@@ -19,12 +19,15 @@ interface CameraConfigPanelProps {
     config: CameraConfig;
     onConfigChange: (newConfig: CameraConfig) => void;
     isExpanded: boolean;
+    /** When true, controls are non-interactive (e.g. device not usable / in use elsewhere). */
+    disabled?: boolean;
 }
 
 export const CameraConfigPanel: React.FC<CameraConfigPanelProps> = ({
     config,
     onConfigChange,
     isExpanded,
+    disabled = false,
 }) => {
     const theme = useTheme();
     const dispatch = useAppDispatch();
@@ -77,6 +80,9 @@ export const CameraConfigPanel: React.FC<CameraConfigPanelProps> = ({
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 1,
+                    ...(disabled
+                        ? { opacity: 0.65, pointerEvents: 'none' as const }
+                        : {}),
                 }}
             >
                 {/* Top row: Resolution, Rotation, then Copy to All pushed right */}
@@ -107,7 +113,7 @@ export const CameraConfigPanel: React.FC<CameraConfigPanelProps> = ({
                             <IconButton
                                 size="small"
                                 onClick={handleCopyToAllCameras}
-                                disabled={otherCamerasCount === 0}
+                                disabled={disabled || otherCamerasCount === 0}
                                 aria-label={t("copySettingsToAll")}
                                 sx={{
                                     color: theme.palette.primary.contrastText,

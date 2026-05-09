@@ -53,7 +53,16 @@ export const CameraConfigTreeView: React.FC = () => {
     // Group cameras by status
     const availableCameras = cameras
         .filter((cam: Camera) => cam.connectionStatus !== "connected")
-        .sort((a, b) => a.index - b.index);
+        .sort((a, b) => {
+            const blocked = (c: Camera) =>
+                !c.streamAvailable && c.connectionStatus !== "connected";
+            const da = blocked(a) ? 1 : 0;
+            const db = blocked(b) ? 1 : 0;
+            if (da !== db) {
+                return da - db;
+            }
+            return (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base" });
+        });
     const isConnectedToCameras = connectedCameras.length > 0;
     const hasSelectedCameras = selectedCameras.length > 0;
 

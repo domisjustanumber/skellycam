@@ -61,11 +61,21 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({camera, isExpande
     const statusLabelMap: Record<string, string> = {
         connected: t('connected'),
         available: t('available'),
+        unavailable: t('unavailableForCapture'),
         error: t('errorsDetected'),
     };
 
+    const selectionLocked =
+        !camera.streamAvailable && camera.connectionStatus !== "connected";
+    const unavailableHint =
+        camera.streamUnavailableReason?.trim()
+        || t('cameraInUseElsewhereHint');
+
     const handleToggleSelection = (e: React.MouseEvent): void => {
         e.stopPropagation();
+        if (selectionLocked) {
+            return;
+        }
         dispatch(cameraSelectionToggled(camera.id));
     };
 
@@ -75,6 +85,8 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({camera, isExpande
                 return theme.palette.success.main;
             case "available":
                 return theme.palette.info.main;
+            case "unavailable":
+                return theme.palette.warning.main;
             case "error":
                 return theme.palette.error.main;
             default:
@@ -96,12 +108,15 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({camera, isExpande
                         py: 0.2,
                         pr: 1,
                         minHeight: 32,
+                        ...(selectionLocked ? { opacity: 0.85 } : {}),
                     }}
                 >
                     {/* Selection checkbox */}
                     <IconButton
                         size="small"
                         onClick={handleToggleSelection}
+                        disabled={selectionLocked}
+                        title={selectionLocked ? unavailableHint : undefined}
                         sx={{mr: 1, flexShrink: 0}}
                     >
                         {camera.selected ? (
@@ -122,7 +137,7 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({camera, isExpande
                         minWidth: 0, // Allow shrinking
                         gap: 1
                     }}>
-                        {/* Camera name */}
+                        {/* Device name from driver / openpnp-capture (not numeric index) */}
                         <Typography
                             variant="body2"
                             sx={{
@@ -130,17 +145,17 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({camera, isExpande
                                 whiteSpace: "nowrap",
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
-                                maxWidth: "200px" // Limit name width
+                                maxWidth: "280px",
                             }}
+                            title={
+                                selectionLocked
+                                    ? `${camera.name}\n${unavailableHint}`
+                                    : camera.deviceInfo.uniqueId
+                                        ? `${camera.name}\n${camera.deviceInfo.uniqueId}`
+                                        : camera.name
+                            }
                         >
-                            <span style={{fontSize: '0.75rem'}}>
-
-                            Camera #{camera.index}
-                            </span>
-                            <br/>
-                            <span style={{fontSize: '0.6rem'}}>
-                                {camera.name} (id: {camera.id})
-                            </span>
+                            {camera.name?.trim() || t("unnamedCameraDevice")}
                         </Typography>
 
                         {/* Config summary - only show when collapsed */}

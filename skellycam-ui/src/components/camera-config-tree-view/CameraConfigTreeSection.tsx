@@ -23,6 +23,9 @@ export const CameraConfigTreeSection: React.FC<CameraConfigTreeSectionProps> = (
         );
     };
 
+    const settingsLocked =
+        !camera.streamAvailable && camera.connectionStatus !== 'connected';
+
     return (
         <TreeItem
             itemId={`camera-${camera.id}-config`}
@@ -31,6 +34,7 @@ export const CameraConfigTreeSection: React.FC<CameraConfigTreeSectionProps> = (
                     config={camera.desiredConfig}
                     onConfigChange={handleConfigChange}
                     isExpanded={true}
+                    disabled={settingsLocked}
                 />
             }
         />
