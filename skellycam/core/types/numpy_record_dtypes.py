@@ -20,6 +20,8 @@ TIMEBASE_MAPPING_DTYPE = np.dtype([
     ('local_time_utc_offset', np.int32),
 ], align=True)
 
+# With openpnp-capture, grab vs retrieve happens inside the native library; Python mirrors grab timestamps
+# into retrieve fields for dtype compatibility (see openpnp_get_frame module docstring).
 FRAME_LIFECYCLE_TIMESTAMPS_DTYPE = np.dtype([
     ('initialized_ns', np.int64),
     ('pre_frame_grab_ns', np.int64),

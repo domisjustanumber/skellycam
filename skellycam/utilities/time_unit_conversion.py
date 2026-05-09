@@ -12,7 +12,9 @@ def ms_to_ns(ms: float | npt.NDArray) -> int | npt.NDArray:
     """
     Convert milliseconds to nanoseconds.
     """
-    return ms * 1e6  # type: ignore[return-value]
+    if isinstance(ms, np.ndarray):
+        return (ms * 1e6).astype(np.int64)
+    return int(round(ms * 1e6))
 
 def ns_to_sec(ns: int | float | npt.NDArray) -> float | npt.NDArray:
     """
