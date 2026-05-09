@@ -195,7 +195,7 @@ tc-fix   = { cmd = "ruff check --select TC --fix skellycam/", help = "Move type-
 tc       = { sequence = ["tc-fix", "test"], help = "Move type-only imports + run tests to verify" }
 lint     = { cmd = "ruff check skellycam/", help = "Run all ruff lint rules" }
 lint-fix = { cmd = "ruff check --fix skellycam/", help = "Auto-fix all ruff lint violations" }
-test     = { cmd = "pytest", help = "Run test suite" }
+test     = { cmd = "pytest", help = "Run test suite (use pytest -m \"not slow\" to skip multi-second tests)" }
 
 
 # =============================================================================
@@ -204,6 +204,9 @@ test     = { cmd = "pytest", help = "Run test suite" }
 [tool.pytest.ini_options]
 testpaths = ["skellycam/tests"]
 asyncio_mode = "auto"
+markers = [
+    "slow: tests that rely on real-time delays (multi-second); exclude with pytest -m \"not slow\"",
+]
 
 # =============================================================================
 # Ruff linter config

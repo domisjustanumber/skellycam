@@ -245,6 +245,7 @@ class TestWorkerRegistry:
         assert len(dead) == 1
         assert w not in registry.workers
 
+    @pytest.mark.slow
     def test_heartbeat_updates_timestamp(self) -> None:
         kill_flag = multiprocessing.Value("b", False)
         registry = WorkerRegistry(
@@ -260,6 +261,7 @@ class TestWorkerRegistry:
         # Clean up
         registry.shutdown_all()
 
+    @pytest.mark.slow
     def test_child_monitor_no_sigterm_when_kill_flag_already_set(self, monkeypatch) -> None:
         """Camera failures that call kill_everything must not trigger os.kill on the main process."""
         sigterm_calls: list[tuple[int, int]] = []

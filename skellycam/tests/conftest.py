@@ -3,6 +3,9 @@ Shared test fixtures for the skellycam test suite.
 
 Builds a lightweight FastAPI app with the same routes as the real app
 but WITHOUT the heavy lifespan (bytecode compilation, logging setup, etc).
+
+Time-consuming tests are marked ``@pytest.mark.slow`` (see ``pyproject.toml``);
+run ``pytest -m "not slow"`` for a faster local loop.
 """
 import multiprocessing
 from unittest.mock import AsyncMock, MagicMock, patch
