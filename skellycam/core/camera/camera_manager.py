@@ -66,6 +66,11 @@ class CameraManager:
         )
 
     def start(self) -> None:
+        """Start every worker in ``camera_index`` order with optional stagger.
+
+        :class:`CameraGroup` uses sequential startup instead (one worker at a time until extracted config).
+        This method remains for callers that own a :class:`CameraManager` directly.
+        """
         logger.info("Starting camera processes...")
         # On Windows, multiprocessing.spawn causes each child process to
         # re-import the full module tree. Spawning many children simultaneously
@@ -73,11 +78,21 @@ class CameraManager:
         # brief exclusive locks during file reads, and antivirus real-time
         # scanning amplifies the contention. Staggering spawns lets each child
         # finish its import phase before the next one starts.
-        _SPAWN_STAGGER_SECONDS: float = 0.25 if sys.platform == "win32" else 0.0
+        # Multiple USB devices opening in parallel often starve the later index;
+        # start lower indices first and use a slightly longer gap when several cameras run.
+        n = len(self.camera_workers)
+        if sys.platform == "win32":
+            # Spawning + USB open contention: give each prior camera time to claim bandwidth before the next worker runs.
+            stagger_s = 1.0 if n > 1 else 0.25
+        elif n > 1:
+            stagger_s = 0.25
+        else:
+            stagger_s = 0.0
 
-        for worker in self.camera_workers.values():
-            if _SPAWN_STAGGER_SECONDS >= 0:
-                time.sleep(_SPAWN_STAGGER_SECONDS)
+        ordered = sorted(self.camera_workers.values(), key=lambda w: w.config.camera_index)
+        for worker in ordered:
+            if stagger_s > 0:
+                time.sleep(stagger_s)
             worker.start()
 
     async def pause_unpause(self, await_state: bool = True) -> None:
@@ -95,12 +110,13 @@ class CameraManager:
     def close(self) -> None:
         logger.info("Closing camera manager and all camera processes...")
         self.ipc.should_continue = False
-        self.orchestrator.close()
 
-        # Mark all workers as intentionally terminated before shutdown
-        # so the child monitor doesn't trigger a cascade kill
+        # Before workers observe should_close and exit, mark intentional shutdown so the child
+        # monitor never treats a fast non-zero exit as a fatal crash (would set global_kill_flag).
         for camera_worker in self.camera_workers.values():
             camera_worker.worker._intentionally_terminated = True
+
+        self.orchestrator.close()
 
         # Phase 1: Wait for all processes to exit on their own (parallel)
         for camera_worker in self.camera_workers.values():

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pydantic import BaseModel
 
 from skellycam.core.camera.config.camera_config import CameraConfig
-from skellycam.core.camera.opencv.opencv_camera_worker_method import opencv_camera_worker_method
+from skellycam.core.camera.openpnp.openpnp_camera_worker_method import openpnp_camera_worker_method
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 from skellycam.core.camera_group.camera_status import CameraStatus
@@ -28,6 +28,7 @@ class CameraState(BaseModel):
 @dataclass
 class CameraWorker:
     camera_id: CameraIdString
+    config: CameraConfig
     worker: ManagedWorker
     ipc: CameraGroupIPC
     orchestrator: CameraOrchestrator
@@ -46,7 +47,7 @@ class CameraWorker:
         recording_info_subscription: TopicSubscriptionQueue,
     ) -> "CameraWorker":
         worker = worker_registry.create_worker(
-            target=opencv_camera_worker_method,
+            target=openpnp_camera_worker_method,
             name=f"Camera{config.camera_index}-{camera_id}-Worker",
             log_queue=ipc.pubsub.topics[TopicTypes.LOGS].publication,
             kwargs=dict(
@@ -61,6 +62,7 @@ class CameraWorker:
         )
         return cls(
             camera_id=camera_id,
+            config=config,
             ipc=ipc,
             orchestrator=orchestrator,
             worker=worker,

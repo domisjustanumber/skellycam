@@ -10,7 +10,7 @@ from skellycam.core.camera.config.image_rotation_types import RotationTypes
 from skellycam.core.types.numpy_record_dtypes import FRAME_CAMERA_INFO_DTYPE
 from skellycam.core.types.type_overloads import CameraIdString, BYTES_PER_MONO_PIXEL
 from skellycam.core.types.type_overloads import CameraIndexInt, CameraNameString
-from skellycam.core.camera.opencv.opencv_helpers.recommend_camera_exposure_setting import ExposureModes
+from skellycam.core.camera.openpnp.openpnp_helpers.recommend_camera_exposure_setting import ExposureModes
 from skellycam.core.recorders.videos.fourcc_codec_helpers import FOURCC_TO_EXTENSION
 
 DEFAULT_IMAGE_HEIGHT: int = 720
@@ -25,7 +25,7 @@ DEFAULT_EXPOSURE_MODE: str = ExposureModes.MANUAL.name
 DEFAULT_EXPOSURE: int = -7
 DEFAULT_FRAMERATE: float = -1.0  # Use camera default framerate
 DEFAULT_ROTATION: RotationTypes = RotationTypes.NO_ROTATION
-DEFAULT_CAPTURE_FOURCC: str = "MJPG"  # skellycam/system/diagnostics/run_cv2_video_capture_diagnostics.py
+DEFAULT_CAPTURE_FOURCC: str = "MJPG"  # matched against openpnp format enumeration
 DEFAULT_WRITER_FOURCC: str = "X264"  # Need set up our installer and whanot so we can us `X264` (or H264, if its easier to set up) skellycam/system/diagnostics/run_cv2_video_writer_diagnostics.py
 
 class OrientationTypes(enum.Enum):
@@ -66,7 +66,8 @@ class CameraConfig(BaseModel):
 
     camera_index: CameraIndexInt = Field(
         default=DEFAULT_CAMERA_INDEX,
-        description="The index of the camera in the system. This is used to create the `cv2.VideoCapture` object. ")
+        description="Device index for openpnp-capture (`Cap_openStream` device ID).",
+    )
 
     camera_name: CameraNameString = Field(
         default=DEFAULT_CAMERA_NAME,
@@ -112,7 +113,7 @@ class CameraConfig(BaseModel):
     )
     capture_fourcc: str = Field(
         default=DEFAULT_CAPTURE_FOURCC,
-        description="The fourcc code to use for the video codec in the `cv2.VideoCapture` object",
+        description="Desired capture FOURCC string (e.g. MJPG, YUY2) matched against openpnp format enumeration.",
     )
 
     writer_fourcc: str = Field(
