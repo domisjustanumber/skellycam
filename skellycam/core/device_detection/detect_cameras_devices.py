@@ -5,7 +5,8 @@ import platform
 from pydantic import BaseModel, ConfigDict, computed_field, field_serializer
 
 from skellycam.core.camera.openpnp_capture import OpenPnPCamera, OpenPnPFormatInfo
-from skellycam.core.device_detection.probe_openpnp_stream import probe_openpnp_stream_available
+from skellycam.core.device_detection.virtual_camera_names import matches_listed_virtual_camera_prefix
+from skellycam.core.device_detection.probe_openpnp_stream import probe_openpnp_stream
 from skellycam.core.types.type_overloads import CameraIdString, CameraIndexInt, CameraNameString
 
 logger = logging.getLogger(__name__)
@@ -20,6 +21,12 @@ class CameraDeviceInfo(BaseModel):
     available_formats: list[OpenPnPFormatInfo]
     stream_available: bool = True
     stream_unavailable_reason: str | None = None
+    matches_listed_virtual_name: bool = False
+    supports_focus_manual: bool = False
+    focus_auto_supported: bool = False
+    focus_min: int | None = None
+    focus_max: int | None = None
+    focus_default: int | None = None
 
     @field_serializer("available_formats")
     def _serialize_formats(self, fmts: list[OpenPnPFormatInfo]) -> list[dict]:
@@ -70,20 +77,43 @@ def detect_available_cameras(
             if not device.unique_id:
                 continue
         formats = list(device.formats)
+        matches_virtual = matches_listed_virtual_camera_prefix(device.name)
         if probe_streams and device.index not in skip_set:
-            ok, reason = probe_openpnp_stream_available(device.index, formats)
-        else:
-            ok, reason = True, None
-        cameras.append(
-            CameraDeviceInfo(
-                index=device.index,
-                name=device.name,
-                unique_id=device.unique_id,
-                available_formats=formats,
-                stream_available=ok,
-                stream_unavailable_reason=reason,
+            outcome = probe_openpnp_stream(device.index, formats)
+            cameras.append(
+                CameraDeviceInfo(
+                    index=device.index,
+                    name=device.name,
+                    unique_id=device.unique_id,
+                    available_formats=formats,
+                    stream_available=outcome.stream_available,
+                    stream_unavailable_reason=outcome.stream_unavailable_reason,
+                    matches_listed_virtual_name=matches_virtual,
+                    supports_focus_manual=outcome.supports_focus_manual,
+                    focus_auto_supported=outcome.focus_auto_supported,
+                    focus_min=outcome.focus_min,
+                    focus_max=outcome.focus_max,
+                    focus_default=outcome.focus_default,
+                )
             )
-        )
+        else:
+            cameras.append(
+                CameraDeviceInfo(
+                    index=device.index,
+                    name=device.name,
+                    unique_id=device.unique_id,
+                    available_formats=formats,
+                    stream_available=True,
+                    stream_unavailable_reason=None,
+                    matches_listed_virtual_name=matches_virtual,
+                    supports_focus_manual=False,
+                    focus_auto_supported=False,
+                    focus_min=None,
+                    focus_max=None,
+                    focus_default=None,
+                )
+            )
+
     logger.debug(
         "Detected %s cameras: %s",
         len(cameras),
