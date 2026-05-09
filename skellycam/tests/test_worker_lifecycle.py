@@ -1,7 +1,8 @@
 """Tests for ManagedWorker and WorkerRegistry process/thread lifecycle management."""
 import multiprocessing
-from multiprocessing.sharedctypes import Synchronized
 import time
+from multiprocessing.sharedctypes import Synchronized
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -258,3 +259,31 @@ class TestWorkerRegistry:
 
         # Clean up
         registry.shutdown_all()
+
+    def test_child_monitor_no_sigterm_when_kill_flag_already_set(self, monkeypatch) -> None:
+        """Camera failures that call kill_everything must not trigger os.kill on the main process."""
+        sigterm_calls: list[tuple[int, int]] = []
+
+        def _record_kill(pid: int, sig: int) -> None:
+            sigterm_calls.append((pid, sig))
+
+        monkeypatch.setattr(
+            "skellycam.core.ipc.process_management.worker_registry.os.kill",
+            _record_kill,
+        )
+        kill_flag = multiprocessing.Value("b", True)
+        registry = WorkerRegistry(
+            global_kill_flag=kill_flag,
+            worker_mode=WorkerMode.THREAD,
+        )
+        registry.start_heartbeat()
+        mock_w = MagicMock()
+        mock_w.pid = 99999
+        mock_w.is_alive.return_value = False
+        mock_w.exitcode = 1
+        mock_w._intentionally_terminated = False
+        mock_w.name = "dead-coordinated"
+        registry._workers.append(mock_w)
+        time.sleep(2.2)
+        registry.shutdown_all()
+        assert sigterm_calls == []

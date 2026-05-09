@@ -80,7 +80,7 @@ class TestFramerateTracker:
         base = 1_000_000_000
         interval_ns = 33_333_333  # ~30fps
         for i in range(10):
-            tracker.update(timestamp_ns=float(base + i * interval_ns))
+            tracker.update(timestamp_ns=base + i * interval_ns)
 
         assert tracker.has_data is True
         fr = tracker.current_framerate
@@ -88,8 +88,8 @@ class TestFramerateTracker:
 
     def test_clear_resets_state(self) -> None:
         tracker = FramerateTracker.create(framerate_source="test")
-        tracker.update(timestamp_ns=1_000_000_000.0)
-        tracker.update(timestamp_ns=1_033_333_333.0)
+        tracker.update(timestamp_ns=1_000_000_000)
+        tracker.update(timestamp_ns=1_033_333_333)
         assert tracker.has_data is True
 
         tracker.clear()

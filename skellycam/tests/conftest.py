@@ -5,8 +5,9 @@ Builds a lightweight FastAPI app with the same routes as the real app
 but WITHOUT the heavy lifespan (bytecode compilation, logging setup, etc).
 """
 import multiprocessing
-from unittest.mock import MagicMock, patch, AsyncMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
+import numpy as np
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
@@ -15,6 +16,9 @@ import skellycam
 from skellycam.api.http.app.health import health_router
 from skellycam.api.http.app.shutdown import shutdown_router
 from skellycam.api.routers import SKELLYCAM_ROUTERS
+from skellycam.core.camera_group.camera_group_manager import CameraGroupManager
+from skellycam.core.ipc.process_management.managed_worker import WorkerMode
+from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
 
 
 # ---------------------------------------------------------------------------
@@ -29,33 +33,42 @@ def mock_global_kill_flag():
 
 @pytest.fixture()
 def mock_worker_registry(mock_global_kill_flag):
-    """A MagicMock standing in for WorkerRegistry (no real threads/processes)."""
-    registry = MagicMock()
-    registry.heartbeat_timestamp = multiprocessing.Value("d", 0.0)
-    return registry
+    """Real WorkerRegistry (THREAD mode, heartbeat not started) for type-checked APIs/tests."""
+    return WorkerRegistry(
+        global_kill_flag=mock_global_kill_flag,
+        worker_mode=WorkerMode.THREAD,
+    )
 
 
 @pytest.fixture()
-def mock_camera_group_manager():
+def mock_camera_group_manager(mock_global_kill_flag, mock_worker_registry):
     """
-    A MagicMock standing in for CameraGroupManager.
+    Real CameraGroupManager with recording/group methods stubbed as AsyncMocks.
 
-    All async methods are AsyncMock so they can be awaited without error.
-    Sync methods return sensible defaults.
+    Must be a true ``CameraGroupManager`` instance so beartype-validated code
+    (e.g. ``WebsocketServer``) accepts ``get_or_create_camera_group_manager`` results.
     """
-    mgr = MagicMock()
-    # Async methods
+    mgr = CameraGroupManager(
+        global_kill_flag=mock_global_kill_flag,
+        worker_registry=mock_worker_registry,
+    )
     mgr.create_or_update_camera_group = AsyncMock()
     mgr.create_and_start_camera_group = AsyncMock()
     mgr.start_recording_all_groups = AsyncMock()
-    def _mock_stats_recarray(mean=30.0):
-        m = MagicMock()
-        m.median_value = mean
-        m.mean_value = mean
-        m.standard_deviation_value = 1.0
-        m.min_value = mean - 2.0
-        m.max_value = mean + 2.0
-        return m
+
+    _stats_dtype = np.dtype(
+        [
+            ("median_value", np.float64),
+            ("mean_value", np.float64),
+            ("standard_deviation_value", np.float64),
+            ("min_value", np.float64),
+            ("max_value", np.float64),
+        ]
+    )
+
+    def _mock_stats_recarray(mean: float = 30.0) -> np.recarray:
+        """Structured scalar as recarray so ``stop_recording._stats_summary`` beartype checks pass."""
+        return np.array((mean, mean, 1.0, mean - 2.0, mean + 2.0), dtype=_stats_dtype).view(np.recarray)
 
     mock_recording_info = MagicMock()
     mock_recording_info.recording_name = "test_recording"
@@ -75,11 +88,6 @@ def mock_camera_group_manager():
     mgr.pause_all_groups = AsyncMock()
     mgr.unpause_all_groups = AsyncMock()
 
-    # Sync methods
-    mgr.get_latest_frontend_payloads = MagicMock(return_value={})
-    mgr.get_backend_framerate_updates = MagicMock(return_value={})
-    mgr.to_state_dict = MagicMock(return_value={"camera_groups": {}})
-    mgr.camera_groups = {}
     return mgr
 
 

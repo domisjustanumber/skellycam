@@ -4,6 +4,7 @@ import time
 
 import numpy as np
 import pytest
+from beartype.roar import BeartypeCallHintParamViolation
 
 from skellycam.core.ipc.pubsub.pubsub_abcs import TopicMessageABC, PubSubTopicABC
 from skellycam.core.ipc.pubsub.pubsub_manager import (
@@ -48,7 +49,7 @@ class TestPubSubTopicManager:
 
     def test_subscribe_unknown_topic_raises(self) -> None:
         manager = PubSubTopicManager()
-        with pytest.raises(ValueError, match="Unknown topic"):
+        with pytest.raises(BeartypeCallHintParamViolation):
             manager.get_subscription("not_a_real_topic")  # type: ignore[arg-type]
 
     def test_close_clears_topics(self) -> None:

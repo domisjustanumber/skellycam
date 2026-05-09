@@ -1,9 +1,15 @@
 """Tests for the camera router endpoints."""
-from unittest.mock import patch, MagicMock, AsyncMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from skellycam.core.camera.config.camera_config import CameraConfig, DEFAULT_CAMERA_ID
+from skellycam.core.camera.openpnp_capture import OpenPnPFormatInfo
+from skellycam.core.camera_group.usb_bandwidth import (
+    USB_BANDWIDTH_ERROR_CODE,
+    USB_BANDWIDTH_USER_GUIDANCE,
+    UsbBandwidthContentionError,
+)
 from skellycam.core.device_detection.detect_cameras_devices import CameraDeviceInfo
 
 
@@ -13,13 +19,19 @@ class TestDetectCameras:
         mock_camera = CameraDeviceInfo(
             index=0,
             name="Test Camera",
-            vendor_id=1234,
-            product_id=5678,
-            path="/dev/video0",
-            backend_id=200,
-            backend_name="V4L2",
+            unique_id="usb-test-000",
+            available_formats=[
+                OpenPnPFormatInfo(
+                    format_id=0,
+                    width=640,
+                    height=480,
+                    fps=30.0,
+                    fourcc_str="MJPG",
+                    bpp=24,
+                )
+            ],
         )
-        
+
         with patch(
             "skellycam.api.http.cameras.camera_router.detect_available_cameras",
             return_value=[mock_camera],
@@ -80,6 +92,30 @@ class TestCameraGroupApply:
             json={"camera_configs": {DEFAULT_CAMERA_ID: CameraConfig().model_dump()}},
         )
         assert response.status_code == 500
+
+    def test_apply_returns_409_with_structured_detail_on_usb_contention(
+        self, client, mock_camera_group_manager
+    ):
+        """A USB bandwidth failure must return HTTP 409 with a structured ``detail``.
+
+        freemocap (and the UI) rely on a stable ``error_code`` and a human-readable
+        ``message`` / ``user_guidance`` so they can react without parsing the message.
+        """
+        mock_camera_group_manager.create_or_update_camera_group = AsyncMock(
+            side_effect=UsbBandwidthContentionError(
+                "Camera xyz never delivered a first frame while 1 other camera(s) were also starting."
+            )
+        )
+        response = client.post(
+            "/skellycam/camera/group/apply",
+            json={"camera_configs": {DEFAULT_CAMERA_ID: CameraConfig().model_dump()}},
+        )
+        assert response.status_code == 409
+        body = response.json()
+        assert isinstance(body["detail"], dict)
+        assert body["detail"]["error_code"] == USB_BANDWIDTH_ERROR_CODE
+        assert "first frame" in body["detail"]["message"]
+        assert body["detail"]["user_guidance"] == USB_BANDWIDTH_USER_GUIDANCE
 
 
 class TestRecording:
