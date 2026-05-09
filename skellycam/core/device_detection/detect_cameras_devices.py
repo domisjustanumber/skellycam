@@ -2,119 +2,108 @@ import hashlib
 import logging
 import platform
 
-import cv2
-from cv2.videoio_registry import getBackendName
-from cv2_enumerate_cameras import supported_backends, enumerate_cameras
-from cv2_enumerate_cameras.camera_info import CameraInfo
-from pydantic import BaseModel, computed_field
-from tabulate import tabulate
+from pydantic import BaseModel, ConfigDict, computed_field, field_serializer
 
-from skellycam.core.camera.determine_backend import determine_opencv_camera_backend, OpenCVBackend
-from skellycam.core.types.type_overloads import CameraIndexInt, CameraNameString, CameraBackendInt, CameraVendorIdInt, \
-    CameraProductIdInt, CameraDevicePathString, CameraBackendNameString, CameraIdString
+from skellycam.core.camera.openpnp_capture import OpenPnPCamera, OpenPnPFormatInfo
+from skellycam.core.device_detection.probe_openpnp_stream import probe_openpnp_stream_available
+from skellycam.core.types.type_overloads import CameraIdString, CameraIndexInt, CameraNameString
 
 logger = logging.getLogger(__name__)
 
-# define a function to search for a camera
-def find_camera(
-        index: CameraIndexInt | None = None,
-        vid: CameraVendorIdInt | None = None,
-        pid: CameraProductIdInt | None = None,
-        path: CameraDevicePathString | None = None,
-        api_preference: CameraBackendInt = cv2.CAP_ANY):
-    for i in enumerate_cameras(api_preference):
-        if index is not None and i.index == index:
-            return cv2.VideoCapture(i.index, i.backend)
-        if path is not None and i.path == path:
-            return cv2.VideoCapture(i.index, i.backend)
-        if vid is not None and pid is not None and i.vid == vid and i.pid == pid:
-            return cv2.VideoCapture(i.index, i.backend)
-    return None
-
 
 class CameraDeviceInfo(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     index: CameraIndexInt
     name: CameraNameString
-    vendor_id: CameraVendorIdInt | None = None
-    product_id: CameraProductIdInt | None = None
-    path: CameraDevicePathString | None = None
-    backend_id: CameraBackendInt | None = None
-    backend_name: CameraBackendNameString | None = None
+    unique_id: str | None = None
+    available_formats: list[OpenPnPFormatInfo]
+    stream_available: bool = True
+    stream_unavailable_reason: str | None = None
+
+    @field_serializer("available_formats")
+    def _serialize_formats(self, fmts: list[OpenPnPFormatInfo]) -> list[dict]:
+        return [
+            {
+                "format_id": f.format_id,
+                "width": f.width,
+                "height": f.height,
+                "fps": f.fps,
+                "fourcc_str": f.fourcc_str,
+                "bpp": f.bpp,
+            }
+            for f in fmts
+        ]
 
     @computed_field
     @property
     def camera_id(self) -> CameraIdString:
-        if self.path:
-            raw = self.path
-        elif self.vendor_id is not None and self.product_id is not None:
-            raw = f"{self.vendor_id:04x}_{self.product_id:04x}_{self.index}"
+        if self.unique_id:
+            raw = self.unique_id
         else:
-            return format(self.index, '04x')
+            raw = f"idx_{self.index}"
         digest = hashlib.sha256(raw.encode()).digest()
-        return format(int.from_bytes(digest[:2], 'big'), '04x')
+        return format(int.from_bytes(digest[:2], "big"), "04x")
 
-    @classmethod
-    def from_camera_info(cls, camera_info: CameraInfo) -> 'CameraDeviceInfo':
-        return cls(
-            index=camera_info.index,
-            name=camera_info.name,
-            vendor_id=camera_info.vid,
-            product_id=camera_info.pid,
-            path=camera_info.path,
-            backend_id=camera_info.backend,
-            backend_name=getBackendName(camera_info.backend)
-        )
-    def create_cv2_video_capture(self) -> 'cv2.VideoCapture':
-        cap = find_camera(
-            vid=self.vendor_id,
-            pid=self.product_id,
-            path=self.path,
-            api_preference=self.backend_id if self.backend_id is not None else cv2.CAP_ANY
-        )
-        if cap is None:
-            raise RuntimeError(f"No matching camera found for index={self.index}, Vendor ID={self.vendor_id}, Product ID={self.product_id}")
-        if not cap.isOpened():
-            raise RuntimeError(f"Failed to open camera {self.index} with Vendor ID: {self.vendor_id} and Product ID: {self.product_id}")
-        # Attempt to read a frame to ensure the camera is working
-        success, image = cap.read()
 
-        if not success or image is None:
-            cap.release()
-            raise RuntimeError(f"Failed to read frame from camera {self.index} with Vendor ID: {self.vendor_id} and Product ID: {self.product_id}")
-        return cap
+def detect_available_cameras(
+    *,
+    filter_virtual: bool = True,
+    probe_streams: bool = True,
+    skip_probe_indices: set[int] | frozenset[int] | None = None,
+) -> list[CameraDeviceInfo]:
+    """Enumerate cameras via openpnp-capture.
 
-def detect_available_cameras(backend_id: CameraBackendInt|None=None, filter_virtual:bool=True) -> list[CameraDeviceInfo]:
+    When ``probe_streams`` is True (default), each device is opened briefly with a candidate format.
+    If every attempt fails, ``stream_available`` is False so the UI can treat the device as busy or unusable.
+    Probing runs sequentially to avoid USB bandwidth contention during detection.
+
+    ``skip_probe_indices``: device indices already streaming inside Skellycam (workers hold the device); the main
+    process cannot open them for probe without falsely marking them busy.
     """
-    Detects available cameras using the cv2_enumerate_cameras package.
-    Returns a list of CameraInfo objects for each detected camera.
-    """
-    if backend_id is None:
-        backend = determine_opencv_camera_backend()
-    else:
-        backend = OpenCVBackend.from_backend_id(backend_id)
-
-
-    cameras: list[CameraDeviceInfo] =  []
-    for camera_info in enumerate_cameras(apiPreference=backend.id):
-        device = CameraDeviceInfo.from_camera_info(camera_info)
-        if filter_virtual and 'virtual' in camera_info.name.lower():
+    skip_set: set[int] = set(skip_probe_indices or ())
+    cameras: list[CameraDeviceInfo] = []
+    for device in OpenPnPCamera.list_devices():
+        if filter_virtual and "virtual" in device.name.lower():
             continue
-        if 'darwin' not in platform.system().lower():
-            # On Windows/Linux, VID/PID is reliably provided - skip cameras without it.
-            # On macOS (AVFoundation), VID/PID are often unavailable even for real USB cameras.
-            if camera_info.vid is None or camera_info.pid is None:
+        if "darwin" not in platform.system().lower():
+            if not device.unique_id:
                 continue
-        cameras.append(device)
-    logger.debug(f"Detected {len(cameras)} cameras:\n {tabulate([camera.model_dump() for camera in cameras], headers='keys')}\n)")
+        formats = list(device.formats)
+        if probe_streams and device.index not in skip_set:
+            ok, reason = probe_openpnp_stream_available(device.index, formats)
+        else:
+            ok, reason = True, None
+        cameras.append(
+            CameraDeviceInfo(
+                index=device.index,
+                name=device.name,
+                unique_id=device.unique_id,
+                available_formats=formats,
+                stream_available=ok,
+                stream_unavailable_reason=reason,
+            )
+        )
+    logger.debug(
+        "Detected %s cameras: %s",
+        len(cameras),
+        [
+            (c.index, c.name, c.unique_id, len(c.available_formats), c.stream_available)
+            for c in cameras
+        ],
+    )
     return cameras
+
 
 if __name__ == "__main__":
     print(f"Platform: {platform.system()}")
-    print(f"OpenCV Version: {cv2.__version__}")
-    print(f"Supported Backends: {[getBackendName(b) for b in supported_backends]}")
+    print(f"openpnp-capture library: {OpenPnPCamera.library_version()}")
     _cameras = detect_available_cameras()
     if not _cameras:
-        print("No _cameras detected.")
+        print("No cameras detected.")
     else:
         for cam in _cameras:
-            print(f"Camera Index: {cam.index}, Name: {cam.name}, Vendor ID: {cam.vendor_id}, Product ID: {cam.product_id}, Path: {cam.path}, Backend: {cam.backend_name} ({cam.backend_id})")
+            print(
+                f"Camera Index: {cam.index}, Name: {cam.name}, Unique ID: {cam.unique_id}, "
+                f"Formats: {len(cam.available_formats)}"
+            )
