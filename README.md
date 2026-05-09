@@ -83,12 +83,23 @@ sudo apt update && sudo apt install clang portaudio19-dev
 
 ## How It Works
 
-Each camera runs in its own OS process to avoid the GIL. The `CameraOrchestrator` enforces synchronization through a two-phase capture protocol:
+Each camera runs in its own OS process to avoid the GIL. USB webcam capture uses **[openpnp-capture](https://github.com/openpnp/openpnp-capture)** (native library + vendored binaries; see [`skellycam/_vendor/openpnp_capture/README.md`](skellycam/_vendor/openpnp_capture/README.md)). Workers rendezvous before opening streams so bandwidth negotiation behaves reliably across cameras. Inside each worker, the `CameraOrchestrator` keeps frame counts aligned so every camera advances together; one multi-frame payload still carries exactly one synchronized frame index per camera plus high-resolution `perf_counter_ns` timestamps around capture.
 
-1. **Grab** — all cameras call `cv2.VideoCapture.grab()` simultaneously, latching sensor images in driver buffers without transferring pixel data
-2. **Retrieve** — after all cameras have grabbed, each calls `cv2.VideoCapture.retrieve()` to decode the latched frame
+OpenCV (`cv2`) stays in the stack for **`VideoWriter`**, rotation helpers, **`putText`** overlays, and writer-side fourcc / file-extension helpers — not for enumerating cameras or decoding the live capture path.
 
-The orchestrator assembles one frame from each camera into a single multi-frame payload — the atomic unit of data throughout the system. Consumers (WebSocket stream, video recorder, frontend) always see exactly one frame per camera per event.
+### Trade-offs (openpnp-capture vs OpenCV grab/retrieve)
+
+openpnp-capture returns **already decoded RGB**. Decompression runs on **the library’s internal worker thread** while polling the OS driver; the Python side reads the latest decoded frame with a memcpy-style copy. That replaces the older OpenCV pattern where **`grab()`** latched raw driver buffers (cheap, easy to timestamp at dequeue time) and **`retrieve()`** did heavy decode afterward on the worker thread — deliberately ordered across cameras so decode did not widen inter-camera timing spread.
+
+| | OpenCV grab/retrieve (previous) | openpnp-capture (current) |
+| --- | --- | --- |
+| **Timestamp meaning** | Could bracket dequeue vs decode separately | Timestamps bracket “copy decoded RGB”; decode time is invisible from Python |
+| **Main-thread work** | `retrieve()` competed with coordinated `grab()` timing | Hot loop variability often **drops**; decode happens off the per-camera thread that runs the capture loop |
+| **Practical emphasis** | Finer notion of OS delivery time | Typically **better cross-camera consistency** with less variability on the coordinated capture step |
+
+For backward compatibility, frame metadata still exposes separate `*_grab_*` and `*_retrieve_*` timestamp fields; under openpnp they are set identically each frame (one call brackets both), so downstream code that expected the old dtype shape keeps working.
+
+Recovering separate grab-vs-decode visibility *and* this lower-jitter behavior would mean extending or **forking** openpnp-capture to expose dequeue and decode as distinct C API stages (discussion and breadcrumbs in [`openpnp_get_frame`](skellycam/core/camera/openpnp/openpnp_helpers/openpnp_get_frame.py) and contributor notes).
 
 For the full architecture (process model, IPC, data flow, playback sync), see the [Architecture docs](https://freemocap.github.io/skellycam/docs/technical/architecture).
 
