@@ -32,8 +32,18 @@ def add_middleware(app: FastAPI) -> None:
                     f"Status: {response.status_code} - "
                     f"Process time: {process_time:.6f}s"
                 )
+            elif response.status_code < 500:
+                # 4xx — client / expected error (e.g. USB bandwidth contention 409).
+                # The endpoint already logged the user-facing detail; here we just record
+                # the request lifecycle outcome at WARNING (not ERROR) so log triage tools
+                # don't treat a user-fixable condition as a server fault.
+                logger.warning(
+                    f"Request {request.method} {request.url} returned "
+                    f"{response.status_code} (client/expected error) "
+                    f"in {process_time:.3f}s"
+                )
             else:
-                # Log failed requests with more details
+                # 5xx — server fault, preserve the alarm bell.
                 logger.error(
                     f"Failed request: {request.method} {request.url}\n"
                     f"  Status: {response.status_code}\n"
@@ -84,14 +94,24 @@ def add_middleware(app: FastAPI) -> None:
             request: Request,
             exc: StarletteHTTPException
     ) -> Response:
-        """Handle HTTP exceptions and log details"""
+        """Handle HTTP exceptions and log details.
+
+        4xx are *expected* — endpoints raise them deliberately to communicate user-fixable
+        conditions (e.g. USB bandwidth contention 409). Logging a full traceback for those
+        is just noise. 5xx still get ERROR + traceback so real bugs stay visible.
+        """
         from fastapi.responses import JSONResponse
 
-        logger.error(
-            f"HTTP {exc.status_code} error: {request.method} {request.url}\n"
-            f"  Detail: {exc.detail}",
-            exc_info=True
-        )
+        if exc.status_code < 500:
+            logger.warning(
+                f"HTTP {exc.status_code} {request.method} {request.url} - detail={exc.detail}"
+            )
+        else:
+            logger.error(
+                f"HTTP {exc.status_code} error: {request.method} {request.url}\n"
+                f"  Detail: {exc.detail}",
+                exc_info=True,
+            )
 
         return JSONResponse(
             status_code=exc.status_code,

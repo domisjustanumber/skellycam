@@ -118,9 +118,15 @@ class WebsocketServer:
 
     @property
     def should_continue(self) -> bool:
+        # ``global_kill_flag`` is the **camera-group** coordinated-shutdown signal — it gets
+        # set whenever a camera worker hits ``ipc.kill_everything()`` (e.g. USB bandwidth
+        # contention) and is cleared at the start of the next ``create_or_update_camera_group``
+        # call. The websocket's lifecycle is independent: it must keep running across camera
+        # failures so the user can be told *why* their cameras failed and so the UI's state
+        # subscription stays alive while they pick a different USB port. We therefore only
+        # check the websocket's own should-continue flag and the connection state here.
         return (
-            not self.global_kill_flag.value
-            and self._websocket_should_continue
+            self._websocket_should_continue
             and self.websocket.client_state == WebSocketState.CONNECTED
         )
 

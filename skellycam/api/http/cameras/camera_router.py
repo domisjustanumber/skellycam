@@ -10,8 +10,14 @@ from skellycam.core.camera_group.camera_group_manager import get_or_create_camer
 from skellycam.core.device_detection.detect_cameras_devices import CameraDeviceInfo, detect_available_cameras
 from skellycam.core.device_detection.detect_microphone_devices import get_available_microphones
 from skellycam.core.recorders.videos.recording_info import RecordingInfo
-from skellycam.core.types.type_overloads import CameraIdString, CameraGroupIdString, CameraBackendInt
+from skellycam.core.types.type_overloads import CameraGroupIdString, CameraIdString
 from skellycam.system.default_paths import default_recording_name, get_default_recording_folder_path
+
+from skellycam.core.camera_group.usb_bandwidth import (
+    USB_BANDWIDTH_ERROR_CODE,
+    USB_BANDWIDTH_USER_GUIDANCE,
+    UsbBandwidthContentionError,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -88,12 +94,18 @@ class StopRecordingResponse(BaseModel):
 
 @camera_router.post("/detect", summary="Detect available camera devices")
 def cameras_detect_endpoint(
-        request: Request,
-        filter_virtual: bool = True,
-        backend_id: CameraBackendInt | None = None
+    request: Request,
+    filter_virtual: bool = True,
+    probe_streams: bool = True,
 ) -> DetectedCamerasResponse:
     try:
-        cameras = detect_available_cameras(backend_id=backend_id, filter_virtual=filter_virtual)
+        mgr = get_or_create_camera_group_manager(request.app)
+        skip_probe = mgr.skellycam_open_device_indices()
+        cameras = detect_available_cameras(
+            filter_virtual=filter_virtual,
+            probe_streams=probe_streams,
+            skip_probe_indices=skip_probe,
+        )
         return DetectedCamerasResponse(cameras=cameras)
     except Exception as e:
         logger.error(f"Error in {request.url}: {type(e).__name__} - {e}", exc_info=True)
@@ -127,6 +139,17 @@ async def camera_group_apply_post_endpoint(
             group_id=camera_group.id,
             camera_configs=camera_group.configs
         )
+    except UsbBandwidthContentionError as e:
+        logger.warning("%s", e)
+        msg = str(e)
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error_code": USB_BANDWIDTH_ERROR_CODE,
+                "message": msg,
+                "user_guidance": USB_BANDWIDTH_USER_GUIDANCE,
+            },
+        ) from e
     except Exception as e:
         logger.error(f"Error in {request.url}: {type(e).__name__} - {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
