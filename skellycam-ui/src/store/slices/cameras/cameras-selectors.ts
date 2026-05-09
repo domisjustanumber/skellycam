@@ -24,20 +24,24 @@ export const selectConnectedCameras = createSelector(
     [selectCameras],
     (cameras) => cameras
         .filter(cam => cam.connectionStatus === 'connected')
-        .sort((a, b) => a.index - b.index)
+        .sort((a, b) =>
+            (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base' }),
+        ),
 );
 
 // Get desired configs for selected cameras (for API calls)
 export const selectSelectedCameraConfigs = createSelector(
     [selectSelectedCameras],
     (cameras): Record<string, CameraConfig> => {
-        return cameras.reduce(
-            (configs, camera) => ({
-                ...configs,
-                [camera.id]: camera.desiredConfig,  // Use desired config
-            }),
-            {} as Record<string, CameraConfig>
-        );
+        return cameras
+            .filter((cam) => cam.streamAvailable || cam.connectionStatus === 'connected')
+            .reduce(
+                (configs, camera) => ({
+                    ...configs,
+                    [camera.id]: camera.desiredConfig,
+                }),
+                {} as Record<string, CameraConfig>
+            );
     }
 );
 

@@ -65,19 +65,31 @@ export type CameraConfig = z.infer<typeof CameraConfigSchema>;
 // ==================== Camera State ====================
 export interface Camera {
     id: string;                    // Primary key (same as camera_id in config) - must be unique
-    index: number;                 // Device index, e.g. the port number used in cv2.VideoCapture() - must be unique
+    index: number;                 // openpnp-capture device index — must be unique in the group
     name: string;                  // Human-readable name, e.g. "Logitech C920" - not necessarily unique
     actualConfig: CameraConfig;     // Configuration extracted from camera stream
     desiredConfig: CameraConfig;    // User's desired configuration
     hasConfigMismatch: boolean;     // Whether actual differs from desired
-    connectionStatus: 'available' | 'connected' | 'error';  // Connection state
+    connectionStatus: 'available' | 'connected' | 'error' | 'unavailable';  // unavailable = detected but stream probe failed (often in use elsewhere)
     selected: boolean;              // UI selection state
+    /** False when detection could not open a capture stream (e.g. exclusive use by another app). */
+    streamAvailable: boolean;
+    /** Backend hint when ``streamAvailable`` is false. */
+    streamUnavailableReason?: string | null;
 
     // Device info (from detection)
     deviceInfo: {
         virtual?: boolean;
-        vendorId?: string;
-        productId?: string;
+        /** Stable ID from openpnp ``Cap_getDeviceUniqueID`` (when present). */
+        uniqueId?: string | null;
+        availableFormats?: Array<{
+            format_id: number;
+            width: number;
+            height: number;
+            fps: number;
+            fourcc_str: string;
+            bpp: number;
+        }>;
     };
 
     // Performance metrics (optional, updated from websocket)
@@ -106,8 +118,17 @@ export interface DetectCamerasResponse {
         camera_id: string;
         index: number;
         name: string;
-        vendor_id?: string;
-        product_id?: string;
+        unique_id?: string | null;
+        stream_available?: boolean;
+        stream_unavailable_reason?: string | null;
+        available_formats?: Array<{
+            format_id: number;
+            width: number;
+            height: number;
+            fps: number;
+            fourcc_str: string;
+            bpp: number;
+        }>;
     }>;
 }
 

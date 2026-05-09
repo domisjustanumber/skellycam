@@ -4,6 +4,7 @@ import {recordingSlice} from "./slices/recording/recording-slice";
 import {themeSlice} from "./slices/theme/theme-slice";
 import {videosSlice} from "./slices/videos/videos-slice";
 import {settingsSlice} from "./slices/settings/settings-slice";
+import { camerasAutoApplyListener } from "./cameras-auto-apply-middleware";
 
 export const store = configureStore({
     reducer: {
@@ -12,5 +13,7 @@ export const store = configureStore({
         theme: themeSlice.reducer,
         videos: videosSlice.reducer,
         settings: settingsSlice.reducer,
-    }
+    },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().prepend(camerasAutoApplyListener.middleware),
 });

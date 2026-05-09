@@ -41,6 +41,14 @@ export const cameraSlice = createSlice({
         cameraSelectionToggled: (state, action: PayloadAction<string>) => {
             const camera = state.cameras.find(cam => cam.id === action.payload);
             if (camera) {
+                const turningOn = !camera.selected;
+                if (
+                    turningOn
+                    && !camera.streamAvailable
+                    && camera.connectionStatus !== 'connected'
+                ) {
+                    return;
+                }
                 camera.selected = !camera.selected;
                 camera.desiredConfig.use_this_camera = camera.selected;
             }
@@ -77,6 +85,12 @@ export const cameraSlice = createSlice({
 
             state.cameras.forEach(camera => {
                 if (camera.id !== action.payload) {
+                    if (
+                        !camera.streamAvailable
+                        && camera.connectionStatus !== 'connected'
+                    ) {
+                        return;
+                    }
                     camera.desiredConfig = {
                         ...camera.desiredConfig,
                         ...settings
@@ -151,7 +165,7 @@ export const cameraSlice = createSlice({
             // ========== Close Cameras ==========
             .addCase(closeCameras.fulfilled, (state) => {
                 state.cameras.forEach(camera => {
-                    camera.connectionStatus = 'available';
+                    camera.connectionStatus = camera.streamAvailable ? 'available' : 'unavailable';
                     camera.metrics = undefined;
                     camera.hasConfigMismatch = false;
                 });

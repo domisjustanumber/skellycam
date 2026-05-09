@@ -65,6 +65,8 @@ export const detectCameras = createAsyncThunk<
             const existing = existingCameras.find(cam => cam.id === cameraId);
             const saved = prunedPersisted[cameraId];
 
+            const streamAvailable = serverCamera.stream_available !== false;
+
             const defaultConfig = createDefaultCameraConfig(
                 cameraId,
                 serverCamera.index,
@@ -75,22 +77,24 @@ export const detectCameras = createAsyncThunk<
             const desiredConfig: CameraConfig = existing?.desiredConfig
                 ?? (saved ? { ...defaultConfig, ...saved.desiredConfig } : { ...defaultConfig });
 
-            const selected: boolean = existing?.selected
-                ?? saved?.selected
-                ?? true;
+            const selected: boolean = streamAvailable
+                ? (existing?.selected ?? saved?.selected ?? true)
+                : false;
 
             return {
                 id: cameraId,
                 name: serverCamera.name,
                 index: serverCamera.index,
                 actualConfig: existing?.actualConfig || defaultConfig,
-                desiredConfig,
+                desiredConfig: { ...desiredConfig, use_this_camera: selected },
                 hasConfigMismatch: existing?.hasConfigMismatch ?? false,
-                connectionStatus: 'available',
+                connectionStatus: streamAvailable ? 'available' : 'unavailable',
                 selected,
+                streamAvailable,
+                streamUnavailableReason: serverCamera.stream_unavailable_reason ?? null,
                 deviceInfo: {
-                    vendorId: serverCamera.vendor_id,
-                    productId: serverCamera.product_id,
+                    uniqueId: serverCamera.unique_id ?? undefined,
+                    availableFormats: serverCamera.available_formats,
                 },
                 metrics: existing?.metrics,
             };
@@ -109,7 +113,10 @@ export const camerasConnectOrUpdate = createAsyncThunk<
         const cameraConfigs = selectSelectedCameraConfigs(state);
 
         if (Object.keys(cameraConfigs).length === 0) {
-            throw new Error('No cameras selected for connection');
+            throw new Error(
+                'No usable cameras selected for connection. If devices show as unavailable, they may be '
+                + 'in use by another application — close it or click refresh to probe again.',
+            );
         }
 
         const request: CamerasConnectOrUpdateRequest = { camera_configs: cameraConfigs };
@@ -121,8 +128,34 @@ export const camerasConnectOrUpdate = createAsyncThunk<
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Failed to connect to cameras');
+            const errorBody = await response.json().catch(() => ({})) as {
+                detail?:
+                    | string
+                    | Array<{ msg?: string } | string>
+                    | { message?: string; user_guidance?: string; error_code?: string };
+            };
+            const d = errorBody.detail;
+            let message: string;
+            if (typeof d === 'string') {
+                message = d;
+            } else if (Array.isArray(d)) {
+                message = d.map((x) => (typeof x === 'string' ? x : x?.msg ?? JSON.stringify(x))).join('; ');
+            } else if (d && typeof d === 'object' && ('message' in d || 'user_guidance' in d)) {
+                const parts: string[] = [];
+                if (typeof d.message === 'string') {
+                    parts.push(d.message);
+                }
+                if (
+                    typeof d.user_guidance === 'string'
+                    && (parts.length === 0 || !parts.some((p) => p.includes(d.user_guidance!)))
+                ) {
+                    parts.push(d.user_guidance);
+                }
+                message = parts.length > 0 ? parts.join('\n\n') : 'Failed to connect to cameras';
+            } else {
+                message = 'Failed to connect to cameras';
+            }
+            throw new Error(message);
         }
 
         return response.json() as Promise<ConnectCamerasResponse>;
