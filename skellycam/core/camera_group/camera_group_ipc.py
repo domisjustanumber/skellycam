@@ -24,6 +24,14 @@ class CameraGroupIPC:
     timebase_mapping: TimebaseMapping = field(default_factory=TimebaseMapping)
     should_pause: Synchronized = field(default_factory=lambda: multiprocessing.Value("b", False))
     shutdown_camera_group_flag: Synchronized = field(default_factory=lambda: multiprocessing.Value("b", False))
+    # Set by ``CameraGroup.create`` to a ``multiprocessing.Barrier(parties=N)`` (or ``None`` for
+    # single-camera groups). Every worker calls ``wait()`` immediately before ``Cap_openStream`` so
+    # that all UVC streams open in the same wall-clock moment. Sequential opens fail on some
+    # Logitech UVC stacks: while one camera is already streaming, a second ``Cap_openStream``
+    # succeeds but never delivers frames; ``close()+open()`` to make room for a peer wedges the
+    # camera that reopened. Synchronizing the opens keeps no camera as an "incumbent" so MF / the
+    # USB stack negotiates bandwidth across them at once.
+    device_open_barrier: object | None = None
 
     @classmethod
     def create(cls,

@@ -1,5 +1,6 @@
 import logging
 import multiprocessing
+import time
 from multiprocessing.sharedctypes import Synchronized
 from dataclasses import dataclass
 
@@ -32,6 +33,7 @@ from skellycam.core.types.type_overloads import (
 )
 from skellycam.utilities.wait_functions import await_100ms, await_10ms
 from skellycam.core.camera_group.camera_status import CameraStatus
+from skellycam.core.camera_group.usb_bandwidth import USB_BANDWIDTH_USER_GUIDANCE, UsbBandwidthContentionError
 
 logger = logging.getLogger(__name__)
 
@@ -83,6 +85,12 @@ class CameraGroup:
                 heartbeat_timestamp=heartbeat_timestamp,
             )
 
+            # Multi-camera startups synchronize every worker's ``Cap_openStream`` call so no
+            # camera is already "streaming" when its peer tries to open. Single-camera groups
+            # don't need a barrier (and creating one would deadlock on the lone wait()).
+            if len(camera_configs) > 1:
+                ipc.device_open_barrier = multiprocessing.Barrier(parties=len(camera_configs))
+
             cameras = CameraManager.create(
                 ipc=ipc,
                 worker_registry=worker_registry,
@@ -102,11 +110,26 @@ class CameraGroup:
     async def start(self) -> CameraConfigs:
         self.started = True
         logger.info(f"Starting camera group ID: {self.id} with cameras: {list(self.configs.keys())}")
+        # global_kill_flag is shared across all groups; shutdown/should_close can be set during overlapping
+        # teardown. Clear immediately before spawning workers so they do not exit the SHM wait on first tick.
+        self.ipc.global_kill_flag.value = False
+        self.ipc.shutdown_camera_group_flag.value = False
+        for status in self.cameras.orchestrator.camera_statuses.values():
+            status.should_close.value = False
+
+        # Workers themselves rendezvous on ``ipc.device_open_barrier`` immediately before
+        # ``Cap_openStream`` (see ``setup_openpnp_camera_loop``); ``CameraManager.start`` only
+        # needs to spawn each worker process so they can reach that barrier. The stagger inside
+        # ``CameraManager.start`` is purely a Windows ``multiprocessing.spawn`` import-race
+        # mitigation, not a USB-bandwidth gate.
         self.cameras.start()
-        logger.debug("Awaiting extracted configs so we can create shared memory...")
-        extracted_configs: CameraConfigs = await await_extracted_configs(
-            ipc=self.ipc, requested_configs=self.configs
+        extracted_configs = await await_extracted_configs(
+            ipc=self.ipc,
+            requested_configs=self.configs,
+            camera_statuses=self.cameras.orchestrator.camera_statuses,
         )
+        validate_camera_configs(extracted_configs)
+        logger.debug("All extracted configs received; creating shared memory...")
         self.shm = CameraGroupSharedMemory.create(
             camera_configs=extracted_configs,
             timebase_mapping=self.ipc.timebase_mapping,
@@ -141,6 +164,7 @@ class CameraGroup:
         return create_frontend_payload(
             latest_frames=latest_frames,
             display_image_sizes=display_image_sizes,
+            camera_group_id=self.id,
         )
 
     def get_frontend_payload_by_frame_number(
@@ -158,6 +182,7 @@ class CameraGroup:
         frame_number_out, mf_timestamp, frames_bytearray = create_frontend_payload(
             latest_frames=latest_frames,
             display_image_sizes=display_image_sizes,
+            camera_group_id=self.id,
         )
         if frame_number_out != frame_number:
             logger.warning(f"Requested frame number {frame_number} but got {frame_number_out}")
@@ -172,7 +197,9 @@ class CameraGroup:
             UpdateCamerasSettingsMessage(requested_configs=requested_configs)
         )
         updated_configs = await await_extracted_configs(
-            ipc=self.ipc, requested_configs=requested_configs
+            ipc=self.ipc,
+            requested_configs=requested_configs,
+            camera_statuses=self.cameras.orchestrator.camera_statuses,
         )
         self.configs = updated_configs
         logger.info(f"Updated camera configs - {list(requested_configs.keys())}")
@@ -285,10 +312,13 @@ class CameraGroup:
 async def await_extracted_configs(
     ipc: CameraGroupIPC,
     requested_configs: CameraConfigs,
+    camera_statuses: dict[CameraIdString, CameraStatus] | None = None,
 ) -> CameraConfigs:
     updated_configs: dict[CameraIdString, CameraConfig | None] = {
         camera_id: None for camera_id in requested_configs.keys()
     }
+    last_pending_log_m = 0.0
+    pending_log_interval_s = 3.0
     while (
         any(not isinstance(config, CameraConfig) for config in updated_configs.values())
         and ipc.should_continue
@@ -302,11 +332,65 @@ async def await_extracted_configs(
             updated_configs[
                 extracted_config_message.extracted_config.camera_id
             ] = extracted_config_message.extracted_config
+        missing_ids = [
+            camera_id
+            for camera_id, cfg in updated_configs.items()
+            if not isinstance(cfg, CameraConfig)
+        ]
+        if missing_ids:
+            now_m = time.monotonic()
+            if now_m - last_pending_log_m >= pending_log_interval_s:
+                last_pending_log_m = now_m
+                received = len(requested_configs) - len(missing_ids)
+                logger.info(
+                    "Waiting for extracted configuration from %s (%d/%d cameras). "
+                    "Shared-memory handles are published only after every camera completes "
+                    "its first frame and publishes settings — cameras already waiting on SHM "
+                    "will stay idle until then. Check worker logs for camera index / device errors.",
+                    missing_ids,
+                    received,
+                    len(requested_configs),
+                )
         await await_100ms()
 
-    validate_camera_configs(updated_configs)
+    missing = [
+        camera_id
+        for camera_id, config in updated_configs.items()
+        if not isinstance(config, CameraConfig)
+    ]
+    if missing:
+        if (
+            camera_statuses is not None
+            and len(requested_configs) > 1
+            and not ipc.should_continue
+            and any(
+                camera_statuses[mid].likely_usb_bandwidth_contention.value for mid in missing if mid in camera_statuses
+            )
+        ):
+            raise UsbBandwidthContentionError(
+                f"Camera group startup failed: no first video frame from at least one camera while others "
+                f"were active (cameras still waiting: {missing}). {USB_BANDWIDTH_USER_GUIDANCE}"
+            )
+        abort_detail = (
+            "The camera group shut down (another worker failed or triggered kill) before these cameras "
+            "published configuration — they may still be opening, or were never reached."
+            if not ipc.should_continue
+            else "Every camera must open and publish its extracted config before shared memory is created."
+        )
+        raise RuntimeError(
+            "Did not receive extracted device configuration for camera(s) "
+            f"{missing} before camera group startup stopped. {abort_detail} "
+            "Check worker logs for other cameras in the same group for the first failure."
+        )
 
-    return updated_configs
+    complete: CameraConfigs = {
+        camera_id: config
+        for camera_id, config in updated_configs.items()
+        if isinstance(config, CameraConfig)
+    }
+    validate_camera_configs(complete)
+
+    return complete
 
 
 async def finalize_recording(

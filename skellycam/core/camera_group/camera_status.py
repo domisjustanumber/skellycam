@@ -17,6 +17,12 @@ class CameraStatus:
     updating: Synchronized = field(default_factory=lambda: multiprocessing.Value("b", False))
     error: Synchronized = field(default_factory=lambda: multiprocessing.Value("b", False))
 
+    # Set by a worker that raises :class:`UsbBandwidthContentionError` during open so the main
+    # process can surface USB bandwidth guidance instead of a generic timeout message.
+    likely_usb_bandwidth_contention: Synchronized = field(
+        default_factory=lambda: multiprocessing.Value("b", False)
+    )
+
     frame_count: Synchronized = field(default_factory=lambda: multiprocessing.Value("q", -1))
 
     @property

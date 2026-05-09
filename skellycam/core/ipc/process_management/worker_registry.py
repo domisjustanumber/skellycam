@@ -81,16 +81,40 @@ class WorkerRegistry:
             self._heartbeat_stop.wait(timeout=1.0)
 
     def _child_monitor_loop(self) -> None:
-        """Watch for unexpected worker death and trigger parent shutdown."""
+        """Watch for unexpected worker death and trigger parent shutdown.
+
+        Camera workers that fail during startup call ``ipc.kill_everything()`` before exiting,
+        which already sets ``global_kill_flag``. In that case we only log: sending SIGTERM to
+        the main process would kill the API before it can return HTTP 409 to the client
+        (e.g. USB bandwidth guidance). SIGTERM is reserved for worker crashes that did *not*
+        already coordinate shutdown via the shared kill flag.
+        """
         while not self._heartbeat_stop.is_set():
-            for worker in self._workers:
+            for worker in list(self._workers):
                 if (worker.pid is not None
                         and not worker.is_alive()
                         and worker.exitcode not in (None, 0)
                         and not worker._intentionally_terminated):
+                    if self._global_kill_flag.value:
+                        logger.warning(
+                            "Worker %s (PID: %s) exited with code %s during coordinated shutdown "
+                            "(e.g. camera open failure after kill_everything). Not sending SIGTERM to main process.",
+                            worker.name,
+                            worker.pid,
+                            worker.exitcode,
+                        )
+                        worker._reap()
+                        try:
+                            self._workers.remove(worker)
+                        except ValueError:
+                            pass
+                        continue
                     logger.error(
                         f"Worker {worker.name} (PID: {worker.pid}) died with "
-                        f"exit code {worker.exitcode} — triggering parent shutdown"
+                        f"exit code {worker.exitcode} — triggering parent shutdown. "
+                        "Search earlier logs for a traceback from that worker "
+                        "(e.g. 'Unhandled exception in ManagedProcess' or "
+                        "'Failed to open camera' / 'Camera worker failed')."
                     )
                     self._global_kill_flag.value = True
                     os.kill(os.getpid(), signal.SIGTERM)

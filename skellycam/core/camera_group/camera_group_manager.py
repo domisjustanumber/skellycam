@@ -26,6 +26,15 @@ from skellycam.core.timestamps.recording_timestamp_stats import RecordingTimesta
 logger = logging.getLogger(__name__)
 
 
+def _matched_camera_ids_from_partials(
+    partial_by_group: dict[CameraGroupIdString, CameraConfigs],
+) -> frozenset[CameraIdString]:
+    matched: set[CameraIdString] = set()
+    for partial in partial_by_group.values():
+        matched.update(partial.keys())
+    return frozenset(matched)
+
+
 @dataclass
 class CameraGroupManager:
     global_kill_flag: Synchronized
@@ -48,7 +57,23 @@ class CameraGroupManager:
             camera_group.ipc.pubsub.get_subscription(TopicTypes.FRAMERATE)
         )
         self.camera_groups[camera_group.id] = camera_group
-        await self.camera_groups[camera_group.id].start()
+        try:
+            await self.camera_groups[camera_group.id].start()
+        except Exception:
+            gid = camera_group.id
+            try:
+                await self.camera_groups[gid].close()
+            except Exception as close_err:
+                logger.warning("Error closing camera group after failed start: %s", close_err)
+            self.camera_groups.pop(gid, None)
+            self.camera_group_framerate_subscriptions.pop(gid, None)
+            # ``ipc.kill_everything()`` from the failing worker set ``global_kill_flag`` to
+            # signal *coordinated camera shutdown*. The camera group is now closed; clear
+            # the flag so the next user retry / detect probe doesn't see stale shutdown
+            # state. The websocket no longer reads this flag (see ``WebsocketServer.should_continue``)
+            # so this is purely housekeeping for camera workers.
+            self.global_kill_flag.value = False
+            raise
 
         logger.info(
             f"Creating camera group with ID: {camera_group.id} "
@@ -58,12 +83,30 @@ class CameraGroupManager:
 
     async def create_or_update_camera_group(self, camera_configs: CameraConfigs) -> CameraGroup:
         """Create a camera group with the provided configuration settings."""
-        camera_groups = self._get_configs_by_group(camera_configs)
-        if not camera_groups:
+        # Workers spin on ipc.should_continue while awaiting SHM; that includes global_kill_flag.
+        # After a crash or force-stop it stays True until cleared — without this, workers publish
+        # extracted config then exit the wait loop in the same millisecond.
+        self.global_kill_flag.value = False
+        requested_ids = frozenset(camera_configs.keys())
+
+        partial_by_group = self._get_configs_by_group(camera_configs)
+        matched_ids = _matched_camera_ids_from_partials(partial_by_group)
+
+        # No overlap with existing groups → create (handled below when partial_by_group is empty).
+        # Partial overlap (e.g. existing group has cam1 only, user applies cam1+cam2) must recreate:
+        # otherwise we would call update with a subset and never spawn workers for new cameras.
+        if matched_ids != requested_ids:
+            await self.close_all_camera_groups()
             return await self.create_and_start_camera_group(camera_configs)
-        if len(camera_groups) > 1:
+
+        if not partial_by_group:
+            return await self.create_and_start_camera_group(camera_configs)
+
+        non_empty_groups = [(gid, cfgs) for gid, cfgs in partial_by_group.items() if cfgs]
+        if len(non_empty_groups) > 1:
             raise NotImplementedError("Cannot update multiple camera groups at once (yet).")
-        camera_group_id, configs = next(iter(camera_groups.items()))
+
+        camera_group_id, configs = non_empty_groups[0]
         camera_group = self.get_camera_group(camera_group_id)
         await camera_group.update_camera_settings(requested_configs=configs)
         return camera_group
@@ -88,17 +131,21 @@ class CameraGroupManager:
     async def close_all_camera_groups(self) -> None:
         """Close all camera groups."""
         self.closing = True
-        if not self.camera_groups:
-            logger.warning("No camera groups to close.")
-            return
+        try:
+            if not self.camera_groups:
+                logger.warning("No camera groups to close.")
+                return
 
-        for camera_group_id in list(self.camera_groups.keys()):
-            await self.camera_groups[camera_group_id].close()
-        logger.success(
-            f"Successfully closed all camera groups ids - {list(self.camera_groups.keys())}"
-        )
-        self.camera_groups.clear()
-        self.closing = False
+            closed_ids = list(self.camera_groups.keys())
+            for camera_group_id in closed_ids:
+                await self.camera_groups[camera_group_id].close()
+            logger.success(f"Successfully closed all camera groups ids - {closed_ids}")
+            self.camera_groups.clear()
+        finally:
+            self.closing = False
+            # Teardown (terminate, worker crash, kill_everything) often sets this; if close raises partway,
+            # we still clear so the next apply/start is not poisoned.
+            self.global_kill_flag.value = False
 
     async def start_recording_all_groups(self, recording_info: RecordingInfo) -> None:
         """Start recording for all camera groups."""
@@ -195,6 +242,19 @@ class CameraGroupManager:
         for camera_group in self.camera_groups.values():
             camera_group.unpause(await_unpaused=await_unpaused)
             logger.info(f"Unpaused camera group ID: {camera_group.id}")
+
+    def skellycam_open_device_indices(self) -> set[int]:
+        """Indices whose streams are already opened by a running Skellycam camera group.
+
+        Probing these from the main process would falsely report ``unavailable`` because capture is exclusive.
+        """
+        indices: set[int] = set()
+        for group in self.camera_groups.values():
+            if not group.started:
+                continue
+            for cfg in group.configs.values():
+                indices.add(int(cfg.camera_index))
+        return indices
 
     def find_camera_group_by_camera_ids(
         self, camera_ids: list[CameraIdString]
