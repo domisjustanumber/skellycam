@@ -1,13 +1,32 @@
 // cameras-selectors.ts
 import {createSelector} from '@reduxjs/toolkit';
 import {RootState} from '../../types';
-import {CameraConfig} from './cameras-types';
+import {
+    Camera,
+    CameraConfig,
+    cameraMatchesListedVirtualPattern,
+    DEFAULT_UI_FRAMERATE,
+    fpsValuesEquivalent,
+} from './cameras-types';
 
 // ========== Basic Selectors ==========
 export const selectCameras = (state: RootState) => state.cameras.cameras;
 export const selectIsPaused = (state: RootState) => state.cameras.isPaused;
 export const selectIsLoading = (state: RootState) => state.cameras.isLoading;
+export const selectIsDetectingCameras = (state: RootState) => state.cameras.isDetectingCameras;
+export const selectSuppressListedVirtualCameras = (state: RootState) =>
+    state.cameras.suppressListedVirtualCameras;
+export const selectHardwareEnumerationChanged = (state: RootState) =>
+    state.cameras.hardwareCameraEnumerationChanged;
 export const selectError = (state: RootState) => state.cameras.error;
+
+/** Devices shown in sidebar / FPS logic: listed virtual cameras are omitted while “Ignore virtual webcams” is on. */
+export const selectCamerasDisplayedInUi = createSelector(
+    [selectCameras, selectSuppressListedVirtualCameras],
+    (cameras, suppress): Camera[] =>
+        (suppress ? cameras.filter((c) => !cameraMatchesListedVirtualPattern(c)) : cameras),
+);
+
 
 // ========== Derived Selectors ==========
 export const selectCameraById = createSelector(
@@ -16,14 +35,19 @@ export const selectCameraById = createSelector(
 );
 
 export const selectSelectedCameras = createSelector(
-    [selectCameras],
-    (cameras) => cameras.filter(cam => cam.selected)
+    [selectCamerasDisplayedInUi],
+    (cameras) => cameras.filter((cam) => cam.selected),
+);
+
+export const selectHasCameraSelection = createSelector(
+    [selectSelectedCameras],
+    (selected) => selected.length > 0,
 );
 
 export const selectConnectedCameras = createSelector(
-    [selectCameras],
+    [selectCamerasDisplayedInUi],
     (cameras) => cameras
-        .filter(cam => cam.connectionStatus === 'connected')
+        .filter((cam) => cam.connectionStatus === 'connected')
         .sort((a, b) =>
             (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base' }),
         ),
@@ -32,17 +56,105 @@ export const selectConnectedCameras = createSelector(
 // Get desired configs for selected cameras (for API calls)
 export const selectSelectedCameraConfigs = createSelector(
     [selectSelectedCameras],
-    (cameras): Record<string, CameraConfig> => {
-        return cameras
+    (cameras): Record<string, CameraConfig> =>
+        cameras
             .filter((cam) => cam.streamAvailable || cam.connectionStatus === 'connected')
             .reduce(
                 (configs, camera) => ({
                     ...configs,
                     [camera.id]: camera.desiredConfig,
                 }),
-                {} as Record<string, CameraConfig>
-            );
+                {} as Record<string, CameraConfig>,
+            ),
+);
+
+function uniqueRepresentativeFpsFromFormats(cam: Camera): number[] {
+    const fmts = cam.deviceInfo.availableFormats ?? [];
+    const out: number[] = [];
+    for (const f of fmts) {
+        if (
+            !out.some((representative) => fpsValuesEquivalent(representative, f.fps))
+        ) {
+            out.push(f.fps);
+        }
     }
+    return out.sort((a, b) => a - b);
+}
+
+/** FPS values every selected usable camera exposes on at least one reported mode (resolution-agnostic union per device, intersected across selection). */
+export const selectIntersectingFpsOptions = createSelector(
+    [selectSelectedCameras],
+    (selected): number[] => {
+        const eligible = selected
+            .filter(
+                (c) =>
+                    (c.streamAvailable || c.connectionStatus === 'connected')
+                    && ((c.deviceInfo.availableFormats?.length ?? 0) > 0),
+            )
+            .sort((a, b) => a.index - b.index);
+        if (eligible.length === 0) {
+            return [];
+        }
+        let options = uniqueRepresentativeFpsFromFormats(eligible[0]);
+        for (let i = 1; i < eligible.length; i++) {
+            options = options.filter((candidateFps) =>
+                (eligible[i].deviceInfo.availableFormats ?? []).some((f) =>
+                    fpsValuesEquivalent(f.fps, candidateFps),
+                ),
+            );
+        }
+        return options;
+    },
+);
+
+export const selectGroupDisplayedFramerate = createSelector(
+    [selectSelectedCameras],
+    (selected): number => {
+        const eligible = selected
+            .filter(
+                (c) =>
+                    (c.streamAvailable || c.connectionStatus === 'connected')
+                    && ((c.deviceInfo.availableFormats?.length ?? 0) > 0),
+            )
+            .sort((a, b) => a.index - b.index);
+        if (eligible.length === 0) {
+            return -1;
+        }
+        const baseline = eligible[0].desiredConfig.framerate ?? -1;
+        const allMatch = eligible.every((c) =>
+            fpsValuesEquivalent(c.desiredConfig.framerate, baseline),
+        );
+        return allMatch ? baseline : -1;
+    },
+);
+
+/**
+ * Canonical FPS the Cameras bar is *visually* displaying — always an element of {@link selectIntersectingFpsOptions}
+ * when there is a selection. Mirrors the dropdown's resolution rule in {@link CamerasSectionTopControls}
+ * so tree rows can never disagree with the bar.
+ *
+ * ``null`` → no enforced target (no selection, or no shared intersect) → cameras render as plain Available.
+ */
+export const selectBarAppliedTargetFramerate = createSelector(
+    [
+        selectHasCameraSelection,
+        selectIntersectingFpsOptions,
+        selectGroupDisplayedFramerate,
+    ],
+    (hasSelection, fpsChoices, groupFpsDisplay): number | null => {
+        if (!hasSelection || fpsChoices.length === 0) {
+            return null;
+        }
+        // Same resolution path as the dropdown: prefer a value matching the unified group FPS,
+        // otherwise default-in-intersect, otherwise first intersect FPS.
+        const representativeMatchingGroup = fpsChoices.find((fps) =>
+            fpsValuesEquivalent(fps, groupFpsDisplay),
+        );
+        const representativeWhenMixed =
+            fpsChoices.find((fps) => fpsValuesEquivalent(fps, DEFAULT_UI_FRAMERATE))
+            ?? fpsChoices[0];
+        return representativeMatchingGroup ?? representativeWhenMixed ?? null;
+    },
 );
 
 // Get actual configs for all cameras
@@ -93,8 +205,8 @@ export const selectCameraConfigComparison = createSelector(
 
 // ========== Count Selectors ==========
 export const selectCameraCount = createSelector(
-    [selectCameras],
-    (cameras) => cameras.length
+    [selectCamerasDisplayedInUi],
+    (cameras) => cameras.length,
 );
 
 export const selectHasConnectedCameras = createSelector(

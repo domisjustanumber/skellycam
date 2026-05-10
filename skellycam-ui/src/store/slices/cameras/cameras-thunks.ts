@@ -11,7 +11,9 @@ import {
     CamerasConnectOrUpdateRequest,
     ConnectCamerasResponse,
     createDefaultCameraConfig,
+    DEFAULT_UI_FRAMERATE,
 } from './cameras-types';
+import { recommendExposureQueued } from './cameras-slice';
 import { selectSelectedCameraConfigs } from './cameras-selectors';
 import {
     loadPersistedCameraSettings,
@@ -28,11 +30,18 @@ export const detectCameras = createAsyncThunk<
     async (request = { filterVirtual: true }, { getState }) => {
         const state = getState();
         const existingCameras = state.cameras.cameras;
+        const suppressListedVirtual = state.cameras.suppressListedVirtualCameras;
 
         const response = await backendFetch(serverUrls.endpoints.detectCameras, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(request),
+            body: JSON.stringify({
+                filterVirtual: request?.filterVirtual ?? true,
+                probeStreams: request?.probeStreams ?? true,
+                skipListedVirtualResolutionInterrogation:
+                    request?.skipListedVirtualResolutionInterrogation
+                    ?? suppressListedVirtual,
+            }),
         });
 
         if (!response.ok) {
@@ -74,12 +83,16 @@ export const detectCameras = createAsyncThunk<
             );
 
             // Priority: existing in-memory state > persisted localStorage > defaults
-            const desiredConfig: CameraConfig = existing?.desiredConfig
+            let desiredConfig: CameraConfig = existing?.desiredConfig
                 ?? (saved ? { ...defaultConfig, ...saved.desiredConfig } : { ...defaultConfig });
+            if (desiredConfig.framerate <= 0) {
+                desiredConfig = { ...desiredConfig, framerate: DEFAULT_UI_FRAMERATE };
+            }
 
-            const selected: boolean = streamAvailable
-                ? (existing?.selected ?? saved?.selected ?? true)
-                : false;
+            const matchesListed = serverCamera.matches_listed_virtual_name === true;
+            const blockedListed = suppressListedVirtual && matchesListed;
+            const selected: boolean =
+                blockedListed ? false : (streamAvailable ? (existing?.selected ?? saved?.selected ?? true) : false);
 
             return {
                 id: cameraId,
@@ -92,8 +105,15 @@ export const detectCameras = createAsyncThunk<
                 selected,
                 streamAvailable,
                 streamUnavailableReason: serverCamera.stream_unavailable_reason ?? null,
+                matchesListedVirtualName: matchesListed,
                 deviceInfo: {
                     uniqueId: serverCamera.unique_id ?? undefined,
+                    matchesListedVirtualName: matchesListed,
+                    supportsFocusManual: serverCamera.supports_focus_manual ?? false,
+                    focusAutoSupported: serverCamera.focus_auto_supported ?? false,
+                    focusMin: serverCamera.focus_min ?? null,
+                    focusMax: serverCamera.focus_max ?? null,
+                    focusDefault: serverCamera.focus_default ?? null,
                     availableFormats: serverCamera.available_formats,
                 },
                 metrics: existing?.metrics,
@@ -108,7 +128,7 @@ export const camerasConnectOrUpdate = createAsyncThunk<
     { state: RootState }
 >(
     'cameras/connect',
-    async (_, { getState }) => {
+    async (_, { getState, dispatch }) => {
         const state = getState();
         const cameraConfigs = selectSelectedCameraConfigs(state);
 
@@ -119,13 +139,27 @@ export const camerasConnectOrUpdate = createAsyncThunk<
             );
         }
 
+        const hasRecommend = Object.values(cameraConfigs).some((c) => c.exposure_mode === 'RECOMMEND');
+        if (hasRecommend) {
+            dispatch(recommendExposureQueued({ camera_ids: Object.keys(cameraConfigs) }));
+        }
+
         const request: CamerasConnectOrUpdateRequest = { camera_configs: cameraConfigs };
 
-        const response = await backendFetch(serverUrls.endpoints.camerasConnectOrUpdate, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(request),
-        });
+        const timeoutMs = hasRecommend ? 120_000 : 20_000;
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+        let response: Response;
+        try {
+            response = await backendFetch(serverUrls.endpoints.camerasConnectOrUpdate, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(request),
+                signal: controller.signal,
+            });
+        } finally {
+            window.clearTimeout(timeout);
+        }
 
         if (!response.ok) {
             const errorBody = await response.json().catch(() => ({})) as {

@@ -2,7 +2,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
     CamerasState,
-    CameraConfig, extractConfigSettings, areConfigsEqual, createDefaultCameraConfig,
+    Camera,
+    CameraConfig,
+    cameraMatchesListedVirtualPattern,
+    extractConfigSettings,
+    areConfigsEqual,
+    createDefaultCameraConfig,
+    normalizeCaptureFourcc,
+    pickBestFormatAtTargetFps,
 } from './cameras-types';
 import {
     detectCameras,
@@ -26,10 +33,18 @@ function persistAllCameraSettings(state: CamerasState): void {
     savePersistedCameraSettings(settingsMap);
 }
 
+function refreshCombinedLoading(state: CamerasState): void {
+    state.isLoading = state.isDetectingCameras || state.isApplyingCameraConnection;
+}
+
 const initialState: CamerasState = {
     cameras: [],
     isPaused: false,
     isLoading: false,
+    isDetectingCameras: false,
+    isApplyingCameraConnection: false,
+    suppressListedVirtualCameras: true,
+    hardwareCameraEnumerationChanged: false,
     error: null,
 };
 
@@ -47,6 +62,9 @@ export const cameraSlice = createSlice({
                     && !camera.streamAvailable
                     && camera.connectionStatus !== 'connected'
                 ) {
+                    return;
+                }
+                if (turningOn && state.suppressListedVirtualCameras && cameraMatchesListedVirtualPattern(camera)) {
                     return;
                 }
                 camera.selected = !camera.selected;
@@ -86,6 +104,12 @@ export const cameraSlice = createSlice({
             state.cameras.forEach(camera => {
                 if (camera.id !== action.payload) {
                     if (
+                        state.suppressListedVirtualCameras
+                        && cameraMatchesListedVirtualPattern(camera)
+                    ) {
+                        return;
+                    }
+                    if (
                         !camera.streamAvailable
                         && camera.connectionStatus !== 'connected'
                     ) {
@@ -110,38 +134,108 @@ export const cameraSlice = createSlice({
                     camera.name,
                 );
                 camera.desiredConfig = defaultConfig;
-                camera.selected = true;
+                const selectable = !(state.suppressListedVirtualCameras && cameraMatchesListedVirtualPattern(camera));
+                camera.selected = selectable;
+                camera.desiredConfig.use_this_camera = selectable;
                 camera.hasConfigMismatch = !areConfigsEqual(camera.actualConfig, defaultConfig);
             }
         },
 
+        suppressListedVirtualCamerasSet: (state, action: PayloadAction<boolean>) => {
+            state.suppressListedVirtualCameras = action.payload;
+            if (action.payload) {
+                state.cameras.forEach(camera => {
+                    if (cameraMatchesListedVirtualPattern(camera)) {
+                        camera.selected = false;
+                        camera.desiredConfig = {
+                            ...camera.desiredConfig,
+                            use_this_camera: false,
+                        };
+                    }
+                });
+                persistAllCameraSettings(state);
+            }
+        },
 
+        hardwareCameraEnumerationChanged: (state) => {
+            state.hardwareCameraEnumerationChanged = true;
+        },
+
+        dismissHardwareCameraEnumerationHint: (state) => {
+            state.hardwareCameraEnumerationChanged = false;
+        },
+
+        camerasGroupFramerateSet: (state, action: PayloadAction<number>) => {
+            const fps = action.payload;
+            state.cameras.forEach(camera => {
+                if (!camera.selected) return;
+                const usable = camera.streamAvailable || camera.connectionStatus === 'connected';
+                if (!usable) return;
+                if (state.suppressListedVirtualCameras && cameraMatchesListedVirtualPattern(camera)) {
+                    return;
+                }
+                const best = pickBestFormatAtTargetFps(camera.deviceInfo.availableFormats, fps);
+                if (best) {
+                    const applied = best.fps;
+                    camera.desiredConfig = {
+                        ...camera.desiredConfig,
+                        framerate: applied,
+                        resolution: { width: best.width, height: best.height },
+                        capture_fourcc: normalizeCaptureFourcc(best.fourcc_str),
+                    };
+                }
+                else {
+                    camera.desiredConfig = { ...camera.desiredConfig, framerate: fps };
+                }
+                camera.hasConfigMismatch = !areConfigsEqual(camera.actualConfig, camera.desiredConfig);
+            });
+            persistAllCameraSettings(state);
+        },
+
+        recommendExposureQueued: (state, action: PayloadAction<{ camera_ids: readonly string[] }>) => {
+            for (const cid of action.payload.camera_ids) {
+                const cam = state.cameras.find(c => c.id === cid);
+                if (!cam || cam.desiredConfig.exposure_mode !== 'RECOMMEND') continue;
+                cam.desiredConfig = {
+                    ...cam.desiredConfig,
+                    exposure_mode: 'MANUAL',
+                    exposure: -7,
+                };
+            }
+            persistAllCameraSettings(state);
+        },
     },
 
     extraReducers: (builder) => {
         builder
             // ========== Detect Cameras ==========
             .addCase(detectCameras.pending, (state) => {
-                state.isLoading = true;
+                state.isDetectingCameras = true;
+                refreshCombinedLoading(state);
                 state.error = null;
             })
             .addCase(detectCameras.fulfilled, (state, action) => {
-                state.isLoading = false;
+                state.isDetectingCameras = false;
+                refreshCombinedLoading(state);
                 state.cameras = action.payload;
+                state.hardwareCameraEnumerationChanged = false;
                 persistAllCameraSettings(state);
             })
             .addCase(detectCameras.rejected, (state, action) => {
-                state.isLoading = false;
+                state.isDetectingCameras = false;
+                refreshCombinedLoading(state);
                 state.error = action.error.message || 'Failed to detect cameras';
             })
 
             // ========== Connect Cameras ==========
             .addCase(camerasConnectOrUpdate.pending, (state) => {
-                state.isLoading = true;
+                state.isApplyingCameraConnection = true;
+                refreshCombinedLoading(state);
                 state.error = null;
             })
             .addCase(camerasConnectOrUpdate.fulfilled, (state, action) => {
-                state.isLoading = false;
+                state.isApplyingCameraConnection = false;
+                refreshCombinedLoading(state);
                 // Update both actual and desired configs from server response
                 Object.entries(action.payload.camera_configs).forEach(
                     ([cameraId, config]) => {
@@ -157,7 +251,8 @@ export const cameraSlice = createSlice({
                 persistAllCameraSettings(state);
             })
             .addCase(camerasConnectOrUpdate.rejected, (state, action) => {
-                state.isLoading = false;
+                state.isApplyingCameraConnection = false;
+                refreshCombinedLoading(state);
                 state.error = action.error.message || 'Failed to connect to cameras';
             })
 
@@ -184,4 +279,9 @@ export const {
     cameraDesiredConfigUpdated,
     configCopiedToAll,
     savedSettingsCleared,
+    suppressListedVirtualCamerasSet,
+    hardwareCameraEnumerationChanged,
+    dismissHardwareCameraEnumerationHint,
+    camerasGroupFramerateSet,
+    recommendExposureQueued,
 } = cameraSlice.actions;

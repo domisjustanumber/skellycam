@@ -17,6 +17,9 @@ export const ROTATION_DEGREE_LABELS: Record<RotationValue, string> = {
 export const ROTATION_OPTIONS = [-1, 0, 1, 2] as const;
 export const FOURCC_OPTIONS = ['MJPG', 'X264', 'YUYV', 'H264'] as const;
 
+/** Default shared frame-rate preset (`30fps (default)` in the Cameras bar when intersecting selections support it). */
+export const DEFAULT_UI_FRAMERATE = 30;
+
 export type PixelFormat = typeof PIXEL_FORMATS[number];
 export type ExposureMode = typeof EXPOSURE_MODES[number];
 export type ConnectionStatus = typeof CONNECTION_STATUS[number];
@@ -54,6 +57,8 @@ export const CameraConfigSchema = z.object({
     // Exposure settings
     exposure_mode: z.enum(EXPOSURE_MODES),
     exposure: z.number(),
+    auto_focus_enabled: z.boolean(),
+    focus: z.number(),
 
     // Codec settings
     capture_fourcc: z.enum(FOURCC_OPTIONS),
@@ -76,12 +81,19 @@ export interface Camera {
     streamAvailable: boolean;
     /** Backend hint when ``streamAvailable`` is false. */
     streamUnavailableReason?: string | null;
+    matchesListedVirtualName?: boolean;
 
     // Device info (from detection)
     deviceInfo: {
         virtual?: boolean;
         /** Stable ID from openpnp ``Cap_getDeviceUniqueID`` (when present). */
         uniqueId?: string | null;
+        matchesListedVirtualName?: boolean;
+        supportsFocusManual?: boolean;
+        focusAutoSupported?: boolean;
+        focusMin?: number | null;
+        focusMax?: number | null;
+        focusDefault?: number | null;
         availableFormats?: Array<{
             format_id: number;
             width: number;
@@ -104,13 +116,22 @@ export interface Camera {
 export interface CamerasState {
     cameras: Camera[];
     isPaused: boolean;
+    /** Deprecated combined flag — derived from detecting vs applying connection */
     isLoading: boolean;
+    isDetectingCameras: boolean;
+    isApplyingCameraConnection: boolean;
+    suppressListedVirtualCameras: boolean;
+    /** Renderer hint that OS media devices may have changed (USB webcam plug/unplug) */
+    hardwareCameraEnumerationChanged: boolean;
     error: string | null;
 }
 
 // ==================== API Types ====================
 export interface DetectCamerasRequest {
     filterVirtual?: boolean;
+    probeStreams?: boolean;
+    /** When true (default mirrors “Ignore virtual webcams”), backend skips format/resolution probing for listed virtual cameras. */
+    skipListedVirtualResolutionInterrogation?: boolean;
 }
 
 export interface DetectCamerasResponse {
@@ -121,6 +142,12 @@ export interface DetectCamerasResponse {
         unique_id?: string | null;
         stream_available?: boolean;
         stream_unavailable_reason?: string | null;
+        matches_listed_virtual_name?: boolean;
+        supports_focus_manual?: boolean;
+        focus_auto_supported?: boolean;
+        focus_min?: number | null;
+        focus_max?: number | null;
+        focus_default?: number | null;
         available_formats?: Array<{
             format_id: number;
             width: number;
@@ -152,12 +179,14 @@ export function createDefaultCameraConfig(
         camera_name: name,
         use_this_camera: true,
         resolution: { width: 1280, height: 720 },
-        framerate: -1,
+        framerate: DEFAULT_UI_FRAMERATE,
         color_channels: 3,
         pixel_format: 'RGB',
         rotation: -1,
-        exposure_mode: 'MANUAL',
+        exposure_mode: 'RECOMMEND',
         exposure: -7,
+        auto_focus_enabled: false,
+        focus: -1,
         capture_fourcc: 'MJPG',
         writer_fourcc: 'X264',
     };
@@ -176,7 +205,9 @@ export function areConfigsEqual(
         config1.rotation === config2.rotation &&
         config1.pixel_format === config2.pixel_format &&
         config1.capture_fourcc === config2.capture_fourcc &&
-        config1.writer_fourcc === config2.writer_fourcc
+        config1.writer_fourcc === config2.writer_fourcc &&
+        config1.auto_focus_enabled === config2.auto_focus_enabled &&
+        config1.focus === config2.focus
     );
 }
 
@@ -192,7 +223,172 @@ export function extractConfigSettings(
         rotation: config.rotation,
         exposure_mode: config.exposure_mode,
         exposure: config.exposure,
+        auto_focus_enabled: config.auto_focus_enabled,
+        focus: config.focus,
         capture_fourcc: config.capture_fourcc,
         writer_fourcc: config.writer_fourcc,
     };
+}
+
+/** Known virtual webcam name prefixes; names containing the word “virtual” also match (see regex below). */
+export const LISTED_VIRTUAL_CAMERA_NAME_PREFIXES: readonly string[] = [
+    'OBS-Camera',
+    'Spout',
+    'NDI Webcam',
+    'Camera (NVIDIA Broadcast)',
+] as const;
+
+const LISTED_VIRTUAL_NAME_WORD_RE = /\bvirtual\b/i;
+
+/** Backend flag, device-info flag, known name prefix, or whole-word “virtual” in the name (“Ignore virtual webcams” UX). */
+export function cameraMatchesListedVirtualPattern(camera: Camera): boolean {
+    if (
+        camera.matchesListedVirtualName
+        || camera.deviceInfo.matchesListedVirtualName
+    ) {
+        return true;
+    }
+    const name = (camera.name ?? '').trim();
+    if (LISTED_VIRTUAL_NAME_WORD_RE.test(name)) {
+        return true;
+    }
+    return LISTED_VIRTUAL_CAMERA_NAME_PREFIXES.some((p) => name.startsWith(p));
+}
+
+export const FPS_VALUE_TOLERANCE = 0.51;
+
+/** Treat two advertised FPS labels as compatible for UI grey-out / matching */
+export function fpsValuesEquivalent(a: number, b: number): boolean {
+    return Math.abs(a - b) < FPS_VALUE_TOLERANCE;
+}
+
+/**
+ * Positive FPS from the Cameras bar when > 0, otherwise this camera’s desired framerate (when > 0).
+ * ``null`` = no numeric target (“Auto / mixed” UI).
+ */
+export function effectiveResolutionTargetFramerate(
+    groupFramerateChoice: number,
+    desiredFramerate: number,
+): number | null {
+    if (typeof groupFramerateChoice === 'number' && groupFramerateChoice > 0) {
+        return groupFramerateChoice;
+    }
+    if (typeof desiredFramerate === 'number' && desiredFramerate > 0) {
+        return desiredFramerate;
+    }
+    return null;
+}
+
+/** True if driver-reported modes include at least one at ``targetFps``. */
+export function formatsIncludeTargetFramerate(
+    formats: Camera['deviceInfo']['availableFormats'],
+    targetFps: number,
+): boolean {
+    if (!formats?.length) return false;
+    return formats.some((f) => fpsValuesEquivalent(f.fps, targetFps));
+}
+
+/**
+ * True when ``availableFormats`` includes no mode at the Cameras-bar target FPS (see
+ * {@link selectBarAppliedTargetFramerate}). Every tree row re-evaluates when selection or FPS changes.
+ */
+export function cameraMissingFormatForTargetFps(
+    camera: Pick<Camera, 'deviceInfo'>,
+    barAppliedTargetFramerate: number | null,
+): boolean {
+    if (barAppliedTargetFramerate === null) {
+        return false;
+    }
+    return !formatsIncludeTargetFramerate(camera.deviceInfo.availableFormats, barAppliedTargetFramerate);
+}
+
+/** Map device fourcc strings into our enum-safe capture_fourcc payload. */
+export function normalizeCaptureFourcc(cc: string): FourccOption {
+    const trimmed = cc.replace(/\s/g, '').toUpperCase();
+    const yuvish = /^(YUY2|YUYV|UYVY|YUV2|UYV2|NV12|NV21|IYUV|I420|YV12|YU12)$/;
+    if (yuvish.test(trimmed)) {
+        return 'YUYV';
+    }
+    const found = FOURCC_OPTIONS.find(
+        (o) => o.replace(/\s/g, '').toUpperCase() === trimmed,
+    );
+    return found ?? 'MJPG';
+}
+
+const _FOURCC_ALNUM = /[^A-Z0-9]/gi;
+
+/**
+ * Codec tie-break among modes with the same resolution + fps:
+ * YUV / uncompressed (better) → H.264 → MJPEG (worse).
+ * Lower numeric rank = preferred.
+ */
+export function captureFourccFamilyRank(fourccRaw: string): number {
+    const compact = fourccRaw.replace(/\s+/g, '').toUpperCase();
+    const alnum = compact.replace(_FOURCC_ALNUM, '');
+    const canon = normalizeCaptureFourcc(fourccRaw);
+
+    if (/\bMJPE?G\b/i.test(compact) || alnum.includes('MJPEG') || alnum.includes('JFIF')) {
+        return 2;
+    }
+    if (
+        alnum.includes('H264')
+        || alnum.includes('X264')
+        || /\b(?:AVC1|HVC1|DVHE|DAVC|M264)\b/i.test(compact)
+        || canon === 'H264'
+        || canon === 'X264'
+    ) {
+        return 1;
+    }
+    if (
+        canon === 'YUYV'
+        || /\b(?:YUY2|YUYV|UYVY|NV12|NV21|IYUV|I420|YV12|YU12|P010|P016|NV16|Y41P|P210|P216)\b/i.test(
+            compact,
+        )
+        || /\b(?:BGR\d?|RGB\d?|GRAY|GREY|Y800|RAW)\b/i.test(compact)
+    ) {
+        return 0;
+    }
+    if (canon === 'MJPG') {
+        return 2;
+    }
+    return 3;
+}
+
+type DeviceFormatEntry = NonNullable<
+    Camera['deviceInfo']['availableFormats']
+>[number];
+
+/** True if format ``b`` is preferred over ``a`` (higher resolution or better codec rank). */
+export function prefersDeviceFormatBOverA(a: DeviceFormatEntry, b: DeviceFormatEntry): boolean {
+    const pa = a.width * a.height;
+    const pb = b.width * b.height;
+    if (pb !== pa) return pb > pa;
+    if (b.width !== a.width) return b.width > a.width;
+    const ra = captureFourccFamilyRank(a.fourcc_str);
+    const rb = captureFourccFamilyRank(b.fourcc_str);
+    if (rb !== ra) return rb < ra;
+    return b.format_id >= a.format_id;
+}
+
+export function compareDeviceFormatsResolutionPreference(
+    a: DeviceFormatEntry,
+    b: DeviceFormatEntry,
+): number {
+    if (prefersDeviceFormatBOverA(a, b)) return 1;
+    if (prefersDeviceFormatBOverA(b, a)) return -1;
+    return 0;
+}
+
+/**
+ * Highest resolution (pixels) among modes matching target fps,
+ * tie-break wider width, then codec preference (YUV > H.264 > MJPEG), then backend format_id.
+ */
+export function pickBestFormatAtTargetFps(
+    formats: Camera['deviceInfo']['availableFormats'],
+    fps: number,
+): DeviceFormatEntry | null {
+    if (!formats?.length) return null;
+    const matches = formats.filter((f) => fpsValuesEquivalent(f.fps, fps));
+    if (!matches.length) return null;
+    return matches.reduce((best, cur) => (prefersDeviceFormatBOverA(best, cur) ? cur : best));
 }

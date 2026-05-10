@@ -11,6 +11,7 @@ import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
 import {
     cameraDesiredConfigUpdated,
     configCopiedToAll,
+    camerasGroupFramerateSet,
 } from './slices/cameras/cameras-slice';
 import { camerasConnectOrUpdate } from './slices/cameras/cameras-thunks';
 
@@ -34,7 +35,11 @@ function hasConnectedSelectedCamera(state: unknown): boolean {
 export const camerasAutoApplyListener = createListenerMiddleware();
 
 camerasAutoApplyListener.startListening({
-    matcher: isAnyOf(cameraDesiredConfigUpdated, configCopiedToAll),
+    matcher: isAnyOf(
+        cameraDesiredConfigUpdated,
+        configCopiedToAll,
+        camerasGroupFramerateSet,
+    ),
     effect: (_action, listenerApi) => {
         if (!hasConnectedSelectedCamera(listenerApi.getState())) {
             return;
