@@ -5,7 +5,10 @@ import platform
 from pydantic import BaseModel, ConfigDict, computed_field, field_serializer
 
 from skellycam.core.camera.openpnp_capture import OpenPnPCamera, OpenPnPFormatInfo
-from skellycam.core.device_detection.virtual_camera_names import matches_listed_virtual_camera_prefix
+from skellycam.core.device_detection.virtual_camera_names import (
+    matches_listed_virtual_camera_prefix,
+    name_contains_virtual_word,
+)
 from skellycam.core.device_detection.probe_openpnp_stream import probe_openpnp_stream
 from skellycam.core.types.type_overloads import CameraIdString, CameraIndexInt, CameraNameString
 
@@ -58,6 +61,7 @@ def detect_available_cameras(
     filter_virtual: bool = True,
     probe_streams: bool = True,
     skip_probe_indices: set[int] | frozenset[int] | None = None,
+    skip_listed_virtual_resolution_interrogation: bool = False,
 ) -> list[CameraDeviceInfo]:
     """Enumerate cameras via openpnp-capture.
 
@@ -67,17 +71,42 @@ def detect_available_cameras(
 
     ``skip_probe_indices``: device indices already streaming inside Skellycam (workers hold the device); the main
     process cannot open them for probe without falsely marking them busy.
+
+    When ``skip_listed_virtual_resolution_interrogation`` is True, devices matching
+    ``matches_listed_virtual_camera_prefix`` (known virtual prefixes or the word *virtual* in the name)
+    are not queried for formats and are not stream-probed
+    (avoids expensive interrogation while the UI is hiding them).
     """
     skip_set: set[int] = set(skip_probe_indices or ())
     cameras: list[CameraDeviceInfo] = []
     for device in OpenPnPCamera.list_devices():
-        if filter_virtual and "virtual" in device.name.lower():
+        if filter_virtual and name_contains_virtual_word(device.name):
             continue
         if "darwin" not in platform.system().lower():
             if not device.unique_id:
                 continue
+
+        matches_listed_virtual = matches_listed_virtual_camera_prefix(device.name)
+        if skip_listed_virtual_resolution_interrogation and matches_listed_virtual:
+            cameras.append(
+                CameraDeviceInfo(
+                    index=device.index,
+                    name=device.name,
+                    unique_id=device.unique_id,
+                    available_formats=[],
+                    stream_available=True,
+                    stream_unavailable_reason=None,
+                    matches_listed_virtual_name=True,
+                    supports_focus_manual=False,
+                    focus_auto_supported=False,
+                    focus_min=None,
+                    focus_max=None,
+                    focus_default=None,
+                )
+            )
+            continue
+
         formats = list(device.formats)
-        matches_virtual = matches_listed_virtual_camera_prefix(device.name)
         if probe_streams and device.index not in skip_set:
             outcome = probe_openpnp_stream(device.index, formats)
             cameras.append(
@@ -88,7 +117,7 @@ def detect_available_cameras(
                     available_formats=formats,
                     stream_available=outcome.stream_available,
                     stream_unavailable_reason=outcome.stream_unavailable_reason,
-                    matches_listed_virtual_name=matches_virtual,
+                    matches_listed_virtual_name=matches_listed_virtual,
                     supports_focus_manual=outcome.supports_focus_manual,
                     focus_auto_supported=outcome.focus_auto_supported,
                     focus_min=outcome.focus_min,
@@ -105,7 +134,7 @@ def detect_available_cameras(
                     available_formats=formats,
                     stream_available=True,
                     stream_unavailable_reason=None,
-                    matches_listed_virtual_name=matches_virtual,
+                    matches_listed_virtual_name=matches_listed_virtual,
                     supports_focus_manual=False,
                     focus_auto_supported=False,
                     focus_min=None,
