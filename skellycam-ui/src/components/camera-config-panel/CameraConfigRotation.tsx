@@ -1,7 +1,7 @@
 import React from 'react';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { Box, Tooltip, useTheme } from '@mui/material';
+import { Box, FormControl, InputLabel, Tooltip, useTheme } from '@mui/material';
 import {ROTATION_DEGREE_LABELS, ROTATION_OPTIONS, RotationValue} from '@/store/slices/cameras/cameras-types';
 import { useTranslation } from 'react-i18next';
 
@@ -10,12 +10,10 @@ interface CameraConfigRotationProps {
     onChange: (rotation: RotationValue) => void;
 }
 
-
-
 export const CameraConfigRotation: React.FC<CameraConfigRotationProps> = ({
-                                                                              rotation = -1,
-                                                                              onChange
-                                                                          }) => {
+    rotation = -1,
+    onChange,
+}) => {
     const theme = useTheme();
     const { t } = useTranslation();
 
@@ -29,33 +27,49 @@ export const CameraConfigRotation: React.FC<CameraConfigRotationProps> = ({
     };
 
     return (
-        <Box>
-            <Tooltip title={t("selectCameraRotation")}>
-                <ToggleButtonGroup
-                    color={theme.palette.primary.main as any}
-                    value={rotation}
-                    size="small"
-                    exclusive
-                    onChange={handleChange}
-                    aria-label={t("cameraRotation")}
+        <Box sx={{ minWidth: 220 }}>
+            <FormControl variant="standard" sx={{ width: '100%' }}>
+                <InputLabel
                     sx={{
-                        '& .MuiToggleButton-root.Mui-selected': {
-                            backgroundColor: theme.palette.primary.dark,
-                            color: theme.palette.primary.contrastText,
-                            border: `1px solid ${theme.palette.text.secondary}`,
-                            '&:hover': {
-                                backgroundColor: theme.palette.primary.light,
-                            },
-                        }
+                        position: 'static',
+                        transform: 'none',
+                        mb: 0.25,
+                        color: theme.palette.text.primary,
+                        fontSize: '0.75rem',
+                        lineHeight: 1.4,
+                        fontWeight: theme.typography.fontWeightRegular,
                     }}
                 >
-                    {ROTATION_OPTIONS.map((option: RotationValue) => (
-                        <ToggleButton key={option} value={option}>
-                            {ROTATION_DEGREE_LABELS[option]}
-                        </ToggleButton>
-                    ))}
-                </ToggleButtonGroup>
-            </Tooltip>
+                    Rotation
+                </InputLabel>
+                <Tooltip title={t('selectCameraRotation')}>
+                    <ToggleButtonGroup
+                        color={theme.palette.primary.main as any}
+                        value={rotation}
+                        size="small"
+                        exclusive
+                        onChange={handleChange}
+                        aria-label={t('cameraRotation')}
+                        sx={{
+                            mt: 0.5,
+                            '& .MuiToggleButton-root.Mui-selected': {
+                                backgroundColor: theme.palette.primary.dark,
+                                color: theme.palette.primary.contrastText,
+                                border: `1px solid ${theme.palette.text.secondary}`,
+                                '&:hover': {
+                                    backgroundColor: theme.palette.primary.light,
+                                },
+                            },
+                        }}
+                    >
+                        {ROTATION_OPTIONS.map((option: RotationValue) => (
+                            <ToggleButton key={option} value={option}>
+                                {ROTATION_DEGREE_LABELS[option]}
+                            </ToggleButton>
+                        ))}
+                    </ToggleButtonGroup>
+                </Tooltip>
+            </FormControl>
         </Box>
     );
 };

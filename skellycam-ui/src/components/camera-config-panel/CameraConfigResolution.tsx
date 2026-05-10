@@ -1,247 +1,248 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
+import { Box, FormControl, InputLabel, MenuItem, Select, useTheme } from "@mui/material";
 import {
-    Box,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    TextField,
-    useTheme
-} from "@mui/material";
-import { CameraConfig } from "@/store/slices/cameras/cameras-types";
-import { useTranslation } from 'react-i18next';
+    CameraConfig,
+    Camera,
+    compareDeviceFormatsResolutionPreference,
+    effectiveResolutionTargetFramerate,
+    fpsValuesEquivalent,
+    normalizeCaptureFourcc,
+    pickBestFormatAtTargetFps,
+} from "@/store/slices/cameras/cameras-types";
 
-interface CameraConfigResolutionProps {
-    resolution: CameraConfig['resolution'];
-    onChange: (width: number, height: number) => void;
+export interface ResolutionRow {
+    key: string;
+    width: number;
+    height: number;
+    fps: number;
+    fourcc_str: string;
+    format_id: number;
 }
 
-const PRESET_RESOLUTIONS = [
-    { width: 640, height: 480, label: "640 x 480" },
-    { width: 1280, height: 720, label: "1280 x 720" },
-    { width: 1920, height: 1080, label: "1920 x 1080" },
-];
+function rowComparable(r: ResolutionRow): {
+    format_id: number;
+    width: number;
+    height: number;
+    fps: number;
+    fourcc_str: string;
+    bpp: number;
+} {
+    return {
+        format_id: r.format_id,
+        width: r.width,
+        height: r.height,
+        fps: r.fps,
+        fourcc_str: r.fourcc_str,
+        bpp: 24,
+    };
+}
 
-const RESOLUTION_CONSTRAINTS = {
-    min: 1,
-    max: 7680, // 8K width probably plent lol
-    default: { width: 1280, height: 720 }
-};
+function rowFromDeviceFormat(
+    f: NonNullable<Camera["deviceInfo"]["availableFormats"]>[number],
+): ResolutionRow {
+    const fourcc_str = f.fourcc_str.trim();
+    return {
+        key: `${f.format_id}_${f.width}x${f.height}@${f.fps}_${fourcc_str}`,
+        width: f.width,
+        height: f.height,
+        fps: f.fps,
+        fourcc_str,
+        format_id: f.format_id,
+    };
+}
+
+function buildResolutionRows(formats: NonNullable<Camera["deviceInfo"]["availableFormats"]>): ResolutionRow[] {
+    const out: ResolutionRow[] = [];
+    const seen = new Set<string>();
+    for (const f of formats) {
+        const key = `${f.format_id}_${f.width}x${f.height}@${f.fps}_${f.fourcc_str}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        out.push({
+            key,
+            width: f.width,
+            height: f.height,
+            fps: f.fps,
+            fourcc_str: f.fourcc_str.trim(),
+            format_id: f.format_id,
+        });
+    }
+    out.sort((a, b) => compareDeviceFormatsResolutionPreference(rowComparable(a), rowComparable(b)));
+    return out;
+}
+
+interface CameraConfigResolutionProps {
+    resolution: CameraConfig["resolution"];
+    /** Shared FPS when all selected cameras agree (often from top-bar); negative or omitted means “unset / mixed”. */
+    groupFramerateChoice: number;
+    /** This camera’s desired FPS (fallback when group shows mixed or −1). */
+    desiredFramerate: number;
+    capture_fourcc: string;
+    formats: Camera["deviceInfo"]["availableFormats"] | undefined;
+    disabled?: boolean;
+    onPick: (row: ResolutionRow) => void;
+}
 
 export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
     resolution,
-    onChange
+    groupFramerateChoice,
+    desiredFramerate,
+    capture_fourcc,
+    formats,
+    disabled,
+    onPick,
 }) => {
     const theme = useTheme();
-    const { t } = useTranslation();
-    const isPreset = PRESET_RESOLUTIONS.some(
-        preset => preset.width === resolution.width && preset.height === resolution.height
+
+    const rows = useMemo(
+        () => (formats?.length ? buildResolutionRows(formats) : []),
+        [formats],
     );
 
-    const [selectedValue, setSelectedValue] = useState<string>(
-        isPreset ? `${resolution.width}x${resolution.height}` : 'custom'
+    const targetFps = useMemo(
+        () => effectiveResolutionTargetFramerate(groupFramerateChoice, desiredFramerate),
+        [groupFramerateChoice, desiredFramerate],
     );
 
-    const [customWidth, setCustomWidth] = useState<string>(resolution.width.toString());
-    const [customHeight, setCustomHeight] = useState<string>(resolution.height.toString());
-    const [widthError, setWidthError] = useState<string>('');
-    const [heightError, setHeightError] = useState<string>('');
+    const selectableRows = useMemo(() => {
+        if (targetFps === null) {
+            return rows;
+        }
+        return rows.filter((r) => fpsValuesEquivalent(r.fps, targetFps));
+    }, [rows, targetFps]);
 
-    // Update custom inputs when resolution prop changes externally
+    const idealRow = useMemo(() => {
+        if (!formats?.length || targetFps === null || selectableRows.length === 0) {
+            return null;
+        }
+        const best = pickBestFormatAtTargetFps(formats, targetFps);
+        return best ? rowFromDeviceFormat(best) : null;
+    }, [formats, targetFps, selectableRows.length]);
+
+    const onPickRef = useRef(onPick);
+    onPickRef.current = onPick;
+
+    const prevTargetFpsSeen = useRef<number | undefined>(undefined);
+
     useEffect(() => {
-        if (selectedValue === 'custom') {
-            setCustomWidth(resolution.width.toString());
-            setCustomHeight(resolution.height.toString());
-        }
-    }, [resolution.width, resolution.height, selectedValue]);
-
-    const validateDimension = (value: string, dimension: 'width' | 'height'): string => {
-        const numValue = parseInt(value, 10);
-
-        if (value === '' || isNaN(numValue)) {
-            return 'Enter a valid number';
+        if (disabled || targetFps === null || idealRow === null || !formats?.length) {
+            return;
         }
 
-        if (numValue < RESOLUTION_CONSTRAINTS.min) {
-            return `Min: ${RESOLUTION_CONSTRAINTS.min}px`;
+        const matchesIdeal =
+            resolution.width === idealRow.width
+            && resolution.height === idealRow.height
+            && normalizeCaptureFourcc(capture_fourcc) === normalizeCaptureFourcc(idealRow.fourcc_str)
+            && fpsValuesEquivalent(idealRow.fps, targetFps);
+
+        if (matchesIdeal) {
+            prevTargetFpsSeen.current = targetFps;
+            return;
         }
 
-        if (numValue > RESOLUTION_CONSTRAINTS.max) {
-            return `Max: ${RESOLUTION_CONSTRAINTS.max}px`;
+        const prev = prevTargetFpsSeen.current;
+        const bindingFirstNumericTarget = prev === undefined;
+        const targetFpsMoved =
+            prev !== undefined && !fpsValuesEquivalent(prev, targetFps);
+
+        if (bindingFirstNumericTarget || targetFpsMoved) {
+            prevTargetFpsSeen.current = targetFps;
+            onPickRef.current(idealRow);
+            return;
         }
 
-        return '';
-    };
+        prevTargetFpsSeen.current = targetFps;
+    }, [
+        disabled,
+        idealRow,
+        idealRow?.key,
+        targetFps,
+        formats?.length,
+        resolution.width,
+        resolution.height,
+        capture_fourcc,
+    ]);
 
-    const handleSelectChange = (event: any): void => {
-        const value = event.target.value;
-        setSelectedValue(value);
+    const currentRowValid = rows.find(
+        (r) =>
+            r.width === resolution.width
+            && r.height === resolution.height
+            && normalizeCaptureFourcc(r.fourcc_str) === normalizeCaptureFourcc(capture_fourcc)
+            && (targetFps === null || fpsValuesEquivalent(r.fps, targetFps)),
+    );
 
-        if (value !== 'custom') {
-            const [width, height] = value.split('x').map(Number);
-            onChange(width, height);
+    const noEnumeratedModes = rows.length === 0;
+    const noSupportedFormatAtTarget =
+        targetFps !== null && rows.length > 0 && selectableRows.length === 0;
+
+    const showPlaceholder = noEnumeratedModes || noSupportedFormatAtTarget;
+    /** Parent stream lock disables the FormControl outline + label cascade; unsupported-FPS mute is handled on the Select only so the notch label stays aligned like other selects. */
+    const formLocked = Boolean(disabled);
+    const selectDisabled = formLocked || showPlaceholder;
+    const placeholderFieldText = noEnumeratedModes
+        ? 'No enumerated modes reported'
+        : 'No supported format';
+
+    const selectValueKey =
+        showPlaceholder
+            ? ''
+            : (targetFps !== null
+                    ? (idealRow?.key ?? currentRowValid?.key ?? selectableRows[0]?.key ?? '')
+                    : (currentRowValid?.key ?? idealRow?.key ?? selectableRows[0]?.key ?? ''));
+
+    const handleSelect = (event: { target: { value: string } }): void => {
+        const row = rows.find((x) => x.key === event.target.value);
+        if (!row) {
+            return;
         }
-    };
-
-    const handleCustomWidthChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        const value = event.target.value;
-        setCustomWidth(value);
-
-        const error = validateDimension(value, 'width');
-        setWidthError(error);
-
-        if (!error) {
-            const width = parseInt(value, 10);
-            const height = parseInt(customHeight, 10);
-            if (!isNaN(height)) {
-                onChange(width, height);
-            }
-        }
-    };
-
-    const handleCustomHeightChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        const value = event.target.value;
-        setCustomHeight(value);
-
-        const error = validateDimension(value, 'height');
-        setHeightError(error);
-
-        if (!error) {
-            const width = parseInt(customWidth, 10);
-            const height = parseInt(value, 10);
-            if (!isNaN(width)) {
-                onChange(width, height);
-            }
-        }
-    };
-
-    const handleCustomBlur = (dimension: 'width' | 'height'): void => {
-        const value = dimension === 'width' ? customWidth : customHeight;
-        const error = validateDimension(value, dimension);
-
-        if (error) {
-            // Reset to current valid value
-            if (dimension === 'width') {
-                setCustomWidth(resolution.width.toString());
-                setWidthError('');
-            } else {
-                setCustomHeight(resolution.height.toString());
-                setHeightError('');
-            }
-        }
-    };
-
-    const handleKeyDown = (
-        event: React.KeyboardEvent<HTMLDivElement>,
-        dimension: 'width' | 'height'
-    ): void => {
-        if (event.key === 'Enter') {
-            handleCustomBlur(dimension);
-            (event.target as HTMLElement).blur();
-        }
+        onPick(row);
     };
 
     return (
-        <Box>
-            <FormControl
-                size="small"
-                fullWidth
-                sx={{
-                    color: theme.palette.text.primary,
-                    mb: selectedValue === 'custom' ? 1 : 0
-                }}
-            >
-                <InputLabel sx={{ color: theme.palette.text.primary }}>
-                    Resolution
-                </InputLabel>
-                <Select
-                    value={selectedValue}
-                    label={t("resolution")}
-                    onChange={handleSelectChange}
+        <Box sx={{ minWidth: 230 }}>
+            <FormControl fullWidth size="small" disabled={formLocked}>
+                <InputLabel sx={{ color: theme.palette.text.primary }}>Resolution</InputLabel>
+                <Select<string>
+                    disabled={selectDisabled}
+                    displayEmpty={showPlaceholder}
+                    value={showPlaceholder ? '' : selectValueKey}
+                    label="Resolution"
+                    onChange={handleSelect}
+                    renderValue={(selected) => {
+                        if (showPlaceholder) {
+                            return placeholderFieldText;
+                        }
+                        const row = rows.find((x) => x.key === selected);
+                        if (!row) {
+                            return '';
+                        }
+                        return `${row.width} × ${row.height} (${row.fourcc_str.trim()}) @ ${row.fps} fps`;
+                    }}
                     sx={{ color: theme.palette.text.primary }}
                 >
-                    {PRESET_RESOLUTIONS.map(preset => (
-                        <MenuItem
-                            key={`${preset.width}x${preset.height}`}
-                            value={`${preset.width}x${preset.height}`}
-                        >
-                            {preset.label}
+                    {showPlaceholder ? (
+                        <MenuItem disabled value="">
+                            {placeholderFieldText}
                         </MenuItem>
-                    ))}
-                    <MenuItem value="custom">{t("custom")}</MenuItem>
+                    ) : (
+                        rows.map((row) => {
+                            const fpsMatch =
+                                targetFps === null || fpsValuesEquivalent(row.fps, targetFps);
+                            const label = `${row.width} × ${row.height} (${row.fourcc_str.trim()}) @ ${row.fps} fps`;
+                            return (
+                                <MenuItem
+                                    key={row.key}
+                                    value={row.key}
+                                    disabled={!fpsMatch}
+                                    sx={!fpsMatch ? { opacity: 0.45 } : {}}
+                                >
+                                    {label}
+                                </MenuItem>
+                            );
+                        })
+                    )}
                 </Select>
             </FormControl>
-
-            {selectedValue === 'custom' && (
-                <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                    <TextField
-                        label={t("width")}
-                        value={customWidth}
-                        onChange={handleCustomWidthChange}
-                        onBlur={() => handleCustomBlur('width')}
-                        onKeyDown={(e) => handleKeyDown(e, 'width')}
-                        type="number"
-                        size="small"
-                        error={!!widthError}
-                        helperText={widthError}
-                        inputProps={{
-                            min: RESOLUTION_CONSTRAINTS.min,
-                            max: RESOLUTION_CONSTRAINTS.max,
-                        }}
-                        sx={{
-                            flex: 1,
-                            '& .MuiInputLabel-root': {
-                                color: theme.palette.text.primary,
-                            },
-                            '& .MuiOutlinedInput-root': {
-                                color: theme.palette.text.primary,
-                                '& fieldset': {
-                                    borderColor: theme.palette.primary.contrastText,
-                                },
-                                '&:hover fieldset': {
-                                    borderColor: theme.palette.primary.contrastText,
-                                },
-                                '&.Mui-focused fieldset': {
-                                    borderColor: theme.palette.primary.contrastText,
-                                },
-                            },
-                        }}
-                    />
-                    <TextField
-                        label={t("height")}
-                        value={customHeight}
-                        onChange={handleCustomHeightChange}
-                        onBlur={() => handleCustomBlur('height')}
-                        onKeyDown={(e) => handleKeyDown(e, 'height')}
-                        type="number"
-                        size="small"
-                        error={!!heightError}
-                        helperText={heightError}
-                        inputProps={{
-                            min: RESOLUTION_CONSTRAINTS.min,
-                            max: RESOLUTION_CONSTRAINTS.max,
-                        }}
-                        sx={{
-                            flex: 1,
-                            '& .MuiInputLabel-root': {
-                                color: theme.palette.text.primary,
-                            },
-                            '& .MuiOutlinedInput-root': {
-                                color: theme.palette.text.primary,
-                                '& fieldset': {
-                                    borderColor: theme.palette.primary.contrastText
-                                },
-                                '&:hover fieldset': {
-                                    borderColor: theme.palette.primary.contrastText,
-                                },
-                                '&.Mui-focused fieldset': {
-                                    borderColor: theme.palette.primary.contrastText
-                                },
-                            },
-                        }}
-                    />
-                </Box>
-            )}
         </Box>
     );
 };

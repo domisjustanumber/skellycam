@@ -7,15 +7,30 @@ import {
     useTheme,
 } from "@mui/material";
 import MediationIcon from "@mui/icons-material/Mediation";
-import { CameraConfigResolution } from "./CameraConfigResolution";
+import { CameraConfigResolution, ResolutionRow } from "./CameraConfigResolution";
 import { CameraConfigExposure } from "./CameraConfigExposure";
 import { CameraConfigRotation } from "./CameraConfigRotation";
-import { CameraConfig, ExposureMode, RotationValue } from "@/store/slices/cameras/cameras-types";
+import { CameraConfigFocus } from './CameraConfigFocus';
+import {
+    Camera,
+    CameraConfig,
+    ExposureMode,
+    RotationValue,
+    cameraMissingFormatForTargetFps,
+    normalizeCaptureFourcc,
+} from "@/store/slices/cameras/cameras-types";
 import { useAppDispatch, useAppSelector } from "@/store";
-import { selectCameras, configCopiedToAll } from "@/store/slices/cameras";
+import {
+    configCopiedToAll,
+    selectCamerasDisplayedInUi,
+    selectBarAppliedTargetFramerate,
+    selectGroupDisplayedFramerate,
+    selectHasCameraSelection,
+} from '@/store/slices/cameras';
 import { useTranslation } from 'react-i18next';
 
 interface CameraConfigPanelProps {
+    camera: Camera;
     config: CameraConfig;
     onConfigChange: (newConfig: CameraConfig) => void;
     isExpanded: boolean;
@@ -24,6 +39,7 @@ interface CameraConfigPanelProps {
 }
 
 export const CameraConfigPanel: React.FC<CameraConfigPanelProps> = ({
+    camera,
     config,
     onConfigChange,
     isExpanded,
@@ -32,8 +48,14 @@ export const CameraConfigPanel: React.FC<CameraConfigPanelProps> = ({
     const theme = useTheme();
     const dispatch = useAppDispatch();
     const { t } = useTranslation();
-    const allCameras = useAppSelector(selectCameras);
+    const allCameras = useAppSelector(selectCamerasDisplayedInUi);
+    const groupFpsChoice = useAppSelector(selectGroupDisplayedFramerate);
+    const barAppliedTargetFps = useAppSelector(selectBarAppliedTargetFramerate);
+    const hasCameraSelection = useAppSelector(selectHasCameraSelection);
     const otherCamerasCount = allCameras.length - 1;
+    const fpsTargetUnsupported =
+        hasCameraSelection
+        && cameraMissingFormatForTargetFps(camera, barAppliedTargetFps);
 
     const handleChange = <K extends keyof CameraConfig>(
         key: K,
@@ -45,12 +67,17 @@ export const CameraConfigPanel: React.FC<CameraConfigPanelProps> = ({
         });
     };
 
-    const handleCopyToAllCameras = (): void => {
-        dispatch(configCopiedToAll(config.camera_id));
+    const handlePickResolutionRow = (row: ResolutionRow): void => {
+        onConfigChange({
+            ...config,
+            resolution: { width: row.width, height: row.height },
+            capture_fourcc: normalizeCaptureFourcc(row.fourcc_str),
+            framerate: row.fps,
+        });
     };
 
-    const handleResolutionChange = (width: number, height: number): void => {
-        handleChange("resolution", { width, height });
+    const handleCopyToAllCameras = (): void => {
+        dispatch(configCopiedToAll(config.camera_id));
     };
 
     const handleRotationChange = (value: RotationValue): void => {
@@ -82,14 +109,23 @@ export const CameraConfigPanel: React.FC<CameraConfigPanelProps> = ({
                     gap: 1,
                     ...(disabled
                         ? { opacity: 0.65, pointerEvents: 'none' as const }
-                        : {}),
+                        : fpsTargetUnsupported
+                            ? {
+                                opacity: 0.52,
+                                pointerEvents: 'none' as const,
+                            }
+                            : {}),
                 }}
             >
-                {/* Top row: Resolution, Rotation, then Copy to All pushed right */}
-                <Box sx={{display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap'}}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
                     <CameraConfigResolution
                         resolution={config.resolution}
-                        onChange={handleResolutionChange}
+                        desiredFramerate={hasCameraSelection ? config.framerate : -1}
+                        groupFramerateChoice={groupFpsChoice}
+                        capture_fourcc={config.capture_fourcc}
+                        formats={camera.deviceInfo.availableFormats}
+                        disabled={disabled}
+                        onPick={(row) => handlePickResolutionRow(row)}
                     />
 
                     <CameraConfigRotation
@@ -97,16 +133,15 @@ export const CameraConfigPanel: React.FC<CameraConfigPanelProps> = ({
                         onChange={handleRotationChange}
                     />
 
-                    {/* Spacer pushes Copy to All to the right */}
-                    <Box sx={{flex: 1}}/>
+                    <Box sx={{ flex: 1 }} />
 
                     <Tooltip
                         title={
                             otherCamerasCount > 0
                                 ? `Copy settings to ${otherCamerasCount} other camera${
-                                    otherCamerasCount > 1 ? "s" : ""
+                                    otherCamerasCount > 1 ? 's' : ''
                                 }`
-                                : "No other cameras to copy to"
+                                : 'No other cameras to copy to'
                         }
                     >
                         <span>
@@ -114,7 +149,7 @@ export const CameraConfigPanel: React.FC<CameraConfigPanelProps> = ({
                                 size="small"
                                 onClick={handleCopyToAllCameras}
                                 disabled={disabled || otherCamerasCount === 0}
-                                aria-label={t("copySettingsToAll")}
+                                aria-label={t('copySettingsToAll')}
                                 sx={{
                                     color: theme.palette.primary.contrastText,
                                     border: `1px solid ${theme.palette.divider}`,
@@ -128,21 +163,28 @@ export const CameraConfigPanel: React.FC<CameraConfigPanelProps> = ({
                                     },
                                 }}
                             >
-                                <MediationIcon fontSize="small"/>
+                                <MediationIcon fontSize="small" />
                             </IconButton>
                         </span>
                     </Tooltip>
                 </Box>
 
-                {/* Exposure controls */}
-                <Box sx={{pt: 0.5, borderTop: `1px solid ${theme.palette.divider}`}}>
-                    <CameraConfigExposure
-                        exposureMode={config.exposure_mode}
-                        exposure={config.exposure}
-                        onExposureModeChange={handleExposureModeChange}
-                        onExposureValueChange={handleExposureValueChange}
-                    />
-                </Box>
+                <CameraConfigExposure
+                    exposureMode={config.exposure_mode}
+                    exposure={config.exposure}
+                    onExposureModeChange={handleExposureModeChange}
+                    onExposureValueChange={handleExposureValueChange}
+                />
+
+                <CameraConfigFocus
+                    disabled={disabled}
+                    autoFocusEnabled={config.auto_focus_enabled}
+                    focusValue={config.focus}
+                    camera={camera}
+                    onChange={(upd) =>
+                        onConfigChange({ ...config, ...upd })
+                    }
+                />
             </Box>
         </Collapse>
     );
