@@ -21,9 +21,11 @@ DEFAULT_CAMERA_INDEX: CameraIndexInt = CameraIndexInt(0)
 DEFAULT_CAMERA_ID: CameraIdString = "000"
 DEFAULT_CAMERA_NAME: CameraNameString = "Default Camera"
 DEFAULT_RESOLUTION: ImageResolution = ImageResolution(height=DEFAULT_IMAGE_HEIGHT, width=DEFAULT_IMAGE_WIDTH)
-DEFAULT_EXPOSURE_MODE: str = ExposureModes.MANUAL.name
+DEFAULT_EXPOSURE_MODE: str = ExposureModes.RECOMMEND.name
 DEFAULT_EXPOSURE: int = -7
 DEFAULT_FRAMERATE: float = -1.0  # Use camera default framerate
+DEFAULT_AUTO_FOCUS_ENABLED: bool = False
+DEFAULT_FOCUS: int = -1  # sentinel: before first probe, backend may replace with device default
 DEFAULT_ROTATION: RotationTypes = RotationTypes.NO_ROTATION
 DEFAULT_CAPTURE_FOURCC: str = "MJPG"  # matched against openpnp format enumeration
 DEFAULT_WRITER_FOURCC: str = "X264"  # Need set up our installer and whanot so we can us `X264` (or H264, if its easier to set up) skellycam/system/diagnostics/run_cv2_video_writer_diagnostics.py
@@ -56,6 +58,8 @@ class SettableCameraParameters(BaseModel):
     resolution: ImageResolution
     framerate: float
     rotation: RotationTypes
+    auto_focus_enabled: bool
+    focus: int
 
 
 class CameraConfig(BaseModel):
@@ -106,6 +110,15 @@ class CameraConfig(BaseModel):
 
     framerate: float = Field(default=DEFAULT_FRAMERATE,
                              description="The frame rate of the camera (in frames per second), default to `0` to use camera's default framerate and run frame loop as quick as it'll go. ")
+
+    auto_focus_enabled: bool = Field(
+        default=DEFAULT_AUTO_FOCUS_ENABLED,
+        description="When True, enable continuous autofocus on the device (if supported).",
+    )
+    focus: int = Field(
+        default=DEFAULT_FOCUS,
+        description="Manual focus value when auto_focus_enabled is False. Use -1 to apply the device's default/manual focus midpoint on first apply.",
+    )
 
     rotation: RotationTypes = Field(
         default=DEFAULT_ROTATION,
@@ -196,7 +209,9 @@ class CameraConfig(BaseModel):
             exposure=self.exposure,
             resolution=self.resolution,
             framerate=self.framerate,
-            rotation=self.rotation
+            rotation=self.rotation,
+            auto_focus_enabled=self.auto_focus_enabled,
+            focus=self.focus,
         )
 
     def accept_settable_parameters(self, settable_parameters: SettableCameraParameters) -> None:
@@ -212,6 +227,8 @@ class CameraConfig(BaseModel):
         self.exposure = settable_parameters.exposure
         self.resolution = settable_parameters.resolution
         self.rotation = settable_parameters.rotation
+        self.auto_focus_enabled = settable_parameters.auto_focus_enabled
+        self.focus = settable_parameters.focus
 
     def get_setting_differences(self, other: "CameraConfig") -> list[ParameterDifferencesModel]:
         """

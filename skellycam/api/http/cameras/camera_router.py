@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 
 from fastapi import APIRouter, Body, HTTPException, Request
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 import numpy as np
 
 from skellycam.core.camera.config.camera_config import CameraConfig, DEFAULT_CAMERA_ID, CameraConfigs
@@ -63,6 +63,24 @@ class CreateCameraGroupResponse(BaseModel):
     camera_configs: CameraConfigs
 
 
+class DetectCamerasRequestBody(BaseModel):
+    """JSON body for POST /camera/detect (camelCase aliases match the Electron UI)."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    filter_virtual: bool = Field(default=True, alias="filterVirtual")
+    probe_streams: bool = Field(default=True, alias="probeStreams")
+    skip_listed_virtual_resolution_interrogation: bool = Field(
+        default=False,
+        alias="skipListedVirtualResolutionInterrogation",
+        description=(
+            "When true, do not enumerate formats or probe streams for cameras matching "
+            "listed virtual webcam name prefixes (OBS, Spout, NDI, NVIDIA Broadcast) "
+            "or whose name contains the word “virtual”."
+        ),
+    )
+
+
 class DetectedCamerasResponse(BaseModel):
     cameras: list[CameraDeviceInfo]
 
@@ -95,16 +113,19 @@ class StopRecordingResponse(BaseModel):
 @camera_router.post("/detect", summary="Detect available camera devices")
 def cameras_detect_endpoint(
     request: Request,
-    filter_virtual: bool = True,
-    probe_streams: bool = True,
+    detect_body: DetectCamerasRequestBody | None = Body(default=None),
 ) -> DetectedCamerasResponse:
     try:
+        opts = detect_body or DetectCamerasRequestBody()
         mgr = get_or_create_camera_group_manager(request.app)
         skip_probe = mgr.skellycam_open_device_indices()
         cameras = detect_available_cameras(
-            filter_virtual=filter_virtual,
-            probe_streams=probe_streams,
+            filter_virtual=opts.filter_virtual,
+            probe_streams=opts.probe_streams,
             skip_probe_indices=skip_probe,
+            skip_listed_virtual_resolution_interrogation=(
+                opts.skip_listed_virtual_resolution_interrogation
+            ),
         )
         return DetectedCamerasResponse(cameras=cameras)
     except Exception as e:

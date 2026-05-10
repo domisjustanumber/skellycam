@@ -53,6 +53,23 @@ class TestDetectCameras:
         data = response.json()
         assert data["cameras"] == []
 
+    def test_detect_request_body_maps_skip_listed_virtual_flag(self, client):
+        """CamelCase JSON skipListedVirtualResolutionInterrogation reaches detect_available_cameras."""
+        with patch(
+            "skellycam.api.http.cameras.camera_router.detect_available_cameras",
+            return_value=[],
+        ) as mock_detect:
+            response = client.post(
+                "/skellycam/camera/detect",
+                json={"skipListedVirtualResolutionInterrogation": True},
+            )
+        assert response.status_code == 200
+        mock_detect.assert_called_once()
+        assert (
+            mock_detect.call_args.kwargs["skip_listed_virtual_resolution_interrogation"]
+            is True
+        )
+
     def test_detect_cameras_error(self, client):
         """POST /skellycam/camera/detect returns 500 on detection error."""
         with patch(

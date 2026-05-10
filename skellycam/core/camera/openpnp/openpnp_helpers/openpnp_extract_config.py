@@ -1,6 +1,6 @@
 import logging
 
-from skellycam.core.camera.config.camera_config import CameraConfig
+from skellycam.core.camera.config.camera_config import CameraConfig, DEFAULT_FOCUS
 from skellycam.core.camera.config.image_resolution import ImageResolution
 from skellycam.core.camera.config.image_rotation_types import RotationTypes
 from skellycam.core.camera.openpnp.openpnp_helpers.recommend_camera_exposure_setting import ExposureModes
@@ -35,6 +35,10 @@ def extract_config_from_openpnp_camera(
 
     framerate = float(fmt.fps)
 
+    auto_focus_enabled = settings.focus_auto is True
+    focus_val = settings.focus
+    focus_int = int(focus_val) if focus_val is not None else DEFAULT_FOCUS
+
     if width == 0 or height == 0:
         logger.error(
             f"Failed to extract configuration from OpenPnPCamera — width: {width}, height: {height}"
@@ -50,6 +54,8 @@ def extract_config_from_openpnp_camera(
             exposure_mode=derived_mode,
             exposure=int(exposure_val),
             framerate=framerate,
+            auto_focus_enabled=auto_focus_enabled,
+            focus=focus_int,
             rotation=rotation,
             capture_fourcc=fmt.fourcc_str.strip(),
         )

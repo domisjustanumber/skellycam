@@ -8,12 +8,38 @@ from skellycam.core.camera.openpnp.openpnp_helpers.recommend_camera_exposure_set
     get_recommended_openpnp_exposure,
 )
 from skellycam.core.camera.openpnp_capture import OpenPnPCamera
+from skellycam.core.camera.openpnp_capture.types import OpenPnPCaptureAPIError, OpenPnPProperty
 
 logger = logging.getLogger(__name__)
 
 
 class FailedToApplyCameraConfigurationError(Exception):
     pass
+
+
+def _apply_focus(camera: OpenPnPCamera, config: CameraConfig, *, initial_config: bool) -> None:
+    if not camera.supports_property(OpenPnPProperty.FOCUS):
+        config.auto_focus_enabled = False
+        return
+    if initial_config:
+        try:
+            camera.set_auto_focus(False)
+        except OpenPnPCaptureAPIError:
+            logger.debug("Could not disable autofocus on camera open for device %s", camera.device_index)
+    try:
+        if config.auto_focus_enabled:
+            camera.set_auto_focus(True)
+            return
+        camera.set_auto_focus(False)
+        limits = camera.get_property_limits(OpenPnPProperty.FOCUS)
+        if config.focus < 0:
+            focus_val = limits.default_value
+        else:
+            focus_val = int(max(limits.min_value, min(config.focus, limits.max_value)))
+        camera.set_focus(focus_val)
+        config.focus = focus_val
+    except OpenPnPCaptureAPIError as e:
+        logger.warning("Focus controls not applied for camera %s: %s", config.camera_index, e)
 
 
 def _apply_exposure(camera: OpenPnPCamera, config: CameraConfig) -> None:
@@ -45,6 +71,9 @@ def apply_camera_configuration(
     should_apply_exposure = (
         initial_config or prior_config.exposure_mode != config.exposure_mode or prior_config.exposure != config.exposure
     )
+    should_apply_focus = initial_config or (
+        prior_config.auto_focus_enabled != config.auto_focus_enabled or prior_config.focus != config.focus
+    )
     should_apply_resolution = initial_config or prior_config.resolution != config.resolution
     should_apply_framerate = False
     should_apply_capture_fourcc = initial_config or prior_config.capture_fourcc != config.capture_fourcc
@@ -66,6 +95,9 @@ def apply_camera_configuration(
 
         if should_apply_exposure:
             _apply_exposure(camera, config)
+
+        if should_apply_focus:
+            _apply_focus(camera, config, initial_config=initial_config)
 
         if should_apply_framerate:
             if config.framerate > 0:

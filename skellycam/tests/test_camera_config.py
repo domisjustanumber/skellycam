@@ -7,6 +7,7 @@ from skellycam.core.camera.config.camera_config import (
     DEFAULT_CAMERA_ID,
     RotationTypes,
 )
+from skellycam.core.camera.openpnp.openpnp_helpers.recommend_camera_exposure_setting import ExposureModes
 
 
 class TestCameraConfigDefaults:
@@ -15,6 +16,7 @@ class TestCameraConfigDefaults:
         config = CameraConfig()
         assert config.camera_id == DEFAULT_CAMERA_ID
         assert config.rotation == RotationTypes.NO_ROTATION
+        assert config.exposure_mode == ExposureModes.RECOMMEND.name
 
     def test_image_shape_default(self):
         """Default image shape is (height, width, channels)."""
