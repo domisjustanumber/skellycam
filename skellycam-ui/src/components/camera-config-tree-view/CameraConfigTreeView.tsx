@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-    Box,
     Paper,
-    Typography,
     useTheme,
 } from "@mui/material";
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
@@ -14,17 +12,20 @@ import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
 import { CameraConfigTreeViewHeader } from "./CameraConfigTreeViewHeader";
 import { CameraGroupTreeItem } from "./CameraGroupTreeItem";
 import { NoCamerasPlaceholder } from "./NoCamerasPlaceholder";
+import { CamerasSectionTopControls } from './CamerasSectionTopControls';
 import {
     useAppDispatch,
     useAppSelector,
     selectCameras,
-    selectIsLoading,
+    selectCamerasDisplayedInUi,
     selectConnectedCameras,
     selectSelectedCameras,
     selectIsPaused,
+    selectIsDetectingCameras,
     detectCameras,
     Camera
 } from "@/store";
+import {useUsbCameraEnumerationListener} from '@/hooks/useUsbCameraEnumerationListener';
 import {useServer} from "@/services/server/ServerContextProvider";
 import { useTranslation } from 'react-i18next';
 
@@ -35,10 +36,13 @@ export const CameraConfigTreeView: React.FC = () => {
     const { t } = useTranslation();
     const {isConnected} = useServer()
     // Redux state
-    const cameras = useAppSelector(selectCameras);
-    const isLoading = useAppSelector(selectIsLoading);
+    const camerasRaw = useAppSelector(selectCameras);
+    const cameras = useAppSelector(selectCamerasDisplayedInUi);
+    const isDetectingCameras = useAppSelector(selectIsDetectingCameras);
     const connectedCameras = useAppSelector(selectConnectedCameras);
     const selectedCameras = useAppSelector(selectSelectedCameras);
+
+    useUsbCameraEnumerationListener();
 
     // Local state
     const [expandedItems, setExpandedItems] = useState<string[]>([
@@ -68,10 +72,10 @@ export const CameraConfigTreeView: React.FC = () => {
 
     // Initial camera detection
     useEffect(() => {
-        if (isConnected  && cameras.length === 0) {
+        if (isConnected && camerasRaw.length === 0) {
             dispatch(detectCameras({ filterVirtual: true }));
         }
-    }, [isConnected, cameras.length, dispatch]);
+    }, [isConnected, camerasRaw.length, dispatch]);
 
     const handleExpandedItemsChange = (
         event: React.SyntheticEvent,
@@ -87,6 +91,9 @@ export const CameraConfigTreeView: React.FC = () => {
             sx={{
                 borderRadius: 2,
                 overflow: "hidden",
+                opacity: isDetectingCameras ? 0.55 : 1,
+                transition: theme.transitions.create('opacity', {duration: theme.transitions.duration.short}),
+                ...(isDetectingCameras ? { pointerEvents: 'none' as const } : {}),
             }}
         >
             <SimpleTreeView
@@ -102,12 +109,13 @@ export const CameraConfigTreeView: React.FC = () => {
                     label={
                         <CameraConfigTreeViewHeader
                             cameraCount={cameras.length}
-                            isLoading={isLoading}
+                            isDetectingCameras={isDetectingCameras}
                             isPaused={isPaused}
                             hasSelectedCameras={hasSelectedCameras}
                         />
                     }
                 >
+                    {cameras.length > 0 ? <CamerasSectionTopControls /> : null}
                     {cameras.length === 0 ? (
                         <NoCamerasPlaceholder />
                     ) : (

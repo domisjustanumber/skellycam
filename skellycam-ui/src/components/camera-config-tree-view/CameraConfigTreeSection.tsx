@@ -31,6 +31,7 @@ export const CameraConfigTreeSection: React.FC<CameraConfigTreeSectionProps> = (
             itemId={`camera-${camera.id}-config`}
             label={
                 <CameraConfigPanel
+                    camera={camera}
                     config={camera.desiredConfig}
                     onConfigChange={handleConfigChange}
                     isExpanded={true}

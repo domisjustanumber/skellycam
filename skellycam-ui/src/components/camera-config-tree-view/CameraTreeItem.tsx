@@ -1,5 +1,6 @@
 import React from "react";
 import {Box, Chip, IconButton, Typography, useTheme} from "@mui/material";
+import {alpha} from "@mui/material/styles";
 import {TreeItem} from "@mui/x-tree-view/TreeItem";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
@@ -7,10 +8,23 @@ import VideocamIcon from "@mui/icons-material/Videocam";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {useTranslation} from "react-i18next";
 
-import {CameraConfigTreeSection} from "./CameraConfigTreeSection";
-import {ROTATION_DEGREE_LABELS, RotationValue, useAppDispatch} from "@/store";
-import {cameraSelectionToggled} from "@/store/slices/cameras/cameras-slice";
-import {Camera} from "@/store/slices/cameras/cameras-types";
+import {
+    Camera,
+    cameraMatchesListedVirtualPattern,
+    cameraMissingFormatForTargetFps,
+} from "@/store/slices/cameras/cameras-types";
+
+import {
+    ROTATION_DEGREE_LABELS,
+    RotationValue,
+    useAppDispatch,
+    useAppSelector,
+    selectBarAppliedTargetFramerate,
+    selectHasCameraSelection,
+} from "@/store";
+
+import { CameraConfigTreeSection } from "./CameraConfigTreeSection";
+import { cameraSelectionToggled } from "@/store/slices/cameras/cameras-slice";
 
 interface CameraTreeItemProps {
     camera: Camera;
@@ -58,6 +72,15 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({camera, isExpande
     const theme = useTheme();
     const { t } = useTranslation();
 
+    const suppressListedVirtual = useAppSelector((state) => state.cameras.suppressListedVirtualCameras);
+    const barAppliedTargetFps = useAppSelector(selectBarAppliedTargetFramerate);
+    const hasCameraSelection = useAppSelector(selectHasCameraSelection);
+
+    /** With no selection the bar reads "Auto" → ignore any stale per-camera FPS state and treat the row as Available. */
+    const unsupportedAtSelectedFps =
+        hasCameraSelection
+        && cameraMissingFormatForTargetFps(camera, barAppliedTargetFps);
+
     const statusLabelMap: Record<string, string> = {
         connected: t('connected'),
         available: t('available'),
@@ -65,8 +88,13 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({camera, isExpande
         error: t('errorsDetected'),
     };
 
+    const noModesAtSelectedFramerateHint =
+        'No modes reported at the selected frame rate for this camera.';
+
     const selectionLocked =
-        !camera.streamAvailable && camera.connectionStatus !== "connected";
+        (!camera.streamAvailable && camera.connectionStatus !== "connected")
+        || !!(suppressListedVirtual && cameraMatchesListedVirtualPattern(camera));
+    const rowDimmedOut = selectionLocked || unsupportedAtSelectedFps;
     const unavailableHint =
         camera.streamUnavailableReason?.trim()
         || t('cameraInUseElsewhereHint');
@@ -74,6 +102,9 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({camera, isExpande
     const handleToggleSelection = (e: React.MouseEvent): void => {
         e.stopPropagation();
         if (selectionLocked) {
+            return;
+        }
+        if (unsupportedAtSelectedFps && !camera.selected) {
             return;
         }
         dispatch(cameraSelectionToggled(camera.id));
@@ -94,12 +125,43 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({camera, isExpande
         }
     };
 
+    /** Info (blue) row accents swap to warning (yellow/amber) when no mode matches the chosen FPS target. */
+    const rowAccentColor =
+        unsupportedAtSelectedFps ? theme.palette.warning.main : undefined;
+
     const configSummary = getConfigSummary(camera.desiredConfig);
     const showConfigSummary = !isExpanded && configSummary.length > 0;
 
     return (
         <TreeItem
             itemId={`camera-${camera.id}`}
+            sx={
+                unsupportedAtSelectedFps
+                    ? {
+                        '& > .MuiTreeItem-content:hover': {
+                            bgcolor: alpha(
+                                theme.palette.warning.main,
+                                theme.palette.mode === 'dark' ? 0.12 : 0.08,
+                            ),
+                        },
+                        '& > .MuiTreeItem-content.Mui-selected': {
+                            bgcolor: alpha(
+                                theme.palette.warning.main,
+                                theme.palette.mode === 'dark' ? 0.2 : 0.14,
+                            ),
+                            '&:hover': {
+                                bgcolor: alpha(
+                                    theme.palette.warning.main,
+                                    theme.palette.mode === 'dark' ? 0.26 : 0.18,
+                                ),
+                            },
+                        },
+                        '& > .MuiTreeItem-content:focus-visible.Mui-selected': {
+                            bgcolor: alpha(theme.palette.warning.main, theme.palette.mode === 'dark' ? 0.22 : 0.16),
+                        },
+                    }
+                    : undefined
+            }
             label={
                 <Box
                     sx={{
@@ -108,7 +170,7 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({camera, isExpande
                         py: 0.2,
                         pr: 1,
                         minHeight: 32,
-                        ...(selectionLocked ? { opacity: 0.85 } : {}),
+                        ...(rowDimmedOut ? { opacity: 0.85 } : {}),
                     }}
                 >
                     {/* Selection checkbox */}
@@ -116,18 +178,26 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({camera, isExpande
                         size="small"
                         onClick={handleToggleSelection}
                         disabled={selectionLocked}
-                        title={selectionLocked ? unavailableHint : undefined}
+                        title={
+                            unsupportedAtSelectedFps
+                                ? noModesAtSelectedFramerateHint
+                                : selectionLocked
+                                    ? unavailableHint
+                                    : undefined
+                        }
                         sx={{mr: 1, flexShrink: 0}}
                     >
                         {camera.selected ? (
-                            <CheckCircleIcon color="info"/>
+                            <CheckCircleIcon color={unsupportedAtSelectedFps ? 'warning' : 'info'} />
                         ) : (
-                            <RadioButtonUncheckedIcon color="info"/>
+                            <RadioButtonUncheckedIcon color={unsupportedAtSelectedFps ? 'warning' : 'info'} />
                         )}
                     </IconButton>
 
                     {/* Camera icon */}
-                    <VideocamIcon sx={{mr: 1, color: getStatusColor(), flexShrink: 0}}/>
+                    <VideocamIcon
+                        sx={{mr: 1, flexShrink: 0, color: rowAccentColor ?? getStatusColor()}}
+                    />
 
                     {/* Camera name and config summary container */}
                     <Box sx={{
@@ -148,11 +218,13 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({camera, isExpande
                                 maxWidth: "280px",
                             }}
                             title={
-                                selectionLocked
-                                    ? `${camera.name}\n${unavailableHint}`
-                                    : camera.deviceInfo.uniqueId
-                                        ? `${camera.name}\n${camera.deviceInfo.uniqueId}`
-                                        : camera.name
+                                unsupportedAtSelectedFps
+                                    ? `${camera.name}\n${noModesAtSelectedFramerateHint}`
+                                    : selectionLocked
+                                        ? `${camera.name}\n${unavailableHint}`
+                                        : camera.deviceInfo.uniqueId
+                                            ? `${camera.name}\n${camera.deviceInfo.uniqueId}`
+                                            : camera.name
                             }
                         >
                             {camera.name?.trim() || t("unnamedCameraDevice")}
@@ -205,13 +277,17 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({camera, isExpande
 
                     {/* Status chip */}
                     <Chip
-                        label={statusLabelMap[camera.connectionStatus] ?? camera.connectionStatus.toUpperCase()}
+                        label={
+                            unsupportedAtSelectedFps
+                                ? t('unsupportedFps')
+                                : (statusLabelMap[camera.connectionStatus] ?? camera.connectionStatus.toUpperCase())
+                        }
                         size="small"
                         sx={{
                             ml: 1,
                             flexShrink: 0,
-                            backgroundColor: getStatusColor(),
-                            color: theme.palette.getContrastText(getStatusColor()),
+                            backgroundColor: rowAccentColor ?? getStatusColor(),
+                            color: theme.palette.getContrastText(rowAccentColor ?? getStatusColor()),
                             fontSize: 10,
                             height: 20,
                         }}

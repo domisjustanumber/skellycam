@@ -21,14 +21,15 @@ import {useTranslation} from 'react-i18next';
 
 interface CameraConfigTreeViewHeaderProps {
     cameraCount: number;
-    isLoading: boolean;
+    /** True while refreshing the camera enumeration (not necessarily while connecting). */
+    isDetectingCameras: boolean;
     isPaused: boolean;
     hasSelectedCameras: boolean;
 }
 
 export const CameraConfigTreeViewHeader: React.FC<CameraConfigTreeViewHeaderProps> = ({
                                                                                           cameraCount,
-                                                                                          isLoading,
+                                                                                          isDetectingCameras,
                                                                                           isPaused,
                                                                                       }) => {
     const theme = useTheme();
@@ -191,7 +192,7 @@ export const CameraConfigTreeViewHeader: React.FC<CameraConfigTreeViewHeaderProp
                             onClick={handleRefreshCameras}
                             sx={{color: "inherit"}}
                         >
-                            {isLoading || isActionInProgress ? (
+                            {isDetectingCameras || isActionInProgress ? (
                                 <CircularProgress size={20} sx={{color: "inherit"}}/>
                             ) : (
                                 <YoutubeSearchedForIcon/>
