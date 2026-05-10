@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 
 # Must match prefixes requested for the UI "ignore virtual cameras" checklist.
+# Matching is case-sensitive (``startswith``); only the word *virtual* is matched case-insensitively.
 LISTED_VIRTUAL_CAMERA_NAME_PREFIXES: tuple[str, ...] = (
     "OBS-Camera",
     "Spout",
@@ -21,7 +22,7 @@ def name_contains_virtual_word(name: str) -> bool:
 
 
 def matches_listed_virtual_camera_prefix(name: str) -> bool:
-    """Listed virtual sources: known prefixes or any name containing the word *virtual*."""
+    """Listed virtual sources: known prefixes (case-sensitive) or the whole word *virtual* (case-insensitive)."""
     n = name.strip()
     if name_contains_virtual_word(n):
         return True

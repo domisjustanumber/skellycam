@@ -20,6 +20,9 @@ export const FOURCC_OPTIONS = ['MJPG', 'X264', 'YUYV', 'H264'] as const;
 /** Default shared frame-rate preset (`30fps (default)` in the Cameras bar when intersecting selections support it). */
 export const DEFAULT_UI_FRAMERATE = 30;
 
+/** Treat advertised FPS labels as compatible (mirror server ``fps_compatibility.FPS_VALUE_TOLERANCE``). */
+export const FPS_VALUE_TOLERANCE = 0.51;
+
 export type PixelFormat = typeof PIXEL_FORMATS[number];
 export type ExposureMode = typeof EXPOSURE_MODES[number];
 export type ConnectionStatus = typeof CONNECTION_STATUS[number];
@@ -63,6 +66,8 @@ export const CameraConfigSchema = z.object({
     // Codec settings
     capture_fourcc: z.enum(FOURCC_OPTIONS),
     writer_fourcc: z.enum(FOURCC_OPTIONS),
+    /** When set, capture runs at this native FPS and ``framerate`` is the logical/output rate after dropping surplus frames (integer-ratio only). */
+    stream_framerate: z.number().positive().max(4000).optional().nullable(),
 });
 
 export type CameraConfig = z.infer<typeof CameraConfigSchema>;
@@ -189,6 +194,7 @@ export function createDefaultCameraConfig(
         focus: -1,
         capture_fourcc: 'MJPG',
         writer_fourcc: 'X264',
+        stream_framerate: null,
     };
 }
 
@@ -206,9 +212,22 @@ export function areConfigsEqual(
         config1.pixel_format === config2.pixel_format &&
         config1.capture_fourcc === config2.capture_fourcc &&
         config1.writer_fourcc === config2.writer_fourcc &&
+        streamRatesMatchOptional(config1.stream_framerate, config2.stream_framerate) &&
         config1.auto_focus_enabled === config2.auto_focus_enabled &&
         config1.focus === config2.focus
     );
+}
+
+function streamRatesMatchOptional(a: CameraConfig['stream_framerate'], b: CameraConfig['stream_framerate']): boolean {
+    const hasA = typeof a === 'number' && a > 0;
+    const hasB = typeof b === 'number' && b > 0;
+    if (!hasA && !hasB) {
+        return true;
+    }
+    if (!hasA || !hasB) {
+        return false;
+    }
+    return Math.abs(a - b) < FPS_VALUE_TOLERANCE;
 }
 
 export function extractConfigSettings(
@@ -227,10 +246,11 @@ export function extractConfigSettings(
         focus: config.focus,
         capture_fourcc: config.capture_fourcc,
         writer_fourcc: config.writer_fourcc,
+        stream_framerate: config.stream_framerate ?? null,
     };
 }
 
-/** Known virtual webcam name prefixes; names containing the word “virtual” also match (see regex below). */
+/** Known virtual webcam name prefixes (case-sensitive ``startsWith``); whole-word “virtual” also matches (regex below). */
 export const LISTED_VIRTUAL_CAMERA_NAME_PREFIXES: readonly string[] = [
     'OBS-Camera',
     'Spout',
@@ -240,7 +260,7 @@ export const LISTED_VIRTUAL_CAMERA_NAME_PREFIXES: readonly string[] = [
 
 const LISTED_VIRTUAL_NAME_WORD_RE = /\bvirtual\b/i;
 
-/** Backend flag, device-info flag, known name prefix, or whole-word “virtual” in the name (“Ignore virtual webcams” UX). */
+/** Backend flag, device-info flag, case-sensitive listed prefix, or whole-word “virtual” (case-insensitive). */
 export function cameraMatchesListedVirtualPattern(camera: Camera): boolean {
     if (
         camera.matchesListedVirtualName
@@ -255,11 +275,35 @@ export function cameraMatchesListedVirtualPattern(camera: Camera): boolean {
     return LISTED_VIRTUAL_CAMERA_NAME_PREFIXES.some((p) => name.startsWith(p));
 }
 
-export const FPS_VALUE_TOLERANCE = 0.51;
+export const FPS_LOGICAL_RATIO_MAX = 24;
 
-/** Treat two advertised FPS labels as compatible for UI grey-out / matching */
+/** Must match ``fps_compatibility.LOGICAL_RATIO_MAX_STRIDE`` on the server. */
+export const LOGICAL_RATIO_MAX_STRIDE = FPS_LOGICAL_RATIO_MAX;
+
+
 export function fpsValuesEquivalent(a: number, b: number): boolean {
     return Math.abs(a - b) < FPS_VALUE_TOLERANCE;
+}
+
+/** ``k``≥1 when ``nativeFps``≈``k``×``logicalFps``; 0 if no integer ratio (e.g. 60 vs 24). */
+export function fpsIntegerStride(nativeFps: number, logicalFps: number): number {
+    if (logicalFps <= 0) {
+        return 0;
+    }
+    for (let k = 1; k <= LOGICAL_RATIO_MAX_STRIDE; k++) {
+        if (fpsValuesEquivalent(nativeFps, k * logicalFps)) {
+            return k;
+        }
+    }
+    return 0;
+}
+
+/** Device can run at ``nativeFps`` and approximate ``logicalFps`` by dropping frames when k>1. */
+export function fpsNativeSupportsLogicalOutput(nativeFps: number, logicalFps: number): boolean {
+    if (logicalFps <= 0) {
+        return true;
+    }
+    return fpsIntegerStride(nativeFps, logicalFps) > 0;
 }
 
 /**
@@ -279,13 +323,16 @@ export function effectiveResolutionTargetFramerate(
     return null;
 }
 
-/** True if driver-reported modes include at least one at ``targetFps``. */
+/** True when at least one mode can yield ``targetFps`` by capture (exact match or integer-ratio drop). */
 export function formatsIncludeTargetFramerate(
     formats: Camera['deviceInfo']['availableFormats'],
     targetFps: number,
 ): boolean {
     if (!formats?.length) return false;
-    return formats.some((f) => fpsValuesEquivalent(f.fps, targetFps));
+    if (targetFps <= 0) {
+        return false;
+    }
+    return formats.some((f) => fpsNativeSupportsLogicalOutput(f.fps, targetFps));
 }
 
 /**
@@ -379,16 +426,124 @@ export function compareDeviceFormatsResolutionPreference(
     return 0;
 }
 
+/** Unique advertised FPS buckets (within {@link FPS_VALUE_TOLERANCE}), sorted ascending. */
+export function uniqRepresentativeFpsFromFormats(
+    formats: Camera['deviceInfo']['availableFormats'],
+): number[] {
+    if (!formats?.length) return [];
+    const reps: number[] = [];
+    for (const f of formats) {
+        if (!reps.some((existing) => fpsValuesEquivalent(existing, f.fps))) {
+            reps.push(f.fps);
+        }
+    }
+    return reps.sort((a, b) => a - b);
+}
+
 /**
- * Highest resolution (pixels) among modes matching target fps,
- * tie-break wider width, then codec preference (YUV > H.264 > MJPEG), then backend format_id.
+ * Canonical logical FPS targets implied by enumerated modes (exact native rate + ``native/k`` divisors).
+ * Used only for FPS-bar intersection logic.
+ */
+export function expandLogicalIntersectCandidatesFromFormats(
+    formats: Camera['deviceInfo']['availableFormats'],
+): number[] {
+    const natives = uniqRepresentativeFpsFromFormats(formats);
+    const raw: number[] = [];
+    for (const native of natives) {
+        raw.push(native);
+        for (let k = 2; k <= LOGICAL_RATIO_MAX_STRIDE; k++) {
+            const logicalGuess = native / k;
+            if (logicalGuess <= 1.0) {
+                continue;
+            }
+            if (fpsNativeSupportsLogicalOutput(native, logicalGuess)) {
+                raw.push(logicalGuess);
+            }
+        }
+    }
+    const out: number[] = [];
+    for (const r of raw) {
+        if (!out.some((e) => fpsValuesEquivalent(e, r))) {
+            out.push(r);
+        }
+    }
+    out.sort((a, b) => a - b);
+    return out;
+}
+
+export function deriveFramerateFieldsFromResolutionPick(
+    rowNativeFps: number,
+    logicalTargetFps: number | null,
+): { framerate: number; stream_framerate: number | null } {
+    if (logicalTargetFps === null || logicalTargetFps <= 0) {
+        return { framerate: rowNativeFps, stream_framerate: null };
+    }
+    const stride = fpsIntegerStride(rowNativeFps, logicalTargetFps);
+    if (stride <= 0) {
+        return { framerate: rowNativeFps, stream_framerate: null };
+    }
+    if (stride <= 1) {
+        return { framerate: logicalTargetFps, stream_framerate: null };
+    }
+    return { framerate: logicalTargetFps, stream_framerate: rowNativeFps };
+}
+
+export function resolutionRowMatchesDesiredFrameratePick(
+    config: Pick<CameraConfig, 'framerate' | 'stream_framerate'>,
+    rowNativeFps: number,
+    logicalTargetFps: number | null,
+): boolean {
+    const desired = deriveFramerateFieldsFromResolutionPick(rowNativeFps, logicalTargetFps);
+    if (!fpsValuesEquivalent(config.framerate, desired.framerate)) {
+        return false;
+    }
+    const cw = typeof config.stream_framerate === 'number' && config.stream_framerate > 0;
+    const dw = typeof desired.stream_framerate === 'number' && desired.stream_framerate > 0;
+    if (!cw && !dw) {
+        return true;
+    }
+    if (!cw || !dw) {
+        return false;
+    }
+    return fpsValuesEquivalent(config.stream_framerate!, desired.stream_framerate!);
+}
+
+function deviceFormatPreferBOverAAtLogicalTarget(
+    a: DeviceFormatEntry,
+    b: DeviceFormatEntry,
+    logicalFps: number,
+): boolean {
+    if (logicalFps <= 0) {
+        return prefersDeviceFormatBOverA(a, b);
+    }
+    const sa = fpsIntegerStride(a.fps, logicalFps) || 9999;
+    const sb = fpsIntegerStride(b.fps, logicalFps) || 9999;
+    if (sb !== sa) {
+        return sb < sa;
+    }
+    return prefersDeviceFormatBOverA(a, b);
+}
+
+/**
+ * Best format for ``logicalFps`` (>0): prefers lowest integer stride (exact native FPS first),
+ * then resolution and codec ranking. Auto / unspecified (logicalFps≤0): highest-resolution heuristic.
  */
 export function pickBestFormatAtTargetFps(
     formats: Camera['deviceInfo']['availableFormats'],
-    fps: number,
+    logicalFps: number,
 ): DeviceFormatEntry | null {
     if (!formats?.length) return null;
-    const matches = formats.filter((f) => fpsValuesEquivalent(f.fps, fps));
-    if (!matches.length) return null;
-    return matches.reduce((best, cur) => (prefersDeviceFormatBOverA(best, cur) ? cur : best));
+
+    let pool = [...formats];
+    if (logicalFps > 0) {
+        const feasible = formats.filter((f) => fpsNativeSupportsLogicalOutput(f.fps, logicalFps));
+        if (!feasible.length) {
+            return null;
+        }
+        pool = feasible;
+    }
+
+    return pool.reduce((best, cur) =>
+        (deviceFormatPreferBOverAAtLogicalTarget(best, cur, logicalFps) ? cur : best),
+    );
 }

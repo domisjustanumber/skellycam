@@ -17,3 +17,9 @@ def test_matches_listed_virtual_includes_prefixes_and_virtual_word():
     assert matches_listed_virtual_camera_prefix("OBS-Camera HD")
     assert matches_listed_virtual_camera_prefix("Brand Virtual Webcam")
     assert not matches_listed_virtual_camera_prefix("Integrated Webcam")
+
+
+def test_listed_prefix_match_is_case_sensitive():
+    assert matches_listed_virtual_camera_prefix("OBS-Camera HD")
+    assert not matches_listed_virtual_camera_prefix("obs-camera HD")
+    assert matches_listed_virtual_camera_prefix("obs-camera Virtual")  # still matches *virtual*

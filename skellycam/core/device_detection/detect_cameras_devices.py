@@ -5,10 +5,7 @@ import platform
 from pydantic import BaseModel, ConfigDict, computed_field, field_serializer
 
 from skellycam.core.camera.openpnp_capture import OpenPnPCamera, OpenPnPFormatInfo
-from skellycam.core.device_detection.virtual_camera_names import (
-    matches_listed_virtual_camera_prefix,
-    name_contains_virtual_word,
-)
+from skellycam.core.device_detection.virtual_camera_names import matches_listed_virtual_camera_prefix
 from skellycam.core.device_detection.probe_openpnp_stream import probe_openpnp_stream
 from skellycam.core.types.type_overloads import CameraIdString, CameraIndexInt, CameraNameString
 
@@ -72,6 +69,9 @@ def detect_available_cameras(
     ``skip_probe_indices``: device indices already streaming inside Skellycam (workers hold the device); the main
     process cannot open them for probe without falsely marking them busy.
 
+    When ``filter_virtual`` is True (default), devices matching ``matches_listed_virtual_camera_prefix`` are omitted
+    entirely (listed name prefixes are matched case-sensitively; the word *virtual* is matched case-insensitively).
+
     When ``skip_listed_virtual_resolution_interrogation`` is True, devices matching
     ``matches_listed_virtual_camera_prefix`` (known virtual prefixes or the word *virtual* in the name)
     are not queried for formats and are not stream-probed
@@ -80,7 +80,7 @@ def detect_available_cameras(
     skip_set: set[int] = set(skip_probe_indices or ())
     cameras: list[CameraDeviceInfo] = []
     for device in OpenPnPCamera.list_devices():
-        if filter_virtual and name_contains_virtual_word(device.name):
+        if filter_virtual and matches_listed_virtual_camera_prefix(device.name):
             continue
         if "darwin" not in platform.system().lower():
             if not device.unique_id:

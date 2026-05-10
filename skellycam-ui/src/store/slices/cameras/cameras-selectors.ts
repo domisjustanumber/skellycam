@@ -6,6 +6,8 @@ import {
     CameraConfig,
     cameraMatchesListedVirtualPattern,
     DEFAULT_UI_FRAMERATE,
+    expandLogicalIntersectCandidatesFromFormats,
+    formatsIncludeTargetFramerate,
     fpsValuesEquivalent,
 } from './cameras-types';
 
@@ -68,20 +70,24 @@ export const selectSelectedCameraConfigs = createSelector(
             ),
 );
 
-function uniqueRepresentativeFpsFromFormats(cam: Camera): number[] {
-    const fmts = cam.deviceInfo.availableFormats ?? [];
+
+
+function unionLogicalFpsIntersectCandidates(cameras: Camera[]): number[] {
+    const raw: number[] = [];
+    for (const cam of cameras) {
+        raw.push(...expandLogicalIntersectCandidatesFromFormats(cam.deviceInfo.availableFormats ?? []));
+    }
     const out: number[] = [];
-    for (const f of fmts) {
-        if (
-            !out.some((representative) => fpsValuesEquivalent(representative, f.fps))
-        ) {
-            out.push(f.fps);
+    for (const r of raw) {
+        if (!out.some((e) => fpsValuesEquivalent(e, r))) {
+            out.push(r);
         }
     }
-    return out.sort((a, b) => a - b);
+    out.sort((a, b) => a - b);
+    return out;
 }
 
-/** FPS values every selected usable camera exposes on at least one reported mode (resolution-agnostic union per device, intersected across selection). */
+/** FPS preset values usable by **every** selected camera (exact native mode or acceptable integer-ratio drop). */
 export const selectIntersectingFpsOptions = createSelector(
     [selectSelectedCameras],
     (selected): number[] => {
@@ -95,14 +101,12 @@ export const selectIntersectingFpsOptions = createSelector(
         if (eligible.length === 0) {
             return [];
         }
-        let options = uniqueRepresentativeFpsFromFormats(eligible[0]);
-        for (let i = 1; i < eligible.length; i++) {
-            options = options.filter((candidateFps) =>
-                (eligible[i].deviceInfo.availableFormats ?? []).some((f) =>
-                    fpsValuesEquivalent(f.fps, candidateFps),
-                ),
-            );
-        }
+        const candidates = unionLogicalFpsIntersectCandidates(eligible);
+        const options = candidates.filter((logical) =>
+            eligible.every((camera) =>
+                formatsIncludeTargetFramerate(camera.deviceInfo.availableFormats, logical),
+            ),
+        );
         return options;
     },
 );
@@ -275,14 +279,29 @@ function getConfigDifferences(
         differences.push({
             field: 'capture_fourcc',
             actual: actual.capture_fourcc,
-            desired: desired.capture_fourcc
+            desired: desired.capture_fourcc,
+        });
+    }
+    const sa = typeof actual.stream_framerate === 'number' && actual.stream_framerate > 0
+        ? actual.stream_framerate
+        : null;
+    const sd = typeof desired.stream_framerate === 'number' && desired.stream_framerate > 0
+        ? desired.stream_framerate
+        : null;
+    const streamUnset = sa === null;
+    const streamDstUnset = sd === null;
+    if (streamUnset !== streamDstUnset || (!streamUnset && !streamDstUnset && !fpsValuesEquivalent(sa!, sd!))) {
+        differences.push({
+            field: 'stream_framerate',
+            actual: actual.stream_framerate,
+            desired: desired.stream_framerate,
         });
     }
     if (actual.writer_fourcc !== desired.writer_fourcc) {
         differences.push({
             field: 'writer_fourcc',
             actual: actual.writer_fourcc,
-            desired: desired.writer_fourcc
+            desired: desired.writer_fourcc,
         });
     }
 

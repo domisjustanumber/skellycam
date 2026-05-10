@@ -3,6 +3,10 @@
 from __future__ import annotations
 
 from skellycam.core.camera.config.camera_config import CameraConfig
+from skellycam.core.camera.fps_compatibility import (
+    fps_integer_stride,
+    native_supports_logical_output_fps,
+)
 from skellycam.core.camera.openpnp_capture.types import OpenPnPFormatInfo
 
 
@@ -67,14 +71,28 @@ def select_best_format(formats: list[OpenPnPFormatInfo], config: CameraConfig) -
 
     if config.framerate > 0:
         target = float(config.framerate)
+
+        feasible = [f for f in pool2 if native_supports_logical_output_fps(f.fps, target)]
+        if not feasible:
+            raise ValueError(
+                f"No enumerated mode supports logical {target:g} fps "
+                f"(integer-ratio capture only — e.g. 60 can serve 30)."
+            )
+
+        def stride_sort_key(fmt: OpenPnPFormatInfo) -> int:
+            stride = fps_integer_stride(fmt.fps, target)
+            return stride if stride > 0 else 999
+
         pool2 = sorted(
-            pool2,
+            feasible,
             key=lambda f: (
-                abs(f.fps - target),
+                stride_sort_key(f),
                 _fourcc_preference_rank(f.fourcc_str),
                 -(f.width * f.height),
+                -f.format_id,
             ),
         )
+
     else:
         pool2 = sorted(
             pool2,

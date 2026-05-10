@@ -87,6 +87,16 @@ Each camera runs in its own OS process to avoid the GIL. USB webcam capture uses
 
 OpenCV (`cv2`) stays in the stack for **`VideoWriter`**, rotation helpers, **`putText`** overlays, and writer-side fourcc / file-extension helpers — not for enumerating cameras or decoding the live capture path.
 
+### Frame rate selection and logical FPS
+
+The **Cameras** bar frame-rate control sets a **logical** output FPS that every **selected** camera is expected to honor together: synchronized multi-frame events and recordings still advance a **single shared frame index**, and all cameras must agree on that cadence.
+
+**How options are built.** Each device exposes a list of native stream modes (resolution, codec, and advertised FPS). SkellyCam derives the set of **logical** frame rates that **all** selected cameras can support at once. A candidate logical rate is allowed if, for **each** camera, there exists **at least one** enumerated mode whose native FPS is either an **exact** match to that rate or a **whole-number multiple** of it (within a small tolerance so values like 29.97 vs 30 still line up). Rates that only one camera could satisfy are omitted from the intersecting list.
+
+**Frame dropping (integer stride only).** If you choose e.g. **30** logical FPS but a camera only offers **60** (or 120, …) at the resolution you want, the app still lets you use that camera: it opens the stream at the **native** rate and **discards** surplus frames so only every *k*-th capture becomes a **logical** frame (*k* = native FPS ÷ logical FPS). The pipeline **never** inserts, blends, or repeats frames to fake a rate; it only **drops** extras. This is intentionally limited to **integer** ratios: combinations like 60 native for 24 logical are **not** treated as valid, because they cannot be expressed as a simple “keep every *k*-th frame” rule with the same tolerance model.
+
+**Configuration fields.** In API and UI payloads, `framerate` is the **logical** rate used for sync and user intent. When frame dropping is in use, **`stream_framerate`** (when set) is the **native** capture rate of the opened mode. Shared logic lives in `skellycam/core/camera/fps_compatibility.py` (server) with matching rules in the UI camera store types.
+
 ### Trade-offs (openpnp-capture vs OpenCV grab/retrieve)
 
 openpnp-capture returns **already decoded RGB**. Decompression runs on **the library’s internal worker thread** while polling the OS driver; the Python side reads the latest decoded frame with a memcpy-style copy. That replaces the older OpenCV pattern where **`grab()`** latched raw driver buffers (cheap, easy to timestamp at dequeue time) and **`retrieve()`** did heavy decode afterward on the worker thread — deliberately ordered across cameras so decode did not widen inter-camera timing spread.

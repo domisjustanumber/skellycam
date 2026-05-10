@@ -68,15 +68,22 @@ class DetectCamerasRequestBody(BaseModel):
 
     model_config = ConfigDict(populate_by_name=True)
 
-    filter_virtual: bool = Field(default=True, alias="filterVirtual")
+    filter_virtual: bool = Field(
+        default=True,
+        alias="filterVirtual",
+        description=(
+            "When true, omit devices matching listed virtual webcam name prefixes (case-sensitive) "
+            "or the whole word virtual (case-insensitive)."
+        ),
+    )
     probe_streams: bool = Field(default=True, alias="probeStreams")
     skip_listed_virtual_resolution_interrogation: bool = Field(
         default=False,
         alias="skipListedVirtualResolutionInterrogation",
         description=(
             "When true, do not enumerate formats or probe streams for cameras matching "
-            "listed virtual webcam name prefixes (OBS, Spout, NDI, NVIDIA Broadcast) "
-            "or whose name contains the word “virtual”."
+            "listed virtual webcam name prefixes (case-sensitive) "
+            "or the whole word virtual (case-insensitive)."
         ),
     )
 

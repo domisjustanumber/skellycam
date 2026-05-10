@@ -1,6 +1,7 @@
 import logging
 
 from skellycam.core.camera.config.camera_config import CameraConfig
+from skellycam.core.camera.fps_compatibility import fps_values_equivalent
 from skellycam.core.camera.openpnp.openpnp_helpers.format_selection import select_best_format
 from skellycam.core.camera.openpnp.openpnp_helpers.openpnp_extract_config import extract_config_from_openpnp_camera
 from skellycam.core.camera.openpnp.openpnp_helpers.recommend_camera_exposure_setting import (
@@ -15,6 +16,30 @@ logger = logging.getLogger(__name__)
 
 class FailedToApplyCameraConfigurationError(Exception):
     pass
+
+
+def _positive_fps_optional_equal(a: float | None, b: float | None) -> bool:
+    ah = isinstance(a, (float, int)) and float(a) > 0
+    bh = isinstance(b, (float, int)) and float(b) > 0
+    if not ah and not bh:
+        return True
+    if not ah or not bh:
+        return False
+    return fps_values_equivalent(float(a), float(b))
+
+
+def _stream_capture_shape_changed(*, prior: CameraConfig, config: CameraConfig) -> bool:
+    """Return True when the selected openpnp format / FPS intent differs from ``prior``."""
+    if prior.resolution != config.resolution:
+        return True
+    if prior.capture_fourcc != config.capture_fourcc:
+        return True
+    if not fps_values_equivalent(prior.framerate, config.framerate):
+        return True
+    return not _positive_fps_optional_equal(
+        getattr(prior, "stream_framerate", None),
+        getattr(config, "stream_framerate", None),
+    )
 
 
 def _apply_focus(camera: OpenPnPCamera, config: CameraConfig, *, initial_config: bool) -> None:
@@ -74,9 +99,9 @@ def apply_camera_configuration(
     should_apply_focus = initial_config or (
         prior_config.auto_focus_enabled != config.auto_focus_enabled or prior_config.focus != config.focus
     )
-    should_apply_resolution = initial_config or prior_config.resolution != config.resolution
-    should_apply_framerate = False
-    should_apply_capture_fourcc = initial_config or prior_config.capture_fourcc != config.capture_fourcc
+    needs_stream_reopen_for_shape = initial_config or (
+        prior_config is not None and _stream_capture_shape_changed(prior=prior_config, config=config)
+    )
 
     try:
         if not camera.is_open():
@@ -84,7 +109,7 @@ def apply_camera_configuration(
                 f"Failed to apply configuration to Camera {config.camera_index} — stream is not open"
             )
 
-        if should_apply_resolution or should_apply_capture_fourcc:
+        if needs_stream_reopen_for_shape:
             chosen = select_best_format(camera.device_formats, config)
             if chosen.format_id != camera.format.format_id:
                 logger.info(
@@ -99,10 +124,6 @@ def apply_camera_configuration(
         if should_apply_focus:
             _apply_focus(camera, config, initial_config=initial_config)
 
-        if should_apply_framerate:
-            if config.framerate > 0:
-                logger.trace("Framerate application is disabled for openpnp-capture paths")
-
         extracted_config = extract_config_from_openpnp_camera(
             camera_index=config.camera_index,
             camera_id=config.camera_id,
@@ -110,6 +131,7 @@ def apply_camera_configuration(
             camera=camera,
             exposure_mode=config.exposure_mode,
             rotation=config.rotation,
+            desired_template=config,
         )
         if not camera.is_open():
             raise FailedToApplyCameraConfigurationError(

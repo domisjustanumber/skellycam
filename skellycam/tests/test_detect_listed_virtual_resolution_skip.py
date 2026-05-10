@@ -64,13 +64,41 @@ def test_skip_listed_virtual_never_reads_formats():
     ), patch(
         "skellycam.core.device_detection.detect_cameras_devices.probe_openpnp_stream",
     ) as mock_probe:
-        out = detect_available_cameras(skip_listed_virtual_resolution_interrogation=True)
+        out = detect_available_cameras(
+            filter_virtual=False,
+            skip_listed_virtual_resolution_interrogation=True,
+        )
 
     assert len(out) == 1
     assert out[0].matches_listed_virtual_name is True
     assert out[0].available_formats == []
     assert out[0].stream_available is True
     mock_probe.assert_not_called()
+
+
+def test_filter_virtual_excludes_listed_prefix_case_sensitive_only():
+    """``OBS-Camera`` is filtered; lowercase ``obs-`` is not."""
+
+    lower = MagicMock()
+    lower.name = "obs-camera Not Listed Prefix"
+    lower.index = 0
+    lower.unique_id = "usb-lower-obs"
+    lower_fmt = OpenPnPFormatInfo(format_id=0, width=640, height=480, fps=30.0, fourcc_str="MJPG", bpp=24)
+    lower.formats = [lower_fmt]
+    probe_out = ProbeStreamOutcome(stream_available=True)
+
+    with (
+        patch.object(OpenPnPCamera, "list_devices", return_value=[_ListedVirtualStub(), lower]),
+        patch(
+            "skellycam.core.device_detection.detect_cameras_devices.probe_openpnp_stream",
+            return_value=probe_out,
+        ) as mock_probe,
+    ):
+        out = detect_available_cameras(filter_virtual=True, skip_listed_virtual_resolution_interrogation=False)
+
+    assert len(out) == 1
+    assert out[0].name == lower.name
+    mock_probe.assert_called_once()
 
 
 def test_listed_virtual_still_interrogated_when_skip_false():
@@ -89,7 +117,10 @@ def test_listed_virtual_still_interrogated_when_skip_false():
             return_value=probe_out,
         ) as mock_probe,
     ):
-        out = detect_available_cameras(skip_listed_virtual_resolution_interrogation=False)
+        out = detect_available_cameras(
+            filter_virtual=False,
+            skip_listed_virtual_resolution_interrogation=False,
+        )
 
     assert len(out) == 1
     assert len(out[0].available_formats) == 1

@@ -109,7 +109,12 @@ class CameraConfig(BaseModel):
     )
 
     framerate: float = Field(default=DEFAULT_FRAMERATE,
-                             description="The frame rate of the camera (in frames per second), default to `0` to use camera's default framerate and run frame loop as quick as it'll go. ")
+                             description="Logical output frame rate (frames per second) after any integer-ratio drop.")
+
+    stream_framerate: float | None = Field(
+        default=None,
+        description="Native capture FPS when it is a whole multiple of ``framerate`` and surplus frames are dropped.",
+    )
 
     auto_focus_enabled: bool = Field(
         default=DEFAULT_AUTO_FOCUS_ENABLED,

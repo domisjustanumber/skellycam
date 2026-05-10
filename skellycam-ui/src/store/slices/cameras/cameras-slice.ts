@@ -10,6 +10,7 @@ import {
     createDefaultCameraConfig,
     normalizeCaptureFourcc,
     pickBestFormatAtTargetFps,
+    deriveFramerateFieldsFromResolutionPick,
 } from './cameras-types';
 import {
     detectCameras,
@@ -176,16 +177,21 @@ export const cameraSlice = createSlice({
                 }
                 const best = pickBestFormatAtTargetFps(camera.deviceInfo.availableFormats, fps);
                 if (best) {
-                    const applied = best.fps;
+                    const fpsFields = deriveFramerateFieldsFromResolutionPick(best.fps, fps);
                     camera.desiredConfig = {
                         ...camera.desiredConfig,
-                        framerate: applied,
+                        framerate: fpsFields.framerate,
+                        stream_framerate: fpsFields.stream_framerate,
                         resolution: { width: best.width, height: best.height },
                         capture_fourcc: normalizeCaptureFourcc(best.fourcc_str),
                     };
                 }
                 else {
-                    camera.desiredConfig = { ...camera.desiredConfig, framerate: fps };
+                    camera.desiredConfig = {
+                        ...camera.desiredConfig,
+                        framerate: fps,
+                        stream_framerate: null,
+                    };
                 }
                 camera.hasConfigMismatch = !areConfigsEqual(camera.actualConfig, camera.desiredConfig);
             });

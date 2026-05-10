@@ -5,9 +5,11 @@ import {
     Camera,
     compareDeviceFormatsResolutionPreference,
     effectiveResolutionTargetFramerate,
+    fpsNativeSupportsLogicalOutput,
     fpsValuesEquivalent,
     normalizeCaptureFourcc,
     pickBestFormatAtTargetFps,
+    resolutionRowMatchesDesiredFrameratePick,
 } from "@/store/slices/cameras/cameras-types";
 
 export interface ResolutionRow {
@@ -75,8 +77,10 @@ interface CameraConfigResolutionProps {
     resolution: CameraConfig["resolution"];
     /** Shared FPS when all selected cameras agree (often from top-bar); negative or omitted means “unset / mixed”. */
     groupFramerateChoice: number;
-    /** This camera’s desired FPS (fallback when group shows mixed or −1). */
+    /** Stored desired FPS (logical when using frame-drop semantics). */
     desiredFramerate: number;
+    /** Native capture FPS when differing from logical, else ``null``. */
+    desiredStreamFramerate: number | null;
     capture_fourcc: string;
     formats: Camera["deviceInfo"]["availableFormats"] | undefined;
     disabled?: boolean;
@@ -87,6 +91,7 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
     resolution,
     groupFramerateChoice,
     desiredFramerate,
+    desiredStreamFramerate,
     capture_fourcc,
     formats,
     disabled,
@@ -108,7 +113,7 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
         if (targetFps === null) {
             return rows;
         }
-        return rows.filter((r) => fpsValuesEquivalent(r.fps, targetFps));
+        return rows.filter((r) => fpsNativeSupportsLogicalOutput(r.fps, targetFps));
     }, [rows, targetFps]);
 
     const idealRow = useMemo(() => {
@@ -133,7 +138,14 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
             resolution.width === idealRow.width
             && resolution.height === idealRow.height
             && normalizeCaptureFourcc(capture_fourcc) === normalizeCaptureFourcc(idealRow.fourcc_str)
-            && fpsValuesEquivalent(idealRow.fps, targetFps);
+            && resolutionRowMatchesDesiredFrameratePick(
+                {
+                    framerate: desiredFramerate,
+                    stream_framerate: desiredStreamFramerate,
+                },
+                idealRow.fps,
+                targetFps,
+            );
 
         if (matchesIdeal) {
             prevTargetFpsSeen.current = targetFps;
@@ -161,6 +173,8 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
         resolution.width,
         resolution.height,
         capture_fourcc,
+        desiredFramerate,
+        desiredStreamFramerate,
     ]);
 
     const currentRowValid = rows.find(
@@ -168,7 +182,12 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
             r.width === resolution.width
             && r.height === resolution.height
             && normalizeCaptureFourcc(r.fourcc_str) === normalizeCaptureFourcc(capture_fourcc)
-            && (targetFps === null || fpsValuesEquivalent(r.fps, targetFps)),
+            && (targetFps === null
+                || resolutionRowMatchesDesiredFrameratePick(
+                    { framerate: desiredFramerate, stream_framerate: desiredStreamFramerate },
+                    r.fps,
+                    targetFps,
+                )),
     );
 
     const noEnumeratedModes = rows.length === 0;
@@ -226,15 +245,15 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
                         </MenuItem>
                     ) : (
                         rows.map((row) => {
-                            const fpsMatch =
-                                targetFps === null || fpsValuesEquivalent(row.fps, targetFps);
+                            const fpsOk =
+                                targetFps === null || fpsNativeSupportsLogicalOutput(row.fps, targetFps);
                             const label = `${row.width} × ${row.height} (${row.fourcc_str.trim()}) @ ${row.fps} fps`;
                             return (
                                 <MenuItem
                                     key={row.key}
                                     value={row.key}
-                                    disabled={!fpsMatch}
-                                    sx={!fpsMatch ? { opacity: 0.45 } : {}}
+                                    disabled={!fpsOk}
+                                    sx={!fpsOk ? { opacity: 0.45 } : {}}
                                 >
                                     {label}
                                 </MenuItem>
