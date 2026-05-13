@@ -8,8 +8,8 @@ from skellycam.core.camera.openpnp.openpnp_helpers.recommend_camera_exposure_set
     ExposureModes,
     get_recommended_openpnp_exposure,
 )
-from skellycam.core.camera.openpnp_capture import OpenPnPCamera
-from skellycam.core.camera.openpnp_capture.types import OpenPnPCaptureAPIError, OpenPnPProperty
+from openpnp_capture import OpenPnPCamera
+from openpnp_capture.types import OpenPnPCaptureAPIError, OpenPnPProperty
 
 logger = logging.getLogger(__name__)
 
@@ -18,28 +18,13 @@ class FailedToApplyCameraConfigurationError(Exception):
     pass
 
 
-def _positive_fps_optional_equal(a: float | None, b: float | None) -> bool:
-    ah = isinstance(a, (float, int)) and float(a) > 0
-    bh = isinstance(b, (float, int)) and float(b) > 0
-    if not ah and not bh:
-        return True
-    if not ah or not bh:
-        return False
-    return fps_values_equivalent(float(a), float(b))
-
-
 def _stream_capture_shape_changed(*, prior: CameraConfig, config: CameraConfig) -> bool:
-    """Return True when the selected openpnp format / FPS intent differs from ``prior``."""
+    """Return True when the selected openpnp format / FPS differs from ``prior``."""
     if prior.resolution != config.resolution:
         return True
     if prior.capture_fourcc != config.capture_fourcc:
         return True
-    if not fps_values_equivalent(prior.framerate, config.framerate):
-        return True
-    return not _positive_fps_optional_equal(
-        getattr(prior, "stream_framerate", None),
-        getattr(config, "stream_framerate", None),
-    )
+    return not fps_values_equivalent(prior.framerate, config.framerate)
 
 
 def _apply_focus(camera: OpenPnPCamera, config: CameraConfig, *, initial_config: bool) -> None:

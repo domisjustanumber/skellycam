@@ -9,7 +9,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from skellycam.core.camera.openpnp_capture import OpenPnPCamera
+from openpnp_capture import OpenPnPCamera
 
 
 def measure_capture_latency(camera: OpenPnPCamera, frames: int = 30) -> dict[str, float]:

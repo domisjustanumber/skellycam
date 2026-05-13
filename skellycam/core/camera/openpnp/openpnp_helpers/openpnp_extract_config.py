@@ -3,9 +3,8 @@ import logging
 from skellycam.core.camera.config.camera_config import CameraConfig, DEFAULT_FOCUS
 from skellycam.core.camera.config.image_resolution import ImageResolution
 from skellycam.core.camera.config.image_rotation_types import RotationTypes
-from skellycam.core.camera.fps_compatibility import fps_integer_stride
 from skellycam.core.camera.openpnp.openpnp_helpers.recommend_camera_exposure_setting import ExposureModes
-from skellycam.core.camera.openpnp_capture import OpenPnPCamera
+from openpnp_capture import OpenPnPCamera
 from skellycam.core.types.type_overloads import CameraIndexInt
 
 logger = logging.getLogger(__name__)
@@ -35,13 +34,6 @@ def extract_config_from_openpnp_camera(
     elif settings.exposure_auto is False:
         derived_mode = ExposureModes.MANUAL.name
     native_fps = float(fmt.fps)
-    logical_fps = native_fps
-    stream_framerate: float | None = None
-    if desired_template is not None and desired_template.framerate > 0:
-        logical_fps = float(desired_template.framerate)
-        stride = fps_integer_stride(native_fps, logical_fps)
-        if stride >= 2:
-            stream_framerate = native_fps
 
     auto_focus_enabled = settings.focus_auto is True
     focus_val = settings.focus
@@ -61,8 +53,7 @@ def extract_config_from_openpnp_camera(
             resolution=ImageResolution(width=width, height=height),
             exposure_mode=derived_mode,
             exposure=int(exposure_val),
-            framerate=float(logical_fps),
-            stream_framerate=stream_framerate,
+            framerate=native_fps,
             auto_focus_enabled=auto_focus_enabled,
             focus=focus_int,
             rotation=rotation,

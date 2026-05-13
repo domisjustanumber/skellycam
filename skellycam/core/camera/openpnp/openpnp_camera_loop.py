@@ -5,13 +5,12 @@ from collections import deque
 import numpy as np
 
 from skellycam.core.camera.config.camera_config import CameraConfig
-from skellycam.core.camera.fps_compatibility import logical_capture_stride_from_camera_config
 from skellycam.core.camera.openpnp.openpnp_helpers.camera_loop_update_checks import camera_loop_update_checks
 from skellycam.core.camera.openpnp.openpnp_helpers.create_openpnp_camera import create_openpnp_camera
 from skellycam.core.camera.openpnp.openpnp_helpers.handle_recording_updates import finish_recording
 from skellycam.core.camera.openpnp.openpnp_helpers.handle_video_recording_loop import handle_video_recording
-from skellycam.core.camera.openpnp.openpnp_helpers.openpnp_get_frame import draw_doubled_text, openpnp_get_frame
-from skellycam.core.camera.openpnp_capture import OpenPnPCamera
+from skellycam.core.camera.openpnp.openpnp_helpers.openpnp_get_frame import openpnp_get_frame
+from openpnp_capture import OpenPnPCamera
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 from skellycam.core.camera_group.camera_status import CameraStatus
@@ -49,8 +48,6 @@ def run_openpnp_camera_loop(
     stall_log_interval_ns = 5 * 1_000_000_000
     last_stall_log_ns = 0
     last_frame_log_ns = 0
-    last_stride_key: tuple[float, float, int] | None = None
-    captures_seen_under_stride_key = 0
 
     try:
         while ipc.should_continue:
@@ -71,21 +68,6 @@ def run_openpnp_camera_loop(
                 video_recorder=video_recorder,
                 framerate=framerate,
             )
-
-            stream_native = getattr(config, "stream_framerate", None)
-            native_for_stride = float(stream_native) if stream_native is not None and float(stream_native) > 0 else float(
-                camera.format.fps
-            )
-            logical_for_stride = float(config.framerate) if config.framerate and float(config.framerate) > 0 else -1.0
-            stride_now = logical_capture_stride_from_camera_config(
-                logical_output_fps=logical_for_stride,
-                capture_native_fps=native_for_stride,
-            )
-
-            stride_key = (logical_for_stride, native_for_stride, stride_now)
-            if last_stride_key != stride_key:
-                last_stride_key = stride_key
-                captures_seen_under_stride_key = 0
 
             if self_status.should_close.value:
                 logger.info(f"Camera {config.camera_id} received shutdown signal.")
@@ -132,7 +114,6 @@ def run_openpnp_camera_loop(
                 frame_success, frame_rec_array = openpnp_get_frame(
                     camera=camera,
                     frame_rec_array=frame_rec_array,
-                    advance_logical_delivery=False,
                 )
                 if not frame_success:
                     fail_count += 1
@@ -151,27 +132,6 @@ def run_openpnp_camera_loop(
                 raise RuntimeError(
                     f"Could not capture a frame from camera {config.camera_id} after {MAX_FAIL_COUNT} failed attempts."
                 )
-
-            captures_seen_under_stride_key += 1
-            logical_deliver = (captures_seen_under_stride_key - 1) % stride_now == 0
-
-            if not logical_deliver:
-                self_status.grabbing_frame.value = False
-                frame_rec_array = initialize_frame_recarray(frame_rec_array=frame_rec_array)
-                continue
-
-            frame_rec_array.frame_metadata.frame_number[0] += 1
-            frame_stamp = (
-                f"camera.id{frame_rec_array.frame_metadata.camera_info.camera_id[0]}."
-                f"idx{frame_rec_array.frame_metadata.camera_info.camera_index[0]}."
-                f"fr{frame_rec_array.frame_metadata.frame_number[0]}"
-            )
-            draw_doubled_text(
-                image=frame_rec_array.image[0],
-                text=frame_stamp,
-                x=10,
-                y=40,
-            )
 
             current_tik = time.perf_counter_ns()
             frame_durations_seconds.append((current_tik - previous_tik) / 1e9)

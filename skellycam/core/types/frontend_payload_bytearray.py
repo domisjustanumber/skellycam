@@ -7,9 +7,9 @@ import cv2
 import numpy as np
 
 from skellycam.core.ipc.shared_memory.ring_buffer_shared_memory import ONE_MEGABYTE, ONE_KILOBYTE
+from skellycam.core.types.type_overloads import CameraGroupIdString, FrameNumberInt, MultiframeTimestampFloat
 
 logger = logging.getLogger(__name__)
-from skellycam.core.types.type_overloads import CameraGroupIdString, FrameNumberInt, MultiframeTimestampFloat
 
 # Pipeline timing row keys (merged into websocket ``per_camera`` for UI).
 PREVIEW_TIMING_JPEG_ROTATE_MS = "jpeg_rotate_ms"
@@ -17,6 +17,8 @@ PREVIEW_TIMING_JPEG_RESIZE_MS = "jpeg_resize_ms"
 PREVIEW_TIMING_JPEG_ENCODE_MS = "jpeg_encode_ms"
 # Wall-clock for entire multiplex binary (header + all cameras + footer) in create_frontend_payload.
 PREVIEW_TIMING_WS_PAYLOAD_PREPARE_MS = "ws_payload_prepare_ms"
+# Per multiframe: max(post_frame_grab_ns) - min(...) across cameras, in ms (live preview telemetry).
+PREVIEW_MULTIFRAME_INTER_CAMERA_GRAB_SPREAD_MS = "inter_camera_grab_spread_ms"
 
 # Thread-safe rolling samples for telemetry (drained by websocket relay).
 _frontend_preview_timing_lock = threading.Lock()
@@ -24,6 +26,32 @@ _frontend_preview_timing_samples: dict[str, dict[str, dict[str, list[float]]]] =
     lambda: defaultdict(lambda: defaultdict(list))
 )
 _MAX_FRONTEND_PREVIEW_TIMING_SAMPLES_PER_STAGE = 512
+
+_frontend_preview_multiframe_lock = threading.Lock()
+_frontend_preview_multiframe_samples: dict[str, dict[str, list[float]]] = defaultdict(
+    lambda: defaultdict(list)
+)
+_MAX_FRONTEND_PREVIEW_MULTIFRAME_SAMPLES_PER_STAGE = 512
+
+
+def record_frontend_preview_multiframe_ms(
+    camera_group_id: str, stage: str, elapsed_ms: float
+) -> None:
+    """Append one multiframe-wide preview telemetry sample (ms) for a logical stage."""
+    with _frontend_preview_multiframe_lock:
+        bucket = _frontend_preview_multiframe_samples[camera_group_id][stage]
+        bucket.append(elapsed_ms)
+        if len(bucket) > _MAX_FRONTEND_PREVIEW_MULTIFRAME_SAMPLES_PER_STAGE:
+            del bucket[: len(bucket) - _MAX_FRONTEND_PREVIEW_MULTIFRAME_SAMPLES_PER_STAGE]
+
+
+def get_and_clear_frontend_preview_multiframe_samples(
+    camera_group_id: str,
+) -> dict[str, list[float]]:
+    """Pop all pending multiframe preview samples: ``stage -> list of ms``."""
+    with _frontend_preview_multiframe_lock:
+        raw = _frontend_preview_multiframe_samples.pop(camera_group_id, {})
+        return {stage: list(samples) for stage, samples in raw.items()}
 
 
 def record_frontend_preview_timing_ms(
@@ -115,6 +143,17 @@ def create_frontend_payload(
     frame_number = frame_numbers[0]
     number_of_cameras = len(camera_ids)
 
+    cg_id = str(camera_group_id) if camera_group_id is not None else None
+    if cg_id is not None and camera_ids:
+        posts = [
+            int(latest_frames[camera_id].frame_metadata.timestamps.post_frame_grab_ns[0])
+            for camera_id in camera_ids
+        ]
+        spread_ms = (max(posts) - min(posts)) / 1e6
+        record_frontend_preview_multiframe_ms(
+            cg_id, PREVIEW_MULTIFRAME_INTER_CAMERA_GRAB_SPREAD_MS, spread_ms
+        )
+
     t_ws_payload_prepare0 = time.perf_counter()
 
     # Pre-allocate with extra space for config data
@@ -143,8 +182,6 @@ def create_frontend_payload(
 
     image_scale = 0.5
     frame_timestamps: list[float | np.floating] = []
-
-    cg_id = str(camera_group_id) if camera_group_id is not None else None
 
     for camera_id in camera_ids:
         frame_recarray = latest_frames[camera_id]

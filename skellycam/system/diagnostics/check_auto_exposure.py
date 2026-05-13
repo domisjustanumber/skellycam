@@ -8,7 +8,7 @@ from typing import Union
 import cv2
 import numpy as np
 
-from skellycam.core.camera.openpnp_capture import OpenPnPCamera, OpenPnPCaptureAPIError, OpenPnPProperty
+from openpnp_capture import OpenPnPCamera, OpenPnPCaptureAPIError, OpenPnPProperty
 
 MIN_EXPOSURE = -9
 MAX_EXPOSURE = -5

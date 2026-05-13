@@ -7,7 +7,7 @@ import numpy as np
 from skellycam.core.camera.config.camera_config import CameraConfig
 from skellycam.core.camera.openpnp.openpnp_helpers.format_selection import select_best_format
 from skellycam.core.camera.openpnp.openpnp_helpers.openpnp_apply_config import apply_camera_configuration
-from skellycam.core.camera.openpnp_capture import OpenPnPCamera
+from openpnp_capture import OpenPnPCamera
 from skellycam.core.camera_group.usb_bandwidth import UsbBandwidthContentionError
 from skellycam.utilities.wait_functions import wait_1s, wait_10ms
 
@@ -15,7 +15,16 @@ logger = logging.getLogger(__name__)
 
 
 class FailedToReadFrameFromCameraException(Exception):
-    pass
+    """Raised when the device accepts ``Cap_openStream`` but never delivers a decodeable frame."""
+
+    _DEFAULT = (
+        "Stream opened but no video frame arrived in time — the camera may be in use elsewhere, "
+        "or this capture mode is not producing data. Close other apps using the camera "
+        "(browser, Meetings, OBS, Camera app), then click refresh in Skellycam."
+    )
+
+    def __init__(self, message: str | None = None) -> None:
+        super().__init__(message if message else self._DEFAULT)
 
 
 class FailedToOpenCameraException(Exception):

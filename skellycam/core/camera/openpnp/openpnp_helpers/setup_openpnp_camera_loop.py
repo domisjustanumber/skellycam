@@ -6,7 +6,7 @@ from skellycam.core.camera.config.camera_config import CameraConfig
 from skellycam.core.camera.openpnp.openpnp_helpers.create_initial_frame_recarray import create_initial_frame_rec_array
 from skellycam.core.camera.openpnp.openpnp_helpers.create_openpnp_camera import create_openpnp_camera
 from skellycam.core.camera_group.usb_bandwidth import CameraStartupAborted, UsbBandwidthContentionError
-from skellycam.core.camera.openpnp_capture import OpenPnPCamera
+from openpnp_capture import OpenPnPCamera
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 from skellycam.core.camera_group.camera_status import CameraStatus

@@ -4,7 +4,8 @@ import platform
 
 from pydantic import BaseModel, ConfigDict, computed_field, field_serializer
 
-from skellycam.core.camera.openpnp_capture import OpenPnPCamera, OpenPnPFormatInfo
+from openpnp_capture import OpenPnPCamera, OpenPnPFormatInfo
+from skellycam.core.camera.openpnp.openpnp_helpers.format_selection import filter_openpnp_formats_mjpeg_capture_policy
 from skellycam.core.device_detection.virtual_camera_names import matches_listed_virtual_camera_prefix
 from skellycam.core.device_detection.probe_openpnp_stream import probe_openpnp_stream
 from skellycam.core.types.type_overloads import CameraIdString, CameraIndexInt, CameraNameString
@@ -106,7 +107,7 @@ def detect_available_cameras(
             )
             continue
 
-        formats = list(device.formats)
+        formats = filter_openpnp_formats_mjpeg_capture_policy(list(device.formats))
         if probe_streams and device.index not in skip_set:
             outcome = probe_openpnp_stream(device.index, formats)
             cameras.append(

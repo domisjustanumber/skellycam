@@ -5,7 +5,7 @@ from typing import List, Tuple
 import numpy as np
 from tabulate import tabulate
 
-from skellycam.core.camera.openpnp_capture import OpenPnPCamera, OpenPnPCaptureAPIError, OpenPnPProperty
+from openpnp_capture import OpenPnPCamera, OpenPnPCaptureAPIError, OpenPnPProperty
 
 logger = logging.getLogger(__name__)
 
