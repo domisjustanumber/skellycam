@@ -520,6 +520,17 @@ wheels = [
 ]
 
 [[package]]
+name = "openpnp-capture-python"
+version = "0.1.0"
+source = { editable = "../openpnp-capture-python" }
+dependencies = [
+    { name = "numpy" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "numpy", specifier = ">=1.24" }]
+
+[[package]]
 name = "packaging"
 version = "26.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1301,6 +1312,7 @@ dependencies = [
     { name = "numpy" },
     { name = "numpydantic" },
     { name = "opencv-contrib-python" },
+    { name = "openpnp-capture-python" },
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.14'" },
     { name = "pandas", version = "3.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.14'" },
     { name = "pillow" },
@@ -1338,6 +1350,7 @@ requires-dist = [
     { name = "numpy" },
     { name = "numpydantic", specifier = ">=1.6.9" },
     { name = "opencv-contrib-python", specifier = "==4.12.*" },
+    { name = "openpnp-capture-python", editable = "../openpnp-capture-python" },
     { name = "pandas" },
     { name = "pillow" },
     { name = "psutil", specifier = "==5.9.6" },

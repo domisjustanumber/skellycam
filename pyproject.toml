@@ -72,10 +72,12 @@ dependencies = [
     "skellypings",
     "beartype>=0.19",
     "msgspec>=0.19",
+    "openpnp-capture-python",
 ]
 [tool.uv.sources]
 skellylogs = { git = "https://github.com/freemocap/skellylogs" }
 skellypings = { git = "https://github.com/freemocap/skellypings" }
+openpnp-capture-python = { path = "../openpnp-capture-python", editable = true }
 
 [tool.uv]
 package = true
@@ -93,9 +95,6 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["."]
-
-[tool.setuptools.package-data]
-skellycam = ["_vendor/openpnp_capture/**/*"]
 
 # ---- Version Bumping (bumpver) ----
 # Run with: uv run bumpver update <flag>

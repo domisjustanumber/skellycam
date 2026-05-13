@@ -2,16 +2,20 @@
 
 from PyInstaller.utils.hooks import Tree, collect_all, collect_dynamic_libs, collect_submodules
 import cv2
+import importlib.util
 import os
+from pathlib import Path
 
 datas = []
 binaries = []
 hiddenimports = ["encodings.idna"]
 
-# ── openpnp-capture vendored native libs (DLL/.so/.dylib) ──
-_vendor_openpnp = os.path.join(os.path.dirname(__file__), "skellycam", "_vendor", "openpnp_capture")
-if os.path.isdir(_vendor_openpnp):
-    datas += Tree(_vendor_openpnp, prefix="skellycam/_vendor/openpnp_capture")
+# ── openpnp-capture-python vendored native libs (DLL/.so/.dylib) ──
+_spec = importlib.util.find_spec("openpnp_capture")
+if _spec and _spec.origin:
+    _vendor_openpnp = Path(_spec.origin).parent / "_vendor" / "openpnp_capture"
+    if _vendor_openpnp.is_dir():
+        datas += Tree(str(_vendor_openpnp), prefix="openpnp_capture/_vendor/openpnp_capture")
 
 # ── OpenCV ──
 # Only collect what we need from cv2 instead of collect_all which grabs

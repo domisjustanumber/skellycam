@@ -83,19 +83,17 @@ sudo apt update && sudo apt install clang portaudio19-dev
 
 ## How It Works
 
-Each camera runs in its own OS process to avoid the GIL. USB webcam capture uses **[openpnp-capture](https://github.com/openpnp/openpnp-capture)** (native library + vendored binaries; see [`skellycam/_vendor/openpnp_capture/README.md`](skellycam/_vendor/openpnp_capture/README.md)). Workers rendezvous before opening streams so bandwidth negotiation behaves reliably across cameras. Inside each worker, the `CameraOrchestrator` keeps frame counts aligned so every camera advances together; one multi-frame payload still carries exactly one synchronized frame index per camera plus high-resolution `perf_counter_ns` timestamps around capture.
+Each camera runs in its own OS process to avoid the GIL. USB webcam capture uses the **[openpnp-capture](https://github.com/openpnp/openpnp-capture)** C library via a **[fork used for releases](https://github.com/domisjustanumber/openpnp-capture)** and the Python helper **[openpnp-capture-python](https://github.com/domisjustanumber/openpnp-capture-python)** (ctypes wrapper + vendored prebuilts; run `uv run openpnp-fetch-prebuilts` after sync when developing that library). Workers rendezvous before opening streams so bandwidth negotiation behaves reliably across cameras. Inside each worker, the `CameraOrchestrator` keeps frame counts aligned so every camera advances together; one multi-frame payload still carries exactly one synchronized frame index per camera plus high-resolution `perf_counter_ns` timestamps around capture.
 
 OpenCV (`cv2`) stays in the stack for **`VideoWriter`**, rotation helpers, **`putText`** overlays, and writer-side fourcc / file-extension helpers — not for enumerating cameras or decoding the live capture path.
 
-### Frame rate selection and logical FPS
+### Frame rate selection
 
-The **Cameras** bar frame-rate control sets a **logical** output FPS that every **selected** camera is expected to honor together: synchronized multi-frame events and recordings still advance a **single shared frame index**, and all cameras must agree on that cadence.
+The **Cameras** bar frame-rate control sets a single FPS that every **selected** camera is expected to honor together: synchronized multi-frame events and recordings advance a **single shared frame index**, and all cameras must agree on that cadence.
 
-**How options are built.** Each device exposes a list of native stream modes (resolution, codec, and advertised FPS). SkellyCam derives the set of **logical** frame rates that **all** selected cameras can support at once. A candidate logical rate is allowed if, for **each** camera, there exists **at least one** enumerated mode whose native FPS is either an **exact** match to that rate or a **whole-number multiple** of it (within a small tolerance so values like 29.97 vs 30 still line up). Rates that only one camera could satisfy are omitted from the intersecting list.
+**How options are built.** Each device exposes a list of native stream modes (resolution, codec, and advertised FPS). SkellyCam shows only the **native** frame rates that **all** selected cameras advertise. A rate is allowed if, for **each** camera, there exists **at least one** enumerated mode whose native FPS matches that rate (within a small tolerance so values like 29.97 vs 30 still line up). Rates that only one camera could satisfy are omitted from the intersecting list. There is **no** frame-drop / integer-stride fallback — if a camera does not advertise a native mode at the chosen FPS, the rate is not offered.
 
-**Frame dropping (integer stride only).** If you choose e.g. **30** logical FPS but a camera only offers **60** (or 120, …) at the resolution you want, the app still lets you use that camera: it opens the stream at the **native** rate and **discards** surplus frames so only every *k*-th capture becomes a **logical** frame (*k* = native FPS ÷ logical FPS). The pipeline **never** inserts, blends, or repeats frames to fake a rate; it only **drops** extras. This is intentionally limited to **integer** ratios: combinations like 60 native for 24 logical are **not** treated as valid, because they cannot be expressed as a simple “keep every *k*-th frame” rule with the same tolerance model.
-
-**Configuration fields.** In API and UI payloads, `framerate` is the **logical** rate used for sync and user intent. When frame dropping is in use, **`stream_framerate`** (when set) is the **native** capture rate of the opened mode. Shared logic lives in `skellycam/core/camera/fps_compatibility.py` (server) with matching rules in the UI camera store types.
+**Configuration fields.** In API and UI payloads, `framerate` is the camera's native capture FPS. Shared equivalence logic lives in `skellycam/core/camera/fps_compatibility.py` (server) with matching rules in the UI camera store types.
 
 ### Trade-offs (openpnp-capture vs OpenCV grab/retrieve)
 
@@ -155,6 +153,8 @@ Full details in the [API Reference](https://freemocap.github.io/skellycam/docs/t
 ---
 
 ## Development
+
+Check out **[openpnp-capture-python](https://github.com/domisjustanumber/openpnp-capture-python)** next to this project (directory name `openpnp-capture-python/` at the repo root — it is gitignored). For example: `git clone https://github.com/domisjustanumber/openpnp-capture-python.git openpnp-capture-python`. Prebuilts are fetched from **[domisjustanumber/openpnp-capture](https://github.com/domisjustanumber/openpnp-capture)** releases by default (`OPENPNP_CAPTURE_RELEASE_REPO` / `--repo` override documented there). Then run `uv run openpnp-fetch-prebuilts`.
 
 ```bash
 uv sync --group dev                     # Install dev dependencies

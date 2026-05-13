@@ -218,10 +218,8 @@ out/
 *.mp3
 *.flac
 
-# openpnp-capture prebuilts (not in git; run scripts/fetch_openpnp_capture_release.py)
-skellycam/_vendor/openpnp_capture/**/*.dll
-skellycam/_vendor/openpnp_capture/**/*.dylib
-# *.so is ignored globally above; vendored Linux libs are therefore uncommitted too.
+# Vendored path dependency (CI checks out domisjustanumber/openpnp-capture-python here; optional local symlink/clone)
+/openpnp-capture-python/
 
 # Don't ignore `skellycam.spec` file
 !skellycam.spec
