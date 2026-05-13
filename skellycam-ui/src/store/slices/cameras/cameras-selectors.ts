@@ -6,9 +6,9 @@ import {
     CameraConfig,
     cameraMatchesListedVirtualPattern,
     DEFAULT_UI_FRAMERATE,
-    expandLogicalIntersectCandidatesFromFormats,
     formatsIncludeTargetFramerate,
     fpsValuesEquivalent,
+    uniqRepresentativeFpsFromFormats,
 } from './cameras-types';
 
 // ========== Basic Selectors ==========
@@ -72,10 +72,10 @@ export const selectSelectedCameraConfigs = createSelector(
 
 
 
-function unionLogicalFpsIntersectCandidates(cameras: Camera[]): number[] {
+function unionNativeFpsCandidates(cameras: Camera[]): number[] {
     const raw: number[] = [];
     for (const cam of cameras) {
-        raw.push(...expandLogicalIntersectCandidatesFromFormats(cam.deviceInfo.availableFormats ?? []));
+        raw.push(...uniqRepresentativeFpsFromFormats(cam.deviceInfo.availableFormats ?? []));
     }
     const out: number[] = [];
     for (const r of raw) {
@@ -87,7 +87,7 @@ function unionLogicalFpsIntersectCandidates(cameras: Camera[]): number[] {
     return out;
 }
 
-/** FPS preset values usable by **every** selected camera (exact native mode or acceptable integer-ratio drop). */
+/** Native FPS presets common to **every** selected usable camera (`streamAvailable` or connected). */
 export const selectIntersectingFpsOptions = createSelector(
     [selectSelectedCameras],
     (selected): number[] => {
@@ -101,10 +101,10 @@ export const selectIntersectingFpsOptions = createSelector(
         if (eligible.length === 0) {
             return [];
         }
-        const candidates = unionLogicalFpsIntersectCandidates(eligible);
-        const options = candidates.filter((logical) =>
+        const candidates = unionNativeFpsCandidates(eligible);
+        const options = candidates.filter((native) =>
             eligible.every((camera) =>
-                formatsIncludeTargetFramerate(camera.deviceInfo.availableFormats, logical),
+                formatsIncludeTargetFramerate(camera.deviceInfo.availableFormats, native),
             ),
         );
         return options;
@@ -280,21 +280,6 @@ function getConfigDifferences(
             field: 'capture_fourcc',
             actual: actual.capture_fourcc,
             desired: desired.capture_fourcc,
-        });
-    }
-    const sa = typeof actual.stream_framerate === 'number' && actual.stream_framerate > 0
-        ? actual.stream_framerate
-        : null;
-    const sd = typeof desired.stream_framerate === 'number' && desired.stream_framerate > 0
-        ? desired.stream_framerate
-        : null;
-    const streamUnset = sa === null;
-    const streamDstUnset = sd === null;
-    if (streamUnset !== streamDstUnset || (!streamUnset && !streamDstUnset && !fpsValuesEquivalent(sa!, sd!))) {
-        differences.push({
-            field: 'stream_framerate',
-            actual: actual.stream_framerate,
-            desired: desired.stream_framerate,
         });
     }
     if (actual.writer_fourcc !== desired.writer_fourcc) {

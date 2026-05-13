@@ -19,6 +19,7 @@ import {
     dismissHardwareCameraEnumerationHint,
     camerasGroupFramerateSet,
 } from '@/store/slices/cameras/cameras-slice';
+import { detectCameras } from '@/store/slices/cameras/cameras-thunks';
 import {
     DEFAULT_UI_FRAMERATE,
     fpsValuesEquivalent,
@@ -156,7 +157,13 @@ export const CamerasSectionTopControls: React.FC = () => {
                         <Checkbox
                             checked={suppressVirtual}
                             size="small"
-                            onChange={(e) => dispatch(suppressListedVirtualCamerasSet(e.target.checked))}
+                            onChange={(e) => {
+                                const ignoreVirtual = e.target.checked;
+                                dispatch(suppressListedVirtualCamerasSet(ignoreVirtual));
+                                if (!ignoreVirtual) {
+                                    void dispatch(detectCameras());
+                                }
+                            }}
                         />
                     }
                     label="Ignore virtual webcams"

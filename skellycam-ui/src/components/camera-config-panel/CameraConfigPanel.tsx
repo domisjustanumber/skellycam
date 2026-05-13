@@ -17,8 +17,6 @@ import {
     ExposureMode,
     RotationValue,
     cameraMissingFormatForTargetFps,
-    deriveFramerateFieldsFromResolutionPick,
-    effectiveResolutionTargetFramerate,
     normalizeCaptureFourcc,
 } from "@/store/slices/cameras/cameras-types";
 import { useAppDispatch, useAppSelector } from "@/store";
@@ -69,20 +67,12 @@ export const CameraConfigPanel: React.FC<CameraConfigPanelProps> = ({
         });
     };
 
-    const logicalTarget =
-        effectiveResolutionTargetFramerate(
-            hasCameraSelection ? groupFpsChoice : -1,
-            config.framerate,
-        );
-
     const handlePickResolutionRow = (row: ResolutionRow): void => {
-        const fp = deriveFramerateFieldsFromResolutionPick(row.fps, logicalTarget);
         onConfigChange({
             ...config,
             resolution: { width: row.width, height: row.height },
             capture_fourcc: normalizeCaptureFourcc(row.fourcc_str),
-            framerate: fp.framerate,
-            stream_framerate: fp.stream_framerate,
+            framerate: row.fps,
         });
     };
 
@@ -130,8 +120,10 @@ export const CameraConfigPanel: React.FC<CameraConfigPanelProps> = ({
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
                     <CameraConfigResolution
                         resolution={config.resolution}
+                        barAppliedTargetFramerate={
+                            hasCameraSelection ? barAppliedTargetFps : null
+                        }
                         desiredFramerate={hasCameraSelection ? config.framerate : -1}
-                        desiredStreamFramerate={hasCameraSelection ? (config.stream_framerate ?? null) : null}
                         groupFramerateChoice={groupFpsChoice}
                         capture_fourcc={config.capture_fourcc}
                         formats={camera.deviceInfo.availableFormats}

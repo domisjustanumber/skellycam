@@ -5,11 +5,9 @@ import {
     Camera,
     compareDeviceFormatsResolutionPreference,
     effectiveResolutionTargetFramerate,
-    fpsNativeSupportsLogicalOutput,
     fpsValuesEquivalent,
     normalizeCaptureFourcc,
     pickBestFormatAtTargetFps,
-    resolutionRowMatchesDesiredFrameratePick,
 } from "@/store/slices/cameras/cameras-types";
 
 export interface ResolutionRow {
@@ -75,12 +73,15 @@ function buildResolutionRows(formats: NonNullable<Camera["deviceInfo"]["availabl
 
 interface CameraConfigResolutionProps {
     resolution: CameraConfig["resolution"];
-    /** Shared FPS when all selected cameras agree (often from top-bar); negative or omitted means “unset / mixed”. */
+    /**
+     * FPS the Cameras bar enforces for the current selection (intersect of native rates).
+     * When set, resolution options must match this — same source as {@link selectBarAppliedTargetFramerate}.
+     */
+    barAppliedTargetFramerate: number | null;
+    /** Legacy: stored group FPS when all selected cameras’ desired framerates agree; used only if bar target is null. */
     groupFramerateChoice: number;
-    /** Stored desired FPS (logical when using frame-drop semantics). */
+    /** Stored desired native capture FPS. */
     desiredFramerate: number;
-    /** Native capture FPS when differing from logical, else ``null``. */
-    desiredStreamFramerate: number | null;
     capture_fourcc: string;
     formats: Camera["deviceInfo"]["availableFormats"] | undefined;
     disabled?: boolean;
@@ -89,9 +90,9 @@ interface CameraConfigResolutionProps {
 
 export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
     resolution,
+    barAppliedTargetFramerate,
     groupFramerateChoice,
     desiredFramerate,
-    desiredStreamFramerate,
     capture_fourcc,
     formats,
     disabled,
@@ -104,16 +105,18 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
         [formats],
     );
 
-    const targetFps = useMemo(
-        () => effectiveResolutionTargetFramerate(groupFramerateChoice, desiredFramerate),
-        [groupFramerateChoice, desiredFramerate],
-    );
+    const targetFps = useMemo(() => {
+        if (barAppliedTargetFramerate !== null) {
+            return barAppliedTargetFramerate;
+        }
+        return effectiveResolutionTargetFramerate(groupFramerateChoice, desiredFramerate);
+    }, [barAppliedTargetFramerate, groupFramerateChoice, desiredFramerate]);
 
     const selectableRows = useMemo(() => {
         if (targetFps === null) {
             return rows;
         }
-        return rows.filter((r) => fpsNativeSupportsLogicalOutput(r.fps, targetFps));
+        return rows.filter((r) => fpsValuesEquivalent(r.fps, targetFps));
     }, [rows, targetFps]);
 
     const idealRow = useMemo(() => {
@@ -138,14 +141,7 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
             resolution.width === idealRow.width
             && resolution.height === idealRow.height
             && normalizeCaptureFourcc(capture_fourcc) === normalizeCaptureFourcc(idealRow.fourcc_str)
-            && resolutionRowMatchesDesiredFrameratePick(
-                {
-                    framerate: desiredFramerate,
-                    stream_framerate: desiredStreamFramerate,
-                },
-                idealRow.fps,
-                targetFps,
-            );
+            && fpsValuesEquivalent(desiredFramerate, idealRow.fps);
 
         if (matchesIdeal) {
             prevTargetFpsSeen.current = targetFps;
@@ -174,7 +170,6 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
         resolution.height,
         capture_fourcc,
         desiredFramerate,
-        desiredStreamFramerate,
     ]);
 
     const currentRowValid = rows.find(
@@ -183,11 +178,8 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
             && r.height === resolution.height
             && normalizeCaptureFourcc(r.fourcc_str) === normalizeCaptureFourcc(capture_fourcc)
             && (targetFps === null
-                || resolutionRowMatchesDesiredFrameratePick(
-                    { framerate: desiredFramerate, stream_framerate: desiredStreamFramerate },
-                    r.fps,
-                    targetFps,
-                )),
+                ? fpsValuesEquivalent(r.fps, desiredFramerate)
+                : fpsValuesEquivalent(r.fps, targetFps)),
     );
 
     const noEnumeratedModes = rows.length === 0;
@@ -202,12 +194,11 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
         ? 'No enumerated modes reported'
         : 'No supported format';
 
+    /** Prefer the actual config row so users can pick any mode at targetFps; idealRow is only the auto default. */
     const selectValueKey =
         showPlaceholder
             ? ''
-            : (targetFps !== null
-                    ? (idealRow?.key ?? currentRowValid?.key ?? selectableRows[0]?.key ?? '')
-                    : (currentRowValid?.key ?? idealRow?.key ?? selectableRows[0]?.key ?? ''));
+            : (currentRowValid?.key ?? idealRow?.key ?? selectableRows[0]?.key ?? '');
 
     const handleSelect = (event: { target: { value: string } }): void => {
         const row = rows.find((x) => x.key === event.target.value);
@@ -246,7 +237,7 @@ export const CameraConfigResolution: React.FC<CameraConfigResolutionProps> = ({
                     ) : (
                         rows.map((row) => {
                             const fpsOk =
-                                targetFps === null || fpsNativeSupportsLogicalOutput(row.fps, targetFps);
+                                targetFps === null || fpsValuesEquivalent(row.fps, targetFps);
                             const label = `${row.width} × ${row.height} (${row.fourcc_str.trim()}) @ ${row.fps} fps`;
                             return (
                                 <MenuItem

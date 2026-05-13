@@ -27,19 +27,21 @@ export const detectCameras = createAsyncThunk<
     { state: RootState }
 >(
     'cameras/detect',
-    async (request = { filterVirtual: true }, { getState }) => {
+    async (request, { getState }) => {
         const state = getState();
         const existingCameras = state.cameras.cameras;
         const suppressListedVirtual = state.cameras.suppressListedVirtualCameras;
+        const opts = request ?? {};
 
         const response = await backendFetch(serverUrls.endpoints.detectCameras, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                filterVirtual: request?.filterVirtual ?? true,
-                probeStreams: request?.probeStreams ?? true,
+                // Mirrors “Ignore virtual webcams” when omitted — otherwise virtual devices stay off the backend list.
+                filterVirtual: opts.filterVirtual ?? suppressListedVirtual,
+                probeStreams: opts.probeStreams ?? true,
                 skipListedVirtualResolutionInterrogation:
-                    request?.skipListedVirtualResolutionInterrogation
+                    opts.skipListedVirtualResolutionInterrogation
                     ?? suppressListedVirtual,
             }),
         });
@@ -69,6 +71,21 @@ export const detectCameras = createAsyncThunk<
         }
         savePersistedCameraSettings(prunedPersisted);
 
+        /** When nothing is restored, only the first selectable device is checked so the FPS bar lists that camera's native rates — not the intersection across every device that used to default to on. */
+        const defaultSingleSelectedCameraId: string | undefined = (() => {
+            for (const sc of data.cameras) {
+                if (sc.stream_available === false) {
+                    continue;
+                }
+                const listedVirtual = sc.matches_listed_virtual_name === true;
+                if (suppressListedVirtual && listedVirtual) {
+                    continue;
+                }
+                return sc.camera_id;
+            }
+            return undefined;
+        })();
+
         return data.cameras.map((serverCamera): Camera => {
             const cameraId = serverCamera.camera_id;
             const existing = existingCameras.find(cam => cam.id === cameraId);
@@ -88,11 +105,22 @@ export const detectCameras = createAsyncThunk<
             if (desiredConfig.framerate <= 0) {
                 desiredConfig = { ...desiredConfig, framerate: DEFAULT_UI_FRAMERATE };
             }
+            desiredConfig = { ...desiredConfig, capture_fourcc: 'MJPG' };
 
             const matchesListed = serverCamera.matches_listed_virtual_name === true;
             const blockedListed = suppressListedVirtual && matchesListed;
             const selected: boolean =
-                blockedListed ? false : (streamAvailable ? (existing?.selected ?? saved?.selected ?? true) : false);
+                blockedListed
+                    ? false
+                    : (
+                        streamAvailable
+                            ? (
+                                existing?.selected
+                                ?? saved?.selected
+                                ?? (cameraId === defaultSingleSelectedCameraId)
+                            )
+                            : false
+                    );
 
             return {
                 id: cameraId,

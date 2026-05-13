@@ -45,7 +45,7 @@ export const CameraConfigTreeViewHeader: React.FC<CameraConfigTreeViewHeaderProp
 
         setIsActionInProgress(true);
         try {
-            await dispatch(detectCameras({filterVirtual: true})).unwrap();
+            await dispatch(detectCameras()).unwrap();
         } catch (error) {
             console.error('Error detecting cameras:', error);
         } finally {

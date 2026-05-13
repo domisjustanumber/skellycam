@@ -10,7 +10,6 @@ import {
     createDefaultCameraConfig,
     normalizeCaptureFourcc,
     pickBestFormatAtTargetFps,
-    deriveFramerateFieldsFromResolutionPick,
 } from './cameras-types';
 import {
     detectCameras,
@@ -87,7 +86,11 @@ export const cameraSlice = createSlice({
                 cam => cam.id === action.payload.cameraId
             );
             if (camera) {
-                camera.desiredConfig = { ...camera.desiredConfig, ...action.payload.config };
+                camera.desiredConfig = {
+                    ...camera.desiredConfig,
+                    ...action.payload.config,
+                    capture_fourcc: 'MJPG',
+                };
                 // Check if there's now a mismatch
                 camera.hasConfigMismatch = !areConfigsEqual(camera.actualConfig, camera.desiredConfig);
             }
@@ -118,7 +121,8 @@ export const cameraSlice = createSlice({
                     }
                     camera.desiredConfig = {
                         ...camera.desiredConfig,
-                        ...settings
+                        ...settings,
+                        capture_fourcc: 'MJPG',
                     };
                     camera.hasConfigMismatch = !areConfigsEqual(camera.actualConfig, camera.desiredConfig);
                 }
@@ -177,11 +181,9 @@ export const cameraSlice = createSlice({
                 }
                 const best = pickBestFormatAtTargetFps(camera.deviceInfo.availableFormats, fps);
                 if (best) {
-                    const fpsFields = deriveFramerateFieldsFromResolutionPick(best.fps, fps);
                     camera.desiredConfig = {
                         ...camera.desiredConfig,
-                        framerate: fpsFields.framerate,
-                        stream_framerate: fpsFields.stream_framerate,
+                        framerate: best.fps,
                         resolution: { width: best.width, height: best.height },
                         capture_fourcc: normalizeCaptureFourcc(best.fourcc_str),
                     };
@@ -190,7 +192,6 @@ export const cameraSlice = createSlice({
                     camera.desiredConfig = {
                         ...camera.desiredConfig,
                         framerate: fps,
-                        stream_framerate: null,
                     };
                 }
                 camera.hasConfigMismatch = !areConfigsEqual(camera.actualConfig, camera.desiredConfig);
@@ -247,8 +248,9 @@ export const cameraSlice = createSlice({
                     ([cameraId, config]) => {
                         const camera = state.cameras.find(cam => cam.id === cameraId);
                         if (camera) {
-                            camera.actualConfig = config as CameraConfig;
-                            camera.desiredConfig = { ...config as CameraConfig };
+                            const cfg = { ...(config as CameraConfig), capture_fourcc: 'MJPG' as const };
+                            camera.actualConfig = cfg;
+                            camera.desiredConfig = { ...cfg };
                             camera.hasConfigMismatch = false;
                             camera.connectionStatus = 'connected';
                         }

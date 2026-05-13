@@ -73,7 +73,7 @@ export const CameraConfigTreeView: React.FC = () => {
     // Initial camera detection
     useEffect(() => {
         if (isConnected && camerasRaw.length === 0) {
-            dispatch(detectCameras({ filterVirtual: true }));
+            dispatch(detectCameras());
         }
     }, [isConnected, camerasRaw.length, dispatch]);
 
