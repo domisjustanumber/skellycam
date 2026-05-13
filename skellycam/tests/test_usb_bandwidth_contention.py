@@ -12,8 +12,8 @@ from skellycam.core.camera.openpnp.openpnp_helpers.create_openpnp_camera import 
     FailedToReadFrameFromCameraException,
     create_openpnp_camera,
 )
-from skellycam.core.camera.openpnp_capture.camera import OpenPnPCamera
-from skellycam.core.camera.openpnp_capture.types import OpenPnPDeviceInfo, OpenPnPFormatInfo
+from openpnp_capture.camera import OpenPnPCamera
+from openpnp_capture.types import OpenPnPDeviceInfo, OpenPnPFormatInfo
 from skellycam.core.camera_group.camera_group import await_extracted_configs
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 from skellycam.core.camera_group.camera_status import CameraStatus

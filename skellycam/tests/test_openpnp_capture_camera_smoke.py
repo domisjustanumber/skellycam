@@ -5,12 +5,12 @@ import os
 import numpy as np
 import pytest
 
-from skellycam.core.camera.openpnp_capture.types import OpenPnPCaptureLibraryNotFoundError
+from openpnp_capture.types import OpenPnPCaptureLibraryNotFoundError
 
 
 @pytest.mark.skipif(not os.environ.get("SKELLYCAM_HAS_REAL_CAMERA"), reason="Set SKELLYCAM_HAS_REAL_CAMERA=1 to run")
 def test_real_camera_grab_smoke() -> None:
-    from skellycam.core.camera.openpnp_capture import OpenPnPCamera, OpenPnPProperty
+    from openpnp_capture import OpenPnPCamera, OpenPnPProperty
 
     try:
         devices = OpenPnPCamera.list_devices()

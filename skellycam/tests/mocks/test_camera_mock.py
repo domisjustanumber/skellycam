@@ -1,7 +1,7 @@
 import time
 
 import numpy as np
-from skellycam.core.camera.openpnp_capture import OpenPnPFormatInfo, OpenPnPProperty
+from openpnp_capture import OpenPnPFormatInfo, OpenPnPProperty
 from skellycam.tests.mocks.camera_mock import MockOpenPnPCamera
 
 

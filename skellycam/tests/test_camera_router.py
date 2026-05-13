@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from skellycam.core.camera.config.camera_config import CameraConfig, DEFAULT_CAMERA_ID
-from skellycam.core.camera.openpnp_capture import OpenPnPFormatInfo
+from openpnp_capture import OpenPnPFormatInfo
 from skellycam.core.camera_group.usb_bandwidth import (
     USB_BANDWIDTH_ERROR_CODE,
     USB_BANDWIDTH_USER_GUIDANCE,

@@ -4,7 +4,7 @@ import time
 import cv2
 import numpy as np
 
-from skellycam.core.camera.openpnp_capture.types import OpenPnPFormatInfo, OpenPnPCameraSettings, OpenPnPProperty, OpenPnPPropertyLimits
+from openpnp_capture.types import OpenPnPFormatInfo, OpenPnPCameraSettings, OpenPnPProperty, OpenPnPPropertyLimits
 
 logger = logging.getLogger(__name__)
 

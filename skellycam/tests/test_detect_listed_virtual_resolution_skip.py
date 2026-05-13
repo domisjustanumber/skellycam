@@ -2,8 +2,8 @@
 
 from unittest.mock import MagicMock, patch
 
-from skellycam.core.camera.openpnp_capture import OpenPnPCamera
-from skellycam.core.camera.openpnp_capture.types import OpenPnPFormatInfo
+from openpnp_capture import OpenPnPCamera
+from openpnp_capture.types import OpenPnPFormatInfo
 from skellycam.core.device_detection.detect_cameras_devices import detect_available_cameras
 from skellycam.core.device_detection.probe_openpnp_stream import ProbeStreamOutcome
 
