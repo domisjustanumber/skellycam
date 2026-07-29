@@ -309,6 +309,9 @@ async def await_extracted_configs(
             ] = extracted_config_message.extracted_config
         await await_100ms()
 
+    # Drop cameras whose configs were never extracted (e.g. process shut down
+    # before extraction completed). validate_camera_configs rejects None values.
+    updated_configs = {cid: cfg for cid, cfg in updated_configs.items() if cfg is not None}
     validate_camera_configs(updated_configs)
 
     return updated_configs
