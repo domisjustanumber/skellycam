@@ -31,3 +31,4 @@ Earlier sessions worked in temp folders named `%LOCALAPPDATA%/Temp/claude/c--Use
 | `96d4d83a` | USB phases 1 and 2 | raw run text under `usb_cameras/results/windows/Gerald/` (`phase2_bw_alt/raw/`, `phase2_bw_alt_verify/raw/`, `verifier_20261025/`, `naming/verifier_20261025/`, `verify_rust/phase1_verifier_20261025/`, `timing/flash_run2_expseries_capture/`), `usb_cameras/bandwidth/phase2_hold_scripts/` |
 | `f77e9c4e` | GigE Vision | `gige_vision/scratch/` (digests, notes, packet captures) |
 | `a9b9d5dd` | Arduino sync | `arduino_sync/research/` (with `SOURCES.md` for what was not kept) |
+| `%TEMP%/skellycam_frame_pipeline_tmp/` (benchmark work folder, not a session) | frame ring buffer | `revision/critic_p1/`, `reproducibility/critic_write_result.py`, `study_state/overnight_console_logs/` under `frame_ring_buffer/`; its `repro_backup/` results were already in the repo. The benchmarks re-create `bench_tmp/` there when they run. |

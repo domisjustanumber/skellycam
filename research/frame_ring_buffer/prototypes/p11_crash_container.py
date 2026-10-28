@@ -1,7 +1,7 @@
 """P11 - is a recording still readable after its writer process is killed without release()? (REVISION stage, 2026-10-28)
 
 Brought into the benchmark tree from the priorities critic's one-off test
-(C:\\Users\\Dom\\AppData\\Local\\Temp\\skellycam_frame_pipeline_tmp\\critic_p1\\crash_container_test.py) and extended with the
+(originally in a temp folder; now research/frame_ring_buffer/revision/critic_p1/crash_container_test.py) and extended with the
 crash-tolerant containers the critic proposed. NOT SkellyCam code.
 
 Writers (each in a spawned child, 1280x720 and 1920x1080 BGR, 60 fps timebase):
