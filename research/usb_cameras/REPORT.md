@@ -59,6 +59,24 @@ Ground truth is a full-screen black/white flash sequence on a 59.95 Hz monitor, 
 25. **libuvc** builds on Windows (MSVC) with 3 shims plus patch 0001 (exposes PTS/SCR and allows an alt override): [libusb/patches/](libusb/patches/). **pyuvc 1.0.8 from PyPI crashes** (access violation) on Windows; a locally patched build (1.0.8.post0+winusbfix) streamed. A **pure-Python libusb1 streamer** works at ~4–8% of one core. **Rust `uvc_iso`** on libusb streamed every run (0.6–2.9% of one core); on the `rawusb` 0.1.7 backend it was intermittent (0, 15 and 15 fps in three alt-4 runs). **nusb** has no isochronous support (PR #233 closed unmerged; its fork accepted only 1 queued transfer). **Measured.** [PROGRESS.md](PROGRESS.md), [phase2_rust_uvc_iso_summary.json](results/windows/Gerald/phase2_rust_uvc_iso/phase2_rust_uvc_iso_summary.json), [phase2_python_libusb/summary.json](results/windows/Gerald/phase2_python_libusb/summary.json)
 26. **The WinUSB driver swap costs:** one UAC prompt plus a replug; the camera disappears from normal apps and its microphone vanishes; rollback (`pnputil /remove-device /subtree` + `/scan-devices`) gives the functions new instance IDs (`&0&`→`&1&`) and re-requires the metadata registry value. **Measured** (C930e only). [rollback_result.json](results/windows/Gerald/winusb_install/rollback_result.json), [PROGRESS.md](PROGRESS.md)
 
+### Capture backend choice (added 2026-10-28)
+
+Details and sources: [docs/capture_backends_review.md](docs/capture_backends_review.md) and [docs/windows_timer_resolution.md](docs/windows_timer_resolution.md).
+
+27. **The openpnp-capture branches (`dom/openpnp-capture`, `dom/openpnp-capture-mf`, May 2026) run stock upstream openpnp-capture v0.0.30 over DirectShow,** which always decodes to RGB24. The DLL hash equals the one probed here, and the "MediaFoundation DLL" that the `-mf` branch documents was never built. Consequences:
+    - Its `hardware_timestamp_ns` is always 0.
+    - Its raw path still decodes every frame.
+    - Its end-marker scan crashes the camera loop (`ValueError` on reshape) whenever an RGB frame contains the bytes `FF D9`, which a bright scene usually does.
+
+    **Measured** (hash; offline replay [eoi_scan_check.json](results/windows/Gerald/prior_art_openpnp_capture/eoi_scan_check.json)).
+28. **The "MF is flaky" reputation comes mostly from OpenCV's MSMF wrapper (39–41 s opens here), the Frame Server service (2016 MJPEG breakage, ongoing crash reports) and specific devices** (Chromium forces ~25 VID:PIDs, mostly capture cards and laptop cameras, to DirectShow). Raw IMFSourceReader and PyAV DirectShow behaved the same on the data path here. They differ in failure modes:
+    - DS fails at open; MF fails at the first `ReadSample`.
+    - MF failed with `MF_E_REBOOT_REQUIRED` after the metadata registry change plus a vetoed restart, while DS kept capturing.
+    - MF had two transient DeviceNotFound misses and one unexplained ~94 s stall.
+
+    **Measured** (short runs only) + **web**. Long-run, multi-process and hot-plug reliability are untested on both.
+29. **The Windows timer story is the `timeBeginPeriod` rule change.** Since Windows 10 2004 requests are per-process, and Windows 11 may ignore them for occluded or minimized window-owning processes. It is not the cause of the 16 ms frame-time grid (finding 7). On Gerald the global timer was already 0.5 ms. Moving the test scripts to Python 3.13 would not change any measured result, because per-frame times use QPC; it would matter for skellycam's `time.monotonic()` and `time.time_ns()` uses. **Measured** + **web**.
+
 ## Techniques compared
 
 **MJPEG capture paths on Windows** (720p30/1080p30, one camera, process CPU as % of one core; [mjpeg/RESULTS.md](mjpeg/RESULTS.md))
@@ -142,6 +160,7 @@ Ground truth is a full-screen black/white flash sequence on a 59.95 Hz monitor, 
 7. **Independent sync ground truth** (an LED with no display scan-out, both cameras imaging it on the same rows, repeated runs). Decides real cross-camera sync accuracy, which the flash method cannot.
 8. **Tests the verifiers flagged as missed but runnable unattended** (CPU repeat runs with CPU frequency logged, C922 720p60, MF-NV12 at 1080p, unpatched rawusb, Docker libuvc build). Listed in [RERUN_20261027.md](results/windows/Gerald/RERUN_20261027.md).
 9. **Write the missing report sections** (goal 1, goal 5, summary, comparison matrix) into [docs/usb_camera_report.md](docs/usb_camera_report.md). Goals 2–4 were corrected there on 2026-10-28.
+10. **MF vs DirectShow soak test (added 2026-10-28):** both stacks, one process per camera, 1 h or more, with one mid-stream replug, logging every error and stall. Decides whether MF should be primary with a DS fallback (the Chromium pattern) or the reverse. Needs the cameras under camlock and a human for the replug. [docs/capture_backends_review.md](docs/capture_backends_review.md)
 
 ## Where to look
 
@@ -156,5 +175,7 @@ Ground truth is a full-screen black/white flash sequence on a 59.95 Hz monitor, 
 - [rust/](rust/): `uvc_iso` (libusb and rawusb backends), nokhwa probe, nusb PR #233 probe, [RUN_LINUX_MACOS.md](rust/platform/RUN_LINUX_MACOS.md).
 - [prior_art/SURVEY.md](prior_art/SURVEY.md): library survey with verified vs documented labels; probes in `prior_art/`, re-check in `verify_prior_art/`.
 - [driver_swap/](driver_swap/): partial scripts for the driver-swap strategy study (no report yet).
+- [docs/capture_backends_review.md](docs/capture_backends_review.md): openpnp-capture branches vs this study, how the MF native-MJPG tool works, MF vs DirectShow pros and cons (workflow `wf_31366494-74f`, output in `results/agent_reports/mf_vs_dshow_reports_and_verifications.json`).
+- [docs/windows_timer_resolution.md](docs/windows_timer_resolution.md): the `timeBeginPeriod` rule changes, a timer probe on Gerald ([tools/timer_probe.py](tools/timer_probe.py)), and what Python 3.13 would change.
 - `results/windows/Gerald/`: `phase2_*` (C930e on WinUSB), `*_rerun_20261027` / `*_verify*` (overnight re-run), `mjpeg_*`, `timing/`, `bw_*`, `naming*`, `prior_art_*`, `rust_*`, `libuvc_*`; `results/agent_reports/` holds every agent report and workflow journal.
 - [workflows/](workflows/): the Workflow scripts that drove each phase and the overnight re-run; [tools/](tools/): `camlock.py` (one test holds the cameras at a time) and `analyze_frames.py`.

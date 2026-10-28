@@ -1,0 +1,35 @@
+{
+ "test": "openpnp_raw_capture_eoi_check",
+ "platform": "win32",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-28T19:11:00.702704+00:00",
+ "command": "research/usb_cameras/prior_art/openpnp_raw_capture_eoi_check.py --out research/usb_cameras/results/windows/Gerald/prior_art_openpnp_capture/eoi_scan_check.json",
+ "environment": {
+  "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.4"
+ },
+ "cameras": [],
+ "cases": [
+  {
+   "case": "dim frame",
+   "ff_d9_pairs": 0,
+   "byte_count": 2764800,
+   "need": 2764800,
+   "outcome": "reshape ok"
+  },
+  {
+   "case": "dim frame + one R=255,G=217 pixel",
+   "ff_d9_pairs": 1,
+   "byte_count": 1382402,
+   "need": 2764800,
+   "outcome": "ValueError: cannot reshape array of size 1382402 into shape (720,1280,3)"
+  },
+  {
+   "case": "bright gradient + noise",
+   "ff_d9_pairs": 1688,
+   "byte_count": 2622235,
+   "need": 2764800,
+   "outcome": "ValueError: cannot reshape array of size 2622235 into shape (720,1280,3)"
+  }
+ ]
+}
