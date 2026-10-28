@@ -1,0 +1,113 @@
+{
+ "test": "mjpeg_v4l2_list",
+ "platform": "linux",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-25T18:34:15.080444+00:00",
+ "command": [
+  "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\mjpeg\\drafts\\linux\\v4l2_mmap_mjpeg.py",
+  "--list"
+ ],
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "av": "18.0.0",
+   "numpy": "2.2.6",
+   "pillow": "12.3.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "kernel": "6.8.0-mock"
+ },
+ "uvcvideo_parameters": {
+  "error": "\\sys\\module\\uvcvideo\\parameters missing (uvcvideo not loaded?)"
+ },
+ "devices": [
+  {
+   "path": "\\dev\\video0",
+   "driver": "uvcvideo",
+   "card": "Mock Cam 10",
+   "bus_info": "usb-0000:00:14.0-10",
+   "kernel_version": "0.0.0",
+   "device_caps": "0x04200001",
+   "video_capture": true,
+   "streaming": true,
+   "sysfs": {
+    "v4l_name": null,
+    "v4l_index": null,
+    "error": "FileNotFoundError(2, 'The system cannot find the path specified')"
+   },
+   "formats": [
+    {
+     "fourcc": "MJPG",
+     "description": "Motion-JPEG",
+     "compressed": true,
+     "sizes": [
+      {
+       "w": 1280,
+       "h": 720,
+       "intervals": [
+        {
+         "num": 1,
+         "den": 30,
+         "fps": 30.0
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "mjpeg_modes": [
+    [
+     1280,
+     720,
+     30.0
+    ]
+   ]
+  },
+  {
+   "path": "\\dev\\video2",
+   "driver": "uvcvideo",
+   "card": "Mock Cam 11",
+   "bus_info": "usb-0000:00:14.0-11",
+   "kernel_version": "0.0.0",
+   "device_caps": "0x04200001",
+   "video_capture": true,
+   "streaming": true,
+   "sysfs": {
+    "v4l_name": null,
+    "v4l_index": null,
+    "error": "FileNotFoundError(2, 'The system cannot find the path specified')"
+   },
+   "formats": [
+    {
+     "fourcc": "MJPG",
+     "description": "Motion-JPEG",
+     "compressed": true,
+     "sizes": [
+      {
+       "w": 1280,
+       "h": 720,
+       "intervals": [
+        {
+         "num": 1,
+         "den": 30,
+         "fps": 30.0
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "mjpeg_modes": [
+    [
+     1280,
+     720,
+     30.0
+    ]
+   ]
+  }
+ ]
+}

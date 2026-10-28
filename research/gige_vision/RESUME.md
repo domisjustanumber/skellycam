@@ -12,14 +12,14 @@ Paths recorded before 2026-10-28 in results/ and journals (`workflows/*.journal.
 2. Explain how frames arrive (raw or compressed).
 3. Explain how PTP sync timing is managed.
 
-Every claim needs a link to code, a test or docs. No cameras are available here, so the deliverables include stand-alone tests for other machines (Windows, macOS, Linux). The written report lives in a Claude Doc.
+Every claim needs a link to code, a test or docs. No cameras are available here, so the deliverables include stand-alone tests for other machines (Windows, macOS, Linux). The written report is [docs/gige_vision_report.md](docs/gige_vision_report.md) (moved from Claude Docs to this repo on 2026-10-28).
 
 ## Where things stand
 
 | Step | Status | Where |
 | --- | --- | --- |
 | Research: 9 topics, each adversarially fact-checked | Done | `scratch/digest/*.md` (summary, verifier corrections, missed points), `scratch/digest/*.claims.json`, full notes in `scratch/research/*.md` |
-| Report (Claude Doc) | 4 of 8 sections filled | https://claude.ai/artifact/SPKjXcBjS5kJmGwtbXGPWZ |
+| Report | 4 of 8 sections filled | [docs/gige_vision_report.md](docs/gige_vision_report.md) |
 | viva-genicam API reference (tested on Windows + Docker) | Done | `scratch/impl/viva_api.md`, `scratch/impl/viva_api_example.py`, `scratch/impl/prep-viva-api.result.md` |
 | Stand-alone hardware test suite | Done; committed 2026-10-28 on branch `dom/research` (dba82026) (corrected 2026-10-28; was "Done, uncommitted") | `hardware_tests/` + `hardware_tests/tests/test_gige_diagnostics_selftest.py` (moved out of `skellycam/system/diagnostics/gige/` on 2026-10-28); log in `scratch/impl/hwtests.md`, `scratch/impl/prep-hardware-tests.result.md` |
 | SkellyCam GigE backend (Python) | **Not started**: the agent was interrupted before changing any tracked file | (to be created under `skellycam/core/camera/gige/`) |
@@ -66,11 +66,11 @@ The workflow resume cache (`resumeFromRunId`) only works inside the original Cla
 
 1. Read this file, `scratch/digest/skellycam-arch.md`, `scratch/impl/viva_api.md` and `hardware_tests/README.md`.
 2. Start from `workflows/gige-implement-wf_d9795230-c81.js`:
-    - Change the `SCRATCH` constant to point at this folder's `scratch/` directory, which has `digest/`, `impl/` and `research/`. Paths inside the digests still reference the old temp scratchpad, so map them to `scratch/...` here.
+    - Its `SCRATCH` constant already points at this folder's `scratch/` directory, which has `digest/`, `impl/` and `research/` (updated 2026-10-28). Paths inside the digests still reference the old temp scratchpad, so map them to `scratch/...` here.
     - Delete the `Prep` phase, which is already done. Pass the viva API notes into the implement prompt directly. The text of the completed prep results is in `scratch/impl/prep-*.result.md`.
     - The remaining stages are: implement-backend, implement-ui, 3 review lenses, fix.
 3. The research workflow script and both journals, which hold every agent's full structured result, are in `workflows/` for reference.
-4. When implementation is done, fill the 4 pending report sections in the Claude Doc. Optionally add the PTP flow diagram.
+4. When implementation is done, fill the 4 pending report sections in `docs/gige_vision_report.md`. Optionally add the PTP flow diagram.
 
 ## Environment notes
 
@@ -81,7 +81,7 @@ The workflow resume cache (`resumeFromRunId`) only works inside the original Cla
     - The Aravis emulator is `apt install aravis-tools`, then `arv-fake-gv-camera-0.8 -i lo`.
     - Use `--network none` or a dedicated network.
 - Docker images built earlier: `skellycam-viva-api:1`, `skellycam-gige-hwtest:1`.
-- Large or untrusted items were not copied: cloned third-party repos, venvs, pcaps, Aravis build trees. They are still in the old temp scratchpad (`%LOCALAPPDATA%\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-.../scratchpad`) until Windows cleans it.
+- Large or untrusted items were not copied: cloned third-party repos, venvs, pcaps, Aravis build trees. The old temp scratchpad that held them was deleted on 2026-10-28. Re-clone or rebuild them if needed; the repo URLs and commits are cited in `scratch/digest/*.md` and `scratch/research/*.md`.
 
 ## Not part of this work
 

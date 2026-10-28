@@ -1,0 +1,45 @@
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\logging\__init__.py", line 1163, in emit
+    stream.write(msg + self.terminator)
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2514' in position 10: character maps to <undefined>
+Call stack:
+  File "C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\ad23e4da-d956-400c-b95c-1c7166f96ad9\scratchpad\fmc_handoff_copy_semantics.py", line 75, in <module>
+    fnum, ts, payload = create_frontend_payload(latest_frames=frames)
+  File "<@beartype(skellycam.core.types.frontend_payload_bytearray.create_frontend_payload) at 0x1b6ffe8e7a0>", line 126, in create_frontend_payload
+  File "C:\Users\Dom\GitHub\freemocap\freemocap\.venv\Lib\site-packages\skellycam\core\types\frontend_payload_bytearray.py", line 81, in create_frontend_payload
+    logger.debug(f"Set reusable bytes payload to {estimated_size // ONE_KILOBYTE} kilobytes")
+Message: 'Set reusable bytes payload to 2048 kilobytes'
+Arguments: ()
+skellycam from: C:\Users\Dom\GitHub\freemocap\freemocap\.venv\Lib\site-packages\skellycam
+
+=== 1280x720 BGR (3ch) ===
+frame itemsize=2765432 bytes (2.64 MiB); ring_buffer_length=388 slots; window at 60fps=6.47s; 5 cams SHM=5.00 GiB
+get_data_by_index result shares memory with SHM slot: False
+get_data_by_index(rec_array=out) returns same object: True | image value now 3
+frame_recarray.image[0] shares memory with local recarray: True
+cv2.rotate output shares memory with input: False
+last_read_index after get_data_by_index: -1 (unchanged => reader invisible to writer's overwrite check)
+get_data_by_index (1 full-frame memcpy, reused buffer): median=0.094ms p95=0.116ms
+cv2.rotate 90: median=0.750ms p95=0.956ms
+get_images_by_frame_number returns new recarray each call: True | module _frame_recarray_cache size: 0
+get_images_by_frame_number (alloc + memcpy): median=0.419ms p95=0.556ms
+create_frontend_payload: payload 67121 bytes; type bytearray; shares memory with module buffer: False
+create_frontend_payload (rotate?+resize 0.5+JPEG q60+copies), random-noise image (worst case): median=1.909ms p95=2.700ms
+
+=== 1920x1080 BGR (3ch) ===
+frame itemsize=6221432 bytes (5.93 MiB); ring_buffer_length=172 slots; window at 60fps=2.87s; 5 cams SHM=4.98 GiB
+get_data_by_index result shares memory with SHM slot: False
+get_data_by_index(rec_array=out) returns same object: True | image value now 3
+frame_recarray.image[0] shares memory with local recarray: True
+cv2.rotate output shares memory with input: False
+last_read_index after get_data_by_index: -1 (unchanged => reader invisible to writer's overwrite check)
+get_data_by_index (1 full-frame memcpy, reused buffer): median=0.217ms p95=0.364ms
+cv2.rotate 90: median=1.911ms p95=2.677ms
+get_images_by_frame_number returns new recarray each call: True | module _frame_recarray_cache size: 0
+get_images_by_frame_number (alloc + memcpy): median=0.881ms p95=1.140ms
+create_frontend_payload: payload 150229 bytes; type bytearray; shares memory with module buffer: False
+create_frontend_payload (rotate?+resize 0.5+JPEG q60+copies), random-noise image (worst case): median=3.541ms p95=4.420ms

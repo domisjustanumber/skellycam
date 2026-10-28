@@ -1,0 +1,118 @@
+### aravis version: 0.8.30-1build2 ; fake camera gvsp-lost-ratio=0/1000 ; extra args: --force-rcvbuf
+### arv-tool-0.8 (Aravis' own client) sanity check
+Width = 512 min:1 max:2048
+Height = 512 min:1 max:2048
+PixelFormat = Mono8
+PayloadSize = 262144
+### probe A: system python3 -I, toy GenApi (no genicam wheel)
+== discovery
+   {'src': '127.0.0.1', 'version': '0.0', 'device_mode': '0x0', 'mac': '00:00:00:00:00:00', 'ip_config_supported': '0x0', 'ip_config_current': '0x0', 'ip': '127.0.0.1', 'mask': '0.0.0.0', 'gateway': '0.0.0.0', 'manufacturer': 'Aravis', 'model': 'Fake', 'device_version': '0.8.30', 'manufacturer_info': 'none', 'serial': 'GV01', 'user_name': ''}
+  PASS discovery found >=1 device 
+== bootstrap registers
+   {'version': '0.0', 'capability': '0x0', 'capability_bits': [], 'heartbeat_timeout_ms': 3000, 'n_stream_channels': 1, 'timestamp_tick_hz': 1000000000}
+  PASS READREG works 
+== PTP / IEEE 1588 / action capability (read-only)
+   {'ieee1588_supported': False, 'scheduled_action_supported': False, 'action_supported': False, 'gvcp_configuration': '0x0', 'ieee1588_enabled': False}
+== GenICam XML
+   url='Local:arv-fake-camera.xml;10000;3e67' -> 15975 bytes
+  PASS XML fetched via READMEM 
+== control channel privilege + heartbeat
+  PASS CCP control acquired (CCP=0x2, hb=3000 ms, period=1.00s)
+   latched device timestamp = 0 ticks (0.000000 s)
+== GenApi features via toy
+   {'Width': 512, 'Height': 512, 'PixelFormat': 17301505, 'PayloadSize': 262144, 'GevIEEE1588': None, 'PtpEnable': None, 'GevIEEE1588Status': None, 'PtpStatus': None, 'ActionDeviceKey': None, 'GevTimestampTickFrequency': None}
+  PASS toy GenApi reads Width = 512
+== stream channel 0 + GVSP
+   {'packets': 14431, 'bytes': 19517396, 'leaders': 75, 'trailers': 74, 'data': 14282, 'extended_id_packets': 0, 'resend_cmds': 0, 'frames_complete': 74, 'frames_incomplete': 0, 'missing_packets': 0, 'out_of_order': 0, 'other': 0, 'payload_types': {'image (uncompressed, PFNC pixel format)': 75}, 'pixel_formats': {'0x1080001': 75}, 'frames_seen': 74, 'device_frame_interval_s_mean': 0.03998481081081081, 'throughput_mbps': 52.01, 'kernel_udp_rcvbuf_errors_delta': 0, 'rcvbuf_actual': 33554432}
+  PASS received GVSP leader+trailer 
+  PASS frames reassembled (complete=74 incomplete=0 missing_pkts=0 resend_cmds=0)
+== 7 passed, 0 failed, 0 skipped
+exit=0
+### probe B: venv python -I with official EMVA genicam 1.6.0
+== discovery
+   {'src': '127.0.0.1', 'version': '0.0', 'device_mode': '0x0', 'mac': '00:00:00:00:00:00', 'ip_config_supported': '0x0', 'ip_config_current': '0x0', 'ip': '127.0.0.1', 'mask': '0.0.0.0', 'gateway': '0.0.0.0', 'manufacturer': 'Aravis', 'model': 'Fake', 'device_version': '0.8.30', 'manufacturer_info': 'none', 'serial': 'GV01', 'user_name': ''}
+  PASS discovery found >=1 device 
+== bootstrap registers
+   {'version': '0.0', 'capability': '0x0', 'capability_bits': [], 'heartbeat_timeout_ms': 3000, 'n_stream_channels': 1, 'timestamp_tick_hz': 1000000000}
+  PASS READREG works 
+== PTP / IEEE 1588 / action capability (read-only)
+   {'ieee1588_supported': False, 'scheduled_action_supported': False, 'action_supported': False, 'gvcp_configuration': '0x0', 'ieee1588_enabled': False}
+== GenICam XML
+   url='Local:arv-fake-camera.xml;10000;3e67' -> 15975 bytes
+  PASS XML fetched via READMEM 
+== control channel privilege + heartbeat
+  PASS CCP control acquired (CCP=0x2, hb=3000 ms, period=1.00s)
+   latched device timestamp = 0 ticks (0.000000 s)
+== GenApi features via official EMVA genicam
+   {'Width': '512', 'Height': '512', 'PixelFormat': 'Mono8', 'PayloadSize': '262144', 'GevIEEE1588': '<LogicalErrorException: Node not existing>', 'PtpEnable': '<LogicalErrorException: Node not existing>', 'GevIEEE1588Status': '<LogicalErrorException: Node not existing>', 'PtpStatus': '<LogicalErrorException: Node not existing>', 'ActionDeviceKey': '<LogicalErrorException: Node not existing>', 'GevTimestampTickFrequency': '<LogicalErrorException: Node not existing>'}
+  PASS toy GenApi reads Width = 512
+== stream channel 0 + GVSP
+   {'packets': 14431, 'bytes': 19517396, 'leaders': 75, 'trailers': 74, 'data': 14282, 'extended_id_packets': 0, 'resend_cmds': 0, 'frames_complete': 74, 'frames_incomplete': 0, 'missing_packets': 0, 'out_of_order': 0, 'other': 0, 'payload_types': {'image (uncompressed, PFNC pixel format)': 75}, 'pixel_formats': {'0x1080001': 75}, 'frames_seen': 74, 'device_frame_interval_s_mean': 0.03969978378378378, 'throughput_mbps': 51.92, 'kernel_udp_rcvbuf_errors_delta': 0, 'rcvbuf_actual': 33554432}
+  PASS received GVSP leader+trailer 
+  PASS frames reassembled (complete=74 incomplete=0 missing_pkts=0 resend_cmds=0)
+== 7 passed, 0 failed, 0 skipped
+exit=0
+======DEFAULT
+### aravis version: 0.8.30-1build2 ; fake camera gvsp-lost-ratio=0/1000 ; extra args: 
+### arv-tool-0.8 (Aravis' own client) sanity check
+Width = 512 min:1 max:2048
+Height = 512 min:1 max:2048
+PixelFormat = Mono8
+PayloadSize = 262144
+### probe A: system python3 -I, toy GenApi (no genicam wheel)
+== discovery
+   {'src': '127.0.0.1', 'version': '0.0', 'device_mode': '0x0', 'mac': '00:00:00:00:00:00', 'ip_config_supported': '0x0', 'ip_config_current': '0x0', 'ip': '127.0.0.1', 'mask': '0.0.0.0', 'gateway': '0.0.0.0', 'manufacturer': 'Aravis', 'model': 'Fake', 'device_version': '0.8.30', 'manufacturer_info': 'none', 'serial': 'GV01', 'user_name': ''}
+  PASS discovery found >=1 device 
+== bootstrap registers
+   {'version': '0.0', 'capability': '0x0', 'capability_bits': [], 'heartbeat_timeout_ms': 3000, 'n_stream_channels': 1, 'timestamp_tick_hz': 1000000000}
+  PASS READREG works 
+== PTP / IEEE 1588 / action capability (read-only)
+   {'ieee1588_supported': False, 'scheduled_action_supported': False, 'action_supported': False, 'gvcp_configuration': '0x0', 'ieee1588_enabled': False}
+== GenICam XML
+   url='Local:arv-fake-camera.xml;10000;3e67' -> 15975 bytes
+  PASS XML fetched via READMEM 
+== control channel privilege + heartbeat
+  PASS CCP control acquired (CCP=0x2, hb=3000 ms, period=1.00s)
+   latched device timestamp = 0 ticks (0.000000 s)
+== GenApi features via toy
+   {'Width': 512, 'Height': 512, 'PixelFormat': 17301505, 'PayloadSize': 262144, 'GevIEEE1588': None, 'PtpEnable': None, 'GevIEEE1588Status': None, 'PtpStatus': None, 'ActionDeviceKey': None, 'GevTimestampTickFrequency': None}
+  PASS toy GenApi reads Width = 512
+== stream channel 0 + GVSP
+   {'packets': 13765, 'bytes': 18785980, 'leaders': 75, 'trailers': 0, 'data': 13690, 'extended_id_packets': 0, 'resend_cmds': 0, 'frames_complete': 0, 'frames_incomplete': 50, 'missing_packets': 400, 'out_of_order': 0, 'other': 0, 'payload_types': {'image (uncompressed, PFNC pixel format)': 75}, 'pixel_formats': {'0x1080001': 75}, 'frames_seen': 50, 'device_frame_interval_s_mean': 0.039957391891891895, 'throughput_mbps': 49.48, 'kernel_udp_rcvbuf_errors_delta': 675, 'rcvbuf_actual': 425984}
+  FAIL received GVSP leader+trailer 
+  PASS frames reassembled (complete=0 incomplete=50 missing_pkts=400 resend_cmds=0)
+== 6 passed, 1 failed, 0 skipped
+exit=1
+### probe B: venv python -I with official EMVA genicam 1.6.0
+== discovery
+   {'src': '127.0.0.1', 'version': '0.0', 'device_mode': '0x0', 'mac': '00:00:00:00:00:00', 'ip_config_supported': '0x0', 'ip_config_current': '0x0', 'ip': '127.0.0.1', 'mask': '0.0.0.0', 'gateway': '0.0.0.0', 'manufacturer': 'Aravis', 'model': 'Fake', 'device_version': '0.8.30', 'manufacturer_info': 'none', 'serial': 'GV01', 'user_name': ''}
+  PASS discovery found >=1 device 
+== bootstrap registers
+   {'version': '0.0', 'capability': '0x0', 'capability_bits': [], 'heartbeat_timeout_ms': 3000, 'n_stream_channels': 1, 'timestamp_tick_hz': 1000000000}
+  PASS READREG works 
+== PTP / IEEE 1588 / action capability (read-only)
+   {'ieee1588_supported': False, 'scheduled_action_supported': False, 'action_supported': False, 'gvcp_configuration': '0x0', 'ieee1588_enabled': False}
+== GenICam XML
+   url='Local:arv-fake-camera.xml;10000;3e67' -> 15975 bytes
+  PASS XML fetched via READMEM 
+== control channel privilege + heartbeat
+  PASS CCP control acquired (CCP=0x2, hb=3000 ms, period=1.00s)
+   latched device timestamp = 0 ticks (0.000000 s)
+== GenApi features via official EMVA genicam
+   {'Width': '512', 'Height': '512', 'PixelFormat': 'Mono8', 'PayloadSize': '262144', 'GevIEEE1588': '<LogicalErrorException: Node not existing>', 'PtpEnable': '<LogicalErrorException: Node not existing>', 'GevIEEE1588Status': '<LogicalErrorException: Node not existing>', 'PtpStatus': '<LogicalErrorException: Node not existing>', 'ActionDeviceKey': '<LogicalErrorException: Node not existing>', 'GevTimestampTickFrequency': '<LogicalErrorException: Node not existing>'}
+  PASS toy GenApi reads Width = 512
+== stream channel 0 + GVSP
+   {'packets': 13819, 'bytes': 18842820, 'leaders': 75, 'trailers': 7, 'data': 13737, 'extended_id_packets': 0, 'resend_cmds': 2, 'frames_complete': 5, 'frames_incomplete': 50, 'missing_packets': 393, 'out_of_order': 0, 'other': 0, 'payload_types': {'image (uncompressed, PFNC pixel format)': 75}, 'pixel_formats': {'0x1080001': 75}, 'frames_seen': 55, 'device_frame_interval_s_mean': 0.039713310810810816, 'throughput_mbps': 49.94, 'kernel_udp_rcvbuf_errors_delta': 621, 'rcvbuf_actual': 425984}
+  PASS received GVSP leader+trailer 
+  PASS frames reassembled (complete=5 incomplete=50 missing_pkts=393 resend_cmds=2)
+== 7 passed, 0 failed, 0 skipped
+exit=0
+===LDD
+	libGenApi_gcc8_v3_5.so => /opt/gen/lib/python3.12/site-packages/genicam/libGenApi_gcc8_v3_5.so (0x00007efdfd5b1000)
+	libMathParser_gcc8_v3_5.so => /opt/gen/lib/python3.12/site-packages/genicam/libMathParser_gcc8_v3_5.so (0x00007efdfd5a2000)
+	libLog_gcc8_v3_5.so => /opt/gen/lib/python3.12/site-packages/genicam/libLog_gcc8_v3_5.so (0x00007efdfd59a000)
+	libpython3.12.so.1.0 => /lib/x86_64-linux-gnu/libpython3.12.so.1.0 (0x00007efdfccee000)
+	libXmlParser_gcc8_v3_5.so => /opt/gen/lib/python3.12/site-packages/genicam/libXmlParser_gcc8_v3_5.so (0x00007efdfcb81000)
+	libGCBase_gcc8_v3_5.so => /opt/gen/lib/python3.12/site-packages/genicam/libGCBase_gcc8_v3_5.so (0x00007efdfcb59000)
+	libNodeMapData_gcc8_v3_5.so => /opt/gen/lib/python3.12/site-packages/genicam/libNodeMapData_gcc8_v3_5.so (0x00007efdfc591000)
+cat: /proc/sys/net/core/rmem_max: No such file or directory

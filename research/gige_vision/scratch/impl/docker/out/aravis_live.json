@@ -1,0 +1,182 @@
+{
+ "tool": "gvsp_capture_report",
+ "host": {
+  "python": "3.12.3",
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "hostname": "3eb2fea01e1c",
+  "time_utc": "2026-10-25T19:25:48Z"
+ },
+ "args": {
+  "pcap": null,
+  "ip": "127.0.0.1",
+  "iface": "",
+  "seconds": 3.0,
+  "packet_size": 0,
+  "test_packet": false,
+  "extended_ids": false,
+  "no_resend": false,
+  "resend_wait": 0.05,
+  "rcvbuf": 33554432,
+  "force_rcvbuf": false,
+  "port": 0,
+  "control": "stdlib",
+  "save_frame": "/out/frames",
+  "tick_hz": 0,
+  "min_complete": 0.99,
+  "json": "/out/aravis_live.json",
+  "selftest": false
+ },
+ "camera": {
+  "ip": "127.0.0.1",
+  "gev_version": "0.0",
+  "capability": "0x00000000",
+  "tick_hz": 1000000000
+ },
+ "socket": {
+  "requested": 33554432,
+  "method": "SO_RCVBUF",
+  "errors": [],
+  "os_default": 212992,
+  "effective": 425984,
+  "effective_usable_estimate": 212992,
+  "capped": true
+ },
+ "scps": 1400,
+ "saved_frame": [
+  "/out/frames/frame_127_0_0_1_Mono8.raw",
+  "/out/frames/frame_127_0_0_1_Mono8.json",
+  "/out/frames/frame_127_0_0_1_Mono8.pgm"
+ ],
+ "stream": {
+  "packets": 14719,
+  "bytes": 19930916,
+  "packet_formats": {
+   "LEADER": 76,
+   "PAYLOAD": 14577,
+   "TRAILER": 66
+  },
+  "status_codes": {
+   "SUCCESS": 14719
+  },
+  "extended_id_packets": 0,
+  "extended_ids_used": false,
+  "resent_packets_received": 0,
+  "late_packets_after_close": 0,
+  "frames_seen": 76,
+  "frames_complete": 64,
+  "frames_incomplete": 2,
+  "frames_trailer_missing": 10,
+  "frames_leader_missing": 0,
+  "missing_packets_total": 11,
+  "block_id_gaps": 0,
+  "completeness": 0.8421052631578947,
+  "resend_ranges_requested": 0,
+  "resend_packets_requested": 0,
+  "resend_packets_recovered": 0,
+  "max_ip_packet_size": 1400,
+  "payload_packet_ip_size_most_common": 1400,
+  "non_gvsp_datagrams": 0,
+  "jumbo_frames": false,
+  "payload_types": {
+   "IMAGE": 76
+  },
+  "chunk_data": false,
+  "pixel_formats": [
+   {
+    "pixel_format": "Mono8",
+    "width": 512,
+    "height": 512,
+    "frames": 76,
+    "opencv_bayer_code": ""
+   }
+  ],
+  "data_bytes_per_complete_frame_median": 262144.0,
+  "uncompressed_frame_bytes_expected": 262144,
+  "leader_timestamp_delta_ticks": {
+   "n": 75,
+   "min": 9620000.0,
+   "median": 40000000.0,
+   "p95": 40073900.0,
+   "max": 40554000.0
+  },
+  "leader_timestamp_first": 1792956348590383000,
+  "leader_timestamp_monotonic": true,
+  "device_fps_from_timestamps": 25.0,
+  "leader_timestamp_delta_us": {
+   "n": 75,
+   "min": 9620.0,
+   "median": 40000.0,
+   "p95": 40073.9,
+   "max": 40554.0
+  },
+  "host_fps": 25.246123660132973,
+  "compression_verdict": "UNCOMPRESSED",
+  "compression_reasons": [
+   "payload bytes/frame 262144 vs uncompressed Mono8 size 262144 (ratio 1.000)",
+   "IMAGE payload in a standard PFNC pixel format, full-size frames"
+  ],
+  "receive": {
+   "foreign_datagrams": 0,
+   "wall_s": 3.000309652998112,
+   "mbit_s": 53.14362397250212,
+   "linux_udp_rcvbuf_errors_delta": 101
+  }
+ },
+ "checks": [
+  {
+   "name": "camera reachable",
+   "status": "PASS",
+   "detail": "GEV 0.0, tick 1000000000 Hz, packet resend NOT supported",
+   "camera": "127.0.0.1"
+  },
+  {
+   "name": "socket receive buffer",
+   "status": "WARN",
+   "detail": "requested 33554432 B via SO_RCVBUF, OS reports 425984 B (default 212992 B) - CAPPED, raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)",
+   "camera": "127.0.0.1"
+  },
+  {
+   "name": "kernel receive-buffer drops",
+   "status": "WARN",
+   "detail": "101 UDP datagrams dropped by the kernel (socket buffer full) - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)",
+   "camera": "127.0.0.1"
+  },
+  {
+   "name": "GVSP leader + trailer packets",
+   "status": "PASS",
+   "detail": "{'LEADER': 76, 'PAYLOAD': 14577, 'TRAILER': 66}",
+   "camera": "GVSP 127.0.0.1 -> 127.0.0.1:41207 (53 Mbit/s)"
+  },
+  {
+   "name": "frames complete",
+   "status": "FAIL",
+   "detail": "64/76 (84.2 %; limit 99 %)",
+   "camera": "GVSP 127.0.0.1 -> 127.0.0.1:41207 (53 Mbit/s)"
+  },
+  {
+   "name": "compression verdict",
+   "status": "INFO",
+   "detail": "UNCOMPRESSED: payload bytes/frame 262144 vs uncompressed Mono8 size 262144 (ratio 1.000); IMAGE payload in a standard PFNC pixel format, full-size frames",
+   "camera": "GVSP 127.0.0.1 -> 127.0.0.1:41207 (53 Mbit/s)"
+  },
+  {
+   "name": "packet size",
+   "status": "INFO",
+   "detail": "payload packets 1400 B IP datagrams (max 1400) -> standard 1500 MTU",
+   "camera": "GVSP 127.0.0.1 -> 127.0.0.1:41207 (53 Mbit/s)"
+  },
+  {
+   "name": "extended ids (64-bit block ids)",
+   "status": "INFO",
+   "detail": "not used (0/14719 packets)",
+   "camera": "GVSP 127.0.0.1 -> 127.0.0.1:41207 (53 Mbit/s)"
+  },
+  {
+   "name": "device timestamps",
+   "status": "INFO",
+   "detail": "increasing; device frame rate 25.00 fps; host arrival rate 25.25 fps",
+   "camera": "GVSP 127.0.0.1 -> 127.0.0.1:41207 (53 Mbit/s)"
+  }
+ ]
+}

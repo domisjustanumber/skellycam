@@ -1,6 +1,6 @@
 # SkellyCam Research — Compiled Report
 
-As of 2026-10-28. `research/` holds five studies that sit beside the skellycam package. None of them is imported by skellycam. This document condenses the five per-study reports. The index, with status and Claude Docs links, is in [README.md](README.md).
+As of 2026-10-28. `research/` holds five studies that sit beside the skellycam package. None of them is imported by skellycam. This document condenses the five per-study reports. The index, with status and links to each study's docs, is in [README.md](README.md).
 
 Labels used throughout: **measured** = run and logged on our hardware; **sourced** = from specs, vendor documents or source code; **computed** = arithmetic; **inferred/hypothesis** = a judgement not yet tested. Hardware for everything measured is one Windows 11 PC, "Gerald": Intel Core i7-14700K (20 cores, 28 logical), 64 GB DDR5 running at 4000 MT/s, Windows 11 Home 10.0.26300 ([overnight report](overnight_run_20261027/REPORT.md)). No Linux or macOS hardware run exists in any study.
 
@@ -185,12 +185,12 @@ Rank 8, MJPEG passthrough, is a separate project.
 
 Ordered by value for effort. Studies are tagged in brackets.
 
-1. **Fix the known skellycam bugs now.** These are the ring buffer's ranks 9, 3, 4, 5 and 2 and the Arduino plan's P1–P5, with the overlaps merged: the copy in put_data, the stale frame after 30 failed grabs, config-apply killing the backend, the dropped config fields, no pause timeout, silent sensor drops, and crash-tolerant containers. Run P4 on a real recording first. *[frame_ring_buffer, arduino_sync]*
+1. **Fix the known skellycam bugs now.** These are the ring buffer's ranks 9, 3, 4, 5 and 2 and the Arduino plan's P1–P5, with the overlaps merged: the copy in put_data, the stale frame after 30 failed grabs, config-apply killing the backend, the dropped config fields, no pause timeout, silent sensor drops, and crash-tolerant containers. P4 still has to be confirmed on a one-camera recording; that is deferred until a camera is available ([arduino_sync/REPORT.md](arduino_sync/REPORT.md)). *[frame_ring_buffer, arduino_sync]*
 2. **Prototype MJPEG passthrough on Windows** through MF IMFSourceReader (or PyAV DirectShow), and confirm that FreeMoCap reads MKV or fragmented MP4. *[usb_cameras, frame_ring_buffer]*
 3. **Test with real 60 fps cameras.** Measure 5 × 60 fps capture CPU, USB bandwidth admission and drop-counter accuracy, and run a 10+ minute recording to size the ring. *[frame_ring_buffer, usb_cameras]*
 4. **Add a `CameraBackend` protocol and a `device_timing` record**, then feed UVC PTS (MF metadata) into it. This unblocks both GigE and hardware-sync work. *[gige_vision, usb_cameras]*
 5. **Build an independent sync ground truth** (an LED, no display) and measure real cross-camera alignment for lockstep, UVC PTS and, later, FSIN or PTP. *[usb_cameras, frame_ring_buffer, arduino_sync]*
-6. **Close the open USB timing and bandwidth questions:** the long-run SCR→QPC re-check, and WinUSB phase 3 with 3 or more cameras per link. These need one UAC prompt and replugs. *[usb_cameras]*
+6. **Close the open USB timing and bandwidth questions:** the long-run SCR→QPC re-check, and WinUSB phase 3 with 3 or more cameras per link. These need one UAC prompt and replugs. Later, confirm the C930e exposure behind the flash ground truth: re-analyse with a range of exposures first, and re-run one flash test only if the result depends on it ([usb_cameras/PROGRESS.md](usb_cameras/PROGRESS.md), section E). *[usb_cameras]*
 7. **Hardware spikes for the sync options:**
    - the 1-week Arduino M0 spike on InnoMaker cameras, after maintainer review of PLAN.md;
    - `hardware_tests/` on two or more real PTP GigE cameras.
@@ -206,7 +206,6 @@ Ordered by value for effort. Studies are tagged in brackets.
 
    *[overnight_run_20261027]*
 10. **Housekeeping:**
-    - copy the Arduino scratchpad research into the repo;
-    - finish the empty sections in the USB and GigE Claude Docs.
+    - finish the empty sections in [usb_cameras/docs/usb_camera_report.md](usb_cameras/docs/usb_camera_report.md) and [gige_vision/docs/gige_vision_report.md](gige_vision/docs/gige_vision_report.md).
 
     *[arduino_sync, frame_ring_buffer, usb_cameras, gige_vision]*

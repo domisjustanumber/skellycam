@@ -1,0 +1,135 @@
+{
+ "tool": "gev_ptp_sync_test",
+ "host": {
+  "python": "3.12.3",
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "hostname": "23dd5623ee00",
+  "time_utc": "2026-10-25T19:13:41Z"
+ },
+ "args": {
+  "ip": [
+   "172.31.77.21",
+   "172.31.77.22"
+  ],
+  "iface": "",
+  "include_loopback": false,
+  "enable_ptp": false,
+  "restore_ptp": false,
+  "external_master": false,
+  "ptp_timeout": 60.0,
+  "settle_s": 2.0,
+  "duration": 3.0,
+  "interval": 0.25,
+  "max_offset_us": 1000.0,
+  "max_drift_ppm": 2.0,
+  "no_action": false,
+  "no_program_keys": true,
+  "device_key": 66,
+  "group_key": 1,
+  "group_mask": 1,
+  "action_index": 0,
+  "action_dest": "auto",
+  "delay_ms": 500,
+  "ack_wait": 0.3,
+  "strict": false,
+  "json": "/out/multi_ptp_viva.json",
+  "selftest": false
+ },
+ "cameras": [
+  {
+   "ip": "172.31.77.21",
+   "label": "172.31.77.21 FakeGigE",
+   "gev_version": "2.0",
+   "capability": "0x08000027",
+   "tick_hz": 1000000000
+  },
+  {
+   "ip": "172.31.77.22",
+   "label": "172.31.77.22 FakeGigE",
+   "gev_version": "2.0",
+   "capability": "0x08000027",
+   "tick_hz": 1000000000
+  }
+ ],
+ "action": {
+  "destination": "to 172.31.77.255",
+  "wrong_key": {},
+  "immediate": {},
+  "immediate_wall_s": 0.30092482300824486
+ },
+ "checks": [
+  {
+   "name": "reachable",
+   "status": "PASS",
+   "detail": "GEV 2.0, capabilities ccp_application_port_ip, pending_ack, packet_resend, write_mem, concatenation, tick 1000000000 Hz",
+   "camera": "172.31.77.21 FakeGigE"
+  },
+  {
+   "name": "reachable",
+   "status": "PASS",
+   "detail": "GEV 2.0, capabilities ccp_application_port_ip, pending_ack, packet_resend, write_mem, concatenation, tick 1000000000 Hz",
+   "camera": "172.31.77.22 FakeGigE"
+  },
+  {
+   "name": "IEEE 1588 capability",
+   "status": "SKIP",
+   "detail": "capability bit 0x00080000 clear - camera does not advertise PTP (if its vendor tool shows Ptp*/GevIEEE1588 features, try viva_sync_capture_test.py)",
+   "camera": "172.31.77.21 FakeGigE"
+  },
+  {
+   "name": "IEEE 1588 capability",
+   "status": "SKIP",
+   "detail": "capability bit 0x00080000 clear - camera does not advertise PTP (if its vendor tool shows Ptp*/GevIEEE1588 features, try viva_sync_capture_test.py)",
+   "camera": "172.31.77.22 FakeGigE"
+  },
+  {
+   "name": "PTP roles",
+   "status": "SKIP",
+   "detail": "no camera supports IEEE 1588",
+   "camera": ""
+  },
+  {
+   "name": "timestamp latch",
+   "status": "SKIP",
+   "detail": "latched value is always 0 - timestamp latch not implemented",
+   "camera": "172.31.77.21 FakeGigE"
+  },
+  {
+   "name": "timestamp latch",
+   "status": "SKIP",
+   "detail": "latched value is always 0 - timestamp latch not implemented",
+   "camera": "172.31.77.22 FakeGigE"
+  },
+  {
+   "name": "clock offset / drift",
+   "status": "SKIP",
+   "detail": "no camera with a working timestamp latch",
+   "camera": ""
+  },
+  {
+   "name": "ACTION_CMD wrong device key ignored",
+   "status": "PASS",
+   "detail": "no camera acknowledged",
+   "camera": ""
+  },
+  {
+   "name": "ACTION_CMD immediate",
+   "status": "SKIP",
+   "detail": "no ACTION_ACK (camera does not advertise action)",
+   "camera": "172.31.77.21 FakeGigE"
+  },
+  {
+   "name": "ACTION_CMD immediate",
+   "status": "SKIP",
+   "detail": "no ACTION_ACK (camera does not advertise action)",
+   "camera": "172.31.77.22 FakeGigE"
+  },
+  {
+   "name": "ACTION_CMD scheduled",
+   "status": "SKIP",
+   "detail": "no camera clock to schedule against (timestamp latch unavailable)",
+   "camera": ""
+  }
+ ]
+}

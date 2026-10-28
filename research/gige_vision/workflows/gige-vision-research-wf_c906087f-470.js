@@ -7,6 +7,8 @@ export const meta = {
   ],
 }
 
+// Historical record of a completed run: SCRATCH was session f77e9c4e's temp scratchpad (deleted 2026-10-28).
+// Its outputs (digest/, research/ notes, impl/) are now in research/gige_vision/scratch/; cloned third-party repos were not kept.
 const SCRATCH = 'C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad'
 const REPO = 'C:/Users/Dom/GitHub/freemocap/skellycam'
 

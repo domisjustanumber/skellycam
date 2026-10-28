@@ -1,6 +1,8 @@
 # Checking the method of flash_run1_repositioned (method and circularity)
 
 The data is `results/windows/Gerald/timing/flash_run1_repositioned/` (C930e and C922, 1280x720@30 MJPEG, E = 2^-7 s, 30 s).
+
+> **Caveat (2026-10-28):** the C930e exposure is assumed, not confirmed. Its session readback shows -7, but in the 2026-10-27/28 rerun MF manual exposure set before streaming took effect on the C930e in only 1 of 5 runs, so the C930e ground-truth model below may use the wrong E. The check to run is listed in `../PROGRESS.md`, section E.
 No camera was opened for this check. The harness is `timing/scripts/flash_verify_method.py`. It imports
 `flash_analyze.py` and `tools/analyze_frames.py` as they are, and their sha256 hashes are stored in the output.
 The output is `verify_method.json` and `verify_method.log` in the same results directory.

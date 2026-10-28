@@ -1,0 +1,6 @@
+#!/bin/bash
+H=/c/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/bandwidth
+$H/coexist_hold.sh /c/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/bin/uvc_capture_test.exe /c/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/coexist2 gen_first "7 4"
+$H/coexist_hold.sh /c/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/bin/uvc_capture_test.exe /c/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/coexist2 c930e_first "8 11"
+# solo control right after: same binary, alt 8, generic NOT streaming
+TAG=_solo_control $H/alt_sweep_run.sh /c/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/bin/uvc_capture_test.exe /c/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/sweep 1280 720 30 10 "8"

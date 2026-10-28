@@ -84,7 +84,7 @@ The per-benchmark load record is the method to copy. It turns "the machine was p
 - **Which DirectShow index was the Kiyo in P9 is not recorded.** The claim that P9 streamed it rests on the prototypes README's list of attached cameras. The by-name attempts on it in P9 and P9b are certain; the naming verifier's earlier DirectShow mapping (Kiyo at index 3) supports the index claim.
 - **All 5×60 fps ring buffer numbers use synthetic cameras.**
 - **Errata in other write-ups:** see finding 13 (stale RESUME.md lines, missing journals). The README index says `usb_cameras` goals 2 and 3 "need corrections" ([../README.md](../README.md)). The USB camera report's own errata list also covers goal 4: MF/DShow indices and naming listing time ([../usb_cameras/REPORT.md](../usb_cameras/REPORT.md)).
-- **The Claude Docs summaries written by `wf_264799ca-33d` were not checked** against local files for this report.
+- **The three summary docs written by `wf_264799ca-33d` (now [mjpeg_passthrough_summary.md](../usb_cameras/docs/mjpeg_passthrough_summary.md), [usb_camera_tests_summary.md](../usb_cameras/docs/usb_camera_tests_summary.md) and [frame_ring_buffer_summary.md](../frame_ring_buffer/docs/frame_ring_buffer_summary.md)) were not fully checked** against local files for this report.
 
 ## Proposed further investigation
 
@@ -104,7 +104,7 @@ The per-benchmark load record is the method to copy. It turns "the machine was p
 | [OVERNIGHT_LOG.md](OVERNIGHT_LOG.md) | Timestamped log: watcher, pre-flight devnode status, launches, completions |
 | [idle_watch.ps1](idle_watch.ps1) | Idle gate (15 min no input, CPU < 25%, after 23:00, gives up at 06:00) |
 | [keep_display_awake.ps1](keep_display_awake.ps1) | Display/system keep-awake until a stop file appears |
-| [workflows/summary-reports-three-docs-wf_264799ca-33d.js](workflows/summary-reports-three-docs-wf_264799ca-33d.js) | Script that filled the three summary Claude Docs |
+| [workflows/summary-reports-three-docs-wf_264799ca-33d.js](workflows/summary-reports-three-docs-wf_264799ca-33d.js) | Script that wrote the three summary docs (originally Claude Docs; local copies are in the studies' `docs/` folders) |
 | [../usb_cameras/results/windows/Gerald/RERUN_20261027.md](../usb_cameras/results/windows/Gerald/RERUN_20261027.md) | Camera re-run results, camera health, Kiyo contact, skipped/missed tests, harness bugs |
 | [../usb_cameras/results/agent_reports/rerun_20261027_reports_and_verifications.json](../usb_cameras/results/agent_reports/rerun_20261027_reports_and_verifications.json) | Structured per-area claims, tests and verdicts |
 | [../frame_ring_buffer/study_state/RESUME.md](../frame_ring_buffer/study_state/RESUME.md), [../frame_ring_buffer/PROVISIONAL.md](../frame_ring_buffer/PROVISIONAL.md) | Ring buffer stage status, idle vs provisional labels |

@@ -1,0 +1,22 @@
+
+=== backend CAP_MSMF: opened=True prefault_ring=False ===
+retrieve ok: True | returned array is the shm view object: True | shares memory with shm: True | data ptr unchanged: True | shm non-zero after decode: True
+current : retrieve->local   7263.1 us + put_data   1361.8 us =   8624.9 us  (n=119)
+proposed: retrieve->slot    7537.8 us + publish      79.9 us =   7617.7 us  (n=119)
+
+=== backend CAP_MSMF: opened=True prefault_ring=True ===
+retrieve ok: True | returned array is the shm view object: True | shares memory with shm: True | data ptr unchanged: True | shm non-zero after decode: True
+prefault (first touch) of whole 1 GiB ring: 328.8 ms
+current : retrieve->local   6899.4 us + put_data    748.9 us =   7648.3 us  (n=119)
+proposed: retrieve->slot    7094.3 us + publish      85.0 us =   7179.3 us  (n=119)
+
+=== backend CAP_FFMPEG: opened=True prefault_ring=False ===
+retrieve ok: True | returned array is the shm view object: True | shares memory with shm: True | data ptr unchanged: True | shm non-zero after decode: True
+current : retrieve->local    778.5 us + put_data   1239.6 us =   2018.1 us  (n=119)
+proposed: retrieve->slot    1443.7 us + publish      42.1 us =   1485.8 us  (n=119)
+
+=== backend CAP_FFMPEG: opened=True prefault_ring=True ===
+retrieve ok: True | returned array is the shm view object: True | shares memory with shm: True | data ptr unchanged: True | shm non-zero after decode: True
+prefault (first touch) of whole 1 GiB ring: 297.9 ms
+current : retrieve->local    755.4 us + put_data    638.5 us =   1393.9 us  (n=119)
+proposed: retrieve->slot     779.7 us + publish      35.8 us =    815.5 us  (n=119)

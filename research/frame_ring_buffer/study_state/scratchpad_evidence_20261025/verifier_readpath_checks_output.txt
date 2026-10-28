@@ -1,0 +1,15 @@
+numpy 2.2.6 cv2 4.12.0
+[A] FRAME_METADATA_DTYPE.itemsize = 632 bytes
+[B 1280x720] copy(frame.frame_metadata): shares_memory=False nbytes=632
+[C 1280x720] put_frame (copy.copy + slot assign + index update): median 1.168 ms p95 1.383 ms (n=200)
+[C 1280x720] single np.copyto into slot (1 copy):              median 0.079 ms p95 0.102 ms (n=200)
+[D 1280x720] read_only=True handle: ring_shm.buffer.flags.writeable = True
+[E 1280x720] reader copy frame_number after writer lapped slot: before=0 after=0 (unchanged => private copy)
+[E 1280x720] stale index read after lap: IndexError (Index 199 has been overwritten by the ring buffer wrapping. ...)
+[B 1920x1080] copy(frame.frame_metadata): shares_memory=False nbytes=632
+[C 1920x1080] put_frame (copy.copy + slot assign + index update): median 2.442 ms p95 2.768 ms (n=200)
+[C 1920x1080] single np.copyto into slot (1 copy):              median 0.162 ms p95 0.204 ms (n=200)
+[D 1920x1080] read_only=True handle: ring_shm.buffer.flags.writeable = True
+[E 1920x1080] reader copy frame_number after writer lapped slot: before=0 after=0 (unchanged => private copy)
+[E 1920x1080] stale index read after lap: IndexError (Index 199 has been overwritten by the ring buffer wrapping. ...)
+[F] backend=FFMPEG retrieve ok=True; returned shares memory with recarray image=True; recarray image updated in place=True (mean=40.0)

@@ -1,0 +1,18 @@
+gst_mf exit=0
+### step=gst_mf utc_start=2026-10-28T03:35:47Z cpu_load_pct_start=4
+### cmd: uv run --script research/usb_cameras/prior_art/gst_probe.py --capture --source mfvideosrc --seconds 6 --device-path \\?\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --device-path \\?\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --device-path \\?\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global
+[camlock] acquired after 68.5s: uv run --script research/usb_cameras/prior_art/gst_probe.py --capture --source mfvideosrc --seconds 6 --device-path \\?\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --device-path \\?\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --device-path \\?\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global
+[camlock] released
+### exit=0 utc_end=2026-10-28T03:37:17Z cpu_load_pct_end=7
+gst_ks exit=0
+### step=gst_ks utc_start=2026-10-28T03:37:21Z cpu_load_pct_start=15
+### cmd: uv run --script research/usb_cameras/prior_art/gst_probe.py --capture --source ksvideosrc --seconds 6 --device-name c922 Pro Stream Webcam --device-name Logitech Webcam C930e --device-name USB Camera
+[camlock] acquired after 120.1s: uv run --script research/usb_cameras/prior_art/gst_probe.py --capture --source ksvideosrc --seconds 6 --device-name c922 Pro Stream Webcam --device-name Logitech Webcam C930e --device-name USB Camera
+[camlock] released
+### exit=0 utc_end=2026-10-28T03:39:42Z cpu_load_pct_end=19
+expo_033946 exit=0
+### step=expo_033946 utc_start=2026-10-28T03:39:46Z cpu_load_pct_start=22
+### cmd: uv run --script research/usb_cameras/tools/dshow_exposure_read.py --vidpid vid_046d&pid_085c --vidpid vid_046d&pid_0843 --vidpid vid_4c4a&pid_4a55 --label after_final --out research/usb_cameras/results/windows/Gerald/prior_art_rerun_20261027/conditions/exposure_033946.json
+[camlock] acquired after 37.5s: uv run --script research/usb_cameras/tools/dshow_exposure_read.py --vidpid vid_046d&pid_085c --vidpid vid_046d&pid_0843 --vidpid vid_4c4a&pid_4a55 --label after_final --out research/usb_cameras/results/windows/Gerald/prior_art_rerun_20261027/conditions/exposure_033946.json
+[camlock] released
+### exit=0 utc_end=2026-10-28T03:40:25Z cpu_load_pct_end=1

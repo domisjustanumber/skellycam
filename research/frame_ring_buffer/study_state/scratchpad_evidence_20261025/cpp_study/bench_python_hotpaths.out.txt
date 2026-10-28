@@ -1,0 +1,64 @@
+3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]
+numpy 2.2.6 cv2 4.12.0 cv2 threads 28
+cpu_count 28
+
+=== A. memcpy bandwidth via np.copyto (cache-cold destination ring, hot source) ===
+np.copyto 720p (2764800 B) into cold ring slot                         median      75.4 us   p99     318.5 us   ~ 36.67 GB/s (bytes copied / time)
+np.copyto 720p cold src -> cold dst                                    median     157.7 us   p99     222.1 us   ~ 17.54 GB/s (bytes copied / time)
+np.copyto 720p hot src -> hot dst (fits L3)                            median      69.9 us   p99      79.6 us   ~ 39.55 GB/s (bytes copied / time)
+np.copyto 1080p (6220800 B) into cold ring slot                        median     161.8 us   p99     842.3 us   ~ 38.46 GB/s (bytes copied / time)
+np.copyto 1080p cold src -> cold dst                                   median     360.5 us   p99     458.6 us   ~ 17.26 GB/s (bytes copied / time)
+np.copyto 1080p hot src -> hot dst (fits L3)                           median     158.8 us   p99     215.8 us   ~ 39.17 GB/s (bytes copied / time)
+np.copyto 1 GiB (single thread)                                        median   63145.9 us   p99   63527.5 us   ~ 17.00 GB/s (bytes copied / time)
+
+=== B/C. SkellyCam SharedMemoryRingBuffer put_data / get_data_by_index (real frame dtype) ===
+720p: itemsize 2765432 B, ring length 388 slots (1 GiB allocation)
+ring.put_data 720p (copy(data) + slot assign + index update)           median    1156.8 us   p99    1597.6 us   ~  2.39 GB/s (bytes copied / time)
+raw np.copyto(record slice) into shm slot 720p                         median      80.3 us   p99     109.9 us   ~ 34.44 GB/s (bytes copied / time)
+buffer[idx] = data (put_data line 132 minus copy()) 720p               median      67.5 us   p99      82.0 us   ~ 41.00 GB/s (bytes copied / time)
+buffer[idx] = data[0] (record scalar assign) 720p                      median      68.9 us   p99     112.8 us   ~ 40.14 GB/s (bytes copied / time)
+raw np.copyto(image only) into shm slot 720p                           median      72.1 us   p99      97.9 us   ~ 38.35 GB/s (bytes copied / time)
+copy.copy(recarray) alone 720p                                         median     375.5 us   p99     489.5 us   ~  7.36 GB/s (bytes copied / time)
+ring.get_data_by_index 720p into preallocated recarray                 median      95.6 us   p99     129.7 us   ~ 28.93 GB/s (bytes copied / time)
+zero-copy view ring.ring_shm.buffer[idx] (no copy) 720p                median       0.3 us   p99       0.8 us
+1080p: itemsize 6221432 B, ring length 172 slots (1 GiB allocation)
+ring.put_data 1080p (copy(data) + slot assign + index update)          median    1466.7 us   p99    2946.3 us   ~  4.24 GB/s (bytes copied / time)
+raw np.copyto(record slice) into shm slot 1080p                        median     172.9 us   p99     345.4 us   ~ 35.98 GB/s (bytes copied / time)
+buffer[idx] = data (put_data line 132 minus copy()) 1080p              median     159.1 us   p99     264.5 us   ~ 39.12 GB/s (bytes copied / time)
+buffer[idx] = data[0] (record scalar assign) 1080p                     median     163.5 us   p99     301.2 us   ~ 38.05 GB/s (bytes copied / time)
+raw np.copyto(image only) into shm slot 1080p                          median     159.8 us   p99     206.4 us   ~ 38.93 GB/s (bytes copied / time)
+copy.copy(recarray) alone 1080p                                        median     855.5 us   p99    1388.5 us   ~  7.27 GB/s (bytes copied / time)
+ring.get_data_by_index 1080p into preallocated recarray                median     191.4 us   p99     264.6 us   ~ 32.50 GB/s (bytes copied / time)
+zero-copy view ring.ring_shm.buffer[idx] (no copy) 1080p               median       0.3 us   p99       0.6 us
+
+=== D. SharedMemoryNumber.value (index counters used on every put/get) ===
+SharedMemoryNumber.value read                                          median       5.6 us   p99       6.2 us
+SharedMemoryNumber.value write                                         median       4.3 us   p99       5.0 us
+raw int64 view read  raw_i64[0]                                        median       0.1 us   p99       0.1 us
+raw int64 view write raw_i64[0]=5                                      median       0.1 us   p99       0.1 us
+
+=== E. nested recarray field write (per-timestamp, as in camera loop) ===
+frame_rec_array.frame_metadata.timestamps.X[0] = v                     median      12.9 us   p99      28.2 us
+cached timestamps view ['X'][0] = v                                    median       0.7 us   p99       0.8 us
+time.perf_counter_ns()                                                 median       0.1 us   p99       0.1 us
+
+=== F. RGB->BGR swap (openpnp_capture.camera.capture_frame_into lines 213-216) vs cv2 ===
+openpnp-python numpy channel swap 720p                                 median     960.9 us   p99    1032.1 us
+cv2.cvtColor(dst=buf) in-place RGB2BGR 720p                            median     974.3 us   p99    1397.0 us
+openpnp-python numpy channel swap 1080p                                median    2095.0 us   p99    2825.3 us
+cv2.cvtColor(dst=buf) in-place RGB2BGR 1080p                           median    2482.4 us   p99    3448.5 us
+
+=== G. GIL scaling: aggregate throughput with N threads (1 thread = 1.0x) ===
+np.copyto 1080p                     1T:    6085.3 ops/s (1.00x)  2T:    6870.0 ops/s (1.13x)  5T:    6325.3 ops/s (1.04x)
+cv2.cvtColor 1080p BGR2RGB          1T:    3951.3 ops/s (1.00x)  2T:    5546.7 ops/s (1.40x)  5T:    4380.0 ops/s (1.11x)
+cv2.imencode jpg 1080p              1T:     106.0 ops/s (1.00x)  2T:     214.0 ops/s (2.02x)  5T:     436.0 ops/s (4.11x)
+pure-Python loop (10k iters)        1T:    4888.7 ops/s (1.00x)  2T:    4026.0 ops/s (0.82x)  5T:    6234.7 ops/s (1.28x)
+SharedMemoryNumber.value x100       1T:    1342.0 ops/s (1.00x)  2T:    1353.3 ops/s (1.01x)  5T:     790.7 ops/s (0.59x)
+
+=== H. encode cost per frame (cv2 default threads) ===
+cv2.imencode .jpg q95 720p                                             median    2056.0 us   p99    7058.8 us
+cv2.VideoWriter MJPG write 720p                                        median    5080.5 us   p99    7467.5 us
+   file size for 105 frames: 4.6 MB
+cv2.imencode .jpg q95 1080p                                            median    3997.8 us   p99    7069.3 us
+cv2.VideoWriter MJPG write 1080p                                       median    8848.8 us   p99   10744.9 us
+   file size for 105 frames: 10.4 MB

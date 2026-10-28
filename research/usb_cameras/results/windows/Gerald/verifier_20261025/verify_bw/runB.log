@@ -1,0 +1,10 @@
+[camlock] acquired after 134.6s: uv run --script research/usb_cameras/bandwidth/run_concurrency.py --batch verify_bw_solo_and_crossport --seconds 5 --exposure -7 --wb 4500 --stagger-ms 2000 --budget-s 160 --combo c930e_mjpg720|vid_046d&pid_0843:MJPG:1280x720@30 --combo c930e_mjpg640|vid_046d&pid_0843:MJPG:640x480@30 --combo c930e_yuy2_640|vid_046d&pid_0843:YUY2:640x480@30 --combo c922_mjpg720|vid_046d&pid_085c:MJPG:1280x720@30 --combo gen_mjpg640|vid_4c4a&pid_4a55:MJPG:640x480@30 --combo c922_alt11_c930e_alt11_diff_rootports|vid_046d&pid_085c:MJPG:1920x1080@30;vid_046d&pid_0843:MJPG:1920x1080@30 --combo c922_mjpg720_gen_mjpg720_diff_rootports|vid_046d&pid_085c:MJPG:1280x720@30;vid_4c4a&pid_4a55:MJPG:1280x720@30
+[c930e_mjpg720] rc=0 vid_046d&pid_0843 OK fps=30.07 B/s=4487150 pipes=['085c:alt[]', '0e05:alt[]', '4a55:alt[]', '0843:alt[11]']
+[c930e_mjpg640] rc=0 vid_046d&pid_0843 OK fps=30.07 B/s=1999860 pipes=['085c:alt[]', '0e05:alt[]', '4a55:alt[]', '0843:alt[10]']
+[c930e_yuy2_640] rc=0 vid_046d&pid_0843 OK fps=30.06 B/s=18468500 pipes=['085c:alt[]', '0e05:alt[]', '4a55:alt[]', '0843:alt[10]']
+[c922_mjpg720] rc=0 vid_046d&pid_085c OK fps=30.01 B/s=3953260 pipes=['085c:alt[9]', '0e05:alt[]', '4a55:alt[]', '0843:alt[]']
+[gen_mjpg640] rc=0 vid_4c4a&pid_4a55 OK fps=25.71 B/s=365807 pipes=['085c:alt[]', '0e05:alt[]', '4a55:alt[1]', '0843:alt[]']
+[c922_alt11_c930e_alt11_diff_rootports] rc=0 vid_046d&pid_085c OK fps=30.02 B/s=7003400 | vid_046d&pid_0843 OK fps=29.99 B/s=7287640 pipes=['085c:alt[11]', '0e05:alt[]', '4a55:alt[]', '0843:alt[11]']
+[c922_mjpg720_gen_mjpg720_diff_rootports] rc=0 vid_046d&pid_085c OK fps=30.02 B/s=3994420 | vid_4c4a&pid_4a55 OK fps=25.78 B/s=1137540 pipes=['085c:alt[9]', '0e05:alt[]', '4a55:alt[1]', '0843:alt[]']
+wrote C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\results\windows\Gerald\bw_concurrency\verify_bw_solo_and_crossport.json
+[camlock] released

@@ -1,0 +1,176 @@
+[camlock] acquired after 6.5s: uv run --script research/usb_cameras/verify_prior_art/timer_res_wrapper.py --period-ms 1 -- --capture --source mfvideosrc --seconds 6
+I2026-10-25 15:06:57.882591 (53876) [INFO] [VCAMDS] python.exe
+E2026-10-25 15:06:57.883109 (53876)  [ERR] [VCAMDS] Failed to open NBX hive
+I2026-10-25 15:06:57.883631 (53876) [INFO] [VCAMDS] Creating WndMsg Listener Window
+I2026-10-25 15:06:57.885147 (53876) [INFO] [VCAMDS] Get number of capabilities
+I2026-10-25 15:06:57.885674 (53876) [INFO] [VCAMDS] Destroying parent object
+I2026-10-25 15:06:57.885674 (53876) [INFO] [VCAMDS] Destroying WndMsg Listener Window
+I2026-10-25 15:06:57.887198 (53876) [INFO] [VCAMDS] Destroyed window
+I2026-10-25 15:06:57.887198 (53876) [INFO] [VCAMDS] Unregistered window class
+I2026-10-25 15:06:57.887198 (53876) [INFO] [VCAMDS] Video data consumption app tracker updating num DLL loaded: 0
+E2026-10-25 15:06:57.887198 (53876)  [ERR] [VCAMDS] NvMxnCltShmConsumer Failed to update num apps DLL loaded
+
+** (python.exe:29848): WARNING **: 15:06:57.910: "ksvideosrc" is deprecated and will be removedin the future. Use "mfvideosrc" element instead
+0:00:14.837868600      29848      31896 ERROR         mfsourceobject gstmfsourcereader.cpp:469:gst_mf_source_reader_read_sample:<mfsourcereader11> Failed to read sample
+{
+ "test": "prior_art_gst_probe",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-25T19:06:55.906016+00:00",
+ "command": "python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\prior_art\\gst_probe.py --capture --source mfvideosrc --seconds 6",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+  "gstreamer": "GStreamer 1.28.8 (GIT)"
+ },
+ "devices_tested": [
+  {
+   "camera_key": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "display_name": "c922 Pro Stream Webcam",
+   "pipeline": "mfvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+   "src_props": {
+    "device-path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+   },
+   "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+   "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1",
+   "n_frames": 172,
+   "n_valid_soi_eoi": 172,
+   "n_pillow_decoded_ok": 12,
+   "n_pillow_decode_fail": 0,
+   "n_buffer_metas_total": 0,
+   "stats": {
+    "fps_by_arrival": 30.02617808631578,
+    "arrival_interval_ms_min_med_max": [
+     30.101,
+     31.9978,
+     48.3206
+    ],
+    "pts_interval_ms_min_med_max": [
+     30.108,
+     31.9999,
+     48.2146
+    ],
+    "arrival_minus_pts_ms_min_med_max": [
+     0.1025,
+     0.1266,
+     0.4818
+    ],
+    "payload_bytes_min_med_max": [
+     137841,
+     138282
+    ]
+   },
+   "frames_file": "frames_046d_085c.jsonl",
+   "sample_file": "sample_046d_085c.jpg"
+  },
+  {
+   "camera_key": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "display_name": "USB Camera",
+   "pipeline": "mfvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+   "src_props": {
+    "device-path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+   },
+   "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+   "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1",
+   "n_frames": 154,
+   "n_valid_soi_eoi": 154,
+   "n_pillow_decoded_ok": 11,
+   "n_pillow_decode_fail": 0,
+   "n_buffer_metas_total": 0,
+   "stats": {
+    "fps_by_arrival": 25.775177947701156,
+    "arrival_interval_ms_min_med_max": [
+     8.5558,
+     32.6736,
+     84.8761
+    ],
+    "pts_interval_ms_min_med_max": [
+     8.6194,
+     32.5403,
+     86.1113
+    ],
+    "arrival_minus_pts_ms_min_med_max": [
+     0.1041,
+     0.1951,
+     4.2787
+    ],
+    "payload_bytes_min_med_max": [
+     19774,
+     40855
+    ]
+   },
+   "frames_file": "frames_4c4a_4a55.jsonl",
+   "sample_file": "sample_4c4a_4a55.jpg"
+  },
+  {
+   "camera_key": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "display_name": "USB Video Device",
+   "pipeline": "mfvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+   "src_props": {
+    "device-path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+   },
+   "error": "Internal data stream error. | ../libs/gst/base/gstbasesrc.c(3187): gst_base_src_loop (): /GstPipeline:pipeline2/GstMFVideoSrc:src:\nstreaming stopped, reason error (-5)",
+   "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+   "negotiated_caps": null,
+   "n_frames": 0,
+   "n_valid_soi_eoi": 0,
+   "n_pillow_decoded_ok": 0,
+   "n_pillow_decode_fail": 0,
+   "n_buffer_metas_total": 0,
+   "stats": {},
+   "frames_file": "frames_1532_0e05.jsonl",
+   "sample_file": null
+  },
+  {
+   "camera_key": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "display_name": "Logitech Webcam C930e",
+   "pipeline": "mfvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+   "src_props": {
+    "device-path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+   },
+   "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+   "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1",
+   "n_frames": 167,
+   "n_valid_soi_eoi": 167,
+   "n_pillow_decoded_ok": 12,
+   "n_pillow_decode_fail": 0,
+   "n_buffer_metas_total": 0,
+   "stats": {
+    "fps_by_arrival": 29.985961873246882,
+    "arrival_interval_ms_min_med_max": [
+     28.564,
+     32.0015,
+     48.0364
+    ],
+    "pts_interval_ms_min_med_max": [
+     28.6531,
+     32.0029,
+     48.0402
+    ],
+    "arrival_minus_pts_ms_min_med_max": [
+     0.0893,
+     0.1205,
+     0.4616
+    ],
+    "payload_bytes_min_med_max": [
+     95721,
+     131647,
+     135667
+    ]
+   },
+   "frames_file": "frames_046d_0843.jsonl",
+   "sample_file": "sample_046d_0843.jpg"
+  }
+ ],
+ "settings": {
+  "width": 1280,
+  "height": 720,
+  "fps": 30,
+  "seconds": 6.0,
+  "exposure": "not controlled (camera auto)"
+ }
+}
+wrote C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\results\windows\Gerald\prior_art_gst_capture-mfvideosrc\result.json
+{"before": {"coarsest_100ns": 156250, "finest_100ns": 5000, "current_100ns": 10000}, "period_ms_requested": 1, "timeBeginPeriod_ret": 0, "after": {"coarsest_100ns": 156250, "finest_100ns": 5000, "current_100ns": 10000}, "at_end": {"coarsest_100ns": 156250, "finest_100ns": 5000, "current_100ns": 10000}}
+[camlock] released
+exit 0

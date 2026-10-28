@@ -1,0 +1,18 @@
+--- 1280x720
+copy.copy(recarray) alone                : median 0.419 ms p95 0.516 ms
+buf[slot] = pre_copied (as line 132)     : median 0.765 ms p95 1.065 ms
+buf[slot] = fr[0]  (record scalar)       : median 0.073 ms p95 0.130 ms
+buf[slot:slot+1] = fr  (array slice)     : median 0.078 ms p95 0.096 ms
+np.copyto(buf[slot:slot+1], fr)          : median 0.081 ms p95 0.104 ms
+buf.image[slot] = fr.image[0] (pixels)   : median 0.069 ms p95 0.088 ms
+last_written_index.value read+write      : median 0.011 ms p95 0.032 ms
+full put_frame                           : median 1.548 ms p95 2.430 ms
+--- 1920x1080
+copy.copy(recarray) alone                : median 1.007 ms p95 1.190 ms
+buf[slot] = pre_copied (as line 132)     : median 1.543 ms p95 2.115 ms
+buf[slot] = fr[0]  (record scalar)       : median 0.171 ms p95 0.195 ms
+buf[slot:slot+1] = fr  (array slice)     : median 0.188 ms p95 0.226 ms
+np.copyto(buf[slot:slot+1], fr)          : median 0.187 ms p95 0.286 ms
+buf.image[slot] = fr.image[0] (pixels)   : median 0.270 ms p95 0.744 ms
+last_written_index.value read+write      : median 0.011 ms p95 0.016 ms
+full put_frame                           : median 1.475 ms p95 1.850 ms

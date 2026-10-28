@@ -1,0 +1,659 @@
+{
+ "tool": "viva_sync_capture_test",
+ "host": {
+  "python": "3.12.3",
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "hostname": "2228bb2574f8",
+  "time_utc": "2026-10-25T19:14:21Z"
+ },
+ "args": {
+  "ip": [],
+  "iface": "",
+  "include_loopback": false,
+  "discovery_timeout": 1.0,
+  "mode": "scheduled-action",
+  "fps": 30.0,
+  "duration": 10.0,
+  "triggers": 60,
+  "pixel_format": "",
+  "packet_size": 0,
+  "force_gvsp": false,
+  "skip_ptp": false,
+  "restore_ptp": false,
+  "ptp_mode": "Auto",
+  "ptp_slave_only": false,
+  "external_master": false,
+  "ptp_timeout": 90.0,
+  "stable_s": 5.0,
+  "max_ptp_offset_ns": 1000,
+  "max_spread_us": 100.0,
+  "expect_aligned": false,
+  "max_drop_pct": 0.5,
+  "trigger_source": "Action1,Action0",
+  "skip_trigger_config": true,
+  "device_key": 66,
+  "group_key": 1,
+  "group_mask": 1,
+  "action_dest": "auto",
+  "action_sender": "viva",
+  "ack_timeout_ms": 20,
+  "lead_ms": 20.0,
+  "start_delay_ms": 1000.0,
+  "fake_cameras": 1,
+  "out": "/out/viva_fake_sched",
+  "selftest": false
+ },
+ "viva_genicam_version": "0.10.0",
+ "cameras": [
+  {
+   "ip": "127.0.0.1",
+   "DeviceVendorName": "vitavision.dev",
+   "DeviceModelName": "VivaCam Fake",
+   "DeviceSerialNumber": "VIVA-FAKE-001",
+   "DeviceFirmwareVersion": "1.0.0-fake",
+   "PixelFormat": "BayerRG8",
+   "Width": "640",
+   "Height": "480",
+   "GevSCPSPacketSize": "1500",
+   "GevTimestampTickFrequency": "1000000000",
+   "ExposureTime": "5000",
+   "bootstrap_gev_version": "2.0",
+   "capability": [
+    "ccp_application_port_ip",
+    "pending_ack",
+    "packet_resend",
+    "write_mem",
+    "concatenation"
+   ],
+   "tick_hz_after_ptp": 1000000000
+  }
+ ],
+ "scheduled": {
+  "latch_round_trip_us": 42.376,
+  "schedule_first_ticks": 2506261192,
+  "period_ticks": 33333333,
+  "destinations": [
+   "127.0.0.1"
+  ],
+  "sender_backend": "viva",
+  "late_sends": 0,
+  "actions": [
+   {
+    "trigger": 0,
+    "time_ticks": 2506261192,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76097825680546,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 1,
+    "time_ticks": 2539594525,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76097858926726,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 2,
+    "time_ticks": 2572927858,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76097892263733,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 3,
+    "time_ticks": 2606261191,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76097925610296,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 4,
+    "time_ticks": 2639594524,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76097958984278,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 5,
+    "time_ticks": 2672927857,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76097992291761,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 6,
+    "time_ticks": 2706261190,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098025614873,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 7,
+    "time_ticks": 2739594523,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098058978959,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 8,
+    "time_ticks": 2772927856,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098092237863,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 9,
+    "time_ticks": 2806261189,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098125612827,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 10,
+    "time_ticks": 2839594522,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098158958913,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 11,
+    "time_ticks": 2872927855,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098192255283,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 12,
+    "time_ticks": 2906261188,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098225592685,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 13,
+    "time_ticks": 2939594521,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098258919103,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 14,
+    "time_ticks": 2972927854,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098292253538,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 15,
+    "time_ticks": 3006261187,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098325653350,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 16,
+    "time_ticks": 3039594520,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098358906797,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 17,
+    "time_ticks": 3072927853,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098392276507,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 18,
+    "time_ticks": 3106261186,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098425587870,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 19,
+    "time_ticks": 3139594519,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098458934364,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 20,
+    "time_ticks": 3172927852,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098492251491,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 21,
+    "time_ticks": 3206261185,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098525607853,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 22,
+    "time_ticks": 3239594518,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098558936547,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 23,
+    "time_ticks": 3272927851,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098592250181,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 24,
+    "time_ticks": 3306261184,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098625601854,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 25,
+    "time_ticks": 3339594517,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098658945676,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 26,
+    "time_ticks": 3372927850,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098692275539,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 27,
+    "time_ticks": 3406261183,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098725598597,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 28,
+    "time_ticks": 3439594516,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098758935228,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 29,
+    "time_ticks": 3472927849,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098792286723,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 30,
+    "time_ticks": 3506261182,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098825625687,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 31,
+    "time_ticks": 3539594515,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098858967465,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 32,
+    "time_ticks": 3572927848,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098892261826,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 33,
+    "time_ticks": 3606261181,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098925610738,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 34,
+    "time_ticks": 3639594514,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098958935451,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 35,
+    "time_ticks": 3672927847,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76098992294002,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 36,
+    "time_ticks": 3706261180,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099025575597,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 37,
+    "time_ticks": 3739594513,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099058920277,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 38,
+    "time_ticks": 3772927846,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099092246125,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 39,
+    "time_ticks": 3806261179,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099125585599,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 40,
+    "time_ticks": 3839594512,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099158914592,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 41,
+    "time_ticks": 3872927845,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099192248217,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 42,
+    "time_ticks": 3906261178,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099225593151,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 43,
+    "time_ticks": 3939594511,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099258916438,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 44,
+    "time_ticks": 3972927844,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099292247677,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 45,
+    "time_ticks": 4006261177,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099325585058,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 46,
+    "time_ticks": 4039594510,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099359037295,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 47,
+    "time_ticks": 4072927843,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099392256500,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 48,
+    "time_ticks": 4106261176,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099425597966,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 49,
+    "time_ticks": 4139594509,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099458926489,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 50,
+    "time_ticks": 4172927842,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099492259563,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 51,
+    "time_ticks": 4206261175,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099525582708,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 52,
+    "time_ticks": 4239594508,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099558931837,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 53,
+    "time_ticks": 4272927841,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099592259273,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 54,
+    "time_ticks": 4306261174,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099625585978,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 55,
+    "time_ticks": 4339594507,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099658919484,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 56,
+    "time_ticks": 4372927840,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099692252361,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 57,
+    "time_ticks": 4406261173,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099725589350,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 58,
+    "time_ticks": 4439594506,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099758913138,
+    "sender": "viva",
+    "acks": 1
+   },
+   {
+    "trigger": 59,
+    "time_ticks": 4472927839,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 76099792258492,
+    "sender": "viva",
+    "acks": 1
+   }
+  ],
+  "matched_by_order": [
+   "cam0 127.0.0.1 VivaCam Fake"
+  ],
+  "lag_us": {
+   "cam0 127.0.0.1 VivaCam Fake": {
+    "n": 60,
+    "min": -2506258.516,
+    "median": -2399904.5645,
+    "p95": -2302283.6989499996,
+    "max": -2292184.318
+   }
+  }
+ },
+ "quality": {
+  "cam0 127.0.0.1 VivaCam Fake": {
+   "frames": 98,
+   "incomplete": 2,
+   "block_id_gaps": 0,
+   "lost_pct": 2.0408163265306123,
+   "device_fps": 27.39740289059039,
+   "stream_stats": {
+    "frames_complete": 96,
+    "frames_incomplete": 2,
+    "frames_missed": 0,
+    "frames_lost": 2,
+    "packets_missing": 2,
+    "resend_requested": 13,
+    "resend_recovered": 13,
+    "avg_fps": 3562.4097347575575,
+    "avg_mbps": 8754.978164140173
+   },
+   "reader_error": ""
+  }
+ },
+ "checks": [
+  {
+   "name": "camera",
+   "status": "INFO",
+   "detail": "vitavision.dev VivaCam Fake serial VIVA-FAKE-001 fw 1.0.0-fake; GEV 2.0 (DeviceTLVersion ?.?); BayerRG8 640x480, packet size 1500",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "PTP enable feature",
+   "status": "SKIP",
+   "detail": "none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "PTP lock",
+   "status": "SKIP",
+   "detail": "PTP could not be enabled on any camera",
+   "camera": ""
+  },
+  {
+   "name": "action trigger setup",
+   "status": "WARN",
+   "detail": "--skip-trigger-config: frames are NOT triggered by the actions (emulator dry run only)",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "scheduled action capability",
+   "status": "WARN",
+   "detail": "capability bit clear - camera may reject scheduled actions (trying anyway)",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "ACTION_ACKs",
+   "status": "PASS",
+   "detail": "60/60 sends acknowledged by every addressed camera (sender viva); 0 sends left after their scheduled time",
+   "camera": ""
+  },
+  {
+   "name": "triggered frames",
+   "status": "WARN",
+   "detail": "60/60 actions produced a frame (matched by ORDER: frame timestamps are not on camera 0's timescale)",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "frame timestamp - scheduled time",
+   "status": "INFO",
+   "detail": "median -2399904.6 us, p95 -2302283.7 us (what the timestamp marks - exposure start, end or readout - is vendor-specific)",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "exposure-start spread",
+   "status": "SKIP",
+   "detail": "needs two or more cameras",
+   "camera": ""
+  },
+  {
+   "name": "frames received",
+   "status": "FAIL",
+   "detail": "98; incomplete 2, block-id gaps 0 (2.04 % lost, limit 0.5 %); device fps 27.40",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  }
+ ]
+}

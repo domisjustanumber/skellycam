@@ -1,0 +1,165 @@
+{
+  "alt_selected": {
+    "all_iso_alts": [
+      [
+        1,
+        192
+      ],
+      [
+        2,
+        384
+      ],
+      [
+        3,
+        512
+      ],
+      [
+        4,
+        640
+      ],
+      [
+        5,
+        800
+      ],
+      [
+        6,
+        944
+      ],
+      [
+        7,
+        1280
+      ],
+      [
+        8,
+        1600
+      ],
+      [
+        9,
+        1984
+      ],
+      [
+        10,
+        2688
+      ],
+      [
+        11,
+        3072
+      ]
+    ],
+    "alt": 11,
+    "bytes_per_interval": 3072,
+    "device_requested_payload": 3072
+  },
+  "command": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\rust\\build\\release\\uvc_iso.exe stream --backend libusb --vid 046d --pid 0843 --width 1280 --height 720 --fps 30 --seconds 5 --save-samples 0 --out C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\phase2\\rust_uvc_iso\\smoke\\stream5_libusb",
+  "controls": {
+    "ae_mode_cur": [
+      1
+    ],
+    "exposure_100us_cur": 312,
+    "wb_cur": 4500
+  },
+  "device": {
+    "address": 29,
+    "bcdUVC": "100",
+    "bus": 1,
+    "dwClockFrequency": 30000000,
+    "port_path": "13.1.4",
+    "serial": null,
+    "speed": "High"
+  },
+  "device_clock_fit": null,
+  "device_clock_fit_note": "host = a + b*STC; STC from first SCR of each frame, host = estimated (micro)frame time of that packet (transfer completion - packets_after*service_interval); intercept at 2nd percentile residual. PTS mapped with same fit (PTS-STC difference taken modulo 2^32).",
+  "environment": {
+    "arch": "x86_64",
+    "backend": "libusb1-sys-0.7.0(libusb-1.0.27)",
+    "features": {
+      "libusb": true,
+      "rawusb": true
+    },
+    "host_clock": "QueryPerformanceCounter",
+    "os": "windows",
+    "os_build": "Microsoft Windows [Version 10.0.26300.9711]",
+    "profile": "release",
+    "uvc_iso_version": "0.1.0"
+  },
+  "hostname": "Gerald",
+  "out_dir": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\phase2\\rust_uvc_iso\\smoke\\stream5_libusb",
+  "platform": "windows",
+  "probe_commit": {
+    "len": 26,
+    "ms": 0.3784,
+    "negotiated": {
+      "bFormatIndex": 2,
+      "bFrameIndex": 15,
+      "bmFramingInfo": 0,
+      "bmHint": 1,
+      "dwClockFrequency": 0,
+      "dwFrameInterval": 333333,
+      "dwMaxPayloadTransferSize": 3072,
+      "dwMaxVideoFrameSize": 1843200,
+      "wCompQuality": 61,
+      "wDelay_ms": 0
+    },
+    "requested": {
+      "bFormatIndex": 2,
+      "bFrameIndex": 15,
+      "bmFramingInfo": 0,
+      "bmHint": 1,
+      "dwClockFrequency": 0,
+      "dwFrameInterval": 333333,
+      "dwMaxPayloadTransferSize": 0,
+      "dwMaxVideoFrameSize": 0,
+      "wCompQuality": 0,
+      "wDelay_ms": 0
+    }
+  },
+  "results": {
+    "bad_headers": 8327,
+    "cpu": {
+      "method": "GetProcessTimes (kernel+user) delta over start_iso..stop window",
+      "percent_of_one_core": 0.9346838722675676,
+      "process_cpu_ns": 46875000,
+      "wall_ns": 5015064600.0
+    },
+    "discarded_partial": 0,
+    "empty_packets": 31705,
+    "err_flag_payloads": 0,
+    "expected_period_ticks": 999999.0,
+    "fps_host_after_skip30": 0.0,
+    "frames": 0,
+    "frames_file": "frames_046d_0843.jsonl",
+    "host_arrival_gaps_ge_1p5_period": 0,
+    "latency_arrival_minus_pts_ms": null,
+    "overflows": 0,
+    "packets": 40032,
+    "packets_with_error_status": 0,
+    "payloads": 0,
+    "pts_delta_ticks_max": 0.0,
+    "pts_delta_ticks_min": null,
+    "pts_gaps_ge_1p5_period": 0,
+    "pts_missing_frames_est": -0.0,
+    "time_to_first_frame_ms": null,
+    "transfers": 1251,
+    "valid_jpeg": 0
+  },
+  "settings": {
+    "alt_policy": "Device",
+    "exposure_100us": null,
+    "fps": 30,
+    "height": 720,
+    "pid": "0843",
+    "pkts_per_xfer": 32,
+    "save_samples": 0,
+    "seconds": 5.0,
+    "vid": "046d",
+    "wb": null,
+    "width": 1280,
+    "xfers": 8
+  },
+  "stream_stats": {
+    "transfers_completed": 1251,
+    "transfers_failed": 0
+  },
+  "test": "rust_uvc_iso_stream_libusb",
+  "utc_started_unix": "1792962161"
+}

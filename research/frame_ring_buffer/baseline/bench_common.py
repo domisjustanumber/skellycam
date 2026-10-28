@@ -12,6 +12,7 @@ import platform
 import statistics
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -21,10 +22,7 @@ HERE = Path(__file__).resolve().parent
 import sys as _fp_sys; _fp_sys.path.insert(0, str(Path(__file__).resolve().parents[1])); from fp_paths import results_dir as _results_dir  # noqa: E402,E702
 RESULTS = _results_dir(HERE)
 RESULTS.mkdir(exist_ok=True)
-SCRATCH_TMP = Path(
-    r"C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam"
-    r"\ad23e4da-d956-400c-b95c-1c7166f96ad9\scratchpad\bench_tmp"
-)
+SCRATCH_TMP = Path(tempfile.gettempdir()) / "skellycam_frame_pipeline_tmp" / "bench_tmp"  # same root as prototypes/ and cpp/
 SCRATCH_TMP.mkdir(parents=True, exist_ok=True)
 
 SIZES = {"720p": (720, 1280), "1080p": (1080, 1920)}  # (height, width), BGR uint8 x3

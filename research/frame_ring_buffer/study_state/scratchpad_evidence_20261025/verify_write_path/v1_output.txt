@@ -1,0 +1,24 @@
+3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]
+numpy 2.2.6
+===== 1280x720x3 =====
+record itemsize 2765432 B; metadata 632 B (camera_info 524 B); image offset 632; slots 388; shm size 1072987616 B
+  put_frame (production)                   median 0.596 ms  p95 0.746 ms
+  buffer[s] = frame (no copy.copy)         median 0.069 ms  p95 0.079 ms
+  np.copyto(buffer[s:s+1], frame)          median 0.082 ms  p95 0.095 ms
+  np.copyto(buffer.image[s], image) only   median 0.071 ms  p95 0.080 ms
+  B equivalence: slot0 image==77 True, fn=4242, shares_memory(slot, frame)=False
+  put_frame has __wrapped__ (beartype)? True
+===== 1920x1080x3 =====
+record itemsize 6221432 B; metadata 632 B (camera_info 524 B); image offset 632; slots 172; shm size 1070086304 B
+  put_frame (production)                   median 1.306 ms  p95 1.795 ms
+  buffer[s] = frame (no copy.copy)         median 0.155 ms  p95 0.179 ms
+  np.copyto(buffer[s:s+1], frame)          median 0.159 ms  p95 0.175 ms
+  np.copyto(buffer.image[s], image) only   median 0.150 ms  p95 0.157 ms
+  B equivalence: slot0 image==77 True, fn=4242, shares_memory(slot, frame)=False
+  put_frame has __wrapped__ (beartype)? True
+===== beartype wrapper overhead (wrapped vs __wrapped__) =====
+should_grab_by_id wrapped? True
+should_grab_by_id (5 cams): wrapped 16.54 us/call; unwrapped 16.31 us/call
+one multiprocessing.Value('b').value read: 0.298 us
+===== PyAV VideoFrame.from_ndarray copy semantics =====
+av 17.0.0: after mutating source, frame still holds old pixels? True (True => from_ndarray copied the input)

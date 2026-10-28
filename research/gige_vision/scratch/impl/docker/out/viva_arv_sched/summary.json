@@ -1,0 +1,130 @@
+{
+ "tool": "viva_sync_capture_test",
+ "host": {
+  "python": "3.12.3",
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "hostname": "2228bb2574f8",
+  "time_utc": "2026-10-25T19:14:08Z"
+ },
+ "args": {
+  "ip": [
+   "172.31.77.11",
+   "172.31.77.12"
+  ],
+  "iface": "",
+  "include_loopback": false,
+  "discovery_timeout": 1.0,
+  "mode": "scheduled-action",
+  "fps": 30.0,
+  "duration": 10.0,
+  "triggers": 150,
+  "pixel_format": "",
+  "packet_size": 0,
+  "force_gvsp": false,
+  "skip_ptp": false,
+  "restore_ptp": false,
+  "ptp_mode": "Auto",
+  "ptp_slave_only": false,
+  "external_master": false,
+  "ptp_timeout": 90.0,
+  "stable_s": 5.0,
+  "max_ptp_offset_ns": 1000,
+  "max_spread_us": 100.0,
+  "expect_aligned": false,
+  "max_drop_pct": 0.5,
+  "trigger_source": "Action1,Action0",
+  "skip_trigger_config": false,
+  "device_key": 305419896,
+  "group_key": 1,
+  "group_mask": 4294967295,
+  "action_dest": "auto",
+  "action_sender": "viva",
+  "ack_timeout_ms": 20,
+  "lead_ms": 20.0,
+  "start_delay_ms": 1000.0,
+  "fake_cameras": 0,
+  "out": "/out/viva_arv_sched",
+  "selftest": false
+ },
+ "viva_genicam_version": "0.10.0",
+ "cameras": [
+  {
+   "ip": "172.31.77.11",
+   "DeviceVendorName": "Aravis",
+   "DeviceModelName": "Fake",
+   "DeviceVersion": "0.8.30",
+   "PixelFormat": "Mono8",
+   "Width": "512",
+   "Height": "512",
+   "ExposureTimeAbs": "10000",
+   "bootstrap_gev_version": "0.0",
+   "capability": [],
+   "tick_hz_after_ptp": 1000000000
+  },
+  {
+   "ip": "172.31.77.12",
+   "DeviceVendorName": "Aravis",
+   "DeviceModelName": "Fake",
+   "DeviceVersion": "0.8.30",
+   "PixelFormat": "Mono8",
+   "Width": "512",
+   "Height": "512",
+   "ExposureTimeAbs": "10000",
+   "bootstrap_gev_version": "0.0",
+   "capability": [],
+   "tick_hz_after_ptp": 1000000000
+  }
+ ],
+ "scheduled": {},
+ "checks": [
+  {
+   "name": "camera",
+   "status": "INFO",
+   "detail": "Aravis Fake serial ? fw ?; GEV 0.0 (DeviceTLVersion ?.?); Mono8 512x512, packet size ?",
+   "camera": "cam0 172.31.77.11 Fake"
+  },
+  {
+   "name": "camera",
+   "status": "INFO",
+   "detail": "Aravis Fake serial ? fw ?; GEV 0.0 (DeviceTLVersion ?.?); Mono8 512x512, packet size ?",
+   "camera": "cam1 172.31.77.12 Fake"
+  },
+  {
+   "name": "PTP enable feature",
+   "status": "SKIP",
+   "detail": "none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML",
+   "camera": "cam0 172.31.77.11 Fake"
+  },
+  {
+   "name": "PTP enable feature",
+   "status": "SKIP",
+   "detail": "none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML",
+   "camera": "cam1 172.31.77.12 Fake"
+  },
+  {
+   "name": "PTP lock",
+   "status": "SKIP",
+   "detail": "PTP could not be enabled on any camera",
+   "camera": ""
+  },
+  {
+   "name": "action trigger setup",
+   "status": "SKIP",
+   "detail": "TriggerSource has none of Action1,Action0 (entries: ['Line0', 'Software'])",
+   "camera": "cam0 172.31.77.11 Fake"
+  },
+  {
+   "name": "action trigger setup",
+   "status": "SKIP",
+   "detail": "TriggerSource has none of Action1,Action0 (entries: ['Line0', 'Software'])",
+   "camera": "cam1 172.31.77.12 Fake"
+  },
+  {
+   "name": "scheduled-action run",
+   "status": "SKIP",
+   "detail": "not every camera can be triggered by an action command",
+   "camera": ""
+  }
+ ]
+}

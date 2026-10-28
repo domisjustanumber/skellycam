@@ -1,0 +1,15 @@
+=== GVSP stream 127.0.0.1:51704 -> 172.17.0.3:35957 ===
+packets: 4095  by format: {'LEADER': 21, 'PAYLOAD': 4053, 'TRAILER': 21}
+status codes: {'0x0': 4095}  (0x100 = resent packet, >=0x8000 = error)
+extended-ID (EI, 64-bit block id) mode: [False]
+payload packet IP length (== GevSCPSPacketSize): 1400  -> jumbo frames: no
+leader payload types: {'IMAGE': 21}
+  image leaders: 21 x Mono8 512x512
+    uncompressed size would be 262144 B/frame
+compression verdict: no standard compressed payload type seen
+avg payload bytes per block (from payload packets): 262144
+leader timestamp deltas (device ticks): min 12362000 median 100000000 max 100002000
+first leader timestamp: 1792950002887639000 (0x18E1D68736273FD8); if PTP-synced, tick = 1 ns and value ~ TAI/PTP epoch ns
+distinct block ids: 21 (first 65401, last 65421)
+=== GVCP commands (host -> device:3956) ===
+{'DISCOVERY': 3, 'READREG': 41, 'WRITEREG': 14, 'READMEM': 71}

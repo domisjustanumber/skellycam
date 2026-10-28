@@ -3,7 +3,8 @@
 # check, raw frames to the scratchpad (S=..., change for another machine). Run from the repo root.
 # usage: run_py_matrix.sh name "extra args" [name "extra args" ...]   (run from repo root)
 R=research/usb_cameras/results/windows/Gerald/phase2_python_libusb
-S=/c/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/python_libusb
+# The 2026-10-25 runs wrote to a session temp scratchpad (deleted 2026-10-28). Override S to choose another folder.
+S=${S:-${TMP:-/tmp}/skellycam_usb_phase2/python_libusb}
 mkdir -p $S
 while [ $# -ge 2 ]; do
   n=$1; x=$2; shift 2

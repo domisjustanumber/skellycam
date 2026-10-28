@@ -1,0 +1,16 @@
+
+=== 1280x720 BGR ===
+copy(frame) alone:                        median=0.368ms p95=0.413ms
+buf[0] = frame   (structured item assign): median=0.068ms p95=0.091ms
+buf[0] = copy(frame)  (what put_data does): median=0.546ms p95=0.594ms
+np.copyto(buf[0:1], frame):               median=0.073ms p95=0.086ms
+buf[0:1] = frame  (slice assign):         median=0.074ms p95=0.107ms
+full put_frame(overwrite=True):           median=1.100ms p95=1.241ms
+
+=== 1920x1080 BGR ===
+copy(frame) alone:                        median=0.814ms p95=0.898ms
+buf[0] = frame   (structured item assign): median=0.155ms p95=0.185ms
+buf[0] = copy(frame)  (what put_data does): median=1.243ms p95=1.699ms
+np.copyto(buf[0:1], frame):               median=0.159ms p95=0.209ms
+buf[0:1] = frame  (slice assign):         median=0.162ms p95=0.183ms
+full put_frame(overwrite=True):           median=2.423ms p95=2.902ms

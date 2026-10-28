@@ -1,0 +1,117 @@
+..F.........................................                             [100%]
+================================== FAILURES ===================================
+_________ TestPubSubTopicManager.test_subscribe_unknown_topic_raises __________
+
+self = <skellycam.tests.test_pubsub.TestPubSubTopicManager object at 0x0000029CA4D76B70>
+
+    def test_subscribe_unknown_topic_raises(self) -> None:
+        manager = PubSubTopicManager()
+        with pytest.raises(ValueError, match="Unknown topic"):
+>           manager.get_subscription("not_a_real_topic")  # type: ignore[arg-type]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+skellycam\tests\test_pubsub.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_object_2869916894720 = <enum 'TopicTypes'>
+__beartype_get_violation = <function get_func_pith_violation at 0x0000029C339556C0>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+__beartype_object_2869895877584 = <class 'multiprocessing.queues.Queue'>
+__beartype_check_meta = <beartype._check.metadata.metacheck.BeartypeCheckMeta object at 0x0000029C63BEF200>
+__beartype_func = <function PubSubTopicManager.get_subscription at 0x0000029C63BE94E0>
+args = (PubSubTopicManager(topics={<TopicTypes.UPDATE_CAMERA_SETTINGS: 1>: UpdateCamerasSettingsTopic(subscriptions=[], messa...ndler.LogRecordModel'>, publication=<multiprocessing.queues.Queue object at 0x0000029C33A41340>)}), 'not_a_real_topic')
+kwargs = {}
+
+>   ???
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.ipc.pubsub.pubsub_manager.PubSubTopicManager.get_subscription() parameter topic_type='not_a_real_topic' violates type hint <enum 'TopicTypes'>, as str 'not_a_real_topic' not instance of <class "skellycam.core.ipc.pubsub.pubsub_manager.TopicTypes">.
+
+<@beartype(skellycam.core.ipc.pubsub.pubsub_manager.PubSubTopicManager.get_subscription) at 0x29c63be94e0>:30: BeartypeCallHintParamViolation
+============================== warnings summary ===============================
+..\freemocap\.venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\Dom\GitHub\freemocap\freemocap\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+skellycam\core\camera\config\image_resolution.py:6
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\camera\config\image_resolution.py:6: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.camera.config.image_resolution.ImageResolution.__hash__() return PEP 484 type hint typing.Hashable deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class ImageResolution(BaseModel):
+
+skellycam\core\camera\opencv\opencv_helpers\recommend_camera_exposure_setting.py:56
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\camera\opencv\opencv_helpers\recommend_camera_exposure_setting.py:56: BeartypeDecorHintPep585DeprecationWarning: Function skellycam.core.camera.opencv.opencv_helpers.recommend_camera_exposure_setting.find_optimal_exposure_setting() parameter "exposure_settings" PEP 484 type hint typing.List[int] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    def find_optimal_exposure_setting(cap: cv2.VideoCapture, exposure_settings: List[int]) -> int:
+
+skellycam\core\camera\config\camera_config.py:63
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\camera\config\camera_config.py:63: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.camera.config.camera_config.CameraConfig.image_shape() return PEP 484 type hint typing.Tuple[int, ...] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class CameraConfig(BaseModel):
+
+skellycam\core\camera\config\camera_config.py:63
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\camera\config\camera_config.py:63: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.camera.config.camera_config.CameraConfig.video_image_shape() return PEP 484 type hint typing.Tuple[int, int] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class CameraConfig(BaseModel):
+
+skellycam\core\ipc\pubsub\pubsub_abcs.py:23
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_abcs.py:23: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_abcs.PubSubTopicABC.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_abcs.TopicMessageABC] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class PubSubTopicABC(ABC):
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:74
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:74: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.UpdateCamerasSettingsTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.UpdateCamerasSettingsMessage] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class UpdateCamerasSettingsTopic(PubSubTopicABC):
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:79
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:79: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.DeviceExtractedConfigTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.DeviceExtractedConfigMessage] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class DeviceExtractedConfigTopic(PubSubTopicABC):
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:84
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:84: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.SetShmTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.SetShmMessage] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class SetShmTopic(PubSubTopicABC):
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:90
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:90: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.RecordingInfoTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.RecordingInfoMessage] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class RecordingInfoTopic(PubSubTopicABC):
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:95
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:95: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.RecordingFinishedTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.RecordingFinishedMessage] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class RecordingFinishedTopic(PubSubTopicABC):
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:100
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:100: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.FramerateTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.FramerateMessage] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class FramerateTopic(PubSubTopicABC):
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:105
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:105: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.LogsTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellylogs.handlers.websocket_log_queue_handler.LogRecordModel] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class LogsTopic(PubSubTopicABC):
+
+skellycam\core\ipc\process_management\managed_worker.py:157
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\process_management\managed_worker.py:157: BeartypeDecorHintPep585DeprecationWarning: Function skellycam.core.ipc.process_management.managed_worker._process_entry_point() parameter "target_fn" PEP 484 type hint typing.Callable[..., NoneType] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    def _process_entry_point(
+
+skellycam\core\ipc\process_management\managed_worker.py:221
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\process_management\managed_worker.py:221: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.process_management.managed_worker.ManagedProcess.__init__() parameter "target" PEP 484 type hint typing.Callable[..., NoneType] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class ManagedProcess(ManagedWorker):
+
+skellycam\core\ipc\process_management\managed_worker.py:281
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\process_management\managed_worker.py:281: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.process_management.managed_worker.ManagedThread.__init__() parameter "target" PEP 484 type hint typing.Callable[..., NoneType] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class ManagedThread(ManagedWorker):
+
+skellycam\core\ipc\process_management\worker_registry.py:22
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\process_management\worker_registry.py:22: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.process_management.worker_registry.WorkerRegistry.create_worker() parameter "target" PEP 484 type hint typing.Callable[..., NoneType] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class WorkerRegistry:
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED skellycam/tests/test_pubsub.py::TestPubSubTopicManager::test_subscribe_unknown_topic_raises
+1 failed, 43 passed, 17 warnings in 6.06s

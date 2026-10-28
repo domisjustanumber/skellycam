@@ -1,0 +1,91 @@
+{
+ "tool": "gev_ptp_sync_test",
+ "host": {
+  "python": "3.12.3",
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "hostname": "3eb2fea01e1c",
+  "time_utc": "2026-10-25T19:25:45Z"
+ },
+ "args": {
+  "ip": [
+   "127.0.0.1"
+  ],
+  "iface": "",
+  "include_loopback": false,
+  "enable_ptp": true,
+  "restore_ptp": false,
+  "external_master": false,
+  "ptp_timeout": 5.0,
+  "settle_s": 2.0,
+  "duration": 3.0,
+  "interval": 0.25,
+  "max_offset_us": 1000.0,
+  "max_drift_ppm": 2.0,
+  "no_action": false,
+  "no_program_keys": false,
+  "device_key": 305419896,
+  "group_key": 1,
+  "group_mask": 4294967295,
+  "action_index": 0,
+  "action_dest": "auto",
+  "delay_ms": 500,
+  "ack_wait": 0.3,
+  "strict": false,
+  "json": "/out/aravis_ptp.json",
+  "selftest": false
+ },
+ "cameras": [
+  {
+   "ip": "127.0.0.1",
+   "label": "127.0.0.1 Fake",
+   "gev_version": "0.0",
+   "capability": "0x00000000",
+   "tick_hz": 1000000000
+  }
+ ],
+ "checks": [
+  {
+   "name": "reachable",
+   "status": "PASS",
+   "detail": "GEV 0.0, capabilities none, tick 1000000000 Hz",
+   "camera": "127.0.0.1 Fake"
+  },
+  {
+   "name": "IEEE 1588 capability",
+   "status": "SKIP",
+   "detail": "capability bit 0x00080000 clear - camera does not advertise PTP (if its vendor tool shows Ptp*/GevIEEE1588 features, try viva_sync_capture_test.py)",
+   "camera": "127.0.0.1 Fake"
+  },
+  {
+   "name": "PTP roles",
+   "status": "SKIP",
+   "detail": "no camera supports IEEE 1588",
+   "camera": ""
+  },
+  {
+   "name": "timestamp latch",
+   "status": "SKIP",
+   "detail": "latched value is always 0 - timestamp latch not implemented",
+   "camera": "127.0.0.1 Fake"
+  },
+  {
+   "name": "clock offset / drift",
+   "status": "SKIP",
+   "detail": "no camera with a working timestamp latch",
+   "camera": ""
+  },
+  {
+   "name": "program action keys",
+   "status": "SKIP",
+   "detail": "ACTION_CMD not supported (capability bit 0x40 clear)",
+   "camera": "127.0.0.1 Fake"
+  },
+  {
+   "name": "ACTION_CMD",
+   "status": "SKIP",
+   "detail": "no camera supports / accepted action keys",
+   "camera": ""
+  }
+ ]
+}

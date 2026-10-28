@@ -1,0 +1,16 @@
+=== 1. single-thread memcpy into CreateFileMapping ring (cold slots) ===
+720p   2764800 B: median     66.2 us  ~ 41.76 GB/s
+1080p  6220800 B: median    153.9 us  ~ 40.42 GB/s
+
+=== 2. aggregate memcpy bandwidth, N threads each with own 1080p camera ring ===
+1 threads:      6315 frames/s total   39.29 GB/s written  (   6315 fps per thread)
+2 threads:      7119 frames/s total   44.28 GB/s written  (   3559 fps per thread)
+5 threads:      5633 frames/s total   35.04 GB/s written  (   1127 fps per thread)
+8 threads:      4685 frames/s total   29.15 GB/s written  (    586 fps per thread)
+
+=== 3. std::atomic<int64_t> on shared mapping ===
+store(release): 0.18 ns   load(acquire): 0.23 ns   (acc=99999990000000)
+
+=== 4. openpnp-capture-style per-pixel BGR->RGB + vflip loop (win/platformstream.cpp submitBuffer) ===
+720p   swap+flip loop: median    342.7 us | flip-only row memcpy: median     82.3 us (dst[0]=3)
+1080p  swap+flip loop: median    801.5 us | flip-only row memcpy: median    204.7 us (dst[0]=3)
