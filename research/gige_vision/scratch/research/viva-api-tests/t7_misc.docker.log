@@ -1,0 +1,28 @@
+    inet 172.21.0.2/16 brd 172.21.255.255 scope global eth0
+ip=172.21.0.2 brd=172.21.255.255
+send_action(timeout_ms=0) unicast -> AckSummary(sent=1, acks=0) in 1.1 ms; fake.actions=0
+send_action(timeout_ms=50) unicast -> AckSummary(sent=1, acks=1) in 51.4 ms; fake.actions=2
+send_action(timeout_ms=200) unicast -> AckSummary(sent=1, acks=1) in 201.6 ms; fake.actions=3
+send_action(dest=172.21.255.255) -> TransportError: action command to 172.21.255.255: Permission denied (os error 13) in 0.1 ms; acted 0
+send_action(dest=255.255.255.255) -> AckSummary(sent=1, acks=0) in 201.8 ms; acted 0
+Traceback (most recent call last):
+  File "/t/t7_misc.py", line 25, in <module>
+    cam = vg.connect_gige(next(i for i in vg.discover(timeout_ms=600, all=True) if i.ip == ip))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+StopIteration
+send_action(timeout_ms=0) unicast -> AckSummary(sent=1, acks=0) in 0.2 ms; fake.actions=1
+send_action(timeout_ms=50) unicast -> AckSummary(sent=1, acks=1) in 51.2 ms; fake.actions=2
+send_action(timeout_ms=200) unicast -> AckSummary(sent=1, acks=1) in 201.4 ms; fake.actions=3
+send_action(dest=127.255.255.255) -> TransportError: action command to 127.255.255.255: Permission denied (os error 13) in 0.1 ms; acted 0
+send_action(dest=255.255.255.255) -> TransportError: action command to 255.255.255.255: Network is unreachable (os error 101) in 0.0 ms; acted 0
+frame Frame(width=1280, height=1024, pixel_format=BayerRG8, bytes=1310720) pixel_format BayerRG8
+  to_numpy() Bayer mosaic      0.259 ms (1024, 1280) uint8
+  np.frombuffer(payload())     0.043 ms (1024, 1280) uint8
+  to_numpy(demosaic=True)      4.256 ms (1024, 1280, 3) uint8
+  to_rgb8()                    4.200 ms (1024, 1280, 3) uint8
+  (cv2 not installed; skipped demosaic comparison)
+  mosaic top-left 4x4:
+ [[0 0 0 0]
+ [0 0 0 0]
+ [0 0 0 0]
+ [0 0 0 0]]

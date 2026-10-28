@@ -1,0 +1,71 @@
+=== package versions ===
+aravis-tools 0.8.30-1build2
+aravis-tools-cli 0.8.30-1build2
+gir1.2-aravis-0.8:amd64 0.8.30-1build2
+libaravis-0.8-0:amd64 0.8.30-1build2
+python3-gi 3.48.2-1
+python3-numpy 1:1.26.4+ds-6ubuntu1
+=== arv-tool-0.8 ===
+Aravis-Fake-GV01 (127.0.0.1)
+=== python capture ===
+PyGObject (3, 48, 2), Aravis GIR namespace version 0.8
+Discovered 1 device(s):
+  [0] id='Aravis-Fake-GV01' protocol='GigEVision' address='127.0.0.1' vendor='Aravis' model='Fake' serial='GV01'
+Opening device: '127.0.0.1'
+is_gv_device=True vendor='Aravis' model='Fake'
+  feature Width: '512'
+  feature Height: '512'
+  feature PixelFormat: 'Mono8'
+  feature AcquisitionFrameRate: '25'
+  feature GevTimestampTickFrequency: <not in GenICam XML>
+  feature GevSCPSPacketSize: '1400'
+  feature PtpEnable: <not in GenICam XML>
+  feature GevIEEE1588: <not in GenICam XML>
+  feature ActionDeviceKey: <not in GenICam XML>
+frame rate setting: 25.000 Hz
+GV packet size: 1400
+GevTimestampTickFrequency (bootstrap register): 1000000000 Hz
+payload=262144 bytes, pixel_format=Mono8, region=(0,0,512,512)
+  GvStream property packet-resend = <enum ARV_GV_STREAM_PACKET_RESEND_NEVER of type Aravis.GvStreamPacketResend>
+  GvStream property socket-buffer = <enum ARV_GV_STREAM_SOCKET_BUFFER_FIXED of type Aravis.GvStreamSocketBuffer>
+  GvStream property socket-buffer-size = 0
+  GvStream property packet-timeout = 20000
+  GvStream property frame-retention = 100000
+first frame: width=512 height=512 pixel_format=0x01080001 () bytes=262144 payload_type=<enum ARV_BUFFER_PAYLOAD_TYPE_IMAGE of type Aravis.BufferPayloadType> mean=127.0 min=0 max=254
+
+frame_id, device_timestamp_ns, system_timestamp_ns, d_device_ms, d_system_ms
+65401, 1792950110704996000, 1792950110707606000, 0.000, 0.000
+65402, 1792950110720003000, 1792950110727766000, 15.007, 20.160
+65403, 1792950110760003000, 1792950110767622000, 40.000, 39.856
+65404, 1792950110800002000, 1792950110807609000, 39.999, 39.987
+65405, 1792950110840008000, 1792950110847609000, 40.006, 40.000
+65406, 1792950110880038000, 1792950110887598000, 40.030, 39.989
+65407, 1792950110920029000, 1792950110927601000, 39.991, 40.003
+65408, 1792950110960018000, 1792950110967619000, 39.989, 40.018
+65409, 1792950111000007000, 1792950111007600000, 39.989, 39.981
+65410, 1792950111040003000, 1792950111047562000, 39.996, 39.962
+...
+65498, 1792950114640002000, 1792950114657582000, 40.000, 39.994
+65499, 1792950114680002000, 1792950114697586000, 40.000, 40.004
+65500, 1792950114720002000, 1792950114737599000, 40.000, 40.013
+
+device-timestamp interval ms: mean=40.556 std=10.553
+system-timestamp interval ms: mean=40.707 std=10.844
+fps (device timestamps) = 24.66
+fps (system timestamps) = 24.57
+buffer.get_data() copy time: mean=0.026 ms for 262144 bytes
+fps (wall clock incl. startup) = 24.51  ok=100 bad=0 elapsed=4.079s
+stream.get_statistics() raw: (n_resent_packets=0, n_missing_packets=0)
+=== python capture, frame-rate 100 ===
+...
+63, 1792950117330037000, 1792950117337663000, 9.980, 0.056
+64, 1792950117340002000, 1792950117357595000, 9.965, 19.932
+65, 1792950117350002000, 1792950117357640000, 10.000, 0.045
+
+device-timestamp interval ms: mean=9.984 std=0.160
+system-timestamp interval ms: mean=10.001 std=10.383
+fps (device timestamps) = 100.16
+fps (system timestamps) = 99.99
+buffer.get_data() copy time: mean=0.029 ms for 262144 bytes
+fps (wall clock incl. startup) = 91.77  ok=100 bad=0 elapsed=1.090s
+stream.get_statistics() raw: (n_resent_packets=0, n_missing_packets=0)

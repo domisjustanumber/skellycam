@@ -1,0 +1,189 @@
+[
+ {
+  "id": "C1",
+  "claim": "IEEE 1588 PTP support and scheduled action commands are GigE Vision 2.0 features, not GEV 3.0; IEEE1588 profile registers were added in GEV 2.1.",
+  "evidence_urls": [
+   "https://gitlab.com/wireshark/wireshark/-/blob/02dbbdbf41aecc1f2a4ba6c0db2546af5bb07d75/epan/dissectors/packet-gvcp.c#L204-229",
+   "https://gitlab.com/wireshark/wireshark/-/blob/02dbbdbf41aecc1f2a4ba6c0db2546af5bb07d75/epan/dissectors/packet-gvcp.c#L426-489",
+   "https://github.com/AravisProject/aravis/issues/184"
+  ],
+  "how_verified": "read-code (Wireshark dissector field names *_v2_0 / *_v2_1 and GEV 2.0 comments); read Aravis issue",
+  "confidence": "high"
+ },
+ {
+  "id": "C2",
+  "claim": "SFNC 2.8 \u00a727.3 defines PtpEnable, PtpClockAccuracy, PtpDataSetLatch, PtpStatus (Initializing, Faulty, Disabled, Listening, PreMaster, Master, Passive, Uncalibrated, Slave = values 1..9), PtpServoStatus (Unknown/Locked/Device-specific), PtpOffsetFromMaster (ns), PtpClockID/ParentClockID/GrandmasterClockID, PtpMeanPropagationDelay; status values are latched. GevIEEE1588/GevIEEE1588Status/GevTimestampControlLatch/GevTimestampValue are deprecated in favour of PtpEnable/PtpStatus/TimestampLatch/TimestampLatchValue.",
+  "evidence_urls": [
+   "https://www.emva.org/wp-content/uploads/GenICam_SFNC_v2_8.pdf",
+   "https://www.emva.org/wp-content/uploads/GenICam_SFNC_v2_7.pdf"
+  ],
+  "how_verified": "read-spec/doc (pdftotext of SFNC 2.8 pp.529-534, p.85, p.118; cross-checked 2.7.1 pp.512-518)",
+  "confidence": "high"
+ },
+ {
+  "id": "C3",
+  "claim": "Bootstrap registers: GVCP capability 0x0934 (bit 0x00080000 IEEE1588, 0x00020000 scheduled action, 0x00000040 action, 0x00100000 unconditional action); configuration 0x0954 bit 0x00080000 = IEEE1588 enable; 0x096C IEEE1588 status (low 4 bits); 0x0970 scheduled action queue size; action device key 0x090C; action group key/mask 0x9800+0x10*i / 0x9804+0x10*i; timestamp control 0x0944 (1=reset, 2=latch), value 0x0948/0x094C.",
+  "evidence_urls": [
+   "https://gitlab.com/wireshark/wireshark/-/blob/02dbbdbf41aecc1f2a4ba6c0db2546af5bb07d75/epan/dissectors/packet-gvcp.c#L113-170",
+   "https://gitlab.com/wireshark/wireshark/-/blob/02dbbdbf41aecc1f2a4ba6c0db2546af5bb07d75/epan/dissectors/packet-gvcp.c#L3468-3500",
+   "https://gitlab.com/wireshark/wireshark/-/blob/02dbbdbf41aecc1f2a4ba6c0db2546af5bb07d75/epan/dissectors/packet-gvcp.c#L3604-3618",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcpprivate.h#L95-L124",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arv-gev-bootstrap.xml#L274-L300"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "C4",
+  "claim": "GVCP ACTION_CMD (0x0100, ack 0x0101) packet: 8-byte header [0x42, flags (0x80=scheduled action time present, 0x01=ack required), cmd u16, length u16 (12 or 20), req_id u16] followed by device_key u32, group_key u32, group_mask u32, optional action_time u64, big-endian, UDP port 3956. Late scheduled actions are reported with status 0x8016 ACTION_LATE.",
+  "evidence_urls": [
+   "https://gitlab.com/wireshark/wireshark/-/blob/02dbbdbf41aecc1f2a4ba6c0db2546af5bb07d75/epan/dissectors/packet-gvcp.c#L2092-2114",
+   "https://gitlab.com/wireshark/wireshark/-/blob/02dbbdbf41aecc1f2a4ba6c0db2546af5bb07d75/epan/dissectors/packet-gvcp.c#L2513-2518",
+   "https://gitlab.com/wireshark/wireshark/-/blob/02dbbdbf41aecc1f2a4ba6c0db2546af5bb07d75/epan/dissectors/packet-gvcp.c#L3049-3067",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcpprivate.h#L298-L303"
+  ],
+  "how_verified": "read-code + ran-test: python -I gev_ptp_sync_test.py selftest --pcap action_cmds.pcap; tshark 4.2.2 -r action_cmds.pcap -d udp.port==3956,gvcp -V decoded Flags 0x81, Scheduled Action Command True, Device Key 0x12345678, Group Key 1, Mask 1, Action Scheduled Time 0x000001e23f5a1000 (log: ptp-sync-tests/out/docker_run_final.log)",
+  "confidence": "high"
+ },
+ {
+  "id": "C5",
+  "claim": "Aravis (HEAD 482547a3, 2026-10-22; latest tags 0.9.2/0.8.36 2026-04-23) has no API to send action or scheduled action commands: ACTION_CMD is absent from its GVCP command enum and the only 'action' symbols are the capability bit and ACTION_LATE status codes; feature request #184 is still open. Its fake GV camera does not handle ACTION_CMD.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcpprivate.h#L267-L281",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvfakecamera.c#L157-L216",
+   "https://github.com/AravisProject/aravis/issues/184"
+  ],
+  "how_verified": "read-code (grep -i 'action_c|ACTION_CMD|scheduled|ptp|1588' across repo) + ran-test (ACTION_CMD to arv-fake-gv-camera-0.8 got no ACTION_ACK)",
+  "confidence": "high"
+ },
+ {
+  "id": "C6",
+  "claim": "pypylon exposes action commands and scheduled action commands from Python: IGigETransportLayer.ActionCommand(...) and .ScheduledActionCommand(deviceKey, groupKey, groupMask, actionTimeNs, broadcastAddress) with IssueNoWait()/IssueWait().",
+  "evidence_urls": [
+   "https://github.com/basler/pypylon/blob/079cd1c7b7a9222591c69f88e3001059eca50dfe/src/pylon/GigETransportLayer.i#L230-L365",
+   "https://github.com/basler/pypylon/blob/079cd1c7b7a9222591c69f88e3001059eca50dfe/samples/pylon/grab_using_action_command/grab_using_action_command.py#L60-L100"
+  ],
+  "how_verified": "read-code (pypylon HEAD 079cd1c7, tag 26.9, 2026-10-23)",
+  "confidence": "high"
+ },
+ {
+  "id": "C7",
+  "claim": "GenTL SFNC 1.2 defines Interface-module action features (ActionCommand, ActionDeviceKey, ActionGroupKey, ActionGroupMask, ActionScheduledTimeEnable, ActionScheduledTime, GevActionDestinationIPAddress); harvesters 1.4.3 exposes the Interface module node_map via ImageAcquirer.interface.",
+  "evidence_urls": [
+   "https://www.emva.org/wp-content/uploads/GenICam_GenTL_SFNC_1_2.pdf",
+   "https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/src/harvesters/core.py#L1990-L1997",
+   "https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/src/harvesters/core.py#L506-L510"
+  ],
+  "how_verified": "read-spec/doc (GenTL SFNC 1.2.0 pp.72-76) + read-code",
+  "confidence": "medium"
+ },
+ {
+  "id": "C8",
+  "claim": "pyGigEVision v0.2.2 (2026-07-08) implements only DISCOVERY, FORCEIP, READ/WRITE REG/MEM and PACKETRESEND GVCP commands - no ACTION_CMD or PTP features - but parses the 64-bit GVSP leader timestamp.",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvcp.py#L50-L56",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L610-L617"
+  ],
+  "how_verified": "read-code (grep for action/ptp/1588)",
+  "confidence": "high"
+ },
+ {
+  "id": "C9",
+  "claim": "Grandmaster selection is by the IEEE 1588 Best Master Clock Algorithm among the cameras (Basler: lowest Priority1 wins; Allied Vision PtpMode=Auto; LUCID BMC + PtpSlaveOnly), so no host master is required; without a GPS/UTC grandmaster the shared timescale is arbitrary.",
+  "evidence_urls": [
+   "https://docs.baslerweb.com/precision-time-protocol",
+   "https://support.thinklucid.com/?p=8070",
+   "https://www.alliedvision.com/assets/support/Camera-Documentation/Allied-Vision/FAQs-Application-Notes/PTP_IEEE1588_with_Prosilica_GT_GC_Manta.pdf"
+  ],
+  "how_verified": "read-spec/doc (vendor docs; AV PDF text-extracted)",
+  "confidence": "high"
+ },
+ {
+  "id": "C10",
+  "claim": "Windows' built-in PTP (w32time ptpprov) is a client/subordinate only (Windows 10 1809+/Server 2019+); multicast receive is off by default (EnableMulticastRx) and masters are configured in PtpMasters. No Microsoft source describes Windows as a PTP master.",
+  "evidence_urls": [
+   "https://github.com/microsoft/W32Time/blob/9795ef91dfe5a452266ffd8106ff2bcb17f33556/README.md#L25-L36",
+   "https://github.com/microsoft/W32Time/blob/9795ef91dfe5a452266ffd8106ff2bcb17f33556/Precision%20Time%20Protocol/Windows%20Configuration%20Helpers/PTPClientConfig.txt",
+   "https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/insider-preview"
+  ],
+  "how_verified": "read-code/doc (W32Time repo cloned; Validation Guide .docx text-extracted)",
+  "confidence": "high"
+ },
+ {
+  "id": "C11",
+  "claim": "On Linux, linuxptp ptp4l can be the grandmaster: defaults UDPv4, E2E, hardware timestamping, priority1 128; -S software timestamping; serverOnly prevents entering client state; event/general ports 319/320 multicast 224.0.1.129 (P2P 224.0.0.107). linuxptp is Linux-only by design.",
+  "evidence_urls": [
+   "https://github.com/richardcochran/linuxptp/blob/f98cb5de87e63696599c59d0a9df7dc04d08d40d/configs/default.cfg",
+   "https://github.com/richardcochran/linuxptp/blob/f98cb5de87e63696599c59d0a9df7dc04d08d40d/ptp4l.8#L48-L62",
+   "https://github.com/richardcochran/linuxptp/blob/f98cb5de87e63696599c59d0a9df7dc04d08d40d/udp.c#L40-L41",
+   "https://github.com/richardcochran/linuxptp/blob/f98cb5de87e63696599c59d0a9df7dc04d08d40d/config.c#L327-L349",
+   "https://github.com/richardcochran/linuxptp/blob/f98cb5de87e63696599c59d0a9df7dc04d08d40d/README.org#L1-L20"
+  ],
+  "how_verified": "read-code (linuxptp HEAD f98cb5de, 2026-06-05; v4.4 2024-09-07)",
+  "confidence": "high"
+ },
+ {
+  "id": "C12",
+  "claim": "IGMP snooping blocks Basler GigE camera PTP traffic (sent to 224.0.1.129) because the cameras don't join an IGMP group; Basler's only fix is to disable IGMP snooping.",
+  "evidence_urls": [
+   "https://docs.baslerweb.com/knowledge/ptp-synchronization-doesn't-work-when-igmp-snooping-is-enabled"
+  ],
+  "how_verified": "read-spec/doc (Basler KB v137, 19 Oct 2026)",
+  "confidence": "high"
+ },
+ {
+  "id": "C13",
+  "claim": "Vendor sync accuracy figures: Allied Vision 'within two microseconds', <\u00b11 \u00b5s max offset over 69 h, ~125 ns on scope between two cameras; Teledyne 'within a few microseconds'. Allied Vision found host software PTP masters on Windows/Linux gave 'significant jitter'.",
+  "evidence_urls": [
+   "https://www.alliedvision.com/assets/support/Camera-Documentation/Allied-Vision/FAQs-Application-Notes/PTP_IEEE1588_with_Prosilica_GT_GC_Manta.pdf",
+   "https://www.teledynevisionsolutions.com/learn/learning-center/machine-vision/precision-system-synchronization-with-the-ieee-1588-precision-time-protocol-ptp/"
+  ],
+  "how_verified": "read-spec/doc (AV app note V1.3.1 2025-02-18 via pdftotext)",
+  "confidence": "high"
+ },
+ {
+  "id": "C14",
+  "claim": "Scheduled action procedure: sync PTP, TimestampLatch on one camera, read TimestampLatchValue, send action with action_time = value + delay (ticks = ns with PTP); 0 or past time executes immediately (Basler); cameras configured TriggerSelector=FrameStart, TriggerMode=On, TriggerSource=Action1 with ActionDeviceKey/ActionSelector/ActionGroupKey/ActionGroupMask (SFNC \u00a714 example).",
+  "evidence_urls": [
+   "https://docs.baslerweb.com/scheduled-action-commands",
+   "https://docs.baslerweb.com/action-commands",
+   "https://www.emva.org/wp-content/uploads/GenICam_SFNC_v2_8.pdf"
+  ],
+  "how_verified": "read-spec/doc",
+  "confidence": "high"
+ },
+ {
+  "id": "C15",
+  "claim": "Vendor PTP-based synchronous acquisition modes: Basler Synchronous Free Run (SyncFreeRunTimerStartTimeLow/High, SyncFreeRunTimerTriggerRateAbs, SyncFreeRunTimerUpdate, SyncFreeRunTimerEnable); LUCID PTPSync (AcquisitionStartMode=PTPSync, PTPSyncFrameRate < AcquisitionFrameRate; firmware schedules 4 advance action commands); Allied Vision PtpAcquisitionGateTime gating FixedRate triggers until GevTimestampValue >= gate time.",
+  "evidence_urls": [
+   "https://docs.baslerweb.com/synchronous-free-run",
+   "https://support.thinklucid.com/?p=7267",
+   "https://www.alliedvision.com/assets/support/Camera-Documentation/Allied-Vision/FAQs-Application-Notes/PTP_IEEE1588_with_Prosilica_GT_GC_Manta.pdf"
+  ],
+  "how_verified": "read-spec/doc",
+  "confidence": "high"
+ },
+ {
+  "id": "C16",
+  "claim": "Every GVSP image leader carries a 64-bit device timestamp; Aravis converts it to ns using GevTimestampTickFrequency read once at stream creation, so PTP (which changes Basler tick from 125 MHz to 1 GHz) should be enabled before creating the stream. The Aravis fake camera stamps frames with host wall-clock time.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvspprivate.h#L452-L463",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L460-L530",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L1617",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvfakecamera.c#L795-L796",
+   "https://docs.baslerweb.com/precision-time-protocol"
+  ],
+  "how_verified": "read-code + ran-test (tshark on lo while arv-camera-test-0.8 streamed from arv-fake-gv-camera-0.8: leader timestamps e.g. 0x18e1d7099b44c930 = 1792950562929822000 fell inside host date +%s%N window, 40 ms apart). Tick-frequency caveat is an inference from code + Basler doc.",
+  "confidence": "medium"
+ },
+ {
+  "id": "C17",
+  "claim": "The Aravis fake GigE Vision camera (aravis-tools 0.8.30) cannot emulate PTP, timestamp latch or action commands: capability register 0, arv-tool finds no PtpEnable/GevIEEE1588/ActionDeviceKey/TimestampLatch features, latch value always 0, no ACTION_ACK.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvfakecamera.c#L157-L216",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvfakecamera.c#L1083-L1084"
+  ],
+  "how_verified": "ran-test: docker run --rm --cap-add NET_RAW --cap-add NET_ADMIN gev-ptp-test bash /t/run_in_docker.sh (gev_ptp_sync_test.py probe/latch/ptp/action against 127.0.0.1); log ptp-sync-tests/out/docker_run_final.log",
+  "confidence": "high"
+ }
+]

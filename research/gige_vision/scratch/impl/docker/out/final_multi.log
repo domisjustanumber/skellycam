@@ -1,0 +1,129 @@
+/out/multi.sh: line 3: cd: $'/out\r': No such file or directory
+### interfaces
+lo 127.0.0.1/8
+eth0 172.31.77.100/24
+### gev_probe: broadcast discovery on all interfaces
+== host
+  python=3.12.3, platform=Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.39, machine=x86_64, hostname=23dd5623ee00, time_utc=2026-10-25T19:13:37Z
+  interface eth0: 172.31.77.100/24 (broadcast 172.31.77.255)
+== discovery (broadcast on all interfaces)
+  found 172.31.77.11  00:00:00:00:00:00  Aravis Fake  serial=GV01  GEV 0.0  user_name=''
+  found 172.31.77.12  00:00:00:00:00:00  Aravis Fake  serial=GV01  GEV 0.0  user_name=''
+  [PASS] discovery: 2 camera(s) answered
+
+== camera 172.31.77.11
+  [PASS] [172.31.77.11 Aravis Fake] read bootstrap registers: via local interface 172.31.77.100
+  [WARN] [172.31.77.11 Aravis Fake] GigE Vision version: Version register reads 0.0 (invalid; emulator?)
+  [INFO] [172.31.77.11 Aravis Fake] GVCP capabilities: none (0x00000000)
+  [INFO] [172.31.77.11 Aravis Fake] timestamp tick frequency: 1000000000 Hz (1 ns ticks, typical with PTP)
+  [SKIP] [172.31.77.11 Aravis Fake] IEEE 1588 (PTP): not supported: capability bit 0x00080000 clear
+  [SKIP] [172.31.77.11 Aravis Fake] action commands: action=False scheduled=False unconditional=False
+  [INFO] [172.31.77.11 Aravis Fake] stream channel 0: SCPS packet size 1400 B (standard MTU); extended ids enabled=False
+  [PASS] [172.31.77.11 Aravis Fake] GenICam XML: 15975 B in 0.0 s, 69 nodes, url Local:arv-fake-camera.xml;10000;3e67
+  [INFO] [172.31.77.11 Aravis Fake] XML enum TriggerSource: Line0, Software
+  [INFO] [172.31.77.11 Aravis Fake] XML enum PixelFormat: BayerBG8, BayerGB8, BayerGR8, BayerRG8, Mono8, RGB8, Mono16
+  [WARN] [172.31.77.11 Aravis Fake] PTP + scheduled-action sync readiness: missing: ptp, scheduled_action, action, TriggerSource Action0/Action1
+
+== camera 172.31.77.12
+  [PASS] [172.31.77.12 Aravis Fake] read bootstrap registers: via local interface 172.31.77.100
+  [WARN] [172.31.77.12 Aravis Fake] GigE Vision version: Version register reads 0.0 (invalid; emulator?)
+  [INFO] [172.31.77.12 Aravis Fake] GVCP capabilities: none (0x00000000)
+  [INFO] [172.31.77.12 Aravis Fake] timestamp tick frequency: 1000000000 Hz (1 ns ticks, typical with PTP)
+  [SKIP] [172.31.77.12 Aravis Fake] IEEE 1588 (PTP): not supported: capability bit 0x00080000 clear
+  [SKIP] [172.31.77.12 Aravis Fake] action commands: action=False scheduled=False unconditional=False
+  [INFO] [172.31.77.12 Aravis Fake] stream channel 0: SCPS packet size 1400 B (standard MTU); extended ids enabled=False
+  [PASS] [172.31.77.12 Aravis Fake] GenICam XML: 15975 B in 0.0 s, 69 nodes, url Local:arv-fake-camera.xml;10000;3e67
+  [INFO] [172.31.77.12 Aravis Fake] XML enum TriggerSource: Line0, Software
+  [INFO] [172.31.77.12 Aravis Fake] XML enum PixelFormat: BayerBG8, BayerGB8, BayerGR8, BayerRG8, Mono8, RGB8, Mono16
+  [WARN] [172.31.77.12 Aravis Fake] PTP + scheduled-action sync readiness: missing: ptp, scheduled_action, action, TriggerSource Action0/Action1
+
+IP              MAC               Vendor / model               GEV  1588 PTP en/state     Sched Act  Resend Tick Hz     SCPS  EI  Act1 trig
+--------------- ----------------- ---------------------------- ---- ---- ---------------- ----- ---- ------ ----------- ----- --- ---------
+172.31.77.11    00:00:00:00:00:00 Aravis Fake                  0.0  no   -                no    no   no     1000000000  1400  off no       
+172.31.77.12    00:00:00:00:00:00 Aravis Fake                  0.0  no   -                no    no   no     1000000000  1400  off no       
+
+== gev_probe: 5 passed, 0 failed, 4 skipped, 4 warnings, 10 info
+   WARN [172.31.77.11 Aravis Fake] GigE Vision version: Version register reads 0.0 (invalid; emulator?)
+   SKIP [172.31.77.11 Aravis Fake] IEEE 1588 (PTP): not supported: capability bit 0x00080000 clear
+   SKIP [172.31.77.11 Aravis Fake] action commands: action=False scheduled=False unconditional=False
+   WARN [172.31.77.11 Aravis Fake] PTP + scheduled-action sync readiness: missing: ptp, scheduled_action, action, TriggerSource Action0/Action1
+   WARN [172.31.77.12 Aravis Fake] GigE Vision version: Version register reads 0.0 (invalid; emulator?)
+   SKIP [172.31.77.12 Aravis Fake] IEEE 1588 (PTP): not supported: capability bit 0x00080000 clear
+   SKIP [172.31.77.12 Aravis Fake] action commands: action=False scheduled=False unconditional=False
+   WARN [172.31.77.12 Aravis Fake] PTP + scheduled-action sync readiness: missing: ptp, scheduled_action, action, TriggerSource Action0/Action1
+wrote /out/multi_probe.json
+exit=0
+### gev_ptp_sync_test: all cameras (mixed emulators), programs keys where supported
+== clock offset / drift
+  [SKIP] clock offset / drift: no camera with a working timestamp latch
+== action commands
+  [SKIP] [172.31.77.11 Fake] program action keys: ACTION_CMD not supported (capability bit 0x40 clear)
+  [SKIP] [172.31.77.12 Fake] program action keys: ACTION_CMD not supported (capability bit 0x40 clear)
+  [SKIP] ACTION_CMD: no camera supports / accepted action keys
+
+== verdict
+  PTP clock sync: NOT VERIFIED (2 camera(s))
+  scheduled ACTION_CMD accepted by all: NO / not tested
+
+== gev_ptp_sync_test: 2 passed, 0 failed, 9 skipped, 0 warnings, 0 info
+   SKIP [172.31.77.11 Fake] IEEE 1588 capability: capability bit 0x00080000 clear - camera does not advertise PTP (if its vendor tool shows Ptp*/GevIEEE1588 features, try viva_sync_capture_test.py)
+   SKIP [172.31.77.12 Fake] IEEE 1588 capability: capability bit 0x00080000 clear - camera does not advertise PTP (if its vendor tool shows Ptp*/GevIEEE1588 features, try viva_sync_capture_test.py)
+   SKIP PTP roles: no camera supports IEEE 1588
+   SKIP [172.31.77.11 Fake] timestamp latch: latched value is always 0 - timestamp latch not implemented
+   SKIP [172.31.77.12 Fake] timestamp latch: latched value is always 0 - timestamp latch not implemented
+   SKIP clock offset / drift: no camera with a working timestamp latch
+   SKIP [172.31.77.11 Fake] program action keys: ACTION_CMD not supported (capability bit 0x40 clear)
+   SKIP [172.31.77.12 Fake] program action keys: ACTION_CMD not supported (capability bit 0x40 clear)
+   SKIP ACTION_CMD: no camera supports / accepted action keys
+wrote /out/multi_ptp_all.json
+exit=0
+### gev_ptp_sync_test: two viva fakes, emulator action keys, subnet broadcast
+  sending ACTION_CMDs to 172.31.77.255 from 172.31.77.100
+  [PASS] ACTION_CMD wrong device key ignored: no camera acknowledged
+  [SKIP] [172.31.77.21 FakeGigE] ACTION_CMD immediate: no ACTION_ACK (camera does not advertise action)
+  [SKIP] [172.31.77.22 FakeGigE] ACTION_CMD immediate: no ACTION_ACK (camera does not advertise action)
+  [SKIP] ACTION_CMD scheduled: no camera clock to schedule against (timestamp latch unavailable)
+== verdict
+  scheduled ACTION_CMD accepted by all: NO / not tested
+   SKIP [172.31.77.21 FakeGigE] ACTION_CMD immediate: no ACTION_ACK (camera does not advertise action)
+   SKIP [172.31.77.22 FakeGigE] ACTION_CMD immediate: no ACTION_ACK (camera does not advertise action)
+   SKIP ACTION_CMD scheduled: no camera clock to schedule against (timestamp latch unavailable)
+exit=0
+### gev_ptp_sync_test: same, unicast
+  sending ACTION_CMDs unicast to each camera from 172.31.77.100
+  [PASS] ACTION_CMD wrong device key ignored: no camera acknowledged
+  [PASS] [172.31.77.21 FakeGigE] ACTION_CMD immediate: ACK SUCCESS
+  [PASS] [172.31.77.22 FakeGigE] ACTION_CMD immediate: ACK SUCCESS
+  [SKIP] ACTION_CMD scheduled: no camera clock to schedule against (timestamp latch unavailable)
+  scheduled ACTION_CMD accepted by all: NO / not tested
+   SKIP ACTION_CMD scheduled: no camera clock to schedule against (timestamp latch unavailable)
+exit=0
+### gvsp_capture_report live: viva fake over the bridge (stdlib control, forced buffer)
+  [PASS] [172.31.77.21] camera reachable: GEV 2.0, tick 1000000000 Hz, packet resend supported
+  [PASS] [172.31.77.21] socket receive buffer: requested 33554432 B via SO_RCVBUFFORCE, OS reports 67108864 B (default 212992 B)
+  frames: seen 81, complete 81, incomplete 0, trailer missing 0, never seen (block-id gaps) 0, missing packets 0
+  image: BayerRG8 640x480 x81 leaders (OpenCV: cv2.COLOR_BayerBG2BGR)
+  [PASS] [GVSP 172.31.77.21 -> 172.31.77.100:59908 (67 Mbit/s)] GVSP leader + trailer packets: {'LEADER': 81, 'PAYLOAD': 17010, 'TRAILER': 81}
+  [PASS] [GVSP 172.31.77.21 -> 172.31.77.100:59908 (67 Mbit/s)] frames complete: 81/81 (100.0 %; limit 99 %)
+  [INFO] [GVSP 172.31.77.21 -> 172.31.77.100:59908 (67 Mbit/s)] compression verdict: UNCOMPRESSED: payload bytes/frame 307200 vs uncompressed BayerRG8 size 307200 (ratio 1.000); IMAGE payload in a standard PFNC pixel format, full-size frames
+  [INFO] [GVSP 172.31.77.21 -> 172.31.77.100:59908 (67 Mbit/s)] packet size: payload packets 1500 B IP datagrams (max 1500) -> standard 1500 MTU
+  [INFO] [GVSP 172.31.77.21 -> 172.31.77.100:59908 (67 Mbit/s)] extended ids (64-bit block ids): not used (0/17172 packets)
+  [INFO] [GVSP 172.31.77.21 -> 172.31.77.100:59908 (67 Mbit/s)] device timestamps: increasing; device frame rate 27.12 fps; host arrival rate 26.79 fps
+exit=0
+### gvsp_capture_report live: Aravis fake over the bridge
+  [PASS] [172.31.77.11] camera reachable: GEV 0.0, tick 1000000000 Hz, packet resend NOT supported
+  [PASS] [172.31.77.11] socket receive buffer: requested 33554432 B via SO_RCVBUFFORCE, OS reports 67108864 B (default 212992 B)
+  frames: seen 75, complete 75, incomplete 0, trailer missing 0, never seen (block-id gaps) 0, missing packets 0
+  image: Mono8 512x512 x75 leaders
+  [PASS] [GVSP 172.31.77.11 -> 172.31.77.100:59489 (52 Mbit/s)] GVSP leader + trailer packets: {'LEADER': 75, 'PAYLOAD': 14475, 'TRAILER': 75}
+  [PASS] [GVSP 172.31.77.11 -> 172.31.77.100:59489 (52 Mbit/s)] frames complete: 75/75 (100.0 %; limit 99 %)
+  [INFO] [GVSP 172.31.77.11 -> 172.31.77.100:59489 (52 Mbit/s)] compression verdict: UNCOMPRESSED: payload bytes/frame 262144 vs uncompressed Mono8 size 262144 (ratio 1.000); IMAGE payload in a standard PFNC pixel format, full-size frames
+  [INFO] [GVSP 172.31.77.11 -> 172.31.77.100:59489 (52 Mbit/s)] packet size: payload packets 1400 B IP datagrams (max 1400) -> standard 1500 MTU
+  [INFO] [GVSP 172.31.77.11 -> 172.31.77.100:59489 (52 Mbit/s)] extended ids (64-bit block ids): not used (0/14625 packets)
+  [INFO] [GVSP 172.31.77.11 -> 172.31.77.100:59489 (52 Mbit/s)] device timestamps: increasing; device frame rate 25.00 fps; host arrival rate 25.26 fps
+exit=0
+### gvsp_capture_report live: viva fake, --control viva
+  [PASS] [172.31.77.22] camera reachable: GEV 2.0, tick 1000000000 Hz, packet resend supported
+  [FAIL] [172.31.77.22] take control: viva: GvcpError: viva-genicam did not discover 172.31.77.22
+   FAIL [172.31.77.22] take control: viva: GvcpError: viva-genicam did not discover 172.31.77.22
+exit=1

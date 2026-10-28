@@ -1,0 +1,69 @@
+diff -ru rawusb-0.1.7/src/sys/windows/ffi.rs b/rawusb-0.1.7/src/sys/windows/ffi.rs
+--- a/rawusb-0.1.7/src/sys/windows/ffi.rs	2006-07-23 21:21:28.000000000 -0400
++++ b/rawusb-0.1.7/src/sys/windows/ffi.rs	2026-10-25 17:14:04.415363600 -0400
+@@ -211,7 +211,10 @@
+ pub(crate) const IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX: DWORD = ctl_code(274);
+ pub(crate) const IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX_V2: DWORD = ctl_code(279);
+ 
+-#[repr(C)]
++// usbioctl.h declares this under #include <pshpack1.h>: 1-byte packing. With plain repr(C)
++// DeviceAddress/NumberOfOpenPipes/ConnectionStatus land 1 byte late, ConnectionStatus reads 0
++// and every non-root-hub device is dropped from enumeration (uvc_iso phase-2 fix).
++#[repr(C, packed)]
+ pub(crate) struct USB_NODE_CONNECTION_INFORMATION_EX {
+     pub(crate) ConnectionIndex: u32,
+     pub(crate) DeviceDescriptor: [u8; 18],
+@@ -221,8 +224,8 @@
+     pub(crate) DeviceAddress: u16,
+     pub(crate) NumberOfOpenPipes: u32,
+     pub(crate) ConnectionStatus: u32,
+-    // USB_PIPE_INFO PipeList[0] follows; we allocate room for 32.
+-    pub(crate) PipeList: [[u8; 12]; 32],
++    // USB_PIPE_INFO PipeList[0] follows (packed: 7-byte endpoint descriptor + ULONG = 11 bytes); room for 32.
++    pub(crate) PipeList: [[u8; 11]; 32],
+ }
+ 
+ pub(crate) const USB_CONNECTION_STATUS_DEVICE_CONNECTED: u32 = 1;
+diff -ru rawusb-0.1.7/src/sys/windows/mod.rs b/rawusb-0.1.7/src/sys/windows/mod.rs
+--- a/rawusb-0.1.7/src/sys/windows/mod.rs	2006-07-23 21:21:28.000000000 -0400
++++ b/rawusb-0.1.7/src/sys/windows/mod.rs	2026-10-25 17:14:04.390503500 -0400
+@@ -614,7 +614,9 @@
+     let mut v2 = USB_NODE_CONNECTION_INFORMATION_EX_V2 {
+         ConnectionIndex: port,
+         Length: std::mem::size_of::<USB_NODE_CONNECTION_INFORMATION_EX_V2>() as DWORD,
+-        SupportedUsbProtocols: 0,
++        // Input: protocols the caller understands (Usb110|Usb200|Usb300). With 0 the hub never
++        // sets the OPERATING_AT_SUPERSPEED flags, so SuperSpeed devices were reported as High.
++        SupportedUsbProtocols: 0x7,
+         Flags: 0,
+     };
+     // SAFETY: as above with the V2 structure.
+@@ -1295,8 +1297,17 @@
+             TransferType::Control => {
+                 let setup = ControlSetup::from_bytes(st.buffer[..8].try_into().expect("checked by caller"));
+                 let data_len = (buf_len - 8).min(setup.length as usize) as u32;
+-                match self.control_handle() {
+-                    Some(h) => {
++                // WinUSB replaces the low byte of wIndex with the handle's own interface number
++                // for interface-recipient requests, so route them through the handle of the
++                // interface named in wIndex (as libusb's WinUSB backend does). Without this a
++                // VS_PROBE to interface 1 reached interface 0 (VC) and stalled (uvc_iso phase-2 fix).
++                let routed = if setup.request_type & 0x1f == 0x01 {
++                    lock(&self.claimed).get(&((setup.index & 0xff) as u8)).map(|c| (c.handle, c.dev.file.0))
++                } else {
++                    None
++                };
++                match routed.or_else(|| self.control_handle().map(|h| (h, self.control_file()))) {
++                    Some((h, file)) => {
+                         let packet = WINUSB_SETUP_PACKET {
+                             RequestType: setup.request_type,
+                             Request: setup.request,
+@@ -1306,7 +1317,7 @@
+                         };
+                         // SAFETY: buffer valid for `data_len` bytes past the setup packet; `ov` outlives the request.
+                         let ok = unsafe { WinUsb_ControlTransfer(h, packet, buf_ptr.add(8), data_len, &mut transferred, ov) };
+-                        (self.control_file(), ok)
++                        (file, ok)
+                     }
+                     None => {
+                         // SAFETY: reclaiming the box we just leaked; nothing was submitted.

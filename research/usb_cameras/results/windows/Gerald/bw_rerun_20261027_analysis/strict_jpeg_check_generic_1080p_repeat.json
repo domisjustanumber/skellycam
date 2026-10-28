@@ -1,0 +1,103 @@
+{
+ "tool": "strict_jpeg_check",
+ "command": "research/usb_cameras/bandwidth/verify/strict_jpeg_check.py C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/7c9d3345-0e7f-4af6-bb14-20fd851edd1a/scratchpad/runs/bw_rerun_20261027/r04b_generic_1080p_repeat/gen_mjpg_1920x1080_30_a/cam0 C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/7c9d3345-0e7f-4af6-bb14-20fd851edd1a/scratchpad/runs/bw_rerun_20261027/r04b_generic_1080p_repeat/gen_mjpg_1920x1080_30_b/cam0 C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/7c9d3345-0e7f-4af6-bb14-20fd851edd1a/scratchpad/runs/bw_rerun_20261027/r04b_generic_1080p_repeat/gen_mjpg_1280x720_30/cam0 --out research/usb_cameras/results/windows/Gerald/bw_rerun_20261027_analysis/strict_jpeg_check_generic_1080p_repeat.json",
+ "runs": [
+  {
+   "run": "cam0",
+   "frames_logged": null,
+   "jpegs": 128,
+   "marker_ok": 128,
+   "pil_ok": 128,
+   "cv_ok": 0,
+   "cv_fail_examples": [
+    {
+     "file": "frame_00000.jpg",
+     "why": "ValueError: Corrupt JPEG data: 397 extraneous bytes before marker 0xd9"
+    },
+    {
+     "file": "frame_00001.jpg",
+     "why": "ValueError: Corrupt JPEG data: 453 extraneous bytes before marker 0xd9"
+    },
+    {
+     "file": "frame_00002.jpg",
+     "why": "ValueError: Corrupt JPEG data: 465 extraneous bytes before marker 0xd9"
+    }
+   ],
+   "marker_fail_examples": [],
+   "dri_values": [
+    0
+   ],
+   "rst_counts": [
+    0
+   ],
+   "trailing_after_eoi": [
+    0
+   ],
+   "dims": [
+    "1920x1080"
+   ]
+  },
+  {
+   "run": "cam0",
+   "frames_logged": null,
+   "jpegs": 129,
+   "marker_ok": 129,
+   "pil_ok": 129,
+   "cv_ok": 0,
+   "cv_fail_examples": [
+    {
+     "file": "frame_00000.jpg",
+     "why": "ValueError: Corrupt JPEG data: 402 extraneous bytes before marker 0xd9"
+    },
+    {
+     "file": "frame_00001.jpg",
+     "why": "ValueError: Corrupt JPEG data: 463 extraneous bytes before marker 0xd9"
+    },
+    {
+     "file": "frame_00002.jpg",
+     "why": "ValueError: Corrupt JPEG data: 453 extraneous bytes before marker 0xd9"
+    }
+   ],
+   "marker_fail_examples": [],
+   "dri_values": [
+    0
+   ],
+   "rst_counts": [
+    0
+   ],
+   "trailing_after_eoi": [
+    0
+   ],
+   "dims": [
+    "1920x1080"
+   ]
+  },
+  {
+   "run": "cam0",
+   "frames_logged": null,
+   "jpegs": 126,
+   "marker_ok": 126,
+   "pil_ok": 126,
+   "cv_ok": 125,
+   "cv_fail_examples": [
+    {
+     "file": "frame_00000.jpg",
+     "why": "ValueError: Corrupt JPEG data: 21171 extraneous bytes before marker 0xd9"
+    }
+   ],
+   "marker_fail_examples": [],
+   "dri_values": [
+    0
+   ],
+   "rst_counts": [
+    0
+   ],
+   "trailing_after_eoi": [
+    0
+   ],
+   "dims": [
+    "1280x720"
+   ]
+  }
+ ]
+}

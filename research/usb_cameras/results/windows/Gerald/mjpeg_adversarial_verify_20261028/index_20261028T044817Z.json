@@ -1,0 +1,14 @@
+{
+ "command": "research/usb_cameras/mjpeg/run_matrix.py --root research/usb_cameras/results/windows/Gerald/mjpeg_adversarial_verify_20261028 --backend msmf --modes common --sets all --cams c922,c930e,usbcam",
+ "root": "research/usb_cameras/results/windows/Gerald/mjpeg_adversarial_verify_20261028",
+ "cells": [
+  {
+   "backend": "msmf",
+   "label": "common_1280x720at30_c922+c930e+usbcam",
+   "rc": 0,
+   "capture_command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c922,c930e,usbcam --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_msmf\\common_1280x720at30_c922+c930e+usbcam' --timeout-s 120 -- research/usb_cameras/mjpeg/build/mf_mjpeg_capture.exe --dev 'vid_046d&pid_085c' --dev 'vid_046d&pid_0843' --dev 'vid_4c4a&pid_4a55' --width 1280 --height 720 --fps 30 --seconds 10 --warmup 2 --out 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_msmf\\common_1280x720at30_c922+c930e+usbcam' --attr-dump 5",
+   "s": 42.5,
+   "summarize_rc": 0
+  }
+ ]
+}

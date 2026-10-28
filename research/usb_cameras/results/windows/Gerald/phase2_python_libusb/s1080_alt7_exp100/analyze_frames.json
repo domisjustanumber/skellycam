@@ -1,0 +1,407 @@
+{
+  "test": "analyze_frames",
+  "platform": "win32",
+  "hostname": "Gerald",
+  "utc_started": "2026-10-25T21:30:56.110842+00:00",
+  "command": "tools/analyze_frames.py results/windows/Gerald/phase2_python_libusb/s1080_alt7_exp100/frames.jsonl --out results/windows/Gerald/phase2_python_libusb/s1080_alt7_exp100/analyze_frames.json",
+  "environment": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "os": "Windows-11-10.0.26300-SP0"
+  },
+  "inputs": [
+    "results/windows/Gerald/phase2_python_libusb/s1080_alt7_exp100/frames.jsonl"
+  ],
+  "cameras": [
+    {
+      "frames": 597,
+      "camera_key": "usb:046d:0843:port:1-13.1.4",
+      "backend": "py-libusb1",
+      "os_timestamp_source": "perf_counter_ns at completion callback of the transfer carrying the closing payload",
+      "payload_bytes": {
+        "n": 597,
+        "mean": 278875.33165829146,
+        "std": 9286.792459281327,
+        "min": 209169.0,
+        "max": 290372.0,
+        "median": 280020.0,
+        "p05": 278759.4,
+        "p95": 282005.4
+      },
+      "valid_jpeg_fraction": 1.0,
+      "duration_s": 19.8829878,
+      "device_clock": {
+        "pts_zero_fraction": 0.0,
+        "pts_freq_vs_host_hz": 29999373.890020844,
+        "nominal_hz": 30000000.0,
+        "nominal_assumed": true,
+        "device_vs_host_ppm": -20.870332638546827,
+        "pts_period_ticks": {
+          "n": 596,
+          "mean": 997222.2046979866,
+          "std": 17.573998499771733,
+          "min": 997162.0,
+          "max": 997272.0,
+          "median": 997222.0,
+          "p05": 997194.0,
+          "p95": 997250.0
+        },
+        "scr_stc_zero_fraction": 0.0,
+        "stc_per_sof_hz": 30001264.26331744,
+        "stc_vs_sof_residual_us": {
+          "n": 597,
+          "mean": -1.8369842970422415e-09,
+          "std": 296.6655367419114,
+          "min": -1344.6230199273966,
+          "max": 503.18440801048285,
+          "median": 7.093984847810117,
+          "p05": -446.9692269180966,
+          "p95": 449.3636070306598
+        },
+        "device_vs_usb_ppm": 42.14211058132351,
+        "usb_sof_ms_per_host_s": 1000.7419640470811,
+        "usb_vs_host_ppm": 741.964047080934,
+        "dev_sof_step_ms": {
+          "n": 596,
+          "mean": 33.23993288590604,
+          "std": 0.42740097347430506,
+          "min": 33.0,
+          "max": 34.0,
+          "median": 33.0,
+          "p05": 33.0,
+          "p95": 34.0
+        },
+        "stc_freq_vs_host_hz": 29999359.371295754,
+        "stc_minus_pts_ms": {
+          "n": 597,
+          "mean": 30.449733109994412,
+          "std": 0.06407683854429941,
+          "min": 29.4524,
+          "max": 31.029933333333332,
+          "median": 30.451133333333335,
+          "p05": 30.448666666666664,
+          "p95": 30.458693333333333
+        },
+        "uvc_pts_via_scr_envelope_valid_frames": 589,
+        "uvc_pts_via_scr_lsq_envelope_valid_frames": 589
+      },
+      "sources": {
+        "host_arrival": {
+          "interval": {
+            "interval_ms": {
+              "n": 596,
+              "mean": 33.3607177852349,
+              "std": 3.247692748763686,
+              "min": 31.7045,
+              "max": 99.01379999999999,
+              "median": 32.0583,
+              "p05": 31.920499999999997,
+              "p95": 36.00105
+            },
+            "drops_est": 2
+          },
+          "periodic_fit": {
+            "period_ms": 33.24030776645166,
+            "fps": 30.083957315499553,
+            "residual_us": {
+              "n": 597,
+              "mean": 6.995339650922834e-10,
+              "std": 1442.6245680339812,
+              "min": -7586.556760666103,
+              "max": 2549.256844493985,
+              "median": 96.9627941608429,
+              "p05": -1839.3335805606844,
+              "p95": 1897.6791092569326
+            },
+            "residual_rms_us": 1441.4158333701089,
+            "slots_skipped": 2,
+            "duplicate_slots": 0
+          }
+        },
+        "os_timestamp": {
+          "interval": {
+            "interval_ms": {
+              "n": 596,
+              "mean": 33.360722147651,
+              "std": 3.269341349339382,
+              "min": 31.860799999999998,
+              "max": 99.0084,
+              "median": 32.013949999999994,
+              "p05": 31.966049999999996,
+              "p95": 36.021625
+            },
+            "drops_est": 2
+          },
+          "periodic_fit": {
+            "period_ms": 33.24028624308427,
+            "fps": 30.08397679511718,
+            "residual_us": {
+              "n": 597,
+              "mean": 1.3012934411396983e-09,
+              "std": 1478.8018985381725,
+              "min": -8429.307393380106,
+              "max": 2729.46774493444,
+              "median": 101.87686496162415,
+              "p05": -1877.4131561206818,
+              "p95": 1965.637315489387
+            },
+            "residual_rms_us": 1477.5628519037464,
+            "slots_skipped": 2,
+            "duplicate_slots": 0
+          },
+          "arrival_minus_source_ms": {
+            "n": 597,
+            "mean": 0.3016083752093803,
+            "std": 0.6736178513030721,
+            "min": 0.0901,
+            "max": 4.1586,
+            "median": 0.1667,
+            "p05": 0.1231,
+            "p95": 0.31133999999999995
+          }
+        },
+        "host_first_payload": {
+          "interval": {
+            "interval_ms": {
+              "n": 596,
+              "mean": 33.30371627516778,
+              "std": 2.4645851106389918,
+              "min": 31.818299999999997,
+              "max": 73.02579999999999,
+              "median": 32.01219999999999,
+              "p05": 31.969724999999997,
+              "p95": 36.02115
+            },
+            "drops_est": 1
+          },
+          "periodic_fit": {
+            "period_ms": 33.23937164615646,
+            "fps": 30.084804569873157,
+            "residual_us": {
+              "n": 597,
+              "mean": -6.502793045150751e-09,
+              "std": 1171.556784992108,
+              "min": -2039.2402319068908,
+              "max": 4784.201537311554,
+              "median": -13.761908401489258,
+              "p05": -1803.766467736602,
+              "p95": 1793.268365876006
+            },
+            "residual_rms_us": 1170.5751704209347,
+            "slots_skipped": 1,
+            "duplicate_slots": 0
+          },
+          "arrival_minus_source_ms": {
+            "n": 597,
+            "mean": 27.784675376884422,
+            "std": 1.7623446431449055,
+            "min": 20.125899999999998,
+            "max": 54.1622,
+            "median": 28.1557,
+            "p05": 24.19354,
+            "p95": 28.30884
+          }
+        },
+        "host_last_payload": {
+          "interval": {
+            "interval_ms": {
+              "n": 596,
+              "mean": 33.360722147651,
+              "std": 3.269341349339382,
+              "min": 31.860799999999998,
+              "max": 99.0084,
+              "median": 32.013949999999994,
+              "p05": 31.966049999999996,
+              "p95": 36.021625
+            },
+            "drops_est": 2
+          },
+          "periodic_fit": {
+            "period_ms": 33.24028624308427,
+            "fps": 30.08397679511718,
+            "residual_us": {
+              "n": 597,
+              "mean": 1.3012934411396983e-09,
+              "std": 1478.8018985381725,
+              "min": -8429.307393380106,
+              "max": 2729.46774493444,
+              "median": 101.87686496162415,
+              "p05": -1877.4131561206818,
+              "p95": 1965.637315489387
+            },
+            "residual_rms_us": 1477.5628519037464,
+            "slots_skipped": 2,
+            "duplicate_slots": 0
+          },
+          "arrival_minus_source_ms": {
+            "n": 597,
+            "mean": 0.3016083752093803,
+            "std": 0.6736178513030721,
+            "min": 0.0901,
+            "max": 4.1586,
+            "median": 0.1667,
+            "p05": 0.1231,
+            "p95": 0.31133999999999995
+          }
+        },
+        "uvc_pts_mapped_direct": {
+          "interval": {
+            "interval_ms": {
+              "n": 596,
+              "mean": 33.3508717147651,
+              "std": 0.0005877197175554184,
+              "min": 33.348858,
+              "max": 33.352537,
+              "median": 33.350865,
+              "p05": 33.349928,
+              "p95": 33.351802
+            },
+            "drops_est": 0
+          },
+          "periodic_fit": {
+            "period_ms": 33.35087216055848,
+            "fps": 29.98422335661204,
+            "residual_us": {
+              "n": 597,
+              "mean": -1.6694026856962265e-09,
+              "std": 0.4064305487718127,
+              "min": -1.248279525756836,
+              "max": 1.2824028434753418,
+              "median": -0.014035194396972657,
+              "p05": -0.6427807489395142,
+              "p95": 0.695873358345031
+            },
+            "residual_rms_us": 0.406090012014265,
+            "slots_skipped": 0,
+            "duplicate_slots": 0
+          },
+          "arrival_minus_source_ms": {
+            "n": 597,
+            "mean": 31.66299536013401,
+            "std": 19.112904194242375,
+            "min": -2.881461,
+            "max": 64.66152,
+            "median": 31.837273999999997,
+            "p05": 1.7688368,
+            "p95": 60.28043259999999
+          }
+        },
+        "uvc_pts_via_scr_envelope": {
+          "interval": {
+            "interval_ms": {
+              "n": 588,
+              "mean": 33.215195098639455,
+              "std": 0.4203381876793384,
+              "min": 32.005826,
+              "max": 34.912821,
+              "median": 32.9858635,
+              "p05": 32.97290925,
+              "p95": 33.9468228
+            },
+            "drops_est": 0
+          },
+          "periodic_fit": {
+            "period_ms": 33.2147039270106,
+            "fps": 30.10714779205928,
+            "residual_us": {
+              "n": 589,
+              "mean": -6.641650685375629e-10,
+              "std": 284.10330340806513,
+              "min": -491.47349425888063,
+              "max": 1297.527622888565,
+              "median": 4.94956521987915,
+              "p05": -436.96218048672677,
+              "p95": 430.1014744781495
+            },
+            "residual_rms_us": 283.86202667374977,
+            "slots_skipped": 0,
+            "duplicate_slots": 0
+          },
+          "arrival_minus_source_ms": {
+            "n": 589,
+            "mean": 42.203613016977926,
+            "std": 5.295213772510136,
+            "min": 27.423443,
+            "max": 113.76327099999999,
+            "median": 42.059912999999995,
+            "p05": 35.4109864,
+            "p95": 48.968504599999996
+          }
+        },
+        "uvc_pts_via_scr_lsq_envelope": {
+          "interval": {
+            "interval_ms": {
+              "n": 588,
+              "mean": 33.214772642857135,
+              "std": 0.034975832246041394,
+              "min": 33.114861999999995,
+              "max": 33.375833,
+              "median": 33.208338499999996,
+              "p05": 33.1702427,
+              "p95": 33.273688699999994
+            },
+            "drops_est": 0
+          },
+          "periodic_fit": {
+            "period_ms": 33.21468903753967,
+            "fps": 30.107161288482544,
+            "residual_us": {
+              "n": 589,
+              "mean": -1.456334760765081e-09,
+              "std": 43.607565816568815,
+              "min": -194.22114820170404,
+              "max": 148.66326473465563,
+              "median": 0.1403646583557129,
+              "p05": -66.06507513542175,
+              "p95": 69.42322634201052
+            },
+            "residual_rms_us": 43.57053178371721,
+            "slots_skipped": 0,
+            "duplicate_slots": 0
+          },
+          "arrival_minus_source_ms": {
+            "n": 589,
+            "mean": 42.20236067911714,
+            "std": 5.294783095596724,
+            "min": 27.684852,
+            "max": 113.729323,
+            "median": 42.045341,
+            "p05": 35.38663699999999,
+            "p95": 48.998141999999994
+          }
+        }
+      },
+      "jitter_ranking_rms_us": [
+        [
+          "uvc_pts_mapped_direct",
+          0.41
+        ],
+        [
+          "uvc_pts_via_scr_lsq_envelope",
+          43.57
+        ],
+        [
+          "uvc_pts_via_scr_envelope",
+          283.86
+        ],
+        [
+          "host_first_payload",
+          1170.58
+        ],
+        [
+          "host_arrival",
+          1441.42
+        ],
+        [
+          "os_timestamp",
+          1477.56
+        ],
+        [
+          "host_last_payload",
+          1477.56
+        ]
+      ],
+      "file": "results/windows/Gerald/phase2_python_libusb/s1080_alt7_exp100/frames.jsonl"
+    }
+  ]
+}

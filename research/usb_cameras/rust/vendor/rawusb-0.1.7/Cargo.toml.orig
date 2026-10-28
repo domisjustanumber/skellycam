@@ -1,0 +1,85 @@
+[package]
+name = "rawusb"
+version = "0.1.7"
+edition = "2024"
+rust-version = "1.89"
+description = "Dependency-free, cross-platform USB device access in the spirit of libusb: enumeration, descriptors, synchronous and asynchronous transfers on Linux, macOS and Windows."
+repository = "https://github.com/KarpelesLab/rawusb"
+license = "MIT"
+keywords = ["usb", "libusb", "hardware", "device", "driver"]
+categories = ["hardware-support", "os", "api-bindings"]
+exclude = [".github", "SECURITY.md"]
+
+[package.metadata.docs.rs]
+# Hotplug and the class helpers are opt-in; document them anyway.
+all-features = true
+targets = [
+    "x86_64-unknown-linux-gnu",
+    "x86_64-pc-windows-msvc",
+    "x86_64-apple-darwin",
+    "aarch64-apple-darwin",
+]
+
+[lib]
+name = "rawusb"
+
+[features]
+default = []
+# Hotplug notifications: netlink uevents on Linux, `CM_Register_Notification`
+# on Windows, IOKit matching notifications on macOS. Opt-in because it adds a
+# second background thread per context (started only when a watcher is
+# actually registered) and, on Linux, a netlink socket.
+hotplug = []
+
+# Class helpers: ready-made drivers for common USB device classes, built on
+# the public transfer API. Each one is independent; enable only what you use.
+#
+# HID: report descriptor parser, input/output/feature reports, idle/protocol.
+hid = []
+# Mass storage: bulk-only transport, SCSI block commands, a `Read + Write +
+# Seek` block device.
+msc = []
+# USB serial adapters: CDC-ACM and FTDI behind one `SerialPort` type.
+serial = []
+# USB Video Class: format/frame descriptors, probe/commit negotiation,
+# isochronous and bulk streaming with frame reassembly, camera controls.
+uvc = []
+# USB Ethernet: CDC-ECM, CDC-NCM and RNDIS devices as one `NetDevice`.
+net = []
+# `pktkit::L2Device` for `net::NetDevice`. The only feature that pulls in a
+# dependency: KarpelesLab's pktkit, itself dependency-free in its default
+# configuration.
+pktkit = ["net", "dep:pktkit"]
+
+[[example]]
+name = "hotplug"
+required-features = ["hotplug"]
+
+[[example]]
+name = "hid_dump"
+required-features = ["hid"]
+
+[[example]]
+name = "msc_info"
+required-features = ["msc"]
+
+[[example]]
+name = "serial_monitor"
+required-features = ["serial"]
+
+[[example]]
+name = "uvc_capture"
+required-features = ["uvc"]
+
+[dependencies]
+pktkit = { version = "0.1.3", optional = true, default-features = false }
+
+[lints.rust]
+missing_docs = "warn"
+unreachable_pub = "warn"
+# Every `unsafe` block in this crate is an OS call (ioctl, WinUSB, IOKit); it is
+# expected in `src/sys/` and reviewed there. Keep it visible everywhere else.
+unsafe_op_in_unsafe_fn = "warn"
+
+[lints.clippy]
+undocumented_unsafe_blocks = "warn"

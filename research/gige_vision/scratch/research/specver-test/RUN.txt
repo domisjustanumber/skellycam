@@ -1,0 +1,21 @@
+# How the probe was run (2026-10-25), Docker Desktop 29.9.2, image ubuntu:24.04, apt aravis-tools 0.8.30-1build2
+docker run --rm -v "<this dir>:/t:ro" ubuntu:24.04 bash -c '
+  apt-get update -qq && apt-get install -y -qq aravis-tools aravis-tools-cli python3
+  (arv-fake-gv-camera-0.8 -i 127.0.0.1 &) ; sleep 2
+  python3 -I /t/probe.py 127.0.0.1
+  arv-tool-0.8 -a 127.0.0.1 control "R[0x0000]=0x00020001" "R[0x0934]=0x001B0067" "R[0x0970]=4"
+  python3 -I /t/probe.py 127.0.0.1'
+
+## Output 1 (stock fake camera):
+Version @0x0000 = 0x00000000 ; GVCPCapability @0x0934 = 0x00000000 ; TimestampTickFreqLow @0x0940 = 0x3B9ACA00 (1 GHz)
+GigE Vision spec version implemented: 0.0 ; GVCP capabilities set: (none)
+=> Aravis fake camera does NOT populate Version or capability registers (cf. src/arvfakecamera.c L1082-1091), so it cannot emulate PTP/scheduled-action.
+
+## Output 2 (after writing synthetic values to the fake camera's register map):
+GigE Vision spec version implemented: 2.1
+GVCP capabilities set: UnconditionalAction(v2.0), IEEE1588(v2.0), ScheduledAction(v2.0), IEEE1588ExtendedCapabilities(v2.1), Action, PendingAck, PacketResend, WriteMem, Concatenation
+-> device advertises IEEE 1588 PTP
+-> device advertises Scheduled Action Commands
+=> confirms the raw READREG path and bit decoding work end-to-end over real GVCP/UDP 3956.
+
+## On a real camera (any OS with Python 3): python3 -I probe.py <camera-ip> [<host-nic-ip>]

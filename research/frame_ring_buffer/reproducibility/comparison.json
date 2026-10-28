@@ -1,0 +1,3640 @@
+{
+ "tolerance": 0.15,
+ "pass_fps": 59.5,
+ "sections": {
+  "baseline e2e (bench_e_e2e.py, real SkellyCam stack)": [
+   {
+    "row": "e_e2e_1080p_mjpeg_ui.json vs e_e2e_1080p_mjpeg_ui_repro.json",
+    "metric": "achieved fps (min cam)",
+    "original": 53.56,
+    "rerun": 53.92,
+    "chg": 0.006721433905899915,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": false,
+    "pass_rerun": false,
+    "same_pass_fail": true
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui.json vs e_e2e_1080p_mjpeg_ui_repro.json",
+    "metric": "UI payloads/s",
+    "original": 36.9,
+    "rerun": 36.7,
+    "chg": -0.00542005420054189,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui.json vs e_e2e_1080p_mjpeg_ui_repro.json",
+    "metric": "sensor frames never grabbed (sum 5)",
+    "original": 964.0,
+    "rerun": 911.0,
+    "chg": -0.054979253112033194,
+    "kind": "count"
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui.json vs e_e2e_1080p_mjpeg_ui_repro.json",
+    "metric": "frames in files == recorded",
+    "original": "True",
+    "rerun": "True",
+    "kind": "check"
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui.json vs e_e2e_1080p_mjpeg_ui_repro.json",
+    "metric": "retrieve median ms",
+    "original": 10.12,
+    "rerun": 10.25,
+    "chg": 0.01284584980237162,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui.json vs e_e2e_1080p_mjpeg_ui_repro.json",
+    "metric": "put_frame median ms",
+    "original": 3.64,
+    "rerun": 3.71,
+    "chg": 0.019230769230769187,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui.json vs e_e2e_1080p_mjpeg_ui_repro.json",
+    "metric": "record_frame median ms",
+    "original": 1.12,
+    "rerun": 1.11,
+    "chg": -0.008928571428571435,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui.json vs e_e2e_1080p_mjpeg_ui_repro.json",
+    "metric": "grab interval median ms",
+    "original": 18.69,
+    "rerun": 18.53,
+    "chg": -0.008560727661851264,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui.json vs e_e2e_1080p_mjpeg_ui_repro.json",
+    "metric": "tick->written median ms",
+    "original": 23.9,
+    "rerun": 23.9,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui.json vs e_e2e_1080p_mjpeg_ui_repro.json",
+    "metric": "tick->written p99 ms",
+    "original": 34.4,
+    "rerun": 35.1,
+    "chg": 0.02034883720930241,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui_rep2.json vs e_e2e_1080p_mjpeg_ui_repro_rep2.json",
+    "metric": "achieved fps (min cam)",
+    "original": 53.57,
+    "rerun": 53.97,
+    "chg": 0.007466865783087522,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": false,
+    "pass_rerun": false,
+    "same_pass_fail": true
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui_rep2.json vs e_e2e_1080p_mjpeg_ui_repro_rep2.json",
+    "metric": "UI payloads/s",
+    "original": 36.6,
+    "rerun": 37.1,
+    "chg": 0.01366120218579235,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui_rep2.json vs e_e2e_1080p_mjpeg_ui_repro_rep2.json",
+    "metric": "sensor frames never grabbed (sum 5)",
+    "original": 964.0,
+    "rerun": 902.0,
+    "chg": -0.06431535269709543,
+    "kind": "count"
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui_rep2.json vs e_e2e_1080p_mjpeg_ui_repro_rep2.json",
+    "metric": "frames in files == recorded",
+    "original": "True",
+    "rerun": "True",
+    "kind": "check"
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui_rep2.json vs e_e2e_1080p_mjpeg_ui_repro_rep2.json",
+    "metric": "retrieve median ms",
+    "original": 10.31,
+    "rerun": 10.14,
+    "chg": -0.016488845780795337,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui_rep2.json vs e_e2e_1080p_mjpeg_ui_repro_rep2.json",
+    "metric": "put_frame median ms",
+    "original": 3.73,
+    "rerun": 3.63,
+    "chg": -0.026809651474530856,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui_rep2.json vs e_e2e_1080p_mjpeg_ui_repro_rep2.json",
+    "metric": "record_frame median ms",
+    "original": 1.19,
+    "rerun": 1.11,
+    "chg": -0.0672268907563024,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui_rep2.json vs e_e2e_1080p_mjpeg_ui_repro_rep2.json",
+    "metric": "grab interval median ms",
+    "original": 18.69,
+    "rerun": 18.43,
+    "chg": -0.013911182450508376,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui_rep2.json vs e_e2e_1080p_mjpeg_ui_repro_rep2.json",
+    "metric": "tick->written median ms",
+    "original": 24.4,
+    "rerun": 23.5,
+    "chg": -0.03688524590163929,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_mjpeg_ui_rep2.json vs e_e2e_1080p_mjpeg_ui_repro_rep2.json",
+    "metric": "tick->written p99 ms",
+    "original": 34.5,
+    "rerun": 34.8,
+    "chg": 0.00869565217391296,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_memcpy_ui.json vs e_e2e_1080p_memcpy_ui_repro.json",
+    "metric": "achieved fps (min cam)",
+    "original": 59.99,
+    "rerun": 59.97,
+    "chg": -0.0003333888981497437,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "e_e2e_1080p_memcpy_ui.json vs e_e2e_1080p_memcpy_ui_repro.json",
+    "metric": "UI payloads/s",
+    "original": 39.9,
+    "rerun": 40.9,
+    "chg": 0.025062656641604012,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "e_e2e_1080p_memcpy_ui.json vs e_e2e_1080p_memcpy_ui_repro.json",
+    "metric": "sensor frames never grabbed (sum 5)",
+    "original": 0.0,
+    "rerun": 3.0,
+    "chg": null,
+    "kind": "count"
+   },
+   {
+    "row": "e_e2e_1080p_memcpy_ui.json vs e_e2e_1080p_memcpy_ui_repro.json",
+    "metric": "frames in files == recorded",
+    "original": "True",
+    "rerun": "True",
+    "kind": "check"
+   },
+   {
+    "row": "e_e2e_1080p_memcpy_ui.json vs e_e2e_1080p_memcpy_ui_repro.json",
+    "metric": "retrieve median ms",
+    "original": 0.67,
+    "rerun": 0.54,
+    "chg": -0.19402985074626866,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_memcpy_ui.json vs e_e2e_1080p_memcpy_ui_repro.json",
+    "metric": "put_frame median ms",
+    "original": 2.14,
+    "rerun": 2.19,
+    "chg": 0.023364485981308327,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_memcpy_ui.json vs e_e2e_1080p_memcpy_ui_repro.json",
+    "metric": "record_frame median ms",
+    "original": 0.7,
+    "rerun": 0.71,
+    "chg": 0.0142857142857143,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_memcpy_ui.json vs e_e2e_1080p_memcpy_ui_repro.json",
+    "metric": "grab interval median ms",
+    "original": 16.74,
+    "rerun": 16.69,
+    "chg": -0.0029868578255673336,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_memcpy_ui.json vs e_e2e_1080p_memcpy_ui_repro.json",
+    "metric": "tick->written median ms",
+    "original": 4.1,
+    "rerun": 3.9,
+    "chg": -0.04878048780487799,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_1080p_memcpy_ui.json vs e_e2e_1080p_memcpy_ui_repro.json",
+    "metric": "tick->written p99 ms",
+    "original": 7.6,
+    "rerun": 14.5,
+    "chg": 0.9078947368421053,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_720p_mjpeg_ui.json vs e_e2e_720p_mjpeg_ui_repro.json",
+    "metric": "achieved fps (min cam)",
+    "original": 60.0,
+    "rerun": 60.0,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "e_e2e_720p_mjpeg_ui.json vs e_e2e_720p_mjpeg_ui_repro.json",
+    "metric": "UI payloads/s",
+    "original": 57.0,
+    "rerun": 57.5,
+    "chg": 0.008771929824561403,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "e_e2e_720p_mjpeg_ui.json vs e_e2e_720p_mjpeg_ui_repro.json",
+    "metric": "sensor frames never grabbed (sum 5)",
+    "original": 0.0,
+    "rerun": 0.0,
+    "chg": null,
+    "kind": "count"
+   },
+   {
+    "row": "e_e2e_720p_mjpeg_ui.json vs e_e2e_720p_mjpeg_ui_repro.json",
+    "metric": "frames in files == recorded",
+    "original": "True",
+    "rerun": "True",
+    "kind": "check"
+   },
+   {
+    "row": "e_e2e_720p_mjpeg_ui.json vs e_e2e_720p_mjpeg_ui_repro.json",
+    "metric": "retrieve median ms",
+    "original": 3.5,
+    "rerun": 3.61,
+    "chg": 0.031428571428571396,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_720p_mjpeg_ui.json vs e_e2e_720p_mjpeg_ui_repro.json",
+    "metric": "put_frame median ms",
+    "original": 0.93,
+    "rerun": 0.85,
+    "chg": -0.08602150537634416,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_720p_mjpeg_ui.json vs e_e2e_720p_mjpeg_ui_repro.json",
+    "metric": "record_frame median ms",
+    "original": 0.46,
+    "rerun": 0.46,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_720p_mjpeg_ui.json vs e_e2e_720p_mjpeg_ui_repro.json",
+    "metric": "grab interval median ms",
+    "original": 16.68,
+    "rerun": 16.66,
+    "chg": -0.0011990407673860657,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_720p_mjpeg_ui.json vs e_e2e_720p_mjpeg_ui_repro.json",
+    "metric": "tick->written median ms",
+    "original": 5.5,
+    "rerun": 5.5,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "e_e2e_720p_mjpeg_ui.json vs e_e2e_720p_mjpeg_ui_repro.json",
+    "metric": "tick->written p99 ms",
+    "original": 7.7,
+    "rerun": 7.6,
+    "chg": -0.012987012987013056,
+    "kind": "latency"
+   }
+  ],
+  "P8 end-to-end prototype (p8_e2e_proto.py)": [
+   {
+    "row": "p8_e2e_1080p_imdecode_msmf.json",
+    "metric": "per-cam fps (min)",
+    "original": 59.95,
+    "rerun": 59.95,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_msmf.json",
+    "metric": "UI payloads/s",
+    "original": 47.3,
+    "rerun": 47.2,
+    "chg": -0.0021141649048624592,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_msmf.json",
+    "metric": "sensor frames never grabbed (sum)",
+    "original": 0.0,
+    "rerun": 0.0,
+    "chg": null,
+    "kind": "count"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_msmf.json",
+    "metric": "files decode == produced / consecutive",
+    "original": "True/True",
+    "rerun": "True/True",
+    "kind": "check"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_msmf.json",
+    "metric": "tick->written median ms",
+    "original": 10.4,
+    "rerun": 10.2,
+    "chg": -0.019230769230769332,
+    "kind": "latency"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_msmf.json",
+    "metric": "tick->written p99 ms",
+    "original": 16.4,
+    "rerun": 16.6,
+    "chg": 0.012195121951219686,
+    "kind": "latency"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_msmf.json",
+    "metric": "recorder CPU %",
+    "original": 954.0,
+    "rerun": 939.0,
+    "chg": -0.015723270440251572,
+    "kind": "cpu"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_msmf_rep2.json",
+    "metric": "per-cam fps (min)",
+    "original": 59.95,
+    "rerun": 59.95,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_msmf_rep2.json",
+    "metric": "UI payloads/s",
+    "original": 46.9,
+    "rerun": 47.4,
+    "chg": 0.010660980810234541,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_msmf_rep2.json",
+    "metric": "sensor frames never grabbed (sum)",
+    "original": 0.0,
+    "rerun": 0.0,
+    "chg": null,
+    "kind": "count"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_msmf_rep2.json",
+    "metric": "files decode == produced / consecutive",
+    "original": "True/True",
+    "rerun": "True/True",
+    "kind": "check"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_msmf_rep2.json",
+    "metric": "tick->written median ms",
+    "original": 10.1,
+    "rerun": 10.1,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_msmf_rep2.json",
+    "metric": "tick->written p99 ms",
+    "original": 15.2,
+    "rerun": 16.6,
+    "chg": 0.09210526315789488,
+    "kind": "latency"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_msmf_rep2.json",
+    "metric": "recorder CPU %",
+    "original": 924.0,
+    "rerun": 954.0,
+    "chg": 0.032467532467532464,
+    "kind": "cpu"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_off_passthrough.json",
+    "metric": "per-cam fps (min)",
+    "original": 59.97,
+    "rerun": 59.97,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_off_passthrough.json",
+    "metric": "UI payloads/s",
+    "original": 49.6,
+    "rerun": 51.3,
+    "chg": 0.03427419354838701,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_off_passthrough.json",
+    "metric": "sensor frames never grabbed (sum)",
+    "original": 0.0,
+    "rerun": 0.0,
+    "chg": null,
+    "kind": "count"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_off_passthrough.json",
+    "metric": "files decode == produced / consecutive",
+    "original": "True/True",
+    "rerun": "True/True",
+    "kind": "check"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_off_passthrough.json",
+    "metric": "tick->written median ms",
+    "original": 0.8,
+    "rerun": 0.8,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_off_passthrough.json",
+    "metric": "tick->written p99 ms",
+    "original": 1.5,
+    "rerun": 1.6,
+    "chg": 0.06666666666666672,
+    "kind": "latency"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_off_passthrough.json",
+    "metric": "recorder CPU %",
+    "original": 19.0,
+    "rerun": 19.0,
+    "chg": 0.0,
+    "kind": "cpu"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_off_passthrough_rep2.json",
+    "metric": "per-cam fps (min)",
+    "original": 59.97,
+    "rerun": 59.97,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_off_passthrough_rep2.json",
+    "metric": "UI payloads/s",
+    "original": 49.9,
+    "rerun": 50.3,
+    "chg": 0.008016032064128228,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_off_passthrough_rep2.json",
+    "metric": "sensor frames never grabbed (sum)",
+    "original": 0.0,
+    "rerun": 0.0,
+    "chg": null,
+    "kind": "count"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_off_passthrough_rep2.json",
+    "metric": "files decode == produced / consecutive",
+    "original": "True/True",
+    "rerun": "True/True",
+    "kind": "check"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_off_passthrough_rep2.json",
+    "metric": "tick->written median ms",
+    "original": 0.8,
+    "rerun": 0.8,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_off_passthrough_rep2.json",
+    "metric": "tick->written p99 ms",
+    "original": 1.5,
+    "rerun": 1.4,
+    "chg": -0.06666666666666672,
+    "kind": "latency"
+   },
+   {
+    "row": "p8_e2e_1080p_imdecode_off_passthrough_rep2.json",
+    "metric": "recorder CPU %",
+    "original": 20.0,
+    "rerun": 23.0,
+    "chg": 0.15,
+    "kind": "cpu"
+   }
+  ],
+  "P6 UI path (p6_ui_path.py)": [
+   {
+    "row": "1080p cur_copy_real (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 51.8,
+    "rerun": 51.6,
+    "chg": -0.003861003861003779,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "1080p cur_copy_real (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 8.2806,
+    "rerun": 8.3193,
+    "chg": 0.004673574378668261,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p cur_copy_real (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 8.2806,
+    "rerun": 8.3193,
+    "chg": 0.004673574378668261,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p view_real (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 57.8,
+    "rerun": 57.7,
+    "chg": -0.0017301038062282755,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "1080p view_real (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 6.3141,
+    "rerun": 6.3827,
+    "chg": 0.010864572939928097,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p view_real (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 6.3141,
+    "rerun": 6.3827,
+    "chg": 0.010864572939928097,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p view_proto (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 53.0,
+    "rerun": 53.9,
+    "chg": 0.01698113207547167,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "1080p view_proto (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 4.8419,
+    "rerun": 4.8738,
+    "chg": 0.006588322765856433,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p view_proto (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 4.8419,
+    "rerun": 4.8738,
+    "chg": 0.006588322765856433,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p view_proto_640x360 (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 43.7,
+    "rerun": 45.1,
+    "chg": 0.03203661327231118,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "1080p view_proto_640x360 (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 2.9323,
+    "rerun": 3.0145,
+    "chg": 0.028032602394025108,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p view_proto_640x360 (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 2.9323,
+    "rerun": 3.0145,
+    "chg": 0.028032602394025108,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p view_proto_threads (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 46.4,
+    "rerun": 46.6,
+    "chg": 0.004310344827586268,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "1080p view_proto_threads (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 2.1969,
+    "rerun": 2.34685,
+    "chg": 0.06825526878783743,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p view_proto_threads (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 0.04675,
+    "rerun": 0.04995,
+    "chg": 0.0684491978609626,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p view_proto_threads_poll2ms (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 60.1,
+    "rerun": 60.1,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "1080p view_proto_threads_poll2ms (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 1.9601,
+    "rerun": 1.9943,
+    "chg": 0.01744808938319474,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p view_proto_threads_poll2ms (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 0.0408,
+    "rerun": 0.0423,
+    "chg": 0.036764705882352804,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p jpeg_forward (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 51.0,
+    "rerun": 51.8,
+    "chg": 0.015686274509803866,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "1080p jpeg_forward (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 0.25095,
+    "rerun": 0.25325,
+    "chg": 0.009165172345088539,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p jpeg_forward (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 0.25095,
+    "rerun": 0.25325,
+    "chg": 0.009165172345088539,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p jpeg_reduced_reencode (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 26.7,
+    "rerun": 27.0,
+    "chg": 0.011235955056179803,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "1080p jpeg_reduced_reencode (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 26.4642,
+    "rerun": 26.0603,
+    "chg": -0.015262127704597159,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p jpeg_reduced_reencode (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 26.4642,
+    "rerun": 26.0603,
+    "chg": -0.015262127704597159,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p jpeg_reduced_reencode_threads (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 58.4,
+    "rerun": 58.3,
+    "chg": -0.001712328767123312,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "1080p jpeg_reduced_reencode_threads (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 5.9122,
+    "rerun": 5.895149999999999,
+    "chg": -0.0028838672575354552,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p jpeg_reduced_reencode_threads (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 0.0444,
+    "rerun": 0.0459,
+    "chg": 0.03378378378378381,
+    "kind": "latency"
+   },
+   {
+    "row": "720p cur_copy_real (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 65.0,
+    "rerun": 66.3,
+    "chg": 0.019999999999999955,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "720p cur_copy_real (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 4.2865,
+    "rerun": 4.1651,
+    "chg": -0.02832147439636076,
+    "kind": "latency"
+   },
+   {
+    "row": "720p cur_copy_real (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 4.2865,
+    "rerun": 4.1651,
+    "chg": -0.02832147439636076,
+    "kind": "latency"
+   },
+   {
+    "row": "720p view_real (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 68.1,
+    "rerun": 69.8,
+    "chg": 0.024963289280469942,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "720p view_real (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 3.37255,
+    "rerun": 3.2798499999999997,
+    "chg": -0.027486619916680326,
+    "kind": "latency"
+   },
+   {
+    "row": "720p view_real (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 3.37255,
+    "rerun": 3.2798499999999997,
+    "chg": -0.027486619916680326,
+    "kind": "latency"
+   },
+   {
+    "row": "720p view_proto (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 60.0,
+    "rerun": 44.3,
+    "chg": -0.2616666666666667,
+    "kind": "throughput",
+    "within_tol": false
+   },
+   {
+    "row": "720p view_proto (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 2.45295,
+    "rerun": 2.428,
+    "chg": -0.010171426241872042,
+    "kind": "latency"
+   },
+   {
+    "row": "720p view_proto (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 2.45295,
+    "rerun": 2.428,
+    "chg": -0.010171426241872042,
+    "kind": "latency"
+   },
+   {
+    "row": "720p view_proto_640x360 (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 60.0,
+    "rerun": 44.4,
+    "chg": -0.26,
+    "kind": "throughput",
+    "within_tol": false
+   },
+   {
+    "row": "720p view_proto_640x360 (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 2.4410499999999997,
+    "rerun": 2.45055,
+    "chg": 0.003891767886770064,
+    "kind": "latency"
+   },
+   {
+    "row": "720p view_proto_640x360 (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 2.4410499999999997,
+    "rerun": 2.45055,
+    "chg": 0.003891767886770064,
+    "kind": "latency"
+   },
+   {
+    "row": "720p view_proto_threads (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 59.7,
+    "rerun": 45.4,
+    "chg": -0.23953098827470692,
+    "kind": "throughput",
+    "within_tol": false
+   },
+   {
+    "row": "720p view_proto_threads (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 1.4243,
+    "rerun": 1.3626,
+    "chg": -0.04331952538088877,
+    "kind": "latency"
+   },
+   {
+    "row": "720p view_proto_threads (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 0.0412,
+    "rerun": 0.04,
+    "chg": -0.029126213592233,
+    "kind": "latency"
+   },
+   {
+    "row": "720p view_proto_threads_poll2ms (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 60.1,
+    "rerun": 60.1,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "720p view_proto_threads_poll2ms (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 1.3192,
+    "rerun": 1.2337,
+    "chg": -0.0648120072771376,
+    "kind": "latency"
+   },
+   {
+    "row": "720p view_proto_threads_poll2ms (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 0.0345,
+    "rerun": 0.0329,
+    "chg": -0.04637681159420302,
+    "kind": "latency"
+   },
+   {
+    "row": "720p jpeg_forward (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 60.1,
+    "rerun": 45.6,
+    "chg": -0.24126455906821964,
+    "kind": "throughput",
+    "within_tol": false
+   },
+   {
+    "row": "720p jpeg_forward (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 0.1325,
+    "rerun": 0.1259,
+    "chg": -0.04981132075471694,
+    "kind": "latency"
+   },
+   {
+    "row": "720p jpeg_forward (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 0.1325,
+    "rerun": 0.1259,
+    "chg": -0.04981132075471694,
+    "kind": "latency"
+   },
+   {
+    "row": "720p jpeg_reduced_reencode (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 43.5,
+    "rerun": 43.2,
+    "chg": -0.006896551724137866,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "720p jpeg_reduced_reencode (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 11.989,
+    "rerun": 12.073550000000001,
+    "chg": 0.00705229793977814,
+    "kind": "latency"
+   },
+   {
+    "row": "720p jpeg_reduced_reencode (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 11.989,
+    "rerun": 12.073550000000001,
+    "chg": 0.00705229793977814,
+    "kind": "latency"
+   },
+   {
+    "row": "720p jpeg_reduced_reencode_threads (skellycamvenv)",
+    "metric": "payloads/s",
+    "original": 59.4,
+    "rerun": 43.9,
+    "chg": -0.260942760942761,
+    "kind": "throughput",
+    "within_tol": false
+   },
+   {
+    "row": "720p jpeg_reduced_reencode_threads (skellycamvenv)",
+    "metric": "build median ms",
+    "original": 3.0278,
+    "rerun": 3.10565,
+    "chg": 0.025711737895501602,
+    "kind": "latency"
+   },
+   {
+    "row": "720p jpeg_reduced_reencode_threads (skellycamvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 0.0326,
+    "rerun": 0.03365,
+    "chg": 0.032208588957055286,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p view_proto (benchvenv)",
+    "metric": "payloads/s",
+    "original": 57.8,
+    "rerun": 53.3,
+    "chg": -0.07785467128027682,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "1080p view_proto (benchvenv)",
+    "metric": "build median ms",
+    "original": 4.99485,
+    "rerun": 4.89515,
+    "chg": -0.019960559376157334,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p view_proto (benchvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 4.99485,
+    "rerun": 4.89515,
+    "chg": -0.019960559376157334,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p view_simplejpeg (benchvenv)",
+    "metric": "payloads/s",
+    "original": 56.1,
+    "rerun": 56.0,
+    "chg": -0.0017825311942959254,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "1080p view_simplejpeg (benchvenv)",
+    "metric": "build median ms",
+    "original": 6.79985,
+    "rerun": 6.812,
+    "chg": 0.001786804120679148,
+    "kind": "latency"
+   },
+   {
+    "row": "1080p view_simplejpeg (benchvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 6.79985,
+    "rerun": 6.812,
+    "chg": 0.001786804120679148,
+    "kind": "latency"
+   },
+   {
+    "row": "720p view_proto (benchvenv)",
+    "metric": "payloads/s",
+    "original": 42.6,
+    "rerun": 43.9,
+    "chg": 0.030516431924882563,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "720p view_proto (benchvenv)",
+    "metric": "build median ms",
+    "original": 2.40355,
+    "rerun": 2.3862,
+    "chg": -0.007218489317883953,
+    "kind": "latency"
+   },
+   {
+    "row": "720p view_proto (benchvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 2.40355,
+    "rerun": 2.3862,
+    "chg": -0.007218489317883953,
+    "kind": "latency"
+   },
+   {
+    "row": "720p view_simplejpeg (benchvenv)",
+    "metric": "payloads/s",
+    "original": 44.5,
+    "rerun": 45.3,
+    "chg": 0.017977528089887576,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "720p view_simplejpeg (benchvenv)",
+    "metric": "build median ms",
+    "original": 3.3311,
+    "rerun": 3.3005,
+    "chg": -0.00918615472366491,
+    "kind": "latency"
+   },
+   {
+    "row": "720p view_simplejpeg (benchvenv)",
+    "metric": "event-loop blocked median ms",
+    "original": 3.3311,
+    "rerun": 3.3005,
+    "chg": -0.00918615472366491,
+    "kind": "latency"
+   }
+  ],
+  "C++ vs Python ring (cpp/run_matrix.py ring_write, ring_spsc)": [
+   {
+    "row": "write_1080p_n1_cpp_head_port",
+    "metric": "slowest-camera fps",
+    "original": 777.7,
+    "rerun": 785.6,
+    "chg": 0.010158158673010129,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n1_cpp_head_port",
+    "metric": "put median ms",
+    "original": 1.2759,
+    "rerun": 1.2736,
+    "chg": -0.0018026491104318274,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n1_cpp_head_port",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n1_cpp_one_copy",
+    "metric": "slowest-camera fps",
+    "original": 6711.8,
+    "rerun": 6818.0,
+    "chg": 0.015822879108435862,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n1_cpp_one_copy",
+    "metric": "put median ms",
+    "original": 0.1456,
+    "rerun": 0.1454,
+    "chg": -0.001373626373626413,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n1_cpp_one_copy",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n1_hybrid",
+    "metric": "slowest-camera fps",
+    "original": 6676.8,
+    "rerun": 6714.7,
+    "chg": 0.005676371914689617,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n1_hybrid",
+    "metric": "put median ms",
+    "original": 0.1465,
+    "rerun": 0.1464,
+    "chg": -0.000682593856655215,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n1_hybrid",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n1_hybrid_ctypes",
+    "metric": "slowest-camera fps",
+    "original": 6685.5,
+    "rerun": 6728.5,
+    "chg": 0.006431830080023932,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n1_hybrid_ctypes",
+    "metric": "put median ms",
+    "original": 0.1466,
+    "rerun": 0.1464,
+    "chg": -0.00136425648021832,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n1_hybrid_ctypes",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n1_py_seq",
+    "metric": "slowest-camera fps",
+    "original": 6675.5,
+    "rerun": 6702.4,
+    "chg": 0.0040296606995730115,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n1_py_seq",
+    "metric": "put median ms",
+    "original": 0.1466,
+    "rerun": 0.1467,
+    "chg": 0.0006821282401090654,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n1_py_seq",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n1_sk_head",
+    "metric": "slowest-camera fps",
+    "original": 748.9,
+    "rerun": 755.0,
+    "chg": 0.008145279743624013,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n1_sk_head",
+    "metric": "put median ms",
+    "original": 1.3263,
+    "rerun": 1.3259,
+    "chg": -0.0003015908919550297,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n1_sk_head",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n5_cpp_head_port",
+    "metric": "slowest-camera fps",
+    "original": 365.1,
+    "rerun": 362.6,
+    "chg": -0.006847439057792385,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n5_cpp_head_port",
+    "metric": "put median ms",
+    "original": 2.6941,
+    "rerun": 2.7428,
+    "chg": 0.01807653761924195,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n5_cpp_head_port",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n5_cpp_head_port_r2",
+    "metric": "slowest-camera fps",
+    "original": 369.2,
+    "rerun": 370.8,
+    "chg": 0.004333694474539606,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n5_cpp_head_port_r2",
+    "metric": "put median ms",
+    "original": 2.6624,
+    "rerun": 2.6946,
+    "chg": 0.012094350961538464,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n5_cpp_head_port_r2",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n5_cpp_one_copy",
+    "metric": "slowest-camera fps",
+    "original": 1487.6,
+    "rerun": 1207.2,
+    "chg": -0.18849152998117766,
+    "kind": "throughput",
+    "within_tol": false
+   },
+   {
+    "row": "write_1080p_n5_cpp_one_copy",
+    "metric": "put median ms",
+    "original": 0.6369,
+    "rerun": 0.59,
+    "chg": -0.07363793374156076,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n5_cpp_one_copy",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n5_cpp_one_copy_r2",
+    "metric": "slowest-camera fps",
+    "original": 1478.0,
+    "rerun": 1400.1,
+    "chg": -0.05270635994587286,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n5_cpp_one_copy_r2",
+    "metric": "put median ms",
+    "original": 0.6295,
+    "rerun": 0.5918,
+    "chg": -0.05988880063542488,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n5_cpp_one_copy_r2",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n5_hybrid",
+    "metric": "slowest-camera fps",
+    "original": 1316.4,
+    "rerun": 1360.5,
+    "chg": 0.03350045578851406,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n5_hybrid",
+    "metric": "put median ms",
+    "original": 0.621,
+    "rerun": 0.6086,
+    "chg": -0.019967793880837307,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n5_hybrid",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n5_hybrid_ctypes",
+    "metric": "slowest-camera fps",
+    "original": 1466.4,
+    "rerun": 1373.9,
+    "chg": -0.06307965084560829,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n5_hybrid_ctypes",
+    "metric": "put median ms",
+    "original": 0.6537,
+    "rerun": 0.6221,
+    "chg": -0.04834021722502672,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n5_hybrid_ctypes",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n5_hybrid_ctypes_r2",
+    "metric": "slowest-camera fps",
+    "original": 1461.4,
+    "rerun": 1482.3,
+    "chg": 0.01430135486519766,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n5_hybrid_ctypes_r2",
+    "metric": "put median ms",
+    "original": 0.6207,
+    "rerun": 0.624,
+    "chg": 0.0053165780570323335,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n5_hybrid_ctypes_r2",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n5_hybrid_r2",
+    "metric": "slowest-camera fps",
+    "original": 1433.0,
+    "rerun": 1510.7,
+    "chg": 0.05422191207257505,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n5_hybrid_r2",
+    "metric": "put median ms",
+    "original": 0.613,
+    "rerun": 0.6266,
+    "chg": 0.022185970636215427,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n5_hybrid_r2",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n5_py_seq",
+    "metric": "slowest-camera fps",
+    "original": 1293.6,
+    "rerun": 1436.3,
+    "chg": 0.11031230674087822,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n5_py_seq",
+    "metric": "put median ms",
+    "original": 0.6353,
+    "rerun": 0.62975,
+    "chg": -0.008736030221942302,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n5_py_seq",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n5_py_seq_r2",
+    "metric": "slowest-camera fps",
+    "original": 1504.1,
+    "rerun": 1456.1,
+    "chg": -0.031912771757197,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n5_py_seq_r2",
+    "metric": "put median ms",
+    "original": 0.63465,
+    "rerun": 0.6267,
+    "chg": -0.012526589458756813,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n5_py_seq_r2",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n5_sk_head",
+    "metric": "slowest-camera fps",
+    "original": 355.6,
+    "rerun": 357.1,
+    "chg": 0.004218222722159729,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n5_sk_head",
+    "metric": "put median ms",
+    "original": 2.76525,
+    "rerun": 2.7873,
+    "chg": 0.00797396257119614,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n5_sk_head",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_1080p_n5_sk_head_r2",
+    "metric": "slowest-camera fps",
+    "original": 355.4,
+    "rerun": 351.8,
+    "chg": -0.010129431626336427,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_1080p_n5_sk_head_r2",
+    "metric": "put median ms",
+    "original": 2.7802,
+    "rerun": 2.7474999999999996,
+    "chg": -0.01176174375944183,
+    "kind": "latency"
+   },
+   {
+    "row": "write_1080p_n5_sk_head_r2",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_64x64_n1_cpp_head_port",
+    "metric": "slowest-camera fps",
+    "original": 1009729.0,
+    "rerun": 1008299.6,
+    "chg": -0.0014156273614009535,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_64x64_n1_cpp_head_port",
+    "metric": "put median ms",
+    "original": 0.0009,
+    "rerun": 0.0009,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "write_64x64_n1_cpp_head_port",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_64x64_n1_cpp_one_copy",
+    "metric": "slowest-camera fps",
+    "original": 1154092.8,
+    "rerun": 1171307.7,
+    "chg": 0.01491639147215883,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_64x64_n1_cpp_one_copy",
+    "metric": "put median ms",
+    "original": 0.0008,
+    "rerun": 0.0008,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "write_64x64_n1_cpp_one_copy",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_64x64_n1_hybrid",
+    "metric": "slowest-camera fps",
+    "original": 616301.2,
+    "rerun": 612245.4,
+    "chg": -0.006580873118533487,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_64x64_n1_hybrid",
+    "metric": "put median ms",
+    "original": 0.0013,
+    "rerun": 0.0013,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "write_64x64_n1_hybrid",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_64x64_n1_hybrid_ctypes",
+    "metric": "slowest-camera fps",
+    "original": 568819.7,
+    "rerun": 582145.9,
+    "chg": 0.023427810253407313,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_64x64_n1_hybrid_ctypes",
+    "metric": "put median ms",
+    "original": 0.0014,
+    "rerun": 0.0014,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "write_64x64_n1_hybrid_ctypes",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_64x64_n1_py_seq",
+    "metric": "slowest-camera fps",
+    "original": 586785.8,
+    "rerun": 579328.1,
+    "chg": -0.012709407760037938,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_64x64_n1_py_seq",
+    "metric": "put median ms",
+    "original": 0.0014,
+    "rerun": 0.0014,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "write_64x64_n1_py_seq",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_64x64_n1_sk_head",
+    "metric": "slowest-camera fps",
+    "original": 38417.2,
+    "rerun": 37829.6,
+    "chg": -0.015295232343845949,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_64x64_n1_sk_head",
+    "metric": "put median ms",
+    "original": 0.0248,
+    "rerun": 0.025,
+    "chg": 0.00806451612903235,
+    "kind": "latency"
+   },
+   {
+    "row": "write_64x64_n1_sk_head",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_64x64_n5_cpp_head_port",
+    "metric": "slowest-camera fps",
+    "original": 591992.5,
+    "rerun": 590963.9,
+    "chg": -0.0017375220125254573,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_64x64_n5_cpp_head_port",
+    "metric": "put median ms",
+    "original": 0.0016,
+    "rerun": 0.0016,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "write_64x64_n5_cpp_head_port",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_64x64_n5_cpp_one_copy",
+    "metric": "slowest-camera fps",
+    "original": 618771.0,
+    "rerun": 620820.2,
+    "chg": 0.003311725985865455,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_64x64_n5_cpp_one_copy",
+    "metric": "put median ms",
+    "original": 0.0015,
+    "rerun": 0.0015,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "write_64x64_n5_cpp_one_copy",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_64x64_n5_hybrid",
+    "metric": "slowest-camera fps",
+    "original": 500271.2,
+    "rerun": 500082.7,
+    "chg": -0.00037679562605242916,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_64x64_n5_hybrid",
+    "metric": "put median ms",
+    "original": 0.0016,
+    "rerun": 0.0016,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "write_64x64_n5_hybrid",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_64x64_n5_hybrid_ctypes",
+    "metric": "slowest-camera fps",
+    "original": 472589.4,
+    "rerun": 477631.5,
+    "chg": 0.010669092451079047,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_64x64_n5_hybrid_ctypes",
+    "metric": "put median ms",
+    "original": 0.0017,
+    "rerun": 0.0017,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "write_64x64_n5_hybrid_ctypes",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_64x64_n5_py_seq",
+    "metric": "slowest-camera fps",
+    "original": 487323.1,
+    "rerun": 484651.0,
+    "chg": -0.0054832204752862665,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_64x64_n5_py_seq",
+    "metric": "put median ms",
+    "original": 0.0017,
+    "rerun": 0.0017,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "write_64x64_n5_py_seq",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_64x64_n5_sk_head",
+    "metric": "slowest-camera fps",
+    "original": 37392.0,
+    "rerun": 37538.7,
+    "chg": 0.003923299101411989,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_64x64_n5_sk_head",
+    "metric": "put median ms",
+    "original": 0.0251,
+    "rerun": 0.0251,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "write_64x64_n5_sk_head",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n1_cpp_head_port",
+    "metric": "slowest-camera fps",
+    "original": 1739.4,
+    "rerun": 1745.7,
+    "chg": 0.0036219385995170483,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n1_cpp_head_port",
+    "metric": "put median ms",
+    "original": 0.5739,
+    "rerun": 0.5704,
+    "chg": -0.006098623453563248,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n1_cpp_head_port",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n1_cpp_one_copy",
+    "metric": "slowest-camera fps",
+    "original": 15658.5,
+    "rerun": 15581.7,
+    "chg": -0.004904684356739105,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n1_cpp_one_copy",
+    "metric": "put median ms",
+    "original": 0.063,
+    "rerun": 0.063,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n1_cpp_one_copy",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n1_hybrid",
+    "metric": "slowest-camera fps",
+    "original": 15189.8,
+    "rerun": 15159.5,
+    "chg": -0.0019947596413382187,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n1_hybrid",
+    "metric": "put median ms",
+    "original": 0.0641,
+    "rerun": 0.0642,
+    "chg": 0.001560062402495928,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n1_hybrid",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n1_hybrid_ctypes",
+    "metric": "slowest-camera fps",
+    "original": 15343.0,
+    "rerun": 14979.6,
+    "chg": -0.023685068109235458,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n1_hybrid_ctypes",
+    "metric": "put median ms",
+    "original": 0.064,
+    "rerun": 0.0642,
+    "chg": 0.0031249999999998727,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n1_hybrid_ctypes",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n1_py_seq",
+    "metric": "slowest-camera fps",
+    "original": 15147.7,
+    "rerun": 15099.1,
+    "chg": -0.0032084078771034783,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n1_py_seq",
+    "metric": "put median ms",
+    "original": 0.0644,
+    "rerun": 0.0644,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n1_py_seq",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n1_sk_head",
+    "metric": "slowest-camera fps",
+    "original": 1602.3,
+    "rerun": 1612.1,
+    "chg": 0.006116207951070308,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n1_sk_head",
+    "metric": "put median ms",
+    "original": 0.6142,
+    "rerun": 0.6142,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n1_sk_head",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n5_cpp_head_port",
+    "metric": "slowest-camera fps",
+    "original": 884.6,
+    "rerun": 882.8,
+    "chg": -0.0020348179968348048,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n5_cpp_head_port",
+    "metric": "put median ms",
+    "original": 1.1212,
+    "rerun": 1.1215,
+    "chg": 0.00026757046022116214,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n5_cpp_head_port",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n5_cpp_head_port_r2",
+    "metric": "slowest-camera fps",
+    "original": 887.6,
+    "rerun": 881.2,
+    "chg": -0.007210455159981948,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n5_cpp_head_port_r2",
+    "metric": "put median ms",
+    "original": 1.1166,
+    "rerun": 1.11035,
+    "chg": -0.005597349095468465,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n5_cpp_head_port_r2",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n5_cpp_one_copy",
+    "metric": "slowest-camera fps",
+    "original": 3935.0,
+    "rerun": 3935.8,
+    "chg": 0.00020330368487933467,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n5_cpp_one_copy",
+    "metric": "put median ms",
+    "original": 0.2474,
+    "rerun": 0.2471,
+    "chg": -0.0012126111560227261,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n5_cpp_one_copy",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n5_cpp_one_copy_r2",
+    "metric": "slowest-camera fps",
+    "original": 3845.2,
+    "rerun": 3782.5,
+    "chg": -0.016306043898886877,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n5_cpp_one_copy_r2",
+    "metric": "put median ms",
+    "original": 0.2498,
+    "rerun": 0.2566,
+    "chg": 0.027221777421937553,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n5_cpp_one_copy_r2",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n5_hybrid",
+    "metric": "slowest-camera fps",
+    "original": 3855.7,
+    "rerun": 3962.3,
+    "chg": 0.02764737920481375,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n5_hybrid",
+    "metric": "put median ms",
+    "original": 0.2492,
+    "rerun": 0.2451,
+    "chg": -0.016452648475120357,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n5_hybrid",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n5_hybrid_ctypes",
+    "metric": "slowest-camera fps",
+    "original": 3897.1,
+    "rerun": 3946.4,
+    "chg": 0.012650432372790071,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n5_hybrid_ctypes",
+    "metric": "put median ms",
+    "original": 0.248,
+    "rerun": 0.2456,
+    "chg": -0.009677419354838651,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n5_hybrid_ctypes",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n5_hybrid_ctypes_r2",
+    "metric": "slowest-camera fps",
+    "original": 3891.8,
+    "rerun": 3933.6,
+    "chg": 0.010740531373657363,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n5_hybrid_ctypes_r2",
+    "metric": "put median ms",
+    "original": 0.2453,
+    "rerun": 0.2466,
+    "chg": 0.00529963310232378,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n5_hybrid_ctypes_r2",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n5_hybrid_r2",
+    "metric": "slowest-camera fps",
+    "original": 3729.5,
+    "rerun": 3821.1,
+    "chg": 0.024560933100951844,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n5_hybrid_r2",
+    "metric": "put median ms",
+    "original": 0.2527,
+    "rerun": 0.2518,
+    "chg": -0.003561535417490924,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n5_hybrid_r2",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n5_py_seq",
+    "metric": "slowest-camera fps",
+    "original": 3817.3,
+    "rerun": 3835.6,
+    "chg": 0.004793964320331052,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n5_py_seq",
+    "metric": "put median ms",
+    "original": 0.2519,
+    "rerun": 0.2512,
+    "chg": -0.0027788805081382846,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n5_py_seq",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n5_py_seq_r2",
+    "metric": "slowest-camera fps",
+    "original": 3894.0,
+    "rerun": 3920.7,
+    "chg": 0.006856702619414437,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n5_py_seq_r2",
+    "metric": "put median ms",
+    "original": 0.2487,
+    "rerun": 0.248,
+    "chg": -0.0028146361077603784,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n5_py_seq_r2",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n5_sk_head",
+    "metric": "slowest-camera fps",
+    "original": 860.1,
+    "rerun": 857.2,
+    "chg": -0.003371700965004043,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n5_sk_head",
+    "metric": "put median ms",
+    "original": 1.1401,
+    "rerun": 1.1466,
+    "chg": 0.005701254275940859,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n5_sk_head",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "write_720p_n5_sk_head_r2",
+    "metric": "slowest-camera fps",
+    "original": 859.1,
+    "rerun": 841.2,
+    "chg": -0.020835758351763448,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "write_720p_n5_sk_head_r2",
+    "metric": "put median ms",
+    "original": 1.1565,
+    "rerun": 1.1475,
+    "chg": -0.0077821011673152776,
+    "kind": "latency"
+   },
+   {
+    "row": "write_720p_n5_sk_head_r2",
+    "metric": "verified",
+    "original": true,
+    "rerun": true,
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n1_max_cpp_proc",
+    "metric": "slowest-camera sustained fps",
+    "original": 2318.0,
+    "rerun": 2297.1,
+    "chg": -0.00901639344262299,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_1080p_n1_max_cpp_proc",
+    "metric": "publish median ms",
+    "original": 0.1878,
+    "rerun": 0.1886,
+    "chg": 0.004259850905218292,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n1_max_cpp_proc",
+    "metric": "written/read/lost/torn",
+    "original": "23324/23324/0/0",
+    "rerun": "23108/23108/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n1_max_cpp_thread",
+    "metric": "slowest-camera sustained fps",
+    "original": 2329.8,
+    "rerun": 2320.4,
+    "chg": -0.004034681088505489,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_1080p_n1_max_cpp_thread",
+    "metric": "publish median ms",
+    "original": 0.1868,
+    "rerun": 0.1871,
+    "chg": 0.0016059957173447255,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n1_max_cpp_thread",
+    "metric": "written/read/lost/torn",
+    "original": "23434/23434/0/0",
+    "rerun": "23341/23341/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n1_max_hybrid",
+    "metric": "slowest-camera sustained fps",
+    "original": 2262.4,
+    "rerun": 2279.9,
+    "chg": 0.007735148514851485,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_1080p_n1_max_hybrid",
+    "metric": "publish median ms",
+    "original": 0.1877,
+    "rerun": 0.1883,
+    "chg": 0.0031965903036760223,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n1_max_hybrid",
+    "metric": "written/read/lost/torn",
+    "original": "22770/22770/0/0",
+    "rerun": "22945/22945/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n1_max_py_seq",
+    "metric": "slowest-camera sustained fps",
+    "original": 2293.0,
+    "rerun": 2285.3,
+    "chg": -0.0033580462276492883,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_1080p_n1_max_py_seq",
+    "metric": "publish median ms",
+    "original": 0.188,
+    "rerun": 0.1894,
+    "chg": 0.007446808510638363,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n1_max_py_seq",
+    "metric": "written/read/lost/torn",
+    "original": "23068/23068/0/0",
+    "rerun": "22997/22997/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n1_max_sk_head",
+    "metric": "slowest-camera sustained fps",
+    "original": 733.8,
+    "rerun": 738.0,
+    "chg": 0.005723630417007421,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_1080p_n1_max_sk_head",
+    "metric": "publish median ms",
+    "original": 1.3568,
+    "rerun": 1.3503500000000002,
+    "chg": -0.004753832547169697,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n1_max_sk_head",
+    "metric": "written/read/lost/torn",
+    "original": "7339/7339/0/0",
+    "rerun": "7380/7380/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n5_max_cpp_proc",
+    "metric": "slowest-camera sustained fps",
+    "original": 542.9,
+    "rerun": 530.1,
+    "chg": -0.02357708601952469,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_1080p_n5_max_cpp_proc",
+    "metric": "publish median ms",
+    "original": 1.06725,
+    "rerun": 1.1493,
+    "chg": 0.07687983134223467,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_max_cpp_proc",
+    "metric": "written/read/lost/torn",
+    "original": "27966/27966/0/0",
+    "rerun": "27758/27758/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n5_max_cpp_proc_r2",
+    "metric": "slowest-camera sustained fps",
+    "original": 535.0,
+    "rerun": 538.4,
+    "chg": 0.006355140186915845,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_1080p_n5_max_cpp_proc_r2",
+    "metric": "publish median ms",
+    "original": 1.14575,
+    "rerun": 1.09655,
+    "chg": -0.042941304822169,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_max_cpp_proc_r2",
+    "metric": "written/read/lost/torn",
+    "original": "27814/27814/0/0",
+    "rerun": "27698/27698/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n5_max_cpp_thread",
+    "metric": "slowest-camera sustained fps",
+    "original": 544.8,
+    "rerun": 538.9,
+    "chg": -0.010829662261380282,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_1080p_n5_max_cpp_thread",
+    "metric": "publish median ms",
+    "original": 1.12105,
+    "rerun": 1.1291,
+    "chg": 0.007180768029971803,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_max_cpp_thread",
+    "metric": "written/read/lost/torn",
+    "original": "28077/28077/0/0",
+    "rerun": "27735/27735/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n5_max_cpp_thread_r2",
+    "metric": "slowest-camera sustained fps",
+    "original": 544.8,
+    "rerun": 540.7,
+    "chg": -0.007525697503670906,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_1080p_n5_max_cpp_thread_r2",
+    "metric": "publish median ms",
+    "original": 1.0937,
+    "rerun": 1.1549,
+    "chg": 0.055956843741428314,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_max_cpp_thread_r2",
+    "metric": "written/read/lost/torn",
+    "original": "28024/28024/0/0",
+    "rerun": "27772/27772/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n5_max_hybrid",
+    "metric": "slowest-camera sustained fps",
+    "original": 530.5,
+    "rerun": 534.2,
+    "chg": 0.0069745523091424046,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_1080p_n5_max_hybrid",
+    "metric": "publish median ms",
+    "original": 1.0635,
+    "rerun": 1.0693,
+    "chg": 0.005453690644099697,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_max_hybrid",
+    "metric": "written/read/lost/torn",
+    "original": "27435/27435/0/0",
+    "rerun": "27600/27600/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n5_max_hybrid_r2",
+    "metric": "slowest-camera sustained fps",
+    "original": 526.2,
+    "rerun": 531.8,
+    "chg": 0.010642341315089145,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_1080p_n5_max_hybrid_r2",
+    "metric": "publish median ms",
+    "original": 1.0817,
+    "rerun": 1.0716,
+    "chg": -0.009337154479060734,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_max_hybrid_r2",
+    "metric": "written/read/lost/torn",
+    "original": "27215/27215/0/0",
+    "rerun": "27360/27360/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n5_max_py_seq",
+    "metric": "slowest-camera sustained fps",
+    "original": 527.3,
+    "rerun": 536.0,
+    "chg": 0.016499146595865818,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_1080p_n5_max_py_seq",
+    "metric": "publish median ms",
+    "original": 1.0858500000000002,
+    "rerun": 1.0192999999999999,
+    "chg": -0.06128839158263141,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_max_py_seq",
+    "metric": "written/read/lost/torn",
+    "original": "27464/27464/0/0",
+    "rerun": "27825/27825/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n5_max_py_seq_r2",
+    "metric": "slowest-camera sustained fps",
+    "original": 537.2,
+    "rerun": 534.1,
+    "chg": -0.005770662695457972,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_1080p_n5_max_py_seq_r2",
+    "metric": "publish median ms",
+    "original": 1.0797,
+    "rerun": 1.0853,
+    "chg": 0.005186625914605749,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_max_py_seq_r2",
+    "metric": "written/read/lost/torn",
+    "original": "27750/27750/0/0",
+    "rerun": "27589/27589/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n5_max_sk_head",
+    "metric": "slowest-camera sustained fps",
+    "original": 243.0,
+    "rerun": 246.1,
+    "chg": 0.012757201646090512,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_1080p_n5_max_sk_head",
+    "metric": "publish median ms",
+    "original": 3.9155,
+    "rerun": 4.01065,
+    "chg": 0.024300855574000725,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_max_sk_head",
+    "metric": "written/read/lost/torn",
+    "original": "12377/12377/0/0",
+    "rerun": "12392/12392/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n5_max_sk_head_r2",
+    "metric": "slowest-camera sustained fps",
+    "original": 249.6,
+    "rerun": 243.2,
+    "chg": -0.025641025641025664,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_1080p_n5_max_sk_head_r2",
+    "metric": "publish median ms",
+    "original": 3.824,
+    "rerun": 3.9875499999999997,
+    "chg": 0.04276935146443511,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_max_sk_head_r2",
+    "metric": "written/read/lost/torn",
+    "original": "12624/12624/0/0",
+    "rerun": "12510/12510/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_cpp_proc",
+    "metric": "slowest-camera sustained fps",
+    "original": 60.0,
+    "rerun": 60.0,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_cpp_proc",
+    "metric": "publish median ms",
+    "original": 0.9366,
+    "rerun": 0.9618,
+    "chg": 0.026905829596412557,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_cpp_proc",
+    "metric": "publish->read median ms",
+    "original": 1.9454,
+    "rerun": 1.9827,
+    "chg": 0.01917343476919908,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_cpp_proc",
+    "metric": "written/read/lost/torn",
+    "original": "3000/3000/0/0",
+    "rerun": "3000/3000/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_cpp_thread",
+    "metric": "slowest-camera sustained fps",
+    "original": 60.0,
+    "rerun": 60.0,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_cpp_thread",
+    "metric": "publish median ms",
+    "original": 0.966,
+    "rerun": 0.99175,
+    "chg": 0.026656314699793016,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_cpp_thread",
+    "metric": "publish->read median ms",
+    "original": 2.02615,
+    "rerun": 2.0583,
+    "chg": 0.01586753201885355,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_cpp_thread",
+    "metric": "written/read/lost/torn",
+    "original": "3000/3000/0/0",
+    "rerun": "3000/3000/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_hybrid",
+    "metric": "slowest-camera sustained fps",
+    "original": 60.0,
+    "rerun": 60.0,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_hybrid",
+    "metric": "publish median ms",
+    "original": 1.00285,
+    "rerun": 0.99505,
+    "chg": -0.007777833175449996,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_hybrid",
+    "metric": "publish->read median ms",
+    "original": 2.03345,
+    "rerun": 2.0278,
+    "chg": -0.0027785291007893747,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_hybrid",
+    "metric": "written/read/lost/torn",
+    "original": "3000/3000/0/0",
+    "rerun": "3000/3000/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_py_seq",
+    "metric": "slowest-camera sustained fps",
+    "original": 60.0,
+    "rerun": 60.0,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_py_seq",
+    "metric": "publish median ms",
+    "original": 0.9788,
+    "rerun": 1.01135,
+    "chg": 0.033255006129955016,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_py_seq",
+    "metric": "publish->read median ms",
+    "original": 2.0187,
+    "rerun": 2.06175,
+    "chg": 0.021325605587754513,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_py_seq",
+    "metric": "written/read/lost/torn",
+    "original": "3000/3000/0/0",
+    "rerun": "3000/3000/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_sk_head",
+    "metric": "slowest-camera sustained fps",
+    "original": 60.0,
+    "rerun": 60.0,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_sk_head",
+    "metric": "publish median ms",
+    "original": 2.6661,
+    "rerun": 2.6500500000000002,
+    "chg": -0.006020029256216908,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_sk_head",
+    "metric": "publish->read median ms",
+    "original": 3.7363999999999997,
+    "rerun": 3.7493499999999997,
+    "chg": 0.0034659030082432336,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_1080p_n5_paced60_sk_head",
+    "metric": "written/read/lost/torn",
+    "original": "3000/3000/0/0",
+    "rerun": "3000/3000/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_64x64_n1_max_cpp_proc",
+    "metric": "slowest-camera sustained fps",
+    "original": 1149700.5,
+    "rerun": 1133744.0,
+    "chg": -0.013878831921878785,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_64x64_n1_max_cpp_proc",
+    "metric": "publish median ms",
+    "original": 0.0008,
+    "rerun": 0.0008,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_64x64_n1_max_cpp_proc",
+    "metric": "written/read/lost/torn",
+    "original": "11497008/11497008/0/0",
+    "rerun": "11337443/11337443/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_64x64_n1_max_cpp_thread",
+    "metric": "slowest-camera sustained fps",
+    "original": 1150875.5,
+    "rerun": 1160943.0,
+    "chg": 0.008747688173047389,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_64x64_n1_max_cpp_thread",
+    "metric": "publish median ms",
+    "original": 0.0008,
+    "rerun": 0.0008,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_64x64_n1_max_cpp_thread",
+    "metric": "written/read/lost/torn",
+    "original": "11508757/11508757/0/0",
+    "rerun": "11609433/11609433/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_64x64_n1_max_hybrid",
+    "metric": "slowest-camera sustained fps",
+    "original": 322693.8,
+    "rerun": 321068.6,
+    "chg": -0.005036353347972635,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_64x64_n1_max_hybrid",
+    "metric": "publish median ms",
+    "original": 0.0012,
+    "rerun": 0.0012,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_64x64_n1_max_hybrid",
+    "metric": "written/read/lost/torn",
+    "original": "3309270/3309270/0/0",
+    "rerun": "3292828/3292828/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_64x64_n1_max_py_seq",
+    "metric": "slowest-camera sustained fps",
+    "original": 347056.0,
+    "rerun": 347424.0,
+    "chg": 0.0010603476096076713,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_64x64_n1_max_py_seq",
+    "metric": "publish median ms",
+    "original": 0.0012,
+    "rerun": 0.0012,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_64x64_n1_max_py_seq",
+    "metric": "written/read/lost/torn",
+    "original": "3553047/3553047/0/0",
+    "rerun": "3556104/3556104/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_64x64_n1_max_sk_head",
+    "metric": "slowest-camera sustained fps",
+    "original": 12976.7,
+    "rerun": 12992.3,
+    "chg": 0.0012021546309923588,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_64x64_n1_max_sk_head",
+    "metric": "publish median ms",
+    "original": 0.0255,
+    "rerun": 0.0253,
+    "chg": -0.007843137254901914,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_64x64_n1_max_sk_head",
+    "metric": "written/read/lost/torn",
+    "original": "212696/212696/0/0",
+    "rerun": "213242/213242/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_64x64_n5_max_cpp_proc",
+    "metric": "slowest-camera sustained fps",
+    "original": 380551.3,
+    "rerun": 384566.6,
+    "chg": 0.010551271274069983,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_64x64_n5_max_cpp_proc",
+    "metric": "publish median ms",
+    "original": 0.0008,
+    "rerun": 0.0007,
+    "chg": -0.12500000000000006,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_64x64_n5_max_cpp_proc",
+    "metric": "written/read/lost/torn",
+    "original": "19577829/19577829/0/0",
+    "rerun": "19762580/19762580/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_64x64_n5_max_cpp_thread",
+    "metric": "slowest-camera sustained fps",
+    "original": 380866.6,
+    "rerun": 386421.9,
+    "chg": 0.014585946890591213,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_64x64_n5_max_cpp_thread",
+    "metric": "publish median ms",
+    "original": 0.0008,
+    "rerun": 0.0008,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_64x64_n5_max_cpp_thread",
+    "metric": "written/read/lost/torn",
+    "original": "19727475/19727475/0/0",
+    "rerun": "19766403/19766403/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_64x64_n5_max_hybrid",
+    "metric": "slowest-camera sustained fps",
+    "original": 262764.0,
+    "rerun": 261963.9,
+    "chg": -0.0030449376626935417,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_64x64_n5_max_hybrid",
+    "metric": "publish median ms",
+    "original": 0.0021,
+    "rerun": 0.002,
+    "chg": -0.04761904761904754,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_64x64_n5_max_hybrid",
+    "metric": "written/read/lost/torn",
+    "original": "13665739/13665739/0/0",
+    "rerun": "13609174/13609174/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_64x64_n5_max_py_seq",
+    "metric": "slowest-camera sustained fps",
+    "original": 276008.3,
+    "rerun": 275054.9,
+    "chg": -0.003454243948460844,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_64x64_n5_max_py_seq",
+    "metric": "publish median ms",
+    "original": 0.0021,
+    "rerun": 0.0021,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_64x64_n5_max_py_seq",
+    "metric": "written/read/lost/torn",
+    "original": "14500379/14500379/0/0",
+    "rerun": "14423802/14423802/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_64x64_n5_max_sk_head",
+    "metric": "slowest-camera sustained fps",
+    "original": 11911.7,
+    "rerun": 11876.7,
+    "chg": -0.002938287566006531,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_64x64_n5_max_sk_head",
+    "metric": "publish median ms",
+    "original": 0.026,
+    "rerun": 0.026,
+    "chg": 0.0,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_64x64_n5_max_sk_head",
+    "metric": "written/read/lost/torn",
+    "original": "1000196/1000196/0/0",
+    "rerun": "992037/992037/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n1_max_cpp_proc",
+    "metric": "slowest-camera sustained fps",
+    "original": 5343.9,
+    "rerun": 5306.1,
+    "chg": -0.007073485656542838,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_720p_n1_max_cpp_proc",
+    "metric": "publish median ms",
+    "original": 0.0953,
+    "rerun": 0.096,
+    "chg": 0.007345225603357882,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n1_max_cpp_proc",
+    "metric": "written/read/lost/torn",
+    "original": "53775/53775/0/0",
+    "rerun": "53391/53391/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n1_max_cpp_thread",
+    "metric": "slowest-camera sustained fps",
+    "original": 5361.3,
+    "rerun": 5324.7,
+    "chg": -0.00682670247887646,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_720p_n1_max_cpp_thread",
+    "metric": "publish median ms",
+    "original": 0.095,
+    "rerun": 0.0954,
+    "chg": 0.0042105263157894484,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n1_max_cpp_thread",
+    "metric": "written/read/lost/torn",
+    "original": "53927/53927/0/0",
+    "rerun": "53559/53559/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n1_max_hybrid",
+    "metric": "slowest-camera sustained fps",
+    "original": 5174.2,
+    "rerun": 5184.1,
+    "chg": 0.0019133392601755916,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_720p_n1_max_hybrid",
+    "metric": "publish median ms",
+    "original": 0.0945,
+    "rerun": 0.0946,
+    "chg": 0.0010582010582010884,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n1_max_hybrid",
+    "metric": "written/read/lost/torn",
+    "original": "52061/52061/0/0",
+    "rerun": "52159/52159/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n1_max_py_seq",
+    "metric": "slowest-camera sustained fps",
+    "original": 5228.3,
+    "rerun": 5231.0,
+    "chg": 0.0005164202513244876,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_720p_n1_max_py_seq",
+    "metric": "publish median ms",
+    "original": 0.0945,
+    "rerun": 0.0952,
+    "chg": 0.007407407407407473,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n1_max_py_seq",
+    "metric": "written/read/lost/torn",
+    "original": "52607/52607/0/0",
+    "rerun": "52654/52654/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n1_max_sk_head",
+    "metric": "slowest-camera sustained fps",
+    "original": 1597.2,
+    "rerun": 1597.2,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_720p_n1_max_sk_head",
+    "metric": "publish median ms",
+    "original": 0.6252,
+    "rerun": 0.6241,
+    "chg": -0.0017594369801663306,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n1_max_sk_head",
+    "metric": "written/read/lost/torn",
+    "original": "15973/15973/0/0",
+    "rerun": "15973/15973/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n5_max_cpp_proc",
+    "metric": "slowest-camera sustained fps",
+    "original": 1256.1,
+    "rerun": 1280.2,
+    "chg": 0.01918637051190203,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_720p_n5_max_cpp_proc",
+    "metric": "publish median ms",
+    "original": 0.3039,
+    "rerun": 0.3044,
+    "chg": 0.0016452780519907878,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_max_cpp_proc",
+    "metric": "written/read/lost/torn",
+    "original": "65775/65775/0/0",
+    "rerun": "66097/66097/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n5_max_cpp_proc_r2",
+    "metric": "slowest-camera sustained fps",
+    "original": 1281.2,
+    "rerun": 1278.1,
+    "chg": -0.002419606618794986,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_720p_n5_max_cpp_proc_r2",
+    "metric": "publish median ms",
+    "original": 0.3045,
+    "rerun": 0.3038,
+    "chg": -0.002298850574712573,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_max_cpp_proc_r2",
+    "metric": "written/read/lost/torn",
+    "original": "65819/65819/0/0",
+    "rerun": "66071/66071/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n5_max_cpp_thread",
+    "metric": "slowest-camera sustained fps",
+    "original": 1287.9,
+    "rerun": 1278.0,
+    "chg": -0.007686932215234172,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_720p_n5_max_cpp_thread",
+    "metric": "publish median ms",
+    "original": 0.311,
+    "rerun": 0.302,
+    "chg": -0.028938906752411602,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_max_cpp_thread",
+    "metric": "written/read/lost/torn",
+    "original": "66317/66317/0/0",
+    "rerun": "66131/66131/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n5_max_cpp_thread_r2",
+    "metric": "slowest-camera sustained fps",
+    "original": 1278.4,
+    "rerun": 1270.2,
+    "chg": -0.006414267834793527,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_720p_n5_max_cpp_thread_r2",
+    "metric": "publish median ms",
+    "original": 0.3066,
+    "rerun": 0.3065,
+    "chg": -0.00032615786040439984,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_max_cpp_thread_r2",
+    "metric": "written/read/lost/torn",
+    "original": "65744/65744/0/0",
+    "rerun": "65621/65621/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n5_max_hybrid",
+    "metric": "slowest-camera sustained fps",
+    "original": 1269.8,
+    "rerun": 1268.4,
+    "chg": -0.0011025358324144462,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_720p_n5_max_hybrid",
+    "metric": "publish median ms",
+    "original": 0.2986,
+    "rerun": 0.2964,
+    "chg": -0.007367716008037441,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_max_hybrid",
+    "metric": "written/read/lost/torn",
+    "original": "65459/65459/0/0",
+    "rerun": "65670/65670/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n5_max_hybrid_r2",
+    "metric": "slowest-camera sustained fps",
+    "original": 1257.7,
+    "rerun": 1265.6,
+    "chg": 0.006281307147968406,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_720p_n5_max_hybrid_r2",
+    "metric": "publish median ms",
+    "original": 0.299,
+    "rerun": 0.29705,
+    "chg": -0.006521739130434807,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_max_hybrid_r2",
+    "metric": "written/read/lost/torn",
+    "original": "65301/65301/0/0",
+    "rerun": "65300/65300/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n5_max_py_seq",
+    "metric": "slowest-camera sustained fps",
+    "original": 1258.5,
+    "rerun": 1260.1,
+    "chg": 0.0012713547874452992,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_720p_n5_max_py_seq",
+    "metric": "publish median ms",
+    "original": 0.3028,
+    "rerun": 0.301,
+    "chg": -0.005944517833553579,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_max_py_seq",
+    "metric": "written/read/lost/torn",
+    "original": "64892/64892/0/0",
+    "rerun": "64946/64946/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n5_max_py_seq_r2",
+    "metric": "slowest-camera sustained fps",
+    "original": 1282.6,
+    "rerun": 1262.9,
+    "chg": -0.015359426165600982,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_720p_n5_max_py_seq_r2",
+    "metric": "publish median ms",
+    "original": 0.3014,
+    "rerun": 0.2909,
+    "chg": -0.034837425348374286,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_max_py_seq_r2",
+    "metric": "written/read/lost/torn",
+    "original": "65640/65640/0/0",
+    "rerun": "65276/65276/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n5_max_sk_head",
+    "metric": "slowest-camera sustained fps",
+    "original": 603.3,
+    "rerun": 588.3,
+    "chg": -0.024863252113376432,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_720p_n5_max_sk_head",
+    "metric": "publish median ms",
+    "original": 1.5796,
+    "rerun": 1.593,
+    "chg": 0.008483160293745302,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_max_sk_head",
+    "metric": "written/read/lost/torn",
+    "original": "30533/30533/0/0",
+    "rerun": "30166/30166/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n5_max_sk_head_r2",
+    "metric": "slowest-camera sustained fps",
+    "original": 603.2,
+    "rerun": 585.3,
+    "chg": -0.029675066312997496,
+    "kind": "throughput",
+    "within_tol": true
+   },
+   {
+    "row": "spsc_720p_n5_max_sk_head_r2",
+    "metric": "publish median ms",
+    "original": 1.5935,
+    "rerun": 1.5855,
+    "chg": -0.0050203953561343,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_max_sk_head_r2",
+    "metric": "written/read/lost/torn",
+    "original": "30513/30513/0/0",
+    "rerun": "30442/30442/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n5_paced60_cpp_proc",
+    "metric": "slowest-camera sustained fps",
+    "original": 60.0,
+    "rerun": 60.0,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "spsc_720p_n5_paced60_cpp_proc",
+    "metric": "publish median ms",
+    "original": 0.3365,
+    "rerun": 0.35645,
+    "chg": 0.05928677563150064,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_paced60_cpp_proc",
+    "metric": "publish->read median ms",
+    "original": 0.77845,
+    "rerun": 0.7987,
+    "chg": 0.02601323142141434,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_paced60_cpp_proc",
+    "metric": "written/read/lost/torn",
+    "original": "3000/3000/0/0",
+    "rerun": "3000/3000/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n5_paced60_cpp_thread",
+    "metric": "slowest-camera sustained fps",
+    "original": 60.0,
+    "rerun": 60.0,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "spsc_720p_n5_paced60_cpp_thread",
+    "metric": "publish median ms",
+    "original": 0.36215,
+    "rerun": 0.36415,
+    "chg": 0.005522573519259826,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_paced60_cpp_thread",
+    "metric": "publish->read median ms",
+    "original": 0.81725,
+    "rerun": 0.82605,
+    "chg": 0.010767818904863773,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_paced60_cpp_thread",
+    "metric": "written/read/lost/torn",
+    "original": "3000/3000/0/0",
+    "rerun": "3000/3000/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n5_paced60_hybrid",
+    "metric": "slowest-camera sustained fps",
+    "original": 60.0,
+    "rerun": 60.0,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "spsc_720p_n5_paced60_hybrid",
+    "metric": "publish median ms",
+    "original": 0.38060000000000005,
+    "rerun": 0.38945,
+    "chg": 0.023252758801891666,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_paced60_hybrid",
+    "metric": "publish->read median ms",
+    "original": 0.8345,
+    "rerun": 0.8359,
+    "chg": 0.001677651288196473,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_paced60_hybrid",
+    "metric": "written/read/lost/torn",
+    "original": "3000/3000/0/0",
+    "rerun": "3000/3000/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n5_paced60_py_seq",
+    "metric": "slowest-camera sustained fps",
+    "original": 60.0,
+    "rerun": 60.0,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "spsc_720p_n5_paced60_py_seq",
+    "metric": "publish median ms",
+    "original": 0.3853,
+    "rerun": 0.38570000000000004,
+    "chg": 0.0010381520892812535,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_paced60_py_seq",
+    "metric": "publish->read median ms",
+    "original": 0.84125,
+    "rerun": 0.83875,
+    "chg": -0.002971768202080306,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_paced60_py_seq",
+    "metric": "written/read/lost/torn",
+    "original": "3000/3000/0/0",
+    "rerun": "3000/3000/0/0",
+    "kind": "check"
+   },
+   {
+    "row": "spsc_720p_n5_paced60_sk_head",
+    "metric": "slowest-camera sustained fps",
+    "original": 60.0,
+    "rerun": 60.0,
+    "chg": 0.0,
+    "kind": "throughput",
+    "within_tol": true,
+    "pass_orig": true,
+    "pass_rerun": true,
+    "same_pass_fail": true
+   },
+   {
+    "row": "spsc_720p_n5_paced60_sk_head",
+    "metric": "publish median ms",
+    "original": 1.17795,
+    "rerun": 1.2166,
+    "chg": 0.03281123986586854,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_paced60_sk_head",
+    "metric": "publish->read median ms",
+    "original": 1.6860499999999998,
+    "rerun": 1.7266,
+    "chg": 0.024050295068355085,
+    "kind": "latency"
+   },
+   {
+    "row": "spsc_720p_n5_paced60_sk_head",
+    "metric": "written/read/lost/torn",
+    "original": "3000/3000/0/0",
+    "rerun": "3000/3000/0/0",
+    "kind": "check"
+   }
+  ]
+ },
+ "summary": {
+  "baseline e2e (bench_e_e2e.py, real SkellyCam stack)": {
+   "throughput_rows": 8,
+   "within_tol": 8,
+   "outside_tol": [],
+   "pass_fail_rows": 4,
+   "pass_fail_changed": []
+  },
+  "P8 end-to-end prototype (p8_e2e_proto.py)": {
+   "throughput_rows": 8,
+   "within_tol": 8,
+   "outside_tol": [],
+   "pass_fail_rows": 4,
+   "pass_fail_changed": []
+  },
+  "P6 UI path (p6_ui_path.py)": {
+   "throughput_rows": 22,
+   "within_tol": 17,
+   "outside_tol": [
+    "720p view_proto (skellycamvenv) :: payloads/s 60.0 -> 44.3 (-26.2%)",
+    "720p view_proto_640x360 (skellycamvenv) :: payloads/s 60.0 -> 44.4 (-26.0%)",
+    "720p view_proto_threads (skellycamvenv) :: payloads/s 59.7 -> 45.4 (-24.0%)",
+    "720p jpeg_forward (skellycamvenv) :: payloads/s 60.1 -> 45.6 (-24.1%)",
+    "720p jpeg_reduced_reencode_threads (skellycamvenv) :: payloads/s 59.4 -> 43.9 (-26.1%)"
+   ],
+   "pass_fail_rows": 0,
+   "pass_fail_changed": []
+  },
+  "C++ vs Python ring (cpp/run_matrix.py ring_write, ring_spsc)": {
+   "throughput_rows": 98,
+   "within_tol": 97,
+   "outside_tol": [
+    "write_1080p_n5_cpp_one_copy :: slowest-camera fps 1487.6 -> 1207.2 (-18.8%)"
+   ],
+   "pass_fail_rows": 10,
+   "pass_fail_changed": []
+  }
+ }
+}

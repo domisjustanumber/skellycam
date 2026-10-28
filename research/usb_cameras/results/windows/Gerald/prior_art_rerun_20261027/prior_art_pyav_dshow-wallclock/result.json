@@ -1,0 +1,200 @@
+{
+  "test": "prior_art_pyav_probe",
+  "platform": "windows",
+  "hostname": "Gerald",
+  "utc_started": "2026-10-28T03:23:42.380249+00:00",
+  "command": "uv run --script research/usb_cameras/prior_art/pyav_dshow_probe.py --seconds 6 --wallclock --device @device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --device @device_pnp_\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --device @device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+  "environment": {
+    "os": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "pyav": "19.0.2",
+    "ffmpeg_libs": {
+      "libavutil": "(61, 1, 102)",
+      "libavcodec": "(63, 1, 102)",
+      "libavformat": "(63, 1, 102)",
+      "libavdevice": "(63, 1, 102)",
+      "libavfilter": "(12, 1, 102)",
+      "libswscale": "(10, 1, 102)",
+      "libswresample": "(7, 1, 102)"
+    }
+  },
+  "settings": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "seconds": 6.0,
+    "exposure": "not controlled (camera auto)"
+  },
+  "listed_devices": [
+    {
+      "name": "@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "kind": "video",
+      "alternative_name": "@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "explicit": true
+    },
+    {
+      "name": "@device_pnp_\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "kind": "video",
+      "alternative_name": "@device_pnp_\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "explicit": true
+    },
+    {
+      "name": "@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "kind": "video",
+      "alternative_name": "@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "explicit": true
+    }
+  ],
+  "cameras": [
+    {
+      "device": {
+        "name": "@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+        "kind": "video",
+        "alternative_name": "@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+        "explicit": true
+      },
+      "url": "video=@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "options": {
+        "vcodec": "mjpeg",
+        "video_size": "1280x720",
+        "framerate": "30",
+        "rtbufsize": "200M",
+        "use_video_device_timestamps": "0"
+      },
+      "open_log": [],
+      "open_ms": 610.554,
+      "codec": "mjpeg",
+      "time_base": "1/10000000",
+      "stream_w_h": [
+        1280,
+        720
+      ],
+      "average_rate": "10000000/333333",
+      "n_packets": 182,
+      "n_valid_jpeg": 182,
+      "n_pillow_ok": 13,
+      "n_pillow_fail": 0,
+      "stats": {
+        "fps_by_arrival": 30.054481603054136,
+        "arrival_interval_ms_min_med_max": [
+          31.667,
+          32.007,
+          48.204
+        ],
+        "pts_interval_ms_min_med_max": [
+          30.0,
+          32.0,
+          50.0
+        ],
+        "host_arrival_minus_pts_ms_min_med_max (only meaningful if same clock)": [
+          35.204,
+          36.237,
+          37.419
+        ],
+        "arrival_minus_pts_spread_ms": 2.215
+      },
+      "frames_file": "frames_vid_046d_pid_085c.jsonl",
+      "sample_file": "sample_vid_046d_pid_085c.jpg"
+    },
+    {
+      "device": {
+        "name": "@device_pnp_\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+        "kind": "video",
+        "alternative_name": "@device_pnp_\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+        "explicit": true
+      },
+      "url": "video=@device_pnp_\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "options": {
+        "vcodec": "mjpeg",
+        "video_size": "1280x720",
+        "framerate": "30",
+        "rtbufsize": "200M",
+        "use_video_device_timestamps": "0"
+      },
+      "open_log": [],
+      "open_ms": 768.7305,
+      "codec": "mjpeg",
+      "time_base": "1/10000000",
+      "stream_w_h": [
+        1280,
+        720
+      ],
+      "average_rate": "10000000/333333",
+      "n_packets": 182,
+      "n_valid_jpeg": 182,
+      "n_pillow_ok": 13,
+      "n_pillow_fail": 0,
+      "stats": {
+        "fps_by_arrival": 30.055605089431733,
+        "arrival_interval_ms_min_med_max": [
+          31.399,
+          32.008,
+          48.108
+        ],
+        "pts_interval_ms_min_med_max": [
+          30.0,
+          32.0,
+          49.0
+        ],
+        "host_arrival_minus_pts_ms_min_med_max (only meaningful if same clock)": [
+          35.193,
+          36.266,
+          37.402
+        ],
+        "arrival_minus_pts_spread_ms": 2.209
+      },
+      "frames_file": "frames_vid_046d_pid_0843.jsonl",
+      "sample_file": "sample_vid_046d_pid_0843.jpg"
+    },
+    {
+      "device": {
+        "name": "@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+        "kind": "video",
+        "alternative_name": "@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+        "explicit": true
+      },
+      "url": "video=@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "options": {
+        "vcodec": "mjpeg",
+        "video_size": "1280x720",
+        "framerate": "30",
+        "rtbufsize": "200M",
+        "use_video_device_timestamps": "0"
+      },
+      "open_log": [],
+      "open_ms": 362.5714,
+      "codec": "mjpeg",
+      "time_base": "1/10000000",
+      "stream_w_h": [
+        1280,
+        720
+      ],
+      "average_rate": "10000000/333333",
+      "n_packets": 156,
+      "n_valid_jpeg": 156,
+      "n_pillow_ok": 11,
+      "n_pillow_fail": 0,
+      "stats": {
+        "fps_by_arrival": 25.754426121333978,
+        "arrival_interval_ms_min_med_max": [
+          31.603,
+          32.145,
+          48.381
+        ],
+        "pts_interval_ms_min_med_max": [
+          30.0,
+          33.0,
+          50.0
+        ],
+        "host_arrival_minus_pts_ms_min_med_max (only meaningful if same clock)": [
+          35.237,
+          36.237,
+          37.341
+        ],
+        "arrival_minus_pts_spread_ms": 2.104
+      },
+      "frames_file": "frames_vid_4c4a_pid_4a55.jsonl",
+      "sample_file": "sample_vid_4c4a_pid_4a55.jpg"
+    }
+  ]
+}

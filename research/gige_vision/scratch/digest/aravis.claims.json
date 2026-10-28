@@ -1,0 +1,165 @@
+[
+ {
+  "id": "license",
+  "claim": "Aravis is LGPL-2.1-or-later; LGPL-2.1 section 3 allows conversion to GPLv2+, and section 6(b) allows distributing an app dynamically linked to a replaceable shared copy of the library.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/README.md#L25",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/COPYING#L211-L221",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/COPYING#L271-L304"
+  ],
+  "how_verified": "read-code (cloned repo, read README, COPYING, SPDX headers)",
+  "confidence": "high"
+ },
+ {
+  "id": "releases",
+  "claim": "Latest stable is 0.8.36 (tag 2026-04-23, GitHub release 'Latest' 2026-04-26); latest dev 0.9.2 (pre-release); main HEAD 482547a3 committed 2026-10-22, version 0.9.3 / API 0.10; 49 commits in last 12 months; Linux/macOS/MinGW/MSVC CI green on 2026-10-23.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/releases",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/meson.build#L1-L7",
+   "https://github.com/AravisProject/aravis/actions/runs/39925980711",
+   "https://github.com/AravisProject/aravis/actions/runs/39925980920"
+  ],
+  "how_verified": "other: git log/tag on local clone, gh release list, gh run list",
+  "confidence": "high"
+ },
+ {
+  "id": "no-ptp-in-lib",
+  "claim": "libaravis (src/) contains no PTP/IEEE1588 code; the only PTP reference is an unreleased GStreamer element option add-reference-timestamp-meta (commit ee31d82f1, 2026-10-03) tagging device timestamps with timestamp/x-ptp caps. Maintainer says PTP is configured via generic GenICam feature access.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/gst/gstaravis.c#L563-L567",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/gst/gstaravis.c#L1203-L1209",
+   "https://github.com/AravisProject/aravis/issues/258"
+  ],
+  "how_verified": "read-code (grep -rni 'ptp|1588' src/ returned nothing) + read issue",
+  "confidence": "high"
+ },
+ {
+  "id": "no-action-commands",
+  "claim": "Aravis does not implement GigE Vision action commands: the GVCP command enum has no ACTION_CMD; only capability bit and ACTION_LATE status codes exist. Feature request #184 open since 2018; draft PR #468 (2021) open and unimplemented.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcpprivate.h#L249-L282",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcpprivate.h#L102",
+   "https://github.com/AravisProject/aravis/issues/184",
+   "https://github.com/AravisProject/aravis/pull/468"
+  ],
+  "how_verified": "read-code + gh issue/pr view",
+  "confidence": "high"
+ },
+ {
+  "id": "timestamps",
+  "claim": "arv_buffer_get_timestamp returns the device's 64-bit GVSP leader timestamp converted to ns using the bootstrap TimestampTickFrequency registers (falls back to host time if tick frequency is 0); arv_buffer_get_system_timestamp is host g_get_real_time()*1000 at leader-packet arrival.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L460-L531",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvspprivate.h#L452-L464",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvspprivate.h#L729-L743",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvdevice.c#L571-L597",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvbuffer.c#L379-L437"
+  ],
+  "how_verified": "read-code + ran-test (docker: python3 -I aravis_fake_camera_capture.py printed device/system timestamps, tick=1e9)",
+  "confidence": "high"
+ },
+ {
+  "id": "raw-frames",
+  "claim": "Aravis delivers uncompressed pixel data (PFNC formats); JPEG, JPEG2000 and H264 payload types are documented as not supported.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvbuffer.h#L64-L92",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L439-L531"
+  ],
+  "how_verified": "read-code + ran-test (fake camera frame Mono8 0x01080001, 512x512 = 262144 bytes = payload)",
+  "confidence": "high"
+ },
+ {
+  "id": "fake-cam-test",
+  "claim": "In Docker ubuntu:24.04 (Aravis 0.8.30, PyGObject 3.48.2, --network none), Python via gi discovered arv-fake-gv-camera-0.8 on 127.0.0.1 and grabbed 100/100 frames at 24.66 fps (default) and 100.16 fps (100 Hz setting); device-ts interval std 0.16 ms vs host receive std ~10 ms; get_data() copy 0.026 ms/256 KiB. Same script ran on HEAD's Aravis-0.10 typelib.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvfakecamera.c#L795-L796"
+  ],
+  "how_verified": "ran-test: docker run --rm --network none -v <research>:/work:ro skellycam-aravis-test bash /work/run_aravis_docker.sh (log aravis_docker_run.log)",
+  "confidence": "high"
+ },
+ {
+  "id": "head-test-suite",
+  "claim": "Aravis HEAD builds on Ubuntu 24.04 with introspection and packet socket enabled; all 10 meson tests pass (incl. genicam chunk_data_test, python tests, fakegv network test) when run network-isolated.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/tests/genicam.c#L1159-L1230",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/tests/fake.py"
+  ],
+  "how_verified": "ran-test: docker run --rm --network none ... skellycam-aravis-build bash /work/build_aravis_head.sh (meson test -C build; log aravis_head_meson_test.log)",
+  "confidence": "high"
+ },
+ {
+  "id": "packet-socket-linux-only",
+  "claim": "The AF_PACKET TPACKET_V3 ring-buffer receive path is Linux-only, requires cap_net_raw, and falls back to normal UDP socket loop otherwise; Windows links ws2_32/iphlpapi.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/meson.build#L96-L119",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L1386-L1392",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/docs/reference/aravis/ethernet.md#L94-L103"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "packaging",
+  "claim": "No Aravis package on PyPI or conda-forge; PyGObject on PyPI has never published wheels (3.58.1 sdist only); conda-forge has pygobject for win/mac/linux but no aravis. Homebrew has aravis 0.8.36 (arm64+x86_64 bottles); MSYS2 has mingw-w64-aravis 0.8.33-4 (ucrt64/clang64/clangarm64).",
+  "evidence_urls": [
+   "https://formulae.brew.sh/api/formula/aravis.json",
+   "https://github.com/Homebrew/homebrew-core/blob/62967b0a1e5adb912fde3b160b73aa696c12672e/Formula/a/aravis.rb",
+   "https://packages.msys2.org/base/mingw-w64-aravis",
+   "https://pypi.org/pypi/PyGObject/json",
+   "https://api.anaconda.org/package/conda-forge/pygobject"
+  ],
+  "how_verified": "other: queried PyPI/anaconda APIs (404 for aravis), WebFetch of brew/MSYS2 pages, gh api for formula",
+  "confidence": "high"
+ },
+ {
+  "id": "ci-introspection",
+  "claim": "Upstream CI builds introspection on Linux and MinGW but disables it on macOS and MSVC; MinGW/MSVC CI use -Dgv-n-buffers=1.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/.github/workflows/aravis-macos.yml#L30",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/.github/workflows/aravis-mingw.yml#L52",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/.github/workflows/aravis-msvc-conan2.yml#L77"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "windows-perf-issue",
+  "claim": "There is an open, unresolved report of ~20 MiB/s and many timeouts on Windows 10 vs ~90 MiB/s on Ubuntu with the same 4K GigE camera.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/issues/752"
+  ],
+  "how_verified": "read-spec/doc (gh issue view with comments)",
+  "confidence": "medium"
+ },
+ {
+  "id": "packet-resend",
+  "claim": "GvStream packet-resend defaults to ALWAYS but is forced to NEVER if the device's GVCP capability lacks packet resend; observed NEVER on the fake camera.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L1850-L1859",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvdevice.c#L1904-L1905"
+  ],
+  "how_verified": "read-code + ran-test",
+  "confidence": "high"
+ },
+ {
+  "id": "rust",
+  "claim": "aravis-rs (crates aravis/aravis-sys 0.11.1, 2025-02-10, BSD-2-Clause) is GIR-generated, binds the 0.8 API up to v0_8_31 feature, links system aravis-0.8 dynamically via pkg-config; README warns not all API tested.",
+  "evidence_urls": [
+   "https://github.com/robohouse-delft/aravis-rs/blob/a911bf002a0511a1c9a0c68a0bcd7ef4aa32aabe/README.md",
+   "https://github.com/robohouse-delft/aravis-rs/blob/a911bf002a0511a1c9a0c68a0bcd7ef4aa32aabe/aravis-sys/Cargo.toml",
+   "https://github.com/robohouse-delft/aravis-rs/blob/a911bf002a0511a1c9a0c68a0bcd7ef4aa32aabe/aravis/Cargo.toml",
+   "https://crates.io/crates/aravis"
+  ],
+  "how_verified": "read-code (cloned) + crates.io API",
+  "confidence": "high"
+ },
+ {
+  "id": "device-id-collision",
+  "claim": "Device discovery broadcasts on all interfaces; two fake cameras with identical id 'Aravis-Fake-GV01' collapsed into one list entry and opening by id connected to the foreign one (write_register timeout). Opening by IP worked.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvsystem.h#L45-L53"
+  ],
+  "how_verified": "ran-test (first docker run without --network none, output recorded in notes)",
+  "confidence": "medium"
+ }
+]

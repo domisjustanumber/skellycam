@@ -1,0 +1,317 @@
+{
+  "env": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.2.6",
+    "opencv": "4.12.0",
+    "cpu_count": 28,
+    "time": "2026-10-25 14:39:15",
+    "psutil": "7.2.2",
+    "ram_total_gb": 68.413349888,
+    "system_cpu_pct_1s_before_run": 23.7,
+    "other_python_processes_at_start": [
+      "C:\\Users\\Dom\\GitHub\\OpenMMLab-Exporter\\.venv\\Scripts\\python.exe notes/decisions/scripts/rtmdet_nms_clamp_parity.py all --reference plans/sidecar-reference-post_",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpWh4boJ\\Scripts\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 580 -- C:\\Users\\Dom\\GitHub\\freemoc",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 580 -- C:\\Users\\Dom\\GitHub\\",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\tools\\camlock.py",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks/frame_pipeline/baseline/bench_d_ui.py",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\tools\\camlock.py",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpANUhVQ\\Scripts\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 3000 -- powershell -NoProfile -Com",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/mjpeg/run_matrix.py --backend pyav-dshow --backend openc",
+      "C:\\Users\\Dom\\GitHub\\OpenMMLab-Exporter\\.venv\\Scripts\\python.exe notes/decisions/scripts/rtmdet_nms_clamp_parity.py all --reference plans/sidecar-reference-post_",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpA34E2j\\Scripts\\python.exe research/usb_cameras/tools/camlock.py -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\res",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py -- C:\\Users\\Dom\\GitHub\\freemocap\\skelly",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 3000 -- C:\\Users\\Dom\\GitHub",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 3000 -- powershell -NoProfi",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\repo-metadata-7557eeb4e478a08e\\Scripts\\python.exe research/usb_cameras/prior_art/repo_metadata.py",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmp8XsQHb\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\tools\\camlock.py -- uv ",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/prior_art/repo_metadata.py",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmprpIT4f\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\tools\\camlock.py -- C:\\",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpxF5asu\\Scripts\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 3000 -- C:\\Users\\Dom\\GitHub\\freemo",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpq3yPTJ\\Scripts\\python.exe research/usb_cameras/mjpeg/run_matrix.py --backend pyav-dshow --backend opencv-dshow"
+    ],
+    "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d"
+  },
+  "n_cams": 5,
+  "writer_fps": 60.0,
+  "seconds_per_row": 15.0,
+  "rows": [
+    {
+      "path": "skellycam_ui",
+      "sleep_10ms": true,
+      "payloads": 899,
+      "elapsed_s": 15.0086739,
+      "payload_fps": 59.89869631320326,
+      "distinct_frame_numbers": 852,
+      "distinct_fps": 56.767173814070276,
+      "duplicate_payloads": 47,
+      "shm_copy": {
+        "n": 899,
+        "median_ms": 2.2085,
+        "mean_ms": 2.8788137931034483,
+        "p99_ms": 6.1281659999999984,
+        "min_ms": 1.0413,
+        "max_ms": 9.5019
+      },
+      "resize_jpeg_pack": {
+        "n": 899,
+        "median_ms": 3.5935,
+        "mean_ms": 3.8184117908787543,
+        "p99_ms": 6.4330599999999984,
+        "min_ms": 2.8954,
+        "max_ms": 11.8302
+      },
+      "total": {
+        "n": 899,
+        "median_ms": 6.2833,
+        "mean_ms": 6.697225583982203,
+        "p99_ms": 11.196663999999993,
+        "min_ms": 3.9846,
+        "max_ms": 18.0346
+      },
+      "age_of_frame_when_payload_ready": {
+        "n": 899,
+        "median_ms": 31.75212,
+        "mean_ms": 31.377070545050056,
+        "p99_ms": 41.657724400000006,
+        "min_ms": 20.65746,
+        "max_ms": 44.91824
+      },
+      "payload_bytes_median": 152803.0,
+      "payload_MBps_out": 9.152700492746398,
+      "main_process_cpu_pct": 59.46006310888986,
+      "size": "720p"
+    },
+    {
+      "path": "freemocap_ui_by_number",
+      "sleep_10ms": true,
+      "payloads": 872,
+      "elapsed_s": 15.0005565,
+      "payload_fps": 58.131176666678996,
+      "distinct_frame_numbers": 859,
+      "distinct_fps": 57.26454215215282,
+      "duplicate_payloads": 13,
+      "shm_copy": {
+        "n": 872,
+        "median_ms": 3.2594000000000003,
+        "mean_ms": 3.4245822247706426,
+        "p99_ms": 5.815760999999995,
+        "min_ms": 2.6846,
+        "max_ms": 7.7137
+      },
+      "resize_jpeg_pack": {
+        "n": 872,
+        "median_ms": 3.5271999999999997,
+        "mean_ms": 3.7750900229357796,
+        "p99_ms": 6.388548999999995,
+        "min_ms": 2.855,
+        "max_ms": 8.5159
+      },
+      "total": {
+        "n": 872,
+        "median_ms": 6.85305,
+        "mean_ms": 7.199672247706422,
+        "p99_ms": 11.405924,
+        "min_ms": 5.6237,
+        "max_ms": 13.4404
+      },
+      "age_of_frame_when_payload_ready": {
+        "n": 872,
+        "median_ms": 32.87817,
+        "mean_ms": 31.933032912844038,
+        "p99_ms": 40.909290799999994,
+        "min_ms": 21.79234,
+        "max_ms": 43.39884
+      },
+      "payload_bytes_median": 152803.0,
+      "payload_MBps_out": 8.88261818819855,
+      "main_process_cpu_pct": 57.65901565524952,
+      "size": "720p"
+    },
+    {
+      "path": "skellycam_ui",
+      "sleep_10ms": false,
+      "payloads": 3253,
+      "elapsed_s": 15.0025064,
+      "payload_fps": 216.8304357463897,
+      "distinct_frame_numbers": 901,
+      "distinct_fps": 60.0566316039032,
+      "duplicate_payloads": 2352,
+      "shm_copy": {
+        "n": 3253,
+        "median_ms": 1.1976,
+        "mean_ms": 1.293056962803566,
+        "p99_ms": 2.6631920000000004,
+        "min_ms": 0.7916,
+        "max_ms": 3.7231
+      },
+      "resize_jpeg_pack": {
+        "n": 3253,
+        "median_ms": 3.122,
+        "mean_ms": 3.3160606209652626,
+        "p99_ms": 5.795948,
+        "min_ms": 2.511,
+        "max_ms": 7.0162
+      },
+      "total": {
+        "n": 3253,
+        "median_ms": 4.3501,
+        "mean_ms": 4.609117583768828,
+        "p99_ms": 7.9638480000000005,
+        "min_ms": 3.3931,
+        "max_ms": 9.76
+      },
+      "age_of_frame_when_payload_ready": {
+        "n": 3253,
+        "median_ms": 28.8759,
+        "mean_ms": 28.93111854288349,
+        "p99_ms": 38.2082944,
+        "min_ms": 19.81958,
+        "max_ms": 40.51924
+      },
+      "payload_bytes_median": 131663.0,
+      "payload_MBps_out": 28.548545661676908,
+      "main_process_cpu_pct": 160.26375097215208,
+      "size": "720p"
+    },
+    {
+      "path": "skellycam_ui",
+      "sleep_10ms": true,
+      "payloads": 656,
+      "elapsed_s": 15.0122584,
+      "payload_fps": 43.697622470980114,
+      "distinct_frame_numbers": 656,
+      "distinct_fps": 43.697622470980114,
+      "duplicate_payloads": 0,
+      "shm_copy": {
+        "n": 656,
+        "median_ms": 3.394,
+        "mean_ms": 5.117397408536585,
+        "p99_ms": 13.522415000000022,
+        "min_ms": 2.0652,
+        "max_ms": 15.1838
+      },
+      "resize_jpeg_pack": {
+        "n": 656,
+        "median_ms": 7.2433499999999995,
+        "mean_ms": 7.729708993902438,
+        "p99_ms": 13.122555000000004,
+        "min_ms": 5.8114,
+        "max_ms": 20.9277
+      },
+      "total": {
+        "n": 656,
+        "median_ms": 10.901250000000001,
+        "mean_ms": 12.847106402439023,
+        "p99_ms": 23.760415000000002,
+        "min_ms": 8.1744,
+        "max_ms": 30.705
+      },
+      "age_of_frame_when_payload_ready": {
+        "n": 656,
+        "median_ms": 32.65887,
+        "mean_ms": 32.745393658536585,
+        "p99_ms": 47.86442700000002,
+        "min_ms": 20.05914,
+        "max_ms": 56.26456
+      },
+      "payload_bytes_median": 337030.0,
+      "payload_MBps_out": 14.727409701394427,
+      "main_process_cpu_pct": 102.85407944277641,
+      "size": "1080p"
+    },
+    {
+      "path": "freemocap_ui_by_number",
+      "sleep_10ms": true,
+      "payloads": 570,
+      "elapsed_s": 15.0237096,
+      "payload_fps": 37.940030470237524,
+      "distinct_frame_numbers": 570,
+      "distinct_fps": 37.940030470237524,
+      "duplicate_payloads": 0,
+      "shm_copy": {
+        "n": 570,
+        "median_ms": 7.2921499999999995,
+        "mean_ms": 7.68286947368421,
+        "p99_ms": 12.828953999999992,
+        "min_ms": 5.7101,
+        "max_ms": 24.3515
+      },
+      "resize_jpeg_pack": {
+        "n": 570,
+        "median_ms": 8.067350000000001,
+        "mean_ms": 8.61244245614035,
+        "p99_ms": 16.585274,
+        "min_ms": 6.1407,
+        "max_ms": 23.2419
+      },
+      "total": {
+        "n": 570,
+        "median_ms": 15.4328,
+        "mean_ms": 16.295311929824564,
+        "p99_ms": 27.82065299999999,
+        "min_ms": 12.0205,
+        "max_ms": 40.9957
+      },
+      "age_of_frame_when_payload_ready": {
+        "n": 570,
+        "median_ms": 36.939589999999995,
+        "mean_ms": 36.823506350877196,
+        "p99_ms": 53.28972519999997,
+        "min_ms": 24.81332,
+        "max_ms": 71.74498
+      },
+      "payload_bytes_median": 337030.0,
+      "payload_MBps_out": 12.786928469384153,
+      "main_process_cpu_pct": 114.72248325376034,
+      "size": "1080p"
+    },
+    {
+      "path": "skellycam_ui",
+      "sleep_10ms": false,
+      "payloads": 1061,
+      "elapsed_s": 15.0076979,
+      "payload_fps": 70.69705207752082,
+      "distinct_frame_numbers": 874,
+      "distinct_fps": 58.23677993944694,
+      "duplicate_payloads": 187,
+      "shm_copy": {
+        "n": 1061,
+        "median_ms": 3.9632,
+        "mean_ms": 4.249027615457115,
+        "p99_ms": 8.120780000000009,
+        "min_ms": 2.1404,
+        "max_ms": 13.474
+      },
+      "resize_jpeg_pack": {
+        "n": 1061,
+        "median_ms": 9.6693,
+        "mean_ms": 9.891171536286521,
+        "p99_ms": 14.893440000000007,
+        "min_ms": 6.1751,
+        "max_ms": 24.4214
+      },
+      "total": {
+        "n": 1061,
+        "median_ms": 13.8096,
+        "mean_ms": 14.140199151743637,
+        "p99_ms": 21.88324,
+        "min_ms": 8.4899,
+        "max_ms": 33.1161
+      },
+      "age_of_frame_when_payload_ready": {
+        "n": 1061,
+        "median_ms": 35.54672,
+        "mean_ms": 35.515442375117814,
+        "p99_ms": 47.809368,
+        "min_ms": 21.6068,
+        "max_ms": 58.92192
+      },
+      "payload_bytes_median": 337030.0,
+      "payload_MBps_out": 23.827027461686846,
+      "main_process_cpu_pct": 183.42754905127288,
+      "size": "1080p"
+    }
+  ]
+}

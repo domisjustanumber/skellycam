@@ -1,0 +1,28 @@
+--- /c/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/7c9d3345-0e7f-4af6-bb14-20fd851edd1a/scratchpad/b/uvc_capture_test.c	2026-10-25 17:08:21.000000000 -0400
++++ /c/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/7c9d3345-0e7f-4af6-bb14-20fd851edd1a/scratchpad/b2/uvc_capture_test.c	2026-10-27 23:18:18.668080200 -0400
+@@ -343,7 +343,11 @@
+     int orc = LIBUSB_ERROR_NOT_SUPPORTED;
+     if (uvc) {
+       n_uvc++;
+-      orc = libusb_open(dev, &h);
++      /* rerun20261027 harness variant: UVC_LIST_SKIP_OPEN="1532:0e05[,vvvv:pppp]" -> do not libusb_open those */
++      char vp_[16]; const char *skip_ = getenv("UVC_LIST_SKIP_OPEN");
++      snprintf(vp_, sizeof vp_, "%04x:%04x", dd.idVendor, dd.idProduct);
++      if (skip_ && strstr(skip_, vp_)) { orc = LIBUSB_ERROR_NOT_SUPPORTED; printf("[skip-open %s]\n", vp_); }
++      else orc = libusb_open(dev, &h);
+       if (orc == 0) n_uvc_open++;
+     }
+     port_path_str(dev, pp, sizeof pp);
+@@ -542,6 +546,12 @@
+   for (int i = 0; devs[i]; i++) {
+     uvc_device_descriptor_t *d = NULL;
+     libusb_device *ud = libusb_ref_device(((struct uvc_device *)devs[i])->usb_dev);
++    { /* rerun20261027 variant: VID/PID pre-filter from the cached libusb device descriptor (no open), so
++         uvc_get_device_descriptor (which calls libusb_open) is never reached for non-target devices */
++      struct libusb_device_descriptor pre_;
++      if (libusb_get_device_descriptor(ud, &pre_) == 0 &&
++          ((o->vid && pre_.idVendor != o->vid) || (o->pid && pre_.idProduct != o->pid))) { libusb_unref_device(ud); continue; }
++    }
+     if (uvc_get_device_descriptor(devs[i], &d) != UVC_SUCCESS) { libusb_unref_device(ud); continue; }
+     int ok = (!o->vid || d->idVendor == o->vid) && (!o->pid || d->idProduct == o->pid) &&
+              (!o->serial || (d->serialNumber && strcmp(d->serialNumber, o->serial) == 0)) &&

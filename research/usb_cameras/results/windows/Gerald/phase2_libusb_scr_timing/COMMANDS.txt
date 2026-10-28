@@ -1,0 +1,22 @@
+Phase 2, goal 2: libuvc PTS/SCR (C930e on WinUSB) + MF (C922) vs screen-flash GT. 2026-10-25 20:58-21:35Z, host GERALD.
+SCR = <scratchpad>/runs/phase2  (C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\scratchpad\runs\phase2)
+JPEG/MJPEG frames stay in SCR; raw/<run>/ here holds every other log (frames.jsonl, usb_frame_qpc.jsonl, display_m0, MF frames/session).
+
+Tool changes (research only): libusb/uvc_capture_test.c  +--save-jpeg-deferred (JPEGs kept in RAM, written after stop, so no disk I/O
+in the libusb event thread)  +--controls-after-start (re-apply AE manual/exposure/WB 0.5 s after stream start). Rebuilt with
+  cmake --build research/usb_cameras/libusb/build/cmake --config Release --target uvc_capture_test
+
+Capture (each under camlock, ~45 s hold):
+  uv run --script research/usb_cameras/tools/camlock.py -- pwsh -NoProfile -File research/usb_cameras/timing/scripts/run_flash_libuvc.ps1 -RunDir SCR\<run> -Seconds 30 [-ControlsAfterStart] [-PacketsPerTransfer 8]
+  precheck: -Seconds 6 ; run1: (no -ControlsAfterStart: C930e exposure NOT applied) ; run2_cas, run4_cas, run5_cas, run6_cas: -ControlsAfterStart ;
+  run3_ppt8: -ControlsAfterStart -PacketsPerTransfer 8
+
+Analysis:
+  uv run --script research/usb_cameras/timing/scripts/flash_libuvc_scr.py --run SCR/precheck --stdmap --skip-first 5      > precheck_stdmap.txt
+  uv run --script research/usb_cameras/timing/scripts/flash_libuvc_scr.py --run SCR/<run> --rows 0.2,0.35,0.5,0.65,0.8 --skip-first 30 --out <run>_analysis.json   (col C930e 0.5, C922 0.75 defaults)
+  uv run --script research/usb_cameras/timing/scripts/flash_step_response.py SCR/<run> 0.5 0.5 [--cam c922 with col 0.75] --out <run>_step_response.json
+  uv run --script research/usb_cameras/timing/scripts/flash_impulse_response.py SCR/run1 0.5 0.5 --out run1_impulse_response.json
+  uv run --script research/usb_cameras/timing/scripts/flash_libuvc_escan.py SCR/run1 0.5 0.5 2 70 2     (exposure scan, printed only)
+  uv run --script research/usb_cameras/timing/scripts/display_model_check.py SCR/run1 ... SCR/precheck --out display_model_check.json
+  uv run --script research/usb_cameras/timing/scripts/flash_libuvc_summary.py run2_cas_analysis.json run4_cas_analysis.json run5_cas_analysis.json run6_cas_analysis.json run3_ppt8_analysis.json --out summary_runs2-6.json
+The analyses read JPEGs from SCR; to re-run elsewhere point --run at a dir with raw/<run> + the frame images.

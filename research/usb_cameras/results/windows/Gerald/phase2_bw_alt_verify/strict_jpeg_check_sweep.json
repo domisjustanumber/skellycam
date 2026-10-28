@@ -1,0 +1,390 @@
+{
+ "tool": "strict_jpeg_check",
+ "command": "verify_bw/strict_jpeg_check.py runs/phase2/verify_bw/sweep/1280x720_alt3 runs/phase2/verify_bw/sweep/1280x720_alt4 runs/phase2/verify_bw/sweep/1280x720_alt5 runs/phase2/verify_bw/sweep/1280x720_alt0 runs/phase2/verify_bw/sweep/1920x1080_alt6 runs/phase2/verify_bw/sweep/1920x1080_alt8 --selftest --out verify_bw/out/strict_jpeg_check_sweep.json",
+ "runs": [
+  {
+   "run": "1280x720_alt3",
+   "frames_logged": 436,
+   "jpegs": 436,
+   "marker_ok": 436,
+   "pil_ok": 436,
+   "cv_ok": 436,
+   "cv_fail_examples": [],
+   "marker_fail_examples": [],
+   "dri_values": [
+    0
+   ],
+   "rst_counts": [
+    0
+   ],
+   "trailing_after_eoi": [
+    0
+   ],
+   "dims": [
+    "1280x720"
+   ],
+   "selftest_on_frame_00001.jpg": {
+    "original": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": true,
+     "cv_why": "",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "drop3072_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "drop1020_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "zero3072_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "truncate_half_plus_eoi": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    }
+   }
+  },
+  {
+   "run": "1280x720_alt4",
+   "frames_logged": 233,
+   "jpegs": 233,
+   "marker_ok": 233,
+   "pil_ok": 233,
+   "cv_ok": 233,
+   "cv_fail_examples": [],
+   "marker_fail_examples": [],
+   "dri_values": [
+    0
+   ],
+   "rst_counts": [
+    0
+   ],
+   "trailing_after_eoi": [
+    0
+   ],
+   "dims": [
+    "1280x720"
+   ],
+   "selftest_on_frame_00001.jpg": {
+    "original": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": true,
+     "cv_why": "",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "drop3072_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "drop1020_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "zero3072_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "truncate_half_plus_eoi": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    }
+   }
+  },
+  {
+   "run": "1280x720_alt5",
+   "frames_logged": 451,
+   "jpegs": 451,
+   "marker_ok": 451,
+   "pil_ok": 451,
+   "cv_ok": 451,
+   "cv_fail_examples": [],
+   "marker_fail_examples": [],
+   "dri_values": [
+    0
+   ],
+   "rst_counts": [
+    0
+   ],
+   "trailing_after_eoi": [
+    0
+   ],
+   "dims": [
+    "1280x720"
+   ],
+   "selftest_on_frame_00001.jpg": {
+    "original": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": true,
+     "cv_why": "",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "drop3072_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "drop1020_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "zero3072_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "truncate_half_plus_eoi": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    }
+   }
+  },
+  {
+   "run": "1280x720_alt0",
+   "frames_logged": 362,
+   "jpegs": 362,
+   "marker_ok": 362,
+   "pil_ok": 362,
+   "cv_ok": 362,
+   "cv_fail_examples": [],
+   "marker_fail_examples": [],
+   "dri_values": [
+    0
+   ],
+   "rst_counts": [
+    0
+   ],
+   "trailing_after_eoi": [
+    0
+   ],
+   "dims": [
+    "1280x720"
+   ],
+   "selftest_on_frame_00001.jpg": {
+    "original": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": true,
+     "cv_why": "",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "drop3072_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "drop1020_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "zero3072_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "truncate_half_plus_eoi": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    }
+   }
+  },
+  {
+   "run": "1920x1080_alt6",
+   "frames_logged": 290,
+   "jpegs": 290,
+   "marker_ok": 290,
+   "pil_ok": 290,
+   "cv_ok": 290,
+   "cv_fail_examples": [],
+   "marker_fail_examples": [],
+   "dri_values": [
+    0
+   ],
+   "rst_counts": [
+    0
+   ],
+   "trailing_after_eoi": [
+    0
+   ],
+   "dims": [
+    "1920x1080"
+   ],
+   "selftest_on_frame_00001.jpg": {
+    "original": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": true,
+     "cv_why": "",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "drop3072_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "drop1020_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "zero3072_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "truncate_half_plus_eoi": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    }
+   }
+  },
+  {
+   "run": "1920x1080_alt8",
+   "frames_logged": 363,
+   "jpegs": 363,
+   "marker_ok": 363,
+   "pil_ok": 363,
+   "cv_ok": 363,
+   "cv_fail_examples": [],
+   "marker_fail_examples": [],
+   "dri_values": [
+    0
+   ],
+   "rst_counts": [
+    0
+   ],
+   "trailing_after_eoi": [
+    0
+   ],
+   "dims": [
+    "1920x1080"
+   ],
+   "selftest_on_frame_00001.jpg": {
+    "original": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": true,
+     "cv_why": "",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "drop3072_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "drop1020_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "zero3072_mid": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    },
+    "truncate_half_plus_eoi": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 0,
+     "expected_rst": null
+    }
+   }
+  }
+ ]
+}

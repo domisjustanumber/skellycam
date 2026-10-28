@@ -1,0 +1,27 @@
+{
+ "test": "kiyo_lens_timeline",
+ "platform": "windows", "hostname": "Gerald",
+ "note": "local time (UTC-4). Every row cites a result file (relative to results/windows/Gerald) or an event-log query; registry MetadataBufferSizeInKB0=5 present on all 6 camera interface keys from 14:09:33 onward (timing/registry_enable_metadata.log; reg query 15:2x shows exactly 6 matches).",
+ "rows": [
+  ["14:03", "Kiyo MF (mf_uvc_timing) 275 frames, no metadata (pre-change)", "timing/baseline_nometa_auto/vid_1532*.session.json"],
+  ["14:09:33", "MetadataBufferSizeInKB0=5 written; pnputil restart refused (pending reboot)", "timing/registry_enable_metadata.log"],
+  ["14:10:44", "nokhwa MF: 0xC00D7167 MF_E_REBOOT_REQUIRED (devnode had DN_NEED_RESTART 0x100 after vetoed restarts)", "rust_nokhwa_capture/20261025T181044Z_cams5_1280x720/summary.json; timing/registry_recover_restart.log (0x180610A)"],
+  ["14:12:52", "Kiyo USB string descriptors readable (Razer Inc / Razer Kiyo Pro), usb address 4", "libuvc_list/list.json; naming/snapshots/baseline_initial.json"],
+  ["14:14:58-14:15:03", "Kiyo surprise-removed and re-arrived (replug), address 5", "Kernel-PnP/Device Management id 1010; DEVPKEY_Device_LastArrivalDate"],
+  ["14:16:44", "Kiyo string GET_DESCRIPTOR via hub IOCTL OK", "bw_topology/topology.json"],
+  ["14:17:36", "Kiyo PyAV dshow 362 frames", "mjpeg_pyav-dshow/common_1280x720at30_kiyo/summary.json"],
+  ["14:19:22", "Kiyo SDL3 Media Foundation MJPG 1280x720 151 valid JPEG frames (metadata registry in effect)", "prior_art_sdl3_camera/result.json cameras[6] (84 formats = 140 MF types minus 56 H264)"],
+  ["<=14:31:12", "Kiyo MF ReadSample fails (21 errors), all controls unsupported", "timing/meta_check1/vid_1532*.session.json; bw_concurrency/b04 0x8007001F"],
+  ["14:36:48", "Kiyo string GET_DESCRIPTOR fails Errno 31 (IOCTL 0x220410)", "naming/descriptors.json"],
+  ["14:38-14:44", "flash_run1 + kiyo_check + sibling rechecks: Kiyo 0x8007001F in MF, DShow RenderStream fails", "timing/flash_run1_repositioned/capture; mjpeg_pyav_dshow_format_probe/kiyo.json; mjpeg_mf_recheck/"],
+  ["14:48:07-14:48:10", "Kiyo surprise-removed and re-arrived again (2nd replug)", "Kernel-PnP/Device Management id 1010; LastArrivalDate 14:48:10"],
+  ["14:49:51", "Kiyo MF Source Reader 335 MJPG 1920x1080 frames, read_error 0, samples carry MFSampleExtension_CaptureMetadata", "mjpeg_msmf/max_1920x1080at30_c922+kiyo+c930e/summary.json + sample_attribute_dumps.json[1]"],
+  ["14:51:12", "Kiyo gst mfvideosrc 155 frames", "verify_prior_art/gst_capture-mfvideosrc/result.json"],
+  ["15:03:56", "Kiyo KS-direct CT GET fails ERROR_GEN_FAILURE (31) in ~7 ms; C922/C930e OK", "timing/kiyo_lens/ks_only_1.jsonl"],
+  ["15:04:34", "Kiyo MF 0x8007001F", "bw_concurrency/b09_kiyo_retry.json"],
+  ["15:05:45", "Kiyo MF matrix 10/10 fail 0x8007001F at first ReadSample (all subtypes/modes, with and without control queries); C922/C930e stream with metadata", "timing/kiyo_lens/run2/mf.jsonl; run2/ks.jsonl (PU+CT all 0x8007001F)"],
+  ["15:09-15:11", "OpenCV MSMF opens, grab fails -2147024865 (0x8007001F); OpenCV DSHOW open fails; PyAV dshow 'Could not RenderStream'; C922 OK in all", "timing/kiyo_lens/run2/cv_av.json, cv_msmf_v2.json"],
+  ["15:22:41", "DirectShow graph: IAMCameraControl::Get 0x8007001F, SetFormat OK, RenderStream 0x80070057; C922 RenderStream OK, Run OK", "timing/kiyo_lens/run2/dshow.jsonl"],
+  ["15:2x", "Hub IOCTL GET_DESCRIPTOR string0/iProduct: Kiyo ERROR_GEN_FAILURE 31 (~7 ms), device descriptor (cached) OK; C922/C930e OK <0.1 ms", "timing/kiyo_lens/run2/usb_ep0.jsonl"]
+ ]
+}

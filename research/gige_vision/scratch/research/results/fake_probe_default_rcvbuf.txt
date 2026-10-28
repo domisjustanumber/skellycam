@@ -1,0 +1,56 @@
+### aravis version: 0.8.30-1build2 ; fake camera gvsp-lost-ratio=0/1000 ; extra args: --action 0:1:1
+### arv-tool-0.8 (Aravis' own client) sanity check
+Width = 512 min:1 max:2048
+Height = 512 min:1 max:2048
+PixelFormat = Mono8
+PayloadSize = 262144
+### probe A: system python3 -I, toy GenApi (no genicam wheel)
+== discovery
+   {'src': '127.0.0.1', 'version': '0.0', 'device_mode': '0x0', 'mac': '00:00:00:00:00:00', 'ip_config_supported': '0x0', 'ip_config_current': '0x0', 'ip': '127.0.0.1', 'mask': '0.0.0.0', 'gateway': '0.0.0.0', 'manufacturer': 'Aravis', 'model': 'Fake', 'device_version': '0.8.30', 'manufacturer_info': 'none', 'serial': 'GV01', 'user_name': ''}
+  PASS discovery found >=1 device 
+== bootstrap registers
+   {'version': '0.0', 'capability': '0x0', 'capability_bits': [], 'heartbeat_timeout_ms': 3000, 'n_stream_channels': 1, 'timestamp_tick_hz': 1000000000}
+  PASS READREG works 
+== PTP / IEEE 1588 / action capability (read-only)
+   {'ieee1588_supported': False, 'scheduled_action_supported': False, 'action_supported': False, 'gvcp_configuration': '0x0', 'ieee1588_enabled': False}
+== GenICam XML
+   url='Local:arv-fake-camera.xml;10000;3e67' -> 15975 bytes
+  PASS XML fetched via READMEM 
+== control channel privilege + heartbeat
+  PASS CCP control acquired (CCP=0x2, hb=3000 ms, period=1.00s)
+   latched device timestamp = 0 ticks (0.000000 s)
+== GenApi features via toy
+   {'Width': 512, 'Height': 512, 'PixelFormat': 17301505, 'PayloadSize': 262144, 'GevIEEE1588': None, 'PtpEnable': None, 'GevIEEE1588Status': None, 'PtpStatus': None, 'ActionDeviceKey': None, 'GevTimestampTickFrequency': None}
+  PASS toy GenApi reads Width = 512
+== stream channel 0 + GVSP
+   {'packets': 13799, 'bytes': 18822772, 'leaders': 75, 'trailers': 4, 'data': 13720, 'extended_id_packets': 0, 'resend_cmds': 1, 'frames_complete': 3, 'frames_incomplete': 50, 'missing_packets': 394, 'out_of_order': 0, 'other': 0, 'payload_types': {'image (uncompressed, PFNC pixel format)': 75}, 'pixel_formats': {'0x1080001': 75}, 'frames_seen': 53, 'device_frame_interval_s_mean': 0.039830148648648644, 'throughput_mbps': 50.18, 'kernel_udp_rcvbuf_errors_delta': 641, 'rcvbuf_actual': 425984}
+  PASS received GVSP leader+trailer 
+  PASS frames reassembled (complete=3 incomplete=50 missing_pkts=394 resend_cmds=1)
+== ACTION_CMD acks: none (device lacks action support or keys mismatch)
+== 7 passed, 0 failed, 0 skipped
+exit=0
+### probe B: venv python -I with official EMVA genicam 1.6.0
+== discovery
+   {'src': '127.0.0.1', 'version': '0.0', 'device_mode': '0x0', 'mac': '00:00:00:00:00:00', 'ip_config_supported': '0x0', 'ip_config_current': '0x0', 'ip': '127.0.0.1', 'mask': '0.0.0.0', 'gateway': '0.0.0.0', 'manufacturer': 'Aravis', 'model': 'Fake', 'device_version': '0.8.30', 'manufacturer_info': 'none', 'serial': 'GV01', 'user_name': ''}
+  PASS discovery found >=1 device 
+== bootstrap registers
+   {'version': '0.0', 'capability': '0x0', 'capability_bits': [], 'heartbeat_timeout_ms': 3000, 'n_stream_channels': 1, 'timestamp_tick_hz': 1000000000}
+  PASS READREG works 
+== PTP / IEEE 1588 / action capability (read-only)
+   {'ieee1588_supported': False, 'scheduled_action_supported': False, 'action_supported': False, 'gvcp_configuration': '0x0', 'ieee1588_enabled': False}
+== GenICam XML
+   url='Local:arv-fake-camera.xml;10000;3e67' -> 15975 bytes
+  PASS XML fetched via READMEM 
+== control channel privilege + heartbeat
+  PASS CCP control acquired (CCP=0x2, hb=3000 ms, period=1.00s)
+   latched device timestamp = 0 ticks (0.000000 s)
+== GenApi features via official EMVA genicam
+   {'Width': '512', 'Height': '512', 'PixelFormat': 'Mono8', 'PayloadSize': '262144', 'GevIEEE1588': '<LogicalErrorException: Node not existing>', 'PtpEnable': '<LogicalErrorException: Node not existing>', 'GevIEEE1588Status': '<LogicalErrorException: Node not existing>', 'PtpStatus': '<LogicalErrorException: Node not existing>', 'ActionDeviceKey': '<LogicalErrorException: Node not existing>', 'GevTimestampTickFrequency': '<LogicalErrorException: Node not existing>'}
+  PASS toy GenApi reads Width = 512
+== stream channel 0 + GVSP
+   {'packets': 14017, 'bytes': 19062732, 'leaders': 75, 'trailers': 28, 'data': 13914, 'extended_id_packets': 0, 'resend_cmds': 0, 'frames_complete': 28, 'frames_incomplete': 30, 'missing_packets': 240, 'out_of_order': 0, 'other': 0, 'payload_types': {'image (uncompressed, PFNC pixel format)': 75}, 'pixel_formats': {'0x1080001': 75}, 'frames_seen': 58, 'device_frame_interval_s_mean': 0.03970566216216216, 'throughput_mbps': 50.76, 'kernel_udp_rcvbuf_errors_delta': 423, 'rcvbuf_actual': 425984}
+  PASS received GVSP leader+trailer 
+  PASS frames reassembled (complete=28 incomplete=30 missing_pkts=240 resend_cmds=0)
+== ACTION_CMD acks: none (device lacks action support or keys mismatch)
+== 7 passed, 0 failed, 0 skipped
+exit=0

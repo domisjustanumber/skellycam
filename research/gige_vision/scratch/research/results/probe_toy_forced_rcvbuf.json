@@ -1,0 +1,142 @@
+{
+ "ok": [
+  "discovery found >=1 device",
+  "READREG works",
+  "XML fetched via READMEM",
+  "CCP control acquired (CCP=0x2, hb=3000 ms, period=1.00s)",
+  "toy GenApi reads Width = 512",
+  "received GVSP leader+trailer",
+  "frames reassembled (complete=75 incomplete=0 missing_pkts=0 resend_cmds=0)"
+ ],
+ "fail": [],
+ "skipped": [],
+ "devices": [
+  {
+   "src": "127.0.0.1",
+   "version": "0.0",
+   "device_mode": "0x0",
+   "mac": "00:00:00:00:00:00",
+   "ip_config_supported": "0x0",
+   "ip_config_current": "0x0",
+   "ip": "127.0.0.1",
+   "mask": "0.0.0.0",
+   "gateway": "0.0.0.0",
+   "manufacturer": "Aravis",
+   "model": "Fake",
+   "device_version": "0.8.30",
+   "manufacturer_info": "none",
+   "serial": "GV01",
+   "user_name": ""
+  }
+ ],
+ "bootstrap": {
+  "version": "0.0",
+  "capability": "0x0",
+  "capability_bits": [],
+  "heartbeat_timeout_ms": 3000,
+  "n_stream_channels": 1,
+  "timestamp_tick_hz": 1000000000
+ },
+ "ptp": {
+  "ieee1588_supported": false,
+  "scheduled_action_supported": false,
+  "action_supported": false,
+  "gvcp_configuration": "0x0",
+  "ieee1588_enabled": false,
+  "latched_timestamp_ticks": 0,
+  "host_time_at_latch_ns": 1792951267149775449
+ },
+ "xml": {
+  "url": "Local:arv-fake-camera.xml;10000;3e67",
+  "name": "arv-fake-camera.xml",
+  "bytes": 15975
+ },
+ "genapi_backend": "toy",
+ "features": {
+  "Width": 512,
+  "Height": 512,
+  "PixelFormat": 17301505,
+  "PayloadSize": 262144,
+  "GevIEEE1588": null,
+  "PtpEnable": null,
+  "GevIEEE1588Status": null,
+  "PtpStatus": null,
+  "ActionDeviceKey": null,
+  "GevTimestampTickFrequency": null
+ },
+ "stream_rcvbuf_actual": 33554432,
+ "packet_size": 1400,
+ "stream": {
+  "packets": 14626,
+  "bytes": 19781144,
+  "leaders": 76,
+  "trailers": 75,
+  "data": 14475,
+  "extended_id_packets": 0,
+  "resend_cmds": 0,
+  "frames_complete": 75,
+  "frames_incomplete": 0,
+  "missing_packets": 0,
+  "out_of_order": 0,
+  "other": 0,
+  "payload_types": {
+   "image (uncompressed, PFNC pixel format)": 76
+  },
+  "pixel_formats": {
+   "0x1080001": 76
+  },
+  "frames_seen": 75,
+  "device_frame_interval_s_mean": 0.03970457333333333,
+  "throughput_mbps": 52.59,
+  "kernel_udp_rcvbuf_errors_delta": 0,
+  "rcvbuf_actual": 33554432
+ },
+ "first_frames": [
+  {
+   "block_id": 65401,
+   "missing": 0,
+   "leader": {
+    "payload_type": 1,
+    "payload_type_name": "image (uncompressed, PFNC pixel format)",
+    "timestamp_ticks": 1792951267182160000,
+    "pixel_format": "0x1080001",
+    "width": 512,
+    "height": 512,
+    "bits_per_pixel": 8
+   }
+  },
+  {
+   "block_id": 65402,
+   "missing": 0,
+   "leader": {
+    "payload_type": 1,
+    "payload_type_name": "image (uncompressed, PFNC pixel format)",
+    "timestamp_ticks": 1792951267200003000,
+    "pixel_format": "0x1080001",
+    "width": 512,
+    "height": 512,
+    "bits_per_pixel": 8
+   }
+  },
+  {
+   "block_id": 65403,
+   "missing": 0,
+   "leader": {
+    "payload_type": 1,
+    "payload_type_name": "image (uncompressed, PFNC pixel format)",
+    "timestamp_ticks": 1792951267240003000,
+    "pixel_format": "0x1080001",
+    "width": 512,
+    "height": 512,
+    "bits_per_pixel": 8
+   }
+  }
+ ],
+ "action_acks": [],
+ "gvcp_stats": {
+  "commands": 62,
+  "retries": 0,
+  "pending_acks": 0
+ },
+ "toy_genapi_unsupported_tags_hit": []
+}

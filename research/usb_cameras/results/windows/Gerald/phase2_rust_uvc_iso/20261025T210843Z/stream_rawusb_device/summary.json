@@ -1,0 +1,182 @@
+{
+  "alt_selected": {
+    "all_iso_alts": [
+      [
+        1,
+        192
+      ],
+      [
+        2,
+        384
+      ],
+      [
+        3,
+        512
+      ],
+      [
+        4,
+        640
+      ],
+      [
+        5,
+        800
+      ],
+      [
+        6,
+        944
+      ],
+      [
+        7,
+        1280
+      ],
+      [
+        8,
+        1600
+      ],
+      [
+        9,
+        1984
+      ],
+      [
+        10,
+        2688
+      ],
+      [
+        11,
+        3072
+      ]
+    ],
+    "alt": 11,
+    "bytes_per_interval": 3072,
+    "device_requested_payload": 3072
+  },
+  "command": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\rust\\build\\release\\uvc_iso.exe stream --backend rawusb --vid 046d --pid 0843 --width 1280 --height 720 --fps 30 --seconds 15 --exposure-100us 78 --wb 4000 --save-samples 0 --alt device --out research\\usb_cameras\\results\\windows\\Gerald\\phase2_rust_uvc_iso\\20261025T210843Z\\stream_rawusb_device --raw-mjpeg C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\phase2\\rust_uvc_iso\\raw\\stream_rawusb_device.mjpeg",
+  "controls": {
+    "ae_mode_cur": [
+      1
+    ],
+    "ae_mode_set_manual_err": null,
+    "exposure_100us_cur": 78,
+    "exposure_set_err": null,
+    "wb_auto_off_err": null,
+    "wb_cur": 4000,
+    "wb_set_err": null
+  },
+  "device": {
+    "address": 29,
+    "bcdUVC": "100",
+    "bus": 1,
+    "dwClockFrequency": 30000000,
+    "port_path": "13.1.4",
+    "serial": null,
+    "speed": "High"
+  },
+  "device_clock_fit": {
+    "implied_device_clock_hz": 30005991.77259294,
+    "n": 453,
+    "ns_per_tick": 33.32667713764376,
+    "residual_ns_p02": -1490539.375,
+    "residual_ns_p50": -393928.5,
+    "residual_ns_p98": 766808.5
+  },
+  "device_clock_fit_note": "host = a + b*STC; STC from first SCR of each frame, host = estimated (micro)frame time of that packet (transfer completion - packets_after*service_interval); intercept at 2nd percentile residual. PTS mapped with same fit (PTS-STC difference taken modulo 2^32).",
+  "environment": {
+    "arch": "x86_64",
+    "backend": "rawusb-0.1.7",
+    "features": {
+      "libusb": true,
+      "rawusb": true
+    },
+    "host_clock": "QueryPerformanceCounter",
+    "os": "windows",
+    "os_build": "Microsoft Windows [Version 10.0.26300.9711]",
+    "profile": "release",
+    "uvc_iso_version": "0.1.0"
+  },
+  "hostname": "Gerald",
+  "out_dir": "research\\usb_cameras\\results\\windows\\Gerald\\phase2_rust_uvc_iso\\20261025T210843Z\\stream_rawusb_device",
+  "platform": "windows",
+  "probe_commit": {
+    "len": 26,
+    "ms": 0.3785,
+    "negotiated": {
+      "bFormatIndex": 2,
+      "bFrameIndex": 15,
+      "bmFramingInfo": 0,
+      "bmHint": 1,
+      "dwClockFrequency": 0,
+      "dwFrameInterval": 333333,
+      "dwMaxPayloadTransferSize": 3072,
+      "dwMaxVideoFrameSize": 1843200,
+      "wCompQuality": 61,
+      "wDelay_ms": 0
+    },
+    "requested": {
+      "bFormatIndex": 2,
+      "bFrameIndex": 15,
+      "bmFramingInfo": 0,
+      "bmHint": 1,
+      "dwClockFrequency": 0,
+      "dwFrameInterval": 333333,
+      "dwMaxPayloadTransferSize": 0,
+      "dwMaxVideoFrameSize": 0,
+      "wCompQuality": 0,
+      "wDelay_ms": 0
+    }
+  },
+  "raw_mjpeg": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\phase2\\rust_uvc_iso\\raw\\stream_rawusb_device.mjpeg",
+  "results": {
+    "bad_headers": 0,
+    "cpu": {
+      "method": "GetProcessTimes (kernel+user) delta over start_iso..stop window",
+      "percent_of_one_core": 3.2238279216596535,
+      "process_cpu_ns": 484375000,
+      "wall_ns": 15024840400.0
+    },
+    "discarded_partial": 0,
+    "empty_packets": 102364,
+    "err_flag_payloads": 0,
+    "expected_period_ticks": 999999.0,
+    "fps_host_after_skip30": 30.091273606951763,
+    "frames": 453,
+    "frames_file": "frames_046d_0843.jsonl",
+    "host_arrival_gaps_ge_1p5_period": 0,
+    "latency_arrival_minus_pts_ms": {
+      "max": 214.108515,
+      "min": 35.257444,
+      "p50": 38.304786
+    },
+    "overflows": 0,
+    "packets": 120160,
+    "packets_with_error_status": 0,
+    "payloads": 17796,
+    "payloads_without_eoh_bit": 17796,
+    "pts_delta_ticks_max": 5994566.0,
+    "pts_delta_ticks_min": 967198.0,
+    "pts_gaps_ge_1p5_period": 1,
+    "pts_missing_frames_est": 5.0,
+    "time_to_first_frame_ms": 12.7149,
+    "transfers": 3755,
+    "valid_jpeg": 453
+  },
+  "settings": {
+    "alt_policy": "Device",
+    "exposure_100us": "78",
+    "fps": 30,
+    "height": 720,
+    "pid": "0843",
+    "pkts_per_xfer": 32,
+    "save_samples": 0,
+    "seconds": 15.0,
+    "vid": "046d",
+    "wb": "4000",
+    "width": 1280,
+    "xfers": 8
+  },
+  "stream_stats": {
+    "transfers_completed": 3755,
+    "transfers_failed": 8
+  },
+  "test": "rust_uvc_iso_stream_rawusb",
+  "utc_started_unix": "1792962558"
+}

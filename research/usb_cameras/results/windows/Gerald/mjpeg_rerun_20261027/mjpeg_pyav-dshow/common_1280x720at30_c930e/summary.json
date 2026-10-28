@@ -1,0 +1,289 @@
+{
+ "test": "mjpeg_pyav-dshow",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-28T03:42:16.950239+00:00",
+ "utc_summarized": "2026-10-28T03:42:46.122872+00:00",
+ "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c930e --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_rerun_20261027\\mjpeg_pyav-dshow\\common_1280x720at30_c930e' --timeout-s 120 -- uv run --script research/usb_cameras/mjpeg/pyav/pyav_capture.py --input-format dshow --device 'video=@device_pnp_\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global' --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_rerun_20261027\\mjpeg_pyav-dshow\\common_1280x720at30_c930e'",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "av": "19.0.2",
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "backend": "pyav-dshow",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30.0
+ },
+ "decoded_by_pipeline": false,
+ "decode_evidence": "only container.demux() is called; packets are passed through as bytes; stream codec reported per camera (codec != mjpeg means FFmpeg/the device delivered a different format than requested WITHOUT raising an error)",
+ "window": {
+  "start_ns": 32562157326500,
+  "end_ns": 32572157635700,
+  "wall_s": 10.0003092
+ },
+ "delivered_codecs": [
+  "mjpeg"
+ ],
+ "silent_format_fallback": false,
+ "cpu": {
+  "method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)",
+  "wall_s": 10.0003134,
+  "process_cpu_s_ticks": 0.1875,
+  "process_cpu_pct_of_one_core_ticks": 1.8749412393415592,
+  "tsc_hz": 3397490770.914367,
+  "process_cycles": 436596851,
+  "process_cpu_pct_of_one_core": 1.2850164957652028,
+  "process_cpu_pct_per_camera": 1.2850164957652028
+ },
+ "cameras": [
+  {
+   "idx": 0,
+   "name": "video=@device_pnp_\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "options": {
+    "video_size": "1280x720",
+    "framerate": "30",
+    "vcodec": "mjpeg",
+    "rtbufsize": "512M"
+   },
+   "codec": "mjpeg",
+   "pix_fmt": "yuvj422p",
+   "stream_time_base": "1/10000000",
+   "stream_size": [
+    1280,
+    720
+   ],
+   "stream_rate": "10000000/333333",
+   "open_ms": 811.7616,
+   "frames": 372,
+   "frames_delivered_total": 372,
+   "frames_in_window": 300,
+   "fps_requested": 30.0,
+   "fps_achieved_count_over_wall": 29.999072428680506,
+   "fps_achieved_span": 30.043556525273583,
+   "inter_arrival_ms": {
+    "n": 299,
+    "min": 31.4978,
+    "p50": 32.0047,
+    "mean": 33.28500735785953,
+    "p95": 47.9803,
+    "max": 48.2394
+   },
+   "gaps_over_1p5_period": 0,
+   "os_timestamp_delta_ms": {
+    "n": 299,
+    "min": 33.3283,
+    "p50": 33.3333,
+    "mean": 33.33214615384615,
+    "p95": 33.3333,
+    "max": 33.3333
+   },
+   "payload_bytes": {
+    "n": 300,
+    "min": 123394,
+    "p50": 123929,
+    "mean": 123896.20333333334,
+    "p95": 124168,
+    "max": 124338
+   },
+   "mean_luma": {
+    "n": 10,
+    "min": 79.21,
+    "p50": 79.25,
+    "mean": 79.256,
+    "p95": 79.29,
+    "max": 79.31,
+    "method": "mean of 8-bit luma, every 30th in-window frame (JPEG: simplejpeg GRAY 1/8 scale; pixels: capture script)"
+   },
+   "pct_valid_jpeg_in_window": 100.0,
+   "pct_valid_jpeg_all": 100.0,
+   "pct_valid_jpeg_strict_all": 100.0,
+   "libjpeg_warnings_sample": [],
+   "jpeg_checks_all": {
+    "soi": 372,
+    "eoi_at_end": 372,
+    "eoi_in_tail": 372,
+    "has_dht": 372,
+    "pillow_ok": 372,
+    "simplejpeg_ok": 372,
+    "simplejpeg_lenient_ok": 372
+   },
+   "n_validated": 372,
+   "cam": "c930e",
+   "jpeg_header": {
+    "fingerprints": {
+     "8809b42ef28a": 372
+    },
+    "header_sha1s": {
+     "8e230f9e519e": 372
+    },
+    "markers": [
+     "DQT",
+     "SOF0",
+     "DHT",
+     "DHT",
+     "DHT",
+     "DHT",
+     "COM",
+     "APP0",
+     "DRI",
+     "SOS"
+    ],
+    "app": [
+     {
+      "marker": "APP0",
+      "len": 16,
+      "id": ""
+     }
+    ],
+    "sof": {
+     "type": "SOF0",
+     "precision": 8,
+     "h": 720,
+     "w": 1280,
+     "components": [
+      {
+       "id": 1,
+       "hv": "2x1",
+       "tq": 0
+      },
+      {
+       "id": 2,
+       "hv": "1x1",
+       "tq": 1
+      },
+      {
+       "id": 3,
+       "hv": "1x1",
+       "tq": 2
+      }
+     ]
+    },
+    "dqt_sha1": "6470e04667df",
+    "dht_sha1": "8f8ba97c8f26",
+    "dqt_q0_first8": [
+     3,
+     3,
+     3,
+     3,
+     3,
+     3,
+     4,
+     4
+    ],
+    "has_dht": true,
+    "header_bytes": 702,
+    "com": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+    "bytes_after_eoi_max": 0
+   },
+   "os_timestamp_source": "FFmpeg dshow packet pts*time_base (dshow: IMediaSample time + graph start_time, ref clock 100ns)",
+   "timestamp_fields_present": {
+    "os_timestamp_ns": 300,
+    "pkt_pts": 300
+   },
+   "arrival_minus_os_timestamp_ms": {
+    "median": 10.4193,
+    "abs_dev_from_median": {
+     "n": 300,
+     "min": 0.0,
+     "p50": 4.918800000000001,
+     "mean": 5.336412,
+     "p95": 12.1691,
+     "max": 15.7847
+    },
+    "note": "host_arrival_ns - os_timestamp_ns; a latency only when os_timestamp_ns is on the host QPC clock (true for MF llTimestamp and WinRT SystemRelativeTime by documentation; FFmpeg dshow pts = DirectShow stream time + FFmpeg start offset, which lands in the QPC domain on this machine: see the median)"
+   }
+  }
+ ],
+ "samples": [
+  "sample_cam0_seq71.jpghdr"
+ ],
+ "devnode_status": {
+  "before": {
+   "c930e:VID_046D&PID_0843&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_02": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_00": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843&MI_03": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_00": "0x0180200A",
+   "usbcam:VID_4C4A&PID_4A55": "0x0180600A",
+   "kiyo:VID_1532&PID_0E05&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843": "0x0180600A"
+  },
+  "after": {
+   "c930e:VID_046D&PID_0843&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_02": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_00": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843&MI_03": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_00": "0x0180200A",
+   "usbcam:VID_4C4A&PID_4A55": "0x0180600A",
+   "kiyo:VID_1532&PID_0E05&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843": "0x0180600A"
+  }
+ },
+ "machine_cpu": {
+  "before": {
+   "utc": "2026-10-28T03:42:16.762152+00:00",
+   "interval_s": 1.0,
+   "machine_cpu_pct": 8.1,
+   "n_logical": 28,
+   "busiest_core_pct": 45.5
+  },
+  "after": {
+   "utc": "2026-10-28T03:42:31.588529+00:00",
+   "interval_s": 1.0,
+   "machine_cpu_pct": 3.8,
+   "n_logical": 28,
+   "busiest_core_pct": 28.2
+  },
+  "note": "whole-machine CPU% (psutil, 1 s) right before and after the capture; other agents run concurrently"
+ },
+ "controls": {
+  "requested": {
+   "exposure_log2s": -7,
+   "white_balance_k": 4500,
+   "auto_exposure_priority": 0
+  },
+  "after_apply": {
+   "Logitech Webcam C930e": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "gain": 32,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "readback_after_capture": {
+   "Logitech Webcam C930e": {
+    "exposure_log2s": -5,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "gain": 31,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "apply_rc": 0,
+  "readback_rc": 0
+ },
+ "errors": []
+}

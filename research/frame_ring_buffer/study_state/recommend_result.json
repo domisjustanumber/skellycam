@@ -1,0 +1,755 @@
+{
+  "headline": "A C++ port is not needed. For P1 the plan is: contain failures, make a crash cost seconds not the file (today a killed MSMF .mp4 has 0 of 300 frames readable, MJPEG-in-MKV 298), record with a block-only cursor under lockstep, and count every loss. For P2 the single biggest measured step is removing copy.copy from put_data: alone, in the real SkellyCam stack, it raises 5x1080p mjpeg + UI from 54.14 to 58.84 / 58.98 fps (sensor frames never grabbed 878 -> 170 / 150). Decoupling the recorder through a gated seqlock ring with lockstep KEPT and SkellyCam's per-frame metadata writes reaches 59.82 / 59.95 fps with 20 / 0 never grabbed (prototype; synthetic 60 fps cameras; idle machine; 1920x1080 BGR). The headroom is small: 3 ms more capture-thread CPU per frame, within P9's real-camera range, drops that design to 58.08 fps. Suggested build order: ranks 9 (copy.copy), 3, 4, 5 and 2 (S effort) first, then rank 1, then ranks 6 + 11 + 7 together with 13 and 10, then 12, 14, 15, with rank 8 (passthrough) as a separate project.",
+  "current_state_verdict": "Measured idle on 20261027 at 23ccbf20 with synthetic FakeCapture cameras. In 8 e2e runs and 6 recorder configurations the writer accepted every grabbed frame: files decode to exactly the recorded count, frames are consecutive, and the finalizer passed (baseline/results/e_e2e_summary.md, c_record.md). Those files sat in the OS page cache (no fsync, re-read from cache, then deleted), so they show the writer API kept up, not that the disk did; P12 below covers the disk. 5x720p holds 60.00 fps. 5x1080p with a decode-free retrieve holds 59.97-59.99 fps (0-3 sensor frames never grabbed in 3 idle runs, incl. the reproducibility re-run). 5x1080p with the MJPEG decode in retrieve() reaches only 53.56 / 53.57 fps, with 964 sensor frames (10.7%) never grabbed. The loss is not counted or validated; it shows only as 'Mean Framerate 53.93 Hz' in the finalizer stats. The limit is the loop body plus the lockstep gate: per camera the finalizer shows 15.77 ms median processing (retrieve 10.04, put_frame 3.56, record 1.14 ms and small idles) plus 2.49 ms median camera idle per frame, and the group runs at the pace of the slowest of 5 cameras each frame, polled with wait_10us (time.sleep(1e-5) = 0.53 ms median), giving an 18.7 ms frame duration (e_e2e_1080p_mjpeg_ui.json finalizer_stats; camera_orchestrator.py L96-109, opencv_camera_loop.py L67-117). The in-loop ring copy matters: removing copy.copy alone gives 58.84 / 58.98 fps, and the remaining 2.5-3.2 ms gate idle is the next limit (baseline/results/e2ev_summary.md and e2ev_*.json (script baseline/bench_e2e_variants.py <variant> 1080p mjpeg ui 30, driver revision/run_revision.py e2ev; idle 2026-10-28)). The isolated put_frame rate (353 fps per camera, a_write.md) does not represent its in-loop cost. The default MSMF recorder keeps up but burns 1207% CPU (c_record.md). Copies: 2 full-frame copies per captured frame (copy.copy + slot), 5 per UI multiframe (31.1 MB at 1080p), and 2N per FreeMoCap processed multiframe (f_copies.md, verified_digest.json). The P1 exposure is structural, not measured: any UI, websocket or FreeMoCap-node exception, 30 failed grabs, or a config change during recording can stall or end a recording (code refs in ranks 1, 3 and 4). No real camera reached 60 fps on this machine (max 30.1 fps, p9_real_camera.md), so every 5x60 number is synthetic, and the synthetic model differs from real DSHOW: FakeCapture.grab() blocks for the frame and retrieve() only decodes, while real grab() returns in 0.00-0.01 ms and retrieve() takes about 32 ms with 11.0-14.7 ms CPU per 1080p frame (at 30 fps, process total). With 3 ms more retrieve CPU the real stack drops to 48.46 fps (1732 never grabbed). A stand-in with the P9 timing (grab returns at once, retrieve waits for the frame; e2ev_dshowlike_1080p_mjpeg_ui_v2) gave 54.17 fps and 874 never grabbed; there the grab stamps spread 2.82 ms p99 across cameras while the frames' capture times spread 12.9 ms median / 20.2 ms max. Per-frame capture-thread CPU of real cameras at 60 fps is unmeasured. Lockstep aligns grab calls, not exposure: the finalizer's 'Inter-Camera Sync' (0.5-1.3 ms) uses grab stamps, while the capture times of the same frame number differ by 7.0-13.3 ms median and up to 20.2 ms (more than one 16.7 ms period) across the free-running synthetic cameras (e2ev_gap_detector.md tick spread). Disk: P12 (prototypes/results/p12_disk_sustained.md; script prototypes/p12_disk_sustained.py; idle): C: had 224.9 GB free (94.38% used). 64 GiB unbuffered write-through ran at about 5 GB/s for the first 48 GiB, then 481-1508 MB/s (SLC cache exhausted). With the cache exhausted, 5 paced write-through streams at 162 MB/s for 300 s achieved 162.2 MB/s, write() max 135 ms, worst stream 135 ms behind schedule; at 69 MB/s for 600 s: 70.0 MB/s, write() max 138 ms, worst lag 138 ms; buffered writes at 162 MB/s for 60 s then FlushFileBuffers: flush took up to 0.48 s, worst lag 3 ms. Time to fill the free space: 54.3 min at 69 MB/s (HEAD MSMF 5x1080p), 23.1 min at 162 MB/s (MJPEG passthrough). The UI cost on capture is about 1.5-2.4 fps at 1080p (no-UI runs 55.94 and 55.62 fps vs 53.56-54.14 with UI); the e2e UI consumer is a stand-in that catches every exception instead of setting the kill flag, so it cannot show fault behaviour. The revision stage's runs were all idle (revision/README.md, load_*.json). All cited baseline, prototype and C++ numbers were measured idle except P10 and the 2026-10-25 map-stage probes, which are labelled PROVISIONAL where used.",
+  "recommendations": [
+    {
+      "rank": 1,
+      "title": "Contain failures: a UI, websocket or analysis error must not end a recording",
+      "priorities_served": [
+        "P1"
+      ],
+      "change": "(a) skellycam/api/websocket/websocket_server.py WebsocketServer._frontend_image_relay L271-274 (and the other ws tasks): on an unexpected Exception, log it, close this connection and end the task. Do not set global_kill_flag. (b) CameraGroupSharedMemory.get_latest_multiframe (camera_group_shared_memory.py L138-140): on a cross-camera frame_number mismatch, return None (skip this payload) instead of raising ValueError. (c) FreeMoCap realtime nodes call ipc.kill_everything() on any exception (camera_node.py L349-352, realtime_aggregator_node.py L833-839, realtime_skeleton_inference_node.py L152, L260, L270, L319): call PipelineIPC.shutdown_pipeline() (pipeline_ipc.py L63-65) instead of kill_everything() (L67-70), so an analysis fault stops the pipeline, not capture. (d) Split the abort signal from a drain-then-stop state. Today rank 1(d)'s original form (finalize after the kill flag) cannot work: once global_kill_flag is set, CameraGroupIPC.should_continue is False (camera_group_ipc.py L47-53), so the camera loops have already exited (opencv_camera_loop.py L43); stop_recording's pause waits on all_cameras_paused with no timeout (camera_group.py L218, camera_orchestrator.py L58-67); finalize_recording's loop is guarded by should_continue and then raises 'Not all cameras finished' (camera_group.py L317-379); the timestamps exist only in the RecordingFinishedMessage (handle_recording_updates.py L50-59). Define ONE graceful-stop path that every camera-side error and every non-camera fault goes through: set a 'stop_recording_requested' flag (not the kill flag), let every camera record up to the same last_recording_frame_number, drain and release the recorders, then set the kill flag. Give pause and finalize timeouts, write per-frame timestamps incrementally to CSV (moved forward from rank 7) so finalize can run from the files on disk, and make WorkerRegistry.shutdown_all (worker_registry.py L161-207, 3 s join then TerminateProcess) wait for a 'recorders released' signal before terminate. Rank 3's CameraDisconnected, rank 4's guards and rank 11's slot-mismatch check must use this path, not raise into kill_everything (opencv_camera_loop.py L119-123). (e) Add a fault-injection test: raise inside the relay, inside a FreeMoCap node and inside one camera loop mid-recording; assert every camera's file holds the same frame-number range, the CSVs exist and the finalizer ran.",
+      "code_refs": [
+        {
+          "repo": "skellycam",
+          "path": "skellycam/api/websocket/websocket_server.py",
+          "lines": "262-276",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/api/websocket/websocket_server.py#L262-L276"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/ipc/shared_memory/camera_group_shared_memory.py",
+          "lines": "129-141",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/camera_group_shared_memory.py#L129-L141"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera_group/camera_group_ipc.py",
+          "lines": "47-53",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera_group/camera_group_ipc.py#L47-L53"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera_group/camera_group.py",
+          "lines": "215-238",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera_group/camera_group.py#L215-L238"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera_group/camera_group.py",
+          "lines": "317-379",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera_group/camera_group.py#L317-L379"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera_group/camera_orchestrator.py",
+          "lines": "58-67",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera_group/camera_orchestrator.py#L58-L67"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_helpers/handle_recording_updates.py",
+          "lines": "50-59",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/handle_recording_updates.py#L50-L59"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/ipc/process_management/worker_registry.py",
+          "lines": "83-109",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/process_management/worker_registry.py#L83-L109"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/ipc/process_management/worker_registry.py",
+          "lines": "161-207",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/process_management/worker_registry.py#L161-L207"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_camera_loop.py",
+          "lines": "119-130",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L119-L130"
+        },
+        {
+          "repo": "freemocap",
+          "path": "freemocap/core/pipeline/abcs/pipeline_ipc.py",
+          "lines": "63-70",
+          "permalink": "https://github.com/freemocap/freemocap/blob/5632778af10e22befd4ec0a719ba844f14a84e93/freemocap/core/pipeline/abcs/pipeline_ipc.py#L63-L70"
+        },
+        {
+          "repo": "freemocap",
+          "path": "freemocap/core/pipeline/realtime/camera_node.py",
+          "lines": "349-352",
+          "permalink": "https://github.com/freemocap/freemocap/blob/5632778af10e22befd4ec0a719ba844f14a84e93/freemocap/core/pipeline/realtime/camera_node.py#L349-L352"
+        },
+        {
+          "repo": "freemocap",
+          "path": "freemocap/core/pipeline/realtime/realtime_aggregator_node.py",
+          "lines": "833-839",
+          "permalink": "https://github.com/freemocap/freemocap/blob/5632778af10e22befd4ec0a719ba844f14a84e93/freemocap/core/pipeline/realtime/realtime_aggregator_node.py#L833-L839"
+        },
+        {
+          "repo": "freemocap",
+          "path": "freemocap/core/pipeline/realtime/realtime_skeleton_inference_node.py",
+          "lines": "152",
+          "permalink": "https://github.com/freemocap/freemocap/blob/5632778af10e22befd4ec0a719ba844f14a84e93/freemocap/core/pipeline/realtime/realtime_skeleton_inference_node.py#L152"
+        },
+        {
+          "repo": "freemocap",
+          "path": "freemocap/core/pipeline/realtime/realtime_skeleton_inference_node.py",
+          "lines": "260-270",
+          "permalink": "https://github.com/freemocap/freemocap/blob/5632778af10e22befd4ec0a719ba844f14a84e93/freemocap/core/pipeline/realtime/realtime_skeleton_inference_node.py#L260-L270"
+        },
+        {
+          "repo": "freemocap",
+          "path": "freemocap/core/pipeline/realtime/realtime_skeleton_inference_node.py",
+          "lines": "319",
+          "permalink": "https://github.com/freemocap/freemocap/blob/5632778af10e22befd4ec0a719ba844f14a84e93/freemocap/core/pipeline/realtime/realtime_skeleton_inference_node.py#L319"
+        }
+      ],
+      "expected_impact": "ESTIMATE (not benchmarked): removes every code path by which a display or analysis exception truncates an in-progress recording, and gives camera faults a stop that ends all cameras on the same frame number with timestamps on disk. No benchmark exercised these faults: the baseline e2e UI stand-in catches every exception instead of setting the kill flag (baseline/bench_e_e2e.py ui_task), so fault behaviour was excluded by construction, not observed as absent.",
+      "evidence": "Code: websocket_server.py L271-274 sets global_kill_flag; worker_registry.py L102-107 SIGTERMs its own PID when the flag is set (TerminateProcess on Windows); pipeline_ipc.py L67-70 sets global_kill_flag; kill_everything call sites at freemocap 5632778a (git grep): camera_node.py L351, realtime_aggregator_node.py L838, realtime_skeleton_inference_node.py L152/260/270/319. Why the original (d) cannot work: camera_group_ipc.py L47-53, camera_group.py L218 and L328-368, camera_orchestrator.py L58-67 (critic priorities issue 3, verified against the code in this stage). Crash consequence for the file: see rank 2 (P11).",
+      "risks_tradeoffs": "A real camera fault must still stop the recording cleanly, so keep escalation for camera-process errors but route it through a graceful stop. Swallowed UI errors need to be visible (log plus a UI error message) so they are not silently ignored.",
+      "effort": "M-L",
+      "previous_rank": 1
+    },
+    {
+      "rank": 2,
+      "previous_rank": null,
+      "title": "Make a crash or forced stop cost seconds, not the whole file: crash-tolerant containers, drain-aware shutdown, free-space guard",
+      "priorities_served": [
+        "P1"
+      ],
+      "change": "(a) Stop writing non-fragmented MP4. SkellyCam's default writer is cv2 'X264' -> .mp4 (camera_config.py L29, fourcc_codec_helpers.py L54-58), whose index (moov) is written only at release(). Record into MKV (PyAV) or fragmented MP4 (movflags=frag_keyframe+empty_moov), or roll segments every N seconds. (b) Drain-aware shutdown: WorkerRegistry.shutdown_all joins each worker for 3 s after setting the kill flag, then calls terminate() (worker_registry.py L161-207). With a decoupled recorder (rank 7) holding up to 2.87 s of 1080p backlog, release must happen before that deadline: wait for a per-camera 'recorder released' flag, and only then terminate. (c) Free-space guard: refuse to start (or stop gracefully via rank 1's path) when the free space is below the expected recording size plus a margin; show the remaining minutes in the UI. (d) For NVENC (rank 14), flush the encoder on stop and accept that a hard kill loses the frames inside the encoder.",
+      "code_refs": [
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/config/camera_config.py",
+          "lines": "29",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/config/camera_config.py#L29"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/recorders/videos/fourcc_codec_helpers.py",
+          "lines": "52-58",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/recorders/videos/fourcc_codec_helpers.py#L52-L58"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/recorders/videos/video_recorder.py",
+          "lines": "116-130",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/recorders/videos/video_recorder.py#L116-L130"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/ipc/process_management/worker_registry.py",
+          "lines": "161-207",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/process_management/worker_registry.py#L161-L207"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_camera_loop.py",
+          "lines": "124-127",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L124-L127"
+        }
+      ],
+      "expected_impact": "Measured (P11): after TerminateProcess the default MSMF .mp4 had 0 of 300 frames readable at both sizes, killed idle or mid-write; MJPEG-in-MKV had 298 of 300 (idle) and 359 (killed mid-write, more frames written); NVENC in MKV 237 of 300 (the frames still inside the encoder are lost). Disk: a recording fills the 224.9 GB free in about 54 min at the HEAD 5x1080p MSMF rate and 23 min with MJPEG passthrough (P12).",
+      "evidence": "prototypes/results/p11_crash_container.md (script prototypes/p11_crash_container.py, driver revision/run_revision.py p11; idle 2026-10-28; reproduces the priorities critic's one-off test, critic_p1/out/crash_container_test.json, inside the benchmark tree and adds fragmented MP4 and NVENC). P12 (prototypes/results/p12_disk_sustained.md; script prototypes/p12_disk_sustained.py; idle): C: had 224.9 GB free (94.38% used). 64 GiB unbuffered write-through ran at about 5 GB/s for the first 48 GiB, then 481-1508 MB/s (SLC cache exhausted). With the cache exhausted, 5 paced write-through streams at 162 MB/s for 300 s achieved 162.2 MB/s, write() max 135 ms, worst stream 135 ms behind schedule; at 69 MB/s for 600 s: 70.0 MB/s, write() max 138 ms, worst lag 138 ms; buffered writes at 162 MB/s for 60 s then FlushFileBuffers: flush took up to 0.48 s, worst lag 3 ms. Time to fill the free space: 54.3 min at 69 MB/s (HEAD MSMF 5x1080p), 23.1 min at 162 MB/s (MJPEG passthrough).",
+      "risks_tradeoffs": "MKV / fragmented MP4 must be checked against FreeMoCap's posthoc reader (cv2.VideoCapture in video_node.py) - not tested. Fragmented MP4 written by PyAV NVENC was readable by cv2 up to the last fragment, but PyAV raised on the truncated tail (P11 rows nvenc_fmp4): readers must tolerate a truncated last fragment. Segmenting adds files to manage.",
+      "effort": "S-M"
+    },
+    {
+      "rank": 3,
+      "title": "Never re-publish or re-record a stale frame after 30 failed grabs",
+      "priorities_served": [
+        "P1"
+      ],
+      "change": "In run_opencv_camera_loop (opencv_camera_loop.py L72-105): after the retry loop, if frame_success is False, skip put_frame and handle_video_recording, count the failure in CameraStatus (new RawValue failed_grabs) and either continue to the next gate check or raise a CameraDisconnected that triggers the graceful stop from rank 1. Today the loop exits on fail_count >= MAX_FAIL_COUNT without checking frame_success (L72), resets fail_count unconditionally (L86), and puts and records a frame whose frame_number did not advance. During a recording that raises VideoRecorder._validate_frame_number (video_recorder.py L149-156), then kill_everything (L119-123). Bound the skip: if no grab succeeds for about 1 s while recording, take rank 1's graceful stop (all cameras end on the same frame number) instead of holding every camera at the lockstep gate indefinitely; expose failed_grabs live in the UI.",
+      "code_refs": [
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_camera_loop.py",
+          "lines": "70-105",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L70-L105"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_camera_loop.py",
+          "lines": "119-123",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L119-L123"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/recorders/videos/video_recorder.py",
+          "lines": "149-156",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/recorders/videos/video_recorder.py#L149-L156"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/ipc/shared_memory/camera_group_shared_memory.py",
+          "lines": "138-140",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/camera_group_shared_memory.py#L138-L140"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera_group/camera_orchestrator.py",
+          "lines": "96-109",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera_group/camera_orchestrator.py#L96-L109"
+        }
+      ],
+      "expected_impact": "ESTIMATE (not benchmarked): one transient camera stall of 30 or more grabs no longer ends the app mid-recording, and no longer leaves the ring index permanently out of step with frame_number.",
+      "evidence": "verified_digest.json, write-path and control areas, P1 risk 'After 30 consecutive grab/retrieve failures ... puts and records a frame with an unchanged frame_number' (verdict confirmed), with refs opencv_camera_loop.py L70-105 and L119-127. Not reproduced in a benchmark.",
+      "risks_tradeoffs": "Skipping a frame creates a real gap. It must be counted (rank 4) and must not trip the consecutive-frame check: either skip recording or record a gap marker in the timestamps. While one camera skips, lockstep holds the others at the gate (camera_orchestrator.py L96-109), so all cameras pause together; that keeps frame numbers aligned (P3 ASYM) but must be bounded, hence the 1 s limit.",
+      "effort": "S",
+      "previous_rank": 2
+    },
+    {
+      "rank": 4,
+      "title": "Guard recording state: no config apply, no inline reopen, no 3-frame start race, no pause at stop while recording",
+      "priorities_served": [
+        "P1"
+      ],
+      "change": "(a) Reject camera config updates while any camera has recording_in_progress: check in CameraGroup.update_camera_settings (camera_group.py L171-181) and return HTTP 409 from the /group/apply route. Today check_for_new_config (check_for_new_config.py L21-41) applies them inline with updating=True, which halts every camera. A resolution change silently writes stale pixels. (b) check_framerate_reset (opencv_camera_loop.py L150-170): skip it while recording, and use config.framerate instead of the hard-coded 30 fps (L156). Today it can release and reopen the capture mid-recording. (c) Start handshake (camera_group.py L183-208): set first_recording_frame_number only after orchestrator.all_cameras_recording is true (recording_in_progress is set at handle_recording_updates.py L44), instead of frame_count + 3. That removes the RuntimeError at handle_video_recording_loop.py L20-22. (d) stop_recording also pauses every camera while recording is active (camera_group.py L215-232; paused loops never grab, opencv_camera_loop.py L60-65). Publish last_recording_frame_number = max(frame_count) + margin while the cameras run, and check on arrival (the mirror of (c)).",
+      "code_refs": [
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_helpers/check_for_new_config.py",
+          "lines": "15-43",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/check_for_new_config.py#L15-L43"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera_group/camera_group.py",
+          "lines": "171-208",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera_group/camera_group.py#L171-L208"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_camera_loop.py",
+          "lines": "150-170",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L150-L170"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_helpers/handle_recording_updates.py",
+          "lines": "39-47",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/handle_recording_updates.py#L39-L47"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_helpers/handle_video_recording_loop.py",
+          "lines": "20-22",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/handle_video_recording_loop.py#L20-L22"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_camera_loop.py",
+          "lines": "60-65",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L60-L65"
+        }
+      ],
+      "expected_impact": "ESTIMATE for (a)-(c) (not benchmarked). (d) measured small: in 8 real-stack runs at 5x1080p the last 10 recorded frames of every camera showed at most 1 skipped sensor tick between consecutive frames (sum 0-14 over 50 camera-frames, vs 0.02-0.24 per camera-frame elsewhere in the same runs), so today's stop pause costs about one sensor frame per camera, silently.",
+      "evidence": "verified_digest.json control area, P1 risks on config updates during recording and on check_framerate_reset (verdict corrected); read area, P1 risk on the 3-frame start margin (verdict corrected, 'real but low-probability ... not reproduced'). Not exercised by any benchmark. Stop gap: baseline/results/e2ev_gap_detector.md columns 'skipped ticks in last 10 recorded frames' (script baseline/analyze_gap_detector.py on the e2ev_*_perframe.npz dumps).",
+      "risks_tradeoffs": "Users can no longer change exposure mid-recording, which is a behaviour change. (c) adds one round-trip wait before the first recorded frame.",
+      "effort": "S",
+      "previous_rank": 3
+    },
+    {
+      "rank": 5,
+      "title": "Count sensor-level drops live and fail validation on gaps",
+      "priorities_served": [
+        "P1"
+      ],
+      "change": "In run_opencv_camera_loop, keep the first post_frame_retrieve_ns of the recording and the frame count, and compute missed = round((t_now - t_first) / T) + 1 - frames_recorded, with T from config.framerate (an accumulated clock; the per-interval max(0, round(dt/T) - 1) formula proposed before cannot see a loop that is uniformly slow, because round(18.7/16.7) = 1). Publish it in CameraStatus (camera_status.py L8-31) and the UI framerate message, store it in the recording metadata, and make RecordingFinalizer.validate_recording (recording_finalizer.py L126-203) warn or fail when it is non-zero. With rank 6, also export the ring's explicit drop and block counters. Prefer device timestamps (PyAV dshow pts, rank 8) where available.",
+      "code_refs": [
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_camera_loop.py",
+          "lines": "80-84",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L80-L84"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera_group/camera_status.py",
+          "lines": "8-31",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera_group/camera_status.py#L8-L31"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/recorders/recording_finalizer.py",
+          "lines": "126-203",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/recorders/recording_finalizer.py#L126-L203"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_helpers/opencv_get_frame.py",
+          "lines": "53-79",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/opencv_get_frame.py#L53-L79"
+        }
+      ],
+      "expected_impact": "Detection only; it prevents no loss (it is not a P1 fix by itself). At HEAD the loss is not counted or validated: the finalizer passes and only shows 'Mean Framerate 53.93 Hz' for a 60 fps configuration. Offline check against the true count (baseline/results/e2ev_gap_detector.md, script baseline/analyze_gap_detector.py): the per-interval round(dt/T)-1 formula finds 16 of 878 at HEAD, 10 of 170 and 49 of 1732 in other runs; the accumulated clock finds 880 of 878, 175 of 170, 154 of 150, 790 of 788, 1730 of 1732 and 655 of 655 (sums over 5 cameras).",
+      "evidence": "Offline check against the true count (baseline/results/e2ev_gap_detector.md, script baseline/analyze_gap_detector.py): the per-interval round(dt/T)-1 formula finds 16 of 878 at HEAD, 10 of 170 and 49 of 1732 in other runs; the accumulated clock finds 880 of 878, 175 of 170, 154 of 150, 790 of 788, 1730 of 1732 and 655 of 655 (sums over 5 cameras). Baseline loss: baseline/results/e_e2e_summary.md rows e_e2e_1080p_mjpeg_ui.json and _rep2 (964 / 964); finalizer_stats in those JSON files. DSHOW timing (why retrieve stamps): prototypes/results/p9_real_camera.md (grab 0.00-0.01 ms, retrieve about 32 ms).",
+      "risks_tradeoffs": "A camera that delivers below its nominal rate shows as constant loss; on real DSHOW cameras the retrieve stamp is the only host stamp near frame arrival, and the detector's accuracy on real cameras is untested (open question).",
+      "effort": "S",
+      "previous_rank": 4
+    },
+    {
+      "rank": 6,
+      "title": "Ring protocol v2: per-slot seqlock, per-reader cursors with lossless gating, prefaulted slots",
+      "priorities_served": [
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "change": "Rework SharedMemoryRingBuffer (ring_buffer_shared_memory.py L26-202) and keep the record dtype so FreeMoCap attach still works. (1) Replace the SharedMemoryNumber indices (L30-31, L47-50) with one int64 header array (head + N reader cursors, 64 B apart), viewed once as np.ndarray. (2) Add a per-slot seq: the writer stores 2k+1, writes the payload, stores 2k+2, then head=k. This is the shape of prototypes/proto_common.py SeqRing.begin/commit L149-162. (3) register_cursor(lossless: bool): before reusing a slot the writer checks gated cursors (SeqRing.can_write L140-147). For the RECORDING cursor the only policy is block, together with lockstep (or a group commit: a multiframe is recorded only once every camera has published that frame number), so that any loss falls on the same frame numbers on every camera and is counted; drop is allowed only for non-recording readers (UI, analysis). (4) Readers get read_view(k) (zero-copy) plus stable(k, seq) to re-check after use (SeqRing.stable L168-169). (5) Fix the get_data_by_index off-by-one (L194 accepts head - index == L-1, the slot written next). (6) Prefault the mapping at create. (7) Fix type_overloads.py L23 (import multiprocessing.queues explicitly): new recorder or reader processes will unpickle ring DTOs. Update or delete the stale diagnostic check_shm_speed.py.",
+      "code_refs": [
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py",
+          "lines": "26-202",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py#L26-L202"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/ipc/shared_memory/shared_memory_number.py",
+          "lines": "23-33",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/shared_memory_number.py#L23-L33"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/types/type_overloads.py",
+          "lines": "23-24",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/types/type_overloads.py#L23-L24"
+        },
+        {
+          "repo": "skellycam",
+          "path": "research/frame_ring_buffer/prototypes/proto_common.py",
+          "lines": "71-169"
+        }
+      ],
+      "expected_impact": "Removes silent torn reads for lagging by-index readers: in the adversarial test (an emulation on SeqRing with a 4,300 fps writer) the current pattern accepted 39,854-41,834 torn and 1,068-1,846 wrong frames when reading the oldest slot, and 15 at L=2; at SkellyCam's real L=388 with latest reads it had 0 (p2_seqlock_read.md row '388 | latest | copy_fncheck'), so the realistic exposure is FreeMoCap readers that lag by about a ring length (6.4 s at 720p, 2.87 s at 1080p at 60 fps). The seqlock had 0 in every row of part A. 5-camera 1080p reads cost 0.0333 ms as validated views vs 1.8365 ms copies (2.3533 ms for get_latest_multiframe at HEAD). The lossless 5x1080p SPSC rate rises to 527-537 fps per camera vs 243-250. The block-only rule keeps cameras in sync when one recorder stalls past the ring (P3 ASYM).",
+      "evidence": "prototypes/results/p2_seqlock_read.md part A (tear counts; rows at L=2/8 oldest/latest and L=388) and part B; script p2_seqlock_read.py. cpp/results/cpp_comparison.md section 1b (SPSC rates; those gated runs cannot exercise a torn read, so they are throughput evidence only). Asymmetric stall: prototypes/results/p3v_asymmetric_stall.md (script prototypes/p3_lossless_record.py ASYM; idle 2026-10-28): with a 3500 ms stall on 1 of 5 recorders at L=172, block without lockstep recorded 445 vs 481 frames and camera 0's frame k was captured up to 606 ms after the others' (92 frames >= 1 period apart; every frame-count check would pass); drop gave 443 vs 481 and 639 ms; block + lockstep recorded 445 on all 5 cameras, each skipping the same 36 sensor ticks, spread 6.3 ms. 1000 ms stalls were lossless under every policy. First-lap cost: baseline/results/a_write.md. Spawn crash: baseline/results/repro_type_overloads_spawn.txt.",
+      "risks_tradeoffs": "The numpy seqlock relies on x86-64 store ordering (TSO) and single-instruction int64 stores. It is not portable to ARM without fences; the C++ ring with std::atomic (cpp/src/ring.hpp, pybind11 module cpp/src/cppring_py.cpp) is the fallback. FreeMoCap (venv skellycam 777b058c) must be updated in lockstep. The block policy turns a stall longer than the ring into counted sensor skips (P3), so size the ring from the measured worst stall. Block + lockstep turns a long single-camera stall into the same counted sensor skip on every camera; P1 then depends on the overflow budget (rank 7 risks).",
+      "effort": "L",
+      "previous_rank": 5
+    },
+    {
+      "rank": 7,
+      "title": "Decouple the recorder from the capture loop (recorder reads the ring through a lossless cursor)",
+      "priorities_served": [
+        "P1",
+        "P2"
+      ],
+      "change": "Remove the inline handle_video_recording call (opencv_camera_loop.py L99-105, handle_video_recording_loop.py L13-37) from the capture loop. Add a per-camera recorder worker. A non-daemon thread in the camera process (measured end to end in P8 with lockstep: 59.93 fps, 1 frame never grabbed) or a separate process both work; a thread dies with its camera process, so it must drain and release on the rank-1 stop path. The worker owns VideoRecorder (video_recorder.py L87-130), registers a lossless cursor on the rank-5 ring, records slot views from first_recording_frame_number to last_recording_frame_number, and advances its cursor after write() returns. Write per-frame timestamps incrementally to CSV instead of accumulating video_frame_metadata (video_recorder.py L108) and pickling one RecordingFinishedMessage at stop (handle_recording_updates.py L50-57). The camera loop then sets frame_count (opencv_camera_loop.py L116) right after publishing, so the encoder no longer gates lockstep. Keep lockstep (or a group commit) for recording; rank 13 makes the gate cheap. Overflow tier: the ring is the recorder's only buffer, so size it from measured stalls (P12: worst write-through stall 138 ms, worst stream lag 138 ms; antivirus and long-run stalls are open) and, where RAM allows, add a compressed overflow (rank 8's JPEG ring) before blocking.",
+      "code_refs": [
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_camera_loop.py",
+          "lines": "95-117",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L95-L117"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_helpers/handle_video_recording_loop.py",
+          "lines": "13-37",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/handle_video_recording_loop.py#L13-L37"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/recorders/videos/video_recorder.py",
+          "lines": "87-130",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/recorders/videos/video_recorder.py#L87-L130"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_helpers/handle_recording_updates.py",
+          "lines": "50-59",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/handle_recording_updates.py#L50-L59"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera_group/camera_orchestrator.py",
+          "lines": "96-109",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera_group/camera_orchestrator.py#L96-L109"
+        }
+      ],
+      "expected_impact": "Measured with lockstep kept and SkellyCam's per-frame metadata writes added (P8 variant): 5x1080p with in-loop imdecode 59.82 / 59.95 fps, 20 / 0 sensor frames never grabbed, files == produced and consecutive; recorder as a thread 59.93 fps, 1 never grabbed; tick to written p99 30.5 / 27.3 ms. HEAD in the same session: 54.14 fps, 878 never grabbed (baseline/results/e2ev_summary.md and e2ev_*.json (script baseline/bench_e2e_variants.py <variant> 1080p mjpeg ui 30, driver revision/run_revision.py e2ev; idle 2026-10-28)). Still not modelled: camera_loop_update_checks/pubsub polling, the deepcopy in should_grab_by_id, the start/stop handshake and the finalizer. Sensitivity: with 3 ms more CPU per frame on the capture thread (decode 14.5 ms, the low end of P9's real 11-15 ms) the same design gives 58.08 fps and 276 never grabbed. A 1500 ms recorder stall recorded 6005 / 6005 frames with 0 of 605 content mismatches (P3 part B).",
+      "evidence": "prototypes/results/p8v_e2e_summary.md and p8v_e2e_*.json (script prototypes/p8_e2e_proto.py 1080p imdecode msmf 30 with P8_LOCKSTEP=1 P8_META=1 [P8_RECTHREAD=1 | P8_EXTRA_CPU_MS=3], driver revision/run_revision.py p8v; idle 2026-10-28). Original no-gate P8 rows: prototypes/results/p8_e2e_summary.md (59.95 / 59.95 fps), reproduced in reproducibility/comparison.md. prototypes/results/p3_lossless_record.md part B. Finalization stall: 387 ms RecordingFinishedMessage.__post_init__ plus 127 ms pickling for 36,000 frames (verified_digest.json control area; PROVISIONAL 2026-10-25 map-stage measurement).",
+      "risks_tradeoffs": "Synthetic cameras only: real 60 fps capture CPU on the calling thread is unmeasured, and the 3 ms sensitivity run shows the decode-in-loop headroom is about 2-3 ms. The ring length is the recorder's stall budget (2.87 s at 1080p with the 1 GiB default); a longer stall becomes counted loss on every camera (block + lockstep), not silent loss. Releasing a slot after write() returns relies on the encoder copying its input (verified for MSMF and PyAV, P3 0/605). Lockstep raises tick to written p99 from 17.3 ms (no gate) to 30.5-27.3 ms.",
+      "effort": "L",
+      "previous_rank": 6
+    },
+    {
+      "rank": 8,
+      "title": "Record the camera's MJPEG bitstream (passthrough) and decode only for consumers",
+      "priorities_served": [
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "change": "Add a capture backend beside opencv_get_frame.py that uses PyAV's FFmpeg dshow input (vcodec=mjpeg) to deliver JPEG packets with device pts. The camera loop writes JPEG bytes and pts into a compressed-slot ring (rank-5 protocol). The recorder muxes the packets into MKV with no encode. Two decoder threads per camera fill the BGR ring for the UI and FreeMoCap (decode releases the GIL). The UI can forward the camera JPEGs or re-encode reduced frames in threads. Camera property setting (opencv_apply_config.py) needs a dshow/PyAV equivalent. OpenCV 4.12 cannot deliver the JPEG bytes (P9).",
+      "code_refs": [
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_helpers/opencv_get_frame.py",
+          "lines": "53-86",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/opencv_get_frame.py#L53-L86"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_helpers/create_cv2_video_capture.py",
+          "lines": "21-28",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/create_cv2_video_capture.py#L21-L28"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/recorders/videos/video_recorder.py",
+          "lines": "116-130",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/recorders/videos/video_recorder.py#L116-L130"
+        },
+        {
+          "repo": "skellycam",
+          "path": "research/frame_ring_buffer/prototypes/p8_e2e_proto.py",
+          "lines": "all"
+        },
+        {
+          "repo": "skellycam",
+          "path": "research/frame_ring_buffer/prototypes/p4_mjpeg_passthrough.py",
+          "lines": "all"
+        }
+      ],
+      "expected_impact": "5x1080p: 59.97 / 59.97 fps, 0 never grabbed, 60.00 fps decoded with 0 skipped, tick to written 0.8 / 1.5 / 2.9 ms. Recorder CPU 19-20% vs 924-954% for decode + MSMF. P4 record path at 1080p: 35 / 28% CPU (cameras / recorders) vs 302 / 939%. Stall budget of the design that was built: 1,024 fixed 1 MiB JPEG slots per camera = 17 s at 60 fps (p8_e2e_proto.py JSLOT = 1 << 20, SeqRing.create(1024, JSLOT)); a packed variable-size ring holding about 9,250 frames of 116 KB (about 154 s) per GiB is an untested ESTIMATE (arithmetic).",
+      "evidence": "prototypes/results/p8_e2e_summary.md rows p8_e2e_1080p_imdecode_off_passthrough.json and _rep2 (reproduced, reproducibility/comparison.md); prototypes/results/p4_mjpeg_passthrough.md; prototypes/results/p9b_pyav_dshow_probe.md: with an explicit 30 fps option, 3 of 4 real cameras delivered 100% FF D8 packets (57-116 KB per frame at 1080p, at most 0.6 ms CPU per packet); with no framerate option the c922 and C930e negotiated 10 fps raw (0 / 31 FF D8, 1,843,200 B); a 60 fps open failed (OSError 5) on 7 of 8 device/size combinations and the one that opened (c922 1280x720) delivered 30.1 fps. A 60 fps passthrough capture is shown on no device. Crash safety of MJPEG-in-MKV: prototypes/results/p11_crash_container.md. All idle.",
+      "risks_tradeoffs": "Changes the recorded format to MJPEG in MKV. Files are larger than H.264 (real cameras about 3.4-7 MB/s per camera by arithmetic; the synthetic q90 frames measured 162 MB/s for 5 cameras). FreeMoCap's posthoc VideoNode (freemocap/core/pipeline/posthoc/video_node.py L372-412, cv2.VideoCapture) reading MJPEG MKV was not tested. The Razer Kiyo Pro would not open through FFmpeg dshow. Real 60 fps cameras were not available. This replaces the OpenCV capture path that SkellyCam's sync design is built on. Copies (P3): the camera loop copies each JPEG into the byte ring and the recorder muxes from it (1 compressed copy each), and the consumer decode keeps one full-frame copy (np.copyto(slot, cv2.imdecode(...))) unless a dst-capable decoder such as simplejpeg buffer= (bench venv only) is used.",
+      "effort": "XL",
+      "previous_rank": 7
+    },
+    {
+      "rank": 9,
+      "title": "Remove copy.copy from SharedMemoryRingBuffer.put_data",
+      "priorities_served": [
+        "P2",
+        "P3"
+      ],
+      "change": "ring_buffer_shared_memory.py L132: replace `self.ring_shm.buffer[i % L] = copy(data)` with `np.copyto(self.ring_shm.buffer[s:s+1], data)` (or `= data[0]`), and drop the copy import if unused. This is the one-line interim fix until rank 10 removes the remaining copy.",
+      "code_refs": [
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py",
+          "lines": "118-133",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py#L118-L133"
+        }
+      ],
+      "expected_impact": "Measured alone in the real SkellyCam stack: 5x1080p mjpeg + UI 58.84 / 58.98 fps with 170 / 150 sensor frames never grabbed, vs 54.14 fps and 878 for HEAD in the same session (and 53.56-53.97 fps, 902-964 in the earlier idle runs); put_frame median 3.61 -> 1.29-1.38 ms; files == recorded in every run. It does not reach 60 fps on its own: the finalizer still shows 2.5-3.2 ms per frame of camera idle at the lockstep gate (rank 13). Isolated: publish 3.085 / 4.046 ms -> 1.166 / 1.854 ms at 1080p with 5 writers, byte-identical slots; removes 6,221,432 B of copy per 1080p frame (1.87 GB/s at 5x1080p60).",
+      "evidence": "baseline/results/e2ev_summary.md and e2ev_*.json (script baseline/bench_e2e_variants.py <variant> 1080p mjpeg ui 30, driver revision/run_revision.py e2ev; idle 2026-10-28) rows e2ev_head_1080p_mjpeg_ui vs e2ev_nocopycopy_1080p_mjpeg_ui(_rep2). prototypes/results/p1_write.md rows cur_memcpy_putframe vs cur_memcpy_putdata_nocopycopy. baseline/results/f_copies.md (byte counts).",
+      "risks_tradeoffs": "None found: same semantics, because the slot assignment already copies. Re-run test_shared_memory.py (21 passed at HEAD, baseline/results/diag_pytest_shared_memory.txt).",
+      "effort": "S",
+      "previous_rank": 8
+    },
+    {
+      "rank": 10,
+      "title": "Call cv2.setNumThreads(1) in recorder processes, and in camera processes once the encode is decoupled",
+      "priorities_served": [
+        "P2"
+      ],
+      "change": "Call cv2.setNumThreads(1) at the start of any recorder process or thread owner (rank 7), and at the start of opencv_camera_worker_method (opencv_camera_worker_method.py L28) once the encode no longer runs in the capture loop. While the encode stays inline, the cap halves camera-process CPU but slows record_frame and costs about 0.5 fps at 1080p (below), so apply it then only if CPU, not fps, is the constraint. Do not apply it blindly in the main process. SkellyCam never calls setNumThreads today.",
+      "code_refs": [
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_camera_worker_method.py",
+          "lines": "18-57",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_worker_method.py#L18-L57"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/recorders/videos/video_recorder.py",
+          "lines": "124-130",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/recorders/videos/video_recorder.py#L124-L130"
+        }
+      ],
+      "expected_impact": "Real VideoRecorder, 5x1080p, idle (P10 revision rows): unthrottled encode rate (slowest camera) 116.1 fps at threads=1 vs 115.8 default and 115.0 at 2, with 896% vs 1826% vs 1045% CPU; paced 60 fps while 5 other processes decode 1080p JPEGs at 60 fps: 481% vs 1185% (default) and 501% (2), all 60.0 fps with 0 late writes; record_frame median 2.67 vs 1.88 ms. Real stack with the encode inline: children CPU 1338% -> 713% and 54.14 -> 54.74 fps alone; combined with rank 9 686% and 58.29 fps vs 58.84 / 58.98 for rank 9 alone (record_frame 1.0 -> 2.7 ms).",
+      "evidence": "prototypes/results/p10v_msmf_threads.md (script prototypes/p10_msmf_threads.py with P10_PLAN=revision, driver revision/run_revision.py p10v; idle 2026-10-28) - replaces the provisional P10 rows for this claim; baseline/results/e2ev_summary.md and e2ev_*.json (script baseline/bench_e2e_variants.py <variant> 1080p mjpeg ui 30, driver revision/run_revision.py e2ev; idle 2026-10-28) rows e2ev_cvthreads1_* and e2ev_nocopycopy+cvthreads1_*. C++ reproduction: cpp/results/codec/vw_1080p_n5_paced60_th1_* 382 / 397 / 443% vs thdefault 1127 / 1257 / 1279%.",
+      "risks_tradeoffs": "The cause (OpenCV Concurrency pool busy-waiting) is inferred, not profiled. With the encode inline, threads=1 raises record_frame and costs fps (above).",
+      "effort": "S",
+      "previous_rank": 9
+    },
+    {
+      "rank": 11,
+      "title": "Retrieve straight into the next ring slot (zero full-frame copies on the write path)",
+      "priorities_served": [
+        "P2",
+        "P3"
+      ],
+      "change": "opencv_get_frame.py L71-73: call cap.retrieve(image=<next slot's image view>), write the frame metadata in place in the slot, then commit (rank 5). The process-private frame_rec_array then only holds metadata scratch. Check np.shares_memory(returned, slot_view) after retrieve; if it is False, fall back to one counted copy into the slot (never raise into kill_everything). Today a shape mismatch makes OpenCV decode into a new array that is discarded, so stale pixels are written silently. This requires the rank-5 seqlock, because readers would otherwise see half-decoded slots.",
+      "code_refs": [
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_helpers/opencv_get_frame.py",
+          "lines": "71-86",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/opencv_get_frame.py#L71-L86"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_camera_loop.py",
+          "lines": "95-97",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L95-L97"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/ipc/shared_memory/camera_shared_memory_ring_buffer.py",
+          "lines": "48-51",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/camera_shared_memory_ring_buffer.py#L48-L51"
+        }
+      ],
+      "expected_impact": "1080p, 5 writers: publish 0.060 ms vs 2.618 ms, total 8.574 vs 11.670 ms per frame, 115 vs 85 fps, 0 vs 2 full-frame copies. On 4 real UVC cameras at 720p and 1080p the decode was verified in place, saving 0.3-1.4 ms CPU per frame.",
+      "evidence": "prototypes/results/p1_write.md rows cur_vcap_into_sk_slot vs cur_vcap_putframe; prototypes/results/p9_real_camera.md; scripts prototypes/p1_write_variants.py and p9_real_camera.py (idle).",
+      "risks_tradeoffs": "The putText overlay (opencv_get_frame.py L80-84) then draws into shm, which matches today's content. Real cameras delivered at most 30.1 fps, so the 60 fps behaviour is untested.",
+      "effort": "M",
+      "previous_rank": 10
+    },
+    {
+      "rank": 12,
+      "title": "UI tap: (a) wake on new frames instead of a 10 ms sleep; (b) build off the event loop from views; plus if_newer_than and no deflate",
+      "priorities_served": [
+        "P2",
+        "P3"
+      ],
+      "change": "WebsocketServer._frontend_image_relay (websocket_server.py L189-212): run the payload build in a ThreadPoolExecutor (await loop.run_in_executor) and poll every 2 ms (or wake on an event). CameraGroup.get_latest_frontend_payload (camera_group.py L133-146): honour if_newer_than, which is ignored today. Build from validated slot views (rank 5) instead of get_latest_multiframe copies (camera_group_shared_memory.py L129-141). In create_frontend_payload (frontend_payload_bytearray.py L107-197): rotate after the resize, resize into a preallocated dst, assign jpeg_data directly instead of .tobytes() (L147), and use per-group buffers instead of the module-global _reusable_bytes_payload. Per-group buffers are what make a memoryview return safe. Fix get_images_by_frame_number (camera_group_shared_memory.py L143-156): _frame_recarray_cache is never filled, so 31 MB is allocated per call. Pass ws_per_message_deflate=False to uvicorn.Config in skellycam/__main__.py L66-72 and freemocap/__main__.py L90-96.",
+      "code_refs": [
+        {
+          "repo": "skellycam",
+          "path": "skellycam/api/websocket/websocket_server.py",
+          "lines": "189-212",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/api/websocket/websocket_server.py#L189-L212"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera_group/camera_group.py",
+          "lines": "133-166",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera_group/camera_group.py#L133-L166"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/types/frontend_payload_bytearray.py",
+          "lines": "107-197",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/types/frontend_payload_bytearray.py#L107-L197"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/ipc/shared_memory/camera_group_shared_memory.py",
+          "lines": "129-169",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/camera_group_shared_memory.py#L129-L169"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/__main__.py",
+          "lines": "66-72",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/__main__.py#L66-L72"
+        },
+        {
+          "repo": "freemocap",
+          "path": "freemocap/__main__.py",
+          "lines": "90-96",
+          "permalink": "https://github.com/freemocap/freemocap/blob/5632778af10e22befd4ec0a719ba844f14a84e93/freemocap/__main__.py#L90-L96"
+        },
+        {
+          "repo": "freemocap",
+          "path": "freemocap/core/pipeline/realtime/realtime_pipeline.py",
+          "lines": "479-482",
+          "permalink": "https://github.com/freemocap/freemocap/blob/5632778af10e22befd4ec0a719ba844f14a84e93/freemocap/core/pipeline/realtime/realtime_pipeline.py#L479-L482"
+        }
+      ],
+      "expected_impact": "(a) gives the rate: polling every 2 ms with the thread-pool build reached view_proto_threads_poll2ms 60.0-60.1/s over 4 runs at 1080p (60.0-60.1/s over 4 runs at 720p). (b) alone, at the same 10 ms poll, does NOT raise the rate (view_proto_threads 46.4-47.5/s over 4 runs vs cur_copy_real 51.6-51.8/s over 4 runs at 1080p) but removes the event-loop blocking: 0.05 / 0.08 ms vs 8.28 / 10.11 ms median / p99 per payload (the loop also serves the start/stop recording HTTP handlers). 720p 10 ms-poll rows are bimodal across runs (e.g. view_proto 43.5-60.0/s over 4 runs). Removes 31.1 MB of shm copies per 1080p multiframe. Deflate: baseline/results/h_deflate.md (script baseline/bench_h_deflate.py, idle 2026-10-28): websockets 16.1.1 PerMessageDeflate with uvicorn's defaults on a real create_frontend_payload payload: 1080p 314 KB -> 95 KB in 6.22 ms median (6.93 p99); 720p 142 KB in 2.81 ms. The synthetic content deflates far more than camera JPEGs would, so the ratio is not representative; the time is. Whether a browser negotiates it was not checked.",
+      "evidence": "prototypes/results/p6_ui_path.md plus repeats prototypes/results/p6_ui_skellycamvenv_rev_rep2.json / _rev_rep3.json (P6_OUT, driver revision/run_revision.py p6v; idle 2026-10-28) and reproducibility/rerun/prototypes/results/p6_ui_skellycamvenv.json; script prototypes/p6_ui_path.py (no browser). baseline/results/d_ui.md (46.0/s with the 10 ms sleep, 60.0 distinct/s without). baseline/results/h_deflate.md (script baseline/bench_h_deflate.py, idle 2026-10-28): websockets 16.1.1 PerMessageDeflate with uvicorn's defaults on a real create_frontend_payload payload: 1080p 314 KB -> 95 KB in 6.22 ms median (6.93 p99); 720p 142 KB in 2.81 ms. The synthetic content deflates far more than camera JPEGs would, so the ratio is not representative; the time is. Whether a browser negotiates it was not checked.",
+      "risks_tradeoffs": "No browser was attached in P6, so these are server-side upper bounds. A thread-pool build competes with the camera processes for CPU (estimate, small: main CPU 58% in that row). The 10 ms poll rate varies with timer phase (P6 limitations).",
+      "effort": "M",
+      "previous_rank": 11
+    },
+    {
+      "rank": 13,
+      "title": "Cheaper hot-loop control plane: numpy views for indices and timestamps, event-driven lockstep wake",
+      "priorities_served": [
+        "P2"
+      ],
+      "change": "SharedMemoryNumber.value (shared_memory_number.py L23-33) allocates a recarray on every write. Replace it with a cached int64 view (part of rank 5). Cache field views for the per-frame timestamp writes (opencv_camera_loop.py L95-97 and L133-147; opencv_get_frame.py L53-73) instead of nested recarray attribute chains. In CameraOrchestrator.should_grab_by_id / _all_camera_counts_greater_than_or_equal_to_camera (camera_orchestrator.py L96-109): drop the deepcopy, read every frame_count from one shared int64 array, and short-circuit all_ready. Replace the wait_10us poll (wait_functions.py L29-30), whose real median sleep is 0.53 ms, with a wake from the last camera to publish (for example a per-group semaphore or event).",
+      "code_refs": [
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/ipc/shared_memory/shared_memory_number.py",
+          "lines": "23-33",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/shared_memory_number.py#L23-L33"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera/opencv/opencv_camera_loop.py",
+          "lines": "133-147",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L133-L147"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/camera_group/camera_orchestrator.py",
+          "lines": "96-109",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera_group/camera_orchestrator.py#L96-L109"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/utilities/wait_functions.py",
+          "lines": "29-30",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/utilities/wait_functions.py#L29-L30"
+        }
+      ],
+      "expected_impact": "Measured: with copy.copy removed, the real stack still idles 2.5-3.2 ms per frame at the lockstep gate (finalizer 'TOTAL CAMERA IDLE TIME', e2ev_nocopycopy_*), the largest remaining gap to 60 fps; HEAD idles 2.48 ms. The P8 lockstep variant, whose gate reads one shared int64 array and polls with time.sleep(1e-5), waited 0.03-6.4 ms median per camera (camera 0: 0.03 / 0.17 ms; camera 1: 6.40 / 6.28 ms across the two runs; prototypes/results/p8v_e2e_1080p_imdecode_msmf_lockstep_meta{,_rep2}.json, cameras[].lockstep_gate_wait) and held 59.82-59.95 fps. Micro: SharedMemoryNumber write / read 4,423 / 5,738 ns -> numpy view 52.85 / 60.36 ns; nested timestamp write 13,502 ns -> 53.85 ns cached; time.sleep(1e-5) 525.4 us median. Event-wake latency itself was not measured.",
+      "evidence": "baseline/results/e2ev_summary.md and e2ev_*.json (script baseline/bench_e2e_variants.py <variant> 1080p mjpeg ui 30, driver revision/run_revision.py e2ev; idle 2026-10-28); prototypes/results/p8v_e2e_summary.md and p8v_e2e_*.json (script prototypes/p8_e2e_proto.py 1080p imdecode msmf 30 with P8_LOCKSTEP=1 P8_META=1 [P8_RECTHREAD=1 | P8_EXTRA_CPU_MS=3], driver revision/run_revision.py p8v; idle 2026-10-28); cpp/results/micro_py.json (script cpp/py_micro.py, idle).",
+      "risks_tradeoffs": "Keep lockstep (or a group commit) for recording: removing it lets a single stalled camera desynchronise frame numbers from capture time silently (P3 ASYM, 606 ms). Lockstep aligns frame numbers and grab calls, not exposure instants: with free-running cameras the capture-time spread of a multiframe was 7.0-13.3 ms median and up to 20.2 ms in the e2ev runs, while the finalizer's grab-stamp sync shows 0.5-1.3 ms.",
+      "effort": "M",
+      "previous_rank": 12
+    },
+    {
+      "rank": 14,
+      "title": "If H.264 output is required, offer h264_nvenc in the decoupled recorder",
+      "priorities_served": [
+        "P2",
+        "P1"
+      ],
+      "change": "In VideoRecorder._initialize_video_writer (video_recorder.py L116-130) / PyavVideoWriter (pyav_video_writer.py L3-39), add an h264_nvenc PyAV writer. Convert BGR to I420/NV12 with cv2.cvtColor into a preallocated buffer. Use it only behind rank 6, because its encode calls block for long periods. Keep MSMF plus setNumThreads(1) as the default. Failure handling (required before use): probe and reserve sessions before recording starts (the machine-wide cap is 12, shared with other apps); if NVENC is unavailable, fall back on all cameras together; on a mid-recording encoder failure keep the ring cursor, reopen the fallback into a new segment at the same frame number and count the event; write MKV, not MP4 (rank 2); flush the encoder on stop. Add an injection test.",
+      "code_refs": [
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/recorders/videos/video_recorder.py",
+          "lines": "116-130",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/recorders/videos/video_recorder.py#L116-L130"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/recorders/videos/pyav_video_writer.py",
+          "lines": "3-39",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/recorders/videos/pyav_video_writer.py#L3-L39"
+        }
+      ],
+      "expected_impact": "5x1080p60: recorder CPU 105% vs MSMF 283% (both with setNumThreads(2)). Bitrate 29.7 vs 124.9 Mbit/s per camera. Unthrottled slowest camera 89 fps, so 1.5x headroom. The session limit of 12 covers 5 cameras.",
+      "evidence": "prototypes/results/p5_nvenc.md; prototypes/results/p8_e2e_summary.md p8_e2e_1080p_imdecode_nvenc.json (59.95 fps, 0 lost, tick to written p99 218.2 ms, max 297.3 ms) and simplejpeg_nvenc; script prototypes/p5_nvenc.py (idle).",
+      "risks_tradeoffs": "Ties recording to NVIDIA GPUs (keep MSMF as fallback). The p99 latency of 103-218 ms means the ring must absorb it, which works at L=172. hevc_nvenc cannot keep up (56 fps). A hard kill loses the frames inside the encoder: 237 of 300 readable (P11). Copies (P3): BGR -> I420 conversion and the from_ndarray copy add 2 passes of 1.5 B/px per frame (p8_e2e_proto.py recorder); writing cvtColor output straight into a preallocated av.VideoFrame plane is untested.",
+      "effort": "M",
+      "previous_rank": 13
+    },
+    {
+      "rank": 15,
+      "title": "FreeMoCap readers: validated views instead of full-frame copies",
+      "priorities_served": [
+        "P3"
+      ],
+      "change": "RealtimeCameraNode (camera_node.py L256-267) and the SkeletonInferenceNode read (realtime_skeleton_inference_node.py L400-413) should read rank-5 slot views and call stable() after processing, instead of get_data_by_index np.copyto. Discard and count the frame if it was lapped. Rotate keypoints instead of pixels (camera_node.py L261-267). Replace the warning-only mismatch handling (L276-280) with a skip.",
+      "code_refs": [
+        {
+          "repo": "freemocap",
+          "path": "freemocap/core/pipeline/realtime/camera_node.py",
+          "lines": "256-280",
+          "permalink": "https://github.com/freemocap/freemocap/blob/5632778af10e22befd4ec0a719ba844f14a84e93/freemocap/core/pipeline/realtime/camera_node.py#L256-L280"
+        },
+        {
+          "repo": "freemocap",
+          "path": "freemocap/core/pipeline/realtime/realtime_skeleton_inference_node.py",
+          "lines": "400-415",
+          "permalink": "https://github.com/freemocap/freemocap/blob/5632778af10e22befd4ec0a719ba844f14a84e93/freemocap/core/pipeline/realtime/realtime_skeleton_inference_node.py#L400-L415"
+        },
+        {
+          "repo": "skellycam",
+          "path": "skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py",
+          "lines": "175-202",
+          "permalink": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py#L175-L202"
+        }
+      ],
+      "expected_impact": "Removes 2N full-frame copies per processed multiframe in the default centralized config (about 62 MB per multiframe at 5x1080p, arithmetic from 6,221,432 B per record). Per read: single-camera view 0.0204 ms vs copy 0.3784 ms; 5 cameras 0.0333 vs 1.8365 ms. FreeMoCap e2e was not measured.",
+      "evidence": "prototypes/results/p2_seqlock_read.md part B (idle); verified_digest.json FreeMoCap area copies (CameraNode and SkeletonInferenceNode get_data_by_index, verdicts corrected / confirmed).",
+      "risks_tradeoffs": "Holding a view during long inference (RTMPose) can be lapped at 2.87 s at 1080p. The post-check must discard such frames, which turns silent wrong-frame reads into counted skips.",
+      "effort": "M",
+      "previous_rank": 14
+    }
+  ],
+  "cpp_verdict": "Not needed, and it would not raise throughput meaningfully. A line-by-line C++ port of put_frame is only 2-7% faster (1080p N=5: 2.694 / 2.662 vs 2.765 / 2.780 ms), because the cost is the algorithm (fresh allocation + 2 copies), not the language. With the same one-copy seqlock design, numpy, pybind11, ctypes and pure C++ write within about 1-4% of each other (1080p N=5 0.613-0.654 ms). They sustain the same lossless SPSC rate (527-545 fps per camera at 5x1080p, vs 243-250 for HEAD). np.copyto matches memcpy to within 1-5% (about 41-44 GB/s). Codec speed is set mostly by the OpenCV / libjpeg-turbo build: Python cv2 4.12 decodes 1.57x and encodes q90 4.9x faster than the C++ OpenCV 4.8 SDK. At the same OpenCV version (4.8.0) C++ does decode 1080p faster: 11.32 ms (copy) or 10.36 ms (in place) vs 12.78 ms in Python, 11-19% on the largest per-frame cost (cpp/results/cpp_comparison.md section 4). C++ in-place decode with a current libjpeg-turbo 3.x was not measured, so 'no meaningful gain' is not proven for decode; it is listed as untested. MSMF VideoWriter behaves identically from both languages, including the thread-pool CPU blow-up. C++ wins only on per-call overhead, which shows at 64x64 frames (0.8 vs 1.4 us per publish) and is irrelevant at 300 frames/s. Untested: C1, a native DSHOW/MF capture callback that removes OpenCV's internal copies (upper bound about 0.07-0.35 ms per copy), and C4, large pages (blocked: SeLockMemoryPrivilege not held). Keep the pybind11 hybrid (cpp/src/cppring_py.cpp) as the option if a portable (non-x86) memory-ordering guarantee is needed. Evidence: cpp/results/cpp_comparison.md sections 1a, 1b, 2 and 4; codec/*.json; micro_*.json; all idle 2026-10-28 (cpp/results/load_summary.md).",
+  "not_recommended": [
+    {
+      "idea": "Line-by-line C++ port of the ring buffer or camera loop",
+      "why_not": "2-7% gain at frame sizes (cpp/results/cpp_comparison.md 1a sk_head vs cpp_head_port). The same gain or more comes from Python fixes (ranks 5, 8, 10)."
+    },
+    {
+      "idea": "Linking a stock C++ OpenCV SDK for decode/encode",
+      "why_not": "The OpenCV 4.8 SDK decodes 1080p in 11.32 ms vs 7.22 ms for Python cv2 4.12 and encodes q90 in 20.00 vs 4.11 ms (cpp/results/codec/decode_1080p_n1_*.json, imencode_1080p_*.json). The library build matters more than the language."
+    },
+    {
+      "idea": "Running per-camera control loops as threads in one process",
+      "why_not": "Pure-Python per-frame work scales x1.03 in threads vs x4.97 in processes (prototypes/results/p7_topology.md). C++ threads vs processes gave no ring gain either (spsc 545 vs 543 fps). Threads are fine for GIL-releasing decode, encode and UI jobs only."
+    },
+    {
+      "idea": "Enlarging the ring while keeping overwrite=True for a ring-reading recorder",
+      "why_not": "Overwrite loses frames silently once a stall exceeds the ring (p3_lossless_record.md: L=172, 3500 ms stall lost 195 frames with non-consecutive output). Use gated cursors with counted block or drop."
+    },
+    {
+      "idea": "hevc_nvenc, or SkellyCam's PyavVideoWriter (libx264), for 5x1080p60",
+      "why_not": "hevc_nvenc: slowest camera 56 fps with a 693 ms paced backlog. libx264: 2442% CPU, 46 fps, and 319 sensor frames lost when paced (prototypes/results/p5_nvenc.md)."
+    },
+    {
+      "idea": "NVENC (or any blocking encoder) inside the capture loop",
+      "why_not": "Tick to written p99 108-218 ms, max 297-313 ms, even when decoupled (p8_e2e_summary.md nvenc rows). Inline, that would stall every camera through lockstep."
+    },
+    {
+      "idea": "Returning memoryview(_reusable_bytes_payload)[:n] as a drop-in fix for the payload slice copy",
+      "why_not": "The buffer is one module global shared by every camera group and connection, and extend() raises BufferError while a view exists (frontend_payload_bytearray.py L165-197; verified_digest.json UI copies, verdict corrected). It is safe only with per-group buffers (rank 11)."
+    },
+    {
+      "idea": "Large pages (SEC_LARGE_PAGES) for the ring",
+      "why_not": "Needs SeLockMemoryPrivilege (errors 1300 / 1314, cpp/results/largepages_probe_stdout.log). Copies already run at 41-44 GB/s with 4 KiB pages (memcpy_*.json), so a benefit is unproven."
+    },
+    {
+      "idea": "Custom memcpy / AVX2 streaming stores",
+      "why_not": "At most about 3% over memcpy at frame sizes. numpy np.copyto is within 1-5% of memcpy (cpp/results/memcpy_cpp.json vs memcpy_py.json)."
+    },
+    {
+      "idea": "simplejpeg for the UI JPEG encode",
+      "why_not": "Slower and larger than cv2.imencode as configured: 6.80 vs 4.99 ms build and 492 vs 306 KB at 1080p (p6_ui_path.md benchvenv rows). Its decode-into-slot advantage (P1: 4.68 vs 7.52 ms) applies only to the decode side."
+    },
+    {
+      "idea": "Relying on grab() timestamps for multi-camera sync on DSHOW",
+      "why_not": "grab() returns in 0.00-0.01 ms and the frame wait happens in retrieve() (p9_real_camera.md), so the grab stamps (opencv_get_frame.py L53-55) mark the call, not the frame's arrival."
+    },
+    {
+      "idea": "Free-threaded CPython to escape the GIL",
+      "why_not": "No free-threaded OpenCV wheel exists (abi3 only), so importing cv2 re-enables the GIL (research.json, Python vs C++ topic). Processes already avoid the GIL."
+    },
+    {
+      "idea": "A 'drop' policy (or no lockstep / group commit) on the recording cursor",
+      "why_not": "One recorder stalling past the ring desynchronises that camera silently: frame numbers still match, but capture times differ by up to 606 ms (block, no lockstep) or 639 ms (drop) over 91-92 frames (prototypes/results/p3v_asymmetric_stall.md)."
+    },
+    {
+      "idea": "Non-fragmented MP4 as the recording container",
+      "why_not": "A killed writer leaves 0 of 300 frames readable (no index); MJPEG-in-MKV keeps 298 (prototypes/results/p11_crash_container.md)."
+    },
+    {
+      "idea": "Per-interval round(dt/T) - 1 as the drop counter",
+      "why_not": "Finds 16 of 878 at HEAD because a uniformly slow loop rounds to 1 frame per interval; use the accumulated clock (baseline/results/e2ev_gap_detector.md)."
+    },
+    {
+      "idea": "Using the finalizer's 'Inter-Camera Frame Grab Sync' as the sync-quality metric",
+      "why_not": "It measures grab-call stamps (0.5-1.3 ms), not capture times, which differed by 7-13 ms median across the synthetic free-running cameras (e2ev_gap_detector.md); on DSHOW the grab call returns before the frame arrives (p9_real_camera.md)."
+    }
+  ],
+  "open_questions": [
+    "Real 5 x 60 fps capture: none of the 4 attached UVC cameras delivered more than 30.1 fps (p9_real_camera.md). USB host-controller bandwidth with 5 real cameras is unmeasured.",
+    "Lockstep (or a group commit) is kept for recording (P3 ASYM). Open: whether non-recording consumers could group free-running frames by timestamp instead, and what sync quality that gives on real cameras.",
+    "Whether DSHOW decodes MJPEG on the calling thread or a graph thread, and therefore which e2e stand-in (mjpeg 53.6 fps or memcpy 59.99 fps) a real camera resembles.",
+    "Spill-to-disk as a full-ring policy was not tested. Raw write-through with the SLC cache exhausted was (P12: 481-1508 MB/s, 5 paced streams kept 162 MB/s, worst write 138 ms); recorder behaviour through the real encoders on a slow or nearly full disk was not.",
+    "Whether MSMF H.264 runs on the GPU or in software on this machine, and why the thread-pool setting changes its CPU 3x (inferred busy-waiting, not profiled).",
+    "Whether FreeMoCap's posthoc pipeline accepts MJPEG-in-MKV recordings (rank 8). FreeMoCap realtime-pipeline contention at 5x60 fps was not measured.",
+    "The memory-ordering guarantee of the numpy seqlock on non-x86 CPUs. There were 0 torn frames in 50 SPSC runs on x86, which is evidence, not proof.",
+    "Browser-side UI throughput (no browser was attached in P6 or d_ui).",
+    "Accuracy of the accumulated-clock drop detector (rank 5) on real DSHOW cameras; on the synthetic stack it matched the true count within +5 (e2ev_gap_detector.md).",
+    "Per-frame capture-thread CPU of real cameras at 60 fps (P9 measured 11.0-14.7 ms per 1080p frame at 30 fps as a process total; the P8 lockstep design loses about 2 fps with 3 ms more CPU).",
+    "Antivirus (Defender real-time scan) and GC pauses as recorder stalls during a 10-minute 5x1080p60 recording through the real encoders; P12 measured raw write-through stalls only (no encoder, Defender in its default state).",
+    "NVENC session-exhaustion and mid-recording driver-reset handling (rank 14) and the rank-1 fault-injection test were specified but not built.",
+    "Whether FreeMoCap's posthoc reader accepts MKV / fragmented MP4 recordings (rank 2) and tolerates a truncated last fragment.",
+    "A packed variable-size compressed ring (rank 8's ~154 s per GiB estimate) was not built; the built prototype holds 17 s.",
+    "Hybrid CPU (8 P-cores + 12 E-cores): no run pinned affinity or recorded core-type placement; the idle rule is a share of all 28 logical CPUs. Part of the run-to-run variance may come from placement.",
+    "Real-camera hardware sync: with free-running cameras the capture-time spread of a multiframe is set by the sensors' phases (7-13 ms median, up to 20 ms on the synthetic stack) whatever the software does; whether the target cameras support a sync input was not examined."
+  ],
+  "revision": "Revised 2026-10-28 by the REVISION stage after the evidence, priorities and reproducibility critiques; issue -> action -> evidence in study_state/revision_result.json; new benchmarks in research/frame_ring_buffer/revision/README.md. Ranks were renumbered: a new rank 2 (crash-tolerant files) was inserted, so previous ranks 2-14 are now 3-15 (field previous_rank)."
+}

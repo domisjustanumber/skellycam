@@ -1,0 +1,261 @@
+{
+ "summary": "Addressed 34 critic issues (2 blockers, 15 majors, 17 minors); 30 resolved with new or corrected evidence, 4 partly resolved and carried as open questions. New idle benchmarks: real-stack single-change variants (copy.copy removed alone: 58.84/58.98 fps vs 54.14 HEAD), P8 with lockstep + metadata (59.82/59.95 fps), P3 asymmetric stall (block+lockstep keeps sync; drop/no-lockstep desyncs by 606-639 ms), P11 crash containers (killed MSMF .mp4 0/300 readable), P12 physical disk, P10 threads=1 unthrottled, deflate on real payloads, P6 repeats. recommend_result.json was rewritten (new rank 2; ranks renumbered with previous_rank) and the stage READMEs corrected.",
+ "actions": [
+  {
+   "severity": "major",
+   "issue": "[evidence] Root-cause arithmetic: quoted loop medians sum to 14.8-15.2 ms < 16.7 ms; 'it is not the ring' contradicts the e2e finalizer (put_frame 23.1% of processing, 2.49 ms gate idle).",
+   "action": "Re-ran the real stack with copy.copy removed alone (rank 8 -> new rank 9) and a same-session HEAD control; restated the verdict as loop body (15.77 ms) + lockstep gate idle (2.49 ms) under max-of-5 pacing; removed 'it is not the ring'; re-weighted ranks 9 and 13.",
+   "evidence": "HEAD control 54.14 fps / 878 never grabbed; nocopycopy 58.84 / 58.98 fps, 170 / 150 never grabbed, gate idle still 2.5-3.2 ms. baseline/results/e2ev_summary.md, e2ev_*.json finalizer_stats; e_e2e_1080p_mjpeg_ui.json finalizer_stats. Command: .venv\\Scripts\\python.exe research\\frame_ring_buffer\\revision\\run_revision.py e2ev (runs baseline/bench_e2e_variants.py <variant> 1080p mjpeg ui 30 through baseline/run_with_load.py). Idle (load_e2ev_*.json).",
+   "resolved": true
+  },
+  {
+   "severity": "major",
+   "issue": "[evidence] 59.95 fps headline came from a prototype without lockstep or SkellyCam loop overheads; recommended configuration never measured.",
+   "action": "Added P8 options P8_LOCKSTEP (SkellyCam-style gate on a shared int64 count array, time.sleep(1e-5) poll), P8_META (31 nested timestamp writes + frame_number into a real SkellyCam frame recarray), P8_RECTHREAD and cross-camera spread; re-ran. Headline now quotes the lockstep+metadata result and lists what is still not modelled.",
+   "evidence": "Lockstep+meta 59.82 / 59.95 fps, 20 / 0 never grabbed; recorder thread 59.93 fps, 1. prototypes/results/p8v_e2e_summary.md, p8v_e2e_*.json. Command: .venv\\Scripts\\python.exe research\\frame_ring_buffer\\revision\\run_revision.py p8v. Idle.",
+   "resolved": true
+  },
+  {
+   "severity": "major",
+   "issue": "[evidence] Synthetic camera model contradicted by P9 (real grab 0 ms, retrieve 32 ms, 11-15 ms CPU at 1080p).",
+   "action": "Added a caveat next to the 5x60 numbers in the verdict and rank 7; ran CPU-sensitivity stand-ins (+3 ms CPU in retrieve) in the real stack and in the P8 lockstep design, and a dshowlike timing stand-in (grab returns at once, retrieve waits, then decodes). Real-camera per-frame CPU at 60 fps stays an open question.",
+   "evidence": "Real stack +3 ms: 48.46 fps, 1732 never grabbed; P8 lockstep +3 ms: 58.08 fps, 276. dshowlike stand-in (grab returns at once, retrieve waits then decodes): 54.17 fps, 874 never grabbed; grab-stamp spread p99 2.82 ms vs capture-time spread median 12.9 / max 20.2 ms. baseline/results/e2ev_summary.md, e2ev_gap_detector.md; prototypes/results/p8v_e2e_summary.md. The first dshowlike run logged setup read() calls into its tick log (index shift) and is kept only in baseline/results/superseded_revision/.",
+   "resolved": true
+  },
+  {
+   "severity": "major",
+   "issue": "[evidence] Rank-4 formula max(0, round(dt/T)-1) cannot see the dominant loss mode (18.7 ms intervals round to 1).",
+   "action": "Validated detectors offline against the true never-grabbed counts from per-frame dumps; replaced the formula with the accumulated clock round((t_last-t_first)/T)+1-n; relabelled rank 4 (now 5) as detection only.",
+   "evidence": "Per-interval finds 16 of 878 at HEAD; accumulated clock 880 of 878, 175 of 170, 1730 of 1732. baseline/results/e2ev_gap_detector.md (script baseline/analyze_gap_detector.py on e2ev_*_perframe.npz).",
+   "resolved": true
+  },
+  {
+   "severity": "major",
+   "issue": "[evidence] No benchmark touched the physical disk; 'no frame lost on the way to disk' overstated; disk-fill figure stale (91%).",
+   "action": "Reworded to 'the writer accepted every grabbed frame (OS cache)'; added P12 (unbuffered write-through, SLC exhaustion past 48 GiB, paced 5-stream 300 s and 600 s runs, buffered + FlushFileBuffers), a free-space guard in new rank 2, and the 94.4% figure.",
+   "evidence": "P12: 64 GiB write-through: about 5 GB/s, then 481+ MB/s after the SLC cache filled; 162 MB/s x 300 s write-through achieved 162.2 MB/s, max write 135 ms, worst lag 135 ms; 69 MB/s x 600 s: 70.0 MB/s, max write 138 ms, worst lag 138 ms; buffered 162 MB/s x 60 s then FlushFileBuffers: flush up to 0.48 s. Free 224.9 GB (94.38% used): 54.3 min at 69 MB/s, 23.1 min at 162 MB/s. prototypes/results/p12_disk_sustained.md (script prototypes/p12_disk_sustained.py; command .venv\\Scripts\\python.exe research\\frame_ring_buffer\\revision\\run_revision.py p12). Not done: a 10-minute run through the real encoders with recording larger than RAM (raw writes only).",
+   "resolved": true
+  },
+  {
+   "severity": "major",
+   "issue": "[evidence] Rank-11 rate gain comes from the 2 ms poll, not from views/threads; P6 noise large.",
+   "action": "Split rank 11 (now 12) into (a) wake/poll faster = rate and (b) thread pool from views = no event-loop blocking; quote 46.4/s for (b) alone; ran P6 two more times (4 runs incl. the reproducibility re-run) and quote ranges.",
+   "evidence": "prototypes/results/p6_ui_skellycamvenv_rev_rep2.json, _rev_rep3.json (P6_OUT; command run_revision.py p6v), prototypes/results/p6_ui_skellycamvenv.json, reproducibility/rerun/prototypes/results/p6_ui_skellycamvenv.json; ranges in recommend_result.json rank 12.",
+   "resolved": true
+  },
+  {
+   "severity": "major",
+   "issue": "[evidence] Rank 9 recommends setNumThreads(1) but the unthrottled comparison was only default vs 2; P10 provisional.",
+   "action": "Re-ran P10 idle with unthrottled threads=1/default/2 and paced rows under a concurrent 5x1080p60 decode load; measured setNumThreads(1) alone and with copy.copy removed in the real stack; rank 9 (now 10) recommends it for recorder processes, and for camera processes once the encode is decoupled.",
+   "evidence": "Unthrottled threads=1 116.1 fps at 896% vs default 115.8 at 1826%; paced+load 1/default/2: 481/1185/501%, 0 late. Real stack: children CPU 1338% -> 713%, fps 54.14 -> 54.74; with nocopycopy 58.29 vs 58.84/58.98. prototypes/results/p10v_msmf_threads.md (P10_PLAN=revision; run_revision.py p10v); baseline/results/e2ev_summary.md. Idle.",
+   "resolved": true
+  },
+  {
+   "severity": "major",
+   "issue": "[evidence] Rank 7 ring budget 154 s assumes an unbuilt ring (prototype 17 s); P9b 60 fps failed on 7 of 8 combos.",
+   "action": "Rank 7 (now 8) states the built budget (1024 x 1 MiB = 17 s) and labels 154 s an untested estimate; P9b qualified (30 fps only with an explicit option; 60 fps open failed on 7 of 8; framerate None -> 10 fps raw).",
+   "evidence": "prototypes/p8_e2e_proto.py JSLOT = 1 << 20, SeqRing.create(1024, JSLOT); prototypes/results/p9b_pyav_dshow_probe.md.",
+   "resolved": true
+  },
+  {
+   "severity": "minor",
+   "issue": "[evidence] Thread recorder topology unmeasured (P7 compared writer threads vs processes, not a recorder thread beside the capture loop).",
+   "action": "Measured: P8 with P8_RECTHREAD=1 (recorder as a non-daemon thread in the camera process) + lockstep + metadata.",
+   "evidence": "59.93 fps, 1 never grabbed, files == produced; prototypes/results/p8v_e2e_1080p_imdecode_msmf_lockstep_meta_recthread.json.",
+   "resolved": true
+  },
+  {
+   "severity": "minor",
+   "issue": "[evidence] Tear framing ignores the 0-tear result at L=388 latest; '0 torn in 50 SPSC runs' cannot exercise the seqlock.",
+   "action": "Rank 5 (now 6) quotes the L=388 latest row (0 tears), names lagging by-index FreeMoCap readers as the realistic exposure, and cites P2 part A (not the gated SPSC runs) for the seqlock.",
+   "evidence": "prototypes/results/p2_seqlock_read.md rows 19-24.",
+   "resolved": true
+  },
+  {
+   "severity": "minor",
+   "issue": "[evidence] Deflate evidence cited the wrong temp file; timings on 45-82 KB payloads.",
+   "action": "Added baseline/bench_h_deflate.py in the benchmark tree: real create_frontend_payload payload, websockets' own PerMessageDeflate with uvicorn's defaults.",
+   "evidence": "1080p 314 KB -> 95 KB in 6.22 ms median; 720p 2.81 ms. baseline/results/h_deflate.md (command run_revision.py h_deflate). Browser negotiation not checked.",
+   "resolved": true
+  },
+  {
+   "severity": "minor",
+   "issue": "[evidence] Rank 1 cited camera_node.py L256-280 for kill_everything.",
+   "action": "Cited the actual call sites with permalinks at freemocap 5632778a.",
+   "evidence": "git grep kill_everything: camera_node.py L351, realtime_aggregator_node.py L838, realtime_skeleton_inference_node.py L152/260/270/319.",
+   "resolved": true
+  },
+  {
+   "severity": "minor",
+   "issue": "[evidence] cpp_verdict omits the same-version (OpenCV 4.8) decode comparison.",
+   "action": "Added: C++ 11.32 ms (copy) / 10.36 ms (in place) vs Python 12.78 ms at 4.8.0; C++ in-place decode with libjpeg-turbo 3.x listed as untested.",
+   "evidence": "cpp/results/cpp_comparison.md section 4.",
+   "resolved": true
+  },
+  {
+   "severity": "minor",
+   "issue": "[evidence] 'SkellyCam cannot see that loss' overstated.",
+   "action": "Reworded: the loss is not counted or validated; it shows only as 'Mean Framerate 53.93 Hz' in the finalizer stats.",
+   "evidence": "baseline/results/e_e2e_1080p_mjpeg_ui.json finalizer_stats.",
+   "resolved": true
+  },
+  {
+   "severity": "minor",
+   "issue": "[evidence] Hybrid CPU / per-thread background load not controlled.",
+   "action": "Recorded as an open question; the load records list the top background processes per 1 s sample (top_background in every load_*.json). No affinity-pinned repeat was run.",
+   "evidence": "revision/README.md; any load_*.json 'samples[].top_background'.",
+   "resolved": false
+  },
+  {
+   "severity": "minor",
+   "issue": "[evidence] Baseline e2e UI is a stand-in; UI cost from 1 no-UI run.",
+   "action": "Verdict now states the stand-in catches every exception (fault behaviour excluded by construction); repeated the no-UI run.",
+   "evidence": "No-UI repeat 55.62 fps (655 never grabbed) vs original 55.94 (605); UI-on 53.56-54.14. baseline/results/e2ev_summary.md.",
+   "resolved": true
+  },
+  {
+   "severity": "blocker",
+   "issue": "[priorities] The plan converts silent loss into counted loss; no guarantee that disk writes never drop; ring cannot be sized from measured stalls.",
+   "action": "Recording cursor is now block-only under lockstep (rank 6/7), so any loss falls on the same frame numbers on every camera and is counted; measured physical-disk stalls (P12) against the 2.87 s ring; overflow tier (compressed JPEG ring) and free-space guard added to the plan. A true never-drop guarantee is not claimed: past the ring + overflow budget the plan stops loudly via rank 1's graceful path.",
+   "evidence": "P12: 64 GiB write-through: about 5 GB/s, then 481+ MB/s after the SLC cache filled; 162 MB/s x 300 s write-through achieved 162.2 MB/s, max write 135 ms, worst lag 135 ms; 69 MB/s x 600 s: 70.0 MB/s, max write 138 ms, worst lag 138 ms; buffered 162 MB/s x 60 s then FlushFileBuffers: flush up to 0.48 s. Free 224.9 GB (94.38% used): 54.3 min at 69 MB/s, 23.1 min at 162 MB/s. prototypes/results/p3v_asymmetric_stall.md. Antivirus and encoder-path stalls over 10 minutes remain open (open_questions).",
+   "resolved": false
+  },
+  {
+   "severity": "blocker",
+   "issue": "[priorities] A crash or forced terminate loses the whole MP4; shutdown_all allows 3 s before terminate; thread recorder dies with its camera.",
+   "action": "Reproduced and extended the critic's test in the benchmark tree (P11: MSMF MP4, MJPEG MKV, NVENC fragmented MP4, NVENC MKV; killed idle and mid-write; 720p and 1080p). Added new rank 2: crash-tolerant containers, drain-aware shutdown (wait for 'recorders released' before terminate), free-space guard; rank 7 requires a non-daemon draining recorder thread on the rank-1 stop path.",
+   "evidence": "Killed MSMF .mp4: 0 of 300 readable (both sizes, both kill modes); MJPEG .mkv 298 (idle) / 359 (mid); NVENC .mkv 237. prototypes/results/p11_crash_container.md (script prototypes/p11_crash_container.py; run_revision.py p11; idle). Code: worker_registry.py L161-207, camera_config.py L29, fourcc_codec_helpers.py L52-58.",
+   "resolved": true
+  },
+  {
+   "severity": "major",
+   "issue": "[priorities] Rank 1(d) cannot work: after the kill flag the loops have exited, pause has no timeout, finalize is guarded by should_continue, timestamps live only in RecordingFinishedMessage.",
+   "action": "Verified each code claim at 23ccbf20 and rewrote rank 1(d): separate stop-requested state from the abort flag, one graceful-stop path, pause/finalize timeouts, incremental CSV timestamps moved forward, drain-aware shutdown.",
+   "evidence": "camera_group_ipc.py L47-53; camera_group.py L215-238, L317-379; camera_orchestrator.py L58-67; handle_recording_updates.py L50-59; worker_registry.py L83-109, L161-207 (permalinks in recommend_result.json rank 1).",
+   "resolved": true
+  },
+  {
+   "severity": "major",
+   "issue": "[priorities] 59.95 fps measured without lockstep; frame-perfect sync requires lockstep or group commit.",
+   "action": "Measured P8 with lockstep kept (see evidence issue 2); made lockstep/group commit a P1 requirement for recording (ranks 6, 7, 13); added the measured capture-time spread and a not-recommended entry for free-running recording.",
+   "evidence": "Lockstep+meta 59.82/59.95 fps. Capture-time vs grab-stamp spread: baseline/results/e2ev_gap_detector.md; P3 ASYM 606 ms desync without lockstep.",
+   "resolved": true
+  },
+  {
+   "severity": "major",
+   "issue": "[priorities] 'Drop' policy on the recording cursor gives unequal per-camera counts under asymmetric stalls; P3 only tested simultaneous stalls.",
+   "action": "Added P3 ASYM (stall on 1 of 5 recorders; block / drop / block+lockstep; 1000 and 3500 ms) and changed rank 6: recording cursor block-only with lockstep; drop only for non-recording readers.",
+   "evidence": "1000 ms block: recorded [481, 481, 481, 481, 481], spread max 6 ms; 1000 ms drop: recorded [481, 481, 481, 481, 481], spread max 6 ms; 1000 ms block+lockstep: recorded [481, 481, 481, 481, 481], spread max 6 ms; 3500 ms block: recorded [445, 481, 481, 481, 481], spread max 606 ms; 3500 ms drop: recorded [443, 481, 481, 481, 481], spread max 640 ms; 3500 ms block+lockstep: recorded [445, 445, 445, 445, 445], spread max 6 ms. prototypes/results/p3v_asymmetric_stall.md (command run_revision.py p3v; idle).",
+   "resolved": true
+  },
+  {
+   "severity": "major",
+   "issue": "[priorities] stop_recording pauses capture during an active recording (silent sensor gap); no rank fixes it.",
+   "action": "Added rank 3(d) (now rank 4(d)): publish last_recording_frame_number while cameras run, no pause; measured the current gap from per-frame dumps.",
+   "evidence": "At most 1 skipped sensor tick between consecutive recorded frames in the last 10 frames of every camera, in every e2ev run (baseline/results/e2ev_gap_detector.md); code camera_group.py L215-232, opencv_camera_loop.py L60-65.",
+   "resolved": true
+  },
+  {
+   "severity": "major",
+   "issue": "[priorities] NVENC session/mid-recording failure unhandled; rank 13 labelled P2-only.",
+   "action": "Rank 13 (now 14) now serves P2+P1 and lists required failure handling (probe/reserve sessions, all-camera fallback, segment reopen at the same frame number, MKV, flush on stop) and an injection test; crash loss of in-encoder frames measured.",
+   "evidence": "NVENC .mkv killed: 237 of 300 readable (P11). Injection test not built (open question).",
+   "resolved": false
+  },
+  {
+   "severity": "major",
+   "issue": "[priorities] Remaining kill-flag paths: any camera-loop exception (incl. proposed raises in ranks 2, 3, 10) still kills everything.",
+   "action": "Rank 1 now defines one graceful-stop path for every camera-side error; rank 10 (now 11) falls back to one counted copy instead of raising; rank 2/3 (now 3/4) route through the graceful stop.",
+   "evidence": "opencv_camera_loop.py L119-130; worker_registry.py L83-109; recommend_result.json ranks 1, 3, 4, 11.",
+   "resolved": true
+  },
+  {
+   "severity": "minor",
+   "issue": "[priorities] Rank 2 skip has no bound; a failing camera holds the group at the gate indefinitely.",
+   "action": "Added a ~1 s bound while recording, then graceful stop; failed_grabs exposed in the UI.",
+   "evidence": "recommend_result.json rank 3; camera_orchestrator.py L96-109.",
+   "resolved": true
+  },
+  {
+   "severity": "minor",
+   "issue": "[priorities] Antivirus / GC stalls not measured.",
+   "action": "P12 measured raw storage stalls with Defender in its default state; encoder-path stalls with real-time scanning on/off and GC pauses remain open.",
+   "evidence": "prototypes/results/p12_disk_sustained.md; open_questions in recommend_result.json.",
+   "resolved": false
+  },
+  {
+   "severity": "minor",
+   "issue": "[priorities] P3 accounting of ranks 7 and 13 (I420 + from_ndarray; decode copy; JPEG copies).",
+   "action": "Listed the copies in ranks 8 and 14.",
+   "evidence": "prototypes/p8_e2e_proto.py recorder (cvtColor dst=i420, VideoFrame.from_ndarray), camera loop jring copy and decoder np.copyto.",
+   "resolved": true
+  },
+  {
+   "severity": "minor",
+   "issue": "[priorities] Ranks with no P1/P3 regression; rank 4 is detection only.",
+   "action": "Kept; rank 4 (now 5) explicitly says it prevents no loss; build order starts with copy.copy and the S-effort P1 fixes.",
+   "evidence": "recommend_result.json headline and rank 5.",
+   "resolved": true
+  },
+  {
+   "severity": "major",
+   "issue": "[repro] Following the READMEs overwrites the cited results (fixed output names, appended logs, no output-dir option).",
+   "action": "Added research/frame_ring_buffer/fp_paths.py and the FRAME_PIPELINE_RESULTS_DIR option to bench_common.py, proto_common.py, the 3 run_with_load.py copies, prototypes/run_all.py, cpp/run_all.py, cpp/run_matrix.py, cpp/summarize.py, the summarizers and env snapshots; documented in each stage README. Verified that the default path is unchanged and that the variable redirects (scratch test). The revision stage's own runs use new file names.",
+   "evidence": "research/frame_ring_buffer/fp_paths.py; baseline/README.md, prototypes/README.md, cpp/README.md ('Keeping the cited results'). Pre-edit copies of the scripts: scratchpad backup_pre_paths/scripts.tar (session scratchpad).",
+   "resolved": true
+  },
+  {
+   "severity": "minor",
+   "issue": "[repro] P6 720p 10 ms-poll rows not reproducible point values.",
+   "action": "prototypes/README.md now gives the range and the bimodality; rank 12 quotes ranges over 4 runs; only poll2ms is cited for 60/s.",
+   "evidence": "prototypes/README.md P6 section; p6_ui_skellycamvenv_rev_rep{2,3}.json.",
+   "resolved": true
+  },
+  {
+   "severity": "minor",
+   "issue": "[repro] cpp_one_copy slowest-writer fps not reproducible (1488 -> 1207).",
+   "action": "cpp/README.md table 1a cell and a note now give ranges and the aggregate GB/s.",
+   "evidence": "cpp/README.md section 1 note; reproducibility/comparison.md.",
+   "resolved": true
+  },
+  {
+   "severity": "minor",
+   "issue": "[repro] Baseline README '59.99-60.00 fps with 0 frames missed' for memcpy.",
+   "action": "Changed to '59.97-60.00 fps with 0-3 of about 9,000 never grabbed (3 idle runs)'.",
+   "evidence": "baseline/README.md 'What changed in the conclusions'.",
+   "resolved": true
+  },
+  {
+   "severity": "minor",
+   "issue": "[repro] Summarizers merge every repeat into the summary.",
+   "action": "summarize_e2e.py takes an optional glob and output name; p8 --summarize honours P8_SUMMARY_GLOB / P8_SUMMARY_OUT; both behaviours documented in the READMEs.",
+   "evidence": "baseline/summarize_e2e.py; prototypes/p8_e2e_proto.py summarize(); baseline/results/e2ev_summary.md; prototypes/results/p8v_e2e_summary.md.",
+   "resolved": true
+  },
+  {
+   "severity": "minor",
+   "issue": "[repro] cpp README prerequisites per step and the vswhere message.",
+   "action": "Documented which run_all.py steps need venv_cv48 and make_inputs.py, and that the vswhere message is expected.",
+   "evidence": "cpp/README.md 'Which prerequisite each run_all.py step needs'.",
+   "resolved": true
+  }
+ ],
+ "open_questions": [
+  "Real 5 x 60 fps capture: none of the 4 attached UVC cameras delivered more than 30.1 fps (p9_real_camera.md). USB host-controller bandwidth with 5 real cameras is unmeasured.",
+  "Lockstep (or a group commit) is kept for recording (P3 ASYM). Open: whether non-recording consumers could group free-running frames by timestamp instead, and what sync quality that gives on real cameras.",
+  "Whether DSHOW decodes MJPEG on the calling thread or a graph thread, and therefore which e2e stand-in (mjpeg 53.6 fps or memcpy 59.99 fps) a real camera resembles.",
+  "Spill-to-disk as a full-ring policy was not tested. Raw write-through with the SLC cache exhausted was (P12: 481-1508 MB/s, 5 paced streams kept 162 MB/s, worst write 138 ms); recorder behaviour through the real encoders on a slow or nearly full disk was not.",
+  "Whether MSMF H.264 runs on the GPU or in software on this machine, and why the thread-pool setting changes its CPU 3x (inferred busy-waiting, not profiled).",
+  "Whether FreeMoCap's posthoc pipeline accepts MJPEG-in-MKV recordings (rank 8). FreeMoCap realtime-pipeline contention at 5x60 fps was not measured.",
+  "The memory-ordering guarantee of the numpy seqlock on non-x86 CPUs. There were 0 torn frames in 50 SPSC runs on x86, which is evidence, not proof.",
+  "Browser-side UI throughput (no browser was attached in P6 or d_ui).",
+  "Accuracy of the accumulated-clock drop detector (rank 5) on real DSHOW cameras; on the synthetic stack it matched the true count within +5 (e2ev_gap_detector.md).",
+  "Per-frame capture-thread CPU of real cameras at 60 fps (P9 measured 11.0-14.7 ms per 1080p frame at 30 fps as a process total; the P8 lockstep design loses about 2 fps with 3 ms more CPU).",
+  "Antivirus (Defender real-time scan) and GC pauses as recorder stalls during a 10-minute 5x1080p60 recording through the real encoders; P12 measured raw write-through stalls only (no encoder, Defender in its default state).",
+  "NVENC session-exhaustion and mid-recording driver-reset handling (rank 14) and the rank-1 fault-injection test were specified but not built.",
+  "Whether FreeMoCap's posthoc reader accepts MKV / fragmented MP4 recordings (rank 2) and tolerates a truncated last fragment.",
+  "A packed variable-size compressed ring (rank 8's ~154 s per GiB estimate) was not built; the built prototype holds 17 s.",
+  "Hybrid CPU (8 P-cores + 12 E-cores): no run pinned affinity or recorded core-type placement; the idle rule is a share of all 28 logical CPUs. Part of the run-to-run variance may come from placement.",
+  "Real-camera hardware sync: with free-running cameras the capture-time spread of a multiframe is set by the sensors' phases (7-13 ms median, up to 20 ms on the synthetic stack) whatever the software does; whether the target cameras support a sync input was not examined."
+ ]
+}

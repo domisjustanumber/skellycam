@@ -1,0 +1,30 @@
+A L=2 latest copy_fncheck: writer 4293 fps, reads 44276, accepted 44276, silent tears 15, wrong-frame accepted 0, rejected seq/fn/stale 0/0/0
+A L=2 latest seqlock_copy: writer 4259 fps, reads 45085, accepted 16953, silent tears 0, wrong-frame accepted 0, rejected seq/fn/stale 28132/0/0
+A L=2 latest seqlock_view: writer 5285 fps, reads 50652, accepted 152, silent tears 0, wrong-frame accepted 0, rejected seq/fn/stale 50500/0/0
+A L=2 oldest copy_fncheck: writer 4368 fps, reads 43482, accepted 43328, silent tears 41834, wrong-frame accepted 1068, rejected seq/fn/stale 0/101/53
+A L=2 oldest seqlock_copy: writer 4283 fps, reads 3716410, accepted 0, silent tears 0, wrong-frame accepted 0, rejected seq/fn/stale 3716410/0/0
+A L=2 oldest seqlock_view: writer 5709 fps, reads 9484255, accepted 0, silent tears 0, wrong-frame accepted 0, rejected seq/fn/stale 9484255/0/0
+A L=8 latest copy_fncheck: writer 4401 fps, reads 43023, accepted 43023, silent tears 0, wrong-frame accepted 0, rejected seq/fn/stale 0/0/0
+A L=8 latest seqlock_copy: writer 4373 fps, reads 42784, accepted 42784, silent tears 0, wrong-frame accepted 0, rejected seq/fn/stale 0/0/0
+A L=8 latest seqlock_view: writer 5564 fps, reads 46598, accepted 46598, silent tears 0, wrong-frame accepted 0, rejected seq/fn/stale 0/0/0
+A L=8 oldest copy_fncheck: writer 4382 fps, reads 43105, accepted 42757, silent tears 40165, wrong-frame accepted 1846, rejected seq/fn/stale 0/249/99
+A L=8 oldest seqlock_copy: writer 4261 fps, reads 3452112, accepted 0, silent tears 0, wrong-frame accepted 0, rejected seq/fn/stale 3452112/0/0
+A L=8 oldest seqlock_view: writer 5747 fps, reads 10096636, accepted 0, silent tears 0, wrong-frame accepted 0, rejected seq/fn/stale 10096636/0/0
+A L=388 latest copy_fncheck: writer 4324 fps, reads 42694, accepted 42694, silent tears 0, wrong-frame accepted 0, rejected seq/fn/stale 0/0/0
+A L=388 latest seqlock_copy: writer 4313 fps, reads 42655, accepted 42655, silent tears 0, wrong-frame accepted 0, rejected seq/fn/stale 0/0/0
+A L=388 latest seqlock_view: writer 5485 fps, reads 46682, accepted 46682, silent tears 0, wrong-frame accepted 0, rejected seq/fn/stale 0/0/0
+A L=388 oldest copy_fncheck: writer 4316 fps, reads 42712, accepted 42359, silent tears 39854, wrong-frame accepted 1778, rejected seq/fn/stale 0/248/105
+A L=388 oldest seqlock_copy: writer 4199 fps, reads 3551326, accepted 0, silent tears 0, wrong-frame accepted 0, rejected seq/fn/stale 3551326/0/0
+A L=388 oldest seqlock_view: writer 5590 fps, reads 9860734, accepted 0, silent tears 0, wrong-frame accepted 0, rejected seq/fn/stale 9860734/0/0
+B 1080p seqlock_copy: median 0.3784 ms p99 0.4547 n 600 fails 0
+B 1080p seqlock_view: median 0.0204 ms p99 0.0393 n 600 fails 0
+B 1080p seqlock_view_resize: median 0.5062 ms p99 0.6708 n 600 fails 0
+B 1080p multi5_seqlock_copy: median 1.8365 ms p99 2.0269 n 600 fails 0
+B 1080p multi5_seqlock_view: median 0.0333 ms p99 0.0569 n 600 fails 0
+B 1080p multi5_seqlock_view_resize: median 2.5013 ms p99 3.3719 n 600 fails 0
+B 720p seqlock_copy: median 0.1837 ms p99 0.2468 n 600 fails 0
+B 720p seqlock_view: median 0.0209 ms p99 0.0375 n 600 fails 0
+B 720p seqlock_view_resize: median 0.2606 ms p99 0.3426 n 600 fails 0
+B 720p multi5_seqlock_copy: median 0.8540 ms p99 0.9992 n 600 fails 0
+B 720p multi5_seqlock_view: median 0.0334 ms p99 0.0583 n 600 fails 0
+B 720p multi5_seqlock_view_resize: median 1.2111 ms p99 1.5478 n 600 fails 0

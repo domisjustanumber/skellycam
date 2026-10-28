@@ -1,0 +1,337 @@
+{
+  "stage": "baseline (20261027 idle re-run)",
+  "environment": "20261027 IDLE RE-RUN (night of 2026-10-27/28, 00:59-01:27 local). Same machine, commit and scripts as the provisional 2026-10-25 run. Intel Core i7-14700K (20 cores / 28 logical, MaxClock 3400 MHz), 64 GB RAM (2x32 GB Corsair DDR5 CMK64GX5M2B6400C32 at 4000 MT/s), WD_BLACK SN850X 4 TB NVMe SSD, NVIDIA RTX 3070 (driver 32.0.16.1088; not used) + Intel UHD 770 + Parsec virtual display, Windows 11 Home 10.0.26300, power plan Balanced. Python 3.12.13 (MSC v.1944) from the SkellyCam venv; numpy 2.2.6, opencv-contrib-python 4.12.0.88 (getNumThreads 28; FFMPEG, DirectShow, Media Foundation), av 18.0.0, psutil 7.2.2, beartype 0.22.9, pydantic 2.13.4, polars 1.43.0, uvicorn 0.51.0, websockets 16.1.1, starlette 1.3.1, fastapi 0.139.2, skellycam 2.0.0a6 at HEAD 23ccbf208e43879bfc74fc01049e5af2a623933d (no source changes). Recorded in C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\environment_system.json and environment_python.json (env_snapshot.py). MACHINE LOAD: every run was IDLE by the rule 'background CPU mean < 10% and p95 < 10% during the run, system CPU < 10% before and after': system CPU 2.9-5.1% before / 3.3-5.1% after, memory 35.6-37.9%, background CPU mean 2.0-4.0%, p95 2.9-7.2%, max 1 s sample 11.2%; no other Python process was running at the start (C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\load_summary.md, load_*.json; run_with_load.py, summarize_load.py). The provisional 2026-10-25 results are preserved in C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results_provisional_20261025\\ and study_state\\baseline_result_provisional_20261025.json.",
+  "scripts": [
+    {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\bench_common.py",
+      "purpose": "Shared helpers: CameraConfig and frame-recarray construction (same as create_initial_frame_rec_array), synthetic frames, stats, environment and load capture",
+      "command": "(imported by the other scripts)"
+    },
+    {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\bench_a_write.py",
+      "purpose": "(a) Real CameraGroupSharedMemory.create(read_only=True) in the parent and 1-5 spawned writers calling CameraSharedMemoryRingBuffer.put_frame(overwrite=True), unthrottled for 10 s after a first lap, both sizes, plus a single np.copyto reference",
+      "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && .venv\\Scripts\\python.exe research\\frame_ring_buffer\\baseline\\bench_a_write.py"
+    },
+    {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\bench_b_read.py",
+      "purpose": "(b) Reader styles get_latest_data (reused or allocating), get_data_by_index, get_next_data, get_latest_multiframe, get_images_by_frame_number and view references, cold and warm, against 5 spawned 60 fps writers, 5 interleaved rounds",
+      "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && .venv\\Scripts\\python.exe research\\frame_ring_buffer\\baseline\\bench_b_read.py"
+    },
+    {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\bench_c_record.py",
+      "purpose": "(c) Real VideoRecorder.create and record_frame in 5 (or 1) spawned processes, paced at 60 fps for 20 s and unthrottled for 10 s, with CPU%, release time and frames counted in the output files",
+      "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && .venv\\Scripts\\python.exe research\\frame_ring_buffer\\baseline\\bench_c_record.py"
+    },
+    {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\bench_d_ui.py",
+      "purpose": "(d) Real UI serialisation: get_latest_multiframe or get_images_by_frame_number followed by create_frontend_payload for 5 cameras, in a relay-style await_10ms loop or a no-sleep loop",
+      "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && .venv\\Scripts\\python.exe research\\frame_ring_buffer\\baseline\\bench_d_ui.py"
+    },
+    {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\bench_e_e2e.py",
+      "purpose": "(e) Real WorkerRegistry(PROCESS), CameraGroupManager, CameraGroup and camera processes running run_opencv_camera_loop with lockstep, put_frame, VideoRecorder, start/stop_recording and RecordingFinalizer, plus a UI consumer. create_cv2_video_capture is monkeypatched in-process to a FakeCapture with a 60 fps free-running sensor (latest frame wins); retrieve is either mjpeg (imdecode) or memcpy",
+      "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && set PYTHONIOENCODING=utf-8 && .venv\\Scripts\\python.exe research\\frame_ring_buffer\\baseline\\bench_e_e2e.py <720p|1080p> <mjpeg|memcpy> <ui|noui> 30   (8 runs: 720p memcpy ui (+BENCH_E2E_REP=_rep2), 720p mjpeg ui, 1080p memcpy ui (+_rep2), 1080p mjpeg ui (+_rep2), 1080p mjpeg noui)"
+    },
+    {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\summarize_e2e.py",
+      "purpose": "Builds results/e_e2e_summary.md from all e_e2e_*.json",
+      "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && .venv\\Scripts\\python.exe research\\frame_ring_buffer\\baseline\\summarize_e2e.py"
+    },
+    {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\bench_f_copies.py",
+      "purpose": "(f) Byte-counting instrumentation (in-process wrappers on copy.copy, the slot __setitem__, np.copyto, np.copy, cv2.rotate/resize/imencode and the metadata copy, plus tracemalloc) of put_frame + record_frame and both UI paths, with and without rotation",
+      "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && .venv\\Scripts\\python.exe research\\frame_ring_buffer\\baseline\\bench_f_copies.py"
+    },
+    {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\bench_g_decode_ref.py",
+      "purpose": "(g) Reference cost of the e2e camera stand-ins (cv2.imdecode of q90 JPEG + copyto vs memcpy), 1 and 5 processes; not SkellyCam code",
+      "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && .venv\\Scripts\\python.exe research\\frame_ring_buffer\\baseline\\bench_g_decode_ref.py"
+    },
+    {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\repro_type_overloads_spawn.py",
+      "purpose": "Reproduces the spawn-child crash from type_overloads.py L23 when a ring DTO is unpickled before any Queue",
+      "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && .venv\\Scripts\\python.exe research\\frame_ring_buffer\\baseline\\repro_type_overloads_spawn.py"
+    },
+    {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\skellycam\\system\\diagnostics\\check_shm_speed.py",
+      "purpose": "Existing SkellyCam diagnostic (unmodified)",
+      "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && .venv\\Scripts\\python.exe skellycam\\system\\diagnostics\\check_shm_speed.py"
+    },
+    {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\skellycam\\tests\\test_shared_memory.py",
+      "purpose": "Existing SkellyCam tests (unmodified)",
+      "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && .venv\\Scripts\\python.exe -m pytest skellycam/tests/test_shared_memory.py -q -p no:cacheprovider ; and .venv\\Scripts\\python.exe -m pytest skellycam/tests/test_shared_memory.py skellycam/tests/test_camera_orchestrator.py skellycam/tests/test_frontend_payload_and_recording.py -q -p no:cacheprovider"
+    },
+    {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\run_with_load.py",
+      "purpose": "(added 20261027) Runs one benchmark command; records system CPU %, memory % and top 10 processes in 3 s windows before and after, background CPU (processes outside the benchmark tree) about every second during; applies the idle rule; kills leftover children",
+      "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && set PYTHONIOENCODING=utf-8 && .venv\\Scripts\\python.exe research\\frame_ring_buffer\\baseline\\run_with_load.py <name> <log file> <timeout_s> -- <benchmark command>"
+    },
+    {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\summarize_load.py",
+      "purpose": "(added 20261027) Builds results/load_summary.md from results/load_*.json",
+      "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && set PYTHONIOENCODING=utf-8 && .venv\\Scripts\\python.exe research\\frame_ring_buffer\\baseline\\summarize_load.py"
+    },
+    {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\env_snapshot.py",
+      "purpose": "(added 20261027) Writes results/environment_system.json and environment_python.json",
+      "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && set PYTHONIOENCODING=utf-8 && .venv\\Scripts\\python.exe research\\frame_ring_buffer\\baseline\\env_snapshot.py"
+    }
+  ],
+  "results": [
+    {
+      "name": "a_write_production_720p",
+      "config": "1 / 5 spawned writers, 1280x720x3, unthrottled, 10 s steady after a first lap, real put_frame(overwrite=True)",
+      "metric": "put_frame latency; per-camera max fps",
+      "value": "N=1: median 0.562 ms, p99 0.719 ms, 1718 fps (4.75 GB/s). N=5: median 1.145 ms, worst p99 1.916 ms, slowest camera 839 fps, aggregate 4221 fps / 11.67 GB/s. First-lap median 1.13-1.56 ms [idle 20261027; was: N=1 0.629/0.827 ms 1539 fps; N=5 1.167/1.891 ms 819 fps]",
+      "meets_5x60": "yes",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\a_write.md (+ a_write.json, load_a_write.json)",
+      "script": "bench_a_write.py"
+    },
+    {
+      "name": "a_write_production_1080p",
+      "config": "1 / 5 spawned writers, 1920x1080x3, unthrottled, 10 s",
+      "metric": "put_frame latency; per-camera max fps",
+      "value": "N=1: median 1.326 ms, p99 1.775 ms, 740 fps (4.60 GB/s). N=5: median 2.747 ms, worst p99 4.040 ms, slowest camera 353 fps, aggregate 1785 fps / 11.11 GB/s. First-lap median 2.70-3.93 ms [idle 20261027; was: N=1 1.352/1.825 ms 717 fps; N=5 2.936/4.412 ms 337 fps, 10.57 GB/s]",
+      "meets_5x60": "yes",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\a_write.md",
+      "script": "bench_a_write.py"
+    },
+    {
+      "name": "a_write_single_copy_reference",
+      "config": "Same harness, np.copyto(buffer[i:i+1], frame) + index store (NOT SkellyCam code)",
+      "metric": "latency, bandwidth",
+      "value": "1080p N=1 0.172 ms (5351 fps, 33.3 GB/s); N=5 0.640 ms (46.1 GB/s aggregate). 720p N=1 0.089 ms; N=5 0.244 ms (52.6 GB/s). Aggregate for N=2..5: 45.1-52.6 GB/s; production gets 4.1-7.2x less bandwidth [idle 20261027; was: 1080p 0.174 / 0.644 ms; 720p 0.089 / 0.263 ms; 38.3-49.5 GB/s]",
+      "meets_5x60": "n/a",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\a_write.md",
+      "script": "bench_a_write.py"
+    },
+    {
+      "name": "b_read_styles_1080p",
+      "config": "5 spawned writers at 60 fps, 1080p; reader in the parent; cold read after each new frame; 10 s per style over 5 interleaved rounds",
+      "metric": "cold read latency per call",
+      "value": "get_data_by_index (reused) 0.423 ms (round range 0.390-0.437); get_latest_data reused 0.421; alloc 1.179; get_next_data 0.483; view 0.017; get_latest_multiframe (5 cams) 2.353 ms (p99 7.29); get_images_by_frame_number (5 cams) 6.628 ms (p99 13.54); 5 views 0.052; 0 frame_number mismatches [idle 20261027; was: 0.498 / 0.534 / 1.211 / 0.559; multiframe 2.415 (p99 11.34); by_number 6.147 (p99 15.36)]",
+      "meets_5x60": "n/a",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\b_read.md (+ b_read.json)",
+      "script": "bench_b_read.py"
+    },
+    {
+      "name": "b_read_styles_720p",
+      "config": "Same, 720p",
+      "metric": "cold read latency per call",
+      "value": "get_data_by_index 0.215 ms; get_latest_data reused 0.208; alloc 0.611; get_next_data 0.285; get_latest_multiframe 1.063 ms; get_images_by_frame_number 3.153 ms; views 0.015 / 0.052 ms. Round-median spread (e.g. 0.191-0.788 ms) comes mostly from rounds 1-2 in both runs, not from load [idle 20261027; was: 0.422 / 0.297 / 0.604 / 0.698; multiframe 1.513; by_number 4.065]",
+      "meets_5x60": "n/a",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\b_read.md",
+      "script": "bench_b_read.py"
+    },
+    {
+      "name": "c_record_5x720p_paced60",
+      "config": "5 spawned processes, real VideoRecorder (X264 resolved to MSMF), 60 fps schedule, 20 s, synthetic gradient+box+noise",
+      "metric": "achieved fps, record_frame latency, CPU, frames on disk",
+      "value": "60.0 fps per camera; record_frame median 0.99 ms, worst p99 1.38, max 2.93 ms; max lateness 3.50 ms; 0 writes over 16.7 ms; summed process CPU 476% (92-101% per camera); release 0.07 s; file frames == written [idle 20261027; was: 0.97/2.36/4.22 ms, 380% CPU]",
+      "meets_5x60": "yes",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\c_record.md (+ c_record.json, load_c_record.json)",
+      "script": "bench_c_record.py"
+    },
+    {
+      "name": "c_record_5x1080p_paced60",
+      "config": "5 spawned processes, real VideoRecorder (MSMF), 60 fps schedule, 20 s",
+      "metric": "achieved fps, record_frame latency, CPU, frames on disk",
+      "value": "60.0 fps per camera; record_frame median 2.17 ms, worst p99 4.05, max 6.47 ms; max lateness 8.90 ms; 0 writes over 16.7 ms; summed process CPU 1207% (232-246% per camera); system CPU 54%; release 0.06 s; file frames == written; 1561.9 MB [idle 20261027; was: 2.18/5.22/9.28 ms, 1169% CPU, system 72%]",
+      "meets_5x60": "yes",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\c_record.md",
+      "script": "bench_c_record.py"
+    },
+    {
+      "name": "c_record_unthrottled",
+      "config": "5 or 1 process, unthrottled for 10 s, both sizes",
+      "metric": "write() return rate; derived encode throughput",
+      "value": "write() return rate: 5x720p 359 fps per camera, 5x1080p 176, 1x720p 1260, 1x1080p 676. release() then takes 5.05-5.35 s (5 cams) and 6.33-7.12 s (1 cam). DERIVED encode throughput = frames/(elapsed+release): 237 / 117 / 772 / 395 fps. All files contained every frame [idle 20261027; was: write() 292/140/1013/522; release 1.8-2.2 / 5.3-6.5 s; derived 246/116/613/342]",
+      "meets_5x60": "yes",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\c_record.json",
+      "script": "bench_c_record.py"
+    },
+    {
+      "name": "d_ui_skellycam_5cam",
+      "config": "5 x 60 fps writers; get_latest_multiframe + create_frontend_payload after await_10ms; instant ack (no browser); 15 s",
+      "metric": "payloads/s, per-payload cost",
+      "value": "720p: 60.5 payloads/s, shm copy 1.33 ms, resize+JPEG+pack 3.23 ms, total 4.70 ms median / 7.90 p99, 153 KB. 1080p: 46.0 payloads/s, copy 2.74 ms, build 6.59 ms, total 9.39 / 17.43 ms, 337 KB. No sleep: 1080p 110.3 payloads/s (60.0 distinct), total 8.84 ms [idle 20261027; was: 720p 59.9/s 6.28 ms; 1080p 43.7/s 10.90/23.76 ms; no sleep 70.7/s]",
+      "meets_5x60": "no",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\d_ui.md (+ d_ui.json, load_d_ui.json)",
+      "script": "bench_d_ui.py"
+    },
+    {
+      "name": "d_ui_freemocap_by_number_5cam",
+      "config": "Same, get_images_by_frame_number path (FreeMoCap UI)",
+      "metric": "payloads/s, per-payload cost",
+      "value": "720p 58.3 payloads/s, total 6.21 ms; 1080p 41.7 payloads/s, shm copy+alloc 6.12 ms, total 12.87 ms median / 15.58 p99 [idle 20261027; was: 720p 58.1/s 6.85 ms; 1080p 37.9/s 15.43/27.82 ms]",
+      "meets_5x60": "no",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\d_ui.md",
+      "script": "bench_d_ui.py"
+    },
+    {
+      "name": "e_e2e_5x1080p_mjpeg_ui",
+      "config": "Real CameraGroup stack, 5 cameras, 60 fps FakeCapture sensors, mjpeg retrieve stand-in, UI consumer, 30 s recording; 2 runs",
+      "metric": "achieved fps, sensor frames never grabbed, disk frames vs recorded, latency",
+      "value": "53.56 / 53.57 fps per camera (all cameras equal, lockstep). Sensor frames never grabbed 964 / 964 of 9009 / 9014 (10.7%). Recorded frames consecutive; files decode to exactly the recorded count (1609 / 1610 per camera); finalizer validation passed ('Mean Framerate' 53.93 / 53.90 Hz). Grab interval median 18.69 ms, p99 21.9-22.2. retrieve 10.12-10.31 ms, put_frame 3.64-3.73 ms (p99 5.8-5.9), record_frame 1.12-1.19 ms (p99 2.6-2.7). Sensor tick -> written median 23.9-24.4 ms, p99 34.4-34.5, max 37.4. UI 36.6-36.9 payloads/s, build 15.2-15.3 ms. CPU: children 1345-1361%, main 131-134% [idle 20261027; was: 44.01 / 46.78 fps, 2398 / 1984 never grabbed (about 25%), grab interval 21-22 ms]",
+      "meets_5x60": "no",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\e_e2e_summary.md (+ e_e2e_1080p_mjpeg_ui.json, e_e2e_1080p_mjpeg_ui_rep2.json, load_e_e2e_1080p_mjpeg_ui*.json)",
+      "script": "bench_e_e2e.py 1080p mjpeg ui 30"
+    },
+    {
+      "name": "e_e2e_5x1080p_mjpeg_noui",
+      "config": "Same, no UI consumer (1 run)",
+      "metric": "achieved fps, missed sensor frames",
+      "value": "55.94 fps per camera; 605 sensor frames never grabbed (6.7% of 9005); files == recorded (1680); put_frame 3.49 ms, record 1.14 ms, retrieve 9.91 ms; children CPU 1392% [idle 20261027; was: 46.11 fps, 2084 never grabbed]",
+      "meets_5x60": "no",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\e_e2e_1080p_mjpeg_noui.json",
+      "script": "bench_e_e2e.py 1080p mjpeg noui 30"
+    },
+    {
+      "name": "e_e2e_5x1080p_memcpy_ui",
+      "config": "Same stack, memcpy retrieve stand-in (no decode cost), UI on; 2 runs",
+      "metric": "achieved fps, missed sensor frames, latency",
+      "value": "59.99 / 59.99 fps per camera; 0 / 0 sensor frames never grabbed; files == recorded (1801 / 1802); put_frame 2.14 / 1.96 ms (p99 4.07 / 3.93), record 0.70 / 0.68 ms; tick -> written median 4.0-4.1 ms, p99 7.6-11.7 ms; UI 39.9-40.8 payloads/s, build 12.4-12.7 ms; children CPU 928-994% [idle 20261027; was: 59.99 / 59.95 fps, 0 / 5 missed]",
+      "meets_5x60": "yes",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\e_e2e_summary.md (+ e_e2e_1080p_memcpy_ui.json, _rep2.json)",
+      "script": "bench_e_e2e.py 1080p memcpy ui 30"
+    },
+    {
+      "name": "e_e2e_5x720p",
+      "config": "Same stack at 720p: mjpeg+UI (1 run), memcpy+UI (2 runs)",
+      "metric": "achieved fps, missed sensor frames",
+      "value": "mjpeg: 60.00 fps, 0 missed, tick -> written 5.5 / 7.7 / 10.9 ms, UI 57.0 payloads/s. memcpy: 60.00 / 60.00 fps, 0 / 0 missed, UI 57.5 / 58.9 payloads/s. Files == recorded in all runs [idle 20261027; was: mjpeg 59.99 fps, 6.7/12.9/20.0 ms; memcpy 58.76 (186 missed) / 60.00]",
+      "meets_5x60": "yes",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\e_e2e_summary.md (+ e_e2e_720p_*.json)",
+      "script": "bench_e_e2e.py 720p {mjpeg|memcpy} ui 30"
+    },
+    {
+      "name": "f_bytes_copied_record_path",
+      "config": "Instrumented real put_frame + record_frame, single process, 20 iterations, 720p/1080p, with and without rotation",
+      "metric": "bytes copied per frame per camera",
+      "value": "Identical to 2026-10-25: copy.copy 1 x 6,221,432 B + shm slot assignment 1 x 6,221,432 B (1080p) = 12.44 MB/frame; plus 8 B index + 4 x 1 B flag copies; encoder handoff is a view (0 B); +6,220,800 B cv2.rotate only when rotated; +632 B metadata copy. Heap allocated per put_frame 6,223,818 B (was 6,223,816). 3.73 GB/s at 5x1080p60, 1.87 GB/s avoidable",
+      "meets_5x60": "n/a",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\f_copies.md (+ f_copies.json)",
+      "script": "bench_f_copies.py"
+    },
+    {
+      "name": "f_bytes_copied_ui_path",
+      "config": "Instrumented get_latest_multiframe / get_images_by_frame_number + create_frontend_payload, 5 cameras",
+      "metric": "bytes copied per multiframe",
+      "value": "Identical byte counts: 1080p 5 x np.copyto = 31,107,160 B out of shm; cv2.resize outputs 7,776,000 B; JPEG copied 3 more times (analytic); +31,104,000 B cv2.rotate when rotated. Heap per call 3.24 MB (SkellyCam path) vs 31.11 MB (FreeMoCap by-number path). 60-75 x 1 B flag np.copy per multiframe",
+      "meets_5x60": "n/a",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\f_copies.md",
+      "script": "bench_f_copies.py"
+    },
+    {
+      "name": "g_decode_reference",
+      "config": "cv2.imdecode of the q90 synthetic JPEG + copyto vs memcpy, 1 and 5 processes, 10 s (not SkellyCam code)",
+      "metric": "per-frame cost of the e2e stand-in",
+      "value": "1080p imdecode 7.30 ms (1 proc) / 7.73 ms (5 procs), JPEG 540 KB; memcpy 0.35 / 1.15 ms. 720p imdecode 3.21 / 3.37 ms, JPEG 241 KB; memcpy 0.15 / 0.51 ms [idle 20261027; was: 1080p 6.98 / 7.69; 720p 3.05 / 3.33]",
+      "meets_5x60": "n/a",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\g_decode_ref.md",
+      "script": "bench_g_decode_ref.py"
+    },
+    {
+      "name": "diag_check_shm_speed",
+      "config": "Existing diagnostic, unmodified",
+      "metric": "runs?",
+      "value": "ImportError: cannot import SharedMemoryRingBufferDTO (line 8); exit 1 (unchanged)",
+      "meets_5x60": "n/a",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\diag_check_shm_speed.txt",
+      "script": "skellycam/system/diagnostics/check_shm_speed.py"
+    },
+    {
+      "name": "diag_pytest_shared_memory",
+      "config": "pytest skellycam/tests/test_shared_memory.py (normal conftest); and together with test_camera_orchestrator + test_frontend_payload_and_recording",
+      "metric": "pass/fail",
+      "value": "21 passed (diag_pytest_shared_memory.txt). Combined run: 58 passed, 1 failed (test_video_file_path_from_config, the known idx0 vs idx-0 failure) (diag_pytest_three_files.txt). Unchanged",
+      "meets_5x60": "n/a",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\diag_pytest_shared_memory.txt (+ diag_pytest_three_files.txt)",
+      "script": "skellycam/tests/test_shared_memory.py"
+    },
+    {
+      "name": "repro_type_overloads_spawn",
+      "config": "Spawned child receiving a ring DTO before any Queue",
+      "metric": "child exit code",
+      "value": "child exitcode=1, AttributeError: module 'multiprocessing' has no attribute 'queues' (unchanged)",
+      "meets_5x60": "n/a",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\repro_type_overloads_spawn.txt",
+      "script": "repro_type_overloads_spawn.py"
+    },
+    {
+      "name": "machine_load_20261027",
+      "config": "All 19 steps above, each via run_with_load.py with 15 s pauses",
+      "metric": "background CPU and idle verdict",
+      "value": "Every run idle: system CPU 2.9-5.1% before / 3.3-5.1% after; memory 35.6-37.9%; background CPU mean 2.0-4.0%, p95 2.9-7.2%, max 11.2% (one 1 s sample). system-minus-tree mean up to 10.3% in the heaviest runs, attributed (inference) to kernel work caused by the benchmark (`System` process up to 7.7% while MSMF wrote files)",
+      "meets_5x60": "n/a",
+      "output_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\load_summary.md (+ load_*.json)",
+      "script": "run_with_load.py, summarize_load.py"
+    }
+  ],
+  "findings": [
+    {
+      "statement": "On an idle machine, 5 cameras at 1080p60 with the MJPEG decode inside retrieve() on the capture loop still do NOT sustain 60 fps: 53.56 / 53.57 fps per camera with the UI (2 runs, 964 sensor frames never grabbed = 10.7%) and 55.94 fps without it (1 run, 6.7%). The 2026-10-25 loaded run overstated the shortfall (44-47 fps, about 25%). With a decode-free retrieve (memcpy) the stack sustains 59.99 fps with 0 missed; 5x720p sustains 60.00 fps in both modes. Which bound applies to a real DSHOW camera is still open.",
+      "evidence": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\e_e2e_summary.md rows e_e2e_1080p_mjpeg_ui(.json, _rep2), e_e2e_1080p_mjpeg_noui, e_e2e_1080p_memcpy_ui(_rep2), e_e2e_720p_*; script bench_e_e2e.py; comparison in baseline\\README.md '20261027 idle re-run'. Lockstep gate: https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera_group/camera_orchestrator.py#L96-L109"
+    },
+    {
+      "statement": "No grabbed frame was lost on the way to disk in any run (8 e2e runs, 6 bench_c configurations): recorded frame numbers were consecutive, every file decoded to exactly the recorded count, RecordingFinalizer validation passed, and the kill flag stayed false. Losses happen before the recorder (frames never grabbed), which SkellyCam's frame_number and finalizer statistics cannot see ('Mean Framerate 53.93 Hz' with no gap reported).",
+      "evidence": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\e_e2e_*.json fields per_camera.consecutive, files[].decoded_frames, sensor_frames_never_grabbed, stop_error=null, kill_flag_set=false, finalizer_stats; c_record.json all_frames_on_disk=True. Code: https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/opencv_get_frame.py#L79"
+    },
+    {
+      "statement": "At 1080p mjpeg the serial per-iteration work still exceeds the 16.7 ms budget on an idle machine: retrieve 10.1-10.3 ms (7.30 ms isolated), plus put_frame 3.6-3.7 ms, plus record_frame 1.1-1.2 ms. The group interval median is 18.69 ms, and lockstep makes the slowest camera set the rate for all.",
+      "evidence": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\e_e2e_1080p_mjpeg_ui.json and _rep2.json per_camera.*.retrieve/put_frame/record_frame_write/grab_interval; g_decode_ref.md; code https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L67-L117"
+    },
+    {
+      "statement": "Turning the UI consumer off raised 1080p mjpeg capture from 53.56/53.57 to 55.94 fps (never grabbed 964 -> 605) on the idle machine. The UI is therefore a small but measurable cost on capture, but not the main limit. Only 1 no-UI run exists; under load on 2026-10-25 no difference was visible (46.1 vs 44.0/46.8).",
+      "evidence": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\e_e2e_summary.md rows e_e2e_1080p_mjpeg_noui vs e_e2e_1080p_mjpeg_ui(_rep2); load_e_e2e_*.json (all idle)"
+    },
+    {
+      "statement": "put_frame makes 2 full-record copies per frame (copy.copy + slot assignment, 6,221,432 B each at 1080p): 3.73 GB/s at 5x1080p60, 1.87 GB/s of it avoidable. Isolated it costs 1.326 ms at 1080p, against 0.172 ms for one np.copyto into the same slot (7.7x). Under e2e load it costs 1.96-2.14 ms (memcpy) and 3.49-3.73 ms (mjpeg). Byte counts are identical to the 2026-10-25 run.",
+      "evidence": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\f_copies.md; a_write.md rows 1080p 1 production vs single_copy_reference; e_e2e_summary.md put_frame column. Code: https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py#L118-L133"
+    },
+    {
+      "statement": "The ring write path is not the throughput limit: 5 unthrottled writers sustain 353 fps per camera at 1080p (839 at 720p). Production put_frame reaches 11.1-11.7 GB/s aggregate, against 45-53 GB/s for a single copy (4.1-7.2x less).",
+      "evidence": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\a_write.md, a_write.json"
+    },
+    {
+      "statement": "The default record path (X264 -> MSMF H.264) keeps up with 5x1080p60 when paced: 60.0 fps per camera, record_frame p99 4.05 ms, max 6.47 ms, 0 writes over 16.7 ms, all frames in the files. It costs 1207% summed process CPU (232-246% per camera). Encoder throughput at 5 cameras is unchanged from the loaded run (derived 117 fps per camera at 1080p, 237 at 720p). Because write() returns faster on the idle machine (176 vs 140 fps at 5x1080p), the unthrottled backlog takes 5.05-5.35 s to drain on release(), against 1.8-2.2 s on 2026-10-25.",
+      "evidence": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\c_record.md, c_record.json per_camera.release_s / elapsed_s / frames_written / cpu_pct_loop. Code: https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/recorders/videos/video_recorder.py#L87-L130"
+    },
+    {
+      "statement": "UI path at 5x1080p: get_latest_multiframe + create_frontend_payload costs 9.39 ms median (p99 17.43) per payload, so the build alone would allow about 110 payloads/s (no-sleep row). The relay awaits 10 ms and then builds, in series, which caps it at 46.0 payloads/s (FreeMoCap by-number path 41.7/s; e2e 36.6-40.8/s). The 2026-10-25 claim that the build alone keeps the UI under 60 fps does not hold idle. 720p reaches 60.5 payloads/s.",
+      "evidence": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\d_ui.md; e_e2e_summary.md UI columns. Code: https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/api/websocket/websocket_server.py#L189-L212 and https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/types/frontend_payload_bytearray.py#L41-L199"
+    },
+    {
+      "statement": "Per UI multiframe at 1080p, 31.1 MB is copied out of shm and 7.8 MB of resize output is produced. get_images_by_frame_number allocates 31.1 MB per call because its cache is never filled, and costs 6.63 ms vs 2.35 ms for get_latest_multiframe in cold reads.",
+      "evidence": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\f_copies.md 1080p UI tables; b_read.md 1080p multiframe rows. Code: https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/camera_group_shared_memory.py#L129-L169"
+    },
+    {
+      "statement": "Read costs per camera at 1080p (cold, writers at 60 fps, idle): get_data_by_index into a reused buffer 0.42 ms, get_latest_data allocating 1.18 ms, view creation 0.017 ms; no frame_number mismatches. The round-to-round spread in b_read comes mostly from rounds 1-2 in both the loaded and idle runs; rounds 3-5 agree within about 20%, so the spread was not caused by background load. Its cause was not established.",
+      "evidence": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\b_read.md, b_read.json cold_round_medians_ms (and results_provisional_20261025\\b_read.json)"
+    },
+    {
+      "statement": "type_overloads.py L23 still crashes a spawned child that unpickles a ring DTO before any multiprocessing.Queue (exit code 1). check_shm_speed.py is still stale (ImportError L8). test_shared_memory.py passes (21); with the orchestrator and payload tests, 58 pass and 1 fails as known.",
+      "evidence": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\repro_type_overloads_spawn.txt, diag_check_shm_speed.txt, diag_pytest_shared_memory.txt, diag_pytest_three_files.txt; code https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/types/type_overloads.py#L1-L24"
+    },
+    {
+      "statement": "Cross-camera grab spread under lockstep (p99) is 0.68-0.92 ms with memcpy capture and 2.6-2.7 ms at 1080p mjpeg. Sensor tick to frame written: median 4.0-4.1 ms at 1080p memcpy, 23.6-24.4 ms at 1080p mjpeg (p99 about 34 ms).",
+      "evidence": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results\\e_e2e_summary.md columns 'cross-cam grab spread p99' and 'sensor tick -> written'"
+    },
+    {
+      "statement": "All 2026-10-25 conclusions still hold in direction. Most numbers moved by 0-30%. The material changes are the 1080p mjpeg e2e rate (44-47 -> 53.6-55.9 fps), the UI-on/off difference now being visible, and the UI build cost (about 9 ms, not 11-14 ms).",
+      "evidence": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\README.md section '20261027 idle re-run', comparison table (old files in C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results_provisional_20261025\\)"
+    }
+  ],
+  "limitations": [
+    "Idle is defined by background CPU (processes outside the benchmark tree) mean and p95 < 10% and system CPU < 10% before and after. The alternative measure system-minus-tree reached a 9.1-10.3% mean in the heaviest runs (c_record, 1080p mjpeg e2e). That is attributed to kernel work caused by the benchmark itself (`System` up to 7.7% while files were written) and to sampling misalignment. This is an inference.",
+    "Each configuration was run as before: 1 run for most configurations, 2 for 1080p mjpeg+UI, 1080p memcpy+UI and 720p memcpy+UI. The UI-off effect rests on 1 run.",
+    "No real cameras were used. The e2e capture is FakeCapture with assumed buffer-size-1 'latest frame wins' semantics. Whether DSHOW decodes MJPEG inside retrieve() (mjpeg mode) or elsewhere (closer to memcpy mode) is still open. The mjpeg stand-in adds one memcpy, and its q90 synthetic JPEGs may differ from a real camera's.",
+    "Encode cost and file sizes depend on the synthetic content. Whether MSMF H.264 runs on the GPU or in software was not established. Why the paced runs used more encoder CPU when idle (476% vs 380% at 720p) was not investigated.",
+    "Unthrottled encode throughputs are derived (frames / (elapsed + release)), because MSMF write() is asynchronous.",
+    "Copy counting (bench_f) is single-process with in-process wrappers. The JPEG tobytes, assemble and slice copies are analytic. Copies inside DSHOW, MSMF, the encoder and the websocket stack cannot be counted.",
+    "The UI benchmarks have no browser (instant ack, no websocket send), so UI rates are server-side upper bounds.",
+    "Power plan was Balanced and CPU frequency was not pinned; turbo and thermal state can still move absolute numbers between runs.",
+    "bench_common.SCRATCH_TMP is hard-coded to the 2026-10-25 session's scratch folder (bench_common.py L23-27). It worked unchanged. bench_f left 20.8 MB there, which was deleted after logging (results\\bench_tmp_leftover_sizes_before_delete.txt). Empty c_rec_* folders remain. SkellyCam's own TRACE log file was written to its default log path."
+  ]
+}

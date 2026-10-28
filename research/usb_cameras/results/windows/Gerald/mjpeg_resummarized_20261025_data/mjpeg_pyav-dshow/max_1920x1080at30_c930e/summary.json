@@ -1,0 +1,255 @@
+{
+ "test": "mjpeg_pyav-dshow",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-25T18:46:20.120108+00:00",
+ "utc_summarized": "2026-10-28T03:15:19.429656+00:00",
+ "command": "uv run --script research/usb_cameras/tools/camlock.py -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c930e --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg_pyav-dshow\\max_1920x1080at30_c930e' -- uv run --script research/usb_cameras/mjpeg/pyav/pyav_capture.py --input-format dshow --device 'video=Logitech Webcam C930e' --size 1920x1080 --fps 30 --seconds 10.0 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg_pyav-dshow\\max_1920x1080at30_c930e'",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "av": "19.0.2",
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "backend": "pyav-dshow",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30.0
+ },
+ "decoded_by_pipeline": false,
+ "decode_evidence": "only container.demux() is called; packets are passed through as bytes; stream codec reported per camera (codec != mjpeg means FFmpeg/the device delivered a different format than requested WITHOUT raising an error)",
+ "window": {
+  "start_ns": 103340638303400,
+  "end_ns": 103350638833500,
+  "wall_s": 10.0005301
+ },
+ "delivered_codecs": [
+  "mjpeg"
+ ],
+ "silent_format_fallback": false,
+ "cpu": {
+  "method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)",
+  "wall_s": 10.0005341,
+  "process_cpu_s_ticks": 0.09375,
+  "process_cpu_pct_of_one_core_ticks": 0.937449930799196,
+  "tsc_hz": 3376075570.3850975,
+  "process_cycles": 263732893,
+  "process_cpu_pct_of_one_core": 0.7811401204754284,
+  "frameserver_pid": 49436,
+  "frameserver_cpu_pct_of_one_core_ticks": 0.15624165513319935,
+  "frameserver_cpu_pct_of_one_core": null,
+  "process_cpu_pct_per_camera": 0.7811401204754284
+ },
+ "cameras": [
+  {
+   "idx": 0,
+   "name": "video=Logitech Webcam C930e",
+   "options": {
+    "video_size": "1920x1080",
+    "framerate": "30",
+    "vcodec": "mjpeg",
+    "rtbufsize": "512M"
+   },
+   "codec": "mjpeg",
+   "pix_fmt": "yuvj422p",
+   "stream_time_base": "1/10000000",
+   "stream_size": [
+    1920,
+    1080
+   ],
+   "stream_rate": "10000000/333333",
+   "open_ms": 805.9792,
+   "frames": 373,
+   "frames_delivered_total": 373,
+   "frames_in_window": 301,
+   "fps_requested": 30.0,
+   "fps_achieved_count_over_wall": 30.098404483578324,
+   "fps_achieved_span": 30.04795533479612,
+   "inter_arrival_ms": {
+    "n": 300,
+    "min": 31.8537,
+    "p50": 32.0043,
+    "mean": 33.28013466666667,
+    "p95": 47.9669,
+    "max": 48.0776
+   },
+   "gaps_over_1p5_period": 0,
+   "os_timestamp_delta_ms": {
+    "n": 300,
+    "min": 20.3198,
+    "p50": 33.3333,
+    "mean": 33.28992166666667,
+    "p95": 33.3333,
+    "max": 33.3333
+   },
+   "payload_bytes": {
+    "n": 301,
+    "min": 221247,
+    "p50": 223628,
+    "mean": 224059.4784053156,
+    "p95": 225683,
+    "max": 225860
+   },
+   "mean_luma": {
+    "n": 10,
+    "min": 122.76,
+    "p50": 124.94,
+    "mean": 124.16300000000001,
+    "p95": 125.09,
+    "max": 125.18,
+    "method": "mean of 8-bit luma, every 30th in-window frame (JPEG: simplejpeg GRAY 1/8 scale; pixels: capture script)"
+   },
+   "pct_valid_jpeg_in_window": 100.0,
+   "pct_valid_jpeg_all": 100.0,
+   "pct_valid_jpeg_strict_all": 100.0,
+   "libjpeg_warnings_sample": [],
+   "jpeg_checks_all": {
+    "soi": 373,
+    "eoi_at_end": 373,
+    "eoi_in_tail": 373,
+    "has_dht": 373,
+    "pillow_ok": 373,
+    "simplejpeg_ok": 373,
+    "simplejpeg_lenient_ok": 373
+   },
+   "n_validated": 373,
+   "cam": null,
+   "jpeg_header": {
+    "fingerprints": {
+     "80baf311e578": 373
+    },
+    "header_sha1s": {
+     "081871992b2b": 373
+    },
+    "markers": [
+     "DQT",
+     "SOF0",
+     "DHT",
+     "DHT",
+     "DHT",
+     "DHT",
+     "COM",
+     "APP0",
+     "DRI",
+     "SOS"
+    ],
+    "app": [
+     {
+      "marker": "APP0",
+      "len": 16,
+      "id": ""
+     }
+    ],
+    "sof": {
+     "type": "SOF0",
+     "precision": 8,
+     "h": 1080,
+     "w": 1920,
+     "components": [
+      {
+       "id": 1,
+       "hv": "2x1",
+       "tq": 0
+      },
+      {
+       "id": 2,
+       "hv": "1x1",
+       "tq": 1
+      },
+      {
+       "id": 3,
+       "hv": "1x1",
+       "tq": 2
+      }
+     ]
+    },
+    "dqt_sha1": "6470e04667df",
+    "dht_sha1": "8f8ba97c8f26",
+    "dqt_q0_first8": [
+     3,
+     3,
+     3,
+     3,
+     3,
+     3,
+     4,
+     4
+    ],
+    "has_dht": true,
+    "header_bytes": 702,
+    "com": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+    "bytes_after_eoi_max": 0
+   },
+   "os_timestamp_source": "FFmpeg dshow packet pts*time_base (dshow: IMediaSample time + graph start_time, ref clock 100ns)",
+   "timestamp_fields_present": {
+    "os_timestamp_ns": 301,
+    "pkt_pts": 301
+   },
+   "arrival_minus_os_timestamp_ms": {
+    "median": 26.0184,
+    "abs_dev_from_median": {
+     "n": 301,
+     "min": 0.0,
+     "p50": 4.027799999999999,
+     "mean": 4.87108438538206,
+     "p95": 10.695,
+     "max": 14.6522
+    },
+    "note": "host_arrival_ns - os_timestamp_ns; a latency only when os_timestamp_ns is on the host QPC clock (true for MF llTimestamp and WinRT SystemRelativeTime by documentation; FFmpeg dshow pts = DirectShow stream time + FFmpeg start offset, which lands in the QPC domain on this machine: see the median)"
+   }
+  }
+ ],
+ "samples": [
+  "sample_cam0_seq71.jpghdr"
+ ],
+ "resummarized_from": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\mjpeg_pyav-dshow\\max_1920x1080at30_c930e\\summary.json",
+ "devnode_status": {
+  "before": null,
+  "after": null
+ },
+ "machine_cpu": {
+  "before": null,
+  "after": null,
+  "note": "whole-machine CPU% (psutil, 1 s) right before and after the capture; other agents run concurrently"
+ },
+ "controls": {
+  "requested": {
+   "exposure_log2s": -7,
+   "white_balance_k": 4500,
+   "auto_exposure_priority": 0
+  },
+  "after_apply": {
+   "Logitech Webcam C930e": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "gain": 5,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "readback_after_capture": {
+   "Logitech Webcam C930e": {
+    "exposure_log2s": -5,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "gain": 4,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "apply_rc": 0,
+  "readback_rc": 0
+ },
+ "errors": []
+}

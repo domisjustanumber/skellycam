@@ -1,0 +1,174 @@
+{
+  "test": "py_libusb1_stream",
+  "platform": "windows",
+  "hostname": "Gerald",
+  "utc_started": "2026-10-25T21:28:29.682490+00:00",
+  "command": "research/usb_cameras/libusb/py_libusb1/uvc_libusb1_stream.py --vid 046d --pid 0843 --fps 30 --seconds 20 --decode-check --raw-dump C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/python_libusb/s720_alt5.bin --out-dir research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s720_alt5 --width 1280 --height 720 --alt 5",
+  "environment": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "os": "Windows-11-10.0.26300-SP0",
+    "libusb1": "3.4.0",
+    "libusb": "1.0.29.11953"
+  },
+  "host_clock": "time.perf_counter_ns",
+  "cameras": [
+    {
+      "vid": "046d",
+      "pid": "0843",
+      "port_path": "1-13.1.4",
+      "bcdUVC": "0100",
+      "dwClockFrequency": 30000000,
+      "alts": [
+        {
+          "alt": 1,
+          "ep": 129,
+          "ep_type": 1,
+          "w_max_packet_size": 192,
+          "bytes_per_interval": 192,
+          "b_interval": 1
+        },
+        {
+          "alt": 2,
+          "ep": 129,
+          "ep_type": 1,
+          "w_max_packet_size": 384,
+          "bytes_per_interval": 384,
+          "b_interval": 1
+        },
+        {
+          "alt": 3,
+          "ep": 129,
+          "ep_type": 1,
+          "w_max_packet_size": 512,
+          "bytes_per_interval": 512,
+          "b_interval": 1
+        },
+        {
+          "alt": 4,
+          "ep": 129,
+          "ep_type": 1,
+          "w_max_packet_size": 640,
+          "bytes_per_interval": 640,
+          "b_interval": 1
+        },
+        {
+          "alt": 5,
+          "ep": 129,
+          "ep_type": 1,
+          "w_max_packet_size": 800,
+          "bytes_per_interval": 800,
+          "b_interval": 1
+        },
+        {
+          "alt": 6,
+          "ep": 129,
+          "ep_type": 1,
+          "w_max_packet_size": 944,
+          "bytes_per_interval": 944,
+          "b_interval": 1
+        },
+        {
+          "alt": 7,
+          "ep": 129,
+          "ep_type": 1,
+          "w_max_packet_size": 2688,
+          "bytes_per_interval": 1280,
+          "b_interval": 1
+        },
+        {
+          "alt": 8,
+          "ep": 129,
+          "ep_type": 1,
+          "w_max_packet_size": 2848,
+          "bytes_per_interval": 1600,
+          "b_interval": 1
+        },
+        {
+          "alt": 9,
+          "ep": 129,
+          "ep_type": 1,
+          "w_max_packet_size": 3040,
+          "bytes_per_interval": 1984,
+          "b_interval": 1
+        },
+        {
+          "alt": 10,
+          "ep": 129,
+          "ep_type": 1,
+          "w_max_packet_size": 4992,
+          "bytes_per_interval": 2688,
+          "b_interval": 1
+        },
+        {
+          "alt": 11,
+          "ep": 129,
+          "ep_type": 1,
+          "w_max_packet_size": 5120,
+          "bytes_per_interval": 3072,
+          "b_interval": 1
+        }
+      ]
+    }
+  ],
+  "controls": {},
+  "negotiation": {
+    "request": {
+      "bmHint": 1,
+      "bFormatIndex": 2,
+      "bFrameIndex": 15,
+      "dwFrameInterval": 333333
+    },
+    "probe": {
+      "bmHint": 1,
+      "bFormatIndex": 2,
+      "bFrameIndex": 15,
+      "dwFrameInterval": 333333,
+      "wKeyFrameRate": 0,
+      "wPFrameRate": 0,
+      "wCompQuality": 61,
+      "wCompWindowSize": 0,
+      "wDelay": 0,
+      "dwMaxVideoFrameSize": 1843200,
+      "dwMaxPayloadTransferSize": 3072,
+      "raw_len": 26
+    },
+    "commit": {
+      "error": "USBErrorPipe()"
+    }
+  },
+  "iso": {
+    "altsetting": 5,
+    "bytes_per_packet": 800,
+    "packets_per_transfer": 32,
+    "transfers": 8,
+    "need_bytes": 3072,
+    "endpoint": 129
+  },
+  "measurements": {
+    "frames": 602,
+    "jpeg_soi_eoi_ok": 602,
+    "seconds": 20.0,
+    "fps_from_arrivals": 29.982719975683366,
+    "mean_frame_bytes": 117331.44684385382,
+    "transfer_errors": 0,
+    "iso_packet_errors": 0,
+    "uvc_error_payloads": 0,
+    "process_cpu_s": 0.78125,
+    "cpu_fraction_of_one_core": 0.0390625,
+    "saved_jpegs": 0,
+    "callbacks": 4999,
+    "callback_mean_us": 104.54094818963793,
+    "callback_max_us": 615.4,
+    "callback_busy_fraction": 0.02613001,
+    "iso_packets": 159968,
+    "iso_packets_nonempty": 90524,
+    "iso_bytes": 71741095,
+    "iso_packets_per_s": 7998.4,
+    "frames_jsonl": "research\\usb_cameras\\results\\windows\\Gerald\\phase2_python_libusb\\s720_alt5\\frames.jsonl",
+    "pillow_full_decode_ok": 602,
+    "pillow_full_decode_checked": 602,
+    "pillow_decode_failures_first10": [],
+    "raw_dump": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\phase2\\python_libusb\\s720_alt5.bin"
+  },
+  "exit_code": 0
+}

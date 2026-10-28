@@ -1,0 +1,200 @@
+[
+ {
+  "id": "C1",
+  "claim": "IEEE 1588/PTP support in GigE Vision is a GEV 2.0 feature (capability bit 0x00080000 in 0x0934, enable bit 0x00080000 in GVCP Configuration 0x0954, clock status in 0x096C low 4 bits); GEV 2.1 added profile registers 0x0974-0x097C. So single-cable PTP sync does not require GigE Vision 3.0.",
+  "evidence_urls": [
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L3474-3477",
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L3604-3607",
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L3692-3695",
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L132-136"
+  ],
+  "how_verified": "read-code (Wireshark GVCP dissector field names/masks tagged _v2_0/_v2_1)",
+  "confidence": "high"
+ },
+ {
+  "id": "C2",
+  "claim": "GigE Vision 3.0 (A3 announced 2026-05-12) adds RoCEv2 RDMA streaming via GVRSP and an expanded control channel; the release text does not mention PTP.",
+  "evidence_urls": [
+   "https://www.vision-systems.com/directory/software/machine-vision-imaging-software/press-release/55377111/association-for-advancing-automation-a3-a3-officially-releases-gige-vision-30-opening-new-possibilities-in-machine-vision"
+  ],
+  "how_verified": "read-spec/doc (press release fetched)",
+  "confidence": "high"
+ },
+ {
+  "id": "C3",
+  "claim": "GVCP command codes: DISCOVERY 0x0002/3, FORCEIP 0x0004/5, PACKETRESEND 0x0040, READREG 0x0080/1, WRITEREG 0x0082/3, READMEM 0x0084/5, WRITEMEM 0x0086/7, PENDING_ACK 0x0089, EVENT 0x00C0, ACTION 0x0100/1; Aravis' enum lacks FORCEIP and ACTION and labels 0x0004 as BYE_CMD.",
+  "evidence_urls": [
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L177-197",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcpprivate.h#L267-L281"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "C4",
+  "claim": "Bootstrap registers needed: XML First URL 0x0200 (512 B), heartbeat timeout 0x0938, timestamp tick 0x093C/0x0940, timestamp control/latch 0x0944-0x094C, CCP 0x0A00 (bit1 control, bit0 exclusive), SCP0 port 0x0D00, packet size 0x0D04 (bit31 fire test, bit30 do-not-fragment), destination 0x0D18.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcpprivate.h#L82-L137",
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L3824-3845"
+  ],
+  "how_verified": "read-code + ran-test (gev_scratch_probe.py against arv-fake-gv-camera-0.8 used these registers successfully)",
+  "confidence": "high"
+ },
+ {
+  "id": "C5",
+  "claim": "Aravis negotiates packet size by binary search using fire-test packets with do-not-fragment set, and implements resend with per-packet timeouts, a request-ratio cap and coalesced gap ranges; on Linux it can receive via PF_PACKET PACKET_RX_RING TPACKET_V3.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvdevice.c#L614-L784",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L659-L746",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L1227-L1367"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "C6",
+  "claim": "PACKETRESEND payload: standard IDs {u16 channel, u16 block_id, u32 first(24b), u32 last(24b)}; extended IDs {u32 0, u32 first, u32 last, u64 block_id} with header flag 0x10. GVSP extended-ID header is status u16, flags u16, infos u32 (bit31 EI), block_id u64, packet_id u32.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcp.c#L406-L440",
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L1555-1622",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvspprivate.h#L132-L145"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "C7",
+  "claim": "ACTION_CMD payload is device_key, group_key, group_mask plus an optional 64-bit action time when GVCP header flag 0x80 (scheduled) is set; capability bits: action 0x40, scheduled action 0x00020000. Of the open-source clients examined, only viva-genicam implements action commands (telegenic stops at EVENTDATA; pyGigEVision has none).",
+  "evidence_urls": [
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L2092-2115",
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L3486-3501",
+   "https://github.com/VitalyVorobyev/viva-genicam/blob/60c9c329a4175290b7065a74027c151cb0acd9ef/crates/viva-gige/src/action.rs#L17-L211",
+   "https://github.com/valstad-shipworks/telegenic/blob/eb9de6579dde096b4a60ccead934edcc3795d6c3/src/gige/proto/gvcp.rs#L26-L46"
+  ],
+  "how_verified": "read-code (grep of pyGigEVision for ACTION/0x0100 returned nothing)",
+  "confidence": "high"
+ },
+ {
+  "id": "C8",
+  "claim": "GVSP frames are uncompressed by default (payload type 1 = image in a PFNC pixel format); GEV 2.0 also defines JPEG (6), JPEG2000 (7), H.264 (8); each image leader carries a 64-bit device timestamp, pixel format, width and height.",
+  "evidence_urls": [
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvsp.c#L43-54",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvspprivate.h#L152-L192",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvbuffer.h#L79-L92"
+  ],
+  "how_verified": "read-code + ran-test (probe decoded payload_type=1, pixel_format 0x1080001 Mono8 and leader timestamps from fake camera)",
+  "confidence": "high"
+ },
+ {
+  "id": "C9",
+  "claim": "In a real camera XML (Hikrobot, vendored in telegenic tests), SFNC GevIEEE1588 maps to Bit 12 of StructReg at 0x0954 (= mask 0x00080000 under GenApi BigEndian bit numbering) and GevIEEE1588Status maps to MaskedIntReg 0x096C LSB31/MSB28 (= mask 0xF), i.e. PTP features are thin GenApi wrappers over bootstrap registers.",
+  "evidence_urls": [
+   "https://github.com/valstad-shipworks/telegenic/blob/eb9de6579dde096b4a60ccead934edcc3795d6c3/tests/data/Hikrobot.xml#L51846-L51900",
+   "https://github.com/valstad-shipworks/telegenic/blob/eb9de6579dde096b4a60ccead934edcc3795d6c3/tests/data/Hikrobot.xml#L50490",
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L3634-3637"
+  ],
+  "how_verified": "read-code (parsed XML with ElementTree and cross-checked masks against Wireshark)",
+  "confidence": "high"
+ },
+ {
+  "id": "C10",
+  "claim": "A from-scratch, stdlib-only Python client (~830 lines) successfully performed discovery, READREG/READMEM, XML fetch from a Local: URL, CCP + heartbeat, toy GenApi reads (incl. IntSwissKnife PayloadSize), AcquisitionStart via GenApi, and GVSP reassembly (75/75 complete frames with a 32 MiB receive buffer) against Aravis 0.8.30 arv-fake-gv-camera-0.8 in Docker.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvfakecamera.c#L157-L215"
+  ],
+  "how_verified": "ran-test: MSYS_NO_PATHCONV=1 docker run --rm --cap-add NET_ADMIN -v $R:/work:ro -v $R/results:/out skellycam-research/fakegv:1 sh /work/docker/run_fake_probe.sh 0 forced_rcvbuf --force-rcvbuf (outputs in research/results/fake_probe_forced_rcvbuf.txt)",
+  "confidence": "high"
+ },
+ {
+  "id": "C11",
+  "claim": "The official EMVA genicam 1.6.0 wheel can serve as the GenApi engine for a from-scratch Python transport via a genapi.AbstractPort subclass (harvesters pattern); verified evaluating Width/Height/PixelFormat=Mono8/PayloadSize and executing AcquisitionStart. On Linux the wheel links libpython3.12.so.1.0 (ImportError until libpython3.12t64 installed) and PyPI has no macOS x86_64 wheel.",
+  "evidence_urls": [
+   "https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/src/harvesters/_private/core/port.py#L31-L67",
+   "https://pypi.org/project/genicam/1.6.0/"
+  ],
+  "how_verified": "ran-test (probe B in docker, results/fake_probe_forced_rcvbuf.txt; ldd on _genapi*.so; PyPI JSON wheel list)",
+  "confidence": "high"
+ },
+ {
+  "id": "C12",
+  "claim": "Real camera XMLs are GenApi-heavy: Hikrobot 2165 named nodes (283 SwissKnife/IntSwissKnife, 58 converters, 41 selector nodes, 406 with pIsAvailable/Implemented/Locked, 370 with pInvalidator, 513 with pAddress/pIndex); Imperx 1386 nodes (402 SwissKnife). A toy ast-based formula translator parses 372/399 and 389/402 formulas (failures: nested ?:).",
+  "evidence_urls": [
+   "https://github.com/valstad-shipworks/telegenic/blob/eb9de6579dde096b4a60ccead934edcc3795d6c3/tests/data/Hikrobot.xml",
+   "https://github.com/valstad-shipworks/telegenic/blob/eb9de6579dde096b4a60ccead934edcc3795d6c3/tests/data/Imperx.xml"
+  ],
+  "how_verified": "ran-test: python -I tests/genapi_formula_coverage.py tests Hikrobot.xml Imperx.xml arv-fake-camera.xml (results/genapi_formula_coverage.txt)",
+  "confidence": "high"
+ },
+ {
+  "id": "C13",
+  "claim": "pyGigEVision (MIT, v0.2.2 2026-07-08) is pure Python GVCP+GVSP with discovery, ForceIP, CCP heartbeat, resend, extended IDs, but no GenApi evaluator (users write vendor registers directly); its receiver does one recvfrom per packet in a thread and requests 16 MiB SO_RCVBUF while suppressing failures.",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/README.rst#L30-L47",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L548-L606",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L347-L350",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvcp.py#L929-L951"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "C14",
+  "claim": "Existing Rust+PyO3 implementations already cover option (b): telegenic (Apache-2.0, 2.1.0 2026-10-20, PyPI telegenicam; GVCP/GVSP, ForceIP, resend, packet-size negotiation, GenApi incl. SwissKnife/Converter) and viva-genicam (MIT, 0.10.0 2026-10-17, PyPI wheels; GigE+U3V, action commands). cameleon (MPL-2.0) is USB3 Vision only but its cameleon-genapi crate is transport-agnostic (Device trait read_mem/write_mem).",
+  "evidence_urls": [
+   "https://github.com/valstad-shipworks/telegenic/blob/eb9de6579dde096b4a60ccead934edcc3795d6c3/README.md#L40-L64",
+   "https://github.com/VitalyVorobyev/viva-genicam/blob/60c9c329a4175290b7065a74027c151cb0acd9ef/README.md#L22-L45",
+   "https://github.com/cameleon-rs/cameleon/blob/1ab3fbf82a11f94da56e35a62893a6042054df4b/README.md#L28",
+   "https://github.com/cameleon-rs/cameleon/blob/1ab3fbf82a11f94da56e35a62893a6042054df4b/genapi/src/lib.rs#L82-L95"
+  ],
+  "how_verified": "read-code + crates.io/PyPI API metadata",
+  "confidence": "high"
+ },
+ {
+  "id": "C15",
+  "claim": "Line-rate packet rates (Ethernet framing incl.): 1 GbE 81,274 pps at MTU1500 and 13,830 pps at MTU9000; 10 GbE 812,744 / 138,305 pps.",
+  "evidence_urls": [],
+  "how_verified": "other: arithmetic in udp_recv_benchmark.py wire_pps() (payload+8 UDP+20 IP+14 Eth+4 FCS+8 preamble+12 IFG)",
+  "confidence": "high"
+ },
+ {
+  "id": "C16",
+  "claim": "A single pure-Python receiver keeps up with 1 Gbit/s over loopback with 0% drops given a large socket buffer (Windows 16 MiB: 31-34% of a core at 1472 B, 6-7% at 8972 B; Linux forced 32 MiB: 21-26% / 5-8%); single-thread ceiling ~340-410 kpps (Windows) and ~620-870 kpps (Linux/WSL2) at 1472 B.",
+  "evidence_urls": [],
+  "how_verified": "ran-test: python -I udp_recv_benchmark.py --seconds 3 [--senders 4] [--force-rcvbuf] on Windows 11 (CPython 3.12.13) and docker python:3.12-slim on WSL2 5.15 (bench_*.txt)",
+  "confidence": "medium"
+ },
+ {
+  "id": "C17",
+  "claim": "Socket buffer limits cause loss: Linux SO_RCVBUF is capped by net.core.rmem_max (16 MiB request -> 425,984 B) and SO_RCVBUFFORCE (CAP_NET_ADMIN) bypasses it; with the cap, MTU9000 at 1 Gbit/s dropped 7.2% (default buffer) and against the fake camera 641 kernel RcvbufErrors / 3-of-53 complete frames at only 50 Mbit/s, vs 0 errors / 75-of-75 with a forced 32 MiB buffer. macOS caps at kern.ipc.maxsockbuf (SB_MAX 8 MiB default); Windows default measured 64 KiB.",
+  "evidence_urls": [
+   "https://man7.org/linux/man-pages/man7/socket.7.html",
+   "https://github.com/apple-oss-distributions/xnu/blob/f6217f891ac0bb64f3d375211650a4c1ff8ca1ea/bsd/sys/socketvar.h#L193",
+   "https://github.com/apple-oss-distributions/xnu/blob/f6217f891ac0bb64f3d375211650a4c1ff8ca1ea/bsd/kern/uipc_socket2.c#L2956-L2976"
+  ],
+  "how_verified": "ran-test (bench_linux_docker_*.txt, results/fake_probe_default_rcvbuf.txt vs forced) + read-spec/doc",
+  "confidence": "high"
+ },
+ {
+  "id": "C18",
+  "claim": "With the GIL, N receiver threads in one Python process collapse at 4 x 1 GbE MTU1500 (39% drop Windows 3.12, 75% Linux 3.12, 80% CPython 3.14.0rc3t with -X gil=1); the same free-threaded interpreter with -X gil=0 had 0% drops up to 8 x 1 GbE (679k pps, 1.39 cores) at both 1472 and 8972 B.",
+  "evidence_urls": [],
+  "how_verified": "ran-test: python -I udp_multicam_threads_benchmark.py --cams 1,2,4,8 [--force-rcvbuf]; docker ghcr.io/astral-sh/uv:0.8.22-bookworm-slim with uv python 3.14t (-X gil=0 / -X gil=1)",
+  "confidence": "medium"
+ },
+ {
+  "id": "C19",
+  "claim": "Windows vendor stacks ship NDIS filter drivers to reduce CPU load (Basler pylon GigE Vision Filter Driver, Windows only; Performance Driver deprecated in pylon 7.1); a from-scratch client is limited to the plain socket path (Basler's 'Socket Driver ... uses the Socket API').",
+  "evidence_urls": [
+   "https://docs.baslerweb.com/pylon-software-suite"
+  ],
+  "how_verified": "read-spec/doc",
+  "confidence": "high"
+ },
+ {
+  "id": "C20",
+  "claim": "SkellyCam's worker infrastructure can run each camera worker as a multiprocessing.Process or a threading.Thread (WorkerMode), so a per-camera-process GVSP receiver avoids GIL contention.",
+  "evidence_urls": [],
+  "how_verified": "read-code: C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/core/ipc/process_management/managed_worker.py L1-20 and worker_registry.py L137-148 at commit 23ccbf20; camera_worker.py L48 create_worker",
+  "confidence": "high"
+ }
+]

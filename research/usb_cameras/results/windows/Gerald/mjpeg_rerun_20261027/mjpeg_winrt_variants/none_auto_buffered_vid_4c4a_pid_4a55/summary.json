@@ -1,0 +1,187 @@
+{
+ "test": "mjpeg_winrt_variants",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-28T04:34:07.925189+00:00",
+ "utc_summarized": "2026-10-28T04:34:14.399006+00:00",
+ "command": "uv run --script research/usb_cameras/tools/camlock.py -- uv run --script research/usb_cameras/mjpeg/winrt/winrt_capture.py --dev vid_4c4a&pid_4a55 --size 1280x720 --fps 30 --seconds 4 --warmup 1 --reader-subtype none --memory auto --acq buffered --run-dir C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/7c9d3345-0e7f-4af6-bb14-20fd851edd1a/scratchpad/runs/mjpeg_rerun_20261027/mjpeg_winrt_variants/none_auto_buffered_vid_4c4a_pid_4a55",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2",
+   "winrt-runtime": "4.0.3"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "backend": "winrt-mediaframereader",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30.0
+ },
+ "decoded_by_pipeline": true,
+ "decode_evidence": "frames_with_buffer=[137] frames_with_softwarebitmap=[0] subtypes=[{'NV12': 137}]",
+ "window": {
+  "start_ns": 35671115244000,
+  "end_ns": 35675116002700,
+  "wall_s": 4.0007587
+ },
+ "delivered_codecs": [
+  "NV12"
+ ],
+ "silent_format_fallback": true,
+ "cpu": {
+  "method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)",
+  "wall_s": 4.000764,
+  "process_cpu_s_ticks": 0.390625,
+  "process_cpu_pct_of_one_core_ticks": 9.763760121816732,
+  "tsc_hz": 3379597083.657015,
+  "process_cycles": 1657814427,
+  "process_cpu_pct_of_one_core": 12.26106103688303,
+  "frameserver_pid": 8196,
+  "frameserver_cpu_pct_of_one_core_ticks": 1.9527520243633465,
+  "frameserver_cpu_pct_of_one_core": null,
+  "process_cpu_pct_per_camera": 12.26106103688303
+ },
+ "cameras": [
+  {
+   "idx": 0,
+   "name": "USB Camera",
+   "group_id": "\\\\?\\USB#VID_4C4A&PID_4A55&MI_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL",
+   "source_id": "Source#0@\\\\?\\USB#VID_4C4A&PID_4A55&MI_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL",
+   "device_id": "\\\\?\\USB#VID_4C4A&PID_4A55&MI_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL",
+   "chosen_format": "MJPG 1280x720@30/1",
+   "requested_mode": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30.0
+   },
+   "handler_calls": 137,
+   "handler_exceptions": 0,
+   "handler_exception_first": null,
+   "current_format_subtype": "MJPG",
+   "reader_output_subtype": "none",
+   "memory_preference": "auto",
+   "acquisition_mode": "buffered",
+   "acquire_errors": 0,
+   "acquire_error_first": null,
+   "frames": 137,
+   "frames_with_buffer": 137,
+   "frames_with_softwarebitmap": 0,
+   "frame_subtypes": {
+    "NV12": 137
+   },
+   "property_dumps": [
+    {
+     "5f002af9-d8f9-41a3-b6c3-a2ad43f647ad": "<winrt.system.Object object at 0x00000227D9033E30>",
+     "8f3e35e7-2dcd-4887-8622-2a58baa652b0": "<winrt.system.Object object at 0x00000227D9033DD0>",
+     "6523775a-ba2d-405f-b2c5-01ff88e2e8f6": "<winrt.system.Object object at 0x00000227D9033E30>",
+     "c4139297-2cec-47c6-9cdf-6db62ee6df72": "<winrt.system.Object object at 0x00000227D9033DD0>",
+     "9cdf01d9-a0f0-43ba-b077-eaa06cbd728a": "<winrt.system.Object object at 0x00000227D9033E30>",
+     "9bec3fd1-d3fd-4816-8943-dbfeb5b43372": "<winrt.system.Object object at 0x00000227D9033DD0>",
+     "137e6b95-4cad-4cb9-9b7f-65cef2068a41": "<winrt.system.Object object at 0x00000227D9033E30>",
+     "03ffdcb2-c32c-4b92-98ff-87c0333db253": "<winrt.system.Object object at 0x00000227D9033DD0>",
+     "d06f8a46-60a0-4c20-bc33-ae96bf4fb070": "<winrt.system.Object object at 0x00000227D9033E30>",
+     "3680913a-0e20-4b48-9364-be67fbf1a5e6": "<winrt.system.Object object at 0x00000227D9033DD0>",
+     "9cdf01d8-a0f0-43ba-b077-eaa06cbd728a": "<winrt.system.Object object at 0x00000227D9033E30>",
+     "b1d5830a-deb8-40e3-90fa-389943716461": "<winrt.system.Object object at 0x00000227D9033DD0>"
+    },
+    {
+     "5f002af9-d8f9-41a3-b6c3-a2ad43f647ad": "<winrt.system.Object object at 0x00000227D9033F10>",
+     "8f3e35e7-2dcd-4887-8622-2a58baa652b0": "<winrt.system.Object object at 0x00000227D9033EF0>",
+     "6523775a-ba2d-405f-b2c5-01ff88e2e8f6": "<winrt.system.Object object at 0x00000227D9033F10>",
+     "c4139297-2cec-47c6-9cdf-6db62ee6df72": "<winrt.system.Object object at 0x00000227D9033EF0>",
+     "9cdf01d9-a0f0-43ba-b077-eaa06cbd728a": "<winrt.system.Object object at 0x00000227D9033F10>",
+     "9bec3fd1-d3fd-4816-8943-dbfeb5b43372": "<winrt.system.Object object at 0x00000227D9033EF0>",
+     "137e6b95-4cad-4cb9-9b7f-65cef2068a41": "<winrt.system.Object object at 0x00000227D9033F10>",
+     "03ffdcb2-c32c-4b92-98ff-87c0333db253": "<winrt.system.Object object at 0x00000227D9033EF0>",
+     "d06f8a46-60a0-4c20-bc33-ae96bf4fb070": "<winrt.system.Object object at 0x00000227D9033F10>",
+     "3680913a-0e20-4b48-9364-be67fbf1a5e6": "<winrt.system.Object object at 0x00000227D9033EF0>",
+     "9cdf01d8-a0f0-43ba-b077-eaa06cbd728a": "<winrt.system.Object object at 0x00000227D9033F10>",
+     "b1d5830a-deb8-40e3-90fa-389943716461": "<winrt.system.Object object at 0x00000227D9033EF0>"
+    },
+    {
+     "5f002af9-d8f9-41a3-b6c3-a2ad43f647ad": "<winrt.system.Object object at 0x00000227D9033F70>",
+     "8f3e35e7-2dcd-4887-8622-2a58baa652b0": "<winrt.system.Object object at 0x00000227D9033F50>",
+     "6523775a-ba2d-405f-b2c5-01ff88e2e8f6": "<winrt.system.Object object at 0x00000227D9033F70>",
+     "c4139297-2cec-47c6-9cdf-6db62ee6df72": "<winrt.system.Object object at 0x00000227D9033F50>",
+     "9cdf01d9-a0f0-43ba-b077-eaa06cbd728a": "<winrt.system.Object object at 0x00000227D9033F70>",
+     "9bec3fd1-d3fd-4816-8943-dbfeb5b43372": "<winrt.system.Object object at 0x00000227D9033F50>",
+     "137e6b95-4cad-4cb9-9b7f-65cef2068a41": "<winrt.system.Object object at 0x00000227D9033F70>",
+     "03ffdcb2-c32c-4b92-98ff-87c0333db253": "<winrt.system.Object object at 0x00000227D9033F50>",
+     "d06f8a46-60a0-4c20-bc33-ae96bf4fb070": "<winrt.system.Object object at 0x00000227D9033F70>",
+     "3680913a-0e20-4b48-9364-be67fbf1a5e6": "<winrt.system.Object object at 0x00000227D9033F50>",
+     "9cdf01d8-a0f0-43ba-b077-eaa06cbd728a": "<winrt.system.Object object at 0x00000227D9033F70>",
+     "b1d5830a-deb8-40e3-90fa-389943716461": "<winrt.system.Object object at 0x00000227D9033F50>"
+    }
+   ],
+   "null_refs": 0,
+   "start_status": 0,
+   "frames_delivered_total": 137,
+   "frames_in_window": 104,
+   "fps_requested": 30.0,
+   "fps_achieved_count_over_wall": 25.99506938521436,
+   "fps_achieved_span": 25.91042439262695,
+   "inter_arrival_ms": {
+    "n": 103,
+    "min": 3.8344,
+    "p50": 32.5835,
+    "mean": 38.59450485436893,
+    "p95": 49.2198,
+    "max": 51.4143
+   },
+   "gaps_over_1p5_period": 4,
+   "os_timestamp_delta_ms": {
+    "n": 103,
+    "min": 31.973,
+    "p50": 32.036,
+    "mean": 38.83515533980583,
+    "p95": 47.998,
+    "max": 48.024
+   },
+   "payload_bytes": {
+    "n": 104,
+    "min": 1382400,
+    "p50": 1382400,
+    "mean": 1382400.0,
+    "p95": 1382400,
+    "max": 1382400
+   },
+   "mean_luma": null,
+   "pct_valid_jpeg_in_window": null,
+   "pct_valid_jpeg_all": null,
+   "pct_valid_jpeg_strict_all": null,
+   "libjpeg_warnings_sample": [],
+   "jpeg_checks_all": null,
+   "n_validated": 0,
+   "cam": "usbcam",
+   "jpeg_header": null,
+   "os_timestamp_source": "MediaFrameReference.SystemRelativeTime (QPC-relative, us resolution via timedelta)",
+   "timestamp_fields_present": {
+    "os_timestamp_ns": 104,
+    "duration_ns": 104
+   },
+   "arrival_minus_os_timestamp_ms": {
+    "median": 35.7523,
+    "abs_dev_from_median": {
+     "n": 104,
+     "min": 0.0,
+     "p50": 0.23629999999999995,
+     "mean": 1.8389557692307694,
+     "p95": 2.9620999999999995,
+     "max": 25.3176
+    },
+    "note": "host_arrival_ns - os_timestamp_ns; a latency only when os_timestamp_ns is on the host QPC clock (true for MF llTimestamp and WinRT SystemRelativeTime by documentation; FFmpeg dshow pts = DirectShow stream time + FFmpeg start offset, which lands in the QPC domain on this machine: see the median)"
+   }
+  }
+ ],
+ "samples": [],
+ "errors": []
+}

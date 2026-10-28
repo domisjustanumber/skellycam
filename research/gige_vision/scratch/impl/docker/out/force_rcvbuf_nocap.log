@@ -1,0 +1,18 @@
+  [WARN] [127.0.0.1] socket receive buffer: requested 33554432 B via SO_RCVBUF, OS reports 425984 B (default 212992 B) - CAPPED, raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+  [WARN] [127.0.0.1] test packet (do-not-fragment): no test packet arrived: either the camera does not implement the fire-test bit, or a packet this large cannot pass - enable jumbo frames (MTU 9000) on the NIC and switch, or use a smaller --packet-size
+  [WARN] [127.0.0.1] kernel receive-buffer drops: 608 UDP datagrams dropped by the kernel (socket buffer full) - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+  frames: seen 76, complete 0, incomplete 0, trailer missing 76, never seen (block-id gaps) 0, missing packets 0
+  [FAIL] [GVSP 127.0.0.1 -> 127.0.0.1:42494 (42 Mbit/s)] frames complete: 0/76 (0.0 %; limit 99 %) - NO complete frame
+   WARN [127.0.0.1] socket receive buffer: requested 33554432 B via SO_RCVBUF, OS reports 425984 B (default 212992 B) - CAPPED, raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+   WARN [127.0.0.1] test packet (do-not-fragment): no test packet arrived: either the camera does not implement the fire-test bit, or a packet this large cannot pass - enable jumbo frames (MTU 9000) on the NIC and switch, or use a smaller --packet-size
+   WARN [127.0.0.1] kernel receive-buffer drops: 608 UDP datagrams dropped by the kernel (socket buffer full) - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+   FAIL [GVSP 127.0.0.1 -> 127.0.0.1:42494 (42 Mbit/s)] frames complete: 0/76 (0.0 %; limit 99 %) - NO complete frame
+exit=1
+  [WARN] [8972 B @ 1000.0 Mbit/s] socket receive buffer: requested 33554432 B, got 425984 B - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+  [PASS] [8972 B @ 1000.0 Mbit/s] paced receive: lost 0.0 % (limit 0.1 %), received 13.9 kpps (line rate needs 13.8 kpps), receive CPU 4.1 % of one core
+   WARN [8972 B @ 1000.0 Mbit/s] socket receive buffer: requested 33554432 B, got 425984 B - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+    Time to Live: 64
+    [Timestamps]
+    Time to Live: 64
+    [Timestamps]
+        Action Scheduled Time: 0x000001e23f5a1000 (2071237103616)

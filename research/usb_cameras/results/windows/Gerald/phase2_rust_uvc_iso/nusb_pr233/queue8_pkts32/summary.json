@@ -1,0 +1,94 @@
+{
+  "alt_selected": {
+    "alt": 11,
+    "bytes_per_interval": 3072
+  },
+  "claim": "ok",
+  "command": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\nusb_pr233\\target_probe\\release\\nusb_pr233_probe.exe --vid 046d --pid 0843 --width 1280 --height 720 --fps 30 --seconds 10 --queue 8 --pkts 32 --out C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\phase2_rust_uvc_iso\\nusb_pr233\\queue8_pkts32",
+  "endpoint_max_payload_per_interval": 3072,
+  "environment": {
+    "nusb": "git zibo-chen/nusb@81ce16fa (kevinmehall/nusb PR #233, closed unmerged)",
+    "os": "windows"
+  },
+  "initial_queue": {
+    "accepted": 1,
+    "rejected": [
+      {
+        "error": "InvalidArgument",
+        "index": 1
+      },
+      {
+        "error": "InvalidArgument",
+        "index": 2
+      },
+      {
+        "error": "InvalidArgument",
+        "index": 3
+      },
+      {
+        "error": "InvalidArgument",
+        "index": 4
+      },
+      {
+        "error": "InvalidArgument",
+        "index": 5
+      },
+      {
+        "error": "InvalidArgument",
+        "index": 6
+      },
+      {
+        "error": "InvalidArgument",
+        "index": 7
+      }
+    ],
+    "requested": 8
+  },
+  "open": "ok",
+  "probe_commit": {
+    "negotiated": {
+      "bFormatIndex": 2,
+      "bFrameIndex": 15,
+      "bmFramingInfo": 0,
+      "bmHint": 1,
+      "dwClockFrequency": 0,
+      "dwFrameInterval": 333333,
+      "dwMaxPayloadTransferSize": 3072,
+      "dwMaxVideoFrameSize": 1843200,
+      "wCompQuality": 61,
+      "wDelay_ms": 0
+    },
+    "requested": {
+      "bFormatIndex": 2,
+      "bFrameIndex": 15,
+      "bmFramingInfo": 0,
+      "bmHint": 1,
+      "dwClockFrequency": 0,
+      "dwFrameInterval": 333333,
+      "dwMaxPayloadTransferSize": 0,
+      "dwMaxVideoFrameSize": 0,
+      "wCompQuality": 0,
+      "wDelay_ms": 0
+    }
+  },
+  "results": {
+    "bad_headers": 0,
+    "completions": 1112,
+    "empty_packets": 19272,
+    "err_flag_payloads": 0,
+    "expected_period_ticks": 999999.0,
+    "fps_after_skip30": 30.09027718394368,
+    "frames": 301,
+    "max_pending_observed": 1,
+    "packets": 35584,
+    "packets_error": 0,
+    "packets_not_executed": 0,
+    "packets_ok": 35584,
+    "payloads": 16312,
+    "pts_gaps_ge_1p5_period": 1,
+    "resubmit_errors": 0,
+    "valid_jpeg_soi_eoi": 301,
+    "wall_s": 10.0070321
+  },
+  "test": "nusb_pr233_uvc_stream"
+}

@@ -1,0 +1,83 @@
+{
+ "test": "bw_verify_zero_frame_after_refused_start",
+ "hostname": "Gerald",
+ "command": "uv run --script research/usb_cameras/tools/camlock.py -- \"C:/Program Files/Git/bin/bash.exe\" research/usb_cameras/bandwidth/verify/zero_frame_hold.sh C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/bin/uvc_capture_test.exe C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/verify_bw/zeroframe research/usb_cameras/bandwidth",
+ "steps": [
+  {
+   "step": "step01_solo_alt8",
+   "kind": "C930e solo",
+   "utc_start": "2026-10-25T22:08:30Z",
+   "alt": 8,
+   "stream_start_error": 0,
+   "frames": 181,
+   "jpeg_soi_eoi_ok": 180,
+   "error_payloads": 1,
+   "fps": 30.07
+  },
+  {
+   "step": "step02_fail",
+   "kind": "C930e alt 9 started while generic 4c4a:4a55 streams via MF",
+   "utc_start": "2026-10-25T22:08:38Z",
+   "c930e_stream_start_error": -1,
+   "c930e_error_name": "I/O error",
+   "c930e_frames": 0,
+   "generic_streamed": true,
+   "generic_fps": 25.7029
+  },
+  {
+   "step": "step03_solo_alt8",
+   "kind": "C930e solo",
+   "utc_start": "2026-10-25T22:09:02Z",
+   "alt": 8,
+   "stream_start_error": 0,
+   "frames": 0,
+   "jpeg_soi_eoi_ok": 0,
+   "error_payloads": 0,
+   "fps": 0.0
+  },
+  {
+   "step": "step04_solo_alt8",
+   "kind": "C930e solo",
+   "utc_start": "2026-10-25T22:09:10Z",
+   "alt": 8,
+   "stream_start_error": 0,
+   "frames": 181,
+   "jpeg_soi_eoi_ok": 181,
+   "error_payloads": 0,
+   "fps": 30.086
+  },
+  {
+   "step": "step05_fail",
+   "kind": "C930e alt 9 started while generic 4c4a:4a55 streams via MF",
+   "utc_start": "2026-10-25T22:09:18Z",
+   "c930e_stream_start_error": -1,
+   "c930e_error_name": "I/O error",
+   "c930e_frames": 0,
+   "generic_streamed": true,
+   "generic_fps": 25.6926
+  },
+  {
+   "step": "step06_solo_alt6",
+   "kind": "C930e solo",
+   "utc_start": "2026-10-25T22:09:43Z",
+   "alt": 6,
+   "stream_start_error": 0,
+   "frames": 0,
+   "jpeg_soi_eoi_ok": 0,
+   "error_payloads": 0,
+   "fps": 0.0
+  },
+  {
+   "step": "step07_solo_alt6",
+   "kind": "C930e solo",
+   "utc_start": "2026-10-25T22:09:51Z",
+   "alt": 6,
+   "stream_start_error": 0,
+   "frames": 181,
+   "jpeg_soi_eoi_ok": 181,
+   "error_payloads": 0,
+   "fps": 30.091
+  }
+ ],
+ "note": "step01 frame 0: 76538 B, no EOI, error_payload_count 1, closed_by_eof false (partial first frame right after the coexist_c930e_first_alt8 zero-frame run at 22:07Z)"
+}

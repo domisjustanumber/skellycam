@@ -1,0 +1,62 @@
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+eth0@if134       UP             172.19.0.2/16 
+Aravis-Fake-GV01 (127.0.0.1)
+Aravis-Fake-GV02 (172.19.0.2)
+cti=/cti/viva_gentl-x86_64-unknown-linux-gnu.cti
+devices found: 3
+  [0] {'access_status': 0, 'display_name': 'Aravis Fake (GEV:00:00:00:00:00:00)', 'id_': 'GEV:00:00:00:00:00:00', 'model': 'Fake', 'parent': <genicam.gentl.Interface; proxy of <Swig Object of type 'std::shared_ptr< GenTLCpp::TLInterface > *' at 0x7f61d55cc810> >, 'serial_number': 'GV01', 'thisown': True, 'tl_type': 'GEV', 'user_defined_name': None, 'vendor': 'Aravis', 'version': '0.8.30'}
+  [1] {'access_status': 0, 'display_name': 'Aravis Fake (GEV:00:00:00:00:00:00)', 'id_': 'GEV:00:00:00:00:00:00', 'model': 'Fake', 'parent': <genicam.gentl.Interface; proxy of <Swig Object of type 'std::shared_ptr< GenTLCpp::TLInterface > *' at 0x7f61d55ccb10> >, 'serial_number': 'GV01', 'thisown': True, 'tl_type': 'GEV', 'user_defined_name': None, 'vendor': 'Aravis', 'version': '0.8.30'}
+  [2] {'access_status': 0, 'display_name': 'Aravis Fake (GEV:00:00:00:00:00:00)', 'id_': 'GEV:00:00:00:00:00:00', 'model': 'Fake', 'parent': <genicam.gentl.Interface; proxy of <Swig Object of type 'std::shared_ptr< GenTLCpp::TLInterface > *' at 0x7f61d55cd230> >, 'serial_number': 'GV01', 'thisown': True, 'tl_type': 'GEV', 'user_defined_name': None, 'vendor': 'Aravis', 'version': '0.8.30'}
+opening device indices [0]
+system.TLVendorName = 'viva-genicam'
+system.TLModelName = 'viva-gentl'
+system.TLVersion = '0.10.0'
+system.TLType = 'GigEVision'
+system.GenTLVersionMajor = 1
+system.GenTLVersionMinor = 6
+--- device 0
+interface.InterfaceID = 'eth0'
+interface.ActionControl = <absent>
+interface.ActionCommand = <absent>
+interface.ActionDeviceKey = <absent>
+interface.ActionGroupKey = <absent>
+interface.ActionGroupMask = <absent>
+interface.ActionScheduledTimeEnable = <absent>
+interface.ActionScheduledTime = <absent>
+interface.GevActionDestinationIPAddress = <absent>
+remote.PtpEnable = <absent>
+remote.PtpStatus = <absent>
+remote.PtpDataSetLatch = <absent>
+remote.PtpOffsetFromMaster = <absent>
+remote.GevIEEE1588 = <absent>
+remote.GevIEEE1588Status = <absent>
+remote.TimestampLatch = <absent>
+remote.TimestampLatchValue = <absent>
+remote.GevTimestampTickFrequency = <absent>
+remote.GevTimestampControlLatch = <absent>
+remote.GevTimestampValue = <absent>
+remote.ActionDeviceKey = <absent>
+remote.ActionGroupKey = <absent>
+remote.ActionGroupMask = <absent>
+remote.ActionSelector = <absent>
+remote.ActionUnconditionalMode = <absent>
+remote.TriggerSelector = 'FrameStart'
+remote.TriggerMode = 'Off'
+remote.TriggerSource = 'Line0'
+remote.ChunkModeActive = <absent>
+remote.ChunkSelector = <absent>
+remote.ChunkEnable = <absent>
+remote.PixelFormat = 'Mono8'
+remote.Width = 512
+remote.Height = 512
+remote.AcquisitionFrameRate = 25.0
+remote.GevSCPSPacketSize = <absent>
+--- device 0: 50 frames in 1.96s (~25.5 fps each)
+    {'frame_id': 65401, 'timestamp_ns': 1792950210814256000, 'timestamp': 1792950210814256000, 'timestamp_frequency': 1000000000, 'payload_type': '1', 'data_format': 'Mono8', 'shape': (512, 512), 'dtype': 'uint8', 'mean': 126.99992370605469, 'is_data_owned_by_numpy': True}
+    {'frame_id': 65402, 'timestamp_ns': 1792950210840002000, 'timestamp': 1792950210840002000, 'timestamp_frequency': 1000000000, 'payload_type': '1', 'data_format': 'Mono8', 'shape': (512, 512), 'dtype': 'uint8', 'mean': 126.99993896484375, 'is_data_owned_by_numpy': True}
+    {'frame_id': 65403, 'timestamp_ns': 1792950210880002000, 'timestamp': 1792950210880002000, 'timestamp_frequency': 1000000000, 'payload_type': '1', 'data_format': 'Mono8', 'shape': (512, 512), 'dtype': 'uint8', 'mean': 126.99995422363281, 'is_data_owned_by_numpy': True}
+    {'frame_id': 65449, 'timestamp_ns': 1792950212720002000, 'timestamp': 1792950212720002000, 'timestamp_frequency': 1000000000, 'payload_type': '1', 'data_format': 'Mono8', 'shape': (512, 512), 'dtype': 'uint8', 'mean': 127.00065612792969, 'is_data_owned_by_numpy': True}
+    {'frame_id': 65450, 'timestamp_ns': 1792950212760002000, 'timestamp': 1792950212760002000, 'timestamp_frequency': 1000000000, 'payload_type': '1', 'data_format': 'Mono8', 'shape': (512, 512), 'dtype': 'uint8', 'mean': 127.00067138671875, 'is_data_owned_by_numpy': True}
+    timestamp_ns deltas: min=25746000 median=40000000 max=40039000
+OK
+exit=0

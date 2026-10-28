@@ -1,0 +1,23 @@
+$ C:\Users\Dom\.cargo\bin\cargo.EXE check --release --target aarch64-apple-darwin
+(cwd=C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\rust\compile_checks\cc_nusb_iso_fail)
+--- stdout
+
+--- stderr
+   Compiling libc v0.2.191
+    Checking core-foundation-sys v0.8.7
+   Compiling io-kit-sys v0.5.0
+    Checking slab v0.4.12
+    Checking futures-core v0.3.34
+    Checking log v0.4.34
+    Checking mach2 v0.5.0
+    Checking core-foundation v0.10.1
+    Checking nusb v0.2.9
+    Checking cc_nusb_iso_fail v0.0.0 (C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\rust\compile_checks\cc_nusb_iso_fail)
+error[E0425]: cannot find type `Isochronous` in module `nusb::transfer`
+ --> src\main.rs:8:47
+  |
+8 |     let _ep = intf.endpoint::<nusb::transfer::Isochronous, nusb::transfer::In>(0x81);
+  |                                               ^^^^^^^^^^^ not found in `nusb::transfer`
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `cc_nusb_iso_fail` (bin "cc_nusb_iso_fail") due to 1 previous error

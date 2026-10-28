@@ -1,0 +1,22 @@
+Independent verification of flash_run1_repositioned (2026-10-25 14:40-15:05 local). Raw .mjpeg only in session scratchpad runs/<dir>/capture.
+Runs (all 1280x720@30 MJPEG, WB 4500, monitor 0 only, seed 100, 30 s, C922 + C930e only, Kiyo not opened):
+  flash_verify_0_c922only   exp -7  ACCIDENTAL C922-only: pwsh -File passes -Cams 'a','b' as ONE string (harness pitfall)
+  flash_verify_1            exp -7
+  flash_verify_2a_c930eonly exp -7  C922 "no device matches" at open (transient; it was OK in Get-PnpDevice right after)
+  flash_verify_2            exp -7  flash window not on screen for first ~3 s (ROI std 0 for s0-2) -> also analysed with --skip-first 100
+  flash_verify_3_exp-9      exp -9 (nominal 1.95 ms). C922 got 3-4x darker; C930e brightness UNCHANGED (exposure not applied?)
+  flash_verify_4_exp-6      exp -6 (nominal 15.6 ms)
+Capture command (under camlock): pwsh -NoProfile -File flash_verify_tools/run_verify.ps1 -RunDir <scratch>/runs/<dir> -ExpLog2 <n>
+Analysis: flash_analyze.py (unchanged), tools/analyze_frames.py, plus timing/scripts/flash_verify_extra.py (extra sources vs the
+same GT), flash_roi_rows.py (fixed ROI at several image rows), flash_exposure_scan.py (assumed-E scan); helpers here.
+Re-analysis of the original data: flash_verify_reanalysis_run1/ (flash_analysis.json identical to the committed one, 358/358 leaves;
+frames_analysis.json differs only in device_clock fields because analyze_frames.py changed since: nominal_hz guess 1 GHz -> 300 MHz).
+Key findings: (1) C930e UVC PTS advances a constant 997222 ticks/frame while the real frame period (STC, SOF, host) is 33.275-33.280 ms
+in fresh runs (33.228 ms in run1): STC-PTS ramps 30->63 ms and PTS jumps by 2 periods once per ~24 s with no frame gap. Every fresh C930e
+run (5/5) had one such step; run1 had none. uvc_pts_mapped_direct then has 4.8-10.3 ms error std on C930e.
+(2) A frame-index model (seq_envelope: host arrival lower envelope vs MF seq) matches uvc_pts_mapped_direct on C922 in every run and on
+C930e in run1 -> the 0.45-0.52 ms figure is not evidence that PTS carries information beyond "frames are periodic".
+(3) Fitted offset depends on ROI image row: 30.4-31.1 ms per frame height (rolling shutter), measured on both cameras; the auto-ROI
+moves between runs (C922 rows 0.43-0.72), so auto-ROI offsets are not comparable across runs or cameras.
+(4) C922, fixed ROI (col 0.75, row 0.5), uvc_pts_mapped_direct: exposure-start offset -58.61/-58.77/-59.07/-58.87 ms at E=7.81 (4 runs),
+-50.97 at E=1.95, -67.64 at E=15.63 -> start offset shifts ~-1.1 to -1.3 x dE, i.e. PTS/arrival is locked near exposure END, not start.

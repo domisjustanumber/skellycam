@@ -1,0 +1,166 @@
+### step=gst_ks utc_start=2026-10-28T03:16:48Z cpu_load_pct_start=15
+### cmd: uv run --script research/usb_cameras/prior_art/gst_probe.py --capture --source ksvideosrc --seconds 6 --device-name c922 Pro Stream Webcam --device-name Logitech Webcam C930e --device-name USB Camera
+[camlock] acquired after 26.5s: uv run --script research/usb_cameras/prior_art/gst_probe.py --capture --source ksvideosrc --seconds 6 --device-name c922 Pro Stream Webcam --device-name Logitech Webcam C930e --device-name USB Camera
+
+** (python.exe:36204): WARNING **: 23:17:16.626: "ksvideosrc" is deprecated and will be removedin the future. Use "mfvideosrc" element instead
+{
+ "test": "prior_art_gst_probe",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-28T03:17:16.568939+00:00",
+ "command": "python.exe research/usb_cameras/prior_art/gst_probe.py --capture --source ksvideosrc --seconds 6 --device-name c922 Pro Stream Webcam --device-name Logitech Webcam C930e --device-name USB Camera",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+  "gstreamer": "GStreamer 1.28.8 (GIT)"
+ },
+ "devices_tested": [
+  {
+   "camera_key": "c922 Pro Stream Webcam",
+   "display_name": "c922 Pro Stream Webcam",
+   "pipeline": "ksvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+   "src_props": {
+    "device-name": "c922 Pro Stream Webcam"
+   },
+   "src_readback_while_playing": {
+    "device-path": null,
+    "device-name": "c922 Pro Stream Webcam",
+    "device-index": -1
+   },
+   "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+   "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1",
+   "n_frames": 172,
+   "n_valid_soi_eoi": 172,
+   "n_pillow_decoded_ok": 12,
+   "n_pillow_decode_fail": 0,
+   "n_buffer_metas_total": 0,
+   "stats": {
+    "fps_by_arrival": 30.022813651362835,
+    "arrival_interval_ms_min_med_max": [
+     31.5648,
+     32.0001,
+     48.4168
+    ],
+    "pts_interval_ms_min_med_max": [
+     31.5762,
+     32.0015,
+     48.4091
+    ],
+    "arrival_minus_pts_ms_min_med_max": [
+     33.367033,
+     33.389033,
+     33.661433
+    ],
+    "payload_bytes_min_med_max": [
+     82950,
+     99682
+    ]
+   },
+   "frames_file": "frames_c922_Pro_Stream_Webcam.jsonl",
+   "sample_file": "sample_c922_Pro_Stream_Webcam.jpg"
+  },
+  {
+   "camera_key": "Logitech Webcam C930e",
+   "display_name": "Logitech Webcam C930e",
+   "pipeline": "ksvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+   "src_props": {
+    "device-name": "Logitech Webcam C930e"
+   },
+   "src_readback_while_playing": {
+    "device-path": null,
+    "device-name": "Logitech Webcam C930e",
+    "device-index": -1
+   },
+   "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+   "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1",
+   "n_frames": 167,
+   "n_valid_soi_eoi": 167,
+   "n_pillow_decoded_ok": 12,
+   "n_pillow_decode_fail": 0,
+   "n_buffer_metas_total": 0,
+   "stats": {
+    "fps_by_arrival": 30.16045580515735,
+    "arrival_interval_ms_min_med_max": [
+     31.8195,
+     32.0008,
+     48.0882
+    ],
+    "pts_interval_ms_min_med_max": [
+     31.8118,
+     32.0005,
+     48.0836
+    ],
+    "arrival_minus_pts_ms_min_med_max": [
+     33.375433,
+     33.390733,
+     33.463233
+    ],
+    "payload_bytes_min_med_max": [
+     91717,
+     109730,
+     109930
+    ]
+   },
+   "frames_file": "frames_Logitech_Webcam_C930e.jsonl",
+   "sample_file": "sample_Logitech_Webcam_C930e.jpg"
+  },
+  {
+   "camera_key": "USB Camera",
+   "display_name": "USB Camera",
+   "pipeline": "ksvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+   "src_props": {
+    "device-name": "USB Camera"
+   },
+   "src_readback_while_playing": {
+    "device-path": null,
+    "device-name": "USB Camera",
+    "device-index": -1
+   },
+   "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+   "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1",
+   "n_frames": 154,
+   "n_valid_soi_eoi": 154,
+   "n_pillow_decoded_ok": 11,
+   "n_pillow_decode_fail": 0,
+   "n_buffer_metas_total": 0,
+   "stats": {
+    "fps_by_arrival": 25.775513171514664,
+    "arrival_interval_ms_min_med_max": [
+     31.8008,
+     32.0365,
+     48.2142
+    ],
+    "pts_interval_ms_min_med_max": [
+     31.7973,
+     32.0298,
+     48.2119
+    ],
+    "arrival_minus_pts_ms_min_med_max": [
+     33.360633,
+     33.387533,
+     33.463833
+    ],
+    "payload_bytes_min_med_max": [
+     21060,
+     55608
+    ]
+   },
+   "frames_file": "frames_USB_Camera.jsonl",
+   "sample_file": "sample_USB_Camera.jpg"
+  }
+ ],
+ "settings": {
+  "width": 1280,
+  "height": 720,
+  "fps": 30,
+  "seconds": 6.0,
+  "exposure": "not controlled (camera auto)"
+ }
+}
+wrote research\usb_cameras\results\windows\Gerald\prior_art_rerun_20261027\prior_art_gst_capture-ksvideosrc\result.json
+[camlock] released
+### exit=0 utc_end=2026-10-28T03:17:35Z cpu_load_pct_end=15
+USB\VID_046D&PID_085C&MI_00\8&268DA596&0&0000 0x180200A need_restart=False
+USB\VID_046D&PID_0843&MI_00\8&39DEC205&1&0000 0x180200A need_restart=False
+USB\VID_4C4A&PID_4A55&MI_00\8&35E81179&0&0000 0x180200A need_restart=False
+USB\VID_1532&PID_0E05&MI_00\A&34494D13&0&0000 0x180200A need_restart=False

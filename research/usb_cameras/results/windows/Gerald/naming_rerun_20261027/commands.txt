@@ -1,0 +1,38 @@
+Goal 4 (naming) unattended re-run on Gerald, 2026-10-27 local (2026-10-28T03:03Z-03:20Z UTC). Run from the repo root.
+Windows 11, not elevated. Kiyo Pro 1532:0e05 excluded: no hub IOCTL, no libusb_open, no stream.
+Harness options --exclude-vidpid / --out-dir were added to the naming scripts for this run (defaults unchanged).
+Pre-change copy of naming/: C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\naming_backup_before_harness_fix_20261027
+
+# devnode state / CPU (PowerShell; read-only)
+$Out='research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/devnode_status_start.json'; Invoke-Expression (Get-Content -Raw research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/devnode_status.ps1)
+  (also devnode_status_before_libusb.json, devnode_status_after_libusb.json, devnode_status_end.json)
+
+# 1 identity dump + snapshot
+uv run --script research/usb_cameras/tools/camlock.py --timeout-s 600 -- uv run --script research/usb_cameras/naming/win_identity_dump.py --out-dir research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/win_identity_dump --label rerun_20261027 --exclude-vidpid 1532:0e05
+
+# 2 diffs against earlier snapshots
+see identity_diff/command.txt
+
+# 3 API names
+uv run --script research/usb_cameras/tools/camlock.py --timeout-s 600 -- uv run --script research/usb_cameras/naming/win_api_names.py --out-dir research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/win_api_names --exclude-vidpid 1532:0e05
+
+# 4 camera_identity (selftest + 5 timed listings)
+see camera_identity/command.txt and camera_identity/timing.txt
+
+# 5 libusb identity (descriptor/enumeration only, no streaming; Kiyo never opened)
+uv run --script research/usb_cameras/tools/camlock.py --timeout-s 600 -- uv run --script research/usb_cameras/naming/libusb_identity.py --exclude-vidpid 1532:0e05 --compare research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/win_identity_dump/snapshots/rerun_20261027.json --out-dir research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/libusb_identity
+
+# 6 unit tests
+uv run --script research/usb_cameras/naming/test_parsers.py research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/win_identity_dump/descriptors.json --out-dir research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/unit_tests/test_parsers_new_descriptors
+uv run --script research/usb_cameras/naming/test_parsers.py research/usb_cameras/results/windows/Gerald/naming/descriptors.json --out-dir research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/unit_tests/test_parsers_phase1_descriptors
+uv run --script research/usb_cameras/naming/test_macos_fake_ioreg.py --out-dir research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/unit_tests/test_macos_fake_ioreg
+see unit_tests/test_linux_fake_sysfs/command.txt (WSL2 Ubuntu, fake sysfs; not real Linux hardware)
+
+# 7 offline claim checks (no device access)
+uv run --script research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/check_claims.py
+
+# 8 reboot evidence (read-only)
+hub_arrival_and_boot.json, boot_events_since_20261025.json (commands inside each file)
+
+# 9 end-of-run dump + diff
+see win_identity_dump_end/command.txt

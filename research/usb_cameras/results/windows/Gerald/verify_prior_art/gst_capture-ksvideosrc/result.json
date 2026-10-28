@@ -1,0 +1,157 @@
+{
+  "test": "prior_art_gst_probe",
+  "platform": "windows",
+  "hostname": "Gerald",
+  "utc_started": "2026-10-25T19:01:19.310576+00:00",
+  "command": "python.exe research/usb_cameras/prior_art/gst_probe.py --capture --source ksvideosrc --seconds 6",
+  "environment": {
+    "os": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "gstreamer": "GStreamer 1.28.8 (GIT)"
+  },
+  "devices_tested": [
+    {
+      "camera_key": "USB Camera",
+      "display_name": "USB Camera",
+      "pipeline": "ksvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+      "src_props": {
+        "device-name": "USB Camera"
+      },
+      "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+      "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1",
+      "n_frames": 152,
+      "n_valid_soi_eoi": 152,
+      "n_pillow_decoded_ok": 11,
+      "n_pillow_decode_fail": 0,
+      "n_buffer_metas_total": 0,
+      "stats": {
+        "fps_by_arrival": 25.7177772005944,
+        "arrival_interval_ms_min_med_max": [
+          26.1079,
+          32.2145,
+          53.7092
+        ],
+        "pts_interval_ms_min_med_max": [
+          26.1021,
+          32.1801,
+          53.7591
+        ],
+        "arrival_minus_pts_ms_min_med_max": [
+          33.383833,
+          33.404233,
+          33.993133
+        ],
+        "payload_bytes_min_med_max": [
+          50068,
+          107315
+        ]
+      },
+      "frames_file": "frames_USB_Camera.jsonl",
+      "sample_file": "sample_USB_Camera.jpg"
+    },
+    {
+      "camera_key": "Razer Kiyo Pro",
+      "display_name": "Razer Kiyo Pro",
+      "pipeline": "ksvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+      "src_props": {
+        "device-name": "Razer Kiyo Pro"
+      },
+      "error": "Internal data stream error. | ../libs/gst/base/gstbasesrc.c(3187): gst_base_src_loop (): /GstPipeline:pipeline1/GstKsVideoSrc:src:\nstreaming stopped, reason not-negotiated (-4)",
+      "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+      "negotiated_caps": null,
+      "n_frames": 0,
+      "n_valid_soi_eoi": 0,
+      "n_pillow_decoded_ok": 0,
+      "n_pillow_decode_fail": 0,
+      "n_buffer_metas_total": 0,
+      "stats": {},
+      "frames_file": "frames_Razer_Kiyo_Pro.jsonl",
+      "sample_file": null
+    },
+    {
+      "camera_key": "c922 Pro Stream Webcam",
+      "display_name": "c922 Pro Stream Webcam",
+      "pipeline": "ksvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+      "src_props": {
+        "device-name": "c922 Pro Stream Webcam"
+      },
+      "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+      "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1",
+      "n_frames": 172,
+      "n_valid_soi_eoi": 172,
+      "n_pillow_decoded_ok": 12,
+      "n_pillow_decode_fail": 0,
+      "n_buffer_metas_total": 0,
+      "stats": {
+        "fps_by_arrival": 29.941183958459145,
+        "arrival_interval_ms_min_med_max": [
+          27.6209,
+          32.0269,
+          49.1883
+        ],
+        "pts_interval_ms_min_med_max": [
+          27.6343,
+          32.0253,
+          49.1874
+        ],
+        "arrival_minus_pts_ms_min_med_max": [
+          33.387133,
+          33.418333,
+          33.752033
+        ],
+        "payload_bytes_min_med_max": [
+          51436,
+          51719
+        ]
+      },
+      "frames_file": "frames_c922_Pro_Stream_Webcam.jsonl",
+      "sample_file": "sample_c922_Pro_Stream_Webcam.jpg"
+    },
+    {
+      "camera_key": "Logitech Webcam C930e",
+      "display_name": "Logitech Webcam C930e",
+      "pipeline": "ksvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+      "src_props": {
+        "device-name": "Logitech Webcam C930e"
+      },
+      "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+      "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1",
+      "n_frames": 168,
+      "n_valid_soi_eoi": 168,
+      "n_pillow_decoded_ok": 12,
+      "n_pillow_decode_fail": 0,
+      "n_buffer_metas_total": 0,
+      "stats": {
+        "fps_by_arrival": 30.08142338810854,
+        "arrival_interval_ms_min_med_max": [
+          26.8577,
+          32.022,
+          49.6975
+        ],
+        "pts_interval_ms_min_med_max": [
+          26.8367,
+          32.0216,
+          49.6863
+        ],
+        "arrival_minus_pts_ms_min_med_max": [
+          33.389033,
+          33.427233,
+          35.417033
+        ],
+        "payload_bytes_min_med_max": [
+          81719,
+          115007
+        ]
+      },
+      "frames_file": "frames_Logitech_Webcam_C930e.jsonl",
+      "sample_file": "sample_Logitech_Webcam_C930e.jpg"
+    }
+  ],
+  "settings": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "seconds": 6.0,
+    "exposure": "not controlled (camera auto)"
+  }
+}

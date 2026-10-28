@@ -1,0 +1,139 @@
+{
+  "test": "prior_art_gst_probe",
+  "platform": "windows",
+  "hostname": "Gerald",
+  "utc_started": "2026-10-25T18:02:57.121396+00:00",
+  "command": "python.exe research/usb_cameras/prior_art/gst_probe.py --capture --source ksvideosrc --seconds 6",
+  "environment": {
+    "os": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "gstreamer": "GStreamer 1.28.8 (GIT)"
+  },
+  "devices_tested": [
+    {
+      "camera_key": "Razer Kiyo Pro",
+      "display_name": "Razer Kiyo Pro",
+      "pipeline": "ksvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+      "src_props": {
+        "device-name": "Razer Kiyo Pro"
+      },
+      "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+      "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1",
+      "n_frames": 148,
+      "n_valid_soi_eoi": 148,
+      "n_pillow_decoded_ok": 10,
+      "n_pillow_decode_fail": 0,
+      "n_buffer_metas_total": 0,
+      "stats": {
+        "fps_by_arrival": 28.624757412483163,
+        "arrival_interval_ms_min_med_max": [
+          0.1003,
+          32.0049,
+          80.0558
+        ],
+        "pts_interval_ms_min_med_max": [
+          0.1293,
+          32.0033,
+          80.0463
+        ],
+        "arrival_minus_pts_ms_min_med_max": [
+          33.350733,
+          33.386733,
+          33.827533
+        ],
+        "payload_bytes_min_med_max": [
+          77513,
+          101305
+        ]
+      },
+      "frames_file": "frames_Razer_Kiyo_Pro.jsonl",
+      "sample_file": "sample_Razer_Kiyo_Pro.jpg"
+    },
+    {
+      "camera_key": "c922 Pro Stream Webcam",
+      "display_name": "c922 Pro Stream Webcam",
+      "pipeline": "ksvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+      "src_props": {
+        "device-name": "c922 Pro Stream Webcam"
+      },
+      "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+      "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1",
+      "n_frames": 173,
+      "n_valid_soi_eoi": 173,
+      "n_pillow_decoded_ok": 12,
+      "n_pillow_decode_fail": 0,
+      "n_buffer_metas_total": 0,
+      "stats": {
+        "fps_by_arrival": 29.946367796344642,
+        "arrival_interval_ms_min_med_max": [
+          27.7638,
+          32.0035,
+          48.1751
+        ],
+        "pts_interval_ms_min_med_max": [
+          27.7712,
+          32.0009,
+          48.1152
+        ],
+        "arrival_minus_pts_ms_min_med_max": [
+          33.372033,
+          33.385333,
+          33.824133
+        ],
+        "payload_bytes_min_med_max": [
+          125071,
+          144851,
+          150505
+        ]
+      },
+      "frames_file": "frames_c922_Pro_Stream_Webcam.jsonl",
+      "sample_file": "sample_c922_Pro_Stream_Webcam.jpg"
+    },
+    {
+      "camera_key": "Logitech Webcam C930e",
+      "display_name": "Logitech Webcam C930e",
+      "pipeline": "ksvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+      "src_props": {
+        "device-name": "Logitech Webcam C930e"
+      },
+      "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+      "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1",
+      "n_frames": 168,
+      "n_valid_soi_eoi": 168,
+      "n_pillow_decoded_ok": 12,
+      "n_pillow_decode_fail": 0,
+      "n_buffer_metas_total": 0,
+      "stats": {
+        "fps_by_arrival": 29.993490514549645,
+        "arrival_interval_ms_min_med_max": [
+          31.3383,
+          32.0021,
+          48.0188
+        ],
+        "pts_interval_ms_min_med_max": [
+          31.7035,
+          32.0028,
+          48.015
+        ],
+        "arrival_minus_pts_ms_min_med_max": [
+          33.379933,
+          33.389833,
+          33.823333
+        ],
+        "payload_bytes_min_med_max": [
+          75442,
+          98197
+        ]
+      },
+      "frames_file": "frames_Logitech_Webcam_C930e.jsonl",
+      "sample_file": "sample_Logitech_Webcam_C930e.jpg"
+    }
+  ],
+  "settings": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "seconds": 6.0,
+    "exposure": "not controlled (camera auto)"
+  }
+}

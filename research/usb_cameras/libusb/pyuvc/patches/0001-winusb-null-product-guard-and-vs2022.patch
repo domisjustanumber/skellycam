@@ -1,0 +1,22 @@
+--- a/libuvc-source/src/stream.c	2026-10-25 13:57:35.256857900 -0400
++++ b/libuvc-source/src/stream.c	2026-10-25 17:10:03.578694900 -0400
+@@ -1139,7 +1139,7 @@
+ 
+     uvc_device_descriptor_t *desc = NULL;
+     char *name;
+-    if (uvc_get_device_descriptor(strmh->devh->dev, &desc) == UVC_SUCCESS)
++    if (uvc_get_device_descriptor(strmh->devh->dev, &desc) == UVC_SUCCESS && desc->product)
+     {
+       const size_t len_product_name = strlen(desc->product) + 1;
+       name = malloc(len_product_name);
+--- a/setup.py	2026-10-25 13:56:37.154913900 -0400
++++ b/setup.py	2026-10-25 17:10:03.578694900 -0400
+@@ -29,7 +29,7 @@
+     # The Ninja cmake generator will use mingw (gcc) on windows travis instances, but we
+     # need to use msvc for compatibility. The easiest solution I found was to just use
+     # the vs cmake generator as it defaults to msvc.
+-    cmake_args.append("-GVisual Studio 18 2026")
++    cmake_args.append("-GVisual Studio 17 2022")
+     cmake_args.append("-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=True")
+ 
+ pyuvc_source_folder = "pyuvc-source"

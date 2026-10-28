@@ -1,0 +1,13 @@
+# P8 - end-to-end prototype (5 cameras x 60 fps FakeSensor, decoupled recorders, seqlock ring, threaded UI)
+
+Directly comparable with baseline/results/e_e2e_summary.md (same sensor model, content, overlay, writer for msmf rows).
+
+| file | size | decode into slot | recorder | per-cam fps (min) | sensor frames never grabbed (sum) | files decode == produced | consecutive | decode median / p99 ms | overlay+publish median ms | grab interval p99 / max ms | tick->written median / p99 / max ms (worst cam) | UI payloads/s | UI build median / p99 ms | event-loop blocked median ms | CPU % cams / recorders / main | off-loop decoder: decoded fps (min cam) / skipped (sum) | copies per frame |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| p8v_e2e_1080p_imdecode_msmf_lockstep_meta.json | 1080p | imdecode | msmf | 59.82 | 20 | True | True | 10.73 / 16.95 | 0.124 | 19.6 / 23.4 | 12.3 / 30.5 / 35.3 | 51.8 | 3.91 / 12.79 | 0.051 | 330 / 1017 / 98 | - | cam: decode alloc + 1 copy into slot; rec: 0 (view to encoder) |
+| p8v_e2e_1080p_imdecode_msmf_lockstep_meta_extracpu3.json | 1080p | imdecode | msmf | 58.08 | 276 | True | True | 14.50 / 18.89 | 0.122 | 20.6 / 25.5 | 21.4 / 34.8 / 35.8 | 58.0 | 4.56 / 8.38 | 0.046 | 408 / 985 / 118 | - | cam: decode alloc + 1 copy into slot; rec: 0 (view to encoder) |
+| p8v_e2e_1080p_imdecode_msmf_lockstep_meta_recthread.json | 1080p | imdecode | msmf | 59.93 | 1 | True | True | 10.37 / 16.54 | 0.112 | 19.3 / 20.5 | 11.7 / 29.7 / 33.3 | 52.1 | 4.36 / 12.75 | 0.050 | 1323 / 0 / 113 | - | cam: decode alloc + 1 copy into slot; rec: 0 (view to encoder) |
+| p8v_e2e_1080p_imdecode_msmf_lockstep_meta_rep2.json | 1080p | imdecode | msmf | 59.95 | 0 | True | True | 10.12 / 16.07 | 0.124 | 20.0 / 23.0 | 12.8 / 27.3 / 32.6 | 52.9 | 4.13 / 12.49 | 0.050 | 338 / 979 / 107 | - | cam: decode alloc + 1 copy into slot; rec: 0 (view to encoder) |
+| p8v_e2e_1080p_imdecode_msmf_spread.json | 1080p | imdecode | msmf | 59.95 | 0 | True | True | 8.83 / 15.37 | 0.125 | 16.7 / 17.9 | 10.1 / 17.3 / 19.4 | 47.0 | 3.67 / 13.57 | 0.047 | 305 / 992 / 84 | - | cam: decode alloc + 1 copy into slot; rec: 0 (view to encoder) |
+
+Baseline rows to compare (baseline/results/e_e2e_summary.md, idle 20261027 re-run, real SkellyCam stack): 1080p mjpeg+UI 53.56 / 53.57 fps, 964 / 964 sensor frames never grabbed, tick->written 23.9 / 34.4 / 37.4 ms, UI 36.9 / 36.6 payloads/s (build 15.2 ms), children CPU 1345 / 1361 %, main 131 / 134 %; 1080p mjpeg no UI 55.94 fps, 605 never grabbed; 1080p memcpy+UI 59.99 / 59.99 fps, 0 / 0 never grabbed, UI 39.9 / 40.8/s, children CPU 994 / 928 %; 720p mjpeg+UI 60.00 fps, 0 never grabbed, UI 57.0/s, tick->written 5.5 / 7.7 / 10.9 ms.

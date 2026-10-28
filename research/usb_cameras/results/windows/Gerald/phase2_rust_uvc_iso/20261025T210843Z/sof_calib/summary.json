@@ -1,0 +1,22 @@
+{
+  "hostname": "Gerald",
+  "platform": "windows",
+  "result": {
+    "first": {
+      "frame": 111902084,
+      "qpc": 1119139964597
+    },
+    "fit_frames_per_s": 999.8561099453742,
+    "fit_intercept_frames": -0.11894425296850386,
+    "fit_max_abs_residual_frames": 0.6086433227753361,
+    "interface_path": "\\\\?\\USB#VID_046D&PID_0843#7&7dcc7ce&0&4#{a5dcbf10-6530-11d2-901f-00c04fb951ed}",
+    "last": {
+      "frame": 111903106,
+      "qpc": 1119150191565
+    },
+    "n": 1000,
+    "note": "frame = f0 + a + b*(qpc - qpc0)/freq; frame counter is 1 ms (USB frames); SCR SOF is its low 11 bits",
+    "qpc_frequency": 10000000.0
+  },
+  "test": "rust_uvc_iso_sof_calib"
+}

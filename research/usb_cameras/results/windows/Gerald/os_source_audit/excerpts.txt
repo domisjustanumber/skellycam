@@ -1,0 +1,215 @@
+# libusb v1.0.30 (release tarball sha256 fea36f34...) libusb/os/windows_winusb.c
+## DEV_PASS uses GUID_DEVINTERFACE_USB_DEVICE; non-composite WinUSB device: interface[0].path = device path
+	guid_list[HUB_PASS] = &GUID_DEVINTERFACE_USB_HUB;
+	guid_list[DEV_PASS] = &GUID_DEVINTERFACE_USB_DEVICE;
+	guid_list[HCD_PASS] = &GUID_DEVINTERFACE_USB_HOST_CONTROLLER;
+	guid_list[GEN_PASS] = NULL;
+					// For other devices, the first interface is the same as the device
+					priv->usb_interface[0].path = _strdup(priv->path);
+					if (priv->usb_interface[0].path == NULL) {
+						usbi_mutex_unlock(&priv->interface_lock);
+						LOOP_BREAK(LIBUSB_ERROR_NO_MEM);
+					}
+					// The following is needed if we want API calls to work for both simple
+## composite children need DeviceInterfaceGUID(s) in the device registry key
+		// Look for both DeviceInterfaceGUIDs *and* DeviceInterfaceGUID, in that order
+		// If multiple GUIDs, find the n-th that is indexed by guid_number
+		s = pRegQueryValueExA(key, "DeviceInterfaceGUIDs", NULL, &reg_type,
+				      (LPBYTE)guid_string, &size);
+		if (s == ERROR_FILE_NOT_FOUND)
+			s = pRegQueryValueExA(key, "DeviceInterfaceGUID", NULL, &reg_type,
+					      (LPBYTE)guid_string, &size);
+		if (s == ERROR_SUCCESS) {
+			// The GUID was read successfully
+			break;
+		} else if (s == ERROR_FILE_NOT_FOUND) {
+			usbi_dbg(ctx, "no DeviceInterfaceGUID registered for '%s'", dev_id);
+			err = LIBUSB_ERROR_ACCESS;
+			goto exit;
+## IAD association for WinUSB functions (libusb >= 1.0.27)
+	// For WinUSBX, set up associations for interfaces grouped by an IAD
+	if ((api == USB_API_WINUSBX) && !libusb_get_active_interface_association_descriptors(dev, &iad_array)) {
+		for (iadi = 0; iadi < iad_array->length; iadi++) {
+			iad = &iad_array->iad[iadi];
+			if (iad->bFirstInterface == interface_number) {
+				priv->usb_interface[interface_number].num_associated_interfaces = iad->bInterfaceCount;
+				priv->usb_interface[interface_number].first_associated_interface = iad->bFirstInterface;
+				for (iadintfi = 1; iadintfi < iad->bInterfaceCount; iadintfi++) {
+					usbi_dbg(ctx, "interface[%d] is associated with interface[%d]",
+							      interface_number + iadintfi, interface_number);
+					priv->usb_interface[interface_number + iadintfi].apib = &usb_api_backend[api];
+					priv->usb_interface[interface_number + iadintfi].sub_api = sub_api;
+					priv->usb_interface[interface_number + iadintfi].num_associated_interfaces = iad->bInterfaceCount;
+					priv->usb_interface[interface_number + iadintfi].first_associated_interface = iad->bFirstInterface;
+				}
+				break;
+			}
+		}
+## WinUSB isoch length constraint
+			// WinUSB only supports isoch transfers spanning a full USB frames. Later, we might be smarter about this
+			// and allocate a temporary buffer. However, this is harder than it seems as its destruction would depend on overlapped
+			// IO...
+			if (transfer->dev_handle->dev->speed >= LIBUSB_SPEED_HIGH) // Microframes (125us)
+				iso_transfer_size_multiple = (pipe_info_ex.MaximumBytesPerInterval * 8) / interval;
+			else // Normal Frames (1ms)
+				iso_transfer_size_multiple = pipe_info_ex.MaximumBytesPerInterval / interval;
+
+			if (transfer->length % iso_transfer_size_multiple != 0) {
+				usbi_err(TRANSFER_CTX(transfer), "length of isoch buffer must be a multiple of the MaximumBytesPerInterval * 8 / Interval");
+				return LIBUSB_ERROR_INVALID_PARAM;
+			}
+
+# libusb v1.0.30 libusb/os/darwin_usb.c darwin_detach_kernel_driver
+static int darwin_detach_kernel_driver (struct libusb_device_handle *dev_handle, uint8_t interface) {
+  UNUSED(interface);
+  struct darwin_cached_device *dpriv = DARWIN_CACHED_DEVICE(dev_handle->dev);
+  IOReturn kresult;
+  enum libusb_error err;
+  struct libusb_context *ctx = HANDLE_CTX (dev_handle);
+
+  if (get_interface_interface_version() < 700) {
+    return LIBUSB_ERROR_NOT_SUPPORTED;
+  }
+
+  if (dpriv->capture_count == 0) {
+    usbi_dbg (ctx, "attempting to detach kernel driver from device");
+
+    if (darwin_has_capture_entitlements ()) {
+      /* request authorization */
+      kresult = IOServiceAuthorize (dpriv->service, kIOServiceInteractionAllowed);
+      if (kresult != kIOReturnSuccess) {
+        usbi_warn (ctx, "IOServiceAuthorize: %s", darwin_error_str(kresult));
+        return darwin_to_libusb (kresult);
+      }
+
+      /* we need start() to be called again for authorization status to refresh */
+      err = darwin_reload_device (dev_handle);
+      if (err != LIBUSB_SUCCESS) {
+        return err;
+      }
+    } else {
+      usbi_info (ctx, "no capture entitlements. may not be able to detach the kernel driver for this device");
+      if (0 != geteuid()) {
+        usbi_warn (ctx, "USB device capture requires either an entitlement (com.apple.vm.device-access) or root privilege");
+        return LIBUSB_ERROR_ACCESS;
+      }
+    }
+
+    /* reset device to release existing drivers */
+    err = darwin_reenumerate_device (dev_handle, true);
+    if (err != LIBUSB_SUCCESS) {
+      return err;
+    }
+  }
+  dpriv->capture_count++;
+  return LIBUSB_SUCCESS;
+}
+
+# linux torvalds/master drivers/usb/core/devio.c (last commit touching file 0dd68b5d01d0, 2026-08-14) sha256 of fetched file: a405936b03c59e92375b1b18f676da4c7d8e35918c8b3d4618c3692448bc9dcc
+static int proc_ioctl(struct usb_dev_state *ps, struct usbdevfs_ioctl *ctl)
+{
+	int			size;
+	void			*buf = NULL;
+	int			retval = 0;
+	struct usb_interface    *intf = NULL;
+	struct usb_driver       *driver = NULL;
+
+	if (ps->privileges_dropped)
+		return -EACCES;
+
+	if (!connected(ps))
+		return -ENODEV;
+	switch (ctl->ioctl_code) {
+
+	/* disconnect kernel driver from interface */
+	case USBDEVFS_DISCONNECT:
+		if (intf->dev.driver) {
+			driver = to_usb_driver(intf->dev.driver);
+			dev_dbg(&intf->dev, "disconnect by usbfs\n");
+			usb_driver_release_interface(driver, intf);
+		} else
+			retval = -ENODATA;
+		break;
+
+
+# linux torvalds/master drivers/media/usb/uvc/uvc_video.c (last commit 9748ecc4cfe9, 2026-10-02): UVC_QUIRK_FIX_BANDWIDTH only for !COMPRESSED formats
+	if ((ctrl->dwMaxPayloadTransferSize & 0xffff0000) == 0xffff0000)
+		ctrl->dwMaxPayloadTransferSize &= ~0xffff0000;
+
+	if (!(format->flags & UVC_FMT_FLAG_COMPRESSED) &&
+	    stream->dev->quirks & UVC_QUIRK_FIX_BANDWIDTH &&
+	    stream->intf->num_altsetting > 1) {
+		u32 interval;
+		u32 bandwidth;
+
+		interval = (ctrl->dwFrameInterval > 100000)
+			 ? ctrl->dwFrameInterval
+			 : frame->dwFrameInterval[0];
+
+		/*
+		 * Compute a bandwidth estimation by multiplying the frame
+		 * size by the number of video frames per second, divide the
+		 * result by the number of USB frames (or micro-frames for
+		 * high- and super-speed devices) per second and add the UVC
+		 * header size (assumed to be 12 bytes long).
+		 */
+		bandwidth = frame->wWidth * frame->wHeight / 8 * format->bpp;
+		bandwidth *= 10000000 / interval + 1;
+		bandwidth /= 1000;
+		if (stream->dev->udev->speed >= USB_SPEED_HIGH)
+			bandwidth /= 8;
+		bandwidth += 12;
+
+		/*
+		 * The bandwidth estimate is too low for many cameras. Don't use
+		 * maximum packet sizes lower than 1024 bytes to try and work
+		 * around the problem. According to measurements done on two
+		 * different camera models, the value is high enough to get most
+		 * resolutions working while not preventing two simultaneous
+		 * VGA streams at 15 fps.
+		 */
+		bandwidth = max_t(u32, bandwidth, 1024);
+
+
+# libusb v1.0.30 windows_winusb.c winusbx_claim_interface: non-composite (parent on WinUSB) -> iface 0 via WinUsb_Initialize, iface N via WinUsb_GetAssociatedInterface(N-1)
+	// If the device is composite, but using the default Windows composite parent driver (usbccgp)
+	// or if it's the first WinUSB-like interface, we get a handle through Initialize().
+	// If it's an associated interface, and is the first one (iface==bFirstInterface), we also
+	// want to get the handle through Initialize(). If it's an associated interface, and NOT
+	// the first one, we want to direct control to the 'else' where the handle will be obtained
+	// via GetAssociatedInterface().
+	if (((is_using_usbccgp) || (iface == 0)) &&
+	    (!is_associated_interface || (iface==priv->usb_interface[iface].first_associated_interface))) {
+		// composite device (independent interfaces) or interface 0
+		file_handle = handle_priv->interface_handle[iface].dev_handle;
+		if (!HANDLE_VALID(file_handle))
+			return LIBUSB_ERROR_NOT_FOUND;
+
+	} else {
+		if (is_associated_interface) {
+			initialized_iface = priv->usb_interface[iface].first_associated_interface;
+			if (iface <= initialized_iface) {
+				usbi_err(ctx, "invalid associated index. iface=%u, initialized iface=%u", iface, initialized_iface);
+				return LIBUSB_ERROR_NOT_FOUND;
+			}
+		} else {
+			initialized_iface = 0;
+		}
+
+		// For all other interfaces, use GetAssociatedInterface()
+		winusb_handle = handle_priv->interface_handle[initialized_iface].api_handle;
+		// It is a requirement for multiple interface devices on Windows that, to you
+		// must first claim the first interface before you claim the others
+		if (!HANDLE_VALID(winusb_handle)) {
+			file_handle = handle_priv->interface_handle[initialized_iface].dev_handle;
+			if (WinUSBX[sub_api].Initialize(file_handle, &winusb_handle)) {
+				handle_priv->interface_handle[initialized_iface].api_handle = winusb_handle;
+				usbi_warn(ctx, "auto-claimed interface %u (required to claim %u with WinUSB)", initialized_iface, iface);
+			} else {
+				usbi_warn(ctx, "failed to auto-claim interface %u (required to claim %u with WinUSB): %s",
+						initialized_iface, iface, windows_error_str(0));
+				return LIBUSB_ERROR_ACCESS;
+			}
+		}
+		if (!WinUSBX[sub_api].GetAssociatedInterface(winusb_handle, (UCHAR)(iface - 1 - initialized_iface),
+			&handle_priv->interface_handle[iface].api_handle)) {

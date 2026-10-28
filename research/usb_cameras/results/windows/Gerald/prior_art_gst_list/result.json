@@ -1,0 +1,301 @@
+{
+  "test": "prior_art_gst_probe",
+  "platform": "windows",
+  "hostname": "Gerald",
+  "utc_started": "2026-10-25T18:01:32.417937+00:00",
+  "command": "python.exe research/usb_cameras/prior_art/gst_probe.py --list",
+  "environment": {
+    "os": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "gstreamer": "GStreamer 1.28.8 (GIT)"
+  },
+  "devices": [
+    {
+      "display_name": "Razer Kiyo Pro",
+      "device_class": "Video/Source",
+      "element_factory": "ksvideosrc",
+      "properties": {},
+      "caps_media_types": [
+        "image/jpeg",
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [
+        "image/jpeg, width=(int)640, height=(int)480, framerate=(fraction)[ 5/1, 60/1 ], pixel-aspect-ratio=(fraction)1/1;",
+        "image/jpeg, width=(int)640, height=(int)360, framerate=(fraction)[ 5/1, 60/1 ], pixel-aspect-ratio=(fraction)1/1;",
+        "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)[ 5/1, 60/1 ], pixel-aspect-ratio=(fraction)1/1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)[ 5/1, 60/1 ], pixel-aspect-ratio=(fraction)1/1;"
+      ],
+      "n_jpeg_caps": 4
+    },
+    {
+      "display_name": "c922 Pro Stream Webcam",
+      "device_class": "Video/Source",
+      "element_factory": "ksvideosrc",
+      "properties": {},
+      "caps_media_types": [
+        "image/jpeg",
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [
+        "image/jpeg, width=(int)640, height=(int)480, framerate=(fraction)[ 5/1, 30/1 ], pixel-aspect-ratio=(fraction)1/1;",
+        "image/jpeg, width=(int)160, height=(int)90, framerate=(fraction)[ 5/1, 30/1 ], pixel-aspect-ratio=(fraction)1/1;",
+        "image/jpeg, width=(int)160, height=(int)120, framerate=(fraction)[ 5/1, 30/1 ], pixel-aspect-ratio=(fraction)1/1;",
+        "image/jpeg, width=(int)176, height=(int)144, framerate=(fraction)[ 5/1, 30/1 ], pixel-aspect-ratio=(fraction)12/11;",
+        "image/jpeg, width=(int)320, height=(int)180, framerate=(fraction)[ 5/1, 30/1 ], pixel-aspect-ratio=(fraction)1/1;",
+        "image/jpeg, width=(int)320, height=(int)240, framerate=(fraction)[ 5/1, 30/1 ], pixel-aspect-ratio=(fraction)1/1;"
+      ],
+      "n_jpeg_caps": 17
+    },
+    {
+      "display_name": "Logitech Webcam C930e",
+      "device_class": "Video/Source",
+      "element_factory": "ksvideosrc",
+      "properties": {},
+      "caps_media_types": [
+        "image/jpeg",
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [
+        "image/jpeg, width=(int)640, height=(int)480, framerate=(fraction)[ 5/1, 30/1 ], pixel-aspect-ratio=(fraction)1/1;",
+        "image/jpeg, width=(int)160, height=(int)120, framerate=(fraction)[ 5/1, 30/1 ], pixel-aspect-ratio=(fraction)1/1;",
+        "image/jpeg, width=(int)176, height=(int)144, framerate=(fraction)[ 5/1, 30/1 ], pixel-aspect-ratio=(fraction)12/11;",
+        "image/jpeg, width=(int)320, height=(int)180, framerate=(fraction)[ 5/1, 30/1 ], pixel-aspect-ratio=(fraction)1/1;",
+        "image/jpeg, width=(int)320, height=(int)240, framerate=(fraction)[ 5/1, 30/1 ], pixel-aspect-ratio=(fraction)1/1;",
+        "image/jpeg, width=(int)352, height=(int)288, framerate=(fraction)[ 5/1, 30/1 ], pixel-aspect-ratio=(fraction)12/11;"
+      ],
+      "n_jpeg_caps": 17
+    },
+    {
+      "display_name": "NDI Webcam Video",
+      "device_class": "Video/Source",
+      "element_factory": "ksvideosrc",
+      "properties": {},
+      "caps_media_types": [
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [],
+      "n_jpeg_caps": 0
+    },
+    {
+      "display_name": "NDI Webcam Video",
+      "device_class": "Video/Source",
+      "element_factory": "ksvideosrc",
+      "properties": {},
+      "caps_media_types": [
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [],
+      "n_jpeg_caps": 0
+    },
+    {
+      "display_name": "NDI Webcam Video",
+      "device_class": "Video/Source",
+      "element_factory": "ksvideosrc",
+      "properties": {},
+      "caps_media_types": [
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [],
+      "n_jpeg_caps": 0
+    },
+    {
+      "display_name": "NDI Webcam Video",
+      "device_class": "Video/Source",
+      "element_factory": "ksvideosrc",
+      "properties": {},
+      "caps_media_types": [
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [],
+      "n_jpeg_caps": 0
+    },
+    {
+      "display_name": "GERALD (Remote Connection 1)",
+      "device_class": "Source/Audio/Video/Network",
+      "element_factory": "ndisrc",
+      "properties": {
+        "ndi-name": "GERALD (Remote Connection 1)",
+        "url-address": "ndi-app:GERALD%20(Remote%20Connection%201)"
+      },
+      "caps_media_types": [
+        "application/x-ndi"
+      ],
+      "jpeg_caps_sample": [],
+      "n_jpeg_caps": 0
+    },
+    {
+      "display_name": "NDI Webcam Video 1",
+      "device_class": "Source/Video",
+      "element_factory": "mfvideosrc",
+      "properties": {
+        "device.api": "mediafoundation",
+        "device.path": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource0",
+        "device.name": "NDI Webcam Video 1"
+      },
+      "caps_media_types": [
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [],
+      "n_jpeg_caps": 0
+    },
+    {
+      "display_name": "NDI Webcam Video 2",
+      "device_class": "Source/Video",
+      "element_factory": "mfvideosrc",
+      "properties": {
+        "device.api": "mediafoundation",
+        "device.path": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource1",
+        "device.name": "NDI Webcam Video 2"
+      },
+      "caps_media_types": [
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [],
+      "n_jpeg_caps": 0
+    },
+    {
+      "display_name": "NDI Webcam Video 3",
+      "device_class": "Source/Video",
+      "element_factory": "mfvideosrc",
+      "properties": {
+        "device.api": "mediafoundation",
+        "device.path": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource2",
+        "device.name": "NDI Webcam Video 3"
+      },
+      "caps_media_types": [
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [],
+      "n_jpeg_caps": 0
+    },
+    {
+      "display_name": "NDI Webcam Video 4",
+      "device_class": "Source/Video",
+      "element_factory": "mfvideosrc",
+      "properties": {
+        "device.api": "mediafoundation",
+        "device.path": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource3",
+        "device.name": "NDI Webcam Video 4"
+      },
+      "caps_media_types": [
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [],
+      "n_jpeg_caps": 0
+    },
+    {
+      "display_name": "c922 Pro Stream Webcam",
+      "device_class": "Source/Video",
+      "element_factory": "mfvideosrc",
+      "properties": {
+        "device.api": "mediafoundation",
+        "device.path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+        "device.name": "c922 Pro Stream Webcam"
+      },
+      "caps_media_types": [
+        "image/jpeg",
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)24/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)20/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)15/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)10/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)10000000/1333333, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;"
+      ],
+      "n_jpeg_caps": 120
+    },
+    {
+      "display_name": "USB Video Device",
+      "device_class": "Source/Video",
+      "element_factory": "mfvideosrc",
+      "properties": {
+        "device.api": "mediafoundation",
+        "device.path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+        "device.name": "USB Video Device"
+      },
+      "caps_media_types": [
+        "image/jpeg",
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)60/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)24/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)20/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)15/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)10/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;"
+      ],
+      "n_jpeg_caps": 28
+    },
+    {
+      "display_name": "Logitech Webcam C930e",
+      "device_class": "Source/Video",
+      "element_factory": "mfvideosrc",
+      "properties": {
+        "device.api": "mediafoundation",
+        "device.path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+        "device.name": "Logitech Webcam C930e"
+      },
+      "caps_media_types": [
+        "image/jpeg",
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)24/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)20/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)15/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)10/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;",
+        "image/jpeg, width=(int)1920, height=(int)1080, framerate=(fraction)10000000/1333333, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1;"
+      ],
+      "n_jpeg_caps": 119
+    },
+    {
+      "display_name": "Camera (NVIDIA Broadcast)",
+      "device_class": "Source/Video",
+      "element_factory": "mfvideosrc",
+      "properties": {
+        "device.api": "mediafoundation",
+        "device.path": "@device:sw:{860BB310-5D01-11D0-BD3B-00A0C911CE86}\\{7BBFF097-B3FB-4B26-B685-7A998DE7CEAC}",
+        "device.name": "Camera (NVIDIA Broadcast)"
+      },
+      "caps_media_types": [
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [],
+      "n_jpeg_caps": 0
+    },
+    {
+      "display_name": "SpoutCam",
+      "device_class": "Source/Video",
+      "element_factory": "mfvideosrc",
+      "properties": {
+        "device.api": "mediafoundation",
+        "device.path": "@device:sw:{860BB310-5D01-11D0-BD3B-00A0C911CE86}\\{8E14549A-DB61-4309-AFA1-3578E927E933}",
+        "device.name": "SpoutCam"
+      },
+      "caps_media_types": [
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [],
+      "n_jpeg_caps": 0
+    },
+    {
+      "display_name": "OBS Virtual Camera",
+      "device_class": "Source/Video",
+      "element_factory": "mfvideosrc",
+      "properties": {
+        "device.api": "mediafoundation",
+        "device.path": "@device:sw:{860BB310-5D01-11D0-BD3B-00A0C911CE86}\\{A3FCE0F5-3493-419F-958A-ABA1250EC20B}",
+        "device.name": "OBS Virtual Camera"
+      },
+      "caps_media_types": [
+        "video/x-raw"
+      ],
+      "jpeg_caps_sample": [],
+      "n_jpeg_caps": 0
+    }
+  ]
+}

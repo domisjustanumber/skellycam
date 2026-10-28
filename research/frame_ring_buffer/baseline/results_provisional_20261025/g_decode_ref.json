@@ -1,0 +1,435 @@
+{
+  "env": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.2.6",
+    "opencv": "4.12.0",
+    "cpu_count": 28,
+    "time": "2026-10-25 14:58:13",
+    "psutil": "7.2.2",
+    "ram_total_gb": 68.413349888,
+    "system_cpu_pct_1s_before_run": 12.2,
+    "other_python_processes_at_start": [
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpU4NqNo\\Scripts\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 560 -- uv run --script research/us",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py -- bash -c research/usb_cameras/mjpeg/b",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/bandwidth/run_concurrency.py --batch b09_kiyo_retry --se",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py -- bash research/usb_cameras/timing/scr",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\flash-exposure-scan-716e74bf182e7be5\\Scripts\\python.exe research/usb_cameras/timing/scripts/flash_exposure_s",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmp1sN2D5\\Scripts\\python.exe research/usb_cameras/tools/camlock.py -- uv run --script research/usb_cameras/prior_",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpDOvIrS\\Scripts\\python.exe research/usb_cameras/tools/camlock.py -- uv run --script research/usb_cameras/naming",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks/frame_pipeline/baseline/bench_g_decode_ref.py",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 1500 -- pwsh -NoProfile -Fi",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmp2ac8k6\\Scripts\\python.exe research/usb_cameras/bandwidth/run_concurrency.py --batch b09_kiyo_retry --seconds 4",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 580 -- C:\\Users\\Dom\\GitHub\\",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py -- research/usb_cameras/libusb/build/cm",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmp8cQnkA\\Scripts\\python.exe research/usb_cameras/tools/camlock.py -- bash -c research/usb_cameras/mjpeg/build/mf",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmp37KMzp\\Scripts\\python.exe research/usb_cameras/tools/camlock.py -- bash research/usb_cameras/timing/scripts/ki",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/timing/scripts/flash_exposure_scan.py --source uvc_pts_m",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py -- uv run --script research/usb_cameras",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpWPZaz1\\Scripts\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 580 -- C:\\Users\\Dom\\GitHub\\freemoc",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py -- uv run --script research/usb_cameras",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py -- pwsh -NoProfile -File research/usb_c",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpEHLp3n\\Scripts\\python.exe research/usb_cameras/tools/camlock.py -- research/usb_cameras/libusb/build/cmake/bin",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 560 -- uv run --script rese",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpqvnqZq\\Scripts\\python.exe research/usb_cameras/tools/camlock.py -- pwsh -NoProfile -File research/usb_cameras/",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmp9lx2gT\\Scripts\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 1500 -- pwsh -NoProfile -File C:\\U"
+    ],
+    "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d"
+  },
+  "duration_s": 10.0,
+  "rows": [
+    {
+      "size": "720p",
+      "mode": "mjpeg",
+      "n": 1,
+      "per_proc": [
+        {
+          "seed": 0,
+          "n": 3251,
+          "fps": 325.1,
+          "jpeg_bytes_mean": 240599.86666666667,
+          "lat": {
+            "n": 3251,
+            "median_ms": 3.05,
+            "mean_ms": 3.0751047370039983,
+            "p99_ms": 3.5494000000000003,
+            "min_ms": 2.9085,
+            "max_ms": 7.117
+          }
+        }
+      ]
+    },
+    {
+      "size": "720p",
+      "mode": "mjpeg",
+      "n": 5,
+      "per_proc": [
+        {
+          "seed": 3,
+          "n": 2937,
+          "fps": 293.7,
+          "jpeg_bytes_mean": 240624.86666666667,
+          "lat": {
+            "n": 2937,
+            "median_ms": 3.3434,
+            "mean_ms": 3.4040288049029623,
+            "p99_ms": 4.3903839999999965,
+            "min_ms": 3.0132,
+            "max_ms": 5.4638
+          }
+        },
+        {
+          "seed": 1,
+          "n": 2953,
+          "fps": 295.3,
+          "jpeg_bytes_mean": 240592.56666666668,
+          "lat": {
+            "n": 2953,
+            "median_ms": 3.3276,
+            "mean_ms": 3.385695022011514,
+            "p99_ms": 4.359748,
+            "min_ms": 2.9997,
+            "max_ms": 5.8547
+          }
+        },
+        {
+          "seed": 2,
+          "n": 2956,
+          "fps": 295.6,
+          "jpeg_bytes_mean": 240549.33333333334,
+          "lat": {
+            "n": 2956,
+            "median_ms": 3.3229,
+            "mean_ms": 3.3827328146143434,
+            "p99_ms": 4.4043899999999985,
+            "min_ms": 2.9955,
+            "max_ms": 5.7837
+          }
+        },
+        {
+          "seed": 4,
+          "n": 2953,
+          "fps": 295.3,
+          "jpeg_bytes_mean": 240553.33333333334,
+          "lat": {
+            "n": 2953,
+            "median_ms": 3.3228,
+            "mean_ms": 3.3864527599051812,
+            "p99_ms": 4.3681160000000006,
+            "min_ms": 3.004,
+            "max_ms": 5.943
+          }
+        },
+        {
+          "seed": 0,
+          "n": 2953,
+          "fps": 295.3,
+          "jpeg_bytes_mean": 240599.86666666667,
+          "lat": {
+            "n": 2953,
+            "median_ms": 3.3263,
+            "mean_ms": 3.386436877751439,
+            "p99_ms": 4.329688,
+            "min_ms": 3.0096,
+            "max_ms": 5.6951
+          }
+        }
+      ]
+    },
+    {
+      "size": "720p",
+      "mode": "memcpy",
+      "n": 1,
+      "per_proc": [
+        {
+          "seed": 0,
+          "n": 66183,
+          "fps": 6618.3,
+          "jpeg_bytes_mean": 240599.86666666667,
+          "lat": {
+            "n": 66183,
+            "median_ms": 0.1474,
+            "mean_ms": 0.15077465512291677,
+            "p99_ms": 0.21511800000000003,
+            "min_ms": 0.1032,
+            "max_ms": 0.6175
+          }
+        }
+      ]
+    },
+    {
+      "size": "720p",
+      "mode": "memcpy",
+      "n": 5,
+      "per_proc": [
+        {
+          "seed": 2,
+          "n": 18792,
+          "fps": 1879.2,
+          "jpeg_bytes_mean": 240549.33333333334,
+          "lat": {
+            "n": 18792,
+            "median_ms": 0.5213,
+            "mean_ms": 0.5315523839931886,
+            "p99_ms": 0.842636,
+            "min_ms": 0.2869,
+            "max_ms": 1.1273
+          }
+        },
+        {
+          "seed": 1,
+          "n": 18754,
+          "fps": 1875.4,
+          "jpeg_bytes_mean": 240592.56666666668,
+          "lat": {
+            "n": 18754,
+            "median_ms": 0.5212,
+            "mean_ms": 0.5326155913405141,
+            "p99_ms": 0.8586290000000008,
+            "min_ms": 0.2785,
+            "max_ms": 1.1478
+          }
+        },
+        {
+          "seed": 0,
+          "n": 18851,
+          "fps": 1885.1,
+          "jpeg_bytes_mean": 240599.86666666667,
+          "lat": {
+            "n": 18851,
+            "median_ms": 0.5207,
+            "mean_ms": 0.5298853960002123,
+            "p99_ms": 0.83525,
+            "min_ms": 0.2858,
+            "max_ms": 1.2658
+          }
+        },
+        {
+          "seed": 3,
+          "n": 18885,
+          "fps": 1888.5,
+          "jpeg_bytes_mean": 240624.86666666667,
+          "lat": {
+            "n": 18885,
+            "median_ms": 0.52,
+            "mean_ms": 0.5289468361133175,
+            "p99_ms": 0.83468,
+            "min_ms": 0.209,
+            "max_ms": 1.1197
+          }
+        },
+        {
+          "seed": 4,
+          "n": 18809,
+          "fps": 1880.9,
+          "jpeg_bytes_mean": 240553.33333333334,
+          "lat": {
+            "n": 18809,
+            "median_ms": 0.5213,
+            "mean_ms": 0.5310882396724971,
+            "p99_ms": 0.8591879999999975,
+            "min_ms": 0.2738,
+            "max_ms": 1.1886
+          }
+        }
+      ]
+    },
+    {
+      "size": "1080p",
+      "mode": "mjpeg",
+      "n": 1,
+      "per_proc": [
+        {
+          "seed": 0,
+          "n": 1420,
+          "fps": 142.0,
+          "jpeg_bytes_mean": 540472.7,
+          "lat": {
+            "n": 1420,
+            "median_ms": 6.9806,
+            "mean_ms": 7.04176,
+            "p99_ms": 8.015636,
+            "min_ms": 6.6392,
+            "max_ms": 12.9045
+          }
+        }
+      ]
+    },
+    {
+      "size": "1080p",
+      "mode": "mjpeg",
+      "n": 5,
+      "per_proc": [
+        {
+          "seed": 3,
+          "n": 1264,
+          "fps": 126.4,
+          "jpeg_bytes_mean": 540428.3666666667,
+          "lat": {
+            "n": 1264,
+            "median_ms": 7.69175,
+            "mean_ms": 7.910221677215189,
+            "p99_ms": 10.874813999999999,
+            "min_ms": 6.7716,
+            "max_ms": 12.7056
+          }
+        },
+        {
+          "seed": 4,
+          "n": 1257,
+          "fps": 125.7,
+          "jpeg_bytes_mean": 540540.4666666667,
+          "lat": {
+            "n": 1257,
+            "median_ms": 7.6858,
+            "mean_ms": 7.955153937947493,
+            "p99_ms": 11.547836000000002,
+            "min_ms": 6.812,
+            "max_ms": 13.2318
+          }
+        },
+        {
+          "seed": 0,
+          "n": 1263,
+          "fps": 126.3,
+          "jpeg_bytes_mean": 540472.7,
+          "lat": {
+            "n": 1263,
+            "median_ms": 7.6966,
+            "mean_ms": 7.917924069675375,
+            "p99_ms": 11.233979999999976,
+            "min_ms": 6.7706,
+            "max_ms": 13.7348
+          }
+        },
+        {
+          "seed": 2,
+          "n": 1256,
+          "fps": 125.6,
+          "jpeg_bytes_mean": 540418.9333333333,
+          "lat": {
+            "n": 1256,
+            "median_ms": 7.7085,
+            "mean_ms": 7.964269426751592,
+            "p99_ms": 11.472905,
+            "min_ms": 6.7976,
+            "max_ms": 13.3212
+          }
+        },
+        {
+          "seed": 1,
+          "n": 1267,
+          "fps": 126.7,
+          "jpeg_bytes_mean": 540439.1333333333,
+          "lat": {
+            "n": 1267,
+            "median_ms": 7.6619,
+            "mean_ms": 7.895548618784531,
+            "p99_ms": 11.011183999999998,
+            "min_ms": 6.7435,
+            "max_ms": 13.2767
+          }
+        }
+      ]
+    },
+    {
+      "size": "1080p",
+      "mode": "memcpy",
+      "n": 1,
+      "per_proc": [
+        {
+          "seed": 0,
+          "n": 28252,
+          "fps": 2825.2,
+          "jpeg_bytes_mean": 540472.7,
+          "lat": {
+            "n": 28252,
+            "median_ms": 0.346,
+            "mean_ms": 0.3535338206144698,
+            "p99_ms": 0.4598979999999996,
+            "min_ms": 0.2596,
+            "max_ms": 3.2012
+          }
+        }
+      ]
+    },
+    {
+      "size": "1080p",
+      "mode": "memcpy",
+      "n": 5,
+      "per_proc": [
+        {
+          "seed": 0,
+          "n": 8134,
+          "fps": 813.4,
+          "jpeg_bytes_mean": 540472.7,
+          "lat": {
+            "n": 8134,
+            "median_ms": 1.1808,
+            "mean_ms": 1.2285041308089502,
+            "p99_ms": 2.064503,
+            "min_ms": 0.8415,
+            "max_ms": 2.6486
+          }
+        },
+        {
+          "seed": 3,
+          "n": 8110,
+          "fps": 811.0,
+          "jpeg_bytes_mean": 540428.3666666667,
+          "lat": {
+            "n": 8110,
+            "median_ms": 1.1832500000000001,
+            "mean_ms": 1.2321469667077682,
+            "p99_ms": 2.0506279999999997,
+            "min_ms": 0.8979,
+            "max_ms": 2.7059
+          }
+        },
+        {
+          "seed": 2,
+          "n": 8154,
+          "fps": 815.4,
+          "jpeg_bytes_mean": 540418.9333333333,
+          "lat": {
+            "n": 8154,
+            "median_ms": 1.183,
+            "mean_ms": 1.2255232033357861,
+            "p99_ms": 1.9736230000000003,
+            "min_ms": 0.8243,
+            "max_ms": 2.4216
+          }
+        },
+        {
+          "seed": 1,
+          "n": 8181,
+          "fps": 818.1,
+          "jpeg_bytes_mean": 540439.1333333333,
+          "lat": {
+            "n": 8181,
+            "median_ms": 1.1804,
+            "mean_ms": 1.2214772766165505,
+            "p99_ms": 2.0050999999999997,
+            "min_ms": 0.8482,
+            "max_ms": 2.4399
+          }
+        },
+        {
+          "seed": 4,
+          "n": 8157,
+          "fps": 815.7,
+          "jpeg_bytes_mean": 540540.4666666667,
+          "lat": {
+            "n": 8157,
+            "median_ms": 1.1833,
+            "mean_ms": 1.2250803604266274,
+            "p99_ms": 1.976687999999999,
+            "min_ms": 0.693,
+            "max_ms": 2.5993
+          }
+        }
+      ]
+    }
+  ]
+}

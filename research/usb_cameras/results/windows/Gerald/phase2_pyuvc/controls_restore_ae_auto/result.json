@@ -1,0 +1,367 @@
+{
+  "test": "pyuvc_winusb_stream",
+  "platform": "windows",
+  "hostname": "Gerald",
+  "utc_started": "2026-10-25T21:30:32.382439+00:00",
+  "command": "research/usb_cameras/libusb/pyuvc/pyuvc_winusb_stream.py --controls-only --manual-exposure 100 --out-dir research/usb_cameras/results/windows/Gerald/phase2_pyuvc/controls_restore_ae_auto",
+  "environment": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "os": "Windows-11-10.0.26300-SP0",
+    "pupil-labs-uvc": "1.0.8"
+  },
+  "host_clock": "time.perf_counter_ns",
+  "cameras": [
+    {
+      "vid": "1532",
+      "pid": "0e05",
+      "uid": "2:7",
+      "is_accessible": false
+    },
+    {
+      "vid": "046d",
+      "pid": "085c",
+      "uid": "1:25",
+      "is_accessible": false
+    },
+    {
+      "vid": "4c4a",
+      "pid": "4a55",
+      "uid": "1:28",
+      "is_accessible": false
+    },
+    {
+      "vid": "046d",
+      "pid": "0843",
+      "uid": "1:29",
+      "is_accessible": true
+    }
+  ],
+  "clock_check": {
+    "uvc_get_time_monotonic_s": 113189.607787,
+    "perf_counter_s": 113189.6077861,
+    "difference_s": 9.00006853044033e-07
+  },
+  "device_list": [
+    {
+      "name": "unknown",
+      "manufacturer": "unknown",
+      "serialNumber": "unknown",
+      "idProduct": 3589,
+      "idVendor": 5426,
+      "device_address": 7,
+      "bus_number": 2,
+      "uid": "2:7"
+    },
+    {
+      "name": "unknown",
+      "manufacturer": "unknown",
+      "serialNumber": "unknown",
+      "idProduct": 2140,
+      "idVendor": 1133,
+      "device_address": 25,
+      "bus_number": 1,
+      "uid": "1:25"
+    },
+    {
+      "name": "unknown",
+      "manufacturer": "unknown",
+      "serialNumber": "unknown",
+      "idProduct": 19029,
+      "idVendor": 19530,
+      "device_address": 28,
+      "bus_number": 1,
+      "uid": "1:28"
+    },
+    {
+      "name": "Logitech Webcam C930e",
+      "manufacturer": "unknown",
+      "serialNumber": "unknown",
+      "idProduct": 2115,
+      "idVendor": 1133,
+      "device_address": 29,
+      "bus_number": 1,
+      "uid": "1:29"
+    }
+  ],
+  "bundled_libusb_double_open": {
+    "dlls": [
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\pyuvc-winusb-stream-0dba3c5abe6ba50d\\Lib\\site-packages\\pupil_labs_uvc.libs\\libusb-1.0-1dac95d1eafcba057cf3df73dcf419bc.dll"
+    ],
+    "libusb_version": "1.0.26.11724",
+    "init": 0,
+    "iProduct_index": 2,
+    "iSerialNumber_index": 0,
+    "open1_rc": 0,
+    "open1_iProduct": "Logitech Webcam C930e",
+    "open2_rc_while_open1": -3,
+    "claim_if0_rc": 0,
+    "open3_rc_while_open1_claimed": -3,
+    "note": "libusb error codes: -3 ACCESS, -4 NO_DEVICE, -5 NOT_FOUND, -6 BUSY, -12 NOT_SUPPORTED"
+  },
+  "controls_only": {
+    "modes": [
+      "CameraMode(width=160, height=120, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=160, height=120, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=160, height=120, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=160, height=120, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=160, height=120, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=160, height=120, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=160, height=120, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=176, height=144, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=176, height=144, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=176, height=144, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=176, height=144, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=176, height=144, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=176, height=144, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=176, height=144, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=320, height=180, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=320, height=180, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=320, height=180, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=320, height=180, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=320, height=180, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=320, height=180, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=320, height=180, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=320, height=240, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=320, height=240, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=320, height=240, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=320, height=240, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=320, height=240, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=320, height=240, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=320, height=240, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=352, height=288, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=352, height=288, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=352, height=288, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=352, height=288, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=352, height=288, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=352, height=288, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=352, height=288, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=424, height=240, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=424, height=240, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=424, height=240, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=424, height=240, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=424, height=240, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=424, height=240, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=424, height=240, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=480, height=270, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=480, height=270, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=480, height=270, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=480, height=270, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=480, height=270, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=480, height=270, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=480, height=270, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=640, height=360, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=640, height=360, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=640, height=360, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=640, height=360, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=640, height=360, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=640, height=360, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=640, height=360, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=640, height=480, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=640, height=480, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=640, height=480, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=640, height=480, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=640, height=480, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=640, height=480, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=640, height=480, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=800, height=448, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=800, height=448, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=800, height=448, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=800, height=448, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=800, height=448, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=800, height=448, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=800, height=448, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=800, height=600, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=800, height=600, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=800, height=600, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=800, height=600, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=800, height=600, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=800, height=600, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=800, height=600, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=848, height=480, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=848, height=480, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=848, height=480, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=848, height=480, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=848, height=480, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=848, height=480, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=848, height=480, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=960, height=540, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=960, height=540, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=960, height=540, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=960, height=540, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=960, height=540, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=960, height=540, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=960, height=540, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1024, height=576, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1024, height=576, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1024, height=576, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1024, height=576, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1024, height=576, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1024, height=576, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1024, height=576, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1280, height=720, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1280, height=720, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1280, height=720, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1280, height=720, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1280, height=720, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1280, height=720, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1280, height=720, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1600, height=896, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1600, height=896, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1600, height=896, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1600, height=896, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1600, height=896, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1600, height=896, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1600, height=896, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1920, height=1080, fps=5, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1920, height=1080, fps=7, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1920, height=1080, fps=10, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1920, height=1080, fps=15, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1920, height=1080, fps=20, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1920, height=1080, fps=24, format_native=7, format_name='MJPG', supported=True)",
+      "CameraMode(width=1920, height=1080, fps=30, format_native=7, format_name='MJPG', supported=True)"
+    ],
+    "controls": {
+      "Auto Exposure Mode": {
+        "value": 1,
+        "min": 1,
+        "max": 8,
+        "def": 8,
+        "step": 9
+      },
+      "Auto Exposure Priority": {
+        "value": 1,
+        "min": 0,
+        "max": 1,
+        "def": 0,
+        "step": 1
+      },
+      "Absolute Exposure Time": {
+        "value": 312,
+        "min": 3,
+        "max": 500,
+        "def": 250,
+        "step": 1
+      },
+      "Auto Focus": {
+        "value": 1,
+        "min": 0,
+        "max": 1,
+        "def": 1,
+        "step": 1
+      },
+      "Absolute Focus": {
+        "value": 80,
+        "min": 0,
+        "max": 255,
+        "def": 0,
+        "step": 5
+      },
+      "Zoom absolute control": {
+        "value": 100,
+        "min": 100,
+        "max": 400,
+        "def": 100,
+        "step": 1
+      },
+      "Pan control": {
+        "value": 0,
+        "min": -36000,
+        "max": 36000,
+        "def": 0,
+        "step": 3600
+      },
+      "Tilt control": {
+        "value": 0,
+        "min": -36000,
+        "max": 36000,
+        "def": 0,
+        "step": 3600
+      },
+      "Backlight Compensation": {
+        "value": 0,
+        "min": 0,
+        "max": 1,
+        "def": 0,
+        "step": 1
+      },
+      "Brightness": {
+        "value": 128,
+        "min": 0,
+        "max": 255,
+        "def": 128,
+        "step": 1
+      },
+      "Contrast": {
+        "value": 128,
+        "min": 0,
+        "max": 255,
+        "def": 128,
+        "step": 1
+      },
+      "Gain": {
+        "value": 62,
+        "min": 0,
+        "max": 255,
+        "def": 0,
+        "step": 1
+      },
+      "Power Line frequency": {
+        "value": 2,
+        "min": 0,
+        "max": 2,
+        "def": 2,
+        "step": 1
+      },
+      "Saturation": {
+        "value": 53,
+        "min": 0,
+        "max": 255,
+        "def": 128,
+        "step": 1
+      },
+      "Sharpness": {
+        "value": 128,
+        "min": 0,
+        "max": 255,
+        "def": 128,
+        "step": 1
+      },
+      "White Balance temperature": {
+        "value": 4000,
+        "min": 2000,
+        "max": 7500,
+        "def": 4000,
+        "step": 1
+      },
+      "White Balance temperature,Auto": {
+        "value": 0,
+        "min": 0,
+        "max": 1,
+        "def": 1,
+        "step": 1
+      }
+    },
+    "set_readback": [
+      {
+        "control": "Auto Exposure Mode",
+        "set": 1,
+        "readback": 1
+      },
+      {
+        "control": "Absolute Exposure Time",
+        "set": 100,
+        "readback": 100
+      },
+      {
+        "control": "Absolute Exposure Time",
+        "set": 200,
+        "readback": 200
+      },
+      {
+        "control": "Auto Exposure Mode",
+        "set": 8,
+        "readback": 8
+      }
+    ]
+  }
+}

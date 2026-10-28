@@ -1,0 +1,47 @@
+Unable to find image 'python:3.12-slim' locally
+3.12-slim: Pulling from library/python
+5c397e4307db: Pulling fs layer
+be6443c06d3c: Pulling fs layer
+b524bb3aba73: Pulling fs layer
+f2be67225471: Pulling fs layer
+f2be67225471: Already exists
+5c397e4307db: Download complete
+a19c1c598c82: Download complete
+be6443c06d3c: Download complete
+be6443c06d3c: Pull complete
+9a229e332182: Download complete
+b524bb3aba73: Download complete
+5c397e4307db: Pull complete
+b524bb3aba73: Pull complete
+Digest: sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704
+Status: Downloaded newer image for python:3.12-slim
+cat: /proc/sys/net/core/rmem_max: No such file or directory
+cat: /proc/sys/net/core/rmem_default: No such file or directory
+rmem_max= rmem_default=
+5.15.153.1-microsoft-standard-WSL2
+28
+python 3.12.15 | Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.41 | cpus=28
+Line-rate reference (GVSP over UDP, full Ethernet framing overhead):
+     1 GbE: MTU1500    81,274 pps | MTU9000   13,830 pps
+   2.5 GbE: MTU1500   203,186 pps | MTU9000   34,576 pps
+    10 GbE: MTU1500   812,744 pps | MTU9000  138,305 pps
+ size  target      mode |      sent      recv   drop% |  tx Mb/s  rx Mb/s  rx kpps rxCPU% | rcvbuf(actual)
+----------------------------------------------------------------------------------------------------------
+ 1472    1000  recvfrom |   254,784   252,917    0.73 |     1000      993     84.3     21 | 425984
+ 1472    1000 recv_into |   254,784   253,946    0.33 |     1000      997     84.6     16 | 425984
+ 1472     max  recvfrom | 3,187,648 1,862,413   41.57 |    12512     7310    620.8    101 | 425984
+ 1472     max recv_into | 3,104,064 2,606,950   16.02 |    12184    10233    869.0    101 | 425984
+ 8972    1000  recvfrom |    41,824    41,824    0.00 |     1000     1000     13.9      7 | 425984
+ 8972    1000 recv_into |    41,824    41,809    0.04 |     1000     1000     13.9      7 | 425984
+ 8972     max  recvfrom | 2,488,768 1,082,139   56.52 |    59544    25891    360.7     96 | 425984
+ 8972     max recv_into | 2,518,480 1,594,029   36.71 |    60255    38138    531.3     99 | 425984
+--- default rcvbuf
+python 3.12.15 | Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.41 | cpus=28
+Line-rate reference (GVSP over UDP, full Ethernet framing overhead):
+     1 GbE: MTU1500    81,274 pps | MTU9000   13,830 pps
+   2.5 GbE: MTU1500   203,186 pps | MTU9000   34,576 pps
+    10 GbE: MTU1500   812,744 pps | MTU9000  138,305 pps
+ size  target      mode |      sent      recv   drop% |  tx Mb/s  rx Mb/s  rx kpps rxCPU% | rcvbuf(actual)
+----------------------------------------------------------------------------------------------------------
+ 1472    1000 recv_into |   254,784   254,784    0.00 |     1000     1000     84.9     16 | 212992
+ 8972    1000 recv_into |    41,824    38,802    7.23 |     1000      928     12.9      5 | 212992

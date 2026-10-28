@@ -1,0 +1,198 @@
+{
+ "test": "mjpeg_opencv-msmf-raw",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-28T04:02:51.458021+00:00",
+ "utc_summarized": "2026-10-28T04:03:49.054440+00:00",
+ "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c930e --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_rerun_20261027\\mjpeg_opencv-msmf-raw\\common_1280x720at30_c930e' --timeout-s 120 -- uv run --script research/usb_cameras/mjpeg/opencv/opencv_capture.py --api msmf --mode raw --set-order size-first --index 6 --name c930e --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_rerun_20261027\\mjpeg_opencv-msmf-raw\\common_1280x720at30_c930e'",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "numpy": "2.2.6",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "backend": "opencv-msmf-raw",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30.0
+ },
+ "decoded_by_pipeline": true,
+ "decode_evidence": "frames returned as pixel arrays (see frame_shapes)",
+ "window": {
+  "start_ns": 33825648718700,
+  "end_ns": 33835649060200,
+  "wall_s": 10.0003415
+ },
+ "delivered_codecs": [
+  "NV12"
+ ],
+ "silent_format_fallback": true,
+ "cpu": {
+  "method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)",
+  "wall_s": 10.0003478,
+  "process_cpu_s_ticks": 7.640625,
+  "process_cpu_pct_of_one_core_ticks": 76.40359268304648,
+  "tsc_hz": 3383191967.22254,
+  "process_cycles": 26050552147,
+  "process_cpu_pct_of_one_core": 76.99724518349728,
+  "frameserver_pid": 45468,
+  "frameserver_cpu_pct_of_one_core_ticks": 2.6561576188380167,
+  "frameserver_cpu_pct_of_one_core": null,
+  "process_cpu_pct_per_camera": 76.99724518349728
+ },
+ "cameras": [
+  {
+   "idx": 0,
+   "name": "c930e",
+   "cv_index": 6,
+   "api": "msmf",
+   "backend_name": "MSMF",
+   "set_results": {
+    "order": "size-first",
+    "w": true,
+    "h": true,
+    "fps": true,
+    "fourcc_last": false,
+    "format_-1": false,
+    "convert_rgb_0": true
+   },
+   "got_fourcc": "NV12",
+   "got_w": 1280.0,
+   "got_h": 720.0,
+   "got_fps": 30.0,
+   "got_convert_rgb": 0.0,
+   "got_format": -1.0,
+   "open_ms": 40018.1501,
+   "frames": 55,
+   "frame_shapes": {
+    "(1, 1382400)/uint8": 55
+   },
+   "frames_starting_ffd8": 0,
+   "frames_delivered_total": 55,
+   "frames_in_window": 54,
+   "fps_requested": 30.0,
+   "fps_achieved_count_over_wall": 5.399815596297387,
+   "fps_achieved_span": 30.54792017655545,
+   "inter_arrival_ms": {
+    "n": 53,
+    "min": 8.8567,
+    "p50": 32.014,
+    "mean": 32.73545283018868,
+    "p95": 44.2237,
+    "max": 50.4841
+   },
+   "gaps_over_1p5_period": 1,
+   "os_timestamp_delta_ms": null,
+   "payload_bytes": {
+    "n": 54,
+    "min": 1382400,
+    "p50": 1382400,
+    "mean": 1382400.0,
+    "p95": 1382400,
+    "max": 1382400
+   },
+   "mean_luma": null,
+   "pct_valid_jpeg_in_window": null,
+   "pct_valid_jpeg_all": null,
+   "pct_valid_jpeg_strict_all": null,
+   "libjpeg_warnings_sample": [],
+   "jpeg_checks_all": null,
+   "n_validated": 0,
+   "cam": "c930e",
+   "jpeg_header": null,
+   "os_timestamp_source": "none (CAP_PROP_POS_MSEC logged as pos_msec)",
+   "timestamp_fields_present": {
+    "pos_msec": 54
+   },
+   "arrival_minus_os_timestamp_ms": null
+  }
+ ],
+ "samples": [],
+ "devnode_status": {
+  "before": {
+   "c930e:VID_046D&PID_0843&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_02": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_00": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843&MI_03": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_00": "0x0180200A",
+   "usbcam:VID_4C4A&PID_4A55": "0x0180600A",
+   "kiyo:VID_1532&PID_0E05&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843": "0x0180600A"
+  },
+  "after": {
+   "c930e:VID_046D&PID_0843&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_02": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_00": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843&MI_03": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_00": "0x0180200A",
+   "usbcam:VID_4C4A&PID_4A55": "0x0180600A",
+   "kiyo:VID_1532&PID_0E05&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843": "0x0180600A"
+  }
+ },
+ "machine_cpu": {
+  "before": {
+   "utc": "2026-10-28T04:02:51.239565+00:00",
+   "interval_s": 1.0,
+   "machine_cpu_pct": 3.8,
+   "n_logical": 28,
+   "busiest_core_pct": 24.6
+  },
+  "after": {
+   "utc": "2026-10-28T04:03:35.323910+00:00",
+   "interval_s": 1.0,
+   "machine_cpu_pct": 3.4,
+   "n_logical": 28,
+   "busiest_core_pct": 24.6
+  },
+  "note": "whole-machine CPU% (psutil, 1 s) right before and after the capture; other agents run concurrently"
+ },
+ "controls": {
+  "requested": {
+   "exposure_log2s": -7,
+   "white_balance_k": 4500,
+   "auto_exposure_priority": 0
+  },
+  "after_apply": {
+   "Logitech Webcam C930e": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "gain": 31,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "readback_after_capture": {
+   "Logitech Webcam C930e": {
+    "exposure_log2s": -5,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "gain": 115,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "apply_rc": 0,
+  "readback_rc": 0
+ },
+ "errors": [],
+ "cv2_version": "4.12.0"
+}

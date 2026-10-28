@@ -1,0 +1,155 @@
+{
+  "test": "prior_art_gst_probe",
+  "platform": "windows",
+  "hostname": "Gerald",
+  "utc_started": "2026-10-28T03:47:34.382233+00:00",
+  "command": "python.exe research/usb_cameras/prior_art/gst_probe.py --capture --source mfvideosrc --seconds 6 --device-path \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --device-path \\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --device-path \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+  "environment": {
+    "os": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "gstreamer": "GStreamer 1.28.8 (GIT)"
+  },
+  "devices_tested": [
+    {
+      "camera_key": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "display_name": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "pipeline": "mfvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+      "src_props": {
+        "device-path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+      },
+      "src_readback_while_playing": {
+        "device-path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+        "device-name": null,
+        "device-index": -1
+      },
+      "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+      "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1",
+      "n_frames": 172,
+      "n_valid_soi_eoi": 172,
+      "n_pillow_decoded_ok": 12,
+      "n_pillow_decode_fail": 0,
+      "n_buffer_metas_total": 0,
+      "stats": {
+        "fps_by_arrival": 30.020167232344928,
+        "arrival_interval_ms_min_med_max": [
+          30.7818,
+          32.0028,
+          48.8629
+        ],
+        "pts_interval_ms_min_med_max": [
+          31.2383,
+          32.0038,
+          48.5883
+        ],
+        "arrival_minus_pts_ms_min_med_max": [
+          0.0647,
+          0.1144,
+          0.5483
+        ],
+        "payload_bytes_min_med_max": [
+          98643,
+          99730
+        ]
+      },
+      "frames_file": "frames_046d_085c.jsonl",
+      "sample_file": "sample_046d_085c.jpg"
+    },
+    {
+      "camera_key": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "display_name": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "pipeline": "mfvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+      "src_props": {
+        "device-path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+      },
+      "src_readback_while_playing": {
+        "device-path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+        "device-name": null,
+        "device-index": -1
+      },
+      "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+      "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1",
+      "n_frames": 167,
+      "n_valid_soi_eoi": 167,
+      "n_pillow_decoded_ok": 12,
+      "n_pillow_decode_fail": 0,
+      "n_buffer_metas_total": 0,
+      "stats": {
+        "fps_by_arrival": 29.982853059202878,
+        "arrival_interval_ms_min_med_max": [
+          30.9822,
+          32.0218,
+          48.777
+        ],
+        "pts_interval_ms_min_med_max": [
+          31.2888,
+          32.0145,
+          48.477
+        ],
+        "arrival_minus_pts_ms_min_med_max": [
+          0.0628,
+          0.3141,
+          0.5985
+        ],
+        "payload_bytes_min_med_max": [
+          105463,
+          123839,
+          124946
+        ]
+      },
+      "frames_file": "frames_046d_0843.jsonl",
+      "sample_file": "sample_046d_0843.jpg"
+    },
+    {
+      "camera_key": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "display_name": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "pipeline": "mfvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+      "src_props": {
+        "device-path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+      },
+      "src_readback_while_playing": {
+        "device-path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+        "device-name": null,
+        "device-index": -1
+      },
+      "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+      "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1",
+      "n_frames": 151,
+      "n_valid_soi_eoi": 151,
+      "n_pillow_decoded_ok": 11,
+      "n_pillow_decode_fail": 0,
+      "n_buffer_metas_total": 0,
+      "stats": {
+        "fps_by_arrival": 25.75792302121067,
+        "arrival_interval_ms_min_med_max": [
+          30.9721,
+          32.5537,
+          49.3603
+        ],
+        "pts_interval_ms_min_med_max": [
+          31.2419,
+          32.4373,
+          49.0153
+        ],
+        "arrival_minus_pts_ms_min_med_max": [
+          0.0809,
+          0.3034,
+          0.7853
+        ],
+        "payload_bytes_min_med_max": [
+          23154,
+          56777,
+          57211
+        ]
+      },
+      "frames_file": "frames_4c4a_4a55.jsonl",
+      "sample_file": "sample_4c4a_4a55.jpg"
+    }
+  ],
+  "settings": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "seconds": 6.0,
+    "exposure": "not controlled (camera auto)"
+  }
+}

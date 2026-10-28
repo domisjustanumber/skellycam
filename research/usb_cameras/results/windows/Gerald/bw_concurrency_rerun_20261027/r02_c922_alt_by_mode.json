@@ -1,0 +1,1873 @@
+{
+ "test": "bw_concurrency",
+ "batch": "r02_c922_alt_by_mode",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-28T03:07:49.826382+00:00",
+ "command": "research/usb_cameras/bandwidth/run_concurrency.py --out-dir research/usb_cameras/results/windows/Gerald/bw_concurrency_rerun_20261027 --exclude 1532:0e05 --exe C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/7c9d3345-0e7f-4af6-bb14-20fd851edd1a/scratchpad/bin/mf_multi_open.exe --save-max 150 --exposure -7 --wb 4500 --batch r02_c922_alt_by_mode --save-dir C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/7c9d3345-0e7f-4af6-bb14-20fd851edd1a/scratchpad/runs/bw_rerun_20261027/r02_c922_alt_by_mode --seconds 5 --budget-s 170 --combo mjpg_640x480_30|vid_046d&pid_085c:MJPG:640x480@30 --combo mjpg_1280x720_30|vid_046d&pid_085c:MJPG:1280x720@30 --combo mjpg_1280x720_60|vid_046d&pid_085c:MJPG:1280x720@60 --combo mjpg_1920x1080_30|vid_046d&pid_085c:MJPG:1920x1080@30 --combo mjpg_1920x1080_5|vid_046d&pid_085c:MJPG:1920x1080@5 --combo yuy2_640x480_30|vid_046d&pid_085c:YUY2:640x480@30 --combo yuy2_1280x720_10|vid_046d&pid_085c:YUY2:1280x720@10 --combo yuy2_1920x1080_5|vid_046d&pid_085c:YUY2:1920x1080@5 --combo yuy2_320x240_30|vid_046d&pid_085c:YUY2:320x240@30",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.13",
+  "exe": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\bin\\mf_multi_open.exe"
+ },
+ "exclude": [
+  "1532:0e05"
+ ],
+ "save_dir": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\bw_rerun_20261027\\r02_c922_alt_by_mode",
+ "machine_cpu_pct_start": 6.0,
+ "settings": {
+  "seconds": 5.0,
+  "exposure": -7,
+  "wb": 4500,
+  "stagger_ms": 0
+ },
+ "combos": [
+  {
+   "label": "mjpg_640x480_30",
+   "specs": [
+    "vid_046d&pid_085c:MJPG:640x480@30"
+   ],
+   "command": [
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\bin\\mf_multi_open.exe",
+    "--seconds",
+    "5.0",
+    "--out",
+    "--stagger-ms",
+    "0",
+    "--exposure",
+    "-7",
+    "--wb",
+    "4500",
+    "--save-dir",
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\bw_rerun_20261027\\r02_c922_alt_by_mode\\mjpg_640x480_30",
+    "--save-max",
+    "150",
+    "--cam",
+    "vid_046d&pid_085c:MJPG:640x480@30"
+   ],
+   "exit_code": 0,
+   "mf": {
+    "tool": "mf_multi_open",
+    "seconds": 5,
+    "stagger_ms": 0,
+    "exposure_requested": -7,
+    "wb_requested": 4500,
+    "cameras": [
+     {
+      "spec": "vid_046d&pid_085c:MJPG:640x480@30",
+      "name": "c922 Pro Stream Webcam",
+      "symbolic_link": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "chosen_native_type": "MJPG 640x480 30/1",
+      "streamed": true,
+      "failed_stage": null,
+      "error_hr": null,
+      "error_msg": "",
+      "setup_ms": 81.9087,
+      "first_sample_ms": 300.508,
+      "samples": 142,
+      "steady_fps": 30.0185,
+      "steady_bytes_per_s": 1262510.0,
+      "steady_mean_sample_bytes": 42057.9,
+      "max_sample_bytes": 42938,
+      "steady_intervals": 110,
+      "late_intervals_gt_1p5x": 0,
+      "max_gap_ms": 48.2557,
+      "stream_ticks": 1,
+      "saved_samples": 142,
+      "read_errors": [],
+      "exposure": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": -5,
+       "prev_flags": 1
+      },
+      "white_balance": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": 4000,
+       "prev_flags": 1
+      },
+      "sizes_first_60": [
+       40361,
+       40865,
+       41239,
+       41265,
+       41221,
+       41264,
+       41279,
+       41281,
+       41213,
+       41231,
+       41201,
+       41244,
+       41273,
+       41377,
+       39507,
+       39469,
+       39455,
+       39498,
+       39490,
+       39495,
+       39390,
+       39467,
+       39468,
+       39437,
+       39488,
+       39491,
+       39460,
+       39508,
+       39445,
+       39444,
+       39499,
+       39476,
+       39502,
+       39537,
+       39503,
+       39451,
+       39403,
+       39523,
+       39521,
+       39405,
+       39442,
+       39422,
+       39515,
+       39445,
+       39537,
+       39434,
+       39678,
+       40572,
+       41505,
+       42458,
+       42616,
+       42028,
+       40888,
+       37876,
+       36478,
+       36364,
+       38607,
+       42750,
+       42756,
+       42666
+      ]
+     }
+    ]
+   },
+   "pipes_while_streaming_t_s": 5.813000000001921,
+   "pipes_while_streaming": [
+    {
+     "idVendor": "046d",
+     "idProduct": "085c",
+     "product": "C922 Pro Stream Webcam",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+     "port": 1,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x83",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x81",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x0280",
+       "base_packet_bytes": 640,
+       "transactions_per_microframe": 1,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 4,
+       "endpoint": "0x81",
+       "bytes_per_interval": 640,
+       "service_interval_us": 125
+      }
+     ]
+    },
+    {
+     "idVendor": "4c4a",
+     "idProduct": "4a55",
+     "product": "USB Composite Device",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 3,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x85",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0010",
+       "base_packet_bytes": 16,
+       "transactions_per_microframe": 1,
+       "bInterval": 4,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    },
+    {
+     "idVendor": "046d",
+     "idProduct": "0843",
+     "product": "Logitech Webcam C930e",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 4,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x86",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    }
+   ],
+   "utc_end": "2026-10-28T03:08:00.922536+00:00"
+  },
+  {
+   "label": "mjpg_1280x720_30",
+   "specs": [
+    "vid_046d&pid_085c:MJPG:1280x720@30"
+   ],
+   "command": [
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\bin\\mf_multi_open.exe",
+    "--seconds",
+    "5.0",
+    "--out",
+    "--stagger-ms",
+    "0",
+    "--exposure",
+    "-7",
+    "--wb",
+    "4500",
+    "--save-dir",
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\bw_rerun_20261027\\r02_c922_alt_by_mode\\mjpg_1280x720_30",
+    "--save-max",
+    "150",
+    "--cam",
+    "vid_046d&pid_085c:MJPG:1280x720@30"
+   ],
+   "exit_code": 0,
+   "mf": {
+    "tool": "mf_multi_open",
+    "seconds": 5,
+    "stagger_ms": 0,
+    "exposure_requested": -7,
+    "wb_requested": 4500,
+    "cameras": [
+     {
+      "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+      "name": "c922 Pro Stream Webcam",
+      "symbolic_link": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "chosen_native_type": "MJPG 1280x720 30/1",
+      "streamed": true,
+      "failed_stage": null,
+      "error_hr": null,
+      "error_msg": "",
+      "setup_ms": 30.7398,
+      "first_sample_ms": 303.558,
+      "samples": 142,
+      "steady_fps": 29.8862,
+      "steady_bytes_per_s": 2994350.0,
+      "steady_mean_sample_bytes": 100192,
+      "max_sample_bytes": 100426,
+      "steady_intervals": 110,
+      "late_intervals_gt_1p5x": 0,
+      "max_gap_ms": 48.4363,
+      "stream_ticks": 1,
+      "saved_samples": 142,
+      "read_errors": [],
+      "exposure": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": -6,
+       "prev_flags": 1
+      },
+      "white_balance": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": 4513,
+       "prev_flags": 1
+      },
+      "sizes_first_60": [
+       99602,
+       99529,
+       99674,
+       99749,
+       99767,
+       99986,
+       99749,
+       99635,
+       99791,
+       99641,
+       100109,
+       100137,
+       100177,
+       100014,
+       99972,
+       99943,
+       100057,
+       100051,
+       100096,
+       100112,
+       99830,
+       100123,
+       100166,
+       100117,
+       99972,
+       99963,
+       100061,
+       100038,
+       100163,
+       100295,
+       100131,
+       100122,
+       99984,
+       99971,
+       100117,
+       100150,
+       100025,
+       100114,
+       100084,
+       100144,
+       100346,
+       100252,
+       100144,
+       100090,
+       100059,
+       100099,
+       100143,
+       100235,
+       100251,
+       100077,
+       100013,
+       100119,
+       100278,
+       100096,
+       100188,
+       100243,
+       100075,
+       100339,
+       100228,
+       100247
+      ]
+     }
+    ]
+   },
+   "pipes_while_streaming_t_s": 5.34400000000096,
+   "pipes_while_streaming": [
+    {
+     "idVendor": "046d",
+     "idProduct": "085c",
+     "product": "C922 Pro Stream Webcam",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+     "port": 1,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x83",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x81",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x0be0",
+       "base_packet_bytes": 992,
+       "transactions_per_microframe": 2,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 9,
+       "endpoint": "0x81",
+       "bytes_per_interval": 1984,
+       "service_interval_us": 125
+      }
+     ]
+    },
+    {
+     "idVendor": "4c4a",
+     "idProduct": "4a55",
+     "product": "USB Composite Device",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 3,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x85",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0010",
+       "base_packet_bytes": 16,
+       "transactions_per_microframe": 1,
+       "bInterval": 4,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    },
+    {
+     "idVendor": "046d",
+     "idProduct": "0843",
+     "product": "Logitech Webcam C930e",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 4,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x86",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    }
+   ],
+   "utc_end": "2026-10-28T03:08:10.513411+00:00"
+  },
+  {
+   "label": "mjpg_1280x720_60",
+   "specs": [
+    "vid_046d&pid_085c:MJPG:1280x720@60"
+   ],
+   "command": [
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\bin\\mf_multi_open.exe",
+    "--seconds",
+    "5.0",
+    "--out",
+    "--stagger-ms",
+    "0",
+    "--exposure",
+    "-7",
+    "--wb",
+    "4500",
+    "--save-dir",
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\bw_rerun_20261027\\r02_c922_alt_by_mode\\mjpg_1280x720_60",
+    "--save-max",
+    "150",
+    "--cam",
+    "vid_046d&pid_085c:MJPG:1280x720@60"
+   ],
+   "exit_code": 0,
+   "mf": {
+    "tool": "mf_multi_open",
+    "seconds": 5,
+    "stagger_ms": 0,
+    "exposure_requested": -7,
+    "wb_requested": 4500,
+    "cameras": [
+     {
+      "spec": "vid_046d&pid_085c:MJPG:1280x720@60",
+      "name": "c922 Pro Stream Webcam",
+      "symbolic_link": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "chosen_native_type": "MJPG 1280x720 60/1",
+      "streamed": true,
+      "failed_stage": null,
+      "error_hr": null,
+      "error_msg": "",
+      "setup_ms": 30.8659,
+      "first_sample_ms": 235.104,
+      "samples": 143,
+      "steady_fps": 29.7859,
+      "steady_bytes_per_s": 2693610.0,
+      "steady_mean_sample_bytes": 90432.4,
+      "max_sample_bytes": 97451,
+      "steady_intervals": 112,
+      "late_intervals_gt_1p5x": 112,
+      "max_gap_ms": 48.0586,
+      "stream_ticks": 1,
+      "saved_samples": 143,
+      "read_errors": [],
+      "exposure": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": -7,
+       "prev_flags": 1
+      },
+      "white_balance": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": 4513,
+       "prev_flags": 1
+      },
+      "sizes_first_60": [
+       97227,
+       97149,
+       97284,
+       97245,
+       97237,
+       97451,
+       97322,
+       94635,
+       93745,
+       91685,
+       91359,
+       90996,
+       91135,
+       90885,
+       90646,
+       90656,
+       90619,
+       90513,
+       90564,
+       90513,
+       90435,
+       90582,
+       90500,
+       90416,
+       90456,
+       90513,
+       90464,
+       90448,
+       90481,
+       90361,
+       90564,
+       90450,
+       90383,
+       90366,
+       90438,
+       90344,
+       90521,
+       90395,
+       90426,
+       90280,
+       90434,
+       90424,
+       90386,
+       90247,
+       90486,
+       90330,
+       90243,
+       90505,
+       90262,
+       90229,
+       90373,
+       90260,
+       90242,
+       90445,
+       90432,
+       90504,
+       90345,
+       90348,
+       90526,
+       90500
+      ]
+     }
+    ]
+   },
+   "pipes_while_streaming_t_s": 5.25,
+   "pipes_while_streaming": [
+    {
+     "idVendor": "046d",
+     "idProduct": "085c",
+     "product": "C922 Pro Stream Webcam",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+     "port": 1,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x83",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x81",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x13fc",
+       "base_packet_bytes": 1020,
+       "transactions_per_microframe": 3,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 11,
+       "endpoint": "0x81",
+       "bytes_per_interval": 3060,
+       "service_interval_us": 125
+      }
+     ]
+    },
+    {
+     "idVendor": "4c4a",
+     "idProduct": "4a55",
+     "product": "USB Composite Device",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 3,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x85",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0010",
+       "base_packet_bytes": 16,
+       "transactions_per_microframe": 1,
+       "bInterval": 4,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    },
+    {
+     "idVendor": "046d",
+     "idProduct": "0843",
+     "product": "Logitech Webcam C930e",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 4,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x86",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    }
+   ],
+   "utc_end": "2026-10-28T03:08:20.046538+00:00"
+  },
+  {
+   "label": "mjpg_1920x1080_30",
+   "specs": [
+    "vid_046d&pid_085c:MJPG:1920x1080@30"
+   ],
+   "command": [
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\bin\\mf_multi_open.exe",
+    "--seconds",
+    "5.0",
+    "--out",
+    "--stagger-ms",
+    "0",
+    "--exposure",
+    "-7",
+    "--wb",
+    "4500",
+    "--save-dir",
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\bw_rerun_20261027\\r02_c922_alt_by_mode\\mjpg_1920x1080_30",
+    "--save-max",
+    "150",
+    "--cam",
+    "vid_046d&pid_085c:MJPG:1920x1080@30"
+   ],
+   "exit_code": 0,
+   "mf": {
+    "tool": "mf_multi_open",
+    "seconds": 5,
+    "stagger_ms": 0,
+    "exposure_requested": -7,
+    "wb_requested": 4500,
+    "cameras": [
+     {
+      "spec": "vid_046d&pid_085c:MJPG:1920x1080@30",
+      "name": "c922 Pro Stream Webcam",
+      "symbolic_link": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "chosen_native_type": "MJPG 1920x1080 30/1",
+      "streamed": true,
+      "failed_stage": null,
+      "error_hr": null,
+      "error_msg": "",
+      "setup_ms": 32.8134,
+      "first_sample_ms": 299.981,
+      "samples": 142,
+      "steady_fps": 30.0329,
+      "steady_bytes_per_s": 6947450.0,
+      "steady_mean_sample_bytes": 231328,
+      "max_sample_bytes": 232108,
+      "steady_intervals": 111,
+      "late_intervals_gt_1p5x": 0,
+      "max_gap_ms": 48.0359,
+      "stream_ticks": 1,
+      "saved_samples": 142,
+      "read_errors": [],
+      "exposure": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": -6,
+       "prev_flags": 1
+      },
+      "white_balance": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": 4513,
+       "prev_flags": 1
+      },
+      "sizes_first_60": [
+       201206,
+       201175,
+       201259,
+       201052,
+       201080,
+       200928,
+       201195,
+       201068,
+       201135,
+       200877,
+       201137,
+       201059,
+       201128,
+       201203,
+       201061,
+       201077,
+       201152,
+       202040,
+       211326,
+       222784,
+       228696,
+       216887,
+       211797,
+       194901,
+       187987,
+       188303,
+       199658,
+       229275,
+       229765,
+       229590,
+       229990,
+       230165,
+       230508,
+       230263,
+       230448,
+       230647,
+       230539,
+       230310,
+       230442,
+       231108,
+       231068,
+       230381,
+       230633,
+       231086,
+       231225,
+       231103,
+       231007,
+       230898,
+       230807,
+       230982,
+       231123,
+       231078,
+       230846,
+       231274,
+       231038,
+       231208,
+       231147,
+       231097,
+       230871,
+       231092
+      ]
+     }
+    ]
+   },
+   "pipes_while_streaming_t_s": 5.327999999997701,
+   "pipes_while_streaming": [
+    {
+     "idVendor": "046d",
+     "idProduct": "085c",
+     "product": "C922 Pro Stream Webcam",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+     "port": 1,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x83",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x81",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x13fc",
+       "base_packet_bytes": 1020,
+       "transactions_per_microframe": 3,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 11,
+       "endpoint": "0x81",
+       "bytes_per_interval": 3060,
+       "service_interval_us": 125
+      }
+     ]
+    },
+    {
+     "idVendor": "4c4a",
+     "idProduct": "4a55",
+     "product": "USB Composite Device",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 3,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x85",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0010",
+       "base_packet_bytes": 16,
+       "transactions_per_microframe": 1,
+       "bInterval": 4,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    },
+    {
+     "idVendor": "046d",
+     "idProduct": "0843",
+     "product": "Logitech Webcam C930e",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 4,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x86",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    }
+   ],
+   "utc_end": "2026-10-28T03:08:29.612427+00:00"
+  },
+  {
+   "label": "mjpg_1920x1080_5",
+   "specs": [
+    "vid_046d&pid_085c:MJPG:1920x1080@5"
+   ],
+   "command": [
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\bin\\mf_multi_open.exe",
+    "--seconds",
+    "5.0",
+    "--out",
+    "--stagger-ms",
+    "0",
+    "--exposure",
+    "-7",
+    "--wb",
+    "4500",
+    "--save-dir",
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\bw_rerun_20261027\\r02_c922_alt_by_mode\\mjpg_1920x1080_5",
+    "--save-max",
+    "150",
+    "--cam",
+    "vid_046d&pid_085c:MJPG:1920x1080@5"
+   ],
+   "exit_code": 0,
+   "mf": {
+    "tool": "mf_multi_open",
+    "seconds": 5,
+    "stagger_ms": 0,
+    "exposure_requested": -7,
+    "wb_requested": 4500,
+    "cameras": [
+     {
+      "spec": "vid_046d&pid_085c:MJPG:1920x1080@5",
+      "name": "c922 Pro Stream Webcam",
+      "symbolic_link": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "chosen_native_type": "MJPG 1920x1080 5/1",
+      "streamed": true,
+      "failed_stage": null,
+      "error_hr": null,
+      "error_msg": "",
+      "setup_ms": 31.0506,
+      "first_sample_ms": 828.471,
+      "samples": 22,
+      "steady_fps": 5.01387,
+      "steady_bytes_per_s": 852041,
+      "steady_mean_sample_bytes": 169937,
+      "max_sample_bytes": 181807,
+      "steady_intervals": 15,
+      "late_intervals_gt_1p5x": 0,
+      "max_gap_ms": 208.765,
+      "stream_ticks": 1,
+      "saved_samples": 22,
+      "read_errors": [],
+      "exposure": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": -6,
+       "prev_flags": 1
+      },
+      "white_balance": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": 4513,
+       "prev_flags": 1
+      },
+      "sizes_first_60": [
+       181807,
+       180994,
+       180923,
+       180635,
+       180784,
+       180793,
+       180783,
+       180877,
+       180866,
+       171691,
+       171686,
+       167659,
+       165973,
+       165158,
+       164823,
+       164615,
+       164436,
+       164168,
+       164676,
+       171611,
+       180287,
+       170524
+      ]
+     }
+    ]
+   },
+   "pipes_while_streaming_t_s": 5.859000000000378,
+   "pipes_while_streaming": [
+    {
+     "idVendor": "046d",
+     "idProduct": "085c",
+     "product": "C922 Pro Stream Webcam",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+     "port": 1,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x83",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x81",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x0320",
+       "base_packet_bytes": 800,
+       "transactions_per_microframe": 1,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 5,
+       "endpoint": "0x81",
+       "bytes_per_interval": 800,
+       "service_interval_us": 125
+      }
+     ]
+    },
+    {
+     "idVendor": "4c4a",
+     "idProduct": "4a55",
+     "product": "USB Composite Device",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 3,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x85",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0010",
+       "base_packet_bytes": 16,
+       "transactions_per_microframe": 1,
+       "bInterval": 4,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    },
+    {
+     "idVendor": "046d",
+     "idProduct": "0843",
+     "product": "Logitech Webcam C930e",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 4,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x86",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    }
+   ],
+   "utc_end": "2026-10-28T03:08:39.451593+00:00"
+  },
+  {
+   "label": "yuy2_640x480_30",
+   "specs": [
+    "vid_046d&pid_085c:YUY2:640x480@30"
+   ],
+   "command": [
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\bin\\mf_multi_open.exe",
+    "--seconds",
+    "5.0",
+    "--out",
+    "--stagger-ms",
+    "0",
+    "--exposure",
+    "-7",
+    "--wb",
+    "4500",
+    "--save-dir",
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\bw_rerun_20261027\\r02_c922_alt_by_mode\\yuy2_640x480_30",
+    "--save-max",
+    "150",
+    "--cam",
+    "vid_046d&pid_085c:YUY2:640x480@30"
+   ],
+   "exit_code": 0,
+   "mf": {
+    "tool": "mf_multi_open",
+    "seconds": 5,
+    "stagger_ms": 0,
+    "exposure_requested": -7,
+    "wb_requested": 4500,
+    "cameras": [
+     {
+      "spec": "vid_046d&pid_085c:YUY2:640x480@30",
+      "name": "c922 Pro Stream Webcam",
+      "symbolic_link": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "chosen_native_type": "YUY2 640x480 30/1",
+      "streamed": true,
+      "failed_stage": null,
+      "error_hr": null,
+      "error_msg": "",
+      "setup_ms": 30.4626,
+      "first_sample_ms": 269.151,
+      "samples": 144,
+      "steady_fps": 29.9153,
+      "steady_bytes_per_s": 18379900.0,
+      "steady_mean_sample_bytes": 614400,
+      "max_sample_bytes": 614400,
+      "steady_intervals": 112,
+      "late_intervals_gt_1p5x": 0,
+      "max_gap_ms": 48.5694,
+      "stream_ticks": 1,
+      "saved_samples": 144,
+      "read_errors": [],
+      "exposure": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": -7,
+       "prev_flags": 1
+      },
+      "white_balance": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": 4500,
+       "prev_flags": 1
+      },
+      "sizes_first_60": [
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400,
+       614400
+      ]
+     }
+    ]
+   },
+   "pipes_while_streaming_t_s": 5.28099999999904,
+   "pipes_while_streaming": [
+    {
+     "idVendor": "046d",
+     "idProduct": "085c",
+     "product": "C922 Pro Stream Webcam",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+     "port": 1,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x83",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x81",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x1380",
+       "base_packet_bytes": 896,
+       "transactions_per_microframe": 3,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 10,
+       "endpoint": "0x81",
+       "bytes_per_interval": 2688,
+       "service_interval_us": 125
+      }
+     ]
+    },
+    {
+     "idVendor": "4c4a",
+     "idProduct": "4a55",
+     "product": "USB Composite Device",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 3,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x85",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0010",
+       "base_packet_bytes": 16,
+       "transactions_per_microframe": 1,
+       "bInterval": 4,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    },
+    {
+     "idVendor": "046d",
+     "idProduct": "0843",
+     "product": "Logitech Webcam C930e",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 4,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x86",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    }
+   ],
+   "utc_end": "2026-10-28T03:08:49.025092+00:00"
+  },
+  {
+   "label": "yuy2_1280x720_10",
+   "specs": [
+    "vid_046d&pid_085c:YUY2:1280x720@10"
+   ],
+   "command": [
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\bin\\mf_multi_open.exe",
+    "--seconds",
+    "5.0",
+    "--out",
+    "--stagger-ms",
+    "0",
+    "--exposure",
+    "-7",
+    "--wb",
+    "4500",
+    "--save-dir",
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\bw_rerun_20261027\\r02_c922_alt_by_mode\\yuy2_1280x720_10",
+    "--save-max",
+    "150",
+    "--cam",
+    "vid_046d&pid_085c:YUY2:1280x720@10"
+   ],
+   "exit_code": 0,
+   "mf": {
+    "tool": "mf_multi_open",
+    "seconds": 5,
+    "stagger_ms": 0,
+    "exposure_requested": -7,
+    "wb_requested": 4500,
+    "cameras": [
+     {
+      "spec": "vid_046d&pid_085c:YUY2:1280x720@10",
+      "name": "c922 Pro Stream Webcam",
+      "symbolic_link": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "chosen_native_type": "YUY2 1280x720 10/1",
+      "streamed": true,
+      "failed_stage": null,
+      "error_hr": null,
+      "error_msg": "",
+      "setup_ms": 31.0379,
+      "first_sample_ms": 574.087,
+      "samples": 46,
+      "steady_fps": 9.98713,
+      "steady_bytes_per_s": 18408300.0,
+      "steady_mean_sample_bytes": 1843200.0,
+      "max_sample_bytes": 1843200,
+      "steady_intervals": 35,
+      "late_intervals_gt_1p5x": 0,
+      "max_gap_ms": 112.778,
+      "stream_ticks": 1,
+      "saved_samples": 46,
+      "read_errors": [],
+      "exposure": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": -7,
+       "prev_flags": 1
+      },
+      "white_balance": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": 4513,
+       "prev_flags": 1
+      },
+      "sizes_first_60": [
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200,
+       1843200
+      ]
+     }
+    ]
+   },
+   "pipes_while_streaming_t_s": 5.625,
+   "pipes_while_streaming": [
+    {
+     "idVendor": "046d",
+     "idProduct": "085c",
+     "product": "C922 Pro Stream Webcam",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+     "port": 1,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x83",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x81",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x1380",
+       "base_packet_bytes": 896,
+       "transactions_per_microframe": 3,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 10,
+       "endpoint": "0x81",
+       "bytes_per_interval": 2688,
+       "service_interval_us": 125
+      }
+     ]
+    },
+    {
+     "idVendor": "4c4a",
+     "idProduct": "4a55",
+     "product": "USB Composite Device",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 3,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x85",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0010",
+       "base_packet_bytes": 16,
+       "transactions_per_microframe": 1,
+       "bInterval": 4,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    },
+    {
+     "idVendor": "046d",
+     "idProduct": "0843",
+     "product": "Logitech Webcam C930e",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 4,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x86",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    }
+   ],
+   "utc_end": "2026-10-28T03:08:58.794984+00:00"
+  },
+  {
+   "label": "yuy2_1920x1080_5",
+   "specs": [
+    "vid_046d&pid_085c:YUY2:1920x1080@5"
+   ],
+   "command": [
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\bin\\mf_multi_open.exe",
+    "--seconds",
+    "5.0",
+    "--out",
+    "--stagger-ms",
+    "0",
+    "--exposure",
+    "-7",
+    "--wb",
+    "4500",
+    "--save-dir",
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\bw_rerun_20261027\\r02_c922_alt_by_mode\\yuy2_1920x1080_5",
+    "--save-max",
+    "150",
+    "--cam",
+    "vid_046d&pid_085c:YUY2:1920x1080@5"
+   ],
+   "exit_code": 0,
+   "mf": {
+    "tool": "mf_multi_open",
+    "seconds": 5,
+    "stagger_ms": 0,
+    "exposure_requested": -7,
+    "wb_requested": 4500,
+    "cameras": [
+     {
+      "spec": "vid_046d&pid_085c:YUY2:1920x1080@5",
+      "name": "c922 Pro Stream Webcam",
+      "symbolic_link": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "chosen_native_type": "YUY2 1920x1080 5/1",
+      "streamed": true,
+      "failed_stage": null,
+      "error_hr": null,
+      "error_msg": "",
+      "setup_ms": 31.3277,
+      "first_sample_ms": 960.038,
+      "samples": 22,
+      "steady_fps": 4.99787,
+      "steady_bytes_per_s": 20727200.0,
+      "steady_mean_sample_bytes": 4147200.0,
+      "max_sample_bytes": 4147200,
+      "steady_intervals": 16,
+      "late_intervals_gt_1p5x": 0,
+      "max_gap_ms": 208.718,
+      "stream_ticks": 1,
+      "saved_samples": 22,
+      "read_errors": [],
+      "exposure": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": -7,
+       "prev_flags": 1
+      },
+      "white_balance": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": 4513,
+       "prev_flags": 1
+      },
+      "sizes_first_60": [
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200,
+       4147200
+      ]
+     }
+    ]
+   },
+   "pipes_while_streaming_t_s": 6.0,
+   "pipes_while_streaming": [
+    {
+     "idVendor": "046d",
+     "idProduct": "085c",
+     "product": "C922 Pro Stream Webcam",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+     "port": 1,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x83",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x81",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x13fc",
+       "base_packet_bytes": 1020,
+       "transactions_per_microframe": 3,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 11,
+       "endpoint": "0x81",
+       "bytes_per_interval": 3060,
+       "service_interval_us": 125
+      }
+     ]
+    },
+    {
+     "idVendor": "4c4a",
+     "idProduct": "4a55",
+     "product": "USB Composite Device",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 3,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x85",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0010",
+       "base_packet_bytes": 16,
+       "transactions_per_microframe": 1,
+       "bInterval": 4,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    },
+    {
+     "idVendor": "046d",
+     "idProduct": "0843",
+     "product": "Logitech Webcam C930e",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 4,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x86",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    }
+   ],
+   "utc_end": "2026-10-28T03:09:08.855201+00:00"
+  },
+  {
+   "label": "yuy2_320x240_30",
+   "specs": [
+    "vid_046d&pid_085c:YUY2:320x240@30"
+   ],
+   "command": [
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\bin\\mf_multi_open.exe",
+    "--seconds",
+    "5.0",
+    "--out",
+    "--stagger-ms",
+    "0",
+    "--exposure",
+    "-7",
+    "--wb",
+    "4500",
+    "--save-dir",
+    "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\bw_rerun_20261027\\r02_c922_alt_by_mode\\yuy2_320x240_30",
+    "--save-max",
+    "150",
+    "--cam",
+    "vid_046d&pid_085c:YUY2:320x240@30"
+   ],
+   "exit_code": 0,
+   "mf": {
+    "tool": "mf_multi_open",
+    "seconds": 5,
+    "stagger_ms": 0,
+    "exposure_requested": -7,
+    "wb_requested": 4500,
+    "cameras": [
+     {
+      "spec": "vid_046d&pid_085c:YUY2:320x240@30",
+      "name": "c922 Pro Stream Webcam",
+      "symbolic_link": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "chosen_native_type": "YUY2 320x240 30/1",
+      "streamed": true,
+      "failed_stage": null,
+      "error_hr": null,
+      "error_msg": "",
+      "setup_ms": 30.3658,
+      "first_sample_ms": 318.02,
+      "samples": 142,
+      "steady_fps": 30.0202,
+      "steady_bytes_per_s": 4611100.0,
+      "steady_mean_sample_bytes": 153600,
+      "max_sample_bytes": 153600,
+      "steady_intervals": 110,
+      "late_intervals_gt_1p5x": 0,
+      "max_gap_ms": 48.5771,
+      "stream_ticks": 1,
+      "saved_samples": 142,
+      "read_errors": [],
+      "exposure": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": -7,
+       "prev_flags": 1
+      },
+      "white_balance": {
+       "set_ok": true,
+       "hr": "0x00000000",
+       "prev": 4513,
+       "prev_flags": 1
+      },
+      "sizes_first_60": [
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600,
+       153600
+      ]
+     }
+    ]
+   },
+   "pipes_while_streaming_t_s": 5.359000000000378,
+   "pipes_while_streaming": [
+    {
+     "idVendor": "046d",
+     "idProduct": "085c",
+     "product": "C922 Pro Stream Webcam",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+     "port": 1,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x83",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x81",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x0320",
+       "base_packet_bytes": 800,
+       "transactions_per_microframe": 1,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 5,
+       "endpoint": "0x81",
+       "bytes_per_interval": 800,
+       "service_interval_us": 125
+      }
+     ]
+    },
+    {
+     "idVendor": "4c4a",
+     "idProduct": "4a55",
+     "product": "USB Composite Device",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 3,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x85",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0010",
+       "base_packet_bytes": 16,
+       "transactions_per_microframe": 1,
+       "bInterval": 4,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    },
+    {
+     "idVendor": "046d",
+     "idProduct": "0843",
+     "product": "Logitech Webcam C930e",
+     "speed": "high",
+     "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 4,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x86",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": []
+    }
+   ],
+   "utc_end": "2026-10-28T03:09:18.397218+00:00"
+  }
+ ],
+ "machine_cpu_pct_end": 2.3,
+ "utc_finished": "2026-10-28T03:09:19.399363+00:00"
+}

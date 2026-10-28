@@ -1,0 +1,2 @@
+uv run --script research/usb_cameras/naming/camera_identity.py --selftest
+5x: uv run --script research/usb_cameras/tools/camlock.py --timeout-s 600 -- uv run --script research/usb_cameras/naming/camera_identity.py --exclude-vidpid 1532:0e05 --out research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/camera_identity/camera_identity_run<i>.json  (wall time measured by PowerShell Stopwatch around the whole camlock+uv command)

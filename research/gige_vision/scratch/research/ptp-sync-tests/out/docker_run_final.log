@@ -1,0 +1,90 @@
+=== versions
+Running as user "root" and group "root". This could be dangerous.
+TShark (Wireshark) 4.2.2 (Git v4.2.2 packaged as 4.2.2-1.1build3).
+aravis-tools 0.8.30-1build2
+Python 3.12.3
+
+=== 1. offline selftest + tshark decode of generated ACTION_CMD packets
+[PASS] unscheduled ACTION_CMD bytes 42010100000c01021234567800000001ffffffff
+[PASS] scheduled ACTION_CMD bytes 4281010000140103123456780000000100000001000001e23f5a1000
+[PASS] scheduled flag 0x80 set 
+[PASS] length field == 20 
+[PASS] ticks_to_ns 125MHz 
+wrote /out/action_cmds.pcap (decode with: tshark -r FILE -V -Y gvcp)
+    000. .... = Flags: 0x0
+        Flags: 0x01
+            0... .... = Scheduled Action Command: False
+            .... ...1 = Acknowledge Required: True
+        Command: ACTION_CMD (0x0100)
+        Payload Length: 0x000c (12)
+        Request ID: 0x0102 (258)
+        Action Device Key: 0x12345678 (305419896)
+        Action Group Key: 0x00000001 (1)
+        1111 1111 1111 1111 1111 1111 1111 1111 = Action Group Mask: 0xffffffff (4294967295)
+    000. .... = Flags: 0x0
+        Flags: 0x81
+            1... .... = Scheduled Action Command: True
+            .... ...1 = Acknowledge Required: True
+        Command: ACTION_CMD (0x0100)
+        Payload Length: 0x0014 (20)
+        Request ID: 0x0103 (259)
+        Action Device Key: 0x12345678 (305419896)
+        Action Group Key: 0x00000001 (1)
+        0000 0000 0000 0000 0000 0000 0000 0001 = Action Group Mask: 0x00000001 (1)
+        Action Scheduled Time: 0x000001e23f5a1000 (2071237103616)
+
+=== 2. start Aravis fake GigE Vision camera on loopback
+
+=== 3. arv-tool feature query (GenICam names)
+Feature 'GevTimestampTickFrequency' not found
+Feature 'GevIEEE1588' not found
+Feature 'PtpEnable' not found
+Feature 'GevIEEE1588Status' not found
+Feature 'PtpStatus' not found
+Feature 'ActionDeviceKey' not found
+TriggerSource = Line0
+Feature 'TimestampLatch' not found
+
+=== 4. probe (bootstrap registers)
+{"ip": "127.0.0.1", "gev_version": "0.0", "capability_raw": "0x00000000", "cap_action": false, "cap_scheduled_action": false, "cap_ieee1588": false, "cap_unconditional_action": false, "tick_frequency_hz": 1000000000, "config_raw": "0x00000000", "ptp_enabled": false, "ptp_status": "raw=0x0", "num_action_signals": 0, "scheduled_action_queue_size": 0}
+
+=== 5. latch timestamps (camera clock vs host clock)
+tick frequencies: {"127.0.0.1": 1000000000}
+timestamp latch returned 0 every time on ['127.0.0.1', '127.0.0.1'] -> latch not implemented
+
+=== 6. ptp --enable (expect: capability says not supported)
+127.0.0.1: capability register says IEEE1588 NOT supported
+rc=1
+
+=== 7. action (expect: fake camera does not implement ACTION_CMD -> no ACTION_ACK)
+127.0.0.1: action=False scheduled=False ieee1588=False
+scheduled (+200 ms)    action_time=200000000 acks={}
+   no ACTION_ACK from ['127.0.0.1']
+late (-1 s)            action_time=1 acks={}
+   no ACTION_ACK from ['127.0.0.1']
+unscheduled            action_time=None acks={}
+   no ACTION_ACK from ['127.0.0.1']
+rc=1
+
+=== 8. stream a few frames to capture GVSP leader timestamps
+Looking for camera 'Aravis-Fake-GV01'
+
+=== 9. decode live capture
+    262 
+    120 0x0080
+    104 0x0084
+     36 0x0082
+      3 0x0100
+      1 0x0002
+-- action commands seen on the wire:
+127.0.0.1	True	0x12345678	0x00000001	0x00000001	0x000000000bebc200
+127.0.0.1	True	0x12345678	0x00000001	0x00000001	0x0000000000000001
+127.0.0.1	False	0x12345678	0x00000001	0x00000001	
+-- GVSP leader timestamps (first 5) vs host clock window:
+65401	0x18e1d7223e835798	0x01080001	512	512
+65402	0x18e1d7223f3d2dd0	0x01080001	512	512
+65403	0x18e1d722419f8bb8	0x01080001	512	512
+65404	0x18e1d7224402bc90	0x01080001	512	512
+65405	0x18e1d72246643fb8	0x01080001	512	512
+host_ns_before=1792950666062933265 host_ns_after=1792950670168411222
+-- fake camera log tail:

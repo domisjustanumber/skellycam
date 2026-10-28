@@ -1,0 +1,89 @@
+{
+ "run_dir": "stream_rawusb_sof60s_run2",
+ "analyzer": "research/usb_cameras/rust/tools/scr_sof_qpc_map.py",
+ "usb_frame_clock": {
+  "rate_source": "in-stream SCR-SOF vs packet arrival (after-calibration missing)",
+  "baseline_s": null,
+  "frames": null,
+  "frames_per_qpc_s": 1000.010121343938,
+  "ppm_vs_qpc": 10.121343937852245,
+  "short_fit_rate_before": 999.9409344115518,
+  "short_fit_rate_after": null,
+  "after_first_sample_predicted_minus_actual_frames": null
+ },
+ "usb_frame_clock_instream": {
+  "frames_per_qpc_s": 1000.010121343938,
+  "ppm_vs_qpc": 10.121343937852245,
+  "span_s": 59.986581,
+  "residual_frames": {
+   "n": 1806,
+   "mean": -1.2656911002969162e-08,
+   "std": 4.177870860754402,
+   "min": -176.91372230648994,
+   "p02": -0.5623567700386047,
+   "p50": 0.09236796200275421,
+   "p98": 0.7466549724340439,
+   "max": 0.8597177416086197
+  }
+ },
+ "sof_expansion_lead_frames": {
+  "n": 1806,
+  "mean": 0.8676957316605883,
+  "std": 4.177870860754402,
+  "min": 0.007977977395057678,
+  "p02": 0.12104074656963348,
+  "p50": 0.7750873118638992,
+  "p98": 1.430052489042282,
+  "max": 177.78141802549362
+ },
+ "stc_fit_via_sof": {
+  "ns_per_tick": 33.33156331917187,
+  "implied_device_clock_hz": 30001593.097339462,
+  "nominal_hz": 30000000,
+  "device_clock_ppm_vs_qpc": 53.103244648688985,
+  "residual_ms": {
+   "n": 1806,
+   "mean": -7.622162237009344e-09,
+   "std": 0.2885943925885045,
+   "min": -0.499358234375,
+   "p02": -0.479751515625,
+   "p50": -0.0001039375,
+   "p98": 0.48123184375,
+   "max": 0.50043546875
+  }
+ },
+ "stc_fit_via_packet_arrival": {
+  "implied_device_clock_hz": 30001594.83060032,
+  "residual_ms": {
+   "n": 1806,
+   "mean": 7.648117380856516e-09,
+   "std": 4.162600689710034,
+   "min": -0.476154671875,
+   "p02": -0.406889609375,
+   "p50": -0.098833984375,
+   "p98": 0.213664265625,
+   "max": 176.689508671875
+  }
+ },
+ "pts_host_interval_ms": {
+  "n": 1805,
+  "mean": 33.331335852025624,
+  "std": 3.919592254963081,
+  "min": 33.23676834375,
+  "p02": 33.237768296875,
+  "p50": 33.238968234375,
+  "p98": 33.2403015,
+  "max": 199.8101894375
+ },
+ "latency_host_arrival_minus_pts_ms": {
+  "n": 1806,
+  "mean": 40.80872749033603,
+  "std": 4.2990698865957615,
+  "min": 36.615063703125,
+  "p02": 38.707885203125,
+  "p50": 40.723940875,
+  "p98": 42.72322234375,
+  "max": 216.310383765625
+ },
+ "notes": "SOF->QPC has a +-0.5 ms systematic (WinUsb_GetCurrentFrameNumber is 1 ms, read as floor). Residual spread, rates and drift are free of it. PTS on the C930e is a synthetic counter (phase 1)."
+}

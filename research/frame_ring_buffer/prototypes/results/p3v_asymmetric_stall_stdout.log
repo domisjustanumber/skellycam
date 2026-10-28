@@ -1,0 +1,18 @@
+ASYM stall=1000 block: produced [481, 481, 481, 481, 481] recorded [481, 481, 481, 481, 481] drops 0 sensor_skipped [0, 0, 0, 0, 0] same_set True tick spread med/p99/max 6.3/6.3/6.3 ms, frames >=1 period 0
+ASYM stall=1000 drop: produced [481, 481, 481, 481, 481] recorded [481, 481, 481, 481, 481] drops 0 sensor_skipped [0, 0, 0, 0, 0] same_set True tick spread med/p99/max 6.3/6.3/6.3 ms, frames >=1 period 0
+ASYM stall=1000 block+lockstep: produced [481, 481, 481, 481, 481] recorded [481, 481, 481, 481, 481] drops 0 sensor_skipped [0, 0, 0, 0, 0] same_set True tick spread med/p99/max 6.3/6.3/6.3 ms, frames >=1 period 0
+ASYM stall=3500 block: produced [445, 481, 481, 481, 481] recorded [445, 481, 481, 481, 481] drops 0 sensor_skipped [36, 0, 0, 0, 0] same_set True tick spread med/p99/max 6.3/606.3/606.3 ms, frames >=1 period 92
+ASYM stall=3500 drop: produced [443, 481, 481, 481, 481] recorded [443, 481, 481, 481, 481] drops 38 sensor_skipped [0, 0, 0, 0, 0] same_set True tick spread med/p99/max 6.3/639.6/639.6 ms, frames >=1 period 91
+ASYM stall=3500 block+lockstep: produced [445, 445, 445, 445, 445] recorded [445, 445, 445, 445, 445] drops 0 sensor_skipped [36, 36, 36, 36, 36] same_set True tick spread med/p99/max 6.3/6.3/6.3 ms, frames >=1 period 0
+# P3 ASYM - one recorder (camera 0) stalls, the other 4 do not: 1080p, L=172 (2.87 s), 2 ms busy recorders, stall at t=3 s, 8 s runs
+
+`tick spread` = per recorded frame number k, max - min over the 5 cameras of the sensor tick time of frame k. A spread >= 16.7 ms means the cameras' frame k were captured at least one frame period apart (the multiframe is out of sync, although every frame count check would pass).
+
+| stall ms (cam 0 only) | policy | lockstep gate | produced per cam | recorded per cam | ring-full drops | sensor skipped per cam | same frame numbers (common range) | tick spread median / p99 / max ms | frames with spread >= 1 period | recorder lost |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1000 | block | False | [481, 481, 481, 481, 481] | [481, 481, 481, 481, 481] | 0 | [0, 0, 0, 0, 0] | True | 6.3 / 6.3 / 6.3 | 0 | 0 |
+| 1000 | drop | False | [481, 481, 481, 481, 481] | [481, 481, 481, 481, 481] | 0 | [0, 0, 0, 0, 0] | True | 6.3 / 6.3 / 6.3 | 0 | 0 |
+| 1000 | block | True | [481, 481, 481, 481, 481] | [481, 481, 481, 481, 481] | 0 | [0, 0, 0, 0, 0] | True | 6.3 / 6.3 / 6.3 | 0 | 0 |
+| 3500 | block | False | [445, 481, 481, 481, 481] | [445, 481, 481, 481, 481] | 0 | [36, 0, 0, 0, 0] | True | 6.3 / 606.3 / 606.3 | 92 | 0 |
+| 3500 | drop | False | [443, 481, 481, 481, 481] | [443, 481, 481, 481, 481] | 38 | [0, 0, 0, 0, 0] | True | 6.3 / 639.6 / 639.6 | 91 | 0 |
+| 3500 | block | True | [445, 445, 445, 445, 445] | [445, 445, 445, 445, 445] | 0 | [36, 36, 36, 36, 36] | True | 6.3 / 6.3 / 6.3 | 0 | 0 |

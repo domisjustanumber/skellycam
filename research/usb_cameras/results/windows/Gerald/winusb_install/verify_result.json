@@ -1,0 +1,82 @@
+{
+  "test": "winusb_verify_c930e",
+  "platform": "windows",
+  "hostname": "GERALD",
+  "utc_started": "2026-10-25T20:55:21.2353528Z",
+  "command": "",
+  "steps": {
+    "libuvc_list": {
+      "command": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\libusb\\winusb\\..\\build\\cmake\\bin\\Release\\uvc_capture_test.exe --list --json-out C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\GERALD\\winusb_install\\verify_libuvc_list.json",
+      "exit_code": 0,
+      "output": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\GERALD\\winusb_install\\verify_libuvc_list.txt"
+    },
+    "py_libusb1_list": {
+      "command": "uv run --script research/usb_cameras/libusb/py_libusb1/uvc_libusb1_stream.py --list --out-dir C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\GERALD\\winusb_install\\verify_py_libusb1_list",
+      "exit_code": 1,
+      "output": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\GERALD\\winusb_install\\verify_py_libusb1_list.txt"
+    },
+    "libuvc_probe_only": {
+      "command": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\libusb\\winusb\\..\\build\\cmake\\bin\\Release\\uvc_capture_test.exe --vid 046d --pid 0843 --probe-only --out-dir C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\GERALD\\winusb_install\\verify_probe_only",
+      "exit_code": 0,
+      "output": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\GERALD\\winusb_install\\verify_libuvc_probe_only.txt"
+    },
+    "libuvc_stream_default_alt": {
+      "command": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\libusb\\winusb\\..\\build\\cmake\\bin\\Release\\uvc_capture_test.exe --vid 046d --pid 0843 --width 1280 --height 720 --fps 30 --seconds 5 --save-jpeg 2 --out-dir C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\GERALD\\winusb_install\\verify_stream_default",
+      "exit_code": 0,
+      "output": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\GERALD\\winusb_install\\verify_libuvc_stream_default_alt.txt"
+    },
+    "libuvc_stream_alt6": {
+      "command": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\libusb\\winusb\\..\\build\\cmake\\bin\\Release\\uvc_capture_test.exe --vid 046d --pid 0843 --width 1280 --height 720 --fps 30 --seconds 5 --alt 6 --out-dir C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\GERALD\\winusb_install\\verify_stream_alt6",
+      "exit_code": 0,
+      "output": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\GERALD\\winusb_install\\verify_libuvc_stream_alt6.txt"
+    }
+  },
+  "pnp": [
+    {
+      "instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&16BE97FE&0&0000",
+      "present": false,
+      "status": "Unknown",
+      "class": "Image",
+      "service": "usbvideo"
+    },
+    {
+      "instance_id": "USB\\VID_046D&PID_0843&MI_03\\8&39DEC205&0&0003",
+      "present": false,
+      "status": "Unknown",
+      "class": "MEDIA",
+      "service": "usbaudio"
+    },
+    {
+      "instance_id": "USB\\VID_046D&PID_0843&MI_03\\8&16BE97FE&0&0003",
+      "present": false,
+      "status": "Unknown",
+      "class": "MEDIA",
+      "service": "usbaudio"
+    },
+    {
+      "instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&1",
+      "present": false,
+      "status": "Unknown",
+      "class": "USB",
+      "service": "usbccgp"
+    },
+    {
+      "instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+      "present": true,
+      "status": "OK",
+      "class": "USBDevice",
+      "service": "WINUSB"
+    },
+    {
+      "instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&0&0000",
+      "present": false,
+      "status": "Unknown",
+      "class": "Image",
+      "service": "usbvideo"
+    }
+  ],
+  "winusb_bound": true,
+  "c930e_open_result": "OK",
+  "outcome": "OK: C930e on WinUSB and openable by libusb",
+  "utc_finished": "2026-10-25T20:55:39.6468322Z"
+}

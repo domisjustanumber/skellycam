@@ -1,0 +1,34 @@
+**********************
+PowerShell transcript start
+Start time: 20261025181628
+Username: GERALD\Dom
+RunAs User: GERALD\Dom
+Configuration Name: 
+Machine: GERALD (Microsoft Windows NT 10.0.26300.0)
+Host Application: C:\Program Files\PowerShell\7\pwsh.dll -NoProfile -ExecutionPolicy Bypass -File C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\libusb\winusb\rollback_winusb_c930e.ps1
+Process ID: 55804
+PSVersion: 7.6.7
+PSEdition: Core
+GitCommitId: 7.6.7
+OS: Microsoft Windows 10.0.26300
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+pnputil /remove-device USB\VID_046D&PID_0843\7&7DCC7CE&0&4 /subtree
+Microsoft PnP Utility
+
+Removing device:          USB\VID_046D&PID_0843\7&7dcc7ce&0&4
+Device removed successfully.
+pnputil /scan-devices
+Microsoft PnP Utility
+
+Scanning for device hardware changes.
+Scan complete.
+CHECK: parent service 'usbccgp'; mismatches: missing: USB\VID_046D&PID_0843&MI_03\8&39DEC205&0&0003; missing: USB\VID_046D&PID_0843&MI_00\8&39DEC205&0&0000
+**********************
+PowerShell transcript end
+End time: 20261025181646
+**********************

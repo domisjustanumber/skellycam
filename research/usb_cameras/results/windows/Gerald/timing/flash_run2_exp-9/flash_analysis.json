@@ -1,0 +1,543 @@
+{
+  "test": "flash_analyze",
+  "platform": "win32",
+  "hostname": "Gerald",
+  "utc_started": "2026-10-25T18:42:07.880812+00:00",
+  "command": "research/usb_cameras/timing/scripts/flash_analyze.py --display C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/expseries/exp-9/display_m0 --capture C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/expseries/exp-9/capture --out C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/expseries/exp-9/flash_analysis.json",
+  "environment": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "opencv": "4.10.0"
+  },
+  "displays": [
+    {
+      "dir": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\expseries\\exp-9\\display_m0",
+      "session": {
+        "tool": "flash_timecode",
+        "monitor_index": 0,
+        "output": "DISPLAY1",
+        "rect": [
+          2560,
+          -201,
+          4000,
+          2359
+        ],
+        "size": [
+          1440,
+          2560
+        ],
+        "mode_refresh": "59951/1000",
+        "seconds": 36.003,
+        "presents": 2160,
+        "disjoint": 1,
+        "seed": 100,
+        "min_hold": 2,
+        "max_hold": 6,
+        "lo": 0,
+        "hi": 255,
+        "qpc_frequency": 10000000,
+        "windowed": false,
+        "swap_effect": "FLIP_DISCARD",
+        "sync_interval": 1
+      },
+      "period_ns": 16680132.361456908,
+      "vblank_fit_resid_us": {
+        "n": 516,
+        "mean": -6.692102713660362e-06,
+        "std": 13.582848391706035,
+        "min": -28.90978125,
+        "max": 38.365359375000004,
+        "median": -3.8563046874999998,
+        "p05": -16.417265625,
+        "p95": 28.6609921875
+      },
+      "refresh_glitches": 0,
+      "presents": 2160,
+      "stats_samples": 516
+    }
+  ],
+  "cameras": [
+    {
+      "camera_key": "vid_046d_pid_0843_mi_00_8_39dec205_0_0000",
+      "friendly_name": "Logitech Webcam C930e",
+      "exposure_control": {
+        "requested": "-9",
+        "min": -11,
+        "max": -2,
+        "step": 1,
+        "default": -5,
+        "value": -9,
+        "flags": 2,
+        "manual": true
+      },
+      "E_ms_used": 1.953125,
+      "roi": {
+        "decoded_shape": [
+          90,
+          160
+        ],
+        "roi_rows": [
+          87,
+          90
+        ],
+        "roi_cols": [
+          36,
+          42
+        ],
+        "roi_row_center_frac": 0.9833333333333333,
+        "roi_col_center_frac": 0.24375,
+        "roi_pixels": 18,
+        "roi_temporal_std": 98.94950866699219,
+        "median_pixel_std": 3.5290513038635254
+      },
+      "display_corr": [
+        0.7784767319119795
+      ],
+      "display_used": "DISPLAY1",
+      "screen_visible": true,
+      "sources": {
+        "host_arrival": {
+          "corr": 0.7784767319119795,
+          "offset_ms": -74.02,
+          "E_ms": 1.953125,
+          "per_frame": {
+            "gamma": 2.0999999999999996,
+            "n": 9,
+            "frames_total": 884,
+            "offset_median_ms": -74.428518359375,
+            "err_std_us": 481.0414813068872,
+            "err_mad_sigma_us": 390.54037627499997,
+            "err_p05_p95_us": [
+              -560.723065625,
+              720.48609375
+            ],
+            "rising_mean_us": 230.42957291666664,
+            "falling_mean_us": 66.30761197916667,
+            "n_rising": 3,
+            "n_falling": 6
+          },
+          "vs_ground_truth": {
+            "n": 20,
+            "offset_ms": -77.4096061875,
+            "err_std_us": 12511.677107842625,
+            "err_mad_sigma_us": 14010.401968139062,
+            "err_min_max_us": [
+              -21513.38228125,
+              21617.5635625
+            ]
+          }
+        },
+        "os_timestamp": {
+          "corr": 0.779434259330605,
+          "offset_ms": -72.1,
+          "E_ms": 1.953125,
+          "per_frame": {
+            "gamma": 1.0499999999999998,
+            "n": 8,
+            "frames_total": 884,
+            "offset_median_ms": -71.8341635859375,
+            "err_std_us": 695.2575767362521,
+            "err_mad_sigma_us": 531.308358328125,
+            "err_p05_p95_us": [
+              -1168.4904437500002,
+              785.0774835937497
+            ],
+            "rising_mean_us": 103.3946796875,
+            "falling_mean_us": -140.32167343749998,
+            "n_rising": 3,
+            "n_falling": 5
+          },
+          "vs_ground_truth": {
+            "n": 20,
+            "offset_ms": -70.471728625,
+            "err_std_us": 11968.595565146441,
+            "err_mad_sigma_us": 14693.38328325,
+            "err_min_max_us": [
+              -25579.896890625,
+              14902.086
+            ]
+          }
+        },
+        "mf_undoc_d06f8a46": {
+          "corr": 0.7783670687306181,
+          "offset_ms": -73.82,
+          "E_ms": 1.953125,
+          "per_frame": {
+            "gamma": 2.8999999999999995,
+            "n": 10,
+            "frames_total": 884,
+            "offset_median_ms": -74.1510695,
+            "err_std_us": 509.7997723341695,
+            "err_mad_sigma_us": 621.43216065,
+            "err_p05_p95_us": [
+              -588.2062335937501,
+              907.3299734374999
+            ],
+            "rising_mean_us": 147.3195703125,
+            "falling_mean_us": 168.50653385416666,
+            "n_rising": 4,
+            "n_falling": 6
+          },
+          "vs_ground_truth": {
+            "n": 20,
+            "offset_ms": -77.1864061875,
+            "err_std_us": 12520.368934706796,
+            "err_mad_sigma_us": 14018.482138139061,
+            "err_min_max_us": [
+              -21546.38228125,
+              21582.9635625
+            ]
+          }
+        },
+        "uvc_pts_mapped_direct": {
+          "corr": 0.854731889538464,
+          "offset_ms": -43.0,
+          "E_ms": 1.953125,
+          "per_frame": {
+            "gamma": 1.5499999999999998,
+            "n": 17,
+            "frames_total": 884,
+            "offset_median_ms": -42.748701609375,
+            "err_std_us": 596.5959554524495,
+            "err_mad_sigma_us": 599.740680196875,
+            "err_p05_p95_us": [
+              -1046.472903125,
+              828.2011218749998
+            ],
+            "rising_mean_us": 56.995541015625,
+            "falling_mean_us": -150.82536458333334,
+            "n_rising": 8,
+            "n_falling": 9
+          },
+          "vs_ground_truth": {
+            "n": 20,
+            "offset_ms": -44.4352609453125,
+            "err_std_us": 7358.9239878734315,
+            "err_mad_sigma_us": 12185.035098928123,
+            "err_min_max_us": [
+              -12512.3039921875,
+              8596.1933046875
+            ]
+          }
+        },
+        "uvc_pts_via_scr_envelope": {
+          "corr": 0.9421620939983864,
+          "offset_ms": -22.34,
+          "E_ms": 1.953125,
+          "per_frame": {
+            "gamma": 2.4499999999999993,
+            "n": 20,
+            "frames_total": 884,
+            "offset_median_ms": -22.1569296796875,
+            "err_std_us": 399.7480859619513,
+            "err_mad_sigma_us": 444.5819223234375,
+            "err_p05_p95_us": [
+              -756.2522578125,
+              338.9441328125001
+            ],
+            "rising_mean_us": -148.77508749999998,
+            "falling_mean_us": -130.2806515625,
+            "n_rising": 10,
+            "n_falling": 10
+          },
+          "vs_ground_truth": {
+            "n": 20,
+            "offset_ms": -22.1569296796875,
+            "err_std_us": 399.7480859619513,
+            "err_mad_sigma_us": 444.5819223234375,
+            "err_min_max_us": [
+              -789.2098359375,
+              426.9919140625
+            ]
+          }
+        },
+        "uvc_pts_via_scr_lsq_envelope": {
+          "corr": 0.9430149910095051,
+          "offset_ms": -20.0,
+          "E_ms": 1.953125,
+          "per_frame": {
+            "gamma": 2.3999999999999995,
+            "n": 25,
+            "frames_total": 884,
+            "offset_median_ms": -19.85954971875,
+            "err_std_us": 494.26342597814545,
+            "err_mad_sigma_us": 603.834416784375,
+            "err_p05_p95_us": [
+              -999.25058125,
+              457.058278125
+            ],
+            "rising_mean_us": -164.01125651041664,
+            "falling_mean_us": -143.45957692307692,
+            "n_rising": 12,
+            "n_falling": 13
+          },
+          "vs_ground_truth": {
+            "n": 20,
+            "offset_ms": -22.272195453125,
+            "err_std_us": 330.2710949993029,
+            "err_mad_sigma_us": 326.5815566671875,
+            "err_min_max_us": [
+              -677.60596875,
+              657.092828125
+            ]
+          }
+        }
+      },
+      "ground_truth_reference_source": "uvc_pts_via_scr_envelope"
+    },
+    {
+      "camera_key": "vid_046d_pid_085c_mi_00_8_268da596_0_0000",
+      "friendly_name": "c922 Pro Stream Webcam",
+      "exposure_control": {
+        "requested": "-9",
+        "min": -11,
+        "max": -2,
+        "step": 1,
+        "default": -5,
+        "value": -9,
+        "flags": 2,
+        "manual": true
+      },
+      "E_ms_used": 1.953125,
+      "roi": {
+        "decoded_shape": [
+          90,
+          160
+        ],
+        "roi_rows": [
+          39,
+          42
+        ],
+        "roi_cols": [
+          154,
+          160
+        ],
+        "roi_row_center_frac": 0.45,
+        "roi_col_center_frac": 0.98125,
+        "roi_pixels": 18,
+        "roi_temporal_std": 37.566532135009766,
+        "median_pixel_std": 12.282390594482422
+      },
+      "display_corr": [
+        0.920978659086752
+      ],
+      "display_used": "DISPLAY1",
+      "screen_visible": true,
+      "sources": {
+        "host_arrival": {
+          "corr": 0.920978659086752,
+          "offset_ms": -58.2,
+          "E_ms": 1.953125,
+          "per_frame": {
+            "gamma": 2.9999999999999996,
+            "n": 12,
+            "frames_total": 888,
+            "offset_median_ms": -58.126882640625,
+            "err_std_us": 537.7862232203533,
+            "err_mad_sigma_us": 367.91842532812495,
+            "err_p05_p95_us": [
+              -1149.9730335937502,
+              497.74162343749964
+            ],
+            "rising_mean_us": -57.69984201388889,
+            "falling_mean_us": -481.252578125,
+            "n_rising": 9,
+            "n_falling": 3
+          },
+          "vs_ground_truth": {
+            "n": 12,
+            "offset_ms": -55.706576734375,
+            "err_std_us": 4637.99211700365,
+            "err_mad_sigma_us": 4993.150711565625,
+            "err_min_max_us": [
+              -9077.148421875,
+              5346.11646875
+            ]
+          }
+        },
+        "os_timestamp": {
+          "corr": 0.9324586939448554,
+          "offset_ms": -53.64,
+          "E_ms": 1.953125,
+          "per_frame": {
+            "gamma": 0.9999999999999999,
+            "n": 12,
+            "frames_total": 888,
+            "offset_median_ms": -53.6301305625,
+            "err_std_us": 569.2710732848021,
+            "err_mad_sigma_us": 563.4559100296874,
+            "err_p05_p95_us": [
+              -1004.35630234375,
+              691.9618429687497
+            ],
+            "rising_mean_us": 124.120544921875,
+            "falling_mean_us": -287.63484765625,
+            "n_rising": 8,
+            "n_falling": 4
+          },
+          "vs_ground_truth": {
+            "n": 12,
+            "offset_ms": -53.293677671875,
+            "err_std_us": 4140.45946151994,
+            "err_mad_sigma_us": 4744.246900870312,
+            "err_min_max_us": [
+              -5775.107765625,
+              8224.07359375
+            ]
+          }
+        },
+        "mf_undoc_d06f8a46": {
+          "corr": 0.9235647659741816,
+          "offset_ms": -57.9,
+          "E_ms": 1.953125,
+          "per_frame": {
+            "gamma": 2.9999999999999996,
+            "n": 13,
+            "frames_total": 888,
+            "offset_median_ms": -57.91632884375,
+            "err_std_us": 542.9712394119977,
+            "err_mad_sigma_us": 440.726455771875,
+            "err_p05_p95_us": [
+              -1093.9579812499999,
+              609.0332781249996
+            ],
+            "rising_mean_us": 11.0785203125,
+            "falling_mean_us": -397.6397083333333,
+            "n_rising": 10,
+            "n_falling": 3
+          },
+          "vs_ground_truth": {
+            "n": 12,
+            "offset_ms": -55.436776734375,
+            "err_std_us": 4631.9572959241905,
+            "err_mad_sigma_us": 5013.610591565624,
+            "err_min_max_us": [
+              -9093.048421875,
+              5302.01646875
+            ]
+          }
+        },
+        "uvc_pts_mapped_direct": {
+          "corr": 0.9923568295933614,
+          "offset_ms": -49.72,
+          "E_ms": 1.953125,
+          "per_frame": {
+            "gamma": 1.2999999999999998,
+            "n": 15,
+            "frames_total": 888,
+            "offset_median_ms": -49.76657353125,
+            "err_std_us": 408.22659353324883,
+            "err_mad_sigma_us": 557.2824215437499,
+            "err_p05_p95_us": [
+              -452.53108125,
+              723.1275515624999
+            ],
+            "rising_mean_us": 78.06955208333333,
+            "falling_mean_us": 100.58773611111111,
+            "n_rising": 6,
+            "n_falling": 9
+          },
+          "vs_ground_truth": {
+            "n": 12,
+            "offset_ms": -49.219091546875,
+            "err_std_us": 430.21993089735605,
+            "err_mad_sigma_us": 744.0001389187499,
+            "err_min_max_us": [
+              -676.37471875,
+              594.778859375
+            ]
+          }
+        },
+        "uvc_pts_via_scr_envelope": {
+          "corr": 0.9928201511110056,
+          "offset_ms": -16.42,
+          "E_ms": 1.953125,
+          "per_frame": {
+            "gamma": 1.15,
+            "n": 12,
+            "frames_total": 888,
+            "offset_median_ms": -16.3268664609375,
+            "err_std_us": 222.15649133050883,
+            "err_mad_sigma_us": 253.7728080890625,
+            "err_p05_p95_us": [
+              -427.4749453125,
+              198.92944296874998
+            ],
+            "rising_mean_us": -89.57322265625,
+            "falling_mean_us": -59.782533203125,
+            "n_rising": 4,
+            "n_falling": 8
+          },
+          "vs_ground_truth": {
+            "n": 12,
+            "offset_ms": -16.3268664609375,
+            "err_std_us": 222.15649133050883,
+            "err_mad_sigma_us": 253.7728080890625,
+            "err_min_max_us": [
+              -460.5191171875,
+              201.3347734375
+            ]
+          }
+        },
+        "uvc_pts_via_scr_lsq_envelope": {
+          "corr": 0.9918388520319993,
+          "offset_ms": -16.74,
+          "E_ms": 1.953125,
+          "per_frame": {
+            "gamma": 1.15,
+            "n": 13,
+            "frames_total": 888,
+            "offset_median_ms": -16.854903453125,
+            "err_std_us": 458.34486507186375,
+            "err_mad_sigma_us": 632.0645338874999,
+            "err_p05_p95_us": [
+              -503.0073125,
+              745.35130625
+            ],
+            "rising_mean_us": 97.492546875,
+            "falling_mean_us": 129.3223325892857,
+            "n_rising": 6,
+            "n_falling": 7
+          },
+          "vs_ground_truth": {
+            "n": 12,
+            "offset_ms": -16.369521546875,
+            "err_std_us": 467.15380133761084,
+            "err_mad_sigma_us": 614.6998941234375,
+            "err_min_max_us": [
+              -705.74471875,
+              671.52153125
+            ]
+          }
+        }
+      },
+      "ground_truth_reference_source": "uvc_pts_via_scr_envelope"
+    }
+  ],
+  "cross_camera": {
+    "vid_046d_pid_0843_mi_00_8_39dec205_0_0000|vid_046d_pid_085c_mi_00_8_268da596_0_0000|os_timestamp": {
+      "offset_diff_ms": -17.178050953124995,
+      "combined_err_std_us": 12664.544380060936
+    },
+    "vid_046d_pid_0843_mi_00_8_39dec205_0_0000|vid_046d_pid_085c_mi_00_8_268da596_0_0000|uvc_pts_via_scr_envelope": {
+      "offset_diff_ms": -5.830063218750002,
+      "combined_err_std_us": 457.3314321917159
+    },
+    "vid_046d_pid_0843_mi_00_8_39dec205_0_0000|vid_046d_pid_085c_mi_00_8_268da596_0_0000|mf_undoc_d06f8a46": {
+      "offset_diff_ms": -21.749629453124996,
+      "combined_err_std_us": 13349.706612972299
+    },
+    "vid_046d_pid_0843_mi_00_8_39dec205_0_0000|vid_046d_pid_085c_mi_00_8_268da596_0_0000|uvc_pts_via_scr_lsq_envelope": {
+      "offset_diff_ms": -5.902673906250001,
+      "combined_err_std_us": 572.1115890245701
+    },
+    "vid_046d_pid_0843_mi_00_8_39dec205_0_0000|vid_046d_pid_085c_mi_00_8_268da596_0_0000|uvc_pts_mapped_direct": {
+      "offset_diff_ms": 4.783830601562499,
+      "combined_err_std_us": 7371.489093001517
+    },
+    "vid_046d_pid_0843_mi_00_8_39dec205_0_0000|vid_046d_pid_085c_mi_00_8_268da596_0_0000|host_arrival": {
+      "offset_diff_ms": -21.703029453125005,
+      "combined_err_std_us": 13343.651484069163
+    }
+  }
+}

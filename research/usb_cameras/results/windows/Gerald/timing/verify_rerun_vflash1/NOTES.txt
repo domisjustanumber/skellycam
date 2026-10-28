@@ -1,0 +1,11 @@
+Adversarial re-run by the timing verifier (2026-10-25 ~15:02 local). Raw .mjpeg (~120 MB) kept only in the session scratchpad
+(scratchpad/verify_timing/runs/vflash1/capture). Commands (repo root):
+  uv run --script research/usb_cameras/tools/camlock.py -- pwsh -NoProfile -File research/usb_cameras/timing/scripts/run_flash_test.ps1 -RunDir <scratch>/verify_timing/runs/vflash1 -Seconds 30 -Monitors 0
+     (default cams: C922, C930e, Kiyo at 1280x720@30 MJPEG, exposure log2 -7 = 7.81 ms, WB 4500 K)
+  uv run --script research/usb_cameras/timing/scripts/flash_analyze.py --display <run>/display_m0 --capture <run>/capture --out <run>/flash_analysis.json
+  uv run --script research/usb_cameras/timing/scripts/flash_rows.py --display <run>/display_m0 --capture <run>/capture --out <run>/flash_rows.json
+  uv run --script research/usb_cameras/tools/analyze_frames.py <run>/capture/vid_046d*.frames.jsonl --out <run>/frames_analysis.json
+  uv run --script research/usb_cameras/timing/scripts/quantization_check.py <run>/capture/vid_046d*.frames.jsonl --out <run>/quantization.json
+  uv run --script research/usb_cameras/timing/scripts/verify_grid_phase.py 16 <run>/capture/vid_046d*.frames.jsonl > grid_phase_check.json
+reanalysis_flash_verify_1_flash_analysis.json: flash_analyze.py re-run on another agent's unreported capture
+  <scratch>/runs/flash_verify_1 (same settings, 14:47 local).

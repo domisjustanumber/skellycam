@@ -1,0 +1,170 @@
+{
+ "name": "env_snapshot_benchvenv",
+ "command": [
+  "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\benchmarks\\frame_pipeline\\.venv-bench\\Scripts\\python.exe",
+  "benchmarks\\frame_pipeline\\cpp\\env_snapshot.py",
+  "benchvenv"
+ ],
+ "log": "env_snapshot_benchvenv_stdout.log",
+ "exit_code": 0,
+ "timed_out": false,
+ "elapsed_s": 4.1,
+ "ncpu": 28,
+ "before": {
+  "time": "2026-10-28 03:45:06",
+  "window_s": 3.0,
+  "system_cpu_pct": 4.1,
+  "memory_pct": 36.1,
+  "memory_used_gb": 24.69,
+  "top_processes": [
+   {
+    "name": "PreSonusHardwareAccessService.exe",
+    "pid": 7828,
+    "cpu_pct_of_machine": 0.52
+   },
+   {
+    "name": "Corsair.Service.CpuIdRemote64.exe",
+    "pid": 13140,
+    "cpu_pct_of_machine": 0.29
+   },
+   {
+    "name": "firefox.exe",
+    "pid": 27000,
+    "cpu_pct_of_machine": 0.2
+   },
+   {
+    "name": "claude.exe",
+    "pid": 18200,
+    "cpu_pct_of_machine": 0.2
+   },
+   {
+    "name": "System",
+    "pid": 4,
+    "cpu_pct_of_machine": 0.17
+   },
+   {
+    "name": "MsMpEng.exe",
+    "pid": 8040,
+    "cpu_pct_of_machine": 0.11
+   },
+   {
+    "name": "parsecd.exe",
+    "pid": 15824,
+    "cpu_pct_of_machine": 0.09
+   },
+   {
+    "name": "parsecd.exe",
+    "pid": 9576,
+    "cpu_pct_of_machine": 0.06
+   },
+   {
+    "name": "firefox.exe",
+    "pid": 38248,
+    "cpu_pct_of_machine": 0.06
+   },
+   {
+    "name": "WTabletServicePro.exe",
+    "pid": 8112,
+    "cpu_pct_of_machine": 0.06
+   }
+  ]
+ },
+ "after": {
+  "time": "2026-10-28 03:45:14",
+  "window_s": 3.0,
+  "system_cpu_pct": 4.3,
+  "memory_pct": 36.2,
+  "memory_used_gb": 24.77,
+  "top_processes": [
+   {
+    "name": "PreSonusHardwareAccessService.exe",
+    "pid": 7828,
+    "cpu_pct_of_machine": 0.34
+   },
+   {
+    "name": "MsMpEng.exe",
+    "pid": 8040,
+    "cpu_pct_of_machine": 0.28
+   },
+   {
+    "name": "Corsair.Service.CpuIdRemote64.exe",
+    "pid": 13140,
+    "cpu_pct_of_machine": 0.2
+   },
+   {
+    "name": "System",
+    "pid": 4,
+    "cpu_pct_of_machine": 0.17
+   },
+   {
+    "name": "Code.exe",
+    "pid": 18468,
+    "cpu_pct_of_machine": 0.17
+   },
+   {
+    "name": "firefox.exe",
+    "pid": 27000,
+    "cpu_pct_of_machine": 0.15
+   },
+   {
+    "name": "Code.exe",
+    "pid": 44288,
+    "cpu_pct_of_machine": 0.15
+   },
+   {
+    "name": "Code.exe",
+    "pid": 20636,
+    "cpu_pct_of_machine": 0.09
+   },
+   {
+    "name": "Corsair.Service.exe",
+    "pid": 8084,
+    "cpu_pct_of_machine": 0.06
+   },
+   {
+    "name": "svchost.exe",
+    "pid": 8064,
+    "cpu_pct_of_machine": 0.05
+   }
+  ]
+ },
+ "during": {
+  "n_samples": 2,
+  "background_mean": 3.71,
+  "background_p95": 3.75,
+  "background_max": 3.75,
+  "background_sys_minus_tree_mean": 7.38,
+  "system_mean": 8.85,
+  "tree_mean": 0.0
+ },
+ "verdict": "idle",
+ "killed_leftover_pids": [],
+ "samples": [
+  {
+   "t": 2.4,
+   "system": 7.8,
+   "tree": 0.0,
+   "wrapper": 1.49,
+   "background": 3.67,
+   "background_sys_minus_tree": 6.31,
+   "top_background": [
+    "MsMpEng.exe:0.6",
+    "PreSonusHardwareAccessService.exe:0.5",
+    "Corsair.Service.CpuIdRemote64.exe:0.4"
+   ]
+  },
+  {
+   "t": 4.1,
+   "system": 9.9,
+   "tree": 0,
+   "wrapper": 1.44,
+   "background": 3.75,
+   "background_sys_minus_tree": 8.46,
+   "top_background": [
+    "WmiPrvSE.exe:0.8",
+    "Corsair.Service.CpuIdRemote64.exe:0.4",
+    "MsMpEng.exe:0.4"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,213 @@
+{
+ "test": "timing_rerun_20261027",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-28T03:04:16Z",
+ "utc_finished": "2026-10-28T03:43:00Z",
+ "command": "see COMMANDS.txt",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.13",
+  "elevated": false
+ },
+ "cameras": {
+  "C922": "046D:085C ...mi_00#8&268da596&0&0000",
+  "C930e": "046D:0843 ...mi_00#8&39dec205&1&0000",
+  "generic": "4C4A:4A55 ...mi_00#8&35e81179&0&0000",
+  "excluded": "Kiyo Pro 1532:0E05 (never opened)"
+ },
+ "conditions": {
+  "room": "night; manual exposure in all flash runs; mean frame luma per run in compact_table_all_runs.json (C922 E=7.8 ms 63-68, generic 37-40, C930e 73 (short state) or 119-137 (long state))",
+  "cpu_total_pct_range_start_end": "1.4-20.9 (Processor _Total, 2 s, other agents running)",
+  "logitune_agent": "running (respawns immediately)",
+  "display": "monitor 0 1440x2560 59.95 Hz; display request held"
+ },
+ "results": {
+  "unit_tests": {
+   "selftest_flash_analyze": "identical to results/.../timing/selftest_flash_analyze.json",
+   "selftest_analyze_frames": "identical except new field stc_freq_vs_host_hz (2 leaves added)"
+  },
+  "reproduce_run1": {
+   "flash_analysis": "0 diffs / 361 leaves",
+   "flash_rows": "0/651",
+   "frames_analysis": "0/532",
+   "verify_method": "0 numeric diffs / 5186 leaves"
+  },
+  "metadata": {
+   "C922": "292/292 frames meta_len 40 with PTS+SCR",
+   "C930e": "287/287",
+   "generic": "0/254 (no registry value, as expected)"
+  },
+  "quantization_16ms": {
+   "all three cameras": "os_timestamp/mf_sample_time grid 16.0 ms concentration 1.0; host_arrival 0.99-0.999"
+  },
+  "flash_vs_gt_std_us_E7.8": {
+   "C922_uvc_pts_mapped_direct": [
+    566,
+    679,
+    483,
+    469,
+    482,
+    516
+   ],
+   "C922_scr_lsq": [
+    669,
+    506,
+    528,
+    583,
+    567,
+    452
+   ],
+   "C922_host_arrival": [
+    4898,
+    4968,
+    4756,
+    4590,
+    4900,
+    4976
+   ],
+   "C922_os_timestamp": [
+    4430,
+    4521,
+    4468,
+    4436,
+    4399,
+    4523
+   ],
+   "C930e_short_state_run_b": {
+    "pts_mapped_direct": 440,
+    "scr_lsq": 569,
+    "seq_envelope": 440,
+    "host": 4816,
+    "os": 4736,
+    "gt_n": 101
+   },
+   "C930e_long_state_runs_a_c_e": "GT n 8-12, display corr 0.79-0.85; not usable",
+   "generic_mf_fixed_gt_seq_env_ref": {
+    "seq_env": "1678-1865",
+    "host_arrival": "4370-5324",
+    "os_timestamp": "4224-4946",
+    "n": "59-73 per row, 2 runs"
+   }
+  },
+  "independent_gt_seq_periodic_env_vs_pts_us": {
+   "run_b_C930e": [
+    444,
+    444
+   ],
+   "run_b_C922": [
+    685,
+    656
+   ],
+   "run_a_C922": [
+    660,
+    655
+   ],
+   "run_e_C922": [
+    578,
+    583
+   ],
+   "exp-6_C922": [
+    568,
+    509
+   ]
+  },
+  "C922_fixed_roi_col0.75_row0.5_offset_ms": {
+   "E7.8125": [
+    -58.05,
+    -57.75,
+    -57.16,
+    -56.76,
+    -57.66,
+    -56.84
+   ],
+   "E1.953": [
+    -50.57
+   ],
+   "E15.625": [
+    -66.09
+   ],
+   "row_slope_ms": "30.1-31.5"
+  },
+  "C930e_fixed_roi_col0.45_row0.5": {
+   "run_b": {
+    "offset_ms": -33.59,
+    "slope_ms": 30.23
+   },
+   "exp-9": {
+    "offset_ms": -26.94,
+    "slope_ms": 30.46
+   }
+  },
+  "step_response_10_90_from_profile": {
+   "C922": "bin 48 (0.16-0.24) -> 60 (0.93-0.94), ~12 ms, 5 valid runs",
+   "C930e_short": "56 (0.30) -> 68 (0.95), ~12 ms",
+   "C930e_long": "56 (0.16) -> 88 (0.93), ~32 ms (runs a,c,e)",
+   "generic": "44 (0.26) -> 56 (0.94), ~12 ms"
+  },
+  "C930e_effective_box_E_ms_peak_corr": {
+   "rerun": {
+    "a": [
+     40,
+     0.919
+    ],
+    "b": [
+     14,
+     0.988
+    ],
+    "exp-9": [
+     7.8,
+     0.998
+    ],
+    "exp-6": [
+     40,
+     0.899
+    ],
+    "c_afterAE": "long (20+ at grid edge, corr 0.84)",
+    "e": "long"
+   },
+   "earlier": {
+    "flash1": [
+     14,
+     0.991
+    ],
+    "flash_verify_1": [
+     22,
+     0.983
+    ],
+    "2a": [
+     24,
+     0.939
+    ],
+    "exp-9": [
+     20,
+     0.978
+    ],
+    "exp-6": [
+     40,
+     0.914
+    ]
+   }
+  },
+  "C930e_frame_period_modes": {
+   "997220-997234_STC_ticks_(33.239_ms)": "rerun a,b,exp-6,c,d,e: no PTS 2x step, STC-PTS 30.4-35.4 ms",
+   "998400_ticks_(33.2785_ms)": "rerun exp-9 and all 6 earlier fresh runs: 1 PTS 2x step, STC-PTS ramps 30.4->63.6 ms"
+  },
+  "clocks": {
+   "C922_sof_per_host_s": "884.7-885.0",
+   "C922_stc_minus_pts_ms": "33.00-33.03 +/- 0.12-0.17",
+   "C922_pts_period_ticks": "alternates ~9.92M / ~10.08M",
+   "C922_eof_minus_sof_scr_ticks": "median 1.03M (E1.95), 1.55-1.64M (E7.8), 1.93M (E15.6)",
+   "C930e_stc_per_sof_hz": "30,001,236-30,001,550 (+41..+52 ppm)",
+   "C930e_eof_minus_sof_scr": 0,
+   "generic_fps": "25.755-25.757 (manual exposure -7 = its minimum; same 25.7 fps in daytime bw_concurrency runs)"
+  },
+  "dshow_open_probe": {
+   "C922/C930e/generic, MJPG 1280x720@30 and YUY2 640x480@30": "bind/SetFormat/RenderStream S_OK, Run 0x1 (S_FALSE), state 2 (running) after 1.5 s; C930e exposure read -5 at open (C922 -7, generic -7)"
+  },
+  "invalid_runs": {
+   "20261028T033232Z_flash_c922_c930e_exp-7_d": "display glitches (50 refresh glitches, 1573/2116 presents unreliable); window was in front"
+  },
+  "usb_ep0_probe": "C922 (root hub port 1), C930e (05E3:0610 hub port 4), generic (same hub port 3): device descriptor, LANGIDs and iProduct all ok, win32_error 0 (usb_ep0_probe/*.jsonl)"
+ }
+}

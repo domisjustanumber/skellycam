@@ -1,0 +1,45 @@
+{
+  "utc": "2026-10-28T03:06:45.9932374Z",
+  "host": "GERALD",
+  "libusb": {
+    "version": "1.0.30",
+    "url": "https://github.com/libusb/libusb/releases/download/v1.0.30/libusb-1.0.30.tar.bz2",
+    "built_with": "msvc/libusb_dll.vcxproj x64 Release",
+    "sha256": "fea36f34f9156400209595e300840767ab1a385ede1dc7ee893015aea9c6dbaf"
+  },
+  "libuvc": {
+    "commit": "d07de4fa23905ee8cac06f5d24b2a03d42a3b363",
+    "url": "https://github.com/libuvc/libuvc.git",
+    "patches": [
+      {
+        "name": "0001-frame-timing-and-iso-override.patch",
+        "sha256": "bed70b10f8bdf909a675b311fdeb9bc5208f673358465720061b40d6af65c0e8"
+      }
+    ]
+  },
+  "msbuild": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.exe",
+  "cmake": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe",
+  "cmake_version": "cmake version 3.29.5-msvc4",
+  "outputs": [
+    {
+      "name": "example.exe",
+      "bytes": 40448,
+      "sha256": "84f1a0384179aa56554d0f0e72612d0c701e77c4b5ed864bc93d542215b491db"
+    },
+    {
+      "name": "libusb-1.0.dll",
+      "bytes": 166400,
+      "sha256": "e2c93513180a749374d2e576f4442c2cc959403d44cc45da7a944339f763da9b"
+    },
+    {
+      "name": "test_payload_timing.exe",
+      "bytes": 20992,
+      "sha256": "b8368af75797202c1f93b5b390c9e9ac1b182243e8a3173351126b1c807d636b"
+    },
+    {
+      "name": "uvc_capture_test.exe",
+      "bytes": 56320,
+      "sha256": "b723c403f07e7de8f940244035b8370a2e5ae943fc68047b2599a63cba38ff46"
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "test": "winusb_compare_family_selftest",
+  "platform": "windows",
+  "hostname": "GERALD",
+  "utc_started": "2026-10-25T22:45:43.5612307Z",
+  "command": "pwsh -File research/usb_cameras/libusb/winusb/selftest_winusb_common.ps1",
+  "inputs": [
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\GERALD\\winusb_install\\prestate.json",
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\GERALD\\winusb_install\\rollback_result.json",
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\GERALD\\winusb_install\\install_result.json"
+  ],
+  "cases": [
+    {
+      "case": "c930e_real_rollback",
+      "expect": "0 mismatches, 2 instance id changes, parent usbccgp; old check reported 2 missing",
+      "got": {
+        "mismatches": [],
+        "instance_id_changes": [
+          "MI_03: USB\\VID_046D&PID_0843&MI_03\\8&39DEC205&0&0003 -> USB\\VID_046D&PID_0843&MI_03\\8&39DEC205&1&0003",
+          "MI_00: USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&0&0000 -> USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&1&0000"
+        ],
+        "parent_service": "usbccgp"
+      },
+      "pass": true
+    },
+    {
+      "case": "c930e_after_install_before_replug",
+      "expect": "1 mismatch (parent service WINUSB inf winusb.inf)",
+      "got": {
+        "mismatches": [
+          "parent: service WINUSB inf winusb.inf (was usbccgp oem74.inf)"
+        ],
+        "instance_id_changes": [],
+        "parent_service": "WINUSB"
+      },
+      "pass": true
+    },
+    {
+      "case": "c930e_after_install_replugged",
+      "expect": "3 mismatches (parent service, MI_00 missing, MI_03 missing)",
+      "got": {
+        "mismatches": [
+          "missing function MI_03 (was USB\\VID_046D&PID_0843&MI_03\\8&39DEC205&0&0003, usbaudio wdma_usb.inf)",
+          "parent: service WINUSB inf winusb.inf (was usbccgp oem74.inf)",
+          "missing function MI_00 (was USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&0&0000, usbvideo oem11.inf)"
+        ],
+        "instance_id_changes": [],
+        "parent_service": "WINUSB"
+      },
+      "pass": true
+    },
+    {
+      "case": "c930e_child_inf_changed",
+      "expect": "1 mismatch on MI_00 inf",
+      "got": {
+        "mismatches": [
+          "MI_00: service usbvideo inf usbvideo.inf (was usbvideo oem11.inf)"
+        ],
+        "instance_id_changes": [
+          "MI_03: USB\\VID_046D&PID_0843&MI_03\\8&39DEC205&0&0003 -> USB\\VID_046D&PID_0843&MI_03\\8&39DEC205&1&0003",
+          "MI_00: USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&0&0000 -> USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&1&0000"
+        ],
+        "parent_service": "usbccgp"
+      },
+      "pass": true
+    },
+    {
+      "case": "c930e_child_not_present",
+      "expect": "1 mismatch: MI_03 missing",
+      "got": {
+        "mismatches": [
+          "missing function MI_03 (was USB\\VID_046D&PID_0843&MI_03\\8&39DEC205&0&0003, usbaudio wdma_usb.inf)"
+        ],
+        "instance_id_changes": [
+          "MI_00: USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&0&0000 -> USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&1&0000"
+        ],
+        "parent_service": "usbccgp"
+      },
+      "pass": true
+    },
+    {
+      "case": "no_prestate",
+      "expect": "1 mismatch 'no prestate'",
+      "got": {
+        "mismatches": [
+          "no prestate: cannot compare"
+        ],
+        "instance_id_changes": [],
+        "parent_service": "usbccgp"
+      },
+      "pass": true
+    },
+    {
+      "case": "service_case",
+      "expect": "WINUSB == WinUSB",
+      "got": true,
+      "pass": true
+    },
+    {
+      "case": "function_keys",
+      "expect": "MI_03,parent,MI_00",
+      "got": "MI_03,parent,MI_00",
+      "pass": true
+    }
+  ],
+  "passed": 8,
+  "total": 8
+}

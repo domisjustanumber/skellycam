@@ -1,0 +1,123 @@
+# libuvc upstream d07de4fa23905ee8cac06f5d24b2a03d42a3b363 source audit (git show d07de4fa23905ee8cac06f5d24b2a03d42a3b363:<file> | grep -n ...)
+
+## pattern: capture_time
+src/stream.c:689:  (void)clock_gettime(CLOCK_MONOTONIC, &strmh->capture_time_finished);
+src/stream.c:1411:  frame->capture_time_finished = strmh->capture_time_finished;
+src/frame.c:123:  out->capture_time = in->capture_time;
+src/frame.c:124:  out->capture_time_finished = in->capture_time_finished;
+src/frame.c:189:  out->capture_time = in->capture_time;
+src/frame.c:190:  out->capture_time_finished = in->capture_time_finished;
+src/frame.c:256:  out->capture_time = in->capture_time;
+src/frame.c:257:  out->capture_time_finished = in->capture_time_finished;
+src/frame.c:307:  out->capture_time = in->capture_time;
+src/frame.c:308:  out->capture_time_finished = in->capture_time_finished;
+src/frame.c:352:  out->capture_time = in->capture_time;
+src/frame.c:353:  out->capture_time_finished = in->capture_time_finished;
+src/frame.c:407:  out->capture_time = in->capture_time;
+src/frame.c:408:  out->capture_time_finished = in->capture_time_finished;
+src/frame.c:468:  out->capture_time = in->capture_time;
+src/frame.c:469:  out->capture_time_finished = in->capture_time_finished;
+include/libuvc/libuvc.h:477:  struct timeval capture_time;
+include/libuvc/libuvc.h:479:  struct timespec capture_time_finished;
+include/libuvc/libuvc_internal.h:288:  struct timespec capture_time_finished;
+
+## pattern: hold_pts\|hold_last_scr\|->pts\b\|last_scr
+src/stream.c:696:  strmh->hold_last_scr = strmh->last_scr;
+src/stream.c:697:  strmh->hold_pts = strmh->pts;
+src/stream.c:712:  strmh->last_scr = 0;
+src/stream.c:713:  strmh->pts = 0;
+src/stream.c:792:      strmh->pts = DW_TO_INT(payload + variable_offset);
+src/stream.c:798:      strmh->last_scr = DW_TO_INT(payload + variable_offset);
+src/stream.c:1133:  strmh->pts = 0;
+src/stream.c:1134:  strmh->last_scr = 0;
+include/libuvc/libuvc_internal.h:274:  uint32_t pts, hold_pts;
+include/libuvc/libuvc_internal.h:275:  uint32_t last_scr, hold_last_scr;
+
+## pattern: SOF token
+src/stream.c:797:      /** @todo read the SOF token counter */
+
+## pattern: pthread_\|clock_gettime\|gettimeofday\|sys/time.h
+src/stream.c:47:// gettimeofday - get time of day for Windows;
+src/stream.c:48:// A gettimeofday implementation for Microsoft Windows;
+src/stream.c:50:int gettimeofday(struct timeval *tv, struct timezone *tz)
+src/stream.c:687:  pthread_mutex_lock(&strmh->cb_mutex);
+src/stream.c:689:  (void)clock_gettime(CLOCK_MONOTONIC, &strmh->capture_time_finished);
+src/stream.c:706:  pthread_cond_broadcast(&strmh->cb_cond);
+src/stream.c:707:  pthread_mutex_unlock(&strmh->cb_mutex);
+src/stream.c:869:    pthread_mutex_lock(&strmh->cb_mutex);
+src/stream.c:887:    pthread_cond_broadcast(&strmh->cb_cond);
+src/stream.c:888:    pthread_mutex_unlock(&strmh->cb_mutex);
+src/stream.c:905:        pthread_mutex_lock(&strmh->cb_mutex);
+src/stream.c:921:        pthread_cond_broadcast(&strmh->cb_cond);
+src/stream.c:922:        pthread_mutex_unlock(&strmh->cb_mutex);
+src/stream.c:926:      pthread_mutex_lock(&strmh->cb_mutex);
+src/stream.c:942:      pthread_cond_broadcast(&strmh->cb_cond);
+src/stream.c:943:      pthread_mutex_unlock(&strmh->cb_mutex);
+src/stream.c:1077:  pthread_mutex_init(&strmh->cb_mutex, NULL);
+src/stream.c:1078:  pthread_cond_init(&strmh->cb_cond, NULL);
+src/stream.c:1271:    pthread_create(&strmh->cb_thread, NULL, _uvc_user_caller, (void*) strmh);
+src/stream.c:1341:    pthread_mutex_lock(&strmh->cb_mutex);
+src/stream.c:1344:      pthread_cond_wait(&strmh->cb_cond, &strmh->cb_mutex);
+src/stream.c:1348:      pthread_mutex_unlock(&strmh->cb_mutex);
+src/stream.c:1355:    pthread_mutex_unlock(&strmh->cb_mutex);
+src/stream.c:1451:  pthread_mutex_lock(&strmh->cb_mutex);
+src/stream.c:1459:      pthread_cond_wait(&strmh->cb_cond, &strmh->cb_mutex);
+src/stream.c:1467:      clock_gettime(CLOCK_REALTIME, &ts);
+src/stream.c:1470:      gettimeofday(&tv, NULL);
+src/stream.c:1478:      /* pthread_cond_timedwait FAILS with EINVAL if ts.tv_nsec > 1000000000 (1 billion)
+src/stream.c:1485:      int err = pthread_cond_timedwait(&strmh->cb_cond, &strmh->cb_mutex, &ts);
+src/stream.c:1490:        pthread_mutex_unlock(&strmh->cb_mutex);
+src/stream.c:1506:  pthread_mutex_unlock(&strmh->cb_mutex);
+src/stream.c:1541:  pthread_mutex_lock(&strmh->cb_mutex);
+src/stream.c:1559:    pthread_cond_wait(&strmh->cb_cond, &strmh->cb_mutex);
+src/stream.c:1562:  pthread_cond_broadcast(&strmh->cb_cond);
+src/stream.c:1563:  pthread_mutex_unlock(&strmh->cb_mutex);
+src/stream.c:1570:    pthread_join(strmh->cb_thread, NULL);
+src/stream.c:1601:  pthread_cond_destroy(&strmh->cb_cond);
+src/stream.c:1602:  pthread_mutex_destroy(&strmh->cb_mutex);
+src/device.c:1758:    pthread_join(ctx->handler_thread, NULL);
+src/init.c:161:    pthread_create(&ctx->handler_thread, NULL, _uvc_handle_events, (void*) ctx);
+include/libuvc/libuvc.h:10:#include <sys/time.h>
+include/libuvc/libuvc_internal.h:278:  pthread_mutex_t cb_mutex;
+include/libuvc/libuvc_internal.h:279:  pthread_cond_t cb_cond;
+include/libuvc/libuvc_internal.h:280:  pthread_t cb_thread;
+include/libuvc/libuvc_internal.h:328:  pthread_t handler_thread;
+
+## pattern: dwMaxPayloadTransferSize
+src/stream.c:236:    INT_TO_DW(ctrl->dwMaxPayloadTransferSize, buf + 22);
+src/stream.c:274:    ctrl->dwMaxPayloadTransferSize = DW_TO_INT(buf + 22);
+src/stream.c:325:    INT_TO_DW(still_ctrl->dwMaxPayloadTransferSize, buf + 7);
+src/stream.c:348:    still_ctrl->dwMaxPayloadTransferSize = DW_TO_INT(buf + 7);
+src/stream.c:1173:    config_bytes_per_packet = strmh->cur_ctrl.dwMaxPayloadTransferSize;
+src/stream.c:1255:          strmh->cur_ctrl.dwMaxPayloadTransferSize );
+src/stream.c:1259:          strmh->cur_ctrl.dwMaxPayloadTransferSize, _uvc_stream_callback,
+include/libuvc/libuvc.h:515:  uint32_t dwMaxPayloadTransferSize;
+include/libuvc/libuvc.h:534:  uint32_t dwMaxPayloadTransferSize;
+
+## pattern: LIBUVC_PACKETS_PER_TRANSFER_MAX\|LIBUVC_NUM_TRANSFER_BUFS
+src/stream.c:872:    for(i=0; i < LIBUVC_NUM_TRANSFER_BUFS; i++) {
+src/stream.c:881:    if(i == LIBUVC_NUM_TRANSFER_BUFS ) {
+src/stream.c:908:        for (i = 0; i < LIBUVC_NUM_TRANSFER_BUFS; i++) {
+src/stream.c:917:        if (i == LIBUVC_NUM_TRANSFER_BUFS) {
+src/stream.c:929:      for(i=0; i < LIBUVC_NUM_TRANSFER_BUFS; i++) {
+src/stream.c:938:      if(i == LIBUVC_NUM_TRANSFER_BUFS ) {
+src/stream.c:1213:        if (packets_per_transfer > LIBUVC_PACKETS_PER_TRANSFER_MAX)
+src/stream.c:1214:          packets_per_transfer = LIBUVC_PACKETS_PER_TRANSFER_MAX;
+src/stream.c:1237:  for (transfer_id = 0; transfer_id < LIBUVC_NUM_TRANSFER_BUFS; ++transfer_id) {
+src/stream.c:1250:    for (transfer_id = 0; transfer_id < LIBUVC_NUM_TRANSFER_BUFS;
+src/stream.c:1274:  for (transfer_id = 0; transfer_id < LIBUVC_NUM_TRANSFER_BUFS;
+src/stream.c:1286:    for ( ; transfer_id < LIBUVC_NUM_TRANSFER_BUFS; transfer_id++) {
+src/stream.c:1546:  for(i=0; i < LIBUVC_NUM_TRANSFER_BUFS; i++) {
+src/stream.c:1553:    for(i=0; i < LIBUVC_NUM_TRANSFER_BUFS; i++) {
+src/stream.c:1557:    if(i == LIBUVC_NUM_TRANSFER_BUFS )
+include/libuvc/libuvc_internal.h:226:#ifndef LIBUVC_NUM_TRANSFER_BUFS
+include/libuvc/libuvc_internal.h:228:#define LIBUVC_NUM_TRANSFER_BUFS 20
+include/libuvc/libuvc_internal.h:230:#define LIBUVC_NUM_TRANSFER_BUFS 100
+include/libuvc/libuvc_internal.h:246:#ifndef LIBUVC_PACKETS_PER_TRANSFER_MAX
+include/libuvc/libuvc_internal.h:247:#define LIBUVC_PACKETS_PER_TRANSFER_MAX 32
+include/libuvc/libuvc_internal.h:250:#if LIBUVC_PACKETS_PER_TRANSFER_MAX < 1
+include/libuvc/libuvc_internal.h:251:#error "LIBUVC_PACKETS_PER_TRANSFER_MAX must be at least 1"
+include/libuvc/libuvc_internal.h:254:#if LIBUVC_NUM_TRANSFER_BUFS < 1
+include/libuvc/libuvc_internal.h:255:#error "LIBUVC_NUM_TRANSFER_BUFS must be at least 1"
+include/libuvc/libuvc_internal.h:284:  struct libusb_transfer *transfers[LIBUVC_NUM_TRANSFER_BUFS];
+include/libuvc/libuvc_internal.h:285:  uint8_t *transfer_bufs[LIBUVC_NUM_TRANSFER_BUFS];

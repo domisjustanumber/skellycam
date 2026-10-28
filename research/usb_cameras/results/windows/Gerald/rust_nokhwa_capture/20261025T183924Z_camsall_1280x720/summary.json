@@ -1,0 +1,169 @@
+{
+  "cameras": [
+    {
+      "actual_format": "1280x720@1 MJPEG",
+      "arrival_interval_ms": null,
+      "camera_key": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "capture_ts_age_ms_wall_minus_ts": null,
+      "coinit_hr": "HRESULT(0x00000000)",
+      "controls_via_nokhwa_after_open": [
+        {
+          "control": "Exposure",
+          "error": "Could not get device property CCValue(4): Exposure - Range: Element not found. (0x80070490)"
+        },
+        {
+          "control": "WhiteBalance",
+          "error": "Could not get device property ProcAmpRange(7): WhiteBalance - Range: Element not found. (0x80070490)"
+        },
+        {
+          "control": "Gain",
+          "error": "Could not get device property ProcAmpRange(9): Gain - Range: Element not found. (0x80070490)"
+        }
+      ],
+      "decode_attempted": 0,
+      "decode_ok": 0,
+      "decoded_dimensions": null,
+      "errors_sample": [
+        "Could not capture frame: A device attached to the system is not functioning. (0x8007001F)",
+        "Could not capture frame: A device attached to the system is not functioning. (0x8007001F)",
+        "Could not capture frame: A device attached to the system is not functioning. (0x8007001F)",
+        "Could not capture frame: A device attached to the system is not functioning. (0x8007001F)",
+        "Could not capture frame: A device attached to the system is not functioning. (0x8007001F)"
+      ],
+      "fps_host_arrival_after_skip30": 0.0,
+      "frame_call_ms": null,
+      "frames": 0,
+      "frames_file": "frames_6_USB_Video_Device.jsonl",
+      "frames_with_capture_timestamp": 0,
+      "frames_with_eoi": 0,
+      "frames_with_soi": 0,
+      "human_name": "USB Video Device",
+      "implied_sample_time_s": null,
+      "index": 6,
+      "open_ms": 32.2375,
+      "open_stream_bracket": {
+        "host_after_ns": 102921959639000,
+        "host_before_ns": 102921959623500,
+        "wall_after_ns": 1792953564553811900,
+        "wall_before_ns": 1792953564553795900
+      },
+      "payload_bytes": null,
+      "read_errors": 16398975,
+      "requested_format": "1280x720@30 MJPEG (RequestedFormatType::Exact)"
+    }
+  ],
+  "command": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\rust\\build\\release\\nokhwa_probe.exe capture --cameras match:vid_1532&pid_0e05 --width 1280 --height 720 --fps 30 --seconds 20 --exposure -7 --wb 4000 --decode-every 30 --save-samples 1 --frame-raw",
+  "controls_read_after": [
+    {
+      "exposure": 0,
+      "exposure_flags": 0,
+      "flags_legend": "1=auto 2=manual",
+      "white_balance": 0,
+      "white_balance_flags": 0
+    }
+  ],
+  "controls_set_before": [
+    {
+      "exposure": {
+        "range": [
+          -11,
+          -2,
+          1,
+          -6
+        ],
+        "readback": 0,
+        "readback_flags": 0,
+        "requested": -7,
+        "set_err": "A device attached to the system is not functioning. (0x8007001F)",
+        "set_ok": false
+      },
+      "method": "IMFMediaSource QueryInterface IAMCameraControl/IAMVideoProcAmp, then Shutdown",
+      "symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "white_balance": {
+        "range": [
+          2000,
+          7500,
+          10,
+          5000
+        ],
+        "readback": 0,
+        "readback_flags": 0,
+        "requested": 4000,
+        "set_err": "A device attached to the system is not functioning. (0x8007001F)",
+        "set_ok": false
+      }
+    }
+  ],
+  "environment": {
+    "arch": "x86_64",
+    "host_clock": "QueryPerformanceCounter",
+    "nokhwa": "0.10.11",
+    "nokhwa_default_features": false,
+    "nokhwa_features": [
+      "input-native"
+    ],
+    "os": "windows",
+    "os_build": "Microsoft Windows [Version 10.0.26300.9711]",
+    "profile": "release",
+    "qpc_frequency_hz": 10000000,
+    "rustc": "see build_info.json"
+  },
+  "hostname": "Gerald",
+  "platform": "windows",
+  "query": [
+    {
+      "human_name": "NDI Webcam Video 1",
+      "index": "0",
+      "misc": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource0"
+    },
+    {
+      "human_name": "NDI Webcam Video 2",
+      "index": "1",
+      "misc": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource1"
+    },
+    {
+      "human_name": "NDI Webcam Video 3",
+      "index": "2",
+      "misc": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource2"
+    },
+    {
+      "human_name": "NDI Webcam Video 4",
+      "index": "3",
+      "misc": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource3"
+    },
+    {
+      "human_name": "c922 Pro Stream Webcam",
+      "index": "4",
+      "misc": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+    },
+    {
+      "human_name": "USB Camera",
+      "index": "5",
+      "misc": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+    },
+    {
+      "human_name": "USB Video Device",
+      "index": "6",
+      "misc": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+    },
+    {
+      "human_name": "Logitech Webcam C930e",
+      "index": "7",
+      "misc": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+    }
+  ],
+  "settings": {
+    "api": "frame_raw",
+    "coinit": "mta",
+    "decode_every": 30,
+    "exposure": -7,
+    "fps": 30,
+    "gain": null,
+    "height": 720,
+    "seconds": 20.0,
+    "white_balance": 4000,
+    "width": 1280
+  },
+  "test": "rust_nokhwa_capture",
+  "utc_started": "2026-10-25T18:39:24Z"
+}

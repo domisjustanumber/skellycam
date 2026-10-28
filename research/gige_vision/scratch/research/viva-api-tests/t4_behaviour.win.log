@@ -1,0 +1,73 @@
+
+=== GIL: busy Python thread iterations over 3 s
+  stream thread got 61 frames, spent 3.03s blocked in next_frame
+  316 uncached GVCP reads in 3.0s (105/s)
+  spin iterations: idle-main 115,681,213  while-streaming 117,427,826 (102%)  while-GVCP-reads 115,410,683 (100%)
+
+=== decode cost: to_numpy vs np.frombuffer(payload())  (1280x1024 Mono8)
+  to_numpy()                          0.436 ms  shape (1024, 1280) owndata False writeable True
+  np.frombuffer(payload()).reshape    0.434 ms  shape (1024, 1280) owndata False writeable False
+  to_rgb8()                           1.106 ms  shape (1024, 1280, 3) owndata False writeable True
+
+=== threading: stream pulled in worker thread while main thread uses camera
+  worker got 30 frames (errors []); main did 35019 feature reads meanwhile
+  two concurrent next_frame on one stream -> ['RuntimeError: Already borrowed', 31]
+  set Width while streaming -> GenApiError node Width is locked by TLParamsLocked
+  second stream() while first open -> OK?!
+
+=== time mapping
+  before calibrate: ts_dev 1556150500 ts_host None map_dev_ts None
+  time_calibrate(8,20) took 0.165s
+  block 4 ts_dev 149366500 ts_host 1792952847.595647 host_now-ts_host 196.219 ms
+  block 5 ts_dev 200366700 ts_host 1792952847.595647 host_now-ts_host 246.133 ms
+  block 6 ts_dev 249867300 ts_host 1792952847.595647 host_now-ts_host 295.402 ms
+  block 7 ts_dev 300745200 ts_host 1792952847.595647 host_now-ts_host 346.661 ms
+  block 8 ts_dev 351865400 ts_host 1792952847.595647 host_now-ts_host 397.660 ms
+  map_dev_ts(ts_dev) == ts_host: True
+  time_calibrate(samples=1) -> TransportError time calibration: it takes at least two samples
+
+=== timeouts / trigger / end
+  TriggerMode On TriggerSource Software
+  next_frame(timeout_ms=300) in trigger mode -> TransportError: timeout waiting for frame after 0.302s
+  after trigger_software -> 9 fake.software_triggers 1
+  set TriggerSource=Action1 -> GenApiError enum TriggerSource has no entry named Action1
+  set TriggerSource=Action0 -> GenApiError enum TriggerSource has no entry named Action0
+  next_frame after close -> ParseError frame stream is closed
+
+=== exceptions
+  get missing: GenApiError | node not found: NoSuchFeature
+  set_integer Width=3: GenApiError | Width: 3 is below the minimum 16
+  set_integer Width=1e6: GenApiError | Width: 1000000 is above the maximum 4096
+  set command: GenApiError | AcquisitionStart is a Command, not a feature that is set (run a command with execute_command or execute_and_wait)
+  get_integer on enum: GenApiError | PixelFormat is an Enumeration, not an Integer
+  set_enum bad entry: GenApiError | enum PixelFormat has no entry named Nope
+  read_register unmapped: ok -> b'\x00\x00\x00\x00'
+  execute(TimestampLatch) -> True warnings []
+
+=== control privilege / heartbeat
+  second controller connect -> TransportError claim control: device reported status ACCESS_DENIED (0x8006)
+  monitor connect -> ControlState.MONITOR Width 1280
+  monitor set -> GenApiError register I/O failed: the camera was opened as a read-only monitor, so nothing is written; open it with Access::Control, or reclaim_control, to write (register 0x00020000)
+  heartbeat timeout reg 0x0938 = 3000 ms
+  after fake.revoke_control(): control_state ControlState.LOST (noticed after 0.50s)
+  set after revoke -> GenApiError register I/O failed: control of the camera was lost, so nothing is written; reclaim_control takes it again (register 0x00020040)
+  after reclaim_control: ControlState.HELD fake.controller 127.0.0.1:63085
+  after release_control: ControlState.RELEASED fake.controller None
+  set after release -> GenApiError register I/O failed: control of the camera was released, so nothing is written; reclaim_control takes it again (register 0x00020040)
+  stream() after release -> 73 ControlState.HELD
+
+=== stream knobs
+  {'packet_size': 9000}: ok block 1; GevSCPSPacketSize=9000 packets/frame=37
+  {'packet_size': 576}: ok block 2; GevSCPSPacketSize=9000 packets/frame=571
+  {'auto_packet_size': True}: ok block 3; GevSCPSPacketSize=9000 packets/frame=212
+  {'packet_delay_ns': 2000}: ok block 4; GevSCPSPacketSize=9000 packets/frame=212
+  {'destination_port': 50555}: ok block 5; GevSCPSPacketSize=9000 packets/frame=212
+  {'resend': False}: ok block 6; GevSCPSPacketSize=9000 packets/frame=212
+  {'iface': '127.0.0.1'}: ok block 7; GevSCPSPacketSize=9000 packets/frame=212
+  {'packet_size': 1500, 'auto_packet_size': True}: ParseError: pass at most one of auto_packet_size=True and packet_size=...
+
+=== incomplete frames / resend
+  camera resend=True deliver_incomplete=False: [(1, 'Complete', None), (2, 'Complete', None), (3, 'Complete', None), (4, 'Complete', None)] | incomplete=0 resend_req=2 recovered=2 unavailable=0
+  camera resend=True deliver_incomplete=True: [(1, 'Complete', None), (2, 'Complete', None), (3, 'Complete', None), (4, 'Complete', None)] | incomplete=0 resend_req=2 recovered=2 unavailable=0
+  camera resend=False deliver_incomplete=False: [(1, 'Complete', None), (4, 'Complete', None), (5, 'Complete', None), (6, 'Complete', None)] | incomplete=2 resend_req=0 recovered=0 unavailable=0
+  camera resend=False deliver_incomplete=True: [(1, 'Complete', None), (2, 'Incomplete', 1), (3, 'Incomplete', 1), (4, 'Complete', None)] | incomplete=2 resend_req=0 recovered=0 unavailable=0

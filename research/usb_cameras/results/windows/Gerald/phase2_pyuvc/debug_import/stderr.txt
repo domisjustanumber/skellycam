@@ -1,0 +1,8 @@
+[camlock] acquired after 0.0s: uv run --script research/usb_cameras/libusb/pyuvc/pyuvc_winusb_stream.py --seconds 3 --bandwidth-factors 2.0 --out-dir research/usb_cameras/results/windows/Gerald/phase2_pyuvc/debug_import
+Windows fatal exception: access violation
+
+Current thread 0x0000d4e0 (most recent call first):
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\libusb\pyuvc\pyuvc_winusb_stream.py", line 104 in stream_one
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\libusb\pyuvc\pyuvc_winusb_stream.py", line 210 in main
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\libusb\pyuvc\pyuvc_winusb_stream.py", line 223 in <module>
+[camlock] released

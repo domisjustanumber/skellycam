@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = ["nokhwa_probe", "uvc_iso"]
+
+# rawusb 0.1.7 with Windows fixes found in phase 2 (diff: patches/rawusb-0.1.7-windows.patch)
+[patch.crates-io]
+rawusb = { path = "vendor/rawusb-0.1.7" }

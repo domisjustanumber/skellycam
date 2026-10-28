@@ -1,0 +1,176 @@
+[
+ {
+  "id": "C1",
+  "claim": "pyGigEVision is MIT-licensed, requires Python >=3.10, and depends only on numpy>=1.20 and psutil>=5.9",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyproject.toml#L9-L10",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyproject.toml#L37-L40"
+  ],
+  "how_verified": "read-code (cloned repo)",
+  "confidence": "high"
+ },
+ {
+  "id": "C2",
+  "claim": "Pure-Python GVCP/GVSP implementation over stdlib sockets; no vendor SDK, GenTL/Harvesters or Aravis dependency",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvcp.py#L29-L41",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L32-L43"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "C3",
+  "claim": "Maintenance: created 2026-05-11, last commit 2026-07-08 (v0.2.2); PyPI releases 0.0.1 (2026-05-12), 0.2.1 (2026-06-11), 0.2.2 (2026-07-08); 6 stars; ~67/69 commits by one author; 2 open PRs from 2026-10-20 (pixel cap, macOS firewall)",
+  "evidence_urls": [
+   "https://pypi.org/pypi/pyGigEVision/json",
+   "https://github.com/ladisk/pyGigEVision/pull/3",
+   "https://github.com/ladisk/pyGigEVision/pull/4",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/docs/source/changelog.rst"
+  ],
+  "how_verified": "other: git log on clone, PyPI JSON API, gh api repos/ladisk/pyGigEVision",
+  "confidence": "high"
+ },
+ {
+  "id": "C4",
+  "claim": "No GenICam XML parsing or feature-by-name access; XML is downloaded only and parsing is left to vendor drivers",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/genicam.py#L15-L19",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/examples/03_grab_one_frame.py#L40-L44"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "C5",
+  "claim": "No PTP (IEEE 1588), no action commands, no WRITEMEM method, no event channel, no multicast support",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvcp.py#L49-L56",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/standard.py#L20-L37"
+  ],
+  "how_verified": "read-code + grep -rniE 'ptp|1588|action|multicast|writemem' over the whole repo (only constant CMD_WRITEMEM defined, never used)",
+  "confidence": "high"
+ },
+ {
+  "id": "C6",
+  "claim": "Only unpacked Mono8/10/12/14/16 pixel formats are supported; unknown formats default to 2 bytes/pixel uint16, so BayerRG8 and RGB8 frames come back mis-sized (614400 bytes vs expected 307200/921600) and never complete",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L55-L76",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L147",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L226-L227"
+  ],
+  "how_verified": "ran-test: docker run pygev-test (python:3.12-bookworm + aravis-tools 0.8.26) arv-fake-gv-camera-0.8 -i eth0; python -I /scripts/t3_grab.py --fmt BayerRG8|RGB8",
+  "confidence": "high"
+ },
+ {
+  "id": "C7",
+  "claim": "Frames larger than 2048*2048 pixels are silently dropped (2448x2048 and 2592x1944 not delivered)",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L140-L145",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L222-L224"
+  ],
+  "how_verified": "ran-test: python -I /scripts/t9_max_pixels.py in Docker (synthetic GVSP sender)",
+  "confidence": "high"
+ },
+ {
+  "id": "C8",
+  "claim": "parse_first_url treats digit-only bare-hex addresses as decimal (and a unit test enshrines this), so bootstrap() against Aravis's fake camera (URL 'Local:arv-fake-camera.xml;10000;3e67') reads address 10000 decimal and returns 15975 zero bytes instead of the XML; Aravis parses these fields base-16",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/genicam.py#L74-L79",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/tests/test_genicam.py#L62-L65",
+   "https://github.com/AravisProject/aravis/blob/0.8.26/src/arvfakecamera.c#L1030-L1032",
+   "https://github.com/AravisProject/aravis/blob/0.8.26/src/arvmisc.c#L1010-L1032"
+  ],
+  "how_verified": "ran-test: t1_discover_xml.py and t2_xml_workaround.py against arv-fake-gv-camera-0.8 in Docker",
+  "confidence": "high"
+ },
+ {
+  "id": "C9",
+  "claim": "GVSPReceiver requests a 16 MB SO_RCVBUF but silently ignores the cap; on Linux default it is 425,984 bytes, yielding 1/43 (Mono8) and 0/49 (Mono16) complete 640x480@30 frames from the fake camera, while Aravis got 91/91 and 82/82; with SO_RCVBUFFORCE 32 MB pyGigEVision got 83/83 and 88/88",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L347-L351",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/docs/source/protocol.rst#L94-L100"
+  ],
+  "how_verified": "ran-test: t3_grab.py with and without --force-rcvbuf 16777216 (--cap-add NET_ADMIN); t4_aravis_baseline.py via /usr/bin/python3 + gir1.2-aravis-0.8",
+  "confidence": "high"
+ },
+ {
+  "id": "C10",
+  "claim": "With a large buffer, a single pyGigEVision receiver sustained ~197 MB/s (1080p100, 1500B packets, ~49% of one core) and ~248 MB/s (2048x2048@60, 9000B packets, ~21%) from the loopback fake camera with 100% complete frames; with default Linux buffers it delivered 0% complete frames at these rates while Aravis's UDP-socket path delivered 94%/90% at 1500B packets using 8-14% CPU",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L548-L574"
+  ],
+  "how_verified": "ran-test: t3_grab.py --fmt Mono8 --w/--h/--fps/--pkt matrix, and t5_aravis_rate.py with --cap-drop NET_RAW, in Docker",
+  "confidence": "medium"
+ },
+ {
+  "id": "C11",
+  "claim": "Two GVSPReceivers in one Python process scale poorly (1080p100/1500B: ~20 fps each, 115% CPU) consistent with GIL contention; two separate processes each reach ~100% complete at ~200 MB/s",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L376-L394"
+  ],
+  "how_verified": "ran-test: t6_multicam.py (one process) and two concurrent t3_grab.py --ip processes, two arv-fake-gv-camera-0.8 instances on eth0 + dummy0",
+  "confidence": "medium"
+ },
+ {
+  "id": "C12",
+  "claim": "Gap detection marks every not-yet-received packet as missing once a frame is >5 ms old, so a lossless sender paced at 110 MB/s triggered resend requests for 82.6% of all packets (and reports them as 'recovered'); Aravis only considers packets below the highest received packet id",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L714-L730",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L185-L189",
+   "https://github.com/AravisProject/aravis/blob/0.8.26/src/arvgvstream.c#L644-L680"
+  ],
+  "how_verified": "ran-test: t7_paced_resend.py 110e6/280e6/1000e6 in Docker (listener on 127.0.0.1:3956 counting PACKETRESEND)",
+  "confidence": "high"
+ },
+ {
+  "id": "C13",
+  "claim": "With GEV 2.x extended IDs, a gap in any block with block_id > 65535 raises an uncaught struct.error in _send_resend_direct, killing the receiver thread silently (get_frame returns None thereafter)",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L754",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L548-L560"
+  ],
+  "how_verified": "ran-test: t8_extended_id.py in Docker; traceback 'struct.error: 'H' format requires 0 <= number <= 65535', receiver_thread_alive=False",
+  "confidence": "high"
+ },
+ {
+  "id": "C14",
+  "claim": "Frame timestamps are exposed only as the raw 64-bit leader tick count; tick frequency (bootstrap 0x093C/0x0940) is not read by the library (fake camera reports 1 GHz when read manually; leader deltas 33,333,000 ticks at 30 fps)",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L614",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L673-L681",
+   "https://github.com/AravisProject/aravis/blob/0.8.26/src/arvgvcpprivate.h#L116-L120",
+   "https://github.com/AravisProject/aravis/blob/0.8.26/src/arvfakecamera.c#L785"
+  ],
+  "how_verified": "read-code + ran-test (t3_grab.py reads 0x093C/0x0940 manually)",
+  "confidence": "high"
+ },
+ {
+  "id": "C15",
+  "claim": "Tests are 85 mock-based unit tests with no hardware/emulator integration; CI runs ubuntu-latest and windows-latest on Python 3.10-3.13, no macOS",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/tests/conftest.py#L1-L2",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/.github/workflows/test.yml#L16-L17"
+  ],
+  "how_verified": "ran-test: python -m pytest -q in Docker -> 85 passed in 0.39s; read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "C16",
+  "claim": "Aravis fake GV camera implements only DISCOVERY/READMEM/WRITEMEM/READREG/WRITEREG (no PACKETRESEND, no PTP, no action commands), so resend recovery, PTP and actions cannot be tested with it",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/0.8.26/src/arvgvfakecamera.c#L158-L212"
+  ],
+  "how_verified": "read-code (aravis 0.8.26 clone) + fake XML grep shows no PTP/timestamp features",
+  "confidence": "high"
+ },
+ {
+  "id": "C17",
+  "claim": "On Windows (Python 3.12.13 on this host) a 16 MB SO_RCVBUF request is honored (default 65536 -> 16777216), unlike Linux's rmem_max cap",
+  "evidence_urls": [
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L347-L351"
+  ],
+  "how_verified": "ran-test: python -I -c socket setsockopt/getsockopt on Windows host",
+  "confidence": "medium"
+ }
+]

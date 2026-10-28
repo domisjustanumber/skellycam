@@ -1,0 +1,433 @@
+{
+ "name": "repro_e_e2e_1080p_memcpy_ui",
+ "command": [
+  ".venv\\Scripts\\python.exe",
+  "benchmarks\\frame_pipeline\\baseline\\bench_e_e2e.py",
+  "1080p",
+  "memcpy",
+  "ui",
+  "30"
+ ],
+ "log": "repro_e_e2e_1080p_memcpy_ui_stdout.log",
+ "exit_code": 0,
+ "timed_out": false,
+ "elapsed_s": 50.7,
+ "ncpu": 28,
+ "before": {
+  "time": "2026-10-28 05:16:23",
+  "window_s": 3.0,
+  "system_cpu_pct": 4.1,
+  "memory_pct": 35.9,
+  "memory_used_gb": 24.57,
+  "top_processes": [
+   {
+    "name": "PreSonusHardwareAccessService.exe",
+    "pid": 7828,
+    "cpu_pct_of_machine": 0.48
+   },
+   {
+    "name": "Corsair.Service.CpuIdRemote64.exe",
+    "pid": 13140,
+    "cpu_pct_of_machine": 0.23
+   },
+   {
+    "name": "System",
+    "pid": 4,
+    "cpu_pct_of_machine": 0.12
+   },
+   {
+    "name": "claude.exe",
+    "pid": 18200,
+    "cpu_pct_of_machine": 0.11
+   },
+   {
+    "name": "parsecd.exe",
+    "pid": 9576,
+    "cpu_pct_of_machine": 0.08
+   },
+   {
+    "name": "iPSMonitor.exe",
+    "pid": 9072,
+    "cpu_pct_of_machine": 0.08
+   },
+   {
+    "name": "grep.exe",
+    "pid": 21140,
+    "cpu_pct_of_machine": 0.08
+   },
+   {
+    "name": "grep.exe",
+    "pid": 6408,
+    "cpu_pct_of_machine": 0.08
+   },
+   {
+    "name": "firefox.exe",
+    "pid": 27000,
+    "cpu_pct_of_machine": 0.08
+   },
+   {
+    "name": "CrossDeviceService.exe",
+    "pid": 14528,
+    "cpu_pct_of_machine": 0.08
+   }
+  ]
+ },
+ "after": {
+  "time": "2026-10-28 05:17:18",
+  "window_s": 3.0,
+  "system_cpu_pct": 4.8,
+  "memory_pct": 35.5,
+  "memory_used_gb": 24.29,
+  "top_processes": [
+   {
+    "name": "PreSonusHardwareAccessService.exe",
+    "pid": 7828,
+    "cpu_pct_of_machine": 0.45
+   },
+   {
+    "name": "Corsair.Service.CpuIdRemote64.exe",
+    "pid": 13140,
+    "cpu_pct_of_machine": 0.25
+   },
+   {
+    "name": "System",
+    "pid": 4,
+    "cpu_pct_of_machine": 0.22
+   },
+   {
+    "name": "MsMpEng.exe",
+    "pid": 8040,
+    "cpu_pct_of_machine": 0.17
+   },
+   {
+    "name": "Code.exe",
+    "pid": 44288,
+    "cpu_pct_of_machine": 0.15
+   },
+   {
+    "name": "Code.exe",
+    "pid": 18468,
+    "cpu_pct_of_machine": 0.14
+   },
+   {
+    "name": "firefox.exe",
+    "pid": 37792,
+    "cpu_pct_of_machine": 0.11
+   },
+   {
+    "name": "Code.exe",
+    "pid": 20636,
+    "cpu_pct_of_machine": 0.09
+   },
+   {
+    "name": "parsecd.exe",
+    "pid": 9576,
+    "cpu_pct_of_machine": 0.08
+   },
+   {
+    "name": "firefox.exe",
+    "pid": 27000,
+    "cpu_pct_of_machine": 0.08
+   }
+  ]
+ },
+ "during": {
+  "n_samples": 22,
+  "background_mean": 2.83,
+  "background_p95": 4.35,
+  "background_max": 4.5,
+  "background_sys_minus_tree_mean": 7.18,
+  "system_mean": 38.52,
+  "tree_mean": 29.57
+ },
+ "verdict": "idle",
+ "killed_leftover_pids": [],
+ "samples": [
+  {
+   "t": 2.8,
+   "system": 9.5,
+   "tree": 0.0,
+   "wrapper": 1.67,
+   "background": 4.35,
+   "background_sys_minus_tree": 7.83,
+   "top_background": [
+    "MsMpEng.exe:1.9",
+    "Code.exe:0.4",
+    "PreSonusHardwareAccessService.exe:0.4"
+   ]
+  },
+  {
+   "t": 4.6,
+   "system": 20.5,
+   "tree": 3.23,
+   "wrapper": 1.8,
+   "background": 4.02,
+   "background_sys_minus_tree": 15.47,
+   "top_background": [
+    "System:1.2",
+    "MsMpEng.exe:0.8",
+    "Corsair.Service.CpuIdRemote64.exe:0.2"
+   ]
+  },
+  {
+   "t": 6.6,
+   "system": 12.8,
+   "tree": 10.51,
+   "wrapper": 1.74,
+   "background": 2.41,
+   "background_sys_minus_tree": 0.54,
+   "top_background": [
+    "System:0.7",
+    "WmiPrvSE.exe:0.5",
+    "BrYNSvc.exe:0.3"
+   ]
+  },
+  {
+   "t": 8.4,
+   "system": 17.7,
+   "tree": 9.78,
+   "wrapper": 1.55,
+   "background": 3.59,
+   "background_sys_minus_tree": 6.36,
+   "top_background": [
+    "System:2.4",
+    "PreSonusHardwareAccessService.exe:0.3",
+    "Corsair.Service.CpuIdRemote64.exe:0.1"
+   ]
+  },
+  {
+   "t": 10.3,
+   "system": 12.6,
+   "tree": 9.46,
+   "wrapper": 1.64,
+   "background": 2.77,
+   "background_sys_minus_tree": 1.5,
+   "top_background": [
+    "System:0.5",
+    "Code.exe:0.5",
+    "MsMpEng.exe:0.5"
+   ]
+  },
+  {
+   "t": 12.8,
+   "system": 28.8,
+   "tree": 33.14,
+   "wrapper": 1.83,
+   "background": 4.5,
+   "background_sys_minus_tree": -6.17,
+   "top_background": [
+    "System:1.6",
+    "MsMpEng.exe:0.6",
+    "svchost.exe:0.4"
+   ]
+  },
+  {
+   "t": 15.3,
+   "system": 47.9,
+   "tree": 41.05,
+   "wrapper": 1.94,
+   "background": 2.51,
+   "background_sys_minus_tree": 4.9,
+   "top_background": [
+    "System:0.9",
+    "PreSonusHardwareAccessService.exe:0.3",
+    "Corsair.Service.CpuIdRemote64.exe:0.2"
+   ]
+  },
+  {
+   "t": 17.7,
+   "system": 48.4,
+   "tree": 41.12,
+   "wrapper": 1.86,
+   "background": 3.42,
+   "background_sys_minus_tree": 5.42,
+   "top_background": [
+    "System:1.0",
+    "WmiPrvSE.exe:0.6",
+    "PreSonusHardwareAccessService.exe:0.3"
+   ]
+  },
+  {
+   "t": 20.2,
+   "system": 47.7,
+   "tree": 41.93,
+   "wrapper": 1.92,
+   "background": 2.04,
+   "background_sys_minus_tree": 3.85,
+   "top_background": [
+    "System:0.7",
+    "PreSonusHardwareAccessService.exe:0.3",
+    "WTabletServicePro.exe:0.1"
+   ]
+  },
+  {
+   "t": 22.6,
+   "system": 49.3,
+   "tree": 40.28,
+   "wrapper": 1.84,
+   "background": 2.11,
+   "background_sys_minus_tree": 7.17,
+   "top_background": [
+    "System:0.7",
+    "PreSonusHardwareAccessService.exe:0.4",
+    "Corsair.Service.CpuIdRemote64.exe:0.2"
+   ]
+  },
+  {
+   "t": 25.1,
+   "system": 46.7,
+   "tree": 40.8,
+   "wrapper": 1.96,
+   "background": 2.34,
+   "background_sys_minus_tree": 3.94,
+   "top_background": [
+    "System:0.7",
+    "PreSonusHardwareAccessService.exe:0.2",
+    "Corsair.Service.CpuIdRemote64.exe:0.2"
+   ]
+  },
+  {
+   "t": 27.5,
+   "system": 51.2,
+   "tree": 43.05,
+   "wrapper": 1.94,
+   "background": 3.42,
+   "background_sys_minus_tree": 6.21,
+   "top_background": [
+    "System:0.9",
+    "WmiPrvSE.exe:0.5",
+    "PreSonusHardwareAccessService.exe:0.3"
+   ]
+  },
+  {
+   "t": 30.0,
+   "system": 46.1,
+   "tree": 40.75,
+   "wrapper": 1.96,
+   "background": 1.85,
+   "background_sys_minus_tree": 3.39,
+   "top_background": [
+    "System:0.8",
+    "PreSonusHardwareAccessService.exe:0.2",
+    "Corsair.Service.CpuIdRemote64.exe:0.1"
+   ]
+  },
+  {
+   "t": 32.4,
+   "system": 52.0,
+   "tree": 41.62,
+   "wrapper": 2.0,
+   "background": 2.27,
+   "background_sys_minus_tree": 8.38,
+   "top_background": [
+    "System:0.9",
+    "PreSonusHardwareAccessService.exe:0.4",
+    "Corsair.Service.CpuIdRemote64.exe:0.2"
+   ]
+  },
+  {
+   "t": 34.8,
+   "system": 44.7,
+   "tree": 40.03,
+   "wrapper": 1.88,
+   "background": 2.43,
+   "background_sys_minus_tree": 2.79,
+   "top_background": [
+    "System:0.6",
+    "PreSonusHardwareAccessService.exe:0.4",
+    "Corsair.Service.CpuIdRemote64.exe:0.2"
+   ]
+  },
+  {
+   "t": 37.3,
+   "system": 48.2,
+   "tree": 41.3,
+   "wrapper": 1.99,
+   "background": 2.85,
+   "background_sys_minus_tree": 4.91,
+   "top_background": [
+    "System:0.9",
+    "WmiPrvSE.exe:0.4",
+    "Corsair.Service.CpuIdRemote64.exe:0.2"
+   ]
+  },
+  {
+   "t": 39.8,
+   "system": 51.1,
+   "tree": 42.94,
+   "wrapper": 1.99,
+   "background": 3.17,
+   "background_sys_minus_tree": 6.17,
+   "top_background": [
+    "System:0.8",
+    "PreSonusHardwareAccessService.exe:0.4",
+    "MsMpEng.exe:0.3"
+   ]
+  },
+  {
+   "t": 41.7,
+   "system": 46.8,
+   "tree": 28.77,
+   "wrapper": 1.8,
+   "background": 2.96,
+   "background_sys_minus_tree": 16.23,
+   "top_background": [
+    "System:0.8",
+    "Code.exe:0.4",
+    "PreSonusHardwareAccessService.exe:0.4"
+   ]
+  },
+  {
+   "t": 43.5,
+   "system": 16.9,
+   "tree": 9.63,
+   "wrapper": 1.6,
+   "background": 2.19,
+   "background_sys_minus_tree": 5.67,
+   "top_background": [
+    "MsMpEng.exe:0.3",
+    "System:0.3",
+    "PreSonusHardwareAccessService.exe:0.2"
+   ]
+  },
+  {
+   "t": 45.4,
+   "system": 10.5,
+   "tree": 1.7,
+   "wrapper": 1.35,
+   "background": 1.35,
+   "background_sys_minus_tree": 7.45,
+   "top_background": [
+    "System:0.5",
+    "WTabletServicePro.exe:0.1",
+    "Corsair.Service.CpuIdRemote64.exe:0.1"
+   ]
+  },
+  {
+   "t": 49.1,
+   "system": 71.2,
+   "tree": 89.48,
+   "wrapper": 1.16,
+   "background": 2.03,
+   "background_sys_minus_tree": -19.43,
+   "top_background": [
+    "WmiPrvSE.exe:0.3",
+    "PreSonusHardwareAccessService.exe:0.2",
+    "Corsair.Service.CpuIdRemote64.exe:0.2"
+   ]
+  },
+  {
+   "t": 50.7,
+   "system": 66.8,
+   "tree": 0,
+   "wrapper": 1.36,
+   "background": 3.63,
+   "background_sys_minus_tree": 65.44,
+   "top_background": [
+    "cpptools.exe:0.8",
+    "PreSonusHardwareAccessService.exe:0.4",
+    "MsMpEng.exe:0.3"
+   ]
+  }
+ ]
+}

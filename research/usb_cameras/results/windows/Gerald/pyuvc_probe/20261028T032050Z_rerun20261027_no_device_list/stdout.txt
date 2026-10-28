@@ -1,0 +1,33 @@
+{
+  "test": "pyuvc_probe",
+  "platform": "windows",
+  "hostname": "Gerald",
+  "utc_started": "2026-10-28T03:20:50.913763+00:00",
+  "command": "research/usb_cameras/libusb/pyuvc/pyuvc_probe.py --out-dir research/usb_cameras/results/windows/Gerald/pyuvc_probe/20261028T032050Z_rerun20261027_no_device_list",
+  "environment": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "os": "Windows-11-10.0.26300-SP0",
+    "pupil-labs-uvc": "1.0.8"
+  },
+  "cameras": [],
+  "import_ok": true,
+  "uvc_module_file": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\pyuvc-probe-skip-7ecd138e10ed71f0\\Lib\\site-packages\\uvc\\__init__.py",
+  "bundled_libusb": {
+    "libs": [
+      {
+        "file": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\pyuvc-probe-skip-7ecd138e10ed71f0\\Lib\\site-packages\\pupil_labs_uvc.libs\\libusb-1.0-1dac95d1eafcba057cf3df73dcf419bc.dll",
+        "version": "1.0.26.11724"
+      },
+      {
+        "file": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\pyuvc-probe-skip-7ecd138e10ed71f0\\Lib\\site-packages\\pupil_labs_uvc.libs\\pthreadVC2-137d7f94f2f57bf0d62cd100b155b534.dll",
+        "note": "pthreads-win32 runtime bundled"
+      }
+    ]
+  },
+  "clock_check": {
+    "uvc_get_time_monotonic_s": 31273.009435,
+    "perf_counter_s": 31273.0094328,
+    "difference_s": 2.1999985619913787e-06,
+    "note": "on Windows both should be QPC-based seconds; difference ~0 means same clock"
+  }
+}

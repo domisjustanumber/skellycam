@@ -1,0 +1,90 @@
+{
+  "test": "pyuvc_probe",
+  "platform": "windows",
+  "hostname": "Gerald",
+  "utc_started": "2026-10-25T18:15:14.512973+00:00",
+  "command": "research/usb_cameras/libusb/pyuvc/pyuvc_probe.py",
+  "environment": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "os": "Windows-11-10.0.26300-SP0",
+    "pupil-labs-uvc": "1.0.8"
+  },
+  "cameras": [
+    {
+      "name": "unknown",
+      "manufacturer": "unknown",
+      "serialNumber": "unknown",
+      "idVendor": 5426,
+      "idProduct": 3589,
+      "bus_number": 2,
+      "device_address": 5,
+      "uid": "2:5",
+      "vid": "1532",
+      "pid": "0e05",
+      "is_accessible": false,
+      "capture_open": "OpenError('Could not open device. Error: Entity not found')"
+    },
+    {
+      "name": "unknown",
+      "manufacturer": "unknown",
+      "serialNumber": "unknown",
+      "idVendor": 1133,
+      "idProduct": 2140,
+      "bus_number": 1,
+      "device_address": 22,
+      "uid": "1:22",
+      "vid": "046d",
+      "pid": "085c",
+      "is_accessible": false,
+      "capture_open": "OpenError('Could not open device. Error: Entity not found')"
+    },
+    {
+      "name": "unknown",
+      "manufacturer": "unknown",
+      "serialNumber": "unknown",
+      "idVendor": 19530,
+      "idProduct": 19029,
+      "bus_number": 1,
+      "device_address": 20,
+      "uid": "1:20",
+      "vid": "4c4a",
+      "pid": "4a55",
+      "is_accessible": false,
+      "capture_open": "OpenError('Could not open device. Error: Entity not found')"
+    },
+    {
+      "name": "unknown",
+      "manufacturer": "unknown",
+      "serialNumber": "unknown",
+      "idVendor": 1133,
+      "idProduct": 2115,
+      "bus_number": 1,
+      "device_address": 21,
+      "uid": "1:21",
+      "vid": "046d",
+      "pid": "0843",
+      "is_accessible": false,
+      "capture_open": "OpenError('Could not open device. Error: Entity not found')"
+    }
+  ],
+  "import_ok": true,
+  "uvc_module_file": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\pyuvc-probe-afc37b7f77b22088\\Lib\\site-packages\\uvc\\__init__.py",
+  "bundled_libusb": {
+    "libs": [
+      {
+        "file": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\pyuvc-probe-afc37b7f77b22088\\Lib\\site-packages\\pupil_labs_uvc.libs\\libusb-1.0-1dac95d1eafcba057cf3df73dcf419bc.dll",
+        "version": "1.0.26.11724"
+      },
+      {
+        "file": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\pyuvc-probe-afc37b7f77b22088\\Lib\\site-packages\\pupil_labs_uvc.libs\\pthreadVC2-137d7f94f2f57bf0d62cd100b155b534.dll",
+        "note": "pthreads-win32 runtime bundled"
+      }
+    ]
+  },
+  "clock_check": {
+    "uvc_get_time_monotonic_s": 101472.090863,
+    "perf_counter_s": 101472.09086285,
+    "difference_s": 1.500011421740055e-07,
+    "note": "on Windows both should be QPC-based seconds; difference ~0 means same clock"
+  }
+}

@@ -1,0 +1,17 @@
+opened 1 camera(s)
+interfaces: {'lo': False} -> FALLBACK TriggerSoftware (unsynchronised)
+0 None None [{'error': 'TimeoutException: '}]
+1 None None [{'frame_id': 65402, 'timestamp': 1792950827160002000, 'chunk_timestamp': None}]
+2 None None [{'frame_id': 65403, 'timestamp': 1792950827280002000, 'chunk_timestamp': None}]
+3 None None [{'frame_id': 65404, 'timestamp': 1792950827400003000, 'chunk_timestamp': None}]
+4 None None [{'frame_id': 65405, 'timestamp': 1792950827520002000, 'chunk_timestamp': None}]
+log (absent/failed features):
+    absent: ActionDeviceKey
+    absent: ActionGroupKey
+    absent: ActionGroupMask
+    absent: ActionSelector
+    absent: ChunkModeActive
+    absent: GevIEEE1588
+    absent: PtpEnable
+    failed: TriggerSource='Action1': InvalidArgumentException: Feature 'TriggerSource' : cannot convert value 'Action1', the value is invalid. : InvalidArgumentException thrown in node 'TriggerSource' while calling 'TriggerSource.FromString()' (file 'Enumeration.cpp', line 132)
+exit=0

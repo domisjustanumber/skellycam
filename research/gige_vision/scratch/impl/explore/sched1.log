@@ -1,0 +1,23 @@
+== cameras
+  [INFO] [cam0 127.0.0.1 VivaCam Fake] camera: vitavision.dev VivaCam Fake serial VIVA-FAKE-001 fw 1.0.0-fake; GEV 2.0 (DeviceTLVersion ?.?); BayerRG8 640x480, packet size 1500
+== PTP
+  [SKIP] [cam0 127.0.0.1 VivaCam Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+  [SKIP] PTP lock: PTP could not be enabled on any camera
+== scheduled actions
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] action trigger setup: --skip-trigger-config: frames are NOT triggered by the actions (emulator dry run only)
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] scheduled action capability: capability bit clear - camera may reject scheduled actions (trying anyway)
+  60 scheduled actions at 30.0 fps to ['127.0.0.1'], sent 20.0 ms ahead ...
+  [PASS] ACTION_ACKs: 60/60 sends acknowledged by every addressed camera (sender viva); 0 sends left after their scheduled time
+  [PASS] [cam0 127.0.0.1 VivaCam Fake] triggered frames: 60/60 actions produced a frame (matched by ORDER: frame timestamps are not on camera 0's timescale)
+  [INFO] [cam0 127.0.0.1 VivaCam Fake] frame timestamp - scheduled time: median -2334752.6 us, p95 -2202487.1 us (what the timestamp marks - exposure start, end or readout - is vendor-specific)
+  [SKIP] exposure-start spread: needs two or more cameras
+  [PASS] [cam0 127.0.0.1 VivaCam Fake] frames received: 75; incomplete 0, block-id gaps 0 (0.00 % lost, limit 0.5 %); device fps 25.84
+wrote vivaout_sched\frames.csv
+wrote vivaout_sched\summary.json
+
+== viva_sync_capture_test: 3 passed, 0 failed, 3 skipped, 2 warnings, 2 info
+   SKIP [cam0 127.0.0.1 VivaCam Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+   SKIP PTP lock: PTP could not be enabled on any camera
+   WARN [cam0 127.0.0.1 VivaCam Fake] action trigger setup: --skip-trigger-config: frames are NOT triggered by the actions (emulator dry run only)
+   WARN [cam0 127.0.0.1 VivaCam Fake] scheduled action capability: capability bit clear - camera may reject scheduled actions (trying anyway)
+   SKIP exposure-start spread: needs two or more cameras

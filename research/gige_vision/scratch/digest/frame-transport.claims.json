@@ -1,0 +1,182 @@
+[
+ {
+  "id": "C1",
+  "claim": "GigE Vision 3.0 (TC-approved 17 Apr 2026) adds GVRSP, an RDMA/RoCEv2 streaming protocol, as an optional alternative to GVSP. Multi-camera synchronization and compressed-image transmission came with GEV 2.0 (Nov 2011), and GEV 2.1 (Aug 2018) updated the IEEE 1588 profile. Single-cable PTP sync is therefore not a 3.0 feature.",
+  "evidence_urls": [
+   "https://www.automate.org/vision/vision-standards/vision-standards-gige-vision",
+   "https://www.automate.org/vision/blogs/gige-vision-3-0-standard-answers-to-frequently-asked-questions-faq"
+  ],
+  "how_verified": "read-spec/doc (curl-downloaded A3 pages, text extracted; quotes in notes)",
+  "confidence": "high"
+ },
+ {
+  "id": "C2",
+  "claim": "Not all GEV 3.0 cameras support RDMA. GEV 3.0 cameras support GVSP v2 plus GVRSP, not legacy GVSP v1, and GVRSP needs a RoCEv2-capable NIC and a GVRSP-capable library.",
+  "evidence_urls": [
+   "https://www.automate.org/vision/blogs/gige-vision-3-0-standard-answers-to-frequently-asked-questions-faq"
+  ],
+  "how_verified": "read-spec/doc",
+  "confidence": "high"
+ },
+ {
+  "id": "C3",
+  "claim": "IEEE 1588 and scheduled-action bootstrap registers (0x096C-0x097C) and ACTION_CMD 0x0100 are part of the GEV 2.x GVCP register map as dissected by Wireshark.",
+  "evidence_urls": [
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L120-L136",
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L181-L197"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "C4",
+  "claim": "GVCP is UDP to device port 3956 with an 8-byte header (0x42 = CMD). GVSP goes to a host-chosen port and IP written into SCP (0x0D00) and SCDA (0x0D18). SCPS (0x0D04) holds the packet size plus fire-test/do-not-fragment bits, and SCPD (0x0D08) the inter-packet delay. Per-channel stride is 0x40.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcpprivate.h#L126-L137",
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L148-L160",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvdevice.c#L1586-L1590"
+  ],
+  "how_verified": "read-code + ran-test (tshark decode of Docker capture showing WRITEREG SCDA0/SCP0, READREG SCPS0=0x578)",
+  "confidence": "high"
+ },
+ {
+  "id": "C5",
+  "claim": "The standard GVSP header is 8 bytes: status, 16-bit block_id, EI bit plus 7-bit format, 24-bit packet_id. With the EI flag (0x80 in byte 4, GEV 2.0) the header is 20 bytes, with a 64-bit block_id and 32-bit packet_id.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvspprivate.h#L32-L36",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvspprivate.h#L132-L144",
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvsp.c#L2349-L2450"
+  ],
+  "how_verified": "read-code + ran-test (raw leader bytes 0000ff7901000000... in Docker capture)",
+  "confidence": "high"
+ },
+ {
+  "id": "C6",
+  "claim": "GVSP payload type codes: IMAGE 0x0001, RAW 0x0002, FILE 0x0003, CHUNK 0x0004, EXT_CHUNK 0x0005 (deprecated in 2.0), JPEG 0x0006, JPEG2000 0x0007, H.264 0x0008, MULTIZONE 0x0009, MULTIPART 0x000A (2.1), GenDC 0x000B (2.2), device-specific 0x8000 and up. Bit 0x4000 flags appended chunk data.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvbuffer.h#L79-L92",
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvsp.c#L43-L54",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvspprivate.h#L427-L449"
+  ],
+  "how_verified": "read-code (two independent implementations agree)",
+  "confidence": "high"
+ },
+ {
+  "id": "C7",
+  "claim": "The image leader is 36 bytes: flags, payload_type, u64 timestamp, u32 PFNC pixel_format, size_x, size_y, offset_x, offset_y, u16 padding_x, u16 padding_y. The image trailer carries payload_type and size_y. JPEG leaders carry timestamp, u64 payload size, u64 tick frequency and data format.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvspprivate.h#L152-L193",
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvsp.c#L1287-L1327",
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvsp.c#L1523-L1550"
+  ],
+  "how_verified": "read-code + ran-test (tshark -O gvsp decode of Aravis fake camera leader: IMAGE, Mono8 0x01080001, 512x512, ts 0x18e1d68736273fd8)",
+  "confidence": "high"
+ },
+ {
+  "id": "C8",
+  "claim": "Per-packet image data = SCPS - 36 bytes (IP 20 + UDP 8 + GVSP 8), or SCPS - 48 with extended IDs. Expected packets per frame = ceil(payload/data) + 2. Verified: SCPS 1400 and 512x512 Mono8 gives trailer packet_id 194 in the capture.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvspprivate.h#L257-L280",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L267-L318"
+  ],
+  "how_verified": "ran-test (docker run gev-ft-research run_capture.sh + decode.sh; bandwidth.py check line)",
+  "confidence": "high"
+ },
+ {
+  "id": "C9",
+  "claim": "Packet loss recovery uses GVCP PACKETRESEND_CMD 0x0040 with a block id and first/last packet ids (24- or 32-bit), sent from the stream socket. Resent packets come back with status 0x0100. Aravis disables resend when GVCP capability register 0x0934 bit 2 is clear. Defaults: 1 ms initial timeout, 20 ms resend timeout, 100 ms frame retention, 25% resend budget.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcp.c#L405-L441",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvdevice.c#L2071-L2072",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvdevice.c#L1904-L1905",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstreamprivate.h#L33-L36",
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L1555-L1620"
+  ],
+  "how_verified": "read-code + ran-test (fake camera with -r 20: n_resend_requests=0, n_failures=19/20 because the fake device does not advertise resend)",
+  "confidence": "high"
+ },
+ {
+  "id": "C10",
+  "claim": "Host UDP receive buffer size decides frame completeness. With SCPS 8000 the default socket buffer completed 9 of 20 frames; Aravis's auto SO_RCVBUF (frame size + 1024) completed 21 of 21 with 0 missing packets.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L224-L262"
+  ],
+  "how_verified": "ran-test (arv-camera-test-0.8 --no-packet-socket -i 8000 with and without -a, in Docker over loopback)",
+  "confidence": "medium"
+ },
+ {
+  "id": "C11",
+  "claim": "Open-source receivers effectively support only uncompressed payloads. Aravis closes JPEG/JPEG2000/H.264/multizone/GenDC buffers as PAYLOAD_NOT_SUPPORTED. pyGigEVision defines only payload 0x0001 and Mono8-16 formats, falls back to 2 B/px for unknown formats, and never checks the payload type.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L384-L393",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvbuffer.h#L64-L75",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L52-L76",
+   "https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L226-L227"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "C12",
+  "claim": "Baumer VLXT.I.JP (10GigE) cameras do JPEG on the camera using the GEV 2.0 JPEG payload type (Mono8 or YCbCr422_8 input, ImageCompressionMode=JPEG, quality 30-100%), and the stream can be saved directly as .jpg.",
+  "evidence_urls": [
+   "https://www.baumer.com/ca/en/service-support/technology-highlights/industrial-cameras-with-integrated-jpeg-image-compression/a/JPEG-image-compression",
+   "https://github.com/Kinovea/Kinovea/blob/13d0236f65622501da5cb776ddb979629f468e71/Kinovea.Camera.Baumer/BaumerHelper.cs#L140-L182"
+  ],
+  "how_verified": "read-spec/doc (vendor page via curl) + read-code (Kinovea integration)",
+  "confidence": "high"
+ },
+ {
+  "id": "C13",
+  "claim": "Teledyne FLIR Blackfly S GigE lossless compression (Mono8/BayerRG8, Spinnaker >= 2.4.0.143) streams in a proprietary format. Basler Compression Beyond (ImageCompressionMode=BaslerCompressionBeyond, Lossless/FixRatio) needs pylon CImageDecompressor and a camera-supplied compression descriptor. LUCID QOI is chosen as a QOI_* PixelFormat and decoded by Arena.",
+  "evidence_urls": [
+   "https://www.teledynevisionsolutions.com/support/support-center/application-note/iis/using-lossless-compression/",
+   "https://docs.baslerweb.com/compression-beyond",
+   "https://docs.baslerweb.com/pylonapi/cpp/class_pylon_1_1_c_image_decompressor",
+   "https://support.thinklucid.com/knowledgebase/using_qoi_with_lucid_cameras/"
+  ],
+  "how_verified": "read-spec/doc (WebFetch of vendor pages)",
+  "confidence": "high"
+ },
+ {
+  "id": "C14",
+  "claim": "1920x1200 BayerRG8 @ 60 fps is 138.24 MB/s (1106 Mbit/s) of payload, which exceeds the ~119 MB/s (1500-byte packets) or ~124 MB/s (9000-byte packets) usable on 1 GbE. One such camera does not fit (max ~51.6 fps); at 30 fps one camera fits per 1 GbE link; at 60 fps 2.5/5/10 GbE carry ~2.2/4.3/8.6 cameras.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvspprivate.h#L257-L280",
+   "https://infosys.beckhoff.com/content/1033/tf7xxx_tc3_vision/22185723659.html"
+  ],
+  "how_verified": "ran-test (python -I scripts-ft/bandwidth.py; overhead model validated against capture packet counts)",
+  "confidence": "high"
+ },
+ {
+  "id": "C15",
+  "claim": "SCPD is in device timestamp ticks; Aravis converts ns with tick_frequency*ns/1e9. Many cameras offer DeviceLinkThroughputLimit, from which the firmware computes the packet delay, so cameras sharing a link can interleave bursts.",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvcamera.c#L3521-L3550",
+   "https://infosys.beckhoff.com/content/1033/tf7xxx_tc3_vision/22185723659.html"
+  ],
+  "how_verified": "read-code + read-spec/doc",
+  "confidence": "high"
+ },
+ {
+  "id": "C16",
+  "claim": "Aravis converts the leader timestamp to ns using bootstrap tick-frequency registers 0x093C/0x0940 and falls back to host wall-clock time when the tick frequency is 0. Aravis src contains no PTP/IEEE 1588-specific code (grep finds none at 482547a).",
+  "evidence_urls": [
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvspprivate.h#L728-L743",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L479-L484",
+   "https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L460"
+  ],
+  "how_verified": "read-code + grep -rli 'ptp|ieee.?1588' src/ (no matches)",
+  "confidence": "high"
+ },
+ {
+  "id": "C17",
+  "claim": "Wireshark's GVSP dissector is heuristic-only and disabled by default (no fixed GVSP port); captures must be decoded with --enable-heuristic gvsp_udp.",
+  "evidence_urls": [
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvsp.c#L3640",
+   "https://gitlab.com/wireshark/wireshark/-/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvsp.c#L2536-L2590"
+  ],
+  "how_verified": "read-code + ran-test (tshark 4.2.2 in Docker)",
+  "confidence": "high"
+ }
+]

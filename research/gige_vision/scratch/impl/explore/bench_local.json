@@ -1,0 +1,143 @@
+{
+ "tool": "udp_recv_benchmark",
+ "role": "local",
+ "host": {
+  "python": "3.12.13",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "hostname": "Gerald",
+  "time_utc": "2026-10-25T18:55:31Z"
+ },
+ "args": {
+  "role": "local",
+  "host": "127.0.0.1",
+  "bind": "0.0.0.0",
+  "target": "",
+  "port": 50000,
+  "sizes": "1472,8972",
+  "rates": "1000,0",
+  "seconds": 2.0,
+  "rcvbuf": 33554432,
+  "force_rcvbuf": false,
+  "senders": 1,
+  "max_drop_pct": 0.1,
+  "json": "bench_local.json",
+  "selftest": false
+ },
+ "rows": [
+  {
+   "size": 1472,
+   "target_mbps": 1000.0,
+   "senders": 1,
+   "sent": 169856,
+   "received": 169856,
+   "drop_pct": 0.0,
+   "send_mbps": 1000.1,
+   "recv_mbps": 1000.2,
+   "recv_kpps": 84.9,
+   "rx_cpu_pct": 21.1,
+   "rcvbuf": {
+    "requested": 33554432,
+    "method": "SO_RCVBUF",
+    "errors": [],
+    "os_default": 65536,
+    "effective": 33554432,
+    "effective_usable_estimate": 33554432,
+    "capped": false
+   },
+   "linux_rcvbuf_errors": null
+  },
+  {
+   "size": 1472,
+   "target_mbps": 0.0,
+   "senders": 1,
+   "sent": 471440,
+   "received": 471440,
+   "drop_pct": 0.0,
+   "send_mbps": 2775.8,
+   "recv_mbps": 2776.1,
+   "recv_kpps": 235.7,
+   "rx_cpu_pct": 69.5,
+   "rcvbuf": {
+    "requested": 33554432,
+    "method": "SO_RCVBUF",
+    "errors": [],
+    "os_default": 65536,
+    "effective": 33554432,
+    "effective_usable_estimate": 33554432,
+    "capped": false
+   },
+   "linux_rcvbuf_errors": null
+  },
+  {
+   "size": 8972,
+   "target_mbps": 1000.0,
+   "senders": 1,
+   "sent": 27888,
+   "received": 27888,
+   "drop_pct": 0.0,
+   "send_mbps": 1000.5,
+   "recv_mbps": 1000.6,
+   "recv_kpps": 13.9,
+   "rx_cpu_pct": 7.0,
+   "rcvbuf": {
+    "requested": 33554432,
+    "method": "SO_RCVBUF",
+    "errors": [],
+    "os_default": 65536,
+    "effective": 33554432,
+    "effective_usable_estimate": 33554432,
+    "capped": false
+   },
+   "linux_rcvbuf_errors": null
+  },
+  {
+   "size": 8972,
+   "target_mbps": 0.0,
+   "senders": 1,
+   "sent": 421344,
+   "received": 421344,
+   "drop_pct": 0.0,
+   "send_mbps": 15121.1,
+   "recv_mbps": 15122.8,
+   "recv_kpps": 210.7,
+   "rx_cpu_pct": 60.9,
+   "rcvbuf": {
+    "requested": 33554432,
+    "method": "SO_RCVBUF",
+    "errors": [],
+    "os_default": 65536,
+    "effective": 33554432,
+    "effective_usable_estimate": 33554432,
+    "capped": false
+   },
+   "linux_rcvbuf_errors": null
+  }
+ ],
+ "checks": [
+  {
+   "name": "paced receive",
+   "status": "PASS",
+   "detail": "lost 0.0 % (limit 0.1 %), received 84.9 kpps (line rate needs 81.3 kpps), receive CPU 21.1 % of one core",
+   "camera": "1472 B @ 1000.0 Mbit/s"
+  },
+  {
+   "name": "unpaced (max) throughput",
+   "status": "INFO",
+   "detail": "235.7 kpps received, 0.0 % lost - the sender outruns the receiver on purpose",
+   "camera": "1472 B @ max"
+  },
+  {
+   "name": "paced receive",
+   "status": "PASS",
+   "detail": "lost 0.0 % (limit 0.1 %), received 13.9 kpps (line rate needs 13.8 kpps), receive CPU 7.0 % of one core",
+   "camera": "8972 B @ 1000.0 Mbit/s"
+  },
+  {
+   "name": "unpaced (max) throughput",
+   "status": "INFO",
+   "detail": "210.7 kpps received, 0.0 % lost - the sender outruns the receiver on purpose",
+   "camera": "8972 B @ max"
+  }
+ ]
+}

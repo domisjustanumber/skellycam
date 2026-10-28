@@ -1,0 +1,9 @@
+Rerun 2026-10-27 (local) / 2026-10-28T03:06Z, unattended, not elevated.
+Built in a scratch COPY of research/usb_cameras/libusb (so the in-repo build/ binaries other agents use are not overwritten):
+  copy: tar of research/usb_cameras/libusb excluding ./build and __pycache__ -> <scratchpad>\b ; build/deps/libusb-1.0.30.tar.bz2 copied; build/deps/libuvc git-cloned locally (commit d07de4fa present)
+  command (from PowerShell, NOT Git Bash): pwsh -NoProfile -File <scratchpad>\b\build_windows.ps1
+  <scratchpad> = C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad
+Harness notes (failed attempts kept):
+  attempt1 (libuvc_build_attempt1_gitbash_tar.log): launched from Git Bash -> script's bare `tar -xjf C:\...` resolved to Git's GNU tar, which reads "C:" as a remote host -> "tar failed". Run from PowerShell (C:\WINDOWS\system32\tar.exe) works.
+  attempt2 (libuvc_build_attempt2_maxpath.log): tree at <scratchpad>\runs\libusb_rust_20261027\libusb_src -> MSBuild FileTracker FTK1011 (path > 260 chars). Moved tree to <scratchpad>\b -> exit 0.
+Build time: 2026-10-28T03:06:38Z -> 03:06:56Z (libuvc clone reused; libusb rebuilt from extracted tarball).

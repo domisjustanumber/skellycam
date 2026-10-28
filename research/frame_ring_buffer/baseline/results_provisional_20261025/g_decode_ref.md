@@ -1,0 +1,12 @@
+# (g) reference cost of FakeCapture.retrieve stand-ins (not SkellyCam code)
+
+| size | mode | parallel procs | median ms | p99 ms | per-proc fps | mean JPEG KB |
+|---|---|---|---|---|---|---|
+| 720p | mjpeg | 1 | 3.05 | 3.55 | 325 | 241 |
+| 720p | mjpeg | 5 | 3.33 | 4.40 | 294 | 241 |
+| 720p | memcpy | 1 | 0.15 | 0.22 | 6618 | 241 |
+| 720p | memcpy | 5 | 0.52 | 0.86 | 1875 | 241 |
+| 1080p | mjpeg | 1 | 6.98 | 8.02 | 142 | 540 |
+| 1080p | mjpeg | 5 | 7.69 | 11.55 | 126 | 540 |
+| 1080p | memcpy | 1 | 0.35 | 0.46 | 2825 | 540 |
+| 1080p | memcpy | 5 | 1.18 | 2.06 | 811 | 540 |

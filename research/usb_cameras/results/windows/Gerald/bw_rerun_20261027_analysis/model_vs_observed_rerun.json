@@ -1,0 +1,888 @@
+{
+ "test": "bw_budget_model",
+ "host": "Gerald",
+ "limit_ns": 100000.0,
+ "formula": "USB2.0 5.11.3 HS iso IN, worst-case bit stuffing, Host_Delay=0",
+ "per_transaction_ns": {
+  "192": 4372,
+  "384": 8105,
+  "512": 10592,
+  "640": 13081,
+  "800": 16193,
+  "896": 18060,
+  "944": 18993,
+  "992": 19926,
+  "1020": 20470,
+  "1023": 20528,
+  "1024": 20547
+ },
+ "inputs": [
+  "research\\usb_cameras\\results\\windows\\Gerald\\bw_concurrency_rerun_20261027\\r05_shared_hub_c930e_generic.json",
+  "research\\usb_cameras\\results\\windows\\Gerald\\bw_concurrency_rerun_20261027\\r07_shared_hub_threshold_staggered.json",
+  "research\\usb_cameras\\results\\windows\\Gerald\\bw_concurrency_rerun_20261027\\r08_cross_rootport_no_kiyo.json",
+  "research\\usb_cameras\\results\\windows\\Gerald\\bw_concurrency_rerun_20261027\\rc_original_exe_nosave.json",
+  "research\\usb_cameras\\results\\windows\\Gerald\\bw_concurrency_rerun_20261027\\rv_shared_hub_threshold.json"
+ ],
+ "rows": [
+  {
+   "file": "r05_shared_hub_c930e_generic.json",
+   "label": "c930e_mjpg720_then_gen_mjpg720",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:1280x720@30",
+     "alt": 11,
+     "alt_source": "solo-run",
+     "packet": 1024,
+     "mult": 3,
+     "cost_ns": 61640,
+     "streamed": false,
+     "error_hr": "0x800718CF"
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "observed",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": true,
+     "error_hr": null
+    }
+   ],
+   "total_ns": 123224,
+   "pct_of_microframe": 98.6,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  },
+  {
+   "file": "r05_shared_hub_c930e_generic.json",
+   "label": "gen_mjpg720_then_c930e_mjpg720",
+   "cameras": [
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "solo-run",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": false,
+     "error_hr": "0x800718CF"
+    },
+    {
+     "pid": "0843",
+     "mode": "MJPG:1280x720@30",
+     "alt": 11,
+     "alt_source": "observed",
+     "packet": 1024,
+     "mult": 3,
+     "cost_ns": 61640,
+     "streamed": true,
+     "error_hr": null
+    }
+   ],
+   "total_ns": 123224,
+   "pct_of_microframe": 98.6,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  },
+  {
+   "file": "r05_shared_hub_c930e_generic.json",
+   "label": "c930e_mjpg320_then_gen_mjpg720",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:320x240@30",
+     "alt": 5,
+     "alt_source": "observed",
+     "packet": 800,
+     "mult": 1,
+     "cost_ns": 16193,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "observed",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": true,
+     "error_hr": null
+    }
+   ],
+   "total_ns": 77777,
+   "pct_of_microframe": 62.2,
+   "predicted_fit": true,
+   "observed_both_streamed": true,
+   "agree": true
+  },
+  {
+   "file": "r05_shared_hub_c930e_generic.json",
+   "label": "c930e_mjpg640_then_gen_mjpg720",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:640x480@30",
+     "alt": 10,
+     "alt_source": "observed",
+     "packet": 896,
+     "mult": 3,
+     "cost_ns": 54179,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "solo-run",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": false,
+     "error_hr": "0x800718CF"
+    }
+   ],
+   "total_ns": 115763,
+   "pct_of_microframe": 92.6,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  },
+  {
+   "file": "r05_shared_hub_c930e_generic.json",
+   "label": "c930e_yuy2_320_then_gen_yuy2_320",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "YUY2:320x240@30",
+     "alt": 5,
+     "alt_source": "observed",
+     "packet": 800,
+     "mult": 1,
+     "cost_ns": 16193,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "YUY2:320x240@30",
+     "alt": 1,
+     "alt_source": "observed",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": true,
+     "error_hr": null
+    }
+   ],
+   "total_ns": 77777,
+   "pct_of_microframe": 62.2,
+   "predicted_fit": true,
+   "observed_both_streamed": true,
+   "agree": true
+  },
+  {
+   "file": "r05_shared_hub_c930e_generic.json",
+   "label": "c922_c930e_gen_mjpg720",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:1280x720@30",
+     "alt": 11,
+     "alt_source": "observed",
+     "packet": 1024,
+     "mult": 3,
+     "cost_ns": 61640,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "solo-run",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": false,
+     "error_hr": "0x800718CF"
+    }
+   ],
+   "total_ns": 123224,
+   "pct_of_microframe": 98.6,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  },
+  {
+   "file": "r07_shared_hub_threshold_staggered.json",
+   "label": "c930e_alt6_then_gen",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:352x288@30",
+     "alt": 6,
+     "alt_source": "observed",
+     "packet": 944,
+     "mult": 1,
+     "cost_ns": 18993,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "observed",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": true,
+     "error_hr": null
+    }
+   ],
+   "total_ns": 80577,
+   "pct_of_microframe": 64.5,
+   "predicted_fit": true,
+   "observed_both_streamed": true,
+   "agree": true
+  },
+  {
+   "file": "r07_shared_hub_threshold_staggered.json",
+   "label": "c930e_alt7_then_gen",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:480x270@30",
+     "alt": 7,
+     "alt_source": "observed",
+     "packet": 640,
+     "mult": 2,
+     "cost_ns": 26162,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "observed",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": true,
+     "error_hr": null
+    }
+   ],
+   "total_ns": 87746,
+   "pct_of_microframe": 70.2,
+   "predicted_fit": true,
+   "observed_both_streamed": true,
+   "agree": true
+  },
+  {
+   "file": "r07_shared_hub_threshold_staggered.json",
+   "label": "c930e_alt8_then_gen",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:640x480@15",
+     "alt": 8,
+     "alt_source": "observed",
+     "packet": 800,
+     "mult": 2,
+     "cost_ns": 32386,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "observed",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": true,
+     "error_hr": null
+    }
+   ],
+   "total_ns": 93970,
+   "pct_of_microframe": 75.2,
+   "predicted_fit": true,
+   "observed_both_streamed": true,
+   "agree": true
+  },
+  {
+   "file": "r07_shared_hub_threshold_staggered.json",
+   "label": "c930e_alt9_then_gen",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:640x360@30",
+     "alt": 9,
+     "alt_source": "observed",
+     "packet": 992,
+     "mult": 2,
+     "cost_ns": 39852,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "solo-run",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": false,
+     "error_hr": "0x800718CF"
+    }
+   ],
+   "total_ns": 101436,
+   "pct_of_microframe": 81.1,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  },
+  {
+   "file": "r07_shared_hub_threshold_staggered.json",
+   "label": "c930e_alt10_then_gen",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:640x480@30",
+     "alt": 10,
+     "alt_source": "solo-run",
+     "packet": 896,
+     "mult": 3,
+     "cost_ns": 54179,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "solo-run",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": false,
+     "error_hr": "0x800718CF"
+    }
+   ],
+   "total_ns": 115763,
+   "pct_of_microframe": 92.6,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  },
+  {
+   "file": "r07_shared_hub_threshold_staggered.json",
+   "label": "c930e_alt11_then_gen",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:1280x720@30",
+     "alt": 11,
+     "alt_source": "observed",
+     "packet": 1024,
+     "mult": 3,
+     "cost_ns": 61640,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "solo-run",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": false,
+     "error_hr": null
+    }
+   ],
+   "total_ns": 123224,
+   "pct_of_microframe": 98.6,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  },
+  {
+   "file": "r07_shared_hub_threshold_staggered.json",
+   "label": "gen_then_c930e_alt11",
+   "cameras": [
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "observed",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "0843",
+     "mode": "MJPG:1280x720@30",
+     "alt": 11,
+     "alt_source": "solo-run",
+     "packet": 1024,
+     "mult": 3,
+     "cost_ns": 61640,
+     "streamed": false,
+     "error_hr": "0x800718CF"
+    }
+   ],
+   "total_ns": 123224,
+   "pct_of_microframe": 98.6,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  },
+  {
+   "file": "r07_shared_hub_threshold_staggered.json",
+   "label": "gen_then_c930e_alt9",
+   "cameras": [
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "observed",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "0843",
+     "mode": "MJPG:640x360@30",
+     "alt": 9,
+     "alt_source": "solo-run",
+     "packet": 992,
+     "mult": 2,
+     "cost_ns": 39852,
+     "streamed": false,
+     "error_hr": "0x800718CF"
+    }
+   ],
+   "total_ns": 101436,
+   "pct_of_microframe": 81.1,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  },
+  {
+   "file": "r08_cross_rootport_no_kiyo.json",
+   "label": "three_cams_max_fit",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:640x480@15",
+     "alt": 8,
+     "alt_source": "observed",
+     "packet": 800,
+     "mult": 2,
+     "cost_ns": 32386,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "observed",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": true,
+     "error_hr": null
+    }
+   ],
+   "total_ns": 93970,
+   "pct_of_microframe": 75.2,
+   "predicted_fit": true,
+   "observed_both_streamed": true,
+   "agree": true
+  },
+  {
+   "file": "r08_cross_rootport_no_kiyo.json",
+   "label": "c922_alt9_c930e_alt11_gen_fail_expected",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:1280x720@30",
+     "alt": 11,
+     "alt_source": "observed",
+     "packet": 1024,
+     "mult": 3,
+     "cost_ns": 61640,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "solo-run",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": false,
+     "error_hr": "0x800718CF"
+    }
+   ],
+   "total_ns": 123224,
+   "pct_of_microframe": 98.6,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  },
+  {
+   "file": "rc_original_exe_nosave.json",
+   "label": "c930e_alt8_then_gen",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:640x480@15",
+     "alt": 8,
+     "alt_source": "observed",
+     "packet": 800,
+     "mult": 2,
+     "cost_ns": 32386,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "observed",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": true,
+     "error_hr": null
+    }
+   ],
+   "total_ns": 93970,
+   "pct_of_microframe": 75.2,
+   "predicted_fit": true,
+   "observed_both_streamed": true,
+   "agree": true
+  },
+  {
+   "file": "rc_original_exe_nosave.json",
+   "label": "c930e_alt9_then_gen",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:640x360@30",
+     "alt": 9,
+     "alt_source": "observed",
+     "packet": 992,
+     "mult": 2,
+     "cost_ns": 39852,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "solo-run",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": false,
+     "error_hr": "0x800718CF"
+    }
+   ],
+   "total_ns": 101436,
+   "pct_of_microframe": 81.1,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  },
+  {
+   "file": "rc_original_exe_nosave.json",
+   "label": "gen_then_c930e_alt8",
+   "cameras": [
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "observed",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "0843",
+     "mode": "MJPG:640x480@15",
+     "alt": 8,
+     "alt_source": "observed",
+     "packet": 800,
+     "mult": 2,
+     "cost_ns": 32386,
+     "streamed": true,
+     "error_hr": null
+    }
+   ],
+   "total_ns": 93970,
+   "pct_of_microframe": 75.2,
+   "predicted_fit": true,
+   "observed_both_streamed": true,
+   "agree": true
+  },
+  {
+   "file": "rv_shared_hub_threshold.json",
+   "label": "c930e_alt8_then_gen",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:640x480@15",
+     "alt": 8,
+     "alt_source": "observed",
+     "packet": 800,
+     "mult": 2,
+     "cost_ns": 32386,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "observed",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": true,
+     "error_hr": null
+    }
+   ],
+   "total_ns": 93970,
+   "pct_of_microframe": 75.2,
+   "predicted_fit": true,
+   "observed_both_streamed": true,
+   "agree": true
+  },
+  {
+   "file": "rv_shared_hub_threshold.json",
+   "label": "c930e_alt9_then_gen",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:640x360@30",
+     "alt": 9,
+     "alt_source": "observed",
+     "packet": 992,
+     "mult": 2,
+     "cost_ns": 39852,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "solo-run",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": false,
+     "error_hr": "0x800718CF"
+    }
+   ],
+   "total_ns": 101436,
+   "pct_of_microframe": 81.1,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  },
+  {
+   "file": "rv_shared_hub_threshold.json",
+   "label": "gen_then_c930e_alt9",
+   "cameras": [
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "observed",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "0843",
+     "mode": "MJPG:640x360@30",
+     "alt": 9,
+     "alt_source": "solo-run",
+     "packet": 992,
+     "mult": 2,
+     "cost_ns": 39852,
+     "streamed": false,
+     "error_hr": "0x800718CF"
+    }
+   ],
+   "total_ns": 101436,
+   "pct_of_microframe": 81.1,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  },
+  {
+   "file": "rv_shared_hub_threshold.json",
+   "label": "gen_then_c930e_alt8",
+   "cameras": [
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "observed",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "0843",
+     "mode": "MJPG:640x480@15",
+     "alt": 8,
+     "alt_source": "observed",
+     "packet": 800,
+     "mult": 2,
+     "cost_ns": 32386,
+     "streamed": true,
+     "error_hr": null
+    }
+   ],
+   "total_ns": 93970,
+   "pct_of_microframe": 75.2,
+   "predicted_fit": true,
+   "observed_both_streamed": true,
+   "agree": true
+  },
+  {
+   "file": "rv_shared_hub_threshold.json",
+   "label": "c930e_alt11_then_gen",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:1280x720@30",
+     "alt": 11,
+     "alt_source": "observed",
+     "packet": 1024,
+     "mult": 3,
+     "cost_ns": 61640,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "solo-run",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": false,
+     "error_hr": "0x800718CF"
+    }
+   ],
+   "total_ns": 123224,
+   "pct_of_microframe": 98.6,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  },
+  {
+   "file": "rv_shared_hub_threshold.json",
+   "label": "c930e_alt10_then_gen",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:640x480@30",
+     "alt": 10,
+     "alt_source": "observed",
+     "packet": 896,
+     "mult": 3,
+     "cost_ns": 54179,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "solo-run",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": false,
+     "error_hr": "0x800718CF"
+    }
+   ],
+   "total_ns": 115763,
+   "pct_of_microframe": 92.6,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  },
+  {
+   "file": "rv_shared_hub_threshold.json",
+   "label": "c930e_alt11_then_gen_repeat",
+   "cameras": [
+    {
+     "pid": "0843",
+     "mode": "MJPG:1280x720@30",
+     "alt": 11,
+     "alt_source": "observed",
+     "packet": 1024,
+     "mult": 3,
+     "cost_ns": 61640,
+     "streamed": true,
+     "error_hr": null
+    },
+    {
+     "pid": "4a55",
+     "mode": "MJPG:1280x720@30",
+     "alt": 1,
+     "alt_source": "solo-run",
+     "packet": 1023,
+     "mult": 3,
+     "cost_ns": 61584,
+     "streamed": false,
+     "error_hr": "0x800718CF"
+    }
+   ],
+   "total_ns": 123224,
+   "pct_of_microframe": 98.6,
+   "predicted_fit": false,
+   "observed_both_streamed": false,
+   "agree": true
+  }
+ ],
+ "n_agree": 26,
+ "n": 26
+}

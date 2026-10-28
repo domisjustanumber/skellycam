@@ -1,0 +1,36 @@
+viva 0.10.0
+discover(all=True): [GigeDeviceInfo(ip='127.0.0.1', mac='00:00:00:00:00:00', manufacturer='Aravis', model='Fake', transport='gige')]
+control_state ControlState.HELD skipped nodes 0 []
+n nodes 65
+interesting nodes: ['PixelFormat', 'PixelFormatRegister', 'TriggerSelector', 'TriggerSelectorInteger', 'TriggerMode', 'TriggerModeRegister', 'TriggerSource', 'TriggerSourceRegister', 'TriggerActivation', 'TriggerActivationRegister', 'TriggerSoftware', 'TriggerSoftwareCommandRegister']
+  DeviceVendorName = 'Aravis'
+  DeviceModelName = 'Fake'
+  DeviceSerialNumber ERR GenApiError: node not found: DeviceSerialNumber
+  DeviceID = 'GV01'
+  Width = '512'
+  Height = '512'
+  PixelFormat = 'Mono8'
+  AcquisitionFrameRate = '25'
+  GevTimestampTickFrequency ERR GenApiError: node not found: GevTimestampTickFrequency
+  GevSCPSPacketSize ERR GenApiError: node not found: GevSCPSPacketSize
+  GevSCPD ERR GenApiError: node not found: GevSCPD
+  TriggerSource = 'Line0'
+  PtpEnable ERR GenApiError: node not found: PtpEnable
+  GevIEEE1588 ERR GenApiError: node not found: GevIEEE1588
+  PixelFormat entries ['BayerBG8', 'BayerGB8', 'BayerGR8', 'BayerRG8', 'Mono8', 'RGB8', 'Mono16'] available ['BayerBG8', 'BayerGB8', 'BayerGR8', 'BayerRG8', 'Mono8', 'RGB8', 'Mono16']
+  TriggerSource entries ['Line0', 'Software'] available ['Line0', 'Software']
+  TriggerSelector entries ['FrameStart', 'AcquisitionStart'] available ['FrameStart', 'AcquisitionStart']
+Version 0x00000000; capability 0x00000000 1588=False sched=False action=False
+bootstrap tick freq 1000000000
+  PixelFormat BayerBG8: frame.pixel_format=BayerBG8 code=0x0108000b to_numpy=((512, 512), 'uint8') to_rgb8=(512, 512, 3)
+  PixelFormat BayerGB8: frame.pixel_format=BayerGB8 code=0x0108000a to_numpy=((512, 512), 'uint8') to_rgb8=(512, 512, 3)
+  PixelFormat BayerGR8: frame.pixel_format=BayerGR8 code=0x01080008 to_numpy=((512, 512), 'uint8') to_rgb8=(512, 512, 3)
+  PixelFormat BayerRG8: frame.pixel_format=BayerRG8 code=0x01080009 to_numpy=((512, 512), 'uint8') to_rgb8=(512, 512, 3)
+  PixelFormat Mono8: frame.pixel_format=Mono8 code=0x01080001 to_numpy=((512, 512), 'uint8') to_rgb8=(512, 512, 3)
+  PixelFormat RGB8: frame.pixel_format=RGB8Packed code=0x02180014 to_numpy=((512, 512, 3), 'uint8') to_rgb8=(512, 512, 3)
+  PixelFormat Mono16: frame.pixel_format=Mono16 code=0x01100007 to_numpy=((512, 512), 'uint16') to_rgb8=(512, 512, 3)
+100 frames in 4.30s (23.3 fps) block ids 65420..65521 ts_dev first [1792952955920005000, 1792952955960010000, 1792952956000014000] deltas [40005000, 40004000, 39992000]
+stats: StreamStats(frames_complete=100, frames_incomplete=5, frames_missed=0, frames_backpressure=0, frames_unsupported=0, packets_received=20430, packets_duplicate=0, packets_missing=5, packets_ignored_malformed=0, packets_ignored_unsupported=0, packets_ignored_out_of_range=0, packets_ignored_late=0, packets_ignored_error_status=0, packets_ignored_foreign=0, packets_size_mismatch=0, resend_requested=0, resend_recovered=0, resend_unavailable=0, transfer_errors=0, bytes=26214400, frames_lost=5, packets_ignored=0, last_frame_dt=7.0417e-05, avg_fps=2855.9416661913465, avg_mbps=5989.343777136514, avg_latency_ms=None, elapsed=4.294833432, packets_per_second=4756.8783105253615)
+time_calibrate ERR GenApiError node not found: TimestampValue
+send_action to Aravis fake: AckSummary(sent=1, acks=0)
+exit 0

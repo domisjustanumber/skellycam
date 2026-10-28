@@ -1,0 +1,301 @@
+{
+  "env": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.2.6",
+    "opencv": "4.12.0",
+    "cpu_count": 28,
+    "time": "2026-10-28 01:10:31",
+    "psutil": "7.2.2",
+    "ram_total_gb": 68.413349888,
+    "system_cpu_pct_1s_before_run": 4.8,
+    "other_python_processes_at_start": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\baseline\\run_with_load.py d_ui d_ui_stdout.log 900 -- .venv\\Scripts\\p",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks\\frame_pipeline\\baseline\\run_with_load.py d_ui d_ui_stdout.log 900 ",
+      ".venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\baseline\\bench_d_ui.py"
+    ],
+    "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d"
+  },
+  "n_cams": 5,
+  "writer_fps": 60.0,
+  "seconds_per_row": 15.0,
+  "rows": [
+    {
+      "path": "skellycam_ui",
+      "sleep_10ms": true,
+      "payloads": 907,
+      "elapsed_s": 15.0022605,
+      "payload_fps": 60.45755571302071,
+      "distinct_frame_numbers": 867,
+      "distinct_fps": 57.791290852468535,
+      "duplicate_payloads": 40,
+      "shm_copy": {
+        "n": 907,
+        "median_ms": 1.3327,
+        "mean_ms": 2.383530429988975,
+        "p99_ms": 4.4005119999999955,
+        "min_ms": 0.9672,
+        "max_ms": 7.5919
+      },
+      "resize_jpeg_pack": {
+        "n": 907,
+        "median_ms": 3.2283,
+        "mean_ms": 3.2608431091510472,
+        "p99_ms": 4.0117059999999976,
+        "min_ms": 2.7406,
+        "max_ms": 15.3666
+      },
+      "total": {
+        "n": 907,
+        "median_ms": 4.6964,
+        "mean_ms": 5.644373539140021,
+        "p99_ms": 7.901845999999999,
+        "min_ms": 3.8072,
+        "max_ms": 21.9264
+      },
+      "age_of_frame_when_payload_ready": {
+        "n": 907,
+        "median_ms": 28.34874,
+        "mean_ms": 28.50043162072767,
+        "p99_ms": 38.423493199999996,
+        "min_ms": 18.8383,
+        "max_ms": 47.1086
+      },
+      "payload_bytes_median": 152803.0,
+      "payload_MBps_out": 9.238095885616705,
+      "main_process_cpu_pct": 51.1807940127585,
+      "size": "720p"
+    },
+    {
+      "path": "freemocap_ui_by_number",
+      "sleep_10ms": true,
+      "payloads": 874,
+      "elapsed_s": 14.9948266,
+      "payload_fps": 58.28676938484904,
+      "distinct_frame_numbers": 871,
+      "distinct_fps": 58.08670038238388,
+      "duplicate_payloads": 3,
+      "shm_copy": {
+        "n": 874,
+        "median_ms": 2.98735,
+        "mean_ms": 3.027253432494279,
+        "p99_ms": 3.8558479999999995,
+        "min_ms": 2.595,
+        "max_ms": 6.5471
+      },
+      "resize_jpeg_pack": {
+        "n": 874,
+        "median_ms": 3.1841,
+        "mean_ms": 3.217633752860412,
+        "p99_ms": 4.044461999999999,
+        "min_ms": 2.7834,
+        "max_ms": 6.9238
+      },
+      "total": {
+        "n": 874,
+        "median_ms": 6.2071000000000005,
+        "mean_ms": 6.244887185354691,
+        "p99_ms": 7.44604,
+        "min_ms": 5.5135,
+        "max_ms": 13.4709
+      },
+      "age_of_frame_when_payload_ready": {
+        "n": 874,
+        "median_ms": 28.91611,
+        "mean_ms": 29.30516933638444,
+        "p99_ms": 37.676763799999996,
+        "min_ms": 20.54974,
+        "max_ms": 38.31488
+      },
+      "payload_bytes_median": 131663.0,
+      "payload_MBps_out": 7.674210917517379,
+      "main_process_cpu_pct": 51.11915186242888,
+      "size": "720p"
+    },
+    {
+      "path": "skellycam_ui",
+      "sleep_10ms": false,
+      "payloads": 3753,
+      "elapsed_s": 15.0020168,
+      "payload_fps": 250.1663642984322,
+      "distinct_frame_numbers": 901,
+      "distinct_fps": 60.05859158883224,
+      "duplicate_payloads": 2852,
+      "shm_copy": {
+        "n": 3753,
+        "median_ms": 1.0814,
+        "mean_ms": 1.0739758326671995,
+        "p99_ms": 1.419392,
+        "min_ms": 0.7084,
+        "max_ms": 3.1733
+      },
+      "resize_jpeg_pack": {
+        "n": 3753,
+        "median_ms": 2.9204,
+        "mean_ms": 2.921374313882228,
+        "p99_ms": 3.475436,
+        "min_ms": 2.5039,
+        "max_ms": 6.5626
+      },
+      "total": {
+        "n": 3753,
+        "median_ms": 3.9837,
+        "mean_ms": 3.995350146549427,
+        "p99_ms": 4.729264,
+        "min_ms": 3.3094,
+        "max_ms": 9.0784
+      },
+      "age_of_frame_when_payload_ready": {
+        "n": 3753,
+        "median_ms": 27.27286,
+        "mean_ms": 27.268205840660805,
+        "p99_ms": 35.1549104,
+        "min_ms": 18.4676,
+        "max_ms": 39.05796
+      },
+      "payload_bytes_median": 131663.0,
+      "payload_MBps_out": 32.93765402262448,
+      "main_process_cpu_pct": 160.5833896321062,
+      "size": "720p"
+    },
+    {
+      "path": "skellycam_ui",
+      "sleep_10ms": true,
+      "payloads": 689,
+      "elapsed_s": 14.990179,
+      "payload_fps": 45.96342712118381,
+      "distinct_frame_numbers": 689,
+      "distinct_fps": 45.96342712118381,
+      "duplicate_payloads": 0,
+      "shm_copy": {
+        "n": 689,
+        "median_ms": 2.7447,
+        "mean_ms": 4.175692307692308,
+        "p99_ms": 9.972520000000001,
+        "min_ms": 1.9998,
+        "max_ms": 11.5613
+      },
+      "resize_jpeg_pack": {
+        "n": 689,
+        "median_ms": 6.5918,
+        "mean_ms": 6.609372859216255,
+        "p99_ms": 7.9602319999999995,
+        "min_ms": 5.6115,
+        "max_ms": 11.0713
+      },
+      "total": {
+        "n": 689,
+        "median_ms": 9.3939,
+        "mean_ms": 10.785065166908561,
+        "p99_ms": 17.434172,
+        "min_ms": 7.7103,
+        "max_ms": 18.8048
+      },
+      "age_of_frame_when_payload_ready": {
+        "n": 689,
+        "median_ms": 31.33648,
+        "mean_ms": 30.99736168359942,
+        "p99_ms": 43.735789600000004,
+        "min_ms": 19.73898,
+        "max_ms": 45.60822
+      },
+      "payload_bytes_median": 337030.0,
+      "payload_MBps_out": 15.49105384265258,
+      "main_process_cpu_pct": 106.12874872736057,
+      "size": "1080p"
+    },
+    {
+      "path": "freemocap_ui_by_number",
+      "sleep_10ms": true,
+      "payloads": 626,
+      "elapsed_s": 15.0024553,
+      "payload_fps": 41.72650326110287,
+      "distinct_frame_numbers": 626,
+      "distinct_fps": 41.72650326110287,
+      "duplicate_payloads": 0,
+      "shm_copy": {
+        "n": 626,
+        "median_ms": 6.1192,
+        "mean_ms": 6.257622044728435,
+        "p99_ms": 8.363125,
+        "min_ms": 5.3939,
+        "max_ms": 8.7764
+      },
+      "resize_jpeg_pack": {
+        "n": 626,
+        "median_ms": 6.7528500000000005,
+        "mean_ms": 6.751091533546327,
+        "p99_ms": 7.87885,
+        "min_ms": 5.6401,
+        "max_ms": 8.9988
+      },
+      "total": {
+        "n": 626,
+        "median_ms": 12.8716,
+        "mean_ms": 13.008713578274762,
+        "p99_ms": 15.579274999999999,
+        "min_ms": 11.3698,
+        "max_ms": 16.0454
+      },
+      "age_of_frame_when_payload_ready": {
+        "n": 626,
+        "median_ms": 33.598349999999996,
+        "mean_ms": 33.64141367412141,
+        "p99_ms": 41.60745,
+        "min_ms": 24.32684,
+        "max_ms": 42.79136
+      },
+      "payload_bytes_median": 337030.0,
+      "payload_MBps_out": 14.0630833940895,
+      "main_process_cpu_pct": 93.6568538881408,
+      "size": "1080p"
+    },
+    {
+      "path": "skellycam_ui",
+      "sleep_10ms": false,
+      "payloads": 1655,
+      "elapsed_s": 15.001342,
+      "payload_fps": 110.32346306083817,
+      "distinct_frame_numbers": 900,
+      "distinct_fps": 59.99463248021411,
+      "duplicate_payloads": 755,
+      "shm_copy": {
+        "n": 1655,
+        "median_ms": 2.4007,
+        "mean_ms": 2.641580785498489,
+        "p99_ms": 5.012508,
+        "min_ms": 1.9991,
+        "max_ms": 6.9667
+      },
+      "resize_jpeg_pack": {
+        "n": 1655,
+        "median_ms": 6.3746,
+        "mean_ms": 6.420087975830816,
+        "p99_ms": 7.69512,
+        "min_ms": 5.3594,
+        "max_ms": 11.222
+      },
+      "total": {
+        "n": 1655,
+        "median_ms": 8.8414,
+        "mean_ms": 9.061668761329305,
+        "p99_ms": 12.162328000000002,
+        "min_ms": 7.4449,
+        "max_ms": 16.8701
+      },
+      "age_of_frame_when_payload_ready": {
+        "n": 1655,
+        "median_ms": 29.8995,
+        "mean_ms": 28.921819287009065,
+        "p99_ms": 37.572676799999996,
+        "min_ms": 19.91896,
+        "max_ms": 38.90512
+      },
+      "payload_bytes_median": 337030.0,
+      "payload_MBps_out": 37.18231675539429,
+      "main_process_cpu_pct": 216.5234189664322,
+      "size": "1080p"
+    }
+  ]
+}

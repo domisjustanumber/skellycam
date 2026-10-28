@@ -1,0 +1,496 @@
+{
+  "test": "pyuvc_winusb_stream",
+  "platform": "windows",
+  "hostname": "Gerald",
+  "utc_started": "2026-10-25T21:39:48.979689+00:00",
+  "command": "research/usb_cameras/libusb/pyuvc/pyuvc_winusb_stream.py --vid 046d --pid 0843 --width 1280 --height 720 --fps 30 --seconds 20 --bandwidth-factors 2.0,0 --out-dir research/usb_cameras/results/windows/Gerald/phase2_python_verify/r2_pyuvc_patched_720_bf2_0",
+  "environment": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "os": "Windows-11-10.0.26300-SP0",
+    "pupil-labs-uvc": "1.0.8.post0+winusbfix"
+  },
+  "host_clock": "time.perf_counter_ns",
+  "cameras": [
+    {
+      "vid": "1532",
+      "pid": "0e05",
+      "uid": "2:7",
+      "is_accessible": false
+    },
+    {
+      "vid": "046d",
+      "pid": "085c",
+      "uid": "1:25",
+      "is_accessible": false
+    },
+    {
+      "vid": "4c4a",
+      "pid": "4a55",
+      "uid": "1:28",
+      "is_accessible": false
+    },
+    {
+      "vid": "046d",
+      "pid": "0843",
+      "uid": "1:29",
+      "is_accessible": true
+    }
+  ],
+  "clock_check": {
+    "uvc_get_time_monotonic_s": 113746.214152,
+    "perf_counter_s": 113746.2141506,
+    "difference_s": 1.3999961083754897e-06
+  },
+  "device_list": [
+    {
+      "name": "unknown",
+      "manufacturer": "unknown",
+      "serialNumber": "unknown",
+      "idProduct": 3589,
+      "idVendor": 5426,
+      "device_address": 7,
+      "bus_number": 2,
+      "uid": "2:7"
+    },
+    {
+      "name": "unknown",
+      "manufacturer": "unknown",
+      "serialNumber": "unknown",
+      "idProduct": 2140,
+      "idVendor": 1133,
+      "device_address": 25,
+      "bus_number": 1,
+      "uid": "1:25"
+    },
+    {
+      "name": "unknown",
+      "manufacturer": "unknown",
+      "serialNumber": "unknown",
+      "idProduct": 19029,
+      "idVendor": 19530,
+      "device_address": 28,
+      "bus_number": 1,
+      "uid": "1:28"
+    },
+    {
+      "name": "Logitech Webcam C930e",
+      "manufacturer": "unknown",
+      "serialNumber": "unknown",
+      "idProduct": 2115,
+      "idVendor": 1133,
+      "device_address": 29,
+      "bus_number": 1,
+      "uid": "1:29"
+    }
+  ],
+  "bundled_libusb_double_open": {
+    "dlls": [
+      "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\build_pyuvc\\runenv\\Lib\\site-packages\\uvc\\libusb-1.0.dll"
+    ],
+    "libusb_version": "1.0.26.11724",
+    "init": 0,
+    "iProduct_index": 2,
+    "iSerialNumber_index": 0,
+    "open1_rc": 0,
+    "open1_iProduct": "Logitech Webcam C930e",
+    "open2_rc_while_open1": -3,
+    "claim_if0_rc": 0,
+    "open3_rc_while_open1_claimed": -3,
+    "note": "libusb error codes: -3 ACCESS, -4 NO_DEVICE, -5 NOT_FOUND, -6 BUSY, -12 NOT_SUPPORTED"
+  },
+  "streams": [
+    {
+      "bandwidth_factor": 2.0,
+      "requested": [
+        1280,
+        720,
+        30
+      ],
+      "available_modes_count": 119,
+      "mode": "CameraMode(width=1280, height=720, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "bandwidth_factor_readback": 2.0,
+      "pyuvc_expected_bytes_per_packet": 904,
+      "controls_before": {
+        "Auto Exposure Mode": {
+          "value": 1,
+          "min": 1,
+          "max": 8,
+          "def": 8
+        },
+        "Auto Exposure Priority": {
+          "value": 1,
+          "min": 0,
+          "max": 1,
+          "def": 0
+        },
+        "Absolute Exposure Time": {
+          "value": 312,
+          "min": 3,
+          "max": 500,
+          "def": 250
+        },
+        "Auto Focus": {
+          "value": 1,
+          "min": 0,
+          "max": 1,
+          "def": 1
+        },
+        "Absolute Focus": {
+          "value": 85,
+          "min": 0,
+          "max": 255,
+          "def": 0
+        },
+        "Zoom absolute control": {
+          "value": 100,
+          "min": 100,
+          "max": 400,
+          "def": 100
+        },
+        "Pan control": {
+          "value": 0,
+          "min": -36000,
+          "max": 36000,
+          "def": 0
+        },
+        "Tilt control": {
+          "value": 0,
+          "min": -36000,
+          "max": 36000,
+          "def": 0
+        },
+        "Backlight Compensation": {
+          "value": 0,
+          "min": 0,
+          "max": 1,
+          "def": 0
+        },
+        "Brightness": {
+          "value": 128,
+          "min": 0,
+          "max": 255,
+          "def": 128
+        },
+        "Contrast": {
+          "value": 128,
+          "min": 0,
+          "max": 255,
+          "def": 128
+        },
+        "Gain": {
+          "value": 74,
+          "min": 0,
+          "max": 255,
+          "def": 0
+        },
+        "Power Line frequency": {
+          "value": 2,
+          "min": 0,
+          "max": 2,
+          "def": 2
+        },
+        "Saturation": {
+          "value": 53,
+          "min": 0,
+          "max": 255,
+          "def": 128
+        },
+        "Sharpness": {
+          "value": 128,
+          "min": 0,
+          "max": 255,
+          "def": 128
+        },
+        "White Balance temperature": {
+          "value": 4000,
+          "min": 2000,
+          "max": 7500,
+          "def": 4000
+        },
+        "White Balance temperature,Auto": {
+          "value": 0,
+          "min": 0,
+          "max": 1,
+          "def": 1
+        }
+      },
+      "snapshot_started_s": 5.022596499999054,
+      "pipes_snapshot": [
+        {
+          "idVendor": "046d",
+          "idProduct": "0843",
+          "product": "Logitech Webcam C930e",
+          "speed": "high",
+          "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+          "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+          "port": 4,
+          "open_pipes": [
+            {
+              "bEndpointAddress": "0x86",
+              "type": "interrupt",
+              "wMaxPacketSize": "0x0040",
+              "base_packet_bytes": 64,
+              "transactions_per_microframe": 1,
+              "bInterval": 8,
+              "ScheduleOffset": 0
+            },
+            {
+              "bEndpointAddress": "0x81",
+              "type": "isochronous",
+              "wMaxPacketSize": "0x03b0",
+              "base_packet_bytes": 944,
+              "transactions_per_microframe": 1,
+              "bInterval": 1,
+              "ScheduleOffset": 0
+            }
+          ],
+          "matched_alt_settings": [
+            {
+              "interface": 1,
+              "bAlternateSetting": 6,
+              "endpoint": "0x81",
+              "bytes_per_interval": 944,
+              "service_interval_us": 125
+            }
+          ]
+        }
+      ],
+      "frames": 589,
+      "pillow_full_decode_ok": 589,
+      "get_frame_errors": 0,
+      "get_frame_errors_first10": [],
+      "fps_from_arrivals": 30.084258179112926,
+      "frame_index_gaps": 0,
+      "frame_index_first_last": [
+        1,
+        589
+      ],
+      "mean_frame_bytes": 172174.75212224107,
+      "data_fully_received_false": 0,
+      "process_cpu_s": 1.1875,
+      "cpu_fraction_of_one_core": 0.059375,
+      "arrival_interval_ms": {
+        "n": 588,
+        "mean": 33.239975340136056,
+        "std": 1.873330118962747,
+        "min": 29.0133,
+        "p50": 32.0793,
+        "max": 39.0022
+      },
+      "timestamp_interval_ms": {
+        "n": 588,
+        "mean": 193480.40688435372,
+        "std": 4686853.96828224,
+        "min": 33.235,
+        "p50": 33.241,
+        "max": 113746966.793
+      },
+      "arrival_minus_timestamp_ms": {
+        "n": 589,
+        "mean": 193001.46714295418,
+        "std": 4682880.350599528,
+        "min": -119.7188,
+        "p50": -117.2722,
+        "max": 113746815.1692
+      },
+      "frames_jsonl": "research\\usb_cameras\\results\\windows\\Gerald\\phase2_python_verify\\r2_pyuvc_patched_720_bf2_0\\frames_bf2.jsonl"
+    },
+    {
+      "bandwidth_factor": 0.0,
+      "requested": [
+        1280,
+        720,
+        30
+      ],
+      "available_modes_count": 119,
+      "mode": "CameraMode(width=1280, height=720, fps=30, format_native=7, format_name='MJPG', supported=True)",
+      "bandwidth_factor_readback": 0.0,
+      "pyuvc_expected_bytes_per_packet": "dwMaxPayloadTransferSize",
+      "controls_before": {
+        "Auto Exposure Mode": {
+          "value": 1,
+          "min": 1,
+          "max": 8,
+          "def": 8
+        },
+        "Auto Exposure Priority": {
+          "value": 1,
+          "min": 0,
+          "max": 1,
+          "def": 0
+        },
+        "Absolute Exposure Time": {
+          "value": 312,
+          "min": 3,
+          "max": 500,
+          "def": 250
+        },
+        "Auto Focus": {
+          "value": 1,
+          "min": 0,
+          "max": 1,
+          "def": 1
+        },
+        "Absolute Focus": {
+          "value": 85,
+          "min": 0,
+          "max": 255,
+          "def": 0
+        },
+        "Zoom absolute control": {
+          "value": 100,
+          "min": 100,
+          "max": 400,
+          "def": 100
+        },
+        "Pan control": {
+          "value": 0,
+          "min": -36000,
+          "max": 36000,
+          "def": 0
+        },
+        "Tilt control": {
+          "value": 0,
+          "min": -36000,
+          "max": 36000,
+          "def": 0
+        },
+        "Backlight Compensation": {
+          "value": 0,
+          "min": 0,
+          "max": 1,
+          "def": 0
+        },
+        "Brightness": {
+          "value": 128,
+          "min": 0,
+          "max": 255,
+          "def": 128
+        },
+        "Contrast": {
+          "value": 128,
+          "min": 0,
+          "max": 255,
+          "def": 128
+        },
+        "Gain": {
+          "value": 78,
+          "min": 0,
+          "max": 255,
+          "def": 0
+        },
+        "Power Line frequency": {
+          "value": 2,
+          "min": 0,
+          "max": 2,
+          "def": 2
+        },
+        "Saturation": {
+          "value": 53,
+          "min": 0,
+          "max": 255,
+          "def": 128
+        },
+        "Sharpness": {
+          "value": 128,
+          "min": 0,
+          "max": 255,
+          "def": 128
+        },
+        "White Balance temperature": {
+          "value": 4000,
+          "min": 2000,
+          "max": 7500,
+          "def": 4000
+        },
+        "White Balance temperature,Auto": {
+          "value": 0,
+          "min": 0,
+          "max": 1,
+          "def": 1
+        }
+      },
+      "snapshot_started_s": 5.019741199997952,
+      "pipes_snapshot": [
+        {
+          "idVendor": "046d",
+          "idProduct": "0843",
+          "product": "Logitech Webcam C930e",
+          "speed": "high",
+          "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+          "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+          "port": 4,
+          "open_pipes": [
+            {
+              "bEndpointAddress": "0x86",
+              "type": "interrupt",
+              "wMaxPacketSize": "0x0040",
+              "base_packet_bytes": 64,
+              "transactions_per_microframe": 1,
+              "bInterval": 8,
+              "ScheduleOffset": 0
+            },
+            {
+              "bEndpointAddress": "0x81",
+              "type": "isochronous",
+              "wMaxPacketSize": "0x1400",
+              "base_packet_bytes": 1024,
+              "transactions_per_microframe": 3,
+              "bInterval": 1,
+              "ScheduleOffset": 0
+            }
+          ],
+          "matched_alt_settings": [
+            {
+              "interface": 1,
+              "bAlternateSetting": 11,
+              "endpoint": "0x81",
+              "bytes_per_interval": 3072,
+              "service_interval_us": 125
+            }
+          ]
+        }
+      ],
+      "frames": 589,
+      "pillow_full_decode_ok": 589,
+      "get_frame_errors": 0,
+      "get_frame_errors_first10": [],
+      "fps_from_arrivals": 30.089042842217125,
+      "frame_index_gaps": 0,
+      "frame_index_first_last": [
+        1,
+        589
+      ],
+      "mean_frame_bytes": 173376.01528013582,
+      "data_fully_received_false": 0,
+      "process_cpu_s": 0.78125,
+      "cpu_fraction_of_one_core": 0.0390625,
+      "arrival_interval_ms": {
+        "n": 588,
+        "mean": 33.23468962585034,
+        "std": 1.8420006339172528,
+        "min": 29.0996,
+        "p50": 32.0825,
+        "max": 36.6216
+      },
+      "timestamp_interval_ms": {
+        "n": 588,
+        "mean": 193518.8886020408,
+        "std": 4687786.306486421,
+        "min": 33.234,
+        "p50": 33.241,
+        "max": 113769594.042
+      },
+      "arrival_minus_timestamp_ms": {
+        "n": 589,
+        "mean": 193025.47238234294,
+        "std": 4683812.151686826,
+        "min": -134.0054,
+        "p50": -131.6781,
+        "max": 113769434.15
+      },
+      "frames_jsonl": "research\\usb_cameras\\results\\windows\\Gerald\\phase2_python_verify\\r2_pyuvc_patched_720_bf2_0\\frames_bf0.jsonl"
+    }
+  ],
+  "exit_code": 0
+}

@@ -1,0 +1,25 @@
+# (a) ring-buffer write: put_frame unthrottled, N spawned writer processes
+steady state 10.0s per config after one full first lap; times are per put_frame call
+
+| size | N cams | mode | per-cam fps (min) | aggregate fps | aggregate GB/s | median ms | worst-cam p99 ms | first-lap median ms | 60fps budget used by put_frame (median) |
+|---|---|---|---|---|---|---|---|---|---|
+| 720p | 1 | production | 1718 | 1718 | 4.75 | 0.562 | 0.719 | 1.128 | 3.4% |
+| 720p | 2 | production | 1460 | 2931 | 8.10 | 0.663 | 0.847 | 1.191 | 4.0% |
+| 720p | 3 | production | 1203 | 3614 | 9.99 | 0.811 | 1.134 | 1.408 | 4.9% |
+| 720p | 4 | production | 1048 | 4222 | 11.68 | 0.921 | 1.439 | 1.466 | 5.5% |
+| 720p | 5 | production | 839 | 4221 | 11.67 | 1.145 | 1.916 | 1.563 | 6.9% |
+| 720p | 1 | single_copy_reference | 9956 | 9956 | 27.53 | 0.089 | 0.126 | 0.723 | 0.5% |
+| 720p | 2 | single_copy_reference | 8145 | 16292 | 45.06 | 0.111 | 0.155 | 0.683 | 0.7% |
+| 720p | 3 | single_copy_reference | 6024 | 18097 | 50.05 | 0.154 | 0.220 | 0.751 | 0.9% |
+| 720p | 4 | single_copy_reference | 4691 | 19005 | 52.56 | 0.197 | 0.334 | 0.780 | 1.2% |
+| 720p | 5 | single_copy_reference | 3740 | 19015 | 52.58 | 0.244 | 0.460 | 0.814 | 1.5% |
+| 1080p | 1 | production | 740 | 740 | 4.60 | 1.326 | 1.775 | 2.749 | 8.0% |
+| 1080p | 2 | production | 666 | 1342 | 8.35 | 1.465 | 1.854 | 2.700 | 8.8% |
+| 1080p | 3 | production | 536 | 1615 | 10.05 | 1.833 | 2.547 | 3.242 | 11.0% |
+| 1080p | 4 | production | 426 | 1735 | 10.79 | 2.275 | 3.322 | 3.498 | 13.6% |
+| 1080p | 5 | production | 353 | 1785 | 11.11 | 2.747 | 4.040 | 3.929 | 16.5% |
+| 1080p | 1 | single_copy_reference | 5351 | 5351 | 33.29 | 0.172 | 0.238 | 1.780 | 1.0% |
+| 1080p | 2 | single_copy_reference | 3972 | 7963 | 49.54 | 0.237 | 0.331 | 1.779 | 1.4% |
+| 1080p | 3 | single_copy_reference | 2651 | 8248 | 51.31 | 0.350 | 0.541 | 1.647 | 2.1% |
+| 1080p | 4 | single_copy_reference | 1976 | 7970 | 49.59 | 0.479 | 0.917 | 1.850 | 2.9% |
+| 1080p | 5 | single_copy_reference | 1369 | 7404 | 46.06 | 0.640 | 1.541 | 1.886 | 3.8% |

@@ -1,0 +1,132 @@
+{
+ "test": "kiyo_lens_cv_av",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-25T19:10:04.259726+00:00",
+ "command": [
+  "research/usb_cameras/timing/scripts/kiyo_lens_cv_av.py",
+  "--out",
+  "research/usb_cameras/results/windows/Gerald/timing/kiyo_lens/run2/cv_msmf_v2.json",
+  "--backends",
+  "msmf,dshow",
+  "--cam",
+  "vid_1532&pid_0e05",
+  "--cam",
+  "vid_046d&pid_085c",
+  "--mode",
+  "1280x720@30",
+  "--seconds",
+  "2"
+ ],
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.13",
+  "opencv": "5.0.0",
+  "av": "19.0.2"
+ },
+ "attempts": [
+  {
+   "backend": "opencv-msmf",
+   "cam": "vid_1532&pid_0e05",
+   "mode": "1280x720@30",
+   "index": 6,
+   "name": "USB Video Device",
+   "set": {
+    "fourcc": false,
+    "w": true,
+    "h": true,
+    "fps": true
+   },
+   "open_ms": 11293.7,
+   "opened": true,
+   "reported": {
+    "w": 1280.0,
+    "h": 720.0,
+    "fps": 30.0,
+    "fourcc": "\u0016\u0000\u0000\u0000",
+    "backend_name": "MSMF"
+   },
+   "frames_ok": 0,
+   "read_failures": 21,
+   "first_failure_s": 0.095,
+   "frame_shape": null,
+   "wall_s": 0.095,
+   "utc": "2026-10-25T19:10:15.685197+00:00"
+  },
+  {
+   "backend": "opencv-dshow",
+   "cam": "vid_1532&pid_0e05",
+   "mode": "1280x720@30",
+   "index": 2,
+   "name": "USB Video Device",
+   "set": null,
+   "open_ms": 356.6,
+   "opened": false,
+   "utc": "2026-10-25T19:10:16.047616+00:00"
+  },
+  {
+   "backend": "opencv-msmf",
+   "cam": "vid_046d&pid_085c",
+   "mode": "1280x720@30",
+   "index": 4,
+   "name": "c922 Pro Stream Webcam",
+   "set": {
+    "fourcc": false,
+    "w": true,
+    "h": true,
+    "fps": true
+   },
+   "open_ms": 45252.4,
+   "opened": true,
+   "reported": {
+    "w": 1280.0,
+    "h": 720.0,
+    "fps": 30.0,
+    "fourcc": "\u0016\u0000\u0000\u0000",
+    "backend_name": "MSMF"
+   },
+   "frames_ok": 50,
+   "read_failures": 0,
+   "first_failure_s": null,
+   "frame_shape": [
+    720,
+    1280,
+    3
+   ],
+   "wall_s": 2.022,
+   "utc": "2026-10-25T19:11:03.666036+00:00"
+  },
+  {
+   "backend": "opencv-dshow",
+   "cam": "vid_046d&pid_085c",
+   "mode": "1280x720@30",
+   "index": 0,
+   "name": "c922 Pro Stream Webcam",
+   "set": {
+    "fourcc": true,
+    "w": true,
+    "h": true,
+    "fps": true
+   },
+   "open_ms": 2821.6,
+   "opened": true,
+   "reported": {
+    "w": 1280.0,
+    "h": 720.0,
+    "fps": 30.00003000003,
+    "fourcc": "YUY2",
+    "backend_name": "DSHOW"
+   },
+   "frames_ok": 19,
+   "read_failures": 0,
+   "first_failure_s": null,
+   "frame_shape": [
+    720,
+    1280,
+    3
+   ],
+   "wall_s": 2.086,
+   "utc": "2026-10-25T19:11:08.909600+00:00"
+  }
+ ]
+}

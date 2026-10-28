@@ -1,0 +1,227 @@
+{
+  "env": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.2.6",
+    "opencv": "4.12.0",
+    "cpu_count": 28,
+    "time": "2026-10-25 15:37:18",
+    "psutil": "7.2.2",
+    "ram_total_gb": 68.413349888,
+    "system_cpu_pct_1s_before_run": 15.6,
+    "other_python_processes_at_start": [
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/mjpeg/run_matrix.py --backend msmf --backend pyav-dshow ",
+      "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\\scratchpad\\venvs\\skellycam-impl\\Scripts\\pyth",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe -m pytest skellycam/tests -p no:cacheprovider -q -rfE",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpbWEh62\\Scripts\\python.exe research/usb_cameras/mjpeg/run_one.py --cams c922 --run-dir C:/Users/Dom/AppData/Loc",
+      "C:\\Users\\Dom\\GitHub\\OpenMMLab-Exporter\\.venv\\Scripts\\python.exe notes/decisions/scripts/rtmdet_nms_clamp_parity.py all --reference plans/sidecar-reference-post_",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 900 -- uv run --script rese",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmptAXANj\\Scripts\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 900 -- uv run --script research/us",
+      "C:\\Users\\Dom\\GitHub\\OpenMMLab-Exporter\\.venv\\Scripts\\python.exe notes/decisions/scripts/rtmdet_nms_clamp_parity.py all --reference plans/sidecar-reference-post_",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks/frame_pipeline/prototypes/p1_write_variants.py",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpFfvRmg\\Scripts\\python.exe research/usb_cameras/mjpeg/run_matrix.py --backend msmf --backend pyav-dshow --backe",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\tools\\camlock.py",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/mjpeg/run_one.py --cams c922 --run-dir C:/Users/Dom/AppD",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpz5dYma\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\tools\\camlock.py --time"
+    ],
+    "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d",
+    "av": "18.0.0",
+    "simplejpeg": null
+  },
+  "run_s": 10.0,
+  "rows": [
+    {
+      "variant": "cur_imdecode_putframe",
+      "size": "720p",
+      "n_cams": 5,
+      "run_s": 10.0,
+      "per_camera": [
+        {
+          "cam": 0,
+          "n": 1989,
+          "elapsed_s": 10.000387,
+          "fps": 198.892302867879,
+          "cpu_ms_per_frame": 4.901960784313726,
+          "cpu_pct": 97.49622689601912,
+          "decode_or_capture": {
+            "n": 1989,
+            "median_ms": 3.685,
+            "mean_ms": 3.869580693815988,
+            "p99_ms": 6.079304,
+            "min_ms": 3.0883,
+            "max_ms": 7.6359
+          },
+          "publish": {
+            "n": 1989,
+            "median_ms": 1.0927,
+            "mean_ms": 1.1558105580693814,
+            "p99_ms": 2.1250399999999967,
+            "min_ms": 0.7122,
+            "max_ms": 3.7768
+          },
+          "total": {
+            "n": 1989,
+            "median_ms": 4.8156,
+            "mean_ms": 5.025391251885369,
+            "p99_ms": 8.032428,
+            "min_ms": 3.848,
+            "max_ms": 9.5359
+          },
+          "ring_len": 388
+        },
+        {
+          "cam": 1,
+          "n": 1984,
+          "elapsed_s": 10.0039046,
+          "fps": 198.32256297206192,
+          "cpu_ms_per_frame": 4.930065524193548,
+          "cpu_pct": 97.77432303782665,
+          "decode_or_capture": {
+            "n": 1984,
+            "median_ms": 3.6849,
+            "mean_ms": 3.8698167338709677,
+            "p99_ms": 6.111122000000003,
+            "min_ms": 3.0311,
+            "max_ms": 7.8195
+          },
+          "publish": {
+            "n": 1984,
+            "median_ms": 1.0962,
+            "mean_ms": 1.1700382560483873,
+            "p99_ms": 2.344398000000001,
+            "min_ms": 0.7329,
+            "max_ms": 4.8443
+          },
+          "total": {
+            "n": 1984,
+            "median_ms": 4.7984,
+            "mean_ms": 5.0398549899193545,
+            "p99_ms": 8.242134000000005,
+            "min_ms": 3.8624,
+            "max_ms": 10.8805
+          },
+          "ring_len": 388
+        },
+        {
+          "cam": 2,
+          "n": 1970,
+          "elapsed_s": 10.0000183,
+          "fps": 196.99963949065972,
+          "cpu_ms_per_frame": 4.949238578680203,
+          "cpu_pct": 97.49982157532651,
+          "decode_or_capture": {
+            "n": 1970,
+            "median_ms": 3.7005,
+            "mean_ms": 3.897433401015229,
+            "p99_ms": 6.449249999999992,
+            "min_ms": 3.1331,
+            "max_ms": 8.7967
+          },
+          "publish": {
+            "n": 1970,
+            "median_ms": 1.1144,
+            "mean_ms": 1.1762597969543147,
+            "p99_ms": 2.245554,
+            "min_ms": 0.7278,
+            "max_ms": 3.4529
+          },
+          "total": {
+            "n": 1970,
+            "median_ms": 4.847300000000001,
+            "mean_ms": 5.073693197969543,
+            "p99_ms": 8.255194999999999,
+            "min_ms": 3.9411,
+            "max_ms": 11.0327
+          },
+          "ring_len": 388
+        },
+        {
+          "cam": 3,
+          "n": 1996,
+          "elapsed_s": 10.0022069,
+          "fps": 199.5559599951887,
+          "cpu_ms_per_frame": 4.955222945891784,
+          "cpu_pct": 98.88442719576217,
+          "decode_or_capture": {
+            "n": 1996,
+            "median_ms": 3.68095,
+            "mean_ms": 3.858084018036072,
+            "p99_ms": 6.0457,
+            "min_ms": 3.072,
+            "max_ms": 8.6701
+          },
+          "publish": {
+            "n": 1996,
+            "median_ms": 1.0922,
+            "mean_ms": 1.1505581663326654,
+            "p99_ms": 2.0423899999999993,
+            "min_ms": 0.7149,
+            "max_ms": 3.7755
+          },
+          "total": {
+            "n": 1996,
+            "median_ms": 4.81265,
+            "mean_ms": 5.008642184368737,
+            "p99_ms": 7.702194999999998,
+            "min_ms": 3.9028,
+            "max_ms": 11.5425
+          },
+          "ring_len": 388
+        },
+        {
+          "cam": 4,
+          "n": 1969,
+          "elapsed_s": 10.0002334,
+          "fps": 196.89540446125986,
+          "cpu_ms_per_frame": 4.927945657694261,
+          "cpu_pct": 97.02898534348208,
+          "decode_or_capture": {
+            "n": 1969,
+            "median_ms": 3.7032,
+            "mean_ms": 3.9048648552564753,
+            "p99_ms": 6.578059999999996,
+            "min_ms": 3.0681,
+            "max_ms": 8.84
+          },
+          "publish": {
+            "n": 1969,
+            "median_ms": 1.1002,
+            "mean_ms": 1.1715584560690706,
+            "p99_ms": 2.309095999999997,
+            "min_ms": 0.71,
+            "max_ms": 4.325
+          },
+          "total": {
+            "n": 1969,
+            "median_ms": 4.8185,
+            "mean_ms": 5.076423311325547,
+            "p99_ms": 8.469344,
+            "min_ms": 3.8811,
+            "max_ms": 12.82
+          },
+          "ring_len": 388
+        }
+      ],
+      "min_cam_fps": 196.89540446125986,
+      "aggregate_fps": 990.6658697870491,
+      "aggregate_GBps_frames": 2.7389929967872333,
+      "median_total_ms": 4.8156,
+      "worst_p99_total_ms": 8.469344,
+      "median_decode_ms": 3.685,
+      "median_publish_ms": 1.0962,
+      "worst_p99_publish_ms": 2.344398000000001,
+      "cpu_ms_per_frame": 4.930065524193548,
+      "full_frame_copies_after_decode": 3,
+      "copy_note": "",
+      "avi_bytes": {},
+      "inplace_verified": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  ]
+}

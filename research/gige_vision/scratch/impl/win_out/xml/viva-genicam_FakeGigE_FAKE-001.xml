@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RegisterDescription
+  xmlns="http://www.genicam.org/GenApi/Version_1_1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.genicam.org/GenApi/Version_1_1 http://www.genicam.org/GenApi/GenApiSchema_Version_1_1.xsd"
+  ModelName="VivaCam_Fake"
+  VendorName="vitavision"
+  ToolTip="Simulated GigE Vision camera for testing"
+  StandardNameSpace="GEV"
+  SchemaMajorVersion="1"
+  SchemaMinorVersion="1"
+  SchemaSubMinorVersion="0"
+  MajorVersion="1"
+  MinorVersion="0"
+  SubMinorVersion="0"
+  ProductGuid="76697661-6361-6d00-0000-000000000000"
+  VersionGuid="76697661-6361-6d00-0000-000000000001">
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       Category Hierarchy (SFNC Standard)
+       ════════════════════════════════════════════════════════════════════ -->
+
+  <Category Name="Root" NameSpace="Standard">
+    <pFeature>DeviceControl</pFeature>
+    <pFeature>ImageFormatControl</pFeature>
+    <pFeature>AcquisitionControl</pFeature>
+    <pFeature>AnalogControl</pFeature>
+    <pFeature>TransportLayerControl</pFeature>
+    <pFeature>ChunkDataControl</pFeature>
+    <pFeature>UserSetControl</pFeature>
+  </Category>
+
+  <Category Name="UserSetControl">
+    <DisplayName>User Set Control</DisplayName>
+    <pFeature>UserSetSelector</pFeature>
+    <pFeature>UserSetLoad</pFeature>
+    <pFeature>UserSetSave</pFeature>
+    <!-- profile:user-set-default-category --><pFeature>UserSetDefault</pFeature><!-- /profile:user-set-default-category -->
+  </Category>
+
+  <Category Name="DeviceControl">
+    <DisplayName>Device Control</DisplayName>
+    <pFeature>DeviceVendorName</pFeature>
+    <pFeature>DeviceModelName</pFeature>
+    <pFeature>DeviceSerialNumber</pFeature>
+    <pFeature>DeviceFirmwareVersion</pFeature>
+    <pFeature>DeviceID</pFeature>
+    <pFeature>DeviceUserID</pFeature>
+    <pFeature>DeviceUserBuffer</pFeature>
+    <pFeature>DeviceTemperature</pFeature>
+  </Category>
+
+  <Category Name="ImageFormatControl">
+    <DisplayName>Image Format Control</DisplayName>
+    <pFeature>SensorType</pFeature>
+    <pFeature>SensorWidth</pFeature>
+    <pFeature>SensorHeight</pFeature>
+    <pFeature>Width</pFeature>
+    <pFeature>Height</pFeature>
+    <pFeature>OffsetX</pFeature>
+    <pFeature>OffsetY</pFeature>
+    <pFeature>BinningHorizontal</pFeature>
+    <pFeature>BinningVertical</pFeature>
+    <pFeature>PixelFormat</pFeature>
+  </Category>
+
+  <Category Name="AcquisitionControl">
+    <DisplayName>Acquisition Control</DisplayName>
+    <pFeature>AcquisitionMode</pFeature>
+    <pFeature>AcquisitionStart</pFeature>
+    <pFeature>AcquisitionStop</pFeature>
+    <pFeature>AcquisitionFrameRateEnable</pFeature>
+    <!-- profile:frame-rate-category --><pFeature>AcquisitionFrameRate</pFeature><!-- /profile:frame-rate-category -->
+    <!-- profile:exposure-category --><pFeature>ExposureTime</pFeature><!-- /profile:exposure-category -->
+    <pFeature>ExposureAuto</pFeature>
+    <pFeature>TriggerSelector</pFeature>
+    <pFeature>TriggerMode</pFeature>
+    <pFeature>TriggerSource</pFeature>
+    <pFeature>TriggerSoftware</pFeature>
+  </Category>
+
+  <Category Name="AnalogControl">
+    <DisplayName>Analog Control</DisplayName>
+    <!-- profile:gain-category --><pFeature>Gain</pFeature><!-- /profile:gain-category -->
+    <pFeature>GainAuto</pFeature>
+    <pFeature>BlackLevel</pFeature>
+  </Category>
+
+  <Category Name="TransportLayerControl">
+    <DisplayName>Transport Layer Control</DisplayName>
+    <pFeature>PayloadSize</pFeature>
+    <pFeature>TLParamsLocked</pFeature>
+    <pFeature>GevTimestampTickFrequency</pFeature>
+    <pFeature>GevTimestampValue</pFeature>
+    <pFeature>TimestampLatch</pFeature>
+    <pFeature>GevIEEE1588OffsetFromMasterLatched_Val</pFeature>
+    <pFeature>ChunkTimestamp_Val</pFeature>
+    <pFeature>ChunkWidth_Val</pFeature>
+  </Category>
+
+  <Category Name="ChunkDataControl">
+    <DisplayName>Chunk Data Control</DisplayName>
+    <pFeature>ChunkModeActive</pFeature>
+    <pFeature>ChunkSelector</pFeature>
+    <pFeature>ChunkEnable</pFeature>
+    <pFeature>ChunkTimestamp</pFeature>
+    <pFeature>ChunkExposureTime</pFeature>
+    <pFeature>ChunkFrameID</pFeature>
+    <pFeature>ChunkWidth</pFeature>
+    <pFeature>ChunkHeight</pFeature>
+    <pFeature>ChunkImageLength</pFeature>
+  </Category>
+
+  <Category Name="EventControl">
+    <DisplayName>Event Control</DisplayName>
+    <pFeature>EventSelector</pFeature>
+    <pFeature>EventNotification</pFeature>
+    <pFeature>EventExposureEnd</pFeature>
+    <pFeature>EventExposureEndTimestamp</pFeature>
+    <pFeature>EventExposureEndFrameID</pFeature>
+  </Category>
+
+  <!-- The device's own register space: every register that is not on a
+       chunk or event port names it. -->
+  <Port Name="Device" NameSpace="Standard"/>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       Device Control Features
+       ════════════════════════════════════════════════════════════════════ -->
+
+  <StringReg Name="DeviceVendorName" NameSpace="Standard">
+    <ToolTip>Name of the device vendor</ToolTip>
+    <Address>0x20220</Address>
+    <Length>32</Length>
+    <AccessMode>RO</AccessMode>
+    <pPort>Device</pPort>
+  </StringReg>
+
+  <StringReg Name="DeviceModelName" NameSpace="Standard">
+    <ToolTip>Name of the device model</ToolTip>
+    <Address>0x20200</Address>
+    <Length>32</Length>
+    <AccessMode>RO</AccessMode>
+    <pPort>Device</pPort>
+  </StringReg>
+
+  <StringReg Name="DeviceSerialNumber" NameSpace="Standard">
+    <ToolTip>Serial number of the device</ToolTip>
+    <Address>0x20240</Address>
+    <Length>16</Length>
+    <AccessMode>RO</AccessMode>
+    <pPort>Device</pPort>
+  </StringReg>
+
+  <StringReg Name="DeviceFirmwareVersion" NameSpace="Standard">
+    <ToolTip>Firmware version of the device</ToolTip>
+    <Address>0x20260</Address>
+    <Length>32</Length>
+    <AccessMode>RO</AccessMode>
+    <pPort>Device</pPort>
+  </StringReg>
+
+  <StringReg Name="DeviceID" NameSpace="Standard">
+    <ToolTip>User-configurable device identifier</ToolTip>
+    <Address>0x20280</Address>
+    <Length>32</Length>
+    <AccessMode>RO</AccessMode>
+    <pPort>Device</pPort>
+  </StringReg>
+
+  <StringReg Name="DeviceUserID" NameSpace="Standard">
+    <ToolTip>A name the user gives the device</ToolTip>
+    <Address>0x20400</Address>
+    <Length>16</Length>
+    <AccessMode>RW</AccessMode>
+    <pPort>Device</pPort>
+  </StringReg>
+
+  <Register Name="DeviceUserBuffer" NameSpace="Custom">
+    <ToolTip>Sixteen bytes of user data, stored as written</ToolTip>
+    <Address>0x20410</Address>
+    <Length>16</Length>
+    <AccessMode>RW</AccessMode>
+    <pPort>Device</pPort>
+  </Register>
+
+  <!-- A value the camera changes on its own, declared as FLIR's BFS declares
+       it (FLIR_BFS_PGE_31S4C_C.xml): a Float over a Converter over an IntReg
+       that is NoCache and polled every 500 ms (GA-05). -->
+  <Float Name="DeviceTemperature" NameSpace="Standard">
+    <ToolTip>Device temperature in degrees Celsius</ToolTip>
+    <ImposedAccessMode>RO</ImposedAccessMode>
+    <pValue>DeviceTemperature_FloatVal</pValue>
+    <Unit>C</Unit>
+  </Float>
+  <Converter Name="DeviceTemperature_FloatVal">
+    <FormulaTo>FROM*256</FormulaTo>
+    <FormulaFrom>TO/256</FormulaFrom>
+    <pValue>DeviceTemperature_Val</pValue>
+    <Slope>Increasing</Slope>
+  </Converter>
+  <IntReg Name="DeviceTemperature_Val">
+    <Address>0x20300</Address>
+    <Length>4</Length>
+    <AccessMode>RO</AccessMode>
+    <pPort>Device</pPort>
+    <Cachable>NoCache</Cachable>
+    <PollingTime>500</PollingTime>
+    <Sign>Signed</Sign>
+    <Endianess>BigEndian</Endianess>
+  </IntReg>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       Image Format Control Features
+       ════════════════════════════════════════════════════════════════════ -->
+
+  <Integer Name="SensorWidth" NameSpace="Standard">
+    <ToolTip>Physical sensor width in pixels</ToolTip>
+    <pValue>SensorWidthReg</pValue>
+    <Min>1</Min>
+    <Max>4096</Max>
+  </Integer>
+  <IntReg Name="SensorWidthReg"><Address>0x20014</Address><Length>4</Length><AccessMode>RO</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <Integer Name="SensorHeight" NameSpace="Standard">
+    <ToolTip>Physical sensor height in pixels</ToolTip>
+    <pValue>SensorHeightReg</pValue>
+    <Min>1</Min>
+    <Max>4096</Max>
+  </Integer>
+  <IntReg Name="SensorHeightReg"><Address>0x20018</Address><Length>4</Length><AccessMode>RO</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <!-- The ROI shape every corpus document shares: a size's maximum shrinks
+       as its offset grows, and an offset's as the size grows, so the order
+       of writes decides whether a new ROI can be reached at all. The size and
+       format are locked while TLParamsLocked is set (FLIR, Basler, Hikrobot).
+       Binning rescales the region (SFNC: WidthMax is counted after binning),
+       which each node below says with a pInvalidator, as Basler's acA1600
+       does on its WidthMax register — on the feature, and on the register
+       behind it, where a GenApi caches the value. -->
+  <Integer Name="Width" NameSpace="Standard">
+    <ToolTip>Width of the image in pixels</ToolTip>
+    <pIsLocked>TLParamsLocked</pIsLocked>
+    <pInvalidator>BinningHorizontal</pInvalidator>
+    <Streamable>Yes</Streamable>
+    <pValue>WidthReg</pValue>
+    <pMin>WidthMin</pMin>
+    <pMax>WidthMaxNow</pMax>
+  </Integer>
+  <IntReg Name="WidthReg"><Address>0x20000</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><pInvalidator>BinningHorizontal</pInvalidator><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+  <IntSwissKnife Name="WidthMaxNow">
+    <pVariable Name="WMAX">WidthMax</pVariable>
+    <pVariable Name="OX">OffsetXReg</pVariable>
+    <Formula>WMAX - OX</Formula>
+  </IntSwissKnife>
+  <IntReg Name="WidthMin"><Address>0x20100</Address><Length>4</Length><AccessMode>RO</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+  <IntReg Name="WidthMax"><Address>0x20104</Address><Length>4</Length><AccessMode>RO</AccessMode><pPort>Device</pPort><pInvalidator>BinningHorizontal</pInvalidator><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <Integer Name="Height" NameSpace="Standard">
+    <ToolTip>Height of the image in pixels</ToolTip>
+    <pIsLocked>TLParamsLocked</pIsLocked>
+    <pInvalidator>BinningVertical</pInvalidator>
+    <Streamable>Yes</Streamable>
+    <pValue>HeightReg</pValue>
+    <pMin>HeightMin</pMin>
+    <pMax>HeightMaxNow</pMax>
+  </Integer>
+  <IntReg Name="HeightReg"><Address>0x20004</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><pInvalidator>BinningVertical</pInvalidator><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+  <IntSwissKnife Name="HeightMaxNow">
+    <pVariable Name="HMAX">HeightMax</pVariable>
+    <pVariable Name="OY">OffsetYReg</pVariable>
+    <Formula>HMAX - OY</Formula>
+  </IntSwissKnife>
+  <IntReg Name="HeightMin"><Address>0x20108</Address><Length>4</Length><AccessMode>RO</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+  <IntReg Name="HeightMax"><Address>0x2010c</Address><Length>4</Length><AccessMode>RO</AccessMode><pPort>Device</pPort><pInvalidator>BinningVertical</pInvalidator><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <Integer Name="OffsetX" NameSpace="Standard">
+    <ToolTip>Horizontal offset from the sensor origin</ToolTip>
+    <pInvalidator>BinningHorizontal</pInvalidator>
+    <Streamable>Yes</Streamable>
+    <pValue>OffsetXReg</pValue>
+    <Min>0</Min>
+    <pMax>OffsetXMax</pMax>
+  </Integer>
+  <IntReg Name="OffsetXReg"><Address>0x2000c</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><pInvalidator>BinningHorizontal</pInvalidator><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <Integer Name="OffsetY" NameSpace="Standard">
+    <ToolTip>Vertical offset from the sensor origin</ToolTip>
+    <pInvalidator>BinningVertical</pInvalidator>
+    <Streamable>Yes</Streamable>
+    <pValue>OffsetYReg</pValue>
+    <Min>0</Min>
+    <pMax>OffsetYMax</pMax>
+  </Integer>
+  <IntReg Name="OffsetYReg"><Address>0x20010</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><pInvalidator>BinningVertical</pInvalidator><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <IntSwissKnife Name="OffsetXMax">
+    <pVariable Name="WMAX">WidthMax</pVariable>
+    <pVariable Name="W">WidthReg</pVariable>
+    <Formula>WMAX - W</Formula>
+  </IntSwissKnife>
+  <IntSwissKnife Name="OffsetYMax">
+    <pVariable Name="HMAX">HeightMax</pVariable>
+    <pVariable Name="H">HeightReg</pVariable>
+    <Formula>HMAX - H</Formula>
+  </IntSwissKnife>
+
+  <Integer Name="BinningHorizontal" NameSpace="Standard">
+    <ToolTip>Pixels combined horizontally</ToolTip>
+    <Streamable>Yes</Streamable>
+    <pValue>BinningHorizontalReg</pValue>
+    <Min>1</Min>
+    <Max>4</Max>
+  </Integer>
+  <IntReg Name="BinningHorizontalReg"><Address>0x200e4</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+  <Integer Name="BinningVertical" NameSpace="Standard">
+    <ToolTip>Pixels combined vertically</ToolTip>
+    <Streamable>Yes</Streamable>
+    <pValue>BinningVerticalReg</pValue>
+    <Min>1</Min>
+    <Max>4</Max>
+  </Integer>
+  <IntReg Name="BinningVerticalReg"><Address>0x200e8</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <Enumeration Name="SensorType" NameSpace="Standard">
+    <ToolTip>Sensor variant (Monochrome / BayerRG / Color). On real hardware this would be read-only sensor metadata; here it is RW so tests can reconfigure the simulator.</ToolTip>
+    <EnumEntry Name="Monochrome"><Value>0</Value></EnumEntry>
+    <EnumEntry Name="BayerRG"><Value>1</Value></EnumEntry>
+    <EnumEntry Name="Color"><Value>2</Value></EnumEntry>
+    <pValue>SensorTypeReg</pValue>
+  </Enumeration>
+  <IntReg Name="SensorTypeReg"><Address>0x20058</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <Enumeration Name="PixelFormat" NameSpace="Standard">
+    <ToolTip>Format of the pixel data — entries are gated by SensorType</ToolTip>
+    <pIsLocked>TLParamsLocked</pIsLocked>
+    <Streamable>Yes</Streamable>
+    <EnumEntry Name="Mono8" NameSpace="Standard">
+      <pIsImplemented>PfMono8Avail</pIsImplemented>
+      <Value>0x01080001</Value>
+    </EnumEntry>
+    <EnumEntry Name="Mono16" NameSpace="Standard">
+      <pIsImplemented>PfMono16Avail</pIsImplemented>
+      <Value>0x01100007</Value>
+    </EnumEntry>
+    <EnumEntry Name="RGB8" NameSpace="Standard">
+      <pIsImplemented>PfRGB8Avail</pIsImplemented>
+      <Value>0x02180014</Value>
+    </EnumEntry>
+    <EnumEntry Name="BayerRG8" NameSpace="Standard">
+      <pIsImplemented>PfBayerRG8Avail</pIsImplemented>
+      <Value>0x01080009</Value>
+    </EnumEntry>
+    <pValue>PixelFormatReg</pValue>
+  </Enumeration>
+  <IntReg Name="PixelFormatReg"><Address>0x20008</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <!-- PixelFormat entry availability driven by SensorType:
+         Monochrome (0) → Mono8, Mono16
+         BayerRG    (1) → BayerRG8
+         Color      (2) → RGB8 -->
+  <IntSwissKnife Name="PfMono8Avail">
+    <pVariable Name="ST">SensorTypeReg</pVariable>
+    <Formula>ST = 0</Formula>
+  </IntSwissKnife>
+  <IntSwissKnife Name="PfMono16Avail">
+    <pVariable Name="ST">SensorTypeReg</pVariable>
+    <Formula>ST = 0</Formula>
+  </IntSwissKnife>
+  <IntSwissKnife Name="PfBayerRG8Avail">
+    <pVariable Name="ST">SensorTypeReg</pVariable>
+    <Formula>ST = 1</Formula>
+  </IntSwissKnife>
+  <IntSwissKnife Name="PfRGB8Avail">
+    <pVariable Name="ST">SensorTypeReg</pVariable>
+    <Formula>ST = 2</Formula>
+  </IntSwissKnife>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       Device capability inquiry bits
+
+       Real inquiry blocks are addressed as `<pAddress>` (the block base) plus
+       a fixed `<Address>` offset, and the individual bits come from a
+       <StructReg>. Both terms contribute: keeping only one reads the wrong
+       register, which is what made issue #35's camera misreport every
+       capability it had.
+       ════════════════════════════════════════════════════════════════════ -->
+  <IntSwissKnife Name="DeviceRegBaseAddress">
+    <Formula>0x20000</Formula>
+  </IntSwissKnife>
+  <StructReg Comment="Device capability inquiry">
+    <pAddress>DeviceRegBaseAddress</pAddress>
+    <Address>0x5C</Address>
+    <Length>4</Length>
+    <AccessMode>RO</AccessMode>
+    <pPort>Device</pPort>
+    <Endianess>BigEndian</Endianess>
+    <StructEntry Name="FrameRateControlInq_Bit"><Bit>0</Bit></StructEntry>
+    <StructEntry Name="ChunkSupportInq_Bit"><Bit>1</Bit></StructEntry>
+    <StructEntry Name="SequencerInq_Bit"><Bit>2</Bit></StructEntry>
+  </StructReg>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       GigE Vision stream channel registers
+
+       Stream channel N lives at 0x0D00 + N * 0x40, so the packet size
+       register is a fixed <Address> plus a <pIndex> scaled by the channel
+       stride. Ignoring the <pIndex> term always addresses channel 0.
+       ════════════════════════════════════════════════════════════════════ -->
+  <Integer Name="GevStreamChannelSelector" NameSpace="Standard">
+    <ToolTip>Stream channel the GevSCP* features address</ToolTip>
+    <pValue>GevStreamChannelSelectorReg</pValue>
+    <Min>0</Min>
+    <Max>1</Max>
+  </Integer>
+  <IntReg Name="GevStreamChannelSelectorReg"><Address>0x20090</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+  <Integer Name="GevSCPSPacketSize" NameSpace="Standard">
+    <ToolTip>Stream channel packet size in bytes</ToolTip>
+    <pValue>GevSCPSPacketSizeReg</pValue>
+    <Min>0</Min>
+    <Max>65535</Max>
+  </Integer>
+  <IntReg Name="GevSCPSPacketSizeReg">
+    <Address>0x0D04</Address>
+    <pIndex Offset="0x40">GevStreamChannelSelector</pIndex>
+    <Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess>
+  </IntReg>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       Acquisition Control Features
+       ════════════════════════════════════════════════════════════════════ -->
+
+  <Enumeration Name="AcquisitionMode" NameSpace="Standard">
+    <ToolTip>Camera acquisition mode</ToolTip>
+    <Streamable>Yes</Streamable>
+    <EnumEntry Name="Continuous"><Value>0</Value></EnumEntry>
+    <EnumEntry Name="SingleFrame"><Value>1</Value></EnumEntry>
+    <EnumEntry Name="MultiFrame"><Value>2</Value></EnumEntry>
+    <pValue>AcquisitionModeReg</pValue>
+  </Enumeration>
+  <IntReg Name="AcquisitionModeReg"><Address>0x20020</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <!-- Every <Command> here reaches its register through <pValue>, the shape
+       all 490 commands in the vendor corpus use; none has an <Address> of its
+       own (backlog GA-10). -->
+  <Command Name="AcquisitionStart" NameSpace="Standard">
+    <ToolTip>Start image acquisition</ToolTip>
+    <pValue>AcquisitionStartReg</pValue>
+    <CommandValue>1</CommandValue>
+  </Command>
+  <IntReg Name="AcquisitionStartReg"><Address>0x20024</Address><Length>4</Length><AccessMode>WO</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <!-- The Hikrobot MV-CS050-10GC user-set block (Hikrobot_MV-CS050-10GC.xml,
+       lines 23009-23148): both commands write the selected set's index,
+       taken through <pCommandValue> from the selector register, and saving is
+       unavailable while Default is selected. -->
+  <Enumeration Name="UserSetSelector" NameSpace="Standard">
+    <ToolTip>User set that UserSetLoad and UserSetSave act on</ToolTip>
+    <EnumEntry Name="Default"><Value>0</Value></EnumEntry>
+    <EnumEntry Name="UserSet1"><Value>1</Value></EnumEntry>
+    <EnumEntry Name="UserSet2"><Value>2</Value></EnumEntry>
+    <pValue>UserSetSelectorReg</pValue>
+    <pSelected>UserSetLoad</pSelected>
+    <pSelected>UserSetSave</pSelected>
+  </Enumeration>
+  <IntReg Name="UserSetSelectorReg"><Address>0x200a8</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <Command Name="UserSetLoad" NameSpace="Standard">
+    <ToolTip>Load the selected user set</ToolTip>
+    <ImposedAccessMode>WO</ImposedAccessMode>
+    <pValue>UserSetLoadReg</pValue>
+    <pCommandValue>UserSetLoad_CmdValue</pCommandValue>
+  </Command>
+  <IntSwissKnife Name="UserSetLoad_CmdValue">
+    <pVariable Name="VALUE">UserSetSelectorReg</pVariable>
+    <Formula>VALUE</Formula>
+  </IntSwissKnife>
+  <IntReg Name="UserSetLoadReg"><Address>0x200ac</Address><Length>4</Length><AccessMode>WO</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <Command Name="UserSetSave" NameSpace="Standard">
+    <ToolTip>Save the current settings into the selected user set</ToolTip>
+    <pIsAvailable>UserSetSaveAvailable</pIsAvailable>
+    <ImposedAccessMode>WO</ImposedAccessMode>
+    <pValue>UserSetSaveReg</pValue>
+    <pCommandValue>UserSetSave_CmdValue</pCommandValue>
+  </Command>
+  <IntSwissKnife Name="UserSetSave_CmdValue">
+    <pVariable Name="VALUE">UserSetSelectorReg</pVariable>
+    <Formula>VALUE</Formula>
+  </IntSwissKnife>
+  <IntSwissKnife Name="UserSetSaveAvailable">
+    <pVariable Name="VAL">UserSetSelectorReg</pVariable>
+    <Formula>(VAL = 0)? 0:1</Formula>
+  </IntSwissKnife>
+  <IntReg Name="UserSetSaveReg"><Address>0x200b4</Address><Length>4</Length><AccessMode>WO</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <!-- profile:user-set-default -->
+  <Enumeration Name="UserSetDefault" NameSpace="Standard">
+    <ToolTip>User set loaded at power-up</ToolTip>
+    <EnumEntry Name="Default"><Value>0</Value></EnumEntry>
+    <EnumEntry Name="UserSet1"><Value>1</Value></EnumEntry>
+    <EnumEntry Name="UserSet2"><Value>2</Value></EnumEntry>
+    <pValue>UserSetDefaultReg</pValue>
+  </Enumeration>
+  <!-- /profile:user-set-default -->
+  <IntReg Name="UserSetDefaultReg"><Address>0x200ec</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <!-- Triggers, as the Basler acA1600 and Hikrobot documents shape them: the
+       selector's value indexes the mode and source registers. -->
+  <Enumeration Name="TriggerSelector" NameSpace="Standard">
+    <ToolTip>Trigger that TriggerMode, TriggerSource and TriggerSoftware act on</ToolTip>
+    <Streamable>Yes</Streamable>
+    <EnumEntry Name="FrameStart"><Value>0</Value></EnumEntry>
+    <EnumEntry Name="AcquisitionStart"><Value>1</Value></EnumEntry>
+    <pValue>TriggerSelectorReg</pValue>
+    <pSelected>TriggerMode</pSelected>
+    <pSelected>TriggerSource</pSelected>
+    <pSelected>TriggerSoftware</pSelected>
+  </Enumeration>
+  <IntReg Name="TriggerSelectorReg"><Address>0x200c0</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+  <Enumeration Name="TriggerMode" NameSpace="Standard">
+    <ToolTip>Whether the selected trigger is active</ToolTip>
+    <Streamable>Yes</Streamable>
+    <EnumEntry Name="Off"><Value>0</Value></EnumEntry>
+    <EnumEntry Name="On"><Value>1</Value></EnumEntry>
+    <pValue>TriggerModeReg</pValue>
+  </Enumeration>
+  <IntReg Name="TriggerModeReg">
+    <Address>0x200c4</Address>
+    <pIndex Offset="4">TriggerSelectorReg</pIndex>
+    <Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess>
+  </IntReg>
+  <Enumeration Name="TriggerSource" NameSpace="Standard">
+    <ToolTip>Signal the selected trigger waits for</ToolTip>
+    <Streamable>Yes</Streamable>
+    <EnumEntry Name="Line1"><Value>0</Value></EnumEntry>
+    <EnumEntry Name="Software"><Value>1</Value></EnumEntry>
+    <pValue>TriggerSourceReg</pValue>
+  </Enumeration>
+  <IntReg Name="TriggerSourceReg">
+    <Address>0x200d0</Address>
+    <pIndex Offset="4">TriggerSelectorReg</pIndex>
+    <Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess>
+  </IntReg>
+  <Command Name="TriggerSoftware" NameSpace="Standard">
+    <ToolTip>Fire the selected trigger once</ToolTip>
+    <pValue>TriggerSoftwareReg</pValue>
+    <CommandValue>1</CommandValue>
+  </Command>
+  <IntReg Name="TriggerSoftwareReg"><Address>0x200e0</Address><Length>4</Length><AccessMode>WO</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <!-- A write-only register addressed bit by bit. Each entry inherits WO from
+       the StructReg, so setting one bit cannot read the register for the
+       others: the device refuses the read (backlog GA-31, issue #135). -->
+  <StructReg Comment="Software signal pulse">
+    <Address>0x200b0</Address>
+    <Length>4</Length>
+    <AccessMode>WO</AccessMode>
+    <pPort>Device</pPort>
+    <Endianess>BigEndian</Endianess>
+    <StructEntry Name="SoftwareSignal0Pulse"><Bit>0</Bit></StructEntry>
+    <StructEntry Name="SoftwareSignal1Pulse"><Bit>1</Bit></StructEntry>
+  </StructReg>
+
+  <Command Name="AcquisitionStop" NameSpace="Standard">
+    <ToolTip>Stop image acquisition</ToolTip>
+    <pValue>AcquisitionStopReg</pValue>
+    <CommandValue>1</CommandValue>
+  </Command>
+  <IntReg Name="AcquisitionStopReg"><Address>0x20028</Address><Length>4</Length><AccessMode>WO</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <Boolean Name="AcquisitionFrameRateEnable" NameSpace="Standard">
+    <ToolTip>Enable manual control of AcquisitionFrameRate. When false, the frame rate is unavailable for read/write.</ToolTip>
+    <Streamable>Yes</Streamable>
+    <pValue>AcquisitionFrameRateEnableReg</pValue>
+  </Boolean>
+  <IntReg Name="AcquisitionFrameRateEnableReg">
+    <pIsImplemented>FrameRateControlInq_Bit</pIsImplemented>
+    <Address>0x20054</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess>
+  </IntReg>
+
+  <!-- profile:frame-rate -->
+  <Float Name="AcquisitionFrameRate" NameSpace="Standard">
+    <ToolTip>Target frame rate in Hz</ToolTip>
+    <pIsAvailable>AcquisitionFrameRateEnable</pIsAvailable>
+    <Streamable>Yes</Streamable>
+    <pValue>AcquisitionFrameRateReg</pValue>
+    <Min>1.0</Min>
+    <Max>120.0</Max>
+    <Unit>Hz</Unit>
+  </Float>
+  <FloatReg Name="AcquisitionFrameRateReg"><Address>0x2002c</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Endianess>BigEndian</Endianess></FloatReg>
+  <!-- /profile:frame-rate -->
+
+  <!-- profile:exposure -->
+  <Float Name="ExposureTime" NameSpace="Standard">
+    <ToolTip>Exposure time in microseconds — locked to RO when ExposureAuto is not Off</ToolTip>
+    <pIsImplemented>ExposureTime_Imp</pIsImplemented>
+    <pIsAvailable>ExposureTime_Avl</pIsAvailable>
+    <pIsLocked>ExposureAutoActive</pIsLocked>
+    <Streamable>Yes</Streamable>
+    <pValue>ExposureTimeReg</pValue>
+    <Min>10.0</Min>
+    <Max>1000000.0</Max>
+    <Unit>us</Unit>
+  </Float>
+  <!-- /profile:exposure -->
+  <!-- The FLIR shape: the register, not the feature, carries <pInvalidator>,
+       and it names the command's pValue register rather than the command. So
+       executing UserSetLoad writes UserSetLoadReg, which marks this register
+       stale, which marks ExposureTime stale through its <pValue> (GA-24). -->
+  <FloatReg Name="ExposureTimeReg">
+    <Address>0x20030</Address>
+    <Length>8</Length>
+    <AccessMode>RW</AccessMode>
+    <pPort>Device</pPort>
+    <pInvalidator>UserSetLoadReg</pInvalidator>
+    <Endianess>BigEndian</Endianess>
+  </FloatReg>
+
+  <!-- Feature-status bits in one big-endian word, the shape FLIR ships and the
+       shape that exposed issue #120. GenICam counts <Bit> from the MSB here, so
+       bit 0 is 0x80000000 and bit 1 is 0x40000000; the fake boots this register
+       to 0xC0000000. Read from the wrong end these both come out zero and
+       ExposureTime becomes unavailable, which is what the reporter saw. -->
+  <MaskedIntReg Name="ExposureTime_Imp">
+    <Address>0x2009c</Address><Length>4</Length><AccessMode>RO</AccessMode><pPort>Device</pPort>
+    <Bit>0</Bit><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess>
+  </MaskedIntReg>
+  <MaskedIntReg Name="ExposureTime_Avl">
+    <Address>0x2009c</Address><Length>4</Length><AccessMode>RO</AccessMode><pPort>Device</pPort>
+    <Bit>1</Bit><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess>
+  </MaskedIntReg>
+
+  <Enumeration Name="ExposureAuto" NameSpace="Standard">
+    <ToolTip>Automatic exposure control</ToolTip>
+    <Streamable>Yes</Streamable>
+    <EnumEntry Name="Off"><Value>0</Value></EnumEntry>
+    <EnumEntry Name="Once"><Value>1</Value></EnumEntry>
+    <EnumEntry Name="Continuous"><Value>2</Value></EnumEntry>
+    <pValue>ExposureAutoReg</pValue>
+  </Enumeration>
+  <IntReg Name="ExposureAutoReg"><Address>0x20038</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <IntSwissKnife Name="ExposureAutoActive">
+    <pVariable Name="EA">ExposureAutoReg</pVariable>
+    <Formula>EA &lt;&gt; 0</Formula>
+  </IntSwissKnife>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       Analog Control Features
+       ════════════════════════════════════════════════════════════════════ -->
+
+  <!-- profile:gain -->
+  <Float Name="Gain" NameSpace="Standard">
+    <!-- CDATA-wrapped tooltip, as shipped by several vendors: the literal `&`
+         and `<` inside are legal here and must survive parsing (issue #45). -->
+    <ToolTip><![CDATA[Gain applied to the image in dB — locked to RO when GainAuto is not Off (0 < gain & gain < 48)]]></ToolTip>
+    <pIsLocked>GainAutoActive</pIsLocked>
+    <Streamable>Yes</Streamable>
+    <pValue>GainReg</pValue>
+    <Min>0.0</Min>
+    <Max>48.0</Max>
+  </Float>
+  <FloatReg Name="GainReg"><Address>0x20040</Address><Length>8</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Endianess>BigEndian</Endianess></FloatReg>
+  <!-- /profile:gain -->
+
+  <Enumeration Name="GainAuto" NameSpace="Standard">
+    <ToolTip>Automatic gain control</ToolTip>
+    <Streamable>Yes</Streamable>
+    <EnumEntry Name="Off"><Value>0</Value></EnumEntry>
+    <EnumEntry Name="Once"><Value>1</Value></EnumEntry>
+    <EnumEntry Name="Continuous"><Value>2</Value></EnumEntry>
+    <pValue>GainAutoReg</pValue>
+  </Enumeration>
+  <IntReg Name="GainAutoReg"><Address>0x20048</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <IntSwissKnife Name="GainAutoActive">
+    <pVariable Name="GA">GainAutoReg</pVariable>
+    <Formula>GA &lt;&gt; 0</Formula>
+  </IntSwissKnife>
+
+  <Integer Name="BlackLevel" NameSpace="Standard">
+    <ToolTip>Analog black level offset</ToolTip>
+    <Streamable>Yes</Streamable>
+    <pValue>BlackLevelReg</pValue>
+    <Min>0</Min>
+    <Max>255</Max>
+  </Integer>
+  <IntReg Name="BlackLevelReg"><Address>0x20050</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       Transport Layer Control (Timestamp)
+       ════════════════════════════════════════════════════════════════════ -->
+
+  <!-- SFNC's PayloadSize: what a host sizes its buffers by, computed by the
+       device from the format and the chunks, and so never cached. -->
+  <Integer Name="PayloadSize" NameSpace="Standard">
+    <ToolTip>Bytes of one block's payload: the image, and its chunks in chunk mode</ToolTip>
+    <ImposedAccessMode>RO</ImposedAccessMode>
+    <pValue>PayloadSizeReg</pValue>
+  </Integer>
+  <IntReg Name="PayloadSizeReg"><Address>0x20120</Address><Length>4</Length><AccessMode>RO</AccessMode><pPort>Device</pPort><Cachable>NoCache</Cachable><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <!-- A variable the host sets while it streams, with no register behind
+       it: FLIR, Basler and Hikrobot declare it so (27 corpus documents use an
+       Integer). -->
+  <!-- profile:tl-params-locked -->
+  <Integer Name="TLParamsLocked">
+    <ToolTip>Indicates whether a live grab is under way</ToolTip>
+    <Visibility>Invisible</Visibility>
+    <Value>0</Value>
+    <Min>0</Min>
+    <Max>1</Max>
+  </Integer>
+  <!-- /profile:tl-params-locked -->
+
+  <IntReg Name="GevTimestampTickFrequency" NameSpace="Standard">
+    <ToolTip>Device timestamp tick frequency in Hz (1 GHz)</ToolTip>
+    <Address>0x20060</Address>
+    <Length>4</Length>
+    <AccessMode>RO</AccessMode>
+    <pPort>Device</pPort>
+    <Sign>Unsigned</Sign>
+    <Endianess>BigEndian</Endianess>
+  </IntReg>
+
+  <!-- An Integer over an IntReg, as every timestamp in the vendor corpus is
+       declared, and with nothing linking it to the latch: the cache holds the
+       reading in the register node. -->
+  <Integer Name="GevTimestampValue" NameSpace="Standard">
+    <ToolTip>Current device timestamp in ticks (latched)</ToolTip>
+    <pValue>GevTimestampValueReg</pValue>
+  </Integer>
+  <IntReg Name="GevTimestampValueReg">
+    <Address>0x20068</Address>
+    <Length>8</Length>
+    <AccessMode>RO</AccessMode>
+    <pPort>Device</pPort>
+    <Sign>Unsigned</Sign>
+    <Endianess>BigEndian</Endianess>
+  </IntReg>
+
+  <IntReg Name="GevIEEE1588OffsetFromMasterLatched_Val" NameSpace="Custom">
+    <ToolTip>PTP offset from master in ns, latched</ToolTip>
+    <Address>0x20078</Address>
+    <Length>8</Length>
+    <AccessMode>RO</AccessMode>
+    <pPort>Device</pPort>
+    <Sign>Unsigned</Sign>
+    <Endianess>BigEndian</Endianess>
+  </IntReg>
+
+  <IntReg Name="ChunkTimestamp_Val" NameSpace="Custom">
+    <ToolTip>Chunk timestamp in ticks</ToolTip>
+    <Address>0x20110</Address>
+    <Length>8</Length>
+    <AccessMode>RO</AccessMode>
+    <pPort>Device</pPort>
+    <Sign>Unsigned</Sign>
+    <Endianess>LittleEndian</Endianess>
+  </IntReg>
+
+  <IntReg Name="ChunkWidth_Val" NameSpace="Custom">
+    <ToolTip>Chunk image width in pixels</ToolTip>
+    <Address>0x20118</Address>
+    <Length>4</Length>
+    <AccessMode>RO</AccessMode>
+    <pPort>Device</pPort>
+    <Sign>Unsigned</Sign>
+    <Endianess>LittleEndian</Endianess>
+  </IntReg>
+
+  <Command Name="TimestampLatch" NameSpace="Standard">
+    <ToolTip>Latch the current timestamp into GevTimestampValue</ToolTip>
+    <pValue>TimestampLatchReg</pValue>
+    <CommandValue>1</CommandValue>
+  </Command>
+  <IntReg Name="TimestampLatchReg"><Address>0x20070</Address><Length>4</Length><AccessMode>WO</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       Chunk Data Control
+       ════════════════════════════════════════════════════════════════════ -->
+
+  <!-- SFNC defines ChunkModeActive and ChunkEnable as IBoolean, and all 23
+       vendor-corpus documents that declare ChunkModeActive use <Boolean> over
+       a backing <IntReg> - none uses <Integer>. Declaring them as <Integer>
+       here made Camera::configure_chunks, which correctly calls set_bool,
+       fail against the only camera we can test with. -->
+  <Boolean Name="ChunkModeActive" NameSpace="Standard">
+    <ToolTip>Enable chunk data in image frames</ToolTip>
+    <Streamable>Yes</Streamable>
+    <pValue>ChunkModeActiveReg</pValue>
+  </Boolean>
+  <IntReg Name="ChunkModeActiveReg"><Address>0x20080</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <Enumeration Name="ChunkSelector" NameSpace="Standard">
+    <ToolTip>Select which chunk feature to configure</ToolTip>
+    <EnumEntry Name="Timestamp"><Value>1</Value></EnumEntry>
+    <EnumEntry Name="ExposureTime"><Value>2</Value></EnumEntry>
+    <EnumEntry Name="Gain"><Value>3</Value></EnumEntry>
+    <EnumEntry Name="FrameID"><Value>4</Value></EnumEntry>
+    <EnumEntry Name="ImageInfo" NameSpace="Custom"><Value>5</Value></EnumEntry>
+    <pValue>ChunkSelectorReg</pValue>
+  </Enumeration>
+  <IntReg Name="ChunkSelectorReg"><Address>0x20084</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <Boolean Name="ChunkEnable" NameSpace="Standard">
+    <ToolTip>Enable the selected chunk feature</ToolTip>
+    <pValue>ChunkEnableReg</pValue>
+  </Boolean>
+  <IntReg Name="ChunkEnableReg"><Address>0x20088</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <!-- Chunk ports (GenICam Standard v2.1.1 §2.8.16): each register below
+       addresses one chunk of a frame, from the chunk's start, not device
+       memory. The shapes are the corpus's: FLIR declares its chunk values
+       little-endian at offset 0 of their own chunks; Baumer's HXG20 reads
+       ChunkImageLength at address -4, "offset from the back of the chunk". -->
+  <Port Name="ChunkImagePort" NameSpace="Custom"><ChunkID>00000001</ChunkID></Port>
+  <Port Name="ChunkTimestampPort" NameSpace="Custom"><ChunkID>00000002</ChunkID></Port>
+  <Port Name="ChunkExposureTimePort" NameSpace="Custom"><ChunkID>00000003</ChunkID></Port>
+  <Port Name="ChunkFrameIDPort" NameSpace="Custom"><ChunkID>05040003</ChunkID></Port>
+  <Port Name="ChunkImageInfoPort" NameSpace="Custom"><ChunkID>A5A50100</ChunkID></Port>
+
+  <Integer Name="ChunkTimestamp" NameSpace="Standard">
+    <ToolTip>Timestamp of the image, in ticks</ToolTip>
+    <ImposedAccessMode>RO</ImposedAccessMode>
+    <pValue>ChunkTimestampReg</pValue>
+  </Integer>
+  <IntReg Name="ChunkTimestampReg"><Address>0x0</Address><Length>8</Length><AccessMode>RO</AccessMode><pPort>ChunkTimestampPort</pPort><Sign>Unsigned</Sign><Endianess>LittleEndian</Endianess></IntReg>
+
+  <Float Name="ChunkExposureTime" NameSpace="Standard">
+    <ToolTip>Exposure time used to capture the image</ToolTip>
+    <ImposedAccessMode>RO</ImposedAccessMode>
+    <pValue>ChunkExposureTimeReg</pValue>
+    <Unit>us</Unit>
+  </Float>
+  <FloatReg Name="ChunkExposureTimeReg"><Address>0x0</Address><Length>8</Length><AccessMode>RO</AccessMode><pPort>ChunkExposureTimePort</pPort><Endianess>LittleEndian</Endianess></FloatReg>
+
+  <Integer Name="ChunkFrameID" NameSpace="Standard">
+    <ToolTip>Frame id of the image</ToolTip>
+    <ImposedAccessMode>RO</ImposedAccessMode>
+    <pValue>ChunkFrameIDReg</pValue>
+  </Integer>
+  <IntReg Name="ChunkFrameIDReg"><Address>0x0</Address><Length>8</Length><AccessMode>RO</AccessMode><pPort>ChunkFrameIDPort</pPort><Sign>Unsigned</Sign><Endianess>LittleEndian</Endianess></IntReg>
+
+  <Integer Name="ChunkWidth" NameSpace="Standard">
+    <ImposedAccessMode>RO</ImposedAccessMode>
+    <pValue>ChunkWidthReg</pValue>
+  </Integer>
+  <IntReg Name="ChunkWidthReg"><Address>0x0</Address><Length>4</Length><AccessMode>RO</AccessMode><pPort>ChunkImageInfoPort</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <Integer Name="ChunkHeight" NameSpace="Standard">
+    <ImposedAccessMode>RO</ImposedAccessMode>
+    <pValue>ChunkHeightReg</pValue>
+  </Integer>
+  <IntReg Name="ChunkHeightReg"><Address>0x4</Address><Length>4</Length><AccessMode>RO</AccessMode><pPort>ChunkImageInfoPort</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <Integer Name="ChunkImageLength" NameSpace="Custom">
+    <ToolTip>Bytes of image data, read from the end of the ImageInfo chunk</ToolTip>
+    <ImposedAccessMode>RO</ImposedAccessMode>
+    <pValue>ChunkImageLengthReg</pValue>
+  </Integer>
+  <IntReg Name="ChunkImageLengthReg"><Address>-4</Address><Length>4</Length><AccessMode>RO</AccessMode><pPort>ChunkImageInfoPort</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <!-- Event delivery is selected through GenApi, not through a bootstrap
+       register: EventSelector picks a GigE Vision event id and
+       EventNotification turns it on. The ids are the standard ones
+       (GEV_EVENT_START_OF_TRANSFER = 0x0005, END_OF_TRANSFER = 0x0006). -->
+  <Enumeration Name="EventSelector" NameSpace="Standard">
+    <ToolTip>Select which event to configure</ToolTip>
+    <EnumEntry Name="StartOfTransfer"><Value>5</Value></EnumEntry>
+    <EnumEntry Name="EndOfTransfer"><Value>6</Value></EnumEntry>
+    <EnumEntry Name="ExposureEnd"><Value>0x9001</Value></EnumEntry>
+    <pValue>EventSelectorReg</pValue>
+  </Enumeration>
+  <IntReg Name="EventSelectorReg"><Address>0x200A0</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <Enumeration Name="EventNotification" NameSpace="Standard">
+    <ToolTip>Enable notification for the selected event</ToolTip>
+    <EnumEntry Name="Off"><Value>0</Value></EnumEntry>
+    <EnumEntry Name="On"><Value>1</Value></EnumEntry>
+    <pValue>EventNotificationReg</pValue>
+  </Enumeration>
+  <IntReg Name="EventNotificationReg"><Address>0x200A4</Address><Length>4</Length><AccessMode>RW</AccessMode><pPort>Device</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+
+  <!-- The ExposureEnd event port: its registers address the event as it was
+       sent, header included — the event id at 0x2 and the timestamp at 0x8,
+       where every corpus document puts them, and the frame id in the event
+       data at 0x10, little-endian, as FLIR declares EventExposureEndFrameID. -->
+  <Port Name="EventExposureEndPort"><EventID>9001</EventID></Port>
+  <Integer Name="EventExposureEnd" NameSpace="Standard">
+    <ImposedAccessMode>RO</ImposedAccessMode>
+    <pValue>EventExposureEndReg</pValue>
+  </Integer>
+  <IntReg Name="EventExposureEndReg"><Address>0x2</Address><Length>2</Length><AccessMode>RO</AccessMode><pPort>EventExposureEndPort</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+  <Integer Name="EventExposureEndTimestamp" NameSpace="Standard">
+    <ImposedAccessMode>RO</ImposedAccessMode>
+    <pValue>EventExposureEndTimestampReg</pValue>
+  </Integer>
+  <IntReg Name="EventExposureEndTimestampReg"><Address>0x8</Address><Length>8</Length><AccessMode>RO</AccessMode><pPort>EventExposureEndPort</pPort><Sign>Unsigned</Sign><Endianess>BigEndian</Endianess></IntReg>
+  <Integer Name="EventExposureEndFrameID" NameSpace="Standard">
+    <ImposedAccessMode>RO</ImposedAccessMode>
+    <pValue>EventExposureEndFrameIDReg</pValue>
+  </Integer>
+  <IntReg Name="EventExposureEndFrameIDReg"><Address>0x10</Address><Length>8</Length><AccessMode>RO</AccessMode><pPort>EventExposureEndPort</pPort><Sign>Unsigned</Sign><Endianess>LittleEndian</Endianess></IntReg>
+
+</RegisterDescription>

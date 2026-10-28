@@ -1,0 +1,510 @@
+{
+  "env": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.2.6",
+    "opencv": "4.12.0",
+    "cpu_count": 28,
+    "time": "2026-10-28 01:53:34",
+    "psutil": "7.2.2",
+    "ram_total_gb": 68.413349888,
+    "system_cpu_pct_1s_before_run": 5.8,
+    "other_python_processes_at_start": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks/frame_pipeline/prototypes/run_all.py",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\prototypes\\run_with_load.py p2_seqlock_read p2_seqlock_read_stdout.lo",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks/frame_pipeline/prototypes/run_all.py",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\prototypes\\p2_seqlock_read.py",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks\\frame_pipeline\\prototypes\\run_with_load.py p2_seqlock_read p2_seql"
+    ],
+    "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d",
+    "av": "18.0.0",
+    "simplejpeg": null
+  },
+  "part_a": [
+    {
+      "L": 2,
+      "pattern": "latest",
+      "style": "copy_fncheck",
+      "writer_fps": 4292.942434625828,
+      "reads": 44276,
+      "accepted": 44276,
+      "rejected_stale": 0,
+      "rejected_seq": 0,
+      "rejected_fn": 0,
+      "silent_tears": 15,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 44276,
+        "median_ms": 0.2155,
+        "mean_ms": 0.21598609630499596,
+        "p99_ms": 0.26545,
+        "min_ms": 0.075,
+        "max_ms": 0.6145
+      }
+    },
+    {
+      "L": 2,
+      "pattern": "latest",
+      "style": "seqlock_copy",
+      "writer_fps": 4259.018030342117,
+      "reads": 45085,
+      "accepted": 16953,
+      "rejected_stale": 0,
+      "rejected_seq": 28132,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 16953,
+        "median_ms": 0.2211,
+        "mean_ms": 0.2224407184569103,
+        "p99_ms": 0.2598,
+        "min_ms": 0.0744,
+        "max_ms": 0.3635
+      }
+    },
+    {
+      "L": 2,
+      "pattern": "latest",
+      "style": "seqlock_view",
+      "writer_fps": 5285.177036737702,
+      "reads": 50652,
+      "accepted": 152,
+      "rejected_stale": 0,
+      "rejected_seq": 50500,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 152,
+        "median_ms": 0.18969999999999998,
+        "mean_ms": 0.1839684210526316,
+        "p99_ms": 0.23234600000000014,
+        "min_ms": 0.1122,
+        "max_ms": 0.2605
+      }
+    },
+    {
+      "L": 2,
+      "pattern": "oldest",
+      "style": "copy_fncheck",
+      "writer_fps": 4368.09040281444,
+      "reads": 43482,
+      "accepted": 43328,
+      "rejected_stale": 53,
+      "rejected_seq": 0,
+      "rejected_fn": 101,
+      "silent_tears": 41834,
+      "accepted_value_wrong": 1068,
+      "accepted_latency": {
+        "n": 43328,
+        "median_ms": 0.2194,
+        "mean_ms": 0.22041795605613,
+        "p99_ms": 0.2702,
+        "min_ms": 0.0764,
+        "max_ms": 0.7762
+      }
+    },
+    {
+      "L": 2,
+      "pattern": "oldest",
+      "style": "seqlock_copy",
+      "writer_fps": 4283.463412041351,
+      "reads": 3716410,
+      "accepted": 0,
+      "rejected_stale": 0,
+      "rejected_seq": 3716410,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 0
+      }
+    },
+    {
+      "L": 2,
+      "pattern": "oldest",
+      "style": "seqlock_view",
+      "writer_fps": 5709.03573669009,
+      "reads": 9484255,
+      "accepted": 0,
+      "rejected_stale": 0,
+      "rejected_seq": 9484255,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 0
+      }
+    },
+    {
+      "L": 8,
+      "pattern": "latest",
+      "style": "copy_fncheck",
+      "writer_fps": 4400.666410896123,
+      "reads": 43023,
+      "accepted": 43023,
+      "rejected_stale": 0,
+      "rejected_seq": 0,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 43023,
+        "median_ms": 0.2214,
+        "mean_ms": 0.22255887316086745,
+        "p99_ms": 0.2643,
+        "min_ms": 0.0735,
+        "max_ms": 0.5784
+      }
+    },
+    {
+      "L": 8,
+      "pattern": "latest",
+      "style": "seqlock_copy",
+      "writer_fps": 4373.468726320078,
+      "reads": 42784,
+      "accepted": 42784,
+      "rejected_stale": 0,
+      "rejected_seq": 0,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 42784,
+        "median_ms": 0.2228,
+        "mean_ms": 0.22406261452879578,
+        "p99_ms": 0.2708,
+        "min_ms": 0.0756,
+        "max_ms": 0.5949
+      }
+    },
+    {
+      "L": 8,
+      "pattern": "latest",
+      "style": "seqlock_view",
+      "writer_fps": 5564.148539771915,
+      "reads": 46598,
+      "accepted": 46598,
+      "rejected_stale": 0,
+      "rejected_seq": 0,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 46598,
+        "median_ms": 0.2046,
+        "mean_ms": 0.2079638396497704,
+        "p99_ms": 0.2792,
+        "min_ms": 0.1104,
+        "max_ms": 1.1328
+      }
+    },
+    {
+      "L": 8,
+      "pattern": "oldest",
+      "style": "copy_fncheck",
+      "writer_fps": 4381.96285072482,
+      "reads": 43105,
+      "accepted": 42757,
+      "rejected_stale": 99,
+      "rejected_seq": 0,
+      "rejected_fn": 249,
+      "silent_tears": 40165,
+      "accepted_value_wrong": 1846,
+      "accepted_latency": {
+        "n": 42757,
+        "median_ms": 0.221,
+        "mean_ms": 0.22271836424445118,
+        "p99_ms": 0.2675,
+        "min_ms": 0.0946,
+        "max_ms": 0.5719
+      }
+    },
+    {
+      "L": 8,
+      "pattern": "oldest",
+      "style": "seqlock_copy",
+      "writer_fps": 4260.564419404961,
+      "reads": 3452112,
+      "accepted": 0,
+      "rejected_stale": 0,
+      "rejected_seq": 3452112,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 0
+      }
+    },
+    {
+      "L": 8,
+      "pattern": "oldest",
+      "style": "seqlock_view",
+      "writer_fps": 5746.7139858276205,
+      "reads": 10096636,
+      "accepted": 0,
+      "rejected_stale": 0,
+      "rejected_seq": 10096636,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 0
+      }
+    },
+    {
+      "L": 388,
+      "pattern": "latest",
+      "style": "copy_fncheck",
+      "writer_fps": 4323.74570564568,
+      "reads": 42694,
+      "accepted": 42694,
+      "rejected_stale": 0,
+      "rejected_seq": 0,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 42694,
+        "median_ms": 0.2227,
+        "mean_ms": 0.22389955263034622,
+        "p99_ms": 0.2713,
+        "min_ms": 0.0725,
+        "max_ms": 0.5823
+      }
+    },
+    {
+      "L": 388,
+      "pattern": "latest",
+      "style": "seqlock_copy",
+      "writer_fps": 4312.501647600928,
+      "reads": 42655,
+      "accepted": 42655,
+      "rejected_stale": 0,
+      "rejected_seq": 0,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 42655,
+        "median_ms": 0.2239,
+        "mean_ms": 0.22442573438049465,
+        "p99_ms": 0.27004599999999995,
+        "min_ms": 0.0732,
+        "max_ms": 0.5999
+      }
+    },
+    {
+      "L": 388,
+      "pattern": "latest",
+      "style": "seqlock_view",
+      "writer_fps": 5484.617214880473,
+      "reads": 46682,
+      "accepted": 46682,
+      "rejected_stale": 0,
+      "rejected_seq": 0,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 46682,
+        "median_ms": 0.2042,
+        "mean_ms": 0.20726912514459536,
+        "p99_ms": 0.2737,
+        "min_ms": 0.1111,
+        "max_ms": 1.6049
+      }
+    },
+    {
+      "L": 388,
+      "pattern": "oldest",
+      "style": "copy_fncheck",
+      "writer_fps": 4315.541167465514,
+      "reads": 42712,
+      "accepted": 42359,
+      "rejected_stale": 105,
+      "rejected_seq": 0,
+      "rejected_fn": 248,
+      "silent_tears": 39854,
+      "accepted_value_wrong": 1778,
+      "accepted_latency": {
+        "n": 42359,
+        "median_ms": 0.2231,
+        "mean_ms": 0.2245581009938856,
+        "p99_ms": 0.2702,
+        "min_ms": 0.0915,
+        "max_ms": 0.6756
+      }
+    },
+    {
+      "L": 388,
+      "pattern": "oldest",
+      "style": "seqlock_copy",
+      "writer_fps": 4198.894224426795,
+      "reads": 3551326,
+      "accepted": 0,
+      "rejected_stale": 0,
+      "rejected_seq": 3551326,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 0
+      }
+    },
+    {
+      "L": 388,
+      "pattern": "oldest",
+      "style": "seqlock_view",
+      "writer_fps": 5589.819640363199,
+      "reads": 9860734,
+      "accepted": 0,
+      "rejected_stale": 0,
+      "rejected_seq": 9860734,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 0
+      }
+    }
+  ],
+  "part_b": [
+    {
+      "size": "1080p",
+      "style": "seqlock_copy",
+      "validation_failures": 0,
+      "n": 600,
+      "median_ms": 0.37835,
+      "mean_ms": 0.38052616666666667,
+      "p99_ms": 0.45474799999999993,
+      "min_ms": 0.3494,
+      "max_ms": 0.8965
+    },
+    {
+      "size": "1080p",
+      "style": "seqlock_view",
+      "validation_failures": 0,
+      "n": 600,
+      "median_ms": 0.0204,
+      "mean_ms": 0.021172,
+      "p99_ms": 0.039328999999999975,
+      "min_ms": 0.005,
+      "max_ms": 0.1107
+    },
+    {
+      "size": "1080p",
+      "style": "seqlock_view_resize",
+      "validation_failures": 0,
+      "n": 600,
+      "median_ms": 0.50625,
+      "mean_ms": 0.5121049999999999,
+      "p99_ms": 0.6708219999999999,
+      "min_ms": 0.4651,
+      "max_ms": 0.8915
+    },
+    {
+      "size": "1080p",
+      "style": "multi5_seqlock_copy",
+      "validation_failures": 0,
+      "n": 600,
+      "median_ms": 1.8364500000000001,
+      "mean_ms": 1.831422,
+      "p99_ms": 2.026935,
+      "min_ms": 1.7077,
+      "max_ms": 4.5907
+    },
+    {
+      "size": "1080p",
+      "style": "multi5_seqlock_view",
+      "validation_failures": 0,
+      "n": 600,
+      "median_ms": 0.0333,
+      "mean_ms": 0.034660333333333335,
+      "p99_ms": 0.056903999999999996,
+      "min_ms": 0.0156,
+      "max_ms": 0.0661
+    },
+    {
+      "size": "1080p",
+      "style": "multi5_seqlock_view_resize",
+      "validation_failures": 0,
+      "n": 600,
+      "median_ms": 2.5012999999999996,
+      "mean_ms": 2.5328703333333333,
+      "p99_ms": 3.371915,
+      "min_ms": 2.3297,
+      "max_ms": 4.1851
+    },
+    {
+      "size": "720p",
+      "style": "seqlock_copy",
+      "validation_failures": 0,
+      "n": 600,
+      "median_ms": 0.18365,
+      "mean_ms": 0.18635916666666666,
+      "p99_ms": 0.24682699999999996,
+      "min_ms": 0.1624,
+      "max_ms": 0.4556
+    },
+    {
+      "size": "720p",
+      "style": "seqlock_view",
+      "validation_failures": 0,
+      "n": 600,
+      "median_ms": 0.0209,
+      "mean_ms": 0.0206485,
+      "p99_ms": 0.037502999999999995,
+      "min_ms": 0.0056,
+      "max_ms": 0.0392
+    },
+    {
+      "size": "720p",
+      "style": "seqlock_view_resize",
+      "validation_failures": 0,
+      "n": 600,
+      "median_ms": 0.2606,
+      "mean_ms": 0.26667983333333334,
+      "p99_ms": 0.342611,
+      "min_ms": 0.2294,
+      "max_ms": 0.3708
+    },
+    {
+      "size": "720p",
+      "style": "multi5_seqlock_copy",
+      "validation_failures": 0,
+      "n": 600,
+      "median_ms": 0.85405,
+      "mean_ms": 0.8563213333333333,
+      "p99_ms": 0.9991879999999999,
+      "min_ms": 0.7725,
+      "max_ms": 2.0362
+    },
+    {
+      "size": "720p",
+      "style": "multi5_seqlock_view",
+      "validation_failures": 0,
+      "n": 600,
+      "median_ms": 0.033350000000000005,
+      "mean_ms": 0.03397616666666667,
+      "p99_ms": 0.058303999999999995,
+      "min_ms": 0.0158,
+      "max_ms": 0.0722
+    },
+    {
+      "size": "720p",
+      "style": "multi5_seqlock_view_resize",
+      "validation_failures": 0,
+      "n": 600,
+      "median_ms": 1.2111,
+      "mean_ms": 1.2257921666666667,
+      "p99_ms": 1.547836,
+      "min_ms": 1.109,
+      "max_ms": 1.5857
+    }
+  ],
+  "run_a_s": 10.0,
+  "run_b_s": 2.0
+}

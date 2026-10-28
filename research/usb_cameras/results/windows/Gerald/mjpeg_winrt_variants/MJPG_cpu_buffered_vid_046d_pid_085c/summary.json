@@ -1,0 +1,102 @@
+{
+ "test": "mjpeg_winrt_variants",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-25T19:23:00.202401+00:00",
+ "utc_summarized": "2026-10-25T19:23:06.575376+00:00",
+ "command": "uv run --script research/usb_cameras/tools/camlock.py -- uv run --script research/usb_cameras/mjpeg/winrt/winrt_capture.py --dev vid_046d&pid_085c --size 1280x720 --fps 30 --seconds 4 --warmup 1 --reader-subtype MJPG --memory cpu --acq buffered --run-dir C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg/winrt_variants/MJPG_cpu_buffered_vid_046d_pid_085c",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2",
+   "winrt-runtime": "4.0.3"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "backend": "winrt-mediaframereader",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30.0
+ },
+ "decoded_by_pipeline": null,
+ "decode_evidence": "frames_with_buffer=[0] frames_with_softwarebitmap=[0] subtypes=[{}]",
+ "window": {
+  "start_ns": 105539128091600,
+  "end_ns": 105543128385600,
+  "wall_s": 4.000294
+ },
+ "delivered_codecs": [],
+ "silent_format_fallback": null,
+ "cpu": {
+  "method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)",
+  "wall_s": 4.0002972,
+  "process_cpu_s_ticks": 0.328125,
+  "process_cpu_pct_of_one_core_ticks": 8.202515553094404,
+  "tsc_hz": 3400362061.667955,
+  "process_cycles": 1151954817,
+  "process_cpu_pct_of_one_core": 8.468724890364774,
+  "frameserver_pid": 44292,
+  "frameserver_cpu_pct_of_one_core_ticks": 0.0,
+  "frameserver_cpu_pct_of_one_core": null,
+  "process_cpu_pct_per_camera": 8.468724890364774
+ },
+ "cameras": [
+  {
+   "idx": 0,
+   "name": "c922 Pro Stream Webcam",
+   "group_id": "\\\\?\\USB#VID_046D&PID_085C&MI_00#8&268DA596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL",
+   "source_id": "Source#0@\\\\?\\USB#VID_046D&PID_085C&MI_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL",
+   "device_id": "\\\\?\\USB#VID_046D&PID_085C&MI_00#8&268DA596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL",
+   "chosen_format": "MJPG 1280x720@30/1",
+   "requested_mode": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30.0
+   },
+   "handler_calls": 156,
+   "handler_exceptions": 0,
+   "handler_exception_first": null,
+   "current_format_subtype": "MJPG",
+   "reader_output_subtype": "MJPG",
+   "memory_preference": "cpu",
+   "acquisition_mode": "buffered",
+   "acquire_errors": 156,
+   "acquire_error_first": "OSError(22, 'The parameter is incorrect.', None, -2147024809)",
+   "frames": 0,
+   "frames_with_buffer": 0,
+   "frames_with_softwarebitmap": 0,
+   "frame_subtypes": {},
+   "property_dumps": [],
+   "null_refs": 0,
+   "start_status": 0,
+   "frames_delivered_total": 0,
+   "frames_in_window": 0,
+   "fps_requested": 30.0,
+   "fps_achieved_count_over_wall": 0.0,
+   "fps_achieved_span": null,
+   "inter_arrival_ms": null,
+   "gaps_over_1p5_period": 0,
+   "os_timestamp_delta_ms": null,
+   "payload_bytes": null,
+   "pct_valid_jpeg_in_window": null,
+   "pct_valid_jpeg_all": null,
+   "jpeg_checks_all": null,
+   "n_validated": 0,
+   "cam": "c922",
+   "jpeg_header": null,
+   "os_timestamp_source": null,
+   "timestamp_fields_present": {},
+   "arrival_minus_os_timestamp_ms": null
+  }
+ ],
+ "samples": [],
+ "errors": []
+}

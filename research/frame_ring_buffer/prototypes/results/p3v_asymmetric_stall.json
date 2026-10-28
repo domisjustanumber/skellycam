@@ -1,0 +1,1826 @@
+{
+  "env": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.2.6",
+    "opencv": "4.12.0",
+    "cpu_count": 28,
+    "time": "2026-10-28 06:38:27",
+    "psutil": "7.2.2",
+    "ram_total_gb": 68.413349888,
+    "system_cpu_pct_1s_before_run": 11.0,
+    "other_python_processes_at_start": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\prototypes\\p3_lossless_record.py ASYM",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\prototypes\\run_with_load.py p3v_asymmetric_stall p3v_asymmetric_stall",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks/frame_pipeline/revision/run_revision.py p8v p10v p11 p3v p12 h_def",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks/frame_pipeline/revision/run_revision.py p8v p10v p11 p3v p12 h_deflate p6v",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks\\frame_pipeline\\prototypes\\run_with_load.py p3v_asymmetric_stall p3"
+    ],
+    "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d",
+    "av": "18.0.0",
+    "simplejpeg": null
+  },
+  "rows": [
+    {
+      "size": "1080p",
+      "L": 172,
+      "policy": "block",
+      "mode": "busy",
+      "stall_ms": 1000,
+      "stall_at_s": 3.0,
+      "run_s": 8.0,
+      "stall_only_cam0": true,
+      "lockstep": false,
+      "sync": {
+        "common_frames": 481,
+        "recorded_per_cam": [
+          481,
+          481,
+          481,
+          481,
+          481
+        ],
+        "same_frame_numbers_over_common_range": true,
+        "tick_spread": {
+          "n": 481,
+          "median_ms": 6.305992,
+          "mean_ms": 6.305992000000002,
+          "p99_ms": 6.305992,
+          "min_ms": 6.305992,
+          "max_ms": 6.305992
+        },
+        "frames_with_tick_spread_ge_1_period": 0
+      },
+      "ring_seconds_at_60fps": 2.8666666666666667,
+      "cameras": [
+        {
+          "cam": 0,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4785,
+            "mean_ms": 0.7864376299376299,
+            "p99_ms": 1.4709800000000002,
+            "min_ms": 0.4078,
+            "max_ms": 1.567
+          }
+        },
+        {
+          "cam": 1,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4143,
+            "mean_ms": 0.7456636174636175,
+            "p99_ms": 1.48512,
+            "min_ms": 0.3534,
+            "max_ms": 1.6703
+          }
+        },
+        {
+          "cam": 2,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4781,
+            "mean_ms": 0.7905313929313929,
+            "p99_ms": 1.4983,
+            "min_ms": 0.3889,
+            "max_ms": 1.9738
+          }
+        },
+        {
+          "cam": 3,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4023,
+            "mean_ms": 0.7464588357588359,
+            "p99_ms": 1.4526599999999998,
+            "min_ms": 0.352,
+            "max_ms": 1.496
+          }
+        },
+        {
+          "cam": 4,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4023,
+            "mean_ms": 0.7064925155925156,
+            "p99_ms": 1.40766,
+            "min_ms": 0.3444,
+            "max_ms": 1.4979
+          }
+        }
+      ],
+      "recorders": [
+        {
+          "cam": 0,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 60,
+          "lag_p99_slots": 55.19999999999999,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.0016060291060294,
+            "p99_ms": 2.0278799999999997,
+            "min_ms": 2.0,
+            "max_ms": 2.129
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.471405,
+            "mean_ms": 73.33964879625782,
+            "p99_ms": 918.9831941999998,
+            "min_ms": 2.461275,
+            "max_ms": 989.336851
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 1,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.002714553014553,
+            "p99_ms": 2.0270200000000003,
+            "min_ms": 2.0,
+            "max_ms": 2.0345
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.200425,
+            "mean_ms": 3.270628945945946,
+            "p99_ms": 4.4330945999999996,
+            "min_ms": 2.391021,
+            "max_ms": 4.510527
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 2,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.001075051975052,
+            "p99_ms": 2.022,
+            "min_ms": 2.0,
+            "max_ms": 2.0419
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.282772,
+            "mean_ms": 3.3206772765072765,
+            "p99_ms": 4.450256,
+            "min_ms": 2.41838,
+            "max_ms": 4.574132
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 3,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.002504781704782,
+            "p99_ms": 2.03602,
+            "min_ms": 2.0,
+            "max_ms": 2.1183
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.227591,
+            "mean_ms": 3.294661091476091,
+            "p99_ms": 4.408609,
+            "min_ms": 2.380881,
+            "max_ms": 4.441461
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 4,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.001130977130977,
+            "p99_ms": 2.02054,
+            "min_ms": 2.0,
+            "max_ms": 2.0536
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.167749,
+            "mean_ms": 3.244294513513514,
+            "p99_ms": 4.326106599999999,
+            "min_ms": 2.394927,
+            "max_ms": 4.537903
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        }
+      ],
+      "files": [],
+      "cpu": {
+        "system": 7.614285714285715,
+        "25932": 8.22857142857143,
+        "30384": 9.128571428571428,
+        "42360": 10.714285714285714,
+        "13160": 14.299999999999999,
+        "37716": 7.771428571428572,
+        "14252": 11.6,
+        "36524": 13.4,
+        "23900": 12.957142857142857,
+        "9188": 12.942857142857141,
+        "8500": 13.842857142857143,
+        "sum_processes": 114.88571428571429
+      },
+      "produced_total": 2405,
+      "recorded_total": 2405,
+      "recorder_lost_total": 0,
+      "ring_full_drops_total": 0,
+      "sensor_skipped_total": 0,
+      "blocked_s_max": 0.0,
+      "max_lag_slots": 60,
+      "all_consecutive": true,
+      "lossless_on_disk_path": true
+    },
+    {
+      "size": "1080p",
+      "L": 172,
+      "policy": "drop",
+      "mode": "busy",
+      "stall_ms": 1000,
+      "stall_at_s": 3.0,
+      "run_s": 8.0,
+      "stall_only_cam0": true,
+      "lockstep": false,
+      "sync": {
+        "common_frames": 481,
+        "recorded_per_cam": [
+          481,
+          481,
+          481,
+          481,
+          481
+        ],
+        "same_frame_numbers_over_common_range": true,
+        "tick_spread": {
+          "n": 481,
+          "median_ms": 6.252192,
+          "mean_ms": 6.252191999999998,
+          "p99_ms": 6.252192,
+          "min_ms": 6.252192,
+          "max_ms": 6.252192
+        },
+        "frames_with_tick_spread_ge_1_period": 0
+      },
+      "ring_seconds_at_60fps": 2.8666666666666667,
+      "cameras": [
+        {
+          "cam": 0,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4797,
+            "mean_ms": 0.7948449064449065,
+            "p99_ms": 1.5202799999999999,
+            "min_ms": 0.4119,
+            "max_ms": 1.9439
+          }
+        },
+        {
+          "cam": 1,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4111,
+            "mean_ms": 0.745195841995842,
+            "p99_ms": 1.43798,
+            "min_ms": 0.3561,
+            "max_ms": 1.4774
+          }
+        },
+        {
+          "cam": 2,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4791,
+            "mean_ms": 0.8006432432432431,
+            "p99_ms": 1.6297,
+            "min_ms": 0.3979,
+            "max_ms": 2.0882
+          }
+        },
+        {
+          "cam": 3,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.3966,
+            "mean_ms": 0.7483463617463617,
+            "p99_ms": 1.5334399999999992,
+            "min_ms": 0.3538,
+            "max_ms": 1.7967
+          }
+        },
+        {
+          "cam": 4,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.401,
+            "mean_ms": 0.7120817047817047,
+            "p99_ms": 1.40294,
+            "min_ms": 0.3371,
+            "max_ms": 1.4282
+          }
+        }
+      ],
+      "recorders": [
+        {
+          "cam": 0,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 60,
+          "lag_p99_slots": 55.19999999999999,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.000172557172557,
+            "p99_ms": 2.0003,
+            "min_ms": 2.0,
+            "max_ms": 2.0364
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.444249,
+            "mean_ms": 73.2269939106029,
+            "p99_ms": 918.0058141999999,
+            "min_ms": 2.442369,
+            "max_ms": 988.377151
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 1,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.0001359667359666,
+            "p99_ms": 2.0003200000000003,
+            "min_ms": 2.0,
+            "max_ms": 2.0127
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.222921,
+            "mean_ms": 3.291707324324324,
+            "p99_ms": 4.3975098,
+            "min_ms": 2.391867,
+            "max_ms": 4.624907
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 2,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.000170893970894,
+            "p99_ms": 2.0004,
+            "min_ms": 2.0,
+            "max_ms": 2.0233
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.282324,
+            "mean_ms": 3.3305205197505203,
+            "p99_ms": 4.4225332,
+            "min_ms": 2.439814,
+            "max_ms": 4.503606
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 3,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.000116008316008,
+            "p99_ms": 2.0003,
+            "min_ms": 2.0,
+            "max_ms": 2.0053
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.184381,
+            "mean_ms": 3.273702671517672,
+            "p99_ms": 4.4456278,
+            "min_ms": 2.386993,
+            "max_ms": 4.760879
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 4,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.0003149688149686,
+            "p99_ms": 2.00034,
+            "min_ms": 2.0,
+            "max_ms": 2.076
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.232671,
+            "mean_ms": 3.2530080270270267,
+            "p99_ms": 4.3360226,
+            "min_ms": 2.393147,
+            "max_ms": 4.407737
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        }
+      ],
+      "files": [],
+      "cpu": {
+        "system": 8.157142857142857,
+        "44256": 14.299999999999999,
+        "26328": 13.842857142857143,
+        "41544": 10.257142857142856,
+        "16464": 11.157142857142857,
+        "35068": 13.171428571428573,
+        "14408": 12.942857142857145,
+        "23252": 13.385714285714286,
+        "29148": 12.485714285714284,
+        "19748": 13.171428571428573,
+        "9384": 11.842857142857142,
+        "sum_processes": 126.55714285714285
+      },
+      "produced_total": 2405,
+      "recorded_total": 2405,
+      "recorder_lost_total": 0,
+      "ring_full_drops_total": 0,
+      "sensor_skipped_total": 0,
+      "blocked_s_max": 0.0,
+      "max_lag_slots": 60,
+      "all_consecutive": true,
+      "lossless_on_disk_path": true
+    },
+    {
+      "size": "1080p",
+      "L": 172,
+      "policy": "block",
+      "mode": "busy",
+      "stall_ms": 1000,
+      "stall_at_s": 3.0,
+      "run_s": 8.0,
+      "stall_only_cam0": true,
+      "lockstep": true,
+      "sync": {
+        "common_frames": 481,
+        "recorded_per_cam": [
+          481,
+          481,
+          481,
+          481,
+          481
+        ],
+        "same_frame_numbers_over_common_range": true,
+        "tick_spread": {
+          "n": 481,
+          "median_ms": 6.299492,
+          "mean_ms": 6.299492,
+          "p99_ms": 6.299492,
+          "min_ms": 6.299492,
+          "max_ms": 6.299492
+        },
+        "frames_with_tick_spread_ge_1_period": 0
+      },
+      "ring_seconds_at_60fps": 2.8666666666666667,
+      "cameras": [
+        {
+          "cam": 0,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4813,
+            "mean_ms": 0.7930453222453222,
+            "p99_ms": 1.4563599999999999,
+            "min_ms": 0.3964,
+            "max_ms": 1.5852
+          }
+        },
+        {
+          "cam": 1,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4094,
+            "mean_ms": 0.7413748440748441,
+            "p99_ms": 1.44186,
+            "min_ms": 0.3531,
+            "max_ms": 1.7409
+          }
+        },
+        {
+          "cam": 2,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4793,
+            "mean_ms": 0.7941449064449064,
+            "p99_ms": 1.45584,
+            "min_ms": 0.3956,
+            "max_ms": 1.9925
+          }
+        },
+        {
+          "cam": 3,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.3964,
+            "mean_ms": 0.7453282744282744,
+            "p99_ms": 1.46682,
+            "min_ms": 0.3515,
+            "max_ms": 1.5094
+          }
+        },
+        {
+          "cam": 4,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4,
+            "mean_ms": 0.7152636174636174,
+            "p99_ms": 1.4044,
+            "min_ms": 0.3451,
+            "max_ms": 1.4365
+          }
+        }
+      ],
+      "recorders": [
+        {
+          "cam": 0,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 60,
+          "lag_p99_slots": 55.19999999999999,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.0001232848232844,
+            "p99_ms": 2.0003,
+            "min_ms": 2.0,
+            "max_ms": 2.0181
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.468065,
+            "mean_ms": 73.24169162370062,
+            "p99_ms": 918.2905741999998,
+            "min_ms": 2.452299,
+            "max_ms": 988.630651
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 1,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.0000968814968814,
+            "p99_ms": 2.0002,
+            "min_ms": 2.0,
+            "max_ms": 2.0043
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.203653,
+            "mean_ms": 3.2649472411642417,
+            "p99_ms": 4.4204346,
+            "min_ms": 2.385343,
+            "max_ms": 4.471715
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 2,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.0000887733887733,
+            "p99_ms": 2.0003,
+            "min_ms": 2.0,
+            "max_ms": 2.0005
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.32078,
+            "mean_ms": 3.334220311850312,
+            "p99_ms": 4.3795652,
+            "min_ms": 2.440094,
+            "max_ms": 4.689364
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 3,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.0000970893970895,
+            "p99_ms": 2.0003,
+            "min_ms": 2.0,
+            "max_ms": 2.0039
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.190663,
+            "mean_ms": 3.288606413721414,
+            "p99_ms": 4.4495518,
+            "min_ms": 2.379837,
+            "max_ms": 4.626049
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 4,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.0004031185031184,
+            "p99_ms": 2.0002,
+            "min_ms": 2.0,
+            "max_ms": 2.1427
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.227829,
+            "mean_ms": 3.2630381725571724,
+            "p99_ms": 4.3754566,
+            "min_ms": 2.386565,
+            "max_ms": 4.461659
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        }
+      ],
+      "files": [],
+      "cpu": {
+        "system": 7.542857142857143,
+        "36764": 12.042857142857144,
+        "14576": 9.357142857142858,
+        "15472": 8.014285714285716,
+        "17156": 13.614285714285716,
+        "45320": 9.142857142857142,
+        "42224": 12.728571428571428,
+        "33996": 11.585714285714285,
+        "25716": 12.271428571428572,
+        "27244": 13.62857142857143,
+        "45888": 12.72857142857143,
+        "sum_processes": 115.11428571428573
+      },
+      "produced_total": 2405,
+      "recorded_total": 2405,
+      "recorder_lost_total": 0,
+      "ring_full_drops_total": 0,
+      "sensor_skipped_total": 0,
+      "blocked_s_max": 0.0,
+      "max_lag_slots": 60,
+      "all_consecutive": true,
+      "lossless_on_disk_path": true
+    },
+    {
+      "size": "1080p",
+      "L": 172,
+      "policy": "block",
+      "mode": "busy",
+      "stall_ms": 3500,
+      "stall_at_s": 3.0,
+      "run_s": 8.0,
+      "stall_only_cam0": true,
+      "lockstep": false,
+      "sync": {
+        "common_frames": 445,
+        "recorded_per_cam": [
+          445,
+          481,
+          481,
+          481,
+          481
+        ],
+        "same_frame_numbers_over_common_range": true,
+        "tick_spread": {
+          "n": 445,
+          "median_ms": 6.266392,
+          "mean_ms": 130.31133085842697,
+          "p99_ms": 606.266368,
+          "min_ms": 6.266392,
+          "max_ms": 606.266368
+        },
+        "frames_with_tick_spread_ge_1_period": 92
+      },
+      "ring_seconds_at_60fps": 2.8666666666666667,
+      "cameras": [
+        {
+          "cam": 0,
+          "produced": 445,
+          "sensor_skipped": 36,
+          "ring_full_drops": 0,
+          "blocked_s": 0.6239223,
+          "block_events": 2,
+          "publish": {
+            "n": 445,
+            "median_ms": 0.4806,
+            "mean_ms": 0.8141247191011235,
+            "p99_ms": 1.452408,
+            "min_ms": 0.3818,
+            "max_ms": 1.5007
+          }
+        },
+        {
+          "cam": 1,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4094,
+            "mean_ms": 0.7460775467775469,
+            "p99_ms": 1.45324,
+            "min_ms": 0.3583,
+            "max_ms": 1.4848
+          }
+        },
+        {
+          "cam": 2,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4698,
+            "mean_ms": 0.7872700623700624,
+            "p99_ms": 1.48058,
+            "min_ms": 0.36,
+            "max_ms": 1.853
+          }
+        },
+        {
+          "cam": 3,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.3967,
+            "mean_ms": 0.7489176715176715,
+            "p99_ms": 1.46322,
+            "min_ms": 0.3524,
+            "max_ms": 1.6489
+          }
+        },
+        {
+          "cam": 4,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.3983,
+            "mean_ms": 0.7190525987525986,
+            "p99_ms": 1.41184,
+            "min_ms": 0.3469,
+            "max_ms": 1.4381
+          }
+        }
+      ],
+      "recorders": [
+        {
+          "cam": 0,
+          "backend": "busy2ms",
+          "consumed": 445,
+          "recorded": 445,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 172,
+          "lag_p99_slots": 169.56,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 445,
+            "median_ms": 2.0001,
+            "mean_ms": 2.0001121348314608,
+            "p99_ms": 2.001192,
+            "min_ms": 2.0,
+            "max_ms": 2.0044
+          },
+          "tick_to_written": {
+            "n": 445,
+            "median_ms": 4.279661,
+            "mean_ms": 878.4176125011237,
+            "p99_ms": 3423.82798596,
+            "min_ms": 2.469565,
+            "max_ms": 3488.839151
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            444
+          ]
+        },
+        {
+          "cam": 1,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.0000871101871103,
+            "p99_ms": 2.0003,
+            "min_ms": 2.0,
+            "max_ms": 2.0003
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.248745,
+            "mean_ms": 3.3038094033264036,
+            "p99_ms": 4.3981686,
+            "min_ms": 2.399827,
+            "max_ms": 4.538945
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 2,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.000118918918919,
+            "p99_ms": 2.00074,
+            "min_ms": 2.0,
+            "max_ms": 2.0051
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.260812,
+            "mean_ms": 3.3053575259875254,
+            "p99_ms": 4.45364,
+            "min_ms": 2.40938,
+            "max_ms": 4.54187
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 3,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.0001492723492724,
+            "p99_ms": 2.00104,
+            "min_ms": 2.0,
+            "max_ms": 2.0162
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.222197,
+            "mean_ms": 3.2818856237006235,
+            "p99_ms": 4.3884618,
+            "min_ms": 2.387179,
+            "max_ms": 4.411967
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 4,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.000112266112266,
+            "p99_ms": 2.0003,
+            "min_ms": 2.0,
+            "max_ms": 2.0095
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.220425,
+            "mean_ms": 3.2672845343035344,
+            "p99_ms": 4.382263399999999,
+            "min_ms": 2.386123,
+            "max_ms": 4.883845
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        }
+      ],
+      "files": [],
+      "cpu": {
+        "system": 7.857142857142856,
+        "27008": 11.12857142857143,
+        "34076": 10.471428571428572,
+        "22396": 7.757142857142859,
+        "3796": 12.457142857142859,
+        "8208": 12.471428571428572,
+        "38032": 12.028571428571428,
+        "42168": 12.914285714285715,
+        "45312": 11.357142857142858,
+        "42144": 11.785714285714286,
+        "34704": 13.128571428571428,
+        "sum_processes": 115.5
+      },
+      "produced_total": 2369,
+      "recorded_total": 2369,
+      "recorder_lost_total": 0,
+      "ring_full_drops_total": 0,
+      "sensor_skipped_total": 36,
+      "blocked_s_max": 0.6239223,
+      "max_lag_slots": 172,
+      "all_consecutive": true,
+      "lossless_on_disk_path": true
+    },
+    {
+      "size": "1080p",
+      "L": 172,
+      "policy": "drop",
+      "mode": "busy",
+      "stall_ms": 3500,
+      "stall_at_s": 3.0,
+      "run_s": 8.0,
+      "stall_only_cam0": true,
+      "lockstep": false,
+      "sync": {
+        "common_frames": 443,
+        "recorded_per_cam": [
+          443,
+          481,
+          481,
+          481,
+          481
+        ],
+        "same_frame_numbers_over_common_range": true,
+        "tick_spread": {
+          "n": 443,
+          "median_ms": 6.262792,
+          "mean_ms": 136.36060470428893,
+          "p99_ms": 639.5961,
+          "min_ms": 6.262792,
+          "max_ms": 639.5961
+        },
+        "frames_with_tick_spread_ge_1_period": 91
+      },
+      "ring_seconds_at_60fps": 2.8666666666666667,
+      "cameras": [
+        {
+          "cam": 0,
+          "produced": 443,
+          "sensor_skipped": 0,
+          "ring_full_drops": 38,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 443,
+            "median_ms": 0.4616,
+            "mean_ms": 0.8063986455981942,
+            "p99_ms": 1.5074699999999996,
+            "min_ms": 0.3929,
+            "max_ms": 2.0717
+          }
+        },
+        {
+          "cam": 1,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4108,
+            "mean_ms": 0.7461426195426196,
+            "p99_ms": 1.45566,
+            "min_ms": 0.3566,
+            "max_ms": 1.4902
+          }
+        },
+        {
+          "cam": 2,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.4503,
+            "mean_ms": 0.7761835758835758,
+            "p99_ms": 1.4913599999999998,
+            "min_ms": 0.3575,
+            "max_ms": 1.8265
+          }
+        },
+        {
+          "cam": 3,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.3965,
+            "mean_ms": 0.7480536382536382,
+            "p99_ms": 1.4975999999999998,
+            "min_ms": 0.3516,
+            "max_ms": 1.9429
+          }
+        },
+        {
+          "cam": 4,
+          "produced": 481,
+          "sensor_skipped": 0,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 481,
+            "median_ms": 0.3995,
+            "mean_ms": 0.7212528066528067,
+            "p99_ms": 1.42134,
+            "min_ms": 0.3415,
+            "max_ms": 1.5469
+          }
+        }
+      ],
+      "recorders": [
+        {
+          "cam": 0,
+          "backend": "busy2ms",
+          "consumed": 443,
+          "recorded": 443,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 172,
+          "lag_p99_slots": 167.57999999999998,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 443,
+            "median_ms": 2.0001,
+            "mean_ms": 2.000727313769752,
+            "p99_ms": 2.0003,
+            "min_ms": 2.0,
+            "max_ms": 2.2761
+          },
+          "tick_to_written": {
+            "n": 443,
+            "median_ms": 4.305535,
+            "mean_ms": 879.3162350045145,
+            "p99_ms": 3424.06015128,
+            "min_ms": 2.463941,
+            "max_ms": 3488.815051
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            442
+          ]
+        },
+        {
+          "cam": 1,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.000124948024948,
+            "p99_ms": 2.0003,
+            "min_ms": 2.0,
+            "max_ms": 2.0141
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.230167,
+            "mean_ms": 3.2686782182952183,
+            "p99_ms": 4.3856665999999995,
+            "min_ms": 2.387727,
+            "max_ms": 4.486439
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 2,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.000245945945946,
+            "p99_ms": 2.0049,
+            "min_ms": 2.0,
+            "max_ms": 2.0302
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.21393,
+            "mean_ms": 3.287513866943867,
+            "p99_ms": 4.4503024,
+            "min_ms": 2.435824,
+            "max_ms": 4.73189
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 3,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.0001632016632014,
+            "p99_ms": 2.0035399999999997,
+            "min_ms": 2.0,
+            "max_ms": 2.0079
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.217069,
+            "mean_ms": 3.29520183991684,
+            "p99_ms": 4.4095582,
+            "min_ms": 2.393553,
+            "max_ms": 4.925495
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        },
+        {
+          "cam": 4,
+          "backend": "busy2ms",
+          "consumed": 481,
+          "recorded": 481,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 481,
+            "median_ms": 2.0001,
+            "mean_ms": 2.000095426195426,
+            "p99_ms": 2.0003,
+            "min_ms": 2.0,
+            "max_ms": 2.0038
+          },
+          "tick_to_written": {
+            "n": 481,
+            "median_ms": 3.232885,
+            "mean_ms": 3.2622531413721414,
+            "p99_ms": 4.3627134,
+            "min_ms": 2.383979,
+            "max_ms": 4.509103
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            480
+          ]
+        }
+      ],
+      "files": [],
+      "cpu": {
+        "system": 8.528571428571428,
+        "14264": 13.414285714285715,
+        "25004": 14.071428571428571,
+        "1948": 14.299999999999999,
+        "39212": 8.22857142857143,
+        "26892": 14.071428571428571,
+        "25184": 10.257142857142858,
+        "45448": 14.271428571428572,
+        "44092": 13.385714285714286,
+        "2388": 12.27142857142857,
+        "44396": 13.857142857142856,
+        "sum_processes": 128.12857142857143
+      },
+      "produced_total": 2367,
+      "recorded_total": 2367,
+      "recorder_lost_total": 0,
+      "ring_full_drops_total": 38,
+      "sensor_skipped_total": 0,
+      "blocked_s_max": 0.0,
+      "max_lag_slots": 172,
+      "all_consecutive": true,
+      "lossless_on_disk_path": true
+    },
+    {
+      "size": "1080p",
+      "L": 172,
+      "policy": "block",
+      "mode": "busy",
+      "stall_ms": 3500,
+      "stall_at_s": 3.0,
+      "run_s": 8.0,
+      "stall_only_cam0": true,
+      "lockstep": true,
+      "sync": {
+        "common_frames": 445,
+        "recorded_per_cam": [
+          445,
+          445,
+          445,
+          445,
+          445
+        ],
+        "same_frame_numbers_over_common_range": true,
+        "tick_spread": {
+          "n": 445,
+          "median_ms": 6.267192,
+          "mean_ms": 6.267192,
+          "p99_ms": 6.267192,
+          "min_ms": 6.267192,
+          "max_ms": 6.267192
+        },
+        "frames_with_tick_spread_ge_1_period": 0
+      },
+      "ring_seconds_at_60fps": 2.8666666666666667,
+      "cameras": [
+        {
+          "cam": 0,
+          "produced": 445,
+          "sensor_skipped": 36,
+          "ring_full_drops": 0,
+          "blocked_s": 0.6232383,
+          "block_events": 2,
+          "publish": {
+            "n": 445,
+            "median_ms": 0.4679,
+            "mean_ms": 0.8050620224719102,
+            "p99_ms": 1.462504,
+            "min_ms": 0.3895,
+            "max_ms": 1.6381
+          }
+        },
+        {
+          "cam": 1,
+          "produced": 445,
+          "sensor_skipped": 36,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 445,
+            "median_ms": 0.4092,
+            "mean_ms": 0.771214831460674,
+            "p99_ms": 1.448376,
+            "min_ms": 0.3526,
+            "max_ms": 1.5423
+          }
+        },
+        {
+          "cam": 2,
+          "produced": 445,
+          "sensor_skipped": 36,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 445,
+            "median_ms": 0.4661,
+            "mean_ms": 0.8085438202247192,
+            "p99_ms": 1.472916,
+            "min_ms": 0.3891,
+            "max_ms": 1.7994
+          }
+        },
+        {
+          "cam": 3,
+          "produced": 445,
+          "sensor_skipped": 36,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 445,
+            "median_ms": 0.394,
+            "mean_ms": 0.7710384269662922,
+            "p99_ms": 1.4551720000000001,
+            "min_ms": 0.3516,
+            "max_ms": 1.5876
+          }
+        },
+        {
+          "cam": 4,
+          "produced": 445,
+          "sensor_skipped": 36,
+          "ring_full_drops": 0,
+          "blocked_s": 0.0,
+          "block_events": 0,
+          "publish": {
+            "n": 445,
+            "median_ms": 0.3974,
+            "mean_ms": 0.7447204494382023,
+            "p99_ms": 1.435308,
+            "min_ms": 0.3451,
+            "max_ms": 1.5026
+          }
+        }
+      ],
+      "recorders": [
+        {
+          "cam": 0,
+          "backend": "busy2ms",
+          "consumed": 445,
+          "recorded": 445,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 172,
+          "lag_p99_slots": 169.56,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 445,
+            "median_ms": 2.0001,
+            "mean_ms": 2.000082247191011,
+            "p99_ms": 2.0002560000000003,
+            "min_ms": 2.0,
+            "max_ms": 2.0003
+          },
+          "tick_to_written": {
+            "n": 445,
+            "median_ms": 4.278211,
+            "mean_ms": 878.0375969955056,
+            "p99_ms": 3423.06719796,
+            "min_ms": 2.424405,
+            "max_ms": 3488.153851
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            444
+          ]
+        },
+        {
+          "cam": 1,
+          "backend": "busy2ms",
+          "consumed": 445,
+          "recorded": 445,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 445,
+            "median_ms": 2.0001,
+            "mean_ms": 2.000085617977528,
+            "p99_ms": 2.0002,
+            "min_ms": 2.0,
+            "max_ms": 2.001
+          },
+          "tick_to_written": {
+            "n": 445,
+            "median_ms": 3.294511,
+            "mean_ms": 3.3402905685393254,
+            "p99_ms": 4.39560804,
+            "min_ms": 2.385543,
+            "max_ms": 15.273649
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            444
+          ]
+        },
+        {
+          "cam": 2,
+          "backend": "busy2ms",
+          "consumed": 445,
+          "recorded": 445,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 445,
+            "median_ms": 2.0001,
+            "mean_ms": 2.000106741573034,
+            "p99_ms": 2.000356,
+            "min_ms": 2.0,
+            "max_ms": 2.0051
+          },
+          "tick_to_written": {
+            "n": 445,
+            "median_ms": 3.24754,
+            "mean_ms": 3.33302633258427,
+            "p99_ms": 4.41038264,
+            "min_ms": 2.42493,
+            "max_ms": 9.218436
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            444
+          ]
+        },
+        {
+          "cam": 3,
+          "backend": "busy2ms",
+          "consumed": 445,
+          "recorded": 445,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 445,
+            "median_ms": 2.0001,
+            "mean_ms": 2.0002071910112362,
+            "p99_ms": 2.0004560000000002,
+            "min_ms": 2.0,
+            "max_ms": 2.0266
+          },
+          "tick_to_written": {
+            "n": 445,
+            "median_ms": 3.190391,
+            "mean_ms": 3.322914591011236,
+            "p99_ms": 4.41171252,
+            "min_ms": 2.379513,
+            "max_ms": 9.653351
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            444
+          ]
+        },
+        {
+          "cam": 4,
+          "backend": "busy2ms",
+          "consumed": 445,
+          "recorded": 445,
+          "lost_lapped": 0,
+          "consecutive": true,
+          "max_lag_slots": 1,
+          "lag_p99_slots": 1.0,
+          "lag_median_slots": 1.0,
+          "write": {
+            "n": 445,
+            "median_ms": 2.0001,
+            "mean_ms": 2.000089887640449,
+            "p99_ms": 2.0002,
+            "min_ms": 2.0,
+            "max_ms": 2.0035
+          },
+          "tick_to_written": {
+            "n": 445,
+            "median_ms": 3.250291,
+            "mean_ms": 3.2848838494382027,
+            "p99_ms": 4.38766908,
+            "min_ms": 2.378039,
+            "max_ms": 10.551947
+          },
+          "release_s": 0.0,
+          "fns_first_last": [
+            0,
+            444
+          ]
+        }
+      ],
+      "files": [],
+      "cpu": {
+        "system": 7.542857142857143,
+        "43144": 7.7857142857142865,
+        "33232": 8.471428571428572,
+        "10056": 10.5,
+        "44888": 14.299999999999999,
+        "7264": 8.685714285714285,
+        "18892": 12.057142857142859,
+        "11676": 12.057142857142859,
+        "37308": 12.714285714285714,
+        "37716": 11.842857142857142,
+        "9188": 12.928571428571429,
+        "sum_processes": 111.34285714285714
+      },
+      "produced_total": 2225,
+      "recorded_total": 2225,
+      "recorder_lost_total": 0,
+      "ring_full_drops_total": 0,
+      "sensor_skipped_total": 180,
+      "blocked_s_max": 0.6232383,
+      "max_lag_slots": 172,
+      "all_consecutive": true,
+      "lossless_on_disk_path": true
+    }
+  ]
+}

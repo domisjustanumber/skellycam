@@ -1,0 +1,415 @@
+{
+  "env": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.2.6",
+    "opencv": "4.12.0",
+    "cpu_count": 28,
+    "time": "2026-10-28 01:13:10",
+    "psutil": "7.2.2",
+    "ram_total_gb": 68.413349888,
+    "system_cpu_pct_1s_before_run": 5.1,
+    "other_python_processes_at_start": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\baseline\\run_with_load.py g_decode_ref g_decode_ref_stdout.log 600 --",
+      ".venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\baseline\\bench_g_decode_ref.py",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks\\frame_pipeline\\baseline\\run_with_load.py g_decode_ref g_decode_ref"
+    ],
+    "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d"
+  },
+  "duration_s": 10.0,
+  "rows": [
+    {
+      "size": "720p",
+      "mode": "mjpeg",
+      "n": 1,
+      "per_proc": [
+        {
+          "seed": 0,
+          "n": 3101,
+          "fps": 310.1,
+          "jpeg_bytes_mean": 240599.86666666667,
+          "lat": {
+            "n": 3101,
+            "median_ms": 3.2147,
+            "mean_ms": 3.2241895840051593,
+            "p99_ms": 3.5373,
+            "min_ms": 3.0222,
+            "max_ms": 6.1345
+          }
+        }
+      ]
+    },
+    {
+      "size": "720p",
+      "mode": "mjpeg",
+      "n": 5,
+      "per_proc": [
+        {
+          "seed": 3,
+          "n": 2940,
+          "fps": 294.0,
+          "jpeg_bytes_mean": 240624.86666666667,
+          "lat": {
+            "n": 2940,
+            "median_ms": 3.37175,
+            "mean_ms": 3.4004538435374143,
+            "p99_ms": 4.306169000000001,
+            "min_ms": 3.025,
+            "max_ms": 5.5078
+          }
+        },
+        {
+          "seed": 4,
+          "n": 2937,
+          "fps": 293.7,
+          "jpeg_bytes_mean": 240553.33333333334,
+          "lat": {
+            "n": 2937,
+            "median_ms": 3.3685,
+            "mean_ms": 3.4042438542730675,
+            "p99_ms": 4.363179999999995,
+            "min_ms": 3.0368,
+            "max_ms": 6.2087
+          }
+        },
+        {
+          "seed": 0,
+          "n": 2942,
+          "fps": 294.2,
+          "jpeg_bytes_mean": 240599.86666666667,
+          "lat": {
+            "n": 2942,
+            "median_ms": 3.3742,
+            "mean_ms": 3.3986486403806935,
+            "p99_ms": 4.255824000000002,
+            "min_ms": 3.0253,
+            "max_ms": 6.1849
+          }
+        },
+        {
+          "seed": 2,
+          "n": 2962,
+          "fps": 296.2,
+          "jpeg_bytes_mean": 240549.33333333334,
+          "lat": {
+            "n": 2962,
+            "median_ms": 3.3355,
+            "mean_ms": 3.376067420661715,
+            "p99_ms": 4.319522999999997,
+            "min_ms": 3.0202,
+            "max_ms": 6.3206
+          }
+        },
+        {
+          "seed": 1,
+          "n": 2992,
+          "fps": 299.2,
+          "jpeg_bytes_mean": 240592.56666666668,
+          "lat": {
+            "n": 2992,
+            "median_ms": 3.3032,
+            "mean_ms": 3.3423509692513367,
+            "p99_ms": 4.322516000000003,
+            "min_ms": 3.0075,
+            "max_ms": 6.0859
+          }
+        }
+      ]
+    },
+    {
+      "size": "720p",
+      "mode": "memcpy",
+      "n": 1,
+      "per_proc": [
+        {
+          "seed": 0,
+          "n": 64844,
+          "fps": 6484.4,
+          "jpeg_bytes_mean": 240599.86666666667,
+          "lat": {
+            "n": 64844,
+            "median_ms": 0.1499,
+            "mean_ms": 0.15384385448152488,
+            "p99_ms": 0.307,
+            "min_ms": 0.0969,
+            "max_ms": 1.538
+          }
+        }
+      ]
+    },
+    {
+      "size": "720p",
+      "mode": "memcpy",
+      "n": 5,
+      "per_proc": [
+        {
+          "seed": 0,
+          "n": 19222,
+          "fps": 1922.2,
+          "jpeg_bytes_mean": 240599.86666666667,
+          "lat": {
+            "n": 19222,
+            "median_ms": 0.5085,
+            "mean_ms": 0.519666652793674,
+            "p99_ms": 0.8377110000000008,
+            "min_ms": 0.2576,
+            "max_ms": 1.3687
+          }
+        },
+        {
+          "seed": 1,
+          "n": 19196,
+          "fps": 1919.6,
+          "jpeg_bytes_mean": 240592.56666666668,
+          "lat": {
+            "n": 19196,
+            "median_ms": 0.5084,
+            "mean_ms": 0.5203745624088352,
+            "p99_ms": 0.8389,
+            "min_ms": 0.254,
+            "max_ms": 1.35
+          }
+        },
+        {
+          "seed": 2,
+          "n": 19268,
+          "fps": 1926.8,
+          "jpeg_bytes_mean": 240549.33333333334,
+          "lat": {
+            "n": 19268,
+            "median_ms": 0.5084,
+            "mean_ms": 0.5184555532489101,
+            "p99_ms": 0.8191,
+            "min_ms": 0.2387,
+            "max_ms": 1.8426
+          }
+        },
+        {
+          "seed": 4,
+          "n": 19287,
+          "fps": 1928.7,
+          "jpeg_bytes_mean": 240553.33333333334,
+          "lat": {
+            "n": 19287,
+            "median_ms": 0.5077,
+            "mean_ms": 0.5179341317986208,
+            "p99_ms": 0.8097979999999996,
+            "min_ms": 0.2248,
+            "max_ms": 1.4346
+          }
+        },
+        {
+          "seed": 3,
+          "n": 19195,
+          "fps": 1919.5,
+          "jpeg_bytes_mean": 240624.86666666667,
+          "lat": {
+            "n": 19195,
+            "median_ms": 0.5091,
+            "mean_ms": 0.5203976348007293,
+            "p99_ms": 0.8313360000000009,
+            "min_ms": 0.2195,
+            "max_ms": 2.1026
+          }
+        }
+      ]
+    },
+    {
+      "size": "1080p",
+      "mode": "mjpeg",
+      "n": 1,
+      "per_proc": [
+        {
+          "seed": 0,
+          "n": 1356,
+          "fps": 135.6,
+          "jpeg_bytes_mean": 540472.7,
+          "lat": {
+            "n": 1356,
+            "median_ms": 7.302,
+            "mean_ms": 7.37501592920354,
+            "p99_ms": 8.653235,
+            "min_ms": 6.733,
+            "max_ms": 11.0755
+          }
+        }
+      ]
+    },
+    {
+      "size": "1080p",
+      "mode": "mjpeg",
+      "n": 5,
+      "per_proc": [
+        {
+          "seed": 4,
+          "n": 1295,
+          "fps": 129.5,
+          "jpeg_bytes_mean": 540540.4666666667,
+          "lat": {
+            "n": 1295,
+            "median_ms": 7.6949,
+            "mean_ms": 7.720787104247104,
+            "p99_ms": 8.868535999999999,
+            "min_ms": 6.7939,
+            "max_ms": 11.2101
+          }
+        },
+        {
+          "seed": 2,
+          "n": 1289,
+          "fps": 128.9,
+          "jpeg_bytes_mean": 540418.9333333333,
+          "lat": {
+            "n": 1289,
+            "median_ms": 7.7338,
+            "mean_ms": 7.758030333591932,
+            "p99_ms": 8.855311999999998,
+            "min_ms": 6.8301,
+            "max_ms": 13.5211
+          }
+        },
+        {
+          "seed": 3,
+          "n": 1291,
+          "fps": 129.1,
+          "jpeg_bytes_mean": 540428.3666666667,
+          "lat": {
+            "n": 1291,
+            "median_ms": 7.7019,
+            "mean_ms": 7.746046320681642,
+            "p99_ms": 8.948009999999996,
+            "min_ms": 6.7635,
+            "max_ms": 12.4477
+          }
+        },
+        {
+          "seed": 0,
+          "n": 1284,
+          "fps": 128.4,
+          "jpeg_bytes_mean": 540472.7,
+          "lat": {
+            "n": 1284,
+            "median_ms": 7.753,
+            "mean_ms": 7.788758800623053,
+            "p99_ms": 8.864923000000006,
+            "min_ms": 6.8247,
+            "max_ms": 12.9957
+          }
+        },
+        {
+          "seed": 1,
+          "n": 1285,
+          "fps": 128.5,
+          "jpeg_bytes_mean": 540439.1333333333,
+          "lat": {
+            "n": 1285,
+            "median_ms": 7.7434,
+            "mean_ms": 7.784765525291828,
+            "p99_ms": 9.007340000000003,
+            "min_ms": 6.8483,
+            "max_ms": 11.6997
+          }
+        }
+      ]
+    },
+    {
+      "size": "1080p",
+      "mode": "memcpy",
+      "n": 1,
+      "per_proc": [
+        {
+          "seed": 0,
+          "n": 28478,
+          "fps": 2847.8,
+          "jpeg_bytes_mean": 540472.7,
+          "lat": {
+            "n": 28478,
+            "median_ms": 0.3477,
+            "mean_ms": 0.35072486831940447,
+            "p99_ms": 0.43182299999999996,
+            "min_ms": 0.2906,
+            "max_ms": 2.1567
+          }
+        }
+      ]
+    },
+    {
+      "size": "1080p",
+      "mode": "memcpy",
+      "n": 5,
+      "per_proc": [
+        {
+          "seed": 0,
+          "n": 8645,
+          "fps": 864.5,
+          "jpeg_bytes_mean": 540472.7,
+          "lat": {
+            "n": 8645,
+            "median_ms": 1.1471,
+            "mean_ms": 1.156070850202429,
+            "p99_ms": 1.5899919999999983,
+            "min_ms": 0.6869,
+            "max_ms": 3.3307
+          }
+        },
+        {
+          "seed": 2,
+          "n": 8646,
+          "fps": 864.6,
+          "jpeg_bytes_mean": 540418.9333333333,
+          "lat": {
+            "n": 8646,
+            "median_ms": 1.1465,
+            "mean_ms": 1.1559347790885959,
+            "p99_ms": 1.6028549999999984,
+            "min_ms": 0.8099,
+            "max_ms": 3.4856
+          }
+        },
+        {
+          "seed": 3,
+          "n": 8648,
+          "fps": 864.8,
+          "jpeg_bytes_mean": 540428.3666666667,
+          "lat": {
+            "n": 8648,
+            "median_ms": 1.1467,
+            "mean_ms": 1.155650358464385,
+            "p99_ms": 1.5656830000000006,
+            "min_ms": 0.4983,
+            "max_ms": 3.241
+          }
+        },
+        {
+          "seed": 4,
+          "n": 8628,
+          "fps": 862.8,
+          "jpeg_bytes_mean": 540540.4666666667,
+          "lat": {
+            "n": 8628,
+            "median_ms": 1.1473,
+            "mean_ms": 1.1583153453871116,
+            "p99_ms": 1.6147589999999963,
+            "min_ms": 0.5607,
+            "max_ms": 3.1676
+          }
+        },
+        {
+          "seed": 1,
+          "n": 8646,
+          "fps": 864.6,
+          "jpeg_bytes_mean": 540439.1333333333,
+          "lat": {
+            "n": 8646,
+            "median_ms": 1.1469,
+            "mean_ms": 1.155922114272496,
+            "p99_ms": 1.5731949999999995,
+            "min_ms": 0.7728,
+            "max_ms": 3.7223
+          }
+        }
+      ]
+    }
+  ]
+}

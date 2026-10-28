@@ -1,0 +1,230 @@
+{
+ "stage": "cpp",
+ "environment": "Measured 2026-10-28 03:44-04:44 local on the study machine at SkellyCam HEAD 23ccbf208e43879bfc74fc01049e5af2a623933d (unmodified): i7-14700K (20C/28T), 64 GB DDR5 at 4000 MT/s (CMK64GX5M2B6400C32), Windows 11 Home 26300, power plan Balanced (cpp/results/environment_system.json). C++: MSVC 19.42.34436 x64 (VS 2022 Community), flags /O2 /std:c++20 /EHsc /arch:AVX2 /MD; OpenCV 4.8.0 official C++ SDK (opencv_world480, vc16, MSVC 1928, libjpeg-turbo 2.1.3-62) from C:\\Users\\Dom\\Downloads\\opencv\\build (cpp/results/environment_cpp.json, opencv_buildinfo_cpp_sdk_4.8.0.txt). Python 3.12.13: SkellyCam venv numpy 2.2.6 + opencv-contrib-python 4.12.0.88 (libjpeg-turbo 3.1.0-70); .venv-bench + pybind11 3.1.0 (installed there for the hybrid build); throw-away venv (scratch, deleted after) opencv-python 4.8.0.76 + numpy 1.26.4 (libjpeg-turbo 2.1.3-62) to separate language from library version (environment_python_{skellycamvenv,benchvenv,cv48venv}.json). Timer tick (QPC / perf_counter_ns) 100 ns. Machine load: every step ran through cpp/run_with_load.py; every measuring step was IDLE by the baseline rule: system CPU 2.8-5.1% before and 4.2-5.6% after, memory 35.7-36.7%, background mean 1.6-3.7%, p95 2.2-5.2%, max 7.4%; top background PreSonusHardwareAccessService, Corsair.Service.CpuIdRemote64, MsMpEng, firefox (each < 0.6%) (cpp/results/load_summary.md, load_*.json). largepages_probe is labelled provisional only because it ended in 0.6 s before the first sample (no timing). No child process left behind (killed_leftover_pids empty everywhere; no ringbench/codecbench/benchmark python processes afterwards). Not provisional.",
+ "scripts": [
+  {
+   "path": "benchmarks/frame_pipeline/cpp/build.bat",
+   "purpose": "Builds ringbench.exe, memcpybench.exe, microbench.exe, codecbench.exe (OpenCV 4.8.0 SDK) and cppring.cp312-win_amd64.pyd (pybind11 + C exports) with MSVC",
+   "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && cmd /c benchmarks\\frame_pipeline\\cpp\\build.bat"
+  },
+  {
+   "path": "benchmarks/frame_pipeline/cpp/src/ring.hpp, src/ringbench.cpp",
+   "purpose": "C++ shared-memory ring (CreateFileMappingW, per-slot seqlock, std::atomic head/cursor, lossless gating); write-only (a_write shape; head_port = line-by-line port of SkellyCam put_data; one_copy) and SPSC (processes or threads, paced or unthrottled); SEC_LARGE_PAGES probe",
+   "command": "benchmarks\\frame_pipeline\\cpp\\build\\ringbench.exe write 1080p 5 head_port 10 out.json ; ringbench.exe spsc 1080p 5 60 10 proc out.json ; ringbench.exe largepages"
+  },
+  {
+   "path": "benchmarks/frame_pipeline/cpp/py_ring.py",
+   "purpose": "Python twin of ringbench: sk_head (REAL CameraGroupSharedMemory / CameraSharedMemoryRingBuffer.put_frame / get_next_data), py_seq (numpy seqlock, byte-identical layout), hybrid (pybind11), hybrid_ctypes",
+   "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && .venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\cpp\\py_ring.py write 1080p 5 sk_head 10 out.json (hybrid: .venv-bench python; spsc: py_ring.py spsc <size> <n> <impl> <fps|0> 10 out.json)"
+  },
+  {
+   "path": "benchmarks/frame_pipeline/cpp/src/memcpybench.cpp, py_memcpy.py, py_pixel_cv2.py",
+   "purpose": "Copy bandwidth (hot/cold, private vs mapping, 1-8 threads, memcpy vs AVX2 streaming stores vs np.copyto vs structured slot assignment with the real SkellyCam dtype) and pixel swap+flip (C++ loop, numpy, cv2 from Python)",
+   "command": "build\\memcpybench.exe results\\memcpy_cpp.json ; .venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\cpp\\py_memcpy.py results\\memcpy_py.json ; py_pixel_cv2.py results\\pixel_cv2_py.json"
+  },
+  {
+   "path": "benchmarks/frame_pipeline/cpp/src/microbench.cpp, py_micro.py",
+   "purpose": "Control-plane op costs (atomic vs numpy view vs REAL SharedMemoryNumber vs nested recarray timestamp write), cross-process ping-pong, sleep granularity",
+   "command": "build\\microbench.exe results\\micro_cpp.json ; .venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\cpp\\py_micro.py results\\micro_py.json"
+  },
+  {
+   "path": "benchmarks/frame_pipeline/cpp/src/codecbench.cpp, py_codec.py, make_inputs.py",
+   "purpose": "imdecode (copy into slot; C++ in place via dst), imencode q90 and the UI resize+q60 step, VideoWriter('X264') exactly as video_recorder.py L125-130, 1 and 5 spawned processes, paced/unthrottled; byte-identical inputs for C++ 4.8, Python cv2 4.8, Python cv2 4.12",
+   "command": "make_inputs.py <dir> ; codecbench.exe decode 1080p 5 10 <dir> 1 out.json ; py_codec.py decode 1080p 5 10 <dir> out.json (full list: run_matrix.py codec)"
+  },
+  {
+   "path": "benchmarks/frame_pipeline/cpp/run_matrix.py, run_all.py, run_with_load.py, summarize_load.py, env_snapshot.py, summarize.py",
+   "purpose": "Run every config with C++ and Python back to back (5-camera ring configs repeated in reverse order, _r2) under the load recorder; build results/cpp_comparison.{md,json}",
+   "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && .venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\cpp\\run_all.py ; .venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\cpp\\summarize_load.py ; .venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\cpp\\summarize.py"
+  }
+ ],
+ "results": [
+  {
+   "name": "Ring write, same algorithm: SkellyCam put_frame vs C++ port of it",
+   "config": "1080p and 720p, N=1 and N=5 spawned writers, unthrottled 10 s after one timed lap, 1 GiB rings (L=172 / 388)",
+   "metric": "put median ms (slowest-camera fps)",
+   "value": "1080p N=1: sk_head 1.326 (749) vs cpp_head_port 1.276 (778); N=5: 2.765/2.780 vs 2.694/2.662 (356/355 vs 365/369); 720p N=1 0.614 vs 0.574; N=5 1.140/1.157 vs 1.121/1.117. C++ 2-7% faster",
+   "meets_5x60": "yes",
+   "output_file": "benchmarks/frame_pipeline/cpp/results/cpp_comparison.md section 1a; ring_write/write_*_sk_head*.json, write_*_cpp_head_port*.json",
+   "script": "py_ring.py / ringbench.exe write"
+  },
+  {
+   "name": "Ring write, one copy: numpy seqlock vs pybind11 hybrid vs ctypes vs C++",
+   "config": "same as above",
+   "metric": "put median ms; aggregate GB/s",
+   "value": "1080p N=1: py_seq 0.1466, hybrid 0.1465, ctypes 0.1466, cpp 0.1456 ms (~6.7k fps, 41.5-41.8 GB/s); 1080p N=5: 0.635/0.635, 0.621/0.613, 0.654/0.621, 0.637/0.630 ms (46.1-48.3 GB/s); 720p N=5: py_seq 0.252/0.249 vs cpp 0.247/0.250 ms",
+   "meets_5x60": "yes",
+   "output_file": "benchmarks/frame_pipeline/cpp/results/cpp_comparison.md section 1a; ring_write/*.json",
+   "script": "py_ring.py / ringbench.exe write"
+  },
+  {
+   "name": "Ring write, tiny frames (per-frame fixed overhead)",
+   "config": "64x64 (record 12,920 B), N=1 and N=5, unthrottled 10 s, L=83,106",
+   "metric": "put median us (fps)",
+   "value": "N=1: sk_head 24.8 (38,417); cpp_head_port 0.9 (1,009,729); py_seq 1.4 (586,786); hybrid 1.3 (616,301); ctypes 1.4 (568,820); cpp_one_copy 0.8 (1,154,093). N=5 slowest fps: 37,392 / 591,992 / 487,323 / 500,271 / 472,589 / 618,771",
+   "meets_5x60": "n/a",
+   "output_file": "benchmarks/frame_pipeline/cpp/results/ring_write/write_64x64_*.json",
+   "script": "py_ring.py / ringbench.exe write"
+  },
+  {
+   "name": "SPSC ring 5x1080p and 5x720p paced at 60 fps",
+   "config": "5 writer + 5 reader processes (cpp also threads), lossless gating, reader copies every frame out and checks stamps, 600 frames per camera",
+   "metric": "frames read / lost / torn; publish median/p99; publish->read median/p99/max ms",
+   "value": "1080p: all 3000/0/0; publish sk_head 2.666/5.043, py_seq 0.979/1.908, hybrid 1.003/1.931, cpp_proc 0.937/1.908, cpp_thread 0.966/1.780; e2e sk_head 3.736/5.715/6.400, py_seq 2.019/2.856/3.281, hybrid 2.033/2.985/3.435, cpp_proc 1.945/2.790/3.065, cpp_thread 2.026/2.679/2.975. 720p e2e median/p99: 1.686/2.581, 0.841/1.488, 0.835/1.246, 0.778/1.347, 0.817/1.286",
+   "meets_5x60": "yes",
+   "output_file": "benchmarks/frame_pipeline/cpp/results/ring_spsc/spsc_*_n5_paced60_*.json; cpp_comparison.md section 1b",
+   "script": "py_ring.py / ringbench.exe spsc"
+  },
+  {
+   "name": "SPSC ring unthrottled (max sustained lossless rate)",
+   "config": "5 pairs, 10 s, 1080p / 720p (run and _r2), 64x64; 1 pair too",
+   "metric": "slowest-camera sustained fps (reader frames / reader elapsed); aggregate GB/s",
+   "value": "5x1080p: sk_head 243/250 (7.70/7.85 GB/s), py_seq 527/537, hybrid 530/526, cpp_proc 543/535 (17.06/16.97), cpp_thread 545/545. 5x720p: 603/603, 1258/1283, 1270/1258, 1256/1281, 1288/1278. 64x64 1 pair: 12,977 / 347,056 / 322,694 / 1,149,700 / 1,150,875; 5 pairs: 11,912 / 276,008 / 262,764 / 380,551 / 380,867. All 50 SPSC runs: 0 lost, 0 torn, 0 seq rejects",
+   "meets_5x60": "yes",
+   "output_file": "benchmarks/frame_pipeline/cpp/results/ring_spsc/spsc_*_max_*.json; cpp_comparison.md section 1b",
+   "script": "py_ring.py / ringbench.exe spsc"
+  },
+  {
+   "name": "Copy bandwidth, C++ memcpy / AVX2 streaming stores vs numpy",
+   "config": "hot src -> 512 MiB pagefile mapping (4 KiB slots, prefaulted), cold->cold, 1-8 threads; 5 reps x 2 s",
+   "metric": "GB/s median; per-copy median/p99 us",
+   "value": "1080p hot->ring: 42.37 / 43.69 / np.copyto 41.23 / structured slot assign 40.72 GB/s; per copy 145.3/186.3, 140.7/170.2, 146.8/191.5 us. Cold->cold 1080p 17.75 / 17.54 / 17.42. Threads 1080p 1/2/4/5/8: C++ 42.6/53.6/52.3/48.2/40.2, numpy 41.6/55.0/49.7/47.9/40.0. 64x64: 16.39 / 46.52 / 10.75 GB/s (0.7 / 0.2 / 1.2 us per copy)",
+   "meets_5x60": "n/a",
+   "output_file": "benchmarks/frame_pipeline/cpp/results/memcpy_cpp.json, memcpy_py.json; cpp_comparison.md section 2",
+   "script": "memcpybench.exe / py_memcpy.py"
+  },
+  {
+   "name": "Pixel swap BGR->RGB + vertical flip (hypothesis C2)",
+   "config": "single thread, 1080p / 720p, 0.5 s warm-up + 5 x 2 s",
+   "metric": "median ms",
+   "value": "C++ per-pixel loop 0.743 / 0.318; numpy strided 5.736 / 2.548; cv2.cvtColor + cv2.flip from Python 0.443 / 0.177; row flip only (1080p) C++ 0.174, numpy 0.177, cv2.flip 0.176",
+   "meets_5x60": "n/a",
+   "output_file": "benchmarks/frame_pipeline/cpp/results/memcpy_cpp.json, memcpy_py.json, pixel_cv2_py.json",
+   "script": "memcpybench.exe / py_memcpy.py / py_pixel_cv2.py"
+  },
+  {
+   "name": "Control-plane fixed costs",
+   "config": "10M (C++) / 1M or 100k (Python) ops x 5 reps; ping-pong 200k round trips (SharedMemoryNumber 20k)",
+   "metric": "ns/op; round trip median/p99 us",
+   "value": "store/load: C++ atomic 0.18/0.29 ns, numpy view 52.85/60.36 ns, SkellyCam SharedMemoryNumber 4,423/5,738 ns; nested recarray timestamp write 13,502 ns vs cached view 53.85 ns; timer QPC 18.0 vs perf_counter_ns 59.2 ns; ping-pong C++ 0.1/0.2, numpy 0.3/0.4, SharedMemoryNumber 16.2/44.0 us",
+   "meets_5x60": "n/a",
+   "output_file": "benchmarks/frame_pipeline/cpp/results/micro_cpp.json, micro_py.json",
+   "script": "microbench.exe / py_micro.py"
+  },
+  {
+   "name": "Sleep granularity",
+   "config": "500 samples each after 20 warm-up",
+   "metric": "median / p99 us",
+   "value": "10 us request: C++ high-res waitable timer 513.9/556.5, Python time.sleep(1e-5) 525.4/647.1; C++ Sleep(1) 2000.0/2674.3, sleep_for(10us) 2007.8/2726.1; 1 ms request: 1550.4 vs 1586.8",
+   "meets_5x60": "n/a",
+   "output_file": "benchmarks/frame_pipeline/cpp/results/micro_cpp.json, micro_py.json",
+   "script": "microbench.exe / py_micro.py"
+  },
+  {
+   "name": "JPEG decode into a ring slot",
+   "config": "30 q90 synthetic JPEGs per camera (527.8 KB at 1080p), setNumThreads(1), 1 and 5 spawned processes, 2 s warm-up + 10 s",
+   "metric": "median ms (slowest fps)",
+   "value": "1080p 1 proc: C++ OpenCV 4.8 copy 11.32 (88.3), C++ in place via dst 10.36 (96.3), Python cv2 4.8 12.78 (78.2), Python cv2 4.12 7.22 (137.7); 5 procs 11.40 / 10.28 / 12.94 / 7.53. 720p 1 proc 5.11 / 4.62 / 5.70 / 3.23. All content_ok",
+   "meets_5x60": "yes",
+   "output_file": "benchmarks/frame_pipeline/cpp/results/codec/decode_*.json; cpp_comparison.md section 4",
+   "script": "codecbench.exe decode / py_codec.py decode"
+  },
+  {
+   "name": "JPEG encode (full q90 and the SkellyCam UI step)",
+   "config": "1 process, setNumThreads(1), 30 raw frames, 2 s warm-up + 10 s",
+   "metric": "median ms",
+   "value": "full q90 1080p / 720p: C++ 4.8 20.00 / 8.81, Python 4.8 21.19 / 9.33, Python 4.12 4.11 / 1.76. UI resize 0.5 + q60: 4.48 / 2.03, 5.01 / 2.19, 1.41 / 0.54",
+   "meets_5x60": "n/a",
+   "output_file": "benchmarks/frame_pipeline/cpp/results/codec/imencode_*.json",
+   "script": "codecbench.exe imencode / py_codec.py imencode"
+  },
+  {
+   "name": "VideoWriter('X264') record (resolves to MSMF in all three)",
+   "config": "1080p 1 proc unthrottled 600 frames; 5 procs paced 60 fps 600 frames, default threads and setNumThreads(1); 720p likewise",
+   "metric": "write median/p99 ms; encode fps incl. release; summed CPU %; frames in file; Mbit/s",
+   "value": "1080p unthrottled (C++ 4.8 / Py 4.8 / Py 4.12): write 0.699 / 0.722 / 0.695 ms, encode 408.6 / 408.1 / 408.8 fps, 125.2 Mbit/s all. 5x1080p paced: write 1.92/2.64, 1.89/2.66, 1.89/2.51 ms, 0 late writes, CPU 1127 / 1257 / 1279 %; setNumThreads(1): 382 / 397 / 443 %. 5x720p paced CPU 532 / 612 / 595 %. Every file had exactly the frames written",
+   "meets_5x60": "yes",
+   "output_file": "benchmarks/frame_pipeline/cpp/results/codec/vw_*.json",
+   "script": "codecbench.exe videowriter / py_codec.py videowriter"
+  },
+  {
+   "name": "SEC_LARGE_PAGES ring (hypothesis C4)",
+   "config": "1 GiB CreateFileMappingW(SEC_COMMIT|SEC_LARGE_PAGES) after AdjustTokenPrivileges(SeLockMemoryPrivilege)",
+   "metric": "result",
+   "value": "not possible: AdjustTokenPrivileges ERROR_NOT_ALL_ASSIGNED (1300), CreateFileMappingW ERROR_PRIVILEGE_NOT_HELD (1314); large page minimum 2 MiB",
+   "meets_5x60": "n/a",
+   "output_file": "benchmarks/frame_pipeline/cpp/results/largepages_probe_stdout.log",
+   "script": "ringbench.exe largepages"
+  }
+ ],
+ "findings": [
+  {
+   "statement": "Porting SkellyCam's ring buffer to C++ without changing the algorithm gains only 2-7%: the cost of put_frame is the algorithm (fresh allocation + 2 copies), not the language.",
+   "evidence": "cpp/results/cpp_comparison.md 1a: ring_write/write_1080p_n1_sk_head.json 1.326 ms vs write_1080p_n1_cpp_head_port.json 1.276 ms; write_1080p_n5_sk_head(_r2) 2.765/2.780 vs cpp_head_port(_r2) 2.694/2.662 ms; 720p 0.614 vs 0.574 and 1.140/1.157 vs 1.121/1.117 ms. Code: https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py#L118-L133. Scripts: py_ring.py write <size> <n> sk_head 10; ringbench.exe write <size> <n> head_port 10 (run_matrix.py ring_write)."
+  },
+  {
+   "statement": "With the same one-copy seqlock design, Python (numpy), the pybind11 hybrid, ctypes and pure C++ write frames at the same speed (within ~1-4%), and Python gets the full 4.4-9x gain of removing the extra copy.",
+   "evidence": "ring_write: 1080p N=1 py_seq 0.1466 / hybrid 0.1465 / hybrid_ctypes 0.1466 / cpp_one_copy 0.1456 ms; N=5 0.635/0.635, 0.621/0.613, 0.654/0.621, 0.637/0.630 ms; vs sk_head 1.326 (N=1) and 2.765 (N=5) ms. Script: run_matrix.py ring_write."
+  },
+  {
+   "statement": "For a lossless writer->reader pipeline across processes, C++ sustains the same throughput as the numpy seqlock ring at frame sizes; both sustain about 2.2x SkellyCam HEAD's ring and about 9x the 60 fps target at 5x1080p. Paced 5x60 is met by every implementation with 0 lost and 0 torn frames.",
+   "evidence": "ring_spsc/spsc_1080p_n5_max_*.json: slowest-camera 543/535 (cpp_proc), 545/545 (cpp_thread), 530/526 (hybrid), 527/537 (py_seq), 243/250 (sk_head) fps; 720p 1256-1288 vs 603. spsc_*_paced60_*: 3000/3000 read, 0 lost, 0 torn; publish->read median 1.945 (cpp_proc) vs 2.019 (py_seq) vs 3.736 (sk_head) ms at 1080p. 50 SPSC runs, 0 lost / 0 torn / 0 seq rejects (cpp_comparison.json ring_spsc). Script: run_matrix.py ring_spsc."
+  },
+  {
+   "statement": "Bulk copy bandwidth is the shared hardware ceiling: numpy np.copyto and MSVC memcpy are within 1-5% at 720p/1080p, single- and multi-threaded, and AVX2 streaming stores add at most ~3% at frame sizes.",
+   "evidence": "memcpy_cpp.json vs memcpy_py.json: 1080p hot->ring 42.37 (memcpy) / 43.69 (nt) / 41.23 (np.copyto) / 40.72 (slot assign) GB/s; cold->cold 17.75/17.54/17.42; 2 threads 53.6/55.3/55.0; 8 threads 40.2/40.7/40.0. Scripts: memcpybench.exe, py_memcpy.py."
+  },
+  {
+   "statement": "C++ wins clearly only on per-call fixed overhead, which shows with tiny frames and is irrelevant at 5x60: a 64x64 publish costs 0.8 us in C++, 1.4 us in lean numpy and 24.8 us in SkellyCam HEAD; the SPSC rate at 64x64 (1 pair) is 3.3x higher in C++ than lean Python.",
+   "evidence": "ring_write/write_64x64_n1_*.json; ring_spsc/spsc_64x64_n1_max_*.json: 1,149,700 (cpp_proc) vs 347,056 (py_seq) vs 12,977 (sk_head) fps. At 300 frames/s, 0.6 us/frame is ~0.18 ms of CPU per second (arithmetic)."
+  },
+  {
+   "statement": "SkellyCam's per-frame control-plane overhead is a Python-wrapper problem fixable in Python: SharedMemoryNumber.value costs 4.4-5.7 us and a nested recarray timestamp write 13.5 us, against 54-60 ns for a numpy view (C++ atomic 0.2-0.3 ns).",
+   "evidence": "micro_py.json rows skellycam_SharedMemoryNumber_value_write/read 4,423/5,738 ns, skellycam_nested_recarray_timestamp_write 13,502 ns, cached_field_view_timestamp_write 53.85 ns, numpy_int64_view_store/load 52.85/60.36 ns; micro_cpp.json atomic 0.18/0.29 ns. Code: https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/shared_memory_number.py#L23-L33 and https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L133-L147."
+  },
+  {
+   "statement": "Decode and encode speed is set by the OpenCV / libjpeg-turbo build, not the language: with the same OpenCV version C++ and Python are within ~11%, while Python's cv2 4.12 (libjpeg-turbo 3.1.0) decodes 1.57x and encodes q90 4.9x faster than the C++ OpenCV 4.8 SDK. A C++ port linked against a stock SDK could be slower than today's Python.",
+   "evidence": "codec/decode_1080p_n1_cpp48_copy.json 11.32 ms, decode_1080p_n1_py48.json 12.78, decode_1080p_n1_py412.json 7.22; imencode_1080p_{cpp48,py48,py412}.json q90 20.00 / 21.19 / 4.11 ms; build info results/opencv_buildinfo_{cpp_sdk_4.8.0,python_4.8.0,python_4.12.0}.txt (JPEG: build-libjpeg-turbo 2.1.3-62 / 2.1.3-62 / 3.1.0-70)."
+  },
+  {
+   "statement": "The C++ API can decode straight into a shared-memory slot (cv::imdecode with dst), saving 0.95 ms per 1080p frame (8%); OpenCV 4.12's Python imdecode has no dst, but Python already has in-place alternatives (retrieve(image=slot), simplejpeg into the slot).",
+   "evidence": "codec/decode_1080p_n1_cpp48_inplace.json 10.36 ms (inplace_ok true) vs decode_1080p_n1_cpp48_copy.json 11.32 ms; 720p 4.62 vs 5.11 ms. Python in-place paths: prototypes/results/p1_write.md rows cur_vcap_into_sk_slot and p_simplejpeg_into_slot."
+  },
+  {
+   "statement": "Recording through cv2.VideoWriter('X264') is the same native MSMF encoder from C++ and Python: identical write latency, encode rate and bitrate. The default-thread-pool CPU blow-up seen in prototypes P10 reproduces in C++, so it is OpenCV behaviour, not a Python cost.",
+   "evidence": "codec/vw_1080p_n1_max_thdefault_{cpp48,py48,py412}.json: write median 0.699/0.722/0.695 ms, 408.6/408.1/408.8 fps, 125.2 Mbit/s; vw_1080p_n5_paced60_thdefault_*: CPU 1127/1257/1279 %, th1: 382/397/443 %, 0 late writes, frames in file == written. Call matches https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/recorders/videos/video_recorder.py#L125-L130."
+  },
+  {
+   "statement": "One process with a thread per camera gives no throughput gain over process-per-camera for the ring in C++ (hypothesis C5 refuted for the ring).",
+   "evidence": "ring_spsc: 5x1080p cpp_thread 545/545 vs cpp_proc 543/535 fps; 5x720p 1288/1278 vs 1256/1281; 64x64 5 pairs 380,867 vs 380,551."
+  },
+  {
+   "statement": "The openpnp-style per-pixel BGR->RGB swap + flip is 7.7x slower as a numpy strided copy than as a C++ loop, but calling OpenCV's cvtColor + flip from Python is faster still (0.443 vs 0.743 ms at 1080p), so C2 is not an argument for C++.",
+   "evidence": "memcpy_cpp.json pixel_op swap_bgr_rgb_and_flip_loop 0.743 ms (1080p); memcpy_py.json swap_bgr_rgb_and_flip 5.736 ms; pixel_cv2_py.json cv2_cvtColor_BGR2RGB_then_flip0 0.443 ms."
+  },
+  {
+   "statement": "Sleep granularity is an OS limit shared by both languages: a 10 us sleep takes ~0.51-0.53 ms either way; naive C++ sleeps (Sleep(1), sleep_for) are worse at ~2.0 ms.",
+   "evidence": "micro_cpp.json hr_waitable_timer(10us) 513.9 us median; micro_py.json time.sleep(1e-05) 525.4 us; Sleep(1) 2000.0 us, this_thread::sleep_for(10us) 2007.8 us. SkellyCam polls with time.sleep(1e-5): https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/utilities/wait_functions.py#L29-L30."
+  },
+  {
+   "statement": "VERDICT: a C++ port is not needed to reach 5 cameras x 60 fps and would not raise throughput meaningfully; the Python fixes (remove copy.copy, one-copy seqlock ring, cached views, decoupled recorder, decode into the slot) capture essentially all the gain. EXTRAPOLATION: in the baseline 1080p mjpeg loop (retrieve ~10.1-10.3, put_frame ~3.6-3.7, record ~1.1-1.2 ms) a line-by-line C++ port would save ~0.1 ms of put_frame and nothing on retrieve/record; the Python fixes save ~2.1 ms of put (2.77 -> 0.64 ms at 5x1080p isolated) and ~0.42 ms of control-plane writes.",
+   "evidence": "Component rows above (ring_write 1080p N=5; micro nested timestamp 13.5 us x ~31 writes per frame, count from research.json); baseline/results/e_e2e_summary.md (53.56/53.57 fps; per_camera retrieve/put/record); prototypes/results/p8_e2e_summary.md (Python-only redesign 59.95 fps, 0 never grabbed). Loop: https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L67-L117."
+  },
+  {
+   "statement": "The hybrid option (C++ ring called from Python) works with zero copies across the binding and matches pure C++ at frame sizes; pybind11 and ctypes cost the same per call (~0.5 us more than C++ at 64x64). It is available if portable memory ordering (non-x86) is ever needed.",
+   "evidence": "ring_write/write_1080p_n1_hybrid.json 0.1465 ms, write_1080p_n1_hybrid_ctypes.json 0.1466 ms vs write_1080p_n1_cpp_one_copy.json 0.1456 ms; 64x64 1.3 / 1.4 / 0.8 us; ring_spsc hybrid 530/526 fps at 5x1080p. Module: cpp/src/cppring_py.cpp (py::buffer, gil_scoped_release)."
+  }
+ ],
+ "limitations": [
+  "Synthetic frames only; no real-camera run in this stage and no native DirectShow/MF capture filter was built, so hypothesis C1 (removing OpenCV's internal SampleCB / getPixels copies) is untested; its upper bound is ~0.07-0.35 ms per removed copy (memcpy rows).",
+  "Hypothesis C4 (SEC_LARGE_PAGES) could not be measured: the account lacks SeLockMemoryPrivilege (errors 1300 / 1314), and granting it is a machine-policy change outside this stage.",
+  "Only an OpenCV 4.8.0 C++ SDK was available (no C++ OpenCV 4.12, FFmpeg or libjpeg-turbo SDK). Language vs library was separated with a throw-away cv2 4.8.0.76 venv, but the two 4.8.0 builds differ (SDK MSVC 1928 /MD vs wheel MSVC 1900 /MT), so the ~11% decode difference between them is not attributable to the language (open question).",
+  "The numpy seqlock (py_seq) relies on x86-64 store ordering; 0 torn frames in 50 SPSC runs is evidence, not proof. The C++ ring uses std::atomic acquire/release.",
+  "All readers and blocked writers poll with Sleep(0) (same policy in both languages), so paced-run CPU is dominated by polling and is not a language comparison; event-based wake-up was not measured.",
+  "QPC / perf_counter_ns tick is 100 ns: sub-microsecond latencies (ping-pong, 64x64 copies) are quantised; the ns/op values come from throughput loops.",
+  "MSMF encoder CPU with OpenCV's default thread pool varies ~10% between runs (1127-1279%); the C++ vs Python CPU differences in those rows are within that spread.",
+  "The full end-to-end camera loop was not ported to C++; its effect on the 5x60 e2e result is EXTRAPOLATED from component rows. Disk throughput (N8) was not measured here.",
+  "The throw-away cv2 4.8 venv's size was measured but not recorded before deletion (the recording command failed); the 310 codec input files totalled 2,812,836,587 B (results/codec_inputs_manifest.json) and were deleted.",
+  "Single machine (i7-14700K, DDR5-4000, Windows 11); thread placement on P/E cores was not pinned."
+ ]
+}
