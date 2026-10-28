@@ -1,6 +1,6 @@
 # Frame Ring Buffer Study — Report
 
-Status as of 2026-10-28: **done** (code mapping, verification and research finished on 2026-10-25; every benchmark stage ran or re-ran in the idle overnight run of 2026-10-27/28 and was then critiqued, partly re-run and revised; nothing in `research/` is committed yet). Raw material: this folder; study state and stage table: [study_state/RESUME.md](study_state/RESUME.md); which numbers are idle vs provisional: [PROVISIONAL.md](PROVISIONAL.md).
+Status as of 2026-10-28: **done** (code mapping, verification and research finished on 2026-10-25; every benchmark stage ran or re-ran in the idle overnight run of 2026-10-27/28 and was then critiqued, partly re-run and revised; committed on branch `dom/research` on 2026-10-28). Raw material: this folder; study state and stage table: [study_state/RESUME.md](study_state/RESUME.md); which numbers are idle vs provisional: [PROVISIONAL.md](PROVISIONAL.md).
 
 ## Executive summary
 
@@ -43,7 +43,7 @@ Confidence labels: **measured** = read from a result file of an idle run; **prov
 | HEAD `23ccbf20` ([e_e2e_summary.md](baseline/results/e_e2e_summary.md); same-session control in [e2ev_summary.md](baseline/results/e2ev_summary.md)) | 53.56 / 53.57 (control 54.14) | 964 / 964 (878) | `put_frame` 3.64-3.73 ms; group interval 18.69 ms | children 1345-1361% | Misses 60 fps, loss uncounted |
 | HEAD, no UI | 55.94 / 55.62 | 605 / 655 | `put_frame` 3.41-3.49 ms | children 1392-1399% | UI costs about 1.5-2.4 fps |
 | HEAD − `copy.copy` (rank 9) | 58.84 / 58.98 | 170 / 150 | `put_frame` 1.29-1.38 ms; gate idle 2.50-3.19 ms | children 1351-1392% | Best single change; still short of 60 |
-| HEAD + `setNumThreads(1)` | 54.74 | 788 | record 2.73 ms | children 713% | Halves CPU, small fps change |
+| HEAD + `setNumThreads(1)` | 54.74 | 788 | record 2.75 ms | children 713% | Halves CPU, small fps change |
 | HEAD − `copy.copy` + `setNumThreads(1)` | 58.29 | 254 | `put_frame` 1.13 ms, record 2.72 ms | children 686% | Cheapest CPU; slightly below rank 9 alone while encode is inline |
 | HEAD + 3 ms retrieve CPU (sensitivity) | 48.46 | 1732 | retrieve 12.88 ms | children 1230% | Shows how close HEAD is to the edge |
 | Prototype: seqlock ring + decoupled recorder + lockstep ([p8v_e2e_summary.md](prototypes/results/p8v_e2e_summary.md)) | 59.82 / 59.95 | 20 / 0 | tick→written p99 30.5 / 27.3 ms | cams 330-338%, recorders 979-1017% | Reaches 60 on synthetic cameras |
@@ -121,7 +121,7 @@ P5 cameras published with a memcpy stand-in, so its recorder CPU is not directly
 - **Not tested:** fault behaviour (the benchmark UI stand-in catches every exception), event-wake latency for the lockstep gate, browser-side UI throughput, non-x86 seqlock ordering, NVENC failure handling, and FreeMoCap reading MKV / fragmented MP4.
 - **Known errata in earlier write-ups.**
   - The Claude Doc report was audited on 2026-10-28 and six content corrections plus a byline-date fix were made, among them the rank 7 prototype label and the rank 13 gate-wait range ([RESUME.md](study_state/RESUME.md)).
-  - RESUME.md still says `recommend_result.json` rank 13 carries the wrong "0.03-0.18 ms" gate-wait range. That note is stale: the current JSON gives the corrected 0.03-6.4 ms per-camera medians, which match the `lockstep_gate_wait` values in `p8v_e2e_1080p_imdecode_msmf_lockstep_meta*.json`.
+  - `recommend_result.json` rank 13 was corrected at the end of the run to the 0.03-6.4 ms per-camera medians, which match the `lockstep_gate_wait` values in `p8v_e2e_1080p_imdecode_msmf_lockstep_meta{,_rep2}.json`. RESUME.md was updated to say so on 2026-10-28.
   - The [Claude Docs summary](https://claude.ai/artifact/H1dJaFNr9cbuQD3XNU78fq) says the 4000 MT/s RAM speed "lowers the memory-copy numbers". The local [research.json](study_state/research.json) says this is untested, so treat it as unverified.
   - The first `dshowlike` run had a tick-log index bug. It is superseded by `_v2` and kept in `baseline/results/superseded_revision/`.
 - **Recorded paths.** Raw logs and results record the old location `benchmarks/frame_pipeline/`, which is now `research/frame_ring_buffer/` ([RESUME.md](study_state/RESUME.md)).
@@ -155,7 +155,7 @@ P5 cameras published with a memcpy stand-in, so its recorder CPU is not directly
 | [study_state/RESUME.md](study_state/RESUME.md) | Stage status, the original task, pinned commits, audit corrections, open items |
 | [PROVISIONAL.md](PROVISIONAL.md) | Which results are idle and which are provisional; the idle rule |
 | [study_state/recommend_result.json](study_state/recommend_result.json) | Final 15 ranked recommendations, C++ verdict, not-recommended ideas, open questions (post-revision) |
-| [study_state/verified_maps.json](study_state/verified_maps.json), [verified_digest.json](study_state/verified_digest.json) | Code map of the write, read, control, UI and FreeMoCap paths; 172 claims verified (123 confirmed, 43 corrected, 1 refuted, 5 unverifiable) |
+| [study_state/verified_maps.json](study_state/verified_maps.json), [verified_digest.json](study_state/verified_digest.json) | Code map of the write, read, control, UI and FreeMoCap paths; 167 claims verified (123 confirmed, 43 corrected, 1 refuted) |
 | [study_state/research.json](study_state/research.json) | Best-practice and Python-vs-C++ research |
 | [study_state/revision_result.json](study_state/revision_result.json), [revision/README.md](revision/README.md) | The 34 critic issues and the benchmarks added to answer them |
 | `study_state/critic_*_result.json` | The three critiques (evidence, priorities, reproducibility) |

@@ -13,7 +13,9 @@ research/usb_cameras/
   timing/       goal 2: capture-time accuracy
   bandwidth/    goal 3: USB bandwidth allocation
   libusb/       libuvc and from-scratch libusb UVC streaming
-  platform/     per-OS runners (run_linux.sh, run_macos.sh, run_windows.ps1)
+  rust/         Rust uvc_iso, nokhwa and nusb probes; rust/platform/ holds run_linux.sh, run_macos.sh, run_windows_phase2.sh
+  (no top-level platform/ folder: other per-OS runners sit in each area, e.g. timing/linux/, timing/macos/,
+   mjpeg/drafts/, libusb/linux/; corrected 2026-10-28, was "platform/  per-OS runners (run_linux.sh, run_macos.sh, run_windows.ps1)")
   workflows/    the Workflow scripts that drove each phase and the overnight rerun (repo copies)
   results/<platform>/<hostname>/<test>/   JSON + logs written by the tests
 ```

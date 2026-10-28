@@ -6,11 +6,13 @@
 - Latest stable release: **0.8.36** (tagged 2026-04-23, "Latest" on GitHub).
 - Latest development release: **0.9.2** (pre-release). `main` is 0.9.3, which uses API version 0.10.
 - It is actively maintained: the last commit was 2026-10-22 and there were 49 commits in the past year. Linux, macOS, MinGW and MSVC CI all passed on 2026-10-23.
+  > **Correction (2026-10-28):** the cited CI runs were a fork pull request (dkogan/aravis, NV12, head b81396e4), not main. Push CI on main HEAD 482547a3 passed on all five workflows on 2026-10-22 (verifier, `releases` claim).
 - The README says the GV/U3V protocol code must not be based on A3 spec documents ([README#L57-L63](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/README.md#L57-L63)).
 
 **License and SkellyCam (AGPL-3.0).**
 - LGPL-2.1 §3 allows conversion to GPLv2-or-later, which makes it compatible with AGPL-3 ([COPYING#L211-L221](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/COPYING#L211-L221)).
 - §6(b) covers distributing it as a separately replaceable shared library, for example in a PyInstaller onedir bundle ([COPYING#L271-L304](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/COPYING#L271-L304)). The bundle also needs a notice and a copy of the license.
+  > **Correction (2026-10-28):** the verifier (`license`, partially supported) found that §6(b) requires a library "already present on the user's computer system", so a copy bundled in a PyInstaller onedir is not clearly covered. Comply via §6(a) or §6(c)/(d) by shipping the source or a written offer. The step to AGPL-3 goes through GPLv3 §13, which the cited links do not show.
 
 **Platforms and Python.**
 - **Linux:** Ubuntu 24.04 ships 0.8.30, including the `gir1.2-aravis-0.8` typelib. There is a Linux-only AF_PACKET TPACKET_V3 ring-buffer receive path ([meson.build#L103-L119](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/meson.build#L103-L119), [arvgvstream.c#L1240-L1265](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L1240-L1265)). It needs `cap_net_raw` ([ethernet.md#L94-L103](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/docs/reference/aravis/ethernet.md#L94-L103)).
@@ -20,6 +22,7 @@
   - MSVC CI builds without introspection ([aravis-msvc-conan2.yml#L77](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/.github/workflows/aravis-msvc-conan2.yml#L77)).
   - Windows has no packet socket.
   - Issue [#752](https://github.com/AravisProject/aravis/issues/752) is open and unresolved: about 20 MiB/s on Windows against about 90 MiB/s on Ubuntu with the same 4K camera. There are also firewall pitfalls ([#830](https://github.com/AravisProject/aravis/issues/830)).
+    > **Correction (2026-10-28):** #830 (Daheng 4K camera failing to stream on Windows 10 with Aravis 0.8.29, labelled 'Needs informations') is a general Windows failure report, not specifically about firewalls (verifier missed point).
 - **Python packaging:** there is no PyPI or conda-forge Aravis (both return 404). PyGObject on PyPI is sdist-only in every release. Python access therefore means a system Python with distro, Homebrew or MSYS2 GI packages, or a custom ctypes/cffi binding over the C API that ships glib, libxml2 and Aravis shared libraries. **This is the biggest blocker for SkellyCam's pip/uv workflow.**
 
 **API.**
@@ -47,6 +50,7 @@
   - `get_data()` copies the frame (0.026 ms per 256 KiB).
 - **HEAD build from source:** all 10 meson tests passed, including the genicam/chunk test, the Python tests and the `fakegv` network test. `ARAVIS_HAS_PACKET_SOCKET` is 1, and the same Python script ran against the Aravis-0.10 typelib.
 - **Pitfall found:** without network isolation, discovery picked up another fake camera with the same id on the Docker bridge, and acquisition failed with a write_register timeout. Open cameras by IP or serial, not by id.
+  > **Correction (2026-10-28):** opening by serial is not safe here, because both fake cameras also report serial GV01. The discovery table is keyed by id, user_id, serial, alias and MAC, and the last reply wins (arvgvinterface.c L444-L480). Open by IP, which bypasses the table (L700-L740) (verifier, `device-id-collision`).
 
 **Rust.** [aravis-rs](https://github.com/robohouse-delft/aravis-rs) 0.11.1 (2025-02-10, BSD-2) is generated from GIR and binds the 0.8 API up to 0.8.31. It links the system Aravis dynamically, so it has the same native-dependency packaging problem.
 

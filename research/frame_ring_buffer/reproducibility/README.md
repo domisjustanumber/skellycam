@@ -54,8 +54,8 @@ cv2 4.8.0 throw-away venv are only needed by the `codec` matrix, which was not r
 | `protect_originals.py` | snapshot / collect / restore of the original results (see above) |
 | `compare.py` | builds `comparison.{json,md}` from the restored originals and `rerun/` |
 | `rerun/baseline/results/` | `e_e2e_*_repro*.json`, `load_repro_*.json`, `repro_*_stdout.log`, the re-generated `e_e2e_summary.md` (original + re-run rows) |
-| `rerun/prototypes/results/` | re-run `p6_ui_*.json`, `p6_ui_path.md`, `p8_e2e_1080p_imdecode_{msmf,off_passthrough}{,_rep2}.json`, `p8_e2e_summary.md` (re-run rows for these 4 files, original rows for the rest), `load_*.json`, `*_stdout.log`, `run_all_log.txt`, `load_summary.md` |
-| `rerun/cpp/results/` | `ring_write/*.json`, `ring_spsc/*.json` (+ `_log.txt`), `cpp_comparison.{md,json}` regenerated, `load_ring_*.json`, `run_all_log.txt` |
+| `rerun/prototypes/results/` | re-run `p6_ui_*.json`, `p6_ui_path.md`, `p8_e2e_1080p_imdecode_{msmf,off_passthrough}{,_rep2}.json`, `p8_e2e_summary.md` (re-run rows for these 4 files, original rows for the rest), `load_*.json`, `*_stdout.log`, `run_all_log.txt`, `load_summary.md` (regenerated in place: only the `p6_ui_*`, `p8_e2e_1080p_imdecode_msmf*`, `p8_e2e_1080p_imdecode_off_passthrough*` and `p8_e2e_summarize` rows are from the re-run, and the other rows repeat the original stage's load; `load_summary_rerun.md` lists only re-run steps; clarified 2026-10-28) |
+| `rerun/cpp/results/` | `ring_write/*.json`, `ring_spsc/*.json` (+ `_log.txt`), `cpp_comparison.{md,json}` regenerated (only its 1a/1b ring tables and the ring_write / ring_spsc load rows are re-run values; sections 2-4 and the other load rows repeat the original `cpp/results/`), `load_ring_*.json`, `run_all_log.txt`, `load_summary.md` (same mix; clarified 2026-10-28) |
 | `rerun/cpp/build/` | the rebuilt binaries |
 | `build_stdout.log` | `build.bat` console output |
 | `originals_manifest.json`, `collected_files.json`, `restore_check.json` | hashes of the originals, list of re-run outputs, restore verification |

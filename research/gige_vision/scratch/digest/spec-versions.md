@@ -38,6 +38,7 @@ Sources: the [A3 GigE Vision standard page](https://www.automate.org/vision/visi
 - **ACTION_CMD** is command 0x0100. When header flag 0x80 is set it carries a 64-bit scheduled time ([L2092-L2114](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L2092-L2114)).
 - **Aravis** (main @482547a3, 2026-10-22; latest release 0.8.36 from 2026-04-26) defines only a subset of the capability bits. It has no host-side ACTION_CMD and no PTP register code ([arvgvcpprivate.h L95-L113 and L267-L282](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcpprivate.h#L267-L282)).
 - **RDMA/GVRSP:** neither Aravis nor Wireshark has any RDMA, RoCE or GVRSP code.
+  > **Correction (2026-10-28):** the verifier (C12, partially supported) found that Wireshark does have a generic RoCE/RRoCE (RoCEv2, UDP 4791) dissector in `packet-infiniband.c` (L33-L34, L1760-L1799). Only its GVCP/GVSP dissectors lack GVRSP. The Aravis part stands.
 
 ## Test I ran
 I wrote a stdlib-only raw GVCP register-read probe (`probe.py`) and ran it in `ubuntu:24.04` against `arv-fake-gv-camera-0.8` (aravis 0.8.30) over loopback.

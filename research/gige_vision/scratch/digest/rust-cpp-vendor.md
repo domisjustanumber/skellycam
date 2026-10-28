@@ -22,6 +22,7 @@ The full notes, with every link, are in `C:/Users/Dom/AppData/Local/Temp/claude/
 * **rc_genicam_api (C++, BSD-3) runs on Linux and Windows only, with no macOS.**
   * It is a GenTL consumer that bundles the GenICam reference implementation and a closed-source Baumer GigE GenTL producer under the Baumer EULA. Its README says "GigE Vision 2.0 compatible" ([README#L4-L8](https://github.com/roboception/rc_genicam_api/blob/1f7aad7ab30d92ddd323992f9eb605b481aca252/README.md#L4-L8)).
   * PTP is toggled through `PtpEnable` / `PtpDataSetLatch` / `PtpStatus` / `PtpOffsetFromMaster` in [gc_config.cc#L280-L299](https://github.com/roboception/rc_genicam_api/blob/1f7aad7ab30d92ddd323992f9eb605b481aca252/tools/gc_config.cc#L280-L299).
+    > **Correction (2026-10-28):** lines 280-299 only read `PtpEnable`/`PtpStatus`/`PtpOffsetFromMaster` after `PtpDataSetLatch`. The toggle is `gc_config -t 1|0`, which sets `PtpEnable` at L173. Also, the bundled Baumer license text is labelled an EULA (for "Baumer Camera Explorer"), but its clause 1 is MIT-style permissive text (verifier c8).
 * **Vendor SDKs mostly lock you to their own cameras:**
   * **Basler pylon:** the [EULA §4](https://docs.baslerweb.com/pylon-end-user-license-agreement) says "solely ... to operate a BASLER camera product".
   * **Spinnaker:** "supports FLIR and Dalsa ... cameras" ([product page](https://www.teledynevisionsolutions.com/products/spinnaker-sdk/)).

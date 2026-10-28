@@ -3,7 +3,7 @@
 Last updated: 2026-10-28 ~04:55Z (night of 2026-10-27 local), after the unattended overnight rerun. Before that: 2026-10-25 ~18:45 local (EDT), when work was paused at Dom's request.
 
 - **Report (Claude Doc):** https://claude.ai/artifact/WrpwyyMF7yU1amEB9pQYgE
-- **Harness and results:** this directory (`research/usb_cameras/`), uncommitted on branch `development`.
+- **Harness and results:** this directory (`research/usb_cameras/`), committed on branch `dom/research` on 2026-10-28 (commit dba82026; build outputs, venvs and binaries left out) (corrected 2026-10-28; was "uncommitted on branch `development`").
 - **Test machine:** "Gerald", Windows 11.
 - **Workflow scripts:** repo copies of all earlier workflow scripts are now in `research/usb_cameras/workflows/` (phase 1 `usb-camera-investigation-phase1-wf_85e88d5f-25b.js`, phase 2 `usb-camera-phase2-winusb-wf_15b731da-b8e.js`, `verify-timing-flash-wf_8bdc03a7-5c0.js`, `mjpeg-finish-and-rust-verify-wf_a3292d44-9ab.js`, and the overnight `overnight_rerun_workflow.js`). The originals are still under `C:\Users\Dom\.claude\projects\c--Users-Dom-GitHub-freemocap-skellycam\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\workflows\scripts\`.
 
@@ -38,7 +38,7 @@ Last updated: 2026-10-28 ~04:55Z (night of 2026-10-27 local), after the unattend
 | 1 Native MJPEG | pending | Windows matrix re-run and adversarially verified on 20261027 (`results/windows/Gerald/mjpeg_rerun_20261027/`, `mjpeg/RESULTS.md`): MF native MJPG and PyAV dshow passthrough give byte-identical camera-native JPEG on all 3 in-scope cameras; nokhwa too; WinRT and OpenCV never return JPEG bytes. Harness consolidated. Doc section still to write; Kiyo, Linux and macOS unmeasured. |
 | 2 Timing | written (needs corrections) | Phase 1 + 2 verified; 20261027 rerun reconfirms the C922 results. Doc needs updates: C930e manual exposure via MF is unreliable (refuted), C930e PTS step follows a frame-period mode, and the xHCI frame/QPC "residual 0 / causal" basis holds only ~2–3.5 s (weakened). |
 | 3 Bandwidth | written (needs corrections) | usbvideo results re-run 20261027 for C922, C930e and generic: alt choice, alt 8/9 threshold and budget model hold. C922 1080p@5 rate is non-deterministic (5/15.8/30 fps). Generic 1080p fails strict JPEG decode. WinUSB phase 3 (C922, generic) still not run. |
-| 4 Naming | written | Windows reconfirmed 20261027 (46/46 claim checks), plus opportunistic reboot evidence and the C930e rollback identity change. Controlled reboot, replug and port-move tests are still only drafted (`naming/win_stability_workflow.ps1`). |
+| 4 Naming | written (needs corrections) | Windows reconfirmed 20261027 (46/46 claim checks), plus opportunistic reboot evidence and the C930e rollback identity change. Doc needs updates: MF/DShow indices are not stable (C930e MF 7→6, DShow 7→2; Kiyo MF 6→7, DShow 2→3), and the C930e's MF/DShow paths and ContainerId changed after its WinUSB rollback; the doc's "0.29–0.37 s" listing time includes `uv` start-up (in-process 0.095–0.102 s). (Status corrected 2026-10-28; was "written".) Controlled reboot, replug and port-move tests are still only drafted (`naming/win_stability_workflow.ps1`). |
 | 5 Cross-platform | pending | Not written. Inputs are in the phase 1 and 2 results. |
 | Summary, comparison matrix, open questions | pending | Not written. |
 
@@ -67,7 +67,7 @@ Unattended rerun of every test that needs no admin rights, no human and no drive
 **Changed or refuted (details in RERUN_20261027.md; none explained by low light or load):**
 - C922 MJPEG 1080p@5 delivers 5.01, 15.76 or 30.0 fps at the same alt 5 (non-deterministic; ~1.17x headroom at 30 fps).
 - C930e manual exposure set through MF before streaming is not reliably applied (1 of 5 valid -7 runs); reads back -5 after capture.
-- C930e PTS 2x step and 8–12 ms OS-timestamp error follow a frame-period mode (998,400 vs ~997,230 STC ticks/frame); trigger unknown.
+- C930e PTS 2x step follows a frame-period mode (998,400 vs ~997,230 STC ticks/frame); trigger unknown. Its 8–12 ms OS-timestamp error was 4.7 ms in the one valid short-state run on 20261027, so the error is probably tied to the period mode, but that rests on 1 run and is untested (corrected 2026-10-28; was "2x step and 8–12 ms OS-timestamp error follow a frame-period mode").
 - xHCI frame/QPC IOCTL "residual 0" holds only ~2–3.5 s after START_TRACKING; over 20 s the mapping shifts up to -641 µs and returned QPC is non-causal in up to 208/396 samples. Re-check the phase-2 SCR-SOF→QPC agreement.
 - Shared-hub loser with simultaneous start is a race; with a 2.5 s stagger the second camera always loses.
 - OpenCV MSMF "0 frames" was a harness open-wait bug. OpenCV DSHOW raw "10 fps YUY2" depends on property order.

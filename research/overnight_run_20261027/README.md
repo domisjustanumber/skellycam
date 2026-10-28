@@ -1,11 +1,11 @@
 # Overnight run, 2026-10-27
 
 On the evening of 2026-10-27 Dom asked for two unattended re-runs once the machine went idle after 23:00 local.
-An idle watcher started them one after the other, and both finished without errors:
+An idle watcher gated only the start of the first run: it passed on its first check (23:02:07) and exited. The second run was started by the session when the first finished. Both finished without errors (corrected 2026-10-28; was "An idle watcher started them one after the other"):
 
 | Run | Workflow script (current location) | What it did | Outcome |
 | --- | --- | --- | --- |
-| `wf_ef322d5c-d99` | `research/usb_cameras/workflows/overnight_rerun_workflow.js` | Re-ran every USB camera test that needs no UAC, replug or reboot, on the C922, C930e and generic camera (Kiyo excluded). Six areas, each with an adversarial verifier. | 23:03 to 00:57 local, 13/13 agents. Summary: `research/usb_cameras/results/windows/Gerald/RERUN_20261027.md` |
+| `wf_ef322d5c-d99` | `research/usb_cameras/workflows/overnight_rerun_workflow.js` | Re-ran the USB camera tests that need no UAC, replug or reboot, on the C922, C930e and generic camera. The Kiyo was excluded from capture, but libusb/rawusb enumeration and GStreamer ksvideosrc still contacted it. Six areas, each with an adversarial verifier; the verifiers listed 27 tests that could have run unattended but that the rerun agents did not run. (Corrected 2026-10-28; was "every USB camera test" and "(Kiyo excluded)".) | 23:03 to 00:57 local, 13/13 agents. Summary: `research/usb_cameras/results/windows/Gerald/RERUN_20261027.md` |
 | `wf_8fd1ec97-b0e` | `research/frame_ring_buffer/study_state/overnight_workflow.js` | Re-ran the frame ring buffer baseline on the idle machine, finished the remaining study stages, then filled and audited the report doc. | 00:57 to 07:32 local, 10/10 agents. Report: https://claude.ai/artifact/Cz1otkZxAjLTHfP1WeE9it |
 
 A third, later workflow (`wf_264799ca-33d`) wrote three short summary docs from these results.

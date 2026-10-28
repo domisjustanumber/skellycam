@@ -18,7 +18,7 @@ Each step runs through its stage's `run_with_load.py` (load before / during / af
 New result files use new names; no file cited by an earlier stage was overwritten. To re-run without touching these
 either, set `FRAME_PIPELINE_RESULTS_DIR` (see `../fp_paths.py`).
 
-Machine state: every measuring step met the idle rule (background CPU mean 2.4-4.6%, p95 4.1-8.0%, system CPU 3.4-5.9%
+Machine state: every measuring step met the idle rule (background CPU mean 1.9-4.6%, p95 3.0-8.0%, system CPU 3.3-5.9% (corrected 2026-10-28; was mean 2.4-4.6%, p95 4.1-8.0%, system 3.4-5.9%)
 before and after; the per-step values are in the `load_*.json` files). One disclosure: a smoke-test process of
 `bench_e2e_variants.py` started at 06:09 (PIDs 25624/35116) stayed alive, blocked on a full stdout pipe, until 06:21,
 i.e. through the `e2ev_*` steps. The load records include it as background, and every step still met the idle rule.
@@ -46,7 +46,7 @@ It was killed at 06:21.
 |---|---|---|---|---|---|
 | HEAD control (`e2ev_head_1080p_mjpeg_ui`) | 54.14 | 878 | 10.16 / 3.61 / 1.14 | 15.42 / 2.48 | 1338 |
 | copy.copy removed (`e2ev_nocopycopy_*`, 2 runs) | 58.84 / 58.98 | 170 / 150 | 9.72-9.99 / 1.29-1.38 / 1.02-1.06 | 13.51-14.12 / 2.50-3.19 | 1392 / 1351 |
-| setNumThreads(1) in camera processes (`e2ev_cvthreads1_*`) | 54.74 | 788 | 8.88 / 2.97 / 2.73 | 14.94 / 1.81 | 713 |
+| setNumThreads(1) in camera processes (`e2ev_cvthreads1_*`) | 54.74 | 788 | 8.88 / 2.97 / 2.75 (corrected 2026-10-28; was 2.73, camera 0's median) | 14.94 / 1.81 | 713 |
 | both (`e2ev_nocopycopy+cvthreads1_*`) | 58.29 | 254 | 8.58 / 1.13 / 2.72 | 13.76 / 2.82 | 686 |
 | retrieve + 3 ms CPU (`e2ev_extracpu3_*`) | 48.46 | 1732 | 12.88 / 3.35 / 1.08 | 17.67 / 2.22 | 1230 |
 | HEAD no UI repeat (`e2ev_head_1080p_mjpeg_noui_rep2`) | 55.62 | 655 | 10.00 / 3.41 / 1.10 | 14.89 / 2.40 | 1399 |
@@ -105,7 +105,7 @@ at 1045%. Paced 60 fps while 5 extra processes decode 1080p JPEGs at 60 fps: def
 
 ### Physical disk (`prototypes/results/p12_disk_sustained.md`; C:, 4 TB SN850X, 224.9 GB free = 94.4% used)
 
-A, 64 GiB unbuffered write-through: about 5.0-5.3 GB/s for the first 48 GiB, then 481-1508 MB/s (SLC cache exhausted);
+A, 64 GiB unbuffered write-through: 4.2-5.3 GB/s per GiB (median 5.2) for the first 48 GiB (corrected 2026-10-28; was "about 5.0-5.3 GB/s"; 16 of those 48 GiB were below 5.0), then 481-1508 MB/s (SLC cache exhausted);
 write() max 97 ms. B1, 5 paced write-through streams at 162 MB/s for 300 s, started right after A: 162.2 MB/s achieved,
 write() median 0.42 ms, p99.9 15.8 ms, max 134.8 ms; worst stream fell 135 ms behind its 60 Hz schedule (the 1080p ring
 holds 2.87 s). Time to fill the 224.9 GB free: 54 min at 69 MB/s (HEAD MSMF), 23 min at 162 MB/s (MJPEG passthrough).

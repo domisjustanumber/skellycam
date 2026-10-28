@@ -1,5 +1,7 @@
 # e2e per-frame analysis: rank-4 drop detector validation, start/stop pause gap, grab-stamp vs capture-time spread
 
+> **Correction (2026-10-28):** "rank-4" is the pre-revision numbering (`study_state/recommend_result_pre_revision.json`). In the final `study_state/recommend_result.json` the live drop counter is rank 5.
+
 Source: bench_e2e_variants.py dumps (`*_perframe.npz`), real SkellyCam stack at 23ccbf20, 5 synthetic cameras, 30 s recording. Detector values are sums over 5 cameras. T = 16.667 ms (configured 60 fps).
 
 | run | true never grabbed | per_interval_round (grab / retrieve) | accumulated_clock (grab / retrieve) | fractional_sum (grab / retrieve) | skipped ticks in first 10 recorded frames (sum 5 cams) | skipped ticks in last 10 recorded frames | largest single gap in last 10 (ticks) | skipped ticks elsewhere | grab-stamp spread p99 ms | sensor-tick spread median / p99 / max ms |

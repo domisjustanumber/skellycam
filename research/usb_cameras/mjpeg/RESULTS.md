@@ -75,7 +75,7 @@ source is named. "Earlier" means the 2026-10-25 captures, re-validated with toda
 1. **Media Foundation IMFSourceReader with the native MJPG type delivers the camera's own JPEG bytes on all three
    cameras.** The tool selects the native MJPG media type with MF_READWRITE_DISABLE_CONVERTERS=TRUE. The reader's
    current output subtype is still MJPG afterwards (`delivered_codecs`), so no decoder MFT sits in the reader.
-   - **Validity:** 100% valid JPEG in every cell that streamed. Single cameras: 300 frames for the C922, 301 for the
+   - **Validity:** 100% valid JPEG (lenient decode, as defined under "valid %" above) in every cell that streamed. The generic camera's 1080p frames fail the strict libjpeg-turbo decode on every frame, on MF and PyAV alike (`pct_valid_jpeg_strict_all` = 0.0, "extraneous bytes before marker 0xd9") (corrected 2026-10-28; was an unqualified "100% valid"). Single cameras: 300 frames for the C922, 301 for the
      C930e and 257–258 for the generic camera per 10 s window, with 0 gaps over 1.5 periods.
    - **Frame rate:** C922 30.00, C930e 30.05, generic camera 25.76–25.78 fps, at both 1280x720@30 and 1920x1080@30.
    - **Process CPU** (one camera, % of one core): 0.7–2.2%.
@@ -117,7 +117,7 @@ source is named. "Earlier" means the 2026-10-25 captures, re-validated with toda
    - With no output subtype, frames arrive as decoded NV12 (1,382,400 B): C930e 30.6–30.7 fps, generic 25.9–26.1 fps,
      at 12–22% of one core (`mjpeg_winrt_variants/none_*`).
    - With outputSubtype "NV12": 0 frames and no callbacks.
-   - The single-camera C930e 720p cell got no FrameArrived callbacks at all (`mjpeg_winrt/common_1280x720at30_c930e`).
+   - The single-camera C930e 720p cell got no FrameArrived callbacks at all (`mjpeg_winrt/common_1280x720at30_c930e`), and neither did the generic camera in both all-three cells (`handler_calls` 0), so the E_INVALIDARG statement above is vacuous for those camera-cells (corrected 2026-10-28; was the C930e 720p cell only).
    - The 10-25 C922-only result is reconfirmed and now extends to the C930e and the generic camera.
 6. **OpenCV 4.12 (the skellycam baseline) never returns JPEG bytes.**
    - **CAP_DSHOW with FOURCC=MJPG:** BGR arrays, 24.6–28.3% of one core at 720p and 37–40% at 1080p, at full camera rate.
@@ -133,7 +133,7 @@ source is named. "Earlier" means the 2026-10-25 captures, re-validated with toda
    - The 10-25 "0 frames, about 93% CPU" result was a harness artifact. The script waited only 30 s for open, so the
      window started mid-open. The open wait is now a parameter (default 90 s), and the four cells affected tonight are
      marked INVALID and re-run as `*_openwait90`.
-7. **MF with its own MJPEG decoder (NV12 output):** 3.3–3.7% of one core at 720p at full camera rate, against
+7. **MF with its own MJPEG decoder (NV12 output):** 3.2–3.7% of one core at 720p at full camera rate (corrected 2026-10-28; was 3.3–3.7%), against
    0.7–1.8% for native MJPG on the same camera. On 10-25 it was 1.83% against 0.77% on the C922.
 8. **Timestamps each API attaches** (fields in `frames.jsonl`; analysis is goal 2's):
    - **MF:** ReadSample llTimestamp equals IMFSample::GetSampleTime, which equals MFSampleExtension_DeviceTimestamp, for
@@ -146,16 +146,18 @@ source is named. "Earlier" means the 2026-10-25 captures, re-validated with toda
      - Sample-time deltas step in about 16 ms units: p50 32.0 ms.
      - Arrival minus sample time is about 0.3–1 ms or about 16 ms for the Logitech cameras, varying by run, and about
        32–33 ms for the generic camera.
-   - **PyAV dshow:** pkt.pts deltas are exactly 33.333 ms for every camera, including the generic camera, which really
-     runs at 25.7 fps (33.338 ms). The pts are nominal, not capture times. On the generic camera, arrival minus pts
-     reaches about 1.06–1.09 s within 10 s.
+   - **PyAV dshow:** pkt.pts deltas are 33.333 ms (p50) on the C922 and C930e and a constant 33.338 ms on the generic
+     camera, although the generic camera really runs at 25.7 fps (about 38.9 ms per frame) (corrected 2026-10-28; was
+     "exactly 33.333 ms for every camera ... 25.7 fps (33.338 ms)"). The pts are nominal, not capture times. On the
+     generic camera, arrival minus pts grows from about 0.34–0.38 s to about 1.76–1.80 s across the 10 s window, median
+     1.06–1.09 s (corrected 2026-10-28; was "reaches about 1.06–1.09 s within 10 s", which is the median).
    - **OpenCV:** only CAP_PROP_POS_MSEC (logged as `pos_msec`).
    - **WinRT:** SystemRelativeTime (QPC-relative), only on the NV12 path.
 
 ### Night conditions
 
 - The room was dark. Luma p50 (0–255, JPEG Y) was about 17 on the C922 (near the JPEG black level of about 16), about
-  78–81 on the C930e, and 15–22 on the generic camera.
+  78–81 on the C930e, and about 20–22 on the generic camera (corrected 2026-10-28; was 15–22, which mixed in OpenCV decoded-pixel luma).
 - Exposure was manual in every cell: 2^-7 s requested on all three. The C930e reads back −5 (2^-5 s) in every cell, as
   it did on 10-25.
 - UVC auto-exposure priority was 0, and readback after each capture confirmed the settings.

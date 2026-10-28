@@ -46,6 +46,7 @@ On Windows and in Linux Docker, every script runs `--help` and `--selftest` clea
 - **tshark cross-check:** tshark 4.2.2 decodes every generated packet as intended, and agrees with the pcap report (77 leaders, 77 trailers, Mono8 512x512).
 - **Receive buffer:**
   - Linux's default buffer cap gives FAIL at 0–84 % complete frames, while the same stream captured with tcpdump shows 77/77.
+    > **Correction (2026-10-28):** the capped-buffer runs ranged from 0 % to 96 % complete, not 0–84 %. Under the 425,984 B cap the results were 23/77 (`docker/out/single_aravis.log`), 73/76 = 96.1 % (`docker/out/final_single_aravis.log`) and 64/76 = 84.2 % (`docker/out/final2_single_aravis.log`). The OS-default 212,992 B buffer gave 0/75 and 1/73. The same applies to "frames 0-84% complete" in the structured fields below.
   - With a forced 64 MiB buffer (container with NET_ADMIN), live capture completes 76/76 frames.
 - **Packet resend:** on the viva emulator, the 4 dropped packets were requested and all 4 recovered.
 - **Multi-camera:** works on a dedicated Docker network, including viva free-run pairing across two Aravis emulators.

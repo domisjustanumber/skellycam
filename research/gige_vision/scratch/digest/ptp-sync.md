@@ -14,12 +14,13 @@
   - enable bit in configuration register `0x0954`, bit `0x00080000`
   - status register `0x096C`
 - **Vendor quirks:**
-  - **Basler:** PTP is always off at power-up, and enabling it changes the tick from 125 MHz to 1 ns. Check the *maximum* offset over a time window, because it does not fall steadily.
+  - **Basler:** PTP is always off at power-up, and enabling it changes the tick from 125 MHz to 1 ns [**Correction (2026-10-28):** this applies only to ace Classic/U/L; other Basler cameras always tick at 1 GHz (1 ns) (verifier C16)]. Check the *maximum* offset over a time window, because it does not fall steadily.
   - **Allied Vision:** uses `PtpMode` Off/Slave/Master/Auto, and documents PtpStatus as 0-based. Read the enumeration by name, not by integer value.
   - **LUCID:** uses `PtpSlaveOnly` and supports end-to-end delay measurement only.
 
 ### 2. Who becomes grandmaster
 - **No host master is needed.** The cameras run the Best Master Clock Algorithm among themselves (Basler: lowest Priority1 wins; Allied Vision: Auto; LUCID: BMC).
+  > **Correction (2026-10-28):** Basler's `BslPtpPriority1` is configurable only on ace 2 and dart M. It is fixed at 128 on other models (verifier C9).
 - **Linux host as master:** possible with `ptp4l` (linuxptp v4.4; defaults are UDPv4, E2E delay, hardware timestamping; `-S` for software timestamping, `serverOnly`, `priority1`; [man page](https://github.com/richardcochran/linuxptp/blob/f98cb5de87e63696599c59d0a9df7dc04d08d40d/ptp4l.8#L48-L62)). Allied Vision warns that host software masters gave "significant jitter".
 - **Windows:** the built-in PTP is a *client* ("subordinate") only, available from Windows 10 1809 and Server 2019 ([W32Time README](https://github.com/microsoft/W32Time/blob/9795ef91dfe5a452266ffd8106ff2bcb17f33556/README.md#L25-L36)).
 - **macOS:** I could not find a supported option.
@@ -30,6 +31,7 @@
 - Allied Vision says all cameras should be on the same subnet behind one switch. Basler recommends PTP-capable switches.
 - **Accuracy figures from vendors:**
   - Allied Vision: "within two microseconds"; under ±1 µs over 69 hours; about 125 ns on an oscilloscope.
+    > **Correction (2026-10-28):** "within two microseconds" is the app note's definition of when sync is achieved, not a measurement. The measured figures are the ±1 µs maximum slave-master offset over 69 h and about 125 ns between two cameras, and they cover Prosilica GT/GC, Manta and Mako G only (verifier C13).
   - Teledyne: "a few microseconds".
   - LUCID: the sample output in its app note implies about 9.2 µs across 7 cameras. That is my arithmetic; LUCID states no figure.
 

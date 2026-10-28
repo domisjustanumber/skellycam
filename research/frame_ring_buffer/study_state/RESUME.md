@@ -46,7 +46,7 @@ Which numbers are idle and which are provisional: `../PROVISIONAL.md`.
 | Stage | Status | Output |
 |---|---|---|
 | Map (5 areas: write, read, control, ui, fmc) | Done (2026-10-25) | `verified_maps.json` (`map` per area) |
-| Verify (adversarial, per area) | Done (2026-10-25): 172 claims (123 confirmed, 43 corrected, 1 refuted, 5 unverifiable), 55 missed facts added | `verified_maps.json` (`verification`), compact form in `verified_digest.json` |
+| Verify (adversarial, per area) | Done (2026-10-25): 167 claims (123 confirmed, 43 corrected, 1 refuted, 0 unverifiable) (corrected 2026-10-28; was "172 claims (123 confirmed, 43 corrected, 1 refuted, 5 unverifiable)"), 55 missed facts added | `verified_maps.json` (`verification`), compact form in `verified_digest.json` |
 | Research: best practices, Python vs C++ | Done (2026-10-25) | `research.json` |
 | Benchmark: baseline | Done, **re-run idle in the 20261027 run** (2026-10-28 00:59-01:27) | `baseline_result.json`, `../baseline/` (README.md, scripts, results/); loaded first run kept in `baseline_result_provisional_20261025.json` and `../baseline/results_provisional_20261025/` |
 | Benchmark: prototypes P1-P10 | Done idle in the 20261027 run (01:44-03:20); `p10_msmf_threads` provisional (Defender scan), superseded by the idle `p10v_msmf_threads` | `prototypes_result.json`, `../prototypes/` |
@@ -70,11 +70,11 @@ Audit of 2026-10-28 (report auditor, 20261027 run). Every number in the doc was 
 - Read paths: the 0-tear result at L=388 (the 720p ring) was paired with the 1080p ring time (2.87 s). Now "720p ring (388 slots) ... 6.5 s at 720p, 2.87 s at 1080p" (`../prototypes/results/p2_seqlock_read.md` part A).
 - UI taps: "the UI got 36.6-40.8 payloads/s" now says "at 1080p" (720p runs gave 57.0-58.9/s).
 - Rank 7 and the Recommendations chart: the 59.82 / 59.95 fps prototype was labelled "with 6, 11, 13". P8 copies the decoded frame into the slot (no retrieve-into-slot, rank 11) and polls the gate with `time.sleep(1e-5)` (no event wake, rank 13) (`../prototypes/p8_e2e_proto.py` L17, L175, L193-194). Relabelled "seqlock ring + decoupled recorder, lockstep (6, 7)".
-- Rank 13: "a gate on one int64 array waited 0.03-0.18 ms" was the camera-0 median only. Per-camera medians are 0.03-6.4 ms (`lockstep_gate_wait` in `../prototypes/results/p8v_e2e_1080p_imdecode_msmf_lockstep_meta*.json`). Corrected in the doc.
+- Rank 13: "a gate on one int64 array waited 0.03-0.18 ms" was the camera-0 median only. Per-camera medians are 0.03-6.4 ms (`lockstep_gate_wait` in `../prototypes/results/p8v_e2e_1080p_imdecode_msmf_lockstep_meta{,_rep2}.json`; corrected 2026-10-28; was `..._lockstep_meta*.json`, which also matches the `_recthread` and `_extracpu3` runs, and all four together span 0.01-6.70 ms). Corrected in the doc.
 - Not recommended: hevc_nvenc / libx264 "56 fps and 46 fps" now says these are the slowest recorder's rates (`p5_nvenc.md`).
 - Byline as-of date moved from 2026-10-25 to 2026-10-28.
 
-Not corrected (not a doc file): `recommend_result.json` rank 13 `expected_impact` still says "waited 0.03-0.18 ms median"; the doc is right, the JSON is not.
+`recommend_result.json` rank 13 `expected_impact` was fixed at the end of the run (07:32:48, `../../overnight_run_20261027/OVERNIGHT_LOG.md`) and now says "waited 0.03-6.4 ms median per camera", which matches the doc (corrected 2026-10-28; was "Not corrected (not a doc file): ... still says 'waited 0.03-0.18 ms median'; the doc is right, the JSON is not.").
 
 ## Open items
 
@@ -96,7 +96,7 @@ Any re-run must set `FRAME_PIPELINE_RESULTS_DIR` first, or the scripts overwrite
 | Run | When | What |
 |---|---|---|
 | Original workflow `wf_c08d445c-b09` | 2026-10-25 | Map, verify, research, baseline (loaded, provisional), partial prototypes; paused by Dom at 18:50 |
-| Overnight run 20261027 | night of 2026-10-27/28 (00:59 to about 07:10) | Idle baseline re-run, prototypes P1-P10, C++ comparison, recommend, three critiques, reproducibility re-run, revision, report fill, report audit (`overnight_workflow.js`) |
+| Overnight run 20261027 | night of 2026-10-27/28 (workflow `wf_8fd1ec97-b0e`, 00:57:41 to 07:32:48) (corrected 2026-10-28; was "00:59 to about 07:10") | Idle baseline re-run, prototypes P1-P10, C++ comparison, recommend, three critiques, reproducibility re-run, revision, report fill, report audit (`overnight_workflow.js`) |
 
 ## Files in this folder
 

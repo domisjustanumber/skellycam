@@ -117,7 +117,7 @@ so the publish->read latency there measures queueing and is not compared.
 In the paced rows, reader CPU is about 16.5 ms per frame in every implementation, because every reader polls with `Sleep(0)` /
 `time.sleep(0)`. The policy is identical on both sides, so it does not bias the comparison.
 
-Note (2026-10-28): in unthrottled 5-writer rows the slowest-writer fps depends on how the writers share memory bandwidth; the reproducibility re-run gave cpp_one_copy 1207 / 1400 fps while its aggregate rose from 47.56 to 48.33 GB/s (`../reproducibility/comparison.md`). Read these cells as ranges (cpp_one_copy 1207-1488, py_seq 1294-1504); every implementation stays at least 20x above 60 fps.
+Note (2026-10-28): in unthrottled 5-writer rows the slowest-writer fps depends on how the writers share memory bandwidth; the reproducibility re-run gave cpp_one_copy 1207 / 1400 fps while its aggregate rose from 47.56 to 48.33 GB/s (`../reproducibility/comparison.md`). Read these cells as ranges (cpp_one_copy 1207-1488, py_seq 1294-1504); every one-copy implementation (py_seq, hybrid, hybrid_ctypes, cpp_one_copy) stays at least 20x above 60 fps, and sk_head / cpp_head_port stay about 6x above it (352-371 fps) (corrected 2026-10-28; was "every implementation stays at least 20x above 60 fps").
 
 ### 2. Copy bandwidth, the ceiling both languages share (`memcpy_cpp.json`, `memcpy_py.json`; median of 5 x 2 s reps)
 

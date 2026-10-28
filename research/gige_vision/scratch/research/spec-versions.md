@@ -52,6 +52,7 @@ Research date: 2026-10-25. Every claim below links to a page or code file that w
   | Action Group Key/Mask *n* | 0x9800 + 0x10·n |
 * **ACTION_CMD** is command 0x0100 and ACTION_ACK is 0x0101 ([L196-L197](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L196-L197)). The payload is device key, group key and group mask, followed by a 64-bit "Action Scheduled Time" when header flag 0x80 is set ([dissect_action_cmd L2092-L2114](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L2092-L2114), [flag L2517-L2518](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L2517-L2518)). The status codes ACTION_LATE 0x8016 and NO_REF_TIME 0x8013 are marked "GEV 2.0" (Aravis [arvgvspprivate.h L89-L93](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvspprivate.h#L89-L93)).
 * **Aravis has no host-side ACTION_CMD or PTP code** (main @482547a3, 2026-10-22). Its `ArvGvcpCommand` enum stops at PENDING_ACK 0x0089 ([L267-L282](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcpprivate.h#L267-L282)), and a grep for action_cmd/actioncommand in src/ returns nothing. Its GStreamer element does tag device timestamps as `timestamp/x-ptp` ([gst/gstaravis.c L564-L567](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/gst/gstaravis.c#L564-L567)). Neither Aravis nor Wireshark contains any RDMA, RoCE or GVRSP code (word-grep, 2026-10-25).
+  > **Correction (2026-10-28):** Wireshark does contain a generic RoCE/RRoCE dissector (`packet-infiniband.c` L33-L34, L1760-L1799). Only its GVCP/GVSP dissectors lack GVRSP (verifier C12, `verify-spec-versions.md`).
 
 ## SFNC (GenICam feature names, EMVA SFNC 2.8, dated 2026-04-08)
 
@@ -62,6 +63,7 @@ Research date: 2026-10-25. Every claim below links to a page or code file that w
 * GevSupportedOption values include Ptp, Action, UnconditionalAction and ScheduledAction.
 * SFNC 2.8 also "Set the unit to ns for all the Timestamp related features" and "Added JPEG XS".
 * No RDMA or GVRSP features in SFNC 2.8.
+  > **Correction (2026-10-28):** refuted by the verifier (C8). SFNC 2.8 already defines `GevStreamingMode` with values GVSP/GVRSP (§27.4.57, pp.560-561), `GevControlChannelMaxPacketSize` (§27.4.51, p.558) and `ControlChannelLargePacketSize` (p.37 change history). See `verify-spec-versions.md`.
 * Source: [GenICam_SFNC_v2_8.pdf](https://www.emva.org/wp-content/uploads/GenICam_SFNC_v2_8.pdf), linked from [EMVA downloads](https://www.emva.org/standards-technology/genicam/genicam-downloads/).
 
 ## Vendor confirmation of PTP edition and behaviour
