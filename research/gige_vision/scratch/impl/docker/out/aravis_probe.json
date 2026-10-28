@@ -1,0 +1,228 @@
+{
+ "tool": "gev_probe",
+ "host": {
+  "python": "3.12.3",
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "hostname": "3eb2fea01e1c",
+  "time_utc": "2026-10-25T19:25:44Z"
+ },
+ "interfaces": [],
+ "cameras": [
+  {
+   "ip": "127.0.0.1",
+   "discovery": {
+    "src": "127.0.0.1",
+    "gev_version": "0.0",
+    "gev_major": 0,
+    "gev_minor": 0,
+    "device_mode": "0x00000000",
+    "mac": "00:00:00:00:00:00",
+    "ip_config_options": "0x00000000",
+    "ip_config_current": "0x00000000",
+    "ip": "127.0.0.1",
+    "subnet_mask": "0.0.0.0",
+    "gateway": "0.0.0.0",
+    "manufacturer": "Aravis",
+    "model": "Fake",
+    "device_version": "0.8.30",
+    "manufacturer_info": "none",
+    "serial": "GV01",
+    "user_name": "",
+    "host_interface": {
+     "name": "lo",
+     "ip": "127.0.0.1",
+     "prefix_len": 8,
+     "broadcast": "127.255.255.255"
+    },
+    "same_subnet_as_host": true,
+    "control_ip": "127.0.0.1"
+   },
+   "gev_version": "0.0",
+   "gev_major": 0,
+   "capability": {
+    "raw": "0x00000000",
+    "set": []
+   },
+   "gvcp_configuration": {
+    "raw": "0x00000000",
+    "set": []
+   },
+   "sc_caps": {
+    "raw": "0x00000000",
+    "set": []
+   },
+   "device_mode": "0x00000000",
+   "tick_frequency_hz": 1000000000,
+   "heartbeat_timeout_ms": 3000,
+   "ccp": "0x00000000",
+   "device_mode_decoded": {
+    "big_endian": false,
+    "device_class": 0,
+    "current_link_configuration": 0,
+    "character_set": 0
+   },
+   "ptp": {
+    "supported": false
+   },
+   "action": {
+    "action": false,
+    "scheduled_action": false,
+    "unconditional_action": false
+   },
+   "stream_channel_0": {
+    "packet_size": 1400,
+    "do_not_fragment": false,
+    "big_endian_pixels": false,
+    "packet_delay_ticks": 0,
+    "host_port": 0,
+    "destination": "0.0.0.0",
+    "capability": {
+     "raw": "0x00000000",
+     "set": []
+    },
+    "configuration": "0x00000000",
+    "extended_ids_enabled": false,
+    "legacy_16bit_block_id_supported": false
+   },
+   "register_errors": {},
+   "xml": {
+    "url": "Local:arv-fake-camera.xml;10000;3e67",
+    "file_name": "arv-fake-camera.xml",
+    "error": "",
+    "bytes": 15975,
+    "features": {
+     "node_count": 69,
+     "root_attributes": {
+      "ModelName": "Fake",
+      "VendorName": "Aravis",
+      "SchemaMajorVersion": "1",
+      "SchemaMinorVersion": "0",
+      "MajorVersion": "1",
+      "MinorVersion": "0"
+     },
+     "present": {
+      "ptp_sfnc": [],
+      "ptp_deprecated": [],
+      "ptp_vendor": [],
+      "timestamp": [],
+      "action": [],
+      "scheduled_action": [],
+      "trigger": [
+       "TriggerSelector",
+       "TriggerMode",
+       "TriggerSource",
+       "TriggerActivation"
+      ],
+      "sync_free_run": [],
+      "transport_version": [],
+      "compression": [],
+      "frame_rate": [
+       "AcquisitionFrameRate"
+      ]
+     },
+     "enum_entries": {
+      "TriggerSource": [
+       "Line0",
+       "Software"
+      ],
+      "TriggerSelector": [
+       "FrameStart",
+       "AcquisitionStart"
+      ],
+      "PixelFormat": [
+       "BayerBG8",
+       "BayerGB8",
+       "BayerGR8",
+       "BayerRG8",
+       "Mono8",
+       "RGB8",
+       "Mono16"
+      ]
+     }
+    },
+    "saved_to": "/out/aravis_xml/Aravis_Fake_GV01_127.0.0.1.xml"
+   },
+   "sync_readiness": {
+    "ptp": false,
+    "scheduled_action": false,
+    "action": false,
+    "action_trigger_source_in_xml": false
+   }
+  }
+ ],
+ "checks": [
+  {
+   "name": "discovery",
+   "status": "PASS",
+   "detail": "1 camera(s) answered",
+   "camera": ""
+  },
+  {
+   "name": "read bootstrap registers",
+   "status": "PASS",
+   "detail": "via local interface 127.0.0.1",
+   "camera": "127.0.0.1 Aravis Fake"
+  },
+  {
+   "name": "GigE Vision version",
+   "status": "WARN",
+   "detail": "Version register reads 0.0 (invalid; emulator?)",
+   "camera": "127.0.0.1 Aravis Fake"
+  },
+  {
+   "name": "GVCP capabilities",
+   "status": "INFO",
+   "detail": "none (0x00000000)",
+   "camera": "127.0.0.1 Aravis Fake"
+  },
+  {
+   "name": "timestamp tick frequency",
+   "status": "INFO",
+   "detail": "1000000000 Hz (1 ns ticks, typical with PTP)",
+   "camera": "127.0.0.1 Aravis Fake"
+  },
+  {
+   "name": "IEEE 1588 (PTP)",
+   "status": "SKIP",
+   "detail": "not supported: capability bit 0x00080000 clear",
+   "camera": "127.0.0.1 Aravis Fake"
+  },
+  {
+   "name": "action commands",
+   "status": "SKIP",
+   "detail": "action=False scheduled=False unconditional=False",
+   "camera": "127.0.0.1 Aravis Fake"
+  },
+  {
+   "name": "stream channel 0",
+   "status": "INFO",
+   "detail": "SCPS packet size 1400 B (standard MTU); extended ids enabled=False",
+   "camera": "127.0.0.1 Aravis Fake"
+  },
+  {
+   "name": "GenICam XML",
+   "status": "PASS",
+   "detail": "15975 B in 0.0 s, 69 nodes, url Local:arv-fake-camera.xml;10000;3e67",
+   "camera": "127.0.0.1 Aravis Fake"
+  },
+  {
+   "name": "XML enum TriggerSource",
+   "status": "INFO",
+   "detail": "Line0, Software",
+   "camera": "127.0.0.1 Aravis Fake"
+  },
+  {
+   "name": "XML enum PixelFormat",
+   "status": "INFO",
+   "detail": "BayerBG8, BayerGB8, BayerGR8, BayerRG8, Mono8, RGB8, Mono16",
+   "camera": "127.0.0.1 Aravis Fake"
+  },
+  {
+   "name": "PTP + scheduled-action sync readiness",
+   "status": "WARN",
+   "detail": "missing: ptp, scheduled_action, action, TriggerSource Action0/Action1",
+   "camera": "127.0.0.1 Aravis Fake"
+  }
+ ]
+}

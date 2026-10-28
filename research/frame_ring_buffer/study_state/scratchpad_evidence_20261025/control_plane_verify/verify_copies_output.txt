@@ -1,0 +1,6 @@
+numpy 2.2.6; FRAME_METADATA_DTYPE.itemsize=632
+V1 frame itemsize=6221432; copy(frame.frame_metadata): type=recarray nbytes=632 shares_memory_with_frame=False owns_data=True
+V2 1280x720 itemsize 2.77 MB: put_data 0.598 ms | copy(frame) 0.436 ms | buf[i]=frame (no copy()) 0.066 ms | np.copyto rotating slot 0.079 ms
+V2 1920x1080 itemsize 6.22 MB: put_data 1.354 ms | copy(frame) 0.815 ms | buf[i]=frame (no copy()) 0.149 ms | np.copyto rotating slot 0.171 ms
+V3 camera_loop_update_checks raised beartype.roar.BeartypeCallHintParamViolation
+V4 retrieve ok=True; target C-contig=True; returned shares memory with recarray slot=True; slot modified=True

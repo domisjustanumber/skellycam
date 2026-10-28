@@ -1,0 +1,67 @@
+{
+ "test": "naming.test_linux_fake_sysfs",
+ "platform": "linux",
+ "hostname": "Gerald",
+ "command": "research/usb_cameras/naming/test_linux_fake_sysfs.py",
+ "input": "/mnt/c/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/naming/descriptors.json",
+ "keys": {
+  "085c": "046d:085c:sn=B76395EF",
+  "0843": "046d:0843:port=pci-0000:00:14.0/2.4"
+ },
+ "checks": [
+  {
+   "name": "two cameras found",
+   "ok": true,
+   "detail": [
+    "3-1",
+    "3-2.4"
+   ]
+  },
+  {
+   "name": "C922 key uses serial",
+   "ok": true,
+   "detail": "046d:085c:sn=B76395EF"
+  },
+  {
+   "name": "C930e key uses port",
+   "ok": true,
+   "detail": "046d:0843:port=pci-0000:00:14.0/2.4"
+  },
+  {
+   "name": "controller detected",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "by-path symlink resolved",
+   "ok": true,
+   "detail": [
+    [
+     "/tmp/tmp7m5xw257/dev/v4l/by-path/pci-0000:00:14.0-usb-0:1:1.0-video-index0"
+    ],
+    [
+     "/tmp/tmp7m5xw257/dev/v4l/by-path/pci-0000:00:14.0-usb-0:2.4:1.0-video-index0"
+    ]
+   ]
+  },
+  {
+   "name": "descriptors parsed from sysfs layout",
+   "ok": true,
+   "detail": [
+    null,
+    null
+   ]
+  },
+  {
+   "name": "UVC clock parsed (C922 300 MHz)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "querycap failure recorded, not raised",
+   "ok": true,
+   "detail": null
+  }
+ ],
+ "all_ok": true
+}

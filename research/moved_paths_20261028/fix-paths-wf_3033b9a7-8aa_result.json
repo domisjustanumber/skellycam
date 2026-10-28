@@ -1,0 +1,326 @@
+{
+  "summary": "After moving study folders under research/, fix every stale path in scripts, docs, resume guides and Claude Docs; smoke-test; verify nothing points to old locations",
+  "agentCount": 5,
+  "logs": [],
+  "result": {
+    "fixes": [
+      {
+        "area": "research/frame_ring_buffer/ (C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer)",
+        "changed": 13,
+        "smoke": [
+          {
+            "command": ".venv\\Scripts\\python.exe -m py_compile <all 53 .py files under research/frame_ring_buffer, excluding results and .venv-bench> (PYTHONPYCACHEPREFIX set to the scratchpad)",
+            "result": "PY_COMPILE_OK: all 53 compiled",
+            "passed": true
+          },
+          {
+            "command": "node -e \"new Function('args','agent','parallel','pipeline','phase','log','workflow','budget','return (async()=>{'+src.replace(/^export const meta/m,'const meta')+'})')\" for study_state/continue_workflow.js, original_workflow.js, overnight_workflow.js and workflows/frame-ring-buffer-analysis-wf_c08d445c-b09.js",
+            "result": "OK for all 4",
+            "passed": true
+          },
+          {
+            "command": "research/frame_ring_buffer/.venv-bench/Scripts/python.exe -c \"import numpy, turbojpeg, simplejpeg, pybind11\"",
+            "result": "bench venv ok: numpy 2.2.6, simplejpeg 1.9.0, pybind11 3.1.0",
+            "passed": true
+          },
+          {
+            "command": "(repo root) .venv\\Scripts\\python.exe -c \"sys.path += baseline, prototypes; import bench_common, proto_common; print RESULTS\"",
+            "result": "bench_common.RESULTS = C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\baseline\\results; proto_common.RESULTS = C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\frame_ring_buffer\\prototypes\\results",
+            "passed": true
+          },
+          {
+            "command": "python json.load on every research/frame_ring_buffer/study_state/*.json",
+            "result": "All 13 parse",
+            "passed": true
+          },
+          {
+            "command": "scratchpad verify_bytes.py: compare every file to the pre-edit tar backup after re-applying only the path substitution",
+            "result": "103 files checked, 0 mismatches. The only other changes are the two hand edits, in baseline/README.md and study_state/RESUME.md.",
+            "passed": true
+          },
+          {
+            "command": "scratchpad check_refs.py: check that every research/frame_ring_buffer/... path named in a .py/.md/.bat/.js guide or script exists",
+            "result": "56 distinct refs, 0 missing",
+            "passed": true
+          },
+          {
+            "command": "grep for old spellings (benchmarks/frame_pipeline, plans/gige, diagnostics/gige, test_gige_diagnostics_selftest, arduino-sync-PLAN, usb_cameras/overnight_rerun) outside the historical files",
+            "result": "Only the 3 intentional mentions are left: the moved-from notes in RESUME.md (2) and baseline/README.md (1)",
+            "passed": true
+          },
+          {
+            "command": "grep for --help / --selftest / argparse in research/frame_ring_buffer/**/*.py",
+            "result": "No script has a --help or --selftest flag, so none was run. The summarizers would rewrite files under results/, so they were not run either.",
+            "passed": true
+          },
+          {
+            "command": "git status --porcelain (read-only)",
+            "result": "Only '?? research/'. No tracked skellycam files were touched.",
+            "passed": true
+          }
+        ],
+        "issues": [
+          "There is no top-level README.md in research/frame_ring_buffer. The one historical-paths note is in study_state/RESUME.md, the area's main guide. The stage READMEs (baseline, prototypes, cpp) do not repeat it.",
+          "The Claude Doc report (https://claude.ai/artifact/Cz1otkZxAjLTHfP1WeE9it) may still cite benchmarks/frame_pipeline paths. It is outside this area and was not edited.",
+          "The memory note frame-ring-buffer-study.md (outside this area) still says to resume from 'skellycam benchmarks/frame_pipeline/study_state/RESUME.md'. It should now point to research/frame_ring_buffer/study_state/RESUME.md.",
+          "cpp/env_snapshot.py, cpp/summarize_load.py, prototypes/env_snapshot.py and prototypes/summarize_load.py were copied from baseline and still name baseline\\\\... in their docstring run lines. That predates the move; only the root path was updated.",
+          "A pre-edit backup of the area (without results or .venv-bench) is at C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\pre_move_fix_backup.tar"
+        ]
+      },
+      {
+        "area": "research/gige_vision/",
+        "changed": 9,
+        "smoke": [
+          {
+            "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe -m pytest research/gige_vision/hardware_tests/tests -q",
+            "result": "5 passed in 0.07s (also passed with -p no:cacheprovider)",
+            "passed": true
+          },
+          {
+            "command": ".venv\\Scripts\\python.exe research/gige_vision/hardware_tests/gev_common.py --selftest",
+            "result": "exit 0; 40 passed, 0 failed",
+            "passed": true
+          },
+          {
+            "command": ".venv\\Scripts\\python.exe research/gige_vision/hardware_tests/gev_probe.py --selftest",
+            "result": "exit 0; 40 passed, 0 failed",
+            "passed": true
+          },
+          {
+            "command": ".venv\\Scripts\\python.exe research/gige_vision/hardware_tests/gev_ptp_sync_test.py --selftest",
+            "result": "exit 0; 41 passed, 0 failed",
+            "passed": true
+          },
+          {
+            "command": ".venv\\Scripts\\python.exe research/gige_vision/hardware_tests/gvsp_capture_report.py --selftest",
+            "result": "exit 0; 43 passed, 0 failed",
+            "passed": true
+          },
+          {
+            "command": ".venv\\Scripts\\python.exe research/gige_vision/hardware_tests/udp_recv_benchmark.py --selftest",
+            "result": "exit 0; 42 passed, 0 failed",
+            "passed": true
+          },
+          {
+            "command": ".venv\\Scripts\\python.exe research/gige_vision/hardware_tests/viva_sync_capture_test.py --selftest",
+            "result": "exit 0; 43 passed, 0 failed (viva-genicam is not installed in .venv; the selftest does not need it)",
+            "passed": true
+          },
+          {
+            "command": "cd research/gige_vision && python -m hardware_tests.gev_probe --selftest",
+            "result": "40 passed. The package-relative import path that hardware_tests/__init__.py enables still works, so the empty __init__.py was kept.",
+            "passed": true
+          },
+          {
+            "command": "python research/gige_vision/hardware_tests/<each of 5 scripts>.py --help",
+            "result": "all exit 0",
+            "passed": true
+          },
+          {
+            "command": "py_compile.compile(..., doraise=True) on every .py under research/gige_vision (cfile written to the scratchpad so no __pycache__ lands in scratch/)",
+            "result": "71 files compiled, 0 failures",
+            "passed": true
+          }
+        ],
+        "issues": [
+          "Git Bash `sed -i` on this machine converts CRLF to LF. It rewrote the 5 hardware_tests/*.py scripts (comment edit), workflows/gige-implement-wf_d9795230-c81.js and scratch/impl/docker/Dockerfile. The JS original under .claude/projects and the Dockerfile original in the old scratchpad are LF, so those match. The .py scripts' original line endings could not be verified because no original copy exists, but they may already have been LF. windows_final.sh had been LF-converted by a failed sed and was restored to CRLF; the CRLF .md result file was edited with Python and keeps CRLF.",
+          "Line 91 of workflows/gige-implement-wf_d9795230-c81.js now reads 'Put it in the repo at ${REPO}/research/gige_vision/hardware_tests/ (this mirrors existing diagnostics scripts in skellycam/system/diagnostics/)'. Only the path was changed, so the parenthetical is now slightly stale. The Prep phase is already done and RESUME says to delete it.",
+          "Running pytest and the selftests created __pycache__ dirs in hardware_tests/ and hardware_tests/tests/. They were not deleted, per the no-delete rule.",
+          "The hardware tests no longer get beartype checking. If that matters, the future GigE backend plan needs to decide whether shipped diagnostics go back into the skellycam package (noted in RESUME.md)."
+        ]
+      },
+      {
+        "area": "research/usb_cameras/, research/arduino_sync/, research/overnight_run_20261027/, research/README.md",
+        "changed": 6,
+        "smoke": [
+          {
+            "command": "node -e \"new Function('args','agent','parallel','pipeline','phase','log','workflow','budget','return (async()=>{'+fs.readFileSync(F)...replace(/^export const meta/m,'const meta')+'})')\" with F=research/usb_cameras/workflows/overnight_rerun_workflow.js",
+            "result": "OK (parses)",
+            "passed": true
+          },
+          {
+            "command": "same node syntax check with F=research/overnight_run_20261027/workflows/summary-reports-three-docs-wf_264799ca-33d.js",
+            "result": "OK (parses)",
+            "passed": true
+          },
+          {
+            "command": "uv run --script research/usb_cameras/naming/test_parsers.py --out-dir C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\naming_smoke",
+            "result": "all_ok = True; every check PASS. Output went to the scratchpad via --out-dir so the recorded results/windows/Gerald/naming/test_parsers.json was not overwritten.",
+            "passed": true
+          },
+          {
+            "command": "git status --porcelain | grep -v '^??'",
+            "result": "No tracked files modified",
+            "passed": true
+          },
+          {
+            "command": "py_compile / bash -n",
+            "result": "Not applicable: no .py or .sh files were touched in this area",
+            "passed": true
+          }
+        ],
+        "issues": [
+          "research/gige_vision/RESUME.md (outside this area) still lists the hardware test suite at skellycam/system/diagnostics/gige/ and skellycam/tests/test_gige_diagnostics_selftest.py. The research/README.md index points to gige_vision/hardware_tests/ correctly; the gige area's own guide is another agent's task.",
+          "The research/usb_cameras/README.md layout block was already out of date: it lists platform/ (does not exist) and omits driver_swap/, prior_art/, rust/ and verify_prior_art/. Only workflows/ was added.",
+          "usb_cameras/PROGRESS.md section A and 'Where results live' still give the ~/.claude session 96d4d83a paths for the resume command and journals, as allowed. The repo copies are now mentioned next to them."
+        ]
+      },
+      {
+        "area": "Claude Docs (6 docs; no repo files touched)",
+        "changed": 6,
+        "smoke": [
+          {
+            "command": "Docs search 'frame_ring_buffer' in the Frame ring buffer report after the edit",
+            "result": "15 hits, all in the new form: 3 paragraphs plus 12 commands in the code block, each now research\\frame_ring_buffer\\<stage>\\<script>.",
+            "passed": true
+          },
+          {
+            "command": "Docs search for old fragments (benchmarks, plans, gige, diagnostics, selftest, arduino, overnight, workflow, frame_pipeline) across all 6 docs",
+            "result": "Before the edits, only the two frame ring buffer docs had old paths: 15 in the report and 1 in the summary. The other 4 docs had 0. A re-search after the edits was not run; the edit acks show the new text at every occurrence.",
+            "passed": true
+          },
+          {
+            "command": "Grep FRAME_PIPELINE_RESULTS_DIR in research/frame_ring_buffer/*.py",
+            "result": "Still used: 3 occurrences in fp_paths.py and 1 in revision/write_revision_result.py. The env var name in the docs is therefore still correct.",
+            "passed": true
+          },
+          {
+            "command": "Read the code of all 7 widgets in the docs (4 in the report, 2 in the frame ring buffer summary, 1 in the USB camera tests summary)",
+            "result": "No old repo paths in any widget code or caption. No widget drafts or publishes were needed.",
+            "passed": true
+          }
+        ],
+        "issues": [
+          "The USB camera report (f1ce03cd) and the GigE Vision report (cd925fcc) still have unfilled pending sections. The GigE 'Stand-alone test suite' section has not been written. When it is, it should name research/gige_vision/hardware_tests/ (and tests/test_gige_diagnostics_selftest.py there), not skellycam/system/diagnostics/gige.",
+          "The frame ring buffer report's commands still run .venv\\Scripts\\python.exe from the repo root. Per the move notes, the separate .venv-bench was rebuilt in place under research/frame_ring_buffer. The report never named .venv-bench, so nothing about it was changed. I did not check whether the reproduction steps should now name that venv.",
+          "No doc has a note about the move itself. Only the path strings were updated."
+        ]
+      }
+    ],
+    "verify": "No stale references are left, and I made no edits. Every old-path hit outside the historical records is either a deliberate \"moved from\" note or the as-run overnight `PLAN.md` described in item 2 below. All smoke tests pass.\n\n**1. Repo-wide sweep** (whole working tree, excluding `.venv`, `.venv-bench`, `.git`, `node_modules` and `__pycache__`; patterns: `benchmarks[/\\]+frame_pipeline`, `plans[/\\]+gige-vision`, `system[/\\]+diagnostics[/\\]+gige`, `diagnostics.gige`, `test_gige_diagnostics_selftest`, `arduino-sync-PLAN`, `usb_cameras[/\\]+overnight_rerun_workflow`, `skellycam[/\\]+benchmarks`, plus a looser search for `benchmarks`, `frame_pipeline`, `plans/`, `gige-vision`, `arduino-sync` and `overnight_rerun_workflow`):\n\n- **(a) Allowed historical records:**\n  - every file under `research/frame_ring_buffer/**/results/` and `results_*/`, including the `cpp/results/*/_log.txt` files and `reproducibility/rerun/*/results`\n  - `research/frame_ring_buffer/study_state/journal_wf_c08d445c-b09.jsonl` and `prototypes_partial_transcript.jsonl`\n  - `research/gige_vision/workflows/wf_d9795230-c81.journal.jsonl`\n  - the \"Structured fields\" JSON block in `research/gige_vision/scratch/impl/prep-hardware-tests.result.md` (lines 60-84)\n  - the section-2 commands in `research/gige_vision/scratch/impl/hwtests.md` (lines 79, 90, 99), which are labelled as runs made at the old location\n- **(b) Intentional \"was / moved from\" notes, not stale:**\n  - `research/README.md` lines 8, 9, 10 and 17\n  - `research/frame_ring_buffer/study_state/RESUME.md` lines 8 and 13\n  - `research/frame_ring_buffer/baseline/README.md:307`\n  - `research/gige_vision/RESUME.md` lines 5, 7, 24, 90 and 92\n  - `research/gige_vision/hardware_tests/README.md:42` and `hardware_tests/tests/test_gige_diagnostics_selftest.py:3`\n  - the move notes in `hwtests.md` (lines 3, 5, 8, 17) and `prep-hardware-tests.result.md` (lines 3, 7, 28)\n  - the trailing comments in `windows_final.sh:4`, `docker/Dockerfile:1` and `summary-reports-three-docs-wf_264799ca-33d.js:13`\n  - `research/overnight_run_20261027/README.md` lines 28-29\n  - `research/usb_cameras/PROGRESS.md:49`\n- **No old paths at all in:**\n  - the `study_state/*.json` files (13 of them)\n  - any `.py`, `.js`, `.bat`, `.sh` or `.ps1` file outside results\n  - `research/frame_ring_buffer/.venv-bench`\n- **Path constants all resolve to the new folders:**\n  - `cpp/run_all.py` (C) and `prototypes/run_all.py` (P)\n  - `revision/run_revision.py` (B and P)\n  - BENCH and STATE in `study_state/*.js` and `workflows/*.js`\n  - UC and OLD_WF in `usb_cameras/workflows/overnight_rerun_workflow.js`\n  - the repo-root math: `SK = HERE.parents[2]` and `FP.parents[1]`\n- **Stale hits fixed:** none were needed.\n\n**2. Judgment calls left as they are**\n\n- `research/overnight_run_20261027/PLAN.md` lines 27 and 35 still give `<REPO>\\research\\usb_cameras\\overnight_rerun_workflow.js` and `<REPO>\\benchmarks\\frame_pipeline\\study_state\\overnight_workflow.js`. The task's rules list PLAN files as guides to update. This one is the as-run copy of a finished one-off run, and `research/overnight_run_20261027/README.md` (lines 24-29, \"Historical paths\") maps both old paths to their new ones. I treated it as a historical record. If you want it updated, the change is those two lines, plus the README sentence saying the file was not edited.\n- `research/gige_vision/workflows/gige-implement-wf_d9795230-c81.js:91`: the parenthetical \"(this mirrors existing diagnostics scripts in skellycam/system/diagnostics/)\" no longer fits the new location. It is cosmetic, and that phase is already done.\n\n**3. Nothing outside `research/` depends on the moved code**\n\n- `git grep` over tracked files for `diagnostics.gige`, `diagnostics/gige`, `frame_pipeline`, `gige-vision`, `arduino-sync`, `benchmarks/` and `plans/` found nothing. A wider search for \"gige\" matched only a German UI string in `skellycam-ui/src/i18n/locales/de-deutsch.json:98`.\n- `git status --porcelain` shows only `?? research/`.\n- `skellycam/system/diagnostics/` no longer has a `gige/` folder, and `benchmarks/` and `plans/` are gone.\n\n**4. Smoke tests** (all pass)\n\n| Command | Result |\n| --- | --- |\n| `.venv\\Scripts\\python.exe -m pytest skellycam/tests -q -x --co -p no:cacheprovider` | 190 tests collected, no errors (only a beartype PEP 585 deprecation warning) |\n| `.venv\\Scripts\\python.exe -m pytest research/gige_vision/hardware_tests/tests -q -p no:cacheprovider` | 5 passed in 0.06s |\n| `py_compile` on every `.py` under `research/` (excluding venvs, `__pycache__`, vendor; `.pyc` written to scratchpad) | 247 compiled, 0 failures |\n| `research/frame_ring_buffer/.venv-bench/Scripts/python.exe -c \"import numpy, turbojpeg, simplejpeg, pybind11\"` | OK (numpy 2.2.6, simplejpeg 1.9.0, pybind11 3.1.0). `uv pip list` shows the 7 packages: av, numpy, opencv-contrib-python, psutil, pybind11, pyturbojpeg, simplejpeg |\n| The `new Function` node syntax check on all 13 scripts (`research/*/workflows/*.js` and `research/frame_ring_buffer/study_state/*.js`) | 13 of 13 OK |\n| `json.load` on `research/frame_ring_buffer/study_state/*.json` | 13 files, 0 bad |\n\n**5. `research/README.md`**\n\n- All five folders it lists exist: `usb_cameras`, `frame_ring_buffer`, `gige_vision`, `arduino_sync`, `overnight_run_20261027`.\n- All five read-first files exist, and so does `gige_vision/hardware_tests/README.md`.\n- All six doc links open with the matching title:\n  - `Cz1otkZxAjLTHfP1WeE9it`: \"SkellyCam → FreeMoCap Frame Ring Buffer: Analysis & Throughput Plan\"\n  - `H1dJaFNr9cbuQD3XNU78fq`: \"Frame ring buffer summary\"\n  - `5QePjWZ3RA8xovd8kQqo26`: \"MJPEG passthrough summary\" (slug 23b1b477…)\n  - `7JPrCGRtZ59LpSj1qdum5E`: \"USB camera tests summary\" (slug 33048e86…)\n  - `WrpwyyMF7yU1amEB9pQYgE` and `SPKjXcBjS5kJmGwtbXGPWZ` also appear in `PROGRESS.md`, `gige_vision/RESUME.md` and the memory notes.\n\n**6. Claude Docs spot-check**\n\nThe Frame ring buffer report is at rev 35, which matches the fix agent's \"rev 20 -> 35\". A search for \"benchmarks\" returns 0 hits. A search for \"frame_pipeline\" returns only the two `FRAME_PIPELINE_RESULTS_DIR` env-var mentions, which are correct to keep. The 12 commands in the code block all use `research\\frame_ring_buffer\\...`. The report is plausible.\n\n**7. Still to fix, all outside the repo**\n\n- The index `C:\\Users\\Dom\\.claude\\projects\\c--Users-Dom-GitHub-freemocap-skellycam\\memory\\MEMORY.md` still has two stale lines:\n  - the frame ring buffer line says to resume from \"skellycam benchmarks/frame_pipeline/study_state/RESUME.md\"; it should be `research/frame_ring_buffer/study_state/RESUME.md`\n  - the GigE line says \"resume from plans/gige-vision/RESUME.md\"; it should be `research/gige_vision/RESUME.md`\n\n  The topic notes `frame-ring-buffer-study.md` and `gige-vision-paused.md` are already updated. I did not edit the memory files because they are outside the repo.\n- The fix agents' runs left `__pycache__` folders in `research/gige_vision/hardware_tests/` and `hardware_tests/tests/`, and there is one in `research/frame_ring_buffer/`. They were not deleted, per the no-delete rule.\n- The 5 `hardware_tests/*.py` scripts may have been converted from CRLF to LF by `sed -i`. No original copy exists to check against, and it does not affect how they run.\n\nThe only files I wrote are in the scratchpad: `C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\pyc_all.py`, `C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\jsonchk.py`, `C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\pat.txt`, `C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\oldpats.txt` and the folder `C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\pyc_out`."
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Fix"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Verify"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "fix:frame_ring_buffer",
+      "phaseIndex": 1,
+      "phaseTitle": "Fix",
+      "agentId": "ab159e02fc3836801",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1793192112290,
+      "queuedAt": 1793192112275,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "research/frame_ring_buffer/ (C:\\Users\\Dom\\GitHub\\freemocap\\…",
+      "promptPreview": "MOVES ALREADY DONE (2026-10-28; nothing is committed; the repo is C:\\Users\\Dom\\GitHub\\freemocap\\skellycam, branch development):\n- benchmarks/frame_pipeline/            -> research/frame_ring_buffer/      (same depth: parents[n] repo-root math is unchanged; .venv-bench was rebuilt in place with the same 7 packages; the 'benchmarks' folder is gone)\n- plans/gige-vision/                    -> research…",
+      "promptFramed": true,
+      "lastProgressAt": 1793192333113,
+      "tokens": 93714,
+      "toolCalls": 33,
+      "durationMs": 220823,
+      "resultPreview": "{\"area\":\"research/frame_ring_buffer/ (C:\\\\Users\\\\Dom\\\\GitHub\\\\freemocap\\\\skellycam\\\\research\\\\frame_ring_buffer)\",\"files_changed\":[{\"path\":\"research/frame_ring_buffer/baseline/{analyze_gap_detector,bench_a_write,bench_b_read,bench_c_record,bench_d_ui,bench_e2e_variants,bench_e_e2e,bench_f_copies,bench_g_decode_ref,bench_h_deflate,env_snapshot,repro_type_overloads_spawn,run_with_load,summarize_e2e,…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "fix:gige_vision",
+      "phaseIndex": 1,
+      "phaseTitle": "Fix",
+      "agentId": "a8a42006dd0d746ec",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1793192112290,
+      "queuedAt": 1793192112275,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "research/gige_vision/",
+      "promptPreview": "MOVES ALREADY DONE (2026-10-28; nothing is committed; the repo is C:\\Users\\Dom\\GitHub\\freemocap\\skellycam, branch development):\n- benchmarks/frame_pipeline/            -> research/frame_ring_buffer/      (same depth: parents[n] repo-root math is unchanged; .venv-bench was rebuilt in place with the same 7 packages; the 'benchmarks' folder is gone)\n- plans/gige-vision/                    -> research…",
+      "promptFramed": true,
+      "lastProgressAt": 1793192352367,
+      "tokens": 108981,
+      "toolCalls": 30,
+      "durationMs": 239095,
+      "resultPreview": "{\"area\":\"research/gige_vision/\",\"files_changed\":[{\"path\":\"C:\\\\Users\\\\Dom\\\\GitHub\\\\freemocap\\\\skellycam\\\\research\\\\gige_vision\\\\RESUME.md\",\"change\":\"Added a dated 'Moved 2026-10-28' note: the folder was plans/gige-vision/; at Dom's request the hardware tests moved out of the skellycam package to research/gige_vision/hardware_tests/, the import name skellycam.system.diagnostics.gige is gone, beartyp…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "fix:usb_arduino_overnight_index",
+      "phaseIndex": 1,
+      "phaseTitle": "Fix",
+      "agentId": "ae2029ba7652c2f0a",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1793192112290,
+      "queuedAt": 1793192112275,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "research/usb_cameras/, research/arduino_sync/, research/ove…",
+      "promptPreview": "MOVES ALREADY DONE (2026-10-28; nothing is committed; the repo is C:\\Users\\Dom\\GitHub\\freemocap\\skellycam, branch development):\n- benchmarks/frame_pipeline/            -> research/frame_ring_buffer/      (same depth: parents[n] repo-root math is unchanged; .venv-bench was rebuilt in place with the same 7 packages; the 'benchmarks' folder is gone)\n- plans/gige-vision/                    -> research…",
+      "promptFramed": true,
+      "lastProgressAt": 1793192282570,
+      "tokens": 80024,
+      "toolCalls": 31,
+      "durationMs": 169297,
+      "resultPreview": "{\"area\":\"research/usb_cameras/, research/arduino_sync/, research/overnight_run_20261027/, research/README.md\",\"files_changed\":[{\"path\":\"C:\\\\Users\\\\Dom\\\\GitHub\\\\freemocap\\\\skellycam\\\\research\\\\usb_cameras\\\\PROGRESS.md\",\"change\":\"Added a 'Workflow scripts' line under the header: repo copies of all earlier workflow scripts (phase1, phase2, verify-timing-flash, mjpeg-finish, overnight) are now in rese…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "fix:claude_docs",
+      "phaseIndex": 1,
+      "phaseTitle": "Fix",
+      "agentId": "a2ee11bb82e230f9a",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1793192112290,
+      "queuedAt": 1793192112275,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Claude Docs (6 docs; no repo files touched)",
+      "promptPreview": "MOVES ALREADY DONE (2026-10-28; nothing is committed; the repo is C:\\Users\\Dom\\GitHub\\freemocap\\skellycam, branch development):\n- benchmarks/frame_pipeline/            -> research/frame_ring_buffer/      (same depth: parents[n] repo-root math is unchanged; .venv-bench was rebuilt in place with the same 7 packages; the 'benchmarks' folder is gone)\n- plans/gige-vision/                    -> research…",
+      "promptFramed": true,
+      "lastProgressAt": 1793192287134,
+      "tokens": 142333,
+      "toolCalls": 62,
+      "durationMs": 173861,
+      "resultPreview": "{\"area\":\"Claude Docs (6 docs; no repo files touched)\",\"files_changed\":[{\"path\":\"Claude Doc 'SkellyCam → FreeMoCap Frame Ring Buffer: Analysis & Throughput Plan' (610a6b1c-1f2a-4bb4-95ef-02f4b8ca0a15, https://claude.ai/artifact/Cz1otkZxAjLTHfP1WeE9it)\",\"change\":\"Found 15 occurrences of benchmarks/frame_pipeline and fixed all 15 with in-place text replacements (rev 20 -> 35). Paragraph 'Paths are re…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 5,
+      "label": "verify:sweep",
+      "phaseIndex": 2,
+      "phaseTitle": "Verify",
+      "agentId": "a3e4ce5ceb7714a2d",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1793192354390,
+      "queuedAt": 1793192354388,
+      "attempt": 1,
+      "lastToolName": "Bash",
+      "lastToolSummary": "cd /c/Users/Dom/GitHub/freemocap/skellycam/research/gige_vi…",
+      "promptPreview": "MOVES ALREADY DONE (2026-10-28; nothing is committed; the repo is C:\\Users\\Dom\\GitHub\\freemocap\\skellycam, branch development):\n- benchmarks/frame_pipeline/            -> research/frame_ring_buffer/      (same depth: parents[n] repo-root math is unchanged; .venv-bench was rebuilt in place with the same 7 packages; the 'benchmarks' folder is gone)\n- plans/gige-vision/                    -> research…",
+      "promptFramed": true,
+      "lastProgressAt": 1793192516799,
+      "tokens": 114205,
+      "toolCalls": 24,
+      "durationMs": 162409,
+      "resultPreview": "No stale references are left, and I made no edits. Every old-path hit outside the historical records is either a deliberate \"moved from\" note or the as-run overnight `PLAN.md` described in item 2 below. All smoke tests pass.\n\n**1. Repo-wide sweep** (whole working tree, excluding `.venv`, `.venv-bench`, `.git`, `node_modules` and `__pycache__`; patterns: `benchmarks[/\\]+frame_pipeline`, `plans[/\\]+…"
+    }
+  ],
+  "totalTokens": 539257,
+  "totalToolCalls": 180
+}

@@ -1,0 +1,46 @@
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\logging\__init__.py", line 1163, in emit
+    stream.write(msg + self.terminator)
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2514' in position 10: character maps to <undefined>
+Call stack:
+  File "C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\ad23e4da-d956-400c-b95c-1c7166f96ad9\scratchpad\read_path_probe.py", line 121, in <module>
+    run(1280, 720)
+  File "C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\ad23e4da-d956-400c-b95c-1c7166f96ad9\scratchpad\read_path_probe.py", line 98, in run
+    fn_, ts_, payload = create_frontend_payload(latest_frames=lm)
+  File "<@beartype(skellycam.core.types.frontend_payload_bytearray.create_frontend_payload) at 0x1b21e61a0c0>", line 126, in create_frontend_payload
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\types\frontend_payload_bytearray.py", line 81, in create_frontend_payload
+    logger.debug(f"Set reusable bytes payload to {estimated_size // ONE_KILOBYTE} kilobytes")
+Message: 'Set reusable bytes payload to 6145 kilobytes'
+Arguments: ()
+3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]
+numpy 2.2.6 cv2 4.12.0
+===== 5 cameras @ 1280x720 BGR =====
+frame dtype itemsize = 2765432 bytes; image bytes = 2764800; metadata+pad = 632
+ring_buffer_length per camera = 388 slots (6.47 s of headroom at 60 fps); shm bytes per camera = 1072987616
+copy.copy(recarray) shares memory with source? False (False => put_data() line 132 allocates+copies once, then slot assignment copies again)
+get_latest_multiframe() result shares memory with SHM ring? False
+get_latest_multiframe() reuses the same destination recarrays on 2nd call? True
+get_images_by_frame_number: module cache populated after calls? 0 entries; same destination arrays reused across calls? False
+VideoRecorder input frame.image[0]: shares memory with camera-local recarray? True; C-contiguous? True; shares memory with SHM? False
+create_frontend_payload returns the reusable buffer itself? False (False => bytearray[:n] slice made a new copy of 334761 bytes)
+get_latest_multiframe (5x np.copyto from SHM):       median 0.787 ms  p95 1.303 ms  (n=200)
+get_images_by_frame_number (alloc + 5x copyto):      median 2.655 ms  p95 3.846 ms  (n=200)
+create_frontend_payload (resize 0.5 + JPEG q60 x5):  median 3.978 ms  p95 4.307 ms  (n=50)
+single-camera np.copyto of one frame slot:           median 0.076 ms  p95 0.087 ms  (n=200)
+===== 5 cameras @ 1920x1080 BGR =====
+frame dtype itemsize = 6221432 bytes; image bytes = 6220800; metadata+pad = 632
+ring_buffer_length per camera = 172 slots (2.87 s of headroom at 60 fps); shm bytes per camera = 1070086304
+copy.copy(recarray) shares memory with source? False (False => put_data() line 132 allocates+copies once, then slot assignment copies again)
+get_latest_multiframe() result shares memory with SHM ring? False
+get_latest_multiframe() reuses the same destination recarrays on 2nd call? True
+get_images_by_frame_number: module cache populated after calls? 0 entries; same destination arrays reused across calls? False
+VideoRecorder input frame.image[0]: shares memory with camera-local recarray? True; C-contiguous? True; shares memory with SHM? False
+create_frontend_payload returns the reusable buffer itself? False (False => bytearray[:n] slice made a new copy of 750819 bytes)
+get_latest_multiframe (5x np.copyto from SHM):       median 1.898 ms  p95 2.293 ms  (n=200)
+get_images_by_frame_number (alloc + 5x copyto):      median 5.588 ms  p95 6.533 ms  (n=200)
+create_frontend_payload (resize 0.5 + JPEG q60 x5):  median 8.477 ms  p95 10.777 ms  (n=50)
+single-camera np.copyto of one frame slot:           median 0.163 ms  p95 0.194 ms  (n=200)

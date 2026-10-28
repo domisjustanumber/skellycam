@@ -1,0 +1,150 @@
+{
+ "tool": "gvsp_capture_report",
+ "host": {
+  "python": "3.12.3",
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "hostname": "3eb2fea01e1c",
+  "time_utc": "2026-10-25T19:26:01Z"
+ },
+ "args": {
+  "pcap": "/out/aravis_live.pcap",
+  "ip": null,
+  "iface": "",
+  "seconds": 5.0,
+  "packet_size": 0,
+  "test_packet": false,
+  "extended_ids": false,
+  "no_resend": false,
+  "resend_wait": 0.05,
+  "rcvbuf": 33554432,
+  "force_rcvbuf": false,
+  "port": 0,
+  "control": "stdlib",
+  "save_frame": null,
+  "tick_hz": 1000000000,
+  "min_complete": 0.99,
+  "json": "/out/aravis_pcap.json",
+  "selftest": false
+ },
+ "capture": {
+  "file": "/out/aravis_live.pcap",
+  "frames": 14926,
+  "truncated_frames": 14701,
+  "ip_fragments": 0,
+  "gvcp_commands_seen": {
+   "READREG": 12,
+   "READMEM": 33,
+   "WRITEREG": 8
+  }
+ },
+ "streams": {
+  "GVSP 127.0.0.1:36820 -> 127.0.0.1:41207": {
+   "packets": 14820,
+   "bytes": 20044848,
+   "packet_formats": {
+    "LEADER": 76,
+    "PAYLOAD": 14668,
+    "TRAILER": 76
+   },
+   "status_codes": {
+    "SUCCESS": 14820
+   },
+   "extended_id_packets": 0,
+   "extended_ids_used": false,
+   "resent_packets_received": 0,
+   "late_packets_after_close": 0,
+   "frames_seen": 76,
+   "frames_complete": 76,
+   "frames_incomplete": 0,
+   "frames_trailer_missing": 0,
+   "frames_leader_missing": 0,
+   "missing_packets_total": 0,
+   "block_id_gaps": 0,
+   "completeness": 1.0,
+   "resend_ranges_requested": 0,
+   "resend_packets_requested": 0,
+   "resend_packets_recovered": 0,
+   "max_ip_packet_size": 1400,
+   "payload_packet_ip_size_most_common": 1400,
+   "non_gvsp_datagrams": 0,
+   "jumbo_frames": false,
+   "payload_types": {
+    "IMAGE": 76
+   },
+   "chunk_data": false,
+   "pixel_formats": [
+    {
+     "pixel_format": "Mono8",
+     "width": 512,
+     "height": 512,
+     "frames": 76,
+     "opencv_bayer_code": ""
+    }
+   ],
+   "data_bytes_per_complete_frame_median": 262144.0,
+   "uncompressed_frame_bytes_expected": 262144,
+   "leader_timestamp_delta_ticks": {
+    "n": 75,
+    "min": 9620000.0,
+    "median": 40000000.0,
+    "p95": 40073900.0,
+    "max": 40554000.0
+   },
+   "leader_timestamp_first": 1792956348590383000,
+   "leader_timestamp_monotonic": true,
+   "device_fps_from_timestamps": 25.0,
+   "leader_timestamp_delta_us": {
+    "n": 75,
+    "min": 9620.0,
+    "median": 40000.0,
+    "p95": 40073.9,
+    "max": 40554.0
+   },
+   "host_fps": 25.250230470416508,
+   "compression_verdict": "UNCOMPRESSED",
+   "compression_reasons": [
+    "payload bytes/frame 262144 vs uncompressed Mono8 size 262144 (ratio 1.000)",
+    "IMAGE payload in a standard PFNC pixel format, full-size frames"
+   ]
+  }
+ },
+ "checks": [
+  {
+   "name": "GVSP leader + trailer packets",
+   "status": "PASS",
+   "detail": "{'LEADER': 76, 'PAYLOAD': 14668, 'TRAILER': 76}",
+   "camera": "GVSP 127.0.0.1:36820 -> 127.0.0.1:41207"
+  },
+  {
+   "name": "frames complete",
+   "status": "PASS",
+   "detail": "76/76 (100.0 %; limit 99 %)",
+   "camera": "GVSP 127.0.0.1:36820 -> 127.0.0.1:41207"
+  },
+  {
+   "name": "compression verdict",
+   "status": "INFO",
+   "detail": "UNCOMPRESSED: payload bytes/frame 262144 vs uncompressed Mono8 size 262144 (ratio 1.000); IMAGE payload in a standard PFNC pixel format, full-size frames",
+   "camera": "GVSP 127.0.0.1:36820 -> 127.0.0.1:41207"
+  },
+  {
+   "name": "packet size",
+   "status": "INFO",
+   "detail": "payload packets 1400 B IP datagrams (max 1400) -> standard 1500 MTU",
+   "camera": "GVSP 127.0.0.1:36820 -> 127.0.0.1:41207"
+  },
+  {
+   "name": "extended ids (64-bit block ids)",
+   "status": "INFO",
+   "detail": "not used (0/14820 packets)",
+   "camera": "GVSP 127.0.0.1:36820 -> 127.0.0.1:41207"
+  },
+  {
+   "name": "device timestamps",
+   "status": "INFO",
+   "detail": "increasing; device frame rate 25.00 fps; host arrival rate 25.25 fps",
+   "camera": "GVSP 127.0.0.1:36820 -> 127.0.0.1:41207"
+  }
+ ]
+}

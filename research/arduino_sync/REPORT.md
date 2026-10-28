@@ -1,6 +1,6 @@
 # Arduino FSIN hardware sync — Report
 
-Status as of 2026-10-28: a **draft plan dated 2026-10-25**, not reviewed by a maintainer, with **no experiments run and no code written**. The plan is [PLAN.md](PLAN.md). The Workflow script that produced it is [workflows/arduino-sync-plan-wf_1cd252bb-775.js](workflows/arduino-sync-plan-wf_1cd252bb-775.js). The only intermediate research that survives is in an earlier session's temp scratchpad, outside the repo (see [Where to look](#where-to-look)).
+Status as of 2026-10-28: a **draft plan dated 2026-10-25**, not reviewed by a maintainer, with **no experiments run and no code written**. The plan is [PLAN.md](PLAN.md). The Workflow script that produced it is [workflows/arduino-sync-plan-wf_1cd252bb-775.js](workflows/arduino-sync-plan-wf_1cd252bb-775.js). The only intermediate research that survives is in [research/](research/) (see [Where to look](#where-to-look)).
 
 ## Executive summary
 
@@ -30,10 +30,10 @@ All items below come from a plan. "Measured" here only ever means measured by a 
 2. **Clock error does not affect inter-camera sync, as long as every camera accepts every pulse.** One edge drives all FSIN inputs, so oscillator error is the same for every camera. *Confidence: inferred (reasoning, not measured).* Source: [PLAN.md §TL;DR](PLAN.md).
 3. **Clock error does affect the absolute rate.** At a nominal 48 Hz, ±0.5% is ±0.24 Hz, which is ±0.3 s per minute and ±18 s per hour. A 20 ppm crystal gives 1.2 ms per minute and 72 ms per hour. *Confidence: computed (re-derived; the plan's figures match).* Source: [PLAN.md §1 table](PLAN.md). The plan fixes this in two ways. The host fits the real rate from its `perf_counter_ns` frame timestamps and the firmware's pulse counter. Any other instrument (audio, EMG, force plates) gets the same TTL edge wired into it.
 4. **Clock error can break inter-camera sync near the lockout.** MoCapSTR reports that the InnoMaker OV9281's USB bridge ignores any pulse arriving within ~18–20 ms of a triggered frame, which caps triggered capture at 50 fps. In their sweeps, 60 Hz gave 30 fps, 90 Hz gave 45 fps and 120 Hz gave 40 fps. A resonator running 0.5% fast turns a nominal 50 Hz into a 19.90 ms period, which falls inside that window, so cameras could reject *different* pulses. At 48 Hz the fast-case period is 20.73 ms, which clears it. *Confidence: the lockout figure is MoCapSTR's own measurement on their cameras, not ours; the periods are computed.* Sources: [PLAN.md §1](PLAN.md); MoCapSTR `README.md` lines 42–43 and `CHANGELOG.md` lines 49–50 and 116 (local clone, see [Where to look](#where-to-look)). The first clock-research report missed this failure mode; the timing verifier added it.
-5. **The −761 ppm and 8.7 ppm/°C figures come from one board.** That board was a single Pro Mini with a resonator of unspecified make. A third party (Joris van Rijn) measured it against a GPS PPS signal while it was warm. The verifier notes that the temperatures were read from the AVR's internal sensor (±10 °C accuracy), so the per-°C coefficient is rough. *Confidence: measured by a third party, n = 1.* Source: [PLAN.md §1](PLAN.md); scratchpad `timing_report.md` and `verify.json`.
-6. **Timer1 quantization is negligible.** 48 Hz at prescaler 8 is 41 667 ticks, which gives 47.9996 Hz (−8 ppm). MoCapSTR instead computes the interval with integer division, `1000000/fps`, which gives 0 ppm at 50 fps, +16 ppm at 48 fps and +40 ppm at 60 and 120 fps. *Confidence: computed.* Sources: [PLAN.md §4 Timing](PLAN.md) for the −8 ppm; scratchpad `timing_report.md` §2 for MoCapSTR's 50, 60 and 120 fps figures; the 48 fps truncation figure was computed for this report.
+5. **The −761 ppm and 8.7 ppm/°C figures come from one board.** That board was a single Pro Mini with a resonator of unspecified make. A third party (Joris van Rijn) measured it against a GPS PPS signal while it was warm. The verifier notes that the temperatures were read from the AVR's internal sensor (±10 °C accuracy), so the per-°C coefficient is rough. *Confidence: measured by a third party, n = 1.* Source: [PLAN.md §1](PLAN.md); [research/timing_report.md](research/timing_report.md) and `verify.json`.
+6. **Timer1 quantization is negligible.** 48 Hz at prescaler 8 is 41 667 ticks, which gives 47.9996 Hz (−8 ppm). MoCapSTR instead computes the interval with integer division, `1000000/fps`, which gives 0 ppm at 50 fps, +16 ppm at 48 fps and +40 ppm at 60 and 120 fps. *Confidence: computed.* Sources: [PLAN.md §4 Timing](PLAN.md) for the −8 ppm; [research/timing_report.md](research/timing_report.md) §2 for MoCapSTR's 50, 60 and 120 fps figures; the 48 fps truncation figure was computed for this report.
 7. **115200 baud at 16 MHz with U2X is +2.1% off.** The plan says this stays inside the 8N1 limit even with a −0.5% resonator. *Confidence: the +2.1% is computed; the claim that it stays under the limit is the plan's.* Source: [PLAN.md §1](PLAN.md).
-8. **Inter-camera skew from FSIN edge to exposure start is unknown.** The plan says it "could be up to about 1 ms" and may be set by the camera's bridge firmware. No vendor or third-party figure was found. *Confidence: unverified estimate.* Source: [PLAN.md §1](PLAN.md); scratchpad `timing_report.md` line 83.
+8. **Inter-camera skew from FSIN edge to exposure start is unknown.** The plan says it "could be up to about 1 ms" and may be set by the camera's bridge firmware. No vendor or third-party figure was found. *Confidence: unverified estimate.* Source: [PLAN.md §1](PLAN.md); [research/timing_report.md](research/timing_report.md) line 83.
 9. **One ATmega pin can drive one camera.** The OV9281's FSIN is an opto-isolated input that draws about 19 mA at 5 V. The plan's reference wiring options are:
    - 2 cameras driven directly (D9 + D10);
    - 7–8 cameras through a ULN2803 low-side sink;
@@ -62,7 +62,7 @@ No technique was built or measured. The options below were compared on paper by 
 | Timer1 fast PWM mode 15 (TOP = OCR1A), output on OC1B/D10. This was the first research recommendation. | Cycle-exact (62.5 ns steps); only oscillator phase noise remains, inferred to be well under 1 µs | Prescaler/TOP quantization only | 1 (OCR1A is used as TOP, so D9 is lost) | TOV1 overflow ISR; the hardware critique found this racy | Rejected: loses D9 |
 | **Timer1 fast PWM mode 14 (TOP = ICR1), OC1A/D9 + OC1B/D10** | Cycle-exact, as above | −8 ppm at 48 Hz | 2 | Counted in the `TIMER1_COMPA` ISR with a 64-bit tick base; STOP and BURST are decided there | **Chosen** |
 
-The research preferred mode 15 because ICR1, unlike OCR1A, is not double-buffered. The final plan refuses RATE, PERIOD and PULSE changes while pulses are running. The plan gives prescaler glitches and one-off short periods as its reason; the link to ICR1 is this report's inference. Sources: [PLAN.md §4](PLAN.md), [§Corrections applied](PLAN.md); scratchpad `timing_report.md` lines 39–65; [workflow script](workflows/arduino-sync-plan-wf_1cd252bb-775.js) line 17 (description of the MoCapSTR firmware).
+The research preferred mode 15 because ICR1, unlike OCR1A, is not double-buffered. The final plan refuses RATE, PERIOD and PULSE changes while pulses are running. The plan gives prescaler glitches and one-off short periods as its reason; the link to ICR1 is this report's inference. Sources: [PLAN.md §4](PLAN.md), [§Corrections applied](PLAN.md); [research/timing_report.md](research/timing_report.md) lines 39–65; [workflow script](workflows/arduino-sync-plan-wf_1cd252bb-775.js) line 17 (description of the MoCapSTR firmware).
 
 **Clock source**
 
@@ -73,7 +73,7 @@ The research preferred mode 15 because ICR1, unlike OCR1A, is not double-buffere
 | TCXO (e.g. DS3231 module) | ±2 ppm | 7.2 ms | No | Deferred until after v1 as optional PPS/DS3231 calibration (not part of any planned milestone) |
 | Uno R4 (RA4M1 HOCO) / Nano Every (internal RC) | ±1% / up to ±4% | — | — | Unsupported: no ATmega328P Timer1 |
 
-Sources: [PLAN.md §1, §2, §TL;DR](PLAN.md); scratchpad `timing_report.md` table and `verify.json`. The Nano Every's ±4% at 5 V is the verifier's correction.
+Sources: [PLAN.md §1, §2, §TL;DR](PLAN.md); [research/timing_report.md](research/timing_report.md) table and [research/verify.json](research/verify.json). The Nano Every's ±4% at 5 V is the verifier's correction.
 
 **Verifying that a camera is really in trigger mode**
 
@@ -99,16 +99,16 @@ The winner in each table is a design choice that still needs the M0 hardware spi
 
 - **No hardware, no code, no measurements.** Nothing in this folder was run on skellycam hardware or on any OS. Every performance figure is a datasheet value, a third-party measurement, a claim by MoCapSTR about their own setup, or a calculation.
 - **All review was by AI agents.** The "independent reviewers" mentioned in [PLAN.md](PLAN.md) are the workflow's verifier and critique agents. The two verifiers checked only the clock-timing report and the FSIN voltage claims. The MoCapSTR read and the skellycam code map were checked only indirectly: the hardware critique cross-checked the plan against the MoCapSTR source, and the code-fit critique against skellycam's code. No maintainer has reviewed the plan ([README.md](../README.md)).
-- **The third-party clock data comes from a single unit.** The −761 ppm, 8.7 ppm/°C and 286 ppm wander figures all come from one warm Pro Mini, and its temperatures came from the AVR's ±10 °C internal sensor (scratchpad `verify.json`).
+- **The third-party clock data comes from a single unit.** The −761 ppm, 8.7 ppm/°C and 286 ppm wander figures all come from one warm Pro Mini, and its temperatures came from the AVR's ±10 °C internal sensor ([research/verify.json](research/verify.json)).
 - **The lockout is MoCapSTR's figure.** The ~18–20 ms window and the 50 fps cap come from MoCapSTR's own sweeps at 1280×720 and 640×400. MoCapSTR attributes it to the camera's bridge firmware. It has not been reproduced.
 - **The electrical figures are unmeasured.** Nobody has tested the ~19 mA FSIN current or the camera count for each wiring option.
-- **Most of the intermediate research is not in the repo.** Only the clock-timing report (`timing_report.md`) and the verifier and critique output (`verify.json`) survive, in a temp scratchpad. The MoCapSTR deep read, the UVC trigger research, the skellycam code map and the first draft were not saved there.
+- **Most of the intermediate research is not in the repo.** Only the clock-timing report and the verifier and critique output survive; they were moved into [research/](research/) on 2026-10-28. The MoCapSTR deep read, the UVC trigger research, the skellycam code map and the first draft were not saved there.
 - **Code line references were valid on 2026-10-28** (commit `23ccbf20`) and will drift as the code changes.
 
 ## Proposed further investigation
 
 1. **Get a maintainer to review [PLAN.md](PLAN.md) and answer its six open questions (§11).** The most important are whether an InnoMaker-only v1 on Windows and Linux is acceptable, and whether the firmware should live in this repo. *Decides* whether the 10-week project goes ahead, and its scope.
-2. **Ship P1–P5 as standalone PRs now (milestone M1, 1.5 weeks).** They are bugs today, whether or not sync goes ahead. P1, P2, P3 and P5 are confirmed by reading the code. Before fixing P4, run its `to_json` on a real recording. *Decides* nothing about sync, but removes crash paths that would block it.
+2. **Ship P1–P5 as standalone PRs now (milestone M1, 1.5 weeks).** They are bugs today, whether or not sync goes ahead. P1, P2, P3 and P5 are confirmed by reading the code. Before fixing P4, confirm it. **To do later (needs a camera; none available as of 2026-10-28):** record a 5 s, one-camera clip, then call `RecordingTimestampsStats.to_json()` on its recording info. A traceback confirms P4. Before that, try the same call on a synthetic recording; if it already fails there, no camera is needed. *Decides* nothing about sync, but removes crash paths that would block it.
 3. **Run the 1-week M0 hardware spike (§9) before writing any sync code.** It should answer four questions:
    - Does a DSHOW `AUTOFOCUS` write on the streaming camera handle actually switch on trigger mode? If not, the plan falls back to MSMF or ships Linux first (risk 1).
    - How does the lockout vary with stream fps, exposure and resolution?
@@ -117,7 +117,7 @@ The winner in each table is a design choice that still needs the M0 hardware spi
 
    *Decides* go/no-go on each item, the default rate and the UI's rate cap.
 4. **Measure the board clock instead of assuming it.** Put a logic analyzer on D2 running the current MoCapSTR firmware and on a Timer1 prototype, to confirm the ~4–20 µs jitter estimate against cycle-exact edges. Also measure the actual rate of the boards on hand against the host clock. *Decides* whether a fast resonator near 50 Hz is a real risk on the boards users actually have.
-5. **Move the surviving research into the repo before the temp folder is cleaned up.** That means `timing_report.md` and `verify.json` from the scratchpad listed below. The downloaded InnoMaker manual and control scripts, the Arduino schematic PDFs and the MoCapSTR clone in the same folder are also useful references for M0.
+5. **Keep the reference material within reach (done 2026-10-28).** The surviving research is in [research/](research/), and [research/SOURCES.md](research/SOURCES.md) lists where to re-download the InnoMaker manual and control scripts, the Arduino schematics and the MoCapSTR clone that M0 will need.
 
 ## Where to look
 
@@ -130,9 +130,7 @@ The winner in each table is a design choice that still needs the M0 hardware spi
   - a list of the corrections made after the critiques.
 - [workflows/arduino-sync-plan-wf_1cd252bb-775.js](workflows/arduino-sync-plan-wf_1cd252bb-775.js) — the Workflow that produced the plan: 4 research agents, 2 verifiers, 1 draft, 2 critiques and 1 final rewrite.
 - [../README.md](../README.md) — index of all research studies.
-- Outside the repo, in a temp folder that may be deleted: `C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/a9b9d5dd-3ef8-4726-a4e0-a9884ba8c7b5/scratchpad/`. It holds:
-  - `timing_report.md` — the clock research;
-  - `verify.json` — the verifier verdicts and both critiques;
-  - `final_plan.md` — the same as PLAN.md apart from the header;
-  - `mocapstr-src/` — a read-only clone of MoCapSTR;
-  - `innomaker-dl/`, `arducam-dl/` and `pdfs/` — vendor manuals and Arduino schematics.
+- [research/](research/) — the surviving research, moved here from a temp scratchpad on 2026-10-28:
+  - [timing_report.md](research/timing_report.md) — the clock research;
+  - [verify.json](research/verify.json) — the verifier verdicts and both critiques;
+  - [SOURCES.md](research/SOURCES.md) — where to re-download the MoCapSTR clone, vendor manuals, Arduino schematics and datasheets, which were not kept.

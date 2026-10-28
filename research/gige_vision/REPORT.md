@@ -1,6 +1,6 @@
 # GigE Vision cameras with PTP sync — Report
 
-Status as of 2026-10-28: **paused since 2026-10-25**. Research and the stand-alone hardware test suite are done. The SkellyCam backend has not been started. The Claude Doc report has 4 of 8 sections filled. Raw material: [RESUME.md](RESUME.md), [scratch/](scratch/) (digests, notes, logs, benchmark output), [hardware_tests/](hardware_tests/) and [workflows/](workflows/).
+Status as of 2026-10-28: **paused since 2026-10-25**. Research and the stand-alone hardware test suite are done. The SkellyCam backend has not been started. The report ([docs/gige_vision_report.md](docs/gige_vision_report.md)) has 4 of 8 sections filled. Raw material: [RESUME.md](RESUME.md), [scratch/](scratch/) (digests, notes, logs, benchmark output), [hardware_tests/](hardware_tests/) and [workflows/](workflows/).
 
 ## Executive summary
 
@@ -159,7 +159,7 @@ Source: [ptp-sync.md](scratch/digest/ptp-sync.md). The test suite is built to me
   - The from-scratch summary had the viva and telegenic first-release dates reversed.
   - The pyGigEVision RGB8 failure is silent corruption (frames flagged complete), not "never completes".
   - Aravis's 100% completeness in the pyGigEVision comparison used its packet-socket path. Its plain UDP path got 81–94%.
-- **Release dates differ across notes.** Aravis 0.8.36 and 0.9.2 were both tagged 2026-04-23 and published on GitHub 2026-04-26. The comparison table in [rust-cpp-vendor.md](scratch/digest/rust-cpp-vendor.md) lists "0.9.2 (2026-04-23)" as the last release, and [spec-versions.md](scratch/digest/spec-versions.md) gives "0.8.36 from 2026-04-26". The Claude Doc says viva's first release was "Apr 2026", which matches the verifier.
+- **Release dates differ across notes.** Aravis 0.8.36 and 0.9.2 were both tagged 2026-04-23 and published on GitHub 2026-04-26. The comparison table in [rust-cpp-vendor.md](scratch/digest/rust-cpp-vendor.md) lists "0.9.2 (2026-04-23)" as the last release, and [spec-versions.md](scratch/digest/spec-versions.md) gives "0.8.36 from 2026-04-26". The [report doc](docs/gige_vision_report.md) says viva's first release was "Apr 2026", which matches the verifier.
 - **Estimates and bandwidth figures are not measurements.** The effort estimates (person-weeks) come from line counts of reference implementations, not a SkellyCam prototype. The bandwidth figures are arithmetic.
 - **Old paths in raw records.** Paths in raw logs, journals and digests refer to `plans/gige-vision/`, `skellycam/system/diagnostics/gige/` or a deleted temp scratchpad ([RESUME.md](RESUME.md)). Cloned third-party repos, venvs and pcaps were not copied here.
 - **Unreviewed pieces.** `scratch/research/ptp-sync-tests/gentl_ptp_sync_test.py` (Harvesters path) was never run against hardware. Only `selftest` of the research-phase `gev_ptp_sync_test.py` passed. The later version in `hardware_tests/` supersedes it.
@@ -181,4 +181,4 @@ Source: [ptp-sync.md](scratch/digest/ptp-sync.md). The test suite is built to me
 - [scratch/research/](scratch/research/): full research notes per topic, verifier notes (`verify-*.md`), benchmark output (`bench_*.txt/json`), benchmark scripts, and test scripts and logs per topic (`scripts/`, `scripts-ft/`, `ptp-sync-tests/`, `viva-api-tests/`, `results/`).
 - [scratch/impl/](scratch/impl/): viva-genicam API reference ([viva_api.md](scratch/impl/viva_api.md)), the test-suite verification log ([hwtests.md](scratch/impl/hwtests.md)), Windows run output (`windows_final.log`, `win_out/`), simulated-register harnesses, and Docker files.
 - [workflows/](workflows/): the research workflow (`wf_c906087f-470`) and implement workflow (`wf_d9795230-c81`) scripts, with journals holding each agent's full result.
-- Claude Doc report (4 of 8 sections filled): https://claude.ai/artifact/SPKjXcBjS5kJmGwtbXGPWZ
+- Report (4 of 8 sections filled): [docs/gige_vision_report.md](docs/gige_vision_report.md)

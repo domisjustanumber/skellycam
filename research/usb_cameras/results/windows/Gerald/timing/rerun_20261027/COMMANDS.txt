@@ -5,7 +5,7 @@ command names its devices explicitly). No driver, registry or device-state chang
 Everything else is copied here (flash/<run>/ = the run dir without .mjpeg).
 
 Machine notes: monitor 0 = DISPLAY1 portrait 1440x2560 now at rect [1920,-201,3360,2359] (was [2560,-201,4000,2359] on 10-25: the primary
-is now 1920x1080). Display idle timeout is 600 s, so tools/keep_display_on.ps1 (scratchpad) held a SetThreadExecutionState display
+is now 1920x1080). Display idle timeout is 600 s, so tools/keep_display_on.ps1 (copied into tools/ on 2026-10-28) held a SetThreadExecutionState display
 request 03:05-03:41Z (no setting changed). LogiTuneAgent was running (it respawned within 3 s when closed at ~03:39Z:
 logitune_kill_*.json). RazerAppEngine not running. All three MI_00 devnodes 0x180200A (no DN_NEED_RESTART) at 03:04Z and 03:41Z
 (devnode_status_end.json).

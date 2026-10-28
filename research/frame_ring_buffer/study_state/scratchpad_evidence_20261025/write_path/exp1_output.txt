@@ -1,0 +1,37 @@
+3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]
+numpy 2.2.6
+===== 1280x720x3 BGR uint8 =====
+FRAME_METADATA_DTYPE.itemsize = 632 B
+frame dtype itemsize = 2765432 B (image 2764800 B, overhead 632 B)
+ring_buffer_length = 388 slots (= 1073741824 // 2765432)
+shm segment size = 1072987616 B; seconds of history at 60fps = 6.47
+image field offset in record = 632 B
+copy.copy(frame) shares memory with frame? False  (False => full data copy)
+after put: slot0.frame_number=12345, slot0.image all==7? True
+slot view shares memory with shm.buf: True
+frame.image[0]: shape=(720, 1280, 3) C_CONTIGUOUS=True WRITEABLE=True shares_memory(frame)=True
+tracemalloc peak during one put_frame = 2767914 B (1.001 x record size)
+put_frame (copy.copy + slot assign + index update): median 2.479 ms, p95 3.408 ms
+copy.copy(frame) alone:                              median 0.402 ms, p95 0.658 ms
+single np.copyto(frame -> slot) (hypothetical):      median 0.090 ms, p95 0.146 ms
+get_data_by_index(latest) with rec_array=None:       median 0.403 ms, p95 0.524 ms
+===== 1920x1080x3 BGR uint8 =====
+FRAME_METADATA_DTYPE.itemsize = 632 B
+frame dtype itemsize = 6221432 B (image 6220800 B, overhead 632 B)
+ring_buffer_length = 172 slots (= 1073741824 // 6221432)
+shm segment size = 1070086304 B; seconds of history at 60fps = 2.87
+image field offset in record = 632 B
+copy.copy(frame) shares memory with frame? False  (False => full data copy)
+after put: slot0.frame_number=12345, slot0.image all==7? True
+slot view shares memory with shm.buf: True
+frame.image[0]: shape=(1080, 1920, 3) C_CONTIGUOUS=True WRITEABLE=True shares_memory(frame)=True
+tracemalloc peak during one put_frame = 6223865 B (1.000 x record size)
+put_frame (copy.copy + slot assign + index update): median 2.440 ms, p95 2.995 ms
+copy.copy(frame) alone:                              median 0.847 ms, p95 1.075 ms
+single np.copyto(frame -> slot) (hypothetical):      median 0.168 ms, p95 0.191 ms
+get_data_by_index(latest) with rec_array=None:       median 0.851 ms, p95 1.002 ms
+===== SharedMemoryNumber costs =====
+SharedMemoryNumber.value set: 4.39 us; get: 5.81 us
+===== time.sleep resolution (wait_10us / wait_1ms) =====
+wait_10us: median 526.2 us, p95 563.1 us, max 1507.9 us
+wait_1ms: median 1089.6 us, p95 1588.3 us, max 1876.2 us

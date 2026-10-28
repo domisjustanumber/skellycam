@@ -93,8 +93,9 @@ from sampling-window misalignment, not from other workloads. This is an inferenc
    `results/` and stays in `results_provisional_20261025/`.
 6. No step recorded machine load, so `run_with_load.py` and `summarize_load.py` were added. They also capture each command's output
    as `results/*_stdout.log`, which the old README did not document.
-7. Not changed, noted only: `bench_common.SCRATCH_TMP` is hard-coded to the 2026-10-25 session's scratch folder
-   (`bench_common.py` L24-28; corrected 2026-10-28, was L23-27). It still works because the folder is created if it is missing. The 20.8 MB that bench_f left
+7. `bench_common.SCRATCH_TMP` was hard-coded to the 2026-10-25 session's scratch folder when these runs were made. On 2026-10-28,
+   when that folder was deleted, it was changed to `%TEMP%\skellycam_frame_pipeline_tmp\bench_tmp`, the same root that `prototypes/` and `cpp/` use
+   (`bench_common.py` L25). The 20.8 MB that bench_f left
    there tonight was deleted after its sizes were logged in `results/bench_tmp_leftover_sizes_before_delete.txt`. Empty `c_rec_*` folders remain.
 
 No script hung at exit this time. Every run finished with its expected exit code: 0, except exit 1 for `check_shm_speed.py`

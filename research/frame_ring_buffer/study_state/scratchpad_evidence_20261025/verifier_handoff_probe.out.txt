@@ -1,0 +1,21 @@
+
+=== 1280x720 BGR ===
+A. copy(frame) shares memory with frame: False | nbytes: 2765432
+A. put_frame (copy(data) + slot store): median=1.283ms p95=1.766ms
+A. single np.copyto(frame -> slot) only: median=0.071ms p95=0.169ms
+B. write through read_only=True mapping succeeded: before=7 after=123
+D. slot image view shares memory with SHM: True | writeable flag: True
+D. cv2.resize+imencode on SHM view ok: True | jpeg bytes: 4307
+D. resize(view)->imencode, no SHM copy: median=0.313ms p95=0.688ms
+
+=== 1920x1080 BGR ===
+A. copy(frame) shares memory with frame: False | nbytes: 6221432
+A. put_frame (copy(data) + slot store): median=2.803ms p95=3.249ms
+A. single np.copyto(frame -> slot) only: median=0.154ms p95=0.188ms
+B. write through read_only=True mapping succeeded: before=7 after=123
+D. slot image view shares memory with SHM: True | writeable flag: True
+D. cv2.resize+imencode on SHM view ok: True | jpeg bytes: 8787
+D. resize(view)->imencode, no SHM copy: median=0.760ms p95=0.842ms
+
+C. head=9 len=5: get_data_by_index(5) accepted, value=5; its slot=0, next write slot=0 -> same slot: True
+C. get_data_by_index(head-len) raises IndexError: Index 4 has been overwritten by the ring buffer wrapping. Write head: 9, ring le

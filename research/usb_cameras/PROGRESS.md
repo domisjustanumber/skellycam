@@ -2,7 +2,7 @@
 
 Last updated: 2026-10-28 ~04:55Z (night of 2026-10-27 local), after the unattended overnight rerun. Before that: 2026-10-25 ~18:45 local (EDT), when work was paused at Dom's request.
 
-- **Report (Claude Doc):** https://claude.ai/artifact/WrpwyyMF7yU1amEB9pQYgE
+- **Report:** [docs/usb_camera_report.md](docs/usb_camera_report.md)
 - **Harness and results:** this directory (`research/usb_cameras/`), committed on branch `dom/research` on 2026-10-28 (commit dba82026; build outputs, venvs and binaries left out) (corrected 2026-10-28; was "uncommitted on branch `development`").
 - **Test machine:** "Gerald", Windows 11.
 - **Workflow scripts:** repo copies of all earlier workflow scripts are now in `research/usb_cameras/workflows/` (phase 1 `usb-camera-investigation-phase1-wf_85e88d5f-25b.js`, phase 2 `usb-camera-phase2-winusb-wf_15b731da-b8e.js`, `verify-timing-flash-wf_8bdc03a7-5c0.js`, `mjpeg-finish-and-rust-verify-wf_a3292d44-9ab.js`, and the overnight `overnight_rerun_workflow.js`). The originals are still under `C:\Users\Dom\.claude\projects\c--Users-Dom-GitHub-freemocap-skellycam\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\workflows\scripts\`.
@@ -21,7 +21,7 @@ Last updated: 2026-10-28 ~04:55Z (night of 2026-10-27 local), after the unattend
 | UVC metadata registry | `MetadataBufferSizeInKB0=5` set on the Kiyo, C922 and C930e interface keys. The C930e's new `&1&` keys were set at 22:30Z on 10-25. Confirmed overnight: every C922/C930e MF frame carries PTS/SCR; the generic camera (not set) has none. Revert: `timing/scripts/revert_uvc_metadata.ps1`, elevated. |
 | Old C930e phantom devnodes | `...&0&0000` / `&0&0003` children and `7&7DCC7CE&0&1` parent are non-present. Harmless. |
 | LogiTune / Razer Synapse | `LogiTuneAgent` was closed three times overnight and respawned within seconds each time via `LogiTuneUpdaterService` (service left alone). `RazerAppEngine` not running; `razer_elevation_service` running. |
-| Rebuilt harness binaries | `mjpeg/.../mf_mjpeg_capture.exe` and `bandwidth/build/mf_multi_open.exe` were rebuilt with new options. The 10-25 binaries are backed up in the scratchpad of session 7c9d3345 (`C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\mf_mjpeg_capture_20261025.exe` and `...\scratchpad\orig_harness\mf_multi_open_20261025.exe`). |
+| Rebuilt harness binaries | `mjpeg/.../mf_mjpeg_capture.exe` and `bandwidth/build/mf_multi_open.exe` were rebuilt with new options. The 10-25 binaries were backed up in a temp scratchpad that was deleted on 2026-10-28. The 10-25 bandwidth harness sources are in `bandwidth/orig_20261025/`; rebuild from those or the current `mjpeg/` and `bandwidth/` sources if needed.. |
 | Rust | User-level rustup installed in `%USERPROFILE%\.cargo` (rustc 1.99.1). |
 | Timers / agents | None scheduled or running. All overnight agents reported their child processes gone. |
 
@@ -90,8 +90,7 @@ Unattended rerun of every test that needs no admin rights, no human and no drive
 - `verify:rust` is DONE (cached). `finish:mjpeg` was stopped mid-run; its partial edits are on disk under `mjpeg/`. `verify:mjpeg` never ran.
 - An unverified compile-only hand-back from an earlier instance is in `mjpeg/HANDBACK_earlier_instance.md`.
 - Resume (all cameras must be on normal drivers):
-  `Workflow({scriptPath: "C:\Users\Dom\.claude\projects\c--Users-Dom-GitHub-freemocap-skellycam\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\workflows\scripts\mjpeg-finish-and-rust-verify-wf_a3292d44-9ab.js", resumeFromRunId: "wf_a3292d44-9ab"})`
-  Resume only works in the same Claude session. In a new session, re-run that script file fresh (the finish:mjpeg prompt is self-contained) or hand its prompt to a new agent. A repo copy of the script is `workflows/mjpeg-finish-and-rust-verify-wf_a3292d44-9ab.js`.
+  Re-run `workflows/mjpeg-finish-and-rust-verify-wf_a3292d44-9ab.js` fresh (the finish:mjpeg prompt is self-contained) or hand its prompt to a new agent. Its journal is `results/agent_reports/journal_wf_a3292d44-9ab.jsonl`. The run cache (`resumeFromRunId`) only worked in the original session.
 - Phase 1's `verify:mjpeg` (workflow `wf_85e88d5f-25b`) is redundant; don't resume it.
 
 ### B. Phase 3: WinUSB coverage for the C922 and the generic 4C4A:4A55 camera
@@ -126,14 +125,22 @@ Unattended rerun of every test that needs no admin rights, no human and no drive
   - Serial-less cameras get a new instance per port, so moving ports probably falls back to usbvideo. Untested.
 
 ### D. Report sections still to write
-- Goal 1, Goal 5, Summary, Comparison matrix, Open questions / tests for other machines.
+- In [docs/usb_camera_report.md](docs/usb_camera_report.md): Goal 1, Goal 5, Summary, Comparison matrix, Open questions / tests for other machines.
 - Optional chart for goal 3: delivered fps vs alt, from `results/windows/Gerald/phase2_bw_alt/summary.json`.
+
+### E. To do later: confirm the C930e exposure in the flash ground truth (added 2026-10-28)
+
+Raw captures that are not in git (size, room images) are in `C:/Users/Dom/Documents/skellycam-raw/` with paths mirroring this repo; see its README.md. That includes the generic camera's strict-decode-failing 1080p frames (`.../bw_rerun_20261027_analysis/strict_decode_failing_frames/`).
+
+- `timing/VERIFY_method.md` assumes the C930e integrated 2^-7 s (7.8 ms) in `flash_run1_repositioned`, but MF manual exposure set before streaming took effect in only 1 of 5 rerun runs.
+- First, no hardware: re-run the analysis on existing data with C930e exposure swept from 2^-8 to 2^-5 s. The raw `.mjpeg` files the flash scripts decode are kept outside git in `C:/Users/Dom/Documents/skellycam-raw/` under the same path (`.../timing/flash_run1_repositioned/capture/`). If the C930e conclusions hold across that range, stop.
+- Otherwise (needs the C930e and C922, about 10 min, unattended once set up): re-run one flash test with `timing/scripts/run_flash_test.ps1`, re-apply C930e exposure after the stream starts, and read it back after capture.
 
 ## Where results live
 - **Phase 1** (naming, MJPEG, timing, bandwidth, rust, libusb, prior_art + verifiers): `results/windows/Gerald/{naming,timing,mjpeg_*,rust_*,bw_*,prior_art_*,winusb_install}/`.
-  - Structured agent outputs: the workflow journals under `C:\Users\Dom\.claude\projects\c--Users-Dom-GitHub-freemocap-skellycam\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\subagents\workflows\wf_85e88d5f-25b\journal.jsonl`.
+  - Structured agent outputs: the workflow journal `results/agent_reports/journal_wf_85e88d5f-25b.jsonl`.
   - Durable copies of every agent report, verification and workflow journal: `results/agent_reports/` (`phase1_reports_and_verifications.json`, `phase2_reports_and_verifications.json`, `journal_wf_*.jsonl`).
-  - Raw MJPEG captures are in the session scratchpad and may be gone in a new session. The analyses in `results/` don't need them.
+  - Raw MJPEG captures were in a temp scratchpad that was deleted on 2026-10-28. The analyses in `results/` don't need them.
 - **Timing verification:** `results/windows/Gerald/timing/flash_verify_*`, `timing/VERIFY_method.md`, `results/windows/Gerald/timing/kiyo_lens/`.
 - **Phase 2** (C930e on WinUSB): `results/windows/Gerald/phase2_{bw_alt,bw_alt_verify,libusb_scr_timing,timing_verify,rust_uvc_iso,python_libusb,python_verify,pyuvc,naming_libusb}/`.
   - Journal: `...\subagents\workflows\wf_15b731da-b8e\journal.jsonl`.

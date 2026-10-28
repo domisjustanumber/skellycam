@@ -1,0 +1,97 @@
+{
+  "test": "winusb_persistence",
+  "platform": "windows",
+  "hostname": "GERALD",
+  "vidpid": "046D:0843",
+  "created_utc": "2026-10-25T22:48:40.2868382Z",
+  "command": "",
+  "restore_via": "rollback_script",
+  "install_cmd": "pwsh -NoProfile -File \"C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\libusb\\winusb\\run_elevated.ps1\" -Action install -Target Parent",
+  "rollback_cmd": "pwsh -NoProfile -File \"C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\libusb\\winusb\\run_elevated.ps1\" -Action rollback",
+  "frame_check": false,
+  "cold_boot": false,
+  "steps_done": [
+    "01_baseline",
+    "recheck_20261025T224905Z"
+  ],
+  "rows": [
+    {
+      "step": "01_baseline",
+      "utc": "2026-10-25T22:48:41.1265571Z",
+      "boot_time_utc": "2026-10-24T14:04:02.5Z",
+      "present_parent": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+      "present_parents": 1,
+      "same_instance_as_port_a": true,
+      "location": "Port_#0004.Hub_#0008",
+      "service": "usbccgp",
+      "inf": "oem74.inf",
+      "rank": "00FF0001",
+      "matching_id": "usb\\vid_046d&pid_0843",
+      "first_install_utc": "2026-10-25T22:16:34.574Z",
+      "last_arrival_utc": "2026-10-25T22:31:14.377127Z",
+      "present_children": [
+        "function MI_00=usbvideo",
+        "function MI_03=usbaudio"
+      ],
+      "video_camera_interface_enabled": true,
+      "port_a_instance_service": "usbccgp",
+      "veto_events_225": 0,
+      "vendor_processes": "logioptionsplus_agent,LogiTuneAgent,razer_elevation_service",
+      "expected": {
+        "service": "usbccgp",
+        "same_instance": true,
+        "camera_interface": true
+      },
+      "matches_prediction": true,
+      "frame_check": null
+    },
+    {
+      "step": "recheck",
+      "utc": "2026-10-25T22:49:06.7318659Z",
+      "boot_time_utc": "2026-10-24T14:04:02.5Z",
+      "present_parent": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+      "present_parents": 1,
+      "same_instance_as_port_a": true,
+      "location": "Port_#0004.Hub_#0008",
+      "service": "usbccgp",
+      "inf": "oem74.inf",
+      "rank": "00FF0001",
+      "matching_id": "usb\\vid_046d&pid_0843",
+      "first_install_utc": "2026-10-25T22:16:34.574Z",
+      "last_arrival_utc": "2026-10-25T22:31:14.377127Z",
+      "present_children": [
+        "function MI_00=usbvideo",
+        "function MI_03=usbaudio"
+      ],
+      "video_camera_interface_enabled": true,
+      "port_a_instance_service": "usbccgp",
+      "veto_events_225": 0,
+      "vendor_processes": "logioptionsplus_agent,LogiTuneAgent,razer_elevation_service",
+      "expected": {
+        "note": "compare with the last row"
+      },
+      "matches_prediction": true
+    }
+  ],
+  "notes": {},
+  "port_a_instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+  "port_a_location": "Port_#0004.Hub_#0008",
+  "port_a_location_paths": [
+    "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+    "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(4)"
+  ],
+  "known_ports_before": [
+    {
+      "instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&1",
+      "location": "Port_#0001.Hub_#0008",
+      "present": false,
+      "service": "usbccgp"
+    },
+    {
+      "instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+      "location": "Port_#0004.Hub_#0008",
+      "present": true,
+      "service": "usbccgp"
+    }
+  ]
+}

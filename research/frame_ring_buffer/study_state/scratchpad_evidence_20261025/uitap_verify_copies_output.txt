@@ -1,0 +1,8 @@
+V1 1280x720: itemsize=2765432 B, image bytes=2764800, slots per 1GiB=388, seconds of history @60fps=6.47
+V1 1920x1080: itemsize=6221432 B, image bytes=6220800, slots per 1GiB=172, seconds of history @60fps=2.87
+V2 python 3.12.13: BytesIO.getvalue() returns same object twice (no copy on getvalue): True
+V3 memoryview(bytearray)[:n] is a view: True
+V4 imencode type=ndarray shape=(8787,); bytearray[:]=ndarray.data works: True
+V5 resize input is view of buffer: True; output shares: False
+V6 rotate output shape=(1920, 1080, 3), shares memory with input: False
+V7 1080p rotate->resize 2.07 ms vs resize->rotate 0.67 ms per camera

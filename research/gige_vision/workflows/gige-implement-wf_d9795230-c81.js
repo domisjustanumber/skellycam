@@ -9,8 +9,10 @@ export const meta = {
   ],
 }
 
-const SCRATCH = 'C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad'
 const REPO = 'C:/Users/Dom/GitHub/freemocap/skellycam'
+// Was the temp scratchpad of session f77e9c4e (deleted 2026-10-28); its digest/, impl/ and research/ now live here.
+// venvs/ under it is git-ignored by the root .gitignore (venv*).
+const SCRATCH = `${REPO}/research/gige_vision/scratch`
 const DIGEST = `${SCRATCH}/digest`
 const RESEARCH = `${SCRATCH}/research`
 const NOTES = `${SCRATCH}/impl`

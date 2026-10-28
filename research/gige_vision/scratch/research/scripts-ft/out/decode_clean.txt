@@ -1,0 +1,71 @@
+== GVCP commands seen (count by info prefix) ==
+    132 <
+    129 >
+== GVCP writes to stream-channel registers (0x0d00..0x0d3c) ==
+95	39455	3956	> READREG_CMD [SCPS0 (Stream Channel #0 Packet Size)]
+96	3956	39455	< READREG_ACK [SCPS0 (Stream Channel #0 Packet Size)] Value=0x00000578
+97	39455	3956	> READREG_CMD [SCPD0 (Stream Channel #0 Packet Delay)]
+98	3956	39455	< READREG_ACK [SCPD0 (Stream Channel #0 Packet Delay)] Value=0x00000000
+216	33784	3956	> READREG_CMD [SCPD0 (Stream Channel #0 Packet Delay)]
+217	3956	33784	< READREG_ACK [SCPD0 (Stream Channel #0 Packet Delay)] Value=0x00000000
+220	33784	3956	> READREG_CMD [SCPS0 (Stream Channel #0 Packet Size)]
+221	3956	33784	< READREG_ACK [SCPS0 (Stream Channel #0 Packet Size)] Value=0x00000578
+226	33784	3956	> READREG_CMD [SCPS0 (Stream Channel #0 Packet Size)]
+227	3956	33784	< READREG_ACK [SCPS0 (Stream Channel #0 Packet Size)] Value=0x00000578
+228	33784	3956	> READREG_CMD [SCPS0 (Stream Channel #0 Packet Size)]
+229	3956	33784	< READREG_ACK [SCPS0 (Stream Channel #0 Packet Size)] Value=0x00000578
+230	33784	3956	> WRITEREG_CMD [SCDA0 (Stream Channel #0 Destination Address)] Value=0xAC110003
+232	33784	3956	> READREG_CMD [SCP0 (Stream Channel #0 Port)]
+233	3956	33784	< READREG_ACK [SCP0 (Stream Channel #0 Port)] Value=0x00000000
+234	33784	3956	> WRITEREG_CMD [SCP0 (Stream Channel #0 Port)] Value=0x00008C75
+238	33784	3956	> READREG_CMD [SCPS0 (Stream Channel #0 Packet Size)]
+239	3956	33784	< READREG_ACK [SCPS0 (Stream Channel #0 Packet Size)] Value=0x00000578
+4351	33784	3956	> WRITEREG_CMD [SCP0 (Stream Channel #0 Port)] Value=0x00000000
+== First GVSP frame block: first 4 and last 3 packets ==
+250	86	51704	35957	LEADER [Block ID: 65401 Packet ID: 0] IMAGE 
+251	1414	51704	35957	PAYLOAD [Block ID: 65401 Packet ID: 1] 
+252	1414	51704	35957	PAYLOAD [Block ID: 65401 Packet ID: 2] 
+253	1414	51704	35957	PAYLOAD [Block ID: 65401 Packet ID: 3] 
+444	58	51704	35957	TRAILER [Block ID: 65401 Packet ID: 194] IMAGE 
+== Verbose decode of first GVSP leader and first trailer ==
+GigE Vision Streaming Protocol
+    Status: GEV_STATUS_SUCCESS (0x0000)
+    Block ID (16 bits): 65401
+    Format: LEADER (0x01)
+    Packet ID (24 bits): 0
+    Field Info: 0x00
+        0000 .... = Field ID: 0x0
+        .... 0000 = Field Count: 0x0
+    Payload Type: IMAGE (0x0001)
+    Timestamp: 0x18e1d68736273fd8
+    Pixel Format: Mono8 (Monochrome 8-bit) (0x01080001), Monochrome or Color: Mono
+        0000 0001 .... .... .... .... .... .... = Monochrome or Color: Mono (0x01)
+        .... .... 0000 1000 .... .... .... .... = Occupy Bits: 8
+        .... .... .... .... 0000 0000 0000 0001 = ID: 0x0001
+    Size X: 512
+    Size Y: 512
+    Offset X: 0
+    Offset Y: 0
+    Padding X: 0
+    Padding Y: 0
+
+-- leader raw bytes (UDP payload) --
+0000ff79010000000000000118e1d68736273fd8010800010000020000000200000000000000000000000000
+GigE Vision Streaming Protocol
+    Status: GEV_STATUS_SUCCESS (0x0000)
+    Block ID (16 bits): 65401
+    Format: TRAILER (0x02)
+    Packet ID (24 bits): 194
+    Payload Type: IMAGE (0x0001)
+    Size Y: 512
+
+-- trailer raw bytes (UDP payload) --
+0000ff79020000c20000000100000200
+== Leader timestamps of first 5 frames ==
+1792950002.888985000	65401	0x18e1d68736273fd8
+1792950002.901238000	65402	0x18e1d68736e3e0e8
+1792950003.001259000	65403	0x18e1d6873cd9c9b8
+1792950003.101301000	65404	0x18e1d68742cfaab8
+1792950003.201251000	65405	0x18e1d68748c58bb8
+== resend commands / resent packets ==
+resent GVSP packets (status 0x0100): 0

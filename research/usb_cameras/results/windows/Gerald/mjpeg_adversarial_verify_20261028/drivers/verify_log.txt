@@ -1,0 +1,148 @@
+Wed Oct 28 04:44:39 UTC 2026
+
+=== msmf common_1280x720at30_c922
+uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c922 --run-dir 'C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_msmf\common_1280x720at30_c922' --timeout-s 120 -- research/usb_cameras/mjpeg/build/mf_mjpeg_capture.exe --dev 'vid_046d&pid_085c' --width 1280 --height 720 --fps 30 --seconds 10 --warmup 2 --out 'C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_msmf\common_1280x720at30_c922' --attr-dump 5
+[camlock] acquired after 0.0s: uv run --script C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\mjpeg\run_one.py --cams c922 --run-dir C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_msmf\common_1280x720at30_c922 --timeout-s 120 -- C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\mjpeg\build\mf_mjpeg_capture.exe --dev vid_046d&pid_085c --width 1280 --height 720 --fps 30 --seconds 10 --warmup 2 --out C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_msmf\common_1280x720at30_c922 --attr-dump 5
+cam 0 c922 Pro Stream Webcam: 353 frames, out=MJPG, err=0x00000000
+
+[camlock] released
+msmf-sourcereader {'subtype': 'MJPG', 'width': 1280, 'height': 720, 'fps': 30.0} decoded=False cpu=1.538
+  cam0 c922 Pro Stream Webcam: fps=30.0 n=300 valid%=100.0 bytes_p50=28829 gaps=0
+wrote research\usb_cameras\results\windows\Gerald\mjpeg_adversarial_verify_20261028\mjpeg_msmf\common_1280x720at30_c922\summary.json
+
+=== msmf common_1280x720at30_usbcam
+uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams usbcam --run-dir 'C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_msmf\common_1280x720at30_usbcam' --timeout-s 120 -- research/usb_cameras/mjpeg/build/mf_mjpeg_capture.exe --dev 'vid_4c4a&pid_4a55' --width 1280 --height 720 --fps 30 --seconds 10 --warmup 2 --out 'C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_msmf\common_1280x720at30_usbcam' --attr-dump 5
+[camlock] acquired after 0.0s: uv run --script C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\mjpeg\run_one.py --cams usbcam --run-dir C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_msmf\common_1280x720at30_usbcam --timeout-s 120 -- C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\mjpeg\build\mf_mjpeg_capture.exe --dev vid_4c4a&pid_4a55 --width 1280 --height 720 --fps 30 --seconds 10 --warmup 2 --out C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_msmf\common_1280x720at30_usbcam --attr-dump 5
+cam 0 USB Camera: 309 frames, out=MJPG, err=0x00000000
+
+[camlock] released
+msmf-sourcereader {'subtype': 'MJPG', 'width': 1280, 'height': 720, 'fps': 30.0} decoded=False cpu=1.63
+  cam0 USB Camera: fps=25.78 n=258 valid%=100.0 bytes_p50=27657 gaps=0
+wrote research\usb_cameras\results\windows\Gerald\mjpeg_adversarial_verify_20261028\mjpeg_msmf\common_1280x720at30_usbcam\summary.json
+
+=== pyav-dshow common_1280x720at30_c922
+uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c922 --run-dir 'C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_pyav-dshow\common_1280x720at30_c922' --timeout-s 120 -- uv run --script research/usb_cameras/mjpeg/pyav/pyav_capture.py --input-format dshow --device 'video=@device_pnp_\\?\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global' --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir 'C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_pyav-dshow\common_1280x720at30_c922'
+[camlock] acquired after 0.0s: uv run --script C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\mjpeg\run_one.py --cams c922 --run-dir C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_pyav-dshow\common_1280x720at30_c922 --timeout-s 120 -- uv run --script C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\mjpeg\pyav\pyav_capture.py --input-format dshow --device video=@device_pnp_\\?\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_pyav-dshow\common_1280x720at30_c922
+{"cameras": [{"name": "video=@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global", "codec": "mjpeg", "pix_fmt": "yuvj422p", "frames": 371, "stream_size": [1280, 720], "stream_time_base": "1/10000000"}], "cpu": {"method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)", "wall_s": 10.0005385, "process_cpu_s_ticks": 0.140625, "process_cpu_pct_of_one_core_ticks": 1.406174277515156, "tsc_hz": 3395013473.187801, "process_cycles": 377321908, "process_cpu_pct_of_one_core": 1.1113404800573257}, "errors": []}
+
+[camlock] released
+pyav-dshow {'subtype': 'MJPG', 'width': 1280, 'height': 720, 'fps': 30.0} decoded=False cpu=1.1113404800573257
+  cam0 video=@device_pnp_\\?\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global: fps=30.0 n=300 valid%=100.0 bytes_p50=28853 gaps=0
+wrote research\usb_cameras\results\windows\Gerald\mjpeg_adversarial_verify_20261028\mjpeg_pyav-dshow\common_1280x720at30_c922\summary.json
+
+=== pyav-dshow common_1280x720at30_usbcam
+uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams usbcam --run-dir 'C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_pyav-dshow\common_1280x720at30_usbcam' --timeout-s 120 -- uv run --script research/usb_cameras/mjpeg/pyav/pyav_capture.py --input-format dshow --device 'video=@device_pnp_\\?\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global' --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir 'C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_pyav-dshow\common_1280x720at30_usbcam'
+[camlock] acquired after 0.0s: uv run --script C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\mjpeg\run_one.py --cams usbcam --run-dir C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_pyav-dshow\common_1280x720at30_usbcam --timeout-s 120 -- uv run --script C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\mjpeg\pyav\pyav_capture.py --input-format dshow --device video=@device_pnp_\\?\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_pyav-dshow\common_1280x720at30_usbcam
+{"cameras": [{"name": "video=@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global", "codec": "mjpeg", "pix_fmt": "yuvj422p", "frames": 319, "stream_size": [1280, 720], "stream_time_base": "1/10000000"}], "cpu": {"method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)", "wall_s": 10.0004251, "process_cpu_s_ticks": 0.09375, "process_cpu_pct_of_one_core_ticks": 0.9374601485690844, "tsc_hz": 3368053479.5211825, "process_cycles": 426328153, "process_cpu_pct_of_one_core": 1.2657460255684747}, "errors": []}
+
+[camlock] released
+pyav-dshow {'subtype': 'MJPG', 'width': 1280, 'height': 720, 'fps': 30.0} decoded=False cpu=1.2657460255684747
+  cam0 video=@device_pnp_\\?\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global: fps=25.74 n=258 valid%=100.0 bytes_p50=27578 gaps=0
+wrote research\usb_cameras\results\windows\Gerald\mjpeg_adversarial_verify_20261028\mjpeg_pyav-dshow\common_1280x720at30_usbcam\summary.json
+[
+ {
+  "backend": "msmf",
+  "label": "common_1280x720at30_c922",
+  "rc": 0,
+  "capture_command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c922 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_msmf\\common_1280x720at30_c922' --timeout-s 120 -- research/usb_cameras/mjpeg/build/mf_mjpeg_capture.exe --dev 'vid_046d&pid_085c' --width 1280 --height 720 --fps 30 --seconds 10 --warmup 2 --out 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_msmf\\common_1280x720at30_c922' --attr-dump 5",
+  "s": 40.1,
+  "summarize_rc": 0
+ },
+ {
+  "backend": "msmf",
+  "label": "common_1280x720at30_usbcam",
+  "rc": 0,
+  "capture_command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams usbcam --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_msmf\\common_1280x720at30_usbcam' --timeout-s 120 -- research/usb_cameras/mjpeg/build/mf_mjpeg_capture.exe --dev 'vid_4c4a&pid_4a55' --width 1280 --height 720 --fps 30 --seconds 10 --warmup 2 --out 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_msmf\\common_1280x720at30_usbcam' --attr-dump 5",
+  "s": 42.3,
+  "summarize_rc": 0
+ },
+ {
+  "backend": "pyav-dshow",
+  "label": "common_1280x720at30_c922",
+  "rc": 0,
+  "capture_command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c922 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_pyav-dshow\\common_1280x720at30_c922' --timeout-s 120 -- uv run --script research/usb_cameras/mjpeg/pyav/pyav_capture.py --input-format dshow --device 'video=@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global' --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_pyav-dshow\\common_1280x720at30_c922'",
+  "s": 43.2,
+  "summarize_rc": 0
+ },
+ {
+  "backend": "pyav-dshow",
+  "label": "common_1280x720at30_usbcam",
+  "rc": 0,
+  "capture_command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams usbcam --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_pyav-dshow\\common_1280x720at30_usbcam' --timeout-s 120 -- uv run --script research/usb_cameras/mjpeg/pyav/pyav_capture.py --input-format dshow --device 'video=@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global' --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_pyav-dshow\\common_1280x720at30_usbcam'",
+  "s": 41.8,
+  "summarize_rc": 0
+ }
+]
+wrote research\usb_cameras\results\windows\Gerald\mjpeg_adversarial_verify_20261028\index_20261028T044732Z.json
+Wed Oct 28 04:47:32 UTC 2026
+
+=== msmf common_1280x720at30_c922+c930e+usbcam
+uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c922,c930e,usbcam --run-dir 'C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_msmf\common_1280x720at30_c922+c930e+usbcam' --timeout-s 120 -- research/usb_cameras/mjpeg/build/mf_mjpeg_capture.exe --dev 'vid_046d&pid_085c' --dev 'vid_046d&pid_0843' --dev 'vid_4c4a&pid_4a55' --width 1280 --height 720 --fps 30 --seconds 10 --warmup 2 --out 'C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_msmf\common_1280x720at30_c922+c930e+usbcam' --attr-dump 5
+[camlock] acquired after 0.0s: uv run --script C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\mjpeg\run_one.py --cams c922,c930e,usbcam --run-dir C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_msmf\common_1280x720at30_c922+c930e+usbcam --timeout-s 120 -- C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\mjpeg\build\mf_mjpeg_capture.exe --dev vid_046d&pid_085c --dev vid_046d&pid_0843 --dev vid_4c4a&pid_4a55 --width 1280 --height 720 --fps 30 --seconds 10 --warmup 2 --out C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_msmf\common_1280x720at30_c922+c930e+usbcam --attr-dump 5
+cam 0 c922 Pro Stream Webcam: 353 frames, out=MJPG, err=0x00000000
+cam 1 Logitech Webcam C930e: 348 frames, out=MJPG, err=0x00000000
+cam 2 USB Camera: 0 frames, out=MJPG, err=0x800718cf
+
+[camlock] released
+msmf-sourcereader {'subtype': 'MJPG', 'width': 1280, 'height': 720, 'fps': 30.0} decoded=False cpu=2.907
+  cam0 c922 Pro Stream Webcam: fps=30.0 n=300 valid%=100.0 bytes_p50=28764 gaps=0
+  cam1 Logitech Webcam C930e: fps=30.05 n=301 valid%=100.0 bytes_p50=63073 gaps=0
+  cam2 USB Camera: fps=None n=0 valid%=None bytes_p50=None gaps=0
+wrote research\usb_cameras\results\windows\Gerald\mjpeg_adversarial_verify_20261028\mjpeg_msmf\common_1280x720at30_c922+c930e+usbcam\summary.json
+[
+ {
+  "backend": "msmf",
+  "label": "common_1280x720at30_c922+c930e+usbcam",
+  "rc": 0,
+  "capture_command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c922,c930e,usbcam --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_msmf\\common_1280x720at30_c922+c930e+usbcam' --timeout-s 120 -- research/usb_cameras/mjpeg/build/mf_mjpeg_capture.exe --dev 'vid_046d&pid_085c' --dev 'vid_046d&pid_0843' --dev 'vid_4c4a&pid_4a55' --width 1280 --height 720 --fps 30 --seconds 10 --warmup 2 --out 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_msmf\\common_1280x720at30_c922+c930e+usbcam' --attr-dump 5",
+  "s": 42.5,
+  "summarize_rc": 0
+ }
+]
+wrote research\usb_cameras\results\windows\Gerald\mjpeg_adversarial_verify_20261028\index_20261028T044817Z.json
+Wed Oct 28 04:48:17 UTC 2026
+
+=== opencv-msmf-decode common_1280x720at30_usbcam_duphash
+uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams usbcam --run-dir 'C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_opencv-msmf-decode\common_1280x720at30_usbcam_duphash' --timeout-s 150.0 -- uv run --script research/usb_cameras/mjpeg/opencv/opencv_capture.py --api msmf --mode decode --set-order size-first --index 5 --name usbcam --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir 'C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_opencv-msmf-decode\common_1280x720at30_usbcam_duphash'
+[camlock] acquired after 0.0s: uv run --script C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\mjpeg\run_one.py --cams usbcam --run-dir C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_opencv-msmf-decode\common_1280x720at30_usbcam_duphash --timeout-s 150.0 -- uv run --script C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\mjpeg\opencv\opencv_capture.py --api msmf --mode decode --set-order size-first --index 5 --name usbcam --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_opencv-msmf-decode\common_1280x720at30_usbcam_duphash
+{"cameras": [{"idx": 0, "name": "usbcam", "cv_index": 5, "api": "msmf", "backend_name": "MSMF", "set_results": {"order": "size-first", "w": true, "h": true, "fps": true, "fourcc_last": false}, "got_fourcc": "\u0016\u0000\u0000\u0000", "got_w": 1280.0, "got_h": 720.0, "got_fps": 30.0, "got_convert_rgb": 1.0, "got_format": -1.0, "open_ms": 3699.9328, "frames": 365, "frame_shapes": {"(720, 1280, 3)/uint8": 365}, "frames_starting_ffd8": 0, "frames_identical_to_previous": 58}], "cpu": {"method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)", "wall_s": 10.0003091, "process_cpu_s_ticks": 6.21875, "process_cpu_pct_of_one_core_ticks": 62.18557784378884, "tsc_hz": 3386092339.9898767, "process_cycles": 16299243305, "process_cpu_pct_of_one_core": 48.13436219229167, "frameserver_pid": 22016, "frameserver_cpu_pct_of_one_core_ticks": 5.781071307085898, "frameserver_cpu_pct_of_one_core": null}, "errors": [], "jpeg": false}
+
+[camlock] released
+opencv-msmf-decode {'subtype': 'MJPG', 'width': 1280, 'height': 720, 'fps': 30.0} decoded=True cpu=48.13436219229167
+  cam0 usbcam: fps=30.05 n=300 valid%=None bytes_p50=2764800 gaps=16
+wrote research\usb_cameras\results\windows\Gerald\mjpeg_adversarial_verify_20261028\mjpeg_opencv-msmf-decode\common_1280x720at30_usbcam_duphash\summary.json
+[
+ {
+  "backend": "opencv-msmf-decode",
+  "label": "common_1280x720at30_usbcam_duphash",
+  "rc": 0,
+  "capture_command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams usbcam --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_opencv-msmf-decode\\common_1280x720at30_usbcam_duphash' --timeout-s 150.0 -- uv run --script research/usb_cameras/mjpeg/opencv/opencv_capture.py --api msmf --mode decode --set-order size-first --index 5 --name usbcam --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_opencv-msmf-decode\\common_1280x720at30_usbcam_duphash'",
+  "s": 45.0,
+  "summarize_rc": 0
+ }
+]
+wrote research\usb_cameras\results\windows\Gerald\mjpeg_adversarial_verify_20261028\index_20261028T044902Z.json
+Wed Oct 28 04:49:02 UTC 2026
+
+=== opencv-dshow-raw common_1280x720at30_c922_fourccfirst
+uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c922 --run-dir 'C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_opencv-dshow-raw\common_1280x720at30_c922_fourccfirst' --timeout-s 120 -- uv run --script research/usb_cameras/mjpeg/opencv/opencv_capture.py --api dshow --mode raw --set-order fourcc-first --index 0 --name c922 --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir 'C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_opencv-dshow-raw\common_1280x720at30_c922_fourccfirst'
+[camlock] acquired after 0.0s: uv run --script C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\mjpeg\run_one.py --cams c922 --run-dir C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_opencv-dshow-raw\common_1280x720at30_c922_fourccfirst --timeout-s 120 -- uv run --script C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\mjpeg\opencv\opencv_capture.py --api dshow --mode raw --set-order fourcc-first --index 0 --name c922 --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\mjpeg_adversarial_verify_20261028\mjpeg_opencv-dshow-raw\common_1280x720at30_c922_fourccfirst
+{"cameras": [{"idx": 0, "name": "c922", "cv_index": 0, "api": "dshow", "backend_name": "DSHOW", "set_results": {"order": "fourcc-first", "fourcc": true, "w": true, "h": true, "fps": true, "convert_rgb_0": true}, "got_fourcc": "YUY2", "got_w": 1280.0, "got_h": 720.0, "got_fps": 30.00003000003, "got_convert_rgb": 0.0, "got_format": -1.0, "open_ms": 2742.7396, "frames": 122, "frame_shapes": {"(720, 1280, 3)/uint8": 122}, "frames_starting_ffd8": 0, "frames_identical_to_previous": 0}], "cpu": {"method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)", "wall_s": 10.0003627, "process_cpu_s_ticks": 0.546875, "process_cpu_pct_of_one_core_ticks": 5.46855165563145, "tsc_hz": 3402811891.582964, "process_cycles": 1992740825, "process_cpu_pct_of_one_core": 5.855946829857477}, "errors": [], "jpeg": false}
+
+[camlock] released
+opencv-dshow-raw {'subtype': 'MJPG', 'width': 1280, 'height': 720, 'fps': 30.0} decoded=True cpu=5.855946829857477
+  cam0 c922: fps=9.99 n=100 valid%=None bytes_p50=2764800 gaps=99
+wrote research\usb_cameras\results\windows\Gerald\mjpeg_adversarial_verify_20261028\mjpeg_opencv-dshow-raw\common_1280x720at30_c922_fourccfirst\summary.json
+[
+ {
+  "backend": "opencv-dshow-raw",
+  "label": "common_1280x720at30_c922_fourccfirst",
+  "rc": 0,
+  "capture_command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c922 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_opencv-dshow-raw\\common_1280x720at30_c922_fourccfirst' --timeout-s 120 -- uv run --script research/usb_cameras/mjpeg/opencv/opencv_capture.py --api dshow --mode raw --set-order fourcc-first --index 0 --name c922 --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_opencv-dshow-raw\\common_1280x720at30_c922_fourccfirst'",
+  "s": 43.1,
+  "summarize_rc": 0
+ }
+]
+wrote research\usb_cameras\results\windows\Gerald\mjpeg_adversarial_verify_20261028\index_20261028T044946Z.json
+Wed Oct 28 04:49:46 UTC 2026
+VERIFY_DONE

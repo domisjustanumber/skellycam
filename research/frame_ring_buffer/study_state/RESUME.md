@@ -54,11 +54,11 @@ Which numbers are idle and which are provisional: `../PROVISIONAL.md`.
 | Recommend | Done; rewritten by the revision stage | `recommend_result.json` (pre-revision copy: `recommend_result_pre_revision.json`) |
 | Critique: evidence, priorities, reproducibility re-run | Done | `critic_evidence_result.json`, `critic_priorities_result.json`, `critic_reproduce_result.json`, `../reproducibility/` (`comparison.md`: 130 of 136 throughput rows within 15%, all pass/fail rows unchanged) |
 | Revision (34 critic issues: 30 resolved, 4 partly) | Done idle (2026-10-28 06:10-07:06): e2ev single-change variants, P8 with lockstep + metadata, P3 ASYM, P10v, P11 crash containers, P12 physical disk, deflate, P6 repeats | `revision_result.json`, `../revision/` |
-| Report (Claude Doc) | Done: every section filled; audited 2026-10-28 (see below) | https://claude.ai/artifact/Cz1otkZxAjLTHfP1WeE9it |
+| Report (`docs/frame_ring_buffer_report.md`) | Done: every section filled; audited 2026-10-28 (see below) | [../docs/frame_ring_buffer_report.md](../docs/frame_ring_buffer_report.md) |
 
 ## The report
 
-Claude Doc: https://claude.ai/artifact/Cz1otkZxAjLTHfP1WeE9it
+Report (moved from Claude Docs to this repo on 2026-10-28): [../docs/frame_ring_buffer_report.md](../docs/frame_ring_buffer_report.md)
 (doc id `610a6b1c-1f2a-4bb4-95ef-02f4b8ca0a15`, tab file `cee6e77d-fec3`, body node `36d22330-cfd9`).
 Sections: Summary, Architecture overview (diagram), Write path, Read paths, Control messages, UI taps and handoff,
 Measured baseline (chart), Best practices, C++ port evaluation (chart), Recommendations (chart, 15 ranks), Reproducing the results.

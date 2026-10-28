@@ -1,0 +1,12 @@
+/root/.local/share/uv/python/cpython-3.14.0rc3+freethreaded-linux-x86_64-gnu/bin/python3.14t
+Python 3.14.0rc3 free-threading build (main, Sep 18 2025, 19:48:41) [Clang 20.1.4 ]
+== gil=0
+python 3.14.0rc3 GIL=off | Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.36 | cpus=28
+cams  size |      sent      recv   drop% | agg kpps cpu cores | rcvbuf
+   4  1472 | 1,019,136 1,019,136    0.00 |    339.7      0.54 | 33554432
+   8  1472 | 2,038,224 2,038,224    0.00 |    679.4      1.29 | 33554432
+== gil=1
+python 3.14.0rc3 GIL=on | Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.36 | cpus=28
+cams  size |      sent      recv   drop% | agg kpps cpu cores | rcvbuf
+   4  1472 | 1,019,136   185,257   81.82 |    339.7      1.51 | 33554432
+   8  1472 | 2,038,272   159,617   92.17 |    679.4      1.24 | 33554432

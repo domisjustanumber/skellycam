@@ -1,0 +1,171 @@
+{
+ "tool": "gvsp_capture_report",
+ "host": {
+  "python": "3.12.3",
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "hostname": "23dd5623ee00",
+  "time_utc": "2026-10-25T19:13:46Z"
+ },
+ "args": {
+  "pcap": null,
+  "ip": "172.31.77.21",
+  "iface": "",
+  "seconds": 3.0,
+  "packet_size": 0,
+  "test_packet": false,
+  "extended_ids": false,
+  "no_resend": false,
+  "resend_wait": 0.05,
+  "rcvbuf": 33554432,
+  "force_rcvbuf": true,
+  "port": 0,
+  "control": "stdlib",
+  "save_frame": null,
+  "tick_hz": 0,
+  "min_complete": 0.99,
+  "json": "/out/multi_live_viva.json",
+  "selftest": false
+ },
+ "camera": {
+  "ip": "172.31.77.21",
+  "gev_version": "2.0",
+  "capability": "0x08000027",
+  "tick_hz": 1000000000
+ },
+ "socket": {
+  "requested": 33554432,
+  "method": "SO_RCVBUFFORCE",
+  "errors": [],
+  "os_default": 212992,
+  "effective": 67108864,
+  "effective_usable_estimate": 33554432,
+  "capped": false
+ },
+ "scps": 1500,
+ "stream": {
+  "packets": 17172,
+  "bytes": 25024140,
+  "packet_formats": {
+   "LEADER": 81,
+   "PAYLOAD": 17010,
+   "TRAILER": 81
+  },
+  "status_codes": {
+   "SUCCESS": 17172
+  },
+  "extended_id_packets": 0,
+  "extended_ids_used": false,
+  "resent_packets_received": 0,
+  "late_packets_after_close": 0,
+  "frames_seen": 81,
+  "frames_complete": 81,
+  "frames_incomplete": 0,
+  "frames_trailer_missing": 0,
+  "frames_leader_missing": 0,
+  "missing_packets_total": 0,
+  "block_id_gaps": 0,
+  "completeness": 1.0,
+  "resend_ranges_requested": 0,
+  "resend_packets_requested": 0,
+  "resend_packets_recovered": 0,
+  "max_ip_packet_size": 1500,
+  "payload_packet_ip_size_most_common": 1500,
+  "non_gvsp_datagrams": 0,
+  "jumbo_frames": false,
+  "payload_types": {
+   "IMAGE": 81
+  },
+  "chunk_data": false,
+  "pixel_formats": [
+   {
+    "pixel_format": "BayerRG8",
+    "width": 640,
+    "height": 480,
+    "frames": 81,
+    "opencv_bayer_code": "cv2.COLOR_BayerBG2BGR"
+   }
+  ],
+  "data_bytes_per_complete_frame_median": 307200.0,
+  "uncompressed_frame_bytes_expected": 307200,
+  "leader_timestamp_delta_ticks": {
+   "n": 80,
+   "min": 36447131.0,
+   "median": 36878613.5,
+   "p95": 39437808.5,
+   "max": 40931572.0
+  },
+  "leader_timestamp_first": 23886,
+  "leader_timestamp_monotonic": true,
+  "device_fps_from_timestamps": 27.11598688491909,
+  "leader_timestamp_delta_us": {
+   "n": 80,
+   "min": 36447.131,
+   "median": 36878.6135,
+   "p95": 39437.8085,
+   "max": 40931.572
+  },
+  "host_fps": 26.79303120228648,
+  "compression_verdict": "UNCOMPRESSED",
+  "compression_reasons": [
+   "payload bytes/frame 307200 vs uncompressed BayerRG8 size 307200 (ratio 1.000)",
+   "IMAGE payload in a standard PFNC pixel format, full-size frames"
+  ],
+  "receive": {
+   "foreign_datagrams": 0,
+   "wall_s": 3.008578673005104,
+   "mbit_s": 66.54076285132942,
+   "linux_udp_rcvbuf_errors_delta": 0
+  }
+ },
+ "checks": [
+  {
+   "name": "camera reachable",
+   "status": "PASS",
+   "detail": "GEV 2.0, tick 1000000000 Hz, packet resend supported",
+   "camera": "172.31.77.21"
+  },
+  {
+   "name": "socket receive buffer",
+   "status": "PASS",
+   "detail": "requested 33554432 B via SO_RCVBUFFORCE, OS reports 67108864 B (default 212992 B)",
+   "camera": "172.31.77.21"
+  },
+  {
+   "name": "GVSP leader + trailer packets",
+   "status": "PASS",
+   "detail": "{'LEADER': 81, 'PAYLOAD': 17010, 'TRAILER': 81}",
+   "camera": "GVSP 172.31.77.21 -> 172.31.77.100:59908 (67 Mbit/s)"
+  },
+  {
+   "name": "frames complete",
+   "status": "PASS",
+   "detail": "81/81 (100.0 %; limit 99 %)",
+   "camera": "GVSP 172.31.77.21 -> 172.31.77.100:59908 (67 Mbit/s)"
+  },
+  {
+   "name": "compression verdict",
+   "status": "INFO",
+   "detail": "UNCOMPRESSED: payload bytes/frame 307200 vs uncompressed BayerRG8 size 307200 (ratio 1.000); IMAGE payload in a standard PFNC pixel format, full-size frames",
+   "camera": "GVSP 172.31.77.21 -> 172.31.77.100:59908 (67 Mbit/s)"
+  },
+  {
+   "name": "packet size",
+   "status": "INFO",
+   "detail": "payload packets 1500 B IP datagrams (max 1500) -> standard 1500 MTU",
+   "camera": "GVSP 172.31.77.21 -> 172.31.77.100:59908 (67 Mbit/s)"
+  },
+  {
+   "name": "extended ids (64-bit block ids)",
+   "status": "INFO",
+   "detail": "not used (0/17172 packets)",
+   "camera": "GVSP 172.31.77.21 -> 172.31.77.100:59908 (67 Mbit/s)"
+  },
+  {
+   "name": "device timestamps",
+   "status": "INFO",
+   "detail": "increasing; device frame rate 27.12 fps; host arrival rate 26.79 fps",
+   "camera": "GVSP 172.31.77.21 -> 172.31.77.100:59908 (67 Mbit/s)"
+  }
+ ]
+}

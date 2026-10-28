@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\ad23e4da-d956-400c-b95c-1c7166f96ad9\scratchpad\verifier_aggregator_gating.py", line 45, in <module>
+    from freemocap.core.pipeline.realtime.realtime_pipeline import RealtimePipeline
+  File "C:\Users\Dom\GitHub\freemocap\freemocap\freemocap\core\pipeline\realtime\realtime_pipeline.py", line 20, in <module>
+    from freemocap.core.tracking.tracker_definitions import RTMPOSE_WHOLEBODY_DEFINITION, MEDIAPIPE_WHOLEBODY_DEFINITION
+  File "C:\Users\Dom\GitHub\freemocap\freemocap\freemocap\core\tracking\tracker_definitions.py", line 39, in <module>
+    RTMPOSE_WHOLEBODY_DEFINITION: TrackerDefinition = _load(
+                                                      ^^^^^^
+  File "<@beartype(freemocap.core.tracking.tracker_definitions._load) at 0x1c2a57bb880>", line 51, in _load
+  File "C:\Users\Dom\GitHub\freemocap\freemocap\freemocap\core\tracking\tracker_definitions.py", line 34, in _load
+    tracked_points=load_point_names(yaml_path),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<@beartype(skellytracker.core.detectors.keypoint_detectors._schema_loader.load_point_names) at 0x1c2a5025120>", line 36, in load_point_names
+  File "C:\Users/Dom/GitHub/freemocap/skellytracker\skellytracker\core\detectors\keypoint_detectors\_schema_loader.py", line 9, in load_point_names
+    with open(path) as f:
+         ^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Dom\\GitHub\\freemocap\\skellytracker\\skellytracker\\core\\detectors\\keypoint_detectors\\rtmpose\\wholebody\\rtmpose_wholebody.yaml'

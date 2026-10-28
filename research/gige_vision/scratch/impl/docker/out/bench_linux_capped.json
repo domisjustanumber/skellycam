@@ -1,0 +1,112 @@
+{
+ "tool": "udp_recv_benchmark",
+ "role": "local",
+ "host": {
+  "python": "3.12.3",
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "hostname": "3eb2fea01e1c",
+  "time_utc": "2026-10-25T19:26:07Z"
+ },
+ "args": {
+  "role": "local",
+  "host": "127.0.0.1",
+  "bind": "0.0.0.0",
+  "target": "",
+  "port": 50000,
+  "sizes": "1472,8972",
+  "rates": "1000",
+  "seconds": 2.0,
+  "rcvbuf": 33554432,
+  "force_rcvbuf": false,
+  "senders": 1,
+  "max_runs": 0,
+  "max_drop_pct": 0.1,
+  "json": "/out/bench_linux_capped.json",
+  "selftest": false
+ },
+ "rows": [
+  {
+   "size": 1472,
+   "target_mbps": 1000.0,
+   "senders": 1,
+   "sent": 169856,
+   "received": 164961,
+   "drop_pct": 2.882,
+   "send_mbps": 1000.0,
+   "recv_mbps": 971.4,
+   "recv_kpps": 82.5,
+   "rx_cpu_pct": 27.7,
+   "rcvbuf": {
+    "requested": 33554432,
+    "method": "SO_RCVBUF",
+    "errors": [],
+    "os_default": 212992,
+    "effective": 425984,
+    "effective_usable_estimate": 212992,
+    "capped": true
+   },
+   "linux_rcvbuf_errors": 4895
+  },
+  {
+   "size": 8972,
+   "target_mbps": 1000.0,
+   "senders": 1,
+   "sent": 27888,
+   "received": 27665,
+   "drop_pct": 0.8,
+   "send_mbps": 1000.5,
+   "recv_mbps": 992.6,
+   "recv_kpps": 13.8,
+   "rx_cpu_pct": 7.9,
+   "rcvbuf": {
+    "requested": 33554432,
+    "method": "SO_RCVBUF",
+    "errors": [],
+    "os_default": 212992,
+    "effective": 425984,
+    "effective_usable_estimate": 212992,
+    "capped": true
+   },
+   "linux_rcvbuf_errors": 223
+  }
+ ],
+ "checks": [
+  {
+   "name": "socket receive buffer",
+   "status": "WARN",
+   "detail": "requested 33554432 B, got 425984 B - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)",
+   "camera": "1472 B @ 1000.0 Mbit/s"
+  },
+  {
+   "name": "kernel receive-buffer drops",
+   "status": "WARN",
+   "detail": "4895 datagrams",
+   "camera": "1472 B @ 1000.0 Mbit/s"
+  },
+  {
+   "name": "paced receive",
+   "status": "FAIL",
+   "detail": "lost 2.882 % (limit 0.1 %), received 82.5 kpps (a 1000 Mbit/s link carries at most 81.3 kpps of this size), receive CPU 27.7 % of one core",
+   "camera": "1472 B @ 1000.0 Mbit/s"
+  },
+  {
+   "name": "socket receive buffer",
+   "status": "WARN",
+   "detail": "requested 33554432 B, got 425984 B - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)",
+   "camera": "8972 B @ 1000.0 Mbit/s"
+  },
+  {
+   "name": "kernel receive-buffer drops",
+   "status": "WARN",
+   "detail": "223 datagrams",
+   "camera": "8972 B @ 1000.0 Mbit/s"
+  },
+  {
+   "name": "paced receive",
+   "status": "FAIL",
+   "detail": "lost 0.8 % (limit 0.1 %), received 13.8 kpps (a 1000 Mbit/s link carries at most 13.8 kpps of this size), receive CPU 7.9 % of one core",
+   "camera": "8972 B @ 1000.0 Mbit/s"
+  }
+ ]
+}

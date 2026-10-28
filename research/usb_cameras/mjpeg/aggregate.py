@@ -18,6 +18,7 @@ delivered pixels, not JPEG. 'hdr==MF' additionally compares the full header byte
 """
 import argparse
 import json
+import os
 import socket
 import sys
 from datetime import datetime, timezone
@@ -186,8 +187,8 @@ if a.markdown:
     md = ["| backend | cell | camera | requested | fps achieved | valid JPEG % | payload p50 (B) | process CPU % (1 core = 100) | machine CPU % before/after | luma p50 | exposure (log2 s, mode) | native bytes? | delivered | result |",
           "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
     for r in rows:
-        link = relp(Path(REPO / r["summary"])) if not Path(r["summary"]).is_absolute() else r["summary"]
-        link = "../" + link.split("research/usb_cameras/", 1)[1] if "research/usb_cameras/" in link else link
+        summary = Path(r["summary"]) if Path(r["summary"]).is_absolute() else REPO / r["summary"]
+        link = os.path.relpath(summary, out).replace(os.sep, "/")  # relative to table.md's own folder
         if r.get("failed"):
             md.append(f"| {r['test'][6:]} | {r['label']} | {r.get('cam') or '-'} | - | FAILED ({r['returncode']}): {r['log_tail'][-120:].replace('|', '/')} | - | - | - | - | - | - | - | - | [result]({link}) |")
             continue

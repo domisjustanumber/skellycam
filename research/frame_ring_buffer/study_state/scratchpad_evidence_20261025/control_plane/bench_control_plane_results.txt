@@ -1,0 +1,14 @@
+python 3.12.13 on Windows-11-10.0.26300-SP0  numpy 2.2.6
+A. Value(lock=True).value read :      306 ns
+A. RawValue.value read         :       35 ns
+B. ipc.should_continue          :     2832 ns
+C. mp.Queue.empty() (empty)     :     8911 ns
+D. should_grab_by_id (1 cams)    :     5913 ns
+D. should_grab_by_id (5 cams)    :    18446 ns
+E. camera_loop_update_checks    :    18039 ns
+E. full pre-grab control poll   :    40872 ns  (5 cams)
+F. wait_10us requested    10.0 us -> median    523.5 us, p99   1002.5 us
+F. wait_1ms  requested  1000.0 us -> median   1531.1 us, p99   1852.8 us
+G. FRAME_METADATA_DTYPE.itemsize = 632 bytes
+G. RecordingFinishedMessage(36000 frames): __post_init__ 387 ms, pickle 127 ms, 23.9 MB, unpickle 98 ms
+H. 1080p frame itemsize 6.22 MB: put_data 1.680 ms, copy(frame) alone 0.971 ms, single np.copyto into slot 0.206 ms

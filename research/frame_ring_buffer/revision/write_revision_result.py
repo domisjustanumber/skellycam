@@ -161,7 +161,7 @@ act("minor", "[priorities] Ranks with no P1/P3 regression; rank 4 is detection o
 # ---------------- reproducibility critic
 act("major", "[repro] Following the READMEs overwrites the cited results (fixed output names, appended logs, no output-dir option).",
     "Added research/frame_ring_buffer/fp_paths.py and the FRAME_PIPELINE_RESULTS_DIR option to bench_common.py, proto_common.py, the 3 run_with_load.py copies, prototypes/run_all.py, cpp/run_all.py, cpp/run_matrix.py, cpp/summarize.py, the summarizers and env snapshots; documented in each stage README. Verified that the default path is unchanged and that the variable redirects (scratch test). The revision stage's own runs use new file names.",
-    "research/frame_ring_buffer/fp_paths.py; baseline/README.md, prototypes/README.md, cpp/README.md ('Keeping the cited results'). Pre-edit copies of the scripts: scratchpad backup_pre_paths/scripts.tar (session scratchpad).")
+    "research/frame_ring_buffer/fp_paths.py; baseline/README.md, prototypes/README.md, cpp/README.md ('Keeping the cited results'). Pre-edit copies of the scripts: revision/pre_edit_scripts_20261028/ (extracted on 2026-10-28 from the scratchpad backup_pre_paths/scripts.tar) (session scratchpad).")
 act("minor", "[repro] P6 720p 10 ms-poll rows not reproducible point values.",
     "prototypes/README.md now gives the range and the bimodality; rank 12 quotes ranges over 4 runs; only poll2ms is cited for 60/s.", "prototypes/README.md P6 section; p6_ui_skellycamvenv_rev_rep{2,3}.json.")
 act("minor", "[repro] cpp_one_copy slowest-writer fps not reproducible (1488 -> 1207).",

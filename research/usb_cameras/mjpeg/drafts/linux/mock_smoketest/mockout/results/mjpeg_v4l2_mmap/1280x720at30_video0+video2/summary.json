@@ -1,0 +1,631 @@
+{
+ "test": "mjpeg_v4l2_mmap",
+ "platform": "linux",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-25T18:48:21.074246+00:00",
+ "utc_summarized": "2026-10-25T18:48:22.740310+00:00",
+ "command": [
+  "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\mjpeg\\drafts\\linux\\v4l2_mmap_mjpeg.py",
+  "--device",
+  "C:/Program Files/Git/dev/video0",
+  "--device",
+  "C:/Program Files/Git/dev/video2",
+  "--seconds",
+  "1",
+  "--warmup",
+  "0.3"
+ ],
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "av": "18.0.0",
+   "numpy": "2.2.6",
+   "pillow": "12.3.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "kernel": "6.8.0-mock"
+ },
+ "backend": "v4l2-mmap-python",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30
+ },
+ "decoded_by_pipeline": false,
+ "decode_evidence": "VIDIOC_S_FMT returned pixelformat (per camera: format.s_fmt_returned); payload = mmap buffer[:bytesused] copied as bytes; no decoder is linked or called during capture (validation decodes happen afterwards in summarize_run)",
+ "window": {
+  "start_ns": 103458757454500,
+  "end_ns": 103459757958100,
+  "wall_s": 1.0005036
+ },
+ "delivered_codecs": [
+  "MJPG",
+  "MJPG"
+ ],
+ "silent_format_fallback": false,
+ "cpu": {
+  "method": "CLOCK_PROCESS_CPUTIME_ID (precise, all threads) + psutil cpu_times (tick-sampled)",
+  "wall_s": 1.0005246,
+  "process_cpu_s_ticks": 0.0,
+  "process_cpu_pct_of_one_core_ticks": 0.0,
+  "tsc_hz": null,
+  "process_cpu_pct_of_one_core": 0.0,
+  "process_cpu_s_clock": 0.0,
+  "process_cpu_pct_per_camera": 0.0
+ },
+ "cameras": [
+  {
+   "idx": 0,
+   "name": "Mock Cam 10 (C:/Program Files/Git/dev/video0)",
+   "camera_key": "Mock Cam 10",
+   "device": "C:/Program Files/Git/dev/video0",
+   "driver": "uvcvideo",
+   "card": "Mock Cam 10",
+   "bus_info": "usb-0000:00:14.0-10",
+   "sysfs": {
+    "v4l_name": null,
+    "v4l_index": null,
+    "error": "FileNotFoundError(2, 'The system cannot find the path specified')"
+   },
+   "format": {
+    "requested": {
+     "fourcc": "MJPG",
+     "width": 1280,
+     "height": 720
+    },
+    "s_fmt_returned": {
+     "fourcc": "MJPG",
+     "width": 1280,
+     "height": 720,
+     "field": 0,
+     "bytesperline": 0,
+     "sizeimage": 1843200,
+     "colorspace": 0
+    },
+    "g_fmt": {
+     "fourcc": "MJPG",
+     "width": 1280,
+     "height": 720
+    }
+   },
+   "silent_format_fallback": false,
+   "size_fallback": false,
+   "payload_is_jpeg": true,
+   "refused": false,
+   "frame_rate": {
+    "requested_fps": 30,
+    "requested_timeperframe": [
+     1,
+     30
+    ],
+    "s_parm_error": null,
+    "s_parm_returned": [
+     1,
+     30
+    ],
+    "g_parm": [
+     1,
+     30
+    ],
+    "driver_fps": 30.0,
+    "cap_timeperframe": true
+   },
+   "controls": {
+    "query": {
+     "exposure_auto": {
+      "name": "ctl",
+      "type": 0,
+      "min": 1,
+      "max": 5000,
+      "step": 0,
+      "default": 0,
+      "flags": 0
+     },
+     "exposure_absolute": {
+      "name": "ctl",
+      "type": 0,
+      "min": 1,
+      "max": 5000,
+      "step": 0,
+      "default": 0,
+      "flags": 0
+     },
+     "exposure_auto_priority": {
+      "name": "ctl",
+      "type": 0,
+      "min": 1,
+      "max": 5000,
+      "step": 0,
+      "default": 0,
+      "flags": 0
+     },
+     "white_balance_auto": {
+      "name": "ctl",
+      "type": 0,
+      "min": 1,
+      "max": 5000,
+      "step": 0,
+      "default": 0,
+      "flags": 0
+     },
+     "white_balance_temperature": {
+      "name": "ctl",
+      "type": 0,
+      "min": 1,
+      "max": 5000,
+      "step": 0,
+      "default": 0,
+      "flags": 0
+     }
+    },
+    "before": {
+     "exposure_auto": 3,
+     "exposure_absolute": 3,
+     "exposure_auto_priority": 3,
+     "white_balance_auto": 3,
+     "white_balance_temperature": 3
+    },
+    "requested": {
+     "exposure_absolute_100us": null,
+     "white_balance_temperature_k": null
+    },
+    "applied": {},
+    "after_apply": {
+     "exposure_auto": 3,
+     "exposure_absolute": 3,
+     "exposure_auto_priority": 3,
+     "white_balance_auto": 3,
+     "white_balance_temperature": 3
+    },
+    "readback_after_capture": {
+     "exposure_auto": 3,
+     "exposure_absolute": 3,
+     "exposure_auto_priority": 3,
+     "white_balance_auto": 3,
+     "white_balance_temperature": 3
+    }
+   },
+   "buffers": {
+    "requested": 6,
+    "granted": 6,
+    "reqbufs_capabilities": "0x0",
+    "lengths": [
+     2000000,
+     2000000,
+     2000000,
+     2000000,
+     2000000,
+     2000000
+    ]
+   },
+   "streamon_host_ns": 103458457079700,
+   "select_timeouts_1s": 0,
+   "frames": 39,
+   "v4l2_flag_counts": {
+    "TIMESTAMP_MONOTONIC|TSTAMP_SRC_SOE|error=False": 39
+   },
+   "frames_delivered_total": 39,
+   "frames_in_window": 30,
+   "fps_requested": 30,
+   "fps_achieved_count_over_wall": 29.984899604559143,
+   "fps_achieved_span": 29.646952840183193,
+   "inter_arrival_ms": {
+    "n": 29,
+    "min": 33.4619,
+    "p50": 33.6986,
+    "mean": 33.73027931034483,
+    "p95": 33.941,
+    "max": 34.154
+   },
+   "gaps_over_1p5_period": 0,
+   "os_timestamp_delta_ms": {
+    "n": 29,
+    "min": 33.45,
+    "p50": 33.694,
+    "mean": 33.73,
+    "p95": 33.946,
+    "max": 34.164
+   },
+   "payload_bytes": {
+    "n": 30,
+    "min": 15029,
+    "p50": 15029,
+    "mean": 15029.0,
+    "p95": 15029,
+    "max": 15029
+   },
+   "pct_valid_jpeg_in_window": 100.0,
+   "pct_valid_jpeg_all": 100.0,
+   "jpeg_checks_all": {
+    "soi": 39,
+    "eoi_at_end": 39,
+    "eoi_in_tail": 39,
+    "has_dht": 39,
+    "pillow_ok": 39,
+    "simplejpeg_ok": 39
+   },
+   "n_validated": 39
+  },
+  {
+   "idx": 1,
+   "name": "Mock Cam 11 (C:/Program Files/Git/dev/video2)",
+   "camera_key": "Mock Cam 11",
+   "device": "C:/Program Files/Git/dev/video2",
+   "driver": "uvcvideo",
+   "card": "Mock Cam 11",
+   "bus_info": "usb-0000:00:14.0-11",
+   "sysfs": {
+    "v4l_name": null,
+    "v4l_index": null,
+    "error": "FileNotFoundError(2, 'The system cannot find the path specified')"
+   },
+   "format": {
+    "requested": {
+     "fourcc": "MJPG",
+     "width": 1280,
+     "height": 720
+    },
+    "s_fmt_returned": {
+     "fourcc": "MJPG",
+     "width": 1280,
+     "height": 720,
+     "field": 0,
+     "bytesperline": 0,
+     "sizeimage": 1843200,
+     "colorspace": 0
+    },
+    "g_fmt": {
+     "fourcc": "MJPG",
+     "width": 1280,
+     "height": 720
+    }
+   },
+   "silent_format_fallback": false,
+   "size_fallback": false,
+   "payload_is_jpeg": true,
+   "refused": false,
+   "frame_rate": {
+    "requested_fps": 30,
+    "requested_timeperframe": [
+     1,
+     30
+    ],
+    "s_parm_error": null,
+    "s_parm_returned": [
+     1,
+     30
+    ],
+    "g_parm": [
+     1,
+     30
+    ],
+    "driver_fps": 30.0,
+    "cap_timeperframe": true
+   },
+   "controls": {
+    "query": {
+     "exposure_auto": {
+      "name": "ctl",
+      "type": 0,
+      "min": 1,
+      "max": 5000,
+      "step": 0,
+      "default": 0,
+      "flags": 0
+     },
+     "exposure_absolute": {
+      "name": "ctl",
+      "type": 0,
+      "min": 1,
+      "max": 5000,
+      "step": 0,
+      "default": 0,
+      "flags": 0
+     },
+     "exposure_auto_priority": {
+      "name": "ctl",
+      "type": 0,
+      "min": 1,
+      "max": 5000,
+      "step": 0,
+      "default": 0,
+      "flags": 0
+     },
+     "white_balance_auto": {
+      "name": "ctl",
+      "type": 0,
+      "min": 1,
+      "max": 5000,
+      "step": 0,
+      "default": 0,
+      "flags": 0
+     },
+     "white_balance_temperature": {
+      "name": "ctl",
+      "type": 0,
+      "min": 1,
+      "max": 5000,
+      "step": 0,
+      "default": 0,
+      "flags": 0
+     }
+    },
+    "before": {
+     "exposure_auto": 3,
+     "exposure_absolute": 3,
+     "exposure_auto_priority": 3,
+     "white_balance_auto": 3,
+     "white_balance_temperature": 3
+    },
+    "requested": {
+     "exposure_absolute_100us": null,
+     "white_balance_temperature_k": null
+    },
+    "applied": {},
+    "after_apply": {
+     "exposure_auto": 3,
+     "exposure_absolute": 3,
+     "exposure_auto_priority": 3,
+     "white_balance_auto": 3,
+     "white_balance_temperature": 3
+    },
+    "readback_after_capture": {
+     "exposure_auto": 3,
+     "exposure_absolute": 3,
+     "exposure_auto_priority": 3,
+     "white_balance_auto": 3,
+     "white_balance_temperature": 3
+    }
+   },
+   "buffers": {
+    "requested": 6,
+    "granted": 6,
+    "reqbufs_capabilities": "0x0",
+    "lengths": [
+     2000000,
+     2000000,
+     2000000,
+     2000000,
+     2000000,
+     2000000
+    ]
+   },
+   "streamon_host_ns": 103458457264400,
+   "select_timeouts_1s": 0,
+   "frames": 39,
+   "v4l2_flag_counts": {
+    "TIMESTAMP_MONOTONIC|TSTAMP_SRC_SOE|error=False": 39
+   },
+   "frames_delivered_total": 39,
+   "frames_in_window": 30,
+   "fps_requested": 30,
+   "fps_achieved_count_over_wall": 29.984899604559143,
+   "fps_achieved_span": 29.634377185535318,
+   "inter_arrival_ms": {
+    "n": 29,
+    "min": 33.5284,
+    "p50": 33.7071,
+    "mean": 33.744593103448274,
+    "p95": 33.973,
+    "max": 34.1058
+   },
+   "gaps_over_1p5_period": 0,
+   "os_timestamp_delta_ms": {
+    "n": 29,
+    "min": 33.528,
+    "p50": 33.695,
+    "mean": 33.74413793103449,
+    "p95": 33.951,
+    "max": 34.118
+   },
+   "payload_bytes": {
+    "n": 30,
+    "min": 15029,
+    "p50": 15029,
+    "mean": 15029.0,
+    "p95": 15029,
+    "max": 15029
+   },
+   "pct_valid_jpeg_in_window": 100.0,
+   "pct_valid_jpeg_all": 100.0,
+   "jpeg_checks_all": {
+    "soi": 39,
+    "eoi_at_end": 39,
+    "eoi_in_tail": 39,
+    "has_dht": 39,
+    "pillow_ok": 39,
+    "simplejpeg_ok": 39
+   },
+   "n_validated": 39
+  }
+ ],
+ "samples": [],
+ "controls": {
+  "C:/Program Files/Git/dev/video0": {
+   "query": {
+    "exposure_auto": {
+     "name": "ctl",
+     "type": 0,
+     "min": 1,
+     "max": 5000,
+     "step": 0,
+     "default": 0,
+     "flags": 0
+    },
+    "exposure_absolute": {
+     "name": "ctl",
+     "type": 0,
+     "min": 1,
+     "max": 5000,
+     "step": 0,
+     "default": 0,
+     "flags": 0
+    },
+    "exposure_auto_priority": {
+     "name": "ctl",
+     "type": 0,
+     "min": 1,
+     "max": 5000,
+     "step": 0,
+     "default": 0,
+     "flags": 0
+    },
+    "white_balance_auto": {
+     "name": "ctl",
+     "type": 0,
+     "min": 1,
+     "max": 5000,
+     "step": 0,
+     "default": 0,
+     "flags": 0
+    },
+    "white_balance_temperature": {
+     "name": "ctl",
+     "type": 0,
+     "min": 1,
+     "max": 5000,
+     "step": 0,
+     "default": 0,
+     "flags": 0
+    }
+   },
+   "before": {
+    "exposure_auto": 3,
+    "exposure_absolute": 3,
+    "exposure_auto_priority": 3,
+    "white_balance_auto": 3,
+    "white_balance_temperature": 3
+   },
+   "requested": {
+    "exposure_absolute_100us": null,
+    "white_balance_temperature_k": null
+   },
+   "applied": {},
+   "after_apply": {
+    "exposure_auto": 3,
+    "exposure_absolute": 3,
+    "exposure_auto_priority": 3,
+    "white_balance_auto": 3,
+    "white_balance_temperature": 3
+   },
+   "readback_after_capture": {
+    "exposure_auto": 3,
+    "exposure_absolute": 3,
+    "exposure_auto_priority": 3,
+    "white_balance_auto": 3,
+    "white_balance_temperature": 3
+   }
+  },
+  "C:/Program Files/Git/dev/video2": {
+   "query": {
+    "exposure_auto": {
+     "name": "ctl",
+     "type": 0,
+     "min": 1,
+     "max": 5000,
+     "step": 0,
+     "default": 0,
+     "flags": 0
+    },
+    "exposure_absolute": {
+     "name": "ctl",
+     "type": 0,
+     "min": 1,
+     "max": 5000,
+     "step": 0,
+     "default": 0,
+     "flags": 0
+    },
+    "exposure_auto_priority": {
+     "name": "ctl",
+     "type": 0,
+     "min": 1,
+     "max": 5000,
+     "step": 0,
+     "default": 0,
+     "flags": 0
+    },
+    "white_balance_auto": {
+     "name": "ctl",
+     "type": 0,
+     "min": 1,
+     "max": 5000,
+     "step": 0,
+     "default": 0,
+     "flags": 0
+    },
+    "white_balance_temperature": {
+     "name": "ctl",
+     "type": 0,
+     "min": 1,
+     "max": 5000,
+     "step": 0,
+     "default": 0,
+     "flags": 0
+    }
+   },
+   "before": {
+    "exposure_auto": 3,
+    "exposure_absolute": 3,
+    "exposure_auto_priority": 3,
+    "white_balance_auto": 3,
+    "white_balance_temperature": 3
+   },
+   "requested": {
+    "exposure_absolute_100us": null,
+    "white_balance_temperature_k": null
+   },
+   "applied": {},
+   "after_apply": {
+    "exposure_auto": 3,
+    "exposure_absolute": 3,
+    "exposure_auto_priority": 3,
+    "white_balance_auto": 3,
+    "white_balance_temperature": 3
+   },
+   "readback_after_capture": {
+    "exposure_auto": 3,
+    "exposure_absolute": 3,
+    "exposure_auto_priority": 3,
+    "white_balance_auto": 3,
+    "white_balance_temperature": 3
+   }
+  }
+ },
+ "notes": "UNVERIFIED draft backend (drafted on Windows). uvcvideo stamps buffers with ktime_get_ns() at the first USB packet of the frame (TSTAMP_SRC_SOE) unless hwtimestamps=1.",
+ "backend_details": {
+  "struct_sizes": {
+   "v4l2_capability": 104,
+   "v4l2_fmtdesc": 64,
+   "v4l2_frmsizeenum": 44,
+   "v4l2_frmivalenum": 52,
+   "v4l2_pix_format": 48,
+   "v4l2_format": 208,
+   "v4l2_captureparm": 40,
+   "v4l2_streamparm": 204,
+   "v4l2_requestbuffers": 20,
+   "timeval": 16,
+   "v4l2_timecode": 16,
+   "v4l2_buffer": 88,
+   "v4l2_control": 8,
+   "v4l2_queryctrl": 68
+  },
+  "uvcvideo_parameters": {
+   "error": "\\sys\\module\\uvcvideo\\parameters missing (uvcvideo not loaded?)"
+  },
+  "clock_pair_at_start": {
+   "realtime_ns": 1792954101074246100,
+   "monotonic_ns": 103458455705500,
+   "realtime_minus_monotonic_ns": 1792850642618540600
+  },
+  "host_clock": "time.clock_gettime_ns(CLOCK_MONOTONIC)",
+  "buffers": 6,
+  "header_revision": "include/uapi/linux/videodev2.h (Linux v6.8), LP64"
+ },
+ "errors": []
+}

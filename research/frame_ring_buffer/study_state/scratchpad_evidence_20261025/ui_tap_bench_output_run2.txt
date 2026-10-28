@@ -1,0 +1,16 @@
+cv2 4.12.0, numpy 2.2.6, threads cv2=28
+E1 bytearray[:n] is a copy: True (slice type bytearray)
+E2 asyncio.sleep(0.01) on win32 (ProactorEventLoop): mean 10.32 ms, p50 10.23 ms, max 12.10 ms
+[34m[34m└>>[0m [34mSet reusable bytes payload to 6145 kilobytes[0m |  DEBUG |  1515.257ms |  skellycam.core.types.frontend_payload_bytearray.create_frontend_payload():81 |  2026-10-25T13:41:13.624 |  [38;2;100;207;216mPID:53208:MainProcess[0m |  [38;2;100;174;255mTID:44728:MainThread[0m[0m
+--- 5 cams @ 1280x720 BGR (raw frame 2.76 MB) ---
+A  SHM->local copy (get_data_by_index, 5 cams): 0.87 ms/multiframe; shares_memory=False
+B  create_frontend_payload (5 cams):            3.53 ms/multiframe -> max 283 payloads/s
+   payload size: 44.4 KiB; type=bytearray
+C  per camera: resize 0.08 ms, imencode q60 0.29 ms, tobytes 0.3 us, payload[:n] slice 1.0 us
+D  zlib deflate on payload: 1.74 ms, 45421 -> 23278 bytes
+--- 5 cams @ 1920x1080 BGR (raw frame 6.22 MB) ---
+A  SHM->local copy (get_data_by_index, 5 cams): 2.76 ms/multiframe; shares_memory=False
+B  create_frontend_payload (5 cams):            12.76 ms/multiframe -> max 78 payloads/s
+   payload size: 80.2 KiB; type=bytearray
+C  per camera: resize 1.79 ms, imencode q60 1.20 ms, tobytes 0.7 us, payload[:n] slice 4.8 us
+D  zlib deflate on payload: 6.69 ms, 82130 -> 48659 bytes

@@ -1,0 +1,549 @@
+{
+  "test": "driver_state_inspect",
+  "label": "01_baseline",
+  "platform": "windows",
+  "hostname": "GERALD",
+  "utc_started": "2026-10-25T22:48:41.1265571Z",
+  "command": "",
+  "environment": {
+    "os_caption": "Microsoft Windows 11 Home",
+    "os_build": "10.0.26300 (UBR 9711)",
+    "pwsh": "7.6.7",
+    "is_admin": false
+  },
+  "boot_time_utc": "2026-10-24T14:04:02.5000000Z",
+  "since_utc": "2026-10-25T22:48:40.2868382Z",
+  "vidpid": [
+    "046D:0843"
+  ],
+  "cameras": [
+    {
+      "vidpid": "046D:0843",
+      "parent_instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&1",
+      "present": false,
+      "location_info": "Port_#0001.Hub_#0008",
+      "parent_service": "usbccgp",
+      "parent_inf": "oem74.inf",
+      "parent_rank": "00FF0001",
+      "children": [
+        "function MI_00=usbvideo/oem11.inf (not present)",
+        "function MI_03=usbaudio/wdma_usb.inf (not present)"
+      ],
+      "camera_interface_enabled": false,
+      "binding": "COMPOSITE(usbccgp->usbvideo)"
+    },
+    {
+      "vidpid": "046D:0843",
+      "parent_instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+      "present": true,
+      "location_info": "Port_#0004.Hub_#0008",
+      "parent_service": "usbccgp",
+      "parent_inf": "oem74.inf",
+      "parent_rank": "00FF0001",
+      "children": [
+        "function MI_00=usbvideo/oem11.inf",
+        "function MI_03=usbaudio/wdma_usb.inf"
+      ],
+      "camera_interface_enabled": true,
+      "binding": "COMPOSITE(usbccgp->usbvideo)"
+    }
+  ],
+  "devices": [
+    {
+      "vidpid": "046D:0843",
+      "instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&1&0000",
+      "role": "function MI_00",
+      "present": true,
+      "status": "OK",
+      "problem": 0,
+      "devnode_status_hex": "0x0180200A",
+      "friendly": "Logitech Webcam C930e",
+      "class": "Image",
+      "class_guid": "{6bdd1fc6-810f-11d0-bec7-08002be2092f}",
+      "service": "usbvideo",
+      "inf": "oem11.inf",
+      "inf_section": "PID_0843.XPAMD64",
+      "matching_device_id": "usb\\vid_046d&pid_0843&mi_00",
+      "driver_rank_hex": "00FF0001",
+      "driver_provider": "Logitech",
+      "driver_version": "1.1.135.0",
+      "driver_date": "2017-06-21T00:00:00.0000000Z",
+      "location_info": "0000.0014.0000.013.001.004.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)#USBMI(0)",
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)#USB(4)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(4)#USBMI(0)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(4)#USB(4)"
+      ],
+      "parent": "USB\\VID_046D&PID_0843\\7&7dcc7ce&0&4",
+      "container_id": "{3F8B42F9-D0C1-11F1-879F-10F60A521D3A}",
+      "first_install_utc": "2026-10-25T22:16:35.2390000Z",
+      "install_utc": "2026-10-25T22:16:35.2390000Z",
+      "last_arrival_utc": "2026-10-25T22:31:14.5133940Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{6bdd1fc6-810f-11d0-bec7-08002be2092f}\\0005",
+        "config_flags": 0,
+        "service": "usbvideo",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_046D&PID_0843&REV_0013&MI_00",
+          "USB\\VID_046D&PID_0843&MI_00"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_046d&Class_0e&SubClass_03&Prot_00",
+          "USB\\COMPAT_VID_046d&Class_0e&SubClass_03",
+          "USB\\COMPAT_VID_046d&Class_0e",
+          "USB\\Class_0e&SubClass_03&Prot_00",
+          "USB\\Class_0e&SubClass_03",
+          "USB\\Class_0e"
+        ],
+        "pnputil_status": "Started",
+        "matching_drivers": [
+          {
+            "inf": "oem11.inf",
+            "original": "luvc1564v.inf",
+            "provider": "Logitech",
+            "class": "Image",
+            "version": "06/21/2017 1.1.135.0",
+            "signer": "Microsoft Windows Hardware Compatibility Publisher",
+            "matching_id": "USB\\VID_046D&PID_0843&MI_00",
+            "rank": "00FF0001",
+            "status": "BestRanked/Installed"
+          },
+          {
+            "inf": "usbvideo.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "Camera",
+            "version": "06/21/2006 10.0.26100.9711",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\Class_0e",
+            "rank": "00FF2005",
+            "status": "Outranked"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "046D:0843",
+      "instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&16BE97FE&0&0000",
+      "role": "function MI_00",
+      "present": false,
+      "status": "Unknown",
+      "problem": null,
+      "devnode_status_hex": null,
+      "friendly": "Logitech Webcam C930e",
+      "class": "Image",
+      "class_guid": "{6bdd1fc6-810f-11d0-bec7-08002be2092f}",
+      "service": "usbvideo",
+      "inf": "oem11.inf",
+      "inf_section": "PID_0843.XPAMD64",
+      "matching_device_id": "usb\\vid_046d&pid_0843&mi_00",
+      "driver_rank_hex": "00FF0001",
+      "driver_provider": "Logitech",
+      "driver_version": "1.1.135.0",
+      "driver_date": "2017-06-21T00:00:00.0000000Z",
+      "location_info": "0000.0014.0000.013.001.001.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(1)#USBMI(0)",
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(1)#USB(1)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(1)#USBMI(0)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(1)#USB(1)"
+      ],
+      "parent": "USB\\VID_046D&PID_0843\\7&7dcc7ce&0&1",
+      "container_id": "{5E5E28BA-47E1-11F1-8734-10F60A521D3A}",
+      "first_install_utc": "2026-05-04T18:38:34.0400000Z",
+      "install_utc": "2026-05-04T18:38:34.0400000Z",
+      "last_arrival_utc": "2026-05-09T19:10:03.7593730Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{6bdd1fc6-810f-11d0-bec7-08002be2092f}\\0003",
+        "config_flags": 0,
+        "service": "usbvideo",
+        "device_interface_guids": null
+      }
+    },
+    {
+      "vidpid": "046D:0843",
+      "instance_id": "USB\\VID_046D&PID_0843&MI_03\\8&39DEC205&1&0003",
+      "role": "function MI_03",
+      "present": true,
+      "status": "OK",
+      "problem": 0,
+      "devnode_status_hex": "0x0180200A",
+      "friendly": "Logitech Webcam C930e",
+      "class": "MEDIA",
+      "class_guid": "{4d36e96c-e325-11ce-bfc1-08002be10318}",
+      "service": "usbaudio",
+      "inf": "wdma_usb.inf",
+      "inf_section": "USBAudio",
+      "matching_device_id": "USB\\Class_01",
+      "driver_rank_hex": "00FF2005",
+      "driver_provider": "Microsoft",
+      "driver_version": "10.0.26100.9457",
+      "driver_date": "2026-09-12T00:00:00.0000000Z",
+      "location_info": "0000.0014.0000.013.001.004.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)#USBMI(3)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(4)#USBMI(3)"
+      ],
+      "parent": "USB\\VID_046D&PID_0843\\7&7dcc7ce&0&4",
+      "container_id": "{3F8B42F9-D0C1-11F1-879F-10F60A521D3A}",
+      "first_install_utc": "2026-10-25T22:16:34.5279880Z",
+      "install_utc": "2026-10-25T22:16:34.5279880Z",
+      "last_arrival_utc": "2026-10-25T22:31:14.5188390Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{4d36e96c-e325-11ce-bfc1-08002be10318}\\0000",
+        "config_flags": 0,
+        "service": "usbaudio",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_046D&PID_0843&REV_0013&MI_03",
+          "USB\\VID_046D&PID_0843&MI_03"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_046d&Class_01&SubClass_02&Prot_00",
+          "USB\\COMPAT_VID_046d&Class_01&SubClass_02",
+          "USB\\COMPAT_VID_046d&Class_01",
+          "USB\\Class_01&SubClass_02&Prot_00",
+          "USB\\Class_01&SubClass_02",
+          "USB\\Class_01"
+        ],
+        "pnputil_status": "Started",
+        "matching_drivers": [
+          {
+            "inf": "wdma_usb.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "MEDIA",
+            "version": "09/12/2026 10.0.26100.9457",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\Class_01",
+            "rank": "00FF2005",
+            "status": "BestRanked/Installed"
+          },
+          {
+            "inf": "usbmidi2.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "MEDIA",
+            "version": "06/21/2006 10.0.26100.9549",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\Class_01",
+            "rank": "00FF3105",
+            "status": "Outranked"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "046D:0843",
+      "instance_id": "USB\\VID_046D&PID_0843&MI_03\\8&16BE97FE&0&0003",
+      "role": "function MI_03",
+      "present": false,
+      "status": "Unknown",
+      "problem": null,
+      "devnode_status_hex": null,
+      "friendly": "Logitech Webcam C930e",
+      "class": "MEDIA",
+      "class_guid": "{4d36e96c-e325-11ce-bfc1-08002be10318}",
+      "service": "usbaudio",
+      "inf": "wdma_usb.inf",
+      "inf_section": "USBAudio",
+      "matching_device_id": "USB\\Class_01",
+      "driver_rank_hex": "00FF2005",
+      "driver_provider": "Microsoft",
+      "driver_version": "10.0.26100.9457",
+      "driver_date": "2026-09-12T00:00:00.0000000Z",
+      "location_info": "0000.0014.0000.013.001.001.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(1)#USBMI(3)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(1)#USBMI(3)"
+      ],
+      "parent": "USB\\VID_046D&PID_0843\\7&7dcc7ce&0&1",
+      "container_id": "{5E5E28BA-47E1-11F1-8734-10F60A521D3A}",
+      "first_install_utc": "2026-05-04T18:38:33.7305010Z",
+      "install_utc": "2026-05-04T18:38:33.7305010Z",
+      "last_arrival_utc": "2026-05-09T19:10:03.7613750Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{4d36e96c-e325-11ce-bfc1-08002be10318}\\0024",
+        "config_flags": 0,
+        "service": "usbaudio",
+        "device_interface_guids": null
+      }
+    },
+    {
+      "vidpid": "046D:0843",
+      "instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&1",
+      "role": "parent",
+      "present": false,
+      "status": "Unknown",
+      "problem": null,
+      "devnode_status_hex": null,
+      "friendly": "Logitech USB Camera (Webcam C930e)",
+      "class": "USB",
+      "class_guid": "{36fc9e60-c465-11cf-8056-444553540000}",
+      "service": "usbccgp",
+      "inf": "oem74.inf",
+      "inf_section": "LogiHubUVC15.Dev.NT",
+      "matching_device_id": "usb\\vid_046d&pid_0843",
+      "driver_rank_hex": "00FF0001",
+      "driver_provider": "Logitech",
+      "driver_version": "1.2.75.34",
+      "driver_date": "2022-01-31T00:00:00.0000000Z",
+      "location_info": "Port_#0001.Hub_#0008",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(1)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(1)"
+      ],
+      "parent": "USB\\VID_05E3&PID_0610\\6&f6f0942&0&1",
+      "container_id": "{5E5E28BA-47E1-11F1-8734-10F60A521D3A}",
+      "first_install_utc": "2026-05-04T18:38:33.7490000Z",
+      "install_utc": "2026-05-04T18:38:33.7490000Z",
+      "last_arrival_utc": "2026-05-09T19:10:03.6198680Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0021",
+        "config_flags": 0,
+        "service": "usbccgp",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_046D&PID_0843&REV_0013",
+          "USB\\VID_046D&PID_0843"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_046D&DevClass_00&SubClass_00&Prot00",
+          "USB\\COMPAT_VID_046D&DevClass_00&SubClass_00",
+          "USB\\COMPAT_VID_046D&DevClass_00",
+          "USB\\DevClass_00&SubClass_00&Prot_00",
+          "USB\\DevClass_00&SubClass_00",
+          "USB\\DevClass_00",
+          "USB\\COMPOSITE"
+        ],
+        "pnputil_status": "Disconnected",
+        "matching_drivers": [
+          {
+            "inf": "oem74.inf",
+            "original": "luvc1564c.inf",
+            "provider": "Logitech",
+            "class": "USB",
+            "version": "01/31/2022 1.2.75.34",
+            "signer": "Microsoft Windows Hardware Compatibility Publisher",
+            "matching_id": "USB\\VID_046D&PID_0843",
+            "rank": "00FF0001",
+            "status": "BestRanked/Installed"
+          },
+          {
+            "inf": "usb.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "USB",
+            "version": "06/21/2006 10.0.26100.9711",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\COMPOSITE",
+            "rank": "00FF2006",
+            "status": "Outranked"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "046D:0843",
+      "instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+      "role": "parent",
+      "present": true,
+      "status": "OK",
+      "problem": 0,
+      "devnode_status_hex": "0x0180600A",
+      "friendly": "Logitech USB Camera (Webcam C930e)",
+      "class": "USB",
+      "class_guid": "{36fc9e60-c465-11cf-8056-444553540000}",
+      "service": "usbccgp",
+      "inf": "oem74.inf",
+      "inf_section": "LogiHubUVC15.Dev.NT",
+      "matching_device_id": "usb\\vid_046d&pid_0843",
+      "driver_rank_hex": "00FF0001",
+      "driver_provider": "Logitech",
+      "driver_version": "1.2.75.34",
+      "driver_date": "2022-01-31T00:00:00.0000000Z",
+      "location_info": "Port_#0004.Hub_#0008",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(4)"
+      ],
+      "parent": "USB\\VID_05E3&PID_0610\\6&f6f0942&0&1",
+      "container_id": "{3F8B42F9-D0C1-11F1-879F-10F60A521D3A}",
+      "first_install_utc": "2026-10-25T22:16:34.5740000Z",
+      "install_utc": "2026-10-25T22:16:34.5740000Z",
+      "last_arrival_utc": "2026-10-25T22:31:14.3771270Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0024",
+        "config_flags": 0,
+        "service": "usbccgp",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_046D&PID_0843&REV_0013",
+          "USB\\VID_046D&PID_0843"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_046D&DevClass_00&SubClass_00&Prot00",
+          "USB\\COMPAT_VID_046D&DevClass_00&SubClass_00",
+          "USB\\COMPAT_VID_046D&DevClass_00",
+          "USB\\DevClass_00&SubClass_00&Prot_00",
+          "USB\\DevClass_00&SubClass_00",
+          "USB\\DevClass_00",
+          "USB\\COMPOSITE"
+        ],
+        "pnputil_status": "Started",
+        "matching_drivers": [
+          {
+            "inf": "oem74.inf",
+            "original": "luvc1564c.inf",
+            "provider": "Logitech",
+            "class": "USB",
+            "version": "01/31/2022 1.2.75.34",
+            "signer": "Microsoft Windows Hardware Compatibility Publisher",
+            "matching_id": "USB\\VID_046D&PID_0843",
+            "rank": "00FF0001",
+            "status": "BestRanked/Installed"
+          },
+          {
+            "inf": "usb.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "USB",
+            "version": "06/21/2006 10.0.26100.9711",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\COMPOSITE",
+            "rank": "00FF2006",
+            "status": "Outranked"
+          }
+        ]
+      }
+    }
+  ],
+  "driver_store": [
+    {
+      "vidpid": "046D:0843",
+      "published": "oem11.inf",
+      "provider": "%PVD%",
+      "driver_ver": "06/21/2017, 1.1.135.0",
+      "class": "Image",
+      "includes_winusb": false,
+      "model_lines": [
+        "%PID_0843_DD%=PID_0843.XPAMD64,usb\\vid_046d&pid_0843&mi_00"
+      ]
+    },
+    {
+      "vidpid": "046D:0843",
+      "published": "oem74.inf",
+      "provider": "%PVD%",
+      "driver_ver": "01/31/2022, 1.2.75.34",
+      "class": "USB",
+      "includes_winusb": false,
+      "model_lines": [
+        "%USB\\VID_046D&PID_0843.DeviceDesc%=LogiHubUVC15_NR.Dev.NT,usb\\vid_046d&pid_0843",
+        "%USB\\VID_046D&PID_0843.DeviceDesc%=LogiHubUVC15_NR.Dev.NT,usb\\vid_046d&pid_0843",
+        "%USB\\VID_046D&PID_0843.DeviceDesc%=LogiHubUVC15.Dev.NT,usb\\vid_046d&pid_0843",
+        "%USB\\VID_046D&PID_0843.DeviceDesc%=LogiHubUVC15.Dev.NT,usb\\vid_046d&pid_0843",
+        "USB\\VID_046D&PID_0843.DeviceDesc=\"Logitech USB Camera (Webcam C930e)\"",
+        "USB\\VID_046D&PID_0843.DeviceDesc=\"Logicool USB Camera (Webcam C930e)\""
+      ]
+    }
+  ],
+  "camera_interfaces": [
+    {
+      "category": "KSCATEGORY_VIDEO_CAMERA",
+      "device_instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&16be97fe&0&0000",
+      "status": "Disabled",
+      "path": "\\\\?\\USB#VID_046D&PID_0843&MI_00#8&16BE97FE&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_VIDEO_CAMERA",
+      "device_instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&39dec205&1&0000",
+      "status": "Enabled",
+      "path": "\\\\?\\USB#VID_046D&PID_0843&MI_00#8&39DEC205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&16be97fe&0&0000",
+      "status": "Disabled",
+      "path": "\\\\?\\USB#VID_046D&PID_0843&MI_00#8&16BE97FE&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_046D&PID_0843&MI_03\\8&16be97fe&0&0003",
+      "status": "Disabled",
+      "path": "\\\\?\\USB#VID_046D&PID_0843&MI_03#8&16be97fe&0&0003#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_046D&PID_0843&MI_03\\8&39dec205&1&0003",
+      "status": "Enabled",
+      "path": "\\\\?\\USB#VID_046D&PID_0843&MI_03#8&39dec205&1&0003#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&39dec205&1&0000",
+      "status": "Enabled",
+      "path": "\\\\?\\USB#VID_046D&PID_0843&MI_00#8&39DEC205&1&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    }
+  ],
+  "usbflags": [
+    {
+      "key": "046D08430013",
+      "osvc": "0000",
+      "ignore_hw_sernum": null
+    }
+  ],
+  "setupapi_sections": [],
+  "pnp_veto_events_225": [],
+  "vendor_processes": [
+    {
+      "name": "logioptionsplus_agent",
+      "pid": 16684,
+      "path": "C:\\Program Files\\LogiOptionsPlus\\logioptionsplus_agent.exe"
+    },
+    {
+      "name": "LogiTuneAgent",
+      "pid": 37760,
+      "path": "C:\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe"
+    },
+    {
+      "name": "razer_elevation_service",
+      "pid": 35024,
+      "path": null
+    }
+  ],
+  "windows_update_policy": {
+    "ExcludeWUDriversInQualityUpdate": null,
+    "SearchOrderConfig": 1
+  },
+  "usbflags_ignore_hw_sernum_values": [
+    "IgnoreHWSerNum04e8663b",
+    "IgnoreHWSerNum04e86708",
+    "IgnoreHWSerNum04e8665c",
+    "IgnoreHWSerNum04e86736",
+    "IgnoreHWSerNum04e86737",
+    "IgnoreHWSerNum04e86663",
+    "IgnoreHWSerNum05c61000",
+    "IgnoreHWSerNum05c63111",
+    "IgnoreHWSerNum04e86601",
+    "IgnoreHWSerNum04e86810",
+    "IgnoreHWSerNum04e86850"
+  ],
+  "frame_server": "Stopped",
+  "utc_finished": "2026-10-25T22:48:48.8637513Z"
+}

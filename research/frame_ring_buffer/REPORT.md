@@ -120,9 +120,9 @@ P5 cameras published with a memcpy stand-in, so its recorder CPU is not directly
 - **Disk.** The e2e recordings sat in the OS page cache (no fsync), so they show the writer kept up, not the disk; P12 covers raw disk writes only ([recommend_result.json](study_state/recommend_result.json)).
 - **Not tested:** fault behaviour (the benchmark UI stand-in catches every exception), event-wake latency for the lockstep gate, browser-side UI throughput, non-x86 seqlock ordering, NVENC failure handling, and FreeMoCap reading MKV / fragmented MP4.
 - **Known errata in earlier write-ups.**
-  - The Claude Doc report was audited on 2026-10-28 and six content corrections plus a byline-date fix were made, among them the rank 7 prototype label and the rank 13 gate-wait range ([RESUME.md](study_state/RESUME.md)).
+  - The [report doc](docs/frame_ring_buffer_report.md) was audited on 2026-10-28 and six content corrections plus a byline-date fix were made, among them the rank 7 prototype label and the rank 13 gate-wait range ([RESUME.md](study_state/RESUME.md)).
   - `recommend_result.json` rank 13 was corrected at the end of the run to the 0.03-6.4 ms per-camera medians, which match the `lockstep_gate_wait` values in `p8v_e2e_1080p_imdecode_msmf_lockstep_meta{,_rep2}.json`. RESUME.md was updated to say so on 2026-10-28.
-  - The [Claude Docs summary](https://claude.ai/artifact/H1dJaFNr9cbuQD3XNU78fq) says the 4000 MT/s RAM speed "lowers the memory-copy numbers". The local [research.json](study_state/research.json) says this is untested, so treat it as unverified.
+  - The [summary doc](docs/frame_ring_buffer_summary.md) said the 4000 MT/s RAM speed "lowers the memory-copy numbers", but [research.json](study_state/research.json) says this is untested; the summary was corrected on 2026-10-28.
   - The first `dshowlike` run had a tick-log index bug. It is superseded by `_v2` and kept in `baseline/results/superseded_revision/`.
 - **Recorded paths.** Raw logs and results record the old location `benchmarks/frame_pipeline/`, which is now `research/frame_ring_buffer/` ([RESUME.md](study_state/RESUME.md)).
 
@@ -164,4 +164,4 @@ P5 cameras published with a memcpy stand-in, so its recorder CPU is not directly
 | [cpp/README.md](cpp/README.md), [cpp/results/cpp_comparison.md](cpp/results/cpp_comparison.md) | C++ vs Python ring, memcpy, micro-ops and codec comparison; sources in `cpp/src/` |
 | [reproducibility/README.md](reproducibility/README.md), [comparison.md](reproducibility/comparison.md) | Re-run of the headline benchmarks and the ±15% comparison |
 | `study_state/*_workflow.js`, `workflows/` | Workflow scripts that drove the study |
-| [Claude Doc report](https://claude.ai/artifact/Cz1otkZxAjLTHfP1WeE9it) · [summary](https://claude.ai/artifact/H1dJaFNr9cbuQD3XNU78fq) | Full report with code references and charts; one-page summary |
+| [Full report](docs/frame_ring_buffer_report.md) · [summary](docs/frame_ring_buffer_summary.md) | Full report with code references and charts; one-page summary |

@@ -1,0 +1,531 @@
+{
+ "vHardware": {
+  "claims_checked": [
+   {
+    "claim": "Uno R3 (genuine): the ATmega328P is clocked by a Murata CSTCE16M0V53-R0 ceramic resonator, and the 16U2 has its own separate 16 MHz crystal that does not clock the 328P.",
+    "verdict": "confirmed",
+    "correction": "Both parts appear in the official schematic text: 'CSTCE16M0V53-R0 16MHZ' and a separate '16MHz' Y1. The PDF text extraction loses the wiring, so which part goes to which chip is not shown there. The split described (resonator on the 328P, crystal on the 16U2) matches the published design and distributor BOM listings.",
+    "source": "https://docs.arduino.cc/resources/schematics/A000066-schematics.pdf (local copy: scratchpad/pdfs/A000066.txt lines 91 and 95)"
+   },
+   {
+    "claim": "Nano V3.3 (genuine): Y1 is a CSTCE16M0V53-R0 ceramic resonator on the 328P.",
+    "verdict": "confirmed",
+    "correction": "I parsed the nets in the official EAGLE file NanoV3.3.sch. Y1 (deviceset 0011_CSTCE16M0V53-R0) has pin 1 on PB6(XTAL1), pin 3 on PB7(XTAL2) and pin 2 on GND. This is a direct primary-source confirmation.",
+    "source": "A000005 CAD files: NanoV3.3.sch, nets N$1 and N$2 (scratchpad/pdfs/nanocad/A00005-cad-files/NanoV3.3.sch)"
+   },
+   {
+    "claim": "The older Nano v2.3 BOM lists a 16 MHz \u00b120 ppm Abracon crystal.",
+    "verdict": "confirmed",
+    "correction": "The BOM reads 'Cystal, 16MHz +/-20ppm HC-49/US Low Profile', Abracon ABL-16.000MHZ-B2. It is a historical board and is not what a current genuine Nano ships with.",
+    "source": "https://www.arduino.cc/en/uploads/Main/ArduinoNanoManual23.pdf (scratchpad/pdfs/nanoman.txt line 105)"
+   },
+   {
+    "claim": "CSTCE16M0V53-R0 tolerance: \u00b10.5% initial, \u00b10.3% over \u221220 to 80 \u00b0C, \u00b10.2% aging (about \u00b11% worst case).",
+    "verdict": "confirmed",
+    "correction": "The Murata figures (\u00b10.5%, \u00b10.3% over \u221220 to +80 \u00b0C, \u00b10.2% aging) were confirmed through search excerpts of the Murata sheet and distributor pages. The Murata PDF itself returned 403 to a direct fetch. The part is now listed as obsolete / no longer manufactured, so current boards may carry a substitute resonator with a similar but different spec.",
+    "source": "Murata sheet https://4donline.ihs.com/images/VipMasterIC/IC/MURE/MURE-S-A0001719029/MURE-S-A0001719029-1.pdf (via search excerpt); https://sg.element14.com/murata/cstce16m0v53-r0/resonator-smd-16mhz/dp/1401454"
+   },
+   {
+    "claim": "No TCXO on any of these boards (Uno R3, Nano V3, clones, Uno R4, Nano Every).",
+    "verdict": "confirmed",
+    "correction": "No TCXO appears in the Uno R3, Nano V3.3, Nano Every (ABX00028) or Uno R4 (ABX00080/ABX00087) schematics. Uno R3 and Nano V3 use a resonator. The Nano Every has no crystal at all. The R4 Minima has a 30 ppm crystal that the core does not use. Clones use a resonator or a plain crystal.",
+    "source": "Arduino schematics A000066, A000005 CAD, ABX00028, ABX00080, ABX00087 (local copies in scratchpad/pdfs)"
+   },
+   {
+    "claim": "One unit was measured at \u2212761 ppm (presented alongside the CSTCE16M0V53 description).",
+    "verdict": "overstated",
+    "correction": "The \u2212761 ppm unit was a Pro Mini 5V with a ceramic resonator of unspecified make, not a verified CSTCE16M0V53 on an Uno or Nano. Only one board was tested. The figure is well inside the \u00b10.5% (5000 ppm) spec.",
+    "source": "https://jorisvr.nl/article/arduino-frequency"
+   },
+   {
+    "claim": "Joris van Rijn: resonator \u2212139 Hz/\u00b0C (8.7 ppm/\u00b0C), 286 ppm wander over 158 h, 43.9 Hz rms short-term noise; crystal +105 ppm, +0.97 Hz/\u00b0C, 0.7 Hz rms; boards were warm (65\u2013110 \u00b0C board temperature).",
+    "verdict": "overstated",
+    "correction": "The numbers match the article: 15983561\u201315988135 Hz is 286 ppm, and 139/16e6 is 8.7 ppm/\u00b0C. The temperatures are AVR internal-sensor readings, not board temperature. The ATmega328P datasheet gives that sensor \u00b110 \u00b0C accuracy. The absolute 65\u2013110 \u00b0C figures and the \u00b0C-based coefficients are therefore approximate. Also, the 43.9 Hz rms noise is from the 18 h run; the 158 h run showed 720 Hz rms.",
+    "source": "https://jorisvr.nl/article/arduino-frequency; ATmega328P datasheet \u00a723.8 (scratchpad/pdfs/m328p.txt line 12336)"
+   },
+   {
+    "claim": "Nano clones: the CH340G needs its own 12 MHz crystal, the CH340C has an internal clock, and the 328P side may have a crystal or a resonator ('most CH340 clones' are crystal boards).",
+    "verdict": "unverifiable",
+    "correction": "The CH340G/CH340C clock requirements match the WCH datasheet. The statement that most CH340 clones have a 16 MHz crystal on the 328P is anecdotal; no primary source exists because clone BOMs vary. Inspect or measure each board.",
+    "source": "https://web.mit.edu/6.111/www/f2017/serial/ch340g.pdf; no primary source for clone 328P oscillators"
+   },
+   {
+    "claim": "Uno R4 Minima: a 16 MHz crystal (FTX16.000M12SM3S-30/30) is fitted, but the Arduino core runs from the internal HOCO at 48 MHz, \u00b11% (47.52\u201348.48 MHz at \u221220 to 85 \u00b0C), with no FLL. The UNOWIFIR4 config is identical.",
+    "verdict": "confirmed",
+    "correction": "Schematic Y1 is FTX16.000M12SM3S-30/30. In both variants, bsp_clock_cfg.h has BSP_CFG_CLOCK_SOURCE=HOCO, BSP_CFG_XTAL_HZ=0 and HOCO_FREQUENCY=4 (48 MHz). The Minima family config contains no FLL define; only the Portenta C33 has BSP_CFG_FLL_ENABLE(0). RA4M1 Table 2.22 gives fHOCO48 = 47.52\u201348.48 MHz at \u221220 to 85 \u00b0C (\u00b11%), widening to 47.28\u201348.72 at \u221240 to \u221220 \u00b0C and 47.04\u201348.96 at 85 to 105 \u00b0C.",
+    "source": "https://github.com/arduino/ArduinoCore-renesas/blob/main/variants/MINIMA/includes/ra_gen/bsp_clock_cfg.h (and UNOWIFIR4); ABX00080 schematic; RA4M1 datasheet R01DS0355EJ0100 Table 2.22"
+   },
+   {
+    "claim": "Nano Every (ATmega4809): internal OSC20M with no crystal; \u00b11.5% at 25 \u00b0C/3 V, \u00b12.0% over 0\u201370 \u00b0C, \u00b14.0% over the full range; trim step 0.75%.",
+    "verdict": "overstated",
+    "correction": "The table values are right, and the ABX00028 schematic shows no crystal. However, the \u00b12.0% over 0\u201370 \u00b0C row applies only at VDD 1.8\u20133.6 V. The Nano Every runs the 4809 at 5 V, so the guaranteed bound is the full-range \u00b14.0%. E_DRIFT gives \u00b11.8% relative to the factory-stored value over 0\u201370 \u00b0C at 1.8\u20135.5 V, so a 0\u201370 \u00b0C, 5 V total of about \u00b13.3% is a defensible estimate. Using \u00b12% in the drift table understates the error. The conclusion that it is the worst board still holds.",
+    "source": "ATmega4809 datasheet, 16/20 MHz Internal Oscillator table (ETOTAL, EDRIFT) (scratchpad/pdfs/m4809.txt lines 810\u2013824); ABX00028 schematic"
+   },
+   {
+    "claim": "ATmega328P internal RC: \u00b12% factory calibration at 3 V/25 \u00b0C, \u00b114% over the full range (Table 28-1).",
+    "verdict": "wrong",
+    "correction": "The source cited is the Atmel-7810 Automotive ATmega328P datasheet (\u221240 to +125 \u00b0C). The commercial ATmega328P on Arduino boards is specified at \u00b110% factory and \u00b11% user calibration; \u00b12% factory applies to the ATmega328PB. This does not affect the boards' main clock, which is external.",
+    "source": "Microchip AT15007 'Differences between ATmega328/P and ATmega328PB' Table 3-2: https://onlinedocs.microchip.com/oxy/GUID-CBDC1838-0100-4F26-A45A-134958193C3B-en-US-4/GUID-06A8DD31-E1C8-4552-95B2-959A721BD03D.html; local m328p.txt is doc 7810D"
+   },
+   {
+    "claim": "Nano ESP32: 40 MHz crystal, \u00b110 ppm per Espressif's reference design.",
+    "verdict": "unverifiable",
+    "correction": "A 40 MHz crystal is mandatory for the ESP32-S3 (guideline \u00a73.4.1). I could not read the \u00b110 ppm figure in the guideline text. The Nano ESP32 uses a u-blox NORA-W106 module, so the crystal and its spec are internal to the module. Either way this is a crystal (tens of ppm), not a TCXO.",
+    "source": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32s3/esp-hardware-design-guidelines-en-master-esp32s3.pdf (section headings only)"
+   },
+   {
+    "claim": "Nano 33 BLE (nRF52840): 32 MHz crystal, \u00b140 ppm limit.",
+    "verdict": "unverifiable",
+    "correction": "Nordic staff on DevZone say the total (tolerance + stability + aging) must be within \u00b140 ppm for short BLE packets and \u00b130 ppm for packets over 200 bytes. I did not read the nRF52840 PS HFXO table directly. Either way it is a crystal, not a TCXO.",
+    "source": "https://devzone.nordicsemi.com/f/nordic-q-a/94933/nrf52840-32mhz-crystal-offset-parameter-recommendation/401064"
+   },
+   {
+    "claim": "DS3231 TCXO: \u00b12 ppm over 0\u201340 \u00b0C, \u00b13.5 ppm over \u221240 to 85 \u00b0C, with 1 Hz/32 kHz output.",
+    "verdict": "confirmed",
+    "correction": "This matches the Maxim/ADI datasheet. Note the additional aging spec of \u00b11 ppm in the first year and \u00b15 ppm over 10 years. Both the 32kHz and INT/SQW pins are open-drain and need pull-ups; most breakout modules include them.",
+    "source": "Maxim DS3231 datasheet (mirror https://courses.physics.illinois.edu/PHYS371/sp2023/code/DS3231.pdf); ADI design note https://www.analog.com/en/resources/design-notes/feature-comparison-of-the-ds323x-realtime-clocks.html"
+   },
+   {
+    "claim": "NEO-6M timepulse is 30 ns rms (conflicting 100 ns figure elsewhere).",
+    "verdict": "unverifiable",
+    "correction": "Retail listings that copy the u-blox sheet give 30 ns rms and <60 ns at 99%. I did not retrieve the u-blox datasheet itself. Either figure is irrelevant at the \u00b5s scale this application cares about.",
+    "source": "https://www.altronics.com.au/product/z6318-neo-6m-gps-breakout-module-with-antenna"
+   },
+   {
+    "claim": "ATmega328P absolute maximum is 40 mA per I/O pin (20 mA test condition), so 4 InnoMaker cameras at about 19 mA each (about 75 mA) on one pin exceeds it.",
+    "verdict": "confirmed",
+    "correction": "The primary datasheet confirms 'DC current per I/O pin 40.0 mA' and the 20 mA at 5 V test condition, so the report's secondary citation is not needed. In practice the VOH sag under load would reduce the current somewhat, but it would still be well over the rating.",
+    "source": "ATmega328P datasheet 7810D \u00a728.1 Absolute Maximum Ratings and DC notes (scratchpad/pdfs/m328p.txt lines 14890 and 14919)"
+   },
+   {
+    "claim": "InnoMaker U20CAM-9281M FSIN is an optocoupler input rated 3.3\u20135 V, with an on-board 200 \u03a9 series resistor (R4) and a rising-edge trigger. 5 V from an Arduino is within spec, at about 19 mA per camera.",
+    "verdict": "confirmed",
+    "correction": "Manual \u00a72.3 states 'FSIN + 3.3v-5v External Trigger Input'. The reference circuit shows the opto LED with 'R4 200R' on board, and the worked example uses If = 20 mA and Vf = 1.25 V at 12 V with R_add = 337.5 \u03a9. \u00a73 says the camera outputs an image on the rising edge. (5 \u2212 1.25)/200 = 18.75 mA. FSIN\u2212 connects to the LED cathode, so the input is isolated from camera ground. The manual gives no minimum pulse width.",
+    "source": "InnoMaker U20CAM-9281M manual V1.1 pp. 5\u20136: https://raw.githubusercontent.com/INNO-MAKER/U20CAM-9281M/main/Manual/U20CAM-9281M-V11.pdf (scratchpad/innomaker-dl/manual.txt and pg1.png)"
+   },
+   {
+    "claim": "Arducam MIPI/CSI OV9281 trigger is 1.8 V (convert 3.3 V or 5 V down), with a minimum pulse of 2 \u00b5s.",
+    "verdict": "confirmed",
+    "correction": "Confirmed through a search excerpt of the official page: 'the voltage of the trigger signal is 1.8V, you need to convert the 3.3V or 5V to 1.8V. The trigger signal pulse width tFSIN_High is not less than 2us'. The page also says the OV9281 mainly uses the XVS pin. A direct fetch returned 403. A forum user measured a clamp near 1.8 V plus a diode drop on a UC-599 board.",
+    "source": "https://docs.arducam.com/Raspberry-Pi-Camera/Global-Shutter-Camera/external-trigger/ (search excerpt); https://forum.arducam.com/t/b0165-camera-had-circuit-board-was-labeled-uc-599-now-uc-788-where-is-fsin-pin/8222"
+   },
+   {
+    "claim": "Arducam UVC OV9281 board FSIN voltage is unconfirmed; a forum post cites an app note saying 'FSIN should be 3.3V'. Treat as not 5 V-safe.",
+    "verdict": "unverifiable",
+    "correction": "The forum question exists, but no staff answer could be read (403), and the B0332 product pages say nothing about FSIN voltage. Arducam documents disagree (1.8 V for MIPI; 3.3 V and 100 \u00b5s in the USB3 shield tutorial). Advising a level shift is the right precaution.",
+    "source": "https://forum.arducam.com/t/safe-fsin-voltage/1674 (title/snippet only)"
+   },
+   {
+    "claim": "MoCapSTR CAMERA_SPECS.md: the InnoMaker board accepts 3.3\u20135 V; the hardware-trigger limit is 50 fps with an 18\u201320 ms lockout; the recommended pulse is 250\u2013500 \u00b5s.",
+    "verdict": "confirmed",
+    "correction": "The file states all of this (in German). The 50 fps lockout is the project's own measurement, not a vendor spec. Also, the firmware's default is currentFps = 60 with a 1000 \u00b5s pulse, which by MoCapSTR's own spec is above the triggered limit.",
+    "source": "MoCapSTR CAMERA_SPECS.md lines 47, 63\u201377; trigger_firmware.ino lines 8\u201311"
+   },
+   {
+    "claim": "Firmware arithmetic: micros() has a 4 \u00b5s step on 16 MHz AVR; truncation errors are +10/0/+40/+10/+40 ppm at 30/50/60/90/120 fps; Timer1 tick errors are as listed; the drift table values are correct.",
+    "verdict": "confirmed",
+    "correction": "I recomputed all values: 1/16666 \u00b5s gives 60.0024 Hz (+40 ppm); 16e6/8/16667 gives \u221220 ppm; 761 ppm \u00d7 3600 s is 2.74 s; the 0.07 ppm regression slope figure checks out. The regression precision assumes uncorrelated timestamp noise; correlated USB/host jitter will make it worse. The re-align branch does drop a pulse and shift the phase whenever the loop falls a full interval behind.",
+    "source": "Calculation; MoCapSTR trigger_firmware.ino lines 108\u2013138; ArduinoCore-avr wiring.c"
+   }
+  ],
+  "overall_answer_to_does_it_matter": "Primary sources back the main conclusion. None of the boards has a TCXO. Genuine Uno R3 and Nano V3.3 boards clock the ATmega328P from a ceramic resonator: \u00b10.5% initial, \u00b10.3% over temperature, \u00b10.2% aging. Its error is about 100 times that of a crystal (\u00b120\u201330 ppm).\n\n**Sync between cameras: it does not matter.** Every camera takes the same physical edge, so oscillator error affects them all equally. What is left is each camera's own FSIN-to-exposure latency, which nobody has measured and which no vendor documents. Firmware jitter of a few \u00b5s to tens of \u00b5s is also negligible.\n\n**Absolute frame rate: it matters in two cases, and both are cheap to fix.**\n- **Assuming the nominal fps.** Code that computes time as frame_index / fps, containers that store the nominal fps, or pairing with devices on their own clocks will drift by about 0.3 s per minute at \u00b10.5%. The fix is to fit the host perf_counter timestamps and record the measured rate, or to feed the trigger edge itself into the other device.\n- **Lockout margin.** At a nominal 50 Hz, a resonator running 0.5% fast gives a 19.9 ms period, which sits inside MoCapSTR's measured 18\u201320 ms lockout for the InnoMaker camera. That can silently halve the frame rate, so target 40\u201348 Hz. MoCapSTR's firmware also defaults to 60 fps, which is above that limit.\n\n**Corrections to the reports:**\n- The ATmega328P internal RC figure was taken from the automotive datasheet. The commercial part is \u00b110% factory, not \u00b12%.\n- The Nano Every's \u00b12% (0\u201370 \u00b0C) row applies only at 1.8\u20133.6 V. At the board's 5 V supply the guaranteed bound is \u00b14%, which makes it even worse than reported.\n- The \u2212761 ppm measurement came from a Pro Mini, not a verified CSTCE part. The temperatures in that article are uncalibrated internal-sensor readings (\u00b110 \u00b0C).\n- The Uno R4's \u00b11% HOCO is confirmed.\n\n**FSIN voltage:**\n- InnoMaker: an optocoupler input rated 3.3\u20135 V with an on-board 200 \u03a9 resistor, about 19 mA at 5 V. It is 5 V-safe, but more than two cameras on one ATmega pin exceeds the 40 mA absolute maximum, so it needs a buffer.\n- Arducam MIPI OV9281: 1.8 V is confirmed.\n- Arducam UVC boards: the voltage is unconfirmed, so level-shift as a precaution.\n\nA crystal or TCXO is not needed. Fix the firmware's pulse dropping and phase jumps (the re-align branch), add a pulse counter, and measure the real rate on the host."
+ },
+ "vReasoning": {
+  "claims_checked": [
+   {
+    "claim": "Genuine Uno R3 and Nano V3.3 clock the ATmega328P from a CSTCE16M0V53-R0 ceramic resonator. They have no TCXO, and the Uno's 16U2 crystal does not clock the 328P.",
+    "verdict": "confirmed",
+    "correction": "I checked this in the extracted NanoV3.3.sch, which has Y1 deviceset=\"0011_CSTCE16M0V53-R0\", and NanoV3.3.brd, which uses package=\"RESONATOR\". The Uno text also lists the CSTCE part. I did not re-check the Murata \u00b10.5% / \u00b10.3% / \u00b10.2% figures against the PDF, but they match the commonly cited datasheet values.",
+    "source": "C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/a9b9d5dd-3ef8-4726-a4e0-a9884ba8c7b5/scratchpad/pdfs/nanocad/A00005-cad-files/NanoV3.3.sch; pdfs/A000066.txt"
+   },
+   {
+    "claim": "Joris van Rijn's data: resonator at -761 ppm with -139 Hz/\u00b0C (8.7 ppm/\u00b0C) and 43.9 Hz rms (2.7 ppm); crystal at +105 ppm with 0.06 ppm/\u00b0C and 0.04 ppm rms. Both boards were at 65-110 \u00b0C.",
+    "verdict": "unverifiable",
+    "correction": "The arithmetic is correct: 139/16e6 = 8.69 ppm/\u00b0C, 43.9/16e6 = 2.74 ppm, 0.97/16e6 = 0.06 ppm/\u00b0C. I could not check the source figures or the '65-110 \u00b0C board temperature' detail without web access. Each result is one board, so treat it as an example and not a distribution.",
+    "source": "Arithmetic re-derived; source not re-fetched"
+   },
+   {
+    "claim": "Integer truncation of 1000000UL/fps gives +10 ppm at 30 fps, 0 at 50, +40 at 60, +10 at 90 and +40 at 120, with drift of 36 or 144 ms per hour.",
+    "verdict": "overstated",
+    "correction": "The arithmetic is right. 16666 vs 16666.67 is 0.667/16666 = 40 ppm, which is 144 ms/h = 8.6 frames at 60 fps. 33333.33 gives 10 ppm (36 ms/h). 11111.1 gives 10 ppm. 8333.33 gives 40 ppm (17.3 frames/h at 120). micros() is exactly 64 CPU cycles per 4 \u00b5s tick, and previousMicros += interval preserves the mean, so the error is exact relative to F_CPU. In practice it does not matter. At up to \u00b15000 ppm the resonator error is 125 times larger. Any host-measured rate absorbs the truncation error and the oscillator error together. Rates above 50 fps are also irrelevant, because the OV9281 bridge rejects every 2nd or 3rd pulse above 50 Hz (CAMERA_SPECS.md).",
+    "source": "Re-derived; trigger_firmware.ino lines 61, 112-115; CAMERA_SPECS.md trigger table"
+   },
+   {
+    "claim": "'MoCapSTR hardware-trigger mode is limited to 50 fps, and that case is exact.'",
+    "verdict": "overstated",
+    "correction": "20000 \u00b5s is exact only in MCU clock ticks. With a \u00b10.5% resonator the real rate is anywhere from 49.75 to 50.25 Hz, which is a period of 19.90 to 20.10 ms. That matters for the specific reason the report missed (see the lockout claim below). The documented camera lockout is 'about 18-20 ms', so 50 Hz already sits at the hardware ceiling with an unmeasured margin.",
+    "source": "CAMERA_SPECS.md and README.md: 18-20 ms lockout, 60 Hz gives 30 FPS"
+   },
+   {
+    "claim": "Bottom line: 'The firmware adds more timing error than the crystal-vs-resonator choice.'",
+    "verdict": "wrong",
+    "correction": "For rate error, the firmware's 0-40 ppm is about 100 times smaller than the resonator's up to 5000 ppm spec (761 ppm measured). For edge jitter, the firmware's roughly 10-20 \u00b5s is larger than the oscillator's phase noise (about 2.7e-6 \u00d7 20 ms, or 50 ns per period). But edge jitter of that size is practically irrelevant (see the jitter claim below). The sentence compares two different quantities. Read as rate error, which is the error users care about, it is backwards.",
+    "source": "Re-derived from the report's own numbers"
+   },
+   {
+    "claim": "Sync between cameras: oscillator error does not matter because the edge is common-mode.",
+    "verdict": "overstated",
+    "correction": "This is true as long as every camera accepts every pulse. The report missed the one way the Arduino's clock can break inter-camera sync. The InnoMaker bridge ignores any pulse that arrives within its own roughly 18-20 ms lockout, and that lockout is timed by each camera's own clock. If the trigger period gets close to the lockout, cameras can reject different pulses, and frame indices then desync between cameras. Two things shorten the period: a resonator running +0.5% fast (about 100 \u00b5s shorter), and a single late edge followed by an on-schedule edge (a one-off short interval of up to about 100 \u00b5s, see the firmware claim below). Whether this happens depends on the real lockout margin at 50 Hz, which nobody has measured. A fixed 'exact' 50.000 Hz has the same exposure to it.",
+    "source": "CAMERA_SPECS.md lines on 50 FPS hardware limit; trigger_firmware.ino lines 112-122"
+   },
+   {
+    "claim": "At \u00b10.5%, 50 fps drifts 1 frame every 4 s. Full drift table, e.g. -761 ppm gives 46 ms/min, 2.7 s/h and 26 s per frame. 2 ppm TCXO gives 7.2 ms/h.",
+    "verdict": "confirmed",
+    "correction": "Every row re-derives correctly: 0.005\u00d760 = 0.3 s = 15 frames; 761e-6\u00d73600 = 2.74 s = 137 frames; 0.02/761e-6 = 26.3 s; 105e-6\u00d73600 = 0.378 s = 18.9 frames; 0.02/105e-6 = 190 s. Keep in mind that \u00b10.5% is the worst-case spec and typical parts are better. The drift is only from nominal and has no effect on inter-camera alignment.",
+    "source": "Re-derived"
+   },
+   {
+    "claim": "micros() has 4 \u00b5s resolution, edges wobble about \u00b14 \u00b5s, it wraps at 71.6 min, and the unsigned subtraction handles the wrap.",
+    "verdict": "confirmed",
+    "correction": "(m<<8)+t times 64/16 gives 4 \u00b5s. 2^32 \u00b5s = 4294.97 s = 71.58 min. currentMicros - previousMicros is unsigned, so it is wrap-safe. The quantization is one-sided per edge (0 to +4 \u00b5s late), so periods wobble by \u00b14 \u00b5s.",
+    "source": "trigger_firmware.ino lines 110-112; wiring.c"
+   },
+   {
+    "claim": "The loop pass (digitalRead, millis, stringComplete, micros, serialEventRun) adds about 10-20 \u00b5s, for 4-20 \u00b5s total edge jitter.",
+    "verdict": "confirmed",
+    "correction": "The range is plausible, but one detail is wrong. millis() is called only when the button state changes (line 41), so it is not in the normal pass. A normal pass is digitalRead(4) (about 3 \u00b5s), two flag checks, micros() (about 3.5 \u00b5s) and serialEventRun/Serial.available (about 1-2 \u00b5s), so roughly 8-12 \u00b5s. Edge lateness is then about 0 to 12 \u00b5s from sampling, plus 0-4 \u00b5s from quantization, plus about 5-6 \u00b5s when the Timer0 overflow ISR (every 1.024 ms) collides. That gives roughly 15-20 \u00b5s peak-to-peak, which still needs a logic analyzer to confirm. The report also does not name the UART RX/TX ISRs (a few \u00b5s per byte), which fire every second because of the host's PING.",
+    "source": "trigger_firmware.ino lines 36-49, 109-112"
+   },
+   {
+    "claim": "digitalWrite takes about 3.4-5 \u00b5s (mostly a constant delay). The LED write adds about 4 \u00b5s to the high time.",
+    "verdict": "confirmed",
+    "correction": "Pins 2 and 13 are not PWM pins on the 328P, so turnOffPWM is skipped and about 3-4 \u00b5s is right. A direct port write takes 2 cycles (125 ns). The LED write sits between the trigger going HIGH and pulseStart, so the pulse is about 1004-1012 \u00b5s. That is irrelevant.",
+    "source": "trigger_firmware.ino lines 125-137"
+   },
+   {
+    "claim": "The <FPS:N> reply is about 62 bytes, fits the 64-byte TX buffer and does not block. If the TX buffer is full, Serial.print blocks for 86.8 \u00b5s per byte.",
+    "verdict": "confirmed",
+    "correction": "Counting the bytes: 'FPS set to: 60\\r\\n' is 16, 'Interval (us): 16666\\r\\n' is 22, 'Pulse width (us): 1000\\r\\n' is 24, for 62 in total. The ring buffer holds 63 usable bytes, and the first byte can go straight to UDR, so it fits only when the buffer is otherwise empty. 10/115200 = 86.8 \u00b5s per byte.",
+    "source": "trigger_firmware.ino lines 62-67"
+   },
+   {
+    "claim": "A stall longer than one interval triggers the re-align branch, which drops a pulse and permanently shifts phase.",
+    "verdict": "overstated",
+    "correction": "The mechanism is correct. With a stall of 2.3 intervals, previousMicros += I leaves the lag at 1.3 I, which is at least I, so it sets previousMicros = currentMicros. Two due edges become one, and phase shifts by 0.3 I. But at 50 fps the branch is practically unreachable from this firmware. The largest single-pass output is 62 bytes, which fits the buffer, and even worst-case blocking (about 62 \u00d7 86.8 \u00b5s = 5.4 ms) is shorter than 20 ms. The likely artifact is the one the report underplays. A command handled in the pass just before an edge makes that edge late by tens to about 100 \u00b5s (String trim, the startsWith/== cascade, println). The next edge is on schedule, so one interval is short by the same amount. That happens once per second in practice, because MoCapSTR's host sends <PING> every 1.0 s for the whole session (main.py line 347). The pulse count is preserved, but at the 50 Hz lockout ceiling a short interval is what could get a pulse rejected.",
+    "source": "trigger_firmware.ino lines 51-106, 112-122; mocapstr-src/python/main.py lines 344-349"
+   },
+   {
+    "claim": "Edge jitter of \u00b5s size is negligible: 20 \u00b5s is 0.1% of a frame, 10 \u00b5s at 5 m/s is 0.05 mm, and 20 \u00b5s at 10 m/s is 0.2 mm.",
+    "verdict": "confirmed",
+    "correction": "The arithmetic is right. On top of that, the jitter is common to all cameras because they share one edge, so it causes no inter-camera skew at all. The unmeasured FSIN-to-exposure latency inside each camera's bridge firmware almost certainly dominates.",
+    "source": "Re-derived"
+   },
+   {
+    "claim": "Timer1 Fast PWM mode 15, OC1B on D10/PB2, prescaler 8: 50 fps = 40000 ticks exact, 60 = 33333 (+10 ppm), 90 = 22222 (+10), 120 = 16667 (-20), 30 needs /64 = 8333 (+40), and the slowest rate at /8 is 30.5 Hz. Edges are cycle-exact with zero ISR jitter.",
+    "verdict": "confirmed",
+    "correction": "Everything re-derives correctly. 2e6/60 = 33333.3, 2e6/90 = 22222.2, 2e6/120 = 16666.7 rounds to 16667 (-20 ppm), 66666 exceeds 65535 so 30 fps needs /64 (250 kHz/30 = 8333.3, +40 ppm), and 2e6/65536 = 30.52 Hz. Note that OCR1A = ticks-1 because the period is TOP+1. OC1B = PB2 = D10, OC1A = PB1 = D9, and OCR1A is double-buffered in mode 15. Fractional-N adds a deterministic \u00b10.5 \u00b5s period dither. It is real but unnecessary: the precision gain (about 15 \u00b5s to 0) has no practical value. The real value of a rewrite is the pulse counter and removing the late-edge/short-interval behaviour.",
+    "source": "ATmega328P Timer1 section; re-derived"
+   },
+   {
+    "claim": "Regressing host frame timestamps on frame index gives the trigger rate to about 0.07 ppm (\u03c3 = 2 ms, N = 30000, D = 600 s). A round-trip handshake gives about 1.7 ppm.",
+    "verdict": "overstated",
+    "correction": "The formula is right: \u03c3\u221a12/(D\u221aN) = 0.002 \u00d7 0.02/600 = 6.7e-8, and 1e-3/600 = 1.7 ppm. But it assumes white, independent timestamp noise and a gap-free index. USB/UVC arrival times have correlated and quantized noise (MoCapSTR requests a 120 fps UVC stream, about 8.3 ms polling) and outliers, and any dropped or duplicated frame steps the index and biases the slope. Expect a few ppm, not 0.07 ppm, unless the fit is robust and drop-aware. The result is also relative to the host QPC clock, which is itself off by \u00b130-50 ppm. It is still easily enough to correct a \u00b10.5% resonator.",
+    "source": "Re-derived; MoCapSTR CHANGELOG 'Auto' USB polling note"
+   },
+   {
+    "claim": "skellycam's video_recorder writes the container with the nominal framerate, while video_audio_remuxer builds VFR PTS from perf_counter_ns and places audio with a single start offset.",
+    "verdict": "confirmed",
+    "correction": "video_recorder.py passes fps=self.framerate at lines 120/128. video_audio_remuxer.py converts perf_counter_ns to PTS (lines 76-84) and applies a single audio offset (lines 96-101). Raw MP4 durations will be off by the trigger clock's error, up to about 18 s per hour at the \u00b10.5% spec, and the remuxed output is fine.",
+    "source": "C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/core/recorders/videos/video_recorder.py; C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/core/recorders/video_audio_remuxer.py"
+   },
+   {
+    "claim": "USB-serial latency: the FTDI latency timer defaults to 16 ms, so micros() cannot timestamp host events directly.",
+    "verdict": "confirmed",
+    "correction": "16 ms applies only to FTDI bridges (the FT232RL on a genuine Nano), and it can be set to 1 ms. The genuine Uno uses the 16U2 CDC firmware, and clones use the CH340, each with different buffering. The conclusion still holds: there is millisecond-scale non-deterministic latency, so you need min-RTT filtering or regression.",
+    "source": "Report-cited AN232-04; board knowledge"
+   },
+   {
+    "claim": "Uno R4 runs from HOCO at \u00b11% and is worse than a 328P resonator board. Nano Every's internal RC is \u00b11.5-2% and is the worst.",
+    "verdict": "unverifiable",
+    "correction": "The Nano Every internal-oscillator point is credible. For the R4, the datasheet HOCO band (47.52-48.48 MHz) is \u00b11%, but the RA4M1 USB device needs a much tighter clock, so the core or hardware may trim HOCO in ways the report did not find. Treat the R4 as 'unknown, measure it'. This does not affect the Nano/Uno answer.",
+    "source": "ra4m1 datasheet band; not re-checked against core startup code"
+   }
+  ],
+  "overall_answer_to_does_it_matter": "Mostly no. There is one exception that the report missed.\n\n**Clock accuracy.**\n- Genuine Uno R3 and Nano V3 boards use a ceramic resonator: \u00b10.5% initial spec, \u2212761 ppm on the one board actually measured. None of these boards has a TCXO.\n- Every camera's FSIN gets the same electrical edge, so oscillator error and the firmware's roughly 15\u201320 \u00b5s edge jitter are common to all cameras. They add no skew between cameras.\n- In motion terms the jitter is under 0.2 mm even at 10 m/s.\n- The integer truncation of 1000000/fps (up to 40 ppm) is irrelevant. It is about 100 times smaller than the resonator error, and anything that measures the real rate absorbs it.\n- Absolute rate error only matters when something assumes the nominal fps:\n  - skellycam's `video_recorder.py` writes the nominal framerate into the raw MP4s, so durations can be off by up to about 18 s per hour.\n  - Devices on their own clocks that are aligned only at the start (audio, force plates, EMG) will drift.\n- The fix is to save the rate skellycam measures from its `perf_counter_ns` frame timestamps (good to a few ppm against the host clock), or to route the TTL edge into the other system. A crystal or TCXO is not needed.\n\n**The exception the report missed: the 50 fps lockout ceiling.**\n- The InnoMaker OV9281 bridge ignores any pulse within its own roughly 18\u201320 ms lockout, and each camera times that lockout with its own clock. 50 Hz (20 ms) is the documented maximum, so 50 fps runs with an unmeasured margin.\n- A resonator running up to 0.5% fast shortens every period by up to about 100 \u00b5s.\n- The firmware also makes one interval short now and then. MoCapSTR's host sends `<PING>` every second for the whole session. When that command is handled just before an edge, the edge is tens of \u00b5s late and the next interval is short by the same amount.\n- If the real period gets close to a camera's lockout, cameras can reject different pulses. Their frame indices then go out of step, which is a real sync failure.\n- The re-align branch the report highlights, which drops a pulse, is practically unreachable at 50 fps. The worst serial blocking is about 5 ms, well under the 20 ms interval.\n\n**What to do in the FreeMoCap integration:**\n1. Add a firmware pulse counter and compare it with the frames each camera received.\n2. Don't send serial commands while the trigger is running, or generate edges with Timer1. The value of Timer1 is the short-interval fix and the counter, not the \u00b5s-level jitter.\n3. Measure the 50 Hz lockout margin once with a logic analyzer, or run slightly under 50 fps (for example 48\u201349) for headroom.\n4. Record the measured rate in the metadata, never the nominal fps.\n\nNone of this needs a better oscillator."
+ },
+ "critCode": {
+  "issues": [
+   {
+    "severity": "blocker",
+    "section": "4.2 Config model changes / 4.3 Camera control",
+    "problem": "Every config apply rebuilds the camera config from the device, and that rebuild drops `trigger_mode` and `trigger_rate_hz`. After the first apply, the camera loop's own `config`, `CameraGroup.configs`, the APP_STATE configs and the `_info.json` camera_configs all fall back to FREE_RUN / None. The plan's checks keyed on `config.trigger_mode` (disable `check_framerate_reset`, starvation threshold, container fps, the Linux exposure skip) would therefore never fire. The next diff would also see a change and re-apply the trigger.",
+    "evidence": "opencv_extract_config.py:35-47 builds a new CameraConfig from only index, id, name, resolution, exposure_mode, exposure, framerate and rotation. opencv_apply_config.py:87-98 returns that object. check_for_new_config.py:33-41 then sets `current_config = extracted_config`. camera_group.py:176-179 stores it as `self.configs`. capture_fourcc, writer_fourcc and use_this_camera are already lost the same way today.",
+    "fix": "Have `extract_config_from_cv2_capture` (or `apply_camera_configuration`) copy every non-hardware field over from the requested config, including `trigger_mode`, `trigger_rate_hz`, `use_this_camera` and the fourccs. Report the verified trigger state as its own field (e.g. `trigger_state`) rather than overwriting the requested mode. Add a unit test that `apply_camera_configuration` round-trips `trigger_mode`."
+   },
+   {
+    "severity": "blocker",
+    "section": "4.2 Config model changes / 5 UI",
+    "problem": "Leaving `trigger_mode` out of `SettableCameraParameters` does not protect anything. `/camera/group/apply` accepts whole `CameraConfig` objects, and both UIs post their full `desiredConfig`. An exposure change from skellycam-ui (zod `z.object` strips unknown keys, so old builds drop the field), from freemocap-ui (its own forked camera slice) or from a stale persisted setting would send FREE_RUN or the default and silently un-trigger cameras mid-session. A persisted EXTERNAL config would also be applied on initial open (`initial_config=True`). The camera would then switch to trigger mode before the sync manager has started pulses, and the setup drain loop would block.",
+    "evidence": "camera_router.py:113-124 passes `request_body.camera_configs` straight to `create_or_update_camera_group`. cameras-thunks.ts:107-115 sends `selectSelectedCameraConfigs`. cameras-slice.ts:131-140 copies the server response into `desiredConfig` and calls `persistAllCameraSettings`. freemocap-ui/src/constants/server-urls.ts:49 posts to the same endpoint from its own slice. cameras-types.ts:35-61 uses `z.object` (strips unknown keys).",
+    "fix": "Make the trigger fields server-owned. In `CameraGroupManager.create_or_update_camera_group` and `create_and_start_camera_group`, overwrite the requested `trigger_mode` and `trigger_rate_hz` with the SyncDeviceManager's current state for that camera, whatever the client sent. On create, force FREE_RUN. Exclude the trigger fields from `persistAllCameraSettings` and from `configCopiedToAll`. In zod, mark them optional or read-only, or use `.passthrough()`."
+   },
+   {
+    "severity": "blocker",
+    "section": "4.3 Camera control / 4.5 Sequencing step 5-6",
+    "problem": "Per the plan, `_apply_trigger_mode` raises on macOS, and a failed verification is supposed to report FAILED_TO_ENTER and trigger a rollback. But any exception from `apply_camera_configuration` during an update kills the whole backend, so the rollback never runs. The behavioural check \"median frame interval over the next ~1 s\" also cannot use loop frames. While `updating=True`, `all_ready` is false, so no camera grabs. `await_extracted_configs` returns as soon as the DeviceExtractedConfigMessage is published, which happens before any loop frames.",
+    "evidence": "opencv_apply_config.py:99-103 wraps every exception in FailedToApplyCameraConfigurationError. check_for_new_config.py:33 does not catch it. opencv_camera_loop.py:119-123 calls `ipc.kill_everything()`, which sets global_kill_flag (camera_group_ipc.py:69-70). camera_status.py:29 includes `not self.updating.value` in `ready`. camera_orchestrator.py:100-101 gates on `all_ready`. check_for_new_config.py:38-40 publishes the extracted config before the next grab.",
+    "fix": "Run verification inside `apply_camera_configuration`, before the extracted config is published: about 1 s of direct `cap.grab()` calls with timestamps (do not touch `frame_number`). Return the result as data, either a `trigger_state` field on the extracted config or a new CameraStatus shared value, and never raise. In `check_for_new_config`, catch apply failures, publish the prior config with an error state and clear `updating`, so that one bad camera cannot SIGTERM the app. Only then can the manager's rollback (step 6) work."
+   },
+   {
+    "severity": "major",
+    "section": "4.4 change 1 / 4.7 failure table",
+    "problem": "Lock-step gating means one starved camera stalls every other camera. The others sit in `should_grab_by_id` and never call grab. The table row \"that camera starves while the others don't\" is therefore not observable as written: a wall-clock \"no frame for 3T\" timer fires on every camera. Frame counts also cannot diverge by more than one, yet even one frame of divergence makes `validate_recording` raise, so the force-finish path ends in an exception rather than a finalized recording.",
+    "evidence": "camera_orchestrator.py:105-109 lets a camera grab only when its count is \u2264 all the others. opencv_camera_loop.py:67-69 makes gated cameras spin on `wait_10us`. recording_finalizer.py:168-170 raises ValueError on unequal video frame counts, and :196-198 raises on a CSV/video mismatch.",
+    "fix": "Measure `trigger_starved` only on time spent inside `grab()` attempts, not on gated idle time. When force-finishing, set `last_recording_frame_number = min(frame_counts) + 1` so every camera stops at the same frame, and make sure a camera that is already one ahead does not record past it. Alternatively, pass a `terminated_reason` to the finalizer and downgrade check 2 to a warning when it is set."
+   },
+   {
+    "severity": "major",
+    "section": "4.1 Process model / 4.5 Disabling sync / closing",
+    "problem": "There is no graceful shutdown hook to attach to. Neither the skellycam nor the freemocap lifespan calls `close_all_camera_groups`; shutdown only sets `global_kill_flag`, and the camera processes exit on `should_continue`. CameraGroup has no reference to an app-level SyncDeviceManager, so \"`CameraGroup.close` and app shutdown call `sync_manager.disable()` first\" cannot be wired as described. As things stand, cameras are left in trigger mode on every normal exit, not just after a crash.",
+    "evidence": "skellycam/app.py:59-67, where the shutdown path only sets the kill flag. skellycam/__main__.py:84-89 calls `worker_registry.shutdown_all()`. freemocap/app/app.py:355-363 likewise only sets the flag. camera_group.py:53-60 has no sync or app reference. opencv_camera_worker_method.py:73-78 is the single place where every camera passes on exit.",
+    "fix": "In the camera worker's `finally` (opencv_camera_worker_method.py:73-78), before `release()`: if `config.trigger_mode != FREE_RUN`, call `cap.set(CAP_PROP_AUTOFOCUS, 0)` and clear the `triggered_cameras.json` entry. That covers close, kill flag and loop exceptions. Have `CameraGroupManager` own the SyncDeviceManager, so CameraGroup hooks, `to_state_dict` and freemocap all reach it without an `app` handle. Keep the JSON recovery for hard kills only."
+   },
+   {
+    "severity": "major",
+    "section": "4.6 Timestamps and recording metadata",
+    "problem": "`_info.json` is written at the start of finalize, before timestamps are processed, so the \"filled at finalize\" fields (measured_rate_hz, frames_per_camera, alignment_violations and so on) would never reach the file. `validate_recording` already runs four checks, so the new one is a fifth. The stop snapshot also cannot simply be attached in `stop_recording`. The RecordingInfo that gets saved comes back from the cameras' RecordingFinishedMessage, and the finalizer requires every copy to be equal.",
+    "evidence": "recording_finalizer.py:55 calls `save_to_file` before `process_and_save_recording_timestamps` (:57). recording_finalizer.py:127-133 and 175-203 already number checks 1\u20134. camera_group.py:354-361 takes recording_info from the camera messages and raises if they differ.",
+    "fix": "Attach `sync.stop` and the computed fields to the RecordingInfo returned by the cameras, after messages are collected and before `RecordingFinalizer.create`. Move `save_to_file`, or call it a second time, after timestamp processing so the computed sync block is persisted. Call the new validation check 5, and make it warn rather than raise."
+   },
+   {
+    "severity": "major",
+    "section": "6 FreeMoCap downstream",
+    "problem": "The freemocap framerate change reads `_stats.json \u2192 trigger.measured_rate_hz`. freemocap's own code documents that skellycam's `RecordingTimestampsStats.to_json` is buggy and that `_stats.json` can be empty. A new `trigger` block there would be just as unreliable. In trigger mode the existing CSV-median fallback already returns about the trigger rate, so the change adds little until `to_json` is fixed.",
+    "evidence": "freemocap/core/tasks/mocap/mocap_helpers/recording_framerate.py:15-18 and :72-76 (\"Empty until skellycam's RecordingTimestampsStats.to_json bug is fixed\"). recording_timestamp_stats.py:123-143 serializes recarrays via `default=lambda o: o.__dict__`. The plan cites `recording_framerate.py:91-130`, but the file ends at 125.",
+    "fix": "Fix `RecordingTimestampsStats.to_json`, which should convert recarrays with `.tolist()` and RecordingInfo with `model_dump(mode='json')`, as a prerequisite. Also have freemocap read `measured_rate_hz` from `{rec}_info.json \u2192 sync`, which `save_to_file` writes reliably, before trying stats.json."
+   },
+   {
+    "severity": "major",
+    "section": "5 API and UI / 6 FreeMoCap downstream",
+    "problem": "Three integration points are missing on the freemocap side. freemocap mounts only skellycam's `camera_router`, so a new `sync_router` will not exist in freemocap. freemocap runs its own websocket server, so the new `SYNC_DEVICE_EVENT` (including `toggle_rec_button`) will never reach the freemocap UI. freemocap-ui has its own forked camera slice and schema, separate from skellycam-ui.",
+    "evidence": "freemocap/api/routers.py:17-19 (`SKELLYCAM_ROUTERS = [camera_router]`). freemocap/api/websocket/websocket_server.py:16 imports only `ServerFramerateCalculator` from skellycam. freemocap/app/app.py:428 mounts the skellycam routers under `/skellycam`. freemocap-ui/src/store/slices/cameras/cameras-selectors.ts:146 and cameras-slice.ts:106 are the separate slice.",
+    "fix": "Add `sync_router` to freemocap's SKELLYCAM_ROUTERS. Add SYNC_DEVICE_EVENT relay to freemocap's websocket server, or deliver events as an APP_STATE event queue/sequence number so no relay is needed. Budget freemocap-ui slice and schema work explicitly in M4."
+   },
+   {
+    "severity": "major",
+    "section": "4.3 Behavioural verification / USB stream fps",
+    "problem": "The behavioural check tells trigger mode from free-run by frame interval. That fails when `uvc_stream_fps` is \"trigger\", the plan's own M0 candidate, because free-run at the stream fps then equals the trigger rate. Changing the UVC stream fps on a running camera is also not supported: framerate application is disabled on updates and FPS is only set before the first read at open.",
+    "evidence": "opencv_apply_config.py:62 (`should_apply_framerate = False  # framerate application is disabled`). create_cv2_video_capture.py:57-58 sets CAP_PROP_FPS only at open.",
+    "fix": "For verification, use a distinguishing signal that does not depend on rate: stop pulses briefly (protocol 2 `<STOP>`/`<BURST:N>`) and confirm the frames stop, or burst N pulses and count exactly N frames. For stream-fps changes, plan a camera re-open (release then `create_cv2_video_capture`) inside the enable sequence, rather than assuming `set(CAP_PROP_FPS)` works mid-stream."
+   },
+   {
+    "severity": "major",
+    "section": "4.4 change 6 (pulse-alignment monitor)",
+    "problem": "No main-process code visits every multiframe; the frontend path reads only the latest. Gating also skews the timestamps the monitor relies on. A camera held back by a slower sibling (encoding is synchronous in the loop) finds the frame already buffered, so `grab()` returns at once and the stamp is the gate-release time, not the arrival time. That produces false spread > T/2 and corrupts the timestamp-derived `trigger.pulse_index`.",
+    "evidence": "camera_group.py:125-131 has `get_latest_frames` only, and the websocket path uses the latest multiframe. camera_orchestrator.py:105-109 is the gating. video_recorder.py:102 calls `video_writer.write` inline in the camera loop (opencv_camera_loop.py:99-105). opencv_get_frame.py:53-55 takes the grab timestamps.",
+    "fix": "Add a monitor task that reads multiframes in order with `get_images_by_frame_number` (camera_group_shared_memory.py:143) and copes with ring-buffer overwrite. Classify each grab by `post_grab - pre_grab`: a grab that returned immediately gives only an upper bound on arrival time and should be excluded from the spread test and the rate fit. Add an M0 item: measure the loop period with recording at 48 Hz and 4 cameras."
+   },
+   {
+    "severity": "major",
+    "section": "4.1 / 4.2 Group binding, 10 Q6",
+    "problem": "Multiple simultaneous camera groups are effectively impossible today. Once any group exists, apply never creates another one, and recording starts on every group. The group selector, `camera_group_id` binding and the \"mixed groups\" question are therefore moot. The real gap is elsewhere: group IDs are regenerated whenever a group is closed and recreated, and the plan has no path to re-run the enable sequence for the new group while pulses keep running.",
+    "evidence": "camera_group_manager.py:91-100 adds an entry for every existing group (empty or not), so lines 75-79 never reach `create_and_start_camera_group` once a group exists. camera_group_manager.py:117-121 starts recording on every group.",
+    "fix": "Bind sync to \"the active group\" and drop the group selector for v1. On group close, mark sync as needing re-enable. On group create, keep cameras in FREE_RUN and either re-run \u00a74.5 automatically or prompt the user."
+   },
+   {
+    "severity": "minor",
+    "section": "4.4 change 1",
+    "problem": "The loop's median framerate is updated inside the retry loop, so failed grabs count as frame durations. In trigger mode, starvation would pollute the framerate passed to VideoRecorder and the FramerateMessage.",
+    "evidence": "opencv_camera_loop.py:80-84 is indented inside the `while not frame_success` loop.",
+    "fix": "Update `frame_durations_seconds` only after a successful grab, as part of the GrabResult refactor."
+   },
+   {
+    "severity": "minor",
+    "section": "4.4 change 4",
+    "problem": "`pause(timeout_s)` raising on timeout leaves `should_pause=True` on every camera, so the group stays paused or not-ready after the error.",
+    "evidence": "camera_orchestrator.py:58-67 sets `should_pause` before awaiting. camera_status.py:25 includes `not self.should_pause.value` in `ready`.",
+    "fix": "On timeout, reset `should_pause=False` on all statuses (as `unpause` does) before raising."
+   },
+   {
+    "severity": "minor",
+    "section": "4.1 Process model",
+    "problem": "The cited precedent is wrong. AudioRecorder is not a `threading.Thread`; it is a sounddevice/PortAudio callback stream. The design (a plain daemon thread kept out of WorkerRegistry) is still sound.",
+    "evidence": "audio_recorder.py: the AudioRecorder docstring and `start()` use `sd.InputStream` with `_audio_callback`.",
+    "fix": "Cite the WorkerRegistry heartbeat/monitor threads (worker_registry.py:61-75) as the daemon-thread precedent instead."
+   },
+   {
+    "severity": "minor",
+    "section": "4.3 Persistent trigger mode after a crash",
+    "problem": "Two details are wrong. The base folder is `~/skellycam_data`, not `~/.skellycam`. CameraConfig has no device-path field (cameras open by `camera_index`), so `{device_path}` is not available in `create_cv2_video_capture`.",
+    "evidence": "default_paths.py:5 and :33-34 (`skellycam_data`). camera_config.py:63-123 has no path field. create_cv2_video_capture.py:37 opens by index. detect_cameras_devices.py:44-50 derives `camera_id` from the device path.",
+    "fix": "Key the file on `camera_id`, which is already derived from the device path, and store it under `get_default_skellycam_base_folder_path()`."
+   },
+   {
+    "severity": "minor",
+    "section": "4.2 Config model changes",
+    "problem": "A plain `enum.Enum` for TriggerMode would break `RecordingInfo.save_to_file`, which runs `json.dumps` on `model_dump()` output. RotationTypes needs a custom field_serializer for exactly this reason.",
+    "evidence": "recording_info.py:79-86 calls `json.dumps(self.model_dump())`. camera_config.py:361-363 shows `serialize_rotation`.",
+    "fix": "Define `class TriggerMode(str, Enum)`, or add a field_serializer."
+   },
+   {
+    "severity": "minor",
+    "section": "4.5 Sequencing rationale",
+    "problem": "The drain loop does not need frames: it ignores the result of `read()`. On a triggered camera without pulses it would only block for up to the backend timeout per call, which makes `all_ready` slow rather than failing. The real hard blocker is the `read()` check in `create_cv2_video_capture`.",
+    "evidence": "setup_opencv_camera_loop.py:63-65 does `_, _ = cv2_video_capture.read()`. create_cv2_video_capture.py:71-81 retries and raises.",
+    "fix": "Correct the rationale. The sequencing conclusion still holds."
+   },
+   {
+    "severity": "minor",
+    "section": "5 WebSocket APP_STATE",
+    "problem": "The APP_STATE sender sets `global_kill_flag` on any exception from `to_state_dict`, so a bug in the sync state serializer would shut down the app. Putting `pulse_count` and the measured rate into APP_STATE also forces a full state resend every second.",
+    "evidence": "skellycam/api/websocket/websocket_server.py:315-325 (state diff/send) and :334-337 (`except Exception` \u2192 `global_kill_flag.value = True`).",
+    "fix": "Make `SyncDeviceManager.to_state_dict` defensive: wrap it in try/except and return an error state. Consider rounding the measured rate and sending `pulse_count` on a separate low-rate channel."
+   },
+   {
+    "severity": "minor",
+    "section": "4.5 Sequencing",
+    "problem": "Nothing stops a user from enabling or disabling sync, or applying camera settings that change trigger mode, while a recording is running. Mixed-mode frames would then land in the recording.",
+    "evidence": "camera_orchestrator.py:36-38 provides `all_cameras_recording`, but the plan's PUT /sync/device does not check it.",
+    "fix": "Return a 409 from PUT /sync/device while `orchestrator.all_cameras_recording` or any `recording_in_progress` is true, as already planned for /sync/test/burst."
+   },
+   {
+    "severity": "minor",
+    "section": "Citations",
+    "problem": "A few line citations are off. \"`:122` calls `ipc.kill_everything()`\" refers to opencv_camera_loop.py:122, not video_recorder.py. The +3-frame window is at camera_group.py:192 and :231, not 228-229. recording_framerate.py ends at line 125.",
+    "evidence": "opencv_camera_loop.py:122; camera_group.py:192, 231.",
+    "fix": "Correct the references."
+   }
+  ],
+  "missing_topics": [
+   "How the requested trigger_mode survives apply_camera_configuration and extract_config_from_cv2_capture (the round-trip of non-hardware fields)",
+   "Server-side override of client-supplied trigger fields on /camera/group/apply, and excluding them from UI persisted settings and copy-to-all",
+   "Error containment for config-apply failures inside the camera process (today they call ipc.kill_everything)",
+   "Reverting trigger mode in the camera worker's finally block, since there is no graceful lifespan close of camera groups in skellycam or freemocap",
+   "Who owns SyncDeviceManager so CameraGroup, the websocket state sender and freemocap can reach it without an app handle (suggest CameraGroupManager)",
+   "Re-enable flow when the camera group is closed and recreated (new group id, cameras open in FREE_RUN while pulses run)",
+   "Effect of synchronous video encoding in the camera loop on per-pulse loop budget at 48 Hz with 4 cameras (M0 measurement)",
+   "Classifying instant-return grabs under lock-step gating before using grab timestamps for alignment or pulse_index",
+   "Fixing RecordingTimestampsStats.to_json before relying on _stats.json downstream",
+   "freemocap-side wiring: SKELLYCAM_ROUTERS, its own websocket server event relay, freemocap-ui camera slice",
+   "Ordering of save_to_file relative to timestamp processing so computed sync fields reach _info.json",
+   "Re-opening the capture to change UVC stream fps (set FPS is disabled on update)",
+   "Refusing sync enable/disable while recording"
+  ]
+ },
+ "critHw": {
+  "issues": [
+   {
+    "severity": "blocker",
+    "section": "4.3 Behavioural verification of trigger mode",
+    "problem": "Checking that the frame interval is about 1/trigger_rate cannot tell a triggered camera from a free-running one in skellycam. should_grab_by_id keeps all cameras in lock-step and BUFFERSIZE=1 returns only the latest frame. So a camera that ignored the AUTOFOCUS write and free-runs at 120 fps is still read at the group's 48 Hz pace and passes. With sync.uvc_stream_fps='trigger', free-run and triggered are also the same 48 fps.",
+    "evidence": "Plan \u00a74.4 item 5 keeps lock-step gating, and \u00a74.3 says 'Free-run on this camera runs at its stream rate, so the two are distinguishable'. camera_orchestrator.py:96-109 gates each grab on the other cameras' frame_count.",
+    "fix": "Verify by removing pulses, not by measuring rate. After switching, either pause pulses for about 300 ms or send <BURST:N> with the timer stopped. Each camera must then deliver exactly N frames, or starve during the gap. A free-running camera keeps producing frames. This needs the starvation-tolerant grab from M2 first, so put the verification after it. In the legacy protocol, use <STOP> and then <START> (allowed here because nothing is recording)."
+   },
+   {
+    "severity": "major",
+    "section": "3 Firmware: pulse counter, START, STOP and BURST",
+    "problem": "pulse_count is incremented in the TOV1 ISR, which fires at TOP\u2192BOTTOM, i.e. at the edge itself. Two things follow. (1) START writes TCNT1=TOP. A written TCNT1 is not guaranteed to raise TOV1 on that first wrap, so the first edge may go uncounted and the 'STOP n=' total would be off by one against the logic analyzer. (2) BURST:N and an exact STOP cannot be implemented from TOV1: once TOV1 is set the next edge is already out, or less than 1 tick (8 CPU cycles) away. Also, mcu_ticks = pulse_count \u00d7 (TOP+1) + TCNT1 is wrong as soon as the rate changes mid-run.",
+    "evidence": "Plan \u00a73: 'A 32-bit pulse_count is incremented in TOV1 (one per rising edge)', 'START sets TCNT1 = TOP\u2026 pulse_count = 0', 'BURST:N emits exactly N pulses', 'mcu_ticks = (uint64)pulse_count \u00d7 (TOP+1) + TCNT1'.",
+    "fix": "Count in the TIMER1_COMPA ISR. It fires once per emitted pulse at the falling edge, unambiguously. Do BURST and STOP decisions there too: on the Nth COMPA, clear COM1A/COM1B (PORTB already low) and then stop CS1x. That leaves almost a whole period of slack before the next BOTTOM. Keep a 64-bit tick_base that the ISR advances by the period that just ended, and set mcu_ticks = tick_base + TCNT1, with the usual pending-flag check under cli(). Add a CI/HIL test: BURST:1000 must give 1000 analyzer edges and n=1000."
+   },
+   {
+    "severity": "major",
+    "section": "3 Firmware: LED bar",
+    "problem": "Timer1 has no third compare unit for the 'mid-period' LED update. OCR1A and OCR1B both hold the pulse width for D9/D10, so COMPB fires at the end of the pulse (~500 \u00b5s after the edge), not at T/2. Separately, 'T/2 is while no camera is exposing' assumes exposure starts at the FSIN edge, and nobody has measured that. The 18\u201320 ms lockout suggests the bridge firmware may relay or delay the trigger.",
+    "evidence": "Plan \u00a73: 'the TIMER1_COMPB ISR (or a second compare at mid-period) writes pulse_count mod 256\u2026 at T/2\u2026 while no camera is exposing'. Mode 14 uses ICR1 as TOP and OCR1A/OCR1B as the outputs.",
+    "fix": "Schedule the LED update from Timer2: arm a one-shot in the COMPA ISR, or use Timer2 CTC with an offset. Run the FSIN-to-exposure sweep (\u00a77.3) first, choose the LED update instant from the measured exposure window, and make the offset configurable (<LEDBUS:1,offset_us>)."
+   },
+   {
+    "severity": "major",
+    "section": "3 Electrical / wiring",
+    "problem": "(a) The text contradicts itself: 'Two identical outputs mean 2 cameras per pin' versus '1 camera per pin (D9 + D10, so 2 cameras)'. Two cameras at about 19 mA each is 38 mA, right at the 40 mA absolute maximum, which is not an operating point; the datasheet characterises pins at 20 mA. (b) A 74HCT541 cannot carry this load. NXP/TI rate HCT outputs at \u00b16 mA (VOH spec at 4 mA), with absolute maxima of \u00b135 mA per output and \u00b170 mA through VCC/GND. Four cameras at about 16 mA is about 64 mA, and 6\u20138 cameras exceeds the package limit. (c) The D2 legacy mirror invites people to plug an existing 4-camera MoCapSTR XLR box (about 75 mA) into one ATmega pin.",
+    "evidence": "Plan \u00a73: 'Two identical outputs mean 2 cameras per pin'; 'D9/D10 \u2192 74HCT541 buffer \u2192 one output per camera with 33\u201347 \u03a9'; 'D2 exists so an existing MoCapSTR XLR box works the day it is reflashed'. InnoMaker R4=200 \u03a9, Vf 1.25 V, about 19 mA at 5 V.",
+    "fix": "State one camera per ATmega pin with no buffer. The reference design should use a driver rated for the current: a ULN2803/ULN2003 low-side sink per camera (FSIN+ to +5 V, FSIN\u2212 to the ULN output; still non-inverting logically, about 13 mA), a 74ACT541/74AHCT541 (\u00b124 mA/output, higher VCC/GND rating), or one NPN/N-MOSFET per camera. Size the series resistor from the remaining current budget. Document that D2 is for a single camera only, or that the legacy splitter needs a buffer. Use a 100 mA polyfuse/current budget from USB 5 V."
+   },
+   {
+    "severity": "major",
+    "section": "4.1 sync_serial_connection.py (DTR auto-reset)",
+    "problem": "Opening the port with dtr=False does not prevent the reset on most real setups. On Linux the tty layer raises DTR/RTS inside open() before pyserial can clear it, so the board always resets. The Uno's 16U2 resets on SET_CONTROL_LINE_STATE. Several CH340 Windows driver versions toggle DTR on open. Banner-wait is also needed on the old ATmegaBOOT Nano bootloader, which waits much longer than Optiboot and treats incoming bytes as STK500. The plan's 2.5 s banner window followed by PINGs can therefore send PINGs into the bootloader.",
+    "evidence": "Plan \u00a74.1: 'sets dtr=False and rts=False, then calls open() to avoid the auto-reset where the driver honours it. Always waits up to 2.5 s for a banner and otherwise PINGs.' MoCapSTR arduino_sync.py:71-90 sleeps 1.5 s and then PINGs every 0.3 s for 3.5 s.",
+    "fix": "Design for reset-on-open as the normal case. Read and discard until the banner line arrives, with a timeout of about 3.5 s to cover the old bootloader. Send PING only after the banner, or after the timeout when nothing was received (meaning no reset happened). Never assume that state survives an open: always re-send PROTO, RATE, PULSE and ARM. Document the optional hardware fix (10 \u00b5F from RESET to GND on a Nano, or cutting RESET-EN on an Uno), noting that it disables bootloader uploads until removed. Drop EEPROM <SAVE>, or at least never auto-start pulses from EEPROM on boot."
+   },
+   {
+    "severity": "major",
+    "section": "4.6 / 4.4 change 6: pulse_index from a single line fit",
+    "problem": "A ceramic resonator drifts with temperature by about 8.7 ppm/\u00b0C, and the board warms after plug-in. If the rate changes by 50 ppm over a 30-minute take, the phase error from a straight-line fit reaches about 45 ms \u00d7 1/6 \u2248 7.5 ms. That is more than the plan's T/4 (5.2 ms at 48 Hz) residual threshold, so validation would raise false alignment failures or assign the wrong pulse_index. The host clock also drifts.",
+    "evidence": "Plan \u00a74.6: 'trigger.pulse_index: the rounded fit of the camera's timestamp to the group's line'; validation requires '|residual| < T/4'. Timing report: \u2212139 Hz/\u00b0C, 286 ppm wander over 158 h.",
+    "fix": "Assign pulse indices locally. Use round(\u0394t/T_local) between consecutive frames, with T_local taken from a sliding-window fit (e.g. 10 s), or a piecewise or Kalman fit. Keep the global slope only as the reported mean rate. Add a synthetic test with a 50\u2013100 ppm warm-up ramp to the rate_estimator tests."
+   },
+   {
+    "severity": "major",
+    "section": "4.4 / Risk 5: BUFFERSIZE=1 in trigger mode",
+    "problem": "With V4L2 and 1 buffer, the driver has no queued buffer from grab k until the requeue at grab k+1. If one camera's publish, record or lock-step wait exceeds T, that camera's next pulse frame is dropped by the driver, and it silently receives pulse k+2 while the others receive k+1. Lock-step gating makes this more likely, because fast cameras sit holding their buffer. DSHOW ignores BUFFERSIZE and keeps a latest-sample buffer, so a grab can return a frame that arrived up to T earlier. In both cases the grab-midpoint spread no longer bounds which pulse a camera got.",
+    "evidence": "create_cv2_video_capture.py:62 sets CAP_PROP_BUFFERSIZE=1; plan \u00a74.4 items 5 and 6 rely on the grab-midpoint spread being less than T/2.",
+    "fix": "In trigger mode use 2\u20134 V4L2 buffers and treat every frame as meaningful: never drain to the latest. Use the driver's buffer timestamp (CAP_PROP_POS_MSEC on V4L2, which is the v4l2_buffer CLOCK_MONOTONIC stamp) as the arrival time instead of the grab midpoint. Make M0 measure slip rate under load with the LED bar before choosing between ordinal and pulse-index matching."
+   },
+   {
+    "severity": "major",
+    "section": "4.3 USB stream fps / lockout",
+    "problem": "The lockout may depend on the negotiated stream frame interval, exposure and resolution, not just a fixed 18\u201320 ms. MoCapSTR measured it only at stream fps 120 and exposure -9. Offering uvc_stream_fps='trigger' (48 fps) could put the bridge's own frame-interval gate exactly at the trigger period, so every edge becomes marginal. The plan also never checks exposure against the period in trigger mode.",
+    "evidence": "Plan \u00a74.3: 'sync.uvc_stream_fps: \"auto\" | \"trigger\" | int'; MoCapSTR CAMERA_SPECS lockout measured with USB polling Auto (=120) and exposure -9.",
+    "fix": "In M0, sweep the lockout against stream fps (trigger rate vs 120), exposure (-11 to -6) and resolution. Do not offer 'trigger' as the stream fps unless M0 shows it is safe. Refuse or warn when exposure + readout > 0.8\u00b7T in trigger mode."
+   },
+   {
+    "severity": "major",
+    "section": "4.1 Detection / reconnect by USB serial number",
+    "problem": "CH340 clones, the most common Nano, have no iSerial, so 'remember the port by USB serial number' and 'auto-reconnect by USB serial number' fail on exactly the boards the plan targets. Ubuntu 22.04 also ships brltty, which grabs 1a86:7523 and makes /dev/ttyUSB0 disappear, and ModemManager probes ttyACM devices (genuine Uno/16U2) with AT strings, resetting the board and corrupting the protocol.",
+    "evidence": "Plan \u00a74.1: 'The last good port is remembered by USB serial number'; \u00a74.7 'Auto-reconnect by USB serial number every 2 s'.",
+    "fix": "Key on serial_number when present. Otherwise fall back to VID:PID plus pyserial's `location` (USB port path), or /dev/serial/by-path on Linux. Add Linux docs and a troubleshooting check covering dialout, removing or masking brltty for CH340, and a udev rule with ENV{ID_MM_DEVICE_IGNORE}=\"1\" for the sync box."
+   },
+   {
+    "severity": "major",
+    "section": "2 Legacy protocol reply parsing",
+    "problem": "The legacy <FPS:N> reply is three lines, not two. A parser that treats 'Interval (us)' as the end of the reply leaves 'Pulse width (us): P' in the stream, which then gets matched to the next command (<PULSE>). The protocol also has no request IDs. A reply that arrives after the 500 ms timeout will be attributed to the next request in both protocols.",
+    "evidence": "trigger_firmware.ino:62-67 prints 'FPS set to: ', 'Interval (us): ', 'Pulse width (us): '. Plan \u00a72 lists only 'FPS set to: N', 'Interval (us): I'.",
+    "fix": "Define a per-command terminal line. For legacy FPS, the terminal line is 'Pulse width (us)' or 'Error:'. On a timeout, drain the input and resync with PING/PONG before sending anything else. In protocol 2, add an optional echoed tag (<SYNC#17> \u2192 '#17 SYNC \u2026') and put 'OK'/'ERR' on a single line per command."
+   },
+   {
+    "severity": "major",
+    "section": "3 Firmware: rate and pulse changes while running; prescaler changes",
+    "problem": "Applying an ICR1 change in TOV1 is fine for TOP. But crossing 30.5 Hz requires a prescaler change, and writing CS1x mid-run (or touching PSRSYNC, which is shared with Timer0) glitches the period and breaks micros(). OCR1x is double-buffered and updates at BOTTOM, but ICR1 written in the ISR takes effect in the current period. So one period runs with the new TOP and the old pulse width, which can violate pulse < period/2. Any change made while cameras are triggered also produces one irregular period, which is exactly the lockout hazard the plan is trying to avoid.",
+    "evidence": "Plan \u00a73: 'rate changes are applied in the TOV1 ISR right after BOTTOM'; 'p = 64 covers 3.8\u201330.5 Hz'.",
+    "fix": "Allow RATE and PULSE only while stopped or armed, and refuse them in protocol 2 while running ('ERR busy'). The host changes the rate by following the disable sequence (cameras to free-run, STOP, RATE, ARM, START, re-enable). If live changes are ever needed, refuse any change that alters the prescaler, and clamp against both the old and the new period."
+   },
+   {
+    "severity": "minor",
+    "section": "3 Firmware: output state at ARM",
+    "problem": "'Forced low' outputs are underspecified. FOC1x is not available in PWM modes. When COM1x is enabled, the pin takes the OC1x internal latch, which could be high if the timer was ever stopped mid-pulse. The high time is also OCR1x+1 ticks, and OCR1x=0 still produces a one-tick spike.",
+    "evidence": "Plan \u00a73: '<ARM> loads ICR1 and OCR1x with the timer stopped\u2026 and the outputs forced low'; 'OCR1x = us \u00d7 2'.",
+    "fix": "At ARM: set COM1x=0 and PORTB1/PORTB2=0 (pins are outputs). If the latch state is unknown, briefly use Normal mode with FOC1A/FOC1B and COM=clear to clear the OC1x latches, then select mode 14 and enable COM1x. Set OCR1x = ticks\u22121 and enforce 2 \u2264 ticks \u2264 TOP/2. The real reason for mode 14 over mode 15 is that mode 15 consumes OC1A; say so."
+   },
+   {
+    "severity": "minor",
+    "section": "3 Build artifacts / flashing clones",
+    "problem": "Nothing stops this firmware from being compiled for boards it cannot run on. Users will try the 'worst choice' boards (Nano Every, Uno R4) as well as common fake Nanos (LGT8F328P, ATmega168, ATmega328PB). The upload docs also need the old-bootloader FQBN. The uno and nano FQBNs produce essentially the same application image. Old ATmegaBOOT also has the watchdog reset-loop bug if the firmware ever enables the WDT.",
+    "evidence": "Plan \u00a73: 'CI-built .hex from arduino-cli compile --fqbn arduino:avr:nano and arduino:avr:uno'; MoCapSTR build_firmware.py uses nano:cpu=atmega328 and its flasher tries 115200 and then 57600.",
+    "fix": "Add `#if !defined(__AVR_ATmega328P__) || F_CPU != 16000000L` \u2192 `#error`. Report the MCU signature and F_CPU in the VERSION/STATUS reply. Ship one .hex. Document `arduino-cli upload --fqbn arduino:avr:nano:cpu=atmega328old` (57600) and the avrdude command lines for both bootloaders, plus CH340 driver notes. Do not use the watchdog."
+   },
+   {
+    "severity": "minor",
+    "section": "4.3 Persistent trigger mode recovery",
+    "problem": "The recovery covers only cameras listed in triggered_cameras.json. Cameras left triggered by MoCapSTR, AMCap or another PC, or after a failed json write, still hit the 5\u00d71 s read failure. On DSHOW, MoCapSTR reports the open or format negotiation itself hanging in trigger mode, so a set() between open and read() may come too late.",
+    "evidence": "Plan \u00a74.3: 'if the camera being opened is listed there, call cap.set(CAP_PROP_AUTOFOCUS, 0) before the capture.read()'. MoCapSTR CHANGELOG notes open/read hangs in trigger mode.",
+    "fix": "Also trigger the recovery when the first read fails and the camera's name or VID:PID matches the known trigger-capable list. Add an M0 item: does the DSHOW open itself block in trigger mode, and does Windows restore the AUTOFOCUS value on replug? On Linux, follow the vendor order: set auto_exposure=1 before focus_automatic_continuous=1."
+   },
+   {
+    "severity": "minor",
+    "section": "Does clock accuracy matter / \u00a77.3 skew expectation",
+    "problem": "The conclusions hold. But the 'Expected: \u00b5s-scale (optocoupler and sensor wake)' skew is unsupported. The 18\u201320 ms lockout suggests the USB bridge firmware handles the trigger, possibly gated to its own frame or microframe timing, which could produce per-camera skew of 100s of \u00b5s or one line time. The plan also lists Uno R4 and Nano Every as poor clock choices when in fact they cannot run the Timer1 firmware at all. And the \u2212761 ppm row is a Pro Mini, not an Uno or Nano.",
+    "evidence": "Plan \u00a77 measurement 3: 'Expected: \u00b5s-scale'; 'Does clock accuracy matter' table row 'Resonator, one unit measured at \u2212761 ppm'.",
+    "fix": "Say 'unknown, possibly up to ~1 ms' and give the sweep a range of 0\u201325 ms in 20 \u00b5s steps around the edge. Label the \u2212761 ppm row 'Pro Mini, one unit, warm'. Mark R4 and Every as unsupported."
+   },
+   {
+    "severity": "minor",
+    "section": "3 Protocol naming",
+    "problem": "`<RATE_MHZ:48000>` reads as 48 GHz (MHz = megahertz). Splitting the prescaler/TOP math between the C and Python mirrors also invites divergence.",
+    "evidence": "Plan \u00a73: 'The host sends the rate in millihertz: <RATE_MHZ:48000>'.",
+    "fix": "Rename it `<RATE_MILLIHZ:48000>`. Also accept `<PERIOD:p,ticks>` computed by timer_math.py, so the firmware only validates the value and the host is the single source of truth for what gets programmed."
+   }
+  ],
+  "missing_topics": [
+   "The 115200 baud rate has +2.1% UBRR error at 16 MHz (U2X). Combined with a \u22120.5% resonator this is still under the ~4.5% 8N1 limit, but check it on the clone set. Do not change the baud rate, since legacy compatibility depends on it.",
+   "Power and grounding: the box is powered from the host USB, so a board reset or brown-out from USB hub glitches stops the pulses. Recommend a powered hub or separate 5 V feed for buffered builds, and state that the opto isolation means FSIN\u2212 can go to Arduino GND without a ground loop.",
+   "Test protocol for each oscillator type: a logic-analyzer test of D9/D10 during USART traffic and while the Identify/SYNC commands run, confirming that hardware edges are unaffected and that only the D2 mirror and the LED bar jitter.",
+   "Defined behaviour when a second process (Arduino IDE, MoCapSTR, ModemManager) opens the port during a session: that causes a reset, the pulses stop, and the device_lost path runs.",
+   "The Identify button must refuse to run on the port that is currently connected and triggering, because opening it again resets the board.",
+   "Exposure guard in trigger mode (exposure + readout vs. period) and the exposure/lockout interaction.",
+   "The order of UVC control writes on Linux (vendor order: auto_exposure=1 first, then focus_automatic_continuous=1).",
+   "Pulse count semantics written into the protocol spec: whether the counter counts rising edges or completed pulses, and whether a value read during the active pulse includes that pulse."
+  ]
+ }
+}

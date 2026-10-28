@@ -1,0 +1,12 @@
+3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]
+cv2 4.12.0
+===== 1280x720 =====
+backend: FFMPEG
+retrieve ok=True; provided buffer now nonzero? True; returned array shares memory with provided view? True; provided data ptr unchanged? True
+retrieve(image=view) median 0.774 ms; retrieve() median 1.175 ms (file decode; not representative of DSHOW)
+wrong-shape buffer (640x480 buffer, 1280x720 stream): ok=True, returned shape=(720, 1280, 3), provided buffer still all zero? True, shares memory? False
+===== 1920x1080 =====
+backend: FFMPEG
+retrieve ok=True; provided buffer now nonzero? True; returned array shares memory with provided view? True; provided data ptr unchanged? True
+retrieve(image=view) median 2.007 ms; retrieve() median 2.770 ms (file decode; not representative of DSHOW)
+wrong-shape buffer (640x480 buffer, 1920x1080 stream): ok=True, returned shape=(1080, 1920, 3), provided buffer still all zero? True, shares memory? False

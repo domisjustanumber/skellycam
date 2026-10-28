@@ -1,0 +1,33 @@
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\logging\__init__.py", line 1163, in emit
+    stream.write(msg + self.terminator)
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2514' in position 10: character maps to <undefined>
+Call stack:
+  File "C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\ad23e4da-d956-400c-b95c-1c7166f96ad9\scratchpad\ui_tap_bench.py", line 136, in <module>
+    bench(720, 1280)
+  File "C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\ad23e4da-d956-400c-b95c-1c7166f96ad9\scratchpad\ui_tap_bench.py", line 72, in bench
+    create_frontend_payload(latest_frames=caches)
+  File "<@beartype(skellycam.core.types.frontend_payload_bytearray.create_frontend_payload) at 0x1b60e2c4a40>", line 126, in create_frontend_payload
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\types\frontend_payload_bytearray.py", line 81, in create_frontend_payload
+    logger.debug(f"Set reusable bytes payload to {estimated_size // ONE_KILOBYTE} kilobytes")
+Message: 'Set reusable bytes payload to 6145 kilobytes'
+Arguments: ()
+cv2 4.12.0, numpy 2.2.6, threads cv2=28
+E1 bytearray[:n] is a copy: True (slice type bytearray)
+E2 asyncio.sleep(0.01) on win32 (ProactorEventLoop): mean 10.36 ms, p50 10.34 ms, max 11.39 ms
+--- 5 cams @ 1280x720 BGR (raw frame 2.76 MB) ---
+A  SHM->local copy (get_data_by_index, 5 cams): 4.94 ms/multiframe; shares_memory=False
+B  create_frontend_payload (5 cams):            8.92 ms/multiframe -> max 112 payloads/s
+   payload size: 44.4 KiB; type=bytearray
+C  per camera: resize 0.12 ms, imencode q60 0.31 ms, tobytes 0.4 us, payload[:n] slice 1.4 us
+D  zlib deflate on payload: 1.72 ms, 45421 -> 23255 bytes
+--- 5 cams @ 1920x1080 BGR (raw frame 6.22 MB) ---
+A  SHM->local copy (get_data_by_index, 5 cams): 2.33 ms/multiframe; shares_memory=False
+B  create_frontend_payload (5 cams):            17.51 ms/multiframe -> max 57 payloads/s
+   payload size: 80.2 KiB; type=bytearray
+C  per camera: resize 0.57 ms, imencode q60 1.52 ms, tobytes 1.1 us, payload[:n] slice 5.7 us
+D  zlib deflate on payload: 5.62 ms, 82130 -> 48603 bytes

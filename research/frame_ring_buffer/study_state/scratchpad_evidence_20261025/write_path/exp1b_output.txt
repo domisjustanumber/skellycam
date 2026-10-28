@@ -1,0 +1,18 @@
+===== 1280x720x3 =====
+put_frame FIRST LAP (388 writes, fresh pages): median 1.260 ms, p95 1.587 ms, max 2.204 ms
+put_frame STEADY (2nd lap):                   median 0.652 ms, p95 1.233 ms, max 1.927 ms
+  copy.copy(frame)                              median 0.392 ms, p95 0.526 ms, max 0.673 ms
+  buffer[i] = tmp (slot assign)                 median 0.243 ms, p95 0.340 ms, max 0.597 ms
+  last_written_index.value = i                  median 0.028 ms, p95 0.060 ms, max 0.098 ms
+  dtype check + read last_written_index         median 0.022 ms, p95 0.046 ms, max 0.132 ms
+  np.copyto(buf[i:i+1], frame) (single copy)    median 0.100 ms, p95 0.183 ms, max 0.309 ms
+  check: buf[s]=tmp leaves slot independent of tmp? True
+===== 1920x1080x3 =====
+put_frame FIRST LAP (172 writes, fresh pages): median 2.823 ms, p95 3.372 ms, max 4.255 ms
+put_frame STEADY (2nd lap):                   median 1.400 ms, p95 2.083 ms, max 2.378 ms
+  copy.copy(frame)                              median 0.901 ms, p95 1.275 ms, max 3.120 ms
+  buffer[i] = tmp (slot assign)                 median 0.457 ms, p95 0.649 ms, max 2.410 ms
+  last_written_index.value = i                  median 0.035 ms, p95 0.067 ms, max 0.317 ms
+  dtype check + read last_written_index         median 0.028 ms, p95 0.045 ms, max 0.290 ms
+  np.copyto(buf[i:i+1], frame) (single copy)    median 0.217 ms, p95 0.351 ms, max 0.738 ms
+  check: buf[s]=tmp leaves slot independent of tmp? True
