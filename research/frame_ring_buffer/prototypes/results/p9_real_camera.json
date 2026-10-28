@@ -1,0 +1,917 @@
+{
+  "env": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.2.6",
+    "opencv": "4.12.0",
+    "cpu_count": 28,
+    "time": "2026-10-28 03:10:31",
+    "psutil": "7.2.2",
+    "ram_total_gb": 68.413349888,
+    "system_cpu_pct_1s_before_run": 7.9,
+    "other_python_processes_at_start": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\prototypes\\p9_real_camera.py",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks/frame_pipeline/prototypes/run_all.py p9",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks/frame_pipeline/prototypes/run_all.py p9",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\prototypes\\run_with_load.py p9_real_camera p9_real_camera_stdout.log ",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks\\frame_pipeline\\prototypes\\run_with_load.py p9_real_camera p9_real_"
+    ],
+    "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d",
+    "av": "18.0.0",
+    "simplejpeg": null
+  },
+  "run_s": 10.0,
+  "cameras": [
+    {
+      "index": 0,
+      "opened": true,
+      "backend": "DSHOW",
+      "requested": [
+        1280,
+        720,
+        60
+      ],
+      "actual": [
+        1280,
+        720,
+        60.000240000960005
+      ],
+      "fourcc": "MJPG",
+      "frame_shape": [
+        720,
+        1280,
+        3
+      ],
+      "modes": [
+        {
+          "mode": "grab_retrieve_private",
+          "frames": 297,
+          "fps": 29.699137834032847,
+          "grab_fails": 0,
+          "grab": {
+            "n": 297,
+            "median_ms": 0.0042,
+            "mean_ms": 0.00409057239057239,
+            "p99_ms": 0.007216000000000008,
+            "min_ms": 0.002,
+            "max_ms": 0.0198
+          },
+          "retrieve_and_publish": {
+            "n": 297,
+            "median_ms": 32.003,
+            "mean_ms": 33.65811885521885,
+            "p99_ms": 51.94491600000006,
+            "min_ms": 21.0932,
+            "max_ms": 55.1228
+          },
+          "cpu_ms_per_frame": 7.6283670033670035,
+          "cpu_pct": 22.655592308158475
+        },
+        {
+          "mode": "grab_retrieve_slot",
+          "frames": 298,
+          "fps": 29.704576720680077,
+          "grab_fails": 0,
+          "grab": {
+            "n": 298,
+            "median_ms": 0.0028,
+            "mean_ms": 0.002923489932885906,
+            "p99_ms": 0.0046,
+            "min_ms": 0.0012,
+            "max_ms": 0.0801
+          },
+          "retrieve_and_publish": {
+            "n": 298,
+            "median_ms": 32.0019,
+            "mean_ms": 33.651964765100665,
+            "p99_ms": 53.70356199999999,
+            "min_ms": 22.0497,
+            "max_ms": 55.6947
+          },
+          "cpu_ms_per_frame": 7.183305369127517,
+          "cpu_pct": 21.337704544532144,
+          "inplace_verified": true
+        }
+      ],
+      "raw_bytes_probe": {
+        "dshow_convert_rgb_0": {
+          "set_returned": true,
+          "frames": 87,
+          "fps": 29.0,
+          "first": {
+            "shape": [
+              720,
+              1280,
+              3
+            ],
+            "dtype": "uint8",
+            "starts_ffd8": false
+          },
+          "median_bytes": 2764800.0,
+          "width": 1280.0,
+          "height": 720.0
+        },
+        "msmf_format_minus1": {
+          "set_returned": false,
+          "frames": 0,
+          "fps": 0.0,
+          "first": null,
+          "median_bytes": null,
+          "width": 1920.0,
+          "height": 1080.0
+        }
+      }
+    },
+    {
+      "index": 0,
+      "opened": true,
+      "backend": "DSHOW",
+      "requested": [
+        1920,
+        1080,
+        60
+      ],
+      "actual": [
+        1920,
+        1080,
+        60.000240000960005
+      ],
+      "fourcc": "MJPG",
+      "frame_shape": [
+        1080,
+        1920,
+        3
+      ],
+      "modes": [
+        {
+          "mode": "grab_retrieve_private",
+          "frames": 300,
+          "fps": 29.996027326140453,
+          "grab_fails": 0,
+          "grab": {
+            "n": 300,
+            "median_ms": 0.0043,
+            "mean_ms": 0.0043366666666666675,
+            "p99_ms": 0.006301999999999999,
+            "min_ms": 0.0026,
+            "max_ms": 0.0109
+          },
+          "retrieve_and_publish": {
+            "n": 300,
+            "median_ms": 31.98625,
+            "mean_ms": 33.32391633333333,
+            "p99_ms": 53.21206999999999,
+            "min_ms": 18.4421,
+            "max_ms": 61.461
+          },
+          "cpu_ms_per_frame": 12.65625,
+          "cpu_pct": 37.96372208464651
+        },
+        {
+          "mode": "grab_retrieve_slot",
+          "frames": 301,
+          "fps": 30.00552969015323,
+          "grab_fails": 0,
+          "grab": {
+            "n": 301,
+            "median_ms": 0.0028,
+            "mean_ms": 0.0027262458471760797,
+            "p99_ms": 0.005,
+            "min_ms": 0.0014,
+            "max_ms": 0.0067
+          },
+          "retrieve_and_publish": {
+            "n": 301,
+            "median_ms": 32.0089,
+            "mean_ms": 33.31404784053156,
+            "p99_ms": 50.5774,
+            "min_ms": 23.2929,
+            "max_ms": 54.8538
+          },
+          "cpu_ms_per_frame": 11.420265780730897,
+          "cpu_pct": 34.26711239531619,
+          "inplace_verified": true
+        }
+      ],
+      "raw_bytes_probe": {
+        "dshow_convert_rgb_0": {
+          "set_returned": true,
+          "frames": 87,
+          "fps": 29.0,
+          "first": {
+            "shape": [
+              1080,
+              1920,
+              3
+            ],
+            "dtype": "uint8",
+            "starts_ffd8": false
+          },
+          "median_bytes": 6220800.0,
+          "width": 1920.0,
+          "height": 1080.0
+        },
+        "msmf_format_minus1": {
+          "set_returned": false,
+          "frames": 0,
+          "fps": 0.0,
+          "first": null,
+          "median_bytes": null,
+          "width": 1920.0,
+          "height": 1080.0
+        }
+      }
+    },
+    {
+      "index": 1,
+      "opened": true,
+      "backend": "DSHOW",
+      "requested": [
+        1280,
+        720,
+        60
+      ],
+      "actual": [
+        1280,
+        720,
+        60.000240000960005
+      ],
+      "fourcc": "MJPG",
+      "frame_shape": [
+        720,
+        1280,
+        3
+      ],
+      "modes": [
+        {
+          "mode": "grab_retrieve_private",
+          "frames": 258,
+          "fps": 25.752901291421967,
+          "grab_fails": 0,
+          "grab": {
+            "n": 258,
+            "median_ms": 0.004,
+            "mean_ms": 0.003966666666666667,
+            "p99_ms": 0.0056430000000000004,
+            "min_ms": 0.0019,
+            "max_ms": 0.0092
+          },
+          "retrieve_and_publish": {
+            "n": 258,
+            "median_ms": 34.5526,
+            "mean_ms": 38.81753798449612,
+            "p99_ms": 54.591226,
+            "min_ms": 21.5804,
+            "max_ms": 58.3452
+          },
+          "cpu_ms_per_frame": 7.933624031007752,
+          "cpu_pct": 20.431383655379587
+        },
+        {
+          "mode": "grab_retrieve_slot",
+          "frames": 258,
+          "fps": 25.732973067720412,
+          "grab_fails": 0,
+          "grab": {
+            "n": 258,
+            "median_ms": 0.0027,
+            "mean_ms": 0.002611240310077519,
+            "p99_ms": 0.0039,
+            "min_ms": 0.0012,
+            "max_ms": 0.0047
+          },
+          "retrieve_and_publish": {
+            "n": 258,
+            "median_ms": 33.7575,
+            "mean_ms": 38.84786085271318,
+            "p99_ms": 54.718302,
+            "min_ms": 22.5457,
+            "max_ms": 57.9325
+          },
+          "cpu_ms_per_frame": 7.630813953488372,
+          "cpu_pct": 19.63635299499014,
+          "inplace_verified": true
+        }
+      ],
+      "raw_bytes_probe": {
+        "dshow_convert_rgb_0": {
+          "set_returned": true,
+          "frames": 77,
+          "fps": 25.666666666666668,
+          "first": {
+            "shape": [
+              720,
+              1280,
+              3
+            ],
+            "dtype": "uint8",
+            "starts_ffd8": false
+          },
+          "median_bytes": 2764800.0,
+          "width": 1280.0,
+          "height": 720.0
+        },
+        "msmf_format_minus1": {
+          "set_returned": false,
+          "frames": 0,
+          "fps": 0.0,
+          "first": null,
+          "median_bytes": null,
+          "width": 1920.0,
+          "height": 1080.0
+        }
+      }
+    },
+    {
+      "index": 1,
+      "opened": true,
+      "backend": "DSHOW",
+      "requested": [
+        1920,
+        1080,
+        60
+      ],
+      "actual": [
+        1920,
+        1080,
+        60.000240000960005
+      ],
+      "fourcc": "MJPG",
+      "frame_shape": [
+        1080,
+        1920,
+        3
+      ],
+      "modes": [
+        {
+          "mode": "grab_retrieve_private",
+          "frames": 258,
+          "fps": 25.756299029881532,
+          "grab_fails": 0,
+          "grab": {
+            "n": 258,
+            "median_ms": 0.00445,
+            "mean_ms": 0.004367829457364341,
+            "p99_ms": 0.006172000000000003,
+            "min_ms": 0.0023,
+            "max_ms": 0.0085
+          },
+          "retrieve_and_publish": {
+            "n": 258,
+            "median_ms": 32.507149999999996,
+            "mean_ms": 38.81101550387597,
+            "p99_ms": 63.62779200000001,
+            "min_ms": 12.4145,
+            "max_ms": 66.1641
+          },
+          "cpu_ms_per_frame": 13.444767441860465,
+          "cpu_pct": 34.62874506197735
+        },
+        {
+          "mode": "grab_retrieve_slot",
+          "frames": 258,
+          "fps": 25.755300131301844,
+          "grab_fails": 0,
+          "grab": {
+            "n": 258,
+            "median_ms": 0.0029,
+            "mean_ms": 0.002838372093023256,
+            "p99_ms": 0.004843,
+            "min_ms": 0.0016,
+            "max_ms": 0.014
+          },
+          "retrieve_and_publish": {
+            "n": 258,
+            "median_ms": 32.7327,
+            "mean_ms": 38.812984108527125,
+            "p99_ms": 57.20354600000001,
+            "min_ms": 11.0583,
+            "max_ms": 67.1922
+          },
+          "cpu_ms_per_frame": 12.294089147286822,
+          "cpu_pct": 31.663795582935286,
+          "inplace_verified": true
+        }
+      ],
+      "raw_bytes_probe": {
+        "dshow_convert_rgb_0": {
+          "set_returned": true,
+          "frames": 77,
+          "fps": 25.666666666666668,
+          "first": {
+            "shape": [
+              1080,
+              1920,
+              3
+            ],
+            "dtype": "uint8",
+            "starts_ffd8": false
+          },
+          "median_bytes": 6220800.0,
+          "width": 1920.0,
+          "height": 1080.0
+        },
+        "msmf_format_minus1": {
+          "set_returned": false,
+          "frames": 0,
+          "fps": 0.0,
+          "first": null,
+          "median_bytes": null,
+          "width": 1920.0,
+          "height": 1080.0
+        }
+      }
+    },
+    {
+      "index": 2,
+      "opened": true,
+      "backend": "DSHOW",
+      "requested": [
+        1280,
+        720,
+        60
+      ],
+      "actual": [
+        1280,
+        720,
+        60.000240000960005
+      ],
+      "fourcc": "MJPG",
+      "frame_shape": [
+        720,
+        1280,
+        3
+      ],
+      "modes": [
+        {
+          "mode": "grab_retrieve_private",
+          "frames": 301,
+          "fps": 30.05137117168781,
+          "grab_fails": 0,
+          "grab": {
+            "n": 301,
+            "median_ms": 0.0041,
+            "mean_ms": 0.004037209302325581,
+            "p99_ms": 0.0067,
+            "min_ms": 0.002,
+            "max_ms": 0.0106
+          },
+          "retrieve_and_publish": {
+            "n": 301,
+            "median_ms": 32.0009,
+            "mean_ms": 33.26317740863788,
+            "p99_ms": 54.3283,
+            "min_ms": 22.1097,
+            "max_ms": 60.8029
+          },
+          "cpu_ms_per_frame": 8.305647840531561,
+          "cpu_pct": 24.959610607714126
+        },
+        {
+          "mode": "grab_retrieve_slot",
+          "frames": 301,
+          "fps": 30.061335711229816,
+          "grab_fails": 0,
+          "grab": {
+            "n": 301,
+            "median_ms": 0.003,
+            "mean_ms": 0.0030591362126245847,
+            "p99_ms": 0.0051,
+            "min_ms": 0.0012,
+            "max_ms": 0.0618
+          },
+          "retrieve_and_publish": {
+            "n": 301,
+            "median_ms": 31.9916,
+            "mean_ms": 33.25157740863787,
+            "p99_ms": 53.4719,
+            "min_ms": 22.2147,
+            "max_ms": 54.8458
+          },
+          "cpu_ms_per_frame": 7.9422757475083055,
+          "cpu_pct": 23.875541755700592,
+          "inplace_verified": true
+        }
+      ],
+      "raw_bytes_probe": {
+        "dshow_convert_rgb_0": {
+          "set_returned": true,
+          "frames": 90,
+          "fps": 30.0,
+          "first": {
+            "shape": [
+              720,
+              1280,
+              3
+            ],
+            "dtype": "uint8",
+            "starts_ffd8": false
+          },
+          "median_bytes": 2764800.0,
+          "width": 1280.0,
+          "height": 720.0
+        },
+        "msmf_format_minus1": {
+          "set_returned": false,
+          "frames": 0,
+          "fps": 0.0,
+          "first": null,
+          "median_bytes": null,
+          "width": 1920.0,
+          "height": 1080.0
+        }
+      }
+    },
+    {
+      "index": 2,
+      "opened": true,
+      "backend": "DSHOW",
+      "requested": [
+        1920,
+        1080,
+        60
+      ],
+      "actual": [
+        1920,
+        1080,
+        60.000240000960005
+      ],
+      "fourcc": "MJPG",
+      "frame_shape": [
+        1080,
+        1920,
+        3
+      ],
+      "modes": [
+        {
+          "mode": "grab_retrieve_private",
+          "frames": 301,
+          "fps": 30.05728589159003,
+          "grab_fails": 0,
+          "grab": {
+            "n": 301,
+            "median_ms": 0.0045,
+            "mean_ms": 0.004488039867109634,
+            "p99_ms": 0.0085,
+            "min_ms": 0.0025,
+            "max_ms": 0.0185
+          },
+          "retrieve_and_publish": {
+            "n": 301,
+            "median_ms": 32.0023,
+            "mean_ms": 33.25563953488371,
+            "p99_ms": 56.9417,
+            "min_ms": 10.406,
+            "max_ms": 60.6859
+          },
+          "cpu_ms_per_frame": 14.690614617940199,
+          "cpu_pct": 44.15600034946002
+        },
+        {
+          "mode": "grab_retrieve_slot",
+          "frames": 301,
+          "fps": 30.033880112606003,
+          "grab_fails": 0,
+          "grab": {
+            "n": 301,
+            "median_ms": 0.0028,
+            "mean_ms": 0.002771760797342193,
+            "p99_ms": 0.0042,
+            "min_ms": 0.0014,
+            "max_ms": 0.006
+          },
+          "retrieve_and_publish": {
+            "n": 301,
+            "median_ms": 32.0523,
+            "mean_ms": 33.2829122923588,
+            "p99_ms": 50.8589,
+            "min_ms": 17.155,
+            "max_ms": 64.1724
+          },
+          "cpu_ms_per_frame": 13.444767441860465,
+          "cpu_pct": 40.37985334907057,
+          "inplace_verified": true
+        }
+      ],
+      "raw_bytes_probe": {
+        "dshow_convert_rgb_0": {
+          "set_returned": true,
+          "frames": 90,
+          "fps": 30.0,
+          "first": {
+            "shape": [
+              1080,
+              1920,
+              3
+            ],
+            "dtype": "uint8",
+            "starts_ffd8": false
+          },
+          "median_bytes": 6220800.0,
+          "width": 1920.0,
+          "height": 1080.0
+        },
+        "msmf_format_minus1": {
+          "set_returned": false,
+          "frames": 0,
+          "fps": 0.0,
+          "first": null,
+          "median_bytes": null,
+          "width": 1920.0,
+          "height": 1080.0
+        }
+      }
+    },
+    {
+      "index": 3,
+      "opened": true,
+      "backend": "DSHOW",
+      "requested": [
+        1280,
+        720,
+        60
+      ],
+      "actual": [
+        1280,
+        720,
+        60.000240000960005
+      ],
+      "fourcc": "MJPG",
+      "frame_shape": [
+        720,
+        1280,
+        3
+      ],
+      "modes": [
+        {
+          "mode": "grab_retrieve_private",
+          "frames": 301,
+          "fps": 30.055515132617067,
+          "grab_fails": 0,
+          "grab": {
+            "n": 301,
+            "median_ms": 0.0046,
+            "mean_ms": 0.004543189368770764,
+            "p99_ms": 0.0079,
+            "min_ms": 0.0021,
+            "max_ms": 0.0576
+          },
+          "retrieve_and_publish": {
+            "n": 301,
+            "median_ms": 31.9688,
+            "mean_ms": 33.25762823920266,
+            "p99_ms": 63.957,
+            "min_ms": 3.7358,
+            "max_ms": 85.7186
+          },
+          "cpu_ms_per_frame": 8.253737541528238,
+          "cpu_pct": 24.80703335800516
+        },
+        {
+          "mode": "grab_retrieve_slot",
+          "frames": 301,
+          "fps": 30.00609382893956,
+          "grab_fails": 0,
+          "grab": {
+            "n": 301,
+            "median_ms": 0.0031,
+            "mean_ms": 0.003196677740863788,
+            "p99_ms": 0.0057,
+            "min_ms": 0.0014,
+            "max_ms": 0.0303
+          },
+          "retrieve_and_publish": {
+            "n": 301,
+            "median_ms": 32.0279,
+            "mean_ms": 33.31006677740864,
+            "p99_ms": 53.0369,
+            "min_ms": 7.9366,
+            "max_ms": 59.7984
+          },
+          "cpu_ms_per_frame": 7.7865448504983386,
+          "cpu_pct": 23.364379538729928,
+          "inplace_verified": true
+        }
+      ],
+      "raw_bytes_probe": {
+        "dshow_convert_rgb_0": {
+          "set_returned": true,
+          "frames": 72,
+          "fps": 24.0,
+          "first": {
+            "shape": [
+              720,
+              1280,
+              3
+            ],
+            "dtype": "uint8",
+            "starts_ffd8": false
+          },
+          "median_bytes": 2764800.0,
+          "width": 1280.0,
+          "height": 720.0
+        },
+        "msmf_format_minus1": {
+          "set_returned": false,
+          "frames": 0,
+          "fps": 0.0,
+          "first": null,
+          "median_bytes": null,
+          "width": 1920.0,
+          "height": 1080.0
+        }
+      }
+    },
+    {
+      "index": 3,
+      "opened": true,
+      "backend": "DSHOW",
+      "requested": [
+        1920,
+        1080,
+        60
+      ],
+      "actual": [
+        1920,
+        1080,
+        60.000240000960005
+      ],
+      "fourcc": "MJPG",
+      "frame_shape": [
+        1080,
+        1920,
+        3
+      ],
+      "modes": [
+        {
+          "mode": "grab_retrieve_private",
+          "frames": 299,
+          "fps": 29.895520455212434,
+          "grab_fails": 0,
+          "grab": {
+            "n": 299,
+            "median_ms": 0.0045,
+            "mean_ms": 0.004549832775919732,
+            "p99_ms": 0.009913999999999897,
+            "min_ms": 0.0029,
+            "max_ms": 0.0193
+          },
+          "retrieve_and_publish": {
+            "n": 299,
+            "median_ms": 32.0248,
+            "mean_ms": 33.435448494983284,
+            "p99_ms": 64.04206399999997,
+            "min_ms": 8.6909,
+            "max_ms": 72.3837
+          },
+          "cpu_ms_per_frame": 12.332775919732441,
+          "cpu_pct": 36.869475477791255
+        },
+        {
+          "mode": "grab_retrieve_slot",
+          "frames": 301,
+          "fps": 30.026596981010968,
+          "grab_fails": 0,
+          "grab": {
+            "n": 301,
+            "median_ms": 0.003,
+            "mean_ms": 0.0030049833887043193,
+            "p99_ms": 0.006,
+            "min_ms": 0.0016,
+            "max_ms": 0.0147
+          },
+          "retrieve_and_publish": {
+            "n": 301,
+            "median_ms": 31.995,
+            "mean_ms": 33.290241860465116,
+            "p99_ms": 54.3368,
+            "min_ms": 9.1246,
+            "max_ms": 59.2385
+          },
+          "cpu_ms_per_frame": 10.953073089700997,
+          "cpu_pct": 32.88835113680084,
+          "inplace_verified": true
+        }
+      ],
+      "raw_bytes_probe": {
+        "dshow_convert_rgb_0": {
+          "set_returned": true,
+          "frames": 69,
+          "fps": 23.0,
+          "first": {
+            "shape": [
+              1080,
+              1920,
+              3
+            ],
+            "dtype": "uint8",
+            "starts_ffd8": false
+          },
+          "median_bytes": 6220800.0,
+          "width": 1920.0,
+          "height": 1080.0
+        },
+        "msmf_format_minus1": {
+          "set_returned": false,
+          "frames": 0,
+          "fps": 0.0,
+          "first": null,
+          "median_bytes": null,
+          "width": 1920.0,
+          "height": 1080.0
+        }
+      }
+    }
+  ],
+  "pyav_dshow_raw_mjpeg": [
+    {
+      "opened": true,
+      "codec": "mjpeg",
+      "negotiated_rate": 60.000240000960005,
+      "width": 1280,
+      "height": 720,
+      "packets": 151,
+      "fps": 30.093124269126626,
+      "packets_starting_ffd8": 151,
+      "median_bytes": 26451.0,
+      "cpu_ms_per_packet": 0.6208609271523179,
+      "device": "c922 Pro Stream Webcam",
+      "requested": [
+        1280,
+        720,
+        60
+      ]
+    },
+    {
+      "opened": false,
+      "error": "OSError(5, 'I/O error', 'video=c922 Pro Stream Webcam')",
+      "device": "c922 Pro Stream Webcam",
+      "requested": [
+        1920,
+        1080,
+        60
+      ]
+    },
+    {
+      "opened": false,
+      "error": "OSError(5, 'I/O error', 'video=Logitech Webcam C930e')",
+      "device": "Logitech Webcam C930e",
+      "requested": [
+        1280,
+        720,
+        60
+      ]
+    },
+    {
+      "opened": false,
+      "error": "OSError(5, 'I/O error', 'video=Logitech Webcam C930e')",
+      "device": "Logitech Webcam C930e",
+      "requested": [
+        1920,
+        1080,
+        60
+      ]
+    },
+    {
+      "opened": false,
+      "error": "OSError(5, 'I/O error', 'video=Razer Kiyo Pro')",
+      "device": "Razer Kiyo Pro",
+      "requested": [
+        1280,
+        720,
+        60
+      ]
+    },
+    {
+      "opened": false,
+      "error": "OSError(5, 'I/O error', 'video=Razer Kiyo Pro')",
+      "device": "Razer Kiyo Pro",
+      "requested": [
+        1920,
+        1080,
+        60
+      ]
+    },
+    {
+      "opened": false,
+      "error": "OSError(5, 'I/O error', 'video=USB Camera')",
+      "device": "USB Camera",
+      "requested": [
+        1280,
+        720,
+        60
+      ]
+    },
+    {
+      "opened": false,
+      "error": "OSError(5, 'I/O error', 'video=USB Camera')",
+      "device": "USB Camera",
+      "requested": [
+        1920,
+        1080,
+        60
+      ]
+    }
+  ]
+}

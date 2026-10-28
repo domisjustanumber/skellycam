@@ -1,0 +1,111 @@
+{
+ "test": "mjpeg_mf_recheck",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-25T18:41:56Z",
+ "command": [
+  "uv run --script research/usb_cameras/tools/camlock.py -- bash mf_recheck.sh  (mf_mjpeg_capture.exe --list; then --dev <vidpid> --width 1280 --height 720 --fps 30 --seconds 3 --warmup 1 per camera)",
+  "uv run --script research/usb_cameras/tools/camlock.py -- bash kiyo_recheck.sh (Kiyo: MJPG 1280x720@30/@60, 1920x1080@30, 640x480@30, YUY2 1280x720@10, --via-dshow)",
+  "uv run --script research/usb_cameras/tools/camlock.py -- uv run --script research/usb_cameras/mjpeg/pyav/pyav_capture.py --input-format dshow --device 'video=USB Video Device' --size 1280x720 --fps 30 --seconds 3 --warmup 1",
+  "Get-PnpDeviceProperty DEVPKEY_Device_DevNodeStatus (devnode_status_1443.txt)"
+ ],
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0"
+ },
+ "context": "Cameras were replugged by the user at ~14:17 local (UTC-4). Earlier in the session MF had returned MF_E_REBOOT_REQUIRED after another agent's registry change left the camera devnodes with DN_NEED_RESTART.",
+ "findings": [
+  "MF_E_REBOOT_REQUIRED no longer occurs after the replug: at 14:41 local, MFEnumDeviceSources/--list succeeded for every camera (empty error fields) and IMFSourceReader native-MJPG capture at 1280x720@30 delivered frames for c922 (113 in 3 s window+warmup) and C930e (108), err=S_OK.",
+  "DN_NEED_RESTART (0x100) is clear on every camera interface devnode (MI_00 status 0x0180600A). It is still set on the three USB composite parent devnodes (usbccgp, 0x0180610A), which does not block MF (c922 and C930e capture fine with the flag on their parents).",
+  "Correction to mjpeg_mf_blocked/devnode_status_1439.json: it labels MI_00 status 0x0180600A as DN_NEED_RESTART=true, but 0x0180600A & 0x100 == 0, so those interfaces did NOT need a restart at 14:39.",
+  "Separate transient fault: from 14:41 to at least 14:47 local the Razer Kiyo Pro failed in every API: MF ReadSample returned 0x8007001F (ERROR_GEN_FAILURE) with 0 frames for every MJPG mode, for YUY2, and via the DirectShow-routed MF path, and its IAMCameraControl/IAMVideoProcAmp controls reported unsupported; FFmpeg dshow open failed with I/O error ('Could not RenderStream to connect pins' in mjpeg_pyav_dshow_format_probe/kiyo.json at 14:39). It recovered without a replug: msmf max_1920x1080at30_c922+kiyo+c930e (~14:5x) and opencv-dshow-raw common_1280x720at30_kiyo delivered 30 fps from it. Not caused by MF_E_REBOOT_REQUIRED; cause not determined (other agents' libusb/WinUSB probes were queued on camlock at the time)."
+ ],
+ "runs": [
+  {
+   "file": "meta_kiyo_pyav_recheck.json",
+   "errors": [
+    "video=USB Video Device: open failed: OSError(5, 'I/O error', 'video=USB Video Device')"
+   ]
+  },
+  {
+   "file": "meta_kiyo_recheck_1280x720at30.json",
+   "camera": "USB Video Device",
+   "chosen_native_type": "MJPG 1280x720@30/1 (native index 43)",
+   "reader_output_subtype": "MJPG",
+   "frames_total": 0,
+   "read_error": "0x8007001f",
+   "codec": null
+  },
+  {
+   "file": "meta_kiyo_recheck_1280x720at60.json",
+   "camera": "USB Video Device",
+   "chosen_native_type": "MJPG 1280x720@60/1 (native index 42)",
+   "reader_output_subtype": "MJPG",
+   "frames_total": 0,
+   "read_error": "0x8007001f",
+   "codec": null
+  },
+  {
+   "file": "meta_kiyo_recheck_1920x1080at30.json",
+   "camera": "USB Video Device",
+   "chosen_native_type": "MJPG 1920x1080@30/1 (native index 50)",
+   "reader_output_subtype": "MJPG",
+   "frames_total": 0,
+   "read_error": "0x8007001f",
+   "codec": null
+  },
+  {
+   "file": "meta_kiyo_recheck_640x480at30.json",
+   "camera": "USB Video Device",
+   "chosen_native_type": "MJPG 640x480@30/1 (native index 29)",
+   "reader_output_subtype": "MJPG",
+   "frames_total": 0,
+   "read_error": "0x8007001f",
+   "codec": null
+  },
+  {
+   "file": "meta_kiyo_recheck_viadshow.json",
+   "camera": "USB Video Device",
+   "chosen_native_type": "MJPG 1280x720@30/1 (native index 43)",
+   "reader_output_subtype": "MJPG",
+   "frames_total": 0,
+   "read_error": "0x8007001f",
+   "codec": null
+  },
+  {
+   "file": "meta_kiyo_recheck_yuy2.json",
+   "camera": "USB Video Device",
+   "chosen_native_type": "YUY2 1280x720@10/1 (native index 19)",
+   "reader_output_subtype": "YUY2",
+   "frames_total": 0,
+   "read_error": "0x8007001f",
+   "codec": null
+  },
+  {
+   "file": "meta_mf_recheck_vid_046d_pid_0843.json",
+   "camera": "Logitech Webcam C930e",
+   "chosen_native_type": "MJPG 1280x720@30/1 (native index 294)",
+   "reader_output_subtype": "MJPG",
+   "frames_total": 108,
+   "read_error": "0x00000000",
+   "codec": null
+  },
+  {
+   "file": "meta_mf_recheck_vid_046d_pid_085c.json",
+   "camera": "c922 Pro Stream Webcam",
+   "chosen_native_type": "MJPG 1280x720@30/1 (native index 295)",
+   "reader_output_subtype": "MJPG",
+   "frames_total": 113,
+   "read_error": "0x00000000",
+   "codec": null
+  },
+  {
+   "file": "meta_mf_recheck_vid_1532_pid_0e05.json",
+   "camera": "USB Video Device",
+   "chosen_native_type": "MJPG 1280x720@30/1 (native index 43)",
+   "reader_output_subtype": "MJPG",
+   "frames_total": 0,
+   "read_error": "0x8007001f",
+   "codec": null
+  }
+ ]
+}

@@ -1,0 +1,495 @@
+{
+ "test": "mjpeg_msmf",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": null,
+ "utc_summarized": "2026-10-28T03:15:04.953993+00:00",
+ "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c930e --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg\\mjpeg_msmf\\common_1280x720at30_c930e' -- research/usb_cameras/mjpeg/build/mf_mjpeg_capture.exe --dev 'vid_046d&pid_0843' --width 1280 --height 720 --fps 30 --seconds 10 --warmup 2 --out 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg\\mjpeg_msmf\\common_1280x720at30_c930e' --attr-dump 5",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "backend": "msmf-sourcereader",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30.0
+ },
+ "decoded_by_pipeline": false,
+ "decode_evidence": "MF_READWRITE_DISABLE_CONVERTERS=True; native MJPG media type set on the source; IMFSourceReader::GetCurrentMediaType subtype per camera = ['MJPG'] (MJPG => no decoder MFT in the reader)",
+ "window": {
+  "start_ns": 103232800335700,
+  "end_ns": 103242800717100,
+  "wall_s": 10.000381,
+  "warmup_s": 2.0,
+  "open_ns": 103230799691600
+ },
+ "delivered_codecs": [
+  "MJPG"
+ ],
+ "silent_format_fallback": false,
+ "cpu": {
+  "method": "GetProcessTimes (tick-sampled) + QueryProcessCycleTime/TSC-rate (precise)",
+  "process_user_s": 0.015625,
+  "process_kernel_s": 0.03125,
+  "process_cpu_pct_of_one_core_ticks": 0.469,
+  "process_cycles": 235784958,
+  "tsc_hz": 3417600461,
+  "process_cpu_pct_of_one_core": 0.69,
+  "frameserver_pid": 49436,
+  "frameserver_open_error": 5,
+  "frameserver_ok": false,
+  "frameserver_cpu_pct_of_one_core_ticks": 0.0,
+  "frameserver_cycles": 0,
+  "frameserver_cpu_pct_of_one_core": null,
+  "process_cpu_pct_per_camera": 0.69
+ },
+ "cameras": [
+  {
+   "idx": 0,
+   "name": "Logitech Webcam C930e",
+   "symbolic_link": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "chosen_native_type": "MJPG 1280x720@30/1 (native index 294)",
+   "reader_output_subtype": "MJPG",
+   "output_w": 1280,
+   "output_h": 720,
+   "output_fps_num": 30,
+   "output_fps_den": 1,
+   "read_error": "0x00000000",
+   "stream_ticks": 1,
+   "null_samples": 1,
+   "frames_total": 350,
+   "first_frame_latency_ms": 406.308,
+   "controls_before": {
+    "exposure_log2s": {
+     "supported": true,
+     "value": -7,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": -11,
+     "max": -2,
+     "step": 1,
+     "default": -5,
+     "set_hr": "0x1"
+    },
+    "focus": {
+     "supported": true,
+     "value": 75,
+     "flags": 1,
+     "flags_meaning": "auto",
+     "min": 0,
+     "max": 255,
+     "step": 5,
+     "default": 0,
+     "set_hr": "0x1"
+    },
+    "white_balance_k": {
+     "supported": true,
+     "value": 4500,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 2000,
+     "max": 7500,
+     "step": 1,
+     "default": 4000,
+     "set_hr": "0x1"
+    },
+    "gain": {
+     "supported": true,
+     "value": 10,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 0,
+     "max": 255,
+     "step": 1,
+     "default": 0,
+     "set_hr": "0x1"
+    },
+    "backlight_compensation": {
+     "supported": true,
+     "value": 0,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 0,
+     "max": 1,
+     "step": 1,
+     "default": 0,
+     "set_hr": "0x1"
+    },
+    "powerline_frequency": {
+     "supported": true,
+     "value": 2,
+     "flags": 0,
+     "flags_meaning": "other",
+     "min": 1,
+     "max": 2,
+     "step": 1,
+     "default": 2,
+     "set_hr": "0x1"
+    },
+    "auto_exposure_priority": {
+     "supported": true,
+     "value": 0,
+     "flags": 0,
+     "flags_meaning": "other",
+     "min": 0,
+     "max": 0,
+     "step": 0,
+     "default": 0,
+     "set_hr": "0x1"
+    }
+   },
+   "controls_after_set": {
+    "exposure_log2s": {
+     "supported": true,
+     "value": -7,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": -11,
+     "max": -2,
+     "step": 1,
+     "default": -5,
+     "set_hr": "0x1"
+    },
+    "focus": {
+     "supported": true,
+     "value": 75,
+     "flags": 1,
+     "flags_meaning": "auto",
+     "min": 0,
+     "max": 255,
+     "step": 5,
+     "default": 0,
+     "set_hr": "0x1"
+    },
+    "white_balance_k": {
+     "supported": true,
+     "value": 4500,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 2000,
+     "max": 7500,
+     "step": 1,
+     "default": 4000,
+     "set_hr": "0x1"
+    },
+    "gain": {
+     "supported": true,
+     "value": 10,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 0,
+     "max": 255,
+     "step": 1,
+     "default": 0,
+     "set_hr": "0x1"
+    },
+    "backlight_compensation": {
+     "supported": true,
+     "value": 0,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 0,
+     "max": 1,
+     "step": 1,
+     "default": 0,
+     "set_hr": "0x1"
+    },
+    "powerline_frequency": {
+     "supported": true,
+     "value": 2,
+     "flags": 0,
+     "flags_meaning": "other",
+     "min": 1,
+     "max": 2,
+     "step": 1,
+     "default": 2,
+     "set_hr": "0x1"
+    },
+    "auto_exposure_priority": {
+     "supported": true,
+     "value": 0,
+     "flags": 0,
+     "flags_meaning": "other",
+     "min": 0,
+     "max": 0,
+     "step": 0,
+     "default": 0,
+     "set_hr": "0x1"
+    }
+   },
+   "controls_end": {
+    "exposure_log2s": {
+     "supported": true,
+     "value": -5,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": -11,
+     "max": -2,
+     "step": 1,
+     "default": -5,
+     "set_hr": "0x1"
+    },
+    "focus": {
+     "supported": true,
+     "value": 80,
+     "flags": 1,
+     "flags_meaning": "auto",
+     "min": 0,
+     "max": 255,
+     "step": 5,
+     "default": 0,
+     "set_hr": "0x1"
+    },
+    "white_balance_k": {
+     "supported": true,
+     "value": 4500,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 2000,
+     "max": 7500,
+     "step": 1,
+     "default": 4000,
+     "set_hr": "0x1"
+    },
+    "gain": {
+     "supported": true,
+     "value": 0,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 0,
+     "max": 255,
+     "step": 1,
+     "default": 0,
+     "set_hr": "0x1"
+    },
+    "backlight_compensation": {
+     "supported": true,
+     "value": 0,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 0,
+     "max": 1,
+     "step": 1,
+     "default": 0,
+     "set_hr": "0x1"
+    },
+    "powerline_frequency": {
+     "supported": true,
+     "value": 2,
+     "flags": 0,
+     "flags_meaning": "other",
+     "min": 1,
+     "max": 2,
+     "step": 1,
+     "default": 2,
+     "set_hr": "0x1"
+    },
+    "auto_exposure_priority": {
+     "supported": true,
+     "value": 0,
+     "flags": 0,
+     "flags_meaning": "other",
+     "min": 0,
+     "max": 0,
+     "step": 0,
+     "default": 0,
+     "set_hr": "0x1"
+    }
+   },
+   "frames_delivered_total": 350,
+   "frames_in_window": 301,
+   "fps_requested": 30.0,
+   "fps_achieved_count_over_wall": 30.098853233691795,
+   "fps_achieved_span": 30.04768417239739,
+   "inter_arrival_ms": {
+    "n": 300,
+    "min": 31.3282,
+    "p50": 32.0051,
+    "mean": 33.280435,
+    "p95": 47.9825,
+    "max": 48.1065
+   },
+   "gaps_over_1p5_period": 0,
+   "os_timestamp_delta_ms": {
+    "n": 300,
+    "min": 31.8592,
+    "p50": 32.0011,
+    "mean": 33.280005333333335,
+    "p95": 47.9927,
+    "max": 48.0739
+   },
+   "payload_bytes": {
+    "n": 301,
+    "min": 126279,
+    "p50": 129500,
+    "mean": 129461.49169435215,
+    "p95": 129895,
+    "max": 130011
+   },
+   "mean_luma": {
+    "n": 10,
+    "min": 113.24,
+    "p50": 113.4,
+    "mean": 113.43699999999998,
+    "p95": 113.44,
+    "max": 114.08,
+    "method": "mean of 8-bit luma, every 30th in-window frame (JPEG: simplejpeg GRAY 1/8 scale; pixels: capture script)"
+   },
+   "pct_valid_jpeg_in_window": 100.0,
+   "pct_valid_jpeg_all": 100.0,
+   "pct_valid_jpeg_strict_all": 100.0,
+   "libjpeg_warnings_sample": [],
+   "jpeg_checks_all": {
+    "soi": 350,
+    "eoi_at_end": 350,
+    "eoi_in_tail": 350,
+    "has_dht": 350,
+    "pillow_ok": 350,
+    "simplejpeg_ok": 350,
+    "simplejpeg_lenient_ok": 350
+   },
+   "n_validated": 350,
+   "cam": "c930e",
+   "jpeg_header": {
+    "fingerprints": {
+     "8809b42ef28a": 350
+    },
+    "header_sha1s": {
+     "8e230f9e519e": 350
+    },
+    "markers": [
+     "DQT",
+     "SOF0",
+     "DHT",
+     "DHT",
+     "DHT",
+     "DHT",
+     "COM",
+     "APP0",
+     "DRI",
+     "SOS"
+    ],
+    "app": [
+     {
+      "marker": "APP0",
+      "len": 16,
+      "id": ""
+     }
+    ],
+    "sof": {
+     "type": "SOF0",
+     "precision": 8,
+     "h": 720,
+     "w": 1280,
+     "components": [
+      {
+       "id": 1,
+       "hv": "2x1",
+       "tq": 0
+      },
+      {
+       "id": 2,
+       "hv": "1x1",
+       "tq": 1
+      },
+      {
+       "id": 3,
+       "hv": "1x1",
+       "tq": 2
+      }
+     ]
+    },
+    "dqt_sha1": "6470e04667df",
+    "dht_sha1": "8f8ba97c8f26",
+    "dqt_q0_first8": [
+     3,
+     3,
+     3,
+     3,
+     3,
+     3,
+     4,
+     4
+    ],
+    "has_dht": true,
+    "header_bytes": 702,
+    "com": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+    "bytes_after_eoi_max": 0
+   },
+   "os_timestamp_source": "IMFSourceReader::ReadSample llTimestamp (100ns units, x100)",
+   "timestamp_fields_present": {
+    "os_timestamp_ns": 301,
+    "readsample_ts_hns": 301,
+    "sample_time_hns": 301,
+    "device_timestamp": 301,
+    "uvc_payloadheader_bytes": 301,
+    "sample_duration_hns": 301
+   },
+   "arrival_minus_os_timestamp_ms": {
+    "median": 0.3226,
+    "abs_dev_from_median": {
+     "n": 301,
+     "min": 0.0,
+     "p50": 0.0494,
+     "mean": 5.450777740863787,
+     "p95": 16.0387,
+     "max": 16.2483
+    },
+    "note": "host_arrival_ns - os_timestamp_ns; a latency only when os_timestamp_ns is on the host QPC clock (true for MF llTimestamp and WinRT SystemRelativeTime by documentation; FFmpeg dshow pts = DirectShow stream time + FFmpeg start offset, which lands in the QPC domain on this machine: see the median)"
+   }
+  }
+ ],
+ "samples": [
+  "sample_cam0_seq48.jpghdr"
+ ],
+ "resummarized_from": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\mjpeg_msmf\\common_1280x720at30_c930e\\summary.json",
+ "devnode_status": {
+  "before": null,
+  "after": null
+ },
+ "machine_cpu": {
+  "before": null,
+  "after": null,
+  "note": "whole-machine CPU% (psutil, 1 s) right before and after the capture; other agents run concurrently"
+ },
+ "controls": {
+  "requested": {
+   "exposure_log2s": -7,
+   "white_balance_k": 4500,
+   "auto_exposure_priority": 0
+  },
+  "after_apply": {
+   "Logitech Webcam C930e": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "gain": 10,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "readback_after_capture": {
+   "Logitech Webcam C930e": {
+    "exposure_log2s": -5,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "gain": 0,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "apply_rc": 0,
+  "readback_rc": 0
+ }
+}

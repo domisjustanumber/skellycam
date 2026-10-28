@@ -1,0 +1,40 @@
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\logging\__init__.py", line 1163, in emit
+    stream.write(msg + self.terminator)
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2514' in position 10: character maps to <undefined>
+Call stack:
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\benchmarks\frame_pipeline\baseline\bench_d_ui.py", line 141, in <module>
+    main()
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\benchmarks\frame_pipeline\baseline\bench_d_ui.py", line 120, in main
+    r = asyncio.run(relay_like(shm, create_frontend_payload, await_10ms, RUN_S, path, sleep))
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 678, in run_until_complete
+    self.run_forever()
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 645, in run_forever
+    self._run_once()
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 1999, in _run_once
+    handle._run()
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\benchmarks\frame_pipeline\baseline\bench_d_ui.py", line 77, in relay_like
+    fn, mf_ts, payload = create_frontend_payload(latest_frames=frames, display_image_sizes=None)
+  File "<@beartype(skellycam.core.types.frontend_payload_bytearray.create_frontend_payload) at 0x1c9e83ee980>", line 126, in create_frontend_payload
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\types\frontend_payload_bytearray.py", line 81, in create_frontend_payload
+    logger.debug(f"Set reusable bytes payload to {estimated_size // ONE_KILOBYTE} kilobytes")
+Message: 'Set reusable bytes payload to 6145 kilobytes'
+Arguments: ()
+| 720p | skellycam_ui | True | 59.9 | 56.8 | 47 | 2.21 | 3.59 | 11.20 | 6.28 | 153 | 59 |
+| 720p | freemocap_ui_by_number | True | 58.1 | 57.3 | 13 | 3.26 | 3.53 | 11.41 | 6.85 | 153 | 58 |
+| 720p | skellycam_ui | False | 216.8 | 60.1 | 2352 | 1.20 | 3.12 | 7.96 | 4.35 | 132 | 160 |
+| 1080p | skellycam_ui | True | 43.7 | 43.7 | 0 | 3.39 | 7.24 | 23.76 | 10.90 | 337 | 103 |
+| 1080p | freemocap_ui_by_number | True | 37.9 | 37.9 | 0 | 7.29 | 8.07 | 27.82 | 15.43 | 337 | 115 |
+| 1080p | skellycam_ui | False | 70.7 | 58.2 | 187 | 3.96 | 9.67 | 21.88 | 13.81 | 337 | 183 |

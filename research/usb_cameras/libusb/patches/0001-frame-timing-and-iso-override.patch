@@ -1,0 +1,371 @@
+skellycam research patch for libuvc (https://github.com/libuvc/libuvc) master
+@ d07de4fa23905ee8cac06f5d24b2a03d42a3b363 (2026-10-01). Apply with: git apply <this file>
+(git apply ignores this preamble). Feature patch only; Windows portability needs no source patch
+(see ../compat/win32 and ../CMakeLists.txt).
+
+Part A - per-frame payload-header timing (upstream keeps PTS / last SCR STC internally in
+  uvc_stream_handle (pts/hold_pts, last_scr/hold_last_scr) but never copies them into uvc_frame_t,
+  ignores the SCR's 11-bit SOF counter ("@todo read the SOF token counter"), and only exposes
+  capture_time_finished (CLOCK_MONOTONIC at buffer swap). capture_time (struct timeval) is never set.)
+  * uvc_frame_t gains (appended, so the existing prefix layout is unchanged): pts, scr_stc_first,
+    scr_sof_first, scr_stc_last, scr_sof_last, has_pts, has_scr, closed_by_eof, fid,
+    host_first_payload_ns, host_last_payload_ns, first/last_payload_packet_idx,
+    packets_per_transfer, payload_count, error_payload_count.
+  * _uvc_stream_callback timestamps each completed transfer (CLOCK_MONOTONIC ns) and the packet
+    index; _uvc_process_payload records them for the first/last data payload of each frame.
+  * header-only payloads of the previous FID no longer leak timing into the next frame.
+Part B - application control of the isochronous alt setting (bandwidth)
+  * uvc_stream_set_iso_override(strmh, altsetting, min_bytes_per_packet, packets_per_transfer):
+    force a bAlternateSetting (even one smaller than dwMaxPayloadTransferSize), or replace
+    dwMaxPayloadTransferSize in libuvc's "first alt that is big enough" search, and/or set the iso
+    packets per transfer. uvc_stream_get_iso_info() reports what uvc_stream_start chose.
+  * LIBUVC_HAS_SKELLYCAM_PATCH is defined in libuvc.h.
+
+diff --git a/include/libuvc/libuvc.h b/include/libuvc/libuvc.h
+index 447b3e7..955377f 100644
+--- a/include/libuvc/libuvc.h
++++ b/include/libuvc/libuvc.h
+@@ -491,6 +491,38 @@ typedef struct uvc_frame {
+   void *metadata;
+   /** Size of metadata buffer */
+   size_t metadata_bytes;
++  /* ---- skellycam patch 0001: raw payload-header timing (appended; prefix layout unchanged) ----
++   * All host_* values are CLOCK_MONOTONIC in ns (QPC on the Windows compat shim). They are
++   * taken when the libusb transfer that carried the payload completed, i.e. after its last
++   * isochronous packet; *_packet_idx and packets_per_transfer let you back-date to the
++   * (micro)frame the payload was in. */
++  /** dwPresentationTime of the frame (device clock ticks), valid if has_pts */
++  uint32_t pts;
++  /** SCR source time clock / 11-bit SOF of the FIRST payload header that carried an SCR */
++  uint32_t scr_stc_first;
++  uint16_t scr_sof_first;
++  /** SCR source time clock / 11-bit SOF of the LAST payload header that carried an SCR */
++  uint32_t scr_stc_last;
++  uint16_t scr_sof_last;
++  uint8_t has_pts;
++  uint8_t has_scr;
++  /** 1 if the frame was closed by the EOF bit, 0 if by an FID toggle or a full buffer */
++  uint8_t closed_by_eof;
++  /** FID bit of this frame */
++  uint8_t fid;
++  /** host time of the transfer completion that carried the first data payload of this frame */
++  int64_t host_first_payload_ns;
++  /** host time of the transfer completion that carried the payload that closed this frame */
++  int64_t host_last_payload_ns;
++  /** iso packet index (within its transfer) of the first / last payload, -1 for bulk */
++  int32_t first_payload_packet_idx;
++  int32_t last_payload_packet_idx;
++  /** iso packets per transfer used by this stream (0 for bulk) */
++  int32_t packets_per_transfer;
++  /** number of non-empty payloads that made up this frame */
++  uint32_t payload_count;
++  /** payloads dropped while this frame was assembled (UVC error bit or iso packet status != 0) */
++  uint32_t error_payload_count;
+ } uvc_frame_t;
+ 
+ /** A callback function to handle incoming assembled UVC frames
+@@ -651,6 +683,12 @@ uvc_error_t uvc_stream_start(uvc_stream_handle_t *strmh,
+ uvc_error_t uvc_stream_start_iso(uvc_stream_handle_t *strmh,
+     uvc_frame_callback_t *cb,
+     void *user_ptr);
++/* skellycam patch: application-controlled isochronous alt setting (bandwidth) */
++#define LIBUVC_HAS_SKELLYCAM_PATCH 1
++uvc_error_t uvc_stream_set_iso_override(uvc_stream_handle_t *strmh, int altsetting,
++    size_t min_bytes_per_packet, int packets_per_transfer);
++void uvc_stream_get_iso_info(uvc_stream_handle_t *strmh, int *altsetting,
++    size_t *bytes_per_packet, int *packets_per_transfer, int *num_transfers);
+ uvc_error_t uvc_stream_get_frame(
+     uvc_stream_handle_t *strmh,
+     uvc_frame_t **frame,
+diff --git a/include/libuvc/libuvc_internal.h b/include/libuvc/libuvc_internal.h
+index 3fd578a..01f5088 100644
+--- a/include/libuvc/libuvc_internal.h
++++ b/include/libuvc/libuvc_internal.h
+@@ -290,6 +290,30 @@ struct uvc_stream_handle {
+   /* raw metadata buffer if available */
+   uint8_t *meta_outbuf, *meta_holdbuf;
+   size_t meta_got_bytes, meta_hold_bytes;
++
++  /* skellycam patch 0001: per-frame payload-header timing, working (cur_) and held (hold_) */
++  struct uvc_frame_timing {
++    uint32_t pts;
++    uint32_t scr_stc_first, scr_stc_last;
++    uint16_t scr_sof_first, scr_sof_last;
++    uint8_t has_pts, has_scr, closed_by_eof, fid;
++    int64_t host_first_payload_ns, host_last_payload_ns;
++    int32_t first_payload_packet_idx, last_payload_packet_idx;
++    uint32_t payload_count, error_payload_count;
++  } cur_timing, hold_timing;
++  /* CLOCK_MONOTONIC ns at entry of the transfer callback currently being processed */
++  int64_t xfer_host_ns;
++  /* iso packet index currently being processed (-1 for bulk) */
++  int32_t xfer_packet_idx;
++  int32_t packets_per_transfer;
++
++  /* skellycam patch 0002: application control of the isochronous alt setting */
++  int iso_force_altsetting;        /* >0: use exactly this bAlternateSetting */
++  size_t iso_min_bytes_per_packet; /* >0: replaces dwMaxPayloadTransferSize in alt selection */
++  int iso_packets_per_transfer;    /* >0: packets per iso transfer (else libuvc default) */
++  /* what uvc_stream_start actually chose (read back with uvc_stream_get_iso_info) */
++  int iso_chosen_altsetting;
++  size_t iso_chosen_bytes_per_packet;
+ };
+ 
+ /** Handle on an open UVC device
+diff --git a/src/stream.c b/src/stream.c
+index a820132..12922e5 100644
+--- a/src/stream.c
++++ b/src/stream.c
+@@ -678,6 +678,19 @@ uvc_error_t uvc_probe_still_ctrl(
+   return res;
+ }
+ 
++/* skellycam patch: helpers for per-frame payload-header timing */
++static int64_t _uvc_host_now_ns(void) {
++  struct timespec ts;
++  (void)clock_gettime(CLOCK_MONOTONIC, &ts);
++  return (int64_t)ts.tv_sec * 1000000000LL + ts.tv_nsec;
++}
++
++static void _uvc_reset_frame_timing(uvc_stream_handle_t *strmh) {
++  memset(&strmh->cur_timing, 0, sizeof(strmh->cur_timing));
++  strmh->cur_timing.first_payload_packet_idx = -1;
++  strmh->cur_timing.last_payload_packet_idx = -1;
++}
++
+ /** @internal
+  * @brief Swap the working buffer with the presented buffer and notify consumers
+  */
+@@ -703,6 +716,9 @@ void _uvc_swap_buffers(uvc_stream_handle_t *strmh) {
+   strmh->meta_outbuf = tmp_buf;
+   strmh->meta_hold_bytes = strmh->meta_got_bytes;
+ 
++  /* skellycam patch: hand the per-frame header timing over with the frame */
++  strmh->hold_timing = strmh->cur_timing;
++
+   pthread_cond_broadcast(&strmh->cb_cond);
+   pthread_mutex_unlock(&strmh->cb_mutex);
+ 
+@@ -711,6 +727,7 @@ void _uvc_swap_buffers(uvc_stream_handle_t *strmh) {
+   strmh->meta_got_bytes = 0;
+   strmh->last_scr = 0;
+   strmh->pts = 0;
++  _uvc_reset_frame_timing(strmh);
+ }
+ 
+ /** @internal
+@@ -776,6 +793,7 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
+ 
+     if (header_info & UVC_STREAM_ERR) {
+       UVC_DEBUG("bad packet: error bit set");
++      strmh->cur_timing.error_payload_count++; /* skellycam patch */
+       return;
+     }
+ 
+@@ -784,18 +802,34 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
+          around from prior transfers. This means the camera didn't send
+          an EOF for the last transfer of the previous frame. */
+       _uvc_swap_buffers(strmh);
++    } else if (strmh->fid != (header_info & UVC_STREAM_FID)) {
++      /* skellycam patch: new frame starts with no data pending; drop header timing
++         collected from header-only payloads of the previous FID */
++      _uvc_reset_frame_timing(strmh);
+     }
+ 
+     strmh->fid = (uint8_t) (header_info & UVC_STREAM_FID);
++    strmh->cur_timing.fid = strmh->fid;
+ 
+     if (header_info & UVC_STREAM_PTS) {
+       strmh->pts = DW_TO_INT(payload + variable_offset);
++      strmh->cur_timing.pts = strmh->pts;       /* skellycam patch */
++      strmh->cur_timing.has_pts = 1;
+       variable_offset += 4;
+     }
+ 
+     if (header_info & UVC_STREAM_SCR) {
+-      /** @todo read the SOF token counter */
+-      strmh->last_scr = DW_TO_INT(payload + variable_offset);
++      /* skellycam patch: also keep the 11-bit SOF token counter and the first SCR */
++      uint32_t stc = DW_TO_INT(payload + variable_offset);
++      uint16_t sof = (uint16_t)(SW_TO_SHORT(payload + variable_offset + 4) & 0x07ff);
++      strmh->last_scr = stc;
++      if (!strmh->cur_timing.has_scr) {
++        strmh->cur_timing.scr_stc_first = stc;
++        strmh->cur_timing.scr_sof_first = sof;
++        strmh->cur_timing.has_scr = 1;
++      }
++      strmh->cur_timing.scr_stc_last = stc;
++      strmh->cur_timing.scr_sof_last = sof;
+       variable_offset += 6;
+     }
+ 
+@@ -813,10 +847,19 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
+     if (strmh->got_bytes + data_len > strmh->cur_ctrl.dwMaxVideoFrameSize)
+       data_len = strmh->cur_ctrl.dwMaxVideoFrameSize - strmh->got_bytes; /* Avoid overflow. */
+     memcpy(strmh->outbuf + strmh->got_bytes, payload + header_len, data_len);
++    /* skellycam patch: record which transfer/packet carried the frame's first/last data */
++    if (strmh->got_bytes == 0) {
++      strmh->cur_timing.host_first_payload_ns = strmh->xfer_host_ns;
++      strmh->cur_timing.first_payload_packet_idx = strmh->xfer_packet_idx;
++    }
++    strmh->cur_timing.host_last_payload_ns = strmh->xfer_host_ns;
++    strmh->cur_timing.last_payload_packet_idx = strmh->xfer_packet_idx;
++    strmh->cur_timing.payload_count++;
+     strmh->got_bytes += data_len;
+ 
+     if (header_info & UVC_STREAM_EOF || strmh->got_bytes == strmh->cur_ctrl.dwMaxVideoFrameSize) {
+       /* The EOF bit is set, so publish the complete frame */
++      strmh->cur_timing.closed_by_eof = (header_info & UVC_STREAM_EOF) ? 1 : 0;
+       _uvc_swap_buffers(strmh);
+     }
+   }
+@@ -835,10 +878,13 @@ void LIBUSB_CALL _uvc_stream_callback(struct libusb_transfer *transfer) {
+ 
+   int resubmit = 1;
+ 
++  strmh->xfer_host_ns = _uvc_host_now_ns(); /* skellycam patch */
++
+   switch (transfer->status) {
+   case LIBUSB_TRANSFER_COMPLETED:
+     if (transfer->type != LIBUSB_TRANSFER_TYPE_ISOCHRONOUS) {
+       /* This is a bulk mode transfer, so it just has one payload transfer */
++      strmh->xfer_packet_idx = -1; /* skellycam patch */
+       _uvc_process_payload(strmh, transfer->buffer, transfer->actual_length);
+     } else {
+       /* This is an isochronous mode transfer, so each packet has a payload transfer */
+@@ -852,9 +898,11 @@ void LIBUSB_CALL _uvc_stream_callback(struct libusb_transfer *transfer) {
+ 
+         if (pkt->status != 0) {
+           UVC_DEBUG("bad packet (isochronous transfer); pkt_id=%d status: %s(%d), actual_length=%d", packet_id, libusb_error_name(pkt->status), pkt->status, pkt->actual_length);
++          strmh->cur_timing.error_payload_count++; /* skellycam patch */
+           continue;
+         }
+ 
++        strmh->xfer_packet_idx = packet_id; /* skellycam patch */
+         pktbuf = libusb_get_iso_packet_buffer_simple(transfer, packet_id);
+ 
+         _uvc_process_payload(strmh, pktbuf, pkt->actual_length);
+@@ -1091,6 +1139,33 @@ fail:
+   return ret;
+ }
+ 
++/** skellycam patch: application control of the isochronous alt setting.
++ * Call after uvc_stream_open_ctrl() and before uvc_stream_start().
++ * @param altsetting >0: use exactly this bAlternateSetting (even if its packets are
++ *        smaller than the negotiated dwMaxPayloadTransferSize); <=0: libuvc's choice
++ * @param min_bytes_per_packet >0: choose the first alt whose packets are at least this
++ *        big, instead of dwMaxPayloadTransferSize; 0: negotiated value
++ * @param packets_per_transfer >0: iso packets per libusb transfer; 0: libuvc default
++ */
++uvc_error_t uvc_stream_set_iso_override(uvc_stream_handle_t *strmh, int altsetting,
++    size_t min_bytes_per_packet, int packets_per_transfer) {
++  if (!strmh || strmh->running)
++    return UVC_ERROR_INVALID_PARAM;
++  strmh->iso_force_altsetting = altsetting;
++  strmh->iso_min_bytes_per_packet = min_bytes_per_packet;
++  strmh->iso_packets_per_transfer = packets_per_transfer;
++  return UVC_SUCCESS;
++}
++
++/** skellycam patch: what uvc_stream_start() selected (0s for bulk / not started). */
++void uvc_stream_get_iso_info(uvc_stream_handle_t *strmh, int *altsetting,
++    size_t *bytes_per_packet, int *packets_per_transfer, int *num_transfers) {
++  if (altsetting) *altsetting = strmh->iso_chosen_altsetting;
++  if (bytes_per_packet) *bytes_per_packet = strmh->iso_chosen_bytes_per_packet;
++  if (packets_per_transfer) *packets_per_transfer = strmh->packets_per_transfer;
++  if (num_transfers) *num_transfers = LIBUVC_NUM_TRANSFER_BUFS;
++}
++
+ /** Begin streaming video from the stream into the callback function.
+  * @ingroup streaming
+  *
+@@ -1132,6 +1207,11 @@ uvc_error_t uvc_stream_start(
+   strmh->fid = 0;
+   strmh->pts = 0;
+   strmh->last_scr = 0;
++  _uvc_reset_frame_timing(strmh); /* skellycam patch */
++  memset(&strmh->hold_timing, 0, sizeof(strmh->hold_timing));
++  strmh->packets_per_transfer = 0;
++  strmh->iso_chosen_altsetting = 0;
++  strmh->iso_chosen_bytes_per_packet = 0;
+ 
+   frame_desc = uvc_find_frame_desc_stream(strmh, ctrl->bFormatIndex, ctrl->bFrameIndex);
+   if (!frame_desc) {
+@@ -1171,12 +1251,19 @@ uvc_error_t uvc_stream_start(
+     int alt_idx, ep_idx;
+     
+     config_bytes_per_packet = strmh->cur_ctrl.dwMaxPayloadTransferSize;
++    /* skellycam patch: the application may replace the negotiated per-packet size */
++    if (strmh->iso_min_bytes_per_packet > 0)
++      config_bytes_per_packet = strmh->iso_min_bytes_per_packet;
+ 
+     /* Go through the altsettings and find one whose packets are at least
+      * as big as our format's maximum per-packet usage. Assume that the
+      * packet sizes are increasing. */
+     for (alt_idx = 0; alt_idx < interface->num_altsetting; alt_idx++) {
+       altsetting = interface->altsetting + alt_idx;
++      /* skellycam patch: forced alt setting -> skip every other alt */
++      if (strmh->iso_force_altsetting > 0 &&
++          altsetting->bAlternateSetting != strmh->iso_force_altsetting)
++        continue;
+       endpoint_bytes_per_packet = 0;
+ 
+       /* Find the endpoint with the number specified in the VS header */
+@@ -1203,7 +1290,8 @@ uvc_error_t uvc_stream_start(
+         }
+       }
+ 
+-      if (endpoint_bytes_per_packet >= config_bytes_per_packet) {
++      if (endpoint_bytes_per_packet >= config_bytes_per_packet ||
++          (strmh->iso_force_altsetting > 0 && endpoint_bytes_per_packet > 0)) {
+         /* Transfers will be at most one frame long: Divide the maximum frame size
+          * by the size of the endpoint and round up */
+         packets_per_transfer = (ctrl->dwMaxVideoFrameSize +
+@@ -1212,7 +1300,10 @@ uvc_error_t uvc_stream_start(
+         /* But keep a reasonable limit: Otherwise we start dropping data */
+         if (packets_per_transfer > LIBUVC_PACKETS_PER_TRANSFER_MAX)
+           packets_per_transfer = LIBUVC_PACKETS_PER_TRANSFER_MAX;
+-        
++        /* skellycam patch: application override of packets per transfer */
++        if (strmh->iso_packets_per_transfer > 0)
++          packets_per_transfer = strmh->iso_packets_per_transfer;
++
+         total_transfer_size = packets_per_transfer * endpoint_bytes_per_packet;
+         break;
+       }
+@@ -1232,6 +1323,10 @@ uvc_error_t uvc_stream_start(
+       UVC_DEBUG("libusb_set_interface_alt_setting failed");
+       goto fail;
+     }
++    /* skellycam patch: remember what was chosen */
++    strmh->iso_chosen_altsetting = altsetting->bAlternateSetting;
++    strmh->iso_chosen_bytes_per_packet = endpoint_bytes_per_packet;
++    strmh->packets_per_transfer = (int32_t)packets_per_transfer;
+ 
+   /* Set up the transfers */
+   for (transfer_id = 0; transfer_id < LIBUVC_NUM_TRANSFER_BUFS; ++transfer_id) {
+@@ -1410,6 +1505,24 @@ void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
+   frame->sequence = strmh->hold_seq;
+   frame->capture_time_finished = strmh->capture_time_finished;
+ 
++  /* skellycam patch: expose the payload-header timing of this frame */
++  frame->pts = strmh->hold_timing.pts;
++  frame->scr_stc_first = strmh->hold_timing.scr_stc_first;
++  frame->scr_sof_first = strmh->hold_timing.scr_sof_first;
++  frame->scr_stc_last = strmh->hold_timing.scr_stc_last;
++  frame->scr_sof_last = strmh->hold_timing.scr_sof_last;
++  frame->has_pts = strmh->hold_timing.has_pts;
++  frame->has_scr = strmh->hold_timing.has_scr;
++  frame->closed_by_eof = strmh->hold_timing.closed_by_eof;
++  frame->fid = strmh->hold_timing.fid;
++  frame->host_first_payload_ns = strmh->hold_timing.host_first_payload_ns;
++  frame->host_last_payload_ns = strmh->hold_timing.host_last_payload_ns;
++  frame->first_payload_packet_idx = strmh->hold_timing.first_payload_packet_idx;
++  frame->last_payload_packet_idx = strmh->hold_timing.last_payload_packet_idx;
++  frame->packets_per_transfer = strmh->packets_per_transfer;
++  frame->payload_count = strmh->hold_timing.payload_count;
++  frame->error_payload_count = strmh->hold_timing.error_payload_count;
++
+   /* copy the image data from the hold buffer to the frame (unnecessary extra buf?) */
+   if (frame->data_bytes < strmh->hold_bytes) {
+     frame->data = realloc(frame->data, strmh->hold_bytes);

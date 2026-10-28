@@ -1,0 +1,13 @@
+[camlock] acquired after 0.0s: uv run --script research/usb_cameras/libusb/py_libusb1/uvc_libusb1_stream.py --list --out-dir C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\results\windows\GERALD\winusb_install\verify_py_libusb1_list
+Traceback (most recent call last):
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\libusb\py_libusb1\uvc_libusb1_stream.py", line 507, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\libusb\py_libusb1\uvc_libusb1_stream.py", line 476, in main
+    rc = list_devices(ctx, res, try_open=not a.no_open)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\libusb\py_libusb1\uvc_libusb1_stream.py", line 424, in list_devices
+    with dev.open() as h:
+         ^^^^^^^^^^
+TypeError: 'USBDeviceHandle' object does not support the context manager protocol
+[camlock] released

@@ -1,0 +1,219 @@
+### python: Python 3.12.3, viva: 0.10.0, aravis: 0.8.30-1build2
+### selftests
+== gev_common selftest: 40 passed, 0 failed, 0 skipped, 0 warnings, 0 info
+== gev_probe selftest: 40 passed, 0 failed, 0 skipped, 0 warnings, 0 info
+== gev_ptp_sync_test selftest: 41 passed, 0 failed, 0 skipped, 0 warnings, 0 info
+== gvsp_capture_report selftest: 43 passed, 0 failed, 0 skipped, 0 warnings, 0 info
+== udp_recv_benchmark selftest: 42 passed, 0 failed, 0 skipped, 0 warnings, 0 info
+== viva_sync_capture_test selftest: 43 passed, 0 failed, 0 skipped, 0 warnings, 0 info
+### --help smoke
+gev_probe --help ok
+gev_ptp_sync_test --help ok
+gvsp_capture_report --help ok
+udp_recv_benchmark --help ok
+viva_sync_capture_test --help ok
+### viva script without viva-genicam installed (system python3)
+This test needs viva-genicam:  pip install viva-genicam
+(wheels: Windows x64, macOS arm64, Linux x86_64; Python >= 3.9; https://github.com/VitalyVorobyev/viva-genicam)
+exit=2
+### gev_probe vs Aravis fake
+== host
+  python=3.12.3, platform=Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.39, machine=x86_64, hostname=50c3c90b4663, time_utc=2026-10-25T18:58:59Z
+== discovery (unicast to 127.0.0.1)
+  found 127.0.0.1  00:00:00:00:00:00  Aravis Fake  serial=GV01  GEV 0.0  user_name=''
+  [PASS] discovery: 1 camera(s) answered
+
+== camera 127.0.0.1
+  [PASS] [127.0.0.1 Aravis Fake] read bootstrap registers: via local interface 127.0.0.1
+  [WARN] [127.0.0.1 Aravis Fake] GigE Vision version: Version register reads 0.0 (invalid; emulator?)
+  [INFO] [127.0.0.1 Aravis Fake] GVCP capabilities: none (0x00000000)
+  [INFO] [127.0.0.1 Aravis Fake] timestamp tick frequency: 1000000000 Hz (1 ns ticks, typical with PTP)
+  [SKIP] [127.0.0.1 Aravis Fake] IEEE 1588 (PTP): not supported: capability bit 0x00080000 clear
+  [SKIP] [127.0.0.1 Aravis Fake] action commands: action=False scheduled=False unconditional=False
+  [INFO] [127.0.0.1 Aravis Fake] stream channel 0: SCPS packet size 1400 B (standard MTU); extended ids enabled=False
+  [PASS] [127.0.0.1 Aravis Fake] GenICam XML: 15975 B in 0.0 s, 69 nodes, url Local:arv-fake-camera.xml;10000;3e67
+  [INFO] [127.0.0.1 Aravis Fake] XML enum TriggerSource: Line0, Software
+  [INFO] [127.0.0.1 Aravis Fake] XML enum PixelFormat: BayerBG8, BayerGB8, BayerGR8, BayerRG8, Mono8, RGB8, Mono16
+  saved XML to /out/aravis_xml/Aravis_Fake_GV01.xml
+  [WARN] [127.0.0.1 Aravis Fake] PTP + scheduled-action sync readiness: missing: ptp, scheduled_action, action, TriggerSource Action0/Action1
+
+IP              MAC               Vendor / model               GEV  1588 PTP en/state     Sched Act  Resend Tick Hz     SCPS  EI  Act1 trig
+--------------- ----------------- ---------------------------- ---- ---- ---------------- ----- ---- ------ ----------- ----- --- ---------
+127.0.0.1       00:00:00:00:00:00 Aravis Fake                  0.0  no   -                no    no   no     1000000000  1400  off no       
+
+== gev_probe: 3 passed, 0 failed, 2 skipped, 2 warnings, 5 info
+   WARN [127.0.0.1 Aravis Fake] GigE Vision version: Version register reads 0.0 (invalid; emulator?)
+   SKIP [127.0.0.1 Aravis Fake] IEEE 1588 (PTP): not supported: capability bit 0x00080000 clear
+   SKIP [127.0.0.1 Aravis Fake] action commands: action=False scheduled=False unconditional=False
+   WARN [127.0.0.1 Aravis Fake] PTP + scheduled-action sync readiness: missing: ptp, scheduled_action, action, TriggerSource Action0/Action1
+wrote /out/aravis_probe.json
+exit=0
+### gev_ptp_sync_test vs Aravis fake
+== cameras
+  [PASS] [127.0.0.1 Fake] reachable: GEV 0.0, capabilities none, tick 1000000000 Hz
+== PTP
+  [SKIP] [127.0.0.1 Fake] IEEE 1588 capability: capability bit 0x00080000 clear - camera does not advertise PTP (if its vendor tool shows Ptp*/GevIEEE1588 features, try viva_sync_capture_test.py)
+  [SKIP] PTP roles: no camera supports IEEE 1588
+== timestamp latch
+  [SKIP] [127.0.0.1 Fake] timestamp latch: latched value is always 0 - timestamp latch not implemented
+== clock offset / drift
+  [SKIP] clock offset / drift: no camera with a working timestamp latch
+== action commands
+  [SKIP] [127.0.0.1 Fake] program action keys: ACTION_CMD not supported (capability bit 0x40 clear)
+  [SKIP] ACTION_CMD: no camera supports / accepted action keys
+
+== verdict
+  PTP clock sync: NOT VERIFIED (1 camera(s))
+  scheduled ACTION_CMD accepted by all: NO / not tested
+
+== gev_ptp_sync_test: 1 passed, 0 failed, 6 skipped, 0 warnings, 0 info
+   SKIP [127.0.0.1 Fake] IEEE 1588 capability: capability bit 0x00080000 clear - camera does not advertise PTP (if its vendor tool shows Ptp*/GevIEEE1588 features, try viva_sync_capture_test.py)
+   SKIP PTP roles: no camera supports IEEE 1588
+   SKIP [127.0.0.1 Fake] timestamp latch: latched value is always 0 - timestamp latch not implemented
+   SKIP clock offset / drift: no camera with a working timestamp latch
+   SKIP [127.0.0.1 Fake] program action keys: ACTION_CMD not supported (capability bit 0x40 clear)
+   SKIP ACTION_CMD: no camera supports / accepted action keys
+wrote /out/aravis_ptp.json
+exit=0
+### gvsp_capture_report live vs Aravis fake (tcpdump running)
+  [PASS] [127.0.0.1] camera reachable: GEV 0.0, tick 1000000000 Hz, packet resend NOT supported
+  [WARN] [127.0.0.1] socket receive buffer: requested 33554432 B via SO_RCVBUF, OS reports 425984 B (default 212992 B) - CAPPED, raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+  streaming to 127.0.0.1:60775 for 3.0 s (control via stdlib GVCP, resend off) ...
+  (TLParamsLocked not set: TLParamsLocked: <Integer> without pValue)
+  saved first complete frame: ['/out/frames/frame_127_0_0_1_Mono8.raw', '/out/frames/frame_127_0_0_1_Mono8.json', '/out/frames/frame_127_0_0_1_Mono8.pgm']
+  [WARN] [127.0.0.1] kernel receive-buffer drops: 486 UDP datagrams dropped by the kernel (socket buffer full) - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+
+=== GVSP 127.0.0.1 -> 127.0.0.1:60775 (53 Mbit/s)
+  packets 14529  formats {'LEADER': 77, 'PAYLOAD': 14429, 'TRAILER': 23}  status codes {'SUCCESS': 14529}
+  frames: seen 77, complete 23, incomplete 0, trailer missing 54, never seen (block-id gaps) 0, missing packets 0
+  image: Mono8 512x512 x77 leaders
+  leader timestamp deltas (ticks): min 2824000 median 40000000 p95 40006500 max 117169000; first timestamp 1792954744218454000
+  [PASS] [GVSP 127.0.0.1 -> 127.0.0.1:60775 (53 Mbit/s)] GVSP leader + trailer packets: {'LEADER': 77, 'PAYLOAD': 14429, 'TRAILER': 23}
+  [FAIL] [GVSP 127.0.0.1 -> 127.0.0.1:60775 (53 Mbit/s)] frames complete: 23/77 (29.9 %; limit 99 %)
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:60775 (53 Mbit/s)] compression verdict: UNCOMPRESSED: payload bytes/frame 262144 vs uncompressed Mono8 size 262144 (ratio 1.000); IMAGE payload in a standard PFNC pixel format, full-size frames
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:60775 (53 Mbit/s)] packet size: payload packets 1400 B IP datagrams (max 1400) -> standard 1500 MTU
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:60775 (53 Mbit/s)] extended ids (64-bit block ids): not used (0/14529 packets)
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:60775 (53 Mbit/s)] device timestamps: increasing; device frame rate 25.00 fps; host arrival rate 25.47 fps
+
+== gvsp_capture_report: 2 passed, 1 failed, 0 skipped, 2 warnings, 4 info
+   WARN [127.0.0.1] socket receive buffer: requested 33554432 B via SO_RCVBUF, OS reports 425984 B (default 212992 B) - CAPPED, raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+   WARN [127.0.0.1] kernel receive-buffer drops: 486 UDP datagrams dropped by the kernel (socket buffer full) - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+   FAIL [GVSP 127.0.0.1 -> 127.0.0.1:60775 (53 Mbit/s)] frames complete: 23/77 (29.9 %; limit 99 %)
+wrote /out/aravis_live.json
+exit=1
+### live with OS-default receive buffer (--rcvbuf 0)
+  [PASS] [127.0.0.1] socket receive buffer: requested 0 B via SO_RCVBUF, OS reports 212992 B (default 212992 B)
+  [WARN] [127.0.0.1] kernel receive-buffer drops: 7484 UDP datagrams dropped by the kernel (socket buffer full) - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+  frames: seen 75, complete 0, incomplete 4, trailer missing 71, never seen (block-id gaps) 0, missing packets 336
+  [FAIL] [GVSP 127.0.0.1 -> 127.0.0.1:60518 (26 Mbit/s)] frames complete: 0/75 (0.0 %; limit 99 %) - NO complete frame
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:60518 (26 Mbit/s)] compression verdict: UNCOMPRESSED: IMAGE payload in standard PFNC pixel format(s) Mono8 (no complete frame to size-check)
+   WARN [127.0.0.1] kernel receive-buffer drops: 7484 UDP datagrams dropped by the kernel (socket buffer full) - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+   FAIL [GVSP 127.0.0.1 -> 127.0.0.1:60518 (26 Mbit/s)] frames complete: 0/75 (0.0 %; limit 99 %) - NO complete frame
+exit=1
+### live with SO_RCVBUFFORCE (root in container)
+  [WARN] [127.0.0.1] socket receive buffer: requested 33554432 B via SO_RCVBUF, OS reports 212992 B (default 212992 B) - CAPPED, raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+  [FAIL] [127.0.0.1] test packet (do-not-fragment): no test packet arrived - packet size above 1500 B: enable jumbo frames (MTU 9000) on the NIC and switch, or use a smaller --packet-size
+  [WARN] [127.0.0.1] kernel receive-buffer drops: 1593 UDP datagrams dropped by the kernel (socket buffer full) - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+  frames: seen 76, complete 0, incomplete 1, trailer missing 75, never seen (block-id gaps) 0, missing packets 18
+  [FAIL] [GVSP 127.0.0.1 -> 127.0.0.1:60487 (21 Mbit/s)] frames complete: 0/76 (0.0 %; limit 99 %) - NO complete frame
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:60487 (21 Mbit/s)] compression verdict: UNCOMPRESSED: IMAGE payload in standard PFNC pixel format(s) Mono8 (no complete frame to size-check)
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:60487 (21 Mbit/s)] packet size: payload packets 8000 B IP datagrams (max 8000) -> jumbo frames
+   WARN [127.0.0.1] socket receive buffer: requested 33554432 B via SO_RCVBUF, OS reports 212992 B (default 212992 B) - CAPPED, raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+   FAIL [127.0.0.1] test packet (do-not-fragment): no test packet arrived - packet size above 1500 B: enable jumbo frames (MTU 9000) on the NIC and switch, or use a smaller --packet-size
+   WARN [127.0.0.1] kernel receive-buffer drops: 1593 UDP datagrams dropped by the kernel (socket buffer full) - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+   FAIL [GVSP 127.0.0.1 -> 127.0.0.1:60487 (21 Mbit/s)] frames complete: 0/76 (0.0 %; limit 99 %) - NO complete frame
+exit=1
+### pcap mode on the tcpdump capture (snaplen 128)
+read 15121 captured frames from /out/aravis_live.pcap (14894 truncated by snaplen, 0 IP fragments)
+GVCP commands host->camera: {'READREG': 12, 'READMEM': 33, 'WRITEREG': 8}
+
+=== GVSP 127.0.0.1:32852 -> 127.0.0.1:60775
+  packets 15015  formats {'LEADER': 77, 'PAYLOAD': 14861, 'TRAILER': 77}  status codes {'SUCCESS': 15015}
+  frames: seen 77, complete 77, incomplete 0, trailer missing 0, never seen (block-id gaps) 0, missing packets 0
+  image: Mono8 512x512 x77 leaders
+  leader timestamp deltas (ticks): min 2824000 median 40000000 p95 40006500 max 117169000; first timestamp 1792954744218454000
+  [PASS] [GVSP 127.0.0.1:32852 -> 127.0.0.1:60775] GVSP leader + trailer packets: {'LEADER': 77, 'PAYLOAD': 14861, 'TRAILER': 77}
+  [PASS] [GVSP 127.0.0.1:32852 -> 127.0.0.1:60775] frames complete: 77/77 (100.0 %; limit 99 %)
+  [INFO] [GVSP 127.0.0.1:32852 -> 127.0.0.1:60775] compression verdict: UNCOMPRESSED: payload bytes/frame 262144 vs uncompressed Mono8 size 262144 (ratio 1.000); IMAGE payload in a standard PFNC pixel format, full-size frames
+  [INFO] [GVSP 127.0.0.1:32852 -> 127.0.0.1:60775] packet size: payload packets 1400 B IP datagrams (max 1400) -> standard 1500 MTU
+  [INFO] [GVSP 127.0.0.1:32852 -> 127.0.0.1:60775] extended ids (64-bit block ids): not used (0/15015 packets)
+  [INFO] [GVSP 127.0.0.1:32852 -> 127.0.0.1:60775] device timestamps: increasing; device frame rate 25.00 fps; host arrival rate 24.82 fps
+
+== gvsp_capture_report: 2 passed, 0 failed, 0 skipped, 0 warnings, 4 info
+wrote /out/aravis_pcap.json
+exit=0
+### tshark cross-check of the same capture
+tshark GVSP leaders: 77, trailers: 77
+     77 0x0001	0x01080001	512	512
+### tshark decode of selftest GVCP packets
+Running as user "root" and group "root". This could be dangerous.
+tshark: Some fields aren't valid:
+	gvcp.cmd.resend.blockid64
+	gvcp.flag
+	gvcp.cmd
+    010. .... = Flags: 0x2, Don't fragment
+        Flags: 0x01
+            0... .... = Scheduled Action Command: False
+        Command: ACTION_CMD (0x0100)
+        Action Device Key: 0x12345678 (305419896)
+        Action Group Key: 0x00000001 (1)
+        1111 1111 1111 1111 1111 1111 1111 1111 = Action Group Mask: 0xffffffff (4294967295)
+    010. .... = Flags: 0x2, Don't fragment
+        Flags: 0x81
+            1... .... = Scheduled Action Command: True
+        Command: ACTION_CMD (0x0100)
+        Action Device Key: 0x12345678 (305419896)
+        Action Group Key: 0x00000001 (1)
+        0000 0000 0000 0000 0000 0000 0000 0001 = Action Group Mask: 0x00000001 (1)
+    010. .... = Flags: 0x2, Don't fragment
+        Flags: 0x00
+        Command: PACKETRESEND_CMD (0x0040)
+            Resend Block ID 16 bits: 0x1234 (4660)
+            Resend First Packet ID 24 bits: 0x000005 (5)
+            Resend Last Packet ID 24 bits: 0x000009 (9)
+    010. .... = Flags: 0x2, Don't fragment
+        Flags: 0x10
+        Command: PACKETRESEND_CMD (0x0040)
+            Resend Block ID 64 bits: 0x0000000100000002 (4294967298)
+            Resend First Packet ID 32 bits: 0x00000005 (5)
+            Resend Last Packet ID 32 bits: 0x00000009 (9)
+    010. .... = Flags: 0x2, Don't fragment
+        Flags: 0x01
+        Command: READREG_CMD (0x0080)
+    010. .... = Flags: 0x2, Don't fragment
+        Flags: 0x01
+        Command: WRITEREG_CMD (0x0082)
+    010. .... = Flags: 0x2, Don't fragment
+        Flags: 0x01
+        Command: READMEM_CMD (0x0084)
+        Count: 0x0200 (512)
+    010. .... = Flags: 0x2, Don't fragment
+        Flags: 0x11
+        Command: DISCOVERY_CMD (0x0002)
+### tshark decode of selftest GVSP packets (Decode-As udp.port==40000)
+Running as user "root" and group "root". This could be dangerous.
+0x01	7		0		0x0001	0x01080009	64	48	0x00000000075bcd15
+0x03	7		1						
+0x03	7		2						
+0x03	7		3						
+0x03	7		4						
+0x02	7		5		0x0001			48	
+0x81		8589934592		0	0x0001	0x01080001	64	48	0x0000000000000005
+0x83		8589934592		1					
+0x83		8589934592		2					
+0x83		8589934592		3					
+0x83		8589934592		4					
+### udp_recv_benchmark local (Linux default rmem_max)
+  [WARN] [1472 B @ 1000.0 Mbit/s] socket receive buffer: requested 33554432 B, got 425984 B - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+  [PASS] [1472 B @ 1000.0 Mbit/s] paced receive: lost 0.0 % (limit 0.1 %), received 84.9 kpps (line rate needs 81.3 kpps), receive CPU 14.3 % of one core
+  [WARN] [8972 B @ 1000.0 Mbit/s] socket receive buffer: requested 33554432 B, got 425984 B - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+  [PASS] [8972 B @ 1000.0 Mbit/s] paced receive: lost 0.0 % (limit 0.1 %), received 13.9 kpps (line rate needs 13.8 kpps), receive CPU 4.4 % of one core
+
+== udp_recv_benchmark: 2 passed, 0 failed, 0 skipped, 2 warnings, 0 info
+   WARN [1472 B @ 1000.0 Mbit/s] socket receive buffer: requested 33554432 B, got 425984 B - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+   WARN [8972 B @ 1000.0 Mbit/s] socket receive buffer: requested 33554432 B, got 425984 B - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+wrote /out/bench_linux_capped.json
+== udp_recv_benchmark: 0 passed, 1 failed, 0 skipped, 2 warnings, 0 info
+   WARN [8972 B @ 1000.0 Mbit/s] socket receive buffer: requested 33554432 B, got 212992 B - raise the cap: sudo sysctl -w net.core.rmem_max=67108864 (or run with --force-rcvbuf as root/CAP_NET_ADMIN to use SO_RCVBUFFORCE)
+   WARN [8972 B @ 1000.0 Mbit/s] kernel receive-buffer drops: 2605 datagrams
+   FAIL [8972 B @ 1000.0 Mbit/s] paced receive: lost 9.341 % (limit 0.1 %), received 12.6 kpps (line rate needs 13.8 kpps), receive CPU 4.0 % of one core

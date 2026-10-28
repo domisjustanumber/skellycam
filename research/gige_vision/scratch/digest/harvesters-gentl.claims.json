@@ -1,0 +1,250 @@
+[
+ {
+  "id": "hv-release",
+  "claim": "Harvesters latest release is 1.4.3 (PyPI upload 2024-05-16); master last commit 2024-05-08; unreleased dev-gendc branch (last commit 2026-04-01) is versioned 1.5.0 with requires-python>=3.10 and genicam>=1.6.0.",
+  "evidence_urls": [
+   "https://pypi.org/pypi/harvesters/json",
+   "https://github.com/genicam/harvesters/releases/tag/1.4.3",
+   "https://github.com/genicam/harvesters/blob/86a93095ebb38309ff6320ccefe3a8e2a23cada9/pyproject.toml"
+  ],
+  "how_verified": "read-code (git clone + git log) and PyPI/GitHub API",
+  "confidence": "high"
+ },
+ {
+  "id": "hv-license",
+  "claim": "Harvesters is Apache-2.0; supported Python versions are defined by the genicam package.",
+  "evidence_urls": [
+   "https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/LICENSE.txt",
+   "https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/docs/INSTALL.rst#L23"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "genicam-wheels",
+  "claim": "genicam 1.6.0 (2026-09-01) ships cp310-cp314 wheels for win_amd64, manylinux2014 x86_64/aarch64/armv7l and macosx_13_0_arm64; 1.5.1 has no macOS wheels; last macOS x86_64 wheels were in 1.3.0; there is no sdist.",
+  "evidence_urls": [
+   "https://pypi.org/project/genicam/#files",
+   "https://pypi.org/pypi/genicam/json"
+  ],
+  "how_verified": "other: PyPI JSON API file listing per version",
+  "confidence": "high"
+ },
+ {
+  "id": "genicam-libpython",
+  "claim": "The genicam 1.6.0 Linux wheel's _genapi.so needs libpython3.12.so.1.0; it fails to import in a stock ubuntu:24.04 venv until libpython3.12t64 is installed.",
+  "evidence_urls": [
+   "https://pypi.org/project/genicam/1.6.0/"
+  ],
+  "how_verified": "ran-test: docker run hg-harvesters-test ldd .../genicam/_genapi.so (log scripts/harvesters-gentl/ldd_genicam.log)",
+  "confidence": "high"
+ },
+ {
+  "id": "genicam-license",
+  "claim": "The genicam runtime is under the EMVA GenICam License: free binary runtime, modified BSD, redistribution allowed without modification.",
+  "evidence_urls": [
+   "https://www.emva.org/standards-technology/genicam/genicam-downloads/"
+  ],
+  "how_verified": "read-spec/doc: genicam/licenses/GenICam_License.pdf extracted from the wheel, section 4",
+  "confidence": "high"
+ },
+ {
+  "id": "hv-zero-copy",
+  "claim": "Harvesters Component2DImage wraps the producer buffer zero-copy with numpy.frombuffer and the buffer is re-queued on context exit, so callers must copy retained frames.",
+  "evidence_urls": [
+   "https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/src/harvesters/core.py#L904-L977",
+   "https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/src/harvesters/core.py#L1184-L1188"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "hv-payload-types",
+  "claim": "Harvesters recognises Image, RawData, File, JPEG, JPEG2000, H264, ChunkOnly and MultiPart payloads but has no decoder for compressed ones. In the Docker test with the fake camera, the GigE stream arrived as uncompressed PAYLOAD_TYPE_IMAGE Mono8.",
+  "evidence_urls": [
+   "https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/src/harvesters/core.py#L1272-L1325"
+  ],
+  "how_verified": "read-code + ran-test (run1_viva_aravisfake.log: payload_type '1', Mono8)",
+  "confidence": "high"
+ },
+ {
+  "id": "hv-timestamps",
+  "claim": "Buffer.timestamp_ns maps to GenTL BUFFER_INFO_TIMESTAMP_NS, which GenTL 1.6 requires producers to convert to ns; Buffer.timestamp falls back to the producer-defined BUFFER_INFO_TIMESTAMP.",
+  "evidence_urls": [
+   "https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/src/harvesters/core.py#L1193-L1235",
+   "https://www.emva.org/wp-content/uploads/GenICam_GenTL_1_6.pdf"
+  ],
+  "how_verified": "read-code + read-spec/doc (GenTL 1.6 pp.140-147)",
+  "confidence": "high"
+ },
+ {
+  "id": "hv-tsfreq-bug",
+  "claim": "Harvesters 1.4.3 Buffer.timestamp_frequency raises an uncaught AttributeError when the producer does not provide BUFFER_INFO_TIMESTAMP_NS.",
+  "evidence_urls": [
+   "https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/src/harvesters/core.py#L1215-L1235"
+  ],
+  "how_verified": "ran-test: probe_harvesters.py with genicam/viky.cti in Docker (run3_viky_three_cams.log)",
+  "confidence": "high"
+ },
+ {
+  "id": "hv-chunk",
+  "claim": "By default Harvesters auto-attaches chunk data to the remote-device node map on every fetch, so chunk features (e.g. ChunkTimestamp) are read from ia.remote_device.node_map after fetch.",
+  "evidence_urls": [
+   "https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/src/harvesters/core.py#L106",
+   "https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/src/harvesters/core.py#L2327-L2377"
+  ],
+  "how_verified": "read-code + ran-test (viky ChunkNrBounces readable after fetch, run3)",
+  "confidence": "high"
+ },
+ {
+  "id": "hv-gil",
+  "claim": "Harvesters fetch() holds the GIL while blocked in the C-level update_event_data call. At 25 fps an unrelated Python thread lost about 50% throughput with the default 1 ms poll and about 87% with a 50 ms poll, and its wake-up latency rose to about one frame period. This matches issue #508.",
+  "evidence_urls": [
+   "https://github.com/genicam/harvesters/issues/508",
+   "https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/src/harvesters/core.py#L2412-L2473"
+  ],
+  "how_verified": "ran-test: gil_probe.py in Docker with viva_gentl.cti+Aravis fake and viky.cti (run4_gil_probe.log)",
+  "confidence": "high"
+ },
+ {
+  "id": "hv-multicam-dupes",
+  "claim": "A GigE camera reachable via several host interfaces is listed once per interface by the producer, and opening the duplicate fails because the first handle holds exclusive control, so consumers must de-duplicate by serial.",
+  "evidence_urls": [
+   "https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/src/harvesters/core.py#L2987-L3088"
+  ],
+  "how_verified": "ran-test: probe_harvesters.py in Docker with viva_gentl.cti (IoException timeout waiting for acknowledgement on 2nd create)",
+  "confidence": "medium"
+ },
+ {
+  "id": "hv-e2e",
+  "claim": "Harvesters 1.4.3 + genicam 1.6.0 acquired 30 Mono8 512x512 frames (~24 fps, ns timestamps) from Aravis arv-fake-gv-camera-0.8 through the MIT viva_gentl.cti v0.10.0 in Docker.",
+  "evidence_urls": [
+   "https://github.com/VitalyVorobyev/viva-genicam/releases/tag/v0.10.0",
+   "https://github.com/VitalyVorobyev/viva-genicam/blob/60c9c329a4175290b7065a74027c151cb0acd9ef/book/src/gentl.md#L13-L40"
+  ],
+  "how_verified": "ran-test: docker run --network none hg-harvesters-test ... probe_harvesters.py viva_gentl-x86_64-unknown-linux-gnu.cti 30 (run1_viva_aravisfake.log)",
+  "confidence": "high"
+ },
+ {
+  "id": "gentl-sfnc-action",
+  "claim": "GenTL SFNC 1.2 defines host-side action command features on the Interface module (ActionCommand, ActionDeviceKey, ActionGroupKey, ActionGroupMask, ActionScheduledTimeEnable, ActionScheduledTime, GevActionDestinationIPAddress), TLType GigEVision, Level Recommended (not Mandatory).",
+  "evidence_urls": [
+   "https://www.emva.org/wp-content/uploads/GenICam_GenTL_SFNC_1_2.pdf"
+  ],
+  "how_verified": "read-spec/doc (sections 2.2.3 and 3.2.3, pp.26, 72-75)",
+  "confidence": "high"
+ },
+ {
+  "id": "sfnc-ptp",
+  "claim": "PTP is a camera node-map feature set in SFNC 2.8 section 27.3 (PtpEnable, PtpStatus, PtpDataSetLatch, PtpOffsetFromMaster..., all Optional), with GevIEEE1588* deprecated. Action signals are SFNC chapter 14. Harvesters reaches both through ia.remote_device.node_map.",
+  "evidence_urls": [
+   "https://www.emva.org/wp-content/uploads/GenICam_SFNC_v2_8.pdf"
+  ],
+  "how_verified": "read-spec/doc (SFNC 2.8, 2026-04-08, pp.296-297, 529-552)",
+  "confidence": "high"
+ },
+ {
+  "id": "viva-no-action",
+  "claim": "viva_gentl.cti v0.10.0 exposes no GenTL-SFNC ActionControl features on its Interface node map.",
+  "evidence_urls": [
+   "https://github.com/VitalyVorobyev/viva-genicam/tree/60c9c329a4175290b7065a74027c151cb0acd9ef/crates/viva-gentl/src"
+  ],
+  "how_verified": "ran-test: probe_harvesters.py printed interface.Action* = <absent> (run1)",
+  "confidence": "high"
+ },
+ {
+  "id": "basler-no-action",
+  "claim": "Basler's pylon GigE GenTL producer does not support action commands (pylon 26.06, 2026-06-18), and the pylon EULA limits use to operating Basler camera products.",
+  "evidence_urls": [
+   "https://docs.baslerweb.com/pylon-software-suite-26-06-release-notes",
+   "https://docs.baslerweb.com/pylon-end-user-license-agreement"
+  ],
+  "how_verified": "read-spec/doc (downloaded HTML, text extracted)",
+  "confidence": "high"
+ },
+ {
+  "id": "balluff-impact",
+  "claim": "Balluff/MATRIX VISION Impact Acquire 3.7.2 (2026-07-27):\n- Platforms: Windows x86_64, Linux x86_64/arm64/armhf and macOS ARM64.\n- Includes a Windows GEV NDIS filter driver.\n- Its InterfaceModule supports GEV action commands.\n- 3.7.0 added full GEV 3.0 support including RoCEv2/RDMA.\n- Since 3.0.0, third-party GenICam devices need a licence or get an overlay after 200 images.",
+  "evidence_urls": [
+   "https://static.matrix-vision.com/mvIMPACT_Acquire/3.7.2/versionInfo.txt",
+   "https://static.matrix-vision.com/mvIMPACT_Acquire/3.7.2/"
+  ],
+  "how_verified": "read-spec/doc (vendor changelog lines 38-46, 560-590, 626-640, 675, 4496; directory listing)",
+  "confidence": "high"
+ },
+ {
+  "id": "av-vimba",
+  "claim": "Allied Vision VimbaGigETL.cti 1.11.0 (Vimba X 2026-3) supports action commands (1.5.0) and scheduled action commands (1.9.1) and ships a Windows GigE filter driver (2.5.13). Vimba X states that third-party cameras and TLs are free to use.",
+  "evidence_urls": [
+   "https://docs.alliedvision.com/GigETL.html",
+   "https://docs.alliedvision.com/compatibility.html"
+  ],
+  "how_verified": "read-spec/doc",
+  "confidence": "medium"
+ },
+ {
+  "id": "baumer-neutral",
+  "claim": "Baumer's GigE GenTL producer is not vendor-locked for GigE Vision: the Harvesters wiki lists it as not proprietary for GEV, and a Baumer engineer said it should work with all standard GigE Vision 2.0 cameras. A user streamed a Point Grey camera through it.",
+  "evidence_urls": [
+   "https://github.com/genicam/harvesters/wiki",
+   "https://github.com/roboception/rc_genicam_api/issues/8"
+  ],
+  "how_verified": "read-spec/doc (wiki, issue thread)",
+  "confidence": "medium"
+ },
+ {
+  "id": "tis-action",
+  "claim": "The Imaging Source GigE Vision GenTL producer 1.6.0.1250 (2026-04-20) runs on Windows 10/11 x64+ARM64 and Ubuntu 22.04+ (x86_64/aarch64), is described as for TIS cameras, and added an ActionCommandToAllInterfaces feature in 1.3.1.860.",
+  "evidence_urls": [
+   "https://dl-gui.theimagingsource.com/en_US/a885e79c-f10a-53d7-9f65-affd27591f14/"
+  ],
+  "how_verified": "read-spec/doc",
+  "confidence": "medium"
+ },
+ {
+  "id": "pleora-watermark",
+  "claim": "Pleora eBUS requires runtime licences, and unlicensed receive applications add a watermark. The eBUS datasheet does not mention a GenTL producer.",
+  "evidence_urls": [
+   "https://www.pleora.com/wp-content/uploads/2026/03/Pleora_DS_eBUS-SDK.pdf"
+  ],
+  "how_verified": "read-spec/doc (pdftotext)",
+  "confidence": "medium"
+ },
+ {
+  "id": "spinnaker",
+  "claim": "Spinnaker 4.x ships Spinnaker_GenTL.cti. Its product page lists Windows 11, Ubuntu 20.04-24.04 and macOS on Intel/AMD, ARM64 (Linux) and Apple Silicon, and supported cameras as FLIR/Dalsa (Teledyne) GigE Vision and USB3 Vision.",
+  "evidence_urls": [
+   "https://www.teledynevisionsolutions.com/products/spinnaker-sdk/",
+   "https://www.teledynevisionsolutions.com/support/support-center/technical-guidance/iis/distributing-spinnaker-applications/"
+  ],
+  "how_verified": "read-spec/doc",
+  "confidence": "medium"
+ },
+ {
+  "id": "lucid-3cti",
+  "claim": "LUCID Arena SDK installs three CTI files for UDP, TCP and RDMA transports (e.g. GenTL_RDMA_LUCID_v140.cti).",
+  "evidence_urls": [
+   "https://support.thinklucid.com/using-matlab-image-acquisition-toolbox-for-windows/"
+  ],
+  "how_verified": "read-spec/doc",
+  "confidence": "medium"
+ },
+ {
+  "id": "euresys",
+  "claim": "Euresys eGrabber Gigelink is described as compatible with any GigE Vision camera and runs on Windows 10/11 x86-64 and Linux x86-64/AArch64.",
+  "evidence_urls": [
+   "https://euresys.com/en/Products/Machine-Vision-Software/eGrabber/eGrabber-Gigelink"
+  ],
+  "how_verified": "read-spec/doc",
+  "confidence": "medium"
+ },
+ {
+  "id": "viky-bundled",
+  "claim": "The genicam wheel bundles viky.cti, a simulated Custom-TL producer with 3 RGBa8 400x400 cameras and chunk data. It can run multi-camera Harvesters tests in CI without a network camera.",
+  "evidence_urls": [
+   "https://pypi.org/project/genicam/1.6.0/"
+  ],
+  "how_verified": "ran-test: probe_harvesters.py with viky.cti, 3 concurrent acquirers (run3_viky_three_cams.log)",
+  "confidence": "high"
+ }
+]

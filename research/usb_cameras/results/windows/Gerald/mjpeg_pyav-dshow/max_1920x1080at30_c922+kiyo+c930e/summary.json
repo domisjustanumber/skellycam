@@ -1,0 +1,237 @@
+{
+ "test": "mjpeg_pyav-dshow",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-25T18:46:48.170122+00:00",
+ "utc_summarized": "2026-10-25T18:47:11.347745+00:00",
+ "command": "uv run --script research/usb_cameras/tools/camlock.py -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c922,kiyo,c930e --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg_pyav-dshow\\max_1920x1080at30_c922+kiyo+c930e' -- uv run --script research/usb_cameras/mjpeg/pyav/pyav_capture.py --input-format dshow --device 'video=c922 Pro Stream Webcam' --device 'video=USB Video Device' --device 'video=Logitech Webcam C930e' --size 1920x1080 --fps 30 --seconds 10.0 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg_pyav-dshow\\max_1920x1080at30_c922+kiyo+c930e'",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "av": "19.0.2",
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "backend": "pyav-dshow",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30.0
+ },
+ "decoded_by_pipeline": false,
+ "decode_evidence": "only container.demux() is called; packets are passed through as bytes; stream codec reported per camera (codec != mjpeg means FFmpeg/the device delivered a different format than requested WITHOUT raising an error)",
+ "window": {
+  "start_ns": 103369607966800,
+  "end_ns": 103379608315400,
+  "wall_s": 10.0003486
+ },
+ "delivered_codecs": [
+  "mjpeg",
+  "mjpeg"
+ ],
+ "silent_format_fallback": false,
+ "cpu": {
+  "method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)",
+  "wall_s": 10.000355,
+  "process_cpu_s_ticks": 0.28125,
+  "process_cpu_pct_of_one_core_ticks": 2.812400159794327,
+  "tsc_hz": 3361092478.669034,
+  "process_cycles": 593454680,
+  "process_cpu_pct_of_one_core": 1.7655973968967664,
+  "frameserver_pid": 49436,
+  "frameserver_cpu_pct_of_one_core_ticks": 0.0,
+  "frameserver_cpu_pct_of_one_core": null,
+  "process_cpu_pct_per_camera": 0.8827986984483832
+ },
+ "cameras": [
+  {
+   "idx": 0,
+   "name": "video=c922 Pro Stream Webcam",
+   "options": {
+    "video_size": "1920x1080",
+    "framerate": "30",
+    "vcodec": "mjpeg",
+    "rtbufsize": "512M"
+   },
+   "codec": "mjpeg",
+   "pix_fmt": "yuvj422p",
+   "stream_time_base": "1/10000000",
+   "stream_size": [
+    1920,
+    1080
+   ],
+   "stream_rate": "10000000/333333",
+   "open_ms": 646.855,
+   "frames": 404,
+   "frames_delivered_total": 404,
+   "frames_in_window": 300,
+   "fps_requested": 30.0,
+   "fps_achieved_count_over_wall": 29.998954236455315,
+   "fps_achieved_span": 29.997259815527286,
+   "inter_arrival_ms": {
+    "n": 299,
+    "min": 31.4349,
+    "p50": 32.0054,
+    "mean": 33.336378260869566,
+    "p95": 47.9755,
+    "max": 48.2553
+   },
+   "gaps_over_1p5_period": 0,
+   "os_timestamp_delta_ms": {
+    "n": 299,
+    "min": 33.3333,
+    "p50": 33.3333,
+    "mean": 33.3333,
+    "p95": 33.3333,
+    "max": 33.3333
+   },
+   "payload_bytes": {
+    "n": 300,
+    "min": 236364,
+    "p50": 239347,
+    "mean": 238885.58,
+    "p95": 239853,
+    "max": 240137
+   },
+   "pct_valid_jpeg_in_window": 100.0,
+   "pct_valid_jpeg_all": 100.0,
+   "jpeg_checks_all": {
+    "soi": 404,
+    "eoi_at_end": 404,
+    "eoi_in_tail": 404,
+    "has_dht": 404,
+    "pillow_ok": 404,
+    "simplejpeg_ok": 404
+   },
+   "n_validated": 404
+  },
+  {
+   "idx": 2,
+   "name": "video=Logitech Webcam C930e",
+   "options": {
+    "video_size": "1920x1080",
+    "framerate": "30",
+    "vcodec": "mjpeg",
+    "rtbufsize": "512M"
+   },
+   "codec": "mjpeg",
+   "pix_fmt": "yuvj422p",
+   "stream_time_base": "1/10000000",
+   "stream_size": [
+    1920,
+    1080
+   ],
+   "stream_rate": "10000000/333333",
+   "open_ms": 777.7618,
+   "frames": 372,
+   "frames_delivered_total": 372,
+   "frames_in_window": 301,
+   "fps_requested": 30.0,
+   "fps_achieved_count_over_wall": 30.098950750576833,
+   "fps_achieved_span": 30.048385713579147,
+   "inter_arrival_ms": {
+    "n": 300,
+    "min": 31.2597,
+    "p50": 32.0044,
+    "mean": 33.279658,
+    "p95": 47.9787,
+    "max": 48.0908
+   },
+   "gaps_over_1p5_period": 0,
+   "os_timestamp_delta_ms": {
+    "n": 300,
+    "min": 33.3283,
+    "p50": 33.3333,
+    "mean": 33.333283333333334,
+    "p95": 33.3333,
+    "max": 33.3333
+   },
+   "payload_bytes": {
+    "n": 301,
+    "min": 217271,
+    "p50": 218523,
+    "mean": 218431.02325581395,
+    "p95": 219126,
+    "max": 219269
+   },
+   "pct_valid_jpeg_in_window": 100.0,
+   "pct_valid_jpeg_all": 100.0,
+   "jpeg_checks_all": {
+    "soi": 372,
+    "eoi_at_end": 372,
+    "eoi_in_tail": 372,
+    "has_dht": 372,
+    "pillow_ok": 372,
+    "simplejpeg_ok": 372
+   },
+   "n_validated": 372
+  }
+ ],
+ "samples": [],
+ "controls": {
+  "requested": {
+   "exposure_log2s": -7,
+   "white_balance_k": 4500,
+   "auto_exposure_priority": 0
+  },
+  "after_apply": {
+   "c922 Pro Stream Webcam": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   },
+   "USB Video Device": {
+    "exposure_log2s": null,
+    "white_balance_k": null,
+    "auto_exposure_priority": null,
+    "exposure_log2s_mode": null,
+    "white_balance_k_mode": null
+   },
+   "Logitech Webcam C930e": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "readback_after_capture": {
+   "c922 Pro Stream Webcam": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   },
+   "USB Video Device": {
+    "exposure_log2s": null,
+    "white_balance_k": null,
+    "auto_exposure_priority": null,
+    "exposure_log2s_mode": null,
+    "white_balance_k_mode": null
+   },
+   "Logitech Webcam C930e": {
+    "exposure_log2s": -5,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "apply_rc": 0,
+  "readback_rc": 0
+ },
+ "errors": [
+  "video=USB Video Device: open failed: OSError(5, 'I/O error', 'video=USB Video Device')"
+ ]
+}

@@ -1,0 +1,200 @@
+{
+ "test": "mjpeg_opencv-msmf-raw",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-28T04:30:32.617232+00:00",
+ "utc_summarized": "2026-10-28T04:31:38.887798+00:00",
+ "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c922 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_rerun_20261027\\mjpeg_opencv-msmf-raw\\common_1280x720at30_c922_openwait90' --timeout-s 150.0 -- uv run --script research/usb_cameras/mjpeg/opencv/opencv_capture.py --api msmf --mode raw --set-order size-first --index 4 --name c922 --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_rerun_20261027\\mjpeg_opencv-msmf-raw\\common_1280x720at30_c922_openwait90'",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "numpy": "2.2.6",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "backend": "opencv-msmf-raw",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30.0
+ },
+ "decoded_by_pipeline": true,
+ "decode_evidence": "frames returned as pixel arrays (see frame_shapes)",
+ "window": {
+  "start_ns": 35495870437000,
+  "end_ns": 35505871123100,
+  "wall_s": 10.0006861
+ },
+ "delivered_codecs": [
+  "NV12"
+ ],
+ "silent_format_fallback": true,
+ "cpu": {
+  "method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)",
+  "wall_s": 10.0006928,
+  "process_cpu_s_ticks": 1.25,
+  "process_cpu_pct_of_one_core_ticks": 12.499134059992324,
+  "tsc_hz": 3386544280.34213,
+  "process_cycles": 4525210133,
+  "process_cpu_pct_of_one_core": 13.361398149806806,
+  "frameserver_pid": 8196,
+  "frameserver_cpu_pct_of_one_core_ticks": 6.093327854246258,
+  "frameserver_cpu_pct_of_one_core": null,
+  "process_cpu_pct_per_camera": 13.361398149806806
+ },
+ "cameras": [
+  {
+   "idx": 0,
+   "name": "c922",
+   "cv_index": 4,
+   "api": "msmf",
+   "backend_name": "MSMF",
+   "set_results": {
+    "order": "size-first",
+    "w": true,
+    "h": true,
+    "fps": true,
+    "fourcc_last": false,
+    "format_-1": false,
+    "convert_rgb_0": true
+   },
+   "got_fourcc": "NV12",
+   "got_w": 1280.0,
+   "got_h": 720.0,
+   "got_fps": 30.0,
+   "got_convert_rgb": 0.0,
+   "got_format": -1.0,
+   "open_ms": 39322.3544,
+   "frames": 360,
+   "frame_shapes": {
+    "(1, 1382400)/uint8": 360
+   },
+   "frames_starting_ffd8": 0,
+   "frames_identical_to_previous": 0,
+   "frames_delivered_total": 360,
+   "frames_in_window": 300,
+   "fps_requested": 30.0,
+   "fps_achieved_count_over_wall": 29.997941841210277,
+   "fps_achieved_span": 29.986536947515354,
+   "inter_arrival_ms": {
+    "n": 299,
+    "min": 29.4441,
+    "p50": 32.0905,
+    "mean": 33.34829899665552,
+    "p95": 47.8519,
+    "max": 50.1813
+   },
+   "gaps_over_1p5_period": 2,
+   "os_timestamp_delta_ms": null,
+   "payload_bytes": {
+    "n": 300,
+    "min": 1382400,
+    "p50": 1382400,
+    "mean": 1382400.0,
+    "p95": 1382400,
+    "max": 1382400
+   },
+   "mean_luma": null,
+   "pct_valid_jpeg_in_window": null,
+   "pct_valid_jpeg_all": null,
+   "pct_valid_jpeg_strict_all": null,
+   "libjpeg_warnings_sample": [],
+   "jpeg_checks_all": null,
+   "n_validated": 0,
+   "cam": "c922",
+   "jpeg_header": null,
+   "os_timestamp_source": "none (CAP_PROP_POS_MSEC logged as pos_msec)",
+   "timestamp_fields_present": {
+    "pos_msec": 300
+   },
+   "arrival_minus_os_timestamp_ms": null
+  }
+ ],
+ "samples": [],
+ "devnode_status": {
+  "before": {
+   "c930e:VID_046D&PID_0843&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_02": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_00": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843&MI_03": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_00": "0x0180200A",
+   "usbcam:VID_4C4A&PID_4A55": "0x0180600A",
+   "kiyo:VID_1532&PID_0E05&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843": "0x0180600A"
+  },
+  "after": {
+   "c930e:VID_046D&PID_0843&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_02": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_00": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843&MI_03": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_00": "0x0180200A",
+   "usbcam:VID_4C4A&PID_4A55": "0x0180600A",
+   "kiyo:VID_1532&PID_0E05&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843": "0x0180600A"
+  }
+ },
+ "machine_cpu": {
+  "before": {
+   "utc": "2026-10-28T04:30:32.412278+00:00",
+   "interval_s": 1.0,
+   "machine_cpu_pct": 5.4,
+   "n_logical": 28,
+   "busiest_core_pct": 19.7
+  },
+  "after": {
+   "utc": "2026-10-28T04:31:25.739994+00:00",
+   "interval_s": 1.0,
+   "machine_cpu_pct": 3.5,
+   "n_logical": 28,
+   "busiest_core_pct": 20.0
+  },
+  "note": "whole-machine CPU% (psutil, 1 s) right before and after the capture; other agents run concurrently"
+ },
+ "controls": {
+  "requested": {
+   "exposure_log2s": -7,
+   "white_balance_k": 4500,
+   "auto_exposure_priority": 0
+  },
+  "after_apply": {
+   "c922 Pro Stream Webcam": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "gain": 0,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "readback_after_capture": {
+   "c922 Pro Stream Webcam": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "gain": 0,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "apply_rc": 0,
+  "readback_rc": 0
+ },
+ "errors": [],
+ "cv2_version": "4.12.0",
+ "open_wait_s": 90
+}

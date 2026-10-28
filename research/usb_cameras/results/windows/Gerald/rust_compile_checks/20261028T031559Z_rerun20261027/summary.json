@@ -1,0 +1,634 @@
+{
+ "test": "rust_compile_checks",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "20261028T031559Z",
+ "command": "compile_checks\\run_compile_checks.py",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "cpu_count": 28
+ },
+ "note": "cross-target rows are `cargo check` only (no linking); C-building crates may fail cross-check for lack of a cross C toolchain, see errors",
+ "items": [
+  {
+   "name": "nokhwa_probe",
+   "target": "host",
+   "action": "build --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "clean_build_s": 14.5,
+   "binary": "7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\build\\nokhwa_probe\\release\\nokhwa_probe.exe",
+   "binary_bytes": 834560,
+   "errors": [],
+   "stderr_tail": [
+    "   Compiling nokhwa-core v0.1.9",
+    "   Compiling nokhwa-bindings-linux v0.1.4",
+    "   Compiling nokhwa-bindings-windows v0.4.6",
+    "   Compiling nokhwa v0.10.11",
+    "   Compiling nokhwa_probe v0.1.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\nokhwa_probe)",
+    "    Finished `release` profile [optimized] target(s) in 14.45s"
+   ],
+   "log": "nokhwa_probe__host.log"
+  },
+  {
+   "name": "nokhwa_probe",
+   "target": "x86_64-unknown-linux-gnu",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 6.8,
+   "errors": [
+    "error: failed to run custom build command for `v4l2-sys-mit v0.3.0`"
+   ],
+   "stderr_tail": [
+    "  process didn't exit successfully: `C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\build\\nokhwa_probe\\release\\build\\v4l2-sys-mit-17623bf9c90ecd41\\build-script-build` (exit code: 101)",
+    "  --- stderr",
+    "",
+    "  thread 'main' (24464) panicked at C:\\Users\\Dom\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\bindgen-0.65.1\\lib.rs:603:31:",
+    "  Unable to find libclang: \"couldn't find any valid shared libraries matching: ['clang.dll', 'libclang.dll'], set the `LIBCLANG_PATH` environment variable to a path where one of these files can be found (invalid: [])\"",
+    "  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace"
+   ],
+   "log": "nokhwa_probe__x86_64-unknown-linux-gnu.log"
+  },
+  {
+   "name": "nokhwa_probe",
+   "target": "aarch64-apple-darwin",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 3.0,
+   "errors": [
+    "error: failed to run custom build command for `objc_exception v0.1.2`"
+   ],
+   "stderr_tail": [
+    "",
+    "",
+    "  error occurred in cc-rs: failed to find tool \"cc\": program not found (see https://docs.rs/cc/latest/cc/#compile-time-requirements for help)",
+    "",
+    "",
+    "warning: build failed, waiting for other jobs to finish..."
+   ],
+   "log": "nokhwa_probe__aarch64-apple-darwin.log"
+  },
+  {
+   "name": "uvc_iso",
+   "target": "host",
+   "action": "build --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "clean_build_s": 8.5,
+   "binary": "7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\build\\uvc_iso\\release\\uvc_iso.exe",
+   "binary_bytes": 895488,
+   "errors": [],
+   "stderr_tail": [
+    "   Compiling windows-collections v0.3.2",
+    "   Compiling windows-future v0.3.2",
+    "   Compiling windows-numerics v0.3.1",
+    "   Compiling windows v0.62.2",
+    "   Compiling uvc_iso v0.1.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\uvc_iso)",
+    "    Finished `release` profile [optimized] target(s) in 8.50s"
+   ],
+   "log": "uvc_iso__host.log"
+  },
+  {
+   "name": "uvc_iso",
+   "target": "x86_64-unknown-linux-gnu",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "check_s": 1.5,
+   "errors": [],
+   "stderr_tail": [
+    "    Checking rawusb v0.1.7 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\vendor\\rawusb-0.1.7)",
+    "   Compiling serde_core v1.0.229",
+    "   Compiling libc v0.2.191",
+    "   Compiling serde_json v1.0.154",
+    "    Checking uvc_iso v0.1.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\uvc_iso)",
+    "    Finished `release` profile [optimized] target(s) in 1.44s"
+   ],
+   "log": "uvc_iso__x86_64-unknown-linux-gnu.log"
+  },
+  {
+   "name": "uvc_iso",
+   "target": "aarch64-apple-darwin",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "check_s": 1.5,
+   "errors": [],
+   "stderr_tail": [
+    "    Checking rawusb v0.1.7 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\vendor\\rawusb-0.1.7)",
+    "   Compiling serde_core v1.0.229",
+    "   Compiling libc v0.2.191",
+    "   Compiling serde_json v1.0.154",
+    "    Checking uvc_iso v0.1.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\uvc_iso)",
+    "    Finished `release` profile [optimized] target(s) in 1.50s"
+   ],
+   "log": "uvc_iso__aarch64-apple-darwin.log"
+  },
+  {
+   "name": "uvc_iso+libusb",
+   "target": "host",
+   "action": "build --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "clean_build_s": 8.7,
+   "binary": "7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\build\\uvc_iso_libusb\\release\\uvc_iso.exe",
+   "binary_bytes": 1042944,
+   "errors": [],
+   "stderr_tail": [
+    "   Compiling windows-future v0.3.2",
+    "   Compiling windows-numerics v0.3.1",
+    "   Compiling windows-collections v0.3.2",
+    "   Compiling windows v0.62.2",
+    "   Compiling uvc_iso v0.1.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\uvc_iso)",
+    "    Finished `release` profile [optimized] target(s) in 8.66s"
+   ],
+   "log": "uvc_iso+libusb__host.log"
+  },
+  {
+   "name": "uvc_iso+libusb",
+   "target": "x86_64-unknown-linux-gnu",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 0.6,
+   "errors": [
+    "error: failed to run custom build command for `libusb1-sys v0.7.0`"
+   ],
+   "stderr_tail": [
+    "",
+    "",
+    "  error occurred in cc-rs: failed to find tool \"x86_64-linux-gnu-gcc\": program not found (see https://docs.rs/cc/latest/cc/#compile-time-requirements for help)",
+    "",
+    "",
+    "warning: build failed, waiting for other jobs to finish..."
+   ],
+   "log": "uvc_iso+libusb__x86_64-unknown-linux-gnu.log"
+  },
+  {
+   "name": "uvc_iso+libusb",
+   "target": "aarch64-apple-darwin",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 0.9,
+   "errors": [
+    "error: failed to run custom build command for `libusb1-sys v0.7.0`"
+   ],
+   "stderr_tail": [
+    "",
+    "",
+    "  error occurred in cc-rs: failed to find tool \"cc\": program not found (see https://docs.rs/cc/latest/cc/#compile-time-requirements for help)",
+    "",
+    "",
+    "warning: build failed, waiting for other jobs to finish..."
+   ],
+   "log": "uvc_iso+libusb__aarch64-apple-darwin.log"
+  },
+  {
+   "name": "cc_nusb_bulk_ok",
+   "target": "host",
+   "action": "build --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "clean_build_s": 3.3,
+   "binary": "7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\build\\cc_nusb_bulk_ok\\release\\cc_nusb_bulk_ok.exe",
+   "binary_bytes": 233984,
+   "errors": [],
+   "stderr_tail": [
+    "   Compiling slab v0.4.12",
+    "   Compiling log v0.4.34",
+    "   Compiling windows-sys v0.61.2",
+    "   Compiling nusb v0.2.9",
+    "   Compiling cc_nusb_bulk_ok v0.0.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\cc_nusb_bulk_ok)",
+    "    Finished `release` profile [optimized] target(s) in 3.27s"
+   ],
+   "log": "cc_nusb_bulk_ok__host.log"
+  },
+  {
+   "name": "cc_nusb_bulk_ok",
+   "target": "x86_64-unknown-linux-gnu",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "check_s": 3.4,
+   "errors": [],
+   "stderr_tail": [
+    "    Checking futures-core v0.3.34",
+    "    Checking slab v0.4.12",
+    "    Checking once_cell v1.21.4",
+    "    Checking nusb v0.2.9",
+    "    Checking cc_nusb_bulk_ok v0.0.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\cc_nusb_bulk_ok)",
+    "    Finished `release` profile [optimized] target(s) in 3.37s"
+   ],
+   "log": "cc_nusb_bulk_ok__x86_64-unknown-linux-gnu.log"
+  },
+  {
+   "name": "cc_nusb_bulk_ok",
+   "target": "aarch64-apple-darwin",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "check_s": 1.8,
+   "errors": [],
+   "stderr_tail": [
+    "    Checking slab v0.4.12",
+    "    Checking mach2 v0.5.0",
+    "    Checking core-foundation v0.10.1",
+    "    Checking nusb v0.2.9",
+    "    Checking cc_nusb_bulk_ok v0.0.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\cc_nusb_bulk_ok)",
+    "    Finished `release` profile [optimized] target(s) in 1.77s"
+   ],
+   "log": "cc_nusb_bulk_ok__aarch64-apple-darwin.log"
+  },
+  {
+   "name": "cc_nusb_iso_fail",
+   "target": "host",
+   "action": "build --release",
+   "expected": "fail",
+   "exit_code": 101,
+   "outcome": "fail",
+   "clean_build_s": 2.7,
+   "binary": null,
+   "binary_bytes": null,
+   "errors": [
+    "error[E0425]: cannot find type `Isochronous` in module `nusb::transfer`",
+    "error: could not compile `cc_nusb_iso_fail` (bin \"cc_nusb_iso_fail\") due to 1 previous error"
+   ],
+   "stderr_tail": [
+    "  |",
+    "8 |     let _ep = intf.endpoint::<nusb::transfer::Isochronous, nusb::transfer::In>(0x81);",
+    "  |                                               ^^^^^^^^^^^ not found in `nusb::transfer`",
+    "",
+    "For more information about this error, try `rustc --explain E0425`.",
+    "error: could not compile `cc_nusb_iso_fail` (bin \"cc_nusb_iso_fail\") due to 1 previous error"
+   ],
+   "log": "cc_nusb_iso_fail__host.log"
+  },
+  {
+   "name": "cc_nusb_iso_fail",
+   "target": "x86_64-unknown-linux-gnu",
+   "action": "check --release",
+   "expected": "fail",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 2.4,
+   "errors": [
+    "error[E0425]: cannot find type `Isochronous` in module `nusb::transfer`",
+    "error: could not compile `cc_nusb_iso_fail` (bin \"cc_nusb_iso_fail\") due to 1 previous error"
+   ],
+   "stderr_tail": [
+    "  |",
+    "8 |     let _ep = intf.endpoint::<nusb::transfer::Isochronous, nusb::transfer::In>(0x81);",
+    "  |                                               ^^^^^^^^^^^ not found in `nusb::transfer`",
+    "",
+    "For more information about this error, try `rustc --explain E0425`.",
+    "error: could not compile `cc_nusb_iso_fail` (bin \"cc_nusb_iso_fail\") due to 1 previous error"
+   ],
+   "log": "cc_nusb_iso_fail__x86_64-unknown-linux-gnu.log"
+  },
+  {
+   "name": "cc_nusb_iso_fail",
+   "target": "aarch64-apple-darwin",
+   "action": "check --release",
+   "expected": "fail",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 1.4,
+   "errors": [
+    "error[E0425]: cannot find type `Isochronous` in module `nusb::transfer`",
+    "error: could not compile `cc_nusb_iso_fail` (bin \"cc_nusb_iso_fail\") due to 1 previous error"
+   ],
+   "stderr_tail": [
+    "  |",
+    "8 |     let _ep = intf.endpoint::<nusb::transfer::Isochronous, nusb::transfer::In>(0x81);",
+    "  |                                               ^^^^^^^^^^^ not found in `nusb::transfer`",
+    "",
+    "For more information about this error, try `rustc --explain E0425`.",
+    "error: could not compile `cc_nusb_iso_fail` (bin \"cc_nusb_iso_fail\") due to 1 previous error"
+   ],
+   "log": "cc_nusb_iso_fail__aarch64-apple-darwin.log"
+  },
+  {
+   "name": "cc_rusb_iso_ffi",
+   "target": "host",
+   "action": "build --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "clean_build_s": 3.9,
+   "binary": "7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\build\\cc_rusb_iso_ffi\\release\\cc_rusb_iso_ffi.exe",
+   "binary_bytes": 258560,
+   "errors": [],
+   "stderr_tail": [
+    "   Compiling libc v0.2.191",
+    "   Compiling rusb v0.9.4",
+    "   Compiling cc v1.10.0",
+    "   Compiling libusb1-sys v0.7.0",
+    "   Compiling cc_rusb_iso_ffi v0.0.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\cc_rusb_iso_ffi)",
+    "    Finished `release` profile [optimized] target(s) in 3.87s"
+   ],
+   "log": "cc_rusb_iso_ffi__host.log"
+  },
+  {
+   "name": "cc_rusb_iso_ffi",
+   "target": "x86_64-unknown-linux-gnu",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 0.1,
+   "errors": [
+    "error: failed to run custom build command for `libusb1-sys v0.7.0`"
+   ],
+   "stderr_tail": [
+    "",
+    "",
+    "  error occurred in cc-rs: failed to find tool \"x86_64-linux-gnu-gcc\": program not found (see https://docs.rs/cc/latest/cc/#compile-time-requirements for help)",
+    "",
+    "",
+    "warning: build failed, waiting for other jobs to finish..."
+   ],
+   "log": "cc_rusb_iso_ffi__x86_64-unknown-linux-gnu.log"
+  },
+  {
+   "name": "cc_rusb_iso_ffi",
+   "target": "aarch64-apple-darwin",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 0.1,
+   "errors": [
+    "error: failed to run custom build command for `libusb1-sys v0.7.0`"
+   ],
+   "stderr_tail": [
+    "",
+    "",
+    "  error occurred in cc-rs: failed to find tool \"cc\": program not found (see https://docs.rs/cc/latest/cc/#compile-time-requirements for help)",
+    "",
+    "",
+    "warning: build failed, waiting for other jobs to finish..."
+   ],
+   "log": "cc_rusb_iso_ffi__aarch64-apple-darwin.log"
+  },
+  {
+   "name": "cc_rawusb_uvc",
+   "target": "host",
+   "action": "build --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "clean_build_s": 1.9,
+   "binary": "7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\build\\cc_rawusb_uvc\\release\\cc_rawusb_uvc.exe",
+   "binary_bytes": 424448,
+   "errors": [],
+   "stderr_tail": [
+    "   Compiling rawusb v0.1.7",
+    "   Compiling cc_rawusb_uvc v0.0.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\cc_rawusb_uvc)",
+    "    Finished `release` profile [optimized] target(s) in 1.87s"
+   ],
+   "log": "cc_rawusb_uvc__host.log"
+  },
+  {
+   "name": "cc_rawusb_uvc",
+   "target": "x86_64-unknown-linux-gnu",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "check_s": 0.5,
+   "errors": [],
+   "stderr_tail": [
+    "    Checking rawusb v0.1.7",
+    "    Checking cc_rawusb_uvc v0.0.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\cc_rawusb_uvc)",
+    "    Finished `release` profile [optimized] target(s) in 0.44s"
+   ],
+   "log": "cc_rawusb_uvc__x86_64-unknown-linux-gnu.log"
+  },
+  {
+   "name": "cc_rawusb_uvc",
+   "target": "aarch64-apple-darwin",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "check_s": 0.5,
+   "errors": [],
+   "stderr_tail": [
+    "    Checking rawusb v0.1.7",
+    "    Checking cc_rawusb_uvc v0.0.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\cc_rawusb_uvc)",
+    "    Finished `release` profile [optimized] target(s) in 0.45s"
+   ],
+   "log": "cc_rawusb_uvc__aarch64-apple-darwin.log"
+  },
+  {
+   "name": "cc_uvc_libuvc",
+   "target": "host",
+   "action": "build --release",
+   "expected": "?",
+   "exit_code": 101,
+   "outcome": "fail",
+   "clean_build_s": 1.5,
+   "binary": null,
+   "binary_bytes": null,
+   "errors": [
+    "error: failed to select a version for the requirement `mozjpeg-sys = \"^0.10.4\"`"
+   ],
+   "stderr_tail": [
+    "  version 0.10.13 is yanked",
+    "location searched: crates.io index",
+    "required by package `uvc-src v0.2.1`",
+    "    ... which satisfies dependency `uvc-src = \"^0.2.1\"` of package `uvc-sys v0.2.0`",
+    "    ... which satisfies dependency `uvc-sys = \"^0.2.0\"` of package `uvc v0.2.0`",
+    "    ... which satisfies dependency `uvc = \"=0.2.0\"` of package `cc_uvc_libuvc v0.0.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\cc_uvc_libuvc)`"
+   ],
+   "log": "cc_uvc_libuvc__host.log"
+  },
+  {
+   "name": "cc_uvc_libuvc",
+   "target": "x86_64-unknown-linux-gnu",
+   "action": "check --release",
+   "expected": "?",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 0.1,
+   "errors": [
+    "error: failed to select a version for the requirement `mozjpeg-sys = \"^0.10.4\"`"
+   ],
+   "stderr_tail": [
+    "  version 0.10.13 is yanked",
+    "location searched: crates.io index",
+    "required by package `uvc-src v0.2.1`",
+    "    ... which satisfies dependency `uvc-src = \"^0.2.1\"` of package `uvc-sys v0.2.0`",
+    "    ... which satisfies dependency `uvc-sys = \"^0.2.0\"` of package `uvc v0.2.0`",
+    "    ... which satisfies dependency `uvc = \"=0.2.0\"` of package `cc_uvc_libuvc v0.0.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\cc_uvc_libuvc)`"
+   ],
+   "log": "cc_uvc_libuvc__x86_64-unknown-linux-gnu.log"
+  },
+  {
+   "name": "cc_uvc_libuvc",
+   "target": "aarch64-apple-darwin",
+   "action": "check --release",
+   "expected": "?",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 0.1,
+   "errors": [
+    "error: failed to select a version for the requirement `mozjpeg-sys = \"^0.10.4\"`"
+   ],
+   "stderr_tail": [
+    "  version 0.10.13 is yanked",
+    "location searched: crates.io index",
+    "required by package `uvc-src v0.2.1`",
+    "    ... which satisfies dependency `uvc-src = \"^0.2.1\"` of package `uvc-sys v0.2.0`",
+    "    ... which satisfies dependency `uvc-sys = \"^0.2.0\"` of package `uvc v0.2.0`",
+    "    ... which satisfies dependency `uvc = \"=0.2.0\"` of package `cc_uvc_libuvc v0.0.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\cc_uvc_libuvc)`"
+   ],
+   "log": "cc_uvc_libuvc__aarch64-apple-darwin.log"
+  },
+  {
+   "name": "cc_libuvc_crate",
+   "target": "host",
+   "action": "build --release",
+   "expected": "?",
+   "exit_code": 101,
+   "outcome": "fail",
+   "clean_build_s": 5.8,
+   "binary": null,
+   "binary_bytes": null,
+   "errors": [
+    "error: failed to run custom build command for `libuvc-sys v0.1.0`"
+   ],
+   "stderr_tail": [
+    "",
+    "  If you did not expect this build to link to a pre-installed system library,",
+    "  then check documentation of the libuvc-sys crate for an option to",
+    "  build the library from source, or disable features or dependencies",
+    "  that require pkg-config.",
+    "  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace"
+   ],
+   "log": "cc_libuvc_crate__host.log"
+  },
+  {
+   "name": "cc_libuvc_crate",
+   "target": "x86_64-unknown-linux-gnu",
+   "action": "check --release",
+   "expected": "?",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 0.1,
+   "errors": [
+    "error: failed to run custom build command for `libuvc-sys v0.1.0`"
+   ],
+   "stderr_tail": [
+    "  Install a sysroot for the target platform and configure it via",
+    "  PKG_CONFIG_SYSROOT_DIR and PKG_CONFIG_PATH, or install a",
+    "  cross-compiling wrapper for pkg-config and set it via",
+    "  PKG_CONFIG environment variable.",
+    "  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+    "warning: build failed, waiting for other jobs to finish..."
+   ],
+   "log": "cc_libuvc_crate__x86_64-unknown-linux-gnu.log"
+  },
+  {
+   "name": "cc_libuvc_crate",
+   "target": "aarch64-apple-darwin",
+   "action": "check --release",
+   "expected": "?",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 0.1,
+   "errors": [
+    "error: failed to run custom build command for `libuvc-sys v0.1.0`"
+   ],
+   "stderr_tail": [
+    "  Install a sysroot for the target platform and configure it via",
+    "  PKG_CONFIG_SYSROOT_DIR and PKG_CONFIG_PATH, or install a",
+    "  cross-compiling wrapper for pkg-config and set it via",
+    "  PKG_CONFIG environment variable.",
+    "  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+    "warning: build failed, waiting for other jobs to finish..."
+   ],
+   "log": "cc_libuvc_crate__aarch64-apple-darwin.log"
+  },
+  {
+   "name": "cc_camera_rs",
+   "target": "host",
+   "action": "build --release",
+   "expected": "?",
+   "exit_code": 0,
+   "outcome": "ok",
+   "clean_build_s": 13.2,
+   "binary": "7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\build\\cc_camera_rs\\release\\cc_camera_rs.exe",
+   "binary_bytes": 130560,
+   "errors": [],
+   "stderr_tail": [
+    "   Compiling tokio-macros v2.7.2",
+    "   Compiling windows-core v0.58.0",
+    "   Compiling tokio v1.54.1",
+    "   Compiling windows v0.58.0",
+    "   Compiling cc_camera_rs v0.0.0 (C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\compile_checks\\cc_camera_rs)",
+    "    Finished `release` profile [optimized] target(s) in 13.16s"
+   ],
+   "log": "cc_camera_rs__host.log"
+  },
+  {
+   "name": "cc_camera_rs",
+   "target": "x86_64-unknown-linux-gnu",
+   "action": "check --release",
+   "expected": "?",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 1.1,
+   "errors": [
+    "error: failed to run custom build command for `camera-rs v0.5.1`"
+   ],
+   "stderr_tail": [
+    "",
+    "",
+    "  error occurred in cc-rs: failed to find tool \"x86_64-linux-gnu-gcc\": program not found (see https://docs.rs/cc/latest/cc/#compile-time-requirements for help)",
+    "",
+    "",
+    "warning: build failed, waiting for other jobs to finish..."
+   ],
+   "log": "cc_camera_rs__x86_64-unknown-linux-gnu.log"
+  },
+  {
+   "name": "cc_camera_rs",
+   "target": "aarch64-apple-darwin",
+   "action": "check --release",
+   "expected": "?",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 1.2,
+   "errors": [
+    "error: failed to run custom build command for `objc2-exception-helper v0.1.1`"
+   ],
+   "stderr_tail": [
+    "",
+    "",
+    "  error occurred in cc-rs: failed to find tool \"cc\": program not found (see https://docs.rs/cc/latest/cc/#compile-time-requirements for help)",
+    "",
+    "",
+    "warning: build failed, waiting for other jobs to finish..."
+   ],
+   "log": "cc_camera_rs__aarch64-apple-darwin.log"
+  }
+ ]
+}

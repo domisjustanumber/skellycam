@@ -1,0 +1,1744 @@
+{
+  "env": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.2.6",
+    "opencv": "4.12.0",
+    "cpu_count": 28,
+    "time": "2026-10-28 02:07:57",
+    "psutil": "7.2.2",
+    "ram_total_gb": 68.413349888,
+    "system_cpu_pct_1s_before_run": 8.0,
+    "other_python_processes_at_start": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks/frame_pipeline/prototypes/run_all.py",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks\\frame_pipeline\\prototypes\\run_with_load.py p4_mjpeg_passthrough p4",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\prototypes\\p4_mjpeg_passthrough.py",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks/frame_pipeline/prototypes/run_all.py",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\prototypes\\run_with_load.py p4_mjpeg_passthrough p4_mjpeg_passthrough"
+    ],
+    "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d",
+    "av": "18.0.0",
+    "simplejpeg": null
+  },
+  "rows": [
+    {
+      "size": "1080p",
+      "mode": "passthrough",
+      "run_s": 20.0,
+      "ring_len": 1024,
+      "ring_slot_bytes": 1048576,
+      "ring_seconds": 17.066666666666666,
+      "cameras": [
+        {
+          "cam": 0,
+          "produced": 1201,
+          "fps": 60.00730959979537,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1201,
+            "median_ms": 0.1631,
+            "mean_ms": 0.18654870940882598,
+            "p99_ms": 0.4275,
+            "min_ms": 0.043,
+            "max_ms": 0.6648
+          },
+          "cpu_ms_per_frame": 1.027789342214821,
+          "cpu_pct": 6.167487326165479
+        },
+        {
+          "cam": 1,
+          "produced": 1201,
+          "fps": 60.026190911505864,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1201,
+            "median_ms": 0.1628,
+            "mean_ms": 0.19517010824313075,
+            "p99_ms": 0.4071,
+            "min_ms": 0.0449,
+            "max_ms": 0.5202
+          },
+          "cpu_ms_per_frame": 1.105849292256453,
+          "cpu_pct": 6.637992073633948
+        },
+        {
+          "cam": 2,
+          "produced": 1201,
+          "fps": 60.00798390986471,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1201,
+            "median_ms": 0.1587,
+            "mean_ms": 0.18616103247293922,
+            "p99_ms": 0.4042,
+            "min_ms": 0.0432,
+            "max_ms": 0.6949
+          },
+          "cpu_ms_per_frame": 1.3270191507077436,
+          "cpu_pct": 7.963174384375261
+        },
+        {
+          "cam": 3,
+          "produced": 1201,
+          "fps": 60.009283101309954,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1201,
+            "median_ms": 0.1569,
+            "mean_ms": 0.18565312239800166,
+            "p99_ms": 0.4069,
+            "min_ms": 0.0437,
+            "max_ms": 0.6563
+          },
+          "cpu_ms_per_frame": 1.4050791007493755,
+          "cpu_pct": 8.431778953660329
+        },
+        {
+          "cam": 4,
+          "produced": 1201,
+          "fps": 60.013545371997935,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1201,
+            "median_ms": 0.1607,
+            "mean_ms": 0.1923383846794338,
+            "p99_ms": 0.424,
+            "min_ms": 0.0436,
+            "max_ms": 0.5846
+          },
+          "cpu_ms_per_frame": 1.0147793505412157,
+          "cpu_pct": 6.090050659627185
+        }
+      ],
+      "recorders": [
+        {
+          "cam": 0,
+          "recorded": 1201,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1201,
+            "median_ms": 0.873841,
+            "mean_ms": 0.8941491515403829,
+            "p99_ms": 1.740827,
+            "min_ms": 0.230609,
+            "max_ms": 2.338431
+          },
+          "write": {
+            "n": 1201,
+            "median_ms": 0.3815,
+            "mean_ms": 0.4238702747710241,
+            "p99_ms": 0.8308,
+            "min_ms": 0.1651,
+            "max_ms": 1.6528
+          },
+          "release_s": 0.0004528999998001382,
+          "loop_s": 20.026054800000566,
+          "cpu_ms_per_frame": 1.1969192339716903,
+          "cpu_pct": 7.177986404489155,
+          "compressed_bytes_muxed": 649088935
+        },
+        {
+          "cam": 1,
+          "recorded": 1201,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1201,
+            "median_ms": 0.894395,
+            "mean_ms": 0.9323470632805995,
+            "p99_ms": 1.677823,
+            "min_ms": 0.318967,
+            "max_ms": 2.155429
+          },
+          "write": {
+            "n": 1201,
+            "median_ms": 0.3953,
+            "mean_ms": 0.4436039134054954,
+            "p99_ms": 0.8733,
+            "min_ms": 0.2093,
+            "max_ms": 1.8715
+          },
+          "release_s": 0.0008121999999275431,
+          "loop_s": 20.0260214000009,
+          "cpu_ms_per_frame": 1.1318692756036637,
+          "cpu_pct": 6.787767987446323,
+          "compressed_bytes_muxed": 649049177
+        },
+        {
+          "cam": 2,
+          "recorded": 1201,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1201,
+            "median_ms": 0.854982,
+            "mean_ms": 0.908856378018318,
+            "p99_ms": 1.759822,
+            "min_ms": 0.311634,
+            "max_ms": 2.13681
+          },
+          "write": {
+            "n": 1201,
+            "median_ms": 0.392,
+            "mean_ms": 0.4372399666944213,
+            "p99_ms": 0.8303,
+            "min_ms": 0.2096,
+            "max_ms": 1.7731
+          },
+          "release_s": 0.0007999000008567236,
+          "loop_s": 20.025892699995893,
+          "cpu_ms_per_frame": 0.9367194004995837,
+          "cpu_pct": 5.617502712355921,
+          "compressed_bytes_muxed": 649023841
+        },
+        {
+          "cam": 3,
+          "recorded": 1201,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1201,
+            "median_ms": 0.838523,
+            "mean_ms": 0.8986731265611988,
+            "p99_ms": 1.840335,
+            "min_ms": 0.283495,
+            "max_ms": 2.310071
+          },
+          "write": {
+            "n": 1201,
+            "median_ms": 0.3807,
+            "mean_ms": 0.43091015820149875,
+            "p99_ms": 0.8839,
+            "min_ms": 0.1836,
+            "max_ms": 1.771
+          },
+          "release_s": 0.0005556999967666343,
+          "loop_s": 20.02593290000368,
+          "cpu_ms_per_frame": 0.5073896752706079,
+          "cpu_pct": 3.0428449648431446,
+          "compressed_bytes_muxed": 649035451
+        },
+        {
+          "cam": 4,
+          "recorded": 1201,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1201,
+            "median_ms": 0.908691,
+            "mean_ms": 0.9240772864279766,
+            "p99_ms": 1.679495,
+            "min_ms": 0.283919,
+            "max_ms": 2.551921
+          },
+          "write": {
+            "n": 1201,
+            "median_ms": 0.39,
+            "mean_ms": 0.4430696919233972,
+            "p99_ms": 0.9532,
+            "min_ms": 0.1679,
+            "max_ms": 1.8906
+          },
+          "release_s": 0.0005383000025176443,
+          "loop_s": 20.02589660000376,
+          "cpu_ms_per_frame": 0.949729392173189,
+          "cpu_pct": 5.6955968733089,
+          "compressed_bytes_muxed": 649170442
+        }
+      ],
+      "files": [
+        {
+          "file": "p4_1080p_passthrough_cam0.mkv",
+          "bytes": 649143422,
+          "decoded_frames": 1201,
+          "produced": 1201,
+          "recorded": 1201
+        },
+        {
+          "file": "p4_1080p_passthrough_cam1.mkv",
+          "bytes": 649103664,
+          "decoded_frames": 1201,
+          "produced": 1201,
+          "recorded": 1201
+        },
+        {
+          "file": "p4_1080p_passthrough_cam2.mkv",
+          "bytes": 649078328,
+          "decoded_frames": 1201,
+          "produced": 1201,
+          "recorded": 1201
+        },
+        {
+          "file": "p4_1080p_passthrough_cam3.mkv",
+          "bytes": 649089938,
+          "decoded_frames": 1201,
+          "produced": 1201,
+          "recorded": 1201
+        },
+        {
+          "file": "p4_1080p_passthrough_cam4.mkv",
+          "bytes": 649224929,
+          "decoded_frames": 1201,
+          "produced": 1201,
+          "recorded": 1201
+        }
+      ],
+      "cpu_psutil_mean": {
+        "system": 6.8,
+        "32808": 6.205263157894738,
+        "44072": 6.631578947368421,
+        "39940": 7.8842105263157904,
+        "6592": 8.289473684210524,
+        "25736": 6.042105263157896,
+        "25700": 7.210526315789475,
+        "12728": 6.731578947368421,
+        "34540": 5.326315789473684,
+        "3232": 3.0526315789473686,
+        "6468": 5.657894736842105,
+        "sum_processes": 63.03157894736842
+      },
+      "cpu_split": {
+        "cameras": 35.05263157894737,
+        "recorders": 27.978947368421053,
+        "system": 6.8
+      },
+      "wall_s": 20.033961000001,
+      "min_cam_fps": 60.00730959979537,
+      "sensor_skipped_total": 0,
+      "files_equal_produced": true,
+      "disk_MBps_5cams": 162.14689164029977,
+      "disk_bytes_total": 3245640281,
+      "cam_cpu_ms_per_frame": 1.105849292256453,
+      "rec_cpu_ms_per_frame": 0.949729392173189,
+      "recorder_fps_unthrottled": null
+    },
+    {
+      "size": "1080p",
+      "mode": "decode_msmf",
+      "run_s": 20.0,
+      "ring_len": 172,
+      "ring_slot_bytes": 6220800,
+      "ring_seconds": 2.8666666666666667,
+      "cameras": [
+        {
+          "cam": 0,
+          "produced": 1200,
+          "fps": 59.97626649171534,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1200,
+            "median_ms": 9.9339,
+            "mean_ms": 10.047474083333332,
+            "p99_ms": 13.296921000000001,
+            "min_ms": 8.056,
+            "max_ms": 14.7466
+          },
+          "cpu_ms_per_frame": 10.5859375,
+          "cpu_pct": 63.49050085646429
+        },
+        {
+          "cam": 1,
+          "produced": 1201,
+          "fps": 59.99793709007129,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1201,
+            "median_ms": 8.452,
+            "mean_ms": 8.954829392173188,
+            "p99_ms": 12.2264,
+            "min_ms": 7.1036,
+            "max_ms": 14.5424
+          },
+          "cpu_ms_per_frame": 9.653413821815153,
+          "cpu_pct": 57.91849151856903
+        },
+        {
+          "cam": 2,
+          "produced": 1200,
+          "fps": 59.980677224836825,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1200,
+            "median_ms": 9.74245,
+            "mean_ms": 9.892858333333333,
+            "p99_ms": 13.207366,
+            "min_ms": 7.3393,
+            "max_ms": 14.3527
+          },
+          "cpu_ms_per_frame": 10.559895833333334,
+          "cpu_pct": 63.33897035070659
+        },
+        {
+          "cam": 3,
+          "produced": 1200,
+          "fps": 59.984882909737536,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1200,
+            "median_ms": 9.46605,
+            "mean_ms": 9.636923083333333,
+            "p99_ms": 13.384445,
+            "min_ms": 7.4111,
+            "max_ms": 14.246
+          },
+          "cpu_ms_per_frame": 10.15625,
+          "cpu_pct": 60.92214670520219
+        },
+        {
+          "cam": 4,
+          "produced": 1200,
+          "fps": 59.99024228715256,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1200,
+            "median_ms": 8.40325,
+            "mean_ms": 8.857531250000001,
+            "p99_ms": 12.454121999999998,
+            "min_ms": 7.1729,
+            "max_ms": 13.7016
+          },
+          "cpu_ms_per_frame": 9.856770833333334,
+          "cpu_pct": 59.13100704606053
+        }
+      ],
+      "recorders": [
+        {
+          "cam": 0,
+          "recorded": 1200,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1200,
+            "median_ms": 11.089184,
+            "mean_ms": 11.305583083333334,
+            "p99_ms": 14.9069875,
+            "min_ms": 8.991519,
+            "max_ms": 18.282431
+          },
+          "write": {
+            "n": 1200,
+            "median_ms": 0.8861,
+            "mean_ms": 0.9208270833333334,
+            "p99_ms": 1.5917849999999998,
+            "min_ms": 0.6262,
+            "max_ms": 8.5537
+          },
+          "release_s": 0.07066440000198781,
+          "loop_s": 20.030933300004108,
+          "cpu_ms_per_frame": 35.416666666666664,
+          "cpu_pct": 211.42598033382745,
+          "compressed_bytes_muxed": 0
+        },
+        {
+          "cam": 1,
+          "recorded": 1201,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1201,
+            "median_ms": 9.537295,
+            "mean_ms": 10.100087529558701,
+            "p99_ms": 13.858451,
+            "min_ms": 8.041895,
+            "max_ms": 16.014957
+          },
+          "write": {
+            "n": 1201,
+            "median_ms": 0.6781,
+            "mean_ms": 0.7180461282264778,
+            "p99_ms": 1.1386,
+            "min_ms": 0.5132,
+            "max_ms": 5.0
+          },
+          "release_s": 0.07057129999884637,
+          "loop_s": 20.030898099998012,
+          "cpu_ms_per_frame": 27.29496253122398,
+          "cpu_pct": 163.0788742240163,
+          "compressed_bytes_muxed": 0
+        },
+        {
+          "cam": 2,
+          "recorded": 1200,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1200,
+            "median_ms": 10.980238,
+            "mean_ms": 11.178981499999999,
+            "p99_ms": 14.71247666,
+            "min_ms": 8.555994,
+            "max_ms": 17.397244
+          },
+          "write": {
+            "n": 1200,
+            "median_ms": 0.91645,
+            "mean_ms": 0.9500629166666666,
+            "p99_ms": 1.575719,
+            "min_ms": 0.5918,
+            "max_ms": 5.4768
+          },
+          "release_s": 0.07087400000455091,
+          "loop_s": 20.030901000005542,
+          "cpu_ms_per_frame": 33.1640625,
+          "cpu_pct": 197.9769199485121,
+          "compressed_bytes_muxed": 0
+        },
+        {
+          "cam": 3,
+          "recorded": 1200,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1200,
+            "median_ms": 10.839542,
+            "mean_ms": 10.941260166666666,
+            "p99_ms": 14.994466,
+            "min_ms": 8.327061,
+            "max_ms": 16.609493
+          },
+          "write": {
+            "n": 1200,
+            "median_ms": 0.9007499999999999,
+            "mean_ms": 0.9624670833333334,
+            "p99_ms": 1.697628,
+            "min_ms": 0.6164,
+            "max_ms": 5.5641
+          },
+          "release_s": 0.07075669999903766,
+          "loop_s": 20.030911599998944,
+          "cpu_ms_per_frame": 32.096354166666664,
+          "cpu_pct": 191.60412173353726,
+          "compressed_bytes_muxed": 0
+        },
+        {
+          "cam": 4,
+          "recorded": 1200,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1200,
+            "median_ms": 9.487697,
+            "mean_ms": 10.009428333333334,
+            "p99_ms": 14.2995267,
+            "min_ms": 8.185321,
+            "max_ms": 16.004259
+          },
+          "write": {
+            "n": 1200,
+            "median_ms": 0.7755,
+            "mean_ms": 0.8344306666666668,
+            "p99_ms": 1.560131,
+            "min_ms": 0.6294,
+            "max_ms": 5.0653
+          },
+          "release_s": 0.07017970000015339,
+          "loop_s": 20.03090610000072,
+          "cpu_ms_per_frame": 29.401041666666668,
+          "cpu_pct": 175.51912543947483,
+          "compressed_bytes_muxed": 0
+        }
+      ],
+      "files": [
+        {
+          "file": "p4_1080p_decode_msmf_cam0.mp4",
+          "bytes": 311820248,
+          "decoded_frames": 1200,
+          "produced": 1200,
+          "recorded": 1200
+        },
+        {
+          "file": "p4_1080p_decode_msmf_cam1.mp4",
+          "bytes": 312099294,
+          "decoded_frames": 1201,
+          "produced": 1201,
+          "recorded": 1201
+        },
+        {
+          "file": "p4_1080p_decode_msmf_cam2.mp4",
+          "bytes": 311764224,
+          "decoded_frames": 1200,
+          "produced": 1200,
+          "recorded": 1200
+        },
+        {
+          "file": "p4_1080p_decode_msmf_cam3.mp4",
+          "bytes": 311911315,
+          "decoded_frames": 1200,
+          "produced": 1200,
+          "recorded": 1200
+        },
+        {
+          "file": "p4_1080p_decode_msmf_cam4.mp4",
+          "bytes": 311857689,
+          "decoded_frames": 1200,
+          "produced": 1200,
+          "recorded": 1200
+        }
+      ],
+      "cpu_psutil_mean": {
+        "system": 54.478947368421046,
+        "45440": 63.18947368421052,
+        "44960": 57.194736842105264,
+        "28748": 62.768421052631574,
+        "38804": 60.56315789473685,
+        "24612": 58.68421052631579,
+        "8184": 207.80526315789473,
+        "36260": 163.85789473684213,
+        "9152": 201.96315789473684,
+        "18480": 189.7526315789474,
+        "38152": 175.15789473684214,
+        "sum_processes": 1240.9368421052632
+      },
+      "cpu_split": {
+        "cameras": 302.4,
+        "recorders": 938.5368421052632,
+        "system": 54.478947368421046
+      },
+      "wall_s": 20.113025800004834,
+      "min_cam_fps": 59.97626649171534,
+      "sensor_skipped_total": 0,
+      "files_equal_produced": true,
+      "disk_MBps_5cams": 77.90771540383014,
+      "disk_bytes_total": 1559452770,
+      "cam_cpu_ms_per_frame": 10.15625,
+      "rec_cpu_ms_per_frame": 32.096354166666664,
+      "recorder_fps_unthrottled": null
+    },
+    {
+      "size": "1080p",
+      "mode": "passthrough_unthrottled",
+      "run_s": 5.0,
+      "ring_len": 1024,
+      "ring_slot_bytes": 1048576,
+      "ring_seconds": 17.066666666666666,
+      "cameras": [
+        {
+          "cam": 0,
+          "produced": 1500,
+          "fps": 4062.3533321751142,
+          "sensor_skipped": null,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1500,
+            "median_ms": 0.25545,
+            "mean_ms": 0.24492313333333335,
+            "p99_ms": 0.45457699999999995,
+            "min_ms": 0.0855,
+            "max_ms": 0.6929
+          },
+          "cpu_ms_per_frame": 0.23958333333333334,
+          "cpu_pct": 97.32721525002877
+        },
+        {
+          "cam": 1,
+          "produced": 1500,
+          "fps": 4136.414539291515,
+          "sensor_skipped": null,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1500,
+            "median_ms": 0.25785,
+            "mean_ms": 0.2406749333333333,
+            "p99_ms": 0.44230600000000003,
+            "min_ms": 0.0849,
+            "max_ms": 0.5692
+          },
+          "cpu_ms_per_frame": 0.23958333333333334,
+          "cpu_pct": 99.10159833719256
+        },
+        {
+          "cam": 2,
+          "produced": 1500,
+          "fps": 4219.979068949544,
+          "sensor_skipped": null,
+          "blocked_s": 0.006517999994684942,
+          "work": {
+            "n": 1500,
+            "median_ms": 0.21989999999999998,
+            "mean_ms": 0.23153866666666667,
+            "p99_ms": 0.44532399999999994,
+            "min_ms": 0.0897,
+            "max_ms": 0.5386
+          },
+          "cpu_ms_per_frame": 0.22916666666666666,
+          "cpu_pct": 96.70785366342704
+        },
+        {
+          "cam": 3,
+          "produced": 1500,
+          "fps": 3890.66303117748,
+          "sensor_skipped": null,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1500,
+            "median_ms": 0.26175000000000004,
+            "mean_ms": 0.25582126666666666,
+            "p99_ms": 0.5103729999999999,
+            "min_ms": 0.059,
+            "max_ms": 0.7375
+          },
+          "cpu_ms_per_frame": 0.25,
+          "cpu_pct": 97.266575779437
+        },
+        {
+          "cam": 4,
+          "produced": 1500,
+          "fps": 3913.194901849336,
+          "sensor_skipped": null,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1500,
+            "median_ms": 0.2588,
+            "mean_ms": 0.2542794,
+            "p99_ms": 0.47501999999999994,
+            "min_ms": 0.0714,
+            "max_ms": 0.5712
+          },
+          "cpu_ms_per_frame": 0.25,
+          "cpu_pct": 97.8298725462334
+        }
+      ],
+      "recorders": [
+        {
+          "cam": 0,
+          "recorded": 1500,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1500,
+            "median_ms": 286.03485,
+            "mean_ms": 246.91072906666668,
+            "p99_ms": 387.619306,
+            "min_ms": 4.2687,
+            "max_ms": 390.4701
+          },
+          "write": {
+            "n": 1500,
+            "median_ms": 0.44215,
+            "mean_ms": 0.5035426666666667,
+            "p99_ms": 1.1452229999999999,
+            "min_ms": 0.2076,
+            "max_ms": 3.6805
+          },
+          "release_s": 0.0005665999997290783,
+          "loop_s": 0.7597650000025169,
+          "cpu_ms_per_frame": 0.5,
+          "cpu_pct": 98.64117182526473,
+          "compressed_bytes_muxed": 810709050
+        },
+        {
+          "cam": 1,
+          "recorded": 1500,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1500,
+            "median_ms": 298.63255000000004,
+            "mean_ms": 257.68204433333335,
+            "p99_ms": 407.825533,
+            "min_ms": 3.3924,
+            "max_ms": 409.507
+          },
+          "write": {
+            "n": 1500,
+            "median_ms": 0.44055,
+            "mean_ms": 0.5117981333333333,
+            "p99_ms": 1.125676,
+            "min_ms": 0.203,
+            "max_ms": 2.9736
+          },
+          "release_s": 0.0004741000011563301,
+          "loop_s": 0.772112400001788,
+          "cpu_ms_per_frame": 0.5104166666666666,
+          "cpu_pct": 99.09893584693522,
+          "compressed_bytes_muxed": 810658700
+        },
+        {
+          "cam": 2,
+          "recorded": 1500,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1500,
+            "median_ms": 314.30505,
+            "mean_ms": 268.5703272,
+            "p99_ms": 425.99292099999997,
+            "min_ms": 3.2954,
+            "max_ms": 427.2971
+          },
+          "write": {
+            "n": 1500,
+            "median_ms": 0.43845,
+            "mean_ms": 0.5137003333333334,
+            "p99_ms": 1.4219119999999998,
+            "min_ms": 0.1927,
+            "max_ms": 6.9139
+          },
+          "release_s": 0.009501199994701892,
+          "loop_s": 0.775132399998256,
+          "cpu_ms_per_frame": 0.5104166666666666,
+          "cpu_pct": 97.57739153751146,
+          "compressed_bytes_muxed": 810628400
+        },
+        {
+          "cam": 3,
+          "recorded": 1500,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1500,
+            "median_ms": 286.1275,
+            "mean_ms": 233.67072280000002,
+            "p99_ms": 374.290861,
+            "min_ms": 3.609,
+            "max_ms": 377.9511
+          },
+          "write": {
+            "n": 1500,
+            "median_ms": 0.44635,
+            "mean_ms": 0.5060802,
+            "p99_ms": 1.176872,
+            "min_ms": 0.2235,
+            "max_ms": 2.9743
+          },
+          "release_s": 0.0005334000015864149,
+          "loop_s": 0.7635508000021218,
+          "cpu_ms_per_frame": 0.5104166666666666,
+          "cpu_pct": 100.20165316810429,
+          "compressed_bytes_muxed": 810642550
+        },
+        {
+          "cam": 4,
+          "recorded": 1500,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1500,
+            "median_ms": 300.6267,
+            "mean_ms": 244.64251240000002,
+            "p99_ms": 382.526404,
+            "min_ms": 3.7106,
+            "max_ms": 385.2593
+          },
+          "write": {
+            "n": 1500,
+            "median_ms": 0.4376,
+            "mean_ms": 0.5095549333333333,
+            "p99_ms": 1.25976,
+            "min_ms": 0.2178,
+            "max_ms": 5.4198
+          },
+          "release_s": 0.00040549999539507553,
+          "loop_s": 0.7685825000007753,
+          "cpu_ms_per_frame": 0.5104166666666666,
+          "cpu_pct": 99.56267197977249,
+          "compressed_bytes_muxed": 810810700
+        }
+      ],
+      "files": [
+        {
+          "file": "p4_1080p_passthrough_unthrottled_cam0.mkv",
+          "bytes": 810753274,
+          "decoded_frames": 1500,
+          "produced": 1500,
+          "recorded": 1500
+        },
+        {
+          "file": "p4_1080p_passthrough_unthrottled_cam1.mkv",
+          "bytes": 810702784,
+          "decoded_frames": 1500,
+          "produced": 1500,
+          "recorded": 1500
+        },
+        {
+          "file": "p4_1080p_passthrough_unthrottled_cam2.mkv",
+          "bytes": 810672278,
+          "decoded_frames": 1500,
+          "produced": 1500,
+          "recorded": 1500
+        },
+        {
+          "file": "p4_1080p_passthrough_unthrottled_cam3.mkv",
+          "bytes": 810687155,
+          "decoded_frames": 1500,
+          "produced": 1500,
+          "recorded": 1500
+        },
+        {
+          "file": "p4_1080p_passthrough_unthrottled_cam4.mkv",
+          "bytes": 810855217,
+          "decoded_frames": 1500,
+          "produced": 1500,
+          "recorded": 1500
+        }
+      ],
+      "cpu_psutil_mean": null,
+      "cpu_split": null,
+      "wall_s": 0.7899985999974888,
+      "min_cam_fps": 3890.66303117748,
+      "sensor_skipped_total": 0,
+      "files_equal_produced": true,
+      "disk_MBps_5cams": 5166.323119525319,
+      "disk_bytes_total": 4053670708,
+      "cam_cpu_ms_per_frame": 0.23958333333333334,
+      "rec_cpu_ms_per_frame": 0.5104166666666666,
+      "recorder_fps_unthrottled": 9739.823975914082
+    },
+    {
+      "size": "720p",
+      "mode": "passthrough",
+      "run_s": 20.0,
+      "ring_len": 1024,
+      "ring_slot_bytes": 1048576,
+      "ring_seconds": 17.066666666666666,
+      "cameras": [
+        {
+          "cam": 0,
+          "produced": 1201,
+          "fps": 60.00722325084303,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1201,
+            "median_ms": 0.0779,
+            "mean_ms": 0.08917560366361366,
+            "p99_ms": 0.2116,
+            "min_ms": 0.0206,
+            "max_ms": 0.282
+          },
+          "cpu_ms_per_frame": 1.7693588676103247,
+          "cpu_pct": 10.617431257955158
+        },
+        {
+          "cam": 1,
+          "produced": 1201,
+          "fps": 60.026256614194445,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1201,
+            "median_ms": 0.0833,
+            "mean_ms": 0.09662464612822648,
+            "p99_ms": 0.2143,
+            "min_ms": 0.0223,
+            "max_ms": 0.3692
+          },
+          "cpu_ms_per_frame": 1.8344088259783513,
+          "cpu_pct": 11.011269492351968
+        },
+        {
+          "cam": 2,
+          "produced": 1201,
+          "fps": 60.0080561689832,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1201,
+            "median_ms": 0.0759,
+            "mean_ms": 0.08998659450457952,
+            "p99_ms": 0.2013,
+            "min_ms": 0.0211,
+            "max_ms": 0.2579
+          },
+          "cpu_ms_per_frame": 1.1708992506244795,
+          "cpu_pct": 7.026338799969411
+        },
+        {
+          "cam": 3,
+          "produced": 1201,
+          "fps": 60.00934306996218,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1201,
+            "median_ms": 0.0757,
+            "mean_ms": 0.09033971690258119,
+            "p99_ms": 0.2064,
+            "min_ms": 0.0221,
+            "max_ms": 0.3533
+          },
+          "cpu_ms_per_frame": 1.0147793505412157,
+          "cpu_pct": 6.089624218694122
+        },
+        {
+          "cam": 4,
+          "produced": 1201,
+          "fps": 60.01359965135474,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1201,
+            "median_ms": 0.0797,
+            "mean_ms": 0.09739592006661116,
+            "p99_ms": 0.2499,
+            "min_ms": 0.0212,
+            "max_ms": 0.3859
+          },
+          "cpu_ms_per_frame": 1.7433388842631141,
+          "cpu_pct": 10.4624041856806
+        }
+      ],
+      "recorders": [
+        {
+          "cam": 0,
+          "recorded": 1201,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1201,
+            "median_ms": 0.538313,
+            "mean_ms": 0.5598843721898419,
+            "p99_ms": 1.152879,
+            "min_ms": 0.112861,
+            "max_ms": 2.087931
+          },
+          "write": {
+            "n": 1201,
+            "median_ms": 0.1781,
+            "mean_ms": 0.19846036636136552,
+            "p99_ms": 0.4024,
+            "min_ms": 0.0326,
+            "max_ms": 1.764
+          },
+          "release_s": 0.00038050000148359686,
+          "loop_s": 20.026606700004777,
+          "cpu_ms_per_frame": 0.42932972522897583,
+          "cpu_pct": 2.574650869102462,
+          "compressed_bytes_muxed": 288952025
+        },
+        {
+          "cam": 1,
+          "recorded": 1201,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1201,
+            "median_ms": 0.560285,
+            "mean_ms": 0.5899740407993339,
+            "p99_ms": 1.158851,
+            "min_ms": 0.105845,
+            "max_ms": 2.510623
+          },
+          "write": {
+            "n": 1201,
+            "median_ms": 0.1912,
+            "mean_ms": 0.21457035803497082,
+            "p99_ms": 0.4685,
+            "min_ms": 0.034,
+            "max_ms": 2.027
+          },
+          "release_s": 0.0006260000009206124,
+          "loop_s": 20.026665099998354,
+          "cpu_ms_per_frame": 0.4943796835970025,
+          "cpu_pct": 2.964704497654311,
+          "compressed_bytes_muxed": 288942763
+        },
+        {
+          "cam": 2,
+          "recorded": 1201,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1201,
+            "median_ms": 0.583498,
+            "mean_ms": 0.6079791923397169,
+            "p99_ms": 1.316186,
+            "min_ms": 0.178796,
+            "max_ms": 2.36351
+          },
+          "write": {
+            "n": 1201,
+            "median_ms": 0.1834,
+            "mean_ms": 0.20392348043297254,
+            "p99_ms": 0.4067,
+            "min_ms": 0.0333,
+            "max_ms": 1.8267
+          },
+          "release_s": 0.0005617999995592982,
+          "loop_s": 20.026626300001226,
+          "cpu_ms_per_frame": 0.5334096586178185,
+          "cpu_pct": 3.1987765671406208,
+          "compressed_bytes_muxed": 288891128
+        },
+        {
+          "cam": 3,
+          "recorded": 1201,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1201,
+            "median_ms": 0.533945,
+            "mean_ms": 0.5670279142381349,
+            "p99_ms": 1.432181,
+            "min_ms": 0.120307,
+            "max_ms": 2.162925
+          },
+          "write": {
+            "n": 1201,
+            "median_ms": 0.1805,
+            "mean_ms": 0.20197610324729393,
+            "p99_ms": 0.4159,
+            "min_ms": 0.0329,
+            "max_ms": 1.731
+          },
+          "release_s": 0.0006498000002466142,
+          "loop_s": 20.026622600002156,
+          "cpu_ms_per_frame": 0.7415695253955037,
+          "cpu_pct": 4.447060898816622,
+          "compressed_bytes_muxed": 288982076
+        },
+        {
+          "cam": 4,
+          "recorded": 1201,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1201,
+            "median_ms": 0.559959,
+            "mean_ms": 0.5826341557035803,
+            "p99_ms": 1.101963,
+            "min_ms": 0.154767,
+            "max_ms": 2.203121
+          },
+          "write": {
+            "n": 1201,
+            "median_ms": 0.1856,
+            "mean_ms": 0.21056586178184847,
+            "p99_ms": 0.437,
+            "min_ms": 0.0383,
+            "max_ms": 1.8489
+          },
+          "release_s": 0.00037000000156695023,
+          "loop_s": 20.026612299996486,
+          "cpu_ms_per_frame": 0.5854496253122398,
+          "cpu_pct": 3.5108884077860716,
+          "compressed_bytes_muxed": 288895940
+        }
+      ],
+      "files": [
+        {
+          "file": "p4_720p_passthrough_cam0.mkv",
+          "bytes": 289006474,
+          "decoded_frames": 1201,
+          "produced": 1201,
+          "recorded": 1201
+        },
+        {
+          "file": "p4_720p_passthrough_cam1.mkv",
+          "bytes": 288997212,
+          "decoded_frames": 1201,
+          "produced": 1201,
+          "recorded": 1201
+        },
+        {
+          "file": "p4_720p_passthrough_cam2.mkv",
+          "bytes": 288945577,
+          "decoded_frames": 1201,
+          "produced": 1201,
+          "recorded": 1201
+        },
+        {
+          "file": "p4_720p_passthrough_cam3.mkv",
+          "bytes": 289036525,
+          "decoded_frames": 1201,
+          "produced": 1201,
+          "recorded": 1201
+        },
+        {
+          "file": "p4_720p_passthrough_cam4.mkv",
+          "bytes": 288950389,
+          "decoded_frames": 1201,
+          "produced": 1201,
+          "recorded": 1201
+        }
+      ],
+      "cpu_psutil_mean": {
+        "system": 5.963157894736841,
+        "45748": 10.610526315789475,
+        "27516": 11.010526315789475,
+        "34224": 7.042105263157896,
+        "1260": 6.042105263157896,
+        "9456": 10.431578947368424,
+        "23516": 2.557894736842105,
+        "26432": 2.7947368421052636,
+        "25500": 2.963157894736842,
+        "33440": 4.178947368421052,
+        "23964": 3.5368421052631582,
+        "sum_processes": 61.16842105263159
+      },
+      "cpu_split": {
+        "cameras": 45.13684210526316,
+        "recorders": 16.03157894736842,
+        "system": 5.963157894736841
+      },
+      "wall_s": 20.03455689999828,
+      "min_cam_fps": 60.00722325084303,
+      "sensor_skipped_total": 0,
+      "files_equal_produced": true,
+      "disk_MBps_5cams": 72.18665330557869,
+      "disk_bytes_total": 1444936177,
+      "cam_cpu_ms_per_frame": 1.7433388842631141,
+      "rec_cpu_ms_per_frame": 0.5334096586178185,
+      "recorder_fps_unthrottled": null
+    },
+    {
+      "size": "720p",
+      "mode": "decode_msmf",
+      "run_s": 20.0,
+      "ring_len": 388,
+      "ring_slot_bytes": 2764800,
+      "ring_seconds": 6.466666666666667,
+      "cameras": [
+        {
+          "cam": 0,
+          "produced": 1200,
+          "fps": 59.997058044251595,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1200,
+            "median_ms": 3.761,
+            "mean_ms": 3.8083816666666666,
+            "p99_ms": 4.906363,
+            "min_ms": 3.2271,
+            "max_ms": 5.825
+          },
+          "cpu_ms_per_frame": 5.169270833333333,
+          "cpu_pct": 31.014104223395684
+        },
+        {
+          "cam": 1,
+          "produced": 1201,
+          "fps": 60.01660975916666,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1201,
+            "median_ms": 3.373,
+            "mean_ms": 3.475523646960866,
+            "p99_ms": 4.1454,
+            "min_ms": 3.1328,
+            "max_ms": 5.5825
+          },
+          "cpu_ms_per_frame": 4.943796835970025,
+          "cpu_pct": 29.670992543301587
+        },
+        {
+          "cam": 2,
+          "produced": 1200,
+          "fps": 59.99797176855219,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1200,
+            "median_ms": 3.7549,
+            "mean_ms": 3.79879875,
+            "p99_ms": 4.974431,
+            "min_ms": 3.2034,
+            "max_ms": 5.7448
+          },
+          "cpu_ms_per_frame": 5.2734375,
+          "cpu_pct": 31.639555424822447
+        },
+        {
+          "cam": 3,
+          "produced": 1200,
+          "fps": 59.99926800894442,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1200,
+            "median_ms": 3.61525,
+            "mean_ms": 3.6857013333333333,
+            "p99_ms": 5.097199999999999,
+            "min_ms": 3.1603,
+            "max_ms": 6.3879
+          },
+          "cpu_ms_per_frame": 4.518229166666667,
+          "cpu_pct": 27.109044269666292
+        },
+        {
+          "cam": 4,
+          "produced": 1201,
+          "fps": 60.00414753063953,
+          "sensor_skipped": 0,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1201,
+            "median_ms": 3.3351,
+            "mean_ms": 3.5516703580349707,
+            "p99_ms": 5.1063,
+            "min_ms": 3.0946,
+            "max_ms": 5.4562
+          },
+          "cpu_ms_per_frame": 4.982826810990841,
+          "cpu_pct": 29.899027508632052
+        }
+      ],
+      "recorders": [
+        {
+          "cam": 0,
+          "recorded": 1200,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1200,
+            "median_ms": 4.57821,
+            "mean_ms": 4.642958416666667,
+            "p99_ms": 5.946080699999999,
+            "min_ms": 3.779571,
+            "max_ms": 8.994931
+          },
+          "write": {
+            "n": 1200,
+            "median_ms": 0.5064,
+            "mean_ms": 0.5241624166666666,
+            "p99_ms": 0.7434399999999999,
+            "min_ms": 0.3657,
+            "max_ms": 4.4369
+          },
+          "release_s": 0.06796349999785889,
+          "loop_s": 20.025432300004468,
+          "cpu_ms_per_frame": 11.158854166666666,
+          "cpu_pct": 66.64192122268577,
+          "compressed_bytes_muxed": 0
+        },
+        {
+          "cam": 1,
+          "recorded": 1201,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1201,
+            "median_ms": 4.230795,
+            "mean_ms": 4.391114756869275,
+            "p99_ms": 5.483611,
+            "min_ms": 3.588079,
+            "max_ms": 8.593723
+          },
+          "write": {
+            "n": 1201,
+            "median_ms": 0.5273,
+            "mean_ms": 0.5384652789342215,
+            "p99_ms": 0.9335,
+            "min_ms": 0.3425,
+            "max_ms": 4.1154
+          },
+          "release_s": 0.06800420000217855,
+          "loop_s": 20.025514900000417,
+          "cpu_ms_per_frame": 7.506765195670274,
+          "cpu_pct": 44.86832274192745,
+          "compressed_bytes_muxed": 0
+        },
+        {
+          "cam": 2,
+          "recorded": 1200,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1200,
+            "median_ms": 4.571212,
+            "mean_ms": 4.626254916666666,
+            "p99_ms": 5.889543199999999,
+            "min_ms": 3.768808,
+            "max_ms": 8.74561
+          },
+          "write": {
+            "n": 1200,
+            "median_ms": 0.5085999999999999,
+            "mean_ms": 0.5190960833333333,
+            "p99_ms": 0.727507,
+            "min_ms": 0.3443,
+            "max_ms": 4.5577
+          },
+          "release_s": 0.06794000000081724,
+          "loop_s": 20.025479200005066,
+          "cpu_ms_per_frame": 10.286458333333334,
+          "cpu_pct": 61.431804498441885,
+          "compressed_bytes_muxed": 0
+        },
+        {
+          "cam": 3,
+          "recorded": 1200,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1200,
+            "median_ms": 4.412301,
+            "mean_ms": 4.500216,
+            "p99_ms": 6.05179376,
+            "min_ms": 3.683081,
+            "max_ms": 8.700425
+          },
+          "write": {
+            "n": 1200,
+            "median_ms": 0.5089,
+            "mean_ms": 0.5170630833333334,
+            "p99_ms": 0.7325179999999999,
+            "min_ms": 0.347,
+            "max_ms": 4.0258
+          },
+          "release_s": 0.0680147000020952,
+          "loop_s": 20.025485400001344,
+          "cpu_ms_per_frame": 9.817708333333334,
+          "cpu_pct": 58.632144431611415,
+          "compressed_bytes_muxed": 0
+        },
+        {
+          "cam": 4,
+          "recorded": 1201,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1201,
+            "median_ms": 4.150433,
+            "mean_ms": 4.316397686094921,
+            "p99_ms": 6.090103,
+            "min_ms": 3.540461,
+            "max_ms": 7.784121
+          },
+          "write": {
+            "n": 1201,
+            "median_ms": 0.4594,
+            "mean_ms": 0.48098792672772694,
+            "p99_ms": 0.7166,
+            "min_ms": 0.3196,
+            "max_ms": 3.8917
+          },
+          "release_s": 0.06794700000318699,
+          "loop_s": 20.025454499998887,
+          "cpu_ms_per_frame": 9.666423813488759,
+          "cpu_pct": 57.77705183464732,
+          "compressed_bytes_muxed": 0
+        }
+      ],
+      "files": [
+        {
+          "file": "p4_720p_decode_msmf_cam0.mp4",
+          "bytes": 138591539,
+          "decoded_frames": 1200,
+          "produced": 1200,
+          "recorded": 1200
+        },
+        {
+          "file": "p4_720p_decode_msmf_cam1.mp4",
+          "bytes": 138744914,
+          "decoded_frames": 1201,
+          "produced": 1201,
+          "recorded": 1201
+        },
+        {
+          "file": "p4_720p_decode_msmf_cam2.mp4",
+          "bytes": 138546904,
+          "decoded_frames": 1200,
+          "produced": 1200,
+          "recorded": 1200
+        },
+        {
+          "file": "p4_720p_decode_msmf_cam3.mp4",
+          "bytes": 138634097,
+          "decoded_frames": 1200,
+          "produced": 1200,
+          "recorded": 1200
+        },
+        {
+          "file": "p4_720p_decode_msmf_cam4.mp4",
+          "bytes": 138751950,
+          "decoded_frames": 1201,
+          "produced": 1201,
+          "recorded": 1201
+        }
+      ],
+      "cpu_psutil_mean": {
+        "system": 21.194736842105264,
+        "40684": 30.826315789473686,
+        "43460": 29.589473684210528,
+        "30944": 31.54736842105263,
+        "38804": 26.88947368421053,
+        "18480": 29.76315789473685,
+        "38732": 67.68947368421053,
+        "45288": 44.88947368421053,
+        "37064": 62.33157894736843,
+        "11364": 57.88947368421052,
+        "24040": 58.88947368421052,
+        "sum_processes": 440.30526315789473
+      },
+      "cpu_split": {
+        "cameras": 148.61578947368423,
+        "recorders": 291.6894736842105,
+        "system": 21.194736842105264
+      },
+      "wall_s": 20.099320400004217,
+      "min_cam_fps": 59.997058044251595,
+      "sensor_skipped_total": 0,
+      "files_equal_produced": true,
+      "disk_MBps_5cams": 34.63460802664447,
+      "disk_bytes_total": 693269404,
+      "cam_cpu_ms_per_frame": 4.982826810990841,
+      "rec_cpu_ms_per_frame": 9.817708333333334,
+      "recorder_fps_unthrottled": null
+    },
+    {
+      "size": "720p",
+      "mode": "passthrough_unthrottled",
+      "run_s": 5.0,
+      "ring_len": 1024,
+      "ring_slot_bytes": 1048576,
+      "ring_seconds": 17.066666666666666,
+      "cameras": [
+        {
+          "cam": 0,
+          "produced": 1500,
+          "fps": 12482.877652352057,
+          "sensor_skipped": null,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1500,
+            "median_ms": 0.0836,
+            "mean_ms": 0.07931053333333332,
+            "p99_ms": 0.15661299999999997,
+            "min_ms": 0.0148,
+            "max_ms": 0.3302
+          },
+          "cpu_ms_per_frame": 0.08333333333333333,
+          "cpu_pct": 104.02398043626714
+        },
+        {
+          "cam": 1,
+          "produced": 1500,
+          "fps": 12266.406727232272,
+          "sensor_skipped": null,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1500,
+            "median_ms": 0.0823,
+            "mean_ms": 0.08072826666666666,
+            "p99_ms": 0.167206,
+            "min_ms": 0.0129,
+            "max_ms": 0.2609
+          },
+          "cpu_ms_per_frame": 0.08333333333333333,
+          "cpu_pct": 102.22005606026893
+        },
+        {
+          "cam": 2,
+          "produced": 1500,
+          "fps": 11797.312729779393,
+          "sensor_skipped": null,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1500,
+            "median_ms": 0.0829,
+            "mean_ms": 0.08393473333333333,
+            "p99_ms": 0.151715,
+            "min_ms": 0.0303,
+            "max_ms": 0.3224
+          },
+          "cpu_ms_per_frame": 0.07291666666666667,
+          "cpu_pct": 86.02207198797474
+        },
+        {
+          "cam": 3,
+          "produced": 1500,
+          "fps": 13949.841948132678,
+          "sensor_skipped": null,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1500,
+            "median_ms": 0.0808,
+            "mean_ms": 0.07100393333333332,
+            "p99_ms": 0.146206,
+            "min_ms": 0.0124,
+            "max_ms": 0.4002
+          },
+          "cpu_ms_per_frame": 0.07291666666666667,
+          "cpu_pct": 101.71759753846744
+        },
+        {
+          "cam": 4,
+          "produced": 1500,
+          "fps": 11896.000405606846,
+          "sensor_skipped": null,
+          "blocked_s": 0.0,
+          "work": {
+            "n": 1500,
+            "median_ms": 0.08235,
+            "mean_ms": 0.08312626666666666,
+            "p99_ms": 0.206414,
+            "min_ms": 0.0152,
+            "max_ms": 0.2972
+          },
+          "cpu_ms_per_frame": 0.08333333333333333,
+          "cpu_pct": 99.13333671339039
+        }
+      ],
+      "recorders": [
+        {
+          "cam": 0,
+          "recorded": 1500,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1500,
+            "median_ms": 84.98485,
+            "mean_ms": 76.93032686666668,
+            "p99_ms": 141.717443,
+            "min_ms": 3.6248,
+            "max_ms": 143.1064
+          },
+          "write": {
+            "n": 1500,
+            "median_ms": 0.1608,
+            "mean_ms": 0.17346626666666667,
+            "p99_ms": 0.39307799999999987,
+            "min_ms": 0.0333,
+            "max_ms": 3.1008
+          },
+          "release_s": 0.0009436000036657788,
+          "loop_s": 0.2633754000053159,
+          "cpu_ms_per_frame": 0.17708333333333334,
+          "cpu_pct": 100.49409992886396,
+          "compressed_bytes_muxed": 360899800
+        },
+        {
+          "cam": 1,
+          "recorded": 1500,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1500,
+            "median_ms": 85.2406,
+            "mean_ms": 83.40070093333333,
+            "p99_ms": 145.284415,
+            "min_ms": 3.5935,
+            "max_ms": 146.1677
+          },
+          "write": {
+            "n": 1500,
+            "median_ms": 0.1609,
+            "mean_ms": 0.17687386666666668,
+            "p99_ms": 0.4347969999999999,
+            "min_ms": 0.03,
+            "max_ms": 3.1739
+          },
+          "release_s": 0.00030589999369112775,
+          "loop_s": 0.2686205999998492,
+          "cpu_ms_per_frame": 0.17708333333333334,
+          "cpu_pct": 98.7723411439112,
+          "compressed_bytes_muxed": 360888850
+        },
+        {
+          "cam": 2,
+          "recorded": 1500,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1500,
+            "median_ms": 79.56235000000001,
+            "mean_ms": 74.99319633333334,
+            "p99_ms": 134.92854100000002,
+            "min_ms": 4.0875,
+            "max_ms": 135.1156
+          },
+          "write": {
+            "n": 1500,
+            "median_ms": 0.157,
+            "mean_ms": 0.17260419999999999,
+            "p99_ms": 0.48350299999999996,
+            "min_ms": 0.034,
+            "max_ms": 3.5629
+          },
+          "release_s": 0.00041649999911896884,
+          "loop_s": 0.2621196999971289,
+          "cpu_ms_per_frame": 0.15625,
+          "cpu_pct": 89.27340305959697,
+          "compressed_bytes_muxed": 360824000
+        },
+        {
+          "cam": 3,
+          "recorded": 1500,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1500,
+            "median_ms": 84.57505,
+            "mean_ms": 81.01361046666666,
+            "p99_ms": 164.179952,
+            "min_ms": 3.2937,
+            "max_ms": 165.4116
+          },
+          "write": {
+            "n": 1500,
+            "median_ms": 0.1608,
+            "mean_ms": 0.17987240000000002,
+            "p99_ms": 0.477827,
+            "min_ms": 0.0291,
+            "max_ms": 4.8789
+          },
+          "release_s": 0.00025689999893074855,
+          "loop_s": 0.2730320999980904,
+          "cpu_ms_per_frame": 0.1875,
+          "cpu_pct": 102.91303345654805,
+          "compressed_bytes_muxed": 360937300
+        },
+        {
+          "cam": 4,
+          "recorded": 1500,
+          "consecutive": true,
+          "tick_to_written": {
+            "n": 1500,
+            "median_ms": 78.50515,
+            "mean_ms": 76.01326166666666,
+            "p99_ms": 142.580278,
+            "min_ms": 4.0035,
+            "max_ms": 143.6891
+          },
+          "write": {
+            "n": 1500,
+            "median_ms": 0.1608,
+            "mean_ms": 0.17771926666666665,
+            "p99_ms": 0.39950600000000003,
+            "min_ms": 0.0294,
+            "max_ms": 3.484
+          },
+          "release_s": 0.0002936000018962659,
+          "loop_s": 0.2698041999974521,
+          "cpu_ms_per_frame": 0.17708333333333334,
+          "cpu_pct": 98.34400724502045,
+          "compressed_bytes_muxed": 360830000
+        }
+      ],
+      "files": [
+        {
+          "file": "p4_720p_passthrough_unthrottled_cam0.mkv",
+          "bytes": 360938598,
+          "decoded_frames": 1500,
+          "produced": 1500,
+          "recorded": 1500
+        },
+        {
+          "file": "p4_720p_passthrough_unthrottled_cam1.mkv",
+          "bytes": 360927686,
+          "decoded_frames": 1500,
+          "produced": 1500,
+          "recorded": 1500
+        },
+        {
+          "file": "p4_720p_passthrough_unthrottled_cam2.mkv",
+          "bytes": 360862931,
+          "decoded_frames": 1500,
+          "produced": 1500,
+          "recorded": 1500
+        },
+        {
+          "file": "p4_720p_passthrough_unthrottled_cam3.mkv",
+          "bytes": 360975851,
+          "decoded_frames": 1500,
+          "produced": 1500,
+          "recorded": 1500
+        },
+        {
+          "file": "p4_720p_passthrough_unthrottled_cam4.mkv",
+          "bytes": 360868911,
+          "decoded_frames": 1500,
+          "produced": 1500,
+          "recorded": 1500
+        }
+      ],
+      "cpu_psutil_mean": null,
+      "cpu_split": null,
+      "wall_s": 0.27848509999603266,
+      "min_cam_fps": 11797.312729779393,
+      "sensor_skipped_total": 0,
+      "files_equal_produced": true,
+      "disk_MBps_5cams": 6603.170918037938,
+      "disk_bytes_total": 1804573977,
+      "cam_cpu_ms_per_frame": 0.08333333333333333,
+      "rec_cpu_ms_per_frame": 0.17708333333333334,
+      "recorder_fps_unthrottled": 28008.429994972288
+    }
+  ]
+}

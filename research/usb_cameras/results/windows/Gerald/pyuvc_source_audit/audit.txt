@@ -1,0 +1,142 @@
+# pyuvc https://github.com/pupil-labs/pyuvc @ 45506641a2ee1996a04fdd023a9ac60ae1f95cb5 (tag v1.0.8); submodule libuvc-source = pupil-labs/libuvc @ 949cb4734ae91feb878f4c363db52cfe2c86d68f; libusb-source = pupil-labs/libusb @ ebfec61f0a283a7b2b4844b59b9029c9b9e1563d
+
+## libuvc-source/src/stream.c get_precise_timestamp_freq (Windows QPC frequency never written)
+void get_precise_timestamp_freq(int64_t *perf_freq)
+{
+#ifdef WIN32
+  LARGE_INTEGER li;
+  QueryPerformanceFrequency(&li);
+  perf_freq = li.QuadPart;
+#elif __linux__
+  *perf_freq = MILLION;
+#endif
+}
+
+extern inline int64_t get_dev_time_us(uvc_stream_handle_t *strmh, int64_t dev_ticks)
+{
+  int64_t time_us = ((int64_t)dev_ticks * MILLION + (strmh->corrected_clock_freq >> 1)) / strmh->corrected_clock_freq;
+
+  return time_us;
+}
+
+
+## bandwidth_factor alt-setting estimate
+      name = "unknown";
+
+    // the proper way: ask the cmaera
+    config_bytes_per_packet = strmh->cur_ctrl.dwMaxPayloadTransferSize;
+
+    // our way: estimate it:
+    if (strmh->frame_format == UVC_FRAME_FORMAT_MJPEG && bandwidth_factor > 0)
+    {
+      size_t bandwidth = frame_desc->wWidth * frame_desc->wHeight / 8 * bandwidth_factor; // the last one is bpp default 4 but we use if for compression, 2 is save, 1.5 is needed to run 3 high speed cameras. on one bus.
+      bandwidth *= 10000000 / strmh->cur_ctrl.dwFrameInterval + 1;
+      bandwidth /= 1000; // unit
+      bandwidth /= 8;    // 8 high speed usb microframes per ms
+      bandwidth += 12;   // header size
+      config_bytes_per_packet = bandwidth;
+      // config_bytes_per_packet *= 2;
+      //  config_bytes_per_packet /= 2;
+    }
+
+## frame timestamp = dev_clk_start_host_us + PTS/clock (+ drift correction)
+void _uvc_populate_frame_ts_us(uvc_stream_handle_t *strmh, int packet_id)
+{
+  if (!strmh->dev_clk_start_host_us)
+  {
+    int64_t frame_end_time_us = get_dev_time_us(strmh, strmh->last_scr);
+    int64_t frame_end_time_host_us = get_host_time_us(strmh->last_iso_ts_us);
+    frame_end_time_host_us -= (strmh->frame_xfer_len_mf + strmh->packets_per_iso_xfer - packet_id) * 125;
+    frame_end_time_host_us -= frame_end_time_us;
+    strmh->dev_clk_start_host_us = frame_end_time_host_us;
+  }
+  else
+  {
+    const int first_measure_int = 30 * (10000000L / strmh->cur_ctrl.dwFrameInterval);
+    int64_t pts = strmh->pts;
+    if (strmh->pts < strmh->hold_pts)
+    {
+      strmh->pts_time_base += 1LL << 32; // get_dev_time_us(strmh, (1LL << 32));
+    }
+    strmh->frame_ts_us = strmh->dev_clk_start_host_us + get_dev_time_us(strmh, strmh->pts_time_base + pts);
+    int64_t host_ts;
+    get_precise_timestamp(&host_ts);
+    int64_t host_ts_us = get_host_time_us(host_ts);
+    int64_t time_diff = host_ts_us - strmh->frame_ts_us;
+    strmh->avg_diff += time_diff;
+
+    if (!((strmh->seq + 1) % first_measure_int))
+    {
+      strmh->avg_diff /= first_measure_int;
+      if (!strmh->initial_avg_diff_set)
+      {
+        strmh->initial_avg_diff = strmh->avg_diff;
+        strmh->initial_host_ts = host_ts_us;
+        strmh->initial_avg_diff_set = 1;
+      }
+      else
+      {
+        strmh->diff_measures++;
+        int64_t diff_incr = strmh->avg_diff - strmh->initial_avg_diff;
+        int64_t td = host_ts_us - strmh->initial_host_ts;
+        double slope = (double)diff_incr / td;
+        // printf("**** After %d frames, avg_diff = %lld, slope=%f\n", strmh->seq+1, strmh->avg_diff, slope);
+        if (strmh->diff_measures > 10 && fabs(slope) > 0.0000005 /* 0.000005*/)
+        {
+          strmh->corrected_clock_freq *= 1.0 - slope;
+          strmh->initial_avg_diff_set = 0;
+          printf("*** Correcting clock frequency to %llu\n", strmh->corrected_clock_freq);
+        }
+      }
+      strmh->avg_diff = 0;
+
+## pyuvc-source/uvc_bindings.pyx: macOS detach decision, default bandwidth_factor, timestamp
+48:    IS_MACOS_BIG_SUR_OR_OLDER = int(_system_info.release.split(".")[0]) < 21
+49:    if IS_MACOS_BIG_SUR_OR_OLDER:
+61:    IS_MACOS_BIG_SUR_OR_OLDER = False
+62:cdef int SHOULD_DETACH_KERNEL_DRIVER = int(not IS_MACOS_BIG_SUR_OR_OLDER)
+531:        self._bandwidth_factor = 2.0
+755:        frame.timestamp = uvc_frame.capture_time.tv_sec + <double>uvc_frame.capture_time.tv_usec * 1e-6
+971:                self._bandwidth_factor = bandwidth_factor
+
+## README.rst macOS / Windows notes
+80:Running as a non-root user
+81-==========================
+82-
+83-One needs to setup udev rules and add the target user to the ``plugdev`` group to avoid
+--
+101:Running as a non-root user
+102-==========================
+103-
+104-Unfortunately, this is currently not possible. See
+--
+125:Manual driver installation
+126-==========================
+127-
+128:pyuvc requires the libUSBk driver to be installed for your corresponding camera.
+129-Otherwise, metadata like the product name will be set to ``"unknown"``.
+130-
+131-Please see `these instructions <https://github.com/pupil-labs/pyuvc/blob/master/WINDOWS_USER.md>`__
+132:on how to manually install libUSBk drivers for your specific camera.
+
+## WINDOWS_USER.md
+# Manual lisbUSBk driver installation
+
+PYUVC will only work with Python3.5+ 64bit!
+
+1. Download and install [libusbk 3.0.7.0] (https://sourceforge.net/projects/libusbk/files/libusbK-release/3.0.7.0/libusbK-3.0.7.0-setup.exe/download)
+
+2. Download and install [Zadig] (https://github.com/pbatard/libwdi/releases/download/v1.2.5/zadig-2.2.exe)
+
+3. Plug in your web camera
+
+4. Start ZadiG. From options menu uncheck "Hide Composite Devices" or "Ignore Hubs or Composite Devices", and check "List All Devices"
+
+5. Locate your web camera composite device. It is crucial you select the composite parent and not one of the interfaces, otherwise libusb will not work
+
+6. Set the driver replacement to libusbK (v3.0.7.0) and click "Replace driver"
+
+7. Verify in device manager it is correctly replaced. Should be listed under a new category libusbK USB Devices
+
+## scripts/download-deps-win.ps1 libusb version
+23:Set-Variable -Name "LUSB_VERSION" -Value "1.0.26"

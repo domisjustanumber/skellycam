@@ -1,0 +1,1781 @@
+{
+  "test": "driver_state_inspect",
+  "label": "baseline_readonly",
+  "platform": "windows",
+  "hostname": "GERALD",
+  "utc_started": "2026-10-25T22:45:41.2912976Z",
+  "command": "",
+  "environment": {
+    "os_caption": "Microsoft Windows 11 Home",
+    "os_build": "10.0.26300 (UBR 9711)",
+    "pwsh": "7.6.7",
+    "is_admin": false
+  },
+  "boot_time_utc": "2026-10-24T14:04:02.5000000Z",
+  "since_utc": "2026-10-25T20:00:00.0000000Z",
+  "vidpid": [
+    "046D:0843",
+    "046D:085C",
+    "1532:0E05",
+    "4C4A:4A55"
+  ],
+  "cameras": [
+    {
+      "vidpid": "046D:0843",
+      "parent_instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&1",
+      "present": false,
+      "location_info": "Port_#0001.Hub_#0008",
+      "parent_service": "usbccgp",
+      "parent_inf": "oem74.inf",
+      "parent_rank": "00FF0001",
+      "children": [
+        "function MI_00=usbvideo/oem11.inf (not present)",
+        "function MI_03=usbaudio/wdma_usb.inf (not present)"
+      ],
+      "camera_interface_enabled": false,
+      "binding": "COMPOSITE(usbccgp->usbvideo)"
+    },
+    {
+      "vidpid": "046D:0843",
+      "parent_instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+      "present": true,
+      "location_info": "Port_#0004.Hub_#0008",
+      "parent_service": "usbccgp",
+      "parent_inf": "oem74.inf",
+      "parent_rank": "00FF0001",
+      "children": [
+        "function MI_00=usbvideo/oem11.inf",
+        "function MI_03=usbaudio/wdma_usb.inf"
+      ],
+      "camera_interface_enabled": true,
+      "binding": "COMPOSITE(usbccgp->usbvideo)"
+    },
+    {
+      "vidpid": "046D:085C",
+      "parent_instance_id": "USB\\VID_046D&PID_085C\\B76395EF",
+      "present": true,
+      "location_info": "Port_#0001.Hub_#0001",
+      "parent_service": "usbccgp",
+      "parent_inf": "usb.inf",
+      "parent_rank": "00FF2006",
+      "children": [
+        "function MI_02=usbaudio/wdma_usb.inf",
+        "function MI_00=usbvideo/oem35.inf"
+      ],
+      "camera_interface_enabled": true,
+      "binding": "COMPOSITE(usbccgp->usbvideo)"
+    },
+    {
+      "vidpid": "1532:0E05",
+      "parent_instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&3",
+      "present": false,
+      "location_info": "Port_#0003.Hub_#0004",
+      "parent_service": "usbccgp",
+      "parent_inf": "usb.inf",
+      "parent_rank": "00FF2006",
+      "children": [
+        "function MI_02=usbaudio/oem0.inf (not present)",
+        "function MI_00=usbvideo/oem123.inf (not present)"
+      ],
+      "camera_interface_enabled": false,
+      "binding": "COMPOSITE(usbccgp->usbvideo)"
+    },
+    {
+      "vidpid": "1532:0E05",
+      "parent_instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "location_info": "Port_#0004.Hub_#0003",
+      "parent_service": "usbccgp",
+      "parent_inf": "usb.inf",
+      "parent_rank": "00FF2006",
+      "children": [
+        "function MI_00=usbvideo/oem123.inf",
+        "function MI_02=usbaudio/oem0.inf"
+      ],
+      "camera_interface_enabled": true,
+      "binding": "COMPOSITE(usbccgp->usbvideo)"
+    },
+    {
+      "vidpid": "1532:0E05",
+      "parent_instance_id": "USB\\VID_1532&PID_0E05\\9&112DB19F&0&3",
+      "present": false,
+      "location_info": "Port_#0003.Hub_#0003",
+      "parent_service": "usbccgp",
+      "parent_inf": "usb.inf",
+      "parent_rank": "00FF2006",
+      "children": [
+        "function MI_02=usbaudio/oem0.inf (not present)",
+        "function MI_00=usbvideo/oem123.inf (not present)"
+      ],
+      "camera_interface_enabled": false,
+      "binding": "COMPOSITE(usbccgp->usbvideo)"
+    },
+    {
+      "vidpid": "4C4A:4A55",
+      "parent_instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&3",
+      "present": true,
+      "location_info": "Port_#0003.Hub_#0008",
+      "parent_service": "usbccgp",
+      "parent_inf": "usb.inf",
+      "parent_rank": "00FF2006",
+      "children": [
+        "function MI_00=usbvideo/usbvideo.inf",
+        "function MI_02=usbaudio/wdma_usb.inf"
+      ],
+      "camera_interface_enabled": true,
+      "binding": "COMPOSITE(usbccgp->usbvideo)"
+    }
+  ],
+  "devices": [
+    {
+      "vidpid": "046D:0843",
+      "instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&1&0000",
+      "role": "function MI_00",
+      "present": true,
+      "status": "OK",
+      "problem": 0,
+      "devnode_status_hex": "0x0180200A",
+      "friendly": "Logitech Webcam C930e",
+      "class": "Image",
+      "class_guid": "{6bdd1fc6-810f-11d0-bec7-08002be2092f}",
+      "service": "usbvideo",
+      "inf": "oem11.inf",
+      "inf_section": "PID_0843.XPAMD64",
+      "matching_device_id": "usb\\vid_046d&pid_0843&mi_00",
+      "driver_rank_hex": "00FF0001",
+      "driver_provider": "Logitech",
+      "driver_version": "1.1.135.0",
+      "driver_date": "2017-06-21T00:00:00.0000000Z",
+      "location_info": "0000.0014.0000.013.001.004.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)#USBMI(0)",
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)#USB(4)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(4)#USBMI(0)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(4)#USB(4)"
+      ],
+      "parent": "USB\\VID_046D&PID_0843\\7&7dcc7ce&0&4",
+      "container_id": "{3F8B42F9-D0C1-11F1-879F-10F60A521D3A}",
+      "first_install_utc": "2026-10-25T22:16:35.2390000Z",
+      "install_utc": "2026-10-25T22:16:35.2390000Z",
+      "last_arrival_utc": "2026-10-25T22:31:14.5133940Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{6bdd1fc6-810f-11d0-bec7-08002be2092f}\\0005",
+        "config_flags": 0,
+        "service": "usbvideo",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_046D&PID_0843&REV_0013&MI_00",
+          "USB\\VID_046D&PID_0843&MI_00"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_046d&Class_0e&SubClass_03&Prot_00",
+          "USB\\COMPAT_VID_046d&Class_0e&SubClass_03",
+          "USB\\COMPAT_VID_046d&Class_0e",
+          "USB\\Class_0e&SubClass_03&Prot_00",
+          "USB\\Class_0e&SubClass_03",
+          "USB\\Class_0e"
+        ],
+        "pnputil_status": "Started",
+        "matching_drivers": [
+          {
+            "inf": "oem11.inf",
+            "original": "luvc1564v.inf",
+            "provider": "Logitech",
+            "class": "Image",
+            "version": "06/21/2017 1.1.135.0",
+            "signer": "Microsoft Windows Hardware Compatibility Publisher",
+            "matching_id": "USB\\VID_046D&PID_0843&MI_00",
+            "rank": "00FF0001",
+            "status": "BestRanked/Installed"
+          },
+          {
+            "inf": "usbvideo.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "Camera",
+            "version": "06/21/2006 10.0.26100.9711",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\Class_0e",
+            "rank": "00FF2005",
+            "status": "Outranked"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "046D:0843",
+      "instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&16BE97FE&0&0000",
+      "role": "function MI_00",
+      "present": false,
+      "status": "Unknown",
+      "problem": null,
+      "devnode_status_hex": null,
+      "friendly": "Logitech Webcam C930e",
+      "class": "Image",
+      "class_guid": "{6bdd1fc6-810f-11d0-bec7-08002be2092f}",
+      "service": "usbvideo",
+      "inf": "oem11.inf",
+      "inf_section": "PID_0843.XPAMD64",
+      "matching_device_id": "usb\\vid_046d&pid_0843&mi_00",
+      "driver_rank_hex": "00FF0001",
+      "driver_provider": "Logitech",
+      "driver_version": "1.1.135.0",
+      "driver_date": "2017-06-21T00:00:00.0000000Z",
+      "location_info": "0000.0014.0000.013.001.001.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(1)#USBMI(0)",
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(1)#USB(1)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(1)#USBMI(0)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(1)#USB(1)"
+      ],
+      "parent": "USB\\VID_046D&PID_0843\\7&7dcc7ce&0&1",
+      "container_id": "{5E5E28BA-47E1-11F1-8734-10F60A521D3A}",
+      "first_install_utc": "2026-05-04T18:38:34.0400000Z",
+      "install_utc": "2026-05-04T18:38:34.0400000Z",
+      "last_arrival_utc": "2026-05-09T19:10:03.7593730Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{6bdd1fc6-810f-11d0-bec7-08002be2092f}\\0003",
+        "config_flags": 0,
+        "service": "usbvideo",
+        "device_interface_guids": null
+      }
+    },
+    {
+      "vidpid": "046D:0843",
+      "instance_id": "USB\\VID_046D&PID_0843&MI_03\\8&39DEC205&1&0003",
+      "role": "function MI_03",
+      "present": true,
+      "status": "OK",
+      "problem": 0,
+      "devnode_status_hex": "0x0180200A",
+      "friendly": "Logitech Webcam C930e",
+      "class": "MEDIA",
+      "class_guid": "{4d36e96c-e325-11ce-bfc1-08002be10318}",
+      "service": "usbaudio",
+      "inf": "wdma_usb.inf",
+      "inf_section": "USBAudio",
+      "matching_device_id": "USB\\Class_01",
+      "driver_rank_hex": "00FF2005",
+      "driver_provider": "Microsoft",
+      "driver_version": "10.0.26100.9457",
+      "driver_date": "2026-09-12T00:00:00.0000000Z",
+      "location_info": "0000.0014.0000.013.001.004.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)#USBMI(3)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(4)#USBMI(3)"
+      ],
+      "parent": "USB\\VID_046D&PID_0843\\7&7dcc7ce&0&4",
+      "container_id": "{3F8B42F9-D0C1-11F1-879F-10F60A521D3A}",
+      "first_install_utc": "2026-10-25T22:16:34.5279880Z",
+      "install_utc": "2026-10-25T22:16:34.5279880Z",
+      "last_arrival_utc": "2026-10-25T22:31:14.5188390Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{4d36e96c-e325-11ce-bfc1-08002be10318}\\0000",
+        "config_flags": 0,
+        "service": "usbaudio",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_046D&PID_0843&REV_0013&MI_03",
+          "USB\\VID_046D&PID_0843&MI_03"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_046d&Class_01&SubClass_02&Prot_00",
+          "USB\\COMPAT_VID_046d&Class_01&SubClass_02",
+          "USB\\COMPAT_VID_046d&Class_01",
+          "USB\\Class_01&SubClass_02&Prot_00",
+          "USB\\Class_01&SubClass_02",
+          "USB\\Class_01"
+        ],
+        "pnputil_status": "Started",
+        "matching_drivers": [
+          {
+            "inf": "wdma_usb.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "MEDIA",
+            "version": "09/12/2026 10.0.26100.9457",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\Class_01",
+            "rank": "00FF2005",
+            "status": "BestRanked/Installed"
+          },
+          {
+            "inf": "usbmidi2.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "MEDIA",
+            "version": "06/21/2006 10.0.26100.9549",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\Class_01",
+            "rank": "00FF3105",
+            "status": "Outranked"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "046D:0843",
+      "instance_id": "USB\\VID_046D&PID_0843&MI_03\\8&16BE97FE&0&0003",
+      "role": "function MI_03",
+      "present": false,
+      "status": "Unknown",
+      "problem": null,
+      "devnode_status_hex": null,
+      "friendly": "Logitech Webcam C930e",
+      "class": "MEDIA",
+      "class_guid": "{4d36e96c-e325-11ce-bfc1-08002be10318}",
+      "service": "usbaudio",
+      "inf": "wdma_usb.inf",
+      "inf_section": "USBAudio",
+      "matching_device_id": "USB\\Class_01",
+      "driver_rank_hex": "00FF2005",
+      "driver_provider": "Microsoft",
+      "driver_version": "10.0.26100.9457",
+      "driver_date": "2026-09-12T00:00:00.0000000Z",
+      "location_info": "0000.0014.0000.013.001.001.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(1)#USBMI(3)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(1)#USBMI(3)"
+      ],
+      "parent": "USB\\VID_046D&PID_0843\\7&7dcc7ce&0&1",
+      "container_id": "{5E5E28BA-47E1-11F1-8734-10F60A521D3A}",
+      "first_install_utc": "2026-05-04T18:38:33.7305010Z",
+      "install_utc": "2026-05-04T18:38:33.7305010Z",
+      "last_arrival_utc": "2026-05-09T19:10:03.7613750Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{4d36e96c-e325-11ce-bfc1-08002be10318}\\0024",
+        "config_flags": 0,
+        "service": "usbaudio",
+        "device_interface_guids": null
+      }
+    },
+    {
+      "vidpid": "046D:0843",
+      "instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&1",
+      "role": "parent",
+      "present": false,
+      "status": "Unknown",
+      "problem": null,
+      "devnode_status_hex": null,
+      "friendly": "Logitech USB Camera (Webcam C930e)",
+      "class": "USB",
+      "class_guid": "{36fc9e60-c465-11cf-8056-444553540000}",
+      "service": "usbccgp",
+      "inf": "oem74.inf",
+      "inf_section": "LogiHubUVC15.Dev.NT",
+      "matching_device_id": "usb\\vid_046d&pid_0843",
+      "driver_rank_hex": "00FF0001",
+      "driver_provider": "Logitech",
+      "driver_version": "1.2.75.34",
+      "driver_date": "2022-01-31T00:00:00.0000000Z",
+      "location_info": "Port_#0001.Hub_#0008",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(1)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(1)"
+      ],
+      "parent": "USB\\VID_05E3&PID_0610\\6&f6f0942&0&1",
+      "container_id": "{5E5E28BA-47E1-11F1-8734-10F60A521D3A}",
+      "first_install_utc": "2026-05-04T18:38:33.7490000Z",
+      "install_utc": "2026-05-04T18:38:33.7490000Z",
+      "last_arrival_utc": "2026-05-09T19:10:03.6198680Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0021",
+        "config_flags": 0,
+        "service": "usbccgp",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_046D&PID_0843&REV_0013",
+          "USB\\VID_046D&PID_0843"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_046D&DevClass_00&SubClass_00&Prot00",
+          "USB\\COMPAT_VID_046D&DevClass_00&SubClass_00",
+          "USB\\COMPAT_VID_046D&DevClass_00",
+          "USB\\DevClass_00&SubClass_00&Prot_00",
+          "USB\\DevClass_00&SubClass_00",
+          "USB\\DevClass_00",
+          "USB\\COMPOSITE"
+        ],
+        "pnputil_status": "Disconnected",
+        "matching_drivers": [
+          {
+            "inf": "oem74.inf",
+            "original": "luvc1564c.inf",
+            "provider": "Logitech",
+            "class": "USB",
+            "version": "01/31/2022 1.2.75.34",
+            "signer": "Microsoft Windows Hardware Compatibility Publisher",
+            "matching_id": "USB\\VID_046D&PID_0843",
+            "rank": "00FF0001",
+            "status": "BestRanked/Installed"
+          },
+          {
+            "inf": "usb.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "USB",
+            "version": "06/21/2006 10.0.26100.9711",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\COMPOSITE",
+            "rank": "00FF2006",
+            "status": "Outranked"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "046D:0843",
+      "instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+      "role": "parent",
+      "present": true,
+      "status": "OK",
+      "problem": 0,
+      "devnode_status_hex": "0x0180600A",
+      "friendly": "Logitech USB Camera (Webcam C930e)",
+      "class": "USB",
+      "class_guid": "{36fc9e60-c465-11cf-8056-444553540000}",
+      "service": "usbccgp",
+      "inf": "oem74.inf",
+      "inf_section": "LogiHubUVC15.Dev.NT",
+      "matching_device_id": "usb\\vid_046d&pid_0843",
+      "driver_rank_hex": "00FF0001",
+      "driver_provider": "Logitech",
+      "driver_version": "1.2.75.34",
+      "driver_date": "2022-01-31T00:00:00.0000000Z",
+      "location_info": "Port_#0004.Hub_#0008",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(4)"
+      ],
+      "parent": "USB\\VID_05E3&PID_0610\\6&f6f0942&0&1",
+      "container_id": "{3F8B42F9-D0C1-11F1-879F-10F60A521D3A}",
+      "first_install_utc": "2026-10-25T22:16:34.5740000Z",
+      "install_utc": "2026-10-25T22:16:34.5740000Z",
+      "last_arrival_utc": "2026-10-25T22:31:14.3771270Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0024",
+        "config_flags": 0,
+        "service": "usbccgp",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_046D&PID_0843&REV_0013",
+          "USB\\VID_046D&PID_0843"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_046D&DevClass_00&SubClass_00&Prot00",
+          "USB\\COMPAT_VID_046D&DevClass_00&SubClass_00",
+          "USB\\COMPAT_VID_046D&DevClass_00",
+          "USB\\DevClass_00&SubClass_00&Prot_00",
+          "USB\\DevClass_00&SubClass_00",
+          "USB\\DevClass_00",
+          "USB\\COMPOSITE"
+        ],
+        "pnputil_status": "Started",
+        "matching_drivers": [
+          {
+            "inf": "oem74.inf",
+            "original": "luvc1564c.inf",
+            "provider": "Logitech",
+            "class": "USB",
+            "version": "01/31/2022 1.2.75.34",
+            "signer": "Microsoft Windows Hardware Compatibility Publisher",
+            "matching_id": "USB\\VID_046D&PID_0843",
+            "rank": "00FF0001",
+            "status": "BestRanked/Installed"
+          },
+          {
+            "inf": "usb.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "USB",
+            "version": "06/21/2006 10.0.26100.9711",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\COMPOSITE",
+            "rank": "00FF2006",
+            "status": "Outranked"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "046D:085C",
+      "instance_id": "USB\\VID_046D&PID_085C&MI_02\\8&268DA596&0&0002",
+      "role": "function MI_02",
+      "present": true,
+      "status": "OK",
+      "problem": 0,
+      "devnode_status_hex": "0x0180200A",
+      "friendly": "C922 Pro Stream Webcam",
+      "class": "MEDIA",
+      "class_guid": "{4d36e96c-e325-11ce-bfc1-08002be10318}",
+      "service": "usbaudio",
+      "inf": "wdma_usb.inf",
+      "inf_section": "USBAudio",
+      "matching_device_id": "USB\\Class_01",
+      "driver_rank_hex": "00FF2005",
+      "driver_provider": "Microsoft",
+      "driver_version": "10.0.26100.9457",
+      "driver_date": "2026-09-12T00:00:00.0000000Z",
+      "location_info": "0000.0014.0000.001.000.000.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(1)#USBMI(2)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS01)#USBMI(2)"
+      ],
+      "parent": "USB\\VID_046D&PID_085C\\B76395EF",
+      "container_id": "{791C9A88-5665-5CBB-9D66-29961BFA28F1}",
+      "first_install_utc": "2026-05-09T19:06:36.0171810Z",
+      "install_utc": "2026-05-09T19:06:36.0171810Z",
+      "last_arrival_utc": "2026-10-25T18:48:16.1248030Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{4d36e96c-e325-11ce-bfc1-08002be10318}\\0027",
+        "config_flags": 0,
+        "service": "usbaudio",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_046D&PID_085C&REV_0016&MI_02",
+          "USB\\VID_046D&PID_085C&MI_02"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_046d&Class_01&SubClass_02&Prot_00",
+          "USB\\COMPAT_VID_046d&Class_01&SubClass_02",
+          "USB\\COMPAT_VID_046d&Class_01",
+          "USB\\Class_01&SubClass_02&Prot_00",
+          "USB\\Class_01&SubClass_02",
+          "USB\\Class_01"
+        ],
+        "pnputil_status": "Started",
+        "matching_drivers": [
+          {
+            "inf": "wdma_usb.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "MEDIA",
+            "version": "09/12/2026 10.0.26100.9457",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\Class_01",
+            "rank": "00FF2005",
+            "status": "BestRanked/Installed"
+          },
+          {
+            "inf": "usbmidi2.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "MEDIA",
+            "version": "06/21/2006 10.0.26100.9549",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\Class_01",
+            "rank": "00FF3105",
+            "status": "Outranked"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "046D:085C",
+      "instance_id": "USB\\VID_046D&PID_085C\\B76395EF",
+      "role": "parent",
+      "present": true,
+      "status": "OK",
+      "problem": 0,
+      "devnode_status_hex": "0x0180600A",
+      "friendly": "USB Composite Device",
+      "class": "USB",
+      "class_guid": "{36fc9e60-c465-11cf-8056-444553540000}",
+      "service": "usbccgp",
+      "inf": "usb.inf",
+      "inf_section": "Composite.Dev.NT",
+      "matching_device_id": "USB\\COMPOSITE",
+      "driver_rank_hex": "00FF2006",
+      "driver_provider": "Microsoft",
+      "driver_version": "10.0.26100.9711",
+      "driver_date": "2006-06-21T00:00:00.0000000Z",
+      "location_info": "Port_#0001.Hub_#0001",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(1)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS01)"
+      ],
+      "parent": "USB\\ROOT_HUB30\\4&2fd48294&0&0",
+      "container_id": "{791C9A88-5665-5CBB-9D66-29961BFA28F1}",
+      "first_install_utc": "2026-05-09T19:06:35.9927100Z",
+      "install_utc": "2026-05-09T19:06:35.9927100Z",
+      "last_arrival_utc": "2026-10-25T18:48:16.1111050Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0022",
+        "config_flags": 0,
+        "service": "usbccgp",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_046D&PID_085C&REV_0016",
+          "USB\\VID_046D&PID_085C"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_046D&DevClass_00&SubClass_00&Prot00",
+          "USB\\COMPAT_VID_046D&DevClass_00&SubClass_00",
+          "USB\\COMPAT_VID_046D&DevClass_00",
+          "USB\\DevClass_00&SubClass_00&Prot_00",
+          "USB\\DevClass_00&SubClass_00",
+          "USB\\DevClass_00",
+          "USB\\COMPOSITE"
+        ],
+        "pnputil_status": "Started",
+        "matching_drivers": [
+          {
+            "inf": "usb.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "USB",
+            "version": "06/21/2006 10.0.26100.9711",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\COMPOSITE",
+            "rank": "00FF2006",
+            "status": "BestRanked/Installed"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "046D:085C",
+      "instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268DA596&0&0000",
+      "role": "function MI_00",
+      "present": true,
+      "status": "OK",
+      "problem": 0,
+      "devnode_status_hex": "0x0180200A",
+      "friendly": "c922 Pro Stream Webcam",
+      "class": "Image",
+      "class_guid": "{6bdd1fc6-810f-11d0-bec7-08002be2092f}",
+      "service": "usbvideo",
+      "inf": "oem35.inf",
+      "inf_section": "lwcusb",
+      "matching_device_id": "usb\\vid_046d&pid_085c&mi_00",
+      "driver_rank_hex": "00FF0001",
+      "driver_provider": "Logitech",
+      "driver_version": "1.4.40.0",
+      "driver_date": "2021-04-27T00:00:00.0000000Z",
+      "location_info": "0000.0014.0000.001.000.000.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(1)#USBMI(0)",
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(1)#USB(1)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS01)#USBMI(0)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS01)#USB(1)"
+      ],
+      "parent": "USB\\VID_046D&PID_085C\\B76395EF",
+      "container_id": "{791C9A88-5665-5CBB-9D66-29961BFA28F1}",
+      "first_install_utc": "2026-05-09T19:06:36.3010000Z",
+      "install_utc": "2026-05-09T19:06:36.3010000Z",
+      "last_arrival_utc": "2026-10-25T18:48:16.1204150Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{6bdd1fc6-810f-11d0-bec7-08002be2092f}\\0004",
+        "config_flags": 0,
+        "service": "usbvideo",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_046D&PID_085C&REV_0016&MI_00",
+          "USB\\VID_046D&PID_085C&MI_00"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_046d&Class_0e&SubClass_03&Prot_00",
+          "USB\\COMPAT_VID_046d&Class_0e&SubClass_03",
+          "USB\\COMPAT_VID_046d&Class_0e",
+          "USB\\Class_0e&SubClass_03&Prot_00",
+          "USB\\Class_0e&SubClass_03",
+          "USB\\Class_0e"
+        ],
+        "pnputil_status": "Started",
+        "matching_drivers": [
+          {
+            "inf": "oem35.inf",
+            "original": "lwcusb.inf",
+            "provider": "Logitech",
+            "class": "Image",
+            "version": "04/27/2021 1.4.40.0",
+            "signer": "Microsoft Windows Hardware Compatibility Publisher",
+            "matching_id": "USB\\VID_046D&PID_085C&MI_00",
+            "rank": "00FF0001",
+            "status": "BestRanked/Installed"
+          },
+          {
+            "inf": "usbvideo.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "Camera",
+            "version": "06/21/2006 10.0.26100.9711",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\Class_0e",
+            "rank": "00FF2005",
+            "status": "Outranked"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "1532:0E05",
+      "instance_id": "USB\\VID_1532&PID_0E05&MI_02\\A&149B2A0F&0&0002",
+      "role": "function MI_02",
+      "present": false,
+      "status": "Unknown",
+      "problem": null,
+      "devnode_status_hex": null,
+      "friendly": "Razer Kiyo Pro",
+      "class": "MEDIA",
+      "class_guid": "{4d36e96c-e325-11ce-bfc1-08002be10318}",
+      "service": "usbaudio",
+      "inf": "oem0.inf",
+      "inf_section": "Razer",
+      "matching_device_id": "usb\\vid_1532&pid_0e05&mi_02",
+      "driver_rank_hex": "00FF0001",
+      "driver_provider": "Razer Inc",
+      "driver_version": "6.2.9200.16547",
+      "driver_date": "2017-01-02T00:00:00.0000000Z",
+      "location_info": "000b.0000.0000.003.003.000.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(3)#USB(3)#USBMI(2)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(PXSX)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS03)#USB(3)#USBMI(2)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(HRUS)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS03)#USB(3)#USBMI(2)"
+      ],
+      "parent": "USB\\VID_1532&PID_0E05\\9&112db19f&0&3",
+      "container_id": "{5B2CB98D-BA47-11EF-860C-806E6F6E6963}",
+      "first_install_utc": "2024-12-14T18:15:48.7200000Z",
+      "install_utc": "2024-12-14T18:15:48.7200000Z",
+      "last_arrival_utc": "2025-04-03T12:40:50.4165880Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{4d36e96c-e325-11ce-bfc1-08002be10318}\\0018",
+        "config_flags": 32,
+        "service": "usbaudio",
+        "device_interface_guids": null
+      }
+    },
+    {
+      "vidpid": "1532:0E05",
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&3",
+      "role": "parent",
+      "present": false,
+      "status": "Unknown",
+      "problem": null,
+      "devnode_status_hex": null,
+      "friendly": "USB Composite Device",
+      "class": "USB",
+      "class_guid": "{36fc9e60-c465-11cf-8056-444553540000}",
+      "service": "usbccgp",
+      "inf": "usb.inf",
+      "inf_section": "Composite.Dev.NT",
+      "matching_device_id": "USB\\COMPOSITE",
+      "driver_rank_hex": "00FF2006",
+      "driver_provider": "Microsoft",
+      "driver_version": "10.0.26100.9711",
+      "driver_date": "2006-06-21T00:00:00.0000000Z",
+      "location_info": "Port_#0003.Hub_#0004",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(3)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(PXSX)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(3)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(HRUS)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(3)"
+      ],
+      "parent": "USB\\VID_05E3&PID_0625\\8&27a25471&0&4",
+      "container_id": "{B431F27A-10DE-11F0-8674-806E6F6E6963}",
+      "first_install_utc": "2025-04-03T22:55:20.2492370Z",
+      "install_utc": "2025-04-03T22:55:20.2492370Z",
+      "last_arrival_utc": "2025-05-21T16:07:40.3478040Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0030",
+        "config_flags": 0,
+        "service": "usbccgp",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_1532&PID_0E05&REV_0821",
+          "USB\\VID_1532&PID_0E05"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_1532&DevClass_00&SubClass_00&Prot00",
+          "USB\\COMPAT_VID_1532&DevClass_00&SubClass_00",
+          "USB\\COMPAT_VID_1532&DevClass_00",
+          "USB\\DevClass_00&SubClass_00&Prot_00",
+          "USB\\DevClass_00&SubClass_00",
+          "USB\\DevClass_00",
+          "USB\\COMPOSITE"
+        ],
+        "pnputil_status": "Disconnected",
+        "matching_drivers": [
+          {
+            "inf": "usb.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "USB",
+            "version": "06/21/2006 10.0.26100.9711",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\COMPOSITE",
+            "rank": "00FF2006",
+            "status": "BestRanked/Installed"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "1532:0E05",
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "role": "parent",
+      "present": true,
+      "status": "OK",
+      "problem": 0,
+      "devnode_status_hex": "0x0180600A",
+      "friendly": "USB Composite Device",
+      "class": "USB",
+      "class_guid": "{36fc9e60-c465-11cf-8056-444553540000}",
+      "service": "usbccgp",
+      "inf": "usb.inf",
+      "inf_section": "Composite.Dev.NT",
+      "matching_device_id": "USB\\COMPOSITE",
+      "driver_rank_hex": "00FF2006",
+      "driver_provider": "Microsoft",
+      "driver_version": "10.0.26100.9711",
+      "driver_date": "2006-06-21T00:00:00.0000000Z",
+      "location_info": "Port_#0004.Hub_#0003",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(PXSX)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(4)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(HRUS)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(4)"
+      ],
+      "parent": "USB\\VID_05E3&PID_0625\\8&27a25471&0&4",
+      "container_id": "{27F8A5AC-F1BD-11F0-8704-10F60A521D3A}",
+      "first_install_utc": "2026-01-15T03:26:17.6108000Z",
+      "install_utc": "2026-01-15T03:26:17.6108000Z",
+      "last_arrival_utc": "2026-10-25T19:48:12.8384740Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0050",
+        "config_flags": 0,
+        "service": "usbccgp",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_1532&PID_0E05&REV_0821",
+          "USB\\VID_1532&PID_0E05"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_1532&DevClass_00&SubClass_00&Prot00",
+          "USB\\COMPAT_VID_1532&DevClass_00&SubClass_00",
+          "USB\\COMPAT_VID_1532&DevClass_00",
+          "USB\\DevClass_00&SubClass_00&Prot_00",
+          "USB\\DevClass_00&SubClass_00",
+          "USB\\DevClass_00",
+          "USB\\COMPOSITE"
+        ],
+        "pnputil_status": "Started",
+        "matching_drivers": [
+          {
+            "inf": "usb.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "USB",
+            "version": "06/21/2006 10.0.26100.9711",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\COMPOSITE",
+            "rank": "00FF2006",
+            "status": "BestRanked/Installed"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "1532:0E05",
+      "instance_id": "USB\\VID_1532&PID_0E05&MI_00\\A&34494D13&0&0000",
+      "role": "function MI_00",
+      "present": true,
+      "status": "OK",
+      "problem": 0,
+      "devnode_status_hex": "0x0180200A",
+      "friendly": "Razer Kiyo Pro",
+      "class": "Camera",
+      "class_guid": "{ca3e7ab9-b4c3-4ae6-8251-579ef933890f}",
+      "service": "usbvideo",
+      "inf": "oem123.inf",
+      "inf_section": "Razer",
+      "matching_device_id": "usb\\vid_1532&pid_0e05&mi_00",
+      "driver_rank_hex": "00FF0001",
+      "driver_provider": "Razer Inc",
+      "driver_version": "6.2.9200.16516",
+      "driver_date": "2017-01-02T00:00:00.0000000Z",
+      "location_info": "000b.0000.0000.004.004.000.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)#USBMI(0)",
+        "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)#USB(4)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(PXSX)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(4)#USBMI(0)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(PXSX)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(4)#USB(4)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(HRUS)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(4)#USBMI(0)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(HRUS)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(4)#USB(4)"
+      ],
+      "parent": "USB\\VID_1532&PID_0E05\\9&3a0ecb01&0&4",
+      "container_id": "{27F8A5AC-F1BD-11F0-8704-10F60A521D3A}",
+      "first_install_utc": "2026-01-15T03:26:20.5260000Z",
+      "install_utc": "2026-01-15T03:26:20.5260000Z",
+      "last_arrival_utc": "2026-10-25T19:48:12.8449000Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{ca3e7ab9-b4c3-4ae6-8251-579ef933890f}\\0004",
+        "config_flags": 0,
+        "service": "usbvideo",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_1532&PID_0E05&REV_0821&MI_00",
+          "USB\\VID_1532&PID_0E05&MI_00"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_1532&Class_0e&SubClass_03&Prot_00",
+          "USB\\COMPAT_VID_1532&Class_0e&SubClass_03",
+          "USB\\COMPAT_VID_1532&Class_0e",
+          "USB\\Class_0e&SubClass_03&Prot_00",
+          "USB\\Class_0e&SubClass_03",
+          "USB\\Class_0e"
+        ],
+        "pnputil_status": "Started",
+        "matching_drivers": [
+          {
+            "inf": "oem123.inf",
+            "original": "rz0e05dev.inf",
+            "provider": "Razer Inc",
+            "class": "Camera",
+            "version": "01/02/2017 6.2.9200.16516",
+            "signer": "Microsoft Windows Hardware Compatibility Publisher",
+            "matching_id": "USB\\VID_1532&PID_0E05&MI_00",
+            "rank": "00FF0001",
+            "status": "BestRanked/Installed"
+          },
+          {
+            "inf": "usbvideo.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "Camera",
+            "version": "06/21/2006 10.0.26100.9711",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\Class_0e",
+            "rank": "00FF2005",
+            "status": "Outranked"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "1532:0E05",
+      "instance_id": "USB\\VID_1532&PID_0E05&MI_02\\A&B6833B1&0&0002",
+      "role": "function MI_02",
+      "present": false,
+      "status": "Unknown",
+      "problem": null,
+      "devnode_status_hex": null,
+      "friendly": "Razer Kiyo Pro",
+      "class": "MEDIA",
+      "class_guid": "{4d36e96c-e325-11ce-bfc1-08002be10318}",
+      "service": "usbaudio",
+      "inf": "oem0.inf",
+      "inf_section": "Razer",
+      "matching_device_id": "usb\\vid_1532&pid_0e05&mi_02",
+      "driver_rank_hex": "00FF0001",
+      "driver_provider": "Razer Inc",
+      "driver_version": "6.2.9200.16547",
+      "driver_date": "2017-01-02T00:00:00.0000000Z",
+      "location_info": "000b.0000.0000.004.003.000.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(3)#USBMI(2)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(PXSX)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(3)#USBMI(2)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(HRUS)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(3)#USBMI(2)"
+      ],
+      "parent": "USB\\VID_1532&PID_0E05\\9&3a0ecb01&0&3",
+      "container_id": "{B431F27A-10DE-11F0-8674-806E6F6E6963}",
+      "first_install_utc": "2025-04-03T22:55:25.3430000Z",
+      "install_utc": "2025-04-03T22:55:25.3430000Z",
+      "last_arrival_utc": "2025-05-21T16:07:40.3897690Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{4d36e96c-e325-11ce-bfc1-08002be10318}\\0015",
+        "config_flags": 32,
+        "service": "usbaudio",
+        "device_interface_guids": null
+      }
+    },
+    {
+      "vidpid": "1532:0E05",
+      "instance_id": "USB\\VID_1532&PID_0E05&MI_00\\A&B6833B1&0&0000",
+      "role": "function MI_00",
+      "present": false,
+      "status": "Unknown",
+      "problem": null,
+      "devnode_status_hex": null,
+      "friendly": "Razer Kiyo Pro",
+      "class": "Camera",
+      "class_guid": "{ca3e7ab9-b4c3-4ae6-8251-579ef933890f}",
+      "service": "usbvideo",
+      "inf": "oem123.inf",
+      "inf_section": "Razer",
+      "matching_device_id": "usb\\vid_1532&pid_0e05&mi_00",
+      "driver_rank_hex": "00FF0001",
+      "driver_provider": "Razer Inc",
+      "driver_version": "6.2.9200.16516",
+      "driver_date": "2017-01-02T00:00:00.0000000Z",
+      "location_info": "000b.0000.0000.004.003.000.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(3)#USBMI(0)",
+        "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(3)#USB(3)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(PXSX)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(3)#USBMI(0)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(PXSX)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(3)#USB(3)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(HRUS)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(3)#USBMI(0)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(HRUS)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(3)#USB(3)"
+      ],
+      "parent": "USB\\VID_1532&PID_0E05\\9&3a0ecb01&0&3",
+      "container_id": "{B431F27A-10DE-11F0-8674-806E6F6E6963}",
+      "first_install_utc": "2025-04-03T22:55:26.4780000Z",
+      "install_utc": "2025-04-03T22:55:26.4780000Z",
+      "last_arrival_utc": "2025-05-21T16:07:40.3807830Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{ca3e7ab9-b4c3-4ae6-8251-579ef933890f}\\0002",
+        "config_flags": 32,
+        "service": "usbvideo",
+        "device_interface_guids": null
+      }
+    },
+    {
+      "vidpid": "1532:0E05",
+      "instance_id": "USB\\VID_1532&PID_0E05&MI_00\\A&149B2A0F&0&0000",
+      "role": "function MI_00",
+      "present": false,
+      "status": "Unknown",
+      "problem": null,
+      "devnode_status_hex": null,
+      "friendly": "Razer Kiyo Pro",
+      "class": "Camera",
+      "class_guid": "{ca3e7ab9-b4c3-4ae6-8251-579ef933890f}",
+      "service": "usbvideo",
+      "inf": "oem123.inf",
+      "inf_section": "Razer",
+      "matching_device_id": "usb\\vid_1532&pid_0e05&mi_00",
+      "driver_rank_hex": "00FF0001",
+      "driver_provider": "Razer Inc",
+      "driver_version": "6.2.9200.16516",
+      "driver_date": "2017-01-02T00:00:00.0000000Z",
+      "location_info": "000b.0000.0000.003.003.000.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(3)#USB(3)#USBMI(0)",
+        "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(3)#USB(3)#USB(3)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(PXSX)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS03)#USB(3)#USBMI(0)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(PXSX)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS03)#USB(3)#USB(3)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(HRUS)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS03)#USB(3)#USBMI(0)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(HRUS)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS03)#USB(3)#USB(3)"
+      ],
+      "parent": "USB\\VID_1532&PID_0E05\\9&112db19f&0&3",
+      "container_id": "{5B2CB98D-BA47-11EF-860C-806E6F6E6963}",
+      "first_install_utc": "2024-12-14T18:15:45.1680000Z",
+      "install_utc": "2024-12-14T18:15:45.1680000Z",
+      "last_arrival_utc": "2025-04-03T12:40:50.4065870Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{ca3e7ab9-b4c3-4ae6-8251-579ef933890f}\\0001",
+        "config_flags": 32,
+        "service": "usbvideo",
+        "device_interface_guids": null
+      }
+    },
+    {
+      "vidpid": "1532:0E05",
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&112DB19F&0&3",
+      "role": "parent",
+      "present": false,
+      "status": "Unknown",
+      "problem": null,
+      "devnode_status_hex": null,
+      "friendly": "USB Composite Device",
+      "class": "USB",
+      "class_guid": "{36fc9e60-c465-11cf-8056-444553540000}",
+      "service": "usbccgp",
+      "inf": "usb.inf",
+      "inf_section": "Composite.Dev.NT",
+      "matching_device_id": "USB\\COMPOSITE",
+      "driver_rank_hex": "00FF2006",
+      "driver_provider": "Microsoft",
+      "driver_version": "10.0.26100.9711",
+      "driver_date": "2006-06-21T00:00:00.0000000Z",
+      "location_info": "Port_#0003.Hub_#0003",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(3)#USB(3)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(PXSX)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS03)#USB(3)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(HRUS)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS03)#USB(3)"
+      ],
+      "parent": "HTREE\\ROOT\\0",
+      "container_id": "{5B2CB98D-BA47-11EF-860C-806E6F6E6963}",
+      "first_install_utc": "2024-12-14T18:15:13.6493280Z",
+      "install_utc": "2024-12-14T18:15:13.6493280Z",
+      "last_arrival_utc": "2025-04-03T12:40:50.3748940Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0006",
+        "config_flags": 0,
+        "service": "usbccgp",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_1532&PID_0E05&REV_0821",
+          "USB\\VID_1532&PID_0E05"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_1532&DevClass_00&SubClass_00&Prot00",
+          "USB\\COMPAT_VID_1532&DevClass_00&SubClass_00",
+          "USB\\COMPAT_VID_1532&DevClass_00",
+          "USB\\DevClass_00&SubClass_00&Prot_00",
+          "USB\\DevClass_00&SubClass_00",
+          "USB\\DevClass_00",
+          "USB\\COMPOSITE"
+        ],
+        "pnputil_status": "Disconnected",
+        "matching_drivers": [
+          {
+            "inf": "usb.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "USB",
+            "version": "06/21/2006 10.0.26100.9711",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\COMPOSITE",
+            "rank": "00FF2006",
+            "status": "BestRanked/Installed"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "1532:0E05",
+      "instance_id": "USB\\VID_1532&PID_0E05&MI_02\\A&34494D13&0&0002",
+      "role": "function MI_02",
+      "present": true,
+      "status": "OK",
+      "problem": 0,
+      "devnode_status_hex": "0x0180200A",
+      "friendly": "Razer Kiyo Pro",
+      "class": "MEDIA",
+      "class_guid": "{4d36e96c-e325-11ce-bfc1-08002be10318}",
+      "service": "usbaudio",
+      "inf": "oem0.inf",
+      "inf_section": "Razer",
+      "matching_device_id": "usb\\vid_1532&pid_0e05&mi_02",
+      "driver_rank_hex": "00FF0001",
+      "driver_provider": "Razer Inc",
+      "driver_version": "6.2.9200.16547",
+      "driver_date": "2017-01-02T00:00:00.0000000Z",
+      "location_info": "000b.0000.0000.004.004.000.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)#USBMI(2)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(PXSX)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(4)#USBMI(2)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(HRUS)#ACPI(TBDU)#ACPI(XHCI)#ACPI(RHUB)#ACPI(SS04)#USB(4)#USBMI(2)"
+      ],
+      "parent": "USB\\VID_1532&PID_0E05\\9&3a0ecb01&0&4",
+      "container_id": "{27F8A5AC-F1BD-11F0-8704-10F60A521D3A}",
+      "first_install_utc": "2026-01-15T03:26:22.8530000Z",
+      "install_utc": "2026-01-15T03:26:22.8530000Z",
+      "last_arrival_utc": "2026-10-25T19:48:12.8561940Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{4d36e96c-e325-11ce-bfc1-08002be10318}\\0023",
+        "config_flags": 0,
+        "service": "usbaudio",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_1532&PID_0E05&REV_0821&MI_02",
+          "USB\\VID_1532&PID_0E05&MI_02"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_1532&Class_01&SubClass_02&Prot_00",
+          "USB\\COMPAT_VID_1532&Class_01&SubClass_02",
+          "USB\\COMPAT_VID_1532&Class_01",
+          "USB\\Class_01&SubClass_02&Prot_00",
+          "USB\\Class_01&SubClass_02",
+          "USB\\Class_01"
+        ],
+        "pnputil_status": "Started",
+        "matching_drivers": [
+          {
+            "inf": "oem0.inf",
+            "original": "rz0e05deva.inf",
+            "provider": "Razer Inc",
+            "class": "MEDIA",
+            "version": "01/02/2017 6.2.9200.16547",
+            "signer": "Microsoft Windows Hardware Compatibility Publisher",
+            "matching_id": "USB\\VID_1532&PID_0E05&MI_02",
+            "rank": "00FF0001",
+            "status": "BestRanked/Installed"
+          },
+          {
+            "inf": "wdma_usb.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "MEDIA",
+            "version": "09/12/2026 10.0.26100.9457",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\Class_01",
+            "rank": "00FF2005",
+            "status": "Outranked"
+          },
+          {
+            "inf": "usbmidi2.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "MEDIA",
+            "version": "06/21/2006 10.0.26100.9549",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\Class_01",
+            "rank": "00FF3105",
+            "status": "Outranked"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "4C4A:4A55",
+      "instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&35E81179&0&0000",
+      "role": "function MI_00",
+      "present": true,
+      "status": "OK",
+      "problem": 0,
+      "devnode_status_hex": "0x0180200A",
+      "friendly": "USB Camera",
+      "class": "Camera",
+      "class_guid": "{ca3e7ab9-b4c3-4ae6-8251-579ef933890f}",
+      "service": "usbvideo",
+      "inf": "usbvideo.inf",
+      "inf_section": "USBVideo.NT",
+      "matching_device_id": "USB\\Class_0e",
+      "driver_rank_hex": "00FF2005",
+      "driver_provider": "Microsoft",
+      "driver_version": "10.0.26100.9711",
+      "driver_date": "2006-06-21T00:00:00.0000000Z",
+      "location_info": "0000.0014.0000.013.001.003.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(3)#USBMI(0)",
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(3)#USB(3)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(3)#USBMI(0)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(3)#USB(3)"
+      ],
+      "parent": "USB\\VID_4C4A&PID_4A55\\7&7dcc7ce&0&3",
+      "container_id": "{C271585B-748A-11F1-875B-10F60A521D37}",
+      "first_install_utc": "2026-06-30T13:52:34.9943260Z",
+      "install_utc": "2026-06-30T13:52:35.0330000Z",
+      "last_arrival_utc": "2026-10-25T22:20:45.2172610Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{ca3e7ab9-b4c3-4ae6-8251-579ef933890f}\\0000",
+        "config_flags": 0,
+        "service": "usbvideo",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_4C4A&PID_4A55&REV_0100&MI_00",
+          "USB\\VID_4C4A&PID_4A55&MI_00"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_4c4a&Class_0e&SubClass_03&Prot_00",
+          "USB\\COMPAT_VID_4c4a&Class_0e&SubClass_03",
+          "USB\\COMPAT_VID_4c4a&Class_0e",
+          "USB\\Class_0e&SubClass_03&Prot_00",
+          "USB\\Class_0e&SubClass_03",
+          "USB\\Class_0e"
+        ],
+        "pnputil_status": "Started",
+        "matching_drivers": [
+          {
+            "inf": "usbvideo.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "Camera",
+            "version": "06/21/2006 10.0.26100.9711",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\Class_0e",
+            "rank": "00FF2005",
+            "status": "BestRanked/Installed"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "4C4A:4A55",
+      "instance_id": "USB\\VID_4C4A&PID_4A55&MI_02\\8&35E81179&0&0002",
+      "role": "function MI_02",
+      "present": true,
+      "status": "OK",
+      "problem": 0,
+      "devnode_status_hex": "0x0180200A",
+      "friendly": "USB Audio",
+      "class": "MEDIA",
+      "class_guid": "{4d36e96c-e325-11ce-bfc1-08002be10318}",
+      "service": "usbaudio",
+      "inf": "wdma_usb.inf",
+      "inf_section": "USBAudio",
+      "matching_device_id": "USB\\Class_01",
+      "driver_rank_hex": "00FF2005",
+      "driver_provider": "Microsoft",
+      "driver_version": "10.0.26100.9457",
+      "driver_date": "2026-09-12T00:00:00.0000000Z",
+      "location_info": "0000.0014.0000.013.001.003.000.000.000",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(3)#USBMI(2)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(3)#USBMI(2)"
+      ],
+      "parent": "USB\\VID_4C4A&PID_4A55\\7&7dcc7ce&0&3",
+      "container_id": "{C271585B-748A-11F1-875B-10F60A521D37}",
+      "first_install_utc": "2026-06-30T13:52:34.9009780Z",
+      "install_utc": "2026-06-30T13:52:34.9009780Z",
+      "last_arrival_utc": "2026-10-25T22:20:45.2295550Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{4d36e96c-e325-11ce-bfc1-08002be10318}\\0029",
+        "config_flags": 0,
+        "service": "usbaudio",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_4C4A&PID_4A55&REV_0100&MI_02",
+          "USB\\VID_4C4A&PID_4A55&MI_02"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_4c4a&Class_01&SubClass_02&Prot_00",
+          "USB\\COMPAT_VID_4c4a&Class_01&SubClass_02",
+          "USB\\COMPAT_VID_4c4a&Class_01",
+          "USB\\Class_01&SubClass_02&Prot_00",
+          "USB\\Class_01&SubClass_02",
+          "USB\\Class_01"
+        ],
+        "pnputil_status": "Started",
+        "matching_drivers": [
+          {
+            "inf": "wdma_usb.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "MEDIA",
+            "version": "09/12/2026 10.0.26100.9457",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\Class_01",
+            "rank": "00FF2005",
+            "status": "BestRanked/Installed"
+          },
+          {
+            "inf": "usbmidi2.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "MEDIA",
+            "version": "06/21/2006 10.0.26100.9549",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\Class_01",
+            "rank": "00FF3105",
+            "status": "Outranked"
+          }
+        ]
+      }
+    },
+    {
+      "vidpid": "4C4A:4A55",
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&3",
+      "role": "parent",
+      "present": true,
+      "status": "OK",
+      "problem": 0,
+      "devnode_status_hex": "0x0180600A",
+      "friendly": "USB Composite Device",
+      "class": "USB",
+      "class_guid": "{36fc9e60-c465-11cf-8056-444553540000}",
+      "service": "usbccgp",
+      "inf": "usb.inf",
+      "inf_section": "Composite.Dev.NT",
+      "matching_device_id": "USB\\COMPOSITE",
+      "driver_rank_hex": "00FF2006",
+      "driver_provider": "Microsoft",
+      "driver_version": "10.0.26100.9711",
+      "driver_date": "2006-06-21T00:00:00.0000000Z",
+      "location_info": "Port_#0003.Hub_#0008",
+      "location_paths": [
+        "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(3)",
+        "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(3)"
+      ],
+      "parent": "USB\\VID_05E3&PID_0610\\6&f6f0942&0&1",
+      "container_id": "{C271585B-748A-11F1-875B-10F60A521D37}",
+      "first_install_utc": "2026-06-30T13:52:34.8863770Z",
+      "install_utc": "2026-06-30T13:52:34.8863770Z",
+      "last_arrival_utc": "2026-10-25T22:20:45.2046560Z",
+      "last_removal_utc": null,
+      "registry": {
+        "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0004",
+        "config_flags": 0,
+        "service": "usbccgp",
+        "device_interface_guids": null
+      },
+      "pnputil": {
+        "hardware_ids": [
+          "USB\\VID_4C4A&PID_4A55&REV_0100",
+          "USB\\VID_4C4A&PID_4A55"
+        ],
+        "compatible_ids": [
+          "USB\\COMPAT_VID_4C4A&DevClass_00&SubClass_00&Prot00",
+          "USB\\COMPAT_VID_4C4A&DevClass_00&SubClass_00",
+          "USB\\COMPAT_VID_4C4A&DevClass_00",
+          "USB\\DevClass_00&SubClass_00&Prot_00",
+          "USB\\DevClass_00&SubClass_00",
+          "USB\\DevClass_00",
+          "USB\\COMPOSITE"
+        ],
+        "pnputil_status": "Started",
+        "matching_drivers": [
+          {
+            "inf": "usb.inf",
+            "original": null,
+            "provider": "Microsoft",
+            "class": "USB",
+            "version": "06/21/2006 10.0.26100.9711",
+            "signer": "Microsoft Windows",
+            "matching_id": "USB\\COMPOSITE",
+            "rank": "00FF2006",
+            "status": "BestRanked/Installed"
+          }
+        ]
+      }
+    }
+  ],
+  "driver_store": [
+    {
+      "vidpid": "046D:0843",
+      "published": "oem11.inf",
+      "provider": "%PVD%",
+      "driver_ver": "06/21/2017, 1.1.135.0",
+      "class": "Image",
+      "includes_winusb": false,
+      "model_lines": [
+        "%PID_0843_DD%=PID_0843.XPAMD64,usb\\vid_046d&pid_0843&mi_00"
+      ]
+    },
+    {
+      "vidpid": "046D:0843",
+      "published": "oem74.inf",
+      "provider": "%PVD%",
+      "driver_ver": "01/31/2022, 1.2.75.34",
+      "class": "USB",
+      "includes_winusb": false,
+      "model_lines": [
+        "%USB\\VID_046D&PID_0843.DeviceDesc%=LogiHubUVC15_NR.Dev.NT,usb\\vid_046d&pid_0843",
+        "%USB\\VID_046D&PID_0843.DeviceDesc%=LogiHubUVC15_NR.Dev.NT,usb\\vid_046d&pid_0843",
+        "%USB\\VID_046D&PID_0843.DeviceDesc%=LogiHubUVC15.Dev.NT,usb\\vid_046d&pid_0843",
+        "%USB\\VID_046D&PID_0843.DeviceDesc%=LogiHubUVC15.Dev.NT,usb\\vid_046d&pid_0843",
+        "USB\\VID_046D&PID_0843.DeviceDesc=\"Logitech USB Camera (Webcam C930e)\"",
+        "USB\\VID_046D&PID_0843.DeviceDesc=\"Logicool USB Camera (Webcam C930e)\""
+      ]
+    },
+    {
+      "vidpid": "046D:085C",
+      "published": "oem35.inf",
+      "provider": "%str_Provider%",
+      "driver_ver": "04/27/2021,1.4.40.0",
+      "class": "Image",
+      "includes_winusb": false,
+      "model_lines": [
+        "%PID_085C_DD%=lwcusb,USB\\VID_046D&PID_085c&MI_00",
+        "%PID_085C_DD%=lwcusb,USB\\VID_046D&PID_085c&MI_00"
+      ]
+    },
+    {
+      "vidpid": "1532:0E05",
+      "published": "oem0.inf",
+      "provider": "%Razer%",
+      "driver_ver": "01/02/2017,6.2.9200.16547",
+      "class": "MEDIA",
+      "includes_winusb": false,
+      "model_lines": [
+        "%Razer0e05.DeviceDesc%=Razer, USB\\Vid_1532&Pid_0e05&MI_02"
+      ]
+    },
+    {
+      "vidpid": "1532:0E05",
+      "published": "oem123.inf",
+      "provider": "%Razer%",
+      "driver_ver": "01/02/2017,6.2.9200.16516",
+      "class": "Camera",
+      "includes_winusb": false,
+      "model_lines": [
+        "%Razer0e05.DeviceDesc%=Razer, USB\\Vid_1532&Pid_0e05&MI_00"
+      ]
+    }
+  ],
+  "camera_interfaces": [
+    {
+      "category": "KSCATEGORY_VIDEO_CAMERA",
+      "device_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&b6833b1&0&0000",
+      "status": "Disabled",
+      "path": "\\\\?\\USB#VID_1532&PID_0E05&MI_00#A&B6833B1&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_VIDEO_CAMERA",
+      "device_instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&16be97fe&0&0000",
+      "status": "Disabled",
+      "path": "\\\\?\\USB#VID_046D&PID_0843&MI_00#8&16BE97FE&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_VIDEO_CAMERA",
+      "device_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+      "status": "Enabled",
+      "path": "\\\\?\\USB#VID_046D&PID_085C&MI_00#8&268DA596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_VIDEO_CAMERA",
+      "device_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&149b2a0f&0&0000",
+      "status": "Disabled",
+      "path": "\\\\?\\USB#VID_1532&PID_0E05&MI_00#a&149b2a0f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_VIDEO_CAMERA",
+      "device_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&35e81179&0&0000",
+      "status": "Enabled",
+      "path": "\\\\?\\USB#VID_4C4A&PID_4A55&MI_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_VIDEO_CAMERA",
+      "device_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+      "status": "Enabled",
+      "path": "\\\\?\\USB#VID_1532&PID_0E05&MI_00#A&34494D13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_VIDEO_CAMERA",
+      "device_instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&39dec205&1&0000",
+      "status": "Enabled",
+      "path": "\\\\?\\USB#VID_046D&PID_0843&MI_00#8&39DEC205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_1532&PID_0E05&MI_02\\a&34494d13&0&0002",
+      "status": "Enabled",
+      "path": "\\\\?\\USB#VID_1532&PID_0E05&MI_02#A&34494D13&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&16be97fe&0&0000",
+      "status": "Disabled",
+      "path": "\\\\?\\USB#VID_046D&PID_0843&MI_00#8&16BE97FE&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_1532&PID_0E05&MI_02\\a&b6833b1&0&0002",
+      "status": "Disabled",
+      "path": "\\\\?\\USB#VID_1532&PID_0E05&MI_02#A&B6833B1&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+      "status": "Enabled",
+      "path": "\\\\?\\USB#VID_046D&PID_085C&MI_00#8&268DA596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&149b2a0f&0&0000",
+      "status": "Disabled",
+      "path": "\\\\?\\USB#VID_1532&PID_0E05&MI_00#a&149b2a0f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_046D&PID_085C&MI_02\\8&268da596&0&0002",
+      "status": "Enabled",
+      "path": "\\\\?\\USB#VID_046D&PID_085C&MI_02#8&268da596&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_046D&PID_0843&MI_03\\8&16be97fe&0&0003",
+      "status": "Disabled",
+      "path": "\\\\?\\USB#VID_046D&PID_0843&MI_03#8&16be97fe&0&0003#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_1532&PID_0E05&MI_02\\a&149b2a0f&0&0002",
+      "status": "Disabled",
+      "path": "\\\\?\\USB#VID_1532&PID_0E05&MI_02#a&149b2a0f&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&35e81179&0&0000",
+      "status": "Enabled",
+      "path": "\\\\?\\USB#VID_4C4A&PID_4A55&MI_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+      "status": "Enabled",
+      "path": "\\\\?\\USB#VID_1532&PID_0E05&MI_00#A&34494D13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&b6833b1&0&0000",
+      "status": "Disabled",
+      "path": "\\\\?\\USB#VID_1532&PID_0E05&MI_00#A&B6833B1&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_4C4A&PID_4A55&MI_02\\8&35e81179&0&0002",
+      "status": "Enabled",
+      "path": "\\\\?\\USB#VID_4C4A&PID_4A55&MI_02#8&35e81179&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_046D&PID_0843&MI_03\\8&39dec205&1&0003",
+      "status": "Enabled",
+      "path": "\\\\?\\USB#VID_046D&PID_0843&MI_03#8&39dec205&1&0003#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    {
+      "category": "KSCATEGORY_CAPTURE",
+      "device_instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&39dec205&1&0000",
+      "status": "Enabled",
+      "path": "\\\\?\\USB#VID_046D&PID_0843&MI_00#8&39DEC205&1&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    }
+  ],
+  "usbflags": [
+    {
+      "key": "046D08430013",
+      "osvc": "0000",
+      "ignore_hw_sernum": null
+    },
+    {
+      "key": "046D085C0016",
+      "osvc": "0000",
+      "ignore_hw_sernum": null
+    },
+    {
+      "key": "15320E050821",
+      "osvc": "0000",
+      "ignore_hw_sernum": null
+    },
+    {
+      "key": "4C4A4A550100",
+      "osvc": "0000",
+      "ignore_hw_sernum": null
+    }
+  ],
+  "setupapi_sections": [
+    {
+      "title": "[Device Install (DiInstallDevice) - USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4]",
+      "line": 44285,
+      "start_local": "2026-10-25T16:54:08",
+      "key_lines": [
+        "cmd: \"C:\\Program Files\\PowerShell\\7\\pwsh.exe\" -NoProfile -ExecutionPolicy Bypass -File \"C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\libusb\\winusb\\install_winusb_c930e.ps1\" -Target Parent",
+        "dvi:      Force-installed driver cannot be configured, performing standard device installation.",
+        "!    pol:           Selected driver node does not match this device (force-install)",
+        "dvi:                                    Strong Name=winusb.inf:392c3d5382e8b16c:WINUSB:10.0.26100.9549:usb\\ms_comp_winusb",
+        "dvi:                          Install Device: Removing device 'USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4' and sub-tree. 16:54:08.954",
+        "dvi:                          Install Device: Removing device sub-tree completed. 16:54:14.107",
+        "!    dvi:                          Query-removal during install of 'USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4' was vetoed by 'USB\\VID_046D&PID_0843&MI_00\\8&39dec205&0&0000' (veto type 5: PNP_VetoOutstandingOpen).",
+        "!    dvi:                          Device required reboot: Query remove failed (install) 0x17: CR_REMOVE_VETOED.",
+        "<<<  [Exit status: SUCCESS]"
+      ],
+      "start_utc": "2026-10-25T20:54:08.6600000Z"
+    },
+    {
+      "title": "[Uninstall device subtree (DiUninstallDevice) - USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4]",
+      "line": 44387,
+      "start_local": "2026-10-25T18:16:30",
+      "key_lines": [
+        "cmd: \"C:\\WINDOWS\\system32\\pnputil.exe\" /remove-device USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4 /subtree",
+        "<<<  [Exit status: SUCCESS]"
+      ],
+      "start_utc": "2026-10-25T22:16:30.0740000Z"
+    },
+    {
+      "title": "[Device Install (Hardware initiated) - USB\\VID_046D&PID_0843\\7&7dcc7ce&0&4]",
+      "line": 44439,
+      "start_local": "2026-10-25T18:16:32",
+      "key_lines": [
+        "ump: Install needed due to device having problem code CM_PROB_NOT_CONFIGURED",
+        "utl:           Driver INF     - oem74.inf (C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\luvc1564c.inf_amd64_fb12626ddadcbec3\\luvc1564c.inf)",
+        "utl:           Driver INF     - usb.inf (C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\usb.inf_amd64_8fb2f3121a117a0a\\usb.inf)",
+        "dvi:                               Strong Name=oem74.inf:c32f19f79bf460b4:LogiHubUVC15.Dev.NT:1.2.75.34:usb\\vid_046d&pid_0843",
+        "<<<  [Exit status: SUCCESS]"
+      ],
+      "start_utc": "2026-10-25T22:16:32.8280000Z"
+    },
+    {
+      "title": "[Device Install (Hardware initiated) - USB\\VID_046D&PID_0843&MI_00\\8&39dec205&1&0000]",
+      "line": 44567,
+      "start_local": "2026-10-25T18:16:34",
+      "key_lines": [
+        "ump: Install needed due to device having problem code CM_PROB_NOT_CONFIGURED",
+        "utl:           Driver INF     - oem11.inf (C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\luvc1564v.inf_amd64_aeff11dd10837b27\\luvc1564v.inf)",
+        "utl:           Driver INF     - usbvideo.inf (C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\usbvideo.inf_amd64_5a87dd4c91ab320f\\usbvideo.inf)",
+        "dvi:                               Strong Name=oem11.inf:c32f19f7370d95c6:PID_0843.XPAMD64:1.1.135.0:usb\\vid_046d&pid_0843&mi_00",
+        "<<<  [Exit status: SUCCESS]"
+      ],
+      "start_utc": "2026-10-25T22:16:34.5770000Z"
+    }
+  ],
+  "pnp_veto_events_225": [
+    {
+      "utc": "2026-10-25T20:54:14.1068493Z",
+      "message": "The application \\Device\\HarddiskVolume3\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe with process id 37760 stopped the removal or ejection for the device USB\\VID_046D&PID_0843\\7&7dcc7ce&0&4. Process command line: \"C:\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe\" \"--run\" -o 000000000000046C -i 00000000000004A4 List of affected devices: USB\\VID_046D&PID_0843&MI_00\\8&39dec205&0&0000 "
+    }
+  ],
+  "vendor_processes": [
+    {
+      "name": "logioptionsplus_agent",
+      "pid": 16684,
+      "path": "C:\\Program Files\\LogiOptionsPlus\\logioptionsplus_agent.exe"
+    },
+    {
+      "name": "LogiTuneAgent",
+      "pid": 37760,
+      "path": "C:\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe"
+    },
+    {
+      "name": "razer_elevation_service",
+      "pid": 35024,
+      "path": null
+    }
+  ],
+  "windows_update_policy": {
+    "ExcludeWUDriversInQualityUpdate": null,
+    "SearchOrderConfig": 1
+  },
+  "usbflags_ignore_hw_sernum_values": [
+    "IgnoreHWSerNum04e8663b",
+    "IgnoreHWSerNum04e86708",
+    "IgnoreHWSerNum04e8665c",
+    "IgnoreHWSerNum04e86736",
+    "IgnoreHWSerNum04e86737",
+    "IgnoreHWSerNum04e86663",
+    "IgnoreHWSerNum05c61000",
+    "IgnoreHWSerNum05c63111",
+    "IgnoreHWSerNum04e86601",
+    "IgnoreHWSerNum04e86810",
+    "IgnoreHWSerNum04e86850"
+  ],
+  "frame_server": "Stopped",
+  "utc_finished": "2026-10-25T22:46:03.4586394Z"
+}

@@ -1,0 +1,462 @@
+{
+  "env": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.2.6",
+    "opencv": "4.12.0",
+    "cpu_count": 28,
+    "time": "2026-10-28 01:12:36",
+    "psutil": "7.2.2",
+    "ram_total_gb": 68.413349888,
+    "system_cpu_pct_1s_before_run": 5.0,
+    "other_python_processes_at_start": [
+      ".venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\baseline\\bench_f_copies.py",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\baseline\\run_with_load.py f_copies f_copies_stdout.log 900 -- .venv\\S",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks\\frame_pipeline\\baseline\\run_with_load.py f_copies f_copies_stdout."
+    ],
+    "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d"
+  },
+  "cases": [
+    {
+      "size": "720p",
+      "rotation": "NO_ROTATION",
+      "frame_image_bytes": 2764800,
+      "frame_record_bytes": 2765432,
+      "iterations": 20,
+      "record_path_per_frame": {
+        "np.copy (flag reads)": {
+          "calls": 4.0,
+          "bytes": 4.0
+        },
+        "copy.copy in put_data (L132)": {
+          "calls": 1.0,
+          "bytes": 2765432.0
+        },
+        "shm_slot_assignment (put_data L132)": {
+          "calls": 1.0,
+          "bytes": 2765432.0
+        },
+        "np.copyto tiny (<1KiB: index/flag)": {
+          "calls": 1.0,
+          "bytes": 8.0
+        },
+        "copy(frame_metadata) in record_frame (L108)": {
+          "calls": 1.0,
+          "bytes": 632.0
+        }
+      },
+      "record_path_heap_peak_bytes_put_frame": 2767845.0,
+      "record_path_heap_peak_bytes_record_frame": 3416.0,
+      "encoder_handoff_is_view_of_frame": true,
+      "skellycam_ui_per_multiframe": {
+        "np.copy (flag reads)": {
+          "calls": 60.0,
+          "bytes": 60.0
+        },
+        "np.copyto frame-sized (>=1KiB)": {
+          "calls": 5.0,
+          "bytes": 13827160.0
+        },
+        "cv2.resize output": {
+          "calls": 5.0,
+          "bytes": 3456000.0
+        },
+        "cv2.imencode output": {
+          "calls": 5.0,
+          "bytes": 139340.0
+        },
+        "JPEG bytes (imencode)": {
+          "calls": 5.0,
+          "bytes": 139340.0
+        },
+        "(analytic) jpeg_data.tobytes() copy L147": {
+          "calls": 5,
+          "bytes": 139340.0
+        },
+        "(analytic) slice-assign into _reusable_bytes_payload L176 (+headers)": {
+          "calls": 5,
+          "bytes": 139668.0
+        },
+        "(analytic) return _reusable_bytes_payload[:current_pos] slice copy L197": {
+          "calls": 1,
+          "bytes": 139668.0
+        }
+      },
+      "skellycam_ui_heap_peak_bytes": 1443074.5,
+      "skellycam_ui_payload_bytes": 139668.0,
+      "freemocap_ui_by_number_per_multiframe": {
+        "np.copy (flag reads)": {
+          "calls": 75.0,
+          "bytes": 75.0
+        },
+        "np.copyto frame-sized (>=1KiB)": {
+          "calls": 5.0,
+          "bytes": 13827160.0
+        },
+        "cv2.resize output": {
+          "calls": 5.0,
+          "bytes": 3456000.0
+        },
+        "cv2.imencode output": {
+          "calls": 5.0,
+          "bytes": 139340.0
+        },
+        "JPEG bytes (imencode)": {
+          "calls": 5.0,
+          "bytes": 139340.0
+        },
+        "(analytic) jpeg_data.tobytes() copy L147": {
+          "calls": 5,
+          "bytes": 139340.0
+        },
+        "(analytic) slice-assign into _reusable_bytes_payload L176 (+headers)": {
+          "calls": 5,
+          "bytes": 139668.0
+        },
+        "(analytic) return _reusable_bytes_payload[:current_pos] slice copy L197": {
+          "calls": 1,
+          "bytes": 139668.0
+        }
+      },
+      "freemocap_ui_by_number_heap_peak_bytes": 13831210.0,
+      "freemocap_ui_by_number_payload_bytes": 139668.0
+    },
+    {
+      "size": "720p",
+      "rotation": "CLOCKWISE_90",
+      "frame_image_bytes": 2764800,
+      "frame_record_bytes": 2765432,
+      "iterations": 20,
+      "record_path_per_frame": {
+        "np.copy (flag reads)": {
+          "calls": 4.0,
+          "bytes": 4.0
+        },
+        "copy.copy in put_data (L132)": {
+          "calls": 1.0,
+          "bytes": 2765432.0
+        },
+        "shm_slot_assignment (put_data L132)": {
+          "calls": 1.0,
+          "bytes": 2765432.0
+        },
+        "np.copyto tiny (<1KiB: index/flag)": {
+          "calls": 1.0,
+          "bytes": 8.0
+        },
+        "cv2.rotate output": {
+          "calls": 1.0,
+          "bytes": 2764800.0
+        },
+        "copy(frame_metadata) in record_frame (L108)": {
+          "calls": 1.0,
+          "bytes": 632.0
+        }
+      },
+      "record_path_heap_peak_bytes_put_frame": 2767819.0,
+      "record_path_heap_peak_bytes_record_frame": 2767992.0,
+      "encoder_handoff_is_view_of_frame": "rotated: cv2.rotate output",
+      "skellycam_ui_per_multiframe": {
+        "np.copy (flag reads)": {
+          "calls": 60.0,
+          "bytes": 60.0
+        },
+        "np.copyto frame-sized (>=1KiB)": {
+          "calls": 5.0,
+          "bytes": 13827160.0
+        },
+        "cv2.rotate output": {
+          "calls": 5.0,
+          "bytes": 13824000.0
+        },
+        "cv2.resize output": {
+          "calls": 5.0,
+          "bytes": 3456000.0
+        },
+        "cv2.imencode output": {
+          "calls": 5.0,
+          "bytes": 145065.0
+        },
+        "JPEG bytes (imencode)": {
+          "calls": 5.0,
+          "bytes": 145065.0
+        },
+        "(analytic) jpeg_data.tobytes() copy L147": {
+          "calls": 5,
+          "bytes": 145065.0
+        },
+        "(analytic) slice-assign into _reusable_bytes_payload L176 (+headers)": {
+          "calls": 5,
+          "bytes": 145393.0
+        },
+        "(analytic) return _reusable_bytes_payload[:current_pos] slice copy L197": {
+          "calls": 1,
+          "bytes": 145393.0
+        }
+      },
+      "skellycam_ui_heap_peak_bytes": 6283859.0,
+      "skellycam_ui_payload_bytes": 145393.0,
+      "freemocap_ui_by_number_per_multiframe": {
+        "np.copy (flag reads)": {
+          "calls": 75.0,
+          "bytes": 75.0
+        },
+        "np.copyto frame-sized (>=1KiB)": {
+          "calls": 5.0,
+          "bytes": 13827160.0
+        },
+        "cv2.rotate output": {
+          "calls": 5.0,
+          "bytes": 13824000.0
+        },
+        "cv2.resize output": {
+          "calls": 5.0,
+          "bytes": 3456000.0
+        },
+        "cv2.imencode output": {
+          "calls": 5.0,
+          "bytes": 145065.0
+        },
+        "JPEG bytes (imencode)": {
+          "calls": 5.0,
+          "bytes": 145065.0
+        },
+        "(analytic) jpeg_data.tobytes() copy L147": {
+          "calls": 5,
+          "bytes": 145065.0
+        },
+        "(analytic) slice-assign into _reusable_bytes_payload L176 (+headers)": {
+          "calls": 5,
+          "bytes": 145393.0
+        },
+        "(analytic) return _reusable_bytes_payload[:current_pos] slice copy L197": {
+          "calls": 1,
+          "bytes": 145393.0
+        }
+      },
+      "freemocap_ui_by_number_heap_peak_bytes": 13831210.0,
+      "freemocap_ui_by_number_payload_bytes": 145393.0
+    },
+    {
+      "size": "1080p",
+      "rotation": "NO_ROTATION",
+      "frame_image_bytes": 6220800,
+      "frame_record_bytes": 6221432,
+      "iterations": 20,
+      "record_path_per_frame": {
+        "np.copy (flag reads)": {
+          "calls": 4.0,
+          "bytes": 4.0
+        },
+        "copy.copy in put_data (L132)": {
+          "calls": 1.0,
+          "bytes": 6221432.0
+        },
+        "shm_slot_assignment (put_data L132)": {
+          "calls": 1.0,
+          "bytes": 6221432.0
+        },
+        "np.copyto tiny (<1KiB: index/flag)": {
+          "calls": 1.0,
+          "bytes": 8.0
+        },
+        "copy(frame_metadata) in record_frame (L108)": {
+          "calls": 1.0,
+          "bytes": 632.0
+        }
+      },
+      "record_path_heap_peak_bytes_put_frame": 6223817.5,
+      "record_path_heap_peak_bytes_record_frame": 3416.0,
+      "encoder_handoff_is_view_of_frame": true,
+      "skellycam_ui_per_multiframe": {
+        "np.copy (flag reads)": {
+          "calls": 60.0,
+          "bytes": 60.0
+        },
+        "np.copyto frame-sized (>=1KiB)": {
+          "calls": 5.0,
+          "bytes": 31107160.0
+        },
+        "cv2.resize output": {
+          "calls": 5.0,
+          "bytes": 7776000.0
+        },
+        "cv2.imencode output": {
+          "calls": 5.0,
+          "bytes": 307931.25
+        },
+        "JPEG bytes (imencode)": {
+          "calls": 5.0,
+          "bytes": 307931.25
+        },
+        "(analytic) jpeg_data.tobytes() copy L147": {
+          "calls": 5,
+          "bytes": 307931.25
+        },
+        "(analytic) slice-assign into _reusable_bytes_payload L176 (+headers)": {
+          "calls": 5,
+          "bytes": 308259.25
+        },
+        "(analytic) return _reusable_bytes_payload[:current_pos] slice copy L197": {
+          "calls": 1,
+          "bytes": 308259.25
+        }
+      },
+      "skellycam_ui_heap_peak_bytes": 3239284.0,
+      "skellycam_ui_payload_bytes": 308259.25,
+      "freemocap_ui_by_number_per_multiframe": {
+        "np.copy (flag reads)": {
+          "calls": 75.0,
+          "bytes": 75.0
+        },
+        "np.copyto frame-sized (>=1KiB)": {
+          "calls": 5.0,
+          "bytes": 31107160.0
+        },
+        "cv2.resize output": {
+          "calls": 5.0,
+          "bytes": 7776000.0
+        },
+        "cv2.imencode output": {
+          "calls": 5.0,
+          "bytes": 307931.25
+        },
+        "JPEG bytes (imencode)": {
+          "calls": 5.0,
+          "bytes": 307931.25
+        },
+        "(analytic) jpeg_data.tobytes() copy L147": {
+          "calls": 5,
+          "bytes": 307931.25
+        },
+        "(analytic) slice-assign into _reusable_bytes_payload L176 (+headers)": {
+          "calls": 5,
+          "bytes": 308259.25
+        },
+        "(analytic) return _reusable_bytes_payload[:current_pos] slice copy L197": {
+          "calls": 1,
+          "bytes": 308259.25
+        }
+      },
+      "freemocap_ui_by_number_heap_peak_bytes": 31111208.5,
+      "freemocap_ui_by_number_payload_bytes": 308259.25
+    },
+    {
+      "size": "1080p",
+      "rotation": "CLOCKWISE_90",
+      "frame_image_bytes": 6220800,
+      "frame_record_bytes": 6221432,
+      "iterations": 20,
+      "record_path_per_frame": {
+        "np.copy (flag reads)": {
+          "calls": 4.0,
+          "bytes": 4.0
+        },
+        "copy.copy in put_data (L132)": {
+          "calls": 1.0,
+          "bytes": 6221432.0
+        },
+        "shm_slot_assignment (put_data L132)": {
+          "calls": 1.0,
+          "bytes": 6221432.0
+        },
+        "np.copyto tiny (<1KiB: index/flag)": {
+          "calls": 1.0,
+          "bytes": 8.0
+        },
+        "cv2.rotate output": {
+          "calls": 1.0,
+          "bytes": 6220800.0
+        },
+        "copy(frame_metadata) in record_frame (L108)": {
+          "calls": 1.0,
+          "bytes": 632.0
+        }
+      },
+      "record_path_heap_peak_bytes_put_frame": 6223819.0,
+      "record_path_heap_peak_bytes_record_frame": 6223992.0,
+      "encoder_handoff_is_view_of_frame": "rotated: cv2.rotate output",
+      "skellycam_ui_per_multiframe": {
+        "np.copy (flag reads)": {
+          "calls": 60.0,
+          "bytes": 60.0
+        },
+        "np.copyto frame-sized (>=1KiB)": {
+          "calls": 5.0,
+          "bytes": 31107160.0
+        },
+        "cv2.rotate output": {
+          "calls": 5.0,
+          "bytes": 31104000.0
+        },
+        "cv2.resize output": {
+          "calls": 5.0,
+          "bytes": 7776000.0
+        },
+        "cv2.imencode output": {
+          "calls": 5.0,
+          "bytes": 321506.25
+        },
+        "JPEG bytes (imencode)": {
+          "calls": 5.0,
+          "bytes": 321506.25
+        },
+        "(analytic) jpeg_data.tobytes() copy L147": {
+          "calls": 5,
+          "bytes": 321506.25
+        },
+        "(analytic) slice-assign into _reusable_bytes_payload L176 (+headers)": {
+          "calls": 5,
+          "bytes": 321834.25
+        },
+        "(analytic) return _reusable_bytes_payload[:current_pos] slice copy L197": {
+          "calls": 1,
+          "bytes": 321834.25
+        }
+      },
+      "skellycam_ui_heap_peak_bytes": 14131445.0,
+      "skellycam_ui_payload_bytes": 321834.25,
+      "freemocap_ui_by_number_per_multiframe": {
+        "np.copy (flag reads)": {
+          "calls": 75.0,
+          "bytes": 75.0
+        },
+        "np.copyto frame-sized (>=1KiB)": {
+          "calls": 5.0,
+          "bytes": 31107160.0
+        },
+        "cv2.rotate output": {
+          "calls": 5.0,
+          "bytes": 31104000.0
+        },
+        "cv2.resize output": {
+          "calls": 5.0,
+          "bytes": 7776000.0
+        },
+        "cv2.imencode output": {
+          "calls": 5.0,
+          "bytes": 321506.25
+        },
+        "JPEG bytes (imencode)": {
+          "calls": 5.0,
+          "bytes": 321506.25
+        },
+        "(analytic) jpeg_data.tobytes() copy L147": {
+          "calls": 5,
+          "bytes": 321506.25
+        },
+        "(analytic) slice-assign into _reusable_bytes_payload L176 (+headers)": {
+          "calls": 5,
+          "bytes": 321834.25
+        },
+        "(analytic) return _reusable_bytes_payload[:current_pos] slice copy L197": {
+          "calls": 1,
+          "bytes": 321834.25
+        }
+      },
+      "freemocap_ui_by_number_heap_peak_bytes": 31111213.0,
+      "freemocap_ui_by_number_payload_bytes": 321834.25
+    }
+  ]
+}

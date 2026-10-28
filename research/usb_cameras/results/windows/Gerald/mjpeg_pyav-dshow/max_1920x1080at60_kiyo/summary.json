@@ -1,0 +1,83 @@
+{
+ "test": "mjpeg_pyav-dshow",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-25T18:42:11.102069+00:00",
+ "utc_summarized": "2026-10-25T18:42:24.279514+00:00",
+ "command": "uv run --script research/usb_cameras/tools/camlock.py -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams kiyo --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg_pyav-dshow\\max_1920x1080at60_kiyo' -- uv run --script research/usb_cameras/mjpeg/pyav/pyav_capture.py --input-format dshow --device 'video=USB Video Device' --size 1920x1080 --fps 60 --seconds 10.0 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg_pyav-dshow\\max_1920x1080at60_kiyo'",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "av": "19.0.2",
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "backend": "pyav-dshow",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1920,
+  "height": 1080,
+  "fps": 60.0
+ },
+ "decoded_by_pipeline": false,
+ "decode_evidence": "only container.demux() is called; packets are passed through as bytes; stream codec reported per camera (codec != mjpeg means FFmpeg/the device delivered a different format than requested WITHOUT raising an error)",
+ "window": {
+  "start_ns": 103091217028600,
+  "end_ns": 103101217200900,
+  "wall_s": 10.0001723
+ },
+ "delivered_codecs": [],
+ "silent_format_fallback": false,
+ "cpu": {
+  "method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)",
+  "wall_s": 10.0001784,
+  "process_cpu_s_ticks": 0.0,
+  "process_cpu_pct_of_one_core_ticks": 0.0,
+  "tsc_hz": 3343300474.4910593,
+  "process_cycles": 738630,
+  "process_cpu_pct_of_one_core": 0.0022092445136517795,
+  "frameserver_pid": 49436,
+  "frameserver_cpu_pct_of_one_core_ticks": 0.0,
+  "frameserver_cpu_pct_of_one_core": null,
+  "process_cpu_pct_per_camera": 0.0022092445136517795
+ },
+ "cameras": [],
+ "samples": [],
+ "controls": {
+  "requested": {
+   "exposure_log2s": -7,
+   "white_balance_k": 4500,
+   "auto_exposure_priority": 0
+  },
+  "after_apply": {
+   "USB Video Device": {
+    "exposure_log2s": null,
+    "white_balance_k": null,
+    "auto_exposure_priority": null,
+    "exposure_log2s_mode": null,
+    "white_balance_k_mode": null
+   }
+  },
+  "readback_after_capture": {
+   "USB Video Device": {
+    "exposure_log2s": null,
+    "white_balance_k": null,
+    "auto_exposure_priority": null,
+    "exposure_log2s_mode": null,
+    "white_balance_k_mode": null
+   }
+  },
+  "apply_rc": 0,
+  "readback_rc": 0
+ },
+ "errors": [
+  "video=USB Video Device: open failed: OSError(5, 'I/O error', 'video=USB Video Device')"
+ ]
+}

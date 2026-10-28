@@ -1,0 +1,437 @@
+{
+  "size": "1080p",
+  "retrieve_mode": "mjpeg",
+  "ui": true,
+  "record_s": 30.0,
+  "n_cams": 5,
+  "sensor_fps": 60.0,
+  "setup_s": 3.820639499994286,
+  "start_recording_call_s": 1.0397617,
+  "stop_recording_call_s": 2.2095322,
+  "stop_error": null,
+  "kill_flag_set": false,
+  "finalizer_stats": "\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nTimestamp Statistics for recording: e2e_1080p_mjpeg_ui_1793182316\n\nNumber of Cameras: 5\nTotal Frames:      1767\nTotal Duration:    30.013 seconds\nMean Framerate:    59.14 Hz\nMean Inter-Camera Sync: 1.28 ms\n\nFRAME TIMING STATISTICS\n=================================  ========  ======  =====  ======  ======\nMetric                               Median    Mean    Std     Min     Max\n=================================  ========  ======  =====  ======  ======\nFramerate/FPS (Hz)                   59.290  59.143  3.856  33.601  77.847\nFrame Duration (ms)                  16.870  16.993  1.173  12.848  29.859\nInter-Camera Frame Grab Sync (ms)     1.296   1.282  0.810   0.014   6.715\n=================================  ========  ======  =====  ======  ======\n\nFRAME PROCESSING BREAKDOWN\n==============================  =============  ============  ============  ============  ============  ============\nStage                           Median (ms)    Mean (ms)     Std (ms)      Min (ms)      Max (ms)      % of Total\n==============================  =============  ============  ============  ============  ============  ============\nDuring frame grab               0.074          0.217         0.364         0.038         3.619         0.6%\nIdle before retrieve            0.027          0.028         0.006         0.015         0.065         0.2%\nDuring frame retrieve           9.413          9.561         1.195         7.528         14.088        75.8%\nIdle before copy to camera SHM  0.469          0.475         0.080         0.325         0.827         3.8%\nDuring copy to camera SHM       1.302          1.320         0.367         0.579         2.643         10.5%\nIdle before frame record        0.116          0.117         0.024         0.069         0.552         0.9%\nDuring frame record             1.017          1.085         0.311         0.656         2.475         8.2%\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550       \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550   \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550  \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550  \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550  \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550  \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\nTOTAL FRAME PROCESSING TIME     13.514         13.377        1.517         10.273        18.600        80.9%\nTOTAL CAMERA IDLE TIME          3.188          3.163         1.507         0.224         17.129        19.1%\n==============================  =============  ============  ============  ============  ============  ============\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500",
+  "per_camera": {
+    "0": {
+      "recorded_frames": 1767,
+      "first_fn": 305,
+      "last_fn": 2071,
+      "consecutive": true,
+      "sensor_frames_during_recording": 1801,
+      "sensor_frames_never_grabbed": 34,
+      "achieved_fps": 58.84169523190516,
+      "grab_interval": {
+        "n": 1766,
+        "median_ms": 16.8996,
+        "mean_ms": 16.994751698754246,
+        "p99_ms": 20.2584,
+        "min_ms": 12.702,
+        "max_ms": 28.6275
+      },
+      "retrieve": {
+        "n": 1767,
+        "median_ms": 9.764,
+        "mean_ms": 9.987203452178834,
+        "p99_ms": 14.594003999999996,
+        "min_ms": 7.3015,
+        "max_ms": 16.7267
+      },
+      "put_frame": {
+        "n": 1767,
+        "median_ms": 1.2857,
+        "mean_ms": 1.3560371816638368,
+        "p99_ms": 3.063709999999999,
+        "min_ms": 0.4645,
+        "max_ms": 3.763
+      },
+      "record_frame_write": {
+        "n": 1767,
+        "median_ms": 1.0043,
+        "mean_ms": 1.1040521788341822,
+        "p99_ms": 2.376365999999999,
+        "min_ms": 0.6183,
+        "max_ms": 3.2238
+      },
+      "grab_to_written": {
+        "n": 1767,
+        "median_ms": 12.8782,
+        "mean_ms": 13.155202829654781,
+        "p99_ms": 18.056876,
+        "min_ms": 9.1541,
+        "max_ms": 19.9188
+      },
+      "sensor_tick_to_written": {
+        "n": 1767,
+        "median_ms": 17.110287,
+        "mean_ms": 17.94137722976797,
+        "p99_ms": 31.379233679999984,
+        "min_ms": 9.294769,
+        "max_ms": 35.191153
+      }
+    },
+    "1": {
+      "recorded_frames": 1767,
+      "first_fn": 305,
+      "last_fn": 2071,
+      "consecutive": true,
+      "sensor_frames_during_recording": 1801,
+      "sensor_frames_never_grabbed": 34,
+      "achieved_fps": 58.8418608995068,
+      "grab_interval": {
+        "n": 1766,
+        "median_ms": 16.9137,
+        "mean_ms": 16.994703850509623,
+        "p99_ms": 20.44431,
+        "min_ms": 12.9078,
+        "max_ms": 29.8127
+      },
+      "retrieve": {
+        "n": 1767,
+        "median_ms": 9.8274,
+        "mean_ms": 10.024707187323148,
+        "p99_ms": 14.528533999999992,
+        "min_ms": 7.2871,
+        "max_ms": 16.2156
+      },
+      "put_frame": {
+        "n": 1767,
+        "median_ms": 1.298,
+        "mean_ms": 1.3565235427277873,
+        "p99_ms": 2.987635999999998,
+        "min_ms": 0.4613,
+        "max_ms": 4.4357
+      },
+      "record_frame_write": {
+        "n": 1767,
+        "median_ms": 0.9495,
+        "mean_ms": 1.0842853989813241,
+        "p99_ms": 2.489769999999999,
+        "min_ms": 0.6188,
+        "max_ms": 3.4014
+      },
+      "grab_to_written": {
+        "n": 1767,
+        "median_ms": 13.0501,
+        "mean_ms": 13.182602263723824,
+        "p99_ms": 18.080164,
+        "min_ms": 9.191,
+        "max_ms": 20.3085
+      },
+      "sensor_tick_to_written": {
+        "n": 1767,
+        "median_ms": 16.630555,
+        "mean_ms": 17.752024884550085,
+        "p99_ms": 31.77605015999998,
+        "min_ms": 9.898539,
+        "max_ms": 35.194453
+      }
+    },
+    "2": {
+      "recorded_frames": 1767,
+      "first_fn": 305,
+      "last_fn": 2071,
+      "consecutive": true,
+      "sensor_frames_during_recording": 1801,
+      "sensor_frames_never_grabbed": 34,
+      "achieved_fps": 58.84323038872335,
+      "grab_interval": {
+        "n": 1766,
+        "median_ms": 16.86645,
+        "mean_ms": 16.994308323895808,
+        "p99_ms": 20.142934999999998,
+        "min_ms": 12.0718,
+        "max_ms": 34.8411
+      },
+      "retrieve": {
+        "n": 1767,
+        "median_ms": 9.7175,
+        "mean_ms": 9.83064272778721,
+        "p99_ms": 14.247873999999996,
+        "min_ms": 7.0833,
+        "max_ms": 15.4872
+      },
+      "put_frame": {
+        "n": 1767,
+        "median_ms": 1.2842,
+        "mean_ms": 1.3747073571024335,
+        "p99_ms": 3.1393020000000003,
+        "min_ms": 0.4454,
+        "max_ms": 4.9431
+      },
+      "record_frame_write": {
+        "n": 1767,
+        "median_ms": 1.0543,
+        "mean_ms": 1.1284880588568194,
+        "p99_ms": 2.2964339999999988,
+        "min_ms": 0.5417,
+        "max_ms": 4.0697
+      },
+      "grab_to_written": {
+        "n": 1767,
+        "median_ms": 12.9372,
+        "mean_ms": 13.032226372382569,
+        "p99_ms": 17.945815999999994,
+        "min_ms": 8.8004,
+        "max_ms": 20.6678
+      },
+      "sensor_tick_to_written": {
+        "n": 1767,
+        "median_ms": 16.673374,
+        "mean_ms": 18.36519098245614,
+        "p99_ms": 31.886708639999988,
+        "min_ms": 9.452762,
+        "max_ms": 34.054564
+      }
+    },
+    "3": {
+      "recorded_frames": 1767,
+      "first_fn": 305,
+      "last_fn": 2071,
+      "consecutive": true,
+      "sensor_frames_during_recording": 1801,
+      "sensor_frames_never_grabbed": 34,
+      "achieved_fps": 58.842675527142994,
+      "grab_interval": {
+        "n": 1766,
+        "median_ms": 16.900100000000002,
+        "mean_ms": 16.994468573046433,
+        "p99_ms": 20.311754999999998,
+        "min_ms": 13.1785,
+        "max_ms": 31.3899
+      },
+      "retrieve": {
+        "n": 1767,
+        "median_ms": 9.6147,
+        "mean_ms": 9.864198358800225,
+        "p99_ms": 14.693465999999997,
+        "min_ms": 7.1233,
+        "max_ms": 17.2548
+      },
+      "put_frame": {
+        "n": 1767,
+        "median_ms": 1.2937,
+        "mean_ms": 1.3493160724391624,
+        "p99_ms": 2.984047999999996,
+        "min_ms": 0.463,
+        "max_ms": 3.7366
+      },
+      "record_frame_write": {
+        "n": 1767,
+        "median_ms": 1.0371,
+        "mean_ms": 1.1224350311262026,
+        "p99_ms": 2.357023999999999,
+        "min_ms": 0.6231,
+        "max_ms": 2.9737
+      },
+      "grab_to_written": {
+        "n": 1767,
+        "median_ms": 12.8498,
+        "mean_ms": 13.022129088851162,
+        "p99_ms": 17.950575999999998,
+        "min_ms": 8.8506,
+        "max_ms": 19.5866
+      },
+      "sensor_tick_to_written": {
+        "n": 1767,
+        "median_ms": 16.084841,
+        "mean_ms": 17.789949185625353,
+        "p99_ms": 31.559357,
+        "min_ms": 9.584013,
+        "max_ms": 33.891605
+      }
+    },
+    "4": {
+      "recorded_frames": 1767,
+      "first_fn": 305,
+      "last_fn": 2071,
+      "consecutive": true,
+      "sensor_frames_during_recording": 1801,
+      "sensor_frames_never_grabbed": 34,
+      "achieved_fps": 58.84248868035117,
+      "grab_interval": {
+        "n": 1766,
+        "median_ms": 16.874,
+        "mean_ms": 16.994522536806343,
+        "p99_ms": 20.350694999999998,
+        "min_ms": 12.7768,
+        "max_ms": 30.9829
+      },
+      "retrieve": {
+        "n": 1767,
+        "median_ms": 9.6329,
+        "mean_ms": 9.811455970571592,
+        "p99_ms": 14.798355999999998,
+        "min_ms": 7.0832,
+        "max_ms": 15.8988
+      },
+      "put_frame": {
+        "n": 1767,
+        "median_ms": 1.3128,
+        "mean_ms": 1.3916528579513299,
+        "p99_ms": 2.9954859999999996,
+        "min_ms": 0.5082,
+        "max_ms": 3.5249
+      },
+      "record_frame_write": {
+        "n": 1767,
+        "median_ms": 1.0195,
+        "mean_ms": 1.106417091114884,
+        "p99_ms": 2.399953999999999,
+        "min_ms": 0.5662,
+        "max_ms": 3.1559
+      },
+      "grab_to_written": {
+        "n": 1767,
+        "median_ms": 12.8532,
+        "mean_ms": 13.001209903791738,
+        "p99_ms": 18.188579999999998,
+        "min_ms": 8.8276,
+        "max_ms": 19.7689
+      },
+      "sensor_tick_to_written": {
+        "n": 1767,
+        "median_ms": 17.804953,
+        "mean_ms": 17.938570086587436,
+        "p99_ms": 31.65589368,
+        "min_ms": 9.143841,
+        "max_ms": 34.691243
+      }
+    }
+  },
+  "cross_camera_grab_spread": {
+    "n": 1767,
+    "median_ms": 0.3164,
+    "mean_ms": 0.4709795132993775,
+    "p99_ms": 2.319843999999991,
+    "min_ms": 0.0133,
+    "max_ms": 6.723
+  },
+  "files": [
+    {
+      "file": "e2e_1080p_mjpeg_ui_1793182316.id-0.idx-0.mp4",
+      "bytes": 457482355,
+      "decoded_frames": 1767,
+      "prop_frame_count": 1767
+    },
+    {
+      "file": "e2e_1080p_mjpeg_ui_1793182316.id-1.idx-1.mp4",
+      "bytes": 455137280,
+      "decoded_frames": 1767,
+      "prop_frame_count": 1767
+    },
+    {
+      "file": "e2e_1080p_mjpeg_ui_1793182316.id-2.idx-2.mp4",
+      "bytes": 455241921,
+      "decoded_frames": 1767,
+      "prop_frame_count": 1767
+    },
+    {
+      "file": "e2e_1080p_mjpeg_ui_1793182316.id-3.idx-3.mp4",
+      "bytes": 457186793,
+      "decoded_frames": 1767,
+      "prop_frame_count": 1767
+    },
+    {
+      "file": "e2e_1080p_mjpeg_ui_1793182316.id-4.idx-4.mp4",
+      "bytes": 457738010,
+      "decoded_frames": 1767,
+      "prop_frame_count": 1767
+    }
+  ],
+  "recording_total_bytes": 2288242555,
+  "ui_summary": {
+    "payloads": 1429,
+    "payload_fps": 37.397116123876266,
+    "distinct_fps": 36.08860961149431,
+    "build": {
+      "n": 1429,
+      "median_ms": 14.8868,
+      "mean_ms": 14.65151168649405,
+      "p99_ms": 22.663556000000014,
+      "min_ms": 8.4626,
+      "max_ms": 30.7455
+    },
+    "age_when_ready": {
+      "n": 1429,
+      "median_ms": 37.60969,
+      "mean_ms": 54.11410848145556,
+      "p99_ms": 751.2451980000005,
+      "min_ms": 22.86742,
+      "max_ms": 1046.46763
+    },
+    "payload_bytes_median": 308246.0,
+    "errors": [],
+    "n_errors": 0
+  },
+  "cpu_pct_mean_during_recording": {
+    "system": 64.13448275862069,
+    "main": 121.11724137931033,
+    "24148": 273.5655172413793,
+    "34432": 260.94482758620694,
+    "8644": 295.14482758620693,
+    "44564": 275.0103448275862,
+    "14276": 287.67241379310343,
+    "sum_child_processes": 1392.3379310344828
+  },
+  "capture_logs": {
+    "0": [
+      {
+        "reads": 1,
+        "skipped": 100,
+        "grabs": 2269
+      }
+    ],
+    "1": [
+      {
+        "reads": 0,
+        "skipped": 101,
+        "grabs": 2269
+      }
+    ],
+    "2": [
+      {
+        "reads": 0,
+        "skipped": 101,
+        "grabs": 2269
+      }
+    ],
+    "3": [
+      {
+        "reads": 0,
+        "skipped": 101,
+        "grabs": 2269
+      }
+    ],
+    "4": [
+      {
+        "reads": 0,
+        "skipped": 101,
+        "grabs": 2269
+      }
+    ]
+  },
+  "variant": "nocopycopy",
+  "variant_doc": " (argv[1], comma-separated combinations allowed):\n  head        : no extra patch (control run with the per-frame dump below)\n  nocopycopy  : SharedMemoryRingBuffer.put_data with `copy(data)` removed (ring_buffer_shared_memory.py L132) = rank 8 alone\n  cvthreads1  : cv2.setNumThreads(1) in every camera child (camera + inline recorder) = rank 9 alone\n  extracpu3   : retrieve() busy-spins 3.0 ms of CPU after the decode (holds the GIL; single thread). Sensitivity stand-in for\n                P9's real DSHOW retrieve CPU of 11.0-14.7 ms/frame at 1080p (stand-in decode alone is about 10 ms in e2e)\n  dshowlike   : grab() returns at once; retrieve() waits for the next sensor tick, then decodes (the P9 real-DSHOW timing:\n                grab 0.00-0.01 ms, retrieve about 32 ms). Throughput model unchanged; it moves where the wait is, so the\n                pre_frame_grab_ns stamps no longer mark the frame's arrival.\n\n",
+  "env": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.2.6",
+    "opencv": "4.12.0",
+    "cpu_count": 28,
+    "time": "2026-10-28 06:12:36",
+    "psutil": "7.2.2",
+    "ram_total_gb": 68.413349888,
+    "system_cpu_pct_1s_before_run": 5.0,
+    "other_python_processes_at_start": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\baseline\\bench_e2e_variants.py nocopycopy,dshowlike,extracpu3,cvthrea",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\baseline\\bench_e2e_variants.py nocopycopy 1080p mjpeg ui 30",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\baseline\\run_with_load.py e2ev_nocopycopy_1080p_mjpeg_ui e2ev_nocopyc",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks\\frame_pipeline\\baseline\\bench_e2e_variants.py nocopycopy,dshowlike",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks\\frame_pipeline\\baseline\\run_with_load.py e2ev_nocopycopy_1080p_mjp",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks/frame_pipeline/revision/run_revision.py e2ev",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks/frame_pipeline/revision/run_revision.py e2ev"
+    ],
+    "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d"
+  }
+}

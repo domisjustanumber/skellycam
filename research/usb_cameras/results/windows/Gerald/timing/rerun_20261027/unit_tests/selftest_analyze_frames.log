@@ -1,0 +1,109 @@
+windows_like {
+ "jitter_ranking_rms_us": [
+  [
+   "uvc_pts_mapped_direct",
+   20.22
+  ],
+  [
+   "uvc_pts_via_scr_lsq_envelope",
+   72.1
+  ],
+  [
+   "uvc_pts_via_scr_envelope",
+   285.36
+  ],
+  [
+   "host_arrival",
+   4264.63
+  ],
+  [
+   "os_timestamp",
+   4264.63
+  ]
+ ],
+ "truth": {
+  "pts_freq_hz": 30001200.0,
+  "device_vs_host_ppm": 40.0,
+  "device_vs_usb_ppm": 55.00082501245197,
+  "usb_vs_host_ppm": -15.0,
+  "stc_minus_pts_ms_mean": 8.098817894456658
+ },
+ "error_vs_true_capture_us": {
+  "host_arrival": {
+   "mean": 36805.09527556806,
+   "std": 4621.152393336703
+  },
+  "os_timestamp": {
+   "mean": 36505.09527556806,
+   "std": 4621.152393336703
+  },
+  "uvc_pts_mapped_direct": {
+   "mean": 29329.757117234727,
+   "std": 221.25960321988143
+  },
+  "uvc_pts_via_scr_envelope": {
+   "mean": 21416.18011471667,
+   "std": 352.67146792940827
+  },
+  "uvc_pts_via_scr_lsq_envelope": {
+   "mean": 21416.077447305954,
+   "std": 219.84746084887286
+  }
+ }
+}
+ device_clock: {'pts_zero_fraction': 0.0, 'pts_freq_vs_host_hz': 30001297.819, 'nominal_hz': 30000000.0, 'nominal_assumed': True, 'device_vs_host_ppm': 43.261, 'scr_stc_zero_fraction': 0.0, 'stc_per_sof_hz': 30001639.692, 'device_vs_usb_ppm': 54.656, 'usb_sof_ms_per_host_s': 999.997, 'usb_vs_host_ppm': -2.536, 'stc_freq_vs_host_hz': 30001301.494, 'uvc_pts_via_scr_envelope_valid_frames': 1792, 'uvc_pts_via_scr_lsq_envelope_valid_frames': 1792}
+linux_like {
+ "jitter_ranking_rms_us": [
+  [
+   "uvc_pts_mapped_direct",
+   20.22
+  ],
+  [
+   "uvc_pts_via_scr_lsq_linux",
+   96.14
+  ],
+  [
+   "uvc_pts_via_scr_linux",
+   258.35
+  ],
+  [
+   "host_arrival",
+   4264.63
+  ],
+  [
+   "os_timestamp",
+   4264.63
+  ]
+ ],
+ "truth": {
+  "pts_freq_hz": 30001200.0,
+  "device_vs_host_ppm": 40.0,
+  "device_vs_usb_ppm": 55.00082501245197,
+  "usb_vs_host_ppm": -15.0,
+  "stc_minus_pts_ms_mean": 8.098817894456658
+ },
+ "error_vs_true_capture_us": {
+  "host_arrival": {
+   "mean": 36805.09527556806,
+   "std": 4621.152393336703
+  },
+  "os_timestamp": {
+   "mean": 36505.09527556806,
+   "std": 4621.152393336703
+  },
+  "uvc_pts_mapped_direct": {
+   "mean": 29329.757117234727,
+   "std": 221.25960321988143
+  },
+  "uvc_pts_via_scr_linux": {
+   "mean": -2.687124680651618,
+   "std": 257.73591527209834
+  },
+  "uvc_pts_via_scr_lsq_linux": {
+   "mean": -3.5974756851159038,
+   "std": 94.20741367002059
+  }
+ }
+}
+ device_clock: {'pts_zero_fraction': 0.0, 'pts_freq_vs_host_hz': 30001297.819, 'nominal_hz': 30000000.0, 'nominal_assumed': True, 'device_vs_host_ppm': 43.261, 'scr_stc_zero_fraction': 0.0, 'stc_per_sof_hz': 30001639.692, 'device_vs_usb_ppm': 54.656, 'usb_sof_ms_per_host_s': 999.997, 'usb_vs_host_ppm': -2.536, 'stc_freq_vs_host_hz': 30001301.494, 'uvc_pts_via_scr_linux_valid_frames': 1792, 'uvc_pts_via_scr_lsq_linux_valid_frames': 1792}
+exit=0

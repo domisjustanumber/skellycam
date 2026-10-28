@@ -1,0 +1,22 @@
+$ C:\Users\Dom\.cargo\bin\cargo.EXE build --release
+(cwd=C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\rust\compile_checks\cc_nusb_iso_fail)
+--- stdout
+
+--- stderr
+    Updating crates.io index
+     Locking 34 packages to highest compatible versions
+   Compiling windows-link v0.2.1
+   Compiling futures-core v0.3.34
+   Compiling slab v0.4.12
+   Compiling log v0.4.34
+   Compiling windows-sys v0.61.2
+   Compiling nusb v0.2.9
+   Compiling cc_nusb_iso_fail v0.0.0 (C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\rust\compile_checks\cc_nusb_iso_fail)
+error[E0425]: cannot find type `Isochronous` in module `nusb::transfer`
+ --> src\main.rs:8:47
+  |
+8 |     let _ep = intf.endpoint::<nusb::transfer::Isochronous, nusb::transfer::In>(0x81);
+  |                                               ^^^^^^^^^^^ not found in `nusb::transfer`
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `cc_nusb_iso_fail` (bin "cc_nusb_iso_fail") due to 1 previous error

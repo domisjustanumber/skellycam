@@ -1,0 +1,36 @@
+diff -ru --strip-trailing-cr /c/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/rust/nokhwa_probe/src/bin/mf_native_types.rs r2/nokhwa_probe/src/bin/mf_native_types.rs
+--- /c/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/rust/nokhwa_probe/src/bin/mf_native_types.rs	2026-10-25 14:02:39.008717900 -0400
++++ r2/nokhwa_probe/src/bin/mf_native_types.rs	2026-10-27 23:15:28.175222700 -0400
+@@ -62,6 +62,14 @@
+             let name = gs(&MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME);
+             let link = gs(&MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK);
+             let mut d = json!({"index": i, "name": name, "symlink": link});
++            // rerun20261027 harness variant: MF_SKIP_MATCH="vid_1532&pid_0e05[,..]" -> do not activate matching devices
++            if let Ok(skip) = std::env::var("MF_SKIP_MATCH") {
++                if skip.to_ascii_lowercase().split(',').any(|p| !p.is_empty() && link.to_ascii_lowercase().contains(p)) {
++                    d["skipped"] = json!("MF_SKIP_MATCH");
++                    devs.push(d);
++                    continue;
++                }
++            }
+             if !link.to_ascii_lowercase().contains("usb#") {
+                 d["skipped"] = json!("not a USB device");
+                 devs.push(d);
+diff -ru --strip-trailing-cr /c/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/rust/nokhwa_probe/src/main.rs r2/nokhwa_probe/src/main.rs
+--- /c/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/rust/nokhwa_probe/src/main.rs	2026-10-25 14:28:00.354003100 -0400
++++ r2/nokhwa_probe/src/main.rs	2026-10-27 23:15:28.175222700 -0400
+@@ -254,6 +254,14 @@
+     match &infos {
+         Ok(list) => {
+             for info in list {
++                // rerun20261027 harness variant: honour --cameras match:<substr,...> in list mode too, so an
++                // excluded camera (e.g. the Kiyo) is enumerated (query only) but never opened.
++                if let Some(m) = CAMERA_MATCH.get() {
++                    if !m.split(',').any(|pat| info.misc().to_ascii_lowercase().contains(pat)) {
++                        cams.push(json!({"index": info.index().to_string(), "human_name": info.human_name(), "misc": info.misc(), "skipped_not_matched": true}));
++                        continue;
++                    }
++                }
+                 let mut c = json!({
+                     "index": info.index().to_string(),
+                     "human_name": info.human_name(),

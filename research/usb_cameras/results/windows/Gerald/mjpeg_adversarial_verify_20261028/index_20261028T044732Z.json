@@ -1,0 +1,38 @@
+{
+ "command": "research/usb_cameras/mjpeg/run_matrix.py --root research/usb_cameras/results/windows/Gerald/mjpeg_adversarial_verify_20261028 --backend msmf --backend pyav-dshow --modes common --sets single --cams c922,usbcam",
+ "root": "research/usb_cameras/results/windows/Gerald/mjpeg_adversarial_verify_20261028",
+ "cells": [
+  {
+   "backend": "msmf",
+   "label": "common_1280x720at30_c922",
+   "rc": 0,
+   "capture_command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c922 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_msmf\\common_1280x720at30_c922' --timeout-s 120 -- research/usb_cameras/mjpeg/build/mf_mjpeg_capture.exe --dev 'vid_046d&pid_085c' --width 1280 --height 720 --fps 30 --seconds 10 --warmup 2 --out 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_msmf\\common_1280x720at30_c922' --attr-dump 5",
+   "s": 40.1,
+   "summarize_rc": 0
+  },
+  {
+   "backend": "msmf",
+   "label": "common_1280x720at30_usbcam",
+   "rc": 0,
+   "capture_command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams usbcam --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_msmf\\common_1280x720at30_usbcam' --timeout-s 120 -- research/usb_cameras/mjpeg/build/mf_mjpeg_capture.exe --dev 'vid_4c4a&pid_4a55' --width 1280 --height 720 --fps 30 --seconds 10 --warmup 2 --out 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_msmf\\common_1280x720at30_usbcam' --attr-dump 5",
+   "s": 42.3,
+   "summarize_rc": 0
+  },
+  {
+   "backend": "pyav-dshow",
+   "label": "common_1280x720at30_c922",
+   "rc": 0,
+   "capture_command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c922 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_pyav-dshow\\common_1280x720at30_c922' --timeout-s 120 -- uv run --script research/usb_cameras/mjpeg/pyav/pyav_capture.py --input-format dshow --device 'video=@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global' --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_pyav-dshow\\common_1280x720at30_c922'",
+   "s": 43.2,
+   "summarize_rc": 0
+  },
+  {
+   "backend": "pyav-dshow",
+   "label": "common_1280x720at30_usbcam",
+   "rc": 0,
+   "capture_command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams usbcam --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_pyav-dshow\\common_1280x720at30_usbcam' --timeout-s 120 -- uv run --script research/usb_cameras/mjpeg/pyav/pyav_capture.py --input-format dshow --device 'video=@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global' --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_pyav-dshow\\common_1280x720at30_usbcam'",
+   "s": 41.8,
+   "summarize_rc": 0
+  }
+ ]
+}

@@ -1,0 +1,73 @@
+HEAD 482547a3d56e3aa8d22d7ffed33c9f1588bfe17a Thu Oct 22 21:22:00 2026 +0200
+Run-time dependency libusb-1.0 found: YES 1.0.27
+Run-time dependency gobject-introspection-1.0 found: YES 1.80.1
+Dependency gobject-introspection-1.0 found: YES 1.80.1 (cached)
+Dependency gobject-introspection-1.0 found: YES 1.80.1 (cached)
+Dependency gobject-introspection-1.0 found: YES 1.80.1 (cached)
+    USB support     : true
+    introspection   : enabled
+ninja: Entering directory `/build-src/build'
+ninja: no work to do.
+ 1/10 aravis:main / evaluator      OK              0.02s
+ 2/10 aravis:main / buffer         OK              0.02s
+ 3/10 aravis:main / misc           OK              0.01s
+ 4/10 aravis:main / dom            OK              0.01s
+ 5/10 aravis:main / genicam        OK              0.03s
+ 6/10 aravis:python / device.py    OK              0.03s
+ 7/10 aravis:python / fake.py      OK              0.49s
+ 8/10 aravis:python / exception.py OK              1.04s
+ 9/10 aravis:main / fake           OK              1.08s
+10/10 aravis:network / fakegv      OK             16.83s
+
+Ok:                 10  
+Expected Fail:      0   
+Fail:               0   
+Unexpected Pass:    0   
+Skipped:            0   
+Timeout:            0   
+
+Full log written to /build-src/build/meson-logs/testlog.txt
+51: * ARAVIS_HAS_PACKET_SOCKET
+53: * ARAVIS_HAS_PACKET_SOCKET is defined as 1 if aravis is compiled with packet socket support, 0 if not.
+58:#define ARAVIS_HAS_PACKET_SOCKET 1
+=== Python capture against HEAD (Aravis-0.10 typelib) ===
+build/src/Aravis-0.10.typelib
+build/src/arv-fake-gv-camera-0.10
+
+build/src/arv-fake-gv-camera-0.10.p:
+arvfakegvcamera.c.o
+PyGObject (3, 48, 2), Aravis GIR namespace version 0.10
+Discovered 1 device(s):
+  [0] id='Aravis-Fake-GV01' protocol='GigEVision' address='127.0.0.1' vendor='Aravis' model='Fake' serial='GV01'
+Opening device: '127.0.0.1'
+is_gv_device=True vendor='Aravis' model='Fake'
+  feature Width: '512'
+  feature Height: '512'
+  feature PixelFormat: 'Mono8'
+  feature AcquisitionFrameRate: '25'
+  feature GevTimestampTickFrequency: <not in GenICam XML>
+  feature GevSCPSPacketSize: '1400'
+  feature PtpEnable: <not in GenICam XML>
+  feature GevIEEE1588: <not in GenICam XML>
+  feature ActionDeviceKey: <not in GenICam XML>
+frame rate setting: 100.000 Hz
+GV packet size: 1400
+GevTimestampTickFrequency (bootstrap register): 1000000000 Hz
+payload=262144 bytes, pixel_format=Mono8, region=(0,0,512,512)
+  GvStream property packet-resend = <enum ARV_GV_STREAM_PACKET_RESEND_NEVER of type Aravis.GvStreamPacketResend>
+  GvStream property socket-buffer = <enum ARV_GV_STREAM_SOCKET_BUFFER_FIXED of type Aravis.GvStreamSocketBuffer>
+  GvStream property socket-buffer-size = 0
+  GvStream property packet-timeout = 20000
+  GvStream property frame-retention = 100000
+first frame: width=512 height=512 pixel_format=0x01080001 () bytes=262144 payload_type=<enum ARV_BUFFER_PAYLOAD_TYPE_IMAGE of type Aravis.BufferPayloadType> mean=127.0 min=0 max=254
+
+frame_id, device_timestamp_ns, system_timestamp_ns, d_device_ms, d_system_ms
+...
+
+device-timestamp interval ms: mean=11.024 std=10.015
+system-timestamp interval ms: mean=11.010 std=14.845
+fps (device timestamps) = 90.71
+fps (system timestamps) = 90.82
+buffer.get_data() copy time: mean=0.041 ms for 262144 bytes
+fps (wall clock incl. startup) = 68.51  ok=100 bad=0 elapsed=1.460s
+stream.get_statistics() raw: (n_resent_packets=0, n_missing_packets=0)

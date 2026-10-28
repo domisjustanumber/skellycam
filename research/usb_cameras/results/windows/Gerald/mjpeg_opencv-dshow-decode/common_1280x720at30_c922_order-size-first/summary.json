@@ -1,0 +1,135 @@
+{
+ "test": "mjpeg_opencv-dshow-decode",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-25T18:51:19.237421+00:00",
+ "utc_summarized": "2026-10-25T18:51:35.017281+00:00",
+ "command": "uv run --script research/usb_cameras/tools/camlock.py -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c922 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg_opencv-dshow-decode\\common_1280x720at30_c922_order-size-first' -- uv run --script research/usb_cameras/mjpeg/opencv/opencv_capture.py --api dshow --mode decode --index 0 --name c922 --size 1280x720 --fps 30 --seconds 10.0 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg_opencv-dshow-decode\\common_1280x720at30_c922_order-size-first' --set-order size-first",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "numpy": "2.2.6",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "backend": "opencv-dshow-decode",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30.0
+ },
+ "decoded_by_pipeline": true,
+ "decode_evidence": "frames returned as pixel arrays (see frame_shapes)",
+ "window": {
+  "start_ns": 103641742144300,
+  "end_ns": 103651742334100,
+  "wall_s": 10.0001898
+ },
+ "delivered_codecs": null,
+ "silent_format_fallback": null,
+ "cpu": {
+  "method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)",
+  "wall_s": 10.0001939,
+  "process_cpu_s_ticks": 1.828125,
+  "process_cpu_pct_of_one_core_ticks": 18.280895533435608,
+  "tsc_hz": 3379706328.613595,
+  "process_cycles": 6101909665,
+  "process_cpu_pct_of_one_core": 18.054205774052395,
+  "frameserver_pid": 49436,
+  "frameserver_cpu_pct_of_one_core_ticks": 0.0,
+  "frameserver_cpu_pct_of_one_core": null,
+  "process_cpu_pct_per_camera": 18.054205774052395
+ },
+ "cameras": [
+  {
+   "idx": 0,
+   "name": "c922",
+   "cv_index": 0,
+   "api": "dshow",
+   "backend_name": "DSHOW",
+   "set_results": {
+    "order": "size-first",
+    "w": true,
+    "h": true,
+    "fps": true,
+    "fourcc_last": true
+   },
+   "got_fourcc": "MJPG",
+   "got_w": 1280.0,
+   "got_h": 720.0,
+   "got_fps": 30.00003000003,
+   "got_convert_rgb": 1.0,
+   "got_format": -1.0,
+   "open_ms": 2813.0983,
+   "frames": 367,
+   "frame_shapes": {
+    "(720, 1280, 3)/uint8": 367
+   },
+   "frames_starting_ffd8": 0,
+   "frames_delivered_total": 367,
+   "frames_in_window": 300,
+   "fps_requested": 30.0,
+   "fps_achieved_count_over_wall": 29.99943061080701,
+   "fps_achieved_span": 29.994936674117884,
+   "inter_arrival_ms": {
+    "n": 299,
+    "min": 30.3902,
+    "p50": 32.0099,
+    "mean": 33.33896020066889,
+    "p95": 47.9688,
+    "max": 48.2823
+   },
+   "gaps_over_1p5_period": 0,
+   "os_timestamp_delta_ms": null,
+   "payload_bytes": {
+    "n": 300,
+    "min": 2764800,
+    "p50": 2764800,
+    "mean": 2764800.0,
+    "p95": 2764800,
+    "max": 2764800
+   },
+   "pct_valid_jpeg_in_window": null,
+   "pct_valid_jpeg_all": null,
+   "jpeg_checks_all": null,
+   "n_validated": 0
+  }
+ ],
+ "samples": [],
+ "controls": {
+  "requested": {
+   "exposure_log2s": -7,
+   "white_balance_k": 4500,
+   "auto_exposure_priority": 0
+  },
+  "after_apply": {
+   "c922 Pro Stream Webcam": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "readback_after_capture": {
+   "c922 Pro Stream Webcam": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "apply_rc": 0,
+  "readback_rc": 0
+ },
+ "errors": [],
+ "cv2_version": "4.12.0"
+}

@@ -1,0 +1,110 @@
+### viva_sync_capture_test: free-run, two Aravis fakes (their timestamps share the host clock)
+== cameras
+  [INFO] [cam0 172.31.77.11 Fake] camera: Aravis Fake serial ? fw ?; GEV 0.0 (DeviceTLVersion ?.?); Mono8 512x512, packet size ?
+  [INFO] [cam1 172.31.77.12 Fake] camera: Aravis Fake serial ? fw ?; GEV 0.0 (DeviceTLVersion ?.?); Mono8 512x512, packet size ?
+== PTP
+  [SKIP] PTP: --skip-ptp
+== free-run at 25.0 fps for 6 s
+  [INFO] [cam0 172.31.77.11 Fake] free-run setup: TriggerMode=Off, AcquisitionFrameRate=25
+  [INFO] [cam1 172.31.77.12 Fake] free-run setup: TriggerMode=Off, AcquisitionFrameRate=25
+  [FAIL] [cam0 172.31.77.11 Fake] frames received: 151 of ~150 requested; incomplete 1, block-id gaps 0 (0.66 % lost, limit 0.5 %); device fps 25.00
+  [PASS] [cam1 172.31.77.12 Fake] frames received: 151 of ~150 requested; incomplete 0, block-id gaps 0 (0.00 % lost, limit 0.5 %); device fps 25.00
+  [INFO] timestamp pairing: 100.0 % of camera-0 frames paired, but device clocks are not PTP-synchronised, so device timestamps are not comparable across cameras
+  [INFO] inter-camera timestamp spread: median 0.0 us, p95 65.5 us, max 15622.0 us over 151 groups (free-run phase is arbitrary; judged only with --expect-aligned)
+  [INFO] [cam1 172.31.77.12 Fake] frame phase vs cam0: median offset +0.0 us, frame-clock drift -68.573 ppm, jitter p95 329.8 us
+  note: without PTP lock, device timestamps of different cameras are not comparable
+wrote /out/viva_arv_free/frames.csv
+wrote /out/viva_arv_free/summary.json
+
+== viva_sync_capture_test: 1 passed, 1 failed, 1 skipped, 0 warnings, 7 info
+   SKIP PTP: --skip-ptp
+   FAIL [cam0 172.31.77.11 Fake] frames received: 151 of ~150 requested; incomplete 1, block-id gaps 0 (0.66 % lost, limit 0.5 %); device fps 25.00
+exit=1
+### same, --expect-aligned (free-run phase is arbitrary -> expected FAIL on spread)
+== PTP
+  [SKIP] [cam0 172.31.77.11 Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+  [SKIP] [cam1 172.31.77.12 Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+  [SKIP] PTP lock: PTP could not be enabled on any camera
+  [INFO] timestamp pairing: 100.0 % of camera-0 frames paired, but device clocks are not PTP-synchronised, so device timestamps are not comparable across cameras
+  [INFO] inter-camera timestamp spread: median 0.0 us, p95 55.0 us, max 5904.0 us over 101 groups (free-run phase is arbitrary; judged only with --expect-aligned)
+  note: without PTP lock, device timestamps of different cameras are not comparable
+   SKIP [cam0 172.31.77.11 Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+   SKIP [cam1 172.31.77.12 Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+   SKIP PTP lock: PTP could not be enabled on any camera
+exit=1
+### scheduled-action against Aravis fakes (no Action1 -> SKIP)
+  [SKIP] [cam0 172.31.77.11 Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+  [SKIP] [cam1 172.31.77.12 Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+  [SKIP] PTP lock: PTP could not be enabled on any camera
+  [SKIP] [cam0 172.31.77.11 Fake] action trigger setup: TriggerSource has none of Action1,Action0 (entries: ['Line0', 'Software'])
+  [SKIP] [cam1 172.31.77.12 Fake] action trigger setup: TriggerSource has none of Action1,Action0 (entries: ['Line0', 'Software'])
+  [SKIP] scheduled-action run: not every camera can be triggered by an action command
+   SKIP [cam0 172.31.77.11 Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+   SKIP [cam1 172.31.77.12 Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+   SKIP PTP lock: PTP could not be enabled on any camera
+   SKIP [cam0 172.31.77.11 Fake] action trigger setup: TriggerSource has none of Action1,Action0 (entries: ['Line0', 'Software'])
+   SKIP [cam1 172.31.77.12 Fake] action trigger setup: TriggerSource has none of Action1,Action0 (entries: ['Line0', 'Software'])
+   SKIP scheduled-action run: not every camera can be triggered by an action command
+exit=0
+### scheduled-action dry run against Aravis fakes (latch returns 0 -> SKIP)
+  [SKIP] [cam0 172.31.77.11 Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+  [SKIP] [cam1 172.31.77.12 Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+  [SKIP] PTP lock: PTP could not be enabled on any camera
+  [WARN] [cam0 172.31.77.11 Fake] action trigger setup: --skip-trigger-config: frames are NOT triggered by the actions (emulator dry run only)
+  [WARN] [cam1 172.31.77.12 Fake] action trigger setup: --skip-trigger-config: frames are NOT triggered by the actions (emulator dry run only)
+  [WARN] [cam0 172.31.77.11 Fake] scheduled action capability: capability bit clear - camera may reject scheduled actions (trying anyway)
+  [WARN] [cam1 172.31.77.12 Fake] scheduled action capability: capability bit clear - camera may reject scheduled actions (trying anyway)
+  [SKIP] scheduled-action run: camera 0's timestamp latch returns 0 (not implemented)
+   SKIP [cam0 172.31.77.11 Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+   SKIP [cam1 172.31.77.12 Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+   SKIP PTP lock: PTP could not be enabled on any camera
+   WARN [cam0 172.31.77.11 Fake] action trigger setup: --skip-trigger-config: frames are NOT triggered by the actions (emulator dry run only)
+   WARN [cam1 172.31.77.12 Fake] action trigger setup: --skip-trigger-config: frames are NOT triggered by the actions (emulator dry run only)
+   WARN [cam0 172.31.77.11 Fake] scheduled action capability: capability bit clear - camera may reject scheduled actions (trying anyway)
+   WARN [cam1 172.31.77.12 Fake] scheduled action capability: capability bit clear - camera may reject scheduled actions (trying anyway)
+   SKIP scheduled-action run: camera 0's timestamp latch returns 0 (not implemented)
+exit=0
+### gvsp_capture_report --control viva against an Aravis fake
+  [PASS] [172.31.77.12] camera reachable: GEV 0.0, tick 1000000000 Hz, packet resend NOT supported
+  [PASS] [172.31.77.12] socket receive buffer: requested 33554432 B via SO_RCVBUFFORCE, OS reports 67108864 B (default 212992 B)
+  streaming to 172.31.77.100:43957 for 3.0 s (control via viva-genicam, resend off) ...
+  frames: seen 75, complete 75, incomplete 0, trailer missing 0, never seen (block-id gaps) 0, missing packets 0
+  [PASS] [GVSP 172.31.77.12 -> 172.31.77.100:43957 (52 Mbit/s)] GVSP leader + trailer packets: {'LEADER': 75, 'PAYLOAD': 14475, 'TRAILER': 75}
+  [PASS] [GVSP 172.31.77.12 -> 172.31.77.100:43957 (52 Mbit/s)] frames complete: 75/75 (100.0 %; limit 99 %)
+  [INFO] [GVSP 172.31.77.12 -> 172.31.77.100:43957 (52 Mbit/s)] compression verdict: UNCOMPRESSED: payload bytes/frame 262144 vs uncompressed Mono8 size 262144 (ratio 1.000); IMAGE payload in a standard PFNC pixel format, full-size frames
+  [INFO] [GVSP 172.31.77.12 -> 172.31.77.100:43957 (52 Mbit/s)] packet size: payload packets 1400 B IP datagrams (max 1400) -> standard 1500 MTU
+  [INFO] [GVSP 172.31.77.12 -> 172.31.77.100:43957 (52 Mbit/s)] extended ids (64-bit block ids): not used (0/14625 packets)
+  [INFO] [GVSP 172.31.77.12 -> 172.31.77.100:43957 (52 Mbit/s)] device timestamps: increasing; device frame rate 25.00 fps; host arrival rate 25.20 fps
+exit=0
+### gvsp_capture_report --control viva against an unreachable IP (clean FAIL expected)
+
+== gvsp_capture_report: 0 passed, 1 failed, 0 skipped, 0 warnings, 0 info
+   FAIL [172.31.77.99] camera reachable: 172.31.77.99: no answer to command 0x0080 after 3 tries
+exit=2
+### viva_sync_capture_test --fake-cameras 1 (in-process viva fake) free-run + scheduled dry run
+  [PASS] [cam0 127.0.0.1 VivaCam Fake] frames received: 83 of ~90 requested; incomplete 0, block-id gaps 0 (0.00 % lost, limit 0.5 %); device fps 27.49
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] frame rate: camera delivered 83 frames, fewer than the 90 the requested 30.0 fps implies, without losing any - it cannot run that fast (exposure time, bandwidth limit, ROI) or ignores AcquisitionFrameRate
+   WARN [cam0 127.0.0.1 VivaCam Fake] frame rate: camera delivered 83 frames, fewer than the 90 the requested 30.0 fps implies, without losing any - it cannot run that fast (exposure time, bandwidth limit, ROI) or ignores AcquisitionFrameRate
+exit=0
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] action trigger setup: --skip-trigger-config: frames are NOT triggered by the actions (emulator dry run only)
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] scheduled action capability: capability bit clear - camera may reject scheduled actions (trying anyway)
+  60 scheduled actions at 30.0 fps to ['127.0.0.1'], sent 20.0 ms ahead ...
+  [PASS] ACTION_ACKs: 60/60 sends acknowledged by every addressed camera (sender viva); 0 sends left after their scheduled time
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] triggered frames: 60/60 actions produced a frame (matched by ORDER: frame timestamps are not on camera 0's timescale)
+  [FAIL] [cam0 127.0.0.1 VivaCam Fake] frames received: 97; incomplete 2, block-id gaps 0 (2.06 % lost, limit 0.5 %); device fps 26.89
+   WARN [cam0 127.0.0.1 VivaCam Fake] action trigger setup: --skip-trigger-config: frames are NOT triggered by the actions (emulator dry run only)
+   WARN [cam0 127.0.0.1 VivaCam Fake] scheduled action capability: capability bit clear - camera may reject scheduled actions (trying anyway)
+   WARN [cam0 127.0.0.1 VivaCam Fake] triggered frames: 60/60 actions produced a frame (matched by ORDER: frame timestamps are not on camera 0's timescale)
+   FAIL [cam0 127.0.0.1 VivaCam Fake] frames received: 97; incomplete 2, block-id gaps 0 (2.06 % lost, limit 0.5 %); device fps 26.89
+exit=1
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] action trigger setup: --skip-trigger-config: frames are NOT triggered by the actions (emulator dry run only)
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] scheduled action capability: capability bit clear - camera may reject scheduled actions (trying anyway)
+  60 scheduled actions at 30.0 fps to ['127.0.0.1'], sent 20.0 ms ahead ...
+  [PASS] ACTION_ACKs: 60/60 sends acknowledged by every addressed camera (sender stdlib); 0 sends left after their scheduled time
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] triggered frames: 60/60 actions produced a frame (matched by ORDER: frame timestamps are not on camera 0's timescale)
+  [FAIL] [cam0 127.0.0.1 VivaCam Fake] frames received: 95; incomplete 3, block-id gaps 0 (3.16 % lost, limit 0.5 %); device fps 27.27
+   WARN [cam0 127.0.0.1 VivaCam Fake] action trigger setup: --skip-trigger-config: frames are NOT triggered by the actions (emulator dry run only)
+   WARN [cam0 127.0.0.1 VivaCam Fake] scheduled action capability: capability bit clear - camera may reject scheduled actions (trying anyway)
+   WARN [cam0 127.0.0.1 VivaCam Fake] triggered frames: 60/60 actions produced a frame (matched by ORDER: frame timestamps are not on camera 0's timescale)
+   FAIL [cam0 127.0.0.1 VivaCam Fake] frames received: 95; incomplete 3, block-id gaps 0 (3.16 % lost, limit 0.5 %); device fps 27.27
+exit=1

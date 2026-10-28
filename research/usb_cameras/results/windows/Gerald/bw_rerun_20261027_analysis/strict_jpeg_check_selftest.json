@@ -1,0 +1,70 @@
+{
+ "tool": "strict_jpeg_check",
+ "command": "research/usb_cameras/bandwidth/verify/strict_jpeg_check.py C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/7c9d3345-0e7f-4af6-bb14-20fd851edd1a/scratchpad/runs/bw_rerun_20261027/r02_c922_alt_by_mode/mjpg_1280x720_30/cam0 --selftest --out research/usb_cameras/results/windows/Gerald/bw_rerun_20261027_analysis/strict_jpeg_check_selftest.json",
+ "runs": [
+  {
+   "run": "cam0",
+   "frames_logged": null,
+   "jpegs": 142,
+   "marker_ok": 142,
+   "pil_ok": 142,
+   "cv_ok": 142,
+   "cv_fail_examples": [],
+   "marker_fail_examples": [],
+   "dri_values": [
+    10
+   ],
+   "rst_counts": [
+    719
+   ],
+   "trailing_after_eoi": [
+    0
+   ],
+   "dims": [
+    "1280x720"
+   ],
+   "selftest_on_frame_00000.jpg": {
+    "original": {
+     "marker_ok": true,
+     "pil_ok": true,
+     "cv_ok": true,
+     "cv_why": "",
+     "rst": 719,
+     "expected_rst": 719
+    },
+    "drop3072_mid": {
+     "marker_ok": false,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 696,
+     "expected_rst": 719
+    },
+    "drop1020_mid": {
+     "marker_ok": false,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: found marker 0xd9 instead of RST7",
+     "rst": 711,
+     "expected_rst": 719
+    },
+    "zero3072_mid": {
+     "marker_ok": false,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: 2651 extraneous bytes before marker 0xd4",
+     "rst": 696,
+     "expected_rst": 719
+    },
+    "truncate_half_plus_eoi": {
+     "marker_ok": false,
+     "pil_ok": true,
+     "cv_ok": false,
+     "cv_why": "ValueError: Corrupt JPEG data: premature end of data segment",
+     "rst": 365,
+     "expected_rst": 719
+    }
+   }
+  }
+ ]
+}

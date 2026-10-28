@@ -1,0 +1,61 @@
+{
+ "test": "mjpeg_pyav_dshow_format_probe",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-25T19:28:37.544341+00:00",
+ "command": [
+  "research/usb_cameras/mjpeg/pyav/pyav_dshow_format_probe.py",
+  "--cam",
+  "kiyo",
+  "--mode",
+  "1280x720@30",
+  "--mode",
+  "1920x1080@60",
+  "--label",
+  "kiyo_after_replug"
+ ],
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "av": "19.0.2",
+  "ffmpeg": {
+   "libavutil": "(61, 1, 102)",
+   "libavcodec": "(63, 1, 102)",
+   "libavformat": "(63, 1, 102)",
+   "libavdevice": "(63, 1, 102)",
+   "libavfilter": "(12, 1, 102)",
+   "libswscale": "(10, 1, 102)",
+   "libswresample": "(7, 1, 102)"
+  }
+ },
+ "device": "video=@device_pnp_\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+ "results": [
+  {
+   "mode": "1280x720@30",
+   "options": {
+    "video_size": "1280x720",
+    "framerate": "30",
+    "rtbufsize": "256M",
+    "vcodec": "mjpeg"
+   },
+   "error": "OSError(5, 'I/O error', 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global', (16, 'dshow', 'Could not RenderStream to connect pins\\n'))",
+   "ffmpeg_log_dshow": [
+    "Selecting pin Capture on video",
+    "Could not RenderStream to connect pins"
+   ]
+  },
+  {
+   "mode": "1920x1080@60",
+   "options": {
+    "video_size": "1920x1080",
+    "framerate": "60",
+    "rtbufsize": "256M",
+    "vcodec": "mjpeg"
+   },
+   "error": "OSError(5, 'I/O error', 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global', (16, 'dshow', 'Could not RenderStream to connect pins\\n'))",
+   "ffmpeg_log_dshow": [
+    "Selecting pin Capture on video",
+    "Could not RenderStream to connect pins"
+   ]
+  }
+ ]
+}

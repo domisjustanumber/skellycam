@@ -1,0 +1,21 @@
+# EXAMPLE udev rules for stable camera symlinks (documented-untested; NOT needed by the app).
+#
+# The stock systemd rule 60-persistent-v4l.rules already gives every user, without root:
+#   /dev/v4l/by-id/usb-<ID_SERIAL>-video-index<N>      ID_SERIAL = <vendor>_<model>[_<serial>] (usb_id builtin);
+#                                                      WITHOUT a usable serial two identical cameras COLLIDE here
+#   /dev/v4l/by-path/<ID_PATH>-video-index<N>           ID_PATH = pci-<controller>-usb[v2|v3]-0:<port chain>:<cfg>.<iface>
+# (source: systemd rules.d/60-persistent-v4l.rules and src/udev/udev-builtin-{usb_id,path_id}.c, v255 == main as fetched)
+# so the app can resolve its stable key by reading those symlinks / sysfs - see naming/linux_identity.py.
+# Rules like the ones below are only for users who want friendly names; installing them needs root:
+#   sudo cp 99-skellycam-cameras.rules.example /etc/udev/rules.d/99-skellycam-cameras.rules
+#   sudo udevadm control --reload && sudo udevadm trigger --subsystem-match=video4linux
+#
+# 1) Camera WITH a usable serial: name follows the camera to any port.
+SUBSYSTEM=="video4linux", KERNEL=="video*", ATTR{index}=="0", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="085c", ATTRS{serial}=="B76395EF", SYMLINK+="skellycam/cam-c922-B76395EF"
+#
+# 2) Camera WITHOUT a serial (or duplicated serials): name is tied to the physical port.
+#    Get ID_PATH with: udevadm info --query=property --name=/dev/video0 | grep ID_PATH=
+SUBSYSTEM=="video4linux", KERNEL=="video*", ATTR{index}=="0", ENV{ID_PATH}=="pci-0000:00:14.0-usb-0:1.4:1.0", SYMLINK+="skellycam/port-front-left"
+#
+# 3) Generic: every UVC capture node gets a port-based link (index 0 = the capture node; index 1 is UVC metadata).
+SUBSYSTEM=="video4linux", KERNEL=="video*", ATTR{index}=="0", ENV{ID_USB_DRIVER}=="uvcvideo", ENV{ID_PATH_TAG}=="?*", SYMLINK+="skellycam/by-port/$env{ID_PATH_TAG}"

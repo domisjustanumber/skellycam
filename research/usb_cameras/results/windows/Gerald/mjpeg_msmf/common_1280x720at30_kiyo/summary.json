@@ -1,0 +1,214 @@
+{
+ "test": "mjpeg_msmf",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": null,
+ "utc_summarized": "2026-10-25T19:30:09.954736+00:00",
+ "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams kiyo --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg\\mjpeg_msmf\\common_1280x720at30_kiyo' -- research/usb_cameras/mjpeg/build/mf_mjpeg_capture.exe --dev 'vid_1532&pid_0e05' --width 1280 --height 720 --fps 30 --seconds 10 --warmup 2 --out 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg\\mjpeg_msmf\\common_1280x720at30_kiyo' --attr-dump 5",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "backend": "msmf-sourcereader",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30.0
+ },
+ "decoded_by_pipeline": null,
+ "decode_evidence": null,
+ "window": {
+  "start_ns": 105956906258100,
+  "end_ns": 105966906490100,
+  "wall_s": 10.000232,
+  "warmup_s": 2.0,
+  "open_ns": 105954905358500
+ },
+ "delivered_codecs": null,
+ "silent_format_fallback": null,
+ "cpu": {
+  "method": "GetProcessTimes (tick-sampled) + QueryProcessCycleTime/TSC-rate (precise)",
+  "process_user_s": 0.0,
+  "process_kernel_s": 0.0,
+  "process_cpu_pct_of_one_core_ticks": 0.0,
+  "process_cycles": 2491722,
+  "tsc_hz": 3417600502,
+  "process_cpu_pct_of_one_core": 0.007,
+  "frameserver_pid": 40784,
+  "frameserver_open_error": 5,
+  "frameserver_ok": false,
+  "frameserver_cpu_pct_of_one_core_ticks": 0.0,
+  "frameserver_cycles": 0,
+  "frameserver_cpu_pct_of_one_core": null,
+  "process_cpu_pct_per_camera": 0.007
+ },
+ "cameras": [
+  {
+   "idx": 0,
+   "name": "USB Video Device",
+   "symbolic_link": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "chosen_native_type": "MJPG 1280x720@30/1 (native index 43)",
+   "reader_output_subtype": "MJPG",
+   "output_w": 1280,
+   "output_h": 720,
+   "output_fps_num": 30,
+   "output_fps_den": 1,
+   "requested_mode": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30.0
+   },
+   "read_error": "0x8007001f",
+   "stream_ticks": 0,
+   "null_samples": 0,
+   "frames_total": 0,
+   "first_frame_latency_ms": -1.0,
+   "controls_before": {
+    "exposure_log2s": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "focus": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "white_balance_k": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "gain": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "backlight_compensation": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "powerline_frequency": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "auto_exposure_priority": {
+     "supported": false,
+     "set_hr": "0x1"
+    }
+   },
+   "controls_after_set": {
+    "exposure_log2s": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "focus": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "white_balance_k": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "gain": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "backlight_compensation": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "powerline_frequency": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "auto_exposure_priority": {
+     "supported": false,
+     "set_hr": "0x1"
+    }
+   },
+   "controls_end": {
+    "exposure_log2s": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "focus": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "white_balance_k": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "gain": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "backlight_compensation": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "powerline_frequency": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "auto_exposure_priority": {
+     "supported": false,
+     "set_hr": "0x1"
+    }
+   },
+   "frames_delivered_total": 0,
+   "frames_in_window": 0,
+   "fps_requested": 30.0,
+   "fps_achieved_count_over_wall": 0.0,
+   "fps_achieved_span": null,
+   "inter_arrival_ms": null,
+   "gaps_over_1p5_period": 0,
+   "os_timestamp_delta_ms": null,
+   "payload_bytes": null,
+   "pct_valid_jpeg_in_window": null,
+   "pct_valid_jpeg_all": null,
+   "jpeg_checks_all": null,
+   "n_validated": 0,
+   "cam": "kiyo",
+   "jpeg_header": null,
+   "os_timestamp_source": null,
+   "timestamp_fields_present": {},
+   "arrival_minus_os_timestamp_ms": null
+  }
+ ],
+ "samples": [],
+ "controls": {
+  "requested": {
+   "exposure_log2s": -7,
+   "white_balance_k": 4500,
+   "auto_exposure_priority": 0
+  },
+  "after_apply": {
+   "USB Video Device": {
+    "exposure_log2s": null,
+    "white_balance_k": null,
+    "auto_exposure_priority": null,
+    "exposure_log2s_mode": null,
+    "white_balance_k_mode": null
+   }
+  },
+  "readback_after_capture": {
+   "USB Video Device": {
+    "exposure_log2s": null,
+    "white_balance_k": null,
+    "auto_exposure_priority": null,
+    "exposure_log2s_mode": null,
+    "white_balance_k_mode": null
+   }
+  },
+  "apply_rc": 0,
+  "readback_rc": 0
+ }
+}

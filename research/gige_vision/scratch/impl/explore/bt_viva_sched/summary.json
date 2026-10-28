@@ -1,0 +1,511 @@
+{
+ "tool": "viva_sync_capture_test",
+ "host": {
+  "python": "3.12.13",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "hostname": "Gerald",
+  "time_utc": "2026-10-25T19:09:08Z"
+ },
+ "args": {
+  "ip": [
+   "127.0.0.1"
+  ],
+  "iface": "",
+  "include_loopback": true,
+  "discovery_timeout": 1.0,
+  "mode": "scheduled-action",
+  "fps": 30.0,
+  "duration": 10.0,
+  "triggers": 30,
+  "pixel_format": "",
+  "packet_size": 0,
+  "force_gvsp": false,
+  "skip_ptp": false,
+  "restore_ptp": false,
+  "ptp_mode": "Auto",
+  "ptp_slave_only": false,
+  "external_master": false,
+  "ptp_timeout": 90.0,
+  "stable_s": 5.0,
+  "max_ptp_offset_ns": 1000,
+  "max_spread_us": 100.0,
+  "expect_aligned": false,
+  "max_drop_pct": 0.5,
+  "trigger_source": "Action1,Action0",
+  "skip_trigger_config": true,
+  "device_key": 66,
+  "group_key": 1,
+  "group_mask": 1,
+  "action_dest": "auto",
+  "action_sender": "stdlib",
+  "ack_timeout_ms": 20,
+  "lead_ms": 20.0,
+  "start_delay_ms": 1000.0,
+  "fake_cameras": 0,
+  "out": "C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/impl/explore/bt_viva_sched",
+  "selftest": false
+ },
+ "viva_genicam_version": "0.10.0",
+ "cameras": [
+  {
+   "ip": "127.0.0.1",
+   "DeviceVendorName": "vitavision.dev",
+   "DeviceModelName": "VivaCam Fake",
+   "DeviceSerialNumber": "VIVA-FAKE-001",
+   "DeviceFirmwareVersion": "1.0.0-fake",
+   "PixelFormat": "BayerRG8",
+   "Width": "640",
+   "Height": "480",
+   "GevSCPSPacketSize": "1500",
+   "GevTimestampTickFrequency": "1000000000",
+   "ExposureTime": "5000",
+   "bootstrap_gev_version": "2.0",
+   "capability": [
+    "ccp_application_port_ip",
+    "pending_ack",
+    "packet_resend",
+    "write_mem",
+    "concatenation"
+   ],
+   "tick_hz_after_ptp": 1000000000
+  }
+ ],
+ "scheduled": {
+  "latch_round_trip_us": 69.2,
+  "schedule_first_ticks": 23238663900,
+  "period_ticks": 33333333,
+  "destinations": [
+   "127.0.0.1"
+  ],
+  "sender_backend": "stdlib",
+  "late_sends": 0,
+  "actions": [
+   {
+    "trigger": 0,
+    "time_ticks": 23238663900,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104707516637000,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 1,
+    "time_ticks": 23271997233,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104707550253400,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 2,
+    "time_ticks": 23305330566,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104707583310100,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 3,
+    "time_ticks": 23338663899,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104707616454100,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 4,
+    "time_ticks": 23371997232,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104707650301400,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 5,
+    "time_ticks": 23405330565,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104707683235700,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 6,
+    "time_ticks": 23438663898,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104707716521400,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 7,
+    "time_ticks": 23471997231,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104707750140900,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 8,
+    "time_ticks": 23505330564,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104707783421800,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 9,
+    "time_ticks": 23538663897,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104707816707500,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 10,
+    "time_ticks": 23571997230,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104707850315800,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 11,
+    "time_ticks": 23605330563,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104707883411900,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 12,
+    "time_ticks": 23638663896,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104707916711100,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 13,
+    "time_ticks": 23671997229,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104707949939500,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 14,
+    "time_ticks": 23705330562,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104707983262800,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 15,
+    "time_ticks": 23738663895,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104708016824800,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 16,
+    "time_ticks": 23771997228,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104708050189000,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 17,
+    "time_ticks": 23805330561,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104708083624000,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 18,
+    "time_ticks": 23838663894,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104708117003400,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 19,
+    "time_ticks": 23871997227,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104708149999900,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 20,
+    "time_ticks": 23905330560,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104708183366800,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 21,
+    "time_ticks": 23938663893,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104708216952700,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 22,
+    "time_ticks": 23971997226,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104708250156300,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 23,
+    "time_ticks": 24005330559,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104708283411300,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 24,
+    "time_ticks": 24038663892,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104708316848800,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 25,
+    "time_ticks": 24071997225,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104708349951900,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 26,
+    "time_ticks": 24105330558,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104708383369100,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 27,
+    "time_ticks": 24138663891,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104708416788300,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 28,
+    "time_ticks": 24171997224,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104708450185000,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   },
+   {
+    "trigger": 29,
+    "time_ticks": 24205330557,
+    "dest": "127.0.0.1",
+    "host_perf_ns": 104708483292100,
+    "sender": "stdlib",
+    "acks": 1,
+    "statuses": {
+     "127.0.0.1": "SUCCESS"
+    }
+   }
+  ],
+  "matched_by_order": [
+   "cam0 127.0.0.1 VivaCam Fake"
+  ],
+  "lag_us": {
+   "cam0 127.0.0.1 VivaCam Fake": {
+    "n": 30,
+    "min": -23238662.0,
+    "median": -23167358.328500003,
+    "p95": -23080597.01415,
+    "max": -23073553.057
+   }
+  }
+ },
+ "quality": {
+  "cam0 127.0.0.1 VivaCam Fake": {
+   "frames": 50,
+   "incomplete": 0,
+   "block_id_gaps": 0,
+   "lost_pct": 0.0,
+   "device_fps": 26.04499011592625,
+   "stream_stats": {
+    "frames_complete": 50,
+    "frames_incomplete": 0,
+    "frames_missed": 0,
+    "frames_lost": 0,
+    "packets_missing": 0,
+    "resend_requested": 2,
+    "resend_recovered": 2,
+    "avg_fps": 26.018685600089395,
+    "avg_mbps": 63.94352173077969
+   },
+   "reader_error": ""
+  }
+ },
+ "checks": [
+  {
+   "name": "camera",
+   "status": "INFO",
+   "detail": "vitavision.dev VivaCam Fake serial VIVA-FAKE-001 fw 1.0.0-fake; GEV 2.0 (DeviceTLVersion ?.?); BayerRG8 640x480, packet size 1500",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "PTP enable feature",
+   "status": "SKIP",
+   "detail": "none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "PTP lock",
+   "status": "SKIP",
+   "detail": "PTP could not be enabled on any camera",
+   "camera": ""
+  },
+  {
+   "name": "action trigger setup",
+   "status": "WARN",
+   "detail": "--skip-trigger-config: frames are NOT triggered by the actions (emulator dry run only)",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "scheduled action capability",
+   "status": "WARN",
+   "detail": "capability bit clear - camera may reject scheduled actions (trying anyway)",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "ACTION_ACKs",
+   "status": "PASS",
+   "detail": "30/30 sends acknowledged by every addressed camera (sender stdlib); 0 sends left after their scheduled time",
+   "camera": ""
+  },
+  {
+   "name": "triggered frames",
+   "status": "WARN",
+   "detail": "30/30 actions produced a frame (matched by ORDER: frame timestamps are not on camera 0's timescale)",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "frame timestamp - scheduled time",
+   "status": "INFO",
+   "detail": "median -23167358.3 us, p95 -23080597.0 us (what the timestamp marks - exposure start, end or readout - is vendor-specific)",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "exposure-start spread",
+   "status": "SKIP",
+   "detail": "needs two or more cameras",
+   "camera": ""
+  },
+  {
+   "name": "frames received",
+   "status": "PASS",
+   "detail": "50; incomplete 0, block-id gaps 0 (0.00 % lost, limit 0.5 %); device fps 26.04",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  }
+ ]
+}

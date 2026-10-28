@@ -1,0 +1,15 @@
+--- /c/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/7c9d3345-0e7f-4af6-bb14-20fd851edd1a/scratchpad/b/uvc_capture_test.c	2026-10-25 17:08:21.000000000 -0400
++++ /c/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/7c9d3345-0e7f-4af6-bb14-20fd851edd1a/scratchpad/b2/uvc_capture_test.c	2026-10-27 23:09:41.226890000 -0400
+@@ -343,7 +343,11 @@
+     int orc = LIBUSB_ERROR_NOT_SUPPORTED;
+     if (uvc) {
+       n_uvc++;
+-      orc = libusb_open(dev, &h);
++      /* rerun20261027 harness variant: UVC_LIST_SKIP_OPEN="1532:0e05[,vvvv:pppp]" -> do not libusb_open those */
++      char vp_[16]; const char *skip_ = getenv("UVC_LIST_SKIP_OPEN");
++      snprintf(vp_, sizeof vp_, "%04x:%04x", dd.idVendor, dd.idProduct);
++      if (skip_ && strstr(skip_, vp_)) { orc = LIBUSB_ERROR_NOT_SUPPORTED; printf("[skip-open %s]\n", vp_); }
++      else orc = libusb_open(dev, &h);
+       if (orc == 0) n_uvc_open++;
+     }
+     port_path_str(dev, pp, sizeof pp);

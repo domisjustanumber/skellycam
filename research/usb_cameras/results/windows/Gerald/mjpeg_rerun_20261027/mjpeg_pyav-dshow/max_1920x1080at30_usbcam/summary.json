@@ -1,0 +1,315 @@
+{
+ "test": "mjpeg_pyav-dshow",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-28T03:47:06.146376+00:00",
+ "utc_summarized": "2026-10-28T03:47:37.682269+00:00",
+ "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams usbcam --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_rerun_20261027\\mjpeg_pyav-dshow\\max_1920x1080at30_usbcam' --timeout-s 120 -- uv run --script research/usb_cameras/mjpeg/pyav/pyav_capture.py --input-format dshow --device 'video=@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global' --size 1920x1080 --fps 30 --seconds 10 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_rerun_20261027\\mjpeg_pyav-dshow\\max_1920x1080at30_usbcam'",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "av": "19.0.2",
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "backend": "pyav-dshow",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30.0
+ },
+ "decoded_by_pipeline": false,
+ "decode_evidence": "only container.demux() is called; packets are passed through as bytes; stream codec reported per camera (codec != mjpeg means FFmpeg/the device delivered a different format than requested WITHOUT raising an error)",
+ "window": {
+  "start_ns": 32851003199200,
+  "end_ns": 32861003601900,
+  "wall_s": 10.0004027
+ },
+ "delivered_codecs": [
+  "mjpeg"
+ ],
+ "silent_format_fallback": false,
+ "cpu": {
+  "method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)",
+  "wall_s": 10.0004101,
+  "process_cpu_s_ticks": 0.125,
+  "process_cpu_pct_of_one_core_ticks": 1.2499487396021889,
+  "tsc_hz": 3403546541.944162,
+  "process_cycles": 374187944,
+  "process_cpu_pct_of_one_core": 1.099360900667966,
+  "frameserver_pid": 20440,
+  "frameserver_cpu_pct_of_one_core_ticks": 0.0,
+  "frameserver_cpu_pct_of_one_core": null,
+  "process_cpu_pct_per_camera": 1.099360900667966
+ },
+ "cameras": [
+  {
+   "idx": 0,
+   "name": "video=@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "options": {
+    "video_size": "1920x1080",
+    "framerate": "30",
+    "vcodec": "mjpeg",
+    "rtbufsize": "512M"
+   },
+   "codec": "mjpeg",
+   "pix_fmt": "yuvj422p",
+   "stream_time_base": "1/10000000",
+   "stream_size": [
+    1920,
+    1080
+   ],
+   "stream_rate": "10000000/333333",
+   "open_ms": 465.8883,
+   "frames": 321,
+   "frames_delivered_total": 321,
+   "frames_in_window": 258,
+   "fps_requested": 30.0,
+   "fps_achieved_count_over_wall": 25.798961075837475,
+   "fps_achieved_span": 25.740507579372583,
+   "inter_arrival_ms": {
+    "n": 257,
+    "min": 31.4823,
+    "p50": 32.123,
+    "mean": 38.84927276264592,
+    "p95": 48.1635,
+    "max": 48.5257
+   },
+   "gaps_over_1p5_period": 0,
+   "os_timestamp_delta_ms": {
+    "n": 257,
+    "min": 33.3383,
+    "p50": 33.3383,
+    "mean": 33.3383,
+    "p95": 33.3383,
+    "max": 33.3383
+   },
+   "payload_bytes": {
+    "n": 258,
+    "min": 108476,
+    "p50": 109130,
+    "mean": 109111.14341085272,
+    "p95": 109480,
+    "max": 109733
+   },
+   "mean_luma": {
+    "n": 8,
+    "min": 19.65,
+    "p50": 19.67,
+    "mean": 19.66625,
+    "p95": 19.67,
+    "max": 19.68,
+    "method": "mean of 8-bit luma, every 30th in-window frame (JPEG: simplejpeg GRAY 1/8 scale; pixels: capture script)"
+   },
+   "pct_valid_jpeg_in_window": 100.0,
+   "pct_valid_jpeg_all": 100.0,
+   "pct_valid_jpeg_strict_all": 0.0,
+   "libjpeg_warnings_sample": [
+    "ValueError('Corrupt JPEG data: 1049 extraneous bytes before marker 0xd9')",
+    "ValueError('Corrupt JPEG data: 1068 extraneous bytes before marker 0xd9')",
+    "ValueError('Corrupt JPEG data: 1069 extraneous bytes before marker 0xd9')"
+   ],
+   "jpeg_checks_all": {
+    "soi": 321,
+    "eoi_at_end": 321,
+    "eoi_in_tail": 321,
+    "has_dht": 321,
+    "pillow_ok": 321,
+    "simplejpeg_ok": 0,
+    "simplejpeg_lenient_ok": 321
+   },
+   "n_validated": 321,
+   "cam": "usbcam",
+   "jpeg_header": {
+    "fingerprints": {
+     "0d66b76922fe": 1,
+     "fb027a2fabd6": 31,
+     "61017a908fc2": 1,
+     "d1d660ae4055": 1,
+     "b32cb2849949": 1,
+     "45dc8d0bad2a": 1,
+     "7c73376ebe13": 1,
+     "a63c2402f66d": 1,
+     "f0024b996868": 1,
+     "7c88aaf4bdc2": 1,
+     "8016e885fefd": 281
+    },
+    "header_sha1s": {
+     "9973f6eb31f7": 1,
+     "6b648f110b91": 31,
+     "a0893b0ac91e": 1,
+     "e229efe787c5": 1,
+     "44fb29fdb1e7": 1,
+     "4496b051fae2": 1,
+     "53ff0794e19e": 1,
+     "adf268350a9e": 1,
+     "22b9f61860ae": 1,
+     "08d7ab510c3b": 1,
+     "08fda7f6f108": 281
+    },
+    "markers": [
+     "APP0",
+     "DQT",
+     "DQT",
+     "SOF0",
+     "DHT",
+     "DHT",
+     "DHT",
+     "DHT",
+     "SOS"
+    ],
+    "app": [
+     {
+      "marker": "APP0",
+      "len": 17,
+      "id": "JFIF"
+     }
+    ],
+    "sof": {
+     "type": "SOF0",
+     "precision": 8,
+     "h": 1080,
+     "w": 1920,
+     "components": [
+      {
+       "id": 1,
+       "hv": "2x1",
+       "tq": 0
+      },
+      {
+       "id": 2,
+       "hv": "1x1",
+       "tq": 1
+      },
+      {
+       "id": 3,
+       "hv": "1x1",
+       "tq": 1
+      }
+     ]
+    },
+    "dqt_sha1": "1dc466a39650",
+    "dht_sha1": "41b700bdd457",
+    "dqt_q0_first8": [
+     10,
+     7,
+     7,
+     8,
+     7,
+     6,
+     10,
+     8
+    ],
+    "has_dht": true,
+    "header_bytes": 624,
+    "com": null,
+    "bytes_after_eoi_max": 0
+   },
+   "os_timestamp_source": "FFmpeg dshow packet pts*time_base (dshow: IMediaSample time + graph start_time, ref clock 100ns)",
+   "timestamp_fields_present": {
+    "os_timestamp_ns": 258,
+    "pkt_pts": 258
+   },
+   "arrival_minus_os_timestamp_ms": {
+    "median": 1087.8835,
+    "abs_dev_from_median": {
+     "n": 258,
+     "min": 0.0,
+     "p50": 358.1414,
+     "mean": 353.8994147286822,
+     "p95": 670.2858999999999,
+     "max": 708.9066999999999
+    },
+    "note": "host_arrival_ns - os_timestamp_ns; a latency only when os_timestamp_ns is on the host QPC clock (true for MF llTimestamp and WinRT SystemRelativeTime by documentation; FFmpeg dshow pts = DirectShow stream time + FFmpeg start offset, which lands in the QPC domain on this machine: see the median)"
+   }
+  }
+ ],
+ "samples": [
+  "sample_cam0_seq62.jpghdr"
+ ],
+ "devnode_status": {
+  "before": {
+   "c930e:VID_046D&PID_0843&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_02": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_00": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843&MI_03": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_00": "0x0180200A",
+   "usbcam:VID_4C4A&PID_4A55": "0x0180600A",
+   "kiyo:VID_1532&PID_0E05&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843": "0x0180600A"
+  },
+  "after": {
+   "c930e:VID_046D&PID_0843&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_02": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_00": "0x0180200A",
+   "kiyo:VID_1532&PID_0E05&MI_00": "0x0180200A",
+   "c922:VID_046D&PID_085C": "0x0180600A",
+   "usbcam:VID_4C4A&PID_4A55&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843&MI_03": "0x0180200A",
+   "c922:VID_046D&PID_085C&MI_00": "0x0180200A",
+   "usbcam:VID_4C4A&PID_4A55": "0x0180600A",
+   "kiyo:VID_1532&PID_0E05&MI_02": "0x0180200A",
+   "c930e:VID_046D&PID_0843": "0x0180600A"
+  }
+ },
+ "machine_cpu": {
+  "before": {
+   "utc": "2026-10-28T03:47:05.962844+00:00",
+   "interval_s": 1.0,
+   "machine_cpu_pct": 4.2,
+   "n_logical": 28,
+   "busiest_core_pct": 20.0
+  },
+  "after": {
+   "utc": "2026-10-28T03:47:20.324088+00:00",
+   "interval_s": 1.0,
+   "machine_cpu_pct": 3.7,
+   "n_logical": 28,
+   "busiest_core_pct": 21.5
+  },
+  "note": "whole-machine CPU% (psutil, 1 s) right before and after the capture; other agents run concurrently"
+ },
+ "controls": {
+  "requested": {
+   "exposure_log2s": -7,
+   "white_balance_k": 4500,
+   "auto_exposure_priority": 0
+  },
+  "after_apply": {
+   "USB Camera": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": null,
+    "gain": 4,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "readback_after_capture": {
+   "USB Camera": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": null,
+    "gain": 4,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "apply_rc": 0,
+  "readback_rc": 0
+ },
+ "errors": []
+}

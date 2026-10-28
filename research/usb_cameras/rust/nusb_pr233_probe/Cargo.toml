@@ -1,0 +1,14 @@
+[package]
+name = "nusb_pr233_probe"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "UVC MJPEG streaming test against the nusb PR #233 (closed, unmerged) isochronous API; reuses uvc_iso/src/uvc.rs"
+
+# Standalone (not a member of ../Cargo.toml) so the main workspace never fetches this git dependency.
+[workspace]
+
+[dependencies]
+# kevinmehall/nusb PR #233 head (zibo-chen/nusb feature/isochronous-upstream), closed unmerged 2026-09-18
+nusb = { git = "https://github.com/zibo-chen/nusb", rev = "81ce16fa14a77101ae66406b7994d6f258789fe4" }
+serde_json = "1"

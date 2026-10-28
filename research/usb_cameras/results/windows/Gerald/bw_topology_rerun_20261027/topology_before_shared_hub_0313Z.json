@@ -1,0 +1,4696 @@
+{
+ "test": "bw_topology",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-28T03:13:45.694896+00:00",
+ "command": "uv run --script research/usb_cameras/bandwidth/win_usb_topology.py --exclude 1532:0e05 --out research/usb_cameras/results/windows/Gerald/bw_topology_rerun_20261027/topology_before_shared_hub_0313Z.json",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.13"
+ },
+ "excluded_vid_pid": [
+  "1532:0e05"
+ ],
+ "cameras": [
+  {
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_parent_chain": [
+    "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0"
+   ],
+   "port": 1,
+   "status": "DeviceConnected",
+   "speed": "high",
+   "device_is_hub": false,
+   "address": 3,
+   "current_configuration": 1,
+   "idVendor": "046d",
+   "idProduct": "085c",
+   "bcdDevice": "0016",
+   "bcdUSB": "0200",
+   "iManufacturer": 0,
+   "iProduct": 2,
+   "iSerialNumber": 1,
+   "open_pipes": [
+    {
+     "bEndpointAddress": "0x83",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0040",
+     "base_packet_bytes": 64,
+     "transactions_per_microframe": 1,
+     "bInterval": 8,
+     "ScheduleOffset": 0
+    }
+   ],
+   "v2_supported_protocols": {
+    "usb110": true,
+    "usb200": true,
+    "usb300": false
+   },
+   "v2_flags": {
+    "operating_at_superspeed_or_higher": false,
+    "superspeed_capable_or_higher": false,
+    "operating_at_superspeed_plus": false,
+    "superspeed_plus_capable": false
+   },
+   "legacy_speed_field": "high",
+   "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0022",
+   "instance_id": "USB\\VID_046D&PID_085C\\B76395EF",
+   "product": "C922 Pro Stream Webcam",
+   "manufacturer": null,
+   "serial": "B76395EF",
+   "uvc": {
+    "vc": {
+     "bcdUVC": "0100",
+     "dwClockFrequency": 300000000
+    },
+    "vs_interfaces": {
+     "1": {
+      "alt_settings": [
+       {
+        "bAlternateSetting": 0,
+        "endpoints": []
+       },
+       {
+        "bAlternateSetting": 1,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x00c0",
+          "base_packet_bytes": 192,
+          "transactions_per_microframe": 1,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 192
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 2,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x0180",
+          "base_packet_bytes": 384,
+          "transactions_per_microframe": 1,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 384
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 3,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x0200",
+          "base_packet_bytes": 512,
+          "transactions_per_microframe": 1,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 512
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 4,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x0280",
+          "base_packet_bytes": 640,
+          "transactions_per_microframe": 1,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 640
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 5,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x0320",
+          "base_packet_bytes": 800,
+          "transactions_per_microframe": 1,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 800
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 6,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x03b0",
+          "base_packet_bytes": 944,
+          "transactions_per_microframe": 1,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 944
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 7,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x0a80",
+          "base_packet_bytes": 640,
+          "transactions_per_microframe": 2,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 1280
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 8,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x0b20",
+          "base_packet_bytes": 800,
+          "transactions_per_microframe": 2,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 1600
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 9,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x0be0",
+          "base_packet_bytes": 992,
+          "transactions_per_microframe": 2,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 1984
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 10,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x1380",
+          "base_packet_bytes": 896,
+          "transactions_per_microframe": 3,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 2688
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 11,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x13fc",
+          "base_packet_bytes": 1020,
+          "transactions_per_microframe": 3,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 3060
+         }
+        ]
+       }
+      ],
+      "formats": [
+       {
+        "bFormatIndex": 1,
+        "type": "UNCOMPRESSED",
+        "frames": [
+         {
+          "bFrameIndex": 1,
+          "width": 640,
+          "height": 480,
+          "dwMinBitRate": 24576000,
+          "dwMaxBitRate": 147456000,
+          "dwMaxVideoFrameBufferSize": 614400,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 2,
+          "width": 160,
+          "height": 90,
+          "dwMinBitRate": 1152000,
+          "dwMaxBitRate": 6912000,
+          "dwMaxVideoFrameBufferSize": 28800,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 3,
+          "width": 160,
+          "height": 120,
+          "dwMinBitRate": 1536000,
+          "dwMaxBitRate": 9216000,
+          "dwMaxVideoFrameBufferSize": 38400,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 4,
+          "width": 176,
+          "height": 144,
+          "dwMinBitRate": 2027520,
+          "dwMaxBitRate": 12165120,
+          "dwMaxVideoFrameBufferSize": 50688,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 5,
+          "width": 320,
+          "height": 180,
+          "dwMinBitRate": 4608000,
+          "dwMaxBitRate": 27648000,
+          "dwMaxVideoFrameBufferSize": 115200,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 6,
+          "width": 320,
+          "height": 240,
+          "dwMinBitRate": 6144000,
+          "dwMaxBitRate": 36864000,
+          "dwMaxVideoFrameBufferSize": 153600,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 7,
+          "width": 352,
+          "height": 288,
+          "dwMinBitRate": 8110080,
+          "dwMaxBitRate": 48660480,
+          "dwMaxVideoFrameBufferSize": 202752,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 8,
+          "width": 432,
+          "height": 240,
+          "dwMinBitRate": 8294400,
+          "dwMaxBitRate": 49766400,
+          "dwMaxVideoFrameBufferSize": 207360,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 9,
+          "width": 640,
+          "height": 360,
+          "dwMinBitRate": 18432000,
+          "dwMaxBitRate": 110592000,
+          "dwMaxVideoFrameBufferSize": 460800,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 10,
+          "width": 800,
+          "height": 448,
+          "dwMinBitRate": 28672000,
+          "dwMaxBitRate": 172032000,
+          "dwMaxVideoFrameBufferSize": 716800,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 11,
+          "width": 800,
+          "height": 600,
+          "dwMinBitRate": 38400000,
+          "dwMaxBitRate": 184320000,
+          "dwMaxVideoFrameBufferSize": 960000,
+          "dwDefaultFrameInterval": 416666,
+          "fps": [
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 12,
+          "width": 864,
+          "height": 480,
+          "dwMinBitRate": 33177600,
+          "dwMaxBitRate": 159252480,
+          "dwMaxVideoFrameBufferSize": 829440,
+          "dwDefaultFrameInterval": 416666,
+          "fps": [
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 13,
+          "width": 960,
+          "height": 720,
+          "dwMinBitRate": 55296000,
+          "dwMaxBitRate": 165888000,
+          "dwMaxVideoFrameBufferSize": 1382400,
+          "dwDefaultFrameInterval": 666666,
+          "fps": [
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 14,
+          "width": 1024,
+          "height": 576,
+          "dwMinBitRate": 47185920,
+          "dwMaxBitRate": 141557760,
+          "dwMaxVideoFrameBufferSize": 1179648,
+          "dwDefaultFrameInterval": 666666,
+          "fps": [
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 15,
+          "width": 1280,
+          "height": 720,
+          "dwMinBitRate": 73728000,
+          "dwMaxBitRate": 147456000,
+          "dwMaxVideoFrameBufferSize": 1843200,
+          "dwDefaultFrameInterval": 1000000,
+          "fps": [
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 16,
+          "width": 1600,
+          "height": 896,
+          "dwMinBitRate": 114688000,
+          "dwMaxBitRate": 172032000,
+          "dwMaxVideoFrameBufferSize": 2867200,
+          "dwDefaultFrameInterval": 1333333,
+          "fps": [
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 17,
+          "width": 1920,
+          "height": 1080,
+          "dwMinBitRate": 165888000,
+          "dwMaxBitRate": 165888000,
+          "dwMaxVideoFrameBufferSize": 4147200,
+          "dwDefaultFrameInterval": 2000000,
+          "fps": [
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 18,
+          "width": 2304,
+          "height": 1296,
+          "dwMinBitRate": 238878720,
+          "dwMaxBitRate": 238878720,
+          "dwMaxVideoFrameBufferSize": 5971968,
+          "dwDefaultFrameInterval": 4999998,
+          "fps": [
+           2.0
+          ]
+         },
+         {
+          "bFrameIndex": 19,
+          "width": 2304,
+          "height": 1536,
+          "dwMinBitRate": 283115520,
+          "dwMaxBitRate": 283115520,
+          "dwMaxVideoFrameBufferSize": 7077888,
+          "dwDefaultFrameInterval": 4999998,
+          "fps": [
+           2.0
+          ]
+         }
+        ],
+        "fourcc": "YUY2",
+        "bBitsPerPixel": 16
+       },
+       {
+        "bFormatIndex": 2,
+        "type": "MJPEG",
+        "frames": [
+         {
+          "bFrameIndex": 1,
+          "width": 640,
+          "height": 480,
+          "dwMinBitRate": 24576000,
+          "dwMaxBitRate": 147456000,
+          "dwMaxVideoFrameBufferSize": 614400,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 2,
+          "width": 160,
+          "height": 90,
+          "dwMinBitRate": 1152000,
+          "dwMaxBitRate": 6912000,
+          "dwMaxVideoFrameBufferSize": 28800,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 3,
+          "width": 160,
+          "height": 120,
+          "dwMinBitRate": 1536000,
+          "dwMaxBitRate": 9216000,
+          "dwMaxVideoFrameBufferSize": 38400,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 4,
+          "width": 176,
+          "height": 144,
+          "dwMinBitRate": 2027520,
+          "dwMaxBitRate": 12165120,
+          "dwMaxVideoFrameBufferSize": 50688,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 5,
+          "width": 320,
+          "height": 180,
+          "dwMinBitRate": 4608000,
+          "dwMaxBitRate": 27648000,
+          "dwMaxVideoFrameBufferSize": 115200,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 6,
+          "width": 320,
+          "height": 240,
+          "dwMinBitRate": 6144000,
+          "dwMaxBitRate": 36864000,
+          "dwMaxVideoFrameBufferSize": 153600,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 7,
+          "width": 352,
+          "height": 288,
+          "dwMinBitRate": 8110080,
+          "dwMaxBitRate": 48660480,
+          "dwMaxVideoFrameBufferSize": 202752,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 8,
+          "width": 432,
+          "height": 240,
+          "dwMinBitRate": 8294400,
+          "dwMaxBitRate": 49766400,
+          "dwMaxVideoFrameBufferSize": 207360,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 9,
+          "width": 640,
+          "height": 360,
+          "dwMinBitRate": 18432000,
+          "dwMaxBitRate": 110592000,
+          "dwMaxVideoFrameBufferSize": 460800,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 10,
+          "width": 800,
+          "height": 448,
+          "dwMinBitRate": 28672000,
+          "dwMaxBitRate": 172032000,
+          "dwMaxVideoFrameBufferSize": 716800,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 11,
+          "width": 800,
+          "height": 600,
+          "dwMinBitRate": 38400000,
+          "dwMaxBitRate": 230400000,
+          "dwMaxVideoFrameBufferSize": 960000,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 12,
+          "width": 864,
+          "height": 480,
+          "dwMinBitRate": 33177600,
+          "dwMaxBitRate": 199065600,
+          "dwMaxVideoFrameBufferSize": 829440,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 13,
+          "width": 960,
+          "height": 720,
+          "dwMinBitRate": 55296000,
+          "dwMaxBitRate": 331776000,
+          "dwMaxVideoFrameBufferSize": 1382400,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 14,
+          "width": 1024,
+          "height": 576,
+          "dwMinBitRate": 47185920,
+          "dwMaxBitRate": 283115520,
+          "dwMaxVideoFrameBufferSize": 1179648,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 15,
+          "width": 1280,
+          "height": 720,
+          "dwMinBitRate": 73728000,
+          "dwMaxBitRate": 884736000,
+          "dwMaxVideoFrameBufferSize": 1843200,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           60.0,
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 16,
+          "width": 1600,
+          "height": 896,
+          "dwMinBitRate": 114688000,
+          "dwMaxBitRate": 688128000,
+          "dwMaxVideoFrameBufferSize": 2867200,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 17,
+          "width": 1920,
+          "height": 1080,
+          "dwMinBitRate": 165888000,
+          "dwMaxBitRate": 995328000,
+          "dwMaxVideoFrameBufferSize": 4147200,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         }
+        ]
+       }
+      ],
+      "input_header_bEndpointAddress": "0x81"
+     }
+    }
+   },
+   "config_descriptor_hex": "0902c70904010080fa080b00020e03000009040000010e0100000d24010001d60000a3e11101011224020101020000000000000000032e0a020b240503010040025b17001b240606d09ee4237811314fae52d2fb8a8d3b480a010302ff03001b240608e48e67690f41db40a8507420d7d8240e070101023b03001c240609a94c5d1f11de8744840d50933c8ec8d111010103f3ff23001b24060a1502e44934f4fe47b1580e885023e51b07010102ba07001b24060b212de5ff30802c4e82d9f587d00540bd020101020041001b24060c41769ea204dee3478b2bf4341aff003b0b010302077f0009240304010100030007058303400008052503400009040100000e0200000f24010251078100040000000100041b240401135955593200001000800000aa00389b7110010000000036240501008002e001000077010000ca08006009001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050200a0005a000094110000786900807000001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050300a00078000070170000a08c00009600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050400b000900000f01e0000a0b90000c600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240505004001b4000050460000e0a50100c201001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240506004001f00000c05d0000803202005802001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240507006001200100c07b000080e602001803001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050800b001f00000907e000060f702002a03001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050900800268010040190100809706000807001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050a002003c0010080b5010000410a00f00a001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003224050b002003580200f049020080fc0a00a60e009a5b0600069a5b060020a107002a2c0a0040420f005558140080841e003224050c006003e0010040fa0100007e0900a80c009a5b0600069a5b060020a107002a2c0a0040420f005558140080841e002a24050d00c003d00200c04b030040e309001815002a2c0a00042a2c0a0040420f005558140080841e002a24050e00000440020000d00200007008000012002a2c0a00042a2c0a0040420f005558140080841e002624050f000005d002000065040000ca0800201c0040420f000340420f005558140080841e002224051000400680030000d6060000410a00c02b0055581400025558140080841e001e24051100800738040040e3090040e30900483f0080841e000180841e001e240512000009100500003d0e00003d0e00205b003e4b4c00013e4b4c001e24051300000900060000e0100000e01000006c003e4b4c00013e4b4c0006240d0101040b2406021101010000000036240701008002e001000077010000ca08006009001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070200a0005a000094110000786900807000001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070300a00078000070170000a08c00009600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070400b000900000f01e0000a0b90000c600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240705004001b4000050460000e0a50100c201001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240706004001f00000c05d0000803202005802001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240707006001200100c07b000080e602001803001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070800b001f00000907e000060f702002a03001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070900800268010040190100809706000807001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070a002003c0010080b5010000410a00f00a001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070b002003580200f0490200a0bb0d00a60e001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070c006003e0010040fa010080dd0b00a80c001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070d00c003d00200c04b030080c613001815001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070e00000440020000d0020000e010000012001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003a24070f000005d002000065040000bc3400201c0015160500080a8b0200151605009a5b060020a107002a2c0a0040420f005558140080841e003624071000400680030000d6060000042900c02b001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624071100800738040040e3090080533b00483f001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0006240d01010409040101010e02000007058105c0000109040102010e0200000705810580010109040103010e0200000705810500020109040104010e0200000705810580020109040105010e0200000705810520030109040106010e02000007058105b0030109040107010e02000007058105800a0109040108010e02000007058105200b0109040109010e02000007058105e00b010904010a010e020000070581058013010904010b010e02000007058105fc1301080b0202010200000904020000010100000924010001260001030c2402010102000103000000092403030101000500082406050101030009040300000102000009040301010102000007240103ff01000b24020102021001803e000905820544000400000725010100000009040302010102000007240103ff01000b24020102021001c05d000905820564000400000725010100000009040303010102000007240103ff01000b24020102021001007d0009058205840004000007250101000000"
+  },
+  {
+   "hub_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_parent_chain": [
+    "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+    "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+    "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0"
+   ],
+   "port": 3,
+   "status": "DeviceConnected",
+   "speed": "high",
+   "device_is_hub": false,
+   "address": 11,
+   "current_configuration": 1,
+   "idVendor": "4c4a",
+   "idProduct": "4a55",
+   "bcdDevice": "0100",
+   "bcdUSB": "0200",
+   "iManufacturer": 1,
+   "iProduct": 2,
+   "iSerialNumber": 0,
+   "open_pipes": [
+    {
+     "bEndpointAddress": "0x85",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0010",
+     "base_packet_bytes": 16,
+     "transactions_per_microframe": 1,
+     "bInterval": 4,
+     "ScheduleOffset": 0
+    }
+   ],
+   "v2_supported_protocols": {
+    "usb110": true,
+    "usb200": true,
+    "usb300": false
+   },
+   "v2_flags": {
+    "operating_at_superspeed_or_higher": false,
+    "superspeed_capable_or_higher": false,
+    "operating_at_superspeed_plus": false,
+    "superspeed_plus_capable": false
+   },
+   "legacy_speed_field": "high",
+   "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0004",
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&3",
+   "product": "USB Composite Device",
+   "manufacturer": "Jieli Technology",
+   "serial": null,
+   "uvc": {
+    "vc": {
+     "bcdUVC": "0100",
+     "dwClockFrequency": 30000000
+    },
+    "vs_interfaces": {
+     "1": {
+      "alt_settings": [
+       {
+        "bAlternateSetting": 0,
+        "endpoints": []
+       },
+       {
+        "bAlternateSetting": 1,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x84",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x13ff",
+          "base_packet_bytes": 1023,
+          "transactions_per_microframe": 3,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 3069
+         }
+        ]
+       }
+      ],
+      "formats": [
+       {
+        "bFormatIndex": 1,
+        "type": "MJPEG",
+        "frames": [
+         {
+          "bFrameIndex": 1,
+          "width": 1920,
+          "height": 1080,
+          "dwMinBitRate": 497664000,
+          "dwMaxBitRate": 995328000,
+          "dwMaxVideoFrameBufferSize": 4147200,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           25.0
+          ]
+         },
+         {
+          "bFrameIndex": 2,
+          "width": 1280,
+          "height": 720,
+          "dwMinBitRate": 221184000,
+          "dwMaxBitRate": 442368000,
+          "dwMaxVideoFrameBufferSize": 1843200,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           25.0
+          ]
+         },
+         {
+          "bFrameIndex": 3,
+          "width": 640,
+          "height": 480,
+          "dwMinBitRate": 73728000,
+          "dwMaxBitRate": 147456000,
+          "dwMaxVideoFrameBufferSize": 614400,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           25.0
+          ]
+         },
+         {
+          "bFrameIndex": 4,
+          "width": 640,
+          "height": 360,
+          "dwMinBitRate": 55296000,
+          "dwMaxBitRate": 110592000,
+          "dwMaxVideoFrameBufferSize": 460800,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           25.0
+          ]
+         },
+         {
+          "bFrameIndex": 5,
+          "width": 352,
+          "height": 288,
+          "dwMinBitRate": 24330240,
+          "dwMaxBitRate": 48660480,
+          "dwMaxVideoFrameBufferSize": 202752,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           25.0
+          ]
+         }
+        ]
+       },
+       {
+        "bFormatIndex": 2,
+        "type": "UNCOMPRESSED",
+        "frames": [
+         {
+          "bFrameIndex": 1,
+          "width": 640,
+          "height": 480,
+          "dwMinBitRate": 73728000,
+          "dwMaxBitRate": 147456000,
+          "dwMaxVideoFrameBufferSize": 614400,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0
+          ]
+         },
+         {
+          "bFrameIndex": 2,
+          "width": 640,
+          "height": 360,
+          "dwMinBitRate": 55296000,
+          "dwMaxBitRate": 110592000,
+          "dwMaxVideoFrameBufferSize": 460800,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0
+          ]
+         },
+         {
+          "bFrameIndex": 3,
+          "width": 352,
+          "height": 288,
+          "dwMinBitRate": 24330240,
+          "dwMaxBitRate": 48660480,
+          "dwMaxVideoFrameBufferSize": 202752,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0
+          ]
+         },
+         {
+          "bFrameIndex": 4,
+          "width": 320,
+          "height": 240,
+          "dwMinBitRate": 18432000,
+          "dwMaxBitRate": 36864000,
+          "dwMaxVideoFrameBufferSize": 153600,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0
+          ]
+         }
+        ],
+        "fourcc": "YUY2",
+        "bBitsPerPixel": 16
+       }
+      ],
+      "input_header_bEndpointAddress": "0x84"
+     }
+    }
+   },
+   "config_descriptor_hex": "09028c0204010080c8080b00020e03000509040000010e0100050d24010001500080c3c90101011224020101020000000000000000030a00000b240502010000027b07001d2406037033f02811632e4aba2c6890eb33401608010204ffffffff0009240305010100040007058503100004052503100009040100000e0200000f24010271018400050201000100000b2406010500010000000022240701008007380400c0a91d0080533b00483f00151605000215160500801a060022240702000005d00200002f0d00005e1a00201c00151605000215160500801a060022240703008002e001000065040000ca0800600900151605000215160500801a060022240704008002680100c04b030080970600080700151605000215160500801a0600222407050060012001004073010080e60200180300151605000215160500801a060016240300030005d0028002e0014001f0000401050a141b240402045955593200001000800000aa00389b711001000000001e240501008002e001000065040000ca08006009001516050001151605001e240502008002680100c04b0300809706000807001516050001151605001e2405030060012001004073010080e602001803001516050001151605001e240504004001f0000040190100803202005802001516050001151605000e240300028002e0014001f0000006240d01010409040101010e02000007058405ff1301080b0202010200060904020000010100060924010001270001030c24020401020001000000000924030601010207000724050701050009240605040143000009040300000102000009040301010102000007240106010100142402010102100444ac0044ac00803e00401f00090582055a0004000007250101000000"
+  },
+  {
+   "hub_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_parent_chain": [
+    "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+    "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+    "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0"
+   ],
+   "port": 4,
+   "status": "DeviceConnected",
+   "speed": "high",
+   "device_is_hub": false,
+   "address": 12,
+   "current_configuration": 2,
+   "idVendor": "046d",
+   "idProduct": "0843",
+   "bcdDevice": "0013",
+   "bcdUSB": "0200",
+   "iManufacturer": 0,
+   "iProduct": 2,
+   "iSerialNumber": 0,
+   "open_pipes": [
+    {
+     "bEndpointAddress": "0x86",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0040",
+     "base_packet_bytes": 64,
+     "transactions_per_microframe": 1,
+     "bInterval": 8,
+     "ScheduleOffset": 0
+    }
+   ],
+   "v2_supported_protocols": {
+    "usb110": true,
+    "usb200": true,
+    "usb300": false
+   },
+   "v2_flags": {
+    "operating_at_superspeed_or_higher": false,
+    "superspeed_capable_or_higher": false,
+    "operating_at_superspeed_plus": false,
+    "superspeed_plus_capable": false
+   },
+   "legacy_speed_field": "high",
+   "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0024",
+   "instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+   "product": "Logitech Webcam C930e",
+   "manufacturer": null,
+   "serial": null,
+   "uvc": {
+    "vc": {
+     "bcdUVC": "0100",
+     "dwClockFrequency": 30000000
+    },
+    "vs_interfaces": {
+     "1": {
+      "alt_settings": [
+       {
+        "bAlternateSetting": 0,
+        "endpoints": []
+       },
+       {
+        "bAlternateSetting": 1,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x00c0",
+          "base_packet_bytes": 192,
+          "transactions_per_microframe": 1,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 192
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 2,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x0180",
+          "base_packet_bytes": 384,
+          "transactions_per_microframe": 1,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 384
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 3,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x0200",
+          "base_packet_bytes": 512,
+          "transactions_per_microframe": 1,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 512
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 4,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x0280",
+          "base_packet_bytes": 640,
+          "transactions_per_microframe": 1,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 640
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 5,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x0320",
+          "base_packet_bytes": 800,
+          "transactions_per_microframe": 1,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 800
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 6,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x03b0",
+          "base_packet_bytes": 944,
+          "transactions_per_microframe": 1,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 944
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 7,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x0a80",
+          "base_packet_bytes": 640,
+          "transactions_per_microframe": 2,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 1280
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 8,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x0b20",
+          "base_packet_bytes": 800,
+          "transactions_per_microframe": 2,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 1600
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 9,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x0be0",
+          "base_packet_bytes": 992,
+          "transactions_per_microframe": 2,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 1984
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 10,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x1380",
+          "base_packet_bytes": 896,
+          "transactions_per_microframe": 3,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 2688
+         }
+        ]
+       },
+       {
+        "bAlternateSetting": 11,
+        "endpoints": [
+         {
+          "bEndpointAddress": "0x81",
+          "type": "isochronous",
+          "wMaxPacketSize": "0x1400",
+          "base_packet_bytes": 1024,
+          "transactions_per_microframe": 3,
+          "bInterval": 1,
+          "service_interval_us": 125,
+          "bytes_per_interval": 3072
+         }
+        ]
+       }
+      ],
+      "formats": [
+       {
+        "bFormatIndex": 1,
+        "type": "UNCOMPRESSED",
+        "frames": [
+         {
+          "bFrameIndex": 1,
+          "width": 640,
+          "height": 480,
+          "dwMinBitRate": 24576000,
+          "dwMaxBitRate": 147456000,
+          "dwMaxVideoFrameBufferSize": 614400,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 2,
+          "width": 160,
+          "height": 120,
+          "dwMinBitRate": 1536000,
+          "dwMaxBitRate": 9216000,
+          "dwMaxVideoFrameBufferSize": 38400,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 3,
+          "width": 176,
+          "height": 144,
+          "dwMinBitRate": 2027520,
+          "dwMaxBitRate": 12165120,
+          "dwMaxVideoFrameBufferSize": 50688,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 4,
+          "width": 320,
+          "height": 180,
+          "dwMinBitRate": 4608000,
+          "dwMaxBitRate": 27648000,
+          "dwMaxVideoFrameBufferSize": 115200,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 5,
+          "width": 320,
+          "height": 240,
+          "dwMinBitRate": 6144000,
+          "dwMaxBitRate": 36864000,
+          "dwMaxVideoFrameBufferSize": 153600,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 6,
+          "width": 352,
+          "height": 288,
+          "dwMinBitRate": 8110080,
+          "dwMaxBitRate": 48660480,
+          "dwMaxVideoFrameBufferSize": 202752,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 7,
+          "width": 424,
+          "height": 240,
+          "dwMinBitRate": 8140800,
+          "dwMaxBitRate": 48844800,
+          "dwMaxVideoFrameBufferSize": 203520,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 8,
+          "width": 480,
+          "height": 270,
+          "dwMinBitRate": 10368000,
+          "dwMaxBitRate": 62208000,
+          "dwMaxVideoFrameBufferSize": 259200,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 9,
+          "width": 640,
+          "height": 360,
+          "dwMinBitRate": 18432000,
+          "dwMaxBitRate": 110592000,
+          "dwMaxVideoFrameBufferSize": 460800,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 10,
+          "width": 800,
+          "height": 448,
+          "dwMinBitRate": 28672000,
+          "dwMaxBitRate": 172032000,
+          "dwMaxVideoFrameBufferSize": 716800,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 11,
+          "width": 800,
+          "height": 600,
+          "dwMinBitRate": 38400000,
+          "dwMaxBitRate": 184320000,
+          "dwMaxVideoFrameBufferSize": 960000,
+          "dwDefaultFrameInterval": 416666,
+          "fps": [
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 12,
+          "width": 848,
+          "height": 480,
+          "dwMinBitRate": 32563200,
+          "dwMaxBitRate": 195379200,
+          "dwMaxVideoFrameBufferSize": 814080,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 13,
+          "width": 960,
+          "height": 540,
+          "dwMinBitRate": 41472000,
+          "dwMaxBitRate": 124416000,
+          "dwMaxVideoFrameBufferSize": 1036800,
+          "dwDefaultFrameInterval": 666666,
+          "fps": [
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 14,
+          "width": 1024,
+          "height": 576,
+          "dwMinBitRate": 47185920,
+          "dwMaxBitRate": 141557760,
+          "dwMaxVideoFrameBufferSize": 1179648,
+          "dwDefaultFrameInterval": 666666,
+          "fps": [
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 15,
+          "width": 1280,
+          "height": 720,
+          "dwMinBitRate": 73728000,
+          "dwMaxBitRate": 147456000,
+          "dwMaxVideoFrameBufferSize": 1843200,
+          "dwDefaultFrameInterval": 1000000,
+          "fps": [
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 16,
+          "width": 1600,
+          "height": 896,
+          "dwMinBitRate": 114688000,
+          "dwMaxBitRate": 172032000,
+          "dwMaxVideoFrameBufferSize": 2867200,
+          "dwDefaultFrameInterval": 1333333,
+          "fps": [
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 17,
+          "width": 1920,
+          "height": 1080,
+          "dwMinBitRate": 165888000,
+          "dwMaxBitRate": 165888000,
+          "dwMaxVideoFrameBufferSize": 4147200,
+          "dwDefaultFrameInterval": 2000000,
+          "fps": [
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 18,
+          "width": 2304,
+          "height": 1296,
+          "dwMinBitRate": 238878720,
+          "dwMaxBitRate": 238878720,
+          "dwMaxVideoFrameBufferSize": 5971968,
+          "dwDefaultFrameInterval": 4999998,
+          "fps": [
+           2.0
+          ]
+         },
+         {
+          "bFrameIndex": 19,
+          "width": 2304,
+          "height": 1536,
+          "dwMinBitRate": 283115520,
+          "dwMaxBitRate": 283115520,
+          "dwMaxVideoFrameBufferSize": 7077888,
+          "dwDefaultFrameInterval": 4999998,
+          "fps": [
+           2.0
+          ]
+         }
+        ],
+        "fourcc": "YUY2",
+        "bBitsPerPixel": 16
+       },
+       {
+        "bFormatIndex": 2,
+        "type": "MJPEG",
+        "frames": [
+         {
+          "bFrameIndex": 1,
+          "width": 640,
+          "height": 480,
+          "dwMinBitRate": 24576000,
+          "dwMaxBitRate": 147456000,
+          "dwMaxVideoFrameBufferSize": 614400,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 2,
+          "width": 160,
+          "height": 120,
+          "dwMinBitRate": 1536000,
+          "dwMaxBitRate": 9216000,
+          "dwMaxVideoFrameBufferSize": 38400,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 3,
+          "width": 176,
+          "height": 144,
+          "dwMinBitRate": 2027520,
+          "dwMaxBitRate": 12165120,
+          "dwMaxVideoFrameBufferSize": 50688,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 4,
+          "width": 320,
+          "height": 180,
+          "dwMinBitRate": 4608000,
+          "dwMaxBitRate": 27648000,
+          "dwMaxVideoFrameBufferSize": 115200,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 5,
+          "width": 320,
+          "height": 240,
+          "dwMinBitRate": 6144000,
+          "dwMaxBitRate": 36864000,
+          "dwMaxVideoFrameBufferSize": 153600,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 6,
+          "width": 352,
+          "height": 288,
+          "dwMinBitRate": 8110080,
+          "dwMaxBitRate": 48660480,
+          "dwMaxVideoFrameBufferSize": 202752,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 7,
+          "width": 424,
+          "height": 240,
+          "dwMinBitRate": 8140800,
+          "dwMaxBitRate": 48844800,
+          "dwMaxVideoFrameBufferSize": 203520,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 8,
+          "width": 480,
+          "height": 270,
+          "dwMinBitRate": 10368000,
+          "dwMaxBitRate": 62208000,
+          "dwMaxVideoFrameBufferSize": 259200,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 9,
+          "width": 640,
+          "height": 360,
+          "dwMinBitRate": 18432000,
+          "dwMaxBitRate": 110592000,
+          "dwMaxVideoFrameBufferSize": 460800,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 10,
+          "width": 800,
+          "height": 448,
+          "dwMinBitRate": 28672000,
+          "dwMaxBitRate": 172032000,
+          "dwMaxVideoFrameBufferSize": 716800,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 11,
+          "width": 800,
+          "height": 600,
+          "dwMinBitRate": 38400000,
+          "dwMaxBitRate": 230400000,
+          "dwMaxVideoFrameBufferSize": 960000,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 12,
+          "width": 848,
+          "height": 480,
+          "dwMinBitRate": 32563200,
+          "dwMaxBitRate": 195379200,
+          "dwMaxVideoFrameBufferSize": 814080,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 13,
+          "width": 960,
+          "height": 540,
+          "dwMinBitRate": 41472000,
+          "dwMaxBitRate": 248832000,
+          "dwMaxVideoFrameBufferSize": 1036800,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 14,
+          "width": 1024,
+          "height": 576,
+          "dwMinBitRate": 47185920,
+          "dwMaxBitRate": 283115520,
+          "dwMaxVideoFrameBufferSize": 1179648,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 15,
+          "width": 1280,
+          "height": 720,
+          "dwMinBitRate": 73728000,
+          "dwMaxBitRate": 442368000,
+          "dwMaxVideoFrameBufferSize": 1843200,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 16,
+          "width": 1600,
+          "height": 896,
+          "dwMinBitRate": 114688000,
+          "dwMaxBitRate": 688128000,
+          "dwMaxVideoFrameBufferSize": 2867200,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         },
+         {
+          "bFrameIndex": 17,
+          "width": 1920,
+          "height": 1080,
+          "dwMinBitRate": 165888000,
+          "dwMaxBitRate": 995328000,
+          "dwMaxVideoFrameBufferSize": 4147200,
+          "dwDefaultFrameInterval": 333333,
+          "fps": [
+           30.0,
+           24.0,
+           20.0,
+           15.0,
+           10.0,
+           7.5,
+           5.0
+          ]
+         }
+        ]
+       }
+      ],
+      "input_header_bEndpointAddress": "0x81"
+     }
+    }
+   },
+   "config_descriptor_hex": "09020d0a04010080fa080b00020e03000009040000010e0100000d24010001f10080c3c90101011224020101020000000000000000032e0a020b240503010040025b17001b240606d09ee4237811314fae52d2fb8a8d3b480a010302ff03001b240608e48e67690f41db40a8507420d7d8240e070103023b03001c240609a94c5d1f11de8744840d50933c8ec8d110010303f3ff03001b24060a1502e44934f4fe47b1580e885023e51b07010302aa0f001c24060b212de5ff30802c4e82d9f587d00540bd03010303004101001b24060c41769ea204dee3478b2bf4341aff003b0b010302077f001a24060d262d6113aa5ac446b13dff4d9a60db8601010301020009240304010100030007058603400008052503400009040100000e0200000f24010251078100040000000100041b240401135955593200001000800000aa00389b7110010000000036240501008002e001000077010000ca08006009001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050200a00078000070170000a08c00009600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050300b000900000f01e0000a0b90000c600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240504004001b4000050460000e0a50100c201001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240505004001f00000c05d0000803202005802001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240506006001200100c07b000080e602001803001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050700a801f00000387c000050e902001b03001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050800e0010e0100349e000038b50380f403001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050900800268010040190100809706000807001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050a002003c0010080b5010000410a00f00a001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003224050b002003580200f049020080fc0a00a60e009a5b0600069a5b060020a107002a2c0a0040420f005558140080841e003624050c005003e00100e0f0010040a50b006c0c001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e002a24050d00c0031c0200d0780200706a0700d20f002a2c0a00042a2c0a0040420f005558140080841e002a24050e00000440020000d00200007008000012002a2c0a00042a2c0a0040420f005558140080841e002624050f000005d002000065040000ca0800201c0040420f000340420f005558140080841e002224051000400680030000d6060000410a00c02b0055581400025558140080841e001e24051100800738040040e3090040e30900483f0080841e000180841e001e240512000009100500003d0e00003d0e00205b003e4b4c00013e4b4c001e24051300000900060000e0100000e01000006c003e4b4c00013e4b4c0006240d0101040b2406021101010000000036240701008002e001000077010000ca08006009001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070200a00078000070170000a08c00009600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070300b000900000f01e0000a0b90000c600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240704004001b4000050460000e0a50100c201001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240705004001f00000c05d0000803202005802001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240706006001200100c07b000080e602001803001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070700a801f00000387c000050e902001b03001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070800e0010e0100349e000038b50380f403001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070900800268010040190100809706000807001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070a002003c0010080b5010000410a00f00a001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070b002003580200f0490200a0bb0d00a60e001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070c005003e00100e0f0010040a50b006c0c001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070d00c0031c0200d0780200e0d40e00d20f001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070e00000440020000d0020000e010000012001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070f000005d0020000650400005e1a00201c001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624071000400680030000d6060000042900c02b001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624071100800738040040e3090080533b00483f001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0006240d01010409040101010e02000007058105c0000109040102010e0200000705810580010109040103010e0200000705810500020109040104010e0200000705810580020109040105010e0200000705810520030109040106010e02000007058105b0030109040107010e02000007058105800a0109040108010e02000007058105200b0109040109010e02000007058105e00b010904010a010e020000070581058013010904010b010e02000007058105001401080b0202010200000904020000010100000924010001260001030c24020101020001030000000924030301010005000824060501010300090403000001020000090403010101020000072401030101000b24020102021001803e0009058305440004000007250101000000090403020101020000072401030101000b24020102021001c05d0009058305640004000007250101000000090403030101020000072401030101000b24020102021001007d0009058305840004000007250101000000090403040101020000072401030101000b2402010202100180bb0009058305c40004000007250101000000"
+  }
+ ],
+ "hubs": [
+  {
+   "device_path": "\\\\?\\usb#vid_0424&pid_2137#6&f6f0942&0&3#{f18a0e88-c30c-11d0-8815-00a0c906bed8}",
+   "instance_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "parent_chain": [
+    "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+    "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+    "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0"
+   ],
+   "num_ports": 7,
+   "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "ports": [
+    {
+     "port": 2,
+     "status": "DeviceConnected",
+     "speed": "full",
+     "device_is_hub": false,
+     "address": 13,
+     "current_configuration": 1,
+     "idVendor": "046d",
+     "idProduct": "c52b",
+     "bcdDevice": "1211",
+     "bcdUSB": "0200",
+     "iManufacturer": 1,
+     "iProduct": 2,
+     "iSerialNumber": 0,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x81",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0008",
+       "base_packet_bytes": 8,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x82",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0008",
+       "base_packet_bytes": 8,
+       "transactions_per_microframe": 1,
+       "bInterval": 2,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x83",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0020",
+       "base_packet_bytes": 32,
+       "transactions_per_microframe": 1,
+       "bInterval": 2,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": true,
+      "usb200": true,
+      "usb300": false
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": false,
+      "superspeed_capable_or_higher": false,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "full",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0051",
+     "instance_id": "USB\\VID_046D&PID_C52B\\7&29C31953&0&2"
+    },
+    {
+     "port": 5,
+     "status": "DeviceConnected",
+     "speed": "full",
+     "device_is_hub": false,
+     "address": 14,
+     "current_configuration": 1,
+     "idVendor": "04d8",
+     "idProduct": "0b2a",
+     "bcdDevice": "0002",
+     "bcdUSB": "0200",
+     "iManufacturer": 1,
+     "iProduct": 2,
+     "iSerialNumber": 0,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x81",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x01",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": true,
+      "usb200": true,
+      "usb300": false
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": false,
+      "superspeed_capable_or_higher": false,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "full",
+     "driver_key": "{745a17a0-74d3-11d0-b6fe-00a0c90f57da}\\0044",
+     "instance_id": "USB\\VID_04D8&PID_0B2A\\7&29C31953&0&5"
+    }
+   ]
+  },
+  {
+   "device_path": "\\\\?\\usb#vid_05e3&pid_0608#5&cc3f949&0&10#{f18a0e88-c30c-11d0-8815-00a0c906bed8}",
+   "instance_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10",
+   "parent_chain": [
+    "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+    "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0"
+   ],
+   "num_ports": 4,
+   "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "ports": []
+  },
+  {
+   "device_path": "\\\\?\\usb#root_hub30#4&2fd48294&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8}",
+   "instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "parent_chain": [
+    "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0"
+   ],
+   "num_ports": 25,
+   "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "ports": [
+    {
+     "port": 1,
+     "status": "DeviceConnected",
+     "speed": "high",
+     "device_is_hub": false,
+     "address": 3,
+     "current_configuration": 1,
+     "idVendor": "046d",
+     "idProduct": "085c",
+     "bcdDevice": "0016",
+     "bcdUSB": "0200",
+     "iManufacturer": 0,
+     "iProduct": 2,
+     "iSerialNumber": 1,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x83",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": true,
+      "usb200": true,
+      "usb300": false
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": false,
+      "superspeed_capable_or_higher": false,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "high",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0022",
+     "instance_id": "USB\\VID_046D&PID_085C\\B76395EF",
+     "product": "C922 Pro Stream Webcam",
+     "manufacturer": null,
+     "serial": "B76395EF",
+     "uvc": {
+      "vc": {
+       "bcdUVC": "0100",
+       "dwClockFrequency": 300000000
+      },
+      "vs_interfaces": {
+       "1": {
+        "alt_settings": [
+         {
+          "bAlternateSetting": 0,
+          "endpoints": []
+         },
+         {
+          "bAlternateSetting": 1,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x00c0",
+            "base_packet_bytes": 192,
+            "transactions_per_microframe": 1,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 192
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 2,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x0180",
+            "base_packet_bytes": 384,
+            "transactions_per_microframe": 1,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 384
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 3,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x0200",
+            "base_packet_bytes": 512,
+            "transactions_per_microframe": 1,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 512
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 4,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x0280",
+            "base_packet_bytes": 640,
+            "transactions_per_microframe": 1,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 640
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 5,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x0320",
+            "base_packet_bytes": 800,
+            "transactions_per_microframe": 1,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 800
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 6,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x03b0",
+            "base_packet_bytes": 944,
+            "transactions_per_microframe": 1,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 944
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 7,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x0a80",
+            "base_packet_bytes": 640,
+            "transactions_per_microframe": 2,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 1280
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 8,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x0b20",
+            "base_packet_bytes": 800,
+            "transactions_per_microframe": 2,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 1600
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 9,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x0be0",
+            "base_packet_bytes": 992,
+            "transactions_per_microframe": 2,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 1984
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 10,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x1380",
+            "base_packet_bytes": 896,
+            "transactions_per_microframe": 3,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 2688
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 11,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x13fc",
+            "base_packet_bytes": 1020,
+            "transactions_per_microframe": 3,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 3060
+           }
+          ]
+         }
+        ],
+        "formats": [
+         {
+          "bFormatIndex": 1,
+          "type": "UNCOMPRESSED",
+          "frames": [
+           {
+            "bFrameIndex": 1,
+            "width": 640,
+            "height": 480,
+            "dwMinBitRate": 24576000,
+            "dwMaxBitRate": 147456000,
+            "dwMaxVideoFrameBufferSize": 614400,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 2,
+            "width": 160,
+            "height": 90,
+            "dwMinBitRate": 1152000,
+            "dwMaxBitRate": 6912000,
+            "dwMaxVideoFrameBufferSize": 28800,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 3,
+            "width": 160,
+            "height": 120,
+            "dwMinBitRate": 1536000,
+            "dwMaxBitRate": 9216000,
+            "dwMaxVideoFrameBufferSize": 38400,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 4,
+            "width": 176,
+            "height": 144,
+            "dwMinBitRate": 2027520,
+            "dwMaxBitRate": 12165120,
+            "dwMaxVideoFrameBufferSize": 50688,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 5,
+            "width": 320,
+            "height": 180,
+            "dwMinBitRate": 4608000,
+            "dwMaxBitRate": 27648000,
+            "dwMaxVideoFrameBufferSize": 115200,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 6,
+            "width": 320,
+            "height": 240,
+            "dwMinBitRate": 6144000,
+            "dwMaxBitRate": 36864000,
+            "dwMaxVideoFrameBufferSize": 153600,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 7,
+            "width": 352,
+            "height": 288,
+            "dwMinBitRate": 8110080,
+            "dwMaxBitRate": 48660480,
+            "dwMaxVideoFrameBufferSize": 202752,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 8,
+            "width": 432,
+            "height": 240,
+            "dwMinBitRate": 8294400,
+            "dwMaxBitRate": 49766400,
+            "dwMaxVideoFrameBufferSize": 207360,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 9,
+            "width": 640,
+            "height": 360,
+            "dwMinBitRate": 18432000,
+            "dwMaxBitRate": 110592000,
+            "dwMaxVideoFrameBufferSize": 460800,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 10,
+            "width": 800,
+            "height": 448,
+            "dwMinBitRate": 28672000,
+            "dwMaxBitRate": 172032000,
+            "dwMaxVideoFrameBufferSize": 716800,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 11,
+            "width": 800,
+            "height": 600,
+            "dwMinBitRate": 38400000,
+            "dwMaxBitRate": 184320000,
+            "dwMaxVideoFrameBufferSize": 960000,
+            "dwDefaultFrameInterval": 416666,
+            "fps": [
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 12,
+            "width": 864,
+            "height": 480,
+            "dwMinBitRate": 33177600,
+            "dwMaxBitRate": 159252480,
+            "dwMaxVideoFrameBufferSize": 829440,
+            "dwDefaultFrameInterval": 416666,
+            "fps": [
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 13,
+            "width": 960,
+            "height": 720,
+            "dwMinBitRate": 55296000,
+            "dwMaxBitRate": 165888000,
+            "dwMaxVideoFrameBufferSize": 1382400,
+            "dwDefaultFrameInterval": 666666,
+            "fps": [
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 14,
+            "width": 1024,
+            "height": 576,
+            "dwMinBitRate": 47185920,
+            "dwMaxBitRate": 141557760,
+            "dwMaxVideoFrameBufferSize": 1179648,
+            "dwDefaultFrameInterval": 666666,
+            "fps": [
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 15,
+            "width": 1280,
+            "height": 720,
+            "dwMinBitRate": 73728000,
+            "dwMaxBitRate": 147456000,
+            "dwMaxVideoFrameBufferSize": 1843200,
+            "dwDefaultFrameInterval": 1000000,
+            "fps": [
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 16,
+            "width": 1600,
+            "height": 896,
+            "dwMinBitRate": 114688000,
+            "dwMaxBitRate": 172032000,
+            "dwMaxVideoFrameBufferSize": 2867200,
+            "dwDefaultFrameInterval": 1333333,
+            "fps": [
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 17,
+            "width": 1920,
+            "height": 1080,
+            "dwMinBitRate": 165888000,
+            "dwMaxBitRate": 165888000,
+            "dwMaxVideoFrameBufferSize": 4147200,
+            "dwDefaultFrameInterval": 2000000,
+            "fps": [
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 18,
+            "width": 2304,
+            "height": 1296,
+            "dwMinBitRate": 238878720,
+            "dwMaxBitRate": 238878720,
+            "dwMaxVideoFrameBufferSize": 5971968,
+            "dwDefaultFrameInterval": 4999998,
+            "fps": [
+             2.0
+            ]
+           },
+           {
+            "bFrameIndex": 19,
+            "width": 2304,
+            "height": 1536,
+            "dwMinBitRate": 283115520,
+            "dwMaxBitRate": 283115520,
+            "dwMaxVideoFrameBufferSize": 7077888,
+            "dwDefaultFrameInterval": 4999998,
+            "fps": [
+             2.0
+            ]
+           }
+          ],
+          "fourcc": "YUY2",
+          "bBitsPerPixel": 16
+         },
+         {
+          "bFormatIndex": 2,
+          "type": "MJPEG",
+          "frames": [
+           {
+            "bFrameIndex": 1,
+            "width": 640,
+            "height": 480,
+            "dwMinBitRate": 24576000,
+            "dwMaxBitRate": 147456000,
+            "dwMaxVideoFrameBufferSize": 614400,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 2,
+            "width": 160,
+            "height": 90,
+            "dwMinBitRate": 1152000,
+            "dwMaxBitRate": 6912000,
+            "dwMaxVideoFrameBufferSize": 28800,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 3,
+            "width": 160,
+            "height": 120,
+            "dwMinBitRate": 1536000,
+            "dwMaxBitRate": 9216000,
+            "dwMaxVideoFrameBufferSize": 38400,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 4,
+            "width": 176,
+            "height": 144,
+            "dwMinBitRate": 2027520,
+            "dwMaxBitRate": 12165120,
+            "dwMaxVideoFrameBufferSize": 50688,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 5,
+            "width": 320,
+            "height": 180,
+            "dwMinBitRate": 4608000,
+            "dwMaxBitRate": 27648000,
+            "dwMaxVideoFrameBufferSize": 115200,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 6,
+            "width": 320,
+            "height": 240,
+            "dwMinBitRate": 6144000,
+            "dwMaxBitRate": 36864000,
+            "dwMaxVideoFrameBufferSize": 153600,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 7,
+            "width": 352,
+            "height": 288,
+            "dwMinBitRate": 8110080,
+            "dwMaxBitRate": 48660480,
+            "dwMaxVideoFrameBufferSize": 202752,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 8,
+            "width": 432,
+            "height": 240,
+            "dwMinBitRate": 8294400,
+            "dwMaxBitRate": 49766400,
+            "dwMaxVideoFrameBufferSize": 207360,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 9,
+            "width": 640,
+            "height": 360,
+            "dwMinBitRate": 18432000,
+            "dwMaxBitRate": 110592000,
+            "dwMaxVideoFrameBufferSize": 460800,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 10,
+            "width": 800,
+            "height": 448,
+            "dwMinBitRate": 28672000,
+            "dwMaxBitRate": 172032000,
+            "dwMaxVideoFrameBufferSize": 716800,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 11,
+            "width": 800,
+            "height": 600,
+            "dwMinBitRate": 38400000,
+            "dwMaxBitRate": 230400000,
+            "dwMaxVideoFrameBufferSize": 960000,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 12,
+            "width": 864,
+            "height": 480,
+            "dwMinBitRate": 33177600,
+            "dwMaxBitRate": 199065600,
+            "dwMaxVideoFrameBufferSize": 829440,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 13,
+            "width": 960,
+            "height": 720,
+            "dwMinBitRate": 55296000,
+            "dwMaxBitRate": 331776000,
+            "dwMaxVideoFrameBufferSize": 1382400,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 14,
+            "width": 1024,
+            "height": 576,
+            "dwMinBitRate": 47185920,
+            "dwMaxBitRate": 283115520,
+            "dwMaxVideoFrameBufferSize": 1179648,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 15,
+            "width": 1280,
+            "height": 720,
+            "dwMinBitRate": 73728000,
+            "dwMaxBitRate": 884736000,
+            "dwMaxVideoFrameBufferSize": 1843200,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             60.0,
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 16,
+            "width": 1600,
+            "height": 896,
+            "dwMinBitRate": 114688000,
+            "dwMaxBitRate": 688128000,
+            "dwMaxVideoFrameBufferSize": 2867200,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 17,
+            "width": 1920,
+            "height": 1080,
+            "dwMinBitRate": 165888000,
+            "dwMaxBitRate": 995328000,
+            "dwMaxVideoFrameBufferSize": 4147200,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           }
+          ]
+         }
+        ],
+        "input_header_bEndpointAddress": "0x81"
+       }
+      }
+     },
+     "config_descriptor_hex": "0902c70904010080fa080b00020e03000009040000010e0100000d24010001d60000a3e11101011224020101020000000000000000032e0a020b240503010040025b17001b240606d09ee4237811314fae52d2fb8a8d3b480a010302ff03001b240608e48e67690f41db40a8507420d7d8240e070101023b03001c240609a94c5d1f11de8744840d50933c8ec8d111010103f3ff23001b24060a1502e44934f4fe47b1580e885023e51b07010102ba07001b24060b212de5ff30802c4e82d9f587d00540bd020101020041001b24060c41769ea204dee3478b2bf4341aff003b0b010302077f0009240304010100030007058303400008052503400009040100000e0200000f24010251078100040000000100041b240401135955593200001000800000aa00389b7110010000000036240501008002e001000077010000ca08006009001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050200a0005a000094110000786900807000001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050300a00078000070170000a08c00009600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050400b000900000f01e0000a0b90000c600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240505004001b4000050460000e0a50100c201001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240506004001f00000c05d0000803202005802001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240507006001200100c07b000080e602001803001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050800b001f00000907e000060f702002a03001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050900800268010040190100809706000807001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050a002003c0010080b5010000410a00f00a001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003224050b002003580200f049020080fc0a00a60e009a5b0600069a5b060020a107002a2c0a0040420f005558140080841e003224050c006003e0010040fa0100007e0900a80c009a5b0600069a5b060020a107002a2c0a0040420f005558140080841e002a24050d00c003d00200c04b030040e309001815002a2c0a00042a2c0a0040420f005558140080841e002a24050e00000440020000d00200007008000012002a2c0a00042a2c0a0040420f005558140080841e002624050f000005d002000065040000ca0800201c0040420f000340420f005558140080841e002224051000400680030000d6060000410a00c02b0055581400025558140080841e001e24051100800738040040e3090040e30900483f0080841e000180841e001e240512000009100500003d0e00003d0e00205b003e4b4c00013e4b4c001e24051300000900060000e0100000e01000006c003e4b4c00013e4b4c0006240d0101040b2406021101010000000036240701008002e001000077010000ca08006009001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070200a0005a000094110000786900807000001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070300a00078000070170000a08c00009600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070400b000900000f01e0000a0b90000c600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240705004001b4000050460000e0a50100c201001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240706004001f00000c05d0000803202005802001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240707006001200100c07b000080e602001803001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070800b001f00000907e000060f702002a03001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070900800268010040190100809706000807001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070a002003c0010080b5010000410a00f00a001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070b002003580200f0490200a0bb0d00a60e001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070c006003e0010040fa010080dd0b00a80c001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070d00c003d00200c04b030080c613001815001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070e00000440020000d0020000e010000012001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003a24070f000005d002000065040000bc3400201c0015160500080a8b0200151605009a5b060020a107002a2c0a0040420f005558140080841e003624071000400680030000d6060000042900c02b001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624071100800738040040e3090080533b00483f001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0006240d01010409040101010e02000007058105c0000109040102010e0200000705810580010109040103010e0200000705810500020109040104010e0200000705810580020109040105010e0200000705810520030109040106010e02000007058105b0030109040107010e02000007058105800a0109040108010e02000007058105200b0109040109010e02000007058105e00b010904010a010e020000070581058013010904010b010e02000007058105fc1301080b0202010200000904020000010100000924010001260001030c2402010102000103000000092403030101000500082406050101030009040300000102000009040301010102000007240103ff01000b24020102021001803e000905820544000400000725010100000009040302010102000007240103ff01000b24020102021001c05d000905820564000400000725010100000009040303010102000007240103ff01000b24020102021001007d0009058205840004000007250101000000"
+    },
+    {
+     "port": 3,
+     "status": "DeviceConnected",
+     "speed": "full",
+     "device_is_hub": false,
+     "address": 1,
+     "current_configuration": 1,
+     "idVendor": "0922",
+     "idProduct": "001f",
+     "bcdDevice": "0112",
+     "bcdUSB": "0200",
+     "iManufacturer": 1,
+     "iProduct": 2,
+     "iSerialNumber": 3,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x82",
+       "type": "bulk",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 0,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x02",
+       "type": "bulk",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 0,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": true,
+      "usb200": true,
+      "usb300": false
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": false,
+      "superspeed_capable_or_higher": false,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "full",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0017",
+     "instance_id": "USB\\VID_0922&PID_001F\\17041109470541"
+    },
+    {
+     "port": 7,
+     "status": "DeviceConnected",
+     "speed": "full",
+     "device_is_hub": false,
+     "address": 2,
+     "current_configuration": 1,
+     "idVendor": "045e",
+     "idProduct": "07b2",
+     "bcdDevice": "0746",
+     "bcdUSB": "0200",
+     "iManufacturer": 1,
+     "iProduct": 2,
+     "iSerialNumber": 0,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x81",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0008",
+       "base_packet_bytes": 8,
+       "transactions_per_microframe": 1,
+       "bInterval": 4,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x82",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x000a",
+       "base_packet_bytes": 10,
+       "transactions_per_microframe": 1,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x83",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0020",
+       "base_packet_bytes": 32,
+       "transactions_per_microframe": 1,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": true,
+      "usb200": true,
+      "usb300": false
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": false,
+      "superspeed_capable_or_higher": false,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "full",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0041",
+     "instance_id": "USB\\VID_045E&PID_07B2\\5&CC3F949&0&7"
+    },
+    {
+     "port": 10,
+     "status": "DeviceConnected",
+     "speed": "high",
+     "device_is_hub": true,
+     "address": 4,
+     "current_configuration": 1,
+     "idVendor": "05e3",
+     "idProduct": "0608",
+     "bcdDevice": "6090",
+     "bcdUSB": "0200",
+     "iManufacturer": 0,
+     "iProduct": 1,
+     "iSerialNumber": 0,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x81",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0001",
+       "base_packet_bytes": 1,
+       "transactions_per_microframe": 1,
+       "bInterval": 12,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": true,
+      "usb200": true,
+      "usb300": false
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": false,
+      "superspeed_capable_or_higher": false,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "high",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0007",
+     "instance_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10"
+    },
+    {
+     "port": 11,
+     "status": "DeviceConnected",
+     "speed": "full",
+     "device_is_hub": false,
+     "address": 5,
+     "current_configuration": 1,
+     "idVendor": "0b05",
+     "idProduct": "19af",
+     "bcdDevice": "0100",
+     "bcdUSB": "0200",
+     "iManufacturer": 1,
+     "iProduct": 2,
+     "iSerialNumber": 3,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x82",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0020",
+       "base_packet_bytes": 32,
+       "transactions_per_microframe": 1,
+       "bInterval": 4,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": true,
+      "usb200": true,
+      "usb300": false
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": false,
+      "superspeed_capable_or_higher": false,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "full",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0008",
+     "instance_id": "USB\\VID_0B05&PID_19AF\\9876543210"
+    },
+    {
+     "port": 13,
+     "status": "DeviceConnected",
+     "speed": "high",
+     "device_is_hub": true,
+     "address": 6,
+     "current_configuration": 1,
+     "idVendor": "05e3",
+     "idProduct": "0610",
+     "bcdDevice": "9405",
+     "bcdUSB": "0210",
+     "iManufacturer": 1,
+     "iProduct": 2,
+     "iSerialNumber": 0,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x81",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0001",
+       "base_packet_bytes": 1,
+       "transactions_per_microframe": 1,
+       "bInterval": 12,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": true,
+      "usb200": true,
+      "usb300": false
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": false,
+      "superspeed_capable_or_higher": true,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": true
+     },
+     "legacy_speed_field": "high",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0028",
+     "instance_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13"
+    },
+    {
+     "port": 14,
+     "status": "DeviceConnected",
+     "speed": "full",
+     "device_is_hub": false,
+     "address": 7,
+     "current_configuration": 1,
+     "idVendor": "8087",
+     "idProduct": "0033",
+     "bcdDevice": "0000",
+     "bcdUSB": "0201",
+     "iManufacturer": 0,
+     "iProduct": 0,
+     "iSerialNumber": 0,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x81",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x02",
+       "type": "bulk",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x82",
+       "type": "bulk",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x03",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x0000",
+       "base_packet_bytes": 0,
+       "transactions_per_microframe": 1,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x83",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x0000",
+       "base_packet_bytes": 0,
+       "transactions_per_microframe": 1,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": true,
+      "usb200": true,
+      "usb300": false
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": false,
+      "superspeed_capable_or_higher": false,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "full",
+     "driver_key": "{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}\\0000",
+     "instance_id": "USB\\VID_8087&PID_0033\\5&CC3F949&0&14"
+    }
+   ]
+  },
+  {
+   "device_path": "\\\\?\\usb#vid_05e3&pid_0626#9&3a0ecb01&0&1#{f18a0e88-c30c-11d0-8815-00a0c906bed8}",
+   "instance_id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1",
+   "parent_chain": [
+    "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+    "USB\\ROOT_HUB30\\7&37B53FB&0&0",
+    "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4"
+   ],
+   "num_ports": 4,
+   "controller": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "ports": []
+  },
+  {
+   "device_path": "\\\\?\\usb#vid_0424&pid_5537#9&3a0ecb01&0&3#{f18a0e88-c30c-11d0-8815-00a0c906bed8}",
+   "instance_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "parent_chain": [
+    "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+    "USB\\ROOT_HUB30\\7&37B53FB&0&0",
+    "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4"
+   ],
+   "num_ports": 7,
+   "controller": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "ports": []
+  },
+  {
+   "device_path": "\\\\?\\usb#vid_05e3&pid_0625#8&27a25471&0&4#{f18a0e88-c30c-11d0-8815-00a0c906bed8}",
+   "instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "parent_chain": [
+    "USB\\ROOT_HUB30\\7&37B53FB&0&0",
+    "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4"
+   ],
+   "num_ports": 4,
+   "controller": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "ports": [
+    {
+     "port": 1,
+     "status": "DeviceConnected",
+     "speed": "super",
+     "device_is_hub": true,
+     "address": 2,
+     "current_configuration": 1,
+     "idVendor": "05e3",
+     "idProduct": "0626",
+     "bcdDevice": "0656",
+     "bcdUSB": "0320",
+     "iManufacturer": 1,
+     "iProduct": 2,
+     "iSerialNumber": 0,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x81",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0002",
+       "base_packet_bytes": 2,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": false,
+      "usb200": false,
+      "usb300": true
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": true,
+      "superspeed_capable_or_higher": true,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "high",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0036",
+     "instance_id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1"
+    },
+    {
+     "port": 3,
+     "status": "DeviceConnected",
+     "speed": "super",
+     "device_is_hub": true,
+     "address": 3,
+     "current_configuration": 1,
+     "idVendor": "0424",
+     "idProduct": "5537",
+     "bcdDevice": "6080",
+     "bcdUSB": "0300",
+     "iManufacturer": 2,
+     "iProduct": 3,
+     "iSerialNumber": 0,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x81",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0002",
+       "base_packet_bytes": 2,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": false,
+      "usb200": false,
+      "usb300": true
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": true,
+      "superspeed_capable_or_higher": true,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "high",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0037",
+     "instance_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3"
+    },
+    {
+     "port": 4,
+     "status": "DeviceConnected",
+     "speed": "super",
+     "device_is_hub": false,
+     "address": 4,
+     "current_configuration": 1,
+     "idVendor": "1532",
+     "idProduct": "0e05",
+     "bcdDevice": "0821",
+     "bcdUSB": "0320",
+     "iManufacturer": 1,
+     "iProduct": 2,
+     "iSerialNumber": 0,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x85",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": false,
+      "usb200": false,
+      "usb300": true
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": true,
+      "superspeed_capable_or_higher": true,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "high",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0050",
+     "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+     "excluded_no_descriptor_requests": true
+    }
+   ]
+  },
+  {
+   "device_path": "\\\\?\\usb#vid_05e3&pid_0610#6&f6f0942&0&1#{f18a0e88-c30c-11d0-8815-00a0c906bed8}",
+   "instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "parent_chain": [
+    "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+    "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+    "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0"
+   ],
+   "num_ports": 4,
+   "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "ports": [
+    {
+     "port": 3,
+     "status": "DeviceConnected",
+     "speed": "high",
+     "device_is_hub": false,
+     "address": 11,
+     "current_configuration": 1,
+     "idVendor": "4c4a",
+     "idProduct": "4a55",
+     "bcdDevice": "0100",
+     "bcdUSB": "0200",
+     "iManufacturer": 1,
+     "iProduct": 2,
+     "iSerialNumber": 0,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x85",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0010",
+       "base_packet_bytes": 16,
+       "transactions_per_microframe": 1,
+       "bInterval": 4,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": true,
+      "usb200": true,
+      "usb300": false
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": false,
+      "superspeed_capable_or_higher": false,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "high",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0004",
+     "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&3",
+     "product": "USB Composite Device",
+     "manufacturer": "Jieli Technology",
+     "serial": null,
+     "uvc": {
+      "vc": {
+       "bcdUVC": "0100",
+       "dwClockFrequency": 30000000
+      },
+      "vs_interfaces": {
+       "1": {
+        "alt_settings": [
+         {
+          "bAlternateSetting": 0,
+          "endpoints": []
+         },
+         {
+          "bAlternateSetting": 1,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x84",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x13ff",
+            "base_packet_bytes": 1023,
+            "transactions_per_microframe": 3,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 3069
+           }
+          ]
+         }
+        ],
+        "formats": [
+         {
+          "bFormatIndex": 1,
+          "type": "MJPEG",
+          "frames": [
+           {
+            "bFrameIndex": 1,
+            "width": 1920,
+            "height": 1080,
+            "dwMinBitRate": 497664000,
+            "dwMaxBitRate": 995328000,
+            "dwMaxVideoFrameBufferSize": 4147200,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             25.0
+            ]
+           },
+           {
+            "bFrameIndex": 2,
+            "width": 1280,
+            "height": 720,
+            "dwMinBitRate": 221184000,
+            "dwMaxBitRate": 442368000,
+            "dwMaxVideoFrameBufferSize": 1843200,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             25.0
+            ]
+           },
+           {
+            "bFrameIndex": 3,
+            "width": 640,
+            "height": 480,
+            "dwMinBitRate": 73728000,
+            "dwMaxBitRate": 147456000,
+            "dwMaxVideoFrameBufferSize": 614400,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             25.0
+            ]
+           },
+           {
+            "bFrameIndex": 4,
+            "width": 640,
+            "height": 360,
+            "dwMinBitRate": 55296000,
+            "dwMaxBitRate": 110592000,
+            "dwMaxVideoFrameBufferSize": 460800,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             25.0
+            ]
+           },
+           {
+            "bFrameIndex": 5,
+            "width": 352,
+            "height": 288,
+            "dwMinBitRate": 24330240,
+            "dwMaxBitRate": 48660480,
+            "dwMaxVideoFrameBufferSize": 202752,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             25.0
+            ]
+           }
+          ]
+         },
+         {
+          "bFormatIndex": 2,
+          "type": "UNCOMPRESSED",
+          "frames": [
+           {
+            "bFrameIndex": 1,
+            "width": 640,
+            "height": 480,
+            "dwMinBitRate": 73728000,
+            "dwMaxBitRate": 147456000,
+            "dwMaxVideoFrameBufferSize": 614400,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0
+            ]
+           },
+           {
+            "bFrameIndex": 2,
+            "width": 640,
+            "height": 360,
+            "dwMinBitRate": 55296000,
+            "dwMaxBitRate": 110592000,
+            "dwMaxVideoFrameBufferSize": 460800,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0
+            ]
+           },
+           {
+            "bFrameIndex": 3,
+            "width": 352,
+            "height": 288,
+            "dwMinBitRate": 24330240,
+            "dwMaxBitRate": 48660480,
+            "dwMaxVideoFrameBufferSize": 202752,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0
+            ]
+           },
+           {
+            "bFrameIndex": 4,
+            "width": 320,
+            "height": 240,
+            "dwMinBitRate": 18432000,
+            "dwMaxBitRate": 36864000,
+            "dwMaxVideoFrameBufferSize": 153600,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0
+            ]
+           }
+          ],
+          "fourcc": "YUY2",
+          "bBitsPerPixel": 16
+         }
+        ],
+        "input_header_bEndpointAddress": "0x84"
+       }
+      }
+     },
+     "config_descriptor_hex": "09028c0204010080c8080b00020e03000509040000010e0100050d24010001500080c3c90101011224020101020000000000000000030a00000b240502010000027b07001d2406037033f02811632e4aba2c6890eb33401608010204ffffffff0009240305010100040007058503100004052503100009040100000e0200000f24010271018400050201000100000b2406010500010000000022240701008007380400c0a91d0080533b00483f00151605000215160500801a060022240702000005d00200002f0d00005e1a00201c00151605000215160500801a060022240703008002e001000065040000ca0800600900151605000215160500801a060022240704008002680100c04b030080970600080700151605000215160500801a0600222407050060012001004073010080e60200180300151605000215160500801a060016240300030005d0028002e0014001f0000401050a141b240402045955593200001000800000aa00389b711001000000001e240501008002e001000065040000ca08006009001516050001151605001e240502008002680100c04b0300809706000807001516050001151605001e2405030060012001004073010080e602001803001516050001151605001e240504004001f0000040190100803202005802001516050001151605000e240300028002e0014001f0000006240d01010409040101010e02000007058405ff1301080b0202010200060904020000010100060924010001270001030c24020401020001000000000924030601010207000724050701050009240605040143000009040300000102000009040301010102000007240106010100142402010102100444ac0044ac00803e00401f00090582055a0004000007250101000000"
+    },
+    {
+     "port": 4,
+     "status": "DeviceConnected",
+     "speed": "high",
+     "device_is_hub": false,
+     "address": 12,
+     "current_configuration": 2,
+     "idVendor": "046d",
+     "idProduct": "0843",
+     "bcdDevice": "0013",
+     "bcdUSB": "0200",
+     "iManufacturer": 0,
+     "iProduct": 2,
+     "iSerialNumber": 0,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x86",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0040",
+       "base_packet_bytes": 64,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": true,
+      "usb200": true,
+      "usb300": false
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": false,
+      "superspeed_capable_or_higher": false,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "high",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0024",
+     "instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+     "product": "Logitech Webcam C930e",
+     "manufacturer": null,
+     "serial": null,
+     "uvc": {
+      "vc": {
+       "bcdUVC": "0100",
+       "dwClockFrequency": 30000000
+      },
+      "vs_interfaces": {
+       "1": {
+        "alt_settings": [
+         {
+          "bAlternateSetting": 0,
+          "endpoints": []
+         },
+         {
+          "bAlternateSetting": 1,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x00c0",
+            "base_packet_bytes": 192,
+            "transactions_per_microframe": 1,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 192
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 2,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x0180",
+            "base_packet_bytes": 384,
+            "transactions_per_microframe": 1,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 384
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 3,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x0200",
+            "base_packet_bytes": 512,
+            "transactions_per_microframe": 1,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 512
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 4,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x0280",
+            "base_packet_bytes": 640,
+            "transactions_per_microframe": 1,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 640
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 5,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x0320",
+            "base_packet_bytes": 800,
+            "transactions_per_microframe": 1,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 800
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 6,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x03b0",
+            "base_packet_bytes": 944,
+            "transactions_per_microframe": 1,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 944
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 7,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x0a80",
+            "base_packet_bytes": 640,
+            "transactions_per_microframe": 2,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 1280
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 8,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x0b20",
+            "base_packet_bytes": 800,
+            "transactions_per_microframe": 2,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 1600
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 9,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x0be0",
+            "base_packet_bytes": 992,
+            "transactions_per_microframe": 2,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 1984
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 10,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x1380",
+            "base_packet_bytes": 896,
+            "transactions_per_microframe": 3,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 2688
+           }
+          ]
+         },
+         {
+          "bAlternateSetting": 11,
+          "endpoints": [
+           {
+            "bEndpointAddress": "0x81",
+            "type": "isochronous",
+            "wMaxPacketSize": "0x1400",
+            "base_packet_bytes": 1024,
+            "transactions_per_microframe": 3,
+            "bInterval": 1,
+            "service_interval_us": 125,
+            "bytes_per_interval": 3072
+           }
+          ]
+         }
+        ],
+        "formats": [
+         {
+          "bFormatIndex": 1,
+          "type": "UNCOMPRESSED",
+          "frames": [
+           {
+            "bFrameIndex": 1,
+            "width": 640,
+            "height": 480,
+            "dwMinBitRate": 24576000,
+            "dwMaxBitRate": 147456000,
+            "dwMaxVideoFrameBufferSize": 614400,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 2,
+            "width": 160,
+            "height": 120,
+            "dwMinBitRate": 1536000,
+            "dwMaxBitRate": 9216000,
+            "dwMaxVideoFrameBufferSize": 38400,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 3,
+            "width": 176,
+            "height": 144,
+            "dwMinBitRate": 2027520,
+            "dwMaxBitRate": 12165120,
+            "dwMaxVideoFrameBufferSize": 50688,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 4,
+            "width": 320,
+            "height": 180,
+            "dwMinBitRate": 4608000,
+            "dwMaxBitRate": 27648000,
+            "dwMaxVideoFrameBufferSize": 115200,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 5,
+            "width": 320,
+            "height": 240,
+            "dwMinBitRate": 6144000,
+            "dwMaxBitRate": 36864000,
+            "dwMaxVideoFrameBufferSize": 153600,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 6,
+            "width": 352,
+            "height": 288,
+            "dwMinBitRate": 8110080,
+            "dwMaxBitRate": 48660480,
+            "dwMaxVideoFrameBufferSize": 202752,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 7,
+            "width": 424,
+            "height": 240,
+            "dwMinBitRate": 8140800,
+            "dwMaxBitRate": 48844800,
+            "dwMaxVideoFrameBufferSize": 203520,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 8,
+            "width": 480,
+            "height": 270,
+            "dwMinBitRate": 10368000,
+            "dwMaxBitRate": 62208000,
+            "dwMaxVideoFrameBufferSize": 259200,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 9,
+            "width": 640,
+            "height": 360,
+            "dwMinBitRate": 18432000,
+            "dwMaxBitRate": 110592000,
+            "dwMaxVideoFrameBufferSize": 460800,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 10,
+            "width": 800,
+            "height": 448,
+            "dwMinBitRate": 28672000,
+            "dwMaxBitRate": 172032000,
+            "dwMaxVideoFrameBufferSize": 716800,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 11,
+            "width": 800,
+            "height": 600,
+            "dwMinBitRate": 38400000,
+            "dwMaxBitRate": 184320000,
+            "dwMaxVideoFrameBufferSize": 960000,
+            "dwDefaultFrameInterval": 416666,
+            "fps": [
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 12,
+            "width": 848,
+            "height": 480,
+            "dwMinBitRate": 32563200,
+            "dwMaxBitRate": 195379200,
+            "dwMaxVideoFrameBufferSize": 814080,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 13,
+            "width": 960,
+            "height": 540,
+            "dwMinBitRate": 41472000,
+            "dwMaxBitRate": 124416000,
+            "dwMaxVideoFrameBufferSize": 1036800,
+            "dwDefaultFrameInterval": 666666,
+            "fps": [
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 14,
+            "width": 1024,
+            "height": 576,
+            "dwMinBitRate": 47185920,
+            "dwMaxBitRate": 141557760,
+            "dwMaxVideoFrameBufferSize": 1179648,
+            "dwDefaultFrameInterval": 666666,
+            "fps": [
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 15,
+            "width": 1280,
+            "height": 720,
+            "dwMinBitRate": 73728000,
+            "dwMaxBitRate": 147456000,
+            "dwMaxVideoFrameBufferSize": 1843200,
+            "dwDefaultFrameInterval": 1000000,
+            "fps": [
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 16,
+            "width": 1600,
+            "height": 896,
+            "dwMinBitRate": 114688000,
+            "dwMaxBitRate": 172032000,
+            "dwMaxVideoFrameBufferSize": 2867200,
+            "dwDefaultFrameInterval": 1333333,
+            "fps": [
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 17,
+            "width": 1920,
+            "height": 1080,
+            "dwMinBitRate": 165888000,
+            "dwMaxBitRate": 165888000,
+            "dwMaxVideoFrameBufferSize": 4147200,
+            "dwDefaultFrameInterval": 2000000,
+            "fps": [
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 18,
+            "width": 2304,
+            "height": 1296,
+            "dwMinBitRate": 238878720,
+            "dwMaxBitRate": 238878720,
+            "dwMaxVideoFrameBufferSize": 5971968,
+            "dwDefaultFrameInterval": 4999998,
+            "fps": [
+             2.0
+            ]
+           },
+           {
+            "bFrameIndex": 19,
+            "width": 2304,
+            "height": 1536,
+            "dwMinBitRate": 283115520,
+            "dwMaxBitRate": 283115520,
+            "dwMaxVideoFrameBufferSize": 7077888,
+            "dwDefaultFrameInterval": 4999998,
+            "fps": [
+             2.0
+            ]
+           }
+          ],
+          "fourcc": "YUY2",
+          "bBitsPerPixel": 16
+         },
+         {
+          "bFormatIndex": 2,
+          "type": "MJPEG",
+          "frames": [
+           {
+            "bFrameIndex": 1,
+            "width": 640,
+            "height": 480,
+            "dwMinBitRate": 24576000,
+            "dwMaxBitRate": 147456000,
+            "dwMaxVideoFrameBufferSize": 614400,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 2,
+            "width": 160,
+            "height": 120,
+            "dwMinBitRate": 1536000,
+            "dwMaxBitRate": 9216000,
+            "dwMaxVideoFrameBufferSize": 38400,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 3,
+            "width": 176,
+            "height": 144,
+            "dwMinBitRate": 2027520,
+            "dwMaxBitRate": 12165120,
+            "dwMaxVideoFrameBufferSize": 50688,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 4,
+            "width": 320,
+            "height": 180,
+            "dwMinBitRate": 4608000,
+            "dwMaxBitRate": 27648000,
+            "dwMaxVideoFrameBufferSize": 115200,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 5,
+            "width": 320,
+            "height": 240,
+            "dwMinBitRate": 6144000,
+            "dwMaxBitRate": 36864000,
+            "dwMaxVideoFrameBufferSize": 153600,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 6,
+            "width": 352,
+            "height": 288,
+            "dwMinBitRate": 8110080,
+            "dwMaxBitRate": 48660480,
+            "dwMaxVideoFrameBufferSize": 202752,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 7,
+            "width": 424,
+            "height": 240,
+            "dwMinBitRate": 8140800,
+            "dwMaxBitRate": 48844800,
+            "dwMaxVideoFrameBufferSize": 203520,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 8,
+            "width": 480,
+            "height": 270,
+            "dwMinBitRate": 10368000,
+            "dwMaxBitRate": 62208000,
+            "dwMaxVideoFrameBufferSize": 259200,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 9,
+            "width": 640,
+            "height": 360,
+            "dwMinBitRate": 18432000,
+            "dwMaxBitRate": 110592000,
+            "dwMaxVideoFrameBufferSize": 460800,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 10,
+            "width": 800,
+            "height": 448,
+            "dwMinBitRate": 28672000,
+            "dwMaxBitRate": 172032000,
+            "dwMaxVideoFrameBufferSize": 716800,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 11,
+            "width": 800,
+            "height": 600,
+            "dwMinBitRate": 38400000,
+            "dwMaxBitRate": 230400000,
+            "dwMaxVideoFrameBufferSize": 960000,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 12,
+            "width": 848,
+            "height": 480,
+            "dwMinBitRate": 32563200,
+            "dwMaxBitRate": 195379200,
+            "dwMaxVideoFrameBufferSize": 814080,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 13,
+            "width": 960,
+            "height": 540,
+            "dwMinBitRate": 41472000,
+            "dwMaxBitRate": 248832000,
+            "dwMaxVideoFrameBufferSize": 1036800,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 14,
+            "width": 1024,
+            "height": 576,
+            "dwMinBitRate": 47185920,
+            "dwMaxBitRate": 283115520,
+            "dwMaxVideoFrameBufferSize": 1179648,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 15,
+            "width": 1280,
+            "height": 720,
+            "dwMinBitRate": 73728000,
+            "dwMaxBitRate": 442368000,
+            "dwMaxVideoFrameBufferSize": 1843200,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 16,
+            "width": 1600,
+            "height": 896,
+            "dwMinBitRate": 114688000,
+            "dwMaxBitRate": 688128000,
+            "dwMaxVideoFrameBufferSize": 2867200,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           },
+           {
+            "bFrameIndex": 17,
+            "width": 1920,
+            "height": 1080,
+            "dwMinBitRate": 165888000,
+            "dwMaxBitRate": 995328000,
+            "dwMaxVideoFrameBufferSize": 4147200,
+            "dwDefaultFrameInterval": 333333,
+            "fps": [
+             30.0,
+             24.0,
+             20.0,
+             15.0,
+             10.0,
+             7.5,
+             5.0
+            ]
+           }
+          ]
+         }
+        ],
+        "input_header_bEndpointAddress": "0x81"
+       }
+      }
+     },
+     "config_descriptor_hex": "09020d0a04010080fa080b00020e03000009040000010e0100000d24010001f10080c3c90101011224020101020000000000000000032e0a020b240503010040025b17001b240606d09ee4237811314fae52d2fb8a8d3b480a010302ff03001b240608e48e67690f41db40a8507420d7d8240e070103023b03001c240609a94c5d1f11de8744840d50933c8ec8d110010303f3ff03001b24060a1502e44934f4fe47b1580e885023e51b07010302aa0f001c24060b212de5ff30802c4e82d9f587d00540bd03010303004101001b24060c41769ea204dee3478b2bf4341aff003b0b010302077f001a24060d262d6113aa5ac446b13dff4d9a60db8601010301020009240304010100030007058603400008052503400009040100000e0200000f24010251078100040000000100041b240401135955593200001000800000aa00389b7110010000000036240501008002e001000077010000ca08006009001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050200a00078000070170000a08c00009600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050300b000900000f01e0000a0b90000c600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240504004001b4000050460000e0a50100c201001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240505004001f00000c05d0000803202005802001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240506006001200100c07b000080e602001803001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050700a801f00000387c000050e902001b03001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050800e0010e0100349e000038b50380f403001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050900800268010040190100809706000807001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624050a002003c0010080b5010000410a00f00a001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003224050b002003580200f049020080fc0a00a60e009a5b0600069a5b060020a107002a2c0a0040420f005558140080841e003624050c005003e00100e0f0010040a50b006c0c001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e002a24050d00c0031c0200d0780200706a0700d20f002a2c0a00042a2c0a0040420f005558140080841e002a24050e00000440020000d00200007008000012002a2c0a00042a2c0a0040420f005558140080841e002624050f000005d002000065040000ca0800201c0040420f000340420f005558140080841e002224051000400680030000d6060000410a00c02b0055581400025558140080841e001e24051100800738040040e3090040e30900483f0080841e000180841e001e240512000009100500003d0e00003d0e00205b003e4b4c00013e4b4c001e24051300000900060000e0100000e01000006c003e4b4c00013e4b4c0006240d0101040b2406021101010000000036240701008002e001000077010000ca08006009001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070200a00078000070170000a08c00009600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070300b000900000f01e0000a0b90000c600001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240704004001b4000050460000e0a50100c201001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240705004001f00000c05d0000803202005802001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0036240706006001200100c07b000080e602001803001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070700a801f00000387c000050e902001b03001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070800e0010e0100349e000038b50380f403001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070900800268010040190100809706000807001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070a002003c0010080b5010000410a00f00a001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070b002003580200f0490200a0bb0d00a60e001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070c005003e00100e0f0010040a50b006c0c001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070d00c0031c0200d0780200e0d40e00d20f001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070e00000440020000d0020000e010000012001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624070f000005d0020000650400005e1a00201c001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624071000400680030000d6060000042900c02b001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e003624071100800738040040e3090080533b00483f001516050007151605009a5b060020a107002a2c0a0040420f005558140080841e0006240d01010409040101010e02000007058105c0000109040102010e0200000705810580010109040103010e0200000705810500020109040104010e0200000705810580020109040105010e0200000705810520030109040106010e02000007058105b0030109040107010e02000007058105800a0109040108010e02000007058105200b0109040109010e02000007058105e00b010904010a010e020000070581058013010904010b010e02000007058105001401080b0202010200000904020000010100000924010001260001030c24020101020001030000000924030301010005000824060501010300090403000001020000090403010101020000072401030101000b24020102021001803e0009058305440004000007250101000000090403020101020000072401030101000b24020102021001c05d0009058305640004000007250101000000090403030101020000072401030101000b24020102021001007d0009058305840004000007250101000000090403040101020000072401030101000b2402010202100180bb0009058305c40004000007250101000000"
+    }
+   ]
+  },
+  {
+   "device_path": "\\\\?\\usb#vid_05e3&pid_0610#5&cc3f949&0&13#{f18a0e88-c30c-11d0-8815-00a0c906bed8}",
+   "instance_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+   "parent_chain": [
+    "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+    "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0"
+   ],
+   "num_ports": 4,
+   "controller": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "ports": [
+    {
+     "port": 1,
+     "status": "DeviceConnected",
+     "speed": "high",
+     "device_is_hub": true,
+     "address": 8,
+     "current_configuration": 1,
+     "idVendor": "05e3",
+     "idProduct": "0610",
+     "bcdDevice": "0656",
+     "bcdUSB": "0210",
+     "iManufacturer": 1,
+     "iProduct": 2,
+     "iSerialNumber": 0,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x81",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0001",
+       "base_packet_bytes": 1,
+       "transactions_per_microframe": 1,
+       "bInterval": 12,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": true,
+      "usb200": true,
+      "usb300": false
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": false,
+      "superspeed_capable_or_higher": true,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "high",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0048",
+     "instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1"
+    },
+    {
+     "port": 2,
+     "status": "DeviceConnected",
+     "speed": "high",
+     "device_is_hub": false,
+     "address": 9,
+     "current_configuration": 1,
+     "idVendor": "194f",
+     "idProduct": "0422",
+     "bcdDevice": "0128",
+     "bcdUSB": "0200",
+     "iManufacturer": 1,
+     "iProduct": 2,
+     "iSerialNumber": 3,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x02",
+       "type": "bulk",
+       "wMaxPacketSize": "0x0200",
+       "base_packet_bytes": 512,
+       "transactions_per_microframe": 1,
+       "bInterval": 0,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x82",
+       "type": "bulk",
+       "wMaxPacketSize": "0x0200",
+       "base_packet_bytes": 512,
+       "transactions_per_microframe": 1,
+       "bInterval": 0,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x81",
+       "type": "bulk",
+       "wMaxPacketSize": "0x0200",
+       "base_packet_bytes": 512,
+       "transactions_per_microframe": 1,
+       "bInterval": 0,
+       "ScheduleOffset": 0
+      },
+      {
+       "bEndpointAddress": "0x01",
+       "type": "bulk",
+       "wMaxPacketSize": "0x0200",
+       "base_packet_bytes": 512,
+       "transactions_per_microframe": 1,
+       "bInterval": 0,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": true,
+      "usb200": true,
+      "usb300": false
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": false,
+      "superspeed_capable_or_higher": false,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "high",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0012",
+     "instance_id": "USB\\VID_194F&PID_0422\\AB7C22020373"
+    },
+    {
+     "port": 3,
+     "status": "DeviceConnected",
+     "speed": "high",
+     "device_is_hub": true,
+     "address": 10,
+     "current_configuration": 1,
+     "idVendor": "0424",
+     "idProduct": "2137",
+     "bcdDevice": "6080",
+     "bcdUSB": "0210",
+     "iManufacturer": 1,
+     "iProduct": 2,
+     "iSerialNumber": 0,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x81",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0001",
+       "base_packet_bytes": 1,
+       "transactions_per_microframe": 1,
+       "bInterval": 12,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": true,
+      "usb200": true,
+      "usb300": false
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": false,
+      "superspeed_capable_or_higher": true,
+      "operating_at_superspeed_plus": false,
+      "superspeed_plus_capable": false
+     },
+     "legacy_speed_field": "high",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0049",
+     "instance_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3"
+    }
+   ]
+  },
+  {
+   "device_path": "\\\\?\\usb#root_hub30#7&37b53fb&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8}",
+   "instance_id": "USB\\ROOT_HUB30\\7&37B53FB&0&0",
+   "parent_chain": [
+    "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4"
+   ],
+   "num_ports": 4,
+   "controller": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "ports": [
+    {
+     "port": 4,
+     "status": "DeviceConnected",
+     "speed": "super_plus",
+     "device_is_hub": true,
+     "address": 1,
+     "current_configuration": 1,
+     "idVendor": "05e3",
+     "idProduct": "0625",
+     "bcdDevice": "9405",
+     "bcdUSB": "0320",
+     "iManufacturer": 1,
+     "iProduct": 2,
+     "iSerialNumber": 0,
+     "open_pipes": [
+      {
+       "bEndpointAddress": "0x83",
+       "type": "interrupt",
+       "wMaxPacketSize": "0x0002",
+       "base_packet_bytes": 2,
+       "transactions_per_microframe": 1,
+       "bInterval": 8,
+       "ScheduleOffset": 0
+      }
+     ],
+     "v2_supported_protocols": {
+      "usb110": false,
+      "usb200": false,
+      "usb300": true
+     },
+     "v2_flags": {
+      "operating_at_superspeed_or_higher": true,
+      "superspeed_capable_or_higher": true,
+      "operating_at_superspeed_plus": true,
+      "superspeed_plus_capable": true
+     },
+     "legacy_speed_field": "high",
+     "driver_key": "{36fc9e60-c465-11cf-8056-444553540000}\\0027",
+     "instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4"
+    }
+   ]
+  }
+ ]
+}

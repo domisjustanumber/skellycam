@@ -1,0 +1,19 @@
+started FakeGigeCamera(running, 320x240 @ 30 fps on 127.0.0.1:3956, pixel_format=0x01080001)
+started FakeGigeCamera(running, 320x240 @ 30 fps on 127.0.0.2:3956, pixel_format=0x01080001)
+started FakeGigeCamera(running, 320x240 @ 30 fps on 127.0.0.3:3956, pixel_format=0x01080001)
+discover {'all': True} [GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')]
+discover {} []
+discover iface 127.0.0.1 [GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')]
+discover iface 127.0.0.2 ERR ParseError iface '127.0.0.2': no interface with IPv4 127.0.0.2
+  interfaces this host reports:
+    10G  192.168.6.86
+    Loopback Pseudo-Interface 1  127.0.0.1
+    vEthernet (WSL (Hyper-V firewall))  172.30.224.1
+discover iface 127.0.0.3 ERR ParseError iface '127.0.0.3': no interface with IPv4 127.0.0.3
+  interfaces this host reports:
+    10G  192.168.6.86
+    Loopback Pseudo-Interface 1  127.0.0.1
+    vEthernet (WSL (Hyper-V firewall))  172.30.224.1
+device_info 127.0.0.1 GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')
+device_info 127.0.0.2 ERR TransportError fake camera at 127.0.0.2 did not reply to discovery within 800 ms
+device_info 127.0.0.3 ERR TransportError fake camera at 127.0.0.3 did not reply to discovery within 800 ms

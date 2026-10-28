@@ -1,0 +1,109 @@
+{
+ "test": "mjpeg_pyav_dshow_format_probe",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-25T18:39:02.913282+00:00",
+ "command": [
+  "research/usb_cameras/mjpeg/pyav/pyav_dshow_format_probe.py",
+  "--device",
+  "video=USB Video Device",
+  "--mode",
+  "1280x720@30",
+  "--mode",
+  "1280x720@60",
+  "--mode",
+  "1920x1080@30",
+  "--mode",
+  "1920x1080@60",
+  "--mode",
+  "640x480@30",
+  "--label",
+  "kiyo"
+ ],
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "av": "19.0.2",
+  "ffmpeg": {
+   "libavutil": "(61, 1, 102)",
+   "libavcodec": "(63, 1, 102)",
+   "libavformat": "(63, 1, 102)",
+   "libavdevice": "(63, 1, 102)",
+   "libavfilter": "(12, 1, 102)",
+   "libswscale": "(10, 1, 102)",
+   "libswresample": "(7, 1, 102)"
+  }
+ },
+ "device": "video=USB Video Device",
+ "results": [
+  {
+   "mode": "1280x720@30",
+   "options": {
+    "vcodec": "mjpeg",
+    "video_size": "1280x720",
+    "framerate": "30",
+    "rtbufsize": "256M"
+   },
+   "error": "OSError(5, 'I/O error', 'video=USB Video Device', (16, 'dshow', 'Could not RenderStream to connect pins\\n'))",
+   "ffmpeg_log_dshow": [
+    "Selecting pin Capture on video",
+    "Could not RenderStream to connect pins"
+   ]
+  },
+  {
+   "mode": "1280x720@60",
+   "options": {
+    "vcodec": "mjpeg",
+    "video_size": "1280x720",
+    "framerate": "60",
+    "rtbufsize": "256M"
+   },
+   "error": "OSError(5, 'I/O error', 'video=USB Video Device', (16, 'dshow', 'Could not RenderStream to connect pins\\n'))",
+   "ffmpeg_log_dshow": [
+    "Selecting pin Capture on video",
+    "Could not RenderStream to connect pins"
+   ]
+  },
+  {
+   "mode": "1920x1080@30",
+   "options": {
+    "vcodec": "mjpeg",
+    "video_size": "1920x1080",
+    "framerate": "30",
+    "rtbufsize": "256M"
+   },
+   "error": "OSError(5, 'I/O error', 'video=USB Video Device', (16, 'dshow', 'Could not RenderStream to connect pins\\n'))",
+   "ffmpeg_log_dshow": [
+    "Selecting pin Capture on video",
+    "Could not RenderStream to connect pins"
+   ]
+  },
+  {
+   "mode": "1920x1080@60",
+   "options": {
+    "vcodec": "mjpeg",
+    "video_size": "1920x1080",
+    "framerate": "60",
+    "rtbufsize": "256M"
+   },
+   "error": "OSError(5, 'I/O error', 'video=USB Video Device', (16, 'dshow', 'Could not RenderStream to connect pins\\n'))",
+   "ffmpeg_log_dshow": [
+    "Selecting pin Capture on video",
+    "Could not RenderStream to connect pins"
+   ]
+  },
+  {
+   "mode": "640x480@30",
+   "options": {
+    "vcodec": "mjpeg",
+    "video_size": "640x480",
+    "framerate": "30",
+    "rtbufsize": "256M"
+   },
+   "error": "OSError(5, 'I/O error', 'video=USB Video Device', (16, 'dshow', 'Could not RenderStream to connect pins\\n'))",
+   "ffmpeg_log_dshow": [
+    "Selecting pin Capture on video",
+    "Could not RenderStream to connect pins"
+   ]
+  }
+ ]
+}

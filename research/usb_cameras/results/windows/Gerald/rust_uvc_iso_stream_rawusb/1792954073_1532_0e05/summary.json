@@ -1,0 +1,38 @@
+{
+  "command": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\rust\\build\\release\\uvc_iso.exe stream --backend rawusb --vid 1532 --pid 0e05 --seconds 3 --width 1280 --height 720 --fps 30",
+  "environment": {
+    "arch": "x86_64",
+    "backend": "rawusb-0.1.7",
+    "features": {
+      "libusb": true,
+      "rawusb": true
+    },
+    "host_clock": "QueryPerformanceCounter",
+    "os": "windows",
+    "os_build": "Microsoft Windows [Version 10.0.26300.9711]",
+    "profile": "release",
+    "uvc_iso_version": "0.1.0"
+  },
+  "error": {
+    "message": "device 1532:0e05 not found",
+    "stage": "open"
+  },
+  "hostname": "Gerald",
+  "platform": "windows",
+  "settings": {
+    "alt_policy": "Device",
+    "exposure_100us": null,
+    "fps": 30,
+    "height": 720,
+    "pid": "0e05",
+    "pkts_per_xfer": 32,
+    "save_samples": 1,
+    "seconds": 3.0,
+    "vid": "1532",
+    "wb": null,
+    "width": 1280,
+    "xfers": 8
+  },
+  "test": "rust_uvc_iso_stream_rawusb",
+  "utc_started_unix": "1792954073"
+}

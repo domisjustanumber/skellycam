@@ -1,0 +1,9 @@
+# /etc/udev/rules.d/70-skellycam-uvc.rules
+# Give the logged-in (seat) user, and members of group "plugdev", read/write access to the usbfs node
+# (/dev/bus/usb/BBB/DDD) of every USB device that has a UVC VideoControl interface (class 0x0E,
+# subclass 0x01). With rw on that node, libusb/libuvc can detach uvcvideo (USBDEVFS_DISCONNECT has
+# no capability check in drivers/usb/core/devio.c proc_ioctl), claim the interfaces, choose the
+# isochronous alt setting and stream -- no sudo at run time. Installed once with sudo.
+# Pattern idiom copied from systemd rules.d/50-udev-default.rules.in (ID_USB_INTERFACES=="*:0701??:*").
+# Must sort before 73-seat-late.rules for TAG+="uaccess" to take effect.
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ENV{ID_USB_INTERFACES}=="*:0e01??:*", TAG+="uaccess", GROUP="plugdev", MODE="0664"

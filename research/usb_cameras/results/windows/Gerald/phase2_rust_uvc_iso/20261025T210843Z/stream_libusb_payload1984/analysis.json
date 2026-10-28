@@ -1,0 +1,73 @@
+{
+ "run_dir": "research\\usb_cameras\\results\\windows\\Gerald\\phase2_rust_uvc_iso\\20261025T210843Z\\stream_libusb_payload1984",
+ "analyzer": "research/usb_cameras/rust/tools/analyze_frames_rust.py",
+ "os_ts_field_override": null,
+ "cameras": [
+  {
+   "file": "frames_046d_0843.jsonl",
+   "camera_key": "usb:046d:0843:bus1:port13.1.4:serial=",
+   "backend": "uvc_iso-libusb",
+   "frames_total": 452,
+   "frames_analysed": 422,
+   "skip_first": 30,
+   "valid_jpeg": 452,
+   "decoded_true": 0,
+   "decoded_false": 0,
+   "seq_gaps": 0,
+   "payload_bytes": {
+    "n": 422,
+    "mean": 170402.07345971564,
+    "std": 2113.699771039355,
+    "min": 166339,
+    "p01": 166472,
+    "p50": 170729,
+    "p99": 173126,
+    "max": 173181
+   },
+   "fps_host": 30.079854583265654,
+   "host_interval_ms": {
+    "n": 421,
+    "mean": 33.24484156769596,
+    "std": 1.8582300282697344,
+    "min": 29.9246,
+    "p01": 31.941,
+    "p50": 32.0091,
+    "p99": 36.1487,
+    "max": 36.3675
+   },
+   "os_ts_interval_ms": {
+    "n": 421,
+    "mean": 33.23391363895487,
+    "std": 0.0006096286536075096,
+    "min": 33.231974,
+    "p01": 33.232507,
+    "p50": 33.233973,
+    "p99": 33.235173,
+    "max": 33.235839
+   },
+   "latency_host_minus_os_ms": {
+    "n": 422,
+    "mean": 44.44147894075829,
+    "std": 1.2960846425716583,
+    "min": 41.34099,
+    "p01": 41.916255,
+    "p50": 44.458632,
+    "p99": 47.048688,
+    "max": 47.17832
+   },
+   "first_frame_latency_ms": 229.42338,
+   "os_timestamp_source": "UVC PTS mapped to host clock via SCR-STC/packet-arrival fit (uvc_iso)",
+   "uvc_pts_interval_ms": {
+    "n": 421,
+    "mean": 33.240740617577195,
+    "std": 0.0006097732565075,
+    "min": 33.2388,
+    "p01": 33.239333333333335,
+    "p50": 33.2408,
+    "p99": 33.242,
+    "max": 33.242666666666665
+   }
+  }
+ ],
+ "cross_camera": []
+}

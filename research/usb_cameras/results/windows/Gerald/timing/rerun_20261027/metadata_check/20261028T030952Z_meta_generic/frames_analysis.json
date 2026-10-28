@@ -1,0 +1,169 @@
+{
+  "test": "analyze_frames",
+  "platform": "win32",
+  "hostname": "Gerald",
+  "utc_started": "2026-10-28T03:29:10.938269+00:00",
+  "command": "research/usb_cameras/tools/analyze_frames.py research/usb_cameras/results/windows/Gerald/timing/rerun_20261027/metadata_check/20261028T030952Z_meta_generic/vid_4c4a_pid_4a55_mi_00_8_35e81179_0_0000.frames.jsonl --out research/usb_cameras/results/windows/Gerald/timing/rerun_20261027/metadata_check/20261028T030952Z_meta_generic/frames_analysis.json",
+  "environment": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "os": "Windows-11-10.0.26300-SP0"
+  },
+  "inputs": [
+    "research/usb_cameras/results/windows/Gerald/timing/rerun_20261027/metadata_check/20261028T030952Z_meta_generic/vid_4c4a_pid_4a55_mi_00_8_35e81179_0_0000.frames.jsonl"
+  ],
+  "cameras": [
+    {
+      "frames": 249,
+      "camera_key": "vid_4c4a_pid_4a55_mi_00_8_35e81179_0_0000",
+      "backend": "msmf-sourcereader-cpp",
+      "os_timestamp_source": "mf_sample_time (usbvideo KS presentation time, QPC 100ns)",
+      "payload_bytes": {
+        "n": 249,
+        "mean": 72457.89156626505,
+        "std": 6593.052924955116,
+        "min": 43941.0,
+        "max": 76513.0,
+        "median": 74515.0,
+        "p05": 52946.8,
+        "p95": 74759.8
+      },
+      "valid_jpeg_fraction": 1.0,
+      "duration_s": 9.6313241,
+      "device_clock": {},
+      "sources": {
+        "host_arrival": {
+          "interval": {
+            "interval_ms": {
+              "n": 248,
+              "mean": 38.83598427419354,
+              "std": 7.906774701762343,
+              "min": 31.2942,
+              "max": 48.9171,
+              "median": 32.2512505,
+              "p05": 31.6577053,
+              "p95": 48.3636103
+            },
+            "drops_est": 11
+          },
+          "periodic_fit": {
+            "period_ms": 38.823354395071895,
+            "fps": 25.75769187339816,
+            "residual_us": {
+              "n": 249,
+              "mean": 2.1545381596626108e-09,
+              "std": 4635.3870857249485,
+              "min": -8380.719957588673,
+              "max": 8087.762078136444,
+              "median": 66.7679438495636,
+              "p05": -7236.197272088051,
+              "p95": 7135.739454155349
+            },
+            "residual_rms_us": 4626.069715327892,
+            "slots_skipped": 0,
+            "duplicate_slots": 0
+          }
+        },
+        "os_timestamp": {
+          "interval": {
+            "interval_ms": {
+              "n": 248,
+              "mean": 38.83869919354838,
+              "std": 7.917350663229067,
+              "min": 31.914299999999997,
+              "max": 48.1475,
+              "median": 32.07,
+              "p05": 31.94587,
+              "p95": 48.034459999999996
+            },
+            "drops_est": 2
+          },
+          "periodic_fit": {
+            "period_ms": 38.82383662013214,
+            "fps": 25.757371940964973,
+            "residual_us": {
+              "n": 249,
+              "mean": 2.3470003878787517e-09,
+              "std": 4605.503613569083,
+              "min": -7902.845484852791,
+              "max": 7919.610856072426,
+              "median": 38.50943065452576,
+              "p05": -7147.696135859752,
+              "p95": 7129.692014035416
+            },
+            "residual_rms_us": 4596.246310513476,
+            "slots_skipped": 0,
+            "duplicate_slots": 0
+          },
+          "arrival_minus_source_ms": {
+            "n": 249,
+            "mean": 31.550297369477914,
+            "std": 4.055356716543172,
+            "min": 16.228199999999998,
+            "max": 33.32,
+            "median": 32.588499999999996,
+            "p05": 16.88532,
+            "p95": 33.1603194
+          }
+        },
+        "mf_undoc_d06f8a46": {
+          "interval": {
+            "interval_ms": {
+              "n": 248,
+              "mean": 38.83844475806452,
+              "std": 7.919685395331372,
+              "min": 31.8631,
+              "max": 48.207899999999995,
+              "median": 32.091699999999996,
+              "p05": 31.923424999999998,
+              "p95": 48.071464999999996
+            },
+            "drops_est": 1
+          },
+          "periodic_fit": {
+            "period_ms": 38.82408869848426,
+            "fps": 25.757204702631984,
+            "residual_us": {
+              "n": 249,
+              "mean": 1.3686762959041808e-09,
+              "std": 4624.734574738723,
+              "min": -8023.903760641575,
+              "max": 7898.933245500565,
+              "median": 7.180490894317627,
+              "p05": -7218.9736827241895,
+              "p95": 7177.93686819725
+            },
+            "residual_rms_us": 4615.438616445701,
+            "slots_skipped": 0,
+            "duplicate_slots": 0
+          },
+          "arrival_minus_source_ms": {
+            "n": 249,
+            "mean": 0.5812527911646587,
+            "std": 0.3055232946936522,
+            "min": 0.1716,
+            "max": 1.1517,
+            "median": 0.6344,
+            "p05": 0.2177996,
+            "p95": 1.07056
+          }
+        }
+      },
+      "jitter_ranking_rms_us": [
+        [
+          "os_timestamp",
+          4596.25
+        ],
+        [
+          "mf_undoc_d06f8a46",
+          4615.44
+        ],
+        [
+          "host_arrival",
+          4626.07
+        ]
+      ],
+      "file": "research/usb_cameras/results/windows/Gerald/timing/rerun_20261027/metadata_check/20261028T030952Z_meta_generic/vid_4c4a_pid_4a55_mi_00_8_35e81179_0_0000.frames.jsonl"
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+{
+  "test": "winusb_install",
+  "platform": "windows",
+  "hostname": "GERALD",
+  "utc_started": "2026-10-25T22:43:51.4601307Z",
+  "command": "install_winusb.ps1 -Device 046D:085C,4C4A:4A55 -Target Parent -DryRun",
+  "environment": {
+    "os": "Microsoft Windows NT 10.0.26300.0",
+    "winusb_inf": "C:\\WINDOWS\\INF\\winusb.inf",
+    "pwsh": "7.6.7"
+  },
+  "target": "Parent",
+  "dry_run": true,
+  "is_admin": false,
+  "devices": [
+    {
+      "spec": "046D:085C",
+      "parent_instance_id": "USB\\VID_046D&PID_085C\\B76395EF",
+      "vid_pid": "046D:085C",
+      "target_instance_id": "USB\\VID_046D&PID_085C\\B76395EF",
+      "prestate_functions": [
+        {
+          "instance_id": "USB\\VID_046D&PID_085C\\B76395EF",
+          "function": "parent",
+          "present": true,
+          "friendly": "USB Composite Device",
+          "class": "USB",
+          "class_guid": "{36fc9e60-c465-11cf-8056-444553540000}",
+          "status": "OK",
+          "problem": "CM_PROB_NONE",
+          "service": "usbccgp",
+          "inf": "usb.inf",
+          "driver_provider": "Microsoft",
+          "driver_version": "10.0.26100.9711",
+          "location_paths": [
+            "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(1)",
+            "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS01)"
+          ],
+          "parent": "USB\\ROOT_HUB30\\4&2fd48294&0&0"
+        },
+        {
+          "instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268DA596&0&0000",
+          "function": "MI_00",
+          "present": true,
+          "friendly": "c922 Pro Stream Webcam",
+          "class": "Image",
+          "class_guid": "{6bdd1fc6-810f-11d0-bec7-08002be2092f}",
+          "status": "OK",
+          "problem": "CM_PROB_NONE",
+          "service": "usbvideo",
+          "inf": "oem35.inf",
+          "driver_provider": "Logitech",
+          "driver_version": "1.4.40.0",
+          "location_paths": [
+            "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(1)#USBMI(0)",
+            "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(1)#USB(1)",
+            "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS01)#USBMI(0)",
+            "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS01)#USB(1)"
+          ],
+          "parent": "USB\\VID_046D&PID_085C\\B76395EF"
+        },
+        {
+          "instance_id": "USB\\VID_046D&PID_085C&MI_02\\8&268DA596&0&0002",
+          "function": "MI_02",
+          "present": true,
+          "friendly": "C922 Pro Stream Webcam",
+          "class": "MEDIA",
+          "class_guid": "{4d36e96c-e325-11ce-bfc1-08002be10318}",
+          "status": "OK",
+          "problem": "CM_PROB_NONE",
+          "service": "usbaudio",
+          "inf": "wdma_usb.inf",
+          "driver_provider": "Microsoft",
+          "driver_version": "10.0.26100.9457",
+          "location_paths": [
+            "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(1)#USBMI(2)",
+            "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS01)#USBMI(2)"
+          ],
+          "parent": "USB\\VID_046D&PID_085C\\B76395EF"
+        }
+      ],
+      "target_service_before": "usbccgp",
+      "already_winusb": false,
+      "driver_list": [
+        "per-device/class|(empty)",
+        "per-device/compat|(empty)",
+        "inherit/class|WinUsb Device|WinUsb Device|Microsoft",
+        "inherit/class|Billboard Device|WinUsb Device|Microsoft",
+        "inherit/class|ADB Device|WinUsb Device|Microsoft"
+      ],
+      "winusb_device_offered": true,
+      "outcome": "dry-run: WinUsb Device selectable for USB\\VID_046D&PID_085C\\B76395EF; nothing changed"
+    },
+    {
+      "spec": "4C4A:4A55",
+      "parent_instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&3",
+      "vid_pid": "4C4A:4A55",
+      "target_instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&3",
+      "prestate_functions": [
+        {
+          "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&3",
+          "function": "parent",
+          "present": true,
+          "friendly": "USB Composite Device",
+          "class": "USB",
+          "class_guid": "{36fc9e60-c465-11cf-8056-444553540000}",
+          "status": "OK",
+          "problem": "CM_PROB_NONE",
+          "service": "usbccgp",
+          "inf": "usb.inf",
+          "driver_provider": "Microsoft",
+          "driver_version": "10.0.26100.9711",
+          "location_paths": [
+            "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(3)",
+            "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(3)"
+          ],
+          "parent": "USB\\VID_05E3&PID_0610\\6&f6f0942&0&1"
+        },
+        {
+          "instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&35E81179&0&0000",
+          "function": "MI_00",
+          "present": true,
+          "friendly": "USB Camera",
+          "class": "Camera",
+          "class_guid": "{ca3e7ab9-b4c3-4ae6-8251-579ef933890f}",
+          "status": "OK",
+          "problem": "CM_PROB_NONE",
+          "service": "usbvideo",
+          "inf": "usbvideo.inf",
+          "driver_provider": "Microsoft",
+          "driver_version": "10.0.26100.9711",
+          "location_paths": [
+            "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(3)#USBMI(0)",
+            "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(3)#USB(3)",
+            "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(3)#USBMI(0)",
+            "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(3)#USB(3)"
+          ],
+          "parent": "USB\\VID_4C4A&PID_4A55\\7&7dcc7ce&0&3"
+        },
+        {
+          "instance_id": "USB\\VID_4C4A&PID_4A55&MI_02\\8&35E81179&0&0002",
+          "function": "MI_02",
+          "present": true,
+          "friendly": "USB Audio",
+          "class": "MEDIA",
+          "class_guid": "{4d36e96c-e325-11ce-bfc1-08002be10318}",
+          "status": "OK",
+          "problem": "CM_PROB_NONE",
+          "service": "usbaudio",
+          "inf": "wdma_usb.inf",
+          "driver_provider": "Microsoft",
+          "driver_version": "10.0.26100.9457",
+          "location_paths": [
+            "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(3)#USBMI(2)",
+            "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)#ACPI(RHUB)#ACPI(HS13)#USB(1)#USB(3)#USBMI(2)"
+          ],
+          "parent": "USB\\VID_4C4A&PID_4A55\\7&7dcc7ce&0&3"
+        }
+      ],
+      "target_service_before": "usbccgp",
+      "already_winusb": false,
+      "driver_list": [
+        "per-device/class|(empty)",
+        "per-device/compat|(empty)",
+        "inherit/class|WinUsb Device|WinUsb Device|Microsoft",
+        "inherit/class|Billboard Device|WinUsb Device|Microsoft",
+        "inherit/class|ADB Device|WinUsb Device|Microsoft"
+      ],
+      "winusb_device_offered": true,
+      "outcome": "dry-run: WinUsb Device selectable for USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&3; nothing changed"
+    }
+  ],
+  "outcome": "dry-run: all 2 device(s) OK",
+  "utc_finished": "2026-10-25T22:44:28.8917145Z"
+}

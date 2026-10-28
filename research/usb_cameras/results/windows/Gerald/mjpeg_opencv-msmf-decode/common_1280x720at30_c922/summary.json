@@ -1,0 +1,126 @@
+{
+ "test": "mjpeg_opencv-msmf-decode",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-25T19:25:48.492124+00:00",
+ "utc_summarized": "2026-10-25T19:26:39.739892+00:00",
+ "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams c922 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg_opencv-msmf-decode\\common_1280x720at30_c922' -- uv run --script research/usb_cameras/mjpeg/opencv/opencv_capture.py --api msmf --mode decode --set-order size-first --index 4 --name c922 --size 1280x720 --fps 30 --seconds 10.0 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg_opencv-msmf-decode\\common_1280x720at30_c922'",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "numpy": "2.2.6",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "backend": "opencv-msmf-decode",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30.0
+ },
+ "decoded_by_pipeline": true,
+ "decode_evidence": "frames returned as pixel arrays (see frame_shapes)",
+ "window": {
+  "start_ns": 105738115793300,
+  "end_ns": 105748116406300,
+  "wall_s": 10.000613
+ },
+ "delivered_codecs": [
+  "\u0016\u0000\u0000\u0000"
+ ],
+ "silent_format_fallback": true,
+ "cpu": {
+  "method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)",
+  "wall_s": 10.0006197,
+  "process_cpu_s_ticks": 9.8125,
+  "process_cpu_pct_of_one_core_ticks": 98.11891957055421,
+  "tsc_hz": 3414090331.6685786,
+  "process_cycles": 32105491475,
+  "process_cpu_pct_of_one_core": 94.03237437273582,
+  "frameserver_pid": 44292,
+  "frameserver_cpu_pct_of_one_core_ticks": 0.0,
+  "frameserver_cpu_pct_of_one_core": null,
+  "process_cpu_pct_per_camera": 94.03237437273582
+ },
+ "cameras": [
+  {
+   "idx": 0,
+   "name": "c922",
+   "cv_index": 4,
+   "api": "msmf",
+   "backend_name": "MSMF",
+   "set_results": {
+    "order": "size-first",
+    "w": true,
+    "h": true,
+    "fps": true,
+    "fourcc_last": false
+   },
+   "got_fourcc": "\u0016\u0000\u0000\u0000",
+   "got_w": 1280.0,
+   "got_h": 720.0,
+   "got_fps": 30.0,
+   "got_convert_rgb": 1.0,
+   "got_format": -1.0,
+   "open_ms": 50907.041,
+   "frames": 0,
+   "frame_shapes": {},
+   "frames_starting_ffd8": 0,
+   "frames_delivered_total": 0,
+   "frames_in_window": 0,
+   "fps_requested": 30.0,
+   "fps_achieved_count_over_wall": 0.0,
+   "fps_achieved_span": null,
+   "inter_arrival_ms": null,
+   "gaps_over_1p5_period": 0,
+   "os_timestamp_delta_ms": null,
+   "payload_bytes": null,
+   "pct_valid_jpeg_in_window": null,
+   "pct_valid_jpeg_all": null,
+   "jpeg_checks_all": null,
+   "n_validated": 0,
+   "cam": "c922",
+   "jpeg_header": null,
+   "os_timestamp_source": null,
+   "timestamp_fields_present": {},
+   "arrival_minus_os_timestamp_ms": null
+  }
+ ],
+ "samples": [],
+ "controls": {
+  "requested": {
+   "exposure_log2s": -7,
+   "white_balance_k": 4500,
+   "auto_exposure_priority": 0
+  },
+  "after_apply": {
+   "c922 Pro Stream Webcam": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "readback_after_capture": {
+   "c922 Pro Stream Webcam": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": 0,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "apply_rc": 0,
+  "readback_rc": 0
+ },
+ "errors": [],
+ "cv2_version": "4.12.0"
+}

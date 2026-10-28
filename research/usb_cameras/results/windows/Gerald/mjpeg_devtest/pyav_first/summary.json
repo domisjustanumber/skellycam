@@ -1,0 +1,113 @@
+{
+ "test": "mjpeg_devtest",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-25T18:11:50.993663+00:00",
+ "utc_summarized": "2026-10-25T18:12:08.542061+00:00",
+ "command": "",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "av": "19.0.2",
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "backend": "pyav-dshow",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30.0
+ },
+ "decoded_by_pipeline": false,
+ "decode_evidence": "only container.demux() is called; packets are passed through as bytes; stream codec reported per camera",
+ "window": {
+  "start_ns": 101271445274300,
+  "end_ns": 101275445582500,
+  "wall_s": 4.0003082
+ },
+ "cpu": {
+  "method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)",
+  "wall_s": 4.0003123,
+  "process_cpu_s_ticks": 0.078125,
+  "process_cpu_pct_of_one_core_ticks": 1.9529725216703706,
+  "tsc_hz": 3398257062.73217,
+  "process_cycles": 106822078,
+  "process_cpu_pct_of_one_core": 0.7857979586709658,
+  "frameserver_pid": 59356,
+  "frameserver_cpu_pct_of_one_core_ticks": 0.0,
+  "frameserver_cpu_pct_of_one_core": null,
+  "process_cpu_pct_per_camera": 0.7857979586709658
+ },
+ "cameras": [
+  {
+   "idx": 0,
+   "name": "video=c922 Pro Stream Webcam",
+   "options": {
+    "video_size": "1280x720",
+    "framerate": "30",
+    "vcodec": "mjpeg",
+    "rtbufsize": "512M"
+   },
+   "codec": "mjpeg",
+   "stream_time_base": "1/10000000",
+   "stream_size": [
+    1280,
+    720
+   ],
+   "stream_rate": "10000000/333333",
+   "open_ms": 611.9874,
+   "frames": 192,
+   "frames_delivered_total": 192,
+   "frames_in_window": 120,
+   "fps_requested": 30.0,
+   "fps_achieved_count_over_wall": 29.997688678087354,
+   "fps_achieved_span": 29.98989290206019,
+   "inter_arrival_ms": {
+    "n": 119,
+    "min": 31.8097,
+    "p50": 32.0024,
+    "mean": 33.34456722689075,
+    "p95": 48.0009,
+    "max": 48.1684
+   },
+   "gaps_over_1p5_period": 0,
+   "os_timestamp_delta_ms": {
+    "n": 119,
+    "min": 33.3333,
+    "p50": 33.3333,
+    "mean": 33.3333,
+    "p95": 33.3333,
+    "max": 33.3333
+   },
+   "payload_bytes": {
+    "n": 120,
+    "min": 136505,
+    "p50": 138587,
+    "mean": 138475.46666666667,
+    "p95": 138843,
+    "max": 139014
+   },
+   "pct_valid_jpeg_in_window": 100.0,
+   "pct_valid_jpeg_all": 100.0,
+   "jpeg_checks_all": {
+    "soi": 192,
+    "eoi_at_end": 192,
+    "eoi_in_tail": 192,
+    "has_dht": 192,
+    "pillow_ok": 192,
+    "simplejpeg_ok": 192
+   },
+   "n_validated": 192
+  }
+ ],
+ "samples": [],
+ "errors": []
+}

@@ -1,0 +1,155 @@
+{
+ "run_dir": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\libusb_rust_20261027\\nokhwa\\20261028T033508Z_all3",
+ "analyzer": "research/usb_cameras/rust/tools/analyze_frames_rust.py",
+ "os_ts_field_override": null,
+ "cameras": [
+  {
+   "file": "frames_4_c922_Pro_Stream_Webcam.jsonl",
+   "camera_key": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "backend": "nokhwa-msmf",
+   "frames_total": 593,
+   "frames_analysed": 563,
+   "skip_first": 30,
+   "valid_jpeg": 593,
+   "decoded_true": 20,
+   "decoded_false": 0,
+   "seq_gaps": 0,
+   "payload_bytes": {
+    "n": 563,
+    "mean": 105852.68561278863,
+    "std": 121.12384743819102,
+    "min": 105406,
+    "p01": 105520,
+    "p50": 105858,
+    "p99": 106116,
+    "max": 106238
+   },
+   "fps_host": 29.995654419595752,
+   "host_interval_ms": {
+    "n": 562,
+    "mean": 33.33816245551601,
+    "std": 4.428314860834367,
+    "min": 31.2185,
+    "p01": 31.6331,
+    "p50": 32.0024,
+    "p99": 48.0581,
+    "max": 48.1471
+   },
+   "os_ts_interval_ms": {
+    "n": 562,
+    "mean": 33.33810160142349,
+    "std": 4.429463725099521,
+    "min": 31.9458,
+    "p01": 31.9656,
+    "p50": 32.0007,
+    "p99": 48.0041,
+    "max": 48.0574
+   },
+   "latency_host_minus_os_ms": {
+    "n": 563,
+    "mean": 6.926402042628775,
+    "std": 7.888711949001897,
+    "min": 0.17255,
+    "p01": 0.18375,
+    "p50": 0.29175,
+    "p99": 16.39805,
+    "max": 16.74145
+   },
+   "first_frame_latency_ms": 16.57945,
+   "os_timestamp_source": "MF IMFSample time (llTimestamp*100ns) recovered as nokhwa capture_ts - stream_epoch; QPC domain"
+  },
+  {
+   "file": "frames_5_USB_Camera.jsonl",
+   "camera_key": null,
+   "backend": null,
+   "frames_total": 0,
+   "frames_analysed": 0,
+   "skip_first": 0,
+   "valid_jpeg": 0,
+   "decoded_true": 0,
+   "decoded_false": 0,
+   "seq_gaps": 0,
+   "payload_bytes": null,
+   "fps_host": null,
+   "host_interval_ms": null,
+   "os_ts_interval_ms": null,
+   "latency_host_minus_os_ms": null,
+   "first_frame_latency_ms": null,
+   "os_timestamp_source": null
+  },
+  {
+   "file": "frames_6_Logitech_Webcam_C930e.jsonl",
+   "camera_key": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "backend": "nokhwa-msmf",
+   "frames_total": 588,
+   "frames_analysed": 558,
+   "skip_first": 30,
+   "valid_jpeg": 588,
+   "decoded_true": 20,
+   "decoded_false": 0,
+   "seq_gaps": 0,
+   "payload_bytes": {
+    "n": 558,
+    "mean": 124805.85304659499,
+    "std": 794.9014771234308,
+    "min": 115752,
+    "p01": 121259,
+    "p50": 124895,
+    "p99": 125220,
+    "max": 125267
+   },
+   "fps_host": 30.062540284546102,
+   "host_interval_ms": {
+    "n": 557,
+    "mean": 33.26398868940754,
+    "std": 4.316787444900451,
+    "min": 31.4955,
+    "p01": 31.7469,
+    "p50": 32.002,
+    "p99": 48.0617,
+    "max": 48.4223
+   },
+   "os_ts_interval_ms": {
+    "n": 557,
+    "mean": 33.2639170556553,
+    "std": 4.315422869886439,
+    "min": 31.9107,
+    "p01": 31.9537,
+    "p50": 32.0001,
+    "p99": 48.0057,
+    "max": 48.0291
+   },
+   "latency_host_minus_os_ms": {
+    "n": 558,
+    "mean": 5.342766845878136,
+    "std": 7.441335447774293,
+    "min": 0.1903,
+    "p01": 0.1997,
+    "p50": 0.2894,
+    "p99": 16.356,
+    "max": 16.6759
+   },
+   "first_frame_latency_ms": 16.3023,
+   "os_timestamp_source": "MF IMFSample time (llTimestamp*100ns) recovered as nokhwa capture_ts - stream_epoch; QPC domain"
+  }
+ ],
+ "cross_camera": [
+  {
+   "a": "frames_4_c922_Pro_Stream_Webcam",
+   "b": "frames_6_Logitech_Webcam_C930e",
+   "nearest_offset_ms": {
+    "n": 563,
+    "mean": 4.961259413854352,
+    "std": 15.12014934699918,
+    "min": -19.04755,
+    "p01": -19.00265,
+    "p50": -2.98985,
+    "p99": 13.09485,
+    "max": 189.00835
+   },
+   "first_offset_ms": 189.00835,
+   "last_offset_ms": -19.00295,
+   "drift_ms_per_min": -666.1330739569136
+  }
+ ]
+}

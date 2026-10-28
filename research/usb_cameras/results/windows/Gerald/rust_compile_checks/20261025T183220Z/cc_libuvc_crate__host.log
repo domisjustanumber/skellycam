@@ -1,0 +1,92 @@
+$ C:\Users\Dom\.cargo\bin\cargo.EXE build --release
+(cwd=C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\rust\compile_checks\cc_libuvc_crate)
+--- stdout
+
+--- stderr
+    Updating crates.io index
+     Locking 29 packages to highest compatible versions
+   Compiling proc-macro2 v1.0.107
+   Compiling glob v0.3.4
+   Compiling unicode-ident v1.0.27
+   Compiling quote v1.0.47
+   Compiling prettyplease v0.2.37
+   Compiling libc v0.2.191
+   Compiling windows-link v0.2.1
+   Compiling regex-syntax v0.8.11
+   Compiling minimal-lexical v0.2.1
+   Compiling memchr v2.8.3
+   Compiling either v1.19.0
+   Compiling bindgen v0.72.1
+   Compiling log v0.4.34
+   Compiling shlex v1.3.0
+   Compiling bitflags v2.13.2
+   Compiling rustc-hash v2.1.3
+   Compiling pkg-config v0.3.34
+   Compiling libloading v0.8.9
+   Compiling itertools v0.13.0
+   Compiling clang-sys v1.9.1
+   Compiling nom v7.1.3
+   Compiling syn v2.0.119
+   Compiling regex-automata v0.4.18
+   Compiling cexpr v0.6.0
+   Compiling regex v1.13.1
+   Compiling libuvc-sys v0.1.0
+error: failed to run custom build command for `libuvc-sys v0.1.0`
+
+Caused by:
+  process didn't exit successfully: `C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\rust\compile_checks\build\cc_libuvc_crate\release\build\libuvc-sys-00793fa42a64afb3\build-script-build` (exit code: 101)
+  --- stdout
+  cargo:rerun-if-env-changed=LIBUVC_NO_PKG_CONFIG
+  cargo:rerun-if-env-changed=PKG_CONFIG_x86_64-pc-windows-msvc
+  cargo:rerun-if-env-changed=PKG_CONFIG_x86_64_pc_windows_msvc
+  cargo:rerun-if-env-changed=HOST_PKG_CONFIG
+  cargo:rerun-if-env-changed=PKG_CONFIG
+  cargo:rerun-if-env-changed=LIBUVC_STATIC
+  cargo:rerun-if-env-changed=LIBUVC_DYNAMIC
+  cargo:rerun-if-env-changed=PKG_CONFIG_ALL_STATIC
+  cargo:rerun-if-env-changed=PKG_CONFIG_ALL_DYNAMIC
+  cargo:rerun-if-env-changed=PKG_CONFIG_PATH_x86_64-pc-windows-msvc
+  cargo:rerun-if-env-changed=PKG_CONFIG_PATH_x86_64_pc_windows_msvc
+  cargo:rerun-if-env-changed=HOST_PKG_CONFIG_PATH
+  cargo:rerun-if-env-changed=PKG_CONFIG_PATH
+  cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR_x86_64-pc-windows-msvc
+  cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR_x86_64_pc_windows_msvc
+  cargo:rerun-if-env-changed=HOST_PKG_CONFIG_LIBDIR
+  cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR
+  cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR_x86_64-pc-windows-msvc
+  cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR_x86_64_pc_windows_msvc
+  cargo:rerun-if-env-changed=HOST_PKG_CONFIG_SYSROOT_DIR
+  cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR
+  cargo:rerun-if-env-changed=LIBUVC_STATIC
+  cargo:rerun-if-env-changed=LIBUVC_DYNAMIC
+  cargo:rerun-if-env-changed=PKG_CONFIG_ALL_STATIC
+  cargo:rerun-if-env-changed=PKG_CONFIG_ALL_DYNAMIC
+  cargo:rerun-if-env-changed=PKG_CONFIG_PATH_x86_64-pc-windows-msvc
+  cargo:rerun-if-env-changed=PKG_CONFIG_PATH_x86_64_pc_windows_msvc
+  cargo:rerun-if-env-changed=HOST_PKG_CONFIG_PATH
+  cargo:rerun-if-env-changed=PKG_CONFIG_PATH
+  cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR_x86_64-pc-windows-msvc
+  cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR_x86_64_pc_windows_msvc
+  cargo:rerun-if-env-changed=HOST_PKG_CONFIG_LIBDIR
+  cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR
+  cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR_x86_64-pc-windows-msvc
+  cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR_x86_64_pc_windows_msvc
+  cargo:rerun-if-env-changed=HOST_PKG_CONFIG_SYSROOT_DIR
+  cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR
+
+  --- stderr
+
+  thread 'main' (55820) panicked at C:\Users\Dom\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libuvc-sys-0.1.0\build.rs:8:10:
+  pkg-config probe libuvc: Could not run `PKG_CONFIG_ALLOW_SYSTEM_LIBS=1 PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1 pkg-config --libs --cflags libuvc 'libuvc >= 0.0.7'`
+  The pkg-config command could not be found.
+
+  Most likely, you need to install a pkg-config package for your OS.
+
+  If you've already installed it, ensure the pkg-config command is one of the
+  directories in the PATH environment variable.
+
+  If you did not expect this build to link to a pre-installed system library,
+  then check documentation of the libuvc-sys crate for an option to
+  build the library from source, or disable features or dependencies
+  that require pkg-config.
+  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

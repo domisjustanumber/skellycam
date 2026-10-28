@@ -1,0 +1,203 @@
+{
+  "alt_selected": {
+    "all_iso_alts": [
+      [
+        1,
+        192
+      ],
+      [
+        2,
+        384
+      ],
+      [
+        3,
+        512
+      ],
+      [
+        4,
+        640
+      ],
+      [
+        5,
+        800
+      ],
+      [
+        6,
+        944
+      ],
+      [
+        7,
+        1280
+      ],
+      [
+        8,
+        1600
+      ],
+      [
+        9,
+        1984
+      ],
+      [
+        10,
+        2688
+      ],
+      [
+        11,
+        3072
+      ]
+    ],
+    "alt": 11,
+    "bytes_per_interval": 3072,
+    "device_requested_payload": 3072
+  },
+  "command": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\uvc_iso_target\\release\\uvc_iso.exe stream --backend rawusb --vid 046d --pid 0843 --width 1280 --height 720 --fps 30 --exposure-100us 78 --wb 4000 --save-samples 0 --alt device --seconds 60 --sof-instance USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4 --out C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\phase2_rust_uvc_iso\\20261025T210843Z\\stream_rawusb_sof60s_run2 --raw-mjpeg C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\phase2\\rust_uvc_iso\\raw\\stream_rawusb_sof60s_run2.mjpeg",
+  "controls": {
+    "ae_mode_cur": [
+      1
+    ],
+    "ae_mode_set_manual_err": null,
+    "exposure_100us_cur": 78,
+    "exposure_set_err": null,
+    "wb_auto_off_err": null,
+    "wb_cur": 4000,
+    "wb_set_err": null
+  },
+  "device": {
+    "address": 29,
+    "bcdUVC": "100",
+    "bus": 1,
+    "dwClockFrequency": 30000000,
+    "port_path": "13.1.4",
+    "serial": null,
+    "speed": "High"
+  },
+  "device_clock_fit": {
+    "implied_device_clock_hz": 30001594.83060034,
+    "n": 1806,
+    "ns_per_tick": 33.33156139353108,
+    "residual_ns_p02": -406889.265625,
+    "residual_ns_p50": -98833.640625,
+    "residual_ns_p98": 212918.75
+  },
+  "device_clock_fit_note": "host = a + b*STC; STC from first SCR of each frame, host = estimated (micro)frame time of that packet (transfer completion - packets_after*service_interval); intercept at 2nd percentile residual. PTS mapped with same fit (PTS-STC difference taken modulo 2^32).",
+  "environment": {
+    "arch": "x86_64",
+    "backend": "rawusb-0.1.7",
+    "features": {
+      "libusb": true,
+      "rawusb": true
+    },
+    "host_clock": "QueryPerformanceCounter",
+    "os": "windows",
+    "os_build": "Microsoft Windows [Version 10.0.26300.9711]",
+    "profile": "release",
+    "uvc_iso_version": "0.1.0"
+  },
+  "hostname": "Gerald",
+  "out_dir": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\phase2_rust_uvc_iso\\20261025T210843Z\\stream_rawusb_sof60s_run2",
+  "platform": "windows",
+  "probe_commit": {
+    "len": 26,
+    "ms": 0.4289,
+    "negotiated": {
+      "bFormatIndex": 2,
+      "bFrameIndex": 15,
+      "bmFramingInfo": 0,
+      "bmHint": 1,
+      "dwClockFrequency": 0,
+      "dwFrameInterval": 333333,
+      "dwMaxPayloadTransferSize": 3072,
+      "dwMaxVideoFrameSize": 1843200,
+      "wCompQuality": 61,
+      "wDelay_ms": 0
+    },
+    "requested": {
+      "bFormatIndex": 2,
+      "bFrameIndex": 15,
+      "bmFramingInfo": 0,
+      "bmHint": 1,
+      "dwClockFrequency": 0,
+      "dwFrameInterval": 333333,
+      "dwMaxPayloadTransferSize": 0,
+      "dwMaxVideoFrameSize": 0,
+      "wCompQuality": 0,
+      "wDelay_ms": 0
+    }
+  },
+  "raw_mjpeg": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\phase2\\rust_uvc_iso\\raw\\stream_rawusb_sof60s_run2.mjpeg",
+  "results": {
+    "bad_headers": 0,
+    "cpu": {
+      "method": "GetProcessTimes (kernel+user) delta over start_iso..stop window",
+      "percent_of_one_core": 2.6822347988185404,
+      "process_cpu_ns": 1609375000,
+      "wall_ns": 60001272100.0
+    },
+    "discarded_partial": 0,
+    "empty_packets": 375309,
+    "err_flag_payloads": 0,
+    "expected_period_ticks": 999999.0,
+    "fps_host_after_skip30": 30.084742907210842,
+    "frames": 1806,
+    "frames_file": "frames_046d_0843.jsonl",
+    "host_arrival_gaps_ge_1p5_period": 0,
+    "latency_arrival_minus_pts_ms": {
+      "max": 215.347848,
+      "min": 35.652545,
+      "p50": 39.762912
+    },
+    "overflows": 0,
+    "packets": 479968,
+    "packets_with_error_status": 0,
+    "payloads": 104659,
+    "payloads_without_eoh_bit": 104659,
+    "pts_delta_ticks_max": 5994624.0,
+    "pts_delta_ticks_min": 997156.0,
+    "pts_gaps_ge_1p5_period": 1,
+    "pts_missing_frames_est": 5.0,
+    "time_to_first_frame_ms": 13.1104,
+    "transfers": 14999,
+    "valid_jpeg": 1806
+  },
+  "settings": {
+    "alt_policy": "Device",
+    "exposure_100us": "78",
+    "fps": 30,
+    "height": 720,
+    "pid": "0843",
+    "pkts_per_xfer": 32,
+    "save_samples": 0,
+    "seconds": 60.0,
+    "vid": "046d",
+    "wb": "4000",
+    "width": 1280,
+    "xfers": 8
+  },
+  "sof_calibration_after": {
+    "error": "CreateFileW(\\\\?\\USB#VID_046D&PID_0843#7&7dcc7ce&0&4#{a5dcbf10-6530-11d2-901f-00c04fb951ed}): Access is denied. (0x80070005)",
+    "retries": 10
+  },
+  "sof_calibration_before": {
+    "first": {
+      "frame": 113671895,
+      "qpc": 1136838072704
+    },
+    "fit_frames_per_s": 999.9409344115518,
+    "fit_intercept_frames": -0.16991733028001477,
+    "fit_max_abs_residual_frames": 0.5132158539834109,
+    "interface_path": "\\\\?\\USB#VID_046D&PID_0843#7&7dcc7ce&0&4#{a5dcbf10-6530-11d2-901f-00c04fb951ed}",
+    "last": {
+      "frame": 113672324,
+      "qpc": 1136842359778
+    },
+    "n": 400,
+    "note": "frame = f0 + a + b*(qpc - qpc0)/freq; frame counter is 1 ms (USB frames); SCR SOF is its low 11 bits",
+    "qpc_frequency": 10000000.0
+  },
+  "stream_stats": {
+    "transfers_completed": 14999,
+    "transfers_failed": 8
+  },
+  "test": "rust_uvc_iso_stream_rawusb",
+  "utc_started_unix": "1792964326"
+}

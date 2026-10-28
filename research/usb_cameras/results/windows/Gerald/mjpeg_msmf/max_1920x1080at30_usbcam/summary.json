@@ -1,0 +1,451 @@
+{
+ "test": "mjpeg_msmf",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": null,
+ "utc_summarized": "2026-10-25T19:32:00.136018+00:00",
+ "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams usbcam --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg\\mjpeg_msmf\\max_1920x1080at30_usbcam' -- research/usb_cameras/mjpeg/build/mf_mjpeg_capture.exe --dev 'vid_4c4a&pid_4a55' --width 1920 --height 1080 --fps 30 --seconds 10 --warmup 2 --out 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\mjpeg\\mjpeg_msmf\\max_1920x1080at30_usbcam' --attr-dump 5",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "backend": "msmf-sourcereader",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30.0
+ },
+ "decoded_by_pipeline": false,
+ "decode_evidence": "MF_READWRITE_DISABLE_CONVERTERS=True; native MJPG media type set on the source; IMFSourceReader::GetCurrentMediaType subtype per camera = ['MJPG'] (MJPG => no decoder MFT in the reader)",
+ "window": {
+  "start_ns": 106064488140600,
+  "end_ns": 106074488409600,
+  "wall_s": 10.000269,
+  "warmup_s": 2.0,
+  "open_ns": 106062487049100
+ },
+ "delivered_codecs": [
+  "MJPG"
+ ],
+ "silent_format_fallback": false,
+ "cpu": {
+  "method": "GetProcessTimes (tick-sampled) + QueryProcessCycleTime/TSC-rate (precise)",
+  "process_user_s": 0.015625,
+  "process_kernel_s": 0.03125,
+  "process_cpu_pct_of_one_core_ticks": 0.469,
+  "process_cycles": 226683472,
+  "tsc_hz": 3417600487,
+  "process_cpu_pct_of_one_core": 0.663,
+  "frameserver_pid": 40784,
+  "frameserver_open_error": 5,
+  "frameserver_ok": false,
+  "frameserver_cpu_pct_of_one_core_ticks": 0.0,
+  "frameserver_cycles": 0,
+  "frameserver_cpu_pct_of_one_core": null,
+  "process_cpu_pct_per_camera": 0.663
+ },
+ "cameras": [
+  {
+   "idx": 0,
+   "name": "USB Camera",
+   "symbolic_link": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "chosen_native_type": "MJPG 1920x1080@30/1 (native index 1)",
+   "reader_output_subtype": "MJPG",
+   "output_w": 1920,
+   "output_h": 1080,
+   "output_fps_num": 30,
+   "output_fps_den": 1,
+   "requested_mode": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30.0
+   },
+   "read_error": "0x00000000",
+   "stream_ticks": 1,
+   "null_samples": 1,
+   "frames_total": 308,
+   "first_frame_latency_ms": 88.775,
+   "controls_before": {
+    "exposure_log2s": {
+     "supported": true,
+     "value": -7,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": -7,
+     "max": 3,
+     "step": 1,
+     "default": -7,
+     "set_hr": "0x1"
+    },
+    "focus": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "white_balance_k": {
+     "supported": true,
+     "value": 4500,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 0,
+     "max": 6500,
+     "step": 1,
+     "default": 4500,
+     "set_hr": "0x1"
+    },
+    "gain": {
+     "supported": true,
+     "value": 4,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 1,
+     "max": 7,
+     "step": 1,
+     "default": 4,
+     "set_hr": "0x1"
+    },
+    "backlight_compensation": {
+     "supported": true,
+     "value": 0,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 0,
+     "max": 255,
+     "step": 1,
+     "default": 0,
+     "set_hr": "0x1"
+    },
+    "powerline_frequency": {
+     "supported": true,
+     "value": 0,
+     "flags": 0,
+     "flags_meaning": "other",
+     "min": 0,
+     "max": 0,
+     "step": 0,
+     "default": 0,
+     "set_hr": "0x1"
+    },
+    "auto_exposure_priority": {
+     "supported": false,
+     "set_hr": "0x1"
+    }
+   },
+   "controls_after_set": {
+    "exposure_log2s": {
+     "supported": true,
+     "value": -7,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": -7,
+     "max": 3,
+     "step": 1,
+     "default": -7,
+     "set_hr": "0x1"
+    },
+    "focus": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "white_balance_k": {
+     "supported": true,
+     "value": 4500,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 0,
+     "max": 6500,
+     "step": 1,
+     "default": 4500,
+     "set_hr": "0x1"
+    },
+    "gain": {
+     "supported": true,
+     "value": 4,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 1,
+     "max": 7,
+     "step": 1,
+     "default": 4,
+     "set_hr": "0x1"
+    },
+    "backlight_compensation": {
+     "supported": true,
+     "value": 0,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 0,
+     "max": 255,
+     "step": 1,
+     "default": 0,
+     "set_hr": "0x1"
+    },
+    "powerline_frequency": {
+     "supported": true,
+     "value": 0,
+     "flags": 0,
+     "flags_meaning": "other",
+     "min": 0,
+     "max": 0,
+     "step": 0,
+     "default": 0,
+     "set_hr": "0x1"
+    },
+    "auto_exposure_priority": {
+     "supported": false,
+     "set_hr": "0x1"
+    }
+   },
+   "controls_end": {
+    "exposure_log2s": {
+     "supported": true,
+     "value": -7,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": -7,
+     "max": 3,
+     "step": 1,
+     "default": -7,
+     "set_hr": "0x1"
+    },
+    "focus": {
+     "supported": false,
+     "set_hr": "0x1"
+    },
+    "white_balance_k": {
+     "supported": true,
+     "value": 4500,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 0,
+     "max": 6500,
+     "step": 1,
+     "default": 4500,
+     "set_hr": "0x1"
+    },
+    "gain": {
+     "supported": true,
+     "value": 4,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 1,
+     "max": 7,
+     "step": 1,
+     "default": 4,
+     "set_hr": "0x1"
+    },
+    "backlight_compensation": {
+     "supported": true,
+     "value": 0,
+     "flags": 2,
+     "flags_meaning": "manual",
+     "min": 0,
+     "max": 255,
+     "step": 1,
+     "default": 0,
+     "set_hr": "0x1"
+    },
+    "powerline_frequency": {
+     "supported": true,
+     "value": 0,
+     "flags": 0,
+     "flags_meaning": "other",
+     "min": 0,
+     "max": 0,
+     "step": 0,
+     "default": 0,
+     "set_hr": "0x1"
+    },
+    "auto_exposure_priority": {
+     "supported": false,
+     "set_hr": "0x1"
+    }
+   },
+   "frames_delivered_total": 308,
+   "frames_in_window": 257,
+   "fps_requested": 30.0,
+   "fps_achieved_count_over_wall": 25.69930868859628,
+   "fps_achieved_span": 25.765040803018223,
+   "inter_arrival_ms": {
+    "n": 256,
+    "min": 31.712,
+    "p50": 32.0429,
+    "mean": 38.812280859375,
+    "p95": 48.076,
+    "max": 48.4001
+   },
+   "gaps_over_1p5_period": 0,
+   "os_timestamp_delta_ms": {
+    "n": 256,
+    "min": 31.7523,
+    "p50": 32.0172,
+    "mean": 38.81239609375,
+    "p95": 47.9982,
+    "max": 48.2346
+   },
+   "payload_bytes": {
+    "n": 257,
+    "min": 86045,
+    "p50": 87237,
+    "mean": 87290.13229571984,
+    "p95": 88152,
+    "max": 88537
+   },
+   "pct_valid_jpeg_in_window": 0.0,
+   "pct_valid_jpeg_all": 0.0,
+   "jpeg_checks_all": {
+    "soi": 308,
+    "eoi_at_end": 308,
+    "eoi_in_tail": 308,
+    "has_dht": 308,
+    "pillow_ok": 308,
+    "simplejpeg_ok": 0
+   },
+   "n_validated": 308,
+   "cam": "usbcam",
+   "jpeg_header": {
+    "fingerprints": {
+     "0d66b76922fe": 1,
+     "fb027a2fabd6": 31,
+     "61017a908fc2": 1,
+     "d1d660ae4055": 1,
+     "b32cb2849949": 1,
+     "45dc8d0bad2a": 1,
+     "7c73376ebe13": 1,
+     "a63c2402f66d": 1,
+     "f0024b996868": 1,
+     "7c88aaf4bdc2": 1,
+     "8016e885fefd": 268
+    },
+    "header_sha1s": {
+     "9973f6eb31f7": 1,
+     "6b648f110b91": 31,
+     "a0893b0ac91e": 1,
+     "e229efe787c5": 1,
+     "44fb29fdb1e7": 1,
+     "4496b051fae2": 1,
+     "53ff0794e19e": 1,
+     "adf268350a9e": 1,
+     "22b9f61860ae": 1,
+     "08d7ab510c3b": 1,
+     "08fda7f6f108": 268
+    },
+    "markers": [
+     "APP0",
+     "DQT",
+     "DQT",
+     "SOF0",
+     "DHT",
+     "DHT",
+     "DHT",
+     "DHT",
+     "SOS"
+    ],
+    "app": [
+     {
+      "marker": "APP0",
+      "len": 17,
+      "id": "JFIF"
+     }
+    ],
+    "sof": {
+     "type": "SOF0",
+     "precision": 8,
+     "h": 1080,
+     "w": 1920,
+     "components": [
+      {
+       "id": 1,
+       "hv": "2x1",
+       "tq": 0
+      },
+      {
+       "id": 2,
+       "hv": "1x1",
+       "tq": 1
+      },
+      {
+       "id": 3,
+       "hv": "1x1",
+       "tq": 1
+      }
+     ]
+    },
+    "dqt_sha1": "1dc466a39650",
+    "dht_sha1": "41b700bdd457",
+    "dqt_q0_first8": [
+     10,
+     7,
+     7,
+     8,
+     7,
+     6,
+     10,
+     8
+    ],
+    "has_dht": true,
+    "header_bytes": 624,
+    "com": null,
+    "bytes_after_eoi_max": 0
+   },
+   "os_timestamp_source": "IMFSourceReader::ReadSample llTimestamp (100ns units, x100)",
+   "timestamp_fields_present": {
+    "os_timestamp_ns": 257,
+    "readsample_ts_hns": 257,
+    "sample_time_hns": 257,
+    "device_timestamp": 257,
+    "uvc_payloadheader_bytes": 257,
+    "sample_duration_hns": 257
+   },
+   "arrival_minus_os_timestamp_ms": {
+    "median": 32.297,
+    "abs_dev_from_median": {
+     "n": 257,
+     "min": 0.0,
+     "p50": 0.015100000000003888,
+     "mean": 1.1497252918287937,
+     "p95": 15.980499999999996,
+     "max": 16.028
+    },
+    "note": "host_arrival_ns - os_timestamp_ns; an absolute latency only if both are on the same clock (MF/WinRT: QPC; dshow: graph clock, arbitrary origin)"
+   }
+  }
+ ],
+ "samples": [],
+ "controls": {
+  "requested": {
+   "exposure_log2s": -7,
+   "white_balance_k": 4500,
+   "auto_exposure_priority": 0
+  },
+  "after_apply": {
+   "USB Camera": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": null,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "readback_after_capture": {
+   "USB Camera": {
+    "exposure_log2s": -7,
+    "white_balance_k": 4500,
+    "auto_exposure_priority": null,
+    "exposure_log2s_mode": "manual",
+    "white_balance_k_mode": "manual"
+   }
+  },
+  "apply_rc": 0,
+  "readback_rc": 0
+ }
+}

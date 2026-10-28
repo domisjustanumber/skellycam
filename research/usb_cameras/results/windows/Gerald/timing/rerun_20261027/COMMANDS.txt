@@ -1,0 +1,48 @@
+Goal 2 (capture timing) unattended re-run, GERALD, 2026-10-28 03:04-03:42Z (local 2026-10-27 23:04-23:42 EDT). Not elevated.
+Cameras: C922 046D:085C, C930e 046D:0843 (...mi_00#8&39dec205&1&0000), generic 4C4A:4A55. Kiyo Pro 1532:0E05 never opened (every
+command names its devices explicitly). No driver, registry or device-state changes. Raw .mjpeg stays in
+  SCR = C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\timing_rerun
+Everything else is copied here (flash/<run>/ = the run dir without .mjpeg).
+
+Machine notes: monitor 0 = DISPLAY1 portrait 1440x2560 now at rect [1920,-201,3360,2359] (was [2560,-201,4000,2359] on 10-25: the primary
+is now 1920x1080). Display idle timeout is 600 s, so tools/keep_display_on.ps1 (scratchpad) held a SetThreadExecutionState display
+request 03:05-03:41Z (no setting changed). LogiTuneAgent was running (it respawned within 3 s when closed at ~03:39Z:
+logitune_kill_*.json). RazerAppEngine not running. All three MI_00 devnodes 0x180200A (no DN_NEED_RESTART) at 03:04Z and 03:41Z
+(devnode_status_end.json).
+
+Unit tests (no camera):
+  uv run --script research/usb_cameras/timing/tests/selftest_analyze_frames.py --out .../rerun_20261027/unit_tests/selftest_analyze_frames.json
+  uv run --script research/usb_cameras/timing/tests/selftest_flash_analyze.py  --out .../rerun_20261027/unit_tests/selftest_flash_analyze.json
+Reproduction of earlier analyses on the 10-25 data (no camera):
+  reproduce_run1/commands.txt (flash_analyze, flash_rows, analyze_frames on flash_run1_repositioned)
+  verify_method_reproduce_run1/command.txt (flash_verify_method on flash_run1_repositioned)
+  exposure_scan_wide/<old run>.json: flash_exposure_scan.py --source uvc_pts_via_scr_lsq_envelope --grid-ms 2,4,6,7.8125,10,12,14,17,20,24,28,32,36,40,45
+  earlier_runs_conditions/*.json: tools/capture_conditions.py on the 10-25 raw captures (luma, gain readback)
+
+MF UVC metadata (camera, under camlock):
+  uv run --script research/usb_cameras/tools/camlock.py -- C:\...\timing\build\mf_uvc_timing.exe --out SCR/<ts>_meta_c922_c930e --seconds 10 --save-mjpeg --cam "vid_046d&pid_085c,1280,720,30" --cam "vid_046d&pid_0843,1280,720,30"
+  uv run --script research/usb_cameras/tools/camlock.py -- C:\...\timing\build\mf_uvc_timing.exe --out SCR/<ts>_meta_generic --seconds 10 --save-mjpeg --cam "vid_4c4a&pid_4a55,1280,720,30"
+  then quantization_check.py, analyze_frames.py, tools/capture_conditions.py -> metadata_check/<ts>_*/
+  (20261028T030822Z: first attempt failed before opening any camera: camlock got a relative exe path, WinError 2.)
+
+Flash runs (camera, under camlock; tools/flashrun.sh wraps this):
+  uv run --script research/usb_cameras/tools/camlock.py -- pwsh -NoProfile -File research/usb_cameras/results/windows/Gerald/timing/rerun_20261027/tools/run_flash_rerun.ps1 -RunDir SCR/<ts>_<label> -Cams "vid_046d&pid_085c,1280,720,30,<exp>,4500;vid_046d&pid_0843,1280,720,30,<exp>,4500" -Seconds 30 -Monitor 0
+  (generic runs: second spec vid_4c4a&pid_4a55,1280,720,30,-7,4500; the C930e and the generic camera cannot both stream 720p MJPEG on their
+  shared hub, bw_concurrency/b05, so they were paired with the C922 separately.) run_flash_rerun.ps1 calls the unchanged
+  timing/scripts/run_flash_test.ps1 and adds conditions.json (CPU% start/end) and cover.json (tools/window_cover_check.py: owner of
+  25 points on monitor 0 every 0.5 s; flash_timecode.exe owned all 25 from t=0.5 s to ~36.1 s in every run).
+  Order of camera holds: meta_c922_c930e, meta_generic, exp-7_a, exp-7_b, generic_exp-7, exp-9, exp-6, order_ae_c930e (6 s, exposure
+  left as is), exp-7_c_afterAE, exp-7_d (INVALID: display glitches), dshow_probe, exp-7_e, generic_exp-7_b.
+Analysis per run (tools/analyze_full.sh RUN = tools/analyze_run.sh + the rest):
+  flash_analyze.py, analyze_frames.py, quantization_check.py, flash_verify_extra.py, flash_rows.py, flash_exposure_scan.py (x2 sources),
+  display_model_check.py, tools/capture_conditions.py, flash_roi_rows.py --cam 085c --col-frac 0.75 --source uvc_pts_mapped_direct,
+  flash_roi_rows.py --cam 0843 --col-frac 0.45 --source uvc_pts_via_scr_lsq_envelope, flash_step_response.py / flash_impulse_response.py
+  (C922 0.75 0.5; C930e 0.45 0.5 --mf-glob '*0843*'; generic 0.456 0.572 --mf-glob '*4a55*'), flash_verify_method.py,
+  tools/mf_fixed_gt.py (device-timestamp-free GT, any MF camera), tools/luma_timeline.py, tools/compact_table.py.
+  Combined: compact_table_all_runs.{json,txt}, verify_method_tables.json (tools/verify_method_table.py).
+DirectShow open probe (camera, under camlock):
+  uv run --script research/usb_cameras/tools/camlock.py -- pwsh -NoProfile -File research/usb_cameras/results/windows/Gerald/timing/rerun_20261027/tools/dshow_probe_all.ps1 -Out SCR/<ts>_dshow_probe.jsonl
+Harness change: timing/scripts/flash_step_response.py and flash_impulse_response.py gained --mf-glob (MF capture of any camera);
+without it the behaviour is unchanged.
+USB EP0 standard-descriptor probe (hub IOCTL, no stream, no driver change; under camlock), 03:42Z:
+  uv run --script research/usb_cameras/tools/camlock.py -- research\usb_cameras\timing\build\usb_ep0_probe.exe "USB\VID_046D&PID_085C\B76395EF" "USB\VID_046D&PID_0843\7&7DCC7CE&0&4" "USB\VID_4C4A&PID_4A55\7&7DCC7CE&0&3"  -> usb_ep0_probe/

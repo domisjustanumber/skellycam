@@ -1,0 +1,57 @@
+=== 3. arv-tool feature query (GenICam names)
+Feature 'GevTimestampTickFrequency' not found
+Feature 'GevIEEE1588' not found
+Feature 'PtpEnable' not found
+Feature 'GevIEEE1588Status' not found
+Feature 'PtpStatus' not found
+Feature 'ActionDeviceKey' not found
+TriggerSource = Line0
+Feature 'TimestampLatch' not found
+
+=== 4. probe (bootstrap registers)
+{"ip": "127.0.0.1", "gev_version": "0.0", "capability_raw": "0x00000000", "cap_action": false, "cap_scheduled_action": false, "cap_ieee1588": false, "cap_unconditional_action": false, "tick_frequency_hz": 1000000000, "config_raw": "0x00000000", "ptp_enabled": false, "ptp_status": "raw=0x0", "num_action_signals": 0, "scheduled_action_queue_size": 0}
+
+=== 5. latch timestamps (camera clock vs host clock)
+tick frequencies: {"127.0.0.1": 1000000000}
+per-camera: median(camera_ns - host_midpoint_ns), median RTT
+  127.0.0.1       offset=-1792950556.261661 s  rtt=29.7 us  last_cam_time=0 ns
+  127.0.0.1       offset=-1792950556.261661 s  rtt=29.7 us  last_cam_time=0 ns
+  127.0.0.1 vs 127.0.0.1: median clock difference +0 ns (resolution ~ +/-36287 ns from RTT)
+RESULT: clocks agree within 1000 us
+
+=== 6. ptp --enable (expect: capability says not supported)
+127.0.0.1: capability register says IEEE1588 NOT supported
+rc=1
+
+=== 7. action (expect: fake camera does not implement ACTION_CMD -> no ACTION_ACK)
+127.0.0.1: action=False scheduled=False ieee1588=False
+scheduled (+200 ms)    action_time=200000000 acks={}
+   no ACTION_ACK from ['127.0.0.1']
+late (-1 s)            action_time=1 acks={}
+   no ACTION_ACK from ['127.0.0.1']
+unscheduled            action_time=None acks={}
+   no ACTION_ACK from ['127.0.0.1']
+rc=1
+
+=== 8. stream a few frames to capture GVSP leader timestamps
+Looking for camera 'Aravis-Fake-GV01'
+
+=== 9. decode live capture
+    262 
+    120 0x0080
+    104 0x0084
+     36 0x0082
+      3 0x0100
+      1 0x0002
+-- action commands seen on the wire:
+127.0.0.1	True	0x12345678	0x00000001	0x00000001	0x000000000bebc200
+127.0.0.1	True	0x12345678	0x00000001	0x00000001	0x0000000000000001
+127.0.0.1	False	0x12345678	0x00000001	0x00000001	
+-- GVSP leader timestamps (first 5) vs host clock window:
+65401	0x18e1d7099b44c930	0x01080001	512	512
+65402	0x18e1d7099d114fb8	0x01080001	512	512
+65403	0x18e1d7099f7478c0	0x01080001	512	512
+65404	0x18e1d709a1d6abb0	0x01080001	512	512
+65405	0x18e1d709a4385db8	0x01080001	512	512
+host_ns_before=1792950560198563709 host_ns_after=1792950564280134544
+-- fake camera log tail:

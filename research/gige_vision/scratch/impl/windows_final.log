@@ -1,0 +1,500 @@
+### host: Python 3.12.13 MINGW64_NT-10.0-26300 Gerald 3.4.9-be826601.x86_64 2023-09-07 12:36 UTC x86_64 Msys
+### selftests + --help (system python 3.12, no viva-genicam)
+== gev_probe selftest: 40 passed, 0 failed, 0 skipped, 0 warnings, 0 info
+gev_probe --help exit 0
+== gev_ptp_sync_test selftest: 41 passed, 0 failed, 0 skipped, 0 warnings, 0 info
+gev_ptp_sync_test --help exit 0
+== gvsp_capture_report selftest: 43 passed, 0 failed, 0 skipped, 0 warnings, 0 info
+gvsp_capture_report --help exit 0
+== udp_recv_benchmark selftest: 42 passed, 0 failed, 0 skipped, 0 warnings, 0 info
+udp_recv_benchmark --help exit 0
+== viva_sync_capture_test selftest: 43 passed, 0 failed, 0 skipped, 0 warnings, 0 info
+viva_sync_capture_test --help exit 0
+
+$ python C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige/viva_sync_capture_test.py --duration 1
+This test needs viva-genicam:  pip install viva-genicam
+(wheels: Windows x64, macOS arm64, Linux x86_64; Python >= 3.9; https://github.com/VitalyVorobyev/viva-genicam)
+[exit=2]
+### broadcast discovery on all interfaces, no cameras
+
+$ python C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige/gev_probe.py --timeout 1
+== host
+  python=3.12.13, platform=Windows-11-10.0.26300-SP0, machine=AMD64, hostname=Gerald, time_utc=2026-10-25T19:22:10Z
+  interface vEthernet (WSL (Hyper-V firewall)): 172.30.224.1/20 (broadcast 172.30.239.255)
+  interface Bluetooth Network Connection: 169.254.205.247/16 (broadcast 169.254.255.255)
+  interface 10G: 192.168.6.86/24 (broadcast 192.168.6.255)
+  interface Ethernet: 192.168.100.101/24 (broadcast 192.168.100.255)
+  interface Ethernet: 169.254.49.121/16 (broadcast 169.254.255.255)
+  interface Local Area Connection* 10: 169.254.221.74/16 (broadcast 169.254.255.255)
+  interface Local Area Connection* 9: 169.254.156.74/16 (broadcast 169.254.255.255)
+  interface WiFi: 169.254.136.41/16 (broadcast 169.254.255.255)
+== discovery (broadcast on all interfaces)
+  [FAIL] discovery: no GigE Vision camera answered. Check cabling/PoE, that the host NIC has an address on the cameras' subnet (link-local 169.254.x.x is common), firewall rules for UDP 3956, and try --iface <host NIC IP>
+
+== gev_probe: 0 passed, 1 failed, 0 skipped, 0 warnings, 0 info
+   FAIL discovery: no GigE Vision camera answered. Check cabling/PoE, that the host NIC has an address on the cameras' subnet (link-local 169.254.x.x is common), firewall rules for UDP 3956, and try --iface <host NIC IP>
+[exit=2]
+
+$ python C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige/gev_probe.py --ip 127.0.0.1 --ip 127.0.0.2 --json probe.json --save-xml xml
+== host
+  python=3.12.13, platform=Windows-11-10.0.26300-SP0, machine=AMD64, hostname=Gerald, time_utc=2026-10-25T19:22:15Z
+  interface vEthernet (WSL (Hyper-V firewall)): 172.30.224.1/20 (broadcast 172.30.239.255)
+  interface Bluetooth Network Connection: 169.254.205.247/16 (broadcast 169.254.255.255)
+  interface 10G: 192.168.6.86/24 (broadcast 192.168.6.255)
+  interface Ethernet: 192.168.100.101/24 (broadcast 192.168.100.255)
+  interface Ethernet: 169.254.49.121/16 (broadcast 169.254.255.255)
+  interface Local Area Connection* 10: 169.254.221.74/16 (broadcast 169.254.255.255)
+  interface Local Area Connection* 9: 169.254.156.74/16 (broadcast 169.254.255.255)
+  interface WiFi: 169.254.136.41/16 (broadcast 169.254.255.255)
+== discovery (unicast to 127.0.0.1, 127.0.0.2)
+  found 127.0.0.1  DE:AD:BE:EF:CA:FE  viva-genicam FakeGigE  serial=FAKE-001  GEV 2.0  user_name='FakeCamera'
+  found 127.0.0.2  DE:AD:BE:EF:CA:FE  viva-genicam FakeGigE  serial=FAKE-001  GEV 2.0  user_name='FakeCamera'
+  [PASS] discovery: 2 camera(s) answered
+
+== camera 127.0.0.1
+  [PASS] [127.0.0.1 viva-genicam FakeGigE] read bootstrap registers: via local interface 127.0.0.1
+  [INFO] [127.0.0.1 viva-genicam FakeGigE] GigE Vision version: 2.0 - PTP and scheduled actions exist since GEV 2.0 (see capability bits)
+  [INFO] [127.0.0.1 viva-genicam FakeGigE] GVCP capabilities: ccp_application_port_ip, pending_ack, packet_resend, write_mem, concatenation
+  [INFO] [127.0.0.1 viva-genicam FakeGigE] timestamp tick frequency: 1000000000 Hz (1 ns ticks, typical with PTP)
+  [SKIP] [127.0.0.1 viva-genicam FakeGigE] IEEE 1588 (PTP): not supported: capability bit 0x00080000 clear
+  [SKIP] [127.0.0.1 viva-genicam FakeGigE] action commands: action=False scheduled=False unconditional=False
+  [INFO] [127.0.0.1 viva-genicam FakeGigE] stream channel 0: SCPS packet size 1500 B (standard MTU); extended ids enabled=False
+  [PASS] [127.0.0.1 viva-genicam FakeGigE] GenICam XML: 45901 B in 0.0 s, 161 nodes, url Local:fake.xml;10000;b34d
+  [INFO] [127.0.0.1 viva-genicam FakeGigE] XML features: timestamp: TimestampLatch, GevTimestampValue, GevTimestampTickFrequency
+  [INFO] [127.0.0.1 viva-genicam FakeGigE] XML enum TriggerSource: Line1, Software
+  [INFO] [127.0.0.1 viva-genicam FakeGigE] XML enum PixelFormat: Mono8, Mono16, RGB8, BayerRG8
+  saved XML to xml\viva-genicam_FakeGigE_FAKE-001.xml
+  [WARN] [127.0.0.1 viva-genicam FakeGigE] PTP + scheduled-action sync readiness: missing: ptp, scheduled_action, action, TriggerSource Action0/Action1
+
+== camera 127.0.0.2
+  [PASS] [127.0.0.2 viva-genicam FakeGigE] read bootstrap registers: via local interface 127.0.0.1
+  [INFO] [127.0.0.2 viva-genicam FakeGigE] GigE Vision version: 2.0 - PTP and scheduled actions exist since GEV 2.0 (see capability bits)
+  [INFO] [127.0.0.2 viva-genicam FakeGigE] GVCP capabilities: ccp_application_port_ip, pending_ack, packet_resend, write_mem, concatenation
+  [INFO] [127.0.0.2 viva-genicam FakeGigE] timestamp tick frequency: 1000000000 Hz (1 ns ticks, typical with PTP)
+  [SKIP] [127.0.0.2 viva-genicam FakeGigE] IEEE 1588 (PTP): not supported: capability bit 0x00080000 clear
+  [SKIP] [127.0.0.2 viva-genicam FakeGigE] action commands: action=False scheduled=False unconditional=False
+  [INFO] [127.0.0.2 viva-genicam FakeGigE] stream channel 0: SCPS packet size 1500 B (standard MTU); extended ids enabled=False
+  [PASS] [127.0.0.2 viva-genicam FakeGigE] GenICam XML: 45901 B in 0.0 s, 161 nodes, url Local:fake.xml;10000;b34d
+  [INFO] [127.0.0.2 viva-genicam FakeGigE] XML features: timestamp: TimestampLatch, GevTimestampValue, GevTimestampTickFrequency
+  [INFO] [127.0.0.2 viva-genicam FakeGigE] XML enum TriggerSource: Line1, Software
+  [INFO] [127.0.0.2 viva-genicam FakeGigE] XML enum PixelFormat: Mono8, Mono16, RGB8, BayerRG8
+  saved XML to xml\viva-genicam_FakeGigE_FAKE-001.xml
+  [WARN] [127.0.0.2 viva-genicam FakeGigE] PTP + scheduled-action sync readiness: missing: ptp, scheduled_action, action, TriggerSource Action0/Action1
+
+IP              MAC               Vendor / model               GEV  1588 PTP en/state     Sched Act  Resend Tick Hz     SCPS  EI  Act1 trig
+--------------- ----------------- ---------------------------- ---- ---- ---------------- ----- ---- ------ ----------- ----- --- ---------
+127.0.0.1       DE:AD:BE:EF:CA:FE viva-genicam FakeGigE        2.0  no   -                no    no   yes    1000000000  1500  off no       
+127.0.0.2       DE:AD:BE:EF:CA:FE viva-genicam FakeGigE        2.0  no   -                no    no   yes    1000000000  1500  off no       
+
+== gev_probe: 5 passed, 0 failed, 4 skipped, 2 warnings, 14 info
+   SKIP [127.0.0.1 viva-genicam FakeGigE] IEEE 1588 (PTP): not supported: capability bit 0x00080000 clear
+   SKIP [127.0.0.1 viva-genicam FakeGigE] action commands: action=False scheduled=False unconditional=False
+   WARN [127.0.0.1 viva-genicam FakeGigE] PTP + scheduled-action sync readiness: missing: ptp, scheduled_action, action, TriggerSource Action0/Action1
+   SKIP [127.0.0.2 viva-genicam FakeGigE] IEEE 1588 (PTP): not supported: capability bit 0x00080000 clear
+   SKIP [127.0.0.2 viva-genicam FakeGigE] action commands: action=False scheduled=False unconditional=False
+   WARN [127.0.0.2 viva-genicam FakeGigE] PTP + scheduled-action sync readiness: missing: ptp, scheduled_action, action, TriggerSource Action0/Action1
+wrote probe.json
+[exit=0]
+
+$ python C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige/gev_ptp_sync_test.py --ip 127.0.0.1 --ip 127.0.0.2 --enable-ptp --ptp-timeout 5 --duration 2 --no-program-keys --device-key 0x42 --group-key 1 --group-mask 1 --json ptp.json
+== cameras
+  [PASS] [127.0.0.1 FakeGigE] reachable: GEV 2.0, capabilities ccp_application_port_ip, pending_ack, packet_resend, write_mem, concatenation, tick 1000000000 Hz
+  [PASS] [127.0.0.2 FakeGigE] reachable: GEV 2.0, capabilities ccp_application_port_ip, pending_ack, packet_resend, write_mem, concatenation, tick 1000000000 Hz
+== PTP
+  [SKIP] [127.0.0.1 FakeGigE] IEEE 1588 capability: capability bit 0x00080000 clear - camera does not advertise PTP (if its vendor tool shows Ptp*/GevIEEE1588 features, try viva_sync_capture_test.py)
+  [SKIP] [127.0.0.2 FakeGigE] IEEE 1588 capability: capability bit 0x00080000 clear - camera does not advertise PTP (if its vendor tool shows Ptp*/GevIEEE1588 features, try viva_sync_capture_test.py)
+  [SKIP] PTP roles: no camera supports IEEE 1588
+== timestamp latch
+  [SKIP] [127.0.0.1 FakeGigE] timestamp latch: latched value is always 0 - timestamp latch not implemented
+  [SKIP] [127.0.0.2 FakeGigE] timestamp latch: latched value is always 0 - timestamp latch not implemented
+== clock offset / drift
+  [SKIP] clock offset / drift: no camera with a working timestamp latch
+== action commands
+  sending ACTION_CMDs unicast to each camera from 127.0.0.1
+  [PASS] ACTION_CMD wrong device key ignored: no camera acknowledged
+  [PASS] [127.0.0.1 FakeGigE] ACTION_CMD immediate: ACK SUCCESS
+  [PASS] [127.0.0.2 FakeGigE] ACTION_CMD immediate: ACK SUCCESS
+  [SKIP] ACTION_CMD scheduled: no camera clock to schedule against (timestamp latch unavailable)
+
+== verdict
+  PTP clock sync: NOT VERIFIED (2 camera(s))
+  scheduled ACTION_CMD accepted by all: NO / not tested
+
+== gev_ptp_sync_test: 5 passed, 0 failed, 7 skipped, 0 warnings, 0 info
+   SKIP [127.0.0.1 FakeGigE] IEEE 1588 capability: capability bit 0x00080000 clear - camera does not advertise PTP (if its vendor tool shows Ptp*/GevIEEE1588 features, try viva_sync_capture_test.py)
+   SKIP [127.0.0.2 FakeGigE] IEEE 1588 capability: capability bit 0x00080000 clear - camera does not advertise PTP (if its vendor tool shows Ptp*/GevIEEE1588 features, try viva_sync_capture_test.py)
+   SKIP PTP roles: no camera supports IEEE 1588
+   SKIP [127.0.0.1 FakeGigE] timestamp latch: latched value is always 0 - timestamp latch not implemented
+   SKIP [127.0.0.2 FakeGigE] timestamp latch: latched value is always 0 - timestamp latch not implemented
+   SKIP clock offset / drift: no camera with a working timestamp latch
+   SKIP ACTION_CMD scheduled: no camera clock to schedule against (timestamp latch unavailable)
+wrote ptp.json
+[exit=0]
+
+$ python C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige/gvsp_capture_report.py --ip 127.0.0.1 --seconds 3 --save-frame frames --json live.json
+  [PASS] [127.0.0.1] camera reachable: GEV 2.0, tick 1000000000 Hz, packet resend supported
+  [PASS] [127.0.0.1] socket receive buffer: requested 33554432 B via SO_RCVBUF, OS reports 33554432 B (default 65536 B)
+  streaming to 127.0.0.1:62571 for 3.0 s (control via stdlib GVCP, resend on) ...
+  (TLParamsLocked not set: TLParamsLocked: <Integer> without pValue)
+  saved first complete frame: ['frames\\frame_127_0_0_1_BayerRG8.raw', 'frames\\frame_127_0_0_1_BayerRG8.json', 'frames\\frame_127_0_0_1_BayerRG8.pgm']
+
+=== GVSP 127.0.0.1 -> 127.0.0.1:62571 (65 Mbit/s)
+  packets 16748  formats {'LEADER': 79, 'PAYLOAD': 16590, 'TRAILER': 79}  status codes {'SUCCESS': 16748}
+  frames: seen 79, complete 79, incomplete 0, trailer missing 0, never seen (block-id gaps) 0, missing packets 0
+  image: BayerRG8 640x480 x79 leaders (OpenCV: cv2.COLOR_BayerBG2BGR)
+  leader timestamp deltas (ticks): min 37026400 median 38131850 p95 39005240 max 39613100; first timestamp 4600
+  [PASS] [GVSP 127.0.0.1 -> 127.0.0.1:62571 (65 Mbit/s)] GVSP leader + trailer packets: {'LEADER': 79, 'PAYLOAD': 16590, 'TRAILER': 79}
+  [PASS] [GVSP 127.0.0.1 -> 127.0.0.1:62571 (65 Mbit/s)] frames complete: 79/79 (100.0 %; limit 99 %)
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:62571 (65 Mbit/s)] compression verdict: UNCOMPRESSED: payload bytes/frame 307200 vs uncompressed BayerRG8 size 307200 (ratio 1.000); IMAGE payload in a standard PFNC pixel format, full-size frames
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:62571 (65 Mbit/s)] packet size: payload packets 1500 B IP datagrams (max 1500) -> standard 1500 MTU
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:62571 (65 Mbit/s)] extended ids (64-bit block ids): not used (0/16748 packets)
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:62571 (65 Mbit/s)] packet resend: 4 packet(s) in 3 range(s) requested, 4 recovered; 0 packet(s) carried the resend marker, 0 arrived after their frame was closed
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:62571 (65 Mbit/s)] device timestamps: increasing; device frame rate 26.22 fps; host arrival rate 26.27 fps
+
+== gvsp_capture_report: 4 passed, 0 failed, 0 skipped, 0 warnings, 5 info
+wrote live.json
+[exit=0]
+
+$ python C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige/gvsp_capture_report.py --ip 127.0.0.2 --seconds 3 --no-resend --json live_noresend.json
+  [PASS] [127.0.0.2] camera reachable: GEV 2.0, tick 1000000000 Hz, packet resend supported
+  [PASS] [127.0.0.2] socket receive buffer: requested 33554432 B via SO_RCVBUF, OS reports 33554432 B (default 65536 B)
+  streaming to 127.0.0.1:55525 for 3.0 s (control via stdlib GVCP, resend off) ...
+  (TLParamsLocked not set: TLParamsLocked: <Integer> without pValue)
+
+=== GVSP 127.0.0.2 -> 127.0.0.1:55525 (65 Mbit/s)
+  packets 16744  formats {'LEADER': 79, 'PAYLOAD': 16586, 'TRAILER': 79}  status codes {'SUCCESS': 16744}
+  frames: seen 79, complete 76, incomplete 3, trailer missing 0, never seen (block-id gaps) 0, missing packets 4
+  image: BayerRG8 640x480 x79 leaders (OpenCV: cv2.COLOR_BayerBG2BGR)
+  leader timestamp deltas (ticks): min 36855900 median 38076900 p95 38943375 max 40786000; first timestamp 2400
+  [PASS] [GVSP 127.0.0.2 -> 127.0.0.1:55525 (65 Mbit/s)] GVSP leader + trailer packets: {'LEADER': 79, 'PAYLOAD': 16586, 'TRAILER': 79}
+  [FAIL] [GVSP 127.0.0.2 -> 127.0.0.1:55525 (65 Mbit/s)] frames complete: 76/79 (96.2 %; limit 99 %)
+  [INFO] [GVSP 127.0.0.2 -> 127.0.0.1:55525 (65 Mbit/s)] compression verdict: UNCOMPRESSED: payload bytes/frame 307200 vs uncompressed BayerRG8 size 307200 (ratio 1.000); IMAGE payload in a standard PFNC pixel format, full-size frames
+  [INFO] [GVSP 127.0.0.2 -> 127.0.0.1:55525 (65 Mbit/s)] packet size: payload packets 1500 B IP datagrams (max 1500) -> standard 1500 MTU
+  [INFO] [GVSP 127.0.0.2 -> 127.0.0.1:55525 (65 Mbit/s)] extended ids (64-bit block ids): not used (0/16744 packets)
+  [INFO] [GVSP 127.0.0.2 -> 127.0.0.1:55525 (65 Mbit/s)] device timestamps: increasing; device frame rate 26.26 fps; host arrival rate 26.27 fps
+
+== gvsp_capture_report: 3 passed, 1 failed, 0 skipped, 0 warnings, 4 info
+   FAIL [GVSP 127.0.0.2 -> 127.0.0.1:55525 (65 Mbit/s)] frames complete: 76/79 (96.2 %; limit 99 %)
+wrote live_noresend.json
+[exit=1]
+
+$ C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/venvs/viva-win/Scripts/python.exe C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige/gvsp_capture_report.py --ip 127.0.0.2 --seconds 1 --control viva
+  [PASS] [127.0.0.2] camera reachable: GEV 2.0, tick 1000000000 Hz, packet resend supported
+  [FAIL] [127.0.0.2] take control: viva: GvcpError: viva-genicam did not discover 127.0.0.2
+
+== gvsp_capture_report: 1 passed, 1 failed, 0 skipped, 0 warnings, 0 info
+   FAIL [127.0.0.2] take control: viva: GvcpError: viva-genicam did not discover 127.0.0.2
+[exit=1]
+fake up 127.0.0.1 3956
+fake up 127.0.0.2 3956
+READY
+fake 127.0.0.1 actions 1 blocks_sent 79 writes 12
+fake 127.0.0.2 actions 1 blocks_sent 79 writes 12
+### viva script with in-process fake
+
+$ C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/venvs/viva-win/Scripts/python.exe C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige/viva_sync_capture_test.py --fake-cameras 1 --duration 3 --out viva_free
+== cameras
+  [INFO] [cam0 127.0.0.1 VivaCam Fake] camera: vitavision.dev VivaCam Fake serial VIVA-FAKE-001 fw 1.0.0-fake; GEV 2.0 (DeviceTLVersion ?.?); BayerRG8 640x480, packet size 1500
+== PTP
+  [SKIP] [cam0 127.0.0.1 VivaCam Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+  [SKIP] PTP lock: PTP could not be enabled on any camera
+== free-run at 30.0 fps for 3 s
+  [INFO] [cam0 127.0.0.1 VivaCam Fake] free-run setup: TriggerMode=Off, AcquisitionFrameRate=30
+  [PASS] [cam0 127.0.0.1 VivaCam Fake] frames received: 79 of ~90 requested; incomplete 0, block-id gaps 0 (0.00 % lost, limit 0.5 %); device fps 26.04
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] frame rate: camera delivered 79 frames, fewer than the 90 the requested 30.0 fps implies, without losing any - it cannot run that fast (exposure time, bandwidth limit, ROI) or ignores AcquisitionFrameRate
+  [SKIP] timestamp pairing: needs two or more cameras
+wrote viva_free\frames.csv
+wrote viva_free\summary.json
+
+== viva_sync_capture_test: 1 passed, 0 failed, 3 skipped, 1 warnings, 2 info
+   SKIP [cam0 127.0.0.1 VivaCam Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+   SKIP PTP lock: PTP could not be enabled on any camera
+   WARN [cam0 127.0.0.1 VivaCam Fake] frame rate: camera delivered 79 frames, fewer than the 90 the requested 30.0 fps implies, without losing any - it cannot run that fast (exposure time, bandwidth limit, ROI) or ignores AcquisitionFrameRate
+   SKIP timestamp pairing: needs two or more cameras
+[exit=0]
+
+$ C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/venvs/viva-win/Scripts/python.exe C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige/viva_sync_capture_test.py --fake-cameras 1 --mode scheduled-action --out viva_sched_skip
+== cameras
+  [INFO] [cam0 127.0.0.1 VivaCam Fake] camera: vitavision.dev VivaCam Fake serial VIVA-FAKE-001 fw 1.0.0-fake; GEV 2.0 (DeviceTLVersion ?.?); BayerRG8 640x480, packet size 1500
+== PTP
+  [SKIP] [cam0 127.0.0.1 VivaCam Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+  [SKIP] PTP lock: PTP could not be enabled on any camera
+== scheduled actions
+  [SKIP] [cam0 127.0.0.1 VivaCam Fake] action trigger setup: TriggerSource has none of Action1,Action0 (entries: ['Line1', 'Software'])
+  [SKIP] scheduled-action run: not every camera can be triggered by an action command
+wrote viva_sched_skip\frames.csv
+wrote viva_sched_skip\summary.json
+
+== viva_sync_capture_test: 0 passed, 0 failed, 4 skipped, 0 warnings, 1 info
+   SKIP [cam0 127.0.0.1 VivaCam Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+   SKIP PTP lock: PTP could not be enabled on any camera
+   SKIP [cam0 127.0.0.1 VivaCam Fake] action trigger setup: TriggerSource has none of Action1,Action0 (entries: ['Line1', 'Software'])
+   SKIP scheduled-action run: not every camera can be triggered by an action command
+[exit=0]
+
+$ C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/venvs/viva-win/Scripts/python.exe C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige/viva_sync_capture_test.py --fake-cameras 1 --mode scheduled-action --skip-trigger-config --device-key 0x42 --group-key 1 --group-mask 1 --triggers 60 --out viva_sched_dry
+== cameras
+  [INFO] [cam0 127.0.0.1 VivaCam Fake] camera: vitavision.dev VivaCam Fake serial VIVA-FAKE-001 fw 1.0.0-fake; GEV 2.0 (DeviceTLVersion ?.?); BayerRG8 640x480, packet size 1500
+== PTP
+  [SKIP] [cam0 127.0.0.1 VivaCam Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+  [SKIP] PTP lock: PTP could not be enabled on any camera
+== scheduled actions
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] action trigger setup: --skip-trigger-config: frames are NOT triggered by the actions (emulator dry run only)
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] scheduled action capability: capability bit clear - camera may reject scheduled actions (trying anyway)
+  60 scheduled actions at 30.0 fps to ['127.0.0.1'], sent 20.0 ms ahead ...
+  [PASS] ACTION_ACKs: 60/60 sends acknowledged by every addressed camera (sender viva); 0 sends left after their scheduled time
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] triggered frames: 60/60 actions produced a frame (matched by ORDER: frame timestamps are not on camera 0's timescale)
+  [INFO] [cam0 127.0.0.1 VivaCam Fake] frame timestamp - scheduled time: median -2354120.9 us, p95 -2211012.5 us (what the timestamp marks - exposure start, end or readout - is vendor-specific)
+  [SKIP] exposure-start spread: needs two or more cameras
+  [PASS] [cam0 127.0.0.1 VivaCam Fake] frames received: 94; incomplete 0, block-id gaps 0 (0.00 % lost, limit 0.5 %); device fps 26.11
+wrote viva_sched_dry\frames.csv
+wrote viva_sched_dry\summary.json
+
+== viva_sync_capture_test: 2 passed, 0 failed, 3 skipped, 3 warnings, 2 info
+   SKIP [cam0 127.0.0.1 VivaCam Fake] PTP enable feature: none of PtpEnable / GevIEEE1588 / PtpMode in the camera XML
+   SKIP PTP lock: PTP could not be enabled on any camera
+   WARN [cam0 127.0.0.1 VivaCam Fake] action trigger setup: --skip-trigger-config: frames are NOT triggered by the actions (emulator dry run only)
+   WARN [cam0 127.0.0.1 VivaCam Fake] scheduled action capability: capability bit clear - camera may reject scheduled actions (trying anyway)
+   WARN [cam0 127.0.0.1 VivaCam Fake] triggered frames: 60/60 actions produced a frame (matched by ORDER: frame timestamps are not on camera 0's timescale)
+   SKIP exposure-start spread: needs two or more cameras
+[exit=0]
+### simulated-register harnesses
+
+$ python C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/impl/harness_ptp_sim.py C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige synced
+== cameras
+  [PASS] [127.0.0.1 FakeGigE] reachable: GEV 2.0, capabilities ccp_application_port_ip, ieee1588, scheduled_action, action, pending_ack, packet_resend, write_mem, concatenation, tick 1000000000 Hz
+  [PASS] [127.0.0.2 FakeGigE] reachable: GEV 2.0, capabilities ccp_application_port_ip, ieee1588, scheduled_action, action, pending_ack, packet_resend, write_mem, concatenation, tick 1000000000 Hz
+== PTP
+  [PASS] [127.0.0.1 FakeGigE] IEEE 1588 capability: capability bit set
+  [PASS] [127.0.0.2 FakeGigE] IEEE 1588 capability: capability bit set
+  [PASS] [127.0.0.1 FakeGigE] PTP enabled: enable bit set via bootstrap register 0x0954
+  [PASS] [127.0.0.2 FakeGigE] PTP enabled: enable bit set via bootstrap register 0x0954
+  waiting up to 8 s for PTP roles (one Master + Slaves) ...
+    t=  0.0s {'127.0.0.1': 'Listening', '127.0.0.2': 'Listening'}
+    t=  1.0s {'127.0.0.1': 'Listening', '127.0.0.2': 'Slave'}
+    t=  1.5s {'127.0.0.1': 'Master', '127.0.0.2': 'Slave'}
+  [PASS] PTP roles: settled after 1.5 s: master=['127.0.0.1'], slaves=['127.0.0.2']
+== timestamp latch
+  [PASS] [127.0.0.1 FakeGigE] timestamp latch: advances at 1000.000 MHz vs tick-frequency register 1000.000 MHz; round trip 536 us
+  [PASS] [127.0.0.2 FakeGigE] timestamp latch: advances at 1000.000 MHz vs tick-frequency register 1000.000 MHz; round trip 1506 us
+== clock offset / drift
+  latching all clocks every 0.10 s for 4 s ...
+  [INFO] [127.0.0.1 FakeGigE] clock vs host: drift +0.000 ppm against the (unsynchronised) host clock; latch round trip median 521 us
+  [INFO] [127.0.0.2 FakeGigE] clock vs host: drift +0.000 ppm against the (unsynchronised) host clock; latch round trip median 533 us
+  [PASS] [127.0.0.2 vs 127.0.0.1] inter-camera clock offset: median offset +0.1 us (resolution +-512 us from latch round trips), drift +0.000 ppm, p95 |dev| 0.0 us over 21 rounds (limits 1000 us, 2.0 ppm)
+  note: the latch method resolves offsets only to about half a GVCP round trip (tens to hundreds of us); use viva_sync_capture_test.py --mode scheduled-action for microsecond-level exposure alignment
+== action commands
+  [PASS] [127.0.0.1 FakeGigE] program action keys: device key 0x00000042, group key 0x00000001, mask 0x00000001 at action index 0
+  [PASS] [127.0.0.2 FakeGigE] program action keys: device key 0x00000042, group key 0x00000001, mask 0x00000001 at action index 0
+  sending ACTION_CMDs unicast to each camera from 127.0.0.1
+  [PASS] ACTION_CMD wrong device key ignored: no camera acknowledged
+  [PASS] [127.0.0.1 FakeGigE] ACTION_CMD immediate: ACK SUCCESS
+  [PASS] [127.0.0.2 FakeGigE] ACTION_CMD immediate: ACK SUCCESS
+  [PASS] [127.0.0.1 FakeGigE] ACTION_CMD scheduled (+200 ms): ACK SUCCESS
+  [PASS] [127.0.0.2 FakeGigE] ACTION_CMD scheduled (+200 ms): ACK SUCCESS
+  [INFO] [127.0.0.1 FakeGigE] ACTION_CMD scheduled in the past: ACK SUCCESS - camera executes late actions immediately (vendor behaviour, e.g. Basler)
+  [INFO] [127.0.0.2 FakeGigE] ACTION_CMD scheduled in the past: ACK SUCCESS - camera executes late actions immediately (vendor behaviour, e.g. Basler)
+
+== verdict
+  PTP clock sync: VERIFIED (2 camera(s))
+  scheduled ACTION_CMD accepted by all: YES
+
+== gev_ptp_sync_test: 17 passed, 0 failed, 0 skipped, 0 warnings, 4 info
+main() returned 0
+[exit=0]
+
+$ python C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/impl/harness_ptp_sim.py C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige unsynced
+== cameras
+  [PASS] [127.0.0.1 FakeGigE] reachable: GEV 2.0, capabilities ccp_application_port_ip, ieee1588, scheduled_action, action, pending_ack, packet_resend, write_mem, concatenation, tick 1000000000 Hz
+  [PASS] [127.0.0.2 FakeGigE] reachable: GEV 2.0, capabilities ccp_application_port_ip, ieee1588, scheduled_action, action, pending_ack, packet_resend, write_mem, concatenation, tick 1000000000 Hz
+== PTP
+  [PASS] [127.0.0.1 FakeGigE] IEEE 1588 capability: capability bit set
+  [PASS] [127.0.0.2 FakeGigE] IEEE 1588 capability: capability bit set
+  [PASS] [127.0.0.1 FakeGigE] PTP enabled: enable bit set via bootstrap register 0x0954
+  [PASS] [127.0.0.2 FakeGigE] PTP enabled: enable bit set via bootstrap register 0x0954
+  waiting up to 8 s for PTP roles (one Master + Slaves) ...
+    t=  0.0s {'127.0.0.1': 'Listening', '127.0.0.2': 'Listening'}
+    t=  1.0s {'127.0.0.1': 'Listening', '127.0.0.2': 'Master'}
+    t=  1.5s {'127.0.0.1': 'Master', '127.0.0.2': 'Master'}
+  [FAIL] PTP roles: not settled within 8 s: {'127.0.0.1': 'Master', '127.0.0.2': 'Master'}. two or more Masters: the cameras cannot see each other's PTP multicast (224.0.1.129, UDP 319/320) - disable IGMP snooping on the switch, use one switch/subnet, then power-cycle the cameras
+== timestamp latch
+  [PASS] [127.0.0.1 FakeGigE] timestamp latch: advances at 1000.000 MHz vs tick-frequency register 1000.000 MHz; round trip 412 us
+  [PASS] [127.0.0.2 FakeGigE] timestamp latch: advances at 1000.025 MHz vs tick-frequency register 1000.000 MHz; round trip 544 us
+== clock offset / drift
+  latching all clocks every 0.10 s for 4 s ...
+  [INFO] [127.0.0.1 FakeGigE] clock vs host: drift +0.000 ppm against the (unsynchronised) host clock; latch round trip median 522 us
+  [INFO] [127.0.0.2 FakeGigE] clock vs host: drift +25.000 ppm against the (unsynchronised) host clock; latch round trip median 533 us
+  [FAIL] [127.0.0.2 vs 127.0.0.1] inter-camera clock offset: median offset +639607.2 us (resolution +-517 us from latch round trips), drift +25.000 ppm, p95 |dev| 48.2 us over 21 rounds (limits 1000 us, 2.0 ppm)
+  note: the latch method resolves offsets only to about half a GVCP round trip (tens to hundreds of us); use viva_sync_capture_test.py --mode scheduled-action for microsecond-level exposure alignment
+== action commands
+  [PASS] [127.0.0.1 FakeGigE] program action keys: device key 0x00000042, group key 0x00000001, mask 0x00000001 at action index 0
+  [PASS] [127.0.0.2 FakeGigE] program action keys: device key 0x00000042, group key 0x00000001, mask 0x00000001 at action index 0
+  sending ACTION_CMDs unicast to each camera from 127.0.0.1
+  [PASS] ACTION_CMD wrong device key ignored: no camera acknowledged
+  [PASS] [127.0.0.1 FakeGigE] ACTION_CMD immediate: ACK SUCCESS
+  [PASS] [127.0.0.2 FakeGigE] ACTION_CMD immediate: ACK SUCCESS
+  [PASS] [127.0.0.1 FakeGigE] ACTION_CMD scheduled (+200 ms): ACK SUCCESS
+  [PASS] [127.0.0.2 FakeGigE] ACTION_CMD scheduled (+200 ms): ACK SUCCESS
+  [INFO] [127.0.0.1 FakeGigE] ACTION_CMD scheduled in the past: ACK SUCCESS - camera executes late actions immediately (vendor behaviour, e.g. Basler)
+  [INFO] [127.0.0.2 FakeGigE] ACTION_CMD scheduled in the past: ACK SUCCESS - camera executes late actions immediately (vendor behaviour, e.g. Basler)
+
+== verdict
+  PTP clock sync: NOT VERIFIED (2 camera(s))
+  scheduled ACTION_CMD accepted by all: YES
+
+== gev_ptp_sync_test: 15 passed, 2 failed, 0 skipped, 0 warnings, 4 info
+   FAIL PTP roles: not settled within 8 s: {'127.0.0.1': 'Master', '127.0.0.2': 'Master'}. two or more Masters: the cameras cannot see each other's PTP multicast (224.0.1.129, UDP 319/320) - disable IGMP snooping on the switch, use one switch/subnet, then power-cycle the cameras
+   FAIL [127.0.0.2 vs 127.0.0.1] inter-camera clock offset: median offset +639607.2 us (resolution +-517 us from latch round trips), drift +25.000 ppm, p95 |dev| 48.2 us over 21 rounds (limits 1000 us, 2.0 ppm)
+main() returned 1
+[exit=0]
+
+$ C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/venvs/viva-win/Scripts/python.exe C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/impl/harness_viva_revoke.py C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige viva_revoke
+== cameras
+  [INFO] [cam0 127.0.0.1 VivaCam Fake] camera: vitavision.dev VivaCam Fake serial VIVA-FAKE-001 fw 1.0.0-fake; GEV 2.0 (DeviceTLVersion ?.?); BayerRG8 640x480, packet size 1500
+== PTP
+  [SKIP] PTP: --skip-ptp
+== free-run at 30.0 fps for 3 s
+  [INFO] [cam0 127.0.0.1 VivaCam Fake] free-run setup: TriggerMode=Off, AcquisitionFrameRate=30
+  [PASS] [cam0 127.0.0.1 VivaCam Fake] frames received: 79 of ~90 requested; incomplete 0, block-id gaps 0 (0.00 % lost, limit 0.5 %); device fps 26.02
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] frame rate: camera delivered 79 frames, fewer than the 90 the requested 30.0 fps implies, without losing any - it cannot run that fast (exposure time, bandwidth limit, ROI) or ignores AcquisitionFrameRate
+  [SKIP] timestamp pairing: needs two or more cameras
+  [FAIL] [cam0 127.0.0.1 VivaCam Fake] camera control: closing stream: GenApiError: register I/O failed: control of the camera was lost, so nothing is written; reclaim_control takes it again (register 0x00020028) - the camera dropped this application (heartbeat timeout: network glitch, another application, or the host was too busy)
+wrote viva_revoke\frames.csv
+wrote viva_revoke\summary.json
+
+== viva_sync_capture_test: 1 passed, 1 failed, 2 skipped, 1 warnings, 2 info
+   SKIP PTP: --skip-ptp
+   WARN [cam0 127.0.0.1 VivaCam Fake] frame rate: camera delivered 79 frames, fewer than the 90 the requested 30.0 fps implies, without losing any - it cannot run that fast (exposure time, bandwidth limit, ROI) or ignores AcquisitionFrameRate
+   SKIP timestamp pairing: needs two or more cameras
+   FAIL [cam0 127.0.0.1 VivaCam Fake] camera control: closing stream: GenApiError: register I/O failed: control of the camera was lost, so nothing is written; reclaim_control takes it again (register 0x00020028) - the camera dropped this application (heartbeat timeout: network glitch, another application, or the host was too busy)
+main() returned 1
+[exit=0]
+
+$ C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/venvs/viva-win/Scripts/python.exe C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/impl/harness_stdlib_revoke.py C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige
+  [PASS] [127.0.0.1] camera reachable: GEV 2.0, tick 1000000000 Hz, packet resend supported
+  [PASS] [127.0.0.1] socket receive buffer: requested 33554432 B via SO_RCVBUF, OS reports 33554432 B (default 65536 B)
+  streaming to 127.0.0.1:55953 for 4.0 s (control via stdlib GVCP, resend on) ...
+  (TLParamsLocked not set: TLParamsLocked: <Integer> without pValue)
+
+=== GVSP 127.0.0.1 -> 127.0.0.1:55953 (12 Mbit/s)
+  packets 4235  formats {'LEADER': 77, 'PAYLOAD': 4081, 'TRAILER': 77}  status codes {'SUCCESS': 4235}
+  frames: seen 77, complete 77, incomplete 0, trailer missing 0, never seen (block-id gaps) 0, missing packets 0
+  image: Mono8 320x240 x77 leaders
+  leader timestamp deltas (ticks): min 51162800 median 52223400 p95 53259200 max 53922300; first timestamp 5800
+  [PASS] [GVSP 127.0.0.1 -> 127.0.0.1:55953 (12 Mbit/s)] GVSP leader + trailer packets: {'LEADER': 77, 'PAYLOAD': 4081, 'TRAILER': 77}
+  [PASS] [GVSP 127.0.0.1 -> 127.0.0.1:55953 (12 Mbit/s)] frames complete: 77/77 (100.0 %; limit 99 %)
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:55953 (12 Mbit/s)] compression verdict: UNCOMPRESSED: payload bytes/frame 76800 vs uncompressed Mono8 size 76800 (ratio 1.000); IMAGE payload in a standard PFNC pixel format, full-size frames
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:55953 (12 Mbit/s)] packet size: payload packets 1500 B IP datagrams (max 1500) -> standard 1500 MTU
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:55953 (12 Mbit/s)] extended ids (64-bit block ids): not used (0/4235 packets)
+  [INFO] [GVSP 127.0.0.1 -> 127.0.0.1:55953 (12 Mbit/s)] device timestamps: increasing; device frame rate 19.15 fps; host arrival rate 19.15 fps
+  [FAIL] [127.0.0.1] camera control: control was lost during the capture (heartbeat timeout: network glitch, another application, or the host was too busy)
+
+== gvsp_capture_report: 4 passed, 1 failed, 0 skipped, 0 warnings, 4 info
+   FAIL [127.0.0.1] camera control: control was lost during the capture (heartbeat timeout: network glitch, another application, or the host was too busy)
+main() returned 1 | SCDA before 00000000 after 00000000 | controller after: None
+[exit=0]
+
+$ C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/venvs/viva-win/Scripts/python.exe C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/impl/harness_viva_ptp_sim.py C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige lock viva_ptp_lock
+== cameras
+  [INFO] [cam0 127.0.0.1 VivaCam Fake] camera: vitavision.dev VivaCam Fake serial VIVA-FAKE-001 fw 1.0.0-fake; GEV 2.0 (DeviceTLVersion ?.?); BayerRG8 640x480, packet size 1500
+== PTP
+  [PASS] [cam0 127.0.0.1 VivaCam Fake] PTP enable feature: PtpEnable: false -> true
+  waiting up to 6 s for PTP lock ...
+    t=  0.0s cam0=Listening/0ns
+    t=  1.0s cam0=Listening/0ns
+    t=  2.0s cam0=Master/0ns
+    t=  3.0s cam0=Master/0ns
+  [PASS] PTP lock: after 2 s: cam0 127.0.0.1 VivaCam Fake: Master offset 0 ns
+== free-run at 30.0 fps for 2 s
+  [INFO] [cam0 127.0.0.1 VivaCam Fake] free-run setup: TriggerMode=Off, AcquisitionFrameRate=30
+  [PASS] [cam0 127.0.0.1 VivaCam Fake] frames received: 54 of ~60 requested; incomplete 0, block-id gaps 0 (0.00 % lost, limit 0.5 %); device fps 26.31
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] frame rate: camera delivered 54 frames, fewer than the 60 the requested 30.0 fps implies, without losing any - it cannot run that fast (exposure time, bandwidth limit, ROI) or ignores AcquisitionFrameRate
+  [SKIP] timestamp pairing: needs two or more cameras
+wrote viva_ptp_lock\frames.csv
+wrote viva_ptp_lock\summary.json
+
+== viva_sync_capture_test: 3 passed, 0 failed, 1 skipped, 1 warnings, 2 info
+   WARN [cam0 127.0.0.1 VivaCam Fake] frame rate: camera delivered 54 frames, fewer than the 60 the requested 30.0 fps implies, without losing any - it cannot run that fast (exposure time, bandwidth limit, ROI) or ignores AcquisitionFrameRate
+   SKIP timestamp pairing: needs two or more cameras
+main() returned 0 PtpEnable after restore: false
+[exit=0]
+
+$ C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/venvs/viva-win/Scripts/python.exe C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/impl/harness_viva_ptp_sim.py C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige nolock viva_ptp_nolock
+== cameras
+  [INFO] [cam0 127.0.0.1 VivaCam Fake] camera: vitavision.dev VivaCam Fake serial VIVA-FAKE-001 fw 1.0.0-fake; GEV 2.0 (DeviceTLVersion ?.?); BayerRG8 640x480, packet size 1500
+== PTP
+  [PASS] [cam0 127.0.0.1 VivaCam Fake] PTP enable feature: PtpEnable: false -> true
+  waiting up to 6 s for PTP lock ...
+    t=  0.0s cam0=Listening/0ns
+    t=  1.0s cam0=Listening/0ns
+    t=  2.0s cam0=Listening/0ns
+    t=  3.0s cam0=Listening/0ns
+    t=  4.0s cam0=Listening/0ns
+    t=  5.0s cam0=Listening/0ns
+    t=  6.0s cam0=Listening/0ns
+  [FAIL] PTP lock: not locked within 6 s (limit 1000 ns): cam0 127.0.0.1 VivaCam Fake: Listening offset 0 ns. Check IGMP snooping (disable), one switch/subnet, power-cycle cameras stuck as Master.
+== free-run at 30.0 fps for 2 s
+  [INFO] [cam0 127.0.0.1 VivaCam Fake] free-run setup: TriggerMode=Off, AcquisitionFrameRate=30
+  [PASS] [cam0 127.0.0.1 VivaCam Fake] frames received: 54 of ~60 requested; incomplete 0, block-id gaps 0 (0.00 % lost, limit 0.5 %); device fps 26.20
+  [WARN] [cam0 127.0.0.1 VivaCam Fake] frame rate: camera delivered 54 frames, fewer than the 60 the requested 30.0 fps implies, without losing any - it cannot run that fast (exposure time, bandwidth limit, ROI) or ignores AcquisitionFrameRate
+  [SKIP] timestamp pairing: needs two or more cameras
+wrote viva_ptp_nolock\frames.csv
+wrote viva_ptp_nolock\summary.json
+
+== viva_sync_capture_test: 2 passed, 1 failed, 1 skipped, 1 warnings, 2 info
+   FAIL PTP lock: not locked within 6 s (limit 1000 ns): cam0 127.0.0.1 VivaCam Fake: Listening offset 0 ns. Check IGMP snooping (disable), one switch/subnet, power-cycle cameras stuck as Master.
+   WARN [cam0 127.0.0.1 VivaCam Fake] frame rate: camera delivered 54 frames, fewer than the 60 the requested 30.0 fps implies, without losing any - it cannot run that fast (exposure time, bandwidth limit, ROI) or ignores AcquisitionFrameRate
+   SKIP timestamp pairing: needs two or more cameras
+main() returned 1 PtpEnable after restore: false
+[exit=0]
+### udp benchmark
+
+$ python C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige/udp_recv_benchmark.py --sizes 1472,8972 --rates 1000,0 --seconds 2 --json bench_local.json
+python 3.12.13 | Windows-11-10.0.26300-SP0 | cpus=28 | role=local
+line rate reference (full Ethernet framing):
+     1 GbE: MTU1500    81,274 pps | MTU9000   13,830 pps
+   2.5 GbE: MTU1500   203,186 pps | MTU9000   34,576 pps
+     5 GbE: MTU1500   406,372 pps | MTU9000   69,152 pps
+    10 GbE: MTU1500   812,744 pps | MTU9000  138,305 pps
+ size  target |      sent      recv   drop% |  tx Mb/s  rx Mb/s  rx kpps rxCPU% | rcvbuf
+----------------------------------------------------------------------------------------
+ 1472    1000 |   169,856   169,856    0.00 |     1000     1000     84.9     33 | 33554432
+ 1472     max |   476,880   476,880    0.00 |     2808     2808    238.5     74 | 33554432
+ 8972    1000 |    27,888    27,888    0.00 |     1000     1001     13.9      6 | 33554432
+ 8972     max |   411,616   411,616    0.00 |    14772    14773    205.8     83 | 33554432
+  [PASS] [1472 B @ 1000.0 Mbit/s] paced receive: lost 0.0 % (limit 0.1 %), received 84.9 kpps (line rate needs 81.3 kpps), receive CPU 32.8 % of one core
+  [INFO] [1472 B @ max] unpaced (max) throughput: 238.5 kpps received, 0.0 % lost with the sender running flat out (Python sender limit, not a pass/fail test)
+  [PASS] [8972 B @ 1000.0 Mbit/s] paced receive: lost 0.0 % (limit 0.1 %), received 13.9 kpps (line rate needs 13.8 kpps), receive CPU 5.5 % of one core
+  [INFO] [8972 B @ max] unpaced (max) throughput: 205.8 kpps received, 0.0 % lost with the sender running flat out (Python sender limit, not a pass/fail test)
+
+== udp_recv_benchmark: 2 passed, 0 failed, 0 skipped, 0 warnings, 2 info
+wrote bench_local.json
+[exit=0]
+
+$ python C:/Users/Dom/GitHub/freemocap/skellycam/skellycam/system/diagnostics/gige/udp_recv_benchmark.py --role sender --target 127.0.0.1 --port 50200 --sizes 1472,8972 --rates 800 --seconds 3
+python 3.12.13 | Windows-11-10.0.26300-SP0 | cpus=28 | role=sender
+line rate reference (full Ethernet framing):
+     1 GbE: MTU1500    81,274 pps | MTU9000   13,830 pps
+   2.5 GbE: MTU1500   203,186 pps | MTU9000   34,576 pps
+     5 GbE: MTU1500   406,372 pps | MTU9000   69,152 pps
+    10 GbE: MTU1500   812,744 pps | MTU9000  138,305 pps
+sent 203,808 x 1472 B in 3.00 s (800 Mbit/s, 0 send errors)
+sent 33,456 x 8972 B in 3.00 s (800 Mbit/s, 0 send errors)
+[exit=0]
+python 3.12.13 | Windows-11-10.0.26300-SP0 | cpus=28 | role=receiver
+line rate reference (full Ethernet framing):
+     1 GbE: MTU1500    81,274 pps | MTU9000   13,830 pps
+   2.5 GbE: MTU1500   203,186 pps | MTU9000   34,576 pps
+     5 GbE: MTU1500   406,372 pps | MTU9000   69,152 pps
+    10 GbE: MTU1500   812,744 pps | MTU9000  138,305 pps
+receiver on 127.0.0.1:50200, SO_RCVBUF requested 33554432 -> 33554432 B. Waiting for a sender (Ctrl+C to stop) ...
+ size  target |      sent      recv   drop% |  tx Mb/s  rx Mb/s  rx kpps rxCPU% | rcvbuf
+ 1472     800 |   203,808   203,808    0.00 |      800      800     67.9     23 | 33554432
+wrote bench_rx.json
+ size  target |      sent      recv   drop% |  tx Mb/s  rx Mb/s  rx kpps rxCPU% | rcvbuf
+ 8972     800 |    33,456    33,456    0.00 |      800      800     11.2      6 | 33554432
+wrote bench_rx.json
+  [PASS] [1472 B @ 800 Mbit/s] paced receive: lost 0.0 % (limit 0.1 %), received 67.9 kpps (line rate needs 65.0 kpps), receive CPU 22.9 % of one core
+  [PASS] [8972 B @ 800 Mbit/s] paced receive: lost 0.0 % (limit 0.1 %), received 11.2 kpps (line rate needs 11.1 kpps), receive CPU 5.7 % of one core
+
+== udp_recv_benchmark: 2 passed, 0 failed, 0 skipped, 0 warnings, 0 info

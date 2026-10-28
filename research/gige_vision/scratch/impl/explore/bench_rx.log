@@ -1,0 +1,12 @@
+python 3.12.13 | Windows-11-10.0.26300-SP0 | cpus=28 | role=receiver
+line rate reference (full Ethernet framing):
+     1 GbE: MTU1500    81,274 pps | MTU9000   13,830 pps
+   2.5 GbE: MTU1500   203,186 pps | MTU9000   34,576 pps
+     5 GbE: MTU1500   406,372 pps | MTU9000   69,152 pps
+    10 GbE: MTU1500   812,744 pps | MTU9000  138,305 pps
+receiver on 127.0.0.1:50125, SO_RCVBUF requested 33554432 -> 33554432 B. Waiting for a sender (Ctrl+C to stop) ...
+ size  target |      sent      recv   drop% |  tx Mb/s  rx Mb/s  rx kpps rxCPU% | rcvbuf
+ 1472     800 |   203,824   203,824    0.00 |      800      800     67.9     21 | 33554432
+wrote bench_rx.json
+ size  target |      sent      recv   drop% |  tx Mb/s  rx Mb/s  rx kpps rxCPU% | rcvbuf
+ 8972     800 |    33,456    33,456    0.00 |      800      800     11.2      3 | 33554432

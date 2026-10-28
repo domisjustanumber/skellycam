@@ -1,0 +1,5556 @@
+{
+ "tool": "rerun_compare",
+ "command": "research/usb_cameras/bandwidth/verify/rerun_compare.py --old-dir research/usb_cameras/results/windows/Gerald/bw_concurrency --new-dir research/usb_cameras/results/windows/Gerald/bw_concurrency_rerun_20261027 --pair b02_c922_alt_by_mode=r02_c922_alt_by_mode --pair b03_c930e_alt_by_mode=r03_c930e_alt_by_mode --pair b04_generic_kiyo_alt_by_mode=r04_generic_alt_by_mode --pair b05_shared_hub_c930e_generic=r05_shared_hub_c930e_generic --pair b06_c930e_small_modes=r06_c930e_small_modes --pair b07_shared_hub_threshold_staggered=r07_shared_hub_threshold_staggered --pair b08_cross_rootport_and_kiyo=r08_cross_rootport_no_kiyo --pair verify_bw_shared_hub_threshold=rv_shared_hub_threshold --pair verify_bw_solo_and_crossport=rv_solo_and_crossport --pair verify_bw_shared_hub_threshold=rc_original_exe_nosave --pair verify_bw_solo_and_crossport=rc_original_exe_nosave --luma research/usb_cameras/results/windows/Gerald/bw_rerun_20261027_analysis/frame_luma.json --out research/usb_cameras/results/windows/Gerald/bw_rerun_20261027_analysis/rerun_compare.json",
+ "summary": {
+  "cameras_compared": 90,
+  "alt_changed": 7,
+  "outcome_changed": 7,
+  "fps_changed": 3,
+  "bytes_changed": 23
+ },
+ "flagged": [
+  {
+   "old_batch": "b02_c922_alt_by_mode",
+   "new_batch": "r02_c922_alt_by_mode",
+   "label": "mjpg_1920x1080_5",
+   "spec": "vid_046d&pid_085c:MJPG:1920x1080@5",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1920x1080@5",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 15.76,
+    "Bps": 3658350,
+    "max_sample_bytes": 249101,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1920x1080@5",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 5.01,
+    "Bps": 852041,
+    "max_sample_bytes": 181807,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -6,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": true,
+   "bytes_changed": true,
+   "new_mean_luma": 17.71
+  },
+  {
+   "old_batch": "b04_generic_kiyo_alt_by_mode",
+   "new_batch": "r04_generic_alt_by_mode",
+   "label": "gen_mjpg_1920x1080_30",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1920x1080@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1920x1080@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.77,
+    "Bps": 2139310,
+    "max_sample_bytes": 88269,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1920x1080@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 2862540,
+    "max_sample_bytes": 121301,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 22.17
+  },
+  {
+   "old_batch": "b04_generic_kiyo_alt_by_mode",
+   "new_batch": "r04_generic_alt_by_mode",
+   "label": "gen_mjpg_640x480_30",
+   "spec": "vid_4c4a&pid_4a55:MJPG:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:640x480@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.71,
+    "Bps": 351378,
+    "max_sample_bytes": 14048,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:640x480@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 469963,
+    "max_sample_bytes": 19184,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 20.9
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c930e_mjpg720_then_gen_mjpg720",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1116160,
+    "max_sample_bytes": 44268,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.77,
+    "Bps": 1604050,
+    "max_sample_bytes": 64989,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 21.93
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "gen_mjpg720_then_c930e_mjpg720",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.72,
+    "Bps": 2268060,
+    "max_sample_bytes": 90868,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": true,
+   "outcome_changed": true,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "gen_mjpg720_then_c930e_mjpg720",
+   "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -6,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.11,
+    "Bps": 3719210,
+    "max_sample_bytes": 124514,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": true,
+   "outcome_changed": true,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 78.82
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c930e_mjpg320_then_gen_mjpg720",
+   "spec": "vid_046d&pid_0843:MJPG:320x240@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:320x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.99,
+    "Bps": 347306,
+    "max_sample_bytes": 15970,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:320x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.11,
+    "Bps": 702137,
+    "max_sample_bytes": 23422,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 84.34
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c930e_mjpg320_then_gen_mjpg720",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.71,
+    "Bps": 1088670,
+    "max_sample_bytes": 43739,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.77,
+    "Bps": 1471350,
+    "max_sample_bytes": 58412,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 19.73
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c930e_mjpg640_then_gen_mjpg720",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+    "pid": "0843",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.1,
+    "Bps": 1758030,
+    "max_sample_bytes": 59190,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": true,
+   "outcome_changed": true,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 83.2
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c930e_mjpg640_then_gen_mjpg720",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1067170,
+    "max_sample_bytes": 42003,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": true,
+   "outcome_changed": true,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c922_c930e_gen_mjpg720",
+   "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.87,
+    "Bps": 4223520,
+    "max_sample_bytes": 143689,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.89,
+    "Bps": 2994810,
+    "max_sample_bytes": 102689,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 17.61
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c922_c930e_gen_mjpg720",
+   "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.11,
+    "Bps": 3672870,
+    "max_sample_bytes": 124544,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": true,
+   "outcome_changed": true,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 78.9
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c922_c930e_gen_mjpg720",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 2,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.71,
+    "Bps": 1077780,
+    "max_sample_bytes": 42299,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 2,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": true,
+   "outcome_changed": true,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b06_c930e_small_modes",
+   "new_batch": "r06_c930e_small_modes",
+   "label": "mjpg_352x288_30",
+   "spec": "vid_046d&pid_0843:MJPG:352x288@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:352x288@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.13,
+    "Bps": 622261,
+    "max_sample_bytes": 20806,
+    "alt": [
+     6
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:352x288@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.12,
+    "Bps": 845548,
+    "max_sample_bytes": 28277,
+    "alt": [
+     6
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 85.87
+  },
+  {
+   "old_batch": "b06_c930e_small_modes",
+   "new_batch": "r06_c930e_small_modes",
+   "label": "mjpg_424x240_30",
+   "spec": "vid_046d&pid_0843:MJPG:424x240@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:424x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.91,
+    "Bps": 643319,
+    "max_sample_bytes": 21603,
+    "alt": [
+     6
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:424x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.06,
+    "Bps": 848548,
+    "max_sample_bytes": 28407,
+    "alt": [
+     6
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 80.66
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt6_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.81,
+    "Bps": 1090380,
+    "max_sample_bytes": 42953,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.73,
+    "Bps": 1439220,
+    "max_sample_bytes": 56588,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 19.55
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt7_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.7,
+    "Bps": 1078060,
+    "max_sample_bytes": 42377,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.73,
+    "Bps": 1445090,
+    "max_sample_bytes": 56614,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 19.73
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt8_then_gen",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 16.99,
+    "Bps": 881794,
+    "max_sample_bytes": 53802,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 14.99,
+    "Bps": 897964,
+    "max_sample_bytes": 60168,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": true,
+   "bytes_changed": false,
+   "new_mean_luma": 95.2
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt8_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.73,
+    "Bps": 1109710,
+    "max_sample_bytes": 43559,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.73,
+    "Bps": 1438840,
+    "max_sample_bytes": 56571,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 19.54
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt10_then_gen",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.06,
+    "Bps": 1572350,
+    "max_sample_bytes": 53342,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.12,
+    "Bps": 1775010,
+    "max_sample_bytes": 59212,
+    "alt": [],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": true,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 83.35
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt11_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "DeviceNotFound",
+    "error_hr": null,
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": 0,
+    "exposure_prev_flags": 0,
+    "exposure_set_ok": false
+   },
+   "alt_changed": false,
+   "outcome_changed": true,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "gen_then_c930e_alt11",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1110330,
+    "max_sample_bytes": 43910,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.74,
+    "Bps": 1921320,
+    "max_sample_bytes": 76578,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 131.79
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "gen_then_c930e_alt9",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1108330,
+    "max_sample_bytes": 43538,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1585790,
+    "max_sample_bytes": 65261,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 21.96
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "c930e_alt8_then_gen",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 15.0,
+    "Bps": 927870,
+    "max_sample_bytes": 62487,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 19.46,
+    "Bps": 979458,
+    "max_sample_bytes": 50970,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": true,
+   "bytes_changed": false,
+   "new_mean_luma": 86.49
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "c930e_alt8_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.81,
+    "Bps": 1166330,
+    "max_sample_bytes": 45560,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.81,
+    "Bps": 1533280,
+    "max_sample_bytes": 60822,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 20.47
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "gen_then_c930e_alt9",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1157210,
+    "max_sample_bytes": 45585,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1498670,
+    "max_sample_bytes": 58723,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 20.75
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "gen_then_c930e_alt8",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.73,
+    "Bps": 1150020,
+    "max_sample_bytes": 45462,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1499300,
+    "max_sample_bytes": 59965,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 20.64
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "gen_then_c930e_alt8",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+   "old": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 14.98,
+    "Bps": 707177,
+    "max_sample_bytes": 48075,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 14.99,
+    "Bps": 528077,
+    "max_sample_bytes": 50619,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 32.6
+  },
+  {
+   "old_batch": "verify_bw_solo_and_crossport",
+   "new_batch": "rv_solo_and_crossport",
+   "label": "c922_mjpg720",
+   "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.01,
+    "Bps": 3953260,
+    "max_sample_bytes": 138237,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.93,
+    "Bps": 2703290,
+    "max_sample_bytes": 94093,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -9,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 17.88
+  },
+  {
+   "old_batch": "verify_bw_solo_and_crossport",
+   "new_batch": "rv_solo_and_crossport",
+   "label": "gen_mjpg640",
+   "spec": "vid_4c4a&pid_4a55:MJPG:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:640x480@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.71,
+    "Bps": 365807,
+    "max_sample_bytes": 14410,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:640x480@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.78,
+    "Bps": 475520,
+    "max_sample_bytes": 18647,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 21.15
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "c930e_alt8_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.81,
+    "Bps": 1166330,
+    "max_sample_bytes": 45560,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.75,
+    "Bps": 1497040,
+    "max_sample_bytes": 58957,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "gen_then_c930e_alt8",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.73,
+    "Bps": 1150020,
+    "max_sample_bytes": 45462,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1505080,
+    "max_sample_bytes": 58986,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "gen_then_c930e_alt8",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+   "old": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 14.98,
+    "Bps": 707177,
+    "max_sample_bytes": 48075,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 14.98,
+    "Bps": 885874,
+    "max_sample_bytes": 59388,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": null
+  }
+ ],
+ "rows": [
+  {
+   "old_batch": "b02_c922_alt_by_mode",
+   "new_batch": "r02_c922_alt_by_mode",
+   "label": "mjpg_640x480_30",
+   "spec": "vid_046d&pid_085c:MJPG:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:640x480@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.89,
+    "Bps": 1306020,
+    "max_sample_bytes": 46463,
+    "alt": [
+     4
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:640x480@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.02,
+    "Bps": 1262510,
+    "max_sample_bytes": 42938,
+    "alt": [
+     4
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 17.52
+  },
+  {
+   "old_batch": "b02_c922_alt_by_mode",
+   "new_batch": "r02_c922_alt_by_mode",
+   "label": "mjpg_1280x720_30",
+   "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.02,
+    "Bps": 3626360,
+    "max_sample_bytes": 121917,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.89,
+    "Bps": 2994350,
+    "max_sample_bytes": 100426,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -6,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 17.63
+  },
+  {
+   "old_batch": "b02_c922_alt_by_mode",
+   "new_batch": "r02_c922_alt_by_mode",
+   "label": "mjpg_1280x720_60",
+   "spec": "vid_046d&pid_085c:MJPG:1280x720@60",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1280x720@60",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.79,
+    "Bps": 3355170,
+    "max_sample_bytes": 114947,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1280x720@60",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.79,
+    "Bps": 2693610,
+    "max_sample_bytes": 97451,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 18.16
+  },
+  {
+   "old_batch": "b02_c922_alt_by_mode",
+   "new_batch": "r02_c922_alt_by_mode",
+   "label": "mjpg_1920x1080_30",
+   "spec": "vid_046d&pid_085c:MJPG:1920x1080@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1920x1080@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.02,
+    "Bps": 6659160,
+    "max_sample_bytes": 256104,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1920x1080@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.03,
+    "Bps": 6947450,
+    "max_sample_bytes": 232108,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -6,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 27.4
+  },
+  {
+   "old_batch": "b02_c922_alt_by_mode",
+   "new_batch": "r02_c922_alt_by_mode",
+   "label": "mjpg_1920x1080_5",
+   "spec": "vid_046d&pid_085c:MJPG:1920x1080@5",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1920x1080@5",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 15.76,
+    "Bps": 3658350,
+    "max_sample_bytes": 249101,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1920x1080@5",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 5.01,
+    "Bps": 852041,
+    "max_sample_bytes": 181807,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -6,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": true,
+   "bytes_changed": true,
+   "new_mean_luma": 17.71
+  },
+  {
+   "old_batch": "b02_c922_alt_by_mode",
+   "new_batch": "r02_c922_alt_by_mode",
+   "label": "yuy2_640x480_30",
+   "spec": "vid_046d&pid_085c:YUY2:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:YUY2:640x480@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.91,
+    "Bps": 18379200,
+    "max_sample_bytes": 614400,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:YUY2:640x480@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.92,
+    "Bps": 18379900,
+    "max_sample_bytes": 614400,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b02_c922_alt_by_mode",
+   "new_batch": "r02_c922_alt_by_mode",
+   "label": "yuy2_1280x720_10",
+   "spec": "vid_046d&pid_085c:YUY2:1280x720@10",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:YUY2:1280x720@10",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 10,
+    "Bps": 18432100,
+    "max_sample_bytes": 1843200,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:YUY2:1280x720@10",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 9.99,
+    "Bps": 18408300,
+    "max_sample_bytes": 1843200,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b02_c922_alt_by_mode",
+   "new_batch": "r02_c922_alt_by_mode",
+   "label": "yuy2_1920x1080_5",
+   "spec": "vid_046d&pid_085c:YUY2:1920x1080@5",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:YUY2:1920x1080@5",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 5.0,
+    "Bps": 20736600,
+    "max_sample_bytes": 4147200,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:YUY2:1920x1080@5",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 5.0,
+    "Bps": 20727200,
+    "max_sample_bytes": 4147200,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b02_c922_alt_by_mode",
+   "new_batch": "r02_c922_alt_by_mode",
+   "label": "yuy2_320x240_30",
+   "spec": "vid_046d&pid_085c:YUY2:320x240@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:YUY2:320x240@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.02,
+    "Bps": 4611430,
+    "max_sample_bytes": 153600,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:YUY2:320x240@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.02,
+    "Bps": 4611100,
+    "max_sample_bytes": 153600,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b03_c930e_alt_by_mode",
+   "new_batch": "r03_c930e_alt_by_mode",
+   "label": "mjpg_640x480_30",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.11,
+    "Bps": 1754440,
+    "max_sample_bytes": 58865,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.11,
+    "Bps": 1767660,
+    "max_sample_bytes": 59189,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 84.12
+  },
+  {
+   "old_batch": "b03_c930e_alt_by_mode",
+   "new_batch": "r03_c930e_alt_by_mode",
+   "label": "mjpg_1280x720_30",
+   "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.11,
+    "Bps": 4061920,
+    "max_sample_bytes": 139856,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.11,
+    "Bps": 3716410,
+    "max_sample_bytes": 125249,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 80.2
+  },
+  {
+   "old_batch": "b03_c930e_alt_by_mode",
+   "new_batch": "r03_c930e_alt_by_mode",
+   "label": "mjpg_1920x1080_30",
+   "spec": "vid_046d&pid_0843:MJPG:1920x1080@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1920x1080@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.97,
+    "Bps": 6785360,
+    "max_sample_bytes": 233863,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1920x1080@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.1,
+    "Bps": 6210550,
+    "max_sample_bytes": 212361,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 82.1
+  },
+  {
+   "old_batch": "b03_c930e_alt_by_mode",
+   "new_batch": "r03_c930e_alt_by_mode",
+   "label": "mjpg_1280x720_15",
+   "spec": "vid_046d&pid_0843:MJPG:1280x720@15",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 14.99,
+    "Bps": 2025280,
+    "max_sample_bytes": 138607,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 14.99,
+    "Bps": 1853690,
+    "max_sample_bytes": 125316,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 80.5
+  },
+  {
+   "old_batch": "b03_c930e_alt_by_mode",
+   "new_batch": "r03_c930e_alt_by_mode",
+   "label": "mjpg_320x240_30",
+   "spec": "vid_046d&pid_0843:MJPG:320x240@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:320x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.11,
+    "Bps": 603435,
+    "max_sample_bytes": 20178,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:320x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.11,
+    "Bps": 704934,
+    "max_sample_bytes": 23516,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 85.77
+  },
+  {
+   "old_batch": "b03_c930e_alt_by_mode",
+   "new_batch": "r03_c930e_alt_by_mode",
+   "label": "yuy2_640x480_30",
+   "spec": "vid_046d&pid_0843:YUY2:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.94,
+    "Bps": 18396100,
+    "max_sample_bytes": 614400,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.94,
+    "Bps": 18394800,
+    "max_sample_bytes": 614400,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b03_c930e_alt_by_mode",
+   "new_batch": "r03_c930e_alt_by_mode",
+   "label": "yuy2_1280x720_10",
+   "spec": "vid_046d&pid_0843:YUY2:1280x720@10",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:1280x720@10",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 10.01,
+    "Bps": 18455500,
+    "max_sample_bytes": 1843200,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:1280x720@10",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 10.01,
+    "Bps": 18451100,
+    "max_sample_bytes": 1843200,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b03_c930e_alt_by_mode",
+   "new_batch": "r03_c930e_alt_by_mode",
+   "label": "yuy2_1920x1080_5",
+   "spec": "vid_046d&pid_0843:YUY2:1920x1080@5",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:1920x1080@5",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 5.0,
+    "Bps": 20736500,
+    "max_sample_bytes": 4147200,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:1920x1080@5",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 5.0,
+    "Bps": 20735000,
+    "max_sample_bytes": 4147200,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b03_c930e_alt_by_mode",
+   "new_batch": "r03_c930e_alt_by_mode",
+   "label": "yuy2_320x240_30",
+   "spec": "vid_046d&pid_0843:YUY2:320x240@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:320x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.09,
+    "Bps": 4621680,
+    "max_sample_bytes": 153600,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:320x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.95,
+    "Bps": 4600330,
+    "max_sample_bytes": 153600,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b04_generic_kiyo_alt_by_mode",
+   "new_batch": "r04_generic_alt_by_mode",
+   "label": "gen_mjpg_1920x1080_30",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1920x1080@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1920x1080@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.77,
+    "Bps": 2139310,
+    "max_sample_bytes": 88269,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1920x1080@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 2862540,
+    "max_sample_bytes": 121301,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 22.17
+  },
+  {
+   "old_batch": "b04_generic_kiyo_alt_by_mode",
+   "new_batch": "r04_generic_alt_by_mode",
+   "label": "gen_mjpg_640x480_30",
+   "spec": "vid_4c4a&pid_4a55:MJPG:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:640x480@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.71,
+    "Bps": 351378,
+    "max_sample_bytes": 14048,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:640x480@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 469963,
+    "max_sample_bytes": 19184,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 20.9
+  },
+  {
+   "old_batch": "b04_generic_kiyo_alt_by_mode",
+   "new_batch": "r04_generic_alt_by_mode",
+   "label": "gen_yuy2_640x480_30",
+   "spec": "vid_4c4a&pid_4a55:YUY2:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:YUY2:640x480@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.77,
+    "Bps": 15832100,
+    "max_sample_bytes": 614400,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:YUY2:640x480@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.71,
+    "Bps": 15794200,
+    "max_sample_bytes": 614400,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b04_generic_kiyo_alt_by_mode",
+   "new_batch": "r04_generic_alt_by_mode",
+   "label": "gen_yuy2_320x240_30",
+   "spec": "vid_4c4a&pid_4a55:YUY2:320x240@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:YUY2:320x240@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.77,
+    "Bps": 3957540,
+    "max_sample_bytes": 153600,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:YUY2:320x240@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.77,
+    "Bps": 3958180,
+    "max_sample_bytes": 153600,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b04_generic_kiyo_alt_by_mode",
+   "new_batch": "r04_generic_alt_by_mode",
+   "label": "gen_mjpg_1280x720_30",
+   "note": "no earlier counterpart"
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c930e_mjpg720_then_gen_mjpg720",
+   "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -6,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c930e_mjpg720_then_gen_mjpg720",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1116160,
+    "max_sample_bytes": 44268,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.77,
+    "Bps": 1604050,
+    "max_sample_bytes": 64989,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 21.93
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "gen_mjpg720_then_c930e_mjpg720",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.72,
+    "Bps": 2268060,
+    "max_sample_bytes": 90868,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": true,
+   "outcome_changed": true,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "gen_mjpg720_then_c930e_mjpg720",
+   "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -6,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.11,
+    "Bps": 3719210,
+    "max_sample_bytes": 124514,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": true,
+   "outcome_changed": true,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 78.82
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c930e_mjpg320_then_gen_mjpg720",
+   "spec": "vid_046d&pid_0843:MJPG:320x240@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:320x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.99,
+    "Bps": 347306,
+    "max_sample_bytes": 15970,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:320x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.11,
+    "Bps": 702137,
+    "max_sample_bytes": 23422,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 84.34
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c930e_mjpg320_then_gen_mjpg720",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.71,
+    "Bps": 1088670,
+    "max_sample_bytes": 43739,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.77,
+    "Bps": 1471350,
+    "max_sample_bytes": 58412,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 19.73
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c930e_mjpg640_then_gen_mjpg720",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+    "pid": "0843",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.1,
+    "Bps": 1758030,
+    "max_sample_bytes": 59190,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": true,
+   "outcome_changed": true,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 83.2
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c930e_mjpg640_then_gen_mjpg720",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1067170,
+    "max_sample_bytes": 42003,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": true,
+   "outcome_changed": true,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c930e_yuy2_320_then_gen_yuy2_320",
+   "spec": "vid_046d&pid_0843:YUY2:320x240@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:320x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.98,
+    "Bps": 4604630,
+    "max_sample_bytes": 153600,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:320x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.94,
+    "Bps": 4599070,
+    "max_sample_bytes": 153600,
+    "alt": [
+     5
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c930e_yuy2_320_then_gen_yuy2_320",
+   "spec": "vid_4c4a&pid_4a55:YUY2:320x240@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:YUY2:320x240@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.77,
+    "Bps": 3957510,
+    "max_sample_bytes": 153600,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:YUY2:320x240@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.77,
+    "Bps": 3957530,
+    "max_sample_bytes": 153600,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c922_c930e_gen_mjpg720",
+   "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.87,
+    "Bps": 4223520,
+    "max_sample_bytes": 143689,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.89,
+    "Bps": 2994810,
+    "max_sample_bytes": 102689,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 17.61
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c922_c930e_gen_mjpg720",
+   "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.11,
+    "Bps": 3672870,
+    "max_sample_bytes": 124544,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": true,
+   "outcome_changed": true,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 78.9
+  },
+  {
+   "old_batch": "b05_shared_hub_c930e_generic",
+   "new_batch": "r05_shared_hub_c930e_generic",
+   "label": "c922_c930e_gen_mjpg720",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 2,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.71,
+    "Bps": 1077780,
+    "max_sample_bytes": 42299,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 2,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": true,
+   "outcome_changed": true,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b06_c930e_small_modes",
+   "new_batch": "r06_c930e_small_modes",
+   "label": "mjpg_352x288_30",
+   "spec": "vid_046d&pid_0843:MJPG:352x288@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:352x288@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.13,
+    "Bps": 622261,
+    "max_sample_bytes": 20806,
+    "alt": [
+     6
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:352x288@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.12,
+    "Bps": 845548,
+    "max_sample_bytes": 28277,
+    "alt": [
+     6
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 85.87
+  },
+  {
+   "old_batch": "b06_c930e_small_modes",
+   "new_batch": "r06_c930e_small_modes",
+   "label": "mjpg_424x240_30",
+   "spec": "vid_046d&pid_0843:MJPG:424x240@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:424x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.91,
+    "Bps": 643319,
+    "max_sample_bytes": 21603,
+    "alt": [
+     6
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:424x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.06,
+    "Bps": 848548,
+    "max_sample_bytes": 28407,
+    "alt": [
+     6
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 80.66
+  },
+  {
+   "old_batch": "b06_c930e_small_modes",
+   "new_batch": "r06_c930e_small_modes",
+   "label": "mjpg_640x360_30",
+   "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.08,
+    "Bps": 1349830,
+    "max_sample_bytes": 45329,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.26,
+    "Bps": 1496820,
+    "max_sample_bytes": 49792,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 81.32
+  },
+  {
+   "old_batch": "b06_c930e_small_modes",
+   "new_batch": "r06_c930e_small_modes",
+   "label": "mjpg_480x270_30",
+   "spec": "vid_046d&pid_0843:MJPG:480x270@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:480x270@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.27,
+    "Bps": 824528,
+    "max_sample_bytes": 27371,
+    "alt": [
+     7
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:480x270@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.06,
+    "Bps": 982499,
+    "max_sample_bytes": 32835,
+    "alt": [
+     7
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 79.93
+  },
+  {
+   "old_batch": "b06_c930e_small_modes",
+   "new_batch": "r06_c930e_small_modes",
+   "label": "mjpg_640x480_15",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 14.94,
+    "Bps": 810561,
+    "max_sample_bytes": 54460,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 15.03,
+    "Bps": 883994,
+    "max_sample_bytes": 59481,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 86.1
+  },
+  {
+   "old_batch": "b06_c930e_small_modes",
+   "new_batch": "r06_c930e_small_modes",
+   "label": "mjpg_640x480_5",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@5",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@5",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 4.98,
+    "Bps": 273198,
+    "max_sample_bytes": 54891,
+    "alt": [
+     3
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@5",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 5.02,
+    "Bps": 295710,
+    "max_sample_bytes": 59361,
+    "alt": [
+     3
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 87.05
+  },
+  {
+   "old_batch": "b06_c930e_small_modes",
+   "new_batch": "r06_c930e_small_modes",
+   "label": "mjpg_1920x1080_5",
+   "spec": "vid_046d&pid_0843:MJPG:1920x1080@5",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1920x1080@5",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 5.02,
+    "Bps": 1095830,
+    "max_sample_bytes": 219639,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1920x1080@5",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 5.0,
+    "Bps": 1056730,
+    "max_sample_bytes": 211948,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 83.69
+  },
+  {
+   "old_batch": "b06_c930e_small_modes",
+   "new_batch": "r06_c930e_small_modes",
+   "label": "yuy2_352x288_30",
+   "spec": "vid_046d&pid_0843:YUY2:352x288@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:352x288@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.13,
+    "Bps": 6109520,
+    "max_sample_bytes": 202752,
+    "alt": [
+     6
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:352x288@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.91,
+    "Bps": 6064100,
+    "max_sample_bytes": 202752,
+    "alt": [
+     6
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b06_c930e_small_modes",
+   "new_batch": "r06_c930e_small_modes",
+   "label": "yuy2_424x240_30",
+   "spec": "vid_046d&pid_0843:YUY2:424x240@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:424x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.05,
+    "Bps": 6115700,
+    "max_sample_bytes": 203520,
+    "alt": [
+     6
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:424x240@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.02,
+    "Bps": 6110560,
+    "max_sample_bytes": 203520,
+    "alt": [
+     6
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b06_c930e_small_modes",
+   "new_batch": "r06_c930e_small_modes",
+   "label": "yuy2_640x360_15",
+   "spec": "vid_046d&pid_0843:YUY2:640x360@15",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:640x360@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 15.02,
+    "Bps": 6920820,
+    "max_sample_bytes": 460800,
+    "alt": [
+     7
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:640x360@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 15.02,
+    "Bps": 6920200,
+    "max_sample_bytes": 460800,
+    "alt": [
+     7
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt6_then_gen",
+   "spec": "vid_046d&pid_0843:MJPG:352x288@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:352x288@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.08,
+    "Bps": 681710,
+    "max_sample_bytes": 22954,
+    "alt": [
+     6
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:352x288@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.15,
+    "Bps": 746147,
+    "max_sample_bytes": 25744,
+    "alt": [
+     6
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 56.49
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt6_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.81,
+    "Bps": 1090380,
+    "max_sample_bytes": 42953,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.73,
+    "Bps": 1439220,
+    "max_sample_bytes": 56588,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 19.55
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt7_then_gen",
+   "spec": "vid_046d&pid_0843:MJPG:480x270@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:480x270@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.06,
+    "Bps": 764777,
+    "max_sample_bytes": 25632,
+    "alt": [
+     7
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:480x270@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.05,
+    "Bps": 901068,
+    "max_sample_bytes": 31497,
+    "alt": [
+     7
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 92.9
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt7_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.7,
+    "Bps": 1078060,
+    "max_sample_bytes": 42377,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.73,
+    "Bps": 1445090,
+    "max_sample_bytes": 56614,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 19.73
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt8_then_gen",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 16.99,
+    "Bps": 881794,
+    "max_sample_bytes": 53802,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 14.99,
+    "Bps": 897964,
+    "max_sample_bytes": 60168,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": true,
+   "bytes_changed": false,
+   "new_mean_luma": 95.2
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt8_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.73,
+    "Bps": 1109710,
+    "max_sample_bytes": 43559,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.73,
+    "Bps": 1438840,
+    "max_sample_bytes": 56571,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 19.54
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt9_then_gen",
+   "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.04,
+    "Bps": 1263890,
+    "max_sample_bytes": 42636,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.12,
+    "Bps": 1494290,
+    "max_sample_bytes": 50294,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 81.41
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt9_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt10_then_gen",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.06,
+    "Bps": 1572350,
+    "max_sample_bytes": 53342,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.12,
+    "Bps": 1775010,
+    "max_sample_bytes": 59212,
+    "alt": [],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": true,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 83.35
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt10_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt11_then_gen",
+   "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.05,
+    "Bps": 3694680,
+    "max_sample_bytes": 124108,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.06,
+    "Bps": 3700470,
+    "max_sample_bytes": 125141,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 80.39
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "c930e_alt11_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "DeviceNotFound",
+    "error_hr": null,
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": 0,
+    "exposure_prev_flags": 0,
+    "exposure_set_ok": false
+   },
+   "alt_changed": false,
+   "outcome_changed": true,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "gen_then_c930e_alt11",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1110330,
+    "max_sample_bytes": 43910,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.74,
+    "Bps": 1921320,
+    "max_sample_bytes": 76578,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 131.79
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "gen_then_c930e_alt11",
+   "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "gen_then_c930e_alt9",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1108330,
+    "max_sample_bytes": 43538,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1585790,
+    "max_sample_bytes": 65261,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 1,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 21.96
+  },
+  {
+   "old_batch": "b07_shared_hub_threshold_staggered",
+   "new_batch": "r07_shared_hub_threshold_staggered",
+   "label": "gen_then_c930e_alt9",
+   "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+    "pid": "0843",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+    "pid": "0843",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b08_cross_rootport_and_kiyo",
+   "new_batch": "r08_cross_rootport_no_kiyo",
+   "label": "c922_alt11_c930e_alt11_diff_rootports",
+   "spec": "vid_046d&pid_085c:MJPG:1920x1080@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1920x1080@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.02,
+    "Bps": 7122310,
+    "max_sample_bytes": 252891,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -6,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1920x1080@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.95,
+    "Bps": 5450570,
+    "max_sample_bytes": 183270,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 17.64
+  },
+  {
+   "old_batch": "b08_cross_rootport_and_kiyo",
+   "new_batch": "r08_cross_rootport_no_kiyo",
+   "label": "c922_alt11_c930e_alt11_diff_rootports",
+   "spec": "vid_046d&pid_0843:MJPG:1920x1080@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:1920x1080@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.08,
+    "Bps": 5760800,
+    "max_sample_bytes": 194126,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -6,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:1920x1080@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.99,
+    "Bps": 6272780,
+    "max_sample_bytes": 211837,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 81.34
+  },
+  {
+   "old_batch": "b08_cross_rootport_and_kiyo",
+   "new_batch": "r08_cross_rootport_no_kiyo",
+   "label": "c922_yuy2_c930e_yuy2_diff_rootports",
+   "spec": "vid_046d&pid_085c:YUY2:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:YUY2:640x480@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.96,
+    "Bps": 18406800,
+    "max_sample_bytes": 614400,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -6,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:YUY2:640x480@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.02,
+    "Bps": 18443900,
+    "max_sample_bytes": 614400,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b08_cross_rootport_and_kiyo",
+   "new_batch": "r08_cross_rootport_no_kiyo",
+   "label": "c922_yuy2_c930e_yuy2_diff_rootports",
+   "spec": "vid_046d&pid_0843:YUY2:640x480@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:YUY2:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.99,
+    "Bps": 18423600,
+    "max_sample_bytes": 614400,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -6,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:YUY2:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.05,
+    "Bps": 18462400,
+    "max_sample_bytes": 614400,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "b08_cross_rootport_and_kiyo",
+   "new_batch": "r08_cross_rootport_no_kiyo",
+   "label": "three_cams_max_fit",
+   "note": "no earlier counterpart"
+  },
+  {
+   "old_batch": "b08_cross_rootport_and_kiyo",
+   "new_batch": "r08_cross_rootport_no_kiyo",
+   "label": "c922_mjpg720_gen_mjpg720_diff_rootports",
+   "note": "no earlier counterpart"
+  },
+  {
+   "old_batch": "b08_cross_rootport_and_kiyo",
+   "new_batch": "r08_cross_rootport_no_kiyo",
+   "label": "c922_alt9_c930e_alt11_gen_fail_expected",
+   "note": "no earlier counterpart"
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "c930e_alt8_then_gen",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 15.0,
+    "Bps": 927870,
+    "max_sample_bytes": 62487,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 19.46,
+    "Bps": 979458,
+    "max_sample_bytes": 50970,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": true,
+   "bytes_changed": false,
+   "new_mean_luma": 86.49
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "c930e_alt8_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.81,
+    "Bps": 1166330,
+    "max_sample_bytes": 45560,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.81,
+    "Bps": 1533280,
+    "max_sample_bytes": 60822,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 20.47
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "c930e_alt9_then_gen",
+   "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.12,
+    "Bps": 1483870,
+    "max_sample_bytes": 50258,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.12,
+    "Bps": 1487620,
+    "max_sample_bytes": 49655,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 80.43
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "c930e_alt9_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "gen_then_c930e_alt9",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1157210,
+    "max_sample_bytes": 45585,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1498670,
+    "max_sample_bytes": 58723,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 20.75
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "gen_then_c930e_alt9",
+   "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+    "pid": "0843",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+    "pid": "0843",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "gen_then_c930e_alt8",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.73,
+    "Bps": 1150020,
+    "max_sample_bytes": 45462,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1499300,
+    "max_sample_bytes": 59965,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 20.64
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "gen_then_c930e_alt8",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+   "old": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 14.98,
+    "Bps": 707177,
+    "max_sample_bytes": 48075,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 14.99,
+    "Bps": 528077,
+    "max_sample_bytes": 50619,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 32.6
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "c930e_alt11_then_gen",
+   "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.06,
+    "Bps": 4278130,
+    "max_sample_bytes": 145563,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.05,
+    "Bps": 3714370,
+    "max_sample_bytes": 124397,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 79.01
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "c930e_alt11_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "c930e_alt10_then_gen",
+   "note": "no earlier counterpart"
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rv_shared_hub_threshold",
+   "label": "c930e_alt11_then_gen_repeat",
+   "note": "no earlier counterpart"
+  },
+  {
+   "old_batch": "verify_bw_solo_and_crossport",
+   "new_batch": "rv_solo_and_crossport",
+   "label": "c930e_mjpg720",
+   "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.07,
+    "Bps": 4487150,
+    "max_sample_bytes": 153796,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.08,
+    "Bps": 3680600,
+    "max_sample_bytes": 123324,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 76.73
+  },
+  {
+   "old_batch": "verify_bw_solo_and_crossport",
+   "new_batch": "rv_solo_and_crossport",
+   "label": "c930e_mjpg640",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.07,
+    "Bps": 1999860,
+    "max_sample_bytes": 68328,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.17,
+    "Bps": 1775160,
+    "max_sample_bytes": 59138,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 83.5
+  },
+  {
+   "old_batch": "verify_bw_solo_and_crossport",
+   "new_batch": "rv_solo_and_crossport",
+   "label": "c930e_yuy2_640",
+   "spec": "vid_046d&pid_0843:YUY2:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.06,
+    "Bps": 18468500,
+    "max_sample_bytes": 614400,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:YUY2:640x480@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.06,
+    "Bps": 18468200,
+    "max_sample_bytes": 614400,
+    "alt": [
+     10
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "verify_bw_solo_and_crossport",
+   "new_batch": "rv_solo_and_crossport",
+   "label": "c922_mjpg720",
+   "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.01,
+    "Bps": 3953260,
+    "max_sample_bytes": 138237,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.93,
+    "Bps": 2703290,
+    "max_sample_bytes": 94093,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -9,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 17.88
+  },
+  {
+   "old_batch": "verify_bw_solo_and_crossport",
+   "new_batch": "rv_solo_and_crossport",
+   "label": "gen_mjpg640",
+   "spec": "vid_4c4a&pid_4a55:MJPG:640x480@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:640x480@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.71,
+    "Bps": 365807,
+    "max_sample_bytes": 14410,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:640x480@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.78,
+    "Bps": 475520,
+    "max_sample_bytes": 18647,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": 21.15
+  },
+  {
+   "old_batch": "verify_bw_solo_and_crossport",
+   "new_batch": "rv_solo_and_crossport",
+   "label": "c922_alt11_c930e_alt11_diff_rootports",
+   "spec": "vid_046d&pid_085c:MJPG:1920x1080@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1920x1080@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.02,
+    "Bps": 7003400,
+    "max_sample_bytes": 234946,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1920x1080@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.95,
+    "Bps": 5430370,
+    "max_sample_bytes": 182827,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -9,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 17.72
+  },
+  {
+   "old_batch": "verify_bw_solo_and_crossport",
+   "new_batch": "rv_solo_and_crossport",
+   "label": "c922_alt11_c930e_alt11_diff_rootports",
+   "spec": "vid_046d&pid_0843:MJPG:1920x1080@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:1920x1080@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 29.99,
+    "Bps": 7287640,
+    "max_sample_bytes": 250802,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:1920x1080@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.06,
+    "Bps": 6255890,
+    "max_sample_bytes": 210926,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": 80.03
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "c930e_mjpg720",
+   "note": "no earlier counterpart"
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "c922_mjpg720",
+   "note": "no earlier counterpart"
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "gen_mjpg720",
+   "note": "no earlier counterpart"
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "c930e_alt8_then_gen",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 15.0,
+    "Bps": 927870,
+    "max_sample_bytes": 62487,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 14.99,
+    "Bps": 886786,
+    "max_sample_bytes": 59368,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "c930e_alt8_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.81,
+    "Bps": 1166330,
+    "max_sample_bytes": 45560,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.75,
+    "Bps": 1497040,
+    "max_sample_bytes": 58957,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "c930e_alt9_then_gen",
+   "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.12,
+    "Bps": 1483870,
+    "max_sample_bytes": 50258,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:640x360@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.06,
+    "Bps": 1489230,
+    "max_sample_bytes": 49741,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "c930e_alt9_then_gen",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": false,
+    "failed_stage": "ReadSample(first)",
+    "error_hr": "0x800718CF",
+    "fps": 0,
+    "Bps": 0,
+    "max_sample_bytes": 0,
+    "alt": [],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "gen_then_c930e_alt8",
+   "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.73,
+    "Bps": 1150020,
+    "max_sample_bytes": 45462,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "pid": "4a55",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 25.76,
+    "Bps": 1505080,
+    "max_sample_bytes": 58986,
+    "alt": [
+     1
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "verify_bw_shared_hub_threshold",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "gen_then_c930e_alt8",
+   "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+   "old": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 14.98,
+    "Bps": 707177,
+    "max_sample_bytes": 48075,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 1,
+    "spec": "vid_046d&pid_0843:MJPG:640x480@15",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 14.98,
+    "Bps": 885874,
+    "max_sample_bytes": 59388,
+    "alt": [
+     8
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": true,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "verify_bw_solo_and_crossport",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "c930e_mjpg720",
+   "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.07,
+    "Bps": 4487150,
+    "max_sample_bytes": 153796,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_0843:MJPG:1280x720@30",
+    "pid": "0843",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.04,
+    "Bps": 3808790,
+    "max_sample_bytes": 128898,
+    "alt": [
+     11
+    ],
+    "exposure_prev": -5,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "verify_bw_solo_and_crossport",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "c922_mjpg720",
+   "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+   "old": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.01,
+    "Bps": 3953260,
+    "max_sample_bytes": 138237,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -7,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "new": {
+    "k": 0,
+    "spec": "vid_046d&pid_085c:MJPG:1280x720@30",
+    "pid": "085c",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "fps": 30.0,
+    "Bps": 3027040,
+    "max_sample_bytes": 101182,
+    "alt": [
+     9
+    ],
+    "exposure_prev": -6,
+    "exposure_prev_flags": 2,
+    "exposure_set_ok": true
+   },
+   "alt_changed": false,
+   "outcome_changed": false,
+   "fps_changed": false,
+   "bytes_changed": false,
+   "new_mean_luma": null
+  },
+  {
+   "old_batch": "verify_bw_solo_and_crossport",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "gen_mjpg720",
+   "note": "no earlier counterpart"
+  },
+  {
+   "old_batch": "verify_bw_solo_and_crossport",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "c930e_alt8_then_gen",
+   "note": "no earlier counterpart"
+  },
+  {
+   "old_batch": "verify_bw_solo_and_crossport",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "c930e_alt9_then_gen",
+   "note": "no earlier counterpart"
+  },
+  {
+   "old_batch": "verify_bw_solo_and_crossport",
+   "new_batch": "rc_original_exe_nosave",
+   "label": "gen_then_c930e_alt8",
+   "note": "no earlier counterpart"
+  }
+ ]
+}

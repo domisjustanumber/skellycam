@@ -1,0 +1,1 @@
+docker run --rm -v <repo>/research/usb_cameras:/w:ro ubuntu:24.04 bash -c "apt-get install git cmake build-essential pkg-config libusb-1.0-0-dev; BUILD_DIR=/tmp/b bash libusb/build_unix.sh; test_payload_timing; uvc_capture_test --list"

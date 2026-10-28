@@ -1,0 +1,510 @@
+{
+ "tool": "gev_probe",
+ "host": {
+  "python": "3.12.13",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "hostname": "Gerald",
+  "time_utc": "2026-10-25T19:22:15Z"
+ },
+ "interfaces": [
+  {
+   "name": "vEthernet (WSL (Hyper-V firewall))",
+   "ip": "172.30.224.1",
+   "prefix_len": 20,
+   "broadcast": "172.30.239.255"
+  },
+  {
+   "name": "Bluetooth Network Connection",
+   "ip": "169.254.205.247",
+   "prefix_len": 16,
+   "broadcast": "169.254.255.255"
+  },
+  {
+   "name": "10G",
+   "ip": "192.168.6.86",
+   "prefix_len": 24,
+   "broadcast": "192.168.6.255"
+  },
+  {
+   "name": "Ethernet",
+   "ip": "192.168.100.101",
+   "prefix_len": 24,
+   "broadcast": "192.168.100.255"
+  },
+  {
+   "name": "Ethernet",
+   "ip": "169.254.49.121",
+   "prefix_len": 16,
+   "broadcast": "169.254.255.255"
+  },
+  {
+   "name": "Local Area Connection* 10",
+   "ip": "169.254.221.74",
+   "prefix_len": 16,
+   "broadcast": "169.254.255.255"
+  },
+  {
+   "name": "Local Area Connection* 9",
+   "ip": "169.254.156.74",
+   "prefix_len": 16,
+   "broadcast": "169.254.255.255"
+  },
+  {
+   "name": "WiFi",
+   "ip": "169.254.136.41",
+   "prefix_len": 16,
+   "broadcast": "169.254.255.255"
+  }
+ ],
+ "cameras": [
+  {
+   "ip": "127.0.0.1",
+   "discovery": {
+    "src": "127.0.0.1",
+    "gev_version": "2.0",
+    "gev_major": 2,
+    "gev_minor": 0,
+    "device_mode": "0x00000000",
+    "mac": "DE:AD:BE:EF:CA:FE",
+    "ip_config_options": "0x00000007",
+    "ip_config_current": "0x00000005",
+    "ip": "127.0.0.1",
+    "subnet_mask": "255.0.0.0",
+    "gateway": "0.0.0.0",
+    "manufacturer": "viva-genicam",
+    "model": "FakeGigE",
+    "device_version": "1.0.0",
+    "manufacturer_info": "Fake camera for testing",
+    "serial": "FAKE-001",
+    "user_name": "FakeCamera",
+    "host_interface": {
+     "name": "Loopback Pseudo-Interface 1",
+     "ip": "127.0.0.1",
+     "prefix_len": 8,
+     "broadcast": "127.255.255.255"
+    },
+    "same_subnet_as_host": true,
+    "control_ip": "127.0.0.1"
+   },
+   "gev_version": "2.0",
+   "gev_major": 2,
+   "capability": {
+    "raw": "0x08000027",
+    "set": [
+     "ccp_application_port_ip",
+     "pending_ack",
+     "packet_resend",
+     "write_mem",
+     "concatenation"
+    ]
+   },
+   "gvcp_configuration": {
+    "raw": "0x00000000",
+    "set": []
+   },
+   "sc_caps": {
+    "raw": "0x00000000",
+    "set": []
+   },
+   "device_mode": "0x80000001",
+   "tick_frequency_hz": 1000000000,
+   "heartbeat_timeout_ms": 3000,
+   "ccp": "0x00000000",
+   "device_mode_decoded": {
+    "big_endian": true,
+    "device_class": 0,
+    "current_link_configuration": 0,
+    "character_set": 1
+   },
+   "ptp": {
+    "supported": false
+   },
+   "action": {
+    "action": false,
+    "scheduled_action": false,
+    "unconditional_action": false
+   },
+   "stream_channel_0": {
+    "packet_size": 1500,
+    "do_not_fragment": false,
+    "big_endian_pixels": false,
+    "packet_delay_ticks": 0,
+    "host_port": 0,
+    "destination": "0.0.0.0",
+    "capability": {
+     "raw": "0x00000000",
+     "set": []
+    },
+    "configuration": "0x00000000",
+    "extended_ids_enabled": false,
+    "legacy_16bit_block_id_supported": false
+   },
+   "register_errors": {},
+   "xml": {
+    "url": "Local:fake.xml;10000;b34d",
+    "file_name": "fake.xml",
+    "error": "",
+    "bytes": 45901,
+    "features": {
+     "node_count": 161,
+     "root_attributes": {
+      "ModelName": "VivaCam_Fake",
+      "VendorName": "vitavision",
+      "SchemaMajorVersion": "1",
+      "SchemaMinorVersion": "1",
+      "MajorVersion": "1",
+      "MinorVersion": "0"
+     },
+     "present": {
+      "ptp_sfnc": [],
+      "ptp_deprecated": [],
+      "ptp_vendor": [],
+      "timestamp": [
+       "TimestampLatch",
+       "GevTimestampValue",
+       "GevTimestampTickFrequency"
+      ],
+      "action": [],
+      "scheduled_action": [],
+      "trigger": [
+       "TriggerSelector",
+       "TriggerMode",
+       "TriggerSource"
+      ],
+      "sync_free_run": [],
+      "transport_version": [],
+      "compression": [],
+      "frame_rate": [
+       "AcquisitionFrameRate",
+       "AcquisitionFrameRateEnable"
+      ]
+     },
+     "enum_entries": {
+      "TriggerSource": [
+       "Line1",
+       "Software"
+      ],
+      "TriggerSelector": [
+       "FrameStart",
+       "AcquisitionStart"
+      ],
+      "PixelFormat": [
+       "Mono8",
+       "Mono16",
+       "RGB8",
+       "BayerRG8"
+      ]
+     }
+    },
+    "saved_to": "xml\\viva-genicam_FakeGigE_FAKE-001.xml"
+   },
+   "sync_readiness": {
+    "ptp": false,
+    "scheduled_action": false,
+    "action": false,
+    "action_trigger_source_in_xml": false
+   }
+  },
+  {
+   "ip": "127.0.0.2",
+   "discovery": {
+    "src": "127.0.0.2",
+    "gev_version": "2.0",
+    "gev_major": 2,
+    "gev_minor": 0,
+    "device_mode": "0x00000000",
+    "mac": "DE:AD:BE:EF:CA:FE",
+    "ip_config_options": "0x00000007",
+    "ip_config_current": "0x00000005",
+    "ip": "127.0.0.2",
+    "subnet_mask": "255.0.0.0",
+    "gateway": "0.0.0.0",
+    "manufacturer": "viva-genicam",
+    "model": "FakeGigE",
+    "device_version": "1.0.0",
+    "manufacturer_info": "Fake camera for testing",
+    "serial": "FAKE-001",
+    "user_name": "FakeCamera",
+    "host_interface": {
+     "name": "Loopback Pseudo-Interface 1",
+     "ip": "127.0.0.1",
+     "prefix_len": 8,
+     "broadcast": "127.255.255.255"
+    },
+    "same_subnet_as_host": true,
+    "control_ip": "127.0.0.2"
+   },
+   "gev_version": "2.0",
+   "gev_major": 2,
+   "capability": {
+    "raw": "0x08000027",
+    "set": [
+     "ccp_application_port_ip",
+     "pending_ack",
+     "packet_resend",
+     "write_mem",
+     "concatenation"
+    ]
+   },
+   "gvcp_configuration": {
+    "raw": "0x00000000",
+    "set": []
+   },
+   "sc_caps": {
+    "raw": "0x00000000",
+    "set": []
+   },
+   "device_mode": "0x80000001",
+   "tick_frequency_hz": 1000000000,
+   "heartbeat_timeout_ms": 3000,
+   "ccp": "0x00000000",
+   "device_mode_decoded": {
+    "big_endian": true,
+    "device_class": 0,
+    "current_link_configuration": 0,
+    "character_set": 1
+   },
+   "ptp": {
+    "supported": false
+   },
+   "action": {
+    "action": false,
+    "scheduled_action": false,
+    "unconditional_action": false
+   },
+   "stream_channel_0": {
+    "packet_size": 1500,
+    "do_not_fragment": false,
+    "big_endian_pixels": false,
+    "packet_delay_ticks": 0,
+    "host_port": 0,
+    "destination": "0.0.0.0",
+    "capability": {
+     "raw": "0x00000000",
+     "set": []
+    },
+    "configuration": "0x00000000",
+    "extended_ids_enabled": false,
+    "legacy_16bit_block_id_supported": false
+   },
+   "register_errors": {},
+   "xml": {
+    "url": "Local:fake.xml;10000;b34d",
+    "file_name": "fake.xml",
+    "error": "",
+    "bytes": 45901,
+    "features": {
+     "node_count": 161,
+     "root_attributes": {
+      "ModelName": "VivaCam_Fake",
+      "VendorName": "vitavision",
+      "SchemaMajorVersion": "1",
+      "SchemaMinorVersion": "1",
+      "MajorVersion": "1",
+      "MinorVersion": "0"
+     },
+     "present": {
+      "ptp_sfnc": [],
+      "ptp_deprecated": [],
+      "ptp_vendor": [],
+      "timestamp": [
+       "TimestampLatch",
+       "GevTimestampValue",
+       "GevTimestampTickFrequency"
+      ],
+      "action": [],
+      "scheduled_action": [],
+      "trigger": [
+       "TriggerSelector",
+       "TriggerMode",
+       "TriggerSource"
+      ],
+      "sync_free_run": [],
+      "transport_version": [],
+      "compression": [],
+      "frame_rate": [
+       "AcquisitionFrameRate",
+       "AcquisitionFrameRateEnable"
+      ]
+     },
+     "enum_entries": {
+      "TriggerSource": [
+       "Line1",
+       "Software"
+      ],
+      "TriggerSelector": [
+       "FrameStart",
+       "AcquisitionStart"
+      ],
+      "PixelFormat": [
+       "Mono8",
+       "Mono16",
+       "RGB8",
+       "BayerRG8"
+      ]
+     }
+    },
+    "saved_to": "xml\\viva-genicam_FakeGigE_FAKE-001.xml"
+   },
+   "sync_readiness": {
+    "ptp": false,
+    "scheduled_action": false,
+    "action": false,
+    "action_trigger_source_in_xml": false
+   }
+  }
+ ],
+ "checks": [
+  {
+   "name": "discovery",
+   "status": "PASS",
+   "detail": "2 camera(s) answered",
+   "camera": ""
+  },
+  {
+   "name": "read bootstrap registers",
+   "status": "PASS",
+   "detail": "via local interface 127.0.0.1",
+   "camera": "127.0.0.1 viva-genicam FakeGigE"
+  },
+  {
+   "name": "GigE Vision version",
+   "status": "INFO",
+   "detail": "2.0 - PTP and scheduled actions exist since GEV 2.0 (see capability bits)",
+   "camera": "127.0.0.1 viva-genicam FakeGigE"
+  },
+  {
+   "name": "GVCP capabilities",
+   "status": "INFO",
+   "detail": "ccp_application_port_ip, pending_ack, packet_resend, write_mem, concatenation",
+   "camera": "127.0.0.1 viva-genicam FakeGigE"
+  },
+  {
+   "name": "timestamp tick frequency",
+   "status": "INFO",
+   "detail": "1000000000 Hz (1 ns ticks, typical with PTP)",
+   "camera": "127.0.0.1 viva-genicam FakeGigE"
+  },
+  {
+   "name": "IEEE 1588 (PTP)",
+   "status": "SKIP",
+   "detail": "not supported: capability bit 0x00080000 clear",
+   "camera": "127.0.0.1 viva-genicam FakeGigE"
+  },
+  {
+   "name": "action commands",
+   "status": "SKIP",
+   "detail": "action=False scheduled=False unconditional=False",
+   "camera": "127.0.0.1 viva-genicam FakeGigE"
+  },
+  {
+   "name": "stream channel 0",
+   "status": "INFO",
+   "detail": "SCPS packet size 1500 B (standard MTU); extended ids enabled=False",
+   "camera": "127.0.0.1 viva-genicam FakeGigE"
+  },
+  {
+   "name": "GenICam XML",
+   "status": "PASS",
+   "detail": "45901 B in 0.0 s, 161 nodes, url Local:fake.xml;10000;b34d",
+   "camera": "127.0.0.1 viva-genicam FakeGigE"
+  },
+  {
+   "name": "XML features: timestamp",
+   "status": "INFO",
+   "detail": "TimestampLatch, GevTimestampValue, GevTimestampTickFrequency",
+   "camera": "127.0.0.1 viva-genicam FakeGigE"
+  },
+  {
+   "name": "XML enum TriggerSource",
+   "status": "INFO",
+   "detail": "Line1, Software",
+   "camera": "127.0.0.1 viva-genicam FakeGigE"
+  },
+  {
+   "name": "XML enum PixelFormat",
+   "status": "INFO",
+   "detail": "Mono8, Mono16, RGB8, BayerRG8",
+   "camera": "127.0.0.1 viva-genicam FakeGigE"
+  },
+  {
+   "name": "PTP + scheduled-action sync readiness",
+   "status": "WARN",
+   "detail": "missing: ptp, scheduled_action, action, TriggerSource Action0/Action1",
+   "camera": "127.0.0.1 viva-genicam FakeGigE"
+  },
+  {
+   "name": "read bootstrap registers",
+   "status": "PASS",
+   "detail": "via local interface 127.0.0.1",
+   "camera": "127.0.0.2 viva-genicam FakeGigE"
+  },
+  {
+   "name": "GigE Vision version",
+   "status": "INFO",
+   "detail": "2.0 - PTP and scheduled actions exist since GEV 2.0 (see capability bits)",
+   "camera": "127.0.0.2 viva-genicam FakeGigE"
+  },
+  {
+   "name": "GVCP capabilities",
+   "status": "INFO",
+   "detail": "ccp_application_port_ip, pending_ack, packet_resend, write_mem, concatenation",
+   "camera": "127.0.0.2 viva-genicam FakeGigE"
+  },
+  {
+   "name": "timestamp tick frequency",
+   "status": "INFO",
+   "detail": "1000000000 Hz (1 ns ticks, typical with PTP)",
+   "camera": "127.0.0.2 viva-genicam FakeGigE"
+  },
+  {
+   "name": "IEEE 1588 (PTP)",
+   "status": "SKIP",
+   "detail": "not supported: capability bit 0x00080000 clear",
+   "camera": "127.0.0.2 viva-genicam FakeGigE"
+  },
+  {
+   "name": "action commands",
+   "status": "SKIP",
+   "detail": "action=False scheduled=False unconditional=False",
+   "camera": "127.0.0.2 viva-genicam FakeGigE"
+  },
+  {
+   "name": "stream channel 0",
+   "status": "INFO",
+   "detail": "SCPS packet size 1500 B (standard MTU); extended ids enabled=False",
+   "camera": "127.0.0.2 viva-genicam FakeGigE"
+  },
+  {
+   "name": "GenICam XML",
+   "status": "PASS",
+   "detail": "45901 B in 0.0 s, 161 nodes, url Local:fake.xml;10000;b34d",
+   "camera": "127.0.0.2 viva-genicam FakeGigE"
+  },
+  {
+   "name": "XML features: timestamp",
+   "status": "INFO",
+   "detail": "TimestampLatch, GevTimestampValue, GevTimestampTickFrequency",
+   "camera": "127.0.0.2 viva-genicam FakeGigE"
+  },
+  {
+   "name": "XML enum TriggerSource",
+   "status": "INFO",
+   "detail": "Line1, Software",
+   "camera": "127.0.0.2 viva-genicam FakeGigE"
+  },
+  {
+   "name": "XML enum PixelFormat",
+   "status": "INFO",
+   "detail": "Mono8, Mono16, RGB8, BayerRG8",
+   "camera": "127.0.0.2 viva-genicam FakeGigE"
+  },
+  {
+   "name": "PTP + scheduled-action sync readiness",
+   "status": "WARN",
+   "detail": "missing: ptp, scheduled_action, action, TriggerSource Action0/Action1",
+   "camera": "127.0.0.2 viva-genicam FakeGigE"
+  }
+ ]
+}

@@ -1,0 +1,200 @@
+...F...........FF.....................EEEEF........................F.... [ 37%]
+......F...........................F....................................F [ 75%]
+F...........F..FFFFF..........................                           [100%]
+=================================== ERRORS ====================================
+_______ ERROR at setup of TestCameraGroupManagerInit.test_starts_empty ________
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__() parameter worker_registry=<MagicMock id='1364729758112'> violates type hint <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>, as <class "unittest.mock.MagicMock"> <MagicMock id='1364729758112'> not instance of <class "skellycam.core.ipc.process_management.worker_registry.WorkerRegistry">.
+_ ERROR at setup of TestCameraGroupManagerInit.test_get_nonexistent_group_raises _
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__() parameter worker_registry=<MagicMock id='1364729764016'> violates type hint <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>, as <class "unittest.mock.MagicMock"> <MagicMock id='1364729764016'> not instance of <class "skellycam.core.ipc.process_management.worker_registry.WorkerRegistry">.
+____ ERROR at setup of TestCameraGroupManagerInit.test_close_empty_groups _____
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__() parameter worker_registry=<MagicMock id='1364729771072'> violates type hint <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>, as <class "unittest.mock.MagicMock"> <MagicMock id='1364729771072'> not instance of <class "skellycam.core.ipc.process_management.worker_registry.WorkerRegistry">.
+____ ERROR at setup of TestCameraGroupManagerInit.test_to_state_dict_empty ____
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__() parameter worker_registry=<MagicMock id='1364726211616'> violates type hint <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>, as <class "unittest.mock.MagicMock"> <MagicMock id='1364726211616'> not instance of <class "skellycam.core.ipc.process_management.worker_registry.WorkerRegistry">.
+================================== FAILURES ===================================
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.tests.mocks.camera_mock.MockVideoCapture.set() parameter value=1920 violates type hint <class 'float'>, as int 1920 not instance of float.
+<@beartype(skellycam.tests.mocks.camera_mock.MockVideoCapture.set) at 0x13dc0226700>:48: beartype.roar.BeartypeCallHintParamViolation: Method skellycam.tests.mocks.camera_mock.MockVideoCapture.set() parameter value=1920 violates type hint <class 'float'>, as int 1920 not instance of float.
+E   beartype.roar.BeartypeCallHintParamViolation: Function skellycam.core.camera.config.camera_config.validate_camera_configs() parameter camera_configs=[CameraConfig(camera_id='000', camera_index=0, camera_name='Camera-000', use_this_camera=T...')] violates type hint dict[str, skellycam.core.camera.config.camera_config.CameraConfig], as list [CameraConfig(camera_id='000', camera_index=0, camera_name='Camera-000', use_this_camera=T...')] not instance of dict.
+<@beartype(skellycam.core.camera.config.camera_config.validate_camera_configs) at 0x13dfe64fec0>:43: beartype.roar.BeartypeCallHintParamViolation: Function skellycam.core.camera.config.camera_config.validate_camera_configs() parameter camera_configs=[CameraConfig(camera_id='000', camera_index=0, camera_name='Camera-000', use_this_camera=T...')] violates type hint dict[str, skellycam.core.camera.config.camera_config.CameraConfig], as list [CameraConfig(camera_id='000', camera_index=0, camera_name='Camera-000', use_this_camera=T...')] not instance of dict.
+E   beartype.roar.BeartypeCallHintParamViolation: Function skellycam.core.camera.config.camera_config.validate_camera_configs() parameter camera_configs={'cam0': {'not': 'a config'}} violates type hint dict[str, skellycam.core.camera.config.camera_config.CameraConfig], as dict key str 'cam0' value dict {'not': 'a config'} not instance of <class "skellycam.core.camera.config.camera_config.CameraConfig">.
+<@beartype(skellycam.core.camera.config.camera_config.validate_camera_configs) at 0x13dfe64fec0>:43: beartype.roar.BeartypeCallHintParamViolation: Function skellycam.core.camera.config.camera_config.validate_camera_configs() parameter camera_configs={'cam0': {'not': 'a config'}} violates type hint dict[str, skellycam.core.camera.config.camera_config.CameraConfig], as dict key str 'cam0' value dict {'not': 'a config'} not instance of <class "skellycam.core.camera.config.camera_config.CameraConfig">.
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__() parameter worker_registry=<MagicMock id='1364729768960'> violates type hint <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>, as <class "unittest.mock.MagicMock"> <MagicMock id='1364729768960'> not instance of <class "skellycam.core.ipc.process_management.worker_registry.WorkerRegistry">.
+<@beartype(skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__) at 0x13dc02ad440>:53: beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__() parameter worker_registry=<MagicMock id='1364729768960'> violates type hint <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>, as <class "unittest.mock.MagicMock"> <MagicMock id='1364729768960'> not instance of <class "skellycam.core.ipc.process_management.worker_registry.WorkerRegistry">.
+E   assert 500 == 200
+     +  where 500 = <Response [500 Internal Server Error]>.status_code
+---------------------------- Captured stdout call -----------------------------
+\x1b[41m\x1b[41m\u2514>>\x1b[0m \x1b[41mError in http://testserver/skellycam/camera/group/all/record/stop: BeartypeCallHintParamViolation - Function skellycam.api.http.cameras.camera_router.stop_recording._stats_summary() parameter stats_recarray=<MagicMock name='mock.framerate_stats' id='1364739773104'> violates type hint <class 'numpy.rec.recarray'>, as <class "unittest.mock.MagicMock"> <MagicMock name='mock.framerate_stats' id='1364739773104'> not instance of <class "numpy.rec.recarray">.\x1b[0m |  ERROR |  18.827ms |  skellycam.api.http.cameras.camera_router.stop_recording():187 |  2026-10-25T13:47:54.864 |  \x1b[38;2;100;227;200mPID:58312:MainProcess\x1b[0m |  \x1b[38;2;100;109;228mTID:28132:asyncio-portal-13dc0c2c1d0\x1b[0m\nTraceback (most recent call last):\n  File "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\skellycam\\api\\http\\cameras\\camera_router.py", line 180, in stop_recording\n    framerate_stats=_stats_summary(timestamp_stats.framerate_stats),\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "<@beartype(skellycam.api.http.cameras.camera_router.stop_recording._stats_summary) at 0x13dc0cf09a0>", line 31, in _stats_summary\nbeartype.roar.BeartypeCallHintParamViolation: Function skellycam.api.http.cameras.camera_router.stop_recording._stats_summary() parameter stats_recarray=<MagicMock name='mock.framerate_stats' id='1364739773104'> violates type hint <class 'numpy.rec.recarray'>, as <class "unittest.mock.MagicMock"> <MagicMock name='mock.framerate_stats' id='1364739773104'> not instance of <class "numpy.rec.recarray">.\x1b[0m
+------------------------------ Captured log call ------------------------------
+ERROR    skellycam.api.http.cameras.camera_router:camera_router.py:187 Error in http://testserver/skellycam/camera/group/all/record/stop: BeartypeCallHintParamViolation - Function skellycam.api.http.cameras.camera_router.stop_recording._stats_summary() parameter stats_recarray=<MagicMock name='mock.framerate_stats' id='1364739773104'> violates type hint <class 'numpy.rec.recarray'>, as <class "unittest.mock.MagicMock"> <MagicMock name='mock.framerate_stats' id='1364739773104'> not instance of <class "numpy.rec.recarray">.
+Traceback (most recent call last):
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\api\http\cameras\camera_router.py", line 180, in stop_recording
+    framerate_stats=_stats_summary(timestamp_stats.framerate_stats),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<@beartype(skellycam.api.http.cameras.camera_router.stop_recording._stats_summary) at 0x13dc0cf09a0>", line 31, in _stats_summary
+beartype.roar.BeartypeCallHintParamViolation: Function skellycam.api.http.cameras.camera_router.stop_recording._stats_summary() parameter stats_recarray=<MagicMock name='mock.framerate_stats' id='1364739773104'> violates type hint <class 'numpy.rec.recarray'>, as <class "unittest.mock.MagicMock"> <MagicMock name='mock.framerate_stats' id='1364739773104'> not instance of <class "numpy.rec.recarray">.
+C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\tests\test_camera_router.py:98: assert 500 == 200
+E   AssertionError: assert 'idx0' in '\\tmp\\test\\rec\\synchronized_videos\\rec.id-cam0.idx-0.mp4'
+C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\tests\test_frontend_payload_and_recording.py:161: AssertionError: assert 'idx0' in '\\tmp\\test\\rec\\synchronized_videos\\rec.id-cam0.idx-0.mp4'
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.ipc.pubsub.pubsub_manager.PubSubTopicManager.get_subscription() parameter topic_type='not_a_real_topic' violates type hint <enum 'TopicTypes'>, as str 'not_a_real_topic' not instance of <class "skellycam.core.ipc.pubsub.pubsub_manager.TopicTypes">.
+<@beartype(skellycam.core.ipc.pubsub.pubsub_manager.PubSubTopicManager.get_subscription) at 0x13dfe778ae0>:31: beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.ipc.pubsub.pubsub_manager.PubSubTopicManager.get_subscription() parameter topic_type='not_a_real_topic' violates type hint <enum 'TopicTypes'>, as str 'not_a_real_topic' not instance of <class "skellycam.core.ipc.pubsub.pubsub_manager.TopicTypes">.
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.recorders.framerate_tracker.FramerateTracker.update() parameter timestamp_ns=1000000000.0 violates type hint <class 'int'>, as float 1000000000.0 not instance of int.
+<@beartype(skellycam.core.recorders.framerate_tracker.FramerateTracker.update) at 0x13dfe750a40>:30: beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.recorders.framerate_tracker.FramerateTracker.update() parameter timestamp_ns=1000000000.0 violates type hint <class 'int'>, as float 1000000000.0 not instance of int.
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.recorders.framerate_tracker.FramerateTracker.update() parameter timestamp_ns=1000000000.0 violates type hint <class 'int'>, as float 1000000000.0 not instance of int.
+<@beartype(skellycam.core.recorders.framerate_tracker.FramerateTracker.update) at 0x13dfe750a40>:30: beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.recorders.framerate_tracker.FramerateTracker.update() parameter timestamp_ns=1000000000.0 violates type hint <class 'int'>, as float 1000000000.0 not instance of int.
+E   beartype.roar.BeartypeCallHintReturnViolation: Function skellycam.utilities.time_unit_conversion.ms_to_ns() return 1000000.0 violates type hint int | numpy.ndarray[tuple[int, ...], numpy.dtype[+_ScalarType_co]], as float 1000000.0 not int or <class "numpy.ndarray">.
+<@beartype(skellycam.utilities.time_unit_conversion.ms_to_ns) at 0x13dfe5554e0>:53: beartype.roar.BeartypeCallHintReturnViolation: Function skellycam.utilities.time_unit_conversion.ms_to_ns() return 1000000.0 violates type hint int | numpy.ndarray[tuple[int, ...], numpy.dtype[+_ScalarType_co]], as float 1000000.0 not int or <class "numpy.ndarray">.
+E   beartype.roar.BeartypeCallHintReturnViolation: Function skellycam.utilities.time_unit_conversion.ms_to_ns() return 123456789.0 violates type hint int | numpy.ndarray[tuple[int, ...], numpy.dtype[+_ScalarType_co]], as float 123456789.0 not int or <class "numpy.ndarray">.
+<@beartype(skellycam.utilities.time_unit_conversion.ms_to_ns) at 0x13dfe5554e0>:53: beartype.roar.BeartypeCallHintReturnViolation: Function skellycam.utilities.time_unit_conversion.ms_to_ns() return 123456789.0 violates type hint int | numpy.ndarray[tuple[int, ...], numpy.dtype[+_ScalarType_co]], as float 123456789.0 not int or <class "numpy.ndarray">.
+E   anyio._core._exceptions.ClosedResourceError
+
+During handling of the above exception, another exception occurred:
+E   beartype.roar.BeartypeDoorHintViolation: Callable skellycam.api.websocket.websocket_server.WebsocketServer.__init__() local variable "self._cgm" value <MagicMock id='1364740394304'> violates type hint <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>, as <class "unittest.mock.MagicMock"> <MagicMock id='1364740394304'> not instance of <class "skellycam.core.camera_group.camera_group_manager.CameraGroupManager">.
+---------------------------- Captured stdout call -----------------------------
+\x1b[95m\x1b[95m\u2514>>\x1b[0m \x1b[95mWebsocket connection established at url: ws://testserver/skellycam/websocket/connect\x1b[0m |  SUCCESS |  21.899ms |  skellycam.api.websocket.websocket_connect.websocket_server_connect():17 |  2026-10-25T13:47:56.341 |  \x1b[38;2;100;227;200mPID:58312:MainProcess\x1b[0m |  \x1b[38;2;100;217;100mTID:55620:asyncio-portal-13dc0eac140\x1b[0m\x1b[0m
+------------------------------ Captured log call ------------------------------
+SUCCESS  skellycam.api.websocket.websocket_connect:websocket_connect.py:17 Websocket connection established at url: ws://testserver/skellycam/websocket/connect
+<@beartype(__beartype_checker_34) at 0x13dcf37b0d0>:22: beartype.roar.BeartypeDoorHintViolation: Callable skellycam.api.websocket.websocket_server.WebsocketServer.__init__() local variable "self._cgm" value <MagicMock id='1364740394304'> violates type hint <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>, as <class "unittest.mock.MagicMock"> <MagicMock id='1364740394304'> not instance of <class "skellycam.core.camera_group.camera_group_manager.CameraGroupManager">.
+E   anyio._core._exceptions.ClosedResourceError
+
+During handling of the above exception, another exception occurred:
+E   beartype.roar.BeartypeDoorHintViolation: Callable skellycam.api.websocket.websocket_server.WebsocketServer.__init__() local variable "self._cgm" value <MagicMock id='1364747435424'> violates type hint <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>, as <class "unittest.mock.MagicMock"> <MagicMock id='1364747435424'> not instance of <class "skellycam.core.camera_group.camera_group_manager.CameraGroupManager">.
+---------------------------- Captured stdout call -----------------------------
+\x1b[95m\x1b[95m\u2514>>\x1b[0m \x1b[95mWebsocket connection established at url: ws://testserver/skellycam/websocket/connect\x1b[0m |  SUCCESS |  9.326ms |  skellycam.api.websocket.websocket_connect.websocket_server_connect():17 |  2026-10-25T13:47:56.350 |  \x1b[38;2;100;227;200mPID:58312:MainProcess\x1b[0m |  \x1b[38;2;100;217;104mTID:55656:asyncio-portal-13dc0dd8620\x1b[0m\x1b[0m
+------------------------------ Captured log call ------------------------------
+SUCCESS  skellycam.api.websocket.websocket_connect:websocket_connect.py:17 Websocket connection established at url: ws://testserver/skellycam/websocket/connect
+<@beartype(__beartype_checker_34) at 0x13dcf37b0d0>:22: beartype.roar.BeartypeDoorHintViolation: Callable skellycam.api.websocket.websocket_server.WebsocketServer.__init__() local variable "self._cgm" value <MagicMock id='1364747435424'> violates type hint <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>, as <class "unittest.mock.MagicMock"> <MagicMock id='1364747435424'> not instance of <class "skellycam.core.camera_group.camera_group_manager.CameraGroupManager">.
+E   anyio._core._exceptions.ClosedResourceError
+
+During handling of the above exception, another exception occurred:
+E   beartype.roar.BeartypeDoorHintViolation: Callable skellycam.api.websocket.websocket_server.WebsocketServer.__init__() local variable "self._cgm" value <MagicMock id='1364746968896'> violates type hint <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>, as <class "unittest.mock.MagicMock"> <MagicMock id='1364746968896'> not instance of <class "skellycam.core.camera_group.camera_group_manager.CameraGroupManager">.
+---------------------------- Captured stdout call -----------------------------
+\x1b[95m\x1b[95m\u2514>>\x1b[0m \x1b[95mWebsocket connection established at url: ws://testserver/skellycam/websocket/connect\x1b[0m |  SUCCESS |  7.343ms |  skellycam.api.websocket.websocket_connect.websocket_server_connect():17 |  2026-10-25T13:47:56.358 |  \x1b[38;2;100;227;200mPID:58312:MainProcess\x1b[0m |  \x1b[38;2;100;101;255mTID:26036:asyncio-portal-13dc15014c0\x1b[0m\x1b[0m
+------------------------------ Captured log call ------------------------------
+SUCCESS  skellycam.api.websocket.websocket_connect:websocket_connect.py:17 Websocket connection established at url: ws://testserver/skellycam/websocket/connect
+<@beartype(__beartype_checker_34) at 0x13dcf37b0d0>:22: beartype.roar.BeartypeDoorHintViolation: Callable skellycam.api.websocket.websocket_server.WebsocketServer.__init__() local variable "self._cgm" value <MagicMock id='1364746968896'> violates type hint <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>, as <class "unittest.mock.MagicMock"> <MagicMock id='1364746968896'> not instance of <class "skellycam.core.camera_group.camera_group_manager.CameraGroupManager">.
+E   anyio._core._exceptions.ClosedResourceError
+
+During handling of the above exception, another exception occurred:
+E   beartype.roar.BeartypeDoorHintViolation: Callable skellycam.api.websocket.websocket_server.WebsocketServer.__init__() local variable "self._cgm" value <MagicMock id='1364748000080'> violates type hint <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>, as <class "unittest.mock.MagicMock"> <MagicMock id='1364748000080'> not instance of <class "skellycam.core.camera_group.camera_group_manager.CameraGroupManager">.
+---------------------------- Captured stdout call -----------------------------
+\x1b[95m\x1b[95m\u2514>>\x1b[0m \x1b[95mWebsocket connection established at url: ws://testserver/skellycam/websocket/connect\x1b[0m |  SUCCESS |  7.346ms |  skellycam.api.websocket.websocket_connect.websocket_server_connect():17 |  2026-10-25T13:47:56.365 |  \x1b[38;2;100;227;200mPID:58312:MainProcess\x1b[0m |  \x1b[38;2;100;209;108mTID:53612:asyncio-portal-13dc0fa1be0\x1b[0m\x1b[0m
+------------------------------ Captured log call ------------------------------
+SUCCESS  skellycam.api.websocket.websocket_connect:websocket_connect.py:17 Websocket connection established at url: ws://testserver/skellycam/websocket/connect
+<@beartype(__beartype_checker_34) at 0x13dcf37b0d0>:22: beartype.roar.BeartypeDoorHintViolation: Callable skellycam.api.websocket.websocket_server.WebsocketServer.__init__() local variable "self._cgm" value <MagicMock id='1364748000080'> violates type hint <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>, as <class "unittest.mock.MagicMock"> <MagicMock id='1364748000080'> not instance of <class "skellycam.core.camera_group.camera_group_manager.CameraGroupManager">.
+============================== warnings summary ===============================
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\research\venvs\skellycam-arch\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\research\venvs\skellycam-arch\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+skellycam\core\camera\config\image_resolution.py:6
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\camera\config\image_resolution.py:6: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.camera.config.image_resolution.ImageResolution.__hash__() return PEP 484 type hint typing.Hashable deprecated by PEP 585. This hint may be removed at some unspecified future date. CPython "typing" devs whose spaghetti code you depend on originally intended to schedule this hint for removal after releasing Python 3.14 on October 7th, 2025. You may have noticed that 2025 was a billion years ago. Nothing happened. Nothing got removed or even scheduled for removal. How lucky does your CI feel today? If the answer is anything except "Super-lucky, thanks for asking", either:
+  * Import this hint from "beartype.typing" rather than "typing".
+  * Globally silence this warning by adding to your top-level "{muh_package}.__init__" submodule:
+  	from beartype.roar import BeartypeDecorHintPep585DeprecationWarning
+  	from warnings import filterwarnings
+  	filterwarnings(action="ignore", category=BeartypeDecorHintPep585DeprecationWarning)
+  
+  See also: https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class ImageResolution(BaseModel):
+
+skellycam\core\camera\opencv\opencv_helpers\recommend_camera_exposure_setting.py:56
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\camera\opencv\opencv_helpers\recommend_camera_exposure_setting.py:56: BeartypeDecorHintPep585DeprecationWarning: Function skellycam.core.camera.opencv.opencv_helpers.recommend_camera_exposure_setting.find_optimal_exposure_setting() parameter "exposure_settings" PEP 484 type hint typing.List[int] deprecated by PEP 585.
+    def find_optimal_exposure_setting(cap: cv2.VideoCapture, exposure_settings: List[int]) -> int:
+
+skellycam\core\camera\config\camera_config.py:63
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\camera\config\camera_config.py:63: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.camera.config.camera_config.CameraConfig.image_shape() return PEP 484 type hint typing.Tuple[int, ...] deprecated by PEP 585.
+    class CameraConfig(BaseModel):
+
+skellycam\core\camera\config\camera_config.py:63
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\camera\config\camera_config.py:63: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.camera.config.camera_config.CameraConfig.video_image_shape() return PEP 484 type hint typing.Tuple[int, int] deprecated by PEP 585.
+    class CameraConfig(BaseModel):
+
+skellycam\core\ipc\pubsub\pubsub_abcs.py:22
+skellycam\core\ipc\pubsub\pubsub_abcs.py:22
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_abcs.py:22: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_abcs.PubSubTopicABC.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_abcs.TopicMessageABC] deprecated by PEP 585.
+    @dataclass
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:73
+skellycam\core\ipc\pubsub\pubsub_topics.py:73
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:73: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.UpdateCamerasSettingsTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.UpdateCamerasSettingsMessage] deprecated by PEP 585.
+    @dataclass
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:78
+skellycam\core\ipc\pubsub\pubsub_topics.py:78
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:78: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.DeviceExtractedConfigTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.DeviceExtractedConfigMessage] deprecated by PEP 585.
+    @dataclass
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:83
+skellycam\core\ipc\pubsub\pubsub_topics.py:83
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:83: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.SetShmTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.SetShmMessage] deprecated by PEP 585.
+    @dataclass
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:89
+skellycam\core\ipc\pubsub\pubsub_topics.py:89
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:89: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.RecordingInfoTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.RecordingInfoMessage] deprecated by PEP 585.
+    @dataclass
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:94
+skellycam\core\ipc\pubsub\pubsub_topics.py:94
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:94: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.RecordingFinishedTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.RecordingFinishedMessage] deprecated by PEP 585.
+    @dataclass
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:99
+skellycam\core\ipc\pubsub\pubsub_topics.py:99
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:99: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.FramerateTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.FramerateMessage] deprecated by PEP 585.
+    @dataclass
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:104
+skellycam\core\ipc\pubsub\pubsub_topics.py:104
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:104: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.LogsTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellylogs.handlers.websocket_log_queue_handler.LogRecordModel] deprecated by PEP 585.
+    @dataclass
+
+skellycam\core\ipc\process_management\managed_worker.py:157
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\process_management\managed_worker.py:157: BeartypeDecorHintPep585DeprecationWarning: Function skellycam.core.ipc.process_management.managed_worker._process_entry_point() parameter "target_fn" PEP 484 type hint typing.Callable[..., NoneType] deprecated by PEP 585.
+    def _process_entry_point(
+
+skellycam\core\ipc\process_management\managed_worker.py:221
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\process_management\managed_worker.py:221: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.process_management.managed_worker.ManagedProcess.__init__() parameter "target" PEP 484 type hint typing.Callable[..., NoneType] deprecated by PEP 585.
+    class ManagedProcess(ManagedWorker):
+
+skellycam\core\ipc\process_management\managed_worker.py:281
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\process_management\managed_worker.py:281: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.process_management.managed_worker.ManagedThread.__init__() parameter "target" PEP 484 type hint typing.Callable[..., NoneType] deprecated by PEP 585.
+    class ManagedThread(ManagedWorker):
+
+skellycam\core\ipc\process_management\worker_registry.py:22
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\process_management\worker_registry.py:22: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.process_management.worker_registry.WorkerRegistry.create_worker() parameter "target" PEP 484 type hint typing.Callable[..., NoneType] deprecated by PEP 585.
+    class WorkerRegistry:
+
+skellycam/tests/test_timestamps_and_framerate.py::TestTimebaseMapping::test_numpy_roundtrip
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\timestamps\timebase_mapping.py:71: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+    utc_time_ns=int(rec_array["utc_time_ns"]),
+
+skellycam/tests/test_timestamps_and_framerate.py::TestTimebaseMapping::test_numpy_roundtrip
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\timestamps\timebase_mapping.py:72: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+    perf_counter_ns=int(rec_array["perf_counter_ns"]),
+
+skellycam/tests/test_timestamps_and_framerate.py::TestTimebaseMapping::test_numpy_roundtrip
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\timestamps\timebase_mapping.py:73: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+    local_time_utc_offset=int(rec_array["local_time_utc_offset"]),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED skellycam/tests/mocks/test_camera_mock.py::TestMockVideoCapture::test_set_get_configuration
+FAILED skellycam/tests/test_camera_config_extended.py::TestValidateCameraConfigs::test_non_dict_raises_type_error
+FAILED skellycam/tests/test_camera_config_extended.py::TestValidateCameraConfigs::test_non_camera_config_value_raises
+FAILED skellycam/tests/test_camera_group_manager.py::TestSingletonFactory::test_returns_same_instance
+FAILED skellycam/tests/test_camera_router.py::TestRecording::test_stop_recording
+FAILED skellycam/tests/test_frontend_payload_and_recording.py::TestRecordingInfo::test_video_file_path_from_config
+FAILED skellycam/tests/test_pubsub.py::TestPubSubTopicManager::test_subscribe_unknown_topic_raises
+FAILED skellycam/tests/test_timestamps_and_framerate.py::TestFramerateTracker::test_update_and_read
+FAILED skellycam/tests/test_timestamps_and_framerate.py::TestFramerateTracker::test_clear_resets_state
+FAILED skellycam/tests/test_timestamps_and_framerate.py::TestTimeUnitConversion::test_ms_to_ns
+FAILED skellycam/tests/test_timestamps_and_framerate.py::TestTimeUnitConversion::test_roundtrip_ns_ms
+FAILED skellycam/tests/test_websocket.py::TestWebsocketConnect::test_websocket_connect_disconnect
+FAILED skellycam/tests/test_websocket.py::TestWebsocketConnect::test_websocket_ping_pong
+FAILED skellycam/tests/test_websocket.py::TestWebsocketConnect::test_websocket_receives_app_state
+FAILED skellycam/tests/test_websocket.py::TestWebsocketConnect::test_websocket_frame_acknowledgment
+ERROR skellycam/tests/test_camera_group_manager.py::TestCameraGroupManagerInit::test_starts_empty
+ERROR skellycam/tests/test_camera_group_manager.py::TestCameraGroupManagerInit::test_get_nonexistent_group_raises
+ERROR skellycam/tests/test_camera_group_manager.py::TestCameraGroupManagerInit::test_close_empty_groups
+ERROR skellycam/tests/test_camera_group_manager.py::TestCameraGroupManagerInit::test_to_state_dict_empty
+15 failed, 171 passed, 28 warnings, 4 errors in 7.96s

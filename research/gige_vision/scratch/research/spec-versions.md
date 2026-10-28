@@ -1,0 +1,86 @@
+# GigE Vision spec versions: what each one added, and where PTP fits
+
+Research date: 2026-10-25. Every claim below links to a page or code file that was opened and read. The spec PDFs themselves sit behind an A3 HubSpot registration form ([download page](https://www.automate.org/vision/vision-standards/download-the-gige-vision-standard)), so they were **not** read. Normative register and bit details therefore come from two open-source implementations of the spec, Wireshark and Aravis, and from the EMVA SFNC 2.8 PDF.
+
+## TL;DR: correcting the premise
+
+* **PTP (IEEE 1588) and Scheduled Action Commands arrived in GigE Vision 2.0 (Nov 2011), not 3.0.** GigE Vision 2.1 (Aug 2018) then added an "updated profile for IEEE1588", with registers for the supported and selected profile (a "PTP" profile and an "802.1AS" profile).
+* **GigE Vision 3.0 (TC-approved 17 Apr 2026, released 12–13 May 2026) is about RDMA streaming over RoCEv2.** It adds a new GigE Vision RDMA Streaming Protocol (GVRSP) next to GVSP and enlarges the control channel's packets. None of the A3 3.0 materials I read mention PTP, IEEE 1588, timestamps or synchronisation. RDMA is optional even inside 3.0, and the FAQ talks about RoCEv2 NICs for "25GigE and beyond".
+* **The "single cable" setup is PoE + PTP + (scheduled) action commands over one Ethernet cable**, all possible since 2.0-era cameras. A 2017 Vision Systems Design article describing the 2.x PTP/action feature says it lets integrators "remove an I/O cable and use only the Ethernet cable to provide data, power, and trigger". PoE comes from IEEE 802.3af/at, separate from GigE Vision.
+* **PTP edition:** EMVA SFNC 2.8 (2026-04-08) still says to "Refer to the IEEE 1588-2008 specification" for PtpStatus. Basler documents "IEEE 1588-2008, also known as PTP Version 2". I found no source tying any GigE Vision version to IEEE 1588-2019. The IEEE 1588 profile registry lists "GigE Vision 2.1" (AIA) as a PTP profile document.
+
+## Version timeline (with sources)
+
+| Version | Date | Additions (sourced) |
+|---|---|---|
+| 1.0 | May 2006 (Vision Show East, Boston) | Device discovery, GVCP (control), GVSP (streaming), and a GenICam XML device description with 7 mandatory features. Sources: [A3 Nov-2006 PR](https://www.automate.org/news/gige-vision-interface-standard-has-strong-european-debut-at-vision-2006) ("GigE Vision version 1.0 was released May 2006 at The Vision Show East"); [Control Design, Feb 2007](https://www.controldesign.com/articles/2007/016) (four elements). |
+| 1.1 | Announced 23 Apr 2009 | "new pixel formats and Bayer format support; improved error handling; support for multiple versions of the GenICam schema and GenAPI; and new commands allowing action commands to be sent to multiple devices simultaneously as well as managing the execution time" ([A3 PR 04/23/2009](https://www.automate.org/news/gige-vision-version-1-1-interface-standard-released)). Wireshark labels the extended-status-codes capability bit "v1.1" ([packet-gvcp.c L3456-L3457](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L3456-L3457)). |
+| 1.2 | Announced 21 Jan 2010 | Control of non-streaming devices, e.g. GigE Vision lights ([A3 PR 01/21/2010](https://www.automate.org/vision/news/gige-vision-camera-interface-standard-version-1-2-released)). SFNC history: "Added GigE Vision 1.2 support" (Draft 1.4, 2009/2010; [SFNC 2.8 PDF](https://www.emva.org/wp-content/uploads/GenICam_SFNC_v2_8.pdf) p.27). Wireshark notes "in GEV1.2 and prior we use only 24 bit packet IDs" ([L1581](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L1581)). |
+| 2.0 | Nov 2011 | From the [A3 GigE Vision page](https://www.automate.org/vision/vision-standards/vision-standards-gige-vision): "non-streaming device control … 10 gigabit Ethernet and link aggregation … compressed images (JPEG, JPEG 2000 and H.264), accurate synchronization of multi-camera systems and enhanced support for multi-tap sensors". SFNC history (v1.5.2 / 2.0) "Added GigE Vision 2.0 support": ActionLate event, link aggregation, PAUSE frames, extended/standard ID modes, **IEEE 1588**, **unconditional and scheduled action commands** ([SFNC 2.8](https://www.emva.org/wp-content/uploads/GenICam_SFNC_v2_8.pdf) pp.29-30). Wireshark's "Added for 2.0 support" block has capability bits for 1588, scheduled action and unconditional action, the IEEE1588 status register, the scheduled-action queue size, the 64-bit action time, 64-bit block IDs, and the link-aggregation (sLAG/dLAG) bits ([L416-L482](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L416-L482)). GVSP payload types JPEG 0x0006, JPEG2000 0x0007, H264 0x0008 and MultiZone 0x0009 are marked "GEV 2.0" ([packet-gvsp.c L43-L54](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvsp.c#L43-L54)). A pre-release article said 2.0 would add JPEG/JPEG 2000/H.264, IEEE 1588 (trigger latency 150 µs, sub-µs jitter claimed), 802.3 PAUSE flow control, frame packing, 10GigE and link aggregation ([VSD 2011-02-02](https://www.vision-systems.com/home/article/16737746/gige-vision-headed-faster)). |
+| 2.1 | Aug 2018 (A3); "fall 2018" (VSD) | Multi-part transmission (3D), an "updated profile for IEEE1588", and a Mechanical Supplement for certified cables ([A3 page](https://www.automate.org/vision/vision-standards/vision-standards-gige-vision); [VSD Jan 2019](https://www.vision-systems.com/articles/2019/01/aia-s-global-vision-standards-update-gige-vision-and-camera-link-updates.html)). Wireshark's "Added for 2.1 support" has the IEEE1588 extended-capabilities bit, IEEE1588 supported profiles (bit "PTP profile" 0x80000000, bit "802.1AS profile" 0x40000000), selected profile (5-bit field) and multi-part ([L484-L493](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L484-L493), [L3380-L3398](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L3380-L3398), [L3326-L3330](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L3326-L3330)). GVSP Multipart payload 0x000A is marked "GEV 2.1". The IEEE 1588 profile registry lists "GigE Vision 2.1" (AIA, Test & Measurement) as a PTP profile document ([IEEE SA](https://sagroups.ieee.org/1588/ptp-profiles)). |
+| 2.2 | Jun 2022 | "GenDC streaming and multi event data" ([A3 page](https://www.automate.org/vision/vision-standards/vision-standards-gige-vision)). Wireshark: GenDC payload 0x000B and packet format 8 are "GEV 2.2", MultiZone was "deprecated with GEV 2.2", and the 2.2 additions include MC configuration and the stream-channel max packet/block size and extended bootstrap ([packet-gvsp.c L51-L53](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvsp.c#L51-L53), [packet-gvcp.c L145-L166](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L145-L166)). |
+| 3.0 | TC approved Fri 17 Apr 2026 (IVSM Prague); A3 release PR 12/13 May 2026 | RDMA over RoCEv2 and the new **GVRSP**, plus an "expansion of the control channel, allowing for more data per packet" ([A3 PR](https://www.automate.org/vision/news/a3-officially-releases-gige-vision-3-0-opening-new-possibilities-in-machine-vision), [A3 page](https://www.automate.org/vision/vision-standards/vision-standards-gige-vision)). From the [A3 FAQ (08/19/2026)](https://www.automate.org/vision/blogs/gige-vision-3-0-standard-answers-to-frequently-asked-questions-faq): it is a supplement, not a replacement; 3.0 cameras support GVSP v2 plus GVRSP; **3.0 does not support legacy GVSP v1**; not all 3.0 cameras do RDMA; GVRSP needs a RoCEv2 NIC and a GVRSP-capable library. The [A3 pre-announcement](https://www.automate.org/vision/vision-standards/rocev2-integration-into-gige-vision-standard-a-leap-forward-in-imaging-technology) says "The current GigE Vision control protocol will be retained as the mechanism for device discovery and configuration." The [A3 Industry Insight 08/04/2026](https://www.automate.org/vision/industry-insights/gige-vision-3-0-brings-fast-data-transfers-at-mass-market-prices) reports 57 engineers voting unanimously. **No PTP or time-sync content in any of these pages.** |
+
+## How a host detects the version and PTP / scheduled-action support
+
+* **Version register at 0x0000:** major in the upper 16 bits, minor in the lower 16. Sources: Aravis [arvgvcpprivate.h L38-L42](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcpprivate.h#L38-L42); Wireshark [L56](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L56) and [L3076-L3090](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L3076-L3090). It is also the first field of the DISCOVERY_ACK payload, so it can be read without opening a control session ([dissect_discovery_ack L2121-L2144](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L2121-L2144)). At the GenICam level, SFNC deprecates `GevVersionMajor/Minor` in favour of `DeviceTLVersionMajor/Minor` (SFNC 2.8 §3.25-3.26, §27.4.2-27.4.3).
+* **GVCP Capability register at 0x0934.** Integer masks, read big-endian, from the Wireshark hf definitions at [L3456-L3502](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L3456-L3502):
+  * `0x00100000` Unconditional Action (2.0)
+  * `0x00080000` IEEE 1588 (2.0)
+  * `0x00040000` Extended Status Codes v2.0
+  * `0x00020000` Scheduled Action Command (2.0)
+  * `0x00010000` IEEE1588 Extended Capabilities (2.1)
+  * `0x00000040` Action
+  * `0x00000020` PendingAck
+
+  Aravis defines only a subset of these: Action is `1<<6`, and there is no PTP or scheduled-action bit ([arvgvcpprivate.h L95-L113](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcpprivate.h#L95-L113)).
+* **Other PTP and action registers** ([Wireshark L113-L136](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L113-L136)):
+
+  | Register | Address |
+  |---|---|
+  | Number of Action Signals | 0x0908 |
+  | Action Device Key | 0x090C |
+  | Timestamp tick frequency | 0x093C/0x0940 |
+  | Timestamp control | 0x0944 |
+  | Timestamp value | 0x0948/0x094C |
+  | GVCP Configuration (IEEE 1588 Enable bit 0x00080000, [L3604-L3607](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L3604-L3607)) | 0x0954 |
+  | IEEE1588 Status (clock state in the low nibble, [L3692-L3696](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L3692-L3696)) | 0x096C |
+  | Scheduled Action Command Queue Size | 0x0970 |
+  | IEEE1588 Extended Capability | 0x0974 |
+  | IEEE1588 Supported Profiles | 0x0978 |
+  | IEEE1588 Selected Profile | 0x097C |
+  | Action Group Key/Mask *n* | 0x9800 + 0x10·n |
+* **ACTION_CMD** is command 0x0100 and ACTION_ACK is 0x0101 ([L196-L197](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L196-L197)). The payload is device key, group key and group mask, followed by a 64-bit "Action Scheduled Time" when header flag 0x80 is set ([dissect_action_cmd L2092-L2114](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L2092-L2114), [flag L2517-L2518](https://github.com/wireshark/wireshark/blob/98a6cfdba1ab23f3c835b17df802004bc9429040/epan/dissectors/packet-gvcp.c#L2517-L2518)). The status codes ACTION_LATE 0x8016 and NO_REF_TIME 0x8013 are marked "GEV 2.0" (Aravis [arvgvspprivate.h L89-L93](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvspprivate.h#L89-L93)).
+* **Aravis has no host-side ACTION_CMD or PTP code** (main @482547a3, 2026-10-22). Its `ArvGvcpCommand` enum stops at PENDING_ACK 0x0089 ([L267-L282](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcpprivate.h#L267-L282)), and a grep for action_cmd/actioncommand in src/ returns nothing. Its GStreamer element does tag device timestamps as `timestamp/x-ptp` ([gst/gstaravis.c L564-L567](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/gst/gstaravis.c#L564-L567)). Neither Aravis nor Wireshark contains any RDMA, RoCE or GVRSP code (word-grep, 2026-10-25).
+
+## SFNC (GenICam feature names, EMVA SFNC 2.8, dated 2026-04-08)
+
+* Section 27.3, PtpControl: PtpEnable, PtpClockAccuracy, PtpDataSetLatch, PtpStatus, PtpServoStatus, PtpOffsetFromMaster, PtpClockID, PtpParentClockID, PtpGrandmasterClockID, PtpMeanPropagationDelay.
+* PtpStatus text: "Refer to the IEEE 1588-2008 specification".
+* The Ptp* features were added in SFNC 2.4 (26.6.2018), deprecating GevIEEE1588, GevIEEE1588ClockAccuracy and GevIEEE1588Status.
+* §14 Action Control: ActionDeviceKey, ActionGroupKey, ActionGroupMask, ActionSelector, ActionQueueSize, ActionUnconditionalMode.
+* GevSupportedOption values include Ptp, Action, UnconditionalAction and ScheduledAction.
+* SFNC 2.8 also "Set the unit to ns for all the Timestamp related features" and "Added JPEG XS".
+* No RDMA or GVRSP features in SFNC 2.8.
+* Source: [GenICam_SFNC_v2_8.pdf](https://www.emva.org/wp-content/uploads/GenICam_SFNC_v2_8.pdf), linked from [EMVA downloads](https://www.emva.org/standards-technology/genicam/genicam-downloads/).
+
+## Vendor confirmation of PTP edition and behaviour
+
+* **Basler** ([docs.baslerweb.com/precision-time-protocol](https://docs.baslerweb.com/precision-time-protocol)): "Basler cameras support IEEE 1588-2008, also known as PTP Version 2". PTP timestamps "are mapped to the 64-bit timestamps of GigE Vision". End-to-end delay measurement is the default, and ace 2 / dart M offer a `BslPtpProfile` choice of DelayRequestResponseDefaultProfile vs PeerToPeerDefaultProfile. Scheduled Action Commands are listed as a PTP-enabled feature.
+* **LUCID** ([app note](https://thinklucid.com/multi-camera-synchronization-using-ptp-and-scheduled-action-commands/)): PTP "has since been integrated into GigE Vision 2.0". The sample schedules an action at a PTP time in ns. Its 7-camera output timestamps spread about 9 µs; I computed that from their printed values.
+* **PoE:** the [Basler 4-port PoE card doc](https://docs.baslerweb.com/basler-gige-interface-card-4-port-poe) (release 19 Oct 2026) lists IEEE 802.3af (15.4 W/port) and 802.3at (25.5 W/port) separately from IEEE 1588.
+* **Single cable:** [VSD 2017-10-18](https://www.vision-systems.com/home/article/16737583/standards-update-gige-vision-standard-status-and-future-what-you-need-to-know) says the PTP + action command combination gives "the ability to remove an I/O cable and use only the Ethernet cable to provide data, power, and trigger".
+
+## Test run (Docker, Aravis fake GigE Vision camera)
+
+* Scripts: `C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/research/specver-test/probe.py` (pure-stdlib raw GVCP READREG probe) and `.../specver-test/RUN.txt` (exact commands and outputs).
+* **Run 1, stock fake camera** (ubuntu:24.04, aravis-tools 0.8.30): Version=0x00000000, Capability=0x00000000, tick frequency 1 GHz. The fake camera does not populate these registers ([arvfakecamera.c L1082-L1091](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvfakecamera.c#L1082-L1091)), so **it cannot emulate PTP or scheduled actions**.
+* **Run 2, synthetic values:** I wrote 0x00020001 to 0x0000 and 0x001B0067 to 0x0934 via `arv-tool-0.8 control R[..]=..`. The probe then decoded "2.1" and listed IEEE1588, ScheduledAction, UnconditionalAction, IEEE1588ExtendedCapabilities, Action and the other set bits, which validates the decode path end-to-end over UDP 3956.
+* **On real hardware:** `python3 -I probe.py <camera-ip>` reports the camera's real spec version and whether it advertises PTP and scheduled actions.
+
+## Open questions
+
+* The exact text of GigE Vision 3.0 on time sync is unverified, because the spec is behind a registration form. Does 3.0 change or add anything for PTP, for example a 1588-2019 profile, or timestamps carried in GVRSP?
+* What are the selected-profile enumeration values at 0x097C, and does the 2.1 "PTP profile" mean the 1588-2008 Default profile?
+* There is a conflict on when action commands first appeared. The 2009 A3 PR says 1.1 added "action commands … managing the execution time", but Wireshark groups the plain Action capability under its "Added for 2.0 support" comment, and SFNC credits scheduled actions to 2.0.
+* What is the GigE Vision 3.0 version register value, and is there a GVRSP capability bit? Neither open-source dissector defines these.

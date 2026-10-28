@@ -1,0 +1,407 @@
+{
+  "test": "analyze_frames",
+  "platform": "win32",
+  "hostname": "Gerald",
+  "utc_started": "2026-10-25T21:30:54.494638+00:00",
+  "command": "tools/analyze_frames.py results/windows/Gerald/phase2_python_libusb/s720_default_ppt128/frames.jsonl --out results/windows/Gerald/phase2_python_libusb/s720_default_ppt128/analyze_frames.json",
+  "environment": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "os": "Windows-11-10.0.26300-SP0"
+  },
+  "inputs": [
+    "results/windows/Gerald/phase2_python_libusb/s720_default_ppt128/frames.jsonl"
+  ],
+  "cameras": [
+    {
+      "frames": 602,
+      "camera_key": "usb:046d:0843:port:1-13.1.4",
+      "backend": "py-libusb1",
+      "os_timestamp_source": "perf_counter_ns at completion callback of the transfer carrying the closing payload",
+      "payload_bytes": {
+        "n": 602,
+        "mean": 165438.50166112956,
+        "std": 6114.055651255786,
+        "min": 119075.0,
+        "max": 168221.0,
+        "median": 166415.5,
+        "p05": 165064.8,
+        "p95": 167477.95
+      },
+      "valid_jpeg_fraction": 1.0,
+      "duration_s": 20.1150054,
+      "device_clock": {
+        "pts_zero_fraction": 0.0,
+        "pts_freq_vs_host_hz": 29998669.46854218,
+        "nominal_hz": 30000000.0,
+        "nominal_assumed": true,
+        "device_vs_host_ppm": -44.35104859396815,
+        "pts_period_ticks": {
+          "n": 601,
+          "mean": 1003859.2745424293,
+          "std": 162710.37617339028,
+          "min": 997038.0,
+          "max": 4986116.0,
+          "median": 997222.0,
+          "p05": 997186.0,
+          "p95": 997256.0
+        },
+        "scr_stc_zero_fraction": 0.0,
+        "stc_per_sof_hz": 30001349.979066093,
+        "stc_vs_sof_residual_us": {
+          "n": 602,
+          "mean": 4.2770847565020405e-09,
+          "std": 289.31367938989337,
+          "min": -498.68297963113844,
+          "max": 499.19393498755386,
+          "median": -0.20920154614669584,
+          "p05": -449.8551098047254,
+          "p95": 449.36519069642225
+        },
+        "device_vs_usb_ppm": 44.99930220308403,
+        "usb_sof_ms_per_host_s": 999.8928874324205,
+        "usb_vs_host_ppm": -107.11256757955923,
+        "dev_sof_step_ms": {
+          "n": 601,
+          "mean": 33.46089850249584,
+          "std": 5.473471036860226,
+          "min": 32.0,
+          "max": 167.0,
+          "median": 33.0,
+          "p05": 33.0,
+          "p95": 34.0
+        },
+        "stc_freq_vs_host_hz": 29998655.956699885,
+        "stc_minus_pts_ms": {
+          "n": 602,
+          "mean": 30.442879512735324,
+          "std": 0.03806195158696604,
+          "min": 30.432533333333335,
+          "max": 31.371266666666667,
+          "median": 30.440600000000003,
+          "p05": 30.437203333333333,
+          "p95": 30.44939666666667
+        },
+        "uvc_pts_via_scr_envelope_valid_frames": 594,
+        "uvc_pts_via_scr_lsq_envelope_valid_frames": 594
+      },
+      "sources": {
+        "host_arrival": {
+          "interval": {
+            "interval_ms": {
+              "n": 601,
+              "mean": 33.46922695507487,
+              "std": 6.894058913209659,
+              "min": 20.5747,
+              "max": 165.0839,
+              "median": 32.0225,
+              "p05": 31.607599999999998,
+              "p95": 47.770399999999995
+            },
+            "drops_est": 6
+          },
+          "periodic_fit": {
+            "period_ms": 33.23999695320625,
+            "fps": 30.084238617944347,
+            "residual_us": {
+              "n": 602,
+              "mean": -3.418926554933141e-09,
+              "std": 4598.115299891333,
+              "min": -9453.789967830598,
+              "max": 10435.044202007293,
+              "median": -21.903460034728052,
+              "p05": -7176.778502150917,
+              "p95": 7081.847129044913
+            },
+            "residual_rms_us": 4594.294679954591,
+            "slots_skipped": 4,
+            "duplicate_slots": 0
+          }
+        },
+        "os_timestamp": {
+          "interval": {
+            "interval_ms": {
+              "n": 601,
+              "mean": 33.469204991680535,
+              "std": 6.935926799474966,
+              "min": 20.8692,
+              "max": 165.0395,
+              "median": 32.0043,
+              "p05": 31.913999999999998,
+              "p95": 47.977
+            },
+            "drops_est": 19
+          },
+          "periodic_fit": {
+            "period_ms": 33.24020640748533,
+            "fps": 30.084049050153038,
+            "residual_us": {
+              "n": 602,
+              "mean": -5.7047375313863405e-11,
+              "std": 4662.859522691508,
+              "min": -9110.95592351909,
+              "max": 10342.486770313264,
+              "median": 21.63226970386505,
+              "p05": -7217.019515315818,
+              "p95": 7233.447165473841
+            },
+            "residual_rms_us": 4658.985106133262,
+            "slots_skipped": 4,
+            "duplicate_slots": 0
+          },
+          "arrival_minus_source_ms": {
+            "n": 602,
+            "mean": 0.4846049833887043,
+            "std": 1.5771784863838005,
+            "min": 0.09799999999999999,
+            "max": 16.192999999999998,
+            "median": 0.2435,
+            "p05": 0.1305,
+            "p95": 0.8626949999999991
+          }
+        },
+        "host_first_payload": {
+          "interval": {
+            "interval_ms": {
+              "n": 601,
+              "mean": 33.469204991680535,
+              "std": 7.041830478458119,
+              "min": 21.0783,
+              "max": 169.9374,
+              "median": 32.004799999999996,
+              "p05": 31.921799999999998,
+              "p95": 47.9403
+            },
+            "drops_est": 7
+          },
+          "periodic_fit": {
+            "period_ms": 33.239476339186695,
+            "fps": 30.08470981298462,
+            "residual_us": {
+              "n": 602,
+              "mean": 1.3128389833352692e-09,
+              "std": 4593.802534543914,
+              "min": -7983.713470155716,
+              "max": 8335.109757202148,
+              "median": -118.28200204086303,
+              "p05": -7194.547587715006,
+              "p95": 7186.552820139885
+            },
+            "residual_rms_us": 4589.985498126983,
+            "slots_skipped": 4,
+            "duplicate_slots": 0
+          },
+          "arrival_minus_source_ms": {
+            "n": 602,
+            "mean": 7.360160465116279,
+            "std": 9.735908474982857,
+            "min": 0.18889999999999998,
+            "max": 149.146,
+            "median": 0.7024999999999999,
+            "p05": 0.22181,
+            "p95": 16.42352
+          }
+        },
+        "host_last_payload": {
+          "interval": {
+            "interval_ms": {
+              "n": 601,
+              "mean": 33.469204991680535,
+              "std": 6.935926799474966,
+              "min": 20.8692,
+              "max": 165.0395,
+              "median": 32.0043,
+              "p05": 31.913999999999998,
+              "p95": 47.977
+            },
+            "drops_est": 19
+          },
+          "periodic_fit": {
+            "period_ms": 33.24020640748533,
+            "fps": 30.084049050153038,
+            "residual_us": {
+              "n": 602,
+              "mean": -5.7047375313863405e-11,
+              "std": 4662.859522691508,
+              "min": -9110.95592351909,
+              "max": 10342.486770313264,
+              "median": 21.63226970386505,
+              "p05": -7217.019515315818,
+              "p95": 7233.447165473841
+            },
+            "residual_rms_us": 4658.985106133262,
+            "slots_skipped": 4,
+            "duplicate_slots": 0
+          },
+          "arrival_minus_source_ms": {
+            "n": 602,
+            "mean": 0.4846049833887043,
+            "std": 1.5771784863838005,
+            "min": 0.09799999999999999,
+            "max": 16.192999999999998,
+            "median": 0.2435,
+            "p05": 0.1305,
+            "p95": 0.8626949999999991
+          }
+        },
+        "uvc_pts_mapped_direct": {
+          "interval": {
+            "interval_ms": {
+              "n": 601,
+              "mean": 33.463024304492514,
+              "std": 5.423849131424915,
+              "min": 33.235641,
+              "max": 166.209074,
+              "median": 33.241775,
+              "p05": 33.240575,
+              "p95": 33.242908
+            },
+            "drops_est": 4
+          },
+          "periodic_fit": {
+            "period_ms": 33.24178233505964,
+            "fps": 30.082622824508242,
+            "residual_us": {
+              "n": 602,
+              "mean": 4.653702318297553e-10,
+              "std": 0.7667640835655944,
+              "min": -1.5667730370759965,
+              "max": 5.258389549255371,
+              "median": -0.08556203603744507,
+              "p05": -0.8027170985698701,
+              "p95": 0.7664983757972705
+            },
+            "residual_rms_us": 0.7661269716287714,
+            "slots_skipped": 4,
+            "duplicate_slots": 0
+          },
+          "arrival_minus_source_ms": {
+            "n": 602,
+            "mean": 8.033383372093022,
+            "std": 7.243460615368638,
+            "min": -1.1083049999999999,
+            "max": 144.98170399999998,
+            "median": 7.8780225,
+            "p05": 0.72974605,
+            "p95": 14.897532
+          }
+        },
+        "uvc_pts_via_scr_envelope": {
+          "interval": {
+            "interval_ms": {
+              "n": 593,
+              "mean": 33.46736164249578,
+              "std": 5.507477120112541,
+              "min": 32.959621,
+              "max": 166.985954,
+              "median": 33.014571,
+              "p05": 32.996752799999996,
+              "p95": 33.977497799999995
+            },
+            "drops_est": 4
+          },
+          "periodic_fit": {
+            "period_ms": 33.242805117837484,
+            "fps": 30.08169727119142,
+            "residual_us": {
+              "n": 594,
+              "mean": -2.8026992174890247e-09,
+              "std": 276.81159263957966,
+              "min": -487.34446893787384,
+              "max": 482.8076900138855,
+              "median": 11.818006783008576,
+              "p05": -436.52591850087646,
+              "p95": 432.1581201364994
+            },
+            "residual_rms_us": 276.57848809917135,
+            "slots_skipped": 4,
+            "duplicate_slots": 0
+          },
+          "arrival_minus_source_ms": {
+            "n": 594,
+            "mean": 38.64236994276094,
+            "std": 7.278226772589426,
+            "min": 29.658939,
+            "max": 175.58799299999998,
+            "median": 38.4098475,
+            "p05": 31.2522032,
+            "p95": 45.4944698
+          }
+        },
+        "uvc_pts_via_scr_lsq_envelope": {
+          "interval": {
+            "interval_ms": {
+              "n": 593,
+              "mean": 33.467285539629,
+              "std": 5.463853018037056,
+              "min": 33.159138,
+              "max": 166.293886,
+              "median": 33.236368,
+              "p05": 33.1988128,
+              "p95": 33.301686600000004
+            },
+            "drops_est": 4
+          },
+          "periodic_fit": {
+            "period_ms": 33.242778835056264,
+            "fps": 30.081721054722635,
+            "residual_us": {
+              "n": 594,
+              "mean": 1.188993983703504e-10,
+              "std": 36.71352379964605,
+              "min": -147.64278736496848,
+              "max": 134.1155218473673,
+              "median": -0.8013505346775055,
+              "p05": -57.41863160681725,
+              "p95": 58.00835116724968
+            },
+            "residual_rms_us": 36.68260714254191,
+            "slots_skipped": 4,
+            "duplicate_slots": 0
+          },
+          "arrival_minus_source_ms": {
+            "n": 594,
+            "mean": 38.64025649158249,
+            "std": 7.265812539423536,
+            "min": 29.614829,
+            "max": 175.333842,
+            "median": 38.3999225,
+            "p05": 31.3589684,
+            "p95": 45.53825595
+          }
+        }
+      },
+      "jitter_ranking_rms_us": [
+        [
+          "uvc_pts_mapped_direct",
+          0.77
+        ],
+        [
+          "uvc_pts_via_scr_lsq_envelope",
+          36.68
+        ],
+        [
+          "uvc_pts_via_scr_envelope",
+          276.58
+        ],
+        [
+          "host_first_payload",
+          4589.99
+        ],
+        [
+          "host_arrival",
+          4594.29
+        ],
+        [
+          "os_timestamp",
+          4658.99
+        ],
+        [
+          "host_last_payload",
+          4658.99
+        ]
+      ],
+      "file": "results/windows/Gerald/phase2_python_libusb/s720_default_ppt128/frames.jsonl"
+    }
+  ]
+}

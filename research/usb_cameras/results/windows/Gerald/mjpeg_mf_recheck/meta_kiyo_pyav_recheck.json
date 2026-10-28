@@ -1,0 +1,66 @@
+{
+ "backend": "pyav-dshow",
+ "utc_started": "2026-10-25T18:45:59.545441+00:00",
+ "command": [
+  "research/usb_cameras/mjpeg/pyav/pyav_capture.py",
+  "--input-format",
+  "dshow",
+  "--device",
+  "video=USB Video Device",
+  "--size",
+  "1280x720",
+  "--fps",
+  "30",
+  "--seconds",
+  "3",
+  "--warmup",
+  "1",
+  "--run-dir",
+  "C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/kiyo_pyav_recheck"
+ ],
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {
+   "av": "19.0.2",
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0",
+   "psutil": "7.2.2"
+  },
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30.0
+ },
+ "decoded_by_pipeline": false,
+ "delivered_codecs": [],
+ "silent_format_fallback": false,
+ "decode_evidence": "only container.demux() is called; packets are passed through as bytes; stream codec reported per camera (codec != mjpeg means FFmpeg/the device delivered a different format than requested WITHOUT raising an error)",
+ "cpu": {
+  "method": "psutil cpu_times (tick-sampled) + QueryProcessCycleTime/calibrated cycle rate (Windows, precise)",
+  "wall_s": 3.0004875,
+  "process_cpu_s_ticks": 0.0,
+  "process_cpu_pct_of_one_core_ticks": 0.0,
+  "tsc_hz": 3413222486.7939243,
+  "process_cycles": 708209,
+  "process_cpu_pct_of_one_core": 0.006915204399706209,
+  "frameserver_pid": 49436,
+  "frameserver_cpu_pct_of_one_core_ticks": 0.0,
+  "frameserver_cpu_pct_of_one_core": null
+ },
+ "cameras": [],
+ "errors": [
+  "video=USB Video Device: open failed: OSError(5, 'I/O error', 'video=USB Video Device')"
+ ],
+ "window": {
+  "start_ns": 103318626460100,
+  "end_ns": 103321626941800,
+  "wall_s": 3.0004817
+ }
+}

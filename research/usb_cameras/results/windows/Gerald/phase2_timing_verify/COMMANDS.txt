@@ -1,0 +1,15 @@
+Adversarial verification of phase2_libusb_scr_timing (goal 2), GERALD, 2026-10-25 21:38-22:00Z. C930e still on WinUSB (pnputil 21:41Z).
+SCR = C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\scratchpad
+Re-runs (each under camlock):
+  uv run --script research/usb_cameras/tools/camlock.py -- pwsh -NoProfile -File research/usb_cameras/timing/scripts/run_flash_libuvc.ps1 -RunDir SCR/runs/phase2_verify/vA_cas -Seconds 30 -ControlsAfterStart
+  ... -RunDir SCR/runs/phase2_verify/vB_nocas -Seconds 20          (display glitched: 1381/1642 presents unreliable -> GT unusable)
+  ... -RunDir SCR/runs/phase2_verify/vC_nocas -Seconds 25
+  ... -RunDir SCR/runs/phase2_verify/vD_ppt8 -Seconds 25 -ControlsAfterStart -PacketsPerTransfer 8
+Analysis:
+  uv run --script research/usb_cameras/timing/scripts/flash_libuvc_scr.py --run SCR/runs/phase2_verify/<run> --rows 0.2,0.35,0.5,0.65,0.8 --skip-first 30 --out <run>_analysis.json
+  uv run --script research/usb_cameras/timing/scripts/flash_step_response.py SCR/runs/phase2_verify/<run> 0.5 0.5 [--cam c922 with col 0.75] --out <run>_step.json
+     (also on original SCR/runs/phase2/run3_ppt8, run5_cas, run6_cas -> run*_step.json; read the profile, the stored rise_10_90 field is buggy)
+  uv run --script research/usb_cameras/timing/scripts/flash_libuvc_escan.py SCR/runs/phase2/run1 0.5 0.5 2 70 2  > run1_escan.txt  (and vC_nocas)
+  uv run --script jitter_regress.py SCR/runs/phase2/{run4_cas,run5_cas,run2_cas,run3_ppt8,run6_cas}  -> jitter_regress_out.json
+  uv run --script jpeg_full_decode.py <c930e_libuvc dirs>   (Pillow strict full decode: vA 922/922, vD 771/771, run4 921/921 ok)
+  frame-size vs SCR-jitter check: inline python over raw/<run>/c930e_libuvc/frames.jsonl (corr of SCR residual vs previous payload_bytes)

@@ -1,0 +1,591 @@
+{
+  "env": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.2.6",
+    "opencv": "4.12.0",
+    "cpu_count": 28,
+    "time": "2026-10-28 06:40:07",
+    "psutil": "7.2.2",
+    "ram_total_gb": 68.413349888,
+    "system_cpu_pct_1s_before_run": 7.0,
+    "other_python_processes_at_start": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\prototypes\\run_with_load.py p12_disk_sustained p12_disk_sustained_std",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks/frame_pipeline/revision/run_revision.py p8v p10v p11 p3v p12 h_def",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks/frame_pipeline/revision/run_revision.py p8v p10v p11 p3v p12 h_deflate p6v",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\prototypes\\p12_disk_sustained.py",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks\\frame_pipeline\\prototypes\\run_with_load.py p12_disk_sustained p12_"
+    ],
+    "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d",
+    "av": "18.0.0",
+    "simplejpeg": null
+  },
+  "target_dir": "C:\\Users\\Dom\\AppData\\Local\\Temp\\skellycam_frame_pipeline_tmp\\bench_tmp\\p12_disk",
+  "volume_total_bytes": 3999610695680,
+  "free_bytes_at_start": 224923832320,
+  "used_pct_at_start": 94.38,
+  "rows": [
+    {
+      "phase": "A",
+      "mode": "unbuffered+write-through, 4 MiB sequential",
+      "bytes": 68719476736,
+      "seconds": 36.372127499998896,
+      "mb_per_s": 1889.3444365057305,
+      "mb_per_s_per_gib": [
+        5223.4,
+        4959.5,
+        5225.7,
+        5166.0,
+        4802.1,
+        5196.9,
+        5271.3,
+        5015.3,
+        5206.9,
+        5026.3,
+        5181.1,
+        4993.1,
+        5168.3,
+        5198.2,
+        4876.3,
+        5147.7,
+        5198.9,
+        4901.0,
+        5170.5,
+        4949.5,
+        5026.9,
+        5231.4,
+        5262.6,
+        5169.6,
+        4824.1,
+        5204.7,
+        5060.7,
+        4944.6,
+        5197.7,
+        4951.0,
+        4960.8,
+        5243.1,
+        5213.8,
+        4912.7,
+        4951.0,
+        5201.7,
+        5231.2,
+        4944.2,
+        5016.5,
+        4242.5,
+        5151.5,
+        5192.7,
+        5177.9,
+        4586.4,
+        5291.2,
+        5269.5,
+        4953.0,
+        5291.7,
+        1508.1,
+        1025.9,
+        679.7,
+        712.9,
+        544.9,
+        531.6,
+        795.7,
+        762.7,
+        540.9,
+        511.4,
+        746.6,
+        549.8,
+        780.5,
+        480.6,
+        512.9,
+        752.2
+      ],
+      "min_gib_mb_per_s": 480.6,
+      "write_call": {
+        "n": 16384,
+        "median_ms": 0.7116,
+        "p99_ms": 10.636935,
+        "p999_ms": 45.27000600000385,
+        "max_ms": 97.1493,
+        "over_16_7ms": 53,
+        "over_100ms": 0,
+        "over_1s": 0
+      },
+      "stopped": null,
+      "free_bytes_after": 224740450304
+    },
+    {
+      "phase": "B1",
+      "mode": "unbuffered+write-through",
+      "target_mb_per_s": 162,
+      "bytes_per_write": 540672,
+      "seconds": 300.0,
+      "wall_s": 300.04403540000203,
+      "achieved_mb_per_s": 162.17779478645045,
+      "bytes": 48660480000,
+      "streams": [
+        {
+          "stream": 0,
+          "writes": 18000,
+          "bytes": 9732096000,
+          "write_call": {
+            "n": 18000,
+            "median_ms": 1.373,
+            "p99_ms": 1.654401,
+            "p999_ms": 10.614407300000043,
+            "max_ms": 119.9152,
+            "over_16_7ms": 11,
+            "over_100ms": 1,
+            "over_1s": 0
+          },
+          "lag_behind_schedule": {
+            "n": 18000,
+            "median_ms": 1.373434,
+            "p99_ms": 1.6633176699999972,
+            "p999_ms": 32.592837100000324,
+            "max_ms": 119.915667,
+            "over_16_7ms": 31,
+            "over_100ms": 2,
+            "over_1s": 0
+          },
+          "flush_s": null
+        },
+        {
+          "stream": 1,
+          "writes": 18000,
+          "bytes": 9732096000,
+          "write_call": {
+            "n": 18000,
+            "median_ms": 0.4248,
+            "p99_ms": 2.308228999999995,
+            "p999_ms": 15.76631800000035,
+            "max_ms": 134.7798,
+            "over_16_7ms": 18,
+            "over_100ms": 1,
+            "over_1s": 0
+          },
+          "lag_behind_schedule": {
+            "n": 18000,
+            "median_ms": 0.601834,
+            "p99_ms": 2.7406096699999987,
+            "p999_ms": 40.348959700000364,
+            "max_ms": 135.204534,
+            "over_16_7ms": 46,
+            "over_100ms": 3,
+            "over_1s": 0
+          },
+          "flush_s": null
+        },
+        {
+          "stream": 2,
+          "writes": 18000,
+          "bytes": 9732096000,
+          "write_call": {
+            "n": 18000,
+            "median_ms": 0.39525,
+            "p99_ms": 2.520355999999991,
+            "p999_ms": 16.697089700000163,
+            "max_ms": 118.7573,
+            "over_16_7ms": 18,
+            "over_100ms": 1,
+            "over_1s": 0
+          },
+          "lag_behind_schedule": {
+            "n": 18000,
+            "median_ms": 0.5129334999999999,
+            "p99_ms": 2.774247999999971,
+            "p999_ms": 42.62104600000017,
+            "max_ms": 118.757767,
+            "over_16_7ms": 49,
+            "over_100ms": 2,
+            "over_1s": 0
+          },
+          "flush_s": null
+        },
+        {
+          "stream": 3,
+          "writes": 18000,
+          "bytes": 9732096000,
+          "write_call": {
+            "n": 18000,
+            "median_ms": 0.3961,
+            "p99_ms": 2.52096199999999,
+            "p999_ms": 17.875531000000617,
+            "max_ms": 134.4282,
+            "over_16_7ms": 20,
+            "over_100ms": 1,
+            "over_1s": 0
+          },
+          "lag_behind_schedule": {
+            "n": 18000,
+            "median_ms": 0.48035,
+            "p99_ms": 2.7135926699999957,
+            "p999_ms": 43.907603033000136,
+            "max_ms": 134.570634,
+            "over_16_7ms": 52,
+            "over_100ms": 3,
+            "over_1s": 0
+          },
+          "flush_s": null
+        },
+        {
+          "stream": 4,
+          "writes": 18000,
+          "bytes": 9732096000,
+          "write_call": {
+            "n": 18000,
+            "median_ms": 0.3841,
+            "p99_ms": 2.561867999999989,
+            "p999_ms": 16.60169510000016,
+            "max_ms": 134.3981,
+            "over_16_7ms": 18,
+            "over_100ms": 1,
+            "over_1s": 0
+          },
+          "lag_behind_schedule": {
+            "n": 18000,
+            "median_ms": 0.3901835,
+            "p99_ms": 2.6892963399999683,
+            "p999_ms": 45.26877096700007,
+            "max_ms": 134.398334,
+            "over_16_7ms": 49,
+            "over_100ms": 3,
+            "over_1s": 0
+          },
+          "flush_s": null
+        }
+      ],
+      "worst_write_call": {
+        "n": 18000,
+        "median_ms": 0.4248,
+        "p99_ms": 2.308228999999995,
+        "p999_ms": 15.76631800000035,
+        "max_ms": 134.7798,
+        "over_16_7ms": 18,
+        "over_100ms": 1,
+        "over_1s": 0
+      },
+      "worst_lag_behind_schedule_ms": 135.204534,
+      "writes_finishing_over_16_7ms_late": 227,
+      "max_flush_s": null,
+      "stopped": null,
+      "free_bytes_after": 224741789696
+    },
+    {
+      "phase": "B2",
+      "mode": "unbuffered+write-through",
+      "target_mb_per_s": 69,
+      "bytes_per_write": 233472,
+      "seconds": 600.0,
+      "wall_s": 600.0617256999976,
+      "achieved_mb_per_s": 70.03439512989449,
+      "bytes": 42024960000,
+      "streams": [
+        {
+          "stream": 0,
+          "writes": 36000,
+          "bytes": 8404992000,
+          "write_call": {
+            "n": 36000,
+            "median_ms": 1.3196,
+            "p99_ms": 2.7216,
+            "p999_ms": 2.788300800000003,
+            "max_ms": 123.7276,
+            "over_16_7ms": 4,
+            "over_100ms": 4,
+            "over_1s": 0
+          },
+          "lag_behind_schedule": {
+            "n": 36000,
+            "median_ms": 1.321,
+            "p99_ms": 2.7252,
+            "p999_ms": 2.9050726670000215,
+            "max_ms": 123.727667,
+            "over_16_7ms": 26,
+            "over_100ms": 6,
+            "over_1s": 0
+          },
+          "flush_s": null
+        },
+        {
+          "stream": 1,
+          "writes": 36000,
+          "bytes": 8404992000,
+          "write_call": {
+            "n": 36000,
+            "median_ms": 1.2492,
+            "p99_ms": 1.8065,
+            "p999_ms": 1.907301600000006,
+            "max_ms": 122.845,
+            "over_16_7ms": 4,
+            "over_100ms": 4,
+            "over_1s": 0
+          },
+          "lag_behind_schedule": {
+            "n": 36000,
+            "median_ms": 1.2530169999999998,
+            "p99_ms": 1.8785016700000003,
+            "p999_ms": 2.305265834000253,
+            "max_ms": 122.845067,
+            "over_16_7ms": 27,
+            "over_100ms": 6,
+            "over_1s": 0
+          },
+          "flush_s": null
+        },
+        {
+          "stream": 2,
+          "writes": 36000,
+          "bytes": 8404992000,
+          "write_call": {
+            "n": 36000,
+            "median_ms": 1.3084,
+            "p99_ms": 1.494601,
+            "p999_ms": 1.6287062000000239,
+            "max_ms": 135.0052,
+            "over_16_7ms": 4,
+            "over_100ms": 4,
+            "over_1s": 0
+          },
+          "lag_behind_schedule": {
+            "n": 36000,
+            "median_ms": 1.309267,
+            "p99_ms": 1.5072033400000007,
+            "p999_ms": 1.8522702000000124,
+            "max_ms": 135.0054,
+            "over_16_7ms": 27,
+            "over_100ms": 7,
+            "over_1s": 0
+          },
+          "flush_s": null
+        },
+        {
+          "stream": 3,
+          "writes": 36000,
+          "bytes": 8404992000,
+          "write_call": {
+            "n": 36000,
+            "median_ms": 0.489,
+            "p99_ms": 0.6913050000000011,
+            "p999_ms": 0.8973023000000088,
+            "max_ms": 137.7392,
+            "over_16_7ms": 4,
+            "over_100ms": 4,
+            "over_1s": 0
+          },
+          "lag_behind_schedule": {
+            "n": 36000,
+            "median_ms": 0.4972,
+            "p99_ms": 0.9879690000000004,
+            "p999_ms": 1.6605000000001267,
+            "max_ms": 138.219034,
+            "over_16_7ms": 28,
+            "over_100ms": 8,
+            "over_1s": 0
+          },
+          "flush_s": null
+        },
+        {
+          "stream": 4,
+          "writes": 36000,
+          "bytes": 8404992000,
+          "write_call": {
+            "n": 36000,
+            "median_ms": 0.1335,
+            "p99_ms": 0.5321,
+            "p999_ms": 0.8734006000000023,
+            "max_ms": 137.7809,
+            "over_16_7ms": 4,
+            "over_100ms": 4,
+            "over_1s": 0
+          },
+          "lag_behind_schedule": {
+            "n": 36000,
+            "median_ms": 0.1342,
+            "p99_ms": 0.53860034,
+            "p999_ms": 1.1711351330003885,
+            "max_ms": 137.780934,
+            "over_16_7ms": 28,
+            "over_100ms": 8,
+            "over_1s": 0
+          },
+          "flush_s": null
+        }
+      ],
+      "worst_write_call": {
+        "n": 36000,
+        "median_ms": 0.1335,
+        "p99_ms": 0.5321,
+        "p999_ms": 0.8734006000000023,
+        "max_ms": 137.7809,
+        "over_16_7ms": 4,
+        "over_100ms": 4,
+        "over_1s": 0
+      },
+      "worst_lag_behind_schedule_ms": 138.219034,
+      "writes_finishing_over_16_7ms_late": 136,
+      "max_flush_s": null,
+      "stopped": null,
+      "free_bytes_after": 224737898496
+    },
+    {
+      "phase": "C",
+      "mode": "buffered (OS cache), FlushFileBuffers at stop",
+      "target_mb_per_s": 162,
+      "bytes_per_write": 540672,
+      "seconds": 60,
+      "wall_s": 60.51465740000276,
+      "achieved_mb_per_s": 160.82212835926188,
+      "bytes": 9732096000,
+      "streams": [
+        {
+          "stream": 0,
+          "writes": 3600,
+          "bytes": 1946419200,
+          "write_call": {
+            "n": 3600,
+            "median_ms": 0.5013,
+            "p99_ms": 1.0663119999999997,
+            "p999_ms": 1.7882119000001626,
+            "max_ms": 2.7058,
+            "over_16_7ms": 0,
+            "over_100ms": 0,
+            "over_1s": 0
+          },
+          "lag_behind_schedule": {
+            "n": 3600,
+            "median_ms": 0.5768169999999999,
+            "p99_ms": 1.5366043399999998,
+            "p999_ms": 2.106976933000123,
+            "max_ms": 3.075767,
+            "over_16_7ms": 0,
+            "over_100ms": 0,
+            "over_1s": 0
+          },
+          "flush_s": 0.18121769999561366
+        },
+        {
+          "stream": 1,
+          "writes": 3600,
+          "bytes": 1946419200,
+          "write_call": {
+            "n": 3600,
+            "median_ms": 0.39195,
+            "p99_ms": 1.052740999999999,
+            "p999_ms": 1.4019795000000235,
+            "max_ms": 2.3386,
+            "over_16_7ms": 0,
+            "over_100ms": 0,
+            "over_1s": 0
+          },
+          "lag_behind_schedule": {
+            "n": 3600,
+            "median_ms": 0.5320834999999999,
+            "p99_ms": 1.3904469999999995,
+            "p999_ms": 1.6679962330000047,
+            "max_ms": 2.644867,
+            "over_16_7ms": 0,
+            "over_100ms": 0,
+            "over_1s": 0
+          },
+          "flush_s": 0.054384099996241275
+        },
+        {
+          "stream": 2,
+          "writes": 3600,
+          "bytes": 1946419200,
+          "write_call": {
+            "n": 3600,
+            "median_ms": 0.31155,
+            "p99_ms": 1.0811709999999983,
+            "p999_ms": 2.0328478000000967,
+            "max_ms": 3.3563,
+            "over_16_7ms": 0,
+            "over_100ms": 0,
+            "over_1s": 0
+          },
+          "lag_behind_schedule": {
+            "n": 3600,
+            "median_ms": 0.46648350000000005,
+            "p99_ms": 1.3726399999999999,
+            "p999_ms": 2.1924691000000185,
+            "max_ms": 3.356867,
+            "over_16_7ms": 0,
+            "over_100ms": 0,
+            "over_1s": 0
+          },
+          "flush_s": 0.47895579999749316
+        },
+        {
+          "stream": 3,
+          "writes": 3600,
+          "bytes": 1946419200,
+          "write_call": {
+            "n": 3600,
+            "median_ms": 0.25025,
+            "p99_ms": 1.0021109999999998,
+            "p999_ms": 1.3018857000000017,
+            "max_ms": 2.5186,
+            "over_16_7ms": 0,
+            "over_100ms": 0,
+            "over_1s": 0
+          },
+          "lag_behind_schedule": {
+            "n": 3600,
+            "median_ms": 0.36024999999999996,
+            "p99_ms": 1.1808089999999998,
+            "p999_ms": 1.5172759000000144,
+            "max_ms": 2.7224,
+            "over_16_7ms": 0,
+            "over_100ms": 0,
+            "over_1s": 0
+          },
+          "flush_s": 0.42468640000151936
+        },
+        {
+          "stream": 4,
+          "writes": 3600,
+          "bytes": 1946419200,
+          "write_call": {
+            "n": 3600,
+            "median_ms": 0.22615000000000002,
+            "p99_ms": 0.938203,
+            "p999_ms": 1.2152213000000003,
+            "max_ms": 3.3185,
+            "over_16_7ms": 0,
+            "over_100ms": 0,
+            "over_1s": 0
+          },
+          "lag_behind_schedule": {
+            "n": 3600,
+            "median_ms": 0.22956700000000002,
+            "p99_ms": 1.04400234,
+            "p999_ms": 1.2840503330000186,
+            "max_ms": 3.3189,
+            "over_16_7ms": 0,
+            "over_100ms": 0,
+            "over_1s": 0
+          },
+          "flush_s": 0.312866699998267
+        }
+      ],
+      "worst_write_call": {
+        "n": 3600,
+        "median_ms": 0.31155,
+        "p99_ms": 1.0811709999999983,
+        "p999_ms": 2.0328478000000967,
+        "max_ms": 3.3563,
+        "over_16_7ms": 0,
+        "over_100ms": 0,
+        "over_1s": 0
+      },
+      "worst_lag_behind_schedule_ms": 3.356867,
+      "writes_finishing_over_16_7ms_late": 0,
+      "max_flush_s": 0.47895579999749316,
+      "stopped": null,
+      "free_bytes_after": 224737636352
+    }
+  ],
+  "time_to_full_at_rate_min": {
+    "69": 54.3,
+    "162": 23.1
+  }
+}

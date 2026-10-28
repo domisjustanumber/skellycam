@@ -1,0 +1,9 @@
+Runner: bash <scratchpad>/wrappers/run_nokhwa_rerun.sh  (copy here) = research/usb_cameras/rust/run_windows_nokhwa.sh with the Kiyo
+(vid_1532&pid_0e05) removed per user exclusion, 4C4A:4A55 added, Kiyo --frame-raw step dropped; same COMMON args:
+  camlock --timeout-s 3000 -- timeout 120 <scratchpad>\r\build\release\nokhwa_probe.exe capture --cameras match:<vidpid[,..]>
+     --width 1280 --height 720 --fps 30 --seconds 20 --exposure -7 --wb 4000 --decode-every 30 --save-samples 1 --out <scratch dir>
+Binary: faithful scratch build (results/windows/Gerald/rust_build/20261028T031415Z_rerun20261027).
+Analysis: uv run --script research/usb_cameras/rust/tools/analyze_frames_rust.py <run dirs>  (analysis.json in each dir)
+          python lat_grid.py <run dirs>  (lat_grid_now.txt / lat_grid_earlier.txt)
+          uv run --script jpeg_luma_dqt.py <sample jpgs>  (luma_dqt.json; sample JPEGs kept only in scratch for privacy)
+CPU% (machine-wide, other agents running): see nokhwa_runs.log (cpu_before/cpu_after per run, 2-18%).

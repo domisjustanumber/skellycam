@@ -1,0 +1,11 @@
+[package]
+name = "cc_rusb_iso_ffi"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[dependencies]
+rusb = { version = "=0.9.4", features = ["vendored"] }
+libusb1-sys = { version = "=0.7.0", features = ["vendored"] }

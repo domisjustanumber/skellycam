@@ -1,0 +1,21 @@
+tar (child): Cannot connect to C: resolve failed
+bzip2.exe: No error
+
+bzip2.exe: Compressed file ends unexpectedly;
+	perhaps it is corrupted?  *Possible* reason follows.
+	Input file = (stdin), output file = (stdout)
+
+It is possible that the compressed file(s) have become corrupted.
+You can use the -tvv option to test integrity of such files.
+
+You can use the `bzip2recover' program to attempt to recover
+data from undamaged sections of corrupted files.
+
+/usr/bin/tar: Child returned status 128
+/usr/bin/tar: Error is not recoverable: exiting now
+[31;1mException: [0mC:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\libusb_rust_20261027\libusb_src\build_windows.ps1:47[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m  47 | [0m . r -xjf $Tarball -C $Deps; if ($LASTEXITCODE) { [36;1mthrow "tar failed"[0m } }[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m                                                  ~~~~~~~~~~~~~~~~~~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1mtar failed[0m
+exit=1

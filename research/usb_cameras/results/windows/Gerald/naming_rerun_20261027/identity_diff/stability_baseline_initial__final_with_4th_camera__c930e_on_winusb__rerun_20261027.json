@@ -1,0 +1,339 @@
+{
+ "test": "naming.identity_diff",
+ "snapshots": [
+  {
+   "label": "baseline_initial",
+   "platform": "windows",
+   "hostname": "Gerald",
+   "utc_started": "2026-10-25T18:12:46.498256+00:00"
+  },
+  {
+   "label": "final_with_4th_camera",
+   "platform": "windows",
+   "hostname": "Gerald",
+   "utc_started": "2026-10-25T18:36:48.264577+00:00"
+  },
+  {
+   "label": "c930e_on_winusb",
+   "platform": "windows",
+   "hostname": "Gerald",
+   "utc_started": "2026-10-25T21:08:22.714855+00:00"
+  },
+  {
+   "label": "rerun_20261027",
+   "platform": "windows",
+   "hostname": "Gerald",
+   "utc_started": "2026-10-28T03:06:39.890674+00:00"
+  }
+ ],
+ "cameras": [
+  {
+   "camera": "1532:0e05 Razer Kiyo Pro",
+   "match": [
+    "vidpid",
+    "1532",
+    "0e05"
+   ],
+   "present_in": [
+    "baseline_initial",
+    "final_with_4th_camera",
+    "c930e_on_winusb"
+   ],
+   "fields": {}
+  },
+  {
+   "camera": "046d:085c C922 Pro Stream Webcam",
+   "match": [
+    "serial",
+    "046d",
+    "085c"
+   ],
+   "present_in": [
+    "baseline_initial",
+    "final_with_4th_camera",
+    "c930e_on_winusb",
+    "rerun_20261027"
+   ],
+   "fields": {
+    "vid": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "046d"
+    },
+    "pid": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "085c"
+    },
+    "bcdDevice": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "0016"
+    },
+    "usb_serial": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "B76395EF"
+    },
+    "usb_manufacturer": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": null
+    },
+    "usb_product": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "C922 Pro Stream Webcam"
+    },
+    "composite_instance_id": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "USB\\VID_046D&PID_085C\\B76395EF"
+    },
+    "video_function_instance_id": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "USB\\VID_046D&PID_085C&MI_00\\8&268DA596&0&0000"
+    },
+    "serial_used_in_instance_id": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": true
+    },
+    "container_id": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "{791c9a88-5665-5cbb-9d66-29961bfa28f1}"
+    },
+    "location_paths": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(1)"
+    },
+    "location_info": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "Port_#0001.Hub_#0001"
+    },
+    "port_number": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": 1
+    },
+    "hub_port_chain": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "USB\\ROOT_HUB30\\4&2FD48294&0&0:1"
+    },
+    "container_id_uuid_version": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": {
+      "version": 5
+     }
+    },
+    "usb_device_address": {
+     "stable": false,
+     "case_only": false,
+     "volatile": true,
+     "values": [
+      1,
+      22,
+      25,
+      3
+     ]
+    },
+    "friendly_name": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "c922 Pro Stream Webcam"
+    },
+    "bus_reported_device_desc": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "C922 Pro Stream Webcam"
+    },
+    "ks_video_camera_symlink": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "\\\\?\\USB#VID_046D&PID_085C&MI_00#8&268DA596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL"
+    },
+    "ks_capture_symlink": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "\\\\?\\USB#VID_046D&PID_085C&MI_00#8&268DA596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\GLOBAL"
+    },
+    "speed": {
+     "stable": true,
+     "case_only": false,
+     "volatile": false,
+     "values": "high"
+    },
+    "usb_serial_source": {
+     "stable": false,
+     "case_only": false,
+     "volatile": false,
+     "values": [
+      null,
+      "string_descriptor",
+      "string_descriptor",
+      "string_descriptor"
+     ]
+    },
+    "mf_index": {
+     "stable": false,
+     "case_only": false,
+     "volatile": false,
+     "values": [
+      null,
+      4,
+      4,
+      4
+     ]
+    },
+    "mf_friendly_name": {
+     "stable": false,
+     "case_only": false,
+     "volatile": false,
+     "values": [
+      null,
+      "c922 Pro Stream Webcam",
+      "c922 Pro Stream Webcam",
+      "c922 Pro Stream Webcam"
+     ]
+    },
+    "mf_symbolic_link": {
+     "stable": false,
+     "case_only": false,
+     "volatile": false,
+     "values": [
+      null,
+      "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+     ]
+    },
+    "dshow_index": {
+     "stable": false,
+     "case_only": false,
+     "volatile": false,
+     "values": [
+      null,
+      0,
+      0,
+      0
+     ]
+    },
+    "dshow_friendly_name": {
+     "stable": false,
+     "case_only": false,
+     "volatile": false,
+     "values": [
+      null,
+      "c922 Pro Stream Webcam",
+      "c922 Pro Stream Webcam",
+      "c922 Pro Stream Webcam"
+     ]
+    },
+    "ffmpeg_dshow_alternative_name": {
+     "stable": false,
+     "case_only": false,
+     "volatile": false,
+     "values": [
+      null,
+      "@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global"
+     ]
+    },
+    "mf_device_count": {
+     "stable": false,
+     "case_only": false,
+     "volatile": false,
+     "values": [
+      null,
+      8,
+      7,
+      8
+     ]
+    },
+    "dshow_device_count": {
+     "stable": false,
+     "case_only": false,
+     "volatile": false,
+     "values": [
+      null,
+      15,
+      14,
+      15
+     ]
+    },
+    "camera_key": {
+     "stable": false,
+     "case_only": false,
+     "volatile": false,
+     "values": [
+      null,
+      "046d:085c:sn=B76395EF",
+      "046d:085c:sn=B76395EF",
+      "046d:085c:sn=B76395EF"
+     ]
+    }
+   }
+  },
+  {
+   "camera": "046d:0843 Logitech Webcam C930e",
+   "match": [
+    "vidpid",
+    "046d",
+    "0843"
+   ],
+   "present_in": [
+    "baseline_initial",
+    "final_with_4th_camera",
+    "rerun_20261027"
+   ],
+   "fields": {}
+  },
+  {
+   "camera": "4c4a:4a55 USB Composite Device",
+   "match": [
+    "vidpid",
+    "4c4a",
+    "4a55"
+   ],
+   "present_in": [
+    "final_with_4th_camera",
+    "c930e_on_winusb",
+    "rerun_20261027"
+   ],
+   "fields": {}
+  }
+ ],
+ "command": "research/usb_cameras/naming/identity_diff.py research/usb_cameras/results/windows/Gerald/naming/snapshots/baseline_initial.json research/usb_cameras/results/windows/Gerald/naming/snapshots/final_with_4th_camera.json research/usb_cameras/results/windows/Gerald/phase2_naming_libusb/win_identity_dump/snapshots/c930e_on_winusb.json research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/win_identity_dump/snapshots/rerun_20261027.json --out research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/identity_diff/stability_baseline_initial__final_with_4th_camera__c930e_on_winusb__rerun_20261027.json",
+ "inputs": [
+  "research\\usb_cameras\\results\\windows\\Gerald\\naming\\snapshots\\baseline_initial.json",
+  "research\\usb_cameras\\results\\windows\\Gerald\\naming\\snapshots\\final_with_4th_camera.json",
+  "research\\usb_cameras\\results\\windows\\Gerald\\phase2_naming_libusb\\win_identity_dump\\snapshots\\c930e_on_winusb.json",
+  "research\\usb_cameras\\results\\windows\\Gerald\\naming_rerun_20261027\\win_identity_dump\\snapshots\\rerun_20261027.json"
+ ]
+}

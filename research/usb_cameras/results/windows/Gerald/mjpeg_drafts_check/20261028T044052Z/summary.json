@@ -1,0 +1,100 @@
+{
+ "test": "mjpeg_drafts_check",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-28T04:40:52.320695+00:00",
+ "command": "uv run --script research/usb_cameras/mjpeg/drafts/check_drafts.py",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "python": "3.12.13",
+  "packages": {},
+  "cpu_count": 28,
+  "windows_build": "10.0.26300"
+ },
+ "all_ok": true,
+ "py_compile": {
+  "aggregate.py": "ok",
+  "compare_runs.py": "ok",
+  "drafts/check_drafts.py": "ok",
+  "drafts/linux/v4l2_mmap_mjpeg.py": "ok",
+  "drafts/macos/avf_mjpeg_probe.py": "ok",
+  "list_formats.py": "ok",
+  "mjpeg_common.py": "ok",
+  "opencv/opencv_capture.py": "ok",
+  "pyav/pyav_capture.py": "ok",
+  "pyav/pyav_dshow_format_probe.py": "ok",
+  "results_table.py": "ok",
+  "resummarize.py": "ok",
+  "run_matrix.py": "ok",
+  "run_one.py": "ok",
+  "summarize.py": "ok",
+  "winrt/winrt_capture.py": "ok"
+ },
+ "bash_n": {
+  "drafts/linux/run_linux_mjpeg.sh": "ok",
+  "drafts/macos/run_macos_mjpeg.sh": "ok",
+  "winrt/run_winrt_variants.sh": "ok"
+ },
+ "runner_refs": {
+  "run_linux_mjpeg.sh": {
+   "V4L2_PY": {
+    "path": "drafts/linux/v4l2_mmap_mjpeg.py",
+    "exists": true
+   },
+   "PYAV_PY": {
+    "path": "pyav/pyav_capture.py",
+    "exists": true
+   },
+   "SUMMARIZE_PY": {
+    "path": "summarize.py",
+    "exists": true
+   },
+   "AGGREGATE_PY": {
+    "path": "aggregate.py",
+    "exists": true
+   }
+  },
+  "run_macos_mjpeg.sh": {
+   "PROBE_PY": {
+    "path": "drafts/macos/avf_mjpeg_probe.py",
+    "exists": true
+   },
+   "PYAV_PY": {
+    "path": "pyav/pyav_capture.py",
+    "exists": true
+   },
+   "SUMMARIZE_PY": {
+    "path": "summarize.py",
+    "exists": true
+   },
+   "AGGREGATE_PY": {
+    "path": "aggregate.py",
+    "exists": true
+   }
+  }
+ },
+ "v4l2_selftest": {
+  "returncode": 0,
+  "pass": true,
+  "output": "python 3.12.13 on win32; sizeof(void*)=8 sizeof(c_long)=4 (irrelevant: layouts use fixed-width types)\nstruct sizes (target: 64-bit Linux):\n  v4l2_capability         104  expected  104  OK\n  v4l2_fmtdesc             64  expected   64  OK\n  v4l2_frmsizeenum         44  expected   44  OK\n  v4l2_frmivalenum         52  expected   52  OK\n  v4l2_pix_format          48  expected   48  OK\n  v4l2_format             208  expected  208  OK\n  v4l2_captureparm         40  expected   40  OK\n  v4l2_streamparm         204  expected  204  OK\n  v4l2_requestbuffers      20  expected   20  OK\n  timeval                  16  expected   16  OK\n  v4l2_timecode            16  expected   16  OK\n  v4l2_buffer              88  expected   88  OK\n  v4l2_control              8  expected    8  OK\n  v4l2_queryctrl           68  expected   68  OK\nfield offsets:\n  v4l2_buffer.timestamp          24  expected   24  OK\n  v4l2_buffer.timecode           40  expected   40  OK\n  v4l2_buffer.sequence           56  expected   56  OK\n  v4l2_buffer.memory             60  expected   60  OK\n  v4l2_buffer.m                  64  expected   64  OK\n  v4l2_buffer.length             72  expected   72  OK\n  v4l2_buffer.r                  80  expected   80  OK\n  v4l2_format.fmt                 8  expected    8  OK\n  v4l2_streamparm.parm            4  expected    4  OK\n  v4l2_captureparm.timeperframe    8  expected    8  OK\n  v4l2_frmivalenum.u             20  expected   20  OK\n  v4l2_frmsizeenum.u             12  expected   12  OK\nioctl numbers (given x86_64 values):\n  VIDIOC_QUERYCAP              0x80685600  expected 0x80685600  OK\n  VIDIOC_S_FMT                 0xc0d05605  expected 0xc0d05605  OK\n  VIDIOC_REQBUFS               0xc0145608  expected 0xc0145608  OK\n  VIDIOC_QUERYBUF              0xc0585609  expected 0xc0585609  OK\n  VIDIOC_QBUF                  0xc058560f  expected 0xc058560f  OK\n  VIDIOC_DQBUF                 0xc0585611  expected 0xc0585611  OK\n  VIDIOC_STREAMON              0x40045612  expected 0x40045612  OK\n  VIDIOC_S_PARM                0xc0cc5616  expected 0xc0cc5616  OK\nioctl numbers (hand-expanded reference values):\n  VIDIOC_ENUM_FMT              0xc0405602  expected 0xc0405602  OK\n  VIDIOC_G_FMT                 0xc0d05604  expected 0xc0d05604  OK\n  VIDIOC_STREAMOFF             0x40045613  expected 0x40045613  OK\n  VIDIOC_G_PARM                0xc0cc5615  expected 0xc0cc5615  OK\n  VIDIOC_G_CTRL                0xc008561b  expected 0xc008561b  OK\n  VIDIOC_S_CTRL                0xc008561c  expected 0xc008561c  OK\n  VIDIOC_QUERYCTRL             0xc0445624  expected 0xc0445624  OK\n  VIDIOC_ENUM_FRAMESIZES       0xc02c564a  expected 0xc02c564a  OK\n  VIDIOC_ENUM_FRAMEINTERVALS   0xc034564b  expected 0xc034564b  OK\nV4L2_PIX_FMT_MJPEG = 0x47504a4d ('MJPG')  expected 0x47504a4d\nSELFTEST PASS\n"
+ },
+ "runner_layout": {
+  "run_linux_mjpeg.sh": {
+   "fresh_run_root": true,
+   "uv_run_calls": 6,
+   "result_writer_calls": 5,
+   "result_writer_calls_with_root": 5,
+   "multiline_capture_cmds_with_root": 4,
+   "ok": true
+  },
+  "run_macos_mjpeg.sh": {
+   "fresh_run_root": true,
+   "uv_run_calls": 6,
+   "result_writer_calls": 5,
+   "result_writer_calls_with_root": 5,
+   "multiline_capture_cmds_with_root": 4,
+   "ok": true
+  }
+ }
+}

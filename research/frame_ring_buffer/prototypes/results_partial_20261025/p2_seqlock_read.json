@@ -1,0 +1,526 @@
+{
+  "env": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.2.6",
+    "opencv": "4.12.0",
+    "cpu_count": 28,
+    "time": "2026-10-25 15:19:43",
+    "psutil": "7.2.2",
+    "ram_total_gb": 68.413349888,
+    "system_cpu_pct_1s_before_run": 31.8,
+    "other_python_processes_at_start": [
+      "C:\\Users\\Dom\\GitHub\\OpenMMLab-Exporter\\.venv\\Scripts\\python.exe notes/decisions/scripts/interim_mmpose_export.py all --family all --runs 2 --weights-dir C:/User",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script res",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpLbLwz1\\Scripts\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/u",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpaDSzWJ\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\tools\\camlock.py --time",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks/frame_pipeline/prototypes/p2_seqlock_read.py",
+      "C:\\Users\\Dom\\GitHub\\OpenMMLab-Exporter\\.venv\\Scripts\\python.exe -I notes/decisions/scripts/interim_vitpose_export.py --weights-dir C:/Users/Dom/AppData/Local/Te",
+      "C:\\Users\\Dom\\GitHub\\OpenMMLab-Exporter\\.venv\\Scripts\\python.exe -I notes/decisions/scripts/interim_vitpose_export.py --weights-dir C:/Users/Dom/AppData/Local/Te",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpKTSctr\\Scripts\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 1500 -- C:\\Program Files\\Git\\bin\\b",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 1500 -- research/usb_camera",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpk3l6qz\\Scripts\\python.exe research/usb_cameras/mjpeg/run_matrix.py --backend msmf-decoded-nv12 --backend openc",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpWRz10J\\Scripts\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 1500 -- research/usb_cameras/rust/",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/mjpeg/run_matrix.py --backend msmf-decoded-nv12 --backen",
+      "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\\scratchpad\\venvs\\viva-win\\Scripts\\python.exe",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\tools\\camlock.py",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py --timeout-s 1500 -- C:\\Program Files\\Gi",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py -- uv run --script research/usb_cameras",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmptz4HIu\\Scripts\\python.exe research/usb_cameras/tools/camlock.py -- cmd C:/ research\\usb_cameras\\timing\\scripts",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpRXku1A\\Scripts\\python.exe research/usb_cameras/tools/camlock.py -- uv run --script research/usb_cameras/bandwi",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellyca",
+      "C:\\Users\\Dom\\GitHub\\OpenMMLab-Exporter\\.venv\\Scripts\\python.exe notes/decisions/scripts/interim_mmpose_export.py all --family all --runs 2 --weights-dir C:/User",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/tools/camlock.py -- cmd C:/ research\\usb_cameras\\timing\\"
+    ],
+    "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d",
+    "av": "18.0.0",
+    "simplejpeg": null
+  },
+  "part_a": [
+    {
+      "L": 2,
+      "pattern": "latest",
+      "style": "copy_fncheck",
+      "writer_fps": 3526.377412653521,
+      "reads": 3581,
+      "accepted": 3581,
+      "rejected_stale": 0,
+      "rejected_seq": 0,
+      "rejected_fn": 0,
+      "silent_tears": 32,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 3581,
+        "median_ms": 0.2611,
+        "mean_ms": 0.26747263334264176,
+        "p99_ms": 0.4411999999999988,
+        "min_ms": 0.0805,
+        "max_ms": 0.6798
+      }
+    },
+    {
+      "L": 2,
+      "pattern": "latest",
+      "style": "seqlock_copy",
+      "writer_fps": 3576.062612478765,
+      "reads": 3591,
+      "accepted": 1041,
+      "rejected_stale": 0,
+      "rejected_seq": 2550,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 1041,
+        "median_ms": 0.2564,
+        "mean_ms": 0.259302497598463,
+        "p99_ms": 0.3626599999999998,
+        "min_ms": 0.084,
+        "max_ms": 0.484
+      }
+    },
+    {
+      "L": 2,
+      "pattern": "latest",
+      "style": "seqlock_view",
+      "writer_fps": 4730.20297904958,
+      "reads": 4611,
+      "accepted": 84,
+      "rejected_stale": 0,
+      "rejected_seq": 4527,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 84,
+        "median_ms": 0.20829999999999999,
+        "mean_ms": 0.21038214285714285,
+        "p99_ms": 0.30194500000000013,
+        "min_ms": 0.1499,
+        "max_ms": 0.3588
+      }
+    },
+    {
+      "L": 2,
+      "pattern": "oldest",
+      "style": "copy_fncheck",
+      "writer_fps": 3802.3890248273665,
+      "reads": 3754,
+      "accepted": 3717,
+      "rejected_stale": 10,
+      "rejected_seq": 0,
+      "rejected_fn": 27,
+      "silent_tears": 3528,
+      "accepted_value_wrong": 131,
+      "accepted_latency": {
+        "n": 3717,
+        "median_ms": 0.2524,
+        "mean_ms": 0.25576004842615013,
+        "p99_ms": 0.3928240000000012,
+        "min_ms": 0.1293,
+        "max_ms": 0.6092
+      }
+    },
+    {
+      "L": 2,
+      "pattern": "oldest",
+      "style": "seqlock_copy",
+      "writer_fps": 3760.8479480680276,
+      "reads": 375990,
+      "accepted": 0,
+      "rejected_stale": 0,
+      "rejected_seq": 375990,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 0
+      }
+    },
+    {
+      "L": 2,
+      "pattern": "oldest",
+      "style": "seqlock_view",
+      "writer_fps": 5067.622647818888,
+      "reads": 840761,
+      "accepted": 0,
+      "rejected_stale": 0,
+      "rejected_seq": 840761,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 0
+      }
+    },
+    {
+      "L": 8,
+      "pattern": "latest",
+      "style": "copy_fncheck",
+      "writer_fps": 3532.16881023317,
+      "reads": 3787,
+      "accepted": 3787,
+      "rejected_stale": 0,
+      "rejected_seq": 0,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 3787,
+        "median_ms": 0.2552,
+        "mean_ms": 0.25229786110377606,
+        "p99_ms": 0.41986599999999974,
+        "min_ms": 0.0769,
+        "max_ms": 0.8306
+      }
+    },
+    {
+      "L": 8,
+      "pattern": "latest",
+      "style": "seqlock_copy",
+      "writer_fps": 3388.75050109897,
+      "reads": 3307,
+      "accepted": 3306,
+      "rejected_stale": 0,
+      "rejected_seq": 1,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 3306,
+        "median_ms": 0.28225,
+        "mean_ms": 0.2889191772534785,
+        "p99_ms": 0.45360499999999965,
+        "min_ms": 0.11,
+        "max_ms": 0.6757
+      }
+    },
+    {
+      "L": 8,
+      "pattern": "latest",
+      "style": "seqlock_view",
+      "writer_fps": 3666.345480744369,
+      "reads": 3364,
+      "accepted": 3363,
+      "rejected_stale": 0,
+      "rejected_seq": 1,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 3363,
+        "median_ms": 0.274,
+        "mean_ms": 0.2867691049658043,
+        "p99_ms": 0.4873420000000001,
+        "min_ms": 0.1215,
+        "max_ms": 0.9572
+      }
+    },
+    {
+      "L": 8,
+      "pattern": "oldest",
+      "style": "copy_fncheck",
+      "writer_fps": 3022.2615435326743,
+      "reads": 3009,
+      "accepted": 2984,
+      "rejected_stale": 8,
+      "rejected_seq": 0,
+      "rejected_fn": 17,
+      "silent_tears": 2800,
+      "accepted_value_wrong": 119,
+      "accepted_latency": {
+        "n": 2984,
+        "median_ms": 0.3086,
+        "mean_ms": 0.3198353217158177,
+        "p99_ms": 0.5684950000000002,
+        "min_ms": 0.1498,
+        "max_ms": 0.9544
+      }
+    },
+    {
+      "L": 8,
+      "pattern": "oldest",
+      "style": "seqlock_copy",
+      "writer_fps": 3344.497893479696,
+      "reads": 387801,
+      "accepted": 0,
+      "rejected_stale": 0,
+      "rejected_seq": 387801,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 0
+      }
+    },
+    {
+      "L": 8,
+      "pattern": "oldest",
+      "style": "seqlock_view",
+      "writer_fps": 3771.3583218632666,
+      "reads": 653709,
+      "accepted": 0,
+      "rejected_stale": 0,
+      "rejected_seq": 653709,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 0
+      }
+    },
+    {
+      "L": 388,
+      "pattern": "latest",
+      "style": "copy_fncheck",
+      "writer_fps": 3113.553552885674,
+      "reads": 3499,
+      "accepted": 3499,
+      "rejected_stale": 0,
+      "rejected_seq": 0,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 3499,
+        "median_ms": 0.2596,
+        "mean_ms": 0.2733684767076307,
+        "p99_ms": 0.5276299999999999,
+        "min_ms": 0.0821,
+        "max_ms": 8.6803
+      }
+    },
+    {
+      "L": 388,
+      "pattern": "latest",
+      "style": "seqlock_copy",
+      "writer_fps": 3472.301286436071,
+      "reads": 3841,
+      "accepted": 3841,
+      "rejected_stale": 0,
+      "rejected_seq": 0,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 3841,
+        "median_ms": 0.2464,
+        "mean_ms": 0.24981627180421764,
+        "p99_ms": 0.33936,
+        "min_ms": 0.0979,
+        "max_ms": 0.6312
+      }
+    },
+    {
+      "L": 388,
+      "pattern": "latest",
+      "style": "seqlock_view",
+      "writer_fps": 3690.6642649472974,
+      "reads": 3621,
+      "accepted": 3621,
+      "rejected_stale": 0,
+      "rejected_seq": 0,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 3621,
+        "median_ms": 0.2487,
+        "mean_ms": 0.2680863297431649,
+        "p99_ms": 0.4991000000000002,
+        "min_ms": 0.1175,
+        "max_ms": 0.7497
+      }
+    },
+    {
+      "L": 388,
+      "pattern": "oldest",
+      "style": "copy_fncheck",
+      "writer_fps": 2940.1524053708363,
+      "reads": 3231,
+      "accepted": 3210,
+      "rejected_stale": 4,
+      "rejected_seq": 0,
+      "rejected_fn": 17,
+      "silent_tears": 2996,
+      "accepted_value_wrong": 141,
+      "accepted_latency": {
+        "n": 3210,
+        "median_ms": 0.2838,
+        "mean_ms": 0.29782433021806853,
+        "p99_ms": 0.5219759999999994,
+        "min_ms": 0.1382,
+        "max_ms": 1.1966
+      }
+    },
+    {
+      "L": 388,
+      "pattern": "oldest",
+      "style": "seqlock_copy",
+      "writer_fps": 2860.203769091207,
+      "reads": 368518,
+      "accepted": 0,
+      "rejected_stale": 0,
+      "rejected_seq": 368518,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 0
+      }
+    },
+    {
+      "L": 388,
+      "pattern": "oldest",
+      "style": "seqlock_view",
+      "writer_fps": 3374.7089866071033,
+      "reads": 637200,
+      "accepted": 0,
+      "rejected_stale": 0,
+      "rejected_seq": 637200,
+      "rejected_fn": 0,
+      "silent_tears": 0,
+      "accepted_value_wrong": 0,
+      "accepted_latency": {
+        "n": 0
+      }
+    }
+  ],
+  "part_b": [
+    {
+      "size": "1080p",
+      "style": "seqlock_copy",
+      "validation_failures": 0,
+      "n": 90,
+      "median_ms": 0.42479999999999996,
+      "mean_ms": 0.4913355555555555,
+      "p99_ms": 1.1381789999999998,
+      "min_ms": 0.3643,
+      "max_ms": 1.4487
+    },
+    {
+      "size": "1080p",
+      "style": "seqlock_view",
+      "validation_failures": 0,
+      "n": 90,
+      "median_ms": 0.0393,
+      "mean_ms": 0.04201666666666667,
+      "p99_ms": 0.11288799999999999,
+      "min_ms": 0.009,
+      "max_ms": 0.1225
+    },
+    {
+      "size": "1080p",
+      "style": "seqlock_view_resize",
+      "validation_failures": 0,
+      "n": 90,
+      "median_ms": 0.5603,
+      "mean_ms": 0.622638888888889,
+      "p99_ms": 1.1956209999999998,
+      "min_ms": 0.4922,
+      "max_ms": 1.5793
+    },
+    {
+      "size": "1080p",
+      "style": "multi5_seqlock_copy",
+      "validation_failures": 0,
+      "n": 87,
+      "median_ms": 2.5224,
+      "mean_ms": 2.5961126436781607,
+      "p99_ms": 4.34313,
+      "min_ms": 1.8256,
+      "max_ms": 4.9791
+    },
+    {
+      "size": "1080p",
+      "style": "multi5_seqlock_view",
+      "validation_failures": 0,
+      "n": 88,
+      "median_ms": 0.05525,
+      "mean_ms": 0.05439318181818182,
+      "p99_ms": 0.10760199999999993,
+      "min_ms": 0.0196,
+      "max_ms": 0.121
+    },
+    {
+      "size": "1080p",
+      "style": "multi5_seqlock_view_resize",
+      "validation_failures": 0,
+      "n": 92,
+      "median_ms": 2.9668,
+      "mean_ms": 3.1230847826086965,
+      "p99_ms": 4.988849000000003,
+      "min_ms": 2.6601,
+      "max_ms": 5.7952
+    },
+    {
+      "size": "720p",
+      "style": "seqlock_copy",
+      "validation_failures": 0,
+      "n": 90,
+      "median_ms": 0.2222,
+      "mean_ms": 0.24460333333333337,
+      "p99_ms": 0.570538,
+      "min_ms": 0.1728,
+      "max_ms": 0.6024
+    },
+    {
+      "size": "720p",
+      "style": "seqlock_view",
+      "validation_failures": 0,
+      "n": 90,
+      "median_ms": 0.035,
+      "mean_ms": 0.03200555555555556,
+      "p99_ms": 0.061844,
+      "min_ms": 0.0063,
+      "max_ms": 0.0622
+    },
+    {
+      "size": "720p",
+      "style": "seqlock_view_resize",
+      "validation_failures": 0,
+      "n": 90,
+      "median_ms": 0.2863,
+      "mean_ms": 0.3036088888888889,
+      "p99_ms": 0.461263,
+      "min_ms": 0.2506,
+      "max_ms": 0.5443
+    },
+    {
+      "size": "720p",
+      "style": "multi5_seqlock_copy",
+      "validation_failures": 0,
+      "n": 90,
+      "median_ms": 1.0013,
+      "mean_ms": 1.0314366666666668,
+      "p99_ms": 1.5791989999999996,
+      "min_ms": 0.816,
+      "max_ms": 2.1229
+    },
+    {
+      "size": "720p",
+      "style": "multi5_seqlock_view",
+      "validation_failures": 0,
+      "n": 90,
+      "median_ms": 0.05275,
+      "mean_ms": 0.04937999999999999,
+      "p99_ms": 0.090291,
+      "min_ms": 0.0177,
+      "max_ms": 0.0975
+    },
+    {
+      "size": "720p",
+      "style": "multi5_seqlock_view_resize",
+      "validation_failures": 0,
+      "n": 90,
+      "median_ms": 1.3022,
+      "mean_ms": 1.4240111111111111,
+      "p99_ms": 3.697993,
+      "min_ms": 1.1841,
+      "max_ms": 3.7659
+    }
+  ],
+  "run_a_s": 1.0,
+  "run_b_s": 0.3
+}

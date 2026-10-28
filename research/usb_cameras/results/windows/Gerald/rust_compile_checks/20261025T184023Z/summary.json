@@ -1,0 +1,138 @@
+{
+ "test": "rust_compile_checks",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "20261025T184023Z",
+ "command": "research/usb_cameras/rust/compile_checks/run_compile_checks.py --only uvc_iso,uvc_iso+libusb",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "cpu_count": 28
+ },
+ "note": "cross-target rows are `cargo check` only (no linking); C-building crates may fail cross-check for lack of a cross C toolchain, see errors",
+ "items": [
+  {
+   "name": "uvc_iso",
+   "target": "host",
+   "action": "build --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "clean_build_s": 11.2,
+   "binary": "research\\usb_cameras\\rust\\compile_checks\\build\\uvc_iso\\release\\uvc_iso.exe",
+   "binary_bytes": 858112,
+   "errors": [],
+   "stderr_tail": [
+    "   Compiling windows-collections v0.3.2",
+    "   Compiling windows-numerics v0.3.1",
+    "   Compiling windows-future v0.3.2",
+    "   Compiling windows v0.62.2",
+    "   Compiling uvc_iso v0.1.0 (C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\rust\\uvc_iso)",
+    "    Finished `release` profile [optimized] target(s) in 11.19s"
+   ],
+   "log": "uvc_iso__host.log"
+  },
+  {
+   "name": "uvc_iso",
+   "target": "x86_64-unknown-linux-gnu",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "check_s": 1.9,
+   "errors": [],
+   "stderr_tail": [
+    "    Checking rawusb v0.1.7",
+    "   Compiling zmij v1.0.23",
+    "   Compiling serde_json v1.0.154",
+    "   Compiling libc v0.2.191",
+    "    Checking uvc_iso v0.1.0 (C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\rust\\uvc_iso)",
+    "    Finished `release` profile [optimized] target(s) in 1.89s"
+   ],
+   "log": "uvc_iso__x86_64-unknown-linux-gnu.log"
+  },
+  {
+   "name": "uvc_iso",
+   "target": "aarch64-apple-darwin",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "check_s": 1.7,
+   "errors": [],
+   "stderr_tail": [
+    "    Checking rawusb v0.1.7",
+    "   Compiling zmij v1.0.23",
+    "   Compiling libc v0.2.191",
+    "   Compiling serde_json v1.0.154",
+    "    Checking uvc_iso v0.1.0 (C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\rust\\uvc_iso)",
+    "    Finished `release` profile [optimized] target(s) in 1.70s"
+   ],
+   "log": "uvc_iso__aarch64-apple-darwin.log"
+  },
+  {
+   "name": "uvc_iso+libusb",
+   "target": "host",
+   "action": "build --release",
+   "expected": "ok",
+   "exit_code": 0,
+   "outcome": "ok",
+   "clean_build_s": 12.9,
+   "binary": "research\\usb_cameras\\rust\\compile_checks\\build\\uvc_iso_libusb\\release\\uvc_iso.exe",
+   "binary_bytes": 1005568,
+   "errors": [],
+   "stderr_tail": [
+    "   Compiling windows-numerics v0.3.1",
+    "   Compiling windows-future v0.3.2",
+    "   Compiling windows-collections v0.3.2",
+    "   Compiling windows v0.62.2",
+    "   Compiling uvc_iso v0.1.0 (C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\rust\\uvc_iso)",
+    "    Finished `release` profile [optimized] target(s) in 12.83s"
+   ],
+   "log": "uvc_iso+libusb__host.log"
+  },
+  {
+   "name": "uvc_iso+libusb",
+   "target": "x86_64-unknown-linux-gnu",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 1.5,
+   "errors": [
+    "error: failed to run custom build command for `libusb1-sys v0.7.0`"
+   ],
+   "stderr_tail": [
+    "",
+    "",
+    "  error occurred in cc-rs: failed to find tool \"x86_64-linux-gnu-gcc\": program not found (see https://docs.rs/cc/latest/cc/#compile-time-requirements for help)",
+    "",
+    "",
+    "warning: build failed, waiting for other jobs to finish..."
+   ],
+   "log": "uvc_iso+libusb__x86_64-unknown-linux-gnu.log"
+  },
+  {
+   "name": "uvc_iso+libusb",
+   "target": "aarch64-apple-darwin",
+   "action": "check --release",
+   "expected": "ok",
+   "exit_code": 101,
+   "outcome": "fail",
+   "check_s": 1.2,
+   "errors": [
+    "error: failed to run custom build command for `libusb1-sys v0.7.0`"
+   ],
+   "stderr_tail": [
+    "",
+    "",
+    "  error occurred in cc-rs: failed to find tool \"cc\": program not found (see https://docs.rs/cc/latest/cc/#compile-time-requirements for help)",
+    "",
+    "",
+    "warning: build failed, waiting for other jobs to finish..."
+   ],
+   "log": "uvc_iso+libusb__aarch64-apple-darwin.log"
+  }
+ ]
+}

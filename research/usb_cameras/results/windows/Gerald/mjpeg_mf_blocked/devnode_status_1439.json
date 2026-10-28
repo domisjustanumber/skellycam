@@ -1,0 +1,83 @@
+{
+ "test": "mjpeg_mf_blocked",
+ "platform": "windows",
+ "hostname": "GERALD",
+ "utc": "2026-10-25T18:39:05.9751720Z",
+ "command": "see README: Get-PnpDeviceProperty DEVPKEY_Device_DevNodeStatus + System log event 225",
+ "devnodes": [
+  {
+   "instance": "USB\\VID_046D&PID_085C&MI_00\\8&268DA596&0&0000",
+   "devnode_status": "0x0180600A",
+   "DN_NEED_RESTART_0x100": false
+  },
+  {
+   "instance": "USB\\VID_1532&PID_0E05&MI_00\\A&34494D13&0&0000",
+   "devnode_status": "0x0180600A",
+   "DN_NEED_RESTART_0x100": false
+  },
+  {
+   "instance": "USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&0&0000",
+   "devnode_status": "0x0180600A",
+   "DN_NEED_RESTART_0x100": false
+  }
+ ],
+ "pnp_veto_events": [
+  {
+   "time": "2026-10-25T14:33:19.9809614-04:00",
+   "Id": 225,
+   "msg": "The application \\Device\\HarddiskVolume3\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe with process id 45784 stopped the removal or ejection for the device USB\\VID_046D&PID_0843\\7&7dcc7ce&0&4.\r\nProcess command line: \"C:\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe\" \"--run\"  -"
+  },
+  {
+   "time": "2026-10-25T14:33:14.8104163-04:00",
+   "Id": 225,
+   "msg": "The application \\Device\\HarddiskVolume3\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe with process id 45784 stopped the removal or ejection for the device USB\\VID_046D&PID_085C\\B76395EF.\r\nProcess command line: \"C:\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe\" \"--run\"  -o 000"
+  },
+  {
+   "time": "2026-10-25T14:33:09.5949091-04:00",
+   "Id": 225,
+   "msg": "The application \\Device\\HarddiskVolume3\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe with process id 45784 stopped the removal or ejection for the device USB\\VID_1532&PID_0E05\\9&3a0ecb01&0&4.\r\nProcess command line: \"C:\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe\" \"--run\"  "
+  },
+  {
+   "time": "2026-10-25T14:33:04.4091782-04:00",
+   "Id": 225,
+   "msg": "The application \\Device\\HarddiskVolume3\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe with process id 45784 stopped the removal or ejection for the device USB\\VID_4C4A&PID_4A55\\7&7dcc7ce&0&3.\r\nProcess command line: \"C:\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe\" \"--run\"  -"
+  },
+  {
+   "time": "2026-10-25T14:11:30.3679082-04:00",
+   "Id": 225,
+   "msg": "The application \\Device\\HarddiskVolume3\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe with process id 8748 stopped the removal or ejection for the device USB\\VID_046D&PID_0843\\7&7dcc7ce&0&4.\r\nProcess command line: \"C:\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe\" \"--run\"  -o"
+  },
+  {
+   "time": "2026-10-25T14:11:25.2082224-04:00",
+   "Id": 225,
+   "msg": "The application \\Device\\HarddiskVolume3\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe with process id 8748 stopped the removal or ejection for the device USB\\VID_046D&PID_085C\\B76395EF.\r\nProcess command line: \"C:\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe\" \"--run\"  -o 0000"
+  },
+  {
+   "time": "2026-10-25T14:11:20.0136563-04:00",
+   "Id": 225,
+   "msg": "The application \\Device\\HarddiskVolume3\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe with process id 8748 stopped the removal or ejection for the device USB\\VID_1532&PID_0E05\\9&3a0ecb01&0&4.\r\nProcess command line: \"C:\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe\" \"--run\"  -"
+  },
+  {
+   "time": "2026-10-25T14:04:44.1942803-04:00",
+   "Id": 225,
+   "msg": "The application \\Device\\HarddiskVolume3\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe with process id 9068 stopped the removal or ejection for the device USB\\VID_046D&PID_0843&MI_00\\8&39dec205&0&0000.\r\nProcess command line: \"C:\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe\" \""
+  },
+  {
+   "time": "2026-10-25T14:04:39.1493182-04:00",
+   "Id": 225,
+   "msg": "The application \\Device\\HarddiskVolume3\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe with process id 9068 stopped the removal or ejection for the device USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000.\r\nProcess command line: \"C:\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe\" \""
+  },
+  {
+   "time": "2026-10-25T14:04:34.1070566-04:00",
+   "Id": 225,
+   "msg": "The application \\Device\\HarddiskVolume3\\Program Files\\Razer\\RazerAppEngine\\app-4.0.827\\RazerAppEngine.exe with process id 35292 stopped the removal or ejection for the device USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000.\r\nProcess command line:  --url-params=apps=synapse --launch-force-hidden=synaps"
+  },
+  {
+   "time": "2026-10-25T14:04:34.1070506-04:00",
+   "Id": 225,
+   "msg": "The application \\Device\\HarddiskVolume3\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe with process id 9068 stopped the removal or ejection for the device USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000.\r\nProcess command line: \"C:\\Program Files\\Logitech\\LogiTune\\backend\\LogiTuneAgent.exe\" \""
+  }
+ ],
+ "correction_by_mjpeg_agent_1450": "DN_NEED_RESTART is bit 0x100 (cfg.h: DN_NEED_RESTART == DN_LIAR == 0x00000100). The MI_00 statuses recorded here (0x0180600A) do not have that bit, so DN_NEED_RESTART should read false for all three. See ../mjpeg_mf_recheck/summary.json.",
+ "correction": "Original file computed DN_NEED_RESTART with the wrong mask (0x01000000). Corrected with DN_NEED_RESTART=0x00000100 (cfg.h): the camera interface devnodes (MI_00, 0x0180600A) did NOT need a restart at 14:39; see mjpeg_mf_recheck/summary.json for the parent usbccgp devnodes."
+}

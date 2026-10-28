@@ -1,0 +1,67 @@
+=== --fmt Mono8
+Frame 65464: 20/210 packets unrecoverable
+Frame 65471: 20/210 packets unrecoverable
+discovered: [('172.17.0.2', 'Fake')]
+FIRST_URL: b'Local:arv-fake-camera.xml;10000;3e67' -> parse_first_url: ('arv-fake-camera.xml', 10000, 15975)
+fetch_genicam_xml: 15975 bytes, nonzero=0, head=b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+manual hex read: head=b'<?xml version="1.0" encoding="utf-8"?>\n\n'
+tick freq (0x093C/0x0940): 1000000000
+SO_RCVBUF after lib init: 425984
+fmt=Mono8 640x480@30: frames=79 complete=1 shapes={((480, 640), 'uint8', 307200)} expected_bytes=307200
+timestamp deltas (first 3): [18852000, 33334000, 33333000] resend_stats: {'requested': 1374, 'recovered': 0, 'failed': 40}
+=== --fmt Mono16
+Frame 40: 173/420 packets unrecoverable
+Frame 42: 178/420 packets unrecoverable
+Frame 43: 184/420 packets unrecoverable
+Frame 46: 194/420 packets unrecoverable
+discovered: [('172.17.0.2', 'Fake')]
+FIRST_URL: b'Local:arv-fake-camera.xml;10000;3e67' -> parse_first_url: ('arv-fake-camera.xml', 10000, 15975)
+fetch_genicam_xml: 15975 bytes, nonzero=0, head=b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+manual hex read: head=b'<?xml version="1.0" encoding="utf-8"?>\n\n'
+tick freq (0x093C/0x0940): 1000000000
+SO_RCVBUF after lib init: 425984
+fmt=Mono16 640x480@30: frames=85 complete=0 shapes={((480, 640), 'uint16', 614400)} expected_bytes=614400
+timestamp deltas (first 3): [31913000, 33332000, 33334000] resend_stats: {'requested': 12691, 'recovered': 0, 'failed': 4731}
+=== --fmt Mono8 --force 33554432
+discovered: [('172.17.0.2', 'Fake')]
+FIRST_URL: b'Local:arv-fake-camera.xml;10000;3e67' -> parse_first_url: ('arv-fake-camera.xml', 10000, 15975)
+fetch_genicam_xml: 15975 bytes, nonzero=0, head=b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+manual hex read: head=b'<?xml version="1.0" encoding="utf-8"?>\n\n'
+tick freq (0x093C/0x0940): 1000000000
+SO_RCVBUF after lib init: 425984
+SO_RCVBUF after FORCE: 67108864
+fmt=Mono8 640x480@30: frames=92 complete=92 shapes={((480, 640), 'uint8', 307200)} expected_bytes=307200
+timestamp deltas (first 3): [2632000, 33334000, 33334000] resend_stats: {'requested': 0, 'recovered': 0, 'failed': 0}
+=== --fmt Mono16 --force 33554432
+discovered: [('172.17.0.2', 'Fake')]
+FIRST_URL: b'Local:arv-fake-camera.xml;10000;3e67' -> parse_first_url: ('arv-fake-camera.xml', 10000, 15975)
+fetch_genicam_xml: 15975 bytes, nonzero=0, head=b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+manual hex read: head=b'<?xml version="1.0" encoding="utf-8"?>\n\n'
+tick freq (0x093C/0x0940): 1000000000
+SO_RCVBUF after lib init: 425984
+SO_RCVBUF after FORCE: 67108864
+fmt=Mono16 640x480@30: frames=89 complete=89 shapes={((480, 640), 'uint16', 614400)} expected_bytes=614400
+timestamp deltas (first 3): [24008000, 33354000, 33312000] resend_stats: {'requested': 0, 'recovered': 0, 'failed': 0}
+=== --fmt BayerRG8 --force 33554432
+Frame 316: 210/420 packets unrecoverable
+Frame 317: 210/420 packets unrecoverable
+Frame 318: 210/420 packets unrecoverable
+discovered: [('172.17.0.2', 'Fake')]
+FIRST_URL: b'Local:arv-fake-camera.xml;10000;3e67' -> parse_first_url: ('arv-fake-camera.xml', 10000, 15975)
+fetch_genicam_xml: 15975 bytes, nonzero=0, head=b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+manual hex read: head=b'<?xml version="1.0" encoding="utf-8"?>\n\n'
+tick freq (0x093C/0x0940): 1000000000
+SO_RCVBUF after lib init: 425984
+SO_RCVBUF after FORCE: 67108864
+fmt=BayerRG8 640x480@30: frames=89 complete=0 shapes={((480, 640), 'uint16', 614400)} expected_bytes=307200
+timestamp deltas (first 3): [31328000, 33337000, 33332000] resend_stats: {'requested': 0, 'recovered': 0, 'failed': 18690}
+=== --fmt RGB8 --force 33554432
+discovered: [('172.17.0.2', 'Fake')]
+FIRST_URL: b'Local:arv-fake-camera.xml;10000;3e67' -> parse_first_url: ('arv-fake-camera.xml', 10000, 15975)
+fetch_genicam_xml: 15975 bytes, nonzero=0, head=b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+manual hex read: head=b'<?xml version="1.0" encoding="utf-8"?>\n\n'
+tick freq (0x093C/0x0940): 1000000000
+SO_RCVBUF after lib init: 425984
+SO_RCVBUF after FORCE: 67108864
+fmt=RGB8 640x480@30: frames=89 complete=89 shapes={((480, 640), 'uint16', 614400)} expected_bytes=921600
+timestamp deltas (first 3): [32090000, 33333000, 33333000] resend_stats: {'requested': 0, 'recovered': 0, 'failed': 0}

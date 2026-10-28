@@ -1,0 +1,143 @@
+28
+python 3.12.15 Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.36 viva 0.10.0
+fake: FakeGigeCamera(running, 640x480 @ 60 fps on 127.0.0.1:3956, pixel_format=0x01080001) ip 127.0.0.1 port 3956 start s 0.003
+discover {} -> [] 0.0 s
+discover {'all': True} -> [GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')] 0.502 s
+discover {'iface': '127.0.0.1'} -> [GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')] 0.503 s
+discover {'iface': '127.0.0.1', 'all': True} -> [GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')] 0.502 s
+device_info: GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige') {'ip': '127.0.0.1', 'mac': 'DE:AD:BE:EF:CA:FE', 'manufacturer': 'viva-genicam', 'model': 'FakeGigE', 'transport': 'gige'}
+control_state ControlState.HELD controller per fake: 127.0.0.1:59474
+transport gige xml len 43436
+n nodes 143
+  get 'DeviceVendorName' = 'vitavision.dev'
+  get 'DeviceModelName' = 'VivaCam Fake'
+  get 'DeviceSerialNumber' = 'VIVA-FAKE-001'
+  get 'DeviceID' = 'VivaCam-0'
+  get 'DeviceFirmwareVersion' = '1.0.0-fake'
+  get 'Width' = '640'
+  get 'Height' = '480'
+  get 'PixelFormat' = 'Mono8'
+  get 'SensorType' = 'Monochrome'
+  get 'AcquisitionFrameRate' = '30'
+  get 'ExposureTime' = '5000'
+  get 'Gain' = '0'
+  get 'GevTimestampTickFrequency' = '1000000000'
+  get 'GevSCPSPacketSize' = '1500'
+  get 'GevSCPD' ERR GenApiError: node not found: GevSCPD
+  get 'PayloadSize' = '307200'
+  get 'TLParamsLocked' = '0'
+  get 'TriggerSelector' = 'FrameStart'
+  get 'TriggerMode' = 'Off'
+  get 'TriggerSource' = 'Line1'
+  get 'PtpEnable' ERR GenApiError: node not found: PtpEnable
+  get 'GevIEEE1588' ERR GenApiError: node not found: GevIEEE1588
+  get 'ActionDeviceKey' ERR GenApiError: node not found: ActionDeviceKey
+  get 'GevIEEE1588OffsetFromMasterLatched_Val' = '-1234567'
+PixelFormat enum_entries ['Mono8', 'Mono16', 'RGB8', 'BayerRG8'] available ['Mono8', 'Mono16']
+TriggerSource entries ['Line1', 'Software']
+feature_state(PixelFormat) FeatureState(kind='Enumeration', value='Mono8', access='RW', is_implemented=True, is_available=True, range=None, enum_entries=['Mono8', 'Mono16'], unit=None, polling_time=None, caching='WriteThrough')
+feature_state(Width) FeatureState(kind='Integer', value=640, access='RW', is_implemented=True, is_available=True, range=ValueRange(min=16.0, max=4096.0, inc=None), enum_entries=None, unit=None, polling_time=None, caching='WriteThrough')
+node_info PtpEnable None
+node_info Nope None
+node_info Width NodeInfo(name='Width', kind='Integer', access='RW', visibility='Beginner', display_name=None, description=None, tooltip='Width of the image in pixels', effective_access='RW')
+feature_state(PtpEnable) ERR GenApiError node not found: PtpEnable | mro ['GenApiError', 'GenicamError', 'Exception', 'BaseException', 'object']
+Version reg 0x0000 = 0x00020000 (major 2, minor 0)
+GVCP capability 0x0934 = 0x08000027; 1588=False sched_action=False action=False
+tick freq bootstrap 1000000000
+GVCP config 0x0954 = 0x2
+bootstrap timestamp latch value 0
+read 8 bytes at 0x0948: 0000000000000000
+set PixelFormat BayerRG8 on mono sensor ERR GenApiError enum PixelFormat's entry BayerRG8 is not available now
+GevSCPSPacketSize during stream 1500
+first frame: Frame(width=640, height=480, pixel_format=Mono8, bytes=307200) status FrameStatus.COMPLETE complete True ptype 0x1 pf Mono8 0x1080001 padding_x 0 ts_dev 8603 ts_host None chunks None missing None
+to_numpy (480, 640) uint8 False True
+100 frames in 2.14s = 46.7 fps; block ids [1, 2, 4]..103; ts_dev deltas(ns?) [20218820, 53734792, 22049378, 20029247]
+stats: StreamStats(frames_complete=100, frames_incomplete=3, frames_missed=0, frames_backpressure=0, frames_unsupported=0, packets_received=21778, packets_duplicate=0, packets_missing=3, packets_ignored_malformed=0, packets_ignored_unsupported=0, packets_ignored_out_of_range=0, packets_ignored_late=0, packets_ignored_error_status=0, packets_ignored_foreign=0, packets_size_mismatch=0, resend_requested=0, resend_recovered=0, resend_unavailable=0, transfer_errors=0, bytes=30720000, frames_lost=3, packets_ignored=0, last_frame_dt=0.02021612, avg_fps=496.0160475448249, avg_mbps=1219.0090384461619, avg_latency_ms=None, elapsed=2.136276617, packets_per_second=10194.372688768703)
+after stream control_state ControlState.HELD
+closed True fake controller after close None
+after close get ERR GenicamError the camera is closed
+== t4
+
+=== GIL: busy Python thread iterations over 3 s
+  stream thread got 68 frames, spent 3.04s blocked in next_frame
+  385 uncached GVCP reads in 3.0s (128/s)
+  spin iterations: idle-main 54,005,912  while-streaming 57,435,134 (106%)  while-GVCP-reads 56,276,178 (104%)
+
+=== decode cost: to_numpy vs np.frombuffer(payload())  (1280x1024 Mono8)
+  to_numpy()                          0.059 ms  shape (1024, 1280) owndata False writeable True
+  np.frombuffer(payload()).reshape    0.062 ms  shape (1024, 1280) owndata False writeable False
+  to_rgb8()                           0.391 ms  shape (1024, 1280, 3) owndata False writeable True
+
+=== threading: stream pulled in worker thread while main thread uses camera
+  worker got 30 frames (errors []); main did 26500 feature reads meanwhile
+  two concurrent next_frame on one stream -> ['RuntimeError: Already borrowed', 32]
+  set Width while streaming -> GenApiError node Width is locked by TLParamsLocked
+  second stream() while first open -> OK?!
+
+=== time mapping
+  before calibrate: ts_dev 1406959003 ts_host None map_dev_ts None
+  time_calibrate(8,20) took 0.149s
+  block 4 ts_dev 132087741 ts_host 1792953013.980017 host_now-ts_host 170.934 ms
+  block 5 ts_dev 175537337 ts_host 1792953013.980017 host_now-ts_host 214.049 ms
+  block 6 ts_dev 218563643 ts_host 1792953013.980017 host_now-ts_host 257.962 ms
+  block 7 ts_dev 262534626 ts_host 1792953013.980017 host_now-ts_host 307.124 ms
+  block 8 ts_dev 306726688 ts_host 1792953013.980017 host_now-ts_host 345.165 ms
+  map_dev_ts(ts_dev) == ts_host: True
+  time_calibrate(samples=1) -> TransportError time calibration: it takes at least two samples
+
+=== timeouts / trigger / end
+  TriggerMode On TriggerSource Software
+  next_frame(timeout_ms=300) in trigger mode -> TransportError: timeout waiting for frame after 0.300s
+  after trigger_software -> 9 fake.software_triggers 1
+  set TriggerSource=Action1 -> GenApiError enum TriggerSource has no entry named Action1
+  set TriggerSource=Action0 -> GenApiError enum TriggerSource has no entry named Action0
+  next_frame after close -> ParseError frame stream is closed
+
+=== exceptions
+  get missing: GenApiError | node not found: NoSuchFeature
+  set_integer Width=3: GenApiError | Width: 3 is below the minimum 16
+  set_integer Width=1e6: GenApiError | Width: 1000000 is above the maximum 4096
+  set command: GenApiError | AcquisitionStart is a Command, not a feature that is set (run a command with execute_command or execute_and_wait)
+  get_integer on enum: GenApiError | PixelFormat is an Enumeration, not an Integer
+  set_enum bad entry: GenApiError | enum PixelFormat has no entry named Nope
+  read_register unmapped: ok -> b'\x00\x00\x00\x00'
+  execute(TimestampLatch) -> True warnings []
+
+=== control privilege / heartbeat
+  second controller connect -> TransportError claim control: device reported status ACCESS_DENIED (0x8006)
+  monitor connect -> ControlState.MONITOR Width 1280
+  monitor set -> GenApiError register I/O failed: the camera was opened as a read-only monitor, so nothing is written; open it with Access::Control, or reclaim_control, to write (register 0x00020000)
+  heartbeat timeout reg 0x0938 = 3000 ms
+  after fake.revoke_control(): control_state ControlState.LOST (noticed after 0.05s)
+  set after revoke -> GenApiError register I/O failed: control of the camera was lost, so nothing is written; reclaim_control takes it again (register 0x00020040)
+  after reclaim_control: ControlState.HELD fake.controller 127.0.0.1:50621
+  after release_control: ControlState.RELEASED fake.controller None
+  set after release -> GenApiError register I/O failed: control of the camera was released, so nothing is written; reclaim_control takes it again (register 0x00020040)
+  stream() after release -> 71 ControlState.HELD
+
+=== stream knobs
+  {'packet_size': 9000}: ok block 1; GevSCPSPacketSize=9000 packets/frame=37
+  {'packet_size': 576}: ok block 2; GevSCPSPacketSize=9000 packets/frame=571
+  {'auto_packet_size': True}: ok block 3; GevSCPSPacketSize=9000 packets/frame=7
+  {'packet_delay_ns': 2000}: ok block 4; GevSCPSPacketSize=9000 packets/frame=7
+  {'destination_port': 50555}: ok block 5; GevSCPSPacketSize=9000 packets/frame=7
+  {'resend': False}: ok block 6; GevSCPSPacketSize=9000 packets/frame=7
+  {'iface': '127.0.0.1'}: ok block 7; GevSCPSPacketSize=9000 packets/frame=7
+  {'packet_size': 1500, 'auto_packet_size': True}: ParseError: pass at most one of auto_packet_size=True and packet_size=...
+
+=== incomplete frames / resend
+  camera resend=True deliver_incomplete=False: [(1, 'Complete', None), (2, 'Complete', None), (3, 'Complete', None), (4, 'Complete', None)] | incomplete=0 resend_req=2 recovered=2 unavailable=0
+  camera resend=True deliver_incomplete=True: [(1, 'Complete', None), (2, 'Complete', None), (3, 'Complete', None), (4, 'Complete', None)] | incomplete=0 resend_req=2 recovered=2 unavailable=0
+  camera resend=False deliver_incomplete=False: [(1, 'Complete', None), (4, 'Complete', None), (5, 'Complete', None), (6, 'Complete', None)] | incomplete=2 resend_req=0 recovered=0 unavailable=0
+  camera resend=False deliver_incomplete=True: [(1, 'Complete', None), (2, 'Incomplete', 1), (3, 'Incomplete', 1), (4, 'Complete', None)] | incomplete=2 resend_req=0 recovered=0 unavailable=0
+== t5
+latched GevTimestampValue (ticks, host time): [(1505258904, 1792953027.7828872), (1555526109, 1792953027.8331726), (1605815851, 1792953027.8834631), (1656099583, 1792953027.9337797), (1706417594, 1792953027.9840758)]
+fake register peek 0x20068: 0000000065b5ddba
+map_dev_ts(0) = 1792953028.0343993
+map_dev_ts(1000000000) = 1792953028.0343993
+map_dev_ts(10000000000) = 1792953036.2777286
+map_dev_ts(1706417594) = 1792953028.0343993
+map_dev_ts(2706417594) = 1792953028.9840562
+frame ts_dev 1869  ts_host 1792953028.0343993  latched-now 1907647502  host now 1792953028.185279
+frame ts_dev 34483427  ts_host 1792953028.0343993  latched-now 1941592914  host now 1792953028.219232
+frame ts_dev 69374049  ts_host 1792953028.0343993  latched-now 1976447178  host now 1792953028.254101

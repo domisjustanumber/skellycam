@@ -1,0 +1,43 @@
+{
+  "test": "winusb_rollback_c930e",
+  "platform": "windows",
+  "hostname": "GERALD",
+  "utc_started": "2026-10-25T22:16:28.6498656Z",
+  "command": "",
+  "steps": [
+    "pnputil /remove-device USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4 /subtree",
+    "Microsoft PnP Utility\r\n\r\nRemoving device:          USB\\VID_046D&PID_0843\\7&7dcc7ce&0&4\r\nDevice removed successfully.\r\n\r\n",
+    "pnputil /scan-devices",
+    "Microsoft PnP Utility\r\n\r\nScanning for device hardware changes.\r\nScan complete.\r\n\r\n"
+  ],
+  "instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+  "poststate": [
+    {
+      "instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&1&0000",
+      "class": "Image",
+      "status": "OK",
+      "service": "usbvideo",
+      "inf": "oem11.inf"
+    },
+    {
+      "instance_id": "USB\\VID_046D&PID_0843&MI_03\\8&39DEC205&1&0003",
+      "class": "MEDIA",
+      "status": "OK",
+      "service": "usbaudio",
+      "inf": "wdma_usb.inf"
+    },
+    {
+      "instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+      "class": "USB",
+      "status": "OK",
+      "service": "usbccgp",
+      "inf": "oem74.inf"
+    }
+  ],
+  "mismatches": [
+    "missing: USB\\VID_046D&PID_0843&MI_03\\8&39DEC205&0&0003",
+    "missing: USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&0&0000"
+  ],
+  "outcome": "CHECK: parent service 'usbccgp'; mismatches: missing: USB\\VID_046D&PID_0843&MI_03\\8&39DEC205&0&0003; missing: USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&0&0000",
+  "utc_finished": "2026-10-25T22:16:46.1343134Z"
+}

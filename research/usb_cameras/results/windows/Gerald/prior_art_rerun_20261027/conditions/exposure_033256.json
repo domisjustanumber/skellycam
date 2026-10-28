@@ -1,0 +1,170 @@
+{
+  "test": "dshow_exposure_read",
+  "hostname": "Gerald",
+  "label": "after_x",
+  "utc": "2026-10-28T03:35:07.685110+00:00",
+  "command": "uv run --script research/usb_cameras/tools/dshow_exposure_read.py --vidpid vid_046d&pid_085c --vidpid vid_046d&pid_0843 --vidpid vid_4c4a&pid_4a55 --label after_x --out research/usb_cameras/results/windows/Gerald/prior_art_rerun_20261027/conditions/exposure_033256.json",
+  "allowlist": [
+    "vid_046d&pid_085c",
+    "vid_046d&pid_0843",
+    "vid_4c4a&pid_4a55"
+  ],
+  "cameras": [
+    {
+      "name": "c922 Pro Stream Webcam",
+      "device_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "exposure": {
+        "value": -7,
+        "flags": 2,
+        "mode": "manual",
+        "range": {
+          "min": -11,
+          "max": -2,
+          "step": 1,
+          "default": -5,
+          "caps_flags": 3
+        }
+      },
+      "brightness": {
+        "value": 128,
+        "flags": 2,
+        "mode": "manual",
+        "range": {
+          "min": 0,
+          "max": 255,
+          "step": 1,
+          "default": 128,
+          "caps_flags": 2
+        }
+      },
+      "gain": {
+        "value": 0,
+        "flags": 2,
+        "mode": "manual",
+        "range": {
+          "min": 0,
+          "max": 255,
+          "step": 1,
+          "default": 0,
+          "caps_flags": 2
+        }
+      },
+      "backlight_compensation": {
+        "value": 0,
+        "flags": 2,
+        "mode": "manual",
+        "range": {
+          "min": 0,
+          "max": 1,
+          "step": 1,
+          "default": 0,
+          "caps_flags": 2
+        }
+      }
+    },
+    {
+      "name": "USB Camera",
+      "device_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "exposure": {
+        "value": -7,
+        "flags": 2,
+        "mode": "manual",
+        "range": {
+          "min": -7,
+          "max": 3,
+          "step": 1,
+          "default": -7,
+          "caps_flags": 3
+        }
+      },
+      "brightness": {
+        "value": 0,
+        "flags": 2,
+        "mode": "manual",
+        "range": {
+          "min": -127,
+          "max": 127,
+          "step": 1,
+          "default": 0,
+          "caps_flags": 2
+        }
+      },
+      "gain": {
+        "value": 4,
+        "flags": 2,
+        "mode": "manual",
+        "range": {
+          "min": 1,
+          "max": 7,
+          "step": 1,
+          "default": 4,
+          "caps_flags": 2
+        }
+      },
+      "backlight_compensation": {
+        "value": 0,
+        "flags": 2,
+        "mode": "manual",
+        "range": {
+          "min": 0,
+          "max": 255,
+          "step": 1,
+          "default": 0,
+          "caps_flags": 2
+        }
+      }
+    },
+    {
+      "name": "Logitech Webcam C930e",
+      "device_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "exposure": {
+        "value": -5,
+        "flags": 2,
+        "mode": "manual",
+        "range": {
+          "min": -11,
+          "max": -2,
+          "step": 1,
+          "default": -5,
+          "caps_flags": 3
+        }
+      },
+      "brightness": {
+        "value": 128,
+        "flags": 2,
+        "mode": "manual",
+        "range": {
+          "min": 0,
+          "max": 255,
+          "step": 1,
+          "default": 128,
+          "caps_flags": 2
+        }
+      },
+      "gain": {
+        "value": 32,
+        "flags": 2,
+        "mode": "manual",
+        "range": {
+          "min": 0,
+          "max": 255,
+          "step": 1,
+          "default": 0,
+          "caps_flags": 2
+        }
+      },
+      "backlight_compensation": {
+        "value": 0,
+        "flags": 2,
+        "mode": "manual",
+        "range": {
+          "min": 0,
+          "max": 1,
+          "step": 1,
+          "default": 0,
+          "caps_flags": 2
+        }
+      }
+    }
+  ]
+}

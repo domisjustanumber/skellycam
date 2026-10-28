@@ -1,0 +1,40 @@
+{
+ "test": "prior_art_rerun_20261027",
+ "hostname": "Gerald",
+ "utc_window": [
+  "2026-10-28T03:07:53Z",
+  "2026-10-28T03:40:25Z"
+ ],
+ "local_date": "2026-10-27 (EDT, night)",
+ "cameras_in_scope": [
+  "C922 046D:085C",
+  "C930e 046D:0843 (&1&0000)",
+  "USB Camera 4C4A:4A55"
+ ],
+ "excluded": "Razer Kiyo Pro 1532:0E05: never bound or activated. All probes ran with explicit device paths/names (gst --device-path/--device-name, pyav --device, pygrabber --name); devnode status logged after every step",
+ "driver": "conditions/drive.sh (each step: camlock-wrapped, CPU load% at start/end, DevNodeStatus of all 4 camera functions at end) -> conditions/step_logs/*.log",
+ "commands": {
+  "cv2_enumerate": "uv run --script research/usb_cameras/tools/camlock.py -- uv run --script research/usb_cameras/prior_art/cv2_enumerate_probe.py",
+  "gst_mf": "... gst_probe.py --capture --source mfvideosrc --seconds 6 --device-path <MF symlink C922> --device-path <C930e> --device-path <generic>",
+  "gst_ks": "... gst_probe.py --capture --source ksvideosrc --seconds 6 --device-name 'c922 Pro Stream Webcam' --device-name 'Logitech Webcam C930e' --device-name 'USB Camera'",
+  "pyav": "... pyav_dshow_probe.py --seconds 6 --device <dshow alt name x3>  (+ --wallclock; --list-options --tag listopts)",
+  "pygrabber": "... pygrabber_probe.py --name 'c922 Pro Stream Webcam' --name 'Logitech Webcam C930e' --name 'USB Camera'",
+  "timer_res": "... verify_prior_art/timer_res_wrapper.py --period-ms 1 -- --capture --source {ks,mf}videosrc --seconds 6 <same device args>",
+  "exposure": "... tools/dshow_exposure_read.py --vidpid vid_046d&pid_085c --vidpid vid_046d&pid_0843 --vidpid vid_4c4a&pid_4a55 --out conditions/exposure_<hhmmss>.json",
+  "repo_metadata": "uv run --script research/usb_cameras/prior_art/repo_metadata.py (no camera)",
+  "compare": "uv run --script research/usb_cameras/verify_prior_art/rerun_compare.py --out compare_summary.json --move-samples <scratchpad> <dirs>",
+  "env": "USBCAM_RESULTS_DIR=research/usb_cameras/results/windows/Gerald/prior_art_rerun_20261027 for every step"
+ },
+ "conditions": {
+  "exposure": "03:11Z all three auto (C922 -7, generic -7, C930e -5 log2 s); 03:35Z and 03:40Z all three manual at the same values (changed by something outside this run; this run only reads controls)",
+  "mean_luma_samples": "C922 17.4-17.5, C930e 70-93, generic 20-126 (varies between runs; monitor content)",
+  "cpu_load_pct": "4 at session start; 1-21 at step boundaries (concurrent agents)",
+  "camlock_wait_s": "17-243 per step (concurrent agents)"
+ },
+ "skipped": {
+  "sdl3_camera_probe": "SDL_Init activates every MF camera (SDL_camera_mediafoundation.c:1004 IMFActivate_ActivateObject in MaybeAddDevice) -> would open the excluded Kiyo",
+  "openpnp_capture_probe": "Cap_createContext binds every DirectShow device (platformcontext.cpp:306 BindToObject in enumerateFrameInfo) -> would open the Kiyo",
+  "gst_probe --list": "Gst.DeviceMonitor providers open every camera to read caps -> would open the Kiyo"
+ },
+ "incident": "First gst_mf/gst_ks outputs (03:16Z, 03:17Z) were overwritten by the timer_res runs that shared USBCAM_RESULTS_DIR; logs kept as step_logs/gst_*_attempt1_overwritten.log, and the captures were repeated at 03:36Z/03:39Z"
+}

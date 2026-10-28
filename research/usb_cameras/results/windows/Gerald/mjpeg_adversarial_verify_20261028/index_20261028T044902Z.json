@@ -1,0 +1,14 @@
+{
+ "command": "research/usb_cameras/mjpeg/run_matrix.py --root research/usb_cameras/results/windows/Gerald/mjpeg_adversarial_verify_20261028 --backend opencv-msmf-decode --modes common --sets single --cams usbcam --label-suffix _duphash --capture-timeout-s 150",
+ "root": "research/usb_cameras/results/windows/Gerald/mjpeg_adversarial_verify_20261028",
+ "cells": [
+  {
+   "backend": "opencv-msmf-decode",
+   "label": "common_1280x720at30_usbcam_duphash",
+   "rc": 0,
+   "capture_command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 3600 -- uv run --script research/usb_cameras/mjpeg/run_one.py --cams usbcam --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_opencv-msmf-decode\\common_1280x720at30_usbcam_duphash' --timeout-s 150.0 -- uv run --script research/usb_cameras/mjpeg/opencv/opencv_capture.py --api msmf --mode decode --set-order size-first --index 5 --name usbcam --size 1280x720 --fps 30 --seconds 10 --warmup 2 --run-dir 'C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\mjpeg_adversarial_verify_20261028\\mjpeg_opencv-msmf-decode\\common_1280x720at30_usbcam_duphash'",
+   "s": 45.0,
+   "summarize_rc": 0
+  }
+ ]
+}

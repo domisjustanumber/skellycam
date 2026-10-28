@@ -1,0 +1,35 @@
+{
+ "recorded": "2026-10-28 04:44:54",
+ "compiler": "Microsoft (R) C/C++ Optimizing Compiler Version 19.42.34436 for x64 (VS 2022 Community; printed by build.bat)",
+ "compile_flags": "/nologo /O2 /std:c++20 /EHsc /W3 /arch:AVX2 /DNDEBUG /MD /D_CRT_SECURE_NO_WARNINGS (build.bat)",
+ "opencv_cpp_sdk": {
+  "path": "C:\\Users\\Dom\\Downloads\\opencv\\build",
+  "version": "4.8.0",
+  "lib": "opencv_world480 (x64/vc16), official Windows build, MSVC 1928, libjpeg-turbo 2.1.3-62",
+  "buildinfo": "results/opencv_buildinfo_cpp_sdk_4.8.0.txt"
+ },
+ "python_opencv_builds": {
+  "skellycam_venv": "opencv-contrib-python 4.12.0.88 (MSVC 1944, libjpeg-turbo 3.1.0-70), results/opencv_buildinfo_python_4.12.0.txt",
+  "cv48_venv": "opencv-python 4.8.0.76 (MSVC 1900, /MT, libjpeg-turbo 2.1.3-62), results/opencv_buildinfo_python_4.8.0.txt"
+ },
+ "pybind11": "3.1.0 (installed into .venv-bench, headers used at build time only)",
+ "python_for_extension": "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none (3.12.13)",
+ "throwaway_venv_cv48": {
+  "path": "C:\\Users\\Dom\\AppData\\Local\\Temp\\skellycam_frame_pipeline_tmp\\venv_cv48",
+  "packages": "opencv-python 4.8.0.76, numpy 1.26.4, psutil 7.2.2 (results/environment_python_cv48venv.json)",
+  "deleted": true,
+  "size_bytes": "not recorded (measured, but the recording command failed before writing it)"
+ },
+ "codec_inputs": {
+  "path": "C:\\Users\\Dom\\AppData\\Local\\Temp\\skellycam_frame_pipeline_tmp\\bench_tmp\\cpp_inputs",
+  "files": 310,
+  "total_bytes_before_delete": 2812836587,
+  "manifest": "results/codec_inputs_manifest.json",
+  "deleted": true
+ },
+ "videos": "every *_vw_*.mp4 was deleted right after its run; per-file sizes are in results/codec/vw_*.json procs[].file_bytes. Two smoke-test videos (31,885,474 and 31,885,475 B) were deleted before the measured runs.",
+ "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d",
+ "hardware_os": "results/environment_system.json (env_snapshot.py)",
+ "qpc_resolution_note": "QueryPerformanceCounter / perf_counter_ns tick here is 100 ns (all per-copy latencies are multiples of 0.1 us)",
+ "large_pages": "SeLockMemoryPrivilege not held: AdjustTokenPrivileges -> 1300, CreateFileMappingW(SEC_LARGE_PAGES) -> 1314 (results/largepages_probe_stdout.log)"
+}

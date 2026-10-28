@@ -1,0 +1,214 @@
+{
+  "cameras": [
+    {
+      "actual_format": "1280x720@1 MJPEG",
+      "arrival_interval_ms": {
+        "max": 49.3237,
+        "mean": 38.84467479338841,
+        "min": 30.7847,
+        "n": 484,
+        "p01": 31.3831,
+        "p50": 32.0806,
+        "p99": 48.5078,
+        "std": 7.945312049667781
+      },
+      "camera_key": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "capture_ts_age_ms_wall_minus_ts": {
+        "max": -32108919.4246,
+        "mean": -32108952.67501632,
+        "min": -32108967.7097,
+        "n": 515,
+        "p01": -32108967.684,
+        "p50": -32108951.6273,
+        "p99": -32108950.5408,
+        "std": 4.434589523781875
+      },
+      "coinit_hr": "HRESULT(0x00000000)",
+      "controls_via_nokhwa_after_open": [
+        {
+          "control": "Exposure",
+          "flags": "[Manual]",
+          "value": "IntegerValue: -7"
+        },
+        {
+          "control": "WhiteBalance",
+          "flags": "[Manual]",
+          "value": "IntegerValue: 4000"
+        },
+        {
+          "control": "Gain",
+          "flags": "[Manual]",
+          "value": "IntegerValue: 4"
+        }
+      ],
+      "decode_attempted": 18,
+      "decode_ok": 18,
+      "decoded_dimensions": [
+        1280,
+        720
+      ],
+      "errors_sample": [],
+      "fps_host_arrival_after_skip30": 25.743554433623558,
+      "frame_call_ms": {
+        "max": 87.7511,
+        "mean": 38.800503106796086,
+        "min": 29.6166,
+        "n": 515,
+        "p01": 29.9889,
+        "p50": 32.055,
+        "p99": 48.5492,
+        "std": 8.217100260132993
+      },
+      "frames": 515,
+      "frames_file": "frames_5_USB_Camera.jsonl",
+      "frames_with_capture_timestamp": 515,
+      "frames_with_eoi": 515,
+      "frames_with_soi": 515,
+      "human_name": "USB Camera",
+      "implied_sample_time_s": {
+        "max": 32128.9914235,
+        "mean": 32119.012933963706,
+        "min": 32109.0073965,
+        "n": 515,
+        "p01": 32109.2313938,
+        "p50": 32119.0073999,
+        "p99": 32128.7994303,
+        "std": 5.771954768278393
+      },
+      "index": 5,
+      "open_ms": 21.7395,
+      "open_stream_bracket": {
+        "host_after_ns": 32108983972600,
+        "host_before_ns": 32108983967800,
+        "wall_after_ns": 1793158486912570100,
+        "wall_before_ns": 1793158486912565300
+      },
+      "payload_bytes": {
+        "max": 58967.0,
+        "mean": 57440.34757281553,
+        "min": 21486.0,
+        "n": 515,
+        "p01": 28574.0,
+        "p50": 58533.0,
+        "p99": 58886.0,
+        "std": 4987.315007890617
+      },
+      "read_errors": 0,
+      "requested_format": "1280x720@30 MJPEG (RequestedFormatType::Exact)"
+    }
+  ],
+  "command": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\r\\build\\release\\nokhwa_probe.exe capture --cameras match:vid_4c4a&pid_4a55 --width 1280 --height 720 --fps 30 --seconds 20 --exposure -7 --wb 4000 --decode-every 30 --save-samples 1 --out C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\libusb_rust_20261027\\nokhwa\\20261028T033401Z_generic4c4a",
+  "controls_read_after": [
+    {
+      "exposure": -7,
+      "exposure_flags": 2,
+      "flags_legend": "1=auto 2=manual",
+      "white_balance": 4000,
+      "white_balance_flags": 2
+    }
+  ],
+  "controls_set_before": [
+    {
+      "exposure": {
+        "range": [
+          -7,
+          3,
+          1,
+          -7
+        ],
+        "readback": -7,
+        "readback_flags": 2,
+        "requested": -7,
+        "set_err": null,
+        "set_ok": true
+      },
+      "method": "IMFMediaSource QueryInterface IAMCameraControl/IAMVideoProcAmp, then Shutdown",
+      "symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "white_balance": {
+        "range": [
+          0,
+          6500,
+          1,
+          4500
+        ],
+        "readback": 4000,
+        "readback_flags": 2,
+        "requested": 4000,
+        "set_err": null,
+        "set_ok": true
+      }
+    }
+  ],
+  "environment": {
+    "arch": "x86_64",
+    "host_clock": "QueryPerformanceCounter",
+    "nokhwa": "0.10.11",
+    "nokhwa_default_features": false,
+    "nokhwa_features": [
+      "input-native"
+    ],
+    "os": "windows",
+    "os_build": "Microsoft Windows [Version 10.0.26300.9711]",
+    "profile": "release",
+    "qpc_frequency_hz": 10000000,
+    "rustc": "see build_info.json"
+  },
+  "hostname": "Gerald",
+  "platform": "windows",
+  "query": [
+    {
+      "human_name": "NDI Webcam Video 1",
+      "index": "0",
+      "misc": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource0"
+    },
+    {
+      "human_name": "NDI Webcam Video 2",
+      "index": "1",
+      "misc": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource1"
+    },
+    {
+      "human_name": "NDI Webcam Video 3",
+      "index": "2",
+      "misc": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource2"
+    },
+    {
+      "human_name": "NDI Webcam Video 4",
+      "index": "3",
+      "misc": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource3"
+    },
+    {
+      "human_name": "c922 Pro Stream Webcam",
+      "index": "4",
+      "misc": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+    },
+    {
+      "human_name": "USB Camera",
+      "index": "5",
+      "misc": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+    },
+    {
+      "human_name": "Logitech Webcam C930e",
+      "index": "6",
+      "misc": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+    },
+    {
+      "human_name": "USB Video Device",
+      "index": "7",
+      "misc": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+    }
+  ],
+  "settings": {
+    "api": "frame",
+    "coinit": "mta",
+    "decode_every": 30,
+    "exposure": -7,
+    "fps": 30,
+    "gain": null,
+    "height": 720,
+    "seconds": 20.0,
+    "white_balance": 4000,
+    "width": 1280
+  },
+  "test": "rust_nokhwa_capture",
+  "utc_started": "2026-10-28T03:34:46Z"
+}

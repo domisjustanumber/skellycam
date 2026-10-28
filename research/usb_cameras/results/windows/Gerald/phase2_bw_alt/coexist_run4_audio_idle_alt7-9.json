@@ -1,0 +1,353 @@
+{
+ "test": "bw_coexist_libuvc_vs_mf",
+ "hub": "Genesys 05e3:0610 USB 2.0 hub on Intel xHCI DEV_7A60 root port 13",
+ "cameras": {
+  "c930e": "046d:0843 WinUSB, libuvc uvc_capture_test --alt",
+  "generic": "4c4a:4a55 usbvideo, MF mf_multi_open MJPG 1280x720@30"
+ },
+ "command": "research/usb_cameras/bandwidth/coexist_summarize.py C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/coexist4 --out C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/phase2_bw_alt/coexist_run4_audio_idle_alt7-9.json",
+ "runs": [
+  {
+   "run": "coexist_c930e_first_alt8",
+   "utc_start": "2026-10-25T21:50:23Z",
+   "c930e": {
+    "requested_alt": 8,
+    "chosen_alt": 8,
+    "stream_start_error": 0,
+    "stream_start_error_name": null,
+    "frames": 0,
+    "seconds": 19,
+    "fps_from_arrivals": 0.0,
+    "jpeg_soi_eoi_ok": 0,
+    "seq_gaps": 0,
+    "error_payloads": 0,
+    "mean_frame_bytes": 0.0,
+    "commit_dwMaxPayloadTransferSize": 3072,
+    "stderr_tail": "ackets/transfer=32 transfers=100 (min_bytes override=0)\nframes=0 jpeg_ok=0 seq_gaps=0 error_payloads=0\nwrote C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/coexist4/coexist_c930e_first_alt8/c930e/result.json\n"
+   },
+   "generic_mf": {
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "chosen_native_type": "MJPG 1280x720 30/1",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "error_msg": "",
+    "samples": 359,
+    "steady_fps": 25.6807,
+    "steady_mean_sample_bytes": 107931,
+    "late_intervals_gt_1p5x": 3,
+    "max_gap_ms": 52.3458,
+    "read_errors": []
+   },
+   "open_pipes_during_overlap": {
+    "4c4a:4a55": {
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 3,
+     "iso_pipes": [
+      {
+       "bEndpointAddress": "0x84",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x13ff",
+       "base_packet_bytes": 1023,
+       "transactions_per_microframe": 3,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 1,
+       "endpoint": "0x84",
+       "bytes_per_interval": 3069,
+       "service_interval_us": 125
+      }
+     ]
+    },
+    "046d:0843": {
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 4,
+     "iso_pipes": [
+      {
+       "bEndpointAddress": "0x81",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x0b20",
+       "base_packet_bytes": 800,
+       "transactions_per_microframe": 2,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 8,
+       "endpoint": "0x81",
+       "bytes_per_interval": 1600,
+       "service_interval_us": 125
+      }
+     ]
+    }
+   },
+   "model": {
+    "generic_alt1_cost_ns": 61584,
+    "c930e_alt_cost_ns": 32386,
+    "total_ns": 93970,
+    "pct_of_125us_microframe": 75.2,
+    "predicted_fit_80pct": true
+   }
+  },
+  {
+   "run": "coexist_gen_first_alt7",
+   "utc_start": "2026-10-25T21:49:09Z",
+   "c930e": {
+    "requested_alt": 7,
+    "chosen_alt": 7,
+    "stream_start_error": 0,
+    "stream_start_error_name": null,
+    "frames": 423,
+    "seconds": 14,
+    "fps_from_arrivals": 30.098,
+    "jpeg_soi_eoi_ok": 423,
+    "seq_gaps": 0,
+    "error_payloads": 0,
+    "mean_frame_bytes": 172407.5,
+    "commit_dwMaxPayloadTransferSize": 3072,
+    "stderr_tail": "kets/transfer=32 transfers=100 (min_bytes override=0)\nframes=423 jpeg_ok=423 seq_gaps=0 error_payloads=0\nwrote C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/coexist4/coexist_gen_first_alt7/c930e/result.json\n"
+   },
+   "generic_mf": {
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "chosen_native_type": "MJPG 1280x720 30/1",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "error_msg": "",
+    "samples": 488,
+    "steady_fps": 25.7025,
+    "steady_mean_sample_bytes": 107923,
+    "late_intervals_gt_1p5x": 5,
+    "max_gap_ms": 52.9316,
+    "read_errors": []
+   },
+   "open_pipes_during_overlap": {
+    "4c4a:4a55": {
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 3,
+     "iso_pipes": [
+      {
+       "bEndpointAddress": "0x84",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x13ff",
+       "base_packet_bytes": 1023,
+       "transactions_per_microframe": 3,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 1,
+       "endpoint": "0x84",
+       "bytes_per_interval": 3069,
+       "service_interval_us": 125
+      }
+     ]
+    },
+    "046d:0843": {
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 4,
+     "iso_pipes": [
+      {
+       "bEndpointAddress": "0x81",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x0a80",
+       "base_packet_bytes": 640,
+       "transactions_per_microframe": 2,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 7,
+       "endpoint": "0x81",
+       "bytes_per_interval": 1280,
+       "service_interval_us": 125
+      }
+     ]
+    }
+   },
+   "model": {
+    "generic_alt1_cost_ns": 61584,
+    "c930e_alt_cost_ns": 26162,
+    "total_ns": 87746,
+    "pct_of_125us_microframe": 70.2,
+    "predicted_fit_80pct": true
+   }
+  },
+  {
+   "run": "coexist_gen_first_alt8",
+   "utc_start": "2026-10-25T21:49:34Z",
+   "c930e": {
+    "requested_alt": 8,
+    "chosen_alt": 8,
+    "stream_start_error": 0,
+    "stream_start_error_name": null,
+    "frames": 423,
+    "seconds": 14,
+    "fps_from_arrivals": 30.1,
+    "jpeg_soi_eoi_ok": 423,
+    "seq_gaps": 0,
+    "error_payloads": 0,
+    "mean_frame_bytes": 171543.1,
+    "commit_dwMaxPayloadTransferSize": 3072,
+    "stderr_tail": "kets/transfer=32 transfers=100 (min_bytes override=0)\nframes=423 jpeg_ok=423 seq_gaps=0 error_payloads=0\nwrote C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/coexist4/coexist_gen_first_alt8/c930e/result.json\n"
+   },
+   "generic_mf": {
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "chosen_native_type": "MJPG 1280x720 30/1",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "error_msg": "",
+    "samples": 487,
+    "steady_fps": 25.6924,
+    "steady_mean_sample_bytes": 107862,
+    "late_intervals_gt_1p5x": 0,
+    "max_gap_ms": 48.8966,
+    "read_errors": []
+   },
+   "open_pipes_during_overlap": {
+    "4c4a:4a55": {
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 3,
+     "iso_pipes": [
+      {
+       "bEndpointAddress": "0x84",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x13ff",
+       "base_packet_bytes": 1023,
+       "transactions_per_microframe": 3,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 1,
+       "endpoint": "0x84",
+       "bytes_per_interval": 3069,
+       "service_interval_us": 125
+      }
+     ]
+    },
+    "046d:0843": {
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 4,
+     "iso_pipes": [
+      {
+       "bEndpointAddress": "0x81",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x0b20",
+       "base_packet_bytes": 800,
+       "transactions_per_microframe": 2,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 8,
+       "endpoint": "0x81",
+       "bytes_per_interval": 1600,
+       "service_interval_us": 125
+      }
+     ]
+    }
+   },
+   "model": {
+    "generic_alt1_cost_ns": 61584,
+    "c930e_alt_cost_ns": 32386,
+    "total_ns": 93970,
+    "pct_of_125us_microframe": 75.2,
+    "predicted_fit_80pct": true
+   }
+  },
+  {
+   "run": "coexist_gen_first_alt9",
+   "utc_start": "2026-10-25T21:49:58Z",
+   "c930e": {
+    "requested_alt": 9,
+    "chosen_alt": 0,
+    "stream_start_error": -1,
+    "stream_start_error_name": "I/O error",
+    "frames": 0,
+    "seconds": 14,
+    "fps_from_arrivals": 0.0,
+    "jpeg_soi_eoi_ok": 0,
+    "seq_gaps": 0,
+    "error_payloads": 0,
+    "mean_frame_bytes": 0.0,
+    "commit_dwMaxPayloadTransferSize": 3072,
+    "stderr_tail": "0 packets/transfer=0 transfers=100 (min_bytes override=0)\nframes=0 jpeg_ok=0 seq_gaps=0 error_payloads=0\nwrote C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/coexist4/coexist_gen_first_alt9/c930e/result.json\n"
+   },
+   "generic_mf": {
+    "spec": "vid_4c4a&pid_4a55:MJPG:1280x720@30",
+    "chosen_native_type": "MJPG 1280x720 30/1",
+    "streamed": true,
+    "failed_stage": null,
+    "error_hr": null,
+    "error_msg": "",
+    "samples": 486,
+    "steady_fps": 25.6829,
+    "steady_mean_sample_bytes": 107934,
+    "late_intervals_gt_1p5x": 0,
+    "max_gap_ms": 49.7053,
+    "read_errors": []
+   },
+   "open_pipes_during_overlap": {
+    "4c4a:4a55": {
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 3,
+     "iso_pipes": [
+      {
+       "bEndpointAddress": "0x84",
+       "type": "isochronous",
+       "wMaxPacketSize": "0x13ff",
+       "base_packet_bytes": 1023,
+       "transactions_per_microframe": 3,
+       "bInterval": 1,
+       "ScheduleOffset": 0
+      }
+     ],
+     "matched_alt_settings": [
+      {
+       "interface": 1,
+       "bAlternateSetting": 1,
+       "endpoint": "0x84",
+       "bytes_per_interval": 3069,
+       "service_interval_us": 125
+      }
+     ]
+    },
+    "046d:0843": {
+     "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+     "port": 4,
+     "iso_pipes": [],
+     "matched_alt_settings": []
+    }
+   },
+   "model": {
+    "generic_alt1_cost_ns": 61584,
+    "c930e_alt_cost_ns": 39852,
+    "total_ns": 101436,
+    "pct_of_125us_microframe": 81.1,
+    "predicted_fit_80pct": false
+   }
+  }
+ ]
+}

@@ -1,0 +1,155 @@
+{
+ "run_dir": "research\\usb_cameras\\results\\windows\\Gerald\\rust_nokhwa_capture\\20261025T190554Z_camsall_1280x720",
+ "analyzer": "research/usb_cameras/rust/tools/analyze_frames_rust.py",
+ "os_ts_field_override": null,
+ "cameras": [
+  {
+   "file": "frames_4_c922_Pro_Stream_Webcam.jsonl",
+   "camera_key": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "backend": "nokhwa-msmf",
+   "frames_total": 593,
+   "frames_analysed": 563,
+   "skip_first": 30,
+   "valid_jpeg": 593,
+   "decoded_true": 20,
+   "decoded_false": 0,
+   "seq_gaps": 0,
+   "payload_bytes": {
+    "n": 563,
+    "mean": 143366.84191829484,
+    "std": 1241.0411423905693,
+    "min": 141672,
+    "p01": 141827,
+    "p50": 142743,
+    "p99": 145372,
+    "max": 145567
+   },
+   "fps_host": 30.0218686877118,
+   "host_interval_ms": {
+    "n": 562,
+    "mean": 33.3090524911032,
+    "std": 4.3610480046747275,
+    "min": 29.4985,
+    "p01": 31.22,
+    "p50": 32.0288,
+    "p99": 48.1422,
+    "max": 48.3823
+   },
+   "os_ts_interval_ms": {
+    "n": 562,
+    "mean": 33.33803309608541,
+    "std": 4.426658580108445,
+    "min": 31.9003,
+    "p01": 31.9455,
+    "p50": 32.0026,
+    "p99": 48.0106,
+    "max": 48.1007
+   },
+   "latency_host_minus_os_ms": {
+    "n": 563,
+    "mean": 9.127887744227353,
+    "std": 7.990265083070531,
+    "min": 0.2566,
+    "p01": 0.2936,
+    "p50": 16.3092,
+    "p99": 17.3716,
+    "max": 18.6097
+   },
+   "first_frame_latency_ms": 17.0423,
+   "os_timestamp_source": "MF IMFSample time (llTimestamp*100ns) recovered as nokhwa capture_ts - stream_epoch; QPC domain"
+  },
+  {
+   "file": "frames_6_USB_Video_Device.jsonl",
+   "camera_key": null,
+   "backend": null,
+   "frames_total": 0,
+   "frames_analysed": 0,
+   "skip_first": 0,
+   "valid_jpeg": 0,
+   "decoded_true": 0,
+   "decoded_false": 0,
+   "seq_gaps": 0,
+   "payload_bytes": null,
+   "fps_host": null,
+   "host_interval_ms": null,
+   "os_ts_interval_ms": null,
+   "latency_host_minus_os_ms": null,
+   "first_frame_latency_ms": null,
+   "os_timestamp_source": null
+  },
+  {
+   "file": "frames_7_Logitech_Webcam_C930e.jsonl",
+   "camera_key": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "backend": "nokhwa-msmf",
+   "frames_total": 588,
+   "frames_analysed": 558,
+   "skip_first": 30,
+   "valid_jpeg": 588,
+   "decoded_true": 20,
+   "decoded_false": 0,
+   "seq_gaps": 0,
+   "payload_bytes": {
+    "n": 558,
+    "mean": 134837.8440860215,
+    "std": 1977.8845599077958,
+    "min": 125488,
+    "p01": 133059,
+    "p50": 133674,
+    "p99": 137726,
+    "max": 137826
+   },
+   "fps_host": 30.062644776664314,
+   "host_interval_ms": {
+    "n": 557,
+    "mean": 33.26387307001795,
+    "std": 4.310972964802773,
+    "min": 29.5276,
+    "p01": 30.867,
+    "p50": 32.0244,
+    "p99": 48.1736,
+    "max": 48.9223
+   },
+   "os_ts_interval_ms": {
+    "n": 557,
+    "mean": 33.2638775583483,
+    "std": 4.316180166785611,
+    "min": 31.8937,
+    "p01": 31.9417,
+    "p50": 32.0013,
+    "p99": 48.018,
+    "max": 48.0503
+   },
+   "latency_host_minus_os_ms": {
+    "n": 558,
+    "mean": 5.962755555555556,
+    "std": 7.543406153747144,
+    "min": 0.2843,
+    "p01": 0.3233,
+    "p50": 0.6717,
+    "p99": 17.1252,
+    "max": 19.2293
+   },
+   "first_frame_latency_ms": 0.8809,
+   "os_timestamp_source": "MF IMFSample time (llTimestamp*100ns) recovered as nokhwa capture_ts - stream_epoch; QPC domain"
+  }
+ ],
+ "cross_camera": [
+  {
+   "a": "frames_4_c922_Pro_Stream_Webcam",
+   "b": "frames_7_Logitech_Webcam_C930e",
+   "nearest_offset_ms": {
+    "n": 563,
+    "mean": 4.850304795737122,
+    "std": 15.117669870589271,
+    "min": -19.0368,
+    "p01": -19.0035,
+    "p50": -2.9571,
+    "p99": 13.1341,
+    "max": 188.9925
+   },
+   "first_offset_ms": 188.9925,
+   "last_offset_ms": -19.0023,
+   "drift_ms_per_min": -666.0816032489712
+  }
+ ]
+}

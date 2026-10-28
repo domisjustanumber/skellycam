@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\multiprocessing\spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\multiprocessing\spawn.py", line 132, in _main
+    self = reduction.pickle.load(from_parent)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\shared_memory\ring_buffer_shared_memory.py", line 6, in <module>
+    from skellycam.core.ipc.shared_memory.shared_memory_element import SharedMemoryElement, SharedMemoryElementDTO
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\shared_memory\shared_memory_element.py", line 7, in <module>
+    from skellycam.core.types.type_overloads import SharedMemoryName
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\types\type_overloads.py", line 23, in <module>
+    TopicSubscriptionQueue = multiprocessing.queues.Queue
+                             ^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'multiprocessing' has no attribute 'queues'. Did you mean: 'Queue'?
+child exitcode=1 (0 = ok, 1 = crashed while unpickling args)

@@ -1,0 +1,193 @@
+{
+ "test": "rust_platform_code_count",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-25T18:49:26Z",
+ "command": "research/usb_cameras/rust/tools/count_platform_code.py",
+ "environment": {
+  "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]"
+ },
+ "ours_files": [
+  {
+   "file": "uvc_iso/src/backend_libusb.rs",
+   "code_lines": 315,
+   "whole_file_platform": null,
+   "cfg_gated_lines": {}
+  },
+  {
+   "file": "uvc_iso/src/backend_rawusb.rs",
+   "code_lines": 134,
+   "whole_file_platform": null,
+   "cfg_gated_lines": {}
+  },
+  {
+   "file": "uvc_iso/src/main.rs",
+   "code_lines": 392,
+   "whole_file_platform": null,
+   "cfg_gated_lines": {
+    "windows": 9
+   }
+  },
+  {
+   "file": "uvc_iso/src/usb.rs",
+   "code_lines": 35,
+   "whole_file_platform": null,
+   "cfg_gated_lines": {}
+  },
+  {
+   "file": "uvc_iso/src/uvc.rs",
+   "code_lines": 581,
+   "whole_file_platform": null,
+   "cfg_gated_lines": {}
+  },
+  {
+   "file": "uvc_iso/src/winsof.rs",
+   "code_lines": 115,
+   "whole_file_platform": "windows",
+   "cfg_gated_lines": {}
+  },
+  {
+   "file": "nokhwa_probe/src/bin/mf_native_types.rs",
+   "code_lines": 93,
+   "whole_file_platform": "windows",
+   "cfg_gated_lines": {
+    "not(windows)": 3,
+    "windows": 88
+   }
+  },
+  {
+   "file": "nokhwa_probe/src/hostclock.rs",
+   "code_lines": 58,
+   "whole_file_platform": null,
+   "cfg_gated_lines": {
+    "windows": 21,
+    "target_os=\"linux\"": 8,
+    "target_os=\"macos\"": 12,
+    "not(windows)": 3
+   }
+  },
+  {
+   "file": "nokhwa_probe/src/main.rs",
+   "code_lines": 525,
+   "whole_file_platform": null,
+   "cfg_gated_lines": {
+    "windows": 16,
+    "target_os=\"macos\"": 9
+   }
+  },
+  {
+   "file": "nokhwa_probe/src/wincontrols.rs",
+   "code_lines": 117,
+   "whole_file_platform": "windows",
+   "cfg_gated_lines": {}
+  }
+ ],
+ "ours_totals": {
+  "code_lines_in_shared_files_including_cfg_blocks": 2040,
+  "platform_specific_lines": {
+   "windows": 459,
+   "not(windows)": 6,
+   "target_os=\"linux\"": 8,
+   "target_os=\"macos\"": 21
+  }
+ },
+ "third_party": {
+  "rawusb-0.1.7": {
+   "shared": {
+    "code_lines": 3651,
+    "files": 13
+   },
+   "windows": {
+    "code_lines": 1814,
+    "files": 2
+   },
+   "linux": {
+    "code_lines": 1186,
+    "files": 3
+   },
+   "macos": {
+    "code_lines": 1624,
+    "files": 2
+   }
+  },
+  "nusb-0.2.9": {
+   "shared": {
+    "code_lines": 3635,
+    "files": 15
+   },
+   "windows": {
+    "code_lines": 2219,
+    "files": 11
+   },
+   "linux": {
+    "code_lines": 1671,
+    "files": 7
+   },
+   "macos": {
+    "code_lines": 2673,
+    "files": 9
+   }
+  },
+  "nokhwa-0.10.11": {
+   "shared": {
+    "code_lines": 2879,
+    "files": 8
+   },
+   "windows": {
+    "code_lines": 193,
+    "files": 1
+   },
+   "linux": {
+    "code_lines": 0,
+    "files": 0
+   },
+   "macos": {
+    "code_lines": 387,
+    "files": 1
+   }
+  },
+  "nokhwa-bindings-windows-0.4.6": {
+   "windows": {
+    "code_lines": 1142,
+    "files": 1
+   }
+  },
+  "nokhwa-bindings-linux-0.1.4": {
+   "linux": {
+    "code_lines": 955,
+    "files": 1
+   }
+  },
+  "nokhwa-bindings-macos-0.2.4": {
+   "macos": {
+    "code_lines": 2131,
+    "files": 1
+   }
+  },
+  "nokhwa-core-0.1.9": {
+   "shared": {
+    "code_lines": 2322,
+    "files": 6
+   }
+  },
+  "libusb1-sys-0.7.0/libusb/libusb": {
+   "shared": {
+    "code_lines": 3578,
+    "files": 6
+   },
+   "windows": {
+    "code_lines": 4846,
+    "files": 3
+   },
+   "linux": {
+    "code_lines": 2629,
+    "files": 3
+   },
+   "macos": {
+    "code_lines": 2116,
+    "files": 1
+   }
+  }
+ },
+ "method": "code line = non-blank, non-// and non-/* */ line; cfg-gated lines = lines of items directly under a #[cfg(windows|unix|target_os=..)] attribute (best-effort brace matching)"
+}

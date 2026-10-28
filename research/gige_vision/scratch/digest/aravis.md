@@ -1,0 +1,89 @@
+# aravis
+
+## Aravis as SkellyCam's GigE Vision backend
+
+**What and status.** [Aravis](https://github.com/AravisProject/aravis) is a GLib/GObject C library for GigE Vision and USB3 Vision. Its license is LGPL-2.1-or-later ([README#L25](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/README.md#L25)).
+- Latest stable release: **0.8.36** (tagged 2026-04-23, "Latest" on GitHub).
+- Latest development release: **0.9.2** (pre-release). `main` is 0.9.3, which uses API version 0.10.
+- It is actively maintained: the last commit was 2026-10-22 and there were 49 commits in the past year. Linux, macOS, MinGW and MSVC CI all passed on 2026-10-23.
+- The README says the GV/U3V protocol code must not be based on A3 spec documents ([README#L57-L63](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/README.md#L57-L63)).
+
+**License and SkellyCam (AGPL-3.0).**
+- LGPL-2.1 §3 allows conversion to GPLv2-or-later, which makes it compatible with AGPL-3 ([COPYING#L211-L221](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/COPYING#L211-L221)).
+- §6(b) covers distributing it as a separately replaceable shared library, for example in a PyInstaller onedir bundle ([COPYING#L271-L304](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/COPYING#L271-L304)). The bundle also needs a notice and a copy of the license.
+
+**Platforms and Python.**
+- **Linux:** Ubuntu 24.04 ships 0.8.30, including the `gir1.2-aravis-0.8` typelib. There is a Linux-only AF_PACKET TPACKET_V3 ring-buffer receive path ([meson.build#L103-L119](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/meson.build#L103-L119), [arvgvstream.c#L1240-L1265](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L1240-L1265)). It needs `cap_net_raw` ([ethernet.md#L94-L103](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/docs/reference/aravis/ethernet.md#L94-L103)).
+- **macOS:** the Homebrew formula is 0.8.36, with arm64 and x86_64 bottles ([formula](https://github.com/Homebrew/homebrew-core/blob/62967b0a1e5adb912fde3b160b73aa696c12672e/Formula/a/aravis.rb)). Upstream macOS CI builds with `-Dintrospection=disabled` ([aravis-macos.yml#L30](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/.github/workflows/aravis-macos.yml#L30)), so Python on macOS is not tested upstream.
+- **Windows:** the docs point to MSYS2 packages and an MSVC/Conan build ([building.md#L93-L109](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/docs/reference/aravis/building.md#L93-L109)).
+  - The [MSYS2 package](https://packages.msys2.org/base/mingw-w64-aravis) is behind, at 0.8.33-4.
+  - MSVC CI builds without introspection ([aravis-msvc-conan2.yml#L77](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/.github/workflows/aravis-msvc-conan2.yml#L77)).
+  - Windows has no packet socket.
+  - Issue [#752](https://github.com/AravisProject/aravis/issues/752) is open and unresolved: about 20 MiB/s on Windows against about 90 MiB/s on Ubuntu with the same 4K camera. There are also firewall pitfalls ([#830](https://github.com/AravisProject/aravis/issues/830)).
+- **Python packaging:** there is no PyPI or conda-forge Aravis (both return 404). PyGObject on PyPI is sdist-only in every release. Python access therefore means a system Python with distro, Homebrew or MSYS2 GI packages, or a custom ctypes/cffi binding over the C API that ships glib, libxml2 and Aravis shared libraries. **This is the biggest blocker for SkellyCam's pip/uv workflow.**
+
+**API.**
+- Discovery: `arv_update_device_list` and related calls ([arvsystem.h#L35-L53](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvsystem.h#L35-L53)).
+- Feature access by name ([arvdevice.h#L143-L179](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvdevice.h#L143-L179)).
+- Stream and buffer pool, GV packet size/delay, multipart, triggers and chunks ([arvcamera.h#L237-L288](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvcamera.h#L237-L288)).
+- Chunk parser, covered by a unit test that passed in my run ([tests/genicam.c#L1159-L1230](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/tests/genicam.c#L1159-L1230)).
+- Socket-buffer AUTO/FIXED setting.
+- Packet resend: on by default, and forced off when the device lacks the capability ([arvgvdevice.c#L1904-L1905](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvdevice.c#L1904-L1905)).
+
+**Raw or compressed?** Uncompressed PFNC pixel data (Mono8/16, Bayer, RGB and so on). The JPEG, JPEG2000 and H264 payload types are explicitly marked "(not supported)" ([arvbuffer.h#L64-L92](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvbuffer.h#L64-L92)).
+
+**Timestamps and PTP.**
+- `arv_buffer_get_timestamp` returns the camera's 64-bit timestamp from the GVSP leader packet, converted to nanoseconds with the bootstrap `TimestampTickFrequency`.
+- `arv_buffer_get_system_timestamp` is the host `g_get_real_time()` taken when the leader packet arrives.
+- If the tick frequency is 0, the device timestamp silently falls back to the host time ([arvgvstream.c#L460-L531](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L460-L531), [arvbuffer.c#L379-L437](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvbuffer.c#L379-L437)).
+- **libaravis has no PTP code at all.** The only PTP mention is an unreleased GStreamer `add-reference-timestamp-meta` option ([gstaravis.c#L563-L567](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/gst/gstaravis.c#L563-L567)).
+- The maintainer's position is that you enable PTP through generic GenICam feature writes ([#258](https://github.com/AravisProject/aravis/issues/258)).
+- **Action commands are not implemented.** GVCP has no ACTION_CMD ([arvgvcpprivate.h#L249-L282](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvcpprivate.h#L249-L282)). Issue [#184](https://github.com/AravisProject/aravis/issues/184) has been open since 2018, and draft PR [#468](https://github.com/AravisProject/aravis/pull/468) has been stalled since 2021.
+
+**Tests run (Docker, ubuntu:24.04, `--network none`).**
+- **Distro 0.8.30 with PyGObject 3.48.2:** `arv-fake-gv-camera-0.8 -i 127.0.0.1` was found on discovery. The script `aravis_fake_camera_capture.py` grabbed 100/100 Mono8 512×512 frames (262144 bytes each) with a 1 GHz tick frequency, at 24.7 fps by default and 100.2 fps when set to 100 Hz.
+  - At 100 Hz the device-timestamp interval std was 0.16 ms, while the host-receive std was about 10 ms.
+  - The fake camera's "device" timestamp is just host time ([arvfakecamera.c#L795](https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvfakecamera.c#L795-L796)), so this only shows the plumbing works, not PTP accuracy.
+  - `get_data()` copies the frame (0.026 ms per 256 KiB).
+- **HEAD build from source:** all 10 meson tests passed, including the genicam/chunk test, the Python tests and the `fakegv` network test. `ARAVIS_HAS_PACKET_SOCKET` is 1, and the same Python script ran against the Aravis-0.10 typelib.
+- **Pitfall found:** without network isolation, discovery picked up another fake camera with the same id on the Docker bridge, and acquisition failed with a write_register timeout. Open cameras by IP or serial, not by id.
+
+**Rust.** [aravis-rs](https://github.com/robohouse-delft/aravis-rs) 0.11.1 (2025-02-10, BSD-2) is generated from GIR and binds the 0.8 API up to 0.8.31. It links the system Aravis dynamically, so it has the same native-dependency packaging problem.
+
+**Verdict.** Viable as a **Linux-first, optional** backend. macOS is likely workable through Homebrew but untested here. Windows works, but it lags, has no packet socket, and has an open throughput issue. Across all three OSes it is **not** an easily pip-installable, equally performant backend, and it gives no help with PTP setup or action-command sync beyond raw timestamps and generic feature access.
+
+## Open questions
+
+- Does Homebrew's aravis bottle actually install Aravis-0.8.typelib, and does `brew install pygobject3` + Homebrew Python import gi.repository.Aravis on macOS arm64? Not testable here.
+- Can python.org/uv CPython on Windows load MSYS2's Aravis via a separately built PyGObject (e.g. gvsbuild), or is a ctypes/cffi binding to libaravis DLL the only practical uv-compatible route? Not prototyped.
+- Real Windows throughput for multi-camera 1GigE/10GigE capture (issue #752 unresolved): needs benchmarking with real cameras, jumbo frames and socket-buffer AUTO.
+- Exact GenICam/SFNC feature names for PTP (PtpEnable vs GevIEEE1588, PtpStatus, TimestampLatch) on target cameras: Aravis only offers generic feature access; must be verified per camera model.
+- Whether GigE Vision 3.x specifically (vs 2.x) is required for PTP or action commands could not be determined from Aravis code; Aravis source comments mark ACTION_LATE as 'GEV 2.0' and issue #184 claims GEV 2.0 introduced action commands, but that is not authoritative.
+- Whether the fakegv test timeout seen on the default Docker bridge network was caused by other concurrently running fake cameras (likely, given the observed id collision) was not proven.
+
+## Verification: Counter({'supported': 12, 'partially-supported': 3})
+
+- [partially-supported] license: Aravis is LGPL-2.1-or-later; LGPL-2.1 section 3 allows conversion to GPLv2+, and section 6(b) allows distributing an app dynamically linked to a replaceable shared copy of the library.
+  REASON: README L25 states LGPL-2.1-or-later and 89 src/*.c files carry SPDX LGPL-2.1-or-later. COPYING L211-221 (§3) allows converting a copy to GPLv2 or a newer GPL version. The step from there to AGPL-3 compatibility runs through GPLv3 §13, which the cited links do not show. §6(b) (L292-299) literally requires a mechanism that 'uses at run time a copy of the library already present on the user's computer system'. A libaravis copy shipped inside a PyInstaller onedir bundle is therefore not clearly covered by 6(b); 6(a) or 6(c)/(d), i.e. supplying the source or a written offer, is the safer reading.
+  CORRECTED: Aravis is LGPL-2.1-or-later. §3 allows converting a copy to GPL v2 or a later GPL version, which gives a path to (A)GPL-3 combination. When bundling libaravis in a PyInstaller onedir, do not rely on §6(b) alone. Comply via §6(a) or §6(c)/(d) by shipping the corresponding source or a written offer, together with the notice and a copy of the license.
+  BETTER: ['https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/COPYING#L271-L304']
+
+- [partially-supported] releases: Latest stable is 0.8.36 (tag 2026-04-23, GitHub release 'Latest' 2026-04-26); latest dev 0.9.2 (pre-release); main HEAD 482547a3 committed 2026-10-22, version 0.9.3 / API 0.10; 49 commits in last 12 months; Linux/macOS/MinGW/MSVC CI green on 2026-10-23.
+  REASON: Confirmed on a local clone: tag 0.9.2 is 2026-04-23 12:03 and 0.8.36 is 2026-04-23 11:57. `gh release list` shows 0.8.36 as 'Latest' and 0.9.2 as 'Pre-release', both published 2026-04-26. HEAD 482547a3 was committed 2026-10-22, meson.build gives version 0.9.3 and API 0.10, and `git log --since=2025-10-25` counts 49 commits. However, the two cited CI runs (39925980711, 39925980920) are pull_request runs from fork dkogan/aravis (head b81396e4, 'Experimental support for the NV12 pixel format'), not main. Main HEAD 482547a3 has its own green push CI (Linux, macOS, MinGW, MSVC, MSVC-Conan2) on 2026-10-22.
+  CORRECTED: Latest stable is 0.8.36 (tagged 2026-04-23, GitHub release 2026-04-26); latest dev is 0.9.2 (pre-release). main HEAD 482547a3 (2026-10-22) is 0.9.3 / API 0.10, with 49 commits in the last 12 months. Push CI on main HEAD 482547a3 passed on all five workflows on 2026-10-22.
+  BETTER: ['https://github.com/AravisProject/aravis/actions/runs/39839548731', 'https://github.com/AravisProject/aravis/actions/runs/39839548908', 'https://github.com/AravisProject/aravis/actions/runs/39839548757', 'https://github.com/AravisProject/aravis/actions/runs/39839548793', 'https://github.com/AravisProject/aravis/actions/runs/39839548815']
+
+- [partially-supported] device-id-collision: Device discovery broadcasts on all interfaces; two fake cameras with identical id 'Aravis-Fake-GV01' collapsed into one list entry and opening by id connected to the foreign one (write_register timeout). Opening by IP worked.
+  REASON: The cited arvsystem.h lines are only API declarations and do not show the behaviour. The real mechanism is in arvgvinterface.c L444-480: discovery replies are inserted with g_hash_table_replace under id, user_id, vendor_serial, vendor_alias_serial and MAC, so a later reply with the same key overwrites an earlier one. Opening by an IP string bypasses the table: L700-740 resolves via getaddrinfo, then arv_gv_interface_camera_locate, then arv_gv_device_new. The summary's advice to 'open by IP or serial' is wrong for the observed case: two fake cameras share serial 'GV01' as well as id, so serial collides too. The observed runtime collision comes only from the researcher's unlogged first run.
+  CORRECTED: The discovery table is keyed by id, user_id, serial and MAC with last-reply-wins, so devices with duplicate ids or serials (e.g. multiple arv-fake-gv-camera instances) collapse into one entry. Open cameras by IP address (which bypasses the table) or by MAC.
+  BETTER: ['https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvinterface.c#L444-L480', 'https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvinterface.c#L700-L740']
+
+## Missed points
+
+- GvStream reads TimestampTickFrequency (bootstrap 0x093C/0x0940) only once, when the stream is constructed (https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L1617 and #L1644). I proved this in Docker (ubuntu:24.04, Aravis 0.8.30, --network none). With the tick register changed after create_stream, device timestamps were still converted with the old 1 GHz value. With it changed before create_stream, they were rescaled. Practical rule: enable PTP and set any timestamp configuration before creating the stream. Test script: C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/research/verify-aravis-work/tick_cache_test.py; log: C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/f77e9c4e-e1ea-4406-8a36-bef826a63a0e/scratchpad/research/verify-aravis-work/tick_cache_test.log.
+- Aravis 0.9.x (dev series, API 0.10) includes a GenTL consumer that loads vendor .cti producers from GENICAM_GENTL{32/64}_PATH (https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/docs/reference/aravis/gentl.md). It is built unconditionally (https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/meson.build#L103-L106), and there is an optional experimental GenTL producer (https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/meson_options.txt#L13). It was added in commit 1676fdc6c (2023-11-15) and first tagged in 0.9.0 (2024-11-12); stable 0.8.36 has no gentl files. On Windows this could route through vendor producers and drivers, but only on the unstable API, and aravis-rs (0.8 API) cannot use it.
+- Aravis source comments tag GVSP status codes NO_REF_TIME 0x8013 and ACTION_LATE 0x8016 as 'GEV 2.0' (https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvspprivate.h#L89-L92). This is a non-authoritative hint that the PTP reference-time and action features predate GigE Vision 3.x, which bears on the user's 'v3 enables PTP' premise. It needs confirmation from a spec or vendor source.
+- Newer Ubuntu releases ship newer Aravis (Launchpad, https://launchpad.net/ubuntu/+source/aravis): 26.04 LTS 'resolute' 0.8.34-1build2, 26.10 'stonking' 0.8.36-2 and 27.04 'tenacious' 0.8.36-2. 24.04 noble has 0.8.30-1build2.
+- GvStream socket-buffer defaults to FIXED, not AUTO (https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/src/arvgvstream.c#L1826-L1833). The researcher's log shows FIXED with size 0, so SkellyCam must set AUTO or a size explicitly for high-bandwidth multi-camera capture.
+- The Homebrew aravis formula declares gobject-introspection as a build dependency and uses default meson args, and meson's 'introspection' option defaults to 'auto' (https://github.com/Homebrew/homebrew-core/blob/62967b0a1e5adb912fde3b160b73aa696c12672e/Formula/a/aravis.rb, https://github.com/AravisProject/aravis/blob/482547a3d56e3aa8d22d7ffed33c9f1588bfe17a/meson_options.txt#L23). A typelib is therefore likely in the bottle, though I did not verify the bottle contents.
+- Issue #830 (Daheng 4K camera fails to stream on Windows 10 with Aravis 0.8.29) is open and labelled 'Needs informations'. Its content is a general Windows failure report, not specifically about firewalls as the summary implies (https://github.com/AravisProject/aravis/issues/830).

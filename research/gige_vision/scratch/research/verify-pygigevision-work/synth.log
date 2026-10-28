@@ -1,0 +1,23 @@
+=== ext
+lossless ext block 70000 -> {'block_id': 70000, 'timestamp': 123456789, 'pixel_format': 17301505, 'width': 320, 'height': 240, 'missing_packets': 0, 'complete': True}
+after gap in block 70001: receiver_thread_alive = True
+next frame: (array([[0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0],
+       ...,
+       [0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0]], shape=(240, 320), dtype=uint8), {'block_id': 70001, 'timestamp': 123456789, 'pixel_format': 17301505, 'width': 320, 'height': 240, 'missing_packets': 1, 'complete': False})
+=== ext_small
+PACKETRESEND bytes: 42010040000c0001000000070000000500000005 len 20 flag byte=0x01
+=== big
+2048x2048 (4194304 px): ((2048, 2048), True)
+2048x2049 (4196352 px): NO FRAME
+2448x2048 (5013504 px): NO FRAME
+2592x1944 (5038848 px): NO FRAME
+=== paced 110e6
+rate=110MB/s frames=20 complete=20 data_pkts_sent=27800 (none dropped) resend_pkts_requested_on_wire=23500 (84.5%) cmds=80 lib_stats={'requested': 23500, 'recovered': 23500, 'failed': 0}
+=== paced 280e6
+rate=280MB/s frames=20 complete=20 data_pkts_sent=27800 (none dropped) resend_pkts_requested_on_wire=21836 (78.5%) cmds=75 lib_stats={'requested': 21836, 'recovered': 21836, 'failed': 0}
+=== paced 1000e6
+rate=1000MB/s frames=20 complete=20 data_pkts_sent=27800 (none dropped) resend_pkts_requested_on_wire=21324 (76.7%) cmds=73 lib_stats={'requested': 21324, 'recovered': 21324, 'failed': 0}

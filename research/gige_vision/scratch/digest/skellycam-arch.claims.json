@@ -1,0 +1,218 @@
+[
+ {
+  "id": "A1",
+  "claim": "OpenCV is hard-wired: CameraWorker.create always spawns opencv_camera_worker_method; there is no backend abstraction, and determine_backend.py only selects an OpenCV videoio API (DSHOW/V4L2/AVFoundation).",
+  "evidence_urls": [
+   "skellycam/core/camera/camera_worker.py:7",
+   "skellycam/core/camera/camera_worker.py:48-61",
+   "skellycam/core/camera/determine_backend.py:28-70",
+   "skellycam/core/types/type_overloads.py:12-13"
+  ],
+  "how_verified": "read-code; grep for gige|aravis|harvester|genicam|ptp|1588|spinnaker|pypylon|vimba over skellycam/, skellycam-ui/src, pyproject.toml returned no hits",
+  "confidence": "high"
+ },
+ {
+  "id": "A2",
+  "claim": "Cross-camera sync is a frame-count lock-step gate: a camera may grab only when all_ready and its frame_count <= all others; grab() and retrieve() then run back-to-back in the same process with no inter-camera barrier between them (contrary to the opencv_get_frame docstring).",
+  "evidence_urls": [
+   "skellycam/core/camera_group/camera_orchestrator.py:96-109",
+   "skellycam/core/camera/opencv/opencv_camera_loop.py:67-69",
+   "skellycam/core/camera/opencv/opencv_helpers/opencv_get_frame.py:30-33",
+   "skellycam/core/camera/opencv/opencv_helpers/opencv_get_frame.py:53-73",
+   "skellycam/core/camera/opencv/opencv_camera_loop.py:115-116",
+   "skellycam/tests/test_camera_orchestrator.py:84-117"
+  ],
+  "how_verified": "read-code; ran-test (test_camera_orchestrator.py passed in pytest run, log research/skellycam-arch-pytest.log)",
+  "confidence": "high"
+ },
+ {
+  "id": "A3",
+  "claim": "Additional barriers: startup waits (draining frames via read()) until orchestrator.all_ready; recording start waits until all cameras are recording.",
+  "evidence_urls": [
+   "skellycam/core/camera/opencv/opencv_helpers/setup_opencv_camera_loop.py:63-65",
+   "skellycam/core/camera/opencv/opencv_helpers/handle_recording_updates.py:44-47"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "A4",
+  "claim": "The frame-number is a host-side counter incremented per successful retrieve, not a device frame ID; a text overlay is drawn into the image before SHM write and recording, so it appears in recorded video.",
+  "evidence_urls": [
+   "skellycam/core/camera/opencv/opencv_helpers/opencv_get_frame.py:79-84",
+   "skellycam/core/camera/opencv/opencv_camera_loop.py:95-105"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "A5",
+  "claim": "check_framerate_reset hard-codes a 30 fps target and recreates the cv2.VideoCapture after 30 consecutive slow frames.",
+  "evidence_urls": [
+   "skellycam/core/camera/opencv/opencv_camera_loop.py:150-170"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "A6",
+  "claim": "CameraConfig fields: camera_id, camera_index (cv2 index, must be unique), camera_name, use_this_camera, resolution, color_channels=3, pixel_format='RGB' (TODO/unused), exposure_mode, exposure (OpenCV log2), framerate, rotation, capture_fourcc='MJPG', writer_fourcc='X264'; no backend or device-address field.",
+  "evidence_urls": [
+   "skellycam/core/camera/config/camera_config.py:63-123",
+   "skellycam/core/camera/config/camera_config.py:386-390"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "A7",
+  "claim": "Frame dtype is {frame_metadata, image uint8[H,W,color_channels]}; metadata has camera_info, frame_number, timebase_mapping and 9 lifecycle int64 timestamps all written from time.perf_counter_ns(); there is no device/PTP timestamp or device frame-id field.",
+  "evidence_urls": [
+   "skellycam/core/types/frame_dtype_factories.py:11-26",
+   "skellycam/core/types/numpy_record_dtypes.py:10-33",
+   "skellycam/core/types/numpy_record_dtypes.py:222-228",
+   "skellycam/core/camera/opencv/opencv_helpers/opencv_get_frame.py:53-73",
+   "skellycam/core/recorders/videos/video_recorder.py:101-103"
+  ],
+  "how_verified": "read-code; ran-test (research/scripts/skellycam_arch_verify.py printed dtype field names; backend_protocol_prototype.py confirmed 'device_timestamp_ns' absent)",
+  "confidence": "high"
+ },
+ {
+  "id": "A8",
+  "claim": "Host timestamps map to UTC via one TimebaseMapping sample created with CameraGroupIPC (camera-group creation), not at recording start as the docs state.",
+  "evidence_urls": [
+   "skellycam/core/timestamps/timebase_mapping.py:16-32",
+   "skellycam/core/camera_group/camera_group_ipc.py:24",
+   "skellycam/core/camera/opencv/opencv_helpers/create_initial_frame_recarray.py:15",
+   "skellycam-docs/docs/core/precise-timestamps.mdx:159"
+  ],
+  "how_verified": "read-code; read-spec/doc",
+  "confidence": "high"
+ },
+ {
+  "id": "A9",
+  "claim": "Downstream consumers assume 3-channel BGR uint8 (JPEG encode, cv2.VideoWriter default isColor, PyAV bgr24); mono (color_channels=1) is inconsistent: frame dtype holds (H,W,1) but CameraConfig.image_shape is (H,W), which recording validation compares against decoded video frames.",
+  "evidence_urls": [
+   "skellycam/core/types/frontend_payload_bytearray.py:142-146",
+   "skellycam/core/recorders/videos/video_recorder.py:124-130",
+   "skellycam/core/recorders/videos/pyav_video_writer.py:25-27",
+   "skellycam/core/recorders/recording_finalizer.py:161-163",
+   "skellycam/core/camera/config/camera_config.py:155-168"
+  ],
+  "how_verified": "read-code; ran-test (skellycam_arch_verify.py [1]: color_channels=1 -> dtype image shape (48,64,1) vs image_shape (48,64))",
+  "confidence": "high"
+ },
+ {
+  "id": "A10",
+  "claim": "Each camera's SHM ring defaults to 1 GiB / frame itemsize slots: 388 frames at 1280x720 BGR, 155 at 1920x1200, 71 at 2448x2048, 29 at 4096x3000.",
+  "evidence_urls": [
+   "skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py:35-45",
+   "skellycam/core/ipc/shared_memory/camera_shared_memory_ring_buffer.py:21-42"
+  ],
+  "how_verified": "ran-test: research/venvs/skellycam-arch python -I research/scripts/skellycam_arch_verify.py <repo> (log research/skellycam-arch-verify.log [3])",
+  "confidence": "high"
+ },
+ {
+  "id": "A11",
+  "claim": "Device detection uses cv2_enumerate_cameras via detect_available_cameras, returning CameraDeviceInfo(index,name,vid,pid,path,backend_id,backend_name) with camera_id hashed from path/vid-pid; exposed at POST /skellycam/camera/detect; the UI builds CameraConfig from (camera_id, index, name) only.",
+  "evidence_urls": [
+   "skellycam/core/device_detection/detect_cameras_devices.py:35-55",
+   "skellycam/core/device_detection/detect_cameras_devices.py:86-109",
+   "skellycam/api/http/cameras/camera_router.py:89-100",
+   "skellycam-ui/src/store/slices/cameras/cameras-thunks.ts:63-97",
+   "skellycam-ui/src/store/slices/cameras/cameras-types.ts:35-61"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "A12",
+  "claim": "Per-camera timestamp CSVs auto-map every FRAME_LIFECYCLE_TIMESTAMPS_DTYPE field to a column minus the host recording_start_time_ns, so device-clock timestamps must be stored in a separate sub-record with explicit columns; the multiframe CSV's inter_camera.frame_grab_range.ms uses host grab midpoints.",
+  "evidence_urls": [
+   "skellycam/core/timestamps/numpy_timestamps/create_camera_csvs.py:49-58",
+   "skellycam/core/timestamps/numpy_timestamps/create_camera_csvs.py:85-89",
+   "skellycam/core/timestamps/numpy_timestamps/process_and_save_recording_timestamps.py:81-84",
+   "skellycam/core/timestamps/numpy_timestamps/create_multi_frame_csvs.py:54-58"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "A13",
+  "claim": "Frame metadata reaches the finalizer via VideoRecorder.video_frame_metadata -> RecordingFinishedMessage -> RecordingFinalizer, so new metadata fields (e.g. device_timing) need no new IPC.",
+  "evidence_urls": [
+   "skellycam/core/recorders/videos/video_recorder.py:108",
+   "skellycam/core/camera/opencv/opencv_helpers/handle_recording_updates.py:50-59",
+   "skellycam/core/camera_group/camera_group.py:317-379"
+  ],
+  "how_verified": "read-code",
+  "confidence": "high"
+ },
+ {
+  "id": "A14",
+  "claim": "beartype_this_package() enforces all annotations at runtime; a typing.Protocol used as a hint must be @runtime_checkable (else BeartypeDecorHintPep3119Exception at decoration); a conforming fake backend passes and a non-conforming object raises BeartypeCallHintParamViolation.",
+  "evidence_urls": [
+   "skellycam/__init__.py:16-17"
+  ],
+  "how_verified": "ran-test: python -I research/scripts/backend_protocol_prototype.py <repo> (log research/backend-protocol-prototype.log)",
+  "confidence": "high"
+ },
+ {
+  "id": "A15",
+  "claim": "Existing test suite: 171 passed, 15 failed, 4 errors; most failures are beartype rejecting MagicMock or int/float mismatches; process hangs after the summary. MockVideoCapture lacks grab()/retrieve().",
+  "evidence_urls": [
+   "skellycam/tests/mocks/camera_mock.py:8-118",
+   "skellycam/tests/conftest.py:30-35",
+   "skellycam/tests/mocks/test_camera_mock.py:67-68"
+  ],
+  "how_verified": "ran-test: timeout 90 <scratch venv>/python -m pytest -p no:cacheprovider -q -rfE --tb=line skellycam/tests (log research/skellycam-arch-pytest.log)",
+  "confidence": "high"
+ },
+ {
+  "id": "A16",
+  "claim": "cv2.cvtColor(bayer, code, dst=frame_rec_array.image[0]) debayers directly into the recarray image view (shares memory, no extra copy); measured ~40 us at 640x480 and ~0.18 ms at 2448x2048 on this machine (OpenCV 4.12.0).",
+  "evidence_urls": [
+   "skellycam/core/types/frame_dtype_factories.py:11-26"
+  ],
+  "how_verified": "ran-test: research/scripts/skellycam_arch_verify.py [4]",
+  "confidence": "high"
+ },
+ {
+  "id": "A17",
+  "claim": "For an RGGB mosaic (red at pixel (0,0)), OpenCV COLOR_BayerBG2BGR yields red while COLOR_BayerRG2BGR yields blue, so the PFNC-name-to-OpenCV-code table must map by layout rather than by name.",
+  "evidence_urls": [],
+  "how_verified": "ran-test: research/scripts/skellycam_arch_verify.py [5] -> {'COLOR_BayerRG2BGR': (255,0,0), 'COLOR_BayerBG2BGR': (0,0,255), ...}",
+  "confidence": "high"
+ },
+ {
+  "id": "A18",
+  "claim": "SHM frame dtype is fixed at camera-group start from extracted configs; check_for_new_config applies settings but does not resize frame_rec_array or SHM.",
+  "evidence_urls": [
+   "skellycam/core/camera_group/camera_group.py:104-119",
+   "skellycam/core/camera/opencv/opencv_helpers/check_for_new_config.py:30-41"
+  ],
+  "how_verified": "read-code",
+  "confidence": "medium"
+ },
+ {
+  "id": "A19",
+  "claim": "Docs/code discrepancies: architecture.mdx claims a second multiframe SHM buffer and JPEG quality 80; code reads per-camera rings directly and uses quality 60; precise-timestamps.mdx links a non-existent timebase_mapping path.",
+  "evidence_urls": [
+   "skellycam-docs/docs/technical/architecture.mdx:164-165",
+   "skellycam/core/ipc/shared_memory/camera_group_shared_memory.py:129-141",
+   "skellycam/core/types/frontend_payload_bytearray.py:34",
+   "skellycam-docs/docs/core/precise-timestamps.mdx:148"
+  ],
+  "how_verified": "read-code; read-spec/doc",
+  "confidence": "high"
+ },
+ {
+  "id": "A20",
+  "claim": "create_camera_frame_csv_row_recarray is unused dead code with a pre+pre midpoint bug and non-existent column names.",
+  "evidence_urls": [
+   "skellycam/core/timestamps/numpy_timestamps/create_camera_csvs.py:110-178"
+  ],
+  "how_verified": "read-code; grep showed no callers",
+  "confidence": "high"
+ }
+]

@@ -1,0 +1,20 @@
+diff --git a/src/example.c b/src/example.c
+index 9e0293e..f414c1b 100644
+--- a/src/example.c
++++ b/src/example.c
+@@ -1,3 +1,4 @@
++#include <stdlib.h>
+ #include "libuvc/libuvc.h"
+ #include <stdio.h>
+ #include <unistd.h>
+@@ -108,7 +109,9 @@ int main(int argc, char **argv) {
+   /* Locates the first attached UVC device, stores in dev */
+   res = uvc_find_device(
+       ctx, &dev,
+-      0, 0, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
++      getenv("UVC_EXAMPLE_VID") ? (int)strtol(getenv("UVC_EXAMPLE_VID"), NULL, 16) : 0,
++      getenv("UVC_EXAMPLE_PID") ? (int)strtol(getenv("UVC_EXAMPLE_PID"), NULL, 16) : 0,
++      NULL); /* rerun20261027 variant: vid/pid from env (upstream: 0, 0 = first UVC device) */
+ 
+   if (res < 0) {
+     uvc_perror(res, "uvc_find_device"); /* no devices found */

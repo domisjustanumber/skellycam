@@ -1,0 +1,46 @@
+command: dumpbin /disasm /range:0x180009cc0,0x180009ce8 uvc\bin\uvc.dll (pupil-labs-uvc 1.0.8 win_amd64 wheel); exports: get_host_time_us RVA 9CC0, get_precise_timestamp_freq RVA 9D20
+
+File Type: DLL
+
+  0000000180009CC0: 40 53              push        rbx
+  0000000180009CC2: 48 83 EC 20        sub         rsp,20h
+  0000000180009CC6: 48 8B D9           mov         rbx,rcx
+  0000000180009CC9: 48 8D 4C 24 30     lea         rcx,[rsp+30h]
+  0000000180009CCE: FF 15 5C 33 00 00  call        qword ptr [000000018000D030h]
+  0000000180009CD4: 48 69 C3 40 42 0F  imul        rax,rbx,0F4240h
+                    00
+  0000000180009CDB: 48 99              cqo
+  0000000180009CDD: 48 F7 7C 24 30     idiv        rax,qword ptr [rsp+30h]
+  0000000180009CE2: 48 83 C4 20        add         rsp,20h
+  0000000180009CE6: 5B                 pop         rbx
+  0000000180009CE7: C3                 ret
+  0000000180009CE8: CC                 int         3
+
+  Summary
+
+        C000 .text
+
+File Type: DLL
+
+  0000000180009D20: 48 83 EC 28        sub         rsp,28h
+  0000000180009D24: 48 8D 4C 24 38     lea         rcx,[rsp+38h]
+  0000000180009D29: FF 15 01 33 00 00  call        qword ptr [000000018000D030h]
+  0000000180009D2F: 48 83 C4 28        add         rsp,28h
+  0000000180009D33: C3                 ret
+  0000000180009D34: CC                 int         3
+  0000000180009D35: CC                 int         3
+  0000000180009D36: CC                 int         3
+  0000000180009D37: CC                 int         3
+  0000000180009D38: CC                 int         3
+  0000000180009D39: CC                 int         3
+  0000000180009D3A: CC                 int         3
+  0000000180009D3B: CC                 int         3
+  0000000180009D3C: CC                 int         3
+  0000000180009D3D: CC                 int         3
+  0000000180009D3E: CC                 int         3
+  0000000180009D3F: CC                 int         3
+  0000000180009D40: 48
+
+  Summary
+
+        C000 .text

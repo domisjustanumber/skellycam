@@ -1,0 +1,189 @@
+{
+ "tool": "viva_sync_capture_test",
+ "host": {
+  "python": "3.12.13",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "machine": "AMD64",
+  "hostname": "Gerald",
+  "time_utc": "2026-10-25T19:24:13Z"
+ },
+ "args": {
+  "ip": [],
+  "iface": "",
+  "include_loopback": false,
+  "discovery_timeout": 1.0,
+  "mode": "freerun",
+  "fps": 30.0,
+  "duration": 2.0,
+  "triggers": 150,
+  "pixel_format": "",
+  "packet_size": 0,
+  "force_gvsp": false,
+  "skip_ptp": false,
+  "restore_ptp": true,
+  "ptp_mode": "Auto",
+  "ptp_slave_only": false,
+  "external_master": false,
+  "ptp_timeout": 6.0,
+  "stable_s": 1.0,
+  "max_ptp_offset_ns": 1000,
+  "max_spread_us": 100.0,
+  "expect_aligned": false,
+  "max_drop_pct": 0.5,
+  "trigger_source": "Action1,Action0",
+  "skip_trigger_config": false,
+  "device_key": 305419896,
+  "group_key": 1,
+  "group_mask": 4294967295,
+  "action_dest": "auto",
+  "action_sender": "viva",
+  "ack_timeout_ms": 20,
+  "lead_ms": 20.0,
+  "start_delay_ms": 1000.0,
+  "fake_cameras": 1,
+  "out": "viva_ptp_nolock",
+  "selftest": false
+ },
+ "viva_genicam_version": "0.10.0",
+ "cameras": [
+  {
+   "ip": "127.0.0.1",
+   "DeviceVendorName": "vitavision.dev",
+   "DeviceModelName": "VivaCam Fake",
+   "DeviceSerialNumber": "VIVA-FAKE-001",
+   "DeviceFirmwareVersion": "1.0.0-fake",
+   "PixelFormat": "BayerRG8",
+   "Width": "640",
+   "Height": "480",
+   "GevSCPSPacketSize": "1500",
+   "GevTimestampTickFrequency": "1000000000",
+   "ExposureTime": "5000",
+   "bootstrap_gev_version": "2.0",
+   "capability": [
+    "ccp_application_port_ip",
+    "pending_ack",
+    "packet_resend",
+    "write_mem",
+    "concatenation"
+   ],
+   "tick_hz_after_ptp": 1000000000
+  }
+ ],
+ "ptp_timeline": [
+  {
+   "t_s": 0.0,
+   "cam0 127.0.0.1 VivaCam Fake": {
+    "status": "Listening",
+    "offset_ns": 0
+   }
+  },
+  {
+   "t_s": 1.0,
+   "cam0 127.0.0.1 VivaCam Fake": {
+    "status": "Listening",
+    "offset_ns": 0
+   }
+  },
+  {
+   "t_s": 2.0,
+   "cam0 127.0.0.1 VivaCam Fake": {
+    "status": "Listening",
+    "offset_ns": 0
+   }
+  },
+  {
+   "t_s": 3.0,
+   "cam0 127.0.0.1 VivaCam Fake": {
+    "status": "Listening",
+    "offset_ns": 0
+   }
+  },
+  {
+   "t_s": 4.0,
+   "cam0 127.0.0.1 VivaCam Fake": {
+    "status": "Listening",
+    "offset_ns": 0
+   }
+  },
+  {
+   "t_s": 5.0,
+   "cam0 127.0.0.1 VivaCam Fake": {
+    "status": "Listening",
+    "offset_ns": 0
+   }
+  },
+  {
+   "t_s": 6.0,
+   "cam0 127.0.0.1 VivaCam Fake": {
+    "status": "Listening",
+    "offset_ns": 0
+   }
+  }
+ ],
+ "quality": {
+  "cam0 127.0.0.1 VivaCam Fake": {
+   "frames": 54,
+   "incomplete": 0,
+   "block_id_gaps": 0,
+   "lost_pct": 0.0,
+   "device_fps": 26.196800846680603,
+   "stream_stats": {
+    "frames_complete": 54,
+    "frames_incomplete": 0,
+    "frames_missed": 0,
+    "frames_lost": 0,
+    "packets_missing": 0,
+    "resend_requested": 0,
+    "resend_recovered": 0,
+    "avg_fps": 26.217173293730436,
+    "avg_mbps": 64.43132508667192
+   },
+   "reader_error": ""
+  }
+ },
+ "freerun": {},
+ "checks": [
+  {
+   "name": "camera",
+   "status": "INFO",
+   "detail": "vitavision.dev VivaCam Fake serial VIVA-FAKE-001 fw 1.0.0-fake; GEV 2.0 (DeviceTLVersion ?.?); BayerRG8 640x480, packet size 1500",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "PTP enable feature",
+   "status": "PASS",
+   "detail": "PtpEnable: false -> true",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "PTP lock",
+   "status": "FAIL",
+   "detail": "not locked within 6 s (limit 1000 ns): cam0 127.0.0.1 VivaCam Fake: Listening offset 0 ns. Check IGMP snooping (disable), one switch/subnet, power-cycle cameras stuck as Master.",
+   "camera": ""
+  },
+  {
+   "name": "free-run setup",
+   "status": "INFO",
+   "detail": "TriggerMode=Off, AcquisitionFrameRate=30",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "frames received",
+   "status": "PASS",
+   "detail": "54 of ~60 requested; incomplete 0, block-id gaps 0 (0.00 % lost, limit 0.5 %); device fps 26.20",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "frame rate",
+   "status": "WARN",
+   "detail": "camera delivered 54 frames, fewer than the 60 the requested 30.0 fps implies, without losing any - it cannot run that fast (exposure time, bandwidth limit, ROI) or ignores AcquisitionFrameRate",
+   "camera": "cam0 127.0.0.1 VivaCam Fake"
+  },
+  {
+   "name": "timestamp pairing",
+   "status": "SKIP",
+   "detail": "needs two or more cameras",
+   "camera": ""
+  }
+ ]
+}

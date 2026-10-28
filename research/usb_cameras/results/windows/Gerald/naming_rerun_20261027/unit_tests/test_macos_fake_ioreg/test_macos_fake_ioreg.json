@@ -1,0 +1,41 @@
+{
+ "test": "naming.test_macos_fake_ioreg",
+ "platform": "win32",
+ "hostname": "Gerald",
+ "command": "research/usb_cameras/naming/test_macos_fake_ioreg.py --out-dir research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/unit_tests/test_macos_fake_ioreg",
+ "keys": {
+  "0843": "046d:0843:port=bus14/1.4",
+  "085c": "046d:085c:sn=B76395EF"
+ },
+ "checks": [
+  {
+   "name": "3 usb devices, deduped",
+   "ok": true,
+   "detail": 3
+  },
+  {
+   "name": "2 video devices",
+   "ok": true,
+   "detail": [
+    "0843",
+    "085c"
+   ]
+  },
+  {
+   "name": "uniqueID matched for both (incl. unpadded)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "C922 serial key",
+   "ok": true,
+   "detail": "046d:085c:sn=B76395EF"
+  },
+  {
+   "name": "C930e port key",
+   "ok": true,
+   "detail": "046d:0843:port=bus14/1.4"
+  }
+ ],
+ "all_ok": true
+}

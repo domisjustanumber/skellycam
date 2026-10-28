@@ -1,0 +1,17 @@
+send_action(timeout_ms=0) unicast -> AckSummary(sent=1, acks=0) in 0.3 ms; fake.actions=0
+send_action(timeout_ms=50) unicast -> AckSummary(sent=1, acks=1) in 52.0 ms; fake.actions=2
+send_action(timeout_ms=200) unicast -> AckSummary(sent=1, acks=1) in 201.4 ms; fake.actions=3
+send_action(dest=172.30.239.255) -> AckSummary(sent=1, acks=1) in 201.5 ms; acted 1
+send_action(dest=255.255.255.255) -> AckSummary(sent=1, acks=0) in 201.3 ms; acted 0
+frame Frame(width=1280, height=1024, pixel_format=BayerRG8, bytes=1310720) pixel_format BayerRG8
+  to_numpy() Bayer mosaic      0.754 ms (1024, 1280) uint8
+  np.frombuffer(payload())     0.281 ms (1024, 1280) uint8
+  to_numpy(demosaic=True)      2.864 ms (1024, 1280, 3) uint8
+  to_rgb8()                    2.839 ms (1024, 1280, 3) uint8
+  mean |viva demosaic - cv2.COLOR_BayerRG2RGB| = 0.54
+  mean |viva demosaic - cv2.COLOR_BayerBG2RGB| = 0.33
+  mosaic top-left 4x4:
+ [[0 0 0 0]
+ [0 0 0 0]
+ [0 0 0 0]
+ [0 0 0 0]]

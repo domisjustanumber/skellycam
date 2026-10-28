@@ -1,0 +1,503 @@
+{
+ "test": "naming.rerun_check_claims",
+ "platform": "win32",
+ "utc_run": "2026-10-28T03:17:27.988337+00:00",
+ "command": "uv run --script research/usb_cameras/results/windows/Gerald/naming_rerun_20261027/check_claims.py",
+ "uvc": {
+  "046d:0843": {
+   "bcdUVC": "1.00",
+   "dwClockFrequency": 30000000,
+   "max_alt": 11,
+   "max_bytes_per_second": 24576000,
+   "formats": [
+    "YUY2(19)",
+    "MJPG(17)"
+   ]
+  },
+  "4c4a:4a55": {
+   "bcdUVC": "1.00",
+   "dwClockFrequency": 30000000,
+   "max_alt": 1,
+   "max_bytes_per_second": 24552000,
+   "formats": [
+    "MJPG(5)",
+    "YUY2(4)"
+   ]
+  },
+  "046d:085c": {
+   "bcdUVC": "1.00",
+   "dwClockFrequency": 300000000,
+   "max_alt": 11,
+   "max_bytes_per_second": 24480000,
+   "formats": [
+    "YUY2(19)",
+    "MJPG(17)"
+   ]
+  }
+ },
+ "device_history": {
+  "046d:0843": {
+   "instances": 2,
+   "container_ids": 2,
+   "rows": [
+    [
+     "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&1",
+     false,
+     "{5e5e28ba-47e1-11f1-8734-10f60a521d3a}",
+     "2026-05-04T18:38:33.749000+00:00"
+    ],
+    [
+     "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+     true,
+     "{3f8b42f9-d0c1-11f1-879f-10f60a521d3a}",
+     "2026-10-25T22:16:34.574000+00:00"
+    ]
+   ]
+  },
+  "4c4a:4a55": {
+   "instances": 1,
+   "container_ids": 1,
+   "rows": [
+    [
+     "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&3",
+     true,
+     "{c271585b-748a-11f1-875b-10f60a521d37}",
+     "2026-06-30T13:52:34.886377+00:00"
+    ]
+   ]
+  },
+  "046d:085c": {
+   "instances": 1,
+   "container_ids": 1,
+   "rows": [
+    [
+     "USB\\VID_046D&PID_085C\\B76395EF",
+     true,
+     "{791c9a88-5665-5cbb-9d66-29961bfa28f1}",
+     "2026-05-09T19:06:35.992710+00:00"
+    ]
+   ]
+  }
+ },
+ "checks": [
+  {
+   "name": "Kiyo 1532:0e05 excluded from the re-run (never sent an IOCTL)",
+   "ok": true,
+   "detail": [
+    "USB\\VID_1532&PID_0E05\\9&3a0ecb01&0&4",
+    "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+    "USB\\VID_1532&PID_0E05&MI_02\\a&34494d13&0&0002"
+   ]
+  },
+  {
+   "name": "3 in-scope cameras found",
+   "ok": true,
+   "detail": [
+    "046d:0843",
+    "046d:085c",
+    "4c4a:4a55"
+   ]
+  },
+  {
+   "name": "046d:0843 raw device descriptor byte-identical to phase 1",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "046d:0843 raw configuration descriptor byte-identical to phase 1",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "046d:0843 UVC summary identical to phase 1",
+   "ok": true,
+   "detail": {
+    "bcdUVC": "1.00",
+    "dwClockFrequency": 30000000,
+    "max_alt": 11,
+    "max_bytes_per_second": 24576000,
+    "formats": [
+     "YUY2(19)",
+     "MJPG(17)"
+    ]
+   }
+  },
+  {
+   "name": "046d:0843 wTotalLength == bytes",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "4c4a:4a55 raw device descriptor byte-identical to phase 1",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "4c4a:4a55 raw configuration descriptor byte-identical to phase 1",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "4c4a:4a55 UVC summary identical to phase 1",
+   "ok": true,
+   "detail": {
+    "bcdUVC": "1.00",
+    "dwClockFrequency": 30000000,
+    "max_alt": 1,
+    "max_bytes_per_second": 24552000,
+    "formats": [
+     "MJPG(5)",
+     "YUY2(4)"
+    ]
+   }
+  },
+  {
+   "name": "4c4a:4a55 wTotalLength == bytes",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "046d:085c raw device descriptor byte-identical to phase 1",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "046d:085c raw configuration descriptor byte-identical to phase 1",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "046d:085c UVC summary identical to phase 1",
+   "ok": true,
+   "detail": {
+    "bcdUVC": "1.00",
+    "dwClockFrequency": 300000000,
+    "max_alt": 11,
+    "max_bytes_per_second": 24480000,
+    "formats": [
+     "YUY2(19)",
+     "MJPG(17)"
+    ]
+   }
+  },
+  {
+   "name": "046d:085c wTotalLength == bytes",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "046d:0843 iSerialNumber=0 and generated instance id (<hash>&0&<port>)",
+   "ok": true,
+   "detail": [
+    0,
+    "7&7DCC7CE&0&4"
+   ]
+  },
+  {
+   "name": "4c4a:4a55 iSerialNumber=0 and generated instance id (<hash>&0&<port>)",
+   "ok": true,
+   "detail": [
+    0,
+    "7&7DCC7CE&0&3"
+   ]
+  },
+  {
+   "name": "C922 iSerialNumber=1, serial B76395EF, used as instance id suffix",
+   "ok": true,
+   "detail": [
+    1,
+    "B76395EF",
+    "B76395EF"
+   ]
+  },
+  {
+   "name": "C930e and generic share parent hub prefix 7&7DCC7CE (ports 4 and 3)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "046d:0843 device_history instances=2 distinct ContainerIds=2 (phase 1 instances=2)",
+   "ok": true,
+   "detail": [
+    [
+     "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&1",
+     false,
+     "{5e5e28ba-47e1-11f1-8734-10f60a521d3a}",
+     "2026-05-04T18:38:33.749000+00:00"
+    ],
+    [
+     "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+     true,
+     "{3f8b42f9-d0c1-11f1-879f-10f60a521d3a}",
+     "2026-10-25T22:16:34.574000+00:00"
+    ]
+   ]
+  },
+  {
+   "name": "4c4a:4a55 device_history instances=1 distinct ContainerIds=1 (phase 1 instances=1)",
+   "ok": true,
+   "detail": [
+    [
+     "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&3",
+     true,
+     "{c271585b-748a-11f1-875b-10f60a521d37}",
+     "2026-06-30T13:52:34.886377+00:00"
+    ]
+   ]
+  },
+  {
+   "name": "046d:085c device_history instances=1 distinct ContainerIds=1 (phase 1 instances=1)",
+   "ok": true,
+   "detail": [
+    [
+     "USB\\VID_046D&PID_085C\\B76395EF",
+     true,
+     "{791c9a88-5665-5cbb-9d66-29961bfa28f1}",
+     "2026-05-09T19:06:35.992710+00:00"
+    ]
+   ]
+  },
+  {
+   "name": "C922 has exactly 1 instance in PnP history",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "C930e: 2 instances, 2 ContainerIds (&0&1, &0&4) as in phase 1",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "C922 ContainerId is UUID v5",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "046d:0843 ContainerId is UUID v1",
+   "ok": true,
+   "detail": {
+    "version": 1,
+    "v1_timestamp": "2026-10-25T22:13:03.855282+00:00",
+    "v1_node": "10f60a521d3a"
+   }
+  },
+  {
+   "name": "4c4a:4a55 ContainerId is UUID v1",
+   "ok": true,
+   "detail": {
+    "version": 1,
+    "v1_timestamp": "2026-06-30T13:51:14.171298+00:00",
+    "v1_node": "10f60a521d37"
+   }
+  },
+  {
+   "name": "046d:0843 no IgnoreHWSerNum; global count 11; device key only osvc/NewInterfaceUsage",
+   "ok": true,
+   "detail": {
+    "global_IgnoreHWSerNum_for_vidpid": {},
+    "global_IgnoreHWSerNum_count": 11,
+    "device_key": "HKLM\\SYSTEM\\CurrentControlSet\\Control\\UsbFlags\\046D08430013",
+    "device_key_values": {
+     "osvc": "0000",
+     "NewInterfaceUsage": 0
+    }
+   }
+  },
+  {
+   "name": "4c4a:4a55 no IgnoreHWSerNum; global count 11; device key only osvc/NewInterfaceUsage",
+   "ok": true,
+   "detail": {
+    "global_IgnoreHWSerNum_for_vidpid": {},
+    "global_IgnoreHWSerNum_count": 11,
+    "device_key": "HKLM\\SYSTEM\\CurrentControlSet\\Control\\UsbFlags\\4C4A4A550100",
+    "device_key_values": {
+     "osvc": "0000",
+     "NewInterfaceUsage": 0
+    }
+   }
+  },
+  {
+   "name": "046d:085c no IgnoreHWSerNum; global count 11; device key only osvc/NewInterfaceUsage",
+   "ok": true,
+   "detail": {
+    "global_IgnoreHWSerNum_for_vidpid": {},
+    "global_IgnoreHWSerNum_count": 11,
+    "device_key": "HKLM\\SYSTEM\\CurrentControlSet\\Control\\UsbFlags\\046D085C0016",
+    "device_key_values": {
+     "osvc": "0000",
+     "NewInterfaceUsage": 0
+    }
+   }
+  },
+  {
+   "name": "046d:0843 MF symbolic link == KSCATEGORY_VIDEO_CAMERA interface (case-insensitive)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "046d:0843 DShow DevicePath == KSCATEGORY_CAPTURE interface (case-insensitive)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "046d:0843 FFmpeg alternative name == '@device_pnp_' + DevicePath",
+   "ok": true,
+   "detail": "@device_pnp_\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global"
+  },
+  {
+   "name": "046d:0843 cv2_enumerate_cameras CAP_MSMF index == MF position (6) and CAP_DSHOW index == DShow position (2) [enumeration only, no VideoCapture opened]",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "4c4a:4a55 MF symbolic link == KSCATEGORY_VIDEO_CAMERA interface (case-insensitive)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "4c4a:4a55 DShow DevicePath == KSCATEGORY_CAPTURE interface (case-insensitive)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "4c4a:4a55 FFmpeg alternative name == '@device_pnp_' + DevicePath",
+   "ok": true,
+   "detail": "@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global"
+  },
+  {
+   "name": "4c4a:4a55 cv2_enumerate_cameras CAP_MSMF index == MF position (5) and CAP_DSHOW index == DShow position (1) [enumeration only, no VideoCapture opened]",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "046d:085c MF symbolic link == KSCATEGORY_VIDEO_CAMERA interface (case-insensitive)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "046d:085c DShow DevicePath == KSCATEGORY_CAPTURE interface (case-insensitive)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "046d:085c FFmpeg alternative name == '@device_pnp_' + DevicePath",
+   "ok": true,
+   "detail": "@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global"
+  },
+  {
+   "name": "046d:085c cv2_enumerate_cameras CAP_MSMF index == MF position (4) and CAP_DSHOW index == DShow position (0) [enumeration only, no VideoCapture opened]",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "8 MF and 15 DShow video sources",
+   "ok": true,
+   "detail": [
+    8,
+    15
+   ]
+  },
+  {
+   "name": "generic camera friendly name 'USB Camera' (MF + DShow)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "Kiyo (enumerated by MF only, not opened) still named 'USB Video Device'",
+   "ok": true,
+   "detail": [
+    "USB Video Device"
+   ]
+  },
+  {
+   "name": "MF/DShow index order of physical cameras changed since phase 1 (indices are not identity)",
+   "ok": true,
+   "detail": {
+    "media_foundation": {
+     "phase1": [
+      [
+       4,
+       "USB\\VID_046D&PID_085C&MI_00\\8&"
+      ],
+      [
+       5,
+       "USB\\VID_4C4A&PID_4A55&MI_00\\8&"
+      ],
+      [
+       6,
+       "USB\\VID_1532&PID_0E05&MI_00\\A&"
+      ],
+      [
+       7,
+       "USB\\VID_046D&PID_0843&MI_00\\8&"
+      ]
+     ],
+     "rerun": [
+      [
+       4,
+       "USB\\VID_046D&PID_085C&MI_00\\8&"
+      ],
+      [
+       5,
+       "USB\\VID_4C4A&PID_4A55&MI_00\\8&"
+      ],
+      [
+       6,
+       "USB\\VID_046D&PID_0843&MI_00\\8&"
+      ],
+      [
+       7,
+       "USB\\VID_1532&PID_0E05&MI_00\\A&"
+      ]
+     ]
+    },
+    "directshow": {
+     "phase1": [
+      [
+       0,
+       "USB\\VID_046D&PID_085C&MI_00\\8&"
+      ],
+      [
+       1,
+       "USB\\VID_4C4A&PID_4A55&MI_00\\8&"
+      ],
+      [
+       2,
+       "USB\\VID_1532&PID_0E05&MI_00\\A&"
+      ],
+      [
+       7,
+       "USB\\VID_046D&PID_0843&MI_00\\8&"
+      ]
+     ],
+     "rerun": [
+      [
+       0,
+       "USB\\VID_046D&PID_085C&MI_00\\8&"
+      ],
+      [
+       1,
+       "USB\\VID_4C4A&PID_4A55&MI_00\\8&"
+      ],
+      [
+       2,
+       "USB\\VID_046D&PID_0843&MI_00\\8&"
+      ],
+      [
+       3,
+       "USB\\VID_1532&PID_0E05&MI_00\\A&"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "name": "camera_key equals phase-1 keys for all 3 cameras",
+   "ok": true,
+   "detail": null
+  }
+ ],
+ "all_ok": true,
+ "n_pass": 46,
+ "n": 46
+}

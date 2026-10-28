@@ -1,0 +1,254 @@
+== vid_046d_pid_085c_mi_00_8_268da596_0_0000 display=DISPLAY1 corr=[0.9490933692242879] roi=[66, 69] E=7.81ms
+   host_arrival                   corr=0.949 offset=  -58.040 ms  per-frame err std=   2368.8 us mad=  1980.2 us n=52 gamma=0.6 | vs GT std=   4828.7 us
+   os_timestamp                   corr=0.953 offset=  -52.960 ms  per-frame err std=   2178.0 us mad=  2100.8 us n=58 gamma=0.5 | vs GT std=   4668.2 us
+   mf_undoc_d06f8a46              corr=0.949 offset=  -57.880 ms  per-frame err std=   2373.8 us mad=  2006.4 us n=52 gamma=0.6 | vs GT std=   4823.8 us
+   uvc_pts_mapped_direct          corr=0.991 offset=  -48.940 ms  per-frame err std=    444.1 us mad=   294.1 us n=59 gamma=1.8999999999999995 | vs GT std=    610.7 us
+   uvc_pts_via_scr_envelope       corr=0.992 offset=  -16.300 ms  per-frame err std=    450.2 us mad=   285.4 us n=66 gamma=1.8499999999999996 | vs GT std=    466.6 us
+   uvc_pts_via_scr_lsq_envelope   corr=0.992 offset=  -16.240 ms  per-frame err std=    432.5 us mad=   266.2 us n=67 gamma=1.8499999999999996 | vs GT std=    432.5 us
+== vid_4c4a_pid_4a55_mi_00_8_35e81179_0_0000 display=DISPLAY1 corr=[0.9515357275145256] roi=[49, 52] E=7.81ms
+   host_arrival                   corr=0.952 offset=  -59.880 ms  per-frame err std=   2473.6 us mad=  2133.2 us n=64 gamma=0.4 | vs GT std=   2328.1 us
+   os_timestamp                   corr=0.953 offset=  -28.400 ms  per-frame err std=   2324.1 us mad=  2776.4 us n=65 gamma=0.8499999999999999 | vs GT std=   2324.1 us
+   mf_undoc_d06f8a46              corr=0.952 offset=  -59.680 ms  per-frame err std=   2473.7 us mad=  2114.5 us n=64 gamma=0.4 | vs GT std=   2325.6 us
+== vid_046d_pid_085c_mi_00_8_268da596_0_0000  frames=888  dur=29.6s
+   uvc_pts_mapped_direct            jitter_rms=    126.8 us  fps=30.0000  arrival-src=   8.646+-4.866 ms  drops=0
+   uvc_pts_via_scr_lsq_envelope     jitter_rms=    342.2 us  fps=29.9999  arrival-src=  41.641+-4.872 ms  drops=0
+   uvc_pts_via_scr_envelope         jitter_rms=    394.6 us  fps=29.9999  arrival-src=  41.643+-4.863 ms  drops=0
+   os_timestamp                     jitter_rms=   4619.9 us  fps=30.0016  arrival-src=   4.949+-7.316 ms  drops=30
+   host_arrival                     jitter_rms=   4852.9 us  fps=29.9998  arrival-src=   0.000+-0.000 ms  drops=35
+   mf_undoc_d06f8a46                jitter_rms=   4853.3 us  fps=29.9998  arrival-src=   0.161+-0.037 ms  drops=28
+   device_clock: {"pts_zero_fraction": 0.0, "pts_freq_vs_host_hz": 299997830.9349978, "nominal_hz": 300000000.0, "nominal_assumed": true, "device_vs_host_ppm": -7.2302166740099585, "eof_pts_equals_sof_pts_fraction": 1.0, "scr_stc_zero_fraction": 0.0, "stc_per_sof_hz": 339007005.1790181, "device_vs_usb_ppm": 130023.35059672693, "usb_sof_ms_per_host_s": 884.9346269232122, "usb_vs_host_ppm": -115065.37307678777, "stc_freq_vs_host_hz": 299997756.83116597, "uvc_pts_via_scr_envelope_valid_frames": 879, "uvc_pts_via_scr_lsq_envelope_valid_frames": 879}
+== vid_4c4a_pid_4a55_mi_00_8_35e81179_0_0000  frames=767  dur=29.7s
+   os_timestamp                     jitter_rms=   4615.4 us  fps=25.7572  arrival-src=  31.086+-4.131 ms  drops=5
+   mf_undoc_d06f8a46                jitter_rms=   4617.5 us  fps=25.7570  arrival-src=   0.208+-0.052 ms  drops=23
+   host_arrival                     jitter_rms=   4623.2 us  fps=25.7570  arrival-src=   0.000+-0.000 ms  drops=40
+C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/7c9d3345-0e7f-4af6-bb14-20fd851edd1a/scratchpad/runs/timing_verify/20261028T034939Z_flash_c922_generic_exp-7_v2/capture/vid_046d_pid_085c_mi_00_8_268da596_0_0000.frames.jsonl {"host_arrival_ns": [16.0, 1.0], "os_timestamp_ns": [16.0, 1.0], "mf_sample_time_100ns": [16.0, 1.0]}
+C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/7c9d3345-0e7f-4af6-bb14-20fd851edd1a/scratchpad/runs/timing_verify/20261028T034939Z_flash_c922_generic_exp-7_v2/capture/vid_4c4a_pid_4a55_mi_00_8_35e81179_0_0000.frames.jsonl {"host_arrival_ns": [16.0, 1.0], "os_timestamp_ns": [16.0, 1.0], "mf_sample_time_100ns": [16.0, 1.0]}
+== vid_046d_pid_085c E=7.81 ms ref=uvc_pts_via_scr_lsq_envelope roi_rows=[66, 69] pts_steps=[]
+   host_arrival                   corr=0.949 fitoff=  -58.04  pf_std=   2369  | GT off= -58.542 ms std=   4829 us mad=   5837 n=67
+   os_timestamp                   corr=0.953 fitoff=  -52.96  pf_std=   2178  | GT off= -51.554 ms std=   4668 us mad=   6316 n=67
+   mf_undoc_d06f8a46              corr=0.949 fitoff=  -57.88  pf_std=   2374  | GT off= -58.417 ms std=   4824 us mad=   5779 n=67
+   uvc_pts_mapped_direct          corr=0.991 fitoff=  -48.94  pf_std=    444  | GT off= -48.757 ms std=    611 us mad=    464 n=67
+   uvc_pts_via_scr_envelope       corr=0.992 fitoff=  -16.30  pf_std=    450  | GT off= -16.125 ms std=    467 us mad=    269 n=67
+   uvc_pts_via_scr_lsq_envelope   corr=0.992 fitoff=  -16.24  pf_std=    432  | GT off= -16.065 ms std=    432 us mad=    266 n=67
+   seq_envelope                   corr=0.991 fitoff=  -49.14  pf_std=    449  | GT off= -48.951 ms std=    598 us mad=    470 n=67
+   uvc_pts_destepped_direct       corr=0.991 fitoff=  -48.94  pf_std=    444  | GT off= -48.757 ms std=    611 us mad=    464 n=67
+   uvc_stc_mapped_direct          corr=0.991 fitoff=  -49.12  pf_std=    449  | GT off= -48.947 ms std=    598 us mad=    472 n=67
+   uvc_pts_via_stc_line           corr=0.991 fitoff=  -16.08  pf_std=    444  | GT off= -15.886 ms std=    610 us mad=    463 n=67
+Traceback (most recent call last):
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\timing\scripts\flash_verify_extra.py", line 91, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\timing\scripts\flash_verify_extra.py", line 54, in main
+    pts = af.unwrap(np.array([r["uvc_pts"] for r in rows], dtype=np.int64), 32).astype(float)
+                              ~^^^^^^^^^^^
+KeyError: 'uvc_pts'
+vid_046d_pid_085c_ E=7.81ms {'E_ms': 7.812, 'decoded_H': 90, 'd0_ms_row0': -39.74, 'readout_ms_full_height': 30.179, 'fit_resid_ms_std': 0.986, 'row_frac_range': [0.011111111111111112, 0.9888888888888889], 'n_blocks': 45}
+Traceback (most recent call last):
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\timing\scripts\flash_rows.py", line 89, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\timing\scripts\flash_rows.py", line 51, in main
+    X = arr["sources"][a.source].astype(float); m = arr["masks"].get(a.source)
+        ~~~~~~~~~~~~~~^^^^^^^^^^
+KeyError: 'uvc_pts_via_scr_lsq_envelope'
+== vid_046d_pid_085c nominal E=7.812 ms  source=uvc_pts_mapped_direct  best-corr E=14.0 ms
+   E=  1.000 corr=0.9804 fitoff=  -45.66 pf_off=-45.641 centre=-45.141 std=178 n=10
+   E=  1.500 corr=0.9815 fitoff=  -45.72 pf_off=-45.676 centre=-44.926 std=319 n=15
+   E=  2.000 corr=0.9829 fitoff=  -45.74 pf_off=-45.667 centre=-44.667 std=393 n=20
+   E=  2.500 corr=0.9841 fitoff=  -46.12 pf_off=-46.009 centre=-44.759 std=472 n=24
+   E=  3.000 corr=0.9852 fitoff=  -46.40 pf_off=-46.326 centre=-44.826 std=536 n=28
+   E=  4.000 corr=0.9867 fitoff=  -47.12 pf_off=-46.948 centre=-44.948 std=562 n=33
+   E=  5.000 corr=0.9881 fitoff=  -47.48 pf_off=-47.346 centre=-44.846 std=583 n=40
+   E=  6.000 corr=0.9894 fitoff=  -47.86 pf_off=-47.773 centre=-44.773 std=507 n=45
+   E=  7.000 corr=0.9903 fitoff=  -48.56 pf_off=-48.325 centre=-44.825 std=494 n=53
+   E=  7.812 corr=0.9911 fitoff=  -48.94 pf_off=-48.699 centre=-44.792 std=444 n=59
+   E=  8.500 corr=0.9917 fitoff=  -49.24 pf_off=-49.077 centre=-44.827 std=469 n=66
+   E= 10.000 corr=0.9928 fitoff=  -49.90 pf_off=-49.867 centre=-44.867 std=441 n=74
+   E= 12.000 corr=0.9940 fitoff=  -51.30 pf_off=-51.312 centre=-45.312 std=738 n=92
+   E= 14.000 corr=0.9945 fitoff=  -52.40 pf_off=-52.352 centre=-45.352 std=988 n=104
+   E= 15.625 corr=0.9940 fitoff=  -53.24 pf_off=-52.936 centre=-45.123 std=1267 n=111
+   E= 17.000 corr=0.9930 fitoff=  -53.94 pf_off=-53.261 centre=-44.761 std=1519 n=113
+   E= 20.000 corr=0.9894 fitoff=  -55.42 pf_off=-55.104 centre=-45.104 std=2000 n=130
+Traceback (most recent call last):
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\timing\scripts\flash_exposure_scan.py", line 59, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\timing\scripts\flash_exposure_scan.py", line 38, in main
+    X = arr["sources"][a.source].astype(float); m = arr["masks"].get(a.source)
+        ~~~~~~~~~~~~~~^^^^^^^^^^
+KeyError: 'uvc_pts_mapped_direct'
+== vid_046d_pid_085c nominal E=7.812 ms  source=uvc_pts_via_scr_lsq_envelope  best-corr E=12.0 ms
+   E=  1.000 corr=0.9804 fitoff=  -12.96 pf_off=-12.935 centre=-12.435 std=152 n=10
+   E=  1.500 corr=0.9817 fitoff=  -13.02 pf_off=-12.994 centre=-12.244 std=284 n=15
+   E=  2.000 corr=0.9833 fitoff=  -13.06 pf_off=-12.963 centre=-11.963 std=371 n=21
+   E=  2.500 corr=0.9846 fitoff=  -13.44 pf_off=-13.339 centre=-12.089 std=429 n=25
+   E=  3.000 corr=0.9856 fitoff=  -13.72 pf_off=-13.659 centre=-12.159 std=460 n=28
+   E=  4.000 corr=0.9872 fitoff=  -14.48 pf_off=-14.27 centre=-12.27 std=532 n=36
+   E=  5.000 corr=0.9887 fitoff=  -14.68 pf_off=-14.575 centre=-12.075 std=517 n=44
+   E=  6.000 corr=0.9898 fitoff=  -15.34 pf_off=-15.122 centre=-12.122 std=487 n=50
+   E=  7.000 corr=0.9909 fitoff=  -15.88 pf_off=-15.654 centre=-12.154 std=377 n=56
+   E=  7.812 corr=0.9917 fitoff=  -16.24 pf_off=-16.065 centre=-12.159 std=432 n=67
+   E=  8.500 corr=0.9923 fitoff=  -16.64 pf_off=-16.489 centre=-12.239 std=453 n=72
+   E= 10.000 corr=0.9934 fitoff=  -17.38 pf_off=-17.384 centre=-12.384 std=508 n=83
+   E= 12.000 corr=0.9942 fitoff=  -18.48 pf_off=-18.364 centre=-12.364 std=776 n=99
+   E= 14.000 corr=0.9942 fitoff=  -19.44 pf_off=-19.374 centre=-12.374 std=1113 n=107
+   E= 15.625 corr=0.9935 fitoff=  -20.26 pf_off=-20.036 centre=-12.223 std=1414 n=113
+   E= 17.000 corr=0.9923 fitoff=  -20.92 pf_off=-20.778 centre=-12.278 std=1621 n=121
+   E= 20.000 corr=0.9885 fitoff=  -22.34 pf_off=-21.908 centre=-11.908 std=2109 n=131
+Traceback (most recent call last):
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\timing\scripts\flash_exposure_scan.py", line 59, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\timing\scripts\flash_exposure_scan.py", line 38, in main
+    X = arr["sources"][a.source].astype(float); m = arr["masks"].get(a.source)
+        ~~~~~~~~~~~~~~^^^^^^^^^^
+KeyError: 'uvc_pts_via_scr_lsq_envelope'
+20261028T034939Z_flash_c922_generic_exp-7_v2 {"presents": 2161, "stats_samples": 325, "refresh_glitches": 0, "bad_refresh_pairs": 0, "unreliable_presents": 20, "global_line_resid_us_std": 5.099146256679514, "robust_minus_global_us": {"median": -0.811921875, "max_abs": 316944.40519140626}, "levels_equal": true}
+{
+ "capture": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\\scratchpad\\runs\\timing_verify\\20261028T034939Z_flash_c922_generic_exp-7_v2\\capture",
+ "cameras": {
+  "vid_046d_pid_085c_mi_00_8_268da596_0_0000": {
+   "friendly_name": "c922 Pro Stream Webcam",
+   "frames": 893,
+   "errors": 0,
+   "wall_s": 30.026,
+   "controls": {
+    "exposure_log2": {
+     "requested": "-7",
+     "min": -11,
+     "max": -2,
+     "step": 1,
+     "default": -5,
+     "value": -7,
+     "flags": 2,
+     "manual": true
+    },
+    "white_balance_k": {
+     "requested": "4500",
+     "min": 2000,
+     "max": 6500,
+     "step": 1,
+     "default": 4000,
+     "value": 4500,
+     "flags": 2,
+     "manual": true
+    },
+    "gain": {
+     "requested": "auto",
+     "min": 0,
+     "max": 255,
+     "step": 1,
+     "default": 0,
+     "value": 0,
+     "flags": 2,
+     "manual": true
+    },
+    "focus": {
+     "requested": "auto",
+     "min": 0,
+     "max": 250,
+     "step": 5,
+     "default": 0,
+     "value": 40,
+     "flags": 1,
+     "manual": false
+    },
+    "backlight_comp": {
+     "requested": "auto",
+     "min": 0,
+     "max": 1,
+     "step": 1,
+     "default": 0,
+     "value": 0,
+     "flags": 2,
+     "manual": true
+    }
+   },
+   "fps_host_arrival": 30.005327021970686,
+   "host_interval_ms": {
+    "median": 32.00255,
+    "max": 48.1904,
+    "n_gt_50ms": 0
+   },
+   "meta_len_values": {
+    "40": 893
+   },
+   "frames_with_uvc_pts": 893,
+   "frames_with_uvc_scr": 893,
+   "jpeg_soi_eoi_ok": 893,
+   "luma_mean": 64.57390686487268,
+   "luma_min": 5.424058159722223,
+   "luma_max": 118.31524739583334,
+   "luma_std_over_time": 46.13894244280384,
+   "luma_samples": 60
+  },
+  "vid_4c4a_pid_4a55_mi_00_8_35e81179_0_0000": {
+   "friendly_name": "USB Camera",
+   "frames": 772,
+   "errors": 0,
+   "wall_s": 30.008,
+   "controls": {
+    "exposure_log2": {
+     "requested": "-7",
+     "min": -7,
+     "max": 3,
+     "step": 1,
+     "default": -7,
+     "value": -7,
+     "flags": 2,
+     "manual": true
+    },
+    "white_balance_k": {
+     "requested": "4500",
+     "min": 0,
+     "max": 6500,
+     "step": 1,
+     "default": 4500,
+     "value": 4500,
+     "flags": 2,
+     "manual": true
+    },
+    "gain": {
+     "requested": "auto",
+     "min": 1,
+     "max": 7,
+     "step": 1,
+     "default": 4,
+     "value": 4,
+     "flags": 2,
+     "manual": true
+    },
+    "focus": {
+     "supported": false
+    },
+    "backlight_comp": {
+     "requested": "auto",
+     "min": 0,
+     "max": 255,
+     "step": 1,
+     "default": 0,
+     "value": 0,
+     "flags": 2,
+     "manual": true
+    }
+   },
+   "fps_host_arrival": 25.75506923148006,
+   "host_interval_ms": {
+    "median": 32.043001,
+    "max": 48.837,
+    "n_gt_50ms": 0
+   },
+   "meta_len_values": {
+    "None": 772
+   },
+   "frames_with_uvc_pts": 0,
+   "frames_with_uvc_scr": 0,
+   "jpeg_soi_eoi_ok": 772,
+   "luma_mean": 36.53686227130075,
+   "luma_min": 12.415629340277778,
+   "luma_max": 66.19202256944445,
+   "luma_std_over_time": 20.50001040618227,
+   "luma_samples": 52
+  }
+ }
+}

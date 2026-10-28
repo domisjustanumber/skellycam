@@ -1,0 +1,64 @@
+{
+  "test": "winusb_dryrun_driverlist",
+  "platform": "windows",
+  "hostname": "GERALD",
+  "utc_started": "2026-10-25T18:26:26.2971130Z",
+  "command": "pwsh -File research/usb_cameras/libusb/winusb/dryrun_winusb_driverlist.ps1",
+  "environment": {
+    "winusb_inf": "C:\\WINDOWS\\INF\\winusb.inf",
+    "is_admin": false,
+    "os": "Microsoft Windows NT 10.0.26300.0"
+  },
+  "set_level_winusb_inf_class_drivers": [
+    "set/class|WinUsb Device|WinUsb Device|Microsoft",
+    "set/class|Billboard Device|WinUsb Device|Microsoft",
+    "set/class|ADB Device|WinUsb Device|Microsoft"
+  ],
+  "cameras": [
+    {
+      "instance_id": "USB\\VID_046D&PID_0843&MI_03\\8&39DEC205&0&0003",
+      "friendly": "Logitech Webcam C930e",
+      "class": "MEDIA",
+      "status": "OK",
+      "current_service": "usbaudio",
+      "current_inf": "wdma_usb.inf",
+      "winusb_inf_driver_list": [
+        "per-device/class|(empty)",
+        "per-device/compat|(empty)",
+        "inherit/class|WinUsb Device|WinUsb Device|Microsoft",
+        "inherit/class|Billboard Device|WinUsb Device|Microsoft",
+        "inherit/class|ADB Device|WinUsb Device|Microsoft"
+      ]
+    },
+    {
+      "instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+      "friendly": "Logitech USB Camera (Webcam C930e)",
+      "class": "USB",
+      "status": "OK",
+      "current_service": "usbccgp",
+      "current_inf": "oem74.inf",
+      "winusb_inf_driver_list": [
+        "per-device/class|(empty)",
+        "per-device/compat|(empty)",
+        "inherit/class|WinUsb Device|WinUsb Device|Microsoft",
+        "inherit/class|Billboard Device|WinUsb Device|Microsoft",
+        "inherit/class|ADB Device|WinUsb Device|Microsoft"
+      ]
+    },
+    {
+      "instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&0&0000",
+      "friendly": "Logitech Webcam C930e",
+      "class": "Image",
+      "status": "OK",
+      "current_service": "usbvideo",
+      "current_inf": "oem11.inf",
+      "winusb_inf_driver_list": [
+        "per-device/class|(empty)",
+        "per-device/compat|(empty)",
+        "inherit/class|WinUsb Device|WinUsb Device|Microsoft",
+        "inherit/class|Billboard Device|WinUsb Device|Microsoft",
+        "inherit/class|ADB Device|WinUsb Device|Microsoft"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1132 @@
+...F...........FF.....................EEEEF........................F.... [ 36%]
+......F................................F................................ [ 73%]
+....FF...........F..FFFFF..........................                      [100%]
+=================================== ERRORS ====================================
+_______ ERROR at setup of TestCameraGroupManagerInit.test_starts_empty ________
+
+kill_flag = <Synchronized wrapper for c_byte(0)>
+worker_registry = <MagicMock id='2649926447616'>
+
+    @pytest.fixture()
+    def manager(kill_flag, worker_registry):
+>       return CameraGroupManager(
+            global_kill_flag=kill_flag,
+            worker_registry=worker_registry,
+        )
+
+skellycam\tests\test_camera_group_manager.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_object_2648036058480 = <class 'multiprocessing.sharedctypes.Synchronized'>
+__beartype_get_violation = <function get_func_pith_violation at 0x000002688A7E6160>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+__beartype_object_2648036151728 = <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>
+__beartype_object_2648043137856 = <class 'skellycam.core.camera_group.camera_group.CameraGroup'>
+__beartype_object_2648016145456 = <class 'multiprocessing.queues.Queue'>
+__beartype_object_140730675300432 = <class 'NoneType'>
+__beartype_check_meta = <beartype._check.metadata.metacheck.BeartypeCheckMeta object at 0x00000268FB4C6880>
+__beartype_func = <function CameraGroupManager.__init__ at 0x00000268FB4CC180>
+args = (<[AttributeError("'CameraGroupManager' object has no attribute 'global_kill_flag'") raised in repr()] CameraGroupManager object at 0x268fbecb170>,)
+kwargs = {'global_kill_flag': <Synchronized wrapper for c_byte(0)>, 'worker_registry': <MagicMock id='2649926447616'>}
+
+>   ???
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__() parameter worker_registry=<MagicMock id='2649926447616'> violates type hint <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>, as <class "unittest.mock.MagicMock"> <MagicMock id='2649926447616'> not instance of <class "skellycam.core.ipc.process_management.worker_registry.WorkerRegistry">.
+
+<@beartype(skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__) at 0x268fb4cc180>:51: BeartypeCallHintParamViolation
+_ ERROR at setup of TestCameraGroupManagerInit.test_get_nonexistent_group_raises _
+
+kill_flag = <Synchronized wrapper for c_byte(0)>
+worker_registry = <MagicMock id='2649943953520'>
+
+    @pytest.fixture()
+    def manager(kill_flag, worker_registry):
+>       return CameraGroupManager(
+            global_kill_flag=kill_flag,
+            worker_registry=worker_registry,
+        )
+
+skellycam\tests\test_camera_group_manager.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_object_2648036058480 = <class 'multiprocessing.sharedctypes.Synchronized'>
+__beartype_get_violation = <function get_func_pith_violation at 0x000002688A7E6160>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+__beartype_object_2648036151728 = <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>
+__beartype_object_2648043137856 = <class 'skellycam.core.camera_group.camera_group.CameraGroup'>
+__beartype_object_2648016145456 = <class 'multiprocessing.queues.Queue'>
+__beartype_object_140730675300432 = <class 'NoneType'>
+__beartype_check_meta = <beartype._check.metadata.metacheck.BeartypeCheckMeta object at 0x00000268FB4C6880>
+__beartype_func = <function CameraGroupManager.__init__ at 0x00000268FB4CC180>
+args = (<[AttributeError("'CameraGroupManager' object has no attribute 'global_kill_flag'") raised in repr()] CameraGroupManager object at 0x268fcf7cfe0>,)
+kwargs = {'global_kill_flag': <Synchronized wrapper for c_byte(0)>, 'worker_registry': <MagicMock id='2649943953520'>}
+
+>   ???
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__() parameter worker_registry=<MagicMock id='2649943953520'> violates type hint <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>, as <class "unittest.mock.MagicMock"> <MagicMock id='2649943953520'> not instance of <class "skellycam.core.ipc.process_management.worker_registry.WorkerRegistry">.
+
+<@beartype(skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__) at 0x268fb4cc180>:51: BeartypeCallHintParamViolation
+____ ERROR at setup of TestCameraGroupManagerInit.test_close_empty_groups _____
+
+kill_flag = <Synchronized wrapper for c_byte(0)>
+worker_registry = <MagicMock id='2649943960624'>
+
+    @pytest.fixture()
+    def manager(kill_flag, worker_registry):
+>       return CameraGroupManager(
+            global_kill_flag=kill_flag,
+            worker_registry=worker_registry,
+        )
+
+skellycam\tests\test_camera_group_manager.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_object_2648036058480 = <class 'multiprocessing.sharedctypes.Synchronized'>
+__beartype_get_violation = <function get_func_pith_violation at 0x000002688A7E6160>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+__beartype_object_2648036151728 = <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>
+__beartype_object_2648043137856 = <class 'skellycam.core.camera_group.camera_group.CameraGroup'>
+__beartype_object_2648016145456 = <class 'multiprocessing.queues.Queue'>
+__beartype_object_140730675300432 = <class 'NoneType'>
+__beartype_check_meta = <beartype._check.metadata.metacheck.BeartypeCheckMeta object at 0x00000268FB4C6880>
+__beartype_func = <function CameraGroupManager.__init__ at 0x00000268FB4CC180>
+args = (<[AttributeError("'CameraGroupManager' object has no attribute 'global_kill_flag'") raised in repr()] CameraGroupManager object at 0x268fcf7eba0>,)
+kwargs = {'global_kill_flag': <Synchronized wrapper for c_byte(0)>, 'worker_registry': <MagicMock id='2649943960624'>}
+
+>   ???
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__() parameter worker_registry=<MagicMock id='2649943960624'> violates type hint <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>, as <class "unittest.mock.MagicMock"> <MagicMock id='2649943960624'> not instance of <class "skellycam.core.ipc.process_management.worker_registry.WorkerRegistry">.
+
+<@beartype(skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__) at 0x268fb4cc180>:51: BeartypeCallHintParamViolation
+____ ERROR at setup of TestCameraGroupManagerInit.test_to_state_dict_empty ____
+
+kill_flag = <Synchronized wrapper for c_byte(0)>
+worker_registry = <MagicMock id='2649926304064'>
+
+    @pytest.fixture()
+    def manager(kill_flag, worker_registry):
+>       return CameraGroupManager(
+            global_kill_flag=kill_flag,
+            worker_registry=worker_registry,
+        )
+
+skellycam\tests\test_camera_group_manager.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_object_2648036058480 = <class 'multiprocessing.sharedctypes.Synchronized'>
+__beartype_get_violation = <function get_func_pith_violation at 0x000002688A7E6160>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+__beartype_object_2648036151728 = <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>
+__beartype_object_2648043137856 = <class 'skellycam.core.camera_group.camera_group.CameraGroup'>
+__beartype_object_2648016145456 = <class 'multiprocessing.queues.Queue'>
+__beartype_object_140730675300432 = <class 'NoneType'>
+__beartype_check_meta = <beartype._check.metadata.metacheck.BeartypeCheckMeta object at 0x00000268FB4C6880>
+__beartype_func = <function CameraGroupManager.__init__ at 0x00000268FB4CC180>
+args = (<[AttributeError("'CameraGroupManager' object has no attribute 'global_kill_flag'") raised in repr()] CameraGroupManager object at 0x268fbea9fd0>,)
+kwargs = {'global_kill_flag': <Synchronized wrapper for c_byte(0)>, 'worker_registry': <MagicMock id='2649926304064'>}
+
+>   ???
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__() parameter worker_registry=<MagicMock id='2649926304064'> violates type hint <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>, as <class "unittest.mock.MagicMock"> <MagicMock id='2649926304064'> not instance of <class "skellycam.core.ipc.process_management.worker_registry.WorkerRegistry">.
+
+<@beartype(skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__) at 0x268fb4cc180>:51: BeartypeCallHintParamViolation
+================================== FAILURES ===================================
+_______________ TestMockVideoCapture.test_set_get_configuration _______________
+
+self = <skellycam.tests.mocks.test_camera_mock.TestMockVideoCapture object at 0x00000268FBC9FDA0>
+
+    def test_set_get_configuration(self):
+        """Verify setting and getting properties."""
+        cap = MockVideoCapture()
+    
+        # Test valid FPS
+        assert cap.set(cv2.CAP_PROP_FPS, 60.0)
+        assert cap.get(cv2.CAP_PROP_FPS) == 60.0
+    
+        # Test valid Resolution
+>       assert cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+skellycam\tests\mocks\test_camera_mock.py:67: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_get_violation = <function get_func_pith_violation at 0x000002688A7E6160>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+__beartype_check_meta = <beartype._check.metadata.metacheck.BeartypeCheckMeta object at 0x00000268FBCBFF40>
+__beartype_func = <function MockVideoCapture.set at 0x00000268FBC85760>
+args = (<skellycam.tests.mocks.camera_mock.MockVideoCapture object at 0x00000268FBCD8D70>, 3, 1920)
+kwargs = {}
+
+>   ???
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.tests.mocks.camera_mock.MockVideoCapture.set() parameter value=1920 violates type hint <class 'float'>, as int 1920 not instance of float.
+
+<@beartype(skellycam.tests.mocks.camera_mock.MockVideoCapture.set) at 0x268fbc85760>:46: BeartypeCallHintParamViolation
+__________ TestValidateCameraConfigs.test_non_dict_raises_type_error __________
+
+self = <skellycam.tests.test_camera_config_extended.TestValidateCameraConfigs object at 0x00000268FBCDA510>
+
+    def test_non_dict_raises_type_error(self) -> None:
+        with pytest.raises(TypeError, match="dictionary"):
+>           validate_camera_configs([CameraConfig()])  # type: ignore[arg-type]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+skellycam\tests\test_camera_config_extended.py:33: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_object_2648036069392 = <class 'skellycam.core.camera.config.camera_config.CameraConfig'>
+__beartype_get_violation = <function get_func_pith_violation at 0x000002688A7E6160>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+__beartype_object_140730675300432 = <class 'NoneType'>
+__beartype_check_meta = <beartype._check.metadata.metacheck.BeartypeCheckMeta object at 0x00000268BA759080>
+__beartype_func = <function validate_camera_configs at 0x00000268BA747920>
+args = ([CameraConfig(camera_id='000', camera_index=0, camera_name='Camera-000', use_this_camera=True, resolution=ImageResolu... exposure=-7, framerate=-1.0, rotation=<RotationTypes.NO_ROTATION: -1>, capture_fourcc='MJPG', writer_fourcc='X264')],)
+kwargs = {}
+
+>   ???
+E   beartype.roar.BeartypeCallHintParamViolation: Function skellycam.core.camera.config.camera_config.validate_camera_configs() parameter camera_configs=[CameraConfig(camera_id='000', camera_index=0, camera_name='Camera-000', use_this_camera=T...')] violates type hint dict[str, skellycam.core.camera.config.camera_config.CameraConfig], as list [CameraConfig(camera_id='000', camera_index=0, camera_name='Camera-000', use_this_camera=T...')] not instance of dict.
+
+<@beartype(skellycam.core.camera.config.camera_config.validate_camera_configs) at 0x268ba747920>:42: BeartypeCallHintParamViolation
+________ TestValidateCameraConfigs.test_non_camera_config_value_raises ________
+
+self = <skellycam.tests.test_camera_config_extended.TestValidateCameraConfigs object at 0x00000268FBCDA840>
+
+    def test_non_camera_config_value_raises(self) -> None:
+        with pytest.raises(TypeError, match="CameraConfig"):
+>           validate_camera_configs({"cam0": {"not": "a config"}})  # type: ignore[dict-item]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+skellycam\tests\test_camera_config_extended.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_object_2648036069392 = <class 'skellycam.core.camera.config.camera_config.CameraConfig'>
+__beartype_get_violation = <function get_func_pith_violation at 0x000002688A7E6160>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+__beartype_object_140730675300432 = <class 'NoneType'>
+__beartype_check_meta = <beartype._check.metadata.metacheck.BeartypeCheckMeta object at 0x00000268BA759080>
+__beartype_func = <function validate_camera_configs at 0x00000268BA747920>
+args = ({'cam0': {'not': 'a config'}},), kwargs = {}
+
+>   ???
+E   beartype.roar.BeartypeCallHintParamViolation: Function skellycam.core.camera.config.camera_config.validate_camera_configs() parameter camera_configs={'cam0': {'not': 'a config'}} violates type hint dict[str, skellycam.core.camera.config.camera_config.CameraConfig], as dict key str 'cam0' value dict {'not': 'a config'} not instance of <class "skellycam.core.camera.config.camera_config.CameraConfig">.
+
+<@beartype(skellycam.core.camera.config.camera_config.validate_camera_configs) at 0x268ba747920>:42: BeartypeCallHintParamViolation
+_______________ TestSingletonFactory.test_returns_same_instance _______________
+
+self = <skellycam.tests.test_camera_group_manager.TestSingletonFactory object at 0x00000268FBD00B00>
+kill_flag = <Synchronized wrapper for c_byte(0)>
+worker_registry = <MagicMock id='2649943958032'>
+
+    def test_returns_same_instance(self, kill_flag, worker_registry):
+        """get_or_create_camera_group_manager returns the same instance on repeated calls."""
+        # We need to reset the module-level singleton before testing
+        with patch(
+            "skellycam.core.camera_group.camera_group_manager._CAMERA_GROUP_MANAGER",
+            None,
+        ):
+            from fastapi import FastAPI
+            app = FastAPI()
+            app.state.global_kill_flag = kill_flag
+            app.state.worker_registry = worker_registry
+    
+>           first = get_or_create_camera_group_manager(app)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+skellycam\tests\test_camera_group_manager.py:69: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+<@beartype(skellycam.core.camera_group.camera_group_manager.get_or_create_camera_group_manager) at 0x268fb4cd3a0>:33: in get_or_create_camera_group_manager
+    ???
+skellycam\core\camera_group\camera_group_manager.py:241: in get_or_create_camera_group_manager
+    _CAMERA_GROUP_MANAGER = CameraGroupManager(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_object_2648036058480 = <class 'multiprocessing.sharedctypes.Synchronized'>
+__beartype_get_violation = <function get_func_pith_violation at 0x000002688A7E6160>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+__beartype_object_2648036151728 = <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>
+__beartype_object_2648043137856 = <class 'skellycam.core.camera_group.camera_group.CameraGroup'>
+__beartype_object_2648016145456 = <class 'multiprocessing.queues.Queue'>
+__beartype_object_140730675300432 = <class 'NoneType'>
+__beartype_check_meta = <beartype._check.metadata.metacheck.BeartypeCheckMeta object at 0x00000268FB4C6880>
+__beartype_func = <function CameraGroupManager.__init__ at 0x00000268FB4CC180>
+args = (<[AttributeError("'CameraGroupManager' object has no attribute 'global_kill_flag'") raised in repr()] CameraGroupManager object at 0x268fbecbb30>,)
+kwargs = {'global_kill_flag': <Synchronized wrapper for c_byte(0)>, 'worker_registry': <MagicMock id='2649943958032'>}
+
+>   ???
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__() parameter worker_registry=<MagicMock id='2649943958032'> violates type hint <class 'skellycam.core.ipc.process_management.worker_registry.WorkerRegistry'>, as <class "unittest.mock.MagicMock"> <MagicMock id='2649943958032'> not instance of <class "skellycam.core.ipc.process_management.worker_registry.WorkerRegistry">.
+
+<@beartype(skellycam.core.camera_group.camera_group_manager.CameraGroupManager.__init__) at 0x268fb4cc180>:51: BeartypeCallHintParamViolation
+______________________ TestRecording.test_stop_recording ______________________
+
+self = <skellycam.tests.test_camera_router.TestRecording object at 0x00000268FBD185C0>
+client = <starlette.testclient.TestClient object at 0x00000268FD0A4320>
+mock_camera_group_manager = <MagicMock id='2649943956256'>
+
+    def test_stop_recording(self, client, mock_camera_group_manager):
+        """GET /skellycam/camera/group/all/record/stop returns list of StopRecordingResponse."""
+        response = client.get("/skellycam/camera/group/all/record/stop")
+>       assert response.status_code == 200
+E       assert 500 == 200
+E        +  where 500 = <Response [500 Internal Server Error]>.status_code
+
+skellycam\tests\test_camera_router.py:98: AssertionError
+---------------------------- Captured stdout call -----------------------------
+\x1b[41m\x1b[41m\u2514>>\x1b[0m \x1b[41mError in http://testserver/skellycam/camera/group/all/record/stop: BeartypeCallHintParamViolation - Function skellycam.api.http.cameras.camera_router.stop_recording._stats_summary() parameter stats_recarray=<MagicMock name='mock.framerate_stats' id='2649943954816'> violates type hint <class 'numpy.rec.recarray'>, as <class "unittest.mock.MagicMock"> <MagicMock name='mock.framerate_stats' id='2649943954816'> not instance of <class "numpy.rec.recarray">.\x1b[0m |  ERROR |  23.399ms |  skellycam.api.http.cameras.camera_router.stop_recording():187 |  2026-10-25T15:31:17.802 |  \x1b[38;2;100;100;255mPID:22448:MainProcess\x1b[0m |  \x1b[38;2;100;208;252mTID:53500:asyncio-portal-268fd1004d0\x1b[0m\nTraceback (most recent call last):\n  File "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\skellycam\\api\\http\\cameras\\camera_router.py", line 180, in stop_recording\n    framerate_stats=_stats_summary(timestamp_stats.framerate_stats),\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "<@beartype(skellycam.api.http.cameras.camera_router.stop_recording._stats_summary) at 0x268fcfdb420>", line 30, in _stats_summary\nbeartype.roar.BeartypeCallHintParamViolation: Function skellycam.api.http.cameras.camera_router.stop_recording._stats_summary() parameter stats_recarray=<MagicMock name='mock.framerate_stats' id='2649943954816'> violates type hint <class 'numpy.rec.recarray'>, as <class "unittest.mock.MagicMock"> <MagicMock name='mock.framerate_stats' id='2649943954816'> not instance of <class "numpy.rec.recarray">.\x1b[0m
+------------------------------ Captured log call ------------------------------
+ERROR    skellycam.api.http.cameras.camera_router:camera_router.py:187 Error in http://testserver/skellycam/camera/group/all/record/stop: BeartypeCallHintParamViolation - Function skellycam.api.http.cameras.camera_router.stop_recording._stats_summary() parameter stats_recarray=<MagicMock name='mock.framerate_stats' id='2649943954816'> violates type hint <class 'numpy.rec.recarray'>, as <class "unittest.mock.MagicMock"> <MagicMock name='mock.framerate_stats' id='2649943954816'> not instance of <class "numpy.rec.recarray">.
+Traceback (most recent call last):
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\api\http\cameras\camera_router.py", line 180, in stop_recording
+    framerate_stats=_stats_summary(timestamp_stats.framerate_stats),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<@beartype(skellycam.api.http.cameras.camera_router.stop_recording._stats_summary) at 0x268fcfdb420>", line 30, in _stats_summary
+beartype.roar.BeartypeCallHintParamViolation: Function skellycam.api.http.cameras.camera_router.stop_recording._stats_summary() parameter stats_recarray=<MagicMock name='mock.framerate_stats' id='2649943954816'> violates type hint <class 'numpy.rec.recarray'>, as <class "unittest.mock.MagicMock"> <MagicMock name='mock.framerate_stats' id='2649943954816'> not instance of <class "numpy.rec.recarray">.
+_____________ TestRecordingInfo.test_video_file_path_from_config ______________
+
+self = <skellycam.tests.test_frontend_payload_and_recording.TestRecordingInfo object at 0x00000268FBD44050>
+
+    def test_video_file_path_from_config(self) -> None:
+        info = RecordingInfo(
+            recording_name="rec",
+            recording_directory="/tmp/test",
+        )
+        config = CameraConfig(camera_id="cam0", camera_index=0)
+        path = info.video_file_path_from_camera_config(config)
+        assert "cam0" in path
+>       assert "idx0" in path
+E       AssertionError: assert 'idx0' in '\\tmp\\test\\rec\\synchronized_videos\\rec.id-cam0.idx-0.mp4'
+
+skellycam\tests\test_frontend_payload_and_recording.py:161: AssertionError
+_________ TestPubSubTopicManager.test_subscribe_unknown_topic_raises __________
+
+self = <skellycam.tests.test_pubsub.TestPubSubTopicManager object at 0x00000268FBE31CD0>
+
+    def test_subscribe_unknown_topic_raises(self) -> None:
+        manager = PubSubTopicManager()
+        with pytest.raises(ValueError, match="Unknown topic"):
+>           manager.get_subscription("not_a_real_topic")  # type: ignore[arg-type]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+skellycam\tests\test_pubsub.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_object_2648036139824 = <enum 'TopicTypes'>
+__beartype_get_violation = <function get_func_pith_violation at 0x000002688A7E6160>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+__beartype_object_2648016145456 = <class 'multiprocessing.queues.Queue'>
+__beartype_check_meta = <beartype._check.metadata.metacheck.BeartypeCheckMeta object at 0x00000268BAA9B7C0>
+__beartype_func = <function PubSubTopicManager.get_subscription at 0x00000268BAAB8CC0>
+args = (PubSubTopicManager(topics={<TopicTypes.UPDATE_CAMERA_SETTINGS: 1>: UpdateCamerasSettingsTopic(subscriptions=[], messa...ndler.LogRecordModel'>, publication=<multiprocessing.queues.Queue object at 0x000002688A749A00>)}), 'not_a_real_topic')
+kwargs = {}
+
+>   ???
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.ipc.pubsub.pubsub_manager.PubSubTopicManager.get_subscription() parameter topic_type='not_a_real_topic' violates type hint <enum 'TopicTypes'>, as str 'not_a_real_topic' not instance of <class "skellycam.core.ipc.pubsub.pubsub_manager.TopicTypes">.
+
+<@beartype(skellycam.core.ipc.pubsub.pubsub_manager.PubSubTopicManager.get_subscription) at 0x268baab8cc0>:30: BeartypeCallHintParamViolation
+__________________ TestFramerateTracker.test_update_and_read __________________
+
+self = <skellycam.tests.test_timestamps_and_framerate.TestFramerateTracker object at 0x00000268FBE7F5F0>
+
+    def test_update_and_read(self) -> None:
+        tracker = FramerateTracker.create(framerate_source="test")
+        # Simulate 30fps timestamps (33.33ms apart in nanoseconds)
+        base = 1_000_000_000
+        interval_ns = 33_333_333  # ~30fps
+        for i in range(10):
+>           tracker.update(timestamp_ns=float(base + i * interval_ns))
+
+skellycam\tests\test_timestamps_and_framerate.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_get_violation = <function get_func_pith_violation at 0x000002688A7E6160>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+__beartype_object_140730675300432 = <class 'NoneType'>
+__beartype_check_meta = <beartype._check.metadata.metacheck.BeartypeCheckMeta object at 0x00000268BAA5BB40>
+__beartype_func = <function FramerateTracker.update at 0x00000268BAA50CC0>
+args = (FramerateTracker(frame_durations_ns=deque([], maxlen=1000), framerate_source='test', _last_timestamp_ns=None),)
+kwargs = {'timestamp_ns': 1000000000.0}
+
+>   ???
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.recorders.framerate_tracker.FramerateTracker.update() parameter timestamp_ns=1000000000.0 violates type hint <class 'int'>, as float 1000000000.0 not instance of int.
+
+<@beartype(skellycam.core.recorders.framerate_tracker.FramerateTracker.update) at 0x268baa50cc0>:29: BeartypeCallHintParamViolation
+________________ TestFramerateTracker.test_clear_resets_state _________________
+
+self = <skellycam.tests.test_timestamps_and_framerate.TestFramerateTracker object at 0x00000268FBE7F8F0>
+
+    def test_clear_resets_state(self) -> None:
+        tracker = FramerateTracker.create(framerate_source="test")
+>       tracker.update(timestamp_ns=1_000_000_000.0)
+
+skellycam\tests\test_timestamps_and_framerate.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_get_violation = <function get_func_pith_violation at 0x000002688A7E6160>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+__beartype_object_140730675300432 = <class 'NoneType'>
+__beartype_check_meta = <beartype._check.metadata.metacheck.BeartypeCheckMeta object at 0x00000268BAA5BB40>
+__beartype_func = <function FramerateTracker.update at 0x00000268BAA50CC0>
+args = (FramerateTracker(frame_durations_ns=deque([], maxlen=1000), framerate_source='test', _last_timestamp_ns=None),)
+kwargs = {'timestamp_ns': 1000000000.0}
+
+>   ???
+E   beartype.roar.BeartypeCallHintParamViolation: Method skellycam.core.recorders.framerate_tracker.FramerateTracker.update() parameter timestamp_ns=1000000000.0 violates type hint <class 'int'>, as float 1000000000.0 not instance of int.
+
+<@beartype(skellycam.core.recorders.framerate_tracker.FramerateTracker.update) at 0x268baa50cc0>:29: BeartypeCallHintParamViolation
+____________________ TestTimeUnitConversion.test_ms_to_ns _____________________
+
+self = <skellycam.tests.test_timestamps_and_framerate.TestTimeUnitConversion object at 0x00000268FBEA8770>
+
+    def test_ms_to_ns(self) -> None:
+>       assert ms_to_ns(1.0) == 1_000_000
+               ^^^^^^^^^^^^^
+
+skellycam\tests\test_timestamps_and_framerate.py:195: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_object_2648828593344 = (<class 'numpy.ndarray'>, <class 'float'>)
+__beartype_get_violation = <function get_func_pith_violation at 0x000002688A7E6160>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+__beartype_object_2648828607296 = (<class 'int'>, <class 'numpy.ndarray'>)
+__beartype_check_meta = <beartype._check.metadata.metacheck.BeartypeCheckMeta object at 0x00000268BA7CFA00>
+__beartype_func = <function ms_to_ns at 0x00000268BA6E4E00>, args = (1.0,)
+kwargs = {}
+
+>   ???
+E   beartype.roar.BeartypeCallHintReturnViolation: Function skellycam.utilities.time_unit_conversion.ms_to_ns() return 1000000.0 violates type hint int | numpy.ndarray[tuple[int, ...], numpy.dtype[+_ScalarType_co]], as float 1000000.0 not int or <class "numpy.ndarray">.
+
+<@beartype(skellycam.utilities.time_unit_conversion.ms_to_ns) at 0x268ba6e4e00>:52: BeartypeCallHintReturnViolation
+_________________ TestTimeUnitConversion.test_roundtrip_ns_ms _________________
+
+self = <skellycam.tests.test_timestamps_and_framerate.TestTimeUnitConversion object at 0x00000268FBEA9070>
+
+    def test_roundtrip_ns_ms(self) -> None:
+        original_ns = 123_456_789
+>       assert ms_to_ns(ns_to_ms(original_ns)) == original_ns
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+skellycam\tests\test_timestamps_and_framerate.py:206: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_object_2648828593344 = (<class 'numpy.ndarray'>, <class 'float'>)
+__beartype_get_violation = <function get_func_pith_violation at 0x000002688A7E6160>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+__beartype_object_2648828607296 = (<class 'int'>, <class 'numpy.ndarray'>)
+__beartype_check_meta = <beartype._check.metadata.metacheck.BeartypeCheckMeta object at 0x00000268BA7CFA00>
+__beartype_func = <function ms_to_ns at 0x00000268BA6E4E00>
+args = (123.456789,), kwargs = {}
+
+>   ???
+E   beartype.roar.BeartypeCallHintReturnViolation: Function skellycam.utilities.time_unit_conversion.ms_to_ns() return 123456789.0 violates type hint int | numpy.ndarray[tuple[int, ...], numpy.dtype[+_ScalarType_co]], as float 123456789.0 not int or <class "numpy.ndarray">.
+
+<@beartype(skellycam.utilities.time_unit_conversion.ms_to_ns) at 0x268ba6e4e00>:52: BeartypeCallHintReturnViolation
+___________ TestWebsocketConnect.test_websocket_connect_disconnect ____________
+
+self = <starlette.testclient.WebSocketTestSession object at 0x00000268FD0D8770>
+
+    def __enter__(self) -> Self:
+        with contextlib.ExitStack() as stack:
+            self.portal = portal = stack.enter_context(self.portal_factory())
+            fut, cs = portal.start_task(self._run)
+            stack.callback(fut.result)
+            stack.callback(portal.call, cs.cancel)
+            self.send({"type": "websocket.connect"})
+>           message = self.receive()
+                      ^^^^^^^^^^^^^^
+
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:122: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:185: in receive
+    return self.portal.call(self._send_rx.receive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\streams\memory.py:118: in receive
+    return self.receive_nowait()
+           ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = MemoryObjectReceiveStream(_state=_MemoryObjectStreamState(max_buffer_size=inf, buffer=deque([{'type': 'websocket.accep...end_channels=0, open_receive_channels=0, waiting_receivers=OrderedDict(), waiting_senders=OrderedDict()), _closed=True)
+
+    def receive_nowait(self) -> T_co:
+        """
+        Receive the next item if it can be done without waiting.
+    
+        :return: the received item
+        :raises ~anyio.ClosedResourceError: if this send stream has been closed
+        :raises ~anyio.EndOfStream: if the buffer is empty and this stream has been
+            closed from the sending end
+        :raises ~anyio.WouldBlock: if there are no items in the buffer and no tasks
+            waiting to send
+    
+        """
+        if self._closed:
+>           raise ClosedResourceError
+E           anyio.ClosedResourceError
+
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\streams\memory.py:100: ClosedResourceError
+
+During handling of the above exception, another exception occurred:
+
+self = <skellycam.tests.test_websocket.TestWebsocketConnect object at 0x00000268FBEA9730>
+client = <starlette.testclient.TestClient object at 0x00000268FD0D9BB0>
+
+    def test_websocket_connect_disconnect(self, client):
+        """Can connect to the websocket endpoint and cleanly disconnect."""
+>       with client.websocket_connect("/skellycam/websocket/connect") as ws:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+skellycam\tests\test_websocket.py:10: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:116: in __enter__
+    with contextlib.ExitStack() as stack:
+         ^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py:610: in __exit__
+    raise exc_details[1]
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py:595: in __exit__
+    if cb(*exc_details):
+       ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py:478: in _exit_wrapper
+    callback(*args, **kwds)
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:449: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:145: in _run
+    await self.app(self.scope, receive_rx.receive, send_tx.send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\middleware\errors.py:151: in __call__
+    await self.app(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:2685: in app
+    await route.handle(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:1766: in handle
+    await self.original_router.handle(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:2740: in handle
+    await included_router._handle_selected(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:1788: in _handle_selected
+    await route.handle(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\routing.py:350: in handle
+    await self.app(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:177: in app
+    await wrap_app_handling_exceptions(app, session)(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:174: in app
+    await func(session)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:781: in app
+    await dependant.call(**solved_result.values)
+skellycam\api\websocket\websocket_connect.py:18: in websocket_server_connect
+    async with WebsocketServer(websocket=websocket,
+<@beartype(skellycam.api.websocket.websocket_server.WebsocketServer.__init__) at 0x268fb50f7e0>:66: in __init__
+    ???
+skellycam\api\websocket\websocket_server.py:83: in __init__
+    self._cgm: CameraGroupManager = get_or_create_camera_group_manager(app=app)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\beartype\door\_func\doorcheck.py:125: in die_if_unbearable
+    func_raiser(obj)  # pyright: ignore
+    ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_pith_0 = <MagicMock id='2649946918064'>
+__beartype_object_2648043149760 = <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>
+__beartype_exception_prefix = 'Callable \x1b[1m\x1b[35mskellycam.api.websocket.websocket_server.WebsocketServer.__init__()\x1b[0m local variable "\x1b[1m\x1b[35mself._cgm\x1b[0m" '
+__beartype_get_violation = <function get_hint_object_violation at 0x000002688A7E6200>
+__beartype_hint = <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+
+>   ???
+E   beartype.roar.BeartypeDoorHintViolation: Callable skellycam.api.websocket.websocket_server.WebsocketServer.__init__() local variable "self._cgm" value <MagicMock id='2649946918064'> violates type hint <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>, as <class "unittest.mock.MagicMock"> <MagicMock id='2649946918064'> not instance of <class "skellycam.core.camera_group.camera_group_manager.CameraGroupManager">.
+
+<@beartype(__beartype_checker_73) at 0x2688bcd79d0>:20: BeartypeDoorHintViolation
+---------------------------- Captured stdout call -----------------------------
+\x1b[95m\x1b[95m\u2514>>\x1b[0m \x1b[95mWebsocket connection established at url: ws://testserver/skellycam/websocket/connect\x1b[0m |  SUCCESS |  38.281ms |  skellycam.api.websocket.websocket_connect.websocket_server_connect():17 |  2026-10-25T15:31:19.646 |  \x1b[38;2;100;100;255mPID:22448:MainProcess\x1b[0m |  \x1b[38;2;100;136;255mTID:34988:asyncio-portal-268fd20ad80\x1b[0m\x1b[0m
+------------------------------ Captured log call ------------------------------
+SUCCESS  skellycam.api.websocket.websocket_connect:websocket_connect.py:17 Websocket connection established at url: ws://testserver/skellycam/websocket/connect
+________________ TestWebsocketConnect.test_websocket_ping_pong ________________
+
+self = <starlette.testclient.WebSocketTestSession object at 0x00000268FD0E1310>
+
+    def __enter__(self) -> Self:
+        with contextlib.ExitStack() as stack:
+            self.portal = portal = stack.enter_context(self.portal_factory())
+            fut, cs = portal.start_task(self._run)
+            stack.callback(fut.result)
+            stack.callback(portal.call, cs.cancel)
+            self.send({"type": "websocket.connect"})
+>           message = self.receive()
+                      ^^^^^^^^^^^^^^
+
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:122: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:185: in receive
+    return self.portal.call(self._send_rx.receive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\streams\memory.py:118: in receive
+    return self.receive_nowait()
+           ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = MemoryObjectReceiveStream(_state=_MemoryObjectStreamState(max_buffer_size=inf, buffer=deque([{'type': 'websocket.accep...end_channels=0, open_receive_channels=0, waiting_receivers=OrderedDict(), waiting_senders=OrderedDict()), _closed=True)
+
+    def receive_nowait(self) -> T_co:
+        """
+        Receive the next item if it can be done without waiting.
+    
+        :return: the received item
+        :raises ~anyio.ClosedResourceError: if this send stream has been closed
+        :raises ~anyio.EndOfStream: if the buffer is empty and this stream has been
+            closed from the sending end
+        :raises ~anyio.WouldBlock: if there are no items in the buffer and no tasks
+            waiting to send
+    
+        """
+        if self._closed:
+>           raise ClosedResourceError
+E           anyio.ClosedResourceError
+
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\streams\memory.py:100: ClosedResourceError
+
+During handling of the above exception, another exception occurred:
+
+self = <skellycam.tests.test_websocket.TestWebsocketConnect object at 0x00000268FBEA9BB0>
+client = <starlette.testclient.TestClient object at 0x00000268FD20B7D0>
+
+    def test_websocket_ping_pong(self, client):
+        """Sending 'ping' text should receive 'pong' back."""
+>       with client.websocket_connect("/skellycam/websocket/connect") as ws:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+skellycam\tests\test_websocket.py:16: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:116: in __enter__
+    with contextlib.ExitStack() as stack:
+         ^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py:610: in __exit__
+    raise exc_details[1]
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py:595: in __exit__
+    if cb(*exc_details):
+       ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py:478: in _exit_wrapper
+    callback(*args, **kwds)
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:449: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:145: in _run
+    await self.app(self.scope, receive_rx.receive, send_tx.send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\middleware\errors.py:151: in __call__
+    await self.app(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:2685: in app
+    await route.handle(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:1766: in handle
+    await self.original_router.handle(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:2740: in handle
+    await included_router._handle_selected(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:1788: in _handle_selected
+    await route.handle(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\routing.py:350: in handle
+    await self.app(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:177: in app
+    await wrap_app_handling_exceptions(app, session)(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:174: in app
+    await func(session)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:781: in app
+    await dependant.call(**solved_result.values)
+skellycam\api\websocket\websocket_connect.py:18: in websocket_server_connect
+    async with WebsocketServer(websocket=websocket,
+<@beartype(skellycam.api.websocket.websocket_server.WebsocketServer.__init__) at 0x268fb50f7e0>:66: in __init__
+    ???
+skellycam\api\websocket\websocket_server.py:83: in __init__
+    self._cgm: CameraGroupManager = get_or_create_camera_group_manager(app=app)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\beartype\door\_func\doorcheck.py:125: in die_if_unbearable
+    func_raiser(obj)  # pyright: ignore
+    ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_pith_0 = <MagicMock id='2649946912192'>
+__beartype_object_2648043149760 = <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>
+__beartype_exception_prefix = 'Callable \x1b[1m\x1b[35mskellycam.api.websocket.websocket_server.WebsocketServer.__init__()\x1b[0m local variable "\x1b[1m\x1b[35mself._cgm\x1b[0m" '
+__beartype_get_violation = <function get_hint_object_violation at 0x000002688A7E6200>
+__beartype_hint = <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+
+>   ???
+E   beartype.roar.BeartypeDoorHintViolation: Callable skellycam.api.websocket.websocket_server.WebsocketServer.__init__() local variable "self._cgm" value <MagicMock id='2649946912192'> violates type hint <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>, as <class "unittest.mock.MagicMock"> <MagicMock id='2649946912192'> not instance of <class "skellycam.core.camera_group.camera_group_manager.CameraGroupManager">.
+
+<@beartype(__beartype_checker_73) at 0x2688bcd79d0>:20: BeartypeDoorHintViolation
+---------------------------- Captured stdout call -----------------------------
+\x1b[95m\x1b[95m\u2514>>\x1b[0m \x1b[95mWebsocket connection established at url: ws://testserver/skellycam/websocket/connect\x1b[0m |  SUCCESS |  200.016ms |  skellycam.api.websocket.websocket_connect.websocket_server_connect():17 |  2026-10-25T15:31:19.846 |  \x1b[38;2;100;100;255mPID:22448:MainProcess\x1b[0m |  \x1b[38;2;100;255;100mTID:41256:asyncio-portal-268fd0e00e0\x1b[0m\x1b[0m
+------------------------------ Captured log call ------------------------------
+SUCCESS  skellycam.api.websocket.websocket_connect:websocket_connect.py:17 Websocket connection established at url: ws://testserver/skellycam/websocket/connect
+___________ TestWebsocketConnect.test_websocket_receives_app_state ____________
+
+self = <starlette.testclient.WebSocketTestSession object at 0x00000268FD12E600>
+
+    def __enter__(self) -> Self:
+        with contextlib.ExitStack() as stack:
+            self.portal = portal = stack.enter_context(self.portal_factory())
+            fut, cs = portal.start_task(self._run)
+            stack.callback(fut.result)
+            stack.callback(portal.call, cs.cancel)
+            self.send({"type": "websocket.connect"})
+>           message = self.receive()
+                      ^^^^^^^^^^^^^^
+
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:122: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:185: in receive
+    return self.portal.call(self._send_rx.receive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\streams\memory.py:118: in receive
+    return self.receive_nowait()
+           ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = MemoryObjectReceiveStream(_state=_MemoryObjectStreamState(max_buffer_size=inf, buffer=deque([{'type': 'websocket.accep...end_channels=0, open_receive_channels=0, waiting_receivers=OrderedDict(), waiting_senders=OrderedDict()), _closed=True)
+
+    def receive_nowait(self) -> T_co:
+        """
+        Receive the next item if it can be done without waiting.
+    
+        :return: the received item
+        :raises ~anyio.ClosedResourceError: if this send stream has been closed
+        :raises ~anyio.EndOfStream: if the buffer is empty and this stream has been
+            closed from the sending end
+        :raises ~anyio.WouldBlock: if there are no items in the buffer and no tasks
+            waiting to send
+    
+        """
+        if self._closed:
+>           raise ClosedResourceError
+E           anyio.ClosedResourceError
+
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\streams\memory.py:100: ClosedResourceError
+
+During handling of the above exception, another exception occurred:
+
+self = <skellycam.tests.test_websocket.TestWebsocketConnect object at 0x00000268FBEA9FA0>
+client = <starlette.testclient.TestClient object at 0x00000268FD0E1430>
+
+    def test_websocket_receives_app_state(self, client):
+        """After connecting, server should send an app_state JSON message."""
+>       with client.websocket_connect("/skellycam/websocket/connect") as ws:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+skellycam\tests\test_websocket.py:36: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:116: in __enter__
+    with contextlib.ExitStack() as stack:
+         ^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py:610: in __exit__
+    raise exc_details[1]
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py:595: in __exit__
+    if cb(*exc_details):
+       ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py:478: in _exit_wrapper
+    callback(*args, **kwds)
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:449: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:145: in _run
+    await self.app(self.scope, receive_rx.receive, send_tx.send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\middleware\errors.py:151: in __call__
+    await self.app(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:2685: in app
+    await route.handle(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:1766: in handle
+    await self.original_router.handle(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:2740: in handle
+    await included_router._handle_selected(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:1788: in _handle_selected
+    await route.handle(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\routing.py:350: in handle
+    await self.app(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:177: in app
+    await wrap_app_handling_exceptions(app, session)(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:174: in app
+    await func(session)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:781: in app
+    await dependant.call(**solved_result.values)
+skellycam\api\websocket\websocket_connect.py:18: in websocket_server_connect
+    async with WebsocketServer(websocket=websocket,
+<@beartype(skellycam.api.websocket.websocket_server.WebsocketServer.__init__) at 0x268fb50f7e0>:66: in __init__
+    ???
+skellycam\api\websocket\websocket_server.py:83: in __init__
+    self._cgm: CameraGroupManager = get_or_create_camera_group_manager(app=app)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\beartype\door\_func\doorcheck.py:125: in die_if_unbearable
+    func_raiser(obj)  # pyright: ignore
+    ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_pith_0 = <MagicMock id='2649945124800'>
+__beartype_object_2648043149760 = <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>
+__beartype_exception_prefix = 'Callable \x1b[1m\x1b[35mskellycam.api.websocket.websocket_server.WebsocketServer.__init__()\x1b[0m local variable "\x1b[1m\x1b[35mself._cgm\x1b[0m" '
+__beartype_get_violation = <function get_hint_object_violation at 0x000002688A7E6200>
+__beartype_hint = <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+
+>   ???
+E   beartype.roar.BeartypeDoorHintViolation: Callable skellycam.api.websocket.websocket_server.WebsocketServer.__init__() local variable "self._cgm" value <MagicMock id='2649945124800'> violates type hint <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>, as <class "unittest.mock.MagicMock"> <MagicMock id='2649945124800'> not instance of <class "skellycam.core.camera_group.camera_group_manager.CameraGroupManager">.
+
+<@beartype(__beartype_checker_73) at 0x2688bcd79d0>:20: BeartypeDoorHintViolation
+---------------------------- Captured stdout call -----------------------------
+\x1b[95m\x1b[95m\u2514>>\x1b[0m \x1b[95mWebsocket connection established at url: ws://testserver/skellycam/websocket/connect\x1b[0m |  SUCCESS |  180.765ms |  skellycam.api.websocket.websocket_connect.websocket_server_connect():17 |  2026-10-25T15:31:20.027 |  \x1b[38;2;100;100;255mPID:22448:MainProcess\x1b[0m |  \x1b[38;2;100;255;100mTID:36160:asyncio-portal-268fd137c50\x1b[0m\x1b[0m
+------------------------------ Captured log call ------------------------------
+SUCCESS  skellycam.api.websocket.websocket_connect:websocket_connect.py:17 Websocket connection established at url: ws://testserver/skellycam/websocket/connect
+__________ TestWebsocketConnect.test_websocket_frame_acknowledgment ___________
+
+self = <starlette.testclient.WebSocketTestSession object at 0x00000268FD2EC470>
+
+    def __enter__(self) -> Self:
+        with contextlib.ExitStack() as stack:
+            self.portal = portal = stack.enter_context(self.portal_factory())
+            fut, cs = portal.start_task(self._run)
+            stack.callback(fut.result)
+            stack.callback(portal.call, cs.cancel)
+            self.send({"type": "websocket.connect"})
+>           message = self.receive()
+                      ^^^^^^^^^^^^^^
+
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:122: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:185: in receive
+    return self.portal.call(self._send_rx.receive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\streams\memory.py:118: in receive
+    return self.receive_nowait()
+           ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = MemoryObjectReceiveStream(_state=_MemoryObjectStreamState(max_buffer_size=inf, buffer=deque([{'type': 'websocket.accep...end_channels=0, open_receive_channels=0, waiting_receivers=OrderedDict(), waiting_senders=OrderedDict()), _closed=True)
+
+    def receive_nowait(self) -> T_co:
+        """
+        Receive the next item if it can be done without waiting.
+    
+        :return: the received item
+        :raises ~anyio.ClosedResourceError: if this send stream has been closed
+        :raises ~anyio.EndOfStream: if the buffer is empty and this stream has been
+            closed from the sending end
+        :raises ~anyio.WouldBlock: if there are no items in the buffer and no tasks
+            waiting to send
+    
+        """
+        if self._closed:
+>           raise ClosedResourceError
+E           anyio.ClosedResourceError
+
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\streams\memory.py:100: ClosedResourceError
+
+During handling of the above exception, another exception occurred:
+
+self = <skellycam.tests.test_websocket.TestWebsocketConnect object at 0x00000268FBE7C8F0>
+client = <starlette.testclient.TestClient object at 0x00000268FD135C70>
+mock_camera_group_manager = <MagicMock id='2649945664512'>
+
+    def test_websocket_frame_acknowledgment(self, client, mock_camera_group_manager):
+        """Sending a frame acknowledgment JSON updates the server state."""
+>       with client.websocket_connect("/skellycam/websocket/connect") as ws:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+skellycam\tests\test_websocket.py:50: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:116: in __enter__
+    with contextlib.ExitStack() as stack:
+         ^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py:610: in __exit__
+    raise exc_details[1]
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py:595: in __exit__
+    if cb(*exc_details):
+       ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py:478: in _exit_wrapper
+    callback(*args, **kwds)
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:449: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\testclient.py:145: in _run
+    await self.app(self.scope, receive_rx.receive, send_tx.send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\middleware\errors.py:151: in __call__
+    await self.app(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:2685: in app
+    await route.handle(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:1766: in handle
+    await self.original_router.handle(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:2740: in handle
+    await included_router._handle_selected(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:1788: in _handle_selected
+    await route.handle(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\routing.py:350: in handle
+    await self.app(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:177: in app
+    await wrap_app_handling_exceptions(app, session)(scope, receive, send)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:174: in app
+    await func(session)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\routing.py:781: in app
+    await dependant.call(**solved_result.values)
+skellycam\api\websocket\websocket_connect.py:18: in websocket_server_connect
+    async with WebsocketServer(websocket=websocket,
+<@beartype(skellycam.api.websocket.websocket_server.WebsocketServer.__init__) at 0x268fb50f7e0>:66: in __init__
+    ???
+skellycam\api\websocket\websocket_server.py:83: in __init__
+    self._cgm: CameraGroupManager = get_or_create_camera_group_manager(app=app)
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\beartype\door\_func\doorcheck.py:125: in die_if_unbearable
+    func_raiser(obj)  # pyright: ignore
+    ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+__beartype_pith_0 = <MagicMock id='2649945664512'>
+__beartype_object_2648043149760 = <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>
+__beartype_exception_prefix = 'Callable \x1b[1m\x1b[35mskellycam.api.websocket.websocket_server.WebsocketServer.__init__()\x1b[0m local variable "\x1b[1m\x1b[35mself._cgm\x1b[0m" '
+__beartype_get_violation = <function get_hint_object_violation at 0x000002688A7E6200>
+__beartype_hint = <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>
+__beartype_conf = BeartypeConf(warning_cls_on_decorator_exception=<class 'beartype.roar._roarwarn.BeartypeClawDecorWarning'>)
+
+>   ???
+E   beartype.roar.BeartypeDoorHintViolation: Callable skellycam.api.websocket.websocket_server.WebsocketServer.__init__() local variable "self._cgm" value <MagicMock id='2649945664512'> violates type hint <class 'skellycam.core.camera_group.camera_group_manager.CameraGroupManager'>, as <class "unittest.mock.MagicMock"> <MagicMock id='2649945664512'> not instance of <class "skellycam.core.camera_group.camera_group_manager.CameraGroupManager">.
+
+<@beartype(__beartype_checker_73) at 0x2688bcd79d0>:20: BeartypeDoorHintViolation
+---------------------------- Captured stdout call -----------------------------
+\x1b[95m\x1b[95m\u2514>>\x1b[0m \x1b[95mWebsocket connection established at url: ws://testserver/skellycam/websocket/connect\x1b[0m |  SUCCESS |  197.668ms |  skellycam.api.websocket.websocket_connect.websocket_server_connect():17 |  2026-10-25T15:31:20.223 |  \x1b[38;2;100;100;255mPID:22448:MainProcess\x1b[0m |  \x1b[38;2;100;185;255mTID:47556:asyncio-portal-268fd2ed940\x1b[0m\x1b[0m
+------------------------------ Captured log call ------------------------------
+SUCCESS  skellycam.api.websocket.websocket_connect:websocket_connect.py:17 Websocket connection established at url: ws://testserver/skellycam/websocket/connect
+============================== warnings summary ===============================
+..\..\..\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\scratchpad\venvs\skellycam-impl\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+skellycam\core\camera\config\image_resolution.py:6
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\camera\config\image_resolution.py:6: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.camera.config.image_resolution.ImageResolution.__hash__() return PEP 484 type hint typing.Hashable deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class ImageResolution(BaseModel):
+
+skellycam\core\camera\opencv\opencv_helpers\recommend_camera_exposure_setting.py:56
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\camera\opencv\opencv_helpers\recommend_camera_exposure_setting.py:56: BeartypeDecorHintPep585DeprecationWarning: Function skellycam.core.camera.opencv.opencv_helpers.recommend_camera_exposure_setting.find_optimal_exposure_setting() parameter "exposure_settings" PEP 484 type hint typing.List[int] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    def find_optimal_exposure_setting(cap: cv2.VideoCapture, exposure_settings: List[int]) -> int:
+
+skellycam\core\camera\config\camera_config.py:63
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\camera\config\camera_config.py:63: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.camera.config.camera_config.CameraConfig.image_shape() return PEP 484 type hint typing.Tuple[int, ...] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class CameraConfig(BaseModel):
+
+skellycam\core\camera\config\camera_config.py:63
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\camera\config\camera_config.py:63: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.camera.config.camera_config.CameraConfig.video_image_shape() return PEP 484 type hint typing.Tuple[int, int] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class CameraConfig(BaseModel):
+
+skellycam\core\ipc\pubsub\pubsub_abcs.py:23
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_abcs.py:23: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_abcs.PubSubTopicABC.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_abcs.TopicMessageABC] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class PubSubTopicABC(ABC):
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:74
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:74: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.UpdateCamerasSettingsTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.UpdateCamerasSettingsMessage] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class UpdateCamerasSettingsTopic(PubSubTopicABC):
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:79
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:79: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.DeviceExtractedConfigTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.DeviceExtractedConfigMessage] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class DeviceExtractedConfigTopic(PubSubTopicABC):
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:84
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:84: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.SetShmTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.SetShmMessage] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class SetShmTopic(PubSubTopicABC):
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:90
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:90: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.RecordingInfoTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.RecordingInfoMessage] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class RecordingInfoTopic(PubSubTopicABC):
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:95
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:95: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.RecordingFinishedTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.RecordingFinishedMessage] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class RecordingFinishedTopic(PubSubTopicABC):
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:100
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:100: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.FramerateTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellycam.core.ipc.pubsub.pubsub_topics.FramerateMessage] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class FramerateTopic(PubSubTopicABC):
+
+skellycam\core\ipc\pubsub\pubsub_topics.py:105
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\pubsub\pubsub_topics.py:105: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.pubsub.pubsub_topics.LogsTopic.__init__() parameter "message_type" PEP 484 type hint typing.Type[skellylogs.handlers.websocket_log_queue_handler.LogRecordModel] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class LogsTopic(PubSubTopicABC):
+
+skellycam\core\ipc\process_management\managed_worker.py:157
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\process_management\managed_worker.py:157: BeartypeDecorHintPep585DeprecationWarning: Function skellycam.core.ipc.process_management.managed_worker._process_entry_point() parameter "target_fn" PEP 484 type hint typing.Callable[..., NoneType] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    def _process_entry_point(
+
+skellycam\core\ipc\process_management\managed_worker.py:221
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\process_management\managed_worker.py:221: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.process_management.managed_worker.ManagedProcess.__init__() parameter "target" PEP 484 type hint typing.Callable[..., NoneType] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class ManagedProcess(ManagedWorker):
+
+skellycam\core\ipc\process_management\managed_worker.py:281
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\process_management\managed_worker.py:281: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.process_management.managed_worker.ManagedThread.__init__() parameter "target" PEP 484 type hint typing.Callable[..., NoneType] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class ManagedThread(ManagedWorker):
+
+skellycam\core\ipc\process_management\worker_registry.py:22
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\ipc\process_management\worker_registry.py:22: BeartypeDecorHintPep585DeprecationWarning: Method skellycam.core.ipc.process_management.worker_registry.WorkerRegistry.create_worker() parameter "target" PEP 484 type hint typing.Callable[..., NoneType] deprecated by PEP 585. This hint is scheduled for removal in the first Python version released after October 5th, 2025. To resolve this, import this hint from "beartype.typing" rather than "typing". For further commentary and alternatives, see also:
+      https://beartype.readthedocs.io/en/latest/api_roar/#pep-585-deprecations
+    class WorkerRegistry:
+
+skellycam/tests/test_timestamps_and_framerate.py::TestTimebaseMapping::test_numpy_roundtrip
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\timestamps\timebase_mapping.py:71: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+    utc_time_ns=int(rec_array["utc_time_ns"]),
+
+skellycam/tests/test_timestamps_and_framerate.py::TestTimebaseMapping::test_numpy_roundtrip
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\timestamps\timebase_mapping.py:72: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+    perf_counter_ns=int(rec_array["perf_counter_ns"]),
+
+skellycam/tests/test_timestamps_and_framerate.py::TestTimebaseMapping::test_numpy_roundtrip
+  C:\Users\Dom\GitHub\freemocap\skellycam\skellycam\core\timestamps\timebase_mapping.py:73: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+    local_time_utc_offset=int(rec_array["local_time_utc_offset"]),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED skellycam/tests/mocks/test_camera_mock.py::TestMockVideoCapture::test_set_get_configuration
+FAILED skellycam/tests/test_camera_config_extended.py::TestValidateCameraConfigs::test_non_dict_raises_type_error
+FAILED skellycam/tests/test_camera_config_extended.py::TestValidateCameraConfigs::test_non_camera_config_value_raises
+FAILED skellycam/tests/test_camera_group_manager.py::TestSingletonFactory::test_returns_same_instance
+FAILED skellycam/tests/test_camera_router.py::TestRecording::test_stop_recording
+FAILED skellycam/tests/test_frontend_payload_and_recording.py::TestRecordingInfo::test_video_file_path_from_config
+FAILED skellycam/tests/test_pubsub.py::TestPubSubTopicManager::test_subscribe_unknown_topic_raises
+FAILED skellycam/tests/test_timestamps_and_framerate.py::TestFramerateTracker::test_update_and_read
+FAILED skellycam/tests/test_timestamps_and_framerate.py::TestFramerateTracker::test_clear_resets_state
+FAILED skellycam/tests/test_timestamps_and_framerate.py::TestTimeUnitConversion::test_ms_to_ns
+FAILED skellycam/tests/test_timestamps_and_framerate.py::TestTimeUnitConversion::test_roundtrip_ns_ms
+FAILED skellycam/tests/test_websocket.py::TestWebsocketConnect::test_websocket_connect_disconnect
+FAILED skellycam/tests/test_websocket.py::TestWebsocketConnect::test_websocket_ping_pong
+FAILED skellycam/tests/test_websocket.py::TestWebsocketConnect::test_websocket_receives_app_state
+FAILED skellycam/tests/test_websocket.py::TestWebsocketConnect::test_websocket_frame_acknowledgment
+ERROR skellycam/tests/test_camera_group_manager.py::TestCameraGroupManagerInit::test_starts_empty
+ERROR skellycam/tests/test_camera_group_manager.py::TestCameraGroupManagerInit::test_get_nonexistent_group_raises
+ERROR skellycam/tests/test_camera_group_manager.py::TestCameraGroupManagerInit::test_close_empty_groups
+ERROR skellycam/tests/test_camera_group_manager.py::TestCameraGroupManagerInit::test_to_state_dict_empty
+15 failed, 176 passed, 20 warnings, 4 errors in 8.42s

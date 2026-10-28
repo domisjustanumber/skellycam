@@ -1,0 +1,164 @@
+### step=gst_mf utc_start=2026-10-28T03:35:47Z cpu_load_pct_start=4
+### cmd: uv run --script research/usb_cameras/prior_art/gst_probe.py --capture --source mfvideosrc --seconds 6 --device-path \\?\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --device-path \\?\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --device-path \\?\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global
+[camlock] acquired after 68.5s: uv run --script research/usb_cameras/prior_art/gst_probe.py --capture --source mfvideosrc --seconds 6 --device-path \\?\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --device-path \\?\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --device-path \\?\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global
+{
+ "test": "prior_art_gst_probe",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-28T03:36:57.642195+00:00",
+ "command": "python.exe research/usb_cameras/prior_art/gst_probe.py --capture --source mfvideosrc --seconds 6 --device-path \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --device-path \\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --device-path \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+  "gstreamer": "GStreamer 1.28.8 (GIT)"
+ },
+ "devices_tested": [
+  {
+   "camera_key": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "display_name": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "pipeline": "mfvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+   "src_props": {
+    "device-path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+   },
+   "src_readback_while_playing": {
+    "device-path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+    "device-name": null,
+    "device-index": -1
+   },
+   "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+   "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1",
+   "n_frames": 172,
+   "n_valid_soi_eoi": 172,
+   "n_pillow_decoded_ok": 12,
+   "n_pillow_decode_fail": 0,
+   "n_buffer_metas_total": 0,
+   "stats": {
+    "fps_by_arrival": 30.027820512302714,
+    "arrival_interval_ms_min_med_max": [
+     30.573,
+     32.0204,
+     48.884
+    ],
+    "pts_interval_ms_min_med_max": [
+     31.1384,
+     32.0126,
+     48.6318
+    ],
+    "arrival_minus_pts_ms_min_med_max": [
+     0.0706,
+     0.2674,
+     0.8475
+    ],
+    "payload_bytes_min_med_max": [
+     83653,
+     100374
+    ]
+   },
+   "frames_file": "frames_046d_085c.jsonl",
+   "sample_file": "sample_046d_085c.jpg"
+  },
+  {
+   "camera_key": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "display_name": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "pipeline": "mfvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+   "src_props": {
+    "device-path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+   },
+   "src_readback_while_playing": {
+    "device-path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#8&39dec205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+    "device-name": null,
+    "device-index": -1
+   },
+   "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+   "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1",
+   "n_frames": 167,
+   "n_valid_soi_eoi": 167,
+   "n_pillow_decoded_ok": 12,
+   "n_pillow_decode_fail": 0,
+   "n_buffer_metas_total": 0,
+   "stats": {
+    "fps_by_arrival": 29.982766953145983,
+    "arrival_interval_ms_min_med_max": [
+     31.0848,
+     32.0097,
+     48.9978
+    ],
+    "pts_interval_ms_min_med_max": [
+     31.3145,
+     32.0089,
+     48.6275
+    ],
+    "arrival_minus_pts_ms_min_med_max": [
+     0.0728,
+     0.3034,
+     0.6251
+    ],
+    "payload_bytes_min_med_max": [
+     101646,
+     120015,
+     120423
+    ]
+   },
+   "frames_file": "frames_046d_0843.jsonl",
+   "sample_file": "sample_046d_0843.jpg"
+  },
+  {
+   "camera_key": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "display_name": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "pipeline": "mfvideosrc name=src ! image/jpeg,width=1280,height=720,framerate=30/1 ! appsink name=sink emit-signals=false sync=false max-buffers=200 drop=false",
+   "src_props": {
+    "device-path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+   },
+   "src_readback_while_playing": {
+    "device-path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+    "device-name": null,
+    "device-index": -1
+   },
+   "set_state_return": "<enum GST_STATE_CHANGE_ASYNC of type Gst.StateChangeReturn>",
+   "negotiated_caps": "image/jpeg, width=(int)1280, height=(int)720, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, colorimetry=(string)1:4:0:1",
+   "n_frames": 154,
+   "n_valid_soi_eoi": 154,
+   "n_pillow_decoded_ok": 11,
+   "n_pillow_decode_fail": 0,
+   "n_buffer_metas_total": 0,
+   "stats": {
+    "fps_by_arrival": 25.781302802698907,
+    "arrival_interval_ms_min_med_max": [
+     30.2617,
+     32.2468,
+     49.0573
+    ],
+    "pts_interval_ms_min_med_max": [
+     30.7401,
+     32.1648,
+     48.7693
+    ],
+    "arrival_minus_pts_ms_min_med_max": [
+     0.0801,
+     0.1249,
+     0.7232
+    ],
+    "payload_bytes_min_med_max": [
+     21297,
+     59008
+    ]
+   },
+   "frames_file": "frames_4c4a_4a55.jsonl",
+   "sample_file": "sample_4c4a_4a55.jpg"
+  }
+ ],
+ "settings": {
+  "width": 1280,
+  "height": 720,
+  "fps": 30,
+  "seconds": 6.0,
+  "exposure": "not controlled (camera auto)"
+ }
+}
+wrote research\usb_cameras\results\windows\Gerald\prior_art_rerun_20261027\prior_art_gst_capture-mfvideosrc\result.json
+[camlock] released
+### exit=0 utc_end=2026-10-28T03:37:17Z cpu_load_pct_end=7
+USB\VID_046D&PID_085C&MI_00\8&268DA596&0&0000 0x180200A need_restart=False
+USB\VID_046D&PID_0843&MI_00\8&39DEC205&1&0000 0x180200A need_restart=False
+USB\VID_4C4A&PID_4A55&MI_00\8&35E81179&0&0000 0x180200A need_restart=False
+USB\VID_1532&PID_0E05&MI_00\A&34494D13&0&0000 0x180200A need_restart=False

@@ -1,0 +1,799 @@
+[
+ {
+  "topic": "Best practices for high-throughput multi-camera USB capture and lossless recording pipelines (5 cams x 60+ fps, Python, Windows), and how they apply to SkellyCam's shared-memory frame ring buffer",
+  "findings": [
+   {
+    "practice": "Request MJPEG from USB 2.0 UVC webcams, never uncompressed YUY2, and assert after configuration that the negotiated FOURCC, size and fps are the ones requested. Many drivers apply the format only when it is set in a particular order relative to frame size.",
+    "why_it_matters": "Uncompressed 4:2:2 at 720p60 needs 884.7 Mbit/s and at 1080p60 needs 1990.7 Mbit/s. USB 2.0 caps isochronous traffic at about 80% of 480 Mbit/s, roughly 384 Mbit/s shared by every device on the controller. Raw transport cannot reach 60 fps even with a single camera, so a wrong FOURCC silently caps the frame rate. That is a throughput failure upstream of any ring buffer.",
+    "applicability_to_skellycam": "SkellyCam defaults to MJPG capture (camera_config.py L28). create_cv2_video_capture.py L53-L56 sets FOURCC BEFORE width/height. opencv_apply_config.py L74-L85 later sets resolution and then FOURCC again. On DSHOW, my probe shows that setting FOURCC only before the size negotiates YUY2 at 10.4 fps. Setting it after the size gives MJPG at 62.5 fps. SkellyCam does reach the 'after' order through apply_config, but that is an implicit dependency. Recommendation: set FOURCC last, read CAP_PROP_FOURCC/FPS back, and fail loudly if they differ. This code is identical in the skellycam commit FreeMoCap pins (777b058c): git diff 777b058c 23ccbf20 over skellycam/core/camera/opencv and skellycam/core/ipc/shared_memory is empty.",
+    "quantitative_evidence": "Arithmetic: 1280*720*2 B*60 = 110.6 MB/s = 884.7 Mbit/s; 1920*1080*2*60 = 248.8 MB/s = 1990.7 Mbit/s; budget about 384 Mbit/s (Good Penguin). Probe on a real camera (OpenCV 4.12.0 DSHOW, index 0): FOURCC set before size only gave {fourcc: YUY2, 1280x720, loop 10.41 fps, retrieve median 96.0 ms}; FOURCC set after size gave {fourcc: MJPG, loop 62.50 fps, retrieve median 15.98 ms}. Script: C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\probe_dshow_grab_retrieve.py. Commands (from C:\\Users\\Dom\\GitHub\\freemocap\\skellycam): .venv\\Scripts\\python.exe -I <script> <bp_bench>\\results 0 [fourcc_before_size_only]. Outputs: C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\results\\probe_dshow_grab_retrieve.json and C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\results\\probe_dshow_grab_retrieve_fourcc_before_size_only.json",
+    "sources": [
+     {
+      "title": "Multiple UVC cameras on Linux: an unexpected challenge (The Good Penguin, 2020/2022)",
+      "url": "https://www.thegoodpenguin.co.uk/?p=251"
+     },
+     {
+      "title": "SkellyCam create_cv2_video_capture.py L48-L69 (FOURCC set before size)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/create_cv2_video_capture.py#L48-L69"
+     },
+     {
+      "title": "SkellyCam opencv_apply_config.py L74-L85 (resolution then FOURCC)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/opencv_apply_config.py#L74-L85"
+     },
+     {
+      "title": "SkellyCam camera_config.py L28-L29 (DEFAULT_CAPTURE_FOURCC = MJPG)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/config/camera_config.py#L28-L29"
+     }
+    ]
+   },
+   {
+    "practice": "Record the camera's compressed MJPEG bitstream as-is (passthrough: packet copy into MKV/AVI) on the must-not-drop path. Decode to BGR only on consumers that need pixels (pose estimation, preview), and decode at reduced scale where possible.",
+    "why_it_matters": "This satisfies all three priorities at once. Each frame is about 36x smaller than BGR (around 167 KB against 6.2 MB), so record-path bytes, copies, ring slots and disk bandwidth all fall by the same factor. Recording costs about 0.1-0.2 ms CPU per frame instead of a decode plus a re-encode. There is also no generational quality loss. Microsoft documents that choosing a native media type on the Source Reader means no decoder is inserted. FFmpeg's dshow demuxer with vcodec=mjpeg returns the raw JPEG packets.",
+    "applicability_to_skellycam": "This is impossible through SkellyCam's current capture path. On Windows SkellyCam forces CAP_DSHOW (determine_backend.py L28-L42). OpenCV 4.12's DSHOW backend always asks the sample grabber for RGB24 unless the subtype is 8/16-bit, Y16 or NV12 (cap_dshow.cpp L2885-L2898), so MJPEG is always decoded before SkellyCam sees it. OpenCV's MSMF backend returns the undecoded sample bytes when CAP_PROP_CONVERT_RGB=0 (cap_msmf.cpp L2289-L2291, L1924-L1927). FFmpeg/PyAV dshow also returns packets, demonstrated below. The ring would then carry variable-size JPEG payloads with metadata (fixed max-size slots, e.g. 512 KB, or a byte ring). The recorder muxes packets. The pose pipeline and preview decode (cv2.imdecode, or IMREAD_REDUCED_COLOR_2 for half scale). Open question: on this machine OpenCV MSMF read() failed with E_PENDING (0x8000000A) on camera 0, so the MSMF raw route is unverified here.",
+    "quantitative_evidence": "Real camera, FFmpeg dshow via PyAV 17.0.0, vcodec=mjpeg, packets not decoded. c922 Pro Stream at 1280x720@60: median 166,841 B/frame, 62.50 packets/s, 10.43 MB/s, demux CPU 0.19 ms/packet, first packet starts FFD8 and decodes to 1280x720 yuvj422p. Logitech C930e at 1920x1080@30: median 160,205 B/frame, 31.25 fps, 5.0 MB/s. Script: C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\probe_ffmpeg_dshow_mjpeg_packets.py, run as: .venv\\Scripts\\python.exe -I <script> <results> \"c922 Pro Stream Webcam\" 1280x720 60. Outputs are the probe_ffmpeg_dshow_mjpeg_*.json files in C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\results. Passthrough mux of 5 cameras x 1800 JPEG frames into MKV (PyAV, 5 threads): 1080p 38,687 frames/s aggregate, 0.118 ms CPU/frame; 720p 67,640 fps, 0.061 ms/frame. Re-opening every file decoded 1800/1800 frames. Script: C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\bench_mjpeg_passthrough_mux.py; output: C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\results\\mjpeg_passthrough_mux.json. For comparison, decode cost alone (cv2.imdecode, 1 thread, synthetic q80): 1080p 4.96 ms, 720p 2.28 ms; reduced-2 decode 1080p 2.63 ms (results\\jpeg.json).",
+    "sources": [
+     {
+      "title": "Microsoft Learn: Using the Source Reader to Process Media Data (native type = no decoder)",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/medfound/processing-media-data-with-the-source-reader"
+     },
+     {
+      "title": "OpenCV 4.12.0 cap_dshow.cpp L2885-L2898 (DSHOW always converts to RGB24)",
+      "url": "https://github.com/opencv/opencv/blob/4.12.0/modules/videoio/src/cap_dshow.cpp#L2885-L2898"
+     },
+     {
+      "title": "OpenCV 4.12.0 cap_msmf.cpp L1924-L1927 (raw sample bytes when convertFormat is false)",
+      "url": "https://github.com/opencv/opencv/blob/4.12.0/modules/videoio/src/cap_msmf.cpp#L1924-L1927"
+     },
+     {
+      "title": "OpenCV 4.12.0 cap_msmf.cpp L2280-L2292 (CAP_PROP_CONVERT_RGB / FORMAT handling)",
+      "url": "https://github.com/opencv/opencv/blob/4.12.0/modules/videoio/src/cap_msmf.cpp#L2280-L2292"
+     },
+     {
+      "title": "OpenCV 4.12.0 videoio.hpp L150-L151 (CAP_PROP_FORMAT -1 = undecoded RAW)",
+      "url": "https://github.com/opencv/opencv/blob/4.12.0/modules/videoio/include/opencv2/videoio.hpp#L150-L151"
+     },
+     {
+      "title": "PyAV cookbook: Remuxing (copy packets without transcoding)",
+      "url": "https://pyav.basswood.io/docs/stable/cookbook/basics.html"
+     },
+     {
+      "title": "SkellyCam determine_backend.py L28-L42 (DSHOW forced on Windows)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/determine_backend.py#L28-L42"
+     }
+    ]
+   },
+   {
+    "practice": "Copy each frame into its final shared-memory slot exactly once: capture or retrieve straight into a preallocated ring slot view, then publish the index. Never allocate per frame (ndarray.copy(), copy.copy of a recarray, new np.recarray). On Linux, V4L2 mmap/USERPTR/DMABUF streaming exchanges only buffer pointers or fds, not data.",
+    "why_it_matters": "Priority 3. A full-frame copy into a pre-faulted buffer is cheap (about 0.35 ms cache-cold at 1080p). An allocate-and-copy costs 5-8x more because fresh pages must be faulted in. SkellyCam's put_data pays that price on every frame in every camera process.",
+    "applicability_to_skellycam": "Current SkellyCam path, per camera per frame. (1) OpenCV DSHOW's SampleCB memcpy's the decoded RGB24 sample into an internal buffer (cap_dshow.cpp L703-L722). (2) retrieve() then copies it with a vertical flip, row by row, into the caller's array (getPixels -> processPixels, L1543-L1590, L2225-L2256; retrieveFrame L3637-L3653). SkellyCam passes a preallocated local frame_rec_array.image[0] (opencv_get_frame.py L72), and my probe confirms OpenCV writes into it. (3) put_frame -> put_data does `self.ring_shm.buffer[slot] = copy(data)` (ring_buffer_shared_memory.py L132), which allocates a temporary recarray and then copies it into shm. That is one alloc+copy plus one copy. (4) Readers copy again into their own recarray (L155, L172, L201). Recommendations: pass the shm slot view itself as image= to retrieve() (or decode into it), then bump last_written_index; and replace L132 with np.copyto(slot, data) where a copy is still needed. The OpenCV-internal copies (1)-(2) cannot be removed without leaving OpenCV DSHOW, for example MF/FFmpeg passthrough or a native capture library.",
+    "quantitative_evidence": "Hardware: i7-14700K, Python 3.12.13, numpy 2.2.6. Cache-cold np.copyto (source and destination rotate over 199 MB pools): 1080p 0.350 ms (17.8 GB/s), 720p 0.162 ms; with 5 processes copying concurrently and continuously (a memory-bandwidth stress test): 1080p 1.281 ms, 720p 0.546 ms (results\\memcpy_cold.json; script bench_memcpy_cold.py). Cache-warm into an 8-slot shm ring: 1080p 0.153 ms, 720p 0.065 ms. ndarray.copy() (allocate+copy): 1080p 0.823 ms, 720p 0.362 ms. Creating a numpy view on shm: 0.0003 ms (results\\memcpy.json; script bench_pipeline_primitives.py memcpy). SkellyCam's own SharedMemoryRingBuffer.put_data(overwrite_allowed=True), imported unmodified: 1080p median 1.261 ms (p99 2.889), 720p 0.596 ms, against a single np.copyto into the slot at 0.155 / 0.073 ms, about 8x (results\\skellycam_put_data.json; script bench_skellycam_put_data.py). DSHOW probe: retrieve_wrote_into_preallocated_array = true. All scripts are in C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench, results in its results subfolder, and all are run from C:\\Users\\Dom\\GitHub\\freemocap\\skellycam with .venv\\Scripts\\python.exe -I <script> <results_dir>.",
+    "sources": [
+     {
+      "title": "OpenCV 4.12.0 cap_dshow.cpp L703-L722 (SampleCB memcpy into internal buffer)",
+      "url": "https://github.com/opencv/opencv/blob/4.12.0/modules/videoio/src/cap_dshow.cpp#L703-L722"
+     },
+     {
+      "title": "OpenCV 4.12.0 cap_dshow.cpp L1543-L1590 (getPixels copies into caller buffer)",
+      "url": "https://github.com/opencv/opencv/blob/4.12.0/modules/videoio/src/cap_dshow.cpp#L1543-L1590"
+     },
+     {
+      "title": "OpenCV 4.12.0 cap_dshow.cpp L3633-L3653 (grabFrame / retrieveFrame)",
+      "url": "https://github.com/opencv/opencv/blob/4.12.0/modules/videoio/src/cap_dshow.cpp#L3633-L3653"
+     },
+     {
+      "title": "SkellyCam ring_buffer_shared_memory.py L118-L133 (put_data uses copy(data))",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py#L118-L133"
+     },
+     {
+      "title": "SkellyCam opencv_get_frame.py L53-L73 (grab/retrieve into preallocated local array)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/opencv_get_frame.py#L53-L73"
+     },
+     {
+      "title": "SkellyCam opencv_camera_loop.py L95-L97 (put_frame overwrite=True)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L95-L97"
+     },
+     {
+      "title": "Linux kernel docs: V4L2 Streaming I/O (Memory Mapping)",
+      "url": "https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/mmap.html"
+     },
+     {
+      "title": "Linux kernel docs: V4L2 Streaming I/O (User Pointers)",
+      "url": "https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/userp.html"
+     },
+     {
+      "title": "Linux kernel docs: V4L2 Streaming I/O (DMA buffer importing)",
+      "url": "https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/dmabuf.html"
+     }
+    ]
+   },
+   {
+    "practice": "Build the frame ring as a single-writer / multi-reader ring with (a) all slots preallocated, (b) a cursor per reader, (c) the producer gated on the slowest lossless reader (Disruptor 'gating') while best-effort readers just jump to the newest slot, (d) a per-slot sequence stamp written before and after the payload (seqlock: odd means write in progress), so lock-free readers detect torn or overwritten slots and retry or skip, and (e) the writer index and each reader cursor on their own cache line, with each side caching the other's index locally.",
+    "why_it_matters": "These are the patterns behind the lowest-latency, highest-throughput IPC designs. LMAX reports a mean of 52 ns per hop against 32,757 ns for ArrayBlockingQueue, and about 8x the throughput. Rigtorp's SPSCQueue with padding and cached indices does 362,723 ops/ms against 209,877 for boost::lockfree::spsc. Per-reader cursors are what make 'disk never drops, preview may drop' expressible in one structure. A seqlock lets 'latest-frame' readers proceed without blocking the writer and still detect torn reads.",
+    "applicability_to_skellycam": "SkellyCam's SharedMemoryRingBuffer has exactly one shared last_read_index (ring_buffer_shared_memory.py L26-L32, L46-L52), so only one consumer can do sequential lossless reads. get_latest_data and get_data_by_index do not advance any cursor (L160-L202), and nothing detects a slot that is being written during the copy. The docstring at L184-L185 asks callers to check frame numbers 'as a safeguard against races'. A frame-number check catches a fully overwritten slot but not a half-written one. The camera writer always calls put_frame(overwrite=True) (opencv_camera_loop.py L96), so the overwrite guard (L115-L116, L124-L130) never fires and a lagging recorder loses frames silently once it falls a full ring behind. Recommendations: add a 'recorder' cursor that the writer checks; add per-slot seq stamps; give preview/pose readers independent latest-wins cursors. Open question for the C++ comparison: Python offers no memory-ordering guarantees for the numpy index stores used for these cursors (SharedMemoryNumber), so a correct seqlock in pure Python relies on x86 store ordering and CPython behaviour. That is a concrete argument for moving the ring index logic into a small C/C++ extension.",
+    "quantitative_evidence": "LMAX Disruptor paper: mean latency 52 ns/hop against 32,757 ns for ArrayBlockingQueue; about 8x throughput. rigtorp/SPSCQueue README (Ryzen 9 3900X): 362,723 ops/ms and 133 ns RTT, against 209,877 ops/ms and 222 ns for boost::lockfree::spsc. SkellyCam default ring depth: 1 GiB / itemsize gives 172 slots (2.87 s at 60 fps) at 1080p and 388 slots (6.47 s) at 720p, computed in C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\results\\skellycam_put_data.json from a record dtype with image plus int64. The real frame dtype carries more metadata, so the real slot count is slightly lower.",
+    "sources": [
+     {
+      "title": "LMAX Disruptor technical paper",
+      "url": "https://lmax-exchange.github.io/disruptor/disruptor.html"
+     },
+     {
+      "title": "rigtorp/SPSCQueue (cache-line padding, cached indices, benchmarks)",
+      "url": "https://github.com/rigtorp/SPSCQueue"
+     },
+     {
+      "title": "rigtorp/Seqlock",
+      "url": "https://github.com/rigtorp/Seqlock"
+     },
+     {
+      "title": "Linux kernel docs: Sequence counters and sequential locks",
+      "url": "https://www.kernel.org/doc/html/latest/locking/seqlock.html"
+     },
+     {
+      "title": "SkellyCam ring_buffer_shared_memory.py L147-L202 (single read cursor; latest/by-index reads)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py#L147-L202"
+     },
+     {
+      "title": "SkellyCam camera_shared_memory_ring_buffer.py L21-L42 (default 1 GiB allocation)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/camera_shared_memory_ring_buffer.py#L21-L42"
+     }
+    ]
+   },
+   {
+    "practice": "Choose the full-queue policy explicitly for each path: the lossless record path uses backpressure or a spill and an explicit drop counter, and preview paths use 'leaky' latest-frame-wins. Remember that the capture source itself cannot be back-pressured, because the camera keeps streaming, so every layer below your ring has its own hidden drop policy that must be known and monitored.",
+    "why_it_matters": "Established frameworks make the policy a named knob. GStreamer's queue blocks upstream by default and offers leaky=upstream (drop new) or leaky=downstream (drop old). appsink can drop. iceoryx pairs WAIT_FOR_CONSUMER with BLOCK_PRODUCER so 'samples are never lost', or overflows the oldest sample in a bounded queue. OBS duplicates the last frame when its video queue is full, so OBS is not a lossless recorder. The capture APIs under OpenCV also drop silently: the MSMF async reader discards all queued frames once 3 are queued, and the DSHOW sample callback discards each NEW frame while the previous one is still unconsumed.",
+    "applicability_to_skellycam": "The record path can only be lossless if the camera loop calls retrieve() at least as fast as the camera delivers. The DSHOW layer has a 1-frame slot and drops new frames with no signal (cap_dshow.cpp L704). Any stall in the camera process, such as GC, logging, or the 1.26 ms put_data, can lose frames before they ever reach the ring. Recommendations: (1) keep the camera process loop minimal (no allocation, no blocking I/O); (2) detect capture-layer drops from timestamp gaps greater than 1.5 frame periods, since frame_number is SkellyCam's own counter (opencv_get_frame.py L79) and cannot reveal driver drops; (3) put the elasticity in the ring/recorder, never in the capture callback; (4) never let the recorder fall more than the ring length behind, and alarm if it does, instead of overwrite=True with no accounting.",
+    "quantitative_evidence": "OpenCV 4.12.0: MSMF_READER_MAX_QUEUE_SIZE = 3 (cap_msmf.cpp L411); on overflow `std::queue<CapturedFrameInfo>().swap(m_capturedFrames)` clears the queue (L459-L468). DSHOW SampleCB returns early if the 'new frame' event is still set (L704). GStreamer queue defaults are 200 buffers / 10 MB / 1 s, blocking upstream. DSHOW probe at 720p60 MJPG: retrieve() max 35.4 ms against a 16.7 ms frame period. That shows a stall long enough to lose at least one frame at the DSHOW layer; the drop itself was not observed directly (results\\probe_dshow_grab_retrieve.json).",
+    "sources": [
+     {
+      "title": "OpenCV 4.12.0 cap_msmf.cpp L449-L470 (async reader drops queued frames)",
+      "url": "https://github.com/opencv/opencv/blob/4.12.0/modules/videoio/src/cap_msmf.cpp#L449-L470"
+     },
+     {
+      "title": "OpenCV 4.12.0 cap_dshow.cpp L703-L722 (SampleCB skips new sample while event set)",
+      "url": "https://github.com/opencv/opencv/blob/4.12.0/modules/videoio/src/cap_dshow.cpp#L703-L722"
+     },
+     {
+      "title": "GStreamer queue element docs (leaky, max-size-*)",
+      "url": "https://gstreamer.freedesktop.org/documentation/coreelements/queue.html"
+     },
+     {
+      "title": "GStreamer appsink docs (drop, max-buffers, leaky-type)",
+      "url": "https://gstreamer.freedesktop.org/documentation/app/appsink.html"
+     },
+     {
+      "title": "iceoryx iceoptions example (WAIT_FOR_CONSUMER / BLOCK_PRODUCER, queueCapacity)",
+      "url": "https://github.com/eclipse-iceoryx/iceoryx/blob/main/iceoryx_examples/iceoptions/README.md"
+     },
+     {
+      "title": "OBS Studio backend design (video pipeline; duplicates last frame when queue full)",
+      "url": "https://docs.obsproject.com/backend-design"
+     }
+    ]
+   },
+   {
+    "practice": "Size the lossless buffer from the measured worst-case writer stall: slots >= fps x worst_stall x safety factor. Put that elasticity where frames are small (compressed domain or recorder RAM), and keep any raw-BGR ring short.",
+    "why_it_matters": "NVMe sustained writes fall off a cliff once the pSLC cache fills: 50-90% lower throughput and 3-10x write latency, made worse by low free space and garbage collection. A ring sized for steady state will overflow on the first stall. Raw buffers are expensive. Five seconds of 1080p BGR is 1.87 GB per camera, against about 50 MB per camera for MJPEG.",
+    "applicability_to_skellycam": "SkellyCam's 1 GiB per camera gives 2.87 s at 1080p60 and 6.47 s at 720p60 before overwrite=True silently overwrites unread frames. That is 5 GiB of shm for 5 cameras. The test drive is a WD_BLACK SN850X 4 TB at 91% full (358 GB free), which is exactly the regime where the SLC cache shrinks. Sustained throughput past the cache was NOT measured (open question; it needs a test of hundreds of GB). Recommendation: measure the stall distribution for the chosen encoder and disk over a long recording, then size the ring (or a compressed-packet queue in the recorder) from p99.9 or max plus margin.",
+    "quantitative_evidence": "Measured burst (4.0 GB sequential to the SN850X): Python unbuffered-file writes of 6.22 MB frames gave a write phase of 4.13 GB/s, 2.89 GB/s including fsync (0.41 s); per-write median 1.36 ms, p99 3.05 ms, max 10.2 ms. FILE_FLAG_NO_BUFFERING with 32 MiB aligned chunks: 5.33 GB/s, per-chunk max 17.8 ms. NO_BUFFERING|WRITE_THROUGH: 5.03 GB/s, max 28.7 ms. Output: C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\results\\disk.json. Command: .venv\\Scripts\\python.exe -I C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\bench_pipeline_primitives.py disk <results>. Sizing examples at 60 fps: a 0.5 s stall needs 30 slots, which is 187 MB/cam BGR 1080p against about 5 MB/cam MJPEG (167 KB); a 5 s stall needs 300 slots, which is 1.87 GB/cam BGR 1080p against about 50 MB/cam MJPEG. Netdata guide: 'Write latency jumps 3-10x', throughput '50-90% below baseline'; keep 15-20% free space.",
+    "sources": [
+     {
+      "title": "Netdata: NVMe GC write cliff guide",
+      "url": "https://www.netdata.cloud/guides/nvme/nvme-gc-write-cliff/"
+     },
+     {
+      "title": "SkellyCam ring_buffer_shared_memory.py L34-L52 (ring length = memory_allocation // itemsize, default 1 GiB)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py#L34-L52"
+     },
+     {
+      "title": "SkellyCam opencv_camera_loop.py L95-L97 (overwrite=True)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L95-L97"
+     }
+    ]
+   },
+   {
+    "practice": "Write recordings as large sequential appends from a dedicated writer thread or process (write-behind), never fsync per frame. For raw or very high rate streams use FILE_FLAG_NO_BUFFERING with sector-aligned (VirtualAlloc page-aligned), sector-multiple chunks so the OS cache does not double-buffer. Prefer compressed formats so disk bandwidth and capacity are never the limit.",
+    "why_it_matters": "Raw BGR is technically writable as a burst on a fast NVMe: 1.87 GB/s needed against 2.9-5.3 GB/s measured. But it consumes the drive's capacity in minutes and depends on the pSLC cache. Compressed recording removes disk as a risk. Unbuffered I/O has strict alignment rules: transfer sizes and file offsets must be multiples of the volume sector size, and buffers should be physical-sector aligned.",
+    "applicability_to_skellycam": "With MJPEG passthrough the recorder writes about 52 MB/s for 5 cameras, roughly 1/36 of raw, so normal buffered writes are adequate. NO_BUFFERING only matters if raw BGR is ever recorded. Frame sizes (6,220,800 B at 1080p) are not 4096-multiples, so frames would need packing into aligned chunks, as the benchmark does.",
+    "quantitative_evidence": "See disk.json above: buffered 4.13 GB/s write phase; NO_BUFFERING 5.33 GB/s; WRITE_THROUGH 5.03 GB/s. Capacity: 358 GB free holds 3.2 min of 5x1080p60 raw BGR (1.866 GB/s), 7.2 min of 5x720p60 raw, about 1.9 h of 5-camera MJPEG at 52 MB/s, and about 13 h of 5x1080p60 H.264 at 12 Mbit/s.",
+    "sources": [
+     {
+      "title": "Microsoft Learn: File Buffering (FILE_FLAG_NO_BUFFERING alignment)",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/fileio/file-buffering"
+     },
+     {
+      "title": "Netdata: NVMe GC write cliff guide",
+      "url": "https://www.netdata.cloud/guides/nvme/nvme-gc-write-cliff/"
+     }
+    ]
+   },
+   {
+    "practice": "If frames must be re-encoded (e.g. H.264 for web playback), use the hardware encoder (NVENC on the RTX 3070) and make sure colour conversion is not the bottleneck: convert BGR to I420/NV12 with a SIMD routine into a preallocated buffer (cv2.cvtColor), or upload once and keep frames on the GPU (FFmpeg -hwaccel_output_format cuda). Do not rely on PyAV/swscale auto-reformat from bgr24. Respect the per-system NVENC session limit.",
+    "why_it_matters": "On this machine, with 5 streams of 1080p, BGR-to-YUV conversion and not NVENC decided whether the 300 fps target was met. NVIDIA's FFmpeg guide states that keeping frames in GPU memory eliminates system-to-video memory transfers. Consumer GPUs have a per-system concurrent NVENC session cap. NVIDIA SDK 12.2 notes, quoted on the NVIDIA forum, say 8 per system on driver >= 551.76. The current support matrix lists 12 for the RTX 3070, with 1 NVENC engine and no AV1 encode.",
+    "applicability_to_skellycam": "SkellyCam's default writer is cv2.VideoWriter with fourcc X264 (camera_config.py L29). On this Windows machine OpenCV's FFmpeg backend fails to load openh264 and falls back to the MSMF H.264 encoder (Constrained Baseline), which keeps up but produces about 125 Mbit/s at 1080p on synthetic content. Its PyAV fallback (pyav_video_writer.py L11-L31: libx264 preset fast, crf 18, bgr24 input) manages only 54 fps for ONE 1080p stream and 25.5 fps per stream with 5, far below 60. If H.264 is required, use h264_nvenc/hevc_nvenc with cv2 I420 conversion. Better still, record MJPEG passthrough and transcode offline.",
+    "quantitative_evidence": "5 concurrent encoder threads, 600 frames each, noisy synthetic content, PyAV 17.0.0 (libavcodec 62.11), driver 610.88. 1080p: h264_nvenc with cv2 BGR->I420 conversion 432.5 fps aggregate (slowest stream 118.0 fps, conversion 3.36 ms/frame under contention, 31 Mbit/s); h264_nvenc with PyAV bgr24->nv12 reformat 255.8 fps aggregate (slowest 60.2, conversion 13.2 ms); h264_nvenc fed BGRA 219.4 fps; hevc_nvenc with cv2 I420 461.6 fps (16.4 Mbit/s); libx264 ultrafast with cv2 I420 407.9 fps (20 Mbit/s, CPU-heavy). 720p: h264_nvenc with cv2 I420 874 fps; with PyAV reformat 466.5 fps. Single-frame conversion cost at 1080p: cv2.cvtColor BGR2YUV_I420 into a preallocated buffer 0.68 ms against PyAV from_ndarray+reformat(nv12) 6.27 ms. Script/output: C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\bench_encode_conversion.py with results\\encode_conversion.json. SkellyCam's own writers, imported unmodified, 300 frames, 5 threads: PyavVideoWriter 1080p 54.1 fps for 1 stream, 127.5 fps aggregate for 5 (slowest 25.5); 720p 117 / 297 (slowest 59.5). cv2 X264 (resolved to the MSMF backend) 1080p 384 fps for 1 stream, 581 aggregate for 5 (slowest 117), 125.6 Mbit/s; 720p 737 / 1173. Script: C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\bench_skellycam_writers.py; output: results\\skellycam_writers.json. The backend check (getBackendName() = MSMF, stream h264 Constrained Baseline) was a one-off inline command, recorded in the run log only.",
+    "sources": [
+     {
+      "title": "NVIDIA Video Encode and Decode GPU Support Matrix",
+      "url": "https://developer.nvidia.com/video-encode-and-decode-gpu-support-matrix-new"
+     },
+     {
+      "title": "NVIDIA Developer Forums: How to increase number of NVENC concurrent sessions (SDK 12.1/12.2 limits)",
+      "url": "https://forums.developer.nvidia.com/t/how-to-increase-number-of-nvenc-concurrent-sessions/169367"
+     },
+     {
+      "title": "NVIDIA Video Codec SDK 13.0: Using FFmpeg with NVIDIA GPU Hardware Acceleration",
+      "url": "https://docs.nvidia.com/video-technologies/video-codec-sdk/13.0/ffmpeg-with-nvidia-gpu/index.html"
+     },
+     {
+      "title": "SkellyCam pyav_video_writer.py L11-L31 (libx264 fast crf18, bgr24 input)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/recorders/videos/pyav_video_writer.py#L11-L31"
+     },
+     {
+      "title": "SkellyCam video_recorder.py L116-L130 (writer selection)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/recorders/videos/video_recorder.py#L116-L130"
+     }
+    ]
+   },
+   {
+    "practice": "Preview path: latest-frame-wins at a capped UI rate (e.g. 15-30 fps), downscale BEFORE JPEG encode (cv2.resize INTER_LINEAR into a preallocated destination), and decode in the browser off the main thread (createImageBitmap(Blob, {resizeWidth, resizeHeight}), or WebCodecs ImageDecoder/VideoDecoder in a dedicated worker). With MJPEG passthrough, the camera's own JPEG bytes can go to the UI with no server-side encode at all.",
+    "why_it_matters": "Full-resolution JPEG encode of 5x1080p at 60 fps consumes about one whole CPU core, while downscale-then-encode costs about a fifth of that. Third-party claims that libjpeg-turbo wrappers are 4-5x faster than cv2.imencode came from OpenCV 3.4 builds. The OpenCV 4.12 wheel used here already bundles libjpeg-turbo 3.1.0, so that speed-up should not be assumed. nvJPEG's hardware encode engine is documented only for Jetson Thor; elsewhere it uses the CUDA encoder.",
+    "applicability_to_skellycam": "Each UI tap should use its own non-blocking latest-wins cursor on the ring, so it can never back-pressure or perturb the recorder. Server-side encoding work should be proportional to the UI's display rate and size, not the camera rate. Where the UI tap encodes, and at what size, is covered by the code-tracing part of the study, not verified here.",
+    "quantitative_evidence": "Single thread (cv2.setNumThreads(1)), OpenCV 4.12.0 with libjpeg-turbo 3.1.0, synthetic camera-like frames. 1080p imencode q80: 3.37 ms (182 KB); q70 2.79 ms; q95 4.55 ms. 720p q80: 1.28 ms (81 KB). Resize 1080p to 640x360: INTER_LINEAR 0.32 ms, INTER_AREA 1.85 ms. Resize 720p to 640x360: either 0.14 ms. Encode 640x360 q80: 0.34 ms (25-29 KB). Per 300 frames/s: full-res 1080p about 1.01 core-seconds/s; downscale (linear) plus encode about 0.20 core-seconds/s. PyTurboJPEG's PyPI benchmark (OpenCV 3.4.0.12, libjpeg-turbo 1.5.3) shows encode 0.140 s vs 0.581 s on Windows. Output: C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\results\\jpeg.json; command: bench_pipeline_primitives.py jpeg <results>.",
+    "sources": [
+     {
+      "title": "MDN: createImageBitmap() (Blob source, resizeWidth/resizeHeight/resizeQuality)",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/createImageBitmap"
+     },
+     {
+      "title": "MDN: ImageDecoder (WebCodecs; dedicated workers)",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/ImageDecoder"
+     },
+     {
+      "title": "MDN: VideoDecoder (WebCodecs; dedicated workers)",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/VideoDecoder"
+     },
+     {
+      "title": "PyTurboJPEG on PyPI (benchmark vs cv2, scaling_factor, dst)",
+      "url": "https://pypi.org/project/PyTurboJPEG/"
+     },
+     {
+      "title": "NVIDIA nvJPEG documentation (encode backends; hardware encode on Jetson Thor)",
+      "url": "https://docs.nvidia.com/cuda/nvjpeg/index.html"
+     },
+     {
+      "title": "GStreamer queue element docs (leaky=downstream for latest-wins)",
+      "url": "https://gstreamer.freedesktop.org/documentation/coreelements/queue.html"
+     }
+    ]
+   },
+   {
+    "practice": "Python-specific: move only small control messages and indices through multiprocessing queues or pubsub. Frames move as numpy views on shared memory. If a frame must be serialized, use pickle protocol 5 with out-of-band buffers. Put heavy per-frame work in calls that release the GIL (OpenCV, most numpy), and use processes rather than threads for anything that holds the GIL.",
+    "why_it_matters": "multiprocessing.Queue pickles every object and pushes it through a pipe from a feeder thread, which tops out at about 1 GB/s. That is 169 fps of 1080p BGR, below the 300 fps target for a single queue. A shared-memory view costs 0.3 microseconds. OpenCV's Python bindings release the GIL around every wrapped call (ERRWRAP2 with PyAllowThreads), and numpy documents that it releases the GIL for many low-level operations.",
+    "applicability_to_skellycam": "This matches SkellyCam's architecture (frames in SharedMemoryRingBuffer, metadata/control via pubsub). The remaining Python overheads measured here are per-frame allocation (put_data), extra reader copies, and Python-level per-frame loops in encoders (PyAV). In my PyAV encode test, 5 threads at 1080p gave only 1.97x the single-stream throughput on the reformat path (129.7 to 253.8 fps). That suggests GIL-held work inside PyAV, but I did not prove the mechanism (open question).",
+    "quantitative_evidence": "mp.Queue, one producer and one consumer process, 299 frames: 1080p 169.2 fps (1.05 GB/s), 720p 393.3 fps (1.09 GB/s) (results\\mpqueue.json). pickle dumps+loads at 1080p: protocol 4 3.04 ms, protocol 5 in-band 1.94 ms, protocol 5 out-of-band 0.005 ms; 720p: 1.39 / 0.88 / 0.009 ms (results\\pickle.json). shm view: 0.0003 ms (results\\memcpy.json). Script: C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\bench_pipeline_primitives.py {mpqueue|pickle|memcpy} <results>. PyAV threading data: results\\nvenc.json (h264_nvenc 1080p, 1 stream 129.7 fps, 5 streams 253.8 fps aggregate).",
+    "sources": [
+     {
+      "title": "Python docs: multiprocessing (Queue pickles objects; feeder thread)",
+      "url": "https://docs.python.org/3/library/multiprocessing.html"
+     },
+     {
+      "title": "Python docs: multiprocessing.shared_memory",
+      "url": "https://docs.python.org/3/library/multiprocessing.shared_memory.html"
+     },
+     {
+      "title": "PEP 574: Pickle protocol 5 with out-of-band data",
+      "url": "https://peps.python.org/pep-0574/"
+     },
+     {
+      "title": "OpenCV 4.12.0 cv2_util.hpp L19-L27, L98-L103 (PyAllowThreads / ERRWRAP2 release the GIL)",
+      "url": "https://github.com/opencv/opencv/blob/4.12.0/modules/python/src2/cv2_util.hpp#L19-L103"
+     },
+     {
+      "title": "NumPy docs: Thread Safety (GIL release, free-threading)",
+      "url": "https://numpy.org/doc/stable/reference/thread_safety.html"
+     }
+    ]
+   },
+   {
+    "practice": "Multi-camera synchronization in software: timestamp each frame from the capture API's own sample time where available (MF ReadSample llTimestamp, V4L2 buffer timestamp, FFmpeg dshow packet pts) and group frames across cameras by timestamp, like DeepStream nvstreammux sync-inputs/max-latency. Use OpenCV's grab()-then-retrieve() idiom only on backends where grab() actually dequeues a frame.",
+    "why_it_matters": "OpenCV documents grab()-for-all, then retrieve(), as the way to bring unsynchronized cameras closer in time. That only works if grab() latches the frame. In OpenCV 4.12's DSHOW backend, grabFrame() only checks for disconnection. The wait for the next frame and the copy both happen inside retrieve(). Timestamps taken around grab() therefore do not bracket frame arrival.",
+    "applicability_to_skellycam": "SkellyCam's synchronization rationale and timestamps (opencv_get_frame.py L30-L55: pre/post_frame_grab_ns) assume grab() dequeues the frame, and determine_backend.py L37-L41 says DSHOW gives functional CAP_PROP_BUFFERSIZE control. In OpenCV 4.12.0, (a) DSHOW grabFrame is `return !g_VI.isDeviceDisconnected(m_index);` (cap_dshow.cpp L3633-L3636), (b) cap_dshow.cpp contains no CAP_PROP_BUFFERSIZE handling, and the probe shows set(CAP_PROP_BUFFERSIZE, 1) returns False with get() = -1, and (c) MSMF also ignores it (cap_msmf.cpp L2385 falls to break/return false). On DSHOW the frame-arrival proxy should be the post-retrieve time minus copy time, or better, a real device timestamp from a different capture path. This needs to be cross-checked by the code-tracing agent against how SkellyCam groups multi-frames.",
+    "quantitative_evidence": "Real camera, DSHOW, 720p60 MJPG, 300 iterations: grab() median 0.0032 ms (max 0.0094 ms); retrieve(image=prealloc) median 15.98 ms (max 35.4 ms); loop 62.5 fps. retrieve() blocks for the next frame and grab() does nothing. set(CAP_PROP_BUFFERSIZE, 1) returned False; get returned -1.0. Output: C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\results\\probe_dshow_grab_retrieve.json. Script: C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\probe_dshow_grab_retrieve.py, run as .venv\\Scripts\\python.exe -I <script> <results> 0.",
+    "sources": [
+     {
+      "title": "OpenCV 4.12.0 videoio.hpp L918-L927 (grab()/retrieve() multi-camera note)",
+      "url": "https://github.com/opencv/opencv/blob/4.12.0/modules/videoio/include/opencv2/videoio.hpp#L918-L927"
+     },
+     {
+      "title": "OpenCV 4.12.0 cap_dshow.cpp L3633-L3653 (grabFrame no-op; retrieveFrame does the work)",
+      "url": "https://github.com/opencv/opencv/blob/4.12.0/modules/videoio/src/cap_dshow.cpp#L3633-L3653"
+     },
+     {
+      "title": "OpenCV 4.12.0 cap_msmf.cpp L2380-L2389 (CAP_PROP_BUFFERSIZE unsupported in MSMF setProperty)",
+      "url": "https://github.com/opencv/opencv/blob/4.12.0/modules/videoio/src/cap_msmf.cpp#L2380-L2389"
+     },
+     {
+      "title": "Microsoft Learn: Source Reader ReadSample (llTimestamp, stream flags)",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/medfound/processing-media-data-with-the-source-reader"
+     },
+     {
+      "title": "DeepStream Gst-nvstreammux New (batching, sync-inputs, max-latency)",
+      "url": "https://archive.docs.nvidia.com/metropolis/deepstream-nvaie31/dev-guide/text/DS_plugin_gst-nvstreammux2.html"
+     },
+     {
+      "title": "SkellyCam determine_backend.py L28-L42 (DSHOW rationale incl. BUFFERSIZE claim)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/determine_backend.py#L28-L42"
+     },
+     {
+      "title": "SkellyCam opencv_get_frame.py L30-L73 (grab/retrieve sync rationale and timestamps)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/opencv_get_frame.py#L30-L73"
+     }
+    ]
+   },
+   {
+    "practice": "Follow the pattern established zero-copy frameworks share: preallocated, fixed-size buffer pools; references or indices passed instead of payloads; the consumer returns ('releases') the loan quickly; batching across cameras by timestamp. Examples are GStreamer buffer pools and queues, ROS 2 loaned messages over iceoryx, NVIDIA DeepStream NvBufSurface batches with nvstreammux, and Holoscan's V4L2 operator with its small fixed V4L2 buffer count.",
+    "why_it_matters": "ROS 2's zero-copy design requires that users can 'avoid all memory operations and copies in at least one configuration', limits loans to POD message types, and asks that loans be returned quickly because the resource is finite. iceoryx claims 'constant latency, regardless of the size of the payload'. DeepStream batches frames from N sources into one NvBufSurface and pushes when the batch fills or times out. Holoscan's V4L2VideoCaptureOp defaults to 4 V4L2 buffers.",
+    "applicability_to_skellycam": "SkellyCam's SharedMemoryRingBuffer already has fixed-size, preallocated slots. Moving closer to the loan model means readers work on slot views in place, holding a 'loan' bounded by the ring gating, instead of copying out (L155/L172/L201). That is only safe once per-slot sequence stamps exist (see ring-design finding). For FreeMoCap's realtime pose pipeline the natural analogue is a timestamp-grouped multi-camera batch that references slots rather than copying them; this needs checking against the FreeMoCap camera_node code.",
+    "quantitative_evidence": "",
+    "sources": [
+     {
+      "title": "ROS 2 design: Zero Copy via Loaned Messages",
+      "url": "https://design.ros.org/articles/zero_copy.html"
+     },
+     {
+      "title": "Eclipse iceoryx README",
+      "url": "https://github.com/eclipse-iceoryx/iceoryx"
+     },
+     {
+      "title": "DeepStream Gst-nvstreammux New",
+      "url": "https://archive.docs.nvidia.com/metropolis/deepstream-nvaie31/dev-guide/text/DS_plugin_gst-nvstreammux2.html"
+     },
+     {
+      "title": "NVIDIA Holoscan SDK 4.2.0: V4L2VideoCaptureOp",
+      "url": "https://docs.nvidia.com/holoscan/archive/4.2.0/api/cpp/classholoscan_1_1ops_1_1V4L2VideoCaptureOp.html"
+     },
+     {
+      "title": "OBS Studio backend design (graphics thread / video output thread)",
+      "url": "https://docs.obsproject.com/backend-design"
+     }
+    ]
+   },
+   {
+    "practice": "Large pages / hugepages for the ring: optional and low priority. They reduce TLB pressure for very large, randomly accessed regions. On Windows they need SeLockMemoryPrivilege, VirtualAlloc(MEM_LARGE_PAGES) with large-page-multiple size and alignment, and one-time allocation at startup, because fragmentation makes them hard to obtain later. On Linux they need MAP_HUGETLB or SHM hugetlb with a reserved nr_hugepages pool.",
+    "why_it_matters": "Frame copies are sequential streams that already run at 17-40 GB/s with 4 KiB pages here, so the TLB benefit is unproven for this workload. The requirements (privileges, non-pageable memory, reservation) are a real deployment cost for a desktop app.",
+    "applicability_to_skellycam": "Python's multiprocessing.shared_memory exposes no large-page option, and whether CreateFileMapping with SEC_LARGE_PAGES works for named cross-process sections was not verified (open question). Recommend benchmarking only after the copy count and per-frame allocations are fixed.",
+    "quantitative_evidence": "Measured 4 KiB-page copies: cache-cold 17.8 GB/s single process (1080p); cache-warm 40.5 GB/s into shm (results\\memcpy_cold.json, results\\memcpy.json). No large-page measurement was made.",
+    "sources": [
+     {
+      "title": "Microsoft Learn: Large-Page Support",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/memory/large-page-support"
+     },
+     {
+      "title": "Linux kernel docs: HugeTLB Pages",
+      "url": "https://www.kernel.org/doc/html/latest/admin-guide/mm/hugetlbpage.html"
+     },
+     {
+      "title": "Python docs: multiprocessing.shared_memory",
+      "url": "https://docs.python.org/3/library/multiprocessing.shared_memory.html"
+     }
+    ]
+   }
+  ],
+  "bandwidth_math": "Reference sizes are BGR uint8, 3 bytes per pixel: 1280x720 = 2,764,800 B/frame and 1920x1080 = 6,220,800 B/frame. Target is 5 cameras x 60 fps = 300 frames/s.\n\n1) Raw bytes per second (BGR):\n- 720p: 165.9 MB/s per camera, 829.4 MB/s for 5 (0.83 GB/s, 2.99 TB/hour).\n- 1080p: 373.2 MB/s per camera, 1,866.2 MB/s for 5 (1.87 GB/s, 6.72 TB/hour).\n- USB-side check: uncompressed YUY2 at 60 fps is 884.7 Mbit/s (720p) and 1,990.7 Mbit/s (1080p) per camera. The USB 2.0 isochronous budget is about 384 Mbit/s, so MJPEG is mandatory.\n\n2) Memcpy cost of one extra full-frame copy at 300 fps (i7-14700K, numpy 2.2.6 np.copyto into pre-faulted memory):\n- Cache-cold single process: 0.162 ms (720p) and 0.350 ms (1080p). At 300 fps that is 48.6 ms/s and 105 ms/s of CPU, about 5% and 10.5% of one core.\n- DRAM traffic per copy stage (read plus write): 1.66 GB/s (720p) and 3.73 GB/s (1080p).\n- Under a 5-process continuous-copy stress test, per-copy time rises to 0.546 ms and 1.281 ms. That is an upper bound of about 16% and 38% of a core.\n- Allocate-and-copy (ndarray.copy) costs 0.362 ms and 0.823 ms, 109 ms/s and 247 ms/s.\n- SkellyCam put_data costs 0.596 ms and 1.261 ms, 179 ms/s and 378 ms/s summed across the 5 camera processes. A single copyto costs 0.073 ms and 0.155 ms, 22 ms/s and 46 ms/s.\n- A numpy view on shm costs 0.0003 ms, effectively free.\n\n3) Disk bytes per second for 5 cameras at 60 fps:\n- Raw BGR: 829 MB/s (720p) and 1,866 MB/s (1080p). The measured 4 GB burst on a WD SN850X 4 TB (91% full) was 4.13 GB/s buffered (write phase), 2.89 GB/s including fsync, and 5.33 GB/s with FILE_FLAG_NO_BUFFERING. Sustained rate past the pSLC cache is unmeasured.\n- MJPEG passthrough, measured on a real c922 at 720p60: 166.8 KB/frame, 10.43 MB/s per camera, about 52 MB/s for 5 (188 GB/hour).\n- MJPEG passthrough at 1080p60: not measured on a 60 fps camera. A C930e at 1080p30 gave 160.2 KB/frame, which at 60 fps would be 9.6 MB/s per camera, 48 MB/s for 5 (assumes the same per-frame size). Synthetic q80 at 1080p gave 182 KB/frame, 10.9 MB/s per camera, 55 MB/s for 5.\n- H.264, YouTube's recommended 60 fps SDR bitrates: 7.5 Mbit/s at 720p (0.94 MB/s per camera, 4.7 MB/s for 5) and 12 Mbit/s at 1080p (1.5 MB/s per camera, 7.5 MB/s for 5).\n- H.264, measured NVENC cq23 on noisy synthetic content: 13.7 Mbit/s at 720p and 31 Mbit/s at 1080p, 8.6 MB/s and 19.4 MB/s for 5.\n- HEVC, measured NVENC cq25: 9.8 Mbit/s and 16.4 Mbit/s.\n- SkellyCam's PyAV libx264 crf18: 14.0 Mbit/s and 31.4 Mbit/s. Its cv2 'X264' writer, which resolved to MSMF H.264 Baseline: 55.8 Mbit/s and 125.6 Mbit/s, 35 MB/s and 78.5 MB/s for 5.\n- Ratios at 1080p: raw to MJPEG is about 36:1, and raw to H.264 at 12 Mbit/s is about 250:1.\n- Ring capacity for a 5 s writer stall, per camera: about 1.87 GB raw at 1080p against about 50 MB MJPEG.\n\nReproduce: from C:\\Users\\Dom\\GitHub\\freemocap\\skellycam run .venv\\Scripts\\python.exe -I <script> <results_dir> with the scripts in C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench:\n- bench_pipeline_primitives.py (memcpy|pickle|mpqueue|jpeg|nvenc|disk)\n- bench_memcpy_cold.py\n- bench_encode_conversion.py\n- bench_mjpeg_passthrough_mux.py\n- bench_skellycam_put_data.py\n- bench_skellycam_writers.py\n- probe_dshow_grab_retrieve.py\n- probe_ffmpeg_dshow_mjpeg_packets.py\n\nJSON outputs are in C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\bp_bench\\results.",
+  "caveats": [
+   "Benchmark environment: one machine only. i7-14700K (28 logical CPUs), RTX 3070 on driver 610.88, WD_BLACK SN850X 4 TB NVMe at 91% full, Windows 11, Python 3.12.13, numpy 2.2.6, opencv-python 4.12.0 (libjpeg-turbo 3.1.0), PyAV 17.0.0 (libavcodec 62.11). Results will differ on other hardware.",
+   "Encoder throughput, JPEG sizes and H.264/HEVC bitrates come from SYNTHETIC camera-like frames (sinusoids plus blurred noise), not real scenes. Bitrates and JPEG sizes depend on content; the MJPEG sizes from real cameras (c922 at 720p60, C930e at 1080p30) are the ones to trust for disk math. 1080p60 MJPEG was not measured on a real 60 fps camera (the Razer Kiyo Pro failed to open via FFmpeg dshow), so the 1080p MJPEG figure is an extrapolation.",
+   "Only one real camera was probed through OpenCV (index 0, DSHOW). OpenCV MSMF read() failed with E_PENDING on that camera, so the MSMF raw-MJPEG route (CAP_PROP_CONVERT_RGB=0) is supported by OpenCV source code but not demonstrated on this machine. The FFmpeg-dshow passthrough route was demonstrated.",
+   "No 5-camera simultaneous capture test was run. The 5-stream results are encoder/copy/mux benchmarks on in-memory frames, so USB host-controller bandwidth with 5 real cameras (one controller or several) remains an open question for the 60 fps goal.",
+   "The disk test wrote only 4 GB per mode. That is inside the SLC cache, so the sustained post-cache write rate and long-tail stall latency on this nearly full drive are not measured. A long recording test (hundreds of GB, or the length of a real session) is needed before sizing buffers.",
+   "The 5-process memcpy result is a bandwidth stress test (continuous back-to-back copies), not a 60 fps duty cycle. Treat it as an upper bound on contention cost.",
+   "NVENC session limit sources conflict. NVIDIA SDK 12.2 notes, quoted on the NVIDIA forum, say 8 per system for non-qualified GPUs (driver >= 551.76); the current support matrix lists 12 'max concurrent sessions' for the RTX 3070. 5 concurrent sessions worked here. QSV is exposed by PyAV (h264_qsv) but was not tested, and its session limits were not researched. AMF is not applicable (no AMD GPU).",
+   "The PyAV threading-scaling observation (5 threads give about 2x one stream on the bgr24 reformat path) is measured, but the cause (GIL held inside PyAV/swscale) is a hypothesis, not proven.",
+   "Whether OpenCV's MSMF H.264 encoder (what cv2 'X264' resolved to on this machine) uses a hardware MFT or software was not determined.",
+   "Some vendor and third-party pages were inaccessible (403 or bot protection): docs.opencv.org, trac.ffmpeg.org, docs.ros.org, techpowerup.com, guru3d.com. OpenCV claims are therefore cited from source code at tag 4.12.0, ROS 2 claims from design.ros.org, and NVMe write-cliff behaviour from the Netdata guide rather than drive reviews.",
+   "SkellyCam applicability notes cite HEAD 23ccbf20. `git diff 777b058c 23ccbf20` over skellycam/core/ipc/shared_memory, skellycam/core/camera/opencv and skellycam/core/camera/determine_backend.py is empty, so FreeMoCap's pinned skellycam (777b058c) has the same ring-buffer and capture code in those paths. Other paths (recorders, pubsub, api) were not diffed.",
+   "Prior-art repositories (skellycam-shm-ui, skellycam-opnpc-mf, openpnp-capture, openpnp-capture-python) were NOT examined for this topic and are not cited."
+  ]
+ },
+ {
+  "topic": "Would porting parts of SkellyCam's Python multi-camera frame pipeline to C++ raise throughput, and where? (Windows 11, i7-14700K, Python 3.12.13, numpy 2.2.6, opencv-python 4.12.0. Frames are 1280x720x3 and 1920x1080x3 uint8 BGR, which matches create_frame_dtype in skellycam/core/types/frame_dtype_factories.py. Everything below is measured or code-referenced. Benchmark scripts and their outputs are in C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\ad23e4da-d956-400c-b95c-1c7166f96ad9\\scratchpad\\cpp_study\\. Run each script with C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe <script>.py > <script>.out.txt from that folder. The C++ benchmark is built with \"cl /O2 /EHsc /std:c++20 bench_native_shm.cpp\" from a vcvars64 shell and run as bench_native_shm.exe > bench_native_shm.out.txt.)",
+  "findings": [
+   {
+    "practice": "Treat memory bandwidth as the hard ceiling. It is the same for Python and C++: np.copyto into multiprocessing.shared_memory runs as fast as C++ memcpy into a CreateFileMapping view.",
+    "why_it_matters": "Most of the bytes in the pipeline are moved by memcpy-class operations. If numpy already copies at native speed, rewriting a copy in C++ gains nothing. The only win is doing fewer copies.",
+    "applicability_to_skellycam": "Rewriting SkellyCam's ring buffer in C++ would not make individual copies faster. Only removing copies helps (see the put_data and retrieve-into-slot findings). Multi-threaded copying also stops scaling at about 2 threads in both languages, so running more copies in parallel will not help either.",
+    "quantitative_evidence": "720p cache-cold destination slot: numpy np.copyto 71-75 us (37-39 GB/s) vs C++ memcpy into a CreateFileMapping ring 66.2 us (41.8 GB/s). 1080p: numpy 162 us (38.5 GB/s) vs C++ 153.9 us (40.4 GB/s). Cold source to cold destination (numpy): 720p 158-163 us, 1080p 356-360 us (about 17 GB/s copied, about 34 GB/s of total read+write traffic). 1 GiB numpy copy: 63.1 ms (17.0 GB/s). Aggregate scaling with each thread writing its own 1080p ring: C++ 1T 39.3, 2T 44.3, 5T 35.0, 8T 29.2 GB/s; numpy np.copyto threads 1.00x, 1.13x (2T), 1.04x (5T) vs C++ 1.00x, 1.13x, 0.89x. The scaling curves are the same, so the limit is bandwidth, not the GIL. RAM is reported running at 4000 MT/s (Win32_PhysicalMemory ConfiguredClockSpeed=4000; part CMK64GX5M2B6400C32). Dual-channel DDR5-4000 theoretical peak by arithmetic: 4000e6 x 8 B x 2 = 64 GB/s.",
+    "sources": [
+     {
+      "title": "bench_python_hotpaths.py, sections A and G (script)",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/bench_python_hotpaths.py"
+     },
+     {
+      "title": "bench_python_hotpaths.out.txt (output)",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/bench_python_hotpaths.out.txt"
+     },
+     {
+      "title": "bench_native_shm.cpp, sections 1-2 (C++ baseline)",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/bench_native_shm.cpp"
+     },
+     {
+      "title": "bench_native_shm.out.txt (output)",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/bench_native_shm.out.txt"
+     }
+    ]
+   },
+   {
+    "practice": "Know which calls release the GIL. numpy array assignment and copyto release it for non-object dtypes above a size threshold. OpenCV's generated Python wrappers release it around every wrapped C++ call (ERRWRAP2 -> PyAllowThreads). Pure-Python code and SkellyCam's SharedMemoryNumber accessors hold it.",
+    "why_it_matters": "Python-level overhead only becomes a throughput limit when Python bytecode is the critical section. When many threads share one interpreter, bulk C calls run in parallel but Python glue code is serialised.",
+    "applicability_to_skellycam": "SkellyCam runs one OS process per camera by default (WorkerMode.PROCESS in skellycam/__main__.py L39-43, and the FreeMoCap default in camera_node_config.py L64). The GIL therefore does not serialise cameras against each other. It only matters in WorkerMode.THREAD, which the FreeMoCap tests use. For the bulk operations (decode, cvtColor, imencode, copy) a C++ port would not remove any GIL contention, because they already release it.",
+    "quantitative_evidence": "Threads with cv2.setNumThreads(1). cv2.imencode 1080p: 1T 106 ops/s, 2T 2.02x, 5T 4.11x, so the GIL is released and the work scales. cv2.cvtColor 1080p: 1.40x (2T), 1.11x (5T), bandwidth-bound. Pure-Python loop: 1.00-1.01x (2T), 1.06-1.13x (5T) over 3 trials, so it is GIL-bound. SharedMemoryNumber.value x100: 1.01x (2T), 0.59x (5T), so it is GIL-bound and gets worse under contention.",
+    "sources": [
+     {
+      "title": "OpenCV cv2_util.hpp: PyAllowThreads and ERRWRAP2",
+      "url": "https://raw.githubusercontent.com/opencv/opencv/4.x/modules/python/src2/cv2_util.hpp"
+     },
+     {
+      "title": "numpy array_assign_array.c: NPY_BEGIN_THREADS_THRESHOLDED unless NPY_METH_REQUIRES_PYAPI",
+      "url": "https://raw.githubusercontent.com/numpy/numpy/main/numpy/_core/src/multiarray/array_assign_array.c"
+     },
+     {
+      "title": "bench_python_hotpaths.out.txt, section G",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/bench_python_hotpaths.out.txt"
+     },
+     {
+      "title": "bench_gil_control.py / .out.txt (3-trial pure-Python control)",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/bench_gil_control.out.txt"
+     },
+     {
+      "title": "skellycam/__main__.py L39-43 (WorkerMode.PROCESS)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/__main__.py#L39-L43"
+     },
+     {
+      "title": "freemocap camera_node_config.py L64 (worker_mode default PROCESS)",
+      "url": "https://github.com/freemocap/freemocap/blob/5632778af10e22befd4ec0a719ba844f14a84e93/freemocap/core/pipeline/realtime/camera_node_config.py#L64"
+     }
+    ]
+   },
+   {
+    "practice": "Remove the extra full-frame copy in SharedMemoryRingBuffer.put_data. This is a Python fix and needs no C++.",
+    "why_it_matters": "Priority 3 is to avoid copying frames. put_data copies every frame twice: copy(data) allocates a fresh temporary frame, and the slot assignment then copies that temporary into shared memory. The fresh allocation also triggers page faults.",
+    "applicability_to_skellycam": "Line 132 is `self.ring_shm.buffer[index_to_write % self.ring_buffer_length] = copy(data)`. Dropping copy() keeps the same semantics, because the slot assignment already copies into shared memory, and it removes about 1.1-1.3 ms per frame per camera. Over 300 frames/s that is about 0.35-0.44 CPU-seconds per second. The same code is in freemocap's venv copy (skellycam 777b058c): the files are byte-identical to HEAD (diff -q), and `git diff --quiet 777b058c HEAD -- skellycam/core/ipc/shared_memory skellycam/core/camera/opencv skellycam/core/recorders` exits 0.",
+    "quantitative_evidence": "Using SkellyCam's own class with the real FRAME dtype: ring.put_data 720p 1157-1237 us, 1080p 1467 us. The same slot assignment without copy(): 67.5 us (720p), 159.1 us (1080p). copy.copy(recarray) alone: 375.5 us (720p, 7.4 GB/s), 855.5 us (1080p). That is roughly 17x slower than necessary at 720p and 9x at 1080p.",
+    "sources": [
+     {
+      "title": "ring_buffer_shared_memory.py put_data L118-133",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py#L118-L133"
+     },
+     {
+      "title": "opencv_camera_loop.py L94-97 (put_frame call)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L94-L97"
+     },
+     {
+      "title": "bench_python_hotpaths.out.txt, section B/C",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/bench_python_hotpaths.out.txt"
+     }
+    ]
+   },
+   {
+    "practice": "Capture straight into caller-owned shared memory. cv2.VideoCapture.retrieve(image=<view of the ring slot>) decodes in place, which removes the local frame recarray and the put_data copies entirely.",
+    "why_it_matters": "It removes 2 of the writer-side full-frame copies without any native code.",
+    "applicability_to_skellycam": "Today opencv_get_frame.py L72 retrieves into a process-local recarray, which is created in create_initial_frame_recarray.py L11 (np.recarray(1,...)). put_frame then copies that into shared memory. Retrieving into ring_shm.buffer.image[next_slot] and then publishing last_written_index keeps the frame bytes in shared memory from the start. Metadata timestamps and the putText overlay can be written into the same slot. With DSHOW (the Windows backend, determine_backend.py L42), OpenCV still memcpys internally: SampleGrabberCallback::SampleCB does memcpy(pixels, ...), and getPixels(..., flipImage=true) row-copies into the output Mat. Only native code could remove those copies. Caveat: the live DSHOW camera path was not tested here, only file-backed MSMF and FFMPEG.",
+    "quantitative_evidence": "Synthetic 720p MJPG file, 119 frames per arm. Both MSMF and FFMPEG retrieve(image=shm_view): returned object is the shm view, data pointer unchanged, np.shares_memory True. FFMPEG with prefaulted ring: current path (retrieve to local, then put_data) 755+639 = 1394 us vs retrieve-to-slot + publish 780+36 = 816 us, about 0.58 ms saved per frame. MSMF prefaulted: 7648 vs 7179 us. FFMPEG without prefault: 2018 vs 1486 us.",
+    "sources": [
+     {
+      "title": "test_retrieve_into_shm.py (script)",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/test_retrieve_into_shm.py"
+     },
+     {
+      "title": "test_retrieve_into_shm.out.txt (output)",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/test_retrieve_into_shm.out.txt"
+     },
+     {
+      "title": "opencv_get_frame.py L53-86 (grab/retrieve into local recarray, putText)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/opencv_get_frame.py#L53-L86"
+     },
+     {
+      "title": "determine_backend.py L42 (CAP_DSHOW on Windows)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/determine_backend.py#L42"
+     },
+     {
+      "title": "OpenCV 4.12.0 cap_dshow.cpp (SampleCB memcpy; getPixels flip; retrieveFrame)",
+      "url": "https://raw.githubusercontent.com/opencv/opencv/4.12.0/modules/videoio/src/cap_dshow.cpp"
+     },
+     {
+      "title": "OpenCV cap_msmf.cpp retrieveVideoFrame (Mat(ptr).copyTo(frame); raw bytes when CONVERT_RGB=0)",
+      "url": "https://raw.githubusercontent.com/opencv/opencv/4.x/modules/videoio/src/cap_msmf.cpp"
+     }
+    ]
+   },
+   {
+    "practice": "Prefault the shared-memory ring at creation. Large pages are the one shared-memory feature that needs native code.",
+    "why_it_matters": "Each 1 GiB ring is pagefile-backed, and every page faults on first write. This costs latency during the first lap of a recording, which is exactly when disk-write deadlines matter.",
+    "applicability_to_skellycam": "SharedMemoryRingBuffer.create allocates 1 GiB per camera by default (memory_allocation=ONE_GIGABYTE, L35-52): 388 slots at 720p, 172 at 1080p. Prefaulting can be done from Python by writing the buffer once. SEC_LARGE_PAGES can only be requested through a native CreateFileMapping call: CPython's SharedMemory calls _winapi.CreateFileMapping with no way to pass it. SEC_LARGE_PAGES also requires SeLockMemoryPrivilege and SEC_COMMIT. Its benefit was NOT measured and is an open hypothesis.",
+    "quantitative_evidence": "Prefaulting a whole 1 GiB ring takes 298-329 ms. Without prefault, retrieve-to-slot costs 1444 us vs 780 us prefaulted (FFMPEG 720p), and put_data costs 1240 us vs 639 us. numpy cold-ring p99 values (842-1715 us) are far above the medians (162 us), which is consistent with first-touch faults.",
+    "sources": [
+     {
+      "title": "ring_buffer_shared_memory.py create L35-52 (1 GiB default)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py#L35-L52"
+     },
+     {
+      "title": "test_retrieve_into_shm.out.txt (prefault vs not)",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/test_retrieve_into_shm.out.txt"
+     },
+     {
+      "title": "Microsoft Learn: CreateFileMappingA (SEC_LARGE_PAGES, SEC_COMMIT)",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createfilemappinga"
+     },
+     {
+      "title": "CPython 3.12 Lib/multiprocessing/shared_memory.py (Windows: CreateFileMapping/OpenFileMapping/MapViewOfFile/mmap)",
+      "url": "https://raw.githubusercontent.com/python/cpython/3.12/Lib/multiprocessing/shared_memory.py"
+     }
+    ]
+   },
+   {
+    "practice": "multiprocessing.shared_memory on Windows already uses native file mappings. Its overhead is in SkellyCam's Python control-plane wrappers, not in the data path.",
+    "why_it_matters": "Replacing it with a native shared-memory library does not speed up pixel transfer. What costs time is per-access Python work: index counters stored as recarrays, and nested recarray field access.",
+    "applicability_to_skellycam": "SharedMemoryNumber.value reads through retrieve_data(), which builds an np.rec.array and checks the valid flag via np.copy. Each write allocates a new recarray (shared_memory_number.py L82-92). put_data and get_* make 3-5 of these calls each. The camera loop, opencv_get_frame and VideoRecorder.record_frame write timestamps through `frame_rec_array.frame_metadata.timestamps.X[0]` about 31 times per frame (grep count 14+8+9). All of this can be made about 10-20x faster in Python with cached int64 or field views. C++ std::atomic would make it effectively free, but the absolute saving is only about 0.4 ms per frame.",
+    "quantitative_evidence": "SharedMemoryNumber.value read 5.6 us, write 4.3 us. Raw numpy int64 view read/write 0.1 us. C++ std::atomic<int64_t> on a shared mapping: store(release) 0.18 ns, load(acquire) 0.23 ns (tight-loop throughput, not contended latency). Nested recarray timestamp write 12.9 us vs 0.7 us through a cached view. time.perf_counter_ns 0.1 us. Estimated per frame: about 31 x 12.9 us = 0.40 ms, plus about 5 x 5 us in put_data.",
+    "sources": [
+     {
+      "title": "shared_memory_number.py L82-92",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/shared_memory_number.py#L82-L92"
+     },
+     {
+      "title": "shared_memory_element.py L84-86 and L136-153 (valid via np.copy; retrieve_data builds np.rec.array)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/shared_memory_element.py#L84-L153"
+     },
+     {
+      "title": "opencv_camera_loop.py L133-147 (9 nested timestamp writes per frame)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L133-L147"
+     },
+     {
+      "title": "SciPy Cookbook: recarray attribute access adds pure-Python overhead",
+      "url": "https://scipy-cookbook.readthedocs.io/items/Recarray.html"
+     },
+     {
+      "title": "bench_python_hotpaths.out.txt, sections D/E; bench_native_shm.out.txt, section 3",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/bench_python_hotpaths.out.txt"
+     }
+    ]
+   },
+   {
+    "practice": "Encoding sits inline in the capture loop and is the largest per-frame cost. It is already native code (FFmpeg / Media Foundation), so C++ cannot speed it up. Only the architecture can change: decouple, use hardware encoding, or pass MJPEG through.",
+    "why_it_matters": "Priority 1 is that disk writes never drop. A capture loop that grabs, decodes, copies and encodes serially has a fixed 16.7 ms budget at 60 fps, and any stall drops frames.",
+    "applicability_to_skellycam": "handle_video_recording calls VideoRecorder.record_frame, and video_writer.write runs synchronously in the camera process right after put_frame. On this machine DEFAULT_WRITER_FOURCC='X264' resolves to cv2.VideoWriter's MSMF backend writing h264: FFMPEG fails because OpenH264 1.8.0 is missing or the wrong version. Moving the writer to its own reader of the ring buffer, with a no-overwrite guarantee for that reader, frees the capture loop. That is a design change, not a language change. Passthrough of the camera's MJPEG bitstream (MSMF CAP_PROP_CONVERT_RGB=0 returns raw bytes per cap_msmf.cpp; the skellycam-opnpc-mf fork, prior art only, stores raw_frame_bytes) would avoid decode and re-encode entirely.",
+    "quantitative_evidence": "Single stream, synthetic content, wall time per frame including flush. cv2 MJPG: 4.73-4.79 ms (720p), 10.71-10.75 ms (1080p). PyavVideoWriter libx264 crf18 fast: 4.39-4.49 ms (720p), 8.38-8.59 ms (1080p). cv2 'X264' via MSMF H.264: 1.52 ms (720p), 2.89 ms (1080p). At 1080p MJPG, encoding alone uses 64% of a 16.7 ms frame budget. A file-based MSMF decode of 720p MJPEG took about 6.9-7.5 ms per frame vs FFMPEG 0.76-0.78 ms. The live DSHOW decode cost was not measured.",
+    "sources": [
+     {
+      "title": "video_recorder.py record_frame L87-109",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/recorders/videos/video_recorder.py#L87-L109"
+     },
+     {
+      "title": "handle_video_recording_loop.py L20-25",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_helpers/handle_video_recording_loop.py#L20-L25"
+     },
+     {
+      "title": "camera_config.py L28-29 (DEFAULT_CAPTURE_FOURCC MJPG, DEFAULT_WRITER_FOURCC X264)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/config/camera_config.py#L28-L29"
+     },
+     {
+      "title": "bench_encode.py / bench_encode.out.txt",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/bench_encode.out.txt"
+     },
+     {
+      "title": "probe_writer_backend.py / probe_writer_backend.out.txt (X264 -> MSMF h264)",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/probe_writer_backend.out.txt"
+     },
+     {
+      "title": "OpenCV cap_msmf.cpp (convertFormat / raw copy path)",
+      "url": "https://raw.githubusercontent.com/opencv/opencv/4.x/modules/videoio/src/cap_msmf.cpp"
+     }
+    ]
+   },
+   {
+    "practice": "Replace sleep-polling with event-driven waits. Windows sleep granularity limits Python and C++ equally.",
+    "why_it_matters": "The lockstep grab gate polls with sleeps. Each failed poll adds about 0.5 ms or more of latency per camera per frame, which reduces timing headroom.",
+    "applicability_to_skellycam": "Camera loops spin on `if not orchestrator.should_grab_by_id(...): wait_10us(); continue` (opencv_camera_loop.py L67-68), and wait_10us is time.sleep(1e-5) (wait_functions.py L29-30). A C++ Sleep() faces the same OS timer. The fix is an event or semaphore wait (Win32 events, WaitOnAddress) or a bounded spin, and Python can reach those through _winapi or ctypes. This is not a C++ argument.",
+    "quantitative_evidence": "Measured on this box: time.sleep(1e-6), (1e-5) and (1e-4) all have a median of about 518-524 us and p99 about 1.0 ms. time.sleep(1e-3) has a median of 1518 us. The Python docs claim 100 ns resolution on Windows 8.1+ (high-resolution waitable timer since 3.11), which does not match this measurement.",
+    "sources": [
+     {
+      "title": "opencv_camera_loop.py L67-68",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera/opencv/opencv_camera_loop.py#L67-L68"
+     },
+     {
+      "title": "wait_functions.py L23-33",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/utilities/wait_functions.py#L23-L33"
+     },
+     {
+      "title": "camera_orchestrator.py L95-109 (should_grab_by_id)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/camera_group/camera_orchestrator.py#L95-L109"
+     },
+     {
+      "title": "bench_sleep.py / bench_sleep.out.txt",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/bench_sleep.out.txt"
+     },
+     {
+      "title": "Python 3.12 time.sleep docs (Windows implementation)",
+      "url": "https://docs.python.org/3.12/library/time.html"
+     }
+    ]
+   },
+   {
+    "practice": "Lock-free C++/Rust IPC libraries (iceoryx2, cpp-ipc, Boost.Interprocess) mainly solve ownership and notification (loan, publish, wake). They do not make data transfer faster than shared memory.",
+    "why_it_matters": "These libraries only avoid copies if the producer writes directly into the loaned chunk. That is the same thing SkellyCam can do with its existing ring (see the retrieve-into-slot finding).",
+    "applicability_to_skellycam": "Possible benefits: per-subscriber cursors so the disk writer can never be overwritten, and event-based wakeups. SkellyCam's ring tracks only one last_read_index (ring_buffer_shared_memory.py L115-116), and put_frame is called with overwrite=True (opencv_camera_loop.py L96). iceoryx2 lists Python bindings as done and Windows as tier 2 (restricted feature set). Its Python publisher loans a Slice[c_uint8] and fills it via payload(). iceoryx v1 is not supported on Windows according to a ROS 2 discourse benchmark thread. cpp-ipc's README gives no numbers (Windows 7 / MSVC 2017 test machine, circular array, up to 32 receivers). Boost.Interprocess emulates portable shared_memory_object on Windows with files; windows_shared_memory is native.",
+    "quantitative_evidence": "The vendors publish no opened, verifiable latency figures: iceoryx2's README shows charts only (i7-13700H, Linux), and its FOSDEM 2026 slides returned 404/redirect and were not opened. Our own native baseline: an atomic index publish is about 0.2 ns of throughput cost vs about 5 us for SkellyCam's SharedMemoryNumber.",
+    "sources": [
+     {
+      "title": "iceoryx2 README (bindings, platforms, benchmark system)",
+      "url": "https://github.com/eclipse-iceoryx/iceoryx2"
+     },
+     {
+      "title": "iceoryx2 Python example publisher (loan_slice_uninit)",
+      "url": "https://raw.githubusercontent.com/eclipse-iceoryx/iceoryx2/main/examples/python/publish_subscribe_dynamic_data/publisher.py"
+     },
+     {
+      "title": "cpp-ipc README",
+      "url": "https://github.com/mutouyun/cpp-ipc"
+     },
+     {
+      "title": "Boost.Interprocess: sharing memory between processes (Windows emulation)",
+      "url": "https://www.boost.org/doc/libs/release/doc/html/interprocess/sharedmemorybetweenprocesses.html"
+     },
+     {
+      "title": "ROS discourse: zero-copy DDS comparison (iceoryx not on Windows)",
+      "url": "https://discourse.openrobotics.org/t/zero-copy-dds-performance-comparison-for-rmw-providers-in-ros-2/22696"
+     },
+     {
+      "title": "ring_buffer_shared_memory.py L115-116 (single last_read_index overwrite check)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py#L115-L116"
+     }
+    ]
+   },
+   {
+    "practice": "Existing C++ capture library with Python bindings (prior art, not under study): openpnp-capture can capture into caller-owned memory, but its Windows path does wasteful pixel work in both C++ and Python.",
+    "why_it_matters": "It shows where native code genuinely helps: avoiding per-pixel conversions that are then undone.",
+    "applicability_to_skellycam": "C API: Cap_captureFrame(ctx, stream, void* RGBbufferPtr, uint32_t bytes) (include/openpnp-capture.h L225) memcpys the latest frame into the caller's buffer under a mutex (common/stream.cpp L60-72). It could therefore write straight into a shared-memory slot. The Windows DirectShow backend's submitBuffer (win/platformstream.cpp L851-885) does a per-pixel BGR->RGB swap plus a vertical flip into an internal buffer. The ctypes wrapper (openpnp-capture-python camera.py L187-217) then swaps RGB back to BGR with three strided numpy passes. Delivering BGR natively and flipping with row memcpys is a real C++ win. Open questions: the vendored win-x64 DLL imports only KERNEL32/ole32/OLEAUT32 (dumpbin), so it uses DirectShow and not Media Foundation. The Python binding declares 5 arguments (an extra POINTER(c_int64) hardware timestamp, _bindings.py L92) while the local C header at 32a9bdd declares 4. The DLL's source is therefore not this checkout, and whether the hardware timestamp is real is unverified.",
+    "quantitative_evidence": "C++ /O2 replica of the submitBuffer swap+flip loop: 342.7 us (720p), 801.5 us (1080p). Flip-only with row memcpy: 82.3 us and 204.7 us. Python wrapper's numpy channel swap: 960.9 us (720p), 2095 us (1080p). Total avoidable work: about 1.2 ms (720p) and 2.7 ms (1080p) per frame. ctypes per-call overhead was reported at about 683 ns (M1 Mac, taichi issue), which is negligible per frame.",
+    "sources": [
+     {
+      "title": "openpnp-capture include/openpnp-capture.h L225 (Cap_captureFrame into caller buffer)",
+      "url": "https://github.com/openpnp/openpnp-capture/blob/32a9bdd3e8e3a31b12cb6573e7c6076208421651/include/openpnp-capture.h#L225"
+     },
+     {
+      "title": "openpnp-capture common/stream.cpp L60-72 (memcpy under mutex)",
+      "url": "https://github.com/openpnp/openpnp-capture/blob/32a9bdd3e8e3a31b12cb6573e7c6076208421651/common/stream.cpp#L60-L72"
+     },
+     {
+      "title": "openpnp-capture win/platformstream.cpp L851-885 (per-pixel BGR->RGB + flip)",
+      "url": "https://github.com/openpnp/openpnp-capture/blob/32a9bdd3e8e3a31b12cb6573e7c6076208421651/win/platformstream.cpp#L851-L885"
+     },
+     {
+      "title": "openpnp-capture-python camera.py L187-217 (local checkout 0aec3cc, not pushed; numpy RGB->BGR swap)",
+      "url": "file:///C:/Users/Dom/GitHub/freemocap/openpnp-capture-python/openpnp_capture/camera.py"
+     },
+     {
+      "title": "bench_native_shm.out.txt section 4; bench_python_hotpaths.out.txt section F",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/bench_native_shm.out.txt"
+     },
+     {
+      "title": "taichi issue 6395 (ctypes/pybind11 per-call timings)",
+      "url": "https://github.com/taichi-dev/taichi/issues/6395"
+     }
+    ]
+   },
+   {
+    "practice": "Free-threaded CPython (3.13t/3.14t) is not a usable route for SkellyCam today.",
+    "why_it_matters": "It is sometimes proposed as the alternative to a C++ port for escaping the GIL.",
+    "applicability_to_skellycam": "PEP 779 is Final for 3.14, so the build is supported, with about a 10% penalty (about 3% on macOS). The docs give 1-8% pyperformance overhead. However, the free-threaded build does not support the stable ABI, and opencv-python on PyPI ships only cp37-abi3 wheels. There is no free-threaded OpenCV wheel, and importing an extension not marked Py_mod_gil re-enables the GIL. SkellyCam already avoids the GIL with processes, so the upside would be small anyway.",
+    "quantitative_evidence": "PEP 779: current penalty about 10%, phase II hard target 15%, memory target 20%. Python docs: 1% (macOS aarch64) to 8% (x86-64 Linux). PyPI opencv-python 5.0.0.93: only cp37-abi3 wheels for win_amd64/win32.",
+    "sources": [
+     {
+      "title": "PEP 779",
+      "url": "https://peps.python.org/pep-0779/"
+     },
+     {
+      "title": "Python HOWTO: free-threading",
+      "url": "https://docs.python.org/3/howto/free-threading-python.html"
+     },
+     {
+      "title": "Python HOWTO: C API extension support for free threading (no stable ABI, Py_mod_gil)",
+      "url": "https://docs.python.org/3/howto/free-threading-extensions.html"
+     },
+     {
+      "title": "PyPI opencv-python files",
+      "url": "https://pypi.org/project/opencv-python/#files"
+     }
+    ]
+   },
+   {
+    "practice": "If native code is written, bind it with a zero-copy buffer-protocol binding (nanobind, pybind11 or Cython). Call overhead is sub-microsecond to a few microseconds and is irrelevant at frame granularity. Avoid conversions that silently copy.",
+    "why_it_matters": "A binding that silently copies (pybind11 forcecast or a dtype mismatch) would cancel out the benefit of moving code to C++.",
+    "applicability_to_skellycam": "A native capture or ring module would expose shared-memory slots as numpy views (nanobind ndarray with owner or capsule; pybind11 buffer_info; Cython typed memoryviews, which can run nogil). With about 5-10 calls per frame, call overhead stays below 15 us per frame even with pybind11.",
+    "quantitative_evidence": "nanobind's own docs: about 3x faster calls than pybind11 for simple functions, about 10x when classes are passed, similar to Cython (Ryzen 9 7950X, author-run). Taichi issue (M1): pybind11 about 1408 ns, ctypes about 683 ns, raw CPython API about 410 ns per call.",
+    "sources": [
+     {
+      "title": "nanobind benchmarks",
+      "url": "https://nanobind.readthedocs.io/en/latest/benchmark.html"
+     },
+     {
+      "title": "nanobind ndarray (zero-copy, owner/capsule)",
+      "url": "https://nanobind.readthedocs.io/en/latest/ndarray.html"
+     },
+     {
+      "title": "pybind11 NumPy / buffer protocol (forcecast copies)",
+      "url": "https://pybind11.readthedocs.io/en/stable/advanced/pycpp/numpy.html"
+     },
+     {
+      "title": "Cython typed memoryviews (nogil)",
+      "url": "https://cython.readthedocs.io/en/latest/src/userguide/memoryviews.html"
+     },
+     {
+      "title": "taichi issue 6395",
+      "url": "https://github.com/taichi-dev/taichi/issues/6395"
+     }
+    ]
+   },
+   {
+    "practice": "Case-study evidence: no rigorous public before/after study of a Python video pipeline ported to C++ or Rust with FPS numbers was found. The documented large wins come from pipeline structure (threads or processes, non-blocking I/O, fewer copies), not language.",
+    "why_it_matters": "It cautions against expecting a C++ port alone to deliver 5 cameras at 60 fps.",
+    "applicability_to_skellycam": "PyImageSearch got a 379% FPS increase by moving the blocking read() to a thread, an I/O-overlap win that applies equally to C++. Basler's pypylon best practices say \"Copy only when required\", \"Reuse buffers\" and separate acquisition from processing. The StereoPi C++-vs-Python article (stereopi.com/node/131) and the WSCG paper (dspace.zcu.cz) could NOT be opened (403/503), so they are not relied on.",
+    "quantitative_evidence": "PyImageSearch: 29.97 FPS unthreaded vs 143.71 FPS threaded (no display); 28.90 vs 39.93 FPS with cv2.imshow. Hardware not stated.",
+    "sources": [
+     {
+      "title": "PyImageSearch: Increasing webcam FPS with Python and OpenCV",
+      "url": "https://pyimagesearch.com/2015/12/21/increasing-webcam-fps-with-python-and-opencv/"
+     },
+     {
+      "title": "Basler pypylon best practices",
+      "url": "https://docs.baslerweb.com/pypylon-best-practices"
+     },
+     {
+      "title": "parallel-pyspin README (multiprocessing per camera; USB buffer limits cause drops)",
+      "url": "https://github.com/jbhunt/parallel-pyspin"
+     }
+    ]
+   },
+   {
+    "practice": "HYPOTHESIS LIST for the benchmark agent: which hot paths could gain from C++ and which cannot.",
+    "why_it_matters": "It turns the evidence above into tests that can confirm or refute each hypothesis.",
+    "applicability_to_skellycam": "COULD GAIN FROM C++ (test these):\n(C1) A custom DirectShow or Media Foundation capture callback that writes decoder output directly into the shared-memory slot. This removes OpenCV DSHOW's internal SampleCB memcpy and the getPixels flip copy. Expected saving: at most 2 frame copies (about 0.13-0.32 ms/frame at 720p, 0.3-0.7 ms at 1080p, per the measured memcpy costs). Compare against the Python retrieve-into-slot baseline, not against HEAD.\n(C2) openpnp-capture (prior art): deliver BGR natively and flip with row memcpy, removing the C++ swap loop and the Python swap back. Expected saving: about 1.2 ms (720p) and 2.7 ms (1080p) per frame.\n(C3) A ring control plane with std::atomic indices, per-reader cursors and a seqlock or generation counter. Expected: index operations go from about 5 us to under 1 us, a saving of tens of microseconds per frame. Python raw int64 views already reach 0.1 us, so expect a small delta. Also check whether numpy int64 stores give the publish ordering readers rely on (open question; not verified here).\n(C4) SEC_LARGE_PAGES shared-memory ring (native only): TLB and page-fault effect on copy and encode throughput is unmeasured.\n(C5) A single native process with one thread per camera, no GIL, sharing one address space. This only helps if the process-per-camera overhead proves significant, which has not been measured.\nCANNOT GAIN FROM C++ (already native or bandwidth-bound; fix in Python or architecture):\n(N1) Bulk memcpy and np.copyto: identical GB/s.\n(N2) MJPEG decode: done by the DirectShow decompressor, MF transform or FFmpeg, already native.\n(N3) Video encode (MSMF H.264, FFmpeg MJPG, libx264): already native. Fix by decoupling the writer from capture, hardware encode, or MJPEG passthrough.\n(N4) UI path resize + imencode (frontend_payload_bytearray.py L136-147): native, releases the GIL, 4.1x on 5 threads.\n(N5) put_data's copy(data) and the local-recarray staging copy: fix in Python (expected saving about 1.1-1.3 ms per frame per camera, plus about 0.58 ms more with retrieve-into-slot).\n(N6) Recarray and SharedMemoryNumber overhead (about 0.4 ms per frame): fix in Python with cached views.\n(N7) Sleep-polling latency: OS timer granularity limits both languages; use events.\n(N8) Disk I/O bandwidth.\nSuggested test: an end-to-end 5-camera x 60 fps synthetic producer (5 processes writing into SkellyCam rings at 720p and 1080p) in four variants: (a) HEAD; (b) Python fixes N5+N6+prefault; (c) (b) plus a decoupled writer process; (d) (c) plus C3 implemented in nanobind. Measure dropped and late frames, capture-loop ms/frame p50/p99, and memory traffic.",
+    "quantitative_evidence": "See the bandwidth math and the findings above. All numbers come from the scratchpad cpp_study outputs.",
+    "sources": [
+     {
+      "title": "camera_group_shared_memory.py L129-169 (reader copies via get_data_by_index)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/camera_group_shared_memory.py#L129-L169"
+     },
+     {
+      "title": "ring_buffer_shared_memory.py get_data_by_index L175-202 (np.copyto out of shm)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/ipc/shared_memory/ring_buffer_shared_memory.py#L175-L202"
+     },
+     {
+      "title": "freemocap camera_node.py L250-258 (per-camera get_data_by_index copy)",
+      "url": "https://github.com/freemocap/freemocap/blob/5632778af10e22befd4ec0a719ba844f14a84e93/freemocap/core/pipeline/realtime/camera_node.py#L250-L258"
+     },
+     {
+      "title": "frontend_payload_bytearray.py L136-147 (resize + imencode for UI)",
+      "url": "https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/core/types/frontend_payload_bytearray.py#L136-L147"
+     },
+     {
+      "title": "cpp_study scratch folder (all scripts + outputs)",
+      "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/ad23e4da-d956-400c-b95c-1c7166f96ad9/scratchpad/cpp_study/"
+     }
+    ]
+   }
+  ],
+  "bandwidth_math": "Frame sizes (BGR uint8): 720p = 1280x720x3 = 2,764,800 B; 1080p = 1920x1080x3 = 6,220,800 B. The SkellyCam slot itemsize including metadata is 2,765,432 B and 6,221,432 B (measured).\n\nRaw stream rate, 5 cameras x 60 fps = 300 frames/s: 720p = 829.4 MB/s (165.9 MB/s per camera); 1080p = 1,866.2 MB/s (373.2 MB/s per camera).\n\nCost of one full-frame copy (measured median; numpy and C++ agree): 720p 66-75 us with a cache-hot source, 158-163 us cold to cold; 1080p 154-162 us hot source, 356-360 us cold to cold. Each copy stage at 300 frames/s therefore costs 21-48 ms of CPU per second (2-5% of one core) at 720p, and 48-108 ms/s (5-11% of a core) at 1080p. Its memory traffic is 2 x bytes: 1.66 GB/s (720p) or 3.73 GB/s (1080p). The measured ceilings are about 17 GB/s copied (about 34 GB/s traffic) for a single-thread cold copy, and 35-44 GB/s aggregate write for C++ with 1-8 threads.\n\nFull-frame copies per frame at HEAD on the DSHOW path: (1) OpenCV SampleCB memcpy into its pixels buffer; (2) getPixels row-flip copy into the local frame_rec_array; (3) copy.copy(data) in put_data; (4) assignment into the shared-memory slot. The encoder then reads the frame. Readers add (5) FreeMoCap RealtimeCameraNode get_data_by_index per camera, and (6) get_latest_multiframe for the UI at UI rate. Six stages cost about 10 GB/s of traffic at 720p (23-28% of the measured ceiling) and about 22.4 GB/s at 1080p (51-64%). In practice put_data costs 1.16-1.47 ms per frame rather than 2 memcpys, because copy() allocates fresh memory and page-faults. That is 0.35-0.44 CPU-seconds per second across 5 cameras.\n\nProposed minimum without C++: (1) OpenCV internal copy, then (2) retrieve directly into the slot, then the encoder or writer and readers use views of the slot. That is 2 copies instead of 4 on the writer side; removing (1) needs native capture code.\n\nDisk write rate for 5 cameras x 60 fps:\n- Raw BGR: 829 MB/s at 720p, 1.87 GB/s at 1080p. Whether this sustained rate fits the target drive was not measured.\n- MJPEG (cv2 MJPG writer, synthetic textured content): 93.9 KB/frame gives 28.2 MB/s at 720p; 208.4 KB/frame gives 62.5 MB/s at 1080p.\n- H.264 via MSMF, which is what the default 'X264' resolves to on this machine: 110.6 KB/frame gives 33 MB/s (720p); 247.8 KB/frame gives 74 MB/s (1080p).\n- H.264 via libx264 crf18 preset fast (PyavVideoWriter): 3.7 KB/frame gives 1.1 MB/s (720p); 4.7 KB/frame gives 1.4 MB/s (1080p). The synthetic content is a translated texture that is trivially predictable, so real-scene bitrates will be much higher (open question).\n\nEncode CPU per frame, single stream: MJPG 4.7 / 10.7 ms; libx264 4.4 / 8.4 ms; MSMF H.264 1.5 / 2.9 ms (720p / 1080p).",
+  "caveats": [
+   "All measurements come from one machine: i7-14700K, a hybrid P/E-core CPU. Thread placement on E-cores adds noise, and affinity was not pinned. The RAM was reported at 4000 MT/s although the part number suggests a 6400 MT/s kit; whether XMP raises the bandwidth ceiling is untested.",
+   "Capture benchmarks used synthetic MJPG .avi files through the CAP_MSMF and CAP_FFMPEG backends. Live USB cameras through CAP_DSHOW (SkellyCam's Windows backend) were NOT tested. The DSHOW internal copies are taken from OpenCV source, not measured.",
+   "Encode sizes and bitrates come from synthetic content (blurred noise translated 3 px/frame) and are indicative only. The libx264 bitrate is unrealistically low. Each encoder was timed as a single stream; 5 concurrent streams will contend for cores, especially libx264, which is multi-threaded.",
+   "The C++ atomic numbers are tight-loop throughput on an uncontended line, not cross-process cache-line transfer latency. The micro-benchmarks report medians; p99 values were noisy (first-touch page faults, scheduler).",
+   "Cross-process concurrency was not benchmarked: one writer process and several reader processes on the same ring at 300 frames/s. Memory-ordering guarantees of numpy int64 index stores used as publish flags were not verified (open question).",
+   "The vendored openpnp-capture DLL does not come from the local openpnp-capture checkout: the C header has 4 arguments while the ctypes binding passes 5, and the DLL imports only KERNEL32/ole32/OLEAUT32. Its exact source and timestamp behaviour are open questions. openpnp-capture, openpnp-capture-python and skellycam-opnpc-mf are prior art, not the code under study.",
+   "Vendor benchmark claims (nanobind vs pybind11, iceoryx2 latency charts) are author-published. The iceoryx2 FOSDEM slides, the StereoPi C++-vs-Python article and the WSCG 2025 paper could not be opened (404/403/503), so no claims rest on them.",
+   "The FreeMoCap venv's skellycam (777b058c) is byte-identical to the SkellyCam HEAD checkout for every file benchmarked here (ring buffer, element, number, camera loop, get_frame, video_recorder). Other IPC files were not compared.",
+   "No source files in either repo were modified. All scripts and outputs are under the scratchpad cpp_study folder, and the SkellyCam venv was used read-only (no installs)."
+  ]
+ }
+]

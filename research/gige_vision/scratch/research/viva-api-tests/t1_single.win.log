@@ -1,0 +1,58 @@
+python 3.12.13 Windows-11-10.0.26300-SP0 viva 0.10.0
+fake: FakeGigeCamera(running, 640x480 @ 60 fps on 127.0.0.1:3956, pixel_format=0x01080001) ip 127.0.0.1 port 3956 start s 0.001
+discover {} -> [] 0.505 s
+discover {'all': True} -> [GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')] 0.503 s
+discover {'iface': '127.0.0.1'} -> [GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')] 0.506 s
+discover {'iface': '127.0.0.1', 'all': True} -> [GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')] 0.508 s
+device_info: GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige') {'ip': '127.0.0.1', 'mac': 'DE:AD:BE:EF:CA:FE', 'manufacturer': 'viva-genicam', 'model': 'FakeGigE', 'transport': 'gige'}
+control_state ControlState.HELD controller per fake: 127.0.0.1:54061
+transport gige xml len 43436
+n nodes 143
+nodes: ['Root', 'UserSetControl', 'DeviceControl', 'ImageFormatControl', 'AcquisitionControl', 'AnalogControl', 'TransportLayerControl', 'ChunkDataControl', 'EventControl', 'DeviceVendorName', 'DeviceModelName', 'DeviceSerialNumber', 'DeviceFirmwareVersion', 'DeviceID', 'DeviceUserID', 'DeviceUserBuffer', 'DeviceTemperature', 'DeviceTemperature_FloatVal', 'DeviceTemperature_Val', 'SensorWidth', 'SensorWidthReg', 'SensorHeight', 'SensorHeightReg', 'Width', 'WidthReg', 'WidthMaxNow', 'WidthMin', 'WidthMax', 'Height', 'HeightReg', 'HeightMaxNow', 'HeightMin', 'HeightMax', 'OffsetX', 'OffsetXReg', 'OffsetY', 'OffsetYReg', 'OffsetXMax', 'OffsetYMax', 'BinningHorizontal', 'BinningHorizontalReg', 'BinningVertical', 'BinningVerticalReg', 'SensorType', 'SensorTypeReg', 'PixelFormat', 'PixelFormatReg', 'PfMono8Avail', 'PfMono16Avail', 'PfBayerRG8Avail', 'PfRGB8Avail', 'DeviceRegBaseAddress', 'FrameRateControlInq_Bit', 'ChunkSupportInq_Bit', 'SequencerInq_Bit', 'GevStreamChannelSelector', 'GevStreamChannelSelectorReg', 'GevSCPSPacketSize', 'GevSCPSPacketSizeReg', 'AcquisitionMode', 'AcquisitionModeReg', 'AcquisitionStart', 'AcquisitionStartReg', 'UserSetSelector', 'UserSetSelectorReg', 'UserSetLoad', 'UserSetLoad_CmdValue', 'UserSetLoadReg', 'UserSetSave', 'UserSetSave_CmdValue', 'UserSetSaveAvailable', 'UserSetSaveReg', 'UserSetDefault', 'UserSetDefaultReg', 'TriggerSelector', 'TriggerSelectorReg', 'TriggerMode', 'TriggerModeReg', 'TriggerSource', 'TriggerSourceReg', 'TriggerSoftware', 'TriggerSoftwareReg', 'SoftwareSignal0Pulse', 'SoftwareSignal1Pulse', 'AcquisitionStop', 'AcquisitionStopReg', 'AcquisitionFrameRateEnable', 'AcquisitionFrameRateEnableReg', 'AcquisitionFrameRate', 'AcquisitionFrameRateReg', 'ExposureTime', 'ExposureTimeReg', 'ExposureTime_Imp', 'ExposureTime_Avl', 'ExposureAuto', 'ExposureAutoReg', 'ExposureAutoActive', 'Gain', 'GainReg', 'GainAuto', 'GainAutoReg', 'GainAutoActive', 'BlackLevel', 'BlackLevelReg', 'PayloadSize', 'PayloadSizeReg', 'TLParamsLocked', 'GevTimestampTickFrequency', 'GevTimestampValue', 'GevTimestampValueReg', 'GevIEEE1588OffsetFromMasterLatched_Val', 'ChunkTimestamp_Val', 'ChunkWidth_Val', 'TimestampLatch', 'TimestampLatchReg', 'ChunkModeActive', 'ChunkModeActiveReg', 'ChunkSelector', 'ChunkSelectorReg', 'ChunkEnable', 'ChunkEnableReg', 'ChunkTimestamp', 'ChunkTimestampReg', 'ChunkExposureTime', 'ChunkExposureTimeReg', 'ChunkFrameID', 'ChunkFrameIDReg', 'ChunkWidth', 'ChunkWidthReg', 'ChunkHeight', 'ChunkHeightReg', 'ChunkImageLength', 'ChunkImageLengthReg', 'EventSelector', 'EventSelectorReg', 'EventNotification', 'EventNotificationReg', 'EventExposureEnd', 'EventExposureEndReg', 'EventExposureEndTimestamp', 'EventExposureEndTimestampReg', 'EventExposureEndFrameID', 'EventExposureEndFrameIDReg']
+  get 'DeviceVendorName' = 'vitavision.dev'
+  get 'DeviceModelName' = 'VivaCam Fake'
+  get 'DeviceSerialNumber' = 'VIVA-FAKE-001'
+  get 'DeviceID' = 'VivaCam-0'
+  get 'DeviceFirmwareVersion' = '1.0.0-fake'
+  get 'Width' = '640'
+  get 'Height' = '480'
+  get 'PixelFormat' = 'Mono8'
+  get 'SensorType' = 'Monochrome'
+  get 'AcquisitionFrameRate' = '30'
+  get 'ExposureTime' = '5000'
+  get 'Gain' = '0'
+  get 'GevTimestampTickFrequency' = '1000000000'
+  get 'GevSCPSPacketSize' = '1500'
+  get 'GevSCPD' ERR GenApiError: node not found: GevSCPD
+  get 'PayloadSize' = '307200'
+  get 'TLParamsLocked' = '0'
+  get 'TriggerSelector' = 'FrameStart'
+  get 'TriggerMode' = 'Off'
+  get 'TriggerSource' = 'Line1'
+  get 'PtpEnable' ERR GenApiError: node not found: PtpEnable
+  get 'GevIEEE1588' ERR GenApiError: node not found: GevIEEE1588
+  get 'ActionDeviceKey' ERR GenApiError: node not found: ActionDeviceKey
+  get 'GevIEEE1588OffsetFromMasterLatched_Val' = '-1234567'
+PixelFormat enum_entries ['Mono8', 'Mono16', 'RGB8', 'BayerRG8'] available ['Mono8', 'Mono16']
+TriggerSource entries ['Line1', 'Software']
+feature_state(PixelFormat) FeatureState(kind='Enumeration', value='Mono8', access='RW', is_implemented=True, is_available=True, range=None, enum_entries=['Mono8', 'Mono16'], unit=None, polling_time=None, caching='WriteThrough')
+feature_state(Width) FeatureState(kind='Integer', value=640, access='RW', is_implemented=True, is_available=True, range=ValueRange(min=16.0, max=4096.0, inc=None), enum_entries=None, unit=None, polling_time=None, caching='WriteThrough')
+node_info PtpEnable None
+node_info Nope None
+node_info Width NodeInfo(name='Width', kind='Integer', access='RW', visibility='Beginner', display_name=None, description=None, tooltip='Width of the image in pixels', effective_access='RW')
+feature_state(PtpEnable) ERR GenApiError node not found: PtpEnable | mro ['GenApiError', 'GenicamError', 'Exception', 'BaseException', 'object']
+Version reg 0x0000 = 0x00020000 (major 2, minor 0)
+GVCP capability 0x0934 = 0x08000027; 1588=False sched_action=False action=False
+tick freq bootstrap 1000000000
+GVCP config 0x0954 = 0x2
+bootstrap timestamp latch value 0
+read 8 bytes at 0x0948: 0000000000000000
+set PixelFormat BayerRG8 on mono sensor ERR GenApiError enum PixelFormat's entry BayerRG8 is not available now
+GevSCPSPacketSize during stream 1500
+first frame: Frame(width=640, height=480, pixel_format=Mono8, bytes=307200) status FrameStatus.COMPLETE complete True ptype 0x1 pf Mono8 0x1080001 padding_x 0 ts_dev 5700 ts_host None chunks None missing None
+to_numpy (480, 640) uint8 False True
+100 frames in 2.31s = 43.3 fps; block ids [1, 7, 8]..105; ts_dev deltas(ns?) [128708900, 22806200, 22034700, 21554400]
+stats: StreamStats(frames_complete=100, frames_incomplete=0, frames_missed=0, frames_backpressure=5, frames_unsupported=0, packets_received=22260, packets_duplicate=0, packets_missing=0, packets_ignored_malformed=0, packets_ignored_unsupported=0, packets_ignored_out_of_range=0, packets_ignored_late=0, packets_ignored_error_status=0, packets_ignored_foreign=0, packets_size_mismatch=0, resend_requested=0, resend_recovered=0, resend_unavailable=0, transfer_errors=0, bytes=30720000, frames_lost=5, packets_ignored=0, last_frame_dt=0.0218939, avg_fps=44.83123516547473, avg_mbps=110.1772435426707, avg_latency_ms=None, elapsed=2.3011845, packets_per_second=9673.279130812847)
+after stream control_state ControlState.HELD
+closed True fake controller after close None
+after close get ERR GenicamError the camera is closed

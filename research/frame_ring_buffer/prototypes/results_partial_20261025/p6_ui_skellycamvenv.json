@@ -1,0 +1,481 @@
+{
+  "env": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.2.6",
+    "opencv": "4.12.0",
+    "cpu_count": 28,
+    "time": "2026-10-25 15:32:21",
+    "psutil": "7.2.2",
+    "ram_total_gb": 68.413349888,
+    "system_cpu_pct_1s_before_run": 32.2,
+    "other_python_processes_at_start": [
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe research/usb_cameras/mjpeg/run_matrix.py --backend msmf --backend pyav-dshow ",
+      "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\f77e9c4e-e1ea-4406-8a36-bef826a63a0e\\scratchpad\\venvs\\skellycam-impl\\Scripts\\pyth",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe -m pytest skellycam/tests -p no:cacheprovider -q -rfE",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\tools\\camlock.py",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpP3jP4L\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\tools\\camlock.py --time",
+      "C:\\Users\\Dom\\GitHub\\OpenMMLab-Exporter\\.venv\\Scripts\\python.exe notes/decisions/scripts/rtmdet_nms_clamp_parity.py all --reference plans/sidecar-reference-post_",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks/frame_pipeline/prototypes/p6_ui_path.py",
+      "C:\\Users\\Dom\\GitHub\\OpenMMLab-Exporter\\.venv\\Scripts\\python.exe notes/decisions/scripts/rtmdet_nms_clamp_parity.py all --reference plans/sidecar-reference-post_",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpFfvRmg\\Scripts\\python.exe research/usb_cameras/mjpeg/run_matrix.py --backend msmf --backend pyav-dshow --backe",
+      "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\builds-v0\\.tmpJaFA1u\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\mjpeg\\run_one.py --cams",
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\mjpeg\\run_one.py"
+    ],
+    "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d",
+    "av": "18.0.0",
+    "simplejpeg": null
+  },
+  "run_s": 2.0,
+  "rows": [
+    {
+      "variant": "cur_copy_real",
+      "payloads_per_s": 50.17511113809844,
+      "distinct_per_s": 50.17511113809844,
+      "skipped_no_new_frame": 0,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 101,
+        "median_ms": 9.7243,
+        "mean_ms": 9.90209702970297,
+        "p99_ms": 14.8065,
+        "min_ms": 8.2112,
+        "max_ms": 16.1601
+      },
+      "payload_kb_median": 290.114,
+      "loop_blocked": {
+        "n": 101,
+        "median_ms": 9.7243,
+        "mean_ms": 9.90209702970297,
+        "p99_ms": 14.8065,
+        "min_ms": 8.2112,
+        "max_ms": 16.1601
+      },
+      "main_cpu_pct": 90.04196924534992,
+      "size": "1080p",
+      "venv": "skellycamvenv",
+      "copies": "5 full frames out of shm + 5 resize outputs (alloc) + JPEG x3 (tobytes, assemble, slice)"
+    },
+    {
+      "variant": "view_real",
+      "payloads_per_s": 58.418643276675695,
+      "distinct_per_s": 57.42003398989492,
+      "skipped_no_new_frame": 0,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 117,
+        "median_ms": 6.8846,
+        "mean_ms": 7.093362393162393,
+        "p99_ms": 9.829576000000001,
+        "min_ms": 5.8541,
+        "max_ms": 10.1
+      },
+      "payload_kb_median": 337.03,
+      "loop_blocked": {
+        "n": 117,
+        "median_ms": 6.8846,
+        "mean_ms": 7.093362393162393,
+        "p99_ms": 9.829576000000001,
+        "min_ms": 5.8541,
+        "max_ms": 10.1
+      },
+      "main_cpu_pct": 141.20959445884483,
+      "size": "1080p",
+      "venv": "skellycamvenv",
+      "copies": "0 out of shm; 5 resize outputs (alloc); JPEG x3"
+    },
+    {
+      "variant": "view_proto",
+      "payloads_per_s": 50.8570560726903,
+      "distinct_per_s": 50.8570560726903,
+      "skipped_no_new_frame": 46,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 102,
+        "median_ms": 4.8886,
+        "mean_ms": 4.951425490196079,
+        "p99_ms": 5.754874999999999,
+        "min_ms": 4.4324,
+        "max_ms": 6.7295
+      },
+      "payload_kb_median": 306.875,
+      "loop_blocked": {
+        "n": 102,
+        "median_ms": 4.8886,
+        "mean_ms": 4.951425490196079,
+        "p99_ms": 5.754874999999999,
+        "min_ms": 4.4324,
+        "max_ms": 6.7295
+      },
+      "main_cpu_pct": 95.824416313433,
+      "size": "1080p",
+      "venv": "skellycamvenv",
+      "copies": "0 out of shm; resize into preallocated dst; JPEG x1 (assemble)"
+    },
+    {
+      "variant": "view_proto_640x360",
+      "payloads_per_s": 47.7972274322937,
+      "distinct_per_s": 47.7972274322937,
+      "skipped_no_new_frame": 73,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 96,
+        "median_ms": 2.98425,
+        "mean_ms": 3.049482291666667,
+        "p99_ms": 4.285674999999999,
+        "min_ms": 2.6829,
+        "max_ms": 4.7697
+      },
+      "payload_kb_median": 202.5475,
+      "loop_blocked": {
+        "n": 96,
+        "median_ms": 2.98425,
+        "mean_ms": 3.049482291666667,
+        "p99_ms": 4.285674999999999,
+        "min_ms": 2.6829,
+        "max_ms": 4.7697
+      },
+      "main_cpu_pct": 24.89438928765297,
+      "size": "1080p",
+      "venv": "skellycamvenv",
+      "copies": "same as view_proto"
+    },
+    {
+      "variant": "view_proto_threads",
+      "payloads_per_s": 45.87161681245607,
+      "distinct_per_s": 45.87161681245607,
+      "skipped_no_new_frame": 83,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 92,
+        "median_ms": 2.3675,
+        "mean_ms": 2.4166608695652174,
+        "p99_ms": 3.697687000000001,
+        "min_ms": 1.9234,
+        "max_ms": 3.9109
+      },
+      "payload_kb_median": 306.875,
+      "loop_blocked": {
+        "n": 92,
+        "median_ms": 0.0519,
+        "mean_ms": 0.05206521739130435,
+        "p99_ms": 0.07374800000000006,
+        "min_ms": 0.039,
+        "max_ms": 0.0894
+      },
+      "main_cpu_pct": 36.61627021374721,
+      "size": "1080p",
+      "venv": "skellycamvenv",
+      "copies": "same as view_proto"
+    },
+    {
+      "variant": "jpeg_forward",
+      "payloads_per_s": 47.925229453358774,
+      "distinct_per_s": 47.925229453358774,
+      "skipped_no_new_frame": 96,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 96,
+        "median_ms": 0.22015,
+        "mean_ms": 0.22893645833333334,
+        "p99_ms": 0.3518949999999999,
+        "min_ms": 0.1893,
+        "max_ms": 0.3841
+      },
+      "payload_kb_median": 2720.326,
+      "loop_blocked": {
+        "n": 96,
+        "median_ms": 0.22015,
+        "mean_ms": 0.22893645833333334,
+        "p99_ms": 0.3518949999999999,
+        "min_ms": 0.1893,
+        "max_ms": 0.3841
+      },
+      "main_cpu_pct": 1.560066062934856,
+      "size": "1080p",
+      "venv": "skellycamvenv",
+      "copies": "0 pixel copies; camera JPEG x1 (assemble)"
+    },
+    {
+      "variant": "jpeg_reduced_reencode",
+      "payloads_per_s": 25.291715138235226,
+      "distinct_per_s": 25.291715138235226,
+      "skipped_no_new_frame": 0,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 51,
+        "median_ms": 29.1986,
+        "mean_ms": 29.4743,
+        "p99_ms": 35.37885,
+        "min_ms": 25.959,
+        "max_ms": 36.29
+      },
+      "payload_kb_median": 304.806,
+      "loop_blocked": {
+        "n": 51,
+        "median_ms": 29.1986,
+        "mean_ms": 29.4743,
+        "p99_ms": 35.37885,
+        "min_ms": 25.959,
+        "max_ms": 36.29
+      },
+      "main_cpu_pct": 73.61252874179984,
+      "size": "1080p",
+      "venv": "skellycamvenv",
+      "copies": "0 full-res frames; reduced decode + encode; JPEG x1"
+    },
+    {
+      "variant": "jpeg_reduced_reencode_threads",
+      "payloads_per_s": 53.74734715766617,
+      "distinct_per_s": 53.74734715766617,
+      "skipped_no_new_frame": 5,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 108,
+        "median_ms": 8.0708,
+        "mean_ms": 8.267282407407407,
+        "p99_ms": 11.186894,
+        "min_ms": 6.3224,
+        "max_ms": 17.0468
+      },
+      "payload_kb_median": 314.0225,
+      "loop_blocked": {
+        "n": 108,
+        "median_ms": 0.05545,
+        "mean_ms": 0.06529814814814815,
+        "p99_ms": 0.16747699999999993,
+        "min_ms": 0.0423,
+        "max_ms": 0.3256
+      },
+      "main_cpu_pct": 167.9604598677068,
+      "size": "1080p",
+      "venv": "skellycamvenv",
+      "copies": "same as jpeg_reduced_reencode"
+    },
+    {
+      "variant": "cur_copy_real",
+      "payloads_per_s": 68.62913160407591,
+      "distinct_per_s": 59.67750574267471,
+      "skipped_no_new_frame": 0,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 138,
+        "median_ms": 4.337350000000001,
+        "mean_ms": 4.655228260869564,
+        "p99_ms": 7.712315999999999,
+        "min_ms": 3.6982,
+        "max_ms": 8.1138
+      },
+      "payload_kb_median": 152.803,
+      "loop_blocked": {
+        "n": 138,
+        "median_ms": 4.337350000000001,
+        "mean_ms": 4.655228260869564,
+        "p99_ms": 7.712315999999999,
+        "min_ms": 3.6982,
+        "max_ms": 8.1138
+      },
+      "main_cpu_pct": 42.73779708134256,
+      "size": "720p",
+      "venv": "skellycamvenv",
+      "copies": "5 full frames out of shm + 5 resize outputs (alloc) + JPEG x3 (tobytes, assemble, slice)"
+    },
+    {
+      "variant": "view_real",
+      "payloads_per_s": 75.47908097268358,
+      "distinct_per_s": 59.98337560743066,
+      "skipped_no_new_frame": 0,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 151,
+        "median_ms": 3.1983,
+        "mean_ms": 3.2344668874172187,
+        "p99_ms": 4.1383,
+        "min_ms": 2.8844,
+        "max_ms": 4.5597
+      },
+      "payload_kb_median": 152.803,
+      "loop_blocked": {
+        "n": 151,
+        "median_ms": 3.1983,
+        "mean_ms": 3.2344668874172187,
+        "p99_ms": 4.1383,
+        "min_ms": 2.8844,
+        "max_ms": 4.5597
+      },
+      "main_cpu_pct": 41.39477743741959,
+      "size": "720p",
+      "venv": "skellycamvenv",
+      "copies": "0 out of shm; 5 resize outputs (alloc); JPEG x3"
+    },
+    {
+      "variant": "view_proto",
+      "payloads_per_s": 48.894773558098514,
+      "distinct_per_s": 48.894773558098514,
+      "skipped_no_new_frame": 76,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 98,
+        "median_ms": 2.33895,
+        "mean_ms": 2.3676520408163264,
+        "p99_ms": 3.138285,
+        "min_ms": 2.1232,
+        "max_ms": 3.2154
+      },
+      "payload_kb_median": 140.167,
+      "loop_blocked": {
+        "n": 98,
+        "median_ms": 2.33895,
+        "mean_ms": 2.3676520408163264,
+        "p99_ms": 3.138285,
+        "min_ms": 2.1232,
+        "max_ms": 3.2154
+      },
+      "main_cpu_pct": 25.725885322341373,
+      "size": "720p",
+      "venv": "skellycamvenv",
+      "copies": "0 out of shm; resize into preallocated dst; JPEG x1 (assemble)"
+    },
+    {
+      "variant": "view_proto_640x360",
+      "payloads_per_s": 47.88621516992589,
+      "distinct_per_s": 47.88621516992589,
+      "skipped_no_new_frame": 78,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 96,
+        "median_ms": 2.43965,
+        "mean_ms": 2.543575,
+        "p99_ms": 3.7216499999999995,
+        "min_ms": 2.1896,
+        "max_ms": 3.8993
+      },
+      "payload_kb_median": 140.433,
+      "loop_blocked": {
+        "n": 96,
+        "median_ms": 2.43965,
+        "mean_ms": 2.543575,
+        "p99_ms": 3.7216499999999995,
+        "min_ms": 2.1896,
+        "max_ms": 3.8993
+      },
+      "main_cpu_pct": 28.05832920112845,
+      "size": "720p",
+      "venv": "skellycamvenv",
+      "copies": "same as view_proto"
+    },
+    {
+      "variant": "view_proto_threads",
+      "payloads_per_s": 49.89055508938446,
+      "distinct_per_s": 49.89055508938446,
+      "skipped_no_new_frame": 86,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 100,
+        "median_ms": 1.1824,
+        "mean_ms": 1.4194299999999995,
+        "p99_ms": 2.264671000000089,
+        "min_ms": 0.9552,
+        "max_ms": 19.5076
+      },
+      "payload_kb_median": 140.157,
+      "loop_blocked": {
+        "n": 100,
+        "median_ms": 0.0338,
+        "mean_ms": 0.03475,
+        "p99_ms": 0.04811900000000001,
+        "min_ms": 0.0257,
+        "max_ms": 0.05
+      },
+      "main_cpu_pct": 18.708958158519174,
+      "size": "720p",
+      "venv": "skellycamvenv",
+      "copies": "same as view_proto"
+    },
+    {
+      "variant": "jpeg_forward",
+      "payloads_per_s": 48.4738265573247,
+      "distinct_per_s": 48.4738265573247,
+      "skipped_no_new_frame": 94,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 97,
+        "median_ms": 0.1406,
+        "mean_ms": 0.1437298969072165,
+        "p99_ms": 0.22465999999999992,
+        "min_ms": 0.0962,
+        "max_ms": 0.2357
+      },
+      "payload_kb_median": 1195.968,
+      "loop_blocked": {
+        "n": 97,
+        "median_ms": 0.1406,
+        "mean_ms": 0.1437298969072165,
+        "p99_ms": 0.22465999999999992,
+        "min_ms": 0.0962,
+        "max_ms": 0.2357
+      },
+      "main_cpu_pct": 2.3424851751284486,
+      "size": "720p",
+      "venv": "skellycamvenv",
+      "copies": "0 pixel copies; camera JPEG x1 (assemble)"
+    },
+    {
+      "variant": "jpeg_reduced_reencode",
+      "payloads_per_s": 43.28608019171103,
+      "distinct_per_s": 43.28608019171103,
+      "skipped_no_new_frame": 0,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 87,
+        "median_ms": 12.6017,
+        "mean_ms": 13.008331034482758,
+        "p99_ms": 18.75877,
+        "min_ms": 11.5618,
+        "max_ms": 19.4472
+      },
+      "payload_kb_median": 140.325,
+      "loop_blocked": {
+        "n": 87,
+        "median_ms": 12.6017,
+        "mean_ms": 13.008331034482758,
+        "p99_ms": 18.75877,
+        "min_ms": 11.5618,
+        "max_ms": 19.4472
+      },
+      "main_cpu_pct": 53.64115540998672,
+      "size": "720p",
+      "venv": "skellycamvenv",
+      "copies": "0 full-res frames; reduced decode + encode; JPEG x1"
+    },
+    {
+      "variant": "jpeg_reduced_reencode_threads",
+      "payloads_per_s": 46.97927509290358,
+      "distinct_per_s": 46.97927509290358,
+      "skipped_no_new_frame": 62,
+      "invalid_seqlock": 0,
+      "build": {
+        "n": 94,
+        "median_ms": 3.81365,
+        "mean_ms": 4.365109574468085,
+        "p99_ms": 14.685843999999957,
+        "min_ms": 2.9159,
+        "max_ms": 20.6092
+      },
+      "payload_kb_median": 140.325,
+      "loop_blocked": {
+        "n": 94,
+        "median_ms": 0.0422,
+        "mean_ms": 0.04813510638297872,
+        "p99_ms": 0.109749,
+        "min_ms": 0.0321,
+        "max_ms": 0.1104
+      },
+      "main_cpu_pct": 61.6915347795775,
+      "size": "720p",
+      "venv": "skellycamvenv",
+      "copies": "same as jpeg_reduced_reencode"
+    }
+  ]
+}

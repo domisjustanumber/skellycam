@@ -1,0 +1,537 @@
+{
+  "env": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.2.6",
+    "opencv": "4.12.0",
+    "cpu_count": 28,
+    "time": "2026-10-28 01:04:25",
+    "psutil": "7.2.2",
+    "ram_total_gb": 68.413349888,
+    "system_cpu_pct_1s_before_run": 6.9,
+    "other_python_processes_at_start": [
+      "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe benchmarks\\frame_pipeline\\baseline\\run_with_load.py b_read b_read_stdout.log ",
+      ".venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\baseline\\bench_b_read.py",
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\.venv\\Scripts\\python.exe benchmarks\\frame_pipeline\\baseline\\run_with_load.py b_read b_read_stdout.log 1200 -- .venv\\Scri"
+    ],
+    "skellycam_head": "23ccbf208e43879bfc74fc01049e5af2a623933d"
+  },
+  "n_cams": 5,
+  "writer_fps": 60.0,
+  "seconds_per_style": 10.0,
+  "rows": [
+    {
+      "size": "720p",
+      "style": "latest_reused",
+      "cams_per_read": 1,
+      "cold": {
+        "n": 605,
+        "median_ms": 0.2081,
+        "mean_ms": 0.32216016528925623,
+        "p99_ms": 0.8445400000000001,
+        "min_ms": 0.1759,
+        "max_ms": 1.1074
+      },
+      "warm": {
+        "n": 605,
+        "median_ms": 0.1437,
+        "mean_ms": 0.15135504132231406,
+        "p99_ms": 0.21462400000000006,
+        "min_ms": 0.1242,
+        "max_ms": 0.2584
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        0.7884,
+        0.2065,
+        0.2099,
+        0.1923,
+        0.1909
+      ],
+      "record_itemsize": 2765432,
+      "ring_len": 388,
+      "cold_GBps": 13.288957232099952
+    },
+    {
+      "size": "720p",
+      "style": "latest_alloc",
+      "cams_per_read": 1,
+      "cold": {
+        "n": 600,
+        "median_ms": 0.6112,
+        "mean_ms": 0.7078276666666666,
+        "p99_ms": 1.241527,
+        "min_ms": 0.506,
+        "max_ms": 1.28
+      },
+      "warm": {
+        "n": 600,
+        "median_ms": 0.54375,
+        "mean_ms": 0.5487403333333333,
+        "p99_ms": 0.647524,
+        "min_ms": 0.4712,
+        "max_ms": 0.6659
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        1.14505,
+        0.57435,
+        0.5736,
+        0.60545,
+        0.6034
+      ],
+      "record_itemsize": 2765432,
+      "ring_len": 388,
+      "cold_GBps": 4.524594240837696
+    },
+    {
+      "size": "720p",
+      "style": "by_index_reused",
+      "cams_per_read": 1,
+      "cold": {
+        "n": 605,
+        "median_ms": 0.215,
+        "mean_ms": 0.3261535537190083,
+        "p99_ms": 0.8344240000000002,
+        "min_ms": 0.1832,
+        "max_ms": 0.902
+      },
+      "warm": {
+        "n": 605,
+        "median_ms": 0.1555,
+        "mean_ms": 0.16497504132231405,
+        "p99_ms": 0.25610000000000016,
+        "min_ms": 0.1034,
+        "max_ms": 0.2846
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        0.7794,
+        0.2156,
+        0.2032,
+        0.2085,
+        0.2012
+      ],
+      "record_itemsize": 2765432,
+      "ring_len": 388,
+      "cold_GBps": 12.862474418604652
+    },
+    {
+      "size": "720p",
+      "style": "next_consuming",
+      "cams_per_read": 1,
+      "cold": {
+        "n": 604,
+        "median_ms": 0.28515,
+        "mean_ms": 0.5178511589403973,
+        "p99_ms": 0.9301190000000001,
+        "min_ms": 0.2217,
+        "max_ms": 1.0477
+      },
+      "warm": {
+        "n": 604,
+        "median_ms": 0.0,
+        "mean_ms": 0.0,
+        "p99_ms": 0.0,
+        "min_ms": 0.0,
+        "max_ms": 0.0
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        0.8251,
+        0.83325,
+        0.2579,
+        0.2463,
+        0.2512
+      ],
+      "record_itemsize": 2765432,
+      "ring_len": 388,
+      "cold_GBps": 9.698165877608277
+    },
+    {
+      "size": "720p",
+      "style": "view_no_copy(REFERENCE)",
+      "cams_per_read": 1,
+      "cold": {
+        "n": 605,
+        "median_ms": 0.0153,
+        "mean_ms": 0.01569900826446281,
+        "p99_ms": 0.025272000000000024,
+        "min_ms": 0.0078,
+        "max_ms": 0.0367
+      },
+      "warm": {
+        "n": 605,
+        "median_ms": 0.0068,
+        "mean_ms": 0.0068327272727272724,
+        "p99_ms": 0.0083,
+        "min_ms": 0.0057,
+        "max_ms": 0.0226
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        0.0142,
+        0.0146,
+        0.016,
+        0.0153,
+        0.0155
+      ],
+      "record_itemsize": 2765432,
+      "ring_len": 388,
+      "cold_GBps": 180.74718954248368
+    },
+    {
+      "size": "720p",
+      "style": "multiframe_latest",
+      "cams_per_read": 5,
+      "cold": {
+        "n": 605,
+        "median_ms": 1.0629,
+        "mean_ms": 1.7311547107438012,
+        "p99_ms": 3.3955800000000003,
+        "min_ms": 0.9515,
+        "max_ms": 4.7617
+      },
+      "warm": {
+        "n": 605,
+        "median_ms": 0.9444,
+        "mean_ms": 0.944475041322314,
+        "p99_ms": 1.070084,
+        "min_ms": 0.8372,
+        "max_ms": 1.0942
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        3.2382,
+        3.1722,
+        1.0246,
+        1.0408,
+        1.0221
+      ],
+      "record_itemsize": 2765432,
+      "ring_len": 388,
+      "cold_GBps": 13.008900178756235
+    },
+    {
+      "size": "720p",
+      "style": "multiframe_by_number",
+      "cams_per_read": 5,
+      "cold": {
+        "n": 600,
+        "median_ms": 3.1532999999999998,
+        "mean_ms": 3.6684435,
+        "p99_ms": 5.504752,
+        "min_ms": 2.623,
+        "max_ms": 5.556
+      },
+      "warm": {
+        "n": 600,
+        "median_ms": 2.9033,
+        "mean_ms": 2.9547495,
+        "p99_ms": 3.637374999999999,
+        "min_ms": 2.5738,
+        "max_ms": 3.8784
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        5.04785,
+        4.89965,
+        2.77445,
+        2.8533,
+        3.30915
+      ],
+      "record_itemsize": 2765432,
+      "ring_len": 388,
+      "cold_GBps": 4.3849808137506745
+    },
+    {
+      "size": "720p",
+      "style": "multiframe_views(REFERENCE)",
+      "cams_per_read": 5,
+      "cold": {
+        "n": 605,
+        "median_ms": 0.0516,
+        "mean_ms": 0.052633223140495865,
+        "p99_ms": 0.08445600000000004,
+        "min_ms": 0.0433,
+        "max_ms": 0.1088
+      },
+      "warm": {
+        "n": 605,
+        "median_ms": 0.0454,
+        "mean_ms": 0.04617851239669422,
+        "p99_ms": 0.07070400000000009,
+        "min_ms": 0.0431,
+        "max_ms": 0.0997
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        0.0509,
+        0.0524,
+        0.0505,
+        0.0536,
+        0.052
+      ],
+      "record_itemsize": 2765432,
+      "ring_len": 388,
+      "cold_GBps": 267.96821705426356
+    },
+    {
+      "size": "1080p",
+      "style": "latest_reused",
+      "cams_per_read": 1,
+      "cold": {
+        "n": 605,
+        "median_ms": 0.4213,
+        "mean_ms": 0.6637603305785125,
+        "p99_ms": 1.757892,
+        "min_ms": 0.3615,
+        "max_ms": 2.1974
+      },
+      "warm": {
+        "n": 605,
+        "median_ms": 0.3372,
+        "mean_ms": 0.34037438016528926,
+        "p99_ms": 0.4247960000000001,
+        "min_ms": 0.1975,
+        "max_ms": 0.4446
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        1.6852,
+        0.3907,
+        0.4296,
+        0.4294,
+        0.3919
+      ],
+      "record_itemsize": 6221432,
+      "ring_len": 172,
+      "cold_GBps": 14.767225255162591
+    },
+    {
+      "size": "1080p",
+      "style": "latest_alloc",
+      "cams_per_read": 1,
+      "cold": {
+        "n": 600,
+        "median_ms": 1.17915,
+        "mean_ms": 1.30263,
+        "p99_ms": 2.450054,
+        "min_ms": 1.0139,
+        "max_ms": 2.5714
+      },
+      "warm": {
+        "n": 600,
+        "median_ms": 1.1006,
+        "mean_ms": 1.1224691666666666,
+        "p99_ms": 1.3268889999999998,
+        "min_ms": 0.9102,
+        "max_ms": 1.434
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        1.18935,
+        1.1254,
+        1.1762,
+        1.13755,
+        1.3493
+      ],
+      "record_itemsize": 6221432,
+      "ring_len": 172,
+      "cold_GBps": 5.276200653012764
+    },
+    {
+      "size": "1080p",
+      "style": "by_index_reused",
+      "cams_per_read": 1,
+      "cold": {
+        "n": 605,
+        "median_ms": 0.4226,
+        "mean_ms": 0.42339008264462813,
+        "p99_ms": 0.500676,
+        "min_ms": 0.3701,
+        "max_ms": 0.548
+      },
+      "warm": {
+        "n": 605,
+        "median_ms": 0.3467,
+        "mean_ms": 0.34841685950413226,
+        "p99_ms": 0.4407320000000002,
+        "min_ms": 0.2172,
+        "max_ms": 0.4746
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        0.399,
+        0.4372,
+        0.4352,
+        0.4365,
+        0.3902
+      ],
+      "record_itemsize": 6221432,
+      "ring_len": 172,
+      "cold_GBps": 14.721798390913396
+    },
+    {
+      "size": "1080p",
+      "style": "next_consuming",
+      "cams_per_read": 1,
+      "cold": {
+        "n": 604,
+        "median_ms": 0.48295,
+        "mean_ms": 0.8141798013245034,
+        "p99_ms": 1.8478080000000006,
+        "min_ms": 0.4065,
+        "max_ms": 1.9659
+      },
+      "warm": {
+        "n": 604,
+        "median_ms": 0.0,
+        "mean_ms": 0.0,
+        "p99_ms": 0.0,
+        "min_ms": 0.0,
+        "max_ms": 0.0
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        1.66175,
+        0.5149,
+        0.475,
+        0.4847,
+        0.4334
+      ],
+      "record_itemsize": 6221432,
+      "ring_len": 172,
+      "cold_GBps": 12.882145149601408
+    },
+    {
+      "size": "1080p",
+      "style": "view_no_copy(REFERENCE)",
+      "cams_per_read": 1,
+      "cold": {
+        "n": 605,
+        "median_ms": 0.0165,
+        "mean_ms": 0.016677851239669424,
+        "p99_ms": 0.027292000000000007,
+        "min_ms": 0.0075,
+        "max_ms": 0.0394
+      },
+      "warm": {
+        "n": 605,
+        "median_ms": 0.0069,
+        "mean_ms": 0.007012561983471075,
+        "p99_ms": 0.010184000000000016,
+        "min_ms": 0.0056,
+        "max_ms": 0.0161
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        0.0157,
+        0.0179,
+        0.0169,
+        0.0168,
+        0.0157
+      ],
+      "record_itemsize": 6221432,
+      "ring_len": 172,
+      "cold_GBps": 377.0564848484848
+    },
+    {
+      "size": "1080p",
+      "style": "multiframe_latest",
+      "cams_per_read": 5,
+      "cold": {
+        "n": 600,
+        "median_ms": 2.35335,
+        "mean_ms": 3.2489113333333335,
+        "p99_ms": 7.289092999999999,
+        "min_ms": 2.0813,
+        "max_ms": 11.1536
+      },
+      "warm": {
+        "n": 600,
+        "median_ms": 2.13805,
+        "mean_ms": 2.1367806666666667,
+        "p99_ms": 2.440341,
+        "min_ms": 1.7953,
+        "max_ms": 2.5686
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        6.98405,
+        2.30195,
+        2.30065,
+        2.2595,
+        2.26605
+      ],
+      "record_itemsize": 6221432,
+      "ring_len": 172,
+      "cold_GBps": 13.218246329700216
+    },
+    {
+      "size": "1080p",
+      "style": "multiframe_by_number",
+      "cams_per_read": 5,
+      "cold": {
+        "n": 586,
+        "median_ms": 6.6274999999999995,
+        "mean_ms": 6.949194539249147,
+        "p99_ms": 13.542519999999998,
+        "min_ms": 5.6745,
+        "max_ms": 14.4901
+      },
+      "warm": {
+        "n": 586,
+        "median_ms": 6.7033000000000005,
+        "mean_ms": 7.071212286689421,
+        "p99_ms": 13.800189999999999,
+        "min_ms": 5.5754,
+        "max_ms": 14.4816
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        7.5818,
+        6.23775,
+        6.2342,
+        6.913,
+        6.67085
+      ],
+      "record_itemsize": 6221432,
+      "ring_len": 172,
+      "cold_GBps": 4.6936491889852885
+    },
+    {
+      "size": "1080p",
+      "style": "multiframe_views(REFERENCE)",
+      "cams_per_read": 5,
+      "cold": {
+        "n": 605,
+        "median_ms": 0.0518,
+        "mean_ms": 0.052159834710743806,
+        "p99_ms": 0.062492000000000006,
+        "min_ms": 0.0431,
+        "max_ms": 0.0883
+      },
+      "warm": {
+        "n": 605,
+        "median_ms": 0.0455,
+        "mean_ms": 0.04610545454545455,
+        "p99_ms": 0.07368000000000038,
+        "min_ms": 0.0429,
+        "max_ms": 0.1335
+      },
+      "frame_number_mismatches": 0,
+      "cold_round_medians_ms": [
+        0.0521,
+        0.0522,
+        0.0513,
+        0.0518,
+        0.0516
+      ],
+      "record_itemsize": 6221432,
+      "ring_len": 172,
+      "cold_GBps": 600.5243243243243
+    }
+  ]
+}

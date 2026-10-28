@@ -1,0 +1,18 @@
+[camlock] acquired after 57.0s: research/usb_cameras/timing/build/mf_uvc_timing.exe --out C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/7c9d3345-0e7f-4af6-bb14-20fd851edd1a/scratchpad/runs/timing_rerun/20261028T030822Z_meta_c922_c930e --seconds 10 --save-mjpeg --cam vid_046d&pid_085c,1280,720,30 --cam vid_046d&pid_0843,1280,720,30
+[camlock] released
+Traceback (most recent call last):
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\tools\camlock.py", line 64, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\tools\camlock.py", line 57, in main
+    return subprocess.call(command)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\subprocess.py", line 389, in call
+    with Popen(*popenargs, **kwargs) as p:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\subprocess.py", line 1538, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 2] The system cannot find the file specified

@@ -1,0 +1,102 @@
+{
+ "test": "phase3_analyze_selftest",
+ "hostname": "Gerald",
+ "utc": "2026-10-25T22:49:36.660891+00:00",
+ "command": "uv run --script research/usb_cameras/libusb/phase3_analyze.py selftest --results-root research/usb_cameras/results/windows/Gerald",
+ "cases": [
+  {
+   "case": "u32_dump_strict_good_bad_good",
+   "pass": true,
+   "got": {
+    "checked": 3,
+    "strict_ok": 2,
+    "libjpeg_strict_ok": 2,
+    "pillow_ok": 3
+   }
+  },
+  {
+   "case": "concat_dump_strict_good_bad_good",
+   "pass": true,
+   "got": {
+    "checked": 3,
+    "strict_ok": 2
+   }
+  },
+  {
+   "case": "size_mismatch_fails",
+   "pass": true,
+   "got": {
+    "strict_ok": 0,
+    "size_ok": 0,
+    "dims": {
+     "64x48": 1
+    }
+   }
+  },
+  {
+   "case": "truncated_plus_eoi_fails_strict",
+   "pass": true,
+   "got": {
+    "strict_ok": 0,
+    "marker_ok": 0,
+    "libjpeg_strict_ok": 0,
+    "pillow_ok": 0
+   }
+  },
+  {
+   "case": "pipes_c930e_alt4_real",
+   "pass": true,
+   "got": [
+    4
+   ]
+  },
+  {
+   "case": "pipes_c922_idle_no_iso_alt",
+   "pass": true,
+   "got": {
+    "snapshots": [
+     {
+      "file": "1280x720_alt4_pipes.json",
+      "seen": true,
+      "hub": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+      "port": 1,
+      "iso_pipes": [],
+      "alts": [],
+      "bytes_per_interval": []
+     }
+    ],
+    "alts_seen": []
+   }
+  },
+  {
+   "case": "confirm_true_false",
+   "pass": true,
+   "got": null
+  },
+  {
+   "case": "timing_reproduces_phase2_c930e_run4_cas",
+   "pass": true,
+   "got": {
+    "stc_hz": 30001288.227799207,
+    "ref_stc_hz": 30001287.834342286,
+    "resid_std_us": 286.01712664415595,
+    "ref_resid_std_us": 286.0974158250439,
+    "cb_minus_sof_first_p50_ms": 2.940522296875,
+    "ref_p50": 2.9402,
+    "sof_per_s": 1000.0040962836434,
+    "sof_valid": true
+   }
+  },
+  {
+   "case": "timing_flags_884_per_s_sof_as_invalid",
+   "pass": true,
+   "got": {
+    "sof_per_s": 884.8003375286395,
+    "sof_valid": false,
+    "stc_hz_via_host": 30001411.263627928
+   }
+  }
+ ],
+ "passed": 9,
+ "total": 9
+}

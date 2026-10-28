@@ -1,0 +1,1415 @@
+[
+ [
+  "test:python",
+  {
+   "topic": "Phase 2: Python user-space UVC paths on WinUSB (pure-Python python-libusb1, pyuvc) and camera naming via libusb",
+   "summary": "I tested this on GERALD between 20:57Z and 21:33Z. The C930e was on WinUSB the whole time and stayed openable; no drivers or registry were changed and no UAC prompt appeared.\n\n(a) Pure-Python streaming works. libuvc_stream.py had one bug, now fixed: python-libusb1 3.4.0's USBDeviceHandle cannot be used in a `with` block, so the script now wraps it in contextlib.closing. I also added a full Pillow decode of every frame, per-callback cost counters and a raw-frame dump. I ran 11 runs of 20 s each. The frame rate, decode checks and transfer settings are in findings 1\u20133; results by topic:\n- **CPU:** 2.9\u20135.8% of one core at about 8000 iso packets/s. Mean callback cost is 47 \u00b5s at 8 packets per transfer, 118 \u00b5s at 32 and 359 \u00b5s at 128. Pure-Python iso handling is fast enough.\n- **Alt settings:** the smallest one that holds 30 fps is alt 5 (800 B) at 720p and alt 7 (1280 B) at 1080p. If the alt is too small, the camera halves to about 15 fps and skips frames itself (PTS jumps 2 periods); the frames that arrive are still valid.\n- **PTS/SCR:** present on 100% of frames.\n- **Host timestamps:** jitter grows with transfer length: 0.43 ms RMS at 8 packets (1 ms), 1.2 ms at 32, 4.6 ms at 128. The SCR-based mapping gives 35\u2013110 \u00b5s.\n\n(b) pyuvc: the PyPI 1.0.8 wheel opens the WinUSB C930e and its controls work (exposure set and read back), but it crashes natively at the first get_frame(). I found the cause in source and confirmed it under a debugger (cdb):\n- At stream start, libuvc opens the device a second time with libusb_open to read the product name.\n- WinUSB refuses a second open (LIBUSB_ERROR_ACCESS, -3), so the name is NULL.\n- That NULL is passed to strlen in stream.c, which crashes.\n\nA one-line patched build (pupil_labs_uvc 1.0.8.post0) streams fine:\n- **Bandwidth factor:** bandwidth_factor 2.0, 1.0 and 0 picked alt 6, 3 and 11 at 720p and alt 10 and 7 at 1080p. The live hub-IOCTL pipe snapshot confirmed each one, and each matches libuvc's formula.\n- **Frames:** jpeg_buffer frames all decode.\n- **CPU:** 0.6\u20134% of one core.\n- **Timestamps:** frame.timestamp is smooth (33.241 ms steps), but the first frame reads 0. Every later timestamp is 100\u2013130 ms later than the time the frame actually arrived. The offset repeats for a given bandwidth factor: -117 ms at 2.0, -103 ms at 1.0, -129 ms at 0 at 720p, about the same in two runs. pyuvc's clock function itself matches perf_counter to about 2 \u00b5s, so the QPC-frequency bug does not show up in the host clock. The error is in how pyuvc maps device time to host time.\n\n(c) Naming: without opening the device, libusb gives bus number, port chain (libusb_get_port_numbers), address, speed and the string-descriptor indices. Strings can only be read from the WinUSB C930e. The usbvideo cameras fail to open (LIBUSB_ERROR_NOT_FOUND), so the C922's serial B76395EF is not readable through libusb on Windows.\n- **Port chain:** libusb's chains (1-13.1.4, 1-13.1.3, 1-1, 2-4.4) match the phase-1 Windows hub_port_chain and LocationPaths exactly, so they are consistent with the phase-1 port key.\n- **Address:** changed for every camera (C930e 21\u219229, generic 20\u219228, C922 22\u219225).\n- **Phase-1 tools miss the WinUSB camera:** camera_identity.py and win_identity_dump.py no longer list the WinUSB C930e at all.\n\nRecommendation: use the serial key when the serial is usable, otherwise vid:pid plus port chain. On a libusb backend, the port chain comes from libusb_get_port_numbers. Never use the address or pyuvc's uid (\"bus:address\").\n\nSide note: other agents change the shared camera's controls. At 21:29Z I found auto-exposure set to manual at 312; I set it back to auto (mode 8). White balance auto was already off, and I did not touch it.",
+   "findings": [
+    {
+     "claim": "Pure-Python python-libusb1 (3.4.0, bundled libusb 1.0.29.11953) streams C930e MJPEG on WinUSB at 30 fps with every frame fully decodable at default alt 11: 720p 603/603 frames, 1080p 604/604 frames in 20 s; 0 transfer errors, 0 iso packet errors, 0 UVC error payloads.",
+     "status": "verified-here",
+     "platform": "windows (GERALD, Win11 26300, C930e 046d:0843 on WinUSB)",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s720_default/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s1080_default/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/summary.json"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 170 -- uv run --script research/usb_cameras/libusb/py_libusb1/uvc_libusb1_stream.py --vid 046d --pid 0843 --fps 30 --seconds 20 --decode-check --raw-dump <scratch>/s1080_default.bin --out-dir research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s1080_default --width 1920 --height 1080   (matrix: bash research/usb_cameras/libusb/py_libusb1/run_phase2_matrix.sh <name> \"<args>\" ...; summary: uv run --script research/usb_cameras/libusb/py_libusb1/summarize_phase2.py)",
+     "numbers": "720p: 29.98 fps, 169 kB/frame mean; 1080p: 30.04 fps, 265 kB/frame; 7997 iso packets/s; wCompQuality 61"
+    },
+    {
+     "claim": "Pure-Python iso handling is cheap: total process CPU 2.9-5.8% of one core at ~8000 iso packets/s; mean callback cost grows with packets per transfer (47 us at 8, 118 us at 32, 359 us at 128), busy fraction ~3%.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s720_default_ppt8/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s720_default/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s720_default_ppt128/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/summary.json"
+     ],
+     "command": "bash research/usb_cameras/libusb/py_libusb1/run_phase2_matrix.sh s720_default_ppt8 \"--width 1280 --height 720 --packets-per-transfer 8\" s720_default_ppt128 \"--width 1280 --height 720 --packets-per-transfer 128\"",
+     "numbers": "cpu_fraction_of_one_core: ppt8 0.055, ppt32 0.048, ppt128 0.029; 1080p ppt32 0.058"
+    },
+    {
+     "claim": "Too few transfers in flight silently corrupts frames: 2 transfers of 8 packets (1 ms each) at alt 6 gave 5 of 607 frames that do not decode, plus split frames (3 zero-period PTS deltas, one garbage PTS), while iso_packet_errors and transfer_errors stayed 0. 8 transfers of 8, 32 or 128 packets were clean.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s720_alt6_ppt8_t2/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/summary.json"
+     ],
+     "command": "bash research/usb_cameras/libusb/py_libusb1/run_phase2_matrix.sh s720_alt6_ppt8_t2 \"--width 1280 --height 720 --alt 6 --packets-per-transfer 8 --transfers 2\"",
+     "numbers": "602/607 Pillow decode ok; pts delta hist {1:601, 0:3, 4306:1}"
+    },
+    {
+     "claim": "The app can choose the bandwidth (alt setting) on the libusb path. The smallest alt that sustains 30 fps is alt 5 (800 B/microframe) for 720p and alt 7 (1280 B) for 1080p. When the alt is too small (720p alt 4; 1080p alt 6 or 4), the C930e halves to ~15 fps and skips frames internally (PTS deltas of 2 periods). Delivered frames stay 100% valid and frame size does not shrink. These thresholds depend on JPEG size, which varies with scene and exposure.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s720_alt5/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s720_alt6/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s720_alt4/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s1080_alt7_exp100/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s1080_alt6/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s1080_alt4/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/summary.json"
+     ],
+     "command": "bash research/usb_cameras/libusb/py_libusb1/run_phase2_matrix.sh s720_alt6 \"--width 1280 --height 720 --alt 6\" s720_alt4 \"--width 1280 --height 720 --alt 4\" s1080_alt6 \"--width 1920 --height 1080 --alt 6\" s1080_alt4 \"--width 1920 --height 1080 --alt 4\" s1080_alt7_exp100 \"--width 1920 --height 1080 --alt 7 --exposure-abs 100\" s720_alt5 \"--width 1280 --height 720 --alt 5\"",
+     "numbers": "720p: alt5 29.98 fps 602/602 (117 kB), alt6 29.93 fps 601/601 (163 kB), alt4 15.81 fps 316/316 (pts {2:283,1:31}); 1080p: alt7 29.98 fps 602/602 (278 kB), alt6 15.36 fps, alt4 14.99 fps (pts {2:299})"
+    },
+    {
+     "claim": "UVC PTS and SCR (STC + 11-bit SOF) parse on 100% of frames through the pure-Python path. STC-PTS (device-internal capture-to-bus latency) is 30.44-30.45 ms in every run. Host-timestamp jitter around a periodic fit scales with transfer duration: 0.43 ms RMS at 8 packets (1 ms), 1.2 ms at 32 (4 ms), 4.6 ms at 128 (16 ms). PTS mapped through SCR (lsq envelope) gives 35-110 us RMS. This measures jitter only; absolute accuracy against ground truth was not measured on this path.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s720_default_ppt8/analyze_frames.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s720_default/analyze_frames.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s720_default_ppt128/analyze_frames.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s1080_default/analyze_frames.json"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/analyze_frames.py research/usb_cameras/results/windows/Gerald/phase2_python_libusb/<run>/frames.jsonl --out research/usb_cameras/results/windows/Gerald/phase2_python_libusb/<run>/analyze_frames.json",
+     "numbers": "host_arrival residual_rms_us: ppt8 430, ppt32 1223, ppt128 4594; uvc_pts_via_scr_lsq_envelope: 35.3 / 108.7 / 36.7; device_vs_host 13 ppm"
+    },
+    {
+     "claim": "Bug fixed in uvc_libusb1_stream.py: python-libusb1 3.4.0's USBDeviceHandle cannot be used in a `with` block (TypeError), which broke both --list and streaming. Both now use contextlib.closing().",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/winusb_install/verify_py_libusb1_list.txt",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/list/result.json"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 180 -- uv run --script research/usb_cameras/libusb/py_libusb1/uvc_libusb1_stream.py --list --out-dir research/usb_cameras/results/windows/Gerald/phase2_python_libusb/list",
+     "numbers": "before: TypeError at dev.open(); after: exit 0, C930e open OK, 11 iso alts parsed"
+    },
+    {
+     "claim": "The PyPI pyuvc 1.0.8 wheel opens the WinUSB C930e (is_accessible True, Capture() OK, 119 modes, controls readable), but the process dies with a native access violation at the first get_frame(). cdb shows ucrtbase!strlen(NULL) called from uvc_bindings.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_pyuvc/s720_bf2_1_0/exit_code.txt",
+      "research/usb_cameras/results/windows/Gerald/phase2_pyuvc/debug_import/stderr.txt",
+      "research/usb_cameras/results/windows/Gerald/phase2_pyuvc/debug_cdb/cdb_stdout.txt",
+      "research/usb_cameras/results/windows/Gerald/phase2_pyuvc/debug_cdb/command.txt"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 150 -- \"C:/Program Files (x86)/Windows Kits/10/Debuggers/x64/cdb.exe\" -g -G -o -c \".lastevent; r; kn 40; lm; q\" <pyuvc-winusb-stream env>\\Scripts\\python.exe research/usb_cameras/libusb/pyuvc/pyuvc_winusb_stream.py --seconds 3 --bandwidth-factors 2.0 --out-dir research/usb_cameras/results/windows/Gerald/phase2_pyuvc/debug_cdb",
+     "numbers": "exit 127; faulthandler: 'Windows fatal exception: access violation' at get_frame; cdb: Access violation c0000005 at ucrtbase!strlen+0x31, rax=0"
+    },
+    {
+     "claim": "Cause of the pyuvc crash: libuvc's uvc_stream_start() calls uvc_get_device_descriptor(), which opens the already-open device a second time with libusb_open to read iProduct. WinUSB refuses the second handle, so desc->product stays NULL and is passed to strlen (libuvc-source src/stream.c ~L1142). The source is the pyuvc v1.0.8 checkout audited in phase 1; the open failure was measured with pyuvc's bundled libusb (1.0.26.11724) and with python-libusb1's libusb 1.0.29.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_pyuvc/no_stream_double_open/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_naming_libusb/libusb_identity/result.json",
+      "research/usb_cameras/libusb/pyuvc/patches/0001-winusb-null-product-guard-and-vs2022.patch"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 150 -- uv run --script research/usb_cameras/libusb/pyuvc/pyuvc_winusb_stream.py --no-stream --out-dir research/usb_cameras/results/windows/Gerald/phase2_pyuvc/no_stream_double_open",
+     "numbers": "open1_rc 0 (iProduct 'Logitech Webcam C930e'); open2_rc_while_open1 -3; open3 (after claim) -3; python-libusb1 second_open_while_open USBErrorAccess"
+    },
+    {
+     "claim": "With the one-line NULL guard (patched build pupil_labs_uvc 1.0.8.post0+winusbfix), pyuvc streams MJPEG from the WinUSB C930e and bandwidth_factor sets the alt exactly as libuvc's formula predicts. The live hub-IOCTL open-pipe snapshot taken during streaming confirms each alt.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_pyuvc/patched_s720_bf2_1_0/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_pyuvc/patched_s1080_bf2_1_exp100/result.json",
+      "research/usb_cameras/libusb/pyuvc/build_pyuvc_patched_windows.sh"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 1200 -- P:/runenv/Scripts/python.exe research/usb_cameras/libusb/pyuvc/pyuvc_winusb_stream.py --vid 046d --pid 0843 --width 1280 --height 720 --fps 30 --seconds 20 --bandwidth-factors 2.0,1.0,0 --out-dir research/usb_cameras/results/windows/Gerald/phase2_pyuvc/patched_s720_bf2_1_0   (P: = subst of the build dir made by build_pyuvc_patched_windows.sh; 1080p: --width 1920 --height 1080 --bandwidth-factors 2.0,1.0 --manual-exposure 100 --out-dir .../patched_s1080_bf2_1_exp100)",
+     "numbers": "720p: bf2.0 expected 904 B -> alt 6 (944), 588/588 decoded, 30.03 fps; bf1.0 458 B -> alt 3 (512), 299/299, 15.27 fps; bf0 (dwMaxPayloadTransferSize) -> alt 11 (3072), 589/589, 30.09 fps. 1080p: bf2.0 2020 B -> alt 10 (2688), 589/589, 30.08 fps; bf1.0 1016 B -> alt 7 (1280), 587/587, 29.98 fps. pyuvc CPU 0.6-3.9% of one core; 0 get_frame errors, 0 index gaps"
+    },
+    {
+     "claim": "pyuvc timestamps are not usable as absolute capture times. The first frame's timestamp is 0.0. Every later frame.timestamp is 100-130 ms later than the perf_counter arrival time of the same frame, which is physically impossible. The offset repeats for a given bandwidth factor/alt at 720p (-117, -103, -129 ms in both runs) and drifts by about -0.6 ms per 20 s. Intervals are smooth (PTS-synthetic, 33.241 ms, std 0.004 ms). uvc.get_time_monotonic() itself matches time.perf_counter to about 2 us, so the phase-1 QPC-frequency bug does not affect the host clock. The error is in the device-to-host anchoring (root cause not tested).",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_pyuvc/patched_s720_bf2_1_0/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_pyuvc/patched_s720_bf2_1_0/frames_bf2.jsonl",
+      "research/usb_cameras/results/windows/Gerald/phase2_pyuvc/patched_s720_bf2_1_0/command.txt",
+      "research/usb_cameras/results/windows/Gerald/phase2_pyuvc/patched_s1080_bf2_1_exp100/result.json"
+     ],
+     "command": "(same as the patched pyuvc stream command); per-frame fields host_arrival_ns vs os_timestamp_ns (=frame.timestamp*1e9) in frames_bf<F>.jsonl",
+     "numbers": "arrival-minus-timestamp p50: run1 -117.3/-102.8/-129.1 ms, run2 -117.6/-103.2/-129.1 ms (bf 2/1/0, 720p); 1080p -124.2 (bf2), -112.9 (bf1); clock_check difference 1.1-1.7 us"
+    },
+    {
+     "claim": "pyuvc controls work on WinUSB without streaming and while streaming: Auto Exposure Mode 1 (manual) and Absolute Exposure Time 100 and 200 are each set and read back exactly. python-libusb1's raw CT requests (AE mode 1, exposure_abs 100) also read back. AE mode was restored to 8 afterwards.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_pyuvc/controls_only/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_pyuvc/controls_restore_ae_auto/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_python_libusb/s1080_alt7_exp100/result.json"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 150 -- uv run --script research/usb_cameras/libusb/pyuvc/pyuvc_winusb_stream.py --controls-only --manual-exposure 100 --out-dir research/usb_cameras/results/windows/Gerald/phase2_pyuvc/controls_only",
+     "numbers": "Absolute Exposure Time range 3..500 (100 us units), default 250; readbacks 1/100/200/8; at 21:29Z another agent had left AE=1, exposure 312"
+    },
+    {
+     "claim": "Without opening, libusb exposes for every camera the bus number, port chain (libusb_get_port_numbers), device address, speed and the iManufacturer/iProduct/iSerialNumber indices. String text needs libusb_open, which works only for the WinUSB C930e (iProduct 'Logitech Webcam C930e', iSerialNumber index 0, so no serial). The usbvideo cameras fail to open with LIBUSB_ERROR_NOT_FOUND, so the C922's serial B76395EF (index 1) cannot be read through libusb on Windows.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_naming_libusb/libusb_identity/result.json",
+      "research/usb_cameras/naming/libusb_identity.py"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 150 -- uv run --script research/usb_cameras/naming/libusb_identity.py --compare research/usb_cameras/results/windows/Gerald/naming/snapshots/final_with_4th_camera.json --out-dir research/usb_cameras/results/windows/Gerald/phase2_naming_libusb/libusb_identity",
+     "numbers": "C930e 1-13.1.4 addr 29 high; generic 4c4a:4a55 1-13.1.3 addr 28; C922 1-1 addr 25; Kiyo 2-4.4 addr 7 super"
+    },
+    {
+     "claim": "libusb's port chain is the same physical path Windows reports: 13.1.4, 13.1.3, 1 and 4.4 equal the phase-1 hub_port_chain and the USB(..) parts of DEVPKEY LocationPaths for all four cameras, including the C930e after its driver changed to WinUSB. The device address changed for every camera since phase 1, so address is not an identity.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_naming_libusb/libusb_identity/result.json",
+      "research/usb_cameras/results/windows/Gerald/naming/snapshots/final_with_4th_camera.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_naming_libusb/win_identity_dump/snapshots/c930e_on_winusb.json"
+     ],
+     "command": "(libusb_identity.py --compare as above); uv run --script research/usb_cameras/tools/camlock.py --timeout-s 150 -- uv run --script research/usb_cameras/naming/win_identity_dump.py --out-dir research/usb_cameras/results/windows/Gerald/phase2_naming_libusb/win_identity_dump --label c930e_on_winusb",
+     "numbers": "address phase1 -> now: C930e 21->29, generic 20->28, C922 22->25, Kiyo 5->7; port_chain_equal True x4"
+    },
+    {
+     "claim": "The phase-1 Windows identity tools enumerate cameras through Windows camera interfaces, so they miss a WinUSB-bound camera entirely. With the C930e on WinUSB, camera_identity.py and win_identity_dump.py list only the 3 usbvideo cameras. A libusb backend in skellycam must therefore build its keys from libusb data (serial when usable, else vid:pid plus port chain).",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_naming_libusb/camera_identity/stdout.txt",
+      "research/usb_cameras/results/windows/Gerald/phase2_naming_libusb/win_identity_dump/snapshots/c930e_on_winusb.json"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 150 -- uv run --script research/usb_cameras/naming/camera_identity.py > research/usb_cameras/results/windows/Gerald/phase2_naming_libusb/camera_identity/stdout.txt",
+     "numbers": "3 keys returned (4c4a:4a55 port 13.1.3, 1532:0e05 port 4.4, 046d:085c:sn=B76395EF); 046d:0843 absent"
+    },
+    {
+     "claim": "pyuvc's device uid is 'bus:address' (e.g. '1:29') and its names are 'unknown' for every camera it cannot open (all usbvideo cameras), so uid and name are not stable identifiers.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_pyuvc/no_stream_double_open/result.json",
+      "research/usb_cameras/results/windows/Gerald/pyuvc_probe/result.json"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py --timeout-s 150 -- uv run --script research/usb_cameras/libusb/pyuvc/pyuvc_winusb_stream.py --no-stream --out-dir research/usb_cameras/results/windows/Gerald/phase2_pyuvc/no_stream_double_open",
+     "numbers": "phase1 C930e uid 1:21 -> now 1:29"
+    },
+    {
+     "claim": "libusb bus numbers on Windows are assigned by root-hub enumeration order (bus 1 = Intel xHCI root hub 4&2FD48294 at PCI(1400), bus 2 = the 7&37B53FB controller), and libusb does not expose the controller's PCI path. Whether bus numbers stay the same across reboots or controller changes was not tested.",
+     "status": "documented-untested",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_naming_libusb/libusb_identity/result.json"
+     ],
+     "command": "(libusb_identity.py --compare as above; mapping inferred from comparison rows)",
+     "numbers": "1 boot observed"
+    },
+    {
+     "claim": "On Linux and macOS, python-libusb1 / pyuvc streaming and reading string descriptors without a WinUSB-style exclusive lock should work (Linux: usbfs with an rw udev rule plus kernel-driver detach; macOS: root). pyuvc's double-open pattern presumably works there because those backends allow several handles. Untested here.",
+     "status": "documented-untested",
+     "platform": "linux, macos",
+     "evidence_files": [],
+     "command": "(not run)"
+    }
+   ],
+   "harness_files": [
+    "research/usb_cameras/libusb/py_libusb1/uvc_libusb1_stream.py",
+    "research/usb_cameras/libusb/py_libusb1/run_phase2_matrix.sh",
+    "research/usb_cameras/libusb/py_libusb1/summarize_phase2.py",
+    "research/usb_cameras/libusb/pyuvc/pyuvc_winusb_stream.py",
+    "research/usb_cameras/libusb/pyuvc/build_pyuvc_patched_windows.sh",
+    "research/usb_cameras/libusb/pyuvc/patches/0001-winusb-null-product-guard-and-vs2022.patch",
+    "research/usb_cameras/naming/libusb_identity.py"
+   ],
+   "candidate_assessment": [
+    {
+     "approach": "Own pure-Python UVC streamer over python-libusb1 (async iso, app-chosen alt, PTS/SCR parse)",
+     "language": "Python",
+     "windows": "Verified on WinUSB C930e: 30 fps MJPEG 720p and 1080p, 100% decodable, ~5% of one core, alt chosen by the app (alt 5 for 720p30 and alt 7 for 1080p30 are enough), PTS/SCR on every frame. Needs >=8 transfers in flight. Requires WinUSB/libusbK on the device, so a driver swap.",
+     "linux": "documented-untested (needs udev rw rule and kernel-driver detach from uvcvideo)",
+     "macos": "documented-untested (root needed on macOS 12+)",
+     "verdict": "Viable and simplest to keep cross-platform; recommended libusb path for skellycam. Use 8 transfers of 8 packets (1 ms) for host-timestamp jitter of about 0.4 ms, or map PTS through SCR (about 35-110 us jitter)."
+    },
+    {
+     "approach": "pyuvc (pupil-labs-uvc 1.0.8) PyPI wheel",
+     "language": "Python + C (Cython, pupil libuvc fork, libusb 1.0.26)",
+     "windows": "Broken on WinUSB: opens and enumerates, controls work, but the first get_frame() crashes (strlen(NULL) after a second libusb_open returns ACCESS).",
+     "linux": "documented-untested",
+     "macos": "documented-untested",
+     "verdict": "Not usable on Windows with WinUSB as shipped."
+    },
+    {
+     "approach": "pyuvc 1.0.8 rebuilt with a NULL-product guard (patches/0001)",
+     "language": "Python + C",
+     "windows": "Verified: streams MJPEG, bandwidth_factor picks the predicted alt (confirmed by hub pipe snapshot), controls work, CPU 0.6-4% of one core. The first frame's timestamp is 0, and later timestamps are 100-130 ms later than the actual arrival time, so it needs its own timestamping. A custom build is required (VS2022, turbojpeg, pthreads, DLLs copied by hand).",
+     "linux": "documented-untested",
+     "macos": "documented-untested",
+     "verdict": "Works only as a fork. Weaker than the own python-libusb1 streamer: no raw PTS/SCR exposed and wrong absolute timestamps."
+    },
+    {
+     "approach": "Camera identity from libusb (serial if usable, else vid:pid + bus/port chain from libusb_get_port_numbers)",
+     "language": "any (libusb)",
+     "windows": "Verified: the port chain matches the Windows LocationPaths/hub_port_chain from phase 1, and it does not change when the driver changes. Serial is readable only for WinUSB/libusbK-bound devices (C930e has none; C922's is unreadable while on usbvideo). Address changes.",
+     "linux": "documented-untested (sysfs port chain, same scheme as phase-1 camera_identity.py)",
+     "macos": "documented-untested",
+     "verdict": "Use serial when usable, otherwise vid:pid plus port chain. Port chain is the only identifier that tells two serial-less cameras apart and survives reconnecting to the same port. Never use the address or pyuvc's uid."
+    }
+   ],
+   "open_questions": [
+    "Does the pyuvc double-open crash also happen with the libusbK driver that pupil-labs documents? Not tested, because it needs a driver change.",
+    "Root cause of pyuvc's 100-130 ms future-dated timestamps (it depends on the alt/bandwidth factor; suspected in _uvc_populate_frame_ts_us anchoring); not traced.",
+    "Absolute capture-time accuracy of SCR-mapped PTS on the python-libusb1 path against the screen-flash ground truth was not measured, only jitter. Combining it with --frame-qpc-style USB-frame/QPC sampling is the next step.",
+    "Coexistence: does the WinUSB C930e at alt 5 or 6 (800-944 B) now stream alongside the generic 4C4A:4A55 (usbvideo, 3069 B) on the shared Genesys hub? Not tested in this topic.",
+    "The JPEG size, and therefore the minimum alt, depends on scene and exposure. Other agents changed the shared camera's AE/exposure during this window, so the alt-5/alt-7 thresholds have unknown margin.",
+    "Are libusb bus numbers on Windows stable across reboots or controller re-enumeration, and how should a libusb bus number map to the PCI controller path used in the phase-1 key? Untested.",
+    "Linux/macOS runs of uvc_libusb1_stream.py, pyuvc_winusb_stream.py and libusb_identity.py are pending."
+   ]
+  }
+ ],
+ [
+  "test:timing",
+  {
+   "topic": "Goal 2 via libusb: C930e UVC PTS/SCR from payload headers (libuvc on WinUSB) mapped to QPC through the xHCI USB-frame/QPC IOCTL, compared with a screen-flash GT and with the C922 via Media Foundation in the same runs",
+   "summary": "Seven flash runs on GERALD, 20:58-21:35Z: a 6 s precheck plus six 30 s runs, each a ~45 s camlock hold. The C930e (libuvc/WinUSB, --frame-qpc) and the C922 (mf_uvc_timing) captured at the same time against one flash_timecode sequence on monitor 0. ROIs were fixed (C930e col 0.5, C922 col 0.75) at the same rows (0.2, 0.35, 0.5, 0.65, 0.8). The GT uses no device timestamp: the reference is a frame-index model (frame index plus the lower envelope of host arrival), gamma is fixed at 2.2, and a display model drops presents outside clean DXGI stats pairs. The C930e stayed openable throughout: 0 seq gaps, 0 error payloads, all JPEGs valid in every run.\n\nMain results:\n(1) The libuvc C930e resets manual exposure at stream start. With controls set only before COMMIT, the camera reports exposure_abs=78 (7.8 ms) but its measured 10-90% step response is about 32 ms wide. Re-applying the controls 0.5 s after start (new --controls-after-start flag) gives about 12 ms, the same as the C922 (7.8 ms exposure plus LCD response). Run 1 is therefore invalid for GT comparisons.\n(2) SCR route. Device SOF equals the low 11 bits of the host bus frame number. The STC fitted to the SOF-mapped QPC leaves a residual that is uniform over +-0.5 ms, which is just the 1 ms SOF quantization. The STC runs +42.3 to +44.7 ppm vs QPC across 6 runs. Its drift against an independent host chain is under 1 us/s, so the STC is stable.\n(3) GT-free cross-check. The SCR-STC-mapped time and the host first-payload time back-dated by packet index are independent clock chains measuring the same bus event. They agree per frame to 55-67 us std (32 packets/transfer, 5 runs), median offset 0.30-0.34 ms.\n(4) Quantization. libusb host arrival snaps to a 4 ms grid at 32 packets/transfer (phase concentration 0.998, 1.13 ms residual) and to a 1 ms grid at 8 packets/transfer (0.96, 0.38 ms). MF os_timestamp on the C922 snaps to a 16.0 ms grid (concentration 1.000) with about 4.6 ms vs-GT std. Back-dating removes the grid at 32 packets/transfer but gets worse at 8 (214 us vs SCR).\n(5) Against the GT, every C930e device-derived source scores 0.47-0.63 ms std (median over rows). That equals the frame-index model, so the GT floor (about 0.5 ms) hides any difference between them. Host arrival scores 1.2-1.3 ms (0.87 ms at 8 packets/transfer). C922 MF PTS scores 0.61-0.73 ms, and MF sample time / host arrival 4.6-4.7 ms.\n(6) Cross-camera offset at the same row, over 5 runs (std of the per-run offset differences): C930e SCR-STC vs C922 MF PTS 0.54-0.79 ms; frame-index model on both 0.48-0.78 ms; host arrival 0.78-1.70 ms. The per-run standard error is about 0.1 ms, so the 0.5 ms run-to-run spread is a real systematic effect, of unknown source, at the method floor.\n(7) The C930e PTS showed no step anomaly in any of these 6 runs. PTS minus STC was a constant 30.45 ms (median). Under manual exposure the SCR frame-start time jitters 0.16-0.27 ms around a periodic model while PTS stays periodic; the back-dated host time tracks the SCR to 55 us, so the jitter is real bus-timing jitter. Whether it reflects exposure timing cannot be resolved by this GT.",
+   "findings": [
+    {
+     "claim": "With manual exposure set only before COMMIT (libuvc default order), the C930e reads back ae_mode=1 and exposure_abs=78 (7.8 ms) but integrates about one full frame period. Its ROI step response rises over about 32 ms (10-90%), the exposure scan peaks at E about 38 ms, and the GT correlation reaches only 0.92. Re-applying AE manual, exposure and WB 0.5 s after stream start brings the rise to about 12 ms (runs 2 and 4), the same as the C922 at 2^-7 s. So the C930e resets or ignores exposure at stream start, and controls must be re-applied after streaming begins.",
+     "status": "verified-here",
+     "platform": "windows (GERALD, C930e on WinUSB via libuvc)",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run1_step_response.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run2_cas_step_response.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run4_cas_step_response.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run1_impulse_response.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/raw/run1/c930e_libuvc/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/raw/run4_cas/c930e_libuvc/result.json"
+     ],
+     "command": "uv run --script research/usb_cameras/timing/scripts/flash_step_response.py <SCR>/runs/phase2/run1 0.5 0.5 --out run1_step_response.json  (and run2_cas, run4_cas); flash_libuvc_escan.py <SCR>/runs/phase2/run1 0.5 0.5 2 70 2",
+     "numbers": "Step 10%->90% (frame time minus transition, ms): run1 (no re-apply) 84->116 (about 32 ms); run2_cas 80->96; run4_cas 84->96 (about 12 ms); C922 run1 48->60 (about 12 ms). E-scan run1 C930e: corr 0.861 @8 ms, 0.925 @38 ms (peak). C922: 0.992 @8 ms, 0.994 @12 ms."
+    },
+    {
+     "claim": "The xHCI IOCTL frame clock is usable as a bus-time reference. CurrentHardwareFrameNumber equals the low 11 bits of CurrentUSBFrameNumber, the fit residual is about 2.4-3 us std, and the bus frame rate vs QPC is -0.04 to +0.14 ppm. The C930e's SCR SOF equals the host bus frame number (mod 2048). After unwrapping, the host transfer callback always comes after the SCR's bus frame (first payload: 0.96-5.1 ms later, never negative).",
+     "status": "verified-here",
+     "platform": "windows (Intel xHCI DEV_7A60)",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run2_cas_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run4_cas_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/raw/run4_cas/c930e_libuvc/usb_frame_qpc.jsonl"
+     ],
+     "command": "uv run --script research/usb_cameras/timing/scripts/flash_libuvc_scr.py --run <SCR>/runs/phase2/<run> --rows 0.2,0.35,0.5,0.65,0.8 --skip-first 30 --out <run>_analysis.json",
+     "numbers": "usb_frame_clock.lsq_residual_us std 2.4 (run2); usb_frame_vs_qpc_ppm: run1 +0.016, run2 -0.043, run3 +0.141, run4 +0.013; callback_minus_sof_frame_ms first: min 0.96, median 2.93, max 5.12 (run2)"
+    },
+    {
+     "claim": "The C930e STC is a stable linear clock. Fitted against the SOF-mapped QPC over 30 s, the residual is uniform within about +-0.5 ms (std 286-295 us = 1 ms/sqrt(12)), which is exactly the SOF quantization, with no steps. Run 4 has one sample at +1016 us. Rate vs QPC is +42.3 to +44.7 ppm in all 6 runs (+51 ppm in the 6 s precheck). 5 s chunk slopes vary 21-63 ppm, which is consistent with the slope noise from 1 ms quantization. Against the independent back-dated host chain the trend is under 1 us/s (-0.67 to +0.76).",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run1_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run2_cas_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run3_ppt8_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run4_cas_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run5_cas_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run6_cas_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/summary_runs2-6.json"
+     ],
+     "command": "flash_libuvc_scr.py (cameras.c930e_libuvc.clock: stc_ppm_vs_nominal_30MHz_qpc_timebase, stc_line_residual_*, stc_chunks_5s; pairwise_gt_free trend_us_per_s)",
+     "numbers": "STC ppm vs QPC: run1 44.70, run2 43.70, run3 44.68, run4 42.93, run5 42.25, run6 in run6_cas_analysis.json; STC Hz about 30.0013 MHz. The ppm is relative to QPC, not to an absolute reference."
+    },
+    {
+     "claim": "GT-free consistency check. The SCR-STC-mapped time (device clock via SOF/IOCTL) and the libusb host transfer-callback time of the first payload, back-dated by (packets_per_transfer-1-packet_idx)*125 us, are independent measurements of the same bus event. They agree per frame to 55-67 us std (median offset +0.30 to +0.34 ms) at 32 packets/transfer. At 8 packets/transfer the agreement worsens to 214 us. Using the SOF alone, without the STC fit, gives 290-300 us (1 ms quantized).",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run2_cas_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run3_ppt8_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run4_cas_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run5_cas_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run6_cas_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run1_analysis.json"
+     ],
+     "command": "flash_libuvc_scr.py ... (cameras.c930e_libuvc.pairwise_gt_free['host_first_payload_backdated - scr_first_stc'])",
+     "numbers": "std us: run1 63.1, run2 56.2, run4 66.8, run5 54.9, run6 57.6, run3(ppt8) 213.8; vs sofdirect 290-343 us; un-backdated host_first_payload vs SCR about 1.12-1.14 ms std (median +2.29 ms)"
+    },
+    {
+     "claim": "libusb host-arrival time is less quantized than MF's. At libuvc's default 32 iso packets per transfer, arrival snaps to a 4 ms grid. With --packets-per-transfer 8 it snaps to a 1 ms grid. MF sample time on the C922 in the same runs snaps to a 16.0 ms grid. Scored against the flash GT, C930e libusb host arrival gives 1.19-1.30 ms std at 32 packets/transfer and 0.87 ms at 8; C922 MF os_timestamp and host arrival give 4.58-4.74 ms.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run3_ppt8_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run4_cas_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/summary_runs2-6.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/raw/run3_ppt8/c930e_libuvc/result.json"
+     ],
+     "command": "run_flash_libuvc.ps1 -ControlsAfterStart [-PacketsPerTransfer 8]; flash_libuvc_scr.py (quantization: best_grid_ms / grid_phase_concentration, grids near the frame period and its fractions excluded)",
+     "numbers": "C930e host_arrival: 32 ppt grid 4.0 ms conc 0.998, residual vs periodic 1133 us; 8 ppt grid 1.0 ms conc 0.964, residual 382 us. C922 MF os_timestamp grid 16.0 ms conc 1.000, residual 4604 us. Caveat: the conc_at_16ms field is invalid (its scan includes P/2 = 16.62 ms) and is not used."
+    },
+    {
+     "claim": "Against the flash GT (fixed ROI, frame-index reference, gamma 2.2), every C930e device-derived source scores the same as the frame-index model with no device timestamp. These are SCR-STC first payload, PTS via the STC line, back-dated host first-payload time and SOF-direct. The GT therefore cannot rank them: its floor of about 0.47-0.71 ms (median over rows) sits far above the 55 us those sources agree to with each other. The same holds for the C922 MF PTS.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/summary_runs2-6.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run4_cas_analysis.json"
+     ],
+     "command": "uv run --script research/usb_cameras/timing/scripts/flash_libuvc_summary.py run2_cas_analysis.json run4_cas_analysis.json run5_cas_analysis.json run6_cas_analysis.json run3_ppt8_analysis.json --out summary_runs2-6.json",
+     "numbers": "C930e std_us median over rows (runs 2/4/5/6): scr_first_stc 561/542/551/553; pts_via_stc 565/473/471/554; host_first_payload_backdated 563/548/558/557; seq_env 565/475/469/554; host_arrival 1300/1185/1301/1293. C922: uvc_pts_mapped_direct 715/610/732/647; seq_env 712/610/703/633; os_timestamp 4622/4578/4636/4710. GT frames per row 42-154."
+    },
+    {
+     "claim": "Cross-camera offset (GT exposure start minus timestamp, C930e minus C922, at the same image row) is reproducible across 5 runs to about 0.5-0.8 ms std for device-timestamp pairs. This is no better than the frame-index model on both cameras, and better than host arrival (0.8-1.7 ms). The per-run standard error is about 0.09-0.12 ms, so the spread is a real run-to-run systematic, of unknown cause, at the method floor. Per-camera absolute offsets move by a similar amount (C930e 0.47 ms, C922 0.62 ms std at row 0.5).",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/summary_runs2-6.json"
+     ],
+     "command": "flash_libuvc_summary.py ... (across_runs.cross_camera_offset_delta)",
+     "numbers": "Row 0.5 delta (ms) runs 2/4/5/6/3: scr_first_stc|uvc_pts_mapped_direct -0.24/-1.05/-0.74/-0.08/+0.60 (std 0.64); seq_env|seq_env std 0.78; host_arrival|host_arrival std 1.46. Over all rows: scr|pts std 0.54-0.79, backdated|pts 0.52-0.72, seq|seq 0.48-0.78, host|host 0.78-1.70. C930e scr_first_stc offset row 0.5: -59.14/-60.31/-60.24/-59.98/-59.91."
+    },
+    {
+     "claim": "In all 6 libuvc runs (30 s each) the C930e PTS advanced exactly 997222 ticks per frame with no step anomaly, and PTS sat a constant 30.45 ms (median) before the SCR STC. The PTS period on the STC clock (33.2393 ms) matched the STC-measured frame period. With manual exposure applied, the first-payload SCR jitters 0.16-0.27 ms (std) around a periodic model while PTS stays periodic. With the camera in its long/auto-exposure state (run 1) the SCR jitter is 7-10 us. The back-dated host time tracks the SCR to 55 us, so the jitter is real bus-timing jitter. Whether exposure jitters too is below the GT floor.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run1_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run2_cas_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run5_cas_analysis.json"
+     ],
+     "command": "flash_libuvc_scr.py ... (clock.pts_steps_not_1x, stc_first_minus_pts_ms, stc_first_step_ms; pairwise 'seq_fit_to_scr_first - scr_first_stc')",
+     "numbers": "pts_steps_not_1x = [] in every run; stc_first_minus_pts median 30.45 ms; stc_first_step std: run1 10 us, run2 230, run3 250, run4 270 us; seq_fit_to_scr_first - scr_first_stc std 6.9 us (run1), 158-212 us (runs 2-6)"
+    },
+    {
+     "claim": "The C930e repeats the same SCR (STC and SOF) in every payload of a frame (uvc_scr_stc_first == uvc_scr_stc in every frame), so libuvc gets one STC/SOF sample per frame, not one per payload.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/raw/run4_cas/c930e_libuvc/frames.jsonl",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run4_cas_analysis.json"
+     ],
+     "command": "flash_libuvc_scr.py ... (scr_first_stc and scr_last_stc score identically; frames.jsonl uvc_scr_stc_first vs uvc_scr_stc)",
+     "numbers": "scr_first_stc and scr_last_stc identical in every run's vs-GT table"
+    },
+    {
+     "claim": "The display is not glitch-free on every run. The 6 s precheck and run 2 showed DXGI refresh intervals off by up to about 25 ms and present->refresh offset changes (26 and 91), which corrupts the global vblank line used by flash_analyze.load_display (residual 36-45 ms std). load_display_robust excludes presents outside clean stats pairs. On glitch-free runs it agrees with the global line (median 8 us).",
+     "status": "verified-here",
+     "platform": "windows (DISPLAY1, portrait 1440x2560 @59.951 Hz)",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/display_model_check.json"
+     ],
+     "command": "uv run --script research/usb_cameras/timing/scripts/display_model_check.py <SCR>/runs/phase2/run1 ... <SCR>/runs/phase2/precheck --out display_model_check.json",
+     "numbers": "refresh_glitches/unreliable presents: precheck 26/273 of 834; run2 91/700 of 2252; runs 1,3,4,5,6: 0 glitches (4-45 unreliable = edges). Cause unknown; parsecd was running."
+    },
+    {
+     "claim": "Before the flash runs, the C930e (and C922) still image the flashing monitor 0. The temporal-std map shows the C930e column band 0.42-0.58 flickering at all rows, and the C922 cols 0.6-1.0. The fixed ROIs were C930e col 0.5 and C922 col 0.75. GT correlation in clean runs was 0.97-0.99 for both cameras.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/precheck_stdmap.txt",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/precheck_c930e_result.json"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py -- pwsh -NoProfile -File research/usb_cameras/timing/scripts/run_flash_libuvc.ps1 -RunDir <SCR>/runs/phase2/precheck -Seconds 6 ; flash_libuvc_scr.py --run <SCR>/runs/phase2/precheck --stdmap --skip-first 5",
+     "numbers": "precheck: 181/181 valid JPEG, 0 seq gaps, alt 11 (3072 B), 32 ppt"
+    },
+    {
+     "claim": "Rolling shutter at the fixed ROIs: the exposure-start offset changes about 29 ms (C930e) and about 30 ms (C922) per frame height, consistent with phase 1's 30.4-31.1 ms. So cross-camera comparisons must use the same row, as done here.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run3_ppt8_analysis.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/run4_cas_analysis.json"
+     ],
+     "command": "flash_libuvc_scr.py ... rows 0.2..0.8",
+     "numbers": "run3 scr_first_stc offset -68.46 (row 0.2) -> -51.18 ms (row 0.8): 28.8 ms/frame height; C922 uvc_pts_mapped_direct -69.37 -> -51.33: 30.1 ms/frame height"
+    },
+    {
+     "claim": "Method floor of the screen-flash GT on this data: about 0.47-0.71 ms per-frame std, shown by the frame-index model (which carries no exposure information) scoring as well as any device timestamp. A systematic run-to-run offset spread of about 0.5 ms adds to that. The GT-free two-chain agreement (55-67 us) bounds how much better the SCR/back-dated-host timing can be than the GT shows, but it measures bus-transmission timing, not photon arrival.",
+     "status": "verified-here",
+     "platform": "windows",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/summary_runs2-6.json"
+     ],
+     "command": "flash_libuvc_summary.py ...",
+     "numbers": "seq_env std median over rows: C930e 469-629 us, C922 605-712 us; cross-run per-camera offset std 0.47 (C930e) / 0.62 (C922) ms at row 0.5"
+    }
+   ],
+   "harness_files": [
+    "research/usb_cameras/libusb/uvc_capture_test.c (added --save-jpeg-deferred and --controls-after-start; rebuilt to research/usb_cameras/libusb/build/cmake/bin/Release/uvc_capture_test.exe; pre-edit copy at C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\uvc_capture_test.c.orig)",
+    "research/usb_cameras/timing/scripts/run_flash_libuvc.ps1",
+    "research/usb_cameras/timing/scripts/flash_libuvc_scr.py",
+    "research/usb_cameras/timing/scripts/flash_libuvc_summary.py",
+    "research/usb_cameras/timing/scripts/flash_step_response.py",
+    "research/usb_cameras/timing/scripts/flash_impulse_response.py",
+    "research/usb_cameras/timing/scripts/flash_libuvc_escan.py",
+    "research/usb_cameras/timing/scripts/display_model_check.py",
+    "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/COMMANDS.txt",
+    "research/usb_cameras/results/windows/Gerald/phase2_libusb_scr_timing/raw/<run>/ (frames.jsonl, usb_frame_qpc.jsonl, result.json, display_m0, C922 MF frames/session, logs)",
+    "Frame images (JPEG/MJPEG): C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\phase2\\<run>\\"
+   ],
+   "candidate_assessment": [
+    {
+     "approach": "libusb/libuvc: UVC SCR STC of first payload mapped to QPC through SOF + IOCTL_USB_GET_FRAME_NUMBER_AND_QPC_FOR_TIME_SYNC (STC line fit, +0.5 ms latch-phase assumption)",
+     "language": "C (libuvc patch 0001 + uvc_capture_test)",
+     "windows": "verified-here: stable STC (+42-45 ppm vs QPC), agrees with an independent host chain to 55-67 us, at GT floor vs flash. Needs the camera on WinUSB (driver swap, UAC) and an unprivileged IOCTL.",
+     "linux": "documented-untested (uvcvideo does the equivalent in-kernel with the host SOF; libusb route would need the host frame number)",
+     "macos": "untested",
+     "verdict": "Best device-clock route measured: deterministic, needs no arrival-latency envelope, could run causally. Accuracy vs photons is not resolvable below the ~0.5 ms GT floor. Depends on the camera giving a real SOF (the C922's SOF is broken per phase 1)."
+    },
+    {
+     "approach": "libusb host first-payload transfer-callback time back-dated by packet index within the iso transfer",
+     "language": "C (libuvc patch 0001)",
+     "windows": "verified-here: 55-67 us vs SCR at 32 packets/transfer; 214 us at 8 packets/transfer",
+     "linux": "untested",
+     "macos": "untested",
+     "verdict": "Strong device-independent fallback when SCR/SOF is missing or broken, at 32 packets/transfer. Smaller transfers made it worse here; batched completion is suspected but untested."
+    },
+    {
+     "approach": "libusb host arrival (frame callback), default 32 packets/transfer vs --packets-per-transfer 8",
+     "language": "C",
+     "windows": "verified-here: 4 ms grid (1.2-1.3 ms vs GT) at 32; 1 ms grid (0.87 ms vs GT) at 8",
+     "linux": "untested",
+     "macos": "untested",
+     "verdict": "About 4x less quantized than MF's 16 ms, but still grid-quantized. Use back-dating or SCR instead."
+    },
+    {
+     "approach": "Media Foundation sample time / host arrival (C922, usbvideo)",
+     "language": "C++ (mf_uvc_timing)",
+     "windows": "verified-here: 16.0 ms grid, 4.6-4.7 ms std vs GT",
+     "linux": "n/a",
+     "macos": "n/a",
+     "verdict": "Not adequate for sub-frame sync."
+    },
+    {
+     "approach": "MF UVC PTS metadata (C922, MetadataBufferSizeInKB0) mapped by whole-run lower envelope of host arrival",
+     "language": "C++/Python",
+     "windows": "verified-here: 0.61-0.73 ms vs GT, same as the frame-index model",
+     "linux": "n/a",
+     "macos": "n/a",
+     "verdict": "At GT floor, but the mapping is non-causal (whole-run envelope), needs a registry setting per device, and the C922 SOF is unusable for the SCR route."
+    },
+    {
+     "approach": "Frame-index model (seq x period, lower envelope of host arrival), no device timestamp",
+     "language": "Python",
+     "windows": "verified-here: matches every device timestamp vs GT (0.47-0.71 ms), cross-camera offset std 0.48-0.78 ms",
+     "linux": "backend-independent",
+     "macos": "backend-independent",
+     "verdict": "Shows the GT cannot rank device timestamps. Non-causal and assumes no dropped frames, so it is a control, not a production method."
+    }
+   ],
+   "open_questions": [
+    "Does the 0.16-0.27 ms SCR frame-start jitter under manual exposure reflect real exposure-timing jitter? The PTS is synthetic and stays periodic. Resolving this needs a GT well below 0.5 ms (LED + photodiode, or a fixed-phase strobe).",
+    "What causes the about 0.5 ms run-to-run spread in per-camera and cross-camera GT offsets? Candidates: GT brightness model or gamma, per-stream-start camera phase, display scan-out/DWM. It is above the per-run standard error (about 0.1 ms).",
+    "Does the C930e also reset exposure at COMMIT under Media Foundation? That would explain phase 1's 'exposure not applied' observation; it was untested here because the camera is on WinUSB.",
+    "Why does back-dating get worse at 8 packets/transfer (214 us vs 55 us)? Batched iso completion on USBXHCI is suspected.",
+    "The +0.5 ms STC latch-phase assumption: the residual is uniform over +-0.5 ms, consistent with a random latch phase. A fixed device latch phase would bias the absolute STC->QPC offset by up to +-0.5 ms (cross-checked only to the 0.30-0.34 ms back-dated-host offset).",
+    "Display glitches in 2 of 7 runs (precheck, run2) with unknown cause; parsecd was running. The robust display model mitigates them, but they lower GT yield.",
+    "Linux/macOS replication of the SCR->SOF->host-clock route (Linux uvcvideo host SOF; macOS no equivalent known).",
+    "All C930e results are on the WinUSB-bound C930e only. The orchestrator still has to roll the driver back."
+   ]
+  }
+ ],
+ [
+  "test:rust",
+  {
+   "topic": "Rust from-scratch UVC streamer (research/usb_cameras/rust/uvc_iso) on WinUSB: rawusb and libusb backends, C930e 046d:0843; plus a nusb PR #233 re-check",
+   "summary": "Both uvc_iso backends stream native 1280x720@30 MJPEG from the WinUSB-bound C930e once 4 bugs are fixed (rawusb needed 3 fixes in its vendored 0.1.7 Windows code; uvc_iso needed 1 in its header parser, which affected both backends). In 23 uvc_iso runs, every frame decoded with Pillow: 11951/11951. Every frame carries PTS and SCR. Results:\n- Device alt policy: alt 11 (3072 B), PROBE/COMMIT 333333 / 3072 / 1843200 B. Gives 30.08-30.09 fps with 0 bad headers, 0 error payloads and 0 real frame drops, at 1-3% of one core.\n- Bandwidth sweep: full 30 fps at alt 11/9/7/6/5 (3072/1984/1280/944/800 B). Alt 4 (640 B) is marginal and depends on frame size: 30, 25.8, 15.0 and 15.1 fps. Alt 2 (384 B) gives 15.0 fps. The camera halves its frame rate rather than corrupting frames.\n- Arrival minus PTS latency grows as the alt shrinks: about 40 ms at alt 11, 44 at alt 9, 50 at alt 7, 57-62 at alts 6/5, 66-70 at alt 4, 91 at alt 2.\n- 60 s timing: the C930e STC runs about +53 ppm vs QPC (30.0016 MHz). The USB frame clock is +9.7 to +10.1 ppm vs QPC (in-stream estimate, 3 runs). STC fit residuals via SCR-SOF are uniform within \u00b10.5 ms, which is exactly the 1 ms SOF quantization.\n- Parity with libuvc 1.0.30: same alts, PROBE/COMMIT and validity (libuvc: 151/151 frames at alt 11 and alt 6, 30.02/30.07 fps). uvc_iso reaches its first frame 12.7 ms after stream start on rawusb vs 18 ms on libusb.\n- nusb PR #233 was closed unmerged by the maintainer on 2026-09-18. Built from its head, it streams at alt 11 (301/301 frames decoded, 30.09 fps) even though its WinUSB path allows only 1 pending iso transfer. At alt 6 that limit halves the frame rate to 15.03 fps (149 PTS gaps). Not usable for low-bandwidth alts.\nThe C930e stayed openable throughout (last run about 21:42Z) and is still on WinUSB. No drivers, registry or devices were changed and no UAC prompt was triggered.",
+   "findings": [
+    {
+     "claim": "BUG 1 (fixed): rawusb 0.1.7 Windows enumeration lists only root hubs. USB_NODE_CONNECTION_INFORMATION_EX is declared #[repr(C)], but usbioctl.h packs it to 1 byte, so ConnectionStatus is read 1 byte late (as 0) and every real device is dropped. Fix: #[repr(C, packed)], plus PipeList entries of 11 bytes. After the fix rawusb lists all 4 UVC cameras with the same C930e alt table as libusb, and reads the C922 serial B76395EF through the hub (libusb's list does not).",
+     "status": "verified-here",
+     "platform": "Windows 11 26300, Intel xHCI DEV_7A60",
+     "evidence_files": [
+      "research/usb_cameras/rust/patches/rawusb-0.1.7-windows.patch",
+      "research/usb_cameras/rust/vendor/rawusb-0.1.7/src/sys/windows/ffi.rs",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/list_rawusb/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/list_libusb/summary.json"
+     ],
+     "command": "cd research/usb_cameras/rust && %USERPROFILE%\\.cargo\\bin\\cargo build --release -p uvc_iso --features libusb && uv run --script research/usb_cameras/tools/camlock.py -- <abs path>\\build\\release\\uvc_iso.exe list --backend rawusb --out <dir>",
+     "numbers": "Before the fix: 0 UVC devices, 2 root hubs (smoke run in scratch). After: 4 UVC devices (085c, 4a55, 0843, 0e05). C930e alts 1-11 = 192,384,512,640,800,944,1280,1600,1984,2688,3072 B; dwClockFrequency 30000000; bcdUVC 1.00; enumeration 3.4 ms (rawusb) vs 13.3 ms (libusb)."
+    },
+    {
+     "claim": "BUG 2 (fixed): rawusb sends SupportedUsbProtocols=0 in IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX_V2, so SuperSpeed devices were reported as High speed. Setting 0x7 fixes it: the Kiyo Pro now reports Super, matching libusb.",
+     "status": "verified-here",
+     "platform": "Windows 11",
+     "evidence_files": [
+      "research/usb_cameras/rust/patches/rawusb-0.1.7-windows.patch",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/list_rawusb/summary.json"
+     ],
+     "command": "same list command as above",
+     "numbers": "Kiyo Pro 1532:0e05 port 4.4: High before the fix, Super after"
+    },
+    {
+     "claim": "BUG 3 (fixed): rawusb sends every control transfer through the interface-0 WinUSB handle. For interface-recipient requests WinUSB replaces the low byte of wIndex with the handle's own interface number, so VS_PROBE SET_CUR for interface 1 reached the VC interface (0) and stalled ('pipe error'). Fix: route interface-recipient requests through the claimed handle of interface (wIndex & 0xff), as libusb's WinUSB backend does. Camera controls (AE manual, exposure 7.8 ms, WB 4000 K) and PROBE/COMMIT then succeed.",
+     "status": "verified-here",
+     "platform": "Windows 11, C930e whole device on inbox WinUSB",
+     "evidence_files": [
+      "research/usb_cameras/rust/patches/rawusb-0.1.7-windows.patch",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_rawusb_device/summary.json"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py -- uvc_iso.exe stream --backend rawusb --vid 046d --pid 0843 --width 1280 --height 720 --fps 30 --seconds 15 --exposure-100us 78 --wb 4000 --alt device --out <dir>",
+     "numbers": "Before: error stage probe_set 'pipe error'. After: probe/commit took 0.38 ms; ae_mode_cur=1, exposure_100us_cur=78, wb_cur=4000."
+    },
+    {
+     "claim": "BUG 4 (fixed in uvc_iso/src/uvc.rs, affected both backends): the C930e sends 12-byte payload headers with flags 0x0c/0x0d/0x0e/0x0f, i.e. EOH (bit 7) is never set. parse_header required EOH, so every payload was rejected (0 frames). Linux uvcvideo and libuvc don't check EOH. Now accepted and counted as payloads_without_eoh_bit, with a unit test from the captured header bytes.",
+     "status": "verified-here",
+     "platform": "Windows 11 (device behaviour, OS-independent)",
+     "evidence_files": [
+      "research/usb_cameras/rust/uvc_iso/src/uvc.rs",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_libusb_device/summary.json"
+     ],
+     "command": "UVC_ISO_DUMP_PKTS=12 uvc_iso.exe stream --backend libusb ... ; cargo test --release -p uvc_iso",
+     "numbers": "Before: 8327 bad headers, 0 payloads, 0 frames in 5 s. After: 0 bad headers, 25165/25165 payloads without EOH, 453 frames in 15 s. Captured header: 0c 0c 84 35 cc f8 f4 23 da f8 67 02. Unit tests: 5/5 pass."
+    },
+    {
+     "claim": "Device alt policy, both backends: alt 11 (3072 B/microframe), matching dwMaxPayloadTransferSize=3072. PROBE/COMMIT negotiated: bFormatIndex 2, bFrameIndex 15, dwFrameInterval 333333, wCompQuality 61, dwMaxVideoFrameSize 1843200, dwMaxPayloadTransferSize 3072 (26-byte UVC 1.0 block). 15 s: 453/453 frames decoded by Pillow, 30.09 fps (rawusb) / 30.08 fps (libusb), 0 bad headers, 0 error-flag payloads, 0 overflows, 0 host-arrival gaps, PTS+SCR on every frame. CPU 3.2% / 2.1% of one core. First frame 12.7 ms (rawusb) / 18.2 ms (libusb) after start_iso.",
+     "status": "verified-here",
+     "platform": "Windows 11, C930e on WinUSB, Genesys hub on root port 13",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_rawusb_device/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_libusb_device/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_rawusb_device/decode_check.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_libusb_device/decode_check.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/run.log",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/phase2_rust_uvc_iso_summary.json"
+     ],
+     "command": "cd C:\\Users\\Dom\\GitHub\\freemocap\\skellycam && RAW_DIR=<scratch>/runs/phase2/rust_uvc_iso/raw bash research/usb_cameras/rust/platform/run_windows_phase2.sh",
+     "numbers": "rawusb: 453 frames, 17796 payloads, 3755 transfers x 32 packets, latency arrival-PTS p50 38.3 ms. libusb: 453 frames, 25165 payloads, p50 40.3 ms."
+    },
+    {
+     "claim": "Seq gaps: uvc_iso's Assembler assigns seq itself, so seq gaps are 0 by construction (libuvc's seq_gaps=0 has the same weakness). Real loss is detected by PTS steps of 1.5 periods or more and by host-arrival gaps. Every full-rate run has exactly one PTS jump of 6 periods, always within the first 3 frames, with host arrival 17-24 ms later: a stale-PTS startup artifact, not a drop. Excluding it, 0 PTS gaps in every full-rate run. The C930e PTS also steps 1 ms short (967228 ticks instead of ~997222) every 54 frames: the synthetic-counter quirk seen in phase 1.",
+     "status": "verified-here",
+     "platform": "Windows 11",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_rawusb_device/frames_046d_0843.jsonl",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/phase2_rust_uvc_iso_summary.json"
+     ],
+     "command": "uv run --script research/usb_cameras/rust/tools/summarize_phase2.py research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z --libuvc research/usb_cameras/results/windows/Gerald/winusb_install/verify_stream_default --libuvc research/usb_cameras/results/windows/Gerald/winusb_install/verify_stream_alt6 --nusb ... --out research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/phase2_rust_uvc_iso_summary.json",
+     "numbers": "Startup jump: 5994566 ticks (about 6 periods), host interval 23.9 ms. Periodic short step at frames 42, 96, 150, ... (every 54 frames)."
+    },
+    {
+     "claim": "App-controlled bandwidth (the --alt payload:N sweep plus explicit alts, 1280x720@30 MJPEG, 10-15 s each, both backends). Every frame decoded in every run; at low alts the camera drops whole frames rather than corrupting them. Mapping: payload:3060 -> alt 11 (3072); payload:1984 -> alt 9 (1984); payload:1024 -> alt 7 (1280); payload:640 -> alt 4 (640); payload:384 -> alt 2 (384). The full 30 fps floor is alt 5 (800 B = 6.4 MB/s) at 160-175 KB frames. Alt 4 (640 B = 5.12 MB/s) is marginal: the fps depends on frame size (scene), not on the backend.",
+     "status": "verified-here",
+     "platform": "Windows 11, C930e on WinUSB",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/phase2_rust_uvc_iso_summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/explicit_alts/",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_rawusb_payload640/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_libusb_payload384/summary.json"
+     ],
+     "command": "run_windows_phase2.sh (payload sweep, both backends) + for alt in 4 5 6; for be in rawusb libusb: camlock.py -- uvc_iso.exe stream --backend $be --vid 046d --pid 0843 --width 1280 --height 720 --fps 30 --seconds 10 --exposure-100us 78 --wb 4000 --save-samples 0 --alt $alt --out .../explicit_alts/stream_${be}_alt$alt --raw-mjpeg <scratch>; then decode_mjpeg_check.py",
+     "numbers": "fps (rawusb/libusb), latency p50 in ms: alt 11 30.08/30.08, 40.2/40.4; alt 9 30.08/30.08, 43.8/44.4; alt 7 30.08/30.09, 50.3/50.2; alt 6 30.08/30.09, 57.4/57.6; alt 5 30.08/30.09, 62.4/61.0; alt 4 25.83 (160 KB), 15.04, 15.04 (167-169 KB) and 0 frames once / 15.11 (165 KB), 30.08 (126 KB); alt 2 15.04/15.05, 90.6/92.0. Need at 165 KB x 30 fps is about 4.95 MB/s, about 620 B per microframe."
+    },
+    {
+     "claim": "Intermittent: in 1 of 4 rawusb alt-4 runs (explicit_alts/stream_rawusb_alt4) the stream started with no errors, but all 80192 packets were empty (0 payloads, 0 frames). The 2 immediate re-runs and the sweep run at the same alt produced frames. No other one of the ~25 uvc_iso stream runs showed this. Not root-caused: camera side or rawusb side is unknown.",
+     "status": "inconclusive",
+     "platform": "Windows 11",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/explicit_alts/stream_rawusb_alt4/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/explicit_alts/stream_rawusb_alt4_run2/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/explicit_alts/stream_rawusb_alt4_run3/summary.json"
+     ],
+     "command": "camlock.py -- uvc_iso.exe stream --backend rawusb ... --alt 4 --seconds 10",
+     "numbers": "2506 transfers completed; 8 'failed' (the 8 in-flight transfers cancelled at stop); 80192 packets, all empty"
+    },
+    {
+     "claim": "60 s timing runs (alt 11, SCR-SOF to QPC mapping):\n- The C930e device clock (STC) runs about +53 ppm vs QPC: the packet-arrival fit gives 30001583-30001596 Hz across 3 runs, and the SOF fit gives 30001593 Hz at the in-stream rate.\n- The USB frame clock is +10.03, +10.12 and +9.68 ppm vs QPC (in-stream: expanded SCR SOF vs packet-time estimate over 60 s, 1806 samples).\n- The long-baseline WinUsb_GetCurrentFrameNumber estimate (before.first -> after.last, 61.6 s) gives -5.3 ppm. Its \u00b11-frame quantization means \u00b116 ppm resolution, so it agrees within error but cannot resolve the difference.\n- STC-fit residuals via SOF are uniform within \u00b10.50 ms (std 0.289 ms = 1 ms/\u221a12): the device latches STC at SOF with no jitter beyond the 1 ms quantization.\n- The packet-arrival fit residuals are p02..p98 -0.41..+0.23 ms, except the stale first frame (+177 ms).\n- Arrival minus PTS (mapped through the SOF fit): p02 38.6, p50 40.5-40.7, p98 42.5-42.7 ms; mapped PTS interval p02..p98 33.238-33.240 ms.\n- SOF to QPC carries a \u00b10.5 ms absolute systematic, because WinUsb_GetCurrentFrameNumber has 1 ms resolution and is read as floor().",
+     "status": "verified-here",
+     "platform": "Windows 11, QPC 10 MHz",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_libusb_sof60s/scr_sof_qpc_map.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_libusb_sof60s/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_rawusb_sof60s/scr_sof_qpc_map.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_rawusb_sof60s_run2/scr_sof_qpc_map.json",
+      "research/usb_cameras/rust/tools/scr_sof_qpc_map.py"
+     ],
+     "command": "camlock.py -- uvc_iso.exe stream --backend libusb --vid 046d --pid 0843 --width 1280 --height 720 --fps 30 --exposure-100us 78 --wb 4000 --save-samples 0 --alt device --seconds 60 --sof-instance 'USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4' --out .../stream_libusb_sof60s ; uv run --script research/usb_cameras/rust/tools/scr_sof_qpc_map.py .../stream_libusb_sof60s",
+     "numbers": "libusb 60 s: 1806/1806 frames decoded, 30.08 fps, CPU 2.6%; 61601 frames in 61.601329 s. rawusb 60 s: 1806/1806 (2 runs), CPU 1.4% / 2.7%."
+    },
+    {
+     "claim": "BUG 5 (fixed): winsof::calibrate looked only for DeviceInterfaceGUIDs in the registry. The Microsoft inbox winusb.inf ('WinUsb Device', class USBDevice) writes none; its only interface is GUID_DEVINTERFACE_USB_DEVICE {a5dcbf10-...}. Added that GUID as a fallback, and WinUsb_Initialize accepts it. sof-calib now works.",
+     "status": "verified-here",
+     "platform": "Windows 11",
+     "evidence_files": [
+      "research/usb_cameras/rust/uvc_iso/src/winsof.rs",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/sof_calib/summary.json"
+     ],
+     "command": "reg query 'HKLM\\SYSTEM\\CurrentControlSet\\Enum\\USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4\\Device Parameters' ; pnputil /enum-devices /instanceid 'USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4' /interfaces ; camlock.py -- uvc_iso.exe sof-calib --instance 'USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4' --out .../sof_calib",
+     "numbers": "1000 samples over 1.02 s; fit 999.856 frames/s; max |residual| 0.61 frame (1 ms quantization, so a 1 s calibration resolves the rate only to about 0.1%)"
+    },
+    {
+     "claim": "BUG 6 (worked around, not fixed): after a rawusb stream, re-opening the WinUSB interface for the after-stream SOF calibration fails with CreateFileW 'Access is denied (0x80070005)'. It still fails after dropping both the device handle and the rawusb Context and retrying 10x over 1 s, so rawusb 0.1.7 keeps the WinUSB file open. A likely cause, from code reading only: the Arc cycle Handle.pending (HashMap<usize, Arc<Inner>>) with Inner.handle (Arc<Handle>). The libusb backend releases it: libusb_close then after-calibration succeeds. Workaround: run the drift run on libusb, or use the in-stream rate.",
+     "status": "verified-here",
+     "platform": "Windows 11",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_rawusb_sof60s/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_rawusb_sof60s_run2/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/stream_libusb_sof60s/summary.json"
+     ],
+     "command": "uvc_iso.exe stream --backend rawusb|libusb ... --seconds 60 --sof-instance 'USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4'",
+     "numbers": "rawusb: sof_calibration_after error, retries=10. libusb: after-calibration OK (400 samples, 999.85 frames/s)."
+    },
+    {
+     "claim": "Comparison with libuvc (d07de4fa + libusb 1.0.30, 5 s runs): libuvc delivered 151/151 frames (SOI/EOI checked) at alt 11 (30.02 fps) and alt 6 (30.07 fps), 0 seq gaps (its own counter), 0 error payloads, PTS+SCR on 151/151 frames, with the same PROBE/COMMIT. uvc_iso matches on both backends at the same alts: alt 11 30.08-30.09 fps and alt 6 30.08-30.09 fps, with Pillow-decoded 453/453 and 301-302/301-302 frames and PTS+SCR on every frame. uvc_iso additionally decodes every frame, sets camera controls, and measures CPU (1-3% of one core). libuvc's CPU was not measured. Note: uvc_iso's libusb backend is the vendored libusb 1.0.27 (libusb1-sys 0.7.0), not 1.0.30.",
+     "status": "verified-here",
+     "platform": "Windows 11",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/winusb_install/verify_stream_default/result.json",
+      "research/usb_cameras/results/windows/Gerald/winusb_install/verify_stream_alt6/result.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/phase2_rust_uvc_iso_summary.json"
+     ],
+     "command": "summarize_phase2.py ... --libuvc .../winusb_install/verify_stream_default --libuvc .../winusb_install/verify_stream_alt6",
+     "numbers": "libuvc mean frame 133-141 KB; uvc_iso 115-177 KB (scene-dependent)"
+    },
+    {
+     "claim": "nusb status: PR #233 'Add cross-platform isochronous transfers' (zibo-chen, draft) was CLOSED unmerged on 2026-09-18. The maintainer wrote: 'I'm not going to merge something as vibecoded as this', and objected to its WinUSB limit of one pending iso transfer per endpoint. PR #178 'implement isochronous transfers for linux' is still OPEN (updated 2026-10-23) and Linux-only. nusb's latest release, v0.2.9 (2026-10-24), has no Windows isochronous support.",
+     "status": "verified-here",
+     "platform": "GitHub (gh CLI)",
+     "evidence_files": [
+      "research/usb_cameras/rust/nusb_pr233_probe/Cargo.toml"
+     ],
+     "command": "gh pr view 233 -R kevinmehall/nusb --json title,state,isDraft,updatedAt,comments ; gh pr list -R kevinmehall/nusb --state all --search isochronous ; gh api repos/kevinmehall/nusb/releases",
+     "numbers": "PR #233 head 81ce16fa14a77101ae66406b7994d6f258789fe4, +3268/-83, 21 files"
+    },
+    {
+     "claim": "nusb PR #233 head built on MSVC and streams the C930e at alt 11 when driven by a small UVC probe that reuses uvc_iso/src/uvc.rs: 301/301 frames decoded in 10 s, 30.09 fps. Device-level control transfers are unavailable on Windows in nusb (cached descriptor used instead). Only 1 iso transfer can be pending: 7 of 8 initial submits were rejected with InvalidArgument and max_pending was 1. As a result only 35584 of about 80000 microframes were polled (44%). Alt 11 survives because the device apparently keeps unsent data in its FIFO and 44% x 3072 B still exceeds the stream rate. At alt 6 (944 B) the same limit drops output to 15.03 fps with 149 PTS gaps, while uvc_iso and libuvc give a full 30 fps at alt 6. So PR #233 is not usable for app-chosen low-bandwidth alts.",
+     "status": "verified-here",
+     "platform": "Windows 11, C930e on WinUSB",
+     "evidence_files": [
+      "research/usb_cameras/rust/nusb_pr233_probe/src/main.rs",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/nusb_pr233/queue8_pkts32/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/nusb_pr233/queue1_pkts32_altdevice_decode/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/nusb_pr233/queue1_pkts32_altdevice_decode/decode_check.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/nusb_pr233/queue1_pkts32_alt6_decode/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/nusb_pr233/queue1_pkts32_alt6_decode/decode_check.json"
+     ],
+     "command": "cd research/usb_cameras/rust/nusb_pr233_probe && cargo build --release --target-dir <scratch>/nusb_pr233/target_probe ; camlock.py -- nusb_pr233_probe.exe --vid 046d --pid 0843 --width 1280 --height 720 --fps 30 --seconds 10 --queue 1|8 --pkts 32 --alt device|6 --out <dir> --raw-mjpeg <scratch> ; decode_mjpeg_check.py <dir> <raw>",
+     "numbers": "alt 11: 1112 completions, 35584 packets, 0 packet errors, 301 frames. alt 6: 150 frames, 15.03 fps, 149 PTS gaps, all 150 decoded."
+    },
+    {
+     "claim": "Cross-platform shape: all UVC logic (descriptor parse, probe/commit, alt policy, header parse, assembly) lives in uvc_iso/src/uvc.rs with no OS calls, and runs unchanged over rawusb, libusb and the nusb PR. The only Windows-specific code is winsof.rs (USB frame counter to QPC) and process CPU time. Linux/macOS runners exist but were not run in phase 2.",
+     "status": "documented-untested",
+     "platform": "Linux/macOS (not run)",
+     "evidence_files": [
+      "research/usb_cameras/rust/uvc_iso/src/uvc.rs",
+      "research/usb_cameras/rust/platform/run_linux.sh",
+      "research/usb_cameras/rust/platform/run_macos.sh"
+     ],
+     "command": "(not run) bash research/usb_cameras/rust/platform/run_linux.sh",
+     "numbers": ""
+    }
+   ],
+   "harness_files": [
+    "research/usb_cameras/rust/platform/run_windows_phase2.sh",
+    "research/usb_cameras/rust/uvc_iso/src/main.rs",
+    "research/usb_cameras/rust/uvc_iso/src/uvc.rs",
+    "research/usb_cameras/rust/uvc_iso/src/winsof.rs",
+    "research/usb_cameras/rust/uvc_iso/Cargo.toml",
+    "research/usb_cameras/rust/Cargo.toml",
+    "research/usb_cameras/rust/vendor/rawusb-0.1.7/",
+    "research/usb_cameras/rust/patches/rawusb-0.1.7-windows.patch",
+    "research/usb_cameras/rust/tools/decode_mjpeg_check.py",
+    "research/usb_cameras/rust/tools/scr_sof_qpc_map.py",
+    "research/usb_cameras/rust/tools/summarize_phase2.py",
+    "research/usb_cameras/rust/nusb_pr233_probe/Cargo.toml",
+    "research/usb_cameras/rust/nusb_pr233_probe/src/main.rs",
+    "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/phase2_rust_uvc_iso_summary.json",
+    "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/20261025T210843Z/",
+    "research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/nusb_pr233/"
+   ],
+   "candidate_assessment": [
+    {
+     "approach": "uvc_iso, rawusb backend (pure Rust; rawusb 0.1.7 vendored with 3 Windows fixes) over WinUSB",
+     "language": "Rust",
+     "windows": "Works after the fixes: full 30 fps at alts 5-11, 100% decoded, CPU 1-3%, fastest first frame (12.7 ms). Caveats: keeps the WinUSB file open after close (after-stream re-open denied), and 1 of 4 alt-4 runs streamed only empty packets.",
+     "linux": "untested (usbfs path exists in the crate)",
+     "macos": "untested (crate calls macOS iso experimental)",
+     "verdict": "Viable as a zero-C-dependency path, but it needs our vendored patches (the upstream crate is broken on Windows enumeration and interface control routing) and the handle-leak fix before production use."
+    },
+    {
+     "approach": "uvc_iso, libusb backend (libusb1-sys 0.7.0, vendored libusb 1.0.27) over WinUSB",
+     "language": "Rust + vendored C",
+     "windows": "Works first time once the header-parse fix (shared with rawusb) was in: full 30 fps at alts 5-11, 100% decoded, CPU 1-3%, clean close (after-stream SOF calibration works). Same results as libuvc on libusb 1.0.30.",
+     "linux": "untested",
+     "macos": "untested",
+     "verdict": "Most robust Rust option today; recommended backend, with rawusb as the pure-Rust alternative."
+    },
+    {
+     "approach": "libuvc d07de4fa + libusb 1.0.30 (phase-2 baseline)",
+     "language": "C",
+     "windows": "Works at alts 11 and 6: 151/151 frames, about 30 fps, PTS/SCR present (5 s runs only)",
+     "linux": "not re-tested in phase 2",
+     "macos": "not re-tested in phase 2",
+     "verdict": "Equivalent stream quality to uvc_iso; uvc_iso adds full decode checks, alt policies, control setting, CPU and SOF/QPC timing in one cross-platform binary."
+    },
+    {
+     "approach": "nusb PR #233 isochronous branch (zibo-chen/nusb@81ce16fa)",
+     "language": "Rust",
+     "windows": "Streams alt 11 (301/301 frames, 30 fps), but only 1 pending transfer per endpoint, so only 44% of microframes are polled; alt 6 halves to 15 fps",
+     "linux": "untested (PR #178 Linux-only, still open)",
+     "macos": "untested",
+     "verdict": "Not usable: PR closed unmerged and will not land; its WinUSB design breaks low-bandwidth alts. Re-check only if a maintainer-accepted iso API appears in nusb."
+    }
+   ],
+   "open_questions": [
+    "rawusb 0.1.7 keeps the WinUSB file open after the Handle and Context are dropped. The suspected Arc cycle (Handle.pending vs Inner.handle) has not been confirmed or fixed.",
+    "Intermittent rawusb no-start: 1 of 4 alt-4 runs returned only empty packets. Is this camera-side (marginal alt) or a rawusb submit-ordering issue? Needs repeats at other alts and on libusb.",
+    "SOF-to-QPC absolute offset carries a \u00b10.5 ms systematic from 1 ms WinUsb_GetCurrentFrameNumber. Integrating IOCTL_USB_GET_FRAME_NUMBER_AND_QPC_FOR_TIME_SYNC (microframe resolution, used by libuvc --frame-qpc in phase 1) into winsof.rs would tighten it. Not done.",
+    "Whether the C930e's PTS marks exposure start (light on sensor) was not tested here. Only PTS-to-host mapping and its stability were measured; a fixed-ROI screen-flash run against the mapped PTS is still needed.",
+    "Frame-size dependence of the alt-4 threshold: a scene-controlled test (fixed target, fixed exposure, wCompQuality) would make the minimum-alt result repeatable.",
+    "Coexistence of the C930e at alt 5/6 with the generic 4C4A camera on the same Genesys hub is goal 3's real test. It was left to the phase2_bw_alt topic and not run here.",
+    "Linux (usbfs) and macOS (IOKit) runs of uvc_iso were not done; run_linux.sh and run_macos.sh are ready.",
+    "The vendored rawusb copy (773 KB) lives in the repo under research/usb_cameras/rust/vendor. Decide whether to keep it or send the 3 fixes upstream (KarpelesLab/rawusb) and pin a release."
+   ]
+  }
+ ],
+ [
+  "verify:python",
+  {
+   "topic": "Adversarial verification of phase 2 topic 'python': python-libusb1 streamer, pyuvc on WinUSB, libusb naming",
+   "verdicts": [
+    {
+     "claim": "1. python-libusb1 streams C930e MJPEG at 30 fps with every frame fully decodable at default alt 11: 720p 603/603, 1080p 604/604; 0 transfer, iso-packet or UVC error payloads.",
+     "verdict": "confirmed",
+     "reason": "result.json values match (alt 11, 3072 B, 29.98 and 30.04 fps). I re-decoded the raw dumps in the scratchpad with libjpeg-turbo in strict mode (simplejpeg 1.9.0, strict=True), which, unlike Pillow, fails on corrupt-data warnings: 603/603 and 604/604 pass, dimensions are right, and EOI is the last byte. Two caveats. Each run has one 2-period PTS gap (one frame skipped: hist {1:600,2:1} and {1:601,2:1}), so 'all frames' means all frames delivered. The Pillow check the claim relies on is lenient (see claim 3). The python-path runs had no live pipe snapshot, but my rerun R1 shows this script's --alt really sets the requested alt.",
+     "rerun_numbers": "Offline strict decode: s720_default 603/603, s1080_default 604/604 (results/windows/Gerald/phase2_python_verify/strict_decode_original_runs.json)"
+    },
+    {
+     "claim": "2. Pure-Python iso handling costs 2.9-5.8% of one core at about 8000 iso packets/s; mean callback cost 47/118/359 us at 8/32/128 packets per transfer; busy fraction about 3%.",
+     "verdict": "weakened",
+     "reason": "The method holds up. time.process_time on Windows is GetProcessTimes (user+kernel, all threads, including libusb's IOCP thread) with 15.625 ms resolution over 20 s; it covers only the streaming window, not the later decode. The callback means and busy fractions (0.047/0.030/0.023) match result.json. But the range does not repeat: the three ppt32 runs in my rerun used 5.9%, 5.8% and 7.6% of one core, against the original 3.9-4.8% at ppt32. That is run-to-run variance, possibly load from other agents. The conclusion 'cheap' stands; the 2.9-5.8% range is too tight.",
+     "rerun_numbers": "R1 (720p ppt32, 8 transfers): cpu_fraction 0.059 (alt5), 0.058 (alt4), 0.076 (alt5)"
+    },
+    {
+     "claim": "3. Too few transfers in flight (2x8 packets, alt 6) corrupts frames silently: 5/607 frames do not decode, with 0 iso/transfer errors. 8 transfers of 8, 32 or 128 packets were clean.",
+     "verdict": "weakened",
+     "reason": "The first half is real but undercounted: strict decoding finds 9/607 bad frames in s720_alt6_ppt8_t2, not 5. Pillow accepted 4 frames that libjpeg flags as 'Corrupt JPEG data: N extraneous bytes before marker 0xd9'. The second half is refuted for 128 packets. The s720_default_ppt128 run (8x128) has a mid-stream dropout: frame 603 has 52 payloads instead of 55 (157533 B against about 166.5 kB), fails strict decode with 'premature end of data segment', and is followed by a 5-period PTS jump (4 frames lost). summary.json shows that run's hist as {1:604,5:1}, yet the finding calls it clean. The '4306' PTS delta labelled 'garbage PTS' is (b-a) mod 2^32: the PTS stepped backwards by about 0.93 period (a split or reordered frame), not random data. Root problem: the assembler has no microframe-continuity check, so lost microframes cannot be seen in iso_packet_errors, and SOI/EOI plus Pillow cannot detect missing payloads.",
+     "rerun_numbers": "Strict decode: t2 598/607 (Pillow 602), ppt128 606/607, ppt8 602/602, ppt32 603/603"
+    },
+    {
+     "claim": "4. The app chooses the alt on the libusb path. The minimum alt for 30 fps is alt 5 (800 B) at 720p and alt 7 (1280 B) at 1080p. Too small an alt halves the rate to about 15 fps with camera-side skips, and delivered frames stay 100% valid.",
+     "verdict": "weakened",
+     "reason": "The original 720p comparison was confounded: alt5 passed at 21:28 with 117 kB mean frames, alt4 failed at 20:59 with 167 kB frames. That is not like-for-like, because alt-4 capacity (628 B x 8 x 33.3 ms, about 167 kB) is above 117 kB. My back-to-back rerun (alt 5/4/5, same scene, live hub-IOCTL pipe snapshot at 7 s) settles the 720p threshold: alt 5 holds 30 fps at about 168-172 kB mean, alt 4 halves. The pipes show 0x0320 (800 B) and 0x0280 (640 B), so the alt really is set. The 1080p alt-7 pass was measured only with manual exposure 100 (python and pyuvc). There is no 1080p alt-7 run under the auto-exposure conditions of the failing alt-6/alt-4 runs, and no control state was logged for the python runs while other agents were changing AE. '100% valid' does not hold under strict decoding: the last frame of every too-small-alt run is truncated (s1080_alt6 308/308, s1080_alt4 301/301, rerun alt4 312/312). Mid-stream frames are all valid.",
+     "rerun_numbers": "R1: alt5 602 frames 29.98 fps 167.9 kB, strict 602/602, pipe 0x0320; alt4 312 frames 15.56 fps 172.3 kB, PTS {2:288,1:21}, strict 311/312 (last frame), pipe 0x0280; alt5 602 frames 29.99 fps 172.1 kB, strict 602/602 (results/windows/Gerald/phase2_python_verify/r1_*)"
+    },
+    {
+     "claim": "5. PTS/SCR parse on 100% of frames; STC-PTS is 30.44-30.45 ms (device capture-to-bus latency). Host-arrival jitter is 0.43/1.2/4.6 ms RMS at 8/32/128 packets per transfer; SCR-mapped PTS jitter is 35-110 us. Jitter only, not accuracy.",
+     "verdict": "weakened",
+     "reason": "The numbers match analyze_frames.json and summary.json. The ppt32 value repeats across runs (1.22, 1.42, 1.43, 1.44 ms), but there is only one run each at ppt8 and ppt128, and the ppt8 fit has outliers up to 5.2 ms plus one skipped slot. Calling STC-PTS 'capture-to-bus latency' is an interpretation with no test behind it. Phase 1 found this camera's PTS to be a synthetic counter (fixed 997222 ticks per frame) that drifts and jumps, so a constant STC-PTS does not show physical latency. The SCR 'lsq envelope' figure is the residual of a mapping fitted to the same run's host timestamps, so it measures smoothness, not accuracy (the claim admits this). uvc_pts_mapped_direct of 0.4 us shows only that PTS is synthetic.",
+     "rerun_numbers": "not rerun (offline check of evidence files)"
+    },
+    {
+     "claim": "6. Bug fixed: USBDeviceHandle in python-libusb1 3.4.0 does not support `with`; the script now uses contextlib.closing.",
+     "verdict": "confirmed",
+     "reason": "verify_py_libusb1_list.txt line 12 shows the TypeError, and the current code uses contextlib.closing(h). My R1 streaming runs executed this code path with exit code 0.",
+     "rerun_numbers": "R1 3/3 runs rc=0"
+    },
+    {
+     "claim": "7. The PyPI pyuvc 1.0.8 wheel opens the WinUSB C930e but crashes natively at the first get_frame(); cdb shows strlen(NULL) called from uvc_bindings.",
+     "verdict": "confirmed",
+     "reason": "I reran it with the PyPI wheel (environment shows pupil-labs-uvc 1.0.8). Plain run: exit 127, and the 'wrote result.json' line is missing (the result has no stream entries). With PYTHONFAULTHANDLER=1: exit 139 and 'Windows fatal exception: access violation' at pyuvc_winusb_stream.py line 104, `fr = cap.get_frame(timeout=1.0)`. The cdb log shows c0000005 at ucrtbase!strlen+0x31 with rcx=0 and the caller in uvc_bindings. There are no symbols, so the frame inside uvc_bindings is not named.",
+     "rerun_numbers": "R3: exit 127; R3b: exit 139, faulthandler access violation at get_frame (results/windows/Gerald/phase2_python_verify/r3_*, r3b_*)"
+    },
+    {
+     "claim": "8. Root cause: uvc_stream_start calls uvc_get_device_descriptor, which libusb_opens the device a second time; WinUSB refuses with ACCESS, so product is NULL and strlen(NULL) crashes (stream.c ~L1142).",
+     "verdict": "confirmed",
+     "reason": "The double-open refusal reproduces. The patched-env result has open1_rc 0 and open2_rc_while_open1 -3 with bundled libusb 1.0.26, and my R4 libusb_identity rerun gives second_open_while_open USBErrorAccess. The patch changes only the strlen guard (plus the VS generator), and the patched build streams without crashing. That intervention is good causal evidence, although cdb could not name the source line without symbols.",
+     "rerun_numbers": "R4: C930e open OK, second_open_while_open USBErrorAccess()"
+    },
+    {
+     "claim": "9. The patched pyuvc streams MJPEG and bandwidth_factor sets the alt exactly as libuvc's formula predicts, confirmed by a live hub-IOCTL pipe snapshot.",
+     "verdict": "confirmed",
+     "reason": "The formula checks: 720p bf2 gives 904 B, so alt 6 (944); bf1 gives 458 B, so alt 3 (512); 1080p bf2 gives 2020 B, so alt 10 (2688); bf1 gives 1016 B, so alt 7 (1280). Each pipe wMaxPacketSize in the evidence matches: 0x03b0, 0x0200, 0x1400 (3x1024), 0x1380 (3x896), 0x0a80 (2x640). My rerun reproduces bf2 as alt 6 (0x03b0) and bf0 as alt 11 (0x1400), 589 frames each, 30.08 and 30.09 fps, 0 index gaps. Caveat: 'all decode' is Pillow-only, since the pyuvc path saves no raw dump, so the strict check could not be applied. pyuvc CPU in my rerun was 5.9% (bf2), above the claimed 0.6-3.9%.",
+     "rerun_numbers": "R2: bf2 alt6 pipe 0x03b0, 589/589 Pillow, 30.08 fps, cpu 0.059; bf0 alt11 pipe 0x1400, 589/589, 30.09 fps, cpu 0.039"
+    },
+    {
+     "claim": "10. pyuvc timestamps are unusable as capture times: the first is 0, and later ones are 100-130 ms after the arrival time; the offset repeats for each bf (-117/-103/-129 ms at 720p in both runs) with about -0.6 ms drift per 20 s; get_time_monotonic matches perf_counter to about 2 us.",
+     "verdict": "confirmed",
+     "reason": "Reproduced: the first os_timestamp_ns is 0, every later timestamp is after the frame's arrival (physically impossible for a capture time), and clock_check differs by 1.4 us. bf2 repeats closely: -117.27 ms against the claimed -117.3/-117.6. bf0 differs by about 2.6 ms between runs (-131.68 ms against -129.1 claimed 'in both runs'), slightly outside the stated 100-130 ms range. Drift from first-50 to last-50 frames is -0.78 and -0.75 ms. The first of the claimed 'two runs' was overwritten; only command.txt mentions it.",
+     "rerun_numbers": "R2 arrival-minus-timestamp p50: bf2 -117.27 ms, bf0 -131.68 ms; drift -0.78/-0.75 ms per 20 s; clock_check 1.4 us"
+    },
+    {
+     "claim": "11. pyuvc and python-libusb1 controls set and read back (AE mode 1, exposure 100/200, restored to 8).",
+     "verdict": "confirmed",
+     "reason": "controls_only and controls_restore_ae_auto show readbacks 1/100/200/8. s1080_alt7_exp100 shows the CT AE mode 1 and exposure_abs 100 readbacks. 'While streaming' is weaker: the exposure in the streaming runs is set before the stream starts. At 21:39Z, in my R2 controls_before, AE was again 1 with exposure 312, so other agents keep changing it. I changed no controls.",
+     "rerun_numbers": "not rerun"
+    },
+    {
+     "claim": "12. Without opening, libusb gives bus, port chain, address, speed and string indices; strings need libusb_open, which works only for the WinUSB C930e (no serial); usbvideo cameras give LIBUSB_ERROR_NOT_FOUND, so the C922 serial cannot be read.",
+     "verdict": "confirmed",
+     "reason": "My R4 rerun reproduces this exactly: C930e open OK, product 'Logitech Webcam C930e', iSerialNumber index 0; C922 iSerialNumber index 1 with open USBErrorNotFound; generic and Kiyo also NotFound.",
+     "rerun_numbers": "R4: C930e 1-13.1.4 addr 29; generic 1-13.1.3 addr 28; C922 1-1 addr 25; Kiyo 2-4.4 addr 7 super"
+    },
+    {
+     "claim": "13. libusb's port chains equal the phase-1 hub_port_chain and LocationPaths for all four cameras; addresses changed, so address is not an identity.",
+     "verdict": "confirmed",
+     "reason": "R4 comparison: port_chain_equal is true for all four, and addresses differ (7 vs 5, 25 vs 22, 28 vs 20, 29 vs 21). Only the hub-port part matches. libusb's bus number (1 or 2) has no PCI path, so a libusb key 'bus1/13.1.4' is not identical to the phase-1 key 'PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.3'. The address changes were caused by re-enumerations (the driver swap and replugs); reboots were not tested.",
+     "rerun_numbers": "R4 port_chain_equal True x4, address_equal False x4"
+    },
+    {
+     "claim": "14. The phase-1 Windows identity tools miss a WinUSB-bound camera (only 3 usbvideo cameras listed).",
+     "verdict": "confirmed",
+     "reason": "camera_identity/stdout.txt has 3 keys and 0 occurrences of 0843. The c930e_on_winusb.json snapshot has 0 occurrences of 0843. Not rerun.",
+     "rerun_numbers": "evidence check only"
+    },
+    {
+     "claim": "15. pyuvc uid is 'bus:address' and names are 'unknown' for cameras it cannot open.",
+     "verdict": "confirmed",
+     "reason": "R2 device_list shows uid '1:29' etc. and name/manufacturer/serial 'unknown' for the non-WinUSB cameras; the uid follows the address.",
+     "rerun_numbers": "R2 device_list uids 2:7, 1:25, 1:28, 1:29"
+    },
+    {
+     "claim": "16. libusb bus numbers follow root-hub enumeration order; no PCI path; stability untested.",
+     "verdict": "unverifiable",
+     "reason": "Labelled documented-untested; there is only one boot of data, and the bus-to-controller mapping is inferred.",
+     "rerun_numbers": ""
+    },
+    {
+     "claim": "17. Linux and macOS behaviour (usbfs/udev, root on macOS, double-open works).",
+     "verdict": "unverifiable",
+     "reason": "Not run; documented-untested.",
+     "rerun_numbers": ""
+    }
+   ],
+   "harness_bugs": [
+    "uvc_libusb1_stream.py frame validity is too lenient. jpeg_ok checks only SOI/EOI, and the --decode-check Pillow im.load() does not fail on libjpeg 'Corrupt JPEG data' warnings, so frames with missing payloads count as valid (s720_default_ppt128 frame 603: 52 of 55 payloads; s720_alt6_ppt8_t2: Pillow 602/607 against strict 598/607). Fix: decode with libjpeg-turbo in strict mode (for example simplejpeg.decode_jpeg(strict=True)) and record the payload count and bytes per frame.",
+    "The Assembler has no isochronous continuity check. When WinUSB loses whole microframes they never appear as packet errors, so iso_packet_errors=0 and transfer_errors=0 do not prove frames are complete. Fix: track the USB frame/microframe number from the transfer start frame, or compare payload_count with the expected count.",
+    "Stream-stop artifact: the final frame of runs at too small an alt is truncated (s1080_alt6, s1080_alt4, rerun alt4) yet is counted as a valid frame. The cancel path drops in-flight packets while a later EOF still closes the frame. Fix: discard frames that close after running=False.",
+    "The PTS-delta histogram in summarize_phase2.py takes the difference mod 2^32 without labelling it. The '4306' bin is a backward step of about 0.93 period (PTS going backwards), not 'garbage'. A plain subtraction gives -4305 at a real 32-bit wrap, which happened in my R1 alt4 run at frame 278.",
+    "The python-libusb1 matrix runs log neither the camera control state (AE mode, exposure) nor a live pipe snapshot, even though other agents changed AE during the window. That confounds the alt-threshold comparison (original alt5 at 117 kB frames against alt4 at 167 kB).",
+    "patched_s720_bf2_1_0: the first of the two runs behind the 'repeats in both runs' timestamp claim was overwritten; only a note in command.txt remains.",
+    "pyuvc_winusb_stream.py saves no raw frames, so a strict decode cannot be applied to pyuvc frames; its 'all decode' is Pillow-only."
+   ],
+   "corrected_summary": "Verified on GERALD between 21:33Z and 21:49Z. The C930e was on WinUSB and openable throughout. No drivers, registry or controls were changed and no UAC prompt was triggered. Every camera command ran under camlock, in four holds of 9-80 s. Verifier outputs are in research/usb_cameras/results/windows/Gerald/phase2_python_verify/, alongside the strict-decode script strict_decode.py. Raw dumps are in the scratchpad: C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\phase2\\python_verify\\.\n\nWhat holds up:\n- **Default-alt streaming (python-libusb1):** frames are complete and decodable. Strict libjpeg-turbo decoding passes 720p 603/603 and 1080p 604/604 at alt 11. The camera skips about one frame per 20 s.\n- **Alt control:** the app really sets the alt; live hub-IOCTL pipe snapshots show 800 B at alt 5 and 640 B at alt 4.\n- **720p threshold:** a back-to-back alt 5/4/5 rerun on the same scene, at about 170 kB frames, shows alt 5 holds 30 fps (602/602 strict, twice) and alt 4 halves to 15.6 fps.\n- **PyPI pyuvc 1.0.8:** crash reproduced (exit 139, access violation at get_frame). The second libusb_open is refused with ACCESS, and the NULL-guard patch cures the crash.\n- **Patched pyuvc:** bandwidth_factor maps to alts exactly per the formula, confirmed by pipe snapshot; rerun gives bf2 alt 6 and bf0 alt 11 at about 30 fps.\n- **pyuvc timestamps:** they are wrong. The first is 0 and later ones run 117-132 ms ahead of arrival; the host clock agrees with perf_counter to 1.4 us.\n- **Naming:** libusb port chains match the phase-1 hub port chain for all 4 cameras. Addresses change, only the WinUSB device opens, the C922 serial cannot be read, and the phase-1 tools do not list the WinUSB C930e.\n\nCorrections:\n- **Transfer depth:** 8 transfers in flight is not always clean. The 8x128-packet run had a mid-stream dropout: one frame missing 3 payloads (Pillow accepted it, strict decode rejects it) and a 4-frame PTS gap. 2x8 transfers produced 9 corrupt frames, not 5.\n- **'Garbage PTS':** it is a backward PTS step of about one period.\n- **Strict decode:** Pillow decoding is not proof of complete frames; use strict decode plus a payload/microframe continuity check. Frames at too-small alts are valid except a truncated final frame at stream stop.\n- **1080p threshold:** alt 7 was shown only with manual exposure 100. Control state was not logged while other agents were changing AE.\n- **CPU:** python-libusb1 at ppt32 measured 5.8-7.6% in reruns, against 3.9-4.8% originally. It is still cheap, but the range is wider than claimed. Patched pyuvc reached 5.9%.\n- **pyuvc offset:** for bf0 it moved from -129.1 to -131.7 ms between runs, so it is not exactly repeatable.\n- **Timing:** STC-PTS of 30.44 ms is not demonstrated as capture-to-bus latency, since PTS is a synthetic counter on this camera. Host-jitter scaling with transfer length is supported, though ppt8 and ppt128 have one run each. The SCR-mapped figure measures smoothness, not accuracy.\n- **Untested:** Linux, macOS and bus-number stability."
+  }
+ ],
+ [
+  "verify:timing",
+  {
+   "topic": "timing (phase 2, goal 2): adversarial verification of C930e libuvc/WinUSB UVC SCR/PTS to QPC via xHCI frame IOCTL, against screen-flash GT and C922 MF",
+   "verdicts": [
+    {
+     "claim": "The C930e resets or ignores manual exposure set before COMMIT: 10-90% step rise is about 32 ms, versus about 12 ms when AE/exposure/WB are re-applied 0.5 s after stream start (C922 also about 12 ms). E-scan on run1 peaks near 38 ms.",
+     "verdict": "confirmed",
+     "reason": "Reproduced in two fresh camlock runs. Readback (ae_mode=1, exposure_abs=78) is the same in both states, so only the flash data can tell them apart. Caveat 1: the stored rise_10_90 field in every *_step_response.json is wrong ([-48,-20], [-48,-36], [-48,-28]); the claimed 84->116 / 84->96 values were read by hand from profile_rel_ms_mean_n, and they match the profiles. Caveat 2: the E-scan peak (38-40 ms) is longer than the 33.2 ms frame period, so the box-exposure model is only approximate.",
+     "rerun_numbers": "vC_nocas (20:46Z+, no -ControlsAfterStart): bins 84:0.133 to 116:0.903, so about 32 ms. vA_cas (-ControlsAfterStart): 84:0.138 to 96:0.956, about 12 ms. C922 in vA: 48:0.018 / 52:0.226 to 64:0.959, about 12 ms. Originals recomputed: run3_ppt8 84:0.169 to 96:0.977; run5 84:0.191 to 96:0.939; run6 84:0.252 to 96:0.90 / 100:0.97. E-scan run1 rerun: 0.8612 @8 ms, 0.9248 @38, peak 0.9249 @40. vC: peak 0.852 @46 ms (low n). Files: results/windows/Gerald/phase2_timing_verify/{vA_step.json,vC_step.json,run1_escan.txt,vC_escan.txt,run6_cas_step.json}"
+    },
+    {
+     "claim": "The xHCI IOCTL frame clock is a usable bus-time reference: HW frame equals the low 11 bits of the USB frame, residual about 2.4-3 us std, -0.04 to +0.14 ppm vs QPC. The C930e SOF equals the host bus frame (mod 2048), and the callback always comes after the SOF frame (0.96-5.1 ms).",
+     "verdict": "weakened",
+     "reason": "The core holds. hw_frame_is_low11 is True in all 10 runs. Callback minus SOF frame is never negative (min 0.95-0.97 ms). The back-dated host time sits a median +0.30-0.35 ms after the SCR-mapped time, which rules out a SOF offset of one or more frames. But the quoted ranges cherry-pick runs 1-4. The residual std is 2.4-8.0 us (run1 4.5, run6 8.0). The ppm range is -0.21 to +0.31 (run6 -0.21, vB +0.31). The callback max reaches 6.15 ms (run3) and 7.98 ms (vA).",
+     "rerun_numbers": "vA: ppm -0.013, resid 2.85 us, cb-sof first 0.97/2.94/7.98 ms. vB: +0.311 ppm, 4.24 us. vC: -0.026. vD: +0.135. Original run5 +0.07 ppm / 3.4 us, run6 -0.21 ppm / 8.0 us."
+    },
+    {
+     "claim": "The C930e STC is a stable linear clock: residual uniform over +-0.5 ms (std 286-295 us), +42.3 to +44.7 ppm vs QPC in all 6 runs, and a trend under 1 us/s (-0.67 to +0.76) against the back-dated host chain.",
+     "verdict": "weakened",
+     "reason": "Within one run, the residual is uniform at the 1 ms SOF quantization limit and reproduces (287-288 us std, range about +-0.5 ms). The rate does not hold across runs: fresh runs gave 43.0, 43.0, 47.0 and 49.5 ppm. Fit noise is about 1 ppm for a 20-30 s run, so the rate really moves by several ppm from session to session. The trend claim is also wrong as stated: original run5 is -0.96 us/s, outside the quoted range, and the re-runs gave +1.51 (vA) and +5.07 (vB) us/s. These trends are plain-polyfit fits, so outliers inflate them.",
+     "rerun_numbers": "STC ppm vs QPC: vA 43.03, vB 49.47 (20 s), vC 43.03, vD(ppt8) 46.97. Resid std 287.2/288.2/287.4/273.3 us. Trend backdated-scr: vA +1.51, vB +5.07 us/s. Original run5 -0.96."
+    },
+    {
+     "claim": "GT-free cross-check: the SCR-STC time and the back-dated host first-payload time agree to 55-67 us std at 32 packets/transfer, worsening to 214 us at 8 packets/transfer. Median offset is +0.30 to +0.34 ms.",
+     "verdict": "weakened",
+     "reason": "The robust agreement reproduces: MAD about 50-66 us in every run at both packet sizes, and the median offset is +0.32 to +0.35 ms. The 55-67 us std does not reproduce: fresh 32-ppt runs gave 127-223 us std because of outlier frames. The '8 ppt is worse' contrast is an artifact of those outliers. Original run3 at 8 ppt has MAD 46 us, better than the 32-ppt runs, and fresh vD at 8 ppt has std 148 us, better than vA at 32 ppt (223 us). The independence argument itself holds: one chain is the device STC mapped through SOF and the IOCTL, the other is the libusb callback QPC.",
+     "rerun_numbers": "backdated-scr_first_stc std/MAD (us): vA(32ppt) 223.3/56.3, vB(32) 127.3/66.5, vC(32) 173.7/52.1, vD(8ppt) 147.7/59.0. p01-p99 vC 0.232..0.611 ms, vD 0.229..0.569 ms. Original run3_ppt8: std 213.9, MAD 46.4."
+    },
+    {
+     "claim": "libusb host arrival snaps to a 4 ms grid at 32 ppt (1.19-1.30 ms vs GT) and a 1 ms grid at 8 ppt (0.87 ms). C922 MF timestamps snap to a 16 ms grid (4.58-4.74 ms vs GT).",
+     "verdict": "confirmed",
+     "reason": "Grids reproduced in the fresh runs. One small range extension: the C930e host arrival vs GT was 1.41 ms in vA. The analysis excludes grids near the frame period and its fractions; 4.0 ms falls just outside the P/8 exclusion band (4.005-4.305), so it was a legitimate pick.",
+     "rerun_numbers": "C930e host_arrival: vA grid 4.0 conc 0.982 resid 1176 us, vs GT 1408 us. vC grid 4.0 conc 0.990. vD(8ppt) grid 1.0 conc 0.935 resid 531 us, vs GT 830 us. C922 os_timestamp grid 16.0 conc 1.000 resid about 4604 us, vs GT 4550 (vA), 4651 (vC), 4632 (vD)."
+    },
+    {
+     "claim": "Against the flash GT, every C930e device-derived source scores the same as the frame-index model (floor 0.47-0.71 ms), so the GT cannot rank them; the same goes for C922 MF PTS.",
+     "verdict": "weakened",
+     "reason": "The GT checks out as independent: the reference only selects frames and sets d0, the ROI and gamma are fixed, and no judged timestamp enters w. But 'cannot rank' and the floor range are both too strong. (a) The floor depends on the run: in fresh vA every C930e source scored about 0.80 ms. (b) A sensitivity test showed the GT can detect about 300 us of added per-frame noise: adding Gaussian noise to seq_env raised its error roughly in quadrature (run4 row 0.5: 423 to 495 us, expected 519). (c) The GT did separate sources in several runs. In runs 4 and 5 the periodic sources beat scr_first_stc (seq_env 475/469 and pts_via_stc 473/471 vs 542/551 us). In vD the reverse happened (scr_first_stc 470 and backdated 477 vs seq_env 557 and pts_via_stc 567). (d) Regressing the periodic-model GT error on the SCR jitter gave slopes that are significant but change sign between runs: run4 -0.68+-0.09, run5 -0.45+-0.09, run3 +1.05+-0.23, run2 +0.88+-0.51. So the GT does see the roughly 200 us SCR jitter but cannot interpret it consistently. A likely confound: in runs 4 and 5 the SCR jitter correlates with the previous frame's JPEG size (r=-0.42 and -0.60), which follows the flash content.",
+     "rerun_numbers": "vA C930e std (median over rows): scr_first_stc 798, pts_via_stc 792, backdated 801, seq_env 800, host_arrival 1408 us; C922 uvc_pts_mapped_direct 639, seq_env 632. vD: scr 470, backdated 477, seq_env 557, pts_via_stc 567. jitter_regress_out.json gives the slopes; sensitivity triples are [base, with noise, expected]."
+    },
+    {
+     "claim": "Cross-camera offset at the same row is reproducible across 5 runs to about 0.5-0.8 ms std, no better than the frame-index model and better than host arrival (0.8-1.7). The per-run SE is about 0.1 ms, so the spread is a real run-to-run systematic.",
+     "verdict": "confirmed",
+     "reason": "The summary numbers match the evidence file, and the fresh deltas fall inside the old range. Two caveats: the 5-run set mixes conditions (run2 had a glitched display and GT corr 0.93; run3 was at 8 ppt and is the most extreme run, +0.60 ms at row 0.5). The 4 runs at 32 ppt with controls re-applied alone give about 0.44 ms std at row 0.5. The SE assumes independent per-frame errors.",
+     "rerun_numbers": "Row 0.5, scr_first_stc(C930e) - uvc_pts_mapped_direct(C922): vA -60.632-(-60.688) = +0.06 ms; vD -60.611-(-59.732) = -0.88 ms (old range -1.05..+0.60). C930e scr_first_stc offset at row 0.5: vA -60.63, vD -60.61 (old -59.14..-60.31)."
+    },
+    {
+     "claim": "The C930e PTS advances exactly 997222 ticks per frame with no steps, and PTS sits a constant 30.45 ms before the STC. With manual exposure applied, the SCR first-payload jitters 0.16-0.27 ms around a periodic model (158-212 us in runs 2-6); in the run-1 long/auto-exposure state it jitters 7-10 us.",
+     "verdict": "refuted",
+     "reason": "The PTS part is confirmed: pts_steps_not_1x is empty in all 10 runs, the step is 997222 (997223 once), the STC-PTS median is 30.45 ms, and the PTS period on the STC clock matches the frame period (33.2393 ms). The jitter-vs-exposure part is refuted by the claim's own evidence. Run6 had controls re-applied (step rise about 12-16 ms, so manual exposure took effect), yet its SCR jitter is 10.5 us (seq_fit-minus-SCR 7.3 us), not 158-212 us. The fresh runs show the same: vA had controls re-applied (12 ms rise) and 10.0 / 6.9 us jitter, while vB had no re-apply and 319 / 231 us. The jitter turns on or off per stream session regardless of exposure state. It does correlate with the previous frame's JPEG size in some runs (runs 4/5 r=-0.42/-0.60, run3 +0.27). Its cause is unknown.",
+     "rerun_numbers": "stc_first_step std / seq_fit-scr std (us): run6 10.5/7.3, vA 10.0/6.9, vC 10.8/7.5, vB 319/231, vD 379/274. Original runs 2-5: 230-302/158-212; run1 10/6.9. Mean frame bytes: run1 68.3K, run6 70.1K, vA 44.4K (no jitter); runs 2-5 48-56K, vB 55.9K (jitter)."
+    },
+    {
+     "claim": "The C930e repeats the same SCR (STC and SOF) in every payload of a frame, so libuvc gets one STC/SOF sample per frame.",
+     "verdict": "confirmed",
+     "reason": "In frames.jsonl, uvc_scr_stc_first == uvc_scr_stc and uvc_scr_sof_first == uvc_scr_sof for every frame in all 6 runs (908-923 frames each). Caveat: only the first and last payload SCRs are logged, so 'every payload' is inferred, not checked directly.",
+     "rerun_numbers": "run1 908/908, run2 923/923, run3 923/923, run4 921/921, run5 921/921, run6 922/922 (STC and SOF)"
+    },
+    {
+     "claim": "The display is not glitch-free on every run (precheck and run2 glitched). load_display_robust excludes the bad presents and agrees with the global line on clean runs (median 8 us).",
+     "verdict": "confirmed",
+     "reason": "Confirmed, and it recurred. In fresh vB, 1381 of 1642 presents were unreliable and the GT was left with 1-9 frames per row, so that run is unusable. parsecd.exe was running at 21:46Z. On clean runs the robust-minus-global median is 0.1-8 us, but max_abs is 50-734 ms at the run edges.",
+     "rerun_numbers": "refresh_glitches/unreliable/presents: vA 0/49/2280, vB 57/1381/1642, vC 1/62/1979, vD 0/6/1980"
+    },
+    {
+     "claim": "In the precheck stdmap, the C930e band at cols 0.42-0.58 and the C922 band at cols 0.6-1.0 flicker. Fixed ROIs at col 0.5 / 0.75; GT corr 0.97-0.99 in clean runs.",
+     "verdict": "confirmed",
+     "reason": "In precheck_stdmap.txt, C930e blocks 5-6 read 62-96% at all rows and C922 blocks 7-11 read at least 51%. Fresh clean runs also had high GT corr.",
+     "rerun_numbers": "GT corr vA C930e 0.990-0.997, C922 0.989-0.992; vD 0.989-0.994 / 0.988-0.993. Runs without re-applied exposure: C930e 0.72-0.84 (vC), 0.81-0.83 (vB, glitched)."
+    },
+    {
+     "claim": "Rolling shutter is about 29 ms (C930e) and 30 ms (C922) per frame height, so comparisons must use the same row.",
+     "verdict": "confirmed",
+     "reason": "Recomputed from run3_ppt8_analysis.json: C930e -68.46 to -51.18 ms over rows 0.2-0.8 (28.8 ms per frame height); C922 -69.37 to -51.33 (30.1 ms per frame height)."
+    },
+    {
+     "claim": "The GT method floor is about 0.47-0.71 ms per frame, plus about 0.5 ms of run-to-run spread; the GT-free 55-67 us agreement bounds bus timing, not photon timing.",
+     "verdict": "weakened",
+     "reason": "The floor depends on the run: 0.80 ms for the C930e in fresh vA, 0.76 ms for the C922 in vC. Some runs separate sources by about 70-90 us (see the GT-ranking verdict), so the floor is not a hard resolution limit. The 55-67 us bound holds only as a robust spread (MAD 46-66 us); the plain std is 127-223 us in fresh runs.",
+     "rerun_numbers": "seq_env std (median over rows): vA C930e 800, C922 632; vD C930e 557, C922 638; vC C922 675 us"
+    },
+    {
+     "claim": "(Bandwidth and validity check) Every stream ran at alt 11 / 3072 B with 0 seq gaps and 0 error payloads, and all JPEGs are valid.",
+     "verdict": "confirmed",
+     "reason": "result.json iso.chosen_altsetting=11 at 3072 B/packet in all runs (8 or 32 ppt as requested); 0 seq_gaps and 0 error_payloads. is_valid_jpeg is only an SOI/EOI check, so I fully decoded the frames with Pillow in strict mode (truncated images raise): every frame decoded at 1280x720. I did not run win_usb_topology --pipes-only; the alt comes from libuvc's own result.json.",
+     "rerun_numbers": "Pillow strict decode: vA 922/922, vD 771/771, original run4 921/921 OK. Fresh runs: vA 922 frames, vB 604, vD 0 gaps, all jpeg_ok."
+    }
+   ],
+   "harness_bugs": [
+    "flash_step_response.py: the stored rise_10_90_ms_frame_time_minus_transition field is wrong ([-48,-20] / [-48,-36] / [-48,-28] in the run1/run2/run4 files). It takes argmax(pv>0.1) over a profile that starts at -48 ms, where earlier flashes leave non-zero levels. The 84->116 / 84->96 numbers in the finding were read by hand from the profile. Limit the search to after the pre-transition minimum. It also hardcodes skip-first 15, while the main analysis uses 30.",
+    "flash_libuvc_escan.py only prints and writes no result file, which breaks the user rule that every assertion has a result file. I saved its output as results/windows/Gerald/phase2_timing_verify/run1_escan.txt.",
+    "flash_libuvc_scr.py pairwise_gt_free: std_us and trend_us_per_s use plain std and polyfit, which a few outlier frames dominate. Fresh runs gave 127-223 us std against 50-66 us MAD, and the '8 ppt is worse' conclusion came from this. Lead with MAD and p01-p99 (both already computed), or use a robust trend.",
+    "flash_libuvc_scr.py assumes E=7.8 ms in every run and never checks that the exposure took effect. The control readback is identical whether it did or not, so a run like run1 or vC is scored with the wrong E without warning (GT corr drops to 0.72-0.92). Add an E-scan or step-width gate per run.",
+    "flash_libuvc_scr.py quantization conc_at_16ms scans 15.5-16.7 ms, which includes P/2 = 16.62 ms (the author already flags this as invalid).",
+    "flash_libuvc_scr.py frame_clock hardcodes the controller match 'dev_7a60'.",
+    "summary_runs2-6.json pools runs from different conditions into one across-run std: run2 with a glitched display (GT corr 0.93) and run3 at 8 ppt.",
+    "run_flash_libuvc.ps1 does not log display or compositor state (for example whether parsecd is running). Display glitches recurred in fresh vB, where 1381 of 1642 presents were unreliable and the GT was unusable; the run gave no pre-flight warning.",
+    "uvc_capture_test is_valid_jpeg is SOI/EOI only, not a decode. A strict full decode passed here, but the field name overstates what it checks.",
+    "Housekeeping: while saving outputs I accidentally copied 13 unrelated older scratchpad files (from an earlier verifier) into the results folder. I deleted them right away; they are copies, so nothing was lost."
+   ],
+   "corrected_summary": "Verification on GERALD, 21:38-22:00Z. The C930e is still bound to WinUSB (pnputil 21:41Z) and stayed openable. I made 4 fresh camlock captures with run_flash_libuvc.ps1: vA (30 s, -ControlsAfterStart), vB (20 s, no re-apply; display glitched, GT unusable), vC (25 s, no re-apply) and vD (25 s, -ControlsAfterStart -PacketsPerTransfer 8). I re-analyzed them with the same scripts, plus a jitter regression, a noise-sensitivity test and a strict JPEG decode. Results and harness: research/usb_cameras/results/windows/Gerald/phase2_timing_verify/ (COMMANDS.txt, v*_analysis.json, *_step.json, jitter_regress.py/_out.json, jpeg_full_decode.py, raw/).\n\nHolds:\n(1) Exposure set only before COMMIT is not applied: the step rise is about 32 ms without re-apply (vC) and about 12 ms with it (vA), with the C922 also about 12 ms. Re-applying controls after stream start is required.\n(2) The IOCTL frame clock: HW frame is the low 11 bits of the USB frame; residual 2.4-8 us; -0.2 to +0.3 ppm vs QPC. The device SOF is the host bus frame mod 2048.\n(3) Within one run, the STC fits a line to the 1 ms SOF quantization limit (about 287 us uniform residual). But its rate vs QPC moves between sessions (42.3-49.5 ppm), beyond fit noise.\n(4) SCR-STC time and back-dated host first-payload time agree robustly (MAD 46-66 us, median offset +0.30 to +0.35 ms) at both 32 and 8 ppt. The plain std is outlier-dominated (127-223 us in fresh runs), so the claimed 55-67 us std and the '8 ppt worse' contrast do not reproduce.\n(5) Quantization grids: libusb 4 ms at 32 ppt, 1 ms at 8 ppt; MF 16 ms (4.6 ms vs GT).\n(6) The PTS is a synthetic 997222-tick counter with no steps, 30.45 ms before the STC. The SCR repeats within a frame. Rolling shutter is about 29-30 ms per frame height.\n\nCorrections:\n(a) The SCR frame-start jitter (about 0.2-0.3 ms) is NOT tied to the exposure state. It is absent in run6 and vA, both with exposure applied, and present in vB without it. It turns on or off per stream session, its cause is unknown, and in some runs it correlates with the previous frame's JPEG size.\n(b) 'The GT cannot rank sources' is too strong. The GT detects about 300 us of added noise, and in runs 4, 5 and vD it separated periodic from SCR sources by 70-90 us, but with inconsistent sign (regression slopes -0.68 to +1.05). The GT floor depends on the run: 0.47-0.80 ms.\n(c) Cross-camera offset spread is 0.5-0.8 ms across runs; fresh deltas (+0.06 and -0.88 ms) fall in the old range.\n(d) Display glitches recur (vB) with parsecd running.\nStreams were at alt 11 / 3072 B with 0 gaps and 0 error payloads, and every JPEG passed a full strict decode."
+  }
+ ],
+ [
+  "test:bandwidth",
+  {
+   "topic": "Goal 3 phase 2: app-controlled isochronous alt selection for the C930e (WinUSB + libuvc). Minimum viable alt, failure mode, shared-hub coexistence, wCompQuality/bandwidth-factor, and an estimate of cameras per link",
+   "summary": "Yes, choosing the alt setting in the application recovers bandwidth. The C930e always asks for alt 11 (3072 B per microframe) at 720p30 and 1080p30, and alt 10 (2688 B) at 480p30. With a static scene it streamed a clean 30 fps at alt 5 (720p, 800 B), alt 8 (1080p, 1600 B) and alt 3 (480p, 512 B).\n\nWhen frames are bigger than the alt's capacity, the camera drops whole frames instead of corrupting them. Delivered fps = 30 / ceil(frame_bytes / ((alt_bytes - 12) * 8000 / 30)); 47 of 48 runs were within 6 % of that formula. 100 % of delivered frames fully decode, with 0 error payloads and 0 libuvc sequence gaps. A drop shows up only as a UVC SCR/PTS step of 2 or more frame periods.\n\nWorst case: monitor 0 (which the C930e views) showing full-contrast noise, with focus pinned. Frames grew to about 241 KB at 720p and 432 KB at 1080p. 720p then needs alt 7 for zero skips (alt 6 skipped 2 frames). 1080p at alt 8 fell to 19 fps.\n\nFrame size also varies by up to 50 % from one stream start to the next under autofocus (720p static: 117\u2013177 KB). A size budget needs margin for that.\n\nwCompQuality is a dead end on this camera. It accepts values 2..61 in PROBE, but frame sizes are identical at 2, 30 and 61. Its dwMaxPayloadTransferSize never changes, whatever quality or payload size the host asks for. pyuvc's `--bandwidth-factor` is host-side only: the commit request stays at 3072 B; factor 2.0 at 720p chose alt 6 and gave 30 fps, factor 1.0 chose alt 3 and gave 15 fps.\n\nShared hub, with the generic 4C4A:4A55 streaming through Media Foundation. With nothing else using periodic bandwidth, the C930e via libuvc ran at full rate together with the generic at alts 7 and 8. Alt 9 was refused (`libusb_set_interface_alt_setting` \u2192 `uvc_stream_start` I/O error). That is the same threshold usbvideo showed in phase 1, so the controller's bandwidth accounting does not depend on the driver.\n\nDuring an earlier window, a third device on the same root-port link (194f:0422 audio interface) had isochronous pipes open. The threshold then dropped to alt 6 pass / alt 7 fail. With the C930e started first, the generic failed with 0x800718CF. The USB 2.0 budget model, once every open periodic endpoint is included, reproduces both thresholds.\n\nSeparately, in 2 of about 50 libuvc starts the stream started and the pipe was open, but no frames arrived. Retrying fixed it, and it also happened with the C930e streaming alone, so it is not bandwidth.\n\nEstimate (labelled as such), C930e-class cameras on one high-speed link with the max frame at no more than about 0.8 of capacity: 480p30 about 7\u20138 cameras (alt 3); 720p30 4 (alt 6, static scene) or 3 (alt 7, worst case); 1080p30 2 (alt 8, static) or 1 (worst case). With the camera's own request (what usbvideo reserves) it is 1 per link in every mode.",
+   "findings": [
+    {
+     "claim": "PROBE/COMMIT dwMaxPayloadTransferSize requested by the C930e (bcdUVC 1.00) is 3072 B (=> alt 11) at MJPEG 1280x720@30 and 1920x1080@30 and 2688 B (=> alt 10) at 640x480@30, in every one of 48 sweep runs; dwMaxVideoFrameSize = w*h*2 (1843200 / 4147200 / 614400).",
+     "status": "verified-here",
+     "platform": "windows 11 (Gerald), C930e 046d:0843 on WinUSB, libusb 1.0.30 + libuvc d07de4fa + patch 0001",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/probe_quality/probe_1280x720.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/probe_quality/probe_1920x1080.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/probe_quality/probe_640x480.json"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py -- <BIN>/uvc_probe_quality.exe --vid 046d --pid 0843 --width 1280 --height 720 --fps 30 --exposure-abs 156 --wb-temp 4000 --quality-list 0,1,10,30,50,61,100,1000,5000,9999,10000,65535 --payload-list 192,512,944,1600,1984,3072 --out research/usb_cameras/results/windows/Gerald/phase2_bw_alt/probe_quality/probe_1280x720.json (and 1920x1080, 640x480); BIN=C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/bin",
+     "numbers": "requests: 3072 / 3072 / 2688 B per microframe"
+    },
+    {
+     "claim": "Failure mode when a frame exceeds the forced alt's capacity: the C930e drops whole frames. Delivered fps = 30/ceil(frame_bytes/capacity), with capacity = (alt_bytes-12)*8000/30. Every delivered frame is complete: 100% decode with Pillow full decode, 0 error payloads, 0 libuvc seq gaps, no truncated frames, no FID errors. A drop shows only as a UVC SCR STC/PTS step of k*period and a host arrival gap.",
+     "status": "verified-here",
+     "platform": "windows 11, C930e on WinUSB/libuvc",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/sweep_1280x720_static_alt1-6.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/sweep_1920x1080_static_alt1-3-5-6-7-8.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/sweep_1920x1080_static_alt2-4-9-10-11_default.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/sweep_640x480_static_alt1-6.json"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py -- \"C:/Program Files/Git/bin/bash.exe\" research/usb_cameras/bandwidth/alt_sweep_run.sh <BIN>/uvc_capture_test.exe <RAW> 1920 1080 30 20 \"1 3 5 6 7 8\"; uv run --script research/usb_cameras/bandwidth/alt_sweep_analyze.py <RAW> --delete-jpegs --out research/usb_cameras/results/windows/Gerald/phase2_bw_alt/sweep_1920x1080_static_alt1-3-5-6-7-8.json; uv run --script research/usb_cameras/bandwidth/alt_sweep_summary.py --host Gerald  (RAW=C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/sweep)",
+     "numbers": "1080p (~278 KB frames): alt1 5.04 fps (model 5), alt2 10.01 (10), alt3 10.18 (10), alt4 15.04 (15), alt5 15.04 (15), alt6 15.36 (15), alt7+ 30.0. 720p (~165 KB): alt1 7.57 (7.5), alt2/3 15.05/15.09, alt4+ ~30. 480p (~77 KB): alt1 15.25, alt2+ 30. 47/48 runs within 6% of the model; the exception is 1080p alt8 with noise at 1.01x capacity: 19.16 fps (a mix of 30 and 15)"
+    },
+    {
+     "claim": "Minimum viable alt for a static indoor scene (fixed manual exposure 15.6 ms, WB 4000 K, autofocus on). 720p30: alt 5 (800 B) is clean, alt 4 is marginal, alt 3 or lower gives 15 fps or less. 1080p30: alt 8 (1600 B) is clean, alt 7 gives 30 fps with one startup skip, alt 6 or lower gives 15 fps or less. 480p30: alt 3 (512 B) is clean, alt 2 gives 30 fps with one startup skip, alt 1 gives 15 fps.",
+     "status": "verified-here",
+     "platform": "windows 11, C930e on WinUSB/libuvc, 20 s per alt",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/sweep_1280x720_static_alt1-6.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/sweep_1280x720_static_alt7-11_default.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/sweep_640x480_static_alt7-9-11_default.json"
+     ],
+     "command": "alt_sweep_run.sh <BIN>/uvc_capture_test.exe <RAW> 1280 720 30 20 \"1 2 3 4 5 6\" | \"7 8 9 10 11 0\"; 1920 1080 30 20 \"1 3 5 6 7 8\" | \"2 4 9 10 11 0\"; 640 480 30 20 \"1 2 3 4 5 6\" | \"7 9 11 0\" (each under camlock), then alt_sweep_analyze.py",
+     "numbers": "720p alt5: max/cap 0.79, 0 skips/604; alt4: median/cap 0.97, 5 skips/599, 29.84 fps. 1080p alt8: max/cap 0.66, 0 skips; alt7: 0.84, 1 skip at frame 1. 480p alt3: 0.58, 0 skips; alt2: 0.77, 1 skip at frame 2. Steady-state skips only occurred at >=0.97 of capacity"
+    },
+    {
+     "claim": "Worst case, high detail and high motion: monitor 0 (viewed by the C930e) shows full-contrast 2-px random noise redrawn ~300 times/s, with autofocus pinned. Frames grow to ~236-242 KB (max 258 KB) at 720p and ~432 KB at 1080p, versus ~177 KB and ~288 KB static. 720p alt 6 is then marginal (2 skips/601, max/cap 1.04) and alt 7 is clean (0.76). 1080p alt 8 drops to 19.2 fps; alt 11 is clean (0.53).",
+     "status": "verified-here",
+     "platform": "windows 11, C930e on WinUSB/libuvc",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/sweep_noise_fixedfocus.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/sweep_noise_720p_1080p.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/noise_display_run1.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/noise_display_run2.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/probe_quality/focus_pinned.json"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py -- \"C:/Program Files/Git/bin/bash.exe\" research/usb_cameras/bandwidth/alt_sweep_noise_hold2.sh <BIN> <RAW> research/usb_cameras/results/windows/Gerald/phase2_bw_alt; uv run --script research/usb_cameras/bandwidth/alt_sweep_analyze.py <RAW> --delete-jpegs --out research/usb_cameras/results/windows/Gerald/phase2_bw_alt/sweep_noise_fixedfocus.json",
+     "numbers": "720p noise: alt11 median 236447, alt6 median 241391 / max 257620 (cap 248533) 2 skips, alt7 (first noise run) median 242037 max 257878 (cap 338133) 0 skips; 1080p noise: alt11 median 432361, alt8 median 429221 (cap 423467) 19.16 fps"
+    },
+    {
+     "claim": "With autofocus on, the C930e's JPEG size changes by up to ~50% from one stream start to the next with identical settings. Sizes are flat within each run. Pinning focus (CT_FOCUS_AUTO=0 at the settled position 85/255) removed it. Alt budgets must allow for this. It also confounded the first noise run: its 1080p alt-9 and 720p alt-11 runs gave small frames.",
+     "status": "verified-here",
+     "platform": "windows 11, C930e on WinUSB/libuvc",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/sweep_1280x720_static_alt7-11_default.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/sweep_noise_720p_1080p.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/probe_quality/focus_before.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/probe_quality/focus_restored.json"
+     ],
+     "command": "see the alt_sweep_run.sh / alt_sweep_noise_hold.sh / alt_sweep_noise_hold2.sh commands above; per-run median from frames.jsonl",
+     "numbers": "720p static, AF on: medians 117134 (alt11), 146578 (alt7), 161149-166060 (others); AF pinned: 176924. 1080p noise AF on: alt9 197562 vs alt11 430921; AF pinned 432361. Focus restored to auto at the end (auto_cur=1)"
+    },
+    {
+     "claim": "wCompQuality does not reduce bandwidth on the C930e. PROBE GET_MIN/MAX/DEF/RES = 2/61/61/1. SET_CUR with bmHint D3 is echoed for 10, 30 and 50, but 0, 1 and anything above 61 come back as 61. dwMaxPayloadTransferSize is unchanged for every value. Streaming with committed wCompQuality 2, 30 or 61 gives the same frame sizes. Asking for a smaller dwMaxPayloadTransferSize in PROBE (192..1984) is ignored: the camera still returns 3072 B (2688 B at 480p).",
+     "status": "verified-here",
+     "platform": "windows 11, C930e on WinUSB/libuvc",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/probe_quality/probe_1280x720.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/probe_quality/probe_1920x1080.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/probe_quality/probe_640x480.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/probe_quality/stream_q61_fixedfocus_1280x720.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/probe_quality/stream_q2_fixedfocus_1280x720.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/probe_quality/stream_q30_fixedfocus_1280x720.json"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py -- <BIN>/uvc_probe_quality.exe --width 1280 --height 720 --fps 30 --exposure-abs 156 --wb-temp 4000 --stream-q 2 --seconds 5 --out research/usb_cameras/results/windows/Gerald/phase2_bw_alt/probe_quality/stream_q2_fixedfocus_1280x720.json (also q=30, q=61; one quality per process)",
+     "numbers": "median bytes q61 176532, q2 176115, q30 176098 (<0.3% difference); dwMaxPayloadTransferSize 3072 in all cases"
+    },
+    {
+     "claim": "pyuvc-style --bandwidth-factor is purely host-side. The camera's COMMIT dwMaxPayloadTransferSize stays 3072 B, and only the alt libuvc selects changes. 720p factor 2.0 => min 904 B => alt 6 => 30.08 fps, clean. 720p factor 1.0 => 458 B => alt 3 => 15.44 fps (frames dropped). 1080p factor 1.5 => 1518 B => alt 8 => 30.07 fps, clean. A fixed factor is therefore a scene-independent guess, and 1.0 is too low for this camera.",
+     "status": "verified-here",
+     "platform": "windows 11, C930e on WinUSB/libuvc",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/sweep_bandwidth_factor.json"
+     ],
+     "command": "TAG=_bwf2.0 research/usb_cameras/bandwidth/alt_sweep_run.sh <BIN>/uvc_capture_test.exe <RAW> 1280 720 30 10 \"0\" --bandwidth-factor 2.0 (also 1.0; and 1920 1080 with 1.5), under camlock; then alt_sweep_analyze.py --out .../sweep_bandwidth_factor.json",
+     "numbers": "commit 3072 for all three; chosen alts 6 / 3 / 8"
+    },
+    {
+     "claim": "Shared hub, other periodic traffic idle. With the generic 4C4A:4A55 already streaming MJPG 1280x720@30 via MF (alt 1, 3x1023 B), the C930e via libuvc streams at full rate at alts 3*, 4, 5, 6, 7 and 8, while the generic stays at its solo rate. Alt 9 is refused by the host (libusb_set_interface_alt_setting fails, uvc_stream_start -1 I/O error), and the generic is unaffected. This is the same threshold usbvideo showed in phase 1 (alt 8 pass / 9 fail). Open pipes during the overlap confirm the alt really set (0x0a80, 0x0b20). *alt 3 runs at 15 fps because the 720p frames don't fit, not because of bandwidth.",
+     "status": "verified-here",
+     "platform": "windows 11, Genesys 05e3:0610 hub on Intel xHCI DEV_7A60 root port 13",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/coexist_run4_audio_idle_alt7-9.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/coexist_run3_alt4_alt5_retest.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/topology_before_coexist4.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/topology_after_coexist4.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/topology_before_coexist3.json",
+      "research/usb_cameras/results/windows/Gerald/bw_concurrency/b07_shared_hub_threshold_staggered.json",
+      "research/usb_cameras/results/windows/Gerald/bw_concurrency/b04_generic_kiyo_alt_by_mode.json"
+     ],
+     "command": "uv run --script research/usb_cameras/tools/camlock.py -- \"C:/Program Files/Git/bin/bash.exe\" research/usb_cameras/bandwidth/coexist_hold.sh <BIN>/uvc_capture_test.exe <RAW>/../coexist4 gen_first \"7 8 9\"; uv run --script research/usb_cameras/bandwidth/coexist_summarize.py <RAW>/../coexist4 --out research/usb_cameras/results/windows/Gerald/phase2_bw_alt/coexist_run4_audio_idle_alt7-9.json",
+     "numbers": "C930e alt7 30.10 fps, alt8 30.10 fps, alt9 refused; generic 25.68-25.70 fps (solo in phase-1 b04: 25.7); model total incl. interrupt EPs: alt8 98119 ns <= 100000, alt9 105585 > 100000"
+    },
+    {
+     "claim": "Bus state changes the threshold. While the 194f:0422 audio device on the upstream hub (same root-port link) had isochronous pipes open (2x312 B every microframe plus 4 B), the threshold dropped to alt 6 pass / alt 7 fail: gen_first alts 3,4,5,6 streamed, alts 7,8,9,11 were refused. With the C930e started first at alt 8 or 11, the generic MF stream failed with 0x800718CF. The budget model reproduces it: alt 6 98853 ns fits, alt 7 106022 ns does not. Caveat: the audio iso state was snapshotted at ~21:37Z, after holds 1 and 2. That hold 1 (21:31Z) ran under the same state is an inference.",
+     "status": "verified-here",
+     "platform": "windows 11, Genesys hub on xHCI root port 13",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/coexist_gen_first.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/coexist_run2_alt7_alt4_reverse_order.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/topology_2137Z_audio_iso_active.json",
+      "research/usb_cameras/results/windows/Gerald/bw_topology/topology.json"
+     ],
+     "command": "coexist_hold.sh <BIN>/uvc_capture_test.exe <RAW>/../coexist gen_first \"3 5 6 8 9 11\"; coexist_hold.sh ... coexist2 gen_first \"7 4\" and c930e_first \"8 11\" (under camlock); coexist_summarize.py; uv run --script research/usb_cameras/bandwidth/win_usb_topology.py --out .../topology_2137Z_audio_iso_active.json",
+     "numbers": "audio periodic cost 14127 ns/microframe (2*t(312)+t(4)); generic 61584; C930e int EP 1883, generic int 950, 2 hub int 658 each"
+    },
+    {
+     "claim": "Intermittent zero-frame start. In 2 of ~50 libuvc starts the C930e stream started (rc 0) and the iso pipe was open (alt 4, and alt 8), but 0 frames arrived for the whole 14-19 s. Not bandwidth: in one case the C930e started first, alone. The alt-4 retest streamed 30 fps. An app needs a no-frames watchdog that restarts the stream.",
+     "status": "verified-here",
+     "platform": "windows 11, C930e on WinUSB/libuvc",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/coexist_run2_alt7_alt4_reverse_order.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/coexist_run4_audio_idle_alt7-9.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/coexist_run3_alt4_alt5_retest.json"
+     ],
+     "command": "coexist_hold.sh (as above); runs coexist_gen_first_alt4 (run2) and coexist_c930e_first_alt8 (run4)",
+     "numbers": "frames=0, error_payloads=0, stream_start_error=0, pipes show 0x0280 / 0x0b20 open"
+    },
+    {
+     "claim": "ESTIMATE (budget model + measured frame sizes, not a multi-camera measurement): how many C930e-class cameras fit on one USB 2.0 high-speed link (one xHCI USB2 root port) at the minimum alt that keeps the max frame at about 0.8 of capacity or less. Per-camera cost = alt cost + 1883 ns for its interrupt endpoint, against a 100 us limit. 480p30 static: alt 3 => 7-8 (worst case not measured; alt 4 => 6). 720p30 static: alt 6 => 4. 720p30 worst case: alt 7 => 3. 1080p30 static: alt 8 => 2 (3 if interrupt endpoints are not counted). 1080p30 worst case: alt 10 => 1 (alt 9 => 2 at ~0.83 of capacity, marginal). At the camera's own request (alt 11 / alt 10, which is what usbvideo reserves) it is 1 per link in every mode. The 2-camera alt-8/alt-9 boundary was verified; 3+ cameras on one link were not.",
+     "status": "inconclusive",
+     "platform": "windows 11 (model + measured sizes)",
+     "evidence_files": [
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/summary.json",
+      "research/usb_cameras/results/windows/Gerald/phase2_bw_alt/coexist_run4_audio_idle_alt7-9.json",
+      "research/usb_cameras/results/windows/Gerald/bw_budget_model/model_vs_observed.json"
+     ],
+     "command": "uv run --script research/usb_cameras/bandwidth/alt_sweep_summary.py --host Gerald (alt_cost_ns_usb2_5_11_3_model, cameras_per_link_if_only_this_alt)",
+     "numbers": "alt cost ns: 1:4372 2:8105 3:10592 4:13081 5:16193 6:18993 7:26162 8:32386 9:39852 10:54179 11:61640"
+    },
+    {
+     "claim": "Linux 'modprobe uvcvideo quirks=128' (UVC_QUIRK_FIX_BANDWIDTH) does not lower the alt for MJPEG. Phase 1 found from source that it applies only to uncompressed formats. On Linux the equivalent of this phase's result is libuvc/libusb with a forced alt (bandwidth/libuvc_forced_alt/uvc_multi_forced_alt.c, udev rule). Not run on Linux in this phase.",
+     "status": "documented-untested",
+     "platform": "linux",
+     "evidence_files": [
+      "research/usb_cameras/bandwidth/libuvc_forced_alt/uvc_multi_forced_alt.c",
+      "research/usb_cameras/bandwidth/libuvc_forced_alt/run_forced_alt.sh"
+     ],
+     "command": "(not run) research/usb_cameras/bandwidth/libuvc_forced_alt/run_forced_alt.sh",
+     "numbers": ""
+    }
+   ],
+   "harness_files": [
+    "research/usb_cameras/bandwidth/alt_sweep_run.sh",
+    "research/usb_cameras/bandwidth/alt_sweep_analyze.py",
+    "research/usb_cameras/bandwidth/alt_sweep_summary.py",
+    "research/usb_cameras/bandwidth/alt_sweep_noise_hold.sh",
+    "research/usb_cameras/bandwidth/alt_sweep_noise_hold2.sh",
+    "research/usb_cameras/bandwidth/coexist_hold.sh",
+    "research/usb_cameras/bandwidth/coexist_summarize.py",
+    "research/usb_cameras/bandwidth/noise_display.c",
+    "research/usb_cameras/bandwidth/libuvc_forced_alt/uvc_probe_quality.c",
+    "research/usb_cameras/bandwidth/hs_budget_model.py",
+    "research/usb_cameras/bandwidth/win_usb_topology.py",
+    "research/usb_cameras/bandwidth/build/mf_multi_open.exe",
+    "research/usb_cameras/libusb/uvc_capture_test.c",
+    "C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/bin/uvc_capture_test.exe (copy of libusb/build/cmake/bin/Release/uvc_capture_test.exe built 20:59Z, sha256 36d2ae886bf90b62e38b0d9bfa07af6b903346dda8e888b2b77adb17712238b7)",
+    "C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/build_pq.bat (cl /MD build of uvc_probe_quality.exe against libusb/build/cmake/libuvc/Release/uvc.lib + libusb-1.0.lib)",
+    "C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/build_noise.bat"
+   ],
+   "candidate_assessment": [
+    {
+     "approach": "Application-forced alt setting via patched libuvc (uvc_stream_set_iso_override / uvc_capture_test --alt) with the camera on WinUSB",
+     "verdict": "Works and recovers bandwidth. The controller's admission rule is the same as under usbvideo (alt 8 pass / 9 fail next to the generic camera). Under-provisioned frames are dropped whole, so pick the alt from measured worst-case frame size with margin, and watch for SCR/PTS steps. Costs: a WinUSB driver swap per device (admin/UAC once) and a no-frames watchdog.",
+     "language": "C (libuvc + libusb 1.0.30)",
+     "windows": "verified-here (C930e, WinUSB)",
+     "linux": "documented-untested (libuvc/libusb + udev rule; uvc_multi_forced_alt.c drafted)",
+     "macos": "documented-untested (libusb detach needs root or entitlement)"
+    },
+    {
+     "approach": "Lower wCompQuality in VS_PROBE (bmHint D3)",
+     "verdict": "Does not work on the C930e. It accepts values 2..61, but JPEG sizes and dwMaxPayloadTransferSize do not change.",
+     "language": "C (libuvc uvc_query_stream_ctrl)",
+     "windows": "refuted-here (C930e)",
+     "linux": "documented-untested",
+     "macos": "documented-untested"
+    },
+    {
+     "approach": "Ask for a smaller dwMaxPayloadTransferSize in VS_PROBE SET_CUR",
+     "verdict": "The camera ignores it and always returns 3072 B (2688 B at 480p). Only a host-side alt override helps.",
+     "language": "C (libuvc)",
+     "windows": "refuted-here (C930e)",
+     "linux": "documented-untested",
+     "macos": "documented-untested"
+    },
+    {
+     "approach": "pyuvc/pupil --bandwidth-factor formula (host-side min packet size)",
+     "verdict": "Works as a host-side alt picker, but the factor is a resolution-based guess that ignores scene content. Factor 1.0 is too low for the C930e at 720p (15 fps); 2.0 at 720p and 1.5 at 1080p were fine on a static scene. Prefer choosing from measured frame sizes.",
+     "language": "C (uvc_capture_test --bandwidth-factor)",
+     "windows": "verified-here",
+     "linux": "documented-untested",
+     "macos": "documented-untested"
+    },
+    {
+     "approach": "OS class driver (usbvideo via Media Foundation/DirectShow) with the camera's own request",
+     "verdict": "Reserves alt 11 (720p/1080p) or alt 10 (480p), so one C930e uses about 62% of a link: 1 camera per link, and sharing with the generic fails (0x800718CF).",
+     "language": "C++ (mf_multi_open)",
+     "windows": "verified-here (phase 1 b05/b07; reproduced 0x800718CF here)",
+     "linux": "documented-untested (uvcvideo FIX_BANDWIDTH does not apply to MJPEG)",
+     "macos": "documented-untested"
+    }
+   ],
+   "open_questions": [
+    "1080p30 worst case (noise, focus pinned) at alt 9 and alt 10 was not measured. The only alt-9 noise run was confounded by autofocus (198 KB frames).",
+    "640x480 worst case (noise) was not measured; the 480p minimum alt is from a static scene only.",
+    "3 or more cameras on one link at reduced alts were not tested, because only the C930e is on WinUSB. Per-link counts are model estimates. Testing them needs more WinUSB/libusb-accessible cameras on one root port, or Linux.",
+    "Do other cameras (generic 4C4A:4A55, C922) also drop whole frames when under-provisioned, or do they send truncated frames? Only the C930e was tested.",
+    "Cause of the intermittent zero-frame starts (2 of ~50) with a successful stream start and an open pipe: camera firmware, libuvc, or libusb/WinUSB?",
+    "Is the controller's admission exactly the USB 2.0 5.11.3 model with interrupt endpoints counted? Both observed thresholds are consistent with counting them and with not counting them, so the margin is untested.",
+    "Camera state left behind: every uvc_capture_test run leaves AE in manual (ae_mode 1, exposure 156) and WB manual at 4000 K, as other agents' runs also do. Autofocus was restored to auto. The phase-1 default was ae_mode 8 and WB auto. The driver rollback may or may not reset this.",
+    "The 194f:0422 audio interface's periodic load comes and goes outside our control. An application choosing alts at runtime has to handle 'alt refused' and step down one alt at a time; that fallback strategy is untested."
+   ]
+  }
+ ],
+ [
+  "verify:rust",
+  {
+   "topic": "ADVERSARIAL VERIFY: phase-2 'rust' (uvc_iso rawusb/libusb backends on WinUSB C930e, plus nusb PR #233)",
+   "verdicts": [
+    {
+     "claim": "BUG 1: rawusb 0.1.7 Windows enumeration needed #[repr(C,packed)] for USB_NODE_CONNECTION_INFORMATION_EX plus 11-byte PipeList entries. After the fix it lists 4 UVC cameras with the same C930e alt table as libusb, and reads the C922 serial B76395EF.",
+     "verdict": "confirmed",
+     "reason": "list_rawusb/summary.json lists 4 UVC devices (085c, 4a55, 0843, 0e05). The C930e alts and dwClockFrequency 30000000 match list_libusb, and the C922 serial is B76395EF on rawusb and null on libusb. usbioctl.h does pack these structs to 1 byte (pshpack1), so the fix is plausible. I did not re-run the 'before' state, which exists only in scratch. Two corrections: (a) the files record enumerate_ms 5.68 (rawusb) vs 13.58 (libusb), not 3.4 vs 13.3; (b) rawusb's raw_config_len is 2-8 bytes larger than libusb's for every device (C930e 2573 vs 2565, C922 2503 vs 2497, Kiyo 1460 vs 1452, 4a55 652 vs 650). Nobody has explained this, so 'same descriptor' holds for the parsed alt table, not byte for byte.",
+     "rerun_numbers": "not re-run. All four cameras appear in win_usb_topology --pipes-only (C930e at hub 05e3:0610 port 4, 4c4a at port 3)."
+    },
+    {
+     "claim": "BUG 2: rawusb SupportedUsbProtocols=0 reported SuperSpeed devices as High; with 0x7 the Kiyo Pro reports Super.",
+     "verdict": "confirmed",
+     "reason": "list_rawusb/summary.json shows the Kiyo 1532:0e05 at port 4.4 with speed 'Super', the same as list_libusb. 0x7 is the Usb110|Usb200|Usb300 bitfield. The 'before = High' state is not in the repo, so I could not check it.",
+     "rerun_numbers": ""
+    },
+    {
+     "claim": "BUG 3: rawusb sent interface-recipient control transfers through the interface-0 WinUSB handle, so VS PROBE stalled. Routing by wIndex&0xff fixes it, and the AE/exposure/WB controls succeed.",
+     "verdict": "confirmed",
+     "reason": "stream_rawusb_device/summary.json controls: ae_mode_cur [1], exposure_100us_cur 78, wb_cur 4000, no set errors. All 5 of my rawusb re-runs completed PROBE/COMMIT with the identical negotiated block. The 'before: pipe error' state was not reproduced.",
+     "rerun_numbers": "5/5 rawusb re-runs: probe/commit OK, bFormatIndex 2, bFrameIndex 15, dwFrameInterval 333333, wCompQuality 61, dwMaxVideoFrameSize 1843200, dwMaxPayloadTransferSize 3072."
+    },
+    {
+     "claim": "BUG 4: C930e payload headers have EOH clear (flags 0x0c-0x0f); parse_header now accepts them; unit test 5/5.",
+     "verdict": "confirmed",
+     "reason": "In every summary payloads_without_eoh equals payloads. The uvc.rs parse_header no longer requires EOH. I re-ran cargo test --release -p uvc_iso: 5 passed, including header_without_eoh_accepted.",
+     "rerun_numbers": "cargo test: 5 passed / 0 failed."
+    },
+    {
+     "claim": "Device alt policy picks alt 11 (3072 B). 15 s: 453/453 frames decoded, 30.08-30.09 fps, 0 bad headers, 0 err payloads, 0 real drops, CPU 1-3%, first frame 12.7 ms (rawusb) / 18.2 ms (libusb).",
+     "verdict": "weakened",
+     "reason": "The libusb half reproduces exactly. The rawusb half does not. In the rawusb re-run, win_usb_topology --pipes-only during streaming showed EP 0x81 iso wMaxPacketSize 0x1400 (3x1024) = alt 11, so the alt is confirmed. But rawusb serviced only 53440 of ~120000 microframes (44.5%; the original run serviced 120160), with 9 failed transfers (vs 8). It delivered 452 frames, and frame 0 was an error-flagged partial frame (28958 B, uvc_err=true) that Pillow and OpenCV both fail to decode. That leaves 451/452 valid. p50 latency was 46.8 ms vs 38.3. fps was still 30.08, because alt 11 has headroom. Caveat on 'valid JPEG': Pillow does not prove a frame is complete. As a positive control I cut 3072 B (one alt-11 microframe) out of the middle of a real frame, and Pillow still reported decoded_ok. libjpeg (via OpenCV) did print 'Corrupt JPEG data: premature end of data segment' for it. I then ran a libjpeg warning check plus a strict marker walk (SOI ... EOI exactly at end, 0 trailing bytes; the frames have no DRI, so restart-marker counting does not apply). Across all 30 original and re-run captures, 15821 frames, there were 0 libjpeg corruption warnings, so delivered frames are complete. The one failure is the error-flagged startup frame, which the Assembler passes to the output instead of dropping. CPU method: GetProcessTimes has 15.625 ms ticks and does not include WinUSB/xHCI kernel DPC time charged outside the process.",
+     "rerun_numbers": "libusb alt device 15 s: alt 11 (pipe 0x1400), 453/453 Pillow decoded, 0 libjpeg warnings, 30.083 fps, 120160 packets (100%), 0 error-status packets, 0 err payloads, 0 transfers failed, first frame 18.43 ms, CPU 2.29%, latency p50 41.1 ms. rawusb alt device 15 s: alt 11 (pipe 0x1400), 452 frames, 451 valid (seq 0 err-flag partial frame, decode fail), 30.082 fps, 53440 packets (44.5%), 1670 transfers completed / 9 failed, first frame 12.60 ms, CPU 1.15%, latency p50 46.8 ms."
+    },
+    {
+     "claim": "Seq gaps are 0 by construction; real loss is detected by PTS steps and host-arrival gaps. Every full-rate run has exactly one 6-period PTS jump within the first 3 frames (stale startup), otherwise 0 PTS gaps. The C930e PTS steps 1 ms short every 54 frames.",
+     "verdict": "weakened",
+     "reason": "The 54-frame short step is confirmed: original rawusb_device short steps at frames 42, 96, 150 ... 420, spaced 54, 967198-967228 ticks. 'Excluding startup, 0 PTS gaps' held in all my full-rate re-runs. 'Exactly one jump of 6 periods' did not: the startup jump was 6.01, 7.01 (libusb alt 5), and 8.02 then 2.0 periods (libusb 60 s re-run, where frames 0-2 arrived within 0.1 ms after a 176.7 ms time-to-first-frame). The host-arrival-gap metric (>=1.5 periods) also fires without data loss: the 60 s libusb re-run had 5 host gaps of 50-60 ms (frames 407, 425, 469, 475, 1236) with consecutive PTS. So it measures host delivery jitter, not loss.",
+     "rerun_numbers": "startup PTS jumps: libusb_device 6.01, rawusb_device 6.01, rawusb_alt6 6.01, libusb_alt5 7.01, libusb_sof60s 8.02 + 2.0. libusb_sof60s: 5 host-arrival gaps, 0 mid-stream PTS gaps."
+    },
+    {
+     "claim": "App-controlled bandwidth: full 30 fps at alt 11/9/7/6/5 on both backends. Alt 5 (800 B) is the 30-fps floor at 160-175 KB frames. Alt 4 is marginal and depends on frame size, not backend. The camera drops whole frames rather than corrupting them.",
+     "verdict": "weakened",
+     "reason": "I confirmed the alts with --pipes-only during streaming: alt 5 = EP 0x81 wMaxPacketSize 0x0320 (800 B), alt 6 = 0x03b0 (944 B), alt 11 = 0x1400. libusb at alt 5 reproduces 30.08 fps with 100% of microframes serviced. rawusb does not. Two rawusb alt-5 re-runs gave 23.24 fps (62 PTS gaps; 62112 of 80000 microframes, 78%) and 15.10 fps (132 PTS gaps; 40480 packets, 50%; 15 failed transfers). That is with smaller frames (128-169 KB) than the original 175 KB. A rawusb alt-6 re-run gave 30.08 fps with 100% serviced. So whether rawusb reaches 30 fps at alt 5 depends on whether it keeps the iso queue full, and 'fps depends on frame size, not backend' is refuted for rawusb. The libusb figures and the camera behaviour (frames dropped whole, 0 libjpeg corruption warnings in any delivered frame) are confirmed. backend_rawusb.rs resubmits with `let _ = t.submit()`, so failed resubmits are neither counted nor reported, and the summary has no microframe-coverage metric.",
+     "rerun_numbers": "libusb alt 5 10 s: 301/301, 30.080 fps, 80160 packets (100%), pipe 0x0320. rawusb alt 5 (with pipe snapshot): 241 frames, 23.24 fps, 62112 packets (78%), 9 failed. rawusb alt 5 (no snapshot): 167 frames, 15.10 fps, 40480 packets (50%), 15 failed. rawusb alt 6: 302/302, 30.084 fps, 80160 packets, 8 failed (stop cancels)."
+    },
+    {
+     "claim": "Intermittent: 1 of 4 rawusb alt-4 runs returned only empty packets. No other uvc_iso run showed this. Not root-caused.",
+     "verdict": "weakened",
+     "reason": "The single run is as described: explicit_alts/stream_rawusb_alt4 has 0 frames with ~100% of packets polled, all empty. But rawusb's intermittency is much broader than one anomalous run. 3 of my 5 rawusb re-runs (alt 11, alt 5, alt 5) serviced only 44-78% of microframes, and 2 of them lost frames. libusb re-runs in the same 10-minute window serviced 100%. The likely family is the rawusb submit/resubmit path: RegisterIsochBuffer on every submit, resubmit inside the completion callback, and ignored resubmit errors. The cause is still unknown, but it is rawusb-side, not camera-side, for the coverage loss.",
+     "rerun_numbers": "rawusb microframe coverage in re-runs: 44.5%, 77.6%, 50.6%, 100%, 100%. libusb: 100% in 3/3 runs."
+    },
+    {
+     "claim": "60 s timing: C930e STC +53 ppm vs QPC (30001583-30001596 Hz); USB frame clock +9.7 to +10.1 ppm vs QPC; SOF-fit residuals uniform +-0.5 ms; packet-arrival residuals p02..p98 -0.41..+0.23 ms; arrival-PTS p50 40.5-40.7, p98 42.5-42.7 ms.",
+     "verdict": "refuted",
+     "reason": "Both ppm figures are artifacts of one outlier. uvc_iso fit_dev_to_host and scr_sof_qpc_map.py linfit are plain unweighted OLS over all frames, including the stale first frame (+177 ms packet-arrival residual, -177 frames in-stream). The expected bias from one such point is 6e/(nT) = ~10 ppm at n=1806, T=60 s, and ~350 ppm at n=301, T=10 s. The 10 s runs do show device_clock_fit of 30012169-30014110 Hz (+405 to +470 ppm). Excluding that one frame (my refit_robust.py), STC = +42.8 / +43.3 / +43.3 ppm vs QPC and the USB frame clock = -0.18 / +0.22 / +0.32 ppm vs QPC. That is consistent with the long-baseline WinUsb_GetCurrentFrameNumber estimates of -5.3 and +6.0 ppm (+-16 ppm resolution). The stable quantity is STC vs the USB SOF clock: +43.0, +43.1, +43.1 and +43.4 ppm over 4 runs including my re-run. The SOF-fit residuals are confirmed uniform within +-0.50 ms (std 0.2886 = 1/sqrt(12)) in the re-run too. Note that 'STC via SOF at the in-stream rate' is not independent of the packet-arrival fit, because the in-stream rate comes from packet times, so their 30001593 vs 30001596 agreement is circular. The host-side numbers were not stable run to run. In my 60 s libusb re-run, packet-arrival residuals were p02..p98 -4.40..+11.45 ms (max 363 ms), arrival-PTS p50 43.1 / p98 55.9 ms, first frame at 176.7 ms, and 5 host gaps. The +-0.5 ms SOF->QPC systematic note is correct.",
+     "rerun_numbers": "Robust refit of original runs (1 frame excluded): STC +42.82 / +43.33 / +43.31 ppm; USB frame -0.18 / +0.22 / +0.32 ppm. Re-run libusb 60 s: 1804/1804 decoded, 30.083 fps, 478688 packets, long-baseline USB frame +5.98 ppm over 62.06 s, STC-via-SOF +49.44 ppm (=> STC vs SOF +43.4 ppm), SOF residual std 0.2886 ms in [-0.5003, +0.5008], arrival-PTS p50 43.07 / p98 55.86 ms, CPU 1.77%."
+    },
+    {
+     "claim": "BUG 5: winsof falls back to GUID_DEVINTERFACE_USB_DEVICE for inbox winusb.inf; sof-calib works (1000 samples, 999.856 frames/s, max residual 0.61 frame).",
+     "verdict": "confirmed",
+     "reason": "sof_calib/summary.json: interface_path ...#{a5dcbf10-6530-11d2-901f-00c04fb951ed}, n=1000, fit 999.8561, max |residual| 0.609 frame. My 60 s libusb re-run completed both before and after calibrations through the same path (baseline 62.06 s).",
+     "rerun_numbers": "re-run before/after calibration OK; after short fit 999.989 frames/s."
+    },
+    {
+     "claim": "BUG 6: after a rawusb stream, re-opening the WinUSB interface fails with Access denied even after dropping handle+Context and retrying 10x; libusb releases it. Suspected Arc cycle (code reading only).",
+     "verdict": "confirmed",
+     "reason": "Both stream_rawusb_sof60s summaries record the CreateFileW Access denied (0x80070005) error in sof_calibration_after (run2 with retries=10). stream_libusb_sof60s, and my libusb re-run, have a successful after-calibration. The root cause is presented as unconfirmed, which is right. I did not re-run rawusb 60 s.",
+     "rerun_numbers": "libusb 60 s re-run: after-calibration OK."
+    },
+    {
+     "claim": "Parity with libuvc 1.0.30: libuvc 151/151 at alt 11 (30.02) and alt 6 (30.07), same PROBE/COMMIT; uvc_iso matches on both backends at the same alts.",
+     "verdict": "weakened",
+     "reason": "The libuvc result.json files confirm 151 frames, fps_from_arrivals 30.024 / 30.066, chosen_altsetting 11 / 6, seq_gaps 0, PTS+SCR 151/151. But libuvc's 'valid' is a SOI/EOI check, not a decode, and its seq_gaps uses its own counter. Its alt was not checked with --pipes-only, and its probe shows odd bPreferredVersion values (230/233). libusb-backend uvc_iso matches libuvc. rawusb-backend uvc_iso only matches when its iso queue stays full, which failed in 3 of 5 of my re-runs (see above).",
+     "rerun_numbers": ""
+    },
+    {
+     "claim": "nusb PR #233 closed unmerged 2026-09-18 by the maintainer ('not going to merge something as vibecoded as this'), with an objection to the one-pending-iso limit. PR #178 is open and Linux-only. v0.2.9 (2026-10-24) has no Windows iso.",
+     "verdict": "confirmed",
+     "reason": "gh pr view 233: state CLOSED, isDraft true, closedAt 2026-09-18T00:47:35Z, mergedAt null, head 81ce16fa, +3268/-83, 21 files. The kevinmehall comments contain the quoted sentence (2026-09-18T00:34Z) and, on 2026-09-15, call the one-pending-transfer limit 'a pretty serious limitation'. PR #178 is OPEN, updatedAt 2026-10-23T21:45Z. Release v0.2.9 was published 2026-10-24, and its notes list no isochronous feature.",
+     "rerun_numbers": ""
+    },
+    {
+     "claim": "nusb PR #233 streams alt 11 (301/301, 30.09 fps) with only 1 pending iso transfer (~44% of microframes polled), but at alt 6 drops to 15.03 fps with 149 PTS gaps.",
+     "verdict": "confirmed",
+     "reason": "I re-ran it under camlock with --pipes-only during streaming. The pipe snapshot showed EP 0x81 wMaxPacketSize 0x03b0 = alt 6 (944 B). The run gave 150 frames, 14.99 fps, 149 PTS gaps, max_pending_observed 1, 34368 packets (43%), and 150/150 decoded with 0 libjpeg warnings. The original queue8 summary shows 7/8 initial submits rejected with InvalidArgument. The 'device keeps unsent data in its FIFO' explanation is a hypothesis.",
+     "rerun_numbers": "alt 6 10 s: 150 frames, 14.989 fps, 149 PTS gaps, 1074 completions, 34368 packets, 0 packet errors, pending max 1, 150/150 Pillow decoded."
+    },
+    {
+     "claim": "Cross-platform shape: all UVC logic is in uvc.rs with no OS calls; only winsof.rs and CPU time are Windows-specific; Linux/macOS not run.",
+     "verdict": "unverifiable",
+     "reason": "Labelled documented-untested. Nothing was run on Linux or macOS. uvc.rs has no OS calls in the parse/assembly code I read.",
+     "rerun_numbers": ""
+    }
+   ],
+   "harness_bugs": [
+    "Clock fits are plain unweighted OLS over every frame: uvc_iso main.rs fit_dev_to_host and rust/tools/scr_sof_qpc_map.py linfit (both the in-stream USB-frame-rate fit and the STC fits). The stale first frame (+177 ms / -177 frames) biases the slope by ~+10 ppm at 60 s and ~+400 ppm at 10 s. Every 10 s run's device_clock_fit (30012169-30014110 Hz) and the phase-2 +53 ppm / +10 ppm numbers are wrong. Excluding that frame gives STC +43 ppm and USB frame ~0 ppm vs QPC.",
+    "rust/tools/decode_mjpeg_check.py (Pillow full decode) does not detect incomplete frames. Positive control: removing 3072 B from the middle of a C930e frame still gives Pillow decoded_ok; only libjpeg's 'Corrupt JPEG data: premature end of data segment' warning reveals it. Use the libjpeg-warning check (rust/tools/verifier/libjpeg_warn.py) or full MCU accounting.",
+    "backend_rawusb.rs resubmits in the completion callback with `let _ = t.submit()`. Resubmit failures are silently dropped and uncounted. The summary also has no microframe-coverage metric (packets / (8000 * wall)), so rawusb runs servicing only 44-78% of microframes look normal except for fps.",
+    "The Assembler emits error-flagged (uvc_err) partial frames. In the rawusb re-run, seq 0 was a 28958 B err frame that fails decode; 'valid_jpeg' excludes it but frames/fps include it.",
+    "host_arrival_gaps_ge_1p5_period counts host delivery delays as gaps: 5 gaps of 50-60 ms in a 60 s libusb run with consecutive PTS. It cannot be used as a loss detector on its own.",
+    "time_to_first_frame_ms measures the arrival of a stale, buffered startup frame (PTS 6-8 periods before the next one). It varied from 12.6 to 176.7 ms across runs and is not a meaningful startup-latency metric.",
+    "rawusb's raw_config_len is 2-8 bytes longer than libusb's for every device (e.g. C930e 2573 vs 2565). The parsed alt tables match, but the extra bytes are unexplained and may be trailing garbage.",
+    "The finding cites enumeration 3.4 ms (rawusb) vs 13.3 ms (libusb); the cited files say 5.68 vs 13.58 ms.",
+    "libuvc baseline 'valid' frames are a SOI/EOI check only (no decode), its alt was not pipe-verified, and its probe shows odd bPreferredVersion values (230/233)."
+   ],
+   "corrected_summary": "Verifier re-runs (21:49-21:58Z, all under camlock) are in research/usb_cameras/results/windows/Gerald/phase2_rust_uvc_iso/verifier_reruns/. Checker scripts are in research/usb_cameras/rust/tools/verifier/; raw MJPEG is in C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\c--Users-Dom-GitHub-freemocap-skellycam\\96d4d83a-4013-4e95-a9bd-1cfedc6522c8\\scratchpad\\runs\\phase2\\rust_verify\\.\n\n**What holds:**\n- The 4 code bugs and their fixes. Unit tests pass 5/5 on re-run.\n- The C930e negotiates PROBE/COMMIT 333333 / 3072 / 1843200, and the device policy picks alt 11.\n- Alts were confirmed by win_usb_topology --pipes-only during streaming: alt 11 = 0x1400, alt 6 = 0x03b0, alt 5 = 0x0320.\n- The libusb backend reproduces exactly: alt 11 453/453 at 30.08 fps, alt 5 301/301 at 30.08 fps, 100% of microframes serviced, 0 error packets.\n- Delivered frames really are complete. Pillow alone cannot show that (a frame with 3072 B removed still \"decodes\"), but a libjpeg corruption-warning check across 30 captures, 15821 frames, found 0 corrupt frames.\n- When bandwidth is short, the camera drops whole frames rather than corrupting them.\n- nusb PR #233 is closed unmerged, and its single pending transfer halves alt 6 to 14.99 fps. The re-run gave 149 PTS gaps at a pipe-verified alt 6.\n- Bug 6 (rawusb keeps the WinUSB file open, so the after-stream SOF calibration is denied) is as reported.\n\n**What does not hold:**\n- **rawusb backend.** It does not reliably keep the iso queue full. In 3 of 5 re-runs it serviced only 44-78% of microframes (libusb was at 100% in the same window). At alt 5 it gave 23.2 and 15.1 fps instead of 30. At alt 11 it emitted an error-flagged partial startup frame that fails decode. So \"full 30 fps at alts 5-11 on both backends\" and \"the alt-4 threshold depends on frame size, not backend\" are only true for libusb. The alt-4 all-empty run is one symptom of broader rawusb intermittency.\n- **Timing numbers.** \"STC +53 ppm\" and \"USB frame clock +10 ppm vs QPC\" are artifacts of unweighted OLS that includes the stale first frame. Excluding it gives STC +42.8 to +43.3 ppm vs QPC and USB frame -0.2 to +0.3 ppm vs QPC. STC vs the USB SOF clock is +43.0 to +43.4 ppm across 4 runs, including the re-run. The same OLS bias makes every 10 s run's device_clock_fit about +400 ppm wrong.\n- **What does reproduce in timing.** SOF-fit residuals are uniform within \u00b10.5 ms (std 0.2886 ms), which is the 1 ms SOF quantization.\n- **What does not reproduce in timing.** Host-side figures are unstable: the 60 s re-run had arrival-PTS p50 43.1 / p98 55.9 ms, packet-arrival residuals up to +11 ms, and a 177 ms first frame.\n- **Startup PTS jump.** It is 6, 7 or 8+2 periods, not always 6. host_arrival_gaps also fires without any loss.\n\n**Recommendation:** libusb is the reliable backend. rawusb needs the resubmit/queue-depth issue fixed, plus a microframe-coverage metric in the harness, before any bandwidth or minimum-alt claim made with it is trusted. The C930e stayed openable throughout and is still on WinUSB. No drivers, registry or devices were changed and no UAC prompt was triggered."
+  }
+ ],
+ [
+  "verify:bandwidth",
+  {
+   "topic": "Adversarial verification of phase-2 'bandwidth' (Goal 3): forced isochronous alt on the C930e (WinUSB + libuvc), how it fails, shared-hub coexistence, wCompQuality and bandwidth-factor, cameras per link. Verifier re-runs 22:01-22:12Z, all under camlock, about 6 min of camera holds. No driver, registry or UAC changes. Autofocus left on auto (auto_cur=1, abs 80).",
+   "verdicts": [
+    {
+     "claim": "PROBE/COMMIT dwMaxPayloadTransferSize is 3072 B (alt 11) at 720p30 and 1080p30 and 2688 B (alt 10) at 480p30; dwMaxVideoFrameSize = w*h*2",
+     "verdict": "confirmed",
+     "reason": "I re-ran the 720p probe (research/usb_cameras/bandwidth/verify/probe_hold.sh under camlock). Base probe: 3072 B, dwMaxVideoFrameSize 1843200. Every one of the 9 verifier libuvc runs (720p and 1080p) committed 3072 B. I did not re-run 480p, but all 11 runs in the evidence files say 2688 B.",
+     "rerun_numbers": "results/windows/Gerald/phase2_bw_alt_verify/probe/probe_1280x720.json: dwMaxPayloadTransferSize 3072, dwMaxVideoFrameSize 1843200; verify_sweep_analyze.json / verify_rep1080.json: commit 3072 for all 9 runs"
+    },
+    {
+     "claim": "Under-provisioned alt: the C930e drops whole frames; fps = 30/ceil(frame_bytes/capacity) (47/48 runs within 6%); every delivered frame is complete (100% Pillow decode, 0 error payloads, 0 seq gaps); a drop shows only as an SCR/PTS step",
+     "verdict": "weakened",
+     "reason": "(1) The evidence cannot support 'complete'. The C930e's JPEGs have no DRI/RST markers, and Pillow decodes them without error after 1020 or 3072 B are cut from the middle, and even when cut to half length plus EOI. Self-test: verify/strict_jpeg_check.py --selftest. So '100% Pillow decode' does not detect truncated frames. I re-checked with a strict libjpeg-turbo decode (simplejpeg strict=True), which catches all four corruptions. All 2135 frames from my under-provisioned and control runs passed, so the conclusion survives, but on a new test. (2) A truncated frame was delivered once. It was the first frame of the run right after a zero-frame run: 76538 B, no EOI, error_payload_count 1, closed_by_eof false. So 'every delivered frame is complete, 0 error payloads' is not universal, and an app must still check EOI and error payloads. (3) The ceil model has a second exception. One of three 1080p alt-6 runs (frames 292 KB, 1.17x capacity) gave 24.14 fps against a model of 15. Frames came about every 40 ms. Two replicates gave 15.51 and 15.97, as the model predicts. (4) In that 24 fps run, counting skips from SCR STC under-counts: STC says 21 skipped, PTS says 70, and the frame count says 70 (290 frames + 70 = 360 = 12 s x 30). STC (first payload) tracks when sending starts, not when the frame was captured. (5) '47/48' is inflated: about 37 of the 48 runs are trivial cases where the frame fits easily. Only about 11 runs test a non-trivial prediction, and 10 of those match. (6) 'seq_gaps' is libuvc's own frame counter on the host, so it cannot show camera-side loss. The alt really was set: win_usb_topology.py --pipes-only during each verifier run showed 0x0200/0x0280/0x0320/0x1400/0x03b0/0x0b20 for alts 3/4/5/11/6/8.",
+     "rerun_numbers": "verify_sweep_analyze.json: 720p alt3 29.01 fps (76 KB frames, defocused; skips started once frames reached 130 KB = 0.98 cap), alt4 15.45 fps (183 KB, 1.09 cap, model 15), alt5 30.02 fps (1 skip, 0.83 cap), alt11 30.08; 1080p alt6 24.14 fps (STC skips 21 / PTS 70), alt8 30.08. verify_rep1080.json: 1080p alt6 15.51 and 15.97, alt4 15.04. strict_jpeg_check_sweep.json: 2135/2135 strict-decode OK; self-test: Pillow accepts all 4 corruptions, strict decode rejects all 4. zero_frame_after_refused_start.json step01: 180/181 SOI/EOI, 1 error payload"
+    },
+    {
+     "claim": "Minimum viable alt, static scene: 720p alt 5 clean / alt 4 marginal / alt 3 or lower at most 15 fps; 1080p alt 8 clean; 480p alt 3 clean",
+     "verdict": "weakened",
+     "reason": "The pass/fail boundaries follow frame size, and frame size follows the autofocus state, not the mode. With the same scene and settings, my 720p alt 4 run failed outright (15.45 fps at 183 KB), where the original was 29.84 fps at 162 KB. My 720p alt 3 ran at 29 fps for 13 s while autofocus left the image soft (76 KB frames). 720p alt 5 had 1 skip at 0.83 of capacity. 1080p alt 8 was clean in all runs (0.70). Read the alt minimums as being for one frame-size range, not as properties of the mode. I did not re-run 480p.",
+     "rerun_numbers": "720p: alt3 29.01 fps / alt4 15.45 / alt5 30.02 (1 skip) ; 1080p alt8 30.08, 0 skips, max/cap 0.697"
+    },
+    {
+     "claim": "Worst case (noise on monitor 0, focus pinned): 720p ~236-242 KB, alt 6 has 2 skips, alt 7 clean; 1080p ~432 KB, alt 8 drops to 19.2 fps, alt 11 clean",
+     "verdict": "confirmed",
+     "reason": "I checked the numbers against sweep_noise_fixedfocus.json and sweep_noise_720p_1080p.json. 720p alt 6 max 257620 B against 248533 B capacity is 1.037, 2 skips. 1080p alt 8 is 19.157 fps, with STC and PTS both counting 219 skips. noise_display ran at 301-304 fps. I did not re-run it, because that would put full-screen noise on the user's monitor. Caveat: the alt-7 'clean' point comes from the first noise run, which had autofocus on (frame sizes were similar, 242 KB).",
+     "rerun_numbers": "not re-run"
+    },
+    {
+     "claim": "Autofocus makes JPEG size vary by up to ~50% from one stream start to the next; sizes are flat within each run; pinning focus removes it",
+     "verdict": "weakened",
+     "reason": "The start-to-start variation is confirmed and larger than claimed: 76 KB against 176 KB at 720p, with the same settings, in starts seconds apart. 'Flat within each run' is refused. Every verifier run ramped for its first 1-2 s (720p 125->176 KB, 1080p 213->292 KB), and the 720p alt-3 run jumped from 76 to 130 KB after 13 s. The originals' own focus-pinned q-streams also show the ramp (bytes_min about 126 KB against a median of 176 KB). 'Pinning removes it' rests on 4 pinned runs within one hold, with no AF-on control in that hold. I did not re-test it.",
+     "rerun_numbers": "720p alt3 sizes every 15 frames: 71,76,...,72,74,76,114,130,130 KB; alt5 125,149,168,175...; alt11 125,140,172,176...; 1080p alt6 213,281,291...; q-streams AF on: medians 168026/167659 (q2) vs 162619/170591 (q61), mins about 120 KB"
+    },
+    {
+     "claim": "wCompQuality has no effect (range 2..61, 0/1/>61 come back as 61, frame size unchanged); a smaller dwMaxPayloadTransferSize in PROBE is ignored",
+     "verdict": "confirmed",
+     "reason": "I re-ran the probe. GET_MIN/MAX/DEF/RES = 2/61/61/1. Requested 0->61, 2->2, 10->10, 30->30, 61->61, 100->61. Payload requests of 192, 944, 1600 and 3072 all came back as 3072. Alternating q2 and q61 streams (AF on) showed no consistent size difference beyond the autofocus noise. Note: per the UVC spec, dwMaxPayloadTransferSize is reported by the device, so ignoring the host's value is expected behaviour, not a C930e quirk.",
+     "rerun_numbers": "probe/stream_q2_221033 168026, q61_221040 162619, q2_221047 167659, q61_221053 170591 B median; 0 error payloads; alt 11"
+    },
+    {
+     "claim": "--bandwidth-factor is host-side only: commit stays 3072; 720p f2.0 -> alt 6 30 fps, f1.0 -> alt 3 15.4 fps; 1080p f1.5 -> alt 8 30 fps",
+     "verdict": "confirmed",
+     "reason": "I checked the numbers against sweep_bandwidth_factor.json: commit 3072 in all three runs, chosen alts 6/3/8, fps 30.08/15.44/30.08, and STC and PTS skip counts agree. The minimum packet sizes (904/458/1518 B) map to alts 6/3/8 from the descriptor table. Not re-run.",
+     "rerun_numbers": "not re-run"
+    },
+    {
+     "claim": "Shared hub, audio idle: generic (MF, 3x1023 B) plus C930e libuvc alt 7/8 at full rate; alt 9 refused (I/O error); same threshold as usbvideo; model with interrupt EPs gives 98119 / 105585 ns",
+     "verdict": "confirmed",
+     "reason": "Re-run at 22:06Z with coexist_hold.sh gen_first '8 9'. The pipes snapshot showed no 194f:0422 iso pipes. Alt 8: C930e 30.08 fps, generic 25.69 fps, pipes 0x0b20 and 0x13ff open during the overlap. Alt 9: uvc_stream_start I/O error (-1), generic unaffected (25.68). The empirical threshold is reproduced. Model caveat: the claim says 'every open periodic endpoint' is counted, but the model leaves out the 0424:2137 hub's interrupt EP and the full-speed split-transaction interrupt EPs of 046d:c52b (3) and 04d8:0b2a (2). Those sit behind that hub on the same root-port-13 link. The alt-8 margin is only 1.9%, so the agreement with the model is weak evidence.",
+     "rerun_numbers": "results/windows/Gerald/phase2_bw_alt_verify/verify_coexist.json: gen_first_alt8 c930e 423 frames 30.083 fps / gen 25.6926; gen_first_alt9 err -1, gen 25.6824"
+    },
+    {
+     "claim": "With the 194f:0422 audio iso pipes active, the threshold drops to alt 6 pass / alt 7 fail; C930e first at alt 8/11 makes the generic fail with 0x800718CF",
+     "verdict": "weakened",
+     "reason": "The observations in the files are real. coexist_gen_first.json: alts 3/5/6 stream, 8/9/11 are refused. run2: alt 7 refused; C930e-first at alt 8 and 11 make the generic fail with 0x800718CF. topology_2137Z shows 194f:0422 on upstream-hub port 2 of the same root port 13, with 2x0x138 + 0x004 iso pipes. Pinning the cause on the audio device rests on one snapshot taken after the runs (21:37:42Z). In that same snapshot the C930e has an alt-4 pipe open that no run of this agent explains. The state cannot be reproduced on demand. The model has the omissions noted above. Treat this as a likely explanation, not a verified one.",
+     "rerun_numbers": "not reproducible (audio idle during all verifier holds)"
+    },
+    {
+     "claim": "Intermittent zero-frame start (2 of ~50), not bandwidth; retry fixes it; app needs a no-frames watchdog",
+     "verdict": "refuted",
+     "reason": "It is not random. Each of the 5 zero-frame starts came immediately after a C930e start that was refused for bandwidth: the original run2 alt 4 came right after the alt 7 refusal, and run4 c930e_first alt 8 right after the alt 9 refusal. I reproduced it deterministically in research/usb_cameras/bandwidth/verify/zero_frame_hold.sh. A good solo alt 8 run, then a refused alt 9 next to the generic, then a solo alt 8 run gave 0 frames (rc 0, pipe open), and the next solo alt 8 gave 181. The same sequence again with alt 6: 0 frames, then 181. It also happened in my coexist c930e_first alt 8 run, right after the alt 9 refusal. Also, the first frame after a zero-frame run was a partial frame with an error payload. This matters for the open question on fallback: an app that steps down one alt after a refusal will get a silent zero-frame stream on the very next start, every time, unless it restarts the stream again.",
+     "rerun_numbers": "zero_frame_after_refused_start.json: step01 alt8 181 fr; step02 alt9 refused (-1); step03 alt8 0 fr; step04 alt8 181; step05 alt9 refused; step06 alt6 0 fr; step07 alt6 181. verify_coexist.json c930e_first_alt8 (after alt9 refusal): 0 frames, pipe 0x0b20 open"
+    },
+    {
+     "claim": "ESTIMATE: cameras per USB 2.0 HS link (480p alt 3: 7-8; 720p alt 6: 4 / alt 7: 3; 1080p alt 8: 2; at the camera's own request: 1)",
+     "verdict": "unverifiable",
+     "reason": "The arithmetic checks out: 100000 / (alt cost + 1883) gives 8.0, 4.79, 3.57 and 2.92. But no test with 3 or more cameras is possible (only the C930e is on WinUSB). The model ignores other periodic traffic on the link: hub interrupt EPs, full-speed devices behind a TT, and the audio device that comes and goes. The per-camera alt choice depends on frame size, which varies a lot with autofocus (see above). A 'step down on refusal' policy also runs into the zero-frame behaviour. The counts are upper bounds under ideal link conditions.",
+     "rerun_numbers": ""
+    },
+    {
+     "claim": "Linux uvcvideo quirks=128 does not lower the alt for MJPEG; libuvc forced alt is the Linux equivalent",
+     "verdict": "unverifiable",
+     "reason": "Documented, not tested, as the finding itself says. No Linux run.",
+     "rerun_numbers": ""
+    }
+   ],
+   "harness_bugs": [
+    "bandwidth/alt_sweep_analyze.py decode_ok(): a Pillow full decode cannot tell whether a C930e MJPEG frame is complete. The frames have no DRI/RST markers, and Pillow accepts frames with 1020 or 3072 B cut from the middle, and frames cut to half length plus EOI (self-test: research/usb_cameras/bandwidth/verify/strict_jpeg_check.py --selftest). Use libjpeg-turbo with warnings as errors (simplejpeg.decode_jpeg(strict=True)).",
+    "bandwidth/alt_sweep_analyze.py camera_skipped_frames_by_scr_stc: when the camera falls behind (each frame takes more than one period to send) the first-payload SCR STC tracks transmission time, and rounding about 1.2-period steps down to 1 under-counts skips. 1080p alt 6: STC 21, PTS 70, frame-count deficit 70. Use the PTS step (on the C930e) or the frame-count deficit.",
+    "bandwidth/alt_sweep_summary.py fps_step_model: '47/48 within 6%' includes about 37 runs where the frame fits trivially and the model must say 30 fps. Report the non-trivial cases separately (about 10/11).",
+    "uvc_capture_test seq_gaps is libuvc's own host-side frame counter, so it cannot reveal camera-side or USB loss. Citing '0 seq gaps' as evidence of completeness adds nothing.",
+    "bandwidth/coexist_hold.sh run order: a start that comes right after a refused start always delivers zero frames, which confounds that run (run2 gen_first alt4, run4 c930e_first alt8). Insert a throwaway start/stop after each refusal, or record the order dependence.",
+    "bandwidth/hs_budget_model.py / coexist_summarize.py: the per-link budget leaves out the other periodic endpoints on root port 13. Those are the 0424:2137 hub interrupt EP and the split-transaction interrupt EPs of the full-speed 046d:c52b and 04d8:0b2a behind it. With a 1.9% margin at alt 8, 'model reproduces threshold' is fragile. coexist_summarize's 'predicted_fit_80pct' also excludes interrupt EPs, while the claim's 98119/105585 ns include them."
+   ],
+   "corrected_summary": "Choosing the alt in the application (libuvc on WinUSB) does recover bandwidth. The alt really is set: during my verifier runs, win_usb_topology --pipes-only showed open pipes that matched each forced alt (alts 3, 4, 5, 6, 8, 11). The C930e always asks for 3072 B (2688 B at 480p). wCompQuality (2..61) and a smaller dwMaxPayloadTransferSize in PROBE make no difference (re-run confirmed).\n\n**Under-provisioned alt.** The camera usually drops whole frames, and fps is about 30/ceil(size/capacity). There are exceptions in the 1.0-1.2x capacity range:\n- 1080p alt 8 with the noise scene gave 19 fps.\n- One of three 1080p alt-6 replicates gave 24 fps instead of 15. Frames arrived every 40 ms, and the SCR-STC skip count under-counted, so count drops from PTS or from the frame-count deficit.\n\n**Frame completeness.** It now rests on a strict libjpeg-turbo decode. 2135 of 2135 verifier frames decoded cleanly. The original Pillow check can't detect truncated C930e frames. Still, one partial frame (no EOI, error payload) was delivered as the first frame after a zero-frame run, so apps must check EOI and error payloads.\n\n**Minimum viable alt.** It depends on frame size, and frame size depends heavily on autofocus. Sizes ramp in the first 1-2 s of every start, and one start stayed soft at 76 KB against 176 KB normal. 720p alt 4 ran at 15 fps in my re-run (30 in the original), and 720p alt 3 ran at 29 fps while the image was out of focus. Plan from measured worst-case size plus margin: 720p alt 6-7 and 1080p alt 8-10 depending on the scene.\n\n**Shared hub, audio idle.** Re-run confirmed: the generic camera via MF plus the C930e at alt 8 both run (30.08 and 25.69 fps); alt 9 is refused with an I/O error. That is the same alt 8 / alt 9 threshold usbvideo showed.\n\n**Audio device active.** The lower threshold (alt 6 pass / alt 7 fail) was observed. Blaming it on 194f:0422 is a likely explanation, not a verified one. The budget model leaves out other periodic endpoints on that link and has only 1.9% margin.\n\n**Zero-frame starts.** This is not intermittent: a refused start always makes the next start deliver zero frames (reproduced 2 of 2, plus 3 of 3 earlier cases). The start after that is normal. So an app that steps down one alt after a refusal must expect a silent stream and restart again.\n\n**Cameras per link.** The counts remain model upper bounds, untested with 3 or more cameras. bandwidth-factor and noise-scene numbers match their files but were not re-run.\n\n**Verifier files.**\n- Harness: research/usb_cameras/bandwidth/verify/{strict_jpeg_check.py, verify_sweep_hold.sh, coexist_verify_hold.sh, zero_frame_hold.sh, probe_hold.sh}\n- Results: research/usb_cameras/results/windows/Gerald/phase2_bw_alt_verify/{verify_sweep_analyze.json, strict_jpeg_check_sweep.json, sweep_pipes/*.json, verify_rep1080.json, verify_coexist.json, zero_frame_after_refused_start.json, probe/*.json}\n- Raw data: C:/Users/Dom/AppData/Local/Temp/claude/c--Users-Dom-GitHub-freemocap-skellycam/96d4d83a-4013-4e95-a9bd-1cfedc6522c8/scratchpad/runs/phase2/verify_bw/ (saved JPEGs deleted)\n- Binary: scratchpad/runs/phase2/bin/uvc_capture_test.exe, sha256 36d2ae88... The libusb/build Release binary has since been rebuilt (bf7a83b8...)."
+  }
+ ]
+]

@@ -1,0 +1,15 @@
+discovered ['127.0.0.1', '172.30.224.1']
+127.0.0.1 PixelFormat Mono8 SensorType Monochrome control ControlState.HELD
+172.30.224.1 PixelFormat BayerRG8 SensorType Monochrome control ControlState.HELD
+127.0.0.1: 100 frames in 3.88s; first/last block 1/100; shapes {('Mono8', (480, 640), 'uint8')}; complete 100 lost 0 backpressure 0 avg_fps 25.5 resend_req 0
+172.30.224.1: 100 frames in 3.88s; first/last block 1/100; shapes {('BayerRG8', (480, 640), 'uint8')}; complete 100 lost 0 backpressure 0 avg_fps 25.5 resend_req 0
+fake action keys device=0x42 group=0x1 mask=0x1
+send_action(dest=255.255.255.255) -> AckSummary(sent=1, acks=0); fake.actions() deltas [0, 0]
+send_action(dest=127.0.0.1) -> AckSummary(sent=1, acks=1); fake.actions() deltas [1, 0]
+send_action(dest=172.30.224.1) -> AckSummary(sent=1, acks=1); fake.actions() deltas [0, 1]
+latched device ticks 5602120400
+scheduled send_action(dest=127.0.0.1) -> AckSummary(sent=1, acks=1)
+scheduled send_action(dest=172.30.224.1) -> AckSummary(sent=1, acks=1)
+wrong device key -> AckSummary(sent=1, acks=0)
+fake actions totals [2, 2]
+bad destination -> ParseError destination 'not-an-ip': invalid IPv4 address syntax

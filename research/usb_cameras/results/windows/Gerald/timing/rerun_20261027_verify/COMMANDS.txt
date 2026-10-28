@@ -1,0 +1,9 @@
+Adversarial verification of the timing rerun (rerun_20261027), 2026-10-28 03:45-03:56Z, GERALD, not elevated. Kiyo never opened.
+SCR = C:\Users\Dom\AppData\Local\Temp\claude\c--Users-Dom-GitHub-freemocap-skellycam\7c9d3345-0e7f-4af6-bb14-20fd851edd1a\scratchpad\runs\timing_verify (raw .mjpeg)
+1) metadata: camlock -- timing\build\mf_uvc_timing.exe --out SCR/20261028T034559Z_meta_c922_c930e --seconds 10 --save-mjpeg --cam "vid_046d&pid_085c,1280,720,30" --cam "vid_046d&pid_0843,1280,720,30"
+   then quantization_check.py, rerun_20261027/tools/capture_conditions.py -> metadata_check/
+2) flash v1: camlock -- pwsh -File rerun_20261027/tools/run_flash_rerun.ps1 -RunDir SCR/20261028T034701Z_flash_c922_c930e_exp-7_v1 -Cams "vid_046d&pid_085c,1280,720,30,-7,4500;vid_046d&pid_0843,1280,720,30,-7,4500" -Seconds 30 -Monitor 0
+3) flash v2: same wrapper, -RunDir SCR/20261028T034939Z_flash_c922_generic_exp-7_v2 -Cams "vid_046d&pid_085c,1280,720,30,-7,4500;vid_4c4a&pid_4a55,1280,720,30,-7,4500"
+Analysis: analyze_full_v.sh RUN (= rerun tools/analyze_full.sh with the wide scan written into the run dir), plus
+  flash_exposure_scan.py --source uvc_pts_via_scr_lsq_envelope --grid-ms 2,...,45 -> exposure_scan_wide.json (v1)
+  stc_mode.py <C930e frames.jsonl...>: LSQ STC ticks/frame and PTS ticks/frame per run.

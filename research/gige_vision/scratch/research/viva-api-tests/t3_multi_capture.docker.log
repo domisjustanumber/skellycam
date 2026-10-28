@@ -1,0 +1,36 @@
+    inet 127.0.0.1/8 scope host lo
+    inet 127.0.0.2/8 scope host secondary lo
+    inet 127.0.0.3/8 scope host secondary lo
+== t2 (no aliases needed for .1)
+started FakeGigeCamera(running, 320x240 @ 30 fps on 127.0.0.1:3956, pixel_format=0x01080001)
+started FakeGigeCamera(running, 320x240 @ 30 fps on 127.0.0.2:3956, pixel_format=0x01080001)
+started FakeGigeCamera(running, 320x240 @ 30 fps on 127.0.0.3:3956, pixel_format=0x01080001)
+discover {'all': True} [GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige'), GigeDeviceInfo(ip='127.0.0.2', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige'), GigeDeviceInfo(ip='127.0.0.3', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')]
+discover {} []
+discover iface 127.0.0.1 [GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige'), GigeDeviceInfo(ip='127.0.0.2', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige'), GigeDeviceInfo(ip='127.0.0.3', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')]
+discover iface 127.0.0.2 [GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige'), GigeDeviceInfo(ip='127.0.0.2', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige'), GigeDeviceInfo(ip='127.0.0.3', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')]
+discover iface 127.0.0.3 [GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige'), GigeDeviceInfo(ip='127.0.0.2', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige'), GigeDeviceInfo(ip='127.0.0.3', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')]
+device_info 127.0.0.1 GigeDeviceInfo(ip='127.0.0.1', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')
+device_info 127.0.0.2 GigeDeviceInfo(ip='127.0.0.2', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')
+device_info 127.0.0.3 GigeDeviceInfo(ip='127.0.0.3', mac='DE:AD:BE:EF:CA:FE', manufacturer='viva-genicam', model='FakeGigE', transport='gige')
+== t3
+discovered ['127.0.0.1', '127.0.0.2', '127.0.0.3']
+127.0.0.1 PixelFormat Mono8 SensorType Monochrome control ControlState.HELD
+127.0.0.2 PixelFormat BayerRG8 SensorType Monochrome control ControlState.HELD
+127.0.0.3 PixelFormat RGB8 SensorType Monochrome control ControlState.HELD
+127.0.0.2: 100 frames in 4.91s; first/last block 1/100; shapes {('BayerRG8', (480, 640), 'uint8')}; complete 100 lost 0 backpressure 0 avg_fps 25.5 resend_req 0
+127.0.0.1: 100 frames in 4.91s; first/last block 1/101; shapes {('Mono8', (480, 640), 'uint8')}; complete 100 lost 1 backpressure 0 avg_fps 25.6 resend_req 13
+127.0.0.3: 100 frames in 4.91s; first/last block 1/100; shapes {('RGB8Packed', (480, 640, 3), 'uint8')}; complete 100 lost 0 backpressure 0 avg_fps 20.1 resend_req 387
+fake action keys device=0x42 group=0x1 mask=0x1
+send_action(dest=255.255.255.255) -> ERR TransportError: action command to 255.255.255.255: Network is unreachable (os error 101); fake.actions() deltas [0, 0, 0]
+send_action(dest=127.0.0.1) -> AckSummary(sent=1, acks=1); fake.actions() deltas [1, 0, 0]
+send_action(dest=127.0.0.2) -> AckSummary(sent=1, acks=1); fake.actions() deltas [0, 1, 0]
+send_action(dest=127.0.0.3) -> AckSummary(sent=1, acks=1); fake.actions() deltas [0, 0, 1]
+latched device ticks 6648551795
+scheduled send_action(dest=127.0.0.1) -> AckSummary(sent=1, acks=1)
+scheduled send_action(dest=127.0.0.2) -> AckSummary(sent=1, acks=1)
+scheduled send_action(dest=127.0.0.3) -> AckSummary(sent=1, acks=1)
+wrong device key -> AckSummary(sent=1, acks=0)
+fake actions totals [2, 2, 2]
+bad destination -> ParseError destination 'not-an-ip': invalid IPv4 address syntax
+exit 0

@@ -1,0 +1,33 @@
+script_exit=0
+uname: Linux db353974e324 5.15.153.1-microsoft-standard-WSL2 #1 SMP Fri Mar 29 23:14:13 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+user: uid=0(root) gid=0(root) groups=0(root)
+libusb: 1.0.27
+uvcvideo quirks param: n/a
+/:  Bus 001.Port 001: Dev 001, Class=root_hub, Driver=vhci_hcd/8p, 480M
+/:  Bus 002.Port 001: Dev 001, Class=root_hub, Driver=vhci_hcd/8p, 5000M
+(none)
+applying 0001-frame-timing-and-iso-override.patch
+CMake Warning at build/unix/deps/libuvc/cmake/FindLibUSB.cmake:50 (message):
+  libusb-1.0 could not be found using pkgconfig
+Call Stack (most recent call first):
+  build/unix/deps/libuvc/CMakeLists.txt:72 (find_package)
+
+
+libusb: 1.0.27
+OK: /tmp/repo/research/usb_cameras/libusb/build/unix/bin/uvc_capture_test
+VID:PID   port_path      addr   speed      uvc  vsalt serial                             open
+1d6b:0003 2              1      super      no   0     -                                  (not tried)
+1d6b:0002 1              1      high       no   0     -                                  (not tried)
+
+UVC devices seen: 0, openable by libusb: 0
+no accessible device: no UVC device is bound to a libusb-compatible driver (Windows: WinUSB/libusbK; Linux: permissions; macOS: kernel driver ownership)
+list exit=3
+{}
+wrote /tmp/repo/research/usb_cameras/results/linux/db353974e324/libuvc_linux/summary.json
+cams.tsv
+environment.txt
+list.json
+list.txt
+permissions.txt
+run.log
+summary.json

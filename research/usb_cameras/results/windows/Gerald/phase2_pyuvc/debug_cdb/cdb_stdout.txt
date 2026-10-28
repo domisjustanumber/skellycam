@@ -1,0 +1,310 @@
+[camlock] acquired after 0.0s: C:/Program Files (x86)/Windows Kits/10/Debuggers/x64/cdb.exe -g -G -o -c .lastevent; r; kn 40; lm; q C:\Users\Dom\AppData\Local\uv\cache\environments-v2\pyuvc-winusb-stream-0dba3c5abe6ba50d\Scripts\python.exe research/usb_cameras/libusb/pyuvc/pyuvc_winusb_stream.py --seconds 3 --bandwidth-factors 2.0 --out-dir research/usb_cameras/results/windows/Gerald/phase2_pyuvc/debug_cdb
+
+************* Preparing the environment for Debugger Extensions Gallery repositories **************
+   ExtensionRepository : Implicit
+   UseExperimentalFeatureForNugetShare : true
+   AllowNugetExeUpdate : true
+   NonInteractiveNuget : true
+   AllowNugetMSCredentialProviderInstall : true
+   AllowParallelInitializationOfLocalRepositories : true
+   EnableRedirectToChakraJsProvider : false
+
+   -- Configuring repositories
+      ----> Repository : LocalInstalled, Enabled: true
+      ----> Repository : UserExtensions, Enabled: true
+
+>>>>>>>>>>>>> Preparing the environment for Debugger Extensions Gallery repositories completed, duration 0.000 seconds
+
+************* Waiting for Debugger Extensions Gallery to Initialize **************
+
+>>>>>>>>>>>>> Waiting for Debugger Extensions Gallery to Initialize completed, duration 0.016 seconds
+   ----> Repository : UserExtensions, Enabled: true, Packages count: 0
+   ----> Repository : LocalInstalled, Enabled: true, Packages count: 30
+
+Microsoft (R) Windows Debugger Version 10.0.28000.1839 AMD64
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+CommandLine: C:\Users\Dom\AppData\Local\uv\cache\environments-v2\pyuvc-winusb-stream-0dba3c5abe6ba50d\Scripts\python.exe research/usb_cameras/libusb/pyuvc/pyuvc_winusb_stream.py --seconds 3 --bandwidth-factors 2.0 --out-dir research/usb_cameras/results/windows/Gerald/phase2_pyuvc/debug_cdb
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+Deferred                                       srv*
+Symbol search path is: srv*
+Executable search path is: 
+
++------------------------------------------------------------------------+
+| This target supports Hardware-enforced Stack Protection. A HW based    |
+| "Shadow Stack" may be available to assist in debugging and analysis.   |
+| See aka.ms/userhsp for more info.                                      |
+|                                                                        |
+| dps @ssp                                                               |
+|                                                                        |
++------------------------------------------------------------------------+
+
+ModLoad: 00007ff6`63140000 00007ff6`63152000   uv_trampoline_console.exe
+ModLoad: 00007ffe`ec220000 00007ffe`ec488000   ntdll.dll
+ModLoad: 00007ffe`ea350000 00007ffe`ea41b000   C:\WINDOWS\System32\KERNEL32.DLL
+ModLoad: 00007ffe`e95a0000 00007ffe`e99a1000   C:\WINDOWS\System32\KERNELBASE.dll
+ModLoad: 00007ffe`ebd20000 00007ffe`ebef7000   C:\WINDOWS\System32\user32.dll
+ModLoad: 00007ffe`e9e70000 00007ffe`e9e97000   C:\WINDOWS\System32\win32u.dll
+ModLoad: 00007ffe`ea140000 00007ffe`ea16b000   C:\WINDOWS\System32\GDI32.dll
+ModLoad: 00007ffe`e99b0000 00007ffe`e9ada000   C:\WINDOWS\System32\gdi32full.dll
+ModLoad: 00007ffe`e9ae0000 00007ffe`e9b83000   C:\WINDOWS\System32\msvcp_win.dll
+ModLoad: 00007ffe`e9b90000 00007ffe`e9cdc000   C:\WINDOWS\System32\ucrtbase.dll
+ModLoad: 00007ffe`ea100000 00007ffe`ea131000   C:\WINDOWS\System32\IMM32.DLL
+ModLoad: 00007ffe`ea8b0000 00007ffe`ea958000   C:\WINDOWS\System32\sechost.dll
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+Deferred                                       srv*
+Symbol search path is: srv*
+Executable search path is: 
+ModLoad: 00007ff6`4d210000 00007ff6`4d22a000   python.exe
+ModLoad: 00007ffe`ec220000 00007ffe`ec488000   ntdll.dll
+ModLoad: 00007ffe`ea350000 00007ffe`ea41b000   C:\WINDOWS\System32\KERNEL32.DLL
+ModLoad: 00007ffe`e95a0000 00007ffe`e99a1000   C:\WINDOWS\System32\KERNELBASE.dll
+ModLoad: 00007ffe`e9b90000 00007ffe`e9cdc000   C:\WINDOWS\System32\ucrtbase.dll
+ModLoad: 00007ffe`e0300000 00007ffe`e031e000   C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\VCRUNTIME140.dll
+ModLoad: 00007ffe`69890000 00007ffe`69f45000   C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\python312.dll
+ModLoad: 00007ffe`eaa80000 00007ffe`eab01000   C:\WINDOWS\System32\WS2_32.dll
+ModLoad: 00007ffe`e1e80000 00007ffe`e1e8b000   C:\WINDOWS\SYSTEM32\VERSION.dll
+ModLoad: 00007ffe`ec0c0000 00007ffe`ec1d8000   C:\WINDOWS\System32\RPCRT4.dll
+ModLoad: 00007ffe`ea9b0000 00007ffe`eaa6c000   C:\WINDOWS\System32\ADVAPI32.dll
+ModLoad: 00007ffe`ec010000 00007ffe`ec0b9000   C:\WINDOWS\System32\msvcrt.dll
+ModLoad: 00007ffe`ea8b0000 00007ffe`ea958000   C:\WINDOWS\System32\sechost.dll
+ModLoad: 00007ffe`e92f0000 00007ffe`e931a000   C:\WINDOWS\SYSTEM32\bcrypt.dll
+ModLoad: 00007ffe`e9cf0000 00007ffe`e9d9c000   C:\WINDOWS\System32\bcryptprimitives.dll
+ModLoad: 000002c7`22a70000 000002c7`22a7f000   C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\python3.DLL
+ModLoad: 000002c7`22a70000 000002c7`22a7f000   C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\python3.DLL
+ModLoad: 00007ffe`c2220000 00007ffe`c2236000   C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\DLLs\_bz2.pyd
+ModLoad: 00007ffe`c21f0000 00007ffe`c221a000   C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\DLLs\_lzma.pyd
+ModLoad: 00007ffe`bdae0000 00007ffe`bdaf6000   C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\DLLs\_socket.pyd
+ModLoad: 00007ffe`e7a80000 00007ffe`e7ab3000   C:\WINDOWS\SYSTEM32\IPHLPAPI.DLL
+ModLoad: 00007ffe`ced10000 00007ffe`ced19000   C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\DLLs\select.pyd
+ModLoad: 00007ffe`ce770000 00007ffe`ce77b000   C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\DLLs\_wmi.pyd
+ModLoad: 00007ffe`eb670000 00007ffe`eb749000   C:\WINDOWS\System32\OLEAUT32.dll
+ModLoad: 00007ffe`e9ae0000 00007ffe`e9b83000   C:\WINDOWS\System32\msvcp_win.dll
+ModLoad: 00007ffe`e3d10000 00007ffe`e3e05000   C:\WINDOWS\SYSTEM32\PROPSYS.dll
+ModLoad: 00007ffe`eb750000 00007ffe`ebadb000   C:\WINDOWS\System32\combase.dll
+ModLoad: 000002c7`239c0000 000002c7`23d4b000   C:\WINDOWS\System32\combase.dll
+ModLoad: 00007ffe`c2190000 00007ffe`c219c000   C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\VCRUNTIME140_1.dll
+ModLoad: 00007ffe`92f20000 00007ffe`92f60000   C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\DLLs\_decimal.pyd
+ModLoad: 00007ffe`e9f60000 00007ffe`ea0fa000   C:\WINDOWS\System32\ole32.dll
+ModLoad: 00007ffe`ea140000 00007ffe`ea16b000   C:\WINDOWS\System32\GDI32.dll
+ModLoad: 00007ffe`e9e70000 00007ffe`e9e97000   C:\WINDOWS\System32\win32u.dll
+ModLoad: 00007ffe`e99b0000 00007ffe`e9ada000   C:\WINDOWS\System32\gdi32full.dll
+ModLoad: 00007ffe`ebd20000 00007ffe`ebef7000   C:\WINDOWS\System32\USER32.dll
+ModLoad: 00007ffe`ea100000 00007ffe`ea131000   C:\WINDOWS\System32\IMM32.DLL
+ModLoad: 00007ffe`e8090000 00007ffe`e80ab000   C:\WINDOWS\SYSTEM32\kernel.appcore.dll
+ModLoad: 00007ffe`e5560000 00007ffe`e5607000   C:\WINDOWS\system32\uxtheme.dll
+ModLoad: 00007ffe`ebae0000 00007ffe`ebb8f000   C:\WINDOWS\System32\clbcatq.dll
+ModLoad: 00007ffe`cca00000 00007ffe`cca12000   C:\WINDOWS\system32\wbem\wbemprox.dll
+ModLoad: 00007ffe`cd9c0000 00007ffe`cda46000   C:\WINDOWS\SYSTEM32\wbemcomn.dll
+ModLoad: 00007ffe`cfc50000 00007ffe`cfc65000   C:\WINDOWS\system32\wbem\wbemsvc.dll
+ModLoad: 00007ffe`cd1e0000 00007ffe`cd2d6000   C:\WINDOWS\system32\wbem\fastprox.dll
+ModLoad: 00007ffe`cd0c0000 00007ffe`cd0dd000   C:\WINDOWS\SYSTEM32\amsi.dll
+ModLoad: 00007ffe`e8720000 00007ffe`e8754000   C:\WINDOWS\SYSTEM32\USERENV.dll
+ModLoad: 00007ffe`e9320000 00007ffe`e9349000   C:\WINDOWS\SYSTEM32\profapi.dll
+ModLoad: 00007ffe`cd010000 00007ffe`cd0b5000   C:\ProgramData\Microsoft\Windows Defender\Platform\4.18.26090.9-0\MpOav.dll
+ModLoad: 00007ffe`cca00000 00007ffe`cca12000   C:\WINDOWS\system32\wbem\wbemprox.dll
+ModLoad: 00007ffe`cd9c0000 00007ffe`cda46000   C:\WINDOWS\SYSTEM32\wbemcomn.dll
+ModLoad: 00007ffe`cfc50000 00007ffe`cfc65000   C:\WINDOWS\system32\wbem\wbemsvc.dll
+ModLoad: 00007ffe`cd1e0000 00007ffe`cd2d6000   C:\WINDOWS\system32\wbem\fastprox.dll
+ModLoad: 00007ffe`cca00000 00007ffe`cca12000   C:\WINDOWS\system32\wbem\wbemprox.dll
+ModLoad: 00007ffe`cd9c0000 00007ffe`cda46000   C:\WINDOWS\SYSTEM32\wbemcomn.dll
+ModLoad: 00007ffe`cfc50000 00007ffe`cfc65000   C:\WINDOWS\system32\wbem\wbemsvc.dll
+ModLoad: 00007ffe`cd1e0000 00007ffe`cd2d6000   C:\WINDOWS\system32\wbem\fastprox.dll
+ModLoad: 00007ffe`cca00000 00007ffe`cca12000   C:\WINDOWS\system32\wbem\wbemprox.dll
+ModLoad: 00007ffe`cd9c0000 00007ffe`cda46000   C:\WINDOWS\SYSTEM32\wbemcomn.dll
+ModLoad: 00007ffe`cfc50000 00007ffe`cfc65000   C:\WINDOWS\system32\wbem\wbemsvc.dll
+ModLoad: 00007ffe`cd1e0000 00007ffe`cd2d6000   C:\WINDOWS\system32\wbem\fastprox.dll
+ModLoad: 00007ffe`6b700000 00007ffe`6b76a000   C:\Users\Dom\AppData\Local\uv\cache\environments-v2\pyuvc-winusb-stream-0dba3c5abe6ba50d\Lib\site-packages\uvc\uvc_bindings.cp312-win_amd64.pyd
+ModLoad: 00007ffe`6a920000 00007ffe`6a9f1000   C:\Users\Dom\AppData\Local\uv\cache\environments-v2\pyuvc-winusb-stream-0dba3c5abe6ba50d\Lib\site-packages\pupil_labs_uvc.libs\turbojpeg-bc6e9febdb54f08d2514ec1d2e0cfadb.dll
+ModLoad: 00007ffe`bd8a0000 00007ffe`bd8b9000   C:\Users\Dom\AppData\Local\uv\cache\environments-v2\pyuvc-winusb-stream-0dba3c5abe6ba50d\Lib\site-packages\pupil_labs_uvc.libs\pthreadVC2-137d7f94f2f57bf0d62cd100b155b534.dll
+ModLoad: 00007ffe`bdab0000 00007ffe`bdadd000   C:\Users\Dom\AppData\Local\uv\cache\environments-v2\pyuvc-winusb-stream-0dba3c5abe6ba50d\Lib\site-packages\pupil_labs_uvc.libs\libusb-1.0-1dac95d1eafcba057cf3df73dcf419bc.dll
+ModLoad: 00000000`63b80000 00000000`63c52000   C:\Users\Dom\AppData\Local\uv\cache\environments-v2\pyuvc-winusb-stream-0dba3c5abe6ba50d\Lib\site-packages\pupil_labs_uvc.libs\msvcr100-ae3cb6c6afba9a4aa5c85f66023c3533.dll
+ModLoad: 00007ffe`e8980000 00007ffe`e898c000   C:\WINDOWS\SYSTEM32\CRYPTBASE.DLL
+ModLoad: 00007ffe`694c0000 00007ffe`69889000   C:\Users\Dom\AppData\Local\uv\cache\environments-v2\pyuvc-winusb-stream-0dba3c5abe6ba50d\Lib\site-packages\numpy\_core\_multiarray_umath.cp312-win_amd64.pyd
+ModLoad: 00007ffe`6b5c0000 00007ffe`6b64d000   C:\Users\Dom\AppData\Local\uv\cache\environments-v2\pyuvc-winusb-stream-0dba3c5abe6ba50d\Lib\site-packages\numpy.libs\msvcp140-a4c2229bdc2a2a630acdc095b4d86008.dll
+ModLoad: 00007ffe`50640000 00007ffe`519ed000   C:\Users\Dom\AppData\Local\uv\cache\environments-v2\pyuvc-winusb-stream-0dba3c5abe6ba50d\Lib\site-packages\numpy.libs\libscipy_openblas64_-ed4f167a5330424524f45258e7ca2c8d.dll
+ModLoad: 00007ffe`bcc70000 00007ffe`bcc91000   C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\DLLs\_ctypes.pyd
+ModLoad: 00007ffe`be410000 00007ffe`be41b000   C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\DLLs\libffi-8.dll
+ModLoad: 00007ffe`bd780000 00007ffe`bd79e000   C:\Users\Dom\AppData\Local\uv\cache\environments-v2\pyuvc-winusb-stream-0dba3c5abe6ba50d\Lib\site-packages\numpy\linalg\_umath_linalg.cp312-win_amd64.pyd
+ModLoad: 00007ffe`e9040000 00007ffe`e9092000   C:\WINDOWS\system32\Cfgmgr32.dll
+ModLoad: 00007ffe`ea420000 00007ffe`ea8a7000   C:\WINDOWS\System32\SetupAPI.dll
+ModLoad: 00007ffe`be3d0000 00007ffe`be3dd000   C:\WINDOWS\system32\WinUSB.dll
+ModLoad: 00007ffe`e76f0000 00007ffe`e76ff000   C:\WINDOWS\system32\hid.dll
+ModLoad: 00007ffe`e90a0000 00007ffe`e90cf000   C:\WINDOWS\SYSTEM32\DEVOBJ.dll
+ModLoad: 00007ffe`e9ea0000 00007ffe`e9f22000   C:\WINDOWS\System32\WINTRUST.dll
+ModLoad: 00007ffe`e9410000 00007ffe`e958f000   C:\WINDOWS\System32\CRYPT32.dll
+ModLoad: 00007ffe`e8b40000 00007ffe`e8b53000   C:\WINDOWS\SYSTEM32\MSASN1.dll
+ModLoad: 00007ffe`ea420000 00007ffe`ea8a7000   C:\WINDOWS\System32\SetupAPI.dll
+ModLoad: 00007ffe`be3d0000 00007ffe`be3dd000   C:\WINDOWS\system32\WinUSB.dll
+ModLoad: 00007ffe`e76f0000 00007ffe`e76ff000   C:\WINDOWS\system32\hid.dll
+ModLoad: 00007ffe`ea420000 00007ffe`ea8a7000   C:\WINDOWS\System32\SetupAPI.dll
+ModLoad: 00007ffe`be3d0000 00007ffe`be3dd000   C:\WINDOWS\system32\WinUSB.dll
+ModLoad: 00007ffe`e76f0000 00007ffe`e76ff000   C:\WINDOWS\system32\hid.dll
+ModLoad: 00007ffe`ea420000 00007ffe`ea8a7000   C:\WINDOWS\System32\SetupAPI.dll
+ModLoad: 00007ffe`be3d0000 00007ffe`be3dd000   C:\WINDOWS\system32\WinUSB.dll
+ModLoad: 00007ffe`e76f0000 00007ffe`e76ff000   C:\WINDOWS\system32\hid.dll
+ModLoad: 00007ffe`ea420000 00007ffe`ea8a7000   C:\WINDOWS\System32\SetupAPI.dll
+ModLoad: 00007ffe`be3d0000 00007ffe`be3dd000   C:\WINDOWS\system32\WinUSB.dll
+ModLoad: 00007ffe`e76f0000 00007ffe`e76ff000   C:\WINDOWS\system32\hid.dll
+ModLoad: 00007ffe`67e80000 00007ffe`68111000   C:\Users\Dom\AppData\Local\uv\cache\environments-v2\pyuvc-winusb-stream-0dba3c5abe6ba50d\Lib\site-packages\PIL\_imaging.cp312-win_amd64.pyd
+ModLoad: 00007ffe`ea420000 00007ffe`ea8a7000   C:\WINDOWS\System32\SetupAPI.dll
+ModLoad: 00007ffe`be3d0000 00007ffe`be3dd000   C:\WINDOWS\system32\WinUSB.dll
+ModLoad: 00007ffe`e76f0000 00007ffe`e76ff000   C:\WINDOWS\system32\hid.dll
+(20c8.dbac): Access violation - code c0000005 (first chance)
+First chance exceptions are reported before any exception handling.
+This exception may be expected and handled.
+*** WARNING: Unable to verify checksum for C:\Users\Dom\AppData\Local\uv\cache\environments-v2\pyuvc-winusb-stream-0dba3c5abe6ba50d\Lib\site-packages\uvc\uvc_bindings.cp312-win_amd64.pyd
+ucrtbase!strlen+0x31:
+00007ffe`e9c7d921 488b10          mov     rdx,qword ptr [rax] ds:00000000`00000000=????????????????
+1:004> cdb: Reading initial command '.lastevent; r; kn 40; lm; q'
+Last event: 20c8.dbac: Access violation - code c0000005 (first chance)
+  debugger time: Sun Oct 25 17:03:45.940 2026 (UTC - 4:00)
+rax=0000000000000000 rbx=000002c723625b80 rcx=0000000000000000
+rdx=000002c7226f0000 rsi=000002c75375ef50 rdi=000002c7537320b0
+rip=00007ffee9c7d921 rsp=000000ce59def408 rbp=0000000000000000
+ r8=7efefefefefefeff  r9=000002c753776b30 r10=000002c722860000
+r11=8101010101010100 r12=0000000000000002 r13=0000000000000000
+r14=0000000000000000 r15=000002c7537161a0
+iopl=0         nv up ei pl zr na po nc
+cs=0033  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00010246
+ucrtbase!strlen+0x31:
+00007ffe`e9c7d921 488b10          mov     rdx,qword ptr [rax] ds:00000000`00000000=????????????????
+ # Child-SP          RetAddr               Call Site
+00 000000ce`59def408 00007ffe`6b74f665     ucrtbase!strlen+0x31
+01 000000ce`59def410 00007ffe`6b72c373     uvc_bindings_cp312_win_amd64!PyInit_uvc_bindings+0x3bb25
+02 000000ce`59def490 00007ffe`6b7448bf     uvc_bindings_cp312_win_amd64!PyInit_uvc_bindings+0x18833
+03 000000ce`59def540 00007ffe`6b712a2a     uvc_bindings_cp312_win_amd64!PyInit_uvc_bindings+0x30d7f
+*** WARNING: Unable to verify checksum for C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\python312.dll
+04 000000ce`59def640 00007ffe`698b3b2d     uvc_bindings_cp312_win_amd64+0x12a2a
+05 000000ce`59def6d0 00007ffe`698b3a99     python312!PyObject_Vectorcall+0xcd
+06 000000ce`59def750 00007ffe`698b4fd8     python312!PyObject_Vectorcall+0x39
+07 000000ce`59def790 00007ffe`6996a908     python312!PyEval_EvalFrameDefault+0x8d8
+08 000000ce`59def9c0 00007ffe`6994ad3a     python312!PyType_CalculateMetaclass+0x114
+09 000000ce`59defa00 00007ffe`6994b078     python312!PyEval_EvalCode+0xb6
+0a 000000ce`59defa80 00007ffe`6994c204     python312!PyEval_GetBuiltins+0xb0
+0b 000000ce`59defab0 00007ffe`69988b2c     python312!PySys_Audit+0xd0
+0c 000000ce`59defb00 00007ffe`699887fa     python312!PyDict_DelItemString+0x28c
+0d 000000ce`59defb70 00007ffe`69988119     python312!PyRun_SimpleFileObject+0x126
+0e 000000ce`59defbf0 00007ffe`699896ce     python312!PyRun_AnyFileObject+0x4d
+0f 000000ce`59defc30 00007ffe`69989773     python312!Py_Exit+0xfe
+10 000000ce`59defd00 00007ffe`6998a1af     python312!Py_Exit+0x1a3
+11 000000ce`59defd30 00007ffe`69989f60     python312!Py_RunMain+0x267
+12 000000ce`59defdb0 00007ffe`699d2ad7     python312!Py_RunMain+0x18
+*** WARNING: Unable to verify checksum for python.exe
+13 000000ce`59defde0 00007ff6`4d211230     python312!Py_Main+0x2b
+14 000000ce`59defe30 00007ffe`ea37dda7     python+0x1230
+15 000000ce`59defe70 00007ffe`ec29ee4c     KERNEL32!BaseThreadInitThunk+0x17
+16 000000ce`59defea0 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+start             end                 module name
+00000000`63b80000 00000000`63c52000   msvcr100_ae3cb6c6afba9a4aa5c85f66023c3533   (deferred)             
+000002c7`22a70000 000002c7`22a7f000   python3    (deferred)             
+00007ff6`4d210000 00007ff6`4d22a000   python   C (no symbols)           
+00007ffe`50640000 00007ffe`519ed000   libscipy_openblas64__ed4f167a5330424524f45258e7ca2c8d   (deferred)             
+00007ffe`67e80000 00007ffe`68111000   _imaging_cp312_win_amd64   (deferred)             
+00007ffe`694c0000 00007ffe`69889000   _multiarray_umath_cp312_win_amd64   (deferred)             
+00007ffe`69890000 00007ffe`69f45000   python312 C (export symbols)       C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\python312.dll
+00007ffe`6a920000 00007ffe`6a9f1000   turbojpeg_bc6e9febdb54f08d2514ec1d2e0cfadb   (deferred)             
+00007ffe`6b5c0000 00007ffe`6b64d000   msvcp140_a4c2229bdc2a2a630acdc095b4d86008   (deferred)             
+00007ffe`6b700000 00007ffe`6b76a000   uvc_bindings_cp312_win_amd64 C (export symbols)       C:\Users\Dom\AppData\Local\uv\cache\environments-v2\pyuvc-winusb-stream-0dba3c5abe6ba50d\Lib\site-packages\uvc\uvc_bindings.cp312-win_amd64.pyd
+00007ffe`92f20000 00007ffe`92f60000   _decimal   (deferred)             
+00007ffe`bcc70000 00007ffe`bcc91000   _ctypes    (deferred)             
+00007ffe`bd780000 00007ffe`bd79e000   _umath_linalg_cp312_win_amd64   (deferred)             
+00007ffe`bd8a0000 00007ffe`bd8b9000   pthreadVC2_137d7f94f2f57bf0d62cd100b155b534   (deferred)             
+00007ffe`bdab0000 00007ffe`bdadd000   libusb_1_0_1dac95d1eafcba057cf3df73dcf419bc   (deferred)             
+00007ffe`bdae0000 00007ffe`bdaf6000   _socket    (deferred)             
+00007ffe`be3d0000 00007ffe`be3dd000   WinUSB     (deferred)             
+00007ffe`be410000 00007ffe`be41b000   libffi_8   (deferred)             
+00007ffe`c2190000 00007ffe`c219c000   VCRUNTIME140_1   (deferred)             
+00007ffe`c21f0000 00007ffe`c221a000   _lzma      (deferred)             
+00007ffe`c2220000 00007ffe`c2236000   _bz2       (deferred)             
+00007ffe`cd010000 00007ffe`cd0b5000   MpOav      (deferred)             
+00007ffe`cd0c0000 00007ffe`cd0dd000   amsi       (deferred)             
+00007ffe`ce770000 00007ffe`ce77b000   _wmi       (deferred)             
+00007ffe`ced10000 00007ffe`ced19000   select     (deferred)             
+00007ffe`e0300000 00007ffe`e031e000   VCRUNTIME140   (deferred)             
+00007ffe`e1e80000 00007ffe`e1e8b000   VERSION    (deferred)             
+00007ffe`e3d10000 00007ffe`e3e05000   PROPSYS    (deferred)             
+00007ffe`e5560000 00007ffe`e5607000   uxtheme    (deferred)             
+00007ffe`e76f0000 00007ffe`e76ff000   hid        (deferred)             
+00007ffe`e7a80000 00007ffe`e7ab3000   IPHLPAPI   (deferred)             
+00007ffe`e8090000 00007ffe`e80ab000   kernel_appcore   (deferred)             
+00007ffe`e8720000 00007ffe`e8754000   USERENV    (deferred)             
+00007ffe`e8980000 00007ffe`e898c000   CRYPTBASE   (deferred)             
+00007ffe`e8b40000 00007ffe`e8b53000   MSASN1     (deferred)             
+00007ffe`e9040000 00007ffe`e9092000   Cfgmgr32   (deferred)             
+00007ffe`e90a0000 00007ffe`e90cf000   DEVOBJ     (deferred)             
+00007ffe`e92f0000 00007ffe`e931a000   bcrypt     (deferred)             
+00007ffe`e9320000 00007ffe`e9349000   profapi    (deferred)             
+00007ffe`e9410000 00007ffe`e958f000   CRYPT32    (deferred)             
+00007ffe`e95a0000 00007ffe`e99a1000   KERNELBASE   (deferred)             
+00007ffe`e99b0000 00007ffe`e9ada000   gdi32full   (deferred)             
+00007ffe`e9ae0000 00007ffe`e9b83000   msvcp_win   (deferred)             
+00007ffe`e9b90000 00007ffe`e9cdc000   ucrtbase   (pdb symbols)          C:\ProgramData\dbg\sym\ucrtbase.pdb\66A3E8DFB8B886146544529E6A6DD4F41\ucrtbase.pdb
+00007ffe`e9cf0000 00007ffe`e9d9c000   bcryptprimitives   (deferred)             
+00007ffe`e9e70000 00007ffe`e9e97000   win32u     (deferred)             
+00007ffe`e9ea0000 00007ffe`e9f22000   WINTRUST   (deferred)             
+00007ffe`e9f60000 00007ffe`ea0fa000   ole32      (deferred)             
+00007ffe`ea100000 00007ffe`ea131000   IMM32      (deferred)             
+00007ffe`ea140000 00007ffe`ea16b000   GDI32      (deferred)             
+00007ffe`ea350000 00007ffe`ea41b000   KERNEL32   (pdb symbols)          C:\ProgramData\dbg\sym\kernel32.pdb\E8C3A48CAC7EB60D8781D8C10020C44F1\kernel32.pdb
+00007ffe`ea420000 00007ffe`ea8a7000   SetupAPI   (deferred)             
+00007ffe`ea8b0000 00007ffe`ea958000   sechost    (deferred)             
+00007ffe`ea9b0000 00007ffe`eaa6c000   ADVAPI32   (deferred)             
+00007ffe`eaa80000 00007ffe`eab01000   WS2_32     (deferred)             
+00007ffe`eb670000 00007ffe`eb749000   OLEAUT32   (deferred)             
+00007ffe`eb750000 00007ffe`ebadb000   combase    (deferred)             
+00007ffe`ebae0000 00007ffe`ebb8f000   clbcatq    (deferred)             
+00007ffe`ebd20000 00007ffe`ebef7000   USER32     (deferred)             
+00007ffe`ec010000 00007ffe`ec0b9000   msvcrt     (deferred)             
+00007ffe`ec0c0000 00007ffe`ec1d8000   RPCRT4     (deferred)             
+00007ffe`ec220000 00007ffe`ec488000   ntdll      (pdb symbols)          C:\ProgramData\dbg\sym\ntdll.pdb\C031D45B0DA18A6E74D06ED6AB2DD9E11\ntdll.pdb
+
+Unloaded modules:
+00007ffe`cfc50000 00007ffe`cfc65000   wbemsvc.dll
+00007ffe`cd1e0000 00007ffe`cd2d6000   fastprox.dll
+00007ffe`cca00000 00007ffe`cca12000   wbemprox.dll
+00007ffe`cd9c0000 00007ffe`cda46000   wbemcomn.dll
+00007ffe`cfc50000 00007ffe`cfc65000   wbemsvc.dll
+00007ffe`cd1e0000 00007ffe`cd2d6000   fastprox.dll
+00007ffe`cca00000 00007ffe`cca12000   wbemprox.dll
+00007ffe`cd9c0000 00007ffe`cda46000   wbemcomn.dll
+00007ffe`cfc50000 00007ffe`cfc65000   wbemsvc.dll
+00007ffe`cd1e0000 00007ffe`cd2d6000   fastprox.dll
+00007ffe`cca00000 00007ffe`cca12000   wbemprox.dll
+00007ffe`cd9c0000 00007ffe`cda46000   wbemcomn.dll
+00007ffe`cfc50000 00007ffe`cfc65000   wbemsvc.dll
+00007ffe`cd1e0000 00007ffe`cd2d6000   fastprox.dll
+00007ffe`cca00000 00007ffe`cca12000   wbemprox.dll
+00007ffe`cd9c0000 00007ffe`cda46000   wbemcomn.dll
+00007ffe`be3d0000 00007ffe`be3dd000   WinUSB.dll
+00007ffe`e76f0000 00007ffe`e76ff000   hid.dll 
+00007ffe`ea420000 00007ffe`ea8a7000   SetupAPI.dll
+00007ffe`be3d0000 00007ffe`be3dd000   WinUSB.dll
+00007ffe`e76f0000 00007ffe`e76ff000   hid.dll 
+00007ffe`ea420000 00007ffe`ea8a7000   SetupAPI.dll
+00007ffe`be3d0000 00007ffe`be3dd000   WinUSB.dll
+00007ffe`e76f0000 00007ffe`e76ff000   hid.dll 
+00007ffe`ea420000 00007ffe`ea8a7000   SetupAPI.dll
+00007ffe`be3d0000 00007ffe`be3dd000   WinUSB.dll
+00007ffe`e76f0000 00007ffe`e76ff000   hid.dll 
+00007ffe`ea420000 00007ffe`ea8a7000   SetupAPI.dll
+00007ffe`be3d0000 00007ffe`be3dd000   WinUSB.dll
+00007ffe`e76f0000 00007ffe`e76ff000   hid.dll 
+00007ffe`ea420000 00007ffe`ea8a7000   SetupAPI.dll
+quit:
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\atlmfc.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\concurrency.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\cpp_rest.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\ObjectiveC.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\stl.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Data.Json.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Geolocation.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Sensors.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Media.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\windows.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\winrt.natvis'
+[camlock] released
