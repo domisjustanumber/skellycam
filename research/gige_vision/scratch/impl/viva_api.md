@@ -478,6 +478,7 @@ So the Aravis fake is useful for checking pixel formats and interoperability, bu
    - `get("GevSCPSPacketSize")` can be stale. Invalidate first.
 9. **Decode:**
    - Nothing is zero-copy, and `to_numpy()` on Bayer8 is about 3× slower than `frombuffer(payload())`.
+     > **Correction (2026-10-28):** about 3× on Windows (0.754 vs 0.281 ms, `t7_misc.win.log`) but about 6× on Linux (0.259 vs 0.043 ms, `t7_misc.docker.log`). See the table in section 7.
    - Formats with no converter (for example YUV422 variants, Bayer10/12 packed beyond those listed, vendor formats) come back as a flat `(N,) uint8`.
    - `pixel_format` names can be legacy (`RGB8Packed`). Compare codes.
    - Bayer CFA orientation was not validated.

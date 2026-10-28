@@ -71,13 +71,13 @@ p95 < 10% while the run was going, and system CPU < 10% in the 3 s windows befor
 |---|---|
 | system CPU before / after the run | 2.9-5.1% / 3.3-5.1% |
 | memory in use before / after | 35.6-37.9% / 35.6-37.8% |
-| background CPU during, mean / p95 / max | 2.0-4.0% / 2.9-7.2% / 2.9-11.2% |
+| background CPU during, mean / p95 / max | 2.0-4.1% (corrected 2026-10-28; was 2.0-4.0%) / 2.9-7.2% / 2.9-11.2% |
 | top background processes | before/after: PreSonusHardwareAccessService, Corsair.Service.CpuIdRemote64, MsMpEng, System, WmiPrvSE (each under 1%). During runs (1 s samples, `samples[].top_background`), the largest single values were: `System` 7.7% (c_record, t=41 s, when MSMF was writing files), MsMpEng 2.7%, VS Code 2.5%, firefox 1.5%. Only 2 of all samples had background above 8%: a_write t=116 s at 11.2% (three VS Code processes) and c_record t=41 s at 10.2% (`System`). |
 | verdict | **idle** for every run. `summarize_e2e` and `diag_check_shm_speed` ended in under 1 s (no sample during the run), but were idle before and after; neither produces a timing. |
 
 The 2026-10-25 run had system CPU of 11-64% just before each run (`results_provisional_20261025/*.json`, `env.system_cpu_pct_1s_before_run`).
 Second measure: system CPU minus the benchmark tree reached a mean of 9.1-10.3% in the heaviest runs (c_record and the 1080p mjpeg
-e2e runs), against 3.6-4.0% from the per-process sum. That gap grows with the benchmark's own load (5.5% at 1080p memcpy, 9-10% at
+e2e runs), against 3.6-4.0% from the per-process sum. That gap grows with the benchmark's own load (5.5-6.2% at 1080p memcpy (corrected 2026-10-28; was 5.5%), 9-10% at
 1080p mjpeg), so it most likely comes from kernel work the benchmark causes (disk writes of 2 GB per e2e run, page faults) and
 from sampling-window misalignment, not from other workloads. This is an inference, not a measurement.
 
@@ -94,7 +94,7 @@ from sampling-window misalignment, not from other workloads. This is an inferenc
 6. No step recorded machine load, so `run_with_load.py` and `summarize_load.py` were added. They also capture each command's output
    as `results/*_stdout.log`, which the old README did not document.
 7. Not changed, noted only: `bench_common.SCRATCH_TMP` is hard-coded to the 2026-10-25 session's scratch folder
-   (`bench_common.py` L23-27). It still works because the folder is created if it is missing. The 20.8 MB that bench_f left
+   (`bench_common.py` L24-28; corrected 2026-10-28, was L23-27). It still works because the folder is created if it is missing. The 20.8 MB that bench_f left
    there tonight was deleted after its sizes were logged in `results/bench_tmp_leftover_sizes_before_delete.txt`. Empty `c_rec_*` folders remain.
 
 No script hung at exit this time. Every run finished with its expected exit code: 0, except exit 1 for `check_shm_speed.py`
@@ -168,9 +168,9 @@ Change is (new - old) / old, or a plain difference where marked.
   The memcpy bracket (no decode cost) holds 59.97-60.00 fps with 0-3 of about 9,000 sensor frames never grabbed (3 idle 1080p runs: 0 / 0 here, 3 in the 2026-10-28 reproducibility re-run, `../reproducibility/rerun/baseline/results/e_e2e_summary.md`), and 720p mjpeg holds 60.00.
   (2026-10-28 revision: the loop-body arithmetic in this bullet's original reading was incomplete; the 1080p mjpeg loop body is about 15.8 ms (finalizer 'TOTAL FRAME PROCESSING TIME') plus about 2.5 ms of lockstep gate idle per frame, and removing `copy.copy` alone raises the rate to 58.8-59.0 fps; see `../revision/README.md`.)
 * **The UI now has a measurable cost on capture.** Without the UI consumer, 1080p mjpeg ran at 55.94 fps, against 53.56/53.57 fps with it.
-  This is only 1 no-UI run, so treat it as an indication. The 2026-10-25 run, under load, saw no difference (46.1 vs 44.0/46.8).
+  This is only 1 no-UI run in this re-run, so treat it as an indication (2026-10-28: a revision-stage repeat, `e2ev_head_1080p_mjpeg_noui_rep2`, gave 55.62 fps with 655 never grabbed, against 54.14 fps for HEAD with the UI in the same session; `results/e2ev_summary.md`). The 2026-10-25 run, under load, saw no difference (46.1 vs 44.0/46.8).
   The UI is still not the main limit: the decode-in-loop is.
-* **The 1080p UI build is about 9 ms per payload, not 11-14 ms.** That alone would allow about 110 payloads/s (no-sleep row). The SkellyCam
+* **The 1080p UI work (shm copy plus build) is about 9 ms per payload, not 11-14 ms.** (corrected 2026-10-28; was "The 1080p UI build is about 9 ms": 9.39 ms is the `total median`, shm copy 2.74 ms plus resize+JPEG+pack 6.59 ms, in `results/d_ui.md`.) That alone would allow about 110 payloads/s (no-sleep row). The SkellyCam
   relay runs `await_10ms()` and then the build in series in one loop ([`websocket_server.py` L189-212](https://github.com/freemocap/skellycam/blob/23ccbf208e43879bfc74fc01049e5af2a623933d/skellycam/api/websocket/websocket_server.py#L189-L212)).
   Sleep plus build per payload caps the rate at 46.0 payloads/s in `d_ui` and 36.6-40.8 in the e2e runs. The old statement "the build cost
   alone keeps the UI below 60 fps" does not hold on an idle machine.
@@ -214,7 +214,7 @@ alone: 1080p median 2.3 to 2.9 ms (memcpy mode) and 4.1 to 4.2 ms (mjpeg mode), 
 1080p cold medians: `get_data_by_index` (reused buffer) 0.50 ms, `get_latest_data` (reused) 0.53 ms, `get_latest_data`
 (allocating) 1.21 ms, `get_next_data` 0.56 ms, view only 0.03 ms. Multi-frame reads (5 cameras): `get_latest_multiframe` 2.42 ms,
 `get_images_by_frame_number` 6.15 ms (it allocates five records on every call because `_frame_recarray_cache` is never filled),
-5 views 0.06 ms. The 720p values are noisy: round medians vary 2 to 4x, as shown in the range column. There were no frame_number
+5 views 0.06 ms. The 720p values are noisy: round medians vary up to about 5x, as shown in the range column (corrected 2026-10-28; was "2 to 4x": `by_index_reused` ranged 0.228-1.064 ms, 4.7x). There were no frame_number
 mismatches in any style.
 
 ### (c) Record (`results/c_record.md`)
@@ -223,7 +223,7 @@ written (each file was decoded and counted).
 
 | size | 5 cameras, paced at 60 fps for 20 s | record_frame median / p99 / max (ms) | summed process CPU (100 = 1 logical CPU) | release() |
 |---|---|---|---|---|
-| 720p | 60.0 fps per camera, 0 writes over 16.7 ms | 0.97 / 2.36 / 4.22 | 380% (~74-84% per camera) | 0.08 s |
+| 720p | 60.0 fps per camera, 0 writes over 16.7 ms | 0.97 / 2.36 / 4.22 | 380% (~70-84% per camera; corrected 2026-10-28, was ~74-84%) | 0.08 s |
 | 1080p | 60.0 fps per camera, 0 writes over 16.7 ms | 2.18 / 5.22 / 9.28 | **1169%** (~225-244% per camera) | 0.09-0.10 s |
 
 When unthrottled, `write()` returns faster than the encoder finishes: `release()` then takes 1.8 to 2.2 s with 5 cameras and
@@ -243,7 +243,7 @@ server-side UI work.
 | 1080p | FreeMoCap UI (`get_images_by_frame_number`) | 37.9 | 7.29 | 8.07 | 15.43 / 27.82 | 337 |
 | 1080p | SkellyCam UI, no sleep (maximum rate) | 70.7 (58.2 distinct) | 3.96 | 9.67 | 13.81 / 21.88 | 337 |
 
-At 1080p the build cost alone (about 11 to 14 ms of the main event loop per payload) keeps the UI below 60 fps. In the full
+At 1080p the build cost alone (about 11 to 14 ms of the main event loop per payload) keeps the UI below 60 fps. (Corrected 2026-10-28: 10.90-13.81 ms is the total of shm copy plus build; the build alone was 7.24-9.67 ms.) In the full
 e2e run the UI reached 34.8 to 41.0 payloads/s at 1080p and 55 to 60 at 720p (`e_e2e_summary.md`).
 
 ### (e) End-to-end, real stack (`results/e_e2e_summary.md`)

@@ -15,6 +15,7 @@ I read SkellyCam at commit `23ccbf20` (branch `development`) and did not modify 
 - **No barrier between grab and retrieve.** The docstring says the split lets all cameras grab before any of them retrieves (`opencv_get_frame.py:30-33`), but the code has no cross-camera ordering between the two calls. The only cross-camera coordination is the frame-count gate, the start-up `all_ready` wait, and a wait for all cameras at recording start (`handle_recording_updates.py:45-47`).
 - `frame_number` is a host-side count of successful grabs (`opencv_get_frame.py:79`), not a device frame ID.
 - `check_framerate_reset` assumes 30 fps and re-creates the `cv2.VideoCapture` when frames run slow (`opencv_camera_loop.py:150-170`).
+  > **Correction (2026-10-28):** it acts only once frame_number > 100, and only after more than 30 consecutive slow iterations (> 66.7 ms). It times post-retrieve processing from `previous_tik` (set at :82), not the true inter-frame interval (verifier A5).
 
 ## 2. CameraConfig and backend choice
 - **Fields:** `camera_id`, `camera_index` (used to open `cv2.VideoCapture` and must be unique), `camera_name`, `use_this_camera`, `resolution`, `color_channels=3`, `pixel_format="RGB"` (marked TODO and unused), `exposure_mode`, `exposure` (OpenCV log2 units), `framerate`, `rotation`, `capture_fourcc="MJPG"`, `writer_fourcc="X264"` (`camera_config.py:63-123,375-390`).
@@ -29,6 +30,7 @@ I read SkellyCam at commit `23ccbf20` (branch `development`) and did not modify 
   - JPEG encode for the UI (`frontend_payload_bytearray.py:142`);
   - `cv2.VideoWriter` with colour on by default, and PyAV with `bgr24` (`video_recorder.py:124-130`; `pyav_video_writer.py:27`);
   - recording validation compares the decoded video shape to `config.image_shape`. For mono that is `(H,W)` while the buffer holds `(H,W,1)` (verified), so mono doesn't work end to end.
+    > **Correction (2026-10-28):** the verifier (A9) found that the JPEG/UI path handles (H,W,1) fine, so the first item above is wrong. Mono fails earlier, in the writers: `cv2.VideoWriter` writes 0 frames ('expected 3 channels but got 1') and PyAV `bgr24` raises ValueError. The finalizer's first-frame read therefore fails before the shape comparison is reached.
 - Each camera gets a 1 GiB ring buffer (`ring_buffer_shared_memory.py:35-45`). Measured depth: 388 frames at 1280×720, 71 at 2448×2048.
 
 ## 4. Device detection

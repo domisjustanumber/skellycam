@@ -120,7 +120,7 @@ Rank 8, MJPEG passthrough, is a separate project.
 - **Clock error does affect the absolute rate:** at 48 Hz, ±0.5% is ±0.3 s per minute or ±18 s per hour (computed). The plan's fix is to measure the real rate on the host and wire the same pulse into other instruments.
 - **Clock error can break sync near the camera's re-trigger lockout.** MoCapSTR reports that the InnoMaker ignores pulses within ~18–20 ms of a triggered frame (their measurement, not ours). A resonator 0.5% fast turns a nominal 50 Hz into a 19.90 ms period, but at 48 Hz the period is 20.73 ms, hence the 48 Hz default (computed).
 - **Design:** "skellysync" firmware on Timer1 fast PWM mode 14, giving cycle-exact edges on D9 and D10 at −8 ppm quantization for 48 Hz. Trigger mode is verified by stopping the pulses and checking that frames stop. v1 targets the InnoMaker on Windows and Linux at about 10 engineer-weeks. The time from FSIN edge to exposure start is unknown, possibly up to ~1 ms.
-- **Five existing skellycam bugs (P1–P5) block sync work** and are worth fixing anyway. P1: the config round-trip drops fields. P2: a config-apply failure kills the backend. P5: pause and unpause have no timeout. These three are confirmed in code. P3, the 30-retry grab give-up, is partly confirmed. P4, the `to_json` breakage, is plausible but has not been run.
+- **Five existing skellycam bugs (P1–P5) block sync work** and are worth fixing anyway. P1: the config round-trip drops fields. P2: a config-apply failure kills the backend. P5: pause and unpause have no timeout. P3: after 30 failed grabs a repeated frame number makes the recorder raise and kill the backend. These four are confirmed by reading the code. P4, the `to_json` breakage, is plausible but has not been run.
 
 **Comparison (condensed, on paper only).**
 
@@ -185,7 +185,7 @@ Rank 8, MJPEG passthrough, is a separate project.
 
 Ordered by value for effort. Studies are tagged in brackets.
 
-1. **Fix the known skellycam bugs now.** These are the ring buffer's ranks 9, 3, 4, 5 and 2 and the Arduino plan's P1–P5, with the overlaps merged: the copy in put_data, the stale frame after 30 failed grabs, config-apply killing the backend, the dropped config fields, no pause timeout, silent sensor drops, and crash-tolerant containers. Trace P3 and run P4 first. *[frame_ring_buffer, arduino_sync]*
+1. **Fix the known skellycam bugs now.** These are the ring buffer's ranks 9, 3, 4, 5 and 2 and the Arduino plan's P1–P5, with the overlaps merged: the copy in put_data, the stale frame after 30 failed grabs, config-apply killing the backend, the dropped config fields, no pause timeout, silent sensor drops, and crash-tolerant containers. Run P4 on a real recording first. *[frame_ring_buffer, arduino_sync]*
 2. **Prototype MJPEG passthrough on Windows** through MF IMFSourceReader (or PyAV DirectShow), and confirm that FreeMoCap reads MKV or fragmented MP4. *[usb_cameras, frame_ring_buffer]*
 3. **Test with real 60 fps cameras.** Measure 5 × 60 fps capture CPU, USB bandwidth admission and drop-counter accuracy, and run a 10+ minute recording to size the ring. *[frame_ring_buffer, usb_cameras]*
 4. **Add a `CameraBackend` protocol and a `device_timing` record**, then feed UVC PTS (MF metadata) into it. This unblocks both GigE and hardware-sync work. *[gige_vision, usb_cameras]*
@@ -207,7 +207,6 @@ Ordered by value for effort. Studies are tagged in brackets.
    *[overnight_run_20261027]*
 10. **Housekeeping:**
     - copy the Arduino scratchpad research into the repo;
-    - fix the stale lines in `frame_ring_buffer/study_state/RESUME.md` (rank 13, run end time);
     - finish the empty sections in the USB and GigE Claude Docs.
 
     *[arduino_sync, frame_ring_buffer, usb_cameras, gige_vision]*

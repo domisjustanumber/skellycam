@@ -1,6 +1,6 @@
 # GigE Vision support: resume guide
 
-Paused 2026-10-25 ~15:37 EST at the user's request. Nothing is committed.
+Paused 2026-10-25 ~15:37 EDT (UTC−4) at the user's request (corrected 2026-10-28; was "EST"). On 2026-10-28 this folder was committed on branch `dom/research` in commit dba82026 (corrected 2026-10-28; was "Nothing is committed.").
 
 **Moved 2026-10-28.** This folder is now `research/gige_vision/` (it was `plans/gige-vision/`). At Dom's request the stand-alone hardware tests also moved out of the skellycam package, from `skellycam/system/diagnostics/gige/` to `research/gige_vision/hardware_tests/`, and their pytest moved from `skellycam/tests/test_gige_diagnostics_selftest.py` to `research/gige_vision/hardware_tests/tests/test_gige_diagnostics_selftest.py`. The import name `skellycam.system.diagnostics.gige` no longer exists, and beartype (`beartype_this_package`) no longer checks these scripts. The future SkellyCam GigE backend plan should decide where shipped diagnostics live (back inside the package, or kept here as research tooling). Run the selftests from the repo root with `python -m pytest research/gige_vision/hardware_tests/tests -q`.
 
@@ -21,7 +21,7 @@ Every claim needs a link to code, a test or docs. No cameras are available here,
 | Research: 9 topics, each adversarially fact-checked | Done | `scratch/digest/*.md` (summary, verifier corrections, missed points), `scratch/digest/*.claims.json`, full notes in `scratch/research/*.md` |
 | Report (Claude Doc) | 4 of 8 sections filled | https://claude.ai/artifact/SPKjXcBjS5kJmGwtbXGPWZ |
 | viva-genicam API reference (tested on Windows + Docker) | Done | `scratch/impl/viva_api.md`, `scratch/impl/viva_api_example.py`, `scratch/impl/prep-viva-api.result.md` |
-| Stand-alone hardware test suite | Done, uncommitted | `hardware_tests/` + `hardware_tests/tests/test_gige_diagnostics_selftest.py` (moved out of `skellycam/system/diagnostics/gige/` on 2026-10-28); log in `scratch/impl/hwtests.md`, `scratch/impl/prep-hardware-tests.result.md` |
+| Stand-alone hardware test suite | Done; committed 2026-10-28 on branch `dom/research` (dba82026) (corrected 2026-10-28; was "Done, uncommitted") | `hardware_tests/` + `hardware_tests/tests/test_gige_diagnostics_selftest.py` (moved out of `skellycam/system/diagnostics/gige/` on 2026-10-28); log in `scratch/impl/hwtests.md`, `scratch/impl/prep-hardware-tests.result.md` |
 | SkellyCam GigE backend (Python) | **Not started**: the agent was interrupted before changing any tracked file | (to be created under `skellycam/core/camera/gige/`) |
 | UI pass-through | Not started | `skellycam-ui/` |
 | Adversarial review (3 lenses) + fix pass | Not started | |
@@ -44,9 +44,9 @@ A diagram of the PTP and scheduled-action flow was also planned for the PTP sect
 ## Key findings (verified)
 
 - **The premise needs correcting.** IEEE 1588 PTP and scheduled action commands came in **GigE Vision 2.0 (2011)**. GigE Vision 3.0 (May 2026) adds optional RDMA/RoCEv2 streaming (GVRSP, 10G and up) and larger control packets. "Single cable" means PoE plus PTP plus scheduled action commands. PTP is optional in every version: check GVCP capability register 0x0934, bits 0x00080000 and 0x00020000.
-- **Frames arrive uncompressed:** raw PFNC Bayer or Mono over GVSP/UDP. Compressed payload types (JPEG/J2K/H.264) exist but are rare, and no open-source stack decodes them.
+- **Frames arrive uncompressed:** raw PFNC Bayer or Mono over GVSP/UDP. Compressed payload types (JPEG/J2K/H.264) exist but are rare, and none of the open-source stacks checked (Aravis, Harvesters, pyGigEVision, viva-genicam) decodes them (corrected 2026-10-28; was "no open-source stack decodes them").
 - **PTP sync** = PTP clock sync (BMCA elects a camera grandmaster) + scheduled `ACTION_CMD` (0x0100, flag 0x80, 64-bit time) or a vendor PTP free-run mode, or post-hoc pairing by the leader timestamp.
-- **Chosen library: viva-genicam 0.10.0** (MIT, Rust, Python wheels for win_amd64, macOS arm64 and manylinux x86_64). It is the only open-source library that sends scheduled action commands. Its `FakeGigeCamera` works natively on Windows.
+- **Chosen library: viva-genicam 0.10.0** (MIT, Rust, Python wheels for win_amd64, macOS arm64 and manylinux x86_64). It is the only open-source library found that sends scheduled action commands (corrected 2026-10-28; was "the only open-source library"). Its `FakeGigeCamera` works natively on Windows.
   - Gaps: no PTP helpers, no SO_RCVBUF control from Python, a fixed 4-frame drop-oldest queue, and no open-by-IP.
   - Fallback: telegenic (Apache-2.0, no action commands).
 - **Rejected options:**
@@ -85,7 +85,7 @@ The workflow resume cache (`resumeFromRunId`) only works inside the original Cla
 
 ## Not part of this work
 
-These untracked folders (under `research/` since 2026-10-28) came from other sessions; this GigE work did not create them:
+These folders (under `research/` since 2026-10-28, and committed with this one in dba82026) came from other sessions; this GigE work did not create them (corrected 2026-10-28; was "These untracked folders"):
 
 - `research/arduino_sync/` (was `plans/arduino-sync-PLAN.md`)
 - `research/usb_cameras/`

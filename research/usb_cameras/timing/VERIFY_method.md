@@ -100,7 +100,7 @@ The step A numbers reproduce `flash_analysis.json` exactly.
   alternates by about ±0.27 ms, and the counter scores better on MAD (320 vs 501 us). That suggests the alternation
   is not real exposure timing, but it is within the GT floor.
 - The gamma used matters more than the source. With gamma 1.0, every PTS source scores 1.7 ms; with 3.0 they score
-  1.05 to 1.18 ms.
+  1.05 to 1.22 ms (independent GT; corrected 2026-10-28; was 1.05 to 1.18 ms, which left out the C922 SCR variants at 1.22 ms).
 - The `per_frame` numbers for host_arrival (2.5 ms) are biased by self-selection: frames whose window misses the
   transition are dropped. The synthetic test shows the same effect, recovering 2.38 ms for an injected 4.6 ms. The
   claim correctly used the `vs_ground_truth` numbers (4.50 / 4.66 ms).
@@ -128,7 +128,7 @@ frames are better judged from PTS slots, which show 0 gaps and slot == seq for b
 ## 6. Cross-camera agreement ("offsets agree to 0.02 ms")
 
 - The numbers quoted (-52.08 / -52.10) are the coarse correlation offsets, searched on a **0.02 ms grid**.
-- The GT median offsets differ by 0.064 ms, CI95 [-0.10, 0.27] (flash_analyze GT), or by 0.19 ms, CI95 [-0.04, 0.32]
+- The GT median offsets differ by 0.064 ms, CI95 [-0.11, 0.26] (flash_analyze GT; corrected 2026-10-28; was [-0.10, 0.27]), or by 0.19 ms, CI95 [-0.04, 0.32]
   (independent GT).
 - host_arrival also agrees (0.10 ms, but CI95 of about ±2.5 ms), so this agreement does not single out the best
   source.

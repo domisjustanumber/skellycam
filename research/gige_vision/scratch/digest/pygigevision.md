@@ -33,8 +33,10 @@
    - With Linux default buffers: Mono8 640×480@30 gave 1 of 43 frames complete, and Mono16 gave 0 of 49.
    - Cause: the 16 MB `SO_RCVBUF` request is capped to 425,984 bytes, and the library silently ignores that ([gvsp.py#L347-L351](https://github.com/ladisk/pyGigEVision/blob/2de253135b8766c1eb752226539a16b810a1cf0f/pyGigEVision/gvsp.py#L347-L351)). Its docs do mention raising the OS buffer.
    - Aravis on the same fake camera got 91/91 and 82/82 complete.
+     > **Correction (2026-10-28):** not like-for-like. With Docker's default CAP_NET_RAW, Aravis 0.8.26 used its PF_PACKET ring socket. On its plain UDP path (`--cap-drop NET_RAW`) the verifier got 81/86 (Mono8), 73/90 (Mono16) and 79/89 (RGB8) complete (C9).
    - With a 32 MB buffer forced through `SO_RCVBUFFORCE`, pyGigEVision got 100% complete frames.
 3. **BayerRG8 and RGB8 frames come back wrong.** Both arrive as uint16 arrays of 614,400 bytes (expected 307,200 and 921,600) and are never marked complete.
+   > **Correction (2026-10-28):** 'never marked complete' is true for BayerRG8 only. With a forced 32 MB buffer, the verifier got RGB8 frames flagged complete=True (89/89) although they were truncated to 614,400 bytes of uint16. That is silent corruption, not 'never complete' (C6).
 4. **Throughput, one camera, 32 MB buffer:**
    - 1920×1080@100 with 1500-byte packets: 197 MB/s at about 49% of one core.
    - 2048×2048@60 with 9000-byte packets: 248 MB/s at about 21% of one core.

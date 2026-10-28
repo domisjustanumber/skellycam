@@ -77,6 +77,7 @@ I counted node types in real camera XMLs (from telegenic's test data):
 **Buffer limits by OS:**
 - macOS caps buffers at `kern.ipc.maxsockbuf`, default 8 MiB ([xnu socketvar.h L193](https://github.com/apple-oss-distributions/xnu/blob/f6217f891ac0bb64f3d375211650a4c1ff8ca1ea/bsd/sys/socketvar.h#L193)).
 - Windows' default was 64 KiB here. Vendors ship NDIS filter drivers (Windows only) to cut CPU load ([Basler docs](https://docs.baslerweb.com/pylon-software-suite)). A from-scratch client only gets the plain socket path.
+  > **Correction (2026-10-28):** the Basler page does not say "NDIS", and "only the plain socket path" is overstated. A from-scratch client cannot use vendor kernel drivers, but on Linux it can go beyond recvfrom, for example with PF_PACKET RX_RING as Aravis does (verifier C19).
 
 ## Options and effort (person-weeks)
 | Option | Effort | Main risks |
@@ -88,6 +89,8 @@ I counted node types in real camera XMLs (from telegenic's test data):
 | (c) C++ with nanobind/pybind11 plus the EMVA GenApi library | 9–14 | native build matrix, licensing |
 
 Telegenic (Apache-2.0, 2.1.0, 2026-10-20) and viva-genicam (MIT, 0.10.0, 2026-10-17) are both Rust with Python bindings and already on PyPI. Telegenic lacks ACTION_CMD.
+
+> **Correction (2026-10-28):** in row (b′) of the table above, the first-release dates are in the wrong order for the names. viva-genicam was first released in 2026-04 (crates.io 2026-04-11, PyPI 2026-04-14) and telegenic in 2026-06 (crates.io 2026-06-13, PyPI as telegenicam 2026-06-21) (verifier missed point).
 
 ## Open questions
 

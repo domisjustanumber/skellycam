@@ -1,7 +1,7 @@
 # Arduino FSIN hardware sync — plan of action
 
 Date: 2026-10-25. Scope: skellycam (backend, skellycam-ui, docs), plus the freemocap and freemocap-ui changes it needs.
-Source: a review of [MoCapSTR](https://github.com/ZClassified/MoCapSTR) v1.5.x (firmware 1.5.0), research on Arduino Nano/Uno clock accuracy, and a map of skellycam's integration points. Research findings and code claims were checked by independent reviewers. Status: draft, not yet reviewed by a maintainer.
+Source: a review of [MoCapSTR](https://github.com/ZClassified/MoCapSTR) v1.5.x (firmware 1.5.0), research on Arduino Nano/Uno clock accuracy, and a map of skellycam's integration points. Research findings and code claims were checked by AI agents in the same workflow, not by a person: two verifiers checked the clock research (the hardware verifier also saw the UVC trigger report), and two critiques checked the draft against skellycam's code and from a hardware angle (corrected 2026-10-28; was "checked by independent reviewers"). Status: draft, not yet reviewed by a maintainer.
 
 ## TL;DR
 
@@ -12,11 +12,12 @@ Source: a review of [MoCapSTR](https://github.com/ZClassified/MoCapSTR) v1.5.x (
 - **No board in the Nano or Uno family has a TCXO.** Genuine boards use a Murata CSTCE16M0V53 ceramic resonator (about ±0.5% initial, ±1% worst case). Clones may have a ±20–100 ppm crystal or a resonator.
 - **Uno R4 and Nano Every are unsupported.** They have no ATmega328P Timer1.
 - **The firmware edges come from hardware.** Our firmware "skellysync" generates edges with Timer1 compare outputs on D9/D10, so they are cycle-exact. It also counts pulses and speaks a superset of MoCapSTR's serial protocol. Nothing is copied from the GPL source.
-- **Four prerequisite fixes must land before any sync code.** Each is a bug that exists today:
+- **Five prerequisite fixes (P1–P5, §5.1) must land before any sync code** (corrected 2026-10-28; was "Four", which left out P5). Each is a bug that exists today:
   1. The config round-trip drops non-hardware fields.
   2. An apply failure kills the backend.
   3. A starved grab records a duplicate frame and kills the backend.
   4. `RecordingTimestampsStats.to_json` is broken.
+  5. `pause()` and `unpause()` wait with no timeout, so one camera that never pauses (or never unpauses) hangs the caller.
 - **Effort:** v1 is InnoMaker OV9281 on Windows and Linux, about 10 engineer-weeks including a 1-week hardware spike (M0).
 
 ---
@@ -30,18 +31,18 @@ Source: a review of [MoCapSTR](https://github.com/ZClassified/MoCapSTR) v1.5.x (
 | Crystal, 20 ppm | ≈0 | 1.2 ms | 72 ms |
 | TCXO, 2 ppm (not on any Nano/Uno) | ≈0 | 0.12 ms | 7.2 ms |
 
-- **Temperature.** The resonator moves about 8.7 ppm/°C, and the board warms up after it is plugged in. Pulse indices are therefore assigned **locally** (§4.6), not from one straight-line fit over the whole take.
+- **Temperature.** The resonator moves about 8.7 ppm/°C (one Pro Mini with a resonator of unspecified make, measured by a third party using the AVR's ±10 °C internal temperature sensor, so approximate; corrected 2026-10-28, was stated as a general resonator figure), and the board warms up after it is plugged in. Pulse indices are therefore assigned **locally** (§4.6), not from one straight-line fit over the whole take.
 - **Absolute rate.** It matters only if something uses `frame_index / nominal_fps`, or if other devices (audio, EMG, force plates) are aligned only at the start. The host fits the real rate from its `perf_counter_ns` frame stamps (±30–50 ppm host clock) and from the protocol-2 `<SYNC>` counter. For other instruments, route the same TTL edge into their sync input.
 - **Lockout.**
   - +0.5% at 48 Hz gives a 20.73 ms period, which still clears the 20 ms lockout.
   - At a nominal 50 Hz, a fast resonator gives 19.9 ms. Cameras could then reject *different* pulses.
   - M0 measures the real lockout against stream fps, exposure and resolution.
 - **Inter-camera skew** (FSIN edge to exposure start) is **unknown and could be up to about 1 ms**. The bridge firmware may gate the trigger to its own timing. M0 and §7 measure it.
-- **Baud rate.** 115200 baud at 16 MHz with U2X is +2.1% off. Even combined with a −0.5% resonator this stays under the 8N1 limit. Keep 115200 for legacy compatibility, and check it on the clone set.
+- **Baud rate.** 115200 baud at 16 MHz with U2X is +2.1% off. Even combined with a +0.5% (fast) resonator, about +2.6% in total, this stays under the 8N1 limit (corrected 2026-10-28; was "combined with a −0.5% resonator": a slow resonator lowers the total to about +1.6%, so the fast case is the one to check). Keep 115200 for legacy compatibility, and check it on the clone set.
 
 ## 2. Scope
 
-| v1 | Later (M6) |
+| v1 | Later (after v1; corrected 2026-10-28, was "Later (M6)": none of these items is in §9's M6, which is docs, packaging and release only) |
 |---|---|
 | InnoMaker U20CAM-9281M. Trigger is UVC `CT_FOCUS_AUTO`. FSIN is an opto input, about 19 mA at 5 V, rising edge. | macOS (AVFoundation has no UVC controls); openpnp-capture fork IOKit path |
 | Windows DSHOW and Linux V4L2 | Arducam (AE-priority control) |
@@ -109,7 +110,7 @@ Source: a review of [MoCapSTR](https://github.com/ZClassified/MoCapSTR) v1.5.x (
 |---|---|
 | Direct from ATmega pin (about 19 mA each; pins are characterised at 20 mA) | **1 per pin**, so 2 cameras on D9 + D10 |
 | ULN2803/ULN2003 low-side sink: FSIN+ to +5 V, FSIN− to the output (about 13 mA) | 7–8 |
-| 74AHCT541 or 74ACT541 (±24 mA per output), series R sized to budget | 4–6 |
+| 74ACT541 (±24 mA per output), series R sized to budget (corrected 2026-10-28; was "74AHCT541 or 74ACT541": the 74AHCT541 is rated only ±8 mA at 5 V, too little for a ~19 mA FSIN) | 4–6 |
 | One NPN or N-MOSFET per camera | any |
 
 - Not a 74HCT541: its outputs are rated ±6 mA, with a 70 mA package limit.
@@ -331,7 +332,7 @@ Source: a review of [MoCapSTR](https://github.com/ZClassified/MoCapSTR) v1.5.x (
 - **Pulse counter:** now counts in COMPA with a `tick_base`, and BURST and STOP are decided in COMPA, because the TOV1 count and stop logic were racy and wrong after rate changes.
 - **Live changes:** RATE and PULSE are refused while running, because live prescaler or period changes glitch and risk the lockout.
 - **LED bar:** moved to Timer2 with a configurable offset, because OCR1B is busy and the exposure window is unmeasured.
-- **Electrical:** fixed to 1 camera per pin; the buffer is now ULN2803 or 74AHCT541 instead of 74HCT541 (6 mA), and D2 is single-camera only.
+- **Electrical:** fixed to 1 camera per pin; the buffer is now ULN2803 or 74ACT541 instead of 74HCT541 (6 mA) (corrected 2026-10-28; was 74AHCT541, which is rated only ±8 mA), and D2 is single-camera only.
 - **Serial open:** reset-on-open is the default with a 3.5 s banner wait, the full config is always re-sent, and EEPROM autostart is dropped, because DTR suppression is unreliable.
 - **Port keying:** falls back to VID:PID plus location, with Linux brltty and ModemManager docs, because CH340 boards have no serial number.
 - **Legacy parsing:** the 3-line FPS reply and per-command terminal lines are handled, timeouts resync with PING, and protocol 2 gets tags.

@@ -50,6 +50,7 @@ viva-genicam 0.10.0 works for a SkellyCam backend on Windows and Linux. Discover
   - `block_id` is 16-bit and wraps.
   - `ts_dev` is the raw device timestamp in ticks.
   - `to_numpy()` and `payload()` each make one copy; nothing is zero-copy. For Bayer8, `np.frombuffer(payload())` is about 3× faster than `to_numpy()`.
+    > **Correction (2026-10-28):** about 3× on Windows (0.754 vs 0.281 ms) and about 6× on Linux (0.259 vs 0.043 ms) (`scratch/research/viva-api-tests/t7_misc.win.log`, `t7_misc.docker.log`).
 - **Actions:**
   - `vg.send_action(dk, gk, gm, scheduled_time=None, destination="255.255.255.255", timeout_ms=200)` returns `AckSummary(sent, acks)`.
   - It always blocks for `timeout_ms`; `timeout_ms=0` returns immediately and the command is still delivered.

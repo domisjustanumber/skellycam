@@ -28,6 +28,7 @@ Code references are from [core.py @1.4.3](https://github.com/genicam/harvesters/
 - **Chunk data:** it is attached automatically to `remote_device.node_map` on each fetch ([L2327-L2377](https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/src/harvesters/core.py#L2327-L2377)). I confirmed this with viky.
 - **Padding bug:** at [L974](https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/src/harvesters/core.py#L974) the result of `numpy.delete` is thrown away, so line padding is not stripped.
 - **Multi-camera:** create one ImageAcquirer per device ([upstream test](https://github.com/genicam/harvesters/blob/383494e36ebb80e2daa271ac0e980dde2093970c/src/harvesters/test/test_harvester_core.py#L162-L200)). A camera visible through several network cards is listed once per card, so de-duplicate by serial number. Otherwise opening the duplicate fails because the first handle has exclusive control (observed in testing).
+  > **Correction (2026-10-28):** the verifier reproduced this only with viva_gentl, which creates one GenTL interface per host NIC, loopback included. Opening the second entry failed with an IoException (GVCP open timeout), and `Harvester.create()` by serial raised ValueError 'multiple devices found'. That 'exclusive control' is the cause is an inference, and vendor producers are untested (`hv-multicam-dupes`).
 
 ## GIL test (run4)
 I fetched at 25 fps in a background thread and measured an unrelated Python thread:
@@ -52,10 +53,12 @@ I fetched at 25 fps in a background thread and measured an unrelated Python thre
   - Since 3.0.0, third-party devices need a licence: "an overlay will be added to each image once 200 have been captured" ([versionInfo](https://static.matrix-vision.com/mvIMPACT_Acquire/3.7.2/versionInfo.txt)).
 - **Basler:** the EULA says it may be used "solely ... to operate a BASLER camera product", so it is vendor-locked.
 - **Baumer GAPI:** vendor-neutral for GigE ([wiki](https://github.com/genicam/harvesters/wiki), [rc_genicam_api#8](https://github.com/roboception/rc_genicam_api/issues/8)). The 2019 EULA is permissive.
+  > **Correction (2026-10-28):** rc_genicam_api#8 does not demonstrate third-party streaming through this producer. The 2018 statement ('should work with all standard GigE Vision 2.0 cameras') came from the rc_genicam_api maintainer, not an identified Baumer engineer, and the thread does not say which producer streamed the Point Grey camera. The Harvesters wiki's 'non-proprietary for GEV' label is the only direct support for 'vendor-neutral' (verifier, `baumer-neutral`).
 - **Allied Vision Vimba X:** free, with a filter driver and macOS support. Whether its GigE layer accepts other vendors' cameras is unclear.
 - **Spinnaker:** supports Teledyne/FLIR/Dalsa cameras, including on Apple Silicon.
 - **Pleora eBUS:** unlicensed receive adds a watermark, and its datasheet does not mention a GenTL producer.
 - **Euresys Gigelink:** "any GigE Vision camera", paid add-on.
+  > **Correction (2026-10-28):** the product page does not say it is paid. It calls Gigelink an optional library (product code PC4400, 'Where to buy') (verifier, `euresys`).
 - **The Imaging Source:** a free producer, described as being for TIS cameras.
 - **viva_gentl.cti:** MIT licensed, for Linux, macOS arm64 and Windows, with no filter driver. Merged 2026-10-12 and tested here.
 

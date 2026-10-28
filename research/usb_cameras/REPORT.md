@@ -145,7 +145,7 @@ Ground truth is a full-screen black/white flash sequence on a 59.95 Hz monitor, 
 ## Where to look
 
 - [PROGRESS.md](PROGRESS.md): status by goal, machine state, hazards (no programmatic device restarts; LogiTune vetoes them), how to resume each unfinished piece.
-- [README.md](README.md): harness layout, conventions and per-frame log schema. (Its layout lists a `platform/` folder that does not exist; per-OS runners are under each area and `rust/platform/`.)
+- [README.md](README.md): harness layout, conventions and per-frame log schema. Per-OS runners are under each area and `rust/platform/`; there is no top-level `platform/` folder.
 - [results/windows/Gerald/RERUN_20261027.md](results/windows/Gerald/RERUN_20261027.md): the best single summary: claim → re-run → verifier verdict tables for every area, skipped tests, open harness bugs.
 - [mjpeg/](mjpeg/) and [mjpeg/RESULTS.md](mjpeg/RESULTS.md): goal 1 harness and full matrix; Linux/macOS drafts in `mjpeg/drafts/`.
 - [timing/](timing/): flash test (`build/`, `src/`, `scripts/`), [VERIFY_method.md](timing/VERIFY_method.md) (what the ground truth can and cannot show), Linux/macOS drafts.

@@ -10,7 +10,7 @@ plus the USB/UVC descriptor dump reused by the bandwidth and timing work.
 | `usbdesc.py` | any | tested (`--selftest`, `test_parsers.py`) | stdlib parser: device / configuration / BOS / string descriptors, UVC VC+VS class descriptors, per-alt-setting bandwidth |
 | `win_identity_dump.py` | Windows | tested | cfgmgr32 PnP properties + device interfaces + hub IOCTL descriptor read; writes `identity_dump.json`, `descriptors.json`, optional `snapshots/<label>.json` |
 | `win_api_names.py` | Windows | tested | names/paths seen by Media Foundation, DirectShow, FFmpeg dshow, OpenCV (cv2_enumerate_cameras), mapped back to the USB device; writes `api_names.json` |
-| `win_restart_test.py` + `win_restart_devices_admin.ps1` (+ `win_restart_revert_admin.ps1`) | Windows | tested | one UAC prompt; `pnputil /restart-device` on each composite parent under camlock, snapshot before/after, diff |
+| `win_restart_test.py` + `win_restart_devices_admin.ps1` (+ `win_restart_revert_admin.ps1`) | Windows | ran once (2026-10-25) with no restart achieved: LogiTune vetoed every `pnputil /restart-device` (exit 3010, Kernel-PnP 225 for all 4 cameras) and left DN_NEED_RESTART; do not use (see PROGRESS.md hazards) (corrected 2026-10-28; was "tested") | one UAC prompt; `pnputil /restart-device` on each composite parent under camlock, snapshot before/after, diff |
 | `win_stability_workflow.ps1` | Windows | user-run, unverified | snapshot before/after reboot, replug same port, move port; diff |
 | `linux_identity.py`, `linux_stability_workflow.sh` | Linux | DRAFT, unverified | sysfs + udev + /dev/v4l symlinks + VIDIOC_QUERYCAP + sysfs `descriptors`; same snapshot/diff workflow |
 | `macos_identity.py`, `macos_stability_workflow.sh` | macOS | DRAFT, unverified | AVFoundation (pyobjc) + `ioreg` IOUSBHostDevice; checks uniqueID == `0x<locationID><vid><pid>` |
@@ -36,7 +36,10 @@ Options added for the 2026-10-27 re-run (defaults unchanged):
 - `--exclude-vidpid vvvv:pppp` (repeatable) on `win_identity_dump.py`, `win_api_names.py`, `camera_identity.py`
   (or env `NAMING_EXCLUDE_VIDPID=vvvv:pppp,...`): the device is skipped before any property read or hub IOCTL, so no
   GET_DESCRIPTOR reaches it. `win_api_names.py` still lists it in the MF/DShow/FFmpeg/OpenCV enumerations (no stream).
-  On `libusb_identity.py` the device is never `libusb_open`ed (libusb's own bus enumeration still sees it).
+  On `libusb_identity.py` the device is never `libusb_open`ed, but libusb's own bus enumeration still sends hub IOCTLs to
+  its parent port, including a real GET_DESCRIPTOR(config) to the device's EP0, before any filter applies (per the vendored
+  libusb 1.0.27 source; the runs used 1.0.29; see `results/windows/Gerald/RERUN_20261027.md`, "Kiyo contact")
+  (corrected 2026-10-28; was "libusb's own bus enumeration still sees it").
 - `--out-dir DIR` on `win_api_names.py`, `test_parsers.py`, `test_macos_fake_ioreg.py`, `test_linux_fake_sysfs.py`
   so re-runs don't overwrite the cited result files; `camera_identity.py --out FILE` writes a result JSON with
   metadata and the in-process listing time.

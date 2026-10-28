@@ -20,7 +20,7 @@ A Workflow of ten AI agents did the work. They read the MoCapSTR source, researc
 
 v1 targets the InnoMaker OV9281 on Windows and Linux, at about 10 engineer-weeks.
 
-**The most useful result for skellycam right now has nothing to do with sync.** The plan lists five existing skellycam bugs (P1–P5) that it says must be fixed first. The code lines it cites match; P1, P2 and P5 are confirmed in the code, while P3 and P4 were only partly checked (see finding 10).
+**The most useful result for skellycam right now has nothing to do with sync.** The plan lists five existing skellycam bugs (P1–P5) that it says must be fixed first. The code lines it cites match; P1, P2, P3 and P5 are confirmed by reading the code, while P4 was only partly checked (see finding 10).
 
 ## Key findings
 
@@ -37,18 +37,18 @@ All items below come from a plan. "Measured" here only ever means measured by a 
 9. **One ATmega pin can drive one camera.** The OV9281's FSIN is an opto-isolated input that draws about 19 mA at 5 V. The plan's reference wiring options are:
    - 2 cameras driven directly (D9 + D10);
    - 7–8 cameras through a ULN2803 low-side sink;
-   - 4–6 cameras through a 74AHCT541 or 74ACT541 buffer;
+   - 4–6 cameras through a 74ACT541 buffer (±24 mA per output; the plan originally also listed 74AHCT541, which is rated only ±8 mA);
    - any number with one transistor per camera.
 
    A 74HCT541 is not suitable, because its outputs are rated ±6 mA. By these figures, MoCapSTR's 4-way splitter from a single pin needs a buffer. *Confidence: provisional (datasheet and vendor figures via the plan; not measured).* Source: [PLAN.md §4 Electrical](PLAN.md).
 10. **Five existing skellycam bugs block sync work (P1–P5).** Each was checked against the code for this report:
     - **P1.** `extract_config_from_cv2_capture` builds a fresh `CameraConfig` without `use_this_camera`, `capture_fourcc` or `writer_fourcc`, so those fields fall back to their defaults. *Confirmed in code* ([opencv_extract_config.py](../../skellycam/core/camera/opencv/opencv_helpers/opencv_extract_config.py) lines 35–47).
     - **P2.** `apply_camera_configuration` re-raises any exception as `FailedToApplyCameraConfigurationError`. `check_for_new_config` does not catch it, so it reaches the camera loop's `kill_everything()` at line 122. *Confirmed in code* ([opencv_apply_config.py](../../skellycam/core/camera/opencv/opencv_helpers/opencv_apply_config.py) lines 99–103, [check_for_new_config.py](../../skellycam/core/camera/opencv/opencv_helpers/check_for_new_config.py) lines 33–41, [opencv_camera_loop.py](../../skellycam/core/camera/opencv/opencv_camera_loop.py) line 122).
-    - **P3.** The grab retry loop gives up after `MAX_FAIL_COUNT = 30` failures and then carries on to publish and record. `frame_durations_seconds` is also appended inside the retry loop. *Partly confirmed in code* ([opencv_camera_loop.py](../../skellycam/core/camera/opencv/opencv_camera_loop.py) lines 24 and 72–86). The plan goes further: it says this records a duplicate frame number, which makes [video_recorder.py](../../skellycam/core/recorders/videos/video_recorder.py) raise (lines 149–157) and kills the backend. That chain was not traced end to end here.
+    - **P3.** The grab retry loop gives up after `MAX_FAIL_COUNT = 30` failures and then carries on to publish and record. `frame_durations_seconds` is also appended inside the retry loop. *Confirmed in code by static reading* ([opencv_camera_loop.py](../../skellycam/core/camera/opencv/opencv_camera_loop.py) lines 24 and 72–86). The loop exits after 30 failures without checking `frame_success`, the frame number only advances on a successful grab, and `VideoRecorder._validate_frame_number` ([video_recorder.py](../../skellycam/core/recorders/videos/video_recorder.py) lines 149–156) raises on the repeated number, which kills the backend (the same chain as the ring buffer's rank 3). It has not been reproduced on a camera (traced 2026-10-28).
     - **P4.** `RecordingTimestampsStats.to_json` falls back to `o.__dict__` for anything that is not a dataclass, list or dict. The plan says this breaks on numpy recarrays and `RecordingInfo`. *Plausible from the code; not run* ([recording_timestamp_stats.py](../../skellycam/core/timestamps/recording_timestamp_stats.py) lines 123–143).
     - **P5.** `pause()` and `unpause()` wait in a loop with no timeout. *Confirmed in code* ([camera_orchestrator.py](../../skellycam/core/camera_group/camera_orchestrator.py) lines 58–78). This is a risk of hanging rather than crashing.
 
-    Note: the plan's TL;DR says there are four prerequisite fixes and lists P1–P4. Its §5.1 table and milestone M1 list five (P1–P5). Source: [PLAN.md §5.1](PLAN.md).
+    Note: the plan's TL;DR said four prerequisite fixes while §5.1 and milestone M1 list five; the TL;DR was corrected to five on 2026-10-28. Source: [PLAN.md §5.1](PLAN.md).
 
 ## Techniques compared
 
@@ -70,7 +70,7 @@ The research preferred mode 15 because ICR1, unlike OCR1A, is not double-buffere
 |---|---|---|---|---|
 | Ceramic resonator (genuine Uno R3 / Nano V3) | ±0.5% initial (spec); −761 ppm on one Pro Mini | ±18 s (spec); 2.7 s (that unit) | Yes | Accepted; the host measures the real rate |
 | Crystal (some clones) | ±20–100 ppm typical | 72 ms at 20 ppm | Some clones | Free improvement, not required |
-| TCXO (e.g. DS3231 module) | ±2 ppm | 7.2 ms | No | Deferred to M6 as optional PPS/DS3231 calibration |
+| TCXO (e.g. DS3231 module) | ±2 ppm | 7.2 ms | No | Deferred until after v1 as optional PPS/DS3231 calibration (not part of any planned milestone) |
 | Uno R4 (RA4M1 HOCO) / Nano Every (internal RC) | ±1% / up to ±4% | — | — | Unsupported: no ATmega328P Timer1 |
 
 Sources: [PLAN.md §1, §2, §TL;DR](PLAN.md); scratchpad `timing_report.md` table and `verify.json`. The Nano Every's ±4% at 5 V is the verifier's correction.
@@ -102,14 +102,13 @@ The winner in each table is a design choice that still needs the M0 hardware spi
 - **The third-party clock data comes from a single unit.** The −761 ppm, 8.7 ppm/°C and 286 ppm wander figures all come from one warm Pro Mini, and its temperatures came from the AVR's ±10 °C internal sensor (scratchpad `verify.json`).
 - **The lockout is MoCapSTR's figure.** The ~18–20 ms window and the 50 fps cap come from MoCapSTR's own sweeps at 1280×720 and 640×400. MoCapSTR attributes it to the camera's bridge firmware. It has not been reproduced.
 - **The electrical figures are unmeasured.** Nobody has tested the ~19 mA FSIN current or the camera count for each wiring option.
-- **PLAN.md contradicts itself on the bug count.** Its TL;DR says four prerequisite fixes; the body lists five (P1–P5).
 - **Most of the intermediate research is not in the repo.** Only the clock-timing report (`timing_report.md`) and the verifier and critique output (`verify.json`) survive, in a temp scratchpad. The MoCapSTR deep read, the UVC trigger research, the skellycam code map and the first draft were not saved there.
 - **Code line references were valid on 2026-10-28** (commit `23ccbf20`) and will drift as the code changes.
 
 ## Proposed further investigation
 
 1. **Get a maintainer to review [PLAN.md](PLAN.md) and answer its six open questions (§11).** The most important are whether an InnoMaker-only v1 on Windows and Linux is acceptable, and whether the firmware should live in this repo. *Decides* whether the 10-week project goes ahead, and its scope.
-2. **Ship P1–P5 as standalone PRs now (milestone M1, 1.5 weeks).** They are bugs today, whether or not sync goes ahead. P1, P2 and P5 are confirmed in the code. Before fixing them, trace the P3 duplicate-frame chain and run P4's `to_json` on a real recording. *Decides* nothing about sync, but removes crash paths that would block it.
+2. **Ship P1–P5 as standalone PRs now (milestone M1, 1.5 weeks).** They are bugs today, whether or not sync goes ahead. P1, P2, P3 and P5 are confirmed by reading the code. Before fixing P4, run its `to_json` on a real recording. *Decides* nothing about sync, but removes crash paths that would block it.
 3. **Run the 1-week M0 hardware spike (§9) before writing any sync code.** It should answer four questions:
    - Does a DSHOW `AUTOFOCUS` write on the streaming camera handle actually switch on trigger mode? If not, the plan falls back to MSMF or ships Linux first (risk 1).
    - How does the lockout vary with stream fps, exposure and resolution?

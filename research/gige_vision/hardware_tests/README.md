@@ -19,8 +19,9 @@ SkellyCam needs for synchronized multi-camera capture:
   GEV 2.x and GEV 3.0 cameras over the normal GVSP stream protocol.
 - **What GEV 3.0 adds.** GEV 3.0 (2026) adds optional RDMA streaming (GVRSP over RoCEv2, 10 GbE and faster)
   and larger control packets.
-- **How GEV 3.0 is detected.** A GEV 3.0 device reports bootstrap Version major = 3 and
-  `DeviceTLVersionMajor = 3`. Both are reported, and GEV 3.x devices are expected to stream with 64-bit
+- **How GEV 3.0 is detected.** A GEV 3.0 device reports `DeviceTLVersionMajor = 3` (per LUCID)
+  and is assumed to report bootstrap Version major = 3 (not confirmed; the GEV 3.0 spec text was not read)
+  (corrected 2026-10-28; was stated as fact for both). The scripts report both, and GEV 3.x devices are expected to stream with 64-bit
   (extended) block ids.
 - **GVRSP / RDMA is not supported.** No open-source library supports it. If a camera has
   `GevStreamingMode = GVRSP`, `viva_sync_capture_test.py --force-gvsp` switches it back to GVSP.
@@ -94,8 +95,9 @@ SkellyCam needs for synchronized multi-camera capture:
    - macOS: `sudo ifconfig <enX> mtu 9000`, or System Settings, then Network, then the adapter, then
      Details, then Hardware, then MTU.
 6. **Socket receive buffers.** A frame arrives as one burst of packets, and a small buffer drops the
-   tail. In the emulator tests, Linux's capped buffer completed only 23 of 77 frames, while a 64 MiB
-   buffer completed all of them.
+   tail. In the emulator tests, Linux's capped buffer completed only 23 of 77 frames in one run
+   (73 of 76 and 64 of 76 in two others; results varied a lot), while a 64 MiB buffer completed all 76
+   frames (corrected 2026-10-28; was "completed only 23 of 77 frames" with the other runs omitted).
    - **Linux:** `sudo sysctl -w net.core.rmem_max=67108864`. To keep it, put the line
      `net.core.rmem_max=67108864` in `/etc/sysctl.d/90-gige.conf`.
      - Alternatively run the scripts as root with `--force-rcvbuf`.
@@ -336,8 +338,9 @@ python viva_sync_capture_test.py --mode scheduled-action --pixel-format BayerRG8
 - For every trigger it reports:
   - the exposure-start (frame timestamp) spread across cameras;
   - each camera's lag behind the scheduled time.
-- **PASS** when p95 spread ≤ `--max-spread-us` (default 100 µs). For reference, LUCID's app note shows
-  about 9 µs across 7 cameras, and Allied Vision reports under 1 µs between camera clocks.
+- **PASS** when p95 spread ≤ `--max-spread-us` (default 100 µs). For reference, the sample output in LUCID's app note
+  implies about 9 µs across 7 cameras (our arithmetic from its printed timestamps; LUCID states no figure)
+  (corrected 2026-10-28; was "LUCID's app note shows"), and Allied Vision reports under 1 µs between camera clocks.
 - Keep the exposure time below the trigger period. The script warns about this.
 - Many cameras queue only 1 to 4 scheduled actions; `gev_probe.py` shows the queue size.
 
