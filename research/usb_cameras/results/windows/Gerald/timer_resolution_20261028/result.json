@@ -1,0 +1,60 @@
+{
+ "test": "timer_probe",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-10-28T19:10:56.937122+00:00",
+ "command": "research/usb_cameras/tools/timer_probe.py --out research/usb_cameras/results/windows/Gerald/timer_resolution_20261028/result.json",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "os_version": "10.0.26300",
+  "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]"
+ },
+ "cameras": [],
+ "before": {
+  "label": "this process has not called timeBeginPeriod",
+  "timer_resolution": {
+   "coarsest_ms": 15.625,
+   "finest_ms": 0.5,
+   "current_ms": 0.5
+  },
+  "GetSystemTimeAsFileTime_step_ms": {
+   "p50": 0.5,
+   "distinct": [
+    0.5,
+    0.7,
+    1.0
+   ]
+  },
+  "GetSystemTimePreciseAsFileTime_step_ms_p50": 0.0004,
+  "Sleep(1)": {
+   "p50_ms": 1.504,
+   "min_ms": 1.014,
+   "max_ms": 2.044,
+   "n": 200
+  }
+ },
+ "after": {
+  "label": "after timeBeginPeriod(1) in this process",
+  "timer_resolution": {
+   "coarsest_ms": 15.625,
+   "finest_ms": 0.5,
+   "current_ms": 0.5
+  },
+  "GetSystemTimeAsFileTime_step_ms": {
+   "p50": 0.5,
+   "distinct": [
+    0.5,
+    0.7,
+    1.0
+   ]
+  },
+  "GetSystemTimePreciseAsFileTime_step_ms_p50": 0.0004,
+  "Sleep(1)": {
+   "p50_ms": 1.5,
+   "min_ms": 1.021,
+   "max_ms": 2.02,
+   "n": 200
+  }
+ },
+ "GlobalTimerResolutionRequests": "not set"
+}
