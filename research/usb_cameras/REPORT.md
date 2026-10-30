@@ -164,6 +164,7 @@ Details and sources: [docs/capture_backends_review.md](docs/capture_backends_rev
 
 ## Where to look
 
+- [README.md § Method comparison](README.md#method-comparison-2026-10-30) (added 2026-10-30): every method tested, rated on the current brief's goals (sync, timestamp, MJPEG, ID, bandwidth) and must-haves (exposure, format, focus). [docs/test_gap_plan.md](docs/test_gap_plan.md) is the plan to fill its gaps, including the ESP32 rig in [sync_rig/](sync_rig/) and the RocSync review in [docs/rocsync_review.md](docs/rocsync_review.md).
 - [PROGRESS.md](PROGRESS.md): status by goal, machine state, hazards (no programmatic device restarts; LogiTune vetoes them), how to resume each unfinished piece.
 - [README.md](README.md): harness layout, conventions and per-frame log schema. Per-OS runners are under each area and `rust/platform/`; there is no top-level `platform/` folder.
 - [results/windows/Gerald/RERUN_20261027.md](results/windows/Gerald/RERUN_20261027.md): the best single summary: claim → re-run → verifier verdict tables for every area, skipped tests, open harness bugs.
