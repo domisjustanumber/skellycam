@@ -1,22 +1,26 @@
-# ESP32 timing and sync test rig: design
+# ESP32 sync rig: design
 
-Scope: this design replaces or adds to the monitor-flash ground truth (`timing/VERIFY_method.md`). It uses a classic ESP32-WROOM-32 DevKit with Arduino-ESP32 core 3.x, which runs on ESP-IDF 5.x, so the IDF drivers (`mcpwm_prelude.h`, `spi_master.h`, `gptimer.h`) can be called from a sketch. Accuracy figures below are **estimates** unless they cite a measured repo result. Nothing here has been built or measured.
+Scope: this design replaces or adds to the monitor-flash ground truth (`timing/VERIFY_method.md`). It uses a classic ESP32-WROOM-32 DevKit with Arduino-ESP32 core 3.x, which runs on ESP-IDF 5.x, so the IDF drivers (`mcpwm_prelude.h`, `spi_master.h`, `gptimer.h`) can be called from a sketch. Accuracy figures below are **estimates** unless they cite a measured repo result. No hardware has been built and nothing has been measured. A draft firmware (compiles, never flashed) and a host clock-sync script now exist in this folder; see `sync_rig/README.md` § Status and § Design deviations for how they differ from this design. The §F analysis code (`timing/rig/`) is not written.
 
-Repo files read: `REPORT.md` (findings 7–15, further investigation 1/6/7), `timing/VERIFY_method.md`, `results/windows/Gerald/RERUN_20261027.md` (goal 2 table), `../arduino_sync/PLAN.md` (§1, §4, §8), `../arduino_sync/REPORT.md` (finding 8).
+Paths are relative to `research/usb_cameras/`. "PLAN.md" below means `../arduino_sync/PLAN.md`.
+
+Goal labels follow the current brief (2026-10-30): G1 sync (exposure alignment), G2 timestamp, M1 exposure, M3 focus. `REPORT.md` and `RERUN_20261027.md` use an older numbering: 1 MJPEG, 2 timing, 3 bandwidth, 4 naming, 5 cross-platform.
+
+Repo files read: `REPORT.md` (findings 7–15, further investigation 1/6/7), `timing/VERIFY_method.md`, `results/windows/Gerald/RERUN_20261027.md` (goal 2 (timing) table, old numbering), `../arduino_sync/PLAN.md` (§1–§4, §5.2, §8), `../arduino_sync/REPORT.md` (finding 8).
 
 ---
 
 ## 0. Why the current method stops at ~0.5 ms, and what the rig changes
 
 From `timing/VERIFY_method.md`:
-- The ground truth (GT) is a display step at vblank. The time inside an exposure E = 7.8 ms is recovered from partial brightness f through a gamma model. The model error swings by **+180 to −1000 µs across f**, with opposite signs for rising and falling edges. Even a deliberately circular PTS fit leaves 0.49–0.59 ms. So **~0.5 ms is the method floor.**
-- The GT offset varies by **35 ms across image blocks**, from rolling shutter plus display scan-out, and the two cannot be separated. Cross-camera "agreement" was therefore a property of where the ROIs sat (§6).
+- The ground truth (GT) is a display step at vblank. The time inside an exposure E = 7.8 ms is recovered from partial brightness f through a gamma model. The model error swings by **+180 to −1000 µs across f**, with opposite signs for rising and falling edges. Even fitting UVC PTS (the camera's payload-header timestamp) directly to the ground truth, which is deliberately circular, leaves 0.49–0.59 ms. So **~0.5 ms is the flash floor** (the limit of the monitor-flash ground truth; true error ≤ that).
+- The GT offset varies by **35 ms across image blocks**, from rolling shutter plus display scan-out, and the two cannot be separated. Cross-camera "agreement" was therefore a property of where the ROIs sat (`VERIFY_method.md` §6).
 - The C930e exposure was assumed, not confirmed (REPORT finding 11).
 
 The rig fixes these as follows:
 1. **Interpolate brightness only inside a short window.** Any brightness interpolation happens inside a 50–100 µs window instead of inside E, so the same model error shrinks by roughly Δ/E (arithmetic in §E).
 2. **No scan-out.** An LED or strobe is lit everywhere at the same instant. Rolling shutter becomes a measured, per-camera line time L instead of an unknown mixed with scan-out.
-3. **Measure exposure every frame.** E and the exposure start are measured per frame, so M1 (exposure control) is verified directly instead of assumed.
+3. **Measure exposure every frame.** E and the exposure start are measured per frame, so M1 exposure is verified directly instead of assumed.
 4. **One ESP32 clock.** Every emitted edge is timestamped on the ESP32's timebase, which can be tied to the host clock (§C).
 
 ---
@@ -34,24 +38,24 @@ A one-hot "chaser" gives the fine time and a Gray-code counter gives the coarse 
 
 RocSync decodes this way: the first lit LED is the start and the last is the end (see Sources).
 
-| Element | Count | Behaviour |
+| Element | Count | Behavior |
 |---|---|---|
 | Fine bar F | 100 LEDs in one straight line | One-hot, advances every Δ = 100 µs (configurable 50 µs–1 ms), wraps every 100·Δ = 10 ms |
-| Coarse counter C | 20 LEDs | Gray code `g = n ^ (n >> 1)` of the F revolution count. It increments when F wraps, every 10 ms, so the range is 2^20 × 10 ms ≈ 2.9 h |
+| Gray counter C (coarse) | 20 LEDs | Gray code `g = n ^ (n >> 1)` of the F revolution count. It increments when F wraps, every 10 ms, so the range is 2^20 × 10 ms ≈ 2.9 h |
 | Fiducials | 4 LEDs, always on (DC) | Bar corners, for homography, tilt and orientation. Only 3 of them need to be asymmetric |
 | Total switched channels | 120 | 8 × 16-channel drivers = 128 channels; 8 spare, one used as a "mode" bit (bar/strobe/calibration) |
 
 **Decoding coarse time.** Gray code changes one bit per increment, so an exposure that spans one counter increment shows exactly **one** half-lit bit. The value is then k or k+1, and the F bar says where in the exposure the 10 ms boundary fell. That resolves it for any E < 10 ms, which covers the 2^-7 s = 7.8 ms exposure used in every flash run.
-- **Longer exposures** (for example the C930e "long state", about a full frame of 33 ms, RERUN goal 2 table): set Δ = 400 µs, giving a 40 ms span. Precision degrades proportionally.
+- **Longer exposures** (for example the C930e "long state", about a full frame of 33 ms, RERUN timing table): set Δ = 400 µs, giving a 40 ms span. Precision degrades proportionally.
 - **Wraps beyond 2.9 h,** or a frame that cannot be decoded, are resolved from the host arrival time mapped through §C. ±5 ms is enough.
 
 ### Geometry for rolling shutter
 
 - **Orient the F bar horizontally, along image rows.** All 100 LEDs then fall in one row band and share one exposure window. RocSync's ring spans many rows. Its authors attribute their residual error (mean RMSE 1.34 ms on Azure Kinect) mainly to rolling shutter, and list compensation as future work.
-- Put the Gray row directly below the F row, within a few image rows. The single-bit Gray ambiguity rule tolerates the small row offset.
+- Put the Gray counter directly below the F row, within a few image rows. The single-bit Gray ambiguity rule tolerates the small row offset.
 - **Tilt and per-LED row correction.** On the C922, L ≈ 30.8 ms / 720 rows ≈ **43 µs per row**, using the measured 30.1–31.5 ms rolling-shutter span (REPORT finding 12). A bar tilted 1° over 400 px spans about 7 rows, which is a 0.3 ms ramp along the bar. The decoder therefore takes each LED's centroid row from the fiducial homography and moves each LED's sample to a reference row, using the L measured in strobe mode (§B).
-- **Physical size.** 100 LEDs at 2.54 mm pitch is a 254 mm bar. For decoding, aim for ≥ 4 px per LED in every camera, so the bar should span ≥ 400 px. At 720p that means about half the frame width.
-- **Optional second F bar** at the other end of a tall board, driven by the same channels (two LEDs in series per channel on a 9–12 V LED rail). It gives exposure windows at two rows per frame, and so a per-frame line-time check. This is a v2 feature, not required.
+- **Physical size.** 100 LEDs at 2.54 mm pitch is a 254 mm bar. For decoding, aim for ≥ 4 px per LED in every camera, so the bar should span ≥ 400 px. At 720p (1280 px wide) that means about a third of the frame width.
+- **Optional second F bar** at the other end of a tall board, driven by the same channels (two LEDs in series per channel; needs a separate 9–12 V LED rail and a new driver dissipation check; v1 uses 3.3 V, §G). It gives exposure windows at two rows per frame, and so a per-frame line-time check. This is a v2 feature, not required.
 
 ### Rise/fall time, LED choice and drive
 
@@ -64,7 +68,7 @@ RocSync decodes this way: the first lit LED is the start and the last is the end
 - **Never dim by PWM**, either by OE-PWM or in firmware. PWM modulates light in time, which is the very thing being measured. Set brightness with the driver's single R_ext resistor (a trimmer). For partial-brightness interpolation the LEDs must stay unsaturated, so turn R_ext down until the brightest LED sits at about 70% of full scale at the chosen gain.
 - **Brightness against short exposure.** An F LED is on for only Δ, so its signal is I × Δ whatever E is, while ambient light grows with E. Work in a dark room with high gain, auto-exposure off, auto-white-balance off, and anti-flicker (power-line frequency) off.
   - **Estimate:** a 20 mA high-brightness LED for 100 µs is clearly visible to a webcam at gain in the dark.
-  - **This must be checked first** in phase 0 (§F P0), before building 120 channels.
+  - **Check this first**, in the §F P0 bring-up, before building 120 channels.
 
 ---
 
@@ -79,9 +83,9 @@ A single high-power monochrome LED, pulsed for w = 20–200 µs, lights a **matt
 L comes from a **double strobe** in one frame, with two pulses Δt apart (for example 10 ms): L = Δt / (band separation in rows). It can also come from a slow phase sweep.
 
 What it gives:
-1. **G1, real exposure phase across cameras.** One flash is seen by every camera at the same physical instant, with no scan-out and no dependence on rig position. s0_A − s0_B (mod frame period) is the true exposure-phase difference, per frame, over time.
+1. **G1 measurement: true exposure phase across cameras.** One flash is seen by every camera at the same physical instant, with no scan-out and no dependence on rig position. s0_A − s0_B (mod frame period) is the true exposure-phase difference, per frame, over time.
 2. **M1, exposure verification.** Band height gives the exposure actually applied, frame by frame, including the frame where a control change takes effect.
-3. **Rolling-shutter line time** L, the readout time H·L, linearity (check that L is constant down the frame), and vertical blanking. When E < T − H·L, there are strobe phases that produce no band.
+3. **Rolling-shutter line time** L, the readout time H·L (H = image rows), linearity (check that L is constant down the frame), and vertical blanking. When E < T_cam − H·L (T_cam = frame period), there are strobe phases that produce no band.
 
 **Equivalent-time sweep.** Set the strobe period to T_cam·(1 + δ), for example δ = 10^-3. The strobe phase then walks about 33 µs per frame and covers a full frame in about 1000 frames (33 s at 30 fps). Free-running drift (tens of ppm) also sweeps it, but slowly.
 
@@ -93,7 +97,7 @@ What it gives:
 - **Estimate:** 0.5–1 A into a 1–3 W green star LED (no phosphor) at 0.3–0.5 m from the card, at ≤ 1% duty, gives a strong band at moderate gain.
 - Calibrate the camera's tone curve with the strobe itself. Sweep w from 10 to 200 µs at fixed gain; integrated light is proportional to w, so this measures the response curve directly. That removes the a-priori gamma assumption that dominated the flash method's error (`VERIFY_method.md` §1 and §3: "the gamma used matters more than the source").
 
-**ISP artefacts to detect:**
+**ISP artifacts to detect:**
 - Temporal noise reduction shows as a weak echo band at the same rows in frame n+1.
 - Sharpening causes edge overshoot; use the 50% crossing of a smoothed profile.
 - MJPEG 8×8 blocks and chroma subsampling cost some sub-row precision. Repeat key runs in YUY2 at the same resolution, but **L must be measured in each format, resolution and fps actually used**, because a sensor may change readout timing with mode.
@@ -102,23 +106,25 @@ What it gives:
 
 ## C. Tying ESP32 time to host time (QPC / CLOCK_MONOTONIC)
 
-**One timebase.** The ESP32's MCPWM capture timer (APB-clocked; 80 MHz on the classic ESP32) is the timebase. Every edge that matters reaches a capture input through a **loopback wire**: the LE anchor, STROBE, FSIN, and the start bit of each incoming serial ping. These are timestamps of the physical edges, not of the commands. The LE/PWM generators and the capture timer both derive from the same 40 MHz crystal through the PLL, so their ratio is fixed. Verify the timer clocking and capture width in the ESP32 TRM; the IDF page states that the capture resolution equals the APB clock on ESP32.
+Host clocks: QPC (Windows QueryPerformanceCounter), CLOCK_MONOTONIC (Linux).
+
+**One timebase.** The ESP32's MCPWM capture timer (APB-clocked; 80 MHz on the classic ESP32) is the timebase. Every edge that matters reaches a capture input through a **loopback wire**: the LE anchor, STROBE, FSIN (the rig's frame-sync trigger output to cameras, §D), and the start bit of each incoming serial ping. These are timestamps of the physical edges, not of the commands. The LE/PWM generators and the capture timer both derive from the same 40 MHz crystal through the PLL, so their ratio is fixed. Verify the timer clocking and capture width in the ESP32 TRM; the IDF page states that the capture resolution equals the APB clock on ESP32.
 
 **Crystal.** ±10 ppm is the commonly cited tolerance for Espressif 40 MHz crystals, but it is **not confirmed for the classic ESP32 or for this DevKit** (forum posts only). It does not matter much: a 10 ppm offset is 0.33 µs per 33 ms frame, and the rate is fitted against the host clock anyway. Over minutes the thermal drift should be < 1 ppm once warm (estimate). Warm the board up for about 5 minutes before runs.
 
 | Option | Hardware | Expected absolute accuracy (estimate) | Expected repeatability (estimate) | Notes |
 |---|---|---|---|---|
-| 1. LED/strobe only, relative (as today) | none extra | none: one offset fitted per source per run | at the rig floor (§E) | Scores regularity and inter-camera phase. Cannot give absolute latency (light → host). Sufficient for G1 and M1 |
-| 2. Serial ping, min-RTT filter, classic DevKit through CP2102/CH340 | none | ±0.1–0.5 ms unknown bias. The path asymmetry is bounded only by RTT_min/2, likely ~0.5–1 ms | ~20–100 µs after min-filtering thousands of pings | Host stamps QPC at write and read. The ESP32 stamps the **RX start-bit edge** on a capture input (not the UART ISR, which fires on FIFO threshold or timeout) and the TX start bit of its reply. Full-speed bulk through a hub's transaction translator quantizes delivery (probably 125 µs / 1 ms steps). FTDI-style latency timers (16 ms default) must be set to 1 ms. No published µs RTT figures for CP2102/CH340 were found, so measure it. The DevKit resets on port open; re-anchor after each open (as PLAN.md §5.2 already assumes) |
-| 3. Native USB CDC ping (ESP32-S3 USB-OTG or USB-Serial-JTAG; C3 USB-Serial-JTAG) | S3/C3 board | similar to option 2, slightly better (no UART hop) | ~10–50 µs | Still bulk scheduling; same asymmetry problem |
-| 4. **USB SOF lock (ESP32-S3)** | S3 on the **same xHCI controller** as the cameras | ~1–10 µs to the USB frame clock; to QPC limited by the IOCTL mapping (below) | ~1 µs | The S3 timestamps every 1 ms SOF: poll the USB-Serial-JTAG `FRAM_NUM` register (11-bit SOF frame index, present on S3/C3) on core 1, or use a TinyUSB SOF callback on the OTG port (verify API). The host maps frame number to QPC with `IOCTL_USB_GET_FRAME_NUMBER_AND_QPC_FOR_TIME_SYNC`, already used in phase 2. Caveat, measured: REPORT finding 14 found that mapping exact for only ~2–3.5 s, then drifting up to −641 µs over 20 s, and Microsoft documents its predicted accuracy in 125 µs units. **Re-anchor every ≤ 2 s**, and treat the residual as part of the result |
-| 4b. SOF domain without QPC | S3 | ~µs | ~µs | UVC SCR pairs camera STC with SOF number. With ESP time ↔ SOF from option 4, camera STC → SOF → ESP time → LED/strobe truth is a chain that **bypasses QPC and the IOCTL drift**. Not usable on the C922, whose device SOF counter is broken (884/s, `VERIFY_method.md` §5); usable on the C930e |
+| 1. LED/strobe only, relative (as today) | none extra | none: one offset fitted per source per run | at the rig floor (§E) | Scores regularity and inter-camera phase. Cannot give absolute latency (light → host). Sufficient to measure G1 and verify M1 |
+| 2. Serial ping, min-RTT filter, classic DevKit through CP2102/CH340 | none | Unknown bias, expected ±0.1–0.5 ms; the hard bound is RTT_min/2 (likely ~0.5–1 ms). The draft host script reports two ping offsets (first-byte vs last-byte forwarding, ~0.27 ms apart; `sync_rig/README.md`); only option 4 can tell which is right | ~20–100 µs after min-filtering thousands of pings | Host stamps QPC at write and read. The ESP32 stamps the **RX start-bit edge** on a capture input (not the UART ISR, which fires on FIFO threshold or timeout) and the TX start bit of its reply. Full-speed bulk through a hub's transaction translator quantizes delivery (probably 125 µs / 1 ms steps). FTDI-style latency timers (16 ms default) must be set to 1 ms. No published µs RTT figures for CP2102/CH340 were found, so measure it. The DevKit resets on port open; re-anchor after each open (as PLAN.md §5.2 already assumes) |
+| 3. Native USB CDC ping (ESP32-S3 USB-OTG or USB-Serial-JTAG; ESP32-C3 USB-Serial-JTAG) | ESP32-S3/ESP32-C3 board | similar to option 2, slightly better (no UART hop) | ~10–50 µs | Still bulk scheduling; same asymmetry problem |
+| 4. **USB SOF lock (ESP32-S3)** | ESP32-S3 on the **same xHCI controller** as the cameras | ~1–10 µs to the USB frame clock; to QPC limited by the IOCTL mapping (below) | ~1 µs | The ESP32-S3 timestamps every 1 ms SOF: poll the USB-Serial-JTAG `FRAM_NUM` register (11-bit SOF frame index, present on ESP32-S3/ESP32-C3) on core 1, or use a TinyUSB SOF callback on the OTG port (verify API). The host maps frame number to QPC with `IOCTL_USB_GET_FRAME_NUMBER_AND_QPC_FOR_TIME_SYNC`, already used in the WinUSB phase-2 study (WinUSB = Microsoft's generic USB driver, used by libusb; REPORT findings 13–14). Caveat, measured: REPORT finding 14 found that mapping exact for only ~2–3.5 s, then drifting up to −641 µs over 20 s, and Microsoft documents its predicted accuracy in 125 µs units. **Re-anchor every ≤ 2 s**, and treat the residual as part of the result |
+| 4b. SOF domain without QPC | ESP32-S3 | ~µs | ~µs | UVC SCR pairs the camera's STC (source time clock) with the USB SOF (start-of-frame, 1 ms) frame number. With ESP time ↔ SOF from option 4, camera STC → SOF → ESP time → LED/strobe truth is a chain that **bypasses QPC and the IOCTL drift**. Not usable on the C922, whose device SOF counter is broken (884/s, `VERIFY_method.md` §2); usable on the C930e |
 | 5. GPIO into audio line-in (WASAPI QPC position) | sound card | unknown, not researched | unknown | Mentioned only for completeness |
 
 **Recommendation:**
-- Start with **options 1 + 2** on the classic DevKit. Option 1 is enough for G1, M1 and line time; option 2 gives sub-ms absolute latency.
+- Start with **options 1 + 2** on the classic DevKit. Option 1 is enough to measure G1, verify M1 and get line time; option 2 gives sub-ms absolute latency.
 - Add **option 4/4b with an ESP32-S3-DevKitC** (about $10–15) when G2 needs absolute latency at the tens-of-µs level.
-- Run options 2 and 4 together once. The S3 SOF path then measures the bias of the serial-ping path, so later runs with only a classic ESP32 can be corrected.
+- Run options 2 and 4 together once. The ESP32-S3 SOF path then measures the bias of the serial-ping path, so later runs with only a classic ESP32 can be corrected.
 - On Linux, ping options 2 and 3 work as on Windows with CLOCK_MONOTONIC. No user-space frame-number ↔ monotonic API was identified in this research (not checked).
 
 ---
@@ -126,13 +132,14 @@ What it gives:
 ## D. FSIN trigger output (InnoMaker OV9281 and others)
 
 - Same MCPWM group, a third timer and generator. The period is set in ticks of the same timebase, and FSIN edges are looped back to a capture input, so **FSIN, strobe and LED code share one clock**.
-- **Period.** Choose an integer multiple of the LED step so FSIN stays phase-locked to the code. For example 208 × 100 µs = 20.8 ms (48.08 Hz). That clears the ~18–20 ms InnoMaker lockout noted in PLAN.md §1, with the ESP32 crystal contributing ~0 rate error (the 48 Hz default in PLAN.md keeps the margin).
+- **Period.** Choose an integer multiple of the LED step so FSIN stays phase-locked to the code. For example 208 × 100 µs = 20.8 ms (48.08 Hz). That is above the ~18–20 ms InnoMaker re-trigger lockout (`../arduino_sync/PLAN.md` §1), about the same margin as PLAN.md's 48 Hz default. The ESP32 crystal's rate error is negligible here (10 ppm would be ~0.2 µs per period; the tolerance is unconfirmed, see §C).
 - **Electrical.** The InnoMaker FSIN is an opto input, about 19 mA at 5 V, triggered on the rising edge (PLAN.md §2). A 3.3 V GPIO cannot drive it. Wire FSIN+ to +5 V and FSIN− to a low-side sink: one AO3400A or 2N7002 per camera, or a ULN2803A channel (PLAN.md §4 electrical table). The GPIO going high turns the opto on; check which optical edge the camera triggers on.
 - **Skew measurement** (PLAN.md §8 and arduino_sync REPORT finding 8: "unknown, could be up to ~1 ms"). With the strobe band method, **one frame** gives s0 of the triggered camera relative to the captured FSIN edge, so FSIN→exposure skew and its spread across cameras come out per frame. The sweep is needed only to cover blanking. This replaces PLAN.md's planned "delayed 50 µs flash swept 0–25 ms" with a faster equivalent.
+- **FSIN channel count is not settled.** The pin table has two FSIN gates (GPIO26/27, MCPWM0 timer2 generators A/B), the BOM's AO3400A ×4 leaves three FSIN sinks after the strobe, and P5 assumes 4 cameras. Pick one before ordering, for example two gates each switching the sinks of two cameras, with AO3400A ×5 (strobe + 4 FSIN) or one ULN2803A. Then make the BOM quantity and P5 match.
 
 ---
 
-## E. Expected ground-truth floor: arithmetic (all estimates)
+## E. Expected rig floor: arithmetic (all estimates)
 
 | Error term | Flash method today | Rig, strobe band | Rig, LED bar |
 |---|---|---|---|
@@ -141,10 +148,10 @@ What it gives:
 | Quantization | — | row: 43/√12 ≈ 12 µs per edge before sub-row fit; averaging across hundreds of columns gives an estimated ~3–8 µs | one-hot step: 100/√12 ≈ 29 µs without interpolation; ~5–15 µs with |
 | Rolling-shutter / position term | **35 ms** variation across blocks, mixed with scan-out | none for s0 (row 0 by construction); L error × r_b. With L to 0.1% (10 ms double strobe ≈ 233 rows, ±0.3 row per edge), the error at row 360 is ~15 µs, and smaller when referenced near the band | L × residual row error after tilt correction: ±0.5 row ≈ ±20 µs unless corrected |
 | MJPEG / ISP blur | gamma confounded | ~5–10 µs (estimate) | ~5–10 µs |
-| **Per-frame total (1σ)** | **~0.5 ms floor (measured)** | **≈ 10–20 µs** | **≈ 15–30 µs** |
+| **Per-frame total (1σ)** | **~0.5 ms flash floor (measured)** | **≈ 10–20 µs** | **≈ 15–30 µs** |
 | Host-time mapping (G2 absolute only) | QPC native (display) | +0 (option 1, relative) / +0.1–0.5 ms bias (option 2) / ~1–10 µs plus re-anchored IOCTL residual (option 4) | same |
 
-So the rig's estimated floor is **~20–50× below the flash method** for relative timing, G1 phase and E. For absolute latency it is set by the §C option. This is fine enough to settle REPORT finding 9: whether C922 PTS is really better than a frame counter. The current data cannot tell them apart (both score 0.5 ms), but the C922 PTS ±0.27 ms alternation (`VERIFY_method.md` §3) would be clearly resolved.
+So the rig's estimated floor is **~25–50× (strobe) or ~17–33× (bar) below the flash floor** for relative timing, G1 phase and E. For absolute latency it is set by the §C option. This is fine enough to settle REPORT finding 9: whether C922 PTS is really better than a frame counter. The current data cannot tell them apart (both score 0.5 ms), but the C922 PTS ±0.27 ms alternation (`VERIFY_method.md` §3) would be clearly resolved.
 
 ---
 
@@ -152,9 +159,10 @@ So the rig's estimated floor is **~20–50× below the flash method** for relati
 
 ### Protocols
 
-**P0, bring-up** (one evening; strobe parts only; worth doing before the bar is built):
+**P0, bring-up** (one evening; strobe parts plus one bar-type LED; worth doing before the bar is built):
 - Logic-analyzer or loopback check of LE, STROBE and FSIN timing.
-- Strobe band visible on all three cameras (C922, C930e, generic) at 720p30 MJPEG, at w = 50 µs, in the dark.
+- Strobe band visible on all three cameras (C922, C930e, generic camera USB 4C4A:4A55) at 720p30 MJPEG, at w = 50 µs, in the dark.
+- One bar-type LED (20 mA through a series resistor, pulsed 100 µs, e.g. from the strobe output) clearly visible at gain in the dark.
 - Echo-band check (temporal noise reduction).
 - Measure L for each camera.
 
@@ -165,39 +173,39 @@ So the rig's estimated floor is **~20–50× below the flash method** for relati
 - Expected (labelled): the C922 matches 30.1–31.5 ms at 720p30 (REPORT finding 12). Other modes are unmeasured.
 
 **P2, M1 exposure verification** (includes the C930e re-apply open item, REPORT further investigation 6, PROGRESS section E):
-- For each API path (MF IAMCameraControl / DirectShow / KS property, and libusb SET_CUR), set exposure at these moments:
+- For each API path (Media Foundation (MF) IAMCameraControl / DirectShow (DShow) / Kernel Streaming (KS) property, and libusb SET_CUR), set exposure at these moments:
   - (a) before stream start or COMMIT;
   - (b) 0.5 s and 2 s after the first frame;
-  - (c) every 5 s, alternating between 2^-9 and 2^-6.
+  - (c) every 5 s, alternating between 2^-9 and 2^-6 (superseded by per-camera, per-path in-range set points, read first from the camera; for example C930e DShow −5, −4, −3; generic camera −7, −6, −5; C922 −9, −7, −5 if in range. See `docs/test_gap_plan.md` C1 and T1.)
 - Record per-frame E from band height, plus the API readback.
 - Outputs:
   - did the requested E apply, and in which frame;
   - control-to-effect latency in frames;
-  - whether the readback lies (the C930e read back −7 while integrating about a full frame, RERUN goal 2 table).
+  - whether the readback lies (the C930e read back −7 (2^-7 s = 7.8 ms) while integrating about a full 33 ms frame, RERUN timing table).
 - Repeat with LogiTune's updater stopped.
 - Also log the C930e PTS period mode (998,400 vs ~997,230 ticks per frame) to test the open hypothesis that the mode follows the exposure state.
 - **M3 side-check:** with focus fixed, the LED spot size in the bar is a per-frame sharpness metric. Step manual focus through the values and confirm the spot size changes and then stays put. This detects autofocus that was not actually disabled.
 
 **P3, G2 timestamp scoring:**
-- C922 + C930e (+ generic), 60 s × 5 runs, at three exposures (2^-9, 2^-7, 2^-5).
-- Log every source: MF OS time, host arrival, UVC PTS/SCR from MF metadata, and on WinUSB the libusb SCR and back-dated first payload.
+- C922 + C930e (+ generic camera), 60 s × 5 runs, at three exposures (2^-9, 2^-7, 2^-5) (superseded by per-camera, per-path in-range set points, read first from the camera; for example C930e DShow −5, −4, −3; generic camera −7, −6, −5; C922 −9, −7, −5 if in range. See `docs/test_gap_plan.md` C1 and T1.)
+- Log every source: MF sample time (OS timestamp), host arrival, UVC PTS/SCR from MF metadata, and, with the camera on WinUSB (Microsoft's generic USB driver, used by libusb), the libusb SCR and back-dated first-payload arrival.
 - Truth per frame: s0 (row 0 exposure start), plus mid-exposure and end-of-readout derived from E and L.
 - Score each source three ways:
   1. offset-only std/MAD (comparable with today's tables);
   2. causal online mapping;
   3. **absolute latency** (source − exposure start), using §C option 2 or 4.
-- Also: regress PTS − s0 on E to test "C922 PTS near end of exposure" (−1.14·ΔE, provisional in REPORT finding 12), and run 60 s windows to re-check the SCR→QPC basis (REPORT further investigation 1).
+- Also: regress PTS − s0 on E to test "C922 PTS near end of exposure" (−1.14·ΔE, provisional in REPORT finding 12), and run 60 s windows to re-check the SCR→QPC mapping (REPORT further investigation 1).
 
 **P4, G1 sync phase and drift:**
 - All cameras view the card; one strobe per ~frame, with δ-sweep off.
-- Δφ_AB(t) = s0_A − s0_B (mod T) over 30 min.
+- Δφ_AB(t) = s0_A − s0_B (mod T_cam) over 30 min.
 - Fit relative rate (ppm), wander, and any lock.
 - Variants:
   - simultaneous versus staggered stream start;
   - same hub versus different root port (tests the hypothesis that a camera derives frame timing from USB SOF, which would give 0 ppm relative drift);
   - each capture API.
-- **Expected:** free-running, unaligned exposures drifting at tens of ppm. This is inferred from the GT-derived PTS rates of +35 ppm (C930e) and −3.9 ppm (C922) against QPC (`VERIFY_method.md` §5), which would mean a full-frame slip in roughly 20–30 min. That supports Dom's assumption that no USB-side API aligns exposures. The rig measures phase; it does not align it.
-- Report the residual after best software pairing: up to T/2 per frame pair, uniform.
+- **Expected:** free-running, unaligned exposures drifting at tens of ppm. This is inferred from the GT-derived PTS rates of +35 ppm (C930e) and −3.9 ppm (C922) against QPC (`VERIFY_method.md` §5), which would mean a full-frame slip about every 14 min (+35 − (−3.9) ≈ 39 ppm relative; derived, not measured). That supports Dom's assumption that no USB-side API aligns exposures. The rig measures phase; it does not align it.
+- Report the residual after best software pairing: up to T_cam/2 per frame pair, uniform.
 
 **P5, FSIN** (when OV9281s are available): FSIN→exposure skew per camera, its spread across 4 cameras, and the lockout found by sweeping the FSIN period.
 
@@ -248,7 +256,7 @@ So the rig's estimated floor is **~20–50× below the flash method** for relati
   - cap2 ← UART RX start bits.
   - Capture ISR: extend the timer to 64-bit and queue the event for serial output at 921600 baud.
 - **Commands:** `<STEP:us>`, `<STROBE:period_us,width_us[,gap_us]>`, `<SWEEP:ppm>`, `<FSIN:period_us,width_us>`, `<BAR:0|1>`, `<ALLON>`, `<ALLOFF>`, `<PING#seq>`, `<STATUS>`.
-- **No autostart.** All outputs are off at boot (see pull resistors in G).
+- **No autostart.** All outputs are off at boot (see pull resistors in §G).
 
 **ESP32-S3 changes:**
 - MCPWM ×2 groups, RMT and LCD_CAM are present (LCD_CAM could DMA the bar pattern with zero CPU, as a v2).
@@ -259,7 +267,7 @@ So the rig's estimated floor is **~20–50× below the flash method** for relati
 - **No MCPWM**, so no capture peripheral. LE would come from LEDC and strobe from a gptimer alarm ISR (about µs of jitter, not loop-back captured).
 - Single core.
 - Strapping pins are 2, 8 and 9; USB is 18/19.
-- Usable for the bar, weaker for strobe and timebase. **Use the S3 instead.**
+- Usable for the bar, weaker for strobe and timebase. **Use the ESP32-S3 instead.**
 
 ---
 
@@ -287,8 +295,9 @@ So the rig's estimated floor is **~20–50× below the flash method** for relati
 | Matte white foam board (A2), black flock or tape, perfboard or PCB | — | $10 | |
 
 **LED rail and thermal.** With red V_f ≈ 2.0 V on a **3.3 V LED rail**, headroom is about 1.3 V. At 20 mA that is 26 mW per lit channel, so 16 lit channels dissipate about 0.4 W per driver. A 5 V rail would dissipate about 1 W per driver with all channels lit, which is too hot in SOIC.
-- Running counter LEDs at 10 mA is enough.
-- Worst-case total LED current ≈ (1 F + 20 Gray + 4 fiducials) × 20 mA ≈ 0.5 A.
+- Running Gray counter LEDs at 10 mA is enough.
+- Normal running, worst case: (1 F + 20 Gray + 4 fiducials) × 20 mA ≈ 0.5 A (≈ 0.3 A with the Gray counter at 10 mA).
+- `<ALLON>` (used for the §F item 8 reference frames) lights all 120 switched channels plus the 4 fiducials: ≈ 2.5 A at 20 mA, ≈ 2.3 A with the Gray counter at 10 mA. That exceeds the 3.3 V 1 A LED regulator and the 500 mA LED-rail polyfuse in the BOM, and puts ~3 W in the drivers at 1.3 V headroom. Either size the LED rail and fuse for it, light `<ALLON>` one driver at a time, or reduce the drive current for reference frames.
 
 ### Classic DevKit pin assignment
 
@@ -316,7 +325,7 @@ Pins avoided:
 | Status LED | 33 | |
 | Spare | 4, 13, 16, 17, 19 | |
 
-S3 equivalent (sketch): SCLK 12, MOSI 11, LE 9, /OE 8, STROBE 4, FSIN 5/6, captures 7/15/16, button 17, native USB on 19/20.
+ESP32-S3 equivalent (sketch): SCLK 12, MOSI 11, LE 9, /OE 8, STROBE 4, FSIN 5/6, captures 7/15/16, button 17, native USB on 19/20.
 
 ### Safety and electrical notes
 
@@ -331,19 +340,19 @@ S3 equivalent (sketch): SCLK 12, MOSI 11, LE 9, /OE 8, STROBE 4, FSIN 5/6, captu
   - Keep strobe return current away from the ESP32 ground (star point at the supply).
   - FSIN optos isolate the cameras.
   - Do not feed the rig's LED current through the PC's USB.
-  - If the ESP32 shares a hub with cameras, note that its full-speed serial or CDC traffic is negligible bandwidth. For SOF lock it **must** be on the same controller as the cameras under test (Gerald has two controllers, REPORT finding 14).
+  - If the ESP32 shares a hub with cameras, note that its full-speed serial or CDC traffic is negligible bandwidth. For SOF lock it **must** be on the same controller as the cameras under test (Gerald, the Windows 11 test machine, has two controllers, REPORT finding 14).
 - **Signal integrity.** For 8 chained drivers over about 30 cm at 10 MHz, keep CLK short, add series termination, and put 0.1 µF at every chip.
 
 ---
 
 ## How RocSync relates
 
-**What RocSync is.** 100 red+IR LEDs in a ring stepping 1 ms per LED (100 ms per revolution), plus a 16-bit binary counter. A RISC-V MCU with a TCXO, battery powered. An offline Python decoder takes the first and last lit LEDs as exposure start and end. Per-camera drift is fitted linearly with RANSAC, from showing the clock at the start and end of a session. The authors report mean RMSE **1.34 ms** against hardware-synced Azure Kinects, with rolling shutter uncompensated and named as the main residual. Published in Sensors 2026, DOI 10.3390/s26031036.
+**What RocSync is.** 100 red+IR LEDs in a ring stepping 1 ms per LED (100 ms per revolution), plus a 16-bit binary counter. A CH32V003 RISC-V MCU with a ±10 ppm 24 MHz crystal (the paper says TCXO, but BOM part C271645 is a plain crystal and hw/README lists a TCXO only as a TODO; see `docs/rocsync_review.md` §3), battery powered. An offline Python decoder takes the first and last lit LEDs as exposure start and end. Per-camera drift is fitted linearly with RANSAC, from showing the clock at the start and end of a session. The authors report mean RMSE **1.34 ms** against hardware-synced Azure Kinects, with rolling shutter uncompensated and named as the main residual. Published in Sensors 2026, DOI 10.3390/s26031036.
 
 **How it helps:**
 1. It validates the one-hot "first/last lit LED" encoding used in §A.
 2. It is a field-ready, ~1 ms post-hoc sync method for real skellycam sessions, including heterogeneous cameras (GoPro, phones) that never need to view the clock at the same time. Worth evaluating as a user-facing tool.
-3. Its TCXO is a good idea for the field version. It is not needed for the bench rig, where the clock is fitted against the host.
+3. A TCXO would be a good idea for the field version. It is not needed for the bench rig, where the clock is fitted against the host.
 
 **Why it is not the bench instrument here:**
 - 1 ms steps are 10× coarser than needed.
@@ -351,19 +360,19 @@ S3 equivalent (sketch): SCLK 12, MOSI 11, LE 9, /OE 8, STROBE 4, FSIN 5/6, captu
 - There is no host-clock link, so absolute latency cannot be scored.
 - There is no strobe or exposure-mapping mode.
 
-The rig in this design is a bench version of the same idea: a horizontal 100 µs bar, a strobe, host correlation and FSIN. Its bar could also run a "1 ms step" mode for field use, but RocSync's decoder assumes a ring geometry, so it would not be reused directly. The RocSync license was not checked; check its LICENSE file before reusing any code or hardware files.
+The rig in this design is a bench version of the same idea: a horizontal 100 µs bar, a strobe, host correlation and FSIN. Its bar could also run a "1 ms step" mode for field use, but RocSync's decoder assumes a ring geometry, so it would not be reused directly. RocSync is MPL-2.0 (root LICENSE, which also covers the hardware files; checked 2026-10-30, `docs/rocsync_review.md` §4). Its files can be combined into skellycam (AGPL-3.0-or-later), and changes to the MPL files themselves stay MPL.
 
 ## Suggested build order
 
-1. **Phase 0: strobe only.** One MOSFET, one LED, a white card, about $10. This alone answers G1 (phase and drift), M1 (actual E, C930e re-apply) and line time, at an estimated ~10–20 µs.
+1. **Phase 0: strobe-only build.** One MOSFET, one LED, a white card; about $15–25 of parts with the 5 V supply and polyfuses (*est.*, plan §5). This alone measures the G1 exposure phase and drift (it does not align them), verifies M1 (actual E, C930e re-apply) and gives line time, at an estimated ~10–20 µs.
 2. Serial ping correlation (§C option 2).
 3. LED bar (§A), as an independent second method and for coarse time.
-4. ESP32-S3 SOF lock (§C option 4/4b), for absolute G2 latency at the µs level and to calibrate the ping path.
+4. ESP32-S3 SOF lock (§C option 4/4b), for absolute G2 latency at the tens-of-µs level (limited by the re-anchored IOCTL residual; µs only within the SOF domain, option 4b) and to calibrate the ping path.
 5. FSIN outputs when the OV9281s are available.
 
 Sources:
 - [RocSync repository](https://github.com/BAL-ROCS-BUT-COOL/RocSync)
-- [RocSync paper, arXiv:2511.14948](https://arxiv.org/html/2511.14948v1), [PMC version](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12900090/)
+- [RocSync paper, arXiv:2511.14948](https://arxiv.org/html/2511.14948v1), [PMC version](https://pmc.ncbi.nlm.nih.gov/articles/PMC12900090/)
 - [Zhao & Chen 2009, camera sync with a single binary LED source](https://www.spiedigitallibrary.org/journals/journal-of-electronic-imaging/volume-18/issue-4/040501/High-precision-synchronization-of-video-cameras-using-a-single-binary/10.1117/1.3247860.pdf)
 - [esp32.com: main crystal requirements (±10 ppm citation, unconfirmed)](https://esp32.com/viewtopic.php?p=1782), [ESP32-PICO-V3-02 crystal thread](https://esp32.com/viewtopic.php?p=155141)
 - [ESP-IDF MCPWM (ESP32)](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/mcpwm.html)

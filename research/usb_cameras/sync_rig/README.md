@@ -1,14 +1,16 @@
-# ESP32 sync and timing rig (DRAFT)
+# ESP32 sync rig: draft firmware and host script
 
-A bench instrument to replace the monitor-flash ground truth (`../timing/VERIFY_method.md`). It is
-built from a classic ESP32 DevKit, an LED strobe, an optional LED time-code bar, and optional FSIN
-trigger outputs. Every edge it emits is timestamped on one ESP32 clock, and that clock is tied to
-the host clock (QPC on Windows, CLOCK_MONOTONIC on Linux) over the serial link.
+A bench instrument to replace the flash method (monitor-flash ground truth, `../timing/VERIFY_method.md`). It is
+built from a classic ESP32 DevKit, an LED strobe, an optional LED bar (a time-code display, DESIGN.md §A: a
+100-LED one-hot fine bar F, a 20-bit Gray counter and 4 fiducials), and optional FSIN trigger outputs (FSIN =
+frame-sync input, the hardware trigger pin on cameras such as the InnoMaker OV9281). Every edge it emits is
+timestamped on one ESP32 clock, and that clock is tied to the host clock (QPC, QueryPerformanceCounter, on
+Windows; CLOCK_MONOTONIC on Linux) over the serial link.
 
 This folder implements a first draft of the rig design ([DESIGN.md](DESIGN.md)) used by the gap-filling test plan
-([../docs/test_gap_plan.md](../docs/test_gap_plan.md)). The design
-estimates a ground-truth floor of about 10–30 µs, against the flash method's measured ~0.5 ms. That
-figure is an estimate and has not been measured.
+([../docs/test_gap_plan.md](../docs/test_gap_plan.md)). The design estimates a rig floor of about 10–20 µs
+(strobe band) and 15–30 µs (LED bar), per frame, 1σ (DESIGN.md §E), against the flash method's measured floor
+of ~0.5 ms. These figures are estimates and have not been measured.
 
 ## Status
 
@@ -17,7 +19,7 @@ figure is an estimate and has not been measured.
 | Firmware `esp32_sync_rig/esp32_sync_rig.ino` | **Compiles, never flashed, never run.** Built on 2026-10-30 with arduino-cli 1.2.0 and the Arduino-ESP32 core 3.2.0 (ESP-IDF v5.4) for `esp32:esp32:esp32`, with `--warnings all`. Result: exit 0, 345,778 bytes of flash (26%), 21,156 bytes of RAM (6%). The only warnings are 6 `-Wmissing-field-initializers` from the IDF macro `MCPWM_GEN_COMPARE_EVENT_ACTION_END()`. A variant build with `-DCAP1_ROLE=1 -DUSE_RX_EDGE_CAPTURE=0` also compiles (exit 0). Build output went to a temp folder outside the repo. |
 | Host script `host/esp32_clock_sync.py` | `--help` and `python -m py_compile` pass. `--self-test` passes on synthetic pings (12.5 ppm true drift → 12.509 ppm fitted). **Never run against a device.** |
 | Hardware | Nothing built, nothing measured. No timing figure on this page is a measurement. |
-| Analysis code (`timing/rig/` in the plan) | Not written. |
+| Analysis code (`timing/rig/`, DESIGN.md §F) | Not written. |
 
 ## Files
 
@@ -25,30 +27,36 @@ figure is an estimate and has not been measured.
 sync_rig/
   README.md                          this file
   esp32_sync_rig/esp32_sync_rig.ino  firmware (Arduino-ESP32 3.x, calls IDF 5 MCPWM / SPI drivers)
-  host/esp32_clock_sync.py           PEP 723 script: PING/PONG clock correlation -> results/<platform>/<host>/sync_rig_clock/
+  host/esp32_clock_sync.py           PEP 723 script: PING/PONG clock correlation -> results/<platform>/<hostname>/sync_rig_clock/
 ```
 
 ## How it maps to the goals
 
+Labels follow the current brief (2026-10-30): G1 sync (exposure alignment), G2 timestamp, G3 MJPEG, G4 ID,
+G5 bandwidth; M1 exposure, M2 format, M3 focus. REPORT.md numbers its goals differently: 1 MJPEG, 2 timing,
+3 bandwidth, 4 naming, 5 cross-platform.
+
 | Goal | What the rig gives | Mode |
 | --- | --- | --- |
-| G1 sync (exposure alignment) | It **measures** each camera's exposure phase. It does not align exposures. A single strobe pulse lights a white card for every camera at once. Each camera shows a lit row band, and the bottom edge of that band gives the start of exposure: s0 = t_strobe − r_bottom·L. Δφ = s0_A − s0_B, tracked over time, gives the phase and drift between cameras. Only FSIN (hardware trigger, cameras with a sync input) can **align** exposures, and the rig drives FSIN too. | strobe, FSIN |
-| G2 timestamp accuracy | A per-frame true exposure start in ESP32 time. The PING/PONG clock fit maps it to QPC or CLOCK_MONOTONIC, so each timestamp source (MF sample time, host arrival, UVC PTS/SCR) can be scored for **absolute** latency as well as offset-only jitter. | strobe + clock sync |
-| M1 exposure control | Band height = actual exposure E for each frame, so the rig confirms whether a requested exposure was applied, and in which frame. It also covers the C930e re-apply open item. | strobe |
+| G1 sync (exposure alignment) | It **measures** each camera's exposure phase. It does not align exposures. A single strobe pulse lights a white card for every camera at once. Each camera shows a strobe band (the lit row band one pulse leaves in a rolling-shutter frame). Its bottom row r_b gives row 0's exposure start: s0 = t_s − r_b·L (t_s = strobe rise in ESP32 time, L = line time per row). Δφ = s0_A − s0_B (mod frame period), tracked over time, gives the phase and drift between cameras. Only FSIN (hardware trigger, cameras with a sync input) can **align** exposures, and the rig drives FSIN too. | strobe, FSIN |
+| G2 timestamp | A per-frame true exposure start in ESP32 time. The PING/PONG clock fit maps it to QPC or CLOCK_MONOTONIC, so each timestamp source can be scored for **absolute** latency as well as offset-only jitter (spread after removing one constant offset per source). Sources: Media Foundation (MF) sample time, host arrival, and UVC PTS/SCR (payload-header timestamps on the camera clock). | strobe + clock sync |
+| M1 exposure control | Band height (rows) × L = actual exposure E for each frame, so the rig confirms whether a requested exposure was applied, and in which frame. It also covers the open C930e exposure item (MF manual exposure −7 took effect in only 1 of 5 runs and read back −5 after capture, REPORT finding 11; does re-applying it after stream start help? REPORT further investigation 6). | strobe |
 | M2 format control | Measures the rolling-shutter line time L and the readout for each format, resolution and fps (double strobe). It does not test whether a format can be set. | strobe (`gap_us`) |
 | M3 focus control | Side check: LED spot size in the bar gives a sharpness value for every frame. If autofocus is still active, the spot size drifts. | bar |
-| G3 MJPEG, G4 IDs, G5 bandwidth | Not addressed by the rig. | n/a |
+| G3 MJPEG, G4 ID, G5 bandwidth | Not addressed by the rig. | n/a |
 
-The rig does not open a camera. Camera captures that run alongside it on Gerald must still go through
-`tools/camlock.py`.
+The rig does not open a camera. Camera captures that run alongside it on Gerald (the Windows 11 test machine,
+i7-14700K) must still go through `tools/camlock.py`.
 
-## Bill of materials (phase 0 first)
+## Bill of materials (Phase 0 first)
 
-Phase 0 is strobe only, about $10, and answers G1, M1 and line time on its own. Build it before the LED bar.
+Phase 0 is the strobe-only build, about $15–25 of parts with the 5 V supply and polyfuses (*est.*). On its own it measures G1 phase and drift, M1 (actual E) and line
+time L (M2). Build it before the LED bar. Build steps follow DESIGN.md "Suggested build order": Phase 0 is
+step 1, the LED bar step 3, FSIN step 5.
 
 | Part | Qty | Notes |
 | --- | --- | --- |
-| ESP32-WROOM-32 DevKitC (classic ESP32, CP2102 or CH340) | 1 | Already on hand. The upgrade path is an ESP32-S3-DevKitC-1 for USB SOF lock (not in this draft) |
+| ESP32-WROOM-32 DevKitC (classic ESP32, CP2102 or CH340) | 1 | Already on hand. The upgrade path is an ESP32-S3-DevKitC-1 for USB SOF lock (the ESP32-S3 timestamps each 1 ms USB start-of-frame (SOF) tick; DESIGN.md §C option 4; not in this draft) |
 | Strobe LED, 1–3 W **green or deep red, no phosphor**, on a star with a small heatsink and a diffuser | 1 | Not white: phosphor decays slowly. Not IR: webcam IR-cut filters block it |
 | AO3400A logic-level N-MOSFET (R_DS(on) specified at V_GS = 2.5 V) | 1 + 1 per FSIN camera | Not IRLZ44N-class parts |
 | Strobe current resistor, ~1.8 Ω 3 W (≈1 A from 5 V at V_f ≈ 3.2 V) | 1 | Size it for your LED's V_f and pulse rating |
@@ -57,11 +65,11 @@ Phase 0 is strobe only, about $10, and answers G1, M1 and line time on its own. 
 | 1 A polyfuse on the strobe rail, 500 mA on the LED rail | 2 | Backstop if a gate sticks on |
 | 5 V 3 A supply (+ 3.3 V 1 A regulator for the bar LEDs) | 1 | LED current never comes from the DevKit or the PC's USB |
 | Matte white foam board (A2), black flock or tape | — | Card must fill the full image height of every camera |
-| 8-channel 24 MHz USB logic analyzer | 1 | Needed for bring-up: checks LE, STROBE, FSIN and SYNC timing |
-| *Bar (phase 3):* STP16CP05 / TLC5926 / MBI5026 16-channel constant-current sink | 8 | **Driver VDD from 3.3 V** (at 5 V, V_IH = 3.5 V is above the ESP32's 3.3 V) |
+| 8-channel 24 MHz USB logic analyzer | 1 | Needed for bring-up: checks LE (latch), STROBE, FSIN and SYNC (GPIO4) timing; see Wiring |
+| *Bar (build step 3):* STP16CP05 / TLC5926 / MBI5026 16-channel constant-current sink | 8 | **Driver VDD from 3.3 V** (at 5 V, V_IH = 3.5 V is above the ESP32's 3.3 V) |
 | *Bar:* red AlGaInP 3 mm diffused (or 0805) LEDs | ~130 | Monochrome only. Never addressable LEDs (WS2812, APA102) |
 | *Bar:* R_ext trimmer + 0.1 µF per driver, 10 µF per 2 drivers | — | Set brightness with R_ext only. **Never PWM-dim** |
-| *FSIN (phase 5):* ULN2803A as an alternative to one MOSFET per camera | 1 | FSIN+ to +5 V, FSIN− to the sink |
+| *FSIN (build step 5):* ULN2803A as an alternative to one MOSFET per camera | 1 | FSIN+ to +5 V, FSIN− to the sink |
 | *Optional:* BPW34 photodiode + 10 kΩ | 1 | Optical rise-time check with a scope |
 
 ## Wiring (classic DevKit)
@@ -81,7 +89,7 @@ Pins avoided: strapping pins 0/2/5/12/15, flash pins 6–11, GPIO14 (outputs PWM
 | Capture: LE or FSIN loopback | 34 | wire from GPIO21 (default) or GPIO26 | capture channel 1 |
 | Capture: STROBE loopback | 35 | wire from GPIO25 | capture channel 0, both edges |
 | Capture: UART RX start bit | 39 | wire from GPIO3 (U0RXD, driven by the bridge's TX) | capture channel 2. With `USE_RX_EDGE_CAPTURE=0`, channel 2 moves to GPIO19 (internal pull-down, nothing wired) |
-| Internal sync | 4 | **leave unconnected** | software pulse at START that aligns the three MCPWM timers. Useful as a logic-analyzer trigger |
+| SYNC (internal timer sync) | 4 | **leave unconnected** | software pulse at START that aligns the three MCPWM timers. Useful as a logic-analyzer trigger |
 | Button | 32 | push button to GND | internal pull-up. Sends `EV BTN` |
 | Status LED | 33 | LED + resistor to GND | on while outputs run |
 | Photodiode (optional) | 36 | BPW34 + 10 kΩ | reserved; this draft does not read it |
@@ -90,14 +98,15 @@ Pins avoided: strapping pins 0/2/5/12/15, flash pins 6–11, GPIO14 (outputs PWM
 **Unwired captures float.** If a loopback wire to 34, 35 or 39 is missing, fit a 100 kΩ pull-down to GND
 on that pin. A floating pin can produce bogus events and a stream of interrupts.
 
-Bar chain: ESP32 → driver 0 → … → driver 7. Channel 0 is driver 0 OUT0. F LEDs use channels 0–99,
-Gray bits 100–119, fiducials 120–123 and the mode bit 124. Mount the F bar **horizontally**, along the
-image rows, with the Gray row directly below it. The bit order is unverified. To check it, send
-`STEP 32000` then `MODE CODE`; the lit F LED should walk 0 → 99.
+Bar chain: ESP32 → driver 0 → … → driver 7. Channel 0 is driver 0 OUT0. Fine-bar (F) LEDs use channels 0–99,
+Gray bits 100–119, fiducials 120–123 and the mode bit 124 (lit in CODE mode, so a decoder can tell CODE frames
+from ALLON/ALLOFF). Mount the F bar **horizontally**, along the image rows, with the Gray row directly below
+it. The bit order is unverified. To check it, send `STEP 32000` then `MODE CODE`; the lit F LED should walk
+0 → 99.
 
 Ground: common ground between the ESP32 and the LED and strobe supplies, with a star point at the
-supply. Keep the strobe return current out of the DevKit ground. FSIN optocouplers isolate the
-cameras.
+supply. Keep the strobe return current out of the DevKit ground. The cameras' own optocoupled FSIN inputs
+(FSIN+/FSIN−) isolate the cameras from the rig.
 
 ## Flashing
 
@@ -108,43 +117,45 @@ arduino-cli compile --fqbn esp32:esp32:esp32 research/usb_cameras/sync_rig/esp32
 arduino-cli upload  --fqbn esp32:esp32:esp32 -p COM5 research/usb_cameras/sync_rig/esp32_sync_rig
 ```
 
-Arduino IDE: board "ESP32 Dev Module", core **3.x** (the sketch `#error`s on 2.x and on non-ESP32 targets).
+Arduino IDE: board "ESP32 Dev Module", core **3.x** (the sketch `#error`s on 2.x and on any target other than the classic ESP32, ESP32-S3 and ESP32-C3 included).
 Build switches can be set from the command line, for example:
 `--build-property "compiler.cpp.extra_flags=-DCAP1_ROLE=1 -DUSE_RX_EDGE_CAPTURE=0"`.
 
 ## Serial protocol
 
 The link runs at 921600 baud, 8N1, one ASCII command per line, case-insensitive. A leading `#tag`
-token is echoed in front of the reply. Replies are `OK <CMD> …` or `ERR <CMD> <reason>`. Lines that
-start with `EV` are unsolicited events, and the host must skip them while waiting for a reply.
+token is echoed in front of the reply (the firmware upper-cases the whole line, so an echoed `#tag` comes back
+upper-case). Replies are `OK <CMD> …` or `ERR <CMD> <reason>`; PING is the exception and replies `PONG …`. A
+line over 96 characters gets `ERR LINE too_long`. Lines that start with `EV` are unsolicited events, and the host must skip them while waiting for a reply.
 Nothing autostarts: at boot every output is held low and the bar is dark.
 
 | Command | Reply / effect |
 | --- | --- |
-| `PING <host_ns>` | `PONG <host_ns> <esp_us_rx> <esp_us_tx> <E\|B>`. `esp_us_rx` is the start bit of the PING's first byte: `E` means captured on GPIO39, `B` means estimated from the read time minus the line's serialization time. `esp_us_tx` is esp_timer read just before the PONG enters the empty TX FIFO |
+| `PING <host_ns>` | `PONG <host_ns> <esp_us_rx> <esp_us_tx> <E\|B>`. `esp_us_rx` is the start bit of the PING's first byte: `E` means captured on GPIO39, `B` means estimated from the read time minus the line's serialization time and the 2-symbol UART RX timeout. `esp_us_tx` is esp_timer (the ESP32's 64-bit µs-since-boot clock, the rig's reported timebase) read just before the PONG enters the empty TX FIFO |
 | `STATUS` | one line of `key=value`: run state, config, counters, `late`, `evq_ovf`, anchor residual, xtal/APB/CPU clocks, `boot_id`, `esp_us` |
 | `VERSION`, `HELP` | |
 | `MODE CODE [step_us]` | bar shows the time code, strobe off, (re)start |
 | `MODE STROBE <period_us> <width_us> <phase_us> [gap_us]` | strobe on, bar dark, (re)start. `gap_us` > 0 adds a second pulse `gap_us` after the first (rise to rise) |
 | `MODE OFF` | same as `STOP` |
 | `STEP <us>` | fine-bar step / LE period, 50–32767 µs. Takes effect at START |
-| `BAR CODE\|ALLON\|ALLOFF\|DARK` | live. ALLON/ALLOFF are the normalization frames; ALLOFF keeps the fiducials lit |
-| `STROBE <period_us> <width_us> <phase_us> [gap_us]` / `STROBE OFF` | takes effect at START. Limits: period 1000–65535 µs, width ≤ 500 µs, duty ≤ 1 %, phase < period, width < gap |
-| `FSIN <period_us> <width_us> [phase_us]` / `FSIN OFF` | takes effect at START |
+| `BAR CODE\|ALLON\|ALLOFF\|DARK` | applies at once if running, otherwise at the next START (while switching, one LE may latch a half-shifted pattern; only a switch into CODE is flagged, as `EV E LATE`). ALLON/ALLOFF are the normalization frames; ALLOFF keeps the fiducials lit |
+| `STROBE <period_us> <width_us> <phase_us> [gap_us]` / `STROBE OFF` | Settings take effect at START; `STROBE OFF` holds the output low at once if running. Limits: period 1000–65535 µs, width 1–500 µs, duty ≤ 1% (both pulses counted in double mode), phase < period, width < gap, and gap + width must fit within the period |
+| `FSIN <period_us> <width_us> [phase_us]` / `FSIN OFF` | Settings take effect at START; `FSIN OFF` holds both FSIN outputs low at once if running. Limits: period 1000–65535 µs, width ≥ 1 µs and shorter than the period, phase < period |
 | `START` / `STOP` | START re-syncs all outputs from one edge and defines a new epoch |
-| `ANCHOR` | re-anchors the capture timer to esp_timer now, and re-arms the LE anchor event |
-| `EVENTS ON\|OFF` | turns EV output on or off; the host script switches it off during ping runs |
+| `ANCHOR` | takes one anchor now (refreshes the unwrap base and `resid_ns`; the boot offset stays fixed) and replies `OK ANCHOR <cap_ticks64> <esp_ns> <resid_ns> <half_ns>`. While running with `CAP1_ROLE=0`, it also reports the next LE edge as `EV A` |
+| `EVENTS ON\|OFF` | turns EV S/F/A/K/BTN output on or off (`EV E` and `EV B` lines are always sent); the host script switches it off during ping runs |
 
 Phase reference: the **epoch** is the first LE rising edge after START. Strobe pulse 1 rises at
-epoch + phase + j·period, and FSIN rises at epoch + phase + j·period. The firmware commands these
-times; the captured loopback edges show what actually happened.
+epoch + strobe phase_us + j·strobe period_us (pulse 2 follows gap_us later), and FSIN rises at
+epoch + FSIN phase_us + j·FSIN period_us. The firmware commands these times; the captured loopback edges
+show what actually happened.
 
 | Event | Meaning (all times are esp_timer nanoseconds: µs since boot × 1000, with sub-µs detail from the 80 MHz capture timer) |
 | --- | --- |
 | `EV B <boot_id> <fw> <ver> hw_ok=<0\|1>` | boot. A new boot_id means the clock fit restarts |
 | `EV S <k> <t_rise_ns> <t_fall_ns>` | strobe pulse k since START, captured on GPIO35 (in double mode, consecutive k alternate between pulse 1 and pulse 2) |
 | `EV F <k> <t_rise_ns>` | FSIN rise (only with `CAP1_ROLE=1`) |
-| `EV A <k> <t_rise_ns>` | LE edge k. k = 0 is the epoch; later ones only after `ANCHOR` |
+| `EV A <k> <t_rise_ns>` | LE edge k (only with `CAP1_ROLE=0`, the default). k = 0 is the epoch; later ones only after `ANCHOR` |
 | `EV K <cap_ticks64> <esp_ns> <resid_ns> <half_ns>` | capture-timer anchor, once a second |
 | `EV E LATE <count> <k>` | the bar render missed the next LE, so stale or half-shifted data was latched (flagged, never silent) |
 | `EV E OVF <count>` / `EV E INIT …` / `EV E ANCHOR …` | event queue overflow, or an init or anchor failure |
@@ -158,12 +169,16 @@ uv run --script research/usb_cameras/sync_rig/host/esp32_clock_sync.py --port CO
 uv run --script research/usb_cameras/sync_rig/host/esp32_clock_sync.py --self-test
 ```
 
-The script holds DTR and RTS low on open so the DevKit does not reset (some drivers pulse them anyway;
-`--allow-reset` skips this). It waits for `EV B`, then sends VERSION and STATUS and `EVENTS OFF`,
-and pings with a jittered schedule so the pings do not lock to the 1 ms USB frame. It busy-polls
+The script de-asserts DTR and RTS on open, which keeps the DevKit's EN and IO0 high so it does not reset
+(some drivers pulse them anyway; `--allow-reset` skips this). It waits up to `--boot-wait` (default 2.5 s) for
+`EV B`, which appears only if the board reset on open. It then sends VERSION, STATUS and (unless
+`--keep-events`) `EVENTS OFF`, and pings with a jittered schedule so the pings do not lock to the 1 ms USB
+frame. After the run it sends `EVENTS ON` (unless `--keep-events`) and STATUS again. It busy-polls
 `in_waiting` and stamps each PONG when its first bytes arrive.
 
-For each ping, delay = RTT − ESP32 turnaround, and offset = ((rx − t1) + (tx − t4))/2. The script
+For each ping: t1 = host clock when PING is written; t4 = host clock when the PONG's first bytes are seen;
+rx = esp_us_rx and tx = esp_us_tx (×1000 to ns). delay = (t4 − t1) − (tx − rx), the round trip minus the
+ESP32 turnaround. offset = ((rx − t1) + (tx − t4))/2 = ESP32 time − host time. The script
 keeps the minimum-delay ping in each 1 s window, then fits a least-squares line through those
 minima to get the offset at a reference time and the drift in ppm.
 
@@ -175,34 +190,38 @@ What the numbers mean:
 - `residual_std_us` is the repeatability of the mapping.
 - `asymmetry_bound_us` (min delay / 2) bounds the **unknown absolute bias**. Min-RTT filtering
   cannot remove it.
-- Two offsets are reported. The second assumes the bridge forwards the PONG only after its last byte.
-  A ~50-byte reply takes ~0.54 ms to serialize at 921600 baud, so the two differ by ~0.27 ms. Only
-  an independent reference can tell which is right. The ESP32-S3 SOF lock in the plan (option 4) is
-  that reference.
+- Two ping offsets are reported: `offset_ns_at_ref` (PONG stamped at its first bytes) and
+  `offset_ns_at_ref_if_reply_seen_after_last_byte` (assumes the bridge forwards the PONG only after its last byte).
+  A ~50-byte reply takes ~0.54 ms to serialize at 921600 baud, so the two differ by ~0.27 ms. (This ~0.27 ms is
+  unrelated to the C922 PTS ±0.27 ms alternation in `../timing/VERIFY_method.md` §3.) Only an independent
+  reference can tell which is right. The ESP32-S3 SOF lock (DESIGN.md §C option 4; test plan R2, validated in
+  V7) is that reference.
 
 Expected accuracy for this path (design estimate, not measured): absolute ±0.1–0.5 ms, repeatability
-~20–100 µs. For G1, M1 and line time, the clock fit is not needed at all: those use only differences
+~20–100 µs. For G1 phase, M1 and line time, the clock fit is not needed at all: those use only differences
 between captured edges and image rows.
 
-## Bring-up checklist (P0, before any camera run)
+## Bring-up checklist (DESIGN.md §F P0; steps 1–4 need no camera, step 5 = test plan V0)
 
 1. Flash. `STATUS` should show `cap_res_hz=80000000` and `apb_hz=80000000`, and
    `anchor_half_ns` should be a few hundred ns to ~1 µs.
 2. Logic analyzer on 4 (SYNC), 21 (LE), 25 (STROBE), 26 (FSIN): send `STROBE 33333 50 1000`,
    `FSIN 20800 100 0`, `START`. Check the following:
    - LE period = STEP, and pulse = 1 µs.
-   - Strobe width = 50 µs, and its rise is 1000 µs after an LE rise.
+   - Strobe width = 50 µs, and the first strobe rise is 1000 µs after the epoch (the first LE rise after START).
    - There are no stray pulses around the SYNC edge.
-   - Double strobe: `STROBE 33333 50 1000 10000` gives a second rise 10 ms after the first.
+   - Double strobe: `STROBE 33333 50 1000 10000` then `START` gives a second rise 10 ms (rise to rise) after the first.
 3. Compare the `EV S` / `EV A` differences with the analyzer, to confirm the capture loopback and the 64-bit unwrapping.
-4. Run `esp32_clock_sync.py` for 60 s, three times, once with each USB topology (direct root port, through a hub).
-5. Then the plan's P0 camera checks: band visible on C922, C930e and generic at 720p30 MJPEG, w = 50 µs, dark room;
-   echo-band check; L for each camera.
+4. Run `esp32_clock_sync.py` for 60 s, three times on each USB topology (direct root port, through a hub).
+5. Then the DESIGN.md §F P0 camera checks (test plan V0): strobe band visible on the C922, C930e and generic
+   camera (USB 4C4A:4A55) at 720p30 MJPEG, strobe width w = 50 µs, dark room; echo-band check (a ghost band in
+   frame n+1 from temporal noise reduction); line time L for each camera.
 
-## Design deviations (versus the plan's rig design)
+## Design deviations (versus DESIGN.md)
 
-1. **Command syntax.** The protocol uses plain words (`MODE STROBE …`, `PING …`), as asked for this draft, instead of the
-   `<STEP:us>` / `<PROTO:2>` framing. The optional `#tag` echo keeps protocol-2-style matching possible.
+1. **Command syntax.** The protocol uses plain words (`MODE STROBE …`, `PING …`), as the 2026-10-30 drafting task specified,
+   instead of the protocol-2 framing (`<STEP:us>`, `<PROTO:2>`; ../../arduino_sync/PLAN.md §3, which DESIGN.md §F asked
+   for). The optional `#tag` echo keeps protocol-2 tag matching possible.
 2. **One PWM resolution, 2 MHz (0.5 µs ticks), for all three timers,** instead of 10 MHz for LE and 1 MHz for the strobe.
    All three then fit one MCPWM group prescaler, and the strobe and FSIN timers can run up/down.
    Commands take whole µs.
@@ -212,9 +231,11 @@ between captured edges and image rows.
    periods give ~30 ppm granularity at 33 ms.
 5. **Timer alignment uses a GPIO sync source on spare GPIO4,** with io_loop_back, pulsed by software at START. An IDF 5.x
    soft-sync source binds to a single timer.
-6. **Reported timebase is esp_timer** (64-bit µs), as this task asked. The design wanted the capture timer itself. Captured
-   edges keep 12.5 ns resolution relative to each other, but their mapping to esp_timer has a fixed offset of about
-   the soft-catch bracket (`anchor_half_ns`, expected ≲ 1 µs). The rate is assumed nominal, because both clocks come
+6. **Reported timebase is esp_timer** (64-bit µs), as the 2026-10-30 drafting task specified. The design wanted the capture
+   timer itself. Captured edges keep 12.5 ns resolution relative to each other, but their mapping to esp_timer carries a
+   fixed error of up to the boot anchor's half-bracket (soft catch = a software-triggered capture bracketed by two
+   esp_timer reads). That boot value is not reported; `anchor_half_ns` (STATUS) and `half_ns` (`EV K`) are the latest
+   anchor's, a proxy, expected ≲ 1 µs. The rate is assumed nominal, because both clocks come
    from APB. The once-a-second anchors report any residual drift as `resid_ns`.
 7. **Capture channel 1 (GPIO34) is LE *or* FSIN, chosen at compile time** (`CAP1_ROLE`), not switched at run time. Two
    outputs wired to one input would short.
@@ -222,17 +243,18 @@ between captured edges and image rows.
    closed before the next pattern is shifted in.
 9. **The strobe/FSIN phase is relative to the first LE edge after START.** Changing a period or phase needs START,
    which starts a new epoch.
-10. Event lines carry an `EV` prefix and times in esp ns, and PONG has a fourth token (`E`/`B`).
-11. Not implemented: the event-log parser and the analysis pipeline (`timing/rig/`), the photodiode ADC, the S3 SOF lock,
+10. Event lines carry an `EV` prefix and times in esp_timer nanoseconds (`esp_ns`), and PONG has a fourth token (`E`/`B`).
+11. Not implemented: the event-log parser and the analysis pipeline (`timing/rig/`), the photodiode ADC, the ESP32-S3 SOF lock,
     LCD_CAM DMA for the bar, and pinning the Arduino loop away from the render core.
 
 ## Known limitations and open TODOs
 
-- **Hardware behaviour assumed, not verified.** All of these are taken from IDF headers and the reasoning in the
+- **Hardware behavior assumed, not verified.** All of these are taken from IDF headers and the reasoning in the
   comments, and each needs checking with the analyzer:
   - whether an MCPWM sync load fires compare/zero events;
   - the sync-to-timer propagation delay (it shows up as a constant phase error, which the loopback captures);
-  - IDF's non-continuous force behaviour on release;
+  - whether releasing a held output (remove the continuous force-low, then apply a one-shot low) hands control back
+    to the generator actions without a glitch;
   - `mcpwm_timer_set_period` halving `period_ticks` in up/down mode.
 - **Render deadline.** At 100 µs steps, the render is a 10 kHz ISR plus a task switch plus a ~13 µs SPI transfer
   on core 1, alongside the Arduino loop. At 50 µs, `EV E LATE` may appear. This is unmeasured.
@@ -242,13 +264,14 @@ between captured edges and image rows.
   µs. TODO: reject anchors whose residual jumps by more than a few µs.
 - **Counter wrap.** `le_events` is 32-bit, so it wraps after 4.97 days at 100 µs. The Gray counter wraps after 2.9 h; resolve that from host time.
 - **Reply serialization.** The host stamps the PONG when its first chunk arrives. When the bridge forwards the reply
-  is unknown, which is why two offsets are reported. FTDI bridges need the latency timer set to 1 ms.
+  is unknown, which is why two ping offsets are reported (see Clock correlation). FTDI bridges need the latency timer set to 1 ms.
 - **DevKit reset.** The DevKit may still reset on port open with some drivers. A new `boot_id` means the old clock fit
   no longer applies.
 - **Bar bit order** in the driver chain is unverified (see Wiring).
-- **Build P0 first.** Check that a 20 mA LED lit for 100 µs is visible to the webcams at gain in the dark, and that the
+- **Build Phase 0 (strobe only) first.** Check that a 20 mA LED lit for 100 µs is visible to the webcams at gain in the dark, and that the
   strobe band is visible, before building 120 channels.
-- **S3 port** (SOF lock, native USB): pins are in the design. The `#error` guard blocks non-ESP32 targets until
-  that port exists.
-- No RocSync code is used here. RocSync is MPL-2.0 (checked 2026-10-30; see `../docs/rocsync_review.md`), which
+- **ESP32-S3 port** (SOF lock, native USB): pins are in DESIGN.md §G ('S3 equivalent'). The `#error` guard blocks any
+  target other than the classic ESP32 (ESP32-S3 and ESP32-C3 included) until that port exists.
+- No RocSync code is used here (RocSync: an open-source LED-clock board for after-the-fact camera sync, reviewed in
+  `../docs/rocsync_review.md`). RocSync is MPL-2.0 (checked 2026-10-30), which
   can be combined with skellycam's AGPL if its decoder is reused later.

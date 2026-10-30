@@ -470,7 +470,7 @@ def main() -> int:
     ap.add_argument("--window", type=float, default=1.0, help="min-delay window in seconds (default 1)")
     ap.add_argument("--timeout", type=float, default=0.2, help="per-ping reply timeout in seconds")
     ap.add_argument("--boot-wait", type=float, default=2.5, help="seconds to wait for the EV B boot line")
-    ap.add_argument("--allow-reset", action="store_true", help="do not hold DTR/RTS low on open (DevKit may reset)")
+    ap.add_argument("--allow-reset", action="store_true", help="do not de-assert DTR/RTS before open (the DevKit may reset)")
     ap.add_argument("--keep-events", action="store_true", help="leave firmware EV lines on during the run")
     ap.add_argument("--out-dir", type=Path, help="override results/<platform>/<hostname>/sync_rig_clock/")
     ap.add_argument("--list-ports", action="store_true", help="list serial ports and exit")
