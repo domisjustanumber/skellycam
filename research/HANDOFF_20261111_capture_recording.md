@@ -20,13 +20,12 @@ Start here in a new session. This covers everything from the 2026-11-11 planning
   - **Still to do in 1.0:** majors one at a time (`numpydantic` 2, `pillow` 13, `polars` 2, `websockets` 17), the dev tools (ruff 0.17 may add lint findings), then skellycam-ui npm (Electron 45 and the other majors), then T-BUMP.
   - **T-BUMP's real recordings haven't been run.** The Kiyo Pro is wedged, and connecting cameras through skellycam could re-probe it, which isn't allowed. A replug is needed first; then one recording per major-bump commit.
 - **Housekeeping:** the 74 untracked media files (10.2 MB) were moved to `C:/Users/Dom/Documents/skellycam-raw/` with mirrored paths, sha1 verified; that README has a new row.
-- **Privacy review:** `PRIVACY_REVIEW_20261111.md` (untracked; private values partly masked). **Needs Dom:**
-  - **High, pushed:** `frame_ring_buffer/study_state/prototypes_partial_transcript.jsonl` is a raw Claude Code transcript containing Dom's personal email (verified: 2 hits on `origin/dom/research`). Remove it; purging it needs a history rewrite + force-push of `dom/research`.
-  - **Medium, pushed:** 54 room/monitor JPEGs under `usb_cameras/results/windows/Gerald/**`.
-  - **Unpushed (9 commits):** `camera_consent_20261109/*.json` (Windows camera-usage history of other apps), skellycam logs with a telemetry user ID, and 3 sample JPEGs. Rewrite these local commits before any push; a delete commit on top would still publish them.
-  - Bench logs and harness `package.json` files (9, not 8): clean, safe to force-add.
-  - Suggested `.gitignore` rules for `*.mjpeg` / `*.jpg` under results.
-
+- **Privacy: fixed 2026-11-11 by rewriting `dom/research` (not yet force-pushed; Dom must approve the push).**
+  - Every commit after `development` was rewritten with git-filter-repo (`development` is unchanged). Removed from all history: the raw session transcript, all 57 webcam JPEGs, and the camera-consent dumps. Replaced in all history: Dom's email, the C922 serial (now `C922SN01`, in file names too), two peripheral serials, the MAC fragment in the ContainerIds, the real host LAN addresses, the skellycam telemetry IDs, the private claude.ai artifact IDs, and a chat app's name in the suite's process lists. A scan of all 18 commits finds none left. Every changed file equals the old file with the rules applied, and no JSON broke.
+  - The removed files are in `C:/Users/Dom/Documents/skellycam-raw/` (mirrored paths; serial renamed there too). The full pre-rewrite branch is in `skellycam-raw/git-backup/dom-research-pre-privacy-20261111.bundle`, which holds the private data, so it must never be pushed.
+  - `.gitignore` now keeps raw media, consent dumps, transcripts and the privacy report out of `research/`.
+  - **Still open:** (1) force-push `dom/research` to the fork (ask Dom); (2) after the push, the old commits stay reachable on GitHub by SHA until GitHub support purges cached views; (3) the suite writes the real C922 serial into new result paths on every run. A local pre-commit guard was proposed but blocked pending Dom's OK; until then, check new results before committing.
+  - The review itself is `research/PRIVACY_REVIEW_20261111.md` (ignored, local only).
 
 ## 1. Read first
 1. [`CAPTURE_AND_RECORDING_PLAN.md`](CAPTURE_AND_RECORDING_PLAN.md) (rev 3.2). It is the plan of record:
