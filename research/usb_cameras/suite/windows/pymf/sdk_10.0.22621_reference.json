@@ -1,0 +1,828 @@
+{
+ "source": "Windows SDK 10.0.22621.0 headers (Microsoft.Windows.SDK.CPP 10.0.22621.3233 from nuget.org; the SDK that built wincam.exe). Extracted 2026-11-08 by parsing MIDL_INTERFACE / DECLARE_INTERFACE_ blocks (method order = vtable order after IUnknown's 3 methods) and DEFINE_GUID / EXTERN_GUID lines.",
+ "include_root": "c/Include/10.0.22621.0",
+ "interfaces": {
+  "IKsControl": {
+   "header": "shared/ks.h",
+   "line": 3921,
+   "iid": "28F54685-06FD-11D2-B27A-00A0C9223196",
+   "base": "IUnknown",
+   "methods": [
+    {
+     "name": "KsProperty",
+     "line": 3925
+    },
+    {
+     "name": "KsMethod",
+     "line": 3932
+    },
+    {
+     "name": "KsEvent",
+     "line": 3939
+    }
+   ],
+   "iid_source": "shared/ks.h:3995 STATIC_IID_IKsControl"
+  },
+  "IMFSourceResolver": {
+   "header": "um/mfidl.h",
+   "line": 1405,
+   "iid": "FBE5A32D-A497-4B61-BB85-97B1A848A6E3",
+   "base": "IUnknown",
+   "methods": [
+    {
+     "name": "CreateObjectFromURL",
+     "line": 1409
+    },
+    {
+     "name": "CreateObjectFromByteStream",
+     "line": 1418
+    },
+    {
+     "name": "BeginCreateObjectFromURL",
+     "line": 1428
+    },
+    {
+     "name": "EndCreateObjectFromURL",
+     "line": 1437
+    },
+    {
+     "name": "BeginCreateObjectFromByteStream",
+     "line": 1444
+    },
+    {
+     "name": "EndCreateObjectFromByteStream",
+     "line": 1454
+    },
+    {
+     "name": "CancelObjectCreation",
+     "line": 1461
+    }
+   ]
+  },
+  "IMFMediaSource": {
+   "header": "um/mfidl.h",
+   "line": 1764,
+   "iid": "279A808D-AEC7-40C8-9C6B-A6B492C78A66",
+   "base": "IMFMediaEventGenerator",
+   "methods": [
+    {
+     "name": "GetCharacteristics",
+     "line": 1768
+    },
+    {
+     "name": "CreatePresentationDescriptor",
+     "line": 1771
+    },
+    {
+     "name": "Start",
+     "line": 1775
+    },
+    {
+     "name": "Stop",
+     "line": 1780
+    },
+    {
+     "name": "Pause",
+     "line": 1782
+    },
+    {
+     "name": "Shutdown",
+     "line": 1784
+    }
+   ]
+  },
+  "IMFPresentationDescriptor": {
+   "header": "um/mfidl.h",
+   "line": 6208,
+   "iid": "03CB2711-24D7-4DB6-A17F-F3A7A479A536",
+   "base": "IMFAttributes",
+   "methods": [
+    {
+     "name": "GetStreamDescriptorCount",
+     "line": 6212
+    },
+    {
+     "name": "GetStreamDescriptorByIndex",
+     "line": 6215
+    },
+    {
+     "name": "SelectStream",
+     "line": 6220
+    },
+    {
+     "name": "DeselectStream",
+     "line": 6223
+    },
+    {
+     "name": "Clone",
+     "line": 6226
+    }
+   ]
+  },
+  "IMFStreamDescriptor": {
+   "header": "um/mfidl.h",
+   "line": 6653,
+   "iid": "56C03D9C-9DBB-45F5-AB4B-D80F47C05938",
+   "base": "IMFAttributes",
+   "methods": [
+    {
+     "name": "GetStreamIdentifier",
+     "line": 6657
+    },
+    {
+     "name": "GetMediaTypeHandler",
+     "line": 6660
+    }
+   ]
+  },
+  "IMFMediaTypeHandler": {
+   "header": "um/mfidl.h",
+   "line": 7036,
+   "iid": "E93DCF6C-4B07-4E1E-8123-AA16ED6EADF5",
+   "base": "IUnknown",
+   "methods": [
+    {
+     "name": "IsMediaTypeSupported",
+     "line": 7040
+    },
+    {
+     "name": "GetMediaTypeCount",
+     "line": 7045
+    },
+    {
+     "name": "GetMediaTypeByIndex",
+     "line": 7048
+    },
+    {
+     "name": "SetCurrentMediaType",
+     "line": 7053
+    },
+    {
+     "name": "GetCurrentMediaType",
+     "line": 7056
+    },
+    {
+     "name": "GetMajorType",
+     "line": 7060
+    }
+   ]
+  },
+  "IMFAttributes": {
+   "header": "um/mfobjects.h",
+   "line": 303,
+   "iid": "2CD2D921-C447-44A7-A13C-4ADABFC247E3",
+   "base": "IUnknown",
+   "methods": [
+    {
+     "name": "GetItem",
+     "line": 307
+    },
+    {
+     "name": "GetItemType",
+     "line": 311
+    },
+    {
+     "name": "CompareItem",
+     "line": 315
+    },
+    {
+     "name": "Compare",
+     "line": 320
+    },
+    {
+     "name": "GetUINT32",
+     "line": 325
+    },
+    {
+     "name": "GetUINT64",
+     "line": 329
+    },
+    {
+     "name": "GetDouble",
+     "line": 333
+    },
+    {
+     "name": "GetGUID",
+     "line": 337
+    },
+    {
+     "name": "GetStringLength",
+     "line": 341
+    },
+    {
+     "name": "GetString",
+     "line": 345
+    },
+    {
+     "name": "GetAllocatedString",
+     "line": 351
+    },
+    {
+     "name": "GetBlobSize",
+     "line": 356
+    },
+    {
+     "name": "GetBlob",
+     "line": 360
+    },
+    {
+     "name": "GetAllocatedBlob",
+     "line": 366
+    },
+    {
+     "name": "GetUnknown",
+     "line": 371
+    },
+    {
+     "name": "SetItem",
+     "line": 376
+    },
+    {
+     "name": "DeleteItem",
+     "line": 380
+    },
+    {
+     "name": "DeleteAllItems",
+     "line": 383
+    },
+    {
+     "name": "SetUINT32",
+     "line": 385
+    },
+    {
+     "name": "SetUINT64",
+     "line": 389
+    },
+    {
+     "name": "SetDouble",
+     "line": 393
+    },
+    {
+     "name": "SetGUID",
+     "line": 397
+    },
+    {
+     "name": "SetString",
+     "line": 401
+    },
+    {
+     "name": "SetBlob",
+     "line": 405
+    },
+    {
+     "name": "SetUnknown",
+     "line": 410
+    },
+    {
+     "name": "LockStore",
+     "line": 414
+    },
+    {
+     "name": "UnlockStore",
+     "line": 416
+    },
+    {
+     "name": "GetCount",
+     "line": 418
+    },
+    {
+     "name": "GetItemByIndex",
+     "line": 421
+    },
+    {
+     "name": "CopyAllItems",
+     "line": 426
+    }
+   ]
+  },
+  "IMFMediaBuffer": {
+   "header": "um/mfobjects.h",
+   "line": 791,
+   "iid": "045FA593-8799-42B8-BC8D-8968C6453507",
+   "base": "IUnknown",
+   "methods": [
+    {
+     "name": "Lock",
+     "line": 795
+    },
+    {
+     "name": "Unlock",
+     "line": 803
+    },
+    {
+     "name": "GetCurrentLength",
+     "line": 805
+    },
+    {
+     "name": "SetCurrentLength",
+     "line": 809
+    },
+    {
+     "name": "GetMaxLength",
+     "line": 812
+    }
+   ]
+  },
+  "IMFSample": {
+   "header": "um/mfobjects.h",
+   "line": 931,
+   "iid": "C40A00F2-B93A-4D80-AE8C-5A1C634F58E4",
+   "base": "IMFAttributes",
+   "methods": [
+    {
+     "name": "GetSampleFlags",
+     "line": 935
+    },
+    {
+     "name": "SetSampleFlags",
+     "line": 939
+    },
+    {
+     "name": "GetSampleTime",
+     "line": 942
+    },
+    {
+     "name": "SetSampleTime",
+     "line": 946
+    },
+    {
+     "name": "GetSampleDuration",
+     "line": 949
+    },
+    {
+     "name": "SetSampleDuration",
+     "line": 953
+    },
+    {
+     "name": "GetBufferCount",
+     "line": 956
+    },
+    {
+     "name": "GetBufferByIndex",
+     "line": 960
+    },
+    {
+     "name": "ConvertToContiguousBuffer",
+     "line": 965
+    },
+    {
+     "name": "AddBuffer",
+     "line": 969
+    },
+    {
+     "name": "RemoveBufferByIndex",
+     "line": 972
+    },
+    {
+     "name": "RemoveAllBuffers",
+     "line": 975
+    },
+    {
+     "name": "GetTotalLength",
+     "line": 977
+    },
+    {
+     "name": "CopyToBuffer",
+     "line": 981
+    }
+   ]
+  },
+  "IMFMediaType": {
+   "header": "um/mfobjects.h",
+   "line": 1959,
+   "iid": "44AE0FA8-EA31-4109-8D2E-4CAE4997C555",
+   "base": "IMFAttributes",
+   "methods": [
+    {
+     "name": "GetMajorType",
+     "line": 1963
+    },
+    {
+     "name": "IsCompressedFormat",
+     "line": 1966
+    },
+    {
+     "name": "IsEqual",
+     "line": 1969
+    },
+    {
+     "name": "GetRepresentation",
+     "line": 1973
+    },
+    {
+     "name": "FreeRepresentation",
+     "line": 1978
+    }
+   ]
+  },
+  "IMFMediaEventGenerator": {
+   "header": "um/mfobjects.h",
+   "line": 4437,
+   "iid": "2CD0BD52-BCD5-4B89-B62C-EADC0C031E7D",
+   "base": "IUnknown",
+   "methods": [
+    {
+     "name": "GetEvent",
+     "line": 4441
+    },
+    {
+     "name": "BeginGetEvent",
+     "line": 4445
+    },
+    {
+     "name": "EndGetEvent",
+     "line": 4449
+    },
+    {
+     "name": "QueueEvent",
+     "line": 4454
+    }
+   ]
+  },
+  "IMFActivate": {
+   "header": "um/mfobjects.h",
+   "line": 5624,
+   "iid": "7FEE9E9A-4A89-47A6-899C-B6A53A70FB67",
+   "base": "IMFAttributes",
+   "methods": [
+    {
+     "name": "ActivateObject",
+     "line": 5628
+    },
+    {
+     "name": "ShutdownObject",
+     "line": 5632
+    },
+    {
+     "name": "DetachObject",
+     "line": 5634
+    }
+   ]
+  },
+  "IMFSourceReader": {
+   "header": "um/mfreadwrite.h",
+   "line": 355,
+   "iid": "70AE66F2-C809-4E4F-8915-BDCB406B7993",
+   "base": "IUnknown",
+   "methods": [
+    {
+     "name": "GetStreamSelection",
+     "line": 359
+    },
+    {
+     "name": "SetStreamSelection",
+     "line": 365
+    },
+    {
+     "name": "GetNativeMediaType",
+     "line": 371
+    },
+    {
+     "name": "GetCurrentMediaType",
+     "line": 379
+    },
+    {
+     "name": "SetCurrentMediaType",
+     "line": 385
+    },
+    {
+     "name": "SetCurrentPosition",
+     "line": 393
+    },
+    {
+     "name": "ReadSample",
+     "line": 399
+    },
+    {
+     "name": "Flush",
+     "line": 413
+    },
+    {
+     "name": "GetServiceForStream",
+     "line": 417
+    },
+    {
+     "name": "GetPresentationAttribute",
+     "line": 427
+    }
+   ]
+  },
+  "IMFSourceReaderCallback": {
+   "header": "um/mfreadwrite.h",
+   "line": 932,
+   "iid": "DEEC8D99-FA1D-4D82-84C2-2C8969944867",
+   "base": "IUnknown",
+   "methods": [
+    {
+     "name": "OnReadSample",
+     "line": 936
+    },
+    {
+     "name": "OnFlush",
+     "line": 948
+    },
+    {
+     "name": "OnEvent",
+     "line": 952
+    }
+   ]
+  },
+  "IAMVideoProcAmp": {
+   "header": "um/strmif.h",
+   "line": 10959,
+   "iid": "C6E13360-30AC-11D0-A18C-00A0C9118956",
+   "base": "IUnknown",
+   "methods": [
+    {
+     "name": "GetRange",
+     "line": 10963
+    },
+    {
+     "name": "Set",
+     "line": 10976
+    },
+    {
+     "name": "Get",
+     "line": 10981
+    }
+   ]
+  },
+  "IAMCameraControl": {
+   "header": "um/strmif.h",
+   "line": 11124,
+   "iid": "C6E13370-30AC-11D0-A18C-00A0C9118956",
+   "base": "IUnknown",
+   "methods": [
+    {
+     "name": "GetRange",
+     "line": 11128
+    },
+    {
+     "name": "Set",
+     "line": 11141
+    },
+    {
+     "name": "Get",
+     "line": 11146
+    }
+   ]
+  }
+ },
+ "guids": {
+  "MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE": {
+   "guid": "C60AC5FE-252A-478F-A0EF-BC8FA5F7CAD3",
+   "header": "um/mfidl.h",
+   "line": 17923
+  },
+  "MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID": {
+   "guid": "8AC3587A-4AE7-42D8-99E0-0A6013EEF90F",
+   "header": "um/mfidl.h",
+   "line": 17948
+  },
+  "MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME": {
+   "guid": "60D0E559-52F8-4FA2-BBCE-ACDB34A8EC01",
+   "header": "um/mfidl.h",
+   "line": 17925
+  },
+  "MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK": {
+   "guid": "58F0AAD8-22BF-4F8A-BB3D-D2C4978C6E2F",
+   "header": "um/mfidl.h",
+   "line": 17932
+  },
+  "MF_READWRITE_DISABLE_CONVERTERS": {
+   "guid": "98D5B065-1374-4847-8D5D-31520FEE7156",
+   "header": "um/mfreadwrite.h",
+   "line": 2069
+  },
+  "MF_SOURCE_READER_DISCONNECT_MEDIASOURCE_ON_SHUTDOWN": {
+   "guid": "56B67165-219E-456D-A22E-2D3004C7FE56",
+   "header": "um/mfreadwrite.h",
+   "line": 299
+  },
+  "MF_SOURCE_READER_ASYNC_CALLBACK": {
+   "guid": "1E3DBEAC-BB43-4C35-B507-CD644464C965",
+   "header": "um/mfreadwrite.h",
+   "line": 289
+  },
+  "MF_MT_MAJOR_TYPE": {
+   "guid": "48EBA18E-F8C9-4687-BF11-0A74C9F96A8F",
+   "header": "um/mfapi.h",
+   "line": 2494
+  },
+  "MF_MT_SUBTYPE": {
+   "guid": "F7E34C9A-42E8-4714-B74B-CB29D72C35E5",
+   "header": "um/mfapi.h",
+   "line": 2498
+  },
+  "MF_MT_FRAME_SIZE": {
+   "guid": "1652C33D-D6B2-4012-B834-72030849A37D",
+   "header": "um/mfapi.h",
+   "line": 2946
+  },
+  "MF_MT_FRAME_RATE": {
+   "guid": "C459A2E8-3D2C-4E44-B132-FEE5156C7BB0",
+   "header": "um/mfapi.h",
+   "line": 2950
+  },
+  "MF_MT_FRAME_RATE_RANGE_MIN": {
+   "guid": "D2E7558C-DC1F-403F-9A72-D28BB1EB3B5E",
+   "header": "um/mfapi.h",
+   "line": 3438
+  },
+  "MF_MT_FRAME_RATE_RANGE_MAX": {
+   "guid": "E3371D41-B4CF-4A05-BD4E-20B88BB2C4D6",
+   "header": "um/mfapi.h",
+   "line": 3442
+  },
+  "MF_MT_SAMPLE_SIZE": {
+   "guid": "DAD3AB78-1990-408B-BCE2-EBA673DACC10",
+   "header": "um/mfapi.h",
+   "line": 2517
+  },
+  "MF_MT_PIXEL_ASPECT_RATIO": {
+   "guid": "C6376A1E-8D0A-4027-BE45-6D9A0AD39BB6",
+   "header": "um/mfapi.h",
+   "line": 2954
+  },
+  "MF_MT_INTERLACE_MODE": {
+   "guid": "E2724BB8-E676-4806-B4B2-A8D6EFB44CCD",
+   "header": "um/mfapi.h",
+   "line": 3001
+  },
+  "MF_MT_ALL_SAMPLES_INDEPENDENT": {
+   "guid": "C9173739-5E56-461C-B713-46FB995CB95F",
+   "header": "um/mfapi.h",
+   "line": 2502
+  },
+  "MF_MT_FIXED_SIZE_SAMPLES": {
+   "guid": "B8EBEFAF-B718-4E04-B0A9-116775E3321B",
+   "header": "um/mfapi.h",
+   "line": 2506
+  },
+  "MF_MT_DEFAULT_STRIDE": {
+   "guid": "644B4E48-1E02-4516-B0EB-C01CA9D49AC6",
+   "header": "um/mfapi.h",
+   "line": 3152
+  },
+  "MF_MT_AVG_BITRATE": {
+   "guid": "20332624-FB0D-4D9E-BD0D-CBF6786C102E",
+   "header": "um/mfapi.h",
+   "line": 3121
+  },
+  "MF_MT_COMPRESSED": {
+   "guid": "3AFD0CEE-18F2-4BA5-A110-8BEA502E1F92",
+   "header": "um/mfapi.h",
+   "line": 2510
+  },
+  "MF_MT_YUV_MATRIX": {
+   "guid": "3E23D450-2C75-4D25-A00E-B91670D12327",
+   "header": "um/mfapi.h",
+   "line": 3093
+  },
+  "MF_MT_VIDEO_NOMINAL_RANGE": {
+   "guid": "C21B8EE5-B956-4071-8DAF-325EDF5CAB11",
+   "header": "um/mfapi.h",
+   "line": 3101
+  },
+  "MF_MT_VIDEO_PRIMARIES": {
+   "guid": "DBFBE4D7-0740-4EE0-8192-850AB0E21935",
+   "header": "um/mfapi.h",
+   "line": 3009
+  },
+  "MF_MT_TRANSFER_FUNCTION": {
+   "guid": "5FB0FCE9-BE5C-4935-A811-EC838F8EED93",
+   "header": "um/mfapi.h",
+   "line": 3005
+  },
+  "MF_MT_VIDEO_CHROMA_SITING": {
+   "guid": "65DF2370-C773-4C33-AA64-843E068EFB0C",
+   "header": "um/mfapi.h",
+   "line": 2997
+  },
+  "MF_MT_AM_FORMAT_TYPE": {
+   "guid": "73D1072D-1870-4174-A063-29FF4FF6C11E",
+   "header": "um/mfapi.h",
+   "line": 3171
+  },
+  "MF_MT_VIDEO_ROTATION": {
+   "guid": "C380465D-2271-428C-9B83-ECEA3B4A85C1",
+   "header": "um/mfapi.h",
+   "line": 2603
+  },
+  "MFSampleExtension_CaptureMetadata": {
+   "guid": "2EBE23A8-FAF5-444A-A6A2-EB810880AB5D",
+   "header": "um/mfapi.h",
+   "line": 1424
+  },
+  "MF_CAPTURE_METADATA_FRAME_RAWSTREAM": {
+   "guid": "9252077B-2680-49B9-AE02-B19075973B70",
+   "header": "um/mfapi.h",
+   "line": 1450
+  },
+  "MFSampleExtension_Discontinuity": {
+   "guid": "9CDF01D9-A0F0-43BA-B077-EAA06CBD728A",
+   "header": "um/mfapi.h",
+   "line": 1124
+  },
+  "MFMediaType_Video": {
+   "guid": "73646976-0000-0010-8000-00AA00389B71",
+   "header": "um/mfapi.h",
+   "line": 3581
+  },
+  "MF_DEVICESTREAM_STREAM_CATEGORY": {
+   "guid": "2939E7B8-A62E-4579-B674-D4073DFABBBA",
+   "header": "um/mfidl.h",
+   "line": 17952
+  },
+  "MF_DEVICESTREAM_STREAM_ID": {
+   "guid": "11BD5120-D124-446B-88E6-17060257FFF9",
+   "header": "um/mfidl.h",
+   "line": 17951
+  },
+  "MF_DEVICESTREAM_FRAMESERVER_SHARED": {
+   "guid": "1CB378E9-B279-41D4-AF97-34A243E68320",
+   "header": "um/mfidl.h",
+   "line": 17953
+  },
+  "MF_DEVICESTREAM_ATTRIBUTE_FRAMESOURCE_TYPES": {
+   "guid": "17145FD1-1B2B-423C-8001-2B6833ED3588",
+   "header": "um/mfapi.h",
+   "line": 2646
+  },
+  "MF_DEVICESTREAM_EXTENSION_PLUGIN_CLSID": {
+   "guid": "048E6558-60C4-4173-BD5B-6A3CA2896AEE",
+   "header": "um/mfidl.h",
+   "line": 17955
+  },
+  "MF_DEVICESTREAM_MAX_FRAME_BUFFERS": {
+   "guid": "1684CEBE-3175-4985-882C-0EFD3E8AC11E",
+   "header": "um/mfidl.h",
+   "line": 17959
+  },
+  "MF_DEVICESTREAM_IMAGE_STREAM": {
+   "guid": "A7FFB865-E7B2-43B0-9F6F-9AF2A0E50FC0",
+   "header": "um/mfidl.h",
+   "line": 17949
+  },
+  "MF_DEVICESTREAM_INDEPENDENT_IMAGE_STREAM": {
+   "guid": "03EEEC7E-D605-4576-8B29-6580B490D7D3",
+   "header": "um/mfidl.h",
+   "line": 17950
+  },
+  "MF_DEVICESTREAM_TAKEPHOTO_TRIGGER": {
+   "guid": "1D180E34-538C-4FBB-A75A-859AF7D261A6",
+   "header": "um/mfidl.h",
+   "line": 17958
+  },
+  "MF_DEVICESTREAM_REQUIRED_CAPABILITIES": {
+   "guid": "6D8B957E-7CF6-43F4-AF56-9C0E1E4FCBE1",
+   "header": "um/mfidl.h",
+   "line": 19758
+  },
+  "MF_DEVICESTREAM_REQUIRED_SDDL": {
+   "guid": "331AE85D-C0D3-49BA-83BA-82A12D63CDD6",
+   "header": "um/mfidl.h",
+   "line": 19759
+  },
+  "MF_SD_STREAM_NAME": {
+   "guid": "4F1B099D-D314-41E5-A781-7FEFAA4C501F",
+   "header": "um/mfidl.h",
+   "line": 6635
+  },
+  "MF_SD_LANGUAGE": {
+   "guid": "00AF2180-BDC2-423C-ABCA-F503593BC121",
+   "header": "um/mfidl.h",
+   "line": 6633
+  },
+  "MFVideoFormat_H264_ES": {
+   "guid": "3F40F4F0-5622-4FF8-B6D8-A17A584BEE5E",
+   "header": "um/mfapi.h",
+   "line": 2270
+  },
+  "MFMediaType_Stream": {
+   "guid": "E436EB83-524F-11CE-9F53-0020AF0BA770",
+   "header": "um/mfapi.h",
+   "line": 3597
+  },
+  "MFSampleExtension_DeviceTimestamp": {
+   "guid": "8F3E35E7-2DCD-4887-8622-2A58BAA652B0",
+   "header": "um/mfidl.h",
+   "line": 17963
+  },
+  "MF_SOURCE_READER_ENABLE_ADVANCED_VIDEO_PROCESSING": {
+   "guid": "0F81DA2C-B537-4672-A8B2-A681B17307A3",
+   "header": "um/mfreadwrite.h",
+   "line": 296
+  },
+  "MF_SOURCE_READER_ENABLE_VIDEO_PROCESSING": {
+   "guid": "FB394F3D-CCF1-42EE-BBB3-F9B845D5681D",
+   "header": "um/mfreadwrite.h",
+   "line": 294
+  },
+  "MFSampleExtension_CleanPoint": {
+   "guid": "9CDF01D8-A0F0-43BA-B077-EAA06CBD728A",
+   "header": "um/mfapi.h",
+   "line": 1115
+  }
+ }
+}

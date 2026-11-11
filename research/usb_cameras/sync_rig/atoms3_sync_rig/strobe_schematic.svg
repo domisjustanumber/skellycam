@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 760" width="1000" height="760" data-rev="2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">
+  <title>AtomS3 Lite LED strobe (IRLZ34N, 1000 uF)</title>
+  <rect width="1000" height="760" fill="#ffffff"/>
+  <style>
+    .w { stroke: #111; stroke-width: 2; fill: none; }
+    .p { stroke: #111; stroke-width: 2; fill: #fff; }
+    .t { fill: #111; paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
+    .s { font-size: 11px; }
+    .b { font-weight: 600; }
+    .dot { fill: #111; }
+    .loop { stroke: #c0392b; stroke-width: 1.5; stroke-dasharray: 6 4; fill: none; }
+    .warn { fill: #c0392b; }
+  </style>
+
+  <text class="t b" x="20" y="30" font-size="17">ESP32 sync rig: LED strobe for the AtomS3 Lite (IRLZ34N, 1000 µF)</text>
+  <text class="t s" x="20" y="48">Firmware: research/usb_cameras/sync_rig/atoms3_sync_rig (strobe out G5, strobe capture G6). Draft, never built.</text>
+
+  <!-- High-current loop outline -->
+  <rect class="loop" x="515" y="96" width="265" height="410" rx="8"/>
+  <text class="t s warn" x="648" y="548" text-anchor="middle">Dashed: pulse-current loop (C1/C2 → D1 → R1 → Q1 → back). Keep these wires short and close together.</text>
+
+  <!-- V_LED rail -->
+  <path class="w" d="M560 110 H790"/>
+  <path class="w" d="M850 110 H910 V180"/>
+  <text class="t s" x="575" y="128">V_LED</text>
+
+  <!-- F1 polyfuse (PTC) -->
+  <rect class="p" x="790" y="101" width="60" height="18"/>
+  <path class="w" d="M782 128 L800 128 L842 92" stroke-width="1.5"/>
+  <text class="t" x="845" y="70" text-anchor="middle">F1  MF-R030</text>
+  <text class="t s" x="845" y="85" text-anchor="middle">PTC, 0.3 A hold / 0.6 A trip</text>
+
+  <!-- 5 V supply -->
+  <rect class="p" x="850" y="180" width="120" height="120" rx="6"/>
+  <text class="t b" x="910" y="228" text-anchor="middle">5 V DC</text>
+  <text class="t s" x="910" y="246" text-anchor="middle">≥ 2 A supply</text>
+  <text class="t s" x="910" y="262" text-anchor="middle">e.g. GST25A05-P1J</text>
+  <text class="t b" x="924" y="197">+</text>
+  <text class="t b" x="924" y="294">−</text>
+  <path class="w" d="M910 300 V500"/>
+
+  <!-- C2 10 uF ceramic -->
+  <path class="w" d="M630 110 V282"/>
+  <path class="w" d="M615 282 H645 M615 292 H645"/>
+  <path class="w" d="M630 292 V500"/>
+  <text class="t" x="630" y="322" text-anchor="middle">C2  10 µF</text>
+  <text class="t s" x="630" y="337" text-anchor="middle">ceramic, at D1/Q1</text>
+
+  <!-- C1 1000 uF electrolytic -->
+  <path class="w" d="M740 110 V282"/>
+  <path class="w" d="M725 282 H755"/>
+  <path class="w" d="M725 295 Q740 286 755 295"/>
+  <text class="t b" x="714" y="279">+</text>
+  <path class="w" d="M740 291 V500"/>
+  <text class="t" x="740" y="322" text-anchor="middle">C1  1000 µF</text>
+  <text class="t s" x="740" y="337" text-anchor="middle">electrolytic ≥ 10 V</text>
+  <text class="t s" x="740" y="351" text-anchor="middle">(+ to V_LED)</text>
+
+  <!-- D1 LED -->
+  <path class="w" d="M560 110 V158"/>
+  <polygon class="p" points="545,158 575,158 560,184"/>
+  <path class="w" d="M545 184 H575"/>
+  <path class="w" d="M580 160 L596 148 M590 149 L596 148 L594 154" stroke-width="1.5"/>
+  <path class="w" d="M582 172 L598 160 M592 161 L598 160 L596 166" stroke-width="1.5"/>
+  <path class="w" d="M560 184 V228"/>
+  <text class="t" x="540" y="164" text-anchor="end">D1  LZ1-10G102-0000_G2</text>
+  <text class="t s" x="540" y="179" text-anchor="end">green 523 nm on star, Vf ≈ 3.75 V at 1 A</text>
+
+  <!-- R1 current resistor -->
+  <rect class="p" x="551" y="228" width="18" height="58"/>
+  <path class="w" d="M560 286 V360"/>
+  <text class="t" x="540" y="252" text-anchor="end">R1  1 Ω, 3 W</text>
+  <text class="t s" x="540" y="267" text-anchor="end">TE ROX3SJ1R0; sets I ≈ 1.2 A</text>
+
+  <!-- Q1 IRLZ34N -->
+  <path class="w" d="M560 360 V388 H545"/>
+  <path class="w" d="M545 381 V394 M545 399 V411 M545 416 V429"/>
+  <path class="w" d="M535 385 V425"/>
+  <path class="w" d="M545 405 H560 V422"/>
+  <polygon class="dot" points="545,405 554,400 554,410"/>
+  <path class="w" d="M545 422 H560 V500"/>
+  <text class="t b" x="528" y="348" text-anchor="end">Q1  IRLZ34N</text>
+  <text class="t s" x="528" y="363" text-anchor="end">TO-220: 1 = G, 2 = D, 3 = S (tab = D)</text>
+
+  <!-- Gate network -->
+  <path class="w" d="M240 405 H380"/>
+  <rect class="p" x="380" y="397" width="60" height="16"/>
+  <path class="w" d="M440 405 H535"/>
+  <circle class="dot" cx="480" cy="405" r="3.5"/>
+  <text class="t" x="410" y="389" text-anchor="middle">R2  100 Ω</text>
+  <path class="w" d="M480 405 V432"/>
+  <rect class="p" x="472" y="432" width="16" height="48"/>
+  <path class="w" d="M480 480 V500"/>
+  <text class="t" x="466" y="452" text-anchor="end">R3  100 kΩ</text>
+  <text class="t s" x="466" y="466" text-anchor="end">gate pull-down</text>
+
+  <!-- Loopback jumper -->
+  <circle class="dot" cx="300" cy="405" r="3.5"/>
+  <path class="w" d="M300 405 V450 H240"/>
+  <text class="t s" x="306" y="435">loopback wire</text>
+  <text class="t s" x="306" y="448">G5 → G6</text>
+
+  <!-- AtomS3 Lite -->
+  <rect class="p" x="40" y="330" width="200" height="200" rx="10"/>
+  <text class="t b" x="140" y="356" text-anchor="middle">M5Stack AtomS3 Lite</text>
+  <text class="t s" x="140" y="374" text-anchor="middle">USB-C → PC (power + serial)</text>
+  <text class="t s warn" x="140" y="389" text-anchor="middle">5V pin: leave unconnected</text>
+  <text class="t" x="232" y="409" text-anchor="end">G5  strobe out</text>
+  <text class="t" x="232" y="454" text-anchor="end">G6  capture in</text>
+  <text class="t" x="232" y="504" text-anchor="end">GND</text>
+
+  <!-- Ground net -->
+  <path class="w" d="M240 500 H910"/>
+  <circle class="dot" cx="480" cy="500" r="3.5"/>
+  <circle class="dot" cx="560" cy="500" r="4.5"/>
+  <circle class="dot" cx="630" cy="500" r="3.5"/>
+  <circle class="dot" cx="740" cy="500" r="3.5"/>
+  <path class="w" d="M560 500 V512 M546 512 H574 M551 518 H569 M556 524 H564"/>
+  <text class="t s" x="580" y="522">star point</text>
+  <text class="t s" x="262" y="492">Atom GND: separate wire to star point</text>
+
+  <!-- Notes -->
+  <text class="t b" x="20" y="590">Notes</text>
+  <text class="t s" x="20" y="610">1. The AtomS3 Lite runs from the PC's USB-C only. Never connect the 5 V supply to the Atom's 5V pin. The two grounds join at one point, the star point at Q1's source.</text>
+  <text class="t s" x="20" y="628">2. LED current ≈ (5 V − 3.75 V − V_DS) / 1 Ω ≈ 1.2 A. Pulses are 50–100 µs at ≤ 1 % duty (firmware limit), so R1 and Q1 run cool. Each flash sags C1 by only ~0.06 V (~0.12 V per double flash).</text>
+  <text class="t s" x="20" y="646">3. F1 sits upstream of C1/C2, so it carries only the few-mA recharge current. It trips if Q1 ever sticks on (~1.2 A continuous). No flyback diode is needed (no inductive load).</text>
+  <text class="t s" x="20" y="664">4. Check Q1 once before use: bridge F1 (the PTC would trip at 1.2 A), tie G5's net to 3.3 V for ~1 s and measure drain-to-source voltage. Under ~0.2 V = fully on.</text>
+  <text class="t s" x="34" y="680">If it is higher, put a TC4427 gate driver (powered from 5 V, TTL-level input) between G5 and R2.</text>
+  <text class="t s" x="20" y="698">5. R2 = 100 Ω keeps the GPIO peak current near 33 mA. IRLZ34N gate charge (~25 nC) then gives ~1 µs edges, negligible against ~40 µs per image row.</text>
+  <text class="t s" x="20" y="716">6. Place C2 right at D1 and Q1, and keep the dashed loop tight. The LED needs a heatsink or star mounting; aim it at a matte white card that fills each camera's full image height.</text>
+  <text class="t s" x="20" y="734">7. Unverified values: IRLZ34N on-resistance at a 3.3 V gate (not in its datasheet) and the LED's Vf bin. Measure the real current: R1 voltage drop ÷ 1 Ω.</text>
+</svg>

@@ -102,6 +102,8 @@ are in the JSON and in the plan's §2 gap table.
 DirectShow as the per-camera fallback, (3) libuvc or Rust `uvc_iso` on WinUSB only if more cameras per link are
 worth a driver swap. Each one still has to pass the exposure and focus tests before it can be adopted. Exposure
 alignment (G1) needs trigger-capable cameras whichever capture stack is chosen.
+*(2026-11-11: superseded for Windows by the suite runs: MF native at tier 0 is primary, and the fallback is the
+ffmpeg CLI, not PyAV. See [docs/windows_results_20261110.md](docs/windows_results_20261110.md) §13.)*
 
 ## Layout
 

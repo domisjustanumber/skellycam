@@ -11,6 +11,14 @@
 //   mf_uvc_timing.exe --out <dir> --seconds 20 [--save-mjpeg]
 //        --cam "<symlink substring>[,W,H,FPS[,exposure_log2[,wb_kelvin]]]"  (repeatable, one thread per camera)
 //   e.g. --cam "vid_046d&pid_085c,1280,720,30,-7,4500"   exposure_log2: DirectShow units (2^v seconds); "auto" = leave
+// Exposure schedule (optional; without it nothing below happens and behaviour is unchanged):
+//   --exposure-schedule "-9,-7,-6"   cycle exposure_log2 through these values during ONE stream (every camera)
+//   --exposure-dwell-s 5             seconds per value (default 5)
+//   --exposure-first-s 1             first set this long after the camera's first frame (default 1; the C930e drops
+//                                    an exposure set before stream start, REPORT finding 11)
+//   per-camera override: 7th --cam field, values separated by ':' e.g. --cam "vid_046d&pid_0843,1280,720,30,auto,auto,-5:-4:-3"
+//   Sets run on a separate thread per camera (IAMCameraControl from the IMFMediaSource), so a slow KS property call
+//   never delays ReadSample. Every set is logged to <dir>/<key>.controls.jsonl (QPC before/after, HRESULT, readback).
 // Output per camera: <dir>/<key>.frames.jsonl (README per-frame schema + extra fields), <dir>/<key>.mjpeg (optional,
 // raw concatenated MJPEG samples exactly as delivered), and <dir>/<key>.session.json (media type, controls, attr names).
 // All host times are QPC converted to ns (QueryPerformanceCounter * 1e9 / QueryPerformanceFrequency).
@@ -127,8 +135,54 @@ static std::string pv_json(const PROPVARIANT& v) {
 
 struct CamSpec {
     std::string match; UINT32 w = 1280, h = 720, fps = 30; std::string exposure = "auto"; std::string wb = "auto";
+    std::vector<long> schedule;  // per-camera exposure schedule (overrides Shared::schedule when non-empty)
 };
-struct Shared { std::atomic<bool> stop{false}; std::string outdir; double seconds = 10; bool save_mjpeg = false; };
+struct Shared {
+    std::atomic<bool> stop{false}; std::string outdir; double seconds = 10; bool save_mjpeg = false;
+    std::vector<long> schedule; double dwell_s = 5.0; double first_s = 1.0;  // --exposure-schedule (empty = off)
+};
+
+static std::vector<long> parse_long_list(const std::string& v, char sep) {
+    std::vector<long> out; size_t p0 = 0;
+    while (p0 <= v.size()) {
+        size_t p = v.find(sep, p0); std::string t = v.substr(p0, p == std::string::npos ? std::string::npos : p - p0);
+        if (!t.empty()) out.push_back(atol(t.c_str()));
+        if (p == std::string::npos) break; p0 = p + 1;
+    }
+    return out;
+}
+
+// Exposure schedule thread: waits for the camera's first frame, then sets schedule[i % n] at
+// first_frame + first_s + i * dwell_s until the stream ends. One JSON line per set in <key>.controls.jsonl.
+struct ScheduleCtx {
+    IAMCameraControl* cc = nullptr; std::vector<long> values; double dwell_s = 5, first_s = 1;
+    std::atomic<int64_t> first_arrival_ns{0}; std::atomic<bool> done{false}; Shared* sh = nullptr;
+    FILE* log = nullptr; std::string key; int sets = 0;
+};
+static void schedule_thread(ScheduleCtx* c) {
+    CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+    while (!c->done && !c->sh->stop && c->first_arrival_ns.load() == 0) Sleep(2);
+    int64_t first = c->first_arrival_ns.load();
+    for (int i = 0; first && !c->done && !c->sh->stop; ++i) {
+        int64_t target = first + (int64_t)((c->first_s + i * c->dwell_s) * 1e9);
+        while (!c->done && !c->sh->stop) {
+            int64_t now = qpc_ns(); if (now >= target) break;
+            int64_t ms = (target - now) / 1000000; Sleep((DWORD)std::max<int64_t>(1, std::min<int64_t>(ms, 20)));
+        }
+        if (c->done || c->sh->stop) break;
+        long v = c->values[i % c->values.size()];
+        int64_t t0 = qpc_ns(); HRESULT hr = c->cc->Set(CameraControl_Exposure, v, CameraControl_Flags_Manual); int64_t t1 = qpc_ns();
+        long cur = 0, fl = 0; HRESULT hr2 = c->cc->Get(CameraControl_Exposure, &cur, &fl); int64_t t2 = qpc_ns();
+        char b[512];
+        sprintf_s(b, "{\"camera_key\":\"%s\",\"event\":\"exposure_set\",\"i\":%d,\"value_log2\":%ld,\"target_ns\":%lld,"
+                     "\"qpc_before_ns\":%lld,\"qpc_after_ns\":%lld,\"hr\":\"0x%08lx\",\"readback_value\":%ld,\"readback_flags\":%ld,"
+                     "\"readback_hr\":\"0x%08lx\",\"readback_qpc_ns\":%lld,\"since_first_frame_s\":%.6f}\n",
+                  c->key.c_str(), i, v, target, t0, t1, (unsigned long)hr, cur, fl, (unsigned long)hr2, t2, (t0 - first) / 1e9);
+        if (c->log) { fputs(b, c->log); fflush(c->log); }
+        ++c->sets;
+    }
+    CoUninitialize();
+}
 
 static std::vector<std::pair<std::string, std::string>> list_devices(std::vector<Com<IMFActivate>>* keep = nullptr, IMFActivate*** raw = nullptr, UINT32* rawn = nullptr) {
     std::vector<std::pair<std::string, std::string>> out;
@@ -227,14 +281,16 @@ static void run_camera(CamSpec spec, Shared* sh) {
 
     // Controls (exposure / white balance) via the KS proxy interfaces the MF device source exposes.
     std::string controls = "{";
-    { Com<IAMCameraControl> cc; src->QueryInterface(IID_PPV_ARGS(&cc));
-      Com<IAMVideoProcAmp> pa; src->QueryInterface(IID_PPV_ARGS(&pa));
+    Com<IAMCameraControl> cc;  // kept for the stream's lifetime: the exposure schedule thread uses it
+    src->QueryInterface(IID_PPV_ARGS(&cc));
+    { Com<IAMVideoProcAmp> pa; src->QueryInterface(IID_PPV_ARGS(&pa));
       set_ctrl_cam(cc, CameraControl_Exposure, spec.exposure, controls, "exposure_log2"); controls += ",";
       set_ctrl_amp(pa, VideoProcAmp_WhiteBalance, spec.wb, controls, "white_balance_k"); controls += ",";
       set_ctrl_amp(pa, VideoProcAmp_Gain, "auto", controls, "gain"); controls += ",";
       set_ctrl_cam(cc, CameraControl_Focus, "auto", controls, "focus"); controls += ",";
       set_ctrl_amp(pa, VideoProcAmp_BacklightCompensation, "auto", controls, "backlight_comp"); }
     controls += "}";
+    const std::vector<long>& sched = spec.schedule.empty() ? sh->schedule : spec.schedule;
 
     Com<IMFAttributes> ra; MFCreateAttributes(&ra, 4);
     ra->SetUINT32(MF_READWRITE_DISABLE_CONVERTERS, TRUE);
@@ -262,6 +318,23 @@ static void run_camera(CamSpec spec, Shared* sh) {
     FILE* fm = nullptr; if (sh->save_mjpeg) fopen_s(&fm, (base + ".mjpeg").c_str(), "wb");
     std::map<std::string, int> attr_seen; uint64_t mjpeg_off = 0;
     int64_t t_start = qpc_ns(); int64_t seq = 0, errors = 0; int64_t first_arrival = 0;
+    ScheduleCtx sc; std::thread sched_th; std::string sched_json = "null";
+    if (!sched.empty()) {
+        if (!cc.p) {
+            fprintf(stderr, "[%s] exposure schedule requested but IAMCameraControl is unavailable; schedule skipped\n", key.c_str());
+            sched_json = "{\"error\":\"IAMCameraControl unavailable\"}";
+        } else {
+            sc.cc = cc.p; sc.values = sched; sc.dwell_s = sh->dwell_s; sc.first_s = sh->first_s; sc.sh = sh; sc.key = key;
+            fopen_s(&sc.log, (base + ".controls.jsonl").c_str(), "wb");
+            if (sc.log) {
+                std::string v; for (size_t i = 0; i < sched.size(); ++i) v += (i ? "," : "") + std::to_string(sched[i]);
+                fprintf(sc.log, "{\"camera_key\":\"%s\",\"event\":\"schedule_start\",\"values_log2\":[%s],\"dwell_s\":%.6f,\"first_s\":%.6f,\"qpc_ns\":%lld}\n",
+                        key.c_str(), v.c_str(), sh->dwell_s, sh->first_s, qpc_ns());
+                fflush(sc.log);
+            }
+            sched_th = std::thread(schedule_thread, &sc);
+        }
+    }
     fprintf(stderr, "[%s] streaming %s %ux%u@%u\n", key.c_str(), name.c_str(), spec.w, spec.h, spec.fps);
     while (!sh->stop) {
         DWORD stream = 0, flags = 0; LONGLONG ts = 0; Com<IMFSample> s;
@@ -270,7 +343,7 @@ static void run_camera(CamSpec spec, Shared* sh) {
         int64_t t_arr = qpc_ns();
         if (FAILED(hr)) { if (errors < 3) fprintf(stderr, "[%s] ReadSample hr=0x%08lx\n", key.c_str(), hr); if (++errors > 20) break; continue; }
         if (!s.p) { if (flags & MF_SOURCE_READERF_ENDOFSTREAM) break; continue; }
-        if (!first_arrival) first_arrival = t_arr;
+        if (!first_arrival) { first_arrival = t_arr; sc.first_arrival_ns = t_arr; }
         std::string js; char b[512];
         sprintf_s(b, "{\"camera_key\":\"%s\",\"backend\":\"msmf-sourcereader-cpp\",\"seq\":%lld,\"host_arrival_ns\":%lld,\"readsample_call_ns\":%lld,\"mf_sample_time_100ns\":%lld,\"reader_flags\":%lu",
                   key.c_str(), seq, t_arr, t_call, ts, flags);
@@ -335,9 +408,24 @@ static void run_camera(CamSpec spec, Shared* sh) {
     }
     int64_t t_end = qpc_ns();
     fclose(fl); if (fm) fclose(fm);
+    if (sched_th.joinable()) {
+        sc.done = true; sched_th.join();
+        long cur = 0, flg = 0; HRESULT hr = cc->Get(CameraControl_Exposure, &cur, &flg);
+        if (sc.log) {
+            fprintf(sc.log, "{\"camera_key\":\"%s\",\"event\":\"final_readback\",\"readback_value\":%ld,\"readback_flags\":%ld,\"readback_hr\":\"0x%08lx\",\"qpc_ns\":%lld}\n",
+                    key.c_str(), cur, flg, (unsigned long)hr, qpc_ns());
+            fclose(sc.log);
+        }
+        std::string v; for (size_t i = 0; i < sched.size(); ++i) v += (i ? "," : "") + std::to_string(sched[i]);
+        char sb[256]; sprintf_s(sb, "{\"values_log2\":[%s],\"dwell_s\":%.6f,\"first_s\":%.6f,\"sets\":%d,\"final_readback\":%ld,\"log\":\"%s.controls.jsonl\"}",
+                                v.c_str(), sh->dwell_s, sh->first_s, sc.sets, cur, key.c_str());
+        sched_json = sb;
+    }
     std::string ses = "{\"camera_key\":\"" + key + "\",\"friendly_name\":\"" + jesc(name) + "\",\"symbolic_link\":\"" + jesc(link) + "\",";
     char b[256]; sprintf_s(b, "\"requested\":{\"w\":%u,\"h\":%u,\"fps\":%u},\"frames\":%lld,\"errors\":%lld,\"wall_s\":%.3f,", spec.w, spec.h, spec.fps, seq, errors, (t_end - t_start) / 1e9);
-    ses += b; ses += "\"controls\":" + controls + ",\"native_types\":" + types_json + ",\"attr_counts\":{";
+    ses += b; ses += "\"controls\":" + controls + ",";
+    if (!sched.empty()) ses += "\"exposure_schedule\":" + sched_json + ",";
+    ses += "\"native_types\":" + types_json + ",\"attr_counts\":{";
     bool f = true; for (auto& kv : attr_seen) { if (!f) ses += ","; f = false; ses += "\"" + kv.first + "\":" + std::to_string(kv.second); }
     ses += "}}\n";
     FILE* fs = nullptr; fopen_s(&fs, (base + ".session.json").c_str(), "wb"); if (fs) { fwrite(ses.data(), 1, ses.size(), fs); fclose(fs); }
@@ -358,6 +446,9 @@ int main(int argc, char** argv) {
         else if (a == "--out" && i + 1 < argc) sh.outdir = argv[++i];
         else if (a == "--seconds" && i + 1 < argc) sh.seconds = atof(argv[++i]);
         else if (a == "--save-mjpeg") sh.save_mjpeg = true;
+        else if (a == "--exposure-schedule" && i + 1 < argc) sh.schedule = parse_long_list(argv[++i], ',');
+        else if (a == "--exposure-dwell-s" && i + 1 < argc) sh.dwell_s = atof(argv[++i]);
+        else if (a == "--exposure-first-s" && i + 1 < argc) sh.first_s = atof(argv[++i]);
         else if (a == "--cam" && i + 1 < argc) {
             CamSpec c; std::string v = argv[++i]; std::vector<std::string> parts; size_t p0 = 0;
             while (true) { size_t p = v.find(',', p0); parts.push_back(v.substr(p0, p == std::string::npos ? std::string::npos : p - p0)); if (p == std::string::npos) break; p0 = p + 1; }
@@ -365,6 +456,7 @@ int main(int argc, char** argv) {
             if (parts.size() > 3) { c.w = atoi(parts[1].c_str()); c.h = atoi(parts[2].c_str()); c.fps = atoi(parts[3].c_str()); }
             if (parts.size() > 4) c.exposure = parts[4];
             if (parts.size() > 5) c.wb = parts[5];
+            if (parts.size() > 6) c.schedule = parse_long_list(parts[6], ':');
             cams.push_back(c);
         } else { fprintf(stderr, "unknown arg %s\n", a.c_str()); return 2; }
     }

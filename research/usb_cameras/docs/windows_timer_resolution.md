@@ -43,7 +43,36 @@ No source describes that exact story. It matches a real, documented behaviour th
 
 ## What this means for camera timing
 
-- **The ~16 ms grid on Windows frame timestamps is not the system timer.** It persists with `timeBeginPeriod(1)` and with the global timer already at 0.5–1 ms, and it also appears on the KS path (REPORT finding 7, [prior_art/SURVEY.md](../prior_art/SURVEY.md)). The unverified hypothesis is isochronous transfer-completion boundaries. No timer setting removes it; only the camera's UVC PTS/SCR does. **Measured.**
+- **The 16 ms grid on Windows frame timestamps is not the system timer.** It persists with `timeBeginPeriod(1)` and with the global timer already at 0.5–1 ms, and it also appears on the KS path (REPORT finding 7, [prior_art/SURVEY.md](../prior_art/SURVEY.md)). No timer setting removes it; only the camera's UVC PTS/SCR does. **Measured.** Three more results separate it from the timer (see below).
+
+### Why the frame grid is not the 15.625 ms timer
+
+- **The period is 16.0 ms, not 15.625.** [timing/scripts/quantization_check.py](../timing/scripts/quantization_check.py) searches grid periods in 2 µs steps and picks 16.0 ms for every timestamp field in every run checked (e.g. [rerun_20261027 run a](../results/windows/Gerald/timing/rerun_20261027/flash/20261028T031633Z_flash_c922_c930e_exp-7_a/quantization.json), [baseline_nometa_auto](../results/windows/Gerald/timing/baseline_nometa_auto/quantization.json)). **Measured.**
+- **Each camera has its own grid phase.** [verify_grid_phase.py](../timing/scripts/verify_grid_phase.py) on one two-camera run, both cameras on the same QPC clock ([grid_phase_check.json](../results/windows/Gerald/timing/verify_rerun_vflash1/grid_phase_check.json)):
+
+  | | C922 (085c) | C930e (0843) |
+  | --- | --- | --- |
+  | MF OS timestamp phase on the 16 ms grid | 14.45 ms | 8.45 ms |
+  | Spread around that phase (std) | 23 µs | 25 µs |
+  | Intervals within 100 µs of a 16 ms multiple | 98% | 98% |
+
+  A global timer tick would put both cameras at the same phase. So the grid is set per stream. **Measured** (one run; the 10-27 rerun captures were not re-checked).
+- **libusb reproduces the Media Foundation jitter at 128 packets per transfer.** Host-arrival jitter on the C930e was 0.43 / 1.2 / 4.6 ms RMS at 8 / 32 / 128 isochronous packets per transfer ([phase2_reports_and_verifications.json](../results/agent_reports/phase2_reports_and_verifications.json)). At 125 µs per high-speed packet, 128 packets is exactly 16.0 ms, and 4.6 ms matches the 16/√12 = 4.62 ms predicted for, and measured on, Media Foundation. **Measured** (libusb); the link to usbvideo is **inferred**.
+
+So the likely mechanism is that `usbvideo.sys` queues isochronous transfers of about 128 packets (16 ms) and stamps each frame when the transfer holding its end completes. This is still **inferred**: the transfer size usbvideo uses has not been observed directly (a USB trace, e.g. USBPcap or the `Microsoft-Windows-USB-UCX` ETW provider, would show it).
+
+### Other Windows timestamp sources checked
+
+- **Same grid:** the `ReadSample` timestamp, equal to `IMFSample::GetSampleTime` and `MFSampleExtension_DeviceTimestamp`; the undocumented MF attribute `d06f8a46` (on the grid with a 45–49 µs spread); GStreamer `mfvideosrc` and `ksvideosrc`; SDL3; WinRT `MediaFrameReader`; nokhwa. **Measured.**
+- **`MFSampleExtension_DeviceReferenceSystemTime` is never set.** [mf_mjpeg_capture.cpp](../mjpeg/msmf/mf_mjpeg_capture.cpp) records it on every frame, and it was `null` in all 15,005 frames of the MF runs that recorded it (C922, C930e, generic camera, Kiyo). **Measured.**
+- **No usbvideo setting for transfer size was found.** Not searched exhaustively.
+
+### Ways past the grid
+
+- **UVC PTS/SCR via `MF_CAPTURE_METADATA_FRAME_RAWSTREAM`**, after setting `MetadataBufferSizeInKB0` once per camera (admin, then a replug): 0.39–0.54 ms on the C922. The C930e's PTS is a synthetic counter. **Measured** ([usb_camera_report.md](usb_camera_report.md)).
+- **A frame-index fit to the arrival times**, with no special API: 0.41–0.51 ms when fitted over the whole run; 0.59–1.1 ms on the C922 for the live (causal) fits. **Measured.**
+- **libusb on WinUSB with 8 packets per transfer** gives a 1 ms grid. With SCR mapped to QPC by `IOCTL_USB_GET_FRAME_NUMBER_AND_QPC_FOR_TIME_SYNC`, two independent methods agreed to 46–66 µs. It needs a driver swap. **Measured** (REPORT findings 13–14).
+- **Untested: that frame-number IOCTL alongside usbvideo.** The IOCTL goes to the host controller, not the camera's driver, so it may work while Media Foundation streams. The SOF field of the SCR in the MF metadata would then map straight to QPC, with no fit to arrival times. The mapping holds for only ~2–3.5 s, so it would need re-anchoring every ≤ 2 s.
 - **What `timeBeginPeriod(1)` did change was wake-up jitter.** Arrival-phase jitter fell from 0.3–0.5 to 0.05–0.08 ms ([RERUN_20261027.md](../results/windows/Gerald/RERUN_20261027.md)). That matters for sleep-polling capture loops. **Measured.**
 - **QPC is unaffected.** `perf_counter_ns` uses QPC (10 MHz here). Microsoft: a higher timer resolution "does not improve the accuracy of the high-resolution performance counter."
 

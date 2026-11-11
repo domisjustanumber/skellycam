@@ -28,7 +28,7 @@ Last updated: 2026-10-28 ~04:55Z (night of 2026-10-27 local), after the unattend
 **Hazards learned (also in Claude memory):**
 - **Device restarts:** never restart devices programmatically. LogiTune vetoes it and leaves `DN_NEED_RESTART` (bit `0x100`), which makes MF fail with `MF_E_REBOOT_REQUIRED`. Ask Dom to replug instead.
 - **Messaging workflow agents:** never SendMessage a running Workflow subagent; it spawns a duplicate instance.
-- **Kiyo Pro:** it stops answering EP0 a few minutes after each plug-in. Every API then fails with `0x8007001F`. This is device/firmware, not our settings.
+- **Kiyo Pro:** it stops answering EP0 a few minutes after each plug-in. Every API then fails with `0x8007001F`. This is device/firmware, not our settings. *(2026-11-11: not tied to plug-in age; the wedges so far came between about 4 and 525 min after plug-in. See [docs/windows_results_20261110.md](docs/windows_results_20261110.md) §9.)*
 - **UAC:** Dom declines unannounced UAC prompts, so announce each one in chat first.
 
 ## Status by goal
@@ -137,6 +137,7 @@ Raw captures that are not in git (size, room images) are in `C:/Users/Dom/Docume
 - Otherwise (needs the C930e and C922, about 10 min, unattended once set up): re-run one flash test with `timing/scripts/run_flash_test.ps1`, re-apply C930e exposure after the stream starts, and read it back after capture.
 
 ## Where results live
+- **Windows suite runs (added 2026-11-11):** 2026-11-06 in [docs/windows_results_20261106.md](docs/windows_results_20261106.md); 2026-11-10/11 (`results/windows/Gerald/suite_20261111T040003Z/`) in [docs/windows_results_20261110.md](docs/windows_results_20261110.md). This file's status sections predate them.
 - **Phase 1** (naming, MJPEG, timing, bandwidth, rust, libusb, prior_art + verifiers): `results/windows/Gerald/{naming,timing,mjpeg_*,rust_*,bw_*,prior_art_*,winusb_install}/`.
   - Structured agent outputs: the workflow journal `results/agent_reports/journal_wf_85e88d5f-25b.jsonl`.
   - Durable copies of every agent report, verification and workflow journal: `results/agent_reports/` (`phase1_reports_and_verifications.json`, `phase2_reports_and_verifications.json`, `journal_wf_*.jsonl`).
