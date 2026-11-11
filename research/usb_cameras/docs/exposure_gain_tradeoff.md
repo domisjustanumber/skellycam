@@ -1,6 +1,7 @@
 # Exposure and gain for motion capture: how the exposure step should choose
 
 Written 2026-11-11 for plan package 1.3 and TP1 (`research/CAPTURE_AND_RECORDING_PLAN.md` §1, §3.2, §3.3).
+**Update, later on 2026-11-11 (Dom's decisions, plan rev 3.3 D9–D12):** no per-model gain caps. The gain limit is measured on the live image in the exposure step (new §5.2a). White balance, zoom, pan, tilt and the image controls are locked at the camera's start values; power-line frequency follows local mains; AE priority is 0. The provisional caps below (128 / 230) are kept only as the evidence that motivated the rule.
 Desk research plus re-analysis of saved result files. **No camera was opened and no setting was changed.**
 
 Labels:
@@ -20,10 +21,10 @@ Method for the noise and size numbers: Appendix A.
 ## Recommendation
 
 - **Pin gain at its minimum by default, but do not freeze it there.** On the C922, C930e and Kiyo the default gain *is* the minimum (0 of 0–255), which is also the lowest-noise value [M]. So "pin gain to default" is the right *starting* point. But in the room light of the 11-11 run, gain 0 needs about 31–40 ms (the −5 step) for mid-grey on the C922 and C930e [M]. That is 19–48 px of blur for a hand or limb at 2–5 m/s at 720p [arith]. Pinning gain at 0 there trades a small noise saving for a lot of blur (or for dark frames).
-- **Order: exposure first, up to a blur ceiling; then gain, up to a cap; then warn the user to add light.** The step chooses the longest exposure that is ≤ the ceiling and does not overshoot the target brightness. Then it raises gain only as far as it needs to reach the target. Gain stays an output of the exposure step, never a user control. This is the same rule as industrial cameras' "minimize gain" auto profile with an exposure upper limit [S], but run **once before the session, with AE off**.
+- **Order: exposure first, up to a blur ceiling; then gain, up to a limit measured on the live image (§5.2a); then warn the user to add light.** The step chooses the longest exposure that is ≤ the ceiling and does not overshoot the target brightness. Then it raises gain only as far as it needs to reach the target. Gain stays an output of the exposure step, never a user control. This is the same rule as industrial cameras' "minimize gain" auto profile with an exposure upper limit [S], but run **once before the session, with AE off**.
 - **The ceiling is the smaller of a blur limit and a frame-period limit.** Blur limit: exposure ≤ blur budget ÷ image speed (table in §3). For example, about 2 ms (−9) for 2 px of blur at 2–3 m/s at 720p [arith]. Frame-period limit: an exposure longer than the frame period lowers the frame rate *even in manual mode with AE priority 0*. Manual −4 (62.5 ms) cut the C922 and C930e to 16.0 fps and the Kiyo to 19.4 fps [M, re-analysis]. So 30 fps allows at most −5 and 60 fps at most −6.
 - **What gain costs, measured at equal brightness.** 3 stops shorter exposure plus high gain gave 1.3–2× the temporal noise. In absolute terms that is ≈0.5–0.7 → 0.8–1.1 grey levels after the camera's JPEG [M, re-analysis]. JPEG bytes per frame grew by 0–5 % (C930e up to +13 % in one run). Brightness drives JPEG size much more than gain does (C922: ×2 from luma 43 to 150). The Kiyo is the exception above gain 128: noise in mid-tones rose ~3× at gain 230. So cap it lower.
-- **Per-camera rules.** C930e: resets exposure **and** gain at stream start, so apply them after the first frame and verify [M]. Generic 4c4a: gain does nothing visible and resets to 4 at every start, so leave it at its default 4 [M]. Its exposure numbers are not 2^v s, so its blur ceiling cannot be enforced until its real exposure times are measured [M, re-analysis].
+- **Per-camera rules.** C930e: resets exposure **and** gain at stream start, so apply them after the first frame and verify [M]. Generic 4c4a: gain does nothing visible and resets to 4 at every start [M]; the measured rule (§5.2a) stops at once because luma doesn't rise. Its exposure numbers are not 2^v s, so its blur ceiling cannot be enforced until its real exposure times are measured [M, re-analysis].
 
 ---
 
@@ -219,25 +220,47 @@ The other direction, blur per setting at 3 m [arith]:
 - **Target brightness:** median luma of the central 80 % of the frame, ≈110, band 95–125, with at most 1 % of pixels ≥ 250 (highlight guard) [I].
   - This replaces today's whole-frame mean 127.5 minus one stop [C] (`recommend_camera_exposure_setting.py:12, 49, 99`).
   - The suite already uses the central-80 % luma ROI [C] (`research/usb_cameras/suite/windows/tests/w_ctrl_effect.py:271`).
-- **Per-camera data:** ranges and defaults read live from the device. Gain cap and rule flags come from a small per-model table (§5.4).
+- **Per-camera data:** ranges and defaults read live from the device. No per-model table: the gain limit is measured (§5.2a), and resets at stream start are detected by reading back after the first frame (§5.3). §5.4 records what each camera did, as test expectations.
 
 ### 5.2 Decisions, in order
-1. **Lock auto modes.** Set AE mode = manual, AF off, AWB off (WB handled elsewhere), and AE priority = 0 where present (harmless; it only matters in AE mode [S]). Read the flags back.
+1. **Lock auto modes.** Set AE mode = manual, AF off, AWB off, holding the white-balance value it had at start (read it, switch AWB off, set that value and read it back; D10), and AE priority = 0 where present (harmless; it only matters in AE mode [S]). Read the flags back.
+   - **Lock the rest at their start values (D11, D12):** read white balance, zoom, pan, tilt, brightness, contrast, saturation, sharpness, gamma and backlight compensation as the camera starts, and keep those values; do not reset them to defaults. Set power-line frequency to local mains (from the OS region; 60 Hz on Gerald) and AE priority to 0 where present. Record every value. When a stored calibration is loaded and its recorded values differ from the camera's start values, list the controls that differ and ask the user what to do (apply the stored values, keep the current ones and recalibrate, or cancel). Never change them silently.
 2. **Compute the ceiling** v_ceil = min(v_blur, v_fps, v_dev_max), where v_fps = ⌊log2(1/fps)⌋ (−5 at 30 fps, −6 at 60 fps).
    - If v_ceil < v_dev_min (the camera cannot go that short), use v_dev_min and warn "camera X cannot expose short enough for this motion setting".
-3. **Gain = minimum** (= default on the Kiyo, C922 and C930e). Generic: do not touch (stays at 4).
+3. **Gain = minimum** (= default on the Kiyo, C922 and C930e). Every camera, including the generic (its minimum is 1 and its start value 4; the rule below finds gain ineffective there).
 4. **Exposure first.** From v_ceil downwards, take the **longest** step whose luma does not exceed the band top and does not clip more than 1 %.
    - The ceiling is the upper limit, never a target: in bright light a shorter step is chosen.
    - At most 4–7 steps; luma rises monotonically with exposure on the three branded cameras [M].
-5. **Then gain, only if short of the target.** At that exposure, binary-search gain in [min, cap] for luma ≈ target.
+5. **Then gain, only if short of the target.** At that exposure, binary-search gain in [min, g_lim] for luma ≈ target, where g_lim is measured on the way (§5.2a).
    - Luma rose monotonically with gain in all 18 runs on the three branded cameras [M] (`monotonic: true`).
    - About 8 probes for 0–255.
    - This also fills the 2× gaps between exposure steps (§3.4).
-6. **If still too dark at the cap,** keep the ceiling: do not lengthen exposure past it. Then:
+6. **If still too dark at g_lim,** keep the ceiling: do not lengthen exposure past it. Then:
    - accept the darker image if luma ≥ ~60 [I];
    - warn: "Camera X is about N× too dark for <motion setting> at <fps>: add light, or choose a slower motion setting". N ≈ target ÷ achieved luma, a rough estimate [I];
    - only the user may choose to relax the motion setting.
 7. **Optional common exposure:** use the same exposure on all cameras (the shortest chosen) and let gain differ, so every view has the same blur [I]. Cost: more gain on the brighter-exposed cameras.
+
+### 5.2a Measuring the gain limit on the live image (D9)
+Dom, 2026-11-11: no list of gain caps per camera model; the gain noise is measured as part of the exposure step. Proposed method [I unless marked]:
+
+- **What ideal gain does.** At a fixed exposure, analog gain scales signal and noise together, so for the same scene pixels the relative noise σ/μ stays about the same, or falls slightly where read noise after the gain stage matters (§2.1–2.2) [S, EMVA 1288]. If σ/μ for the same pixels **rises** as gain goes up, the extra comes from digital gain, quantization or the camera's processing. That's the cost to stop at.
+- **The evidence fits.** Kiyo at −7, gain 0 → 230: overall σ/μ rose ×1.20 [arith: (1.06/151) ÷ (0.65/111)]. For the pixels that land in the 140–180 bin at gain 230, it rose about ×2.3 [arith: (2.07/160) ÷ (0.66/118), assuming those pixels sat near 118 at gain 0 with noise ≈ the overall 0.66]. That matches the "noise triples in bright mid-tones above 128" finding (§1.2). The per-pixel version is [NV]: the 11-11 analysis didn't track matched pixel sets.
+- **Measurement per gain probe** (the same probes as step 5, at the chosen exposure):
+  - discard ≥ 200 ms of frames, then decode **8 consecutive frames** to Y (the camera's JPEG, as everywhere in this doc);
+  - **flat mask**, fixed for the whole step from the gain-minimum frames: pixels in the central 80 % ROI with low spatial gradient, luma 30–220 at gain minimum (away from clipping at higher gain);
+  - per-pixel temporal σ over the 8 frames, and the per-pixel mean μ; take the **median of σ/μ** over the mask: the relative noise ρ(g). The median limits the effect of a few moving pixels;
+  - **detail** D(g): mean gradient magnitude over the textured part of the ROI ÷ mean luma (ideal gain leaves this unchanged; noise reduction smearing lowers it);
+  - **gain response**: μ(g) ÷ μ(g_min) over the mask.
+- **Rule (thresholds provisional; T1 sets them):** g_lim is the highest probed gain where
+  - ρ(g) ≤ 1.5 × ρ(g_min), and
+  - D(g) ≥ 0.85 × D(g_min), and
+  - luma still rises: the last probe raised μ by ≥ 3 %. If gain has no visible effect (the generic camera [M]), g_lim = g_min and gain is left alone.
+
+  The binary search assumes ρ rises monotonically with gain [I]; T1 checks that.
+- **Motion guard.** The step needs a mostly still scene (it already assumes that for luma). If more than 5 % of mask pixels change by more than 10 grey levels between consecutive frames, the probe is retried (up to 3 times). After that, g_lim falls back to the highest gain already verified (g_min if none), and the result is flagged `gain_limit_unverified` with a "hold still / clear the view" message.
+- **Cost:** 8 frames + 200 ms ≈ 0.47 s per probe at 30 fps, 0.33 s at 60 fps; about 8 gain probes ≈ 4 s per camera, all cameras in parallel. The whole step goes from ≈ 4–5 s to ≈ 8–9 s [arith].
+- **Record** g_lim, ρ(g_min), ρ(g_lim), the D ratio, the gain response and any flag with the other exposure-step outputs. Each run measures afresh; nothing is looked up by model.
 
 ### 5.3 How it runs
 - **Once, before the session, with AE off.** It is triggered by the user (like today's RECOMMEND button) and never during recording.
@@ -261,12 +284,12 @@ The other direction, blur per setting at 3 m [arith]:
 
 | Camera | Gain | Exposure | Re-apply | Other |
 | --- | --- | --- | --- | --- |
-| Kiyo Pro | min 0; provisional cap **128** | −11…−2; luma responds weakly | after open; holds through start [M] | Found with brightness/contrast/backlight compensation non-default [M]. Consider pinning these PU image controls to defaults inside the same step, so the luma mapping is the same every session (owner's decision) [I]. Wedge handling as per plan |
-| C922 | min 0; provisional cap **230** | −11…−2 | holds through start [M] | Only 60 fps camera: verify −6 keeps 60 fps (§6, T4) |
-| C930e | min 0; provisional cap **230** | −11…−2 | **apply both after the first frame (≥ 1 s) and verify**; resets at every start [M] | AE priority reads 1 [M]: set 0 (no effect in manual, but keeps the as-found AE sane) |
-| generic 4c4a | **leave at default 4**; ineffective and reset at start [M] | −7…3, **units unknown** [M, re-analysis] | — | Blur ceiling cannot be enforced until T3 measures real times. Until then use brightness only and flag "not suitable for fast motion" [I] |
+| Kiyo Pro | min 0; limit measured (§5.2a). 11-11 evidence: noise jumps above 128 | −11…−2; luma responds weakly | after open; holds through start [M] | Found with brightness/contrast/backlight compensation non-default [M]. Decided (D11): lock them at their start values, record them, and ask the user on a calibration mismatch. Wedge handling as per plan |
+| C922 | min 0; limit measured (§5.2a); 230 tested without a large jump | −11…−2 | holds through start [M] | Only 60 fps camera: verify −6 keeps 60 fps (§6, T4) |
+| C930e | min 0; limit measured (§5.2a); 230 tested | −11…−2 | **apply both after the first frame (≥ 1 s) and verify**; resets at every start [M] | AE priority reads 1 [M]: set 0 (no effect in manual, but keeps the as-found AE sane) |
+| generic 4c4a | ineffective and reset to 4 at start [M]; the measured rule leaves it alone | −7…3, **units unknown** [M, re-analysis] | — | Blur ceiling cannot be enforced until T3 measures real times. Until then use brightness only and flag "not suitable for fast motion" [I] |
 
-Provisional caps are the highest values measured without a large noise jump (§1.2). T1 replaces them with measured caps.
+The table records what each camera did on 11-11, as expectations for TP1. None of it is looked up at run time (D9). The C930e re-apply is handled generically: read back after the first frame (≥ 1 s) and re-apply anything that changed.
 
 ---
 
@@ -286,13 +309,13 @@ All run on the phase-1 MF backend, AE/AF/AWB off, fixed focus, MJPEG at the mode
   - detail: MTF50 from the slanted edge, plus gradient energy on the chart;
   - JPEG bytes (T2).
 - **Dark frames:** lens covered, 64 frames per gain, for dark offset and dark σ (read noise in grey levels).
-- **Decision rule (proposed):** the gain cap per camera is the highest gain where, at target luma, σ_t ≤ 2 × σ_t at minimum gain **and** MTF50 ≥ 85 % of the minimum-gain value. Report the cap and the noise-vs-gain curve per camera.
+- **Checking the in-step rule (D9):** T1's full grid is the reference for §5.2a. The reference cap per camera is the highest gain where, at target luma, σ_t ≤ 2 × σ_t at minimum gain **and** MTF50 ≥ 85 % of the minimum-gain value. Report the cap and the noise-vs-gain curve per camera. Then run the §5.2a measurement on the same scene, 10× per camera: pass if its g_lim lands within one probe step of the reference cap every time, and ρ rises monotonically with gain on the grid. Adjust the 1.5 / 0.85 / 3 % thresholds if not.
 
 **T2. JPEG bytes per frame vs gain (same captures as T1).**
 - Mean, p95 and max bytes per frame per cell. MB/s at 30 and 60 fps.
 - Compare at equal luma (gain-heavy vs exposure-heavy cells).
 - Check that delivered fps and frame integrity (strict decode) do not change with gain.
-- Pass: bytes at the gain cap ≤ 1.2 × bytes at minimum gain at equal luma (proposed threshold).
+- Pass: bytes at the measured g_lim (or the T1 reference cap) ≤ 1.2 × bytes at minimum gain at equal luma (proposed threshold).
 
 **T3. Real exposure time and blur vs exposure (also fills test plan M1, [test_gap_plan.md](test_gap_plan.md)).**
 - **Target:** a rotating disk with a thin white radial line on black, at a known speed (record turntable at 33⅓ or 45 rpm, or a motor with a tachometer). The camera faces the disk; light is steady and bright enough for −11 at moderate gain.
@@ -308,7 +331,7 @@ All run on the phase-1 MF backend, AE/AF/AWB off, fixed focus, MJPEG at the mode
 **T5. The exposure step end to end.**
 - **Conditions:** three light levels (bright, room, dim), measured. Each motion preset × 30 and 60 fps.
 - **Check:**
-  - chosen exposure ≤ ceiling; gain ≤ cap (generic untouched);
+  - chosen exposure ≤ ceiling; gain ≤ the measured g_lim (generic: g_lim = minimum, gain left alone);
   - luma in band, or the add-light warning fires (and it must fire in dim);
   - readbacks match; fps holds;
   - settings re-applied and verified after stop/start (C930e) and close/reopen;
