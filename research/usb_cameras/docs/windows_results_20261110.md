@@ -132,6 +132,7 @@ harmless)" on every cell):
   priority off the camera no longer lowers the rate in low light. This is one capture.
 - **The generic** delivers 25.76 fps at @30 on every API. *Inferred:* auto exposure lengthens the exposure in room
   light (the same 25.7 fps as in the 11-06 daytime run).
+  - **Correction (2026-11-11):** this inference does not hold. The generic camera also ran at 25.7 fps with exposure set manually, including at exposure −2 and 1, so auto exposure is not the cause ([exposure_gain_tradeoff.md](exposure_gain_tradeoff.md)).
 - **CPU, % of one core** (`cpu_pct_one_core`): MF 1.55–2.65 %. PyAV 1.87–3.12 % where it got MJPEG. The ffmpeg CLI
   process on the Kiyo used 9.4 % at 720p30 and 20.2 % at 720p60; the files do not show why it costs more than MF.
 - **Open to first frame** (`timings.open_to_first_frame_ms`): MF 965 ms (Kiyo), 519 (C930e), 102 (generic),
@@ -288,7 +289,7 @@ the part of the sweep set after the stream started):
 
 | Camera | Rating MF / DS | Exposure | Gain | White balance | Focus (sharpness max/min) | Before and after stream start |
 | --- | --- | --- | --- | --- | --- | --- |
-| Kiyo | **yes / yes** | luma ×1.79 (after start ×1.13) | ×1.27 (after ×1.13) | R/B ×4.9 (after ×1.53) | ×55.7 MF, ×11.4 DS | all hold through start; all persist |
+| Kiyo | **yes / yes** | luma ×1.79 (after start ×1.13) | ×1.27 (after ×1.13) | R/B ×4.9 (after ×1.53) | ×55.7 MF, ×11.4 DS | all hold through start; exposure, gain and WB persist; **focus does not** (correction 2026-11-11: `persisted = false` on both paths, see below) |
 | C930e | partial / partial | after start ×4.1–4.4; **reset to −5 at the first frame in 3/3 runs on both paths** | ×2.6–4.2; held through start in 1/3 runs per path | ×1.40 | ×77.7 MF, ×80.5 DS | exposure and gain do not hold |
 | generic | partial / partial | ×4.45–4.60 (after ×1.46) | **no effect (×1.00); reads 4 at the first frame in 3/3 runs** | **no effect**: MF 1/3 runs (×1.106 once), DS 0/3 | – (no focus control) | gain does not hold |
 | C922 | **yes / yes** | ×14.9–15.5 (after ×3.6) | ×2.31–2.33 | ×2.13 | ×286 MF, ×290 DS | all hold; all persist |
@@ -302,6 +303,7 @@ the part of the sweep set after the stream started):
   not validated (11-06 saw the same direction).
 - **Restore is clean on all 8 paths**, and every swept control persisted across a reopen (`restore.restored`,
   `persisted_after_reopen`).
+  - **Correction (2026-11-11):** not the Kiyo's focus. `controls.focus.persistence.persisted` is `false` on both its MF and DS paths. Re-scoring the saved frames shows the Kiyo ignores a set focus value for about 1 s after each stream start, which also makes the "focus 0 is sharpest" result an artefact ([focus_setting_options.md](focus_setting_options.md)).
 
 **Turning auto exposure and autofocus back on, verified on the image** (*measured*, [W-AUTO] `G-CTRL-AUTO|*`;
 3 in-stream toggles × 3 runs, plus auto switched on before the stream starts):
