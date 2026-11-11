@@ -1,0 +1,2125 @@
+{
+ "utc": "2026-11-09T22:12:04Z",
+ "encode": [],
+ "decode": [
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": null,
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_720p_flash",
+   "n": 10,
+   "label": "camera 720p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "yuvj422p"
+   ],
+   "codec_ctx": "mjpeg",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "mjpeg_qsv",
+   "hw": null,
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_720p_flash",
+   "n": 10,
+   "label": "camera 720p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "mjpeg_qsv",
+   "psnr_y_vs_cpu_min": 67.15,
+   "psnr_all_vs_cpu_min": 61.54,
+   "ok": true,
+   "log": [
+    "W mjpeg_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D mjpeg_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "mjpeg_qsv",
+   "hw": "qsv",
+   "hw_out": true,
+   "fallback": false,
+   "set": "c930e_720p_flash",
+   "n": 10,
+   "label": "camera 720p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "qsv"
+   ],
+   "codec_ctx": "mjpeg_qsv",
+   "decoder_hw_configs": [
+    "5"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "ok": true,
+   "log": [
+    "D QSV: Defaulting child_device_type to AV_HWDEVICE_TYPE_D3D11VA for oneVPL.Please explicitly set child device type via \"-init_hw_device\" option if needed.",
+    "D D3D11VA: Selecting d3d11va adapter 1",
+    "I D3D11VA: Using device 8086:a780 (Intel(R) UHD Graphics 770).",
+    "D QSV: Use Intel(R) oneVPL to create MFX session, API version is 2.16, the required implementation version is 1.3",
+    "D QSV: Initialize MFX session: implementation version is 2.15",
+    "W mjpeg_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D mjpeg_qsv: Use Intel(R) oneVPL to create MFX session with the specified MFX loader"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "mjpeg_cuvid",
+   "hw": null,
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_720p_flash",
+   "n": 10,
+   "label": "camera 720p 4:2:2",
+   "ok": false,
+   "error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_send_packet()'; last error log: [mjpeg_cuvid] cuvid decode callback error",
+   "log": [
+    "W mjpeg_cuvid: Invalid pkt_timebase, passing timestamps as-is.",
+    "D mjpeg_cuvid: Formats: Original: nv12 | HW: nv16 | SW: nv16",
+    "W mjpeg_cuvid: ignoring invalid SAR: 0/0",
+    "E mjpeg_cuvid: ctx->cvdl->cuvidCreateDecoder(&ctx->cudecoder, &cuinfo) failed",
+    "E mjpeg_cuvid: -> CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected",
+    "E mjpeg_cuvid: ctx->cvdl->cuvidDecodePicture(ctx->cudecoder, picparams) failed",
+    "E mjpeg_cuvid: -> CUDA_ERROR_INVALID_HANDLE: invalid resource handle",
+    "E mjpeg_cuvid: cuvid decode callback error"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "cuda",
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_720p_flash",
+   "n": 10,
+   "label": "camera 720p 4:2:2",
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_send_packet()' returned 22; last error log: [mjpeg] Failed setup for format cuda: hwaccel initialisation returned error.",
+   "log": [
+    "D mjpeg: format supported: yes, max_mb_count: 67108864",
+    "E mjpeg: decoder->cvdl->cuvidCreateDecoder(&decoder->decoder, params) failed",
+    "E mjpeg: -> CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected",
+    "E mjpeg: Failed setup for format cuda: hwaccel initialisation returned error."
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "qsv",
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_720p_flash",
+   "n": 10,
+   "label": "camera 720p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "yuvj422p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "d3d11va",
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_720p_flash",
+   "n": 10,
+   "label": "camera 720p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "yuvj422p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "d3d12va",
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_720p_flash",
+   "n": 10,
+   "label": "camera 720p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "yuvj422p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "dxva2",
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_720p_flash",
+   "n": 10,
+   "label": "camera 720p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "yuvj422p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": null,
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_1080p",
+   "n": 10,
+   "label": "camera 1080p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "yuvj422p"
+   ],
+   "codec_ctx": "mjpeg",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "mjpeg_qsv",
+   "hw": null,
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_1080p",
+   "n": 10,
+   "label": "camera 1080p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "mjpeg_qsv",
+   "psnr_y_vs_cpu_min": 69.48,
+   "psnr_all_vs_cpu_min": 58.76,
+   "ok": true,
+   "log": [
+    "W mjpeg_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D mjpeg_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "mjpeg_qsv",
+   "hw": "qsv",
+   "hw_out": true,
+   "fallback": false,
+   "set": "c930e_1080p",
+   "n": 10,
+   "label": "camera 1080p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "qsv"
+   ],
+   "codec_ctx": "mjpeg_qsv",
+   "decoder_hw_configs": [
+    "5"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "ok": true,
+   "log": [
+    "D QSV: Defaulting child_device_type to AV_HWDEVICE_TYPE_D3D11VA for oneVPL.Please explicitly set child device type via \"-init_hw_device\" option if needed.",
+    "D D3D11VA: Selecting d3d11va adapter 1",
+    "I D3D11VA: Using device 8086:a780 (Intel(R) UHD Graphics 770).",
+    "D QSV: Use Intel(R) oneVPL to create MFX session, API version is 2.16, the required implementation version is 1.3",
+    "D QSV: Initialize MFX session: implementation version is 2.15",
+    "W mjpeg_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D mjpeg_qsv: Use Intel(R) oneVPL to create MFX session with the specified MFX loader"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "mjpeg_cuvid",
+   "hw": null,
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_1080p",
+   "n": 10,
+   "label": "camera 1080p 4:2:2",
+   "ok": false,
+   "error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_send_packet()'; last error log: [mjpeg_cuvid] cuvid decode callback error",
+   "log": [
+    "W mjpeg_cuvid: Invalid pkt_timebase, passing timestamps as-is.",
+    "D mjpeg_cuvid: Formats: Original: nv12 | HW: nv16 | SW: nv16",
+    "W mjpeg_cuvid: ignoring invalid SAR: 0/0",
+    "E mjpeg_cuvid: ctx->cvdl->cuvidCreateDecoder(&ctx->cudecoder, &cuinfo) failed",
+    "E mjpeg_cuvid: -> CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected",
+    "E mjpeg_cuvid: ctx->cvdl->cuvidDecodePicture(ctx->cudecoder, picparams) failed",
+    "E mjpeg_cuvid: -> CUDA_ERROR_INVALID_HANDLE: invalid resource handle",
+    "E mjpeg_cuvid: cuvid decode callback error"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "cuda",
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_1080p",
+   "n": 10,
+   "label": "camera 1080p 4:2:2",
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_send_packet()' returned 22; last error log: [mjpeg] Failed setup for format cuda: hwaccel initialisation returned error.",
+   "log": [
+    "D mjpeg: format supported: yes, max_mb_count: 67108864",
+    "E mjpeg: decoder->cvdl->cuvidCreateDecoder(&decoder->decoder, params) failed",
+    "E mjpeg: -> CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected",
+    "E mjpeg: Failed setup for format cuda: hwaccel initialisation returned error."
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "qsv",
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_1080p",
+   "n": 10,
+   "label": "camera 1080p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "yuvj422p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "d3d11va",
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_1080p",
+   "n": 10,
+   "label": "camera 1080p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "yuvj422p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "d3d12va",
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_1080p",
+   "n": 10,
+   "label": "camera 1080p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "yuvj422p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "dxva2",
+   "hw_out": false,
+   "fallback": false,
+   "set": "c930e_1080p",
+   "n": 10,
+   "label": "camera 1080p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "yuvj422p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": null,
+   "hw_out": false,
+   "fallback": false,
+   "set": "c922_1080p",
+   "n": 10,
+   "label": "camera c922 1080p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "yuvj422p"
+   ],
+   "codec_ctx": "mjpeg",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "mjpeg_qsv",
+   "hw": null,
+   "hw_out": false,
+   "fallback": false,
+   "set": "c922_1080p",
+   "n": 10,
+   "label": "camera c922 1080p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "mjpeg_qsv",
+   "psnr_y_vs_cpu_min": 66.94,
+   "psnr_all_vs_cpu_min": 57.61,
+   "ok": true,
+   "log": [
+    "W mjpeg_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D mjpeg_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "mjpeg_qsv",
+   "hw": "qsv",
+   "hw_out": true,
+   "fallback": false,
+   "set": "c922_1080p",
+   "n": 10,
+   "label": "camera c922 1080p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "qsv"
+   ],
+   "codec_ctx": "mjpeg_qsv",
+   "decoder_hw_configs": [
+    "5"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "ok": true,
+   "log": [
+    "D QSV: Defaulting child_device_type to AV_HWDEVICE_TYPE_D3D11VA for oneVPL.Please explicitly set child device type via \"-init_hw_device\" option if needed.",
+    "D D3D11VA: Selecting d3d11va adapter 1",
+    "I D3D11VA: Using device 8086:a780 (Intel(R) UHD Graphics 770).",
+    "D QSV: Use Intel(R) oneVPL to create MFX session, API version is 2.16, the required implementation version is 1.3",
+    "D QSV: Initialize MFX session: implementation version is 2.15",
+    "W mjpeg_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D mjpeg_qsv: Use Intel(R) oneVPL to create MFX session with the specified MFX loader"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "mjpeg_cuvid",
+   "hw": null,
+   "hw_out": false,
+   "fallback": false,
+   "set": "c922_1080p",
+   "n": 10,
+   "label": "camera c922 1080p 4:2:2",
+   "ok": false,
+   "error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_send_packet()'; last error log: [mjpeg_cuvid] cuvid decode callback error",
+   "log": [
+    "W mjpeg_cuvid: Invalid pkt_timebase, passing timestamps as-is.",
+    "D mjpeg_cuvid: Formats: Original: nv12 | HW: nv16 | SW: nv16",
+    "W mjpeg_cuvid: ignoring invalid SAR: 0/0",
+    "E mjpeg_cuvid: ctx->cvdl->cuvidCreateDecoder(&ctx->cudecoder, &cuinfo) failed",
+    "E mjpeg_cuvid: -> CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected",
+    "E mjpeg_cuvid: ctx->cvdl->cuvidDecodePicture(ctx->cudecoder, picparams) failed",
+    "E mjpeg_cuvid: -> CUDA_ERROR_INVALID_HANDLE: invalid resource handle",
+    "E mjpeg_cuvid: cuvid decode callback error"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "cuda",
+   "hw_out": false,
+   "fallback": false,
+   "set": "c922_1080p",
+   "n": 10,
+   "label": "camera c922 1080p 4:2:2",
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_send_packet()' returned 22; last error log: [mjpeg] Failed setup for format cuda: hwaccel initialisation returned error.",
+   "log": [
+    "D mjpeg: format supported: yes, max_mb_count: 67108864",
+    "E mjpeg: decoder->cvdl->cuvidCreateDecoder(&decoder->decoder, params) failed",
+    "E mjpeg: -> CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected",
+    "E mjpeg: Failed setup for format cuda: hwaccel initialisation returned error."
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "qsv",
+   "hw_out": false,
+   "fallback": false,
+   "set": "c922_1080p",
+   "n": 10,
+   "label": "camera c922 1080p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "yuvj422p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "d3d11va",
+   "hw_out": false,
+   "fallback": false,
+   "set": "c922_1080p",
+   "n": 10,
+   "label": "camera c922 1080p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "yuvj422p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "d3d12va",
+   "hw_out": false,
+   "fallback": false,
+   "set": "c922_1080p",
+   "n": 10,
+   "label": "camera c922 1080p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "yuvj422p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "dxva2",
+   "hw_out": false,
+   "fallback": false,
+   "set": "c922_1080p",
+   "n": 10,
+   "label": "camera c922 1080p 4:2:2",
+   "frames": 10,
+   "out_formats": [
+    "yuvj422p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": null,
+   "hw_out": false,
+   "fallback": false,
+   "set": "",
+   "n": 10,
+   "label": "control 1080p 4:2:0 (PyAV mjpeg)",
+   "frames": 10,
+   "out_formats": [
+    "yuvj420p"
+   ],
+   "codec_ctx": "mjpeg",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "mjpeg_qsv",
+   "hw": null,
+   "hw_out": false,
+   "fallback": false,
+   "set": "",
+   "n": 10,
+   "label": "control 1080p 4:2:0 (PyAV mjpeg)",
+   "frames": 10,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "mjpeg_qsv",
+   "psnr_y_vs_cpu_min": 74.68,
+   "psnr_all_vs_cpu_min": 75.53,
+   "ok": true,
+   "log": [
+    "W mjpeg_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D mjpeg_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "mjpeg_qsv",
+   "hw": "qsv",
+   "hw_out": true,
+   "fallback": false,
+   "set": "",
+   "n": 10,
+   "label": "control 1080p 4:2:0 (PyAV mjpeg)",
+   "frames": 10,
+   "out_formats": [
+    "qsv"
+   ],
+   "codec_ctx": "mjpeg_qsv",
+   "decoder_hw_configs": [
+    "5"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "ok": true,
+   "log": [
+    "D QSV: Defaulting child_device_type to AV_HWDEVICE_TYPE_D3D11VA for oneVPL.Please explicitly set child device type via \"-init_hw_device\" option if needed.",
+    "D D3D11VA: Selecting d3d11va adapter 1",
+    "I D3D11VA: Using device 8086:a780 (Intel(R) UHD Graphics 770).",
+    "D QSV: Use Intel(R) oneVPL to create MFX session, API version is 2.16, the required implementation version is 1.3",
+    "D QSV: Initialize MFX session: implementation version is 2.15",
+    "W mjpeg_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D mjpeg_qsv: Use Intel(R) oneVPL to create MFX session with the specified MFX loader"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "mjpeg_cuvid",
+   "hw": null,
+   "hw_out": false,
+   "fallback": false,
+   "set": "",
+   "n": 10,
+   "label": "control 1080p 4:2:0 (PyAV mjpeg)",
+   "frames": 10,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "mjpeg_cuvid",
+   "psnr_y_vs_cpu_min": 74.51,
+   "psnr_all_vs_cpu_min": 75.32,
+   "ok": true,
+   "log": [
+    "W mjpeg_cuvid: Invalid pkt_timebase, passing timestamps as-is.",
+    "D mjpeg_cuvid: Formats: Original: nv12 | HW: nv12 | SW: nv12",
+    "W mjpeg_cuvid: ignoring invalid SAR: 0/0",
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "cuda",
+   "hw_out": false,
+   "fallback": false,
+   "set": "",
+   "n": 10,
+   "label": "control 1080p 4:2:0 (PyAV mjpeg)",
+   "frames": 10,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 74.51,
+   "psnr_all_vs_cpu_min": 75.32,
+   "ok": true,
+   "log": [
+    "D mjpeg: format supported: yes, max_mb_count: 67108864",
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "qsv",
+   "hw_out": false,
+   "fallback": false,
+   "set": "",
+   "n": 10,
+   "label": "control 1080p 4:2:0 (PyAV mjpeg)",
+   "frames": 10,
+   "out_formats": [
+    "yuvj420p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "d3d11va",
+   "hw_out": false,
+   "fallback": false,
+   "set": "",
+   "n": 10,
+   "label": "control 1080p 4:2:0 (PyAV mjpeg)",
+   "frames": 10,
+   "out_formats": [
+    "yuvj420p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "d3d12va",
+   "hw_out": false,
+   "fallback": false,
+   "set": "",
+   "n": 10,
+   "label": "control 1080p 4:2:0 (PyAV mjpeg)",
+   "frames": 10,
+   "out_formats": [
+    "yuvj420p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "jpeg",
+   "decoder": "native",
+   "hw": "dxva2",
+   "hw_out": false,
+   "fallback": false,
+   "set": "",
+   "n": 10,
+   "label": "control 1080p 4:2:0 (PyAV mjpeg)",
+   "frames": 10,
+   "out_formats": [
+    "yuvj420p"
+   ],
+   "codec_ctx": "mjpeg",
+   "decoder_hw_configs": [
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W swscaler: deprecated pixel format used, make sure you did set range correctly"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\libsvtav1__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "av1_qsv",
+   "hw": null,
+   "fallback": false,
+   "label": "av1_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "av1_qsv",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W av1_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D av1_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D av1_qsv: Initialized an internal MFX session using hardware accelerated implementation"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\libsvtav1__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "av1_cuvid",
+   "hw": null,
+   "fallback": false,
+   "label": "av1_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "av1_cuvid",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W av1_cuvid: Invalid pkt_timebase, passing timestamps as-is.",
+    "D av1_cuvid: Formats: Original: nv12 | HW: nv12 | SW: nv12"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\libsvtav1__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d11va",
+   "fallback": false,
+   "label": "av1_gop30",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\libsvtav1__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d12va",
+   "fallback": false,
+   "label": "av1_gop30",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\libsvtav1__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "cuda",
+   "fallback": false,
+   "label": "av1_gop30",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\libsvtav1__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "qsv",
+   "fallback": false,
+   "label": "av1_gop30",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\libsvtav1__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "dxva2",
+   "fallback": false,
+   "label": "av1_gop30",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\libsvtav1__yuy2_1080p_intra_sw.mkv",
+   "decoder": "av1_qsv",
+   "hw": null,
+   "fallback": false,
+   "label": "av1_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "av1_qsv",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W av1_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D av1_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D av1_qsv: Initialized an internal MFX session using hardware accelerated implementation"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\libsvtav1__yuy2_1080p_intra_sw.mkv",
+   "decoder": "av1_cuvid",
+   "hw": null,
+   "fallback": false,
+   "label": "av1_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "av1_cuvid",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W av1_cuvid: Invalid pkt_timebase, passing timestamps as-is.",
+    "D av1_cuvid: Formats: Original: nv12 | HW: nv12 | SW: nv12"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\libsvtav1__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d11va",
+   "fallback": false,
+   "label": "av1_intra",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\libsvtav1__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d12va",
+   "fallback": false,
+   "label": "av1_intra",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\libsvtav1__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "cuda",
+   "fallback": false,
+   "label": "av1_intra",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\libsvtav1__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "qsv",
+   "fallback": false,
+   "label": "av1_intra",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\libsvtav1__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "dxva2",
+   "fallback": false,
+   "label": "av1_intra",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\h264_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "h264_qsv",
+   "hw": null,
+   "fallback": false,
+   "label": "h264_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "h264_qsv",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 63.69,
+   "ok": true,
+   "log": [
+    "W h264_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D h264_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D h264_qsv: Initialized an internal MFX session using hardware accelerated implementation"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\h264_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "h264_cuvid",
+   "hw": null,
+   "fallback": false,
+   "label": "h264_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "h264_cuvid",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 63.69,
+   "ok": true,
+   "log": [
+    "W h264_cuvid: Invalid pkt_timebase, passing timestamps as-is.",
+    "D h264_cuvid: Formats: Original: nv12 | HW: nv12 | SW: nv12"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\h264_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d11va",
+   "fallback": false,
+   "label": "h264_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "h264",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "D h264: Reinit context to 1920x1088, pix_fmt: d3d11"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\h264_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d12va",
+   "fallback": false,
+   "label": "h264_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "h264",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D h264: Reinit context to 1920x1088, pix_fmt: d3d12"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\h264_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "cuda",
+   "fallback": false,
+   "label": "h264_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "h264",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "D h264: format supported: yes, max_mb_count: 65536"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\h264_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "qsv",
+   "fallback": false,
+   "label": "h264_gop30",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\h264_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "dxva2",
+   "fallback": false,
+   "label": "h264_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "h264",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "D DXVA2: Using D3D9Ex device."
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\h264_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "h264_qsv",
+   "hw": null,
+   "fallback": false,
+   "label": "h264_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "h264_qsv",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 63.34,
+   "ok": true,
+   "log": [
+    "W h264_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D h264_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D h264_qsv: Initialized an internal MFX session using hardware accelerated implementation"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\h264_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "h264_cuvid",
+   "hw": null,
+   "fallback": false,
+   "label": "h264_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "h264_cuvid",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 63.34,
+   "ok": true,
+   "log": [
+    "W h264_cuvid: Invalid pkt_timebase, passing timestamps as-is.",
+    "D h264_cuvid: Formats: Original: nv12 | HW: nv12 | SW: nv12"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\h264_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d11va",
+   "fallback": false,
+   "label": "h264_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "h264",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "D h264: Reinit context to 1920x1088, pix_fmt: d3d11"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\h264_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d12va",
+   "fallback": false,
+   "label": "h264_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "h264",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D h264: Reinit context to 1920x1088, pix_fmt: d3d12"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\h264_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "cuda",
+   "fallback": false,
+   "label": "h264_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "h264",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "D h264: format supported: yes, max_mb_count: 65536"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\h264_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "qsv",
+   "fallback": false,
+   "label": "h264_intra",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\h264_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "dxva2",
+   "fallback": false,
+   "label": "h264_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "h264",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "D DXVA2: Using D3D9Ex device."
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_intra_native422_yuyv422.mkv",
+   "decoder": "hevc_qsv",
+   "hw": null,
+   "fallback": false,
+   "label": "hevc422_intra",
+   "frames": 60,
+   "out_formats": [
+    "yuyv422"
+   ],
+   "codec_ctx": "hevc_qsv",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W hevc_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D hevc_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_intra_native422_yuyv422.mkv",
+   "decoder": "hevc_cuvid",
+   "hw": null,
+   "fallback": false,
+   "label": "hevc422_intra",
+   "ok": false,
+   "error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_send_packet()'; last error log: [hevc_cuvid] cuvid decode callback error",
+   "log": [
+    "W hevc_cuvid: Invalid pkt_timebase, passing timestamps as-is.",
+    "D hevc_cuvid: Formats: Original: nv12 | HW: nv16 | SW: nv16",
+    "E hevc_cuvid: ctx->cvdl->cuvidCreateDecoder(&ctx->cudecoder, &cuinfo) failed",
+    "E hevc_cuvid: -> CUDA_ERROR_NOT_SUPPORTED: operation not supported",
+    "E hevc_cuvid: cuvid decode callback error"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_intra_native422_yuyv422.mkv",
+   "decoder": "native",
+   "hw": "d3d11va",
+   "fallback": false,
+   "label": "hevc422_intra",
+   "ok": false,
+   "error": "PermissionError: [Errno 1] Operation not permitted: 'avcodec_send_packet()'",
+   "log": [
+    "W hevc: Error parsing NAL unit #4."
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_intra_native422_yuyv422.mkv",
+   "decoder": "native",
+   "hw": "d3d12va",
+   "fallback": false,
+   "label": "hevc422_intra",
+   "ok": false,
+   "error": "PermissionError: [Errno 1] Operation not permitted: 'avcodec_send_packet()'",
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "W hevc: Error parsing NAL unit #4."
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_intra_native422_yuyv422.mkv",
+   "decoder": "native",
+   "hw": "cuda",
+   "fallback": false,
+   "label": "hevc422_intra",
+   "ok": false,
+   "error": "PermissionError: [Errno 1] Operation not permitted: 'avcodec_send_packet()'; last error log: [hevc] Failed setup for format cuda: hwaccel initialisation returned error.",
+   "log": [
+    "D hevc: format supported: no, max_mb_count: 0",
+    "E hevc: Hardware is lacking required capabilities",
+    "E hevc: Failed setup for format cuda: hwaccel initialisation returned error.",
+    "W hevc: Error parsing NAL unit #4."
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_intra_native422_yuyv422.mkv",
+   "decoder": "native",
+   "hw": "qsv",
+   "fallback": false,
+   "label": "hevc422_intra",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_intra_native422_yuyv422.mkv",
+   "decoder": "native",
+   "hw": "dxva2",
+   "fallback": false,
+   "label": "hevc422_intra",
+   "ok": false,
+   "error": "PermissionError: [Errno 1] Operation not permitted: 'avcodec_send_packet()'",
+   "log": [
+    "D DXVA2: Using D3D9Ex device.",
+    "W hevc: Error parsing NAL unit #4."
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "hevc_qsv",
+   "hw": null,
+   "fallback": false,
+   "label": "hevc_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "hevc_qsv",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 63.67,
+   "ok": true,
+   "log": [
+    "W hevc_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D hevc_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "hevc_cuvid",
+   "hw": null,
+   "fallback": false,
+   "label": "hevc_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "hevc_cuvid",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 63.67,
+   "ok": true,
+   "log": [
+    "W hevc_cuvid: Invalid pkt_timebase, passing timestamps as-is.",
+    "D hevc_cuvid: Formats: Original: nv12 | HW: nv12 | SW: nv12"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d11va",
+   "fallback": false,
+   "label": "hevc_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "hevc",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d12va",
+   "fallback": false,
+   "label": "hevc_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "hevc",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070)."
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "cuda",
+   "fallback": false,
+   "label": "hevc_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "hevc",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "D hevc: format supported: yes, max_mb_count: 262144"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "qsv",
+   "fallback": false,
+   "label": "hevc_gop30",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "dxva2",
+   "fallback": false,
+   "label": "hevc_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "hevc",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "D DXVA2: Using D3D9Ex device."
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "hevc_qsv",
+   "hw": null,
+   "fallback": false,
+   "label": "hevc_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "hevc_qsv",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 63.38,
+   "ok": true,
+   "log": [
+    "W hevc_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D hevc_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "hevc_cuvid",
+   "hw": null,
+   "fallback": false,
+   "label": "hevc_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "hevc_cuvid",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 63.38,
+   "ok": true,
+   "log": [
+    "W hevc_cuvid: Invalid pkt_timebase, passing timestamps as-is.",
+    "D hevc_cuvid: Formats: Original: nv12 | HW: nv12 | SW: nv12"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d11va",
+   "fallback": false,
+   "label": "hevc_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "hevc",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d12va",
+   "fallback": false,
+   "label": "hevc_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "hevc",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070)."
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "cuda",
+   "fallback": false,
+   "label": "hevc_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "hevc",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "D hevc: format supported: yes, max_mb_count: 262144"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "qsv",
+   "fallback": false,
+   "label": "hevc_intra",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\hevc_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "dxva2",
+   "fallback": false,
+   "label": "hevc_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "hevc",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "D DXVA2: Using D3D9Ex device."
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\vp9_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "vp9_qsv",
+   "hw": null,
+   "fallback": false,
+   "label": "vp9_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "vp9_qsv",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W vp9_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D vp9_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D vp9_qsv: Initialized an internal MFX session using hardware accelerated implementation"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\vp9_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "vp9_cuvid",
+   "hw": null,
+   "fallback": false,
+   "label": "vp9_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "vp9_cuvid",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W vp9_cuvid: Invalid pkt_timebase, passing timestamps as-is.",
+    "D vp9_cuvid: Formats: Original: nv12 | HW: nv12 | SW: nv12"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\vp9_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d11va",
+   "fallback": false,
+   "label": "vp9_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "vp9",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\vp9_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d12va",
+   "fallback": false,
+   "label": "vp9_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "vp9",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070)."
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\vp9_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "cuda",
+   "fallback": false,
+   "label": "vp9_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "vp9",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "D vp9: format supported: yes, max_mb_count: 262144"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\vp9_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "qsv",
+   "fallback": false,
+   "label": "vp9_gop30",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\vp9_qsv__yuy2_1080p_gop30_sw.mkv",
+   "decoder": "native",
+   "hw": "dxva2",
+   "fallback": false,
+   "label": "vp9_gop30",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "vp9",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "D DXVA2: Using D3D9Ex device."
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\vp9_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "vp9_qsv",
+   "hw": null,
+   "fallback": false,
+   "label": "vp9_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "vp9_qsv",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W vp9_qsv: Invalid pkt_timebase, passing timestamps as-is.",
+    "D vp9_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D vp9_qsv: Initialized an internal MFX session using hardware accelerated implementation"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\vp9_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "vp9_cuvid",
+   "hw": null,
+   "fallback": false,
+   "label": "vp9_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "vp9_cuvid",
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "W vp9_cuvid: Invalid pkt_timebase, passing timestamps as-is.",
+    "D vp9_cuvid: Formats: Original: nv12 | HW: nv12 | SW: nv12"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\vp9_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d11va",
+   "fallback": false,
+   "label": "vp9_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "vp9",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\vp9_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "d3d12va",
+   "fallback": false,
+   "label": "vp9_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "vp9",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070)."
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\vp9_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "cuda",
+   "fallback": false,
+   "label": "vp9_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "vp9",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "D vp9: format supported: yes, max_mb_count: 262144"
+   ]
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\vp9_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "qsv",
+   "fallback": false,
+   "label": "vp9_intra",
+   "ok": false,
+   "error": "RuntimeError: Hardware accelerated decode requested but no stream is compatible",
+   "log": []
+  },
+  {
+   "kind": "file",
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\hw_accel_target\\functional\\vp9_qsv__yuy2_1080p_intra_sw.mkv",
+   "decoder": "native",
+   "hw": "dxva2",
+   "fallback": false,
+   "label": "vp9_intra",
+   "frames": 60,
+   "out_formats": [
+    "nv12"
+   ],
+   "codec_ctx": "vp9",
+   "decoder_hw_configs": [
+    "4",
+    "0",
+    "7",
+    "12",
+    "2"
+   ],
+   "decoder_has_hw_config_for_device": false,
+   "psnr_y_vs_cpu_min": 99.0,
+   "psnr_all_vs_cpu_min": 99.0,
+   "ok": true,
+   "log": [
+    "D DXVA2: Using D3D9Ex device."
+   ]
+  }
+ ],
+ "nvidia_smi_per_encoder": {}
+}

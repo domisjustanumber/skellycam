@@ -1,0 +1,110 @@
+{
+ "env": {
+  "python": "3.12.13",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "machine": "Gerald",
+  "av": "19.0.2",
+  "libavformat": [
+   63,
+   1,
+   102
+  ],
+  "libavcodec": [
+   63,
+   1,
+   102
+  ],
+  "numpy": "2.2.6",
+  "cv2": "4.12.0",
+  "psutil": null
+ },
+ "ffmpeg": "9.0.2",
+ "rows": [
+  {
+   "variant": "mkv_flush",
+   "options": {
+    "flush_packets": "1"
+   },
+   "empty_packet_after_each_frame": false,
+   "frames": 30,
+   "while_open": [
+    {
+     "after_frame": 1,
+     "readable_exact_on_disk": 0
+    },
+    {
+     "after_frame": 2,
+     "readable_exact_on_disk": 1
+    },
+    {
+     "after_frame": 10,
+     "readable_exact_on_disk": 9
+    },
+    {
+     "after_frame": 30,
+     "readable_exact_on_disk": 29
+    }
+   ],
+   "closed": {
+    "ffprobe_packets": 30,
+    "ffprobe_zero_size_packets": 0,
+    "ffprobe_first_lines": [
+     "0,65760,K__",
+     "33,65723,K__",
+     "67,65483,K__",
+     "100,56745,K__"
+    ],
+    "ffprobe_stderr_tail": [],
+    "pyav_demux_packets": 30,
+    "pyav_empty_packets": 0,
+    "pyav_decoded_frames": 30,
+    "pyav_decode_errors": [],
+    "pyav_decode_error_count": 0,
+    "cv2_frames": 30
+   }
+  },
+  {
+   "variant": "mkv_flush_emptypkt",
+   "options": {
+    "flush_packets": "1"
+   },
+   "empty_packet_after_each_frame": true,
+   "frames": 30,
+   "while_open": [
+    {
+     "after_frame": 1,
+     "readable_exact_on_disk": 1
+    },
+    {
+     "after_frame": 2,
+     "readable_exact_on_disk": 2
+    },
+    {
+     "after_frame": 10,
+     "readable_exact_on_disk": 10
+    },
+    {
+     "after_frame": 30,
+     "readable_exact_on_disk": 30
+    }
+   ],
+   "closed": {
+    "ffprobe_packets": 30,
+    "ffprobe_zero_size_packets": 0,
+    "ffprobe_first_lines": [
+     "0,65760,K__",
+     "33,65723,K__",
+     "67,65483,K__",
+     "100,56745,K__"
+    ],
+    "ffprobe_stderr_tail": [],
+    "pyav_demux_packets": 30,
+    "pyav_empty_packets": 0,
+    "pyav_decoded_frames": 30,
+    "pyav_decode_errors": [],
+    "pyav_decode_error_count": 0,
+    "cv2_frames": 30
+   }
+  }
+ ]
+}

@@ -1,0 +1,201 @@
+{
+ "config": "libsvtav1_intra_crf30_p10.mkv",
+ "codec": "libsvtav1",
+ "opts": {
+  "preset": "10",
+  "crf": "30",
+  "svtav1-params": "keyint=1"
+ },
+ "gop": 1,
+ "source": "yuyv422",
+ "source_note": "real camera YUY2 (1080p) / JPEG-decoded YUY2 (720p)",
+ "res": "1080p",
+ "width": 1920,
+ "height": 1080,
+ "src_pix_fmt": "yuyv422",
+ "target_pix_fmt": "yuv420p",
+ "path": "swscale (lossy)",
+ "threads": 1,
+ "frames": 24,
+ "unique_frames": 8,
+ "looped": true,
+ "reps": 3,
+ "warmup_frames": 4,
+ "warmup_discarded": true,
+ "av_version": "18.0.0",
+ "ffmpeg_version": "8.1.2",
+ "library_versions": {
+  "libavutil": [
+   60,
+   26,
+   102
+  ],
+  "libavcodec": [
+   62,
+   28,
+   102
+  ],
+  "libavformat": [
+   62,
+   12,
+   102
+  ],
+  "libavdevice": [
+   62,
+   3,
+   102
+  ],
+  "libavfilter": [
+   11,
+   14,
+   102
+  ],
+  "libswscale": [
+   9,
+   5,
+   102
+  ],
+  "libswresample": [
+   6,
+   3,
+   102
+  ]
+ },
+ "numpy": "2.2.6",
+ "python": "3.12.13",
+ "machine": "Gerald",
+ "cpu_logical": 28,
+ "system_cpu_percent_before": 39.5,
+ "prep_ms_per_frame": 3.921,
+ "warmup": {
+  "encode_wall_s": 0.1265,
+  "encode_fps": 31.61,
+  "encode_cpu_s": 0.2812,
+  "encode_cpu_cores_per_30fps_stream": 2.109,
+  "latency_p50": 1.908,
+  "latency_p95": 102.447,
+  "latency_p99": 102.447,
+  "latency_max": 102.447,
+  "latency_mean": 26.886,
+  "packets": 4,
+  "bytes_per_frame": 24412.8,
+  "file_bytes": 98325,
+  "system_cpu_percent_during_encode": 77.9,
+  "decode_frames": 4,
+  "decode_wall_s": 0.0367,
+  "decode_fps": 109.04,
+  "decode_cpu_s": 0.0312
+ },
+ "rep_results": [
+  {
+   "encode_wall_s": 0.2094,
+   "encode_fps": 114.59,
+   "encode_cpu_s": 1.2188,
+   "encode_cpu_cores_per_30fps_stream": 1.523,
+   "latency_p50": 3.115,
+   "latency_p95": 5.67,
+   "latency_p99": 113.815,
+   "latency_max": 113.815,
+   "latency_mean": 7.72,
+   "packets": 24,
+   "bytes_per_frame": 25323.4,
+   "file_bytes": 609268,
+   "system_cpu_percent_during_encode": 81.5,
+   "decode_frames": 24,
+   "decode_wall_s": 0.1307,
+   "decode_fps": 183.68,
+   "decode_cpu_s": 0.125
+  },
+  {
+   "encode_wall_s": 0.1753,
+   "encode_fps": 136.89,
+   "encode_cpu_s": 1.1875,
+   "encode_cpu_cores_per_30fps_stream": 1.484,
+   "latency_p50": 2.535,
+   "latency_p95": 3.988,
+   "latency_p99": 96.825,
+   "latency_max": 96.825,
+   "latency_mean": 6.568,
+   "packets": 24,
+   "bytes_per_frame": 25323.4,
+   "file_bytes": 609268,
+   "system_cpu_percent_during_encode": 70.3,
+   "decode_frames": 24,
+   "decode_wall_s": 0.1303,
+   "decode_fps": 184.17,
+   "decode_cpu_s": 0.125
+  },
+  {
+   "encode_wall_s": 0.1823,
+   "encode_fps": 131.66,
+   "encode_cpu_s": 1.1094,
+   "encode_cpu_cores_per_30fps_stream": 1.387,
+   "latency_p50": 2.585,
+   "latency_p95": 5.15,
+   "latency_p99": 97.307,
+   "latency_max": 97.307,
+   "latency_mean": 6.724,
+   "packets": 24,
+   "bytes_per_frame": 25323.4,
+   "file_bytes": 609268,
+   "system_cpu_percent_during_encode": 74.2,
+   "decode_frames": 24,
+   "decode_wall_s": 0.1313,
+   "decode_fps": 182.8,
+   "decode_cpu_s": 0.125
+  }
+ ],
+ "stats": {
+  "encode_fps": {
+   "median": 131.66,
+   "min": 114.59,
+   "max": 136.89
+  },
+  "encode_cpu_cores_per_30fps_stream": {
+   "median": 1.484,
+   "min": 1.387,
+   "max": 1.523
+  },
+  "latency_p50": {
+   "median": 2.585,
+   "min": 2.535,
+   "max": 3.115
+  },
+  "latency_p99": {
+   "median": 97.307,
+   "min": 96.825,
+   "max": 113.815
+  },
+  "latency_max": {
+   "median": 97.307,
+   "min": 96.825,
+   "max": 113.815
+  },
+  "bytes_per_frame": {
+   "median": 25323.4,
+   "min": 25323.4,
+   "max": 25323.4
+  },
+  "decode_fps": {
+   "median": 183.68,
+   "min": 182.8,
+   "max": 184.17
+  },
+  "system_cpu_percent_during_encode": {
+   "median": 74.2,
+   "min": 70.3,
+   "max": 81.5
+  }
+ },
+ "encode_fps": 131.66,
+ "encode_cpu_cores_per_30fps_stream": 1.484,
+ "encode_latency_ms": {
+  "p50": 2.585,
+  "p99": 97.307,
+  "max": 97.307
+ },
+ "bytes_per_frame": 25323.4,
+ "decode_fps": 183.68,
+ "decoder": "libav default for codec (software unless the decoder is hw)",
+ "system_cpu_percent_after": 52.8
+}

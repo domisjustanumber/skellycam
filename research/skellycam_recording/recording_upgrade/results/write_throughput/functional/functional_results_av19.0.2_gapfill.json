@@ -1,0 +1,315 @@
+{
+ "env": {
+  "python": "3.12.13",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "machine": "Gerald",
+  "av": "19.0.2",
+  "libavformat": [
+   63,
+   1,
+   102
+  ],
+  "libavcodec": [
+   63,
+   1,
+   102
+  ],
+  "numpy": "2.2.6",
+  "cv2": "4.12.0",
+  "psutil": "7.2.2"
+ },
+ "started": "2026-11-09T16:45:34",
+ "T1": [
+  {
+   "test": "T1",
+   "payload": "mjpeg",
+   "profile": "720p30",
+   "variant": "mkv_flush_cluster1",
+   "frames_written": 300,
+   "close": {
+    "bytes": 16592276,
+    "files": 2
+   },
+   "idx_records": 300,
+   "file_bytes": 16605956,
+   "container_overhead_bytes_per_frame": 45.6,
+   "frame0_decode_equals_reference": true,
+   "units": 300,
+   "byte_exact": 300,
+   "files": 1,
+   "av_decoded": 300,
+   "cv2_frames": 300,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 300,
+   "ffprobe_keyframes": 300,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 498.916
+  },
+  {
+   "test": "T1",
+   "payload": "mjpeg",
+   "profile": "720p30",
+   "variant": "fmp4_1s_flush",
+   "frames_written": 300,
+   "close": {
+    "bytes": 16592276,
+    "files": 2
+   },
+   "idx_records": 300,
+   "file_bytes": 16596746,
+   "container_overhead_bytes_per_frame": 14.9,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 10,
+    "mdat": 10,
+    "mfra": 1
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "frame0_decode_equals_reference": true,
+   "units": 300,
+   "byte_exact": 300,
+   "files": 1,
+   "av_decoded": 300,
+   "cv2_frames": 300,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 300,
+   "ffprobe_keyframes": 300,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 6.434
+  },
+  {
+   "test": "T1",
+   "payload": "ffv1",
+   "profile": "1080p30",
+   "variant": "mkv_flush_cluster1",
+   "frames_written": 64,
+   "close": {
+    "bytes": 32026248,
+    "files": 2
+   },
+   "idx_records": 64,
+   "file_bytes": 32029760,
+   "container_overhead_bytes_per_frame": 54.9,
+   "frame0_decode_equals_reference": true,
+   "units": 64,
+   "byte_exact": 64,
+   "files": 1,
+   "av_decoded": 64,
+   "cv2_frames": 64,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 64,
+   "ffprobe_keyframes": 64,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 493.727
+  },
+  {
+   "test": "T1",
+   "payload": "ffv1",
+   "profile": "1080p30",
+   "variant": "fmp4_1s_flush",
+   "frames_written": 64,
+   "close": {
+    "bytes": 32026248,
+    "files": 2
+   },
+   "idx_records": 64,
+   "file_bytes": 32028096,
+   "container_overhead_bytes_per_frame": 28.9,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 3,
+    "mdat": 3,
+    "mfra": 1
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "frame0_decode_equals_reference": true,
+   "units": 64,
+   "byte_exact": 64,
+   "files": 1,
+   "av_decoded": 64,
+   "cv2_frames": 64,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 64,
+   "ffprobe_keyframes": 64,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 6.434
+  }
+ ],
+ "T2T3": [],
+ "T4": [
+  {
+   "test": "T4",
+   "variant": "mkv_flush_cluster1",
+   "repeat": 0,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 323,
+   "exitcode": -15,
+   "idx_records": 323,
+   "file_bytes": 17818704,
+   "container_overhead_bytes_per_frame": 26.5,
+   "units": 322,
+   "byte_exact": 322,
+   "files": 1,
+   "av_decoded": 322,
+   "cv2_frames": 322,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 322,
+   "ffprobe_keyframes": 322,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 3708.92,
+   "acked_frames_all_readable": false,
+   "acked_lost": 1,
+   "partial_or_corrupt_units": 0
+  },
+  {
+   "test": "T4",
+   "variant": "mkv_flush_cluster1",
+   "repeat": 1,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 311,
+   "exitcode": -15,
+   "idx_records": 311,
+   "file_bytes": 17148109,
+   "container_overhead_bytes_per_frame": 26.5,
+   "units": 310,
+   "byte_exact": 310,
+   "files": 1,
+   "av_decoded": 310,
+   "cv2_frames": 310,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 310,
+   "ffprobe_keyframes": 310,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 3708.92,
+   "acked_frames_all_readable": false,
+   "acked_lost": 1,
+   "partial_or_corrupt_units": 0
+  },
+  {
+   "test": "T4",
+   "variant": "fmp4_1s_flush",
+   "repeat": 0,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 346,
+   "exitcode": -15,
+   "idx_records": 346,
+   "file_bytes": 16594768,
+   "container_overhead_bytes_per_frame": 8.3,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 5,
+    "mdat": 5
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "units": 300,
+   "byte_exact": 300,
+   "files": 1,
+   "av_decoded": 300,
+   "cv2_frames": 300,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 300,
+   "ffprobe_keyframes": 300,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 3431.372,
+   "acked_frames_all_readable": false,
+   "acked_lost": 46,
+   "partial_or_corrupt_units": 0
+  },
+  {
+   "test": "T4",
+   "variant": "fmp4_1s_flush",
+   "repeat": 1,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 305,
+   "exitcode": -15,
+   "idx_records": 305,
+   "file_bytes": 16594768,
+   "container_overhead_bytes_per_frame": 8.3,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 5,
+    "mdat": 5
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "units": 300,
+   "byte_exact": 300,
+   "files": 1,
+   "av_decoded": 300,
+   "cv2_frames": 300,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 300,
+   "ffprobe_keyframes": 300,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 3431.372,
+   "acked_frames_all_readable": false,
+   "acked_lost": 5,
+   "partial_or_corrupt_units": 0
+  }
+ ],
+ "T5": [],
+ "T6": []
+}

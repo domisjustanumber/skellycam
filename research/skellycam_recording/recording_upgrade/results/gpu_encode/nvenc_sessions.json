@@ -1,0 +1,52 @@
+{
+ "pyav": "18.0.0",
+ "codec": "h264_nvenc",
+ "nvidia_smi_before": "0, 37 %, 610.88",
+ "opened": 12,
+ "first_error_at_session": 13,
+ "first_error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_open2(\"h264_nvenc\", {\\'preset\\': \\'p4\\'})'",
+ "nvidia_smi_while_open": "12, 3 %, 610.88",
+ "extra_api_while_held": {
+  "hevc_nvenc": {
+   "returncode": 3752568763,
+   "ok": false,
+   "diagnosis": [
+    "OpenEncodeSessionEx failed: incompatible client key (21): (no details)",
+    "Error while opening encoder - maybe incorrect parameters such as bit_rate, rate, width or height.",
+    "Error sending frames to consumers: Generic error in an external library",
+    "Task finished with error code: -542398533 (Generic error in an external library)"
+   ]
+  },
+  "h264_vulkan": {
+   "returncode": 3752568763,
+   "ok": false,
+   "diagnosis": [
+    "Error while opening encoder - maybe incorrect parameters such as bit_rate, rate, width or height.",
+    "Error sending frames to consumers: Generic error in an external library",
+    "Task finished with error code: -542398533 (Generic error in an external library)",
+    "Task finished with error code: -22 (Invalid argument)"
+   ]
+  },
+  "h264_d3d12va": {
+   "returncode": 4294967274,
+   "ok": false,
+   "diagnosis": [
+    "Failed to create encoder.",
+    "Error while opening encoder - maybe incorrect parameters such as bit_rate, rate, width or height.",
+    "Error sending frames to consumers: Invalid argument",
+    "Task finished with error code: -22 (Invalid argument)"
+   ]
+  },
+  "h264_mf": {
+   "returncode": 3752568763,
+   "ok": false,
+   "diagnosis": [
+    "Error while opening encoder - maybe incorrect parameters such as bit_rate, rate, width or height.",
+    "Error sending frames to consumers: Generic error in an external library",
+    "Task finished with error code: -542398533 (Generic error in an external library)",
+    "Task finished with error code: -22 (Invalid argument)"
+   ]
+  }
+ },
+ "nvidia_smi_after_close": "1, 6 %, 610.88"
+}

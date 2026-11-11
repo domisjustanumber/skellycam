@@ -1,0 +1,317 @@
+{
+ "server": "skellycam",
+ "args": {
+  "server": "skellycam",
+  "cameras": [
+   "046D:0843",
+   "1532:0E05",
+   "046D:085C"
+  ],
+  "width": 1920,
+  "height": 1080,
+  "warmup_s": 15,
+  "duration_s": 20.0,
+  "mic": -1,
+  "root": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\real_recording_20261109\\runC_skellycam_1080p",
+  "name": "runC_1080p_3cam",
+  "out_json": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\skellycam_recording\\results\\real_recording_20261109\\runC_drive.json",
+  "server_log": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\skellycam_recording\\results\\real_recording_20261109\\runC_server.log",
+  "hw_transforms_off": false
+ },
+ "server_pid": 7276,
+ "server_ready_s": 1.6,
+ "record_start_wall": "2026-11-09T09:48:29.095",
+ "stop_status": 200,
+ "stop_response": [
+  {
+   "recording_name": "runC_1080p_3cam",
+   "recording_path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\real_recording_20261109\\runC_skellycam_1080p\\runC_1080p_3cam",
+   "number_of_cameras": 3,
+   "number_of_frames": 602,
+   "total_duration_sec": 20.033,
+   "mean_framerate": 30.42,
+   "mean_inter_camera_sync_ms": 0.25,
+   "framerate_stats": {
+    "median": 31.200757975435547,
+    "mean": 30.424821636371092,
+    "std": 3.416254205257576,
+    "min": 20.605910737111145,
+    "max": 45.565037416458956
+   },
+   "frame_duration_stats": {
+    "median": 32.05135,
+    "mean": 33.332747559622845,
+    "std": 4.285596228255589,
+    "min": 21.946933333333334,
+    "max": 48.53073333333333
+   },
+   "inter_camera_grab_range_ms_stats": {
+    "median": 0.16685,
+    "mean": 0.2508950166112957,
+    "std": 0.20317031934530563,
+    "min": 0.00255,
+    "max": 0.82125
+   }
+  }
+ ],
+ "server_exit_rc": 15,
+ "log": [
+  {
+   "t": "2026-11-09T09:48:03.090",
+   "method": "POST",
+   "path": "/skellycam/camera/detect",
+   "request": null,
+   "status": 200,
+   "seconds": 0.023,
+   "response": {
+    "cameras": [
+     {
+      "index": 0,
+      "name": "USB Camera",
+      "vendor_id": 19530,
+      "product_id": 19029,
+      "path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "backend_id": 700,
+      "backend_name": "DSHOW",
+      "camera_id": "b395"
+     },
+     {
+      "index": 1,
+      "name": "c922 Pro Stream Webcam",
+      "vendor_id": 1133,
+      "product_id": 2140,
+      "path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "backend_id": 700,
+      "backend_name": "DSHOW",
+      "camera_id": "1c81"
+     },
+     {
+      "index": 2,
+      "name": "USB Video Device",
+      "vendor_id": 5426,
+      "product_id": 3589,
+      "path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "backend_id": 700,
+      "backend_name": "DSHOW",
+      "camera_id": "fbf5"
+     },
+     {
+      "index": 3,
+      "name": "Logitech Webcam C930e",
+      "vendor_id": 1133,
+      "product_id": 2115,
+      "path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "backend_id": 700,
+      "backend_name": "DSHOW",
+      "camera_id": "0100"
+     }
+    ]
+   }
+  },
+  {
+   "t": "2026-11-09T09:48:03.092",
+   "method": "GET",
+   "path": "/skellycam/camera/microphone/detect",
+   "request": null,
+   "status": 200,
+   "seconds": 0.002,
+   "response": {
+    "microphones": {
+     "1": "Microphone (2- USB Audio)",
+     "2": "Webcam 3 (NDI Webcam Audio)",
+     "3": "Mic/Inst 1/2 (Revelator IO 24)",
+     "4": "Webcam 4 (NDI Webcam Audio)",
+     "5": "Webcam 2 (NDI Webcam Audio)",
+     "6": "Microphone (4- Logitech Webcam",
+     "7": "Stream Mix B L/R (Revelator IO",
+     "8": "Microphone (4- Razer Kiyo Pro)",
+     "9": "Webcam 1 (NDI Webcam Audio)",
+     "10": "Microphone (C922 Pro Stream Web",
+     "11": "Stream Mix A L/R (Revelator IO",
+     "24": "Microphone (4- Logitech Webcam C930e)",
+     "25": "Stream Mix B L/R (Revelator IO 24)",
+     "28": "Microphone (C922 Pro Stream Webcam)",
+     "29": "Stream Mix A L/R (Revelator IO 24)",
+     "52": "Microphone (Realtek HD Audio Mic input)",
+     "54": "Line In (Realtek HD Audio Line input)",
+     "58": "Mic/Inst 1/2 (Mic/Inst 1/2)",
+     "60": "Stream Mix B L/R (Stream Mix B L/R)",
+     "62": "Stream Mix A L/R (Stream Mix A L/R)",
+     "64": "Webcam 1 (Web Camera Wave Mic 1)",
+     "65": "Webcam 2 (Web Camera Wave Mic 2)",
+     "66": "Webcam 3 (Web Camera Wave Mic 3)",
+     "67": "Webcam 4 (Web Camera Wave Mic 4)",
+     "69": "Headset (@System32\\drivers\\bthhfenum.sys,#2;%1 Hands-Free%0\r\n;(FiiO BTR3K))",
+     "74": "Headset Microphone (@System32\\drivers\\bthhfenum.sys,#2;%1 Hands-Free%0\r\n;(Bose Mini II SoundLink))",
+     "76": "Headset (@System32\\drivers\\bthhfenum.sys,#2;%1 Hands-Free%0\r\n;(Bose QC Ultra Earbuds))",
+     "77": "Microphone (USB Audio Device)",
+     "78": "Microphone (Logitech Webcam C930e)",
+     "80": "Microphone (USB Audio)"
+    }
+   }
+  },
+  {
+   "t": "2026-11-09T09:48:13.258",
+   "method": "POST",
+   "path": "/skellycam/camera/group/apply",
+   "request": {
+    "camera_configs": {
+     "0100": {
+      "camera_id": "0100",
+      "camera_index": 3,
+      "camera_name": "Logitech Webcam C930e",
+      "resolution": {
+       "width": 1920,
+       "height": 1080
+      }
+     },
+     "fbf5": {
+      "camera_id": "fbf5",
+      "camera_index": 2,
+      "camera_name": "USB Video Device",
+      "resolution": {
+       "width": 1920,
+       "height": 1080
+      }
+     },
+     "1c81": {
+      "camera_id": "1c81",
+      "camera_index": 1,
+      "camera_name": "c922 Pro Stream Webcam",
+      "resolution": {
+       "width": 1920,
+       "height": 1080
+      }
+     }
+    }
+   },
+   "status": 200,
+   "seconds": 10.166,
+   "response": {
+    "group_id": "cfa558",
+    "camera_configs": {
+     "0100": {
+      "camera_id": "0100",
+      "camera_index": 3,
+      "camera_name": "Logitech Webcam C930e",
+      "use_this_camera": true,
+      "resolution": {
+       "height": 1080,
+       "width": 1920
+      },
+      "color_channels": 3,
+      "pixel_format": "RGB",
+      "exposure_mode": "MANUAL",
+      "exposure": -5,
+      "framerate": 0.0,
+      "rotation": -1,
+      "capture_fourcc": "MJPG",
+      "writer_fourcc": "X264"
+     },
+     "fbf5": {
+      "camera_id": "fbf5",
+      "camera_index": 2,
+      "camera_name": "USB Video Device",
+      "use_this_camera": true,
+      "resolution": {
+       "height": 1080,
+       "width": 1920
+      },
+      "color_channels": 3,
+      "pixel_format": "RGB",
+      "exposure_mode": "MANUAL",
+      "exposure": -7,
+      "framerate": 0.0,
+      "rotation": -1,
+      "capture_fourcc": "MJPG",
+      "writer_fourcc": "X264"
+     },
+     "1c81": {
+      "camera_id": "1c81",
+      "camera_index": 1,
+      "camera_name": "c922 Pro Stream Webcam",
+      "use_this_camera": true,
+      "resolution": {
+       "height": 1080,
+       "width": 1920
+      },
+      "color_channels": 3,
+      "pixel_format": "RGB",
+      "exposure_mode": "MANUAL",
+      "exposure": -7,
+      "framerate": 0.0,
+      "rotation": -1,
+      "capture_fourcc": "MJPG",
+      "writer_fourcc": "X264"
+     }
+    }
+   }
+  },
+  {
+   "t": "2026-11-09T09:48:29.095",
+   "method": "POST",
+   "path": "/skellycam/camera/group/all/record/start",
+   "request": {
+    "recording_name": "runC_1080p_3cam",
+    "recording_directory": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\real_recording_20261109\\runC_skellycam_1080p",
+    "mic_device_index": -1
+   },
+   "status": 200,
+   "seconds": 0.837,
+   "response": true
+  },
+  {
+   "t": "2026-11-09T09:48:49.990",
+   "method": "GET",
+   "path": "/skellycam/camera/group/all/record/stop",
+   "request": null,
+   "status": 200,
+   "seconds": 0.894,
+   "response": [
+    {
+     "recording_name": "runC_1080p_3cam",
+     "recording_path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\real_recording_20261109\\runC_skellycam_1080p\\runC_1080p_3cam",
+     "number_of_cameras": 3,
+     "number_of_frames": 602,
+     "total_duration_sec": 20.033,
+     "mean_framerate": 30.42,
+     "mean_inter_camera_sync_ms": 0.25,
+     "framerate_stats": {
+      "median": 31.200757975435547,
+      "mean": 30.424821636371092,
+      "std": 3.416254205257576,
+      "min": 20.605910737111145,
+      "max": 45.565037416458956
+     },
+     "frame_duration_stats": {
+      "median": 32.05135,
+      "mean": 33.332747559622845,
+      "std": 4.285596228255589,
+      "min": 21.946933333333334,
+      "max": 48.53073333333333
+     },
+     "inter_camera_grab_range_ms_stats": {
+      "median": 0.16685,
+      "mean": 0.2508950166112957,
+      "std": 0.20317031934530563,
+      "min": 0.00255,
+      "max": 0.82125
+     }
+    }
+   ]
+  },
+  {
+   "t": "2026-11-09T09:48:51.282",
+   "method": "DELETE",
+   "path": "/skellycam/camera/group/close/all",
+   "request": null,
+   "status": 200,
+   "seconds": 1.292,
+   "response": true
+  },
+  {
+   "path": "/shutdown",
+   "error": "ReadError('[WinError 10054] An existing connection was forcibly closed by the remote host')"
+  }
+ ]
+}

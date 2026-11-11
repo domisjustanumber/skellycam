@@ -1,0 +1,20 @@
+Demuxer image2 [image2 sequence]:
+image2 demuxer AVOptions:
+  -pattern_type      <int>        .D......... set pattern type (from 0 to INT_MAX) (default 4)
+     glob            1            .D......... select glob pattern type
+     sequence        2            .D......... select sequence pattern type
+     none            3            .D......... disable pattern matching
+  -start_number      <int>        .D......... set first number in the sequence (from INT_MIN to INT_MAX) (default 0)
+  -start_number_range <int>        .D......... set range for looking at the first sequence number (from 1 to INT_MAX) (default 5)
+  -ts_from_file      <int>        .D......... set frame timestamp from file's one (from 0 to 2) (default none)
+     none            0            .D......... none
+     sec             1            .D......... second precision
+     ns              2            .D......... nanosecond precision
+  -export_path_metadata <boolean>    .D......... enable metadata containing input path information (default false)
+  -framerate         <video_rate> .D......... set the video framerate (default "25")
+  -pixel_format      <string>     .D......... set video pixel format
+  -video_size        <image_size> .D......... set video size
+  -loop              <boolean>    .D......... force loop over input file sequence (default false)
+
+
+Exiting with exit code 0

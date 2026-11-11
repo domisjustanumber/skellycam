@@ -1,0 +1,204 @@
+{
+ "env": {
+  "python": "3.12.13",
+  "pyav": "18.0.0",
+  "libav": {
+   "libavutil": "60.26.102",
+   "libavcodec": "62.28.102",
+   "libavformat": "62.12.102",
+   "libavdevice": "62.3.102",
+   "libavfilter": "11.14.102",
+   "libswscale": "9.5.102",
+   "libswresample": "6.3.102"
+  },
+  "opencv": "4.12.0",
+  "ffmpeg_cli": "ffmpeg version 9.0.2-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers"
+ },
+ "frames": 30,
+ "repeats": 1,
+ "drive": "C:",
+ "started": "2026-11-09T11:22:25",
+ "results": [
+  {
+   "policy": "none",
+   "repeats": [
+    {
+     "wall_s": 0.00181460000021616,
+     "cpu_s": 0.0,
+     "bytes": 1696871,
+     "MB_per_s": 935.1212387291217,
+     "lat_us_p50": 16.4,
+     "lat_us_p99": 290.2,
+     "lat_us_max": 290.2
+    }
+   ],
+   "wall_s_median": 0.00181460000021616,
+   "cpu_s_median": 0.0,
+   "MB_per_s_median": 935.1212387291217,
+   "lat_us_p50_median": 16.4,
+   "lat_us_p99_median": 290.2,
+   "lat_us_max_median": 290.2
+  },
+  {
+   "policy": "flush",
+   "repeats": [
+    {
+     "wall_s": 0.0012121999989176402,
+     "cpu_s": 0.0,
+     "bytes": 1696871,
+     "MB_per_s": 1399.827587456787,
+     "lat_us_p50": 18.0,
+     "lat_us_p99": 140.4,
+     "lat_us_max": 140.4
+    }
+   ],
+   "wall_s_median": 0.0012121999989176402,
+   "cpu_s_median": 0.0,
+   "MB_per_s_median": 1399.827587456787,
+   "lat_us_p50_median": 18.0,
+   "lat_us_p99_median": 140.4,
+   "lat_us_max_median": 140.4
+  },
+  {
+   "policy": "fsync_every_1",
+   "repeats": [
+    {
+     "wall_s": 0.021280699998897035,
+     "cpu_s": 0.0,
+     "bytes": 1696871,
+     "MB_per_s": 79.73755562965259,
+     "lat_us_p50": 590.0,
+     "lat_us_p99": 1635.2,
+     "lat_us_max": 1635.2
+    }
+   ],
+   "wall_s_median": 0.021280699998897035,
+   "cpu_s_median": 0.0,
+   "MB_per_s_median": 79.73755562965259,
+   "lat_us_p50_median": 590.0,
+   "lat_us_p99_median": 1635.2,
+   "lat_us_max_median": 1635.2
+  },
+  {
+   "policy": "fsync_every_10",
+   "repeats": [
+    {
+     "wall_s": 0.004335199999331962,
+     "cpu_s": 0.0,
+     "bytes": 1696871,
+     "MB_per_s": 391.4170050427849,
+     "lat_us_p50": 30.1,
+     "lat_us_p99": 1210.1,
+     "lat_us_max": 1210.1
+    }
+   ],
+   "wall_s_median": 0.004335199999331962,
+   "cpu_s_median": 0.0,
+   "MB_per_s_median": 391.4170050427849,
+   "lat_us_p50_median": 30.1,
+   "lat_us_p99_median": 1210.1,
+   "lat_us_max_median": 1210.1
+  },
+  {
+   "policy": "fsync_every_30",
+   "repeats": [
+    {
+     "wall_s": 0.0026995999996870523,
+     "cpu_s": 0.0,
+     "bytes": 1696871,
+     "MB_per_s": 628.5638613856526,
+     "lat_us_p50": 22.1,
+     "lat_us_p99": 1249.9,
+     "lat_us_max": 1249.9
+    }
+   ],
+   "wall_s_median": 0.0026995999996870523,
+   "cpu_s_median": 0.0,
+   "MB_per_s_median": 628.5638613856526,
+   "lat_us_p50_median": 22.1,
+   "lat_us_p99_median": 1249.9,
+   "lat_us_max_median": 1249.9
+  },
+  {
+   "policy": "fsync_every_300",
+   "repeats": [
+    {
+     "wall_s": 0.0013425999986793613,
+     "cpu_s": 0.0,
+     "bytes": 1696871,
+     "MB_per_s": 1263.8693592053587,
+     "lat_us_p50": 17.9,
+     "lat_us_p99": 99.4,
+     "lat_us_max": 99.4
+    }
+   ],
+   "wall_s_median": 0.0013425999986793613,
+   "cpu_s_median": 0.0,
+   "MB_per_s_median": 1263.8693592053587,
+   "lat_us_p50_median": 17.9,
+   "lat_us_p99_median": 99.4,
+   "lat_us_max_median": 99.4
+  },
+  {
+   "policy": "sidecar_fsync_1",
+   "repeats": [
+    {
+     "wall_s": 0.012002699999356992,
+     "cpu_s": 0.0,
+     "bytes": 1696871,
+     "MB_per_s": 141.37410750005455,
+     "lat_us_p50": 322.4,
+     "lat_us_p99": 734.5,
+     "lat_us_max": 734.5
+    }
+   ],
+   "wall_s_median": 0.012002699999356992,
+   "cpu_s_median": 0.0,
+   "MB_per_s_median": 141.37410750005455,
+   "lat_us_p50_median": 322.4,
+   "lat_us_p99_median": 734.5,
+   "lat_us_max_median": 734.5
+  },
+  {
+   "policy": "mkv_fp_fsync_1",
+   "repeats": [
+    {
+     "wall_s": 0.025970099999540253,
+     "cpu_s": 0.0,
+     "bytes": 1698681,
+     "MB_per_s": 65.40910508739172,
+     "lat_us_p50": 645.4,
+     "lat_us_p99": 3206.8,
+     "lat_us_max": 3206.8
+    }
+   ],
+   "wall_s_median": 0.025970099999540253,
+   "cpu_s_median": 0.0,
+   "MB_per_s_median": 65.40910508739172,
+   "lat_us_p50_median": 645.4,
+   "lat_us_p99_median": 3206.8,
+   "lat_us_max_median": 3206.8
+  },
+  {
+   "policy": "mkv_fp_fsync_30",
+   "repeats": [
+    {
+     "wall_s": 0.007383600001048762,
+     "cpu_s": 0.0,
+     "bytes": 1698681,
+     "MB_per_s": 230.06135215324778,
+     "lat_us_p50": 37.6,
+     "lat_us_p99": 2427.1,
+     "lat_us_max": 2427.1
+    }
+   ],
+   "wall_s_median": 0.007383600001048762,
+   "cpu_s_median": 0.0,
+   "MB_per_s_median": 230.06135215324778,
+   "lat_us_p50_median": 37.6,
+   "lat_us_p99_median": 2427.1,
+   "lat_us_max_median": 2427.1
+  }
+ ],
+ "finished": "2026-11-09T11:22:25"
+}

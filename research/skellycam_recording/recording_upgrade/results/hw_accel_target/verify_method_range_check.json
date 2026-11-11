@@ -1,0 +1,22 @@
+{
+ "av": "19.0.2",
+ "input": "yuvj420p ramp Y 0..255, 1280x720",
+ "reformat_nv12_dst_color_range_1 (bench MJPEG-source path)": {
+  "fed_Y_min": 16,
+  "fed_Y_max": 235,
+  "mjpeg_qsv_jpeg": {
+   "decoded_fmt": "yuvj420p",
+   "decoded_Y_min": 16,
+   "decoded_Y_max": 235
+  }
+ },
+ "reformat_nv12_no_range_arg": {
+  "fed_Y_min": 16,
+  "fed_Y_max": 235,
+  "mjpeg_qsv_jpeg": {
+   "decoded_fmt": "yuvj420p",
+   "decoded_Y_min": 16,
+   "decoded_Y_max": 235
+  }
+ }
+}

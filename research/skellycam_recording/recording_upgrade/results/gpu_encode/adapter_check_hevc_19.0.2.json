@@ -1,0 +1,66 @@
+{
+ "pyav": "19.0.2",
+ "runs": [
+  {
+   "encoder": "hevc_d3d12va",
+   "ok": true,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 8,
+    "key_packets": 8,
+    "decoded_frames": 8,
+    "pict_types": {
+     "I": 8
+    }
+   },
+   "nvidia_smi_mid_encode": "1, 24 %, 610.88",
+   "log_matches": [
+    "D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "hevc_d3d12va: Using CTU size 32x32, min CB size 8x8.",
+    "hevc_d3d12va: Using intra frames only.",
+    "hevc_d3d12va: Using fixed QP = 25 / 25 / 25 for IDR- / P- / B-frames.",
+    "hevc_d3d12va: Using level 4.",
+    "hevc_d3d12va: Using nv12 as format of reconstructed frames."
+   ]
+  },
+  {
+   "encoder": "hevc_mf",
+   "ok": true,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 8,
+    "key_packets": 8,
+    "decoded_frames": 8,
+    "pict_types": {
+     "I": 8
+    }
+   },
+   "nvidia_smi_mid_encode": "1, 13 %, 610.88",
+   "log_matches": [
+    "hevc_mf: MFT_ENUM_HARDWARE_URL_Attribute='NVIDIA HEVC Encoder MFT'",
+    "hevc_mf: MFT_FRIENDLY_NAME_Attribute='NVIDIA HEVC Encoder MFT'",
+    "hevc_mf: MFT_TRANSFORM_CLSID_Attribute={966f107c-8ea2-425d-b822-e4a71bef01d7}",
+    "hevc_mf: MFT_ENUM_HARDWARE_URL_Attribute='AA243E5D-2F73-48c7-97F7-F6FA17651651'",
+    "hevc_mf: MFT_FRIENDLY_NAME_Attribute='Intel\\xae Hardware H265 Encoder MFT'",
+    "hevc_mf: MFT_TRANSFORM_CLSID_Attribute={bc10864d-2b34-408f-912a-102b1b867b6c}",
+    "hevc_mf: MFT_ENUM_HARDWARE_URL_Attribute='AA243E5D-2F73-48c7-97F7-F6FA17651651'",
+    "hevc_mf: MFT_FRIENDLY_NAME_Attribute='Intel\\xae Hardware H265 Encoder MFT'",
+    "hevc_mf: MFT_TRANSFORM_CLSID_Attribute={bc10864d-2b34-408f-912a-102b1b867b6c}",
+    "hevc_mf: activate MFT 0",
+    "hevc_mf: MFT attributes",
+    "hevc_mf: MFT_ENUM_HARDWARE_URL_Attribute='NVIDIA HEVC Encoder MFT'",
+    "hevc_mf: MFT_FRIENDLY_NAME_Attribute='NVIDIA HEVC Encoder MFT'",
+    "hevc_mf: MFT name: 'NVIDIA HEVC Encoder MFT'",
+    "hevc_mf: MFT supports ICodecAPI."
+   ]
+  }
+ ]
+}

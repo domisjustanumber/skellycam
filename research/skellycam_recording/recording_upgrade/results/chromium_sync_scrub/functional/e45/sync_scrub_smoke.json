@@ -1,0 +1,384 @@
+{
+ "test": "batch",
+ "params": {},
+ "versions": {
+  "electron": "45.2.3",
+  "chrome": "156.0.8078.80",
+  "node": "24.22.2",
+  "v8": "15.6.75.27-electron.0"
+ },
+ "gpu_feature_status": {
+  "2d_canvas": "enabled",
+  "direct_rendering_display_compositor": "disabled_off_ok",
+  "gpu_compositing": "enabled",
+  "multiple_raster_threads": "enabled_on",
+  "opengl": "enabled_on",
+  "rasterization": "enabled",
+  "raw_draw": "disabled_off_ok",
+  "skia_graphite": "disabled_off",
+  "trees_in_viz": "disabled_off",
+  "video_decode": "enabled",
+  "video_encode": "enabled",
+  "webgl": "enabled",
+  "webgpu": "enabled",
+  "webnn": "disabled_off"
+ },
+ "gpu_info": {
+  "gpuDevice": [
+   {
+    "active": true,
+    "deviceId": 9348,
+    "deviceString": "NVIDIA GeForce RTX 3070",
+    "driverVendor": "NVIDIA",
+    "driverVersion": "32.0.16.1088",
+    "gpuPreference": 2,
+    "revision": 161,
+    "subSysId": 928331842,
+    "vendorId": 4318
+   },
+   {
+    "active": false,
+    "deviceId": 9348,
+    "deviceString": "NVIDIA GeForce RTX 3070",
+    "driverVersion": "32.0.16.1088",
+    "gpuPreference": 0,
+    "revision": 161,
+    "subSysId": 928331842,
+    "vendorId": 4318
+   },
+   {
+    "active": false,
+    "deviceId": 140,
+    "deviceString": "Microsoft Basic Render Driver",
+    "driverVersion": "10.0.26100.9711",
+    "gpuPreference": 0,
+    "revision": 0,
+    "subSysId": 0,
+    "vendorId": 5140
+   }
+  ]
+ },
+ "metrics_summary": null,
+ "metrics_samples": null,
+ "window": {
+  "width": 1600,
+  "height": 900
+ },
+ "finished_utc": "2026-11-09T17:02:10.416Z",
+ "result": [
+  {
+   "config": {
+    "test": "sync",
+    "clip": "c720p30/av1_gop.mp4",
+    "path": "video-free",
+    "n": "4",
+    "dur": "3",
+    "readpattern": "1"
+   },
+   "result": {
+    "clip": "c720p30/av1_gop.mp4",
+    "path": "video-free",
+    "n": 4,
+    "per_stream": [
+     {
+      "rvfc_callbacks": 89,
+      "presented_frames_delta": 88,
+      "pattern_mismatch": 0
+     },
+     {
+      "rvfc_callbacks": 89,
+      "presented_frames_delta": 89,
+      "pattern_mismatch": 0
+     },
+     {
+      "rvfc_callbacks": 89,
+      "presented_frames_delta": 89,
+      "pattern_mismatch": 0
+     },
+     {
+      "rvfc_callbacks": 89,
+      "presented_frames_delta": 89,
+      "pattern_mismatch": 0
+     }
+    ],
+    "follower_corrections": 0,
+    "dropped": [
+     {
+      "total": 95,
+      "dropped": 0
+     },
+     {
+      "total": 95,
+      "dropped": 0
+     },
+     {
+      "total": 95,
+      "dropped": 0
+     },
+     {
+      "total": 95,
+      "dropped": 0
+     }
+    ],
+    "ticks": 93,
+    "spread_hist": {
+     "0": 10,
+     "1": 83
+    },
+    "spread_exact0_pct": 10.75268817204301
+   }
+  },
+  {
+   "config": {
+    "test": "sync",
+    "clip": "c720p30/av1_gop.mp4",
+    "path": "video-leader",
+    "n": "4",
+    "dur": "3",
+    "readpattern": "1"
+   },
+   "result": {
+    "clip": "c720p30/av1_gop.mp4",
+    "path": "video-leader",
+    "n": 4,
+    "per_stream": [
+     {
+      "rvfc_callbacks": 87,
+      "presented_frames_delta": 88,
+      "pattern_mismatch": 0
+     },
+     {
+      "rvfc_callbacks": 87,
+      "presented_frames_delta": 89,
+      "pattern_mismatch": 0
+     },
+     {
+      "rvfc_callbacks": 87,
+      "presented_frames_delta": 89,
+      "pattern_mismatch": 0
+     },
+     {
+      "rvfc_callbacks": 87,
+      "presented_frames_delta": 89,
+      "pattern_mismatch": 0
+     }
+    ],
+    "follower_corrections": 0,
+    "dropped": [
+     {
+      "total": 95,
+      "dropped": 0
+     },
+     {
+      "total": 95,
+      "dropped": 0
+     },
+     {
+      "total": 95,
+      "dropped": 0
+     },
+     {
+      "total": 95,
+      "dropped": 0
+     }
+    ],
+    "ticks": 93,
+    "spread_hist": {
+     "0": 13,
+     "1": 80
+    },
+    "spread_exact0_pct": 13.978494623655914
+   }
+  },
+  {
+   "config": {
+    "test": "sync",
+    "clip": "c720p30/av1_gop.mp4",
+    "path": "wc-master",
+    "n": "4",
+    "dur": "3",
+    "readpattern": "1"
+   },
+   "result": {
+    "clip": "c720p30/av1_gop.mp4",
+    "path": "wc-master",
+    "n": 4,
+    "per_stream": [
+     {
+      "draws": 90,
+      "pattern_mismatch": 0
+     },
+     {
+      "draws": 90,
+      "pattern_mismatch": 0
+     },
+     {
+      "draws": 90,
+      "pattern_mismatch": 0
+     },
+     {
+      "draws": 90,
+      "pattern_mismatch": 0
+     }
+    ],
+    "ticks": 180,
+    "spread_hist": {
+     "0": 180
+    },
+    "spread_exact0_pct": 100
+   }
+  },
+  {
+   "config": {
+    "test": "sync",
+    "clip": "c720p30/mjpeg",
+    "path": "jpeg-master-range-bitmap",
+    "n": "4",
+    "dur": "3",
+    "readpattern": "1"
+   },
+   "result": {
+    "clip": "c720p30/mjpeg",
+    "path": "jpeg-master-range-bitmap",
+    "n": 4,
+    "per_stream": [
+     {
+      "draws": 90,
+      "pattern_mismatch": 0
+     },
+     {
+      "draws": 90,
+      "pattern_mismatch": 0
+     },
+     {
+      "draws": 90,
+      "pattern_mismatch": 0
+     },
+     {
+      "draws": 90,
+      "pattern_mismatch": 0
+     }
+    ],
+    "ticks": 180,
+    "spread_hist": {
+     "0": 180
+    },
+    "spread_exact0_pct": 100
+   }
+  },
+  {
+   "config": {
+    "test": "scrub",
+    "clip": "c720p30/av1_gop.mp4",
+    "path": "video-ui",
+    "n": "2",
+    "dur": "2"
+   },
+   "result": {
+    "clip": "c720p30/av1_gop.mp4",
+    "path": "video-ui",
+    "n": 2,
+    "speed_frames_per_s": 90,
+    "per_stream": [
+     {
+      "presents": 111,
+      "distinct_frames": 111
+     },
+     {
+      "presents": 109,
+      "distinct_frames": 109
+     }
+    ],
+    "input_events": 120
+   }
+  },
+  {
+   "config": {
+    "test": "scrub",
+    "clip": "c720p30/av1_gop.mp4",
+    "path": "video-gated",
+    "n": "2",
+    "dur": "2"
+   },
+   "result": {
+    "clip": "c720p30/av1_gop.mp4",
+    "path": "video-gated",
+    "n": 2,
+    "speed_frames_per_s": 90,
+    "per_stream": [
+     {
+      "presents": 112,
+      "distinct_frames": 93
+     },
+     {
+      "presents": 113,
+      "distinct_frames": 92
+     }
+    ],
+    "input_events": 120
+   }
+  },
+  {
+   "config": {
+    "test": "scrub",
+    "clip": "c720p30/av1_gop.mp4",
+    "path": "webcodecs",
+    "n": "2",
+    "dur": "2"
+   },
+   "result": {
+    "clip": "c720p30/av1_gop.mp4",
+    "path": "webcodecs",
+    "n": 2,
+    "speed_frames_per_s": 90,
+    "per_stream": [
+     {
+      "presents": 120,
+      "distinct_frames": 120,
+      "errors": 0
+     },
+     {
+      "presents": 120,
+      "distinct_frames": 120,
+      "errors": 0
+     }
+    ],
+    "input_events": 120
+   }
+  },
+  {
+   "config": {
+    "test": "scrub",
+    "clip": "c720p30/mjpeg",
+    "path": "jpeg-range-imagedecoder",
+    "n": "2",
+    "dur": "2"
+   },
+   "result": {
+    "clip": "c720p30/mjpeg",
+    "path": "jpeg-range-imagedecoder",
+    "n": 2,
+    "speed_frames_per_s": 90,
+    "per_stream": [
+     {
+      "presents": 120,
+      "distinct_frames": 120,
+      "errors": 0
+     },
+     {
+      "presents": 120,
+      "distinct_frames": 120,
+      "errors": 0
+     }
+    ],
+    "input_events": 120
+   }
+  }
+ ],
+ "nvidia_smi": {
+  "query": "encoder.stats.sessionCount,utilization.gpu,utilization.decoder,memory.used",
+  "before": "0, 6 %, 0 %, 2493 MiB",
+  "after": "0, 21 %, 0 %, 2519 MiB"
+ },
+ "note": "CPU/memory samples removed: functional stage, machine shared with other agents"
+}

@@ -1,0 +1,1756 @@
+{
+ "utc": "2026-11-09T21:58:42Z",
+ "pyav": "19.0.2",
+ "libavcodec": "63.1.102",
+ "hwdevices_available": [
+  "cuda",
+  "dxva2",
+  "qsv",
+  "d3d11va",
+  "d3d12va",
+  "amf"
+ ],
+ "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+ "input_formats": {
+  "yuy2_1080p": [
+   "yuyv422",
+   1920,
+   1080,
+   8,
+   "0"
+  ],
+  "mjpeg_720p": [
+   "yuvj422p",
+   1280,
+   720,
+   60,
+   "2"
+  ],
+  "mjpeg_1080p": [
+   "yuvj422p",
+   1920,
+   1080,
+   19,
+   "2"
+  ]
+ },
+ "encoder_advertised_formats": {
+  "h264_qsv": [
+   "nv12",
+   "qsv"
+  ],
+  "hevc_qsv": [
+   "nv12",
+   "p010le",
+   "p012le",
+   "yuyv422",
+   "y210le",
+   "qsv",
+   "bgra",
+   "x2rgb10le",
+   "vuyx",
+   "xv30le"
+  ],
+  "vp9_qsv": [
+   "nv12",
+   "p010le",
+   "vuyx",
+   "qsv",
+   "xv30le"
+  ],
+  "mjpeg_qsv": [
+   "nv12",
+   "yuyv422",
+   "bgra",
+   "qsv"
+  ],
+  "h264_nvenc": [
+   "yuv420p",
+   "nv12",
+   "p010le",
+   "yuv444p",
+   "p012le",
+   "p016le",
+   "nv16",
+   "p210le",
+   "p212le",
+   "p216le",
+   "yuv444p10msble",
+   "yuv444p12msble",
+   "yuv444p16le",
+   "bgr0",
+   "bgra",
+   "rgb0",
+   "rgba",
+   "x2rgb10le",
+   "x2bgr10le",
+   "gbrp",
+   "gbrp10msble",
+   "gbrp16le",
+   "cuda",
+   "d3d11"
+  ],
+  "hevc_nvenc": [
+   "yuv420p",
+   "nv12",
+   "p010le",
+   "yuv444p",
+   "p012le",
+   "p016le",
+   "nv16",
+   "p210le",
+   "p212le",
+   "p216le",
+   "yuv444p10msble",
+   "yuv444p12msble",
+   "yuv444p16le",
+   "bgr0",
+   "bgra",
+   "rgb0",
+   "rgba",
+   "x2rgb10le",
+   "x2bgr10le",
+   "gbrp",
+   "gbrp10msble",
+   "gbrp16le",
+   "cuda",
+   "d3d11"
+  ],
+  "h264_d3d12va": [
+   "d3d12"
+  ],
+  "hevc_d3d12va": [
+   "d3d12"
+  ],
+  "h264_mf": [
+   "nv12",
+   "yuv420p",
+   "d3d11"
+  ],
+  "hevc_mf": [
+   "nv12",
+   "yuv420p",
+   "d3d11"
+  ],
+  "libsvtav1": [
+   "yuv420p",
+   "yuv420p10le"
+  ],
+  "libvpx-vp9": [
+   "yuv420p",
+   "yuva420p",
+   "yuv422p",
+   "yuva422p",
+   "yuv440p",
+   "yuv444p",
+   "yuva444p",
+   "gbrp",
+   "gbrap"
+  ],
+  "mjpeg": [
+   "yuvj420p",
+   "yuvj422p",
+   "yuvj444p",
+   "yuv420p",
+   "yuv422p",
+   "yuv444p"
+  ],
+  "ffv1": [
+   "yuv420p",
+   "yuva420p",
+   "yuva422p",
+   "yuv444p",
+   "yuva444p",
+   "yuv440p",
+   "yuv422p",
+   "yuv411p",
+   "yuv410p",
+   "bgr0",
+   "bgra",
+   "yuv420p16le",
+   "yuv422p16le",
+   "yuv444p16le",
+   "yuv444p9le",
+   "yuv422p9le",
+   "yuv420p9le",
+   "yuv420p10le",
+   "yuv422p10le",
+   "yuv444p10le",
+   "yuv420p12le",
+   "yuv422p12le",
+   "yuv444p12le",
+   "yuva444p16le",
+   "yuva422p16le",
+   "yuva420p16le",
+   "yuva444p12le",
+   "yuva422p12le",
+   "yuva444p10le",
+   "yuva422p10le",
+   "yuva420p10le",
+   "yuva444p9le",
+   "yuva422p9le",
+   "yuva420p9le",
+   "gray16le",
+   "gray",
+   "gbrp9le",
+   "gbrp10le",
+   "gbrp12le",
+   "gbrp14le",
+   "gbrap14le",
+   "gbrap10le",
+   "gbrap12le",
+   "ya8",
+   "gray10le",
+   "gray12le",
+   "gray14le",
+   "gbrp16le",
+   "rgb48le",
+   "gbrap16le",
+   "rgba64le",
+   "gray9le",
+   "yuv420p14le",
+   "yuv422p14le",
+   "yuv444p14le",
+   "yuv440p10le",
+   "yuv440p12le",
+   "yaf16le",
+   "grayf16le",
+   "gbrpf16le",
+   "gbrpf32le",
+   "bayer_rggb16le"
+  ]
+ },
+ "mjpeg_decoder_hw_configs": [
+  "2"
+ ],
+ "nvidia_smi_before": "0, 24 %",
+ "encode": [
+  {
+   "encoder": "h264_qsv",
+   "tag": "mjpeg_720p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 0,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 225495,
+   "log": [
+    "D h264_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "W h264_qsv: Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice.",
+    "D h264_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "D h264_qsv: profile: avc high; level: 31",
+    "D h264_qsv: PRefType: simple"
+   ],
+   "probe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": null,
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "h264",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 46.94,
+    "psnr_y_mean": 48.04,
+    "psnr_all_min": 48.75,
+    "psnr_all_mean": 49.64
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "h264_qsv",
+   "tag": "mjpeg_1080p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 0,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 396325,
+   "log": [
+    "D h264_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "W h264_qsv: Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice.",
+    "D h264_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "D h264_qsv: profile: avc high; level: 40",
+    "D h264_qsv: PRefType: simple"
+   ],
+   "probe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": null,
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "h264",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 46.25,
+    "psnr_y_mean": 47.28,
+    "psnr_all_min": 48.26,
+    "psnr_all_mean": 49.36
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "hevc_qsv",
+   "tag": "mjpeg_720p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 0,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 108265,
+   "log": [
+    "D hevc_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "W hevc_qsv: Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice.",
+    "D hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "D hevc_qsv: profile: hevc main; level: 40"
+   ],
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": "tv",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "B": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "hevc",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 48.01,
+    "psnr_y_mean": 48.97,
+    "psnr_all_min": 50.6,
+    "psnr_all_mean": 51.57
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "hevc_qsv",
+   "tag": "mjpeg_1080p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 0,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 239896,
+   "log": [
+    "D hevc_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "W hevc_qsv: Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice.",
+    "D hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "D hevc_qsv: profile: hevc main; level: 296"
+   ],
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "tv",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "B": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "hevc",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 46.83,
+    "psnr_y_mean": 48.54,
+    "psnr_all_min": 49.03,
+    "psnr_all_mean": 50.71
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "vp9_qsv",
+   "tag": "mjpeg_720p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 0,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 785297,
+   "log": [
+    "D vp9_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D vp9_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "W vp9_qsv: Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice.",
+    "D vp9_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "D vp9_qsv: profile: vp9 0"
+   ],
+   "probe": {
+    "codec_name": "vp9",
+    "profile": "Profile 0",
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": "tv",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "vp9",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 51.09,
+    "psnr_y_mean": 51.66,
+    "psnr_all_min": 53.7,
+    "psnr_all_mean": 54.47
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "vp9_qsv",
+   "tag": "mjpeg_1080p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 0,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 2156802,
+   "log": [
+    "D vp9_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D vp9_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "W vp9_qsv: Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice.",
+    "D vp9_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "D vp9_qsv: profile: vp9 0"
+   ],
+   "probe": {
+    "codec_name": "vp9",
+    "profile": "Profile 0",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "tv",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "vp9",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 51.25,
+    "psnr_y_mean": 51.58,
+    "psnr_all_min": 53.25,
+    "psnr_all_mean": 53.54
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "mjpeg_qsv",
+   "tag": "mjpeg_720p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 0,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 2629441,
+   "log": [
+    "D mjpeg_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation"
+   ],
+   "probe": {
+    "codec_name": "mjpeg",
+    "profile": "Baseline",
+    "pix_fmt": "yuvj420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": "pc",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 60,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": true
+   },
+   "decode_back": {
+    "decoder": "mjpeg",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuvj420p"
+    ],
+    "psnr_y_min": 50.04,
+    "psnr_y_mean": 51.52,
+    "psnr_all_min": 52.88,
+    "psnr_all_mean": 54.18
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "mjpeg_qsv",
+   "tag": "mjpeg_1080p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 0,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 6236763,
+   "log": [
+    "D mjpeg_qsv: Use Intel(R) oneVPL to create MFX session, the required implementation version is 1.1",
+    "D mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation"
+   ],
+   "probe": {
+    "codec_name": "mjpeg",
+    "profile": "Baseline",
+    "pix_fmt": "yuvj420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "pc",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 60,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": true
+   },
+   "decode_back": {
+    "decoder": "mjpeg",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuvj420p"
+    ],
+    "psnr_y_min": 50.54,
+    "psnr_y_mean": 51.86,
+    "psnr_all_min": 52.0,
+    "psnr_all_mean": 52.79
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "h264_nvenc",
+   "tag": "mjpeg_720p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 2807033,
+   "log": [
+    "D h264_nvenc: 1 CUDA capable devices found",
+    "D h264_nvenc: [ GPU #0 - < NVIDIA GeForce RTX 3070 > has Compute SM 8.6 ]"
+   ],
+   "probe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": null,
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "h264",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 54.01,
+    "psnr_y_mean": 56.45,
+    "psnr_all_min": 56.47,
+    "psnr_all_mean": 58.83
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "h264_nvenc",
+   "tag": "mjpeg_1080p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 3918403,
+   "log": [
+    "D h264_nvenc: 1 CUDA capable devices found",
+    "D h264_nvenc: [ GPU #0 - < NVIDIA GeForce RTX 3070 > has Compute SM 8.6 ]"
+   ],
+   "probe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": null,
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "h264",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 52.44,
+    "psnr_y_mean": 54.06,
+    "psnr_all_min": 53.4,
+    "psnr_all_mean": 54.72
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "hevc_nvenc",
+   "tag": "mjpeg_720p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 2008072,
+   "log": [
+    "D hevc_nvenc: 1 CUDA capable devices found",
+    "D hevc_nvenc: [ GPU #0 - < NVIDIA GeForce RTX 3070 > has Compute SM 8.6 ]"
+   ],
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": "tv",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "hevc",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 52.54,
+    "psnr_y_mean": 54.43,
+    "psnr_all_min": 55.2,
+    "psnr_all_mean": 57.03
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "hevc_nvenc",
+   "tag": "mjpeg_1080p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 2605494,
+   "log": [
+    "D hevc_nvenc: 1 CUDA capable devices found",
+    "D hevc_nvenc: [ GPU #0 - < NVIDIA GeForce RTX 3070 > has Compute SM 8.6 ]"
+   ],
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "tv",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "hevc",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 51.28,
+    "psnr_y_mean": 52.32,
+    "psnr_all_min": 52.7,
+    "psnr_all_mean": 53.8
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "tag": "mjpeg_720p_gop30_hwctx_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 291103,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D h264_d3d12va: Input surface format is nv12.",
+    "W h264_d3d12va: No quality level set; using default (25).",
+    "D h264_d3d12va: RC mode: CQP.",
+    "D h264_d3d12va: RC quality: 25.",
+    "D h264_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D h264_d3d12va: Using intra and P-frames (supported references: 7 / 7).",
+    "D h264_d3d12va: Using level 3.1."
+   ],
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": null,
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "h264",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 47.25,
+    "psnr_y_mean": 48.5,
+    "psnr_all_min": 50.16,
+    "psnr_all_mean": 51.39
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "tag": "mjpeg_1080p_gop30_hwctx_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 476881,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D h264_d3d12va: Input surface format is nv12.",
+    "W h264_d3d12va: No quality level set; using default (25).",
+    "D h264_d3d12va: RC mode: CQP.",
+    "D h264_d3d12va: RC quality: 25.",
+    "D h264_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D h264_d3d12va: Using intra and P-frames (supported references: 7 / 7).",
+    "D h264_d3d12va: Using level 4."
+   ],
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": null,
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "h264",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 47.62,
+    "psnr_y_mean": 48.09,
+    "psnr_all_min": 49.41,
+    "psnr_all_mean": 49.93
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "tag": "mjpeg_720p_gop30_hwctx_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 223371,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D hevc_d3d12va: Input surface format is nv12.",
+    "W hevc_d3d12va: No quality level set; using default (25).",
+    "D hevc_d3d12va: RC mode: CQP.",
+    "D hevc_d3d12va: RC quality: 25.",
+    "D hevc_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D hevc_d3d12va: Using CTU size 32x32, min CB size 8x8.",
+    "D hevc_d3d12va: Using intra and P-frames (supported references: 7 / 7).",
+    "D hevc_d3d12va: Using level 3.1."
+   ],
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": "tv",
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "hevc",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 47.61,
+    "psnr_y_mean": 48.83,
+    "psnr_all_min": 50.22,
+    "psnr_all_mean": 51.47
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "tag": "mjpeg_1080p_gop30_hwctx_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 477556,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D hevc_d3d12va: Input surface format is nv12.",
+    "W hevc_d3d12va: No quality level set; using default (25).",
+    "D hevc_d3d12va: RC mode: CQP.",
+    "D hevc_d3d12va: RC quality: 25.",
+    "D hevc_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D hevc_d3d12va: Using CTU size 32x32, min CB size 8x8.",
+    "D hevc_d3d12va: Using intra and P-frames (supported references: 7 / 7).",
+    "D hevc_d3d12va: Using level 4."
+   ],
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "tv",
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "hevc",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 48.0,
+    "psnr_y_mean": 48.73,
+    "psnr_all_min": 49.75,
+    "psnr_all_mean": 50.39
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "h264_mf",
+   "tag": "mjpeg_720p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 1782513,
+   "log": [
+    "D h264_mf: MFT_ENUM_HARDWARE_URL_Attribute='NVIDIA H.264 Encoder MFT'",
+    "D h264_mf: MFT_FRIENDLY_NAME_Attribute='NVIDIA H.264 Encoder MFT'",
+    "D h264_mf: MFT_TRANSFORM_CLSID_Attribute={60f44560-5a20-4857-bfef-d29773cb8040}",
+    "D h264_mf: MFT_ENUM_HARDWARE_URL_Attribute='AA243E5D-2F73-48c7-97F7-F6FA17651651'",
+    "D h264_mf: MFT_FRIENDLY_NAME_Attribute='Intel\\xae Quick Sync Video H.264 Encoder MFT'",
+    "D h264_mf: MFT_TRANSFORM_CLSID_Attribute={4be8d3c0-0515-4a37-ad55-e4bae19af471}",
+    "D h264_mf: activate MFT 0",
+    "D h264_mf: MFT attributes",
+    "D h264_mf: ff_MF_SA_D3D11_AWARE=1",
+    "I h264_mf: MFT name: 'NVIDIA H.264 Encoder MFT'",
+    "D h264_mf: MFT supports ICodecAPI.",
+    "D h264_mf: MF_MT_MPEG2_PROFILE=77",
+    "D h264_mf: MF_MT_SUBTYPE=MFVideoFormat_H264",
+    "D h264_mf: MF_MT_MPEG2_PROFILE=66",
+    "D h264_mf: FF-pixel-format=nv12"
+   ],
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Constrained Baseline",
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": null,
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "h264",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 50.31,
+    "psnr_y_mean": 52.95,
+    "psnr_all_min": 52.88,
+    "psnr_all_mean": 55.33
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "h264_mf",
+   "tag": "mjpeg_1080p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 2,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 3857700,
+   "log": [
+    "D h264_mf: MFT_ENUM_HARDWARE_URL_Attribute='NVIDIA H.264 Encoder MFT'",
+    "D h264_mf: MFT_FRIENDLY_NAME_Attribute='NVIDIA H.264 Encoder MFT'",
+    "D h264_mf: MFT_TRANSFORM_CLSID_Attribute={60f44560-5a20-4857-bfef-d29773cb8040}",
+    "D h264_mf: MFT_ENUM_HARDWARE_URL_Attribute='AA243E5D-2F73-48c7-97F7-F6FA17651651'",
+    "D h264_mf: MFT_FRIENDLY_NAME_Attribute='Intel\\xae Quick Sync Video H.264 Encoder MFT'",
+    "D h264_mf: MFT_TRANSFORM_CLSID_Attribute={4be8d3c0-0515-4a37-ad55-e4bae19af471}",
+    "D h264_mf: activate MFT 0",
+    "D h264_mf: MFT attributes",
+    "D h264_mf: ff_MF_SA_D3D11_AWARE=1",
+    "I h264_mf: MFT name: 'NVIDIA H.264 Encoder MFT'",
+    "D h264_mf: MFT supports ICodecAPI.",
+    "D h264_mf: MF_MT_MPEG2_PROFILE=77",
+    "D h264_mf: MF_MT_SUBTYPE=MFVideoFormat_H264",
+    "D h264_mf: MF_MT_MPEG2_PROFILE=66",
+    "D h264_mf: FF-pixel-format=nv12"
+   ],
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Constrained Baseline",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": null,
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "h264",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 51.07,
+    "psnr_y_mean": 52.66,
+    "psnr_all_min": 52.54,
+    "psnr_all_mean": 53.55
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "hevc_mf",
+   "tag": "mjpeg_720p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 1716657,
+   "log": [
+    "D hevc_mf: MFT_ENUM_HARDWARE_URL_Attribute='NVIDIA HEVC Encoder MFT'",
+    "D hevc_mf: MFT_FRIENDLY_NAME_Attribute='NVIDIA HEVC Encoder MFT'",
+    "D hevc_mf: MFT_TRANSFORM_CLSID_Attribute={966f107c-8ea2-425d-b822-e4a71bef01d7}",
+    "D hevc_mf: MFT_ENUM_HARDWARE_URL_Attribute='AA243E5D-2F73-48c7-97F7-F6FA17651651'",
+    "D hevc_mf: MFT_FRIENDLY_NAME_Attribute='Intel\\xae Hardware H265 Encoder MFT'",
+    "D hevc_mf: MFT_TRANSFORM_CLSID_Attribute={bc10864d-2b34-408f-912a-102b1b867b6c}",
+    "D hevc_mf: activate MFT 0",
+    "D hevc_mf: MFT attributes",
+    "D hevc_mf: ff_MF_SA_D3D11_AWARE=1",
+    "I hevc_mf: MFT name: 'NVIDIA HEVC Encoder MFT'",
+    "D hevc_mf: MFT supports ICodecAPI.",
+    "D hevc_mf: MF_MT_MPEG2_PROFILE=1",
+    "D hevc_mf: MF_MT_SUBTYPE=ff_MFVideoFormat_HEVC",
+    "D hevc_mf: FF-pixel-format=nv12",
+    "D hevc_mf: FF-pixel-format=p010le",
+    "D hevc_mf: FF-pixel-format=yuyv422"
+   ],
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": "tv",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "hevc",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 51.49,
+    "psnr_y_mean": 53.7,
+    "psnr_all_min": 54.11,
+    "psnr_all_mean": 56.36
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "hevc_mf",
+   "tag": "mjpeg_1080p_gop30_sw_pictreset",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "nv12",
+   "ok": true,
+   "bytes": 3894330,
+   "log": [
+    "D hevc_mf: MFT_ENUM_HARDWARE_URL_Attribute='NVIDIA HEVC Encoder MFT'",
+    "D hevc_mf: MFT_FRIENDLY_NAME_Attribute='NVIDIA HEVC Encoder MFT'",
+    "D hevc_mf: MFT_TRANSFORM_CLSID_Attribute={966f107c-8ea2-425d-b822-e4a71bef01d7}",
+    "D hevc_mf: MFT_ENUM_HARDWARE_URL_Attribute='AA243E5D-2F73-48c7-97F7-F6FA17651651'",
+    "D hevc_mf: MFT_FRIENDLY_NAME_Attribute='Intel\\xae Hardware H265 Encoder MFT'",
+    "D hevc_mf: MFT_TRANSFORM_CLSID_Attribute={bc10864d-2b34-408f-912a-102b1b867b6c}",
+    "D hevc_mf: activate MFT 0",
+    "D hevc_mf: MFT attributes",
+    "D hevc_mf: ff_MF_SA_D3D11_AWARE=1",
+    "I hevc_mf: MFT name: 'NVIDIA HEVC Encoder MFT'",
+    "D hevc_mf: MFT supports ICodecAPI.",
+    "D hevc_mf: MF_MT_MPEG2_PROFILE=1",
+    "D hevc_mf: MF_MT_SUBTYPE=ff_MFVideoFormat_HEVC",
+    "D hevc_mf: FF-pixel-format=nv12",
+    "D hevc_mf: FF-pixel-format=p010le",
+    "D hevc_mf: FF-pixel-format=yuyv422"
+   ],
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "tv",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "hevc",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 52.37,
+    "psnr_y_mean": 53.28,
+    "psnr_all_min": 53.95,
+    "psnr_all_mean": 54.78
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "libsvtav1",
+   "tag": "mjpeg_720p_gop30_sw_pictreset",
+   "pix_fmt_in": "yuv420p",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "yuv420p",
+   "ok": true,
+   "bytes": 95047,
+   "log": [],
+   "probe": {
+    "codec_name": "av1",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": "tv",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "libdav1d",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 19.28,
+    "psnr_y_mean": 43.01,
+    "psnr_all_min": 24.03,
+    "psnr_all_mean": 46.44
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "libsvtav1",
+   "tag": "mjpeg_1080p_gop30_sw_pictreset",
+   "pix_fmt_in": "yuv420p",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "yuv420p",
+   "ok": true,
+   "bytes": 154061,
+   "log": [],
+   "probe": {
+    "codec_name": "av1",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "tv",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "libdav1d",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 41.63,
+    "psnr_y_mean": 47.64,
+    "psnr_all_min": 45.2,
+    "psnr_all_mean": 50.18
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "libvpx-vp9",
+   "tag": "mjpeg_720p_gop30_sw_pictreset",
+   "pix_fmt_in": "yuv420p",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "yuv420p",
+   "ok": true,
+   "bytes": 245475,
+   "log": [
+    "D libvpx-vp9: --disable-static --enable-shared --libdir=/c/cibw/vendor/lib --prefix=/c/cibw/vendor --target=x86_64-win64-gcc --disable-examples --disable-tools --disable-unit-tests --disable-dependency-tracking",
+    "W libvpx-vp9: Neither bitrate nor constrained quality specified, using default CRF of 32"
+   ],
+   "probe": {
+    "codec_name": "vp9",
+    "profile": "Profile 0",
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": "tv",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "vp9",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 45.39,
+    "psnr_y_mean": 47.94,
+    "psnr_all_min": 47.8,
+    "psnr_all_mean": 50.73
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "libvpx-vp9",
+   "tag": "mjpeg_1080p_gop30_sw_pictreset",
+   "pix_fmt_in": "yuv420p",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "yuv420p",
+   "ok": true,
+   "bytes": 365374,
+   "log": [
+    "D libvpx-vp9: --disable-static --enable-shared --libdir=/c/cibw/vendor/lib --prefix=/c/cibw/vendor --target=x86_64-win64-gcc --disable-examples --disable-tools --disable-unit-tests --disable-dependency-tracking",
+    "W libvpx-vp9: Neither bitrate nor constrained quality specified, using default CRF of 32"
+   ],
+   "probe": {
+    "codec_name": "vp9",
+    "profile": "Profile 0",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "tv",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "vp9",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 45.19,
+    "psnr_y_mean": 47.75,
+    "psnr_all_min": 48.09,
+    "psnr_all_mean": 50.52
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "mjpeg",
+   "tag": "mjpeg_720p_gop30_sw_pictreset",
+   "pix_fmt_in": "yuvj420p",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "yuvj420p",
+   "ok": true,
+   "bytes": 1315183,
+   "log": [],
+   "probe": {
+    "codec_name": "mjpeg",
+    "profile": "Baseline",
+    "pix_fmt": "yuvj420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": "pc",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 60,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": true
+   },
+   "decode_back": {
+    "decoder": "mjpeg",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuvj420p"
+    ],
+    "psnr_y_min": 41.15,
+    "psnr_y_mean": 41.74,
+    "psnr_all_min": 45.17,
+    "psnr_all_mean": 45.71
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "mjpeg",
+   "tag": "mjpeg_1080p_gop30_sw_pictreset",
+   "pix_fmt_in": "yuvj420p",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "yuvj420p",
+   "ok": true,
+   "bytes": 2978966,
+   "log": [],
+   "probe": {
+    "codec_name": "mjpeg",
+    "profile": "Baseline",
+    "pix_fmt": "yuvj420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "pc",
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 60,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": true
+   },
+   "decode_back": {
+    "decoder": "mjpeg",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuvj420p"
+    ],
+    "psnr_y_min": 40.18,
+    "psnr_y_mean": 41.52,
+    "psnr_all_min": 43.3,
+    "psnr_all_mean": 44.32
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "ffv1",
+   "tag": "mjpeg_720p_gop30_sw_pictreset",
+   "pix_fmt_in": "yuv420p",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "yuv420p",
+   "ok": true,
+   "bytes": 6854781,
+   "log": [],
+   "probe": {
+    "codec_name": "ffv1",
+    "profile": null,
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": null,
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "ffv1",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 99.0,
+    "psnr_y_mean": 99.0,
+    "psnr_all_min": 99.0,
+    "psnr_all_mean": 99.0
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "ffv1",
+   "tag": "mjpeg_1080p_gop30_sw_pictreset",
+   "pix_fmt_in": "yuv420p",
+   "variant": "gop30",
+   "mode": "sw",
+   "container": "mkv",
+   "frames_requested": 60,
+   "pict_type_reset": true,
+   "input_pict_type": "1",
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "yuv420p",
+   "ok": true,
+   "bytes": 17300885,
+   "log": [],
+   "probe": {
+    "codec_name": "ffv1",
+    "profile": null,
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": null,
+    "format_name": "matroska,webm",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "ffv1",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 99.0,
+    "psnr_y_mean": 99.0,
+    "psnr_all_min": 99.0,
+    "psnr_all_mean": 99.0
+   },
+   "stage": "gop_pictreset",
+   "input": "mjpeg_1080p"
+  }
+ ],
+ "nvidia_smi_per_encoder": {
+  "h264_qsv": {
+   "before": "0, 24 %",
+   "after": "0, 24 %"
+  },
+  "hevc_qsv": {
+   "before": "0, 24 %",
+   "after": "0, 25 %"
+  },
+  "vp9_qsv": {
+   "before": "0, 25 %",
+   "after": "0, 22 %"
+  },
+  "mjpeg_qsv": {
+   "before": "0, 22 %",
+   "after": "0, 36 %"
+  },
+  "h264_nvenc": {
+   "before": "0, 36 %",
+   "after": "0, 7 %"
+  },
+  "hevc_nvenc": {
+   "before": "0, 7 %",
+   "after": "0, 8 %"
+  },
+  "h264_d3d12va": {
+   "before": "0, 8 %",
+   "after": "0, 32 %"
+  },
+  "hevc_d3d12va": {
+   "before": "0, 32 %",
+   "after": "0, 19 %"
+  },
+  "h264_mf": {
+   "before": "0, 19 %",
+   "after": "0, 21 %"
+  },
+  "hevc_mf": {
+   "before": "0, 21 %",
+   "after": "0, 10 %"
+  },
+  "libsvtav1": {
+   "before": "0, 10 %",
+   "after": "0, 10 %"
+  },
+  "libvpx-vp9": {
+   "before": "0, 10 %",
+   "after": "0, 23 %"
+  },
+  "mjpeg": {
+   "before": "0, 23 %",
+   "after": "0, 10 %"
+  },
+  "ffv1": {
+   "before": "0, 10 %",
+   "after": "0, 26 %"
+  }
+ },
+ "nvidia_smi_after": "0, 26 %"
+}

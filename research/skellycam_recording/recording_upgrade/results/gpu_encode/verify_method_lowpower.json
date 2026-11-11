@@ -1,0 +1,66 @@
+{
+ "pyav": "19.0.2",
+ "libavcodec": [
+  63,
+  1,
+  102
+ ],
+ "cases": [
+  {
+   "encoder": "hevc_qsv",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1534",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "ok": true,
+   "packets": 8,
+   "keyframes": 8,
+   "bytes": 22881310
+  },
+  {
+   "encoder": "hevc_qsv",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1534",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "low_power": "1"
+   },
+   "ok": true,
+   "packets": 8,
+   "keyframes": 8,
+   "bytes": 23230445
+  },
+  {
+   "encoder": "hevc_qsv",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1534",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "preset": "veryfast"
+   },
+   "ok": true,
+   "packets": 8,
+   "keyframes": 8,
+   "bytes": 22792419
+  },
+  {
+   "encoder": "hevc_qsv",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1534",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "low_power": "1",
+    "preset": "veryfast"
+   },
+   "ok": true,
+   "packets": 8,
+   "keyframes": 8,
+   "bytes": 23030886
+  }
+ ]
+}

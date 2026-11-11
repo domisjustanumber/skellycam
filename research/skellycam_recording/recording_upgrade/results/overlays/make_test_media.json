@@ -1,0 +1,226 @@
+{
+ "pyav": "18.0.0",
+ "libavcodec": "62.28.102",
+ "opencv": "4.12.0",
+ "frames": 300,
+ "source": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\corpus\\c930e_720p_flash",
+ "steps": {
+  "base_cfr_h264.mp4": {
+   "rc": 0,
+   "how": "PyAV libx264 {'preset': 'veryfast', 'crf': '20'}"
+  },
+  "base_cfr_vp9.webm": {
+   "rc": 0,
+   "how": "PyAV libvpx-vp9 {'crf': '32', 'b': '0', 'deadline': 'realtime', 'cpu-used': '8', 'row-mt': '1'}"
+  },
+  "base_cfr_av1.webm": {
+   "rc": 0,
+   "how": "PyAV libsvtav1 {'crf': '35', 'preset': '10'}"
+  },
+  "vfr": {
+   "pts_ms_first10": [
+    0,
+    34,
+    70,
+    102,
+    131,
+    165,
+    203,
+    229,
+    269,
+    302
+   ],
+   "gap_after_frame": 149
+  },
+  "probe_base_cfr_h264.mp4": {
+   "frames": 300,
+   "first5": [
+    0.0,
+    0.033333,
+    0.066667,
+    0.1,
+    0.133333
+   ],
+   "last": 9.966667,
+   "bytes": 2580501
+  },
+  "probe_base_cfr_vp9.webm": {
+   "frames": 300,
+   "first5": [
+    0.0,
+    0.033,
+    0.067,
+    0.1,
+    0.133
+   ],
+   "last": 9.967,
+   "bytes": 1074265
+  },
+  "probe_base_cfr_av1.webm": {
+   "frames": 300,
+   "first5": [
+    0.0,
+    0.033,
+    0.067,
+    0.1,
+    0.133
+   ],
+   "last": 9.967,
+   "bytes": 478720
+  },
+  "probe_base_vfr_vp9.webm": {
+   "frames": 300,
+   "first5": [
+    0.0,
+    0.034,
+    0.07,
+    0.102,
+    0.131
+   ],
+   "last": 10.036,
+   "bytes": 1072518
+  },
+  "probe_base_vfr_h264.mp4": {
+   "frames": 300,
+   "first5": [
+    0.0,
+    0.034,
+    0.07,
+    0.102,
+    0.131
+   ],
+   "last": 10.036,
+   "bytes": 2588895
+  },
+  "overlay_vp9alpha.webm": {
+   "cmd": "ffmpeg -y -hide_banner -loglevel error -f rawvideo -pix_fmt bgra -s 1280x720 -r 30 -i - -c:v libvpx-vp9 -pix_fmt yuva420p -crf 32 -b:v 0 -deadline realtime -cpu-used 8 -row-mt 1 -auto-alt-ref 0 -g 30 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\media\\overlay_vp9alpha.webm",
+   "rc": 0,
+   "stderr_tail": "",
+   "bytes": 24075364,
+   "bytes_per_frame": 80251,
+   "ffprobe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+     {
+      "codec_name": "vp9",
+      "pix_fmt": "yuv420p",
+      "tags": {
+       "alpha_mode": "1"
+      }
+     }
+    ]
+   }
+  },
+  "overlay_png.mov": {
+   "cmd": "ffmpeg -y -hide_banner -loglevel error -f rawvideo -pix_fmt bgra -s 1280x720 -r 30 -i - -c:v png -pix_fmt rgba C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\media\\overlay_png.mov",
+   "rc": 0,
+   "stderr_tail": "",
+   "bytes": 46757633,
+   "bytes_per_frame": 155859,
+   "ffprobe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+     {
+      "codec_name": "png",
+      "pix_fmt": "rgba",
+      "tags": {}
+     }
+    ]
+   }
+  },
+  "overlay_qtrle.mov": {
+   "cmd": "ffmpeg -y -hide_banner -loglevel error -f rawvideo -pix_fmt bgra -s 1280x720 -r 30 -i - -c:v qtrle -pix_fmt argb C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\media\\overlay_qtrle.mov",
+   "rc": 0,
+   "stderr_tail": "",
+   "bytes": 87298818,
+   "bytes_per_frame": 290996,
+   "ffprobe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+     {
+      "codec_name": "qtrle",
+      "pix_fmt": "argb",
+      "tags": {}
+     }
+    ]
+   }
+  },
+  "vp9alpha_decode_check": {
+   "alpha_mean_abs_diff": 0.11445529513888889,
+   "alpha_zero_fraction_ref": 0.8730230034722222,
+   "alpha_zero_fraction_dec": 0.8746180555555556
+  },
+  "base_vp9_vtt_inband.webm": {
+   "cmd": "ffmpeg -y -hide_banner -loglevel error -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\media\\base_cfr_vp9.webm -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\media\\overlay.vtt -map 0:v -map 1:s -c:v copy -c:s webvtt C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\media\\base_vp9_vtt_inband.webm",
+   "rc": 0,
+   "stderr_tail": ""
+  },
+  "base_vp9_ass.mkv": {
+   "cmd": "ffmpeg -y -hide_banner -loglevel error -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\media\\base_cfr_vp9.webm -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\media\\overlay.ass -map 0:v -map 1:s -c copy C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\media\\base_vp9_ass.mkv",
+   "rc": 0,
+   "stderr_tail": ""
+  },
+  "ass_mkv_packets": {
+   "n": 30898,
+   "first6": [
+    [
+     "0.000000",
+     "0.030000"
+    ],
+    [
+     "0.000000",
+     "0.030000"
+    ],
+    [
+     "0.000000",
+     "0.030000"
+    ],
+    [
+     "0.000000",
+     "0.030000"
+    ],
+    [
+     "0.000000",
+     "0.030000"
+    ],
+    [
+     "0.000000",
+     "0.030000"
+    ]
+   ]
+  },
+  "vtt_webm_packets": {
+   "n": 300,
+   "first6": [
+    [
+     "0.000000",
+     "0.033000"
+    ],
+    [
+     "0.033000",
+     "0.034000"
+    ],
+    [
+     "0.067000",
+     "0.033000"
+    ],
+    [
+     "0.100000",
+     "0.033000"
+    ],
+    [
+     "0.133000",
+     "0.034000"
+    ],
+    [
+     "0.167000",
+     "0.033000"
+    ]
+   ]
+  }
+ },
+ "ffmpeg": "ffmpeg version 9.0.2-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers"
+}

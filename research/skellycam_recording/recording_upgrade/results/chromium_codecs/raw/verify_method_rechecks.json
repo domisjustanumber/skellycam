@@ -1,0 +1,27 @@
+{
+  "when": "2026-11-09T19:00-19:11 EST",
+  "machine": "Gerald",
+  "note": "Quick functional re-checks by the methodology verifier; no timing. Scripts: scripts/chromium_codecs/verify_method/. nvidia-smi after: encoder sessions 0, decoder util 0%.",
+  "filefetch_range": {
+    "script": "scripts/chromium_codecs/verify_method/filefetch/",
+    "what": "fetch(file://blob.bin, {headers:{Range:'bytes=10-19'}}) from a page loaded with loadFile; 100000-byte random file; expected bytes 10-19 = af6bbaa40f95de974b14 (od)",
+    "electron_35.7.5": {"range": {"status": 200, "len": 10, "content_range": null, "hex": "af6bbaa40f95de974b14"}, "plain": {"status": 200, "len": 100000}},
+    "electron_45.2.3": {"range": {"status": 200, "len": 10, "content_range": null, "hex": "af6bbaa40f95de974b14"}, "plain": {"status": 200, "len": 100000}}
+  },
+  "hevc422_probe_and_play": {
+    "script": "scripts/chromium_codecs/verify_method/hevc422/ (probe part was an earlier revision of page.html: canPlayType video/mp4 + VideoDecoder.isConfigSupported 1280x720)",
+    "files": {
+      "hevc422": "C:/Users/Dom/Documents/skellycam-raw/skellycam_recording/recording_upgrade_20261109/hw_accel_target/functional/hevc_qsv__mjpeg_720p_intra_native422_yuyv422.mkv (ffprobe: Rext, yuv422p; SPS constraint flags progressive=1 interlaced=0 non_packed=0 frame_only=1 max_12bit=1 max_10bit=1 max_8bit=0 max_422chroma=1 max_420chroma=0 ... lower_bit_rate=1, level_idc 120)",
+      "control_420": "C:/Users/Dom/Documents/skellycam-raw/skellycam_recording/recording_upgrade_20261109/hw_accel_target/functional/hevc_qsv__mjpeg_720p_intra_sw.mkv (ffprobe: Main, yuv420p)"
+    },
+    "probe": {
+      "electron_35.7.5": {"hvc1.4.10.L93.B0": ["", false, false], "hvc1.4.10.L120.9D.08": ["", false, false], "hvc1.4.10.L120.9D": ["", false, false], "hvc1.1.6.L93.B0": ["probably", true, false]},
+      "electron_45.2.3": {"hvc1.4.10.L93.B0": ["probably", true, false], "hvc1.4.10.L120.9D.08": ["probably", true, false], "hvc1.4.10.L120.9D": ["probably", true, false], "hvc1.1.6.L93.B0": ["probably", true, false]},
+      "columns": ["canPlayType", "isConfigSupported prefer-hardware", "isConfigSupported prefer-software"]
+    },
+    "play_file_url": {
+      "electron_35.7.5": {"hevc422": {"error": 4, "msg": "DEMUXER_ERROR_NO_SUPPORTED_STREAMS: FFmpegDemuxer: no supported streams"}, "control_420": {"loadeddata": true, "w": 1280, "h": 720, "rvfc_frames": 10, "mean_green_after_10_rvfc": 96.9}},
+      "electron_45.2.3": {"hevc422": {"error": 3, "msg": "PipelineStatus::PIPELINE_ERROR_DECODE", "note": "an earlier revision without play() reached loadeddata (1280x720) with an all-zero canvas"}, "control_420": {"loadeddata": true, "w": 1280, "h": 720, "rvfc_frames": 11, "mean_green_after_10_rvfc": 89.2}}
+    }
+  }
+}

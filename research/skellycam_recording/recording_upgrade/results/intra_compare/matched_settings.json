@@ -1,0 +1,2679 @@
+{
+ "_meta": {
+  "generated_by": "scripts/intra_compare/analyze.py",
+  "pyav": "19.0.2",
+  "target_A": "ssim_y closest to 0.9961 (camera-equivalent: libjpeg-turbo at the cameras' IJG-equivalent q94 on the same camera models' raw YUY2 1080p frames; camera_jpeg_quality.json)",
+  "target_B": "psnr_y closest to 45.0 dB, stored under key 'psnr45' (lower quality than A on this content)",
+  "apply": "open the encoder with exactly 'options' (PyAV CodecContext.options / simplejpeg kwargs / nvimgcodec EncodeParams), pix_fmt 'pix_fmt_fed', gop_size as given, max_b_frames=0; JPEG paths are fed full-range samples, H.264/HEVC paths limited-range (NOTES.md section 2)",
+  "input_classes": "yuy2_1080p, yuy2_720p (derived by swscale), mjpeg_720p, mjpeg_1080p (camera JPEG decoded)",
+  "camera_passthrough_bytes_per_frame": {
+   "mjpeg_720p": 66594.1,
+   "mjpeg_1080p": 163478.1
+  },
+  "metric_note": "for mjpeg_* classes the metrics are generation loss vs the decoded camera frame"
+ },
+ "ff_mjpeg_420": {
+  "yuy2_1080p": {
+   "knob": "qscale (qmin=qmax)",
+   "value": 1,
+   "bytes_per_frame": 227165.6,
+   "psnr_y": 52.562,
+   "ssim_y": 0.99617,
+   "psnr_yuv_422": 52.413,
+   "encoder": "mjpeg",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuvj420p",
+   "gop_size": 1,
+   "options": {
+    "qmin": "1",
+    "qmax": "1"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 7e-05,
+   "bytes_at_target_interp": 221837.0,
+   "psnr45": {
+    "knob": "qscale (qmin=qmax)",
+    "value": 9,
+    "bytes_per_frame": 65536.6,
+    "psnr_y": 44.769,
+    "ssim_y": 0.98571,
+    "psnr_yuv_422": 46.206,
+    "encoder": "mjpeg",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuvj420p",
+    "gop_size": 1,
+    "options": {
+     "qmin": "9",
+     "qmax": "9"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.231,
+    "bytes_at_target_interp": 66622.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "qscale (qmin=qmax)",
+   "value": 1,
+   "bytes_per_frame": 119968.1,
+   "psnr_y": 52.393,
+   "ssim_y": 0.99626,
+   "psnr_yuv_422": 52.35,
+   "encoder": "mjpeg",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuvj420p",
+   "gop_size": 1,
+   "options": {
+    "qmin": "1",
+    "qmax": "1"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 0.00016,
+   "bytes_at_target_interp": 114849.0,
+   "psnr45": {
+    "knob": "qscale (qmin=qmax)",
+    "value": 6,
+    "bytes_per_frame": 40192.2,
+    "psnr_y": 45.356,
+    "ssim_y": 0.98757,
+    "psnr_yuv_422": 46.735,
+    "encoder": "mjpeg",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuvj420p",
+    "gop_size": 1,
+    "options": {
+     "qmin": "6",
+     "qmax": "6"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.356,
+    "bytes_at_target_interp": 39007.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "qscale (qmin=qmax)",
+   "value": 2,
+   "bytes_per_frame": 54655.0,
+   "psnr_y": 52.571,
+   "ssim_y": 0.99619,
+   "psnr_yuv_422": 53.914,
+   "encoder": "mjpeg",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuvj420p",
+   "gop_size": 1,
+   "options": {
+    "qmin": "2",
+    "qmax": "2"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 9e-05,
+   "bytes_at_target_interp": 54073.0,
+   "psnr45": {
+    "knob": "qscale (qmin=qmax)",
+    "value": 8,
+    "bytes_per_frame": 26539.5,
+    "psnr_y": 44.944,
+    "ssim_y": 0.98596,
+    "psnr_yuv_422": 47.192,
+    "encoder": "mjpeg",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuvj420p",
+    "gop_size": 1,
+    "options": {
+     "qmin": "8",
+     "qmax": "8"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.056,
+    "bytes_at_target_interp": 26631.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "qscale (qmin=qmax)",
+   "value": 2,
+   "bytes_per_frame": 136470.7,
+   "psnr_y": 52.754,
+   "ssim_y": 0.99626,
+   "psnr_yuv_422": 52.967,
+   "encoder": "mjpeg",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuvj420p",
+   "gop_size": 1,
+   "options": {
+    "qmin": "2",
+    "qmax": "2"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 0.00016,
+   "bytes_at_target_interp": 133872.0,
+   "psnr45": {
+    "knob": "qscale (qmin=qmax)",
+    "value": 9,
+    "bytes_per_frame": 59619.0,
+    "psnr_y": 45.102,
+    "ssim_y": 0.98574,
+    "psnr_yuv_422": 46.377,
+    "encoder": "mjpeg",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuvj420p",
+    "gop_size": 1,
+    "options": {
+     "qmin": "9",
+     "qmax": "9"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.102,
+    "bytes_at_target_interp": 59270.0
+   }
+  }
+ },
+ "ff_mjpeg_422": {
+  "yuy2_1080p": {
+   "knob": "qscale (qmin=qmax)",
+   "value": 1,
+   "bytes_per_frame": 265149.6,
+   "psnr_y": 52.562,
+   "ssim_y": 0.99617,
+   "psnr_yuv_422": 52.841,
+   "encoder": "mjpeg",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": "yuvj422p",
+   "gop_size": 1,
+   "options": {
+    "qmin": "1",
+    "qmax": "1"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 7e-05,
+   "bytes_at_target_interp": 258748.0,
+   "psnr45": {
+    "knob": "qscale (qmin=qmax)",
+    "value": 9,
+    "bytes_per_frame": 75692.4,
+    "psnr_y": 44.769,
+    "ssim_y": 0.98571,
+    "psnr_yuv_422": 46.452,
+    "encoder": "mjpeg",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": "yuvj422p",
+    "gop_size": 1,
+    "options": {
+     "qmin": "9",
+     "qmax": "9"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.231,
+    "bytes_at_target_interp": 76857.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "qscale (qmin=qmax)",
+   "value": 1,
+   "bytes_per_frame": 137904.2,
+   "psnr_y": 52.393,
+   "ssim_y": 0.99626,
+   "psnr_yuv_422": 52.801,
+   "encoder": "mjpeg",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": "yuvj422p",
+   "gop_size": 1,
+   "options": {
+    "qmin": "1",
+    "qmax": "1"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 0.00016,
+   "bytes_at_target_interp": 131824.0,
+   "psnr45": {
+    "knob": "qscale (qmin=qmax)",
+    "value": 6,
+    "bytes_per_frame": 45237.8,
+    "psnr_y": 45.356,
+    "ssim_y": 0.98757,
+    "psnr_yuv_422": 47.01,
+    "encoder": "mjpeg",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": "yuvj422p",
+    "gop_size": 1,
+    "options": {
+     "qmin": "6",
+     "qmax": "6"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.356,
+    "bytes_at_target_interp": 43978.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "qscale (qmin=qmax)",
+   "value": 2,
+   "bytes_per_frame": 58663.9,
+   "psnr_y": 52.571,
+   "ssim_y": 0.99619,
+   "psnr_yuv_422": 54.873,
+   "encoder": "mjpeg",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": "yuvj422p",
+   "gop_size": 1,
+   "options": {
+    "qmin": "2",
+    "qmax": "2"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 9e-05,
+   "bytes_at_target_interp": 58143.0,
+   "psnr45": {
+    "knob": "qscale (qmin=qmax)",
+    "value": 8,
+    "bytes_per_frame": 30645.1,
+    "psnr_y": 44.944,
+    "ssim_y": 0.98596,
+    "psnr_yuv_422": 47.429,
+    "encoder": "mjpeg",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": "yuvj422p",
+    "gop_size": 1,
+    "options": {
+     "qmin": "8",
+     "qmax": "8"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.056,
+    "bytes_at_target_interp": 30737.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "qscale (qmin=qmax)",
+   "value": 2,
+   "bytes_per_frame": 148920.8,
+   "psnr_y": 52.754,
+   "ssim_y": 0.99626,
+   "psnr_yuv_422": 54.341,
+   "encoder": "mjpeg",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": "yuvj422p",
+   "gop_size": 1,
+   "options": {
+    "qmin": "2",
+    "qmax": "2"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 0.00016,
+   "bytes_at_target_interp": 146720.0,
+   "psnr45": {
+    "knob": "qscale (qmin=qmax)",
+    "value": 9,
+    "bytes_per_frame": 69921.9,
+    "psnr_y": 45.102,
+    "ssim_y": 0.98574,
+    "psnr_yuv_422": 46.797,
+    "encoder": "mjpeg",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": "yuvj422p",
+    "gop_size": 1,
+    "options": {
+     "qmin": "9",
+     "qmax": "9"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.102,
+    "bytes_at_target_interp": 69552.0
+   }
+  }
+ },
+ "h264_nvenc_420": {
+  "yuy2_1080p": {
+   "knob": "qp (rc=constqp)",
+   "value": 12,
+   "bytes_per_frame": 157840.4,
+   "psnr_y": 53.219,
+   "ssim_y": 0.9961,
+   "psnr_yuv_422": 53.077,
+   "encoder": "h264_nvenc",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 0,
+   "options": {
+    "preset": "p4",
+    "tune": "ll",
+    "rc": "constqp",
+    "qp": "12",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 0.0,
+   "bytes_at_target_interp": 157840.0,
+   "psnr45": {
+    "knob": "qp (rc=constqp)",
+    "value": 31,
+    "bytes_per_frame": 21830.8,
+    "psnr_y": 44.848,
+    "ssim_y": 0.98847,
+    "psnr_yuv_422": 45.561,
+    "encoder": "h264_nvenc",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 0,
+    "options": {
+     "preset": "p4",
+     "tune": "ll",
+     "rc": "constqp",
+     "qp": "31",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.152,
+    "bytes_at_target_interp": 22392.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "qp (rc=constqp)",
+   "value": 12,
+   "bytes_per_frame": 83592.6,
+   "psnr_y": 52.901,
+   "ssim_y": 0.99609,
+   "psnr_yuv_422": 52.891,
+   "encoder": "h264_nvenc",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 0,
+   "options": {
+    "preset": "p4",
+    "tune": "ll",
+    "rc": "constqp",
+    "qp": "12",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -1e-05,
+   "bytes_at_target_interp": 83913.0,
+   "psnr45": {
+    "knob": "qp (rc=constqp)",
+    "value": 28,
+    "bytes_per_frame": 16812.8,
+    "psnr_y": 45.288,
+    "ssim_y": 0.98891,
+    "psnr_yuv_422": 46.078,
+    "encoder": "h264_nvenc",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 0,
+    "options": {
+     "preset": "p4",
+     "tune": "ll",
+     "rc": "constqp",
+     "qp": "28",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.288,
+    "bytes_at_target_interp": 16047.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "qp (rc=constqp)",
+   "value": 14,
+   "bytes_per_frame": 46317.1,
+   "psnr_y": 52.383,
+   "ssim_y": 0.99611,
+   "psnr_yuv_422": 53.585,
+   "encoder": "h264_nvenc",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 0,
+   "options": {
+    "preset": "p4",
+    "tune": "ll",
+    "rc": "constqp",
+    "qp": "14",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 1e-05,
+   "bytes_at_target_interp": 46217.0,
+   "psnr45": {
+    "knob": "qp (rc=constqp)",
+    "value": 30,
+    "bytes_per_frame": 8489.9,
+    "psnr_y": 44.9,
+    "ssim_y": 0.98733,
+    "psnr_yuv_422": 46.24,
+    "encoder": "h264_nvenc",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 0,
+    "options": {
+     "preset": "p4",
+     "tune": "ll",
+     "rc": "constqp",
+     "qp": "30",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.1,
+    "bytes_at_target_interp": 8611.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "qp (rc=constqp)",
+   "value": 14,
+   "bytes_per_frame": 119146.6,
+   "psnr_y": 52.211,
+   "ssim_y": 0.99594,
+   "psnr_yuv_422": 52.712,
+   "encoder": "h264_nvenc",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 0,
+   "options": {
+    "preset": "p4",
+    "tune": "ll",
+    "rc": "constqp",
+    "qp": "14",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -0.00016,
+   "bytes_at_target_interp": 123426.0,
+   "psnr45": {
+    "knob": "qp (rc=constqp)",
+    "value": 30,
+    "bytes_per_frame": 18549.1,
+    "psnr_y": 45.149,
+    "ssim_y": 0.98846,
+    "psnr_yuv_422": 45.691,
+    "encoder": "h264_nvenc",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 0,
+    "options": {
+     "preset": "p4",
+     "tune": "ll",
+     "rc": "constqp",
+     "qp": "30",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.149,
+    "bytes_at_target_interp": 18026.0
+   }
+  }
+ },
+ "h264_qsv_420": {
+  "yuy2_1080p": {
+   "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+   "value": 12,
+   "bytes_per_frame": 170094.4,
+   "psnr_y": 53.154,
+   "ssim_y": 0.99603,
+   "psnr_yuv_422": 53.061,
+   "encoder": "h264_qsv",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 1,
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1416",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -7e-05,
+   "bytes_at_target_interp": 175094.0,
+   "psnr45": {
+    "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+    "value": 30,
+    "bytes_per_frame": 27081.3,
+    "psnr_y": 44.898,
+    "ssim_y": 0.98868,
+    "psnr_yuv_422": 45.65,
+    "encoder": "h264_qsv",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 1,
+    "options": {
+     "flags": "+qscale",
+     "global_quality": "3540",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.102,
+    "bytes_at_target_interp": 27378.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+   "value": 12,
+   "bytes_per_frame": 89276.0,
+   "psnr_y": 52.831,
+   "ssim_y": 0.99601,
+   "psnr_yuv_422": 52.88,
+   "encoder": "h264_qsv",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 1,
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1416",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -9e-05,
+   "bytes_at_target_interp": 92438.0,
+   "psnr45": {
+    "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+    "value": 28,
+    "bytes_per_frame": 18732.1,
+    "psnr_y": 45.056,
+    "ssim_y": 0.9884,
+    "psnr_yuv_422": 45.835,
+    "encoder": "h264_qsv",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 1,
+    "options": {
+     "flags": "+qscale",
+     "global_quality": "3304",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.056,
+    "bytes_at_target_interp": 18593.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+   "value": 13,
+   "bytes_per_frame": 54779.4,
+   "psnr_y": 52.508,
+   "ssim_y": 0.99603,
+   "psnr_yuv_422": 53.993,
+   "encoder": "h264_qsv",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 1,
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1534",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -7e-05,
+   "bytes_at_target_interp": 55667.0,
+   "psnr45": {
+    "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+    "value": 29,
+    "bytes_per_frame": 10635.2,
+    "psnr_y": 44.939,
+    "ssim_y": 0.98712,
+    "psnr_yuv_422": 46.072,
+    "encoder": "h264_qsv",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 1,
+    "options": {
+     "flags": "+qscale",
+     "global_quality": "3422",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.061,
+    "bytes_at_target_interp": 10722.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+   "value": 12,
+   "bytes_per_frame": 150441.6,
+   "psnr_y": 52.604,
+   "ssim_y": 0.99616,
+   "psnr_yuv_422": 53.562,
+   "encoder": "h264_qsv",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 1,
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1416",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 6e-05,
+   "bytes_at_target_interp": 148327.0,
+   "psnr45": {
+    "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+    "value": 29,
+    "bytes_per_frame": 23148.2,
+    "psnr_y": 45.201,
+    "ssim_y": 0.98824,
+    "psnr_yuv_422": 45.576,
+    "encoder": "h264_qsv",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 1,
+    "options": {
+     "flags": "+qscale",
+     "global_quality": "3422",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.201,
+    "bytes_at_target_interp": 22639.0
+   }
+  }
+ },
+ "hevc_nvenc_420": {
+  "yuy2_1080p": {
+   "knob": "qp (rc=constqp)",
+   "value": 12,
+   "bytes_per_frame": 135208.4,
+   "psnr_y": 53.326,
+   "ssim_y": 0.99619,
+   "psnr_yuv_422": 53.247,
+   "encoder": "hevc_nvenc",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 0,
+   "options": {
+    "preset": "p4",
+    "tune": "ll",
+    "rc": "constqp",
+    "qp": "12",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 9e-05,
+   "bytes_at_target_interp": 129131.0,
+   "psnr45": {
+    "knob": "qp (rc=constqp)",
+    "value": 31,
+    "bytes_per_frame": 14505.9,
+    "psnr_y": 45.083,
+    "ssim_y": 0.98882,
+    "psnr_yuv_422": 46.177,
+    "encoder": "hevc_nvenc",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 0,
+    "options": {
+     "preset": "p4",
+     "tune": "ll",
+     "rc": "constqp",
+     "qp": "31",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.083,
+    "bytes_at_target_interp": 14290.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "qp (rc=constqp)",
+   "value": 13,
+   "bytes_per_frame": 64003.2,
+   "psnr_y": 52.715,
+   "ssim_y": 0.99603,
+   "psnr_yuv_422": 52.793,
+   "encoder": "hevc_nvenc",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 0,
+   "options": {
+    "preset": "p4",
+    "tune": "ll",
+    "rc": "constqp",
+    "qp": "13",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -7e-05,
+   "bytes_at_target_interp": 66037.0,
+   "psnr45": {
+    "knob": "qp (rc=constqp)",
+    "value": 29,
+    "bytes_per_frame": 11161.8,
+    "psnr_y": 45.134,
+    "ssim_y": 0.98885,
+    "psnr_yuv_422": 46.134,
+    "encoder": "hevc_nvenc",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 0,
+    "options": {
+     "preset": "p4",
+     "tune": "ll",
+     "rc": "constqp",
+     "qp": "29",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.134,
+    "bytes_at_target_interp": 10960.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "qp (rc=constqp)",
+   "value": 11,
+   "bytes_per_frame": 55247.4,
+   "psnr_y": 52.894,
+   "ssim_y": 0.99619,
+   "psnr_yuv_422": 54.339,
+   "encoder": "hevc_nvenc",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 0,
+   "options": {
+    "preset": "p4",
+    "tune": "ll",
+    "rc": "constqp",
+    "qp": "11",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 9e-05,
+   "bytes_at_target_interp": 53975.0,
+   "psnr45": {
+    "knob": "qp (rc=constqp)",
+    "value": 30,
+    "bytes_per_frame": 6289.7,
+    "psnr_y": 44.89,
+    "ssim_y": 0.98649,
+    "psnr_yuv_422": 46.753,
+    "encoder": "hevc_nvenc",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 0,
+    "options": {
+     "preset": "p4",
+     "tune": "ll",
+     "rc": "constqp",
+     "qp": "30",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.11,
+    "bytes_at_target_interp": 6417.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "qp (rc=constqp)",
+   "value": 11,
+   "bytes_per_frame": 144220.6,
+   "psnr_y": 52.795,
+   "ssim_y": 0.99616,
+   "psnr_yuv_422": 53.731,
+   "encoder": "hevc_nvenc",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 0,
+   "options": {
+    "preset": "p4",
+    "tune": "ll",
+    "rc": "constqp",
+    "qp": "11",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 6e-05,
+   "bytes_at_target_interp": 141655.0,
+   "psnr45": {
+    "knob": "qp (rc=constqp)",
+    "value": 30,
+    "bytes_per_frame": 12949.9,
+    "psnr_y": 45.173,
+    "ssim_y": 0.98748,
+    "psnr_yuv_422": 46.093,
+    "encoder": "hevc_nvenc",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 0,
+    "options": {
+     "preset": "p4",
+     "tune": "ll",
+     "rc": "constqp",
+     "qp": "30",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.173,
+    "bytes_at_target_interp": 12428.0
+   }
+  }
+ },
+ "hevc_qsv_420": {
+  "yuy2_1080p": {
+   "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+   "value": 13,
+   "bytes_per_frame": 117180.0,
+   "psnr_y": 53.181,
+   "ssim_y": 0.99611,
+   "psnr_yuv_422": 53.097,
+   "encoder": "hevc_qsv",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 1,
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1534",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 1e-05,
+   "bytes_at_target_interp": 116646.0,
+   "psnr45": {
+    "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+    "value": 31,
+    "bytes_per_frame": 14449.0,
+    "psnr_y": 45.084,
+    "ssim_y": 0.98889,
+    "psnr_yuv_422": 46.095,
+    "encoder": "hevc_qsv",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 1,
+    "options": {
+     "flags": "+qscale",
+     "global_quality": "3658",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.084,
+    "bytes_at_target_interp": 14236.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+   "value": 13,
+   "bytes_per_frame": 61251.6,
+   "psnr_y": 52.934,
+   "ssim_y": 0.99618,
+   "psnr_yuv_422": 52.953,
+   "encoder": "hevc_qsv",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 1,
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1534",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 8e-05,
+   "bytes_at_target_interp": 59282.0,
+   "psnr45": {
+    "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+    "value": 29,
+    "bytes_per_frame": 10759.8,
+    "psnr_y": 45.228,
+    "ssim_y": 0.98912,
+    "psnr_yuv_422": 46.17,
+    "encoder": "hevc_qsv",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 1,
+    "options": {
+     "flags": "+qscale",
+     "global_quality": "3422",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.228,
+    "bytes_at_target_interp": 10431.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+   "value": 14,
+   "bytes_per_frame": 40366.7,
+   "psnr_y": 52.193,
+   "ssim_y": 0.99582,
+   "psnr_yuv_422": 53.542,
+   "encoder": "hevc_qsv",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 1,
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1652",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -0.00028,
+   "bytes_at_target_interp": 42502.0,
+   "psnr45": {
+    "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+    "value": 30,
+    "bytes_per_frame": 6016.1,
+    "psnr_y": 45.05,
+    "ssim_y": 0.98683,
+    "psnr_yuv_422": 46.799,
+    "encoder": "hevc_qsv",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 1,
+    "options": {
+     "flags": "+qscale",
+     "global_quality": "3540",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.05,
+    "bytes_at_target_interp": 5959.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+   "value": 14,
+   "bytes_per_frame": 103941.6,
+   "psnr_y": 52.104,
+   "ssim_y": 0.99576,
+   "psnr_yuv_422": 52.769,
+   "encoder": "hevc_qsv",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 1,
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1652",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -0.00034,
+   "bytes_at_target_interp": 110835.0,
+   "psnr45": {
+    "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+    "value": 31,
+    "bytes_per_frame": 11436.7,
+    "psnr_y": 44.799,
+    "ssim_y": 0.9871,
+    "psnr_yuv_422": 45.677,
+    "encoder": "hevc_qsv",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 1,
+    "options": {
+     "flags": "+qscale",
+     "global_quality": "3658",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.201,
+    "bytes_at_target_interp": 11965.0
+   }
+  }
+ },
+ "hevc_qsv_422": {
+  "yuy2_1080p": {
+   "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+   "value": 13,
+   "bytes_per_frame": 155863.7,
+   "psnr_y": 53.18,
+   "ssim_y": 0.99611,
+   "psnr_yuv_422": 53.541,
+   "encoder": "hevc_qsv",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": "yuyv422",
+   "gop_size": 1,
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1534",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 1e-05,
+   "bytes_at_target_interp": 155171.0,
+   "psnr45": {
+    "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+    "value": 31,
+    "bytes_per_frame": 17549.1,
+    "psnr_y": 45.066,
+    "ssim_y": 0.98882,
+    "psnr_yuv_422": 45.972,
+    "encoder": "hevc_qsv",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": "yuyv422",
+    "gop_size": 1,
+    "options": {
+     "flags": "+qscale",
+     "global_quality": "3658",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.066,
+    "bytes_at_target_interp": 17337.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+   "value": 13,
+   "bytes_per_frame": 79659.2,
+   "psnr_y": 52.932,
+   "ssim_y": 0.99618,
+   "psnr_yuv_422": 53.422,
+   "encoder": "hevc_qsv",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": "yuyv422",
+   "gop_size": 1,
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1534",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 8e-05,
+   "bytes_at_target_interp": 77251.0,
+   "psnr45": {
+    "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+    "value": 29,
+    "bytes_per_frame": 12963.3,
+    "psnr_y": 45.218,
+    "ssim_y": 0.98908,
+    "psnr_yuv_422": 46.254,
+    "encoder": "hevc_qsv",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": "yuyv422",
+    "gop_size": 1,
+    "options": {
+     "flags": "+qscale",
+     "global_quality": "3422",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.218,
+    "bytes_at_target_interp": 12530.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+   "value": 14,
+   "bytes_per_frame": 45603.4,
+   "psnr_y": 52.19,
+   "ssim_y": 0.99582,
+   "psnr_yuv_422": 53.684,
+   "encoder": "hevc_qsv",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": "yuyv422",
+   "gop_size": 1,
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1652",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -0.00028,
+   "bytes_at_target_interp": 47993.0,
+   "psnr45": {
+    "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+    "value": 30,
+    "bytes_per_frame": 6965.0,
+    "psnr_y": 45.038,
+    "ssim_y": 0.98679,
+    "psnr_yuv_422": 46.699,
+    "encoder": "hevc_qsv",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": "yuyv422",
+    "gop_size": 1,
+    "options": {
+     "flags": "+qscale",
+     "global_quality": "3540",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.038,
+    "bytes_at_target_interp": 6916.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+   "value": 14,
+   "bytes_per_frame": 127876.6,
+   "psnr_y": 52.1,
+   "ssim_y": 0.99575,
+   "psnr_yuv_422": 52.998,
+   "encoder": "hevc_qsv",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": "yuyv422",
+   "gop_size": 1,
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "1652",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -0.00035,
+   "bytes_at_target_interp": 136529.0,
+   "psnr45": {
+    "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+    "value": 31,
+    "bytes_per_frame": 14632.4,
+    "psnr_y": 44.782,
+    "ssim_y": 0.98706,
+    "psnr_yuv_422": 45.506,
+    "encoder": "hevc_qsv",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": "yuyv422",
+    "gop_size": 1,
+    "options": {
+     "flags": "+qscale",
+     "global_quality": "3658",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.218,
+    "bytes_at_target_interp": 15444.0
+   }
+  }
+ },
+ "jpeg_turbo_420": {
+  "yuy2_1080p": {
+   "knob": "quality",
+   "value": 94,
+   "bytes_per_frame": 255373.0,
+   "psnr_y": 52.24,
+   "ssim_y": 0.99607,
+   "psnr_yuv_422": 51.958,
+   "encoder": "simplejpeg",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality": 94,
+    "fastdct": false,
+    "planes": "Y,U,V 4:2:0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -3e-05,
+   "bytes_at_target_interp": 265001.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 44,
+    "bytes_per_frame": 69096.7,
+    "psnr_y": 45.086,
+    "ssim_y": 0.98705,
+    "psnr_yuv_422": 45.916,
+    "encoder": "simplejpeg",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality": 44,
+     "fastdct": false,
+     "planes": "Y,U,V 4:2:0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.086,
+    "bytes_at_target_interp": 68773.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "quality",
+   "value": 95,
+   "bytes_per_frame": 150615.8,
+   "psnr_y": 51.768,
+   "ssim_y": 0.99613,
+   "psnr_yuv_422": 51.771,
+   "encoder": "simplejpeg",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality": 95,
+    "fastdct": false,
+    "planes": "Y,U,V 4:2:0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 3e-05,
+   "bytes_at_target_interp": 147259.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 59,
+    "bytes_per_frame": 42483.1,
+    "psnr_y": 44.978,
+    "ssim_y": 0.98771,
+    "psnr_yuv_422": 46.038,
+    "encoder": "simplejpeg",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality": 59,
+     "fastdct": false,
+     "planes": "Y,U,V 4:2:0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.022,
+    "bytes_at_target_interp": 42593.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "quality",
+   "value": 85,
+   "bytes_per_frame": 56066.9,
+   "psnr_y": 51.489,
+   "ssim_y": 0.99631,
+   "psnr_yuv_422": 52.953,
+   "encoder": "simplejpeg",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality": 85,
+    "fastdct": false,
+    "planes": "Y,U,V 4:2:0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 0.00021,
+   "bytes_at_target_interp": 55459.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 51,
+    "bytes_per_frame": 28111.4,
+    "psnr_y": 44.967,
+    "ssim_y": 0.98583,
+    "psnr_yuv_422": 46.512,
+    "encoder": "simplejpeg",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality": 51,
+     "fastdct": false,
+     "planes": "Y,U,V 4:2:0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.033,
+    "bytes_at_target_interp": 28228.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "quality",
+   "value": 83,
+   "bytes_per_frame": 130139.0,
+   "psnr_y": 51.667,
+   "ssim_y": 0.99609,
+   "psnr_yuv_422": 51.276,
+   "encoder": "simplejpeg",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality": 83,
+    "fastdct": false,
+    "planes": "Y,U,V 4:2:0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -1e-05,
+   "bytes_at_target_interp": 130185.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 43,
+    "bytes_per_frame": 61110.6,
+    "psnr_y": 44.949,
+    "ssim_y": 0.98502,
+    "psnr_yuv_422": 45.453,
+    "encoder": "simplejpeg",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality": 43,
+     "fastdct": false,
+     "planes": "Y,U,V 4:2:0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.051,
+    "bytes_at_target_interp": 61406.0
+   }
+  }
+ },
+ "jpeg_turbo_422": {
+  "yuy2_1080p": {
+   "knob": "quality",
+   "value": 94,
+   "bytes_per_frame": 286819.6,
+   "psnr_y": 52.24,
+   "ssim_y": 0.99607,
+   "psnr_yuv_422": 52.407,
+   "encoder": "simplejpeg",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality": 94,
+    "fastdct": false,
+    "planes": "Y,U,V 4:2:2"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -3e-05,
+   "bytes_at_target_interp": 297359.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 44,
+    "bytes_per_frame": 77806.5,
+    "psnr_y": 45.086,
+    "ssim_y": 0.98705,
+    "psnr_yuv_422": 46.114,
+    "encoder": "simplejpeg",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality": 44,
+     "fastdct": false,
+     "planes": "Y,U,V 4:2:2"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.086,
+    "bytes_at_target_interp": 77458.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "quality",
+   "value": 95,
+   "bytes_per_frame": 167564.7,
+   "psnr_y": 51.768,
+   "ssim_y": 0.99613,
+   "psnr_yuv_422": 52.253,
+   "encoder": "simplejpeg",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality": 95,
+    "fastdct": false,
+    "planes": "Y,U,V 4:2:2"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 3e-05,
+   "bytes_at_target_interp": 163913.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 59,
+    "bytes_per_frame": 46958.4,
+    "psnr_y": 44.978,
+    "ssim_y": 0.98771,
+    "psnr_yuv_422": 46.25,
+    "encoder": "simplejpeg",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality": 59,
+     "fastdct": false,
+     "planes": "Y,U,V 4:2:2"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.022,
+    "bytes_at_target_interp": 47077.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "quality",
+   "value": 85,
+   "bytes_per_frame": 60787.8,
+   "psnr_y": 51.489,
+   "ssim_y": 0.99631,
+   "psnr_yuv_422": 53.879,
+   "encoder": "simplejpeg",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality": 85,
+    "fastdct": false,
+    "planes": "Y,U,V 4:2:2"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 0.00021,
+   "bytes_at_target_interp": 60318.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 51,
+    "bytes_per_frame": 31965.4,
+    "psnr_y": 44.967,
+    "ssim_y": 0.98583,
+    "psnr_yuv_422": 46.621,
+    "encoder": "simplejpeg",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality": 51,
+     "fastdct": false,
+     "planes": "Y,U,V 4:2:2"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.033,
+    "bytes_at_target_interp": 32096.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "quality",
+   "value": 83,
+   "bytes_per_frame": 145719.4,
+   "psnr_y": 51.667,
+   "ssim_y": 0.99609,
+   "psnr_yuv_422": 52.942,
+   "encoder": "simplejpeg",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality": 83,
+    "fastdct": false,
+    "planes": "Y,U,V 4:2:2"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -1e-05,
+   "bytes_at_target_interp": 145774.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 43,
+    "bytes_per_frame": 69330.1,
+    "psnr_y": 44.949,
+    "ssim_y": 0.98502,
+    "psnr_yuv_422": 45.729,
+    "encoder": "simplejpeg",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality": 43,
+     "fastdct": false,
+     "planes": "Y,U,V 4:2:2"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.051,
+    "bytes_at_target_interp": 69748.0
+   }
+  }
+ },
+ "libx264_ultrafast_420": {
+  "yuy2_1080p": {
+   "knob": "qp",
+   "value": 11,
+   "bytes_per_frame": 250962.7,
+   "psnr_y": 53.358,
+   "ssim_y": 0.99619,
+   "psnr_yuv_422": 53.314,
+   "encoder": "libx264",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuv420p",
+   "gop_size": 1,
+   "options": {
+    "preset": "ultrafast",
+    "qp": "11",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 9e-05,
+   "bytes_at_target_interp": 244910.0,
+   "psnr45": {
+    "knob": "qp",
+    "value": 27,
+    "bytes_per_frame": 54690.7,
+    "psnr_y": 44.904,
+    "ssim_y": 0.98488,
+    "psnr_yuv_422": 45.952,
+    "encoder": "libx264",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuv420p",
+    "gop_size": 1,
+    "options": {
+     "preset": "ultrafast",
+     "qp": "27",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.096,
+    "bytes_at_target_interp": 55449.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "qp",
+   "value": 11,
+   "bytes_per_frame": 133675.2,
+   "psnr_y": 53.019,
+   "ssim_y": 0.99612,
+   "psnr_yuv_422": 53.141,
+   "encoder": "libx264",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuv420p",
+   "gop_size": 1,
+   "options": {
+    "preset": "ultrafast",
+    "qp": "11",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 2e-05,
+   "bytes_at_target_interp": 133065.0,
+   "psnr45": {
+    "knob": "qp",
+    "value": 25,
+    "bytes_per_frame": 39183.2,
+    "psnr_y": 45.215,
+    "ssim_y": 0.9857,
+    "psnr_yuv_422": 46.418,
+    "encoder": "libx264",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuv420p",
+    "gop_size": 1,
+    "options": {
+     "preset": "ultrafast",
+     "qp": "25",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.215,
+    "bytes_at_target_interp": 38125.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "qp",
+   "value": 10,
+   "bytes_per_frame": 92024.5,
+   "psnr_y": 52.754,
+   "ssim_y": 0.99603,
+   "psnr_yuv_422": 54.318,
+   "encoder": "libx264",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuv420p",
+   "gop_size": 1,
+   "options": {
+    "preset": "ultrafast",
+    "qp": "10",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -7e-05,
+   "bytes_at_target_interp": 94459.0,
+   "psnr45": {
+    "knob": "qp",
+    "value": 26,
+    "bytes_per_frame": 19970.2,
+    "psnr_y": 45.207,
+    "ssim_y": 0.98564,
+    "psnr_yuv_422": 46.62,
+    "encoder": "libx264",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuv420p",
+    "gop_size": 1,
+    "options": {
+     "preset": "ultrafast",
+     "qp": "26",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.207,
+    "bytes_at_target_interp": 19391.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "qp",
+   "value": 10,
+   "bytes_per_frame": 246884.8,
+   "psnr_y": 52.705,
+   "ssim_y": 0.99607,
+   "psnr_yuv_422": 53.815,
+   "encoder": "libx264",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuv420p",
+   "gop_size": 1,
+   "options": {
+    "preset": "ultrafast",
+    "qp": "10",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -3e-05,
+   "bytes_at_target_interp": 249785.0,
+   "psnr45": {
+    "knob": "qp",
+    "value": 26,
+    "bytes_per_frame": 46897.7,
+    "psnr_y": 44.892,
+    "ssim_y": 0.98397,
+    "psnr_yuv_422": 45.714,
+    "encoder": "libx264",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuv420p",
+    "gop_size": 1,
+    "options": {
+     "preset": "ultrafast",
+     "qp": "26",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.108,
+    "bytes_at_target_interp": 47793.0
+   }
+  }
+ },
+ "libx264_veryfast_420": {
+  "yuy2_1080p": {
+   "knob": "qp",
+   "value": 12,
+   "bytes_per_frame": 163490.2,
+   "psnr_y": 53.121,
+   "ssim_y": 0.99608,
+   "psnr_yuv_422": 52.982,
+   "encoder": "libx264",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuv420p",
+   "gop_size": 1,
+   "options": {
+    "preset": "veryfast",
+    "qp": "12",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -2e-05,
+   "bytes_at_target_interp": 164862.0,
+   "psnr45": {
+    "knob": "qp",
+    "value": 29,
+    "bytes_per_frame": 28259.3,
+    "psnr_y": 45.155,
+    "ssim_y": 0.98912,
+    "psnr_yuv_422": 45.869,
+    "encoder": "libx264",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuv420p",
+    "gop_size": 1,
+    "options": {
+     "preset": "veryfast",
+     "qp": "29",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.155,
+    "bytes_at_target_interp": 27722.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "qp",
+   "value": 12,
+   "bytes_per_frame": 86628.7,
+   "psnr_y": 52.788,
+   "ssim_y": 0.99606,
+   "psnr_yuv_422": 52.785,
+   "encoder": "libx264",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuv420p",
+   "gop_size": 1,
+   "options": {
+    "preset": "veryfast",
+    "qp": "12",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -4e-05,
+   "bytes_at_target_interp": 87991.0,
+   "psnr45": {
+    "knob": "qp",
+    "value": 28,
+    "bytes_per_frame": 18610.2,
+    "psnr_y": 44.776,
+    "ssim_y": 0.98814,
+    "psnr_yuv_422": 45.691,
+    "encoder": "libx264",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuv420p",
+    "gop_size": 1,
+    "options": {
+     "preset": "veryfast",
+     "qp": "28",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.224,
+    "bytes_at_target_interp": 19231.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "qp",
+   "value": 13,
+   "bytes_per_frame": 56469.5,
+   "psnr_y": 52.597,
+   "ssim_y": 0.99619,
+   "psnr_yuv_422": 54.074,
+   "encoder": "libx264",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuv420p",
+   "gop_size": 1,
+   "options": {
+    "preset": "veryfast",
+    "qp": "13",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 9e-05,
+   "bytes_at_target_interp": 55236.0,
+   "psnr45": {
+    "knob": "qp",
+    "value": 28,
+    "bytes_per_frame": 11459.8,
+    "psnr_y": 45.164,
+    "ssim_y": 0.98712,
+    "psnr_yuv_422": 46.552,
+    "encoder": "libx264",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuv420p",
+    "gop_size": 1,
+    "options": {
+     "preset": "veryfast",
+     "qp": "28",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.164,
+    "bytes_at_target_interp": 11217.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "qp",
+   "value": 12,
+   "bytes_per_frame": 152652.2,
+   "psnr_y": 52.576,
+   "ssim_y": 0.99618,
+   "psnr_yuv_422": 53.519,
+   "encoder": "libx264",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuv420p",
+   "gop_size": 1,
+   "options": {
+    "preset": "veryfast",
+    "qp": "12",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 8e-05,
+   "bytes_at_target_interp": 149851.0,
+   "psnr45": {
+    "knob": "qp",
+    "value": 29,
+    "bytes_per_frame": 22569.3,
+    "psnr_y": 44.751,
+    "ssim_y": 0.98773,
+    "psnr_yuv_422": 45.254,
+    "encoder": "libx264",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuv420p",
+    "gop_size": 1,
+    "options": {
+     "preset": "veryfast",
+     "qp": "29",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.249,
+    "bytes_at_target_interp": 23474.0
+   }
+  }
+ },
+ "libx265_ultrafast_420": {
+  "yuy2_1080p": {
+   "knob": "qp",
+   "value": 12,
+   "bytes_per_frame": 147024.8,
+   "psnr_y": 53.263,
+   "ssim_y": 0.99611,
+   "psnr_yuv_422": 53.267,
+   "encoder": "libx265",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuv420p",
+   "gop_size": 1,
+   "options": {
+    "preset": "ultrafast",
+    "qp": "12",
+    "x265-params": "log-level=error",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 1e-05,
+   "bytes_at_target_interp": 146521.0,
+   "psnr45": {
+    "knob": "qp",
+    "value": 30,
+    "bytes_per_frame": 19943.7,
+    "psnr_y": 45.127,
+    "ssim_y": 0.98794,
+    "psnr_yuv_422": 46.315,
+    "encoder": "libx265",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuv420p",
+    "gop_size": 1,
+    "options": {
+     "preset": "ultrafast",
+     "qp": "30",
+     "x265-params": "log-level=error",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.127,
+    "bytes_at_target_interp": 19518.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "qp",
+   "value": 12,
+   "bytes_per_frame": 80403.4,
+   "psnr_y": 52.966,
+   "ssim_y": 0.99613,
+   "psnr_yuv_422": 53.114,
+   "encoder": "libx265",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuv420p",
+   "gop_size": 1,
+   "options": {
+    "preset": "ultrafast",
+    "qp": "12",
+    "x265-params": "log-level=error",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 3e-05,
+   "bytes_at_target_interp": 79734.0,
+   "psnr45": {
+    "knob": "qp",
+    "value": 28,
+    "bytes_per_frame": 16191.4,
+    "psnr_y": 44.998,
+    "ssim_y": 0.98739,
+    "psnr_yuv_422": 46.215,
+    "encoder": "libx265",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuv420p",
+    "gop_size": 1,
+    "options": {
+     "preset": "ultrafast",
+     "qp": "28",
+     "x265-params": "log-level=error",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.002,
+    "bytes_at_target_interp": 16196.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "qp",
+   "value": 10,
+   "bytes_per_frame": 69387.7,
+   "psnr_y": 52.993,
+   "ssim_y": 0.9962,
+   "psnr_yuv_422": 54.576,
+   "encoder": "libx265",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuv420p",
+   "gop_size": 1,
+   "options": {
+    "preset": "ultrafast",
+    "qp": "10",
+    "x265-params": "log-level=error",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 0.0001,
+   "bytes_at_target_interp": 67662.0,
+   "psnr45": {
+    "knob": "qp",
+    "value": 29,
+    "bytes_per_frame": 9800.2,
+    "psnr_y": 44.997,
+    "ssim_y": 0.98585,
+    "psnr_yuv_422": 46.826,
+    "encoder": "libx265",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuv420p",
+    "gop_size": 1,
+    "options": {
+     "preset": "ultrafast",
+     "qp": "29",
+     "x265-params": "log-level=error",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.003,
+    "bytes_at_target_interp": 9805.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "qp",
+   "value": 11,
+   "bytes_per_frame": 154266.8,
+   "psnr_y": 52.67,
+   "ssim_y": 0.99595,
+   "psnr_yuv_422": 53.823,
+   "encoder": "libx265",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "yuv420p",
+   "gop_size": 1,
+   "options": {
+    "preset": "ultrafast",
+    "qp": "11",
+    "x265-params": "log-level=error",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -0.00015,
+   "bytes_at_target_interp": 161155.0,
+   "psnr45": {
+    "knob": "qp",
+    "value": 30,
+    "bytes_per_frame": 15933.9,
+    "psnr_y": 44.98,
+    "ssim_y": 0.98672,
+    "psnr_yuv_422": 46.009,
+    "encoder": "libx265",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "yuv420p",
+    "gop_size": 1,
+    "options": {
+     "preset": "ultrafast",
+     "qp": "30",
+     "x265-params": "log-level=error",
+     "i_qfactor": "1",
+     "i_qoffset": "0"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.02,
+    "bytes_at_target_interp": 15985.0
+   }
+  }
+ },
+ "mjpeg_qsv_420": {
+  "yuy2_1080p": {
+   "knob": "global_quality",
+   "value": 94,
+   "bytes_per_frame": 276184.8,
+   "psnr_y": 52.363,
+   "ssim_y": 0.996,
+   "psnr_yuv_422": 52.011,
+   "encoder": "mjpeg_qsv",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 1,
+   "options": {
+    "global_quality": "94"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -0.0001,
+   "bytes_at_target_interp": 296502.0,
+   "psnr45": {
+    "knob": "global_quality",
+    "value": 44,
+    "bytes_per_frame": 68772.6,
+    "psnr_y": 45.1,
+    "ssim_y": 0.98713,
+    "psnr_yuv_422": 45.924,
+    "encoder": "mjpeg_qsv",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 1,
+    "options": {
+     "global_quality": "44"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.1,
+    "bytes_at_target_interp": 68415.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "global_quality",
+   "value": 95,
+   "bytes_per_frame": 163552.4,
+   "psnr_y": 52.313,
+   "ssim_y": 0.99623,
+   "psnr_yuv_422": 51.996,
+   "encoder": "mjpeg_qsv",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 1,
+   "options": {
+    "global_quality": "95"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 0.00013,
+   "bytes_at_target_interp": 152596.0,
+   "psnr45": {
+    "knob": "global_quality",
+    "value": 59,
+    "bytes_per_frame": 42321.8,
+    "psnr_y": 44.995,
+    "ssim_y": 0.98783,
+    "psnr_yuv_422": 46.052,
+    "encoder": "mjpeg_qsv",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 1,
+    "options": {
+     "global_quality": "59"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.005,
+    "bytes_at_target_interp": 42349.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "global_quality",
+   "value": 84,
+   "bytes_per_frame": 54675.7,
+   "psnr_y": 51.127,
+   "ssim_y": 0.99605,
+   "psnr_yuv_422": 52.562,
+   "encoder": "mjpeg_qsv",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 1,
+   "options": {
+    "global_quality": "84"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -5e-05,
+   "bytes_at_target_interp": 54796.0,
+   "psnr45": {
+    "knob": "global_quality",
+    "value": 51,
+    "bytes_per_frame": 28001.2,
+    "psnr_y": 44.958,
+    "ssim_y": 0.98582,
+    "psnr_yuv_422": 46.506,
+    "encoder": "mjpeg_qsv",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 1,
+    "options": {
+     "global_quality": "51"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.042,
+    "bytes_at_target_interp": 28133.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "global_quality",
+   "value": 83,
+   "bytes_per_frame": 130615.4,
+   "psnr_y": 51.857,
+   "ssim_y": 0.99623,
+   "psnr_yuv_422": 51.363,
+   "encoder": "mjpeg_qsv",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 1,
+   "options": {
+    "global_quality": "83"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 0.00013,
+   "bytes_at_target_interp": 129364.0,
+   "psnr45": {
+    "knob": "global_quality",
+    "value": 43,
+    "bytes_per_frame": 60846.7,
+    "psnr_y": 44.965,
+    "ssim_y": 0.98519,
+    "psnr_yuv_422": 45.455,
+    "encoder": "mjpeg_qsv",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": "nv12",
+    "gop_size": 1,
+    "options": {
+     "global_quality": "43"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.035,
+    "bytes_at_target_interp": 61085.0
+   }
+  }
+ },
+ "mjpeg_qsv_422": {
+  "yuy2_1080p": {
+   "knob": "global_quality",
+   "value": 94,
+   "bytes_per_frame": 308017.6,
+   "psnr_y": 52.363,
+   "ssim_y": 0.996,
+   "psnr_yuv_422": 52.506,
+   "encoder": "mjpeg_qsv",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": "yuyv422",
+   "gop_size": 1,
+   "options": {
+    "global_quality": "94"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -0.0001,
+   "bytes_at_target_interp": 331349.0,
+   "psnr45": {
+    "knob": "global_quality",
+    "value": 44,
+    "bytes_per_frame": 77325.6,
+    "psnr_y": 45.1,
+    "ssim_y": 0.98713,
+    "psnr_yuv_422": 46.125,
+    "encoder": "mjpeg_qsv",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": "yuyv422",
+    "gop_size": 1,
+    "options": {
+     "global_quality": "44"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.1,
+    "bytes_at_target_interp": 76949.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "global_quality",
+   "value": 95,
+   "bytes_per_frame": 182518.4,
+   "psnr_y": 52.313,
+   "ssim_y": 0.99623,
+   "psnr_yuv_422": 52.545,
+   "encoder": "mjpeg_qsv",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": "yuyv422",
+   "gop_size": 1,
+   "options": {
+    "global_quality": "95"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 0.00013,
+   "bytes_at_target_interp": 170009.0,
+   "psnr45": {
+    "knob": "global_quality",
+    "value": 59,
+    "bytes_per_frame": 46774.9,
+    "psnr_y": 44.995,
+    "ssim_y": 0.98783,
+    "psnr_yuv_422": 46.267,
+    "encoder": "mjpeg_qsv",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": "yuyv422",
+    "gop_size": 1,
+    "options": {
+     "global_quality": "59"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.005,
+    "bytes_at_target_interp": 46804.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "global_quality",
+   "value": 84,
+   "bytes_per_frame": 59720.4,
+   "psnr_y": 51.127,
+   "ssim_y": 0.99605,
+   "psnr_yuv_422": 53.445,
+   "encoder": "mjpeg_qsv",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": "yuyv422",
+   "gop_size": 1,
+   "options": {
+    "global_quality": "84"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -5e-05,
+   "bytes_at_target_interp": 59802.0,
+   "psnr45": {
+    "knob": "global_quality",
+    "value": 51,
+    "bytes_per_frame": 31866.9,
+    "psnr_y": 44.958,
+    "ssim_y": 0.98582,
+    "psnr_yuv_422": 46.617,
+    "encoder": "mjpeg_qsv",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": "yuyv422",
+    "gop_size": 1,
+    "options": {
+     "global_quality": "51"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.042,
+    "bytes_at_target_interp": 32015.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "global_quality",
+   "value": 83,
+   "bytes_per_frame": 146152.2,
+   "psnr_y": 51.857,
+   "ssim_y": 0.99623,
+   "psnr_yuv_422": 53.141,
+   "encoder": "mjpeg_qsv",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": "yuyv422",
+   "gop_size": 1,
+   "options": {
+    "global_quality": "83"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 0.00013,
+   "bytes_at_target_interp": 145128.0,
+   "psnr45": {
+    "knob": "global_quality",
+    "value": 43,
+    "bytes_per_frame": 68711.4,
+    "psnr_y": 44.965,
+    "ssim_y": 0.98519,
+    "psnr_yuv_422": 45.751,
+    "encoder": "mjpeg_qsv",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": "yuyv422",
+    "gop_size": 1,
+    "options": {
+     "global_quality": "43"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.035,
+    "bytes_at_target_interp": 69004.0
+   }
+  }
+ },
+ "nvjpeg_420": {
+  "yuy2_1080p": {
+   "knob": "quality",
+   "value": 93,
+   "bytes_per_frame": 226551.5,
+   "psnr_y": 50.797,
+   "ssim_y": 0.99616,
+   "psnr_yuv_422": 49.935,
+   "encoder": "nvjpeg",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality_type": "QUALITY",
+    "quality_value": 93,
+    "chroma_subsampling": "CSS_420",
+    "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 6e-05,
+   "bytes_at_target_interp": 221461.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 48,
+    "bytes_per_frame": 71774.6,
+    "psnr_y": 45.015,
+    "ssim_y": 0.98794,
+    "psnr_yuv_422": 45.496,
+    "encoder": "nvjpeg",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality_type": "QUALITY",
+     "quality_value": 48,
+     "chroma_subsampling": "CSS_420",
+     "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.015,
+    "bytes_at_target_interp": 71551.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "quality",
+   "value": 93,
+   "bytes_per_frame": 117449.1,
+   "psnr_y": 50.353,
+   "ssim_y": 0.99605,
+   "psnr_yuv_422": 49.676,
+   "encoder": "nvjpeg",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality_type": "QUALITY",
+    "quality_value": 93,
+    "chroma_subsampling": "CSS_420",
+    "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -5e-05,
+   "bytes_at_target_interp": 119385.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 64,
+    "bytes_per_frame": 44919.6,
+    "psnr_y": 44.936,
+    "ssim_y": 0.98872,
+    "psnr_yuv_422": 45.465,
+    "encoder": "nvjpeg",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality_type": "QUALITY",
+     "quality_value": 64,
+     "chroma_subsampling": "CSS_420",
+     "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.064,
+    "bytes_at_target_interp": 45104.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "quality",
+   "value": 89,
+   "bytes_per_frame": 62824.8,
+   "psnr_y": 49.301,
+   "ssim_y": 0.99624,
+   "psnr_yuv_422": 49.829,
+   "encoder": "nvjpeg",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality_type": "QUALITY",
+    "quality_value": 89,
+    "chroma_subsampling": "CSS_420",
+    "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 0.00014,
+   "bytes_at_target_interp": 60527.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 65,
+    "bytes_per_frame": 32380.3,
+    "psnr_y": 45.1,
+    "ssim_y": 0.98782,
+    "psnr_yuv_422": 46.021,
+    "encoder": "nvjpeg",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality_type": "QUALITY",
+     "quality_value": 65,
+     "chroma_subsampling": "CSS_420",
+     "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.1,
+    "bytes_at_target_interp": 32263.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "quality",
+   "value": 90,
+   "bytes_per_frame": 164684.7,
+   "psnr_y": 49.995,
+   "ssim_y": 0.99617,
+   "psnr_yuv_422": 49.451,
+   "encoder": "nvjpeg",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality_type": "QUALITY",
+    "quality_value": 90,
+    "chroma_subsampling": "CSS_420",
+    "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 7e-05,
+   "bytes_at_target_interp": 161033.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 51,
+    "bytes_per_frame": 65949.1,
+    "psnr_y": 44.997,
+    "ssim_y": 0.98619,
+    "psnr_yuv_422": 45.081,
+    "encoder": "nvjpeg",
+    "chroma": "4:2:0",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality_type": "QUALITY",
+     "quality_value": 51,
+     "chroma_subsampling": "CSS_420",
+     "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.003,
+    "bytes_at_target_interp": 68468.0
+   }
+  }
+ },
+ "nvjpeg_422": {
+  "yuy2_1080p": {
+   "knob": "quality",
+   "value": 93,
+   "bytes_per_frame": 254251.5,
+   "psnr_y": 50.797,
+   "ssim_y": 0.99616,
+   "psnr_yuv_422": 50.532,
+   "encoder": "nvjpeg",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality_type": "QUALITY",
+    "quality_value": 93,
+    "chroma_subsampling": "CSS_422",
+    "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 6e-05,
+   "bytes_at_target_interp": 248629.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 48,
+    "bytes_per_frame": 80440.6,
+    "psnr_y": 45.015,
+    "ssim_y": 0.98794,
+    "psnr_yuv_422": 45.796,
+    "encoder": "nvjpeg",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality_type": "QUALITY",
+     "quality_value": 48,
+     "chroma_subsampling": "CSS_422",
+     "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.015,
+    "bytes_at_target_interp": 80220.0
+   }
+  },
+  "yuy2_720p": {
+   "knob": "quality",
+   "value": 93,
+   "bytes_per_frame": 131261.1,
+   "psnr_y": 50.353,
+   "ssim_y": 0.99605,
+   "psnr_yuv_422": 50.303,
+   "encoder": "nvjpeg",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality_type": "QUALITY",
+    "quality_value": 93,
+    "chroma_subsampling": "CSS_422",
+    "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": -5e-05,
+   "bytes_at_target_interp": 133459.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 64,
+    "bytes_per_frame": 49628.0,
+    "psnr_y": 44.936,
+    "ssim_y": 0.98872,
+    "psnr_yuv_422": 45.806,
+    "encoder": "nvjpeg",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality_type": "QUALITY",
+     "quality_value": 64,
+     "chroma_subsampling": "CSS_422",
+     "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.064,
+    "bytes_at_target_interp": 49810.0
+   }
+  },
+  "mjpeg_720p": {
+   "knob": "quality",
+   "value": 89,
+   "bytes_per_frame": 67747.1,
+   "psnr_y": 49.301,
+   "ssim_y": 0.99624,
+   "psnr_yuv_422": 50.161,
+   "encoder": "nvjpeg",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality_type": "QUALITY",
+    "quality_value": 89,
+    "chroma_subsampling": "CSS_422",
+    "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 0.00014,
+   "bytes_at_target_interp": 65280.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 65,
+    "bytes_per_frame": 36569.2,
+    "psnr_y": 45.1,
+    "ssim_y": 0.98782,
+    "psnr_yuv_422": 46.098,
+    "encoder": "nvjpeg",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality_type": "QUALITY",
+     "quality_value": 65,
+     "chroma_subsampling": "CSS_422",
+     "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+    },
+    "target": "psnr_y=45.0",
+    "delta": 0.1,
+    "bytes_at_target_interp": 36447.0
+   }
+  },
+  "mjpeg_1080p": {
+   "knob": "quality",
+   "value": 90,
+   "bytes_per_frame": 179306.9,
+   "psnr_y": 49.995,
+   "ssim_y": 0.99617,
+   "psnr_yuv_422": 50.271,
+   "encoder": "nvjpeg",
+   "chroma": "4:2:2",
+   "pix_fmt_fed": null,
+   "gop_size": 1,
+   "options": {
+    "quality_type": "QUALITY",
+    "quality_value": 90,
+    "chroma_subsampling": "CSS_422",
+    "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+   },
+   "target": "ssim_y=0.9961",
+   "delta": 7e-05,
+   "bytes_at_target_interp": 175469.0,
+   "psnr45": {
+    "knob": "quality",
+    "value": 51,
+    "bytes_per_frame": 74643.7,
+    "psnr_y": 44.997,
+    "ssim_y": 0.98619,
+    "psnr_yuv_422": 45.315,
+    "encoder": "nvjpeg",
+    "chroma": "4:2:2",
+    "pix_fmt_fed": null,
+    "gop_size": 1,
+    "options": {
+     "quality_type": "QUALITY",
+     "quality_value": 51,
+     "chroma_subsampling": "CSS_422",
+     "input": "host RGB24, exact float BT.601 from the 4:2:2 source (iclib.rgb_from_src)"
+    },
+    "target": "psnr_y=45.0",
+    "delta": -0.003,
+    "bytes_at_target_interp": 77255.0
+   }
+  }
+ }
+}

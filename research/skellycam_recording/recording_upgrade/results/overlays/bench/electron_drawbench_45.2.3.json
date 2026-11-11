@@ -1,0 +1,135 @@
+{
+ "tests": [
+  "drawbench"
+ ],
+ "mode": "bench",
+ "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) overlay-harness/0.0.1 Chrome/156.0.8078.80 Electron/45.2.3 Safari/537.36",
+ "results": {
+  "drawbench": {
+   "canvas_full_layout": {
+    "n": 1500,
+    "median_ms": 0.8999999985098839,
+    "p95_ms": 1.1000000014901161,
+    "max_ms": 112.90000000596046
+   },
+   "canvas_full_naive_labels": {
+    "n": 1500,
+    "median_ms": 0.7999999970197678,
+    "p95_ms": 0.9000000059604645,
+    "max_ms": 1.3999999985098839
+   },
+   "canvas_no_labels": {
+    "n": 1500,
+    "median_ms": 0.6000000014901161,
+    "p95_ms": 0.7000000029802322,
+    "max_ms": 1
+   },
+   "svg_dom_innerHTML_plus_raf": {
+    "n": 1500,
+    "median_ms": 18,
+    "p95_ms": 18.100000001490116,
+    "note": "includes waiting for the next rAF (~16.7 ms at 60 Hz floor)"
+   }
+  }
+ },
+ "env": {
+  "electron": "45.2.3",
+  "chrome": "156.0.8078.80",
+  "node": "24.22.2",
+  "scaleFactor": 1,
+  "gpuFeatureStatus": {
+   "2d_canvas": "enabled",
+   "direct_rendering_display_compositor": "disabled_off_ok",
+   "gpu_compositing": "enabled",
+   "multiple_raster_threads": "enabled_on",
+   "opengl": "enabled_on",
+   "rasterization": "enabled",
+   "raw_draw": "disabled_off_ok",
+   "skia_graphite": "disabled_off",
+   "trees_in_viz": "disabled_off",
+   "video_decode": "enabled",
+   "video_encode": "enabled",
+   "webgl": "enabled",
+   "webgpu": "enabled",
+   "webnn": "disabled_off"
+  },
+  "gpuInfo": {
+   "auxAttributes": {
+    "amdSwitchable": false,
+    "canSupportThreadedTextureMailbox": false,
+    "directMLFeatureLevel": "Not supported",
+    "dx12FeatureLevel": "Not supported",
+    "glImplementationParts": "(gl=none,angle=none)",
+    "glResetNotificationStrategy": 0,
+    "inProcessGpu": true,
+    "initializationTime": 0,
+    "isAsan": false,
+    "isClangCoverage": false,
+    "jpegDecodeAcceleratorSupported": false,
+    "optimus": false,
+    "overlayInfo": {
+     "bgra8OverlaySupport": "NONE",
+     "directComposition": false,
+     "nv12OverlaySupport": "NONE",
+     "p010OverlaySupport": "NONE",
+     "rgb10a2OverlaySupport": "NONE",
+     "supportsOverlays": false,
+     "yuy2OverlaySupport": "NONE"
+    },
+    "passthroughCmdDecoder": false,
+    "sandboxed": false,
+    "skiaBackendType": "None",
+    "subpixelFontRendering": true,
+    "supportsD3dSharedImages": false,
+    "supportsDirectML": false,
+    "supportsDx12": false,
+    "supportsVulkan": false,
+    "targetCpuBits": 64,
+    "visibilityCallbackCallCount": 0,
+    "vulkanVersion": "Not supported"
+   },
+   "gpuDevice": [
+    {
+     "active": false,
+     "deviceId": 9348,
+     "deviceString": "NVIDIA GeForce RTX 3070",
+     "driverVersion": "32.0.16.1088",
+     "gpuPreference": 3,
+     "revision": 161,
+     "subSysId": 928331842,
+     "vendorId": 4318
+    },
+    {
+     "active": false,
+     "deviceId": 42880,
+     "deviceString": "Intel(R) UHD Graphics 770",
+     "driverVersion": "32.0.101.7088",
+     "gpuPreference": 2,
+     "revision": 4,
+     "subSysId": -2004742077,
+     "vendorId": 32902
+    },
+    {
+     "active": false,
+     "deviceId": 9348,
+     "deviceString": "NVIDIA GeForce RTX 3070",
+     "driverVersion": "32.0.16.1088",
+     "gpuPreference": 0,
+     "revision": 161,
+     "subSysId": 928331842,
+     "vendorId": 4318
+    },
+    {
+     "active": false,
+     "deviceId": 140,
+     "deviceString": "Microsoft Basic Render Driver",
+     "driverVersion": "10.0.26100.9711",
+     "gpuPreference": 0,
+     "revision": 0,
+     "subSysId": 0,
+     "vendorId": 5140
+    }
+   ]
+  }
+ }
+}

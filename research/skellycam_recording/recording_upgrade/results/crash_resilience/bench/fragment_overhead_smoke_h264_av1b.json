@@ -1,0 +1,82 @@
+{
+ "env": {
+  "python": "3.12.13",
+  "pyav": "18.0.0",
+  "libav": {
+   "libavutil": "60.26.102",
+   "libavcodec": "62.28.102",
+   "libavformat": "62.12.102",
+   "libavdevice": "62.3.102",
+   "libavfilter": "11.14.102",
+   "libswscale": "9.5.102",
+   "libswresample": "6.3.102"
+  },
+  "opencv": "4.12.0",
+  "ffmpeg_cli": "ffmpeg version 9.0.2-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers"
+ },
+ "frames": 40,
+ "repeats": 1,
+ "nvidia_smi_before": "0, 11 %",
+ "started": "2026-11-09T11:57:41",
+ "results": [
+  {
+   "payload": "av1",
+   "variant": "mkv+fp",
+   "repeats": [
+    {
+     "wall_s": 0.001337400000920752,
+     "cpu_s": 0.0,
+     "bytes": 70703,
+     "payload_bytes": 69860,
+     "overhead_bytes_per_frame": 21.075
+    }
+   ],
+   "error": null,
+   "wall_s_median": 0.001337400000920752,
+   "cpu_s_median": 0.0,
+   "cpu_us_per_frame_median": 0.0,
+   "bytes": 70703,
+   "overhead_bytes_per_frame": 21.075
+  },
+  {
+   "payload": "av1",
+   "variant": "fmp4_every+fp",
+   "repeats": [
+    {
+     "wall_s": 0.001222099999722559,
+     "cpu_s": 0.0,
+     "bytes": 75750,
+     "payload_bytes": 69860,
+     "overhead_bytes_per_frame": 147.25
+    }
+   ],
+   "error": null,
+   "wall_s_median": 0.001222099999722559,
+   "cpu_s_median": 0.0,
+   "cpu_us_per_frame_median": 0.0,
+   "bytes": 75750,
+   "overhead_bytes_per_frame": 147.25
+  },
+  {
+   "payload": "av1",
+   "variant": "nut+fp",
+   "repeats": [
+    {
+     "wall_s": 0.0011027999989892123,
+     "cpu_s": 0.0,
+     "bytes": 70356,
+     "payload_bytes": 69860,
+     "overhead_bytes_per_frame": 12.4
+    }
+   ],
+   "error": null,
+   "wall_s_median": 0.0011027999989892123,
+   "cpu_s_median": 0.0,
+   "cpu_us_per_frame_median": 0.0,
+   "bytes": 70356,
+   "overhead_bytes_per_frame": 12.4
+  }
+ ],
+ "nvidia_smi_after": "0, 12 %",
+ "finished": "2026-11-09T11:57:41"
+}

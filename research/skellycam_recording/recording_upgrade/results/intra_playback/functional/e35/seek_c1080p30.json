@@ -1,0 +1,4020 @@
+{
+ "test": "batch",
+ "params": {},
+ "versions": {
+  "electron": "35.7.5",
+  "chrome": "134.0.6998.205",
+  "node": "22.16.0",
+  "v8": "13.4.114.21-electron.0"
+ },
+ "gpu_feature_status": {
+  "2d_canvas": "enabled",
+  "canvas_oop_rasterization": "enabled_on",
+  "direct_rendering_display_compositor": "disabled_off_ok",
+  "gpu_compositing": "enabled",
+  "multiple_raster_threads": "enabled_on",
+  "opengl": "enabled_on",
+  "rasterization": "enabled",
+  "raw_draw": "disabled_off_ok",
+  "skia_graphite": "disabled_off",
+  "video_decode": "enabled",
+  "video_encode": "enabled",
+  "vulkan": "disabled_off",
+  "webgl": "enabled",
+  "webgl2": "enabled",
+  "webgpu": "enabled",
+  "webnn": "disabled_off"
+ },
+ "gpu_info": {
+  "gpuDevice": [
+   {
+    "active": true,
+    "deviceId": 9348,
+    "driverVendor": "NVIDIA",
+    "driverVersion": "32.0.16.1088",
+    "gpuPreference": 3,
+    "revision": 161,
+    "subSysId": 928331842,
+    "vendorId": 4318
+   },
+   {
+    "active": false,
+    "deviceId": 42880,
+    "driverVersion": "32.0.101.7088",
+    "gpuPreference": 2,
+    "revision": 4,
+    "subSysId": -2004742077,
+    "vendorId": 32902
+   },
+   {
+    "active": false,
+    "deviceId": 9348,
+    "driverVersion": "32.0.16.1088",
+    "gpuPreference": 0,
+    "revision": 161,
+    "subSysId": 928331842,
+    "vendorId": 4318
+   },
+   {
+    "active": false,
+    "deviceId": 140,
+    "driverVersion": "10.0.26100.9711",
+    "gpuPreference": 0,
+    "revision": 0,
+    "subSysId": 0,
+    "vendorId": 5140
+   }
+  ]
+ },
+ "metrics_summary": null,
+ "media_players_at_end": [
+  {
+   "seq": 1,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 2,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 3,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 4,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 5,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 6,
+   "kVideoDecoderName": "FFmpegVideoDecoder",
+   "kIsPlatformVideoDecoder": "false",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 7,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 8,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 9,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 10,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 11,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 12,
+   "kVideoDecoderName": "FFmpegVideoDecoder",
+   "kIsPlatformVideoDecoder": "false",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 13,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 14,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 15,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 16,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 17,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 18,
+   "kVideoDecoderName": "FFmpegVideoDecoder",
+   "kIsPlatformVideoDecoder": "false",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 19,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 20,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 21,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 22,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 23,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 24,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 25,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 26,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 27,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 28,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 29,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 30,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 31,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 32,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 33,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 34,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 35,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 36,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 37,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 38,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 39,
+   "kVideoDecoderName": "FFmpegVideoDecoder",
+   "kIsPlatformVideoDecoder": "false",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 40,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 41,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 42,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 43,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 44,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 45,
+   "kVideoDecoderName": "FFmpegVideoDecoder",
+   "kIsPlatformVideoDecoder": "false",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 46,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 47,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 48,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 49,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 50,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 51,
+   "kVideoDecoderName": "FFmpegVideoDecoder",
+   "kIsPlatformVideoDecoder": "false",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 52,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 53,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 54,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 55,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 56,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 57,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 58,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 59,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 60,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 61,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 62,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 63,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "kIsVideoDecryptingDemuxerStream": "false",
+   "kResolution": "1920x1080",
+   "kIsStreaming": "false",
+   "kIsRangeHeaderSupported": "true",
+   "kFrameTitle": "chromium_sync_scrub harness",
+   "errors": [],
+   "messages": []
+  },
+  {
+   "seq": 64,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 65,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 66,
+   "kVideoDecoderName": "D3D11VideoDecoder",
+   "kIsPlatformVideoDecoder": "true",
+   "errors": [],
+   "messages": [
+    "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+   ]
+  },
+  {
+   "seq": 67,
+   "errors": [],
+   "messages": []
+  }
+ ],
+ "switches": {
+  "medialog": true,
+  "noocclusion": true
+ },
+ "metrics_samples": null,
+ "window": {
+  "width": 1600,
+  "height": 900
+ },
+ "finished_utc": "2026-11-09T23:08:43.051Z",
+ "result": [
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra.mp4",
+    "path": "video",
+    "mode": "cfrmid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra.mp4",
+     "path": "video",
+     "mode": "cfrmid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 1,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra.mp4",
+    "path": "video",
+    "mode": "mid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra.mp4",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 2,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra.mp4",
+    "path": "webcodecs",
+    "n": "100",
+    "seed": "1",
+    "wcflush": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 100,
+     "resets": 99,
+     "decoder_error": null,
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 3,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra.mp4",
+    "path": "webcodecs",
+    "n": "30",
+    "seed": "5",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 30,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 4,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra.mp4",
+    "path": "webcodecs-hw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra.mp4",
+     "path": "webcodecs-hw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 30,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 5,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra.mp4",
+    "path": "webcodecs-sw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra.mp4",
+     "path": "webcodecs-sw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 6,
+       "kVideoDecoderName": "FFmpegVideoDecoder",
+       "kIsPlatformVideoDecoder": "false",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra_frag.mp4",
+    "path": "video",
+    "mode": "cfrmid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra_frag.mp4",
+     "path": "video",
+     "mode": "cfrmid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 7,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra_frag.mp4",
+    "path": "video",
+    "mode": "mid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra_frag.mp4",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 8,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra_frag.mp4",
+    "path": "webcodecs",
+    "n": "100",
+    "seed": "1",
+    "wcflush": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra_frag.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 100,
+     "resets": 99,
+     "decoder_error": null,
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 9,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra_frag.mp4",
+    "path": "webcodecs",
+    "n": "30",
+    "seed": "5",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra_frag.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 30,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 10,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra_frag.mp4",
+    "path": "webcodecs-hw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra_frag.mp4",
+     "path": "webcodecs-hw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 30,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 11,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra_frag.mp4",
+    "path": "webcodecs-sw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra_frag.mp4",
+     "path": "webcodecs-sw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 12,
+       "kVideoDecoderName": "FFmpegVideoDecoder",
+       "kIsPlatformVideoDecoder": "false",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra.mkv",
+    "path": "video",
+    "mode": "cfrmid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra.mkv",
+     "path": "video",
+     "mode": "cfrmid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 22.967,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 13,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra.mkv",
+    "path": "video",
+    "mode": "mid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra.mkv",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 22.967,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 14,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra.mkv",
+    "path": "webcodecs",
+    "n": "100",
+    "seed": "1",
+    "wcflush": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra.mkv",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 100,
+     "resets": 99,
+     "decoder_error": null,
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 15,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra.mkv",
+    "path": "webcodecs",
+    "n": "30",
+    "seed": "5",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra.mkv",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 30,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 16,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra.mkv",
+    "path": "webcodecs-hw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra.mkv",
+     "path": "webcodecs-hw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 30,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 17,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_nvenc_intra.mkv",
+    "path": "webcodecs-sw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_nvenc_intra.mkv",
+     "path": "webcodecs-sw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 18,
+       "kVideoDecoderName": "FFmpegVideoDecoder",
+       "kIsPlatformVideoDecoder": "false",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra.mp4",
+    "path": "video",
+    "mode": "cfrmid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_nvenc_intra.mp4",
+     "path": "video",
+     "mode": "cfrmid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 19,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra.mp4",
+    "path": "video",
+    "mode": "mid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_nvenc_intra.mp4",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 20,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra.mp4",
+    "path": "webcodecs",
+    "n": "100",
+    "seed": "1",
+    "wcflush": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_nvenc_intra.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 100,
+     "resets": 99,
+     "decoder_error": null,
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 21,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra.mp4",
+    "path": "webcodecs",
+    "n": "30",
+    "seed": "5",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_nvenc_intra.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 22,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra.mp4",
+    "path": "webcodecs-hw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_nvenc_intra.mp4",
+     "path": "webcodecs-hw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 23,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra.mp4",
+    "path": "webcodecs-sw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "error": "Error: config not supported {\"codec\":\"hev1.1.6.L120.90\",\"codedWidth\":1920,\"codedHeight\":1080,\"optimizeForLatency\":true,\"hardwareAcceleration\":\"prefer-software\"}",
+    "media": {
+     "players": []
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra_frag.mp4",
+    "path": "video",
+    "mode": "cfrmid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_nvenc_intra_frag.mp4",
+     "path": "video",
+     "mode": "cfrmid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 24,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra_frag.mp4",
+    "path": "video",
+    "mode": "mid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_nvenc_intra_frag.mp4",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 25,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra_frag.mp4",
+    "path": "webcodecs",
+    "n": "100",
+    "seed": "1",
+    "wcflush": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_nvenc_intra_frag.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 100,
+     "resets": 99,
+     "decoder_error": null,
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 26,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra_frag.mp4",
+    "path": "webcodecs",
+    "n": "30",
+    "seed": "5",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_nvenc_intra_frag.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 27,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra_frag.mp4",
+    "path": "webcodecs-hw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_nvenc_intra_frag.mp4",
+     "path": "webcodecs-hw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 28,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra_frag.mp4",
+    "path": "webcodecs-sw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "error": "Error: config not supported {\"codec\":\"hev1.1.6.L120.90\",\"codedWidth\":1920,\"codedHeight\":1080,\"optimizeForLatency\":true,\"hardwareAcceleration\":\"prefer-software\"}",
+    "media": {
+     "players": []
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra.mkv",
+    "path": "video",
+    "mode": "cfrmid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_nvenc_intra.mkv",
+     "path": "video",
+     "mode": "cfrmid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 22.967,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 29,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra.mkv",
+    "path": "video",
+    "mode": "mid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_nvenc_intra.mkv",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 22.967,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 30,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra.mkv",
+    "path": "webcodecs",
+    "n": "100",
+    "seed": "1",
+    "wcflush": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_nvenc_intra.mkv",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 100,
+     "resets": 99,
+     "decoder_error": null,
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 31,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra.mkv",
+    "path": "webcodecs",
+    "n": "30",
+    "seed": "5",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_nvenc_intra.mkv",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 32,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra.mkv",
+    "path": "webcodecs-hw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_nvenc_intra.mkv",
+     "path": "webcodecs-hw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 33,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_nvenc_intra.mkv",
+    "path": "webcodecs-sw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "error": "Error: config not supported {\"codec\":\"hvc1.1.6.L120.90\",\"codedWidth\":1920,\"codedHeight\":1080,\"optimizeForLatency\":true,\"hardwareAcceleration\":\"prefer-software\"}",
+    "media": {
+     "players": []
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra.mp4",
+    "path": "video",
+    "mode": "cfrmid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra.mp4",
+     "path": "video",
+     "mode": "cfrmid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 34,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra.mp4",
+    "path": "video",
+    "mode": "mid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra.mp4",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 35,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra.mp4",
+    "path": "webcodecs",
+    "n": "100",
+    "seed": "1",
+    "wcflush": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 100,
+     "resets": 99,
+     "decoder_error": null,
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 36,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra.mp4",
+    "path": "webcodecs",
+    "n": "30",
+    "seed": "5",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 37,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra.mp4",
+    "path": "webcodecs-hw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra.mp4",
+     "path": "webcodecs-hw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 38,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra.mp4",
+    "path": "webcodecs-sw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra.mp4",
+     "path": "webcodecs-sw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 39,
+       "kVideoDecoderName": "FFmpegVideoDecoder",
+       "kIsPlatformVideoDecoder": "false",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra_frag.mp4",
+    "path": "video",
+    "mode": "cfrmid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra_frag.mp4",
+     "path": "video",
+     "mode": "cfrmid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 40,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra_frag.mp4",
+    "path": "video",
+    "mode": "mid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra_frag.mp4",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 41,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra_frag.mp4",
+    "path": "webcodecs",
+    "n": "100",
+    "seed": "1",
+    "wcflush": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra_frag.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 100,
+     "resets": 99,
+     "decoder_error": null,
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 42,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra_frag.mp4",
+    "path": "webcodecs",
+    "n": "30",
+    "seed": "5",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra_frag.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 43,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra_frag.mp4",
+    "path": "webcodecs-hw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra_frag.mp4",
+     "path": "webcodecs-hw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 44,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra_frag.mp4",
+    "path": "webcodecs-sw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra_frag.mp4",
+     "path": "webcodecs-sw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 45,
+       "kVideoDecoderName": "FFmpegVideoDecoder",
+       "kIsPlatformVideoDecoder": "false",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra.mkv",
+    "path": "video",
+    "mode": "cfrmid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra.mkv",
+     "path": "video",
+     "mode": "cfrmid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 22.967,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 46,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra.mkv",
+    "path": "video",
+    "mode": "mid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra.mkv",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 22.967,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 47,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra.mkv",
+    "path": "webcodecs",
+    "n": "100",
+    "seed": "1",
+    "wcflush": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra.mkv",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 100,
+     "resets": 99,
+     "decoder_error": null,
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 48,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra.mkv",
+    "path": "webcodecs",
+    "n": "30",
+    "seed": "5",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra.mkv",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 49,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra.mkv",
+    "path": "webcodecs-hw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra.mkv",
+     "path": "webcodecs-hw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 50,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/h264_qsv_intra.mkv",
+    "path": "webcodecs-sw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/h264_qsv_intra.mkv",
+     "path": "webcodecs-sw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 51,
+       "kVideoDecoderName": "FFmpegVideoDecoder",
+       "kIsPlatformVideoDecoder": "false",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra.mp4",
+    "path": "video",
+    "mode": "cfrmid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_qsv_intra.mp4",
+     "path": "video",
+     "mode": "cfrmid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 52,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra.mp4",
+    "path": "video",
+    "mode": "mid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_qsv_intra.mp4",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 53,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra.mp4",
+    "path": "webcodecs",
+    "n": "100",
+    "seed": "1",
+    "wcflush": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_qsv_intra.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 100,
+     "resets": 99,
+     "decoder_error": null,
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 54,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra.mp4",
+    "path": "webcodecs",
+    "n": "30",
+    "seed": "5",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_qsv_intra.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 55,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra.mp4",
+    "path": "webcodecs-hw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_qsv_intra.mp4",
+     "path": "webcodecs-hw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 56,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra.mp4",
+    "path": "webcodecs-sw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "error": "Error: config not supported {\"codec\":\"hev1.1.2.H120.90\",\"codedWidth\":1920,\"codedHeight\":1080,\"optimizeForLatency\":true,\"hardwareAcceleration\":\"prefer-software\"}",
+    "media": {
+     "players": []
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra_frag.mp4",
+    "path": "video",
+    "mode": "cfrmid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_qsv_intra_frag.mp4",
+     "path": "video",
+     "mode": "cfrmid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 57,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra_frag.mp4",
+    "path": "video",
+    "mode": "mid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_qsv_intra_frag.mp4",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 58,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra_frag.mp4",
+    "path": "webcodecs",
+    "n": "100",
+    "seed": "1",
+    "wcflush": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_qsv_intra_frag.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 100,
+     "resets": 99,
+     "decoder_error": null,
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 59,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra_frag.mp4",
+    "path": "webcodecs",
+    "n": "30",
+    "seed": "5",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_qsv_intra_frag.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 60,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra_frag.mp4",
+    "path": "webcodecs-hw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_qsv_intra_frag.mp4",
+     "path": "webcodecs-hw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 61,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra_frag.mp4",
+    "path": "webcodecs-sw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "error": "Error: config not supported {\"codec\":\"hev1.1.2.H120.90\",\"codedWidth\":1920,\"codedHeight\":1080,\"optimizeForLatency\":true,\"hardwareAcceleration\":\"prefer-software\"}",
+    "media": {
+     "players": []
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra.mkv",
+    "path": "video",
+    "mode": "cfrmid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_qsv_intra.mkv",
+     "path": "video",
+     "mode": "cfrmid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 22.967,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 62,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra.mkv",
+    "path": "video",
+    "mode": "mid",
+    "n": "100",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_qsv_intra.mkv",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 22.967,
+     "videoWidth": 1920,
+     "videoHeight": 1080,
+     "rvfc_fired": 100,
+     "mediatime_idx_equals_pattern": 100
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 63,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "kIsVideoDecryptingDemuxerStream": "false",
+       "kResolution": "1920x1080",
+       "kIsStreaming": "false",
+       "kIsRangeHeaderSupported": "true",
+       "kFrameTitle": "chromium_sync_scrub harness",
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra.mkv",
+    "path": "webcodecs",
+    "n": "100",
+    "seed": "1",
+    "wcflush": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_qsv_intra.mkv",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 100,
+     "resets": 99,
+     "decoder_error": null,
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 64,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra.mkv",
+    "path": "webcodecs",
+    "n": "30",
+    "seed": "5",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_qsv_intra.mkv",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 65,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra.mkv",
+    "path": "webcodecs-hw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/hevc_qsv_intra.mkv",
+     "path": "webcodecs-hw",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 30,
+     "exact": 30,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 29,
+     "decoder_error": null,
+     "fetches": 30,
+     "decoded_hist": {
+      "1": 30
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": [],
+    "media": {
+     "players": [
+      {
+       "seq": 66,
+       "kVideoDecoderName": "D3D11VideoDecoder",
+       "kIsPlatformVideoDecoder": "true",
+       "errors": [],
+       "messages": [
+        "warning: Log rate exceeds 512 messages per second. Futher entries will be dropped."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/hevc_qsv_intra.mkv",
+    "path": "webcodecs-sw",
+    "n": "30",
+    "seed": "4",
+    "medialog": "1"
+   },
+   "result": {
+    "error": "Error: config not supported {\"codec\":\"hvc1.1.2.H120.90\",\"codedWidth\":1920,\"codedHeight\":1080,\"optimizeForLatency\":true,\"hardwareAcceleration\":\"prefer-software\"}",
+    "media": {
+     "players": []
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/mjpeg_qsv422.mkv",
+    "path": "video",
+    "mode": "mid",
+    "n": "5",
+    "seed": "1",
+    "medialog": "1"
+   },
+   "result": {
+    "error": "Error: media error 4 DEMUXER_ERROR_NO_SUPPORTED_STREAMS: FFmpegDemuxer: no supported streams",
+    "media": {
+     "players": [
+      {
+       "seq": 67,
+       "errors": [],
+       "messages": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/jpeg_seq",
+    "path": "jpeg-range-bitmap",
+    "n": "100",
+    "seed": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/jpeg_seq",
+     "path": "jpeg-range-bitmap",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": []
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/jpeg_seq",
+    "path": "jpeg-range-imagedecoder",
+    "n": "100",
+    "seed": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/jpeg_seq",
+     "path": "jpeg-range-imagedecoder",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": []
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/jpeg_in_mkv",
+    "path": "jpeg-range-bitmap",
+    "n": "100",
+    "seed": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/jpeg_in_mkv",
+     "path": "jpeg-range-bitmap",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": []
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c1080p30/jpeg_in_mkv",
+    "path": "jpeg-range-imagedecoder",
+    "n": "100",
+    "seed": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c1080p30/jpeg_in_mkv",
+     "path": "jpeg-range-imagedecoder",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 100,
+     "exact": 100,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "fetches": 100,
+     "decoded_hist": {
+      "1": 100
+     },
+     "errors": 0,
+     "first_error": null
+    },
+    "wrong_rows": []
+   }
+  }
+ ],
+ "nvidia_smi": {
+  "query": "encoder.stats.sessionCount,utilization.gpu,utilization.decoder,memory.used",
+  "before": "1, 11 %, 82 %, 1161 MiB",
+  "after": "2, 12 %, 78 %, 1546 MiB"
+ },
+ "note": "functional run on a shared machine (3 browsers in parallel); CPU/memory samples removed, no timing fields kept"
+}

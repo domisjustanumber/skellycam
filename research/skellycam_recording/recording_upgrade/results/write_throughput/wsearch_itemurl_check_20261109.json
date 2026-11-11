@@ -1,0 +1,23 @@
+{
+ "when": "2026-11-09T17:00:30",
+ "why": "VERIFY_provenance W3: wsearch_scope_check_20261109.json shows System.ItemPathDisplay as C:\\Users\\Pictures\\Documents\\..., not C:\\Users\\Dom\\Documents\\...; re-query System.ItemUrl to confirm the real path",
+ "method": "read-only OLE DB query (PowerShell ADODB): Provider=Search.CollatorDSO;Extended Properties='Application=Windows'; SELECT TOP 3 System.ItemUrl, System.ItemPathDisplay, System.ItemFolderPathDisplay FROM SYSTEMINDEX WHERE SCOPE='file:C:/Users/Dom/Documents/skellycam-raw/skellycam_recording/recording_upgrade_20261109/write_throughput'",
+ "rows": [
+  [
+   "file:C:/Users/Dom/Documents/skellycam-raw/skellycam_recording/recording_upgrade_20261109/write_throughput/payload_cache",
+   "C:\\Users\\Pictures\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\write_throughput\\payload_cache",
+   "C:\\Users\\Pictures\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\write_throughput"
+  ],
+  [
+   "file:C:/Users/Dom/Documents/skellycam-raw/skellycam_recording/recording_upgrade_20261109/write_throughput/payload_cache/ffv1_1080p.bin",
+   "C:\\Users\\Pictures\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\write_throughput\\payload_cache\\ffv1_1080p.bin",
+   "C:\\Users\\Pictures\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\write_throughput\\payload_cache"
+  ],
+  [
+   "file:C:/Users/Dom/Documents/skellycam-raw/skellycam_recording/recording_upgrade_20261109/write_throughput/payload_cache/ffv1_1080p.json",
+   "C:\\Users\\Pictures\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\write_throughput\\payload_cache\\ffv1_1080p.json",
+   "C:\\Users\\Pictures\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\write_throughput\\payload_cache"
+  ]
+ ],
+ "result": "System.ItemUrl gives the real path under C:/Users/Dom/Documents; the C:\\Users\\Pictures\\... form appears only in the display-path properties (cause NOT VERIFIED)."
+}

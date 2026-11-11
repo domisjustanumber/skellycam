@@ -1,0 +1,143 @@
+{
+ "pyav": "18.0.0",
+ "opencv": "4.12.0",
+ "frames": 300,
+ "sidecar_frames_read": 300,
+ "sidecar_bad": 0,
+ "p1_burnin_vp9.webm": {
+  "frames": 300,
+  "base==overlay": 300,
+  "decode_fail": 0,
+  "mismatch_examples": [],
+  "bytes": 15215723
+ },
+ "p1_burnin_h264.mp4": {
+  "frames": 300,
+  "base==overlay": 300,
+  "decode_fail": 0,
+  "mismatch_examples": [],
+  "bytes": 11827653
+ },
+ "p2_overlay_filter": {
+  "cmd": "ffmpeg -y -hide_banner -loglevel error -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\media\\base_cfr_vp9.webm -c:v libvpx-vp9 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\media\\overlay_vp9alpha.webm -filter_complex [0:v][1:v]overlay=0:0:eof_action=pass[v] -map [v] -c:v libvpx-vp9 -crf 32 -b:v 0 -deadline realtime -cpu-used 8 -row-mt 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\export\\p2_overlay_filter_vp9.webm",
+  "rc": 0,
+  "stderr": "",
+  "frames": 300,
+  "base==overlay": 300,
+  "decode_fail": 0,
+  "mismatch_examples": [],
+  "bytes": 14895883
+ },
+ "p2b_overlay_filter_native_vp9_decoder": {
+  "cmd": "ffmpeg -y -hide_banner -loglevel error -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\media\\base_cfr_vp9.webm -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\media\\overlay_vp9alpha.webm -filter_complex [0:v][1:v]overlay=0:0:eof_action=pass[v] -map [v] -c:v libvpx-vp9 -crf 32 -b:v 0 -deadline realtime -cpu-used 8 -row-mt 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\export\\p2b_overlay_filter_native_dec.webm",
+  "rc": 0,
+  "stderr": "",
+  "frames": 300,
+  "base==overlay": 1,
+  "decode_fail": 0,
+  "mismatch_examples": [
+   [
+    0,
+    1
+   ],
+   [
+    0,
+    2
+   ],
+   [
+    0,
+    3
+   ],
+   [
+    0,
+    4
+   ],
+   [
+    0,
+    5
+   ],
+   [
+    0,
+    6
+   ],
+   [
+    0,
+    7
+   ],
+   [
+    0,
+    8
+   ],
+   [
+    0,
+    9
+   ],
+   [
+    0,
+    10
+   ]
+  ],
+  "bytes": 12104287
+ },
+ "p3_libass": {
+  "cmd": "ffmpeg -y -hide_banner -loglevel error -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\media\\base_cfr_vp9.webm -vf ass=barcode_p3_libass.ass -c:v libvpx-vp9 -crf 32 -b:v 0 -deadline realtime -cpu-used 8 -row-mt 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\export\\p3_libass_vp9.webm",
+  "rc": 0,
+  "stderr": "",
+  "frames": 300,
+  "base==overlay": 200,
+  "decode_fail": 0,
+  "mismatch_examples": [
+   [
+    2,
+    1
+   ],
+   [
+    5,
+    4
+   ],
+   [
+    8,
+    7
+   ],
+   [
+    11,
+    10
+   ],
+   [
+    14,
+    13
+   ],
+   [
+    17,
+    16
+   ],
+   [
+    20,
+    19
+   ],
+   [
+    23,
+    22
+   ],
+   [
+    26,
+    25
+   ],
+   [
+    29,
+    28
+   ]
+  ],
+  "bytes": 960276
+ },
+ "p3b_libass_halfframe": {
+  "cmd": "ffmpeg -y -hide_banner -loglevel error -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\media\\base_cfr_vp9.webm -vf ass=barcode_p3b_libass_halfframe.ass -c:v libvpx-vp9 -crf 32 -b:v 0 -deadline realtime -cpu-used 8 -row-mt 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\overlays\\export\\p3b_libass_halfframe_vp9.webm",
+  "rc": 0,
+  "stderr": "",
+  "frames": 300,
+  "base==overlay": 300,
+  "decode_fail": 0,
+  "mismatch_examples": [],
+  "bytes": 958420
+ }
+}

@@ -1,0 +1,52 @@
+# fetched 2026-11-09 with gh api (raw). Format: file@ref, lines
+## FFmpeg libavcodec/ffv1enc.c@n8.1.2 lines 9,11
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+## FFmpeg libavcodec/utvideoenc.c@n8.1.2 lines 8,10
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+## FFmpeg libavcodec/magicyuvenc.c@n8.1.2 lines 8,10
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+## FFmpeg libavcodec/huffyuvenc.c@n8.1.2 lines 10,12
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+## FFmpeg libavcodec/dnxhdenc.c@n8.1.2 lines 12,14
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+## FFmpeg LICENSE.md@n8.1.2 lines 84-98
+The following libraries are under GPL version 2:
+- avisynth
+- frei0r
+- libcdio
+- libdavs2
+- librubberband
+- libvidstab
+- libx264
+- libx265
+- libxavs
+- libxavs2
+- libxvid
+
+When combining them with FFmpeg, FFmpeg needs to be licensed as GPL as well by
+passing `--enable-gpl` to configure.
+## FFmpeg configure@n8.1.2 lines 1988-1998 and 4767
+EXTERNAL_LIBRARY_GPL_LIST="
+    avisynth
+    frei0r
+    libcdio
+    libdavs2
+    libdvdnav
+    libdvdread
+    librubberband
+    libvidstab
+    libx264
+    libx265
+map "die_license_disabled gpl"      $EXTERNAL_LIBRARY_GPL_LIST $EXTERNAL_LIBRARY_GPLV3_LIST
+## PyAV setup.py@v19.0.2 grep -n ffmpeg-dir
+126:    if arg.startswith("--ffmpeg-dir="):

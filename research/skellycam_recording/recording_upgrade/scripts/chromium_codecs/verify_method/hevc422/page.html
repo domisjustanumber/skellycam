@@ -1,0 +1,13 @@
+<!doctype html><meta charset=utf-8><script>
+function one(src){return new Promise(res=>{const v=document.createElement('video');v.muted=true;document.documentElement.appendChild(v);
+ const t=setTimeout(()=>res({timeout:true,err:v.error&&v.error.message}),12000);
+ const grab=(tag)=>{const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;const x=c.getContext('2d');x.drawImage(v,0,0);const d=x.getImageData(0,0,c.width,c.height).data;let s=0,n=0;for(let i=0;i<d.length;i+=4*97){s+=d[i+1];n++}return Math.round(s/n*10)/10};
+ v.onerror=()=>{clearTimeout(t);res({error:v.error&&v.error.code,msg:v.error&&v.error.message})};
+ v.onloadeddata=()=>{const at_load=grab();let frames=0;const r={loadeddata:true,w:v.videoWidth,h:v.videoHeight,meanG_load:at_load};
+  const cb=(now,md)=>{frames++;if(frames===10){r.meanG_rvfc10=grab();r.mediaTime=md.mediaTime;r.presented=md.presentedFrames;clearTimeout(t);v.pause();r.err=v.error&&v.error.message;res(r)}else v.requestVideoFrameCallback(cb)};
+  v.requestVideoFrameCallback(cb);v.play().catch(e=>{r.playErr=String(e)});};
+ v.src=src;});}
+window.onerror=(m)=>console.log('ERR '+m);(async()=>{const out={};console.log('start');
+for (const f of ['hevc_qsv__mjpeg_720p_intra_native422_yuyv422.mkv','hevc_qsv__mjpeg_720p_intra_sw.mkv']) out[f]=await one('file:///C:/Users/Dom/Documents/skellycam-raw/skellycam_recording/recording_upgrade_20261109/hw_accel_target/functional/'+f);
+document.title='RESULT:'+JSON.stringify(out);})();
+</script>

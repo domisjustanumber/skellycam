@@ -1,0 +1,197 @@
+{
+ "config": "rawvideo.nut",
+ "codec": "rawvideo",
+ "opts": {},
+ "gop": 1,
+ "source": "nv12",
+ "source_note": "derived 4:2:0",
+ "res": "1080p",
+ "width": 1920,
+ "height": 1080,
+ "src_pix_fmt": "nv12",
+ "target_pix_fmt": "nv12",
+ "path": "native",
+ "threads": 1,
+ "frames": 300,
+ "unique_frames": 8,
+ "looped": true,
+ "reps": 3,
+ "warmup_frames": 20,
+ "warmup_discarded": true,
+ "av_version": "19.0.2",
+ "ffmpeg_version": "9.0.2",
+ "library_versions": {
+  "libavutil": [
+   61,
+   1,
+   102
+  ],
+  "libavcodec": [
+   63,
+   1,
+   102
+  ],
+  "libavformat": [
+   63,
+   1,
+   102
+  ],
+  "libavdevice": [
+   63,
+   1,
+   102
+  ],
+  "libavfilter": [
+   12,
+   1,
+   102
+  ],
+  "libswscale": [
+   10,
+   1,
+   102
+  ],
+  "libswresample": [
+   7,
+   1,
+   102
+  ]
+ },
+ "numpy": "2.2.6",
+ "python": "3.12.13",
+ "machine": "Gerald",
+ "cpu_logical": 28,
+ "system_cpu_percent_before": 3.3,
+ "prep_ms_per_frame": 0.562,
+ "warmup": {
+  "encode_wall_s": 0.0411,
+  "encode_fps": 486.79,
+  "encode_cpu_s": 0.0469,
+  "encode_cpu_cores_per_30fps_stream": 0.07,
+  "latency_p50": 2.033,
+  "latency_p95": 2.399,
+  "latency_p99": 2.399,
+  "latency_max": 2.399,
+  "latency_mean": 2.053,
+  "packets": 20,
+  "bytes_per_frame": 3110400.0,
+  "file_bytes": 62208948,
+  "system_cpu_percent_during_encode": 10.1,
+  "decode_frames": 20,
+  "decode_wall_s": 0.0303,
+  "decode_fps": 660.23,
+  "decode_cpu_s": 0.0156
+ },
+ "rep_results": [
+  {
+   "encode_wall_s": 0.5884,
+   "encode_fps": 509.87,
+   "encode_cpu_s": 0.5938,
+   "encode_cpu_cores_per_30fps_stream": 0.059,
+   "latency_p50": 1.939,
+   "latency_p95": 2.14,
+   "latency_p99": 2.31,
+   "latency_max": 3.753,
+   "latency_mean": 1.961,
+   "packets": 300,
+   "bytes_per_frame": 3110400.0,
+   "file_bytes": 933130996,
+   "system_cpu_percent_during_encode": 7.6,
+   "decode_frames": 300,
+   "decode_wall_s": 0.2806,
+   "decode_fps": 1069.18,
+   "decode_cpu_s": 0.25
+  },
+  {
+   "encode_wall_s": 0.5927,
+   "encode_fps": 506.16,
+   "encode_cpu_s": 0.5938,
+   "encode_cpu_cores_per_30fps_stream": 0.059,
+   "latency_p50": 1.936,
+   "latency_p95": 2.299,
+   "latency_p99": 2.44,
+   "latency_max": 2.764,
+   "latency_mean": 1.975,
+   "packets": 300,
+   "bytes_per_frame": 3110400.0,
+   "file_bytes": 933130996,
+   "system_cpu_percent_during_encode": 7.2,
+   "decode_frames": 300,
+   "decode_wall_s": 0.2808,
+   "decode_fps": 1068.25,
+   "decode_cpu_s": 0.2656
+  },
+  {
+   "encode_wall_s": 0.584,
+   "encode_fps": 513.7,
+   "encode_cpu_s": 0.5781,
+   "encode_cpu_cores_per_30fps_stream": 0.058,
+   "latency_p50": 1.9,
+   "latency_p95": 2.21,
+   "latency_p99": 2.561,
+   "latency_max": 3.635,
+   "latency_mean": 1.946,
+   "packets": 300,
+   "bytes_per_frame": 3110400.0,
+   "file_bytes": 933130996,
+   "system_cpu_percent_during_encode": 7.4,
+   "decode_frames": 300,
+   "decode_wall_s": 0.2646,
+   "decode_fps": 1133.82,
+   "decode_cpu_s": 0.25
+  }
+ ],
+ "stats": {
+  "encode_fps": {
+   "median": 509.87,
+   "min": 506.16,
+   "max": 513.7
+  },
+  "encode_cpu_cores_per_30fps_stream": {
+   "median": 0.059,
+   "min": 0.058,
+   "max": 0.059
+  },
+  "latency_p50": {
+   "median": 1.936,
+   "min": 1.9,
+   "max": 1.939
+  },
+  "latency_p99": {
+   "median": 2.44,
+   "min": 2.31,
+   "max": 2.561
+  },
+  "latency_max": {
+   "median": 3.635,
+   "min": 2.764,
+   "max": 3.753
+  },
+  "bytes_per_frame": {
+   "median": 3110400.0,
+   "min": 3110400.0,
+   "max": 3110400.0
+  },
+  "decode_fps": {
+   "median": 1069.18,
+   "min": 1068.25,
+   "max": 1133.82
+  },
+  "system_cpu_percent_during_encode": {
+   "median": 7.4,
+   "min": 7.2,
+   "max": 7.6
+  }
+ },
+ "encode_fps": 509.87,
+ "encode_cpu_cores_per_30fps_stream": 0.059,
+ "encode_latency_ms": {
+  "p50": 1.936,
+  "p99": 2.44,
+  "max": 3.635
+ },
+ "bytes_per_frame": 3110400.0,
+ "decode_fps": 1069.18,
+ "decoder": "libav default for codec (software unless the decoder is hw)",
+ "system_cpu_percent_after": 6.0
+}

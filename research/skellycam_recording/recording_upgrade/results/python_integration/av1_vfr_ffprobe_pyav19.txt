@@ -1,0 +1,59 @@
+# ffprobe 9.0.2 (gyan, PATH) inspection of SVT-AV1 VFR MP4 compat clips, 2026-11-09 (inspection only)
+
+== compat_pyav19/av1svt_mp4_vfr.mp4 (compat = PyAV 18.0.0 encode, compat_pyav19 = PyAV 19.0.2 encode)
+-- first 3 packets: pts,dts,flags (stream time base)
+-560,-560,KD_
+0,0,___
+576,576,___
+-- stream: time_base, nb_frames, counted packets/frames
+time_base=1/16000
+start_time=0.000000
+nb_frames=120
+nb_read_frames=119
+nb_read_packets=120
+-- edit list lines from -v trace
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0000025fd57a4480] type:'elst' parent:'edts' sz: 28 8 28
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0000025fd57a4480] Processing st: 0, edit list 0 - media time: 48, duration: 65040
+
+== compat/av1svt_mp4_vfr.mp4 (compat = PyAV 18.0.0 encode, compat_pyav19 = PyAV 19.0.2 encode)
+-- first 3 packets: pts,dts,flags (stream time base)
+-560,-560,KD_
+0,0,___
+576,576,___
+-- stream: time_base, nb_frames, counted packets/frames
+time_base=1/16000
+start_time=0.000000
+nb_frames=120
+nb_read_frames=119
+nb_read_packets=120
+-- edit list lines from -v trace
+[mov,mp4,m4a,3gp,3g2,mj2 @ 000001bd2e234400] type:'elst' parent:'edts' sz: 28 8 28
+[mov,mp4,m4a,3gp,3g2,mj2 @ 000001bd2e234400] Processing st: 0, edit list 0 - media time: 48, duration: 65040
+
+== compat_pyav19/mjpeg_mp4frag_vfr.mp4 (compat = PyAV 18.0.0 encode, compat_pyav19 = PyAV 19.0.2 encode)
+-- first 3 packets: pts,dts,flags (stream time base)
+0,0,K__
+560,560,K__
+1136,1136,K__
+-- stream: time_base, nb_frames, counted packets/frames
+time_base=1/16000
+start_time=0.000000
+nb_frames=N/A
+nb_read_frames=120
+nb_read_packets=120
+-- edit list lines from -v trace
+(none)
+
+== compat_pyav19/mjpeg_mkv_vfr.mkv (compat = PyAV 18.0.0 encode, compat_pyav19 = PyAV 19.0.2 encode)
+-- first 3 packets: pts,dts,flags (stream time base)
+0,0,K__
+35,35,K__
+71,71,K__
+-- stream: time_base, nb_frames, counted packets/frames
+time_base=1/1000
+start_time=0.000000
+nb_frames=N/A
+nb_read_frames=120
+nb_read_packets=120
+-- edit list lines from -v trace
+(none)

@@ -1,0 +1,826 @@
+{
+ "ffmpeg": "ffmpeg version 9.0.2-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+ "n": 600,
+ "runs": [
+  {
+   "out_kind": "mp4_sfn26",
+   "case": "clean",
+   "ffmpeg_exit": 0,
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 600,
+   "bytes": 10286035,
+   "summary": {
+    "ffprobe": 600,
+    "pyav": 600,
+    "cv2": 600,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "20.000000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 600,
+     "stream_duration": "20.000000",
+     "format_duration": "20.000000",
+     "header_nb_frames": "600"
+    },
+    "pyav": {
+     "frames": 600,
+     "packets": 600,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 20.0,
+     "stream_frames_header": 600,
+     "stream_duration_s": 20.0,
+     "seek": {
+      "ok": true,
+      "target_pts": 153600,
+      "got_pts": 128000,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 600,
+     "opened": true,
+     "prop_frame_count": 600.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 300,
+      "pos_after": 301.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "mp4_sfn26",
+   "case": "ffmpeg_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 300,
+   "bytes": 4718640,
+   "summary": {
+    "ffprobe": 0,
+    "pyav": 0,
+    "cv2": 0,
+    "pyav_err": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: '",
+    "byte_exact": null,
+    "pyav_seek": null,
+    "cv2_seek": null,
+    "dur": null
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 1,
+     "stderr": "[mov,mp4,m4a,3gp,3g2,mj2 @ 00000293afcf3ec0] moov atom not found\nC:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\crash_resilience\\sfn26_pipe\\mp4_sfn26__ffmpeg_killed.mp4: Invalid data found when processing input",
+     "frames": 0,
+     "stream_duration": null,
+     "format_duration": null,
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 0,
+     "packets": 0,
+     "byte_exact": null,
+     "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\crash_r"
+    },
+    "cv2": {
+     "frames": 0,
+     "opened": false
+    }
+   }
+  },
+  {
+   "out_kind": "mp4_sfn26",
+   "case": "feeder_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 300,
+   "bytes": 5133192,
+   "summary": {
+    "ffprobe": 300,
+    "pyav": 300,
+    "cv2": 300,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "10.000000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 300,
+     "stream_duration": "10.000000",
+     "format_duration": "10.000000",
+     "header_nb_frames": "300"
+    },
+    "pyav": {
+     "frames": 300,
+     "packets": 300,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 10.0,
+     "stream_frames_header": 300,
+     "stream_duration_s": 10.0,
+     "seek": {
+      "ok": true,
+      "target_pts": 76800,
+      "got_pts": 0,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 300,
+     "opened": true,
+     "prop_frame_count": 300.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 150,
+      "pos_after": 151.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "mp4_sfn26",
+   "case": "tree_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 300,
+   "bytes": 4718640,
+   "summary": {
+    "ffprobe": 0,
+    "pyav": 0,
+    "cv2": 0,
+    "pyav_err": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: '",
+    "byte_exact": null,
+    "pyav_seek": null,
+    "cv2_seek": null,
+    "dur": null
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 1,
+     "stderr": "[mov,mp4,m4a,3gp,3g2,mj2 @ 00000118a6ab7080] moov atom not found\nC:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\crash_resilience\\sfn26_pipe\\mp4_sfn26__tree_killed.mp4: Invalid data found when processing input",
+     "frames": 0,
+     "stream_duration": null,
+     "format_duration": null,
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 0,
+     "packets": 0,
+     "byte_exact": null,
+     "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\crash_r"
+    },
+    "cv2": {
+     "frames": 0,
+     "opened": false
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_x264",
+   "case": "clean",
+   "ffmpeg_exit": 0,
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 600,
+   "bytes": 10287949,
+   "summary": {
+    "ffprobe": 600,
+    "pyav": 600,
+    "cv2": 600,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "20.000000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 600,
+     "stream_duration": null,
+     "format_duration": "20.000000",
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 600,
+     "packets": 600,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 20.0,
+     "stream_frames_header": 0,
+     "stream_duration_s": null,
+     "seek": {
+      "ok": true,
+      "target_pts": 10000,
+      "got_pts": 8333,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 600,
+     "opened": true,
+     "prop_frame_count": 600.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 300,
+      "pos_after": 301.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_x264",
+   "case": "ffmpeg_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 300,
+   "bytes": 4194304,
+   "summary": {
+    "ffprobe": 246,
+    "pyav": 246,
+    "cv2": 246,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": null
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "[matroska,webm @ 0000019d4e4b35c0] File ended prematurely",
+     "frames": 246,
+     "stream_duration": null,
+     "format_duration": null,
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 246,
+     "packets": 246,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": null,
+     "stream_frames_header": 0,
+     "stream_duration_s": null,
+     "seek": {
+      "ok": true,
+      "target_pts": 4100,
+      "got_pts": 0,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 246,
+     "opened": true,
+     "prop_frame_count": -2.7670116110564326e+17,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 123,
+      "pos_after": 1.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_x264",
+   "case": "feeder_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 300,
+   "bytes": 5134040,
+   "summary": {
+    "ffprobe": 300,
+    "pyav": 300,
+    "cv2": 300,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "10.000000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 300,
+     "stream_duration": null,
+     "format_duration": "10.000000",
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 300,
+     "packets": 300,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 10.0,
+     "stream_frames_header": 0,
+     "stream_duration_s": null,
+     "seek": {
+      "ok": true,
+      "target_pts": 5000,
+      "got_pts": 0,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 300,
+     "opened": true,
+     "prop_frame_count": 300.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 150,
+      "pos_after": 151.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_x264",
+   "case": "tree_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 300,
+   "bytes": 4194304,
+   "summary": {
+    "ffprobe": 246,
+    "pyav": 246,
+    "cv2": 246,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": null
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "[matroska,webm @ 000001940fbc3600] File ended prematurely",
+     "frames": 246,
+     "stream_duration": null,
+     "format_duration": null,
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 246,
+     "packets": 246,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": null,
+     "stream_frames_header": 0,
+     "stream_duration_s": null,
+     "seek": {
+      "ok": true,
+      "target_pts": 4100,
+      "got_pts": 0,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 246,
+     "opened": true,
+     "prop_frame_count": -2.7670116110564326e+17,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 123,
+      "pos_after": 1.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "fmp4_x264",
+   "case": "clean",
+   "ffmpeg_exit": 0,
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 600,
+   "bytes": 10286268,
+   "summary": {
+    "ffprobe": 600,
+    "pyav": 600,
+    "cv2": 600,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "20.000000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 600,
+     "stream_duration": "20.000000",
+     "format_duration": "20.000000",
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 600,
+     "packets": 600,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 20.0,
+     "stream_frames_header": 0,
+     "stream_duration_s": 20.0,
+     "seek": {
+      "ok": true,
+      "target_pts": 153600,
+      "got_pts": 128000,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 600,
+     "opened": true,
+     "prop_frame_count": 600.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 300,
+      "pos_after": 301.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "fmp4_x264",
+   "case": "ffmpeg_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 300,
+   "bytes": 4194332,
+   "summary": {
+    "ffprobe": 246,
+    "pyav": 246,
+    "cv2": 246,
+    "pyav_err": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: '",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "8.333333"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "[h264 @ 000001fbdb935c00] Invalid NAL unit size (15615 > 899).\n[h264 @ 000001fbdb935c00] missing picture in access unit with size 903\n[h264 @ 000001fbd9884780] Invalid NAL unit size (15615 > 899).\n[h264 @ 000001fbd9884780] Error splitting the input into NAL units.\n[mov,mp4,m4a,3gp,3g2,mj2 @ 000001fb",
+     "frames": 246,
+     "stream_duration": "8.333333",
+     "format_duration": "8.333333",
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 246,
+     "packets": 247,
+     "byte_exact": null,
+     "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'avcodec_send_packet()'",
+     "container_duration_s": 8.333333,
+     "stream_frames_header": 0,
+     "stream_duration_s": 8.333333333333334,
+     "seek": {
+      "ok": true,
+      "target_pts": 62976,
+      "got_pts": 0,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 246,
+     "opened": true,
+     "prop_frame_count": 250.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 123,
+      "pos_after": 124.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "fmp4_x264",
+   "case": "feeder_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 300,
+   "bytes": 5133354,
+   "summary": {
+    "ffprobe": 300,
+    "pyav": 300,
+    "cv2": 300,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "10.000000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 300,
+     "stream_duration": "10.000000",
+     "format_duration": "10.000000",
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 300,
+     "packets": 300,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 10.0,
+     "stream_frames_header": 0,
+     "stream_duration_s": 10.0,
+     "seek": {
+      "ok": true,
+      "target_pts": 76800,
+      "got_pts": 0,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 300,
+     "opened": true,
+     "prop_frame_count": 300.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 150,
+      "pos_after": 151.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "fmp4_x264",
+   "case": "tree_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 300,
+   "bytes": 4194332,
+   "summary": {
+    "ffprobe": 246,
+    "pyav": 246,
+    "cv2": 246,
+    "pyav_err": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: '",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "8.333333"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "[h264 @ 000001b94464e6c0] Invalid NAL unit size (15615 > 899).\n[h264 @ 000001b94464e6c0] missing picture in access unit with size 903\n[h264 @ 000001b944607540] Invalid NAL unit size (15615 > 899).\n[h264 @ 000001b944607540] Error splitting the input into NAL units.\n[mov,mp4,m4a,3gp,3g2,mj2 @ 000001b9",
+     "frames": 246,
+     "stream_duration": "8.333333",
+     "format_duration": "8.333333",
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 246,
+     "packets": 247,
+     "byte_exact": null,
+     "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'avcodec_send_packet()'",
+     "container_duration_s": 8.333333,
+     "stream_frames_header": 0,
+     "stream_duration_s": 8.333333333333334,
+     "seek": {
+      "ok": true,
+      "target_pts": 62976,
+      "got_pts": 0,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 246,
+     "opened": true,
+     "prop_frame_count": 250.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 123,
+      "pos_after": 124.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_mjpeg_copy",
+   "case": "clean",
+   "ffmpeg_exit": 0,
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 600,
+   "bytes": 33204533,
+   "summary": {
+    "ffprobe": 600,
+    "pyav": 600,
+    "cv2": 600,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "20.000000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 600,
+     "stream_duration": null,
+     "format_duration": "20.000000",
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 600,
+     "packets": 600,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 20.0,
+     "stream_frames_header": 0,
+     "stream_duration_s": null,
+     "seek": {
+      "ok": true,
+      "target_pts": 10000,
+      "got_pts": 10000,
+      "exact": true
+     }
+    },
+    "cv2": {
+     "frames": 600,
+     "opened": true,
+     "prop_frame_count": 600.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 300,
+      "pos_after": 301.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_mjpeg_copy",
+   "case": "ffmpeg_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 300,
+   "bytes": 16252928,
+   "summary": {
+    "ffprobe": 293,
+    "pyav": 293,
+    "cv2": 293,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": null
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "[matroska,webm @ 000001cd69053140] File ended prematurely",
+     "frames": 293,
+     "stream_duration": null,
+     "format_duration": null,
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 293,
+     "packets": 293,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": null,
+     "stream_frames_header": 0,
+     "stream_duration_s": null,
+     "seek": {
+      "ok": true,
+      "target_pts": 4867,
+      "got_pts": 4867,
+      "exact": true
+     }
+    },
+    "cv2": {
+     "frames": 293,
+     "opened": true,
+     "prop_frame_count": -2.7670116110564326e+17,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 146,
+      "pos_after": 1.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_mjpeg_copy",
+   "case": "feeder_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 300,
+   "bytes": 16605975,
+   "summary": {
+    "ffprobe": 300,
+    "pyav": 300,
+    "cv2": 300,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "10.000000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 300,
+     "stream_duration": null,
+     "format_duration": "10.000000",
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 300,
+     "packets": 300,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 10.0,
+     "stream_frames_header": 0,
+     "stream_duration_s": null,
+     "seek": {
+      "ok": true,
+      "target_pts": 5000,
+      "got_pts": 5000,
+      "exact": true
+     }
+    },
+    "cv2": {
+     "frames": 300,
+     "opened": true,
+     "prop_frame_count": 300.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 150,
+      "pos_after": 151.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_mjpeg_copy",
+   "case": "tree_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 300,
+   "bytes": 16252928,
+   "summary": {
+    "ffprobe": 293,
+    "pyav": 293,
+    "cv2": 293,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": null
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "[matroska,webm @ 00000263bd0a5480] File ended prematurely",
+     "frames": 293,
+     "stream_duration": null,
+     "format_duration": null,
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 293,
+     "packets": 293,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": null,
+     "stream_frames_header": 0,
+     "stream_duration_s": null,
+     "seek": {
+      "ok": true,
+      "target_pts": 4867,
+      "got_pts": 4867,
+      "exact": true
+     }
+    },
+    "cv2": {
+     "frames": 293,
+     "opened": true,
+     "prop_frame_count": -2.7670116110564326e+17,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 146,
+      "pos_after": 1.0
+     }
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,197 @@
+{
+ "config": "rawvideo.nut",
+ "codec": "rawvideo",
+ "opts": {},
+ "gop": 1,
+ "source": "yuyv422",
+ "source_note": "real camera YUY2 (1080p) / JPEG-decoded YUY2 (720p)",
+ "res": "1080p",
+ "width": 1920,
+ "height": 1080,
+ "src_pix_fmt": "yuyv422",
+ "target_pix_fmt": "yuyv422",
+ "path": "native",
+ "threads": 0,
+ "frames": 90,
+ "unique_frames": 8,
+ "looped": true,
+ "reps": 3,
+ "warmup_frames": 10,
+ "warmup_discarded": true,
+ "av_version": "18.0.0",
+ "ffmpeg_version": "8.1.2",
+ "library_versions": {
+  "libavutil": [
+   60,
+   26,
+   102
+  ],
+  "libavcodec": [
+   62,
+   28,
+   102
+  ],
+  "libavformat": [
+   62,
+   12,
+   102
+  ],
+  "libavdevice": [
+   62,
+   3,
+   102
+  ],
+  "libavfilter": [
+   11,
+   14,
+   102
+  ],
+  "libswscale": [
+   9,
+   5,
+   102
+  ],
+  "libswresample": [
+   6,
+   3,
+   102
+  ]
+ },
+ "numpy": "2.2.6",
+ "python": "3.12.13",
+ "machine": "Gerald",
+ "cpu_logical": 28,
+ "system_cpu_percent_before": 21.8,
+ "prep_ms_per_frame": 0.696,
+ "warmup": {
+  "encode_wall_s": 0.0232,
+  "encode_fps": 430.48,
+  "encode_cpu_s": 0.0156,
+  "encode_cpu_cores_per_30fps_stream": 0.047,
+  "latency_p50": 2.147,
+  "latency_p95": 2.662,
+  "latency_p99": 2.662,
+  "latency_max": 2.662,
+  "latency_mean": 2.0,
+  "packets": 10,
+  "bytes_per_frame": 4147200.0,
+  "file_bytes": 41472590,
+  "system_cpu_percent_during_encode": 17.9,
+  "decode_frames": 10,
+  "decode_wall_s": 0.018,
+  "decode_fps": 556.9,
+  "decode_cpu_s": 0.0156
+ },
+ "rep_results": [
+  {
+   "encode_wall_s": 0.2261,
+   "encode_fps": 398.13,
+   "encode_cpu_s": 0.2969,
+   "encode_cpu_cores_per_30fps_stream": 0.099,
+   "latency_p50": 2.41,
+   "latency_p95": 3.416,
+   "latency_p99": 3.902,
+   "latency_max": 3.902,
+   "latency_mean": 2.477,
+   "packets": 90,
+   "bytes_per_frame": 4147200.0,
+   "file_bytes": 373251462,
+   "system_cpu_percent_during_encode": 38.8,
+   "decode_frames": 90,
+   "decode_wall_s": 0.1171,
+   "decode_fps": 768.86,
+   "decode_cpu_s": 0.125
+  },
+  {
+   "encode_wall_s": 0.22,
+   "encode_fps": 409.1,
+   "encode_cpu_s": 0.3438,
+   "encode_cpu_cores_per_30fps_stream": 0.115,
+   "latency_p50": 2.344,
+   "latency_p95": 3.06,
+   "latency_p99": 3.744,
+   "latency_max": 3.744,
+   "latency_mean": 2.411,
+   "packets": 90,
+   "bytes_per_frame": 4147200.0,
+   "file_bytes": 373251462,
+   "system_cpu_percent_during_encode": 44.4,
+   "decode_frames": 90,
+   "decode_wall_s": 0.1232,
+   "decode_fps": 730.77,
+   "decode_cpu_s": 0.1094
+  },
+  {
+   "encode_wall_s": 0.2098,
+   "encode_fps": 429.04,
+   "encode_cpu_s": 0.2812,
+   "encode_cpu_cores_per_30fps_stream": 0.094,
+   "latency_p50": 2.243,
+   "latency_p95": 2.745,
+   "latency_p99": 3.719,
+   "latency_max": 3.719,
+   "latency_mean": 2.3,
+   "packets": 90,
+   "bytes_per_frame": 4147200.0,
+   "file_bytes": 373251462,
+   "system_cpu_percent_during_encode": 27.3,
+   "decode_frames": 90,
+   "decode_wall_s": 0.1228,
+   "decode_fps": 732.94,
+   "decode_cpu_s": 0.125
+  }
+ ],
+ "stats": {
+  "encode_fps": {
+   "median": 409.1,
+   "min": 398.13,
+   "max": 429.04
+  },
+  "encode_cpu_cores_per_30fps_stream": {
+   "median": 0.099,
+   "min": 0.094,
+   "max": 0.115
+  },
+  "latency_p50": {
+   "median": 2.344,
+   "min": 2.243,
+   "max": 2.41
+  },
+  "latency_p99": {
+   "median": 3.744,
+   "min": 3.719,
+   "max": 3.902
+  },
+  "latency_max": {
+   "median": 3.744,
+   "min": 3.719,
+   "max": 3.902
+  },
+  "bytes_per_frame": {
+   "median": 4147200.0,
+   "min": 4147200.0,
+   "max": 4147200.0
+  },
+  "decode_fps": {
+   "median": 732.94,
+   "min": 730.77,
+   "max": 768.86
+  },
+  "system_cpu_percent_during_encode": {
+   "median": 38.8,
+   "min": 27.3,
+   "max": 44.4
+  }
+ },
+ "encode_fps": 409.1,
+ "encode_cpu_cores_per_30fps_stream": 0.099,
+ "encode_latency_ms": {
+  "p50": 2.344,
+  "p99": 3.744,
+  "max": 3.744
+ },
+ "bytes_per_frame": 4147200.0,
+ "decode_fps": 732.94,
+ "decoder": "libav default for codec (software unless the decoder is hw)",
+ "system_cpu_percent_after": 29.1
+}

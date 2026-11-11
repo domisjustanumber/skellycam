@@ -1,0 +1,29 @@
+<!doctype html><html><body><video id="v" muted preload="auto"></video><canvas id="c" width="320" height="180"></canvas><script>
+const { ipcRenderer } = require('electron'); const fs = require('fs');
+const list = JSON.parse(fs.readFileSync(new URLSearchParams(location.search).get('list'), 'utf8'));
+const v = document.getElementById('v'), c = document.getElementById('c'), g = c.getContext('2d', { willReadFrequently: true });
+const once = (el, ev, ms) => new Promise(r => { const t = setTimeout(() => r(false), ms); el.addEventListener(ev, function h() { clearTimeout(t); el.removeEventListener(ev, h); r(true); }); });
+async function load(p) { v.src = 'file:///' + p; const ok = await Promise.race([once(v, 'loadeddata', 8000), once(v, 'error', 8000).then(() => false)]); return ok; }
+async function grab(t) { v.currentTime = t; const ok = await once(v, 'seeked', 5000); g.drawImage(v, 0, 0, 320, 180); return { ok, cur: v.currentTime, px: g.getImageData(0, 0, 320, 180).data.slice() }; }
+const mad = (a, b) => { let s = 0; for (let i = 0; i < a.length; i += 4) s += Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]); return s / (a.length / 4 * 3); };
+window.onerror = (m) => console.log("ERR " + m);
+(async () => { console.log("start " + list.pairs.length);
+  const out = { method: "finalized frames grabbed at i/30+0.002 s; for each target the unfinalized frame is matched (min MAD) against all of them", results: [] };
+  for (const pr of list.pairs) {
+    if (!await load(pr.finalized)) { out.results.push({ id: pr.id, error: 'finalized load failed' }); continue; }
+    const N = Math.round(v.duration * 30); const refs = [];
+    for (let i = 0; i < N; i++) refs.push((await grab(i / 30 + 0.002)).px);
+    for (let rep = 0; rep < 2; rep++) {
+      if (!await load(pr.unfinalized)) { out.results.push({ id: pr.id, error: 'unfinalized load failed' }); continue; }
+      for (const t of list.targets) {
+        const u = await grab(t); const m = refs.map(r => mad(u.px, r));
+        let best = 0; m.forEach((x, i) => { if (x < m[best]) best = i; });
+        const tgt = Math.floor(t * 30 + 1e-6);
+        const r = { id: pr.id, rep, target_s: t, target_frame: tgt, seeked: u.ok, currentTime: u.cur, best_match_frame: best, best_mad: +m[best].toFixed(3), mad_vs_target_frame: +m[tgt].toFixed(3), frames_with_mad0: m.map((x, i) => x === 0 ? i : -1).filter(i => i >= 0) };
+        out.results.push(r); ipcRenderer.send("progress", JSON.stringify(r));
+      }
+    }
+  }
+  ipcRenderer.send('done', out);
+})();
+</script></body></html>

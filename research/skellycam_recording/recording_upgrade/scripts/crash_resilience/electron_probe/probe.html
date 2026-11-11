@@ -1,0 +1,59 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>crash probe</title></head>
+<body style="margin:0;background:#000">
+<script>
+function ranges(r) { const a = []; for (let i = 0; i < r.length; i++) a.push([num(r.start(i)), num(r.end(i))]); return a; }
+function num(x) { return Number.isFinite(x) ? x : String(x); }
+function errObj(v) { return v.error ? { code: v.error.code, message: v.error.message } : null; }
+function once(v, name, t) {
+  return new Promise(res => {
+    let done = false;
+    const fin = x => { if (!done) { done = true; res(x); } };
+    v.addEventListener(name, () => fin(true), { once: true });
+    v.addEventListener('error', () => fin(false), { once: true });
+    setTimeout(() => fin(null), t);   // null = timed out
+  });
+}
+async function probe(url, timeoutMs) {
+  const v = document.createElement('video');
+  v.muted = true; v.preload = 'auto'; v.width = 320;
+  document.body.appendChild(v);
+  const out = {};
+  v.src = url;
+  out.loadedmetadata = await once(v, 'loadedmetadata', 5000);
+  out.error = errObj(v);
+  if (out.loadedmetadata !== true) { v.remove(); return out; }
+  out.duration = num(v.duration); out.videoWidth = v.videoWidth; out.videoHeight = v.videoHeight;
+  out.seekable = ranges(v.seekable);
+  out.loadeddata = (v.readyState >= 2) ? true : await once(v, 'loadeddata', 5000);
+  const mid = isFinite(v.duration) && v.duration > 0 ? v.duration / 2 : 1.0;
+  v.currentTime = mid;
+  out.seek_mid = await once(v, 'seeked', 5000);
+  out.seek_mid_target = mid; out.seek_mid_currentTime = v.currentTime; out.readyState_after_seek = v.readyState;
+  v.currentTime = 0;
+  await once(v, 'seeked', 5000);
+  let cbs = 0, maxMedia = -1, presented = 0;
+  const cb = (now, md) => { cbs++; maxMedia = Math.max(maxMedia, md.mediaTime); presented = md.presentedFrames; v.requestVideoFrameCallback(cb); };
+  v.requestVideoFrameCallback(cb);
+  v.playbackRate = 4;
+  const q0 = v.getVideoPlaybackQuality();
+  out.totalVideoFrames_before_play = q0.totalVideoFrames;
+  const ended = once(v, 'ended', timeoutMs);
+  // play() can stay pending forever on a stalled file: race it with a timeout
+  const playRes = await Promise.race([
+    v.play().then(() => 'ok', e => 'rejected: ' + String(e)),
+    new Promise(r => setTimeout(() => r('pending'), 5000))]);
+  out.play_ok = playRes === 'ok'; if (playRes !== 'ok') out.play_error = playRes;
+  out.ended = await ended;
+  out.final_currentTime = v.currentTime;
+  out.rvfc_callbacks = cbs; out.rvfc_max_mediaTime = maxMedia; out.rvfc_presentedFrames = presented;
+  const q = v.getVideoPlaybackQuality();
+  out.totalVideoFrames = q.totalVideoFrames; out.droppedVideoFrames = q.droppedVideoFrames;
+  out.decoded_during_play = q.totalVideoFrames - q0.totalVideoFrames;
+  out.duration_after_play = num(v.duration);
+  out.error_after_play = errObj(v);
+  v.pause(); v.removeAttribute('src'); v.load(); v.remove();
+  return out;
+}
+</script>
+</body></html>

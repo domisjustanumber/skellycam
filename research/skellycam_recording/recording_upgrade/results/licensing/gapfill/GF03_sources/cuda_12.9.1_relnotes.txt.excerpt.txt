@@ -1,0 +1,18 @@
+source file: work/txt/cuda_12.9.1_relnotes.txt
+access date: 2026-11-10
+
+[R09] found_verbatim=True
+Added hardware-accelerated JPEG encoding support for NVIDIA Jetson Thor hardware (Blackwell SM 10.1 architecture).
+
+[R10] found_verbatim=True
+Added hardware-accelerated JPEG decoding support in nvJPEG for NVIDIA Blackwell architecture GPUs.
+
+[R11] found_verbatim=True
+nvjpegEncode: Replaces nvjpegEncodeYUV and nvjpegEncodeImage. nvjpegEncode is required for hardware encoding
+
+[R12] found_verbatim=True
+Maxwell, Pascal, and Volta architectures are now feature-complete with no further enhancements planned.
+
+[R21] found_verbatim=True
+Added JPEG decoding support for two new formats: NV12 and YUY2, for both hardware engine and CUDA. For NV12, the chroma subsampling must be 420, and for YUY2, it must be 422.
+

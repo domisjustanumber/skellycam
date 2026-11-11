@@ -1,0 +1,2373 @@
+{
+ "meta": {
+  "utc": "2026-11-10T05:51:28Z",
+  "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+  "pyav": "19.0.2",
+  "pyav_ffmpeg_libs": {
+   "libavutil": "61.1.102",
+   "libavcodec": "63.1.102",
+   "libavformat": "63.1.102",
+   "libavdevice": "63.1.102",
+   "libavfilter": "12.1.102",
+   "libswscale": "10.1.102",
+   "libswresample": "7.1.102"
+  },
+  "machine": "Gerald",
+  "cpu_count": 28,
+  "args": {
+   "containers": "pkt_only,mkv,mp4,fmp4_1s,fmp4_perframe,fmp4_1s_tb_us,fmp4_perframe_tb_us,mov,avi_tb_rate,nut,mjpeg_raw_mux,raw_sidecar,jpg_folder",
+   "res": "720p,1080p",
+   "frames": 3000,
+   "reps": 5,
+   "fsync": false,
+   "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\jpeg_passthrough\\bench_tmp",
+   "tag": "default_pyav19"
+  },
+  "note": "1 camera per process; worker processes run sequentially; output dir on C:",
+  "cpu_percent_before_1s": 3.0
+ },
+ "summary": {
+  "720p|pkt_only": {
+   "cpu_us_per_frame_mux": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_us_per_frame_mux": {
+    "median": 0.6821000000248508,
+    "min": 0.676700000137013,
+    "max": 0.6988999994064216
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.000300002284348011,
+    "min": 0.000200001522898674,
+    "max": 0.0005000001692678779
+   },
+   "reps": 5,
+   "bytes_on_disk": 0,
+   "payload_bytes": 166023810
+  },
+  "720p|mkv": {
+   "cpu_us_per_frame_mux": {
+    "median": 15.625,
+    "min": 15.625,
+    "max": 20.833333333333332
+   },
+   "wall_us_per_frame_mux": {
+    "median": 19.035899999532074,
+    "min": 18.577333333572216,
+    "max": 19.307533333631
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.3755999969143886,
+    "min": 0.3628999984357506,
+    "max": 0.3812000031757634
+   },
+   "reps": 5,
+   "bytes_on_disk": 166160961,
+   "payload_bytes": 166023810
+  },
+  "720p|mp4": {
+   "cpu_us_per_frame_mux": {
+    "median": 15.625,
+    "min": 15.625,
+    "max": 20.833333333333332
+   },
+   "wall_us_per_frame_mux": {
+    "median": 17.86826666648267,
+    "min": 17.43480000004638,
+    "max": 18.31089999905089
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.27150000096298754,
+    "min": 0.2457999980833847,
+    "max": 0.48940000124275684
+   },
+   "reps": 5,
+   "bytes_on_disk": 166059282,
+   "payload_bytes": 166023810
+  },
+  "720p|fmp4_1s": {
+   "cpu_us_per_frame_mux": {
+    "median": 20.833333333333332,
+    "min": 15.625,
+    "max": 20.833333333333332
+   },
+   "wall_us_per_frame_mux": {
+    "median": 20.693366666819202,
+    "min": 20.46596666696132,
+    "max": 21.363133332973423
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.5319000010786112,
+    "min": 0.5024000020057429,
+    "max": 0.7082999982230831
+   },
+   "reps": 5,
+   "bytes_on_disk": 166061056,
+   "payload_bytes": 166023810
+  },
+  "720p|fmp4_perframe": {
+   "cpu_us_per_frame_mux": {
+    "median": 20.833333333333332,
+    "min": 20.833333333333332,
+    "max": 20.833333333333332
+   },
+   "wall_us_per_frame_mux": {
+    "median": 20.088433334118843,
+    "min": 19.59963333259414,
+    "max": 20.7279000011719
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.29799999902024865,
+    "min": 0.28619999648071826,
+    "max": 0.32559999817749485
+   },
+   "reps": 5,
+   "bytes_on_disk": 166417610,
+   "payload_bytes": 166023810
+  },
+  "720p|fmp4_1s_tb_us": {
+   "cpu_us_per_frame_mux": {
+    "median": 20.833333333333332,
+    "min": 20.833333333333332,
+    "max": 20.833333333333332
+   },
+   "wall_us_per_frame_mux": {
+    "median": 20.784933333440375,
+    "min": 20.559433333498117,
+    "max": 20.936633332894417
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.6372000025294255,
+    "min": 0.5205999987083487,
+    "max": 0.7566000022052322
+   },
+   "reps": 5,
+   "bytes_on_disk": 166061056,
+   "payload_bytes": 166023810
+  },
+  "720p|fmp4_perframe_tb_us": {
+   "cpu_us_per_frame_mux": {
+    "median": 20.833333333333332,
+    "min": 15.625,
+    "max": 20.833333333333332
+   },
+   "wall_us_per_frame_mux": {
+    "median": 20.411566666249808,
+    "min": 20.039099999848986,
+    "max": 20.56063333293423
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.28389999715727754,
+    "min": 0.27749999935622327,
+    "max": 0.30780000088270754
+   },
+   "reps": 5,
+   "bytes_on_disk": 166417610,
+   "payload_bytes": 166023810
+  },
+  "720p|mov": {
+   "cpu_us_per_frame_mux": {
+    "median": 15.625,
+    "min": 15.625,
+    "max": 20.833333333333332
+   },
+   "wall_us_per_frame_mux": {
+    "median": 17.974866666918388,
+    "min": 17.784733332518954,
+    "max": 18.436866666888818
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.2730999985942617,
+    "min": 0.2623000000312459,
+    "max": 0.28110000130254775
+   },
+   "reps": 5,
+   "bytes_on_disk": 166059189,
+   "payload_bytes": 166023810
+  },
+  "720p|avi_tb_rate": {
+   "cpu_us_per_frame_mux": {
+    "median": 15.625,
+    "min": 15.625,
+    "max": 15.625
+   },
+   "wall_us_per_frame_mux": {
+    "median": 16.148300001077587,
+    "min": 16.04399999996531,
+    "max": 16.88323333291919
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.22570000146515667,
+    "min": 0.22199999875738285,
+    "max": 0.23470000087399967
+   },
+   "reps": 5,
+   "bytes_on_disk": 166102998,
+   "payload_bytes": 166023810
+  },
+  "720p|nut": {
+   "cpu_us_per_frame_mux": {
+    "median": 15.625,
+    "min": 15.625,
+    "max": 20.833333333333332
+   },
+   "wall_us_per_frame_mux": {
+    "median": 17.554299999270977,
+    "min": 17.22659999965496,
+    "max": 17.6549666672751
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.5720000008295756,
+    "min": 0.5461000000650529,
+    "max": 0.605199998972239
+   },
+   "reps": 5,
+   "bytes_on_disk": 166110363,
+   "payload_bytes": 166023810
+  },
+  "720p|mjpeg_raw_mux": {
+   "cpu_us_per_frame_mux": {
+    "median": 15.625,
+    "min": 15.625,
+    "max": 20.833333333333332
+   },
+   "wall_us_per_frame_mux": {
+    "median": 16.51253333329805,
+    "min": 16.247233333463857,
+    "max": 17.087366665994825
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.14980000196374021,
+    "min": 0.14319999900180846,
+    "max": 0.15970000094966963
+   },
+   "reps": 5,
+   "bytes_on_disk": 166023810,
+   "payload_bytes": 166023810
+  },
+  "720p|raw_sidecar": {
+   "cpu_us_per_frame_mux": {
+    "median": 20.833333333333332,
+    "min": 20.833333333333332,
+    "max": 20.833333333333332
+   },
+   "wall_us_per_frame_mux": {
+    "median": 19.97069999924861,
+    "min": 19.35103333259273,
+    "max": 20.598666666046483
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.14210000153980218,
+    "min": 0.13080000280751847,
+    "max": 0.14310000187833793
+   },
+   "reps": 5,
+   "bytes_on_disk": 166083810,
+   "payload_bytes": 166023810
+  },
+  "720p|jpg_folder": {
+   "cpu_us_per_frame_mux": {
+    "median": 192.70833333333334,
+    "min": 187.5,
+    "max": 218.75
+   },
+   "wall_us_per_frame_mux": {
+    "median": 217.92640000057872,
+    "min": 190.72413333318158,
+    "max": 298.44379999970744
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.0006999980541877449,
+    "min": 0.0006000009307172149,
+    "max": 0.000700001692166552
+   },
+   "reps": 5,
+   "bytes_on_disk": 166023810,
+   "payload_bytes": 166023810
+  },
+  "1080p|pkt_only": {
+   "cpu_us_per_frame_mux": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_us_per_frame_mux": {
+    "median": 0.6593666669990247,
+    "min": 0.6562000004729877,
+    "max": 0.6615333331865259
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.0002999986463692039,
+    "min": 0.0002999986463692039,
+    "max": 0.000300002284348011
+   },
+   "reps": 5,
+   "bytes_on_disk": 0,
+   "payload_bytes": 577145177
+  },
+  "1080p|mkv": {
+   "cpu_us_per_frame_mux": {
+    "median": 52.083333333333336,
+    "min": 52.083333333333336,
+    "max": 57.291666666666664
+   },
+   "wall_us_per_frame_mux": {
+    "median": 55.20056666622016,
+    "min": 54.253466667432804,
+    "max": 56.66920000051808
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.401399996917462,
+    "min": 0.3820000019914005,
+    "max": 0.40809999700286426
+   },
+   "reps": 5,
+   "bytes_on_disk": 577282544,
+   "payload_bytes": 577145177
+  },
+  "1080p|mp4": {
+   "cpu_us_per_frame_mux": {
+    "median": 52.083333333333336,
+    "min": 41.666666666666664,
+    "max": 57.291666666666664
+   },
+   "wall_us_per_frame_mux": {
+    "median": 51.22306666695901,
+    "min": 50.94929999904707,
+    "max": 53.25950000042212
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.27800000316346996,
+    "min": 0.2674999996088445,
+    "max": 0.29010000071139075
+   },
+   "reps": 5,
+   "bytes_on_disk": 577181349,
+   "payload_bytes": 577145177
+  },
+  "1080p|fmp4_1s": {
+   "cpu_us_per_frame_mux": {
+    "median": 57.291666666666664,
+    "min": 57.291666666666664,
+    "max": 62.5
+   },
+   "wall_us_per_frame_mux": {
+    "median": 59.924166667769896,
+    "min": 59.43943333356098,
+    "max": 60.596133333698766
+   },
+   "cpu_ms_close": {
+    "median": 15.625,
+    "min": 0.0,
+    "max": 15.625
+   },
+   "wall_ms_close": {
+    "median": 1.539799999591196,
+    "min": 1.4098999999987427,
+    "max": 1.7126999991887715
+   },
+   "reps": 5,
+   "bytes_on_disk": 577182423,
+   "payload_bytes": 577145177
+  },
+  "1080p|fmp4_perframe": {
+   "cpu_us_per_frame_mux": {
+    "median": 57.291666666666664,
+    "min": 52.083333333333336,
+    "max": 57.291666666666664
+   },
+   "wall_us_per_frame_mux": {
+    "median": 55.679933334128386,
+    "min": 55.395433333615074,
+    "max": 57.48206666612532
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.30079999851295725,
+    "min": 0.2792999985103961,
+    "max": 0.320099999953527
+   },
+   "reps": 5,
+   "bytes_on_disk": 577538977,
+   "payload_bytes": 577145177
+  },
+  "1080p|fmp4_1s_tb_us": {
+   "cpu_us_per_frame_mux": {
+    "median": 62.5,
+    "min": 57.291666666666664,
+    "max": 62.5
+   },
+   "wall_us_per_frame_mux": {
+    "median": 60.23773333314845,
+    "min": 59.0318333330894,
+    "max": 62.290866666444344
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 15.625
+   },
+   "wall_ms_close": {
+    "median": 1.544900002045324,
+    "min": 1.4077000014367513,
+    "max": 1.6744999993534293
+   },
+   "reps": 5,
+   "bytes_on_disk": 577182423,
+   "payload_bytes": 577145177
+  },
+  "1080p|fmp4_perframe_tb_us": {
+   "cpu_us_per_frame_mux": {
+    "median": 57.291666666666664,
+    "min": 52.083333333333336,
+    "max": 62.5
+   },
+   "wall_us_per_frame_mux": {
+    "median": 56.256733332702424,
+    "min": 55.49870000080167,
+    "max": 61.032866667422546
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.2888999988499563,
+    "min": 0.2738999974098988,
+    "max": 0.31060000037541613
+   },
+   "reps": 5,
+   "bytes_on_disk": 577538977,
+   "payload_bytes": 577145177
+  },
+  "1080p|mov": {
+   "cpu_us_per_frame_mux": {
+    "median": 52.083333333333336,
+    "min": 46.875,
+    "max": 52.083333333333336
+   },
+   "wall_us_per_frame_mux": {
+    "median": 51.29799999970904,
+    "min": 50.679833333560964,
+    "max": 52.14886666605404
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.28160000147181563,
+    "min": 0.2702000019780826,
+    "max": 0.2973000009660609
+   },
+   "reps": 5,
+   "bytes_on_disk": 577181256,
+   "payload_bytes": 577145177
+  },
+  "1080p|avi_tb_rate": {
+   "cpu_us_per_frame_mux": {
+    "median": 46.875,
+    "min": 41.666666666666664,
+    "max": 46.875
+   },
+   "wall_us_per_frame_mux": {
+    "median": 46.355799999825344,
+    "min": 45.579000000240434,
+    "max": 47.94083333278346
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.24429999757558107,
+    "min": 0.22280000121099874,
+    "max": 0.24510000002919696
+   },
+   "reps": 5,
+   "bytes_on_disk": 577225074,
+   "payload_bytes": 577145177
+  },
+  "1080p|nut": {
+   "cpu_us_per_frame_mux": {
+    "median": 46.875,
+    "min": 46.875,
+    "max": 46.875
+   },
+   "wall_us_per_frame_mux": {
+    "median": 47.929133333430705,
+    "min": 47.27730000013253,
+    "max": 48.15586666639623
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 15.625
+   },
+   "wall_ms_close": {
+    "median": 0.6591999990632758,
+    "min": 0.6221000003279187,
+    "max": 0.6672000017715618
+   },
+   "reps": 5,
+   "bytes_on_disk": 577246690,
+   "payload_bytes": 577145177
+  },
+  "1080p|mjpeg_raw_mux": {
+   "cpu_us_per_frame_mux": {
+    "median": 46.875,
+    "min": 41.666666666666664,
+    "max": 46.875
+   },
+   "wall_us_per_frame_mux": {
+    "median": 46.40036666629991,
+    "min": 45.96199999893239,
+    "max": 49.118300000069816
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.17870000010589138,
+    "min": 0.15949999942677096,
+    "max": 0.18760000239126384
+   },
+   "reps": 5,
+   "bytes_on_disk": 577145177,
+   "payload_bytes": 577145177
+  },
+  "1080p|raw_sidecar": {
+   "cpu_us_per_frame_mux": {
+    "median": 41.666666666666664,
+    "min": 36.458333333333336,
+    "max": 41.666666666666664
+   },
+   "wall_us_per_frame_mux": {
+    "median": 42.98253333399771,
+    "min": 42.09333333346876,
+    "max": 43.535066666663624
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.12769999739248306,
+    "min": 0.12239999705343507,
+    "max": 0.15630000052624382
+   },
+   "reps": 5,
+   "bytes_on_disk": 577205177,
+   "payload_bytes": 577145177
+  },
+  "1080p|jpg_folder": {
+   "cpu_us_per_frame_mux": {
+    "median": 223.95833333333334,
+    "min": 218.75,
+    "max": 234.375
+   },
+   "wall_us_per_frame_mux": {
+    "median": 232.53446666664482,
+    "min": 224.88890000022366,
+    "max": 250.99106666554385
+   },
+   "cpu_ms_close": {
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "wall_ms_close": {
+    "median": 0.0006000009307172149,
+    "min": 0.0006000009307172149,
+    "max": 0.000700001692166552
+   },
+   "reps": 5,
+   "bytes_on_disk": 577145177,
+   "payload_bytes": 577145177
+  }
+ },
+ "runs": [
+  {
+   "container": "pkt_only",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 44836,
+   "cpu_us_per_frame_mux": 0.0,
+   "wall_us_per_frame_mux": 0.6769000004472522,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.0005000001692678779,
+   "bytes_on_disk": 0,
+   "rep": 0
+  },
+  {
+   "container": "pkt_only",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 27996,
+   "cpu_us_per_frame_mux": 0.0,
+   "wall_us_per_frame_mux": 0.676700000137013,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.000300002284348011,
+   "bytes_on_disk": 0,
+   "rep": 1
+  },
+  {
+   "container": "pkt_only",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 3376,
+   "cpu_us_per_frame_mux": 0.0,
+   "wall_us_per_frame_mux": 0.6988999994064216,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.000300002284348011,
+   "bytes_on_disk": 0,
+   "rep": 2
+  },
+  {
+   "container": "pkt_only",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 24012,
+   "cpu_us_per_frame_mux": 0.0,
+   "wall_us_per_frame_mux": 0.6821000000248508,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.000300002284348011,
+   "bytes_on_disk": 0,
+   "rep": 3
+  },
+  {
+   "container": "pkt_only",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 14616,
+   "cpu_us_per_frame_mux": 0.0,
+   "wall_us_per_frame_mux": 0.6894666670026103,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.000200001522898674,
+   "bytes_on_disk": 0,
+   "rep": 4
+  },
+  {
+   "container": "mkv",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 23312,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 18.921300000026047,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.3772999989450909,
+   "bytes_on_disk": 166160961,
+   "rep": 0
+  },
+  {
+   "container": "mkv",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 40124,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 19.25660000051721,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.3628999984357506,
+   "bytes_on_disk": 166160961,
+   "rep": 1
+  },
+  {
+   "container": "mkv",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 47716,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 19.307533333631,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.3755999969143886,
+   "bytes_on_disk": 166160961,
+   "rep": 2
+  },
+  {
+   "container": "mkv",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 39892,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 19.035899999532074,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.3812000031757634,
+   "bytes_on_disk": 166160961,
+   "rep": 3
+  },
+  {
+   "container": "mkv",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 26732,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 18.577333333572216,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.3730000025825575,
+   "bytes_on_disk": 166160961,
+   "rep": 4
+  },
+  {
+   "container": "mp4",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 39664,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 17.43480000004638,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.48940000124275684,
+   "bytes_on_disk": 166059282,
+   "rep": 0
+  },
+  {
+   "container": "mp4",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 3948,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 17.82223333308745,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.27150000096298754,
+   "bytes_on_disk": 166059282,
+   "rep": 1
+  },
+  {
+   "container": "mp4",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 21116,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 18.31089999905089,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.3080000024056062,
+   "bytes_on_disk": 166059282,
+   "rep": 2
+  },
+  {
+   "container": "mp4",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 20716,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 18.19216666626744,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2696999981708359,
+   "bytes_on_disk": 166059282,
+   "rep": 3
+  },
+  {
+   "container": "mp4",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 12256,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 17.86826666648267,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2457999980833847,
+   "bytes_on_disk": 166059282,
+   "rep": 4
+  },
+  {
+   "container": "fmp4_1s",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 25800,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 20.46596666696132,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.5319000010786112,
+   "bytes_on_disk": 166061056,
+   "rep": 0
+  },
+  {
+   "container": "fmp4_1s",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 8448,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 20.693366666819202,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.7082999982230831,
+   "bytes_on_disk": 166061056,
+   "rep": 1
+  },
+  {
+   "container": "fmp4_1s",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 18500,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 21.12446666675775,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.5024000020057429,
+   "bytes_on_disk": 166061056,
+   "rep": 2
+  },
+  {
+   "container": "fmp4_1s",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 36384,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 20.68709999972877,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.5191999989619944,
+   "bytes_on_disk": 166061056,
+   "rep": 3
+  },
+  {
+   "container": "fmp4_1s",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 22464,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 21.363133332973423,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.6304000016825739,
+   "bytes_on_disk": 166061056,
+   "rep": 4
+  },
+  {
+   "container": "fmp4_perframe",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 40660,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 20.7279000011719,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.32559999817749485,
+   "bytes_on_disk": 166417610,
+   "rep": 0
+  },
+  {
+   "container": "fmp4_perframe",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 44120,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 20.411099999667687,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.29799999902024865,
+   "bytes_on_disk": 166417610,
+   "rep": 1
+  },
+  {
+   "container": "fmp4_perframe",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 11188,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 19.59963333259414,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.3103000017290469,
+   "bytes_on_disk": 166417610,
+   "rep": 2
+  },
+  {
+   "container": "fmp4_perframe",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 7592,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 19.79809999951006,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2888000017264858,
+   "bytes_on_disk": 166417610,
+   "rep": 3
+  },
+  {
+   "container": "fmp4_perframe",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 3244,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 20.088433334118843,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.28619999648071826,
+   "bytes_on_disk": 166417610,
+   "rep": 4
+  },
+  {
+   "container": "fmp4_1s_tb_us",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 26016,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 20.586199999039916,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.5242000006546732,
+   "bytes_on_disk": 166061056,
+   "rep": 0
+  },
+  {
+   "container": "fmp4_1s_tb_us",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 28108,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 20.559433333498117,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.5205999987083487,
+   "bytes_on_disk": 166061056,
+   "rep": 1
+  },
+  {
+   "container": "fmp4_1s_tb_us",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 47492,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 20.80993333341515,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.7566000022052322,
+   "bytes_on_disk": 166061056,
+   "rep": 2
+  },
+  {
+   "container": "fmp4_1s_tb_us",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 34944,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 20.936633332894417,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.6372000025294255,
+   "bytes_on_disk": 166061056,
+   "rep": 3
+  },
+  {
+   "container": "fmp4_1s_tb_us",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 29964,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 20.784933333440375,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.7274999989022035,
+   "bytes_on_disk": 166061056,
+   "rep": 4
+  },
+  {
+   "container": "fmp4_perframe_tb_us",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 34012,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 20.56063333293423,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.30780000088270754,
+   "bytes_on_disk": 166417610,
+   "rep": 0
+  },
+  {
+   "container": "fmp4_perframe_tb_us",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 14148,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 20.039099999848986,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.27749999935622327,
+   "bytes_on_disk": 166417610,
+   "rep": 1
+  },
+  {
+   "container": "fmp4_perframe_tb_us",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 28840,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 20.411566666249808,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2830000012181699,
+   "bytes_on_disk": 166417610,
+   "rep": 2
+  },
+  {
+   "container": "fmp4_perframe_tb_us",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 624,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 20.437766666873358,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.29849999918951653,
+   "bytes_on_disk": 166417610,
+   "rep": 3
+  },
+  {
+   "container": "fmp4_perframe_tb_us",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 37540,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 20.24353333399631,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.28389999715727754,
+   "bytes_on_disk": 166417610,
+   "rep": 4
+  },
+  {
+   "container": "mov",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 32252,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 17.974866666918388,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2730999985942617,
+   "bytes_on_disk": 166059189,
+   "rep": 0
+  },
+  {
+   "container": "mov",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 46268,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 17.784733332518954,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.27630000113276765,
+   "bytes_on_disk": 166059189,
+   "rep": 1
+  },
+  {
+   "container": "mov",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 46776,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 17.885533333659016,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2623000000312459,
+   "bytes_on_disk": 166059189,
+   "rep": 2
+  },
+  {
+   "container": "mov",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 25652,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 18.436866666888818,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.28110000130254775,
+   "bytes_on_disk": 166059189,
+   "rep": 3
+  },
+  {
+   "container": "mov",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 44416,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 18.02016666624695,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.26960000104736537,
+   "bytes_on_disk": 166059189,
+   "rep": 4
+  },
+  {
+   "container": "avi_tb_rate",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 25784,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 16.04399999996531,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.22570000146515667,
+   "bytes_on_disk": 166102998,
+   "rep": 0
+  },
+  {
+   "container": "avi_tb_rate",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 45232,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 16.056966665928485,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.22850000095786527,
+   "bytes_on_disk": 166102998,
+   "rep": 1
+  },
+  {
+   "container": "avi_tb_rate",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 22300,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 16.88323333291919,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.23470000087399967,
+   "bytes_on_disk": 166102998,
+   "rep": 2
+  },
+  {
+   "container": "avi_tb_rate",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 20376,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 16.148300001077587,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.22369999715010636,
+   "bytes_on_disk": 166102998,
+   "rep": 3
+  },
+  {
+   "container": "avi_tb_rate",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 28988,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 16.366866667037055,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.22199999875738285,
+   "bytes_on_disk": 166102998,
+   "rep": 4
+  },
+  {
+   "container": "nut",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 40244,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 17.6549666672751,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.5461000000650529,
+   "bytes_on_disk": 166110363,
+   "rep": 0
+  },
+  {
+   "container": "nut",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 8984,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 17.402799998914514,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.579499999730615,
+   "bytes_on_disk": 166110363,
+   "rep": 1
+  },
+  {
+   "container": "nut",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 4224,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 17.610033333767205,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.605199998972239,
+   "bytes_on_disk": 166110363,
+   "rep": 2
+  },
+  {
+   "container": "nut",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 38944,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 17.22659999965496,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.5720000008295756,
+   "bytes_on_disk": 166110363,
+   "rep": 3
+  },
+  {
+   "container": "nut",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 44856,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 17.554299999270977,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.5715000006603077,
+   "bytes_on_disk": 166110363,
+   "rep": 4
+  },
+  {
+   "container": "mjpeg_raw_mux",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 37196,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 16.58543333299652,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.15970000094966963,
+   "bytes_on_disk": 166023810,
+   "rep": 0
+  },
+  {
+   "container": "mjpeg_raw_mux",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 37748,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 16.51253333329805,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.14319999900180846,
+   "bytes_on_disk": 166023810,
+   "rep": 1
+  },
+  {
+   "container": "mjpeg_raw_mux",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 12572,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 17.087366665994825,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.15780000103404745,
+   "bytes_on_disk": 166023810,
+   "rep": 2
+  },
+  {
+   "container": "mjpeg_raw_mux",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 4972,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 16.247233333463857,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.14409999857889488,
+   "bytes_on_disk": 166023810,
+   "rep": 3
+  },
+  {
+   "container": "mjpeg_raw_mux",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 26272,
+   "cpu_us_per_frame_mux": 15.625,
+   "wall_us_per_frame_mux": 16.248566666035913,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.14980000196374021,
+   "bytes_on_disk": 166023810,
+   "rep": 4
+  },
+  {
+   "container": "raw_sidecar",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 23952,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 19.35103333259273,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.14310000187833793,
+   "bytes_on_disk": 166083810,
+   "rep": 0
+  },
+  {
+   "container": "raw_sidecar",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 4352,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 19.882266666778985,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.13750000289292075,
+   "bytes_on_disk": 166083810,
+   "rep": 1
+  },
+  {
+   "container": "raw_sidecar",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 48052,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 20.00469999984489,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.13080000280751847,
+   "bytes_on_disk": 166083810,
+   "rep": 2
+  },
+  {
+   "container": "raw_sidecar",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 47912,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 20.598666666046483,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.1427000024705194,
+   "bytes_on_disk": 166083810,
+   "rep": 3
+  },
+  {
+   "container": "raw_sidecar",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 21864,
+   "cpu_us_per_frame_mux": 20.833333333333332,
+   "wall_us_per_frame_mux": 19.97069999924861,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.14210000153980218,
+   "bytes_on_disk": 166083810,
+   "rep": 4
+  },
+  {
+   "container": "jpg_folder",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 45752,
+   "cpu_us_per_frame_mux": 218.75,
+   "wall_us_per_frame_mux": 217.92640000057872,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.0006999980541877449,
+   "bytes_on_disk": 166023810,
+   "rep": 0
+  },
+  {
+   "container": "jpg_folder",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 46440,
+   "cpu_us_per_frame_mux": 187.5,
+   "wall_us_per_frame_mux": 298.44379999970744,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.0006000009307172149,
+   "bytes_on_disk": 166023810,
+   "rep": 1
+  },
+  {
+   "container": "jpg_folder",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 17884,
+   "cpu_us_per_frame_mux": 192.70833333333334,
+   "wall_us_per_frame_mux": 222.03360000033476,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.000700001692166552,
+   "bytes_on_disk": 166023810,
+   "rep": 2
+  },
+  {
+   "container": "jpg_folder",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 5792,
+   "cpu_us_per_frame_mux": 192.70833333333334,
+   "wall_us_per_frame_mux": 190.72413333318158,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.0006000009307172149,
+   "bytes_on_disk": 166023810,
+   "rep": 3
+  },
+  {
+   "container": "jpg_folder",
+   "res": "720p",
+   "frames": 3000,
+   "payload_bytes": 166023810,
+   "pid": 23712,
+   "cpu_us_per_frame_mux": 197.91666666666666,
+   "wall_us_per_frame_mux": 196.37966666656817,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.0006999980541877449,
+   "bytes_on_disk": 166023810,
+   "rep": 4
+  },
+  {
+   "container": "pkt_only",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 46604,
+   "cpu_us_per_frame_mux": 0.0,
+   "wall_us_per_frame_mux": 0.6615333331865259,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.000300002284348011,
+   "bytes_on_disk": 0,
+   "rep": 0
+  },
+  {
+   "container": "pkt_only",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 12932,
+   "cpu_us_per_frame_mux": 0.0,
+   "wall_us_per_frame_mux": 0.6569999992886247,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.000300002284348011,
+   "bytes_on_disk": 0,
+   "rep": 1
+  },
+  {
+   "container": "pkt_only",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 35140,
+   "cpu_us_per_frame_mux": 0.0,
+   "wall_us_per_frame_mux": 0.6593666669990247,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.0002999986463692039,
+   "bytes_on_disk": 0,
+   "rep": 2
+  },
+  {
+   "container": "pkt_only",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 38320,
+   "cpu_us_per_frame_mux": 0.0,
+   "wall_us_per_frame_mux": 0.6596333332709037,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.0002999986463692039,
+   "bytes_on_disk": 0,
+   "rep": 3
+  },
+  {
+   "container": "pkt_only",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 18140,
+   "cpu_us_per_frame_mux": 0.0,
+   "wall_us_per_frame_mux": 0.6562000004729877,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.0002999986463692039,
+   "bytes_on_disk": 0,
+   "rep": 4
+  },
+  {
+   "container": "mkv",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 32680,
+   "cpu_us_per_frame_mux": 57.291666666666664,
+   "wall_us_per_frame_mux": 56.66920000051808,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.40809999700286426,
+   "bytes_on_disk": 577282544,
+   "rep": 0
+  },
+  {
+   "container": "mkv",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 19928,
+   "cpu_us_per_frame_mux": 52.083333333333336,
+   "wall_us_per_frame_mux": 55.697366666815164,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.3974999999627471,
+   "bytes_on_disk": 577282544,
+   "rep": 1
+  },
+  {
+   "container": "mkv",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 42448,
+   "cpu_us_per_frame_mux": 52.083333333333336,
+   "wall_us_per_frame_mux": 54.42313333333004,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.401399996917462,
+   "bytes_on_disk": 577282544,
+   "rep": 2
+  },
+  {
+   "container": "mkv",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 25816,
+   "cpu_us_per_frame_mux": 52.083333333333336,
+   "wall_us_per_frame_mux": 54.253466667432804,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.40529999751015566,
+   "bytes_on_disk": 577282544,
+   "rep": 3
+  },
+  {
+   "container": "mkv",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 3772,
+   "cpu_us_per_frame_mux": 57.291666666666664,
+   "wall_us_per_frame_mux": 55.20056666622016,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.3820000019914005,
+   "bytes_on_disk": 577282544,
+   "rep": 4
+  },
+  {
+   "container": "mp4",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 36496,
+   "cpu_us_per_frame_mux": 52.083333333333336,
+   "wall_us_per_frame_mux": 51.22306666695901,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2877999977499712,
+   "bytes_on_disk": 577181349,
+   "rep": 0
+  },
+  {
+   "container": "mp4",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 21312,
+   "cpu_us_per_frame_mux": 41.666666666666664,
+   "wall_us_per_frame_mux": 50.967133333566984,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.29010000071139075,
+   "bytes_on_disk": 577181349,
+   "rep": 1
+  },
+  {
+   "container": "mp4",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 11484,
+   "cpu_us_per_frame_mux": 52.083333333333336,
+   "wall_us_per_frame_mux": 50.94929999904707,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.27800000316346996,
+   "bytes_on_disk": 577181349,
+   "rep": 2
+  },
+  {
+   "container": "mp4",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 41540,
+   "cpu_us_per_frame_mux": 57.291666666666664,
+   "wall_us_per_frame_mux": 53.08703333381951,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2674999996088445,
+   "bytes_on_disk": 577181349,
+   "rep": 3
+  },
+  {
+   "container": "mp4",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 22080,
+   "cpu_us_per_frame_mux": 52.083333333333336,
+   "wall_us_per_frame_mux": 53.25950000042212,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2738999974098988,
+   "bytes_on_disk": 577181349,
+   "rep": 4
+  },
+  {
+   "container": "fmp4_1s",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 14952,
+   "cpu_us_per_frame_mux": 57.291666666666664,
+   "wall_us_per_frame_mux": 59.924166667769896,
+   "cpu_ms_close": 15.625,
+   "wall_ms_close": 1.4098999999987427,
+   "bytes_on_disk": 577182423,
+   "rep": 0
+  },
+  {
+   "container": "fmp4_1s",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 31856,
+   "cpu_us_per_frame_mux": 57.291666666666664,
+   "wall_us_per_frame_mux": 59.56343333309633,
+   "cpu_ms_close": 15.625,
+   "wall_ms_close": 1.4652999998361338,
+   "bytes_on_disk": 577182423,
+   "rep": 1
+  },
+  {
+   "container": "fmp4_1s",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 35676,
+   "cpu_us_per_frame_mux": 57.291666666666664,
+   "wall_us_per_frame_mux": 59.43943333356098,
+   "cpu_ms_close": 15.625,
+   "wall_ms_close": 1.5853000004426576,
+   "bytes_on_disk": 577182423,
+   "rep": 2
+  },
+  {
+   "container": "fmp4_1s",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 33040,
+   "cpu_us_per_frame_mux": 62.5,
+   "wall_us_per_frame_mux": 59.92893333313987,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 1.539799999591196,
+   "bytes_on_disk": 577182423,
+   "rep": 3
+  },
+  {
+   "container": "fmp4_1s",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 42944,
+   "cpu_us_per_frame_mux": 62.5,
+   "wall_us_per_frame_mux": 60.596133333698766,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 1.7126999991887715,
+   "bytes_on_disk": 577182423,
+   "rep": 4
+  },
+  {
+   "container": "fmp4_perframe",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 44960,
+   "cpu_us_per_frame_mux": 52.083333333333336,
+   "wall_us_per_frame_mux": 55.56050000086543,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.320099999953527,
+   "bytes_on_disk": 577538977,
+   "rep": 0
+  },
+  {
+   "container": "fmp4_perframe",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 25960,
+   "cpu_us_per_frame_mux": 52.083333333333336,
+   "wall_us_per_frame_mux": 55.679933334128386,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.30079999851295725,
+   "bytes_on_disk": 577538977,
+   "rep": 1
+  },
+  {
+   "container": "fmp4_perframe",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 46780,
+   "cpu_us_per_frame_mux": 57.291666666666664,
+   "wall_us_per_frame_mux": 55.395433333615074,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2792999985103961,
+   "bytes_on_disk": 577538977,
+   "rep": 2
+  },
+  {
+   "container": "fmp4_perframe",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 24028,
+   "cpu_us_per_frame_mux": 57.291666666666664,
+   "wall_us_per_frame_mux": 57.48206666612532,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.31229999876813963,
+   "bytes_on_disk": 577538977,
+   "rep": 3
+  },
+  {
+   "container": "fmp4_perframe",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 21376,
+   "cpu_us_per_frame_mux": 57.291666666666664,
+   "wall_us_per_frame_mux": 56.3617666666687,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2958000004582573,
+   "bytes_on_disk": 577538977,
+   "rep": 4
+  },
+  {
+   "container": "fmp4_1s_tb_us",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 30896,
+   "cpu_us_per_frame_mux": 62.5,
+   "wall_us_per_frame_mux": 60.77406666615085,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 1.4077000014367513,
+   "bytes_on_disk": 577182423,
+   "rep": 0
+  },
+  {
+   "container": "fmp4_1s_tb_us",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 24012,
+   "cpu_us_per_frame_mux": 57.291666666666664,
+   "wall_us_per_frame_mux": 62.290866666444344,
+   "cpu_ms_close": 15.625,
+   "wall_ms_close": 1.5474000028916635,
+   "bytes_on_disk": 577182423,
+   "rep": 1
+  },
+  {
+   "container": "fmp4_1s_tb_us",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 15916,
+   "cpu_us_per_frame_mux": 62.5,
+   "wall_us_per_frame_mux": 59.0318333330894,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 1.5227000003505964,
+   "bytes_on_disk": 577182423,
+   "rep": 2
+  },
+  {
+   "container": "fmp4_1s_tb_us",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 45556,
+   "cpu_us_per_frame_mux": 62.5,
+   "wall_us_per_frame_mux": 60.23773333314845,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 1.544900002045324,
+   "bytes_on_disk": 577182423,
+   "rep": 3
+  },
+  {
+   "container": "fmp4_1s_tb_us",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 46588,
+   "cpu_us_per_frame_mux": 62.5,
+   "wall_us_per_frame_mux": 59.82056666592447,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 1.6744999993534293,
+   "bytes_on_disk": 577182423,
+   "rep": 4
+  },
+  {
+   "container": "fmp4_perframe_tb_us",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 37420,
+   "cpu_us_per_frame_mux": 52.083333333333336,
+   "wall_us_per_frame_mux": 56.469266666681506,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.31060000037541613,
+   "bytes_on_disk": 577538977,
+   "rep": 0
+  },
+  {
+   "container": "fmp4_perframe_tb_us",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 16728,
+   "cpu_us_per_frame_mux": 62.5,
+   "wall_us_per_frame_mux": 61.032866667422546,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2738999974098988,
+   "bytes_on_disk": 577538977,
+   "rep": 1
+  },
+  {
+   "container": "fmp4_perframe_tb_us",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 38440,
+   "cpu_us_per_frame_mux": 52.083333333333336,
+   "wall_us_per_frame_mux": 55.49870000080167,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2888999988499563,
+   "bytes_on_disk": 577538977,
+   "rep": 2
+  },
+  {
+   "container": "fmp4_perframe_tb_us",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 16544,
+   "cpu_us_per_frame_mux": 57.291666666666664,
+   "wall_us_per_frame_mux": 55.579566667195955,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2815000007103663,
+   "bytes_on_disk": 577538977,
+   "rep": 3
+  },
+  {
+   "container": "fmp4_perframe_tb_us",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 40608,
+   "cpu_us_per_frame_mux": 57.291666666666664,
+   "wall_us_per_frame_mux": 56.256733332702424,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.29279999944265,
+   "bytes_on_disk": 577538977,
+   "rep": 4
+  },
+  {
+   "container": "mov",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 36636,
+   "cpu_us_per_frame_mux": 46.875,
+   "wall_us_per_frame_mux": 50.679833333560964,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2973000009660609,
+   "bytes_on_disk": 577181256,
+   "rep": 0
+  },
+  {
+   "container": "mov",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 5944,
+   "cpu_us_per_frame_mux": 52.083333333333336,
+   "wall_us_per_frame_mux": 51.29799999970904,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.28160000147181563,
+   "bytes_on_disk": 577181256,
+   "rep": 1
+  },
+  {
+   "container": "mov",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 43660,
+   "cpu_us_per_frame_mux": 52.083333333333336,
+   "wall_us_per_frame_mux": 52.14886666605404,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2702000019780826,
+   "bytes_on_disk": 577181256,
+   "rep": 2
+  },
+  {
+   "container": "mov",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 33784,
+   "cpu_us_per_frame_mux": 46.875,
+   "wall_us_per_frame_mux": 50.81573333397197,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2773000014713034,
+   "bytes_on_disk": 577181256,
+   "rep": 3
+  },
+  {
+   "container": "mov",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 17752,
+   "cpu_us_per_frame_mux": 52.083333333333336,
+   "wall_us_per_frame_mux": 51.37173333302295,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.2934000003733672,
+   "bytes_on_disk": 577181256,
+   "rep": 4
+  },
+  {
+   "container": "avi_tb_rate",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 47328,
+   "cpu_us_per_frame_mux": 41.666666666666664,
+   "wall_us_per_frame_mux": 47.94083333278346,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.24510000002919696,
+   "bytes_on_disk": 577225074,
+   "rep": 0
+  },
+  {
+   "container": "avi_tb_rate",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 25868,
+   "cpu_us_per_frame_mux": 46.875,
+   "wall_us_per_frame_mux": 46.6718666672629,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.24499999926774763,
+   "bytes_on_disk": 577225074,
+   "rep": 1
+  },
+  {
+   "container": "avi_tb_rate",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 14000,
+   "cpu_us_per_frame_mux": 46.875,
+   "wall_us_per_frame_mux": 46.355799999825344,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.22280000121099874,
+   "bytes_on_disk": 577225074,
+   "rep": 2
+  },
+  {
+   "container": "avi_tb_rate",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 41548,
+   "cpu_us_per_frame_mux": 46.875,
+   "wall_us_per_frame_mux": 46.31580000083583,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.24429999757558107,
+   "bytes_on_disk": 577225074,
+   "rep": 3
+  },
+  {
+   "container": "avi_tb_rate",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 44028,
+   "cpu_us_per_frame_mux": 41.666666666666664,
+   "wall_us_per_frame_mux": 45.579000000240434,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.23270000019692816,
+   "bytes_on_disk": 577225074,
+   "rep": 4
+  },
+  {
+   "container": "nut",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 28740,
+   "cpu_us_per_frame_mux": 46.875,
+   "wall_us_per_frame_mux": 47.395566666333856,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.6656000005023088,
+   "bytes_on_disk": 577246690,
+   "rep": 0
+  },
+  {
+   "container": "nut",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 36376,
+   "cpu_us_per_frame_mux": 46.875,
+   "wall_us_per_frame_mux": 48.15586666639623,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.6221000003279187,
+   "bytes_on_disk": 577246690,
+   "rep": 1
+  },
+  {
+   "container": "nut",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 40912,
+   "cpu_us_per_frame_mux": 46.875,
+   "wall_us_per_frame_mux": 47.929133333430705,
+   "cpu_ms_close": 15.625,
+   "wall_ms_close": 0.6591999990632758,
+   "bytes_on_disk": 577246690,
+   "rep": 2
+  },
+  {
+   "container": "nut",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 38124,
+   "cpu_us_per_frame_mux": 46.875,
+   "wall_us_per_frame_mux": 47.94849999962025,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.6289000011747703,
+   "bytes_on_disk": 577246690,
+   "rep": 3
+  },
+  {
+   "container": "nut",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 19316,
+   "cpu_us_per_frame_mux": 46.875,
+   "wall_us_per_frame_mux": 47.27730000013253,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.6672000017715618,
+   "bytes_on_disk": 577246690,
+   "rep": 4
+  },
+  {
+   "container": "mjpeg_raw_mux",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 35616,
+   "cpu_us_per_frame_mux": 46.875,
+   "wall_us_per_frame_mux": 46.39146666643986,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.15949999942677096,
+   "bytes_on_disk": 577145177,
+   "rep": 0
+  },
+  {
+   "container": "mjpeg_raw_mux",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 26212,
+   "cpu_us_per_frame_mux": 41.666666666666664,
+   "wall_us_per_frame_mux": 46.40036666629991,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.16999999934341758,
+   "bytes_on_disk": 577145177,
+   "rep": 1
+  },
+  {
+   "container": "mjpeg_raw_mux",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 39640,
+   "cpu_us_per_frame_mux": 46.875,
+   "wall_us_per_frame_mux": 49.118300000069816,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.18490000002202578,
+   "bytes_on_disk": 577145177,
+   "rep": 2
+  },
+  {
+   "container": "mjpeg_raw_mux",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 37540,
+   "cpu_us_per_frame_mux": 41.666666666666664,
+   "wall_us_per_frame_mux": 46.63576666644076,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.17870000010589138,
+   "bytes_on_disk": 577145177,
+   "rep": 3
+  },
+  {
+   "container": "mjpeg_raw_mux",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 17672,
+   "cpu_us_per_frame_mux": 46.875,
+   "wall_us_per_frame_mux": 45.96199999893239,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.18760000239126384,
+   "bytes_on_disk": 577145177,
+   "rep": 4
+  },
+  {
+   "container": "raw_sidecar",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 44976,
+   "cpu_us_per_frame_mux": 36.458333333333336,
+   "wall_us_per_frame_mux": 42.795866667196,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.12769999739248306,
+   "bytes_on_disk": 577205177,
+   "rep": 0
+  },
+  {
+   "container": "raw_sidecar",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 38084,
+   "cpu_us_per_frame_mux": 41.666666666666664,
+   "wall_us_per_frame_mux": 42.98253333399771,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.12239999705343507,
+   "bytes_on_disk": 577205177,
+   "rep": 1
+  },
+  {
+   "container": "raw_sidecar",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 31472,
+   "cpu_us_per_frame_mux": 41.666666666666664,
+   "wall_us_per_frame_mux": 42.09333333346876,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.15630000052624382,
+   "bytes_on_disk": 577205177,
+   "rep": 2
+  },
+  {
+   "container": "raw_sidecar",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 43940,
+   "cpu_us_per_frame_mux": 41.666666666666664,
+   "wall_us_per_frame_mux": 43.535066666663624,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.15630000052624382,
+   "bytes_on_disk": 577205177,
+   "rep": 3
+  },
+  {
+   "container": "raw_sidecar",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 40484,
+   "cpu_us_per_frame_mux": 41.666666666666664,
+   "wall_us_per_frame_mux": 43.160366666901005,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.1260999997612089,
+   "bytes_on_disk": 577205177,
+   "rep": 4
+  },
+  {
+   "container": "jpg_folder",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 20784,
+   "cpu_us_per_frame_mux": 223.95833333333334,
+   "wall_us_per_frame_mux": 225.49383333292403,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.0006000009307172149,
+   "bytes_on_disk": 577145177,
+   "rep": 0
+  },
+  {
+   "container": "jpg_folder",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 8360,
+   "cpu_us_per_frame_mux": 234.375,
+   "wall_us_per_frame_mux": 234.30579999937132,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.0006000009307172149,
+   "bytes_on_disk": 577145177,
+   "rep": 1
+  },
+  {
+   "container": "jpg_folder",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 45432,
+   "cpu_us_per_frame_mux": 229.16666666666666,
+   "wall_us_per_frame_mux": 250.99106666554385,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.0006000009307172149,
+   "bytes_on_disk": 577145177,
+   "rep": 2
+  },
+  {
+   "container": "jpg_folder",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 24336,
+   "cpu_us_per_frame_mux": 218.75,
+   "wall_us_per_frame_mux": 232.53446666664482,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.000700001692166552,
+   "bytes_on_disk": 577145177,
+   "rep": 3
+  },
+  {
+   "container": "jpg_folder",
+   "res": "1080p",
+   "frames": 3000,
+   "payload_bytes": 577145177,
+   "pid": 33144,
+   "cpu_us_per_frame_mux": 218.75,
+   "wall_us_per_frame_mux": 224.88890000022366,
+   "cpu_ms_close": 0.0,
+   "wall_ms_close": 0.0006999980541877449,
+   "bytes_on_disk": 577145177,
+   "rep": 4
+  }
+ ]
+}

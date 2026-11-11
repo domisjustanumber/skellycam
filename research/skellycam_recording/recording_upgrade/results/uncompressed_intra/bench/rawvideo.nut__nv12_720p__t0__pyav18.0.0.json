@@ -1,0 +1,197 @@
+{
+ "config": "rawvideo.nut",
+ "codec": "rawvideo",
+ "opts": {},
+ "gop": 1,
+ "source": "nv12",
+ "source_note": "derived 4:2:0",
+ "res": "720p",
+ "width": 1280,
+ "height": 720,
+ "src_pix_fmt": "nv12",
+ "target_pix_fmt": "nv12",
+ "path": "native",
+ "threads": 0,
+ "frames": 90,
+ "unique_frames": 8,
+ "looped": true,
+ "reps": 3,
+ "warmup_frames": 10,
+ "warmup_discarded": true,
+ "av_version": "18.0.0",
+ "ffmpeg_version": "8.1.2",
+ "library_versions": {
+  "libavutil": [
+   60,
+   26,
+   102
+  ],
+  "libavcodec": [
+   62,
+   28,
+   102
+  ],
+  "libavformat": [
+   62,
+   12,
+   102
+  ],
+  "libavdevice": [
+   62,
+   3,
+   102
+  ],
+  "libavfilter": [
+   11,
+   14,
+   102
+  ],
+  "libswscale": [
+   9,
+   5,
+   102
+  ],
+  "libswresample": [
+   6,
+   3,
+   102
+  ]
+ },
+ "numpy": "2.2.6",
+ "python": "3.12.13",
+ "machine": "Gerald",
+ "cpu_logical": 28,
+ "system_cpu_percent_before": 28.7,
+ "prep_ms_per_frame": 0.322,
+ "warmup": {
+  "encode_wall_s": 0.0098,
+  "encode_fps": 1017.94,
+  "encode_cpu_s": 0.0156,
+  "encode_cpu_cores_per_30fps_stream": 0.047,
+  "latency_p50": 0.883,
+  "latency_p95": 1.455,
+  "latency_p99": 1.455,
+  "latency_max": 1.455,
+  "latency_mean": 0.93,
+  "packets": 10,
+  "bytes_per_frame": 1382400.0,
+  "file_bytes": 13824580,
+  "system_cpu_percent_during_encode": 45.0,
+  "decode_frames": 10,
+  "decode_wall_s": 0.0096,
+  "decode_fps": 1044.78,
+  "decode_cpu_s": 0.0
+ },
+ "rep_results": [
+  {
+   "encode_wall_s": 0.0704,
+   "encode_fps": 1277.55,
+   "encode_cpu_s": 0.1562,
+   "encode_cpu_cores_per_30fps_stream": 0.052,
+   "latency_p50": 0.754,
+   "latency_p95": 0.925,
+   "latency_p99": 1.331,
+   "latency_max": 1.331,
+   "latency_mean": 0.776,
+   "packets": 90,
+   "bytes_per_frame": 1382400.0,
+   "file_bytes": 124419372,
+   "system_cpu_percent_during_encode": 29.9,
+   "decode_frames": 90,
+   "decode_wall_s": 0.0446,
+   "decode_fps": 2017.27,
+   "decode_cpu_s": 0.0469
+  },
+  {
+   "encode_wall_s": 0.0728,
+   "encode_fps": 1236.47,
+   "encode_cpu_s": 0.0938,
+   "encode_cpu_cores_per_30fps_stream": 0.031,
+   "latency_p50": 0.779,
+   "latency_p95": 1.03,
+   "latency_p99": 1.624,
+   "latency_max": 1.624,
+   "latency_mean": 0.804,
+   "packets": 90,
+   "bytes_per_frame": 1382400.0,
+   "file_bytes": 124419372,
+   "system_cpu_percent_during_encode": 25.9,
+   "decode_frames": 90,
+   "decode_wall_s": 0.0478,
+   "decode_fps": 1881.81,
+   "decode_cpu_s": 0.0312
+  },
+  {
+   "encode_wall_s": 0.0776,
+   "encode_fps": 1159.14,
+   "encode_cpu_s": 0.0781,
+   "encode_cpu_cores_per_30fps_stream": 0.026,
+   "latency_p50": 0.838,
+   "latency_p95": 1.038,
+   "latency_p99": 1.814,
+   "latency_max": 1.814,
+   "latency_mean": 0.855,
+   "packets": 90,
+   "bytes_per_frame": 1382400.0,
+   "file_bytes": 124419372,
+   "system_cpu_percent_during_encode": 29.8,
+   "decode_frames": 90,
+   "decode_wall_s": 0.0491,
+   "decode_fps": 1832.65,
+   "decode_cpu_s": 0.0469
+  }
+ ],
+ "stats": {
+  "encode_fps": {
+   "median": 1236.47,
+   "min": 1159.14,
+   "max": 1277.55
+  },
+  "encode_cpu_cores_per_30fps_stream": {
+   "median": 0.031,
+   "min": 0.026,
+   "max": 0.052
+  },
+  "latency_p50": {
+   "median": 0.779,
+   "min": 0.754,
+   "max": 0.838
+  },
+  "latency_p99": {
+   "median": 1.624,
+   "min": 1.331,
+   "max": 1.814
+  },
+  "latency_max": {
+   "median": 1.624,
+   "min": 1.331,
+   "max": 1.814
+  },
+  "bytes_per_frame": {
+   "median": 1382400.0,
+   "min": 1382400.0,
+   "max": 1382400.0
+  },
+  "decode_fps": {
+   "median": 1881.81,
+   "min": 1832.65,
+   "max": 2017.27
+  },
+  "system_cpu_percent_during_encode": {
+   "median": 29.8,
+   "min": 25.9,
+   "max": 29.9
+  }
+ },
+ "encode_fps": 1236.47,
+ "encode_cpu_cores_per_30fps_stream": 0.031,
+ "encode_latency_ms": {
+  "p50": 0.779,
+  "p99": 1.624,
+  "max": 1.624
+ },
+ "bytes_per_frame": 1382400.0,
+ "decode_fps": 1881.81,
+ "decoder": "libav default for codec (software unless the decoder is hw)",
+ "system_cpu_percent_after": 18.0
+}

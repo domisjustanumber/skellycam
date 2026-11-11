@@ -1,0 +1,60 @@
+{
+ "pyav": "19.0.2",
+ "runs": [
+  {
+   "input": "j420 (4:2:0)",
+   "src_pix_fmt": "yuvj420p",
+   "mode": "mjpeg_cuvid",
+   "packets": 3,
+   "ok": true,
+   "frames": 3,
+   "formats": [
+    "nv12"
+   ],
+   "log_tail": [
+    "Invalid pkt_timebase, passing timestamps as-is.",
+    "ignoring invalid SAR: 0/0"
+   ]
+  },
+  {
+   "input": "j420 (4:2:0)",
+   "src_pix_fmt": "yuvj420p",
+   "mode": "mjpeg+hwaccel_cuda",
+   "packets": 3,
+   "ok": true,
+   "frames": 3,
+   "formats": [
+    "nv12"
+   ],
+   "log_tail": []
+  },
+  {
+   "input": "mjpeg_1080p (4:2:2)",
+   "src_pix_fmt": "yuvj422p",
+   "mode": "mjpeg_cuvid",
+   "packets": 5,
+   "ok": false,
+   "error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_send_packet()'; last error log: [mjpeg_cuvid] cuvid decode callback error",
+   "log_tail": [
+    "ctx->cvdl->cuvidDecodePicture(ctx->cudecoder, picparams) failed",
+    "-> CUDA_ERROR_INVALID_HANDLE: invalid resource handle",
+    "",
+    "cuvid decode callback error"
+   ]
+  },
+  {
+   "input": "mjpeg_1080p (4:2:2)",
+   "src_pix_fmt": "yuvj422p",
+   "mode": "mjpeg+hwaccel_cuda",
+   "packets": 5,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_send_packet()' returned 22; last error log: [mjpeg] Failed setup for format cuda: hwaccel initialisation returned error.",
+   "log_tail": [
+    "decoder->cvdl->cuvidCreateDecoder(&decoder->decoder, params) failed",
+    "-> CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected",
+    "",
+    "Failed setup for format cuda: hwaccel initialisation returned error."
+   ]
+  }
+ ]
+}

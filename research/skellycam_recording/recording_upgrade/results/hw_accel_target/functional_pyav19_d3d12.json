@@ -1,0 +1,1395 @@
+{
+ "utc": "2026-11-09T21:56:54Z",
+ "pyav": "19.0.2",
+ "libavcodec": "63.1.102",
+ "hwdevices_available": [
+  "cuda",
+  "dxva2",
+  "qsv",
+  "d3d11va",
+  "d3d12va",
+  "amf"
+ ],
+ "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+ "input_formats": {
+  "yuy2_1080p": [
+   "yuyv422",
+   1920,
+   1080,
+   8,
+   "0"
+  ],
+  "mjpeg_720p": [
+   "yuvj422p",
+   1280,
+   720,
+   60,
+   "2"
+  ],
+  "mjpeg_1080p": [
+   "yuvj422p",
+   1920,
+   1080,
+   19,
+   "2"
+  ]
+ },
+ "encoder_advertised_formats": {
+  "h264_d3d12va": [
+   "d3d12"
+  ],
+  "hevc_d3d12va": [
+   "d3d12"
+  ],
+  "av1_d3d12va": [
+   "d3d12"
+  ]
+ },
+ "mjpeg_decoder_hw_configs": [
+  "2"
+ ],
+ "nvidia_smi_before": "0, 10 %",
+ "encode": [
+  {
+   "encoder": "h264_d3d12va",
+   "tag": "fmtprobe_yuyv422",
+   "pix_fmt_in": "yuyv422",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument returned 22; last error log: [AVHWFramesContext] Unsupported pixel format: yuyv422",
+   "frames_fed_before_error": 0,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "E AVHWFramesContext: Unsupported pixel format: yuyv422"
+   ],
+   "stage": "format_probe",
+   "chroma_in": "4:2:2"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "tag": "fmtprobe_yuv422p",
+   "pix_fmt_in": "yuv422p",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument returned 22; last error log: [AVHWFramesContext] Unsupported pixel format: yuv422p",
+   "frames_fed_before_error": 0,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "E AVHWFramesContext: Unsupported pixel format: yuv422p"
+   ],
+   "stage": "format_probe",
+   "chroma_in": "4:2:2"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "tag": "fmtprobe_nv16",
+   "pix_fmt_in": "nv16",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument returned 22; last error log: [AVHWFramesContext] Unsupported pixel format: nv16",
+   "frames_fed_before_error": 0,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "E AVHWFramesContext: Unsupported pixel format: nv16"
+   ],
+   "stage": "format_probe",
+   "chroma_in": "4:2:2"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "tag": "fmtprobe_nv12",
+   "pix_fmt_in": "nv12",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "packets_muxed": 4,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 207720,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D h264_d3d12va: Input surface format is nv12.",
+    "W h264_d3d12va: No quality level set; using default (25).",
+    "D h264_d3d12va: RC mode: CQP.",
+    "D h264_d3d12va: RC quality: 25.",
+    "D h264_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D h264_d3d12va: Using intra frames only.",
+    "D h264_d3d12va: Using level 4."
+   ],
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": null,
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 4,
+    "ffprobe_key_frames": 4,
+    "pict_types": {
+     "I": 4
+    },
+    "all_key": true
+   },
+   "stage": "format_probe",
+   "chroma_in": "4:2:0"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "tag": "fmtprobe_yuv420p",
+   "pix_fmt_in": "yuv420p",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument returned 22; last error log: [AVHWFramesContext] Unsupported pixel format: yuv420p",
+   "frames_fed_before_error": 0,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "E AVHWFramesContext: Unsupported pixel format: yuv420p"
+   ],
+   "stage": "format_probe",
+   "chroma_in": "4:2:0"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "tag": "yuy2_1080p_intra_hwctx",
+   "pix_fmt_in": "nv12",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 3182370,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D h264_d3d12va: Input surface format is nv12.",
+    "W h264_d3d12va: No quality level set; using default (25).",
+    "D h264_d3d12va: RC mode: CQP.",
+    "D h264_d3d12va: RC quality: 25.",
+    "D h264_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D h264_d3d12va: Using intra frames only.",
+    "D h264_d3d12va: Using level 4."
+   ],
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": null,
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 60,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": true
+   },
+   "decode_back": {
+    "decoder": "h264",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 47.52,
+    "psnr_y_mean": 47.72,
+    "psnr_all_min": 49.64,
+    "psnr_all_mean": 49.77
+   },
+   "stage": "main",
+   "input": "yuy2_1080p"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "tag": "yuy2_1080p_gop30_hwctx",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 652013,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D h264_d3d12va: Input surface format is nv12.",
+    "W h264_d3d12va: No quality level set; using default (25).",
+    "D h264_d3d12va: RC mode: CQP.",
+    "D h264_d3d12va: RC quality: 25.",
+    "D h264_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D h264_d3d12va: Using intra and P-frames (supported references: 7 / 7).",
+    "D h264_d3d12va: Using level 4."
+   ],
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": null,
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "h264",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 46.67,
+    "psnr_y_mean": 47.13,
+    "psnr_all_min": 49.04,
+    "psnr_all_mean": 49.39
+   },
+   "stage": "main",
+   "input": "yuy2_1080p"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "tag": "mjpeg_720p_intra_hwctx",
+   "pix_fmt_in": "nv12",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 1038664,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D h264_d3d12va: Input surface format is nv12.",
+    "W h264_d3d12va: No quality level set; using default (25).",
+    "D h264_d3d12va: RC mode: CQP.",
+    "D h264_d3d12va: RC quality: 25.",
+    "D h264_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D h264_d3d12va: Using intra frames only.",
+    "D h264_d3d12va: Using level 3.1."
+   ],
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": null,
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 60,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": true
+   },
+   "decode_back": {
+    "decoder": "h264",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 48.17,
+    "psnr_y_mean": 49.19,
+    "psnr_all_min": 50.97,
+    "psnr_all_mean": 52.04
+   },
+   "stage": "main",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "tag": "mjpeg_720p_gop30_hwctx",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 1038733,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D h264_d3d12va: Input surface format is nv12.",
+    "W h264_d3d12va: No quality level set; using default (25).",
+    "D h264_d3d12va: RC mode: CQP.",
+    "D h264_d3d12va: RC quality: 25.",
+    "D h264_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D h264_d3d12va: Using intra and P-frames (supported references: 7 / 7).",
+    "D h264_d3d12va: Using level 3.1."
+   ],
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": null,
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 60,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": true
+   },
+   "decode_back": {
+    "decoder": "h264",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 48.17,
+    "psnr_y_mean": 49.19,
+    "psnr_all_min": 50.97,
+    "psnr_all_mean": 52.04
+   },
+   "stage": "main",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "tag": "mjpeg_1080p_intra_hwctx",
+   "pix_fmt_in": "nv12",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 2526461,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D h264_d3d12va: Input surface format is nv12.",
+    "W h264_d3d12va: No quality level set; using default (25).",
+    "D h264_d3d12va: RC mode: CQP.",
+    "D h264_d3d12va: RC quality: 25.",
+    "D h264_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D h264_d3d12va: Using intra frames only.",
+    "D h264_d3d12va: Using level 4."
+   ],
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": null,
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 60,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": true
+   },
+   "decode_back": {
+    "decoder": "h264",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 48.73,
+    "psnr_y_mean": 49.06,
+    "psnr_all_min": 50.41,
+    "psnr_all_mean": 50.65
+   },
+   "stage": "main",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "tag": "mjpeg_1080p_gop30_hwctx",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 2526530,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D h264_d3d12va: Input surface format is nv12.",
+    "W h264_d3d12va: No quality level set; using default (25).",
+    "D h264_d3d12va: RC mode: CQP.",
+    "D h264_d3d12va: RC quality: 25.",
+    "D h264_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D h264_d3d12va: Using intra and P-frames (supported references: 7 / 7).",
+    "D h264_d3d12va: Using level 4."
+   ],
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": null,
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 60,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": true
+   },
+   "decode_back": {
+    "decoder": "h264",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 48.73,
+    "psnr_y_mean": 49.06,
+    "psnr_all_min": 50.41,
+    "psnr_all_mean": 50.65
+   },
+   "stage": "main",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "tag": "yuy2_1080p_intra_container",
+   "pix_fmt_in": "nv12",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mkv",
+   "frames_requested": 30,
+   "ok": false,
+   "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\hw_accel_target\\\\functional\\\\h264_d3d12va__yuy2_1080p_intra_container.mkv'",
+   "frames_fed_before_error": 1,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D h264_d3d12va: Input surface format is nv12.",
+    "W h264_d3d12va: No quality level set; using default (25).",
+    "D h264_d3d12va: RC mode: CQP.",
+    "D h264_d3d12va: RC quality: 25.",
+    "D h264_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D h264_d3d12va: Using intra frames only.",
+    "D h264_d3d12va: Using level 4."
+   ],
+   "stage": "container"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "tag": "fmtprobe_yuyv422",
+   "pix_fmt_in": "yuyv422",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument returned 22; last error log: [AVHWFramesContext] Unsupported pixel format: yuyv422",
+   "frames_fed_before_error": 0,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "E AVHWFramesContext: Unsupported pixel format: yuyv422"
+   ],
+   "stage": "format_probe",
+   "chroma_in": "4:2:2"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "tag": "fmtprobe_yuv422p",
+   "pix_fmt_in": "yuv422p",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument returned 22; last error log: [AVHWFramesContext] Unsupported pixel format: yuv422p",
+   "frames_fed_before_error": 0,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "E AVHWFramesContext: Unsupported pixel format: yuv422p"
+   ],
+   "stage": "format_probe",
+   "chroma_in": "4:2:2"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "tag": "fmtprobe_nv16",
+   "pix_fmt_in": "nv16",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument returned 22; last error log: [AVHWFramesContext] Unsupported pixel format: nv16",
+   "frames_fed_before_error": 0,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "E AVHWFramesContext: Unsupported pixel format: nv16"
+   ],
+   "stage": "format_probe",
+   "chroma_in": "4:2:2"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "tag": "fmtprobe_nv12",
+   "pix_fmt_in": "nv12",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "packets_muxed": 4,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 122107,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D hevc_d3d12va: Input surface format is nv12.",
+    "W hevc_d3d12va: No quality level set; using default (25).",
+    "D hevc_d3d12va: RC mode: CQP.",
+    "D hevc_d3d12va: RC quality: 25.",
+    "D hevc_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D hevc_d3d12va: Using CTU size 32x32, min CB size 8x8.",
+    "D hevc_d3d12va: Using intra frames only.",
+    "D hevc_d3d12va: Using level 4."
+   ],
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "tv",
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 4,
+    "ffprobe_key_frames": 4,
+    "pict_types": {
+     "I": 4
+    },
+    "all_key": true
+   },
+   "stage": "format_probe",
+   "chroma_in": "4:2:0"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "tag": "fmtprobe_yuv420p",
+   "pix_fmt_in": "yuv420p",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument returned 22; last error log: [AVHWFramesContext] Unsupported pixel format: yuv420p",
+   "frames_fed_before_error": 0,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "E AVHWFramesContext: Unsupported pixel format: yuv420p"
+   ],
+   "stage": "format_probe",
+   "chroma_in": "4:2:0"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "tag": "yuy2_1080p_intra_hwctx",
+   "pix_fmt_in": "nv12",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 1887460,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D hevc_d3d12va: Input surface format is nv12.",
+    "W hevc_d3d12va: No quality level set; using default (25).",
+    "D hevc_d3d12va: RC mode: CQP.",
+    "D hevc_d3d12va: RC quality: 25.",
+    "D hevc_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D hevc_d3d12va: Using CTU size 32x32, min CB size 8x8.",
+    "D hevc_d3d12va: Using intra frames only.",
+    "D hevc_d3d12va: Using level 4."
+   ],
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "tv",
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 60,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": true
+   },
+   "decode_back": {
+    "decoder": "hevc",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 48.04,
+    "psnr_y_mean": 48.22,
+    "psnr_all_min": 50.26,
+    "psnr_all_mean": 50.39
+   },
+   "stage": "main",
+   "input": "yuy2_1080p"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "tag": "yuy2_1080p_gop30_hwctx",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 615508,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D hevc_d3d12va: Input surface format is nv12.",
+    "W hevc_d3d12va: No quality level set; using default (25).",
+    "D hevc_d3d12va: RC mode: CQP.",
+    "D hevc_d3d12va: RC quality: 25.",
+    "D hevc_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D hevc_d3d12va: Using CTU size 32x32, min CB size 8x8.",
+    "D hevc_d3d12va: Using intra and P-frames (supported references: 7 / 7).",
+    "D hevc_d3d12va: Using level 4."
+   ],
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "tv",
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 2,
+    "pict_types": {
+     "I": 2,
+     "P": 58
+    },
+    "all_key": false
+   },
+   "decode_back": {
+    "decoder": "hevc",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 47.23,
+    "psnr_y_mean": 48.11,
+    "psnr_all_min": 49.62,
+    "psnr_all_mean": 50.17
+   },
+   "stage": "main",
+   "input": "yuy2_1080p"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "tag": "mjpeg_720p_intra_hwctx",
+   "pix_fmt_in": "nv12",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 578702,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D hevc_d3d12va: Input surface format is nv12.",
+    "W hevc_d3d12va: No quality level set; using default (25).",
+    "D hevc_d3d12va: RC mode: CQP.",
+    "D hevc_d3d12va: RC quality: 25.",
+    "D hevc_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D hevc_d3d12va: Using CTU size 32x32, min CB size 8x8.",
+    "D hevc_d3d12va: Using intra frames only.",
+    "D hevc_d3d12va: Using level 3.1."
+   ],
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": "tv",
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 60,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": true
+   },
+   "decode_back": {
+    "decoder": "hevc",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 48.08,
+    "psnr_y_mean": 49.03,
+    "psnr_all_min": 50.81,
+    "psnr_all_mean": 51.87
+   },
+   "stage": "main",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "tag": "mjpeg_720p_gop30_hwctx",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 578702,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D hevc_d3d12va: Input surface format is nv12.",
+    "W hevc_d3d12va: No quality level set; using default (25).",
+    "D hevc_d3d12va: RC mode: CQP.",
+    "D hevc_d3d12va: RC quality: 25.",
+    "D hevc_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D hevc_d3d12va: Using CTU size 32x32, min CB size 8x8.",
+    "D hevc_d3d12va: Using intra and P-frames (supported references: 7 / 7).",
+    "D hevc_d3d12va: Using level 3.1."
+   ],
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "color_range": "tv",
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 60,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": true
+   },
+   "decode_back": {
+    "decoder": "hevc",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 48.08,
+    "psnr_y_mean": 49.03,
+    "psnr_all_min": 50.81,
+    "psnr_all_mean": 51.87
+   },
+   "stage": "main",
+   "input": "mjpeg_720p"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "tag": "mjpeg_1080p_intra_hwctx",
+   "pix_fmt_in": "nv12",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 1440951,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D hevc_d3d12va: Input surface format is nv12.",
+    "W hevc_d3d12va: No quality level set; using default (25).",
+    "D hevc_d3d12va: RC mode: CQP.",
+    "D hevc_d3d12va: RC quality: 25.",
+    "D hevc_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D hevc_d3d12va: Using CTU size 32x32, min CB size 8x8.",
+    "D hevc_d3d12va: Using intra frames only.",
+    "D hevc_d3d12va: Using level 4."
+   ],
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "tv",
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 60,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": true
+   },
+   "decode_back": {
+    "decoder": "hevc",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 48.65,
+    "psnr_y_mean": 49.04,
+    "psnr_all_min": 50.53,
+    "psnr_all_mean": 50.79
+   },
+   "stage": "main",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "tag": "mjpeg_1080p_gop30_hwctx",
+   "pix_fmt_in": "nv12",
+   "variant": "gop30",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 60,
+   "nvenc_sessions_while_open": 1,
+   "packets_muxed": 60,
+   "codec_ctx_pix_fmt": "d3d12",
+   "ok": true,
+   "bytes": 1440951,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D hevc_d3d12va: Input surface format is nv12.",
+    "W hevc_d3d12va: No quality level set; using default (25).",
+    "D hevc_d3d12va: RC mode: CQP.",
+    "D hevc_d3d12va: RC quality: 25.",
+    "D hevc_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D hevc_d3d12va: Using CTU size 32x32, min CB size 8x8.",
+    "D hevc_d3d12va: Using intra and P-frames (supported references: 7 / 7).",
+    "D hevc_d3d12va: Using level 4."
+   ],
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "tv",
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 60,
+    "ffprobe_key_frames": 60,
+    "pict_types": {
+     "I": 60
+    },
+    "all_key": true
+   },
+   "decode_back": {
+    "decoder": "hevc",
+    "frames": 60,
+    "frames_fed": 60,
+    "out_formats": [
+     "yuv420p"
+    ],
+    "psnr_y_min": 48.65,
+    "psnr_y_mean": 49.04,
+    "psnr_all_min": 50.53,
+    "psnr_all_mean": 50.79
+   },
+   "stage": "main",
+   "input": "mjpeg_1080p"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "tag": "yuy2_1080p_intra_container",
+   "pix_fmt_in": "nv12",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mkv",
+   "frames_requested": 30,
+   "ok": false,
+   "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\hw_accel_target\\\\functional\\\\hevc_d3d12va__yuy2_1080p_intra_container.mkv'",
+   "frames_fed_before_error": 1,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D hevc_d3d12va: Input surface format is nv12.",
+    "W hevc_d3d12va: No quality level set; using default (25).",
+    "D hevc_d3d12va: RC mode: CQP.",
+    "D hevc_d3d12va: RC quality: 25.",
+    "D hevc_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D hevc_d3d12va: Using CTU size 32x32, min CB size 8x8.",
+    "D hevc_d3d12va: Using intra frames only.",
+    "D hevc_d3d12va: Using level 4."
+   ],
+   "stage": "container"
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "tag": "fmtprobe_yuyv422",
+   "pix_fmt_in": "yuyv422",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument returned 22; last error log: [AVHWFramesContext] Unsupported pixel format: yuyv422",
+   "frames_fed_before_error": 0,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "E AVHWFramesContext: Unsupported pixel format: yuyv422"
+   ],
+   "stage": "format_probe",
+   "chroma_in": "4:2:2"
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "tag": "fmtprobe_yuv422p",
+   "pix_fmt_in": "yuv422p",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument returned 22; last error log: [AVHWFramesContext] Unsupported pixel format: yuv422p",
+   "frames_fed_before_error": 0,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "E AVHWFramesContext: Unsupported pixel format: yuv422p"
+   ],
+   "stage": "format_probe",
+   "chroma_in": "4:2:2"
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "tag": "fmtprobe_nv16",
+   "pix_fmt_in": "nv16",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument returned 22; last error log: [AVHWFramesContext] Unsupported pixel format: nv16",
+   "frames_fed_before_error": 0,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "E AVHWFramesContext: Unsupported pixel format: nv16"
+   ],
+   "stage": "format_probe",
+   "chroma_in": "4:2:2"
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "tag": "fmtprobe_nv12",
+   "pix_fmt_in": "nv12",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_open2(\"av1_d3d12va\", {})' returned 22; last error log: [av1_d3d12va] Codec sequence initialisation failed: -22.",
+   "frames_fed_before_error": 0,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D av1_d3d12va: Input surface format is nv12.",
+    "W av1_d3d12va: No quality level set; using default (25).",
+    "D av1_d3d12va: RC mode: CQP.",
+    "D av1_d3d12va: RC quality: 25.",
+    "D av1_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D av1_d3d12va: Using intra frames only.",
+    "E av1_d3d12va: Driver does not support requested features. ValidationFlags: 0x10",
+    "E av1_d3d12va: - Codec configuration not supported",
+    "E av1_d3d12va: Codec sequence initialisation failed: -22.",
+    "D av1_d3d12va: Total number of command allocators reused: 1"
+   ],
+   "stage": "format_probe",
+   "chroma_in": "4:2:0"
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "tag": "fmtprobe_yuv420p",
+   "pix_fmt_in": "yuv420p",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument returned 22; last error log: [AVHWFramesContext] Unsupported pixel format: yuv420p",
+   "frames_fed_before_error": 0,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "E AVHWFramesContext: Unsupported pixel format: yuv420p"
+   ],
+   "stage": "format_probe",
+   "chroma_in": "4:2:0"
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "tag": "yuy2_1080p_intra_hwctx",
+   "pix_fmt_in": "nv12",
+   "variant": "intra",
+   "mode": "hwctx",
+   "container": "mp4",
+   "frames_requested": 4,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_open2(\"av1_d3d12va\", {})' returned 22; last error log: [av1_d3d12va] Codec sequence initialisation failed: -22.",
+   "frames_fed_before_error": 0,
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D av1_d3d12va: Input surface format is nv12.",
+    "W av1_d3d12va: No quality level set; using default (25).",
+    "D av1_d3d12va: RC mode: CQP.",
+    "D av1_d3d12va: RC quality: 25.",
+    "D av1_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D av1_d3d12va: Using intra frames only.",
+    "E av1_d3d12va: Driver does not support requested features. ValidationFlags: 0x10",
+    "E av1_d3d12va: - Codec configuration not supported",
+    "E av1_d3d12va: Codec sequence initialisation failed: -22.",
+    "D av1_d3d12va: Total number of command allocators reused: 1"
+   ],
+   "stage": "main"
+  }
+ ],
+ "nvidia_smi_per_encoder": {
+  "h264_d3d12va": {
+   "before": "0, 10 %",
+   "after": "0, 12 %"
+  },
+  "hevc_d3d12va": {
+   "before": "0, 12 %",
+   "after": "0, 29 %"
+  },
+  "av1_d3d12va": {
+   "before": "0, 29 %",
+   "after": "0, 11 %"
+  }
+ },
+ "d3d12_adapter": [
+  {
+   "encoder": "h264_d3d12va",
+   "device": "0",
+   "stage": "d3d12_adapter",
+   "nvenc_sessions_while_open": 1,
+   "ok": true,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": null,
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 8,
+    "ffprobe_key_frames": 8,
+    "pict_types": {
+     "I": 8
+    },
+    "all_key": true
+   },
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D h264_d3d12va: Input surface format is nv12.",
+    "W h264_d3d12va: No quality level set; using default (25).",
+    "D h264_d3d12va: RC mode: CQP.",
+    "D h264_d3d12va: RC quality: 25.",
+    "D h264_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D h264_d3d12va: Using intra frames only.",
+    "D h264_d3d12va: Using level 4."
+   ]
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "device": "1",
+   "stage": "d3d12_adapter",
+   "nvenc_sessions_while_open": 0,
+   "ok": true,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": null,
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 8,
+    "ffprobe_key_frames": 8,
+    "pict_types": {
+     "I": 8
+    },
+    "all_key": true
+   },
+   "log": [
+    "I D3D12VA: Using device 8086:a780 (Intel(R) UHD Graphics 770).",
+    "D h264_d3d12va: Input surface format is nv12.",
+    "W h264_d3d12va: No quality level set; using default (25).",
+    "D h264_d3d12va: RC mode: CQP.",
+    "D h264_d3d12va: RC quality: 25.",
+    "D h264_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D h264_d3d12va: Using intra frames only.",
+    "D h264_d3d12va: Using level 4.",
+    "D h264_d3d12va: Total number of command allocators reused: 2"
+   ]
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "device": "2",
+   "stage": "d3d12_adapter",
+   "nvenc_sessions_while_open": 1,
+   "ok": true,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": null,
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 8,
+    "ffprobe_key_frames": 8,
+    "pict_types": {
+     "I": 8
+    },
+    "all_key": true
+   },
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D h264_d3d12va: Input surface format is nv12.",
+    "W h264_d3d12va: No quality level set; using default (25).",
+    "D h264_d3d12va: RC mode: CQP.",
+    "D h264_d3d12va: RC quality: 25.",
+    "D h264_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D h264_d3d12va: Using intra frames only.",
+    "D h264_d3d12va: Using level 4.",
+    "D h264_d3d12va: Total number of command allocators reused: 2"
+   ]
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "device": "3",
+   "stage": "d3d12_adapter",
+   "ok": false,
+   "error": "ArgumentError: Invalid argument returned 22",
+   "log": [
+    "I D3D12VA: Using device 1414:008c (Microsoft Basic Render Driver)."
+   ]
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "device": "0",
+   "stage": "d3d12_adapter",
+   "nvenc_sessions_while_open": 1,
+   "ok": true,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "tv",
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 8,
+    "ffprobe_key_frames": 8,
+    "pict_types": {
+     "I": 8
+    },
+    "all_key": true
+   },
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D hevc_d3d12va: Input surface format is nv12.",
+    "W hevc_d3d12va: No quality level set; using default (25).",
+    "D hevc_d3d12va: RC mode: CQP.",
+    "D hevc_d3d12va: RC quality: 25.",
+    "D hevc_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D hevc_d3d12va: Using CTU size 32x32, min CB size 8x8.",
+    "D hevc_d3d12va: Using intra frames only.",
+    "D hevc_d3d12va: Using level 4.",
+    "D h264_d3d12va: Total number of command allocators reused: 1"
+   ]
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "device": "1",
+   "stage": "d3d12_adapter",
+   "nvenc_sessions_while_open": 0,
+   "ok": true,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "tv",
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 8,
+    "ffprobe_key_frames": 8,
+    "pict_types": {
+     "I": 8
+    },
+    "all_key": true
+   },
+   "log": [
+    "I D3D12VA: Using device 8086:a780 (Intel(R) UHD Graphics 770).",
+    "D hevc_d3d12va: Input surface format is nv12.",
+    "W hevc_d3d12va: No quality level set; using default (25).",
+    "D hevc_d3d12va: RC mode: CQP.",
+    "D hevc_d3d12va: RC quality: 25.",
+    "D hevc_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D hevc_d3d12va: Using CTU size 64x64, min CB size 8x8.",
+    "D hevc_d3d12va: Driver does not support P-frames, replacing them with B-frames.",
+    "D hevc_d3d12va: Using intra frames only.",
+    "D hevc_d3d12va: Using level 4.",
+    "D hevc_d3d12va: Total number of command allocators reused: 2"
+   ]
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "device": "2",
+   "stage": "d3d12_adapter",
+   "nvenc_sessions_while_open": 1,
+   "ok": true,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "color_range": "tv",
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "ffprobe_frames": 8,
+    "ffprobe_key_frames": 8,
+    "pict_types": {
+     "I": 8
+    },
+    "all_key": true
+   },
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D hevc_d3d12va: Input surface format is nv12.",
+    "W hevc_d3d12va: No quality level set; using default (25).",
+    "D hevc_d3d12va: RC mode: CQP.",
+    "D hevc_d3d12va: RC quality: 25.",
+    "D hevc_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D hevc_d3d12va: Using CTU size 32x32, min CB size 8x8.",
+    "D hevc_d3d12va: Using intra frames only.",
+    "D hevc_d3d12va: Using level 4.",
+    "D hevc_d3d12va: Total number of command allocators reused: 2"
+   ]
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "device": "3",
+   "stage": "d3d12_adapter",
+   "ok": false,
+   "error": "ArgumentError: Invalid argument returned 22",
+   "log": [
+    "I D3D12VA: Using device 1414:008c (Microsoft Basic Render Driver)."
+   ]
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "device": "0",
+   "stage": "d3d12_adapter",
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_open2(\"av1_d3d12va\", {})' returned 22; last error log: [av1_d3d12va] Codec sequence initialisation failed: -22.",
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D av1_d3d12va: Input surface format is nv12.",
+    "W av1_d3d12va: No quality level set; using default (25).",
+    "D av1_d3d12va: RC mode: CQP.",
+    "D av1_d3d12va: RC quality: 25.",
+    "D av1_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D av1_d3d12va: Using intra frames only.",
+    "E av1_d3d12va: Driver does not support requested features. ValidationFlags: 0x10",
+    "E av1_d3d12va: - Codec configuration not supported",
+    "E av1_d3d12va: Codec sequence initialisation failed: -22.",
+    "D av1_d3d12va: Total number of command allocators reused: 1"
+   ]
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "device": "1",
+   "stage": "d3d12_adapter",
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_open2(\"av1_d3d12va\", {})' returned 22; last error log: [av1_d3d12va] Driver does not support any RC mode compatible with selected options.",
+   "log": [
+    "I D3D12VA: Using device 8086:a780 (Intel(R) UHD Graphics 770).",
+    "D av1_d3d12va: Input surface format is nv12.",
+    "E av1_d3d12va: Driver does not support any RC mode compatible with selected options."
+   ]
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "device": "2",
+   "stage": "d3d12_adapter",
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_open2(\"av1_d3d12va\", {})' returned 22; last error log: [av1_d3d12va] Codec sequence initialisation failed: -22.",
+   "log": [
+    "I D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "D av1_d3d12va: Input surface format is nv12.",
+    "W av1_d3d12va: No quality level set; using default (25).",
+    "D av1_d3d12va: RC mode: CQP.",
+    "D av1_d3d12va: RC quality: 25.",
+    "D av1_d3d12va: RC framerate: 30/1 (30.00 fps).",
+    "D av1_d3d12va: Using intra frames only.",
+    "E av1_d3d12va: Driver does not support requested features. ValidationFlags: 0x10",
+    "E av1_d3d12va: - Codec configuration not supported",
+    "E av1_d3d12va: Codec sequence initialisation failed: -22.",
+    "D av1_d3d12va: Total number of command allocators reused: 1"
+   ]
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "device": "3",
+   "stage": "d3d12_adapter",
+   "ok": false,
+   "error": "ArgumentError: Invalid argument returned 22",
+   "log": [
+    "I D3D12VA: Using device 1414:008c (Microsoft Basic Render Driver)."
+   ]
+  }
+ ],
+ "nvidia_smi_after": "0, 12 %"
+}

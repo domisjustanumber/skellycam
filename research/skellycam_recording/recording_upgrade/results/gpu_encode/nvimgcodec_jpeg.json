@@ -1,0 +1,266 @@
+{
+ "nvimgcodec": "0.10.0",
+ "decoder_ids": [
+  "nvjpeg_cuda_decoder",
+  "nvjpeg_lossless_decoder",
+  "libjpeg_turbo_decoder",
+  "opencv_jpeg_decoder",
+  "opencv_bmp_decoder",
+  "nvbmp_decoder",
+  "opencv_jpeg2k_decoder",
+  "opencv_png_decoder",
+  "opencv_pnm_decoder",
+  "libtiff_decoder",
+  "opencv_tiff_decoder",
+  "opencv_webp_decoder"
+ ],
+ "encoder_ids": [
+  "nvjpeg_cuda_encoder",
+  "opencv_jpeg_encoder",
+  "opencv_bmp_encoder",
+  "nvbmp_encoder",
+  "opencv_jpeg2k_encoder",
+  "opencv_png_encoder",
+  "opencv_pnm_encoder",
+  "nvpnm_encoder",
+  "opencv_tiff_encoder",
+  "opencv_webp_encoder"
+ ],
+ "nvidia_smi_before": "0, 27 %, 610.88",
+ "decode": [
+  {
+   "set": "c930e_1080p",
+   "src_pix_fmt": "yuvj422p",
+   "backend": "backend:GPU_ONLY",
+   "ok": false,
+   "error": "RuntimeError: Internal error - Could not create decoder. Code: 7"
+  },
+  {
+   "set": "c930e_1080p",
+   "src_pix_fmt": "yuvj422p",
+   "backend": "backend:HW_GPU_ONLY",
+   "ok": false,
+   "error": "RuntimeError: Internal error - Could not create decoder. Code: 7"
+  },
+  {
+   "set": "c930e_1080p",
+   "src_pix_fmt": "yuvj422p",
+   "backend": "backend:HYBRID_CPU_GPU",
+   "buffer_kind": "ImageBufferKind.STRIDED_DEVICE",
+   "shape": [
+    1080,
+    1920,
+    3
+   ],
+   "ok": true,
+   "max_abs_diff_vs_ffmpeg": 8,
+   "mean_abs_diff_vs_ffmpeg": 0.245,
+   "psnr_vs_ffmpeg_db": 53.14
+  },
+  {
+   "set": "c930e_1080p",
+   "src_pix_fmt": "yuvj422p",
+   "backend": "id:nvjpeg_cuda_decoder",
+   "buffer_kind": "ImageBufferKind.STRIDED_DEVICE",
+   "shape": [
+    1080,
+    1920,
+    3
+   ],
+   "ok": true,
+   "max_abs_diff_vs_ffmpeg": 8,
+   "mean_abs_diff_vs_ffmpeg": 0.245,
+   "psnr_vs_ffmpeg_db": 53.14
+  },
+  {
+   "set": "c930e_1080p",
+   "src_pix_fmt": "yuvj422p",
+   "backend": "id:libjpeg_turbo_decoder",
+   "buffer_kind": "ImageBufferKind.STRIDED_DEVICE",
+   "shape": [
+    1080,
+    1920,
+    3
+   ],
+   "ok": true,
+   "max_abs_diff_vs_ffmpeg": 8,
+   "mean_abs_diff_vs_ffmpeg": 0.668,
+   "psnr_vs_ffmpeg_db": 48.75
+  },
+  {
+   "set": "c922_720p_flash",
+   "src_pix_fmt": "yuvj422p",
+   "backend": "backend:GPU_ONLY",
+   "ok": false,
+   "error": "RuntimeError: Internal error - Could not create decoder. Code: 7"
+  },
+  {
+   "set": "c922_720p_flash",
+   "src_pix_fmt": "yuvj422p",
+   "backend": "backend:HW_GPU_ONLY",
+   "ok": false,
+   "error": "RuntimeError: Internal error - Could not create decoder. Code: 7"
+  },
+  {
+   "set": "c922_720p_flash",
+   "src_pix_fmt": "yuvj422p",
+   "backend": "backend:HYBRID_CPU_GPU",
+   "buffer_kind": "ImageBufferKind.STRIDED_DEVICE",
+   "shape": [
+    720,
+    1280,
+    3
+   ],
+   "ok": true,
+   "max_abs_diff_vs_ffmpeg": 25,
+   "mean_abs_diff_vs_ffmpeg": 0.179,
+   "psnr_vs_ffmpeg_db": 54.18
+  },
+  {
+   "set": "c922_720p_flash",
+   "src_pix_fmt": "yuvj422p",
+   "backend": "id:nvjpeg_cuda_decoder",
+   "buffer_kind": "ImageBufferKind.STRIDED_DEVICE",
+   "shape": [
+    720,
+    1280,
+    3
+   ],
+   "ok": true,
+   "max_abs_diff_vs_ffmpeg": 25,
+   "mean_abs_diff_vs_ffmpeg": 0.179,
+   "psnr_vs_ffmpeg_db": 54.18
+  },
+  {
+   "set": "c922_720p_flash",
+   "src_pix_fmt": "yuvj422p",
+   "backend": "id:libjpeg_turbo_decoder",
+   "buffer_kind": "ImageBufferKind.STRIDED_DEVICE",
+   "shape": [
+    720,
+    1280,
+    3
+   ],
+   "ok": true,
+   "max_abs_diff_vs_ffmpeg": 24,
+   "mean_abs_diff_vs_ffmpeg": 0.574,
+   "psnr_vs_ffmpeg_db": 49.15
+  }
+ ],
+ "encode": [
+  {
+   "input": "host numpy RGB 1920x1080",
+   "chroma": "CSS_422",
+   "backend": "backend:GPU_ONLY",
+   "quality": 90,
+   "ok": false,
+   "error": "RuntimeError: Internal error - Could not create encoder. Code: 7"
+  },
+  {
+   "input": "host numpy RGB 1920x1080",
+   "chroma": "CSS_422",
+   "backend": "id:nvjpeg_cuda_encoder",
+   "quality": 90,
+   "ok": true,
+   "bytes": 144880,
+   "ffprobe_pix_fmt": "yuvj422p",
+   "psnr_db": 44.42,
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\nvimgcodec\\enc_id:nvjpeg_cuda_encoder_CSS_422.jpg"
+  },
+  {
+   "input": "host numpy RGB 1920x1080",
+   "chroma": "CSS_422",
+   "backend": "id:opencv_jpeg_encoder",
+   "quality": 90,
+   "ok": true,
+   "bytes": 145207,
+   "ffprobe_pix_fmt": "yuvj422p",
+   "psnr_db": 47.25,
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\nvimgcodec\\enc_id:opencv_jpeg_encoder_CSS_422.jpg"
+  },
+  {
+   "input": "host numpy RGB 1920x1080",
+   "chroma": "CSS_420",
+   "backend": "backend:GPU_ONLY",
+   "quality": 90,
+   "ok": false,
+   "error": "RuntimeError: Internal error - Could not create encoder. Code: 7"
+  },
+  {
+   "input": "host numpy RGB 1920x1080",
+   "chroma": "CSS_420",
+   "backend": "id:nvjpeg_cuda_encoder",
+   "quality": 90,
+   "ok": true,
+   "bytes": 133516,
+   "ffprobe_pix_fmt": "yuvj420p",
+   "psnr_db": 43.74,
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\nvimgcodec\\enc_id:nvjpeg_cuda_encoder_CSS_420.jpg"
+  },
+  {
+   "input": "host numpy RGB 1920x1080",
+   "chroma": "CSS_420",
+   "backend": "id:opencv_jpeg_encoder",
+   "quality": 90,
+   "ok": true,
+   "bytes": 133742,
+   "ffprobe_pix_fmt": "yuvj420p",
+   "psnr_db": 46.16,
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\nvimgcodec\\enc_id:opencv_jpeg_encoder_CSS_420.jpg"
+  }
+ ],
+ "gpu_resident": [
+  {
+   "ok": true,
+   "decoded_buffer_kind": "ImageBufferKind.STRIDED_DEVICE",
+   "bytes": 144363,
+   "ffprobe_pix_fmt": "yuvj422p",
+   "psnr_vs_ffmpeg_decode_db": 43.5
+  }
+ ],
+ "yuv_input": [
+  {
+   "sample_format": "P_YUV",
+   "shape": [
+    3,
+    1080,
+    1920
+   ],
+   "ok": false,
+   "error": "RuntimeError: encode returned None"
+  },
+  {
+   "sample_format": "I_YUV",
+   "shape": [
+    1080,
+    1920,
+    3
+   ],
+   "ok": false,
+   "error": "RuntimeError: encode returned None"
+  },
+  {
+   "sample_format": "P_Y",
+   "shape": [
+    1,
+    1080,
+    1920
+   ],
+   "ok": true,
+   "bytes": 109135,
+   "ffprobe_pix_fmt": "gray"
+  },
+  {
+   "sample_format": "I_Y",
+   "shape": [
+    1080,
+    1920,
+    1
+   ],
+   "ok": true,
+   "bytes": 109135,
+   "ffprobe_pix_fmt": "gray"
+  }
+ ],
+ "nvidia_smi_after": "0, 13 %, 610.88"
+}

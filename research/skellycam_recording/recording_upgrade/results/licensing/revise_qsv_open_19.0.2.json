@@ -1,0 +1,45 @@
+{
+ "av": "19.0.2",
+ "ffmpeg": [
+  63,
+  1,
+  102
+ ],
+ "encoders": {
+  "h264_qsv": {
+   "pix_fmt": "nv12",
+   "opened": true,
+   "packets": 8,
+   "bytes": 1308
+  },
+  "hevc_qsv": {
+   "pix_fmt": "nv12",
+   "opened": true,
+   "packets": 8,
+   "bytes": 1770
+  },
+  "vp9_qsv": {
+   "pix_fmt": "nv12",
+   "opened": true,
+   "packets": 8,
+   "bytes": 1334
+  },
+  "av1_qsv": {
+   "pix_fmt": "nv12",
+   "opened": false,
+   "error": "NotImplementedError: [Errno 40] Function not implemented: 'avcodec_open2(\"av1_qsv\", {})'"
+  },
+  "mjpeg_qsv": {
+   "pix_fmt": "nv12",
+   "opened": true,
+   "packets": 8,
+   "bytes": 44773
+  },
+  "libsvtav1": {
+   "pix_fmt": "yuv420p",
+   "opened": true,
+   "packets": 8,
+   "bytes": 1293
+  }
+ }
+}

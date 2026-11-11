@@ -1,0 +1,666 @@
+{
+ "ffmpeg": "ffmpeg version 9.0.2-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+ "n": 150,
+ "runs": [
+  {
+   "out_kind": "mp4_sfn26",
+   "case": "clean",
+   "ffmpeg_exit": 0,
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 150,
+   "bytes": 2586443,
+   "summary": {
+    "ffprobe": 150,
+    "pyav": 150,
+    "cv2": 150,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "5.000000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 150,
+     "stream_duration": "5.000000",
+     "format_duration": "5.000000",
+     "header_nb_frames": "150"
+    },
+    "pyav": {
+     "frames": 150,
+     "packets": 150,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 5.0,
+     "stream_frames_header": 150,
+     "stream_duration_s": 5.0,
+     "seek": {
+      "ok": true,
+      "target_pts": 38400,
+      "got_pts": 0,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 150,
+     "opened": true,
+     "prop_frame_count": 150.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 75,
+      "pos_after": 76.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "mp4_sfn26",
+   "case": "ffmpeg_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 75,
+   "bytes": 0,
+   "summary": {
+    "ffprobe": 0,
+    "pyav": 0,
+    "cv2": 0,
+    "pyav_err": "missing",
+    "byte_exact": null,
+    "pyav_seek": null,
+    "cv2_seek": null,
+    "dur": null
+   },
+   "read": {
+    "ffprobe": {
+     "frames": 0
+    },
+    "pyav": {
+     "frames": 0,
+     "error": "missing"
+    },
+    "cv2": {
+     "frames": 0
+    }
+   }
+  },
+  {
+   "out_kind": "mp4_sfn26",
+   "case": "feeder_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 75,
+   "bytes": 1314618,
+   "summary": {
+    "ffprobe": 75,
+    "pyav": 75,
+    "cv2": 75,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "2.500000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 75,
+     "stream_duration": "2.500000",
+     "format_duration": "2.500000",
+     "header_nb_frames": "75"
+    },
+    "pyav": {
+     "frames": 75,
+     "packets": 75,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 2.5,
+     "stream_frames_header": 75,
+     "stream_duration_s": 2.5,
+     "seek": {
+      "ok": true,
+      "target_pts": 18944,
+      "got_pts": 0,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 75,
+     "opened": true,
+     "prop_frame_count": 75.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 37,
+      "pos_after": 38.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "mp4_sfn26",
+   "case": "tree_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 75,
+   "bytes": 0,
+   "summary": {
+    "ffprobe": 0,
+    "pyav": 0,
+    "cv2": 0,
+    "pyav_err": "missing",
+    "byte_exact": null,
+    "pyav_seek": null,
+    "cv2_seek": null,
+    "dur": null
+   },
+   "read": {
+    "ffprobe": {
+     "frames": 0
+    },
+    "pyav": {
+     "frames": 0,
+     "error": "missing"
+    },
+    "cv2": {
+     "frames": 0
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_x264",
+   "case": "clean",
+   "ffmpeg_exit": 0,
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 150,
+   "bytes": 2586743,
+   "summary": {
+    "ffprobe": 150,
+    "pyav": 150,
+    "cv2": 150,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "5.000000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 150,
+     "stream_duration": null,
+     "format_duration": "5.000000",
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 150,
+     "packets": 150,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 5.0,
+     "stream_frames_header": 0,
+     "stream_duration_s": null,
+     "seek": {
+      "ok": true,
+      "target_pts": 2500,
+      "got_pts": 0,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 150,
+     "opened": true,
+     "prop_frame_count": 150.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 75,
+      "pos_after": 76.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_x264",
+   "case": "ffmpeg_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 75,
+   "bytes": 0,
+   "summary": {
+    "ffprobe": 0,
+    "pyav": 0,
+    "cv2": 0,
+    "pyav_err": "missing",
+    "byte_exact": null,
+    "pyav_seek": null,
+    "cv2_seek": null,
+    "dur": null
+   },
+   "read": {
+    "ffprobe": {
+     "frames": 0
+    },
+    "pyav": {
+     "frames": 0,
+     "error": "missing"
+    },
+    "cv2": {
+     "frames": 0
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_x264",
+   "case": "feeder_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 75,
+   "bytes": 1314667,
+   "summary": {
+    "ffprobe": 75,
+    "pyav": 75,
+    "cv2": 75,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "2.500000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 75,
+     "stream_duration": null,
+     "format_duration": "2.500000",
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 75,
+     "packets": 75,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 2.5,
+     "stream_frames_header": 0,
+     "stream_duration_s": null,
+     "seek": {
+      "ok": true,
+      "target_pts": 1233,
+      "got_pts": 0,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 75,
+     "opened": true,
+     "prop_frame_count": 75.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 37,
+      "pos_after": 38.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_x264",
+   "case": "tree_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 75,
+   "bytes": 0,
+   "summary": {
+    "ffprobe": 0,
+    "pyav": 0,
+    "cv2": 0,
+    "pyav_err": "missing",
+    "byte_exact": null,
+    "pyav_seek": null,
+    "cv2_seek": null,
+    "dur": null
+   },
+   "read": {
+    "ffprobe": {
+     "frames": 0
+    },
+    "pyav": {
+     "frames": 0,
+     "error": "missing"
+    },
+    "cv2": {
+     "frames": 0
+    }
+   }
+  },
+  {
+   "out_kind": "fmp4_x264",
+   "case": "clean",
+   "ffmpeg_exit": 0,
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 150,
+   "bytes": 2586510,
+   "summary": {
+    "ffprobe": 150,
+    "pyav": 150,
+    "cv2": 150,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "5.000000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 150,
+     "stream_duration": "5.000000",
+     "format_duration": "5.000000",
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 150,
+     "packets": 150,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 5.0,
+     "stream_frames_header": 0,
+     "stream_duration_s": 5.0,
+     "seek": {
+      "ok": true,
+      "target_pts": 38400,
+      "got_pts": 0,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 150,
+     "opened": true,
+     "prop_frame_count": 150.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 75,
+      "pos_after": 76.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "fmp4_x264",
+   "case": "ffmpeg_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 75,
+   "bytes": 0,
+   "summary": {
+    "ffprobe": 0,
+    "pyav": 0,
+    "cv2": 0,
+    "pyav_err": "missing",
+    "byte_exact": null,
+    "pyav_seek": null,
+    "cv2_seek": null,
+    "dur": null
+   },
+   "read": {
+    "ffprobe": {
+     "frames": 0
+    },
+    "pyav": {
+     "frames": 0,
+     "error": "missing"
+    },
+    "cv2": {
+     "frames": 0
+    }
+   }
+  },
+  {
+   "out_kind": "fmp4_x264",
+   "case": "feeder_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 75,
+   "bytes": 1314701,
+   "summary": {
+    "ffprobe": 75,
+    "pyav": 75,
+    "cv2": 75,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "2.500000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 75,
+     "stream_duration": "2.500000",
+     "format_duration": "2.500000",
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 75,
+     "packets": 75,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 2.5,
+     "stream_frames_header": 0,
+     "stream_duration_s": 2.5,
+     "seek": {
+      "ok": true,
+      "target_pts": 18944,
+      "got_pts": 0,
+      "exact": false
+     }
+    },
+    "cv2": {
+     "frames": 75,
+     "opened": true,
+     "prop_frame_count": 75.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 37,
+      "pos_after": 38.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "fmp4_x264",
+   "case": "tree_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 75,
+   "bytes": 0,
+   "summary": {
+    "ffprobe": 0,
+    "pyav": 0,
+    "cv2": 0,
+    "pyav_err": "missing",
+    "byte_exact": null,
+    "pyav_seek": null,
+    "cv2_seek": null,
+    "dur": null
+   },
+   "read": {
+    "ffprobe": {
+     "frames": 0
+    },
+    "pyav": {
+     "frames": 0,
+     "error": "missing"
+    },
+    "cv2": {
+     "frames": 0
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_mjpeg_copy",
+   "case": "clean",
+   "ffmpeg_exit": 0,
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 150,
+   "bytes": 8324113,
+   "summary": {
+    "ffprobe": 150,
+    "pyav": 150,
+    "cv2": 150,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "5.000000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 150,
+     "stream_duration": null,
+     "format_duration": "5.000000",
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 150,
+     "packets": 150,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 5.0,
+     "stream_frames_header": 0,
+     "stream_duration_s": null,
+     "seek": {
+      "ok": true,
+      "target_pts": 2500,
+      "got_pts": 2500,
+      "exact": true
+     }
+    },
+    "cv2": {
+     "frames": 150,
+     "opened": true,
+     "prop_frame_count": 150.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 75,
+      "pos_after": 76.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_mjpeg_copy",
+   "case": "ffmpeg_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 75,
+   "bytes": 0,
+   "summary": {
+    "ffprobe": 0,
+    "pyav": 0,
+    "cv2": 0,
+    "pyav_err": "missing",
+    "byte_exact": null,
+    "pyav_seek": null,
+    "cv2_seek": null,
+    "dur": null
+   },
+   "read": {
+    "ffprobe": {
+     "frames": 0
+    },
+    "pyav": {
+     "frames": 0,
+     "error": "missing"
+    },
+    "cv2": {
+     "frames": 0
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_mjpeg_copy",
+   "case": "feeder_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 75,
+   "bytes": 4174837,
+   "summary": {
+    "ffprobe": 75,
+    "pyav": 75,
+    "cv2": 75,
+    "pyav_err": "",
+    "byte_exact": null,
+    "pyav_seek": true,
+    "cv2_seek": true,
+    "dur": "2.500000"
+   },
+   "read": {
+    "ffprobe": {
+     "rc": 0,
+     "stderr": "",
+     "frames": 75,
+     "stream_duration": null,
+     "format_duration": "2.500000",
+     "header_nb_frames": null
+    },
+    "pyav": {
+     "frames": 75,
+     "packets": 75,
+     "byte_exact": null,
+     "error": null,
+     "container_duration_s": 2.5,
+     "stream_frames_header": 0,
+     "stream_duration_s": null,
+     "seek": {
+      "ok": true,
+      "target_pts": 1233,
+      "got_pts": 1233,
+      "exact": true
+     }
+    },
+    "cv2": {
+     "frames": 75,
+     "opened": true,
+     "prop_frame_count": 75.0,
+     "seek": {
+      "set_ok": true,
+      "read_ok": true,
+      "target": 37,
+      "pos_after": 38.0
+     }
+    }
+   }
+  },
+  {
+   "out_kind": "mkv_mjpeg_copy",
+   "case": "tree_killed",
+   "ffmpeg_alive_after_60s": false,
+   "frames_fed": 75,
+   "bytes": 0,
+   "summary": {
+    "ffprobe": 0,
+    "pyav": 0,
+    "cv2": 0,
+    "pyav_err": "missing",
+    "byte_exact": null,
+    "pyav_seek": null,
+    "cv2_seek": null,
+    "dur": null
+   },
+   "read": {
+    "ffprobe": {
+     "frames": 0
+    },
+    "pyav": {
+     "frames": 0,
+     "error": "missing"
+    },
+    "cv2": {
+     "frames": 0
+    }
+   }
+  }
+ ]
+}

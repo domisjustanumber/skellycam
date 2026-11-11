@@ -1,0 +1,71 @@
+FFmpeg n9.0.2 source excerpts used by intra_compare (accessed 2026-11-09).
+Base URL: https://raw.githubusercontent.com/FFmpeg/FFmpeg/n9.0.2/  Format: file:line<TAB>text
+--- libavcodec/options_table.h lines 61-61
+libavcodec/options_table.h:61	{"qscale", "use fixed qscale", 0, AV_OPT_TYPE_CONST, {.i64 = AV_CODEC_FLAG_QSCALE }, INT_MIN, INT_MAX, 0, .unit = "flags"},
+--- libavcodec/options_table.h lines 151-152
+libavcodec/options_table.h:151	{"i_qfactor", "QP factor between P- and I-frames", OFFSET(i_quant_factor), AV_OPT_TYPE_FLOAT, {.dbl = -0.8 }, -FLT_MAX, FLT_MAX, V|E},
+libavcodec/options_table.h:152	{"i_qoffset", "QP offset between P- and I-frames", OFFSET(i_quant_offset), AV_OPT_TYPE_FLOAT, {.dbl = 0.0 }, -FLT_MAX, FLT_MAX, V|E},
+--- libavcodec/options_table.h lines 209-209
+libavcodec/options_table.h:209	{"global_quality", NULL, OFFSET(global_quality), AV_OPT_TYPE_INT, {.i64 = DEFAULT }, INT_MIN, INT_MAX, V|A|E},
+--- libavcodec/qsvenc.c lines 576-576
+libavcodec/qsvenc.c:576	    int want_qscale = !!(avctx->flags & AV_CODEC_FLAG_QSCALE);
+--- libavcodec/qsvenc.c lines 591-594
+libavcodec/qsvenc.c:591	
+libavcodec/qsvenc.c:592	    if (want_qscale) {
+libavcodec/qsvenc.c:593	        rc_mode = MFX_RATECONTROL_CQP;
+libavcodec/qsvenc.c:594	        rc_desc = "constant quantization parameter (CQP)";
+--- libavcodec/qsvenc.c lines 707-707
+libavcodec/qsvenc.c:707	static int init_video_param_jpeg(AVCodecContext *avctx, QSVEncContext *q)
+--- libavcodec/qsvenc.c lines 762-762
+libavcodec/qsvenc.c:762	    q->param.mfx.Quality              = av_clip(avctx->global_quality, 1, 100);
+--- libavcodec/qsvenc.c lines 922-930
+libavcodec/qsvenc.c:922	    case MFX_RATECONTROL_CQP:
+libavcodec/qsvenc.c:923	        quant = avctx->global_quality / FF_QP2LAMBDA;
+libavcodec/qsvenc.c:924	        if (avctx->codec_id == AV_CODEC_ID_AV1) {
+libavcodec/qsvenc.c:925	            q->param.mfx.QPI = av_clip_uintp2(quant * fabs(avctx->i_quant_factor) + avctx->i_quant_offset, 8);
+libavcodec/qsvenc.c:926	            q->param.mfx.QPP = av_clip_uintp2(quant, 8);
+libavcodec/qsvenc.c:927	            q->param.mfx.QPB = av_clip_uintp2(quant * fabs(avctx->b_quant_factor) + avctx->b_quant_offset, 8);
+libavcodec/qsvenc.c:928	        } else {
+libavcodec/qsvenc.c:929	            q->param.mfx.QPI = av_clip(quant * fabs(avctx->i_quant_factor) + avctx->i_quant_offset, 0, 51);
+libavcodec/qsvenc.c:930	            q->param.mfx.QPP = av_clip(quant, 0, 51);
+--- libavcodec/qsvenc.c lines 2691-2695
+libavcodec/qsvenc.c:2691	        if (avctx->codec_id == AV_CODEC_ID_H264) {
+libavcodec/qsvenc.c:2692	            enc_buf = qpkt.bs->ExtParam;
+libavcodec/qsvenc.c:2693	            enc_info = (mfxExtAVCEncodedFrameInfo *)(*enc_buf);
+libavcodec/qsvenc.c:2694	            ff_encode_add_stats_side_data(&qpkt.pkt,
+libavcodec/qsvenc.c:2695	                enc_info->QP * FF_QP2LAMBDA, NULL, 0, pict_type);
+--- libavcodec/nvenc.c lines 805-805
+libavcodec/nvenc.c:805	static av_cold void set_constqp(AVCodecContext *avctx)
+--- libavcodec/nvenc.c lines 831-837
+libavcodec/nvenc.c:831	    } else if (ctx->cqp >= 0) {
+libavcodec/nvenc.c:832	        rc->constQP.qpInterP = rc->constQP.qpInterB = rc->constQP.qpIntra = ctx->cqp;
+libavcodec/nvenc.c:833	        if (avctx->b_quant_factor != 0.0)
+libavcodec/nvenc.c:834	            rc->constQP.qpInterB = av_clip(ctx->cqp * fabs(avctx->b_quant_factor) + avctx->b_quant_offset + 0.5, 0, qmax);
+libavcodec/nvenc.c:835	        if (avctx->i_quant_factor != 0.0)
+libavcodec/nvenc.c:836	            rc->constQP.qpIntra = av_clip(ctx->cqp * fabs(avctx->i_quant_factor) + avctx->i_quant_offset + 0.5, 0, qmax);
+libavcodec/nvenc.c:837	    }
+--- libavcodec/nvenc.c lines 1764-1767
+libavcodec/nvenc.c:1764	    } else if (avctx->gop_size == 0) {
+libavcodec/nvenc.c:1765	        ctx->encode_config.frameIntervalP = 0;
+libavcodec/nvenc.c:1766	        ctx->encode_config.gopLength = 1;
+libavcodec/nvenc.c:1767	    }
+--- libavcodec/nvenc.c lines 2646-2647
+libavcodec/nvenc.c:2646	    ff_encode_add_stats_side_data(pkt,
+libavcodec/nvenc.c:2647	        (lock_params.frameAvgQP - 1) * FF_QP2LAMBDA, NULL, 0, pict_type);
+--- libavcodec/libx264.c lines 731-731
+libavcodec/libx264.c:731	        ff_encode_add_stats_side_data(pkt, (pic_out.i_qpplus1 - 1) * FF_QP2LAMBDA,
+--- libavcodec/libx264.c lines 1143-1144
+libavcodec/libx264.c:1143	    if (avctx->i_quant_factor > 0)
+libavcodec/libx264.c:1144	        x4->params.rc.f_ip_factor         = 1 / fabs(avctx->i_quant_factor);
+--- libavcodec/libx265.c lines 442-443
+libavcodec/libx265.c:442	    } else if (ctx->cqp >= 0) {
+libavcodec/libx265.c:443	        ret = libx265_param_parse_int(avctx, "qp", ctx->cqp);
+--- libavcodec/libx265.c lines 473-474
+libavcodec/libx265.c:473	    if (avctx->i_quant_factor >= 0) {
+libavcodec/libx265.c:474	        ret = libx265_param_parse_float(avctx, "ipratio", avctx->i_quant_factor);
+--- libavcodec/libx265.c lines 934-934
+libavcodec/libx265.c:934	    ff_encode_add_stats_side_data(pkt, x265pic_out->frameData.qp * FF_QP2LAMBDA, NULL, 0, pict_type);
+--- libavcodec/mjpegenc.c lines 650-652
+libavcodec/mjpegenc.c:650	{ "huffman", "Huffman table strategy", OFFSET(huffman), AV_OPT_TYPE_INT, { .i64 = HUFFMAN_TABLE_OPTIMAL }, 0, NB_HUFFMAN_TABLE_OPTION - 1, VE, .unit = "huffman" },
+libavcodec/mjpegenc.c:651	    { "default", NULL, 0, AV_OPT_TYPE_CONST, { .i64 = HUFFMAN_TABLE_DEFAULT }, INT_MIN, INT_MAX, VE, .unit = "huffman" },
+libavcodec/mjpegenc.c:652	    { "optimal", NULL, 0, AV_OPT_TYPE_CONST, { .i64 = HUFFMAN_TABLE_OPTIMAL }, INT_MIN, INT_MAX, VE, .unit = "huffman" },

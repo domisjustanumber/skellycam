@@ -1,0 +1,47 @@
+{
+ "versions": {
+  "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.2.6",
+  "simplejpeg": "not importable: No module named 'simplejpeg'",
+  "turbojpeg": "not importable: No module named 'turbojpeg'",
+  "imagecodecs": "not importable: No module named 'imagecodecs'",
+  "cv2": "4.12.0"
+ },
+ "tests": {
+  "cv2.imencode_jpg_422_via_bgr": {
+   "sof": "0xffc0",
+   "precision": 8,
+   "w": 1920,
+   "h": 1080,
+   "sampling": [
+    "2x1",
+    "1x1",
+    "1x1"
+   ],
+   "bytes": 175847,
+   "ok": true,
+   "input": "BGR (cvtColor YUV2BGR_YUY2 first)"
+  },
+  "cv2.imencode_yuyv_direct": {
+   "error": "error: OpenCV(4.12.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\imgcodecs\\src\\loadsave.cpp:1612: error: (-215:Assertion failed) channels == 1 || channels == 3 || channels == 4 in function 'cv::imencodeWithMetadata'\n"
+  },
+  "cv2.have_image_writer": {
+   ".jxl": false,
+   ".jp2": true,
+   ".png": true,
+   ".tiff": true,
+   ".webp": true,
+   ".avif": false,
+   ".pgm": true
+  },
+  "cv2.png_bayer12_in_u16": {
+   "ok": true,
+   "bytes": 3167639,
+   "bit_exact": true,
+   "dtype": "uint16"
+  },
+  "cv2.jxl_lossless_bayer12": {
+   "error": "error: OpenCV(4.12.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\imgcodecs\\src\\loadsave.cpp:1593: error: (-2:Unspecified error) could not find encoder for the specified extension in function 'cv::imencodeWithMetadata'\n"
+  }
+ }
+}

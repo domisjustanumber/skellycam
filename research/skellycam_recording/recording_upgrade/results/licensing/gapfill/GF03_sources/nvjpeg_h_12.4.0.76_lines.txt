@@ -1,0 +1,36 @@
+source: nvidia_nvjpeg_cu12-12.4.0.76-py3-none-win_amd64.whl member nvidia/nvjpeg/include/nvjpeg.h (wheel sha256 21923726db667bd53050d0de88320983ff423322b7f376057dd943e487c40abc), read 2026-11-10. Format: <line>: <text>
+70: #define NVJPEG_VER_MAJOR 12
+71: #define NVJPEG_VER_MINOR 4
+72: #define NVJPEG_VER_PATCH 0
+73: #define NVJPEG_VER_BUILD 76
+152: typedef enum
+153: {
+154:     NVJPEG_INPUT_YUV         = 1, // Input is YUV (or YCbCr)
+155:     NVJPEG_INPUT_RGB         = 3, // Input is RGB - will be converted to YCbCr before encoding
+156:     NVJPEG_INPUT_BGR         = 4, // Input is RGB - will be converted to YCbCr before encoding
+157:     NVJPEG_INPUT_RGBI        = 5, // Input is interleaved RGB - will be converted to YCbCr before encoding
+158:     NVJPEG_INPUT_BGRI        = 6, // Input is interleaved RGB - will be converted to YCbCr before encoding
+159:     NVJPEG_INPUT_NV12        = 8, // Input is 2 channels: Y and UV (at half horizontal + vertical resolution - 420)
+160: } nvjpegInputFormat_t;
+182: {
+183:     NVJPEG_ENC_BACKEND_DEFAULT = 0,
+184:     NVJPEG_ENC_BACKEND_GPU = 1,
+185:     NVJPEG_ENC_BACKEND_HARDWARE = 2,
+186: } nvjpegEncBackend_t;
+350: nvjpegStatus_t NVJPEGAPI nvjpegGetHardwareEncoderInfo(nvjpegHandle_t handle,
+351:         unsigned int* num_engines);
+540: nvjpegStatus_t NVJPEGAPI nvjpegEncodeYUV(
+541:         nvjpegHandle_t handle,
+542:         nvjpegEncoderState_t encoder_state,
+543:         const nvjpegEncoderParams_t encoder_params,
+544:         const nvjpegImage_t *source,
+545:         nvjpegChromaSubsampling_t chroma_subsampling, 
+546:         int image_width,
+560: nvjpegStatus_t NVJPEGAPI nvjpegEncode(
+561:         nvjpegHandle_t handle,
+562:         nvjpegEncoderState_t encoder_state,
+563:         const nvjpegEncoderParams_t encoder_params,
+564:         const nvjpegImage_t* source,
+565:         nvjpegChromaSubsampling_t input_subsampling,
+566:         nvjpegInputFormat_t input_format,
+567:         int image_width,

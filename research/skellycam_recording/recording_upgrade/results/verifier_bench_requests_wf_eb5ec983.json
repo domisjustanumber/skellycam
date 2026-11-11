@@ -1,0 +1,58 @@
+{
+ "jpeg_passthrough": {
+  "bench_requests": [
+   "uv run --no-project --python 3.12 --with av==19.0.2 --with numpy --with psutil python research/skellycam_recording/recording_upgrade/scripts/jpeg_passthrough/bench_mux.py --tag default_pyav19",
+   "uv run --script research/skellycam_recording/recording_upgrade/scripts/jpeg_passthrough/bench_rotate.py --lib C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/106dc0c8-f977-4082-9d8d-367e9a9f721d/scratchpad/jpeg_passthrough/ljt321/bin/turbojpeg.dll",
+   "uv run --script research/skellycam_recording/recording_upgrade/scripts/jpeg_passthrough/bench_open_long.py --frames 54000 --reps 5"
+  ],
+  "n_refuted": 6
+ },
+ "write_throughput": {
+  "bench_requests": [
+   "uv run --no-project --python 3.12 --with av==19.0.2 --with numpy==2.2.6 --with psutil==7.2.2 --with opencv-python==4.12.0.88 python research/skellycam_recording/recording_upgrade/scripts/write_throughput/run_matrix.py --set core --cams 16 --profiles 1080p60 --writers files,append,mkv_flush,fmp4_frame_flush --reps 3 --outdir-name focus16_av19",
+   "uv run --no-project --python 3.12 --with av==19.0.2 --with numpy==2.2.6 --with psutil==7.2.2 --with opencv-python==4.12.0.88 python research/skellycam_recording/recording_upgrade/scripts/write_throughput/first_read_check.py --frames 5000",
+   "uv run --no-project --python 3.12 --with psutil==7.2.2 python -c \"\nimport psutil,time,json\nN=('msmpeng.exe','searchindexer.exe','searchprotocolhost.exe','searchfilterhost.exe')\ndef g():\n    o={}\n    for p in psutil.process_iter(['name']):\n        n=(p.info['name'] or '').lower()\n        if n in N:\n            try: c=p.cpu_times(); o[n]=o.get(n,0)+c.user+c.system\n            except Exception as e: o[n+'_err']=type(e).__name__\n    return o\na=g(); time.sleep(30); b=g()\nprint(json.dumps(dict(when=time.strftime('%Y-%m-%dT%H:%M:%S'), idle_30s_cpu_s={k:(b[k]-a.get(k,0)) if isinstance(b[k],float) else b[k] for k in b})))\n\" >> research/skellycam_recording/recording_upgrade/results/write_throughput/bench/idle_baseline_av19.jsonl",
+   "uv run --no-project --python 3.12 --with av==19.0.2 --with numpy==2.2.6 --with psutil==7.2.2 --with opencv-python==4.12.0.88 python research/skellycam_recording/recording_upgrade/scripts/write_throughput/run_matrix.py --set models --writers files,append,mkv_flush --cams 16 --profiles 1080p60 --models thread,process_shared --duration 30 --reps 3 --outdir-name models16_av19_shared_vs_thread"
+  ],
+  "n_refuted": 6
+ },
+ "crash_resilience": {
+  "bench_requests": [
+   "uv run --no-project --with av==19.0.2 --with numpy --with opencv-python python research/skellycam_recording/recording_upgrade/scripts/crash_resilience/bench_fsync.py --frames 3000 --repeats 3",
+   "uv run --no-project --with av==19.0.2 --with numpy --with opencv-python python research/skellycam_recording/recording_upgrade/scripts/crash_resilience/bench_fragment_overhead.py --frames 3000 --repeats 3 --payloads mjpeg,ffv1,h264nv",
+   "uv run --script research/skellycam_recording/recording_upgrade/scripts/crash_resilience/pyav19_checks/bench_lowdelay_pyav19.py --frames 600 --paced 300 --repeats 3 --out research/skellycam_recording/recording_upgrade/results/crash_resilience/bench/lowdelay_pyav19.json",
+   "uv run --no-project --with av==19.0.2 --with numpy --with opencv-python-headless==4.12.0.88 python research/skellycam_recording/recording_upgrade/scripts/crash_resilience/bench_fsync.py --frames 3000 --repeats 3 --out-name pyav19"
+  ],
+  "n_refuted": 7
+ },
+ "overlays": {
+  "bench_requests": [
+   "uv run --with av==19.0.2 --with numpy --with opencv-python==4.12.0.88 --with msgspec==0.21.1 python research/skellycam_recording/recording_upgrade/scripts/overlays/bench_overlay_cost.py --frames 900 --repeats 3   # PyAV 19 environment for overlay_cost; the alpha_vp9_pipeline row still uses the ffmpeg CLI and must be flagged CLI-only",
+   "for i in 1 2 3; do env -u ELECTRON_RUN_AS_NODE skellycam-ui/node_modules/electron/dist/electron.exe research/skellycam_recording/recording_upgrade/scripts/overlays/electron_harness --tests=play --out=research/skellycam_recording/recording_upgrade/results/overlays/bench/electron_play_repeat_35.7.5_run$i.json; done",
+   "for i in 1 2 3; do env -u ELECTRON_RUN_AS_NODE C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/106dc0c8-f977-4082-9d8d-367e9a9f721d/scratchpad/shared/electron-latest/node_modules/electron/dist/electron.exe research/skellycam_recording/recording_upgrade/scripts/overlays/electron_harness --tests=play --out=research/skellycam_recording/recording_upgrade/results/overlays/bench/electron_play_repeat_45.2.3_run$i.json; done"
+  ],
+  "n_refuted": 6
+ },
+ "gpu_encode": {
+  "bench_requests": [
+   "uv run --script research/skellycam_recording/recording_upgrade/scripts/gpu_encode/bench_pyav_concurrent.py --codec vp9_qsv --size 720p --streams 1,2,4,8,12,16 --frames 600 --mode unpaced,paced",
+   "uv run --script research/skellycam_recording/recording_upgrade/scripts/gpu_encode/bench_pyav_concurrent.py --codec h264_qsv --size 720p --streams 1,2,4,8,12,16 --frames 600 --mode unpaced,paced"
+  ],
+  "n_refuted": 7
+ },
+ "chromium_sync_scrub": {
+  "bench_requests": [
+   ".venv/Scripts/python.exe C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/93366190-c2b0-4501-a85e-83654db13698/scratchpad/chromium_sync_scrub/verify_method/exhaustive_mid_sweep.py --electron 45 && .venv/Scripts/python.exe C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/93366190-c2b0-4501-a85e-83654db13698/scratchpad/chromium_sync_scrub/verify_method/exhaustive_mid_sweep.py --electron 35"
+  ],
+  "n_refuted": 6
+ },
+ "python_integration": {
+  "bench_requests": [
+   "cd /c/Users/Dom/GitHub/freemocap/skellycam && UV_CACHE_DIR=C:/Users/Dom/AppData/Local/Temp/pi_uv uv run --no-project --python 3.12 --with av==19.0.2 --with numpy==2.2.6 --with opencv-python==4.12.0.88 python research/skellycam_recording/recording_upgrade/scripts/python_integration/bench_recwriter.py --tag quiet1_pyav19   # replaces pi_recwriter_cost (.venv = PyAV 18); writes results/python_integration/bench/recwriter_quiet1_pyav19.json",
+   "cd /c/Users/Dom/GitHub/freemocap/skellycam && D=/c/Users/Dom/AppData/Local/Temp/pi_ljt && mkdir -p $D && ( [ -f $D/bin/turbojpeg.dll ] || ( curl -sSfL -o $D/ljt.exe https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0-vc-x64.exe && echo \"662761d8ba8dae04aec74023ebaeceb856c2b56b9b59cfd180759d26300dda42 *$D/ljt.exe\" | sha256sum -c && \"/c/Program Files/7-Zip/7z.exe\" x -y -o$D $D/ljt.exe > /dev/null ) ) && UV_CACHE_DIR=C:/Users/Dom/AppData/Local/Temp/pi_uv uv run --no-project --python 3.12 --with numpy==2.2.6 --with opencv-python==4.12.0.88 --with simplejpeg==1.9.0 --with PyTurboJPEG==2.6.1 --with av==19.0.2 python research/skellycam_recording/recording_upgrade/scripts/python_integration/bench_jpeg_decode.py --tag quiet1_pyav19 --turbojpeg-dll \"$D/bin/turbojpeg.dll\"   # replaces pi_jpeg_decode_cpu (script header pins av==18.0.0); writes results/python_integration/bench/jpeg_decode_quiet1_pyav19.json",
+   "cd /c/Users/Dom/GitHub/freemocap/skellycam && uv run --no-project --python 3.12 --with av==19.0.2 --with numpy==2.2.6 --with opencv-python==4.12.0.88 python research/skellycam_recording/recording_upgrade/scripts/python_integration/bench_recwriter.py --tag quiet1_pyav19",
+   "cd /c/Users/Dom/GitHub/freemocap/skellycam && D=/c/Users/Dom/AppData/Local/Temp/pi_ljt && mkdir -p $D && ( [ -f $D/bin/turbojpeg.dll ] || ( curl -sSfL -o $D/ljt.exe https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0-vc-x64.exe && echo \"662761d8ba8dae04aec74023ebaeceb856c2b56b9b59cfd180759d26300dda42 *$D/ljt.exe\" | sha256sum -c && \"/c/Program Files/7-Zip/7z.exe\" x -y -o$D $D/ljt.exe > /dev/null ) ) && uv run --no-project --python 3.12 --with av==19.0.2 --with numpy==2.2.6 --with opencv-python==4.12.0.88 --with simplejpeg==1.9.0 --with PyTurboJPEG==2.6.1 python research/skellycam_recording/recording_upgrade/scripts/python_integration/bench_jpeg_decode.py --tag quiet1_pyav19 --turbojpeg-dll \"$D/bin/turbojpeg.dll\""
+  ],
+  "n_refuted": 8
+ }
+}

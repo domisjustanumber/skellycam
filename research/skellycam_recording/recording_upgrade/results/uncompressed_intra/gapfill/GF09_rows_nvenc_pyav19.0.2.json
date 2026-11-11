@@ -1,0 +1,1173 @@
+{
+ "av_version": "19.0.2",
+ "library_versions": {
+  "libavutil": [
+   61,
+   1,
+   102
+  ],
+  "libavcodec": [
+   63,
+   1,
+   102
+  ],
+  "libavformat": [
+   63,
+   1,
+   102
+  ],
+  "libavdevice": [
+   63,
+   1,
+   102
+  ],
+  "libavfilter": [
+   12,
+   1,
+   102
+  ],
+  "libswscale": [
+   10,
+   1,
+   102
+  ],
+  "libswresample": [
+   7,
+   1,
+   102
+  ]
+ },
+ "numpy": "2.2.6",
+ "python": "3.12.13",
+ "frames": 300,
+ "note": "functional only; no timing recorded",
+ "script": "recording_upgrade\\scripts\\uncompressed_intra\\gapfill\\GF09\\gf09_lossless_check.py",
+ "nvidia_smi_before": "NVIDIA GeForce RTX 3070, 610.88, 0",
+ "rows": [
+  {
+   "part": "nvenc",
+   "id": "h264_nvenc__nv12_1080p",
+   "encoder": "h264_nvenc",
+   "config": "h264_nvenc_intra_lossless.mkv",
+   "options": {
+    "preset": "p1",
+    "tune": "lossless"
+   },
+   "gop_size": 1,
+   "threads": 1,
+   "input": "nv12",
+   "res": "1080p",
+   "src_pix_fmt": "nv12",
+   "pix_fmt_fed": "nv12",
+   "path": "native",
+   "data_planes": 3,
+   "bench_file_stem": "h264_nvenc_intra_lossless.mkv__nv12_1080p",
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "file_bytes": 178084917,
+   "ffprobe": {
+    "codec_name": "h264",
+    "profile": "High 4:4:4 Predictive",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 40,
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 593569.7,
+   "coded_profile_pyav": "High 4:4:4 Predictive",
+   "extradata_len": 58,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "h264",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p"
+    },
+    "cuvid": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "h264_cuvid",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "cuda": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "h264 is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "d3d11va": {
+     "frames_decoded": 0,
+     "frames_expected": 300,
+     "decoder": null,
+     "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'avcodec_send_packet()'",
+     "decoded_pix_fmt": null
+    }
+   }
+  },
+  {
+   "part": "nvenc",
+   "id": "h264_nvenc__gray_1080p",
+   "encoder": "h264_nvenc",
+   "config": "h264_nvenc_intra_lossless.mkv",
+   "options": {
+    "preset": "p1",
+    "tune": "lossless"
+   },
+   "gop_size": 1,
+   "threads": 1,
+   "input": "gray",
+   "res": "1080p",
+   "src_pix_fmt": "gray",
+   "pix_fmt_fed": "yuv420p",
+   "path": "Y + neutral chroma",
+   "data_planes": 1,
+   "bench_file_stem": "h264_nvenc_intra_lossless.mkv__gray_1080p",
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "file_bytes": 134097533,
+   "ffprobe": {
+    "codec_name": "h264",
+    "profile": "High 4:4:4 Predictive",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 40,
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 446945.1,
+   "coded_profile_pyav": "High 4:4:4 Predictive",
+   "extradata_len": 58,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "h264",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p"
+    },
+    "cuvid": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "h264_cuvid",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "cuda": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "h264 is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "d3d11va": {
+     "frames_decoded": 0,
+     "frames_expected": 300,
+     "decoder": null,
+     "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'avcodec_send_packet()'",
+     "decoded_pix_fmt": null
+    }
+   }
+  },
+  {
+   "part": "nvenc",
+   "id": "hevc_nvenc__nv12_1080p",
+   "encoder": "hevc_nvenc",
+   "config": "hevc_nvenc_intra_lossless.mkv",
+   "options": {
+    "preset": "p1",
+    "tune": "lossless"
+   },
+   "gop_size": 1,
+   "threads": 1,
+   "input": "nv12",
+   "res": "1080p",
+   "src_pix_fmt": "nv12",
+   "pix_fmt_fed": "nv12",
+   "path": "native",
+   "data_planes": 3,
+   "bench_file_stem": "hevc_nvenc_intra_lossless.mkv__nv12_1080p",
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "file_bytes": 155336392,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 517741.0,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 128,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p"
+    },
+    "cuvid": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc_cuvid",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "cuda": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "d3d11va": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    }
+   }
+  },
+  {
+   "part": "nvenc",
+   "id": "hevc_nvenc__p010le_1080p",
+   "encoder": "hevc_nvenc",
+   "config": "hevc_nvenc_intra_lossless.mkv",
+   "options": {
+    "preset": "p1",
+    "tune": "lossless"
+   },
+   "gop_size": 1,
+   "threads": 1,
+   "input": "p010le",
+   "res": "1080p",
+   "src_pix_fmt": "p010le",
+   "pix_fmt_fed": "p010le",
+   "path": "native",
+   "data_planes": 3,
+   "bench_file_stem": "hevc_nvenc_intra_lossless.mkv__p010le_1080p",
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "file_bytes": 427033368,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main 10",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p10le",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 1423397.5,
+   "coded_profile_pyav": "Main 10",
+   "extradata_len": 127,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p10le"
+    },
+    "cuvid": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc_cuvid",
+     "error": null,
+     "decoded_pix_fmt": "p010le"
+    },
+    "cuda": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "p010le"
+    },
+    "d3d11va": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "p010le"
+    }
+   }
+  },
+  {
+   "part": "nvenc",
+   "id": "hevc_nvenc__bayer8_1080p",
+   "encoder": "hevc_nvenc",
+   "config": "hevc_nvenc_intra_lossless.mkv",
+   "options": {
+    "preset": "p1",
+    "tune": "lossless"
+   },
+   "gop_size": 1,
+   "threads": 1,
+   "input": "bayer8",
+   "res": "1080p",
+   "src_pix_fmt": "bayer_rggb8",
+   "pix_fmt_fed": "yuv420p",
+   "path": "mosaic as Y + neutral chroma",
+   "data_planes": 1,
+   "bench_file_stem": "hevc_nvenc_intra_lossless.mkv__bayer8_1080p",
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "file_bytes": 410927392,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 1369710.9,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 128,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p"
+    },
+    "cuvid": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc_cuvid",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "cuda": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "d3d11va": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    }
+   }
+  },
+  {
+   "part": "nvenc",
+   "id": "h264_nvenc__bayer8_quad_1080p",
+   "encoder": "h264_nvenc",
+   "config": "h264_nvenc_intra_lossless.mkv",
+   "options": {
+    "preset": "p1",
+    "tune": "lossless"
+   },
+   "gop_size": 1,
+   "threads": 1,
+   "input": "bayer8_quad",
+   "res": "1080p",
+   "src_pix_fmt": "gray",
+   "pix_fmt_fed": "yuv420p",
+   "path": "Y + neutral chroma",
+   "data_planes": 1,
+   "bench_file_stem": "h264_nvenc_intra_lossless.mkv__bayer8_quad_1080p",
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "file_bytes": 231792002,
+   "ffprobe": {
+    "codec_name": "h264",
+    "profile": "High 4:4:4 Predictive",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 40,
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 772593.2,
+   "coded_profile_pyav": "High 4:4:4 Predictive",
+   "extradata_len": 58,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "h264",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p"
+    },
+    "cuvid": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "h264_cuvid",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "cuda": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "h264 is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "d3d11va": {
+     "frames_decoded": 0,
+     "frames_expected": 300,
+     "decoder": null,
+     "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'avcodec_send_packet()'",
+     "decoded_pix_fmt": null
+    }
+   }
+  },
+  {
+   "part": "nvenc",
+   "id": "hevc_nvenc__bayer8_quad_1080p",
+   "encoder": "hevc_nvenc",
+   "config": "hevc_nvenc_intra_lossless.mkv",
+   "options": {
+    "preset": "p1",
+    "tune": "lossless"
+   },
+   "gop_size": 1,
+   "threads": 1,
+   "input": "bayer8_quad",
+   "res": "1080p",
+   "src_pix_fmt": "gray",
+   "pix_fmt_fed": "yuv420p",
+   "path": "Y + neutral chroma",
+   "data_planes": 1,
+   "bench_file_stem": "hevc_nvenc_intra_lossless.mkv__bayer8_quad_1080p",
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "file_bytes": 205557177,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 685143.6,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 128,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p"
+    },
+    "cuvid": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc_cuvid",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "cuda": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "d3d11va": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    }
+   }
+  },
+  {
+   "part": "nvenc",
+   "id": "h264_nvenc__nv12_720p",
+   "encoder": "h264_nvenc",
+   "config": "h264_nvenc_intra_lossless.mkv",
+   "options": {
+    "preset": "p1",
+    "tune": "lossless"
+   },
+   "gop_size": 1,
+   "threads": 1,
+   "input": "nv12",
+   "res": "720p",
+   "src_pix_fmt": "nv12",
+   "pix_fmt_fed": "nv12",
+   "path": "native",
+   "data_planes": 3,
+   "bench_file_stem": "h264_nvenc_intra_lossless.mkv__nv12_720p",
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "file_bytes": 60750650,
+   "ffprobe": {
+    "codec_name": "h264",
+    "profile": "High 4:4:4 Predictive",
+    "width": 1280,
+    "height": 720,
+    "pix_fmt": "yuv420p",
+    "level": 31,
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 202455.6,
+   "coded_profile_pyav": "High 4:4:4 Predictive",
+   "extradata_len": 56,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "h264",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p"
+    },
+    "cuvid": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "h264_cuvid",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "cuda": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "h264 is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "d3d11va": {
+     "frames_decoded": 0,
+     "frames_expected": 300,
+     "decoder": null,
+     "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'avcodec_send_packet()'",
+     "decoded_pix_fmt": null
+    }
+   }
+  },
+  {
+   "part": "nvenc",
+   "id": "h264_nvenc__gray_720p",
+   "encoder": "h264_nvenc",
+   "config": "h264_nvenc_intra_lossless.mkv",
+   "options": {
+    "preset": "p1",
+    "tune": "lossless"
+   },
+   "gop_size": 1,
+   "threads": 1,
+   "input": "gray",
+   "res": "720p",
+   "src_pix_fmt": "gray",
+   "pix_fmt_fed": "yuv420p",
+   "path": "Y + neutral chroma",
+   "data_planes": 1,
+   "bench_file_stem": "h264_nvenc_intra_lossless.mkv__gray_720p",
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "file_bytes": 52045659,
+   "ffprobe": {
+    "codec_name": "h264",
+    "profile": "High 4:4:4 Predictive",
+    "width": 1280,
+    "height": 720,
+    "pix_fmt": "yuv420p",
+    "level": 31,
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 173439.0,
+   "coded_profile_pyav": "High 4:4:4 Predictive",
+   "extradata_len": 56,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "h264",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p"
+    },
+    "cuvid": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "h264_cuvid",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "cuda": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "h264 is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "d3d11va": {
+     "frames_decoded": 0,
+     "frames_expected": 300,
+     "decoder": null,
+     "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'avcodec_send_packet()'",
+     "decoded_pix_fmt": null
+    }
+   }
+  },
+  {
+   "part": "nvenc",
+   "id": "hevc_nvenc__nv12_720p",
+   "encoder": "hevc_nvenc",
+   "config": "hevc_nvenc_intra_lossless.mkv",
+   "options": {
+    "preset": "p1",
+    "tune": "lossless"
+   },
+   "gop_size": 1,
+   "threads": 1,
+   "input": "nv12",
+   "res": "720p",
+   "src_pix_fmt": "nv12",
+   "pix_fmt_fed": "nv12",
+   "path": "native",
+   "data_planes": 3,
+   "bench_file_stem": "hevc_nvenc_intra_lossless.mkv__nv12_720p",
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "file_bytes": 63958585,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1280,
+    "height": 720,
+    "pix_fmt": "yuv420p",
+    "level": 93,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 213148.5,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 128,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p"
+    },
+    "cuvid": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc_cuvid",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "cuda": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "d3d11va": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    }
+   }
+  },
+  {
+   "part": "nvenc",
+   "id": "hevc_nvenc__p010le_720p",
+   "encoder": "hevc_nvenc",
+   "config": "hevc_nvenc_intra_lossless.mkv",
+   "options": {
+    "preset": "p1",
+    "tune": "lossless"
+   },
+   "gop_size": 1,
+   "threads": 1,
+   "input": "p010le",
+   "res": "720p",
+   "src_pix_fmt": "p010le",
+   "pix_fmt_fed": "p010le",
+   "path": "native",
+   "data_planes": 3,
+   "bench_file_stem": "hevc_nvenc_intra_lossless.mkv__p010le_720p",
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "file_bytes": 186704932,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main 10",
+    "width": 1280,
+    "height": 720,
+    "pix_fmt": "yuv420p10le",
+    "level": 93,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 622302.8,
+   "coded_profile_pyav": "Main 10",
+   "extradata_len": 128,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p10le"
+    },
+    "cuvid": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc_cuvid",
+     "error": null,
+     "decoded_pix_fmt": "p010le"
+    },
+    "cuda": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "p010le"
+    },
+    "d3d11va": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "p010le"
+    }
+   }
+  },
+  {
+   "part": "nvenc",
+   "id": "hevc_nvenc__bayer8_720p",
+   "encoder": "hevc_nvenc",
+   "config": "hevc_nvenc_intra_lossless.mkv",
+   "options": {
+    "preset": "p1",
+    "tune": "lossless"
+   },
+   "gop_size": 1,
+   "threads": 1,
+   "input": "bayer8",
+   "res": "720p",
+   "src_pix_fmt": "bayer_rggb8",
+   "pix_fmt_fed": "yuv420p",
+   "path": "mosaic as Y + neutral chroma",
+   "data_planes": 1,
+   "bench_file_stem": "hevc_nvenc_intra_lossless.mkv__bayer8_720p",
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "file_bytes": 167857234,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1280,
+    "height": 720,
+    "pix_fmt": "yuv420p",
+    "level": 93,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 559477.1,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 128,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p"
+    },
+    "cuvid": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc_cuvid",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "cuda": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    },
+    "d3d11va": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 300,
+     "frames_exact_all_planes": 300,
+     "max_abs_per_plane": [
+      0,
+      0,
+      0
+     ],
+     "decoder": "hevc is_hwaccel=True",
+     "error": null,
+     "decoded_pix_fmt": "nv12"
+    }
+   }
+  }
+ ],
+ "source": "corpus c930e_1080p_yuy2 (1080p) / c930e_720p_flash decoded (720p), 8 frames looped to 300"
+}

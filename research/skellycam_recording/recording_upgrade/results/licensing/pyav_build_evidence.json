@@ -1,0 +1,68 @@
+{
+ "pyav": {
+  "v18.0.0": {
+   "tag_commit": "54a4395bb4cdd9cdd53ff6216c50b69f6475c13d",
+   "ffmpeg_latest_json": {
+    "url": "https://github.com/PyAV-Org/pyav-ffmpeg/releases/download/8.1.2-1/ffmpeg-{platform}.tar.gz"
+   },
+   "windows_before_build": [
+    "CIBW_BEFORE_BUILD_WINDOWS: python scripts\\fetch-vendor.py --config-file scripts\\ffmpeg-latest.json C:\\cibw\\vendor"
+   ]
+  },
+  "v19.0.2": {
+   "tag_commit": "a4ad0133b13eb84067dc6e8105eb1fc8f8b93c4f",
+   "ffmpeg_latest_json": {
+    "url": "https://github.com/PyAV-Org/pyav-ffmpeg/releases/download/9.0.2-1/ffmpeg-{platform}.tar.gz"
+   },
+   "windows_before_build": [
+    "CIBW_BEFORE_BUILD_WINDOWS: python scripts\\fetch-vendor.py --config-file scripts\\ffmpeg-latest.json C:\\cibw\\vendor"
+   ]
+  }
+ },
+ "pyav_ffmpeg": {
+  "8.1.1-2": {
+   "tag_commit": "b84838a003b1626152ef530750d5c3e0022c3db9",
+   "build_flags_with_gpl_or_x26x": [
+    "\"--enable-version3\",",
+    "[\"--enable-libx264\", \"--enable-libx265\"]"
+   ],
+   "configure_patch_hunks": [
+    "@@ -1996,8 +1996,6 @@ EXTERNAL_LIBRARY_GPL_LIST=\"",
+    "-    libx264",
+    "-    libx265",
+    "@@ -2010,6 +2008,8 @@ EXTERNAL_LIBRARY_NONFREE_LIST=\"",
+    "+    libx264",
+    "+    libx265"
+   ]
+  },
+  "9.0.2-1": {
+   "tag_commit": "bac889417e26be29615cb6a3f38318151fed55cd",
+   "build_flags_with_gpl_or_x26x": [
+    "\"--enable-version3\",",
+    "ffmpeg_package.build_arguments.append(\"--enable-libx265\")",
+    "ffmpeg_package.build_arguments.append(\"--enable-libx264\")"
+   ],
+   "configure_patch_hunks": [
+    "@@ -1996,8 +1996,6 @@ EXTERNAL_LIBRARY_GPL_LIST=\"",
+    "-    libx264",
+    "-    libx265",
+    "@@ -2010,6 +2008,8 @@ EXTERNAL_LIBRARY_NONFREE_LIST=\"",
+    "+    libx264",
+    "+    libx265"
+   ]
+  },
+  "patch_history": "[\"598dea363c 2026-08-04T16:36:16Z FFmpeg 9.0\",\"1e42248dfc 2026-03-20T04:23:18Z Build FFmpeg 8.1\",\"50b84b4abf 2026-03-16T22:43:18Z Support riscv64 builds (#214)\",\"9e70d98192 2025-08-23T03:47:46Z ffmpeg 8.0\",\"dc9ee64dff 2025-06-27T02:08:25Z GPLv3 OR \\\"LGPLv3 + Exceptions\\\"\",\"9e598243ae 2025-04-01T04:53:24Z Upgrade libs and add hash checks\",\"4b7c2354be 2023-12-22T23:20:47Z Switch to 6.1\",\"d7b47a0745 2023-10-31T04:44:04Z Add patch to build ffmpeg with binutils \\u003e= 2.41\"]",
+  "release_8.1.2-1": "NOT FOUND via API",
+  "release_9.0.2-1": "9.0.2-1 2026-09-19T18:29:01Z"
+ },
+ "ffmpeg": {
+  "n8.1.2": {
+   "tag_commit": "1c2c67c0b9f7f66ab32c19dcf7f227bcd290aa4c",
+   "LICENSE.md_gpl_section": "The following libraries are under GPL version 2:\n- avisynth\n- frei0r\n- libcdio\n- libdavs2\n- librubberband\n- libvidstab\n- libx264\n- libx265\n- libxavs\n- libxavs2\n- libxvid\n\nWhen combining them with FFmpeg, FFmpeg needs to be licensed as GPL as well by\npassing `--enable-gpl` to configure.\n\nThe following libraries are under LGPL ver"
+  },
+  "n9.0.2": {
+   "tag_commit": "ce8f11b9fac4cd7ccfb41ca7c01bc17f5cda8cc3",
+   "LICENSE.md_gpl_section": "The following libraries are under GPL version 2:\n- avisynth\n- frei0r\n- libcdio\n- libdavs2\n- librubberband\n- libvidstab\n- libx264\n- libx265\n- libxavs\n- libxavs2\n- libxvid\n\nWhen combining them with FFmpeg, FFmpeg needs to be licensed as GPL as well by\npassing `--enable-gpl` to configure.\n\nThe following libraries are under LGPL ver"
+  }
+ }
+}

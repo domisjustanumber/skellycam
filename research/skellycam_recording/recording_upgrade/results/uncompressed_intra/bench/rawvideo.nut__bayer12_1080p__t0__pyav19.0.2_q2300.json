@@ -1,0 +1,197 @@
+{
+ "config": "rawvideo.nut",
+ "codec": "rawvideo",
+ "opts": {},
+ "gop": 1,
+ "source": "bayer12",
+ "source_note": "derived 12-bit RGGB in 16-bit LE",
+ "res": "1080p",
+ "width": 1920,
+ "height": 1080,
+ "src_pix_fmt": "bayer_rggb16le",
+ "target_pix_fmt": "bayer_rggb16le",
+ "path": "native",
+ "threads": 0,
+ "frames": 300,
+ "unique_frames": 8,
+ "looped": true,
+ "reps": 3,
+ "warmup_frames": 20,
+ "warmup_discarded": true,
+ "av_version": "19.0.2",
+ "ffmpeg_version": "9.0.2",
+ "library_versions": {
+  "libavutil": [
+   61,
+   1,
+   102
+  ],
+  "libavcodec": [
+   63,
+   1,
+   102
+  ],
+  "libavformat": [
+   63,
+   1,
+   102
+  ],
+  "libavdevice": [
+   63,
+   1,
+   102
+  ],
+  "libavfilter": [
+   12,
+   1,
+   102
+  ],
+  "libswscale": [
+   10,
+   1,
+   102
+  ],
+  "libswresample": [
+   7,
+   1,
+   102
+  ]
+ },
+ "numpy": "2.2.6",
+ "python": "3.12.13",
+ "machine": "Gerald",
+ "cpu_logical": 28,
+ "system_cpu_percent_before": 3.5,
+ "prep_ms_per_frame": 0.676,
+ "warmup": {
+  "encode_wall_s": 0.041,
+  "encode_fps": 487.66,
+  "encode_cpu_s": 0.0625,
+  "encode_cpu_cores_per_30fps_stream": 0.094,
+  "latency_p50": 1.947,
+  "latency_p95": 2.517,
+  "latency_p99": 2.517,
+  "latency_max": 2.517,
+  "latency_mean": 1.915,
+  "packets": 20,
+  "bytes_per_frame": 4147200.0,
+  "file_bytes": 82944948,
+  "system_cpu_percent_during_encode": 5.4,
+  "decode_frames": 20,
+  "decode_wall_s": 0.0311,
+  "decode_fps": 642.87,
+  "decode_cpu_s": 0.0156
+ },
+ "rep_results": [
+  {
+   "encode_wall_s": 0.6023,
+   "encode_fps": 498.13,
+   "encode_cpu_s": 0.7344,
+   "encode_cpu_cores_per_30fps_stream": 0.073,
+   "latency_p50": 1.971,
+   "latency_p95": 2.282,
+   "latency_p99": 2.43,
+   "latency_max": 3.023,
+   "latency_mean": 1.998,
+   "packets": 300,
+   "bytes_per_frame": 4147200.0,
+   "file_bytes": 1244170996,
+   "system_cpu_percent_during_encode": 6.6,
+   "decode_frames": 300,
+   "decode_wall_s": 0.3805,
+   "decode_fps": 788.45,
+   "decode_cpu_s": 0.375
+  },
+  {
+   "encode_wall_s": 0.6098,
+   "encode_fps": 491.98,
+   "encode_cpu_s": 0.8906,
+   "encode_cpu_cores_per_30fps_stream": 0.089,
+   "latency_p50": 2.003,
+   "latency_p95": 2.263,
+   "latency_p99": 2.777,
+   "latency_max": 3.585,
+   "latency_mean": 2.023,
+   "packets": 300,
+   "bytes_per_frame": 4147200.0,
+   "file_bytes": 1244170996,
+   "system_cpu_percent_during_encode": 7.6,
+   "decode_frames": 300,
+   "decode_wall_s": 0.3812,
+   "decode_fps": 787.07,
+   "decode_cpu_s": 0.375
+  },
+  {
+   "encode_wall_s": 0.6222,
+   "encode_fps": 482.16,
+   "encode_cpu_s": 0.8594,
+   "encode_cpu_cores_per_30fps_stream": 0.086,
+   "latency_p50": 2.024,
+   "latency_p95": 2.445,
+   "latency_p99": 3.079,
+   "latency_max": 3.246,
+   "latency_mean": 2.065,
+   "packets": 300,
+   "bytes_per_frame": 4147200.0,
+   "file_bytes": 1244170996,
+   "system_cpu_percent_during_encode": 9.3,
+   "decode_frames": 300,
+   "decode_wall_s": 0.3765,
+   "decode_fps": 796.74,
+   "decode_cpu_s": 0.375
+  }
+ ],
+ "stats": {
+  "encode_fps": {
+   "median": 491.98,
+   "min": 482.16,
+   "max": 498.13
+  },
+  "encode_cpu_cores_per_30fps_stream": {
+   "median": 0.086,
+   "min": 0.073,
+   "max": 0.089
+  },
+  "latency_p50": {
+   "median": 2.003,
+   "min": 1.971,
+   "max": 2.024
+  },
+  "latency_p99": {
+   "median": 2.777,
+   "min": 2.43,
+   "max": 3.079
+  },
+  "latency_max": {
+   "median": 3.246,
+   "min": 3.023,
+   "max": 3.585
+  },
+  "bytes_per_frame": {
+   "median": 4147200.0,
+   "min": 4147200.0,
+   "max": 4147200.0
+  },
+  "decode_fps": {
+   "median": 788.45,
+   "min": 787.07,
+   "max": 796.74
+  },
+  "system_cpu_percent_during_encode": {
+   "median": 7.6,
+   "min": 6.6,
+   "max": 9.3
+  }
+ },
+ "encode_fps": 491.98,
+ "encode_cpu_cores_per_30fps_stream": 0.086,
+ "encode_latency_ms": {
+  "p50": 2.003,
+  "p99": 2.777,
+  "max": 3.246
+ },
+ "bytes_per_frame": 4147200.0,
+ "decode_fps": 788.45,
+ "decoder": "libav default for codec (software unless the decoder is hw)",
+ "system_cpu_percent_after": 2.9
+}

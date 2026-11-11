@@ -1,0 +1,3250 @@
+{
+ "test": "batch",
+ "params": {},
+ "versions": {
+  "electron": "45.2.3",
+  "chrome": "156.0.8078.80",
+  "node": "24.22.2",
+  "v8": "15.6.75.27-electron.0"
+ },
+ "gpu_feature_status": {
+  "2d_canvas": "enabled",
+  "direct_rendering_display_compositor": "disabled_off_ok",
+  "gpu_compositing": "enabled",
+  "multiple_raster_threads": "enabled_on",
+  "opengl": "enabled_on",
+  "rasterization": "enabled",
+  "raw_draw": "disabled_off_ok",
+  "skia_graphite": "disabled_off",
+  "trees_in_viz": "disabled_off",
+  "video_decode": "enabled",
+  "video_encode": "enabled",
+  "webgl": "enabled",
+  "webgpu": "enabled",
+  "webnn": "disabled_off"
+ },
+ "gpu_info": {
+  "gpuDevice": [
+   {
+    "active": true,
+    "deviceId": 9348,
+    "deviceString": "NVIDIA GeForce RTX 3070",
+    "driverVendor": "NVIDIA",
+    "driverVersion": "32.0.16.1088",
+    "gpuPreference": 2,
+    "revision": 161,
+    "subSysId": 928331842,
+    "vendorId": 4318
+   },
+   {
+    "active": false,
+    "deviceId": 9348,
+    "deviceString": "NVIDIA GeForce RTX 3070",
+    "driverVersion": "32.0.16.1088",
+    "gpuPreference": 0,
+    "revision": 161,
+    "subSysId": 928331842,
+    "vendorId": 4318
+   },
+   {
+    "active": false,
+    "deviceId": 140,
+    "deviceString": "Microsoft Basic Render Driver",
+    "driverVersion": "10.0.26100.9711",
+    "gpuPreference": 0,
+    "revision": 0,
+    "subSysId": 0,
+    "vendorId": 5140
+   }
+  ]
+ },
+ "metrics_summary": null,
+ "metrics_samples": null,
+ "window": {
+  "width": 1600,
+  "height": 900
+ },
+ "finished_utc": "2026-11-09T17:03:01.348Z",
+ "result": [
+  {
+   "config": {
+    "test": "seek",
+    "clip": "vfr720p/av1_gop.mp4",
+    "path": "video",
+    "mode": "mid",
+    "ks": "79,80,81,82,83,84,82,81,80",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "vfr720p/av1_gop.mp4",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 9,
+     "exact": 7,
+     "exact_pct": 77.77777777777777,
+     "unreadable": 0,
+     "off_by_hist": {
+      "-1": 2
+     },
+     "readyState": 4,
+     "duration": 29.601356,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 9,
+     "mediatime_idx_equals_pattern": 9
+    },
+    "rows": [
+     {
+      "k": 79,
+      "idx": 79,
+      "mt_idx": 79,
+      "rvfc": true,
+      "t_s": 2.6479777777777778,
+      "step": 79
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.687977777777778,
+      "step": 1
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7039833333333334,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.719977777777778,
+      "step": 1
+     },
+     {
+      "k": 83,
+      "idx": 83,
+      "mt_idx": 83,
+      "rvfc": true,
+      "t_s": 2.7519722222222223,
+      "step": 1
+     },
+     {
+      "k": 84,
+      "idx": 84,
+      "mt_idx": 84,
+      "rvfc": true,
+      "t_s": 2.791977777777778,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.719977777777778,
+      "step": -2
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7039833333333334,
+      "step": -1
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.687977777777778,
+      "step": -1
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "vfr720p/av1_gop.mp4",
+    "path": "video",
+    "mode": "ptsexact",
+    "ks": "79,80,81,82,83,84,82,81,80",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "vfr720p/av1_gop.mp4",
+     "path": "video",
+     "mode": "ptsexact",
+     "pattern": "random",
+     "n": 9,
+     "exact": 0,
+     "exact_pct": 0,
+     "unreadable": 0,
+     "off_by_hist": {
+      "-1": 8,
+      "-2": 1
+     },
+     "readyState": 4,
+     "duration": 29.601356,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 9,
+     "mediatime_idx_equals_pattern": 9
+    },
+    "rows": [
+     {
+      "k": 79,
+      "idx": 78,
+      "mt_idx": 78,
+      "rvfc": true,
+      "t_s": 2.6239777777777777,
+      "step": 79
+     },
+     {
+      "k": 80,
+      "idx": 79,
+      "mt_idx": 79,
+      "rvfc": true,
+      "t_s": 2.671977777777778,
+      "step": 1
+     },
+     {
+      "k": 81,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.703977777777778,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.703988888888889,
+      "step": 1
+     },
+     {
+      "k": 83,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7359666666666667,
+      "step": 1
+     },
+     {
+      "k": 84,
+      "idx": 83,
+      "mt_idx": 83,
+      "rvfc": true,
+      "t_s": 2.767977777777778,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.703988888888889,
+      "step": -2
+     },
+     {
+      "k": 81,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.703977777777778,
+      "step": -1
+     },
+     {
+      "k": 80,
+      "idx": 79,
+      "mt_idx": 79,
+      "rvfc": true,
+      "t_s": 2.671977777777778,
+      "step": -1
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "vfr720p/av1_gop.mp4",
+    "path": "webcodecs",
+    "ks": "79,80,81,82,83,84,82,81,80",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "vfr720p/av1_gop.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 9,
+     "exact": 9,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 3,
+     "decoder_error": null,
+     "fetches": 7
+    },
+    "rows": [
+     {
+      "k": 79,
+      "idx": 79,
+      "decoded": 20,
+      "step": 79,
+      "err": null
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 82,
+      "idx": 82,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 83,
+      "idx": 83,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 84,
+      "idx": 84,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 82,
+      "idx": 82,
+      "decoded": 23,
+      "step": -2,
+      "err": null
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "decoded": 22,
+      "step": -1,
+      "err": null
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "decoded": 21,
+      "step": -1,
+      "err": null
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "vfr720p/av1_gop.webm",
+    "path": "video",
+    "mode": "mid",
+    "ks": "79,80,81,82,83,84,82,81,80",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "vfr720p/av1_gop.webm",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 9,
+     "exact": 7,
+     "exact_pct": 77.77777777777777,
+     "unreadable": 0,
+     "off_by_hist": {
+      "-1": 2
+     },
+     "readyState": 4,
+     "duration": 29.601,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 9,
+     "mediatime_idx_equals_pattern": 9
+    },
+    "rows": [
+     {
+      "k": 79,
+      "idx": 79,
+      "mt_idx": 79,
+      "rvfc": true,
+      "t_s": 2.648,
+      "step": 79
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.688,
+      "step": 1
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7045000000000003,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7205000000000004,
+      "step": 1
+     },
+     {
+      "k": 83,
+      "idx": 83,
+      "mt_idx": 83,
+      "rvfc": true,
+      "t_s": 2.752,
+      "step": 1
+     },
+     {
+      "k": 84,
+      "idx": 84,
+      "mt_idx": 84,
+      "rvfc": true,
+      "t_s": 2.792,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7205000000000004,
+      "step": -2
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7045000000000003,
+      "step": -1
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.688,
+      "step": -1
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "vfr720p/av1_gop.webm",
+    "path": "video",
+    "mode": "ptsexact",
+    "ks": "79,80,81,82,83,84,82,81,80",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "vfr720p/av1_gop.webm",
+     "path": "video",
+     "mode": "ptsexact",
+     "pattern": "random",
+     "n": 9,
+     "exact": 6,
+     "exact_pct": 66.66666666666667,
+     "unreadable": 0,
+     "off_by_hist": {
+      "-1": 3
+     },
+     "readyState": 4,
+     "duration": 29.601,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 9,
+     "mediatime_idx_equals_pattern": 9
+    },
+    "rows": [
+     {
+      "k": 79,
+      "idx": 79,
+      "mt_idx": 79,
+      "rvfc": true,
+      "t_s": 2.624,
+      "step": 79
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.672,
+      "step": 1
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.704,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.705,
+      "step": 1
+     },
+     {
+      "k": 83,
+      "idx": 82,
+      "mt_idx": 82,
+      "rvfc": true,
+      "t_s": 2.736,
+      "step": 1
+     },
+     {
+      "k": 84,
+      "idx": 84,
+      "mt_idx": 84,
+      "rvfc": true,
+      "t_s": 2.768,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.705,
+      "step": -2
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.704,
+      "step": -1
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.672,
+      "step": -1
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "vfr720p/av1_gop.webm",
+    "path": "webcodecs",
+    "ks": "79,80,81,82,83,84,82,81,80",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "vfr720p/av1_gop.webm",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 9,
+     "exact": 9,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 3,
+     "decoder_error": null,
+     "fetches": 7
+    },
+    "rows": [
+     {
+      "k": 79,
+      "idx": 79,
+      "decoded": 20,
+      "step": 79,
+      "err": null
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 82,
+      "idx": 82,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 83,
+      "idx": 83,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 84,
+      "idx": 84,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 82,
+      "idx": 82,
+      "decoded": 23,
+      "step": -2,
+      "err": null
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "decoded": 22,
+      "step": -1,
+      "err": null
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "decoded": 21,
+      "step": -1,
+      "err": null
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "vfr720p/vp9_gop.webm",
+    "path": "video",
+    "mode": "mid",
+    "ks": "79,80,81,82,83,84,82,81,80",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "vfr720p/vp9_gop.webm",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 9,
+     "exact": 7,
+     "exact_pct": 77.77777777777777,
+     "unreadable": 0,
+     "off_by_hist": {
+      "-1": 2
+     },
+     "readyState": 4,
+     "duration": 29.601,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 9,
+     "mediatime_idx_equals_pattern": 9
+    },
+    "rows": [
+     {
+      "k": 79,
+      "idx": 79,
+      "mt_idx": 79,
+      "rvfc": true,
+      "t_s": 2.648,
+      "step": 79
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.688,
+      "step": 1
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7045000000000003,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7205000000000004,
+      "step": 1
+     },
+     {
+      "k": 83,
+      "idx": 83,
+      "mt_idx": 83,
+      "rvfc": true,
+      "t_s": 2.752,
+      "step": 1
+     },
+     {
+      "k": 84,
+      "idx": 84,
+      "mt_idx": 84,
+      "rvfc": true,
+      "t_s": 2.792,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7205000000000004,
+      "step": -2
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7045000000000003,
+      "step": -1
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.688,
+      "step": -1
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "vfr720p/vp9_gop.webm",
+    "path": "video",
+    "mode": "ptsexact",
+    "ks": "79,80,81,82,83,84,82,81,80",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "vfr720p/vp9_gop.webm",
+     "path": "video",
+     "mode": "ptsexact",
+     "pattern": "random",
+     "n": 9,
+     "exact": 6,
+     "exact_pct": 66.66666666666667,
+     "unreadable": 0,
+     "off_by_hist": {
+      "-1": 3
+     },
+     "readyState": 4,
+     "duration": 29.601,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 9,
+     "mediatime_idx_equals_pattern": 9
+    },
+    "rows": [
+     {
+      "k": 79,
+      "idx": 79,
+      "mt_idx": 79,
+      "rvfc": true,
+      "t_s": 2.624,
+      "step": 79
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.672,
+      "step": 1
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.704,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.705,
+      "step": 1
+     },
+     {
+      "k": 83,
+      "idx": 82,
+      "mt_idx": 82,
+      "rvfc": true,
+      "t_s": 2.736,
+      "step": 1
+     },
+     {
+      "k": 84,
+      "idx": 84,
+      "mt_idx": 84,
+      "rvfc": true,
+      "t_s": 2.768,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.705,
+      "step": -2
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.704,
+      "step": -1
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.672,
+      "step": -1
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "vfr720p/vp9_gop.webm",
+    "path": "webcodecs",
+    "ks": "79,80,81,82,83,84,82,81,80",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "vfr720p/vp9_gop.webm",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 9,
+     "exact": 9,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 3,
+     "decoder_error": null,
+     "fetches": 7
+    },
+    "rows": [
+     {
+      "k": 79,
+      "idx": 79,
+      "decoded": 20,
+      "step": 79,
+      "err": null
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 82,
+      "idx": 82,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 83,
+      "idx": 83,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 84,
+      "idx": 84,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 82,
+      "idx": 82,
+      "decoded": 23,
+      "step": -2,
+      "err": null
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "decoded": 22,
+      "step": -1,
+      "err": null
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "decoded": 21,
+      "step": -1,
+      "err": null
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "vfr720p/h264_gop.mp4",
+    "path": "video",
+    "mode": "mid",
+    "ks": "79,80,81,82,83,84,82,81,80",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "vfr720p/h264_gop.mp4",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 9,
+     "exact": 7,
+     "exact_pct": 77.77777777777777,
+     "unreadable": 0,
+     "off_by_hist": {
+      "-1": 2
+     },
+     "readyState": 4,
+     "duration": 29.601356,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 9,
+     "mediatime_idx_equals_pattern": 9
+    },
+    "rows": [
+     {
+      "k": 79,
+      "idx": 79,
+      "mt_idx": 79,
+      "rvfc": true,
+      "t_s": 2.6479777777777778,
+      "step": 79
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.687977777777778,
+      "step": 1
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7039833333333334,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.719977777777778,
+      "step": 1
+     },
+     {
+      "k": 83,
+      "idx": 83,
+      "mt_idx": 83,
+      "rvfc": true,
+      "t_s": 2.7519722222222223,
+      "step": 1
+     },
+     {
+      "k": 84,
+      "idx": 84,
+      "mt_idx": 84,
+      "rvfc": true,
+      "t_s": 2.791977777777778,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.719977777777778,
+      "step": -2
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7039833333333334,
+      "step": -1
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.687977777777778,
+      "step": -1
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "vfr720p/h264_gop.mp4",
+    "path": "video",
+    "mode": "ptsexact",
+    "ks": "79,80,81,82,83,84,82,81,80",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "vfr720p/h264_gop.mp4",
+     "path": "video",
+     "mode": "ptsexact",
+     "pattern": "random",
+     "n": 9,
+     "exact": 0,
+     "exact_pct": 0,
+     "unreadable": 0,
+     "off_by_hist": {
+      "-1": 8,
+      "-2": 1
+     },
+     "readyState": 4,
+     "duration": 29.601356,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 9,
+     "mediatime_idx_equals_pattern": 9
+    },
+    "rows": [
+     {
+      "k": 79,
+      "idx": 78,
+      "mt_idx": 78,
+      "rvfc": true,
+      "t_s": 2.6239777777777777,
+      "step": 79
+     },
+     {
+      "k": 80,
+      "idx": 79,
+      "mt_idx": 79,
+      "rvfc": true,
+      "t_s": 2.671977777777778,
+      "step": 1
+     },
+     {
+      "k": 81,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.703977777777778,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.703988888888889,
+      "step": 1
+     },
+     {
+      "k": 83,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7359666666666667,
+      "step": 1
+     },
+     {
+      "k": 84,
+      "idx": 83,
+      "mt_idx": 83,
+      "rvfc": true,
+      "t_s": 2.767977777777778,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.703988888888889,
+      "step": -2
+     },
+     {
+      "k": 81,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.703977777777778,
+      "step": -1
+     },
+     {
+      "k": 80,
+      "idx": 79,
+      "mt_idx": 79,
+      "rvfc": true,
+      "t_s": 2.671977777777778,
+      "step": -1
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "vfr720p/h264_gop.mp4",
+    "path": "webcodecs",
+    "ks": "79,80,81,82,83,84,82,81,80",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "vfr720p/h264_gop.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 9,
+     "exact": 9,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 3,
+     "decoder_error": null,
+     "fetches": 7
+    },
+    "rows": [
+     {
+      "k": 79,
+      "idx": 79,
+      "decoded": 20,
+      "step": 79,
+      "err": null
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 82,
+      "idx": 82,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 83,
+      "idx": 83,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 84,
+      "idx": 84,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 82,
+      "idx": 82,
+      "decoded": 23,
+      "step": -2,
+      "err": null
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "decoded": 22,
+      "step": -1,
+      "err": null
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "decoded": 21,
+      "step": -1,
+      "err": null
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "vfr720p/av1_intra.mp4",
+    "path": "video",
+    "mode": "mid",
+    "ks": "79,80,81,82,83,84,82,81,80",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "vfr720p/av1_intra.mp4",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 9,
+     "exact": 9,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 29.601356,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 9,
+     "mediatime_idx_equals_pattern": 9
+    },
+    "rows": [
+     {
+      "k": 79,
+      "idx": 79,
+      "mt_idx": 79,
+      "rvfc": true,
+      "t_s": 2.6479777777777778,
+      "step": 79
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.687977777777778,
+      "step": 1
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7039833333333334,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 82,
+      "mt_idx": 82,
+      "rvfc": true,
+      "t_s": 2.719977777777778,
+      "step": 1
+     },
+     {
+      "k": 83,
+      "idx": 83,
+      "mt_idx": 83,
+      "rvfc": true,
+      "t_s": 2.7519722222222223,
+      "step": 1
+     },
+     {
+      "k": 84,
+      "idx": 84,
+      "mt_idx": 84,
+      "rvfc": true,
+      "t_s": 2.791977777777778,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 82,
+      "mt_idx": 82,
+      "rvfc": true,
+      "t_s": 2.719977777777778,
+      "step": -2
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.7039833333333334,
+      "step": -1
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.687977777777778,
+      "step": -1
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "vfr720p/av1_intra.mp4",
+    "path": "video",
+    "mode": "ptsexact",
+    "ks": "79,80,81,82,83,84,82,81,80",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "vfr720p/av1_intra.mp4",
+     "path": "video",
+     "mode": "ptsexact",
+     "pattern": "random",
+     "n": 9,
+     "exact": 9,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 29.601356,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 9,
+     "mediatime_idx_equals_pattern": 9
+    },
+    "rows": [
+     {
+      "k": 79,
+      "idx": 79,
+      "mt_idx": 79,
+      "rvfc": true,
+      "t_s": 2.6239777777777777,
+      "step": 79
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.671977777777778,
+      "step": 1
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.703977777777778,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 82,
+      "mt_idx": 82,
+      "rvfc": true,
+      "t_s": 2.703988888888889,
+      "step": 1
+     },
+     {
+      "k": 83,
+      "idx": 83,
+      "mt_idx": 83,
+      "rvfc": true,
+      "t_s": 2.7359666666666667,
+      "step": 1
+     },
+     {
+      "k": 84,
+      "idx": 84,
+      "mt_idx": 84,
+      "rvfc": true,
+      "t_s": 2.767977777777778,
+      "step": 1
+     },
+     {
+      "k": 82,
+      "idx": 82,
+      "mt_idx": 82,
+      "rvfc": true,
+      "t_s": 2.703988888888889,
+      "step": -2
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "mt_idx": 81,
+      "rvfc": true,
+      "t_s": 2.703977777777778,
+      "step": -1
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "mt_idx": 80,
+      "rvfc": true,
+      "t_s": 2.671977777777778,
+      "step": -1
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "vfr720p/av1_intra.mp4",
+    "path": "webcodecs",
+    "ks": "79,80,81,82,83,84,82,81,80",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "vfr720p/av1_intra.mp4",
+     "path": "webcodecs",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 9,
+     "exact": 9,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "flushes": 0,
+     "resets": 8,
+     "decoder_error": null,
+     "fetches": 9
+    },
+    "rows": [
+     {
+      "k": 79,
+      "idx": 79,
+      "decoded": 1,
+      "step": 79,
+      "err": null
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 82,
+      "idx": 82,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 83,
+      "idx": 83,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 84,
+      "idx": 84,
+      "decoded": 1,
+      "step": 1,
+      "err": null
+     },
+     {
+      "k": 82,
+      "idx": 82,
+      "decoded": 1,
+      "step": -2,
+      "err": null
+     },
+     {
+      "k": 81,
+      "idx": 81,
+      "decoded": 1,
+      "step": -1,
+      "err": null
+     },
+     {
+      "k": 80,
+      "idx": 80,
+      "decoded": 1,
+      "step": -1,
+      "err": null
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c720p30/av1_gop.webm",
+    "path": "video",
+    "mode": "ptsexact",
+    "ks": "300,599,586,8,300,598,300,599,0,300",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c720p30/av1_gop.webm",
+     "path": "video",
+     "mode": "ptsexact",
+     "pattern": "random",
+     "n": 10,
+     "exact": 10,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 10,
+     "mediatime_idx_equals_pattern": 10
+    },
+    "rows": [
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.967,
+      "step": 299
+     },
+     {
+      "k": 586,
+      "idx": 586,
+      "mt_idx": 586,
+      "rvfc": true,
+      "t_s": 19.533,
+      "step": -13
+     },
+     {
+      "k": 8,
+      "idx": 8,
+      "mt_idx": 8,
+      "rvfc": true,
+      "t_s": 0.267,
+      "step": -578
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 292
+     },
+     {
+      "k": 598,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.933,
+      "step": 298
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": -298
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.967,
+      "step": 299
+     },
+     {
+      "k": 0,
+      "idx": 0,
+      "mt_idx": 0,
+      "rvfc": true,
+      "t_s": 0,
+      "step": -599
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c720p30/av1_gop.webm",
+    "path": "video",
+    "mode": "mid",
+    "ks": "300,599,586,8,300,598,300,599,0,300",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c720p30/av1_gop.webm",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 10,
+     "exact": 10,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 10,
+     "mediatime_idx_equals_pattern": 10
+    },
+    "rows": [
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.0165,
+      "step": 300
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.983666666666664,
+      "step": 299
+     },
+     {
+      "k": 586,
+      "idx": 586,
+      "mt_idx": 586,
+      "rvfc": true,
+      "t_s": 19.55,
+      "step": -13
+     },
+     {
+      "k": 8,
+      "idx": 8,
+      "mt_idx": 8,
+      "rvfc": true,
+      "t_s": 0.2835,
+      "step": -578
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.0165,
+      "step": 292
+     },
+     {
+      "k": 598,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.95,
+      "step": 298
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.0165,
+      "step": -298
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.983666666666664,
+      "step": 299
+     },
+     {
+      "k": 0,
+      "idx": 0,
+      "mt_idx": 0,
+      "rvfc": true,
+      "t_s": 0.0165,
+      "step": -599
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.0165,
+      "step": 300
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c720p30/av1_gop.webm",
+    "path": "video",
+    "mode": "ui",
+    "ks": "300,599,586,8,300,598,300,599,0,300",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c720p30/av1_gop.webm",
+     "path": "video",
+     "mode": "ui",
+     "pattern": "random",
+     "n": 10,
+     "exact": 7,
+     "exact_pct": 70,
+     "unreadable": 0,
+     "off_by_hist": {
+      "-1": 3
+     },
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 10,
+     "mediatime_idx_equals_pattern": 10
+    },
+    "rows": [
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     },
+     {
+      "k": 599,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.966666666666665,
+      "step": 299
+     },
+     {
+      "k": 586,
+      "idx": 586,
+      "mt_idx": 586,
+      "rvfc": true,
+      "t_s": 19.533333333333335,
+      "step": -13
+     },
+     {
+      "k": 8,
+      "idx": 7,
+      "mt_idx": 7,
+      "rvfc": true,
+      "t_s": 0.26666666666666666,
+      "step": -578
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 292
+     },
+     {
+      "k": 598,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.933333333333334,
+      "step": 298
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": -298
+     },
+     {
+      "k": 599,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.966666666666665,
+      "step": 299
+     },
+     {
+      "k": 0,
+      "idx": 0,
+      "mt_idx": 0,
+      "rvfc": true,
+      "t_s": 0,
+      "step": -599
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c720p30/vp9_intra.webm",
+    "path": "video",
+    "mode": "ptsexact",
+    "ks": "300,599,586,8,300,598,300,599,0,300",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c720p30/vp9_intra.webm",
+     "path": "video",
+     "mode": "ptsexact",
+     "pattern": "random",
+     "n": 10,
+     "exact": 10,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 10,
+     "mediatime_idx_equals_pattern": 10
+    },
+    "rows": [
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.967,
+      "step": 299
+     },
+     {
+      "k": 586,
+      "idx": 586,
+      "mt_idx": 586,
+      "rvfc": true,
+      "t_s": 19.533,
+      "step": -13
+     },
+     {
+      "k": 8,
+      "idx": 8,
+      "mt_idx": 8,
+      "rvfc": true,
+      "t_s": 0.267,
+      "step": -578
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 292
+     },
+     {
+      "k": 598,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.933,
+      "step": 298
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": -298
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.967,
+      "step": 299
+     },
+     {
+      "k": 0,
+      "idx": 0,
+      "mt_idx": 0,
+      "rvfc": true,
+      "t_s": 0,
+      "step": -599
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c720p30/vp9_intra.webm",
+    "path": "video",
+    "mode": "mid",
+    "ks": "300,599,586,8,300,598,300,599,0,300",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c720p30/vp9_intra.webm",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 10,
+     "exact": 10,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 10,
+     "mediatime_idx_equals_pattern": 10
+    },
+    "rows": [
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.0165,
+      "step": 300
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.983666666666664,
+      "step": 299
+     },
+     {
+      "k": 586,
+      "idx": 586,
+      "mt_idx": 586,
+      "rvfc": true,
+      "t_s": 19.55,
+      "step": -13
+     },
+     {
+      "k": 8,
+      "idx": 8,
+      "mt_idx": 8,
+      "rvfc": true,
+      "t_s": 0.2835,
+      "step": -578
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.0165,
+      "step": 292
+     },
+     {
+      "k": 598,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.95,
+      "step": 298
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.0165,
+      "step": -298
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.983666666666664,
+      "step": 299
+     },
+     {
+      "k": 0,
+      "idx": 0,
+      "mt_idx": 0,
+      "rvfc": true,
+      "t_s": 0.0165,
+      "step": -599
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.0165,
+      "step": 300
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c720p30/vp9_intra.webm",
+    "path": "video",
+    "mode": "ui",
+    "ks": "300,599,586,8,300,598,300,599,0,300",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c720p30/vp9_intra.webm",
+     "path": "video",
+     "mode": "ui",
+     "pattern": "random",
+     "n": 10,
+     "exact": 10,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 10,
+     "mediatime_idx_equals_pattern": 10
+    },
+    "rows": [
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.966666666666665,
+      "step": 299
+     },
+     {
+      "k": 586,
+      "idx": 586,
+      "mt_idx": 586,
+      "rvfc": true,
+      "t_s": 19.533333333333335,
+      "step": -13
+     },
+     {
+      "k": 8,
+      "idx": 8,
+      "mt_idx": 8,
+      "rvfc": true,
+      "t_s": 0.26666666666666666,
+      "step": -578
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 292
+     },
+     {
+      "k": 598,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.933333333333334,
+      "step": 298
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": -298
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.966666666666665,
+      "step": 299
+     },
+     {
+      "k": 0,
+      "idx": 0,
+      "mt_idx": 0,
+      "rvfc": true,
+      "t_s": 0,
+      "step": -599
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c720p30/av1_intra.mp4",
+    "path": "video",
+    "mode": "ptsexact",
+    "ks": "300,599,586,8,300,598,300,599,0,300",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c720p30/av1_intra.mp4",
+     "path": "video",
+     "mode": "ptsexact",
+     "pattern": "random",
+     "n": 10,
+     "exact": 10,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 10,
+     "mediatime_idx_equals_pattern": 10
+    },
+    "rows": [
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.966666666666665,
+      "step": 299
+     },
+     {
+      "k": 586,
+      "idx": 586,
+      "mt_idx": 586,
+      "rvfc": true,
+      "t_s": 19.533333333333335,
+      "step": -13
+     },
+     {
+      "k": 8,
+      "idx": 8,
+      "mt_idx": 8,
+      "rvfc": true,
+      "t_s": 0.26666666666666666,
+      "step": -578
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 292
+     },
+     {
+      "k": 598,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.933333333333334,
+      "step": 298
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": -298
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.966666666666665,
+      "step": 299
+     },
+     {
+      "k": 0,
+      "idx": 0,
+      "mt_idx": 0,
+      "rvfc": true,
+      "t_s": 0,
+      "step": -599
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c720p30/av1_intra.mp4",
+    "path": "video",
+    "mode": "mid",
+    "ks": "300,599,586,8,300,598,300,599,0,300",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c720p30/av1_intra.mp4",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 10,
+     "exact": 10,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 10,
+     "mediatime_idx_equals_pattern": 10
+    },
+    "rows": [
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.016666666666666,
+      "step": 300
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.983333333333334,
+      "step": 299
+     },
+     {
+      "k": 586,
+      "idx": 586,
+      "mt_idx": 586,
+      "rvfc": true,
+      "t_s": 19.55,
+      "step": -13
+     },
+     {
+      "k": 8,
+      "idx": 8,
+      "mt_idx": 8,
+      "rvfc": true,
+      "t_s": 0.2833333333333333,
+      "step": -578
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.016666666666666,
+      "step": 292
+     },
+     {
+      "k": 598,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.95,
+      "step": 298
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.016666666666666,
+      "step": -298
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.983333333333334,
+      "step": 299
+     },
+     {
+      "k": 0,
+      "idx": 0,
+      "mt_idx": 0,
+      "rvfc": true,
+      "t_s": 0.016666666666666666,
+      "step": -599
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.016666666666666,
+      "step": 300
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c720p30/av1_intra.mp4",
+    "path": "video",
+    "mode": "ui",
+    "ks": "300,599,586,8,300,598,300,599,0,300",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c720p30/av1_intra.mp4",
+     "path": "video",
+     "mode": "ui",
+     "pattern": "random",
+     "n": 10,
+     "exact": 10,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 10,
+     "mediatime_idx_equals_pattern": 10
+    },
+    "rows": [
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.966666666666665,
+      "step": 299
+     },
+     {
+      "k": 586,
+      "idx": 586,
+      "mt_idx": 586,
+      "rvfc": true,
+      "t_s": 19.533333333333335,
+      "step": -13
+     },
+     {
+      "k": 8,
+      "idx": 8,
+      "mt_idx": 8,
+      "rvfc": true,
+      "t_s": 0.26666666666666666,
+      "step": -578
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 292
+     },
+     {
+      "k": 598,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.933333333333334,
+      "step": 298
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": -298
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.966666666666665,
+      "step": 299
+     },
+     {
+      "k": 0,
+      "idx": 0,
+      "mt_idx": 0,
+      "rvfc": true,
+      "t_s": 0,
+      "step": -599
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c720p30/h264_gop.mp4",
+    "path": "video",
+    "mode": "ptsexact",
+    "ks": "300,599,586,8,300,598,300,599,0,300",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c720p30/h264_gop.mp4",
+     "path": "video",
+     "mode": "ptsexact",
+     "pattern": "random",
+     "n": 10,
+     "exact": 7,
+     "exact_pct": 70,
+     "unreadable": 0,
+     "off_by_hist": {
+      "-1": 3
+     },
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 10,
+     "mediatime_idx_equals_pattern": 10
+    },
+    "rows": [
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     },
+     {
+      "k": 599,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.966666666666665,
+      "step": 299
+     },
+     {
+      "k": 586,
+      "idx": 586,
+      "mt_idx": 586,
+      "rvfc": true,
+      "t_s": 19.533333333333335,
+      "step": -13
+     },
+     {
+      "k": 8,
+      "idx": 7,
+      "mt_idx": 7,
+      "rvfc": true,
+      "t_s": 0.26666666666666666,
+      "step": -578
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 292
+     },
+     {
+      "k": 598,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.933333333333334,
+      "step": 298
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": -298
+     },
+     {
+      "k": 599,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.966666666666665,
+      "step": 299
+     },
+     {
+      "k": 0,
+      "idx": 0,
+      "mt_idx": 0,
+      "rvfc": true,
+      "t_s": 0,
+      "step": -599
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c720p30/h264_gop.mp4",
+    "path": "video",
+    "mode": "mid",
+    "ks": "300,599,586,8,300,598,300,599,0,300",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c720p30/h264_gop.mp4",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 10,
+     "exact": 10,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 10,
+     "mediatime_idx_equals_pattern": 10
+    },
+    "rows": [
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.016666666666666,
+      "step": 300
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.983333333333334,
+      "step": 299
+     },
+     {
+      "k": 586,
+      "idx": 586,
+      "mt_idx": 586,
+      "rvfc": true,
+      "t_s": 19.55,
+      "step": -13
+     },
+     {
+      "k": 8,
+      "idx": 8,
+      "mt_idx": 8,
+      "rvfc": true,
+      "t_s": 0.2833333333333333,
+      "step": -578
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.016666666666666,
+      "step": 292
+     },
+     {
+      "k": 598,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.95,
+      "step": 298
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.016666666666666,
+      "step": -298
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 19.983333333333334,
+      "step": 299
+     },
+     {
+      "k": 0,
+      "idx": 0,
+      "mt_idx": 0,
+      "rvfc": true,
+      "t_s": 0.016666666666666666,
+      "step": -599
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10.016666666666666,
+      "step": 300
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c720p30/h264_gop.mp4",
+    "path": "video",
+    "mode": "ui",
+    "ks": "300,599,586,8,300,598,300,599,0,300",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c720p30/h264_gop.mp4",
+     "path": "video",
+     "mode": "ui",
+     "pattern": "random",
+     "n": 10,
+     "exact": 7,
+     "exact_pct": 70,
+     "unreadable": 0,
+     "off_by_hist": {
+      "-1": 3
+     },
+     "readyState": 4,
+     "duration": 20,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 10,
+     "mediatime_idx_equals_pattern": 10
+    },
+    "rows": [
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     },
+     {
+      "k": 599,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.966666666666665,
+      "step": 299
+     },
+     {
+      "k": 586,
+      "idx": 586,
+      "mt_idx": 586,
+      "rvfc": true,
+      "t_s": 19.533333333333335,
+      "step": -13
+     },
+     {
+      "k": 8,
+      "idx": 7,
+      "mt_idx": 7,
+      "rvfc": true,
+      "t_s": 0.26666666666666666,
+      "step": -578
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 292
+     },
+     {
+      "k": 598,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.933333333333334,
+      "step": 298
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": -298
+     },
+     {
+      "k": 599,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 19.966666666666665,
+      "step": 299
+     },
+     {
+      "k": 0,
+      "idx": 0,
+      "mt_idx": 0,
+      "rvfc": true,
+      "t_s": 0,
+      "step": -599
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 10,
+      "step": 300
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c720p60/av1_intra.mp4",
+    "path": "video",
+    "mode": "ptsexact",
+    "ks": "300,599,586,8,300,598,300,599,0,300",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c720p60/av1_intra.mp4",
+     "path": "video",
+     "mode": "ptsexact",
+     "pattern": "random",
+     "n": 10,
+     "exact": 10,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 10,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 10,
+     "mediatime_idx_equals_pattern": 10
+    },
+    "rows": [
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 5,
+      "step": 300
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 9.983333333333333,
+      "step": 299
+     },
+     {
+      "k": 586,
+      "idx": 586,
+      "mt_idx": 586,
+      "rvfc": true,
+      "t_s": 9.766666666666667,
+      "step": -13
+     },
+     {
+      "k": 8,
+      "idx": 8,
+      "mt_idx": 8,
+      "rvfc": true,
+      "t_s": 0.13333333333333333,
+      "step": -578
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 5,
+      "step": 292
+     },
+     {
+      "k": 598,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 9.966666666666667,
+      "step": 298
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 5,
+      "step": -298
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 9.983333333333333,
+      "step": 299
+     },
+     {
+      "k": 0,
+      "idx": 0,
+      "mt_idx": 0,
+      "rvfc": true,
+      "t_s": 0,
+      "step": -599
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 5,
+      "step": 300
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c720p60/av1_intra.mp4",
+    "path": "video",
+    "mode": "mid",
+    "ks": "300,599,586,8,300,598,300,599,0,300",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c720p60/av1_intra.mp4",
+     "path": "video",
+     "mode": "mid",
+     "pattern": "random",
+     "n": 10,
+     "exact": 10,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 10,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 10,
+     "mediatime_idx_equals_pattern": 10
+    },
+    "rows": [
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 5.008333333333333,
+      "step": 300
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 9.991666666666667,
+      "step": 299
+     },
+     {
+      "k": 586,
+      "idx": 586,
+      "mt_idx": 586,
+      "rvfc": true,
+      "t_s": 9.775,
+      "step": -13
+     },
+     {
+      "k": 8,
+      "idx": 8,
+      "mt_idx": 8,
+      "rvfc": true,
+      "t_s": 0.14166666666666666,
+      "step": -578
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 5.008333333333333,
+      "step": 292
+     },
+     {
+      "k": 598,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 9.975,
+      "step": 298
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 5.008333333333333,
+      "step": -298
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 9.991666666666667,
+      "step": 299
+     },
+     {
+      "k": 0,
+      "idx": 0,
+      "mt_idx": 0,
+      "rvfc": true,
+      "t_s": 0.008333333333333333,
+      "step": -599
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 5.008333333333333,
+      "step": 300
+     }
+    ]
+   }
+  },
+  {
+   "config": {
+    "test": "seek",
+    "clip": "c720p60/av1_intra.mp4",
+    "path": "video",
+    "mode": "ui",
+    "ks": "300,599,586,8,300,598,300,599,0,300",
+    "keeprows": "1"
+   },
+   "result": {
+    "summary": {
+     "clip": "c720p60/av1_intra.mp4",
+     "path": "video",
+     "mode": "ui",
+     "pattern": "random",
+     "n": 10,
+     "exact": 10,
+     "exact_pct": 100,
+     "unreadable": 0,
+     "off_by_hist": {},
+     "readyState": 4,
+     "duration": 10,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "rvfc_fired": 10,
+     "mediatime_idx_equals_pattern": 10
+    },
+    "rows": [
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 5,
+      "step": 300
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 9.983333333333333,
+      "step": 299
+     },
+     {
+      "k": 586,
+      "idx": 586,
+      "mt_idx": 586,
+      "rvfc": true,
+      "t_s": 9.766666666666667,
+      "step": -13
+     },
+     {
+      "k": 8,
+      "idx": 8,
+      "mt_idx": 8,
+      "rvfc": true,
+      "t_s": 0.13333333333333333,
+      "step": -578
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 5,
+      "step": 292
+     },
+     {
+      "k": 598,
+      "idx": 598,
+      "mt_idx": 598,
+      "rvfc": true,
+      "t_s": 9.966666666666667,
+      "step": 298
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 5,
+      "step": -298
+     },
+     {
+      "k": 599,
+      "idx": 599,
+      "mt_idx": 599,
+      "rvfc": true,
+      "t_s": 9.983333333333333,
+      "step": 299
+     },
+     {
+      "k": 0,
+      "idx": 0,
+      "mt_idx": 0,
+      "rvfc": true,
+      "t_s": 0,
+      "step": -599
+     },
+     {
+      "k": 300,
+      "idx": 300,
+      "mt_idx": 300,
+      "rvfc": true,
+      "t_s": 5,
+      "step": 300
+     }
+    ]
+   }
+  }
+ ],
+ "nvidia_smi": {
+  "query": "encoder.stats.sessionCount,utilization.gpu,utilization.decoder,memory.used",
+  "before": "0, 25 %, 0 %, 2518 MiB",
+  "after": "0, 9 %, 21 %, 2519 MiB"
+ },
+ "note": "CPU/memory samples removed: functional stage, machine shared with other agents"
+}

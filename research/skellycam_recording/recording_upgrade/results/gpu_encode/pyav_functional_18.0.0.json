@@ -1,0 +1,1020 @@
+{
+ "pyav": "18.0.0",
+ "library_versions": {
+  "libavutil": [
+   60,
+   26,
+   102
+  ],
+  "libavcodec": [
+   62,
+   28,
+   102
+  ],
+  "libavformat": [
+   62,
+   12,
+   102
+  ],
+  "libavdevice": [
+   62,
+   3,
+   102
+  ],
+  "libavfilter": [
+   11,
+   14,
+   102
+  ],
+  "libswscale": [
+   9,
+   5,
+   102
+  ],
+  "libswresample": [
+   6,
+   3,
+   102
+  ]
+ },
+ "hwdevices_available": [
+  "cuda",
+  "dxva2",
+  "qsv",
+  "d3d11va",
+  "d3d12va",
+  "amf"
+ ],
+ "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+ "hw_encoders_in_wheel": [
+  "aac_mf",
+  "ac3_mf",
+  "av1_amf",
+  "av1_cuvid",
+  "av1_d3d12va",
+  "av1_mf",
+  "av1_nvenc",
+  "av1_qsv",
+  "h264_amf",
+  "h264_cuvid",
+  "h264_d3d12va",
+  "h264_mf",
+  "h264_nvenc",
+  "h264_qsv",
+  "hevc_amf",
+  "hevc_cuvid",
+  "hevc_d3d12va",
+  "hevc_mf",
+  "hevc_nvenc",
+  "hevc_qsv",
+  "mjpeg_cuvid",
+  "mjpeg_qsv",
+  "mp3_mf",
+  "mpeg1_cuvid",
+  "mpeg2_cuvid",
+  "mpeg2_qsv",
+  "mpeg4_cuvid",
+  "vc1_cuvid",
+  "vc1_qsv",
+  "vp8_cuvid",
+  "vp8_qsv",
+  "vp9_amf",
+  "vp9_cuvid",
+  "vp9_qsv",
+  "vvc_qsv"
+ ],
+ "nvidia_smi_before": "0, 4 %, 610.88",
+ "encode": [
+  {
+   "encoder": "h264_nvenc",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": true,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_nvenc",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "cuda",
+   "ok": true,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_nvenc",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": true,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_nvenc",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "cuda",
+   "ok": true,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "hevc_nvenc",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": true,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "hevc_nvenc",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "cuda",
+   "ok": true,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "hevc_nvenc",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": true,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "hevc_nvenc",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "cuda",
+   "ok": true,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "av1_nvenc",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_open2(\"av1_nvenc\", {\\'preset\\': \\'p4\\'})'",
+   "trace_last": "av.error.ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_open2(\"av1_nvenc\", {\\'preset\\': \\'p4\\'})'"
+  },
+  {
+   "encoder": "av1_nvenc",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "cuda",
+   "ok": false,
+   "error": "NotImplementedError: [Errno 40] Function not implemented: 'avcodec_open2(\"av1_nvenc\", {\\'preset\\': \\'p4\\'})'",
+   "trace_last": "av.error.NotImplementedError: [Errno 40] Function not implemented: 'avcodec_open2(\"av1_nvenc\", {\\'preset\\': \\'p4\\'})'"
+  },
+  {
+   "encoder": "av1_nvenc",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_open2(\"av1_nvenc\", {\\'preset\\': \\'p4\\'})'",
+   "trace_last": "av.error.ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_open2(\"av1_nvenc\", {\\'preset\\': \\'p4\\'})'"
+  },
+  {
+   "encoder": "av1_nvenc",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "cuda",
+   "ok": false,
+   "error": "NotImplementedError: [Errno 40] Function not implemented: 'avcodec_open2(\"av1_nvenc\", {\\'preset\\': \\'p4\\'})'",
+   "trace_last": "av.error.NotImplementedError: [Errno 40] Function not implemented: 'avcodec_open2(\"av1_nvenc\", {\\'preset\\': \\'p4\\'})'"
+  },
+  {
+   "encoder": "h264_qsv",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"h264_qsv\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"h264_qsv\", {})'"
+  },
+  {
+   "encoder": "h264_qsv",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "qsv",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "h264_qsv",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"h264_qsv\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"h264_qsv\", {})'"
+  },
+  {
+   "encoder": "h264_qsv",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "qsv",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "hevc_qsv",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"hevc_qsv\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"hevc_qsv\", {})'"
+  },
+  {
+   "encoder": "hevc_qsv",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "qsv",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "hevc_qsv",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"hevc_qsv\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"hevc_qsv\", {})'"
+  },
+  {
+   "encoder": "hevc_qsv",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "qsv",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "av1_qsv",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"av1_qsv\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"av1_qsv\", {})'"
+  },
+  {
+   "encoder": "av1_qsv",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "qsv",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "av1_qsv",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"av1_qsv\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"av1_qsv\", {})'"
+  },
+  {
+   "encoder": "av1_qsv",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "qsv",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "vp9_qsv",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"vp9_qsv\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"vp9_qsv\", {})'"
+  },
+  {
+   "encoder": "vp9_qsv",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "qsv",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "vp9_qsv",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"vp9_qsv\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"vp9_qsv\", {})'"
+  },
+  {
+   "encoder": "vp9_qsv",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "qsv",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "mjpeg_qsv",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"mjpeg_qsv\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"mjpeg_qsv\", {})'"
+  },
+  {
+   "encoder": "mjpeg_qsv",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "qsv",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "mjpeg_qsv",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"mjpeg_qsv\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"mjpeg_qsv\", {})'"
+  },
+  {
+   "encoder": "mjpeg_qsv",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "qsv",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "h264_amf",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"h264_amf\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"h264_amf\", {})'"
+  },
+  {
+   "encoder": "h264_amf",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "amf",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "h264_amf",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"h264_amf\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"h264_amf\", {})'"
+  },
+  {
+   "encoder": "h264_amf",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "amf",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "hevc_amf",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"hevc_amf\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"hevc_amf\", {})'"
+  },
+  {
+   "encoder": "hevc_amf",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "amf",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "hevc_amf",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"hevc_amf\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"hevc_amf\", {})'"
+  },
+  {
+   "encoder": "hevc_amf",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "amf",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "av1_amf",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"av1_amf\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"av1_amf\", {})'"
+  },
+  {
+   "encoder": "av1_amf",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "amf",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "av1_amf",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"av1_amf\", {})'",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"av1_amf\", {})'"
+  },
+  {
+   "encoder": "av1_amf",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "amf",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred",
+   "trace_last": "av.error.UnknownError: [Errno 1313558101] Unknown error occurred"
+  },
+  {
+   "encoder": "h264_mf",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": true,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Constrained Baseline",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_mf",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": true,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Constrained Baseline",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "hevc_mf",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": true,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "hevc_mf",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": true,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "av1_mf",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "OSError: [Errno 104] Error number -104 occurred: 'avcodec_send_frame()'",
+   "trace_last": "av.error.OSError: [Errno 104] Error number -104 occurred: 'avcodec_send_frame()'"
+  },
+  {
+   "encoder": "av1_mf",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "OSError: [Errno 104] Error number -104 occurred: 'avcodec_send_frame()'",
+   "trace_last": "av.error.OSError: [Errno 104] Error number -104 occurred: 'avcodec_send_frame()'"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_open2(\"h264_d3d12va\", {})' returned 22",
+   "trace_last": "av.error.ArgumentError: Invalid argument: 'avcodec_open2(\"h264_d3d12va\", {})' returned 22"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "d3d12va",
+   "ok": true,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_open2(\"h264_d3d12va\", {})' returned 22",
+   "trace_last": "av.error.ArgumentError: Invalid argument: 'avcodec_open2(\"h264_d3d12va\", {})' returned 22"
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "d3d12va",
+   "ok": true,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_open2(\"hevc_d3d12va\", {})' returned 22",
+   "trace_last": "av.error.ArgumentError: Invalid argument: 'avcodec_open2(\"hevc_d3d12va\", {})' returned 22"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "d3d12va",
+   "ok": true,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_open2(\"hevc_d3d12va\", {})' returned 22",
+   "trace_last": "av.error.ArgumentError: Invalid argument: 'avcodec_open2(\"hevc_d3d12va\", {})' returned 22"
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "d3d12va",
+   "ok": true,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_open2(\"av1_d3d12va\", {})' returned 22",
+   "trace_last": "av.error.ArgumentError: Invalid argument: 'avcodec_open2(\"av1_d3d12va\", {})' returned 22"
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "d3d12va",
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_open2(\"av1_d3d12va\", {})' returned 22",
+   "trace_last": "av.error.ArgumentError: Invalid argument: 'avcodec_open2(\"av1_d3d12va\", {})' returned 22"
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_open2(\"av1_d3d12va\", {})' returned 22",
+   "trace_last": "av.error.ArgumentError: Invalid argument: 'avcodec_open2(\"av1_d3d12va\", {})' returned 22"
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "d3d12va",
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_open2(\"av1_d3d12va\", {})' returned 22",
+   "trace_last": "av.error.ArgumentError: Invalid argument: 'avcodec_open2(\"av1_d3d12va\", {})' returned 22"
+  },
+  {
+   "encoder": "h264_vulkan",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  },
+  {
+   "encoder": "h264_vulkan",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "vulkan",
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  },
+  {
+   "encoder": "h264_vulkan",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  },
+  {
+   "encoder": "h264_vulkan",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "vulkan",
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  },
+  {
+   "encoder": "hevc_vulkan",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  },
+  {
+   "encoder": "hevc_vulkan",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "vulkan",
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  },
+  {
+   "encoder": "hevc_vulkan",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  },
+  {
+   "encoder": "hevc_vulkan",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "vulkan",
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  },
+  {
+   "encoder": "av1_vulkan",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  },
+  {
+   "encoder": "av1_vulkan",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "vulkan",
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  },
+  {
+   "encoder": "av1_vulkan",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  },
+  {
+   "encoder": "av1_vulkan",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "vulkan",
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  },
+  {
+   "encoder": "ffv1_vulkan",
+   "variant": "intra",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  },
+  {
+   "encoder": "ffv1_vulkan",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "hwaccel": "vulkan",
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  },
+  {
+   "encoder": "ffv1_vulkan",
+   "variant": "gop15",
+   "input": "sw frames",
+   "hwaccel": null,
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  },
+  {
+   "encoder": "ffv1_vulkan",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "hwaccel": "vulkan",
+   "ok": false,
+   "error": "codec not in av.codecs_available (not built into this wheel)"
+  }
+ ],
+ "decode": [
+  {
+   "set": "c930e_1080p",
+   "decoder": "mjpeg",
+   "ok": true,
+   "frames": 5,
+   "formats": [
+    "yuvj422p"
+   ]
+  },
+  {
+   "set": "c930e_1080p",
+   "decoder": "mjpeg_cuvid",
+   "ok": false,
+   "error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_send_packet()'"
+  },
+  {
+   "set": "c930e_1080p",
+   "decoder": "mjpeg+hwaccel_cuda",
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_send_packet()' returned 22"
+  },
+  {
+   "set": "c930e_720p_flash",
+   "decoder": "mjpeg",
+   "ok": true,
+   "frames": 5,
+   "formats": [
+    "yuvj422p"
+   ]
+  },
+  {
+   "set": "c930e_720p_flash",
+   "decoder": "mjpeg_cuvid",
+   "ok": false,
+   "error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_send_packet()'"
+  },
+  {
+   "set": "c930e_720p_flash",
+   "decoder": "mjpeg+hwaccel_cuda",
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_send_packet()' returned 22"
+  }
+ ],
+ "nvidia_smi_after": "0, 6 %, 610.88"
+}

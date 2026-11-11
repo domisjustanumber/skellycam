@@ -1,0 +1,69 @@
+# system_probe (read-only), 2026-11-09T16:39:33.0741036-05:00
+## Get-PnpDevice -Class Display | ft Status,Present,FriendlyName
+
+Status Present FriendlyName                   InstanceId
+------ ------- ------------                   ----------
+OK        True Parsec Virtual Display Adapter ROOT\DISPLAY\0000
+OK        True Intel(R) UHD Graphics 770      PCI\VEN_8086&DEV_A780&SUBSYS_88821043&REV_04\3&11583659&0&10
+OK        True NVIDIA GeForce RTX 3070        PCI\VEN_10DE&DEV_2484&SUBSYS_37553842&REV_A1\4&256A0AA8&0&0008
+
+
+## Get-CimInstance Win32_VideoController
+
+Name                 : Parsec Virtual Display Adapter
+DriverVersion        : 0.45.0.0
+DriverDate           : 2024-01-24 7:00:00 PM
+PNPDeviceID          : ROOT\DISPLAY\0000
+Status               : OK
+AdapterCompatibility : Parsec Cloud, Inc.
+VideoProcessor       : 
+
+Name                 : Intel(R) UHD Graphics 770
+DriverVersion        : 32.0.101.7088
+DriverDate           : 2026-06-16 8:00:00 PM
+PNPDeviceID          : PCI\VEN_8086&DEV_A780&SUBSYS_88821043&REV_04\3&11583659&0&10
+Status               : OK
+AdapterCompatibility : Intel Corporation
+VideoProcessor       : Intel(R) UHD Graphics Family
+
+Name                 : NVIDIA GeForce RTX 3070
+DriverVersion        : 32.0.16.1088
+DriverDate           : 2026-07-21 8:00:00 PM
+PNPDeviceID          : PCI\VEN_10DE&DEV_2484&SUBSYS_37553842&REV_A1\4&256A0AA8&0&0008
+Status               : OK
+AdapterCompatibility : NVIDIA
+VideoProcessor       : NVIDIA GeForce RTX 3070
+
+
+## nvidia-smi --query-gpu=name,driver_version,encoder.stats.sessionCount,utilization.gpu --format=csv
+name, driver_version, encoder.stats.sessionCount, utilization.gpu [%]
+NVIDIA GeForce RTX 3070, 610.88, 0, 18 %
+
+## nvidia-smi -q -d ENCODER_STATS
+
+==============NVSMI LOG==============
+
+Timestamp                                              : Mon Nov  9 16:39:34 2026
+Driver Version                                         : 610.88 [Deprecated; will be removed in CUDA 14.0. Use KMD Version instead]
+CUDA Version                                           : 13.3 [Deprecated; will be removed in CUDA 14.0. Use CUDA UMD Version instead]
+KMD Version                                            : 610.88
+CUDA UMD Version                                       : 13.3
+
+Attached GPUs                                          : 1
+GPU 00000000:01:00.0
+    Encoder Stats
+        Active Sessions                                : 0
+        Average FPS                                    : 0
+        Average Latency                                : 0
+
+
+## Processes matching parsec|sunshine
+
+ProcessName    Id CPU
+-----------    -- ---
+parsecd      8168 
+parsecd     23684 3.55
+sunshine    16048 
+sunshinesvc  6440 
+
+

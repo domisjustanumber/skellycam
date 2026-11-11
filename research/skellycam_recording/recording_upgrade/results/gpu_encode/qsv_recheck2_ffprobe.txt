@@ -1,0 +1,19 @@
+# ffprobe inspection of hevc_qsv gop15 outputs (PyAV 19.0.2 encodes from qsv_recheck*.py), 2026-11-09T16:44:11-05:00
+# gyan ffprobe 9.0.2, inspection only
+== hevc_qsv_gop15_sw.mkv
+cmd: ffprobe -v error -select_streams v:0 -show_entries packet=pts,dts,flags -of csv=p=0 hevc_qsv_gop15_sw.mkv
+0,0,K__ 33,33,___ 67,67,___ 100,100,___ 133,133,___ 167,167,___ 200,200,___ 233,233,___ 267,267,___ 300,300,___ 333,333,___ 367,367,___ 400,400,___ 433,433,___ 467,467,___ 500,500,K__ 533,533,___ 567,567,___ 600,600,___ 633,633,___ 667,667,___ 700,700,___ 733,733,___ 767,767,___ 800,800,___ 833,833,___ 867,867,___ 900,900,___ 933,933,___ 967,967,___ 1000,1000,K__ 1033,1033,___ 
+cmd: ffprobe -v error -select_streams v:0 -show_entries stream=has_b_frames -of csv=p=0 hevc_qsv_gop15_sw.mkv
+0
+== hevc_qsv_gop15_gpb1.mkv
+cmd: ffprobe -v error -select_streams v:0 -show_entries packet=pts,dts,flags -of csv=p=0 hevc_qsv_gop15_gpb1.mkv
+0,0,K__ 33,33,___ 67,67,___ 100,100,___ 133,133,___ 167,167,___ 200,200,___ 233,233,___ 267,267,___ 300,300,___ 333,333,___ 367,367,___ 400,400,___ 433,433,___ 467,467,___ 500,500,K__ 533,533,___ 567,567,___ 600,600,___ 633,633,___ 667,667,___ 700,700,___ 733,733,___ 767,767,___ 800,800,___ 833,833,___ 867,867,___ 900,900,___ 933,933,___ 967,967,___ 1000,1000,K__ 1033,1033,___ 
+cmd: ffprobe -v error -select_streams v:0 -show_entries stream=has_b_frames -of csv=p=0 hevc_qsv_gop15_gpb1.mkv
+0
+== hevc_qsv_gop15_gpb0.mkv
+cmd: ffprobe -v error -select_streams v:0 -show_entries packet=pts,dts,flags -of csv=p=0 hevc_qsv_gop15_gpb0.mkv
+0,0,K__ 33,33,___ 67,67,___ 100,100,___ 133,133,___ 167,167,___ 200,200,___ 233,233,___ 267,267,___ 300,300,___ 333,333,___ 367,367,___ 400,400,___ 433,433,___ 467,467,___ 500,500,K__ 533,533,___ 567,567,___ 600,600,___ 633,633,___ 667,667,___ 700,700,___ 733,733,___ 767,767,___ 800,800,___ 833,833,___ 867,867,___ 900,900,___ 933,933,___ 967,967,___ 1000,1000,K__ 1033,1033,___ 
+cmd: ffprobe -v error -select_streams v:0 -show_entries stream=has_b_frames -of csv=p=0 hevc_qsv_gop15_gpb0.mkv
+0
+== ffmpeg -h encoder=hevc_qsv | grep gpb
+  -gpb               <boolean>    E..V....... 1: GPB (generalized P/B frame); 0: regular P frame (default true)

@@ -1,0 +1,31 @@
+nvsdk131_nvenc-application-note.txt:396:As far as NVENC hardware encoding is concerned, NVIDIA GPUs are classified into two categories: “qualified” and “non-qualified”. On qualified GPUs, the number of concurrent encode sessions is limited by available system resources (encoder capacity, system memory, video memory etc.). On non-qualified GPUs, the number of concurrent encode sessions is limited to 12 per system. This limit of 12 concurrent sessions per system applies to the combined number of encoding sessions executed on all non-qualified cards present in the system.
+nvsdk131_nvenc-application-note.txt:397:For a complete list of qualified and non-qualified GPUs, refer to https://developer.nvidia.com/nvidia-video-codec-sdk.
+nvsdk131_nvenc-application-note.txt:398:For example, on a system with one Quadro RTX4000 card (which is a qualified GPU) and three GeForce cards (which are non-qualified GPUs), the application can run N simultaneous encode sessions on Quadro RTX4000 card (where N is defined by the encoder/memory/hardware limitations) and 12 sessions on all the GeForce cards combined. Thus, the limit on the number of simultaneous encode sessions for such a system is N + 12.
+nvsdk131_nvenc-video-encoder-api-prog-guide.txt:579:All NVIDIA GPUs support 8-bit encoding (RGB/YUV input with 8-bit precision). Starting from Pascal generation, NVIDIA GPUs support high-bit-depth HEVC encoding (HEVC main-10 profile with 10-bit input precision). Starting from Ada generation, NVIDIA GPUs support high-bit-depth AV1 encoding (AV1 main profile with 8 or 10-bit input precision). Starting from Blackwell generation, NVIDIA GPUs support high-bit-depth H264 encoding (H264 high-10 profile with 10-bit input precision).
+NVDEC decodes the compressed video streams and copies the resulting YUV frames to video memory (in GPUs) or system memory (in Jetson platforms). With frames in video/system memory, video post processing can be done using CUDA. The NVDECODE API also provides CUDA-optimized implementation of commonly used post-processing operations such as scaling, cropping, aspect ratio conversion, de-interlacing and color space conversion to many popular output video formats. The client can choose to use the CUDA-optimized implementations provided by the NVDECODE API for these post-processing steps or choose to implement their own post-processing on the decoded output frames.
+Decoded video frames can be presented to the display with graphics interoperability for video playback, passed directly to a dedicated hardware encoder (NVENC) for high-performance video transcoding, used for GPU accelerated inferencing or consumed further by CUDA or CPU-based processing.
+### 1.1. Supported Codecs#
+The codecs supported by NVDECODE API are:
+- 
+MPEG-1,
+- 
+MPEG-2,
+- 
+MPEG-4,
+- 
+VC-1 (Simple/Main/Advanced Profile),
+- 
+H.264 (AVCHD) Baseline/Main/High/High10 (exclude MBAFF)/High422 (exclude MBAFF) Profile,
+- 
+H.265 (HEVC) (Main/Main10/Main12 Profile, Main 4:2:2/4:4:4 10/12 profile (exclude YUV400)),
+- 
+VP8,
+- 
+VP9 (8-bit, 10-bit, and 12-bit),
+- 
+AV1 Main profile,
+- 
+Hybrid (CUDA + CPU) JPEG
+Note
+The Hybrid (CUDA + CPU) JPEG codec is not supported on Jetson platforms.
+Refer to Chapter 2 for complete details about the video capabilities for various GPUs and Jetson platforms.

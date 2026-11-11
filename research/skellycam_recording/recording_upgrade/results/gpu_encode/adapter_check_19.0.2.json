@@ -1,0 +1,65 @@
+{
+ "pyav": "19.0.2",
+ "runs": [
+  {
+   "encoder": "h264_d3d12va",
+   "ok": true,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 8,
+    "key_packets": 8,
+    "decoded_frames": 8,
+    "pict_types": {
+     "I": 8
+    }
+   },
+   "nvidia_smi_mid_encode": "1, 28 %, 610.88",
+   "log_matches": [
+    "D3D12VA: Using device 10de:2484 (NVIDIA GeForce RTX 3070).",
+    "h264_d3d12va: Using intra frames only.",
+    "h264_d3d12va: Using fixed QP = 25 / 25 / 33 for IDR- / P- / B-frames.",
+    "h264_d3d12va: Using level 4.",
+    "h264_d3d12va: Using nv12 as format of reconstructed frames."
+   ]
+  },
+  {
+   "encoder": "h264_mf",
+   "ok": true,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Constrained Baseline",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 8,
+    "key_packets": 8,
+    "decoded_frames": 8,
+    "pict_types": {
+     "I": 8
+    }
+   },
+   "nvidia_smi_mid_encode": "1, 28 %, 610.88",
+   "log_matches": [
+    "h264_mf: MFT_ENUM_HARDWARE_URL_Attribute='NVIDIA H.264 Encoder MFT'",
+    "h264_mf: MFT_FRIENDLY_NAME_Attribute='NVIDIA H.264 Encoder MFT'",
+    "h264_mf: MFT_TRANSFORM_CLSID_Attribute={60f44560-5a20-4857-bfef-d29773cb8040}",
+    "h264_mf: MFT_ENUM_HARDWARE_URL_Attribute='AA243E5D-2F73-48c7-97F7-F6FA17651651'",
+    "h264_mf: MFT_FRIENDLY_NAME_Attribute='Intel\\xae Quick Sync Video H.264 Encoder MFT'",
+    "h264_mf: MFT_TRANSFORM_CLSID_Attribute={4be8d3c0-0515-4a37-ad55-e4bae19af471}",
+    "h264_mf: MFT_ENUM_HARDWARE_URL_Attribute='AA243E5D-2F73-48c7-97F7-F6FA17651651'",
+    "h264_mf: MFT_FRIENDLY_NAME_Attribute='Intel\\xae Quick Sync Video H.264 Encoder MFT'",
+    "h264_mf: MFT_TRANSFORM_CLSID_Attribute={4be8d3c0-0515-4a37-ad55-e4bae19af471}",
+    "h264_mf: activate MFT 0",
+    "h264_mf: MFT attributes",
+    "h264_mf: MFT_ENUM_HARDWARE_URL_Attribute='NVIDIA H.264 Encoder MFT'",
+    "h264_mf: MFT_FRIENDLY_NAME_Attribute='NVIDIA H.264 Encoder MFT'",
+    "h264_mf: MFT name: 'NVIDIA H.264 Encoder MFT'",
+    "h264_mf: MFT supports ICodecAPI."
+   ]
+  }
+ ]
+}

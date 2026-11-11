@@ -1,0 +1,442 @@
+{
+ "pyav": "19.0.2",
+ "ffmpeg": "9.0.2",
+ "opencv": "4.12.0",
+ "date": "2026-11-09",
+ "killed_container_decode": [
+  {
+   "file": "killed.mkv.real.mkv",
+   "bytes": 23068672,
+   "bytes_mod_32KiB": 0,
+   "packets": 297,
+   "frames": 297,
+   "last_packet": [
+    296,
+    80637
+   ],
+   "packets_flagged_corrupt": [],
+   "frames_flagged_corrupt": [],
+   "error": null
+  },
+  {
+   "file": "killed.mp4f.real.mp4",
+   "bytes": 23068700,
+   "bytes_mod_32KiB": 28,
+   "packets": 298,
+   "frames": 298,
+   "last_packet": [
+    297,
+    22583
+   ],
+   "packets_flagged_corrupt": [
+    297
+   ],
+   "frames_flagged_corrupt": [],
+   "error": null
+  },
+  {
+   "file": "killed.avi.index.avi",
+   "bytes": 23068672,
+   "bytes_mod_32KiB": 0,
+   "packets": 298,
+   "frames": 298,
+   "last_packet": [
+    297,
+    48476
+   ],
+   "packets_flagged_corrupt": [
+    297
+   ],
+   "frames_flagged_corrupt": [],
+   "error": null
+  }
+ ],
+ "truncated_container_decode": [
+  {
+   "file": "cut_50pct.mp4f.real.mp4",
+   "bytes": 11647228,
+   "bytes_mod_32KiB": 14588,
+   "packets": 150,
+   "frames": 150,
+   "last_packet": [
+    149,
+    47179
+   ],
+   "packets_flagged_corrupt": [
+    149
+   ],
+   "frames_flagged_corrupt": [],
+   "error": null
+  },
+  {
+   "file": "cut_90pct.avi.index.avi",
+   "bytes": 20940649,
+   "bytes_mod_32KiB": 1897,
+   "packets": 271,
+   "frames": 271,
+   "last_packet": [
+    270,
+    16117
+   ],
+   "packets_flagged_corrupt": [
+    270
+   ],
+   "frames_flagged_corrupt": [],
+   "error": null
+  },
+  {
+   "file": "cut_50pct.mkv.real.mkv",
+   "bytes": 11634063,
+   "bytes_mod_32KiB": 1423,
+   "packets": 149,
+   "frames": 149,
+   "last_packet": [
+    148,
+    80156
+   ],
+   "packets_flagged_corrupt": [],
+   "frames_flagged_corrupt": [],
+   "error": null
+  }
+ ],
+ "vfr": {
+  "mjpeg_mkv_orig": {
+   "first_pts_ms": [
+    -3,
+    32,
+    68
+   ],
+   "encoder_first_packets": [
+    [
+     -3,
+     -3,
+     "1/1000"
+    ],
+    [
+     32,
+     32,
+     "1/1000"
+    ],
+    [
+     68,
+     68,
+     "1/1000"
+    ]
+   ],
+   "pyav_decoded": 120,
+   "cv2": {
+    "opened": true,
+    "backend": "FFMPEG",
+    "frame_count_prop": 122.0,
+    "fps_prop": 30.0,
+    "fourcc": "MJPG",
+    "frames_read": 120,
+    "sequence_exact": true,
+    "seek_results": {
+     "0": 0,
+     "1": 1,
+     "29": 29,
+     "30": 30,
+     "31": 31,
+     "59": 59,
+     "61": 61,
+     "62": 62,
+     "77": 77,
+     "119": 117,
+     "5": 5
+    },
+    "seek_all_exact": false
+   }
+  },
+  "mjpeg_mkv_jitter_only": {
+   "first_pts_ms": [
+    -3,
+    32,
+    68
+   ],
+   "encoder_first_packets": [
+    [
+     -3,
+     -3,
+     "1/1000"
+    ],
+    [
+     32,
+     32,
+     "1/1000"
+    ],
+    [
+     68,
+     68,
+     "1/1000"
+    ]
+   ],
+   "pyav_decoded": 120,
+   "cv2": {
+    "opened": true,
+    "backend": "FFMPEG",
+    "frame_count_prop": 120.0,
+    "fps_prop": 30.0,
+    "fourcc": "MJPG",
+    "frames_read": 120,
+    "sequence_exact": true,
+    "seek_results": {
+     "0": 0,
+     "1": 1,
+     "29": 29,
+     "30": 30,
+     "31": 31,
+     "59": 59,
+     "61": 61,
+     "62": 62,
+     "77": 77,
+     "119": 119,
+     "5": 5
+    },
+    "seek_all_exact": true
+   }
+  },
+  "mjpeg_mp4frag_orig": {
+   "first_pts_ms": [
+    -3,
+    32,
+    68
+   ],
+   "encoder_first_packets": [
+    [
+     -3,
+     -3,
+     "1/1000"
+    ],
+    [
+     32,
+     32,
+     "1/1000"
+    ],
+    [
+     68,
+     68,
+     "1/1000"
+    ]
+   ],
+   "pyav_decoded": 120,
+   "cv2": {
+    "opened": true,
+    "backend": "FFMPEG",
+    "frame_count_prop": 120.0,
+    "fps_prop": 29.5035,
+    "fourcc": "MJPG",
+    "frames_read": 120,
+    "sequence_exact": true,
+    "seek_results": {
+     "0": 0,
+     "1": 1,
+     "29": 29,
+     "30": 30,
+     "31": 31,
+     "59": 60,
+     "61": 62,
+     "62": 63,
+     "77": 78,
+     "119": 119,
+     "5": 5
+    },
+    "seek_all_exact": false
+   }
+  },
+  "mjpeg_mp4frag_jitter_only": {
+   "first_pts_ms": [
+    -3,
+    32,
+    68
+   ],
+   "encoder_first_packets": [
+    [
+     -3,
+     -3,
+     "1/1000"
+    ],
+    [
+     32,
+     32,
+     "1/1000"
+    ],
+    [
+     68,
+     68,
+     "1/1000"
+    ]
+   ],
+   "pyav_decoded": 120,
+   "cv2": {
+    "opened": true,
+    "backend": "FFMPEG",
+    "frame_count_prop": 120.0,
+    "fps_prop": 29.9977,
+    "fourcc": "MJPG",
+    "frames_read": 120,
+    "sequence_exact": true,
+    "seek_results": {
+     "0": 0,
+     "1": 1,
+     "29": 29,
+     "30": 30,
+     "31": 31,
+     "59": 59,
+     "61": 61,
+     "62": 62,
+     "77": 77,
+     "119": 119,
+     "5": 5
+    },
+    "seek_all_exact": true
+   }
+  },
+  "av1svt_mp4_orig": {
+   "first_pts_ms": [
+    -3,
+    32,
+    68
+   ],
+   "encoder_first_packets": [
+    [
+     -3,
+     -3,
+     "1/1000"
+    ],
+    [
+     32,
+     32,
+     "1/1000"
+    ],
+    [
+     68,
+     68,
+     "1/1000"
+    ]
+   ],
+   "pyav_decoded": 119,
+   "cv2": {
+    "opened": true,
+    "backend": "FFMPEG",
+    "frame_count_prop": 120.0,
+    "fps_prop": 29.5035,
+    "fourcc": "AV01",
+    "frames_read": 119,
+    "sequence_exact": false,
+    "sequence_first_bad": 0,
+    "seek_results": {
+     "0": 1,
+     "1": 2,
+     "29": 30,
+     "30": 31,
+     "31": 32,
+     "59": 60,
+     "61": 62,
+     "62": 63,
+     "77": 79,
+     "119": 119,
+     "5": 6
+    },
+    "seek_all_exact": false
+   }
+  },
+  "av1svt_mp4_jitter_only": {
+   "first_pts_ms": [
+    -3,
+    32,
+    68
+   ],
+   "encoder_first_packets": [
+    [
+     -3,
+     -3,
+     "1/1000"
+    ],
+    [
+     32,
+     32,
+     "1/1000"
+    ],
+    [
+     68,
+     68,
+     "1/1000"
+    ]
+   ],
+   "pyav_decoded": 119,
+   "cv2": {
+    "opened": true,
+    "backend": "FFMPEG",
+    "frame_count_prop": 120.0,
+    "fps_prop": 29.9977,
+    "fourcc": "AV01",
+    "frames_read": 119,
+    "sequence_exact": false,
+    "sequence_first_bad": 0,
+    "seek_results": {
+     "0": 1,
+     "1": 2,
+     "29": 30,
+     "30": 31,
+     "31": 32,
+     "59": 60,
+     "61": 62,
+     "62": 63,
+     "77": 78,
+     "119": null,
+     "5": 6
+    },
+    "seek_all_exact": false
+   }
+  },
+  "av1svt_mp4_orig_nonneg": {
+   "first_pts_ms": [
+    0,
+    35,
+    71
+   ],
+   "encoder_first_packets": [
+    [
+     0,
+     0,
+     "1/1000"
+    ],
+    [
+     35,
+     35,
+     "1/1000"
+    ],
+    [
+     71,
+     71,
+     "1/1000"
+    ]
+   ],
+   "pyav_decoded": 120,
+   "cv2": {
+    "opened": true,
+    "backend": "FFMPEG",
+    "frame_count_prop": 120.0,
+    "fps_prop": 29.5035,
+    "fourcc": "AV01",
+    "frames_read": 120,
+    "sequence_exact": true,
+    "seek_results": {
+     "0": 0,
+     "1": 1,
+     "29": 29,
+     "30": 30,
+     "31": 31,
+     "59": 59,
+     "61": 61,
+     "62": 62,
+     "77": 78,
+     "119": 118,
+     "5": 5
+    },
+    "seek_all_exact": false
+   }
+  }
+ }
+}

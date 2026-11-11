@@ -1,0 +1,108 @@
+# VERIFY_method evidence (2026-11-09): PyAV 19.0.2 manylinux_2_28_x86_64 wheel - QSV encoders compiled in, VAAPI absent
+# wheel: av-19.0.2-cp312-abi3-manylinux_2_28_x86_64.whl from PyPI, sha256 9c1da7aad0fa6c13b4a5c1e7985be0d13f8526a96284573acaf3d55ead6d3fe8 (verified OK); not installed or run (Linux wheel on Windows)
+# method: printable-ASCII runs (>=6 chars) extracted with python -I from the bundled .so files (scratchpad script strs.py)
+## av.libs file list
+libSvtAv1Enc-cc8e453e.so.4.2.0
+libXau-154567c4.so.6.0.0
+libasound-c7818c60.so.2.0.0
+libavcodec-d61378e8.so.63.1.102
+libavdevice-c9c4901c.so.63.1.102
+libavfilter-6a4661f8.so.12.1.102
+libavformat-7f5186bf.so.63.1.102
+libavutil-8f0ab4ee.so.61.1.102
+libdav1d-0fe430b9.so.7.0.0
+libdrm-b0291a67.so.2.4.0
+libgmp-8c6c054f.so.10.5.0
+libgnutls-e2125fb5.so.30.42.0
+libhogweed-e2118ea2.so.7.0
+libnettle-6eb03162.so.9.0
+libopus-114e2b1a.so.0.11.1
+libsharpyuv-48a062bd.so.0.1.2
+libswresample-d0a74e06.so.7.1.102
+libswscale-cd7831fd.so.10.1.102
+libunistring-09f6121d.so.5.2.1
+libvmaf-258f7447.so.3.2.0
+libvpl-e4e9cae8.so.2.16
+libvpx-e67815b1.so.12.1.0
+libwebp-0c5118d0.so.7.2.0
+libwebpmux-e1880640.so.3.1.2
+libx264-d6533a8d.so.165
+libx265-eebb7db1.so.217
+libxcb-5ddf6756.so.1.1.0
+libxcb-shape-7716c890.so.0.0.0
+libxcb-shm-0be6dfbf.so.0.0.0
+libxcb-xfixes-6de855b8.so.0.0.0
+## libavutil configure tokens matching vaapi|vpl|mfx|vulkan|drm|cuda|nvenc (none for vaapi/vulkan)
+--enable-libvpl
+--enable-nvenc
+## count of strings containing 'vaapi' (case-insensitive): libavutil / libavcodec
+0
+0
+## libavutil hwcontext_qsv error strings present
+Error initializing a child device context
+Unknown child device type "%s".
+No supported child device type is enabled
+## libavcodec 'Quick Sync' long names (encoder long names lack the word 'video', per upstream n9.0.2 qsvenc_*.c CODEC_LONG_NAME; decoder names are '#X video (...)', qsvdec.c:1229)
+AV1 (Intel Quick Sync Video acceleration)
+AV1 video (Intel Quick Sync Video acceleration)
+H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10 (Intel Quick Sync Video acceleration)
+H264 video (Intel Quick Sync Video acceleration)
+HEVC (Intel Quick Sync Video acceleration)
+HEVC video (Intel Quick Sync Video acceleration)
+MJPEG (Intel Quick Sync Video acceleration)
+MJPEG video (Intel Quick Sync Video acceleration)
+MPEG-2 video (Intel Quick Sync Video acceleration)
+MPEG2VIDEO video (Intel Quick Sync Video acceleration)
+VC1 video (Intel Quick Sync Video acceleration)
+VP8 video (Intel Quick Sync Video acceleration)
+VP9 video (Intel Quick Sync Video acceleration)
+VVC video (Intel Quick Sync Video acceleration)
+## Windows win_amd64 PyAV 19.0.2 on Gerald (uv run --script, av==19.0.2): av.Codec(name,'w'/'r').long_name
+{
+ "av": "19.0.2",
+ "ffmpeg": "9.0.2",
+ "hwdevices_available": [
+  "cuda",
+  "dxva2",
+  "qsv",
+  "d3d11va",
+  "d3d12va",
+  "amf"
+ ],
+ "h264_qsv:w": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10 (Intel Quick Sync Video acceleration)",
+ "h264_qsv:r": "H264 video (Intel Quick Sync Video acceleration)",
+ "hevc_qsv:w": "HEVC (Intel Quick Sync Video acceleration)",
+ "hevc_qsv:r": "HEVC video (Intel Quick Sync Video acceleration)",
+ "mjpeg_qsv:w": "MJPEG (Intel Quick Sync Video acceleration)",
+ "mjpeg_qsv:r": "MJPEG video (Intel Quick Sync Video acceleration)",
+ "vp9_qsv:w": "VP9 video (Intel Quick Sync Video acceleration)",
+ "vp9_qsv:r": "VP9 video (Intel Quick Sync Video acceleration)",
+ "av1_qsv:w": "AV1 (Intel Quick Sync Video acceleration)",
+ "av1_qsv:r": "AV1 video (Intel Quick Sync Video acceleration)"
+}
+## upstream FFmpeg n9.0.2 (gh api repos/FFmpeg/FFmpeg/contents/<file>?ref=n9.0.2, fetched 2026-11-09)
+-- libavcodec/qsv_internal.h:26-28
+#if CONFIG_VAAPI && !defined(_WIN32) // Do not enable for libva-win32 on Windows
+#define AVCODEC_QSV_LINUX_SESSION_HANDLE
+#endif //CONFIG_VAAPI && !defined(_WIN32)
+-- libavcodec/qsv.c:461-466 and 710-714
+//This code is only required for Linux since a display handle is required.
+//For Windows the session is complete and ready to use.
+
+#ifdef AVCODEC_QSV_LINUX_SESSION_HANDLE
+static int ff_qsv_set_display_handle(AVCodecContext *avctx, QSVSession *qs)
+{
+#ifdef AVCODEC_QSV_LINUX_SESSION_HANDLE
+    ret = ff_qsv_set_display_handle(avctx, qs);
+    if (ret < 0)
+        return ret;
+#endif
+-- libavutil/hwcontext_qsv.c:2545-2552
+    } else if (CONFIG_D3D11VA) {
+        child_device_type = AV_HWDEVICE_TYPE_D3D11VA;
+#endif
+    } else if (CONFIG_VAAPI) {
+        child_device_type = AV_HWDEVICE_TYPE_VAAPI;
+    } else {
+        av_log(ctx, AV_LOG_ERROR, "No supported child device type is enabled\n");
+        return AVERROR(ENOSYS);

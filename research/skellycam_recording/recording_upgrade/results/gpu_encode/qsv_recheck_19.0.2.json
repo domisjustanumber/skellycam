@@ -1,0 +1,524 @@
+{
+ "when": "2026-11-09T16:42:40.735574-05:00",
+ "pyav": "19.0.2",
+ "libavcodec": "(63, 1, 102)",
+ "hwdevices_available": [
+  "cuda",
+  "dxva2",
+  "qsv",
+  "d3d11va",
+  "d3d12va",
+  "amf"
+ ],
+ "display_adapters": [
+  "OK True Parsec Virtual Display Adapter",
+  "OK True Intel(R) UHD Graphics 770",
+  "OK True NVIDIA GeForce RTX 3070"
+ ],
+ "nvidia_smi_before": "0, 37 %, 610.88",
+ "encode": [
+  {
+   "encoder": "h264_qsv",
+   "variant": "intra",
+   "input": "sw frames",
+   "ok": true,
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\qsv_recheck_19.0.2\\h264_qsv_intra_sw.mkv",
+   "probe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   },
+   "log_tail": [
+    "h264_qsv: Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice."
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "h264_qsv",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred; last error log: [AVHWFramesContext] Error creating an internal frame pool",
+   "log_tail": [
+    "AVHWFramesContext: Could not create the texture (80070057)",
+    "AVHWFramesContext: Error initializing a child frames context",
+    "AVHWFramesContext: Error creating an internal frame pool"
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "h264_qsv",
+   "variant": "gop15",
+   "input": "sw frames",
+   "ok": true,
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\qsv_recheck_19.0.2\\h264_qsv_gop15_sw.mkv",
+   "probe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   },
+   "log_tail": [
+    "h264_qsv: Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice."
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "h264_qsv",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred; last error log: [AVHWFramesContext] Error creating an internal frame pool",
+   "log_tail": [
+    "AVHWFramesContext: Could not create the texture (80070057)",
+    "AVHWFramesContext: Error initializing a child frames context",
+    "AVHWFramesContext: Error creating an internal frame pool"
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "hevc_qsv",
+   "variant": "intra",
+   "input": "sw frames",
+   "ok": true,
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\qsv_recheck_19.0.2\\hevc_qsv_intra_sw.mkv",
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   },
+   "log_tail": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice."
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "hevc_qsv",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred; last error log: [AVHWFramesContext] Error creating an internal frame pool",
+   "log_tail": [
+    "AVHWFramesContext: Could not create the texture (80070057)",
+    "AVHWFramesContext: Error initializing a child frames context",
+    "AVHWFramesContext: Error creating an internal frame pool"
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "hevc_qsv",
+   "variant": "gop15",
+   "input": "sw frames",
+   "ok": true,
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\qsv_recheck_19.0.2\\hevc_qsv_gop15_sw.mkv",
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "B": 29
+    },
+    "decode_stderr": ""
+   },
+   "log_tail": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice."
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "hevc_qsv",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred; last error log: [AVHWFramesContext] Error creating an internal frame pool",
+   "log_tail": [
+    "AVHWFramesContext: Could not create the texture (80070057)",
+    "AVHWFramesContext: Error initializing a child frames context",
+    "AVHWFramesContext: Error creating an internal frame pool"
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "av1_qsv",
+   "variant": "intra",
+   "input": "sw frames",
+   "ok": false,
+   "error": "NotImplementedError: [Errno 40] Function not implemented: 'avcodec_open2(\"av1_qsv\", {})'; last error log: [av1_qsv] some encoding parameters are not supported by the QSV runtime. Please double check the input parameters.",
+   "log_tail": [
+    "av1_qsv: Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice.",
+    "av1_qsv: Current codec type is unsupported",
+    "av1_qsv: some encoding parameters are not supported by the QSV runtime. Please double check the input parameters."
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "av1_qsv",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred; last error log: [AVHWFramesContext] Error creating an internal frame pool",
+   "log_tail": [
+    "AVHWFramesContext: Could not create the texture (80070057)",
+    "AVHWFramesContext: Error initializing a child frames context",
+    "AVHWFramesContext: Error creating an internal frame pool"
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "av1_qsv",
+   "variant": "gop15",
+   "input": "sw frames",
+   "ok": false,
+   "error": "NotImplementedError: [Errno 40] Function not implemented: 'avcodec_open2(\"av1_qsv\", {})'; last error log: [av1_qsv] some encoding parameters are not supported by the QSV runtime. Please double check the input parameters.",
+   "log_tail": [
+    "av1_qsv: Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice.",
+    "av1_qsv: Current codec type is unsupported",
+    "av1_qsv: some encoding parameters are not supported by the QSV runtime. Please double check the input parameters."
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "av1_qsv",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred; last error log: [AVHWFramesContext] Error creating an internal frame pool",
+   "log_tail": [
+    "AVHWFramesContext: Could not create the texture (80070057)",
+    "AVHWFramesContext: Error initializing a child frames context",
+    "AVHWFramesContext: Error creating an internal frame pool"
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "vp9_qsv",
+   "variant": "intra",
+   "input": "sw frames",
+   "ok": true,
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\qsv_recheck_19.0.2\\vp9_qsv_intra_sw.mkv",
+   "probe": {
+    "codec_name": "vp9",
+    "profile": "Profile 0",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   },
+   "log_tail": [
+    "vp9_qsv: Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice."
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "vp9_qsv",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred; last error log: [AVHWFramesContext] Error creating an internal frame pool",
+   "log_tail": [
+    "AVHWFramesContext: Could not create the texture (80070057)",
+    "AVHWFramesContext: Error initializing a child frames context",
+    "AVHWFramesContext: Error creating an internal frame pool"
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "vp9_qsv",
+   "variant": "gop15",
+   "input": "sw frames",
+   "ok": true,
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\qsv_recheck_19.0.2\\vp9_qsv_gop15_sw.mkv",
+   "probe": {
+    "codec_name": "vp9",
+    "profile": "Profile 0",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   },
+   "log_tail": [
+    "vp9_qsv: Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice."
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "vp9_qsv",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred; last error log: [AVHWFramesContext] Error creating an internal frame pool",
+   "log_tail": [
+    "AVHWFramesContext: Could not create the texture (80070057)",
+    "AVHWFramesContext: Error initializing a child frames context",
+    "AVHWFramesContext: Error creating an internal frame pool"
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "mjpeg_qsv",
+   "variant": "intra",
+   "input": "sw frames",
+   "ok": true,
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\qsv_recheck_19.0.2\\mjpeg_qsv_intra_sw.mkv",
+   "probe": {
+    "codec_name": "mjpeg",
+    "profile": "Baseline",
+    "pix_fmt": "yuvj420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   },
+   "log_tail": [],
+   "mft": []
+  },
+  {
+   "encoder": "mjpeg_qsv",
+   "variant": "intra",
+   "input": "hwaccel ctx",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred; last error log: [AVHWFramesContext] Error creating an internal frame pool",
+   "log_tail": [
+    "AVHWFramesContext: Could not create the texture (80070057)",
+    "AVHWFramesContext: Error initializing a child frames context",
+    "AVHWFramesContext: Error creating an internal frame pool"
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "mjpeg_qsv",
+   "variant": "gop15",
+   "input": "sw frames",
+   "ok": true,
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\qsv_recheck_19.0.2\\mjpeg_qsv_gop15_sw.mkv",
+   "probe": {
+    "codec_name": "mjpeg",
+    "profile": "Baseline",
+    "pix_fmt": "yuvj420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   },
+   "log_tail": [],
+   "mft": []
+  },
+  {
+   "encoder": "mjpeg_qsv",
+   "variant": "gop15",
+   "input": "hwaccel ctx",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred; last error log: [AVHWFramesContext] Error creating an internal frame pool",
+   "log_tail": [
+    "AVHWFramesContext: Could not create the texture (80070057)",
+    "AVHWFramesContext: Error initializing a child frames context",
+    "AVHWFramesContext: Error creating an internal frame pool"
+   ],
+   "mft": []
+  },
+  {
+   "encoder": "av1_mf",
+   "variant": "intra",
+   "input": "sw frames",
+   "ok": false,
+   "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\gpu_encode\\\\qsv_recheck_19.0.2\\\\av1_mf_intra_sw.mkv'",
+   "log_tail": [],
+   "mft": [
+    "MFT_FRIENDLY_NAME_Attribute='Intel\\xae Hardware Accelerated AV1 Encoder MFT'"
+   ]
+  },
+  {
+   "encoder": "av1_mf",
+   "variant": "gop15",
+   "input": "sw frames",
+   "ok": false,
+   "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\gpu_encode\\\\qsv_recheck_19.0.2\\\\av1_mf_gop15_sw.mkv'",
+   "log_tail": [],
+   "mft": [
+    "MFT_FRIENDLY_NAME_Attribute='Intel\\xae Hardware Accelerated AV1 Encoder MFT'"
+   ]
+  },
+  {
+   "encoder": "h264_mf",
+   "variant": "intra",
+   "input": "sw frames",
+   "ok": true,
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\qsv_recheck_19.0.2\\h264_mf_intra_sw.mkv",
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Constrained Baseline",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   },
+   "log_tail": [],
+   "mft": [
+    "MFT_FRIENDLY_NAME_Attribute='Intel\\xae Quick Sync Video H.264 Encoder MFT'",
+    "MFT_FRIENDLY_NAME_Attribute='NVIDIA H.264 Encoder MFT'"
+   ]
+  },
+  {
+   "encoder": "h264_mf",
+   "variant": "gop15",
+   "input": "sw frames",
+   "ok": true,
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\qsv_recheck_19.0.2\\h264_mf_gop15_sw.mkv",
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Constrained Baseline",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   },
+   "log_tail": [],
+   "mft": [
+    "MFT_FRIENDLY_NAME_Attribute='Intel\\xae Quick Sync Video H.264 Encoder MFT'",
+    "MFT_FRIENDLY_NAME_Attribute='NVIDIA H.264 Encoder MFT'"
+   ]
+  }
+ ],
+ "decode": [
+  {
+   "set": "c930e_1080p",
+   "decoder": "mjpeg",
+   "inputs": 5,
+   "ok": true,
+   "frames": 5,
+   "formats": [
+    "yuvj422p"
+   ],
+   "log_tail": []
+  },
+  {
+   "set": "c930e_1080p",
+   "decoder": "mjpeg_qsv",
+   "inputs": 5,
+   "ok": true,
+   "frames": 5,
+   "formats": [
+    "nv12"
+   ],
+   "log_tail": [
+    "mjpeg_qsv: Invalid pkt_timebase, passing timestamps as-is."
+   ]
+  },
+  {
+   "set": "c930e_1080p",
+   "decoder": "mjpeg+hwaccel_qsv",
+   "inputs": 5,
+   "ok": true,
+   "frames": 5,
+   "formats": [
+    "yuvj422p"
+   ],
+   "log_tail": []
+  },
+  {
+   "set": "c930e_720p_flash",
+   "decoder": "mjpeg",
+   "inputs": 5,
+   "ok": true,
+   "frames": 5,
+   "formats": [
+    "yuvj422p"
+   ],
+   "log_tail": []
+  },
+  {
+   "set": "c930e_720p_flash",
+   "decoder": "mjpeg_qsv",
+   "inputs": 5,
+   "ok": true,
+   "frames": 5,
+   "formats": [
+    "nv12"
+   ],
+   "log_tail": [
+    "mjpeg_qsv: Invalid pkt_timebase, passing timestamps as-is."
+   ]
+  },
+  {
+   "set": "c930e_720p_flash",
+   "decoder": "mjpeg+hwaccel_qsv",
+   "inputs": 5,
+   "ok": true,
+   "frames": 5,
+   "formats": [
+    "yuvj422p"
+   ],
+   "log_tail": []
+  }
+ ],
+ "nvidia_smi_after": "0, 6 %, 610.88"
+}

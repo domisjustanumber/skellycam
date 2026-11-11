@@ -1,0 +1,1414 @@
+{
+ "env": {
+  "python": "3.12.13",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "machine": "Gerald",
+  "av": "19.0.2",
+  "libavformat": [
+   63,
+   1,
+   102
+  ],
+  "libavcodec": [
+   63,
+   1,
+   102
+  ],
+  "numpy": "2.2.6",
+  "cv2": "4.12.0",
+  "psutil": "7.2.2"
+ },
+ "started": "2026-11-09T11:27:25",
+ "T1": [
+  {
+   "test": "T1",
+   "payload": "mjpeg",
+   "profile": "720p30",
+   "variant": "files",
+   "frames_written": 300,
+   "close": {
+    "bytes": 16592276,
+    "files": 301
+   },
+   "idx_records": 300,
+   "units": 300,
+   "byte_exact": 300
+  },
+  {
+   "test": "T1",
+   "payload": "mjpeg",
+   "profile": "720p30",
+   "variant": "append",
+   "frames_written": 300,
+   "close": {
+    "bytes": 16592276,
+    "files": 2,
+    "fsyncs": 0
+   },
+   "idx_records": 300,
+   "units": 300,
+   "byte_exact": 300,
+   "file_bytes": 16592276,
+   "byte_exact_without_index_soi_scan": 300,
+   "ffprobe_ffprobe_packets": 300,
+   "ffprobe_ffprobe_keyframes": 300,
+   "cv2_frames": 300,
+   "cv2_opened": true,
+   "cv2_backend": "FFMPEG"
+  },
+  {
+   "test": "T1",
+   "payload": "mjpeg",
+   "profile": "720p30",
+   "variant": "mkv",
+   "frames_written": 300,
+   "close": {
+    "bytes": 16592276,
+    "files": 2
+   },
+   "idx_records": 300,
+   "file_bytes": 16605956,
+   "container_overhead_bytes_per_frame": 45.6,
+   "frame0_decode_equals_reference": true,
+   "units": 300,
+   "byte_exact": 300,
+   "files": 1,
+   "av_decoded": 300,
+   "cv2_frames": 300,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 300,
+   "ffprobe_keyframes": 300,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 498.916
+  },
+  {
+   "test": "T1",
+   "payload": "mjpeg",
+   "profile": "720p30",
+   "variant": "mkv_flush",
+   "frames_written": 300,
+   "close": {
+    "bytes": 16592276,
+    "files": 2
+   },
+   "idx_records": 300,
+   "file_bytes": 16605956,
+   "container_overhead_bytes_per_frame": 45.6,
+   "frame0_decode_equals_reference": true,
+   "units": 300,
+   "byte_exact": 300,
+   "files": 1,
+   "av_decoded": 300,
+   "cv2_frames": 300,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 300,
+   "ffprobe_keyframes": 300,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 498.916
+  },
+  {
+   "test": "T1",
+   "payload": "mjpeg",
+   "profile": "720p30",
+   "variant": "fmp4_frame",
+   "frames_written": 300,
+   "close": {
+    "bytes": 16592276,
+    "files": 2
+   },
+   "idx_records": 300,
+   "file_bytes": 16632376,
+   "container_overhead_bytes_per_frame": 133.7,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 300,
+    "mdat": 300,
+    "mfra": 1
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "frame0_decode_equals_reference": true,
+   "units": 300,
+   "byte_exact": 300,
+   "files": 1,
+   "av_decoded": 300,
+   "cv2_frames": 300,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 300,
+   "ffprobe_keyframes": 300,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 6.434
+  },
+  {
+   "test": "T1",
+   "payload": "mjpeg",
+   "profile": "720p30",
+   "variant": "fmp4_frame_flush",
+   "frames_written": 300,
+   "close": {
+    "bytes": 16592276,
+    "files": 2
+   },
+   "idx_records": 300,
+   "file_bytes": 16632376,
+   "container_overhead_bytes_per_frame": 133.7,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 300,
+    "mdat": 300,
+    "mfra": 1
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "frame0_decode_equals_reference": true,
+   "units": 300,
+   "byte_exact": 300,
+   "files": 1,
+   "av_decoded": 300,
+   "cv2_frames": 300,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 300,
+   "ffprobe_keyframes": 300,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 6.434
+  },
+  {
+   "test": "T1",
+   "payload": "mjpeg",
+   "profile": "720p30",
+   "variant": "fmp4_1s",
+   "frames_written": 300,
+   "close": {
+    "bytes": 16592276,
+    "files": 2
+   },
+   "idx_records": 300,
+   "file_bytes": 16596746,
+   "container_overhead_bytes_per_frame": 14.9,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 10,
+    "mdat": 10,
+    "mfra": 1
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "frame0_decode_equals_reference": true,
+   "units": 300,
+   "byte_exact": 300,
+   "files": 1,
+   "av_decoded": 300,
+   "cv2_frames": 300,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 300,
+   "ffprobe_keyframes": 300,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 6.434
+  },
+  {
+   "test": "T1",
+   "payload": "mjpeg",
+   "profile": "720p30",
+   "variant": "fmp4_hybrid",
+   "frames_written": 300,
+   "close": {
+    "bytes": 16592276,
+    "files": 2
+   },
+   "idx_records": 300,
+   "file_bytes": 16634528,
+   "container_overhead_bytes_per_frame": 140.8,
+   "boxes": {
+    "ftyp": 1,
+    "free": 1,
+    "mdat": 1,
+    "moov": 1
+   },
+   "first_boxes": [
+    "ftyp",
+    "free",
+    "mdat",
+    "moov"
+   ],
+   "frame0_decode_equals_reference": true,
+   "units": 300,
+   "byte_exact": 300,
+   "files": 1,
+   "av_decoded": 300,
+   "cv2_frames": 300,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 300,
+   "ffprobe_keyframes": 300,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 6.434
+  },
+  {
+   "test": "T1",
+   "payload": "mjpeg",
+   "profile": "720p30",
+   "variant": "mkvseg10",
+   "frames_written": 300,
+   "close": {
+    "bytes": 16592276,
+    "files": 6
+   },
+   "idx_records": 300,
+   "file_bytes": 16607936,
+   "container_overhead_bytes_per_frame": 52.2,
+   "frame0_decode_equals_reference": true,
+   "units": 300,
+   "byte_exact": 300,
+   "files": 5,
+   "av_decoded": 300,
+   "cv2_frames": 300,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 300,
+   "ffprobe_keyframes": 300,
+   "ffprobe_err": null
+  },
+  {
+   "test": "T1",
+   "payload": "ffv1",
+   "profile": "1080p30",
+   "variant": "files",
+   "frames_written": 64,
+   "close": {
+    "bytes": 32026248,
+    "files": 65
+   },
+   "idx_records": 64,
+   "units": 64,
+   "byte_exact": 64
+  },
+  {
+   "test": "T1",
+   "payload": "ffv1",
+   "profile": "1080p30",
+   "variant": "append",
+   "frames_written": 64,
+   "close": {
+    "bytes": 32026248,
+    "files": 2,
+    "fsyncs": 0
+   },
+   "idx_records": 64,
+   "units": 64,
+   "byte_exact": 64,
+   "file_bytes": 32026248
+  },
+  {
+   "test": "T1",
+   "payload": "ffv1",
+   "profile": "1080p30",
+   "variant": "mkv",
+   "frames_written": 64,
+   "close": {
+    "bytes": 32026248,
+    "files": 2
+   },
+   "idx_records": 64,
+   "file_bytes": 32029760,
+   "container_overhead_bytes_per_frame": 54.9,
+   "frame0_decode_equals_reference": true,
+   "units": 64,
+   "byte_exact": 64,
+   "files": 1,
+   "av_decoded": 64,
+   "cv2_frames": 64,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 64,
+   "ffprobe_keyframes": 64,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 493.727
+  },
+  {
+   "test": "T1",
+   "payload": "ffv1",
+   "profile": "1080p30",
+   "variant": "mkv_flush",
+   "frames_written": 64,
+   "close": {
+    "bytes": 32026248,
+    "files": 2
+   },
+   "idx_records": 64,
+   "file_bytes": 32029760,
+   "container_overhead_bytes_per_frame": 54.9,
+   "frame0_decode_equals_reference": true,
+   "units": 64,
+   "byte_exact": 64,
+   "files": 1,
+   "av_decoded": 64,
+   "cv2_frames": 64,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 64,
+   "ffprobe_keyframes": 64,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 493.727
+  },
+  {
+   "test": "T1",
+   "payload": "ffv1",
+   "profile": "1080p30",
+   "variant": "fmp4_frame",
+   "frames_written": 64,
+   "close": {
+    "bytes": 32026248,
+    "files": 2
+   },
+   "idx_records": 64,
+   "file_bytes": 32035587,
+   "container_overhead_bytes_per_frame": 145.9,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 64,
+    "mdat": 64,
+    "mfra": 1
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "frame0_decode_equals_reference": true,
+   "units": 64,
+   "byte_exact": 64,
+   "files": 1,
+   "av_decoded": 64,
+   "cv2_frames": 64,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 64,
+   "ffprobe_keyframes": 64,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 6.434
+  },
+  {
+   "test": "T1",
+   "payload": "ffv1",
+   "profile": "1080p30",
+   "variant": "fmp4_frame_flush",
+   "frames_written": 64,
+   "close": {
+    "bytes": 32026248,
+    "files": 2
+   },
+   "idx_records": 64,
+   "file_bytes": 32035587,
+   "container_overhead_bytes_per_frame": 145.9,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 64,
+    "mdat": 64,
+    "mfra": 1
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "frame0_decode_equals_reference": true,
+   "units": 64,
+   "byte_exact": 64,
+   "files": 1,
+   "av_decoded": 64,
+   "cv2_frames": 64,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 64,
+   "ffprobe_keyframes": 64,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 6.434
+  },
+  {
+   "test": "T1",
+   "payload": "ffv1",
+   "profile": "1080p30",
+   "variant": "fmp4_1s",
+   "frames_written": 64,
+   "close": {
+    "bytes": 32026248,
+    "files": 2
+   },
+   "idx_records": 64,
+   "file_bytes": 32028096,
+   "container_overhead_bytes_per_frame": 28.9,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 3,
+    "mdat": 3,
+    "mfra": 1
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "frame0_decode_equals_reference": true,
+   "units": 64,
+   "byte_exact": 64,
+   "files": 1,
+   "av_decoded": 64,
+   "cv2_frames": 64,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 64,
+   "ffprobe_keyframes": 64,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 6.434
+  },
+  {
+   "test": "T1",
+   "payload": "ffv1",
+   "profile": "1080p30",
+   "variant": "fmp4_hybrid",
+   "frames_written": 64,
+   "close": {
+    "bytes": 32026248,
+    "files": 2
+   },
+   "idx_records": 64,
+   "file_bytes": 32036714,
+   "container_overhead_bytes_per_frame": 163.5,
+   "boxes": {
+    "ftyp": 1,
+    "free": 1,
+    "mdat": 1,
+    "moov": 1
+   },
+   "first_boxes": [
+    "ftyp",
+    "free",
+    "mdat",
+    "moov"
+   ],
+   "frame0_decode_equals_reference": true,
+   "units": 64,
+   "byte_exact": 64,
+   "files": 1,
+   "av_decoded": 64,
+   "cv2_frames": 64,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 64,
+   "ffprobe_keyframes": 64,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 6.434
+  },
+  {
+   "test": "T1",
+   "payload": "ffv1",
+   "profile": "1080p30",
+   "variant": "mkvseg10",
+   "frames_written": 64,
+   "close": {
+    "bytes": 32026248,
+    "files": 3
+   },
+   "idx_records": 64,
+   "file_bytes": 32030438,
+   "container_overhead_bytes_per_frame": 65.5,
+   "frame0_decode_equals_reference": true,
+   "units": 64,
+   "byte_exact": 64,
+   "files": 2,
+   "av_decoded": 64,
+   "cv2_frames": 64,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 64,
+   "ffprobe_keyframes": 64,
+   "ffprobe_err": null
+  }
+ ],
+ "T2T3": [],
+ "T4": [
+  {
+   "test": "T4",
+   "variant": "files",
+   "repeat": 0,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 323,
+   "exitcode": -15,
+   "idx_records": 323,
+   "units": 323,
+   "byte_exact": 323,
+   "acked_frames_all_readable": true,
+   "acked_lost": 0,
+   "partial_or_corrupt_units": 0
+  },
+  {
+   "test": "T4",
+   "variant": "files",
+   "repeat": 1,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 311,
+   "exitcode": -15,
+   "idx_records": 311,
+   "units": 311,
+   "byte_exact": 311,
+   "acked_frames_all_readable": true,
+   "acked_lost": 0,
+   "partial_or_corrupt_units": 0
+  },
+  {
+   "test": "T4",
+   "variant": "append",
+   "repeat": 0,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 347,
+   "exitcode": -15,
+   "idx_records": 347,
+   "units": 347,
+   "byte_exact": 347,
+   "file_bytes": 19193572,
+   "byte_exact_without_index_soi_scan": 347,
+   "ffprobe_ffprobe_packets": 347,
+   "ffprobe_ffprobe_keyframes": 347,
+   "cv2_frames": 347,
+   "cv2_opened": true,
+   "cv2_backend": "FFMPEG",
+   "acked_frames_all_readable": true,
+   "acked_lost": 0,
+   "partial_or_corrupt_units": 0
+  },
+  {
+   "test": "T4",
+   "variant": "append",
+   "repeat": 1,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 305,
+   "exitcode": -15,
+   "idx_records": 305,
+   "units": 305,
+   "byte_exact": 305,
+   "file_bytes": 16862135,
+   "byte_exact_without_index_soi_scan": 305,
+   "ffprobe_ffprobe_packets": 305,
+   "ffprobe_ffprobe_keyframes": 305,
+   "cv2_frames": 305,
+   "cv2_opened": true,
+   "cv2_backend": "FFMPEG",
+   "acked_frames_all_readable": true,
+   "acked_lost": 0,
+   "partial_or_corrupt_units": 0
+  },
+  {
+   "test": "T4",
+   "variant": "mkv",
+   "repeat": 0,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 339,
+   "exitcode": -15,
+   "idx_records": 339,
+   "file_bytes": 18612224,
+   "container_overhead_bytes_per_frame": 82.6,
+   "units": 336,
+   "byte_exact": 336,
+   "files": 1,
+   "av_decoded": 336,
+   "cv2_frames": 336,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 336,
+   "ffprobe_keyframes": 336,
+   "ffprobe_err": "[matroska,webm @ 000001a184d44600] File ended prematurely",
+   "pts_max_abs_err_us": 3708.92,
+   "acked_frames_all_readable": false,
+   "acked_lost": 3,
+   "partial_or_corrupt_units": 0
+  },
+  {
+   "test": "T4",
+   "variant": "mkv",
+   "repeat": 1,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 326,
+   "exitcode": -15,
+   "idx_records": 326,
+   "file_bytes": 17825792,
+   "container_overhead_bytes_per_frame": 48.5,
+   "units": 322,
+   "byte_exact": 322,
+   "files": 1,
+   "av_decoded": 322,
+   "cv2_frames": 322,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 322,
+   "ffprobe_keyframes": 322,
+   "ffprobe_err": "[matroska,webm @ 000002a00ea8f400] File ended prematurely",
+   "pts_max_abs_err_us": 3708.92,
+   "acked_frames_all_readable": false,
+   "acked_lost": 4,
+   "partial_or_corrupt_units": 0
+  },
+  {
+   "test": "T4",
+   "variant": "mkv_flush",
+   "repeat": 0,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 304,
+   "exitcode": -15,
+   "idx_records": 304,
+   "file_bytes": 16760257,
+   "container_overhead_bytes_per_frame": 26.5,
+   "units": 303,
+   "byte_exact": 303,
+   "files": 1,
+   "av_decoded": 303,
+   "cv2_frames": 303,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 303,
+   "ffprobe_keyframes": 303,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 3708.92,
+   "acked_frames_all_readable": false,
+   "acked_lost": 1,
+   "partial_or_corrupt_units": 0
+  },
+  {
+   "test": "T4",
+   "variant": "mkv_flush",
+   "repeat": 1,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 336,
+   "exitcode": -15,
+   "idx_records": 336,
+   "file_bytes": 18536140,
+   "container_overhead_bytes_per_frame": 26.4,
+   "units": 335,
+   "byte_exact": 335,
+   "files": 1,
+   "av_decoded": 335,
+   "cv2_frames": 335,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 335,
+   "ffprobe_keyframes": 335,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 3708.92,
+   "acked_frames_all_readable": false,
+   "acked_lost": 1,
+   "partial_or_corrupt_units": 0
+  },
+  {
+   "test": "T4",
+   "variant": "fmp4_frame",
+   "repeat": 0,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 303,
+   "exitcode": -15,
+   "idx_records": 303,
+   "file_bytes": 16515116,
+   "container_overhead_bytes_per_frame": 114.5,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 299,
+    "mdat": 299
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "units": 299,
+   "byte_exact": 298,
+   "files": 1,
+   "av_decoded": 298,
+   "cv2_frames": 298,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [
+    "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'avcodec_send_packet()'"
+   ],
+   "time_base": "1/90000",
+   "ffprobe_packets": 299,
+   "ffprobe_keyframes": 299,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 3431.372,
+   "acked_frames_all_readable": false,
+   "acked_lost": 5,
+   "partial_or_corrupt_units": 1
+  },
+  {
+   "test": "T4",
+   "variant": "fmp4_frame",
+   "repeat": 1,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 331,
+   "exitcode": -15,
+   "idx_records": 331,
+   "file_bytes": 18087980,
+   "container_overhead_bytes_per_frame": 114.3,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 327,
+    "mdat": 327
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "units": 327,
+   "byte_exact": 326,
+   "files": 1,
+   "av_decoded": 327,
+   "cv2_frames": 327,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 327,
+   "ffprobe_keyframes": 327,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 3431.372,
+   "acked_frames_all_readable": false,
+   "acked_lost": 5,
+   "partial_or_corrupt_units": 1
+  },
+  {
+   "test": "T4",
+   "variant": "fmp4_frame_flush",
+   "repeat": 0,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 305,
+   "exitcode": -15,
+   "idx_records": 305,
+   "file_bytes": 16842435,
+   "container_overhead_bytes_per_frame": 114.5,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 304,
+    "mdat": 304
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "units": 304,
+   "byte_exact": 304,
+   "files": 1,
+   "av_decoded": 304,
+   "cv2_frames": 304,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 304,
+   "ffprobe_keyframes": 304,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 3431.372,
+   "acked_frames_all_readable": false,
+   "acked_lost": 1,
+   "partial_or_corrupt_units": 0
+  },
+  {
+   "test": "T4",
+   "variant": "fmp4_frame_flush",
+   "repeat": 1,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 306,
+   "exitcode": -15,
+   "idx_records": 306,
+   "file_bytes": 16897047,
+   "container_overhead_bytes_per_frame": 114.5,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 305,
+    "mdat": 305
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "units": 305,
+   "byte_exact": 305,
+   "files": 1,
+   "av_decoded": 305,
+   "cv2_frames": 305,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 305,
+   "ffprobe_keyframes": 305,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 3431.372,
+   "acked_frames_all_readable": false,
+   "acked_lost": 1,
+   "partial_or_corrupt_units": 0
+  },
+  {
+   "test": "T4",
+   "variant": "fmp4_1s",
+   "repeat": 0,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 331,
+   "exitcode": -15,
+   "idx_records": 331,
+   "file_bytes": 16515100,
+   "container_overhead_bytes_per_frame": 8.3,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 5,
+    "mdat": 5
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "units": 299,
+   "byte_exact": 298,
+   "files": 1,
+   "av_decoded": 299,
+   "cv2_frames": 299,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 299,
+   "ffprobe_keyframes": 299,
+   "ffprobe_err": "[mov,mp4,m4a,3gp,3g2,mj2 @ 00000169a806de80] stream 0, offset 0xfc5fbf: partial file",
+   "pts_max_abs_err_us": 3431.372,
+   "acked_frames_all_readable": false,
+   "acked_lost": 33,
+   "partial_or_corrupt_units": 1
+  },
+  {
+   "test": "T4",
+   "variant": "fmp4_1s",
+   "repeat": 1,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 360,
+   "exitcode": -15,
+   "idx_records": 360,
+   "file_bytes": 16515100,
+   "container_overhead_bytes_per_frame": 8.3,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 5,
+    "mdat": 5
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "units": 299,
+   "byte_exact": 298,
+   "files": 1,
+   "av_decoded": 299,
+   "cv2_frames": 299,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 299,
+   "ffprobe_keyframes": 299,
+   "ffprobe_err": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000024ccec4a180] stream 0, offset 0xfc5fbf: partial file",
+   "pts_max_abs_err_us": 3431.372,
+   "acked_frames_all_readable": false,
+   "acked_lost": 62,
+   "partial_or_corrupt_units": 1
+  },
+  {
+   "test": "T4",
+   "variant": "fmp4_hybrid",
+   "repeat": 0,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 308,
+   "exitcode": -15,
+   "idx_records": 308,
+   "file_bytes": 17039440,
+   "container_overhead_bytes_per_frame": 122.4,
+   "boxes": {
+    "ftyp": 1,
+    "free": 2,
+    "moov": 1,
+    "mdat": 308,
+    "moof": 307
+   },
+   "first_boxes": [
+    "ftyp",
+    "free",
+    "free",
+    "moov",
+    "mdat",
+    "moof"
+   ],
+   "units": 308,
+   "byte_exact": 307,
+   "files": 1,
+   "av_decoded": 308,
+   "cv2_frames": 308,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 308,
+   "ffprobe_keyframes": 308,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 3431.372,
+   "acked_frames_all_readable": false,
+   "acked_lost": 1,
+   "partial_or_corrupt_units": 1
+  },
+  {
+   "test": "T4",
+   "variant": "fmp4_hybrid",
+   "repeat": 1,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 316,
+   "exitcode": -15,
+   "idx_records": 316,
+   "file_bytes": 17301584,
+   "container_overhead_bytes_per_frame": 122.4,
+   "boxes": {
+    "ftyp": 1,
+    "free": 2,
+    "moov": 1,
+    "mdat": 313,
+    "moof": 312
+   },
+   "first_boxes": [
+    "ftyp",
+    "free",
+    "free",
+    "moov",
+    "mdat",
+    "moof"
+   ],
+   "units": 313,
+   "byte_exact": 312,
+   "files": 1,
+   "av_decoded": 313,
+   "cv2_frames": 313,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 313,
+   "ffprobe_keyframes": 313,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 3431.372,
+   "acked_frames_all_readable": false,
+   "acked_lost": 4,
+   "partial_or_corrupt_units": 1
+  },
+  {
+   "test": "T4",
+   "variant": "mkvseg10",
+   "repeat": 0,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 345,
+   "exitcode": -15,
+   "idx_records": 345,
+   "file_bytes": 18901219,
+   "container_overhead_bytes_per_frame": 133.6,
+   "units": 341,
+   "byte_exact": 341,
+   "files": 3,
+   "av_decoded": 341,
+   "cv2_frames": 341,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 341,
+   "ffprobe_keyframes": 341,
+   "ffprobe_err": "[matroska,webm @ 00000222a8226300] File ended prematurely",
+   "acked_frames_all_readable": false,
+   "acked_lost": 4,
+   "partial_or_corrupt_units": 0
+  },
+  {
+   "test": "T4",
+   "variant": "mkvseg10",
+   "repeat": 1,
+   "payload": "mjpeg 720p (c930e_720p_flash)",
+   "acked_at_kill": 368,
+   "exitcode": -15,
+   "idx_records": 368,
+   "file_bytes": 20105932,
+   "container_overhead_bytes_per_frame": 48.0,
+   "units": 363,
+   "byte_exact": 363,
+   "files": 4,
+   "av_decoded": 363,
+   "cv2_frames": 363,
+   "cv2_backends": [
+    "FFMPEG",
+    "None"
+   ],
+   "av_errors": [
+    "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\write_throughput\\\\functional\\\\t4\\\\mkvseg10\\\\cam00_seg0003.mkv'"
+   ],
+   "time_base": "None",
+   "ffprobe_packets": 363,
+   "ffprobe_keyframes": 363,
+   "ffprobe_err": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\write_throughput\\functional\\t4\\mkvseg10\\cam00_seg0003.mkv: Invalid data found when processing input",
+   "acked_frames_all_readable": false,
+   "acked_lost": 5,
+   "partial_or_corrupt_units": 0
+  }
+ ],
+ "T5": [
+  {
+   "test": "T5",
+   "variant": "append",
+   "truncated_file": "cam00.mjpeg",
+   "original_bytes": 16592276,
+   "kept_bytes": 8296138,
+   "frames_in_clean_file": 300,
+   "idx_records": 300,
+   "units": 149,
+   "byte_exact": 149,
+   "file_bytes": 8296138,
+   "byte_exact_without_index_soi_scan": 149,
+   "ffprobe_ffprobe_packets": 150,
+   "ffprobe_ffprobe_keyframes": 150,
+   "cv2_frames": 150,
+   "cv2_opened": true,
+   "cv2_backend": "FFMPEG"
+  },
+  {
+   "test": "T5",
+   "variant": "mkv",
+   "truncated_file": "cam00.mkv",
+   "original_bytes": 16605956,
+   "kept_bytes": 8302978,
+   "frames_in_clean_file": 300,
+   "idx_records": 300,
+   "file_bytes": 8302978,
+   "container_overhead_bytes_per_frame": 276.3,
+   "units": 149,
+   "byte_exact": 149,
+   "files": 1,
+   "av_decoded": 149,
+   "cv2_frames": 149,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 149,
+   "ffprobe_keyframes": 149,
+   "ffprobe_err": "[matroska,webm @ 0000019fe507ac40] File ended prematurely",
+   "pts_max_abs_err_us": 495.414
+  },
+  {
+   "test": "T5",
+   "variant": "mkv_flush",
+   "truncated_file": "cam00.mkv",
+   "original_bytes": 16605956,
+   "kept_bytes": 8302978,
+   "frames_in_clean_file": 300,
+   "idx_records": 300,
+   "file_bytes": 8302978,
+   "container_overhead_bytes_per_frame": 276.3,
+   "units": 149,
+   "byte_exact": 149,
+   "files": 1,
+   "av_decoded": 149,
+   "cv2_frames": 149,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/1000",
+   "ffprobe_packets": 149,
+   "ffprobe_keyframes": 149,
+   "ffprobe_err": "[matroska,webm @ 000002099a959300] File ended prematurely",
+   "pts_max_abs_err_us": 495.414
+  },
+  {
+   "test": "T5",
+   "variant": "fmp4_frame",
+   "truncated_file": "cam00.mp4",
+   "original_bytes": 16632376,
+   "kept_bytes": 8316188,
+   "frames_in_clean_file": 300,
+   "idx_records": 300,
+   "file_bytes": 8316188,
+   "container_overhead_bytes_per_frame": 117.0,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 150,
+    "mdat": 150
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "units": 150,
+   "byte_exact": 149,
+   "files": 1,
+   "av_decoded": 150,
+   "cv2_frames": 150,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 150,
+   "ffprobe_keyframes": 150,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 6.434
+  },
+  {
+   "test": "T5",
+   "variant": "fmp4_frame_flush",
+   "truncated_file": "cam00.mp4",
+   "original_bytes": 16632376,
+   "kept_bytes": 8316188,
+   "frames_in_clean_file": 300,
+   "idx_records": 300,
+   "file_bytes": 8316188,
+   "container_overhead_bytes_per_frame": 117.0,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 150,
+    "mdat": 150
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "units": 150,
+   "byte_exact": 149,
+   "files": 1,
+   "av_decoded": 150,
+   "cv2_frames": 150,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 150,
+   "ffprobe_keyframes": 150,
+   "ffprobe_err": null,
+   "pts_max_abs_err_us": 6.434
+  },
+  {
+   "test": "T5",
+   "variant": "fmp4_1s",
+   "truncated_file": "cam00.mp4",
+   "original_bytes": 16596746,
+   "kept_bytes": 8298373,
+   "frames_in_clean_file": 300,
+   "idx_records": 300,
+   "file_bytes": 8298373,
+   "container_overhead_bytes_per_frame": 16.7,
+   "boxes": {
+    "ftyp": 1,
+    "moov": 1,
+    "moof": 5,
+    "mdat": 5
+   },
+   "first_boxes": [
+    "ftyp",
+    "moov",
+    "moof",
+    "mdat",
+    "moof",
+    "mdat"
+   ],
+   "units": 150,
+   "byte_exact": 149,
+   "files": 1,
+   "av_decoded": 150,
+   "cv2_frames": 150,
+   "cv2_backends": [
+    "FFMPEG"
+   ],
+   "av_errors": [],
+   "time_base": "1/90000",
+   "ffprobe_packets": 150,
+   "ffprobe_keyframes": 150,
+   "ffprobe_err": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001ce1fb3c740] stream 0, offset 0x7ef222: partial file",
+   "pts_max_abs_err_us": 6.434
+  },
+  {
+   "test": "T5",
+   "variant": "fmp4_hybrid",
+   "truncated_file": "cam00.mp4",
+   "original_bytes": 16634528,
+   "kept_bytes": 8317264,
+   "frames_in_clean_file": 300,
+   "idx_records": 300,
+   "file_bytes": 8317264,
+   "container_overhead_bytes_per_frame": 8317264.0,
+   "boxes": {
+    "ftyp": 1,
+    "free": 1,
+    "mdat": 1
+   },
+   "first_boxes": [
+    "ftyp",
+    "free",
+    "mdat"
+   ],
+   "units": 0,
+   "byte_exact": 0,
+   "files": 1,
+   "av_decoded": 0,
+   "cv2_frames": 0,
+   "cv2_backends": [
+    "None"
+   ],
+   "av_errors": [
+    "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\write_throughput\\\\functional\\\\t5\\\\fmp4_hybrid\\\\cam00.mp4'"
+   ],
+   "time_base": "None",
+   "ffprobe_packets": 0,
+   "ffprobe_keyframes": 0,
+   "ffprobe_err": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\write_throughput\\functional\\t5\\fmp4_hybrid\\cam00.mp4: Invalid data found when processing input"
+  }
+ ],
+ "T6": []
+}

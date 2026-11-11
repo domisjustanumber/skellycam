@@ -1,0 +1,199 @@
+{
+ "config": "utvideo_median.avi",
+ "codec": "utvideo",
+ "opts": {
+  "pred": "median"
+ },
+ "gop": 1,
+ "source": "nv12",
+ "source_note": "derived 4:2:0",
+ "res": "1080p",
+ "width": 1920,
+ "height": 1080,
+ "src_pix_fmt": "nv12",
+ "target_pix_fmt": "yuv420p",
+ "path": "numpy deinterleave",
+ "threads": 1,
+ "frames": 90,
+ "unique_frames": 8,
+ "looped": true,
+ "reps": 3,
+ "warmup_frames": 10,
+ "warmup_discarded": true,
+ "av_version": "18.0.0",
+ "ffmpeg_version": "8.1.2",
+ "library_versions": {
+  "libavutil": [
+   60,
+   26,
+   102
+  ],
+  "libavcodec": [
+   62,
+   28,
+   102
+  ],
+  "libavformat": [
+   62,
+   12,
+   102
+  ],
+  "libavdevice": [
+   62,
+   3,
+   102
+  ],
+  "libavfilter": [
+   11,
+   14,
+   102
+  ],
+  "libswscale": [
+   9,
+   5,
+   102
+  ],
+  "libswresample": [
+   6,
+   3,
+   102
+  ]
+ },
+ "numpy": "2.2.6",
+ "python": "3.12.13",
+ "machine": "Gerald",
+ "cpu_logical": 28,
+ "system_cpu_percent_before": 18.4,
+ "prep_ms_per_frame": 0.376,
+ "warmup": {
+  "encode_wall_s": 0.066,
+  "encode_fps": 151.54,
+  "encode_cpu_s": 0.0469,
+  "encode_cpu_cores_per_30fps_stream": 0.141,
+  "latency_p50": 6.3,
+  "latency_p95": 8.506,
+  "latency_p99": 8.506,
+  "latency_max": 8.506,
+  "latency_mean": 6.597,
+  "packets": 10,
+  "bytes_per_frame": 624777.6,
+  "file_bytes": 6253718,
+  "system_cpu_percent_during_encode": 23.0,
+  "decode_frames": 10,
+  "decode_wall_s": 0.0672,
+  "decode_fps": 148.81,
+  "decode_cpu_s": 0.0625
+ },
+ "rep_results": [
+  {
+   "encode_wall_s": 0.5788,
+   "encode_fps": 155.49,
+   "encode_cpu_s": 0.5781,
+   "encode_cpu_cores_per_30fps_stream": 0.193,
+   "latency_p50": 6.342,
+   "latency_p95": 6.841,
+   "latency_p99": 8.562,
+   "latency_max": 8.562,
+   "latency_mean": 6.429,
+   "packets": 90,
+   "bytes_per_frame": 626996.6,
+   "file_bytes": 56437558,
+   "system_cpu_percent_during_encode": 24.2,
+   "decode_frames": 90,
+   "decode_wall_s": 0.5484,
+   "decode_fps": 164.11,
+   "decode_cpu_s": 0.5469
+  },
+  {
+   "encode_wall_s": 0.5667,
+   "encode_fps": 158.81,
+   "encode_cpu_s": 0.5469,
+   "encode_cpu_cores_per_30fps_stream": 0.182,
+   "latency_p50": 6.219,
+   "latency_p95": 6.717,
+   "latency_p99": 8.925,
+   "latency_max": 8.925,
+   "latency_mean": 6.295,
+   "packets": 90,
+   "bytes_per_frame": 626996.6,
+   "file_bytes": 56437558,
+   "system_cpu_percent_during_encode": 20.8,
+   "decode_frames": 90,
+   "decode_wall_s": 0.5392,
+   "decode_fps": 166.9,
+   "decode_cpu_s": 0.5156
+  },
+  {
+   "encode_wall_s": 0.5659,
+   "encode_fps": 159.03,
+   "encode_cpu_s": 0.5625,
+   "encode_cpu_cores_per_30fps_stream": 0.188,
+   "latency_p50": 6.223,
+   "latency_p95": 6.781,
+   "latency_p99": 8.307,
+   "latency_max": 8.307,
+   "latency_mean": 6.287,
+   "packets": 90,
+   "bytes_per_frame": 626996.6,
+   "file_bytes": 56437558,
+   "system_cpu_percent_during_encode": 20.0,
+   "decode_frames": 90,
+   "decode_wall_s": 0.5407,
+   "decode_fps": 166.44,
+   "decode_cpu_s": 0.5156
+  }
+ ],
+ "stats": {
+  "encode_fps": {
+   "median": 158.81,
+   "min": 155.49,
+   "max": 159.03
+  },
+  "encode_cpu_cores_per_30fps_stream": {
+   "median": 0.188,
+   "min": 0.182,
+   "max": 0.193
+  },
+  "latency_p50": {
+   "median": 6.223,
+   "min": 6.219,
+   "max": 6.342
+  },
+  "latency_p99": {
+   "median": 8.562,
+   "min": 8.307,
+   "max": 8.925
+  },
+  "latency_max": {
+   "median": 8.562,
+   "min": 8.307,
+   "max": 8.925
+  },
+  "bytes_per_frame": {
+   "median": 626996.6,
+   "min": 626996.6,
+   "max": 626996.6
+  },
+  "decode_fps": {
+   "median": 166.44,
+   "min": 164.11,
+   "max": 166.9
+  },
+  "system_cpu_percent_during_encode": {
+   "median": 20.8,
+   "min": 20.0,
+   "max": 24.2
+  }
+ },
+ "encode_fps": 158.81,
+ "encode_cpu_cores_per_30fps_stream": 0.188,
+ "encode_latency_ms": {
+  "p50": 6.223,
+  "p99": 8.562,
+  "max": 8.562
+ },
+ "bytes_per_frame": 626996.6,
+ "decode_fps": 166.44,
+ "decoder": "libav default for codec (software unless the decoder is hw)",
+ "system_cpu_percent_after": 17.0
+}

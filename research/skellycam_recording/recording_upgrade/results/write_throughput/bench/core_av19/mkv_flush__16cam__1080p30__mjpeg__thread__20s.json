@@ -1,0 +1,704 @@
+{
+ "config": {
+  "writer": "mkv_flush",
+  "cams": 16,
+  "profile": "1080p30",
+  "payload": "mjpeg",
+  "model": "thread",
+  "duration": 20.0,
+  "ring_s": 2.87,
+  "inloop_buffer": 1,
+  "no_sidecar": false,
+  "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\write_throughput\\bench_runs\\current",
+  "argv": [
+   "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\skellycam_recording\\recording_upgrade\\scripts\\write_throughput\\bench_write.py",
+   "--writer",
+   "mkv_flush",
+   "--cams",
+   "16",
+   "--profile",
+   "1080p30",
+   "--model",
+   "thread",
+   "--duration",
+   "20",
+   "--payload",
+   "mjpeg",
+   "--json-out",
+   "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\skellycam_recording\\recording_upgrade\\results\\write_throughput\\bench\\core_av19\\mkv_flush__16cam__1080p30__mjpeg__thread__20s.json"
+  ],
+  "fps": 30
+ },
+ "env": {
+  "python": "3.12.13",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "machine": "Gerald",
+  "av": "19.0.2",
+  "libavformat": [
+   63,
+   1,
+   102
+  ],
+  "libavcodec": [
+   63,
+   1,
+   102
+  ],
+  "numpy": "2.2.6",
+  "cv2": "4.12.0",
+  "psutil": "7.2.2"
+ },
+ "started": "2026-11-10T04:47:18",
+ "summary": {
+  "cams": 16,
+  "profile": "1080p30",
+  "fps": 30,
+  "writer": "mkv_flush",
+  "model": "thread",
+  "payload": "mjpeg",
+  "duration_s": 20.0,
+  "wall_s": 20.52828070000396,
+  "ticks": 9600,
+  "produced": 9600,
+  "written": 9600,
+  "dropped": 0,
+  "late_ticks": 0,
+  "bytes": 1569469824,
+  "files_written": 32,
+  "throughput_MBps_over_duration": 78.4734912,
+  "throughput_MBps_over_write_span": 78.59701308681204,
+  "nominal_MBps": 78.4694905263158,
+  "write_ms_all": {
+   "p50": 0.81755,
+   "p99": 1.804904,
+   "p99.9": 2.4947416000000024,
+   "max": 2.9221
+  },
+  "tick_to_written_ms_all": {
+   "p50": 1.6283335,
+   "p99": 2.74936967,
+   "p99.9": 3.2457552670000025,
+   "max": 3.568934
+  },
+  "grab_lateness_ms_all": {
+   "p50": 0.517217,
+   "p99": 0.9446176700000004,
+   "p99.9": 1.2488263000000104,
+   "max": 1.509267
+  },
+  "worst_cam_write_ms_p999": 2.6305068000000325,
+  "max_close_s": 0.0021861000059288926,
+  "our_cpu_s": 12.171875,
+  "our_cpu_pct_of_one_core_per_cam": 3.8037109375,
+  "system_busy_pct_all_cpus": 7.115831576671531,
+  "other_cpu_s_estimate": 28.96875,
+  "logical_cpus": 28,
+  "msmpeng_cpu_s": 1.078125,
+  "physical_disk_delta": {
+   "PhysicalDrive0": {
+    "write_bytes": 3084288,
+    "write_count": 181,
+    "read_bytes": 24274432,
+    "write_time_ms": 0
+   }
+  },
+  "slots": 86,
+  "slot_bytes": 196608,
+  "delete_s": 0.10640520000015385
+ },
+ "per_cam": [
+  {
+   "cam": 0,
+   "source": "c922_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 115428540,
+   "write_ms": {
+    "p50": 0.958,
+    "p99": 1.888951,
+    "p99.9": 2.4322124000000103,
+    "max": 2.5235
+   },
+   "tick_to_written_ms": {
+    "p50": 1.7868335000000002,
+    "p99": 2.7451256699999997,
+    "p99.9": 3.0256453000000176,
+    "max": 3.180367
+   },
+   "grab_lateness_ms": {
+    "p50": 0.520967,
+    "p99": 0.9940896599999997,
+    "p99.9": 1.259096200000001,
+    "max": 1.2688
+   },
+   "close_s": 0.002035400000750087,
+   "close_info": {
+    "bytes": 115428540,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.765625,
+   "camera_thread_cpu_s": 0.28125,
+   "writer_cpu_s": 0.484375,
+   "writer_proc_cams": null
+  },
+  {
+   "cam": 1,
+   "source": "c930e_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 80755188,
+   "write_ms": {
+    "p50": 0.69275,
+    "p99": 1.6634169999999993,
+    "p99.9": 2.503479400000001,
+    "max": 2.5151
+   },
+   "tick_to_written_ms": {
+    "p50": 1.465017,
+    "p99": 2.65012,
+    "p99.9": 3.074408567000027,
+    "max": 3.315067
+   },
+   "grab_lateness_ms": {
+    "p50": 0.5274335,
+    "p99": 0.9367629999999999,
+    "p99.9": 1.147744733000011,
+    "max": 1.2463
+   },
+   "close_s": 0.0020053000043844804,
+   "close_info": {
+    "bytes": 80755188,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.640625,
+   "camera_thread_cpu_s": 0.15625,
+   "writer_cpu_s": 0.484375,
+   "writer_proc_cams": null
+  },
+  {
+   "cam": 2,
+   "source": "c922_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 115428540,
+   "write_ms": {
+    "p50": 0.98045,
+    "p99": 1.803964,
+    "p99.9": 2.5643247000000033,
+    "max": 2.5911
+   },
+   "tick_to_written_ms": {
+    "p50": 1.8195505,
+    "p99": 2.7789716700000002,
+    "p99.9": 3.102833867000016,
+    "max": 3.246634
+   },
+   "grab_lateness_ms": {
+    "p50": 0.5096335000000001,
+    "p99": 0.9390313299999997,
+    "p99.9": 1.2171883000000112,
+    "max": 1.318
+   },
+   "close_s": 0.0020842000012635253,
+   "close_info": {
+    "bytes": 115428540,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.828125,
+   "camera_thread_cpu_s": 0.1875,
+   "writer_cpu_s": 0.640625,
+   "writer_proc_cams": null
+  },
+  {
+   "cam": 3,
+   "source": "c930e_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 80755188,
+   "write_ms": {
+    "p50": 0.68065,
+    "p99": 1.6801979999999996,
+    "p99.9": 2.1200422000000376,
+    "max": 2.4568
+   },
+   "tick_to_written_ms": {
+    "p50": 1.4069505,
+    "p99": 2.6296120000000003,
+    "p99.9": 2.9320152670000357,
+    "max": 3.248567
+   },
+   "grab_lateness_ms": {
+    "p50": 0.5171505000000001,
+    "p99": 0.9945293299999999,
+    "p99.9": 1.2938100660000007,
+    "max": 1.2996
+   },
+   "close_s": 0.002013299999816809,
+   "close_info": {
+    "bytes": 80755188,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.765625,
+   "camera_thread_cpu_s": 0.21875,
+   "writer_cpu_s": 0.546875,
+   "writer_proc_cams": null
+  },
+  {
+   "cam": 4,
+   "source": "c922_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 115428540,
+   "write_ms": {
+    "p50": 0.94445,
+    "p99": 1.942733,
+    "p99.9": 2.6305068000000325,
+    "max": 2.9221
+   },
+   "tick_to_written_ms": {
+    "p50": 1.834534,
+    "p99": 2.7839446699999995,
+    "p99.9": 3.3923272000000075,
+    "max": 3.460134
+   },
+   "grab_lateness_ms": {
+    "p50": 0.5200005,
+    "p99": 0.9615983399999999,
+    "p99.9": 1.304628833000023,
+    "max": 1.509267
+   },
+   "close_s": 0.0020979999972041696,
+   "close_info": {
+    "bytes": 115428540,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.828125,
+   "camera_thread_cpu_s": 0.234375,
+   "writer_cpu_s": 0.59375,
+   "writer_proc_cams": null
+  },
+  {
+   "cam": 5,
+   "source": "c930e_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 80755188,
+   "write_ms": {
+    "p50": 0.66595,
+    "p99": 1.7767389999999998,
+    "p99.9": 2.520159700000005,
+    "max": 2.5679
+   },
+   "tick_to_written_ms": {
+    "p50": 1.4751335,
+    "p99": 2.7095263299999996,
+    "p99.9": 3.2354664670000024,
+    "max": 3.255034
+   },
+   "grab_lateness_ms": {
+    "p50": 0.5221505,
+    "p99": 0.90007966,
+    "p99.9": 1.026496000000002,
+    "max": 1.043867
+   },
+   "close_s": 0.0018485000036889687,
+   "close_info": {
+    "bytes": 80755188,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.640625,
+   "camera_thread_cpu_s": 0.109375,
+   "writer_cpu_s": 0.53125,
+   "writer_proc_cams": null
+  },
+  {
+   "cam": 6,
+   "source": "c922_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 115428540,
+   "write_ms": {
+    "p50": 0.9661500000000001,
+    "p99": 1.8544299999999985,
+    "p99.9": 2.5405302000000103,
+    "max": 2.6305
+   },
+   "tick_to_written_ms": {
+    "p50": 1.772717,
+    "p99": 2.82368167,
+    "p99.9": 3.326229400000016,
+    "max": 3.467234
+   },
+   "grab_lateness_ms": {
+    "p50": 0.51825,
+    "p99": 0.9434613399999995,
+    "p99.9": 1.1786185670000098,
+    "max": 1.265334
+   },
+   "close_s": 0.002064800006337464,
+   "close_info": {
+    "bytes": 115428540,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.84375,
+   "camera_thread_cpu_s": 0.140625,
+   "writer_cpu_s": 0.703125,
+   "writer_proc_cams": null
+  },
+  {
+   "cam": 7,
+   "source": "c930e_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 80755188,
+   "write_ms": {
+    "p50": 0.7002,
+    "p99": 1.831932,
+    "p99.9": 2.412331100000006,
+    "max": 2.4669
+   },
+   "tick_to_written_ms": {
+    "p50": 1.4513835,
+    "p99": 2.7627703300000004,
+    "p99.9": 3.1011887000000096,
+    "max": 3.186067
+   },
+   "grab_lateness_ms": {
+    "p50": 0.5123340000000001,
+    "p99": 0.9034449999999999,
+    "p99.9": 1.0483625330000108,
+    "max": 1.1456
+   },
+   "close_s": 0.001966099996934645,
+   "close_info": {
+    "bytes": 80755188,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.640625,
+   "camera_thread_cpu_s": 0.109375,
+   "writer_cpu_s": 0.53125,
+   "writer_proc_cams": null
+  },
+  {
+   "cam": 8,
+   "source": "c922_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 115428540,
+   "write_ms": {
+    "p50": 0.9574,
+    "p99": 1.846809,
+    "p99.9": 2.2908782000000065,
+    "max": 2.3497
+   },
+   "tick_to_written_ms": {
+    "p50": 1.7852670000000002,
+    "p99": 2.804955659999999,
+    "p99.9": 3.137539600000004,
+    "max": 3.176834
+   },
+   "grab_lateness_ms": {
+    "p50": 0.520417,
+    "p99": 0.9616599999999998,
+    "p99.9": 1.1878076000000022,
+    "max": 1.207934
+   },
+   "close_s": 0.0020722999979625456,
+   "close_info": {
+    "bytes": 115428540,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.84375,
+   "camera_thread_cpu_s": 0.21875,
+   "writer_cpu_s": 0.625,
+   "writer_proc_cams": null
+  },
+  {
+   "cam": 9,
+   "source": "c930e_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 80755188,
+   "write_ms": {
+    "p50": 0.6976,
+    "p99": 1.6872619999999996,
+    "p99.9": 2.015038400000012,
+    "max": 2.1219
+   },
+   "tick_to_written_ms": {
+    "p50": 1.4848504999999999,
+    "p99": 2.64094433,
+    "p99.9": 2.7928459000000148,
+    "max": 2.923967
+   },
+   "grab_lateness_ms": {
+    "p50": 0.520134,
+    "p99": 0.9553883299999999,
+    "p99.9": 1.1083127670000108,
+    "max": 1.203534
+   },
+   "close_s": 0.0019406999999773689,
+   "close_info": {
+    "bytes": 80755188,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.765625,
+   "camera_thread_cpu_s": 0.1875,
+   "writer_cpu_s": 0.578125,
+   "writer_proc_cams": null
+  },
+  {
+   "cam": 10,
+   "source": "c922_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 115428540,
+   "write_ms": {
+    "p50": 0.9762500000000001,
+    "p99": 1.826056,
+    "p99.9": 2.3922101000000113,
+    "max": 2.4941
+   },
+   "tick_to_written_ms": {
+    "p50": 1.7942335,
+    "p99": 2.8481336699999997,
+    "p99.9": 3.0273404670000006,
+    "max": 3.031334
+   },
+   "grab_lateness_ms": {
+    "p50": 0.5209505,
+    "p99": 0.97007233,
+    "p99.9": 1.2477699660000008,
+    "max": 1.2535
+   },
+   "close_s": 0.0021861000059288926,
+   "close_info": {
+    "bytes": 115428540,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.828125,
+   "camera_thread_cpu_s": 0.140625,
+   "writer_cpu_s": 0.6875,
+   "writer_proc_cams": null
+  },
+  {
+   "cam": 11,
+   "source": "c930e_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 80755188,
+   "write_ms": {
+    "p50": 0.7060500000000001,
+    "p99": 1.7112049999999996,
+    "p99.9": 2.3728360000000226,
+    "max": 2.5741
+   },
+   "tick_to_written_ms": {
+    "p50": 1.4830670000000001,
+    "p99": 2.63063167,
+    "p99.9": 3.0316476330000004,
+    "max": 3.0361
+   },
+   "grab_lateness_ms": {
+    "p50": 0.5097005,
+    "p99": 0.97239667,
+    "p99.9": 1.2258084000000031,
+    "max": 1.2548
+   },
+   "close_s": 0.002058400001260452,
+   "close_info": {
+    "bytes": 80755188,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.65625,
+   "camera_thread_cpu_s": 0.109375,
+   "writer_cpu_s": 0.546875,
+   "writer_proc_cams": null
+  },
+  {
+   "cam": 12,
+   "source": "c922_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 115428540,
+   "write_ms": {
+    "p50": 0.9941,
+    "p99": 1.8030229999999998,
+    "p99.9": 2.4777303000000006,
+    "max": 2.4839
+   },
+   "tick_to_written_ms": {
+    "p50": 1.8161005000000001,
+    "p99": 2.80757334,
+    "p99.9": 3.3019353670000093,
+    "max": 3.386734
+   },
+   "grab_lateness_ms": {
+    "p50": 0.5180005,
+    "p99": 0.8844073299999999,
+    "p99.9": 1.0318884660000018,
+    "max": 1.0487
+   },
+   "close_s": 0.0019860000029439107,
+   "close_info": {
+    "bytes": 115428540,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.828125,
+   "camera_thread_cpu_s": 0.21875,
+   "writer_cpu_s": 0.609375,
+   "writer_proc_cams": null
+  },
+  {
+   "cam": 13,
+   "source": "c930e_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 80755188,
+   "write_ms": {
+    "p50": 0.72635,
+    "p99": 1.6782639999999998,
+    "p99.9": 2.0804399000000324,
+    "max": 2.3679
+   },
+   "tick_to_written_ms": {
+    "p50": 1.466517,
+    "p99": 2.6505656599999994,
+    "p99.9": 2.8716269330000204,
+    "max": 3.051167
+   },
+   "grab_lateness_ms": {
+    "p50": 0.5170170000000001,
+    "p99": 0.9273376699999998,
+    "p99.9": 1.1008492000000067,
+    "max": 1.162067
+   },
+   "close_s": 0.0018993000048794784,
+   "close_info": {
+    "bytes": 80755188,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.734375,
+   "camera_thread_cpu_s": 0.140625,
+   "writer_cpu_s": 0.59375,
+   "writer_proc_cams": null
+  },
+  {
+   "cam": 14,
+   "source": "c922_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 115428540,
+   "write_ms": {
+    "p50": 0.9934000000000001,
+    "p99": 1.8122999999999998,
+    "p99.9": 2.396729100000006,
+    "max": 2.4501
+   },
+   "tick_to_written_ms": {
+    "p50": 1.7895505,
+    "p99": 2.7311669999999997,
+    "p99.9": 3.231331167000008,
+    "max": 3.301634
+   },
+   "grab_lateness_ms": {
+    "p50": 0.51195,
+    "p99": 0.9017463299999994,
+    "p99.9": 1.2691355000000226,
+    "max": 1.4701
+   },
+   "close_s": 0.0021418000033008866,
+   "close_info": {
+    "bytes": 115428540,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.8125,
+   "camera_thread_cpu_s": 0.15625,
+   "writer_cpu_s": 0.65625,
+   "writer_proc_cams": null
+  },
+  {
+   "cam": 15,
+   "source": "c930e_1080p",
+   "ticks": 600,
+   "produced": 600,
+   "written": 600,
+   "dropped": 0,
+   "late_ticks": 0,
+   "bytes": 80755188,
+   "write_ms": {
+    "p50": 0.7086,
+    "p99": 1.8473819999999996,
+    "p99.9": 2.3952356000000132,
+    "max": 2.5124
+   },
+   "tick_to_written_ms": {
+    "p50": 1.5136669999999999,
+    "p99": 2.7195153399999987,
+    "p99.9": 3.3313706000000267,
+    "max": 3.568934
+   },
+   "grab_lateness_ms": {
+    "p50": 0.509167,
+    "p99": 0.8617783299999998,
+    "p99.9": 1.0000987000000034,
+    "max": 1.031067
+   },
+   "close_s": 0.0020814000017708167,
+   "close_info": {
+    "bytes": 80755188,
+    "files": 2
+   },
+   "camera_process_cpu_s": 0.75,
+   "camera_thread_cpu_s": 0.15625,
+   "writer_cpu_s": 0.59375,
+   "writer_proc_cams": null
+  }
+ ],
+ "cell": "mkv_flush__16cam__1080p30__mjpeg__thread__20s"
+}

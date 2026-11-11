@@ -1,0 +1,197 @@
+{
+ "config": "rawvideo.nut",
+ "codec": "rawvideo",
+ "opts": {},
+ "gop": 1,
+ "source": "bayer8",
+ "source_note": "derived 8-bit RGGB",
+ "res": "1080p",
+ "width": 1920,
+ "height": 1080,
+ "src_pix_fmt": "bayer_rggb8",
+ "target_pix_fmt": "bayer_rggb8",
+ "path": "native",
+ "threads": 0,
+ "frames": 90,
+ "unique_frames": 8,
+ "looped": true,
+ "reps": 3,
+ "warmup_frames": 10,
+ "warmup_discarded": true,
+ "av_version": "18.0.0",
+ "ffmpeg_version": "8.1.2",
+ "library_versions": {
+  "libavutil": [
+   60,
+   26,
+   102
+  ],
+  "libavcodec": [
+   62,
+   28,
+   102
+  ],
+  "libavformat": [
+   62,
+   12,
+   102
+  ],
+  "libavdevice": [
+   62,
+   3,
+   102
+  ],
+  "libavfilter": [
+   11,
+   14,
+   102
+  ],
+  "libswscale": [
+   9,
+   5,
+   102
+  ],
+  "libswresample": [
+   6,
+   3,
+   102
+  ]
+ },
+ "numpy": "2.2.6",
+ "python": "3.12.13",
+ "machine": "Gerald",
+ "cpu_logical": 28,
+ "system_cpu_percent_before": 28.7,
+ "prep_ms_per_frame": 0.453,
+ "warmup": {
+  "encode_wall_s": 0.013,
+  "encode_fps": 769.73,
+  "encode_cpu_s": 0.0156,
+  "encode_cpu_cores_per_30fps_stream": 0.047,
+  "latency_p50": 1.181,
+  "latency_p95": 1.792,
+  "latency_p99": 1.792,
+  "latency_max": 1.792,
+  "latency_mean": 1.139,
+  "packets": 10,
+  "bytes_per_frame": 2073600.0,
+  "file_bytes": 20736580,
+  "system_cpu_percent_during_encode": 51.7,
+  "decode_frames": 10,
+  "decode_wall_s": 0.0118,
+  "decode_fps": 849.87,
+  "decode_cpu_s": 0.0156
+ },
+ "rep_results": [
+  {
+   "encode_wall_s": 0.1069,
+   "encode_fps": 841.69,
+   "encode_cpu_s": 0.1719,
+   "encode_cpu_cores_per_30fps_stream": 0.057,
+   "latency_p50": 1.186,
+   "latency_p95": 1.445,
+   "latency_p99": 1.672,
+   "latency_max": 1.672,
+   "latency_mean": 1.171,
+   "packets": 90,
+   "bytes_per_frame": 2073600.0,
+   "file_bytes": 186627372,
+   "system_cpu_percent_during_encode": 34.5,
+   "decode_frames": 90,
+   "decode_wall_s": 0.0615,
+   "decode_fps": 1462.31,
+   "decode_cpu_s": 0.0625
+  },
+  {
+   "encode_wall_s": 0.1091,
+   "encode_fps": 824.82,
+   "encode_cpu_s": 0.1562,
+   "encode_cpu_cores_per_30fps_stream": 0.052,
+   "latency_p50": 1.172,
+   "latency_p95": 1.639,
+   "latency_p99": 1.886,
+   "latency_max": 1.886,
+   "latency_mean": 1.196,
+   "packets": 90,
+   "bytes_per_frame": 2073600.0,
+   "file_bytes": 186627372,
+   "system_cpu_percent_during_encode": 29.8,
+   "decode_frames": 90,
+   "decode_wall_s": 0.0633,
+   "decode_fps": 1421.19,
+   "decode_cpu_s": 0.0625
+  },
+  {
+   "encode_wall_s": 0.1102,
+   "encode_fps": 816.57,
+   "encode_cpu_s": 0.1406,
+   "encode_cpu_cores_per_30fps_stream": 0.047,
+   "latency_p50": 1.16,
+   "latency_p95": 1.625,
+   "latency_p99": 1.93,
+   "latency_max": 1.93,
+   "latency_mean": 1.209,
+   "packets": 90,
+   "bytes_per_frame": 2073600.0,
+   "file_bytes": 186627372,
+   "system_cpu_percent_during_encode": 26.8,
+   "decode_frames": 90,
+   "decode_wall_s": 0.0683,
+   "decode_fps": 1317.33,
+   "decode_cpu_s": 0.0625
+  }
+ ],
+ "stats": {
+  "encode_fps": {
+   "median": 824.82,
+   "min": 816.57,
+   "max": 841.69
+  },
+  "encode_cpu_cores_per_30fps_stream": {
+   "median": 0.052,
+   "min": 0.047,
+   "max": 0.057
+  },
+  "latency_p50": {
+   "median": 1.172,
+   "min": 1.16,
+   "max": 1.186
+  },
+  "latency_p99": {
+   "median": 1.886,
+   "min": 1.672,
+   "max": 1.93
+  },
+  "latency_max": {
+   "median": 1.886,
+   "min": 1.672,
+   "max": 1.93
+  },
+  "bytes_per_frame": {
+   "median": 2073600.0,
+   "min": 2073600.0,
+   "max": 2073600.0
+  },
+  "decode_fps": {
+   "median": 1421.19,
+   "min": 1317.33,
+   "max": 1462.31
+  },
+  "system_cpu_percent_during_encode": {
+   "median": 29.8,
+   "min": 26.8,
+   "max": 34.5
+  }
+ },
+ "encode_fps": 824.82,
+ "encode_cpu_cores_per_30fps_stream": 0.052,
+ "encode_latency_ms": {
+  "p50": 1.172,
+  "p99": 1.886,
+  "max": 1.886
+ },
+ "bytes_per_frame": 2073600.0,
+ "decode_fps": 1421.19,
+ "decoder": "libav default for codec (software unless the decoder is hw)",
+ "system_cpu_percent_after": 20.3
+}

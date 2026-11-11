@@ -1,0 +1,1098 @@
+{
+ "bench": "matched_concurrent",
+ "args": {
+  "path": "h264_qsv_420",
+  "size": "1080p",
+  "source": "mjpeg_qsv",
+  "target": "A",
+  "streams": "1,4,8,16",
+  "modes": "paced,unpaced",
+  "paced_frames": 450,
+  "unpaced_frames": 300,
+  "fps": 30.0,
+  "reps": 2,
+  "workers": "thread",
+  "limit_probe": 0,
+  "outdir": "",
+  "smoke": false
+ },
+ "matched_settings": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\skellycam_recording\\recording_upgrade\\results\\intra_compare\\matched_settings.json",
+ "entry": {
+  "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+  "value": 12,
+  "bytes_per_frame": 150441.6,
+  "psnr_y": 52.604,
+  "ssim_y": 0.99616,
+  "psnr_yuv_422": 53.562,
+  "encoder": "h264_qsv",
+  "chroma": "4:2:0",
+  "pix_fmt_fed": "nv12",
+  "gop_size": 1,
+  "options": {
+   "flags": "+qscale",
+   "global_quality": "1416",
+   "i_qfactor": "1",
+   "i_qoffset": "0"
+  },
+  "target": "ssim_y=0.9961",
+  "delta": 6e-05,
+  "bytes_at_target_interp": 148327.0,
+  "psnr45": {
+   "knob": "qp (CQP: +qscale, global_quality=qp*118)",
+   "value": 29,
+   "bytes_per_frame": 23148.2,
+   "psnr_y": 45.201,
+   "ssim_y": 0.98824,
+   "psnr_yuv_422": 45.576,
+   "encoder": "h264_qsv",
+   "chroma": "4:2:0",
+   "pix_fmt_fed": "nv12",
+   "gop_size": 1,
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "3422",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "target": "psnr_y=45.0",
+   "delta": 0.201,
+   "bytes_at_target_interp": 22639.0
+  }
+ },
+ "system_before": {
+  "utc": "2026-11-10T08:23:13Z",
+  "machine": "Gerald",
+  "cpu_count": 28,
+  "python": "3.12.13",
+  "pyav": "19.0.2",
+  "libavcodec": "63.1.102",
+  "nvidia_smi": "0, 0 %, 0 %, 0 %",
+  "process_cpu_affinity": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15
+  ],
+  "simplejpeg": "1.9.0",
+  "nvimgcodec": "0.10.0",
+  "display_devices": [
+   "OK|True|Parsec Virtual Display Adapter",
+   "OK|True|Intel(R) UHD Graphics 770",
+   "OK|True|NVIDIA GeForce RTX 3070"
+  ]
+ },
+ "dxgi_adapters": {
+  "0x00000000_0x0001400D": "NVIDIA GeForce RTX 3070 (vendor 0x10DE)",
+  "0x00000000_0x0001543E": "Intel(R) UHD Graphics 770 (vendor 0x8086)",
+  "0x00000000_0x0008A3C6": "NVIDIA GeForce RTX 3070 (vendor 0x10DE)",
+  "0x00000000_0x000153D0": "Microsoft Basic Render Driver (vendor 0x1414)"
+ },
+ "runs": [
+  {
+   "requested": 1,
+   "opened": 1,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 14.978,
+   "process_cpu_s": 6.609,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 33
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 4.1,
+      "max": 4.5,
+      "samples": 15
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 9.1,
+      "max": 9.7,
+      "samples": 15
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 450,
+   "aggregate_fps": 30.04,
+   "per_stream_fps_min": 30.05,
+   "per_stream_fps_median": 30.05,
+   "cpu_ms_per_frame": 14.688,
+   "cpu_cores": 0.441,
+   "encode_ms_p50": 4.234,
+   "encode_ms_p99": 5.965,
+   "bytes_per_frame": 149705,
+   "late_frames": 5,
+   "lag_end_s_max": 0.0,
+   "dropped_equiv": 0,
+   "streams_keeping_up": 1,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "paced",
+   "rep": 1,
+   "frames_per_stream": 450
+  },
+  {
+   "requested": 4,
+   "opened": 4,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 14.985,
+   "process_cpu_s": 27.547,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 33
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 15.1,
+      "max": 16.2,
+      "samples": 15
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 26.6,
+      "max": 29.2,
+      "samples": 15
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 1800,
+   "aggregate_fps": 120.12,
+   "per_stream_fps_min": 30.03,
+   "per_stream_fps_median": 30.04,
+   "cpu_ms_per_frame": 15.304,
+   "cpu_cores": 1.838,
+   "encode_ms_p50": 5.312,
+   "encode_ms_p99": 10.121,
+   "bytes_per_frame": 149705,
+   "late_frames": 43,
+   "lag_end_s_max": 0.0,
+   "dropped_equiv": 0,
+   "streams_keeping_up": 4,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "paced",
+   "rep": 1,
+   "frames_per_stream": 450
+  },
+  {
+   "requested": 8,
+   "opened": 8,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 14.991,
+   "process_cpu_s": 43.469,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 33
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 29.4,
+      "max": 33.1,
+      "samples": 16
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 48.5,
+      "max": 51.9,
+      "samples": 16
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 3600,
+   "aggregate_fps": 240.14,
+   "per_stream_fps_min": 30.02,
+   "per_stream_fps_median": 30.03,
+   "cpu_ms_per_frame": 12.075,
+   "cpu_cores": 2.9,
+   "encode_ms_p50": 6.243,
+   "encode_ms_p99": 40.513,
+   "bytes_per_frame": 149705,
+   "late_frames": 153,
+   "lag_end_s_max": 0.0,
+   "dropped_equiv": 0,
+   "streams_keeping_up": 8,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "paced",
+   "rep": 1,
+   "frames_per_stream": 450
+  },
+  {
+   "requested": 16,
+   "opened": 16,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 15.001,
+   "process_cpu_s": 65.25,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 33
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 61.4,
+      "max": 65.3,
+      "samples": 16
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 88.6,
+      "max": 94.5,
+      "samples": 16
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 7200,
+   "aggregate_fps": 479.95,
+   "per_stream_fps_min": 30.0,
+   "per_stream_fps_median": 30.02,
+   "cpu_ms_per_frame": 9.062,
+   "cpu_cores": 4.35,
+   "encode_ms_p50": 7.745,
+   "encode_ms_p99": 13.597,
+   "bytes_per_frame": 149705,
+   "late_frames": 0,
+   "lag_end_s_max": 0.0,
+   "dropped_equiv": 0,
+   "streams_keeping_up": 16,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "paced",
+   "rep": 1,
+   "frames_per_stream": 450
+  },
+  {
+   "requested": 1,
+   "opened": 1,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 1.039,
+   "process_cpu_s": 2.219,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 5
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 17.2,
+      "max": 33.5,
+      "samples": 2
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 39.0,
+      "max": 76.1,
+      "samples": 2
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 300,
+   "aggregate_fps": 288.74,
+   "per_stream_fps_min": 289.15,
+   "per_stream_fps_median": 289.15,
+   "cpu_ms_per_frame": 7.396,
+   "cpu_cores": 2.135,
+   "encode_ms_p50": 2.747,
+   "encode_ms_p99": 4.54,
+   "bytes_per_frame": 150361,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "unpaced",
+   "rep": 1,
+   "frames_per_stream": 300
+  },
+  {
+   "requested": 4,
+   "opened": 4,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 2.886,
+   "process_cpu_s": 12.016,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 9
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 35.6,
+      "max": 64.0,
+      "samples": 3
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 56.2,
+      "max": 99.5,
+      "samples": 3
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 1200,
+   "aggregate_fps": 415.86,
+   "per_stream_fps_min": 104.05,
+   "per_stream_fps_median": 106.24,
+   "cpu_ms_per_frame": 10.013,
+   "cpu_cores": 4.164,
+   "encode_ms_p50": 4.089,
+   "encode_ms_p99": 36.591,
+   "bytes_per_frame": 150361,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "unpaced",
+   "rep": 1,
+   "frames_per_stream": 300
+  },
+  {
+   "requested": 8,
+   "opened": 8,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 5.164,
+   "process_cpu_s": 15.391,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 13
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 51.3,
+      "max": 65.8,
+      "samples": 6
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 81.1,
+      "max": 99.6,
+      "samples": 6
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 2400,
+   "aggregate_fps": 464.76,
+   "per_stream_fps_min": 58.13,
+   "per_stream_fps_median": 59.17,
+   "cpu_ms_per_frame": 6.413,
+   "cpu_cores": 2.98,
+   "encode_ms_p50": 3.938,
+   "encode_ms_p99": 94.252,
+   "bytes_per_frame": 150361,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "unpaced",
+   "rep": 1,
+   "frames_per_stream": 300
+  },
+  {
+   "requested": 16,
+   "opened": 16,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 10.081,
+   "process_cpu_s": 37.594,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 23
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 57.7,
+      "max": 64.6,
+      "samples": 11
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 92.1,
+      "max": 99.7,
+      "samples": 11
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 4800,
+   "aggregate_fps": 476.16,
+   "per_stream_fps_min": 29.77,
+   "per_stream_fps_median": 30.36,
+   "cpu_ms_per_frame": 7.832,
+   "cpu_cores": 3.729,
+   "encode_ms_p50": 3.976,
+   "encode_ms_p99": 199.143,
+   "bytes_per_frame": 150361,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "unpaced",
+   "rep": 1,
+   "frames_per_stream": 300
+  },
+  {
+   "requested": 1,
+   "opened": 1,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 14.975,
+   "process_cpu_s": 6.625,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 33
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 4.2,
+      "max": 4.8,
+      "samples": 15
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 9.1,
+      "max": 9.9,
+      "samples": 15
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 450,
+   "aggregate_fps": 30.05,
+   "per_stream_fps_min": 30.05,
+   "per_stream_fps_median": 30.05,
+   "cpu_ms_per_frame": 14.722,
+   "cpu_cores": 0.442,
+   "encode_ms_p50": 4.144,
+   "encode_ms_p99": 5.776,
+   "bytes_per_frame": 149705,
+   "late_frames": 5,
+   "lag_end_s_max": 0.0,
+   "dropped_equiv": 0,
+   "streams_keeping_up": 1,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "paced",
+   "rep": 2,
+   "frames_per_stream": 450
+  },
+  {
+   "requested": 4,
+   "opened": 4,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 14.979,
+   "process_cpu_s": 29.625,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 33
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 14.9,
+      "max": 16.1,
+      "samples": 15
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 23.1,
+      "max": 25.2,
+      "samples": 15
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 1800,
+   "aggregate_fps": 120.17,
+   "per_stream_fps_min": 30.05,
+   "per_stream_fps_median": 30.05,
+   "cpu_ms_per_frame": 16.458,
+   "cpu_cores": 1.978,
+   "encode_ms_p50": 6.014,
+   "encode_ms_p99": 9.754,
+   "bytes_per_frame": 149705,
+   "late_frames": 45,
+   "lag_end_s_max": 0.0,
+   "dropped_equiv": 0,
+   "streams_keeping_up": 4,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "paced",
+   "rep": 2,
+   "frames_per_stream": 450
+  },
+  {
+   "requested": 8,
+   "opened": 8,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 14.991,
+   "process_cpu_s": 41.875,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 33
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 28.9,
+      "max": 30.8,
+      "samples": 16
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 51.5,
+      "max": 54.8,
+      "samples": 16
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 3600,
+   "aggregate_fps": 240.14,
+   "per_stream_fps_min": 30.02,
+   "per_stream_fps_median": 30.03,
+   "cpu_ms_per_frame": 11.632,
+   "cpu_cores": 2.793,
+   "encode_ms_p50": 6.513,
+   "encode_ms_p99": 23.353,
+   "bytes_per_frame": 149705,
+   "late_frames": 113,
+   "lag_end_s_max": 0.0,
+   "dropped_equiv": 0,
+   "streams_keeping_up": 8,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "paced",
+   "rep": 2,
+   "frames_per_stream": 450
+  },
+  {
+   "requested": 16,
+   "opened": 16,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 15.002,
+   "process_cpu_s": 64.547,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 33
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 61.4,
+      "max": 65.1,
+      "samples": 16
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 89.6,
+      "max": 95.4,
+      "samples": 16
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 7200,
+   "aggregate_fps": 479.93,
+   "per_stream_fps_min": 30.0,
+   "per_stream_fps_median": 30.02,
+   "cpu_ms_per_frame": 8.965,
+   "cpu_cores": 4.303,
+   "encode_ms_p50": 7.364,
+   "encode_ms_p99": 12.442,
+   "bytes_per_frame": 149705,
+   "late_frames": 0,
+   "lag_end_s_max": 0.0,
+   "dropped_equiv": 0,
+   "streams_keeping_up": 16,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "paced",
+   "rep": 2,
+   "frames_per_stream": 450
+  },
+  {
+   "requested": 1,
+   "opened": 1,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 0.74,
+   "process_cpu_s": 2.531,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 4
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 1.0,
+      "max": 1.0,
+      "samples": 1
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 1.8,
+      "max": 1.8,
+      "samples": 1
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 300,
+   "aggregate_fps": 405.22,
+   "per_stream_fps_min": 406.05,
+   "per_stream_fps_median": 406.05,
+   "cpu_ms_per_frame": 8.438,
+   "cpu_cores": 3.419,
+   "encode_ms_p50": 1.781,
+   "encode_ms_p99": 3.091,
+   "bytes_per_frame": 150361,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "unpaced",
+   "rep": 2,
+   "frames_per_stream": 300
+  },
+  {
+   "requested": 4,
+   "opened": 4,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 2.722,
+   "process_cpu_s": 8.453,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 8
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 37.3,
+      "max": 60.5,
+      "samples": 3
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 58.8,
+      "max": 99.2,
+      "samples": 3
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 1200,
+   "aggregate_fps": 440.92,
+   "per_stream_fps_min": 110.3,
+   "per_stream_fps_median": 111.59,
+   "cpu_ms_per_frame": 7.044,
+   "cpu_cores": 3.106,
+   "encode_ms_p50": 3.809,
+   "encode_ms_p99": 38.613,
+   "bytes_per_frame": 150361,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "unpaced",
+   "rep": 2,
+   "frames_per_stream": 300
+  },
+  {
+   "requested": 8,
+   "opened": 8,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 5.341,
+   "process_cpu_s": 18.781,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 14
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 49.5,
+      "max": 64.9,
+      "samples": 6
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 80.5,
+      "max": 99.7,
+      "samples": 6
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 2400,
+   "aggregate_fps": 449.32,
+   "per_stream_fps_min": 56.18,
+   "per_stream_fps_median": 56.56,
+   "cpu_ms_per_frame": 7.826,
+   "cpu_cores": 3.516,
+   "encode_ms_p50": 3.972,
+   "encode_ms_p99": 92.333,
+   "bytes_per_frame": 150361,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "unpaced",
+   "rep": 2,
+   "frames_per_stream": 300
+  },
+  {
+   "requested": 16,
+   "opened": 16,
+   "open_error": null,
+   "nvidia_smi_after_open": "0, 0 %, 0 %, 0 %",
+   "wall_s": 9.699,
+   "process_cpu_s": 37.922,
+   "gpu": {
+    "nvidia_smi": {
+     "encoder.stats.sessionCount": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.gpu": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.encoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "utilization.decoder": {
+      "mean": 0.0,
+      "max": 0.0
+     },
+     "samples": 22
+    },
+    "gpu_engine_util_pct": {
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | 3D": {
+      "mean": 60.9,
+      "max": 71.1,
+      "samples": 10
+     },
+     "Intel(R) UHD Graphics 770 (vendor 0x8086) | VideoDecode": {
+      "mean": 91.3,
+      "max": 99.6,
+      "samples": 10
+     }
+    }
+   },
+   "stream_errors": [],
+   "total_frames": 4800,
+   "aggregate_fps": 494.92,
+   "per_stream_fps_min": 30.94,
+   "per_stream_fps_median": 31.42,
+   "cpu_ms_per_frame": 7.9,
+   "cpu_cores": 3.91,
+   "encode_ms_p50": 3.791,
+   "encode_ms_p99": 191.776,
+   "bytes_per_frame": 150361,
+   "path": "h264_qsv_420",
+   "size": "1080p",
+   "source": "mjpeg_qsv",
+   "workers": "thread",
+   "mode": "unpaced",
+   "rep": 2,
+   "frames_per_stream": 300
+  }
+ ],
+ "system_after": {
+  "utc": "2026-11-10T08:27:02Z",
+  "machine": "Gerald",
+  "cpu_count": 28,
+  "python": "3.12.13",
+  "pyav": "19.0.2",
+  "libavcodec": "63.1.102",
+  "nvidia_smi": "0, 0 %, 0 %, 0 %",
+  "process_cpu_affinity": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15
+  ],
+  "simplejpeg": "1.9.0",
+  "nvimgcodec": "0.10.0",
+  "display_devices": [
+   "OK|True|Parsec Virtual Display Adapter",
+   "OK|True|Intel(R) UHD Graphics 770",
+   "OK|True|NVIDIA GeForce RTX 3070"
+  ]
+ }
+}

@@ -1,0 +1,846 @@
+{
+ "test": "scrub",
+ "params": {
+  "clip": "c1080p30/h264_qsv_intra.mp4",
+  "path": "video-gated",
+  "n": "4",
+  "dur": "8",
+  "speed": "90",
+  "bench": "1"
+ },
+ "versions": {
+  "electron": "35.7.5",
+  "chrome": "134.0.6998.205",
+  "node": "22.16.0",
+  "v8": "13.4.114.21-electron.0"
+ },
+ "gpu_feature_status": {
+  "2d_canvas": "enabled",
+  "canvas_oop_rasterization": "enabled_on",
+  "direct_rendering_display_compositor": "disabled_off_ok",
+  "gpu_compositing": "enabled",
+  "multiple_raster_threads": "enabled_on",
+  "opengl": "enabled_on",
+  "rasterization": "enabled",
+  "raw_draw": "disabled_off_ok",
+  "skia_graphite": "disabled_off",
+  "video_decode": "enabled",
+  "video_encode": "enabled",
+  "vulkan": "disabled_off",
+  "webgl": "enabled",
+  "webgl2": "enabled",
+  "webgpu": "enabled",
+  "webnn": "disabled_off"
+ },
+ "gpu_info": {
+  "gpuDevice": [
+   {
+    "active": true,
+    "deviceId": 9348,
+    "driverVendor": "NVIDIA",
+    "driverVersion": "32.0.16.1088",
+    "gpuPreference": 3,
+    "revision": 161,
+    "subSysId": 928331842,
+    "vendorId": 4318
+   },
+   {
+    "active": false,
+    "deviceId": 42880,
+    "driverVersion": "32.0.101.7088",
+    "gpuPreference": 2,
+    "revision": 4,
+    "subSysId": -2004742077,
+    "vendorId": 32902
+   },
+   {
+    "active": false,
+    "deviceId": 9348,
+    "driverVersion": "32.0.16.1088",
+    "gpuPreference": 0,
+    "revision": 161,
+    "subSysId": 928331842,
+    "vendorId": 4318
+   },
+   {
+    "active": false,
+    "deviceId": 140,
+    "driverVersion": "10.0.26100.9711",
+    "gpuPreference": 0,
+    "revision": 0,
+    "subSysId": 0,
+    "vendorId": 5140
+   }
+  ]
+ },
+ "metrics_summary": {
+  "Browser": {
+   "processes": 1,
+   "cpu_pct_sum_mean": 0.30009197326528936,
+   "ws_mb_max_single": 155.97265625,
+   "cpu_cores_from_cumulative": 0.055671106966830954
+  },
+  "GPU": {
+   "processes": 1,
+   "cpu_pct_sum_mean": 1.3353986223349006,
+   "ws_mb_max_single": 364.2734375,
+   "cpu_cores_from_cumulative": 0.32645051285466903
+  },
+  "Utility": {
+   "processes": 1,
+   "cpu_pct_sum_mean": 0.10035914074528911,
+   "ws_mb_max_single": 58.9609375,
+   "cpu_cores_from_cumulative": 0.010249500466231519
+  },
+  "Tab": {
+   "processes": 1,
+   "cpu_pct_sum_mean": 3.0611495974529053,
+   "ws_mb_max_single": 661.34765625,
+   "cpu_cores_from_cumulative": 0.8065468229652326
+  },
+  "cpu_cores_total_from_cumulative": 1.198917943252964,
+  "window_s": 7.507,
+  "total_ws_mb_last": 1202.0546875
+ },
+ "switches": {
+  "medialog": false,
+  "noocclusion": true
+ },
+ "metrics_samples": [
+  {
+   "t": 1794290685253,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 3.847379745616769,
+   "cum_cpu_s": 0.924273,
+   "ws_kb": 107232,
+   "peak_ws_kb": 161036,
+   "private_kb": 81800
+  },
+  {
+   "t": 1794290685253,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 4.5997016480569375,
+   "cum_cpu_s": 0.961417,
+   "ws_kb": 375500,
+   "peak_ws_kb": 375500,
+   "private_kb": 531628
+  },
+  {
+   "t": 1794290685253,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 1.1438361841942222,
+   "cum_cpu_s": 0.248393,
+   "ws_kb": 60376,
+   "peak_ws_kb": 60376,
+   "private_kb": 14272
+  },
+  {
+   "t": 1794290685253,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 6.8386832999272045,
+   "cum_cpu_s": 1.166071,
+   "ws_kb": 507464,
+   "peak_ws_kb": 519876,
+   "private_kb": 534320
+  },
+  {
+   "t": 1794290685752,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 1.7995598040573089,
+   "cum_cpu_s": 1.175903,
+   "ws_kb": 159716,
+   "peak_ws_kb": 166500,
+   "private_kb": 134448
+  },
+  {
+   "t": 1794290685752,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 3.8515380923204368,
+   "cum_cpu_s": 1.500009,
+   "ws_kb": 371544,
+   "peak_ws_kb": 395392,
+   "private_kb": 530408
+  },
+  {
+   "t": 1794290685752,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 0.40705101252187426,
+   "cum_cpu_s": 0.305317,
+   "ws_kb": 60376,
+   "peak_ws_kb": 60376,
+   "private_kb": 14272
+  },
+  {
+   "t": 1794290685752,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 4.085633016147537,
+   "cum_cpu_s": 1.73757,
+   "ws_kb": 623736,
+   "peak_ws_kb": 641772,
+   "private_kb": 680216
+  },
+  {
+   "t": 1794290686252,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 0.47950171556453774,
+   "cum_cpu_s": 1.243095,
+   "ws_kb": 131108,
+   "peak_ws_kb": 166500,
+   "private_kb": 105472
+  },
+  {
+   "t": 1794290686252,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 1.3745588979040586,
+   "cum_cpu_s": 1.692652,
+   "ws_kb": 373016,
+   "peak_ws_kb": 395392,
+   "private_kb": 531792
+  },
+  {
+   "t": 1794290686252,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 0.11138461977538992,
+   "cum_cpu_s": 0.320928,
+   "ws_kb": 52188,
+   "peak_ws_kb": 60380,
+   "private_kb": 14252
+  },
+  {
+   "t": 1794290686252,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 3.5651413099484315,
+   "cum_cpu_s": 2.237134,
+   "ws_kb": 673616,
+   "peak_ws_kb": 679324,
+   "private_kb": 748532
+  },
+  {
+   "t": 1794290686752,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 0.05500869964835587,
+   "cum_cpu_s": 1.250794,
+   "ws_kb": 131196,
+   "peak_ws_kb": 166500,
+   "private_kb": 105564
+  },
+  {
+   "t": 1794290686752,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 0.9594930730793629,
+   "cum_cpu_s": 1.826905,
+   "ws_kb": 370936,
+   "peak_ws_kb": 395392,
+   "private_kb": 496348
+  },
+  {
+   "t": 1794290686752,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 0,
+   "cum_cpu_s": 0.320928,
+   "ws_kb": 52188,
+   "peak_ws_kb": 60380,
+   "private_kb": 14252
+  },
+  {
+   "t": 1794290686752,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 3.1638197592386903,
+   "cum_cpu_s": 2.679772,
+   "ws_kb": 676328,
+   "peak_ws_kb": 679324,
+   "private_kb": 751520
+  },
+  {
+   "t": 1794290687254,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 0.04542230634182594,
+   "cum_cpu_s": 1.25717,
+   "ws_kb": 131196,
+   "peak_ws_kb": 166500,
+   "private_kb": 105564
+  },
+  {
+   "t": 1794290687254,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 0.8887523104596757,
+   "cum_cpu_s": 1.951671,
+   "ws_kb": 370328,
+   "peak_ws_kb": 395392,
+   "private_kb": 495680
+  },
+  {
+   "t": 1794290687254,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 0,
+   "cum_cpu_s": 0.320928,
+   "ws_kb": 52188,
+   "peak_ws_kb": 60380,
+   "private_kb": 14252
+  },
+  {
+   "t": 1794290687254,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 3.2021168157284334,
+   "cum_cpu_s": 3.129372,
+   "ws_kb": 666624,
+   "peak_ws_kb": 679324,
+   "private_kb": 741476
+  },
+  {
+   "t": 1794290687753,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 0.050434257680327124,
+   "cum_cpu_s": 1.264228,
+   "ws_kb": 131224,
+   "peak_ws_kb": 166500,
+   "private_kb": 105592
+  },
+  {
+   "t": 1794290687753,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 0.8827021059588412,
+   "cum_cpu_s": 2.075188,
+   "ws_kb": 370792,
+   "peak_ws_kb": 395392,
+   "private_kb": 496112
+  },
+  {
+   "t": 1794290687753,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 0,
+   "cum_cpu_s": 0.320928,
+   "ws_kb": 52188,
+   "peak_ws_kb": 60380,
+   "private_kb": 14252
+  },
+  {
+   "t": 1794290687753,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 2.9589680312922937,
+   "cum_cpu_s": 3.543374,
+   "ws_kb": 676724,
+   "peak_ws_kb": 679324,
+   "private_kb": 751604
+  },
+  {
+   "t": 1794290688255,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 0.05035780545984627,
+   "cum_cpu_s": 1.271296,
+   "ws_kb": 131224,
+   "peak_ws_kb": 166500,
+   "private_kb": 105592
+  },
+  {
+   "t": 1794290688255,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 0.9182299422187707,
+   "cum_cpu_s": 2.204068,
+   "ws_kb": 370812,
+   "peak_ws_kb": 395392,
+   "private_kb": 496132
+  },
+  {
+   "t": 1794290688255,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 0,
+   "cum_cpu_s": 0.320928,
+   "ws_kb": 52188,
+   "peak_ws_kb": 60380,
+   "private_kb": 14252
+  },
+  {
+   "t": 1794290688255,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 2.9236602823428157,
+   "cum_cpu_s": 3.953722,
+   "ws_kb": 664632,
+   "peak_ws_kb": 679324,
+   "private_kb": 739784
+  },
+  {
+   "t": 1794290688754,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 0.051837458781747496,
+   "cum_cpu_s": 1.278545,
+   "ws_kb": 131248,
+   "peak_ws_kb": 166500,
+   "private_kb": 105596
+  },
+  {
+   "t": 1794290688754,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 0.8992135501156594,
+   "cum_cpu_s": 2.329831,
+   "ws_kb": 369496,
+   "peak_ws_kb": 395392,
+   "private_kb": 495816
+  },
+  {
+   "t": 1794290688754,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 0,
+   "cum_cpu_s": 0.320928,
+   "ws_kb": 52188,
+   "peak_ws_kb": 60380,
+   "private_kb": 14252
+  },
+  {
+   "t": 1794290688754,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 3.0284607486765602,
+   "cum_cpu_s": 4.377291,
+   "ws_kb": 674256,
+   "peak_ws_kb": 679324,
+   "private_kb": 749080
+  },
+  {
+   "t": 1794290689254,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 0.04858105050486582,
+   "cum_cpu_s": 1.285347,
+   "ws_kb": 131248,
+   "peak_ws_kb": 166500,
+   "private_kb": 105596
+  },
+  {
+   "t": 1794290689254,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 0.9603008415025046,
+   "cum_cpu_s": 2.464275,
+   "ws_kb": 369720,
+   "peak_ws_kb": 395392,
+   "private_kb": 496044
+  },
+  {
+   "t": 1794290689254,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 0,
+   "cum_cpu_s": 0.320928,
+   "ws_kb": 52188,
+   "peak_ws_kb": 60380,
+   "private_kb": 14252
+  },
+  {
+   "t": 1794290689254,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 2.9997340324480417,
+   "cum_cpu_s": 4.797305,
+   "ws_kb": 652524,
+   "peak_ws_kb": 679324,
+   "private_kb": 727408
+  },
+  {
+   "t": 1794290689754,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 0.05143905065310882,
+   "cum_cpu_s": 1.292549,
+   "ws_kb": 131248,
+   "peak_ws_kb": 166500,
+   "private_kb": 105596
+  },
+  {
+   "t": 1794290689754,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 0.906236670469288,
+   "cum_cpu_s": 2.591156,
+   "ws_kb": 371508,
+   "peak_ws_kb": 395392,
+   "private_kb": 497852
+  },
+  {
+   "t": 1794290689754,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 0.00030000720017280414,
+   "cum_cpu_s": 0.32097,
+   "ws_kb": 52188,
+   "peak_ws_kb": 60380,
+   "private_kb": 14252
+  },
+  {
+   "t": 1794290689754,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 3.1465085404068374,
+   "cum_cpu_s": 5.237751,
+   "ws_kb": 662088,
+   "peak_ws_kb": 679324,
+   "private_kb": 736996
+  },
+  {
+   "t": 1794290690254,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 0.04165582734684005,
+   "cum_cpu_s": 1.298384,
+   "ws_kb": 131248,
+   "peak_ws_kb": 166500,
+   "private_kb": 105596
+  },
+  {
+   "t": 1794290690254,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 0.8161837662662127,
+   "cum_cpu_s": 2.705496,
+   "ws_kb": 371540,
+   "peak_ws_kb": 395392,
+   "private_kb": 497836
+  },
+  {
+   "t": 1794290690254,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 0,
+   "cum_cpu_s": 0.32097,
+   "ws_kb": 52188,
+   "peak_ws_kb": 60380,
+   "private_kb": 14252
+  },
+  {
+   "t": 1794290690254,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 2.8074730422800864,
+   "cum_cpu_s": 5.63107,
+   "ws_kb": 676748,
+   "peak_ws_kb": 679324,
+   "private_kb": 751516
+  },
+  {
+   "t": 1794290690756,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 0.05716337952294017,
+   "cum_cpu_s": 1.306406,
+   "ws_kb": 131248,
+   "peak_ws_kb": 166500,
+   "private_kb": 105596
+  },
+  {
+   "t": 1794290690756,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 0.915611303139365,
+   "cum_cpu_s": 2.83397,
+   "ws_kb": 370684,
+   "peak_ws_kb": 395392,
+   "private_kb": 496940
+  },
+  {
+   "t": 1794290690756,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 0,
+   "cum_cpu_s": 0.32097,
+   "ws_kb": 52188,
+   "peak_ws_kb": 60380,
+   "private_kb": 14252
+  },
+  {
+   "t": 1794290690756,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 2.7932639597989266,
+   "cum_cpu_s": 6.023017,
+   "ws_kb": 677220,
+   "peak_ws_kb": 679324,
+   "private_kb": 752288
+  },
+  {
+   "t": 1794290691255,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 0.05197921231732233,
+   "cum_cpu_s": 1.313679,
+   "ws_kb": 131248,
+   "peak_ws_kb": 166500,
+   "private_kb": 105596
+  },
+  {
+   "t": 1794290691255,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 0.9998690692740749,
+   "cum_cpu_s": 2.973873,
+   "ws_kb": 369800,
+   "peak_ws_kb": 395392,
+   "private_kb": 492812
+  },
+  {
+   "t": 1794290691255,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 0,
+   "cum_cpu_s": 0.32097,
+   "ws_kb": 52188,
+   "peak_ws_kb": 60380,
+   "private_kb": 14252
+  },
+  {
+   "t": 1794290691255,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 2.0138009153913425,
+   "cum_cpu_s": 6.304767,
+   "ws_kb": 651212,
+   "peak_ws_kb": 679324,
+   "private_kb": 725580
+  },
+  {
+   "t": 1794290691755,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 0.08296478350298674,
+   "cum_cpu_s": 1.325294,
+   "ws_kb": 131320,
+   "peak_ws_kb": 166500,
+   "private_kb": 105644
+  },
+  {
+   "t": 1794290691755,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 1.2163473102129125,
+   "cum_cpu_s": 3.144195,
+   "ws_kb": 371716,
+   "peak_ws_kb": 395392,
+   "private_kb": 500144
+  },
+  {
+   "t": 1794290691755,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 0,
+   "cum_cpu_s": 0.32097,
+   "ws_kb": 52188,
+   "peak_ws_kb": 60380,
+   "private_kb": 14252
+  },
+  {
+   "t": 1794290691755,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 1.2881210596432058,
+   "cum_cpu_s": 6.485153,
+   "ws_kb": 650784,
+   "peak_ws_kb": 679324,
+   "private_kb": 725460
+  },
+  {
+   "t": 1794290692256,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 0.06112636814103961,
+   "cum_cpu_s": 1.333866,
+   "ws_kb": 131320,
+   "peak_ws_kb": 166500,
+   "private_kb": 105644
+  },
+  {
+   "t": 1794290692256,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 0.9867515512198518,
+   "cum_cpu_s": 3.282556,
+   "ws_kb": 370392,
+   "peak_ws_kb": 395392,
+   "private_kb": 498796
+  },
+  {
+   "t": 1794290692256,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 0,
+   "cum_cpu_s": 0.32097,
+   "ws_kb": 52188,
+   "peak_ws_kb": 60380,
+   "private_kb": 14252
+  },
+  {
+   "t": 1794290692256,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 2.289679346627787,
+   "cum_cpu_s": 6.806246,
+   "ws_kb": 660480,
+   "peak_ws_kb": 679324,
+   "private_kb": 735408
+  },
+  {
+   "t": 1794290692757,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 0.048824766535848926,
+   "cum_cpu_s": 1.340709,
+   "ws_kb": 131304,
+   "peak_ws_kb": 166500,
+   "private_kb": 105644
+  },
+  {
+   "t": 1794290692757,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 0.9013231688695696,
+   "cum_cpu_s": 3.408875,
+   "ws_kb": 370820,
+   "peak_ws_kb": 395392,
+   "private_kb": 499248
+  },
+  {
+   "t": 1794290692757,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 0.02487572129601509,
+   "cum_cpu_s": 0.324456,
+   "ws_kb": 52356,
+   "peak_ws_kb": 60380,
+   "private_kb": 14500
+  },
+  {
+   "t": 1794290692757,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 2.92468060789399,
+   "cum_cpu_s": 7.216096,
+   "ws_kb": 676844,
+   "peak_ws_kb": 679324,
+   "private_kb": 751544
+  },
+  {
+   "t": 1794290692760,
+   "pid": 8956,
+   "type": "Browser",
+   "cpu": 1.8256150861857292,
+   "cum_cpu_s": 1.342196,
+   "ws_kb": 131312,
+   "peak_ws_kb": 166500,
+   "private_kb": 105648
+  },
+  {
+   "t": 1794290692760,
+   "pid": 39872,
+   "type": "GPU",
+   "cpu": 3.8892663043478257,
+   "cum_cpu_s": 3.412081,
+   "ws_kb": 370156,
+   "peak_ws_kb": 395392,
+   "private_kb": 498572
+  },
+  {
+   "t": 1794290692760,
+   "pid": 21244,
+   "type": "Utility",
+   "cpu": 1.0621348911311737,
+   "cum_cpu_s": 0.325336,
+   "ws_kb": 52364,
+   "peak_ws_kb": 60380,
+   "private_kb": 14500
+  },
+  {
+   "t": 1794290692760,
+   "pid": 44316,
+   "type": "Tab",
+   "cpu": 5.787332091381508,
+   "cum_cpu_s": 7.220818,
+   "ws_kb": 677072,
+   "peak_ws_kb": 679324,
+   "private_kb": 752076
+  }
+ ],
+ "window": {
+  "width": 1600,
+  "height": 900
+ },
+ "finished_utc": "2026-11-10T06:04:52.764Z",
+ "result": {
+  "clip": "c1080p30/h264_qsv_intra.mp4",
+  "path": "video-gated",
+  "n": 4,
+  "speed_frames_per_s": 90,
+  "per_stream": [
+   {
+    "presents": 230,
+    "distinct_frames": 223
+   },
+   {
+    "presents": 235,
+    "distinct_frames": 224
+   },
+   {
+    "presents": 241,
+    "distinct_frames": 229
+   },
+   {
+    "presents": 247,
+    "distinct_frames": 239
+   }
+  ],
+  "input_events": 473,
+  "dur_s": 8,
+  "frames_shown_per_s": [
+   28.75,
+   29.375,
+   30.125,
+   30.875
+  ],
+  "distinct_per_s": [
+   27.875,
+   28,
+   28.625,
+   29.875
+  ],
+  "lag_frames": {
+   "n": 473,
+   "p50": 5,
+   "p95": 9,
+   "max": 12,
+   "mean": 5.469344608879493
+  }
+ },
+ "nvidia_smi": {
+  "query": "encoder.stats.sessionCount,utilization.gpu,utilization.decoder,memory.used",
+  "before": "0, 3 %, 0 %, 260 MiB",
+  "after": "0, 1 %, 99 %, 260 MiB"
+ }
+}

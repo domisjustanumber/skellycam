@@ -1,0 +1,476 @@
+{
+ "generator": {
+  "pyav": "19.0.2",
+  "libavcodec": "(63, 1, 102)",
+  "libavformat": "(63, 1, 102)",
+  "python": "3.12.13"
+ },
+ "offset_ns": {
+  "0": 0,
+  "1": 7654321,
+  "2": -3000000,
+  "3": 19876543
+ },
+ "P_ns": 33333333,
+ "cameras": {
+  "cam0": {
+   "source_set": "c930e_720p_flash",
+   "offset_ns": 0,
+   "frames": 891,
+   "first_ts_ns": 0,
+   "last_ts_ns": 29568024200,
+   "orig_first": 0,
+   "orig_last": 890,
+   "gaps": [],
+   "files": {
+    "jpeg": {
+     "bytes": 49354793,
+     "packets": 891,
+     "byte_identical_to_corpus": 891,
+     "time_base": "1/1000",
+     "pts_bumped_for_monotonic": 1,
+     "pos_delta_hist": {
+      "4": 891
+     },
+     "all_offsets_found": true
+    },
+    "jpegbc": {
+     "bytes": 43154753,
+     "packets": 891,
+     "pts_bumped_for_monotonic": 1,
+     "encoder": "mjpeg",
+     "options": {
+      "qmin": "2",
+      "qmax": "2"
+     },
+     "pix_fmt_fed": "yuvj422p",
+     "decode_back": {
+      "decoded": 891,
+      "expected": 891,
+      "barcode_ok": 891,
+      "unreadable": 0
+     },
+     "all_offsets_found": true
+    },
+    "h264": {
+     "bytes": 30150179,
+     "packets": 891,
+     "encoder": "h264_nvenc",
+     "nvenc_error": null,
+     "options": {
+      "preset": "p4",
+      "tune": "ll",
+      "rc": "constqp",
+      "qp": "14",
+      "i_qfactor": "1",
+      "i_qoffset": "0"
+     },
+     "gop_size": 0,
+     "max_b_frames": 0,
+     "settings_source": "results/intra_compare/matched_settings.json h264_nvenc_420 / mjpeg_720p (target A)",
+     "time_base": "1/90000",
+     "pts_bumped_for_monotonic": 0,
+     "all_key": true,
+     "decode_order_equals_pts_order": true,
+     "all_offsets_found": true,
+     "codec_string": "avc1.64001F",
+     "decode_back": {
+      "decoded": 891,
+      "expected": 891,
+      "barcode_ok": 891,
+      "unreadable": 0
+     },
+     "ffprobe": {
+      "ffprobe": "ffprobe version 9.0.2-full_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+      "frames": 891,
+      "key_frames": 891,
+      "pict_I": 891
+     }
+    }
+   }
+  },
+  "cam1": {
+   "source_set": "c922_720p_flash",
+   "offset_ns": 7654321,
+   "frames": 893,
+   "first_ts_ns": 7654321,
+   "last_ts_ns": 29751641021,
+   "orig_first": 0,
+   "orig_last": 892,
+   "gaps": [],
+   "files": {
+    "jpeg": {
+     "bytes": 69383626,
+     "packets": 893,
+     "byte_identical_to_corpus": 893,
+     "time_base": "1/1000",
+     "pts_bumped_for_monotonic": 0,
+     "pos_delta_hist": {
+      "4": 893
+     },
+     "all_offsets_found": true
+    },
+    "jpegbc": {
+     "bytes": 59296585,
+     "packets": 893,
+     "pts_bumped_for_monotonic": 0,
+     "encoder": "mjpeg",
+     "options": {
+      "qmin": "2",
+      "qmax": "2"
+     },
+     "pix_fmt_fed": "yuvj422p",
+     "decode_back": {
+      "decoded": 893,
+      "expected": 893,
+      "barcode_ok": 893,
+      "unreadable": 0
+     },
+     "all_offsets_found": true
+    },
+    "h264": {
+     "bytes": 49519026,
+     "packets": 893,
+     "encoder": "h264_nvenc",
+     "nvenc_error": null,
+     "options": {
+      "preset": "p4",
+      "tune": "ll",
+      "rc": "constqp",
+      "qp": "14",
+      "i_qfactor": "1",
+      "i_qoffset": "0"
+     },
+     "gop_size": 0,
+     "max_b_frames": 0,
+     "settings_source": "results/intra_compare/matched_settings.json h264_nvenc_420 / mjpeg_720p (target A)",
+     "time_base": "1/90000",
+     "pts_bumped_for_monotonic": 0,
+     "all_key": true,
+     "decode_order_equals_pts_order": true,
+     "all_offsets_found": true,
+     "codec_string": "avc1.64001F",
+     "decode_back": {
+      "decoded": 893,
+      "expected": 893,
+      "barcode_ok": 893,
+      "unreadable": 0
+     },
+     "ffprobe": {
+      "ffprobe": "ffprobe version 9.0.2-full_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+      "frames": 893,
+      "key_frames": 893,
+      "pict_I": 893
+     }
+    }
+   }
+  },
+  "cam2": {
+   "source_set": "c930e_720p_flash",
+   "offset_ns": -3000000,
+   "frames": 776,
+   "first_ts_ns": 1325039000,
+   "last_ts_ns": 29565024200,
+   "orig_first": 40,
+   "orig_last": 890,
+   "gaps": [
+    {
+     "k_before": 9,
+     "k_after": 10,
+     "orig_before": 49,
+     "orig_after": 51,
+     "missing": 1
+    },
+    {
+     "k_before": 58,
+     "k_after": 59,
+     "orig_before": 99,
+     "orig_after": 101,
+     "missing": 1
+    },
+    {
+     "k_before": 107,
+     "k_after": 108,
+     "orig_before": 149,
+     "orig_after": 151,
+     "missing": 1
+    },
+    {
+     "k_before": 156,
+     "k_after": 157,
+     "orig_before": 199,
+     "orig_after": 201,
+     "missing": 1
+    },
+    {
+     "k_before": 205,
+     "k_after": 206,
+     "orig_before": 249,
+     "orig_after": 251,
+     "missing": 1
+    },
+    {
+     "k_before": 254,
+     "k_after": 255,
+     "orig_before": 299,
+     "orig_after": 301,
+     "missing": 1
+    },
+    {
+     "k_before": 303,
+     "k_after": 304,
+     "orig_before": 349,
+     "orig_after": 351,
+     "missing": 1
+    },
+    {
+     "k_before": 352,
+     "k_after": 353,
+     "orig_before": 399,
+     "orig_after": 460,
+     "missing": 60
+    },
+    {
+     "k_before": 392,
+     "k_after": 393,
+     "orig_before": 499,
+     "orig_after": 501,
+     "missing": 1
+    },
+    {
+     "k_before": 441,
+     "k_after": 442,
+     "orig_before": 549,
+     "orig_after": 551,
+     "missing": 1
+    },
+    {
+     "k_before": 490,
+     "k_after": 491,
+     "orig_before": 599,
+     "orig_after": 601,
+     "missing": 1
+    },
+    {
+     "k_before": 539,
+     "k_after": 540,
+     "orig_before": 649,
+     "orig_after": 651,
+     "missing": 1
+    },
+    {
+     "k_before": 588,
+     "k_after": 589,
+     "orig_before": 699,
+     "orig_after": 701,
+     "missing": 1
+    },
+    {
+     "k_before": 637,
+     "k_after": 638,
+     "orig_before": 749,
+     "orig_after": 751,
+     "missing": 1
+    },
+    {
+     "k_before": 686,
+     "k_after": 687,
+     "orig_before": 799,
+     "orig_after": 801,
+     "missing": 1
+    },
+    {
+     "k_before": 735,
+     "k_after": 736,
+     "orig_before": 849,
+     "orig_after": 851,
+     "missing": 1
+    }
+   ],
+   "files": {
+    "jpeg": {
+     "bytes": 42970808,
+     "packets": 776,
+     "byte_identical_to_corpus": 776,
+     "time_base": "1/1000",
+     "pts_bumped_for_monotonic": 1,
+     "pos_delta_hist": {
+      "4": 776
+     },
+     "all_offsets_found": true
+    },
+    "jpegbc": {
+     "bytes": 37567309,
+     "packets": 776,
+     "pts_bumped_for_monotonic": 1,
+     "encoder": "mjpeg",
+     "options": {
+      "qmin": "2",
+      "qmax": "2"
+     },
+     "pix_fmt_fed": "yuvj422p",
+     "decode_back": {
+      "decoded": 776,
+      "expected": 776,
+      "barcode_ok": 776,
+      "unreadable": 0
+     },
+     "all_offsets_found": true
+    },
+    "h264": {
+     "bytes": 26242027,
+     "packets": 776,
+     "encoder": "h264_nvenc",
+     "nvenc_error": null,
+     "options": {
+      "preset": "p4",
+      "tune": "ll",
+      "rc": "constqp",
+      "qp": "14",
+      "i_qfactor": "1",
+      "i_qoffset": "0"
+     },
+     "gop_size": 0,
+     "max_b_frames": 0,
+     "settings_source": "results/intra_compare/matched_settings.json h264_nvenc_420 / mjpeg_720p (target A)",
+     "time_base": "1/90000",
+     "pts_bumped_for_monotonic": 0,
+     "all_key": true,
+     "decode_order_equals_pts_order": true,
+     "all_offsets_found": true,
+     "codec_string": "avc1.64001F",
+     "decode_back": {
+      "decoded": 776,
+      "expected": 776,
+      "barcode_ok": 776,
+      "unreadable": 0
+     },
+     "ffprobe": {
+      "ffprobe": "ffprobe version 9.0.2-full_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+      "frames": 776,
+      "key_frames": 776,
+      "pict_I": 776
+     }
+    }
+   }
+  },
+  "cam3": {
+   "source_set": "c922_720p_flash",
+   "offset_ns": 19876543,
+   "frames": 697,
+   "first_ts_ns": 19876543,
+   "last_ts_ns": 23331848143,
+   "orig_first": 0,
+   "orig_last": 699,
+   "gaps": [
+    {
+     "k_before": 299,
+     "k_after": 300,
+     "orig_before": 299,
+     "orig_after": 303,
+     "missing": 3
+    }
+   ],
+   "files": {
+    "jpeg": {
+     "bytes": 54173942,
+     "packets": 697,
+     "byte_identical_to_corpus": 697,
+     "time_base": "1/1000",
+     "pts_bumped_for_monotonic": 0,
+     "pos_delta_hist": {
+      "4": 697
+     },
+     "all_offsets_found": true
+    },
+    "jpegbc": {
+     "bytes": 46299818,
+     "packets": 697,
+     "pts_bumped_for_monotonic": 0,
+     "encoder": "mjpeg",
+     "options": {
+      "qmin": "2",
+      "qmax": "2"
+     },
+     "pix_fmt_fed": "yuvj422p",
+     "decode_back": {
+      "decoded": 697,
+      "expected": 697,
+      "barcode_ok": 697,
+      "unreadable": 0
+     },
+     "all_offsets_found": true
+    },
+    "h264": {
+     "bytes": 38665491,
+     "packets": 697,
+     "encoder": "h264_nvenc",
+     "nvenc_error": null,
+     "options": {
+      "preset": "p4",
+      "tune": "ll",
+      "rc": "constqp",
+      "qp": "14",
+      "i_qfactor": "1",
+      "i_qoffset": "0"
+     },
+     "gop_size": 0,
+     "max_b_frames": 0,
+     "settings_source": "results/intra_compare/matched_settings.json h264_nvenc_420 / mjpeg_720p (target A)",
+     "time_base": "1/90000",
+     "pts_bumped_for_monotonic": 0,
+     "all_key": true,
+     "decode_order_equals_pts_order": true,
+     "all_offsets_found": true,
+     "codec_string": "avc1.64001F",
+     "decode_back": {
+      "decoded": 697,
+      "expected": 697,
+      "barcode_ok": 697,
+      "unreadable": 0
+     },
+     "ffprobe": {
+      "ffprobe": "ffprobe version 9.0.2-full_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+      "frames": 697,
+      "key_frames": 697,
+      "pict_I": 697
+     }
+    }
+   }
+  }
+ },
+ "sets": {
+  "c930e_720p_flash": {
+   "frames": 891,
+   "t0_raw_ns": 102620156696400,
+   "last_raw_ns": 102649724720600,
+   "ts_source": "research/usb_cameras/results/windows/Gerald/timing/flash_run1_repositioned/capture/vid_046d_pid_0843_mi_00_8_39dec205_0_0000.frames.jsonl",
+   "strictly_increasing": true
+  },
+  "c922_720p_flash": {
+   "frames": 893,
+   "t0_raw_ns": 102619991700900,
+   "last_raw_ns": 102649735687600,
+   "ts_source": "research/usb_cameras/results/windows/Gerald/timing/flash_run1_repositioned/capture/vid_046d_pid_085c_mi_00_8_268da596_0_0000.frames.jsonl",
+   "strictly_increasing": true
+  }
+ },
+ "raw_start_difference_ns_c930e_minus_c922": 164995500,
+ "ticks": {
+  "count": 456,
+  "why_hist": {
+   "mid+1ns": 58,
+   "gap_P": 5,
+   "plus1ms": 62,
+   "after_end": 32,
+   "minus1ms": 62,
+   "gap_P+1": 5,
+   "exact": 62,
+   "mid": 58,
+   "random": 60,
+   "before_start": 28,
+   "gap_edge": 10,
+   "gap": 27
+  }
+ }
+}

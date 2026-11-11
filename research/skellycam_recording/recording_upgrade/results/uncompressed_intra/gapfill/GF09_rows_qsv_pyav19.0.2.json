@@ -1,0 +1,2524 @@
+{
+ "av_version": "19.0.2",
+ "library_versions": {
+  "libavutil": [
+   61,
+   1,
+   102
+  ],
+  "libavcodec": [
+   63,
+   1,
+   102
+  ],
+  "libavformat": [
+   63,
+   1,
+   102
+  ],
+  "libavdevice": [
+   63,
+   1,
+   102
+  ],
+  "libavfilter": [
+   12,
+   1,
+   102
+  ],
+  "libswscale": [
+   10,
+   1,
+   102
+  ],
+  "libswresample": [
+   7,
+   1,
+   102
+  ]
+ },
+ "numpy": "2.2.6",
+ "python": "3.12.13",
+ "frames": 300,
+ "note": "functional only; no timing recorded",
+ "script": "recording_upgrade\\scripts\\uncompressed_intra\\gapfill\\GF09\\gf09_lossless_check.py",
+ "nvidia_smi_before": "NVIDIA GeForce RTX 3070, 610.88, 0",
+ "rows": [
+  {
+   "part": "qsv",
+   "id": "h264_qsv__cqp_qp0__nv12",
+   "encoder": "h264_qsv",
+   "config": "cqp_qp0",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "0",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "gop_size": 1,
+   "input": "nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "h264_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "h264_qsv: profile: avc high; level: 40",
+    "h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "h264_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "h264_qsv: QPI: 1; QPP: 2; QPB: 1",
+    "h264_qsv: VDENC: OFF",
+    "h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "h264_qsv: TransformSkip: unknown"
+   ],
+   "file_bytes": 159893504,
+   "ffprobe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 40,
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 532931.7,
+   "coded_profile_pyav": "High",
+   "extradata_len": 46,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      1,
+      1
+     ],
+     "psnr_y_min": 64.844,
+     "psnr_y_mean": 64.877,
+     "decoder": "h264",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "h264_qsv__cqp_qp0__bayer8_quad_as_nv12",
+   "encoder": "h264_qsv",
+   "config": "cqp_qp0",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "0",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 1,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "h264_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "h264_qsv: profile: avc high; level: 40",
+    "h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "h264_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "h264_qsv: QPI: 1; QPP: 2; QPB: 1",
+    "h264_qsv: VDENC: OFF",
+    "h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "h264_qsv: TransformSkip: unknown"
+   ],
+   "file_bytes": 215662895,
+   "ffprobe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 40,
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 718829.6,
+   "coded_profile_pyav": "High",
+   "extradata_len": 46,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      0,
+      0
+     ],
+     "psnr_y_min": 64.421,
+     "psnr_y_mean": 64.49,
+     "decoder": "h264",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp0__nv12",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp0",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "0",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "gop_size": 1,
+   "input": "nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc main; level: 296",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 1; QPP: 3; QPB: 1",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 131308490,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 437648.0,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 124,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      1,
+      1
+     ],
+     "psnr_y_min": 65.328,
+     "psnr_y_mean": 65.424,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp0__bayer8_quad_as_nv12",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp0",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "0",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 1,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc main; level: 296",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 1; QPP: 3; QPB: 1",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 187872577,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 626195.0,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 124,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      0,
+      0
+     ],
+     "psnr_y_min": 65.421,
+     "psnr_y_mean": 65.579,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp0__bayer8_quad_as_vuyx",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp0",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "0",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_vuyx",
+   "pix_fmt_fed": "vuyx",
+   "data_planes": 1,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc rext; level: 297",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 10; QPP: 12; QPB: 10",
+    "hevc_qsv: VDENC: ON",
+    "hevc_qsv: MinQPI: 10; MaxQPI: 51; MinQPP: 10; MaxQPP: 51; MinQPB: 10; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 92033463,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Rext",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv444p",
+    "level": 123,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 306731.3,
+   "coded_profile_pyav": "Rext",
+   "extradata_len": 122,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      3,
+      0,
+      0
+     ],
+     "psnr_y_min": 52.607,
+     "psnr_y_mean": 52.627,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv444p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp0__yuyv422",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp0",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "0",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "gop_size": 1,
+   "input": "yuyv422",
+   "pix_fmt_fed": "yuyv422",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc rext; level: 297",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 1; QPP: 3; QPB: 1",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 168879334,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Rext",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv422p",
+    "level": 123,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 562884.2,
+   "coded_profile_pyav": "Rext",
+   "extradata_len": 122,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      1,
+      2
+     ],
+     "psnr_y_min": 65.328,
+     "psnr_y_mean": 65.424,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv422p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "h264_qsv__cqp_qp1__nv12",
+   "encoder": "h264_qsv",
+   "config": "cqp_qp1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "gop_size": 1,
+   "input": "nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "h264_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "h264_qsv: profile: avc high; level: 40",
+    "h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "h264_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "h264_qsv: QPI: 1; QPP: 1; QPB: 2",
+    "h264_qsv: VDENC: OFF",
+    "h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "h264_qsv: TransformSkip: unknown"
+   ],
+   "file_bytes": 159893504,
+   "ffprobe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 40,
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 532931.7,
+   "coded_profile_pyav": "High",
+   "extradata_len": 46,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      1,
+      1
+     ],
+     "psnr_y_min": 64.844,
+     "psnr_y_mean": 64.877,
+     "decoder": "h264",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "h264_qsv__cqp_qp1__bayer8_quad_as_nv12",
+   "encoder": "h264_qsv",
+   "config": "cqp_qp1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 1,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "h264_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "h264_qsv: profile: avc high; level: 40",
+    "h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "h264_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "h264_qsv: QPI: 1; QPP: 1; QPB: 2",
+    "h264_qsv: VDENC: OFF",
+    "h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "h264_qsv: TransformSkip: unknown"
+   ],
+   "file_bytes": 215662895,
+   "ffprobe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 40,
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 718829.6,
+   "coded_profile_pyav": "High",
+   "extradata_len": 46,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      0,
+      0
+     ],
+     "psnr_y_min": 64.421,
+     "psnr_y_mean": 64.49,
+     "decoder": "h264",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1__nv12",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "gop_size": 1,
+   "input": "nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc main; level: 296",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 1; QPP: 1; QPB: 2",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 131308490,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 437648.0,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 124,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      1,
+      1
+     ],
+     "psnr_y_min": 65.328,
+     "psnr_y_mean": 65.424,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1__bayer8_quad_as_nv12",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 1,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc main; level: 296",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 1; QPP: 1; QPB: 2",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 187872577,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 626195.0,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 124,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      0,
+      0
+     ],
+     "psnr_y_min": 65.421,
+     "psnr_y_mean": 65.579,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1__bayer8_quad_as_vuyx",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_vuyx",
+   "pix_fmt_fed": "vuyx",
+   "data_planes": 1,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc rext; level: 297",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 10; QPP: 10; QPB: 10",
+    "hevc_qsv: VDENC: ON",
+    "hevc_qsv: MinQPI: 10; MaxQPI: 51; MinQPP: 10; MaxQPP: 51; MinQPB: 10; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 92033463,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Rext",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv444p",
+    "level": 123,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 306731.3,
+   "coded_profile_pyav": "Rext",
+   "extradata_len": 122,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      3,
+      0,
+      0
+     ],
+     "psnr_y_min": 52.607,
+     "psnr_y_mean": 52.627,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv444p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1__yuyv422",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0"
+   },
+   "gop_size": 1,
+   "input": "yuyv422",
+   "pix_fmt_fed": "yuyv422",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc rext; level: 297",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 1; QPP: 1; QPB: 2",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 168879334,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Rext",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv422p",
+    "level": 123,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 562884.2,
+   "coded_profile_pyav": "Rext",
+   "extradata_len": 122,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      1,
+      2
+     ],
+     "psnr_y_min": 65.328,
+     "psnr_y_mean": 65.424,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv422p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "h264_qsv__cqp_qp1_lp1__nv12",
+   "encoder": "h264_qsv",
+   "config": "cqp_qp1_lp1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "low_power": "1"
+   },
+   "gop_size": 1,
+   "input": "nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "h264_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "h264_qsv: profile: avc high; level: 40",
+    "h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "h264_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "h264_qsv: QPI: 10; QPP: 10; QPB: 10",
+    "h264_qsv: VDENC: ON",
+    "h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "h264_qsv: TransformSkip: unknown"
+   ],
+   "file_bytes": 60514863,
+   "ffprobe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 40,
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 201669.7,
+   "coded_profile_pyav": "High",
+   "extradata_len": 46,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      4,
+      3,
+      3
+     ],
+     "psnr_y_min": 55.151,
+     "psnr_y_mean": 55.171,
+     "decoder": "h264",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "h264_qsv__cqp_qp1_lp1__bayer8_quad_as_nv12",
+   "encoder": "h264_qsv",
+   "config": "cqp_qp1_lp1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "low_power": "1"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 1,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "h264_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "h264_qsv: profile: avc high; level: 40",
+    "h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "h264_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "h264_qsv: QPI: 10; QPP: 10; QPB: 10",
+    "h264_qsv: VDENC: ON",
+    "h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "h264_qsv: TransformSkip: unknown"
+   ],
+   "file_bytes": 105659955,
+   "ffprobe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 40,
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 352153.2,
+   "coded_profile_pyav": "High",
+   "extradata_len": 46,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      4,
+      0,
+      0
+     ],
+     "psnr_y_min": 52.751,
+     "psnr_y_mean": 52.765,
+     "decoder": "h264",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1_lp1__nv12",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1_lp1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "low_power": "1"
+   },
+   "gop_size": 1,
+   "input": "nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc main; level: 296",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 10; QPP: 10; QPB: 10",
+    "hevc_qsv: VDENC: ON",
+    "hevc_qsv: MinQPI: 10; MaxQPI: 51; MinQPP: 10; MaxQPP: 51; MinQPB: 10; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 49406923,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 164643.0,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 124,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      4,
+      3,
+      3
+     ],
+     "psnr_y_min": 55.08,
+     "psnr_y_mean": 55.113,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1_lp1__bayer8_quad_as_nv12",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1_lp1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "low_power": "1"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 1,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc main; level: 296",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 10; QPP: 10; QPB: 10",
+    "hevc_qsv: VDENC: ON",
+    "hevc_qsv: MinQPI: 10; MaxQPI: 51; MinQPP: 10; MaxQPP: 51; MinQPB: 10; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 92011985,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 306659.7,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 124,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      3,
+      0,
+      0
+     ],
+     "psnr_y_min": 52.607,
+     "psnr_y_mean": 52.627,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1_lp1__bayer8_quad_as_vuyx",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1_lp1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "low_power": "1"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_vuyx",
+   "pix_fmt_fed": "vuyx",
+   "data_planes": 1,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc rext; level: 297",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 10; QPP: 10; QPB: 10",
+    "hevc_qsv: VDENC: ON",
+    "hevc_qsv: MinQPI: 10; MaxQPI: 51; MinQPP: 10; MaxQPP: 51; MinQPB: 10; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 92033463,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Rext",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv444p",
+    "level": 123,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 306731.3,
+   "coded_profile_pyav": "Rext",
+   "extradata_len": 122,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      3,
+      0,
+      0
+     ],
+     "psnr_y_min": 52.607,
+     "psnr_y_mean": 52.627,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv444p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1_lp1__yuyv422",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1_lp1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "low_power": "1"
+   },
+   "gop_size": 1,
+   "input": "yuyv422",
+   "pix_fmt_fed": "yuyv422",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc main; level: 296",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 10; QPP: 10; QPB: 10",
+    "hevc_qsv: VDENC: ON",
+    "hevc_qsv: MinQPI: 10; MaxQPI: 51; MinQPP: 10; MaxQPP: 51; MinQPB: 10; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 49406923,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 164643.0,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 124,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      4,
+      null,
+      null
+     ],
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "h264_qsv__cqp_qp1_lp0__nv12",
+   "encoder": "h264_qsv",
+   "config": "cqp_qp1_lp0",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "low_power": "0"
+   },
+   "gop_size": 1,
+   "input": "nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "h264_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "h264_qsv: profile: avc high; level: 40",
+    "h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "h264_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "h264_qsv: QPI: 1; QPP: 1; QPB: 2",
+    "h264_qsv: VDENC: OFF",
+    "h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "h264_qsv: TransformSkip: unknown"
+   ],
+   "file_bytes": 159893504,
+   "ffprobe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 40,
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 532931.7,
+   "coded_profile_pyav": "High",
+   "extradata_len": 46,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      1,
+      1
+     ],
+     "psnr_y_min": 64.844,
+     "psnr_y_mean": 64.877,
+     "decoder": "h264",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "h264_qsv__cqp_qp1_lp0__bayer8_quad_as_nv12",
+   "encoder": "h264_qsv",
+   "config": "cqp_qp1_lp0",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "low_power": "0"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 1,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "h264_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "h264_qsv: profile: avc high; level: 40",
+    "h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "h264_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "h264_qsv: QPI: 1; QPP: 1; QPB: 2",
+    "h264_qsv: VDENC: OFF",
+    "h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "h264_qsv: TransformSkip: unknown"
+   ],
+   "file_bytes": 215662895,
+   "ffprobe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 40,
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 718829.6,
+   "coded_profile_pyav": "High",
+   "extradata_len": 46,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      0,
+      0
+     ],
+     "psnr_y_min": 64.421,
+     "psnr_y_mean": 64.49,
+     "decoder": "h264",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1_lp0__nv12",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1_lp0",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "low_power": "0"
+   },
+   "gop_size": 1,
+   "input": "nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc main; level: 296",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 1; QPP: 1; QPB: 2",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 131308490,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 437648.0,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 124,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      1,
+      1
+     ],
+     "psnr_y_min": 65.328,
+     "psnr_y_mean": 65.424,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1_lp0__bayer8_quad_as_nv12",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1_lp0",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "low_power": "0"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 1,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc main; level: 296",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 1; QPP: 1; QPB: 2",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 187872577,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 626195.0,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 124,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      0,
+      0
+     ],
+     "psnr_y_min": 65.421,
+     "psnr_y_mean": 65.579,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1_lp0__bayer8_quad_as_vuyx",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1_lp0",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "low_power": "0"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_vuyx",
+   "pix_fmt_fed": "vuyx",
+   "data_planes": 1,
+   "opened": true,
+   "stage": "failed",
+   "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'avcodec_send_frame()'; last error log: [hevc_qsv] Invalid FrameType:0.",
+   "libav_warnings": [
+    "hevc_qsv: Invalid FrameType:0."
+   ],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc main; level: 296",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 1; QPP: 1; QPB: 2",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ]
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1_lp0__yuyv422",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1_lp0",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "low_power": "0"
+   },
+   "gop_size": 1,
+   "input": "yuyv422",
+   "pix_fmt_fed": "yuyv422",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc rext; level: 297",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 1; QPP: 1; QPB: 2",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 168879334,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Rext",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv422p",
+    "level": 123,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 562884.2,
+   "coded_profile_pyav": "Rext",
+   "extradata_len": 122,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      1,
+      2
+     ],
+     "psnr_y_min": 65.328,
+     "psnr_y_mean": 65.424,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv422p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1_ts1__nv12",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1_ts1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "transform_skip": "1"
+   },
+   "gop_size": 1,
+   "input": "nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc main; level: 296",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 1; QPP: 1; QPB: 2",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 131308490,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 437648.0,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 124,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      1,
+      1
+     ],
+     "psnr_y_min": 65.328,
+     "psnr_y_mean": 65.424,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1_ts1__bayer8_quad_as_nv12",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1_ts1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "transform_skip": "1"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 1,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc main; level: 296",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 1; QPP: 1; QPB: 2",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 187872577,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 626195.0,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 124,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      0,
+      0
+     ],
+     "psnr_y_min": 65.421,
+     "psnr_y_mean": 65.579,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1_ts1__bayer8_quad_as_vuyx",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1_ts1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "transform_skip": "1"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_vuyx",
+   "pix_fmt_fed": "vuyx",
+   "data_planes": 1,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc rext; level: 297",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 10; QPP: 10; QPB: 10",
+    "hevc_qsv: VDENC: ON",
+    "hevc_qsv: MinQPI: 10; MaxQPI: 51; MinQPP: 10; MaxQPP: 51; MinQPB: 10; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 92033463,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Rext",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv444p",
+    "level": 123,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 306731.3,
+   "coded_profile_pyav": "Rext",
+   "extradata_len": 122,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      3,
+      0,
+      0
+     ],
+     "psnr_y_min": 52.607,
+     "psnr_y_mean": 52.627,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv444p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1_ts1__yuyv422",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1_ts1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "transform_skip": "1"
+   },
+   "gop_size": 1,
+   "input": "yuyv422",
+   "pix_fmt_fed": "yuyv422",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc rext; level: 297",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 1; QPP: 1; QPB: 2",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 168879334,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Rext",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv422p",
+    "level": 123,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 562884.2,
+   "coded_profile_pyav": "Rext",
+   "extradata_len": 122,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      1,
+      2
+     ],
+     "psnr_y_min": 65.328,
+     "psnr_y_mean": 65.424,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv422p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp4_ts1__nv12",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp4_ts1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "472",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "transform_skip": "1"
+   },
+   "gop_size": 1,
+   "input": "nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc main; level: 296",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 4; QPP: 4; QPB: 6",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 99826962,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 332709.7,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 124,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      3,
+      2,
+      2
+     ],
+     "psnr_y_min": 59.987,
+     "psnr_y_mean": 60.157,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp4_ts1__bayer8_quad_as_nv12",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp4_ts1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "472",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "transform_skip": "1"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 1,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc main; level: 296",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 4; QPP: 4; QPB: 6",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 159323754,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 531032.2,
+   "coded_profile_pyav": "Main",
+   "extradata_len": 124,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      3,
+      0,
+      0
+     ],
+     "psnr_y_min": 59.254,
+     "psnr_y_mean": 59.504,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp4_ts1__bayer8_quad_as_vuyx",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp4_ts1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "472",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "transform_skip": "1"
+   },
+   "gop_size": 1,
+   "input": "bayer8_quad_as_vuyx",
+   "pix_fmt_fed": "vuyx",
+   "data_planes": 1,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc rext; level: 297",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 10; QPP: 10; QPB: 10",
+    "hevc_qsv: VDENC: ON",
+    "hevc_qsv: MinQPI: 10; MaxQPI: 51; MinQPP: 10; MaxQPP: 51; MinQPB: 10; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 92033463,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Rext",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv444p",
+    "level": 123,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 306731.3,
+   "coded_profile_pyav": "Rext",
+   "extradata_len": 122,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      3,
+      0,
+      0
+     ],
+     "psnr_y_min": 52.607,
+     "psnr_y_mean": 52.627,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv444p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp4_ts1__yuyv422",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp4_ts1",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "472",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "transform_skip": "1"
+   },
+   "gop_size": 1,
+   "input": "yuyv422",
+   "pix_fmt_fed": "yuyv422",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc rext; level: 297",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 4; QPP: 4; QPB: 6",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 128211431,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Rext",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv422p",
+    "level": 123,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 427324.5,
+   "coded_profile_pyav": "Rext",
+   "extradata_len": 122,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      3,
+      2,
+      2
+     ],
+     "psnr_y_min": 59.987,
+     "psnr_y_mean": 60.157,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv422p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "part": "qsv",
+   "id": "hevc_qsv__cqp_qp1_rext__nv12",
+   "encoder": "hevc_qsv",
+   "config": "cqp_qp1_rext",
+   "options": {
+    "flags": "+qscale",
+    "global_quality": "118",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "profile": "rext"
+   },
+   "gop_size": 1,
+   "input": "nv12",
+   "pix_fmt_fed": "nv12",
+   "data_planes": 3,
+   "opened": true,
+   "packets_written": 300,
+   "stage": "ok",
+   "libav_warnings": [],
+   "libav_param_dump": [
+    "hevc_qsv: Using the constant quantization parameter (CQP) ratecontrol method",
+    "hevc_qsv: profile: hevc rext; level: 296",
+    "hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "hevc_qsv: TargetUsage: 4; RateControlMethod: CQP",
+    "hevc_qsv: QPI: 1; QPP: 1; QPB: 2",
+    "hevc_qsv: VDENC: OFF",
+    "hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "hevc_qsv: TransformSkip: ON"
+   ],
+   "file_bytes": 131307888,
+   "ffprobe": {
+    "codec_name": "hevc",
+    "profile": "Rext",
+    "width": 1920,
+    "height": 1080,
+    "pix_fmt": "yuv420p",
+    "level": 120,
+    "color_range": "tv",
+    "nb_read_packets": "300"
+   },
+   "packets": 300,
+   "keyframe_packets": 300,
+   "packet_bytes_mean": 437646.0,
+   "coded_profile_pyav": "Rext",
+   "extradata_len": 122,
+   "decode": {
+    "sw": {
+     "frames_decoded": 300,
+     "frames_expected": 300,
+     "frames_exact_data": 0,
+     "frames_exact_all_planes": 0,
+     "max_abs_per_plane": [
+      2,
+      1,
+      1
+     ],
+     "psnr_y_min": 65.328,
+     "psnr_y_mean": 65.424,
+     "decoder": "hevc",
+     "error": null,
+     "decoded_pix_fmt": "yuv420p",
+     "first_nonexact_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  }
+ ],
+ "source": "corpus c930e_1080p_yuy2, 8 frames looped to 300"
+}

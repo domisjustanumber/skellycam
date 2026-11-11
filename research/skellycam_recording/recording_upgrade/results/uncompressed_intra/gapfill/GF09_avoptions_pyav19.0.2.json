@@ -1,0 +1,2836 @@
+{
+ "av_version": "19.0.2",
+ "library_versions": {
+  "libavutil": [
+   61,
+   1,
+   102
+  ],
+  "libavcodec": [
+   63,
+   1,
+   102
+  ],
+  "libavformat": [
+   63,
+   1,
+   102
+  ],
+  "libavdevice": [
+   63,
+   1,
+   102
+  ],
+  "libavfilter": [
+   12,
+   1,
+   102
+  ],
+  "libswscale": [
+   10,
+   1,
+   102
+  ],
+  "libswresample": [
+   7,
+   1,
+   102
+  ]
+ },
+ "method": "ctypes on the wheel's av.libs avcodec/avutil: avcodec_alloc_context3 + av_opt_next on priv_data",
+ "encoders": {
+  "h264_qsv": {
+   "n_options": 48,
+   "options": [
+    {
+     "name": "async_depth",
+     "type": "int",
+     "default": "4",
+     "min": 1.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Maximum processing parallelism"
+    },
+    {
+     "name": "preset",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 7.0,
+     "unit": "preset",
+     "help": null,
+     "choices": [
+      {
+       "name": "veryfast",
+       "value": 7
+      },
+      {
+       "name": "faster",
+       "value": 6
+      },
+      {
+       "name": "fast",
+       "value": 5
+      },
+      {
+       "name": "medium",
+       "value": 4
+      },
+      {
+       "name": "slow",
+       "value": 3
+      },
+      {
+       "name": "slower",
+       "value": 2
+      },
+      {
+       "name": "veryslow",
+       "value": 1
+      }
+     ]
+    },
+    {
+     "name": "forced_idr",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Forcing I frames as IDR frames"
+    },
+    {
+     "name": "low_power",
+     "type": "bool",
+     "default": "auto",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "enable low power mode(experimental: many limitations by mfx version, BRC modes, etc.)"
+    },
+    {
+     "name": "qsv_params",
+     "type": "dict",
+     "default": "",
+     "min": 0.0,
+     "max": 0.0,
+     "unit": null,
+     "help": "Set QSV encoder parameters as key1=value1:key2=value2:..."
+    },
+    {
+     "name": "rdo",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Enable rate distortion optimization"
+    },
+    {
+     "name": "max_frame_size",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Maximum encoded frame size in bytes"
+    },
+    {
+     "name": "max_frame_size_i",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Maximum encoded I frame size in bytes"
+    },
+    {
+     "name": "max_frame_size_p",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Maximum encoded P frame size in bytes"
+    },
+    {
+     "name": "max_slice_size",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Maximum encoded slice size in bytes"
+    },
+    {
+     "name": "bitrate_limit",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Toggle bitrate limitations"
+    },
+    {
+     "name": "mbbrc",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "MB level bitrate control"
+    },
+    {
+     "name": "extbrc",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Extended bitrate control"
+    },
+    {
+     "name": "adaptive_i",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Adaptive I-frame placement"
+    },
+    {
+     "name": "adaptive_b",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Adaptive B-frame placement"
+    },
+    {
+     "name": "p_strategy",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2.0,
+     "unit": null,
+     "help": "Enable P-pyramid: 0-default 1-simple 2-pyramid(bf need to be set to 0)."
+    },
+    {
+     "name": "b_strategy",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Strategy to choose between I/P/B-frames"
+    },
+    {
+     "name": "dblk_idc",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2.0,
+     "unit": null,
+     "help": "This option disable deblocking. It has value in range 0~2."
+    },
+    {
+     "name": "low_delay_brc",
+     "type": "bool",
+     "default": "auto",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Allow to strictly obey avg frame size"
+    },
+    {
+     "name": "max_qp_i",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Maximum video quantizer scale for I frame"
+    },
+    {
+     "name": "min_qp_i",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Minimum video quantizer scale for I frame"
+    },
+    {
+     "name": "max_qp_p",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Maximum video quantizer scale for P frame"
+    },
+    {
+     "name": "min_qp_p",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Minimum video quantizer scale for P frame"
+    },
+    {
+     "name": "max_qp_b",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Maximum video quantizer scale for B frame"
+    },
+    {
+     "name": "min_qp_b",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Minimum video quantizer scale for B frame"
+    },
+    {
+     "name": "scenario",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 8.0,
+     "unit": "scenario",
+     "help": "A hint to encoder about the scenario for the encoding session",
+     "choices": [
+      {
+       "name": "unknown",
+       "value": 0
+      },
+      {
+       "name": "displayremoting",
+       "value": 1
+      },
+      {
+       "name": "videoconference",
+       "value": 2
+      },
+      {
+       "name": "archive",
+       "value": 3
+      },
+      {
+       "name": "livestreaming",
+       "value": 4
+      },
+      {
+       "name": "cameracapture",
+       "value": 5
+      },
+      {
+       "name": "videosurveillance",
+       "value": 6
+      },
+      {
+       "name": "gamestreaming",
+       "value": 7
+      },
+      {
+       "name": "remotegaming",
+       "value": 8
+      }
+     ]
+    },
+    {
+     "name": "avbr_accuracy",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 65535.0,
+     "unit": null,
+     "help": "Accuracy of the AVBR ratecontrol (unit of tenth of percent)"
+    },
+    {
+     "name": "avbr_convergence",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 65535.0,
+     "unit": null,
+     "help": "Convergence of the AVBR ratecontrol (unit of 100 frames)"
+    },
+    {
+     "name": "skip_frame",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 3.0,
+     "unit": "skip_frame",
+     "help": "Allow frame skipping",
+     "choices": [
+      {
+       "name": "no_skip",
+       "value": 0
+      },
+      {
+       "name": "insert_dummy",
+       "value": 1
+      },
+      {
+       "name": "insert_nothing",
+       "value": 2
+      },
+      {
+       "name": "brc_only",
+       "value": 3
+      }
+     ]
+    },
+    {
+     "name": "dual_gfx",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2.0,
+     "unit": "dual_gfx",
+     "help": "Prefer processing on both iGfx and dGfx simultaneously",
+     "choices": [
+      {
+       "name": "off",
+       "value": 0
+      },
+      {
+       "name": "on",
+       "value": 1
+      },
+      {
+       "name": "adaptive",
+       "value": 2
+      }
+     ]
+    },
+    {
+     "name": "cavlc",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Enable CAVLC"
+    },
+    {
+     "name": "vcm",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Use the video conferencing mode ratecontrol"
+    },
+    {
+     "name": "idr_interval",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Distance (in I-frames) between IDR frames"
+    },
+    {
+     "name": "pic_timing_sei",
+     "type": "bool",
+     "default": "true",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Insert picture timing SEI with pic_struct_syntax element"
+    },
+    {
+     "name": "single_sei_nal_unit",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Put all the SEI messages into one NALU"
+    },
+    {
+     "name": "max_dec_frame_buffering",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 65535.0,
+     "unit": null,
+     "help": "Maximum number of frames buffered in the DPB"
+    },
+    {
+     "name": "look_ahead",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Use VBR algorithm with look ahead"
+    },
+    {
+     "name": "look_ahead_depth",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 100.0,
+     "unit": null,
+     "help": "Depth of look ahead in number frames"
+    },
+    {
+     "name": "look_ahead_downsampling",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 3.0,
+     "unit": "look_ahead_downsampling",
+     "help": "Downscaling factor for the frames saved for the lookahead analysis",
+     "choices": [
+      {
+       "name": "unknown",
+       "value": 0
+      },
+      {
+       "name": "auto",
+       "value": 0
+      },
+      {
+       "name": "off",
+       "value": 1
+      },
+      {
+       "name": "2x",
+       "value": 2
+      },
+      {
+       "name": "4x",
+       "value": 3
+      }
+     ]
+    },
+    {
+     "name": "int_ref_type",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 65535.0,
+     "unit": "int_ref_type",
+     "help": "Intra refresh type. B frames should be set to 0.",
+     "choices": [
+      {
+       "name": "none",
+       "value": 0
+      },
+      {
+       "name": "vertical",
+       "value": 1
+      },
+      {
+       "name": "horizontal",
+       "value": 2
+      },
+      {
+       "name": "slice",
+       "value": 3
+      }
+     ]
+    },
+    {
+     "name": "int_ref_cycle_size",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 65535.0,
+     "unit": null,
+     "help": "Number of frames in the intra refresh cycle"
+    },
+    {
+     "name": "int_ref_qp_delta",
+     "type": "int",
+     "default": "-32768",
+     "min": -32768.0,
+     "max": 32767.0,
+     "unit": null,
+     "help": "QP difference for the refresh MBs"
+    },
+    {
+     "name": "recovery_point_sei",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Insert recovery point SEI messages"
+    },
+    {
+     "name": "int_ref_cycle_dist",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 32767.0,
+     "unit": null,
+     "help": "Distance between the beginnings of the intra-refresh cycles in frames"
+    },
+    {
+     "name": "profile",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2147483647.0,
+     "unit": "profile",
+     "help": null,
+     "choices": [
+      {
+       "name": "unknown",
+       "value": 0
+      },
+      {
+       "name": "baseline",
+       "value": 66
+      },
+      {
+       "name": "main",
+       "value": 77
+      },
+      {
+       "name": "high",
+       "value": 100
+      }
+     ]
+    },
+    {
+     "name": "a53cc",
+     "type": "bool",
+     "default": "true",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Use A53 Closed Captions (if available)"
+    },
+    {
+     "name": "aud",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Insert the Access Unit Delimiter NAL"
+    },
+    {
+     "name": "repeat_pps",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "repeat pps for every frame"
+    }
+   ]
+  },
+  "hevc_qsv": {
+   "n_options": 46,
+   "options": [
+    {
+     "name": "async_depth",
+     "type": "int",
+     "default": "4",
+     "min": 1.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Maximum processing parallelism"
+    },
+    {
+     "name": "preset",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 7.0,
+     "unit": "preset",
+     "help": null,
+     "choices": [
+      {
+       "name": "veryfast",
+       "value": 7
+      },
+      {
+       "name": "faster",
+       "value": 6
+      },
+      {
+       "name": "fast",
+       "value": 5
+      },
+      {
+       "name": "medium",
+       "value": 4
+      },
+      {
+       "name": "slow",
+       "value": 3
+      },
+      {
+       "name": "slower",
+       "value": 2
+      },
+      {
+       "name": "veryslow",
+       "value": 1
+      }
+     ]
+    },
+    {
+     "name": "forced_idr",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Forcing I frames as IDR frames"
+    },
+    {
+     "name": "low_power",
+     "type": "bool",
+     "default": "auto",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "enable low power mode(experimental: many limitations by mfx version, BRC modes, etc.)"
+    },
+    {
+     "name": "qsv_params",
+     "type": "dict",
+     "default": "",
+     "min": 0.0,
+     "max": 0.0,
+     "unit": null,
+     "help": "Set QSV encoder parameters as key1=value1:key2=value2:..."
+    },
+    {
+     "name": "rdo",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Enable rate distortion optimization"
+    },
+    {
+     "name": "max_frame_size",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Maximum encoded frame size in bytes"
+    },
+    {
+     "name": "max_frame_size_i",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Maximum encoded I frame size in bytes"
+    },
+    {
+     "name": "max_frame_size_p",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Maximum encoded P frame size in bytes"
+    },
+    {
+     "name": "max_slice_size",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Maximum encoded slice size in bytes"
+    },
+    {
+     "name": "mbbrc",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "MB level bitrate control"
+    },
+    {
+     "name": "extbrc",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Extended bitrate control"
+    },
+    {
+     "name": "p_strategy",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2.0,
+     "unit": null,
+     "help": "Enable P-pyramid: 0-default 1-simple 2-pyramid(bf need to be set to 0)."
+    },
+    {
+     "name": "b_strategy",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Strategy to choose between I/P/B-frames"
+    },
+    {
+     "name": "dblk_idc",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2.0,
+     "unit": null,
+     "help": "This option disable deblocking. It has value in range 0~2."
+    },
+    {
+     "name": "low_delay_brc",
+     "type": "bool",
+     "default": "auto",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Allow to strictly obey avg frame size"
+    },
+    {
+     "name": "max_qp_i",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Maximum video quantizer scale for I frame"
+    },
+    {
+     "name": "min_qp_i",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Minimum video quantizer scale for I frame"
+    },
+    {
+     "name": "max_qp_p",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Maximum video quantizer scale for P frame"
+    },
+    {
+     "name": "min_qp_p",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Minimum video quantizer scale for P frame"
+    },
+    {
+     "name": "max_qp_b",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Maximum video quantizer scale for B frame"
+    },
+    {
+     "name": "min_qp_b",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Minimum video quantizer scale for B frame"
+    },
+    {
+     "name": "adaptive_i",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Adaptive I-frame placement"
+    },
+    {
+     "name": "adaptive_b",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Adaptive B-frame placement"
+    },
+    {
+     "name": "scenario",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 8.0,
+     "unit": "scenario",
+     "help": "A hint to encoder about the scenario for the encoding session",
+     "choices": [
+      {
+       "name": "unknown",
+       "value": 0
+      },
+      {
+       "name": "displayremoting",
+       "value": 1
+      },
+      {
+       "name": "videoconference",
+       "value": 2
+      },
+      {
+       "name": "archive",
+       "value": 3
+      },
+      {
+       "name": "livestreaming",
+       "value": 4
+      },
+      {
+       "name": "cameracapture",
+       "value": 5
+      },
+      {
+       "name": "videosurveillance",
+       "value": 6
+      },
+      {
+       "name": "gamestreaming",
+       "value": 7
+      },
+      {
+       "name": "remotegaming",
+       "value": 8
+      }
+     ]
+    },
+    {
+     "name": "avbr_accuracy",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 65535.0,
+     "unit": null,
+     "help": "Accuracy of the AVBR ratecontrol (unit of tenth of percent)"
+    },
+    {
+     "name": "avbr_convergence",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 65535.0,
+     "unit": null,
+     "help": "Convergence of the AVBR ratecontrol (unit of 100 frames)"
+    },
+    {
+     "name": "skip_frame",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 3.0,
+     "unit": "skip_frame",
+     "help": "Allow frame skipping",
+     "choices": [
+      {
+       "name": "no_skip",
+       "value": 0
+      },
+      {
+       "name": "insert_dummy",
+       "value": 1
+      },
+      {
+       "name": "insert_nothing",
+       "value": 2
+      },
+      {
+       "name": "brc_only",
+       "value": 3
+      }
+     ]
+    },
+    {
+     "name": "dual_gfx",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2.0,
+     "unit": "dual_gfx",
+     "help": "Prefer processing on both iGfx and dGfx simultaneously",
+     "choices": [
+      {
+       "name": "off",
+       "value": 0
+      },
+      {
+       "name": "on",
+       "value": 1
+      },
+      {
+       "name": "adaptive",
+       "value": 2
+      }
+     ]
+    },
+    {
+     "name": "idr_interval",
+     "type": "int",
+     "default": "0",
+     "min": -1.0,
+     "max": 2147483647.0,
+     "unit": "idr_interval",
+     "help": "Distance (in I-frames) between IDR frames",
+     "choices": [
+      {
+       "name": "begin_only",
+       "value": -1
+      }
+     ]
+    },
+    {
+     "name": "load_plugin",
+     "type": "int",
+     "default": "2",
+     "min": 0.0,
+     "max": 2.0,
+     "unit": "load_plugin",
+     "help": "A user plugin to load in an internal session",
+     "choices": [
+      {
+       "name": "none",
+       "value": 0
+      },
+      {
+       "name": "hevc_sw",
+       "value": 1
+      },
+      {
+       "name": "hevc_hw",
+       "value": 2
+      }
+     ]
+    },
+    {
+     "name": "load_plugins",
+     "type": "string",
+     "default": "",
+     "min": 0.0,
+     "max": 0.0,
+     "unit": null,
+     "help": "A :-separate list of hexadecimal plugin UIDs to load in an internal session"
+    },
+    {
+     "name": "look_ahead_depth",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 100.0,
+     "unit": null,
+     "help": "Depth of look ahead in number frames, available when extbrc option is enabled"
+    },
+    {
+     "name": "profile",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2147483647.0,
+     "unit": "profile",
+     "help": null,
+     "choices": [
+      {
+       "name": "unknown",
+       "value": 0
+      },
+      {
+       "name": "main",
+       "value": 1
+      },
+      {
+       "name": "main10",
+       "value": 2
+      },
+      {
+       "name": "mainsp",
+       "value": 3
+      },
+      {
+       "name": "rext",
+       "value": 4
+      },
+      {
+       "name": "scc",
+       "value": 9
+      }
+     ]
+    },
+    {
+     "name": "tier",
+     "type": "int",
+     "default": "256",
+     "min": 0.0,
+     "max": 256.0,
+     "unit": "tier",
+     "help": "Set the encoding tier (only level >= 4 can support high tier)",
+     "choices": [
+      {
+       "name": "main",
+       "value": 0
+      },
+      {
+       "name": "high",
+       "value": 256
+      }
+     ]
+    },
+    {
+     "name": "gpb",
+     "type": "bool",
+     "default": "true",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "1: GPB (generalized P/B frame); 0: regular P frame"
+    },
+    {
+     "name": "tile_cols",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 65535.0,
+     "unit": null,
+     "help": "Number of columns for tiled encoding"
+    },
+    {
+     "name": "tile_rows",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 65535.0,
+     "unit": null,
+     "help": "Number of rows for tiled encoding"
+    },
+    {
+     "name": "recovery_point_sei",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Insert recovery point SEI messages"
+    },
+    {
+     "name": "aud",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Insert the Access Unit Delimiter NAL"
+    },
+    {
+     "name": "pic_timing_sei",
+     "type": "bool",
+     "default": "true",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Insert picture timing SEI with pic_struct_syntax element"
+    },
+    {
+     "name": "transform_skip",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Turn this option ON to enable transformskip"
+    },
+    {
+     "name": "int_ref_type",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 65535.0,
+     "unit": "int_ref_type",
+     "help": "Intra refresh type. B frames should be set to 0",
+     "choices": [
+      {
+       "name": "none",
+       "value": 0
+      },
+      {
+       "name": "vertical",
+       "value": 1
+      },
+      {
+       "name": "horizontal",
+       "value": 2
+      },
+      {
+       "name": "slice",
+       "value": 3
+      }
+     ]
+    },
+    {
+     "name": "int_ref_cycle_size",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 65535.0,
+     "unit": null,
+     "help": "Number of frames in the intra refresh cycle"
+    },
+    {
+     "name": "int_ref_qp_delta",
+     "type": "int",
+     "default": "-32768",
+     "min": -32768.0,
+     "max": 32767.0,
+     "unit": null,
+     "help": "QP difference for the refresh MBs"
+    },
+    {
+     "name": "int_ref_cycle_dist",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 32767.0,
+     "unit": null,
+     "help": "Distance between the beginnings of the intra-refresh cycles in frames"
+    }
+   ]
+  },
+  "h264_nvenc": {
+   "n_options": 48,
+   "options": [
+    {
+     "name": "preset",
+     "type": "int",
+     "default": "6",
+     "min": 0.0,
+     "max": 9.0,
+     "unit": "preset",
+     "help": "Set the encoding preset",
+     "choices": [
+      {
+       "name": "slow",
+       "value": 0
+      },
+      {
+       "name": "medium",
+       "value": 1
+      },
+      {
+       "name": "fast",
+       "value": 2
+      },
+      {
+       "name": "p1",
+       "value": 3
+      },
+      {
+       "name": "p2",
+       "value": 4
+      },
+      {
+       "name": "p3",
+       "value": 5
+      },
+      {
+       "name": "p4",
+       "value": 6
+      },
+      {
+       "name": "p5",
+       "value": 7
+      },
+      {
+       "name": "p6",
+       "value": 8
+      },
+      {
+       "name": "p7",
+       "value": 9
+      }
+     ]
+    },
+    {
+     "name": "tune",
+     "type": "int",
+     "default": "1",
+     "min": 1.0,
+     "max": 4.0,
+     "unit": "tune",
+     "help": "Set the encoding tuning info",
+     "choices": [
+      {
+       "name": "hq",
+       "value": 1
+      },
+      {
+       "name": "ll",
+       "value": 2
+      },
+      {
+       "name": "ull",
+       "value": 3
+      },
+      {
+       "name": "lossless",
+       "value": 4
+      }
+     ]
+    },
+    {
+     "name": "profile",
+     "type": "int",
+     "default": "2",
+     "min": 0.0,
+     "max": 5.0,
+     "unit": "profile",
+     "help": "Set the encoding profile",
+     "choices": [
+      {
+       "name": "baseline",
+       "value": 0
+      },
+      {
+       "name": "main",
+       "value": 1
+      },
+      {
+       "name": "high",
+       "value": 2
+      },
+      {
+       "name": "high10",
+       "value": 3
+      },
+      {
+       "name": "high422",
+       "value": 4
+      },
+      {
+       "name": "high444p",
+       "value": 5
+      }
+     ]
+    },
+    {
+     "name": "level",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 62.0,
+     "unit": "level",
+     "help": "Set the encoding level restriction",
+     "choices": [
+      {
+       "name": "auto",
+       "value": 0
+      },
+      {
+       "name": "1",
+       "value": 10
+      },
+      {
+       "name": "1.0",
+       "value": 10
+      },
+      {
+       "name": "1b",
+       "value": 9
+      },
+      {
+       "name": "1.0b",
+       "value": 9
+      },
+      {
+       "name": "1.1",
+       "value": 11
+      },
+      {
+       "name": "1.2",
+       "value": 12
+      },
+      {
+       "name": "1.3",
+       "value": 13
+      },
+      {
+       "name": "2",
+       "value": 20
+      },
+      {
+       "name": "2.0",
+       "value": 20
+      },
+      {
+       "name": "2.1",
+       "value": 21
+      },
+      {
+       "name": "2.2",
+       "value": 22
+      },
+      {
+       "name": "3",
+       "value": 30
+      },
+      {
+       "name": "3.0",
+       "value": 30
+      },
+      {
+       "name": "3.1",
+       "value": 31
+      },
+      {
+       "name": "3.2",
+       "value": 32
+      },
+      {
+       "name": "4",
+       "value": 40
+      },
+      {
+       "name": "4.0",
+       "value": 40
+      },
+      {
+       "name": "4.1",
+       "value": 41
+      },
+      {
+       "name": "4.2",
+       "value": 42
+      },
+      {
+       "name": "5",
+       "value": 50
+      },
+      {
+       "name": "5.0",
+       "value": 50
+      },
+      {
+       "name": "5.1",
+       "value": 51
+      },
+      {
+       "name": "5.2",
+       "value": 52
+      },
+      {
+       "name": "6.0",
+       "value": 60
+      },
+      {
+       "name": "6.1",
+       "value": 61
+      },
+      {
+       "name": "6.2",
+       "value": 62
+      }
+     ]
+    },
+    {
+     "name": "rc",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 2147483647.0,
+     "unit": "rc",
+     "help": "Override the preset rate-control",
+     "choices": [
+      {
+       "name": "constqp",
+       "value": 0
+      },
+      {
+       "name": "vbr",
+       "value": 1
+      },
+      {
+       "name": "cbr",
+       "value": 2
+      }
+     ]
+    },
+    {
+     "name": "rc-lookahead",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Number of frames to look ahead for rate-control"
+    },
+    {
+     "name": "surfaces",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 64.0,
+     "unit": null,
+     "help": "Number of concurrent surfaces"
+    },
+    {
+     "name": "gpu",
+     "type": "int",
+     "default": "-1",
+     "min": -2.0,
+     "max": 2147483647.0,
+     "unit": "gpu",
+     "help": "Selects which NVENC capable GPU to use. First GPU is 0, second is 1, and so on.",
+     "choices": [
+      {
+       "name": "any",
+       "value": -1
+      },
+      {
+       "name": "list",
+       "value": -2
+      }
+     ]
+    },
+    {
+     "name": "rgb_mode",
+     "type": "int",
+     "default": "1",
+     "min": 0.0,
+     "max": 2147483647.0,
+     "unit": "rgb_mode",
+     "help": "Configure how nvenc handles packed RGB input.",
+     "choices": [
+      {
+       "name": "yuv420",
+       "value": 1
+      },
+      {
+       "name": "yuv444",
+       "value": 2
+      },
+      {
+       "name": "disabled",
+       "value": 0
+      }
+     ]
+    },
+    {
+     "name": "delay",
+     "type": "int",
+     "default": "2147483647",
+     "min": 0.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Delay frame output by the given amount of frames"
+    },
+    {
+     "name": "no-scenecut",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "When lookahead is enabled, set this to 1 to disable adaptive I-frame insertion at scene cuts"
+    },
+    {
+     "name": "forced-idr",
+     "type": "bool",
+     "default": "false",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "If forcing keyframes, force them as IDR frames."
+    },
+    {
+     "name": "b_adapt",
+     "type": "bool",
+     "default": "true",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "When lookahead is enabled, set this to 0 to disable adaptive B-frame decision"
+    },
+    {
+     "name": "spatial-aq",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "set to 1 to enable Spatial AQ"
+    },
+    {
+     "name": "temporal-aq",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "set to 1 to enable Temporal AQ"
+    },
+    {
+     "name": "zerolatency",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Set 1 to indicate zero latency operation (no reordering delay)"
+    },
+    {
+     "name": "nonref_p",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Set this to 1 to enable automatic insertion of non-reference P-frames"
+    },
+    {
+     "name": "strict_gop",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Set 1 to minimize GOP-to-GOP rate fluctuations"
+    },
+    {
+     "name": "aq-strength",
+     "type": "int",
+     "default": "8",
+     "min": 1.0,
+     "max": 15.0,
+     "unit": null,
+     "help": "When Spatial AQ is enabled, this field is used to specify AQ strength. AQ strength scale is from 1 (low) - 15 (aggressive)"
+    },
+    {
+     "name": "cq",
+     "type": "float",
+     "default": "0.000000",
+     "min": 0.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Set target quality level (0 to 51, 0 means automatic) for constant quality mode in VBR rate control"
+    },
+    {
+     "name": "aud",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Use access unit delimiters"
+    },
+    {
+     "name": "bluray-compat",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Bluray compatibility workarounds"
+    },
+    {
+     "name": "init_qpP",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Initial QP value for P frame"
+    },
+    {
+     "name": "init_qpB",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Initial QP value for B frame"
+    },
+    {
+     "name": "init_qpI",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Initial QP value for I frame"
+    },
+    {
+     "name": "qp",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Constant quantization parameter rate control method"
+    },
+    {
+     "name": "qp_cb_offset",
+     "type": "int",
+     "default": "0",
+     "min": -12.0,
+     "max": 12.0,
+     "unit": null,
+     "help": "Quantization parameter offset for cb channel"
+    },
+    {
+     "name": "qp_cr_offset",
+     "type": "int",
+     "default": "0",
+     "min": -12.0,
+     "max": 12.0,
+     "unit": null,
+     "help": "Quantization parameter offset for cr channel"
+    },
+    {
+     "name": "qmin",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Specifies the minimum QP used for rate control"
+    },
+    {
+     "name": "qmax",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Specifies the maximum QP used for rate control"
+    },
+    {
+     "name": "weighted_pred",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Set 1 to enable weighted prediction"
+    },
+    {
+     "name": "coder",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 2.0,
+     "unit": "coder",
+     "help": "Coder type",
+     "choices": [
+      {
+       "name": "default",
+       "value": -1
+      },
+      {
+       "name": "auto",
+       "value": 0
+      },
+      {
+       "name": "cabac",
+       "value": 1
+      },
+      {
+       "name": "cavlc",
+       "value": 2
+      },
+      {
+       "name": "ac",
+       "value": 1
+      },
+      {
+       "name": "vlc",
+       "value": 2
+      }
+     ]
+    },
+    {
+     "name": "b_ref_mode",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 2.0,
+     "unit": "b_ref_mode",
+     "help": "Use B frames as references",
+     "choices": [
+      {
+       "name": "disabled",
+       "value": 0
+      },
+      {
+       "name": "each",
+       "value": 1
+      },
+      {
+       "name": "middle",
+       "value": 2
+      }
+     ]
+    },
+    {
+     "name": "a53cc",
+     "type": "bool",
+     "default": "true",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Use A53 Closed Captions (if available)"
+    },
+    {
+     "name": "s12m_tc",
+     "type": "bool",
+     "default": "true",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Use timecode (if available)"
+    },
+    {
+     "name": "dpb_size",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Specifies the DPB size used for encoding (0 means automatic)"
+    },
+    {
+     "name": "multipass",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2.0,
+     "unit": "multipass",
+     "help": "Set the multipass encoding",
+     "choices": [
+      {
+       "name": "disabled",
+       "value": 0
+      },
+      {
+       "name": "qres",
+       "value": 1
+      },
+      {
+       "name": "fullres",
+       "value": 2
+      }
+     ]
+    },
+    {
+     "name": "highbitdepth",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Enable 10 bit encode for 8 bit input"
+    },
+    {
+     "name": "ldkfs",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 255.0,
+     "unit": null,
+     "help": "Low delay key frame scale; Specifies the Scene Change frame size increase allowed in case of single frame VBV and CBR"
+    },
+    {
+     "name": "extra_sei",
+     "type": "bool",
+     "default": "true",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Pass on extra SEI data (e.g. a53 cc) to be included in the bitstream"
+    },
+    {
+     "name": "udu_sei",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Pass on user data unregistered SEI if available"
+    },
+    {
+     "name": "intra-refresh",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Use Periodic Intra Refresh instead of IDR frames"
+    },
+    {
+     "name": "single-slice-intra-refresh",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Use single slice intra refresh"
+    },
+    {
+     "name": "max_slice_size",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Maximum encoded slice size in bytes"
+    },
+    {
+     "name": "constrained-encoding",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Enable constrainedFrame encoding where each slice in the constrained picture is independent of other slices"
+    },
+    {
+     "name": "cbr_padding",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Pad the bitstream to ensure bitrate does not drop below the target in CBR mode"
+    },
+    {
+     "name": "tf_level",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 2147483647.0,
+     "unit": "tf_level",
+     "help": "Specifies the strength of the temporal filtering",
+     "choices": [
+      {
+       "name": "0",
+       "value": 0
+      },
+      {
+       "name": "4",
+       "value": 4
+      }
+     ]
+    },
+    {
+     "name": "lookahead_level",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 15.0,
+     "unit": "lookahead_level",
+     "help": "Specifies the lookahead level. Higher level may improve quality at the expense of performance.",
+     "choices": [
+      {
+       "name": "auto",
+       "value": 15
+      },
+      {
+       "name": "0",
+       "value": 0
+      },
+      {
+       "name": "1",
+       "value": 1
+      },
+      {
+       "name": "2",
+       "value": 2
+      },
+      {
+       "name": "3",
+       "value": 3
+      }
+     ]
+    }
+   ]
+  },
+  "hevc_nvenc": {
+   "n_options": 50,
+   "options": [
+    {
+     "name": "preset",
+     "type": "int",
+     "default": "6",
+     "min": 0.0,
+     "max": 9.0,
+     "unit": "preset",
+     "help": "Set the encoding preset",
+     "choices": [
+      {
+       "name": "slow",
+       "value": 0
+      },
+      {
+       "name": "medium",
+       "value": 1
+      },
+      {
+       "name": "fast",
+       "value": 2
+      },
+      {
+       "name": "p1",
+       "value": 3
+      },
+      {
+       "name": "p2",
+       "value": 4
+      },
+      {
+       "name": "p3",
+       "value": 5
+      },
+      {
+       "name": "p4",
+       "value": 6
+      },
+      {
+       "name": "p5",
+       "value": 7
+      },
+      {
+       "name": "p6",
+       "value": 8
+      },
+      {
+       "name": "p7",
+       "value": 9
+      }
+     ]
+    },
+    {
+     "name": "tune",
+     "type": "int",
+     "default": "1",
+     "min": 1.0,
+     "max": 5.0,
+     "unit": "tune",
+     "help": "Set the encoding tuning info",
+     "choices": [
+      {
+       "name": "hq",
+       "value": 1
+      },
+      {
+       "name": "uhq",
+       "value": 5
+      },
+      {
+       "name": "ll",
+       "value": 2
+      },
+      {
+       "name": "ull",
+       "value": 3
+      },
+      {
+       "name": "lossless",
+       "value": 4
+      }
+     ]
+    },
+    {
+     "name": "profile",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 3.0,
+     "unit": "profile",
+     "help": "Set the encoding profile",
+     "choices": [
+      {
+       "name": "main",
+       "value": 0
+      },
+      {
+       "name": "main10",
+       "value": 1
+      },
+      {
+       "name": "rext",
+       "value": 2
+      },
+      {
+       "name": "mv",
+       "value": 3
+      }
+     ]
+    },
+    {
+     "name": "level",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 186.0,
+     "unit": "level",
+     "help": "Set the encoding level restriction",
+     "choices": [
+      {
+       "name": "auto",
+       "value": 0
+      },
+      {
+       "name": "1",
+       "value": 30
+      },
+      {
+       "name": "1.0",
+       "value": 30
+      },
+      {
+       "name": "2",
+       "value": 60
+      },
+      {
+       "name": "2.0",
+       "value": 60
+      },
+      {
+       "name": "2.1",
+       "value": 63
+      },
+      {
+       "name": "3",
+       "value": 90
+      },
+      {
+       "name": "3.0",
+       "value": 90
+      },
+      {
+       "name": "3.1",
+       "value": 93
+      },
+      {
+       "name": "4",
+       "value": 120
+      },
+      {
+       "name": "4.0",
+       "value": 120
+      },
+      {
+       "name": "4.1",
+       "value": 123
+      },
+      {
+       "name": "5",
+       "value": 150
+      },
+      {
+       "name": "5.0",
+       "value": 150
+      },
+      {
+       "name": "5.1",
+       "value": 153
+      },
+      {
+       "name": "5.2",
+       "value": 156
+      },
+      {
+       "name": "6",
+       "value": 180
+      },
+      {
+       "name": "6.0",
+       "value": 180
+      },
+      {
+       "name": "6.1",
+       "value": 183
+      },
+      {
+       "name": "6.2",
+       "value": 186
+      }
+     ]
+    },
+    {
+     "name": "tier",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": "tier",
+     "help": "Set the encoding tier",
+     "choices": [
+      {
+       "name": "main",
+       "value": 0
+      },
+      {
+       "name": "high",
+       "value": 1
+      }
+     ]
+    },
+    {
+     "name": "rc",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 2147483647.0,
+     "unit": "rc",
+     "help": "Override the preset rate-control",
+     "choices": [
+      {
+       "name": "constqp",
+       "value": 0
+      },
+      {
+       "name": "vbr",
+       "value": 1
+      },
+      {
+       "name": "cbr",
+       "value": 2
+      }
+     ]
+    },
+    {
+     "name": "rc-lookahead",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Number of frames to look ahead for rate-control"
+    },
+    {
+     "name": "surfaces",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 64.0,
+     "unit": null,
+     "help": "Number of concurrent surfaces"
+    },
+    {
+     "name": "gpu",
+     "type": "int",
+     "default": "-1",
+     "min": -2.0,
+     "max": 2147483647.0,
+     "unit": "gpu",
+     "help": "Selects which NVENC capable GPU to use. First GPU is 0, second is 1, and so on.",
+     "choices": [
+      {
+       "name": "any",
+       "value": -1
+      },
+      {
+       "name": "list",
+       "value": -2
+      }
+     ]
+    },
+    {
+     "name": "rgb_mode",
+     "type": "int",
+     "default": "1",
+     "min": 0.0,
+     "max": 2147483647.0,
+     "unit": "rgb_mode",
+     "help": "Configure how nvenc handles packed RGB input.",
+     "choices": [
+      {
+       "name": "yuv420",
+       "value": 1
+      },
+      {
+       "name": "yuv444",
+       "value": 2
+      },
+      {
+       "name": "disabled",
+       "value": 0
+      }
+     ]
+    },
+    {
+     "name": "delay",
+     "type": "int",
+     "default": "2147483647",
+     "min": 0.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Delay frame output by the given amount of frames"
+    },
+    {
+     "name": "no-scenecut",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "When lookahead is enabled, set this to 1 to disable adaptive I-frame insertion at scene cuts"
+    },
+    {
+     "name": "forced-idr",
+     "type": "bool",
+     "default": "false",
+     "min": -1.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "If forcing keyframes, force them as IDR frames."
+    },
+    {
+     "name": "b_adapt",
+     "type": "bool",
+     "default": "true",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "When lookahead is enabled, set this to 0 to disable adaptive B-frame decision"
+    },
+    {
+     "name": "spatial-aq",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "set to 1 to enable Spatial AQ"
+    },
+    {
+     "name": "temporal-aq",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "set to 1 to enable Temporal AQ"
+    },
+    {
+     "name": "zerolatency",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Set 1 to indicate zero latency operation (no reordering delay)"
+    },
+    {
+     "name": "nonref_p",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Set this to 1 to enable automatic insertion of non-reference P-frames"
+    },
+    {
+     "name": "strict_gop",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Set 1 to minimize GOP-to-GOP rate fluctuations"
+    },
+    {
+     "name": "aq-strength",
+     "type": "int",
+     "default": "8",
+     "min": 1.0,
+     "max": 15.0,
+     "unit": null,
+     "help": "When Spatial AQ is enabled, this field is used to specify AQ strength. AQ strength scale is from 1 (low) - 15 (aggressive)"
+    },
+    {
+     "name": "cq",
+     "type": "float",
+     "default": "0.000000",
+     "min": 0.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Set target quality level (0 to 51, 0 means automatic) for constant quality mode in VBR rate control"
+    },
+    {
+     "name": "aud",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Use access unit delimiters"
+    },
+    {
+     "name": "bluray-compat",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Bluray compatibility workarounds"
+    },
+    {
+     "name": "init_qpP",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Initial QP value for P frame"
+    },
+    {
+     "name": "init_qpB",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Initial QP value for B frame"
+    },
+    {
+     "name": "init_qpI",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Initial QP value for I frame"
+    },
+    {
+     "name": "qp",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Constant quantization parameter rate control method"
+    },
+    {
+     "name": "qp_cb_offset",
+     "type": "int",
+     "default": "0",
+     "min": -12.0,
+     "max": 12.0,
+     "unit": null,
+     "help": "Quantization parameter offset for cb channel"
+    },
+    {
+     "name": "qp_cr_offset",
+     "type": "int",
+     "default": "0",
+     "min": -12.0,
+     "max": 12.0,
+     "unit": null,
+     "help": "Quantization parameter offset for cr channel"
+    },
+    {
+     "name": "qmin",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Specifies the minimum QP used for rate control"
+    },
+    {
+     "name": "qmax",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 51.0,
+     "unit": null,
+     "help": "Specifies the maximum QP used for rate control"
+    },
+    {
+     "name": "weighted_pred",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Set 1 to enable weighted prediction"
+    },
+    {
+     "name": "b_ref_mode",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 2.0,
+     "unit": "b_ref_mode",
+     "help": "Use B frames as references",
+     "choices": [
+      {
+       "name": "disabled",
+       "value": 0
+      },
+      {
+       "name": "each",
+       "value": 1
+      },
+      {
+       "name": "middle",
+       "value": 2
+      }
+     ]
+    },
+    {
+     "name": "a53cc",
+     "type": "bool",
+     "default": "true",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Use A53 Closed Captions (if available)"
+    },
+    {
+     "name": "s12m_tc",
+     "type": "bool",
+     "default": "true",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Use timecode (if available)"
+    },
+    {
+     "name": "dpb_size",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Specifies the DPB size used for encoding (0 means automatic)"
+    },
+    {
+     "name": "multipass",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2.0,
+     "unit": "multipass",
+     "help": "Set the multipass encoding",
+     "choices": [
+      {
+       "name": "disabled",
+       "value": 0
+      },
+      {
+       "name": "qres",
+       "value": 1
+      },
+      {
+       "name": "fullres",
+       "value": 2
+      }
+     ]
+    },
+    {
+     "name": "highbitdepth",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Enable 10 bit encode for 8 bit input"
+    },
+    {
+     "name": "ldkfs",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 255.0,
+     "unit": null,
+     "help": "Low delay key frame scale; Specifies the Scene Change frame size increase allowed in case of single frame VBV and CBR"
+    },
+    {
+     "name": "extra_sei",
+     "type": "bool",
+     "default": "true",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Pass on extra SEI data (e.g. a53 cc) to be included in the bitstream"
+    },
+    {
+     "name": "udu_sei",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Pass on user data unregistered SEI if available"
+    },
+    {
+     "name": "intra-refresh",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Use Periodic Intra Refresh instead of IDR frames"
+    },
+    {
+     "name": "single-slice-intra-refresh",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Use single slice intra refresh"
+    },
+    {
+     "name": "max_slice_size",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 2147483647.0,
+     "unit": null,
+     "help": "Maximum encoded slice size in bytes"
+    },
+    {
+     "name": "constrained-encoding",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Enable constrainedFrame encoding where each slice in the constrained picture is independent of other slices"
+    },
+    {
+     "name": "cbr_padding",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Pad the bitstream to ensure bitrate does not drop below the target in CBR mode"
+    },
+    {
+     "name": "tf_level",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 2147483647.0,
+     "unit": "tf_level",
+     "help": "Specifies the strength of the temporal filtering",
+     "choices": [
+      {
+       "name": "0",
+       "value": 0
+      },
+      {
+       "name": "4",
+       "value": 4
+      }
+     ]
+    },
+    {
+     "name": "lookahead_level",
+     "type": "int",
+     "default": "-1",
+     "min": -1.0,
+     "max": 15.0,
+     "unit": "lookahead_level",
+     "help": "Specifies the lookahead level. Higher level may improve quality at the expense of performance.",
+     "choices": [
+      {
+       "name": "auto",
+       "value": 15
+      },
+      {
+       "name": "0",
+       "value": 0
+      },
+      {
+       "name": "1",
+       "value": 1
+      },
+      {
+       "name": "2",
+       "value": 2
+      },
+      {
+       "name": "3",
+       "value": 3
+      }
+     ]
+    },
+    {
+     "name": "unidir_b",
+     "type": "bool",
+     "default": "false",
+     "min": 0.0,
+     "max": 1.0,
+     "unit": null,
+     "help": "Enable use of unidirectional B-Frames."
+    },
+    {
+     "name": "split_encode_mode",
+     "type": "int",
+     "default": "0",
+     "min": 0.0,
+     "max": 15.0,
+     "unit": "split_encode_mode",
+     "help": "Specifies the split encoding mode",
+     "choices": [
+      {
+       "name": "disabled",
+       "value": 15
+      },
+      {
+       "name": "auto",
+       "value": 0
+      },
+      {
+       "name": "forced",
+       "value": 1
+      },
+      {
+       "name": "2",
+       "value": 2
+      },
+      {
+       "name": "3",
+       "value": 3
+      },
+      {
+       "name": "4",
+       "value": 4
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "hw_decoders_in_wheel": [
+  "av1_cuvid",
+  "av1_qsv",
+  "h264_cuvid",
+  "h264_qsv",
+  "hevc_cuvid",
+  "hevc_qsv",
+  "mjpeg_cuvid",
+  "mjpeg_qsv",
+  "mpeg1_cuvid",
+  "mpeg2_cuvid",
+  "mpeg2_qsv",
+  "mpeg4_cuvid",
+  "vc1_cuvid",
+  "vc1_qsv",
+  "vp8_cuvid",
+  "vp8_qsv",
+  "vp9_cuvid",
+  "vp9_qsv",
+  "vvc_qsv"
+ ],
+ "hwdevices_available": [
+  "cuda",
+  "dxva2",
+  "qsv",
+  "d3d11va",
+  "d3d12va",
+  "amf"
+ ],
+ "keyword_hits": {
+  "h264_qsv": [
+   "forced_idr",
+   "low_power",
+   "mbbrc",
+   "extbrc",
+   "low_delay_brc",
+   "max_qp_i",
+   "min_qp_i",
+   "max_qp_p",
+   "min_qp_p",
+   "max_qp_b",
+   "min_qp_b",
+   "avbr_accuracy",
+   "int_ref_qp_delta",
+   "profile"
+  ],
+  "hevc_qsv": [
+   "forced_idr",
+   "low_power",
+   "mbbrc",
+   "extbrc",
+   "low_delay_brc",
+   "max_qp_i",
+   "min_qp_i",
+   "max_qp_p",
+   "min_qp_p",
+   "max_qp_b",
+   "min_qp_b",
+   "avbr_accuracy",
+   "look_ahead_depth",
+   "profile",
+   "transform_skip",
+   "int_ref_qp_delta"
+  ],
+  "h264_nvenc": [
+   "tune",
+   "profile",
+   "rc",
+   "rc-lookahead",
+   "forced-idr",
+   "init_qpP",
+   "init_qpB",
+   "init_qpI",
+   "qp",
+   "qp_cb_offset",
+   "qp_cr_offset",
+   "qmin",
+   "qmax"
+  ],
+  "hevc_nvenc": [
+   "tune",
+   "profile",
+   "rc",
+   "rc-lookahead",
+   "forced-idr",
+   "init_qpP",
+   "init_qpB",
+   "init_qpI",
+   "qp",
+   "qp_cb_offset",
+   "qp_cr_offset",
+   "qmin",
+   "qmax"
+  ]
+ }
+}

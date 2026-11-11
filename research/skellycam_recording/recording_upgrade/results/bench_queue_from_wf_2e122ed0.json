@@ -1,0 +1,497 @@
+{
+ "licensing": {
+  "summary": "Licensing (G7) results. No timing work; all 59 quotes were re-checked verbatim against downloaded pages (quote_verification.json reports 59/59).\n\n1. [measured+source] PyAV 18.0.0 (FFmpeg 8.1.2) and 19.0.2 (FFmpeg 9.0.2) Windows wheels bundle the GPL libraries libx264 and libx265 (DLLs in av.libs), yet FFmpeg reports \"LGPL version 3 or later\". The configure line has no --enable-gpl. The cause is pyav-ffmpeg patches/ffmpeg.patch, which moves libx264/libx265 out of FFmpeg's EXTERNAL_LIBRARY_GPL_LIST (commit dc9ee64dff; same patch at tags 8.1.1-2 and 9.0.2-1).\n2. [source] Upstream FFmpeg LICENSE.md:84-98 at n8.1.2 and n9.0.2 says combining with libx264 requires --enable-gpl. The FFmpeg legal page says: \"Make sure your program is not using any GPL libraries (notably libx264).\"\n3. [measured] The wheels ship no x264/x265/FFmpeg licence texts. Removing the two GPL DLLs from a copy of the wheel breaks `import av` (DLL load failed) in both versions. Bumping to 19.0.2 changes nothing licence-wise.\n4. [measured] opencv-python 4.12 / 5.0.0.93 ship an LGPL FFmpeg with libopenh264, libvpx and libaom, but no OpenH264 DLL, so H.264 through CAP_FFMPEG fails until Cisco's DLL is downloaded. The CAP_MSMF writer ignores the FOURCC and always writes H.264 (av01/hev1/mp4v requests all give h264, checked with ffprobe).\n5. [source] AV1: the AOM Patent License 1.0 is royalty-free but ends for anyone who sues over AV1 patents. Sisvel runs royalty-bearing AV1 and VP9 pools (EUR 0.32/0.24 and 0.24/0.18 per display device); Avanci Video and Access Advance VDP license AV1/VP9 to streaming providers. These are those parties' claims, reported as such.\n6. [source] VP9/VP8: Google's patent grant covers its own implementations only, not modified code.\n7. [measured] FFV1, Matroska and FLAC have 0 IETF IPR disclosures (Datatracker API). Opus has 16, some declared RAND with possible royalty.\n8. [source] Baseline JPEG: T.81 Annex L lists patents only for the arithmetic-coding processes and one hierarchical-lossless case. [measured] All 1,862 corpus frames are SOF0 baseline Huffman with no DAC.\n9. [source] JPEG XL has a royalty-free reference implementation and a libjxl Google grant. JPEG 2000 has only a \"royalty-free objective\".\n10. [source] ProRes is Apple-licensed, and Apple names FFmpeg as an \"unauthorized implementation\". UT Video is GPLv2+. MagicYUV is commercial. DNxHD, HuffYUV, NUT and AVI: NOT VERIFIED.\n11. [source] H.264 (Via LA): $0 for the first 100k units/year, then $0.20. HEVC (Via LA, now Access Advance): $0 for the first 100k, then $0.30/$0.20. HEVC Advance charges per device/software copy. Cisco OpenH264 is covered only when Cisco's binary is downloaded separately.\n12. [source] The NVIDIA Video Codec SDK and CUDA EULA explicitly grant no codec patent rights. nvImageCodec forbids use that would make it subject to an open-source licence. Microsoft MF and Apple VideoToolbox royalty bearer: NOT VERIFIED.\n13. [source+measured] Electron 35.7.5 and 45.2.3 build with proprietary_codecs=true. H.264, HEVC, AV1, VP9 and VP8 play in both and in Chrome 156. MJPEG (mkv/mp4/avi), FFV1, ProRes, UT Video and JPEG 2000 do not play. Electron 45.2.3 adds JPEG XL image decoding over the pinned 35.7.5.\n\nLimits: the ISO/ITU patent databases were not reachable (HTTP 403), so those declarations are NOT VERIFIED. Only the public summaries of pool licences were read, not the agreements. Tests ran on Windows only.",
+  "bench_manifest": [],
+  "open_questions": [
+   "PyAV wheels ship GPL libx264/libx265 (pyav-ffmpeg patches FFmpeg's configure so it reports LGPLv3). Should skellycam distribute stock PyAV wheels (GPL obligations for the bundled x264/x265), or build its own FFmpeg/PyAV without libx264/libx265 (PyAV setup.py --ffmpeg-dir)? A custom build was not attempted.",
+   "Is Sisvel's royalty-bearing AV1/VP9 consumer-product pool acceptable as a residual risk for 'ideally royalty-free' (G7)? The AOM licence and Google's grant are royalty-free; Sisvel's claims are its own.",
+   "Who bears H.264/HEVC royalties when skellycam encodes through Windows Media Foundation or NVENC? NVIDIA explicitly disclaims codec patent rights, and Microsoft's docs are silent (NOT VERIFIED). A legal reading of the actual pool agreements is outside primary-source web evidence.",
+   "ISO/IEC 18181 (JPEG XL), 15444-1 (JPEG 2000) and 14496-12 (ISO BMFF) patent declarations could not be retrieved (ISO and ITU databases return 403). Someone with access could check them.",
+   "Should the UI pin be bumped to Electron 45.x? It adds JPEG XL decoding and a Matroska canPlayType 'probably' over the pinned 35.7.5; no other codec difference was found."
+  ]
+ },
+ "uncompressed_intra": {
+  "summary": "TOPIC uncompressed_intra (G4). These are functional results only; no timing was reported. Notes are in research/skellycam_recording/recording_upgrade/results/uncompressed_intra/NOTES.md and the full matrix is in functional_tables.md.\n\n- [measured] PyAV 18.0.0 bundles FFmpeg 8.1.2 and PyAV 19.0.2 bundles FFmpeg 9.0.2 (the same libraries as the CLI). Neither wheel has libjxl, libaom, openjpeg, rav1e or svtjpegxs. The only additions in 19 are native FFV1 bayer_rggb16le and NVENC 12-bit pix_fmts (pyav_caps_*.json).\n- [measured, plus source av/container/output.py] Both PyAV versions refuse ffvhuff, huffyuv, utvideo, magicyuv, jpegls and png in Matroska. This comes from PyAV's avformat_query_codec gate. The ffmpeg CLI muxes these into MKV and they decode bit-exact. NUT and AVI work from PyAV.\n- [measured] No compressing encoder takes packed YUY2 or UYVY directly. An exact numpy de-interleave to yuv422p fixes that. NV12 is native only in x264, NVENC and QSV; everything else needs an exact NV12-to-yuv420p split. Gray, gray16, P010 and RGB all have exact paths (functional_matrix_pyav*.json; 15 sources x 37 configs, 4 real 1080p frames).\n- [measured, plus source RFC 9043] FFV1 needs gop_size=1. With the default GOP, packets are not keyframes. Every FFV1 v1/v3 g=1 config was bit-exact for all sources. For 8-bit content the range coder makes files smaller than the default rice coder (e.g. YUY2 368 vs 464 KB/frame). For >8-bit the encoder forces the range coder anyway (ffv1enc.c n9.0.2:1024-1029).\n- [measured] Rawvideo containers:\n  - NUT keeps Bayer, gray16 and rgb24, but not p010.\n  - MKV rejects gray16, p010, RGB and Bayer (\"Raw RGB is not supported Natively\"). With allow_raw_vfw the pix_fmt is lost.\n  - AVI and MOV mangle several formats.\n  - At a 50% truncation, MKV, NUT and AVI keep every complete frame before the cut. MOV/MP4 keep 0.\n- [measured] Bayer, 12-bit. Splitting the mosaic into 4 colour planes and storing it in FFV1 v3 gives 1620 KB/frame, the same as FFV1 v4 native Bayer (1625) and well below the mosaic stored as gray16 (2413). For 8-bit the split cuts FFV1 from 1085 to 457 KB.\n- [measured, plus source] FFV1 v4 is experimental. Files written by FFmpeg 9.0.2 cannot be opened by FFmpeg 8.1.2 (PyAV 18), and PyAV 18's own v4 gray16 output was not bit-exact.\n- [measured] Debayering: swscale keeps the original sensor samples, but the RGB result is 1.1-2.3x larger. After conversion to 8-bit yuv420p the sensor samples are off by up to 365/4095. OpenCV's BayerBG code is the one that matches this RGGB layout.\n- [measured, plus source nvenc.c] RTX 3070 NVENC: lossless H.264/HEVC is bit-exact for NV12, P010 and gbrp. 4:2:2 fails (\"YUV422P not supported\"), AV1 fails (\"Codec not supported\"), and 12-bit comes out as 10-bit. QSV is not available: the UHD 770 shows PnP status Unknown. AMF and MF AV1 are unavailable.\n- [measured] Python JPEG:\n  - simplejpeg 1.9.0 encodes camera YUV planes (4:2:2 / 4:2:0) without RGB conversion.\n  - PyTurboJPEG needs an external libjpeg-turbo 3.x DLL.\n  - cv2 4.12 and 5.0 need a BGR conversion first and have no JXL writer.\n  - imagecodecs 2026.10.10 gives lossless JPEG (12-bit SOF3), JPEG-LS, J2K and JXL, all bit-exact.\n- [source JFIF 1.02 + measured] JFIF expects full-range YCbCr, but the cameras' YUY2 is limited range (Y between 16 and 235). Range must be converted or flagged when YUV is put into a JPEG, and ffmpeg's mjpeg encoder needs strict=unofficial.\n- [measured] JPEG XL and JPEG XS cannot be muxed into MKV, NUT or MOV in ffmpeg 9.0.2; JPEG XL works only as a per-frame .jxl sequence. libaom all-intra lossless 4:2:2 and gray12 are bit-exact, as long as -g 1 is not used.\n- [measured] Chromium: Electron 35 and 45 both play VP9 lossless 4:4:4/4:2:2, AV1 lossless 4:2:0/4:2:2/4:4:4/gray12, and H.264 intra/lossless/4:2:2. Neither plays FFV1, MJPEG, rawvideo or ProRes. Only Electron 45 (Chrome 156) plays HEVC and decodes JPEG XL stills. Neither decodes JPEG 2000.\n\nNot run yet: all timing benches. They are written and smoke-tested; see the manifest.",
+  "bench_manifest": [
+   {
+    "id": "uintra_core_1080p",
+    "purpose": "Single-stream encode fps at 1 thread and at all threads, CPU cores per 30 fps stream, p99 latency, bytes/frame and decode fps. Covers 23 intra configs (rawvideo, FFV1 v1/v3 with 4/16/24 slices and rice/range coders, ffvhuff, utvideo, magicyuv, jpeg2000, mjpeg, svtav1 crf/lossless, vp9 lossless/crf, x264 qp0/crf, x265 lossless, prores, dnxhr) on real YUY2 1080p and derived NV12 1080p. Writes JSON to results/uncompressed_intra/bench/.",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/uncompressed_intra/bench_suite.py --group core_1080p",
+    "est_minutes": 50,
+    "priority": 1
+   },
+   {
+    "id": "uintra_bayer_1080p",
+    "purpose": "The same metrics for Bayer storage: 12-bit mosaic as gray16le, 12-bit 4-plane split, 8-bit mosaic, 8-bit split and MIPI RAW12-packed. Configs: rawvideo, FFV1 v3 s4/s24 rice/range, ffvhuff, jpegls, jpeg2000, x265 lossless; 1 thread and all threads.",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/uncompressed_intra/bench_suite.py --group bayer",
+    "est_minutes": 35,
+    "priority": 1
+   },
+   {
+    "id": "uintra_gpu_nvenc",
+    "purpose": "NVENC intra-only throughput and CPU cost: h264/hevc lossless on NV12, P010, gray and Bayer8, plus HEVC constant-QP, at 1080p and 720p. nvidia-smi session count and utilisation recorded before and after each case. Parsec and Sunshine must be idle.",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/uncompressed_intra/bench_suite.py --group gpu",
+    "est_minutes": 6,
+    "priority": 1
+   },
+   {
+    "id": "uintra_core_720p",
+    "purpose": "Encode/decode fps, CPU per stream and bytes/frame for 10 key configs at 720p, YUY2 and NV12 (made from the real c930e 720p JPEGs), 1 thread and all threads.",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/uncompressed_intra/bench_suite.py --group core_720p",
+    "est_minutes": 15,
+    "priority": 2
+   },
+   {
+    "id": "uintra_pyav19",
+    "purpose": "PyAV 19.0.2 (isolated via uv) against the pinned 18.0.0 on the same key configs, including FFV1 v4 native Bayer against v3 with the 4-plane split.",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/uncompressed_intra/bench_suite.py --group pyav19",
+    "est_minutes": 8,
+    "priority": 2
+   },
+   {
+    "id": "uintra_py_still",
+    "purpose": "Python per-frame image encoders at 1080p: simplejpeg from YUV planes (4:2:2 and 4:2:0), cv2 YUY2-to-BGR then JPEG 4:2:2, and on Bayer12 cv2 PNG plus imagecodecs lossless JPEG SOF3, ljpeg, JPEG-LS, J2K reversible, JXL e1 (mosaic and split), plus lossy JXL on RGB. Run with 1, 4 and 8 thread-pool workers to show whether each library releases the GIL. Reports fps, CPU per stream, bytes/frame and decode fps.",
+    "command": "uv run --script research/skellycam_recording/recording_upgrade/scripts/uncompressed_intra/bench_py_still.py --frames 120 --workers 1,4,8",
+    "est_minutes": 12,
+    "priority": 2
+   },
+   {
+    "id": "uintra_debayer",
+    "purpose": "Cost in ms/frame of demosaicing 1080p RGGB before storage: libswscale against OpenCV bilinear, EA and VNG, at 8 and 12 bit.",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/uncompressed_intra/bench_debayer.py --frames 120",
+    "est_minutes": 2,
+    "priority": 3
+   },
+   {
+    "id": "uintra_summary",
+    "purpose": "After the benches: aggregate every bench JSON into results/uncompressed_intra/bench/bench_summary.md.",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/uncompressed_intra/bench_summary.py",
+    "est_minutes": 1,
+    "priority": 1
+   }
+  ],
+  "open_questions": [
+   "Real sensor Bayer data was not available; all mosaics were derived from 4:2:2 YUY2. Do the gains from the 4-plane split in FFV1 v3, and the FFV1 v4 equivalence, hold on real RAW8/10/12 from a machine-vision camera? Which camera or format does the project actually expect?",
+   "Should the recorder accept FFV1 v4 (experimental) for native Bayer, given that FFmpeg 8.1.2 cannot read v4 Bayer files? Or should it standardise on v3 with the 4-plane split, which is the same size, is in RFC 9043, and needs a small numpy re-layout plus a metadata tag?",
+   "For JPEG storage of camera YUV: convert limited range to full range before encoding (simplejpeg planes), or keep the samples and record the range in sidecar metadata? Which does the playback path (Chromium, which assumes JFIF full range) need?",
+   "The Intel UHD 770 shows PnP status Unknown, so QSV cannot be tested. Is the iGPU disabled in BIOS on purpose? No change was made.",
+   "Can the playback UI rely on Electron 45 (JPEG XL and HEVC decode), or must it stay on Electron 35? This decides whether a JXL image sequence or HEVC intra is usable natively.",
+   "PyAV cannot mux utvideo, magicyuv or ffvhuff into MKV (avformat_query_codec gate) although the ffmpeg CLI can. Is NUT or AVI acceptable as the container for those codecs, or should only MKV-acceptable codecs (FFV1, rawvideo for the formats it supports) be considered?",
+   "Not verified: whether the ffmpeg CLI NVENC '-g 1' failure ('Gop Length should be greater than number of B frames + 1') happens only on 1-frame clips. PyAV gop_size=1 worked."
+  ]
+ },
+ "write_throughput": {
+  "summary": "Topic write_throughput (G5): which recording wrapper (folder of JPEGs, raw append file + index, MKV, fragmented MP4, segmented MKV) and which writer threading model. Other agents were running, so this stage reports no timing, throughput or CPU numbers. All timing work is in benchmark scripts, each smoke-tested with a tiny run.\n- measured (sysinfo_stage1_20261109.json): the disk is a WD_BLACK SN850X 4000GB NVMe SSD with NTFS 4 KiB clusters, 829.4 GB free. Defender real-time and on-access scanning are ON. Its exclusions cannot be read without admin. Windows Search is running; whether it indexes the media folder is NOT VERIFIED. Last-access time updates are enabled.\n- measured (functional_results.md T1): every wrapper stores the camera's JPEG bytes unchanged, 300/300 byte-exact, and FFV1 packets 64/64. PyAV, cv2 and ffprobe all read the containers, and every packet has its keyframe flag set. MKV stores timestamps in ms (pts error up to 498.9 us); MP4 at a 90 kHz timescale gives 6.4 us. FFV1 inside MP4 works.\n- measured (T4, 5 kills per variant, TerminateProcess at 60 fps): frames the writer had confirmed and then lost:\n  - one file per frame, and raw append + index: 0 lost.\n  - MKV with defaults: 2-6. MKV with flush_packets=1: always exactly 1.\n  - fMP4 with one fragment per frame: 2-5 plus a partial packet; with flush_packets=1: 0-1.\n  - fMP4 with 1 s fragments: up to 59 (36 with flush_packets=1).\n  - fMP4 hybrid_fragmented: 3-6. MKV in segments: 3-5.\n  - Every killed file was still readable.\n- source (FFmpeg n8.0 matroskaenc.c): the MKV muxer keeps the current cluster in memory and writes it when the next packet arrives. That explains the one frame always lost; cluster_size_limit=1 does not help (measured).\n- measured (T2/T3): cv2.VideoCapture can read a JPEG folder as an image sequence (frame_%06d.jpg, CAP_IMAGES or FFMPEG backend). It stops at the first missing frame number (one dropped frame ends playback there) and cannot read sub-folders. FFmpeg's image2 glob pattern is not available on this Windows build.\n- measured (T5): a cleanly closed hybrid_fragmented MP4 cut to 50 % gives 0 readable frames (moov at the end). MKV and append keep 149 of 300.\n- measured (repro JSONs): PyAV add_stream('ffv1') writes its own extradata and the passthrough FFV1 output does not decode. add_stream_from_template is needed (add_mux_stream is enough for MJPEG). PyAV 19.0.2 behaves the same.\n- measured (functional_results_av19.0.2.md): bumping PyAV to 19.0.2 gives no functional gain for wrappers.\n- measured (usability smoke): random frame-by-index reads were 0 wrong out of 200 for every format. PyAV reports stream.frames=0 for MKV and fMP4, so a frame count needs a full demux pass or a sidecar index.\n- code (upstream/sfn26 recorder.rs, recording_thread.rs): the Rust version pipes MJPEG into an ffmpeg child process that re-encodes with libx264, behind an unbounded channel. It is not a passthrough reference.\n- Earlier results reused, not re-measured: p4 (passthrough at about 28 % recorder CPU at 5x1080p60), p8/p8v (decoupled recorder with lockstep holds 59.8-59.95 fps), p3/p3v (lockstep stall propagation), p11, p12.\n- Scripts are in research/skellycam_recording/recording_upgrade/scripts/write_throughput/: wt_common.py, functional_tests.py, repro_pyav_add_stream_extradata.py, bench_write.py (5 threading models), run_matrix.py, summarize_bench.py, bench_usability.py, sysinfo.py.\n- NOT VERIFIED until the benches run: write latency p50/p99/p99.9/max, CPU, Defender CPU and frame drops across wrappers and threading models; and the copy/delete cost of a 108k-file recording.",
+  "bench_manifest": [
+   {
+    "id": "sysinfo_before",
+    "purpose": "Read-only machine snapshot before benches (disk, free space, Defender status, WSearch, power plan, top CPU processes, nvidia-smi encoder sessions); confirms the machine is quiet. Writes results/write_throughput/bench/sysinfo/sysinfo_<ts>.json",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/write_throughput/sysinfo.py",
+    "est_minutes": 1,
+    "priority": 1
+   },
+   {
+    "id": "usability_1h",
+    "purpose": "After-recording cost of a 1-hour-equivalent single-camera 720p30 recording (108000 frames, ~6.1 GB per format): build, frame table, sequential read, 1000 random frame-accurate reads (with correctness check), first image, same-volume copy (shutil + robocopy /MT:8) and delete, for files, files_subdirs, append, mkv_flush, fmp4_frame_flush. Warm cache. Writes results/write_throughput/bench/usability/usability_108000.json; media deleted after",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/write_throughput/bench_usability.py --frames 108000 --robocopy",
+    "est_minutes": 30,
+    "priority": 1
+   },
+   {
+    "id": "models",
+    "purpose": "Threading model comparison: {files, append, mkv_flush} x {inloop, inloop_lockstep, thread, process, process_shared} x {4,16} cameras at 1080p60, 60 s each: write latency p50/p99/p99.9/max, grab lateness, drops, CPU, MsMpEng CPU. Writes results/write_throughput/bench/models/*.json and regenerates bench/bench_summary.md. Resumable (skips existing JSON)",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/write_throughput/run_matrix.py --set models",
+    "est_minutes": 40,
+    "priority": 1
+   },
+   {
+    "id": "core",
+    "purpose": "Wrapper comparison, thread model, camera MJPEG: {files, files_subdirs, files_fsync, append, append_fsync1s, mkv_flush, fmp4_frame_flush, mkvseg10} x {1,4,8,16} cameras x {720p30, 1080p30, 1080p60}, 30 s each (96 cells). Writes results/write_throughput/bench/core/*.json and bench_summary.md",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/write_throughput/run_matrix.py --set core",
+    "est_minutes": 75,
+    "priority": 1
+   },
+   {
+    "id": "variants",
+    "purpose": "Other container settings at 4 and 16 cameras x 1080p60, thread model, 30 s: mkv defaults, mkv_flush_cluster1, fmp4_frame, fmp4_1s, fmp4_1s_flush, fmp4_hybrid, files_subdirs_fsync. Writes bench/variants/*.json",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/write_throughput/run_matrix.py --set variants",
+    "est_minutes": 10,
+    "priority": 2
+   },
+   {
+    "id": "intra_ffv1",
+    "purpose": "Intra codec stream for comparison: FFV1 1080p packets (about 350 KB/frame, from the real YUY2 corpus) through {files, append, mkv_flush, fmp4_frame_flush} x {1,4,8,16} cameras at 1080p30, thread model, 30 s. Writes bench/intra/*.json",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/write_throughput/run_matrix.py --set intra",
+    "est_minutes": 12,
+    "priority": 2
+   },
+   {
+    "id": "repeat",
+    "purpose": "Run-to-run spread: {files, mkv_flush} x 16 cameras x 1080p60, thread model, 60 s, 3 repetitions. Writes bench/repeat/*.json",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/write_throughput/run_matrix.py --set repeat",
+    "est_minutes": 8,
+    "priority": 2
+   },
+   {
+    "id": "long",
+    "purpose": "Sustained 10-minute runs at 16 x 1080p60 (about 94 GB each, deleted after each run) for files, append, mkv_flush: SSD cache, Defender steady state, lazy writer, late stalls. Needs more than 240 GB free (built-in guard). Writes bench/long/*.json",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/write_throughput/run_matrix.py --set long",
+    "est_minutes": 35,
+    "priority": 2
+   },
+   {
+    "id": "sysinfo_after",
+    "purpose": "Read-only snapshot after the bench session (free space back, background load)",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/write_throughput/sysinfo.py",
+    "est_minutes": 1,
+    "priority": 1
+   },
+   {
+    "id": "functional_rerun_quiet",
+    "purpose": "Functional only (no timing): re-run T1-T6 on the quiet machine to confirm the hard-kill (T4) loss pattern is stable. Writes results/write_throughput/functional/functional_results_quiet.md/.json",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/write_throughput/functional_tests.py --tag _quiet",
+    "est_minutes": 45,
+    "priority": 3
+   }
+  ],
+  "open_questions": [
+   "Is the media folder under C:/Users/Dom/Documents indexed by Windows Search (WSearch is running)? If so it adds load to the folder-of-JPEGs benches; the runner may pass --out-dir to a non-indexed folder on C: (bench_write.py) and should note it.",
+   "Defender exclusions cannot be read without admin. If the skellycam-raw path is excluded, the MsMpEng CPU measured for the folder layout understates a default install.",
+   "Can PyAV make the Matroska muxer write each cluster right away (av_write_frame(NULL) / mkv_write_flush_packet), so mkv_flush loses 0 frames instead of 1? NOT VERIFIED.",
+   "Power-loss durability (as opposed to a process kill) is untested; it decides whether fsync (files_fsync / append_fsync1s) is needed at all.",
+   "The inloop drop model (--inloop-buffer 1) is an assumption. The real MSMF/DShow queue depth is not modelled, so in-loop drop counts are indicative and grab lateness is the more reliable signal.",
+   "The usability bench reads with a warm cache only; cold-cache open and enumeration of 108k files needs admin (standby-list flush) or a reboot.",
+   "MKV stores timestamps in ms (error up to 0.5 ms, measured). A finer TimestampScale through PyAV is untested; otherwise exact capture times must live in the sidecar index (relevant to G9).",
+   "Only Windows was tested. Behaviour of the same wrappers on macOS/Linux file systems is NOT VERIFIED."
+  ]
+ },
+ "python_integration": {
+  "summary": "python_integration: how the recording upgrades (G1-G9) fit skellycam's Python implementation. Functional tests only; no timing reported.\n\n1. [code] JPEG bytes have no entry point today. OpenCV retrieve() decodes into the shared array (opencv_get_frame.py:72), and the recorder encodes that array inside the lockstep loop (video_recorder.py:102). OpenCV 4.12 never returns JPEG bytes [measured, mjpeg_passthrough_summary]. A new backend read() is needed; the recorder call site is opencv_camera_loop.py:99-105. sfn26's Rust path already does this: JPEG via Arc to a recording thread over an unbounded channel (dispatcher.rs:216-321, recording_thread.rs:1-6), but it still re-encodes with libx264 (recorder.rs:137-155).\n2. [measured R/roundtrip.md] The prototype RecordingWriter(jpeg_bytes, frame_number, timestamp_ns) plus reader returns 1,862 real camera JPEGs (7 corpus sets) byte-exact through MKV, fMP4 and AVI. The binary sidecar (48 B/frame, CRC, flushed per frame) returns the input ns timestamps exactly. Container PTS equal sidecar PTS on every frame.\n3. [source FFmpeg n8.1.2 matroskaenc.c:2593,3534] The MKV muxer fixes the time base at 1 ms. In real C930e data two arrivals were 0.118 ms apart, so one PTS was bumped by 1 tick [measured]. fMP4 keeps 1/1e6. AVI with real PTS pads to 1/600, so cv2 reports 17,761 frames at fps 600 [measured].\n4. [measured R/cv2_compat_table.md] FreeMoCap reads videos with cv2 CAP_FRAME_COUNT and sequential reads, raises when counts differ (fmc video_group_helper.py:151-166, 381-392), and on fmc-sfn26 also seeks with POS_FRAMES. With CFR files, OpenCV 4.12 (pin, FFmpeg 4.4) and opencv-python 5.0.0.93 (FFmpeg 7.1) give exact counts, order and seeks for MJPEG/FFV1 in MKV/AVI, VP9 and AV1 in WebM/MKV/MP4, and H.264 MP4. With VFR, the MKV count is wrong (888 of 891 real frames) and MKV/MP4 seeks land 1-2 frames off. OpenCV 5 changes nothing. Recommendation [inferred]: CFR PTS (index/fps) in the file, real ns stamps in the sidecar, and fitted times at finalize.\n5. [measured R/crash.md] After a hard kill, MKV returns only whole frames (297 of 300 sidecar records). fMP4 and AVI return a torn last JPEG that PyAV and cv2 decode with no corrupt flag. A killed MKV reports FRAME_COUNT -2.77e17 and a killed AVI reports 0. The sidecar CRC detects the torn frame. find_unfinished() plus recover() (remux of the matched prefix) restore correct counts (297/300).\n6. [measured + source] PyAV 19.0.2 bundles FFmpeg 9.0.2 (18.0.0 has 8.1.2). The tested list of 45 codecs shows no encoder/decoder change, and recwriter runs unchanged. time_base now returns av.AVRational, and header/trailer/close release the GIL (CHANGELOG v19.0.0). There is no format reason to bump PyAV or OpenCV for this recorder.\n7. [measured smoke] simplejpeg 1.9.0 with its default strict=True rejects every generic-camera frame; cv2 and PyTurboJPEG accept them. cv2, simplejpeg and turbojpeg output is bit-identical; PyAV mjpeg differs by up to 24. nvImageCodec 0.9.0.20 decodes all sets on the RTX 3070. av1_nvenc fails to open on the RTX 3070.\n8. [measured prior] The threading model is backed by p3 (decoupled recorder, drop/block policy lossless), p4 (passthrough recorder 0.95 ms/frame vs 32 ms decode+MSMF), p8 (off-loop decode with passthrough recorder: tick-to-written 0.8/1.5 ms) and p12 (162 MB/s for 5x1080p passthrough). The prototype RecorderThread (bounded queue, counted drops) ran 5 cameras at 30 and 60 fps in the smoke test with 0 drops and byte-exact output.\n9. Missing timing: JPEG decode per library on real camera JPEGs (prior p8 used synthetic ~540 KB frames under load), nvJPEG, writer per-call cost, submit cost, and long-file open cost. All are scripted and smoke-tested; see bench_manifest.",
+  "bench_manifest": [
+   {
+    "id": "pi_jpeg_decode_cpu",
+    "purpose": "Per-call CPU decode cost on the real camera JPEGs (720p C930e/C922, 1080p C930e/C922/generic): cv2.imdecode full and reduced/2, simplejpeg (strict=False) default, fast, min_h360 and into-buffer, PyTurboJPEG full and 1/2, PyAV mjpeg bgr24 and native YUV. Also 1-thread vs 5-thread aggregate decodes/s (GIL release). Replaces the synthetic-JPEG p8 numbers for the live-UI / decode-at-source decision.",
+    "command": "cd /c/Users/Dom/GitHub/freemocap/skellycam && D=/c/Users/Dom/AppData/Local/Temp/pi_ljt && mkdir -p $D && ( [ -f $D/bin/turbojpeg.dll ] || ( curl -sSfL -o $D/ljt.exe https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0-vc-x64.exe && echo \"662761d8ba8dae04aec74023ebaeceb856c2b56b9b59cfd180759d26300dda42 *$D/ljt.exe\" | sha256sum -c && \"/c/Program Files/7-Zip/7z.exe\" x -y -o$D $D/ljt.exe > /dev/null ) ) && uv run --script research/skellycam_recording/recording_upgrade/scripts/python_integration/bench_jpeg_decode.py --tag quiet1 --turbojpeg-dll \"$D/bin/turbojpeg.dll\"   # writes research/skellycam_recording/recording_upgrade/results/python_integration/bench/jpeg_decode_quiet1.json",
+    "est_minutes": 15,
+    "priority": 1
+   },
+   {
+    "id": "pi_recwriter_cost",
+    "purpose": "Prototype recorder costs in the skellycam venv. (A) RecordingWriter.write() per-call median/p99/p99.9/max for mkv / fMP4 / avi vs a folder of JPEGs, with fsync off and every 30 frames, at 720p and 1080p (3000 frames each). (B) RecorderThread.submit() cost, queue depth and drops with 5 cameras paced at 30 and 60 fps for 60 s, plus a byte-exact check. (C) cv2/PyAV open, frame-count and mid-seek time on a 10-minute 720p file, MKV vs fMP4. Needs about 3 GB of temporary space on C:, deleted at the end.",
+    "command": "cd /c/Users/Dom/GitHub/freemocap/skellycam && .venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/python_integration/bench_recwriter.py --tag quiet1   # writes research/skellycam_recording/recording_upgrade/results/python_integration/bench/recwriter_quiet1.json",
+    "est_minutes": 12,
+    "priority": 1
+   },
+   {
+    "id": "pi_nvjpeg_decode",
+    "purpose": "nvJPEG (NVIDIA nvImageCodec 0.9.0.20) decode of the same real JPEGs: single frame to GPU, to host numpy, and a batch of 5. Records nvidia-smi before and after (Parsec/Sunshine may use the GPU). UV_CACHE_DIR must be a short path: a long path fails with 'DLL load failed ... filename or extension is too long'.",
+    "command": "cd /c/Users/Dom/GitHub/freemocap/skellycam && nvidia-smi --query-gpu=encoder.stats.sessionCount,utilization.gpu --format=csv && UV_CACHE_DIR=C:/Users/Dom/AppData/Local/Temp/pi_uv uv run --script research/skellycam_recording/recording_upgrade/scripts/python_integration/bench_nvjpeg_decode.py --tag quiet1 && nvidia-smi --query-gpu=encoder.stats.sessionCount,utilization.gpu --format=csv   # writes research/skellycam_recording/recording_upgrade/results/python_integration/bench/nvjpeg_decode_quiet1.json",
+    "est_minutes": 5,
+    "priority": 2
+   }
+  ],
+  "open_questions": [
+   "Why does SVT-AV1 in MP4 with VFR PTS decode only 119 of 120 frames, starting at frame 1, in PyAV 18 and 19 and in cv2 4.12 and 5.0? Cause not investigated; CFR AV1 clips were exact.",
+   "Recorder placement: a thread in the camera process (prototype; matches Rust) or a separate recorder process fed through a variable-size JPEG ring? Bench B measures only the thread variant.",
+   "Lossless 90/270 rotation in Python: is the jpeg_passthrough topic's tj3Transform via libjpeg-turbo enough, given that the sidecar geometry and the CFR writer must be fixed at writer open?",
+   "Should the file carry real (VFR) PTS for players that show true time, or CFR PTS for FreeMoCap and the current UI (frame/fps seeks)? This study recommends CFR plus a sidecar. That needs the UI and playback router to read timestamps from the sidecar rather than from 'the first CSV column containing time' (playback_router.py:253-298).",
+   "A killed MKV reports a garbage CAP_PROP_FRAME_COUNT until it is remuxed. Where should recovery run: skellycam server startup, a FreeMoCap load-time check, or both? sfn26 VideoFileMetadata would reject the unrecovered file outright.",
+   "FreeMoCap development imports skellycam.core.recorders.videos.parse_video_filename, which sfn26 skellycam deletes (renamed video_filename). Any recorder change on sfn26 needs FreeMoCap on fmc-sfn26 or a shim.",
+   "Behaviour on Linux and macOS OpenCV/PyAV wheels (different bundled FFmpeg builds) was not tested.",
+   "For real-world sizing: should the decode benchmark be repeated with a bright, textured scene? The corpus scenes are dim; the flash sets show a monitor."
+  ]
+ },
+ "jpeg_passthrough": {
+  "summary": "Topic jpeg_passthrough (G1, G5 compat side). All functional; no timing numbers are reported.\n- measured (mux_matrix.json/.md): PyAV 18.0.0 `add_mux_stream(\"mjpeg\", rate, width, height)` plus `av.Packet(jpeg_bytes)` writes the camera's own JPEG bytes into MKV, MP4, fMP4 (1 s and per-frame fragments), MOV, AVI, NUT and raw .mjpeg without transcoding. The Python raw+sidecar and folder-of-JPEG writers also work. Every written output, across 7 real-camera sets (1,862 frames per writer mode) and 3 writers (PyAV VFR, PyAV CFR, ffmpeg CLI image2pipe -c copy), comes back SHA-256-identical from both PyAV demux and `ffmpeg -c:v copy -f image2`. No muxer changed any JPEG header.\n- measured + source: WebM refuses MJPEG in both PyAV and the ffmpeg CLI. Source: FFmpeg n8.1.2 matroskaenc.c:3675 and matroska.c:110-124; the WebM guidelines say \"Video codec SHOULD be VP8 or VP9\".\n- measured: width and height are mandatory (EINVAL without them). The is_keyframe flag is not needed (source: mux.c:820 sets KEY for intra-only codecs). `add_stream_from_template` drops the last frame from the MP4/MOV index.\n- measured: timestamps. With stream time_base 1/1e6, MP4/MOV/NUT keep real VFR timestamps exactly (0 us). The muxer default 1/90000 gives <=6 us (fMP4 was only tested at 1/90000). MKV is fixed at 1 ms (source: matroskaenc.c:3534): max error 470 us, and two real frames 11 us apart collapse to the same time. AVI cannot hold VFR: it pads with empty frames, or fails with non-monotonic DTS at the real c930e frame 82. PyAV's default AVI time base of 1/600 multiplies OpenCV's frame count by about 20 even for CFR input; setting time_base = 1/fps fixes it. cv2 POS_MSEC, PyAV and ffprobe all report the same pts.\n- measured + source: OpenCV 4.12 (and FreeMoCap's VideoHelper, which trusts CAP_PROP_FRAME_COUNT): MP4, MOV and fMP4 gave exact counts and frame-exact POS_FRAMES seeks (70/70) in every set. MKV-VFR on the jittery c930e capture reported 888 of 891 frames and seek was 5/10. NUT is always short by 1 or more. Raw .mjpeg gives a garbage count and 0/70 seeks. Cause: duration x fps estimate (cap_ffmpeg_impl.hpp:1980). CAP_MSMF cannot read MJPEG from MP4 or fMP4.\n- measured (truncation.json): after os._exit, MKV, fMP4, AVI, NUT, raw and raw+sidecar stay readable; plain MP4 and MOV do not. On those files OpenCV's count is garbage or 0, so FreeMoCap raises. A >1 GiB OpenDML AVI (6000 frames) read correctly everywhere.\n- measured (electron_check.json): Electron 35.7.5 (Chrome 134) and 45.2.3 (Chrome 156) play MJPEG in no container (DEMUXER_ERROR_NO_SUPPORTED_STREAMS / COULD_NOT_OPEN); the VP9 control plays. img, createImageBitmap and ImageDecoder decode every camera JPEG, including DHT-stripped, extra-bytes and rotated 4:4:0 ones.\n- measured (rotation.json): libjpeg-turbo 3.2.1 tj3Transform via ctypes (the Rust call) is DCT-exact in 228 of 228 cases; jpegtran gives identical bytes. The Rust legacy tjTransform path returns -1 on all 33 generic-camera frames (TJERR_WARNING), so Rust would silently leave them unrotated.\n- measured (edge_cases.json): the 3 cameras' DHTs are the standard Annex K tables. DHT-stripped frames decode identically in cv2, Pillow, PyAV, djpeg and MSMF, and stay byte-exact in every container. The mjpeg2jpeg bsf adds 438 B and mjpegadump adds 44 B (neither is byte-exact; both are opt-in).\n- measured (version_bump.json): PyAV 19.0.2 (FFmpeg 9 libs) and opencv-python 5.0.0.93 (FFmpeg 7.1 libs) change nothing for MJPEG passthrough.\n- inferred: no container gives Chromium playback, so the G5 choice comes down to OpenCV/FreeMoCap compatibility (MP4/fMP4), crash tolerance (fMP4/MKV/NUT/raw) and mux cost (pending bench). Per-frame timestamps should go in a sidecar.",
+  "bench_manifest": [
+   {
+    "id": "jp_mux_cost",
+    "purpose": "Per-container PyAV passthrough mux cost (CPU and wall us/frame in the mux loop, plus close/trailer ms) for camera JPEGs. Containers: pkt_only baseline, mkv, mp4, fmp4_1s, fmp4_perframe, mov, avi_tb_rate, nut, mjpeg_raw_mux, raw_sidecar, jpg_folder. Resolutions: 720p (c930e) and 1080p (c922). 3000 frames, 5 reps, 1 camera per fresh worker process, page cache (no fsync). Writes results/jpeg_passthrough/bench/bench_mux_default_<UTC>.json; median/min/max are in summary['<res>|<container>'].",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/jpeg_passthrough/bench_mux.py --tag default",
+    "est_minutes": 8,
+    "priority": 1
+   },
+   {
+    "id": "jp_mux_cost_fsync",
+    "purpose": "Same as jp_mux_cost, but with FlushFileBuffers (os.fsync on a reopened r+b handle) after close, so close cost includes getting the data to disk. Writes results/jpeg_passthrough/bench/bench_mux_fsync_<UTC>.json.",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/jpeg_passthrough/bench_mux.py --fsync --tag fsync",
+    "est_minutes": 10,
+    "priority": 2
+   },
+   {
+    "id": "jp_rotate_cost",
+    "purpose": "Per-frame CPU/wall cost of lossless JPEG rotation (libjpeg-turbo 3.2.1 tj3Transform via ctypes, options 0, as in skellycam-rust jpeg_transform.rs) for rot90/180/270 on real 720p and 1080p camera JPEGs. 1000 frames x 5 reps, single thread. Writes results/jpeg_passthrough/bench/bench_rotate_<UTC>.json. If the DLL is missing, download https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.1/libjpeg-turbo-3.2.1-vc-x64.exe and extract it with 7-Zip (see NOTES.md section 14).",
+    "command": "uv run --script research/skellycam_recording/recording_upgrade/scripts/jpeg_passthrough/bench_rotate.py --lib C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/106dc0c8-f977-4082-9d8d-367e9a9f721d/scratchpad/jpeg_passthrough/ljt321/bin/turbojpeg.dll",
+    "est_minutes": 3,
+    "priority": 2
+   }
+  ],
+  "open_questions": [
+   "Which single container to recommend? fMP4 (1 s fragments) is the only tested option that is byte-exact, keeps VFR within 6 us, gives OpenCV/FreeMoCap exact counts and seeks on clean files, and survives a kill. But on a killed fMP4 OpenCV's count is wrong (582 reported vs 579 readable). Should FreeMoCap stop trusting CAP_PROP_FRAME_COUNT and use a timestamp sidecar or a PyAV packet count instead?",
+   "fMP4 with stream time_base 1/1e6 was not tested (only MP4/MOV/NUT were); it needs a one-line re-run to confirm exact microsecond timestamps.",
+   "How many frames does each container lose on a hard kill with a per-packet avio flush (flush_packets) vs default buffering? 597-598 of 600 reached the file with default FFmpeg buffering; the Python sidecar writer lost 191. (crash_resilience topic)",
+   "Is MKV's fixed 1 ms timestamp grid acceptable for the timestamp-accuracy goals? It merged two real c930e frames 11 us apart. Or must timestamps always live in a sidecar?",
+   "Chromium cannot play MJPEG in any container in Electron 35.7.5 or 45.2.3. Is per-frame JPEG decode in the renderer (img/ImageDecoder) fast enough for N synchronized cameras, or is a playback proxy encode needed? (chromium_codecs / chromium_sync_scrub topics)",
+   "Does any camera used with skellycam actually omit DHT? None of the three corpus cameras do; all carry the standard Annex K tables.",
+   "Not tested: MP4/MKV > 4 GiB passthrough files (co64 path only cited from source), macOS/Linux readers, and AVFoundation/QuickTime playback of MJPEG MOV/MP4.",
+   "Mux CPU per frame per container, and the cost of rotation per frame: pending bench_mux.py / bench_rotate.py on a quiet machine."
+  ]
+ },
+ "gpu_encode": {
+  "summary": "gpu_encode (G6, G7). Functional tests and primary sources only. No timing numbers reported, per the stage rule.\n- measured: Gerald has no working hardware AV1 or VP9 encoder through any API. av1_nvenc fails with \"Codec not supported\"; av1_vulkan \"Device does not support encoding av1!\"; av1_d3d12va \"Codec configuration not supported\"; av1_mf picks the Intel MFT and fails 80004005; all QSV fail with \"Failed to find d3d11va adapter by vendor id 0x8086\"; AMF fails with \"amfrt64.dll failed to open\".\n- measured: the Intel UHD 770 is installed but Present=False, CM_PROB_PHANTOM (Get-PnpDevice). Nothing was changed.\n- source: the NVIDIA support matrix RTX 3070 row shows AV1 encode NO and 4:2:2 encode NO. Ada shows AV1 YES; Blackwell shows AV1 YES and 4:2:2 YES. Every GeForce row says \"Max # of concurrent sessions\" 12.\n- measured: H.264/HEVC hardware encode works all-intra and gop15 via nvenc, vulkan, d3d12va and mf (NVIDIA MFT), checked with ffprobe pict_types.\n- measured: configuration quirks. nvenc intra needs -g 0 (-g 1 gives \"Gop Length should be greater than number of B frames + 1\"; code nvenc.c:1761-1767 @ n9.0.2). d3d12va needs -bf 0, and its MKV header write fails while MP4 works.\n- measured: royalty-free GPU codecs on Gerald:\n  - ffv1_vulkan, byte-exact for yuv420p (needs -level 4 -strict -2 at 1080p), bgr0, and 16-bit Bayer RGGB (FFV1 v4.10);\n  - nvJPEG via nvImageCodec 0.10.0.9: GPU encode 4:2:2/4:2:0/gray, and GPU decode of the cameras' 4:2:2 JPEGs.\n- measured: prores_ks_vulkan also works.\n- measured: NVDEC cannot decode the cameras' 4:2:2 MJPEG. mjpeg_cuvid fails and hung; -hwaccel cuda silently falls back to the CPU. The same frames as 4:2:0 decode fine. source: the NVDEC guide calls JPEG \"Hybrid (CUDA + CPU)\".\n- measured: the NVENC limit is 12 sessions on driver 610.88. While 12 are held, hevc_nvenc, h264_vulkan, h264_d3d12va and h264_mf all fail too, so they share one pool.\n- measured: PyAV 18.0.0 and 19.0.2 give identical functional results. d3d12va works only with HWAccel('d3d12va'). Neither wheel has Vulkan encoders, so a version bump adds no GPU-encode capability.\n- measured: hardware encoders in the PyPI wheels (static libavcodec inspection with sha256 check), same for 18 and 19:\n  - Windows x64: NVENC, QSV, AMF, D3D12, MF;\n  - Linux x64: NVENC, QSV, AMF, V4L2 (no VAAPI, no Vulkan);\n  - macOS: VideoToolbox h264/hevc/prores.\n- source/code: ffmpeg n9.0.2 has no AV1/VP9 VideoToolbox encoder (allcodecs.c). Apple M5 specs list \"H.264, HEVC, ProRes\" encode and \"AV1 decode\".\n- source: Intel media-driver 26.3.5: AV1 encode on DG2/MTL/LNL/BMG/PTL/NVL; VP9 encode on TGL-MTL/PTL/NVL. AMD: RX 7600 (RDNA3) lists \"AV1 Encode Yes\"; RX 6600 has no AV1 encode row. NVIDIA Vulkan driver 553.40 added VK_KHR_video_encode_av1. Mesa 26.2.6: RADV exposes AV1 encode when the hardware supports it; ANV encode is debug-gated, with no AV1.\n- measured: nvImageCodec pitfalls. Backend(GPU_ONLY) alone fails (\"Code: 7\"), so select by encoder_ids/decoder_ids. Dropping unsynchronised GPU-decoded images produces CUDA error 700.\n- inferred: there is no single royalty-free hardware encoder across Windows, Linux and macOS. MJPEG passthrough needs no encoder. ffv1_vulkan is the royalty-free GPU option for raw/Bayer input on Gerald, but needs the ffmpeg CLI or a custom FFmpeg build. AV1 hardware is an optional accelerator on Ada+/Arc+/RDNA3.",
+  "bench_manifest": [
+   {
+    "id": "B1a",
+    "purpose": "Single-stream unpaced encode fps + CPU cores/ms-per-frame (ffmpeg -benchmark) for every working GPU encoder (nvenc, vulkan, d3d12va, mf, ffv1_vulkan, prores_ks_vulkan) at 720p/1080p, intra and gop15, from NV12 raw input and from real 4:2:2 MJPEG input (CPU decode); none_rawvideo baseline isolates decode/input cost",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/gpu_encode/bench_ffmpeg_encode.py --frames 900 --reps 3 --only h264_nvenc,hevc_nvenc,h264_vulkan,hevc_vulkan,h264_d3d12va,hevc_d3d12va,h264_mf,hevc_mf,ffv1_vulkan,prores_ks_vulkan,none_rawvideo",
+    "est_minutes": 20,
+    "priority": 1
+   },
+   {
+    "id": "B1b",
+    "purpose": "CPU royalty-free reference encoders (libsvtav1 preset 10, libvpx-vp9 realtime, mjpeg, ffv1) with the same matrix, for comparison with GPU encode cost",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/gpu_encode/bench_ffmpeg_encode.py --frames 300 --reps 3 --only libsvtav1,libvpx-vp9,mjpeg,ffv1,none_rawvideo",
+    "est_minutes": 20,
+    "priority": 1
+   },
+   {
+    "id": "B2a",
+    "purpose": "Concurrent-stream scaling 1/2/4/8/12/16 from Python (PyAV threads, one h264_nvenc per stream, numpy NV12 frames) at 1080p, unpaced and paced 30 fps: aggregate and per-stream fps, encode-call p50/p99, late frames, process CPU, session-limit failures",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/gpu_encode/bench_pyav_concurrent.py --codec h264_nvenc --size 1080p --streams 1,2,4,8,12,16 --frames 600 --mode unpaced,paced",
+    "est_minutes": 10,
+    "priority": 1
+   },
+   {
+    "id": "B2b",
+    "purpose": "Same concurrent scaling with hevc_nvenc 1080p",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/gpu_encode/bench_pyav_concurrent.py --codec hevc_nvenc --size 1080p --streams 1,2,4,8,12,16 --frames 600 --mode unpaced,paced",
+    "est_minutes": 10,
+    "priority": 2
+   },
+   {
+    "id": "B2c",
+    "purpose": "Same concurrent scaling via the vendor-neutral D3D12 path (h264_d3d12va with HWAccel d3d12va) 1080p",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/gpu_encode/bench_pyav_concurrent.py --codec h264_d3d12va --size 1080p --streams 1,2,4,8,12,16 --frames 600 --mode unpaced,paced",
+    "est_minutes": 10,
+    "priority": 2
+   },
+   {
+    "id": "B2d",
+    "purpose": "Concurrent scaling h264_nvenc at 720p",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/gpu_encode/bench_pyav_concurrent.py --codec h264_nvenc --size 720p --streams 1,2,4,8,12,16 --frames 600 --mode unpaced,paced",
+    "est_minutes": 8,
+    "priority": 2
+   },
+   {
+    "id": "B3a",
+    "purpose": "numpy->frame cost from Python, PyAV 18: from_ndarray nv12/bgr24, swscale BGR->NV12, cv2 BGR->I420, encode() call with sw frames vs HWAccel(cuda) upload, d3d12va encode call; 720p and 1080p",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/gpu_encode/bench_pyav_upload.py --iters 600",
+    "est_minutes": 4,
+    "priority": 1
+   },
+   {
+    "id": "B3b",
+    "purpose": "Same upload/encode-call microbench under PyAV 19.0.2 (isolated uv env) to compare versions",
+    "command": "uv run --script research/skellycam_recording/recording_upgrade/scripts/gpu_encode/bench_pyav_upload.py --iters 600",
+    "est_minutes": 5,
+    "priority": 2
+   },
+   {
+    "id": "B4",
+    "purpose": "GPU JPEG throughput (nvImageCodec 0.10.0.9 / nvJPEG CUDA): decode of real 4:2:2 camera JPEGs (device-only and with download) and q90 4:2:2 encode from host and from device memory, vs libjpeg-turbo/opencv on CPU, batch 1 and 8",
+    "command": "uv run --script research/skellycam_recording/recording_upgrade/scripts/gpu_encode/bench_nvimgcodec.py --n 300 --reps 3",
+    "est_minutes": 6,
+    "priority": 2
+   },
+   {
+    "id": "B5",
+    "purpose": "Definitive NVENC concurrent-session limit with driver 610.88 on a quiet machine, plus whether vulkan/d3d12va/mf encodes share the pool",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/gpu_encode/nvenc_sessions.py --max 24 --bench",
+    "est_minutes": 1,
+    "priority": 2
+   },
+   {
+    "id": "B2e",
+    "purpose": "Concurrent h264_nvenc scaling under PyAV 19.0.2 for version comparison",
+    "command": "uv run --script research/skellycam_recording/recording_upgrade/scripts/gpu_encode/bench_pyav_concurrent.py --codec h264_nvenc --size 1080p --streams 1,4,8,12 --frames 600 --mode unpaced,paced",
+    "est_minutes": 8,
+    "priority": 3
+   }
+  ],
+  "open_questions": [
+   "Would enabling the i7-14700K iGPU (BIOS or display setting, out of scope here) give working vp9_qsv / mjpeg_qsv / h264_qsv on Gerald? The Intel media-driver doc says TGLx (incl. RPL) has VP9 and JPEG encode but no AV1. NOT VERIFIED on this machine.",
+   "AV1 hardware encode (av1_nvenc / av1_vulkan / av1_d3d12va / av1_qsv / av1_amf) could not be tested: there is no Ada/Blackwell, Arc or RDNA3 GPU available. Does all-intra / short-GOP AV1 work through PyAV's HWAccel path on those GPUs?",
+   "ffv1_vulkan (the only royalty-free GPU codec working here) is not in any PyPI PyAV wheel (no --enable-vulkan in pyav-ffmpeg 9.0.2-1). Should the design pipe frames to an ffmpeg CLI subprocess, or build FFmpeg/PyAV with Vulkan? Also, does ffv1_vulkan work on AMD, Intel and MoltenVK? NOT VERIFIED.",
+   "Is there a GPU-resident path from nvJPEG-decoded device images (RGB) to NVENC (NV12) from Python without a host copy? PyAV cannot wrap external CUDA pointers as hw frames (inferred from the API, not tested).",
+   "Should torchvision.io.encode_jpeg on CUDA be tested? It needs the multi-GB CUDA torch wheel from the PyTorch index; on Windows, PyPI torch 2.15.0 pulls in no CUDA packages.",
+   "The d3d12va H.264/HEVC to Matroska header failure and the default-B-frame mid-stream failure in ffmpeg 9.0.2: are these ffmpeg bugs or NVIDIA D3D12 driver limits? They matter if MKV is the chosen wrapper.",
+   "nvImageCodec CUDA error 700 when GPU-decoded images are dropped unsynchronised was inconsistent: not seen after a device-image encode. Root cause is unknown; does it also happen on Linux or newer nvImageCodec versions?"
+  ]
+ },
+ "overlays": {
+  "summary": "TOPIC overlays (G3). All results are functional; no timing numbers are reported.\n- Inventory (code): skellycam burns its stamp `camera.id..idx..frN` into every recorded frame (opencv_get_frame.py:79-90). skellycam-ui draws nothing on the image; playback shows HTML F#/timecode divs computed as floor(currentTime*fps) in rAF (SyncedVideoPlayer.tsx:377-403). The Rust backend has no overlay. FreeMoCap live UI composites ChArUco and skeleton overlays onto the frame bitmap in a worker, always using the latest observation with no frame-number match (offscreen-renderer.worker.ts:62-103). FreeMoCap post-hoc burns skellytracker annotators into annotated_videos (video_node.py:316-411). Data shapes: CharucoOverlayData and SkeletonOverlayData, already sent as float32 binary blocks (binary_keypoints_protocol.py).\n- Overlaps today (code + measured): the FreeMoCap UI info panel (5,5,500x85) covers the burned stamp. skellytracker's Corner#id labels overlap: 12,272 label-label overlaps in 60 frames of a 100-corner board at 720p. Its undetected list fits only 35 lines at 720p.\n- Formats (measured, results/overlays/formats_functional.md), full overlay at 720p:\n  - binary sidecar with per-record CRC: 3.3 KB/frame, 355 MB/h; JSONL: 616 MB/h; length-prefixed msgpack: 745 MB/h; WebVTT: 619 MB/h.\n  - All four recovered every complete record at 28/28 truncation cuts.\n  - ASS: 1.8 GB/h. SVG per frame: 3.8 GB/h. Single SVG: 3.8 GB/h, fails strict XML parse at every cut, and Chromium fires img error on a truncated copy.\n- Chromium alignment (measured, Electron 35.7.5 and 45.2.3):\n  - Overlay looked up from rVFC mediaTime via a pts table names the presented frame in 98-100% of callbacks at 1x.\n  - Canvas over <video> on screen: overlay usually one frame behind (3-19 of 30 captures aligned). Drawing the video into the overlay canvas: 29/29 to 30/30.\n  - Today's floor(currentTime*30) rAF rule matched the shown frame in only 2-78% of samples.\n  - VFR: seeking to exact pts often shows the previous frame; midpoint seeks fix it for VP9.\n- Electron 35 bug (measured): after a seek to the last frame, all later seeks stay stuck on it in all 5 files. Fixed in Electron 45.2.3.\n- WebVTT metadata cues lag one frame during playback and are correct only on paused CFR seeks (source: ms timestamps). WebVTT-in-WebM and ASS-in-MKV are not exposed as textTracks in either version (measured). ASS uses centisecond timing (source: ffmpeg assdec.c); naive libass burn-in got 200/300 frames right, half-frame-shifted events 300/300 (measured).\n- Alpha layer (measured): VP9-alpha WebM plays with alpha in Chromium and survives truncation (160 frames decoded from a 50% cut), but costs 80 KB/frame, more than the camera JPEG (~57 KB). ffmpeg keeps its alpha only with -c:v libvpx-vp9. PNG/QTRLE MOV do not play in Chromium and are unreadable after truncation.\n- Layout (measured): a deterministic greedy placement with side lanes (Python and JS versions) gives 0 label-label and 0 label-marker overlaps in all cases; images are in <raw>/overlays/layout.\n- Export (measured): PyAV+cv2 from sidecar to VP9/H.264, 300/300 aligned; ffmpeg overlay filter with the alpha layer, 300/300.\n- Inferred recommendation: an append-only data sidecar keyed by frame number and timestamp, rendered in the UI; drive the overlay from rVFC mediaTime, composite in a single canvas, and upgrade to Electron 45.",
+  "bench_manifest": [
+   {
+    "id": "overlay_cost",
+    "purpose": "Per-frame cost (median/p95 us) of generating and writing each overlay format (binary/JSONL/msgpack/VTT sidecars, SVG per frame, single SVG, ASS) vs cv2 burn-in, burn-in with JPEG decode+re-encode, plain JPEG round trip, alpha rasterisation and the VP9-alpha pipeline. Covers 720p and 1080p for the text, skeleton(33), charuco(100 corners) and all cases; also bytes/hour. Writes results/overlays/bench/bench_overlay_cost_<UTC>.json",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/overlays/bench_overlay_cost.py --frames 900 --repeats 3",
+    "est_minutes": 20,
+    "priority": 1
+   },
+   {
+    "id": "electron_play_quiet_35",
+    "purpose": "Quiet-machine rerun of the load-sensitive Chromium alignment tests in Electron 35.7.5: canvas-over-video vs canvas-composite screen captures, today's rAF rule, paused-seek capture convergence, WebVTT cue lag, dual-video alpha sync. Needs <raw>/overlays/media (run make_test_media.py --frames 300 first if missing); keep the window visible. Summarise with summarize_electron.py <file>",
+    "command": "env -u ELECTRON_RUN_AS_NODE skellycam-ui/node_modules/electron/dist/electron.exe research/skellycam_recording/recording_upgrade/scripts/overlays/electron_harness --tests=play,seek,vtt,alpha --out=research/skellycam_recording/recording_upgrade/results/overlays/bench/electron_play_quiet_35.7.5.json",
+    "est_minutes": 6,
+    "priority": 2
+   },
+   {
+    "id": "electron_play_quiet_45",
+    "purpose": "Same quiet-machine alignment rerun in Electron 45.2.3 (Chromium 156) for the version-bump comparison",
+    "command": "env -u ELECTRON_RUN_AS_NODE C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/106dc0c8-f977-4082-9d8d-367e9a9f721d/scratchpad/shared/electron-latest/node_modules/electron/dist/electron.exe research/skellycam_recording/recording_upgrade/scripts/overlays/electron_harness --tests=play,seek,vtt,alpha --out=research/skellycam_recording/recording_upgrade/results/overlays/bench/electron_play_quiet_45.2.3.json",
+    "est_minutes": 6,
+    "priority": 2
+   },
+   {
+    "id": "electron_draw_35",
+    "purpose": "UI-side render cost per frame in Electron 35.7.5 for the full overlay (33-point skeleton + 100 ChArUco corners): canvas with deterministic label layout, canvas with naive labels, canvas without labels, and SVG DOM innerHTML replacement (includes one rAF wait)",
+    "command": "env -u ELECTRON_RUN_AS_NODE skellycam-ui/node_modules/electron/dist/electron.exe research/skellycam_recording/recording_upgrade/scripts/overlays/electron_harness --tests=drawbench --mode=bench --query=reps=5 --out=research/skellycam_recording/recording_upgrade/results/overlays/bench/electron_drawbench_35.7.5.json",
+    "est_minutes": 3,
+    "priority": 2
+   },
+   {
+    "id": "electron_draw_45",
+    "purpose": "Same UI render-cost bench in Electron 45.2.3",
+    "command": "env -u ELECTRON_RUN_AS_NODE C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/106dc0c8-f977-4082-9d8d-367e9a9f721d/scratchpad/shared/electron-latest/node_modules/electron/dist/electron.exe research/skellycam_recording/recording_upgrade/scripts/overlays/electron_harness --tests=drawbench --mode=bench --query=reps=5 --out=research/skellycam_recording/recording_upgrade/results/overlays/bench/electron_drawbench_45.2.3.json",
+    "est_minutes": 3,
+    "priority": 3
+   }
+  ],
+  "open_questions": [
+   "Should the canonical overlay sidecar be the custom CRC-framed binary (smallest, resyncs after corruption) or JSON Lines (simplest, about 1.7x larger)? Should it reuse FreeMoCap's existing binary_keypoints_protocol block layout so the live and recorded formats match?",
+   "Canvas-composite (drawImage(video) in rVFC) gave frame-exact screen captures at 1x. At 2x in Electron 35, drawImage returned the next frame in 72/241 callbacks. Should G9 playback move to WebCodecs decoding (VideoFrame timestamps paired with the overlay) for guaranteed pairing? This was not tested here.",
+   "Is upgrading the skellycam/freemocap UIs from Electron 35.7.5 to 45.x acceptable? Electron 35 never shows a new frame after any seek to a video's last frame, in all 5 test files.",
+   "Real tracker output (RTMPose 133 points, NaNs, variable point counts) was not used. Sizes are from synthetic MediaPipe-33 and 100-corner ChArUco data; real FreeMoCap recordings should be sampled.",
+   "Which overlays must survive into exported/shared videos (burned-in export), and which only need UI rendering? The export paths work (PyAV+cv2; ffmpeg overlay with -c:v libvpx-vp9; libass only with half-frame-shifted events).",
+   "Should label placement run in the UI at display time (recommended, depends on display scale and font) or be stored? Leader-line crossings are not handled yet."
+  ]
+ },
+ "crash_resilience": {
+  "summary": "crash_resilience (G2) study is finished. All tests were functional; no timing numbers are reported. NOTES: research/skellycam_recording/recording_upgrade/results/crash_resilience/NOTES.md; condensed tables in summary.md.\n\n[measured] A plain MP4 kept 0 readable frames after a hard kill at every point, for MJPEG, FFV1, AV1 and NVENC H.264, with or without flush_packets. ffmpeg -c copy cannot repair it, and every power-loss cut also gave 0 frames. This matches p11.\n[source+measured] The biggest hidden loss is FFmpeg's file protocol. For regular files it buffers 256 KiB and turns per-packet flushing off (n8.1 file.c:318-326; mux.c:426-434; aviobuf.c:464-470). Killed files were exact multiples of 262144 bytes. That is 4-5 MJPEG frames at 57 KB each, and the whole 5 s file for AV1.\n[measured] With flush_packets=1, the only loss left is what the muxer holds in memory:\n- MKV/WebM: the open cluster. That is 1 frame for intra payloads (149/150), or one GOP for inter codecs (120/150) unless cluster_size_limit=0 (149/150).\n- fMP4: the open fragment. frag_every_frame loses 1 frame, frag_keyframe loses one GOP.\n- NUT, AVI, IVF, raw .mjpeg+index and the JPEG folder lose nothing extra (150/150).\n- The segment muxer ignores flush_packets, and with segment_format=mp4 the open segment is lost.\n[measured] Encoders hold frames that no container can save. At a live 30 fps feed, SVT-AV1 (preset 10) held about 40 frames and NVENC held 2.\n[measured] Unfinalized MKV is readable by ffprobe, PyAV and cv2: MJPEG frames are byte-exact and seeking works, but there is no duration. cv2 CAP_PROP_FRAME_COUNT gives garbage on it (-2.77e17 for MKV, 0 for AVI). An ffmpeg -c copy remux to .mkv kept the frame count in 389/389 files and restored duration and seek in 303/303 tested.\n[measured] Power-loss emulation (24 prefix cuts per variant): MKV loses at most 1 frame and never hands over a torn frame. fMP4, NUT, AVI, raw MJPEG and the JPEG folder hand the torn last JPEG to decoders, which count it as a frame in 20-23 of 24 cuts. The naive PyAV loop that stops at the first error dropped up to 5 AV1 frames compared with ffprobe.\n[measured] Electron 35.7.5 and 45.2.3 (Chromium 134 / 156):\n- Unfinalized and truncated MKV/WebM with AV1 or H.264 play to the end (duration Infinity, seek works).\n- Unfinalized fMP4 written with flush_packets plays with a finite duration.\n- A torn fMP4 sample stops playback with a MediaError: for AV1 in both versions, for H.264 only in Electron 35.\n- Neither version opens MJPEG or FFV1 in any container, or any NUT, AVI or IVF file.\n[code+measured] sfn26 recorder.rs:141-155 writes a plain MP4 through an ffmpeg child with no movflags, and its Drop kills ffmpeg (:265-276). Killing ffmpeg or the whole process tree leaves 0 frames. Killing only the feeding parent gives 300/300, because ffmpeg sees EOF and finalizes. ffmpeg had created no output file after 75 frames (4.3 MB) and 1 s; probing is the inferred cause.\n[measured] Resumable prototype (resumable_recorder.py): a journal, per-segment MKV with flush_packets, and a CRC'd binary sidecar. It passed 9 crash scenarios: kills, a double crash, and 5 power losses that also tore the journal and sidecar. Frame numbers stayed unique and increasing, video frame count equalled timestamp records, pts matched the capture clock, and MJPEG stayed byte-exact. Testing found and fixed a bug where a segment was overwritten.\n[measured] Sidecar: flushing each row survives a kill, and not flushing loses rows. pandas read_csv took the torn last row as data and returned silently wrong integers in 6 of 24 cuts. A CRC'd binary record detected every torn or zero-filled record.\n[measured] Side findings:\n- Decoded JPEG frames carry pict_type=I, which makes libsvtav1 and libx264 encode every frame as a key frame. Fix: set frame.pict_type = NONE.\n- PyAV 18 add_stream_from_template fails for AV1 unless opaque=True.\n- The venv python.exe is a launcher that starts a second interpreter.",
+  "bench_manifest": [
+   {
+    "id": "cr_fsync",
+    "purpose": "Cost of durability policies when appending ~57 KB camera JPEGs + 72-byte timestamp records: none / flush / fsync every 1,10,30,300 frames / sidecar-only fsync / PyAV MKV+flush_packets with fsync every 1 or 30. Per-frame latency p50/p99/max, throughput, CPU. Answers 'fsync cost per N frames'. Writes results/crash_resilience/bench/fsync.json",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/crash_resilience/bench_fsync.py --frames 3000 --repeats 3",
+    "est_minutes": 5,
+    "priority": 1
+   },
+   {
+    "id": "cr_fragment_overhead",
+    "purpose": "CPU/wall/size overhead of crash-tolerant container settings with pre-built packets re-muxed from memory. Covers mkv vs mkv+flush_packets vs cluster_size_limit=0; fMP4 per frame / per keyframe / frag_duration 100,500,1000,2000 ms; plain mp4; nut; avi; segment muxer 1/10/60 s; raw .mjpeg+index; folder of JPEGs. Payloads MJPEG, FFV1, NVENC H.264 (NVENC used once to prepare packets; nvidia-smi recorded). Writes results/crash_resilience/bench/fragment_overhead.json",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/crash_resilience/bench_fragment_overhead.py --frames 3000 --repeats 3 --payloads mjpeg,ffv1,h264nv",
+    "est_minutes": 15,
+    "priority": 1
+   },
+   {
+    "id": "cr_repair",
+    "purpose": "Repair (remux to finalized file) time per GB. Builds ~1 GB unfinalized recordings by killing a writer before close (mkv+flush_packets, fmp4 frag_every_frame+flush_packets, plain mp4, raw .mjpeg+index), then times ffmpeg -c copy to mkv/mp4, the PyAV remux and the resumable prototype's segment repair, 3 repeats. First run vs repeats shows cold vs OS-cached reads. Needs ~4 GB free under C:/Users/Dom/Documents/skellycam-raw/.../crash_resilience/bench_tmp (deleted afterwards). Writes results/crash_resilience/bench/repair.json",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/crash_resilience/bench_repair.py --gb 1 --repeats 3",
+    "est_minutes": 10,
+    "priority": 2
+   },
+   {
+    "id": "cr_fragment_overhead_av1",
+    "purpose": "Same container-overhead benchmark for AV1 (libsvtav1) packets, encoded once then re-muxed. Writes results/crash_resilience/bench/fragment_overhead_av1.json",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/crash_resilience/bench_fragment_overhead.py --frames 3000 --repeats 3 --payloads av1 --out-name av1",
+    "est_minutes": 5,
+    "priority": 3
+   }
+  ],
+  "open_questions": [
+   "When the packaged skellycam/freemocap app hard-crashes, does the sfn26 Rust recorder's ffmpeg child outlive its host process (no kill-on-close job object)? That decides whether sfn26 plain MP4s are finalized (300/300) or lost (0). NOT VERIFIED for the real launcher; only the venv-launcher behaviour was measured.",
+   "A real power cut on NTFS was only emulated as a clean prefix cut, plus a zero-filled tail for the sidecar. Reordered or stale blocks and metadata loss were not tested. Is a VM or USB-drive power-pull test worth doing before choosing the fsync policy?",
+   "The fsync policy (per frame vs every N frames, or the sidecar only) and the segment length for the resumable recorder both depend on bench_fsync and bench_repair results, which do not exist yet.",
+   "SVT-AV1 held about 40 frames (preset 10, default settings) that are lost on any crash. Low-delay settings (e.g. no lookahead / low-delay prediction structure) were not tested; they matter for G6/G7 crash loss.",
+   "Chromium cannot play MJPEG or FFV1 at all, so the crash-tolerant MJPEG/MKV recording needs a separate UI preview or transcode path. How that path behaves after a crash is untested.",
+   "FreeMoCap's own video reader was not run on unfinalized MKV. cv2 CAP_PROP_FRAME_COUNT returns -2.77e17 on an unfinalized MKV (0 for AVI), so reading these files probably needs a repair or finalize step first. Inferred, not checked in FreeMoCap code.",
+   "The first kill_matrix_a pass was terminated externally (no traceback, cause unknown) and was completed with --resume. If other agents kill python or electron processes by name, the long runs may need a rerun on a quiet machine."
+  ]
+ },
+ "chromium_sync_scrub": {
+  "summary": "TOPIC chromium_sync_scrub (G9). The harness runs in Electron 35.7.5 (Chromium 134.0.6998.205) and Electron 45.2.3 (Chromium 156.0.8078.80). It used 37 test clips made from real corpus frames with a 16-bit frame index burned into each frame: 720p30, 1080p30 (looped), 720p60 (looped), VFR using the cameras' real capture times, and a clip with today's 32.9 fps header. Codecs and containers: AV1/VP9/H.264 GOP and all-intra, MP4, fragmented MP4 and WebM, plus MJPEG as a .mjpeg file with an index and as a folder. A recorder index (byte offsets inside the container) was checked byte-exact for every sample. No timing numbers are reported.\n- code: today's UI (SyncedVideoPlayer.tsx, the same in HEAD and upstream/sfn26) uses one <video> per camera. The first one is the leader, read with rAF via currentTime*fps. Followers are re-seeked only when they drift more than 2 frames, checked every 15 ticks. Seek, step and drag all set currentTime=frame/fps, using an fps from the CSV, not the file's own timeline. rVFC is never used.\n- measured: that seek math shows the requested frame in 360/600 random seeks on CFR30 GOP files (every miss is one frame early), 34-35/200 on real VFR timing, and 10/400 on a today-style clip (32.9 fps header, UI fps 30), up to 52 frames off. Steps on VFR: 0/122.\n- measured: seeking to the middle of the frame interval, taken from the file's real pts, was 100% exact for every CFR, VFR, GOP and intra file, every codec and every container, in both Electrons. The only exception is two VFR frames captured 0.011 ms apart.\n- code: the cause is Chromium's seek arithmetic. base::Seconds truncates the target, the demuxer rounds frame times with av_rescale_q, and the renderer keeps the last frame whose timestamp is <= the target (video_renderer_impl.cc). All-intra files hide the problem (measured).\n- measured: WebCodecs fed from the recorder index, and all 4 JPEG paths (Range or folder; createImageBitmap or ImageDecoder), returned the right frame in every seek and step, including the 0.011 ms pair. The WebCodecs flush() fallback was never needed (optimizeForLatency).\n- measured: the cameras' own JPEG bytes (7 modes) decode in both Electrons. createImageBitmap output is bit-identical to OpenCV's libjpeg-turbo decode. ImageDecoder returns I422 frames, which differ by up to 24 levels after drawing to a canvas.\n- measured: mp4box.js 2.4.1 sample tables match the recorder index exactly for all 20 MP4s, including fragmented ones.\n- measured: codec support is the same in both Electrons: canPlayType 'probably'; prefer-hardware and powerEfficient for AV1/VP9/H.264; no fastSeek. Electron 45 adds JPEG XL to ImageDecoder and fixes a Chromium 134 bug where a seek that lands exactly on the last frame leaves the element stuck there. It also improves exact-pts seeks. Mid-frame seeks and the index paths behave the same in both.\n- source: the HTML spec gives no frame-exactness rule. rVFC mediaTime is the presented frame's PTS but delivery is best effort. WebCodecs timestamps are integer microseconds; flush() sets the key-chunk-required flag; AV1 chunks take no description.\n- inferred: the minimal fix for the existing player is per-camera pts-midpoint seeking plus rVFC mediaTime readback. An index-driven master clock (WebCodecs or JPEG) is exact by construction, but its cost has not been measured yet.\n- The sync, scrub, seek-latency, step-latency and CPU/memory benchmarks are written and smoke-tested on both Electrons (0 errors). The smoke outputs were deleted; only the _index.json files are kept.",
+  "bench_manifest": [
+   {
+    "id": "bench_sync_e35",
+    "purpose": "N-stream sync while playing: per-rAF-tick frame-index spread across N=4/8 1080p streams (and 720p, VFR at N=4) for <video> free, <video> with today's UI leader/follower correction, WebCodecs master clock, JPEG master clock; dropped frames, follower corrections, CPU cores (cumulativeCPUUsage) and working set per process type, nvidia-smi before/after. Electron 35.7.5 (UI pin). Writes JSON to research/skellycam_recording/recording_upgrade/results/chromium_sync_scrub/bench/e35/bench_sync/",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/chromium_sync_scrub/run_suite.py --electron 35 --suite bench_sync",
+    "est_minutes": 15,
+    "priority": 1
+   },
+   {
+    "id": "bench_sync_e45",
+    "purpose": "Same as bench_sync_e35 in Electron 45.2.3 (Chromium 156) to compare versions. Output bench/e45/bench_sync/",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/chromium_sync_scrub/run_suite.py --electron 45 --suite bench_sync",
+    "est_minutes": 15,
+    "priority": 1
+   },
+   {
+    "id": "bench_seek_e35",
+    "purpose": "Seek latency p50/p95/max per path and GOP length (200 random seeks per clip): <video> mid-frame (currentTime set -> rVFC and -> seeked), WebCodecs+recorder index, 4 JPEG paths; 720p30, 1080p30, 720p60; GOP vs all-intra; accuracy re-checked. Output bench/e35/bench_seek/",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/chromium_sync_scrub/run_suite.py --electron 35 --suite bench_seek",
+    "est_minutes": 8,
+    "priority": 1
+   },
+   {
+    "id": "bench_seek_e45",
+    "purpose": "Same as bench_seek_e35 in Electron 45.2.3. Output bench/e45/bench_seek/",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/chromium_sync_scrub/run_suite.py --electron 45 --suite bench_seek",
+    "est_minutes": 8,
+    "priority": 1
+   },
+   {
+    "id": "bench_scrub_e35",
+    "purpose": "Scrub smoothness: frames shown/s and distinct frames/s while a simulated slider drags at 90 frames/s (input every 16 ms), lag to the slider, CPU; N=1 and 4; <video> UI-style (seek on every input) vs gated, WebCodecs, JPEG bitmap/ImageDecoder; 720p30 and 1080p30. Output bench/e35/bench_scrub/",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/chromium_sync_scrub/run_suite.py --electron 35 --suite bench_scrub",
+    "est_minutes": 14,
+    "priority": 2
+   },
+   {
+    "id": "bench_scrub_e45",
+    "purpose": "Same as bench_scrub_e35 in Electron 45.2.3. Output bench/e45/bench_scrub/",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/chromium_sync_scrub/run_suite.py --electron 45 --suite bench_scrub",
+    "est_minutes": 14,
+    "priority": 2
+   },
+   {
+    "id": "bench_step_e35",
+    "purpose": "Single-frame step forward/back latency (20 forward then 40 back from random starts, 300 steps) for <video> (UI-style targets), WebCodecs, JPEG; GOP vs intra; 720p30/1080p30. Output bench/e35/bench_step/",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/chromium_sync_scrub/run_suite.py --electron 35 --suite bench_step",
+    "est_minutes": 5,
+    "priority": 2
+   },
+   {
+    "id": "bench_step_e45",
+    "purpose": "Same as bench_step_e35 in Electron 45.2.3. Output bench/e45/bench_step/",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/chromium_sync_scrub/run_suite.py --electron 45 --suite bench_step",
+    "est_minutes": 5,
+    "priority": 2
+   },
+   {
+    "id": "bench_summarize",
+    "purpose": "After the runs above: build research/skellycam_recording/recording_upgrade/results/chromium_sync_scrub/bench/bench_tables.md (latency, spread, scrub rate, CPU/memory, nvidia-smi columns) from all bench JSONs",
+    "command": ".venv/Scripts/python.exe research/skellycam_recording/recording_upgrade/scripts/chromium_sync_scrub/summarize.py bench",
+    "est_minutes": 1,
+    "priority": 1
+   }
+  ],
+  "open_questions": [
+   "Real multi-camera recordings have different per-camera capture times; should the player sync by capture timestamp (per-camera pts lookup from one master clock) or by frame index? Not tested: every stream in bench_sync is the same clip.",
+   "Does <video> decode on NVDEC here? Chromium reports prefer-hardware/powerEfficient, but no decoder counters were read. bench runs sample nvidia-smi utilization.decoder before/after; a per-run in-window sample would be better.",
+   "Root cause of the Chromium 134 bug where a seek landing exactly on the last frame leaves the element stuck (no rVFC, frame never changes). It is fixed in 156. Is it worth a bump to Electron 45 for this alone, given that mid-frame targets avoid it?",
+   "Long recordings (hour-long MP4/fMP4 with large moov or many fragments, multi-GB intra files) were not tested for seek accuracy, latency, or the server's Range handling.",
+   "WebM in-page demux (no library tested) vs the recorder index only; MSE playback was not evaluated.",
+   "Behaviour on macOS/Linux Chromium and on Intel/AMD GPUs is untested (only this RTX 3070 Windows machine)."
+  ]
+ }
+}

@@ -1,0 +1,83 @@
+{
+ "env": {
+  "pyav": "19.0.2",
+  "libavcodec": "63.1.102"
+ },
+ "nvidia_smi_before": "0, 3 %",
+ "runs": [
+  {
+   "codec": "libsvtav1",
+   "options": {
+    "preset": "10",
+    "crf": "35"
+   },
+   "fed": 75,
+   "packets_before_drain": 36,
+   "held_by_encoder": 39,
+   "packets_from_drain": 39
+  },
+  {
+   "codec": "libsvtav1",
+   "options": {
+    "preset": "10",
+    "crf": "35",
+    "svtav1-params": "pred-struct=1"
+   },
+   "fed": 75,
+   "packets_before_drain": 75,
+   "held_by_encoder": 0,
+   "packets_from_drain": 0
+  },
+  {
+   "codec": "libsvtav1",
+   "options": {
+    "preset": "10",
+    "crf": "35"
+   },
+   "fed": 75,
+   "packets_before_drain": 36,
+   "held_by_encoder": 39,
+   "packets_from_drain": 39
+  },
+  {
+   "codec": "libsvtav1",
+   "options": {
+    "preset": "10",
+    "crf": "35",
+    "svtav1-params": "pred-struct=1"
+   },
+   "fed": 75,
+   "packets_before_drain": 75,
+   "held_by_encoder": 0,
+   "packets_from_drain": 0
+  },
+  {
+   "codec": "h264_nvenc",
+   "options": {
+    "preset": "p4",
+    "bf": "0",
+    "rc": "vbr",
+    "cq": "23"
+   },
+   "fed": 75,
+   "packets_before_drain": 73,
+   "held_by_encoder": 2,
+   "packets_from_drain": 2
+  },
+  {
+   "codec": "h264_nvenc",
+   "options": {
+    "preset": "p4",
+    "bf": "0",
+    "rc": "vbr",
+    "cq": "23",
+    "delay": "0"
+   },
+   "fed": 75,
+   "packets_before_drain": 75,
+   "held_by_encoder": 0,
+   "packets_from_drain": 0
+  }
+ ],
+ "nvidia_smi_after": "0, 5 %"
+}

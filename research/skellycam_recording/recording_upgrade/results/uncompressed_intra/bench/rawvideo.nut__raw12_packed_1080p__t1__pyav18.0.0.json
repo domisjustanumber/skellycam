@@ -1,0 +1,197 @@
+{
+ "config": "rawvideo.nut",
+ "codec": "rawvideo",
+ "opts": {},
+ "gop": 1,
+ "source": "raw12_packed",
+ "source_note": "derived MIPI RAW12 packed bytes as gray8",
+ "res": "1080p",
+ "width": 2880,
+ "height": 1080,
+ "src_pix_fmt": "gray",
+ "target_pix_fmt": "gray",
+ "path": "native",
+ "threads": 1,
+ "frames": 90,
+ "unique_frames": 8,
+ "looped": true,
+ "reps": 3,
+ "warmup_frames": 10,
+ "warmup_discarded": true,
+ "av_version": "18.0.0",
+ "ffmpeg_version": "8.1.2",
+ "library_versions": {
+  "libavutil": [
+   60,
+   26,
+   102
+  ],
+  "libavcodec": [
+   62,
+   28,
+   102
+  ],
+  "libavformat": [
+   62,
+   12,
+   102
+  ],
+  "libavdevice": [
+   62,
+   3,
+   102
+  ],
+  "libavfilter": [
+   11,
+   14,
+   102
+  ],
+  "libswscale": [
+   9,
+   5,
+   102
+  ],
+  "libswresample": [
+   6,
+   3,
+   102
+  ]
+ },
+ "numpy": "2.2.6",
+ "python": "3.12.13",
+ "machine": "Gerald",
+ "cpu_logical": 28,
+ "system_cpu_percent_before": 22.9,
+ "prep_ms_per_frame": 0.53,
+ "warmup": {
+  "encode_wall_s": 0.0203,
+  "encode_fps": 492.55,
+  "encode_cpu_s": 0.0156,
+  "encode_cpu_cores_per_30fps_stream": 0.047,
+  "latency_p50": 1.956,
+  "latency_p95": 2.453,
+  "latency_p99": 2.453,
+  "latency_max": 2.453,
+  "latency_mean": 2.029,
+  "packets": 10,
+  "bytes_per_frame": 3110400.0,
+  "file_bytes": 31104590,
+  "system_cpu_percent_during_encode": 12.5,
+  "decode_frames": 10,
+  "decode_wall_s": 0.0141,
+  "decode_fps": 708.17,
+  "decode_cpu_s": 0.0
+ },
+ "rep_results": [
+  {
+   "encode_wall_s": 0.1989,
+   "encode_fps": 452.58,
+   "encode_cpu_s": 0.2031,
+   "encode_cpu_cores_per_30fps_stream": 0.068,
+   "latency_p50": 2.165,
+   "latency_p95": 2.554,
+   "latency_p99": 2.906,
+   "latency_max": 2.906,
+   "latency_mean": 2.208,
+   "packets": 90,
+   "bytes_per_frame": 3110400.0,
+   "file_bytes": 279939462,
+   "system_cpu_percent_during_encode": 20.6,
+   "decode_frames": 90,
+   "decode_wall_s": 0.0949,
+   "decode_fps": 948.63,
+   "decode_cpu_s": 0.0625
+  },
+  {
+   "encode_wall_s": 0.2122,
+   "encode_fps": 424.08,
+   "encode_cpu_s": 0.2031,
+   "encode_cpu_cores_per_30fps_stream": 0.068,
+   "latency_p50": 2.27,
+   "latency_p95": 3.007,
+   "latency_p99": 3.677,
+   "latency_max": 3.677,
+   "latency_mean": 2.357,
+   "packets": 90,
+   "bytes_per_frame": 3110400.0,
+   "file_bytes": 279939462,
+   "system_cpu_percent_during_encode": 34.9,
+   "decode_frames": 90,
+   "decode_wall_s": 0.0928,
+   "decode_fps": 969.92,
+   "decode_cpu_s": 0.0938
+  },
+  {
+   "encode_wall_s": 0.1991,
+   "encode_fps": 452.08,
+   "encode_cpu_s": 0.2031,
+   "encode_cpu_cores_per_30fps_stream": 0.068,
+   "latency_p50": 2.138,
+   "latency_p95": 2.678,
+   "latency_p99": 3.091,
+   "latency_max": 3.091,
+   "latency_mean": 2.211,
+   "packets": 90,
+   "bytes_per_frame": 3110400.0,
+   "file_bytes": 279939462,
+   "system_cpu_percent_during_encode": 33.6,
+   "decode_frames": 90,
+   "decode_wall_s": 0.0935,
+   "decode_fps": 962.39,
+   "decode_cpu_s": 0.0938
+  }
+ ],
+ "stats": {
+  "encode_fps": {
+   "median": 452.08,
+   "min": 424.08,
+   "max": 452.58
+  },
+  "encode_cpu_cores_per_30fps_stream": {
+   "median": 0.068,
+   "min": 0.068,
+   "max": 0.068
+  },
+  "latency_p50": {
+   "median": 2.165,
+   "min": 2.138,
+   "max": 2.27
+  },
+  "latency_p99": {
+   "median": 3.091,
+   "min": 2.906,
+   "max": 3.677
+  },
+  "latency_max": {
+   "median": 3.091,
+   "min": 2.906,
+   "max": 3.677
+  },
+  "bytes_per_frame": {
+   "median": 3110400.0,
+   "min": 3110400.0,
+   "max": 3110400.0
+  },
+  "decode_fps": {
+   "median": 962.39,
+   "min": 948.63,
+   "max": 969.92
+  },
+  "system_cpu_percent_during_encode": {
+   "median": 33.6,
+   "min": 20.6,
+   "max": 34.9
+  }
+ },
+ "encode_fps": 452.08,
+ "encode_cpu_cores_per_30fps_stream": 0.068,
+ "encode_latency_ms": {
+  "p50": 2.165,
+  "p99": 3.091,
+  "max": 3.091
+ },
+ "bytes_per_frame": 3110400.0,
+ "decode_fps": 962.39,
+ "decoder": "libav default for codec (software unless the decoder is hw)",
+ "system_cpu_percent_after": 12.9
+}

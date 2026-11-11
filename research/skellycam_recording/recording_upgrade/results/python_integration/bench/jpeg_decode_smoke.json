@@ -1,0 +1,1580 @@
+{
+ "env": {
+  "python": "3.12.13",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "cpu_count": 28,
+  "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+  "numpy": "2.2.6",
+  "opencv": "4.12.0",
+  "simplejpeg": "1.9.0",
+  "av": "18.0.0",
+  "turbojpeg_dll": "C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/106dc0c8-f977-4082-9d8d-367e9a9f721d/scratchpad/python_integration/dl_libjpeg_turbo/x/bin/turbojpeg.dll",
+  "quick": true,
+  "cv2_num_threads": 1,
+  "started_unix": 1794241416.0128827,
+  "PyTurboJPEG": "2.6.1",
+  "finished_unix": 1794241469.7509117
+ },
+ "sets": {
+  "c930e_720p_flash": {
+   "frames": 10,
+   "jpeg_bytes_median": 56817,
+   "shape": [
+    720,
+    1280,
+    3
+   ],
+   "methods": {
+    "cv2_imdecode_bgr": {
+     "out_shape": [
+      720,
+      1280,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 2.4779,
+      "mean_ms": 2.6628,
+      "p90_ms": 3.1932,
+      "p99_ms": 3.3495,
+      "min_ms": 2.3619,
+      "max_ms": 3.3669
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 175,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 349.5
+      },
+      {
+       "threads": 5,
+       "decodes": 664,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 1319.9
+      }
+     ]
+    },
+    "cv2_imdecode_reduced2_bgr": {
+     "out_shape": [
+      360,
+      640,
+      3
+     ],
+     "single_call": {
+      "n": 10,
+      "median_ms": 1.3945,
+      "mean_ms": 1.398,
+      "p90_ms": 1.4761,
+      "p99_ms": 1.5844,
+      "min_ms": 1.2803,
+      "max_ms": 1.5964
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 408,
+       "elapsed_s": 0.5,
+       "decodes_per_s": 815.9
+      },
+      {
+       "threads": 5,
+       "decodes": 1482,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 2955.9
+      }
+     ]
+    },
+    "simplejpeg_bgr": {
+     "out_shape": [
+      720,
+      1280,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 1.8115,
+      "mean_ms": 1.8649,
+      "p90_ms": 2.1254,
+      "p99_ms": 2.1637,
+      "min_ms": 1.5828,
+      "max_ms": 2.1679
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 218,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 435.5
+      },
+      {
+       "threads": 5,
+       "decodes": 910,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 1811.7
+      }
+     ]
+    },
+    "simplejpeg_bgr_fast": {
+     "out_shape": [
+      720,
+      1280,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 8,
+     "single_call": {
+      "n": 10,
+      "median_ms": 1.6599,
+      "mean_ms": 1.6342,
+      "p90_ms": 1.7766,
+      "p99_ms": 1.8493,
+      "min_ms": 1.4007,
+      "max_ms": 1.8574
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 288,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 575.0
+      },
+      {
+       "threads": 5,
+       "decodes": 1237,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 2465.9
+      }
+     ]
+    },
+    "simplejpeg_bgr_min_h360": {
+     "out_shape": [
+      360,
+      640,
+      3
+     ],
+     "single_call": {
+      "n": 10,
+      "median_ms": 1.0494,
+      "mean_ms": 1.0638,
+      "p90_ms": 1.3237,
+      "p99_ms": 1.3286,
+      "min_ms": 0.8021,
+      "max_ms": 1.3291
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 508,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 1014.4
+      },
+      {
+       "threads": 5,
+       "decodes": 2132,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 4253.8
+      }
+     ]
+    },
+    "simplejpeg_bgr_into_buffer": {
+     "out_shape": [
+      720,
+      1280,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 1.587,
+      "mean_ms": 1.5654,
+      "p90_ms": 1.7256,
+      "p99_ms": 1.8333,
+      "min_ms": 1.2516,
+      "max_ms": 1.8453
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 299,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 594.9
+      },
+      {
+       "threads": 5,
+       "decodes": 1339,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 2665.9
+      }
+     ]
+    },
+    "turbojpeg_bgr": {
+     "out_shape": [
+      720,
+      1280,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 1.6311,
+      "mean_ms": 1.6949,
+      "p90_ms": 1.77,
+      "p99_ms": 2.1293,
+      "min_ms": 1.5871,
+      "max_ms": 2.1692
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 243,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 484.4
+      },
+      {
+       "threads": 5,
+       "decodes": 979,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 1947.6
+      }
+     ]
+    },
+    "turbojpeg_bgr_scale_1_2": {
+     "out_shape": [
+      360,
+      640,
+      3
+     ],
+     "single_call": {
+      "n": 10,
+      "median_ms": 0.9152,
+      "mean_ms": 0.924,
+      "p90_ms": 1.0128,
+      "p99_ms": 1.0367,
+      "min_ms": 0.824,
+      "max_ms": 1.0394
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 440,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 877.9
+      },
+      {
+       "threads": 5,
+       "decodes": 2065,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 4118.2
+      }
+     ]
+    },
+    "pyav_mjpeg_bgr24": {
+     "out_shape": [
+      720,
+      1280,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 6,
+     "single_call": {
+      "n": 10,
+      "median_ms": 5.4897,
+      "mean_ms": 5.4767,
+      "p90_ms": 5.7655,
+      "p99_ms": 5.9907,
+      "min_ms": 5.1432,
+      "max_ms": 6.0157
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 93,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 185.4
+      },
+      {
+       "threads": 5,
+       "decodes": 254,
+       "elapsed_s": 0.507,
+       "decodes_per_s": 500.5
+      }
+     ]
+    },
+    "pyav_mjpeg_native_yuv": {
+     "single_call": {
+      "n": 10,
+      "median_ms": 1.4279,
+      "mean_ms": 1.4164,
+      "p90_ms": 1.501,
+      "p99_ms": 1.5805,
+      "min_ms": 1.3198,
+      "max_ms": 1.5893
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 320,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 639.3
+      },
+      {
+       "threads": 5,
+       "decodes": 1501,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 2992.0
+      }
+     ]
+    }
+   }
+  },
+  "c922_720p_flash": {
+   "frames": 10,
+   "jpeg_bytes_median": 78265,
+   "shape": [
+    720,
+    1280,
+    3
+   ],
+   "methods": {
+    "cv2_imdecode_bgr": {
+     "out_shape": [
+      720,
+      1280,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 3.3479,
+      "mean_ms": 3.3016,
+      "p90_ms": 3.8259,
+      "p99_ms": 4.0302,
+      "min_ms": 2.7042,
+      "max_ms": 4.0529
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 153,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 304.8
+      },
+      {
+       "threads": 5,
+       "decodes": 583,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 1160.8
+      }
+     ]
+    },
+    "cv2_imdecode_reduced2_bgr": {
+     "out_shape": [
+      360,
+      640,
+      3
+     ],
+     "single_call": {
+      "n": 10,
+      "median_ms": 1.4794,
+      "mean_ms": 1.4258,
+      "p90_ms": 1.5902,
+      "p99_ms": 1.7758,
+      "min_ms": 1.1287,
+      "max_ms": 1.7964
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 342,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 682.5
+      },
+      {
+       "threads": 5,
+       "decodes": 1590,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 3170.3
+      }
+     ]
+    },
+    "simplejpeg_bgr": {
+     "out_shape": [
+      720,
+      1280,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 2.3315,
+      "mean_ms": 2.2834,
+      "p90_ms": 2.68,
+      "p99_ms": 2.6844,
+      "min_ms": 1.8388,
+      "max_ms": 2.6849
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 203,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 405.3
+      },
+      {
+       "threads": 5,
+       "decodes": 852,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 1696.6
+      }
+     ]
+    },
+    "simplejpeg_bgr_fast": {
+     "out_shape": [
+      720,
+      1280,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 26,
+     "single_call": {
+      "n": 10,
+      "median_ms": 2.0056,
+      "mean_ms": 2.0153,
+      "p90_ms": 2.4255,
+      "p99_ms": 2.4377,
+      "min_ms": 1.6433,
+      "max_ms": 2.439
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 206,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 409.8
+      },
+      {
+       "threads": 5,
+       "decodes": 900,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 1791.3
+      }
+     ]
+    },
+    "simplejpeg_bgr_min_h360": {
+     "out_shape": [
+      360,
+      640,
+      3
+     ],
+     "single_call": {
+      "n": 10,
+      "median_ms": 1.4482,
+      "mean_ms": 1.4289,
+      "p90_ms": 1.7556,
+      "p99_ms": 1.7939,
+      "min_ms": 1.1278,
+      "max_ms": 1.7981
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 298,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 595.1
+      },
+      {
+       "threads": 5,
+       "decodes": 1449,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 2889.5
+      }
+     ]
+    },
+    "simplejpeg_bgr_into_buffer": {
+     "out_shape": [
+      720,
+      1280,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 2.1301,
+      "mean_ms": 2.1259,
+      "p90_ms": 2.2614,
+      "p99_ms": 2.3024,
+      "min_ms": 1.8794,
+      "max_ms": 2.3069
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 229,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 455.8
+      },
+      {
+       "threads": 5,
+       "decodes": 983,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 1959.4
+      }
+     ]
+    },
+    "turbojpeg_bgr": {
+     "out_shape": [
+      720,
+      1280,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 2.8746,
+      "mean_ms": 2.9685,
+      "p90_ms": 3.4236,
+      "p99_ms": 3.7076,
+      "min_ms": 2.5876,
+      "max_ms": 3.7392
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 198,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 395.0
+      },
+      {
+       "threads": 5,
+       "decodes": 842,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 1676.3
+      }
+     ]
+    },
+    "turbojpeg_bgr_scale_1_2": {
+     "out_shape": [
+      360,
+      640,
+      3
+     ],
+     "single_call": {
+      "n": 10,
+      "median_ms": 1.4943,
+      "mean_ms": 1.5086,
+      "p90_ms": 1.7513,
+      "p99_ms": 2.325,
+      "min_ms": 1.0791,
+      "max_ms": 2.3887
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 307,
+       "elapsed_s": 0.5,
+       "decodes_per_s": 613.5
+      },
+      {
+       "threads": 5,
+       "decodes": 1603,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 3198.6
+      }
+     ]
+    },
+    "pyav_mjpeg_bgr24": {
+     "out_shape": [
+      720,
+      1280,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 24,
+     "single_call": {
+      "n": 10,
+      "median_ms": 5.8751,
+      "mean_ms": 6.0519,
+      "p90_ms": 6.711,
+      "p99_ms": 6.7197,
+      "min_ms": 5.595,
+      "max_ms": 6.7207
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 79,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 157.1
+      },
+      {
+       "threads": 5,
+       "decodes": 281,
+       "elapsed_s": 0.508,
+       "decodes_per_s": 553.7
+      }
+     ]
+    },
+    "pyav_mjpeg_native_yuv": {
+     "single_call": {
+      "n": 10,
+      "median_ms": 1.5948,
+      "mean_ms": 1.6794,
+      "p90_ms": 1.9077,
+      "p99_ms": 1.9489,
+      "min_ms": 1.4812,
+      "max_ms": 1.9535
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 276,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 550.4
+      },
+      {
+       "threads": 5,
+       "decodes": 1255,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 2501.5
+      }
+     ]
+    }
+   }
+  },
+  "c930e_1080p": {
+   "frames": 10,
+   "jpeg_bytes_median": 134092,
+   "shape": [
+    1080,
+    1920,
+    3
+   ],
+   "methods": {
+    "cv2_imdecode_bgr": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 6.7921,
+      "mean_ms": 6.872,
+      "p90_ms": 7.6314,
+      "p99_ms": 8.4561,
+      "min_ms": 5.6245,
+      "max_ms": 8.5477
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 74,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 147.8
+      },
+      {
+       "threads": 5,
+       "decodes": 294,
+       "elapsed_s": 0.506,
+       "decodes_per_s": 580.7
+      }
+     ]
+    },
+    "cv2_imdecode_reduced2_bgr": {
+     "out_shape": [
+      540,
+      960,
+      3
+     ],
+     "single_call": {
+      "n": 10,
+      "median_ms": 2.7237,
+      "mean_ms": 2.9318,
+      "p90_ms": 3.7463,
+      "p99_ms": 3.8323,
+      "min_ms": 2.488,
+      "max_ms": 3.8418
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 148,
+       "elapsed_s": 0.504,
+       "decodes_per_s": 293.9
+      },
+      {
+       "threads": 5,
+       "decodes": 642,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 1275.6
+      }
+     ]
+    },
+    "simplejpeg_bgr": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 4.9998,
+      "mean_ms": 5.0212,
+      "p90_ms": 5.2484,
+      "p99_ms": 5.7125,
+      "min_ms": 4.4472,
+      "max_ms": 5.7641
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 95,
+       "elapsed_s": 0.504,
+       "decodes_per_s": 188.6
+      },
+      {
+       "threads": 5,
+       "decodes": 403,
+       "elapsed_s": 0.506,
+       "decodes_per_s": 796.7
+      }
+     ]
+    },
+    "simplejpeg_bgr_fast": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 11,
+     "single_call": {
+      "n": 10,
+      "median_ms": 4.5385,
+      "mean_ms": 4.5787,
+      "p90_ms": 4.8259,
+      "p99_ms": 4.9559,
+      "min_ms": 4.0089,
+      "max_ms": 4.9703
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 107,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 212.5
+      },
+      {
+       "threads": 5,
+       "decodes": 490,
+       "elapsed_s": 0.504,
+       "decodes_per_s": 972.0
+      }
+     ]
+    },
+    "simplejpeg_bgr_min_h360": {
+     "out_shape": [
+      405,
+      720,
+      3
+     ],
+     "single_call": {
+      "n": 10,
+      "median_ms": 2.9579,
+      "mean_ms": 3.2556,
+      "p90_ms": 4.2054,
+      "p99_ms": 4.6425,
+      "min_ms": 2.7681,
+      "max_ms": 4.6911
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 178,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 354.9
+      },
+      {
+       "threads": 5,
+       "decodes": 854,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 1698.9
+      }
+     ]
+    },
+    "simplejpeg_bgr_into_buffer": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 4.1922,
+      "mean_ms": 4.1306,
+      "p90_ms": 4.7517,
+      "p99_ms": 5.4533,
+      "min_ms": 3.0484,
+      "max_ms": 5.5313
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 99,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 196.8
+      },
+      {
+       "threads": 5,
+       "decodes": 448,
+       "elapsed_s": 0.507,
+       "decodes_per_s": 884.5
+      }
+     ]
+    },
+    "turbojpeg_bgr": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 5.1852,
+      "mean_ms": 5.5385,
+      "p90_ms": 7.0769,
+      "p99_ms": 7.1615,
+      "min_ms": 4.41,
+      "max_ms": 7.1709
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 95,
+       "elapsed_s": 0.504,
+       "decodes_per_s": 188.4
+      },
+      {
+       "threads": 5,
+       "decodes": 402,
+       "elapsed_s": 0.506,
+       "decodes_per_s": 793.8
+      }
+     ]
+    },
+    "turbojpeg_bgr_scale_1_2": {
+     "out_shape": [
+      540,
+      960,
+      3
+     ],
+     "single_call": {
+      "n": 10,
+      "median_ms": 3.3289,
+      "mean_ms": 3.3164,
+      "p90_ms": 3.5445,
+      "p99_ms": 3.7561,
+      "min_ms": 2.8576,
+      "max_ms": 3.7796
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 155,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 308.8
+      },
+      {
+       "threads": 5,
+       "decodes": 746,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 1483.6
+      }
+     ]
+    },
+    "pyav_mjpeg_bgr24": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 8,
+     "single_call": {
+      "n": 10,
+      "median_ms": 7.8632,
+      "mean_ms": 7.8103,
+      "p90_ms": 8.6219,
+      "p99_ms": 8.6965,
+      "min_ms": 7.0792,
+      "max_ms": 8.7048
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 64,
+       "elapsed_s": 0.506,
+       "decodes_per_s": 126.6
+      },
+      {
+       "threads": 5,
+       "decodes": 241,
+       "elapsed_s": 0.509,
+       "decodes_per_s": 473.3
+      }
+     ]
+    },
+    "pyav_mjpeg_native_yuv": {
+     "single_call": {
+      "n": 10,
+      "median_ms": 4.0156,
+      "mean_ms": 4.01,
+      "p90_ms": 4.3404,
+      "p99_ms": 4.5075,
+      "min_ms": 3.3851,
+      "max_ms": 4.5261
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 128,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 254.8
+      },
+      {
+       "threads": 5,
+       "decodes": 611,
+       "elapsed_s": 0.504,
+       "decodes_per_s": 1211.1
+      }
+     ]
+    }
+   }
+  },
+  "c922_1080p": {
+   "frames": 10,
+   "jpeg_bytes_median": 192328,
+   "shape": [
+    1080,
+    1920,
+    3
+   ],
+   "methods": {
+    "cv2_imdecode_bgr": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 8.373,
+      "mean_ms": 8.6572,
+      "p90_ms": 9.5181,
+      "p99_ms": 10.7098,
+      "min_ms": 7.0894,
+      "max_ms": 10.8422
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 51,
+       "elapsed_s": 0.511,
+       "decodes_per_s": 99.7
+      },
+      {
+       "threads": 5,
+       "decodes": 232,
+       "elapsed_s": 0.51,
+       "decodes_per_s": 455.0
+      }
+     ]
+    },
+    "cv2_imdecode_reduced2_bgr": {
+     "out_shape": [
+      540,
+      960,
+      3
+     ],
+     "single_call": {
+      "n": 10,
+      "median_ms": 4.9093,
+      "mean_ms": 5.0255,
+      "p90_ms": 5.5,
+      "p99_ms": 6.5596,
+      "min_ms": 4.4384,
+      "max_ms": 6.6773
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 108,
+       "elapsed_s": 0.504,
+       "decodes_per_s": 214.1
+      },
+      {
+       "threads": 5,
+       "decodes": 504,
+       "elapsed_s": 0.505,
+       "decodes_per_s": 998.9
+      }
+     ]
+    },
+    "simplejpeg_bgr": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 6.0888,
+      "mean_ms": 6.3774,
+      "p90_ms": 7.1266,
+      "p99_ms": 8.6101,
+      "min_ms": 5.3965,
+      "max_ms": 8.7749
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 73,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 145.6
+      },
+      {
+       "threads": 5,
+       "decodes": 317,
+       "elapsed_s": 0.507,
+       "decodes_per_s": 625.4
+      }
+     ]
+    },
+    "simplejpeg_bgr_fast": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 13,
+     "single_call": {
+      "n": 10,
+      "median_ms": 5.991,
+      "mean_ms": 6.9801,
+      "p90_ms": 8.3178,
+      "p99_ms": 14.294,
+      "min_ms": 5.1232,
+      "max_ms": 14.958
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 94,
+       "elapsed_s": 0.504,
+       "decodes_per_s": 186.5
+      },
+      {
+       "threads": 5,
+       "decodes": 413,
+       "elapsed_s": 0.504,
+       "decodes_per_s": 819.5
+      }
+     ]
+    },
+    "simplejpeg_bgr_min_h360": {
+     "out_shape": [
+      405,
+      720,
+      3
+     ],
+     "single_call": {
+      "n": 10,
+      "median_ms": 3.4649,
+      "mean_ms": 3.4489,
+      "p90_ms": 3.6264,
+      "p99_ms": 3.7296,
+      "min_ms": 3.2065,
+      "max_ms": 3.7411
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 141,
+       "elapsed_s": 0.505,
+       "decodes_per_s": 279.3
+      },
+      {
+       "threads": 5,
+       "decodes": 642,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 1275.2
+      }
+     ]
+    },
+    "simplejpeg_bgr_into_buffer": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 5.776,
+      "mean_ms": 5.9279,
+      "p90_ms": 7.2083,
+      "p99_ms": 7.4688,
+      "min_ms": 4.6611,
+      "max_ms": 7.4977
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 91,
+       "elapsed_s": 0.505,
+       "decodes_per_s": 180.3
+      },
+      {
+       "threads": 5,
+       "decodes": 406,
+       "elapsed_s": 0.505,
+       "decodes_per_s": 804.7
+      }
+     ]
+    },
+    "turbojpeg_bgr": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 6.1357,
+      "mean_ms": 6.1564,
+      "p90_ms": 6.7036,
+      "p99_ms": 7.2544,
+      "min_ms": 5.1425,
+      "max_ms": 7.3156
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 74,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 147.4
+      },
+      {
+       "threads": 5,
+       "decodes": 330,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 656.1
+      }
+     ]
+    },
+    "turbojpeg_bgr_scale_1_2": {
+     "out_shape": [
+      540,
+      960,
+      3
+     ],
+     "single_call": {
+      "n": 10,
+      "median_ms": 4.1441,
+      "mean_ms": 4.3025,
+      "p90_ms": 4.6152,
+      "p99_ms": 4.7861,
+      "min_ms": 3.9985,
+      "max_ms": 4.8051
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 119,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 236.7
+      },
+      {
+       "threads": 5,
+       "decodes": 570,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 1132.6
+      }
+     ]
+    },
+    "pyav_mjpeg_bgr24": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 11,
+     "single_call": {
+      "n": 10,
+      "median_ms": 10.0745,
+      "mean_ms": 10.046,
+      "p90_ms": 11.0374,
+      "p99_ms": 11.2343,
+      "min_ms": 8.5994,
+      "max_ms": 11.2562
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 57,
+       "elapsed_s": 0.508,
+       "decodes_per_s": 112.2
+      },
+      {
+       "threads": 5,
+       "decodes": 194,
+       "elapsed_s": 0.51,
+       "decodes_per_s": 380.2
+      }
+     ]
+    },
+    "pyav_mjpeg_native_yuv": {
+     "single_call": {
+      "n": 10,
+      "median_ms": 4.7567,
+      "mean_ms": 4.8022,
+      "p90_ms": 5.1958,
+      "p99_ms": 5.3906,
+      "min_ms": 4.4266,
+      "max_ms": 5.4122
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 102,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 203.0
+      },
+      {
+       "threads": 5,
+       "decodes": 475,
+       "elapsed_s": 0.506,
+       "decodes_per_s": 938.7
+      }
+     ]
+    }
+   }
+  },
+  "generic_1080p": {
+   "frames": 10,
+   "jpeg_bytes_median": 59908,
+   "shape": [
+    1080,
+    1920,
+    3
+   ],
+   "methods": {
+    "cv2_imdecode_bgr": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 7.3681,
+      "mean_ms": 7.7974,
+      "p90_ms": 9.1,
+      "p99_ms": 10.0203,
+      "min_ms": 6.9794,
+      "max_ms": 10.1226
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 66,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 131.6
+      },
+      {
+       "threads": 5,
+       "decodes": 273,
+       "elapsed_s": 0.506,
+       "decodes_per_s": 539.3
+      }
+     ]
+    },
+    "cv2_imdecode_reduced2_bgr": {
+     "out_shape": [
+      540,
+      960,
+      3
+     ],
+     "single_call": {
+      "n": 10,
+      "median_ms": 3.1256,
+      "mean_ms": 3.351,
+      "p90_ms": 4.4033,
+      "p99_ms": 4.969,
+      "min_ms": 2.5889,
+      "max_ms": 5.0319
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 148,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 294.1
+      },
+      {
+       "threads": 5,
+       "decodes": 711,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 1413.8
+      }
+     ]
+    },
+    "simplejpeg_bgr": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 4.8271,
+      "mean_ms": 5.1624,
+      "p90_ms": 6.4186,
+      "p99_ms": 6.8961,
+      "min_ms": 3.6884,
+      "max_ms": 6.9491
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 107,
+       "elapsed_s": 0.505,
+       "decodes_per_s": 211.8
+      },
+      {
+       "threads": 5,
+       "decodes": 435,
+       "elapsed_s": 0.505,
+       "decodes_per_s": 861.0
+      }
+     ]
+    },
+    "simplejpeg_bgr_fast": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 12,
+     "single_call": {
+      "n": 10,
+      "median_ms": 4.1684,
+      "mean_ms": 4.5666,
+      "p90_ms": 6.2243,
+      "p99_ms": 6.5091,
+      "min_ms": 3.5322,
+      "max_ms": 6.5407
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 118,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 235.2
+      },
+      {
+       "threads": 5,
+       "decodes": 500,
+       "elapsed_s": 0.504,
+       "decodes_per_s": 992.7
+      }
+     ]
+    },
+    "simplejpeg_bgr_min_h360": {
+     "out_shape": [
+      405,
+      720,
+      3
+     ],
+     "single_call": {
+      "n": 10,
+      "median_ms": 2.2912,
+      "mean_ms": 2.4307,
+      "p90_ms": 2.9923,
+      "p99_ms": 3.0111,
+      "min_ms": 1.9547,
+      "max_ms": 3.0132
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 213,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 425.6
+      },
+      {
+       "threads": 5,
+       "decodes": 1075,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 2141.0
+      }
+     ]
+    },
+    "simplejpeg_bgr_into_buffer": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 3.8953,
+      "mean_ms": 3.8792,
+      "p90_ms": 4.6346,
+      "p99_ms": 5.3707,
+      "min_ms": 2.6678,
+      "max_ms": 5.4525
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 139,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 277.1
+      },
+      {
+       "threads": 5,
+       "decodes": 548,
+       "elapsed_s": 0.505,
+       "decodes_per_s": 1086.1
+      }
+     ]
+    },
+    "turbojpeg_bgr": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 0,
+     "single_call": {
+      "n": 10,
+      "median_ms": 5.6113,
+      "mean_ms": 5.3746,
+      "p90_ms": 6.8199,
+      "p99_ms": 7.6803,
+      "min_ms": 3.9438,
+      "max_ms": 7.7759
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 99,
+       "elapsed_s": 0.502,
+       "decodes_per_s": 197.1
+      },
+      {
+       "threads": 5,
+       "decodes": 441,
+       "elapsed_s": 0.504,
+       "decodes_per_s": 875.6
+      }
+     ]
+    },
+    "turbojpeg_bgr_scale_1_2": {
+     "out_shape": [
+      540,
+      960,
+      3
+     ],
+     "single_call": {
+      "n": 10,
+      "median_ms": 2.4168,
+      "mean_ms": 2.5945,
+      "p90_ms": 3.4325,
+      "p99_ms": 3.4998,
+      "min_ms": 1.7379,
+      "max_ms": 3.5073
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 182,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 363.1
+      },
+      {
+       "threads": 5,
+       "decodes": 890,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 1769.6
+      }
+     ]
+    },
+    "pyav_mjpeg_bgr24": {
+     "out_shape": [
+      1080,
+      1920,
+      3
+     ],
+     "max_abs_diff_vs_cv2": 11,
+     "single_call": {
+      "n": 10,
+      "median_ms": 7.3068,
+      "mean_ms": 7.3339,
+      "p90_ms": 7.9888,
+      "p99_ms": 8.297,
+      "min_ms": 6.5536,
+      "max_ms": 8.3313
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 66,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 131.2
+      },
+      {
+       "threads": 5,
+       "decodes": 241,
+       "elapsed_s": 0.511,
+       "decodes_per_s": 471.7
+      }
+     ]
+    },
+    "pyav_mjpeg_native_yuv": {
+     "single_call": {
+      "n": 10,
+      "median_ms": 3.1368,
+      "mean_ms": 3.3325,
+      "p90_ms": 3.9908,
+      "p99_ms": 4.1614,
+      "min_ms": 2.8226,
+      "max_ms": 4.1804
+     },
+     "threaded": [
+      {
+       "threads": 1,
+       "decodes": 143,
+       "elapsed_s": 0.501,
+       "decodes_per_s": 285.4
+      },
+      {
+       "threads": 5,
+       "decodes": 700,
+       "elapsed_s": 0.503,
+       "decodes_per_s": 1392.4
+      }
+     ]
+    }
+   }
+  }
+ }
+}

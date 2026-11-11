@@ -1,0 +1,977 @@
+{
+ "runner": "electron",
+ "versions": {
+  "electron": "35.7.5",
+  "chrome": "134.0.6998.205"
+ },
+ "manifest": {
+  "w": 1920,
+  "h": 1080,
+  "fps": 30,
+  "ref_frames": [
+   0,
+   1,
+   7
+  ],
+  "clips": [
+   {
+    "id": "h264_nvenc_lossless_nv12",
+    "source_mkv": "nvenc__h264_nvenc__nv12_1080p__t1.mkv",
+    "codec_string": "avc1.F40028",
+    "mkv": {
+     "file": "h264_nvenc_lossless_nv12.mkv",
+     "bytes": 35600621,
+     "packets": 60,
+     "codec_tag": "\u0000\u0000\u0000\u0000"
+    },
+    "mp4": {
+     "file": "h264_nvenc_lossless_nv12.mp4",
+     "bytes": 35599032,
+     "packets": 60,
+     "codec_tag": "avc1"
+    },
+    "wc": "h264_nvenc_lossless_nv12.wc.json",
+    "refs_sha256": {
+     "0": "4ac07c119c612b90dfd9ebae882360ebcef81ec4d6256b4ae268a2ef8e299352",
+     "1": "d1986db0482c1bfc1c17325d8f0fda8e735d08c64735a01ddf8a59a7275b1396",
+     "7": "de50a26a0cbd0804f9a95ba803c265d985a1f455c5be4e1bf78092bd547a3f61"
+    },
+    "extradata_hex_head": "01f40028ffe1002767f40028ae2b200f"
+   },
+   {
+    "id": "hevc_nvenc_lossless_nv12",
+    "source_mkv": "nvenc__hevc_nvenc__nv12_1080p__t1.mkv",
+    "codec_string": "hvc1.1.6.L120.90",
+    "mkv": {
+     "file": "hevc_nvenc_lossless_nv12.mkv",
+     "bytes": 31055467,
+     "packets": 60,
+     "codec_tag": "\u0000\u0000\u0000\u0000"
+    },
+    "mp4": {
+     "file": "hevc_nvenc_lossless_nv12.mp4",
+     "bytes": 31053755,
+     "packets": 60,
+     "codec_tag": "hev1"
+    },
+    "wc": "hevc_nvenc_lossless_nv12.wc.json",
+    "refs_sha256": {
+     "0": "4ac07c119c612b90dfd9ebae882360ebcef81ec4d6256b4ae268a2ef8e299352",
+     "1": "d1986db0482c1bfc1c17325d8f0fda8e735d08c64735a01ddf8a59a7275b1396",
+     "7": "de50a26a0cbd0804f9a95ba803c265d985a1f455c5be4e1bf78092bd547a3f61"
+    },
+    "extradata_hex_head": "01016000000090000000000078f000fc"
+   }
+  ]
+ },
+ "results": {
+  "h264_nvenc_lossless_nv12|caps": {
+   "key": "h264_nvenc_lossless_nv12|caps",
+   "mode": "caps",
+   "clip": "h264_nvenc_lossless_nv12",
+   "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36",
+   "codecString": "avc1.F40028",
+   "canPlayType": {
+    "video/mp4; codecs=\"avc1.F40028\"": "maybe",
+    "video/x-matroska; codecs=\"avc1.F40028\"": "",
+    "video/webm; codecs=\"avc1.F40028\"": "",
+    "video/x-matroska": ""
+   },
+   "mseIsTypeSupported": true,
+   "isConfigSupported": {
+    "no-preference": true,
+    "prefer-hardware": false,
+    "prefer-software": true
+   },
+   "mediaCapabilities": {
+    "supported": true,
+    "smooth": true,
+    "powerEfficient": false
+   },
+   "media": {}
+  },
+  "h264_nvenc_lossless_nv12|video-mkv": {
+   "key": "h264_nvenc_lossless_nv12|video-mkv",
+   "mode": "video",
+   "clip": "h264_nvenc_lossless_nv12",
+   "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36",
+   "codecString": "avc1.F40028",
+   "file": "h264_nvenc_lossless_nv12.mkv",
+   "events": [
+    "loadedmetadata",
+    "loadeddata",
+    "canplay",
+    "ended",
+    "canplay",
+    "canplay",
+    "canplay"
+   ],
+   "ready": "loadeddata",
+   "meta": {
+    "duration": 2,
+    "w": 1920,
+    "h": 1080
+   },
+   "playOk": true,
+   "ended": true,
+   "rvfcCallbacks": 59,
+   "maxPresentedFrames": 60,
+   "decodedFrames": 60,
+   "droppedFrames": 0,
+   "readback": [
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1080,
+     "timestampUs": 0,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 0,
+     "frameIndexFromTimestamp": 0
+    },
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1080,
+     "timestampUs": 33000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 1,
+     "frameIndexFromTimestamp": 1
+    },
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1080,
+     "timestampUs": 233000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 7,
+     "frameIndexFromTimestamp": 7
+    }
+   ],
+   "media": {
+    "94A277FF215CAA1B5C3E0D59B7A155FC": {
+     "props": {
+      "kVideoDecoderName": "FFmpegVideoDecoder",
+      "kIsPlatformVideoDecoder": "false",
+      "kResolution": "1920x1080",
+      "kVideoTracks": "\"[{\\\"alpha mode\\\":\\\"is_opaque\\\",\\\"codec\\\":\\\"h264\\\",\\\"coded size\\\":\\\"1920x1080\\\",\\\"color space\\\":{\\\"matrix\\\":\\\"BT709\\\",\\\"primaries\\\":\\\"BT709\\\",\\\"range\\\":\\\"LIMITED\\\",\\\"transfer\\\":\\\"BT709\\\"},\\\"encryption scheme\\\":\\\"Unencrypted\\\",\\\"has extra data\\\":true,\\\"hdr metadata\\\":\\\"unset\\\",\\\"natural size\\\":\\\"1920x1080\\\",\\\"orientation\\\":\\\"0°\\\",\\\"profile\\\":\\\"h264 high 4:4:4 predictive\\\",\\\"visible rect\\\":\\\"0,0 192",
+      "kFrameUrl": "http://127.0.0.1:47613/h/page.html?mode=video&clip=h264_nvenc_lossless_nv12&file=h264_nvenc_lossless_nv12.mkv&key=h264_nvenc_lossless_nv12%7Cvideo-mkv&server=http%3A%2F%2F127.0.0.1%3A47613",
+      "kIsRangeHeaderSupported": "true"
+     },
+     "errors": [],
+     "messages": []
+    }
+   }
+  },
+  "h264_nvenc_lossless_nv12|video-mp4": {
+   "key": "h264_nvenc_lossless_nv12|video-mp4",
+   "mode": "video",
+   "clip": "h264_nvenc_lossless_nv12",
+   "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36",
+   "codecString": "avc1.F40028",
+   "file": "h264_nvenc_lossless_nv12.mp4",
+   "events": [
+    "loadedmetadata",
+    "loadeddata",
+    "canplay",
+    "ended",
+    "canplay",
+    "canplay",
+    "canplay"
+   ],
+   "ready": "loadeddata",
+   "meta": {
+    "duration": 2,
+    "w": 1920,
+    "h": 1080
+   },
+   "playOk": true,
+   "ended": true,
+   "rvfcCallbacks": 59,
+   "maxPresentedFrames": 60,
+   "decodedFrames": 60,
+   "droppedFrames": 0,
+   "readback": [
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1080,
+     "timestampUs": 0,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 0,
+     "frameIndexFromTimestamp": 0
+    },
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1080,
+     "timestampUs": 33000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 1,
+     "frameIndexFromTimestamp": 1
+    },
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1080,
+     "timestampUs": 233000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 7,
+     "frameIndexFromTimestamp": 7
+    }
+   ],
+   "media": {
+    "3A79248FE19C61BB33ABBE910A3A6EDB": {
+     "props": {
+      "kVideoDecoderName": "FFmpegVideoDecoder",
+      "kIsPlatformVideoDecoder": "false",
+      "kResolution": "1920x1080",
+      "kVideoTracks": "\"[{\\\"alpha mode\\\":\\\"is_opaque\\\",\\\"codec\\\":\\\"h264\\\",\\\"coded size\\\":\\\"1920x1080\\\",\\\"color space\\\":{\\\"matrix\\\":\\\"BT709\\\",\\\"primaries\\\":\\\"BT709\\\",\\\"range\\\":\\\"LIMITED\\\",\\\"transfer\\\":\\\"BT709\\\"},\\\"encryption scheme\\\":\\\"Unencrypted\\\",\\\"has extra data\\\":true,\\\"hdr metadata\\\":\\\"unset\\\",\\\"natural size\\\":\\\"1920x1080\\\",\\\"orientation\\\":\\\"0°\\\",\\\"profile\\\":\\\"h264 high 4:4:4 predictive\\\",\\\"visible rect\\\":\\\"0,0 192",
+      "kFrameUrl": "http://127.0.0.1:47613/h/page.html?mode=video&clip=h264_nvenc_lossless_nv12&file=h264_nvenc_lossless_nv12.mp4&key=h264_nvenc_lossless_nv12%7Cvideo-mp4&server=http%3A%2F%2F127.0.0.1%3A47613",
+      "kIsRangeHeaderSupported": "true"
+     },
+     "errors": [],
+     "messages": []
+    }
+   }
+  },
+  "h264_nvenc_lossless_nv12|wc|no-preference": {
+   "key": "h264_nvenc_lossless_nv12|wc|no-preference",
+   "mode": "wc",
+   "clip": "h264_nvenc_lossless_nv12",
+   "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36",
+   "codecString": "avc1.F40028",
+   "hw": "no-preference",
+   "isConfigSupported": true,
+   "errors": [],
+   "outputs": 8,
+   "readback": [
+    {
+     "format": "I420",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 0,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 0,
+     "frameIndexFromTimestamp": 0
+    },
+    {
+     "format": "I420",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 33000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 1,
+     "frameIndexFromTimestamp": 1
+    },
+    {
+     "format": "I420",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 233000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 7,
+     "frameIndexFromTimestamp": 7
+    }
+   ],
+   "media": {
+    "2D912B3FFDB2A9091C48DABFB4FAEF42": {
+     "props": {
+      "kVideoDecoderName": "FFmpegVideoDecoder",
+      "kIsPlatformVideoDecoder": "false",
+      "kVideoTracks": "\"[{\\\"alpha mode\\\":\\\"is_opaque\\\",\\\"codec\\\":\\\"h264\\\",\\\"coded size\\\":\\\"1920x1080\\\",\\\"color space\\\":{\\\"matrix\\\":\\\"BT709\\\",\\\"primaries\\\":\\\"BT709\\\",\\\"range\\\":\\\"LIMITED\\\",\\\"transfer\\\":\\\"BT709\\\"},\\\"encryption scheme\\\":\\\"Unencrypted\\\",\\\"has extra data\\\":false,\\\"hdr metadata\\\":\\\"unset\\\",\\\"natural size\\\":\\\"1920x1080\\\",\\\"orientation\\\":\\\"0°\\\",\\\"profile\\\":\\\"h264 high 4:4:4 predictive\\\",\\\"visible rect\\\":\\\"0,0 19",
+      "kFrameUrl": "http://127.0.0.1:47613/h/page.html?mode=wc&clip=h264_nvenc_lossless_nv12&hw=no-preference&key=h264_nvenc_lossless_nv12%7Cwc%7Cno-preference&server=http%3A%2F%2F127.0.0.1%3A47613"
+     },
+     "errors": [],
+     "messages": []
+    }
+   }
+  },
+  "h264_nvenc_lossless_nv12|wc|prefer-hardware": {
+   "key": "h264_nvenc_lossless_nv12|wc|prefer-hardware",
+   "mode": "wc",
+   "clip": "h264_nvenc_lossless_nv12",
+   "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36",
+   "codecString": "avc1.F40028",
+   "hw": "prefer-hardware",
+   "isConfigSupported": false,
+   "errors": [
+    "OperationError: Unsupported configuration. Check isConfigSupported() prior to calling configure().",
+    "throw OperationError: Unsupported configuration. Check isConfigSupported() prior to calling configure()."
+   ],
+   "outputs": 0,
+   "readback": [
+    {
+     "k": 0,
+     "missing": true
+    },
+    {
+     "k": 1,
+     "missing": true
+    },
+    {
+     "k": 7,
+     "missing": true
+    }
+   ],
+   "media": {
+    "3E40868A11B406E0D0BB5F379FEAE681": {
+     "props": {
+      "kFrameUrl": "http://127.0.0.1:47613/h/page.html?mode=wc&clip=h264_nvenc_lossless_nv12&hw=prefer-hardware&key=h264_nvenc_lossless_nv12%7Cwc%7Cprefer-hardware&server=http%3A%2F%2F127.0.0.1%3A47613"
+     },
+     "errors": [
+      "DecoderStatus 202 {}"
+     ],
+     "messages": []
+    }
+   }
+  },
+  "h264_nvenc_lossless_nv12|wc|prefer-software": {
+   "key": "h264_nvenc_lossless_nv12|wc|prefer-software",
+   "mode": "wc",
+   "clip": "h264_nvenc_lossless_nv12",
+   "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36",
+   "codecString": "avc1.F40028",
+   "hw": "prefer-software",
+   "isConfigSupported": true,
+   "errors": [],
+   "outputs": 8,
+   "readback": [
+    {
+     "format": "I420",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 0,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 0,
+     "frameIndexFromTimestamp": 0
+    },
+    {
+     "format": "I420",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 33000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 1,
+     "frameIndexFromTimestamp": 1
+    },
+    {
+     "format": "I420",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 233000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 7,
+     "frameIndexFromTimestamp": 7
+    }
+   ],
+   "media": {
+    "1DADD2E01ED8BF936D9A88CD8E499600": {
+     "props": {
+      "kVideoDecoderName": "FFmpegVideoDecoder",
+      "kIsPlatformVideoDecoder": "false",
+      "kVideoTracks": "\"[{\\\"alpha mode\\\":\\\"is_opaque\\\",\\\"codec\\\":\\\"h264\\\",\\\"coded size\\\":\\\"1920x1080\\\",\\\"color space\\\":{\\\"matrix\\\":\\\"BT709\\\",\\\"primaries\\\":\\\"BT709\\\",\\\"range\\\":\\\"LIMITED\\\",\\\"transfer\\\":\\\"BT709\\\"},\\\"encryption scheme\\\":\\\"Unencrypted\\\",\\\"has extra data\\\":false,\\\"hdr metadata\\\":\\\"unset\\\",\\\"natural size\\\":\\\"1920x1080\\\",\\\"orientation\\\":\\\"0°\\\",\\\"profile\\\":\\\"h264 high 4:4:4 predictive\\\",\\\"visible rect\\\":\\\"0,0 19",
+      "kFrameUrl": "http://127.0.0.1:47613/h/page.html?mode=wc&clip=h264_nvenc_lossless_nv12&hw=prefer-software&key=h264_nvenc_lossless_nv12%7Cwc%7Cprefer-software&server=http%3A%2F%2F127.0.0.1%3A47613"
+     },
+     "errors": [],
+     "messages": []
+    }
+   }
+  },
+  "hevc_nvenc_lossless_nv12|caps": {
+   "key": "hevc_nvenc_lossless_nv12|caps",
+   "mode": "caps",
+   "clip": "hevc_nvenc_lossless_nv12",
+   "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36",
+   "codecString": "hvc1.1.6.L120.90",
+   "canPlayType": {
+    "video/mp4; codecs=\"hvc1.1.6.L120.90\"": "probably",
+    "video/x-matroska; codecs=\"hvc1.1.6.L120.90\"": "",
+    "video/webm; codecs=\"hvc1.1.6.L120.90\"": "",
+    "video/x-matroska": ""
+   },
+   "mseIsTypeSupported": true,
+   "isConfigSupported": {
+    "no-preference": true,
+    "prefer-hardware": true,
+    "prefer-software": false
+   },
+   "mediaCapabilities": {
+    "supported": true,
+    "smooth": true,
+    "powerEfficient": true
+   },
+   "media": {}
+  },
+  "hevc_nvenc_lossless_nv12|video-mkv": {
+   "key": "hevc_nvenc_lossless_nv12|video-mkv",
+   "mode": "video",
+   "clip": "hevc_nvenc_lossless_nv12",
+   "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36",
+   "codecString": "hvc1.1.6.L120.90",
+   "file": "hevc_nvenc_lossless_nv12.mkv",
+   "events": [
+    "loadedmetadata",
+    "loadeddata",
+    "canplay",
+    "ended",
+    "canplay",
+    "canplay",
+    "canplay"
+   ],
+   "ready": "loadeddata",
+   "meta": {
+    "duration": 2,
+    "w": 1920,
+    "h": 1080
+   },
+   "playOk": true,
+   "ended": true,
+   "rvfcCallbacks": 58,
+   "maxPresentedFrames": 59,
+   "decodedFrames": 60,
+   "droppedFrames": 1,
+   "readback": [
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 0,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 0,
+     "frameIndexFromTimestamp": 0
+    },
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 33000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 1,
+     "frameIndexFromTimestamp": 1
+    },
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 233000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 7,
+     "frameIndexFromTimestamp": 7
+    }
+   ],
+   "media": {
+    "5BA9844E4FF860F26017D37797163AA6": {
+     "props": {
+      "kVideoDecoderName": "D3D11VideoDecoder",
+      "kIsPlatformVideoDecoder": "true",
+      "kResolution": "1920x1080",
+      "kVideoTracks": "\"[{\\\"alpha mode\\\":\\\"is_opaque\\\",\\\"codec\\\":\\\"hevc\\\",\\\"coded size\\\":\\\"1920x1080\\\",\\\"color space\\\":{\\\"matrix\\\":\\\"BT709\\\",\\\"primaries\\\":\\\"BT709\\\",\\\"range\\\":\\\"LIMITED\\\",\\\"transfer\\\":\\\"BT709\\\"},\\\"encryption scheme\\\":\\\"Unencrypted\\\",\\\"has extra data\\\":true,\\\"hdr metadata\\\":\\\"unset\\\",\\\"natural size\\\":\\\"1920x1080\\\",\\\"orientation\\\":\\\"0°\\\",\\\"profile\\\":\\\"hevc main\\\",\\\"visible rect\\\":\\\"0,0 1920x1080\\\"}]\"",
+      "kFrameUrl": "http://127.0.0.1:47613/h/page.html?mode=video&clip=hevc_nvenc_lossless_nv12&file=hevc_nvenc_lossless_nv12.mkv&key=hevc_nvenc_lossless_nv12%7Cvideo-mkv&server=http%3A%2F%2F127.0.0.1%3A47613",
+      "kIsRangeHeaderSupported": "true"
+     },
+     "errors": [],
+     "messages": []
+    }
+   }
+  },
+  "hevc_nvenc_lossless_nv12|video-mp4": {
+   "key": "hevc_nvenc_lossless_nv12|video-mp4",
+   "mode": "video",
+   "clip": "hevc_nvenc_lossless_nv12",
+   "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36",
+   "codecString": "hvc1.1.6.L120.90",
+   "file": "hevc_nvenc_lossless_nv12.mp4",
+   "events": [
+    "loadedmetadata",
+    "loadeddata",
+    "canplay",
+    "ended",
+    "canplay",
+    "canplay",
+    "canplay"
+   ],
+   "ready": "loadeddata",
+   "meta": {
+    "duration": 2,
+    "w": 1920,
+    "h": 1080
+   },
+   "playOk": true,
+   "ended": true,
+   "rvfcCallbacks": 59,
+   "maxPresentedFrames": 60,
+   "decodedFrames": 60,
+   "droppedFrames": 0,
+   "readback": [
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 0,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 0,
+     "frameIndexFromTimestamp": 0
+    },
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 33000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 1,
+     "frameIndexFromTimestamp": 1
+    },
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 233000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 7,
+     "frameIndexFromTimestamp": 7
+    }
+   ],
+   "media": {
+    "C4CE87A28973B9AC59A944209C65632A": {
+     "props": {
+      "kVideoDecoderName": "D3D11VideoDecoder",
+      "kIsPlatformVideoDecoder": "true",
+      "kResolution": "1920x1080",
+      "kVideoTracks": "\"[{\\\"alpha mode\\\":\\\"is_opaque\\\",\\\"codec\\\":\\\"hevc\\\",\\\"coded size\\\":\\\"1920x1080\\\",\\\"color space\\\":{\\\"matrix\\\":\\\"BT709\\\",\\\"primaries\\\":\\\"BT709\\\",\\\"range\\\":\\\"LIMITED\\\",\\\"transfer\\\":\\\"BT709\\\"},\\\"encryption scheme\\\":\\\"Unencrypted\\\",\\\"has extra data\\\":true,\\\"hdr metadata\\\":\\\"unset\\\",\\\"natural size\\\":\\\"1920x1080\\\",\\\"orientation\\\":\\\"0°\\\",\\\"profile\\\":\\\"hevc main\\\",\\\"visible rect\\\":\\\"0,0 1920x1080\\\"}]\"",
+      "kFrameUrl": "http://127.0.0.1:47613/h/page.html?mode=video&clip=hevc_nvenc_lossless_nv12&file=hevc_nvenc_lossless_nv12.mp4&key=hevc_nvenc_lossless_nv12%7Cvideo-mp4&server=http%3A%2F%2F127.0.0.1%3A47613",
+      "kIsRangeHeaderSupported": "true"
+     },
+     "errors": [],
+     "messages": []
+    }
+   }
+  },
+  "hevc_nvenc_lossless_nv12|wc|no-preference": {
+   "key": "hevc_nvenc_lossless_nv12|wc|no-preference",
+   "mode": "wc",
+   "clip": "hevc_nvenc_lossless_nv12",
+   "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36",
+   "codecString": "hvc1.1.6.L120.90",
+   "hw": "no-preference",
+   "isConfigSupported": true,
+   "errors": [],
+   "outputs": 8,
+   "readback": [
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 0,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 0,
+     "frameIndexFromTimestamp": 0
+    },
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 33000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 1,
+     "frameIndexFromTimestamp": 1
+    },
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 233000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 7,
+     "frameIndexFromTimestamp": 7
+    }
+   ],
+   "media": {
+    "2AAF30314E76BCDF03E485DB19D1704E": {
+     "props": {
+      "kVideoDecoderName": "D3D11VideoDecoder",
+      "kIsPlatformVideoDecoder": "true",
+      "kVideoTracks": "\"[{\\\"alpha mode\\\":\\\"is_opaque\\\",\\\"codec\\\":\\\"hevc\\\",\\\"coded size\\\":\\\"1920x1080\\\",\\\"color space\\\":{\\\"matrix\\\":\\\"BT709\\\",\\\"primaries\\\":\\\"BT709\\\",\\\"range\\\":\\\"LIMITED\\\",\\\"transfer\\\":\\\"BT709\\\"},\\\"encryption scheme\\\":\\\"Unencrypted\\\",\\\"has extra data\\\":false,\\\"hdr metadata\\\":\\\"unset\\\",\\\"natural size\\\":\\\"1920x1080\\\",\\\"orientation\\\":\\\"0°\\\",\\\"profile\\\":\\\"hevc main\\\",\\\"visible rect\\\":\\\"0,0 1920x1080\\\"}]\"",
+      "kFrameUrl": "http://127.0.0.1:47613/h/page.html?mode=wc&clip=hevc_nvenc_lossless_nv12&hw=no-preference&key=hevc_nvenc_lossless_nv12%7Cwc%7Cno-preference&server=http%3A%2F%2F127.0.0.1%3A47613"
+     },
+     "errors": [],
+     "messages": []
+    }
+   }
+  },
+  "hevc_nvenc_lossless_nv12|wc|prefer-hardware": {
+   "key": "hevc_nvenc_lossless_nv12|wc|prefer-hardware",
+   "mode": "wc",
+   "clip": "hevc_nvenc_lossless_nv12",
+   "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36",
+   "codecString": "hvc1.1.6.L120.90",
+   "hw": "prefer-hardware",
+   "isConfigSupported": true,
+   "errors": [],
+   "outputs": 8,
+   "readback": [
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 0,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 0,
+     "frameIndexFromTimestamp": 0
+    },
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 33000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 1,
+     "frameIndexFromTimestamp": 1
+    },
+    {
+     "format": "NV12",
+     "codedWidth": 1920,
+     "codedHeight": 1088,
+     "timestampUs": 233000,
+     "visible": [
+      1920,
+      1080
+     ],
+     "compared": true,
+     "maxAbsY": 0,
+     "maxAbsU": 0,
+     "maxAbsV": 0,
+     "diffSamplesY": 0,
+     "diffChromaPairs": 0,
+     "exact": true,
+     "k": 7,
+     "frameIndexFromTimestamp": 7
+    }
+   ],
+   "media": {
+    "58235F11D7350BA2F16BF8B741D519D5": {
+     "props": {
+      "kVideoDecoderName": "D3D11VideoDecoder",
+      "kIsPlatformVideoDecoder": "true",
+      "kVideoTracks": "\"[{\\\"alpha mode\\\":\\\"is_opaque\\\",\\\"codec\\\":\\\"hevc\\\",\\\"coded size\\\":\\\"1920x1080\\\",\\\"color space\\\":{\\\"matrix\\\":\\\"BT709\\\",\\\"primaries\\\":\\\"BT709\\\",\\\"range\\\":\\\"LIMITED\\\",\\\"transfer\\\":\\\"BT709\\\"},\\\"encryption scheme\\\":\\\"Unencrypted\\\",\\\"has extra data\\\":false,\\\"hdr metadata\\\":\\\"unset\\\",\\\"natural size\\\":\\\"1920x1080\\\",\\\"orientation\\\":\\\"0°\\\",\\\"profile\\\":\\\"hevc main\\\",\\\"visible rect\\\":\\\"0,0 1920x1080\\\"}]\"",
+      "kFrameUrl": "http://127.0.0.1:47613/h/page.html?mode=wc&clip=hevc_nvenc_lossless_nv12&hw=prefer-hardware&key=hevc_nvenc_lossless_nv12%7Cwc%7Cprefer-hardware&server=http%3A%2F%2F127.0.0.1%3A47613"
+     },
+     "errors": [],
+     "messages": []
+    }
+   }
+  },
+  "hevc_nvenc_lossless_nv12|wc|prefer-software": {
+   "key": "hevc_nvenc_lossless_nv12|wc|prefer-software",
+   "mode": "wc",
+   "clip": "hevc_nvenc_lossless_nv12",
+   "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36",
+   "codecString": "hvc1.1.6.L120.90",
+   "hw": "prefer-software",
+   "isConfigSupported": false,
+   "errors": [
+    "OperationError: Unsupported configuration. Check isConfigSupported() prior to calling configure().",
+    "throw OperationError: Unsupported configuration. Check isConfigSupported() prior to calling configure()."
+   ],
+   "outputs": 0,
+   "readback": [
+    {
+     "k": 0,
+     "missing": true
+    },
+    {
+     "k": 1,
+     "missing": true
+    },
+    {
+     "k": 7,
+     "missing": true
+    }
+   ],
+   "media": {
+    "979385D8ABAFB753CB571E76496D407C": {
+     "props": {
+      "kFrameUrl": "http://127.0.0.1:47613/h/page.html?mode=wc&clip=hevc_nvenc_lossless_nv12&hw=prefer-software&key=hevc_nvenc_lossless_nv12%7Cwc%7Cprefer-software&server=http%3A%2F%2F127.0.0.1%3A47613"
+     },
+     "errors": [
+      "DecoderStatus 202 {}"
+     ],
+     "messages": []
+    }
+   }
+  }
+ },
+ "gpu": [
+  {
+   "vendorId": 4318,
+   "deviceId": 9348,
+   "active": false,
+   "driverVersion": "32.0.16.1088"
+  },
+  {
+   "vendorId": 32902,
+   "deviceId": 42880,
+   "active": false,
+   "driverVersion": "32.0.101.7088"
+  },
+  {
+   "vendorId": 4318,
+   "deviceId": 9348,
+   "active": false,
+   "driverVersion": "32.0.16.1088"
+  },
+  {
+   "vendorId": 5140,
+   "deviceId": 140,
+   "active": false,
+   "driverVersion": "10.0.26100.9711"
+  }
+ ],
+ "featureStatus": {
+  "2d_canvas": "disabled_software",
+  "canvas_oop_rasterization": "disabled_off",
+  "direct_rendering_display_compositor": "disabled_off_ok",
+  "gpu_compositing": "disabled_software",
+  "multiple_raster_threads": "enabled_on",
+  "opengl": "disabled_off",
+  "rasterization": "disabled_software",
+  "raw_draw": "disabled_off_ok",
+  "skia_graphite": "disabled_off",
+  "video_decode": "disabled_software",
+  "video_encode": "disabled_software",
+  "vulkan": "disabled_off",
+  "webgl": "disabled_off",
+  "webgl2": "disabled_off",
+  "webgpu": "disabled_off",
+  "webnn": "disabled_off"
+ }
+}

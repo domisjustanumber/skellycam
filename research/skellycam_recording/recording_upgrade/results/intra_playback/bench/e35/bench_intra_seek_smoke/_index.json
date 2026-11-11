@@ -1,0 +1,35 @@
+{
+ "suite": "bench_intra_seek",
+ "electron": "35",
+ "smoke": true,
+ "runs": [
+  {
+   "id": "c1080p30/h264_nvenc_intra.mp4|video|mid",
+   "file": "c1080p30_h264_nvenc_intra.mp4__video__mid.json",
+   "error": null
+  },
+  {
+   "id": "c1080p30/h264_nvenc_intra.mp4|webcodecs",
+   "file": "c1080p30_h264_nvenc_intra.mp4__webcodecs.json",
+   "error": null
+  },
+  {
+   "id": "c1080p30/jpeg_seq|jpeg-range-bitmap",
+   "file": "c1080p30_jpeg_seq__jpeg-range-bitmap.json",
+   "error": null
+  },
+  {
+   "id": "c1080p30/jpeg_seq|jpeg-range-imagedecoder",
+   "file": "c1080p30_jpeg_seq__jpeg-range-imagedecoder.json",
+   "error": null
+  }
+ ],
+ "switches": {
+  "env": {
+   "CSS_MEDIA_ROOT": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\intra_playback"
+  },
+  "args": [
+   "--noocclusion=1"
+  ]
+ }
+}

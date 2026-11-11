@@ -1,0 +1,758 @@
+{
+ "meta": {
+  "date": "2026-11-09T11:12:59",
+  "set": "c930e_720p_flash",
+  "kill_after_frames": 600
+ },
+ "killed": {
+  "mkv": {
+   "child_rc": 1,
+   "child_stderr": "",
+   "bytes": 33030144,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "[matroska,webm @ 0000012b0c1c3280] File ended prematurely",
+    "nb_frames": null,
+    "nb_read_packets": "597",
+    "packets_nonempty": 597
+   },
+   "pyav": {
+    "packets": 597,
+    "exact_prefix": 597,
+    "decoded": 597,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 597,
+    "frame_count_prop": -276701161105643264
+   },
+   "freemocap": {
+    "frame_count": null,
+    "error": "ValidationError: 1 validation error for VideoMetadata\n  Value error, Invalid frame range: start_frame=0, end_frame=-276701161105643264 [type=value_error, input_value={'file_path': WindowsPath...e': -276701161105643264}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2",
+    "reads_ok": 0,
+    "reads": 0
+   }
+  },
+  "mp4": {
+   "child_rc": 1,
+   "child_stderr": "",
+   "bytes": 33030188,
+   "ffprobe": {
+    "returncode": 1,
+    "stderr": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001dcac3539c0] moov atom not found\r\nC:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\jpeg_passthrough\\truncation\\killed_mp4.mp4: Invalid data found when processing input",
+    "nb_frames": null,
+    "nb_read_packets": null,
+    "packets_nonempty": null
+   },
+   "pyav": {
+    "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\jpeg_passthrough\\\\truncation\\\\killed_mp4.mp4'"
+   },
+   "cv2_ffmpeg": {
+    "opened": false,
+    "frames_read": null,
+    "frame_count_prop": null
+   },
+   "freemocap": {
+    "frame_count": null,
+    "error": "RuntimeError: Failed to open video file: C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\jpeg_passthrough\\truncation\\killed_mp4.mp4",
+    "reads_ok": 0,
+    "reads": 0
+   }
+  },
+  "fmp4_1s": {
+   "child_rc": 1,
+   "child_stderr": "",
+   "bytes": 31981596,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "",
+    "nb_frames": null,
+    "nb_read_packets": "579",
+    "packets_nonempty": 579
+   },
+   "pyav": {
+    "packets": 579,
+    "exact_prefix": 578,
+    "decoded": 579,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 579,
+    "frame_count_prop": 582
+   },
+   "freemocap": {
+    "frame_count": 582,
+    "error": null,
+    "reads_ok": 3,
+    "reads": 4
+   }
+  },
+  "fmp4_perframe": {
+   "child_rc": 1,
+   "child_stderr": "",
+   "bytes": 33030189,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "",
+    "nb_frames": null,
+    "nb_read_packets": "597",
+    "packets_nonempty": 597
+   },
+   "pyav": {
+    "packets": 597,
+    "exact_prefix": 596,
+    "decoded": 596,
+    "decode_errors": 1,
+    "first_errors": [
+     "596: InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'avcodec_send_packet()'"
+    ]
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 596,
+    "frame_count_prop": 597
+   },
+   "freemocap": {
+    "frame_count": 597,
+    "error": null,
+    "reads_ok": 3,
+    "reads": 4
+   }
+  },
+  "mov": {
+   "child_rc": 1,
+   "child_stderr": "",
+   "bytes": 33030180,
+   "ffprobe": {
+    "returncode": 1,
+    "stderr": "[mov,mp4,m4a,3gp,3g2,mj2 @ 00000198358342c0] moov atom not found\r\nC:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\jpeg_passthrough\\truncation\\killed_mov.mov: Invalid data found when processing input",
+    "nb_frames": null,
+    "nb_read_packets": null,
+    "packets_nonempty": null
+   },
+   "pyav": {
+    "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\jpeg_passthrough\\\\truncation\\\\killed_mov.mov'"
+   },
+   "cv2_ffmpeg": {
+    "opened": false,
+    "frames_read": null,
+    "frame_count_prop": null
+   },
+   "freemocap": {
+    "frame_count": null,
+    "error": "RuntimeError: Failed to open video file: C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\jpeg_passthrough\\truncation\\killed_mov.mov",
+    "reads_ok": 0,
+    "reads": 0
+   }
+  },
+  "avi_tb_rate": {
+   "child_rc": 1,
+   "child_stderr": "",
+   "bytes": 33030144,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "",
+    "nb_frames": null,
+    "nb_read_packets": "598",
+    "packets_nonempty": 598
+   },
+   "pyav": {
+    "packets": 598,
+    "exact_prefix": 597,
+    "decoded": 598,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 598,
+    "frame_count_prop": 0
+   },
+   "freemocap": {
+    "frame_count": null,
+    "error": "ValidationError: 1 validation error for VideoMetadata\n  Value error, Invalid frame range: start_frame=0, end_frame=0 [type=value_error, input_value={'file_path': WindowsPath...s': 0.0, 'end_frame': 0}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+    "reads_ok": 0,
+    "reads": 0
+   }
+  },
+  "nut": {
+   "child_rc": 1,
+   "child_stderr": "",
+   "bytes": 33030144,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "[nut @ 000001c3290a39c0] read_timestamp failed.",
+    "nb_frames": null,
+    "nb_read_packets": "598",
+    "packets_nonempty": 598
+   },
+   "pyav": {
+    "packets": 598,
+    "exact_prefix": 597,
+    "decoded": 598,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 598,
+    "frame_count_prop": 595
+   },
+   "freemocap": {
+    "frame_count": 595,
+    "error": null,
+    "reads_ok": 4,
+    "reads": 4
+   }
+  },
+  "mjpeg_raw_mux": {
+   "child_rc": 1,
+   "child_stderr": "",
+   "bytes": 33030144,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "",
+    "nb_frames": null,
+    "nb_read_packets": "598",
+    "packets_nonempty": 598
+   },
+   "pyav": {
+    "packets": 598,
+    "exact_prefix": 597,
+    "decoded": 598,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 598,
+    "frame_count_prop": -192153584101141
+   },
+   "freemocap": {
+    "frame_count": null,
+    "error": "ValidationError: 1 validation error for VideoMetadata\n  Value error, Invalid frame range: start_frame=0, end_frame=-192153584101141 [type=value_error, input_value={'file_path': WindowsPath...rame': -192153584101141}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13",
+    "reads_ok": 0,
+    "reads": 0
+   }
+  },
+  "raw_sidecar": {
+   "child_rc": 1,
+   "child_stderr": "",
+   "sidecar_entries": 409,
+   "sidecar_complete_exact_frames": 409,
+   "data_bytes": 33177338
+  }
+ },
+ "truncated": {
+  "mkv|0.5": {
+   "bytes": 24677388,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "[matroska,webm @ 000001ceb9154700] File ended prematurely",
+    "nb_frames": null,
+    "nb_read_packets": "445",
+    "packets_nonempty": 445
+   },
+   "pyav": {
+    "packets": 445,
+    "exact_prefix": 445,
+    "decoded": 445,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 445,
+    "frame_count_prop": 888
+   },
+   "freemocap": {
+    "frame_count": 888,
+    "error": null,
+    "reads_ok": 3,
+    "reads": 4
+   }
+  },
+  "mkv|0.9": {
+   "bytes": 44419299,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "[matroska,webm @ 00000233221e3100] File ended prematurely",
+    "nb_frames": null,
+    "nb_read_packets": "802",
+    "packets_nonempty": 802
+   },
+   "pyav": {
+    "packets": 802,
+    "exact_prefix": 802,
+    "decoded": 802,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 802,
+    "frame_count_prop": 888
+   },
+   "freemocap": {
+    "frame_count": 888,
+    "error": null,
+    "reads_ok": 3,
+    "reads": 4
+   }
+  },
+  "mp4|0.5": {
+   "bytes": 24662877,
+   "ffprobe": {
+    "returncode": 1,
+    "stderr": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001dd42b73740] moov atom not found\r\nC:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\jpeg_passthrough\\truncation\\trunc50_mp4.mp4: Invalid data found when processing input",
+    "nb_frames": null,
+    "nb_read_packets": null,
+    "packets_nonempty": null
+   },
+   "pyav": {
+    "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\jpeg_passthrough\\\\truncation\\\\trunc50_mp4.mp4'"
+   },
+   "cv2_ffmpeg": {
+    "opened": false,
+    "frames_read": null,
+    "frame_count_prop": null
+   },
+   "freemocap": {
+    "frame_count": null,
+    "error": "RuntimeError: Failed to open video file: C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\jpeg_passthrough\\truncation\\trunc50_mp4.mp4",
+    "reads_ok": 0,
+    "reads": 0
+   }
+  },
+  "mp4|0.9": {
+   "bytes": 44393178,
+   "ffprobe": {
+    "returncode": 1,
+    "stderr": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000002293fcb35c0] moov atom not found\r\nC:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\jpeg_passthrough\\truncation\\trunc90_mp4.mp4: Invalid data found when processing input",
+    "nb_frames": null,
+    "nb_read_packets": null,
+    "packets_nonempty": null
+   },
+   "pyav": {
+    "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\jpeg_passthrough\\\\truncation\\\\trunc90_mp4.mp4'"
+   },
+   "cv2_ffmpeg": {
+    "opened": false,
+    "frames_read": null,
+    "frame_count_prop": null
+   },
+   "freemocap": {
+    "frame_count": null,
+    "error": "RuntimeError: Failed to open video file: C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\jpeg_passthrough\\truncation\\trunc90_mp4.mp4",
+    "reads_ok": 0,
+    "reads": 0
+   }
+  },
+  "fmp4_1s|0.5": {
+   "bytes": 24663130,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "[mov,mp4,m4a,3gp,3g2,mj2 @ 00000132e4435a80] stream 0, offset 0x1789717: partial file",
+    "nb_frames": null,
+    "nb_read_packets": "446",
+    "packets_nonempty": 446
+   },
+   "pyav": {
+    "packets": 446,
+    "exact_prefix": 445,
+    "decoded": 446,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 446,
+    "frame_count_prop": 459
+   },
+   "freemocap": {
+    "frame_count": 459,
+    "error": null,
+    "reads_ok": 3,
+    "reads": 4
+   }
+  },
+  "fmp4_1s|0.9": {
+   "bytes": 44393634,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001a9a31c37c0] stream 0, offset 0x2a5995b: partial file",
+    "nb_frames": null,
+    "nb_read_packets": "802",
+    "packets_nonempty": 802
+   },
+   "pyav": {
+    "packets": 802,
+    "exact_prefix": 801,
+    "decoded": 802,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 802,
+    "frame_count_prop": 828
+   },
+   "freemocap": {
+    "frame_count": 828,
+    "error": null,
+    "reads_ok": 3,
+    "reads": 4
+   }
+  },
+  "fmp4_perframe|0.5": {
+   "bytes": 24716021,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "",
+    "nb_frames": null,
+    "nb_read_packets": "446",
+    "packets_nonempty": 446
+   },
+   "pyav": {
+    "packets": 446,
+    "exact_prefix": 445,
+    "decoded": 446,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 446,
+    "frame_count_prop": 446
+   },
+   "freemocap": {
+    "frame_count": 446,
+    "error": null,
+    "reads_ok": 4,
+    "reads": 4
+   }
+  },
+  "fmp4_perframe|0.9": {
+   "bytes": 44488838,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "",
+    "nb_frames": null,
+    "nb_read_packets": "803",
+    "packets_nonempty": 803
+   },
+   "pyav": {
+    "packets": 803,
+    "exact_prefix": 802,
+    "decoded": 802,
+    "decode_errors": 1,
+    "first_errors": [
+     "802: InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'avcodec_send_packet()'"
+    ]
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 802,
+    "frame_count_prop": 803
+   },
+   "freemocap": {
+    "frame_count": 803,
+    "error": null,
+    "reads_ok": 3,
+    "reads": 4
+   }
+  },
+  "mov|0.5": {
+   "bytes": 24662830,
+   "ffprobe": {
+    "returncode": 1,
+    "stderr": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000026051f04600] moov atom not found\r\nC:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\jpeg_passthrough\\truncation\\trunc50_mov.mov: Invalid data found when processing input",
+    "nb_frames": null,
+    "nb_read_packets": null,
+    "packets_nonempty": null
+   },
+   "pyav": {
+    "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\jpeg_passthrough\\\\truncation\\\\trunc50_mov.mov'"
+   },
+   "cv2_ffmpeg": {
+    "opened": false,
+    "frames_read": null,
+    "frame_count_prop": null
+   },
+   "freemocap": {
+    "frame_count": null,
+    "error": "RuntimeError: Failed to open video file: C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\jpeg_passthrough\\truncation\\trunc50_mov.mov",
+    "reads_ok": 0,
+    "reads": 0
+   }
+  },
+  "mov|0.9": {
+   "bytes": 44393094,
+   "ffprobe": {
+    "returncode": 1,
+    "stderr": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000015e91fb32c0] moov atom not found\r\nC:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\jpeg_passthrough\\truncation\\trunc90_mov.mov: Invalid data found when processing input",
+    "nb_frames": null,
+    "nb_read_packets": null,
+    "packets_nonempty": null
+   },
+   "pyav": {
+    "error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\jpeg_passthrough\\\\truncation\\\\trunc90_mov.mov'"
+   },
+   "cv2_ffmpeg": {
+    "opened": false,
+    "frames_read": null,
+    "frame_count_prop": null
+   },
+   "freemocap": {
+    "frame_count": null,
+    "error": "RuntimeError: Failed to open video file: C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\jpeg_passthrough\\truncation\\trunc90_mov.mov",
+    "reads_ok": 0,
+    "reads": 0
+   }
+  },
+  "avi_tb_rate|0.5": {
+   "bytes": 24671018,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "",
+    "nb_frames": "891",
+    "nb_read_packets": "446",
+    "packets_nonempty": 446
+   },
+   "pyav": {
+    "packets": 446,
+    "exact_prefix": 445,
+    "decoded": 446,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 446,
+    "frame_count_prop": 891
+   },
+   "freemocap": {
+    "frame_count": 891,
+    "error": null,
+    "reads_ok": 3,
+    "reads": 4
+   }
+  },
+  "avi_tb_rate|0.9": {
+   "bytes": 44407832,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "",
+    "nb_frames": "891",
+    "nb_read_packets": "802",
+    "packets_nonempty": 802
+   },
+   "pyav": {
+    "packets": 802,
+    "exact_prefix": 801,
+    "decoded": 802,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 802,
+    "frame_count_prop": 891
+   },
+   "freemocap": {
+    "frame_count": 891,
+    "error": null,
+    "reads_ok": 3,
+    "reads": 4
+   }
+  },
+  "nut|0.5": {
+   "bytes": 24669949,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "[nut @ 000001fe5e7f3700] read_timestamp failed.",
+    "nb_frames": null,
+    "nb_read_packets": "446",
+    "packets_nonempty": 446
+   },
+   "pyav": {
+    "packets": 446,
+    "exact_prefix": 445,
+    "decoded": 446,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 446,
+    "frame_count_prop": 443
+   },
+   "freemocap": {
+    "frame_count": 443,
+    "error": null,
+    "reads_ok": 4,
+    "reads": 4
+   }
+  },
+  "nut|0.9": {
+   "bytes": 44405908,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "[nut @ 000002cb59003300] read_timestamp failed.",
+    "nb_frames": null,
+    "nb_read_packets": "802",
+    "packets_nonempty": 802
+   },
+   "pyav": {
+    "packets": 802,
+    "exact_prefix": 801,
+    "decoded": 802,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 802,
+    "frame_count_prop": 798
+   },
+   "freemocap": {
+    "frame_count": 798,
+    "error": null,
+    "reads_ok": 4,
+    "reads": 4
+   }
+  },
+  "mjpeg_raw_mux|0.5": {
+   "bytes": 24657260,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "",
+    "nb_frames": null,
+    "nb_read_packets": "446",
+    "packets_nonempty": 446
+   },
+   "pyav": {
+    "packets": 446,
+    "exact_prefix": 445,
+    "decoded": 446,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 446,
+    "frame_count_prop": -192153584101141
+   },
+   "freemocap": {
+    "frame_count": null,
+    "error": "ValidationError: 1 validation error for VideoMetadata\n  Value error, Invalid frame range: start_frame=0, end_frame=-192153584101141 [type=value_error, input_value={'file_path': WindowsPath...rame': -192153584101141}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13",
+    "reads_ok": 0,
+    "reads": 0
+   }
+  },
+  "mjpeg_raw_mux|0.9": {
+   "bytes": 44383068,
+   "ffprobe": {
+    "returncode": 0,
+    "stderr": "",
+    "nb_frames": null,
+    "nb_read_packets": "802",
+    "packets_nonempty": 802
+   },
+   "pyav": {
+    "packets": 802,
+    "exact_prefix": 801,
+    "decoded": 802,
+    "decode_errors": 0,
+    "first_errors": []
+   },
+   "cv2_ffmpeg": {
+    "opened": true,
+    "frames_read": 802,
+    "frame_count_prop": -192153584101141
+   },
+   "freemocap": {
+    "frame_count": null,
+    "error": "ValidationError: 1 validation error for VideoMetadata\n  Value error, Invalid frame range: start_frame=0, end_frame=-192153584101141 [type=value_error, input_value={'file_path': WindowsPath...rame': -192153584101141}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13",
+    "reads_ok": 0,
+    "reads": 0
+   }
+  },
+  "raw_sidecar|0.5": {
+   "sidecar_entries": 891,
+   "sidecar_complete_exact_frames": 445,
+   "data_bytes": 24657260
+  },
+  "raw_sidecar|0.9": {
+   "sidecar_entries": 891,
+   "sidecar_complete_exact_frames": 801,
+   "data_bytes": 44383068
+  }
+ },
+ "large_avi": {
+  "write": {
+   "writer": "pyav",
+   "setup": "mux_stream",
+   "container": "avi_tb_rate",
+   "keyframe_flag": true,
+   "mode": "cfr",
+   "ok": true,
+   "stream_time_base_requested": "1/30",
+   "stream_time_base_after_first_mux": "1/30",
+   "packets_muxed": 6000,
+   "bytes": 1154485550
+  },
+  "payload_bytes": 1154290042,
+  "riff_avix_chunks": 1,
+  "has_odml_indx": true,
+  "ffprobe": {
+   "returncode": 0,
+   "nb_frames": "6000",
+   "nb_read_packets": "6000"
+  },
+  "pyav_byte_exact_all": true,
+  "pyav_packets": 6000,
+  "cv2_ffmpeg": {
+   "opened": true,
+   "frames_read": 6000,
+   "frame_count_prop": 6000,
+   "seek_exact": 10,
+   "seek_total": 10
+  },
+  "cv2_msmf": {
+   "opened": true,
+   "frames_read": 6000,
+   "frame_count_prop": 6000
+  },
+  "freemocap": {
+   "frame_count": 6000,
+   "reads": [
+    {
+     "k": 0,
+     "ok": true,
+     "match_cv2_sequential": false
+    },
+    {
+     "k": 1,
+     "ok": true,
+     "match_cv2_sequential": false
+    },
+    {
+     "k": 3000,
+     "ok": true,
+     "match_cv2_sequential": false
+    },
+    {
+     "k": 5999,
+     "ok": true,
+     "match_cv2_sequential": false
+    }
+   ],
+   "error": null
+  }
+ }
+}

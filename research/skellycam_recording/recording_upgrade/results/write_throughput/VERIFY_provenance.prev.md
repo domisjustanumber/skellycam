@@ -1,0 +1,71 @@
+# write_throughput: provenance check of the draft FINDINGS (2026-11-09)
+
+Verifier: adversarial provenance pass. For each claim, the cited file, JSON field, code line or URL was opened and compared. No timed benchmarks were run. Functional work was limited to reading files and fetching primary sources.
+
+`RES` = `research/skellycam_recording/recording_upgrade/results/write_throughput`, `SCR` = `research/skellycam_recording/recording_upgrade/scripts/write_throughput`.
+Fetched sources (2026-11-09) were saved under the scratchpad at `C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/93366190-c2b0-4501-a85e-83654db13698/scratchpad/write_throughput/verify_src/`: `matroskaenc.c`, `mux.c` (FFmpeg tag n9.0.2, raw.githubusercontent.com) and `rfc9559.txt` (rfc-editor.org).
+
+## 1. Verdict
+
+Most claims survive. Every T1/T2/T3/T4/T5/T6 number checked matches the result files. Every FFmpeg n9.0.2 line cited matches the upstream file line for line. The RFC 9559 quote is exact. All bench numbers in 2.8 and 3.2/3.3 match the raw JSON, and every bench JSON has `env.av = 18.0.0`, so the "background" label is correct.
+
+Three claims are refuted. One is an unsourced, wrong number (FFV1 "about 350 KB per frame"). Two are reproduction commands that would not reproduce the files on disk, and one of them would overwrite PyAV 18 background evidence. There are also several weak spots: wrong column or file citations, a paraphrase shown as a quote, an inference stated as a version effect, and a "best container" ranking the data does not separate.
+
+## 2. Refuted
+
+| # | Draft claim | Evidence | Correction |
+|---|---|---|---|
+| R1 | Section 5: "Wrapper cost for FFV1 intra packets (about 350 KB per frame)" | No citation. `C:/Users/Dom/Documents/skellycam-raw/.../write_throughput/payload_cache/ffv1_1080p.json` lists 16 packets of 345,823 to 629,661 bytes. `ffv1_1080p.bin` is 8,006,562 bytes, a mean of about 500 KB per packet. The same JSON says `"av": "18.0.0"`, so the cache was encoded with PyAV 18. | "FFV1 1080p payload: 16 packets of 346-630 KB, mean about 500 KB (measured: payload_cache/ffv1_1080p.json). The cache was encoded with PyAV 18.0.0." |
+| R2 | Section 7: the extradata repro command (`... python SCR/repro_pyav_add_stream_extradata.py`) reproduces `RES/functional/repro_pyav_add_stream_extradata_av19.0.2.json` | code: `SCR/repro_pyav_add_stream_extradata.py` hard-codes its output as `functional/repro_pyav_add_stream_extradata.json` and has no tag option. Run under PyAV 19, it overwrites the PyAV 18 background file. The `_av19.0.2.json` file must have been renamed by hand. | Add a `--tag` option to the script, or tell the reader to rename the output and back up the PyAV 18 file first. Say that the `_av19.0.2` name was applied by hand. |
+| R3 | Section 7: "PyAV 19.0.2 functional T1/T4/T5 (the earlier run)" = `functional_tests.py --only T1,T4,T5 --repeats 2 --tag _av19.0.2` | code: with no `--variants`, `functional_tests.py:470` uses all 15 `WRITER_VARIANTS` (`wt_common.py:45-61`). T4 would then run 11 variants (no fsync variants). `functional_results_av19.0.2.json` (started 11:27:25) has only 9 variants. `wt_common.py` was last modified at 11:25, before that run started. So the run used a `--variants` list. The exact command is not recorded. | Add `--variants files,append,mkv,mkv_flush,fmp4_frame,fmp4_frame_flush,fmp4_1s,fmp4_hybrid,mkvseg10`, or note that the shown command runs a superset. Label the original command NOT VERIFIED. |
+
+## 3. Weak (survives only with the fix)
+
+| # | Draft claim | Problem | Fix |
+|---|---|---|---|
+| W1 | Header: "libavformat 63.1.102; measured: `RES/functional/pyav19.0.2_outputcontainer_api.txt`" | That file contains only `av 19.0.2 ffmpeg 9.0.2` and the method list. It has no libavformat version. | Cite the `env` block of `RES/functional/functional_results_av19.0.2.md` for libavformat 63.1.102. |
+| W2 | Table 3.1, row "mkv_flush + empty packet per frame": "Byte-exact T1 30/30" | This is not T1. The 30/30 is `while_open[after_frame=30].readable_exact_on_disk` in `mkv_emptypkt_check_av19.0.2.json`. That script's closed-file check (`readers()` in `SCR/av19_checks/mkv_emptypkt_av19.py`) counts packets and frames but does not compare bytes. | Rename the cell to "30/30 on disk while open (not T1)". Mark closed-file byte-exactness NOT TESTED for this variant. |
+| W3 | 2.7: the media folder is in the Windows Search index, items under `.../recording_upgrade_20261109/...` | `RES/wsearch_scope_check_20261109.json` returns `C:\Users\Pictures\Documents\skellycam-raw\...`, not `C:\Users\Dom\Documents\...`. The draft's `...` hides this. That the items are inside the scope follows only from the SCOPE filter (inferred). | Quote the returned paths as they are, note the mismatch, and re-query `System.ItemUrl` to confirm. Also, the result shows that items exist in the index. It does not show that files written during bench cells are indexed while the cell runs. |
+| W4 | 2.2: the PyAV 18 statement "every killed file was still readable" does not hold "for segmented MKV under PyAV 19". Implication 6: "Seen once under PyAV 19.0.2" | (a) That quote is not in `RES/NOTES.md`. Section 4.3 says "no killed file was unreadable; every container opened in PyAV, cv2 and ffprobe". (b) There is no evidence of a version effect. PyAV 18 had 5 mkvseg10 kills and PyAV 19 had 2, and the failure depends on when the kill lands. PyAV 19 repeat 0 also logged ffprobe "File ended prematurely" (`functional_results_av19.0.2.json`). | Quote NOTES 4.3 exactly. Rephrase: "observed in 1 of 2 PyAV 19 kills, not in 5 PyAV 18 kills; cause and version dependence NOT VERIFIED". |
+| W5 | Implication 3: "MKV with `flush_packets=1` is the best measured container" | fmp4_frame_flush ties on kill loss (19.0.2: 1, 1; PyAV 18: 0-1), also leaves 0 partial units, keeps 149 + 1 after truncation and stores 1/90000 instead of 1/1000 (`functional_results_av19.0.2.md`, `functional_results_fmp4_flush.md`). MKV's edge rests on the empty-packet workaround, which has no kill test, and on PyAV 18 background usability timing. | State the trade-off rather than a ranking, or mark the ranking inferred. |
+| W6 | Implication 8: `add_stream_from_template` for "FFV1 and hardware-encoded codecs" | Only FFV1 was tested (`repro_pyav_add_stream_extradata_av19.0.2.json`). | Mark "hardware-encoded codecs" inferred / NOT VERIFIED. |
+| W7 | Section 1 Q6, 2.8 and Implication 1 tie the 116.42 s first read to Defender | `usability_27000.json` does not record MsMpEng CPU. Only `first_read_check_3000.json` does (12.02 s on the first pass for 3,000 files). | Label "Defender causes the first-read cost" as inferred from first_read_check_3000. |
+| W8 | 2.8: "3,000 fresh .jpg files took 11.35 s and 12.02 s of MsMpEng CPU on the first pass, and 0.117 s on the second" | 0.117 s is the second-pass wall time. Second-pass MsMpEng CPU is 0.141 s (`first_read_check_3000.json`). The sentence reads as if 0.117 s were MsMpEng CPU. | "first pass: 11.35 s wall, 12.02 s MsMpEng CPU; second pass: 0.117 s wall, 0.14 s MsMpEng CPU". |
+| W9 | 2.7: "100/100 random `seek(pts, backward=True)` + demux reads returned the exact bytes" | code: `SCR/av19_checks/meta_seek_av19.py` compares each seek result with the bytes from a sequential demux of the same file, not with the source JPEGs. | "returned the same bytes as sequential demux at that pts". Source equality is covered by T1. |
+| W10 | 2.1 / 2.8: code `SCR/wt_common.py:157-219` (files/append writers do not use PyAV) | The claim holds, but both writers also use `_Idx` (`wt_common.py:144-155`, `open(..., "wb", buffering=0)`), which is outside the cited range. | Cite `wt_common.py:144-220`. |
+| W11 | 2.3: `av_interleaved_write_frame(s, NULL)` "only drains the interleaving queue (mux.c:1232-1234)" | The word "only" depends on `interleaved_write_packet` (`mux.c:1075-1092`, fetched n9.0.2), which loops `interleave_packet` → `write_packet(s, pkt)` and never calls `write_packet(s, NULL)`. Those lines are not in the excerpt file. | Add `mux.c:1075-1092` to the citation and the excerpt file. |
+| W12 | 2.3: "The only log line was an error-level `extract_extradata ...`" | `mkv_emptypkt_ts_av19.0.2.json` frame 0 holds 6 lines at level 16 (AV_LOG_ERROR), all from one multi-line message. The script keeps at most 6 lines (`[:6]`), so the message may be cut off. | "One error-level message (6 lines captured, possibly cut off) ...". |
+| W13 | Section 6: "fmp4_1s_flush and mkv_flush_cluster1 truncation (T5), and mkvseg10 truncation, were not run under 19.0.2" | fmp4_1s_flush and mkvseg10 T5 were never run under either version. mkv_flush_cluster1 T5 exists only under PyAV 18 (`functional_results.md` T5). Table 3.1 has this right. | Change the text to match table 3.1. |
+| W14 | 2.1: FFV1 T1 rows under 19.0.2; Section 5 `intra_ffv1` | The FFV1 payload cache, template MKV included, was built with PyAV 18.0.0 (payload_cache `*.json`, `"av": "18.0.0"`). This does not matter for byte passthrough, but it is a PyAV 18 input to PyAV 19 runs. | Disclose it, or rebuild the cache under 19.0.2 before tonight's `intra_ffv1`. |
+| W15 | 2.2 inferred: "a process kill does not lose data already passed to WriteFile (it is in the OS cache)" | This is an OS-behaviour claim with no primary source. It is labelled inferred and fits files/append losing 0 frames. | Keep it labelled inferred, or add a Microsoft primary source. |
+
+## 4. Checked and confirmed (no change needed)
+
+| Claim group | Evidence opened | Result |
+|---|---|---|
+| 2.1 T1 byte-exact counts, readers, keyframes, time bases, pts error 498.916/493.727/6.434 us, overhead 45.6/133.7/14.9/140.8/52.2 | `functional_results_av19.0.2.md`, `..._gapfill.md` | match |
+| 2.1 PyAV 18 rows for files_subdirs, files_fsync, files_subdirs_fsync, append_fsync1s (300/300, 64/64) | `functional_results.md` lines 10-27 | match, env av 18.0.0 |
+| 2.1 extradata repro, 191 bytes, InvalidDataError under 18 and 19 | both repro JSONs | match. code: the write path has no try/except, so writing raises no error ("fails silently" holds) |
+| 2.2 kill losses per variant (19.0.2) and partial units, fmp4_frame 298/299 with decode error, mkvseg10 seg0003 unreadable in PyAV/ffprobe/cv2 (backend None), 363 earlier frames | `functional_results_av19.0.2.json` T4 | match |
+| 2.2 PyAV 18 ranges (mkv 2-6, fmp4_frame 2-5, fmp4_1s 19-59, fmp4_1s_flush 2-36, fmp4_frame_flush 0-1, hybrid 3-6, mkvseg10 3-5, files 1 partial of 5) | `functional_results.md`, `functional_results_fmp4_flush.md` (both av 18.0.0) | match |
+| idx_records = acked_at_kill in every kill; append SOI scan and cv2 counts | same files | match |
+| FFmpeg n9.0.2 lines matroskaenc.c:2613, 3231-3236, 3273-3288, 3602-3603, 3727, 3739 and mux.c:820-827, 1176-1190, 1223-1236 | upstream files fetched again | match line for line |
+| inferred: the cluster is written only when the next packet arrives | matroskaenc.c:3156-3168 (blocks go into the `cluster_bc` dynamic buffer), 3240-3243 (`mkv_end_cluster` runs on the next packet). The log in `mkv_emptypkt_log_av19.0.2.json` shows the size-0 block opening a new cluster with keyframe 1 | consistent with the source |
+| 2.3 OutputContainer API, `mux_one(None)` TypeError, 29/30 with flush/live/cluster_time_limit=0, fMP4 29/30 | `pyav19.0.2_outputcontainer_api.txt`, `mkv_flush_timebase_check_av19.0.2.json` | match |
+| 2.3 empty packet: 1/1, 2/2, 10/10, 30/30 vs control 0/1, 1/2, 9/10, 29/30; closed file 30 packets, 0 zero-size, 0 errors; "Timestamps are unset" warning, made-up pts +1 ms; explicit-ts variant 10/10 and no warning (log level WARNING, code) | `mkv_emptypkt_check/log/ts_av19.0.2.json`, scripts in `SCR/av19_checks/` | match |
+| 2.4 T2/T3 (cv2 30/30, gap stops at 10, sub-folders not opened, diff 0 vs 6, PyAV glob NotImplementedError) | `functional_results_av19.0.2_t2t6.md`, `functional_results.md` | match |
+| 2.5 time base 1/1000, pts 0/33/67/100/133; RFC 9559 5.1.2.9 quote | `mkv_flush_timebase_check_av19.0.2.json` check B; https://www.rfc-editor.org/rfc/rfc9559.txt lines 996-1005 | match, exact quote |
+| 2.6 T5 149 / 149 + 1 / 0 for hybrid; T6 5 files, 300/300, 1/1000 | `functional_results_av19.0.2.md`, `..._t2t6.md` | match |
+| mkvseg10 "2 s in tests" | code: `functional_tests.py:313-314` (`segment_ns = int(2e9)`), but `wt_common.py:61` sets 10.0 s for the benches | match |
+| 2.7 stream.frames 0, duration 10.0 s | `meta_seek_check_av19.0.2.json` | match |
+| 2.7 code: MsMpEng `bench_write.py:263-272`; WSearch only in `sysinfo.py:26` | files opened; grep of `SCR/*.py` | match |
+| 2.8 / 3.2: 45 timed cells (46 JSON files incl. warm-up), written = produced, 0 dropped, busy 11.0-43.8 %, focus16 medians and ranges, MsMpEng, fsync tails (1278.5 / 113.0 / 235.0 ms), process_shared 0.262-0.279 vs 0.920-1.380 ms, disk delta 2.39-3.28 GB vs 4.71 GB, fsync cells 5.32/5.73 GB | raw `RES/bench/*/*.json`, recomputed | match; all env av 18.0.0 |
+| 3.3 usability table (files 27001, 116.42/129.79 s, frame table 0.060/0.061/0.009/0.442/1.008 s, copy, robocopy 6.73 s, delete) and 1000 random reads | `usability_27000.json`; `bench_usability.py:195` default `--random-reads 1000` | match |
+| 2.9 p11 (MSMF 0 readable, MKV 298-359), p3 (195 lost at L=172, 3.5 s stall), p3v (lockstep: 445 per camera on every camera) | `research/frame_ring_buffer/prototypes/results/p11_crash_container.md`, `p3_lossless_record.md` line 42, `p3v_asymmetric_stall.md` | match |
+| 2.9 Rust prototype (ffmpeg child re-encodes to H.264, libx264 ultrafast, unbounded mpsc channel) | `git show upstream/sfn26:skellycam-rust/src/recording/recorder.rs` lines 1-6 and default() near 41-43; `recording_thread.rs` lines 1-6 | match (checked in the code, not only through NOTES) |
+| Section 5: manifest ids and `.venv/Scripts/python.exe` commands; `run_matrix.py:103` uses `sys.executable` | `research/skellycam_recording/recording_upgrade/results/bench_queue_from_wf_2e122ed0.json`; code | match |
+| Section 6: inloop drop rule is an assumption | `RES/NOTES.md` section 7 (bench design, threading models) and section 9 | match |
+
+## 5. Pending (timing; not verified here)
+
+All throughput, latency, CPU and Defender numbers are PyAV 18.0.0 on a loaded machine. They are background only. The draft already says this, and section 4 confirms `env.av` in every JSON.

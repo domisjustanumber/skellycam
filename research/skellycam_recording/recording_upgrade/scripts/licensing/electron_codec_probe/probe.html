@@ -1,0 +1,94 @@
+<!doctype html><html><head><meta charset="utf-8"><title>codec probe</title></head><body>
+<pre id="out">running</pre>
+<script>
+// Works in Electron (sends via ipcRenderer) and in plain Chrome (writes JSON into #out; read with --dump-dom).
+const params = new URLSearchParams(location.search);
+const base = params.get('samples');
+const VIDEO_FILES = ['h264_libx264.mp4','hevc_libx265.mp4','av1_svt.mp4','av1_svt.webm','av1_svt.mkv','vp9.webm','vp9.mp4','vp8.webm',
+  'mjpeg.mkv','mjpeg.avi','mjpeg.mp4','ffv1.mkv','prores.mov','utvideo.avi'];
+const AUDIO_FILES = ['opus.webm','opus.mp4','flac.flac','flac.mp4','aac.m4a','pcm.wav','mp3.mp3'];
+const IMAGE_FILES = ['still.jpg','still.jxl','still.avif','still.webp','still.png','still.jp2'];
+const MIME = [
+  'video/mp4; codecs="avc1.42E01E"','video/mp4; codecs="hvc1.1.6.L93.B0"','video/mp4; codecs="av01.0.04M.08"',
+  'video/webm; codecs="av01.0.04M.08"','video/webm; codecs="vp09.00.10.08"','video/mp4; codecs="vp09.00.10.08"','video/webm; codecs="vp8"',
+  'video/x-matroska; codecs="av01.0.04M.08"','video/x-matroska; codecs="avc1.42E01E"','video/x-msvideo',
+  'audio/webm; codecs="opus"','audio/mp4; codecs="opus"','audio/mp4; codecs="mp4a.40.2"','audio/mp4; codecs="flac"','audio/flac','audio/wav','audio/mpeg'];
+const WC = { avc1: 'avc1.42001f', hevc: 'hvc1.1.6.L93.B0', av1: 'av01.0.04M.08', vp9: 'vp09.00.10.08', vp8: 'vp8' };
+const IMG_MIME = ['image/jpeg','image/jxl','image/avif','image/webp','image/png','image/jp2'];
+
+function withTimeout(p, ms, label) { return Promise.race([p, new Promise((r) => setTimeout(() => r({ timeout: label || true }), ms))]); }
+
+async function probeMedia(kind, name) {
+  const el = document.createElement(kind); el.muted = true; el.preload = 'auto'; document.body.appendChild(el);
+  const res = { file: name };
+  const loaded = new Promise((resolve) => {
+    el.addEventListener('loadeddata', () => resolve('loadeddata'), { once: true });
+    el.addEventListener('error', () => resolve('error'), { once: true });
+  });
+  el.src = base + name;
+  res.event = await withTimeout(loaded, 6000, 'no loadeddata/error in 6s');
+  if (el.error) res.error = { code: el.error.code, message: el.error.message };
+  res.readyState = el.readyState; res.duration = el.duration;
+  if (kind === 'video') { res.videoWidth = el.videoWidth; res.videoHeight = el.videoHeight; }
+  if (res.event === 'loadeddata') {
+    try {
+      await el.play();
+      await new Promise((r) => setTimeout(r, 1000));
+      res.played_currentTime = el.currentTime;
+      if (kind === 'video') {
+        // Decode proof that does not depend on a visible compositor: seek to 1.0 s, draw, check pixels.
+        el.pause();
+        const seeked = new Promise((resolve) => el.addEventListener('seeked', () => resolve('seeked'), { once: true }));
+        el.currentTime = 1.0;
+        res.seek = await withTimeout(seeked, 4000, 'no seeked in 4s');
+        const c = document.createElement('canvas'); c.width = el.videoWidth; c.height = el.videoHeight;
+        const ctx = c.getContext('2d'); ctx.drawImage(el, 0, 0);
+        const px = ctx.getImageData(0, 0, c.width, c.height).data;
+        let sum = 0, nonzero = 0; for (let i = 0; i < px.length; i += 4) { const s = px[i] + px[i + 1] + px[i + 2]; sum += s; if (s > 0) nonzero++; }
+        res.canvas_mean_rgb_sum = sum / (px.length / 4); res.canvas_nonblack_fraction = nonzero / (px.length / 4);
+        res.decoded_frame_ok = res.seek === 'seeked' && res.canvas_nonblack_fraction > 0.5;
+        if (el.getVideoPlaybackQuality) { const q = el.getVideoPlaybackQuality(); res.totalVideoFrames = q.totalVideoFrames; res.droppedVideoFrames = q.droppedVideoFrames; }
+      }
+    } catch (e) { res.play_error = String(e); }
+  }
+  el.pause(); el.removeAttribute('src'); el.load(); el.remove();
+  return res;
+}
+
+async function probeImage(name) {
+  const img = new Image();
+  const r = await withTimeout(new Promise((resolve) => {
+    img.onload = () => resolve('load'); img.onerror = () => resolve('error'); img.src = base + name;
+  }), 5000);
+  return { file: name, event: r, naturalWidth: img.naturalWidth };
+}
+
+async function main() {
+  const result = { userAgent: navigator.userAgent, canPlayType: {}, mseIsTypeSupported: {},
+    webcodecs: { decoder: {}, encoder: {} }, imageDecoder: {}, video: [], audio: [], images: [] };
+  const v = document.createElement('video');
+  for (const m of MIME) {
+    result.canPlayType[m] = v.canPlayType(m);
+    result.mseIsTypeSupported[m] = (window.MediaSource ? MediaSource.isTypeSupported(m) : null);
+  }
+  for (const [k, codec] of Object.entries(WC)) {
+    for (const hw of ['no-preference', 'prefer-hardware', 'prefer-software']) {
+      try { result.webcodecs.decoder[`${k}/${hw}`] = (await VideoDecoder.isConfigSupported({ codec, codedWidth: 1280, codedHeight: 720, hardwareAcceleration: hw })).supported; }
+      catch (e) { result.webcodecs.decoder[`${k}/${hw}`] = String(e); }
+      try { result.webcodecs.encoder[`${k}/${hw}`] = (await VideoEncoder.isConfigSupported({ codec, width: 1280, height: 720, bitrate: 4e6, framerate: 30, hardwareAcceleration: hw })).supported; }
+      catch (e) { result.webcodecs.encoder[`${k}/${hw}`] = String(e); }
+    }
+  }
+  for (const m of IMG_MIME) {
+    try { result.imageDecoder[m] = window.ImageDecoder ? await ImageDecoder.isTypeSupported(m) : null; }
+    catch (e) { result.imageDecoder[m] = String(e); }
+  }
+  for (const f of VIDEO_FILES) result.video.push(await probeMedia('video', f));
+  for (const f of AUDIO_FILES) result.audio.push(await probeMedia('audio', f));
+  for (const f of IMAGE_FILES) result.images.push(await probeImage(f));
+  if (typeof require === 'function') { require('electron').ipcRenderer.send('result', result); }
+  document.getElementById('out').textContent = 'RESULT_JSON_BEGIN' + JSON.stringify(result) + 'RESULT_JSON_END';
+  console.log('RESULT_JSON_BEGIN' + JSON.stringify(result) + 'RESULT_JSON_END');
+}
+main();
+</script></body></html>

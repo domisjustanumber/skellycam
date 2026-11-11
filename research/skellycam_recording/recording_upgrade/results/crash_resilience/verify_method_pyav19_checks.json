@@ -1,0 +1,100 @@
+{
+ "env": {
+  "pyav": "19.0.2",
+  "libavformat": "63.1.102",
+  "python": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\verify-method-checks-fc225797322168ed\\Scripts\\python.exe"
+ },
+ "segment": [
+  {
+   "payload": "mjpeg",
+   "container": "seg_mkv",
+   "status": "killed_idle",
+   "last_mux_line": "M 150 150",
+   "segment_files": 5,
+   "bytes": 8238820,
+   "ffprobe_frames_per_segment": [
+    30,
+    30,
+    30,
+    30,
+    28
+   ],
+   "ffprobe_frames": 148
+  },
+  {
+   "payload": "mjpeg",
+   "container": "seg_mkv+fp",
+   "status": "killed_idle",
+   "last_mux_line": "M 150 150",
+   "segment_files": 5,
+   "bytes": 8238820,
+   "ffprobe_frames_per_segment": [
+    30,
+    30,
+    30,
+    30,
+    28
+   ],
+   "ffprobe_frames": 148
+  }
+ ],
+ "rt": [
+  {
+   "payload": "mjpeg",
+   "container": "mkv+fp",
+   "last_mux_line_seen": "M 75 75",
+   "bytes": 4120876,
+   "ffprobe_frames": 74,
+   "pyav": {
+    "frames": 74,
+    "packets": 74,
+    "byte_exact": 74,
+    "error": null,
+    "seek": {
+     "ok": true,
+     "target_pts": 1233,
+     "got_pts": 1233,
+     "exact": true
+    }
+   }
+  },
+  {
+   "payload": "h264nv",
+   "container": "mkv_cl0+fp",
+   "last_mux_line_seen": "M 73 75",
+   "bytes": 956883,
+   "ffprobe_frames": 72,
+   "pyav": {
+    "frames": 72,
+    "packets": 72,
+    "byte_exact": null,
+    "error": null,
+    "seek": {
+     "ok": true,
+     "target_pts": 1200,
+     "got_pts": 1000,
+     "exact": false
+    }
+   }
+  },
+  {
+   "payload": "av1",
+   "container": "mkv_cl0+fp",
+   "last_mux_line_seen": "M 36 75",
+   "bytes": 72943,
+   "ffprobe_frames": 35,
+   "pyav": {
+    "frames": 35,
+    "packets": 35,
+    "byte_exact": null,
+    "error": null,
+    "seek": {
+     "ok": true,
+     "target_pts": 500,
+     "got_pts": 0,
+     "exact": false
+    }
+   }
+  }
+ ]
+}

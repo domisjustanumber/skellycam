@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>overlay harness</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #202020; color: #ddd; font: 12px monospace; overflow: hidden; }
+  #stage { position: absolute; left: 0; top: 0; width: 640px; height: 360px; background: #000; }
+  #stage video, #stage canvas { position: absolute; left: 0; top: 0; width: 640px; height: 360px; }
+  #status { position: absolute; left: 660px; top: 0; width: 680px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="status">starting</div>
+<script src="/app/layout.js"></script>
+<script src="/app/harness.js"></script>
+</body>
+</html>

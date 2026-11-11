@@ -1,0 +1,398 @@
+{
+ "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+ "platform": "Windows-11-10.0.26300-SP0",
+ "pyav_version": "18.0.0",
+ "ffmpeg_version": "8.1.2",
+ "library_meta": {
+  "libavutil": {
+   "version": [
+    60,
+    26,
+    102
+   ],
+   "license": "LGPL version 3 or later",
+   "configuration": "--disable-static --enable-shared --libdir=/c/cibw/vendor/lib --prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --disable-alsa --disable-gnutls --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libsvtav1 --enable-libvpx --enable-libwebp --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --enable-amf --enable-libvpl --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd' --disable-decoder=sonic --disable-libjack --disable-indev=jack --disable-filter=gfxcapture"
+  },
+  "libavcodec": {
+   "version": [
+    62,
+    28,
+    102
+   ],
+   "license": "LGPL version 3 or later",
+   "configuration": "--disable-static --enable-shared --libdir=/c/cibw/vendor/lib --prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --disable-alsa --disable-gnutls --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libsvtav1 --enable-libvpx --enable-libwebp --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --enable-amf --enable-libvpl --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd' --disable-decoder=sonic --disable-libjack --disable-indev=jack --disable-filter=gfxcapture"
+  },
+  "libavformat": {
+   "version": [
+    62,
+    12,
+    102
+   ],
+   "license": "LGPL version 3 or later",
+   "configuration": "--disable-static --enable-shared --libdir=/c/cibw/vendor/lib --prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --disable-alsa --disable-gnutls --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libsvtav1 --enable-libvpx --enable-libwebp --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --enable-amf --enable-libvpl --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd' --disable-decoder=sonic --disable-libjack --disable-indev=jack --disable-filter=gfxcapture"
+  },
+  "libavdevice": {
+   "version": [
+    62,
+    3,
+    102
+   ],
+   "license": "LGPL version 3 or later",
+   "configuration": "--disable-static --enable-shared --libdir=/c/cibw/vendor/lib --prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --disable-alsa --disable-gnutls --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libsvtav1 --enable-libvpx --enable-libwebp --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --enable-amf --enable-libvpl --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd' --disable-decoder=sonic --disable-libjack --disable-indev=jack --disable-filter=gfxcapture"
+  },
+  "libavfilter": {
+   "version": [
+    11,
+    14,
+    102
+   ],
+   "license": "LGPL version 3 or later",
+   "configuration": "--disable-static --enable-shared --libdir=/c/cibw/vendor/lib --prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --disable-alsa --disable-gnutls --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libsvtav1 --enable-libvpx --enable-libwebp --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --enable-amf --enable-libvpl --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd' --disable-decoder=sonic --disable-libjack --disable-indev=jack --disable-filter=gfxcapture"
+  },
+  "libswscale": {
+   "version": [
+    9,
+    5,
+    102
+   ],
+   "license": "LGPL version 3 or later",
+   "configuration": "--disable-static --enable-shared --libdir=/c/cibw/vendor/lib --prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --disable-alsa --disable-gnutls --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libsvtav1 --enable-libvpx --enable-libwebp --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --enable-amf --enable-libvpl --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd' --disable-decoder=sonic --disable-libjack --disable-indev=jack --disable-filter=gfxcapture"
+  },
+  "libswresample": {
+   "version": [
+    6,
+    3,
+    102
+   ],
+   "license": "LGPL version 3 or later",
+   "configuration": "--disable-static --enable-shared --libdir=/c/cibw/vendor/lib --prefix=/c/cibw/vendor --disable-programs --disable-doc --disable-libxml2 --disable-lzma --disable-libtheora --disable-libfreetype --disable-libfontconfig --disable-libbluray --disable-libopenjpeg --enable-mediafoundation --enable-version3 --disable-alsa --disable-gnutls --enable-libdav1d --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libsvtav1 --enable-libvpx --enable-libwebp --disable-libxcb --enable-zlib --enable-libx264 --enable-libx265 --enable-nvenc --enable-nvdec --enable-amf --enable-libvpl --disable-encoder='avui,dca,mlp,opus,s302m,sonic,sonic_ls,truehd' --disable-decoder=sonic --disable-libjack --disable-indev=jack --disable-filter=gfxcapture"
+  }
+ },
+ "configure_enable_flags": [
+  "--enable-amf",
+  "--enable-libdav1d",
+  "--enable-libmp3lame",
+  "--enable-libopencore-amrnb",
+  "--enable-libopencore-amrwb",
+  "--enable-libopus",
+  "--enable-libsvtav1",
+  "--enable-libvpl",
+  "--enable-libvpx",
+  "--enable-libwebp",
+  "--enable-libx264",
+  "--enable-libx265",
+  "--enable-mediafoundation",
+  "--enable-nvdec",
+  "--enable-nvenc",
+  "--enable-shared",
+  "--enable-version3",
+  "--enable-zlib"
+ ],
+ "has_enable_gpl": false,
+ "has_enable_nonfree": false,
+ "has_enable_version3": true,
+ "bundled_libs": [
+  "avcodec-62-984de33114b7fa384296817dec999c9d.dll",
+  "avdevice-62-bf7a3ffbb6a4b577f24a39ea98a958d5.dll",
+  "avfilter-11-aef80fc767dc77e0319469b5bdcdf998.dll",
+  "avformat-62-b6d6bb16ff0b7753371e2d0b285c9dc0.dll",
+  "avutil-60-cc1777f859dcfd98b8019bdf459e774e.dll",
+  "libSvtAv1Enc-c4dd99c98ddcdb013e820dbd68a30e26.dll",
+  "libdav1d-959ebc1340f7dfcbcf8e299a26281738.dll",
+  "libgcc_s_seh-1-4c0a762e4178b574f72d1ef1f8bb5fc9.dll",
+  "libiconv-2-6ce5f4ff92ada49d6f23a8e413455502.dll",
+  "libmp3lame-0-da02696cc34a9bbc1d1d4f67a85cfbef.dll",
+  "libopencore-amrnb-0-b8933128305cd084d40426d0d2c0d9ef.dll",
+  "libopencore-amrwb-0-49da3acfc50704f92538d74aca03c3b8.dll",
+  "libopus-0-4369edc456631a3cc933d7918747e5d2.dll",
+  "libsharpyuv-8b869e30854bf3db317a2a93d0782c3d.dll",
+  "libstdc++-6-2d5c346d47ad531ef9f5185db0e8cef3.dll",
+  "libvpl-969a52d626b0390fc34f6a4fb0b08d7e.dll",
+  "libvpx-1-d869f8b2cb42d58b35545ffbfb0f7509.dll",
+  "libwebp-4bf4e57964c7a01c09ce39470d6b67ca.dll",
+  "libwebpmux-9cf6581f8709616d9591befbb1a2264b.dll",
+  "libwinpthread-1-02332fab016bf884a2a7a7b2ece22ffe.dll",
+  "libx264-165-f3a909470ddc2d85ed21eda3d0fb7954.dll",
+  "libx265-efe48a158520a59ef99c0a0b3eb835ae.dll",
+  "swresample-6-0158536d5c4197d7d623445553ce9472.dll",
+  "swscale-9-0c9886c118598c54e159ef2267ff99f3.dll",
+  "zlib1-79e0c4f9db71cb511398c504b832d395.dll"
+ ],
+ "wheel_license_files": [
+  "av-18.0.0.dist-info/licenses/AUTHORS.py",
+  "av-18.0.0.dist-info/licenses/AUTHORS.rst",
+  "av-18.0.0.dist-info/licenses/LICENSE.txt"
+ ],
+ "video_encoders": {
+  "libsvtav1": {
+   "present": true,
+   "long_name": "SVT-AV1(Scalable Video Technology for AV1) encoder",
+   "opens": true,
+   "container": "matroska",
+   "packets": 8,
+   "bytes": 944
+  },
+  "libaom-av1": {
+   "present": false,
+   "error": "UnknownCodecError: libaom-av1"
+  },
+  "librav1e": {
+   "present": false,
+   "error": "UnknownCodecError: librav1e"
+  },
+  "av1_nvenc": {
+   "present": true,
+   "long_name": "NVIDIA NVENC av1 encoder",
+   "opens": false,
+   "container": "matroska",
+   "error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_open2(\"av1_nvenc\", {})'"
+  },
+  "av1_qsv": {
+   "present": true,
+   "long_name": "AV1 (Intel Quick Sync Video acceleration)",
+   "opens": false,
+   "container": "matroska",
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"av1_qsv\", {})'"
+  },
+  "av1_amf": {
+   "present": true,
+   "long_name": "AMD AMF AV1 encoder",
+   "opens": false,
+   "container": "matroska",
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"av1_amf\", {})'"
+  },
+  "av1_mf": {
+   "present": true,
+   "long_name": "AV1 via MediaFoundation",
+   "opens": false,
+   "container": "matroska",
+   "error": "NotImplementedError: [Errno 40] Function not implemented: 'avcodec_open2(\"av1_mf\", {})'"
+  },
+  "libvpx": {
+   "present": true,
+   "long_name": "libvpx VP8",
+   "opens": true,
+   "container": "matroska",
+   "packets": 8,
+   "bytes": 898
+  },
+  "libvpx-vp9": {
+   "present": true,
+   "long_name": "libvpx VP9",
+   "opens": true,
+   "container": "matroska",
+   "packets": 8,
+   "bytes": 781
+  },
+  "ffv1": {
+   "present": true,
+   "long_name": "FFmpeg video codec #1",
+   "opens": true,
+   "container": "matroska",
+   "packets": 8,
+   "bytes": 3384
+  },
+  "mjpeg": {
+   "present": true,
+   "long_name": "MJPEG (Motion JPEG)",
+   "opens": true,
+   "container": "matroska",
+   "packets": 8,
+   "bytes": 15821
+  },
+  "libjxl": {
+   "present": false,
+   "error": "UnknownCodecError: libjxl"
+  },
+  "libopenjpeg": {
+   "present": false,
+   "error": "UnknownCodecError: libopenjpeg"
+  },
+  "jpeg2000": {
+   "present": true,
+   "long_name": "JPEG 2000",
+   "opens": true,
+   "container": "matroska",
+   "packets": 8,
+   "bytes": 3238
+  },
+  "utvideo": {
+   "present": true,
+   "long_name": "Ut Video",
+   "opens": true,
+   "container": "nut",
+   "packets": 8,
+   "bytes": 72253
+  },
+  "magicyuv": {
+   "present": true,
+   "long_name": "MagicYUV video",
+   "opens": true,
+   "container": "nut",
+   "packets": 8,
+   "bytes": 141456
+  },
+  "huffyuv": {
+   "present": true,
+   "long_name": "Huffyuv / HuffYUV",
+   "opens": true,
+   "container": "nut",
+   "packets": 8,
+   "bytes": 262739
+  },
+  "ffvhuff": {
+   "present": true,
+   "long_name": "Huffyuv FFmpeg variant",
+   "opens": true,
+   "container": "nut",
+   "packets": 8,
+   "bytes": 262739
+  },
+  "prores_ks": {
+   "present": true,
+   "long_name": "Apple ProRes (iCodec Pro)",
+   "opens": true,
+   "container": "matroska",
+   "packets": 8,
+   "bytes": 7136
+  },
+  "dnxhd": {
+   "present": true,
+   "long_name": "VC3/DNxHD",
+   "opens": false,
+   "error": "no container accepted codec; last: mov: Invalid argument: 'avcodec_open2(\"dnxhd\", {})' returned 22"
+  },
+  "rawvideo": {
+   "present": true,
+   "long_name": "raw video",
+   "opens": true,
+   "container": "matroska",
+   "packets": 8,
+   "bytes": 1049426
+  },
+  "png": {
+   "present": true,
+   "long_name": "PNG (Portable Network Graphics) image",
+   "opens": true,
+   "container": "nut",
+   "packets": 8,
+   "bytes": 6531
+  },
+  "libwebp": {
+   "present": true,
+   "long_name": "libwebp WebP image",
+   "opens": false,
+   "error": "no container accepted codec; last: mov: 'mov' format does not support 'libwebp' codec"
+  },
+  "libx264": {
+   "present": true,
+   "long_name": "libx264 H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+   "opens": true,
+   "container": "matroska",
+   "packets": 8,
+   "bytes": 2466
+  },
+  "libopenh264": {
+   "present": false,
+   "error": "UnknownCodecError: libopenh264"
+  },
+  "h264_nvenc": {
+   "present": true,
+   "long_name": "NVIDIA NVENC H.264 encoder",
+   "opens": true,
+   "container": "matroska",
+   "packets": 8,
+   "bytes": 22911
+  },
+  "h264_qsv": {
+   "present": true,
+   "long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10 (Intel Quick Sync Video acceleration)",
+   "opens": false,
+   "container": "matroska",
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"h264_qsv\", {})'"
+  },
+  "h264_amf": {
+   "present": true,
+   "long_name": "AMD AMF H.264 Encoder",
+   "opens": false,
+   "container": "matroska",
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"h264_amf\", {})'"
+  },
+  "h264_mf": {
+   "present": true,
+   "long_name": "H264 via MediaFoundation",
+   "opens": false,
+   "container": "matroska",
+   "error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_open2(\"h264_mf\", {})'"
+  },
+  "libx265": {
+   "present": true,
+   "long_name": "libx265 H.265 / HEVC",
+   "opens": true,
+   "container": "matroska",
+   "packets": 8,
+   "bytes": 3313
+  },
+  "hevc_nvenc": {
+   "present": true,
+   "long_name": "NVIDIA NVENC hevc encoder",
+   "opens": true,
+   "container": "matroska",
+   "packets": 8,
+   "bytes": 1167
+  },
+  "hevc_qsv": {
+   "present": true,
+   "long_name": "HEVC (Intel Quick Sync Video acceleration)",
+   "opens": false,
+   "container": "matroska",
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"hevc_qsv\", {})'"
+  },
+  "hevc_amf": {
+   "present": true,
+   "long_name": "AMD AMF HEVC encoder",
+   "opens": false,
+   "container": "matroska",
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_open2(\"hevc_amf\", {})'"
+  },
+  "hevc_mf": {
+   "present": true,
+   "long_name": "HEVC via MediaFoundation",
+   "opens": false,
+   "container": "matroska",
+   "error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_open2(\"hevc_mf\", {})'"
+  }
+ },
+ "audio_encoders_present": {
+  "libopus": true,
+  "opus": true,
+  "flac": true,
+  "pcm_s16le": true,
+  "aac": true,
+  "libfdk_aac": false,
+  "libmp3lame": true
+ },
+ "decoders_present": {
+  "libdav1d": true,
+  "av1": true,
+  "libaom-av1": false,
+  "vp8": true,
+  "vp9": true,
+  "libvpx-vp9": true,
+  "h264": true,
+  "hevc": true,
+  "mjpeg": true,
+  "jpegxl": false,
+  "libjxl": false,
+  "jpeg2000": true,
+  "libopenjpeg": false,
+  "ffv1": true,
+  "utvideo": true,
+  "magicyuv": true,
+  "prores": true,
+  "dnxhd": true,
+  "opus": true,
+  "flac": true,
+  "aac": true
+ }
+}

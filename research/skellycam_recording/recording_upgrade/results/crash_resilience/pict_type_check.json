@@ -1,0 +1,63 @@
+{
+ "env": {
+  "python": "3.12.13",
+  "pyav": "18.0.0",
+  "libav": {
+   "libavutil": "60.26.102",
+   "libavcodec": "62.28.102",
+   "libavformat": "62.12.102",
+   "libavdevice": "62.3.102",
+   "libavfilter": "11.14.102",
+   "libswscale": "9.5.102",
+   "libswresample": "6.3.102"
+  },
+  "opencv": "4.12.0",
+  "ffmpeg_cli": "ffmpeg version 9.0.2-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers"
+ },
+ "nvidia_smi_before": "0, 9 %",
+ "runs": [
+  {
+   "codec": "libsvtav1",
+   "pict_type_cleared": false,
+   "packets": 60,
+   "key_packets": 60,
+   "decoded_jpeg_pict_type": "1"
+  },
+  {
+   "codec": "libsvtav1",
+   "pict_type_cleared": true,
+   "packets": 60,
+   "key_packets": 2,
+   "decoded_jpeg_pict_type": "1"
+  },
+  {
+   "codec": "h264_nvenc",
+   "pict_type_cleared": false,
+   "packets": 60,
+   "key_packets": 2,
+   "decoded_jpeg_pict_type": "1"
+  },
+  {
+   "codec": "h264_nvenc",
+   "pict_type_cleared": true,
+   "packets": 60,
+   "key_packets": 2,
+   "decoded_jpeg_pict_type": "1"
+  },
+  {
+   "codec": "libx264",
+   "pict_type_cleared": false,
+   "packets": 60,
+   "key_packets": 60,
+   "decoded_jpeg_pict_type": "1"
+  },
+  {
+   "codec": "libx264",
+   "pict_type_cleared": true,
+   "packets": 60,
+   "key_packets": 2,
+   "decoded_jpeg_pict_type": "1"
+  }
+ ],
+ "nvidia_smi_after": "0, 5 %"
+}

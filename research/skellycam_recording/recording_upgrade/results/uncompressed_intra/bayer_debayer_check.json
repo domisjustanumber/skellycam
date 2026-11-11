@@ -1,0 +1,124 @@
+{
+ "versions": {
+  "av": "18.0.0",
+  "ffmpeg": "8.1.2",
+  "cv2": "4.12.0",
+  "numpy": "2.2.6"
+ },
+ "frame": "c930e_1080p_yuy2 frame 0, derived RGGB",
+ "methods": {
+  "swscale_bilinear_12bit": {
+   "cfa_samples_preserved_exactly": true,
+   "cfa_max_abs_err": 0,
+   "scale_note": null,
+   "ffv1_bytes_rgb": 3735615,
+   "after_yuv420p8_cfa_max_abs_err": 365,
+   "after_yuv420p8_cfa_psnr": 43.52
+  },
+  "swscale_bilinear_8bit": {
+   "cfa_samples_preserved_exactly": true,
+   "cfa_max_abs_err": 0,
+   "scale_note": null,
+   "ffv1_bytes_rgb": 1151126,
+   "after_yuv420p8_cfa_max_abs_err": 24,
+   "after_yuv420p8_cfa_psnr": 43.23
+  },
+  "cv2_BayerRG2BGR_12bit": {
+   "cfa_samples_preserved_exactly": false,
+   "cfa_max_abs_err": 1208,
+   "scale_note": null,
+   "ffv1_bytes_rgb": 3744908,
+   "after_yuv420p8_cfa_max_abs_err": 1082,
+   "after_yuv420p8_cfa_psnr": 20.35
+  },
+  "cv2_BayerRG2BGR_8bit": {
+   "cfa_samples_preserved_exactly": false,
+   "cfa_max_abs_err": 76,
+   "scale_note": null,
+   "ffv1_bytes_rgb": 1064892,
+   "after_yuv420p8_cfa_max_abs_err": 67,
+   "after_yuv420p8_cfa_psnr": 20.33
+  },
+  "cv2_BayerRG2BGR_EA_12bit": {
+   "cfa_samples_preserved_exactly": false,
+   "cfa_max_abs_err": 1208,
+   "scale_note": null,
+   "ffv1_bytes_rgb": 3768838,
+   "after_yuv420p8_cfa_max_abs_err": 1093,
+   "after_yuv420p8_cfa_psnr": 20.35
+  },
+  "cv2_BayerRG2BGR_EA_8bit": {
+   "cfa_samples_preserved_exactly": false,
+   "cfa_max_abs_err": 76,
+   "scale_note": null,
+   "ffv1_bytes_rgb": 1053658,
+   "after_yuv420p8_cfa_max_abs_err": 65,
+   "after_yuv420p8_cfa_psnr": 20.33
+  },
+  "cv2_BayerRG2BGR_VNG_12bit": {
+   "error": "error: OpenCV(4.12.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\imgproc\\src\\demosaicing.cpp:1804: error: (-215:Assertion failed) depth == CV_8U in function 'cv::demosaicing'\n"
+  },
+  "cv2_BayerRG2BGR_VNG_8bit": {
+   "cfa_samples_preserved_exactly": false,
+   "cfa_max_abs_err": 58,
+   "scale_note": null,
+   "ffv1_bytes_rgb": 940034,
+   "after_yuv420p8_cfa_max_abs_err": 59,
+   "after_yuv420p8_cfa_psnr": 20.34
+  },
+  "cv2_BayerBG2BGR_12bit": {
+   "cfa_samples_preserved_exactly": false,
+   "cfa_max_abs_err": 601,
+   "scale_note": null,
+   "ffv1_bytes_rgb": 3746633,
+   "after_yuv420p8_cfa_max_abs_err": 639,
+   "after_yuv420p8_cfa_psnr": 43.6
+  },
+  "cv2_BayerBG2BGR_8bit": {
+   "cfa_samples_preserved_exactly": false,
+   "cfa_max_abs_err": 37,
+   "scale_note": null,
+   "ffv1_bytes_rgb": 1064974,
+   "after_yuv420p8_cfa_max_abs_err": 39,
+   "after_yuv420p8_cfa_psnr": 44.04
+  },
+  "cv2_BayerBG2BGR_EA_12bit": {
+   "cfa_samples_preserved_exactly": false,
+   "cfa_max_abs_err": 601,
+   "scale_note": null,
+   "ffv1_bytes_rgb": 3769594,
+   "after_yuv420p8_cfa_max_abs_err": 639,
+   "after_yuv420p8_cfa_psnr": 43.68
+  },
+  "cv2_BayerBG2BGR_EA_8bit": {
+   "cfa_samples_preserved_exactly": false,
+   "cfa_max_abs_err": 37,
+   "scale_note": null,
+   "ffv1_bytes_rgb": 1053643,
+   "after_yuv420p8_cfa_max_abs_err": 39,
+   "after_yuv420p8_cfa_psnr": 44.17
+  },
+  "cv2_BayerBG2BGR_VNG_12bit": {
+   "error": "error: OpenCV(4.12.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\imgproc\\src\\demosaicing.cpp:1804: error: (-215:Assertion failed) depth == CV_8U in function 'cv::demosaicing'\n"
+  },
+  "cv2_BayerBG2BGR_VNG_8bit": {
+   "cfa_samples_preserved_exactly": true,
+   "cfa_max_abs_err": 0,
+   "scale_note": null,
+   "ffv1_bytes_rgb": 940014,
+   "after_yuv420p8_cfa_max_abs_err": 13,
+   "after_yuv420p8_cfa_psnr": 44.25
+  }
+ },
+ "raw_mosaic_ffv1_bytes": {
+  "bayer12_as_gray16le": 2414539,
+  "bayer12_quad_as_gray16le": 1596055,
+  "bayer8_as_gray": 1078696,
+  "bayer8_quad_as_gray": 492160
+ },
+ "raw_bytes": {
+  "bayer12_in_16bit": 4147200,
+  "bayer12_packed_raw12": 3110400,
+  "bayer8": 2073600
+ }
+}

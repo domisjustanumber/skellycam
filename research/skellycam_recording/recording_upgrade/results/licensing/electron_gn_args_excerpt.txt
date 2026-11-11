@@ -1,0 +1,22 @@
+# fetched 2026-11-09 with gh api (raw)
+## electron/electron build/args/all.gn @ v35.7.5 (grep -n proprietary|branding)
+17:ffmpeg_branding = "Chrome"
+18:proprietary_codecs = true
+## build/args/release.gn @ v35.7.5 (grep -n proprietary)
+5:# By default, Electron builds ffmpeg with proprietary codecs enabled. In order
+6:# to facilitate users who don't want to ship proprietary codecs in ffmpeg, or
+7:# who have an LGPL requirement to ship ffmpeg as a dynamically linked library,
+8:# we build ffmpeg as a shared library.
+## electron/electron build/args/all.gn @ v45.2.3 (grep -n proprietary|branding)
+40:ffmpeg_branding = "Chrome"
+41:proprietary_codecs = true
+## build/args/release.gn @ v45.2.3 (grep -n proprietary)
+5:# By default, Electron builds ffmpeg with proprietary codecs enabled. In order
+6:# to facilitate users who don't want to ship proprietary codecs in ffmpeg, or
+7:# who have an LGPL requirement to ship ffmpeg as a dynamically linked library,
+8:# we build ffmpeg as a shared library.
+## gh api repos/electron/electron/releases/tags/<tag> asset names matching ffmpeg-*win32-x64 (fetched 2026-11-09)
+v35.7.5:
+ffmpeg-v35.7.5-win32-x64.zip
+v45.2.3:
+ffmpeg-v45.2.3-win32-x64.zip

@@ -1,0 +1,84 @@
+{
+ "av_version": "19.0.2",
+ "ffmpeg": [
+  63,
+  1,
+  102
+ ],
+ "frames": 4,
+ "source": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\corpus\\c930e_1080p_yuy2",
+ "note": "functional only, no timing",
+ "nvidia_smi_before": "0, 24 %",
+ "cases": [
+  {
+   "codec": "hevc_qsv",
+   "input_pix_fmt": "yuyv422",
+   "options": {},
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\qsv_recheck\\hevc_qsv_yuyv422.mkv",
+   "stage": "ok",
+   "packets": 4,
+   "keyframe_flags": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "libav_log": [],
+   "coded_profile": "Rext",
+   "frames_decoded": 4,
+   "decoded_pix_fmt": "yuv422p",
+   "y_psnr_db_min": 50.64,
+   "file_bytes": 218045
+  },
+  {
+   "codec": "hevc_qsv",
+   "input_pix_fmt": "nv12",
+   "options": {},
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\qsv_recheck\\hevc_qsv_nv12.mkv",
+   "stage": "ok",
+   "packets": 4,
+   "keyframe_flags": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "libav_log": [],
+   "coded_profile": "Main",
+   "frames_decoded": 4,
+   "decoded_pix_fmt": "yuv420p",
+   "y_psnr_db_min": 50.65,
+   "file_bytes": 181091
+  },
+  {
+   "codec": "h264_qsv",
+   "input_pix_fmt": "nv12",
+   "options": {},
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\qsv_recheck\\h264_qsv_nv12.mkv",
+   "stage": "ok",
+   "packets": 4,
+   "keyframe_flags": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "libav_log": [],
+   "coded_profile": "High",
+   "frames_decoded": 4,
+   "decoded_pix_fmt": "yuv420p",
+   "y_psnr_db_min": 50.12,
+   "file_bytes": 267563
+  },
+  {
+   "codec": "av1_qsv",
+   "input_pix_fmt": "nv12",
+   "options": {},
+   "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\qsv_recheck\\av1_qsv_nv12.mkv",
+   "stage": "encode_failed",
+   "error": "NotImplementedError: [Errno 40] Function not implemented: 'avcodec_open2(\"av1_qsv\", {})'",
+   "libav_log": []
+  }
+ ],
+ "nvidia_smi_after": "0, 17 %"
+}

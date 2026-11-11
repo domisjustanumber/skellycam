@@ -1,0 +1,168 @@
+{
+ "pyav": "19.0.2",
+ "library_versions": {
+  "libavutil": "61.1.102",
+  "libavcodec": "63.1.102",
+  "libavformat": "63.1.102",
+  "libavdevice": "63.1.102",
+  "libavfilter": "12.1.102",
+  "libswscale": "10.1.102",
+  "libswresample": "7.1.102"
+ },
+ "opencv": "4.12.0",
+ "numpy": "2.2.6",
+ "frames": 60,
+ "timing": "none recorded (functional only)",
+ "caps": {
+  "codecs": {
+   "libvpx-vp9": {
+    "encode": true,
+    "decode": true
+   },
+   "vp9": {
+    "encode": true,
+    "decode": true
+   },
+   "libx264": {
+    "encode": true,
+    "decode": false
+   },
+   "libsvtav1": {
+    "encode": true,
+    "decode": false
+   },
+   "libdav1d": {
+    "encode": false,
+    "decode": true
+   },
+   "png": {
+    "encode": true,
+    "decode": true
+   },
+   "qtrle": {
+    "encode": true,
+    "decode": true
+   },
+   "webvtt": {
+    "encode": true,
+    "decode": true
+   },
+   "ass": {
+    "encode": true,
+    "decode": true
+   },
+   "mjpeg": {
+    "encode": true,
+    "decode": true
+   }
+  },
+  "filters": {
+   "overlay": true,
+   "alphamerge": true,
+   "alphaextract": true,
+   "ass": false,
+   "subtitles": false,
+   "drawtext": false,
+   "drawbox": true
+  },
+  "formats": {
+   "webm": true,
+   "matroska": true,
+   "mp4": true,
+   "mov": true,
+   "webvtt": true,
+   "ass": true
+  }
+ },
+ "p1": {
+  "sidecar_frames_read": 60,
+  "sidecar_bad": 0,
+  "p1_burnin_vp9.webm": {
+   "frames": 60,
+   "base==overlay": 60,
+   "decode_fail": 0,
+   "mismatch_examples": [],
+   "bytes": 2591161
+  },
+  "p1_burnin_h264.mp4": {
+   "frames": 60,
+   "base==overlay": 60,
+   "decode_fail": 0,
+   "mismatch_examples": [],
+   "bytes": 2120810
+  }
+ },
+ "alpha": {
+  "file": "overlay_vp9alpha_pyav19.webm",
+  "bytes": 3840349,
+  "bytes_per_frame": 64006,
+  "encoder_pix_fmt": "yuva420p",
+  "stream_meta": {
+   "codec": "vp9",
+   "pix_fmt_reported": "yuv420p",
+   "metadata": {
+    "alpha_mode": "1",
+    "DURATION": "00:00:02.000000000"
+   }
+  },
+  "default_decoder": {
+   "decoder": "vp9 (FFmpeg native, PyAV default)",
+   "frames": 60,
+   "frame_format": "yuv420p"
+  },
+  "libvpx_decoder": {
+   "frames": 60,
+   "frame_format": "yuva420p",
+   "errors": [],
+   "frames_with_alpha_plane": 60,
+   "alpha_mean_abs_diff_vs_matte_max": 0.4572,
+   "alpha_zero_fraction_frame0_ref": 0.873,
+   "alpha_zero_fraction_frame0_dec": 0.8463,
+   "overlay_barcode_matches": 60
+  },
+  "trunc50": {
+   "bytes_cut": 1920174,
+   "frames_decoded": 30,
+   "frames_with_transparency": 30,
+   "errors": []
+  }
+ },
+ "p2": {
+  "base_file": "base_cfr_vp9.webm",
+  "layer_libvpx_decoder": {
+   "frames": 60,
+   "base==overlay": 60,
+   "decode_fail": 0,
+   "mismatch_examples": [],
+   "layer_frame_format": "yuva420p"
+  },
+  "layer_default_decoder": {
+   "frames": 60,
+   "base==overlay": 1,
+   "decode_fail": 0,
+   "mismatch_examples": [
+    [
+     0,
+     1
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     0,
+     5
+    ]
+   ],
+   "layer_frame_format": "yuv420p"
+  }
+ }
+}

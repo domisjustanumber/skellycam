@@ -1,0 +1,86 @@
+{
+ "env": {
+  "pyav": "19.0.2",
+  "libavcodec": "63.1.102"
+ },
+ "hold": [
+  {
+   "codec": "h264_nvenc",
+   "options": {
+    "preset": "p4",
+    "tune": "ll",
+    "rc": "constqp",
+    "qp": "14",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "bf": "0"
+   },
+   "gop_size": 0,
+   "fed": 75,
+   "packets_before_drain": 73,
+   "held_by_encoder": 2,
+   "packets_from_drain": 2,
+   "keyframe_packets_total": 75
+  },
+  {
+   "codec": "hevc_nvenc",
+   "options": {
+    "preset": "p4",
+    "tune": "ll",
+    "rc": "constqp",
+    "qp": "11",
+    "i_qfactor": "1",
+    "i_qoffset": "0",
+    "bf": "0"
+   },
+   "gop_size": 0,
+   "fed": 75,
+   "packets_before_drain": 73,
+   "held_by_encoder": 2,
+   "packets_from_drain": 2,
+   "keyframe_packets_total": 75
+  }
+ ],
+ "rt": [
+  {
+   "payload": "h264nv_intra",
+   "container": "mkv+fp",
+   "last_mux_line_seen": "M 73 75",
+   "bytes": 2780391,
+   "ffprobe_frames": 72,
+   "pyav": {
+    "frames": 72,
+    "packets": 72,
+    "error": null,
+    "seek": {
+     "ok": true,
+     "target_pts": 1200,
+     "got_pts": 1200,
+     "exact": true
+    }
+   },
+   "demux_packets": 72,
+   "demux_keyframes": 72
+  },
+  {
+   "payload": "hevcnv_intra",
+   "container": "mkv+fp",
+   "last_mux_line_seen": "M 73 75",
+   "bytes": 3268260,
+   "ffprobe_frames": 72,
+   "pyav": {
+    "frames": 72,
+    "packets": 72,
+    "error": null,
+    "seek": {
+     "ok": true,
+     "target_pts": 1200,
+     "got_pts": 1200,
+     "exact": true
+    }
+   },
+   "demux_packets": 72,
+   "demux_keyframes": 72
+  }
+ ]
+}

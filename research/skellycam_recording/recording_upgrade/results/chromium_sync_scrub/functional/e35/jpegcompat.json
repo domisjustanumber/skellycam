@@ -1,0 +1,162 @@
+{
+ "test": "jpegcompat",
+ "params": {
+  "tag": "e35",
+  "maxframes": "30"
+ },
+ "versions": {
+  "electron": "35.7.5",
+  "chrome": "134.0.6998.205",
+  "node": "22.16.0",
+  "v8": "13.4.114.21-electron.0"
+ },
+ "gpu_feature_status": {
+  "2d_canvas": "enabled",
+  "canvas_oop_rasterization": "enabled_on",
+  "direct_rendering_display_compositor": "disabled_off_ok",
+  "gpu_compositing": "enabled",
+  "multiple_raster_threads": "enabled_on",
+  "opengl": "enabled_on",
+  "rasterization": "enabled",
+  "raw_draw": "disabled_off_ok",
+  "skia_graphite": "disabled_off",
+  "video_decode": "enabled",
+  "video_encode": "enabled",
+  "vulkan": "disabled_off",
+  "webgl": "enabled",
+  "webgl2": "enabled",
+  "webgpu": "enabled",
+  "webnn": "disabled_off"
+ },
+ "gpu_info": {
+  "gpuDevice": [
+   {
+    "active": true,
+    "deviceId": 9348,
+    "driverVendor": "NVIDIA",
+    "driverVersion": "32.0.16.1088",
+    "gpuPreference": 2,
+    "revision": 161,
+    "subSysId": 928331842,
+    "vendorId": 4318
+   },
+   {
+    "active": false,
+    "deviceId": 9348,
+    "driverVersion": "32.0.16.1088",
+    "gpuPreference": 0,
+    "revision": 161,
+    "subSysId": 928331842,
+    "vendorId": 4318
+   },
+   {
+    "active": false,
+    "deviceId": 140,
+    "driverVersion": "10.0.26100.9711",
+    "gpuPreference": 0,
+    "revision": 0,
+    "subSysId": 0,
+    "vendorId": 5140
+   }
+  ]
+ },
+ "metrics_summary": null,
+ "metrics_samples": null,
+ "window": {
+  "width": 1600,
+  "height": 900
+ },
+ "finished_utc": "2026-11-09T16:52:02.227Z",
+ "result": {
+  "c930e_720p_flash": {
+   "frames_tested": 30,
+   "bitmap_ok": 30,
+   "imagedecoder_ok": 30,
+   "errors": [],
+   "dims": [
+    1280,
+    720
+   ],
+   "imagedecoder_complete": 30,
+   "imagedecoder_format": "I422"
+  },
+  "c922_720p_flash": {
+   "frames_tested": 30,
+   "bitmap_ok": 30,
+   "imagedecoder_ok": 30,
+   "errors": [],
+   "dims": [
+    1280,
+    720
+   ],
+   "imagedecoder_complete": 30,
+   "imagedecoder_format": "I422"
+  },
+  "c922_1080p": {
+   "frames_tested": 19,
+   "bitmap_ok": 19,
+   "imagedecoder_ok": 19,
+   "errors": [],
+   "dims": [
+    1920,
+    1080
+   ],
+   "imagedecoder_complete": 19,
+   "imagedecoder_format": "I422"
+  },
+  "c930e_1080p": {
+   "frames_tested": 19,
+   "bitmap_ok": 19,
+   "imagedecoder_ok": 19,
+   "errors": [],
+   "dims": [
+    1920,
+    1080
+   ],
+   "imagedecoder_complete": 19,
+   "imagedecoder_format": "I422"
+  },
+  "c922_1600x896": {
+   "frames_tested": 19,
+   "bitmap_ok": 19,
+   "imagedecoder_ok": 19,
+   "errors": [],
+   "dims": [
+    1600,
+    896
+   ],
+   "imagedecoder_complete": 19,
+   "imagedecoder_format": "I422"
+  },
+  "c922_720p60": {
+   "frames_tested": 10,
+   "bitmap_ok": 10,
+   "imagedecoder_ok": 10,
+   "errors": [],
+   "dims": [
+    1280,
+    720
+   ],
+   "imagedecoder_complete": 10,
+   "imagedecoder_format": "I422"
+  },
+  "generic_1080p": {
+   "frames_tested": 11,
+   "bitmap_ok": 11,
+   "imagedecoder_ok": 11,
+   "errors": [],
+   "dims": [
+    1920,
+    1080
+   ],
+   "imagedecoder_complete": 11,
+   "imagedecoder_format": "I422"
+  }
+ },
+ "nvidia_smi": {
+  "query": "encoder.stats.sessionCount,utilization.gpu,utilization.decoder,memory.used",
+  "before": "0, 23 %, 13 %, 2831 MiB",
+  "after": "0, 12 %, 3 %, 2829 MiB"
+ },
+ "note": "CPU/memory samples removed: functional stage, machine shared with other agents"
+}

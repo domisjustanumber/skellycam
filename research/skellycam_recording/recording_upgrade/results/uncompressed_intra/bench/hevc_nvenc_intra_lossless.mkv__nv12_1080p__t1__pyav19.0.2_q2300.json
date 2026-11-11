@@ -1,0 +1,202 @@
+{
+ "config": "hevc_nvenc_intra_lossless.mkv",
+ "codec": "hevc_nvenc",
+ "opts": {
+  "preset": "p1",
+  "tune": "lossless"
+ },
+ "gop": 1,
+ "source": "nv12",
+ "source_note": "derived 4:2:0",
+ "res": "1080p",
+ "width": 1920,
+ "height": 1080,
+ "src_pix_fmt": "nv12",
+ "target_pix_fmt": "nv12",
+ "path": "native",
+ "threads": 1,
+ "frames": 300,
+ "unique_frames": 8,
+ "looped": true,
+ "reps": 3,
+ "warmup_frames": 20,
+ "warmup_discarded": true,
+ "av_version": "19.0.2",
+ "ffmpeg_version": "9.0.2",
+ "library_versions": {
+  "libavutil": [
+   61,
+   1,
+   102
+  ],
+  "libavcodec": [
+   63,
+   1,
+   102
+  ],
+  "libavformat": [
+   63,
+   1,
+   102
+  ],
+  "libavdevice": [
+   63,
+   1,
+   102
+  ],
+  "libavfilter": [
+   12,
+   1,
+   102
+  ],
+  "libswscale": [
+   10,
+   1,
+   102
+  ],
+  "libswresample": [
+   7,
+   1,
+   102
+  ]
+ },
+ "numpy": "2.2.6",
+ "python": "3.12.13",
+ "machine": "Gerald",
+ "cpu_logical": 28,
+ "system_cpu_percent_before": 4.2,
+ "prep_ms_per_frame": 0.556,
+ "nvidia_smi_before": "0, 0 %",
+ "warmup": {
+  "encode_wall_s": 0.1571,
+  "encode_fps": 127.29,
+  "encode_cpu_s": 0.0938,
+  "encode_cpu_cores_per_30fps_stream": 0.141,
+  "latency_p50": 3.326,
+  "latency_p95": 89.773,
+  "latency_p99": 89.773,
+  "latency_max": 89.773,
+  "latency_mean": 7.505,
+  "packets": 20,
+  "bytes_per_frame": 517023.7,
+  "file_bytes": 10341975,
+  "system_cpu_percent_during_encode": 6.4,
+  "decode_frames": 20,
+  "decode_wall_s": 0.7005,
+  "decode_fps": 28.55,
+  "decode_cpu_s": 0.6875
+ },
+ "rep_results": [
+  {
+   "encode_wall_s": 0.9892,
+   "encode_fps": 303.27,
+   "encode_cpu_s": 0.4531,
+   "encode_cpu_cores_per_30fps_stream": 0.045,
+   "latency_p50": 3.029,
+   "latency_p95": 3.403,
+   "latency_p99": 3.467,
+   "latency_max": 62.23,
+   "latency_mean": 3.275,
+   "packets": 300,
+   "bytes_per_frame": 517741.0,
+   "file_bytes": 155336392,
+   "system_cpu_percent_during_encode": 4.3,
+   "decode_frames": 300,
+   "decode_wall_s": 10.4532,
+   "decode_fps": 28.7,
+   "decode_cpu_s": 10.375
+  },
+  {
+   "encode_wall_s": 0.9947,
+   "encode_fps": 301.61,
+   "encode_cpu_s": 0.4844,
+   "encode_cpu_cores_per_30fps_stream": 0.048,
+   "latency_p50": 3.013,
+   "latency_p95": 3.38,
+   "latency_p99": 3.484,
+   "latency_max": 76.974,
+   "latency_mean": 3.294,
+   "packets": 300,
+   "bytes_per_frame": 517741.0,
+   "file_bytes": 155336392,
+   "system_cpu_percent_during_encode": 5.8,
+   "decode_frames": 300,
+   "decode_wall_s": 10.445,
+   "decode_fps": 28.72,
+   "decode_cpu_s": 10.375
+  },
+  {
+   "encode_wall_s": 1.0071,
+   "encode_fps": 297.9,
+   "encode_cpu_s": 0.4844,
+   "encode_cpu_cores_per_30fps_stream": 0.048,
+   "latency_p50": 3.04,
+   "latency_p95": 3.4,
+   "latency_p99": 3.713,
+   "latency_max": 78.698,
+   "latency_mean": 3.335,
+   "packets": 300,
+   "bytes_per_frame": 517741.0,
+   "file_bytes": 155336392,
+   "system_cpu_percent_during_encode": 5.2,
+   "decode_frames": 300,
+   "decode_wall_s": 10.4388,
+   "decode_fps": 28.74,
+   "decode_cpu_s": 10.3906
+  }
+ ],
+ "stats": {
+  "encode_fps": {
+   "median": 301.61,
+   "min": 297.9,
+   "max": 303.27
+  },
+  "encode_cpu_cores_per_30fps_stream": {
+   "median": 0.048,
+   "min": 0.045,
+   "max": 0.048
+  },
+  "latency_p50": {
+   "median": 3.029,
+   "min": 3.013,
+   "max": 3.04
+  },
+  "latency_p99": {
+   "median": 3.484,
+   "min": 3.467,
+   "max": 3.713
+  },
+  "latency_max": {
+   "median": 76.974,
+   "min": 62.23,
+   "max": 78.698
+  },
+  "bytes_per_frame": {
+   "median": 517741.0,
+   "min": 517741.0,
+   "max": 517741.0
+  },
+  "decode_fps": {
+   "median": 28.72,
+   "min": 28.7,
+   "max": 28.74
+  },
+  "system_cpu_percent_during_encode": {
+   "median": 5.2,
+   "min": 4.3,
+   "max": 5.8
+  }
+ },
+ "encode_fps": 301.61,
+ "encode_cpu_cores_per_30fps_stream": 0.048,
+ "encode_latency_ms": {
+  "p50": 3.029,
+  "p99": 3.484,
+  "max": 76.974
+ },
+ "bytes_per_frame": 517741.0,
+ "decode_fps": 28.72,
+ "decoder": "libav default for codec (software unless the decoder is hw)",
+ "nvidia_smi_after": "0, 0 %",
+ "system_cpu_percent_after": 2.1
+}

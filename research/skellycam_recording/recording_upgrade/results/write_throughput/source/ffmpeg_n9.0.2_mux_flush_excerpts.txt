@@ -1,0 +1,97 @@
+Excerpts from FFmpeg tag n9.0.2 (the FFmpeg bundled by PyAV 19.0.2), fetched 2026-11-09 from
+https://raw.githubusercontent.com/FFmpeg/FFmpeg/n9.0.2/libavformat/matroskaenc.c and .../libavformat/mux.c
+Format: <file>:<line>: <text>
+
+matroskaenc.c:2613:     put_ebml_uint(pb, MATROSKA_ID_TIMECODESCALE, 1000000);
+
+matroskaenc.c:2740:     mkv->cluster_pos = -1;
+matroskaenc.c:2741: 
+matroskaenc.c:2742:     // start a new cluster every 5 MB or 5 sec, or 32k / 1 sec for streaming or
+matroskaenc.c:2743:     // after 4k and on a keyframe
+matroskaenc.c:2744:     if (IS_SEEKABLE(pb, mkv)) {
+matroskaenc.c:2745:         if (mkv->cluster_time_limit < 0)
+matroskaenc.c:2746:             mkv->cluster_time_limit = 5000;
+matroskaenc.c:2747:         if (mkv->cluster_size_limit < 0)
+matroskaenc.c:2748:             mkv->cluster_size_limit = 5 * 1024 * 1024;
+matroskaenc.c:2749:     } else {
+matroskaenc.c:2750:         if (mkv->cluster_time_limit < 0)
+matroskaenc.c:2751:             mkv->cluster_time_limit = 1000;
+matroskaenc.c:2752:         if (mkv->cluster_size_limit < 0)
+matroskaenc.c:2753:             mkv->cluster_size_limit = 32 * 1024;
+matroskaenc.c:2754:     }
+
+matroskaenc.c:3229:             // For DASH audio, we create a Cluster based on cluster_time_limit.
+matroskaenc.c:3230:             start_new_cluster = 1;
+matroskaenc.c:3231:         } else if (!mkv->is_dash &&
+matroskaenc.c:3232:                    (cluster_size > mkv->cluster_size_limit ||
+matroskaenc.c:3233:                     cluster_time > mkv->cluster_time_limit ||
+matroskaenc.c:3234:                     (codec_type == AVMEDIA_TYPE_VIDEO && keyframe &&
+matroskaenc.c:3235:                      cluster_size > 4 * 1024))) {
+matroskaenc.c:3236:             start_new_cluster = 1;
+
+matroskaenc.c:3273: static int mkv_write_flush_packet(AVFormatContext *s, AVPacket *pkt)
+matroskaenc.c:3274: {
+matroskaenc.c:3275:     MatroskaMuxContext *mkv = s->priv_data;
+matroskaenc.c:3276: 
+matroskaenc.c:3277:     if (!pkt) {
+matroskaenc.c:3278:         if (mkv->cluster_pos != -1) {
+matroskaenc.c:3279:             int ret = mkv_end_cluster(s);
+matroskaenc.c:3280:             if (ret < 0)
+matroskaenc.c:3281:                 return ret;
+matroskaenc.c:3282:             av_log(s, AV_LOG_DEBUG,
+matroskaenc.c:3283:                    "Flushing cluster at offset %" PRIu64 " bytes\n",
+matroskaenc.c:3284:                    avio_tell(s->pb));
+matroskaenc.c:3285:         }
+matroskaenc.c:3286:         return 1;
+matroskaenc.c:3287:     }
+matroskaenc.c:3288:     return mkv_write_packet(s, pkt);
+
+matroskaenc.c:3601: 
+matroskaenc.c:3602:         // ms precision is the de-facto standard timescale for mkv files
+matroskaenc.c:3603:         avpriv_set_pts_info(st, 64, 1, 1000);
+
+matroskaenc.c:3727:     .write_packet      = mkv_write_flush_packet,
+
+matroskaenc.c:3739:     .flags_internal    = FF_OFMT_FLAG_ALLOW_FLUSH,
+
+mux.c:1176: int av_write_frame(AVFormatContext *s, AVPacket *in)
+mux.c:1177: {
+mux.c:1178:     FFFormatContext *const si = ffformatcontext(s);
+mux.c:1179:     AVPacket *pkt = si->parse_pkt;
+mux.c:1180:     int ret;
+mux.c:1181: 
+mux.c:1182:     if (!in) {
+mux.c:1183:         if (ffofmt(s->oformat)->flags_internal & FF_OFMT_FLAG_ALLOW_FLUSH) {
+mux.c:1184:             ret = ffofmt(s->oformat)->write_packet(s, NULL);
+mux.c:1185:             flush_if_needed(s);
+mux.c:1186:             if (ret >= 0 && s->pb && s->pb->error < 0)
+mux.c:1187:                 ret = s->pb->error;
+mux.c:1188:             return ret;
+mux.c:1189:         }
+mux.c:1190:         return 1;
+
+mux.c:1223: int av_interleaved_write_frame(AVFormatContext *s, AVPacket *pkt)
+mux.c:1224: {
+mux.c:1225:     int ret;
+mux.c:1226: 
+mux.c:1227:     if (pkt) {
+mux.c:1228:         ret = write_packets_common(s, pkt, 1/*interleaved*/);
+mux.c:1229:         if (ret < 0)
+mux.c:1230:             av_packet_unref(pkt);
+mux.c:1231:         return ret;
+mux.c:1232:     } else {
+mux.c:1233:         av_log(s, AV_LOG_TRACE, "av_interleaved_write_frame FLUSH\n");
+mux.c:1234:         return interleaved_write_packet(s, ffformatcontext(s)->parse_pkt, 1/*flush*/, 0);
+mux.c:1235:     }
+mux.c:1236: }
+
+mux.c:819:     /* update flags */
+mux.c:820:     if (sti->is_intra_only)
+mux.c:821:         pkt->flags |= AV_PKT_FLAG_KEY;
+mux.c:822: 
+mux.c:823:     if (!pkt->data && !pkt->side_data_elems) {
+mux.c:824:         /* Such empty packets signal EOS for the BSF API; so sanitize
+mux.c:825:          * the packet by allocating data of size 0 (+ padding). */
+mux.c:826:         av_buffer_unref(&pkt->buf);
+mux.c:827:         return av_packet_make_refcounted(pkt);
+mux.c:828:     }

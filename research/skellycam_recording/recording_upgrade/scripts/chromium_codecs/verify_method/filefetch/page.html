@@ -1,0 +1,7 @@
+<!doctype html><meta charset=utf-8><script>
+(async()=>{const out={};
+for (const [name,opts] of [['range',{headers:{Range:'bytes=10-19'}}],['plain',{}]]){
+ try{const r=await fetch(new URL('blob.bin',location.href).href,opts);const b=await r.arrayBuffer();out[name]={status:r.status,len:b.byteLength,cr:r.headers.get('content-range'),hex:[...new Uint8Array(b).slice(0,10)].map(x=>x.toString(16).padStart(2,'0')).join('')};}
+ catch(e){out[name]={error:String(e)}}}
+document.title='RESULT:'+JSON.stringify(out);})();
+</script>

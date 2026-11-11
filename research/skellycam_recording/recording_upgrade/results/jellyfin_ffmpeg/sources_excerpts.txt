@@ -1,0 +1,154 @@
+# PyAV v19.0.2 docs/overview/installation.rst lines 24-47 and 59-73 (gh api repos/PyAV-Org/PyAV/contents/...?ref=v19.0.2, fetched 2026-11-09)
+    24	Bring your own FFmpeg
+    25	---------------------
+    26	
+    27	PyAV can also be compiled against your own build of FFmpeg 8.x. You can force installing PyAV from source by running:
+    28	
+    29	.. code-block:: bash
+    30	
+    31	    pip install av --no-binary av
+    32	
+    33	PyAV depends upon several libraries from FFmpeg:
+    34	
+    35	- ``libavcodec``
+    36	- ``libavdevice``
+    37	- ``libavfilter``
+    38	- ``libavformat``
+    39	- ``libavutil``
+    40	- ``libswresample``
+    41	- ``libswscale``
+    42	
+    43	and a few other tools in general:
+    44	
+    45	- ``pkg-config``
+    46	- Python's development headers
+    47	
+    59	Windows
+    60	^^^^^^^
+    61	
+    62	The Windows build uses FFmpeg development files maintained by the PyAV project. From a PowerShell prompt, create a development environment, fetch the libraries into it, and pass their location to the build:
+    63	
+    64	.. code-block:: powershell
+    65	
+    66	    conda create --name pyav-dev --channel conda-forge python=3.12 cython setuptools numpy pillow pytest
+    67	    conda activate pyav-dev
+    68	    $ffmpegDir = Join-Path $env:CONDA_PREFIX "Library"
+    69	    python scripts\fetch-vendor.py --config-file scripts\ffmpeg-latest.json $ffmpegDir
+    70	    python setup.py build_ext --inplace --ffmpeg-dir=$ffmpegDir
+    71	    python -m pytest
+    72	
+    73	This is the same approach used by PyAV's Windows continuous-integration build.
+# PyAV v19.0.2 setup.py lines 56-76, 123-140
+    56	def get_config_from_directory(ffmpeg_dir):
+    57	    """
+    58	    Get distutils-compatible extension arguments for a specific directory.
+    59	    """
+    60	    if not os.path.isdir(ffmpeg_dir):
+    61	        print("The specified ffmpeg directory does not exist")
+    62	        exit(1)
+    63	
+    64	    include_dir = os.path.join(FFMPEG_DIR, "include")
+    65	    library_dir = os.path.join(FFMPEG_DIR, "lib")
+    66	    if not os.path.exists(include_dir):
+    67	        include_dir = FFMPEG_DIR
+    68	    if not os.path.exists(library_dir):
+    69	        library_dir = FFMPEG_DIR
+    70	
+    71	    return {
+    72	        "include_dirs": [include_dir],
+    73	        "libraries": FFMPEG_LIBRARIES,
+    74	        "library_dirs": [library_dir],
+    75	    }
+    76	
+   123	# Parse command-line arguments.
+   124	FFMPEG_DIR = None
+   125	for i, arg in enumerate(sys.argv):
+   126	    if arg.startswith("--ffmpeg-dir="):
+   127	        FFMPEG_DIR = arg.split("=")[1]
+   128	        del sys.argv[i]
+   129	
+   130	# Locate ffmpeg libraries and headers.
+   131	if FFMPEG_DIR is not None:
+   132	    extension_extra = get_config_from_directory(FFMPEG_DIR)
+   133	elif platform.system() != "Windows":
+   134	    extension_extra = get_config_from_pkg_config()
+   135	else:
+   136	    extension_extra = {
+   137	        "include_dirs": [],
+   138	        "libraries": FFMPEG_LIBRARIES,
+   139	        "library_dirs": [],
+   140	    }
+
+# Search for a public PyAV binding / wheel built on jellyfin-ffmpeg (2026-11-09)
+gh search repos 'jellyfin-ffmpeg pyav' -> []
+gh search repos 'jellyfin ffmpeg python' -> []
+gh search code 'jellyfin-ffmpeg' --filename setup.py -> Archov/MediaClipMakarr scripts/windows_setup.py (downloads portable win64 zip), quen-de/NeonFin demo/setup.py (FFMPEG = '/usr/lib/jellyfin-ffmpeg/ffmpeg'), war4peace/timelapse-maker (hint text) - all use the CLI binary, none builds PyAV
+gh search code 'jellyfin-ffmpeg' --filename pyproject.toml -> no hits
+https://pypi.org/pypi/jellyfin-ffmpeg/json -> 404
+https://pypi.org/pypi/pyav-jellyfin/json -> 404
+https://pypi.org/pypi/av-jellyfin/json -> 404
+https://pypi.org/pypi/jellyfin-av/json -> 404
+https://pypi.org/pypi/jellyfin_ffmpeg/json -> 404
+https://api.anaconda.org/package/conda-forge/jellyfin-ffmpeg -> 404
+WebSearch 'PyAV jellyfin-ffmpeg wheel binding python' -> only generic PyAV pages/forks; no jellyfin-ffmpeg binding
+PyPI full-text search page not machine-readable (no results parsed) - not counted
+
+# Jellyfin docs (repo jellyfin/jellyfin.org, master @ 4acfc64a884ff59aa6b7329724b7c325ddb4580e, fetched 2026-11-09) docs/general/post-install/transcoding/hardware-acceleration/index.md
+The Jellyfin server uses a modified version of [FFmpeg](http://ffmpeg.org/) as its transcoder, namely [jellyfin-ffmpeg](https://github.com/jellyfin/jellyfin-ffmpeg). It enables the Jellyfin server to access the fixed-function video codecs, video processors and [GPGPU](https://en.wikipedia.org/wiki/General-purpose_computing_on_graphics_processing_units) computing interfaces provided by vendor of the installed GPU and the operating system.
+Partial acceleration may result in higher CPU usage and lower transcoding speed.
+
+:::
+
+Jellyfin supports full acceleration for:
+
+- Mainstream Intel and Nvidia GPUs on Windows and Linux
+- AMD Polaris and newer GPUs on Linux via VA-API and Vulkan interop
+- Older AMD GPUs on Windows
+- Rockchip VPU of RK3588/3588S
+- Intel and Apple Silicon on macOS 12 and above
+
+Using [jellyfin-ffmpeg](https://github.com/jellyfin/jellyfin-ffmpeg/releases) with Jellyfin is highly recommended, which has a `-Jellyfin` suffix in the version string.
+
+```shell
+$ /usr/lib/jellyfin-ffmpeg/ffmpeg
+
+ffmpeg version 6.0.1-Jellyfin Copyright (c) 2000-2023 the FFmpeg developers
+  built with gcc 12.2.0 (crosstool-NG 1.25.0.90_cf9beb1)
+...
+```
+
+:::caution
+
+Using FFmpeg binaries downloaded from somewhere else will result in partial acceleration.
+
+Jellyfin-ffmpeg usually ships with our deb package, official Docker images and Windows installers.
+## intel.md:270,278
+The `jellyfin-ffmpeg*` deb package comes with all necessary user mode Intel media drivers except OpenCL (see below).
+1. Assuming you have added the jellyfin repository to your apt source list and installed the `jellyfin-server` and `jellyfin-web`, if you choose to use vanilla ffmpeg, instead of jellyfin-ffmpeg, you will need to install the following [intel packages](https://github.com/intel/media-driver/wiki).
+## nvidia.md:161,256
+The `jellyfin-ffmpeg*` deb package required by Jellyfin doesn't include any NVIDIA proprietary driver.
+We provide **portable** [jellyfin-ffmpeg](https://github.com/jellyfin/jellyfin-ffmpeg) binaries for distros that don't have a regular maintainer.
+## amd.md:180
+The `jellyfin-ffmpeg*` deb package required by Jellyfin comes with all necessary user mode Mesa drivers.
+## apple.md:42
+To have native Apple Silicon support, Jellyfin server 10.9.0+ and `jellyfin-ffmpeg6` 6.0.1-5 or higher is required.
+## rockchip.md:26,104
+The [MPP](https://github.com/rockchip-linux/mpp) interface is part of the SDK and BSP kernel provided by Rockchip. Its kernel driver and user-mode runtime library are both open source implementations and do not rely on proprietary firmware. Rockchip has experimented with using the upstream V4L2 interface, but it cannot meet Rockchip's actual needs in their products. Until there is a mature transcoding solution in the Linux mainline, users need to use RKMPP.
+The `jellyfin-ffmpeg*` deb package required by Jellyfin comes with all necessary user mode Rockchip MPP & RGA drivers.
+
+# FFmpeg n9.0.2 doc/demuxers.texi 1029-1041
+@section rawvideo
+
+Raw video demuxer.
+
+This demuxer allows one to read raw video data. Since there is no header
+specifying the assumed video parameters, the user must specify them
+in order to be able to decode the data correctly.
+
+This demuxer accepts the following options:
+@table @option
+
+@item framerate
+Set input video frame rate. Default value is 25.
+# upstream tag dates (git tag tagger.date)
+n8.1.3 2026-09-21T00:46:52Z; n9.0 2026-08-03T21:21:22Z; n9.0.2 2026-09-18T00:40:57Z

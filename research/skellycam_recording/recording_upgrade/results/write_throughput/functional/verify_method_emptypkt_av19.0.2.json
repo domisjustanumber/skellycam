@@ -1,0 +1,121 @@
+{
+ "av": "19.0.2",
+ "ffmpeg": "9.0.2",
+ "A_logs_control_no_empty": {
+  "n_lines": 14,
+  "non_extract_extradata": [],
+  "extract_extradata_lines": 14
+ },
+ "B_ebml_control_no_empty": {
+  "clusters": 10,
+  "simpleblocks": 10,
+  "simpleblocks_size0": 0,
+  "blockgroups": 0,
+  "first_cluster_layout": [
+   {
+    "cluster": 1,
+    "payload": 65760,
+    "reltc": 0
+   },
+   {
+    "cluster": 2,
+    "payload": 65723,
+    "reltc": 0
+   },
+   {
+    "cluster": 3,
+    "payload": 65483,
+    "reltc": 0
+   }
+  ]
+ },
+ "B_ffprobe_control_no_empty": {
+  "n": 10,
+  "zero": 0,
+  "stderr": ""
+ },
+ "A_logs_empty_explicit_ts": {
+  "n_lines": 14,
+  "non_extract_extradata": [],
+  "extract_extradata_lines": 14
+ },
+ "B_ebml_empty_explicit_ts": {
+  "clusters": 11,
+  "simpleblocks": 20,
+  "simpleblocks_size0": 10,
+  "blockgroups": 0,
+  "first_cluster_layout": [
+   {
+    "cluster": 1,
+    "payload": 65760,
+    "reltc": 0
+   },
+   {
+    "cluster": 2,
+    "payload": 0,
+    "reltc": 0
+   },
+   {
+    "cluster": 2,
+    "payload": 65723,
+    "reltc": 33
+   },
+   {
+    "cluster": 3,
+    "payload": 0,
+    "reltc": 0
+   },
+   {
+    "cluster": 3,
+    "payload": 65483,
+    "reltc": 34
+   }
+  ]
+ },
+ "B_ffprobe_empty_explicit_ts": {
+  "n": 10,
+  "zero": 0,
+  "stderr": ""
+ },
+ "C_kills_mkv_flush_emptypkt_ts": [
+  {
+   "rep": 0,
+   "acked_at_kill": 332,
+   "units": 332,
+   "byte_exact": 332,
+   "acked_lost": 0,
+   "err": null,
+   "ffprobe": {
+    "n": 332,
+    "zero": 0,
+    "stderr": ""
+   }
+  },
+  {
+   "rep": 1,
+   "acked_at_kill": 340,
+   "units": 340,
+   "byte_exact": 340,
+   "acked_lost": 0,
+   "err": null,
+   "ffprobe": {
+    "n": 340,
+    "zero": 0,
+    "stderr": ""
+   }
+  },
+  {
+   "rep": 2,
+   "acked_at_kill": 367,
+   "units": 367,
+   "byte_exact": 367,
+   "acked_lost": 0,
+   "err": null,
+   "ffprobe": {
+    "n": 367,
+    "zero": 0,
+    "stderr": ""
+   }
+  }
+ ]
+}

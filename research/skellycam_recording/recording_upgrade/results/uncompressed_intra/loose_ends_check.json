@@ -1,0 +1,141 @@
+{
+ "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+ "numpy": "2.2.6",
+ "ffmpeg_version": "ffmpeg version 9.0.2-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+ "yuy2_range": {
+  "c930e_1080p_yuy2": {
+   "frames": 8,
+   "Y_min": 18,
+   "Y_max": 234,
+   "C_min": 115,
+   "C_max": 151,
+   "Y_frac_below_16": 0.0,
+   "Y_frac_above_235": 0.0
+  },
+  "c922_1080p_yuy2": {
+   "frames": 8,
+   "Y_min": 16,
+   "Y_max": 235,
+   "C_min": 95,
+   "C_max": 181,
+   "Y_frac_below_16": 0.0,
+   "Y_frac_above_235": 0.0
+  }
+ },
+ "pnp_display": {
+  "cmd": "powershell -NoProfile -Command Get-PnpDevice -Class Display | Select-Object Status,FriendlyName | Format-Table -HideTableHeaders | Out-String -Width 200",
+  "rc": 0,
+  "stdout_head": "OK      Parsec Virtual Display Adapter\nUnknown Intel(R) UHD Graphics 770     \nOK      NVIDIA GeForce RTX 3070",
+  "stdout_tail": "OK      Parsec Virtual Display Adapter\nUnknown Intel(R) UHD Graphics 770     \nOK      NVIDIA GeForce RTX 3070",
+  "stderr_head": "",
+  "stderr_tail": ""
+ },
+ "win32_videocontroller": {
+  "cmd": "powershell -NoProfile -Command Get-CimInstance Win32_VideoController | Select-Object Name,Status | Format-Table -HideTableHeaders | Out-String -Width 200",
+  "rc": 0,
+  "stdout_head": "Parsec Virtual Display Adapter OK    \nNVIDIA GeForce RTX 3070        OK",
+  "stdout_tail": "Parsec Virtual Display Adapter OK    \nNVIDIA GeForce RTX 3070        OK",
+  "stderr_head": "",
+  "stderr_tail": ""
+ },
+ "qsv_init": {
+  "cmd": "ffmpeg -hide_banner -init_hw_device qsv=q -f lavfi -i nullsrc=s=64x64:d=0.04 -f null -",
+  "rc": 2981409195,
+  "stdout_head": "",
+  "stdout_tail": "",
+  "stderr_head": "[D3D11VA @ 000001fa400a4480] Failed to find d3d11va adapter by vendor id 0x8086\nDevice creation failed: -1313558101.\nFailed to set value 'qsv=q' for option 'init_hw_device': Unknown error occurred\nError parsing global options: Unknown error occurred",
+  "stderr_tail": "[D3D11VA @ 000001fa400a4480] Failed to find d3d11va adapter by vendor id 0x8086\nDevice creation failed: -1313558101.\nFailed to set value 'qsv=q' for option 'init_hw_device': Unknown error occurred\nError parsing global options: Unknown error occurred"
+ },
+ "nvidia_smi_before": "0, 8 %",
+ "nvenc_open": {
+  "h264_nvenc_nv16": {
+   "cmd": "ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=s=256x256:d=0.04:r=25 -pix_fmt nv16 -c:v h264_nvenc -frames:v 1 -f null -",
+   "rc": 3752568763,
+   "stdout_head": "",
+   "stdout_tail": "",
+   "stderr_head": "[h264_nvenc @ 000001c23c356d80] No capable devices found\n[vost#0:0/h264_nvenc @ 000001c23c356a80] [enc:h264_nvenc @ 000001c23c319d40] Error while opening encoder - maybe incorrect parameters such as bit_rate, rate, width or height.\n[vf#0:0 @ 000001c23e2fabc0] Error sending frames to consumers: Generic error in an external library\n[vf#0:0 @ 000001c23e2fabc0] Task finished with error code: -542398533 (Generic error in an external library)\n[vf#0:0 @ 000001c23e2fabc0] Terminating thread with return code -542398533 (Generic error in an external library)\n[vost#0:0/h264_nvenc @ 000001c23c356a80] [enc:h264_nvenc @ 000001c23c319d40] Could not open encoder before EOF\n[vost#0:0/h264_nvenc @ 000001c23c356a80] Task finished with error code: -22 (Invalid argument)\n[vost#0:0/h264_nvenc @ 000001c23c356a80",
+   "stderr_tail": "[h264_nvenc @ 000001c23c356d80] No capable devices found\n[vost#0:0/h264_nvenc @ 000001c23c356a80] [enc:h264_nvenc @ 000001c23c319d40] Error while opening encoder - maybe incorrect parameters such as bit_rate, rate, width or height.\n[vf#0:0 @ 000001c23e2fabc0] Error sending frames to consumers: Generic error in an external library\n[vf#0:0 @ 000001c23e2fabc0] Task finished with error code: -542398533 (Generic error in an external library)\n[vf#0:0 @ 000001c23e2fabc0] Terminating thread with return code -542398533 (Generic error in an external library)\n[vost#0:0/h264_nvenc @ 000001c23c356a80] [enc:h264_nvenc @ 000001c23c319d40] Could not open encoder before EOF\n[vost#0:0/h264_nvenc @ 000001c23c356a80] Task finished with error code: -22 (Invalid argument)\n[vost#0:0/h264_nvenc @ 000001c23c356a80] Terminating thread with return code -22 (Invalid argument)\n[out#0/null @ 000001c23c2a1a40] Nothing was written into output file, because at least one of its streams received no packets."
+  },
+  "hevc_nvenc_nv16": {
+   "cmd": "ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=s=256x256:d=0.04:r=25 -pix_fmt nv16 -c:v hevc_nvenc -frames:v 1 -f null -",
+   "rc": 3752568763,
+   "stdout_head": "",
+   "stdout_tail": "",
+   "stderr_head": "[hevc_nvenc @ 000002b91e12b740] No capable devices found\n[vost#0:0/hevc_nvenc @ 000002b91e12b440] [enc:hevc_nvenc @ 000002b91e0ebec0] Error while opening encoder - maybe incorrect parameters such as bit_rate, rate, width or height.\n[vf#0:0 @ 000002b91fc1abc0] Error sending frames to consumers: Generic error in an external library\n[vf#0:0 @ 000002b91fc1abc0] Task finished with error code: -542398533 (Generic error in an external library)\n[vf#0:0 @ 000002b91fc1abc0] Terminating thread with return code -542398533 (Generic error in an external library)\n[vost#0:0/hevc_nvenc @ 000002b91e12b440] [enc:hevc_nvenc @ 000002b91e0ebec0] Could not open encoder before EOF\n[vost#0:0/hevc_nvenc @ 000002b91e12b440] Task finished with error code: -22 (Invalid argument)\n[vost#0:0/hevc_nvenc @ 000002b91e12b440",
+   "stderr_tail": "[hevc_nvenc @ 000002b91e12b740] No capable devices found\n[vost#0:0/hevc_nvenc @ 000002b91e12b440] [enc:hevc_nvenc @ 000002b91e0ebec0] Error while opening encoder - maybe incorrect parameters such as bit_rate, rate, width or height.\n[vf#0:0 @ 000002b91fc1abc0] Error sending frames to consumers: Generic error in an external library\n[vf#0:0 @ 000002b91fc1abc0] Task finished with error code: -542398533 (Generic error in an external library)\n[vf#0:0 @ 000002b91fc1abc0] Terminating thread with return code -542398533 (Generic error in an external library)\n[vost#0:0/hevc_nvenc @ 000002b91e12b440] [enc:hevc_nvenc @ 000002b91e0ebec0] Could not open encoder before EOF\n[vost#0:0/hevc_nvenc @ 000002b91e12b440] Task finished with error code: -22 (Invalid argument)\n[vost#0:0/hevc_nvenc @ 000002b91e12b440] Terminating thread with return code -22 (Invalid argument)\n[out#0/null @ 000002b91e0ee8c0] Nothing was written into output file, because at least one of its streams received no packets."
+  },
+  "av1_nvenc_nv12": {
+   "cmd": "ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=s=256x256:d=0.04:r=25 -pix_fmt nv12 -c:v av1_nvenc -frames:v 1 -f null -",
+   "rc": 3752568763,
+   "stdout_head": "",
+   "stdout_tail": "",
+   "stderr_head": "[av1_nvenc @ 000002192d128740] No capable devices found\n[vost#0:0/av1_nvenc @ 000002192d128440] [enc:av1_nvenc @ 000002192d0ec680] Error while opening encoder - maybe incorrect parameters such as bit_rate, rate, width or height.\n[vf#0:0 @ 000002192f14abc0] Error sending frames to consumers: Generic error in an external library\n[vf#0:0 @ 000002192f14abc0] Task finished with error code: -542398533 (Generic error in an external library)\n[vf#0:0 @ 000002192f14abc0] Terminating thread with return code -542398533 (Generic error in an external library)\n[vost#0:0/av1_nvenc @ 000002192d128440] [enc:av1_nvenc @ 000002192d0ec680] Could not open encoder before EOF\n[vost#0:0/av1_nvenc @ 000002192d128440] Task finished with error code: -22 (Invalid argument)\n[vost#0:0/av1_nvenc @ 000002192d128440] Termi",
+   "stderr_tail": "[av1_nvenc @ 000002192d128740] No capable devices found\n[vost#0:0/av1_nvenc @ 000002192d128440] [enc:av1_nvenc @ 000002192d0ec680] Error while opening encoder - maybe incorrect parameters such as bit_rate, rate, width or height.\n[vf#0:0 @ 000002192f14abc0] Error sending frames to consumers: Generic error in an external library\n[vf#0:0 @ 000002192f14abc0] Task finished with error code: -542398533 (Generic error in an external library)\n[vf#0:0 @ 000002192f14abc0] Terminating thread with return code -542398533 (Generic error in an external library)\n[vost#0:0/av1_nvenc @ 000002192d128440] [enc:av1_nvenc @ 000002192d0ec680] Could not open encoder before EOF\n[vost#0:0/av1_nvenc @ 000002192d128440] Task finished with error code: -22 (Invalid argument)\n[vost#0:0/av1_nvenc @ 000002192d128440] Terminating thread with return code -22 (Invalid argument)\n[out#0/null @ 000002192d0757c0] Nothing was written into output file, because at least one of its streams received no packets."
+  },
+  "hevc_nvenc_nv12_control": {
+   "cmd": "ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=s=256x256:d=0.04:r=25 -pix_fmt nv12 -c:v hevc_nvenc -frames:v 1 -f null -",
+   "rc": 0,
+   "stdout_head": "",
+   "stdout_tail": "",
+   "stderr_head": "",
+   "stderr_tail": ""
+  }
+ },
+ "nvidia_smi_after": "0, 8 %",
+ "mux_acceptance": {
+  "libjxl.mkv": {
+   "cmd": "ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=s=256x256:d=0.08:r=25 -pix_fmt rgb24 -c:v libjxl C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\loose_ends\\libjxl.mkv",
+   "rc": 4294967274,
+   "stdout_head": "",
+   "stdout_tail": "",
+   "stderr_head": "[matroska @ 000001c9443dec00] No bmp codec tag found for codec jpegxl\n[out#0/matroska @ 000001c944343380] Could not write header (incorrect codec parameters ?): Invalid argument\n[vf#0:0 @ 000001c9443f9740] Error sending frames to consumers: Invalid argument\n[vf#0:0 @ 000001c9443f9740] Task finished with error code: -22 (Invalid argument)\n[vf#0:0 @ 000001c9443f9740] Terminating thread with return code -22 (Invalid argument)\n[out#0/matroska @ 000001c944343380] Nothing was written into output file, because at least one of its streams received no packets.",
+   "stderr_tail": "[matroska @ 000001c9443dec00] No bmp codec tag found for codec jpegxl\n[out#0/matroska @ 000001c944343380] Could not write header (incorrect codec parameters ?): Invalid argument\n[vf#0:0 @ 000001c9443f9740] Error sending frames to consumers: Invalid argument\n[vf#0:0 @ 000001c9443f9740] Task finished with error code: -22 (Invalid argument)\n[vf#0:0 @ 000001c9443f9740] Terminating thread with return code -22 (Invalid argument)\n[out#0/matroska @ 000001c944343380] Nothing was written into output file, because at least one of its streams received no packets.",
+   "file_written": true
+  },
+  "libjxl.nut": {
+   "cmd": "ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=s=256x256:d=0.08:r=25 -pix_fmt rgb24 -c:v libjxl C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\loose_ends\\libjxl.nut",
+   "rc": 4294967274,
+   "stdout_head": "",
+   "stdout_tail": "",
+   "stderr_head": "[nut @ 000001fb29e7e140] No codec tag defined for stream 0\n[out#0/nut @ 000001fb29de4a00] Could not write header (incorrect codec parameters ?): Invalid argument\n[vf#0:0 @ 000001fb29e9a240] Error sending frames to consumers: Invalid argument\n[vf#0:0 @ 000001fb29e9a240] Task finished with error code: -22 (Invalid argument)\n[vf#0:0 @ 000001fb29e9a240] Terminating thread with return code -22 (Invalid argument)\n[out#0/nut @ 000001fb29de4a00] Nothing was written into output file, because at least one of its streams received no packets.",
+   "stderr_tail": "[nut @ 000001fb29e7e140] No codec tag defined for stream 0\n[out#0/nut @ 000001fb29de4a00] Could not write header (incorrect codec parameters ?): Invalid argument\n[vf#0:0 @ 000001fb29e9a240] Error sending frames to consumers: Invalid argument\n[vf#0:0 @ 000001fb29e9a240] Task finished with error code: -22 (Invalid argument)\n[vf#0:0 @ 000001fb29e9a240] Terminating thread with return code -22 (Invalid argument)\n[out#0/nut @ 000001fb29de4a00] Nothing was written into output file, because at least one of its streams received no packets.",
+   "file_written": true
+  },
+  "libjxl.mov": {
+   "cmd": "ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=s=256x256:d=0.08:r=25 -pix_fmt rgb24 -c:v libjxl C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\loose_ends\\libjxl.mov",
+   "rc": 4294967274,
+   "stdout_head": "",
+   "stdout_tail": "",
+   "stderr_head": "[mov @ 00000298e6eef100] Could not find tag for codec jpegxl in stream #0, codec not currently supported in container\n[out#0/mov @ 00000298e6e53940] Could not write header (incorrect codec parameters ?): Invalid argument\n[vf#0:0 @ 00000298e6f0a080] Error sending frames to consumers: Invalid argument\n[vf#0:0 @ 00000298e6f0a080] Task finished with error code: -22 (Invalid argument)\n[vf#0:0 @ 00000298e6f0a080] Terminating thread with return code -22 (Invalid argument)\n[out#0/mov @ 00000298e6e53940] Nothing was written into output file, because at least one of its streams received no packets.",
+   "stderr_tail": "[mov @ 00000298e6eef100] Could not find tag for codec jpegxl in stream #0, codec not currently supported in container\n[out#0/mov @ 00000298e6e53940] Could not write header (incorrect codec parameters ?): Invalid argument\n[vf#0:0 @ 00000298e6f0a080] Error sending frames to consumers: Invalid argument\n[vf#0:0 @ 00000298e6f0a080] Task finished with error code: -22 (Invalid argument)\n[vf#0:0 @ 00000298e6f0a080] Terminating thread with return code -22 (Invalid argument)\n[out#0/mov @ 00000298e6e53940] Nothing was written into output file, because at least one of its streams received no packets.",
+   "file_written": false
+  },
+  "libsvtjpegxs.mkv": {
+   "cmd": "ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=s=256x256:d=0.08:r=25 -pix_fmt yuv422p -b:v 50M -c:v libsvtjpegxs C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\loose_ends\\libsvtjpegxs.mkv",
+   "rc": 4294967274,
+   "stdout_head": "",
+   "stdout_tail": "",
+   "stderr_head": "[matroska @ 000001511a18e300] No bmp codec tag found for codec jpegxs\n[out#0/matroska @ 000001511a0f7180] Could not write header (incorrect codec parameters ?): Invalid argument\n[vf#0:0 @ 000001511a1aafc0] Error sending frames to consumers: Invalid argument\n[vf#0:0 @ 000001511a1aafc0] Task finished with error code: -22 (Invalid argument)\n[vf#0:0 @ 000001511a1aafc0] Terminating thread with return code -22 (Invalid argument)\n[out#0/matroska @ 000001511a0f7180] Nothing was written into output file, because at least one of its streams received no packets.",
+   "stderr_tail": "[matroska @ 000001511a18e300] No bmp codec tag found for codec jpegxs\n[out#0/matroska @ 000001511a0f7180] Could not write header (incorrect codec parameters ?): Invalid argument\n[vf#0:0 @ 000001511a1aafc0] Error sending frames to consumers: Invalid argument\n[vf#0:0 @ 000001511a1aafc0] Task finished with error code: -22 (Invalid argument)\n[vf#0:0 @ 000001511a1aafc0] Terminating thread with return code -22 (Invalid argument)\n[out#0/matroska @ 000001511a0f7180] Nothing was written into output file, because at least one of its streams received no packets.",
+   "file_written": true
+  },
+  "libsvtjpegxs.nut": {
+   "cmd": "ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=s=256x256:d=0.08:r=25 -pix_fmt yuv422p -b:v 50M -c:v libsvtjpegxs C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\loose_ends\\libsvtjpegxs.nut",
+   "rc": 4294967274,
+   "stdout_head": "",
+   "stdout_tail": "",
+   "stderr_head": "[nut @ 0000027f145d2ac0] No codec tag defined for stream 0\n[out#0/nut @ 0000027f145369c0] Could not write header (incorrect codec parameters ?): Invalid argument\n[vf#0:0 @ 0000027f145efa40] Error sending frames to consumers: Invalid argument\n[vf#0:0 @ 0000027f145efa40] Task finished with error code: -22 (Invalid argument)\n[vf#0:0 @ 0000027f145efa40] Terminating thread with return code -22 (Invalid argument)\n[out#0/nut @ 0000027f145369c0] Nothing was written into output file, because at least one of its streams received no packets.",
+   "stderr_tail": "[nut @ 0000027f145d2ac0] No codec tag defined for stream 0\n[out#0/nut @ 0000027f145369c0] Could not write header (incorrect codec parameters ?): Invalid argument\n[vf#0:0 @ 0000027f145efa40] Error sending frames to consumers: Invalid argument\n[vf#0:0 @ 0000027f145efa40] Task finished with error code: -22 (Invalid argument)\n[vf#0:0 @ 0000027f145efa40] Terminating thread with return code -22 (Invalid argument)\n[out#0/nut @ 0000027f145369c0] Nothing was written into output file, because at least one of its streams received no packets.",
+   "file_written": true
+  },
+  "libsvtjpegxs.mov": {
+   "cmd": "ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=s=256x256:d=0.08:r=25 -pix_fmt yuv422p -b:v 50M -c:v libsvtjpegxs C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\loose_ends\\libsvtjpegxs.mov",
+   "rc": 4294967274,
+   "stdout_head": "",
+   "stdout_tail": "",
+   "stderr_head": "[mov @ 000001801f4addc0] Could not find tag for codec jpegxs in stream #0, codec not currently supported in container\n[out#0/mov @ 000001801f411f00] Could not write header (incorrect codec parameters ?): Invalid argument\n[vf#0:0 @ 000001801f4cae40] Error sending frames to consumers: Invalid argument\n[vf#0:0 @ 000001801f4cae40] Task finished with error code: -22 (Invalid argument)\n[vf#0:0 @ 000001801f4cae40] Terminating thread with return code -22 (Invalid argument)\n[out#0/mov @ 000001801f411f00] Nothing was written into output file, because at least one of its streams received no packets.",
+   "stderr_tail": "[mov @ 000001801f4addc0] Could not find tag for codec jpegxs in stream #0, codec not currently supported in container\n[out#0/mov @ 000001801f411f00] Could not write header (incorrect codec parameters ?): Invalid argument\n[vf#0:0 @ 000001801f4cae40] Error sending frames to consumers: Invalid argument\n[vf#0:0 @ 000001801f4cae40] Task finished with error code: -22 (Invalid argument)\n[vf#0:0 @ 000001801f4cae40] Terminating thread with return code -22 (Invalid argument)\n[out#0/mov @ 000001801f411f00] Nothing was written into output file, because at least one of its streams received no packets.",
+   "file_written": false
+  }
+ }
+}

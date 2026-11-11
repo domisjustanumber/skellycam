@@ -1,0 +1,48 @@
+{
+ "env": {
+  "python": "3.12.13",
+  "pyav": "18.0.0",
+  "libav": {
+   "libavutil": "60.26.102",
+   "libavcodec": "62.28.102",
+   "libavformat": "62.12.102",
+   "libavdevice": "62.3.102",
+   "libavfilter": "11.14.102",
+   "libswscale": "9.5.102",
+   "libswresample": "6.3.102"
+  },
+  "opencv": "4.12.0",
+  "ffmpeg_cli": "ffmpeg version 9.0.2-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers"
+ },
+ "note": "remux_pyav with add_stream_from_template(opaque=True) on the mkv+fp drained:150 kill images",
+ "results": {
+  "av1": {
+   "packets": 120,
+   "error": null,
+   "bytes": 186851,
+   "ffprobe_frames": 120,
+   "src_ffprobe": 120
+  },
+  "h264nv": {
+   "packets": 120,
+   "error": null,
+   "bytes": 1606269,
+   "ffprobe_frames": 120,
+   "src_ffprobe": 120
+  },
+  "mjpeg": {
+   "packets": 149,
+   "error": null,
+   "bytes": 8268855,
+   "ffprobe_frames": 149,
+   "src_ffprobe": 149
+  },
+  "ffv1": {
+   "packets": 149,
+   "error": null,
+   "bytes": 17665810,
+   "ffprobe_frames": 149,
+   "src_ffprobe": 149
+  }
+ }
+}

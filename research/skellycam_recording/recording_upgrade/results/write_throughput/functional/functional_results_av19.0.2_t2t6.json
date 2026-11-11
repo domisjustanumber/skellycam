@@ -1,0 +1,244 @@
+{
+ "env": {
+  "python": "3.12.13",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "machine": "Gerald",
+  "av": "19.0.2",
+  "libavformat": [
+   63,
+   1,
+   102
+  ],
+  "libavcodec": [
+   63,
+   1,
+   102
+  ],
+  "numpy": "2.2.6",
+  "cv2": "4.12.0",
+  "psutil": "7.2.2"
+ },
+ "started": "2026-11-09T16:45:20",
+ "T1": [],
+ "T2T3": [
+  {
+   "test": "T2",
+   "layout": "contiguous_0..29",
+   "reader": "cv2.VideoCapture",
+   "api": "CAP_IMAGES",
+   "pattern": "frame_%06d.jpg",
+   "opened": true,
+   "backend": "CV_IMAGES",
+   "frames_read": 30,
+   "prop_frame_count": 30.0,
+   "files_on_disk": 30,
+   "first_frame_max_abs_diff_vs_cv2_imdecode": 0
+  },
+  {
+   "test": "T2",
+   "layout": "contiguous_0..29",
+   "reader": "cv2.VideoCapture",
+   "api": "CAP_FFMPEG",
+   "pattern": "frame_%06d.jpg",
+   "opened": true,
+   "backend": "FFMPEG",
+   "frames_read": 30,
+   "prop_frame_count": 30.0,
+   "files_on_disk": 30,
+   "first_frame_max_abs_diff_vs_cv2_imdecode": 6
+  },
+  {
+   "test": "T2",
+   "layout": "contiguous_0..29",
+   "reader": "cv2.VideoCapture",
+   "api": "CAP_ANY",
+   "pattern": "frame_%06d.jpg",
+   "opened": true,
+   "backend": "FFMPEG",
+   "frames_read": 30,
+   "prop_frame_count": 30.0,
+   "files_on_disk": 30,
+   "first_frame_max_abs_diff_vs_cv2_imdecode": 6
+  },
+  {
+   "test": "T3",
+   "layout": "contiguous_0..29",
+   "reader": "PyAV image2",
+   "api": "sequence",
+   "pattern": "frame_%06d.jpg",
+   "packets_read": 30,
+   "error": null,
+   "files_on_disk": 30
+  },
+  {
+   "test": "T3",
+   "layout": "contiguous_0..29",
+   "reader": "PyAV image2",
+   "api": "glob",
+   "pattern": "frame_*.jpg",
+   "packets_read": 0,
+   "error": "NotImplementedError: [Errno 40] Function not implemented: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\write_throughput\\\\functional\\\\t2\\\\contiguous\\\\frame_*.jpg'",
+   "files_on_disk": 30
+  },
+  {
+   "test": "T3",
+   "layout": "contiguous_0..29",
+   "reader": "PyAV image2",
+   "api": "glob_recursive",
+   "pattern": "frame_*.jpg",
+   "packets_read": 0,
+   "error": "NotImplementedError: [Errno 40] Function not implemented: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\write_throughput\\\\functional\\\\t2\\\\contiguous\\\\*\\\\frame_*.jpg'",
+   "files_on_disk": 30
+  },
+  {
+   "test": "T2",
+   "layout": "gap_at_10",
+   "reader": "cv2.VideoCapture",
+   "api": "CAP_IMAGES",
+   "pattern": "frame_%06d.jpg",
+   "opened": true,
+   "backend": "CV_IMAGES",
+   "frames_read": 10,
+   "prop_frame_count": 10.0,
+   "files_on_disk": 29,
+   "first_frame_max_abs_diff_vs_cv2_imdecode": 0
+  },
+  {
+   "test": "T2",
+   "layout": "gap_at_10",
+   "reader": "cv2.VideoCapture",
+   "api": "CAP_FFMPEG",
+   "pattern": "frame_%06d.jpg",
+   "opened": true,
+   "backend": "FFMPEG",
+   "frames_read": 10,
+   "prop_frame_count": 30.0,
+   "files_on_disk": 29,
+   "first_frame_max_abs_diff_vs_cv2_imdecode": 6
+  },
+  {
+   "test": "T2",
+   "layout": "gap_at_10",
+   "reader": "cv2.VideoCapture",
+   "api": "CAP_ANY",
+   "pattern": "frame_%06d.jpg",
+   "opened": true,
+   "backend": "FFMPEG",
+   "frames_read": 10,
+   "prop_frame_count": 30.0,
+   "files_on_disk": 29,
+   "first_frame_max_abs_diff_vs_cv2_imdecode": 6
+  },
+  {
+   "test": "T3",
+   "layout": "gap_at_10",
+   "reader": "PyAV image2",
+   "api": "sequence",
+   "pattern": "frame_%06d.jpg",
+   "packets_read": 10,
+   "error": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\write_throughput\\\\functional\\\\t2\\\\gap_at_10\\\\frame_%06d.jpg'",
+   "files_on_disk": 29
+  },
+  {
+   "test": "T3",
+   "layout": "gap_at_10",
+   "reader": "PyAV image2",
+   "api": "glob",
+   "pattern": "frame_*.jpg",
+   "packets_read": 0,
+   "error": "NotImplementedError: [Errno 40] Function not implemented: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\write_throughput\\\\functional\\\\t2\\\\gap_at_10\\\\frame_*.jpg'",
+   "files_on_disk": 29
+  },
+  {
+   "test": "T3",
+   "layout": "gap_at_10",
+   "reader": "PyAV image2",
+   "api": "glob_recursive",
+   "pattern": "frame_*.jpg",
+   "packets_read": 0,
+   "error": "NotImplementedError: [Errno 40] Function not implemented: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\write_throughput\\\\functional\\\\t2\\\\gap_at_10\\\\*\\\\frame_*.jpg'",
+   "files_on_disk": 29
+  },
+  {
+   "test": "T2",
+   "layout": "subdirs_of_10",
+   "reader": "cv2.VideoCapture",
+   "api": "CAP_IMAGES",
+   "pattern": "frame_%06d.jpg",
+   "opened": false,
+   "backend": null,
+   "frames_read": 0,
+   "prop_frame_count": null,
+   "files_on_disk": 30,
+   "first_frame_max_abs_diff_vs_cv2_imdecode": null
+  },
+  {
+   "test": "T2",
+   "layout": "subdirs_of_10",
+   "reader": "cv2.VideoCapture",
+   "api": "CAP_FFMPEG",
+   "pattern": "frame_%06d.jpg",
+   "opened": false,
+   "backend": null,
+   "frames_read": 0,
+   "prop_frame_count": null,
+   "files_on_disk": 30,
+   "first_frame_max_abs_diff_vs_cv2_imdecode": null
+  },
+  {
+   "test": "T2",
+   "layout": "subdirs_of_10",
+   "reader": "cv2.VideoCapture",
+   "api": "CAP_ANY",
+   "pattern": "frame_%06d.jpg",
+   "opened": false,
+   "backend": null,
+   "frames_read": 0,
+   "prop_frame_count": null,
+   "files_on_disk": 30,
+   "first_frame_max_abs_diff_vs_cv2_imdecode": null
+  },
+  {
+   "test": "T3",
+   "layout": "subdirs_of_10",
+   "reader": "PyAV image2",
+   "api": "sequence",
+   "pattern": "frame_%06d.jpg",
+   "packets_read": 0,
+   "error": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\write_throughput\\\\functional\\\\t2\\\\subdirs\\\\frame_%06d.jpg'",
+   "files_on_disk": 30
+  },
+  {
+   "test": "T3",
+   "layout": "subdirs_of_10",
+   "reader": "PyAV image2",
+   "api": "glob",
+   "pattern": "frame_*.jpg",
+   "packets_read": 0,
+   "error": "NotImplementedError: [Errno 40] Function not implemented: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\write_throughput\\\\functional\\\\t2\\\\subdirs\\\\frame_*.jpg'",
+   "files_on_disk": 30
+  },
+  {
+   "test": "T3",
+   "layout": "subdirs_of_10",
+   "reader": "PyAV image2",
+   "api": "glob_recursive",
+   "pattern": "frame_*.jpg",
+   "packets_read": 0,
+   "error": "NotImplementedError: [Errno 40] Function not implemented: 'C:\\\\Users\\\\Dom\\\\Documents\\\\skellycam-raw\\\\skellycam_recording\\\\recording_upgrade_20261109\\\\write_throughput\\\\functional\\\\t2\\\\subdirs\\\\*\\\\frame_*.jpg'",
+   "files_on_disk": 30
+  }
+ ],
+ "T4": [],
+ "T5": [],
+ "T6": [
+  {
+   "test": "T6",
+   "what": "PyAV format='segment', segment_format=matroska, segment_time=2, 300 frames @30",
+   "files": 5,
+   "packets": 300,
+   "byte_exact": 300,
+   "stream_time_base": "1/1000"
+  }
+ ]
+}

@@ -1,0 +1,26 @@
+{
+ "pyav": "18.0.0",
+ "pyav_ffmpeg": "8.1.2",
+ "writer": "ffmpeg version 9.0.2-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+ "cases": {
+  "v4_bayer16": {
+   "cmd": "ffmpeg -hide_banner -loglevel error -y -f rawvideo -pix_fmt bayer_rggb16le -s 320x240 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\cross_version\\rand12.raw -c:v ffv1 -level 4 -g 1 -strict experimental C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\cross_version\\v4_bayer16.mkv",
+   "encode_rc": 0,
+   "decode_error": "InvalidDataError: [Errno 1094995529] Invalid data found when processing input: 'avcodec_open2(\"ffv1\", {})'"
+  },
+  "v4_gray16": {
+   "cmd": "ffmpeg -hide_banner -loglevel error -y -f rawvideo -pix_fmt gray16le -s 320x240 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\cross_version\\rand12.raw -c:v ffv1 -level 4 -g 1 -strict experimental C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\cross_version\\v4_gray16.mkv",
+   "encode_rc": 0,
+   "decoded_frames": 5,
+   "decoded_pix_fmt": "gray16le",
+   "frame0_bit_exact": true
+  },
+  "v3_gray16": {
+   "cmd": "ffmpeg -hide_banner -loglevel error -y -f rawvideo -pix_fmt gray16le -s 320x240 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\cross_version\\rand12.raw -c:v ffv1 -level 3 -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\uncompressed_intra\\cross_version\\v3_gray16.mkv",
+   "encode_rc": 0,
+   "decoded_frames": 5,
+   "decoded_pix_fmt": "gray16le",
+   "frame0_bit_exact": true
+  }
+ }
+}

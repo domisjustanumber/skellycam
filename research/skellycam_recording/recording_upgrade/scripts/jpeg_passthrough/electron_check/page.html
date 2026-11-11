@@ -1,0 +1,70 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>mjpeg check</title></head>
+<body>
+<script>
+function mimeChecks() {
+  const v = document.createElement('video');
+  const types = ['video/x-matroska', 'video/x-matroska; codecs="mjpeg"', 'video/webm; codecs="mjpeg"', 'video/mp4; codecs="mp4v.6C"',
+                 'video/mp4; codecs="mjpeg"', 'video/quicktime', 'video/x-msvideo', 'video/x-motion-jpeg', 'video/webm; codecs="vp9"',
+                 'video/mp4; codecs="avc1.42E01E"'];
+  const out = {};
+  for (const t of types) {
+    out[t] = { canPlayType: v.canPlayType(t), mse: (window.MediaSource && MediaSource.isTypeSupported(t)) || false };
+  }
+  out.ImageDecoder_jpeg = (typeof ImageDecoder !== 'undefined') ? 'pending' : 'no ImageDecoder';
+  return (typeof ImageDecoder !== 'undefined') ? ImageDecoder.isTypeSupported('image/jpeg').then(x => { out.ImageDecoder_jpeg = x; return out; }) : out;
+}
+
+function testVideo(url) {
+  return new Promise(resolve => {
+    const v = document.createElement('video');
+    v.muted = true; v.preload = 'auto';
+    const r = { events: [] };
+    let done = false;
+    const finish = extra => {
+      if (done) return; done = true;
+      Object.assign(r, extra || {});
+      r.readyState = v.readyState; r.videoWidth = v.videoWidth; r.videoHeight = v.videoHeight; r.duration = v.duration;
+      if (v.error) { r.error_code = v.error.code; r.error_message = v.error.message; }
+      v.removeAttribute('src'); v.load();
+      resolve(r);
+    };
+    v.addEventListener('error', () => { r.events.push('error'); finish(); });
+    v.addEventListener('loadedmetadata', () => r.events.push('loadedmetadata'));
+    v.addEventListener('loadeddata', () => {
+      r.events.push('loadeddata');
+      try {
+        const c = document.createElement('canvas'); c.width = 64; c.height = 36;
+        const g = c.getContext('2d'); g.drawImage(v, 0, 0, 64, 36);
+        const d = g.getImageData(0, 0, 64, 36).data; let s = 0; for (let i = 0; i < d.length; i += 4) s += d[i] + d[i + 1] + d[i + 2];
+        r.first_frame_mean = s / (d.length / 4) / 3;
+      } catch (e) { r.draw_error = String(e); }
+      v.currentTime = Math.min(1.0, (v.duration || 2) / 2);
+      v.addEventListener('seeked', () => { r.events.push('seeked'); finish({ seeked_to: v.currentTime }); }, { once: true });
+      setTimeout(() => finish({ seek_timeout: true }), 5000);
+    });
+    setTimeout(() => finish({ timeout: true }), 8000);
+    v.src = url;
+  });
+}
+
+async function testImage(b64) {
+  const bin = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  const blob = new Blob([bin], { type: 'image/jpeg' });
+  const r = {};
+  try { const bm = await createImageBitmap(blob); r.createImageBitmap = [bm.width, bm.height]; bm.close(); } catch (e) { r.createImageBitmap = 'ERR ' + e; }
+  try {
+    const img = new Image(); img.src = URL.createObjectURL(blob); await img.decode(); r.img_decode = [img.naturalWidth, img.naturalHeight];
+    const c = document.createElement('canvas'); c.width = 32; c.height = 32; const g = c.getContext('2d'); g.drawImage(img, 0, 0, 32, 32);
+    const d = g.getImageData(0, 0, 32, 32).data; let s = 0; for (let i = 0; i < d.length; i += 4) s += d[i] + d[i + 1] + d[i + 2]; r.img_mean = s / (d.length / 4) / 3;
+  } catch (e) { r.img_decode = 'ERR ' + e; }
+  if (typeof ImageDecoder !== 'undefined') {
+    try {
+      const dec = new ImageDecoder({ data: bin, type: 'image/jpeg' });
+      const fr = await dec.decode(); r.ImageDecoder = [fr.image.displayWidth, fr.image.displayHeight, fr.image.format]; fr.image.close(); dec.close();
+    } catch (e) { r.ImageDecoder = 'ERR ' + e; }
+  }
+  return r;
+}
+</script>
+</body></html>

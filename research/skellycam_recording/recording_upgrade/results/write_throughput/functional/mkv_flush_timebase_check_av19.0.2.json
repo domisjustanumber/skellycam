@@ -1,0 +1,144 @@
+{
+ "env": {
+  "python": "3.12.13",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "machine": "Gerald",
+  "av": "19.0.2",
+  "libavformat": [
+   63,
+   1,
+   102
+  ],
+  "libavcodec": [
+   63,
+   1,
+   102
+  ],
+  "numpy": "2.5.4",
+  "cv2": null,
+  "psutil": null
+ },
+ "ffmpeg": "9.0.2",
+ "rows": [
+  {
+   "check": "A_open_file_readable",
+   "variant": "mkv_flush",
+   "options": {
+    "flush_packets": "1"
+   },
+   "muxed": 30,
+   "readable_exact_while_open": 29,
+   "bytes_on_disk": 1640465,
+   "read_err": null,
+   "mux_one_None": "TypeError: Argument 'packet' has incorrect type (expected av.packet.Packet, got NoneType)",
+   "after_mux_one_None_readable_exact": 29,
+   "empty_packet": "accepted",
+   "after_empty_packet_readable_exact": 30,
+   "after_empty_packet_read_err": null,
+   "after_close_readable_exact": 30,
+   "bytes_after_close": 1698711,
+   "after_close_read_err": null
+  },
+  {
+   "check": "A_open_file_readable",
+   "variant": "mkv_flush_live",
+   "options": {
+    "flush_packets": "1",
+    "live": "1"
+   },
+   "muxed": 30,
+   "readable_exact_while_open": 29,
+   "bytes_on_disk": 1640386,
+   "read_err": null,
+   "mux_one_None": "TypeError: Argument 'packet' has incorrect type (expected av.packet.Packet, got NoneType)",
+   "after_mux_one_None_readable_exact": 29,
+   "empty_packet": "accepted",
+   "after_empty_packet_readable_exact": 30,
+   "after_empty_packet_read_err": null,
+   "after_close_readable_exact": 30,
+   "bytes_after_close": 1698040,
+   "after_close_read_err": null
+  },
+  {
+   "check": "A_open_file_readable",
+   "variant": "mkv_flush_cluster_time_limit0",
+   "options": {
+    "flush_packets": "1",
+    "cluster_time_limit": "0"
+   },
+   "muxed": 30,
+   "readable_exact_while_open": 29,
+   "bytes_on_disk": 1640465,
+   "read_err": null,
+   "mux_one_None": "TypeError: Argument 'packet' has incorrect type (expected av.packet.Packet, got NoneType)",
+   "after_mux_one_None_readable_exact": 29,
+   "empty_packet": "accepted",
+   "after_empty_packet_readable_exact": 30,
+   "after_empty_packet_read_err": null,
+   "after_close_readable_exact": 30,
+   "bytes_after_close": 1698711,
+   "after_close_read_err": null
+  },
+  {
+   "check": "A_open_file_readable",
+   "variant": "fmp4_frame_flush",
+   "options": {
+    "flush_packets": "1",
+    "movflags": "frag_keyframe+empty_moov+default_base_moof",
+    "video_track_timescale": "90000"
+   },
+   "muxed": 30,
+   "readable_exact_while_open": 29,
+   "bytes_on_disk": 1643263,
+   "read_err": null,
+   "mux_one_None": "TypeError: Argument 'packet' has incorrect type (expected av.packet.Packet, got NoneType)",
+   "after_mux_one_None_readable_exact": 29,
+   "empty_packet": "accepted",
+   "after_empty_packet_readable_exact": 29,
+   "after_empty_packet_read_err": null,
+   "after_close_readable_exact": 30,
+   "bytes_after_close": 1701601,
+   "after_close_read_err": null
+  },
+  {
+   "check": "B_mkv_time_base",
+   "requested": "1/1000000",
+   "stream_time_base_after_header": "1/1000",
+   "read_back_time_base": "1/1000",
+   "read_back_pts": [
+    0,
+    33,
+    67,
+    100,
+    133
+   ],
+   "written_pts_us": [
+    0,
+    33333,
+    66666,
+    100000,
+    133333
+   ]
+  },
+  {
+   "check": "B_mkv_time_base",
+   "requested": "1/90000",
+   "stream_time_base_after_header": "1/1000",
+   "read_back_time_base": "1/1000",
+   "read_back_pts": [
+    0,
+    33,
+    67,
+    100,
+    133
+   ],
+   "written_pts_us": [
+    0,
+    33333,
+    66666,
+    100000,
+    133333
+   ]
+  }
+ ]
+}

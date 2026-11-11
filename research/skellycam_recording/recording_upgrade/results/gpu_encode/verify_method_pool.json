@@ -1,0 +1,79 @@
+{
+ "pyav": "19.0.2",
+ "smi_before": "0",
+ "control_no_sessions_held": {
+  "hevc_nvenc": {
+   "ok": true,
+   "packets": 3,
+   "mft": [],
+   "log_tail": []
+  },
+  "h264_d3d12va": {
+   "ok": true,
+   "packets": 3,
+   "mft": [],
+   "log_tail": [
+    "No quality level set; using default (25)."
+   ]
+  },
+  "h264_mf": {
+   "ok": true,
+   "packets": 3,
+   "mft": [
+    "MFT name: 'NVIDIA H.264 Encoder MFT'"
+   ],
+   "log_tail": []
+  },
+  "h264_qsv": {
+   "ok": true,
+   "packets": 3,
+   "mft": [],
+   "log_tail": [
+    "Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice."
+   ]
+  }
+ },
+ "first_h264_nvenc_error_at": 13,
+ "first_error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_open2(\"h264_nvenc\", {\\'preset\\': \\'p4\\'})'",
+ "held": 12,
+ "smi_while_held": "12",
+ "with_sessions_held": {
+  "hevc_nvenc": {
+   "ok": false,
+   "error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_open2(\"hevc_nvenc\", {\\'preset\\': \\'p4\\'})'; last error log: [hevc_nvenc] OpenEncodeSessionEx failed: incompatible client key (21): (no details)",
+   "mft": [],
+   "log_tail": [
+    "OpenEncodeSessionEx failed: incompatible client key (21): (no details)",
+    "No capable devices found"
+   ]
+  },
+  "h264_d3d12va": {
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_open2(\"h264_d3d12va\", {})' returned 22; last error log: [h264_d3d12va] Failed to create encoder.",
+   "mft": [],
+   "log_tail": [
+    "No quality level set; using default (25).",
+    "Failed to create encoder."
+   ]
+  },
+  "h264_mf": {
+   "ok": false,
+   "error": "ExternalError: [Errno 542398533] Generic error in an external library: 'avcodec_open2(\"h264_mf\", {\\'hw_encoding\\': \\'1\\'})'; last error log: [h264_mf] could not set output type (MF_E_UNSUPPORTED_D3D_TYPE)",
+   "mft": [
+    "MFT name: 'NVIDIA H.264 Encoder MFT'"
+   ],
+   "log_tail": [
+    "could not set output type (MF_E_UNSUPPORTED_D3D_TYPE)"
+   ]
+  },
+  "h264_qsv": {
+   "ok": true,
+   "packets": 3,
+   "mft": [],
+   "log_tail": [
+    "Using the constant quantization parameter (CQP) by default. Please use the global_quality option and other options for a quality-based mode or the b option and other options for a bitrate-based mode if the default is not the desired choice."
+   ]
+  }
+ },
+ "smi_after": "1"
+}

@@ -1,0 +1,80 @@
+{
+ "test": "jpegmkv",
+ "runner": "chrome-cdp",
+ "params": {
+  "order": "random",
+  "seed": "3",
+  "maxframes": "150"
+ },
+ "versions": {
+  "chrome": "Chrome/156.0.8078.80",
+  "protocol": "1.3",
+  "node": "24.15.0"
+ },
+ "gpu_info": {
+  "gpuDevices": [
+   {
+    "vendorId": 4318,
+    "deviceId": 9348,
+    "subSysId": 928331842,
+    "revision": 161,
+    "vendorString": "",
+    "deviceString": "NVIDIA GeForce RTX 3070",
+    "driverVendor": "NVIDIA",
+    "driverVersion": "32.0.16.1088"
+   },
+   {
+    "vendorId": 32902,
+    "deviceId": 42880,
+    "subSysId": 2290225219,
+    "revision": 4,
+    "vendorString": "",
+    "deviceString": "Intel(R) UHD Graphics 770",
+    "driverVendor": "",
+    "driverVersion": "32.0.101.7088"
+   },
+   {
+    "vendorId": 4318,
+    "deviceId": 9348,
+    "subSysId": 928331842,
+    "revision": 161,
+    "vendorString": "",
+    "deviceString": "NVIDIA GeForce RTX 3070",
+    "driverVendor": "",
+    "driverVersion": "32.0.16.1088"
+   },
+   {
+    "vendorId": 5140,
+    "deviceId": 140,
+    "subSysId": 0,
+    "revision": 0,
+    "vendorString": "",
+    "deviceString": "Microsoft Basic Render Driver",
+    "driverVendor": "",
+    "driverVersion": "10.0.26100.9711"
+   }
+  ],
+  "videoDecoding": []
+ },
+ "media_players_at_end": [],
+ "finished_utc": "2026-11-09T23:06:00.447Z",
+ "result": {
+  "c720p30/camera_bytes_mkv": {
+   "frames": 300,
+   "range_fetches": 150,
+   "bytes_identical": 150,
+   "bitmap_ok": 150,
+   "imagedecoder_ok": 150,
+   "soi_eoi_ok": 150,
+   "errors": [],
+   "tested": 150,
+   "order": "random"
+  }
+ },
+ "nvidia_smi": {
+  "query": "encoder.stats.sessionCount,utilization.gpu,utilization.decoder,memory.used",
+  "before": "1, 14 %, 96 %, 1216 MiB",
+  "after": "2, 25 %, 6 %, 1581 MiB"
+ },
+ "note": "functional run on a shared machine (3 browsers in parallel); CPU/memory samples removed, no timing fields kept"
+}

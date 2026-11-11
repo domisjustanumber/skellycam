@@ -1,0 +1,40 @@
+{
+ "pyav_version": "19.0.2",
+ "variants": {
+  "control_unmodified": {
+   "removed": [],
+   "returncode": 0,
+   "import_ok": true,
+   "imported_from_copy": true,
+   "stderr_last_line": ""
+  },
+  "no_x264": {
+   "removed": [
+    "libx264-165-0f71f37cf3f3ee0e2ecac2b06829e9ff.dll"
+   ],
+   "returncode": 1,
+   "import_ok": false,
+   "imported_from_copy": false,
+   "stderr_last_line": "ImportError: DLL load failed while importing _core: The specified module could not be found."
+  },
+  "no_x265": {
+   "removed": [
+    "libx265-ee9d492f3fb55d0a3b564bb1bf4f6822.dll"
+   ],
+   "returncode": 1,
+   "import_ok": false,
+   "imported_from_copy": false,
+   "stderr_last_line": "ImportError: DLL load failed while importing _core: The specified module could not be found."
+  },
+  "no_x264_no_x265": {
+   "removed": [
+    "libx264-165-0f71f37cf3f3ee0e2ecac2b06829e9ff.dll",
+    "libx265-ee9d492f3fb55d0a3b564bb1bf4f6822.dll"
+   ],
+   "returncode": 1,
+   "import_ok": false,
+   "imported_from_copy": false,
+   "stderr_last_line": "ImportError: DLL load failed while importing _core: The specified module could not be found."
+  }
+ }
+}

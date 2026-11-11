@@ -1,0 +1,1171 @@
+{
+ "ffmpeg": "ffmpeg version 9.0.2-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+ "machine": "Gerald",
+ "nvidia_smi_before": "0, 22 %, 610.88",
+ "results": [
+  {
+   "encoder": "av1_nvenc",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v av1_nvenc -preset p4 -g 0 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\av1_nvenc_intra.mkv",
+   "returncode": 3752568763,
+   "stderr_tail": "[in#0/rawvideo @ 0000026bd11a5580]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 0000026bd11a5580]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 0000026bd12466c0] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -542398533",
+   "diagnosis": [
+    "[av1_nvenc @ 0000026bd124bf00] Codec not supported",
+    "[av1_nvenc @ 0000026bd124bf00] No capable devices found",
+    "[vost#0:0/av1_nvenc @ 0000026bd124bcc0] [enc:av1_nvenc @ 0000026bd1248100] Could not open encoder before EOF",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "av1_nvenc",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v av1_nvenc -preset p4 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\av1_nvenc_gop15.mkv",
+   "returncode": 3752568763,
+   "stderr_tail": "[in#0/rawvideo @ 000001ba4c3d3780]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000001ba4c3d3780]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 000001ba4c469900] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -542398533",
+   "diagnosis": [
+    "[av1_nvenc @ 000001ba4c46b140] Codec not supported",
+    "[av1_nvenc @ 000001ba4c46b140] No capable devices found",
+    "[vost#0:0/av1_nvenc @ 000001ba4c46aec0] [enc:av1_nvenc @ 000001ba4c471700] Could not open encoder before EOF",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "hevc_nvenc",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v hevc_nvenc -preset p4 -bf 0 -g 0 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\hevc_nvenc_intra.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 00000250317035c0] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 00000250317035c0]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 00000250317035c0]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 0000025031704000] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 331888,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "hevc_nvenc",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v hevc_nvenc -preset p4 -bf 0 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\hevc_nvenc_gop15.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 0000027a49603d00] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 0000027a49603d00]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 0000027a49603d00]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 0000027a49604740] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 454709,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_nvenc",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v h264_nvenc -preset p4 -bf 0 -g 0 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_nvenc_intra.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 000001af5aa73700] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 000001af5aa73700]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000001af5aa73700]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 000001af5aa740c0] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 334822,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_nvenc",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v h264_nvenc -preset p4 -bf 0 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_nvenc_gop15.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 000001dcd3403440] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 000001dcd3403440]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000001dcd3403440]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 000001dcd3403e80] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 349312,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "hevc_nvenc_g1",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v hevc_nvenc -preset p4 -bf 0 -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\hevc_nvenc_g1_intra.mkv",
+   "returncode": 4294967274,
+   "stderr_tail": "[in#0/rawvideo @ 00000213f0204000]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 00000213f0204000]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 00000213f0204a40] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -22",
+   "diagnosis": [
+    "[hevc_nvenc @ 00000213f02aa8c0] InitializeEncoder failed: invalid param (8): Gop Length should be greater than number of B frames + 1",
+    "[vost#0:0/hevc_nvenc @ 00000213f02aa580] [enc:hevc_nvenc @ 00000213f02a2000] Could not open encoder before EOF",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "hevc_nvenc_g1",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v hevc_nvenc -preset p4 -bf 0 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\hevc_nvenc_g1_gop15.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 000001f31ed234c0] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 000001f31ed234c0]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000001f31ed234c0]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 000001f31ed23f00] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 454709,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_nvenc_g1",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v h264_nvenc -preset p4 -bf 0 -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_nvenc_g1_intra.mkv",
+   "returncode": 4294967274,
+   "stderr_tail": "[in#0/rawvideo @ 00000167613d4380]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 00000167613d4380]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 00000167613d4dc0] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -22",
+   "diagnosis": [
+    "[h264_nvenc @ 000001676146bec0] InitializeEncoder failed: invalid param (8): Gop Length should be greater than number of B frames + 1",
+    "[vost#0:0/h264_nvenc @ 000001676146bc40] [enc:h264_nvenc @ 000001676146dcc0] Could not open encoder before EOF",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "h264_nvenc_g1",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v h264_nvenc -preset p4 -bf 0 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_nvenc_g1_gop15.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 000001f0b7604400] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 000001f0b7604400]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000001f0b7604400]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 000001f0b769e440] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 349312,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "av1_qsv",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device qsv=hw:hw_any -filter_hw_device hw -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v av1_qsv -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\av1_qsv_intra.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[D3D11VA @ 0000014a3dc742c0] Failed to find d3d11va adapter by vendor id 0x8086\nDevice creation failed: -1313558101.\nFailed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred\nError parsing global options: Unknown error occurred\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[D3D11VA @ 0000014a3dc742c0] Failed to find d3d11va adapter by vendor id 0x8086",
+    "Device creation failed: -1313558101.",
+    "Failed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred"
+   ],
+   "ok": false
+  },
+  {
+   "encoder": "av1_qsv",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device qsv=hw:hw_any -filter_hw_device hw -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v av1_qsv -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\av1_qsv_gop15.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[D3D11VA @ 0000022b03a749c0] Failed to find d3d11va adapter by vendor id 0x8086\nDevice creation failed: -1313558101.\nFailed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred\nError parsing global options: Unknown error occurred\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[D3D11VA @ 0000022b03a749c0] Failed to find d3d11va adapter by vendor id 0x8086",
+    "Device creation failed: -1313558101.",
+    "Failed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred"
+   ],
+   "ok": false
+  },
+  {
+   "encoder": "hevc_qsv",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device qsv=hw:hw_any -filter_hw_device hw -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v hevc_qsv -bf 0 -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\hevc_qsv_intra.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[D3D11VA @ 000001820131c5c0] Failed to find d3d11va adapter by vendor id 0x8086\nDevice creation failed: -1313558101.\nFailed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred\nError parsing global options: Unknown error occurred\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[D3D11VA @ 000001820131c5c0] Failed to find d3d11va adapter by vendor id 0x8086",
+    "Device creation failed: -1313558101.",
+    "Failed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred"
+   ],
+   "ok": false
+  },
+  {
+   "encoder": "hevc_qsv",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device qsv=hw:hw_any -filter_hw_device hw -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v hevc_qsv -bf 0 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\hevc_qsv_gop15.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[D3D11VA @ 000001c4d0156440] Failed to find d3d11va adapter by vendor id 0x8086\nDevice creation failed: -1313558101.\nFailed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred\nError parsing global options: Unknown error occurred\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[D3D11VA @ 000001c4d0156440] Failed to find d3d11va adapter by vendor id 0x8086",
+    "Device creation failed: -1313558101.",
+    "Failed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred"
+   ],
+   "ok": false
+  },
+  {
+   "encoder": "h264_qsv",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device qsv=hw:hw_any -filter_hw_device hw -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v h264_qsv -bf 0 -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_qsv_intra.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[D3D11VA @ 00000274549d5500] Failed to find d3d11va adapter by vendor id 0x8086\nDevice creation failed: -1313558101.\nFailed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred\nError parsing global options: Unknown error occurred\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[D3D11VA @ 00000274549d5500] Failed to find d3d11va adapter by vendor id 0x8086",
+    "Device creation failed: -1313558101.",
+    "Failed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred"
+   ],
+   "ok": false
+  },
+  {
+   "encoder": "h264_qsv",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device qsv=hw:hw_any -filter_hw_device hw -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v h264_qsv -bf 0 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_qsv_gop15.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[D3D11VA @ 00000220b8aac700] Failed to find d3d11va adapter by vendor id 0x8086\nDevice creation failed: -1313558101.\nFailed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred\nError parsing global options: Unknown error occurred\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[D3D11VA @ 00000220b8aac700] Failed to find d3d11va adapter by vendor id 0x8086",
+    "Device creation failed: -1313558101.",
+    "Failed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred"
+   ],
+   "ok": false
+  },
+  {
+   "encoder": "vp9_qsv",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device qsv=hw:hw_any -filter_hw_device hw -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v vp9_qsv -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\vp9_qsv_intra.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[D3D11VA @ 00000201829dc200] Failed to find d3d11va adapter by vendor id 0x8086\nDevice creation failed: -1313558101.\nFailed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred\nError parsing global options: Unknown error occurred\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[D3D11VA @ 00000201829dc200] Failed to find d3d11va adapter by vendor id 0x8086",
+    "Device creation failed: -1313558101.",
+    "Failed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred"
+   ],
+   "ok": false
+  },
+  {
+   "encoder": "vp9_qsv",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device qsv=hw:hw_any -filter_hw_device hw -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v vp9_qsv -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\vp9_qsv_gop15.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[D3D11VA @ 000001d267d76140] Failed to find d3d11va adapter by vendor id 0x8086\nDevice creation failed: -1313558101.\nFailed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred\nError parsing global options: Unknown error occurred\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[D3D11VA @ 000001d267d76140] Failed to find d3d11va adapter by vendor id 0x8086",
+    "Device creation failed: -1313558101.",
+    "Failed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred"
+   ],
+   "ok": false
+  },
+  {
+   "encoder": "mjpeg_qsv",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device qsv=hw:hw_any -filter_hw_device hw -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v mjpeg_qsv -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\mjpeg_qsv_intra.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[D3D11VA @ 0000024e5887f280] Failed to find d3d11va adapter by vendor id 0x8086\nDevice creation failed: -1313558101.\nFailed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred\nError parsing global options: Unknown error occurred\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[D3D11VA @ 0000024e5887f280] Failed to find d3d11va adapter by vendor id 0x8086",
+    "Device creation failed: -1313558101.",
+    "Failed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred"
+   ],
+   "ok": false
+  },
+  {
+   "encoder": "mjpeg_qsv",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device qsv=hw:hw_any -filter_hw_device hw -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v mjpeg_qsv -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\mjpeg_qsv_gop15.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[D3D11VA @ 000001f1bcde41c0] Failed to find d3d11va adapter by vendor id 0x8086\nDevice creation failed: -1313558101.\nFailed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred\nError parsing global options: Unknown error occurred\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[D3D11VA @ 000001f1bcde41c0] Failed to find d3d11va adapter by vendor id 0x8086",
+    "Device creation failed: -1313558101.",
+    "Failed to set value 'qsv=hw:hw_any' for option 'init_hw_device': Unknown error occurred"
+   ],
+   "ok": false
+  },
+  {
+   "encoder": "av1_amf",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v av1_amf -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\av1_amf_intra.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[in#0/rawvideo @ 00000193db594980]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 00000193db594980]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 00000193db63cb80] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[AMF @ 00000193db648600] DLL amfrt64.dll failed to open",
+    "[av1_amf @ 00000193db63d880] Failed to create  hardware device context (AMF) : Unknown error occurred",
+    "[vost#0:0/av1_amf @ 00000193db63e180] [enc:av1_amf @ 00000193db632f80] Could not open encoder before EOF",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "av1_amf",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v av1_amf -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\av1_amf_gop15.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[in#0/rawvideo @ 000001f2aa1e3480]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000001f2aa1e3480]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 000001f2aa27d8c0] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[AMF @ 000001f2aa294c80] DLL amfrt64.dll failed to open",
+    "[av1_amf @ 000001f2aa28c6c0] Failed to create  hardware device context (AMF) : Unknown error occurred",
+    "[vost#0:0/av1_amf @ 000001f2aa28c0c0] [enc:av1_amf @ 000001f2aa2800c0] Could not open encoder before EOF",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "hevc_amf",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v hevc_amf -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\hevc_amf_intra.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[in#0/rawvideo @ 0000024edebc4800]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 0000024edebc4800]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 0000024edec5acc0] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[AMF @ 0000024edec74a00] DLL amfrt64.dll failed to open",
+    "[hevc_amf @ 0000024edec5c8c0] Failed to create  hardware device context (AMF) : Unknown error occurred",
+    "[vost#0:0/hevc_amf @ 0000024edec5c2c0] [enc:hevc_amf @ 0000024edec61300] Could not open encoder before EOF",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "hevc_amf",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v hevc_amf -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\hevc_amf_gop15.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[in#0/rawvideo @ 0000024778564540]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 0000024778564540]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 0000024778609640] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[AMF @ 0000024778618a40] DLL amfrt64.dll failed to open",
+    "[hevc_amf @ 000002477860a340] Failed to create  hardware device context (AMF) : Unknown error occurred",
+    "[vost#0:0/hevc_amf @ 000002477860ac40] [enc:hevc_amf @ 00000247785fe900] Could not open encoder before EOF",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "h264_amf",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v h264_amf -bf 0 -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_amf_intra.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[in#0/rawvideo @ 0000012faad74840]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 0000012faad74840]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 0000012faad75240] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[AMF @ 0000012faae25a80] DLL amfrt64.dll failed to open",
+    "[h264_amf @ 0000012faae1c600] Failed to create  hardware device context (AMF) : Unknown error occurred",
+    "[vost#0:0/h264_amf @ 0000012faae0e4c0] [enc:h264_amf @ 0000012faae18640] Could not open encoder before EOF",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "h264_amf",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v h264_amf -bf 0 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_amf_gop15.mkv",
+   "returncode": 2981409195,
+   "stderr_tail": "[in#0/rawvideo @ 000002178fda30c0]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000002178fda30c0]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 000002178fe491c0] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -1313558101",
+   "diagnosis": [
+    "[AMF @ 000002178fe5b9c0] DLL amfrt64.dll failed to open",
+    "[h264_amf @ 000002178fe4adc0] Failed to create  hardware device context (AMF) : Unknown error occurred",
+    "[vost#0:0/h264_amf @ 000002178fe4a7c0] [enc:h264_amf @ 000002178fe3f540] Could not open encoder before EOF",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "av1_mf",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v av1_mf -hw_encoding 1 -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\av1_mf_intra.mkv",
+   "returncode": 4294967192,
+   "stderr_tail": "[in#0/rawvideo @ 00000241fec83780]   Input stream #0:0 (video): 16 packets read (49766400 bytes); 8 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 00000241fec83780]   Total: 16 packets (49766400 bytes) demuxed\n[AVIOContext @ 00000241fed20640] Statistics: 49766400 bytes read, 1 seeks\nConversion failed!\n\nExiting with exit code -104",
+   "diagnosis": [
+    "[av1_mf @ 00000241fed21c40] could not start streaming (80004005)",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 1020
+  },
+  {
+   "encoder": "av1_mf",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v av1_mf -hw_encoding 1 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\av1_mf_gop15.mkv",
+   "returncode": 4294967192,
+   "stderr_tail": "[in#0/rawvideo @ 000001858fe53480]   Input stream #0:0 (video): 16 packets read (49766400 bytes); 8 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000001858fe53480]   Total: 16 packets (49766400 bytes) demuxed\n[AVIOContext @ 000001858fe53e80] Statistics: 49766400 bytes read, 1 seeks\nConversion failed!\n\nExiting with exit code -104",
+   "diagnosis": [
+    "[av1_mf @ 000001858feed6c0] could not start streaming (80004005)",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 1020
+  },
+  {
+   "encoder": "hevc_mf",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v hevc_mf -hw_encoding 1 -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\hevc_mf_intra.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 000001efb76b4e80] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 000001efb76b4e80]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000001efb76b4e80]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 000001efb774c4c0] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 94372,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "hevc_mf",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v hevc_mf -hw_encoding 1 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\hevc_mf_gop15.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 00000205eb364000] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 00000205eb364000]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 00000205eb364000]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 00000205eb364a00] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 62508,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_mf",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v h264_mf -hw_encoding 1 -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_mf_intra.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 0000019aa9b83740] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 0000019aa9b83740]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 0000019aa9b83740]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 0000019aa9b84140] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 354004,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Constrained Baseline",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_mf",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -c:v h264_mf -hw_encoding 1 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_mf_gop15.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 000001de4d506fc0] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 000001de4d506fc0]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000001de4d506fc0]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 000001de4d5079c0] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 47432,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Constrained Baseline",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device d3d12va=d3d -filter_hw_device d3d -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v av1_d3d12va -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\av1_d3d12va_intra.mkv",
+   "returncode": 4294967274,
+   "stderr_tail": "[in#0/rawvideo @ 00000209406a6640]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 00000209406a6640]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 0000020942b36340] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -22",
+   "diagnosis": [
+    "[av1_d3d12va @ 0000020942b5d800] Driver does not support requested features. ValidationFlags: 0x10",
+    "[av1_d3d12va @ 0000020942b5d800]   - Codec configuration not supported",
+    "[av1_d3d12va @ 0000020942b5d800] Codec sequence initialisation failed: -22.",
+    "[vost#0:0/av1_d3d12va @ 00000209424ee980] [enc:av1_d3d12va @ 0000020942a614c0] Could not open encoder before EOF"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "av1_d3d12va",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device d3d12va=d3d -filter_hw_device d3d -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v av1_d3d12va -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\av1_d3d12va_gop15.mkv",
+   "returncode": 4294967274,
+   "stderr_tail": "[in#0/rawvideo @ 000002517bdedd00]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000002517bdedd00]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 000002517e23dbc0] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -22",
+   "diagnosis": [
+    "[av1_d3d12va @ 000002517e23f000] Driver does not support requested features. ValidationFlags: 0x10",
+    "[av1_d3d12va @ 000002517e23f000]   - Codec configuration not supported",
+    "[av1_d3d12va @ 000002517e23f000] Codec sequence initialisation failed: -22.",
+    "[vost#0:0/av1_d3d12va @ 000002517bde2dc0] [enc:av1_d3d12va @ 000002517e1474c0] Could not open encoder before EOF"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device d3d12va=d3d -filter_hw_device d3d -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v hevc_d3d12va -bf 0 -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\hevc_d3d12va_intra.mp4",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 00000256029fe680] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 00000256029fe680]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 00000256029fe680]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 0000025602c48000] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 1011230,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "hevc_d3d12va",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device d3d12va=d3d -filter_hw_device d3d -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v hevc_d3d12va -bf 0 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\hevc_d3d12va_gop15.mp4",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 000002be94ba2640] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 000002be94ba2640]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000002be94ba2640]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 000002be970094c0] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 369671,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device d3d12va=d3d -filter_hw_device d3d -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v h264_d3d12va -bf 0 -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_d3d12va_intra.mp4",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 00000174af509ec0] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 00000174af509ec0]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 00000174af509ec0]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 00000174af4ff600] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 1704765,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_d3d12va",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device d3d12va=d3d -filter_hw_device d3d -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v h264_d3d12va -bf 0 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_d3d12va_gop15.mp4",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 0000025563a8cc80] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 0000025563a8cc80]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 0000025563a8cc80]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 0000025565e81b80] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 428656,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_d3d12va_bf",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device d3d12va=d3d -filter_hw_device d3d -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v h264_d3d12va -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_d3d12va_bf_intra.mp4",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 000002b26afcb2c0] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 000002b26afcb2c0]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000002b26afcb2c0]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 000002b26afced00] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 1704765,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_d3d12va_bf",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device d3d12va=d3d -filter_hw_device d3d -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v h264_d3d12va -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_d3d12va_bf_gop15.mp4",
+   "returncode": 4294967274,
+   "stderr_tail": "[in#0/rawvideo @ 00000238e0669f00]   Input stream #0:0 (video): 14 packets read (43545600 bytes); 12 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 00000238e0669f00]   Total: 14 packets (43545600 bytes) demuxed\n[AVIOContext @ 00000238e0661ac0] Statistics: 43545600 bytes read, 1 seeks\nConversion failed!\n\nExiting with exit code -22",
+   "diagnosis": [
+    "[h264_d3d12va @ 00000238e2963dc0] Encode failed: Unknown error occurred.",
+    "[hwupload @ 00000238e2689040] Failed to upload frame: -22.",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 46192
+  },
+  {
+   "encoder": "h264_d3d12va_mkv",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device d3d12va=d3d -filter_hw_device d3d -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v h264_d3d12va -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_d3d12va_mkv_intra.mkv",
+   "returncode": 3221225477,
+   "stderr_tail": "[vf#0:0 @ 000002b8896baa40] Terminating thread with return code -1094995529 (Invalid data found when processing input)\n[vost#0:0/h264_d3d12va @ 000002b8896b6e00] [enc:h264_d3d12va @ 000002b8893ebcc0] Encoder thread received EOF\n[in#0/rawvideo @ 000002b88739c780] Terminating thread with return code 0 (success)\n[vist#0:0/rawvideo @ 000002b88735d980] [dec:rawvideo @ 000002b88735e3c0] Decoder thread received EOF packet\n[vist#0:0/rawvideo @ 000002b88735d980] [dec:rawvideo @ 000002b88735e3c0] Decoder returned EOF, finishing\n[vist#0:0/rawvideo @ 000002b88735d980] [dec:rawvideo @ 000002b88735e3c0] Terminating thread with return code 0 (success)",
+   "diagnosis": [
+    "[out#0/matroska @ 000002b8896be840] Could not write header (incorrect codec parameters ?): Invalid data found when processing input"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "h264_d3d12va_mkv",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device d3d12va=d3d -filter_hw_device d3d -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v h264_d3d12va -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_d3d12va_mkv_gop15.mkv",
+   "returncode": 3221225477,
+   "stderr_tail": "[vf#0:0 @ 0000023b604f12c0] Terminating thread with return code -1094995529 (Invalid data found when processing input)\n[vost#0:0/h264_d3d12va @ 0000023b604eeec0] [enc:h264_d3d12va @ 0000023b603f2140] Encoder thread received EOF\n[in#0/rawvideo @ 0000023b5e22a300] Terminating thread with return code 0 (success)\n[vist#0:0/rawvideo @ 0000023b5e22b140] [dec:rawvideo @ 0000023b604f2600] Decoder thread received EOF packet\n[vist#0:0/rawvideo @ 0000023b5e22b140] [dec:rawvideo @ 0000023b604f2600] Decoder returned EOF, finishing\n[vist#0:0/rawvideo @ 0000023b5e22b140] [dec:rawvideo @ 0000023b604f2600] Terminating thread with return code 0 (success)",
+   "diagnosis": [
+    "[out#0/matroska @ 0000023b60468c40] Could not write header (incorrect codec parameters ?): Invalid data found when processing input"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "av1_vulkan",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v av1_vulkan -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\av1_vulkan_intra.mkv",
+   "returncode": 4294967256,
+   "stderr_tail": "[in#0/rawvideo @ 0000025269cf8240]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 0000025269cf8240]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 0000025269cd2240] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -40",
+   "diagnosis": [
+    "[av1_vulkan @ 0000025269d03740] Device does not support encoding av1!",
+    "[vost#0:0/av1_vulkan @ 0000025269d034c0] [enc:av1_vulkan @ 00000252695da040] Could not open encoder before EOF",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "av1_vulkan",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v av1_vulkan -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\av1_vulkan_gop15.mkv",
+   "returncode": 4294967256,
+   "stderr_tail": "[in#0/rawvideo @ 0000023acab21740]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 0000023acab21740]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 0000023acab4c580] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -40",
+   "diagnosis": [
+    "[av1_vulkan @ 0000023acab2b840] Device does not support encoding av1!",
+    "[vost#0:0/av1_vulkan @ 0000023acab4cd40] [enc:av1_vulkan @ 0000023aca42a4c0] Could not open encoder before EOF",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "hevc_vulkan",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v hevc_vulkan -bf 0 -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\hevc_vulkan_intra.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 00000169e2e4d880] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 00000169e2e4d880]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 00000169e2e4d880]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 00000169e2f4f040] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [
+    "[hevc_vulkan @ 00000169e2f47e40]         requiresGopRemainingFrames: 0"
+   ],
+   "ok": true,
+   "bytes": 916039,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "hevc_vulkan",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v hevc_vulkan -bf 0 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\hevc_vulkan_gop15.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 0000021d62bda6c0] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 0000021d62bda6c0]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 0000021d62bda6c0]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 0000021d62bc3980] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [
+    "[hevc_vulkan @ 0000021d62be5000]         requiresGopRemainingFrames: 0"
+   ],
+   "ok": true,
+   "bytes": 10750263,
+   "probe": {
+    "codec_name": "hevc",
+    "profile": "Main",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_vulkan",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v h264_vulkan -bf 0 -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_vulkan_intra.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 000001c65ea646c0] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 000001c65ea646c0]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000001c65ea646c0]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 000001c65ea6fb80] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [
+    "[h264_vulkan @ 000001c65ea71180]         requiresGopRemainingFrames: 0"
+   ],
+   "ok": true,
+   "bytes": 2663180,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "h264_vulkan",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v h264_vulkan -bf 0 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_vulkan_gop15.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 000002adcfad05c0] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv):\n[in#0/rawvideo @ 000002adcfad05c0]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000002adcfad05c0]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 000002adcfac9140] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [
+    "[h264_vulkan @ 000002adcfadaec0]         requiresGopRemainingFrames: 0"
+   ],
+   "ok": true,
+   "bytes": 1133887,
+   "probe": {
+    "codec_name": "h264",
+    "profile": "High",
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 3,
+     "P": 29
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "ffv1_vulkan",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt yuv420p -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\yuv420p_1080p.yuv -vf format=yuv420p,hwupload -c:v ffv1_vulkan -level 4 -strict -2 -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\ffv1_vulkan_intra.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 0000024f5c3fc040] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\yuv420p_1080p.yuv):\n[in#0/rawvideo @ 0000024f5c3fc040]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 0000024f5c3fc040]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 0000024f5c4f1a80] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 11577377,
+   "probe": {
+    "codec_name": "ffv1",
+    "profile": null,
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "ffv1_vulkan",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt yuv420p -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\yuv420p_1080p.yuv -vf format=yuv420p,hwupload -c:v ffv1_vulkan -level 4 -strict -2 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\ffv1_vulkan_gop15.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 00000239fac3a580] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\yuv420p_1080p.yuv):\n[in#0/rawvideo @ 00000239fac3a580]   Input stream #0:0 (video): 32 packets read (99532800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 00000239fac3a580]   Total: 32 packets (99532800 bytes) demuxed\n[AVIOContext @ 00000239fac42a00] Statistics: 99532800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 10082809,
+   "probe": {
+    "codec_name": "ffv1",
+    "profile": null,
+    "pix_fmt": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "ffv1_vulkan_l3",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt yuv420p -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\yuv420p_1080p.yuv -vf format=yuv420p,hwupload -c:v ffv1_vulkan -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\ffv1_vulkan_l3_intra.mkv",
+   "returncode": 3131621040,
+   "stderr_tail": "[in#0/rawvideo @ 000002575d14b800]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000002575d14b800]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 000002575d1b7800] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -1163346256",
+   "diagnosis": [
+    "[ffv1_vulkan @ 000002575d1aad40] Encoding frames with subsampling and unaligned dimensions is only supported in version 4 (-level 4)",
+    "[vf#0:0 @ 000002575d1ab0c0] Error sending frames to consumers: Not yet implemented in FFmpeg, patches welcome",
+    "[vf#0:0 @ 000002575d1ab0c0] Task finished with error code: -1163346256 (Not yet implemented in FFmpeg, patches welcome)",
+    "[vf#0:0 @ 000002575d1ab0c0] Terminating thread with return code -1163346256 (Not yet implemented in FFmpeg, patches welcome)"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "ffv1_vulkan_l3",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt yuv420p -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\yuv420p_1080p.yuv -vf format=yuv420p,hwupload -c:v ffv1_vulkan -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\ffv1_vulkan_l3_gop15.mkv",
+   "returncode": 3199971767,
+   "stderr_tail": "[in#0/rawvideo @ 000001f850f63c40]   Input stream #0:0 (video): 2 packets read (6220800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000001f850f63c40]   Total: 2 packets (6220800 bytes) demuxed\n[AVIOContext @ 000001f850fa1a40] Statistics: 6220800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -1094995529",
+   "diagnosis": [
+    "[ffv1_vulkan @ 000001f850fd6100] Using inter frames requires version 4 (-level 4)",
+    "[vost#0:0/ffv1_vulkan @ 000001f850ff5c00] [enc:ffv1_vulkan @ 000001f850eb8080] Could not open encoder before EOF",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "ffv1_vulkan_rgb",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt bgr0 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\bgr0_1080p.yuv -vf format=bgr0,hwupload -c:v ffv1_vulkan -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\ffv1_vulkan_rgb_intra.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 00000194e41282c0] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\bgr0_1080p.yuv):\n[in#0/rawvideo @ 00000194e41282c0]   Input stream #0:0 (video): 32 packets read (265420800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 00000194e41282c0]   Total: 32 packets (265420800 bytes) demuxed\n[AVIOContext @ 00000194e4128700] Statistics: 265420800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 21309077,
+   "probe": {
+    "codec_name": "ffv1",
+    "profile": null,
+    "pix_fmt": "bgr0",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "ffv1_vulkan_rgb",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt bgr0 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\bgr0_1080p.yuv -vf format=bgr0,hwupload -c:v ffv1_vulkan -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\ffv1_vulkan_rgb_gop15.mkv",
+   "returncode": 3199971767,
+   "stderr_tail": "[in#0/rawvideo @ 0000025b57aa2140]   Input stream #0:0 (video): 2 packets read (16588800 bytes); 1 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 0000025b57aa2140]   Total: 2 packets (16588800 bytes) demuxed\n[AVIOContext @ 0000025b57abb2c0] Statistics: 16588800 bytes read, 0 seeks\nConversion failed!\n\nExiting with exit code -1094995529",
+   "diagnosis": [
+    "[ffv1_vulkan @ 0000025b57aabe00] Using inter frames requires version 4 (-level 4)",
+    "[vost#0:0/ffv1_vulkan @ 0000025b57aab380] [enc:ffv1_vulkan @ 0000025b579d1780] Could not open encoder before EOF",
+    "Conversion failed!"
+   ],
+   "ok": false,
+   "bytes_partial": 0
+  },
+  {
+   "encoder": "ffv1_vulkan_bayer",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt bayer_rggb16le -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\bayer_rggb16le_1080p.yuv -vf format=bayer_rggb16le,hwupload -c:v ffv1_vulkan -level 4 -strict -2 -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\ffv1_vulkan_bayer_intra.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 00000205821d3c80] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\bayer_rggb16le_1080p.yuv):\n[in#0/rawvideo @ 00000205821d3c80]   Input stream #0:0 (video): 32 packets read (132710400 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 00000205821d3c80]   Total: 32 packets (132710400 bytes) demuxed\n[AVIOContext @ 00000205821d1380] Statistics: 132710400 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 32349302,
+   "probe": {
+    "codec_name": "ffv1",
+    "profile": null,
+    "pix_fmt": "bayer_rggb16le",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "ffv1_vulkan_bayer",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt bayer_rggb16le -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\bayer_rggb16le_1080p.yuv -vf format=bayer_rggb16le,hwupload -c:v ffv1_vulkan -level 4 -strict -2 -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\ffv1_vulkan_bayer_gop15.mkv",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 0000014d4eea4d00] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\bayer_rggb16le_1080p.yuv):\n[in#0/rawvideo @ 0000014d4eea4d00]   Input stream #0:0 (video): 32 packets read (132710400 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 0000014d4eea4d00]   Total: 32 packets (132710400 bytes) demuxed\n[AVIOContext @ 0000014d4ef70200] Statistics: 132710400 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 27827346,
+   "probe": {
+    "codec_name": "ffv1",
+    "profile": null,
+    "pix_fmt": "bayer_rggb16le",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 3,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "prores_ks_vulkan",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt yuv422p10le -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\yuv422p10le_1080p.yuv -vf format=yuv422p10le,hwupload -c:v prores_ks_vulkan -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\prores_ks_vulkan_intra.mov",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 000002857050bc00] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\yuv422p10le_1080p.yuv):\n[in#0/rawvideo @ 000002857050bc00]   Input stream #0:0 (video): 32 packets read (265420800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 000002857050bc00]   Total: 32 packets (265420800 bytes) demuxed\n[AVIOContext @ 000002857050dcc0] Statistics: 265420800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 29721449,
+   "probe": {
+    "codec_name": "prores",
+    "profile": "HQ",
+    "pix_fmt": "yuv422p10le",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "prores_ks_vulkan",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vulkan=vk -filter_hw_device vk -f rawvideo -pix_fmt yuv422p10le -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\yuv422p10le_1080p.yuv -vf format=yuv422p10le,hwupload -c:v prores_ks_vulkan -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\prores_ks_vulkan_gop15.mov",
+   "returncode": 0,
+   "stderr_tail": "[in#0/rawvideo @ 0000021a4c1a8080] Input file #0 (C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\yuv422p10le_1080p.yuv):\n[in#0/rawvideo @ 0000021a4c1a8080]   Input stream #0:0 (video): 32 packets read (265420800 bytes); 32 frames decoded; 0 decode errors; \n[in#0/rawvideo @ 0000021a4c1a8080]   Total: 32 packets (265420800 bytes) demuxed\n[AVIOContext @ 0000021a4c1c42c0] Statistics: 265420800 bytes read, 3 seeks\n\nExiting with exit code 0",
+   "diagnosis": [],
+   "ok": true,
+   "bytes": 29721449,
+   "probe": {
+    "codec_name": "prores",
+    "profile": "HQ",
+    "pix_fmt": "yuv422p10le",
+    "width": 1920,
+    "height": 1080,
+    "packets": 32,
+    "key_packets": 32,
+    "decoded_frames": 32,
+    "pict_types": {
+     "I": 32
+    },
+    "decode_stderr": ""
+   }
+  },
+  {
+   "encoder": "av1_vaapi",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vaapi=va -filter_hw_device va -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v av1_vaapi -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\av1_vaapi_intra.mkv",
+   "returncode": 4294967291,
+   "stderr_tail": "[VAAPI @ 000001c14a366480] Failed to initialise VAAPI connection: -1 (unknown libva error).\nDevice creation failed: -5.\nFailed to set value 'vaapi=va' for option 'init_hw_device': I/O error\nError parsing global options: I/O error\n\nExiting with exit code -5",
+   "diagnosis": [
+    "[VAAPI @ 000001c14a366480] Failed to initialise VAAPI connection: -1 (unknown libva error).",
+    "Device creation failed: -5.",
+    "Failed to set value 'vaapi=va' for option 'init_hw_device': I/O error"
+   ],
+   "ok": false
+  },
+  {
+   "encoder": "av1_vaapi",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vaapi=va -filter_hw_device va -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v av1_vaapi -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\av1_vaapi_gop15.mkv",
+   "returncode": 4294967291,
+   "stderr_tail": "[VAAPI @ 000001e50dbbbfc0] Failed to initialise VAAPI connection: -1 (unknown libva error).\nDevice creation failed: -5.\nFailed to set value 'vaapi=va' for option 'init_hw_device': I/O error\nError parsing global options: I/O error\n\nExiting with exit code -5",
+   "diagnosis": [
+    "[VAAPI @ 000001e50dbbbfc0] Failed to initialise VAAPI connection: -1 (unknown libva error).",
+    "Device creation failed: -5.",
+    "Failed to set value 'vaapi=va' for option 'init_hw_device': I/O error"
+   ],
+   "ok": false
+  },
+  {
+   "encoder": "h264_vaapi",
+   "variant": "intra",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vaapi=va -filter_hw_device va -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v h264_vaapi -g 1 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_vaapi_intra.mkv",
+   "returncode": 4294967291,
+   "stderr_tail": "[VAAPI @ 00000241049bd2c0] Failed to initialise VAAPI connection: -1 (unknown libva error).\nDevice creation failed: -5.\nFailed to set value 'vaapi=va' for option 'init_hw_device': I/O error\nError parsing global options: I/O error\n\nExiting with exit code -5",
+   "diagnosis": [
+    "[VAAPI @ 00000241049bd2c0] Failed to initialise VAAPI connection: -1 (unknown libva error).",
+    "Device creation failed: -5.",
+    "Failed to set value 'vaapi=va' for option 'init_hw_device': I/O error"
+   ],
+   "ok": false
+  },
+  {
+   "encoder": "h264_vaapi",
+   "variant": "gop15",
+   "cmd": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE -hide_banner -y -v verbose -init_hw_device vaapi=va -filter_hw_device va -f rawvideo -pix_fmt nv12 -s 1920x1080 -framerate 30 -stream_loop 3 -i C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\inputs\\nv12_1080p.yuv -vf format=nv12,hwupload -c:v h264_vaapi -g 15 C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\h264_vaapi_gop15.mkv",
+   "returncode": 4294967291,
+   "stderr_tail": "[VAAPI @ 00000198f4086440] Failed to initialise VAAPI connection: -1 (unknown libva error).\nDevice creation failed: -5.\nFailed to set value 'vaapi=va' for option 'init_hw_device': I/O error\nError parsing global options: I/O error\n\nExiting with exit code -5",
+   "diagnosis": [
+    "[VAAPI @ 00000198f4086440] Failed to initialise VAAPI connection: -1 (unknown libva error).",
+    "Device creation failed: -5.",
+    "Failed to set value 'vaapi=va' for option 'init_hw_device': I/O error"
+   ],
+   "ok": false
+  }
+ ],
+ "nvidia_smi_after": "0, 12 %, 610.88",
+ "roundtrip": {
+  "ffv1_vulkan": {
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\ffv1_vulkan_intra.mkv",
+   "compare_pix_fmt": "yuv420p",
+   "src_frames": 8,
+   "dec_frames": 8,
+   "byte_exact": true,
+   "stderr": ""
+  },
+  "ffv1_vulkan_rgb": {
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\ffv1_vulkan_rgb_intra.mkv",
+   "compare_pix_fmt": "gbrp",
+   "src_frames": 8,
+   "dec_frames": 8,
+   "byte_exact": true,
+   "stderr": ""
+  },
+  "ffv1_vulkan_bayer": {
+   "file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\recording_upgrade_20261109\\gpu_encode\\ff_functional\\ffv1_vulkan_bayer_intra.mkv",
+   "compare_pix_fmt": "bayer_rggb16le",
+   "src_frames": 8,
+   "dec_frames": 8,
+   "byte_exact": true,
+   "stderr": ""
+  }
+ }
+}

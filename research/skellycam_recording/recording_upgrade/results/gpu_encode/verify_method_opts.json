@@ -1,0 +1,37 @@
+{
+ "pyav": "19.0.2",
+ "cases": [
+  {
+   "case": "nvenc_gop1_bf0",
+   "max_b_frames_effective": 0,
+   "ok": false,
+   "error": "ArgumentError: Invalid argument: 'avcodec_open2(\"h264_nvenc\", {\\'preset\\': \\'p4\\'})' returned 22; last error log: [h264_nvenc] InitializeEncoder failed: invalid param (8): Gop Length should be greater than number of B frames + 1",
+   "log_tail": [
+    "InitializeEncoder failed: invalid param (8): Gop Length should be greater than number of B frames + 1"
+   ],
+   "log_bframes": []
+  },
+  {
+   "case": "d3d12_gop15_default_bf",
+   "max_b_frames_effective": 2,
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred: 'avcodec_send_frame()'; last error log: [h264_d3d12va] Encode failed: Unknown error occurred.",
+   "log_tail": [
+    "No quality level set; using default (25).",
+    "Encode failed: Unknown error occurred."
+   ],
+   "log_bframes": [
+    "Using intra, P- and B-frames (supported references: 7 / 7)."
+   ]
+  },
+  {
+   "case": "d3d12_intra_mkv",
+   "ok": false,
+   "error": "UnknownError: [Errno 1313558101] Unknown error occurred; last error log: [D3D12VA] Failed to create Direct 3D 12 device (887a0020)",
+   "log_tail": [
+    "Failed to create Direct 3D 12 device (887a0020)"
+   ],
+   "log_bframes": []
+  }
+ ]
+}

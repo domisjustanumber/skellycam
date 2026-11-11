@@ -1,0 +1,49 @@
+<!doctype html><html><head><meta charset="utf-8"><title>uintra chromium check</title></head><body>
+<script>
+const { ipcRenderer } = require('electron');
+const { pathToFileURL } = require('url');
+function testVideo(m) {
+  return new Promise(resolve => {
+    const r = { name: m.name, kind: 'video', mime: m.mime, canPlayType: document.createElement('video').canPlayType(m.mime) };
+    const v = document.createElement('video');
+    v.muted = true; v.preload = 'auto'; document.body.appendChild(v);
+    let finished = false;
+    const finish = (why) => { if (finished) return; finished = true; r.end = why;
+      r.videoWidth = v.videoWidth; r.videoHeight = v.videoHeight;
+      r.duration = v.duration; r.error = v.error ? { code: v.error.code, message: v.error.message } : null;
+      v.remove(); resolve(r); };
+    v.onerror = () => finish('error');
+    // After the first frame: draw it to a canvas (non-black?), then seek to frame 5 and draw again
+    // (seek completes + picture changed => more than one frame decodes). The window is hidden, so
+    // presentation-based counters (requestVideoFrameCallback) are not used.
+    const cv = document.createElement('canvas'); cv.width = 64; cv.height = 36;
+    const ctx = cv.getContext('2d', { willReadFrequently: true });
+    const grab = () => { ctx.drawImage(v, 0, 0, 64, 36); const d = ctx.getImageData(0, 0, 64, 36).data;
+      let s = 0; for (let i = 0; i < d.length; i += 4) s += d[i] + 3 * d[i + 1] + 7 * d[i + 2]; return s; };
+    v.onloadeddata = () => {
+      r.loadeddata = true;
+      try { r.firstFrameSum = grab(); } catch (e) { r.grabError = String(e); }
+      v.onseeked = () => { r.seeked = true; try { r.seekFrameSum = grab(); } catch (e) { r.grabError = String(e); }
+        r.framesDiffer = r.firstFrameSum !== r.seekFrameSum; finish('seeked'); };
+      v.currentTime = 5 / 30 + 0.001;
+    };
+    setTimeout(() => finish('timeout_8s'), 8000);
+    v.src = pathToFileURL(m.path).href;
+  });
+}
+function testImage(m) {
+  return new Promise(resolve => {
+    const r = { name: m.name, kind: 'image', mime: m.mime };
+    const img = new Image();
+    img.onload = () => { r.decoded = true; r.naturalWidth = img.naturalWidth; r.naturalHeight = img.naturalHeight; resolve(r); };
+    img.onerror = () => { r.decoded = false; resolve(r); };
+    setTimeout(() => { r.decoded = r.decoded ?? 'timeout'; resolve(r); }, 8000);
+    img.src = pathToFileURL(m.path).href;
+  });
+}
+ipcRenderer.on('run', async (_e, manifest) => {
+  const results = [];
+  for (const m of manifest) results.push(await (m.kind === 'image' ? testImage(m) : testVideo(m)));
+  ipcRenderer.send('done', results);
+});
+</script></body></html>

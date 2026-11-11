@@ -1,0 +1,194 @@
+{
+ "versions": {
+  "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.2.6",
+  "simplejpeg": "1.9.0",
+  "turbojpeg": "2.6.1",
+  "imagecodecs": "2026.10.10",
+  "cv2": "5.0.0",
+  "imagecodecs_libs": "imagecodecs-2026.10.10, cython-3.2.9, numpy-2.2.6, numpy_abi-0x2000000.17, imcd-2026.10.10, bcdec-0.985, bitshuffle-0.5.2, bmp-2026.10.10, brotli-1.2.0, brunsli-n/a, c-blosc-1.21.6, c-blosc2-3.3.5, ccitt-2026.3.6, charls-2.4.4, chunked-2026.10.10, giflib-6.1.3, h5checksum-1.14.3, hcompress-2026.5.10, heif-n/a, imcd-2026.10.10, isa-l-2.32.1, jetraw-n/a, jpegsof3-2026.3.6, jpegxs-n/a, jxrlib-1.1, lcms2-2.19.0, lerc-4.2.0, libaec-1.1.7, libavif-1.4.2, libbzip2-1.0.8, libdeflate-1.26, libjpeg_turbo-3.2.0/8.0, libjxl-0.12.0, liblj92-2026.3.6, liblzf-1.5, liblzma-5.8.4, libpng-1.6.59, libpng_apng-1.6.59, libspng-0.7.4, libtiff-4.7.2, libultrahdr-2.0.2, libwavpack-5.9.0, libwebp-1.6.0, lz4-1.10.0, lzfse-1.0, lzham-10.8.1, lzokay-unknown, meshoptimizer-1.3.0, mozjpeg-4.1.5/8.0, nc4var-4.9.2, openexr-3.5.2, openjpeg-2.5.4, openjph-0.32.0, openzl-0.3.0, pcodec-1.0.4, pcx-2026.6.18, pg_lzcompress-15.6, pixarlog-2026.3.2, pliocomp-2026.5.10, qoi-4461cc3, rgbe-2026.3.6, ricecomp-2023.7.4, snappy-1.3.0, sperr-0.8.5, sz3-3.4.0, tga-2026.6.18, wic-10.0.26300, zfp-1.0.1, zlib-1.3.2, zlib_ng-2.3.3, zopfli-1.0.3, zstd-1.5.7"
+ },
+ "tests": {
+  "simplejpeg.yuv_planes_422_from_yuy2": {
+   "sof": "0xffc0",
+   "precision": 8,
+   "w": 1920,
+   "h": 1080,
+   "sampling": [
+    "2x1",
+    "1x1",
+    "1x1"
+   ],
+   "bytes": 158290,
+   "psnr_rgb_vs_numpy_bt601_limited_rgb": 27.74,
+   "psnr_Y_plane_vs_input_Y": 52.92
+  },
+  "simplejpeg.yuv_planes_420_from_nv12": {
+   "sof": "0xffc0",
+   "precision": 8,
+   "w": 1920,
+   "h": 1080,
+   "sampling": [
+    "2x2",
+    "1x1",
+    "1x1"
+   ],
+   "bytes": 143727
+  },
+  "simplejpeg.yuv_planes_gray": {
+   "sof": "0xffc0",
+   "precision": 8,
+   "w": 1920,
+   "h": 1080,
+   "sampling": [
+    "1x1"
+   ],
+   "bytes": 124079
+  },
+  "simplejpeg.nv12_interleaved_uv": {
+   "error": "ValueError: either both U (present) and V (missing) planes must be given, or neither"
+  },
+  "turbojpeg.auto_locate_library": {
+   "error": "RuntimeError: Unable to locate turbojpeg library automatically. You may specify the turbojpeg library path manually.\ne.g. jpeg = TurboJPEG(lib_path)"
+  },
+  "turbojpeg.encode_from_yuv_422": {
+   "error": "RuntimeError: PyTurboJPEG 2.0 requires libjpeg-turbo 3.0 or later.\nThe loaded library appears to be libjpeg-turbo 2.x or older.\n\nPlease upgrade your libjpeg-turbo installation to version 3.0 or later.\nDownload the appropriate binary for your system from:\nhttps://github.com/libjpeg-turbo/libjpeg-turbo/releases\n\nAlternatively, use PyTurboJPEG 1.x for libjpeg-turbo 2.x compatibility."
+  },
+  "cv2.imencode_jpg_422_via_bgr": {
+   "sof": "0xffc0",
+   "precision": 8,
+   "w": 1920,
+   "h": 1080,
+   "sampling": [
+    "2x1",
+    "1x1",
+    "1x1"
+   ],
+   "bytes": 175847,
+   "ok": true,
+   "input": "BGR (cvtColor YUV2BGR_YUY2 first)"
+  },
+  "cv2.imencode_yuyv_direct": {
+   "error": "error: OpenCV(5.0.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\imgcodecs\\src\\loadsave.cpp:1646: error: (-215:Assertion failed) channels == 1 || channels == 3 || channels == 4 in function 'cv::imencodeWithMetadata'\n"
+  },
+  "cv2.have_image_writer": {
+   ".jxl": false,
+   ".jp2": true,
+   ".png": true,
+   ".tiff": true,
+   ".webp": true,
+   ".avif": false,
+   ".pgm": true
+  },
+  "cv2.png_bayer12_in_u16": {
+   "ok": true,
+   "bytes": 3167639,
+   "bit_exact": true,
+   "dtype": "uint16"
+  },
+  "cv2.jxl_lossless_bayer12": {
+   "error": "error: OpenCV(5.0.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\imgcodecs\\src\\loadsave.cpp:1624: error: (-2:Unspecified error) could not find encoder for the specified extension in function 'cv::imencodeWithMetadata'\n"
+  },
+  "imagecodecs.jpeg8_lossless_sof3_bayer12": {
+   "bytes": 2704878,
+   "bit_exact": true,
+   "sof": {
+    "sof": "0xffc3",
+    "precision": 12,
+    "w": 1920,
+    "h": 1080,
+    "sampling": [
+     "1x1"
+    ]
+   }
+  },
+  "imagecodecs.jpeg8_lossless_sof3_bayer8": {
+   "bytes": 1668010,
+   "bit_exact": true,
+   "sof": {
+    "sof": "0xffc3",
+    "precision": 8,
+    "w": 1920,
+    "h": 1080,
+    "sampling": [
+     "1x1"
+    ]
+   }
+  },
+  "imagecodecs.ljpeg_bayer12": {
+   "bytes": 2776208,
+   "bit_exact": true,
+   "sof": {
+    "sof": "0xffc3",
+    "precision": 12,
+    "w": 1920,
+    "h": 1080,
+    "sampling": [
+     "1x1"
+    ]
+   }
+  },
+  "imagecodecs.jpegls_bayer12": {
+   "bytes": 2505039,
+   "bit_exact": true,
+   "sof": {
+    "error": "bad marker at 40"
+   }
+  },
+  "imagecodecs.jpeg2k_reversible_bayer12": {
+   "bytes": 1748361,
+   "bit_exact": true
+  },
+  "imagecodecs.jpegxl_lossless_bayer12_e1": {
+   "bytes": 2766913,
+   "bit_exact": true
+  },
+  "imagecodecs.jpegxl_lossless_bayer12_e3": {
+   "bytes": 2396530,
+   "bit_exact": true
+  },
+  "imagecodecs.jpegxl_lossless_gray8_e1": {
+   "bytes": 414957,
+   "bit_exact": true
+  },
+  "imagecodecs.png_bayer12": {
+   "bytes": 2938387,
+   "bit_exact": true
+  },
+  "imagecodecs.jpegls_gray8": {
+   "bytes": 280313,
+   "bit_exact": true,
+   "sof": {
+    "error": "bad marker at 25"
+   }
+  },
+  "imagecodecs.jpegxl_lossy_rgb_d1_e1": {
+   "bytes": 96089,
+   "psnr_rgb": 47.4
+  },
+  "imagecodecs.jpeg8_from_ycbcr444_interleaved": {
+   "bytes": 157367,
+   "sof": "0xffc0",
+   "precision": 8,
+   "w": 1920,
+   "h": 1080,
+   "sampling": [
+    "2x1",
+    "1x1",
+    "1x1"
+   ]
+  },
+  "imagecodecs.jpeg8_from_rgb_422": {
+   "bytes": 175766,
+   "sof": "0xffc0",
+   "precision": 8,
+   "w": 1920,
+   "h": 1080,
+   "sampling": [
+    "2x1",
+    "1x1",
+    "1x1"
+   ]
+  }
+ }
+}

@@ -1,0 +1,5770 @@
+{
+ "generator": {
+  "python": "3.12.13",
+  "pyav": "19.0.2",
+  "libav": {
+   "libavutil": "61.1.102",
+   "libavcodec": "63.1.102",
+   "libavformat": "63.1.102",
+   "libavdevice": "63.1.102",
+   "libavfilter": "12.1.102",
+   "libswscale": "10.1.102",
+   "libswresample": "7.1.102"
+  },
+  "platform": "Windows-11-10.0.26300-SP0",
+  "target_y_psnr_db": 55.0,
+  "pattern": "16 bits MSB first, (bit, NOT bit) cell pairs, 32 cells, strip height = cell width"
+ },
+ "calibration": {
+  "h264_nvenc|720p|c930e_720p_flash": {
+   "target_y_psnr_db": 55.0,
+   "sweep": [
+    {
+     "q": 5,
+     "frames": 30,
+     "bytes_per_frame": 95416.13333333333,
+     "y_psnr_db": 61.43,
+     "y_ssim": 0.9994
+    },
+    {
+     "q": 8,
+     "frames": 30,
+     "bytes_per_frame": 76878.76666666666,
+     "y_psnr_db": 59.81,
+     "y_ssim": 0.9992
+    },
+    {
+     "q": 11,
+     "frames": 30,
+     "bytes_per_frame": 58254.86666666667,
+     "y_psnr_db": 57.79,
+     "y_ssim": 0.9987
+    },
+    {
+     "q": 14,
+     "frames": 30,
+     "bytes_per_frame": 45488.26666666667,
+     "y_psnr_db": 56.57,
+     "y_ssim": 0.9983
+    },
+    {
+     "q": 17,
+     "frames": 30,
+     "bytes_per_frame": 34802.166666666664,
+     "y_psnr_db": 55.27,
+     "y_ssim": 0.9979
+    },
+    {
+     "q": 20,
+     "frames": 30,
+     "bytes_per_frame": 28832.866666666665,
+     "y_psnr_db": 53.95,
+     "y_ssim": 0.9972
+    },
+    {
+     "q": 23,
+     "frames": 30,
+     "bytes_per_frame": 23469.233333333334,
+     "y_psnr_db": 52.94,
+     "y_ssim": 0.9967
+    },
+    {
+     "q": 26,
+     "frames": 30,
+     "bytes_per_frame": 16697.433333333334,
+     "y_psnr_db": 51.54,
+     "y_ssim": 0.9958
+    },
+    {
+     "q": 29,
+     "frames": 30,
+     "bytes_per_frame": 13612.333333333334,
+     "y_psnr_db": 50.57,
+     "y_ssim": 0.9952
+    },
+    {
+     "q": 32,
+     "frames": 30,
+     "bytes_per_frame": 9949.733333333334,
+     "y_psnr_db": 49.16,
+     "y_ssim": 0.9941
+    },
+    {
+     "q": 35,
+     "frames": 30,
+     "bytes_per_frame": 8407.333333333334,
+     "y_psnr_db": 48.27,
+     "y_ssim": 0.9933
+    },
+    {
+     "q": 38,
+     "frames": 30,
+     "bytes_per_frame": 7191.1,
+     "y_psnr_db": 47.3,
+     "y_ssim": 0.9925
+    },
+    {
+     "q": 41,
+     "frames": 30,
+     "bytes_per_frame": 5721.3,
+     "y_psnr_db": 45.65,
+     "y_ssim": 0.9906
+    },
+    {
+     "q": 44,
+     "frames": 30,
+     "bytes_per_frame": 4884.766666666666,
+     "y_psnr_db": 44.41,
+     "y_ssim": 0.989
+    }
+   ],
+   "chosen_q": 17,
+   "log": [
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found"
+   ]
+  },
+  "hevc_nvenc|720p|c930e_720p_flash": {
+   "target_y_psnr_db": 55.0,
+   "sweep": [
+    {
+     "q": 5,
+     "frames": 30,
+     "bytes_per_frame": 88746.9,
+     "y_psnr_db": 61.11,
+     "y_ssim": 0.9994
+    },
+    {
+     "q": 8,
+     "frames": 30,
+     "bytes_per_frame": 71885.03333333334,
+     "y_psnr_db": 59.08,
+     "y_ssim": 0.999
+    },
+    {
+     "q": 11,
+     "frames": 30,
+     "bytes_per_frame": 51414.2,
+     "y_psnr_db": 57.07,
+     "y_ssim": 0.9984
+    },
+    {
+     "q": 14,
+     "frames": 30,
+     "bytes_per_frame": 40962.46666666667,
+     "y_psnr_db": 56.05,
+     "y_ssim": 0.9981
+    },
+    {
+     "q": 17,
+     "frames": 30,
+     "bytes_per_frame": 28449.833333333332,
+     "y_psnr_db": 54.43,
+     "y_ssim": 0.9973
+    },
+    {
+     "q": 20,
+     "frames": 30,
+     "bytes_per_frame": 22915.866666666665,
+     "y_psnr_db": 53.52,
+     "y_ssim": 0.9968
+    },
+    {
+     "q": 23,
+     "frames": 30,
+     "bytes_per_frame": 17508.5,
+     "y_psnr_db": 52.55,
+     "y_ssim": 0.9961
+    },
+    {
+     "q": 26,
+     "frames": 30,
+     "bytes_per_frame": 11999.366666666667,
+     "y_psnr_db": 51.31,
+     "y_ssim": 0.9953
+    },
+    {
+     "q": 29,
+     "frames": 30,
+     "bytes_per_frame": 9704.6,
+     "y_psnr_db": 50.54,
+     "y_ssim": 0.9947
+    },
+    {
+     "q": 32,
+     "frames": 30,
+     "bytes_per_frame": 7139.566666666667,
+     "y_psnr_db": 49.2,
+     "y_ssim": 0.9936
+    },
+    {
+     "q": 35,
+     "frames": 30,
+     "bytes_per_frame": 5944.033333333334,
+     "y_psnr_db": 48.29,
+     "y_ssim": 0.9928
+    },
+    {
+     "q": 38,
+     "frames": 30,
+     "bytes_per_frame": 5049.266666666666,
+     "y_psnr_db": 47.39,
+     "y_ssim": 0.9919
+    },
+    {
+     "q": 41,
+     "frames": 30,
+     "bytes_per_frame": 3908.4,
+     "y_psnr_db": 45.79,
+     "y_ssim": 0.9898
+    },
+    {
+     "q": 44,
+     "frames": 30,
+     "bytes_per_frame": 3367.4,
+     "y_psnr_db": 44.66,
+     "y_ssim": 0.988
+    }
+   ],
+   "chosen_q": 17,
+   "log": [
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found"
+   ]
+  },
+  "h264_qsv|720p|c930e_720p_flash": {
+   "target_y_psnr_db": 55.0,
+   "sweep": [
+    {
+     "q": 5,
+     "frames": 30,
+     "bytes_per_frame": 79292.7,
+     "y_psnr_db": 59.59,
+     "y_ssim": 0.9992
+    },
+    {
+     "q": 8,
+     "frames": 30,
+     "bytes_per_frame": 58799.63333333333,
+     "y_psnr_db": 57.01,
+     "y_ssim": 0.9985
+    },
+    {
+     "q": 11,
+     "frames": 30,
+     "bytes_per_frame": 42641.333333333336,
+     "y_psnr_db": 55.6,
+     "y_ssim": 0.998
+    },
+    {
+     "q": 14,
+     "frames": 30,
+     "bytes_per_frame": 31437.733333333334,
+     "y_psnr_db": 53.44,
+     "y_ssim": 0.9969
+    },
+    {
+     "q": 17,
+     "frames": 30,
+     "bytes_per_frame": 28235.6,
+     "y_psnr_db": 52.79,
+     "y_ssim": 0.9969
+    },
+    {
+     "q": 20,
+     "frames": 30,
+     "bytes_per_frame": 23240.533333333333,
+     "y_psnr_db": 51.69,
+     "y_ssim": 0.9962
+    },
+    {
+     "q": 23,
+     "frames": 30,
+     "bytes_per_frame": 18704.666666666668,
+     "y_psnr_db": 50.71,
+     "y_ssim": 0.9955
+    },
+    {
+     "q": 26,
+     "frames": 30,
+     "bytes_per_frame": 15735.866666666667,
+     "y_psnr_db": 49.81,
+     "y_ssim": 0.9949
+    },
+    {
+     "q": 29,
+     "frames": 30,
+     "bytes_per_frame": 13402.266666666666,
+     "y_psnr_db": 48.85,
+     "y_ssim": 0.9942
+    },
+    {
+     "q": 32,
+     "frames": 30,
+     "bytes_per_frame": 10404.6,
+     "y_psnr_db": 47.15,
+     "y_ssim": 0.9925
+    },
+    {
+     "q": 35,
+     "frames": 30,
+     "bytes_per_frame": 8451.566666666668,
+     "y_psnr_db": 45.53,
+     "y_ssim": 0.9908
+    },
+    {
+     "q": 38,
+     "frames": 30,
+     "bytes_per_frame": 6801.433333333333,
+     "y_psnr_db": 43.65,
+     "y_ssim": 0.9877
+    },
+    {
+     "q": 41,
+     "frames": 30,
+     "bytes_per_frame": 5717.866666666667,
+     "y_psnr_db": 41.82,
+     "y_ssim": 0.9839
+    },
+    {
+     "q": 44,
+     "frames": 30,
+     "bytes_per_frame": 4975.633333333333,
+     "y_psnr_db": 39.4,
+     "y_ssim": 0.9773
+    }
+   ],
+   "chosen_q": 11,
+   "log": [
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 31",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 5",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 31",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 8",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 31",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 11",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 31",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 14",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 31",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0"
+   ]
+  },
+  "hevc_qsv|720p|c930e_720p_flash": {
+   "target_y_psnr_db": 55.0,
+   "sweep": [
+    {
+     "q": 5,
+     "frames": 30,
+     "bytes_per_frame": 113250.73333333334,
+     "y_psnr_db": 64.89,
+     "y_ssim": 0.9997
+    },
+    {
+     "q": 8,
+     "frames": 30,
+     "bytes_per_frame": 106152.4,
+     "y_psnr_db": 63.61,
+     "y_ssim": 0.9996
+    },
+    {
+     "q": 11,
+     "frames": 30,
+     "bytes_per_frame": 71614.86666666667,
+     "y_psnr_db": 59.98,
+     "y_ssim": 0.9992
+    },
+    {
+     "q": 14,
+     "frames": 30,
+     "bytes_per_frame": 60388.666666666664,
+     "y_psnr_db": 58.61,
+     "y_ssim": 0.999
+    },
+    {
+     "q": 17,
+     "frames": 30,
+     "bytes_per_frame": 41354.333333333336,
+     "y_psnr_db": 56.91,
+     "y_ssim": 0.9985
+    },
+    {
+     "q": 20,
+     "frames": 30,
+     "bytes_per_frame": 29868.766666666666,
+     "y_psnr_db": 54.7,
+     "y_ssim": 0.9975
+    },
+    {
+     "q": 23,
+     "frames": 30,
+     "bytes_per_frame": 22102.666666666668,
+     "y_psnr_db": 53.3,
+     "y_ssim": 0.9966
+    },
+    {
+     "q": 26,
+     "frames": 30,
+     "bytes_per_frame": 16097.4,
+     "y_psnr_db": 52.14,
+     "y_ssim": 0.9959
+    },
+    {
+     "q": 29,
+     "frames": 30,
+     "bytes_per_frame": 11159.866666666667,
+     "y_psnr_db": 50.84,
+     "y_ssim": 0.9949
+    },
+    {
+     "q": 32,
+     "frames": 30,
+     "bytes_per_frame": 8182.566666666667,
+     "y_psnr_db": 49.55,
+     "y_ssim": 0.9939
+    },
+    {
+     "q": 35,
+     "frames": 30,
+     "bytes_per_frame": 5784.333333333333,
+     "y_psnr_db": 47.8,
+     "y_ssim": 0.9922
+    },
+    {
+     "q": 38,
+     "frames": 30,
+     "bytes_per_frame": 4590.366666666667,
+     "y_psnr_db": 46.18,
+     "y_ssim": 0.9901
+    },
+    {
+     "q": 41,
+     "frames": 30,
+     "bytes_per_frame": 3461.9,
+     "y_psnr_db": 43.59,
+     "y_ssim": 0.9851
+    },
+    {
+     "q": 44,
+     "frames": 30,
+     "bytes_per_frame": 2755.9333333333334,
+     "y_psnr_db": 41.51,
+     "y_ssim": 0.98
+    }
+   ],
+   "chosen_q": 20,
+   "log": [
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 40",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 5",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 40",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 8",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 40",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 11",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 40",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 14",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 40",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1"
+   ]
+  },
+  "mjpeg_qsv|720p|c930e_720p_flash": {
+   "target_y_psnr_db": 55.0,
+   "sweep": [
+    {
+     "q": 50,
+     "frames": 30,
+     "bytes_per_frame": 30726.9,
+     "y_psnr_db": 48.32,
+     "y_ssim": 0.9924
+    },
+    {
+     "q": 60,
+     "frames": 30,
+     "bytes_per_frame": 32931.166666666664,
+     "y_psnr_db": 49.34,
+     "y_ssim": 0.9939
+    },
+    {
+     "q": 70,
+     "frames": 30,
+     "bytes_per_frame": 37647.36666666667,
+     "y_psnr_db": 50.52,
+     "y_ssim": 0.995
+    },
+    {
+     "q": 75,
+     "frames": 30,
+     "bytes_per_frame": 40067.833333333336,
+     "y_psnr_db": 51.64,
+     "y_ssim": 0.9959
+    },
+    {
+     "q": 80,
+     "frames": 30,
+     "bytes_per_frame": 47380.76666666667,
+     "y_psnr_db": 53.15,
+     "y_ssim": 0.9971
+    },
+    {
+     "q": 85,
+     "frames": 30,
+     "bytes_per_frame": 52149.7,
+     "y_psnr_db": 55.49,
+     "y_ssim": 0.9983
+    },
+    {
+     "q": 90,
+     "frames": 30,
+     "bytes_per_frame": 61361.76666666667,
+     "y_psnr_db": 57.97,
+     "y_ssim": 0.9988
+    },
+    {
+     "q": 95,
+     "frames": 30,
+     "bytes_per_frame": 87936.56666666667,
+     "y_psnr_db": 60.23,
+     "y_ssim": 0.9993
+    }
+   ],
+   "chosen_q": 85,
+   "log": [
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation"
+   ]
+  },
+  "h264_nvenc|1080p|c922_1080p": {
+   "target_y_psnr_db": 55.0,
+   "sweep": [
+    {
+     "q": 5,
+     "frames": 30,
+     "bytes_per_frame": 396545.0,
+     "y_psnr_db": 58.82,
+     "y_ssim": 0.9988
+    },
+    {
+     "q": 8,
+     "frames": 30,
+     "bytes_per_frame": 310961.4,
+     "y_psnr_db": 57.17,
+     "y_ssim": 0.9983
+    },
+    {
+     "q": 11,
+     "frames": 30,
+     "bytes_per_frame": 229677.66666666666,
+     "y_psnr_db": 55.52,
+     "y_ssim": 0.9975
+    },
+    {
+     "q": 14,
+     "frames": 30,
+     "bytes_per_frame": 182002.3,
+     "y_psnr_db": 54.49,
+     "y_ssim": 0.9969
+    },
+    {
+     "q": 17,
+     "frames": 30,
+     "bytes_per_frame": 137369.16666666666,
+     "y_psnr_db": 53.35,
+     "y_ssim": 0.9962
+    },
+    {
+     "q": 20,
+     "frames": 30,
+     "bytes_per_frame": 111931.1,
+     "y_psnr_db": 51.82,
+     "y_ssim": 0.9946
+    },
+    {
+     "q": 23,
+     "frames": 30,
+     "bytes_per_frame": 85393.03333333334,
+     "y_psnr_db": 50.77,
+     "y_ssim": 0.9934
+    },
+    {
+     "q": 26,
+     "frames": 30,
+     "bytes_per_frame": 51664.96666666667,
+     "y_psnr_db": 49.4,
+     "y_ssim": 0.9916
+    },
+    {
+     "q": 29,
+     "frames": 30,
+     "bytes_per_frame": 38540.066666666666,
+     "y_psnr_db": 48.56,
+     "y_ssim": 0.9905
+    },
+    {
+     "q": 32,
+     "frames": 30,
+     "bytes_per_frame": 26425.233333333334,
+     "y_psnr_db": 47.42,
+     "y_ssim": 0.9892
+    },
+    {
+     "q": 35,
+     "frames": 30,
+     "bytes_per_frame": 21543.166666666668,
+     "y_psnr_db": 46.73,
+     "y_ssim": 0.9883
+    },
+    {
+     "q": 38,
+     "frames": 30,
+     "bytes_per_frame": 18065.2,
+     "y_psnr_db": 45.94,
+     "y_ssim": 0.9874
+    },
+    {
+     "q": 41,
+     "frames": 30,
+     "bytes_per_frame": 14110.666666666666,
+     "y_psnr_db": 44.63,
+     "y_ssim": 0.9857
+    },
+    {
+     "q": 44,
+     "frames": 30,
+     "bytes_per_frame": 12128.566666666668,
+     "y_psnr_db": 43.56,
+     "y_ssim": 0.9842
+    }
+   ],
+   "chosen_q": 14,
+   "log": [
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found",
+    "libav.h264_nvenc: 1 CUDA capable devices found"
+   ]
+  },
+  "hevc_nvenc|1080p|c922_1080p": {
+   "target_y_psnr_db": 55.0,
+   "sweep": [
+    {
+     "q": 5,
+     "frames": 30,
+     "bytes_per_frame": 381899.63333333336,
+     "y_psnr_db": 58.95,
+     "y_ssim": 0.9988
+    },
+    {
+     "q": 8,
+     "frames": 30,
+     "bytes_per_frame": 301502.6666666667,
+     "y_psnr_db": 56.81,
+     "y_ssim": 0.9981
+    },
+    {
+     "q": 11,
+     "frames": 30,
+     "bytes_per_frame": 213112.26666666666,
+     "y_psnr_db": 54.92,
+     "y_ssim": 0.9971
+    },
+    {
+     "q": 14,
+     "frames": 30,
+     "bytes_per_frame": 171278.43333333332,
+     "y_psnr_db": 53.99,
+     "y_ssim": 0.9964
+    },
+    {
+     "q": 17,
+     "frames": 30,
+     "bytes_per_frame": 120073.93333333333,
+     "y_psnr_db": 52.56,
+     "y_ssim": 0.9952
+    },
+    {
+     "q": 20,
+     "frames": 30,
+     "bytes_per_frame": 95822.96666666666,
+     "y_psnr_db": 51.54,
+     "y_ssim": 0.9941
+    },
+    {
+     "q": 23,
+     "frames": 30,
+     "bytes_per_frame": 69251.46666666666,
+     "y_psnr_db": 50.57,
+     "y_ssim": 0.9929
+    },
+    {
+     "q": 26,
+     "frames": 30,
+     "bytes_per_frame": 42891.8,
+     "y_psnr_db": 49.29,
+     "y_ssim": 0.9911
+    },
+    {
+     "q": 29,
+     "frames": 30,
+     "bytes_per_frame": 31690.066666666666,
+     "y_psnr_db": 48.49,
+     "y_ssim": 0.99
+    },
+    {
+     "q": 32,
+     "frames": 30,
+     "bytes_per_frame": 20319.466666666667,
+     "y_psnr_db": 47.27,
+     "y_ssim": 0.9883
+    },
+    {
+     "q": 35,
+     "frames": 30,
+     "bytes_per_frame": 15656.566666666668,
+     "y_psnr_db": 46.48,
+     "y_ssim": 0.9873
+    },
+    {
+     "q": 38,
+     "frames": 30,
+     "bytes_per_frame": 12898.766666666666,
+     "y_psnr_db": 45.78,
+     "y_ssim": 0.9863
+    },
+    {
+     "q": 41,
+     "frames": 30,
+     "bytes_per_frame": 9564.066666666668,
+     "y_psnr_db": 44.48,
+     "y_ssim": 0.9845
+    },
+    {
+     "q": 44,
+     "frames": 30,
+     "bytes_per_frame": 8187.2,
+     "y_psnr_db": 43.53,
+     "y_ssim": 0.9827
+    }
+   ],
+   "chosen_q": 11,
+   "log": [
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found",
+    "libav.hevc_nvenc: 1 CUDA capable devices found"
+   ]
+  },
+  "h264_qsv|1080p|c922_1080p": {
+   "target_y_psnr_db": 55.0,
+   "sweep": [
+    {
+     "q": 5,
+     "frames": 30,
+     "bytes_per_frame": 312885.4666666667,
+     "y_psnr_db": 56.99,
+     "y_ssim": 0.9982
+    },
+    {
+     "q": 8,
+     "frames": 30,
+     "bytes_per_frame": 223539.06666666668,
+     "y_psnr_db": 54.93,
+     "y_ssim": 0.9972
+    },
+    {
+     "q": 11,
+     "frames": 30,
+     "bytes_per_frame": 164058.53333333333,
+     "y_psnr_db": 53.57,
+     "y_ssim": 0.9962
+    },
+    {
+     "q": 14,
+     "frames": 30,
+     "bytes_per_frame": 116812.43333333333,
+     "y_psnr_db": 51.61,
+     "y_ssim": 0.9944
+    },
+    {
+     "q": 17,
+     "frames": 30,
+     "bytes_per_frame": 112053.96666666666,
+     "y_psnr_db": 51.06,
+     "y_ssim": 0.9945
+    },
+    {
+     "q": 20,
+     "frames": 30,
+     "bytes_per_frame": 87750.23333333334,
+     "y_psnr_db": 49.95,
+     "y_ssim": 0.9932
+    },
+    {
+     "q": 23,
+     "frames": 30,
+     "bytes_per_frame": 65764.36666666667,
+     "y_psnr_db": 49.01,
+     "y_ssim": 0.9919
+    },
+    {
+     "q": 26,
+     "frames": 30,
+     "bytes_per_frame": 49047.46666666667,
+     "y_psnr_db": 48.01,
+     "y_ssim": 0.9908
+    },
+    {
+     "q": 29,
+     "frames": 30,
+     "bytes_per_frame": 37115.333333333336,
+     "y_psnr_db": 47.15,
+     "y_ssim": 0.9897
+    },
+    {
+     "q": 32,
+     "frames": 30,
+     "bytes_per_frame": 26379.033333333333,
+     "y_psnr_db": 45.77,
+     "y_ssim": 0.9879
+    },
+    {
+     "q": 35,
+     "frames": 30,
+     "bytes_per_frame": 20019.266666666666,
+     "y_psnr_db": 44.2,
+     "y_ssim": 0.9859
+    },
+    {
+     "q": 38,
+     "frames": 30,
+     "bytes_per_frame": 15767.733333333334,
+     "y_psnr_db": 42.52,
+     "y_ssim": 0.9832
+    },
+    {
+     "q": 41,
+     "frames": 30,
+     "bytes_per_frame": 12941.0,
+     "y_psnr_db": 40.75,
+     "y_ssim": 0.9799
+    },
+    {
+     "q": 44,
+     "frames": 30,
+     "bytes_per_frame": 11176.833333333334,
+     "y_psnr_db": 38.73,
+     "y_ssim": 0.9747
+    }
+   ],
+   "chosen_q": 8,
+   "log": [
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 40",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 5",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 40",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 8",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 40",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 11",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 40",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 14",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0",
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 40",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0"
+   ]
+  },
+  "hevc_qsv|1080p|c922_1080p": {
+   "target_y_psnr_db": 55.0,
+   "sweep": [
+    {
+     "q": 5,
+     "frames": 30,
+     "bytes_per_frame": 492701.4666666667,
+     "y_psnr_db": 61.98,
+     "y_ssim": 0.9994
+    },
+    {
+     "q": 8,
+     "frames": 30,
+     "bytes_per_frame": 452144.8333333333,
+     "y_psnr_db": 60.99,
+     "y_ssim": 0.9993
+    },
+    {
+     "q": 11,
+     "frames": 30,
+     "bytes_per_frame": 316604.1,
+     "y_psnr_db": 58.02,
+     "y_ssim": 0.9986
+    },
+    {
+     "q": 14,
+     "frames": 30,
+     "bytes_per_frame": 240127.23333333334,
+     "y_psnr_db": 56.06,
+     "y_ssim": 0.9978
+    },
+    {
+     "q": 17,
+     "frames": 30,
+     "bytes_per_frame": 184615.9,
+     "y_psnr_db": 55.01,
+     "y_ssim": 0.9972
+    },
+    {
+     "q": 20,
+     "frames": 30,
+     "bytes_per_frame": 135457.26666666666,
+     "y_psnr_db": 53.64,
+     "y_ssim": 0.9963
+    },
+    {
+     "q": 23,
+     "frames": 30,
+     "bytes_per_frame": 90330.83333333333,
+     "y_psnr_db": 51.48,
+     "y_ssim": 0.994
+    },
+    {
+     "q": 26,
+     "frames": 30,
+     "bytes_per_frame": 64383.86666666667,
+     "y_psnr_db": 50.15,
+     "y_ssim": 0.9926
+    },
+    {
+     "q": 29,
+     "frames": 30,
+     "bytes_per_frame": 39829.833333333336,
+     "y_psnr_db": 48.8,
+     "y_ssim": 0.9907
+    },
+    {
+     "q": 32,
+     "frames": 30,
+     "bytes_per_frame": 24659.9,
+     "y_psnr_db": 47.55,
+     "y_ssim": 0.989
+    },
+    {
+     "q": 35,
+     "frames": 30,
+     "bytes_per_frame": 16057.266666666666,
+     "y_psnr_db": 46.34,
+     "y_ssim": 0.9873
+    },
+    {
+     "q": 38,
+     "frames": 30,
+     "bytes_per_frame": 11550.133333333333,
+     "y_psnr_db": 45.03,
+     "y_ssim": 0.9854
+    },
+    {
+     "q": 41,
+     "frames": 30,
+     "bytes_per_frame": 8124.8,
+     "y_psnr_db": 42.98,
+     "y_ssim": 0.9816
+    },
+    {
+     "q": 44,
+     "frames": 30,
+     "bytes_per_frame": 6539.966666666666,
+     "y_psnr_db": 41.19,
+     "y_ssim": 0.9771
+    }
+   ],
+   "chosen_q": 17,
+   "log": [
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 296",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 5",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 296",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 8",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 296",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 11",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 296",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 14",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51",
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 296",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1"
+   ]
+  },
+  "mjpeg_qsv|1080p|c922_1080p": {
+   "target_y_psnr_db": 55.0,
+   "sweep": [
+    {
+     "q": 50,
+     "frames": 30,
+     "bytes_per_frame": 76885.26666666666,
+     "y_psnr_db": 46.13,
+     "y_ssim": 0.9871
+    },
+    {
+     "q": 60,
+     "frames": 30,
+     "bytes_per_frame": 84383.0,
+     "y_psnr_db": 46.97,
+     "y_ssim": 0.9889
+    },
+    {
+     "q": 70,
+     "frames": 30,
+     "bytes_per_frame": 113861.6,
+     "y_psnr_db": 48.03,
+     "y_ssim": 0.9908
+    },
+    {
+     "q": 75,
+     "frames": 30,
+     "bytes_per_frame": 131159.36666666667,
+     "y_psnr_db": 49.02,
+     "y_ssim": 0.9925
+    },
+    {
+     "q": 80,
+     "frames": 30,
+     "bytes_per_frame": 150934.36666666667,
+     "y_psnr_db": 50.37,
+     "y_ssim": 0.9946
+    },
+    {
+     "q": 85,
+     "frames": 30,
+     "bytes_per_frame": 171731.13333333333,
+     "y_psnr_db": 52.14,
+     "y_ssim": 0.9964
+    },
+    {
+     "q": 90,
+     "frames": 30,
+     "bytes_per_frame": 206909.43333333332,
+     "y_psnr_db": 54.55,
+     "y_ssim": 0.9975
+    },
+    {
+     "q": 95,
+     "frames": 30,
+     "bytes_per_frame": 310542.06666666665,
+     "y_psnr_db": 56.68,
+     "y_ssim": 0.9982
+    }
+   ],
+   "chosen_q": 90,
+   "log": [
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation"
+   ]
+  }
+ },
+ "clips": {
+  "c720p30/h264_nvenc_intra.mp4": {
+   "kind": "video",
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1280,
+   "height": 720,
+   "codec": "h264_nvenc",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/c720p30/h264_nvenc_intra.mp4",
+   "bytes": 20263244,
+   "codec_string": "avc1.64001F",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 1200
+    },
+    "first_frame_nal": [
+     6,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "nb_frames": "600"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 7 %, 12 %",
+    "while_open": "1, 8 %, 12 %",
+    "after": "1, 7 %, 11 %"
+   },
+   "encoder_log": [
+    "libav.h264_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 55.42,
+    "y_psnr_db_min": 54.35,
+    "y_ssim_mean": 0.9979,
+    "quality_frames": 60
+   },
+   "keyframe_count": 600
+  },
+  "c720p30/h264_nvenc_intra_frag.mp4": {
+   "kind": "video",
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1280,
+   "height": 720,
+   "codec": "h264_nvenc",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/c720p30/h264_nvenc_intra_frag.mp4",
+   "bytes": 20339296,
+   "codec_string": "avc1.64001F",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 1200
+    },
+    "first_frame_nal": [
+     6,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 7 %, 12 %",
+    "while_open": "1, 8 %, 12 %",
+    "after": "1, 7 %, 11 %"
+   },
+   "encoder_log": [
+    "libav.h264_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c720p30/h264_nvenc_intra.mkv": {
+   "kind": "video",
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1280,
+   "height": 720,
+   "codec": "h264_nvenc",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/c720p30/h264_nvenc_intra.mkv",
+   "bytes": 20291704,
+   "codec_string": "avc1.64001F",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 1200
+    },
+    "first_frame_nal": [
+     6,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 7 %, 12 %",
+    "while_open": "1, 8 %, 12 %",
+    "after": "1, 7 %, 11 %"
+   },
+   "encoder_log": [
+    "libav.h264_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c720p30/hevc_nvenc_intra.mp4": {
+   "kind": "video",
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1280,
+   "height": 720,
+   "codec": "hevc_nvenc",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/c720p30/hevc_nvenc_intra.mp4",
+   "bytes": 16473959,
+   "codec_string": "hev1.1.6.L93.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv",
+     "nb_frames": "600"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 5 %, 4 %",
+    "while_open": "2, 4 %, 4 %",
+    "after": "2, 8 %, 4 %"
+   },
+   "encoder_log": [
+    "libav.hevc_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 54.54,
+    "y_psnr_db_min": 53.67,
+    "y_ssim_mean": 0.9973,
+    "quality_frames": 60
+   },
+   "keyframe_count": 600
+  },
+  "c720p30/hevc_nvenc_intra_frag.mp4": {
+   "kind": "video",
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1280,
+   "height": 720,
+   "codec": "hevc_nvenc",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/c720p30/hevc_nvenc_intra_frag.mp4",
+   "bytes": 16550079,
+   "codec_string": "hev1.1.6.L93.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 5 %, 4 %",
+    "while_open": "2, 4 %, 4 %",
+    "after": "2, 8 %, 4 %"
+   },
+   "encoder_log": [
+    "libav.hevc_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c720p30/hevc_nvenc_intra.mkv": {
+   "kind": "video",
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1280,
+   "height": 720,
+   "codec": "hevc_nvenc",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/c720p30/hevc_nvenc_intra.mkv",
+   "bytes": 16502387,
+   "codec_string": "hvc1.1.6.L93.90",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 5 %, 4 %",
+    "while_open": "2, 4 %, 4 %",
+    "after": "2, 8 %, 4 %"
+   },
+   "encoder_log": [
+    "libav.hevc_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c720p30/h264_qsv_intra.mp4": {
+   "kind": "video",
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1280,
+   "height": 720,
+   "codec": "h264_qsv",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 11,
+   "url": "/media/clips/c720p30/h264_qsv_intra.mp4",
+   "bytes": 24803931,
+   "codec_string": "avc1.64001F",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 600,
+     "7": 600,
+     "8": 600
+    },
+    "first_frame_nal": [
+     7,
+     8,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "nb_frames": "600"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 3 %, 1 %",
+    "while_open": "0, 3 %, 3 %",
+    "after": "0, 29 %, 4 %"
+   },
+   "encoder_log": [
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 31",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 11",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0"
+   ],
+   "decode_check_mp4": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 55.71,
+    "y_psnr_db_min": 54.59,
+    "y_ssim_mean": 0.998,
+    "quality_frames": 60
+   },
+   "keyframe_count": 600
+  },
+  "c720p30/h264_qsv_intra_frag.mp4": {
+   "kind": "video",
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1280,
+   "height": 720,
+   "codec": "h264_qsv",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 11,
+   "url": "/media/clips/c720p30/h264_qsv_intra_frag.mp4",
+   "bytes": 24880035,
+   "codec_string": "avc1.64001F",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 600,
+     "7": 600,
+     "8": 600
+    },
+    "first_frame_nal": [
+     7,
+     8,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 3 %, 1 %",
+    "while_open": "0, 3 %, 3 %",
+    "after": "0, 29 %, 4 %"
+   },
+   "encoder_log": [
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 31",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 11",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c720p30/h264_qsv_intra.mkv": {
+   "kind": "video",
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1280,
+   "height": 720,
+   "codec": "h264_qsv",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 11,
+   "url": "/media/clips/c720p30/h264_qsv_intra.mkv",
+   "bytes": 24832534,
+   "codec_string": "avc1.64001F",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 600,
+     "7": 600,
+     "8": 600
+    },
+    "first_frame_nal": [
+     7,
+     8,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 3 %, 1 %",
+    "while_open": "0, 3 %, 3 %",
+    "after": "0, 29 %, 4 %"
+   },
+   "encoder_log": [
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 31",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 11",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c720p30/hevc_qsv_intra.mp4": {
+   "kind": "video",
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1280,
+   "height": 720,
+   "codec": "hevc_qsv",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 20,
+   "url": "/media/clips/c720p30/hevc_qsv_intra.mp4",
+   "bytes": 19039245,
+   "codec_string": "hev1.1.2.L120.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "32": 600,
+     "33": 600,
+     "34": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     32,
+     33,
+     34,
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv",
+     "nb_frames": "600"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 13 %, 10 %",
+    "while_open": "0, 8 %, 5 %",
+    "after": "0, 8 %, 7 %"
+   },
+   "encoder_log": [
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 40",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 20",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51"
+   ],
+   "decode_check_mp4": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 55.35,
+    "y_psnr_db_min": 53.85,
+    "y_ssim_mean": 0.9978,
+    "quality_frames": 60
+   },
+   "keyframe_count": 600
+  },
+  "c720p30/hevc_qsv_intra_frag.mp4": {
+   "kind": "video",
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1280,
+   "height": 720,
+   "codec": "hevc_qsv",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 20,
+   "url": "/media/clips/c720p30/hevc_qsv_intra_frag.mp4",
+   "bytes": 19115353,
+   "codec_string": "hev1.1.2.L120.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "32": 600,
+     "33": 600,
+     "34": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     32,
+     33,
+     34,
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 13 %, 10 %",
+    "while_open": "0, 8 %, 5 %",
+    "after": "0, 8 %, 7 %"
+   },
+   "encoder_log": [
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 40",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 20",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c720p30/hevc_qsv_intra.mkv": {
+   "kind": "video",
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1280,
+   "height": 720,
+   "codec": "hevc_qsv",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 20,
+   "url": "/media/clips/c720p30/hevc_qsv_intra.mkv",
+   "bytes": 19067730,
+   "codec_string": "hvc1.1.2.L120.90",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "32": 600,
+     "33": 600,
+     "34": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     32,
+     33,
+     34,
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 13 %, 10 %",
+    "while_open": "0, 8 %, 5 %",
+    "after": "0, 8 %, 7 %"
+   },
+   "encoder_log": [
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 40",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 20",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c720p30/jpeg_seq": {
+   "kind": "mjpeg",
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "width": 1280,
+   "height": 720,
+   "codec": "mjpeg_qsv 4:2:2 (yuyv422 full range in)",
+   "quality_param": 85,
+   "gop": 1,
+   "jpeg_check": {
+    "jpegs": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "decoded_formats": [
+     "yuvj422p"
+    ],
+    "sof0_baseline": 600
+   },
+   "decode_check": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 55.72,
+    "y_psnr_db_min": 54.04,
+    "y_ssim_mean": 0.9983,
+    "quality_frames": 60
+   },
+   "url": "/media/clips/c720p30/jpeg_qsv422/clip.mjpeg",
+   "bytes": 30645221,
+   "keyframe_count": 600
+  },
+  "c720p30/jpeg_in_mkv": {
+   "kind": "mjpeg",
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "width": 1280,
+   "height": 720,
+   "codec": "mjpeg_qsv 4:2:2 (yuyv422 full range in)",
+   "quality_param": 85,
+   "gop": 1,
+   "jpeg_check": {
+    "jpegs": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "decoded_formats": [
+     "yuvj422p"
+    ],
+    "sof0_baseline": 600
+   },
+   "decode_check": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 55.72,
+    "y_psnr_db_min": 54.04,
+    "y_ssim_mean": 0.9983,
+    "quality_frames": 60
+   },
+   "url": "/media/clips/c720p30/mjpeg_qsv422.mkv",
+   "bytes": 30672371,
+   "mkv_index": {
+    "time_base": "1/1000",
+    "all_offsets_found": true,
+    "pos_exact_count": 0,
+    "pos_delta_hist": {
+     "4": 600
+    }
+   },
+   "sizes_equal_jpeg_seq": true,
+   "pts_adjusted_for_monotonic": 0,
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "mjpeg",
+     "profile": "Baseline",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuvj422p",
+     "color_range": "pc"
+    }
+   },
+   "keyframe_count": 600
+  },
+  "c720p30/mjpeg_qsv422.mkv": {
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "width": 1280,
+   "height": 720,
+   "codec": "mjpeg_qsv 4:2:2 (yuyv422 full range in)",
+   "quality_param": 85,
+   "gop": 1,
+   "jpeg_check": {
+    "jpegs": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "decoded_formats": [
+     "yuvj422p"
+    ],
+    "sof0_baseline": 600
+   },
+   "decode_check": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 55.72,
+    "y_psnr_db_min": 54.04,
+    "y_ssim_mean": 0.9983,
+    "quality_frames": 60
+   },
+   "kind": "video",
+   "container": "mkv",
+   "url": "/media/clips/c720p30/mjpeg_qsv422.mkv",
+   "codec_string": "mjpeg",
+   "bytes": 30672371,
+   "video_only_expect_fail": true,
+   "keyframe_count": 600
+  },
+  "c720p30/camera_bytes_mkv": {
+   "kind": "camera_mkv",
+   "content": "c720p30",
+   "corpus_set": "c930e_720p_flash",
+   "frames": 300,
+   "width": 1280,
+   "height": 720,
+   "url": "/media/clips/c720p30/camera_bytes.mkv",
+   "corpus_url_pattern": "/corpus/c930e_720p_flash/frame_%06d.jpg",
+   "bytes": 16605956,
+   "sizes_equal_corpus": true,
+   "mkv_index": {
+    "time_base": "1/1000",
+    "all_offsets_found": true,
+    "pos_exact_count": 0,
+    "pos_delta_hist": {
+     "4": 300
+    }
+   },
+   "keyframe_count": 0
+  },
+  "c1080p30/h264_nvenc_intra.mp4": {
+   "kind": "video",
+   "content": "c1080p30",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "h264_nvenc",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 14,
+   "url": "/media/clips/c1080p30/h264_nvenc_intra.mp4",
+   "bytes": 109174200,
+   "codec_string": "avc1.640028",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 1200
+    },
+    "first_frame_nal": [
+     6,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "nb_frames": "600"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 13 %, 7 %",
+    "while_open": "1, 13 %, 7 %",
+    "after": "1, 9 %, 33 %"
+   },
+   "encoder_log": [
+    "libav.h264_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 54.49,
+    "y_psnr_db_min": 54.48,
+    "y_ssim_mean": 0.9969,
+    "quality_frames": 60
+   },
+   "keyframe_count": 600
+  },
+  "c1080p30/h264_nvenc_intra_frag.mp4": {
+   "kind": "video",
+   "content": "c1080p30",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "h264_nvenc",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 14,
+   "url": "/media/clips/c1080p30/h264_nvenc_intra_frag.mp4",
+   "bytes": 109249948,
+   "codec_string": "avc1.640028",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 1200
+    },
+    "first_frame_nal": [
+     6,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 13 %, 7 %",
+    "while_open": "1, 13 %, 7 %",
+    "after": "1, 9 %, 33 %"
+   },
+   "encoder_log": [
+    "libav.h264_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c1080p30/h264_nvenc_intra.mkv": {
+   "kind": "video",
+   "content": "c1080p30",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "h264_nvenc",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 14,
+   "url": "/media/clips/c1080p30/h264_nvenc_intra.mkv",
+   "bytes": 109202761,
+   "codec_string": "avc1.640028",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 1200
+    },
+    "first_frame_nal": [
+     6,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 13 %, 7 %",
+    "while_open": "1, 13 %, 7 %",
+    "after": "1, 9 %, 33 %"
+   },
+   "encoder_log": [
+    "libav.h264_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c1080p30/hevc_nvenc_intra.mp4": {
+   "kind": "video",
+   "content": "c1080p30",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "hevc_nvenc",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 11,
+   "url": "/media/clips/c1080p30/hevc_nvenc_intra.mp4",
+   "bytes": 127807632,
+   "codec_string": "hev1.1.6.L120.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv",
+     "nb_frames": "600"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 4 %, 4 %",
+    "while_open": "1, 4 %, 4 %",
+    "after": "1, 20 %, 4 %"
+   },
+   "encoder_log": [
+    "libav.hevc_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 54.92,
+    "y_psnr_db_min": 54.9,
+    "y_ssim_mean": 0.9971,
+    "quality_frames": 60
+   },
+   "keyframe_count": 600
+  },
+  "c1080p30/hevc_nvenc_intra_frag.mp4": {
+   "kind": "video",
+   "content": "c1080p30",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "hevc_nvenc",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 11,
+   "url": "/media/clips/c1080p30/hevc_nvenc_intra_frag.mp4",
+   "bytes": 127883264,
+   "codec_string": "hev1.1.6.L120.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 4 %, 4 %",
+    "while_open": "1, 4 %, 4 %",
+    "after": "1, 20 %, 4 %"
+   },
+   "encoder_log": [
+    "libav.hevc_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c1080p30/hevc_nvenc_intra.mkv": {
+   "kind": "video",
+   "content": "c1080p30",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "hevc_nvenc",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 11,
+   "url": "/media/clips/c1080p30/hevc_nvenc_intra.mkv",
+   "bytes": 127836094,
+   "codec_string": "hvc1.1.6.L120.90",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 4 %, 4 %",
+    "while_open": "1, 4 %, 4 %",
+    "after": "1, 20 %, 4 %"
+   },
+   "encoder_log": [
+    "libav.hevc_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c1080p30/h264_qsv_intra.mp4": {
+   "kind": "video",
+   "content": "c1080p30",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "h264_qsv",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 8,
+   "url": "/media/clips/c1080p30/h264_qsv_intra.mp4",
+   "bytes": 134142671,
+   "codec_string": "avc1.640028",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 600,
+     "7": 600,
+     "8": 600
+    },
+    "first_frame_nal": [
+     7,
+     8,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "nb_frames": "600"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 50 %, 4 %",
+    "while_open": "0, 14 %, 3 %",
+    "after": "0, 30 %, 72 %"
+   },
+   "encoder_log": [
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 40",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 8",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0"
+   ],
+   "decode_check_mp4": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 54.93,
+    "y_psnr_db_min": 54.9,
+    "y_ssim_mean": 0.9972,
+    "quality_frames": 60
+   },
+   "keyframe_count": 600
+  },
+  "c1080p30/h264_qsv_intra_frag.mp4": {
+   "kind": "video",
+   "content": "c1080p30",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "h264_qsv",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 8,
+   "url": "/media/clips/c1080p30/h264_qsv_intra_frag.mp4",
+   "bytes": 134218299,
+   "codec_string": "avc1.640028",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 600,
+     "7": 600,
+     "8": 600
+    },
+    "first_frame_nal": [
+     7,
+     8,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 50 %, 4 %",
+    "while_open": "0, 14 %, 3 %",
+    "after": "0, 30 %, 72 %"
+   },
+   "encoder_log": [
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 40",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 8",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c1080p30/h264_qsv_intra.mkv": {
+   "kind": "video",
+   "content": "c1080p30",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "h264_qsv",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 8,
+   "url": "/media/clips/c1080p30/h264_qsv_intra.mkv",
+   "bytes": 134171129,
+   "codec_string": "avc1.640028",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 600,
+     "7": 600,
+     "8": 600
+    },
+    "first_frame_nal": [
+     7,
+     8,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 50 %, 4 %",
+    "while_open": "0, 14 %, 3 %",
+    "after": "0, 30 %, 72 %"
+   },
+   "encoder_log": [
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 40",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 8",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c1080p30/hevc_qsv_intra.mp4": {
+   "kind": "video",
+   "content": "c1080p30",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "hevc_qsv",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/c1080p30/hevc_qsv_intra.mp4",
+   "bytes": 110776615,
+   "codec_string": "hev1.1.2.H120.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "32": 600,
+     "33": 600,
+     "34": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     32,
+     33,
+     34,
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv",
+     "nb_frames": "600"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 44 %, 6 %",
+    "while_open": "0, 23 %, 12 %",
+    "after": "0, 38 %, 3 %"
+   },
+   "encoder_log": [
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 296",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 17",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51"
+   ],
+   "decode_check_mp4": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 55.01,
+    "y_psnr_db_min": 54.99,
+    "y_ssim_mean": 0.9972,
+    "quality_frames": 60
+   },
+   "keyframe_count": 600
+  },
+  "c1080p30/hevc_qsv_intra_frag.mp4": {
+   "kind": "video",
+   "content": "c1080p30",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "hevc_qsv",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/c1080p30/hevc_qsv_intra_frag.mp4",
+   "bytes": 110852367,
+   "codec_string": "hev1.1.2.H120.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "32": 600,
+     "33": 600,
+     "34": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     32,
+     33,
+     34,
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 44 %, 6 %",
+    "while_open": "0, 23 %, 12 %",
+    "after": "0, 38 %, 3 %"
+   },
+   "encoder_log": [
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 296",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 17",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c1080p30/hevc_qsv_intra.mkv": {
+   "kind": "video",
+   "content": "c1080p30",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "hevc_qsv",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/c1080p30/hevc_qsv_intra.mkv",
+   "bytes": 110805184,
+   "codec_string": "hvc1.1.2.H120.90",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "32": 600,
+     "33": 600,
+     "34": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     32,
+     33,
+     34,
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "0, 44 %, 6 %",
+    "while_open": "0, 23 %, 12 %",
+    "after": "0, 38 %, 3 %"
+   },
+   "encoder_log": [
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 296",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 17",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "c1080p30/jpeg_seq": {
+   "kind": "mjpeg",
+   "content": "c1080p30",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "mjpeg_qsv 4:2:2 (yuyv422 full range in)",
+   "quality_param": 90,
+   "gop": 1,
+   "jpeg_check": {
+    "jpegs": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "decoded_formats": [
+     "yuvj422p"
+    ],
+    "sof0_baseline": 600
+   },
+   "decode_check": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 54.55,
+    "y_psnr_db_min": 54.52,
+    "y_ssim_mean": 0.9975,
+    "quality_frames": 60
+   },
+   "url": "/media/clips/c1080p30/jpeg_qsv422/clip.mjpeg",
+   "bytes": 124162572,
+   "keyframe_count": 600
+  },
+  "c1080p30/jpeg_in_mkv": {
+   "kind": "mjpeg",
+   "content": "c1080p30",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "mjpeg_qsv 4:2:2 (yuyv422 full range in)",
+   "quality_param": 90,
+   "gop": 1,
+   "jpeg_check": {
+    "jpegs": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "decoded_formats": [
+     "yuvj422p"
+    ],
+    "sof0_baseline": 600
+   },
+   "decode_check": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 54.55,
+    "y_psnr_db_min": 54.52,
+    "y_ssim_mean": 0.9975,
+    "quality_frames": 60
+   },
+   "url": "/media/clips/c1080p30/mjpeg_qsv422.mkv",
+   "bytes": 124189970,
+   "mkv_index": {
+    "time_base": "1/1000",
+    "all_offsets_found": true,
+    "pos_exact_count": 0,
+    "pos_delta_hist": {
+     "4": 600
+    }
+   },
+   "sizes_equal_jpeg_seq": true,
+   "pts_adjusted_for_monotonic": 0,
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "mjpeg",
+     "profile": "Baseline",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuvj422p",
+     "color_range": "pc"
+    }
+   },
+   "keyframe_count": 600
+  },
+  "c1080p30/mjpeg_qsv422.mkv": {
+   "content": "c1080p30",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": false,
+   "nominal_fps": 30,
+   "frames": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "mjpeg_qsv 4:2:2 (yuyv422 full range in)",
+   "quality_param": 90,
+   "gop": 1,
+   "jpeg_check": {
+    "jpegs": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "decoded_formats": [
+     "yuvj422p"
+    ],
+    "sof0_baseline": 600
+   },
+   "decode_check": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 54.55,
+    "y_psnr_db_min": 54.52,
+    "y_ssim_mean": 0.9975,
+    "quality_frames": 60
+   },
+   "kind": "video",
+   "container": "mkv",
+   "url": "/media/clips/c1080p30/mjpeg_qsv422.mkv",
+   "codec_string": "mjpeg",
+   "bytes": 124189970,
+   "video_only_expect_fail": true,
+   "keyframe_count": 600
+  },
+  "vfr720p/h264_nvenc_intra.mp4": {
+   "kind": "video",
+   "content": "vfr720p",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 891,
+   "frames_encoded": 891,
+   "width": 1280,
+   "height": 720,
+   "codec": "h264_nvenc",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/vfr720p/h264_nvenc_intra.mp4",
+   "bytes": 30150179,
+   "codec_string": "avc1.64001F",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 891,
+   "pos_delta_hist": {
+    "0": 891
+   },
+   "nal_check": {
+    "frames": 891,
+    "frames_with_idr": 891,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 891,
+    "nal_type_hist": {
+     "5": 891,
+     "6": 1782
+    },
+    "first_frame_nal": [
+     6,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 891,
+    "key_frames": 891,
+    "pict_types": {
+     "I": 891
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "nb_frames": "891"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 39 %, 11 %",
+    "while_open": "2, 20 %, 6 %",
+    "after": "2, 7 %, 5 %"
+   },
+   "encoder_log": [
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": {
+    "decoded": 891,
+    "pattern_ok": 891,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 55.4,
+    "y_psnr_db_min": 54.35,
+    "y_ssim_mean": 0.9979,
+    "quality_frames": 90
+   },
+   "keyframe_count": 891
+  },
+  "vfr720p/h264_nvenc_intra_frag.mp4": {
+   "kind": "video",
+   "content": "vfr720p",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 891,
+   "frames_encoded": 891,
+   "width": 1280,
+   "height": 720,
+   "codec": "h264_nvenc",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/vfr720p/h264_nvenc_intra_frag.mp4",
+   "bytes": 30256792,
+   "codec_string": "avc1.64001F",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 891,
+   "pos_delta_hist": {
+    "0": 891
+   },
+   "nal_check": {
+    "frames": 891,
+    "frames_with_idr": 891,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 891,
+    "nal_type_hist": {
+     "5": 891,
+     "6": 1782
+    },
+    "first_frame_nal": [
+     6,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 891,
+    "key_frames": 891,
+    "pict_types": {
+     "I": 891
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 39 %, 11 %",
+    "while_open": "2, 20 %, 6 %",
+    "after": "2, 7 %, 5 %"
+   },
+   "encoder_log": [
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 891
+  },
+  "vfr720p/h264_nvenc_intra.mkv": {
+   "kind": "video",
+   "content": "vfr720p",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 891,
+   "frames_encoded": 891,
+   "width": 1280,
+   "height": 720,
+   "codec": "h264_nvenc",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/vfr720p/h264_nvenc_intra.mkv",
+   "bytes": 30186502,
+   "codec_string": "avc1.64001F",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 891
+   },
+   "nal_check": {
+    "frames": 891,
+    "frames_with_idr": 891,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 891,
+    "nal_type_hist": {
+     "5": 891,
+     "6": 1782
+    },
+    "first_frame_nal": [
+     6,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 1
+   },
+   "ffprobe": {
+    "frames": 891,
+    "key_frames": 891,
+    "pict_types": {
+     "I": 891
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 39 %, 11 %",
+    "while_open": "2, 20 %, 6 %",
+    "after": "2, 7 %, 5 %"
+   },
+   "encoder_log": [
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 891
+  },
+  "vfr720p/hevc_nvenc_intra.mp4": {
+   "kind": "video",
+   "content": "vfr720p",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 891,
+   "frames_encoded": 891,
+   "width": 1280,
+   "height": 720,
+   "codec": "hevc_nvenc",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/vfr720p/hevc_nvenc_intra.mp4",
+   "bytes": 24510231,
+   "codec_string": "hev1.1.6.L93.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 891,
+   "pos_delta_hist": {
+    "0": 891
+   },
+   "nal_check": {
+    "frames": 891,
+    "frames_with_idr": 891,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 891,
+    "nal_type_hist": {
+     "19": 891,
+     "39": 891
+    },
+    "first_frame_nal": [
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 891,
+    "key_frames": 891,
+    "pict_types": {
+     "I": 891
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv",
+     "nb_frames": "891"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 31 %, 14 %",
+    "while_open": "2, 31 %, 14 %",
+    "after": "2, 9 %, 4 %"
+   },
+   "encoder_log": [
+    "libav.hevc_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": {
+    "decoded": 891,
+    "pattern_ok": 891,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 54.52,
+    "y_psnr_db_min": 53.67,
+    "y_ssim_mean": 0.9973,
+    "quality_frames": 90
+   },
+   "keyframe_count": 891
+  },
+  "vfr720p/hevc_nvenc_intra_frag.mp4": {
+   "kind": "video",
+   "content": "vfr720p",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 891,
+   "frames_encoded": 891,
+   "width": 1280,
+   "height": 720,
+   "codec": "hevc_nvenc",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/vfr720p/hevc_nvenc_intra_frag.mp4",
+   "bytes": 24616932,
+   "codec_string": "hev1.1.6.L93.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 891,
+   "pos_delta_hist": {
+    "0": 891
+   },
+   "nal_check": {
+    "frames": 891,
+    "frames_with_idr": 891,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 891,
+    "nal_type_hist": {
+     "19": 891,
+     "39": 891
+    },
+    "first_frame_nal": [
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 891,
+    "key_frames": 891,
+    "pict_types": {
+     "I": 891
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 31 %, 14 %",
+    "while_open": "2, 31 %, 14 %",
+    "after": "2, 9 %, 4 %"
+   },
+   "encoder_log": [
+    "libav.hevc_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 891
+  },
+  "vfr720p/hevc_nvenc_intra.mkv": {
+   "kind": "video",
+   "content": "vfr720p",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 891,
+   "frames_encoded": 891,
+   "width": 1280,
+   "height": 720,
+   "codec": "hevc_nvenc",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/vfr720p/hevc_nvenc_intra.mkv",
+   "bytes": 24546531,
+   "codec_string": "hvc1.1.6.L93.90",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 891
+   },
+   "nal_check": {
+    "frames": 891,
+    "frames_with_idr": 891,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 891,
+    "nal_type_hist": {
+     "19": 891,
+     "39": 891
+    },
+    "first_frame_nal": [
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 1
+   },
+   "ffprobe": {
+    "frames": 891,
+    "key_frames": 891,
+    "pict_types": {
+     "I": 891
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 31 %, 14 %",
+    "while_open": "2, 31 %, 14 %",
+    "after": "2, 9 %, 4 %"
+   },
+   "encoder_log": [
+    "libav.hevc_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 891
+  },
+  "vfr720p/h264_qsv_intra.mp4": {
+   "kind": "video",
+   "content": "vfr720p",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 891,
+   "frames_encoded": 891,
+   "width": 1280,
+   "height": 720,
+   "codec": "h264_qsv",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 11,
+   "url": "/media/clips/vfr720p/h264_qsv_intra.mp4",
+   "bytes": 36909410,
+   "codec_string": "avc1.64001F",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 891,
+   "pos_delta_hist": {
+    "0": 891
+   },
+   "nal_check": {
+    "frames": 891,
+    "frames_with_idr": 891,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 891,
+    "nal_type_hist": {
+     "5": 891,
+     "6": 891,
+     "7": 891,
+     "8": 891
+    },
+    "first_frame_nal": [
+     7,
+     8,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 891,
+    "key_frames": 891,
+    "pict_types": {
+     "I": 891
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "nb_frames": "891"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 34 %, 4 %",
+    "while_open": "1, 34 %, 5 %",
+    "after": "1, 33 %, 10 %"
+   },
+   "encoder_log": [
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 31",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 11",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0"
+   ],
+   "decode_check_mp4": {
+    "decoded": 891,
+    "pattern_ok": 891,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 55.7,
+    "y_psnr_db_min": 54.59,
+    "y_ssim_mean": 0.998,
+    "quality_frames": 90
+   },
+   "keyframe_count": 891
+  },
+  "vfr720p/h264_qsv_intra_frag.mp4": {
+   "kind": "video",
+   "content": "vfr720p",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 891,
+   "frames_encoded": 891,
+   "width": 1280,
+   "height": 720,
+   "codec": "h264_qsv",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 11,
+   "url": "/media/clips/vfr720p/h264_qsv_intra_frag.mp4",
+   "bytes": 37016083,
+   "codec_string": "avc1.64001F",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 891,
+   "pos_delta_hist": {
+    "0": 891
+   },
+   "nal_check": {
+    "frames": 891,
+    "frames_with_idr": 891,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 891,
+    "nal_type_hist": {
+     "5": 891,
+     "6": 891,
+     "7": 891,
+     "8": 891
+    },
+    "first_frame_nal": [
+     7,
+     8,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 891,
+    "key_frames": 891,
+    "pict_types": {
+     "I": 891
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 34 %, 4 %",
+    "while_open": "1, 34 %, 5 %",
+    "after": "1, 33 %, 10 %"
+   },
+   "encoder_log": [
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 31",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 11",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 891
+  },
+  "vfr720p/h264_qsv_intra.mkv": {
+   "kind": "video",
+   "content": "vfr720p",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 891,
+   "frames_encoded": 891,
+   "width": 1280,
+   "height": 720,
+   "codec": "h264_qsv",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 11,
+   "url": "/media/clips/vfr720p/h264_qsv_intra.mkv",
+   "bytes": 36945884,
+   "codec_string": "avc1.64001F",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 891
+   },
+   "nal_check": {
+    "frames": 891,
+    "frames_with_idr": 891,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 891,
+    "nal_type_hist": {
+     "5": 891,
+     "6": 891,
+     "7": 891,
+     "8": 891
+    },
+    "first_frame_nal": [
+     7,
+     8,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 1
+   },
+   "ffprobe": {
+    "frames": 891,
+    "key_frames": 891,
+    "pict_types": {
+     "I": 891
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 34 %, 4 %",
+    "while_open": "1, 34 %, 5 %",
+    "after": "1, 33 %, 10 %"
+   },
+   "encoder_log": [
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 31",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 11",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 891
+  },
+  "vfr720p/hevc_qsv_intra.mp4": {
+   "kind": "video",
+   "content": "vfr720p",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 891,
+   "frames_encoded": 891,
+   "width": 1280,
+   "height": 720,
+   "codec": "hevc_qsv",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 20,
+   "url": "/media/clips/vfr720p/hevc_qsv_intra.mp4",
+   "bytes": 28461176,
+   "codec_string": "hev1.1.2.L120.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 891,
+   "pos_delta_hist": {
+    "0": 891
+   },
+   "nal_check": {
+    "frames": 891,
+    "frames_with_idr": 891,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 891,
+    "nal_type_hist": {
+     "19": 891,
+     "32": 891,
+     "33": 891,
+     "34": 891,
+     "39": 891
+    },
+    "first_frame_nal": [
+     32,
+     33,
+     34,
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 891,
+    "key_frames": 891,
+    "pict_types": {
+     "I": 891
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv",
+     "nb_frames": "891"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 27 %, 9 %",
+    "while_open": "1, 24 %, 5 %",
+    "after": "1, 32 %, 5 %"
+   },
+   "encoder_log": [
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 40",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 20",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51"
+   ],
+   "decode_check_mp4": {
+    "decoded": 891,
+    "pattern_ok": 891,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 55.37,
+    "y_psnr_db_min": 53.85,
+    "y_ssim_mean": 0.9978,
+    "quality_frames": 90
+   },
+   "keyframe_count": 891
+  },
+  "vfr720p/hevc_qsv_intra_frag.mp4": {
+   "kind": "video",
+   "content": "vfr720p",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 891,
+   "frames_encoded": 891,
+   "width": 1280,
+   "height": 720,
+   "codec": "hevc_qsv",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 20,
+   "url": "/media/clips/vfr720p/hevc_qsv_intra_frag.mp4",
+   "bytes": 28567885,
+   "codec_string": "hev1.1.2.L120.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 891,
+   "pos_delta_hist": {
+    "0": 891
+   },
+   "nal_check": {
+    "frames": 891,
+    "frames_with_idr": 891,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 891,
+    "nal_type_hist": {
+     "19": 891,
+     "32": 891,
+     "33": 891,
+     "34": 891,
+     "39": 891
+    },
+    "first_frame_nal": [
+     32,
+     33,
+     34,
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 891,
+    "key_frames": 891,
+    "pict_types": {
+     "I": 891
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 27 %, 9 %",
+    "while_open": "1, 24 %, 5 %",
+    "after": "1, 32 %, 5 %"
+   },
+   "encoder_log": [
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 40",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 20",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 891
+  },
+  "vfr720p/hevc_qsv_intra.mkv": {
+   "kind": "video",
+   "content": "vfr720p",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 891,
+   "frames_encoded": 891,
+   "width": 1280,
+   "height": 720,
+   "codec": "hevc_qsv",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 20,
+   "url": "/media/clips/vfr720p/hevc_qsv_intra.mkv",
+   "bytes": 28497564,
+   "codec_string": "hvc1.1.2.L120.90",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 891
+   },
+   "nal_check": {
+    "frames": 891,
+    "frames_with_idr": 891,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 891,
+    "nal_type_hist": {
+     "19": 891,
+     "32": 891,
+     "33": 891,
+     "34": 891,
+     "39": 891
+    },
+    "first_frame_nal": [
+     32,
+     33,
+     34,
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 1
+   },
+   "ffprobe": {
+    "frames": 891,
+    "key_frames": 891,
+    "pict_types": {
+     "I": 891
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 27 %, 9 %",
+    "while_open": "1, 24 %, 5 %",
+    "after": "1, 32 %, 5 %"
+   },
+   "encoder_log": [
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 40",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 20",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 891
+  },
+  "vfr720p/jpeg_seq": {
+   "kind": "mjpeg",
+   "content": "vfr720p",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 891,
+   "width": 1280,
+   "height": 720,
+   "codec": "mjpeg_qsv 4:2:2 (yuyv422 full range in)",
+   "quality_param": 85,
+   "gop": 1,
+   "jpeg_check": {
+    "jpegs": 891,
+    "pattern_ok": 891,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "decoded_formats": [
+     "yuvj422p"
+    ],
+    "sof0_baseline": 891
+   },
+   "decode_check": {
+    "decoded": 891,
+    "pattern_ok": 891,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 55.71,
+    "y_psnr_db_min": 54.04,
+    "y_ssim_mean": 0.9983,
+    "quality_frames": 90
+   },
+   "url": "/media/clips/vfr720p/jpeg_qsv422/clip.mjpeg",
+   "bytes": 45543879,
+   "keyframe_count": 891
+  },
+  "vfr720p/jpeg_in_mkv": {
+   "kind": "mjpeg",
+   "content": "vfr720p",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 891,
+   "width": 1280,
+   "height": 720,
+   "codec": "mjpeg_qsv 4:2:2 (yuyv422 full range in)",
+   "quality_param": 85,
+   "gop": 1,
+   "jpeg_check": {
+    "jpegs": 891,
+    "pattern_ok": 891,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "decoded_formats": [
+     "yuvj422p"
+    ],
+    "sof0_baseline": 891
+   },
+   "decode_check": {
+    "decoded": 891,
+    "pattern_ok": 891,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 55.71,
+    "y_psnr_db_min": 54.04,
+    "y_ssim_mean": 0.9983,
+    "quality_frames": 90
+   },
+   "url": "/media/clips/vfr720p/mjpeg_qsv422.mkv",
+   "bytes": 45584125,
+   "mkv_index": {
+    "time_base": "1/1000",
+    "all_offsets_found": true,
+    "pos_exact_count": 0,
+    "pos_delta_hist": {
+     "4": 891
+    }
+   },
+   "sizes_equal_jpeg_seq": true,
+   "pts_adjusted_for_monotonic": 1,
+   "ffprobe": {
+    "frames": 891,
+    "key_frames": 891,
+    "pict_types": {
+     "I": 891
+    },
+    "stream": {
+     "codec_name": "mjpeg",
+     "profile": "Baseline",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1280,
+     "height": 720,
+     "has_b_frames": 0,
+     "pix_fmt": "yuvj422p",
+     "color_range": "pc"
+    }
+   },
+   "keyframe_count": 891
+  },
+  "vfr720p/mjpeg_qsv422.mkv": {
+   "content": "vfr720p",
+   "corpus_set": "c930e_720p_flash",
+   "distinct_source_frames": 891,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 891,
+   "width": 1280,
+   "height": 720,
+   "codec": "mjpeg_qsv 4:2:2 (yuyv422 full range in)",
+   "quality_param": 85,
+   "gop": 1,
+   "jpeg_check": {
+    "jpegs": 891,
+    "pattern_ok": 891,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "decoded_formats": [
+     "yuvj422p"
+    ],
+    "sof0_baseline": 891
+   },
+   "decode_check": {
+    "decoded": 891,
+    "pattern_ok": 891,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 55.71,
+    "y_psnr_db_min": 54.04,
+    "y_ssim_mean": 0.9983,
+    "quality_frames": 90
+   },
+   "kind": "video",
+   "container": "mkv",
+   "url": "/media/clips/vfr720p/mjpeg_qsv422.mkv",
+   "codec_string": "mjpeg",
+   "bytes": 45584125,
+   "video_only_expect_fail": true,
+   "keyframe_count": 891
+  },
+  "vfr1080p/h264_nvenc_intra.mp4": {
+   "kind": "video",
+   "content": "vfr1080p",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "h264_nvenc",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 14,
+   "url": "/media/clips/vfr1080p/h264_nvenc_intra.mp4",
+   "bytes": 109178392,
+   "codec_string": "avc1.640028",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 1200
+    },
+    "first_frame_nal": [
+     6,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "nb_frames": "600"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 27 %, 2 %",
+    "while_open": "2, 33 %, 2 %",
+    "after": "2, 9 %, 1 %"
+   },
+   "encoder_log": [
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 54.49,
+    "y_psnr_db_min": 54.48,
+    "y_ssim_mean": 0.9969,
+    "quality_frames": 60
+   },
+   "keyframe_count": 600
+  },
+  "vfr1080p/h264_nvenc_intra_frag.mp4": {
+   "kind": "video",
+   "content": "vfr1080p",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "h264_nvenc",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 14,
+   "url": "/media/clips/vfr1080p/h264_nvenc_intra_frag.mp4",
+   "bytes": 109249948,
+   "codec_string": "avc1.640028",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 1200
+    },
+    "first_frame_nal": [
+     6,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 27 %, 2 %",
+    "while_open": "2, 33 %, 2 %",
+    "after": "2, 9 %, 1 %"
+   },
+   "encoder_log": [
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "vfr1080p/h264_nvenc_intra.mkv": {
+   "kind": "video",
+   "content": "vfr1080p",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "h264_nvenc",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 14,
+   "url": "/media/clips/vfr1080p/h264_nvenc_intra.mkv",
+   "bytes": 109202760,
+   "codec_string": "avc1.640028",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 1200
+    },
+    "first_frame_nal": [
+     6,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 1
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 27 %, 2 %",
+    "while_open": "2, 33 %, 2 %",
+    "after": "2, 9 %, 1 %"
+   },
+   "encoder_log": [
+    "libav.mjpeg_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "vfr1080p/hevc_nvenc_intra.mp4": {
+   "kind": "video",
+   "content": "vfr1080p",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "hevc_nvenc",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 11,
+   "url": "/media/clips/vfr1080p/hevc_nvenc_intra.mp4",
+   "bytes": 127811824,
+   "codec_string": "hev1.1.6.L120.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv",
+     "nb_frames": "600"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 28 %, 4 %",
+    "while_open": "2, 28 %, 4 %",
+    "after": "2, 5 %, 0 %"
+   },
+   "encoder_log": [
+    "libav.hevc_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 54.92,
+    "y_psnr_db_min": 54.9,
+    "y_ssim_mean": 0.9971,
+    "quality_frames": 60
+   },
+   "keyframe_count": 600
+  },
+  "vfr1080p/hevc_nvenc_intra_frag.mp4": {
+   "kind": "video",
+   "content": "vfr1080p",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "hevc_nvenc",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 11,
+   "url": "/media/clips/vfr1080p/hevc_nvenc_intra_frag.mp4",
+   "bytes": 127883264,
+   "codec_string": "hev1.1.6.L120.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 28 %, 4 %",
+    "while_open": "2, 28 %, 4 %",
+    "after": "2, 5 %, 0 %"
+   },
+   "encoder_log": [
+    "libav.hevc_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "vfr1080p/hevc_nvenc_intra.mkv": {
+   "kind": "video",
+   "content": "vfr1080p",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "hevc_nvenc",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 11,
+   "url": "/media/clips/vfr1080p/hevc_nvenc_intra.mkv",
+   "bytes": 127836093,
+   "codec_string": "hvc1.1.6.L120.90",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 1
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 28 %, 4 %",
+    "while_open": "2, 28 %, 4 %",
+    "after": "2, 5 %, 0 %"
+   },
+   "encoder_log": [
+    "libav.hevc_nvenc: 1 CUDA capable devices found"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "vfr1080p/h264_qsv_intra.mp4": {
+   "kind": "video",
+   "content": "vfr1080p",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "h264_qsv",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 8,
+   "url": "/media/clips/vfr1080p/h264_qsv_intra.mp4",
+   "bytes": 134146863,
+   "codec_string": "avc1.640028",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 600,
+     "7": 600,
+     "8": 600
+    },
+    "first_frame_nal": [
+     7,
+     8,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "nb_frames": "600"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 10 %, 0 %",
+    "while_open": "1, 10 %, 0 %",
+    "after": "1, 10 %, 0 %"
+   },
+   "encoder_log": [
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 40",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 8",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0"
+   ],
+   "decode_check_mp4": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 54.93,
+    "y_psnr_db_min": 54.9,
+    "y_ssim_mean": 0.9972,
+    "quality_frames": 60
+   },
+   "keyframe_count": 600
+  },
+  "vfr1080p/h264_qsv_intra_frag.mp4": {
+   "kind": "video",
+   "content": "vfr1080p",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "h264_qsv",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 8,
+   "url": "/media/clips/vfr1080p/h264_qsv_intra_frag.mp4",
+   "bytes": 134218299,
+   "codec_string": "avc1.640028",
+   "codec_tag": "avc1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 600,
+     "7": 600,
+     "8": 600
+    },
+    "first_frame_nal": [
+     7,
+     8,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "avc1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 10 %, 0 %",
+    "while_open": "1, 10 %, 0 %",
+    "after": "1, 10 %, 0 %"
+   },
+   "encoder_log": [
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 40",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 8",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "vfr1080p/h264_qsv_intra.mkv": {
+   "kind": "video",
+   "content": "vfr1080p",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "h264_qsv",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 8,
+   "url": "/media/clips/vfr1080p/h264_qsv_intra.mkv",
+   "bytes": 134171128,
+   "codec_string": "avc1.640028",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "5": 600,
+     "6": 600,
+     "7": 600,
+     "8": 600
+    },
+    "first_frame_nal": [
+     7,
+     8,
+     6,
+     5
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 1
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "h264",
+     "profile": "High",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 10 %, 0 %",
+    "while_open": "1, 10 %, 0 %",
+    "after": "1, 10 %, 0 %"
+   },
+   "encoder_log": [
+    "libav.h264_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.h264_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.h264_qsv: profile: avc high; level: 40",
+    "libav.h264_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag: closed; IdrInterval: 0",
+    "libav.h264_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.h264_qsv: ICQQuality: 8",
+    "libav.h264_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.h264_qsv: BitrateLimit: ON; MBBRC: ON; ExtBRC: OFF",
+    "libav.h264_qsv: MinQPI: 0; MaxQPI: 0; MinQPP: 0; MaxQPP: 0; MinQPB: 0; MaxQPB: 0"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "vfr1080p/hevc_qsv_intra.mp4": {
+   "kind": "video",
+   "content": "vfr1080p",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "hevc_qsv",
+   "container": "mp4",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/vfr1080p/hevc_qsv_intra.mp4",
+   "bytes": 110780807,
+   "codec_string": "hev1.1.2.H120.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "32": 600,
+     "33": 600,
+     "34": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     32,
+     33,
+     34,
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "+faststart"
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv",
+     "nb_frames": "600"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 12 %, 0 %",
+    "while_open": "1, 4 %, 0 %",
+    "after": "1, 10 %, 0 %"
+   },
+   "encoder_log": [
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 296",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 17",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51"
+   ],
+   "decode_check_mp4": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 55.01,
+    "y_psnr_db_min": 54.99,
+    "y_ssim_mean": 0.9972,
+    "quality_frames": 60
+   },
+   "keyframe_count": 600
+  },
+  "vfr1080p/hevc_qsv_intra_frag.mp4": {
+   "kind": "video",
+   "content": "vfr1080p",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "hevc_qsv",
+   "container": "mp4",
+   "fragmented": true,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/vfr1080p/hevc_qsv_intra_frag.mp4",
+   "bytes": 110852367,
+   "codec_string": "hev1.1.2.H120.90",
+   "codec_tag": "hev1",
+   "time_base": "1/90000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 600,
+   "pos_delta_hist": {
+    "0": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "32": 600,
+     "33": 600,
+     "34": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     32,
+     33,
+     34,
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "frag_keyframe+empty_moov+default_base_moof",
+    "pts_adjusted_for_monotonic": 0
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "hev1",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 12 %, 0 %",
+    "while_open": "1, 4 %, 0 %",
+    "after": "1, 10 %, 0 %"
+   },
+   "encoder_log": [
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 296",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 17",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "vfr1080p/hevc_qsv_intra.mkv": {
+   "kind": "video",
+   "content": "vfr1080p",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 600,
+   "frames_encoded": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "hevc_qsv",
+   "container": "mkv",
+   "fragmented": false,
+   "gop": 1,
+   "quality_param": 17,
+   "url": "/media/clips/vfr1080p/hevc_qsv_intra.mkv",
+   "bytes": 110805183,
+   "codec_string": "hvc1.1.2.H120.90",
+   "codec_tag": "\u0000\u0000\u0000\u0000",
+   "time_base": "1/1000",
+   "decode_order_equals_pts_order": true,
+   "all_offsets_found": true,
+   "pos_exact_count": 0,
+   "pos_delta_hist": {
+    "4": 600
+   },
+   "nal_check": {
+    "frames": 600,
+    "frames_with_idr": 600,
+    "frames_with_non_irap_vcl": 0,
+    "frames_flagged_key": 600,
+    "nal_type_hist": {
+     "19": 600,
+     "32": 600,
+     "33": 600,
+     "34": 600,
+     "39": 600
+    },
+    "first_frame_nal": [
+     32,
+     33,
+     34,
+     39,
+     19
+    ]
+   },
+   "mux_flags": {
+    "mux": "matroska",
+    "pts_adjusted_for_monotonic": 1
+   },
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "hevc",
+     "profile": "Main",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv"
+    }
+   },
+   "nvidia_smi": {
+    "before": "1, 12 %, 0 %",
+    "while_open": "1, 4 %, 0 %",
+    "after": "1, 10 %, 0 %"
+   },
+   "encoder_log": [
+    "libav.hevc_qsv: Initialized an internal MFX session using hardware accelerated implementation",
+    "libav.hevc_qsv: Using the intelligent constant quality (ICQ) ratecontrol method",
+    "libav.hevc_qsv: profile: hevc main; level: 296",
+    "libav.hevc_qsv: GopPicSize: 1; GopRefDist: 1; GopOptFlag:; IdrInterval: 1",
+    "libav.hevc_qsv: TargetUsage: 4; RateControlMethod: ICQ",
+    "libav.hevc_qsv: ICQQuality: 17",
+    "libav.hevc_qsv: IntRefType: 0; IntRefCycleSize: 0; IntRefQPDelta: 0",
+    "libav.hevc_qsv: BitrateLimit: unknown; MBBRC: unknown; ExtBRC: OFF",
+    "libav.hevc_qsv: MinQPI: 1; MaxQPI: 51; MinQPP: 1; MaxQPP: 51; MinQPB: 1; MaxQPB: 51"
+   ],
+   "decode_check_mp4": "same packets as mp4",
+   "keyframe_count": 600
+  },
+  "vfr1080p/jpeg_seq": {
+   "kind": "mjpeg",
+   "content": "vfr1080p",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "mjpeg_qsv 4:2:2 (yuyv422 full range in)",
+   "quality_param": 90,
+   "gop": 1,
+   "jpeg_check": {
+    "jpegs": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "decoded_formats": [
+     "yuvj422p"
+    ],
+    "sof0_baseline": 600
+   },
+   "decode_check": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 54.55,
+    "y_psnr_db_min": 54.52,
+    "y_ssim_mean": 0.9975,
+    "quality_frames": 60
+   },
+   "url": "/media/clips/vfr1080p/jpeg_qsv422/clip.mjpeg",
+   "bytes": 124162572,
+   "keyframe_count": 600
+  },
+  "vfr1080p/jpeg_in_mkv": {
+   "kind": "mjpeg",
+   "content": "vfr1080p",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "mjpeg_qsv 4:2:2 (yuyv422 full range in)",
+   "quality_param": 90,
+   "gop": 1,
+   "jpeg_check": {
+    "jpegs": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "decoded_formats": [
+     "yuvj422p"
+    ],
+    "sof0_baseline": 600
+   },
+   "decode_check": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 54.55,
+    "y_psnr_db_min": 54.52,
+    "y_ssim_mean": 0.9975,
+    "quality_frames": 60
+   },
+   "url": "/media/clips/vfr1080p/mjpeg_qsv422.mkv",
+   "bytes": 124189970,
+   "mkv_index": {
+    "time_base": "1/1000",
+    "all_offsets_found": true,
+    "pos_exact_count": 0,
+    "pos_delta_hist": {
+     "4": 600
+    }
+   },
+   "sizes_equal_jpeg_seq": true,
+   "pts_adjusted_for_monotonic": 1,
+   "ffprobe": {
+    "frames": 600,
+    "key_frames": 600,
+    "pict_types": {
+     "I": 600
+    },
+    "stream": {
+     "codec_name": "mjpeg",
+     "profile": "Baseline",
+     "codec_tag_string": "[0][0][0][0]",
+     "width": 1920,
+     "height": 1080,
+     "has_b_frames": 0,
+     "pix_fmt": "yuvj422p",
+     "color_range": "pc"
+    }
+   },
+   "keyframe_count": 600
+  },
+  "vfr1080p/mjpeg_qsv422.mkv": {
+   "content": "vfr1080p",
+   "corpus_set": "c922_1080p",
+   "distinct_source_frames": 19,
+   "vfr": true,
+   "nominal_fps": 30,
+   "frames": 600,
+   "width": 1920,
+   "height": 1080,
+   "codec": "mjpeg_qsv 4:2:2 (yuyv422 full range in)",
+   "quality_param": 90,
+   "gop": 1,
+   "jpeg_check": {
+    "jpegs": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "decoded_formats": [
+     "yuvj422p"
+    ],
+    "sof0_baseline": 600
+   },
+   "decode_check": {
+    "decoded": 600,
+    "pattern_ok": 600,
+    "pattern_wrong": 0,
+    "pattern_unreadable": 0,
+    "y_psnr_db_mean": 54.55,
+    "y_psnr_db_min": 54.52,
+    "y_ssim_mean": 0.9975,
+    "quality_frames": 60
+   },
+   "kind": "video",
+   "container": "mkv",
+   "url": "/media/clips/vfr1080p/mjpeg_qsv422.mkv",
+   "codec_string": "mjpeg",
+   "bytes": 124189970,
+   "video_only_expect_fail": true,
+   "keyframe_count": 600
+  }
+ }
+}

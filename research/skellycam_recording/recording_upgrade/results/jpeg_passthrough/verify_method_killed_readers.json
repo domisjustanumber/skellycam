@@ -1,0 +1,137 @@
+{
+ "meta": {
+  "opencv": "4.12.0",
+  "writer": "PyAV 19.0.2, pyav19_recheck.py --child (os._exit after 600 mux calls)",
+  "set": "c930e_720p_flash",
+  "note": "functional only; no timing"
+ },
+ "files": {
+  "killed_fmp4_1s_tb_us.mp4": {
+   "bytes": 31981596,
+   "cv2": {
+    "opened": true,
+    "frame_count_prop": 582,
+    "frames_read": 579
+   },
+   "freemocap": {
+    "frame_count": 582,
+    "error": null,
+    "reads": [
+     {
+      "k": 0,
+      "ok": true,
+      "match_cv2_sequential": true,
+      "error": null
+     },
+     {
+      "k": 1,
+      "ok": true,
+      "match_cv2_sequential": true,
+      "error": null
+     },
+     {
+      "k": 291,
+      "ok": true,
+      "match_cv2_sequential": true,
+      "error": null
+     },
+     {
+      "k": 581,
+      "ok": false,
+      "match_cv2_sequential": null,
+      "error": "RuntimeError: Failed to grab frame while seeking to 581"
+     }
+    ]
+   }
+  },
+  "killed_fmp4_perframe.mp4": {
+   "bytes": 33030188,
+   "cv2": {
+    "opened": true,
+    "frame_count_prop": 597,
+    "frames_read": 596
+   },
+   "freemocap": {
+    "frame_count": 597,
+    "error": null,
+    "reads": [
+     {
+      "k": 0,
+      "ok": true,
+      "match_cv2_sequential": true,
+      "error": null
+     },
+     {
+      "k": 1,
+      "ok": true,
+      "match_cv2_sequential": true,
+      "error": null
+     },
+     {
+      "k": 298,
+      "ok": true,
+      "match_cv2_sequential": true,
+      "error": null
+     },
+     {
+      "k": 596,
+      "ok": false,
+      "match_cv2_sequential": null,
+      "error": "RuntimeError: Failed to retrieve frame 596"
+     }
+    ]
+   }
+  },
+  "killed_mkv.mkv": {
+   "bytes": 33030144,
+   "cv2": {
+    "opened": true,
+    "frame_count_prop": -276701161105643264,
+    "frames_read": 597
+   },
+   "freemocap": {
+    "frame_count": null,
+    "error": "ValidationError: 1 validation error for VideoMetadata\n  Value error, Invalid frame range: start_frame=0, end_frame=-276701161105643264 [type=value_error, input_",
+    "reads": []
+   }
+  },
+  "killed_nut.nut": {
+   "bytes": 33030144,
+   "cv2": {
+    "opened": true,
+    "frame_count_prop": 595,
+    "frames_read": 598
+   },
+   "freemocap": {
+    "frame_count": 595,
+    "error": null,
+    "reads": [
+     {
+      "k": 0,
+      "ok": true,
+      "match_cv2_sequential": true,
+      "error": null
+     },
+     {
+      "k": 1,
+      "ok": true,
+      "match_cv2_sequential": true,
+      "error": null
+     },
+     {
+      "k": 297,
+      "ok": true,
+      "match_cv2_sequential": true,
+      "error": null
+     },
+     {
+      "k": 594,
+      "ok": true,
+      "match_cv2_sequential": true,
+      "error": null
+     }
+    ]
+   }
+  }
+ }
+}

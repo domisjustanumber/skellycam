@@ -1,0 +1,533 @@
+FREEMOCAP_PORT=53117
+[34m[34m└>>[0m [34mRegistered proactor ConnectionResetError suppressor on event loop[0m |  DEBUG |  2785.853ms |  freemocap.utilities.asyncio_exception_handler.suppress_proactor_connection_reset():30 |  2026-11-09T09:46:19.158 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mHeartbeat thread started[0m |  DEBUG |  1.003ms |  skellycam.core.ipc.process_management.worker_registry.start_heartbeat():67 |  2026-11-09T09:46:19.160 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mChild monitor thread started[0m |  DEBUG |  1.001ms |  skellycam.core.ipc.process_management.worker_registry.start_heartbeat():75 |  2026-11-09T09:46:19.161 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mRegistering shutdown signal 2: (signal.SIGINT)[0m |  TRACE |  0.999ms |  __main__.main():78 |  2026-11-09T09:46:19.161 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mRegistering shutdown signal 15: (signal.SIGTERM)[0m |  TRACE |  0.000ms |  __main__.main():78 |  2026-11-09T09:46:19.162 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m
+Registering WebSocket routes:[0m |  API |  100.092ms |  freemocap.app.app._register_routes():404 |  2026-11-09T09:46:19.262 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registered WebSocket route: /websocket/connect[0m |  API |  1.007ms |  freemocap.app.app._register_routes():407 |  2026-11-09T09:46:19.263 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m
+Registering App level routes:[0m |  API |  0.000ms |  freemocap.app.app._register_routes():410 |  2026-11-09T09:46:19.263 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registered: /health with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():414 |  2026-11-09T09:46:19.263 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registered: /shutdown with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():414 |  2026-11-09T09:46:19.263 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m
+Registering FreeMoCap endpoints:[0m |  API |  1.000ms |  freemocap.app.app._register_routes():416 |  2026-11-09T09:46:19.263 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/realtime/apply` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.264 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/realtime/all/close` with methods: [DELETE][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.264 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/realtime/reset-skeleton-fitter` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.264 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/calibration/recording/start` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.264 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/calibration/recording/stop` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.264 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/calibration/solver-methods/pyceres-availability` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.264 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/calibration/recording/calibrate` with methods: [POST][0m |  API |  0.998ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.265 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/mocap/recording/start` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.265 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/mocap/recording/stop` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.265 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/mocap/recording/check_sync` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.265 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/mocap/recording/synchronize` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.265 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/mocap/recording/synchronize/{job_id}` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.265 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/mocap/recording/import` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.265 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/mocap/recording/process` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.265 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/posthoc/pipeline/{pipeline_id}` with methods: [DELETE][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.265 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/posthoc/pipeline` with methods: [DELETE][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.265 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/blender/detect` with methods: [GET][0m |  API |  1.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.266 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/blender/addon/install` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.266 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/blender/export` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.266 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/blender/open` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.266 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/ffmpeg/detect` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.266 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/playback/viewer` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.266 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/playback/parquet` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.266 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/playback/recordings` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.266 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/playback/{recording_id}/status` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.266 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/playback/{recording_id}/videos` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.266 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/playback/{recording_id}/videos/{video_id}` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.266 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/playback/{recording_id}/parquet` with methods: [GET][0m |  API |  1.003ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.267 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/playback/{recording_id}/calibration` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.267 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/playback/{recording_id}/tracker-schema` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.267 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/playback/{recording_id}/timestamps` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.267 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/playback/{recording_id}/videos/{video_id}/timestamps` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.267 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/playback/{recording_id}/bundle` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.267 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/freemocap/telemetry/track` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():420 |  2026-11-09T09:46:19.267 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m
+Registering SkellyCam endpoints:[0m |  API |  0.000ms |  freemocap.app.app._register_routes():423 |  2026-11-09T09:46:19.267 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/skellycam/camera/detect` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():426 |  2026-11-09T09:46:19.267 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/skellycam/camera/microphone/detect` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():426 |  2026-11-09T09:46:19.267 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/skellycam/camera/group/apply` with methods: [POST][0m |  API |  0.000ms |  freemocap.app.app._register_routes():426 |  2026-11-09T09:46:19.267 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/skellycam/camera/group/all/record/start` with methods: [POST][0m |  API |  0.997ms |  freemocap.app.app._register_routes():426 |  2026-11-09T09:46:19.268 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/skellycam/camera/group/all/record/stop` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():426 |  2026-11-09T09:46:19.268 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/skellycam/camera/group/close/all` with methods: [DELETE][0m |  API |  0.000ms |  freemocap.app.app._register_routes():426 |  2026-11-09T09:46:19.268 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92m	Registering route: `/skellycam/camera/group/all/pause_unpause` with methods: [GET][0m |  API |  0.000ms |  freemocap.app.app._register_routes():426 |  2026-11-09T09:46:19.268 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mAdding middleware...[0m |  DEBUG |  0.000ms |  freemocap.api.middleware.add_middleware.add_middleware():12 |  2026-11-09T09:46:19.268 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mStarting server on localhost:53117[0m |  INFO |  1.002ms |  __main__.main():99 |  2026-11-09T09:46:19.269 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92mFreeMoCap API starting...[0m |  API |  32.789ms |  freemocap.app.app.app_lifespan():337 |  2026-11-09T09:46:19.302 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96m
+  System info:
+    OS:          Windows 11 (10.0.26300)
+    CPU:         Intel64 Family 6 Model 183 Stepping 1, GenuineIntel -- 20 physical / 28 logical cores @ 3.40 GHz
+    RAM:         68.4 GB total, 44.1 GB available
+    Python:      3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]
+    FreeMoCap:   v2.0.0-alpha.25
+
+    GPU:
+      GPU 0: NVIDIA GeForce RTX 3070
+        VRAM:                8.0 GB
+        Driver Version:      610.88
+        Compute Capability:  8.6
+
+    ONNX Runtime:
+      Version:   1.26.0
+      Providers: TensorrtExecutionProvider, CUDAExecutionProvider, CPUExecutionProvider
+      GPU acceleration:       Available (CUDAExecutionProvider)
+
+    Skelly Packages:
+      skellycam=v2.0.0-alpha.6
+      skellytracker=v2024.09.1019
+      skellyforge=v2024.12.1009
+      skellylogs=n/a
+      skellypings=0.1.0
+      freemocap_blender_addon=v2026.04.1041[0m |  INFO |  40.556ms |  freemocap.app.app._log_system_info():310 |  2026-11-09T09:46:19.342 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mBase folder: C:\Users\Dom\freemocap_data[0m |  INFO |  0.000ms |  freemocap.app.app.app_lifespan():343 |  2026-11-09T09:46:19.342 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mSkellypings telemetry initializing: server_url=https://skellypings-401698866387.northamerica-northeast1.run.app, secret=NOT CONFIGURED (events will be unverified), app_version=v2.0.0-alpha.25[0m |  INFO |  1.000ms |  freemocap.system.telemetry.telemetry.initialize_telemetry():58 |  2026-11-09T09:46:19.343 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mSkellypings user_id_file: C:\Users\Dom\freemocap_data\telemetry_uid[0m |  INFO |  0.000ms |  freemocap.system.telemetry.telemetry.initialize_telemetry():66 |  2026-11-09T09:46:19.343 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mSkellypings sending 'app_opened' event with payload: {'os': 'Windows', 'os_version': '10.0.26300', 'os_release': '11', 'architecture': 'AMD64', 'python_version': '3.12.13', 'cpu_count_physical': 20, 'cpu_count_logical': 28, 'ram_total_gb': 63.7}[0m |  INFO |  1.001ms |  freemocap.system.telemetry.telemetry.initialize_telemetry():77 |  2026-11-09T09:46:19.344 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mSkellypings telemetry initialized (user_id=<redacted>, flush_interval=60.0s)[0m |  INFO |  0.000ms |  freemocap.system.telemetry.telemetry.initialize_telemetry():79 |  2026-11-09T09:46:19.344 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[95m[95m└>>[0m [95mFreeMoCap API v2.0.0-alpha.25 started successfully 💀✨
+Swagger API docs: http://localhost:53117/docs[0m |  SUCCESS |  1.000ms |  freemocap.app.app.app_lifespan():350 |  2026-11-09T09:46:19.344 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92mReceived request: GET http://localhost:53117/health. No body.[0m |  API |  301.488ms |  freemocap.api.middleware.add_middleware.log_requests():43 |  2026-11-09T09:46:19.647 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92mHandled Request: http://localhost:53117/health processed in 0.002327 seconds and returned status code: 200[0m |  API |  0.000ms |  freemocap.api.middleware.add_middleware.log_requests():75 |  2026-11-09T09:46:19.647 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mDetermined OpenCV backend: DSHOW (ID: 700)[0m |  DEBUG |  26.005ms |  skellycam.core.camera.determine_backend.determine_opencv_camera_backend():69 |  2026-11-09T09:46:19.673 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;100;255mTID:9876:AnyIO worker thread[0m[0m
+[34m[34m└>>[0m [34mDetected 4 cameras:
+   index  name                      vendor_id    product_id  path                                                                                               backend_id  backend_name    camera_id
+-------  ----------------------  -----------  ------------  -----------------------------------------------------------------------------------------------  ------------  --------------  -----------
+      0  USB Camera                    19530         19029  \\?\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global           700  DSHOW           b395
+      1  c922 Pro Stream Webcam         1133          2140  \\?\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global           700  DSHOW           1c81
+      2  USB Video Device               5426          3589  \\?\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global           700  DSHOW           fbf5
+      3  Logitech Webcam C930e          1133          2115  \\?\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global           700  DSHOW           0100
+)[0m |  DEBUG |  5.506ms |  skellycam.core.device_detection.detect_cameras_devices.detect_available_cameras():108 |  2026-11-09T09:46:19.678 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;100;255mTID:9876:AnyIO worker thread[0m[0m
+[92m[92m└>>[0m [92mReceived request: POST http://localhost:53117/skellycam/camera/detect. No body.[0m |  API |  0.000ms |  freemocap.api.middleware.add_middleware.log_requests():43 |  2026-11-09T09:46:19.678 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92mHandled Request: http://localhost:53117/skellycam/camera/detect processed in 0.030586 seconds and returned status code: 200[0m |  API |  0.000ms |  freemocap.api.middleware.add_middleware.log_requests():75 |  2026-11-09T09:46:19.678 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92mReceived request: GET http://localhost:53117/skellycam/camera/microphone/detect. No body.[0m |  API |  2.667ms |  freemocap.api.middleware.add_middleware.log_requests():43 |  2026-11-09T09:46:19.681 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92mHandled Request: http://localhost:53117/skellycam/camera/microphone/detect processed in 0.001480 seconds and returned status code: 200[0m |  API |  0.000ms |  freemocap.api.middleware.add_middleware.log_requests():75 |  2026-11-09T09:46:19.681 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mRequest to http://localhost:53117/skellycam/camera/group/apply: {"camera_configs":{"0100":{"camera_id":"0100","camera_index":3,"camera_name":"Logitech Webcam C930e","resolution":{"width":1280,"height":720}},"fbf5":{"camera_id":"fbf5","camera_index":2,"camera_name":"USB Video Device","resolution":{"width":1280,"height":720}},"1c81":{"camera_id":"1c81","camera_index":1,"camera_name":"c922 Pro Stream Webcam","resolution":{"width":1280,"height":720}}}}[0m |  INFO |  1.999ms |  skellycam.api.http.cameras.camera_router.camera_group_apply_post_endpoint():120 |  2026-11-09T09:46:19.683 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mStarting camera manager process with 3 cameras[0m |  INFO |  1.002ms |  skellycam.core.camera.camera_manager.create():35 |  2026-11-09T09:46:19.683 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mSubscribed to topic FRAMERATE with 1 subscriptions[0m |  TRACE |  1.000ms |  skellycam.core.ipc.pubsub.pubsub_manager.get_subscription():52 |  2026-11-09T09:46:19.685 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mStarting camera group ID: 93ecbe with cameras: ['0100', 'fbf5', '1c81'][0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_group.start():106 |  2026-11-09T09:46:19.685 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mStarting camera processes...[0m |  INFO |  1.005ms |  skellycam.core.camera.camera_manager.start():69 |  2026-11-09T09:46:19.685 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mManagedProcess Camera3-0100-Worker (PID: 6328) started[0m |  DEBUG |  0.000ms |  skellycam.core.ipc.process_management.managed_worker._process_entry_point():198 |  2026-11-09T09:46:20.543 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+Exception in thread LogQueueConsumer:
+Traceback (most recent call last):
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\threading.py", line 1075, in _bootstrap_inner
+[37m[37m└>>[0m [37mCamera 0100 worker started[0m |  TRACE |  1.088ms |  skellycam.core.camera.opencv.opencv_camera_worker_method.opencv_camera_worker_method():28 |  2026-11-09T09:46:20.543 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+    self.run()
+  File "C:\Users\Dom\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "<@beartype(freemocap.system.logging.log_queue_consumer._consume_log_queue) at 0x2d4abcd9080>", line 12, in _consume_log_queue
+  File "C:\Users\Dom\GitHub\freemocap\freemocap\freemocap\system\logging\log_queue_consumer.py", line 52, in _consume_log_queue
+    _write_worker_record_to_main_file(log_entry)
+  File "<@beartype(freemocap.system.logging.log_queue_consumer._write_worker_record_to_main_file) at 0x2d4abcd8e00>", line 32, in _write_worker_record_to_main_file
+  File "C:\Users\Dom\GitHub\freemocap\freemocap\freemocap\system\logging\log_queue_consumer.py", line 23, in _write_worker_record_to_main_file
+    log_model = LogRecordModel.from_dict(log_entry)
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'LogRecordModel' has no attribute 'from_dict'
+[34m[34m└>>[0m [34mDetermined OpenCV backend: DSHOW (ID: 700)[0m |  DEBUG |  19.075ms |  skellycam.core.camera.determine_backend.determine_opencv_camera_backend():69 |  2026-11-09T09:46:20.563 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[34m[34m└>>[0m [34mAwaiting extracted configs so we can create shared memory...[0m |  DEBUG |  933.582ms |  skellycam.core.camera_group.camera_group.start():108 |  2026-11-09T09:46:20.619 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mManagedProcess Camera2-fbf5-Worker (PID: 32308) started[0m |  DEBUG |  1.001ms |  skellycam.core.ipc.process_management.managed_worker._process_entry_point():198 |  2026-11-09T09:46:20.868 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[37m[37m└>>[0m [37mCamera fbf5 worker started[0m |  TRACE |  0.000ms |  skellycam.core.camera.opencv.opencv_camera_worker_method.opencv_camera_worker_method():28 |  2026-11-09T09:46:20.869 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[34m[34m└>>[0m [34mDetermined OpenCV backend: DSHOW (ID: 700)[0m |  DEBUG |  20.526ms |  skellycam.core.camera.determine_backend.determine_opencv_camera_backend():69 |  2026-11-09T09:46:20.890 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[34m[34m└>>[0m [34mManagedProcess Camera1-1c81-Worker (PID: 32824) started[0m |  DEBUG |  0.506ms |  skellycam.core.ipc.process_management.managed_worker._process_entry_point():198 |  2026-11-09T09:46:21.174 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[37m[37m└>>[0m [37mCamera 1c81 worker started[0m |  TRACE |  0.000ms |  skellycam.core.camera.opencv.opencv_camera_worker_method.opencv_camera_worker_method():28 |  2026-11-09T09:46:21.174 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[34m[34m└>>[0m [34mDetermined OpenCV backend: DSHOW (ID: 700)[0m |  DEBUG |  17.007ms |  skellycam.core.camera.determine_backend.determine_opencv_camera_backend():69 |  2026-11-09T09:46:21.191 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera 1: backend did not accept CAP_PROP_BUFFERSIZE=1 (this is normal for some backends)[0m |  DEBUG |  1964.462ms |  skellycam.core.camera.opencv.opencv_helpers.create_cv2_video_capture.create_cv2_video_capture():63 |  2026-11-09T09:46:23.155 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[96m[96m└>>[0m [96mApplying initial configuration to Camera 1:
+
+	BASE CONFIG:
+		camera_id (str): 1c81 
+		camera_index (int): 1 
+		camera_name (str): c922 Pro Stream Webcam 
+		use_this_camera (bool): True 
+		resolution (dict): {'height': 720, 'width': 1280} 
+		color_channels (int): 3 
+		pixel_format (str): RGB 
+		exposure_mode (str): MANUAL 
+		exposure (int): -7 
+		framerate (float): -1.0 
+		rotation (int): -1 
+		capture_fourcc (str): MJPG 
+		writer_fourcc (str): X264 
+	COMPUTED:
+		aspect_ratio(w/h): 1.778
+		orientation: OrientationTypes.LANDSCAPE
+		image_shape: (720, 1280, 3)
+		image_size: 2700.000KB
+[0m |  INFO |  300.818ms |  skellycam.core.camera.opencv.opencv_helpers.opencv_apply_config.apply_camera_configuration():56 |  2026-11-09T09:46:23.455 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera 3: backend did not accept CAP_PROP_BUFFERSIZE=1 (this is normal for some backends)[0m |  DEBUG |  2962.534ms |  skellycam.core.camera.opencv.opencv_helpers.create_cv2_video_capture.create_cv2_video_capture():63 |  2026-11-09T09:46:23.526 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[96m[96m└>>[0m [96mApplying initial configuration to Camera 3:
+
+	BASE CONFIG:
+		camera_id (str): 0100 
+		camera_index (int): 3 
+		camera_name (str): Logitech Webcam C930e 
+		use_this_camera (bool): True 
+		resolution (dict): {'height': 720, 'width': 1280} 
+		color_channels (int): 3 
+		pixel_format (str): RGB 
+		exposure_mode (str): MANUAL 
+		exposure (int): -7 
+		framerate (float): -1.0 
+		rotation (int): -1 
+		capture_fourcc (str): MJPG 
+		writer_fourcc (str): X264 
+	COMPUTED:
+		aspect_ratio(w/h): 1.778
+		orientation: OrientationTypes.LANDSCAPE
+		image_shape: (720, 1280, 3)
+		image_size: 2700.000KB
+[0m |  INFO |  218.908ms |  skellycam.core.camera.opencv.opencv_helpers.opencv_apply_config.apply_camera_configuration():56 |  2026-11-09T09:46:23.745 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[37m[37m└>>[0m [37mCamera 1 configuration applied, extracted config: 
+	BASE CONFIG:
+		camera_id (str): 1c81 
+		camera_index (int): 1 
+		camera_name (str): c922 Pro Stream Webcam 
+		use_this_camera (bool): True 
+		resolution (dict): {'height': 720, 'width': 1280} 
+		color_channels (int): 3 
+		pixel_format (str): RGB 
+		exposure_mode (str): MANUAL 
+		exposure (int): -7 
+		framerate (float): 0.0 
+		rotation (int): -1 
+		capture_fourcc (str): MJPG 
+		writer_fourcc (str): X264 
+	COMPUTED:
+		aspect_ratio(w/h): 1.778
+		orientation: OrientationTypes.LANDSCAPE
+		image_shape: (720, 1280, 3)
+		image_size: 2700.000KB
+[0m |  TRACE |  1577.742ms |  skellycam.core.camera.opencv.opencv_helpers.opencv_apply_config.apply_camera_configuration():97 |  2026-11-09T09:46:25.034 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[96m[96m└>>[0m [96mCreated `cv2.VideoCapture` object for Camera: 1[0m |  INFO |  0.000ms |  skellycam.core.camera.opencv.opencv_helpers.create_cv2_video_capture.create_cv2_video_capture():87 |  2026-11-09T09:46:25.034 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[37m[37m└>>[0m [37mPublishing message of type <class 'skellycam.core.ipc.pubsub.pubsub_topics.DeviceExtractedConfigMessage'> to 1 subscribers[0m |  TRACE |  0.000ms |  skellycam.core.ipc.pubsub.pubsub_abcs.publish():49 |  2026-11-09T09:46:25.034 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera 1c81 connected, awaiting shm message...[0m |  DEBUG |  0.000ms |  skellycam.core.camera.opencv.opencv_helpers.setup_opencv_camera_loop.setup_opencv_camera_loop():43 |  2026-11-09T09:46:25.034 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[37m[37m└>>[0m [37mCamera 3 configuration applied, extracted config: 
+	BASE CONFIG:
+		camera_id (str): 0100 
+		camera_index (int): 3 
+		camera_name (str): Logitech Webcam C930e 
+		use_this_camera (bool): True 
+		resolution (dict): {'height': 720, 'width': 1280} 
+		color_channels (int): 3 
+		pixel_format (str): RGB 
+		exposure_mode (str): MANUAL 
+		exposure (int): -5 
+		framerate (float): 0.0 
+		rotation (int): -1 
+		capture_fourcc (str): MJPG 
+		writer_fourcc (str): X264 
+	COMPUTED:
+		aspect_ratio(w/h): 1.778
+		orientation: OrientationTypes.LANDSCAPE
+		image_shape: (720, 1280, 3)
+		image_size: 2700.000KB
+[0m |  TRACE |  2102.657ms |  skellycam.core.camera.opencv.opencv_helpers.opencv_apply_config.apply_camera_configuration():97 |  2026-11-09T09:46:25.848 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[96m[96m└>>[0m [96mCreated `cv2.VideoCapture` object for Camera: 3[0m |  INFO |  0.000ms |  skellycam.core.camera.opencv.opencv_helpers.create_cv2_video_capture.create_cv2_video_capture():87 |  2026-11-09T09:46:25.848 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[37m[37m└>>[0m [37mPublishing message of type <class 'skellycam.core.ipc.pubsub.pubsub_topics.DeviceExtractedConfigMessage'> to 1 subscribers[0m |  TRACE |  0.508ms |  skellycam.core.ipc.pubsub.pubsub_abcs.publish():49 |  2026-11-09T09:46:25.848 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera 0100 connected, awaiting shm message...[0m |  DEBUG |  0.000ms |  skellycam.core.camera.opencv.opencv_helpers.setup_opencv_camera_loop.setup_opencv_camera_loop():43 |  2026-11-09T09:46:25.848 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera 2: backend did not accept CAP_PROP_BUFFERSIZE=1 (this is normal for some backends)[0m |  DEBUG |  5157.772ms |  skellycam.core.camera.opencv.opencv_helpers.create_cv2_video_capture.create_cv2_video_capture():63 |  2026-11-09T09:46:26.048 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[96m[96m└>>[0m [96mApplying initial configuration to Camera 2:
+
+	BASE CONFIG:
+		camera_id (str): fbf5 
+		camera_index (int): 2 
+		camera_name (str): USB Video Device 
+		use_this_camera (bool): True 
+		resolution (dict): {'height': 720, 'width': 1280} 
+		color_channels (int): 3 
+		pixel_format (str): RGB 
+		exposure_mode (str): MANUAL 
+		exposure (int): -7 
+		framerate (float): -1.0 
+		rotation (int): -1 
+		capture_fourcc (str): MJPG 
+		writer_fourcc (str): X264 
+	COMPUTED:
+		aspect_ratio(w/h): 1.778
+		orientation: OrientationTypes.LANDSCAPE
+		image_shape: (720, 1280, 3)
+		image_size: 2700.000KB
+[0m |  INFO |  278.454ms |  skellycam.core.camera.opencv.opencv_helpers.opencv_apply_config.apply_camera_configuration():56 |  2026-11-09T09:46:26.326 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[37m[37m└>>[0m [37mCamera 2 configuration applied, extracted config: 
+	BASE CONFIG:
+		camera_id (str): fbf5 
+		camera_index (int): 2 
+		camera_name (str): USB Video Device 
+		use_this_camera (bool): True 
+		resolution (dict): {'height': 720, 'width': 1280} 
+		color_channels (int): 3 
+		pixel_format (str): RGB 
+		exposure_mode (str): MANUAL 
+		exposure (int): -7 
+		framerate (float): 0.0 
+		rotation (int): -1 
+		capture_fourcc (str): MJPG 
+		writer_fourcc (str): X264 
+	COMPUTED:
+		aspect_ratio(w/h): 1.778
+		orientation: OrientationTypes.LANDSCAPE
+		image_shape: (720, 1280, 3)
+		image_size: 2700.000KB
+[0m |  TRACE |  3355.131ms |  skellycam.core.camera.opencv.opencv_helpers.opencv_apply_config.apply_camera_configuration():97 |  2026-11-09T09:46:29.681 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[96m[96m└>>[0m [96mCreated `cv2.VideoCapture` object for Camera: 2[0m |  INFO |  0.000ms |  skellycam.core.camera.opencv.opencv_helpers.create_cv2_video_capture.create_cv2_video_capture():87 |  2026-11-09T09:46:29.681 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[37m[37m└>>[0m [37mPublishing message of type <class 'skellycam.core.ipc.pubsub.pubsub_topics.DeviceExtractedConfigMessage'> to 1 subscribers[0m |  TRACE |  0.000ms |  skellycam.core.ipc.pubsub.pubsub_abcs.publish():49 |  2026-11-09T09:46:29.681 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera fbf5 connected, awaiting shm message...[0m |  DEBUG |  1.000ms |  skellycam.core.camera.opencv.opencv_helpers.setup_opencv_camera_loop.setup_opencv_camera_loop():43 |  2026-11-09T09:46:29.682 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[37m[37m└>>[0m [37mPublishing message of type <class 'skellycam.core.ipc.pubsub.pubsub_topics.SetShmMessage'> to 3 subscribers[0m |  TRACE |  9242.404ms |  skellycam.core.ipc.pubsub.pubsub_abcs.publish():49 |  2026-11-09T09:46:29.862 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mCreating camera group with ID: 93ecbe and cameras: ['0100', 'fbf5', '1c81'][0m |  INFO |  1.002ms |  skellycam.core.camera_group.camera_group_manager.create_and_start_camera_group():67 |  2026-11-09T09:46:29.863 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92mReceived request: POST http://localhost:53117/skellycam/camera/group/apply. Body:
+{
+  "camera_configs": {
+    "0100": {
+      "camera_id": "0100",
+      "camera_index": 3,
+      "camera_name": "Logitech Webcam C930e",
+      "resolution": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    "fbf5": {
+      "camera_id": "fbf5",
+      "camera_index": 2,
+      "camera_name": "USB Video Device",
+      "resolution": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    "1c81": {
+      "camera_id": "1c81",
+      "camera_index": 1,
+      "camera_name": "c922 Pro Stream Webcam",
+      "resolution": {
+        "width": 1280,
+        "height": 720
+      }
+    }
+  }
+}[0m |  API |  0.997ms |  freemocap.api.middleware.add_middleware.log_requests():43 |  2026-11-09T09:46:29.864 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92mHandled Request: http://localhost:53117/skellycam/camera/group/apply processed in 10.181410 seconds and returned status code: 200[0m |  API |  0.000ms |  freemocap.api.middleware.add_middleware.log_requests():75 |  2026-11-09T09:46:29.864 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mCreating camera shared memory for camera 0100...[0m |  DEBUG |  4018.331ms |  skellycam.core.camera.opencv.opencv_helpers.setup_opencv_camera_loop.setup_opencv_camera_loop():53 |  2026-11-09T09:46:29.866 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[95m[95m└>>[0m [95mCamera 0100 ready![0m |  SUCCESS |  0.000ms |  skellycam.core.camera.opencv.opencv_helpers.setup_opencv_camera_loop.setup_opencv_camera_loop():62 |  2026-11-09T09:46:29.866 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[34m[34m└>>[0m [34mCreating camera shared memory for camera 1c81...[0m |  DEBUG |  4836.119ms |  skellycam.core.camera.opencv.opencv_helpers.setup_opencv_camera_loop.setup_opencv_camera_loop():53 |  2026-11-09T09:46:29.870 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[95m[95m└>>[0m [95mCamera 1c81 ready![0m |  SUCCESS |  0.519ms |  skellycam.core.camera.opencv.opencv_helpers.setup_opencv_camera_loop.setup_opencv_camera_loop():62 |  2026-11-09T09:46:29.870 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[34m[34m└>>[0m [34mCreating camera shared memory for camera fbf5...[0m |  DEBUG |  188.130ms |  skellycam.core.camera.opencv.opencv_helpers.setup_opencv_camera_loop.setup_opencv_camera_loop():53 |  2026-11-09T09:46:29.870 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[95m[95m└>>[0m [95mCamera fbf5 ready![0m |  SUCCESS |  0.000ms |  skellycam.core.camera.opencv.opencv_helpers.setup_opencv_camera_loop.setup_opencv_camera_loop():62 |  2026-11-09T09:46:29.870 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera fbf5 frame grab loop starting...[0m |  DEBUG |  2.521ms |  skellycam.core.camera.opencv.opencv_camera_worker_method.opencv_camera_worker_method():46 |  2026-11-09T09:46:29.873 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera 0100 frame grab loop starting...[0m |  DEBUG |  13.050ms |  skellycam.core.camera.opencv.opencv_camera_worker_method.opencv_camera_worker_method():46 |  2026-11-09T09:46:29.879 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera 1c81 frame grab loop starting...[0m |  DEBUG |  12.531ms |  skellycam.core.camera.opencv.opencv_camera_worker_method.opencv_camera_worker_method():46 |  2026-11-09T09:46:29.883 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[96m[96m└>>[0m [96mPausing all cameras...[0m |  INFO |  15013.226ms |  skellycam.core.camera_group.camera_orchestrator.pause():59 |  2026-11-09T09:46:44.877 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mWaiting for all cameras to pause...[0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_orchestrator.pause():64 |  2026-11-09T09:46:44.877 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mPausing camera 0100...[0m |  TRACE |  14997.675ms |  skellycam.core.camera.opencv.opencv_helpers.camera_loop_update_checks.check_camera_should_pause():57 |  2026-11-09T09:46:44.877 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[37m[37m└>>[0m [37mPausing camera 1c81...[0m |  TRACE |  14998.681ms |  skellycam.core.camera.opencv.opencv_helpers.camera_loop_update_checks.check_camera_should_pause():57 |  2026-11-09T09:46:44.882 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[37m[37m└>>[0m [37mPausing camera fbf5...[0m |  TRACE |  15031.286ms |  skellycam.core.camera.opencv.opencv_helpers.camera_loop_update_checks.check_camera_should_pause():57 |  2026-11-09T09:46:44.904 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[37m[37m└>>[0m [37mAll cameras paused.[0m |  TRACE |  35.518ms |  skellycam.core.camera_group.camera_orchestrator.pause():67 |  2026-11-09T09:46:44.913 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mPublishing recording info message...[0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_group.start_recording():186 |  2026-11-09T09:46:44.913 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mPublishing message of type <class 'skellycam.core.ipc.pubsub.pubsub_topics.RecordingInfoMessage'> to 3 subscribers[0m |  TRACE |  0.000ms |  skellycam.core.ipc.pubsub.pubsub_abcs.publish():49 |  2026-11-09T09:46:44.913 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mCamera fbf5 creating recorder for recording: 2026-11-09_09-46-44_calibration[0m |  INFO |  10.021ms |  skellycam.core.camera.opencv.opencv_helpers.handle_recording_updates.check_for_new_recording_info():37 |  2026-11-09T09:46:44.914 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[96m[96m└>>[0m [96mCamera 1c81 creating recorder for recording: 2026-11-09_09-46-44_calibration[0m |  INFO |  32.616ms |  skellycam.core.camera.opencv.opencv_helpers.handle_recording_updates.check_for_new_recording_info():37 |  2026-11-09T09:46:44.914 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[96m[96m└>>[0m [96mCamera 0100 creating recorder for recording: 2026-11-09_09-46-44_calibration[0m |  INFO |  37.125ms |  skellycam.core.camera.opencv.opencv_helpers.handle_recording_updates.check_for_new_recording_info():37 |  2026-11-09T09:46:44.914 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[34m[34m└>>[0m [34mProbing video codec 'X264' with frame size (1280, 720)...[0m |  DEBUG |  0.000ms |  skellycam.core.recorders.videos.fourcc_codec_helpers._probe_codec():102 |  2026-11-09T09:46:44.914 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[34m[34m└>>[0m [34mProbing video codec 'X264' with frame size (1280, 720)...[0m |  DEBUG |  0.000ms |  skellycam.core.recorders.videos.fourcc_codec_helpers._probe_codec():102 |  2026-11-09T09:46:44.914 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[34m[34m└>>[0m [34mProbing video codec 'X264' with frame size (1280, 720)...[0m |  DEBUG |  0.000ms |  skellycam.core.recorders.videos.fourcc_codec_helpers._probe_codec():102 |  2026-11-09T09:46:44.914 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+OpenCV: FFMPEG: tag 0x34363258/'X264' is not supported with codec id 27 and format 'mp4 / MP4 (MPEG-4 Part 14)'
+OpenCV: FFMPEG: fallback to use tag 0x31637661/'avc1'
+
+Failed to load OpenH264 library: openh264-1.8.0-win64.dll
+	Please check environment and/or download library: https://github.com/cisco/openh264/releases
+
+[libopenh264 @ 0000025ec99dea40] Incorrect library version loaded
+[ERROR:0@0.001] global cap_ffmpeg_impl.hpp:3268 open Could not open codec libopenh264, error: Unspecified error (-22)
+OpenCV: FFMPEG: tag 0x34363258/'X264' is not supported with codec id 27 and format 'mp4 / MP4 (MPEG-4 Part 14)'
+OpenCV: FFMPEG: fallback to use tag 0x31637661/'avc1'
+
+Failed to load OpenH264 library: openh264-1.8.0-win64.dll
+	Please check environment and/or download library: https://github.com/cisco/openh264/releases
+
+[libopenh264 @ 0000020e29e6ea40] Incorrect library version loaded
+[ERROR:0@0.001] global cap_ffmpeg_impl.hpp:3268 open Could not open codec libopenh264, error: Unspecified error (-22)
+OpenCV: FFMPEG: tag 0x34363258/'X264' is not supported with codec id 27 and format 'mp4 / MP4 (MPEG-4 Part 14)'
+OpenCV: FFMPEG: fallback to use tag 0x31637661/'avc1'
+
+Failed to load OpenH264 library: openh264-1.8.0-win64.dll
+	Please check environment and/or download library: https://github.com/cisco/openh264/releases
+
+[libopenh264 @ 00000186636dea40] Incorrect library version loaded
+[ERROR:0@0.002] global cap_ffmpeg_impl.hpp:3268 open Could not open codec libopenh264, error: Unspecified error (-22)
+[ERROR:0@0.001] global cap_ffmpeg_impl.hpp:3285 open VIDEOIO/FFMPEG: Failed to initialize VideoWriter
+[ERROR:0@0.002] global cap_ffmpeg_impl.hpp:3285 open VIDEOIO/FFMPEG: Failed to initialize VideoWriter
+[ERROR:0@0.001] global cap_ffmpeg_impl.hpp:3285 open VIDEOIO/FFMPEG: Failed to initialize VideoWriter
+[96m[96m└>>[0m [96mUnpausing all cameras...[0m |  INFO |  11.613ms |  skellycam.core.camera_group.camera_orchestrator.unpause():70 |  2026-11-09T09:46:44.924 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mWaiting for all cameras to unpause...[0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_orchestrator.unpause():75 |  2026-11-09T09:46:44.924 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mCodec 'X264' probe succeeded[0m |  DEBUG |  509.942ms |  skellycam.core.recorders.videos.fourcc_codec_helpers._probe_codec():135 |  2026-11-09T09:46:45.424 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[34m[34m└>>[0m [34mCreated VideoSaver for camera 2 with codec=X264, path=C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\2026-11-09_09-46-44_calibration.id-fbf5.idx-2.mp4[0m |  DEBUG |  2.000ms |  skellycam.core.recorders.videos.video_recorder.create():71 |  2026-11-09T09:46:45.425 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+OpenCV: FFMPEG: tag 0x34363258/'X264' is not supported with codec id 27 and format 'mp4 / MP4 (MPEG-4 Part 14)'
+OpenCV: FFMPEG: fallback to use tag 0x31637661/'avc1'
+[libopenh264 @ 000001867f5cf200] Incorrect library version loaded
+[ERROR:0@0.510] global cap_ffmpeg_impl.hpp:3268 open Could not open codec libopenh264, error: Unspecified error (-22)
+[ERROR:0@0.510] global cap_ffmpeg_impl.hpp:3285 open VIDEOIO/FFMPEG: Failed to initialize VideoWriter
+[34m[34m└>>[0m [34mCodec 'X264' probe succeeded[0m |  DEBUG |  607.001ms |  skellycam.core.recorders.videos.fourcc_codec_helpers._probe_codec():135 |  2026-11-09T09:46:45.521 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[34m[34m└>>[0m [34mCodec 'X264' probe succeeded[0m |  DEBUG |  607.001ms |  skellycam.core.recorders.videos.fourcc_codec_helpers._probe_codec():135 |  2026-11-09T09:46:45.521 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[34m[34m└>>[0m [34mCreated VideoSaver for camera 1 with codec=X264, path=C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\2026-11-09_09-46-44_calibration.id-1c81.idx-1.mp4[0m |  DEBUG |  1.003ms |  skellycam.core.recorders.videos.video_recorder.create():71 |  2026-11-09T09:46:45.522 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[34m[34m└>>[0m [34mCreated VideoSaver for camera 3 with codec=X264, path=C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\2026-11-09_09-46-44_calibration.id-0100.idx-3.mp4[0m |  DEBUG |  1.003ms |  skellycam.core.recorders.videos.video_recorder.create():71 |  2026-11-09T09:46:45.522 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+OpenCV: FFMPEG: tag 0x34363258/'X264' is not supported with codec id 27 and format 'mp4 / MP4 (MPEG-4 Part 14)'
+OpenCV: FFMPEG: fallback to use tag 0x31637661/'avc1'
+[libopenh264 @ 0000020e5cd5f200] Incorrect library version loaded
+[ERROR:0@0.606] global cap_ffmpeg_impl.hpp:3268 open Could not open codec libopenh264, error: Unspecified error (-22)
+[ERROR:0@0.606] global cap_ffmpeg_impl.hpp:3285 open VIDEOIO/FFMPEG: Failed to initialize VideoWriter
+OpenCV: FFMPEG: tag 0x34363258/'X264' is not supported with codec id 27 and format 'mp4 / MP4 (MPEG-4 Part 14)'
+OpenCV: FFMPEG: fallback to use tag 0x31637661/'avc1'
+[libopenh264 @ 0000025efc93f200] Incorrect library version loaded
+[ERROR:0@0.606] global cap_ffmpeg_impl.hpp:3268 open Could not open codec libopenh264, error: Unspecified error (-22)
+[ERROR:0@0.606] global cap_ffmpeg_impl.hpp:3285 open VIDEOIO/FFMPEG: Failed to initialize VideoWriter
+[34m[34m└>>[0m [34mInitialized VideoRecorder for camera 2 - Video file will be saved to C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\2026-11-09_09-46-44_calibration.id-fbf5.idx-2.mp4[0m |  DEBUG |  217.286ms |  skellycam.core.recorders.videos.video_recorder._initialize_video_writer():136 |  2026-11-09T09:46:45.643 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[34m[34m└>>[0m [34mInitialized VideoRecorder for camera 1 - Video file will be saved to C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\2026-11-09_09-46-44_calibration.id-1c81.idx-1.mp4[0m |  DEBUG |  214.173ms |  skellycam.core.recorders.videos.video_recorder._initialize_video_writer():136 |  2026-11-09T09:46:45.736 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[34m[34m└>>[0m [34mInitialized VideoRecorder for camera 3 - Video file will be saved to C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\2026-11-09_09-46-44_calibration.id-0100.idx-3.mp4[0m |  DEBUG |  283.786ms |  skellycam.core.recorders.videos.video_recorder._initialize_video_writer():136 |  2026-11-09T09:46:45.805 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[37m[37m└>>[0m [37mResuming camera 0100...[0m |  TRACE |  0.000ms |  skellycam.core.camera.opencv.opencv_helpers.camera_loop_update_checks.check_camera_should_pause():61 |  2026-11-09T09:46:45.806 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[37m[37m└>>[0m [37mResuming camera 1c81...[0m |  TRACE |  70.116ms |  skellycam.core.camera.opencv.opencv_helpers.camera_loop_update_checks.check_camera_should_pause():61 |  2026-11-09T09:46:45.807 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[37m[37m└>>[0m [37mResuming camera fbf5...[0m |  TRACE |  164.069ms |  skellycam.core.camera.opencv.opencv_helpers.camera_loop_update_checks.check_camera_should_pause():61 |  2026-11-09T09:46:45.808 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[37m[37m└>>[0m [37mAll cameras unpaused.[0m |  TRACE |  891.380ms |  skellycam.core.camera_group.camera_orchestrator.unpause():78 |  2026-11-09T09:46:45.816 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mCamera group unpaused - Recording successfully started.[0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_group.start_recording():209 |  2026-11-09T09:46:45.816 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mStarted recording for camera group ID: 93ecbe with recording name: 2026-11-09_09-46-44_calibration[0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_group.start_recording():210 |  2026-11-09T09:46:45.816 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mStarted recording for camera group ID: 93ecbe[0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_group_manager.start_recording_all_groups():121 |  2026-11-09T09:46:45.816 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mStarting calibration recording: RecordingInfo(name=2026-11-09_09-46-44_calibration,
+ directory=C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration,
+ uuid=41d9ae66-c3d3-48ed-aa38-a0fd82afab84)[0m |  INFO |  0.000ms |  freemocap.api.http.calibration.calibration_router.start_calibration_recording():147 |  2026-11-09T09:46:45.816 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92mReceived request: POST http://localhost:53117/freemocap/calibration/recording/start. Body:
+{
+  "calibrationRecordingDirectory": "C:\\Users\\Dom\\Documents\\skellycam-raw\\skellycam_recording\\real_recording_20261109\\runB_freemocap_calibration/2026-11-09_09-46-44_calibration"
+}[0m |  API |  0.637ms |  freemocap.api.middleware.add_middleware.log_requests():43 |  2026-11-09T09:46:45.816 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92mHandled Request: http://localhost:53117/freemocap/calibration/recording/start processed in 0.940468 seconds and returned status code: 200[0m |  API |  0.000ms |  freemocap.api.middleware.add_middleware.log_requests():75 |  2026-11-09T09:46:45.816 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mStopping recording for all cameras in orchestrator...[0m |  DEBUG |  40012.227ms |  skellycam.core.camera_group.camera_group.stop_recording():217 |  2026-11-09T09:47:25.828 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mPausing all cameras...[0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_orchestrator.pause():59 |  2026-11-09T09:47:25.828 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mWaiting for all cameras to pause...[0m |  INFO |  0.614ms |  skellycam.core.camera_group.camera_orchestrator.pause():64 |  2026-11-09T09:47:25.828 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mPausing camera 0100...[0m |  TRACE |  40023.074ms |  skellycam.core.camera.opencv.opencv_helpers.camera_loop_update_checks.check_camera_should_pause():57 |  2026-11-09T09:47:25.829 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[37m[37m└>>[0m [37mPausing camera 1c81...[0m |  TRACE |  40035.743ms |  skellycam.core.camera.opencv.opencv_helpers.camera_loop_update_checks.check_camera_should_pause():57 |  2026-11-09T09:47:25.842 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[37m[37m└>>[0m [37mPausing camera fbf5...[0m |  TRACE |  40040.003ms |  skellycam.core.camera.opencv.opencv_helpers.camera_loop_update_checks.check_camera_should_pause():57 |  2026-11-09T09:47:25.848 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[37m[37m└>>[0m [37mAll cameras paused.[0m |  TRACE |  23.074ms |  skellycam.core.camera_group.camera_orchestrator.pause():67 |  2026-11-09T09:47:25.852 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mUnpausing all cameras...[0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_orchestrator.unpause():70 |  2026-11-09T09:47:25.852 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mWaiting for all cameras to unpause...[0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_orchestrator.unpause():75 |  2026-11-09T09:47:25.852 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mResuming camera fbf5...[0m |  TRACE |  5.155ms |  skellycam.core.camera.opencv.opencv_helpers.camera_loop_update_checks.check_camera_should_pause():61 |  2026-11-09T09:47:25.853 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[37m[37m└>>[0m [37mResuming camera 0100...[0m |  TRACE |  24.114ms |  skellycam.core.camera.opencv.opencv_helpers.camera_loop_update_checks.check_camera_should_pause():61 |  2026-11-09T09:47:25.853 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[37m[37m└>>[0m [37mResuming camera 1c81...[0m |  TRACE |  11.456ms |  skellycam.core.camera.opencv.opencv_helpers.camera_loop_update_checks.check_camera_should_pause():61 |  2026-11-09T09:47:25.854 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[37m[37m└>>[0m [37mAll cameras unpaused.[0m |  TRACE |  11.043ms |  skellycam.core.camera_group.camera_orchestrator.unpause():78 |  2026-11-09T09:47:25.863 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mCamera 0100 finishing and closing video recorder...[0m |  INFO |  66.153ms |  skellycam.core.camera.opencv.opencv_helpers.handle_video_recording_loop.handle_video_recording():33 |  2026-11-09T09:47:25.919 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera 0100 finishing recording: 2026-11-09_09-46-44_calibration[0m |  DEBUG |  0.000ms |  skellycam.core.camera.opencv.opencv_helpers.handle_recording_updates.finish_recording():52 |  2026-11-09T09:47:25.919 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[34m[34m└>>[0m [34mFinishing and closing VideoSaver for camera 0100[0m |  DEBUG |  0.000ms |  skellycam.core.recorders.videos.video_recorder.finish_and_close():112 |  2026-11-09T09:47:25.919 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[96m[96m└>>[0m [96mCamera 1c81 finishing and closing video recorder...[0m |  INFO |  83.669ms |  skellycam.core.camera.opencv.opencv_helpers.handle_video_recording_loop.handle_video_recording():33 |  2026-11-09T09:47:25.937 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera 1c81 finishing recording: 2026-11-09_09-46-44_calibration[0m |  DEBUG |  0.000ms |  skellycam.core.camera.opencv.opencv_helpers.handle_recording_updates.finish_recording():52 |  2026-11-09T09:47:25.937 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[34m[34m└>>[0m [34mFinishing and closing VideoSaver for camera 1c81[0m |  DEBUG |  0.000ms |  skellycam.core.recorders.videos.video_recorder.finish_and_close():112 |  2026-11-09T09:47:25.937 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[96m[96m└>>[0m [96mCamera fbf5 finishing and closing video recorder...[0m |  INFO |  90.220ms |  skellycam.core.camera.opencv.opencv_helpers.handle_video_recording_loop.handle_video_recording():33 |  2026-11-09T09:47:25.943 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera fbf5 finishing recording: 2026-11-09_09-46-44_calibration[0m |  DEBUG |  0.000ms |  skellycam.core.camera.opencv.opencv_helpers.handle_recording_updates.finish_recording():52 |  2026-11-09T09:47:25.943 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[34m[34m└>>[0m [34mFinishing and closing VideoSaver for camera fbf5[0m |  DEBUG |  0.000ms |  skellycam.core.recorders.videos.video_recorder.finish_and_close():112 |  2026-11-09T09:47:25.943 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[96m[96m└>>[0m [96mCamera 0100 - Video file saved to C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\2026-11-09_09-46-44_calibration.id-0100.idx-3.mp4[0m |  INFO |  27.059ms |  skellycam.core.recorders.videos.video_recorder.close():161 |  2026-11-09T09:47:25.945 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[37m[37m└>>[0m [37mPublishing message of type <class 'skellycam.core.ipc.pubsub.pubsub_topics.RecordingFinishedMessage'> to 1 subscribers[0m |  TRACE |  10.001ms |  skellycam.core.ipc.pubsub.pubsub_abcs.publish():49 |  2026-11-09T09:47:25.956 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[96m[96m└>>[0m [96mCamera fbf5 - Video file saved to C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\2026-11-09_09-46-44_calibration.id-fbf5.idx-2.mp4[0m |  INFO |  28.535ms |  skellycam.core.recorders.videos.video_recorder.close():161 |  2026-11-09T09:47:25.971 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[96m[96m└>>[0m [96mCamera 1c81 - Video file saved to C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\2026-11-09_09-46-44_calibration.id-1c81.idx-1.mp4[0m |  INFO |  35.049ms |  skellycam.core.recorders.videos.video_recorder.close():161 |  2026-11-09T09:47:25.972 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[37m[37m└>>[0m [37mPublishing message of type <class 'skellycam.core.ipc.pubsub.pubsub_topics.RecordingFinishedMessage'> to 1 subscribers[0m |  TRACE |  9.978ms |  skellycam.core.ipc.pubsub.pubsub_abcs.publish():49 |  2026-11-09T09:47:25.981 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[37m[37m└>>[0m [37mPublishing message of type <class 'skellycam.core.ipc.pubsub.pubsub_topics.RecordingFinishedMessage'> to 1 subscribers[0m |  TRACE |  10.128ms |  skellycam.core.ipc.pubsub.pubsub_abcs.publish():49 |  2026-11-09T09:47:25.983 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[34m[34m└>>[0m [34mReceived recording finished message for camera 0100.[0m |  DEBUG |  236.559ms |  skellycam.core.camera_group.camera_group.finalize_recording():348 |  2026-11-09T09:47:26.100 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mReceived recording finished message for camera fbf5.[0m |  DEBUG |  111.706ms |  skellycam.core.camera_group.camera_group.finalize_recording():348 |  2026-11-09T09:47:26.211 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mReceived recording finished message for camera 1c81.[0m |  DEBUG |  109.810ms |  skellycam.core.camera_group.camera_group.finalize_recording():348 |  2026-11-09T09:47:26.321 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mFinalizing recording: `2026-11-09_09-46-44_calibration`...[0m |  DEBUG |  101.374ms |  skellycam.core.recorders.recording_finalizer.finalize_recording():54 |  2026-11-09T09:47:26.423 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mSaving recording info to [C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\2026-11-09_09-46-44_calibration_info.json][0m |  DEBUG |  0.000ms |  skellycam.core.recorders.videos.recording_info.save_to_file():78 |  2026-11-09T09:47:26.423 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+Processed timestamps for 3 cameras in 0.275 seconds.
+Processed multiframe timestamps in 0.125 seconds.
+[34m[34m└>>[0m [34mSaved timestamp statistics summary to C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\timestamps/2026-11-09_09-46-44_calibration_stats.txt[0m |  DEBUG |  443.744ms |  skellycam.core.timestamps.numpy_timestamps.save_timestamps_statistics_summary.save_timestamp_statistics_summary():28 |  2026-11-09T09:47:26.866 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mValidating recording: 2026-11-09_09-46-44_calibration[0m |  DEBUG |  1.007ms |  skellycam.core.recorders.recording_finalizer.validate_recording():136 |  2026-11-09T09:47:26.867 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mRecording Validation Check#1 - Found video file for camera 0100: C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\2026-11-09_09-46-44_calibration.id-0100.idx-3.mp4[0m |  TRACE |  0.000ms |  skellycam.core.recorders.recording_finalizer.validate_recording():143 |  2026-11-09T09:47:26.867 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mRecording Validation Check#1 - Found video file for camera fbf5: C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\2026-11-09_09-46-44_calibration.id-fbf5.idx-2.mp4[0m |  TRACE |  1.000ms |  skellycam.core.recorders.recording_finalizer.validate_recording():143 |  2026-11-09T09:47:26.868 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mRecording Validation Check#1 - Found video file for camera 1c81: C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\2026-11-09_09-46-44_calibration.id-1c81.idx-1.mp4[0m |  TRACE |  0.000ms |  skellycam.core.recorders.recording_finalizer.validate_recording():143 |  2026-11-09T09:47:26.868 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mRecording Validation Check#2 - Camera 0100 video has 1203 frames[0m |  TRACE |  31.660ms |  skellycam.core.recorders.recording_finalizer.validate_recording():166 |  2026-11-09T09:47:26.900 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mRecording Validation Check#2 - Camera fbf5 video has 1203 frames[0m |  TRACE |  30.174ms |  skellycam.core.recorders.recording_finalizer.validate_recording():166 |  2026-11-09T09:47:26.930 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mRecording Validation Check#2 - Camera 1c81 video has 1203 frames[0m |  TRACE |  28.385ms |  skellycam.core.recorders.recording_finalizer.validate_recording():166 |  2026-11-09T09:47:26.958 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mRecording Validation Check#2 - All videos have 1203 frames[0m |  TRACE |  0.000ms |  skellycam.core.recorders.recording_finalizer.validate_recording():173 |  2026-11-09T09:47:26.959 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mRecording Validation Check#3 - Camera timestamp file for camera 0100 exists: C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\timestamps\camera_timestamps\2026-11-09_09-46-44_calibration.camera0100.timestamps.csv[0m |  TRACE |  0.604ms |  skellycam.core.recorders.recording_finalizer.validate_recording():186 |  2026-11-09T09:47:26.959 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mRecording Validation Check#3 - Camera timestamp file for camera fbf5 exists: C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\timestamps\camera_timestamps\2026-11-09_09-46-44_calibration.camerafbf5.timestamps.csv[0m |  TRACE |  0.000ms |  skellycam.core.recorders.recording_finalizer.validate_recording():186 |  2026-11-09T09:47:26.959 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mRecording Validation Check#3 - Camera timestamp file for camera 1c81 exists: C:\Users\Dom\Documents\skellycam-raw\skellycam_recording\real_recording_20261109\runB_freemocap_calibration\2026-11-09_09-46-44_calibration\synchronized_videos\timestamps\camera_timestamps\2026-11-09_09-46-44_calibration.camera1c81.timestamps.csv[0m |  TRACE |  0.610ms |  skellycam.core.recorders.recording_finalizer.validate_recording():186 |  2026-11-09T09:47:26.959 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mRecording Validation Check#4 - Camera 0100 has matching frame count in video and timestamps: 1203[0m |  TRACE |  7.861ms |  skellycam.core.recorders.recording_finalizer.validate_recording():200 |  2026-11-09T09:47:26.968 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mRecording Validation Check#4 - Camera fbf5 has matching frame count in video and timestamps: 1203[0m |  TRACE |  7.137ms |  skellycam.core.recorders.recording_finalizer.validate_recording():200 |  2026-11-09T09:47:26.975 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mRecording Validation Check#4 - Camera 1c81 has matching frame count in video and timestamps: 1203[0m |  TRACE |  6.662ms |  skellycam.core.recorders.recording_finalizer.validate_recording():200 |  2026-11-09T09:47:26.980 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mRecording validation successful for 2026-11-09_09-46-44_calibration
+	- 3 videos saved with 1203 frames each
+	- All timestamp files present and match video frame counts[0m |  INFO |  0.000ms |  skellycam.core.recorders.recording_finalizer.validate_recording():206 |  2026-11-09T09:47:26.981 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[95m[95m└>>[0m [95mRecording Finalized successfully! Timestamps statistics summary:
+
+────────────────────────────────────────────────────────────────────────────────
+Timestamp Statistics for recording: 2026-11-09_09-46-44_calibration
+
+Number of Cameras: 3
+Total Frames:      1203
+Total Duration:    40.048 seconds
+Mean Framerate:    30.92 Hz
+Mean Inter-Camera Sync: 0.27 ms
+
+FRAME TIMING STATISTICS
+=================================  ========  ======  =====  ======  ======
+Metric                               Median    Mean    Std     Min     Max
+=================================  ========  ======  =====  ======  ======
+Framerate/FPS (Hz)                   31.230  30.923  6.030  20.570  63.905
+Frame Duration (ms)                  32.021  33.318  5.697  15.650  48.615
+Inter-Camera Frame Grab Sync (ms)     0.267   0.268  0.144   0.005   1.030
+=================================  ========  ======  =====  ======  ======
+
+FRAME PROCESSING BREAKDOWN
+==============================  =============  ============  ============  ============  ============  ============
+Stage                           Median (ms)    Mean (ms)     Std (ms)      Min (ms)      Max (ms)      % of Total
+==============================  =============  ============  ============  ============  ============  ============
+During frame grab               0.038          0.038         0.008         0.023         0.145         0.4%
+Idle before retrieve            0.011          0.011         0.002         0.009         0.037         0.1%
+During frame retrieve           8.212          14.581        8.272         0.328         40.408        83.5%
+Idle before copy to camera SHM  0.323          0.324         0.020         0.272         0.475         3.3%
+During copy to camera SHM       0.744          0.747         0.029         0.688         0.987         7.6%
+Idle before frame record        0.059          0.059         0.003         0.051         0.088         0.6%
+During frame record             0.444          0.454         0.068         0.326         0.833         4.5%
+═════════════════════════       ════════════   ════════════  ════════════  ════════════  ════════════  ══════════
+TOTAL FRAME PROCESSING TIME     9.837          16.231        8.321         1.943         42.471        30.8%
+TOTAL CAMERA IDLE TIME          22.110         16.915        8.207         4.640         38.835        69.2%
+==============================  =============  ============  ============  ============  ============  ============
+────────────────────────────────────────────────────────────────────────────────
+
+--------------------------------------------------------
+[0m |  SUCCESS |  1.001ms |  skellycam.core.recorders.recording_finalizer.finalize_recording():66 |  2026-11-09T09:47:26.982 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mStopped recording for camera group ID: 93ecbe with recording name: 2026-11-09_09-46-44_calibration[0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_group.stop_recording():234 |  2026-11-09T09:47:26.982 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mStopped recording for camera group ID: 93ecbe[0m |  INFO |  0.896ms |  skellycam.core.camera_group.camera_group_manager.stop_recording_all_groups():128 |  2026-11-09T09:47:26.983 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92mReceived request: GET http://localhost:53117/skellycam/camera/group/all/record/stop. No body.[0m |  API |  0.507ms |  freemocap.api.middleware.add_middleware.log_requests():43 |  2026-11-09T09:47:26.984 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92mHandled Request: http://localhost:53117/skellycam/camera/group/all/record/stop processed in 1.155964 seconds and returned status code: 200[0m |  API |  0.000ms |  freemocap.api.middleware.add_middleware.log_requests():75 |  2026-11-09T09:47:26.984 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mClosing camera group[0m |  DEBUG |  1.222ms |  skellycam.core.camera_group.camera_group.close():241 |  2026-11-09T09:47:26.985 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mSetting should_continue to False for camera group 93ecbe[0m |  INFO |  0.626ms |  skellycam.core.camera_group.camera_group_ipc.should_continue():57 |  2026-11-09T09:47:26.985 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mClosing camera manager and all camera processes...[0m |  INFO |  0.000ms |  skellycam.core.camera.camera_manager.close():96 |  2026-11-09T09:47:26.986 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mSetting should_continue to False for camera group 93ecbe[0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_group_ipc.should_continue():57 |  2026-11-09T09:47:26.986 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[96m[96m└>>[0m [96mWaiting for all cameras to close...[0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_orchestrator.close():114 |  2026-11-09T09:47:26.986 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera fbf5 loop ended.[0m |  DEBUG |  1004.338ms |  skellycam.core.camera.opencv.opencv_camera_loop.run_opencv_camera_loop():130 |  2026-11-09T09:47:26.986 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[34m[34m└>>[0m [34mReleasing camera fbf5 `cv2.VideoCapture` and shutting down CameraProcess[0m |  DEBUG |  0.000ms |  skellycam.core.camera.opencv.opencv_camera_worker_method.opencv_camera_worker_method():74 |  2026-11-09T09:47:26.986 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[96m[96m└>>[0m [96mSetting should_continue to False for camera group 93ecbe[0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_group_ipc.should_continue():57 |  2026-11-09T09:47:26.986 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera 0100 loop ended.[0m |  DEBUG |  1035.534ms |  skellycam.core.camera.opencv.opencv_camera_loop.run_opencv_camera_loop():130 |  2026-11-09T09:47:26.992 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[34m[34m└>>[0m [34mReleasing camera 0100 `cv2.VideoCapture` and shutting down CameraProcess[0m |  DEBUG |  0.000ms |  skellycam.core.camera.opencv.opencv_camera_worker_method.opencv_camera_worker_method():74 |  2026-11-09T09:47:26.992 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[96m[96m└>>[0m [96mSetting should_continue to False for camera group 93ecbe[0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_group_ipc.should_continue():57 |  2026-11-09T09:47:26.992 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera 1c81 loop ended.[0m |  DEBUG |  1026.907ms |  skellycam.core.camera.opencv.opencv_camera_loop.run_opencv_camera_loop():130 |  2026-11-09T09:47:27.009 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[34m[34m└>>[0m [34mReleasing camera 1c81 `cv2.VideoCapture` and shutting down CameraProcess[0m |  DEBUG |  0.000ms |  skellycam.core.camera.opencv.opencv_camera_worker_method.opencv_camera_worker_method():74 |  2026-11-09T09:47:27.009 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[96m[96m└>>[0m [96mSetting should_continue to False for camera group 93ecbe[0m |  INFO |  0.000ms |  skellycam.core.camera_group.camera_group_ipc.should_continue():57 |  2026-11-09T09:47:27.009 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[96m[96m└>>[0m [96mAll cameras closed.[0m |  INFO |  100.468ms |  skellycam.core.camera_group.camera_orchestrator.close():117 |  2026-11-09T09:47:27.086 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[37m[37m└>>[0m [37mClosing camera 1 shared memory[0m |  TRACE |  337.685ms |  skellycam.core.camera.opencv.opencv_camera_worker_method.opencv_camera_worker_method():80 |  2026-11-09T09:47:27.347 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[37m[37m└>>[0m [37mClosing camera 3 shared memory[0m |  TRACE |  370.207ms |  skellycam.core.camera.opencv.opencv_camera_worker_method.opencv_camera_worker_method():80 |  2026-11-09T09:47:27.362 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera 1 process completed[0m |  DEBUG |  94.130ms |  skellycam.core.camera.opencv.opencv_camera_worker_method.opencv_camera_worker_method():83 |  2026-11-09T09:47:27.441 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[34m[34m└>>[0m [34mManagedProcess Camera1-1c81-Worker (PID: 32824) exiting[0m |  DEBUG |  0.000ms |  skellycam.core.ipc.process_management.managed_worker._process_entry_point():218 |  2026-11-09T09:47:27.441 |  [38;2;100;255;100mPID:32824:Camera1-1c81-Worker[0m |  [38;2;100;100;255mTID:7276:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera 3 process completed[0m |  DEBUG |  94.642ms |  skellycam.core.camera.opencv.opencv_camera_worker_method.opencv_camera_worker_method():83 |  2026-11-09T09:47:27.457 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[34m[34m└>>[0m [34mManagedProcess Camera3-0100-Worker (PID: 6328) exiting[0m |  DEBUG |  0.000ms |  skellycam.core.ipc.process_management.managed_worker._process_entry_point():218 |  2026-11-09T09:47:27.457 |  [38;2;100;100;255mPID:6328:Camera3-0100-Worker[0m |  [38;2;127;100;255mTID:14604:MainThread[0m[0m
+[37m[37m└>>[0m [37mClosing camera 2 shared memory[0m |  TRACE |  841.780ms |  skellycam.core.camera.opencv.opencv_camera_worker_method.opencv_camera_worker_method():80 |  2026-11-09T09:47:27.828 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[34m[34m└>>[0m [34mCamera 2 process completed[0m |  DEBUG |  71.087ms |  skellycam.core.camera.opencv.opencv_camera_worker_method.opencv_camera_worker_method():83 |  2026-11-09T09:47:27.899 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[34m[34m└>>[0m [34mManagedProcess Camera2-fbf5-Worker (PID: 32308) exiting[0m |  DEBUG |  0.000ms |  skellycam.core.ipc.process_management.managed_worker._process_entry_point():218 |  2026-11-09T09:47:27.899 |  [38;2;100;255;100mPID:32308:Camera2-fbf5-Worker[0m |  [38;2;100;160;228mTID:41188:MainThread[0m[0m
+[95m[95m└>>[0m [95mCamera manager closed all camera processes successfully.[0m |  SUCCESS |  869.914ms |  skellycam.core.camera.camera_manager.close():139 |  2026-11-09T09:47:27.956 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[95m[95m└>>[0m [95mShared memory closed and unlinked if applicable.[0m |  SUCCESS |  193.237ms |  skellycam.core.camera_group.camera_group.close():269 |  2026-11-09T09:47:28.148 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[95m[95m└>>[0m [95mCamera group closed successfully.[0m |  SUCCESS |  0.000ms |  skellycam.core.camera_group.camera_group.close():271 |  2026-11-09T09:47:28.149 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[95m[95m└>>[0m [95mSuccessfully closed all camera groups ids - ['93ecbe'][0m |  SUCCESS |  0.000ms |  skellycam.core.camera_group.camera_group_manager.close_all_camera_groups():111 |  2026-11-09T09:47:28.149 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92mReceived request: DELETE http://localhost:53117/skellycam/camera/group/close/all. No body.[0m |  API |  0.000ms |  freemocap.api.middleware.add_middleware.log_requests():43 |  2026-11-09T09:47:28.149 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92mHandled Request: http://localhost:53117/skellycam/camera/group/close/all processed in 1.164797 seconds and returned status code: 200[0m |  API |  0.000ms |  freemocap.api.middleware.add_middleware.log_requests():75 |  2026-11-09T09:47:28.149 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[92m[92m└>>[0m [92mShutdown requested via API - http://localhost:53117/shutdown[0m |  API |  2.003ms |  freemocap.api.http.app.shutdown.shutdown_server():34 |  2026-11-09T09:47:28.151 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;255;112mTID:31088:MainThread[0m[0m
+[41m[41m└>>[0m [41mglobal_kill_flag is set (no worker death detected) — triggering parent shutdown[0m |  ERROR |  32.048ms |  skellycam.core.ipc.process_management.worker_registry._child_monitor_loop():103 |  2026-11-09T09:47:28.183 |  [38;2;100;107;255mPID:27508:MainProcess[0m |  [38;2;100;100;255mTID:3512:WorkerRegistry-ChildMonitor[0m[0m

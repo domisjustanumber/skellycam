@@ -1,0 +1,2338 @@
+{
+ "tests": [
+  "caps",
+  "play",
+  "seek",
+  "lastframe",
+  "vtt",
+  "inband",
+  "alpha",
+  "trunc",
+  "webcodecs",
+  "layout"
+ ],
+ "mode": "functional",
+ "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) overlay-harness/0.0.1 Chrome/156.0.8078.80 Electron/45.2.3 Safari/537.36",
+ "results": {
+  "caps": {
+   "canPlayType": {
+    "video/webm; codecs=\"vp9\"": "probably",
+    "video/webm; codecs=\"av01.0.04M.08\"": "probably",
+    "video/mp4; codecs=\"avc1.42E01F\"": "probably",
+    "video/mp4; codecs=\"av01.0.04M.08\"": "probably",
+    "video/x-matroska": "maybe",
+    "video/x-matroska; codecs=\"vp9\"": "",
+    "video/x-matroska; codecs=\"avc1.42E01F\"": "probably",
+    "video/quicktime": "",
+    "video/quicktime; codecs=\"png\"": "",
+    "video/webm; codecs=\"vp9\"; alpha": "probably",
+    "text/vtt": ""
+   },
+   "load": {
+    "base_cfr_h264.mp4": {
+     "ok": true,
+     "mediaTimeFirst": null,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "duration": 10,
+     "textTracks": 0,
+     "barcodeAtLoad": 0
+    },
+    "base_cfr_vp9.webm": {
+     "ok": true,
+     "mediaTimeFirst": null,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "duration": 10,
+     "textTracks": 0,
+     "barcodeAtLoad": 0
+    },
+    "base_cfr_av1.webm": {
+     "ok": true,
+     "mediaTimeFirst": null,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "duration": 10,
+     "textTracks": 0,
+     "barcodeAtLoad": 0
+    },
+    "base_vfr_vp9.webm": {
+     "ok": true,
+     "mediaTimeFirst": null,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "duration": 10.069,
+     "textTracks": 0,
+     "barcodeAtLoad": 0
+    },
+    "base_vfr_h264.mp4": {
+     "ok": true,
+     "mediaTimeFirst": null,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "duration": 10.07,
+     "textTracks": 0,
+     "barcodeAtLoad": 0
+    },
+    "overlay_vp9alpha.webm": {
+     "ok": true,
+     "mediaTimeFirst": null,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "duration": 10,
+     "textTracks": 0,
+     "barcodeAtLoad": 0
+    },
+    "overlay_png.mov": {
+     "ok": false,
+     "why": "error",
+     "code": 4,
+     "msg": "PipelineStatus::DEMUXER_ERROR_NO_SUPPORTED_STREAMS: FFmpegDemuxer: no supported streams",
+     "videoWidth": 0,
+     "videoHeight": 0,
+     "duration": null,
+     "textTracks": 0,
+     "barcodeAtLoad": null
+    },
+    "overlay_qtrle.mov": {
+     "ok": false,
+     "why": "error",
+     "code": 4,
+     "msg": "PipelineStatus::DEMUXER_ERROR_NO_SUPPORTED_STREAMS: FFmpegDemuxer: no supported streams",
+     "videoWidth": 0,
+     "videoHeight": 0,
+     "duration": null,
+     "textTracks": 0,
+     "barcodeAtLoad": null
+    },
+    "base_vp9_vtt_inband.webm": {
+     "ok": true,
+     "mediaTimeFirst": null,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "duration": 10,
+     "textTracks": 0,
+     "barcodeAtLoad": 0
+    },
+    "base_vp9_ass.mkv": {
+     "ok": true,
+     "mediaTimeFirst": null,
+     "videoWidth": 1280,
+     "videoHeight": 720,
+     "duration": 10,
+     "textTracks": 0,
+     "barcodeAtLoad": 0
+    }
+   }
+  },
+  "play": {
+   "base_cfr_h264.mp4": {
+    "file": "base_cfr_h264.mp4",
+    "rate": 1,
+    "canvasComposite": false,
+    "frames": 300,
+    "vfc": 299,
+    "vfcDecodeFail": 0,
+    "overlayMatch": 299,
+    "overlayMismatch": [],
+    "naiveMatch": 299,
+    "naiveMismatch": 0,
+    "overlaySelfCheckFail": 0,
+    "presentedGaps": 0,
+    "maxPresentedGap": 0,
+    "barcodeSkips": 0,
+    "raf": 600,
+    "rafDecodeFail": 0,
+    "rafUiMatch": 35,
+    "rafUiMismatch": 565,
+    "rafUiOffsets": {
+     "1": 1,
+     "-1": 564
+    },
+    "captures": 30,
+    "captureMatch": 3,
+    "captureMismatch": [
+     [
+      5,
+      4
+     ],
+     [
+      15,
+      14
+     ],
+     [
+      25,
+      24
+     ],
+     [
+      35,
+      34
+     ],
+     [
+      45,
+      44
+     ],
+     [
+      55,
+      54
+     ],
+     [
+      65,
+      64
+     ],
+     [
+      75,
+      74
+     ],
+     [
+      85,
+      84
+     ],
+     [
+      95,
+      94
+     ],
+     [
+      105,
+      104
+     ],
+     [
+      115,
+      114
+     ],
+     [
+      125,
+      124
+     ],
+     [
+      135,
+      134
+     ],
+     [
+      145,
+      144
+     ],
+     [
+      155,
+      154
+     ],
+     [
+      165,
+      164
+     ],
+     [
+      175,
+      174
+     ],
+     [
+      185,
+      184
+     ],
+     [
+      195,
+      194
+     ],
+     [
+      205,
+      204
+     ],
+     [
+      215,
+      214
+     ],
+     [
+      235,
+      234
+     ],
+     [
+      255,
+      254
+     ],
+     [
+      265,
+      264
+     ],
+     [
+      275,
+      274
+     ],
+     [
+      295,
+      294
+     ]
+    ],
+    "captureFail": 0,
+    "distinctFramesSeen": 299,
+    "droppedVideoFrames": 0,
+    "totalVideoFrames": 300,
+    "overlayMismatchCount": 0
+   },
+   "base_cfr_vp9.webm": {
+    "file": "base_cfr_vp9.webm",
+    "rate": 1,
+    "canvasComposite": false,
+    "frames": 300,
+    "vfc": 299,
+    "vfcDecodeFail": 0,
+    "overlayMatch": 299,
+    "overlayMismatch": [],
+    "naiveMatch": 299,
+    "naiveMismatch": 0,
+    "overlaySelfCheckFail": 0,
+    "presentedGaps": 0,
+    "maxPresentedGap": 0,
+    "barcodeSkips": 0,
+    "raf": 599,
+    "rafDecodeFail": 0,
+    "rafUiMatch": 58,
+    "rafUiMismatch": 541,
+    "rafUiOffsets": {
+     "-1": 541
+    },
+    "captures": 30,
+    "captureMatch": 4,
+    "captureMismatch": [
+     [
+      15,
+      14
+     ],
+     [
+      25,
+      24
+     ],
+     [
+      45,
+      44
+     ],
+     [
+      55,
+      54
+     ],
+     [
+      65,
+      64
+     ],
+     [
+      75,
+      74
+     ],
+     [
+      85,
+      84
+     ],
+     [
+      95,
+      94
+     ],
+     [
+      105,
+      104
+     ],
+     [
+      115,
+      114
+     ],
+     [
+      125,
+      124
+     ],
+     [
+      135,
+      134
+     ],
+     [
+      145,
+      144
+     ],
+     [
+      155,
+      154
+     ],
+     [
+      165,
+      164
+     ],
+     [
+      175,
+      174
+     ],
+     [
+      185,
+      184
+     ],
+     [
+      195,
+      194
+     ],
+     [
+      205,
+      204
+     ],
+     [
+      215,
+      214
+     ],
+     [
+      225,
+      224
+     ],
+     [
+      235,
+      234
+     ],
+     [
+      245,
+      244
+     ],
+     [
+      255,
+      254
+     ],
+     [
+      275,
+      274
+     ],
+     [
+      285,
+      284
+     ]
+    ],
+    "captureFail": 0,
+    "distinctFramesSeen": 299,
+    "droppedVideoFrames": 0,
+    "totalVideoFrames": 300,
+    "overlayMismatchCount": 0
+   },
+   "base_cfr_av1.webm": {
+    "file": "base_cfr_av1.webm",
+    "rate": 1,
+    "canvasComposite": false,
+    "frames": 300,
+    "vfc": 298,
+    "vfcDecodeFail": 2,
+    "overlayMatch": 296,
+    "overlayMismatch": [],
+    "naiveMatch": 296,
+    "naiveMismatch": 0,
+    "overlaySelfCheckFail": 0,
+    "presentedGaps": 0,
+    "maxPresentedGap": 0,
+    "barcodeSkips": 2,
+    "raf": 600,
+    "rafDecodeFail": 4,
+    "rafUiMatch": 13,
+    "rafUiMismatch": 583,
+    "rafUiOffsets": {
+     "-1": 583
+    },
+    "captures": 30,
+    "captureMatch": 11,
+    "captureMismatch": [
+     [
+      6,
+      5
+     ],
+     [
+      16,
+      15
+     ],
+     [
+      26,
+      25
+     ],
+     [
+      56,
+      55
+     ],
+     [
+      66,
+      65
+     ],
+     [
+      76,
+      75
+     ],
+     [
+      96,
+      95
+     ],
+     [
+      146,
+      145
+     ],
+     [
+      166,
+      165
+     ],
+     [
+      176,
+      175
+     ],
+     [
+      186,
+      185
+     ],
+     [
+      196,
+      195
+     ],
+     [
+      206,
+      205
+     ],
+     [
+      216,
+      215
+     ],
+     [
+      226,
+      225
+     ],
+     [
+      236,
+      235
+     ],
+     [
+      246,
+      245
+     ],
+     [
+      256,
+      255
+     ],
+     [
+      266,
+      265
+     ]
+    ],
+    "captureFail": 0,
+    "distinctFramesSeen": 296,
+    "decodeFailAt": [
+     {
+      "fi": 14,
+      "mediaTime": 0.467
+     },
+     {
+      "fi": 254,
+      "mediaTime": 8.467
+     }
+    ],
+    "droppedVideoFrames": 1,
+    "totalVideoFrames": 300,
+    "overlayMismatchCount": 0
+   },
+   "base_vfr_vp9.webm": {
+    "file": "base_vfr_vp9.webm",
+    "rate": 1,
+    "canvasComposite": false,
+    "frames": 300,
+    "vfc": 287,
+    "vfcDecodeFail": 0,
+    "overlayMatch": 282,
+    "overlayMismatch": [
+     {
+      "code": 159,
+      "fi": 158,
+      "mediaTime": 5.333
+     },
+     {
+      "code": 164,
+      "fi": 163,
+      "mediaTime": 5.503
+     },
+     {
+      "code": 206,
+      "fi": 205,
+      "mediaTime": 6.901
+     },
+     {
+      "code": 222,
+      "fi": 221,
+      "mediaTime": 7.436
+     },
+     {
+      "code": 259,
+      "fi": 258,
+      "mediaTime": 8.669
+     }
+    ],
+    "naiveMatch": 147,
+    "naiveMismatch": 140,
+    "overlaySelfCheckFail": 0,
+    "presentedGaps": 12,
+    "maxPresentedGap": 1,
+    "barcodeSkips": 12,
+    "raf": 604,
+    "rafDecodeFail": 0,
+    "rafUiMatch": 145,
+    "rafUiMismatch": 459,
+    "rafUiOffsets": {
+     "1": 193,
+     "2": 111,
+     "-1": 155
+    },
+    "captures": 29,
+    "captureMatch": 8,
+    "captureMismatch": [
+     [
+      5,
+      4
+     ],
+     [
+      15,
+      14
+     ],
+     [
+      45,
+      44
+     ],
+     [
+      55,
+      54
+     ],
+     [
+      65,
+      64
+     ],
+     [
+      75,
+      74
+     ],
+     [
+      85,
+      84
+     ],
+     [
+      95,
+      94
+     ],
+     [
+      105,
+      104
+     ],
+     [
+      116,
+      115
+     ],
+     [
+      127,
+      126
+     ],
+     [
+      191,
+      190
+     ],
+     [
+      202,
+      201
+     ],
+     [
+      213,
+      212
+     ],
+     [
+      226,
+      225
+     ],
+     [
+      236,
+      235
+     ],
+     [
+      246,
+      245
+     ],
+     [
+      256,
+      255
+     ],
+     [
+      277,
+      276
+     ],
+     [
+      287,
+      286
+     ],
+     [
+      297,
+      296
+     ]
+    ],
+    "captureFail": 0,
+    "distinctFramesSeen": 287,
+    "droppedVideoFrames": 0,
+    "totalVideoFrames": 300,
+    "overlayMismatchCount": 5
+   },
+   "base_vfr_h264.mp4": {
+    "file": "base_vfr_h264.mp4",
+    "rate": 1,
+    "canvasComposite": false,
+    "frames": 300,
+    "vfc": 292,
+    "vfcDecodeFail": 0,
+    "overlayMatch": 290,
+    "overlayMismatch": [
+     {
+      "code": 53,
+      "fi": 52,
+      "mediaTime": 1.734
+     },
+     {
+      "code": 155,
+      "fi": 154,
+      "mediaTime": 5.202
+     }
+    ],
+    "naiveMatch": 143,
+    "naiveMismatch": 149,
+    "overlaySelfCheckFail": 0,
+    "presentedGaps": 7,
+    "maxPresentedGap": 1,
+    "barcodeSkips": 7,
+    "raf": 604,
+    "rafDecodeFail": 0,
+    "rafUiMatch": 100,
+    "rafUiMismatch": 504,
+    "rafUiOffsets": {
+     "1": 282,
+     "2": 22,
+     "-1": 200
+    },
+    "captures": 29,
+    "captureMatch": 10,
+    "captureMismatch": [
+     [
+      5,
+      4
+     ],
+     [
+      15,
+      14
+     ],
+     [
+      25,
+      24
+     ],
+     [
+      35,
+      34
+     ],
+     [
+      45,
+      44
+     ],
+     [
+      66,
+      65
+     ],
+     [
+      77,
+      76
+     ],
+     [
+      120,
+      119
+     ],
+     [
+      130,
+      129
+     ],
+     [
+      140,
+      139
+     ],
+     [
+      151,
+      150
+     ],
+     [
+      162,
+      161
+     ],
+     [
+      202,
+      201
+     ],
+     [
+      212,
+      211
+     ],
+     [
+      222,
+      221
+     ],
+     [
+      242,
+      241
+     ],
+     [
+      252,
+      251
+     ],
+     [
+      262,
+      261
+     ],
+     [
+      282,
+      281
+     ]
+    ],
+    "captureFail": 0,
+    "distinctFramesSeen": 292,
+    "droppedVideoFrames": 0,
+    "totalVideoFrames": 300,
+    "overlayMismatchCount": 2
+   },
+   "base_cfr_vp9.webm@2x": {
+    "file": "base_cfr_vp9.webm",
+    "rate": 2,
+    "canvasComposite": false,
+    "frames": 300,
+    "vfc": 281,
+    "vfcDecodeFail": 0,
+    "overlayMatch": 269,
+    "overlayMismatch": [
+     {
+      "code": 2,
+      "fi": 1,
+      "mediaTime": 0.033
+     },
+     {
+      "code": 169,
+      "fi": 168,
+      "mediaTime": 5.6
+     },
+     {
+      "code": 173,
+      "fi": 172,
+      "mediaTime": 5.733
+     },
+     {
+      "code": 194,
+      "fi": 193,
+      "mediaTime": 6.433
+     },
+     {
+      "code": 199,
+      "fi": 198,
+      "mediaTime": 6.6
+     },
+     {
+      "code": 200,
+      "fi": 199,
+      "mediaTime": 6.633
+     },
+     {
+      "code": 204,
+      "fi": 203,
+      "mediaTime": 6.767
+     },
+     {
+      "code": 209,
+      "fi": 208,
+      "mediaTime": 6.933
+     },
+     {
+      "code": 242,
+      "fi": 241,
+      "mediaTime": 8.033
+     },
+     {
+      "code": 247,
+      "fi": 246,
+      "mediaTime": 8.2
+     },
+     {
+      "code": 257,
+      "fi": 256,
+      "mediaTime": 8.533
+     },
+     {
+      "code": 263,
+      "fi": 262,
+      "mediaTime": 8.733
+     }
+    ],
+    "naiveMatch": 269,
+    "naiveMismatch": 12,
+    "overlaySelfCheckFail": 0,
+    "presentedGaps": 18,
+    "maxPresentedGap": 1,
+    "barcodeSkips": 23,
+    "raf": 299,
+    "rafDecodeFail": 0,
+    "rafUiMatch": 12,
+    "rafUiMismatch": 287,
+    "rafUiOffsets": {
+     "-1": 286,
+     "-2": 1
+    },
+    "captures": 28,
+    "captureMatch": 0,
+    "captureMismatch": [
+     [
+      7,
+      6
+     ],
+     [
+      17,
+      16
+     ],
+     [
+      27,
+      26
+     ],
+     [
+      37,
+      36
+     ],
+     [
+      47,
+      46
+     ],
+     [
+      57,
+      56
+     ],
+     [
+      67,
+      66
+     ],
+     [
+      77,
+      76
+     ],
+     [
+      87,
+      86
+     ],
+     [
+      97,
+      96
+     ],
+     [
+      108,
+      107
+     ],
+     [
+      118,
+      117
+     ],
+     [
+      128,
+      127
+     ],
+     [
+      138,
+      136
+     ],
+     [
+      149,
+      148
+     ],
+     [
+      159,
+      158
+     ],
+     [
+      171,
+      170
+     ],
+     [
+      184,
+      183
+     ],
+     [
+      196,
+      194
+     ],
+     [
+      208,
+      206
+     ],
+     [
+      220,
+      219
+     ],
+     [
+      232,
+      231
+     ],
+     [
+      243,
+      241
+     ],
+     [
+      253,
+      251
+     ],
+     [
+      263,
+      261
+     ],
+     [
+      273,
+      272
+     ],
+     [
+      284,
+      283
+     ],
+     [
+      294,
+      293
+     ]
+    ],
+    "captureFail": 0,
+    "distinctFramesSeen": 275,
+    "droppedVideoFrames": 1,
+    "totalVideoFrames": 300,
+    "overlayMismatchCount": 12
+   },
+   "base_cfr_vp9.webm@canvasComposite": {
+    "file": "base_cfr_vp9.webm",
+    "rate": 1,
+    "canvasComposite": true,
+    "frames": 300,
+    "vfc": 299,
+    "vfcDecodeFail": 0,
+    "overlayMatch": 299,
+    "overlayMismatch": [],
+    "naiveMatch": 299,
+    "naiveMismatch": 0,
+    "overlaySelfCheckFail": 0,
+    "presentedGaps": 0,
+    "maxPresentedGap": 0,
+    "barcodeSkips": 0,
+    "raf": 600,
+    "rafDecodeFail": 0,
+    "rafUiMatch": 169,
+    "rafUiMismatch": 431,
+    "rafUiOffsets": {
+     "1": 1,
+     "-1": 430
+    },
+    "captures": 30,
+    "captureMatch": 30,
+    "captureMismatch": [],
+    "captureFail": 0,
+    "distinctFramesSeen": 299,
+    "droppedVideoFrames": 0,
+    "totalVideoFrames": 300,
+    "overlayMismatchCount": 0
+   },
+   "base_vfr_h264.mp4@canvasComposite": {
+    "file": "base_vfr_h264.mp4",
+    "rate": 1,
+    "canvasComposite": true,
+    "frames": 300,
+    "vfc": 287,
+    "vfcDecodeFail": 0,
+    "overlayMatch": 287,
+    "overlayMismatch": [],
+    "naiveMatch": 137,
+    "naiveMismatch": 150,
+    "overlaySelfCheckFail": 0,
+    "presentedGaps": 12,
+    "maxPresentedGap": 1,
+    "barcodeSkips": 12,
+    "raf": 602,
+    "rafDecodeFail": 0,
+    "rafUiMatch": 122,
+    "rafUiMismatch": 480,
+    "rafUiOffsets": {
+     "1": 212,
+     "2": 89,
+     "3": 1,
+     "-1": 178
+    },
+    "captures": 29,
+    "captureMatch": 29,
+    "captureMismatch": [],
+    "captureFail": 0,
+    "distinctFramesSeen": 287,
+    "droppedVideoFrames": 0,
+    "totalVideoFrames": 300,
+    "overlayMismatchCount": 0
+   }
+  },
+  "seek": {
+   "base_cfr_h264.mp4": {
+    "file": "base_cfr_h264.mp4",
+    "n": 80,
+    "modes": {
+     "exact": {
+      "requestedMatch": 80,
+      "lookupMatch": 80,
+      "decodeFail": 0,
+      "decodeFailAt": [],
+      "noVFC": 0,
+      "mism": [],
+      "captureMatch": 64,
+      "captureMismatch": [
+       [
+        5,
+        5,
+        4
+       ],
+       [
+        11,
+        11,
+        10
+       ],
+       [
+        17,
+        17,
+        16
+       ],
+       [
+        23,
+        23,
+        22
+       ],
+       [
+        13,
+        13,
+        29
+       ],
+       [
+        110,
+        110,
+        13
+       ],
+       [
+        207,
+        207,
+        110
+       ],
+       [
+        65,
+        65,
+        268
+       ],
+       [
+        259,
+        259,
+        162
+       ],
+       [
+        56,
+        56,
+        259
+       ],
+       [
+        232,
+        232,
+        135
+       ],
+       [
+        160,
+        160,
+        126
+       ],
+       [
+        159,
+        159,
+        160
+       ],
+       [
+        149,
+        149,
+        150
+       ],
+       [
+        141,
+        141,
+        142
+       ]
+      ],
+      "captureFail": 1,
+      "capture100Match": 80,
+      "capture100Mismatch": [],
+      "capture100Fail": 0
+     },
+     "mid": {
+      "requestedMatch": 80,
+      "lookupMatch": 80,
+      "decodeFail": 0,
+      "decodeFailAt": [],
+      "noVFC": 0,
+      "mism": [],
+      "captureMatch": 76,
+      "captureMismatch": [
+       [
+        17,
+        17,
+        16
+       ],
+       [
+        18,
+        18,
+        17
+       ],
+       [
+        13,
+        13,
+        29
+       ],
+       [
+        149,
+        149,
+        150
+       ]
+      ],
+      "captureFail": 0,
+      "capture100Match": 80,
+      "capture100Mismatch": [],
+      "capture100Fail": 0
+     }
+    }
+   },
+   "base_cfr_vp9.webm": {
+    "file": "base_cfr_vp9.webm",
+    "n": 80,
+    "modes": {
+     "exact": {
+      "requestedMatch": 79,
+      "lookupMatch": 80,
+      "decodeFail": 0,
+      "decodeFailAt": [],
+      "noVFC": 0,
+      "mism": [
+       {
+        "f": 241,
+        "code": 240,
+        "fi": 240,
+        "mediaTime": 8,
+        "t": 8.033
+       }
+      ],
+      "captureMatch": 80,
+      "captureMismatch": [],
+      "captureFail": 0,
+      "capture100Match": 80,
+      "capture100Mismatch": [],
+      "capture100Fail": 0
+     },
+     "mid": {
+      "requestedMatch": 80,
+      "lookupMatch": 80,
+      "decodeFail": 0,
+      "decodeFailAt": [],
+      "noVFC": 0,
+      "mism": [],
+      "captureMatch": 77,
+      "captureMismatch": [
+       [
+        21,
+        21,
+        20
+       ],
+       [
+        259,
+        259,
+        162
+       ],
+       [
+        250,
+        250,
+        153
+       ]
+      ],
+      "captureFail": 0,
+      "capture100Match": 80,
+      "capture100Mismatch": [],
+      "capture100Fail": 0
+     }
+    }
+   },
+   "base_cfr_av1.webm": {
+    "file": "base_cfr_av1.webm",
+    "n": 80,
+    "modes": {
+     "exact": {
+      "requestedMatch": 78,
+      "lookupMatch": 79,
+      "decodeFail": 1,
+      "decodeFailAt": [
+       {
+        "f": 14,
+        "mediaTime": 0.467
+       }
+      ],
+      "noVFC": 0,
+      "mism": [
+       {
+        "f": 241,
+        "code": 240,
+        "fi": 240,
+        "mediaTime": 8,
+        "t": 8.033
+       }
+      ],
+      "captureMatch": 77,
+      "captureMismatch": [
+       [
+        83,
+        83,
+        286
+       ],
+       [
+        171,
+        171,
+        74
+       ]
+      ],
+      "captureFail": 1,
+      "capture100Match": 79,
+      "capture100Mismatch": [],
+      "capture100Fail": 1
+     },
+     "mid": {
+      "requestedMatch": 79,
+      "lookupMatch": 79,
+      "decodeFail": 1,
+      "decodeFailAt": [
+       {
+        "f": 14,
+        "mediaTime": 0.467
+       }
+      ],
+      "noVFC": 0,
+      "mism": [],
+      "captureMatch": 79,
+      "captureMismatch": [],
+      "captureFail": 1,
+      "capture100Match": 79,
+      "capture100Mismatch": [],
+      "capture100Fail": 1
+     }
+    }
+   },
+   "base_vfr_vp9.webm": {
+    "file": "base_vfr_vp9.webm",
+    "n": 80,
+    "modes": {
+     "exact": {
+      "requestedMatch": 56,
+      "lookupMatch": 80,
+      "decodeFail": 0,
+      "decodeFailAt": [],
+      "noVFC": 0,
+      "mism": [
+       {
+        "f": 4,
+        "code": 3,
+        "fi": 3,
+        "mediaTime": 0.102,
+        "t": 0.131
+       },
+       {
+        "f": 7,
+        "code": 6,
+        "fi": 6,
+        "mediaTime": 0.203,
+        "t": 0.229
+       },
+       {
+        "f": 10,
+        "code": 9,
+        "fi": 9,
+        "mediaTime": 0.302,
+        "t": 0.333
+       },
+       {
+        "f": 18,
+        "code": 17,
+        "fi": 17,
+        "mediaTime": 0.571,
+        "t": 0.602
+       },
+       {
+        "f": 21,
+        "code": 20,
+        "fi": 20,
+        "mediaTime": 0.671,
+        "t": 0.698
+       },
+       {
+        "f": 24,
+        "code": 23,
+        "fi": 23,
+        "mediaTime": 0.768,
+        "t": 0.796
+       },
+       {
+        "f": 29,
+        "code": 28,
+        "fi": 28,
+        "mediaTime": 0.937,
+        "t": 0.968
+       },
+       {
+        "f": 4,
+        "code": 3,
+        "fi": 3,
+        "mediaTime": 0.102,
+        "t": 0.131
+       },
+       {
+        "f": 286,
+        "code": 285,
+        "fi": 285,
+        "mediaTime": 9.569,
+        "t": 9.598
+       },
+       {
+        "f": 83,
+        "code": 82,
+        "fi": 82,
+        "mediaTime": 2.737,
+        "t": 2.767
+       }
+      ],
+      "captureMatch": 78,
+      "captureMismatch": [
+       [
+        135,
+        135,
+        37
+       ],
+       [
+        142,
+        142,
+        143
+       ]
+      ],
+      "captureFail": 0,
+      "capture100Match": 80,
+      "capture100Mismatch": [],
+      "capture100Fail": 0
+     },
+     "mid": {
+      "requestedMatch": 80,
+      "lookupMatch": 80,
+      "decodeFail": 0,
+      "decodeFailAt": [],
+      "noVFC": 0,
+      "mism": [],
+      "captureMatch": 77,
+      "captureMismatch": [
+       [
+        14,
+        14,
+        13
+       ],
+       [
+        16,
+        16,
+        15
+       ],
+       [
+        149,
+        149,
+        150
+       ]
+      ],
+      "captureFail": 0,
+      "capture100Match": 80,
+      "capture100Mismatch": [],
+      "capture100Fail": 0
+     }
+    }
+   },
+   "base_vfr_h264.mp4": {
+    "file": "base_vfr_h264.mp4",
+    "n": 80,
+    "modes": {
+     "exact": {
+      "requestedMatch": 80,
+      "lookupMatch": 80,
+      "decodeFail": 0,
+      "decodeFailAt": [],
+      "noVFC": 0,
+      "mism": [],
+      "captureMatch": 74,
+      "captureMismatch": [
+       [
+        25,
+        25,
+        24
+       ],
+       [
+        207,
+        207,
+        110
+       ],
+       [
+        189,
+        189,
+        92
+       ],
+       [
+        83,
+        83,
+        286
+       ],
+       [
+        47,
+        47,
+        250
+       ],
+       [
+        38,
+        38,
+        241
+       ]
+      ],
+      "captureFail": 0,
+      "capture100Match": 80,
+      "capture100Mismatch": [],
+      "capture100Fail": 0
+     },
+     "mid": {
+      "requestedMatch": 79,
+      "lookupMatch": 80,
+      "decodeFail": 0,
+      "decodeFailAt": [],
+      "noVFC": 0,
+      "mism": [
+       {
+        "f": 149,
+        "code": 150,
+        "fi": 150,
+        "mediaTime": 5.07,
+        "t": 5.0184999999999995
+       }
+      ],
+      "captureMatch": 73,
+      "captureMismatch": [
+       [
+        16,
+        16,
+        15
+       ],
+       [
+        19,
+        19,
+        18
+       ],
+       [
+        23,
+        23,
+        22
+       ],
+       [
+        27,
+        27,
+        26
+       ],
+       [
+        47,
+        47,
+        250
+       ],
+       [
+        148,
+        148,
+        150
+       ],
+       [
+        145,
+        145,
+        146
+       ]
+      ],
+      "captureFail": 0,
+      "capture100Match": 80,
+      "capture100Mismatch": [],
+      "capture100Fail": 0
+     }
+    }
+   }
+  },
+  "lastframe": {
+   "base_cfr_h264.mp4": {
+    "file": "base_cfr_h264.mp4",
+    "n": 300,
+    "duration": 10,
+    "lastPts": 9.966667,
+    "steps": [
+     {
+      "target": 100,
+      "t": 3.333333,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 3.333333,
+      "currentTimeAfter": 3.333333,
+      "ended": false,
+      "barcode": 100
+     },
+     {
+      "target": 298,
+      "t": 9.933333,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 9.933333,
+      "currentTimeAfter": 9.933333,
+      "ended": false,
+      "barcode": 298
+     },
+     {
+      "target": 299,
+      "t": 9.966667,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 9.966667,
+      "currentTimeAfter": 9.966667,
+      "ended": true,
+      "barcode": 299
+     },
+     {
+      "target": 150,
+      "t": 5,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 5,
+      "currentTimeAfter": 5,
+      "ended": false,
+      "barcode": 150
+     },
+     {
+      "target": 0,
+      "t": 0,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 0,
+      "currentTimeAfter": 0,
+      "ended": false,
+      "barcode": 0
+     },
+     {
+      "target": 299,
+      "t": 9.966667,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 9.966667,
+      "currentTimeAfter": 9.966667,
+      "ended": true,
+      "barcode": 299
+     },
+     {
+      "target": "duration",
+      "t": 10,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 9.966667,
+      "currentTimeAfter": 10,
+      "ended": true,
+      "barcode": 299
+     },
+     {
+      "target": 75,
+      "t": 2.5,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 2.5,
+      "currentTimeAfter": 2.5,
+      "ended": false,
+      "barcode": 75
+     }
+    ]
+   },
+   "base_cfr_vp9.webm": {
+    "file": "base_cfr_vp9.webm",
+    "n": 300,
+    "duration": 10,
+    "lastPts": 9.967,
+    "steps": [
+     {
+      "target": 100,
+      "t": 3.333,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 3.333,
+      "currentTimeAfter": 3.333,
+      "ended": false,
+      "barcode": 100
+     },
+     {
+      "target": 298,
+      "t": 9.933,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 9.933,
+      "currentTimeAfter": 9.933,
+      "ended": false,
+      "barcode": 298
+     },
+     {
+      "target": 299,
+      "t": 9.967,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 9.967,
+      "currentTimeAfter": 9.967,
+      "ended": true,
+      "barcode": 299
+     },
+     {
+      "target": 150,
+      "t": 5,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 5,
+      "currentTimeAfter": 5,
+      "ended": false,
+      "barcode": 150
+     },
+     {
+      "target": 0,
+      "t": 0,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 0,
+      "currentTimeAfter": 0,
+      "ended": false,
+      "barcode": 0
+     },
+     {
+      "target": 299,
+      "t": 9.967,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 9.967,
+      "currentTimeAfter": 9.967,
+      "ended": true,
+      "barcode": 299
+     },
+     {
+      "target": "duration",
+      "t": 10,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 9.967,
+      "currentTimeAfter": 10,
+      "ended": true,
+      "barcode": 299
+     },
+     {
+      "target": 75,
+      "t": 2.5,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 2.5,
+      "currentTimeAfter": 2.5,
+      "ended": false,
+      "barcode": 75
+     }
+    ]
+   },
+   "base_cfr_av1.webm": {
+    "file": "base_cfr_av1.webm",
+    "n": 300,
+    "duration": 10,
+    "lastPts": 9.967,
+    "steps": [
+     {
+      "target": 100,
+      "t": 3.333,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 3.333,
+      "currentTimeAfter": 3.333,
+      "ended": false,
+      "barcode": 100
+     },
+     {
+      "target": 298,
+      "t": 9.933,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 9.933,
+      "currentTimeAfter": 9.933,
+      "ended": false,
+      "barcode": 298
+     },
+     {
+      "target": 299,
+      "t": 9.967,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 9.967,
+      "currentTimeAfter": 9.967,
+      "ended": true,
+      "barcode": 299
+     },
+     {
+      "target": 150,
+      "t": 5,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 5,
+      "currentTimeAfter": 5,
+      "ended": false,
+      "barcode": 150
+     },
+     {
+      "target": 0,
+      "t": 0,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 0,
+      "currentTimeAfter": 0,
+      "ended": false,
+      "barcode": 0
+     },
+     {
+      "target": 299,
+      "t": 9.967,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 9.967,
+      "currentTimeAfter": 9.967,
+      "ended": true,
+      "barcode": 299
+     },
+     {
+      "target": "duration",
+      "t": 10,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 9.967,
+      "currentTimeAfter": 10,
+      "ended": true,
+      "barcode": 299
+     },
+     {
+      "target": 75,
+      "t": 2.5,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 2.5,
+      "currentTimeAfter": 2.5,
+      "ended": false,
+      "barcode": 75
+     }
+    ]
+   },
+   "base_vfr_vp9.webm": {
+    "file": "base_vfr_vp9.webm",
+    "n": 300,
+    "duration": 10.069,
+    "lastPts": 10.036,
+    "steps": [
+     {
+      "target": 100,
+      "t": 3.33,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 3.33,
+      "currentTimeAfter": 3.33,
+      "ended": false,
+      "barcode": 100
+     },
+     {
+      "target": 298,
+      "t": 10.003,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 10.003,
+      "currentTimeAfter": 10.003,
+      "ended": false,
+      "barcode": 298
+     },
+     {
+      "target": 299,
+      "t": 10.036,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 10.036,
+      "currentTimeAfter": 10.036,
+      "ended": true,
+      "barcode": 299
+     },
+     {
+      "target": 150,
+      "t": 5.07,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 5.07,
+      "currentTimeAfter": 5.07,
+      "ended": false,
+      "barcode": 150
+     },
+     {
+      "target": 0,
+      "t": 0,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 0,
+      "currentTimeAfter": 0,
+      "ended": false,
+      "barcode": 0
+     },
+     {
+      "target": 299,
+      "t": 10.036,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 10.036,
+      "currentTimeAfter": 10.036,
+      "ended": true,
+      "barcode": 299
+     },
+     {
+      "target": "duration",
+      "t": 10.069,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 10.036,
+      "currentTimeAfter": 10.069,
+      "ended": true,
+      "barcode": 299
+     },
+     {
+      "target": 75,
+      "t": 2.497,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 2.468,
+      "currentTimeAfter": 2.497,
+      "ended": false,
+      "barcode": 74
+     }
+    ]
+   },
+   "base_vfr_h264.mp4": {
+    "file": "base_vfr_h264.mp4",
+    "n": 300,
+    "duration": 10.07,
+    "lastPts": 10.036,
+    "steps": [
+     {
+      "target": 100,
+      "t": 3.33,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 3.33,
+      "currentTimeAfter": 3.33,
+      "ended": false,
+      "barcode": 100
+     },
+     {
+      "target": 298,
+      "t": 10.003,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 10.003,
+      "currentTimeAfter": 10.003,
+      "ended": false,
+      "barcode": 298
+     },
+     {
+      "target": 299,
+      "t": 10.036,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 10.036,
+      "currentTimeAfter": 10.036,
+      "ended": true,
+      "barcode": 299
+     },
+     {
+      "target": 150,
+      "t": 5.07,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 5.07,
+      "currentTimeAfter": 5.07,
+      "ended": false,
+      "barcode": 150
+     },
+     {
+      "target": 0,
+      "t": 0,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 0,
+      "currentTimeAfter": 0,
+      "ended": false,
+      "barcode": 0
+     },
+     {
+      "target": 299,
+      "t": 10.036,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 10.036,
+      "currentTimeAfter": 10.036,
+      "ended": true,
+      "barcode": 299
+     },
+     {
+      "target": "duration",
+      "t": 10.07,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 10.003,
+      "currentTimeAfter": 10.07,
+      "ended": true,
+      "barcode": 298
+     },
+     {
+      "target": 75,
+      "t": 2.497,
+      "seeked": true,
+      "vfc": true,
+      "mediaTime": 2.497,
+      "currentTimeAfter": 2.497,
+      "ended": false,
+      "barcode": 75
+     }
+    ]
+   }
+  },
+  "vtt": {
+   "cfr": {
+    "file": "base_cfr_vp9.webm",
+    "vtt": "overlay.vtt",
+    "trackLoad": {
+     "ok": true
+    },
+    "cues": 300,
+    "play": {
+     "vfc": 299,
+     "match": 8,
+     "empty": 0,
+     "multi": 1,
+     "mismatch": 291,
+     "offsets": {
+      "-1": 291
+     }
+    },
+    "cuechange": {
+     "events": 340,
+     "matchLastVFC": 291
+    },
+    "seek": {
+     "n": 40,
+     "match": 40,
+     "empty": 0,
+     "mismatch": []
+    }
+   },
+   "cfr_halfshift": {
+    "file": "base_cfr_vp9.webm",
+    "vtt": "overlay_half.vtt",
+    "trackLoad": {
+     "ok": true
+    },
+    "cues": 300,
+    "play": {
+     "vfc": 298,
+     "match": 18,
+     "empty": 0,
+     "multi": 0,
+     "mismatch": 280,
+     "offsets": {
+      "-1": 280
+     }
+    },
+    "cuechange": {
+     "events": 341,
+     "matchLastVFC": 280
+    },
+    "seek": {
+     "n": 40,
+     "match": 39,
+     "empty": 0,
+     "mismatch": [
+      {
+       "f": 248,
+       "code": 247,
+       "cue": 248
+      }
+     ]
+    }
+   },
+   "vfr": {
+    "file": "base_vfr_vp9.webm",
+    "vtt": "overlay_vfr.vtt",
+    "trackLoad": {
+     "ok": true
+    },
+    "cues": 300,
+    "play": {
+     "vfc": 286,
+     "match": 32,
+     "empty": 0,
+     "multi": 2,
+     "mismatch": 254,
+     "offsets": {
+      "-1": 254
+     }
+    },
+    "cuechange": {
+     "events": 340,
+     "matchLastVFC": 254
+    },
+    "seek": {
+     "n": 40,
+     "match": 32,
+     "empty": 0,
+     "mismatch": [
+      {
+       "f": 79,
+       "code": 78,
+       "cue": 79
+      },
+      {
+       "f": 38,
+       "code": 37,
+       "cue": 38
+      },
+      {
+       "f": 75,
+       "code": 74,
+       "cue": 75
+      },
+      {
+       "f": 186,
+       "code": 185,
+       "cue": 186
+      },
+      {
+       "f": 260,
+       "code": 259,
+       "cue": 260
+      },
+      {
+       "f": 145,
+       "code": 144,
+       "cue": 145
+      },
+      {
+       "f": 219,
+       "code": 218,
+       "cue": 219
+      },
+      {
+       "f": 174,
+       "code": 173,
+       "cue": 174
+      }
+     ]
+    }
+   }
+  },
+  "inband": {
+   "base_vp9_vtt_inband.webm": {
+    "load": {
+     "ok": true
+    },
+    "textTracks": [],
+    "cuesAfterSeek": [],
+    "videoWidth": 1280,
+    "audioTracks": "n/a"
+   },
+   "base_vp9_ass.mkv": {
+    "load": {
+     "ok": true
+    },
+    "textTracks": [],
+    "cuesAfterSeek": [],
+    "videoWidth": 1280,
+    "audioTracks": "n/a"
+   }
+  },
+  "alpha": {
+   "load": {
+    "ok": true
+   },
+   "frame0_alpha_zero_fraction": 0.8746180555555556,
+   "frame0_alpha_full_fraction": 0.11354709201388889,
+   "overlayBarcodeFrame0": 0,
+   "dualVideoSync": {
+    "vfc": 271,
+    "match": 76,
+    "mismatch": 195,
+    "offsets": {
+     "1": 195
+    },
+    "decodeFail": 0,
+    "captures": 27,
+    "captureMatch": 27,
+    "captureMismatch": [],
+    "captureFail": 0
+   },
+   "dualVideoSeek": {
+    "n": 30,
+    "match": 30,
+    "mism": []
+   }
+  },
+  "trunc": {
+   "truncated/overlay_full.svg": {
+    "imgEvent": "load",
+    "domParserError": false,
+    "groups": 300
+   },
+   "truncated/overlay_trunc.svg": {
+    "imgEvent": "error",
+    "domParserError": true,
+    "groups": 151
+   },
+   "overlay.vtt": {
+    "load": {
+     "ok": true
+    },
+    "cues": 300,
+    "lastCuePayloadParses": true
+   },
+   "truncated/overlay_trunc.vtt": {
+    "load": {
+     "ok": true
+    },
+    "cues": 150,
+    "lastCuePayloadParses": false
+   }
+  },
+  "webcodecs": {
+   "VideoEncoder": true,
+   "enc": {
+    "vp8/prefer-hardware": false,
+    "vp8/prefer-software": true,
+    "vp9/prefer-hardware": false,
+    "vp9/prefer-software": true,
+    "av1/prefer-hardware": false,
+    "av1/prefer-software": true,
+    "h264/prefer-hardware": true,
+    "h264/prefer-software": true,
+    "hevc/prefer-hardware": true,
+    "hevc/prefer-software": false
+   },
+   "dec": {
+    "vp8/prefer-hardware": false,
+    "vp8/prefer-software": true,
+    "vp9/prefer-hardware": true,
+    "vp9/prefer-software": true,
+    "av1/prefer-hardware": true,
+    "av1/prefer-software": true,
+    "h264/prefer-hardware": true,
+    "h264/prefer-software": true,
+    "hevc/prefer-hardware": true,
+    "hevc/prefer-software": false
+   }
+  },
+  "layout": {
+   "frames": 60,
+   "naive": {
+    "labelLabel": 11,
+    "labelMarker": 322,
+    "outOfBounds": 0
+   },
+   "placed": {
+    "labelLabel": 0,
+    "labelMarker": 0,
+    "outOfBounds": 0,
+    "lane": 0,
+    "hidden": 0
+   },
+   "deterministic": true
+  }
+ },
+ "env": {
+  "electron": "45.2.3",
+  "chrome": "156.0.8078.80",
+  "node": "24.22.2",
+  "scaleFactor": 1,
+  "gpuFeatureStatus": {
+   "2d_canvas": "enabled",
+   "direct_rendering_display_compositor": "disabled_off_ok",
+   "gpu_compositing": "enabled",
+   "multiple_raster_threads": "enabled_on",
+   "opengl": "enabled_on",
+   "rasterization": "enabled",
+   "raw_draw": "disabled_off_ok",
+   "skia_graphite": "disabled_off",
+   "trees_in_viz": "disabled_off",
+   "video_decode": "enabled",
+   "video_encode": "enabled",
+   "webgl": "enabled",
+   "webgpu": "enabled",
+   "webnn": "disabled_off"
+  },
+  "gpuInfo": {
+   "auxAttributes": {
+    "amdSwitchable": false,
+    "canSupportThreadedTextureMailbox": false,
+    "directMLFeatureLevel": "Not supported",
+    "dx12FeatureLevel": "Not supported",
+    "glImplementationParts": "(gl=none,angle=none)",
+    "glResetNotificationStrategy": 0,
+    "inProcessGpu": true,
+    "initializationTime": 0,
+    "isAsan": false,
+    "isClangCoverage": false,
+    "jpegDecodeAcceleratorSupported": false,
+    "optimus": false,
+    "overlayInfo": {
+     "bgra8OverlaySupport": "NONE",
+     "directComposition": false,
+     "nv12OverlaySupport": "NONE",
+     "p010OverlaySupport": "NONE",
+     "rgb10a2OverlaySupport": "NONE",
+     "supportsOverlays": false,
+     "yuy2OverlaySupport": "NONE"
+    },
+    "passthroughCmdDecoder": false,
+    "sandboxed": false,
+    "skiaBackendType": "None",
+    "subpixelFontRendering": true,
+    "supportsD3dSharedImages": false,
+    "supportsDirectML": false,
+    "supportsDx12": false,
+    "supportsVulkan": false,
+    "targetCpuBits": 64,
+    "visibilityCallbackCallCount": 0,
+    "vulkanVersion": "Not supported"
+   },
+   "gpuDevice": [
+    {
+     "active": false,
+     "deviceId": 9348,
+     "deviceString": "NVIDIA GeForce RTX 3070",
+     "driverVersion": "32.0.16.1088",
+     "gpuPreference": 2,
+     "revision": 161,
+     "subSysId": 928331842,
+     "vendorId": 4318
+    },
+    {
+     "active": false,
+     "deviceId": 9348,
+     "deviceString": "NVIDIA GeForce RTX 3070",
+     "driverVersion": "32.0.16.1088",
+     "gpuPreference": 0,
+     "revision": 161,
+     "subSysId": 928331842,
+     "vendorId": 4318
+    },
+    {
+     "active": false,
+     "deviceId": 140,
+     "deviceString": "Microsoft Basic Render Driver",
+     "driverVersion": "10.0.26100.9711",
+     "gpuPreference": 0,
+     "revision": 0,
+     "subSysId": 0,
+     "vendorId": 5140
+    }
+   ]
+  }
+ }
+}

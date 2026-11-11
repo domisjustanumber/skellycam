@@ -1,0 +1,31 @@
+== 1. FFV1 coder on 12-bit (gray16le) and v4 native Bayer: packet bytes, bit-exactness, encoder log ==
+gray16le bayer16_quad_noiseTrue level=3 coder=0 bytes=1617493 exact=y log=[high bits_per_raw_sample, forcing range coder]
+gray16le bayer16_quad_noiseTrue level=3 coder=1 bytes=1617493 exact=y log=[]
+gray16le bayer16_quad_noiseTrue level=4 coder=0 bytes=1617502 exact=y log=[high bits_per_raw_sample, forcing range coder]
+gray16le bayer16_quad_noiseTrue level=4 coder=1 bytes=1617502 exact=y log=[]
+gray16le bayer_rggb16le_noiseTrue level=3 coder=0 bytes=2347875 exact=y log=[high bits_per_raw_sample, forcing range coder]
+gray16le bayer_rggb16le_noiseTrue level=3 coder=1 bytes=2347875 exact=y log=[]
+gray16le bayer_rggb16le_noiseTrue level=4 coder=0 bytes=2347882 exact=y log=[high bits_per_raw_sample, forcing range coder]
+gray16le bayer_rggb16le_noiseTrue level=4 coder=1 bytes=2347882 exact=y log=[]
+bayer_rggb16le native level=4 coder=0 bytes=1588642 exact=y log=[]
+bayer_rggb16le native level=4 coder=1 bytes=1569842 exact=y log=[]
+== 2. Hard kill (SIGKILL -> TerminateProcess) of an ffmpeg writer after 3 s at -re 30 fps; then count readable frames ==
+cli_checks.sh: line 22: 45215 Killed                  timeout -s KILL 3 ffmpeg -hide_banner -loglevel error -y -re -stream_loop -1 -f rawvideo -pix_fmt yuyv422 -s 1920x1080 -r 30 -i yuyv422_noiseTrue.raw -c:v $c $opts -pix_fmt yuv422p $o 2> /dev/null
+utvideo.avi rc=137 bytes=76021760 frames_read=100 first_errors=[[utvideo ] Incorrect slice size [vist#0:0/utvideo ] [dec:utvideo ] Decoding error: Invalid data found when processing input ]
+cli_checks.sh: line 22: 45232 Killed                  timeout -s KILL 3 ffmpeg -hide_banner -loglevel error -y -re -stream_loop -1 -f rawvideo -pix_fmt yuyv422 -s 1920x1080 -r 30 -i yuyv422_noiseTrue.raw -c:v $c $opts -pix_fmt yuv422p $o 2> /dev/null
+ffvhuff.nut rc=137 bytes=116129792 frames_read=102 first_errors=[[in#0 ] read_timestamp failed.     Last message repeated 9 times ]
+cli_checks.sh: line 22: 45254 Killed                  timeout -s KILL 3 ffmpeg -hide_banner -loglevel error -y -re -stream_loop -1 -f rawvideo -pix_fmt yuyv422 -s 1920x1080 -r 30 -i yuyv422_noiseTrue.raw -c:v $c $opts -pix_fmt yuv422p $o 2> /dev/null
+ffv1.mkv rc=137 bytes=46137344 frames_read=103 first_errors=[[in#0/matroska,webm ] File ended prematurely ]
+cli_checks.sh: line 22: 45284 Killed                  timeout -s KILL 3 ffmpeg -hide_banner -loglevel error -y -re -stream_loop -1 -f rawvideo -pix_fmt yuyv422 -s 1920x1080 -r 30 -i yuyv422_noiseTrue.raw -c:v $c $opts -pix_fmt yuv422p $o 2> /dev/null
+utvideo.nut rc=137 bytes=76808192 frames_read=101 first_errors=[[in#0 ] read_timestamp failed.     Last message repeated 9 times ]
+cli_checks.sh: line 22: 45313 Killed                  timeout -s KILL 3 ffmpeg -hide_banner -loglevel error -y -re -stream_loop -1 -f rawvideo -pix_fmt yuyv422 -s 1920x1080 -r 30 -i yuyv422_noiseTrue.raw -c:v $c $opts -pix_fmt yuv422p $o 2> /dev/null
+ffv1.avi rc=137 bytes=46661632 frames_read=104 first_errors=[[ffv1 ] slice count 0 is invalid (max=4) [vist#0:0/ffv1 ] [dec:ffv1 ] Decoding error: Invalid data found when processing input ]
+== 3. Share of 12-bit FFV1 size caused by the 4 seeded noise bits (uintra_frames noise=True vs noise=False), FFV1 v3 range (forced), s24, 1 frame ==
+bayer16_quad noise=True bytes=1617493
+bayer16_quad noise=False bytes=504260
+bayer_rggb16le noise=True bytes=2347875
+bayer_rggb16le noise=False bytes=1219858
+entropy of 4 uniform random bits x 1920x1080 samples = 1036800 bytes
+== 4. FFV1 v3 12-bit signalling: low-aligned gray16le (bits_per_raw_sample 16, default) vs MSB-aligned gray16le with -bits_per_raw_sample 12 (bayer16_quad_noiseTrue, 1 frame) ==
+default(16) bytes=1617493
+bprs12(msb-aligned) bytes=1617492

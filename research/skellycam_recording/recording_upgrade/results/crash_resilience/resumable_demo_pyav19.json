@@ -1,0 +1,475 @@
+{
+ "env": {
+  "pyav": "19.0.2",
+  "libavformat": "63.1.102",
+  "child_interpreter": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\resumable-pyav19-6608b0d2289d0bd8\\Scripts\\python.exe"
+ },
+ "scenarios": [
+  {
+   "name": "kill_mid_segment",
+   "payload": "mjpeg",
+   "steps": [
+    {
+     "recovery": {
+      "was_incomplete": false,
+      "repaired_segment": null,
+      "frames_in_repaired_segment": 0,
+      "timestamps_valid": 0,
+      "timestamps_dropped": 0,
+      "lost_frames": [],
+      "next_frame": 0
+     },
+     "last_frame_reported": 169,
+     "closed": false,
+     "exit": 1,
+     "stderr_tail": ""
+    },
+    {
+     "recovery": {
+      "was_incomplete": true,
+      "repaired_segment": "seg_00002.mkv",
+      "frames_in_repaired_segment": 49,
+      "timestamps_valid": 169,
+      "timestamps_dropped": 1,
+      "lost_frames": [
+       169
+      ],
+      "next_frame": 170
+     },
+     "last_frame_reported": 259,
+     "closed": true,
+     "exit": 0,
+     "stderr_tail": ""
+    }
+   ],
+   "verify": {
+    "segments": 5,
+    "frames_per_segment": [
+     60,
+     60,
+     49,
+     60,
+     30
+    ],
+    "video_frames": 259,
+    "timestamp_records": 259,
+    "session_closed": true,
+    "resumes": 1,
+    "lost_frames": [
+     169
+    ],
+    "frame_numbers_unique_increasing": true,
+    "gaps_all_listed_as_lost": true,
+    "video_eq_timestamps": true,
+    "pts_match_capture_ns": true,
+    "byte_exact": 259,
+    "joined": {
+     "segments": 5,
+     "packets": 259,
+     "pts_monotonic": true
+    },
+    "joined_ffprobe_frames": 259,
+    "max_capture_gap_ms": 285.4
+   }
+  },
+  {
+   "name": "double_crash",
+   "payload": "mjpeg",
+   "steps": [
+    {
+     "recovery": {
+      "was_incomplete": false,
+      "repaired_segment": null,
+      "frames_in_repaired_segment": 0,
+      "timestamps_valid": 0,
+      "timestamps_dropped": 0,
+      "lost_frames": [],
+      "next_frame": 0
+     },
+     "last_frame_reported": 99,
+     "closed": false,
+     "exit": 1,
+     "stderr_tail": ""
+    },
+    {
+     "recovery": {
+      "was_incomplete": true,
+      "repaired_segment": "seg_00001.mkv",
+      "frames_in_repaired_segment": 39,
+      "timestamps_valid": 99,
+      "timestamps_dropped": 1,
+      "lost_frames": [
+       99
+      ],
+      "next_frame": 100
+     },
+     "last_frame_reported": 174,
+     "closed": false,
+     "exit": 1,
+     "stderr_tail": ""
+    },
+    {
+     "recovery": {
+      "was_incomplete": true,
+      "repaired_segment": "seg_00003.mkv",
+      "frames_in_repaired_segment": 14,
+      "timestamps_valid": 173,
+      "timestamps_dropped": 1,
+      "lost_frames": [
+       174
+      ],
+      "next_frame": 175
+     },
+     "last_frame_reported": 234,
+     "closed": true,
+     "exit": 0,
+     "stderr_tail": ""
+    }
+   ],
+   "verify": {
+    "segments": 5,
+    "frames_per_segment": [
+     60,
+     39,
+     60,
+     14,
+     60
+    ],
+    "video_frames": 233,
+    "timestamp_records": 233,
+    "session_closed": true,
+    "resumes": 2,
+    "lost_frames": [
+     99,
+     174
+    ],
+    "frame_numbers_unique_increasing": true,
+    "gaps_all_listed_as_lost": true,
+    "video_eq_timestamps": true,
+    "pts_match_capture_ns": true,
+    "byte_exact": 233,
+    "joined": {
+     "segments": 5,
+     "packets": 233,
+     "pts_monotonic": true
+    },
+    "joined_ffprobe_frames": 233,
+    "max_capture_gap_ms": 312.4
+   }
+  },
+  {
+   "name": "powerloss_0",
+   "payload": "mjpeg",
+   "steps": [
+    {
+     "recovery": {
+      "was_incomplete": false,
+      "repaired_segment": null,
+      "frames_in_repaired_segment": 0,
+      "timestamps_valid": 0,
+      "timestamps_dropped": 0,
+      "lost_frames": [],
+      "next_frame": 0
+     },
+     "last_frame_reported": 169,
+     "closed": false,
+     "exit": 1,
+     "stderr_tail": ""
+    },
+    {
+     "powerloss": {
+      "segment": [
+       "seg_00002.mkv",
+       2692921,
+       1615836
+      ],
+      "timestamps": [
+       5440,
+       5021
+      ],
+      "manifest": [
+       669,
+       667
+      ]
+     }
+    },
+    {
+     "recovery": {
+      "was_incomplete": true,
+      "repaired_segment": "seg_00002.mkv",
+      "frames_in_repaired_segment": 29,
+      "timestamps_valid": 149,
+      "timestamps_dropped": 7,
+      "lost_frames": [
+       149,
+       150,
+       151,
+       152,
+       153,
+       154,
+       155
+      ],
+      "next_frame": 156
+     },
+     "last_frame_reported": 215,
+     "closed": true,
+     "exit": 0,
+     "stderr_tail": ""
+    }
+   ],
+   "verify": {
+    "segments": 4,
+    "frames_per_segment": [
+     60,
+     60,
+     29,
+     60
+    ],
+    "video_frames": 209,
+    "timestamp_records": 209,
+    "session_closed": true,
+    "resumes": 1,
+    "lost_frames": [
+     149,
+     150,
+     151,
+     152,
+     153,
+     154,
+     155
+    ],
+    "frame_numbers_unique_increasing": true,
+    "gaps_all_listed_as_lost": true,
+    "video_eq_timestamps": true,
+    "pts_match_capture_ns": true,
+    "byte_exact": 209,
+    "joined": {
+     "segments": 4,
+     "packets": 209,
+     "pts_monotonic": true
+    },
+    "joined_ffprobe_frames": 209,
+    "max_capture_gap_ms": 1006.6
+   }
+  },
+  {
+   "name": "powerloss_1",
+   "payload": "mjpeg",
+   "steps": [
+    {
+     "recovery": {
+      "was_incomplete": false,
+      "repaired_segment": null,
+      "frames_in_repaired_segment": 0,
+      "timestamps_valid": 0,
+      "timestamps_dropped": 0,
+      "lost_frames": [],
+      "next_frame": 0
+     },
+     "last_frame_reported": 169,
+     "closed": false,
+     "exit": 1,
+     "stderr_tail": ""
+    },
+    {
+     "powerloss": {
+      "segment": [
+       "seg_00002.mkv",
+       2692921,
+       563565
+      ],
+      "timestamps": [
+       5440,
+       5325
+      ],
+      "manifest": [
+       669,
+       641
+      ]
+     }
+    },
+    {
+     "recovery": {
+      "was_incomplete": true,
+      "repaired_segment": "seg_00002.mkv",
+      "frames_in_repaired_segment": 10,
+      "timestamps_valid": 130,
+      "timestamps_dropped": 36,
+      "lost_frames": [
+       130,
+       131,
+       132,
+       133,
+       134,
+       135,
+       136,
+       137,
+       138,
+       139,
+       140,
+       141,
+       142,
+       143,
+       144,
+       145,
+       146,
+       147,
+       148,
+       149,
+       150,
+       151,
+       152,
+       153,
+       154,
+       155,
+       156,
+       157,
+       158,
+       159,
+       160,
+       161,
+       162,
+       163,
+       164,
+       165
+      ],
+      "next_frame": 166
+     },
+     "last_frame_reported": 225,
+     "closed": true,
+     "exit": 0,
+     "stderr_tail": ""
+    }
+   ],
+   "verify": {
+    "segments": 4,
+    "frames_per_segment": [
+     60,
+     60,
+     10,
+     60
+    ],
+    "video_frames": 190,
+    "timestamp_records": 190,
+    "session_closed": true,
+    "resumes": 1,
+    "lost_frames": [
+     130,
+     131,
+     132,
+     133,
+     134,
+     135,
+     136,
+     137,
+     138,
+     139,
+     140,
+     141,
+     142,
+     143,
+     144,
+     145,
+     146,
+     147,
+     148,
+     149,
+     150,
+     151,
+     152,
+     153,
+     154,
+     155,
+     156,
+     157,
+     158,
+     159,
+     160,
+     161,
+     162,
+     163,
+     164,
+     165
+    ],
+    "frame_numbers_unique_increasing": true,
+    "gaps_all_listed_as_lost": true,
+    "video_eq_timestamps": true,
+    "pts_match_capture_ns": true,
+    "byte_exact": 190,
+    "joined": {
+     "segments": 4,
+     "packets": 190,
+     "pts_monotonic": true
+    },
+    "joined_ffprobe_frames": 190,
+    "max_capture_gap_ms": 1682.5
+   }
+  },
+  {
+   "name": "ffv1_kill_mid",
+   "payload": "ffv1",
+   "steps": [
+    {
+     "recovery": {
+      "was_incomplete": false,
+      "repaired_segment": null,
+      "frames_in_repaired_segment": 0,
+      "timestamps_valid": 0,
+      "timestamps_dropped": 0,
+      "lost_frames": [],
+      "next_frame": 0
+     },
+     "last_frame_reported": 169,
+     "closed": false,
+     "exit": 1,
+     "stderr_tail": ""
+    },
+    {
+     "recovery": {
+      "was_incomplete": true,
+      "repaired_segment": "seg_00002.mkv",
+      "frames_in_repaired_segment": 47,
+      "timestamps_valid": 169,
+      "timestamps_dropped": 1,
+      "lost_frames": [
+       169
+      ],
+      "next_frame": 170
+     },
+     "last_frame_reported": 259,
+     "closed": true,
+     "exit": 0,
+     "stderr_tail": ""
+    }
+   ],
+   "verify": {
+    "segments": 5,
+    "frames_per_segment": [
+     61,
+     61,
+     47,
+     61,
+     29
+    ],
+    "video_frames": 259,
+    "timestamp_records": 259,
+    "session_closed": true,
+    "resumes": 1,
+    "lost_frames": [
+     169
+    ],
+    "frame_numbers_unique_increasing": true,
+    "gaps_all_listed_as_lost": true,
+    "video_eq_timestamps": true,
+    "pts_match_capture_ns": true,
+    "joined": {
+     "segments": 5,
+     "packets": 259,
+     "pts_monotonic": true
+    },
+    "joined_ffprobe_frames": 259,
+    "max_capture_gap_ms": 313.1
+   }
+  }
+ ]
+}

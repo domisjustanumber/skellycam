@@ -1,0 +1,94 @@
+# gpu_encode system probe (read-only), 2026-11-09T11:36:32.5337805-05:00
+## Get-PnpDevice -Class Display
+
+Status  Present         Problem FriendlyName                   InstanceId
+------  -------         ------- ------------                   ----------
+OK         True    CM_PROB_NONE Parsec Virtual Display Adapter ROOT\DISPLAY\0000
+Unknown   False CM_PROB_PHANTOM Intel(R) UHD Graphics 770      PCI\VEN_8086&DEV_A780&SUBSYS_88821043&REV_04\3&11583659&0&10
+OK         True    CM_PROB_NONE NVIDIA GeForce RTX 3070        PCI\VEN_10DE&DEV_2484&SUBSYS_37553842&REV_A1\4&256A0AA8&0&0008
+
+
+## Intel iGPU properties
+
+KeyName                                         Data
+-------                                         ----
+DEVPKEY_Device_IsPresent                       False
+DEVPKEY_Device_DriverVersion           32.0.101.7088
+DEVPKEY_Device_LastArrivalDate 2026-11-07 1:47:10 PM
+DEVPKEY_Device_LastRemovalDate                      
+
+
+## Win32_VideoController
+
+Name                           DriverVersion Status
+----                           ------------- ------
+Parsec Virtual Display Adapter 0.45.0.0      OK
+NVIDIA GeForce RTX 3070        32.0.16.1088  OK
+
+
+## nvidia-smi
+name, driver_version, compute_cap, encoder.stats.sessionCount, utilization.gpu [%]
+NVIDIA GeForce RTX 3070, 610.88, 8.6, 0, 31 %
+## ffmpeg -version (first line) / -hwaccels / hardware encoders
+ffmpeg version 9.0.2-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers
+Hardware acceleration methods:
+cuda
+vaapi
+dxva2
+qsv
+d3d11va
+opencl
+vulkan
+d3d12va
+amf
+
+ V....D av1_d3d12va          D3D12VA av1 encoder (codec av1)
+ V....D av1_nvenc            NVIDIA NVENC av1 encoder (codec av1)
+ V..... av1_qsv              AV1 (Intel Quick Sync Video acceleration) (codec av1)
+ V....D av1_amf              AMD AMF AV1 encoder (codec av1)
+ V....D av1_mf               AV1 via MediaFoundation (codec av1)
+ V....D av1_vaapi            AV1 (VAAPI) (codec av1)
+ V....D av1_vulkan           AV1 (Vulkan) (codec av1)
+ V....D ffv1_vulkan          FFmpeg video codec #1 (Vulkan) (codec ffv1)
+ V....D h264_amf             AMD AMF H.264 Encoder (codec h264)
+ V....D h264_d3d12va         D3D12VA h264 encoder (codec h264)
+ V....D h264_mf              H264 via MediaFoundation (codec h264)
+ V....D h264_nvenc           NVIDIA NVENC H.264 encoder (codec h264)
+ V..... h264_qsv             H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10 (Intel Quick Sync Video acceleration) (codec h264)
+ V....D h264_vaapi           H.264/AVC (VAAPI) (codec h264)
+ V....D h264_vulkan          H.264/AVC (Vulkan) (codec h264)
+ V....D hevc_amf             AMD AMF HEVC encoder (codec hevc)
+ V....D hevc_d3d12va         D3D12VA hevc encoder (codec hevc)
+ V....D hevc_mf              HEVC via MediaFoundation (codec hevc)
+ V....D hevc_nvenc           NVIDIA NVENC hevc encoder (codec hevc)
+ V..... hevc_qsv             HEVC (Intel Quick Sync Video acceleration) (codec hevc)
+ V....D hevc_vaapi           H.265/HEVC (VAAPI) (codec hevc)
+ V....D hevc_vulkan          H.265/HEVC (Vulkan) (codec hevc)
+ V..... mjpeg_qsv            MJPEG (Intel Quick Sync Video acceleration) (codec mjpeg)
+ V....D mjpeg_vaapi          MJPEG (VAAPI) (codec mjpeg)
+ V..... mpeg2_qsv            MPEG-2 video (Intel Quick Sync Video acceleration) (codec mpeg2video)
+ V....D mpeg2_vaapi          MPEG-2 (VAAPI) (codec mpeg2video)
+ V..... prores_ks_vulkan     Apple ProRes (iCodec Pro) (codec prores)
+ V....D vp8_vaapi            VP8 (VAAPI) (codec vp8)
+ V....D vp9_vaapi            VP9 (VAAPI) (codec vp9)
+ V..... vp9_qsv              VP9 video (Intel Quick Sync Video acceleration) (codec vp9)
+ A....D aac_mf               AAC via MediaFoundation (codec aac)
+ A....D ac3_mf               AC3 via MediaFoundation (codec ac3)
+ A....D mp3_mf               MP3 via MediaFoundation (codec mp3)
+## Vulkan device extensions used by ffmpeg (video)
+[Vulkan @ 000002b5ef7b5340] GPU listing:
+[Vulkan @ 000002b5ef7b5340] Device 0 selected: NVIDIA GeForce RTX 3070 (discrete) (0x2484)
+[Vulkan @ 000002b5ef7b5340] Using device extension VK_KHR_video_maintenance1
+[Vulkan @ 000002b5ef7b5340] Using device extension VK_KHR_video_maintenance2
+[Vulkan @ 000002b5ef7b5340] Using device extension VK_KHR_video_queue
+[Vulkan @ 000002b5ef7b5340] Using device extension VK_KHR_video_encode_queue
+[Vulkan @ 000002b5ef7b5340] Using device extension VK_KHR_video_decode_queue
+[Vulkan @ 000002b5ef7b5340] Using device extension VK_KHR_video_encode_h264
+[Vulkan @ 000002b5ef7b5340] Using device extension VK_KHR_video_decode_h264
+[Vulkan @ 000002b5ef7b5340] Using device extension VK_KHR_video_encode_h265
+[Vulkan @ 000002b5ef7b5340] Using device extension VK_KHR_video_decode_h265
+[Vulkan @ 000002b5ef7b5340] Using device extension VK_KHR_video_decode_vp9
+[Vulkan @ 000002b5ef7b5340] Using device extension VK_KHR_video_decode_av1
+## av1_mf MFT chosen (hw_encoding)
+[av1_mf @ 0000014858246440]    MFT_FRIENDLY_NAME_Attribute='Intel� Hardware Accelerated AV1 Encoder MFT'
+[vost#0:0/av1_mf @ 00000148582461c0] [enc:av1_mf @ 00000148561ea640] Could not open encoder before EOF
