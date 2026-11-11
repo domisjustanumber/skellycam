@@ -17,6 +17,39 @@ Short names for evidence files:
 
 ---
 
+## Handoff (2026-11-11): start here in a new session
+
+Dom will pick this up in a separate session. Nothing is decided yet: everything below is for that session to settle with Dom.
+
+**Project rules this work must follow** (Dom, 2026-11-11, in `PLAN` §1):
+- JPEG only, I-frames only, everywhere; long-GOP is forbidden. Container: JPEG in MKV with a binary per-frame sidecar.
+- Raw frames are encoded with `mjpeg_qsv` first (needs full-range input), libjpeg-turbo as the fallback.
+- Imported footage plays in a separate `<video>`-based import player (`PLAN` §4, item 2.8). `<video>` cannot play MJPEG.
+- Phase 2 is freemocap-side work. freemocap stays on Python 3.11 and its current skellycam pin until its phase-2 move to 3.13 (`PLAN` §6, D3).
+
+**Recommendation from the main session** (inferred from this report, not decided):
+1. **Design B first:** keep the originals untouched and write a sync sidecar (§3). It is days of work in skellysync, adds no disk and loses no quality. It has no Python/PyAV blocker, and it fits the `<video>` import player.
+2. **Treat untouched imported originals as source data** that the JPEG-only rule does not cover. The rule applies to everything skellysync and freemocap *write*.
+3. **Fix the two existing bugs either way** (§1): the 30 s ffmpeg trim timeout (`core/backends/ffmpeg.py:178`, `config.py:24`), and the audio reattach ignoring the synced WAV for stereo sources (no `-map`).
+4. **Design A later, only if needed:** if imported footage must be shown in the canvas player, or processed as JPEG. When it is built, settle the quality basis first. Matching target A against an already-lossy source makes JPEG copy the source's noise: phone clips needed 1.4–5.4× the bytes of webcam frames (§8).
+
+**The three decisions that drive the rest** (the full list of 11 is in §7):
+1. **Design:** A (JPEG-in-MKV output), B (sidecar only), or B now and A later.
+2. **Rule scope:** do untouched imported originals fall under "JPEG only, I-frames only"?
+3. **Quality basis for lossy sources:** SSIM-Y 0.9961 against the decoded source, or a fixed quality (the cameras' q94-like quantisation).
+
+**Headline numbers** (details in §5–§6):
+- **Effort:** A is ~3–5 weeks in skellysync plus a few days to a week in freemocap. B is days to a week in skellysync plus 1–2+ weeks in freemocap if every reader applies the offsets.
+- **Size, GB per camera-hour:** 4K60 is 27–54 from the source against ~112–480 as JPEG at A. A 4-camera, 10-minute 4K60 session goes from 30 GB to ~75–320 GB.
+- **CPU:** 4K HEVC software decode dominates, at about 11 cores for 4 × 4K60, so conversion runs at about real time on an i7-14700K.
+- **Playback:** GoPro HERO11/12 record HEVC only, and Chromium has no software HEVC decode.
+
+**Not kept:** the size-measurement scripts and raw results (`sizecheck.py`, `sizecheck_hiq.py`, `result*.json`) were left in the original session's temporary scratchpad. They name the paths of personal phone clips, so they are not in the repo. §8 describes the method well enough to redo it on real GoPro clips, one per mode, which is the next step for firming up sizes.
+
+**Related:** `PLAN` (rev 3.2) §4 item 2.8 and phase-2 exit tests; `research/usb_cameras/docs/` for the capture side.
+
+---
+
 ## 0. Summary
 
 1. **Your read of the code is right, with three corrections and two extra defects.** One offset per video, from audio cross-correlation or the first brightness flash. Normalize with `-r`, trim with `-ss … -frames:v N`, reattach audio with `-c:v copy`. No codec is named, so the output is ffmpeg's default MP4 encoder, which with the Gyan 9.0.2 build on this machine is libx264 High with B-frames (`has_b_frames=2`) [M, §8.4]. Corrections and additions:
