@@ -16,8 +16,12 @@ Start here in a new session. This covers everything from the 2026-11-11 planning
   2. `7a9b82c9`: Python 3.13 floor, `av>=19.0.2`, `setproctitle>=1.3.8`, `opencv-contrib-python>=4.12,<6`, CI 3.13 on Linux/Windows/macOS.
   3. `528456dd`: runtime minors (fastapi 0.162, pydantic 2.14, uvicorn 0.54, …).
   4. `2e19444a`: numpy 2.5 + OpenCV 5.0 (coupled by the resolver); `.item()` fix in `timebase_mapping.py`; VFW/QT backends dropped from the diagnostics script.
+  5. `d50129a50`: **every version pinned exactly (D13)**: Python 3.13.13 in `.python-version` and `requires-python`, all direct and dev dependencies `==`, skellylogs/skellypings by commit, setuptools 84.2.1.
+  6. `777b123b6`: CI actions pinned to exact tags; uv 0.13.7, Node 20.20.2 / 22.23.5, Python 3.13.13 in CI. Local uv is still 0.11.8.
+  7. `7d06ba2e1`: skellycam-ui packages pinned to their locked versions; `.npmrc` sets `save-exact`. The old lock had already installed TypeScript 6.0.3 despite the `~5.9.3` range. **`tsc --noEmit` fails on `main` before and after** (TS 6 deprecates `baseUrl` in `tsconfig.json`).
   - Every step: ruff clean, no new test failures. The PyAV libx264 writer was smoke-tested on PyAV 19.
-  - **Still to do in 1.0:** majors one at a time (`numpydantic` 2, `pillow` 13, `polars` 2, `websockets` 17), the dev tools (ruff 0.17 may add lint findings), then skellycam-ui npm (Electron 45 and the other majors), then T-BUMP.
+  - **Polars is pinned at 1.43.0, which is yanked;** the polars 2 step must move it.
+  - **Still to do in 1.0:** each bump now edits one exact pin. Majors one at a time (`numpydantic` 2, `pillow` 13, `polars` 2, `websockets` 17), the dev tools (ruff 0.17 may add lint findings), then skellycam-ui npm (Electron 45 and the other majors), then T-BUMP.
   - **T-BUMP's real recordings haven't been run.** The Kiyo Pro is wedged, and connecting cameras through skellycam could re-probe it, which isn't allowed. A replug is needed first; then one recording per major-bump commit.
 - **Housekeeping:** the 74 untracked media files (10.2 MB) were moved to `C:/Users/Dom/Documents/skellycam-raw/` with mirrored paths, sha1 verified; that README has a new row.
 - **Privacy: fixed 2026-11-11 by rewriting `dom/research` (not yet force-pushed; Dom must approve the push).**
