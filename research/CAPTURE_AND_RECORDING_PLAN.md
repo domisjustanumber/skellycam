@@ -57,7 +57,7 @@ Two facts about the code today:
 ### 2.3 Why JPEG avoids the scrub crash
 - **The crash happened in the WebCodecs `VideoDecoder` path.** That decode runs in Chromium's GPU process. Without a GPU-to-CPU sync point, the GPU process crashed in 21 of 24 scrub configs, and in 12/12 runs of the earlier bench loop. After 3 crashes Chromium turned off hardware video decode for the session [M] (`results/intra_playback/gapfill/GF10_wc_scrub_memory.md` §4).
 - **The JPEG path uses `ImageDecoder`, the image decoder, not the video decoder.** No JPEG scrub or sync config crashed, and no JPEG scrub config went above 901,812 GPU `private_kb` [M] (`intra_playback/FINDINGS.md` F22). The JPEG scrub was timed: 58 frames/s at 8 cameras, which is the harness's input limit, at 3.05–3.20 cores [M] (F23).
-- **The remaining risk is in the app's own code:** holding decoded images without closing them, and unbounded prefetch. A real component over a long session has not been tested (T-PLAY).
+- **The remaining risk is in the app's own code:** holding decoded images without closing them, and unbounded prefetch. A real component over a long session has not been tested (TP4).
 
 ### 2.4 Python 3.13 and the packaging change it forces on freemocap
 - PyAV 19.0.2 needs Python ≥ 3.12 [S]. freemocap's `requires-python` is `>=3.11` and its lock resolves from 3.11 [C] (`freemocap/pyproject.toml:6`, `freemocap/uv.lock:3`). So the PyAV bump alone forces freemocap to raise its minimum Python.
@@ -126,7 +126,7 @@ Source: `results/intra_playback/FINDINGS.md` F18–F23 and `bench/bench_tables.m
 | 1.0 | **Python 3.13 + package bumps** | `.python-version` 3.13 and `requires-python`; `av==19.0.2`; every Python and npm package to latest (§2.5), with majors one at a time and tests run after each. Electron 45. CI on 3.13. `opencv-contrib-python>=4.12,<6` (D6) | §2.4, §2.5; PyAV 19 releases the GIL around header/trailer/close too [M] (EI §2.5) | — |
 | 1.1 | **Small fixes** | Fix the ISO 8601 column (it applies the UTC offset twice) [M]. Fix the C930e exposure loss (set the format once, before exposure) [M]. Fix Windows AUTO exposure, which locks instead (fixed upstream on `sfn26`) [C]. Store a `retrieve_blocked` flag | `usb_cameras/docs/timestamp_accuracy_options.md` §7.2; `skellycam_exposure_review.md` §3.2 | — |
 | 1.2 | **Recording reliability inside skellycam** | Ring study ranks 9 (drop the `copy.copy` in `put_data`: 54.1 → 58.8–59.0 fps [M]), 3, 4, 5, 1 and 10. None of them change the ring layout | `frame_ring_buffer/docs/frame_ring_buffer_summary.md` | — |
-| 1.3 | **MF capture backend (Windows)** | Pure-Python MF source reader (comtypes), native format, converters off, behind a capture interface. Decode at source to BGR for the ring (unchanged), and keep the JPEG bytes for the recorder. Controls come from the MF source and are read back and checked on the image, with per-camera rules. OpenCV leaves the Windows capture path. DirectShow via the ffmpeg CLI only if T-CYC demands it | MF 400/400 + 100/100 cycles on 4 cameras; pymf = wincam on 3 cameras; OpenCV no first frame in 2 s [M] (`usb_cameras/WINDOWS_RUN_20261110_EXEC_SUMMARY.md`) | T-ID |
+| 1.3 | **MF capture backend (Windows)** | Pure-Python MF source reader (comtypes), native format, converters off, behind a capture interface. Decode at source to BGR for the ring (unchanged), and keep the JPEG bytes for the recorder. Controls come from the MF source and are read back and checked on the image, with per-camera rules. **Adds gain control** (config, UI, apply + read back) beside exposure and focus; skellycam has none today [C]. The C930e resets exposure and gain at stream start, so both are re-applied after the first frame [M]. OpenCV leaves the Windows capture path. DirectShow via the ffmpeg CLI only if TP1's reliability part demands it | MF 400/400 + 100/100 cycles on 4 cameras; pymf = wincam on 3 cameras; OpenCV no first frame in 2 s [M] (`usb_cameras/WINDOWS_RUN_20261110_EXEC_SUMMARY.md`) | TP1 (camera IDs) |
 | 1.4 | **JPEG encoder choice (raw streams only)** | **`mjpeg_qsv` first** (Dom, 2026-11-11): open it, encode one frame at the camera's mode, decode it, and check the quality is at A. Feed it full-range input: expand the camera's limited-range YUY2 first, or the JPEGs come out washed out [M] (`hw_accel_target/FINDINGS.md` F2). Otherwise use libjpeg-turbo in worker processes. Cache the choice; the user can force libjpeg-turbo. `mjpeg_qsv` returns each packet 3 calls later [M], so up to 3 frames sit in the encoder at a crash (T-KILL) | §2.1; `intra_compare/FINDINGS.md` §2.5 | 1.0 |
 | 1.5 | **New recording writer** | One writer thread per camera in the camera process, fed by a bounded queue that counts drops. MKV with `flush_packets=1`. Container timestamps = frame index at the nominal rate. **MJPEG stream → passthrough; raw stream → JPEG encode at A (1.4).** Binary sidecar, one fixed record per frame: frame number, capture times in integer ns, CRC, offset, size, plus a header with format, encoder and stable camera key. **Removes every H.264 writer in skellycam:** the MSMF `cv2.VideoWriter` path, `PyavVideoWriter` (libx264), the libx264 re-encode in `video_audio_remuxer.py:69` (audio is muxed by stream copy instead) and `transcode_to_h264.py` | MKV+fp lost 1 frame per kill, 0 torn frames on cuts; MP4 keeps 0 [M]; torn JPEG decoded silently 5/6, CSV read wrong 6/24 [M]; 0 drops in 77/77 write cells to 16 × 1080p60 [M] (EI §2.2, §2.5) | 1.3, 1.4 |
 | 1.6 | **Timestamps without changing what freemocap reads** | Per frame: MF arrival QPC, MF sample time, and today's stamp computed as now. At finalisation, build the timestamp CSVs from the sidecar and **add** columns: fitted camera time (offline lattice fit, start-up exclusion, change-point segments, `fit_unreliable` flag), drop/repeat flags, provenance. The existing columns are unchanged | Fit ≤ 0.56 ms vs flash, one 30 s run [M]; today 4.6–16 ms [M] (`timestamp_accuracy_options.md` §1) | 1.5 |
@@ -137,17 +137,74 @@ Source: `results/intra_playback/FINDINGS.md` F18–F23 and `bench/bench_tables.m
 | 1.11 | **Bandwidth guidance** | Topology mapper (USB 2.0 root-port domains, per-mode bandwidth slot cache, refused-start classification). The UI says which port to move a camera to | `usb_cameras/docs/xplat_capture_plan.md` §5 [M on Intel; policy table for other vendors] | 1.3 |
 | 1.12 | **Linux and macOS (phase 1b)** | Keep OpenCV capture until the native backends (V4L2 ctypes; AVFoundation + CoreMediaIO controls) pass hardware runs. Meanwhile they use the new writer with JPEG encode of decoded frames, because OpenCV gives no JPEG bytes there | `usb_cameras/docs/capture_stack_options_plan.md`; `macos_uvc_controls_review.md` [d, no hardware run] | L/M hardware suites |
 
-### 3.3 Exit tests for phase 1
+### 3.3 Test plans for phase 1
 
-| Test | What it shows |
+Four separate test plans, run in order, each building on the one before (Dom, 2026-11-11). Two release checks sit beside them.
+
+**Live-camera modes in scope** (MJPEG, ≥ 30 fps, as listed by the cameras [M] `usb_cameras/results/windows/Gerald/suite_20261111T040003Z/mjpeg_modes.json`):
+
+| Camera | 720p30 | 720p60 | 1080p30 | 1080p60 |
+|---|---|---|---|---|
+| Razer Kiyo Pro | ✓ | ✓ | ✓ | ✓ |
+| Logitech C922 | ✓ | ✓ | ✓ | – |
+| Logitech C930e | ✓ | – | ✓ | – |
+| Generic 4c4a:4a55 | ✓ (delivers ~25.7 fps [M]) | – | ✓ | – |
+
+USB 2.0 bandwidth allows about one max-slot MJPEG camera per USB 2.0 root port [M] (`usb_cameras/REPORT.md` finding 16), so multi-camera sets follow the topology mapper's port plan (1.11).
+
+#### TP1: Camera controls and frame extraction (real cameras)
+Runs against the phase-1 MF backend (1.3), not only the probes. It reuses the suite tests W-MJPEG, W-FMT, W-CTRL-LIST, W-CTRL-EFFECT, W-AUTO, W-CYC and W-ID. Pass thresholds are the G-MJPEG / G-CTRL rows of `usb_cameras/docs/xplat_capture_plan.md` §3.
+
+| Part | What is tested |
 |---|---|
-| **T-E2E** (= NG11) | The whole writer at 12–16 × 1080p30 passthrough + CRC sidecar + overlay sidecar, timed. Plus the Kiyo raw mode through `mjpeg_qsv` and libjpeg-turbo. |
-| **T-KILL** (= NG06 for `mjpeg_qsv`, + NG07) | Frames lost per hard kill, for passthrough and `mjpeg_qsv`. Killed files must play in skellycam-ui and process in freemocap. |
-| **T-FMC** | A freemocap posthoc run on phase-1 recordings, with outputs identical in structure to today's. |
-| **T-CYC** | The Kiyo wedge repro: multi-camera MF all-at-once vs DirectShow all-at-once, repeated. Plus 381 cycles per camera for a ≥ 99 % claim. |
-| **T-ID** | The MF device path vs today's `camera_id`, with no streaming. |
-| **T-PLAY** | skellycam-ui's real canvas player on real camera recordings. At 4, 8 and 16 cameras, 720p30, 720p60 and 1080p30: CPU, memory (with the GPU process listed separately), shown fps and seek latency. Also scrub rate above 58/s, and a 30-minute play-and-scrub soak for memory growth. Run on Gerald plus one low-end laptop, serving byte ranges through skellycam's FastAPI route vs Electron `protocol.handle`. **CPU-saving variants, each against the plain main-thread `ImageDecoder` baseline:** (a) decode in Web Workers (1 per camera and a fixed pool of 2–4), with `ImageBitmap`s transferred to the main thread; (b) reduced-size decode for small tiles (`ImageDecoder` / `createImageBitmap` at ½ and ¼ size), measuring whether Chromium uses libjpeg-turbo's scaled IDCT, i.e. whether CPU falls with size; (c) no fetch or decode for hidden or off-screen tiles; (d) an `OffscreenCanvas` in a worker that draws as well as decodes. Record whether any platform reports a JPEG decode accelerator (`jpegDecodeAcceleratorSupported`). |
-| **T-BUMP** | The full test suite plus one real recording after each major package bump. |
+| Frame extraction | Every in-scope mode on every camera: the camera's own JPEG bytes (header hash against the MF reference), strict decode, delivered fps against requested, first frame within 2 s. The Kiyo Pro raw mode through the encoder choice (1.4). |
+| **Controls: exposure, gain, white balance, focus**, all with the same procedure | Listed with the descriptor's range; set → read back (within one step); visible effect in the image (exposure at 25/50/75 % of range → luma; **gain at 10/50/90 % with exposure fixed manual at mid-range → luma**; WB → R/B ratio; focus with AF off → sharpness); set before and after stream start; held through stream start (the C930e resets exposure **and gain** at stream start [M]); kept across close/reopen; 3/3 runs; state restored afterwards. W-CTRL-EFFECT already does this for gain exactly as for exposure and focus [C] (`suite/windows/tests/w_ctrl_effect.py`). |
+| Auto modes | AE and AF off → on → off, with recovery (W-AUTO). **New: gain while AE is on**: whether a manual gain write is ignored or overridden, and whether the manual gain value returns when AE goes off. |
+| Open/close reliability | ≥ 381 failure-free cycles per camera, in-process and new-process (≥ 99 % claim); multi-camera MF all-at-once vs DirectShow all-at-once; the Kiyo Pro wedge is detected and reported (first-sample timeout, then `0x8007001F`). |
+| Camera IDs (T-ID) | MF device path → today's `camera_id`, no streaming. |
+| Kiyo Pro wedge: **handle, record, don't revive, don't diagnose** (Dom, 2026-11-11) | Every test must expect the Kiyo Pro to wedge (a first-sample timeout, then `0x8007001F`), roughly once per ~1,000 stream starts [I]. **On a wedge:** mark the Kiyo Pro dead for the rest of the run; skip its remaining cells, rated "not run (wedged)"; keep testing the other cameras. **No revival attempts:** no re-probes, re-opens, device restarts or resets; the background poller stops polling it. **Record, for later diagnosis only:** time, plug-in age, run and test step, the last command and its arguments, every error code and timeout, the other cameras open at that moment and through which API, the Frame Server clients and camera-holding processes, the USB topology (controller, hub, port, speed), and the stream starts since plug-in. Nothing further. The diagnostic test arms in `usb_cameras/docs/kiyo_pro_wedge_research.md` §9 are **not run**. |
+
+Product gap found while planning: **skellycam has no gain control today** [C] (no `gain` anywhere in `skellycam/`). Package 1.3 adds it.
+
+#### TP2: Recording with real cameras at mixed frame rates and resolutions
+Builds on TP1: same backend, with controls set and verified first. Real cameras only.
+
+| Set | Cameras in one recording |
+|---|---|
+| U1 | all four at 720p30 |
+| U2 | all four at 1080p30 |
+| M1 | Kiyo Pro 1080p60 + C922 720p60 + C930e 720p30 + generic 720p30 |
+| M2 | Kiyo Pro 1080p60 + C922 720p60 + C930e 1080p30 + generic 1080p30 |
+| M3 | Kiyo Pro raw mode (`mjpeg_qsv`, then a repeat with libjpeg-turbo) + C922 720p60 + C930e 720p30 + generic 720p30 |
+
+- Each set: 3 × 60 s, plus one 10-minute run.
+- Measured per camera: delivered fps against requested; frames written against frames captured; drops (writer queue, plus gaps found by the timestamp fit); writer queue depth and write latency p99.9; CPU per process; disk MB/s; sidecar CRC check; OpenCV read exactness after finalising; timestamp CSVs and the lattice fit at each camera's own rate.
+- Crash (T-KILL): hard kills during M1 and M3. Frames lost per kill for passthrough and for `mjpeg_qsv` (3-frame hold-back); killed files repair, play in skellycam-ui and read in OpenCV.
+- **Lockstep caveat (D7):** phase 1 keeps the lockstep gate, which paces every camera to the slowest (it silently dropped 14 % of the C930e's frames beside the generic camera [M]). Recording each camera at its native rate gives unequal frame counts, which freemocap rejects until phase 2 (2.2).
+
+#### TP3: Total throughput with simulated cameras (CPU load)
+Builds on TP2: the same capture pipeline and writer, fed by simulated cameras that replay real camera JPEGs (taken from TP2 recordings) at real frame pacing. This is NG11 / the former T-E2E.
+- Camera counts: 4, 8, 12, 16, then upward until something fails, to find the knee.
+- Modes: 720p30, 720p60, 1080p30, 1080p60, and mixes like TP2's.
+- Load switched on and off: decode at source to BGR for the ring; the live-view UI relay; raw-camera JPEG encode streams (`mjpeg_qsv` up to its limit of about 31 × 1080p30 [M], then libjpeg-turbo).
+- Measured: CPU per process and in total, drops, write latency p99.9, disk MB/s, Defender CPU.
+- Quiet machine (Gerald), plus one low-end machine.
+
+#### TP4: Playback
+skellycam-ui's real canvas player, on TP2's real mixed-rate recordings and TP3's 16-camera simulated recordings, plus T-KILL's killed files (NG07) and overlays drawn on the canvas (NG03).
+- At 4, 8 and 16 cameras; 720p30, 720p60, 1080p30 and 1080p60.
+- Measured: CPU (GPU process listed separately), memory, shown fps, seek latency, scrub rate above 58/s, and memory growth over a 30-minute play-and-scrub soak.
+- Run on Gerald plus one low-end laptop, serving byte ranges through skellycam's FastAPI route vs Electron `protocol.handle`.
+- **CPU-saving variants, each against the plain main-thread `ImageDecoder` baseline:**
+  - (a) decode in Web Workers (1 per camera and a fixed pool of 2–4), with `ImageBitmap`s transferred to the main thread;
+  - (b) reduced-size decode for small tiles (`ImageDecoder` / `createImageBitmap` at ½ and ¼ size), measuring whether Chromium uses libjpeg-turbo's scaled IDCT, i.e. whether CPU falls with size;
+  - (c) no fetch or decode for hidden or off-screen tiles;
+  - (d) an `OffscreenCanvas` in a worker that draws as well as decodes.
+- Record whether any platform reports a JPEG decode accelerator (`jpegDecodeAcceleratorSupported`).
+
+#### Release checks
+- **T-FMC:** a freemocap posthoc run on phase-1 lockstep recordings, with outputs identical in structure to today's.
+- **T-BUMP:** the full test suite plus one real recording after each major package bump.
 
 ## 4. Phase 2: skellycam and freemocap
 
@@ -156,15 +213,17 @@ Source: `results/intra_playback/FINDINGS.md` F18–F23 and `bench/bench_tables.m
 | 2.1 | **Option: raw JPEG over the ring** | Ring v2: variable-size payload slots, per-slot seqlock, per-reader cursors (ring ranks 6, 11, 15). The camera publishes the JPEG bytes (about 163 kB at 1080p [M]) instead of BGR (6.2 MB); freemocap's readers decode. The recorder becomes a lossless ring reader (rank 7). It is behind an option, and BGR stays the default until freemocap's decode cost is measured. freemocap: ring attach, decode in the camera node, frame metadata dtype | 0 torn reads vs 39,854–41,834 [M]; decoupled recorder 59.82/59.95 fps (synthetic cameras) [M]; passthrough recorder CPU 19–20 % vs 924–954 % [M] (ring summary) |
 | 2.2 | **Timing and lockstep** | Remove the gate. Assemble group slots by time. Per-camera `frame_status` (fresh/repeated/missing). The existing time column becomes the slot time, and the fitted camera time from 1.6 becomes the camera's time. freemocap: `RecordingGroupTiming.resolve`, skellycam's `recording_timing_reader`, `FRAME_METADATA_DTYPE`, about 11 equal-count sites, and the realtime 1€ filter using capture time | Today the gate silently drops 14 % of the C930e's frames next to the generic camera [M]. Without lockstep, a stall drifted 606 ms while frame-count checks still passed [M], so slot assembly must flag it |
 | 2.3 | **freemocap-ui canvas player** (D2: ported by a session in the freemocap repo, after the skellycam-ui player is built and tested) | The player from 1.9, shared between the two UIs (they are near copies today [C]) | §2.2 |
-| 2.4 | **JPEG-only rule in freemocap** | The annotated-video writer tries `avc1`, then `mp4v`, then `MJPG` through `cv2.VideoWriter` [C] (`freemocap/core/pipeline/posthoc/video_node.py:339-345`); switch it to JPEG in MKV with a sidecar. Also audit the skelly_synchronize output (copied as `.mp4` in `mocap_router.py:362`) [NV] | rule §1 |
+| 2.4 | **JPEG-only rule in freemocap** | The annotated-video writer tries `avc1`, then `mp4v`, then `MJPG` through `cv2.VideoWriter` [C] (`freemocap/core/pipeline/posthoc/video_node.py:339-345`); switch it to JPEG in MKV with a sidecar. skelly_synchronize's outputs also break the rule: see 2.8 | rule §1 |
 | 2.5 | **freemocap packaging and bumps** (freemocap-repo session) | `requires-python >=3.13` and `.python-version` 3.13 (D3), relock against phase-1 skellycam, OpenCV 5 (D6), and freemocap's lock and UI to latest | §2.4, §2.5 |
 | 2.6 | **Stable camera keys in file names and configs** | Serial, else port path, replacing index-based ids where freemocap parses them (`extract_camera_id_from_video_path.py`) | `usb_cameras/REPORT.md` findings 22–23 [M] |
 | 2.7 | **2D time interpolation before triangulation** | Interpolate each camera's 2D track to a common time, with a rolling-shutter row term | Needs the A5 strobe rig: light-to-stamp bias between models 4.4–30.7 ms over 6 runs, unstable [M] |
+| 2.8 | **Imported cameras with no sync (GoPro etc.)** | **Today** [C]: freemocap's import route (`api/http/mocap/mocap_router.py`) either only checks that frame counts are equal, or runs **skelly_synchronize**, the `skelly_synchronize` package from the **`freemocap/skellysync`** repo, branch `philip/rewrite`, pinned at `0231c41` in freemocap's `uv.lock`. skelly_synchronize finds **one offset per video**, by audio cross-correlation against a reference video (the default) or by the first brightness flash. If frame rates differ it **re-encodes every video to the lowest rate** (`ffmpeg -r`). It trims every video to a shared start and frame count with `ffmpeg -i … -ss … -frames:v N out.mp4`, which names no codec, so ffmpeg's default MP4 encoder re-encodes the video (long-GOP libx264 if the ffmpeg on PATH has it [I]). No drift correction. freemocap then pairs cameras by frame index. **Breaks the rules:** the outputs are long-GOP re-encodes with a second generation of loss. **Playback:** a separate `<video>`-based import player (Dom, 2026-11-11, as read from his reply). Its known risks: long-GOP seeking was error-prone in tests (libx264 GOP in fMP4 showed frames 2 behind and 2/10 seeks; HEVC in MP4 7/10 seeks [M], C9); HEVC has no software decode in Chromium [M] (F10); 8 `<video>` elements stalled [M] (F21). **Open, for the freemocap session:** keep the originals untouched and write a sync sidecar (offset, trim range, method, confidence) instead of re-encoding; correct clock drift with a second sync point (independent clocks drift up to ~30 ms over 10 min at 50 ppm [I]); combine with webcams through 2.2's time-based slots | `skellysync` checkout `skelly_synchronize/core/pipeline/stages.py`, `core/backends/ffmpeg.py`; `chromium_codecs/FINDINGS.md` C9; `intra_playback/FINDINGS.md` F10, F21 |
 
 Exit tests for phase 2:
 - freemocap realtime and posthoc on unequal frame counts and dropped frames;
 - freemocap's decode cost per camera with the JPEG ring;
-- the A5 rig for the cross-camera bias, before 2.7.
+- the A5 rig for the cross-camera bias, before 2.7;
+- for 2.8: seek and step exactness of real GoPro H.264 and HEVC files in the `<video>` import player; sync error against a flash or clap ground truth at the start and at the end of a 10-minute or longer recording (clock drift).
 
 ## 5. Not doing
 - **Any H.264, HEVC, AV1 or VP9**, intra or otherwise (rule).
@@ -191,6 +250,15 @@ All resolved (Dom, 2026-11-11):
 | D5 | No size-reducing export | — |
 | D6 | **OpenCV 5 in phase 2** | Phase-1 skellycam declares `opencv-contrib-python>=4.12,<6`. skellycam's own lock may move to 5.0 for its tests; freemocap moves with its other bumps. |
 | — | No server-side decode for playback | §5 |
+| — | Tests are split into TP1 controls and frame extraction, TP2 real-camera recording at mixed rates, TP3 simulated-camera throughput and TP4 playback; gain is tested like exposure and focus | §3.3 |
+| — | Kiyo Pro wedges are handled, recorded and left alone: no revival, no diagnosis | §3.3 TP1 |
+| — | Imported cameras: separate `<video>`-based import player (as read from Dom's reply) | §4, 2.8 |
+
+**Open:**
+
+| # | Question | Recommendation |
+|---|---|---|
+| D7 | Mixed frame rates in phase 1, with lockstep kept: (a) record each camera at its native rate (unequal frame counts, which freemocap can't read until phase 2), or (b) pace all cameras to the slowest, as today (faster cameras lose frames silently)? | (b) by default, so phase-1 recordings stay freemocap-compatible. Add (a) as an opt-in setting, which TP2 uses for its mixed sets. |
 
 ## 7. Sources
 - `skellycam_recording/recording_upgrade/EXECUTIVE_SUMMARY.md` and `results/EVIDENCE_INDEX.md`. Note: EI §2.12 and executive summary §4.3 compare passthrough with H.264 made from different (YUY2) captures; the same-source figures are in `results/intra_compare/FINDINGS.md` §3.1.
