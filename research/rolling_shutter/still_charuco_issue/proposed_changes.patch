@@ -1,0 +1,979 @@
+# Still-frame ChArUco detection — proposed changes
+#
+# REPO: freemocap (github.com/freemocap/freemocap), against branch `development`
+# Apply from the freemocap repo root:   git apply proposed_changes.patch
+# Paths are relative to that root (Python package in freemocap/, UI in freemocap-ui/).
+#
+# REPO: skellytracker — no changes. The stillness logic only reads skellytracker's
+# existing Observation / StageObservation / Keypoints primitives.
+#
+#   NEW  freemocap/core/tasks/calibration/charuco_board/board_motion.py   (metric, hysteresis, posthoc filter)
+#   NEW  freemocap/tests/calibration/test_board_motion.py                 (unit tests)
+#   MOD  freemocap/core/tasks/calibration/calibration_task_config.py     (board_stillness_config)
+#   MOD  freemocap/core/tasks/calibration/posthoc_calibration_task.py    (choke point before both solvers)
+#   MOD  freemocap/core/pipeline/realtime/camera_node_config.py          (board_stillness_config)
+#   MOD  freemocap/core/pipeline/realtime/camera_node.py                 (per-camera BoardStillnessTracker)
+#   MOD  freemocap/pubsub/pubsub_topics.py                               (CameraNodeOutputMessage.charuco_board_motion)
+#   MOD  freemocap/core/viz/image_overlay/charuco_overlay_data.py        (board_still / board_motion_px_per_frame in JSON)
+#   MOD  freemocap-ui/src/services/server/server-helpers/image-overlay/charuco-types.ts
+#   MOD  freemocap-ui/src/services/server/server-helpers/image-overlay/charuco-overlay-renderer.ts
+#
+diff --git a/freemocap/core/tasks/calibration/charuco_board/board_motion.py b/freemocap/core/tasks/calibration/charuco_board/board_motion.py
+new file mode 100644
+--- /dev/null
++++ b/freemocap/core/tasks/calibration/charuco_board/board_motion.py
+@@ -0,0 +1,334 @@
++"""Charuco board stillness: only calibrate from frames where the board is held still.
++
++freemocap's USB webcams are rolling-shutter: image rows are read out over ~30 ms
++of a ~33 ms frame. A moving board is therefore sheared within one image, and
++because it sits at different image heights in different cameras, each camera
++captures it at a different instant. Both calibration solvers assume ONE rigid
++board pose per frame index, shared by every camera, so moving-board frames add
++systematic error that robust losses can only down-weight. Motion blur also
++degrades corner accuracy.
++
++Metric (per camera, per frame): the MEDIAN pixel displacement of the charuco
++corners seen in both this frame and the reference (previous usable) frame,
++divided by the frame-number gap. Same median-over-shared-corners idea as
++``groundplane_math.find_stable_window``, but in 2D image space because no
++calibration exists yet.
++
++Units are px per camera frame, not px/s: rolling-shutter shear and motion blur
++both scale with how far the board moves *during one frame*, and frame numbers
++are available in realtime (connection frame number) and posthoc (recording
++frame index) with no extra plumbing.
++
++No IO. The realtime CameraNode (overlay colour) and the posthoc calibration
++task (frame filter) both use ``BoardStillnessTracker`` so they behave the same.
++"""
++import logging
++from dataclasses import dataclass, field, replace
++
++import numpy as np
++from numpy.typing import NDArray
++from pydantic import BaseModel, ConfigDict, model_validator
++from skellycam.core.types.type_overloads import CameraIdString
++from skellytracker.core.data_primitives.keypoints import Keypoints
++from skellytracker.core.data_primitives.observation import Observation
++
++logger = logging.getLogger(__name__)
++
++CHARUCO_STAGE_NAME = "charuco"
++_CHARUCO_CORNER_PREFIX = "CharucoCorner-"
++
++# corner_id -> (2,) pixel xy
++CornerPixels = dict[int, NDArray[np.float64]]
++
++
++class CharucoStillnessError(RuntimeError):
++    """Raised when too few still-board frames remain to calibrate a camera."""
++
++
++class BoardStillnessConfig(BaseModel):
++    """Thresholds for deciding when the charuco board is held still."""
++
++    model_config = ConfigDict(extra="forbid", frozen=True)
++
++    # Realtime: False keeps the legacy always-green overlay.
++    # Posthoc: False feeds every detected frame to the solver (old behaviour).
++    enabled: bool = True
++    # A frame-to-frame transition counts as still when the median shared-corner
++    # displacement is at or below this (px per camera frame).
++    max_motion_px_per_frame: float = 1.0
++    # Hysteresis: this many consecutive still transitions before the board is
++    # reported still. Still -> moving is immediate.
++    min_still_transitions: int = 3
++    # Fewer corners than this (in the frame, or shared with the reference) means
++    # motion is unknown and the frame is not still. Also the bar for a camera to
++    # "see the board" in the multi-camera rule.
++    min_shared_corners: int = 4
++    # A frame-number gap larger than this (dropped realtime frames, board out of
++    # view) discards the reference, so the next frame cannot be still.
++    max_frame_gap: int = 3
++    # Posthoc only: fail if a camera that saw the board keeps fewer still frames.
++    min_still_frames_per_camera: int = 10
++
++    @model_validator(mode="after")
++    def validate_values(self) -> "BoardStillnessConfig":
++        if self.max_motion_px_per_frame <= 0.0:
++            raise ValueError(f"max_motion_px_per_frame must be > 0, got {self.max_motion_px_per_frame}")
++        if self.min_still_transitions < 1:
++            raise ValueError(f"min_still_transitions must be >= 1, got {self.min_still_transitions}")
++        if self.min_shared_corners < 1:
++            raise ValueError(f"min_shared_corners must be >= 1, got {self.min_shared_corners}")
++        if self.max_frame_gap < 1:
++            raise ValueError(f"max_frame_gap must be >= 1, got {self.max_frame_gap}")
++        return self
++
++
++@dataclass(frozen=True, slots=True)
++class BoardMotionSample:
++    """Board motion for one camera at one frame."""
++
++    frame_number: int
++    n_corners: int
++    # None = no usable reference (first sighting, gap, too few shared corners).
++    motion_px_per_frame: float | None
++    is_still: bool
++
++
++def charuco_corner_pixels(observation: Observation | None) -> CornerPixels:
++    """Visible charuco corners of one observation as {corner_id: (2,) xy}.
++
++    Same visibility rule as posthoc_calibration_task._observation_to_frame_observation:
++    zero-visibility or NaN points are skipped. ArUco marker corners are ignored.
++    """
++    if observation is None:
++        return {}
++    stage = observation.stages.get(CHARUCO_STAGE_NAME)
++    if stage is None or stage.keypoints is None:
++        return {}
++
++    kpts = stage.keypoints
++    corners: CornerPixels = {}
++    for idx, name in enumerate(kpts.names):
++        if not name.startswith(_CHARUCO_CORNER_PREFIX):
++            continue
++        if kpts.visibility[idx] <= 0.0 or np.isnan(kpts.xyz[idx, :2]).any():
++            continue
++        corners[int(name[len(_CHARUCO_CORNER_PREFIX):])] = np.array(kpts.xyz[idx, :2], dtype=np.float64)
++    return corners
++
++
++def board_motion_px_per_frame(
++        *,
++        previous_corners: CornerPixels,
++        current_corners: CornerPixels,
++        frame_gap: int,
++        min_shared_corners: int,
++) -> float | None:
++    """Median displacement of shared corners, per camera frame. None if not measurable."""
++    if frame_gap < 1:
++        return None
++    shared_ids = sorted(previous_corners.keys() & current_corners.keys())
++    if len(shared_ids) < min_shared_corners:
++        return None
++    previous_xy = np.stack([previous_corners[corner_id] for corner_id in shared_ids])
++    current_xy = np.stack([current_corners[corner_id] for corner_id in shared_ids])
++    displacement = np.linalg.norm(current_xy - previous_xy, axis=1)
++    return float(np.median(displacement)) / frame_gap
++
++
++@dataclass
++class BoardStillnessTracker:
++    """Per-camera stillness state with hysteresis. Feed frames in frame-number order."""
++
++    config: BoardStillnessConfig
++    _reference_corners: CornerPixels = field(default_factory=dict, repr=False)
++    _reference_frame_number: int | None = field(default=None, repr=False)
++    _still_transitions: int = field(default=0, repr=False)
++
++    def reset(self) -> None:
++        self._reference_corners = {}
++        self._reference_frame_number = None
++        self._still_transitions = 0
++
++    def update(self, *, frame_number: int, corners: CornerPixels) -> BoardMotionSample:
++        if len(corners) < self.config.min_shared_corners:
++            # Too little board to judge. Keep the reference and the still run, so a
++            # one-frame detection dropout doesn't restart the hysteresis; the gap
++            # check below still discards a stale reference.
++            return BoardMotionSample(
++                frame_number=frame_number,
++                n_corners=len(corners),
++                motion_px_per_frame=None,
++                is_still=False,
++            )
++
++        motion: float | None = None
++        if self._reference_frame_number is not None:
++            frame_gap = frame_number - self._reference_frame_number
++            if 1 <= frame_gap <= self.config.max_frame_gap:
++                motion = board_motion_px_per_frame(
++                    previous_corners=self._reference_corners,
++                    current_corners=corners,
++                    frame_gap=frame_gap,
++                    min_shared_corners=self.config.min_shared_corners,
++                )
++
++        if motion is not None and motion <= self.config.max_motion_px_per_frame:
++            self._still_transitions += 1
++        else:
++            self._still_transitions = 0
++
++        self._reference_corners = corners
++        self._reference_frame_number = frame_number
++        return BoardMotionSample(
++            frame_number=frame_number,
++            n_corners=len(corners),
++            motion_px_per_frame=motion,
++            is_still=self._still_transitions >= self.config.min_still_transitions,
++        )
++
++
++# =============================================================================
++# POSTHOC: MULTI-CAMERA STILL-FRAME FILTER
++# =============================================================================
++
++
++@dataclass(frozen=True)
++class StillFrameFilterReport:
++    n_frames: int
++    n_frames_kept: int
++    frames_with_board_by_camera: dict[CameraIdString, int]
++    still_frames_by_camera: dict[CameraIdString, int]
++
++    @property
++    def summary(self) -> str:
++        per_camera = ", ".join(
++            f"{camera_id}: {self.still_frames_by_camera[camera_id]}/{n_with_board}"
++            for camera_id, n_with_board in self.frames_with_board_by_camera.items()
++        )
++        return (
++            f"Charuco still-frame filter kept {self.n_frames_kept}/{self.n_frames} frames "
++            f"(still/with-board per camera — {per_camera})"
++        )
++
++
++def compute_board_motion_by_camera(
++        *,
++        charuco_observations_by_frame: list[dict[CameraIdString, Observation]],
++        config: BoardStillnessConfig,
++) -> dict[CameraIdString, list[BoardMotionSample]]:
++    """Run one BoardStillnessTracker per camera over a posthoc recording.
++
++    Uses the list index as the frame number: posthoc frames are contiguous
++    recording frames, the same index _convert_all_observations stamps.
++    """
++    if not charuco_observations_by_frame:
++        return {}
++    camera_ids = list(charuco_observations_by_frame[0].keys())
++    trackers = {camera_id: BoardStillnessTracker(config=config) for camera_id in camera_ids}
++    samples: dict[CameraIdString, list[BoardMotionSample]] = {camera_id: [] for camera_id in camera_ids}
++    for frame_index, observations_by_camera in enumerate(charuco_observations_by_frame):
++        for camera_id, tracker in trackers.items():
++            samples[camera_id].append(
++                tracker.update(
++                    frame_number=frame_index,
++                    corners=charuco_corner_pixels(observations_by_camera.get(camera_id)),
++                )
++            )
++    return samples
++
++
++def still_frame_mask(
++        *,
++        motion_by_camera: dict[CameraIdString, list[BoardMotionSample]],
++        config: BoardStillnessConfig,
++) -> NDArray[np.bool_]:
++    """Keep a frame only if every camera that saw the board reports it still.
++
++    Board motion is physical, so one camera seeing it move is enough to drop
++    the frame for all cameras. Cameras with fewer than min_shared_corners don't
++    vote. A frame no camera saw well is dropped (nothing to calibrate from).
++    """
++    if not motion_by_camera:
++        return np.zeros(0, dtype=bool)
++    n_frames = len(next(iter(motion_by_camera.values())))
++    keep = np.zeros(n_frames, dtype=bool)
++    for frame_index in range(n_frames):
++        voters = [
++            samples[frame_index]
++            for samples in motion_by_camera.values()
++            if samples[frame_index].n_corners >= config.min_shared_corners
++        ]
++        keep[frame_index] = bool(voters) and all(sample.is_still for sample in voters)
++    return keep
++
++
++def _without_charuco_corners(observation: Observation) -> Observation:
++    """Same observation with every charuco-stage point blanked (NaN, visibility 0).
++
++    The charuco stage itself stays, so downstream validation and anipose row
++    building see an ordinary "board not detected" frame.
++    """
++    stage = observation.stages.get(CHARUCO_STAGE_NAME)
++    if stage is None or stage.keypoints is None:
++        return observation
++    blank_stage = replace(stage, keypoints=Keypoints.empty(stage.keypoints.names))
++    return replace(observation, stages={**observation.stages, CHARUCO_STAGE_NAME: blank_stage})
++
++
++def filter_moving_charuco_frames(
++        *,
++        charuco_observations_by_frame: list[dict[CameraIdString, Observation]],
++        config: BoardStillnessConfig,
++) -> tuple[list[dict[CameraIdString, Observation]], StillFrameFilterReport]:
++    """Blank charuco corners on every frame where the board was moving.
++
++    Returns a new list the same length as the input (frame indices stay aligned);
++    the input observations are not mutated.
++
++    Raises:
++        CharucoStillnessError: if a camera that saw the board keeps fewer than
++            config.min_still_frames_per_camera still frames.
++    """
++    motion_by_camera = compute_board_motion_by_camera(
++        charuco_observations_by_frame=charuco_observations_by_frame,
++        config=config,
++    )
++    keep = still_frame_mask(motion_by_camera=motion_by_camera, config=config)
++
++    filtered: list[dict[CameraIdString, Observation]] = [
++        observations_by_camera
++        if keep[frame_index]
++        else {camera_id: _without_charuco_corners(obs) for camera_id, obs in observations_by_camera.items()}
++        for frame_index, observations_by_camera in enumerate(charuco_observations_by_frame)
++    ]
++
++    frames_with_board_by_camera: dict[CameraIdString, int] = {}
++    still_frames_by_camera: dict[CameraIdString, int] = {}
++    for camera_id, samples in motion_by_camera.items():
++        with_board = np.array([sample.n_corners >= config.min_shared_corners for sample in samples], dtype=bool)
++        frames_with_board_by_camera[camera_id] = int(with_board.sum())
++        still_frames_by_camera[camera_id] = int((with_board & keep).sum())
++
++    report = StillFrameFilterReport(
++        n_frames=len(charuco_observations_by_frame),
++        n_frames_kept=int(keep.sum()),
++        frames_with_board_by_camera=frames_with_board_by_camera,
++        still_frames_by_camera=still_frames_by_camera,
++    )
++
++    too_few = {
++        camera_id: n_still
++        for camera_id, n_still in still_frames_by_camera.items()
++        if frames_with_board_by_camera[camera_id] > 0 and n_still < config.min_still_frames_per_camera
++    }
++    if too_few:
++        raise CharucoStillnessError(
++            f"Too few frames with the charuco board held still: {too_few} "
++            f"(need >= {config.min_still_frames_per_camera} per camera). "
++            f"A frame counts as still once the board moves <= {config.max_motion_px_per_frame} px/frame "
++            f"for {config.min_still_transitions} frames in a row in every camera that sees it. "
++            f"Hold the board still for about half a second at each pose, or set "
++            f"board_stillness_config.enabled=False to calibrate from every frame. {report.summary}"
++        )
++
++    return filtered, report
+diff --git a/freemocap/tests/calibration/test_board_motion.py b/freemocap/tests/calibration/test_board_motion.py
+new file mode 100644
+--- /dev/null
++++ b/freemocap/tests/calibration/test_board_motion.py
+@@ -0,0 +1,215 @@
++"""Unit tests for charuco board stillness (realtime overlay colour + posthoc frame filter)."""
++import numpy as np
++import pytest
++from skellytracker.core.data_primitives.keypoints import Keypoints
++from skellytracker.core.data_primitives.observation import Observation, StageObservation
++from skellytracker.core.detectors.keypoint_detectors.charuco.anipose_export import to_anipose_camera_row
++from skellytracker.core.detectors.keypoint_detectors.charuco import CharucoBoardDefinition
++
++from freemocap.core.tasks.calibration.charuco_board.board_motion import (
++    BoardStillnessConfig,
++    BoardStillnessTracker,
++    CharucoStillnessError,
++    board_motion_px_per_frame,
++    charuco_corner_pixels,
++    compute_board_motion_by_camera,
++    filter_moving_charuco_frames,
++    still_frame_mask,
++)
++
++BOARD = CharucoBoardDefinition(squares_x=5, squares_y=3, square_length_mm=54.0, aruco_dictionary_enum=2)
++N_CORNERS = BOARD.n_corners  # 8 for a 5x3 board
++BASE_XY = np.array([[100.0 + 40.0 * (i % 4), 200.0 + 40.0 * (i // 4)] for i in range(N_CORNERS)])
++
++CONFIG = BoardStillnessConfig(
++    max_motion_px_per_frame=1.0,
++    min_still_transitions=3,
++    min_shared_corners=4,
++    max_frame_gap=3,
++    min_still_frames_per_camera=1,
++)
++
++
++# ---------------------------------------------------------------------------
++# Helpers
++# ---------------------------------------------------------------------------
++
++def _corners(offset_xy: tuple[float, float] = (0.0, 0.0), ids: range | list[int] = range(N_CORNERS)) -> dict:
++    return {i: BASE_XY[i] + np.asarray(offset_xy) for i in ids}
++
++
++def _obs(frame_number: int, offset_xy: tuple[float, float] | None = (0.0, 0.0)) -> Observation:
++    """Charuco Observation shaped like CharucoDetector output; offset None = board not detected."""
++    names = tuple(f"CharucoCorner-{i}" for i in range(N_CORNERS)) + ("ArucoMarkerCorner-0-0",)
++    kpts = Keypoints.empty(names)
++    if offset_xy is not None:
++        kpts.xyz[:N_CORNERS, :2] = BASE_XY + np.asarray(offset_xy)
++        kpts.visibility[:N_CORNERS] = 1.0
++    return Observation(
++        frame_number=frame_number,
++        image_size=(720, 1280),
++        stages={"charuco": StageObservation(name="charuco", keypoints=kpts)},
++    )
++
++
++def _run(tracker: BoardStillnessTracker, offsets: list[tuple[float, float] | None]) -> list[bool]:
++    return [
++        tracker.update(
++            frame_number=frame,
++            corners={} if offset is None else _corners(offset),
++        ).is_still
++        for frame, offset in enumerate(offsets)
++    ]
++
++
++# ---------------------------------------------------------------------------
++# Metric
++# ---------------------------------------------------------------------------
++
++def test_charuco_corner_pixels_skips_invisible_and_aruco_points():
++    obs = _obs(0)
++    obs.stages["charuco"].keypoints.visibility[2] = 0.0
++    corners = charuco_corner_pixels(obs)
++    assert sorted(corners) == [i for i in range(N_CORNERS) if i != 2]
++    np.testing.assert_allclose(corners[0], BASE_XY[0])
++    assert charuco_corner_pixels(None) == {}
++    assert charuco_corner_pixels(_obs(0, offset_xy=None)) == {}
++
++
++def test_motion_is_zero_for_identical_corners():
++    assert board_motion_px_per_frame(
++        previous_corners=_corners(), current_corners=_corners(), frame_gap=1, min_shared_corners=4,
++    ) == pytest.approx(0.0)
++
++
++def test_motion_is_normalised_by_frame_gap():
++    assert board_motion_px_per_frame(
++        previous_corners=_corners(), current_corners=_corners((3.0, 4.0)), frame_gap=1, min_shared_corners=4,
++    ) == pytest.approx(5.0)
++    assert board_motion_px_per_frame(
++        previous_corners=_corners(), current_corners=_corners((6.0, 8.0)), frame_gap=2, min_shared_corners=4,
++    ) == pytest.approx(5.0)
++
++
++def test_motion_median_ignores_a_single_bad_corner():
++    current = _corners()
++    current[0] = current[0] + np.array([50.0, 0.0])
++    assert board_motion_px_per_frame(
++        previous_corners=_corners(), current_corners=current, frame_gap=1, min_shared_corners=4,
++    ) == pytest.approx(0.0)
++
++
++def test_motion_unknown_with_too_few_shared_corners():
++    assert board_motion_px_per_frame(
++        previous_corners=_corners(ids=[0, 1, 2, 3]),
++        current_corners=_corners(ids=[2, 3, 4, 5]),
++        frame_gap=1,
++        min_shared_corners=4,
++    ) is None
++
++
++# ---------------------------------------------------------------------------
++# Hysteresis
++# ---------------------------------------------------------------------------
++
++def test_first_frame_is_moving_and_still_needs_n_transitions():
++    tracker = BoardStillnessTracker(config=CONFIG)
++    # frame 0 has no reference; frames 1..3 are the 3 still transitions
++    assert _run(tracker, [(0.0, 0.0)] * 5) == [False, False, False, True, True]
++
++
++def test_moving_is_immediate_then_still_rebuilds():
++    tracker = BoardStillnessTracker(config=CONFIG)
++    offsets = [(0.0, 0.0)] * 4 + [(5.0, 0.0)] + [(5.0, 0.0)] * 3
++    assert _run(tracker, offsets) == [False, False, False, True, False, False, False, True]
++
++
++def test_slow_drift_below_threshold_counts_as_still():
++    tracker = BoardStillnessTracker(config=CONFIG)
++    offsets = [(0.5 * i, 0.0) for i in range(5)]
++    assert _run(tracker, offsets) == [False, False, False, True, True]
++
++
++def test_single_frame_dropout_keeps_the_still_run():
++    tracker = BoardStillnessTracker(config=CONFIG)
++    # dropout frame reports not-still, but the run resumes against the frame-3 reference
++    assert _run(tracker, [(0.0, 0.0)] * 4 + [None] + [(0.0, 0.0)]) == [False, False, False, True, False, True]
++
++
++def test_gap_longer_than_max_frame_gap_resets():
++    tracker = BoardStillnessTracker(config=CONFIG)
++    for frame in range(4):
++        tracker.update(frame_number=frame, corners=_corners())
++    sample = tracker.update(frame_number=3 + CONFIG.max_frame_gap + 1, corners=_corners())
++    assert sample.motion_px_per_frame is None
++    assert sample.is_still is False
++
++
++def test_config_rejects_nonsense():
++    with pytest.raises(ValueError):
++        BoardStillnessConfig(max_motion_px_per_frame=0.0)
++    with pytest.raises(ValueError):
++        BoardStillnessConfig(min_still_transitions=0)
++
++
++# ---------------------------------------------------------------------------
++# Posthoc multi-camera filter
++# ---------------------------------------------------------------------------
++
++def _recording(offsets_by_camera: dict[str, list[tuple[float, float] | None]]) -> list[dict[str, Observation]]:
++    n_frames = len(next(iter(offsets_by_camera.values())))
++    return [
++        {camera_id: _obs(frame, offsets[frame]) for camera_id, offsets in offsets_by_camera.items()}
++        for frame in range(n_frames)
++    ]
++
++
++def test_one_moving_camera_drops_the_frame_for_all_cameras():
++    still = [(0.0, 0.0)] * 6
++    waving = [(0.0, 0.0)] * 4 + [(5.0, 0.0), (5.0, 0.0)]
++    recording = _recording({"cam_a": still, "cam_b": waving})
++    keep = still_frame_mask(
++        motion_by_camera=compute_board_motion_by_camera(charuco_observations_by_frame=recording, config=CONFIG),
++        config=CONFIG,
++    )
++    assert keep.tolist() == [False, False, False, True, False, False]
++
++
++def test_camera_that_cannot_see_the_board_does_not_veto():
++    recording = _recording({"cam_a": [(0.0, 0.0)] * 5, "cam_b": [None] * 5})
++    keep = still_frame_mask(
++        motion_by_camera=compute_board_motion_by_camera(charuco_observations_by_frame=recording, config=CONFIG),
++        config=CONFIG,
++    )
++    assert keep.tolist() == [False, False, False, True, True]
++
++
++def test_filter_blanks_dropped_frames_without_mutating_input():
++    recording = _recording({"cam_a": [(0.0, 0.0)] * 5, "cam_b": [(0.0, 0.0)] * 5})
++    filtered, report = filter_moving_charuco_frames(charuco_observations_by_frame=recording, config=CONFIG)
++
++    assert len(filtered) == len(recording)
++    assert report.n_frames_kept == 2
++    assert report.still_frames_by_camera == {"cam_a": 2, "cam_b": 2}
++    assert report.frames_with_board_by_camera == {"cam_a": 5, "cam_b": 5}
++
++    dropped = filtered[0]["cam_a"]
++    assert "charuco" in dropped.stages  # posthoc validation still passes
++    assert dropped.stages["charuco"].keypoints.names == recording[0]["cam_a"].stages["charuco"].keypoints.names
++    assert charuco_corner_pixels(dropped) == {}
++    assert filtered[4]["cam_a"] is recording[4]["cam_a"]
++    # input untouched
++    assert len(charuco_corner_pixels(recording[0]["cam_a"])) == N_CORNERS
++
++    # anipose sees a dropped frame as an ordinary no-detection row
++    row = to_anipose_camera_row(
++        keypoints=dropped.stages["charuco"].keypoints, board_def=BOARD, frame_number=0,
++    )
++    assert np.isnan(row["filled"]).all()
++
++
++def test_filter_raises_when_too_few_still_frames():
++    config = CONFIG.model_copy(update={"min_still_frames_per_camera": 10})
++    recording = _recording({"cam_a": [(5.0 * i, 0.0) for i in range(20)]})
++    with pytest.raises(CharucoStillnessError, match="Hold the board still"):
++        filter_moving_charuco_frames(charuco_observations_by_frame=recording, config=config)
+diff --git a/freemocap/core/tasks/calibration/calibration_task_config.py b/freemocap/core/tasks/calibration/calibration_task_config.py
+--- a/freemocap/core/tasks/calibration/calibration_task_config.py
++++ b/freemocap/core/tasks/calibration/calibration_task_config.py
+@@ -7,6 +7,7 @@
+     CharucoDetectorConfig,
+ )
+ 
++from freemocap.core.tasks.calibration.charuco_board.board_motion import BoardStillnessConfig
+ from freemocap.core.tasks.calibration.pyceres_calibration.helpers.models import PyceresCalibrationSolverConfig
+ from freemocap.core.tasks.triangulation.helpers.triangulation_config import TriangulationConfig
+ 
+@@ -38,6 +39,16 @@
+         description="Configuration for the pyceres bundle adjustment solver. Only used when solver_method='pyceres'.",
+     )
+ 
++    board_stillness_config: BoardStillnessConfig = Field(
++        default_factory=BoardStillnessConfig,
++        alias="boardStillnessConfig",
++        description=(
++            "Only calibrate from frames where the charuco board is held still. Rolling-shutter "
++            "webcams shear a moving board and capture it at a different instant in each camera, "
++            "which breaks both solvers' one-rigid-board-pose-per-frame assumption."
++        ),
++    )
++
+     use_groundplane: bool = Field(
+         default=False,
+         alias="useGroundplane",
+diff --git a/freemocap/core/tasks/calibration/posthoc_calibration_task.py b/freemocap/core/tasks/calibration/posthoc_calibration_task.py
+--- a/freemocap/core/tasks/calibration/posthoc_calibration_task.py
++++ b/freemocap/core/tasks/calibration/posthoc_calibration_task.py
+@@ -29,6 +29,7 @@
+ from freemocap.core.tasks.calibration.calibration_task_config import PosthocCalibrationPipelineConfig, \
+     CalibrationSolverMethod
+ from freemocap.core.tasks.calibration.shared.calibration_result import CalibrationResult
++from freemocap.core.tasks.calibration.charuco_board.board_motion import filter_moving_charuco_frames
+ from freemocap.core.tasks.calibration.charuco_board.charuco_corners import CornerObservation, CharucoCornersObservation
+ from freemocap.core.tasks.calibration.shared.calibration_paths import get_last_successful_calibration_toml_path
+ from freemocap.core.tasks.calibration.shared.calibration_save import save_calibration_copies
+@@ -277,12 +278,28 @@
+     views_per_camera = {camera_id: len(charuco_observations_by_frame) for camera_id in camera_ids}
+     logger.debug(f"Received (video id: charuco observation count): {views_per_camera}")
+ 
++    # ---- Keep only frames where the board was held still ----
++    # Single choke point for BOTH solvers. Moving-board frames keep their charuco
++    # stage but lose every corner, so frame indices stay aligned downstream. The
++    # unfiltered list is still used for the charuco board model export below.
++    calibration_observations_by_frame = charuco_observations_by_frame
++    if task_config.board_stillness_config.enabled:
++        _reporter.report(
++            stage=CalibrationStage.VALIDATING_OBSERVATIONS,
++            detail="Dropping frames where the charuco board was moving",
++        )
++        calibration_observations_by_frame, stillness_report = filter_moving_charuco_frames(
++            charuco_observations_by_frame=charuco_observations_by_frame,
++            config=task_config.board_stillness_config,
++        )
++        logger.info(stillness_report.summary)
++
+     # ---- Create shared board definition ----
+     board = _create_board(task_config=task_config)
+ 
+     # ---- Convert to shared observation format (used by pyceres and health check) ----
+     all_observations = _convert_all_observations(
+-        charuco_observations_by_frame=charuco_observations_by_frame,
++        charuco_observations_by_frame=calibration_observations_by_frame,
+         board_def=board,
+     )
+ 
+@@ -302,7 +319,7 @@
+     match task_config.solver_method:
+         case CalibrationSolverMethod.ANIPOSE:
+             result, ground_plane = _run_anipose_path(
+-                charuco_observations_by_frame=charuco_observations_by_frame,
++                charuco_observations_by_frame=calibration_observations_by_frame,
+                 board=board,
+                 task_config=task_config,
+                 recording_info=recording_info,
+diff --git a/freemocap/core/pipeline/realtime/camera_node_config.py b/freemocap/core/pipeline/realtime/camera_node_config.py
+--- a/freemocap/core/pipeline/realtime/camera_node_config.py
++++ b/freemocap/core/pipeline/realtime/camera_node_config.py
+@@ -18,6 +18,8 @@
+     KeypointsWithinBBoxRatioConfig,
+ )
+ 
++from freemocap.core.tasks.calibration.charuco_board.board_motion import BoardStillnessConfig
++
+ 
+ _REDETECT_SECONDS = 5.0
+ _ASSUMED_CAMERA_FPS = 30.0
+@@ -80,6 +82,10 @@
+     )
+     # Always rebuilt from charuco_board by _sync_charuco_tracker_config below.
+     charuco_tracker_config: TrackerConfig | None = None
++    # Per-camera board stillness: the charuco overlay is yellow while the board
++    # moves and green once it is still. Same metric posthoc calibration uses to
++    # drop moving-board frames (see board_motion.py).
++    board_stillness_config: BoardStillnessConfig = Field(default_factory=BoardStillnessConfig)
+     # max_persons: we only support single-person tracking for now. Capping
+     # detections to one crop per camera keeps the pose batch a fixed size
+     # (N cameras), which prevents the ONNX Runtime GPU arena from growing on
+diff --git a/freemocap/core/pipeline/realtime/camera_node.py b/freemocap/core/pipeline/realtime/camera_node.py
+--- a/freemocap/core/pipeline/realtime/camera_node.py
++++ b/freemocap/core/pipeline/realtime/camera_node.py
+@@ -22,6 +22,11 @@
+ from freemocap.core.types.type_overloads import TopicPublicationQueue
+ from freemocap.core.pipeline.pipeline_stage_timer import PipelineStageTimer
+ from freemocap.core.pipeline.realtime.realtime_keypoint_filter import RealtimeKeypointFilter
++from freemocap.core.tasks.calibration.charuco_board.board_motion import (
++    BoardMotionSample,
++    BoardStillnessTracker,
++    charuco_corner_pixels,
++)
+ from freemocap.pubsub.pubsub_manager import PubSubTopicManager
+ from freemocap.pubsub.pubsub_topics import (
+     ProcessFrameNumberTopic,
+@@ -55,6 +60,13 @@
+     return build_charuco_tracker(board_def)
+ 
+ 
++def _build_board_stillness_tracker(node_config: CameraNodeConfig) -> BoardStillnessTracker | None:
++    """Per-camera charuco board stillness (drives the yellow/green overlay). None when disabled."""
++    if not node_config.board_stillness_config.enabled:
++        return None
++    return BoardStillnessTracker(config=node_config.board_stillness_config)
++
++
+ def _build_skeleton_tracker_from_config(node_config: CameraNodeConfig):
+     """Return (Tracker, session) for skeleton detection in per-camera mode."""
+     if node_config.detector_type == "mediapipe":
+@@ -160,12 +172,14 @@
+         charuco_tracker = None
+         charuco_session = None
+         charuco_state = TrackerState()
++        board_stillness: BoardStillnessTracker | None = None
+         skeleton_tracker = None
+         skeleton_session = None
+         skeleton_state = TrackerState()
+ 
+         if config.charuco_tracking_enabled and config.charuco_tracker_config is not None:
+             charuco_tracker, charuco_session = _build_charuco_tracker_from_config(config)
++            board_stillness = _build_board_stillness_tracker(config)
+ 
+         if (
+                 config.skeleton_tracking_enabled
+@@ -207,11 +221,13 @@
+                             charuco_tracker.close()
+                         charuco_tracker, charuco_session = _build_charuco_tracker_from_config(new_config)
+                         charuco_state = TrackerState()
++                        board_stillness = _build_board_stillness_tracker(new_config)
+                     elif not new_config.charuco_tracking_enabled:
+                         if charuco_tracker is not None:
+                             charuco_tracker.close()
+                         charuco_tracker = None
+                         charuco_session = None
++                        board_stillness = None
+ 
+                     if (
+                             new_config.skeleton_tracking_enabled
+@@ -280,6 +296,7 @@
+                     )
+                 skeleton_observation = None
+                 charuco_observation = None
++                charuco_board_motion: BoardMotionSample | None = None
+                 t_frame_start = time.perf_counter() if timer is not None else 0.0
+ 
+                 if skeleton_tracker is not None:
+@@ -327,6 +344,11 @@
+                     )
+                     if timer is not None:
+                         timer.record("charuco_detection", (time.perf_counter() - t0) * 1e3)
++                    if board_stillness is not None:
++                        charuco_board_motion = board_stillness.update(
++                            frame_number=actual_frame_number,
++                            corners=charuco_corner_pixels(charuco_observation),
++                        )
+ 
+                 if timer is not None:
+                     timer.record("total_camera_node", (time.perf_counter() - t_frame_start) * 1e3)
+@@ -336,6 +358,7 @@
+                         camera_id=actual_camera_id,
+                         frame_number=actual_frame_number,
+                         charuco_observation=charuco_observation,
++                        charuco_board_motion=charuco_board_motion,
+                         skeleton_observation=skeleton_observation,
+                     ),
+                 )
+diff --git a/freemocap/pubsub/pubsub_topics.py b/freemocap/pubsub/pubsub_topics.py
+--- a/freemocap/pubsub/pubsub_topics.py
++++ b/freemocap/pubsub/pubsub_topics.py
+@@ -16,6 +16,7 @@
+ 
+ from freemocap.core.kinematics.body_kinematics_state import BodyKinematicsState
+ from freemocap.core.pipeline.realtime.realtime_pipeline_config import RealtimePipelineConfig
++from freemocap.core.tasks.calibration.charuco_board.board_motion import BoardMotionSample
+ from freemocap.core.tasks.mocap.center_of_mass import CenterOfMassResult
+ from freemocap.core.types.type_overloads import (
+     FrameNumberInt,
+@@ -62,6 +63,8 @@
+     camera_id: CameraIdString = ""
+     frame_number: FrameNumberInt = 0
+     charuco_observation: Observation | None = None
++    # Per-camera board stillness for the charuco overlay; None when disabled.
++    charuco_board_motion: BoardMotionSample | None = None
+     skeleton_observation: Observation | None = None
+ 
+     def __post_init__(self) -> None:
+@@ -141,6 +144,7 @@
+                 overlay_data[camera_id] = CharucoOverlayData.from_observation(
+                     camera_id=camera_id,
+                     observation=cam_output.charuco_observation,
++                    board_motion=cam_output.charuco_board_motion,
+                 )
+         return overlay_data
+ 
+diff --git a/freemocap/core/viz/image_overlay/charuco_overlay_data.py b/freemocap/core/viz/image_overlay/charuco_overlay_data.py
+--- a/freemocap/core/viz/image_overlay/charuco_overlay_data.py
++++ b/freemocap/core/viz/image_overlay/charuco_overlay_data.py
+@@ -2,6 +2,8 @@
+ from skellycam.core.types.type_overloads import CameraIdString
+ from skellytracker.core.data_primitives.observation import Observation
+ 
++from freemocap.core.tasks.calibration.charuco_board.board_motion import BoardMotionSample
++
+ 
+ class CharucoPointModel(msgspec.Struct):
+     """A single detected Charuco corner point."""
+@@ -34,6 +36,10 @@
+     message_type: str = "charuco_overlay"
+     charuco_corners: list[CharucoPointModel] = []
+     aruco_markers: list[ArucoMarkerModel] = []
++    # Board stillness from the camera node. None = not computed (stillness
++    # disabled) and the frontend keeps the legacy green overlay.
++    board_still: bool | None = None
++    board_motion_px_per_frame: float | None = None
+ 
+     @classmethod
+     def from_observation(
+@@ -42,7 +48,11 @@
+             camera_id: CameraIdString,
+             observation: Observation,
+             scale: float = 1.0,
++            board_motion: BoardMotionSample | None = None,
+     ) -> "CharucoOverlayData":
++        board_still = board_motion.is_still if board_motion is not None else None
++        board_motion_px_per_frame = board_motion.motion_px_per_frame if board_motion is not None else None
++
+         stage = observation.stages.get("charuco")
+         if stage is None or stage.keypoints is None:
+             return cls(
+@@ -50,6 +60,8 @@
+                 frame_number=observation.frame_number,
+                 charuco_corners=[],
+                 aruco_markers=[],
++                board_still=board_still,
++                board_motion_px_per_frame=board_motion_px_per_frame,
+                 metadata=CharucoMetadataModel(
+                     n_charuco_detected=0, n_charuco_total=0,
+                     n_aruco_detected=0, n_aruco_total=0,
+@@ -105,6 +117,8 @@
+             frame_number=observation.frame_number,
+             charuco_corners=charuco_corners,
+             aruco_markers=aruco_markers,
++            board_still=board_still,
++            board_motion_px_per_frame=board_motion_px_per_frame,
+             metadata=CharucoMetadataModel(
+                 n_charuco_detected=len(charuco_corners),
+                 n_charuco_total=n_charuco_total,
+diff --git a/freemocap-ui/src/services/server/server-helpers/image-overlay/charuco-types.ts b/freemocap-ui/src/services/server/server-helpers/image-overlay/charuco-types.ts
+--- a/freemocap-ui/src/services/server/server-helpers/image-overlay/charuco-types.ts
++++ b/freemocap-ui/src/services/server/server-helpers/image-overlay/charuco-types.ts
+@@ -29,6 +29,10 @@
+     charuco_corners: z.array(CharucoPointSchema),
+     aruco_markers: z.array(ArucoMarkerSchema),
+     metadata: CharucoMetadataSchema,
++    // Board stillness from the backend camera node (board_motion.py).
++    // null/absent = not computed (disabled, or an older backend) -> legacy green.
++    board_still: z.boolean().nullable().optional(),
++    board_motion_px_per_frame: z.number().nullable().optional(),
+ });
+ 
+ // Schema for the websocket message containing multiple camera observations
+diff --git a/freemocap-ui/src/services/server/server-helpers/image-overlay/charuco-overlay-renderer.ts b/freemocap-ui/src/services/server/server-helpers/image-overlay/charuco-overlay-renderer.ts
+--- a/freemocap-ui/src/services/server/server-helpers/image-overlay/charuco-overlay-renderer.ts
++++ b/freemocap-ui/src/services/server/server-helpers/image-overlay/charuco-overlay-renderer.ts
+@@ -11,8 +11,17 @@
+     CharucoPoint
+ } from "@/services/server/server-helpers/image-overlay/charuco-types";
+ 
++const STILL_SEGMENT_COLOR = 'rgba(0, 255, 0, 0.5)';  // Semi-transparent green
++const MOVING_SEGMENT_COLOR = 'rgba(255, 255, 0, 0.5)';  // Semi-transparent yellow
++
++/** Only an explicit `false` means moving; null/undefined keeps the legacy green. */
++function isBoardMoving(observation: CharucoObservation): boolean {
++    return observation.board_still === false;
++}
++
+ export class CharucoOverlayRenderer extends BaseOverlayRenderer {
+     // Charuco-specific styles
++    // Green: board still (or stillness not reported by the backend).
+     private readonly charucoStyle: DrawStyle = {
+         pointColor: '#00FF00',
+         pointStroke: '#009600',
+@@ -25,6 +34,15 @@
+         showLabels: true,
+     };
+ 
++    // Yellow: board moving, so these frames won't be used for calibration.
++    private readonly movingCharucoStyle: DrawStyle = {
++        ...this.charucoStyle,
++        pointColor: '#FFFF00',
++        pointStroke: '#969600',
++        lineColor: '#FFFF00',
++        labelColor: '#FFFF00',
++    };
++
+     private readonly arucoStyle: DrawStyle = {
+         pointColor: '#FF6400',
+         pointStroke: '#C85000',
+@@ -63,12 +81,19 @@
+         // Draw ArUco markers first (behind Charuco corners)
+         this.drawArucoMarkers(observation.aruco_markers);
+ 
++        const moving = isBoardMoving(observation);
++        const cornerStyle = moving ? this.movingCharucoStyle : this.charucoStyle;
++
+         // Draw Charuco corners
+-        this.drawCharucoCorners(observation.charuco_corners);
++        this.drawCharucoCorners(observation.charuco_corners, cornerStyle);
+ 
+         // Draw segments if model info is available
+         if (this.modelInfo) {
+-            this.drawCharucoSegments(observation.charuco_corners);
++            this.drawCharucoSegments(
++                observation.charuco_corners,
++                cornerStyle,
++                moving ? MOVING_SEGMENT_COLOR : STILL_SEGMENT_COLOR,
++            );
+         }
+ 
+         // Draw info overlay
+@@ -77,7 +102,7 @@
+         this.ctx.restore();
+     }
+ 
+-    private drawCharucoCorners(corners: CharucoPoint[]): void {
++    private drawCharucoCorners(corners: CharucoPoint[], style: DrawStyle): void {
+         if (corners.length === 0) return;
+ 
+         const { scaleX, scaleY } = this;
+@@ -89,10 +114,10 @@
+             id: corner.id,
+         }));
+ 
+-        this.drawPoints(points, this.charucoStyle);
++        this.drawPoints(points, style);
+     }
+ 
+-    private drawCharucoSegments(corners: CharucoPoint[]): void {
++    private drawCharucoSegments(corners: CharucoPoint[], style: DrawStyle, segmentColor: string): void {
+         if (!this.modelInfo || corners.length === 0) return;
+ 
+         const { scaleX, scaleY } = this;
+@@ -111,8 +136,8 @@
+         const bodyAspect = this.modelInfo.aspects['body'];
+         if (bodyAspect?.segment_connections) {
+             this.drawSegments(pointMap, bodyAspect.segment_connections, {
+-                ...this.charucoStyle,
+-                lineColor: 'rgba(0, 255, 0, 0.5)',  // Semi-transparent green
++                ...style,
++                lineColor: segmentColor,
+                 lineWidth: 1,
+             });
+         }
+@@ -148,15 +173,24 @@
+         } else if (metadata.n_charuco_detected < 4) {
+             statusText = '⚠ INSUFFICIENT CORNERS';
+             statusColor = '#FFAA00';
++        } else if (isBoardMoving(observation)) {
++            // Text as well as colour, so the state doesn't rely on colour alone.
++            statusText = '⟳ BOARD MOVING — HOLD STILL';
++            statusColor = '#FFFF00';
++        } else if (observation.board_still === true) {
++            statusText = '✔ BOARD STILL';
++            statusColor = '#00FF00';
+         } else {
+             statusText = '✔ BOARD DETECTED';
+             statusColor = '#00FF00';
+         }
+ 
++        const motion = observation.board_motion_px_per_frame;
+         const additionalInfo = [
+             `Charuco: ${metadata.n_charuco_detected}/${metadata.n_charuco_total} | ` +
+             `ArUco: ${metadata.n_aruco_detected}/${metadata.n_aruco_total}` +
+-            (metadata.has_pose ? ' | POSE ✔' : ''),
++            (metadata.has_pose ? ' | POSE ✔' : '') +
++            (motion !== null && motion !== undefined ? ` | Motion: ${motion.toFixed(1)} px/frame` : ''),
+             statusText,
+         ];
+ 
