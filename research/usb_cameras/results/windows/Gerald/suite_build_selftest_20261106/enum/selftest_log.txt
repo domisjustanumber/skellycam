@@ -1,0 +1,61 @@
+Windows suite, enumeration half: self-test on Gerald, 2026-11-06 (local ~11:30-11:56 EST, 16:30-16:56Z).
+Machine state: Windows 11 build 26300.9711, not elevated; booted 2026-11-06T14:26Z; cameras as found: C922 (046D:085C,
+sn C922SN01) and generic (4C4A:4A55) behind the Genesys hub on PCH root port HS13, C930e (046D:0843) on HS07, Razer
+Kiyo Pro (1532:0E05) SuperSpeed on the Thunderbolt xHCI (SS04 -> hub port 4). Kiyo included in every step; it
+answered every request today (no hang, no 0x8007001F). No camera re-arrived during any test (arrivals before/after
+recorded in every result JSON). No registry write, no device restart, no driver change.
+
+Final integrated run (this folder's W-*.json, summary.md, run_suite.json, discovery.json, descriptors/, W-TOPO/,
+W-FMT/, W-CTRL-LIST/, mode_alt_cache.json, mjpeg_modes.json):
+  uv run --python 3.12 --script research/usb_cameras/suite/windows/run_suite.py \
+      --only W-ENV,W-POLICY,W-TOPO,W-ID,W-FMT,W-CTRL-LIST --out-dir <this folder>
+  -> done in 18 s, every test 0 errors:
+     W-ENV        0.6 s  context only. Flags: USB 3 LPM "Moderate power savings" (AC/DC), USB selective suspend
+                         enabled, LogiTune (+Agent PID 3296 = the PID wincam's activity monitor saw on the C930e) and
+                         Razer AppEngine running, FrameServer stopped (demand start), FrameServerMonitor running.
+                         Tier-1 MetadataBufferSizeInKB0=5 on the current C922 and Kiyo instances; C930e and generic
+                         not set; a stale value remains on the old C930e instance 8&39DEC205&1&0000.
+     W-POLICY     0.2 s  policy_traps yes: every camera's DS interface CLSID is ksproxy, no EnableDshowRedirection,
+                         no DMFT/plugin (Kiyo has empty chain values), DshowBridge list = Launcher_Main.exe only,
+                         EnableFrameServerMode absent, privacy Allow; no rotation / multi-app value found in the
+                         searched keys (default, or unknown location).
+     W-TOPO       1.5 s  mapper partial (only because labels are raw ACPI names / port numbers on this ASUS board).
+                         Domains: HS13 = C922 + generic + Revelator audio (open iso pipes 2x312 B = 14.1 us now) +
+                         receiver/monitor hub (2 active TTs); HS07 = C930e; Kiyo = SS domain on the TB xHCI.
+                         Gerald pairs: C922 720p30 + generic 81.1% of a microframe (over), 640x480@30 59.7% (fits),
+                         1080p@5 62.2% (fits) - the plan's numbers; with the audio pipes counted 92.5 / 71.0 / 73.5%.
+                         Message follows the template; suggestions = HS01/02/04/05/06/09/12/15/16 + HS10 hub ports,
+                         never HS13's hub ports, the TB twins or HS07.
+     W-ID        11.8 s  G-ID partial ("provisional yes": attended A1 not run). MF, DS, PyAV dshow, FFmpeg 9.0.2 CLI,
+                         OpenCV MSMF and OpenCV DSHOW (cv2_enumerate_cameras 1.4.0) all map 1:1 to the 4 keys,
+                         identical in 20/20 runs; OpenCV indices equal wincam's MF/DS order. Timing p50: MF 2.2 ms,
+                         DS 5.0 ms, OpenCV 2-3 ms, PyAV 154 ms, FFmpeg CLI 220 ms. Natural evidence vs
+                         naming_rerun_20261027: C922 kept its serial key across today's reboot and its move from HS01
+                         to 13.1.4; C930e and generic port keys changed with their moves (expected); Kiyo was
+                         excluded on 10-27 (no earlier record).
+     W-FMT        2.3 s  fmt_equivalence yes: MJPEG sizes and discrete rates identical in descriptors, MF native types
+                         and DS GetFrameRateList on all four (C922 17 sizes/120 modes, Kiyo 4/28, generic 5/10,
+                         C930e 17/119). MF synthesized NV12: C922 120, C930e 119, generic 13 (incl. still), Kiyo 0.
+                         Generic still sizes (320x240, 640x480, 1280x720) equal in descriptor, MF still stream and DS
+                         still pin. Non-MJPEG differences (informational): the C930e's YUY2 2304x1536@2 and
+                         2304x1296@2 descriptor modes are absent from both MF and DS; its H.264 stream (Logitech XU)
+                         exists only in MF/DS. Serial-string cross-check agrees with discovery's keys on all four.
+     W-CTRL-LIST  2.2 s  ctrl_list_equivalence yes: every descriptor CT/PU control listed via MF and DS with
+                         identical ranges, defaults, caps flags and current values (C922/C930e/Kiyo 16, generic 11);
+                         focal_length is listed by both APIs though no bmControls bit exists (it comes from the
+                         terminal's focal-length fields); degenerate ranges: auto_exposure_priority 0..0 (C922, C930e,
+                         Kiyo), powerline_frequency min=max (generic).
+
+Other self-tests:
+  uv run --isolated --python 3.12 --no-project --with pytest pytest suite/windows/tests/test_enum_offline.py
+      -> 8 passed (dshow listing parser for FFmpeg 9 and 4 output, _PLD zero-position defaults, IOCTL allow-list
+         refuses 260/262/263/273/275 and USBUSER_OP codes, CT/PU map covers every usbdesc bit, W-FMT normalization
+         and tolerance, W-TOPO seed + Gerald pairs on the common fixture, SuperSpeed alt mult from the companion).
+  uv run --isolated --python 3.12 --no-project --with pyflakes python -m pyflakes <my files> -> clean.
+  python suite/windows/suitectx.py --discover -> 4 cameras in 31 ms (child ~0.15 s); with a missing wincam.exe it
+      falls back to the PnP interface lists and still finds all 4 (indices null).
+  selftest_topology_live_alt/topology_live_alt.json: win_topology.collect() once a second while the C922 streamed
+      MJPG 1280x720@30 for 5 s (wincam capture under camlock, 29.96 fps): current_alt 9 (992x2 B) in all 5 streaming
+      snapshots, 0 after close - same alt as measured on 10-27; no admin, no device request.
+  Descriptor reads (helpers/win_descriptors.py, one camera per child under camlock): ~0.1 s each, Kiyo included
+      (SuperSpeed alts 1024x3 and 1024x33).

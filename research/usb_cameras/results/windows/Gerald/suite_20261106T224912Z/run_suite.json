@@ -1,0 +1,881 @@
+{
+ "argv": [
+  "suite/windows/run_suite.py"
+ ],
+ "args": {
+  "quick": false,
+  "only": "",
+  "skip": "",
+  "cycles": 50,
+  "proc_cycles": 15,
+  "frames": 30,
+  "mjpeg_seconds": 3.0,
+  "flash": false,
+  "out_dir": null,
+  "raw_dir": null,
+  "wincam": null,
+  "repeats": 20,
+  "no_fault_gate": false,
+  "min_fps": 30.0,
+  "min_height": 720,
+  "all_modes": false,
+  "multi_reps": null,
+  "ts_seconds": null,
+  "ctrl_runs": null,
+  "kiyo_minutes": null,
+  "mjpeg_recapture_s": null,
+  "camera": [],
+  "kiyo_interval": 10.0,
+  "kiyo_foreground": false,
+  "probe_at_start": false,
+  "nograb_hold_ms": 2500,
+  "list": false,
+  "reanalyse": null
+ },
+ "utc_started": "2026-11-06T22:49:13.463082+00:00",
+ "out_dir": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261106T224912Z",
+ "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261106T224912Z",
+ "tests": [
+  "W-ENV",
+  "W-POLICY",
+  "W-TOPO",
+  "W-ID",
+  "W-FMT",
+  "W-FMT-NOGRAB",
+  "W-CTRL-LIST",
+  "W-CYC",
+  "W-CTRL-EFFECT",
+  "W-TS",
+  "W-MULTI",
+  "W-MJPEG",
+  "W-KIYO"
+ ],
+ "test_order": [
+  "W-ENV",
+  "W-POLICY",
+  "W-TOPO",
+  "W-ID",
+  "W-FMT",
+  "W-FMT-NOGRAB",
+  "W-CTRL-LIST",
+  "W-CYC",
+  "W-CTRL-EFFECT",
+  "W-TS",
+  "W-MULTI",
+  "W-MJPEG"
+ ],
+ "background": [
+  "W-KIYO"
+ ],
+ "eta_s": {
+  "W-ENV": 20,
+  "W-POLICY": 10,
+  "W-TOPO": 62,
+  "W-ID": 80,
+  "W-FMT": 34,
+  "W-FMT-NOGRAB": 183.0,
+  "W-CTRL-LIST": 34,
+  "W-CYC": 3408.75,
+  "W-CTRL-EFFECT": 1184.0,
+  "W-TS": 264.0,
+  "W-MULTI": 1389.5,
+  "W-MJPEG": 311.0,
+  "W-KIYO": 0.0
+ },
+ "cameras": [
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "vid": "046d",
+   "pid": "085c",
+   "serial": "C922SN01",
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "c922 Pro Stream Webcam",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+   "speed": "HS",
+   "bcd_device": "0016",
+   "metadata_tier1": true,
+   "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 4,
+   "ds_index": 0
+  },
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": true,
+   "last_arrival": "2026-11-06T20:32:29.065252+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 5,
+   "ds_index": 1
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "name": "USB Camera",
+   "vid": "4c4a",
+   "pid": "4a55",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232e60d4&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Camera",
+   "ds_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "speed": "HS",
+   "bcd_device": "0100",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-06T22:26:45.172797+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 6,
+   "ds_index": 6
+  },
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+   "name": "Logitech Webcam C930e",
+   "vid": "046d",
+   "pid": "0843",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+   "parent_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&2206973f&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "Logitech Webcam C930e",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(7)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+   "speed": "HS",
+   "bcd_device": "0013",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 7
+  }
+ ],
+ "fault_gate": true,
+ "arrivals_since_previous_run": {
+  "previous_run": "suite_20261106T181941Z",
+  "cameras": {
+   "046d:085c:sn=C922SN01": {
+    "previous": "2026-11-06T15:04:37.661901+00:00",
+    "now": "2026-11-06T15:04:37.661901+00:00",
+    "re_arrived_since": false,
+    "in_previous_run": true
+   },
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "previous": "2026-11-06T14:59:24.581364+00:00",
+    "now": "2026-11-06T20:32:29.065252+00:00",
+    "re_arrived_since": true,
+    "in_previous_run": true
+   },
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+    "previous": "2026-11-06T18:17:09.152775+00:00",
+    "now": "2026-11-06T22:26:45.172797+00:00",
+    "re_arrived_since": true,
+    "in_previous_run": true
+   },
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+    "previous": "2026-11-06T15:00:22.388177+00:00",
+    "now": "2026-11-06T15:00:22.388177+00:00",
+    "re_arrived_since": false,
+    "in_previous_run": true
+   }
+  }
+ },
+ "faults": {
+  "faults": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "utc": "2026-11-07T00:04:02.348704+00:00",
+    "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "name": "USB Video Device",
+    "is_kiyo": true,
+    "test": "W-MULTI",
+    "mode": null,
+    "code": "0x8007001F",
+    "api": "mf",
+    "stage": "control_get",
+    "class": "device_error",
+    "source": "camcmd_scan",
+    "plug_in_age_s": 12693.3,
+    "last_arrival": "2026-11-06T20:32:29.065252+00:00",
+    "detail": {
+     "argv": "wincam.exe controls --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 3...",
+     "why": "error 0x8007001F / device_error"
+    },
+    "command_utc_started": "2026-11-07T00:04:02.075602Z",
+    "faulted": true,
+    "since_utc": "2026-11-07T00:04:02.348704+00:00",
+    "history": [
+     {
+      "type": "fault",
+      "utc": "2026-11-07T00:04:02.348704+00:00",
+      "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "name": "USB Video Device",
+      "is_kiyo": true,
+      "test": "W-MULTI",
+      "mode": null,
+      "code": "0x8007001F",
+      "api": "mf",
+      "stage": "control_get",
+      "class": "device_error",
+      "source": "camcmd_scan",
+      "plug_in_age_s": 12693.3,
+      "last_arrival": "2026-11-06T20:32:29.065252+00:00",
+      "detail": {
+       "argv": "wincam.exe controls --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 3...",
+       "why": "error 0x8007001F / device_error"
+      },
+      "command_utc_started": "2026-11-07T00:04:02.075602Z"
+     }
+    ],
+    "repeats": 207
+   }
+  },
+  "currently_faulted": [
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+  ],
+  "first_failure": {
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+    "utc": "2026-11-07T00:00:28.873306+00:00",
+    "test": "W-MULTI",
+    "mode": "MJPG 1280x720@30",
+    "code": 5,
+    "api": "ds",
+    "stage": "open",
+    "class": "other",
+    "source": "camcmd_scan",
+    "plug_in_age_s": 5623.7,
+    "last_arrival": "2026-11-06T22:26:45.172797+00:00",
+    "detail": {
+     "argv": "uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_ds.py capture --device \\\\?\\usb#vid_4c4a&pi..."
+    },
+    "is_kiyo": false,
+    "name": "USB Camera"
+   },
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "utc": "2026-11-07T00:04:02.348704+00:00",
+    "test": "W-MULTI",
+    "mode": null,
+    "code": "0x8007001F",
+    "api": "mf",
+    "stage": "control_get",
+    "class": "device_error",
+    "source": "camcmd_scan",
+    "plug_in_age_s": 12693.3,
+    "last_arrival": "2026-11-06T20:32:29.065252+00:00",
+    "detail": {
+     "argv": "wincam.exe controls --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 3...",
+     "why": "error 0x8007001F / device_error"
+    },
+    "is_kiyo": true,
+    "name": "USB Video Device"
+   }
+  },
+  "events": [
+   {
+    "type": "probe_ok",
+    "utc": "2026-11-06T22:52:18.996660+00:00",
+    "key": "046d:085c:sn=C922SN01",
+    "name": "c922 Pro Stream Webcam",
+    "test": "W-CYC",
+    "reason": "W-CYC probe before the camera's variants",
+    "code": null,
+    "stage": null,
+    "class": null,
+    "recovered": false
+   },
+   {
+    "type": "probe_ok",
+    "utc": "2026-11-06T23:01:21.588929+00:00",
+    "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "name": "USB Video Device",
+    "test": "W-CYC",
+    "reason": "W-CYC probe before the camera's variants",
+    "code": null,
+    "stage": null,
+    "class": null,
+    "recovered": false
+   },
+   {
+    "type": "probe_ok",
+    "utc": "2026-11-06T23:16:47.227266+00:00",
+    "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "name": "USB Camera",
+    "test": "W-CYC",
+    "reason": "W-CYC probe before the camera's variants",
+    "code": null,
+    "stage": null,
+    "class": null,
+    "recovered": false
+   },
+   {
+    "type": "probe_ok",
+    "utc": "2026-11-06T23:26:20.684365+00:00",
+    "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+    "name": "Logitech Webcam C930e",
+    "test": "W-CYC",
+    "reason": "W-CYC probe before the camera's variants",
+    "code": null,
+    "stage": null,
+    "class": null,
+    "recovered": false
+   },
+   {
+    "type": "fault",
+    "utc": "2026-11-07T00:04:02.348704+00:00",
+    "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "name": "USB Video Device",
+    "is_kiyo": true,
+    "test": "W-MULTI",
+    "mode": null,
+    "code": "0x8007001F",
+    "api": "mf",
+    "stage": "control_get",
+    "class": "device_error",
+    "source": "camcmd_scan",
+    "plug_in_age_s": 12693.3,
+    "last_arrival": "2026-11-06T20:32:29.065252+00:00",
+    "detail": {
+     "argv": "wincam.exe controls --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 3...",
+     "why": "error 0x8007001F / device_error"
+    },
+    "command_utc_started": "2026-11-07T00:04:02.075602Z"
+   },
+   {
+    "type": "probe_failed",
+    "utc": "2026-11-07T00:11:01.018856+00:00",
+    "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "name": "USB Video Device",
+    "test": "W-MJPEG",
+    "reason": "re-probe at the start of W-MJPEG",
+    "code": "0x8007001F",
+    "stage": "first_sample",
+    "class": "device_error",
+    "recovered": false
+   }
+  ],
+  "gated_by_test": {
+   "W-ENV": {},
+   "W-POLICY": {},
+   "W-TOPO": {},
+   "W-ID": {},
+   "W-FMT": {},
+   "W-FMT-NOGRAB": {},
+   "W-CTRL-LIST": {},
+   "W-CYC": {},
+   "W-CTRL-EFFECT": {},
+   "W-TS": {},
+   "W-MULTI": {},
+   "W-MJPEG": {
+    "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-07T00:04:02.348704+00:00"
+   }
+  },
+  "probes_by_test": {
+   "W-CYC": {
+    "046d:085c:sn=C922SN01": [
+     {
+      "ok": true,
+      "key": "046d:085c:sn=C922SN01",
+      "name": "c922 Pro Stream Webcam",
+      "utc": "2026-11-06T22:52:18.996660+00:00",
+      "test": "W-CYC",
+      "reason": "W-CYC probe before the camera's variants",
+      "mode": "MJPG 1280x720@30",
+      "frames": 1,
+      "fault_like": false,
+      "code": null,
+      "stage": null,
+      "class": null,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.703,
+      "no_json": false,
+      "open_to_first_frame_ms": 330.8124,
+      "was_faulted": false,
+      "recovered": false,
+      "faulted_after": false
+     }
+    ],
+    "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": [
+     {
+      "ok": true,
+      "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "name": "USB Video Device",
+      "utc": "2026-11-06T23:01:21.588929+00:00",
+      "test": "W-CYC",
+      "reason": "W-CYC probe before the camera's variants",
+      "mode": "MJPG 1280x720@30",
+      "frames": 1,
+      "fault_like": false,
+      "code": null,
+      "stage": null,
+      "class": null,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 1.828,
+      "no_json": false,
+      "open_to_first_frame_ms": 913.1846,
+      "was_faulted": false,
+      "recovered": false,
+      "faulted_after": false
+     }
+    ],
+    "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": [
+     {
+      "ok": true,
+      "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "name": "USB Camera",
+      "utc": "2026-11-06T23:16:47.227266+00:00",
+      "test": "W-CYC",
+      "reason": "W-CYC probe before the camera's variants",
+      "mode": "MJPG 1280x720@30",
+      "frames": 1,
+      "fault_like": false,
+      "code": null,
+      "stage": null,
+      "class": null,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.391,
+      "no_json": false,
+      "open_to_first_frame_ms": 99.9902,
+      "was_faulted": false,
+      "recovered": false,
+      "faulted_after": false
+     }
+    ],
+    "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": [
+     {
+      "ok": true,
+      "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+      "name": "Logitech Webcam C930e",
+      "utc": "2026-11-06T23:26:20.684365+00:00",
+      "test": "W-CYC",
+      "reason": "W-CYC probe before the camera's variants",
+      "mode": "MJPG 1280x720@30",
+      "frames": 1,
+      "fault_like": false,
+      "code": null,
+      "stage": null,
+      "class": null,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.906,
+      "no_json": false,
+      "open_to_first_frame_ms": 514.3802,
+      "was_faulted": false,
+      "recovered": false,
+      "faulted_after": false
+     }
+    ]
+   },
+   "W-MJPEG": {
+    "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": [
+     {
+      "ok": false,
+      "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "name": "USB Video Device",
+      "utc": "2026-11-07T00:11:01.018856+00:00",
+      "test": "W-MJPEG",
+      "reason": "re-probe at the start of W-MJPEG",
+      "mode": "MJPG 1280x720@30",
+      "frames": 0,
+      "fault_like": true,
+      "code": "0x8007001F",
+      "stage": "first_sample",
+      "class": "device_error",
+      "rc": 4,
+      "timed_out": false,
+      "elapsed_s": 0.062,
+      "no_json": false,
+      "open_to_first_frame_ms": -1,
+      "was_faulted": true,
+      "recovered": false,
+      "faulted_after": true
+     }
+    ]
+   }
+  },
+  "kiyo": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "name": "USB Video Device",
+    "poller_mode": "background",
+    "poller_started_utc": "2026-11-06T22:49:12.339966+00:00",
+    "plug_in_age_at_start_s": 8203.9,
+    "last_arrival": "2026-11-06T20:32:29.065252+00:00",
+    "stopped_answering": true,
+    "failed_from_first_poll": false,
+    "first_failure_utc": "2026-11-07T00:03:01.219341+00:00",
+    "first_failure_plug_in_age_s": 12632.2,
+    "first_failure_test": "W-MULTI",
+    "first_failure_codes": [],
+    "first_failure_vendor_processes": [
+     "LogiTune.exe:16536",
+     "LogiTune.exe:18788",
+     "LogiTune.exe:26388",
+     "LogiTune.exe:34856",
+     "LogiTune.exe:35428",
+     "LogiTune.exe:39072",
+     "LogiTune.exe:41652",
+     "LogiTune.exe:42572",
+     "LogiTune.exe:42832",
+     "LogiTuneAgent.exe:3296",
+     "LogiTuneUpdater.exe:6532",
+     "RazerAppEngine.exe:11860",
+     "RazerAppEngine.exe:14228",
+     "RazerAppEngine.exe:20916",
+     "RazerAppEngine.exe:2452",
+     "RazerAppEngine.exe:37044",
+     "RazerAppEngine.exe:37240",
+     "RazerAppEngine.exe:37416",
+     "RazerAppEngine.exe:41092",
+     "RazerAppEngine.exe:43916",
+     "logioptionsplus_agent.exe:42752",
+     "logioptionsplus_appbroker.exe:11372",
+     "logioptionsplus_updater.exe:3496",
+     "razer_elevation_service.exe:22052"
+    ],
+    "first_failure_activity_processes": [
+     "LogiTuneAgent.exe:3296",
+     "RazerAppEngine.exe:37240"
+    ],
+    "per_api": {
+     "mf": {
+      "utc": "2026-11-07T00:03:01.219341+00:00",
+      "plug_in_age_s": 12632.2,
+      "test": "W-MULTI",
+      "codes": [],
+      "real_codes": [],
+      "error_hr": null,
+      "failed_from_first_poll": false
+     },
+     "ds": {
+      "utc": "2026-11-07T00:03:42.508740+00:00",
+      "plug_in_age_s": 12632.2,
+      "test": "W-MULTI",
+      "codes": [],
+      "real_codes": [],
+      "error_hr": null,
+      "failed_from_first_poll": false
+     }
+    },
+    "transitions": [
+     {
+      "api": "mf",
+      "to": "not_answering",
+      "utc": "2026-11-07T00:03:01.219341+00:00",
+      "plug_in_age_s": 12632.2,
+      "test": "W-MULTI"
+     },
+     {
+      "api": "ds",
+      "to": "not_answering",
+      "utc": "2026-11-07T00:03:42.508740+00:00",
+      "plug_in_age_s": 12632.2,
+      "test": "W-MULTI"
+     }
+    ],
+    "n_polls": 588
+   }
+  },
+  "rule": "fault = 0x8007001F (device_error) / unreleasable or hung reader / streaming command killed at its timeout; its streaming commands are gated from the next test on; each later test re-probes it once (1-frame MF capture) and un-faults it if it answers"
+ },
+ "kiyo_onset": {
+  "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+   "control_polls": {
+    "name": "USB Video Device",
+    "poller_mode": "background",
+    "poller_started_utc": "2026-11-06T22:49:12.339966+00:00",
+    "plug_in_age_at_start_s": 8203.9,
+    "last_arrival": "2026-11-06T20:32:29.065252+00:00",
+    "stopped_answering": true,
+    "failed_from_first_poll": false,
+    "first_failure_utc": "2026-11-07T00:03:01.219341+00:00",
+    "first_failure_plug_in_age_s": 12632.2,
+    "first_failure_test": "W-MULTI",
+    "first_failure_codes": [],
+    "first_failure_vendor_processes": [
+     "LogiTune.exe:16536",
+     "LogiTune.exe:18788",
+     "LogiTune.exe:26388",
+     "LogiTune.exe:34856",
+     "LogiTune.exe:35428",
+     "LogiTune.exe:39072",
+     "LogiTune.exe:41652",
+     "LogiTune.exe:42572",
+     "LogiTune.exe:42832",
+     "LogiTuneAgent.exe:3296",
+     "LogiTuneUpdater.exe:6532",
+     "RazerAppEngine.exe:11860",
+     "RazerAppEngine.exe:14228",
+     "RazerAppEngine.exe:20916",
+     "RazerAppEngine.exe:2452",
+     "RazerAppEngine.exe:37044",
+     "RazerAppEngine.exe:37240",
+     "RazerAppEngine.exe:37416",
+     "RazerAppEngine.exe:41092",
+     "RazerAppEngine.exe:43916",
+     "logioptionsplus_agent.exe:42752",
+     "logioptionsplus_appbroker.exe:11372",
+     "logioptionsplus_updater.exe:3496",
+     "razer_elevation_service.exe:22052"
+    ],
+    "first_failure_activity_processes": [
+     "LogiTuneAgent.exe:3296",
+     "RazerAppEngine.exe:37240"
+    ],
+    "per_api": {
+     "mf": {
+      "utc": "2026-11-07T00:03:01.219341+00:00",
+      "plug_in_age_s": 12632.2,
+      "test": "W-MULTI",
+      "codes": [],
+      "real_codes": [],
+      "error_hr": null,
+      "failed_from_first_poll": false
+     },
+     "ds": {
+      "utc": "2026-11-07T00:03:42.508740+00:00",
+      "plug_in_age_s": 12632.2,
+      "test": "W-MULTI",
+      "codes": [],
+      "real_codes": [],
+      "error_hr": null,
+      "failed_from_first_poll": false
+     }
+    },
+    "transitions": [
+     {
+      "api": "mf",
+      "to": "not_answering",
+      "utc": "2026-11-07T00:03:01.219341+00:00",
+      "plug_in_age_s": 12632.2,
+      "test": "W-MULTI"
+     },
+     {
+      "api": "ds",
+      "to": "not_answering",
+      "utc": "2026-11-07T00:03:42.508740+00:00",
+      "plug_in_age_s": 12632.2,
+      "test": "W-MULTI"
+     }
+    ],
+    "n_polls": 588
+   },
+   "first_device_fault": {
+    "since_utc": "2026-11-07T00:04:02.348704+00:00",
+    "test": "W-MULTI",
+    "mode": null,
+    "code": "0x8007001F",
+    "class": "device_error",
+    "stage": "control_get",
+    "api": "mf",
+    "source": "camcmd_scan",
+    "plug_in_age_s": 12693.3
+   },
+   "first_failure": {
+    "utc": "2026-11-07T00:04:02.348704+00:00",
+    "test": "W-MULTI",
+    "mode": null,
+    "code": "0x8007001F",
+    "api": "mf",
+    "stage": "control_get",
+    "class": "device_error",
+    "source": "camcmd_scan",
+    "plug_in_age_s": 12693.3,
+    "last_arrival": "2026-11-06T20:32:29.065252+00:00",
+    "detail": {
+     "argv": "wincam.exe controls --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 3...",
+     "why": "error 0x8007001F / device_error"
+    },
+    "is_kiyo": true,
+    "name": "USB Video Device"
+   },
+   "faulted_at_end": true
+  }
+ },
+ "status": [
+  {
+   "test": "W-ENV",
+   "eta_s": 20,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 0.7,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-POLICY",
+   "eta_s": 10,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 0.2,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-TOPO",
+   "eta_s": 62,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 1.3,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-ID",
+   "eta_s": 80,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 11.7,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-FMT",
+   "eta_s": 34,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 2.1,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-FMT-NOGRAB",
+   "eta_s": 183.0,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 165.4,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-CTRL-LIST",
+   "eta_s": 34,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 3.0,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-CYC",
+   "eta_s": 3408.75,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 2674.2,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-CTRL-EFFECT",
+   "eta_s": 1184.0,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 860.2,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-TS",
+   "eta_s": 264.0,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 252.6,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-MULTI",
+   "eta_s": 1389.5,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 940.4,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-MJPEG",
+   "eta_s": 311.0,
+   "gated": {
+    "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-07T00:04:02.348704+00:00"
+   },
+   "probes": {
+    "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+     "ok": false,
+     "code": "0x8007001F",
+     "class": "device_error",
+     "recovered": false,
+     "utc": "2026-11-07T00:11:01.018856+00:00"
+    }
+   },
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 139.5,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-KIYO",
+   "eta_s": 0.0,
+   "mode": "background",
+   "status": "ok (background)",
+   "elapsed_s": 0.8,
+   "n_errors": 0,
+   "errors_head": []
+  }
+ ],
+ "utc_finished": "2026-11-07T00:13:21.061788+00:00",
+ "elapsed_s": 5053.5,
+ "interrupted": false
+}

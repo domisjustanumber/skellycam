@@ -1,0 +1,231 @@
+{
+ "argv": [
+  "suite/windows/run_suite.py",
+  "--quick",
+  "--only",
+  "W-ENV,W-CTRL-LIST,W-CYC",
+  "--camera",
+  "0e05",
+  "--out-dir",
+  "results/windows/Gerald/suite_build_selftest_20261106/kiyo_wedged_quick"
+ ],
+ "args": {
+  "quick": true,
+  "only": "W-ENV,W-CTRL-LIST,W-CYC",
+  "skip": "",
+  "cycles": 4,
+  "proc_cycles": 2,
+  "frames": 10,
+  "mjpeg_seconds": 1.5,
+  "flash": false,
+  "out_dir": "results/windows/Gerald/suite_build_selftest_20261106/kiyo_wedged_quick",
+  "raw_dir": null,
+  "wincam": null,
+  "repeats": 5,
+  "no_fault_gate": false,
+  "multi_reps": null,
+  "ts_seconds": null,
+  "ctrl_runs": null,
+  "kiyo_minutes": null,
+  "mjpeg_recapture_s": null,
+  "camera": [
+   "0e05"
+  ],
+  "kiyo_interval": 10.0,
+  "kiyo_foreground": false,
+  "probe_at_start": false,
+  "list": false,
+  "reanalyse": null
+ },
+ "utc_started": "2026-11-06T21:21:00.823608+00:00",
+ "out_dir": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_build_selftest_20261106\\kiyo_wedged_quick",
+ "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\kiyo_wedged_quick",
+ "tests": [
+  "W-ENV",
+  "W-CTRL-LIST",
+  "W-CYC"
+ ],
+ "test_order": [
+  "W-ENV",
+  "W-CTRL-LIST",
+  "W-CYC"
+ ],
+ "background": [],
+ "eta_s": {
+  "W-ENV": 20,
+  "W-CTRL-LIST": 16,
+  "W-CYC": 119.2
+ },
+ "cameras": [
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": true,
+   "last_arrival": "2026-11-06T20:32:29.065252+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 5,
+   "ds_index": 1
+  }
+ ],
+ "fault_gate": true,
+ "arrivals_since_previous_run": {
+  "previous_run": "fixes_quick_rerun",
+  "cameras": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "previous": "2026-11-06T20:32:29.065252+00:00",
+    "now": "2026-11-06T20:32:29.065252+00:00",
+    "re_arrived_since": false,
+    "in_previous_run": true
+   }
+  }
+ },
+ "faults": {
+  "faults": {},
+  "currently_faulted": [],
+  "first_failure": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "utc": "2026-11-06T21:21:31.665896+00:00",
+    "test": "W-CYC",
+    "mode": "MJPG 1280x720@30",
+    "code": 4,
+    "api": "ds",
+    "stage": "format",
+    "class": "other",
+    "source": "camcmd_scan",
+    "plug_in_age_s": 2942.6,
+    "last_arrival": "2026-11-06T20:32:29.065252+00:00",
+    "detail": {
+     "argv": "uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_ds.py capture --device \\\\?\\usb#vid_1532&pi..."
+    },
+    "is_kiyo": true,
+    "name": "USB Video Device"
+   }
+  },
+  "events": [
+   {
+    "type": "probe_ok",
+    "utc": "2026-11-06T21:21:04.265935+00:00",
+    "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "name": "USB Video Device",
+    "test": "W-CYC",
+    "reason": "W-CYC probe before the camera's variants",
+    "code": null,
+    "stage": null,
+    "class": null,
+    "recovered": false
+   }
+  ],
+  "gated_by_test": {
+   "W-ENV": {},
+   "W-CTRL-LIST": {},
+   "W-CYC": {}
+  },
+  "probes_by_test": {
+   "W-CYC": {
+    "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": [
+     {
+      "ok": true,
+      "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "name": "USB Video Device",
+      "utc": "2026-11-06T21:21:04.265935+00:00",
+      "test": "W-CYC",
+      "reason": "W-CYC probe before the camera's variants",
+      "mode": "MJPG 1280x720@30",
+      "frames": 1,
+      "fault_like": false,
+      "code": null,
+      "stage": null,
+      "class": null,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 1.547,
+      "no_json": false,
+      "open_to_first_frame_ms": 595.0795,
+      "was_faulted": false,
+      "recovered": false,
+      "faulted_after": false
+     }
+    ]
+   }
+  },
+  "kiyo": {},
+  "rule": "fault = 0x8007001F (device_error) / unreleasable or hung reader / streaming command killed at its timeout; its streaming commands are gated from the next test on; each later test re-probes it once (1-frame MF capture) and un-faults it if it answers"
+ },
+ "kiyo_onset": {
+  "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+   "control_polls": null,
+   "first_device_fault": null,
+   "first_failure": {
+    "utc": "2026-11-06T21:21:31.665896+00:00",
+    "test": "W-CYC",
+    "mode": "MJPG 1280x720@30",
+    "code": 4,
+    "api": "ds",
+    "stage": "format",
+    "class": "other",
+    "source": "camcmd_scan",
+    "plug_in_age_s": 2942.6,
+    "last_arrival": "2026-11-06T20:32:29.065252+00:00",
+    "detail": {
+     "argv": "uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_ds.py capture --device \\\\?\\usb#vid_1532&pi..."
+    },
+    "is_kiyo": true,
+    "name": "USB Video Device"
+   },
+   "faulted_at_end": false
+  }
+ },
+ "status": [
+  {
+   "test": "W-ENV",
+   "eta_s": 20,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 0.7,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-CTRL-LIST",
+   "eta_s": 16,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 0.8,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-CYC",
+   "eta_s": 119.2,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 88.0,
+   "n_errors": 0,
+   "errors_head": []
+  }
+ ],
+ "utc_finished": "2026-11-06T21:22:30.274181+00:00",
+ "elapsed_s": 89.6,
+ "interrupted": false
+}

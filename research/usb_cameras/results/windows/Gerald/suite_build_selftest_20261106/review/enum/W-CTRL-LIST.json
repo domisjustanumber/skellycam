@@ -1,0 +1,2529 @@
+{
+ "test": "W-CTRL-LIST",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-06T18:05:12.265574+00:00",
+ "utc_finished": "2026-11-06T18:05:14.317255+00:00",
+ "elapsed_s": 2.047,
+ "command": "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/suite/windows/run_suite.py --quick --only W-ENV,W-TOPO,W-ID,W-FMT,W-CTRL-LIST --out-dir C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/review/enum (module W-CTRL-LIST)",
+ "argv": [
+  "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/suite/windows/run_suite.py",
+  "--quick",
+  "--only",
+  "W-ENV,W-TOPO,W-ID,W-FMT,W-CTRL-LIST",
+  "--out-dir",
+  "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/review/enum",
+  "(module W-CTRL-LIST)"
+ ],
+ "environment": {
+  "os": {
+   "platform": "Windows-11-10.0.26300-SP0",
+   "system": "Windows",
+   "release": "11",
+   "version": "10.0.26300",
+   "machine": "AMD64",
+   "windows_build": 26300,
+   "windows_version": "10.0.26300",
+   "windows_edition": "Core",
+   "windows_displayversion": "26H2",
+   "windows_ubr": 9711,
+   "windows_productname": "Windows 10 Home",
+   "windows_currentbuild": "26300"
+  },
+  "python": "3.12.13",
+  "python_implementation": "CPython",
+  "python_executable": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+  "hostname": "Gerald",
+  "pid": 22548,
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0"
+  }
+ },
+ "cameras": [
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "vid": "046d",
+   "pid": "085c",
+   "serial": "C922SN01",
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "c922 Pro Stream Webcam",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+   "speed": "HS",
+   "bcd_device": "0016",
+   "metadata_tier1": true,
+   "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 4,
+   "ds_index": 0
+  },
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": true,
+   "last_arrival": "2026-11-06T14:59:24.581364+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 5,
+   "ds_index": 1
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "name": "USB Camera",
+   "vid": "4c4a",
+   "pid": "4a55",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232e60d4&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Camera",
+   "ds_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "speed": "HS",
+   "bcd_device": "0100",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-06T17:47:04.819155+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 6,
+   "ds_index": 6
+  },
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+   "name": "Logitech Webcam C930e",
+   "vid": "046d",
+   "pid": "0843",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+   "parent_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&2206973f&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "Logitech Webcam C930e",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(7)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+   "speed": "HS",
+   "bcd_device": "0013",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 7
+  }
+ ],
+ "measurements": {
+  "cameras": [
+   {
+    "key": "046d:085c:sn=C922SN01",
+    "name": "c922 Pro Stream Webcam",
+    "is_kiyo": false,
+    "descriptor": {
+     "camera_terminal": [
+      "auto_exposure_mode",
+      "auto_exposure_priority",
+      "exposure_time_absolute",
+      "focus_absolute",
+      "zoom_absolute",
+      "pantilt_absolute",
+      "focus_auto"
+     ],
+     "processing_unit": [
+      "brightness",
+      "contrast",
+      "saturation",
+      "sharpness",
+      "white_balance_temperature",
+      "backlight_compensation",
+      "gain",
+      "power_line_frequency",
+      "white_balance_temperature_auto"
+     ],
+     "extension_units": [
+      {
+       "bUnitID": 6,
+       "guidExtensionCode": "23e49ed0-1178-4f31-ae52-d2fb8a8d3b48",
+       "known_as": null,
+       "bNumControls": 10,
+       "bmControls": "0x03ff"
+      },
+      {
+       "bUnitID": 8,
+       "guidExtensionCode": "69678ee4-410f-40db-a850-7420d7d8240e",
+       "known_as": null,
+       "bNumControls": 7,
+       "bmControls": "0x033b"
+      },
+      {
+       "bUnitID": 9,
+       "guidExtensionCode": "1f5d4ca9-de11-4487-840d-50933c8ec8d1",
+       "known_as": null,
+       "bNumControls": 17,
+       "bmControls": "0x23fff3"
+      },
+      {
+       "bUnitID": 10,
+       "guidExtensionCode": "49e40215-f434-47fe-b158-0e885023e51b",
+       "known_as": null,
+       "bNumControls": 7,
+       "bmControls": "0x07ba"
+      },
+      {
+       "bUnitID": 11,
+       "guidExtensionCode": "ffe52d21-8030-4e2c-82d9-f587d00540bd",
+       "known_as": null,
+       "bNumControls": 2,
+       "bmControls": "0x4100"
+      },
+      {
+       "bUnitID": 12,
+       "guidExtensionCode": "a29e7641-de04-47e3-8b2b-f4341aff003b",
+       "known_as": null,
+       "bNumControls": 11,
+       "bmControls": "0x7f07"
+      }
+     ],
+     "focal_length_fields": {
+      "wObjectiveFocalLengthMin": 0,
+      "wObjectiveFocalLengthMax": 0,
+      "wOcularFocalLength": 0
+     },
+     "bcdUVC": "1.00",
+     "camera_terminal_bmControls": "0x020a2e",
+     "processing_unit_bmControls": "0x175b"
+    },
+    "mf_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "controls",
+      "--api",
+      "mf",
+      "--device",
+      "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "--read-only",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.063,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 60.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 8000\n[camlock] released"
+    },
+    "ds_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "controls",
+      "--api",
+      "ds",
+      "--device",
+      "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "--read-only",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.047,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 60.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api ds --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --read-only --timeout-ms 8000\n[camlock] released"
+    },
+    "descriptor_to_ks": [
+     {
+      "descriptor": "CT.auto_exposure_mode",
+      "ks": "cc.exposure",
+      "aspect": "auto",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.auto_exposure_priority",
+      "ks": "cc.auto_exposure_priority",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.exposure_time_absolute",
+      "ks": "cc.exposure",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.focus_absolute",
+      "ks": "cc.focus",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.zoom_absolute",
+      "ks": "cc.zoom",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.pantilt_absolute",
+      "ks": "cc.pan",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.pantilt_absolute",
+      "ks": "cc.tilt",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.pantilt_absolute",
+      "ks": "cc.pantilt",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.focus_auto",
+      "ks": "cc.focus",
+      "aspect": "auto",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.brightness",
+      "ks": "pa.brightness",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.contrast",
+      "ks": "pa.contrast",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.saturation",
+      "ks": "pa.saturation",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.sharpness",
+      "ks": "pa.sharpness",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.white_balance_temperature",
+      "ks": "pa.white_balance",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.backlight_compensation",
+      "ks": "pa.backlight_compensation",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.gain",
+      "ks": "pa.gain",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.power_line_frequency",
+      "ks": "pa.powerline_frequency",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.white_balance_temperature_auto",
+      "ks": "pa.white_balance",
+      "aspect": "auto",
+      "mf": true,
+      "ds": true
+     }
+    ],
+    "descriptor_controls_without_ks_id": [],
+    "missing": {
+     "mf": [],
+     "ds": []
+    },
+    "extra_supported_not_in_descriptor": {
+     "mf": [
+      "cc.focal_length"
+     ],
+     "ds": [
+      "cc.focal_length"
+     ]
+    },
+    "mf_vs_ds_differences": [],
+    "supported": {
+     "cc.auto_exposure_priority": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.exposure": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.focal_length": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.focus": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.pan": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.pantilt": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.tilt": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.zoom": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.backlight_compensation": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.brightness": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.contrast": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.gain": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.powerline_frequency": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.saturation": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.sharpness": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.white_balance": {
+      "mf": true,
+      "ds": true
+     }
+    },
+    "ranges": {
+     "cc.auto_exposure_priority": {
+      "min": 0,
+      "max": 0,
+      "step": 0,
+      "default": 0,
+      "caps_flags_names": [],
+      "value": 1,
+      "flags_names": [],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.exposure": {
+      "min": -11,
+      "max": -2,
+      "step": 1,
+      "default": -5,
+      "caps_flags_names": [
+       "auto",
+       "manual"
+      ],
+      "value": -4,
+      "flags_names": [
+       "auto"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.focal_length": {
+      "min": null,
+      "max": null,
+      "step": null,
+      "default": null,
+      "caps_flags_names": [],
+      "value": 0,
+      "flags_names": [],
+      "via": "IKsControl",
+      "iam_ks_range_agree": null,
+      "note": null
+     },
+     "cc.focus": {
+      "min": 0,
+      "max": 250,
+      "step": 5,
+      "default": 0,
+      "caps_flags_names": [
+       "auto",
+       "manual"
+      ],
+      "value": 60,
+      "flags_names": [
+       "auto"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.pan": {
+      "min": -10,
+      "max": 10,
+      "step": 1,
+      "default": 0,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 0,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.pantilt": {
+      "min": null,
+      "max": null,
+      "step": null,
+      "default": null,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 0,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IKsControl",
+      "iam_ks_range_agree": null,
+      "note": null
+     },
+     "cc.tilt": {
+      "min": -10,
+      "max": 10,
+      "step": 1,
+      "default": 0,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 0,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.zoom": {
+      "min": 100,
+      "max": 500,
+      "step": 1,
+      "default": 100,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 100,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.backlight_compensation": {
+      "min": 0,
+      "max": 1,
+      "step": 1,
+      "default": 0,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 0,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.brightness": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 128,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 128,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.contrast": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 128,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 128,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.gain": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 0,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 0,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.powerline_frequency": {
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "default": 2,
+      "caps_flags_names": [],
+      "value": 2,
+      "flags_names": [],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.saturation": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 128,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 128,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.sharpness": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 128,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 128,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.white_balance": {
+      "min": 2000,
+      "max": 6500,
+      "step": 1,
+      "default": 4000,
+      "caps_flags_names": [
+       "auto",
+       "manual"
+      ],
+      "value": 2731,
+      "flags_names": [
+       "auto"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     }
+    },
+    "degenerate_ranges": [
+     "cc.auto_exposure_priority"
+    ],
+    "iam_ks_disagree": [],
+    "counts": {
+     "descriptor_ct": 7,
+     "descriptor_pu": 9,
+     "mf_supported": 16,
+     "ds_supported": 16,
+     "missing_mf": 0,
+     "missing_ds": 0,
+     "mf_vs_ds_diffs": 0
+    },
+    "equivalent": true
+   },
+   {
+    "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "name": "USB Video Device",
+    "is_kiyo": true,
+    "descriptor": {
+     "camera_terminal": [
+      "auto_exposure_mode",
+      "auto_exposure_priority",
+      "exposure_time_absolute",
+      "focus_absolute",
+      "zoom_absolute",
+      "pantilt_absolute",
+      "focus_auto"
+     ],
+     "processing_unit": [
+      "brightness",
+      "contrast",
+      "saturation",
+      "sharpness",
+      "white_balance_temperature",
+      "backlight_compensation",
+      "gain",
+      "power_line_frequency",
+      "white_balance_temperature_auto"
+     ],
+     "extension_units": [
+      {
+       "bUnitID": 2,
+       "guidExtensionCode": "2c49d16a-32b8-4485-3ea8-643a152362f2",
+       "known_as": null,
+       "bNumControls": 6,
+       "bmControls": "0x003f"
+      },
+      {
+       "bUnitID": 6,
+       "guidExtensionCode": "23e49ed0-1178-4f31-ae52-d2fb8a8d3b48",
+       "known_as": null,
+       "bNumControls": 5,
+       "bmControls": "0x7fff"
+      }
+     ],
+     "focal_length_fields": {
+      "wObjectiveFocalLengthMin": 0,
+      "wObjectiveFocalLengthMax": 0,
+      "wOcularFocalLength": 0
+     },
+     "bcdUVC": "1.00",
+     "camera_terminal_bmControls": "0x020a2e",
+     "processing_unit_bmControls": "0x175b"
+    },
+    "mf_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "controls",
+      "--api",
+      "mf",
+      "--device",
+      "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "--read-only",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.063,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 60.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 8000\n[camlock] released"
+    },
+    "ds_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "controls",
+      "--api",
+      "ds",
+      "--device",
+      "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "--read-only",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.047,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 60.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api ds --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --read-only --timeout-ms 8000\n[camlock] released"
+    },
+    "descriptor_to_ks": [
+     {
+      "descriptor": "CT.auto_exposure_mode",
+      "ks": "cc.exposure",
+      "aspect": "auto",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.auto_exposure_priority",
+      "ks": "cc.auto_exposure_priority",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.exposure_time_absolute",
+      "ks": "cc.exposure",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.focus_absolute",
+      "ks": "cc.focus",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.zoom_absolute",
+      "ks": "cc.zoom",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.pantilt_absolute",
+      "ks": "cc.pan",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.pantilt_absolute",
+      "ks": "cc.tilt",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.pantilt_absolute",
+      "ks": "cc.pantilt",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.focus_auto",
+      "ks": "cc.focus",
+      "aspect": "auto",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.brightness",
+      "ks": "pa.brightness",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.contrast",
+      "ks": "pa.contrast",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.saturation",
+      "ks": "pa.saturation",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.sharpness",
+      "ks": "pa.sharpness",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.white_balance_temperature",
+      "ks": "pa.white_balance",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.backlight_compensation",
+      "ks": "pa.backlight_compensation",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.gain",
+      "ks": "pa.gain",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.power_line_frequency",
+      "ks": "pa.powerline_frequency",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.white_balance_temperature_auto",
+      "ks": "pa.white_balance",
+      "aspect": "auto",
+      "mf": true,
+      "ds": true
+     }
+    ],
+    "descriptor_controls_without_ks_id": [],
+    "missing": {
+     "mf": [],
+     "ds": []
+    },
+    "extra_supported_not_in_descriptor": {
+     "mf": [
+      "cc.focal_length"
+     ],
+     "ds": [
+      "cc.focal_length"
+     ]
+    },
+    "mf_vs_ds_differences": [],
+    "supported": {
+     "cc.auto_exposure_priority": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.exposure": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.focal_length": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.focus": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.pan": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.pantilt": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.tilt": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.zoom": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.backlight_compensation": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.brightness": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.contrast": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.gain": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.powerline_frequency": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.saturation": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.sharpness": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.white_balance": {
+      "mf": true,
+      "ds": true
+     }
+    },
+    "ranges": {
+     "cc.auto_exposure_priority": {
+      "min": 0,
+      "max": 0,
+      "step": 0,
+      "default": 0,
+      "caps_flags_names": [],
+      "value": 0,
+      "flags_names": [],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.exposure": {
+      "min": -11,
+      "max": -2,
+      "step": 1,
+      "default": -6,
+      "caps_flags_names": [
+       "auto",
+       "manual"
+      ],
+      "value": -4,
+      "flags_names": [
+       "auto"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.focal_length": {
+      "min": null,
+      "max": null,
+      "step": null,
+      "default": null,
+      "caps_flags_names": [],
+      "value": 0,
+      "flags_names": [],
+      "via": "IKsControl",
+      "iam_ks_range_agree": null,
+      "note": null
+     },
+     "cc.focus": {
+      "min": 0,
+      "max": 600,
+      "step": 1,
+      "default": 0,
+      "caps_flags_names": [
+       "auto",
+       "manual"
+      ],
+      "value": 600,
+      "flags_names": [
+       "auto"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.pan": {
+      "min": -10,
+      "max": 10,
+      "step": 1,
+      "default": 0,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 0,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.pantilt": {
+      "min": null,
+      "max": null,
+      "step": null,
+      "default": null,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 0,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IKsControl",
+      "iam_ks_range_agree": null,
+      "note": null
+     },
+     "cc.tilt": {
+      "min": -10,
+      "max": 10,
+      "step": 1,
+      "default": 0,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 0,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.zoom": {
+      "min": 100,
+      "max": 400,
+      "step": 1,
+      "default": 100,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 100,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.backlight_compensation": {
+      "min": 0,
+      "max": 1,
+      "step": 1,
+      "default": 0,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 1,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.brightness": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 128,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 205,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.contrast": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 128,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 201,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.gain": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 0,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 0,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.powerline_frequency": {
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "default": 2,
+      "caps_flags_names": [],
+      "value": 2,
+      "flags_names": [],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.saturation": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 128,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 110,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.sharpness": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 128,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 128,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.white_balance": {
+      "min": 2000,
+      "max": 7500,
+      "step": 10,
+      "default": 5000,
+      "caps_flags_names": [
+       "auto",
+       "manual"
+      ],
+      "value": 6500,
+      "flags_names": [
+       "auto"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     }
+    },
+    "degenerate_ranges": [
+     "cc.auto_exposure_priority"
+    ],
+    "iam_ks_disagree": [],
+    "counts": {
+     "descriptor_ct": 7,
+     "descriptor_pu": 9,
+     "mf_supported": 16,
+     "ds_supported": 16,
+     "missing_mf": 0,
+     "missing_ds": 0,
+     "mf_vs_ds_diffs": 0
+    },
+    "equivalent": true
+   },
+   {
+    "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "name": "USB Camera",
+    "is_kiyo": false,
+    "descriptor": {
+     "camera_terminal": [
+      "auto_exposure_mode",
+      "exposure_time_absolute"
+     ],
+     "processing_unit": [
+      "brightness",
+      "contrast",
+      "saturation",
+      "sharpness",
+      "gamma",
+      "white_balance_temperature",
+      "backlight_compensation",
+      "gain",
+      "power_line_frequency"
+     ],
+     "extension_units": [
+      {
+       "bUnitID": 3,
+       "guidExtensionCode": "28f03370-6311-4a2e-ba2c-6890eb334016",
+       "known_as": null,
+       "bNumControls": 8,
+       "bmControls": "0xffffffff"
+      }
+     ],
+     "focal_length_fields": {
+      "wObjectiveFocalLengthMin": 0,
+      "wObjectiveFocalLengthMax": 0,
+      "wOcularFocalLength": 0
+     },
+     "bcdUVC": "1.00",
+     "camera_terminal_bmControls": "0x00000a",
+     "processing_unit_bmControls": "0x077b"
+    },
+    "mf_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "controls",
+      "--api",
+      "mf",
+      "--device",
+      "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "--read-only",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.063,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 60.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 8000\n[camlock] released"
+    },
+    "ds_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "controls",
+      "--api",
+      "ds",
+      "--device",
+      "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "--read-only",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.047,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 60.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api ds --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --read-only --timeout-ms 8000\n[camlock] released"
+    },
+    "descriptor_to_ks": [
+     {
+      "descriptor": "CT.auto_exposure_mode",
+      "ks": "cc.exposure",
+      "aspect": "auto",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.exposure_time_absolute",
+      "ks": "cc.exposure",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.brightness",
+      "ks": "pa.brightness",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.contrast",
+      "ks": "pa.contrast",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.saturation",
+      "ks": "pa.saturation",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.sharpness",
+      "ks": "pa.sharpness",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.gamma",
+      "ks": "pa.gamma",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.white_balance_temperature",
+      "ks": "pa.white_balance",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.backlight_compensation",
+      "ks": "pa.backlight_compensation",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.gain",
+      "ks": "pa.gain",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.power_line_frequency",
+      "ks": "pa.powerline_frequency",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     }
+    ],
+    "descriptor_controls_without_ks_id": [],
+    "missing": {
+     "mf": [],
+     "ds": []
+    },
+    "extra_supported_not_in_descriptor": {
+     "mf": [
+      "cc.focal_length"
+     ],
+     "ds": [
+      "cc.focal_length"
+     ]
+    },
+    "mf_vs_ds_differences": [],
+    "supported": {
+     "cc.exposure": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.focal_length": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.backlight_compensation": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.brightness": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.contrast": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.gain": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.gamma": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.powerline_frequency": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.saturation": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.sharpness": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.white_balance": {
+      "mf": true,
+      "ds": true
+     }
+    },
+    "ranges": {
+     "cc.exposure": {
+      "min": -7,
+      "max": 3,
+      "step": 1,
+      "default": -7,
+      "caps_flags_names": [
+       "auto",
+       "manual"
+      ],
+      "value": 1,
+      "flags_names": [
+       "auto"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.focal_length": {
+      "min": null,
+      "max": null,
+      "step": null,
+      "default": null,
+      "caps_flags_names": [],
+      "value": 0,
+      "flags_names": [],
+      "via": "IKsControl",
+      "iam_ks_range_agree": null,
+      "note": null
+     },
+     "pa.backlight_compensation": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 0,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 0,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.brightness": {
+      "min": -127,
+      "max": 127,
+      "step": 1,
+      "default": 0,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 0,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.contrast": {
+      "min": 0,
+      "max": 511,
+      "step": 1,
+      "default": 256,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 250,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.gain": {
+      "min": 1,
+      "max": 7,
+      "step": 1,
+      "default": 4,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 4,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.gamma": {
+      "min": 10,
+      "max": 30,
+      "step": 10,
+      "default": 20,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 22,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.powerline_frequency": {
+      "min": 0,
+      "max": 0,
+      "step": 0,
+      "default": 0,
+      "caps_flags_names": [],
+      "value": 0,
+      "flags_names": [],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.saturation": {
+      "min": 0,
+      "max": 511,
+      "step": 1,
+      "default": 256,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 475,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.sharpness": {
+      "min": 0,
+      "max": 256,
+      "step": 1,
+      "default": 128,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 180,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.white_balance": {
+      "min": 0,
+      "max": 6500,
+      "step": 1,
+      "default": 4500,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 4500,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     }
+    },
+    "degenerate_ranges": [
+     "pa.powerline_frequency"
+    ],
+    "iam_ks_disagree": [],
+    "counts": {
+     "descriptor_ct": 2,
+     "descriptor_pu": 9,
+     "mf_supported": 11,
+     "ds_supported": 11,
+     "missing_mf": 0,
+     "missing_ds": 0,
+     "mf_vs_ds_diffs": 0
+    },
+    "equivalent": true
+   },
+   {
+    "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+    "name": "Logitech Webcam C930e",
+    "is_kiyo": false,
+    "descriptor": {
+     "camera_terminal": [
+      "auto_exposure_mode",
+      "auto_exposure_priority",
+      "exposure_time_absolute",
+      "focus_absolute",
+      "zoom_absolute",
+      "pantilt_absolute",
+      "focus_auto"
+     ],
+     "processing_unit": [
+      "brightness",
+      "contrast",
+      "saturation",
+      "sharpness",
+      "white_balance_temperature",
+      "backlight_compensation",
+      "gain",
+      "power_line_frequency",
+      "white_balance_temperature_auto"
+     ],
+     "extension_units": [
+      {
+       "bUnitID": 6,
+       "guidExtensionCode": "23e49ed0-1178-4f31-ae52-d2fb8a8d3b48",
+       "known_as": null,
+       "bNumControls": 10,
+       "bmControls": "0x03ff"
+      },
+      {
+       "bUnitID": 8,
+       "guidExtensionCode": "69678ee4-410f-40db-a850-7420d7d8240e",
+       "known_as": null,
+       "bNumControls": 7,
+       "bmControls": "0x033b"
+      },
+      {
+       "bUnitID": 9,
+       "guidExtensionCode": "1f5d4ca9-de11-4487-840d-50933c8ec8d1",
+       "known_as": null,
+       "bNumControls": 16,
+       "bmControls": "0x03fff3"
+      },
+      {
+       "bUnitID": 10,
+       "guidExtensionCode": "49e40215-f434-47fe-b158-0e885023e51b",
+       "known_as": null,
+       "bNumControls": 7,
+       "bmControls": "0x0faa"
+      },
+      {
+       "bUnitID": 11,
+       "guidExtensionCode": "ffe52d21-8030-4e2c-82d9-f587d00540bd",
+       "known_as": null,
+       "bNumControls": 3,
+       "bmControls": "0x014100"
+      },
+      {
+       "bUnitID": 12,
+       "guidExtensionCode": "a29e7641-de04-47e3-8b2b-f4341aff003b",
+       "known_as": null,
+       "bNumControls": 11,
+       "bmControls": "0x7f07"
+      },
+      {
+       "bUnitID": 13,
+       "guidExtensionCode": "13612d26-5aaa-46c4-b13d-ff4d9a60db86",
+       "known_as": null,
+       "bNumControls": 1,
+       "bmControls": "0x02"
+      }
+     ],
+     "focal_length_fields": {
+      "wObjectiveFocalLengthMin": 0,
+      "wObjectiveFocalLengthMax": 0,
+      "wOcularFocalLength": 0
+     },
+     "bcdUVC": "1.00",
+     "camera_terminal_bmControls": "0x020a2e",
+     "processing_unit_bmControls": "0x175b"
+    },
+    "mf_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "controls",
+      "--api",
+      "mf",
+      "--device",
+      "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "--read-only",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.078,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 60.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 8000\n[camlock] released"
+    },
+    "ds_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "controls",
+      "--api",
+      "ds",
+      "--device",
+      "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "--read-only",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.031,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 60.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api ds --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --read-only --timeout-ms 8000\n[camlock] released"
+    },
+    "descriptor_to_ks": [
+     {
+      "descriptor": "CT.auto_exposure_mode",
+      "ks": "cc.exposure",
+      "aspect": "auto",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.auto_exposure_priority",
+      "ks": "cc.auto_exposure_priority",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.exposure_time_absolute",
+      "ks": "cc.exposure",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.focus_absolute",
+      "ks": "cc.focus",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.zoom_absolute",
+      "ks": "cc.zoom",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.pantilt_absolute",
+      "ks": "cc.pan",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.pantilt_absolute",
+      "ks": "cc.tilt",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.pantilt_absolute",
+      "ks": "cc.pantilt",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "CT.focus_auto",
+      "ks": "cc.focus",
+      "aspect": "auto",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.brightness",
+      "ks": "pa.brightness",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.contrast",
+      "ks": "pa.contrast",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.saturation",
+      "ks": "pa.saturation",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.sharpness",
+      "ks": "pa.sharpness",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.white_balance_temperature",
+      "ks": "pa.white_balance",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.backlight_compensation",
+      "ks": "pa.backlight_compensation",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.gain",
+      "ks": "pa.gain",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.power_line_frequency",
+      "ks": "pa.powerline_frequency",
+      "aspect": "value",
+      "mf": true,
+      "ds": true
+     },
+     {
+      "descriptor": "PU.white_balance_temperature_auto",
+      "ks": "pa.white_balance",
+      "aspect": "auto",
+      "mf": true,
+      "ds": true
+     }
+    ],
+    "descriptor_controls_without_ks_id": [],
+    "missing": {
+     "mf": [],
+     "ds": []
+    },
+    "extra_supported_not_in_descriptor": {
+     "mf": [
+      "cc.focal_length"
+     ],
+     "ds": [
+      "cc.focal_length"
+     ]
+    },
+    "mf_vs_ds_differences": [],
+    "supported": {
+     "cc.auto_exposure_priority": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.exposure": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.focal_length": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.focus": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.pan": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.pantilt": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.tilt": {
+      "mf": true,
+      "ds": true
+     },
+     "cc.zoom": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.backlight_compensation": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.brightness": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.contrast": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.gain": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.powerline_frequency": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.saturation": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.sharpness": {
+      "mf": true,
+      "ds": true
+     },
+     "pa.white_balance": {
+      "mf": true,
+      "ds": true
+     }
+    },
+    "ranges": {
+     "cc.auto_exposure_priority": {
+      "min": 0,
+      "max": 0,
+      "step": 0,
+      "default": 0,
+      "caps_flags_names": [],
+      "value": 1,
+      "flags_names": [],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.exposure": {
+      "min": -11,
+      "max": -2,
+      "step": 1,
+      "default": -5,
+      "caps_flags_names": [
+       "auto",
+       "manual"
+      ],
+      "value": -5,
+      "flags_names": [
+       "auto"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.focal_length": {
+      "min": null,
+      "max": null,
+      "step": null,
+      "default": null,
+      "caps_flags_names": [],
+      "value": 0,
+      "flags_names": [],
+      "via": "IKsControl",
+      "iam_ks_range_agree": null,
+      "note": null
+     },
+     "cc.focus": {
+      "min": 0,
+      "max": 255,
+      "step": 5,
+      "default": 0,
+      "caps_flags_names": [
+       "auto",
+       "manual"
+      ],
+      "value": 60,
+      "flags_names": [
+       "auto"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.pan": {
+      "min": -10,
+      "max": 10,
+      "step": 1,
+      "default": 0,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 0,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.pantilt": {
+      "min": null,
+      "max": null,
+      "step": null,
+      "default": null,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 0,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IKsControl",
+      "iam_ks_range_agree": null,
+      "note": null
+     },
+     "cc.tilt": {
+      "min": -10,
+      "max": 10,
+      "step": 1,
+      "default": 0,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 0,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "cc.zoom": {
+      "min": 100,
+      "max": 400,
+      "step": 1,
+      "default": 100,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 100,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMCameraControl",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.backlight_compensation": {
+      "min": 0,
+      "max": 1,
+      "step": 1,
+      "default": 0,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 0,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.brightness": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 128,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 128,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.contrast": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 128,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 128,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.gain": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 0,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 15,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.powerline_frequency": {
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "default": 2,
+      "caps_flags_names": [],
+      "value": 2,
+      "flags_names": [],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.saturation": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 128,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 53,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.sharpness": {
+      "min": 0,
+      "max": 255,
+      "step": 1,
+      "default": 128,
+      "caps_flags_names": [
+       "manual"
+      ],
+      "value": 128,
+      "flags_names": [
+       "manual"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     },
+     "pa.white_balance": {
+      "min": 2000,
+      "max": 7500,
+      "step": 1,
+      "default": 4000,
+      "caps_flags_names": [
+       "auto",
+       "manual"
+      ],
+      "value": 6500,
+      "flags_names": [
+       "auto"
+      ],
+      "via": "IAMVideoProcAmp",
+      "iam_ks_range_agree": true,
+      "note": null
+     }
+    },
+    "degenerate_ranges": [
+     "cc.auto_exposure_priority"
+    ],
+    "iam_ks_disagree": [],
+    "counts": {
+     "descriptor_ct": 7,
+     "descriptor_pu": 9,
+     "mf_supported": 16,
+     "ds_supported": 16,
+     "missing_mf": 0,
+     "missing_ds": 0,
+     "mf_vs_ds_diffs": 0
+    },
+    "equivalent": true
+   }
+  ],
+  "arrivals": {
+   "before": {
+    "utc": "2026-11-06T18:05:12.269577+00:00",
+    "cameras": {
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-06T14:59:24.581364+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-06T17:47:04.819155+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+      "present": true,
+      "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "after": {
+    "utc": "2026-11-06T18:05:14.317255+00:00",
+    "cameras": {
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-06T14:59:24.581364+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-06T17:47:04.819155+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+      "present": true,
+      "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "changes": [],
+   "unexplained_re_arrival": []
+  }
+ },
+ "verdicts": {
+  "ctrl_list_equivalence": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "c922 Pro Stream Webcam: every descriptor control listed via MF and DS, identical ranges/defaults/flags",
+     "met": true,
+     "detail": {
+      "counts": {
+       "descriptor_ct": 7,
+       "descriptor_pu": 9,
+       "mf_supported": 16,
+       "ds_supported": 16,
+       "missing_mf": 0,
+       "missing_ds": 0,
+       "mf_vs_ds_diffs": 0
+      },
+      "missing": {
+       "mf": [],
+       "ds": []
+      },
+      "diffs": [],
+      "unmapped": []
+     }
+    },
+    {
+     "criterion": "USB Video Device: every descriptor control listed via MF and DS, identical ranges/defaults/flags",
+     "met": true,
+     "detail": {
+      "counts": {
+       "descriptor_ct": 7,
+       "descriptor_pu": 9,
+       "mf_supported": 16,
+       "ds_supported": 16,
+       "missing_mf": 0,
+       "missing_ds": 0,
+       "mf_vs_ds_diffs": 0
+      },
+      "missing": {
+       "mf": [],
+       "ds": []
+      },
+      "diffs": [],
+      "unmapped": []
+     }
+    },
+    {
+     "criterion": "USB Camera: every descriptor control listed via MF and DS, identical ranges/defaults/flags",
+     "met": true,
+     "detail": {
+      "counts": {
+       "descriptor_ct": 2,
+       "descriptor_pu": 9,
+       "mf_supported": 11,
+       "ds_supported": 11,
+       "missing_mf": 0,
+       "missing_ds": 0,
+       "mf_vs_ds_diffs": 0
+      },
+      "missing": {
+       "mf": [],
+       "ds": []
+      },
+      "diffs": [],
+      "unmapped": []
+     }
+    },
+    {
+     "criterion": "Logitech Webcam C930e: every descriptor control listed via MF and DS, identical ranges/defaults/flags",
+     "met": true,
+     "detail": {
+      "counts": {
+       "descriptor_ct": 7,
+       "descriptor_pu": 9,
+       "mf_supported": 16,
+       "ds_supported": 16,
+       "missing_mf": 0,
+       "missing_ds": 0,
+       "mf_vs_ds_diffs": 0
+      },
+      "missing": {
+       "mf": [],
+       "ds": []
+      },
+      "diffs": [],
+      "unmapped": []
+     }
+    }
+   ],
+   "evidence": {
+    "note": "answers plan Q 'same controls in DS and MF?'; descriptor bmControls carry no ranges, so ranges are compared MF vs DS; G-CTRL (set/readback/effect) is W-CTRL-EFFECT's"
+   }
+  },
+  "G-CTRL": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "listing only; set + readback + image effect is W-CTRL-EFFECT"
+    }
+   ],
+   "evidence": {
+    "listed_counts": {
+     "c922 Pro Stream Webcam": {
+      "descriptor_ct": 7,
+      "descriptor_pu": 9,
+      "mf_supported": 16,
+      "ds_supported": 16,
+      "missing_mf": 0,
+      "missing_ds": 0,
+      "mf_vs_ds_diffs": 0
+     },
+     "USB Video Device": {
+      "descriptor_ct": 7,
+      "descriptor_pu": 9,
+      "mf_supported": 16,
+      "ds_supported": 16,
+      "missing_mf": 0,
+      "missing_ds": 0,
+      "mf_vs_ds_diffs": 0
+     },
+     "USB Camera": {
+      "descriptor_ct": 2,
+      "descriptor_pu": 9,
+      "mf_supported": 11,
+      "ds_supported": 11,
+      "missing_mf": 0,
+      "missing_ds": 0,
+      "mf_vs_ds_diffs": 0
+     },
+     "Logitech Webcam C930e": {
+      "descriptor_ct": 7,
+      "descriptor_pu": 9,
+      "mf_supported": 16,
+      "ds_supported": 16,
+      "missing_mf": 0,
+      "missing_ds": 0,
+      "mf_vs_ds_diffs": 0
+     }
+    }
+   }
+  }
+ },
+ "errors": []
+}

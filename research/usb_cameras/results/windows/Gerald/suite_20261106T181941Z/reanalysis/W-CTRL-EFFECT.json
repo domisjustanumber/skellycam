@@ -1,0 +1,944 @@
+{
+ "test": "W-CTRL-EFFECT",
+ "reanalysis_of": "..\\..\\..\\results\\windows\\Gerald\\suite_20261106T181941Z\\W-CTRL-EFFECT.json",
+ "utc": "2026-11-06T21:06:08.916664+00:00",
+ "verdicts": {
+  "G-CTRL|046d:085c:sn=C922SN01|mf": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "every control listed with descriptor support (W-CTRL-LIST: listed, MF and DS ranges equal)",
+     "met": true,
+     "detail": {
+      "listed": true,
+      "ranges_equal": true
+     }
+    },
+    {
+     "criterion": "set + readback agree",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "effect shows in the image (exposure, gain, WB, focus)",
+     "met": true,
+     "detail": [
+      "exposure",
+      "gain",
+      "white_balance",
+      "focus"
+     ]
+    },
+    {
+     "criterion": "works before and after stream start",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "3/3 runs",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "no workaround needed",
+     "met": true,
+     "detail": []
+    }
+   ],
+   "evidence": {
+    "controls": [
+     {
+      "name": "exposure",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": true,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 3,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     },
+     {
+      "name": "gain",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": true,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 3,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     },
+     {
+      "name": "white_balance",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": true,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 3,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     },
+     {
+      "name": "focus",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": true,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 3,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     }
+    ]
+   },
+   "restore": true
+  },
+  "G-CTRL|046d:085c:sn=C922SN01|ds": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "every control listed with descriptor support (W-CTRL-LIST: listed, MF and DS ranges equal)",
+     "met": true,
+     "detail": {
+      "listed": true,
+      "ranges_equal": true
+     }
+    },
+    {
+     "criterion": "set + readback agree",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "effect shows in the image (exposure, gain, WB, focus)",
+     "met": true,
+     "detail": [
+      "exposure",
+      "gain",
+      "white_balance",
+      "focus"
+     ]
+    },
+    {
+     "criterion": "works before and after stream start",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "3/3 runs",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "no workaround needed",
+     "met": true,
+     "detail": []
+    }
+   ],
+   "evidence": {
+    "controls": [
+     {
+      "name": "exposure",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": null,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 3,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     },
+     {
+      "name": "gain",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": null,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 3,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     },
+     {
+      "name": "white_balance",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": null,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 3,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     },
+     {
+      "name": "focus",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": null,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 3,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     }
+    ]
+   },
+   "restore": true
+  },
+  "G-CTRL|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|mf": {
+   "rating": "no",
+   "criteria": [
+    {
+     "criterion": "can set a control",
+     "met": false,
+     "detail": {
+      "device_not_answering": true,
+      "hr": null
+     }
+    }
+   ],
+   "evidence": {
+    "controls": [],
+    "device_not_answering": true,
+    "not_answering_hr": null,
+    "device_not_answering_detail": {
+     "at": "initial_read",
+     "hr": null,
+     "inferred": true,
+     "why": "every control listed as supported but with an empty caps field: wincam fills caps only from a successful KS GET when IAM GetRange fails, i.e. every GET failed (ctrl_id_env B1); the initial read JSON was not saved, so the HRESULT is unknown (W-KIYO's code was the old 'not called' default 0x80004002)",
+     "w_kiyo": {
+      "verdicts": {
+       "kiyo|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|all": {
+        "rating": "no",
+        "note": null
+       }
+      }
+     }
+    }
+   },
+   "note": "cannot set: device not answering",
+   "summary_label": "no (device not answering)",
+   "restore": null
+  },
+  "G-CTRL|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|ds": {
+   "rating": "no",
+   "criteria": [
+    {
+     "criterion": "can set a control",
+     "met": false,
+     "detail": {
+      "device_not_answering": true,
+      "hr": null
+     }
+    }
+   ],
+   "evidence": {
+    "controls": [],
+    "device_not_answering": true,
+    "not_answering_hr": null,
+    "device_not_answering_detail": {
+     "at": "initial_read",
+     "hr": null,
+     "inferred": true,
+     "why": "every control listed as supported but with an empty caps field: wincam fills caps only from a successful KS GET when IAM GetRange fails, i.e. every GET failed (ctrl_id_env B1); the initial read JSON was not saved, so the HRESULT is unknown (W-KIYO's code was the old 'not called' default 0x80004002)",
+     "w_kiyo": {
+      "verdicts": {
+       "kiyo|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|all": {
+        "rating": "no",
+        "note": null
+       }
+      }
+     }
+    }
+   },
+   "note": "cannot set: device not answering",
+   "summary_label": "no (device not answering)",
+   "restore": null
+  },
+  "G-CTRL|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|mf": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every control listed with descriptor support (W-CTRL-LIST: listed, MF and DS ranges equal)",
+     "met": true,
+     "detail": {
+      "listed": true,
+      "ranges_equal": true
+     }
+    },
+    {
+     "criterion": "set + readback agree",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "effect shows in the image (exposure, gain, WB, focus)",
+     "met": false,
+     "detail": [
+      "exposure",
+      "gain",
+      "white_balance"
+     ]
+    },
+    {
+     "criterion": "works before and after stream start",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "3/3 runs",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "no workaround needed",
+     "met": true,
+     "detail": []
+    }
+   ],
+   "evidence": {
+    "controls": [
+     {
+      "name": "exposure",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": true,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 3,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     },
+     {
+      "name": "gain",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": false,
+      "effect_all_segments_ok": false,
+      "held_through_start": false,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": false,
+      "after_start_ok": false,
+      "runs_ok": 0,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     },
+     {
+      "name": "white_balance",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": false,
+      "effect_all_segments_ok": false,
+      "held_through_start": true,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": false,
+      "runs_ok": 0,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     }
+    ]
+   },
+   "restore": true
+  },
+  "G-CTRL|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|ds": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every control listed with descriptor support (W-CTRL-LIST: listed, MF and DS ranges equal)",
+     "met": true,
+     "detail": {
+      "listed": true,
+      "ranges_equal": true
+     }
+    },
+    {
+     "criterion": "set + readback agree",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "effect shows in the image (exposure, gain, WB, focus)",
+     "met": false,
+     "detail": [
+      "exposure",
+      "gain",
+      "white_balance"
+     ]
+    },
+    {
+     "criterion": "works before and after stream start",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "3/3 runs",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "no workaround needed",
+     "met": true,
+     "detail": []
+    }
+   ],
+   "evidence": {
+    "controls": [
+     {
+      "name": "exposure",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": null,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 3,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     },
+     {
+      "name": "gain",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": false,
+      "effect_all_segments_ok": false,
+      "held_through_start": null,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": false,
+      "runs_ok": 0,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     },
+     {
+      "name": "white_balance",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": false,
+      "effect_all_segments_ok": false,
+      "held_through_start": null,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": false,
+      "runs_ok": 0,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     }
+    ]
+   },
+   "restore": true
+  },
+  "G-CTRL|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7|mf": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every control listed with descriptor support (W-CTRL-LIST: listed, MF and DS ranges equal)",
+     "met": true,
+     "detail": {
+      "listed": true,
+      "ranges_equal": true
+     }
+    },
+    {
+     "criterion": "set + readback agree",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "effect shows in the image (exposure, gain, WB, focus)",
+     "met": true,
+     "detail": [
+      "exposure",
+      "gain",
+      "white_balance",
+      "focus"
+     ]
+    },
+    {
+     "criterion": "works before and after stream start",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "3/3 runs",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "no workaround needed",
+     "met": false,
+     "detail": [
+      "a value set before the stream starts reads back but is reset at stream start (seen at the first in-stream readback); re-apply it after the stream has started (tested >= 1 s after the first frame)",
+      "a value set before the stream starts reads back but is reset at stream start (seen at the first in-stream readback); re-apply it after the stream has started (tested >= 1 s after the first frame)"
+     ]
+    }
+   ],
+   "evidence": {
+    "controls": [
+     {
+      "name": "exposure",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": false,
+      "held_through_start": false,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": false,
+      "after_start_ok": true,
+      "runs_ok": 0,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": "a value set before the stream starts reads back but is reset at stream start (seen at the first in-stream readback); re-apply it after the stream has started (tested >= 1 s after the first frame)"
+     },
+     {
+      "name": "gain",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": false,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": false,
+      "after_start_ok": true,
+      "runs_ok": 0,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": "a value set before the stream starts reads back but is reset at stream start (seen at the first in-stream readback); re-apply it after the stream has started (tested >= 1 s after the first frame)"
+     },
+     {
+      "name": "white_balance",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": true,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 3,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     },
+     {
+      "name": "focus",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": true,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 3,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     }
+    ]
+   },
+   "restore": true
+  },
+  "G-CTRL|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7|ds": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every control listed with descriptor support (W-CTRL-LIST: listed, MF and DS ranges equal)",
+     "met": true,
+     "detail": {
+      "listed": true,
+      "ranges_equal": true
+     }
+    },
+    {
+     "criterion": "set + readback agree",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "effect shows in the image (exposure, gain, WB, focus)",
+     "met": true,
+     "detail": [
+      "exposure",
+      "gain",
+      "white_balance",
+      "focus"
+     ]
+    },
+    {
+     "criterion": "works before and after stream start",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "3/3 runs",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "no workaround needed",
+     "met": false,
+     "detail": [
+      "a value set before the stream starts reads back but does not reach the image; re-apply it after the stream has started (tested >= 1 s after the first frame)"
+     ]
+    }
+   ],
+   "evidence": {
+    "controls": [
+     {
+      "name": "exposure",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": false,
+      "held_through_start": null,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": false,
+      "after_start_ok": true,
+      "runs_ok": 1,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": "a value set before the stream starts reads back but does not reach the image; re-apply it after the stream has started (tested >= 1 s after the first frame)"
+     },
+     {
+      "name": "gain",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": null,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 3,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     },
+     {
+      "name": "white_balance",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": null,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 3,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     },
+     {
+      "name": "focus",
+      "listed": true,
+      "range_matches_descriptor": true,
+      "listing_source": "W-CTRL-LIST descriptor_to_ks + mf_vs_ds_differences",
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "held_through_start": null,
+      "fixed_controls_held_through_start": null,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 3,
+      "runs_total": 3,
+      "persisted_after_reopen": true,
+      "readback_after_reopen_ok": null,
+      "workaround": null
+     }
+    ]
+   },
+   "restore": true
+  }
+ },
+ "changes": [
+  {
+   "cell": "G-CTRL|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|mf",
+   "from": "untested",
+   "to": "no"
+  },
+  {
+   "cell": "G-CTRL|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|ds",
+   "from": "untested",
+   "to": "no"
+  }
+ ],
+ "cells": {
+  "G-CTRL|046d:085c:sn=C922SN01|mf": {
+   "original": "yes",
+   "reanalysed": "yes",
+   "held_through_start": {
+    "exposure": [
+     true,
+     true,
+     true
+    ],
+    "gain": [
+     true,
+     true,
+     true
+    ],
+    "white_balance": [
+     true,
+     true,
+     true
+    ],
+    "focus": [
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  "G-CTRL|046d:085c:sn=C922SN01|ds": {
+   "original": "yes",
+   "reanalysed": "yes",
+   "held_through_start": {
+    "exposure": [
+     null,
+     null,
+     null
+    ],
+    "gain": [
+     null,
+     null,
+     null
+    ],
+    "white_balance": [
+     null,
+     null,
+     null
+    ],
+    "focus": [
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  "G-CTRL|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|mf": {
+   "original": "untested",
+   "reanalysed": "no",
+   "held_through_start": {}
+  },
+  "G-CTRL|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|ds": {
+   "original": "untested",
+   "reanalysed": "no",
+   "held_through_start": {}
+  },
+  "G-CTRL|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|mf": {
+   "original": "partial",
+   "reanalysed": "partial",
+   "held_through_start": {
+    "exposure": [
+     true,
+     true,
+     true
+    ],
+    "gain": [
+     false,
+     false,
+     false
+    ],
+    "white_balance": [
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  "G-CTRL|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|ds": {
+   "original": "partial",
+   "reanalysed": "partial",
+   "held_through_start": {
+    "exposure": [
+     null,
+     null,
+     null
+    ],
+    "gain": [
+     null,
+     null,
+     null
+    ],
+    "white_balance": [
+     null,
+     null,
+     null
+    ]
+   }
+  },
+  "G-CTRL|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7|mf": {
+   "original": "partial",
+   "reanalysed": "partial",
+   "held_through_start": {
+    "exposure": [
+     false,
+     false,
+     false
+    ],
+    "gain": [
+     false,
+     false,
+     false
+    ],
+    "white_balance": [
+     true,
+     true,
+     true
+    ],
+    "focus": [
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  "G-CTRL|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7|ds": {
+   "original": "partial",
+   "reanalysed": "partial",
+   "held_through_start": {
+    "exposure": [
+     null,
+     null,
+     null
+    ],
+    "gain": [
+     null,
+     null,
+     null
+    ],
+    "white_balance": [
+     null,
+     null,
+     null
+    ],
+    "focus": [
+     null,
+     null,
+     null
+    ]
+   }
+  }
+ },
+ "caveats": [
+  "V1 (state carry-over between control tests) cannot be undone offline: C930e MF WB runs 1-2 ran with gain 230 manual left by the gain test (luma ~209, verifier F10); their 1.0531 ratio stays counted",
+  "persistence by short capture (B5) and in-stream re-apply of fixed controls (B4) need a re-run",
+  "DS held-through-start needs a re-run (set1 before_value was not stored)"
+ ],
+ "fixes_applied": [
+  "B1 device not answering -> no (inferred for all-'no manual mode' paths)",
+  "B3 held through start (MF, one-step tolerance) in before_start_ok / runs_ok",
+  "B6 criterion 1 from W-CTRL-LIST (listed + MF/DS ranges equal)"
+ ]
+}

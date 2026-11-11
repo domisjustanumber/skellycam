@@ -1,0 +1,572 @@
+{
+ "test": "rig_anchor_selftest",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-06T22:40:55.204696+00:00",
+ "command": "research/usb_cameras/timing/rig/selftest_anchor.py",
+ "environment": {
+  "os": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.4",
+  "opencv": "4.10.0"
+ },
+ "cameras": [],
+ "parameters": {
+  "seed": 7,
+  "quick": false,
+  "capture_s": 60.0,
+  "captures": 2,
+  "cameras": {
+   "A": {
+    "key": "synA_vid_046d_pid_085c_mi_00",
+    "name": "synthetic C922-like",
+    "W": 1280,
+    "H": 720,
+    "L": 42800.0,
+    "ppm_esp": 25.0,
+    "x0_off": 7300000.0,
+    "echo": 0.08,
+    "sharpen": 0.3,
+    "noise": 1.5,
+    "amp": 0.3,
+    "short": 0.97,
+    "sched": [
+     -9,
+     -7,
+     -6
+    ],
+    "K1": 2000000.0,
+    "K05": 5000000.0,
+    "pts_ppm": 37.0,
+    "drops": []
+   },
+   "B": {
+    "key": "synB_vid_4c4a_pid_4a55_mi_00",
+    "name": "synthetic generic-like",
+    "W": 640,
+    "H": 480,
+    "L": 64100.0,
+    "ppm_esp": -15.0,
+    "x0_off": 21100000.0,
+    "echo": 0.0,
+    "sharpen": 0.0,
+    "noise": 2.0,
+    "amp": 0.25,
+    "short": 1.0,
+    "sched": [
+     -8,
+     -7,
+     -6
+    ],
+    "K1": 3100000.0,
+    "K05": 4200000.0,
+    "pts_ppm": -52.0,
+    "drops": [
+     400,
+     401
+    ]
+   }
+  }
+ },
+ "measurements": {
+  "verdict": "pass",
+  "checks": [
+   {
+    "check": "L/capture_r01/synA s0,E per frame <= 20 us",
+    "pass": true,
+    "detail": "n=149/359 s0 max 2.94 us (p99 2.35), E max 2.24 us (p99 1.97), misassigned 0"
+   },
+   {
+    "check": "L/capture_r01/synB s0,E per frame <= 20 us",
+    "pass": true,
+    "detail": "n=248/360 s0 max 9.45 us (p99 9.39), E max 2.56 us (p99 2.16), misassigned 0"
+   },
+   {
+    "check": "E/capture_r01/synA s0,E per frame <= 20 us",
+    "pass": true,
+    "detail": "n=60/239 s0 max 2.58 us (p99 2.57), E max 2.30 us (p99 2.29), misassigned 0"
+   },
+   {
+    "check": "E/capture_r01/synB s0,E per frame <= 20 us",
+    "pass": true,
+    "detail": "n=66/240 s0 max 9.77 us (p99 9.75), E max 2.23 us (p99 2.22), misassigned 0"
+   },
+   {
+    "check": "B/capture_r01/synA s0,E per frame <= 20 us",
+    "pass": true,
+    "detail": "n=194/299 s0 max 1.82 us (p99 1.62), E max 2.61 us (p99 2.40), misassigned 0"
+   },
+   {
+    "check": "B/capture_r01/synB s0,E per frame <= 20 us",
+    "pass": true,
+    "detail": "n=208/300 s0 max 9.61 us (p99 9.52), E max 3.11 us (p99 2.80), misassigned 0"
+   },
+   {
+    "check": "A/capture_r01/synA s0,E per frame <= 20 us",
+    "pass": true,
+    "detail": "n=1186/1799 s0 max 4.01 us (p99 2.67), E max 3.07 us (p99 2.52), misassigned 0"
+   },
+   {
+    "check": "A/capture_r01/synB s0,E per frame <= 20 us",
+    "pass": true,
+    "detail": "n=1025/1798 s0 max 10.20 us (p99 9.50), E max 2.77 us (p99 2.33), misassigned 0"
+   },
+   {
+    "check": "A/capture_r02/synA s0,E per frame <= 20 us",
+    "pass": true,
+    "detail": "n=1191/1799 s0 max 3.58 us (p99 2.67), E max 3.41 us (p99 2.42), misassigned 0"
+   },
+   {
+    "check": "A/capture_r02/synB s0,E per frame <= 20 us",
+    "pass": true,
+    "detail": "n=1028/1798 s0 max 10.01 us (p99 9.44), E max 2.96 us (p99 2.35), misassigned 0"
+   },
+   {
+    "check": "epoch check E/capture_r01 A",
+    "pass": true,
+    "detail": "[{\"c0\": 0, \"first_band_cycle_minus_c0\": 0, \"bands_assigned_to_pre_epoch_strobes\": 0, \"consistent\": true}]"
+   },
+   {
+    "check": "epoch check E/capture_r01 B",
+    "pass": true,
+    "detail": "[{\"c0\": 0, \"first_band_cycle_minus_c0\": 0, \"bands_assigned_to_pre_epoch_strobes\": 0, \"consistent\": true}]"
+   },
+   {
+    "check": "epoch check B/capture_r01 A",
+    "pass": true,
+    "detail": "[{\"c0\": 0, \"first_band_cycle_minus_c0\": 0, \"bands_assigned_to_pre_epoch_strobes\": 0, \"consistent\": true}]"
+   },
+   {
+    "check": "epoch check B/capture_r01 B",
+    "pass": true,
+    "detail": "[{\"c0\": 0, \"first_band_cycle_minus_c0\": 0, \"bands_assigned_to_pre_epoch_strobes\": 0, \"consistent\": true}]"
+   },
+   {
+    "check": "epoch check A/capture_r01 A",
+    "pass": true,
+    "detail": "[{\"c0\": 0, \"first_band_cycle_minus_c0\": 0, \"bands_assigned_to_pre_epoch_strobes\": 0, \"consistent\": true}]"
+   },
+   {
+    "check": "epoch check A/capture_r01 B",
+    "pass": true,
+    "detail": "[{\"c0\": 0, \"first_band_cycle_minus_c0\": 0, \"bands_assigned_to_pre_epoch_strobes\": 0, \"consistent\": true}]"
+   },
+   {
+    "check": "epoch check A/capture_r02 A",
+    "pass": true,
+    "detail": "[{\"c0\": 1739, \"first_band_cycle_minus_c0\": 0, \"bands_assigned_to_pre_epoch_strobes\": 0, \"consistent\": true}]"
+   },
+   {
+    "check": "epoch check A/capture_r02 B",
+    "pass": true,
+    "detail": "[{\"c0\": 1739, \"first_band_cycle_minus_c0\": 0, \"bands_assigned_to_pre_epoch_strobes\": 0, \"consistent\": true}]"
+   },
+   {
+    "check": "L double strobe A",
+    "pass": true,
+    "detail": "L 42801.860 ns vs 42800.0 (+0.0043 %), CV 0.0095779669367601 %, n=149"
+   },
+   {
+    "check": "L double strobe B",
+    "pass": true,
+    "detail": "L 64105.696 ns vs 64100.0 (+0.0089 %), CV 0.006913526264297619 %, n=248"
+   },
+   {
+    "check": "E/capture_r01 A uses L from the L run",
+    "pass": true,
+    "detail": "L_source=given"
+   },
+   {
+    "check": "E/capture_r01 B uses L from the L run",
+    "pass": true,
+    "detail": "L_source=given"
+   },
+   {
+    "check": "B/capture_r01 A uses L from the L run",
+    "pass": true,
+    "detail": "L_source=given"
+   },
+   {
+    "check": "B/capture_r01 B uses L from the L run",
+    "pass": true,
+    "detail": "L_source=given"
+   },
+   {
+    "check": "A/capture_r01 A uses L from the L run",
+    "pass": true,
+    "detail": "L_source=given"
+   },
+   {
+    "check": "A/capture_r01 B uses L from the L run",
+    "pass": true,
+    "detail": "L_source=given"
+   },
+   {
+    "check": "A/capture_r02 A uses L from the L run",
+    "pass": true,
+    "detail": "L_source=given"
+   },
+   {
+    "check": "A/capture_r02 B uses L from the L run",
+    "pass": true,
+    "detail": "L_source=given"
+   },
+   {
+    "check": "sweep L cross-check B/capture_r01/A (fast sweep) within 0.3 %",
+    "pass": true,
+    "detail": "{\"err_pct\": 0.004154771679542332, \"se_pct\": 0.0005380154668297335, \"wraps\": 3}"
+   },
+   {
+    "check": "sweep L cross-check B/capture_r01/B (fast sweep) within 0.3 %",
+    "pass": true,
+    "detail": "{\"err_pct\": 0.011053026158380061, \"se_pct\": 0.004569297484096721, \"wraps\": 2}"
+   },
+   {
+    "check": "echo detected on A (truth 0.08)",
+    "pass": true,
+    "detail": "ratio 0.07999817639832246 n=59"
+   },
+   {
+    "check": "no echo on B (truth 0)",
+    "pass": true,
+    "detail": "ratio 2.2638492399776676e-05 n=66"
+   },
+   {
+    "check": "blanking gap A",
+    "pass": true,
+    "detail": "observed {'start_ms': 30.75, 'end_ms': 31.5, 'width_ms': 0.75} expected start 30.775 ms width 0.66 ms"
+   },
+   {
+    "check": "blanking gap B",
+    "pass": true,
+    "detail": "observed {'start_ms': 30.75, 'end_ms': 31.5, 'width_ms': 0.75} expected start 30.707 ms width 0.726 ms"
+   },
+   {
+    "check": "alpha capture_r01 A syn_alpha1_ns",
+    "pass": true,
+    "detail": "alpha 1.0024 CI [0.9991014375694759, 1.0056654243957983] (truth 1.0), jitter std 308.3 us"
+   },
+   {
+    "check": "alpha capture_r01 A syn_alpha05_ns",
+    "pass": true,
+    "detail": "alpha 0.4998 CI [0.49530379000933783, 0.5030408528989588] (truth 0.5), jitter std 303.5 us"
+   },
+   {
+    "check": "alpha capture_r01 A uvc_pts",
+    "pass": true,
+    "detail": "alpha 0.9999 CI [0.999310311280209, 1.0004009076099651] (truth 1.0), jitter std 51.2 us"
+   },
+   {
+    "check": "alpha capture_r01 A uvc_scr_stc",
+    "pass": true,
+    "detail": "alpha 1.0009 CI [0.9989640902402032, 1.002515496909714] (truth 1.0), jitter std 156.2 us"
+   },
+   {
+    "check": "K_abs capture_r01 A syn_alpha1 (est.)",
+    "pass": true,
+    "detail": "2006.5 us vs 2000.0 (bound 150.815 us); last-byte variant 2223.5"
+   },
+   {
+    "check": "K_abs capture_r01 A syn_alpha05 alpha-fit (est.)",
+    "pass": true,
+    "detail": "5005.6 us vs 5000.0"
+   },
+   {
+    "check": "grid source capture_r01 A honest",
+    "pass": true,
+    "detail": "jitter 4500 us, alpha 1.001 CI [0.954, 1.049] (half 0.048 vs clean 0.0033)"
+   },
+   {
+    "check": "exposure per dwell capture_r01 A = applied (not requested)",
+    "pass": true,
+    "detail": "-9: 1.8834 ms (applied 1.8832); -7: 7.5758 ms (applied 7.5756); -6: 15.1513 ms (applied 15.1512)"
+   },
+   {
+    "check": "alpha capture_r01 B syn_alpha1_ns",
+    "pass": true,
+    "detail": "alpha 0.9983 CI [0.993173855888632, 1.0025907313865703] (truth 1.0), jitter std 302.1 us"
+   },
+   {
+    "check": "alpha capture_r01 B syn_alpha05_ns",
+    "pass": true,
+    "detail": "alpha 0.5017 CI [0.49546577366002753, 0.5077942094108581] (truth 0.5), jitter std 298.1 us"
+   },
+   {
+    "check": "alpha capture_r01 B uvc_pts",
+    "pass": true,
+    "detail": "alpha 0.9996 CI [0.9989194402070654, 1.0003548947079988] (truth 1.0), jitter std 50.2 us"
+   },
+   {
+    "check": "alpha capture_r01 B uvc_scr_stc",
+    "pass": true,
+    "detail": "alpha 0.9999 CI [0.9974212112106482, 1.0023046666793745] (truth 1.0), jitter std 149.8 us"
+   },
+   {
+    "check": "K_abs capture_r01 B syn_alpha1 (est.)",
+    "pass": true,
+    "detail": "3085.5 us vs 3100.0 (bound 150.815 us); last-byte variant 3302.5"
+   },
+   {
+    "check": "K_abs capture_r01 B syn_alpha05 alpha-fit (est.)",
+    "pass": true,
+    "detail": "4209.7 us vs 4200.0"
+   },
+   {
+    "check": "grid source capture_r01 B honest",
+    "pass": true,
+    "detail": "jitter 4503 us, alpha 1.003 CI [0.939, 1.067] (half 0.064 vs clean 0.0047)"
+   },
+   {
+    "check": "exposure per dwell capture_r01 B = applied (not requested)",
+    "pass": true,
+    "detail": "-8: 3.9102 ms (applied 3.9101); -7: 7.8204 ms (applied 7.8202); -6: 15.6405 ms (applied 15.6404)"
+   },
+   {
+    "check": "alpha capture_r02 A syn_alpha1_ns",
+    "pass": true,
+    "detail": "alpha 1.0004 CI [0.9972422067619, 1.0035547079160234] (truth 1.0), jitter std 297.5 us"
+   },
+   {
+    "check": "alpha capture_r02 A syn_alpha05_ns",
+    "pass": true,
+    "detail": "alpha 0.4998 CI [0.4963786957558529, 0.5029802348122432] (truth 0.5), jitter std 296.3 us"
+   },
+   {
+    "check": "alpha capture_r02 A uvc_pts",
+    "pass": true,
+    "detail": "alpha 1.0003 CI [0.9998221915812407, 1.0008572579605866] (truth 1.0), jitter std 48.8 us"
+   },
+   {
+    "check": "alpha capture_r02 A uvc_scr_stc",
+    "pass": true,
+    "detail": "alpha 0.9986 CI [0.9967731390845723, 1.000214066626113] (truth 1.0), jitter std 148.5 us"
+   },
+   {
+    "check": "K_abs capture_r02 A syn_alpha1 (est.)",
+    "pass": true,
+    "detail": "1992.0 us vs 2000.0 (bound 150.815 us); last-byte variant 2209.0"
+   },
+   {
+    "check": "K_abs capture_r02 A syn_alpha05 alpha-fit (est.)",
+    "pass": true,
+    "detail": "5006.3 us vs 5000.0"
+   },
+   {
+    "check": "grid source capture_r02 A honest",
+    "pass": true,
+    "detail": "jitter 4502 us, alpha 0.970 CI [0.922, 1.018] (half 0.048 vs clean 0.0032)"
+   },
+   {
+    "check": "exposure per dwell capture_r02 A = applied (not requested)",
+    "pass": true,
+    "detail": "-9: 1.8835 ms (applied 1.8832); -7: 7.5759 ms (applied 7.5756); -6: 15.1513 ms (applied 15.1512)"
+   },
+   {
+    "check": "alpha capture_r02 B syn_alpha1_ns",
+    "pass": true,
+    "detail": "alpha 1.0020 CI [0.9977224017409844, 1.0062239073929231] (truth 1.0), jitter std 296.9 us"
+   },
+   {
+    "check": "alpha capture_r02 B syn_alpha05_ns",
+    "pass": true,
+    "detail": "alpha 0.4967 CI [0.4922199160211887, 0.5031013437693946] (truth 0.5), jitter std 311.0 us"
+   },
+   {
+    "check": "alpha capture_r02 B uvc_pts",
+    "pass": true,
+    "detail": "alpha 1.0005 CI [0.9997728159379322, 1.0011688206671179] (truth 1.0), jitter std 48.7 us"
+   },
+   {
+    "check": "alpha capture_r02 B uvc_scr_stc",
+    "pass": true,
+    "detail": "alpha 0.9991 CI [0.9969465552229297, 1.0013426332000295] (truth 1.0), jitter std 153.5 us"
+   },
+   {
+    "check": "K_abs capture_r02 B syn_alpha1 (est.)",
+    "pass": true,
+    "detail": "3094.7 us vs 3100.0 (bound 150.815 us); last-byte variant 3311.7"
+   },
+   {
+    "check": "K_abs capture_r02 B syn_alpha05 alpha-fit (est.)",
+    "pass": true,
+    "detail": "4215.0 us vs 4200.0"
+   },
+   {
+    "check": "grid source capture_r02 B honest",
+    "pass": true,
+    "detail": "jitter 4511 us, alpha 1.033 CI [0.969, 1.098] (half 0.065 vs clean 0.0043)"
+   },
+   {
+    "check": "exposure per dwell capture_r02 B = applied (not requested)",
+    "pass": true,
+    "detail": "-8: 3.9103 ms (applied 3.9101); -7: 7.8203 ms (applied 7.8202); -6: 15.6404 ms (applied 15.6404)"
+   },
+   {
+    "check": "K_rel capture_r01 B-A syn_alpha1",
+    "pass": true,
+    "detail": "1079.0 us vs 1100.0"
+   },
+   {
+    "check": "K_rel capture_r01 B-A syn_alpha05",
+    "pass": true,
+    "detail": "-795.9 us vs -800.0"
+   },
+   {
+    "check": "K_rel capture_r02 B-A syn_alpha1",
+    "pass": true,
+    "detail": "1102.6 us vs 1100.0"
+   },
+   {
+    "check": "K_rel capture_r02 B-A syn_alpha05",
+    "pass": true,
+    "detail": "-791.3 us vs -800.0"
+   },
+   {
+    "check": "K repeatable across restarts A (truth identical)",
+    "pass": true,
+    "detail": "K_alpha1 per capture [2006.5, 1992.0] us"
+   },
+   {
+    "check": "K repeatable across restarts B (truth identical)",
+    "pass": true,
+    "detail": "K_alpha1 per capture [3085.5, 3094.7] us"
+   }
+  ],
+  "frame_errors": {
+   "L/capture_r01/synA_vid_046d_pid_085c_mi_00": {
+    "frames": 359,
+    "full_band_frames_scored": 149,
+    "misassigned": 0,
+    "s0_err_us_p50": 1.2836879119873046,
+    "s0_err_us_p99": 2.3546288427734385,
+    "s0_err_us_max": 2.938627388000488,
+    "E_err_us_p50": 0.3802130800969899,
+    "E_err_us_p99": 1.967129532381008,
+    "E_err_us_max": 2.237425976437982
+   },
+   "L/capture_r01/synB_vid_4c4a_pid_4a55_mi_00": {
+    "frames": 360,
+    "full_band_frames_scored": 248,
+    "misassigned": 0,
+    "s0_err_us_p50": 4.724771263122559,
+    "s0_err_us_p99": 9.39237265701294,
+    "s0_err_us_max": 9.449638900756836,
+    "E_err_us_p50": 0.5524496699937154,
+    "E_err_us_p99": 2.1559930307887427,
+    "E_err_us_max": 2.562893946121447
+   },
+   "E/capture_r01/synA_vid_046d_pid_085c_mi_00": {
+    "frames": 239,
+    "full_band_frames_scored": 60,
+    "misassigned": 0,
+    "s0_err_us_p50": 1.1303031692504883,
+    "s0_err_us_p99": 2.5729642277526854,
+    "s0_err_us_max": 2.5774317474365236,
+    "E_err_us_p50": 0.9200457571144216,
+    "E_err_us_p99": 2.2879035458282564,
+    "E_err_us_max": 2.297472809142433
+   },
+   "E/capture_r01/synB_vid_4c4a_pid_4a55_mi_00": {
+    "frames": 240,
+    "full_band_frames_scored": 66,
+    "misassigned": 0,
+    "s0_err_us_p50": 4.339257591247558,
+    "s0_err_us_p99": 9.749938351440429,
+    "s0_err_us_max": 9.765067474365235,
+    "E_err_us_p50": 0.7042983231781982,
+    "E_err_us_p99": 2.2190306687635832,
+    "E_err_us_max": 2.230766728403047
+   },
+   "B/capture_r01/synA_vid_046d_pid_085c_mi_00": {
+    "frames": 299,
+    "full_band_frames_scored": 194,
+    "misassigned": 0,
+    "s0_err_us_p50": 0.48041166687011716,
+    "s0_err_us_p99": 1.6219309071350096,
+    "s0_err_us_max": 1.819537322998047,
+    "E_err_us_p50": 0.6897928511456121,
+    "E_err_us_p99": 2.3980827189208656,
+    "E_err_us_max": 2.605432436387753
+   },
+   "B/capture_r01/synB_vid_4c4a_pid_4a55_mi_00": {
+    "frames": 300,
+    "full_band_frames_scored": 208,
+    "misassigned": 0,
+    "s0_err_us_p50": 4.611161354064941,
+    "s0_err_us_p99": 9.516951246643067,
+    "s0_err_us_max": 9.611527618408203,
+    "E_err_us_p50": 0.5672245816302021,
+    "E_err_us_p99": 2.7971944440533254,
+    "E_err_us_max": 3.1088025039976928
+   },
+   "A/capture_r01/synA_vid_046d_pid_085c_mi_00": {
+    "frames": 1799,
+    "full_band_frames_scored": 1186,
+    "misassigned": 0,
+    "s0_err_us_p50": 1.3070550079345704,
+    "s0_err_us_p99": 2.6672838294982957,
+    "s0_err_us_max": 4.00523812866211,
+    "E_err_us_p50": 0.5414542396352626,
+    "E_err_us_p99": 2.5166366668431563,
+    "E_err_us_max": 3.0698752402404788
+   },
+   "A/capture_r01/synB_vid_4c4a_pid_4a55_mi_00": {
+    "frames": 1798,
+    "full_band_frames_scored": 1025,
+    "misassigned": 0,
+    "s0_err_us_p50": 4.644543151855469,
+    "s0_err_us_p99": 9.502058732299803,
+    "s0_err_us_max": 10.202197998046875,
+    "E_err_us_p50": 0.7005862089730799,
+    "E_err_us_p99": 2.3343210604570057,
+    "E_err_us_max": 2.7716415624450894
+   },
+   "A/capture_r02/synA_vid_046d_pid_085c_mi_00": {
+    "frames": 1799,
+    "full_band_frames_scored": 1191,
+    "misassigned": 0,
+    "s0_err_us_p50": 1.267877655029297,
+    "s0_err_us_p99": 2.670384823608394,
+    "s0_err_us_max": 3.575249542236328,
+    "E_err_us_p50": 0.5673441770910286,
+    "E_err_us_p99": 2.4195482668043753,
+    "E_err_us_max": 3.406484979351051
+   },
+   "A/capture_r02/synB_vid_4c4a_pid_4a55_mi_00": {
+    "frames": 1798,
+    "full_band_frames_scored": 1028,
+    "misassigned": 0,
+    "s0_err_us_p50": 4.561694793701172,
+    "s0_err_us_p99": 9.440211692199707,
+    "s0_err_us_max": 10.00551708984375,
+    "E_err_us_p50": 0.6478133128157351,
+    "E_err_us_p99": 2.3519346428477816,
+    "E_err_us_max": 2.9643573643248526
+   }
+  },
+  "sweep_L_cross_check": {
+   "E/capture_r01/B": {
+    "err_pct": -0.01836921637892351,
+    "se_pct": 0.014249075468017902,
+    "wraps": 6
+   },
+   "B/capture_r01/A": {
+    "err_pct": 0.004154771679542332,
+    "se_pct": 0.0005380154668297335,
+    "wraps": 3
+   },
+   "B/capture_r01/B": {
+    "err_pct": 0.011053026158380061,
+    "se_pct": 0.004569297484096721,
+    "wraps": 2
+   }
+  },
+  "generation_s": 122.83498899999904,
+  "total_s": 142.22885179999867,
+  "analysis_summary_md": "# Timestamp anchor analysis\n\nRuns: C:\\Users\\Dom\\AppData\\Local\\Temp\\rig_anchor_selftest_ktxc5fu4\\rig_anchor_A, C:\\Users\\Dom\\AppData\\Local\\Temp\\rig_anchor_selftest_ktxc5fu4\\rig_anchor_E, C:\\Users\\Dom\\AppData\\Local\\Temp\\rig_anchor_selftest_ktxc5fu4\\rig_anchor_B, C:\\Users\\Dom\\AppData\\Local\\Temp\\rig_anchor_selftest_ktxc5fu4\\rig_anchor_L\n\nConventions: row 0 = top = read first; s0 = row-0 exposure start; E measured from band height; alpha 0 = exposure start, 0.5 = mid-exposure, 1 = row-0 readout start. K_abs is **estimated** (ping-path asymmetry, both offsets shown); K_rel (same run) is offset-free.\n\n## C:\\Users\\Dom\\AppData\\Local\\Temp\\rig_anchor_selftest_ktxc5fu4\\rig_anchor_L\n\nStrobe: {\"period_us\": 33366, \"width_us\": 50, \"phase_us\": 1000, \"gap_us\": 10000}; clock fit: drift 19.031 ppm, residual 8.759 us, asymmetry bound 152.350 us (native USB CDC (bulk IN polling), Espressif VID 303A (e.g. AtomS3 Lite USB Serial/JTAG)).\n\n### capture_r01 / synA_vid_046d_pid_085c_mi_00 (synthetic C922-like, 1280x720@30, synthetic)\n\nL = 42.8019 us (double strobe (this run)), T_ro = 30.817 ms, H = 720; full bands 149/359 frames; assignment rejected 0, continuity fixed/dropped 0/0; echo ratio n/a (n=0); blanking gap by E: not computed for double-strobe runs (only paired bands are assigned).\n\n| source | kind | n | alpha | 95% CI | jitter std us | MAD us | K_rel us (a=1) | K_abs us first/last (a=1, est.) |\n|---|---|---|---|---|---|---|---|---|\n| host_arrival_ns | host | 149 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| os_timestamp_ns | host | 149 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| syn_alpha05_ns | host | 149 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| syn_alpha1_ns | host | 149 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_pts | camera | 149 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_scr_stc | camera | 149 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_pts->qpc_env | host | 149 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_scr_stc->qpc_env | host | 149 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n\n### capture_r01 / synB_vid_4c4a_pid_4a55_mi_00 (synthetic generic-like, 640x480@30, synthetic)\n\nL = 64.1057 us (double strobe (this run)), T_ro = 30.771 ms, H = 480; full bands 248/360 frames; assignment rejected 0, continuity fixed/dropped 0/0; echo ratio n/a (n=0); blanking gap by E: not computed for double-strobe runs (only paired bands are assigned).\n\n| source | kind | n | alpha | 95% CI | jitter std us | MAD us | K_rel us (a=1) | K_abs us first/last (a=1, est.) |\n|---|---|---|---|---|---|---|---|---|\n| host_arrival_ns | host | 248 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| os_timestamp_ns | host | 248 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| syn_alpha05_ns | host | 248 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| syn_alpha1_ns | host | 248 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_pts | camera | 248 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_scr_stc | camera | 248 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_pts->qpc_env | host | 248 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_scr_stc->qpc_env | host | 248 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n\n## C:\\Users\\Dom\\AppData\\Local\\Temp\\rig_anchor_selftest_ktxc5fu4\\rig_anchor_A\n\nStrobe: {\"period_us\": 33366, \"width_us\": 50, \"phase_us\": 1000, \"gap_us\": 0}; clock fit: drift 19.986 ppm, residual 5.976 us, asymmetry bound 150.815 us (native USB CDC (bulk IN polling), Espressif VID 303A (e.g. AtomS3 Lite USB Serial/JTAG)).\n\n### capture_r01 / synA_vid_046d_pid_085c_mi_00 (synthetic C922-like, 1280x720@30, synthetic)\n\nL = 42.8019 us (given), T_ro = 30.817 ms, H = 720; full bands 1186/1799 frames; assignment rejected 328, continuity fixed/dropped 1/0; echo ratio 0.077 (n=2); blanking gap by E: E 1.90 ms: observed n/a ms at n/a (expected 0.66 ms at 30.77); E 7.60 ms: observed n/a ms at n/a (expected 0.00 ms at 30.77); E 15.20 ms: observed n/a ms at n/a (expected 0.00 ms at 30.77).\n\nExposure: -9 -> 1.883 ms (x0.964 of 1.953); -7 -> 7.576 ms (x0.970 of 7.812); -6 -> 15.151 ms (x0.970 of 15.625)\n\n| source | kind | n | alpha | 95% CI | jitter std us | MAD us | K_rel us (a=1) | K_abs us first/last (a=1, est.) |\n|---|---|---|---|---|---|---|---|---|\n| host_arrival_ns | host | 1186 | 0.9927 | 0.9444 .. 1.0410 | 4538.6 | 4089.6 | 0.0 | 42272.3 / 42489.3 |\n| os_timestamp_ns | host | 1186 | 1.0014 | 0.9535 .. 1.0493 | 4499.6 | 4160.8 | -20014.8 | 22257.5 / 22474.5 |\n| syn_alpha05_ns | host | 1186 | 0.4998 | 0.4953 .. 0.5030 | 303.5 | 208.0 | -40766.8 | 1505.5 / 1722.5 |\n| syn_alpha1_ns | host | 1186 | 1.0024 | 0.9991 .. 1.0057 | 308.3 | 206.6 | -40265.8 | 2006.5 / 2223.5 |\n| uvc_pts | camera | 1186 | 0.9999 | 0.9993 .. 1.0004 | 51.2 | 36.4 | n/a | n/a (camera clock) |\n| uvc_scr_stc | camera | 1186 | 1.0009 | 0.9990 .. 1.0025 | 156.2 | 101.4 | n/a | n/a (camera clock) |\n| uvc_pts->qpc_env | host | 1186 | 0.9999 | 0.9993 .. 1.0004 | 51.2 | 36.4 | -7427.6 | 34844.7 / 35061.7 |\n| uvc_scr_stc->qpc_env | host | 1186 | 1.0009 | 0.9990 .. 1.0025 | 156.2 | 101.4 | -7403.2 | 34869.1 / 35086.1 |\n\n### capture_r01 / synB_vid_4c4a_pid_4a55_mi_00 (synthetic generic-like, 640x480@30, synthetic)\n\nL = 64.1057 us (given), T_ro = 30.771 ms, H = 480; full bands 1025/1798 frames; assignment rejected 453, continuity fixed/dropped 0/6; echo ratio 0.000 (n=1); blanking gap by E: E 3.90 ms: observed n/a ms at n/a (expected 0.00 ms at 30.71); E 7.80 ms: observed n/a ms at n/a (expected 0.00 ms at 30.71); E 15.60 ms: observed n/a ms at n/a (expected 0.00 ms at 30.71).\n\nExposure: -8 -> 3.910 ms (x1.001 of 3.906); -7 -> 7.820 ms (x1.001 of 7.812); -6 -> 15.641 ms (x1.001 of 15.625)\n\n| source | kind | n | alpha | 95% CI | jitter std us | MAD us | K_rel us (a=1) | K_abs us first/last (a=1, est.) |\n|---|---|---|---|---|---|---|---|---|\n| host_arrival_ns | host | 1025 | 1.0012 | 0.9365 .. 1.0659 | 4523.2 | 4032.4 | 24.5 | 42296.8 / 42513.8 |\n| os_timestamp_ns | host | 1025 | 1.0031 | 0.9387 .. 1.0675 | 4502.8 | 3992.6 | -19944.2 | 22328.1 / 22545.1 |\n| syn_alpha05_ns | host | 1025 | 0.5017 | 0.4955 .. 0.5078 | 298.1 | 195.1 | -42208.8 | 63.5 / 280.5 |\n| syn_alpha1_ns | host | 1025 | 0.9983 | 0.9932 .. 1.0026 | 302.1 | 209.0 | -39186.8 | 3085.5 / 3302.5 |\n| uvc_pts | camera | 1025 | 0.9996 | 0.9989 .. 1.0004 | 50.2 | 33.3 | n/a | n/a (camera clock) |\n| uvc_scr_stc | camera | 1025 | 0.9999 | 0.9974 .. 1.0023 | 149.8 | 99.5 | n/a | n/a (camera clock) |\n| uvc_pts->qpc_env | host | 1025 | 0.9996 | 0.9989 .. 1.0004 | 50.2 | 33.3 | -7559.3 | 34713.0 / 34930.0 |\n| uvc_scr_stc->qpc_env | host | 1025 | 0.9999 | 0.9974 .. 1.0023 | 149.8 | 99.5 | -7559.7 | 34712.6 / 34929.6 |\n\n### capture_r02 / synA_vid_046d_pid_085c_mi_00 (synthetic C922-like, 1280x720@30, synthetic)\n\nL = 42.8019 us (given), T_ro = 30.817 ms, H = 720; full bands 1191/1799 frames; assignment rejected 322, continuity fixed/dropped 1/0; echo ratio 0.078 (n=2); blanking gap by E: E 1.90 ms: observed n/a ms at n/a (expected 0.66 ms at 30.77); E 7.60 ms: observed n/a ms at n/a (expected 0.00 ms at 30.77); E 15.20 ms: observed n/a ms at n/a (expected 0.00 ms at 30.77).\n\nExposure: -9 -> 1.883 ms (x0.964 of 1.953); -7 -> 7.576 ms (x0.970 of 7.812); -6 -> 15.151 ms (x0.970 of 15.625)\n\n| source | kind | n | alpha | 95% CI | jitter std us | MAD us | K_rel us (a=1) | K_abs us first/last (a=1, est.) |\n|---|---|---|---|---|---|---|---|---|\n| host_arrival_ns | host | 1191 | 0.9997 | 0.9516 .. 1.0479 | 4537.8 | 4023.1 | 0.0 | 42328.0 / 42545.0 |\n| os_timestamp_ns | host | 1191 | 0.9700 | 0.9222 .. 1.0177 | 4501.9 | 3998.8 | -19965.5 | 22362.5 / 22579.5 |\n| syn_alpha05_ns | host | 1191 | 0.4998 | 0.4964 .. 0.5030 | 296.3 | 206.1 | -40850.8 | 1477.2 / 1694.2 |\n| syn_alpha1_ns | host | 1191 | 1.0004 | 0.9972 .. 1.0036 | 297.5 | 195.4 | -40336.0 | 1992.0 / 2209.0 |\n| uvc_pts | camera | 1191 | 1.0003 | 0.9998 .. 1.0009 | 48.8 | 31.4 | n/a | n/a (camera clock) |\n| uvc_scr_stc | camera | 1191 | 0.9986 | 0.9968 .. 1.0002 | 148.5 | 100.9 | n/a | n/a (camera clock) |\n| uvc_pts->qpc_env | host | 1191 | 1.0003 | 0.9998 .. 1.0009 | 48.8 | 31.4 | -7750.4 | 34577.6 / 34794.6 |\n| uvc_scr_stc->qpc_env | host | 1191 | 0.9986 | 0.9968 .. 1.0002 | 148.5 | 100.9 | -7744.0 | 34584.0 / 34801.1 |\n\n### capture_r02 / synB_vid_4c4a_pid_4a55_mi_00 (synthetic generic-like, 640x480@30, synthetic)\n\nL = 64.1057 us (given), T_ro = 30.771 ms, H = 480; full bands 1028/1798 frames; assignment rejected 449, continuity fixed/dropped 0/0; echo ratio 0.000 (n=1); blanking gap by E: E 3.90 ms: observed n/a ms at n/a (expected 0.00 ms at 30.71); E 7.80 ms: observed n/a ms at n/a (expected 0.00 ms at 30.71); E 15.60 ms: observed n/a ms at n/a (expected 0.00 ms at 30.71).\n\nExposure: -8 -> 3.910 ms (x1.001 of 3.906); -7 -> 7.820 ms (x1.001 of 7.812); -6 -> 15.640 ms (x1.001 of 15.625)\n\n| source | kind | n | alpha | 95% CI | jitter std us | MAD us | K_rel us (a=1) | K_abs us first/last (a=1, est.) |\n|---|---|---|---|---|---|---|---|---|\n| host_arrival_ns | host | 1028 | 0.9956 | 0.9308 .. 1.0605 | 4529.0 | 3921.4 | -13.1 | 42314.9 / 42531.9 |\n| os_timestamp_ns | host | 1028 | 1.0335 | 0.9689 .. 1.0981 | 4510.5 | 4042.0 | -20207.7 | 22120.3 / 22337.3 |\n| syn_alpha05_ns | host | 1028 | 0.4967 | 0.4922 .. 0.5031 | 311.0 | 202.8 | -42317.2 | 10.8 / 227.8 |\n| syn_alpha1_ns | host | 1028 | 1.0020 | 0.9977 .. 1.0062 | 296.9 | 201.2 | -39233.3 | 3094.7 / 3311.7 |\n| uvc_pts | camera | 1028 | 1.0005 | 0.9998 .. 1.0012 | 48.7 | 31.6 | n/a | n/a (camera clock) |\n| uvc_scr_stc | camera | 1028 | 0.9991 | 0.9969 .. 1.0013 | 153.5 | 106.1 | n/a | n/a (camera clock) |\n| uvc_pts->qpc_env | host | 1028 | 1.0005 | 0.9998 .. 1.0012 | 48.7 | 31.6 | -7626.4 | 34701.6 / 34918.6 |\n| uvc_scr_stc->qpc_env | host | 1028 | 0.9991 | 0.9969 .. 1.0013 | 153.5 | 106.1 | -7634.2 | 34693.8 / 34910.8 |\n\n## C:\\Users\\Dom\\AppData\\Local\\Temp\\rig_anchor_selftest_ktxc5fu4\\rig_anchor_E\n\nStrobe: {\"period_us\": 50033, \"width_us\": 50, \"phase_us\": 1000, \"gap_us\": 0}; clock fit: drift 19.163 ppm, residual 3.094 us, asymmetry bound 150.899 us (native USB CDC (bulk IN polling), Espressif VID 303A (e.g. AtomS3 Lite USB Serial/JTAG)).\n\n### capture_r01 / synA_vid_046d_pid_085c_mi_00 (synthetic C922-like, 1280x720@30, synthetic)\n\nL = 42.8019 us (given), T_ro = 30.817 ms, H = 720; full bands 60/239 frames; assignment rejected 0, continuity fixed/dropped 0/0; echo ratio 0.080 (n=59); blanking gap by E: E 7.60 ms: observed n/a ms at n/a (expected 0.00 ms at 30.77).\n\n| source | kind | n | alpha | 95% CI | jitter std us | MAD us | K_rel us (a=1) | K_abs us first/last (a=1, est.) |\n|---|---|---|---|---|---|---|---|---|\n| host_arrival_ns | host | 60 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| os_timestamp_ns | host | 60 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| syn_alpha05_ns | host | 60 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| syn_alpha1_ns | host | 60 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_pts | camera | 60 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_scr_stc | camera | 60 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_pts->qpc_env | host | 60 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_scr_stc->qpc_env | host | 60 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n\n### capture_r01 / synB_vid_4c4a_pid_4a55_mi_00 (synthetic generic-like, 640x480@30, synthetic)\n\nL = 64.1057 us (given), T_ro = 30.771 ms, H = 480; full bands 66/240 frames; assignment rejected 0, continuity fixed/dropped 0/0; echo ratio 0.000 (n=66); blanking gap by E: E 7.80 ms: observed n/a ms at n/a (expected 0.00 ms at 30.71).\n\n| source | kind | n | alpha | 95% CI | jitter std us | MAD us | K_rel us (a=1) | K_abs us first/last (a=1, est.) |\n|---|---|---|---|---|---|---|---|---|\n| host_arrival_ns | host | 66 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| os_timestamp_ns | host | 66 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| syn_alpha05_ns | host | 66 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| syn_alpha1_ns | host | 66 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_pts | camera | 66 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_scr_stc | camera | 66 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_pts->qpc_env | host | 66 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_scr_stc->qpc_env | host | 66 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n\n## C:\\Users\\Dom\\AppData\\Local\\Temp\\rig_anchor_selftest_ktxc5fu4\\rig_anchor_B\n\nStrobe: {\"period_us\": 33666, \"width_us\": 50, \"phase_us\": 1000, \"gap_us\": 0}; clock fit: drift 21.146 ppm, residual 6.836 us, asymmetry bound 151.650 us (native USB CDC (bulk IN polling), Espressif VID 303A (e.g. AtomS3 Lite USB Serial/JTAG)).\n\n### capture_r01 / synA_vid_046d_pid_085c_mi_00 (synthetic C922-like, 1280x720@30, synthetic)\n\nL = 42.8019 us (given), T_ro = 30.817 ms, H = 720; full bands 194/299 frames; assignment rejected 0, continuity fixed/dropped 0/0; echo ratio n/a (n=0); blanking gap by E: E 1.90 ms: observed 0.750 ms at 30.750 (expected 0.66 ms at 30.77).\n\n| source | kind | n | alpha | 95% CI | jitter std us | MAD us | K_rel us (a=1) | K_abs us first/last (a=1, est.) |\n|---|---|---|---|---|---|---|---|---|\n| host_arrival_ns | host | 194 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| os_timestamp_ns | host | 194 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| syn_alpha05_ns | host | 194 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| syn_alpha1_ns | host | 194 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_pts | camera | 194 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_scr_stc | camera | 194 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_pts->qpc_env | host | 194 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_scr_stc->qpc_env | host | 194 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n\n### capture_r01 / synB_vid_4c4a_pid_4a55_mi_00 (synthetic generic-like, 640x480@30, synthetic)\n\nL = 64.1057 us (given), T_ro = 30.771 ms, H = 480; full bands 208/300 frames; assignment rejected 0, continuity fixed/dropped 0/0; echo ratio 0.000 (n=1); blanking gap by E: E 1.90 ms: observed 0.750 ms at 30.750 (expected 0.73 ms at 30.71).\n\n| source | kind | n | alpha | 95% CI | jitter std us | MAD us | K_rel us (a=1) | K_abs us first/last (a=1, est.) |\n|---|---|---|---|---|---|---|---|---|\n| host_arrival_ns | host | 208 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| os_timestamp_ns | host | 208 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| syn_alpha05_ns | host | 208 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| syn_alpha1_ns | host | 208 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_pts | camera | 208 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_scr_stc | camera | 208 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_pts->qpc_env | host | 208 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n| uvc_scr_stc->qpc_env | host | 208 | exposure did not vary (range < 50 us): alpha not identified | | | | | |\n\n## Across stream restarts\n\n| camera | mode | source | runs | alpha per run | max CI half | K_a1 range us | pass alpha | pass K |\n|---|---|---|---|---|---|---|---|---|\n| synA_vid_046d_pid_085c_mi_00 | 1280x720@30 | host_arrival_ns | 2 | 0.993, 1.000 | 0.048 | 55.7 | True | True |\n| synA_vid_046d_pid_085c_mi_00 | 1280x720@30 | os_timestamp_ns | 2 | 1.001, 0.970 | 0.048 | 105.0 | True | True |\n| synA_vid_046d_pid_085c_mi_00 | 1280x720@30 | syn_alpha05_ns | 2 | 0.500, 0.500 | 0.004 | 28.2 | True | True |\n| synA_vid_046d_pid_085c_mi_00 | 1280x720@30 | syn_alpha1_ns | 2 | 1.002, 1.000 | 0.003 | 14.5 | True | True |\n| synA_vid_046d_pid_085c_mi_00 | 1280x720@30 | uvc_pts | 2 | 1.000, 1.000 | 0.001 | n/a | True | n/a |\n| synA_vid_046d_pid_085c_mi_00 | 1280x720@30 | uvc_pts->qpc_env | 2 | 1.000, 1.000 | 0.001 | 267.2 | True | False |\n| synA_vid_046d_pid_085c_mi_00 | 1280x720@30 | uvc_scr_stc | 2 | 1.001, 0.999 | 0.002 | n/a | True | n/a |\n| synA_vid_046d_pid_085c_mi_00 | 1280x720@30 | uvc_scr_stc->qpc_env | 2 | 1.001, 0.999 | 0.002 | 285.1 | True | False |\n| synB_vid_4c4a_pid_4a55_mi_00 | 640x480@30 | host_arrival_ns | 2 | 1.001, 0.996 | 0.065 | 18.1 | False | True |\n| synB_vid_4c4a_pid_4a55_mi_00 | 640x480@30 | os_timestamp_ns | 2 | 1.003, 1.033 | 0.065 | 207.8 | False | False |\n| synB_vid_4c4a_pid_4a55_mi_00 | 640x480@30 | syn_alpha05_ns | 2 | 0.502, 0.497 | 0.006 | 52.7 | True | True |\n| synB_vid_4c4a_pid_4a55_mi_00 | 640x480@30 | syn_alpha1_ns | 2 | 0.998, 1.002 | 0.005 | 9.1 | True | True |\n| synB_vid_4c4a_pid_4a55_mi_00 | 640x480@30 | uvc_pts | 2 | 1.000, 1.000 | 0.001 | n/a | True | n/a |\n| synB_vid_4c4a_pid_4a55_mi_00 | 640x480@30 | uvc_pts->qpc_env | 2 | 1.000, 1.000 | 0.001 | 11.4 | True | True |\n| synB_vid_4c4a_pid_4a55_mi_00 | 640x480@30 | uvc_scr_stc | 2 | 1.000, 0.999 | 0.002 | n/a | True | n/a |\n| synB_vid_4c4a_pid_4a55_mi_00 | 640x480@30 | uvc_scr_stc->qpc_env | 2 | 1.000, 0.999 | 0.002 | 18.8 | True | True |\n\n"
+ },
+ "notes": [
+  "Synthetic only: no camera, no ESP32. Passing this is the V3 gate, not evidence about real cameras.",
+  "Truth anchors are chosen by the generator; see the docstring for the model."
+ ]
+}

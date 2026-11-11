@@ -1,0 +1,1412 @@
+{
+ "test": "W-ID",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-09T17:33:39.869719+00:00",
+ "utc_finished": "2026-11-09T17:33:52.945477+00:00",
+ "elapsed_s": 13.078,
+ "command": "research/usb_cameras/suite/windows/run_suite.py --cyc-profile reliability --reliability-cycles 400 --min-fps 30 --min-height 720 --max-height 720 (module W-ID)",
+ "argv": [
+  "research/usb_cameras/suite/windows/run_suite.py",
+  "--cyc-profile",
+  "reliability",
+  "--reliability-cycles",
+  "400",
+  "--min-fps",
+  "30",
+  "--min-height",
+  "720",
+  "--max-height",
+  "720",
+  "(module W-ID)"
+ ],
+ "environment": {
+  "os": {
+   "platform": "Windows-11-10.0.26300-SP0",
+   "system": "Windows",
+   "release": "11",
+   "version": "10.0.26300",
+   "machine": "AMD64",
+   "windows_build": 26300,
+   "windows_version": "10.0.26300",
+   "windows_edition": "Core",
+   "windows_displayversion": "26H2",
+   "windows_ubr": 9711,
+   "windows_productname": "Windows 10 Home",
+   "windows_currentbuild": "26300"
+  },
+  "python": "3.12.13",
+  "python_implementation": "CPython",
+  "python_executable": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+  "hostname": "Gerald",
+  "pid": 47376,
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0"
+  }
+ },
+ "cameras": [
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-09T14:25:04.535864+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 2
+  },
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "name": "Logitech Webcam C930e",
+   "vid": "046d",
+   "pid": "0843",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+   "parent_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&34c047e4&0&0000",
+   "hub_port": 8,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "Logitech Webcam C930e",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(8)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "speed": "HS",
+   "bcd_device": "0013",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-09T14:25:25.190309+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 0,
+   "ds_index": 3
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "name": "USB Camera",
+   "vid": "4c4a",
+   "pid": "4a55",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232e60d4&0&0000",
+   "hub_port": 2,
+   "mf_symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Camera",
+   "ds_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "speed": "HS",
+   "bcd_device": "0100",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-09T14:31:30.844483+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 5,
+   "ds_index": 0
+  },
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "vid": "046d",
+   "pid": "085c",
+   "serial": "C922SN01",
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "c922 Pro Stream Webcam",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+   "speed": "HS",
+   "bcd_device": "0016",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-09T14:25:14.024580+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 6,
+   "ds_index": 1
+  }
+ ],
+ "measurements": {
+  "repeats": 20,
+  "helper_runs": {
+   "pyav": {
+    "argv": [
+     "uv",
+     "run",
+     "--python",
+     "3.12",
+     "--script",
+     "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\enum_apis.py",
+     "pyav",
+     "--repeats",
+     "20"
+    ],
+    "rc": 0,
+    "elapsed_s": 3.344,
+    "timed_out": false,
+    "killed": false,
+    "lock_wait_s": 0.0,
+    "spawn_error": null,
+    "stderr_tail": "1536) [INFO] [VCAMDS] python.exe\nE2026-11-09 12:33:43.625175 (51536)  [ERR] [VCAMDS] Failed to open NBX hive\nI2026-11-09 12:33:43.625675 (51536) [INFO] [VCAMDS] Creating WndMsg Listener Window\nI2026-11-09 12:33:43.627194 (51536) [INFO] [VCAMDS] Destroying parent object\nI2026-11-09 12:33:43.627194 (51536) [INFO] [VCAMDS] Destroying WndMsg Listener Window\nI2026-11-09 12:33:43.628695 (51536) [INFO] [VCAMDS] Destroyed window\nI2026-11-09 12:33:43.628695 (51536) [INFO] [VCAMDS] Unregistered window class\nI2026-11-09 12:33:43.628695 (51536) [INFO] [VCAMDS] Video data consumption app tracker updating num DLL loaded: 0\nE2026-11-09 12:33:43.628695 (51536)  [ERR] [VCAMDS] NvMxnCltShmConsumer Failed to update num apps DLL loaded\nI2026-11-09 12:33:43.775060 (51536) [INFO] [VCAMDS] python.exe\nE2026-11-09 12:33:43.775060 (51536)  [ERR] [VCAMDS] Failed to open NBX hive\nI2026-11-09 12:33:43.775565 (51536) [INFO] [VCAMDS] Creating WndMsg Listener Window\nI2026-11-09 12:33:43.777064 (51536) [INFO] [VCAMDS] Destroying parent object\nI2026-11-09 12:33:43.777064 (51536) [INFO] [VCAMDS] Destroying WndMsg Listener Window\nI2026-11-09 12:33:43.778564 (51536) [INFO] [VCAMDS] Destroyed window\nI2026-11-09 12:33:43.778564 (51536) [INFO] [VCAMDS] Unregistered window class\nI2026-11-09 12:33:43.779064 (51536) [INFO] [VCAMDS] Video data consumption app tracker updating num DLL loaded: 0\nE2026-11-09 12:33:43.779064 (51536)  [ERR] [VCAMDS] NvMxnCltShmConsumer Failed to update num apps DLL loaded\n[camlock] released"
+   },
+   "ffmpeg": {
+    "argv": [
+     "uv",
+     "run",
+     "--python",
+     "3.12",
+     "--script",
+     "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\enum_apis.py",
+     "ffmpeg",
+     "--repeats",
+     "20"
+    ],
+    "rc": 0,
+    "elapsed_s": 4.5,
+    "timed_out": false,
+    "killed": false,
+    "lock_wait_s": 0.0,
+    "spawn_error": null,
+    "stderr_tail": "[camlock] acquired after 0.0s (ticket 647): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 180.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\enum_apis.py ffmpeg --repeats 20\n[camlock] released"
+   },
+   "opencv": {
+    "argv": [
+     "uv",
+     "run",
+     "--python",
+     "3.12",
+     "--script",
+     "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\enum_apis.py",
+     "opencv",
+     "--repeats",
+     "20"
+    ],
+    "rc": 0,
+    "elapsed_s": 0.312,
+    "timed_out": false,
+    "killed": false,
+    "lock_wait_s": 0.2,
+    "spawn_error": null,
+    "stderr_tail": "[camlock] acquired after 0.2s (ticket 649): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 180.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\enum_apis.py opencv --repeats 20\n[camlock] released"
+   }
+  },
+  "versions": {
+   "pyav": {
+    "av": "19.0.2",
+    "libavdevice": "(63, 1, 102)"
+   },
+   "ffmpeg": {
+    "ffmpeg": "ffmpeg version 9.0.2-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers"
+   },
+   "opencv": {
+    "cv2_enumerate_cameras": "1.4.0"
+   }
+  },
+  "per_api": {
+   "mf": {
+    "runs": 20,
+    "first_run_keys": [
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "046d:085c:sn=C922SN01",
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "first_run_entries": [
+     {
+      "index": 0,
+      "name": "Logitech Webcam C930e",
+      "link": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+     },
+     {
+      "index": 5,
+      "name": "USB Camera",
+      "link": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     },
+     {
+      "index": 6,
+      "name": "c922 Pro Stream Webcam",
+      "link": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "key": "046d:085c:sn=C922SN01"
+     },
+     {
+      "index": 7,
+      "name": "USB Video Device",
+      "link": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+     }
+    ],
+    "one_to_one_every_run": true,
+    "all_mappable": true,
+    "order_stable": true,
+    "distinct_orders": 1,
+    "missing_keys_first_run": [],
+    "timing_ms": {
+     "n": 20,
+     "min": 2.142299999,
+     "p50": 2.2317,
+     "p90": 2.3159300008,
+     "p95": 2.3347449991499998,
+     "p99": 2.39774900143,
+     "max": 2.413500002,
+     "mean": 2.24562000035
+    },
+    "errors": null
+   },
+   "ds": {
+    "runs": 20,
+    "first_run_keys": [
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "046d:085c:sn=C922SN01",
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+    ],
+    "first_run_entries": [
+     {
+      "index": 0,
+      "name": "USB Camera",
+      "link": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     },
+     {
+      "index": 1,
+      "name": "c922 Pro Stream Webcam",
+      "link": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "046d:085c:sn=C922SN01"
+     },
+     {
+      "index": 2,
+      "name": "USB Video Device",
+      "link": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+     },
+     {
+      "index": 3,
+      "name": "Logitech Webcam C930e",
+      "link": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+     }
+    ],
+    "one_to_one_every_run": true,
+    "all_mappable": true,
+    "order_stable": true,
+    "distinct_orders": 1,
+    "missing_keys_first_run": [],
+    "timing_ms": {
+     "n": 20,
+     "min": 4.9954,
+     "p50": 5.23575,
+     "p90": 5.44487,
+     "p95": 5.50398000005,
+     "p99": 5.6678360008099995,
+     "max": 5.708800001,
+     "mean": 5.26780000015
+    },
+    "errors": null
+   },
+   "pyav_dshow": {
+    "runs": 20,
+    "first_run_keys": [
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "046d:085c:sn=C922SN01",
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+    ],
+    "first_run_entries": [
+     {
+      "index": 0,
+      "name": "USB Camera",
+      "link": "@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     },
+     {
+      "index": 1,
+      "name": "c922 Pro Stream Webcam",
+      "link": "@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "046d:085c:sn=C922SN01"
+     },
+     {
+      "index": 2,
+      "name": "USB Video Device",
+      "link": "@device_pnp_\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+     },
+     {
+      "index": 3,
+      "name": "Logitech Webcam C930e",
+      "link": "@device_pnp_\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+     }
+    ],
+    "one_to_one_every_run": true,
+    "all_mappable": true,
+    "order_stable": true,
+    "distinct_orders": 1,
+    "missing_keys_first_run": [],
+    "timing_ms": {
+     "n": 20,
+     "min": 143.84,
+     "p50": 152.485,
+     "p90": 165.606,
+     "p95": 167.2795,
+     "p99": 182.3199,
+     "max": 186.08,
+     "mean": 155.0365
+    },
+    "errors": null
+   },
+   "ffmpeg_cli_dshow": {
+    "runs": 20,
+    "first_run_keys": [
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "046d:085c:sn=C922SN01",
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+    ],
+    "first_run_entries": [
+     {
+      "index": 0,
+      "name": "USB Camera",
+      "link": "@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     },
+     {
+      "index": 1,
+      "name": "c922 Pro Stream Webcam",
+      "link": "@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "046d:085c:sn=C922SN01"
+     },
+     {
+      "index": 2,
+      "name": "USB Video Device",
+      "link": "@device_pnp_\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+     },
+     {
+      "index": 3,
+      "name": "Logitech Webcam C930e",
+      "link": "@device_pnp_\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+     }
+    ],
+    "one_to_one_every_run": true,
+    "all_mappable": true,
+    "order_stable": true,
+    "distinct_orders": 1,
+    "missing_keys_first_run": [],
+    "timing_ms": {
+     "n": 20,
+     "min": 209.81,
+     "p50": 220.59,
+     "p90": 225.685,
+     "p95": 230.83550000000002,
+     "p99": 231.83110000000002,
+     "max": 232.08,
+     "mean": 220.115
+    },
+    "errors": null
+   },
+   "opencv_msmf": {
+    "runs": 20,
+    "first_run_keys": [
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "046d:085c:sn=C922SN01",
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "first_run_entries": [
+     {
+      "index": 0,
+      "name": "Logitech Webcam C930e",
+      "link": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+     },
+     {
+      "index": 5,
+      "name": "USB Camera",
+      "link": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     },
+     {
+      "index": 6,
+      "name": "c922 Pro Stream Webcam",
+      "link": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "key": "046d:085c:sn=C922SN01"
+     },
+     {
+      "index": 7,
+      "name": "USB Video Device",
+      "link": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+     }
+    ],
+    "one_to_one_every_run": true,
+    "all_mappable": true,
+    "order_stable": true,
+    "distinct_orders": 1,
+    "missing_keys_first_run": [],
+    "timing_ms": {
+     "n": 20,
+     "min": 2.1,
+     "p50": 2.285,
+     "p90": 2.5570000000000004,
+     "p95": 2.8455000000000004,
+     "p99": 3.537099999999999,
+     "max": 3.71,
+     "mean": 2.387
+    },
+    "errors": null
+   },
+   "opencv_dshow": {
+    "runs": 20,
+    "first_run_keys": [
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "046d:085c:sn=C922SN01",
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+    ],
+    "first_run_entries": [
+     {
+      "index": 0,
+      "name": "USB Camera",
+      "link": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     },
+     {
+      "index": 1,
+      "name": "c922 Pro Stream Webcam",
+      "link": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "046d:085c:sn=C922SN01"
+     },
+     {
+      "index": 2,
+      "name": "USB Video Device",
+      "link": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+     },
+     {
+      "index": 3,
+      "name": "Logitech Webcam C930e",
+      "link": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+      "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+     }
+    ],
+    "one_to_one_every_run": true,
+    "all_mappable": true,
+    "order_stable": true,
+    "distinct_orders": 1,
+    "missing_keys_first_run": [],
+    "timing_ms": {
+     "n": 20,
+     "min": 2.81,
+     "p50": 3.165,
+     "p90": 3.5940000000000003,
+     "p95": 3.8430000000000017,
+     "p99": 5.712599999999997,
+     "max": 6.18,
+     "mean": 3.313
+    },
+    "errors": null
+   },
+   "pnp_discovery": {
+    "runs": 20,
+    "first_run_keys": [
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "046d:085c:sn=C922SN01",
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "first_run_entries": null,
+    "one_to_one_every_run": true,
+    "all_mappable": true,
+    "order_stable": true,
+    "distinct_orders": 1,
+    "missing_keys_first_run": [],
+    "timing_ms": {
+     "n": 20,
+     "min": 139.17,
+     "p50": 143.02,
+     "p90": 156.19,
+     "p95": 189.29500000000047,
+     "p99": 674.7069999999992,
+     "max": 796.06,
+     "mean": 178.058
+    },
+    "errors": null
+   }
+  },
+  "expected_keys": [
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "046d:085c:sn=C922SN01"
+  ],
+  "timing_ms": {
+   "mf": {
+    "n": 20,
+    "min": 2.142299999,
+    "p50": 2.2317,
+    "p90": 2.3159300008,
+    "p95": 2.3347449991499998,
+    "p99": 2.39774900143,
+    "max": 2.413500002,
+    "mean": 2.24562000035
+   },
+   "ds": {
+    "n": 20,
+    "min": 4.9954,
+    "p50": 5.23575,
+    "p90": 5.44487,
+    "p95": 5.50398000005,
+    "p99": 5.6678360008099995,
+    "max": 5.708800001,
+    "mean": 5.26780000015
+   },
+   "pyav_dshow": {
+    "n": 20,
+    "min": 143.84,
+    "p50": 152.485,
+    "p90": 165.606,
+    "p95": 167.2795,
+    "p99": 182.3199,
+    "max": 186.08,
+    "mean": 155.0365
+   },
+   "ffmpeg_cli_dshow": {
+    "n": 20,
+    "min": 209.81,
+    "p50": 220.59,
+    "p90": 225.685,
+    "p95": 230.83550000000002,
+    "p99": 231.83110000000002,
+    "max": 232.08,
+    "mean": 220.115
+   },
+   "opencv_msmf": {
+    "n": 20,
+    "min": 2.1,
+    "p50": 2.285,
+    "p90": 2.5570000000000004,
+    "p95": 2.8455000000000004,
+    "p99": 3.537099999999999,
+    "max": 3.71,
+    "mean": 2.387
+   },
+   "opencv_dshow": {
+    "n": 20,
+    "min": 2.81,
+    "p50": 3.165,
+    "p90": 3.5940000000000003,
+    "p95": 3.8430000000000017,
+    "p99": 5.712599999999997,
+    "max": 6.18,
+    "mean": 3.313
+   },
+   "pnp_discovery_incl_child_process": {
+    "n": 20,
+    "min": 139.17,
+    "p50": 143.02,
+    "p90": 156.19,
+    "p95": 189.29500000000047,
+    "p99": 674.7069999999992,
+    "max": 796.06,
+    "mean": 178.058
+   }
+  },
+  "opencv_index_vs_enumeration_order": {
+   "opencv_dshow": {
+    "opencv_index_by_key": {
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": 0,
+     "046d:085c:sn=C922SN01": 1,
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": 2,
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": 3
+    },
+    "wincam_index_by_key": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": 2,
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": 3,
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": 0,
+     "046d:085c:sn=C922SN01": 1
+    },
+    "equal": true
+   },
+   "opencv_msmf": {
+    "opencv_index_by_key": {
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": 0,
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": 5,
+     "046d:085c:sn=C922SN01": 6,
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": 7
+    },
+    "wincam_index_by_key": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": 7,
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": 0,
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": 5,
+     "046d:085c:sn=C922SN01": 6
+    },
+    "equal": true
+   }
+  },
+  "natural_evidence": {
+   "earlier_dir": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\naming_rerun_20261027",
+   "cameras": [
+    {
+     "key_now": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "name": "USB Video Device",
+     "vid": "1532",
+     "pid": "0e05",
+     "earlier": null,
+     "note": "not in the 10-27 identity runs (excluded: 1532:0e05)"
+    },
+    {
+     "key_now": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "name": "Logitech Webcam C930e",
+     "vid": "046d",
+     "pid": "0843",
+     "earlier": {
+      "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+      "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+      "composite_instance_id": "USB\\VID_046D&PID_0843\\7&7DCC7CE&0&4",
+      "video_function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&1&0000",
+      "msmf_symbolic_link": "\\\\?\\USB#VID_046D&PID_0843&MI_00#8&39DEC205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL"
+     },
+     "port_moved": true,
+     "key_same": false,
+     "composite_instance_same": false,
+     "function_instance_same": false,
+     "mf_symlink_same": false,
+     "key_kind": "port",
+     "interpretation": "port key changed with the port move (expected for a serial-less camera)"
+    },
+    {
+     "key_now": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "name": "USB Camera",
+     "vid": "4c4a",
+     "pid": "4a55",
+     "earlier": {
+      "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.3",
+      "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.3",
+      "composite_instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&3",
+      "video_function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&35E81179&0&0000",
+      "msmf_symbolic_link": "\\\\?\\USB#VID_4C4A&PID_4A55&MI_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL"
+     },
+     "port_moved": true,
+     "key_same": false,
+     "composite_instance_same": false,
+     "function_instance_same": false,
+     "mf_symlink_same": false,
+     "key_kind": "port",
+     "interpretation": "port key changed with the port move (expected for a serial-less camera)"
+    },
+    {
+     "key_now": "046d:085c:sn=C922SN01",
+     "name": "c922 Pro Stream Webcam",
+     "vid": "046d",
+     "pid": "085c",
+     "earlier": {
+      "key": "046d:085c:sn=C922SN01",
+      "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/1",
+      "composite_instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "video_function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268DA596&0&0000",
+      "msmf_symbolic_link": "\\\\?\\USB#VID_046D&PID_085C&MI_00#8&268DA596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\GLOBAL"
+     },
+     "port_moved": true,
+     "key_same": true,
+     "composite_instance_same": true,
+     "function_instance_same": true,
+     "mf_symlink_same": true,
+     "key_kind": "serial",
+     "interpretation": "serial key kept across a port move"
+    }
+   ],
+   "boot_time_utc": "2026-11-09T13:22:24.301475+00:00",
+   "earlier_utc": "2026-10-28T03:07:47.256951+00:00",
+   "earlier_excluded_vidpid": "1532:0e05",
+   "earlier_api_order": [
+    {
+     "product": "Logitech Webcam C930e",
+     "mf_index": [
+      6
+     ],
+     "dshow_index": [
+      2
+     ]
+    },
+    {
+     "product": "USB Composite Device",
+     "mf_index": [
+      5
+     ],
+     "dshow_index": [
+      1
+     ]
+    },
+    {
+     "product": "C922 Pro Stream Webcam",
+     "mf_index": [
+      4
+     ],
+     "dshow_index": [
+      0
+     ]
+    }
+   ]
+  },
+  "natural_replug_evidence": {
+   "previous_run": "suite_20261109T170041Z",
+   "cameras": [
+    {
+     "key_now": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "name": "Logitech Webcam C930e",
+     "key_kind": "port",
+     "is_kiyo": false,
+     "matched_by": "key",
+     "key_previous": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "key_same": true,
+     "same_port": true,
+     "last_arrival_previous": "2026-11-09T14:25:25.190309+00:00",
+     "last_arrival_now": "2026-11-09T14:25:25.190309+00:00",
+     "re_arrived": false,
+     "kind": "no re-arrival"
+    },
+    {
+     "key_now": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "name": "USB Camera",
+     "key_kind": "port",
+     "is_kiyo": false,
+     "matched_by": "key",
+     "key_previous": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "key_same": true,
+     "same_port": true,
+     "last_arrival_previous": "2026-11-09T14:31:30.844483+00:00",
+     "last_arrival_now": "2026-11-09T14:31:30.844483+00:00",
+     "re_arrived": false,
+     "kind": "no re-arrival"
+    },
+    {
+     "key_now": "046d:085c:sn=C922SN01",
+     "name": "c922 Pro Stream Webcam",
+     "key_kind": "serial",
+     "is_kiyo": false,
+     "matched_by": "key",
+     "key_previous": "046d:085c:sn=C922SN01",
+     "key_same": true,
+     "same_port": true,
+     "last_arrival_previous": "2026-11-09T14:25:14.024580+00:00",
+     "last_arrival_now": "2026-11-09T14:25:14.024580+00:00",
+     "re_arrived": false,
+     "kind": "no re-arrival"
+    },
+    {
+     "key_now": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "name": "USB Video Device",
+     "key_kind": "port",
+     "is_kiyo": true,
+     "matched_by": "key",
+     "key_previous": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "key_same": true,
+     "same_port": true,
+     "last_arrival_previous": "2026-11-09T14:25:04.535864+00:00",
+     "last_arrival_now": "2026-11-09T14:25:04.535864+00:00",
+     "re_arrived": false,
+     "kind": "no re-arrival"
+    }
+   ],
+   "same_port_replug": null,
+   "port_move_serial": null,
+   "n_same_port_re_arrivals": 0,
+   "n_port_moves": 0,
+   "note": "natural evidence only (a re-arrival may be a replug or a re-enumeration); reboot persistence and a deliberate replug / port move are the attended A1 steps, so G-ID stays provisional"
+  },
+  "persistence_inputs": {
+   "reboot": null,
+   "same_port_replug": null,
+   "port_move_serial": true,
+   "rebooted_since_earlier_run": true,
+   "boot_time_utc": "2026-11-09T13:22:24.301475+00:00",
+   "serial_keys_kept_over_reboot": [
+    true
+   ],
+   "note": "reboot and same-port replug are attended item A1 (port-keyed cameras moved since 10-27, so a reboot comparison is only possible for serial keys); port_move_serial comes from the 10-27 comparison"
+  },
+  "arrivals": {
+   "before": {
+    "utc": "2026-11-09T17:33:39.873222+00:00",
+    "cameras": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-09T14:25:04.535864+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+      "present": true,
+      "last_arrival": "2026-11-09T14:25:25.190309+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-09T14:31:30.844483+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-09T14:25:14.024580+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "after": {
+    "utc": "2026-11-09T17:33:52.945477+00:00",
+    "cameras": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-09T14:25:04.535864+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+      "present": true,
+      "last_arrival": "2026-11-09T14:25:25.190309+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-09T14:31:30.844483+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-09T14:25:14.024580+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "changes": [],
+   "unexplained_re_arrival": []
+  }
+ },
+ "verdicts": {
+  "G-ID": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every API's list maps 1:1 to identity keys",
+     "met": true,
+     "detail": "6/6 APIs"
+    },
+    {
+     "criterion": "identical over >= 20 repeated enumerations",
+     "met": true,
+     "detail": {
+      "mf": 20,
+      "ds": 20,
+      "pyav_dshow": 20,
+      "ffmpeg_cli_dshow": 20,
+      "opencv_msmf": 20,
+      "opencv_dshow": 20
+     }
+    },
+    {
+     "criterion": "key unchanged over reboot / same-port replug / port move (serial cameras)",
+     "met": null,
+     "detail": {
+      "reboot": null,
+      "same_port_replug": null,
+      "port_move_serial": true
+     }
+    }
+   ],
+   "evidence": {
+    "per_api": {
+     "mf": {
+      "runs": 20,
+      "mappable": true,
+      "one_to_one": true,
+      "stable_order": true,
+      "first_run": [
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ]
+     },
+     "ds": {
+      "runs": 20,
+      "mappable": true,
+      "one_to_one": true,
+      "stable_order": true,
+      "first_run": [
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+      ]
+     },
+     "pyav_dshow": {
+      "runs": 20,
+      "mappable": true,
+      "one_to_one": true,
+      "stable_order": true,
+      "first_run": [
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+      ]
+     },
+     "ffmpeg_cli_dshow": {
+      "runs": 20,
+      "mappable": true,
+      "one_to_one": true,
+      "stable_order": true,
+      "first_run": [
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+      ]
+     },
+     "opencv_msmf": {
+      "runs": 20,
+      "mappable": true,
+      "one_to_one": true,
+      "stable_order": true,
+      "first_run": [
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ]
+     },
+     "opencv_dshow": {
+      "runs": 20,
+      "mappable": true,
+      "one_to_one": true,
+      "stable_order": true,
+      "first_run": [
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+      ]
+     }
+    },
+    "expected_keys": [
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "046d:085c:sn=C922SN01",
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+    ]
+   },
+   "note": "provisional yes: attended persistence steps (A1: reboot, replug, port move) not run yet",
+   "provisional": true,
+   "summary_label": "partial (provisional: persistence not measured)"
+  },
+  "G-ID_per_api": {
+   "mf": {
+    "rating": "partial",
+    "criteria": [
+     {
+      "criterion": "every API's list maps 1:1 to identity keys",
+      "met": true,
+      "detail": "1/1 APIs"
+     },
+     {
+      "criterion": "identical over >= 20 repeated enumerations",
+      "met": true,
+      "detail": {
+       "mf": 20
+      }
+     },
+     {
+      "criterion": "key unchanged over reboot / same-port replug / port move (serial cameras)",
+      "met": null,
+      "detail": {
+       "reboot": null,
+       "same_port_replug": null,
+       "port_move_serial": true
+      }
+     }
+    ],
+    "evidence": {
+     "per_api": {
+      "mf": {
+       "runs": 20,
+       "mappable": true,
+       "one_to_one": true,
+       "stable_order": true,
+       "first_run": [
+        "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+        "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+        "046d:085c:sn=C922SN01",
+        "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+       ]
+      }
+     },
+     "expected_keys": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "046d:085c:sn=C922SN01",
+      "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    },
+    "note": "provisional yes: attended persistence steps (A1: reboot, replug, port move) not run yet",
+    "provisional": true,
+    "summary_label": "partial (provisional: persistence not measured)"
+   },
+   "ds": {
+    "rating": "partial",
+    "criteria": [
+     {
+      "criterion": "every API's list maps 1:1 to identity keys",
+      "met": true,
+      "detail": "1/1 APIs"
+     },
+     {
+      "criterion": "identical over >= 20 repeated enumerations",
+      "met": true,
+      "detail": {
+       "ds": 20
+      }
+     },
+     {
+      "criterion": "key unchanged over reboot / same-port replug / port move (serial cameras)",
+      "met": null,
+      "detail": {
+       "reboot": null,
+       "same_port_replug": null,
+       "port_move_serial": true
+      }
+     }
+    ],
+    "evidence": {
+     "per_api": {
+      "ds": {
+       "runs": 20,
+       "mappable": true,
+       "one_to_one": true,
+       "stable_order": true,
+       "first_run": [
+        "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+        "046d:085c:sn=C922SN01",
+        "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+        "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+       ]
+      }
+     },
+     "expected_keys": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "046d:085c:sn=C922SN01",
+      "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    },
+    "note": "provisional yes: attended persistence steps (A1: reboot, replug, port move) not run yet",
+    "provisional": true,
+    "summary_label": "partial (provisional: persistence not measured)"
+   },
+   "pyav_dshow": {
+    "rating": "partial",
+    "criteria": [
+     {
+      "criterion": "every API's list maps 1:1 to identity keys",
+      "met": true,
+      "detail": "1/1 APIs"
+     },
+     {
+      "criterion": "identical over >= 20 repeated enumerations",
+      "met": true,
+      "detail": {
+       "pyav_dshow": 20
+      }
+     },
+     {
+      "criterion": "key unchanged over reboot / same-port replug / port move (serial cameras)",
+      "met": null,
+      "detail": {
+       "reboot": null,
+       "same_port_replug": null,
+       "port_move_serial": true
+      }
+     }
+    ],
+    "evidence": {
+     "per_api": {
+      "pyav_dshow": {
+       "runs": 20,
+       "mappable": true,
+       "one_to_one": true,
+       "stable_order": true,
+       "first_run": [
+        "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+        "046d:085c:sn=C922SN01",
+        "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+        "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+       ]
+      }
+     },
+     "expected_keys": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "046d:085c:sn=C922SN01",
+      "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    },
+    "note": "provisional yes: attended persistence steps (A1: reboot, replug, port move) not run yet",
+    "provisional": true,
+    "summary_label": "partial (provisional: persistence not measured)"
+   },
+   "ffmpeg_cli_dshow": {
+    "rating": "partial",
+    "criteria": [
+     {
+      "criterion": "every API's list maps 1:1 to identity keys",
+      "met": true,
+      "detail": "1/1 APIs"
+     },
+     {
+      "criterion": "identical over >= 20 repeated enumerations",
+      "met": true,
+      "detail": {
+       "ffmpeg_cli_dshow": 20
+      }
+     },
+     {
+      "criterion": "key unchanged over reboot / same-port replug / port move (serial cameras)",
+      "met": null,
+      "detail": {
+       "reboot": null,
+       "same_port_replug": null,
+       "port_move_serial": true
+      }
+     }
+    ],
+    "evidence": {
+     "per_api": {
+      "ffmpeg_cli_dshow": {
+       "runs": 20,
+       "mappable": true,
+       "one_to_one": true,
+       "stable_order": true,
+       "first_run": [
+        "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+        "046d:085c:sn=C922SN01",
+        "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+        "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+       ]
+      }
+     },
+     "expected_keys": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "046d:085c:sn=C922SN01",
+      "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    },
+    "note": "provisional yes: attended persistence steps (A1: reboot, replug, port move) not run yet",
+    "provisional": true,
+    "summary_label": "partial (provisional: persistence not measured)"
+   },
+   "opencv_msmf": {
+    "rating": "partial",
+    "criteria": [
+     {
+      "criterion": "every API's list maps 1:1 to identity keys",
+      "met": true,
+      "detail": "1/1 APIs"
+     },
+     {
+      "criterion": "identical over >= 20 repeated enumerations",
+      "met": true,
+      "detail": {
+       "opencv_msmf": 20
+      }
+     },
+     {
+      "criterion": "key unchanged over reboot / same-port replug / port move (serial cameras)",
+      "met": null,
+      "detail": {
+       "reboot": null,
+       "same_port_replug": null,
+       "port_move_serial": true
+      }
+     }
+    ],
+    "evidence": {
+     "per_api": {
+      "opencv_msmf": {
+       "runs": 20,
+       "mappable": true,
+       "one_to_one": true,
+       "stable_order": true,
+       "first_run": [
+        "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+        "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+        "046d:085c:sn=C922SN01",
+        "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+       ]
+      }
+     },
+     "expected_keys": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "046d:085c:sn=C922SN01",
+      "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ],
+     "caveat": "index order from cv2_enumerate_cameras 1.4.0 (MFEnumDeviceSources / property bags); no VideoCapture(index) was opened to confirm which device an index opens"
+    },
+    "note": "provisional yes: attended persistence steps (A1: reboot, replug, port move) not run yet",
+    "provisional": true,
+    "summary_label": "partial (provisional: persistence not measured)"
+   },
+   "opencv_dshow": {
+    "rating": "partial",
+    "criteria": [
+     {
+      "criterion": "every API's list maps 1:1 to identity keys",
+      "met": true,
+      "detail": "1/1 APIs"
+     },
+     {
+      "criterion": "identical over >= 20 repeated enumerations",
+      "met": true,
+      "detail": {
+       "opencv_dshow": 20
+      }
+     },
+     {
+      "criterion": "key unchanged over reboot / same-port replug / port move (serial cameras)",
+      "met": null,
+      "detail": {
+       "reboot": null,
+       "same_port_replug": null,
+       "port_move_serial": true
+      }
+     }
+    ],
+    "evidence": {
+     "per_api": {
+      "opencv_dshow": {
+       "runs": 20,
+       "mappable": true,
+       "one_to_one": true,
+       "stable_order": true,
+       "first_run": [
+        "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+        "046d:085c:sn=C922SN01",
+        "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+        "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+       ]
+      }
+     },
+     "expected_keys": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "046d:085c:sn=C922SN01",
+      "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ],
+     "caveat": "index order from cv2_enumerate_cameras 1.4.0 (MFEnumDeviceSources / property bags); no VideoCapture(index) was opened to confirm which device an index opens"
+    },
+    "note": "provisional yes: attended persistence steps (A1: reboot, replug, port move) not run yet",
+    "provisional": true,
+    "summary_label": "partial (provisional: persistence not measured)"
+   }
+  },
+  "key_source_stability": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "suitectx discovery returns the same keys in 20 runs",
+     "met": true,
+     "detail": {
+      "runs": 20,
+      "first_run_keys": [
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "first_run_entries": null,
+      "one_to_one_every_run": true,
+      "all_mappable": true,
+      "order_stable": true,
+      "distinct_orders": 1,
+      "missing_keys_first_run": [],
+      "timing_ms": {
+       "n": 20,
+       "min": 139.17,
+       "p50": 143.02,
+       "p90": 156.19,
+       "p95": 189.29500000000047,
+       "p99": 674.7069999999992,
+       "max": 796.06,
+       "mean": 178.058
+      },
+      "errors": null
+     }
+    }
+   ],
+   "evidence": {
+    "note": "the identity key source itself (CfgMgr + cached hub data)"
+   }
+  }
+ },
+ "errors": [],
+ "device_faults": {
+  "faulted_at_start": {},
+  "faulted_at_end": {},
+  "kiyo_dead_since": null
+ }
+}

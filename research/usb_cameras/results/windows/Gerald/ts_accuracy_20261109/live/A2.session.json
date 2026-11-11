@@ -1,0 +1,146 @@
+{
+ "label": "A2",
+ "mode": "skellycam",
+ "argv": [
+  "timing/ts_accuracy/live/dshow_capture.py",
+  "--mode",
+  "skellycam",
+  "--cams",
+  "046D:0843,1532:0E05",
+  "--seconds",
+  "75",
+  "--record",
+  "--video-dir",
+  "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\ca7e9b09df19a3f5\\d7b5ebd7-23e2-4038-b89c-9e7af70dd7af\\scratchpad\\vid",
+  "--label",
+  "A2",
+  "--out",
+  "results/windows/Gerald/ts_accuracy_20261109/live"
+ ],
+ "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+ "resolved": {
+  "1532:0E05": {
+   "index": 2,
+   "name": "USB Video Device",
+   "path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global"
+  },
+  "046D:0843": {
+   "index": 3,
+   "name": "Logitech Webcam C930e",
+   "path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global"
+  }
+ },
+ "started_utc": "2026-11-09T13:47:29Z",
+ "opencv": "4.12.0",
+ "go_ns": 1517133860400,
+ "early_stop": false,
+ "cameras": [
+  {
+   "vidpid": "046D:0843",
+   "index": 3,
+   "sets": {
+    "fourcc_1": true,
+    "width_1": true,
+    "height_1": true,
+    "buffersize_1": false,
+    "auto_exposure_2": true,
+    "exposure_2": true,
+    "width_2": true,
+    "height_2": true,
+    "fourcc_2": true
+   },
+   "events": [
+    {
+     "event": "exposure_reset",
+     "t_s": 1.5569409,
+     "set_auto": true,
+     "set_exp": true,
+     "readback": -7.0
+    }
+   ],
+   "open_s": 0.8648577,
+   "first_read_s": 0.2477196,
+   "first_read_ok": true,
+   "fourcc_2_call_s": 1.3799236,
+   "readback": {
+    "fourcc": "MJPG",
+    "width": 1280.0,
+    "height": 720.0,
+    "fps": 0.0,
+    "exposure": -4.0,
+    "auto_exposure": -1.0,
+    "buffersize": -1.0,
+    "pos_msec": -1.0,
+    "convert_rgb": 1.0
+   },
+   "writer": {
+    "codec": "X264",
+    "path": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\ca7e9b09df19a3f5\\d7b5ebd7-23e2-4038-b89c-9e7af70dd7af\\scratchpad\\vid\\A2_046D0843_X264.mp4",
+    "deleted": true
+   },
+   "first_frame_after_config_ns": 1512372693300,
+   "brightness_mean": {
+    "before_reset": 95.86483796296297,
+    "after_reset": 17.08335648148148
+   },
+   "record_queue_dropped": 0,
+   "would_framerate_reset": 0,
+   "frames": 2255,
+   "csv": "A2_046D0843.frames.csv"
+  },
+  {
+   "vidpid": "1532:0E05",
+   "index": 2,
+   "sets": {
+    "fourcc_1": true,
+    "width_1": true,
+    "height_1": true,
+    "buffersize_1": false,
+    "auto_exposure_2": true,
+    "exposure_2": true,
+    "width_2": true,
+    "height_2": true,
+    "fourcc_2": true
+   },
+   "events": [
+    {
+     "event": "exposure_reset",
+     "t_s": 1.5031433,
+     "set_auto": true,
+     "set_exp": true,
+     "readback": -7.0
+    }
+   ],
+   "open_s": 0.6193571,
+   "first_read_s": 0.2784853,
+   "first_read_ok": true,
+   "fourcc_2_call_s": 1.6363851,
+   "readback": {
+    "fourcc": "MJPG",
+    "width": 1280.0,
+    "height": 720.0,
+    "fps": 0.0,
+    "exposure": -7.0,
+    "auto_exposure": -1.0,
+    "buffersize": -1.0,
+    "pos_msec": -1.0,
+    "convert_rgb": 1.0
+   },
+   "writer": {
+    "codec": "X264",
+    "path": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\ca7e9b09df19a3f5\\d7b5ebd7-23e2-4038-b89c-9e7af70dd7af\\scratchpad\\vid\\A2_15320E05_X264.mp4",
+    "deleted": true
+   },
+   "first_frame_after_config_ns": 1514558176900,
+   "brightness_mean": {
+    "before_reset": 29.31738425925926,
+    "after_reset": 29.85761574074074
+   },
+   "record_queue_dropped": 0,
+   "would_framerate_reset": 0,
+   "frames": 2255,
+   "csv": "A2_15320E05.frames.csv"
+  }
+ ],
+ "ended_utc": "2026-11-09T13:48:57Z"
+}

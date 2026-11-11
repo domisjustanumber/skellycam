@@ -1,0 +1,1007 @@
+{
+ "what": "wincam build self-test on Gerald, 2026-11-06; one JSON per run in this folder, per-frame/per-cycle JSONL in subfolders",
+ "runs": {
+  "c922_controls_ds": {
+   "exit_code": 0,
+   "subcommand": "controls",
+   "api": "ds",
+   "supported": 16,
+   "elapsed_ms": 42.6,
+   "state": {
+    "exposure": [
+     -5,
+     [
+      "auto"
+     ]
+    ],
+    "focus": [
+     0,
+     [
+      "auto"
+     ]
+    ],
+    "white_balance": [
+     4000,
+     [
+      "auto"
+     ]
+    ],
+    "gain": [
+     0,
+     [
+      "manual"
+     ]
+    ]
+   }
+  },
+  "c922_controls_mf": {
+   "exit_code": 0,
+   "subcommand": "controls",
+   "api": "mf",
+   "supported": 16,
+   "elapsed_ms": 71.8,
+   "state": {
+    "exposure": [
+     -5,
+     [
+      "auto"
+     ]
+    ],
+    "focus": [
+     0,
+     [
+      "auto"
+     ]
+    ],
+    "white_balance": [
+     4000,
+     [
+      "auto"
+     ]
+    ],
+    "gain": [
+     0,
+     [
+      "manual"
+     ]
+    ]
+   }
+  },
+  "c922_formats_ds": {
+   "exit_code": 0,
+   "subcommand": "formats",
+   "api": "ds",
+   "ds_pins": [
+    {
+     "pin": 0,
+     "name": "Capture",
+     "dir": "output",
+     "category": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+     "caps": 72,
+     "modes": 36
+    },
+    {
+     "pin": 1,
+     "name": "Video Camera Terminal",
+     "dir": "input",
+     "category": "3EBC7959-3310-493B-AA81-C7E132D56F71",
+     "caps": null,
+     "modes": null
+    }
+   ]
+  },
+  "c922_formats_mf": {
+   "exit_code": 0,
+   "subcommand": "formats",
+   "api": "mf",
+   "mf_streams": [
+    {
+     "stream": 0,
+     "types": 338,
+     "subtypes": {
+      "MJPG": 120,
+      "NV12": 120,
+      "YUY2": 98
+     },
+     "mjpg_sizes": 17,
+     "nv12_flagged": 120
+    }
+   ],
+   "activate_ms": 33.4342
+  },
+  "c930e_capture": {
+   "exit_code": 0,
+   "subcommand": "capture",
+   "api": "mf",
+   "ok": true,
+   "frames": 60,
+   "frames_ok": 60,
+   "with_uvc_metadata": 0,
+   "fps_measured": 29.79,
+   "negotiated": {
+    "native_type_index": 294,
+    "subtype": "MJPG",
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "readback_ok": true
+   },
+   "timings_ms": {
+    "enumerate_ms": 2.6,
+    "activate_ms": 52.5,
+    "reader_ms": 1.4,
+    "settype_ms": 1.3,
+    "first_frame_ms": 447.8,
+    "open_to_first_frame_ms": 507.3,
+    "flush_ms": 30.1,
+    "reader_release_ms": 375.2,
+    "shutdown_ms": 4.5,
+    "shutdown_object_ms": 0.3,
+    "close_ms": 414.4
+   },
+   "cpu_pct_one_core": 1.58,
+   "unreleasable": false,
+   "schedule": []
+  },
+  "c930e_capture_after_timeouts": {
+   "exit_code": 0,
+   "subcommand": "capture",
+   "api": "mf",
+   "ok": true,
+   "frames": 60,
+   "frames_ok": 60,
+   "with_uvc_metadata": 0,
+   "fps_measured": 30.78,
+   "negotiated": {
+    "native_type_index": 294,
+    "subtype": "MJPG",
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "readback_ok": true
+   },
+   "timings_ms": {
+    "enumerate_ms": 3.4,
+    "activate_ms": 62.9,
+    "reader_ms": 1.5,
+    "settype_ms": 1.6,
+    "first_frame_ms": 483.1,
+    "open_to_first_frame_ms": 554.0,
+    "flush_ms": 0.3,
+    "reader_release_ms": 334.2,
+    "shutdown_ms": 4.5,
+    "shutdown_object_ms": 0.8,
+    "close_ms": 340.4
+   },
+   "cpu_pct_one_core": 0,
+   "unreleasable": false,
+   "schedule": []
+  },
+  "c930e_capture_schedule": {
+   "exit_code": 0,
+   "subcommand": "capture",
+   "api": "mf",
+   "ok": true,
+   "frames": 77,
+   "frames_ok": 77,
+   "with_uvc_metadata": 0,
+   "fps_measured": 30.07,
+   "negotiated": {
+    "native_type_index": 294,
+    "subtype": "MJPG",
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "readback_ok": true
+   },
+   "timings_ms": {
+    "enumerate_ms": 2.1,
+    "activate_ms": 94.3,
+    "reader_ms": 3.2,
+    "settype_ms": 2.4,
+    "first_frame_ms": 448.8,
+    "open_to_first_frame_ms": 563.6,
+    "flush_ms": 0.2,
+    "reader_release_ms": 358.5,
+    "shutdown_ms": 4.0,
+    "shutdown_object_ms": 0.2,
+    "close_ms": 363.1
+   },
+   "cpu_pct_one_core": 0.62,
+   "unreleasable": false,
+   "schedule": [
+    {
+     "item": "700:exposure=-9",
+     "applied_ms_after_first_frame": 700.7494,
+     "readback_value": -9,
+     "readback_flags": 2,
+     "matches": true
+    },
+    {
+     "item": "1400:exposure=auto",
+     "applied_ms_after_first_frame": 1403.6233,
+     "readback_value": -9,
+     "readback_flags": 1,
+     "matches": true
+    }
+   ]
+  },
+  "c930e_controls_ds": {
+   "exit_code": 0,
+   "subcommand": "controls",
+   "api": "ds",
+   "supported": 16,
+   "elapsed_ms": 522.4,
+   "state": {
+    "exposure": [
+     -7,
+     [
+      "auto"
+     ]
+    ],
+    "focus": [
+     60,
+     [
+      "auto"
+     ]
+    ],
+    "white_balance": [
+     4500,
+     [
+      "auto"
+     ]
+    ],
+    "gain": [
+     0,
+     [
+      "manual"
+     ]
+    ]
+   }
+  },
+  "c930e_controls_mf": {
+   "exit_code": 0,
+   "subcommand": "controls",
+   "api": "mf",
+   "supported": 16,
+   "elapsed_ms": 474.6,
+   "state": {
+    "exposure": [
+     -7,
+     [
+      "auto"
+     ]
+    ],
+    "focus": [
+     60,
+     [
+      "auto"
+     ]
+    ],
+    "white_balance": [
+     4500,
+     [
+      "auto"
+     ]
+    ],
+    "gain": [
+     0,
+     [
+      "manual"
+     ]
+    ]
+   }
+  },
+  "c930e_controls_mf_final": {
+   "exit_code": 0,
+   "subcommand": "controls",
+   "api": "mf",
+   "supported": 16,
+   "elapsed_ms": 310.4,
+   "state": {
+    "exposure": [
+     -7,
+     [
+      "auto"
+     ]
+    ],
+    "focus": [
+     60,
+     [
+      "auto"
+     ]
+    ],
+    "white_balance": [
+     4500,
+     [
+      "auto"
+     ]
+    ],
+    "gain": [
+     0,
+     [
+      "manual"
+     ]
+    ]
+   }
+  },
+  "c930e_controls_set_restore_mf": {
+   "exit_code": 0,
+   "subcommand": "controls",
+   "api": "mf",
+   "supported": 16,
+   "elapsed_ms": 74.9,
+   "sets": [
+    {
+     "control": "cc.exposure",
+     "requested": "-7",
+     "hr_set_name": "S_OK",
+     "readback_value": -7,
+     "readback_flags": 2,
+     "matches": true
+    },
+    {
+     "control": "cc.focus",
+     "requested": "120",
+     "hr_set_name": "S_OK",
+     "readback_value": 120,
+     "readback_flags": 2,
+     "matches": true
+    },
+    {
+     "control": "pa.white_balance",
+     "requested": "4500",
+     "hr_set_name": "S_OK",
+     "readback_value": 4500,
+     "readback_flags": 2,
+     "matches": true
+    },
+    {
+     "control": "pa.gain",
+     "requested": "40",
+     "hr_set_name": "S_OK",
+     "readback_value": 40,
+     "readback_flags": 2,
+     "matches": true
+    }
+   ],
+   "restore": [
+    {
+     "control": "pa.gain",
+     "restore_flags": 2,
+     "readback_flags": 2
+    },
+    {
+     "control": "pa.white_balance",
+     "restore_flags": 1,
+     "readback_flags": 1
+    },
+    {
+     "control": "cc.focus",
+     "restore_flags": 1,
+     "readback_flags": 1
+    },
+    {
+     "control": "cc.exposure",
+     "restore_flags": 1,
+     "readback_flags": 1
+    }
+   ],
+   "state": {
+    "exposure": [
+     -7,
+     [
+      "auto"
+     ]
+    ],
+    "focus": [
+     60,
+     [
+      "auto"
+     ]
+    ],
+    "white_balance": [
+     4500,
+     [
+      "auto"
+     ]
+    ],
+    "gain": [
+     0,
+     [
+      "manual"
+     ]
+    ]
+   }
+  },
+  "c930e_cycle": {
+   "exit_code": 0,
+   "subcommand": "cycle",
+   "api": "mf",
+   "summary": {
+    "cycles_run": 3,
+    "ok": 3,
+    "failed": 0,
+    "timeouts": 0,
+    "failures_by_class": {},
+    "recovered_after_failure": 0,
+    "first_frame_ms_p50": 450.1181,
+    "close_ms_p50": 396.135,
+    "unreleasable": false
+   },
+   "cycles": [
+    {
+     "i": 0,
+     "mode": "MJPG 1280x720@30",
+     "ok": true,
+     "stage_failed": null,
+     "hr_name": null,
+     "first_frame_ms": 450.1181,
+     "frames_ok": 30,
+     "close_ms": 396.135,
+     "in_use_by_other": false
+    },
+    {
+     "i": 1,
+     "mode": "MJPG 640x480@30",
+     "ok": true,
+     "stage_failed": null,
+     "hr_name": null,
+     "first_frame_ms": 442.866,
+     "frames_ok": 30,
+     "close_ms": 467.8793,
+     "in_use_by_other": false
+    },
+    {
+     "i": 2,
+     "mode": "MJPG 1280x720@30",
+     "ok": true,
+     "stage_failed": null,
+     "hr_name": null,
+     "first_frame_ms": 462.1222,
+     "frames_ok": 30,
+     "close_ms": 338.9299,
+     "in_use_by_other": false
+    }
+   ]
+  },
+  "c930e_formats_ds": {
+   "exit_code": 0,
+   "subcommand": "formats",
+   "api": "ds",
+   "ds_pins": [
+    {
+     "pin": 0,
+     "name": "Capture",
+     "dir": "output",
+     "category": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+     "caps": 68,
+     "modes": 34
+    },
+    {
+     "pin": 1,
+     "name": "Capture",
+     "dir": "output",
+     "category": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+     "caps": 68,
+     "modes": 2
+    },
+    {
+     "pin": 2,
+     "name": "Video Camera Terminal",
+     "dir": "input",
+     "category": "3EBC7959-3310-493B-AA81-C7E132D56F71",
+     "caps": null,
+     "modes": null
+    }
+   ]
+  },
+  "c930e_formats_mf": {
+   "exit_code": 0,
+   "subcommand": "formats",
+   "api": "mf",
+   "mf_streams": [
+    {
+     "stream": 0,
+     "types": 335,
+     "subtypes": {
+      "MJPG": 119,
+      "NV12": 119,
+      "YUY2": 97
+     },
+     "mjpg_sizes": 17,
+     "nv12_flagged": 119
+    },
+    {
+     "stream": 1,
+     "types": 476,
+     "subtypes": {
+      "H264": 238,
+      "MFVideoFormat_H264_ES": 238
+     },
+     "mjpg_sizes": 0,
+     "nv12_flagged": 0
+    }
+   ],
+   "activate_ms": 141.9141
+  },
+  "generic_controls_ds": {
+   "exit_code": 0,
+   "subcommand": "controls",
+   "api": "ds",
+   "supported": 11,
+   "elapsed_ms": 40.6,
+   "state": {
+    "exposure": [
+     -7,
+     [
+      "auto"
+     ]
+    ],
+    "white_balance": [
+     4500,
+     [
+      "manual"
+     ]
+    ],
+    "gain": [
+     4,
+     [
+      "manual"
+     ]
+    ]
+   }
+  },
+  "generic_controls_mf": {
+   "exit_code": 0,
+   "subcommand": "controls",
+   "api": "mf",
+   "supported": 11,
+   "elapsed_ms": 89.4,
+   "state": {
+    "exposure": [
+     -7,
+     [
+      "auto"
+     ]
+    ],
+    "white_balance": [
+     4500,
+     [
+      "manual"
+     ]
+    ],
+    "gain": [
+     4,
+     [
+      "manual"
+     ]
+    ]
+   }
+  },
+  "generic_formats_ds": {
+   "exit_code": 0,
+   "subcommand": "formats",
+   "api": "ds",
+   "ds_pins": [
+    {
+     "pin": 0,
+     "name": "Capture",
+     "dir": "output",
+     "category": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+     "caps": 18,
+     "modes": 9
+    },
+    {
+     "pin": 1,
+     "name": "Video Camera Terminal",
+     "dir": "input",
+     "category": "3EBC7959-3310-493B-AA81-C7E132D56F71",
+     "caps": null,
+     "modes": null
+    },
+    {
+     "pin": 2,
+     "name": "Still",
+     "dir": "output",
+     "category": "PIN_CATEGORY_STILL (PINNAME_VIDEO_STILL)",
+     "caps": 5,
+     "modes": 5
+    }
+   ]
+  },
+  "generic_formats_mf": {
+   "exit_code": 0,
+   "subcommand": "formats",
+   "api": "mf",
+   "mf_streams": [
+    {
+     "stream": 0,
+     "types": 24,
+     "subtypes": {
+      "MJPG": 10,
+      "NV12": 10,
+      "YUY2": 4
+     },
+     "mjpg_sizes": 5,
+     "nv12_flagged": 10
+    },
+    {
+     "stream": 1,
+     "types": 8,
+     "subtypes": {
+      "MJPG": 3,
+      "NV12": 3,
+      "YUY2": 2
+     },
+     "mjpg_sizes": 3,
+     "nv12_flagged": 3
+    }
+   ],
+   "activate_ms": 75.3211
+  },
+  "kiyo_capture": {
+   "exit_code": 0,
+   "subcommand": "capture",
+   "api": "mf",
+   "ok": true,
+   "frames": 60,
+   "frames_ok": 60,
+   "with_uvc_metadata": 60,
+   "fps_measured": 30.27,
+   "negotiated": {
+    "native_type_index": 43,
+    "subtype": "MJPG",
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "readback_ok": true
+   },
+   "timings_ms": {
+    "enumerate_ms": 38.8,
+    "activate_ms": 104.1,
+    "reader_ms": 2.0,
+    "settype_ms": 16.5,
+    "first_frame_ms": 963.7,
+    "open_to_first_frame_ms": 1157.3,
+    "flush_ms": 0.2,
+    "reader_release_ms": 1087.1,
+    "shutdown_ms": 2.7,
+    "shutdown_object_ms": 0.1,
+    "close_ms": 1090.2
+   },
+   "cpu_pct_one_core": 0,
+   "unreleasable": false,
+   "schedule": []
+  },
+  "kiyo_controls_ds": {
+   "exit_code": 0,
+   "subcommand": "controls",
+   "api": "ds",
+   "supported": 16,
+   "elapsed_ms": 41.6,
+   "state": {
+    "exposure": [
+     -5,
+     [
+      "auto"
+     ]
+    ],
+    "focus": [
+     206,
+     [
+      "auto"
+     ]
+    ],
+    "white_balance": [
+     3410,
+     [
+      "auto"
+     ]
+    ],
+    "gain": [
+     0,
+     [
+      "manual"
+     ]
+    ]
+   }
+  },
+  "kiyo_controls_mf": {
+   "exit_code": 0,
+   "subcommand": "controls",
+   "api": "mf",
+   "supported": 16,
+   "elapsed_ms": 72.9,
+   "state": {
+    "exposure": [
+     -5,
+     [
+      "auto"
+     ]
+    ],
+    "focus": [
+     206,
+     [
+      "auto"
+     ]
+    ],
+    "white_balance": [
+     3410,
+     [
+      "auto"
+     ]
+    ],
+    "gain": [
+     0,
+     [
+      "manual"
+     ]
+    ]
+   }
+  },
+  "kiyo_controls_mf_final": {
+   "exit_code": 0,
+   "subcommand": "controls",
+   "api": "mf",
+   "supported": 16,
+   "elapsed_ms": 238.9,
+   "state": {
+    "exposure": [
+     -5,
+     [
+      "auto"
+     ]
+    ],
+    "focus": [
+     206,
+     [
+      "auto"
+     ]
+    ],
+    "white_balance": [
+     3410,
+     [
+      "auto"
+     ]
+    ],
+    "gain": [
+     0,
+     [
+      "manual"
+     ]
+    ]
+   }
+  },
+  "kiyo_cycle": {
+   "exit_code": 0,
+   "subcommand": "cycle",
+   "api": "mf",
+   "summary": {
+    "cycles_run": 3,
+    "ok": 3,
+    "failed": 0,
+    "timeouts": 0,
+    "failures_by_class": {},
+    "recovered_after_failure": 0,
+    "first_frame_ms_p50": 941.9313,
+    "close_ms_p50": 1183.0076,
+    "unreleasable": false
+   },
+   "cycles": [
+    {
+     "i": 0,
+     "mode": "MJPG 1280x720@30",
+     "ok": true,
+     "stage_failed": null,
+     "hr_name": null,
+     "first_frame_ms": 948.1722,
+     "frames_ok": 30,
+     "close_ms": 1078.591,
+     "in_use_by_other": false
+    },
+    {
+     "i": 1,
+     "mode": "MJPG 640x480@30",
+     "ok": true,
+     "stage_failed": null,
+     "hr_name": null,
+     "first_frame_ms": 890.229,
+     "frames_ok": 30,
+     "close_ms": 1291.1733,
+     "in_use_by_other": false
+    },
+    {
+     "i": 2,
+     "mode": "MJPG 1280x720@30",
+     "ok": true,
+     "stage_failed": null,
+     "hr_name": null,
+     "first_frame_ms": 941.9313,
+     "frames_ok": 30,
+     "close_ms": 1183.0076,
+     "in_use_by_other": false
+    }
+   ]
+  },
+  "kiyo_formats_ds": {
+   "exit_code": 0,
+   "subcommand": "formats",
+   "api": "ds",
+   "ds_pins": [
+    {
+     "pin": 0,
+     "name": "Capture",
+     "dir": "output",
+     "category": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+     "caps": 32,
+     "modes": 16
+    },
+    {
+     "pin": 1,
+     "name": "Video Camera Terminal",
+     "dir": "input",
+     "category": "3EBC7959-3310-493B-AA81-C7E132D56F71",
+     "caps": null,
+     "modes": null
+    }
+   ]
+  },
+  "kiyo_formats_mf": {
+   "exit_code": 0,
+   "subcommand": "formats",
+   "api": "mf",
+   "mf_streams": [
+    {
+     "stream": 0,
+     "types": 140,
+     "subtypes": {
+      "H264": 56,
+      "MJPG": 28,
+      "NV12": 28,
+      "YUY2": 28
+     },
+     "mjpg_sizes": 4,
+     "nv12_flagged": 0
+    }
+   ],
+   "activate_ms": 98.1912
+  },
+  "list": {
+   "exit_code": 0,
+   "subcommand": "list",
+   "api": null
+  },
+  "not_found": {
+   "exit_code": 3,
+   "subcommand": "formats",
+   "api": "mf",
+   "error": {
+    "stage": "match",
+    "class": "device_error",
+    "reason": "no MF device matches --device"
+   },
+   "mf_streams": [],
+   "activate_ms": null
+  },
+  "timeout_test_capture_300ms": {
+   "exit_code": 5,
+   "subcommand": "capture",
+   "api": "mf",
+   "error": {
+    "stage": "first_sample",
+    "hr_name": "timeout",
+    "class": "timeout",
+    "reason": "call did not return within --timeout-ms"
+   },
+   "ok": false,
+   "frames": 0,
+   "frames_ok": 0,
+   "with_uvc_metadata": 0,
+   "fps_measured": 0,
+   "negotiated": {
+    "native_type_index": 294,
+    "subtype": "MJPG",
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "readback_ok": true
+   },
+   "timings_ms": {
+    "enumerate_ms": 2.6,
+    "activate_ms": 60.4,
+    "reader_ms": 1.4,
+    "settype_ms": 1.5,
+    "first_frame_ms": -1,
+    "open_to_first_frame_ms": -1,
+    "flush_ms": 82.3,
+    "reader_release_ms": 301.1,
+    "shutdown_ms": -1,
+    "shutdown_object_ms": -1,
+    "close_ms": 383.4
+   },
+   "cpu_pct_one_core": 0,
+   "unreleasable": true,
+   "schedule": []
+  },
+  "timeout_test_cycle_400ms": {
+   "exit_code": 4,
+   "subcommand": "cycle",
+   "api": "mf",
+   "summary": {
+    "cycles_run": 3,
+    "ok": 0,
+    "failed": 3,
+    "timeouts": 3,
+    "failures_by_class": {
+     "timeout": 3
+    },
+    "recovered_after_failure": 0,
+    "first_frame_ms_p50": null,
+    "close_ms_p50": 369.6063,
+    "unreleasable": false
+   },
+   "cycles": [
+    {
+     "i": 0,
+     "mode": "MJPG 1280x720@30",
+     "ok": false,
+     "stage_failed": "first_sample",
+     "hr_name": "timeout",
+     "first_frame_ms": -1,
+     "frames_ok": 0,
+     "close_ms": 368.6935,
+     "in_use_by_other": false
+    },
+    {
+     "i": 1,
+     "mode": "MJPG 1280x720@30",
+     "ok": false,
+     "stage_failed": "first_sample",
+     "hr_name": "timeout",
+     "first_frame_ms": -1,
+     "frames_ok": 0,
+     "close_ms": 369.6063,
+     "in_use_by_other": false
+    },
+    {
+     "i": 2,
+     "mode": "MJPG 1280x720@30",
+     "ok": false,
+     "stage_failed": "first_sample",
+     "hr_name": "timeout",
+     "first_frame_ms": -1,
+     "frames_ok": 0,
+     "close_ms": 370.1837,
+     "in_use_by_other": false
+    }
+   ]
+  },
+  "timeout_test_watchdog": {
+   "exit_code": 5,
+   "subcommand": "capture",
+   "api": null,
+   "error": {
+    "stage": "streaming",
+    "class": "timeout",
+    "reason": "process watchdog expired; a camera call hung beyond every per-call timeout"
+   },
+   "watchdog_fired": true,
+   "stage": "streaming",
+   "partial": {
+    "stage": "streaming",
+    "device": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+    "frames": 32
+   }
+  },
+  "usage_ambiguous": {
+   "exit_code": 2,
+   "subcommand": "capture",
+   "api": "mf",
+   "error": {
+    "stage": "match",
+    "reason": "ambiguous --device"
+   }
+  }
+ }
+}

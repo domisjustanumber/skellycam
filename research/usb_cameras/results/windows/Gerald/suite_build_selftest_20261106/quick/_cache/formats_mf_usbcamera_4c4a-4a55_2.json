@@ -1,0 +1,902 @@
+{
+ "tool": "wincam",
+ "version": "wincam 1.0 (2026-11-06)",
+ "subcommand": "formats",
+ "utc_started": "2026-11-06T17:38:57.676880Z",
+ "pid": 40052,
+ "argv": [
+  "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+  "formats",
+  "--api",
+  "mf",
+  "--device",
+  "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+  "--timeout-ms",
+  "8000"
+ ],
+ "timeout_ms": 8000,
+ "api": "mf",
+ "enumerate_ms": 2.5068,
+ "device": {
+  "index": 6,
+  "friendly_name": "USB Camera",
+  "symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+  "usb": {
+   "vid": "4c4a",
+   "pid": "4a55",
+   "mi": "00",
+   "instance": "8&232e60d4&0&0000"
+  }
+ },
+ "streams": [
+  {
+   "stream_index": 0,
+   "selected_by_default": true,
+   "stream_identifier": 0,
+   "attributes": {
+    "MF_DEVICESTREAM_ATTRIBUTE_FRAMESOURCE_TYPES": 1,
+    "MF_DEVICESTREAM_STREAM_CATEGORY": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)"
+   },
+   "major_type": "MFMediaType_Video",
+   "handler_type_count": 24
+  },
+  {
+   "stream_index": 1,
+   "selected_by_default": false,
+   "stream_identifier": 1,
+   "attributes": {
+    "MF_DEVICESTREAM_ATTRIBUTE_FRAMESOURCE_TYPES": 1,
+    "MF_DEVICESTREAM_STREAM_CATEGORY": "PIN_CATEGORY_STILL (PINNAME_VIDEO_STILL)"
+   },
+   "major_type": "MFMediaType_Video",
+   "handler_type_count": 8
+  }
+ ],
+ "reader_streams": [
+  {
+   "stream_index": 0,
+   "type_count": 24,
+   "subtype_counts": {
+    "MJPG": 10,
+    "NV12": 10,
+    "YUY2": 4
+   },
+   "mjpg_sizes": [
+    {
+     "width": 1920,
+     "height": 1080,
+     "fps": [
+      30,
+      25
+     ]
+    },
+    {
+     "width": 1280,
+     "height": 720,
+     "fps": [
+      30,
+      25
+     ]
+    },
+    {
+     "width": 640,
+     "height": 480,
+     "fps": [
+      30,
+      25
+     ]
+    },
+    {
+     "width": 640,
+     "height": 360,
+     "fps": [
+      30,
+      25
+     ]
+    },
+    {
+     "width": 352,
+     "height": 288,
+     "fps": [
+      30,
+      25
+     ]
+    }
+   ],
+   "types": [
+    {
+     "stream_index": 0,
+     "type_index": 0,
+     "subtype": "NV12",
+     "subtype_guid": "3231564E-0000-0010-8000-00AA00389B71",
+     "width": 1920,
+     "height": 1080,
+     "fps_num": 30,
+     "fps_den": 1,
+     "fps": 30,
+     "flags": [
+      "nv12_immediately_before_same_mode_mjpg:likely_mf_synthesized_decode"
+     ],
+     "frame_rate_range_min": [
+      30,
+      1
+     ],
+     "frame_rate_range_max": [
+      30,
+      1
+     ],
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 1,
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "width": 1920,
+     "height": 1080,
+     "fps_num": 30,
+     "fps_den": 1,
+     "fps": 30,
+     "flags": [],
+     "frame_rate_range_min": [
+      30,
+      1
+     ],
+     "frame_rate_range_max": [
+      30,
+      1
+     ],
+     "sample_size": 6220800,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 2,
+     "subtype": "NV12",
+     "subtype_guid": "3231564E-0000-0010-8000-00AA00389B71",
+     "width": 1920,
+     "height": 1080,
+     "fps_num": 25,
+     "fps_den": 1,
+     "fps": 25,
+     "flags": [
+      "nv12_immediately_before_same_mode_mjpg:likely_mf_synthesized_decode"
+     ],
+     "frame_rate_range_min": [
+      25,
+      1
+     ],
+     "frame_rate_range_max": [
+      25,
+      1
+     ],
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 3,
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "width": 1920,
+     "height": 1080,
+     "fps_num": 25,
+     "fps_den": 1,
+     "fps": 25,
+     "flags": [],
+     "frame_rate_range_min": [
+      25,
+      1
+     ],
+     "frame_rate_range_max": [
+      25,
+      1
+     ],
+     "sample_size": 6220800,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 4,
+     "subtype": "NV12",
+     "subtype_guid": "3231564E-0000-0010-8000-00AA00389B71",
+     "width": 1280,
+     "height": 720,
+     "fps_num": 30,
+     "fps_den": 1,
+     "fps": 30,
+     "flags": [
+      "nv12_immediately_before_same_mode_mjpg:likely_mf_synthesized_decode"
+     ],
+     "frame_rate_range_min": [
+      30,
+      1
+     ],
+     "frame_rate_range_max": [
+      30,
+      1
+     ],
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 5,
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "width": 1280,
+     "height": 720,
+     "fps_num": 30,
+     "fps_den": 1,
+     "fps": 30,
+     "flags": [],
+     "frame_rate_range_min": [
+      30,
+      1
+     ],
+     "frame_rate_range_max": [
+      30,
+      1
+     ],
+     "sample_size": 2764800,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 6,
+     "subtype": "NV12",
+     "subtype_guid": "3231564E-0000-0010-8000-00AA00389B71",
+     "width": 1280,
+     "height": 720,
+     "fps_num": 25,
+     "fps_den": 1,
+     "fps": 25,
+     "flags": [
+      "nv12_immediately_before_same_mode_mjpg:likely_mf_synthesized_decode"
+     ],
+     "frame_rate_range_min": [
+      25,
+      1
+     ],
+     "frame_rate_range_max": [
+      25,
+      1
+     ],
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 7,
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "width": 1280,
+     "height": 720,
+     "fps_num": 25,
+     "fps_den": 1,
+     "fps": 25,
+     "flags": [],
+     "frame_rate_range_min": [
+      25,
+      1
+     ],
+     "frame_rate_range_max": [
+      25,
+      1
+     ],
+     "sample_size": 2764800,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 8,
+     "subtype": "NV12",
+     "subtype_guid": "3231564E-0000-0010-8000-00AA00389B71",
+     "width": 640,
+     "height": 480,
+     "fps_num": 30,
+     "fps_den": 1,
+     "fps": 30,
+     "flags": [
+      "nv12_immediately_before_same_mode_mjpg:likely_mf_synthesized_decode"
+     ],
+     "frame_rate_range_min": [
+      30,
+      1
+     ],
+     "frame_rate_range_max": [
+      30,
+      1
+     ],
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 9,
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "width": 640,
+     "height": 480,
+     "fps_num": 30,
+     "fps_den": 1,
+     "fps": 30,
+     "flags": [],
+     "frame_rate_range_min": [
+      30,
+      1
+     ],
+     "frame_rate_range_max": [
+      30,
+      1
+     ],
+     "sample_size": 921600,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 10,
+     "subtype": "NV12",
+     "subtype_guid": "3231564E-0000-0010-8000-00AA00389B71",
+     "width": 640,
+     "height": 480,
+     "fps_num": 25,
+     "fps_den": 1,
+     "fps": 25,
+     "flags": [
+      "nv12_immediately_before_same_mode_mjpg:likely_mf_synthesized_decode"
+     ],
+     "frame_rate_range_min": [
+      25,
+      1
+     ],
+     "frame_rate_range_max": [
+      25,
+      1
+     ],
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 11,
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "width": 640,
+     "height": 480,
+     "fps_num": 25,
+     "fps_den": 1,
+     "fps": 25,
+     "flags": [],
+     "frame_rate_range_min": [
+      25,
+      1
+     ],
+     "frame_rate_range_max": [
+      25,
+      1
+     ],
+     "sample_size": 921600,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 12,
+     "subtype": "NV12",
+     "subtype_guid": "3231564E-0000-0010-8000-00AA00389B71",
+     "width": 640,
+     "height": 360,
+     "fps_num": 30,
+     "fps_den": 1,
+     "fps": 30,
+     "flags": [
+      "nv12_immediately_before_same_mode_mjpg:likely_mf_synthesized_decode"
+     ],
+     "frame_rate_range_min": [
+      30,
+      1
+     ],
+     "frame_rate_range_max": [
+      30,
+      1
+     ],
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 13,
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "width": 640,
+     "height": 360,
+     "fps_num": 30,
+     "fps_den": 1,
+     "fps": 30,
+     "flags": [],
+     "frame_rate_range_min": [
+      30,
+      1
+     ],
+     "frame_rate_range_max": [
+      30,
+      1
+     ],
+     "sample_size": 691200,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 14,
+     "subtype": "NV12",
+     "subtype_guid": "3231564E-0000-0010-8000-00AA00389B71",
+     "width": 640,
+     "height": 360,
+     "fps_num": 25,
+     "fps_den": 1,
+     "fps": 25,
+     "flags": [
+      "nv12_immediately_before_same_mode_mjpg:likely_mf_synthesized_decode"
+     ],
+     "frame_rate_range_min": [
+      25,
+      1
+     ],
+     "frame_rate_range_max": [
+      25,
+      1
+     ],
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 15,
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "width": 640,
+     "height": 360,
+     "fps_num": 25,
+     "fps_den": 1,
+     "fps": 25,
+     "flags": [],
+     "frame_rate_range_min": [
+      25,
+      1
+     ],
+     "frame_rate_range_max": [
+      25,
+      1
+     ],
+     "sample_size": 691200,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 16,
+     "subtype": "NV12",
+     "subtype_guid": "3231564E-0000-0010-8000-00AA00389B71",
+     "width": 352,
+     "height": 288,
+     "fps_num": 30,
+     "fps_den": 1,
+     "fps": 30,
+     "flags": [
+      "nv12_immediately_before_same_mode_mjpg:likely_mf_synthesized_decode"
+     ],
+     "frame_rate_range_min": [
+      30,
+      1
+     ],
+     "frame_rate_range_max": [
+      30,
+      1
+     ],
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 17,
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "width": 352,
+     "height": 288,
+     "fps_num": 30,
+     "fps_den": 1,
+     "fps": 30,
+     "flags": [],
+     "frame_rate_range_min": [
+      30,
+      1
+     ],
+     "frame_rate_range_max": [
+      30,
+      1
+     ],
+     "sample_size": 304128,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 18,
+     "subtype": "NV12",
+     "subtype_guid": "3231564E-0000-0010-8000-00AA00389B71",
+     "width": 352,
+     "height": 288,
+     "fps_num": 25,
+     "fps_den": 1,
+     "fps": 25,
+     "flags": [
+      "nv12_immediately_before_same_mode_mjpg:likely_mf_synthesized_decode"
+     ],
+     "frame_rate_range_min": [
+      25,
+      1
+     ],
+     "frame_rate_range_max": [
+      25,
+      1
+     ],
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 19,
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "width": 352,
+     "height": 288,
+     "fps_num": 25,
+     "fps_den": 1,
+     "fps": 25,
+     "flags": [],
+     "frame_rate_range_min": [
+      25,
+      1
+     ],
+     "frame_rate_range_max": [
+      25,
+      1
+     ],
+     "sample_size": 304128,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 20,
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "width": 640,
+     "height": 480,
+     "fps_num": 30,
+     "fps_den": 1,
+     "fps": 30,
+     "flags": [],
+     "frame_rate_range_min": [
+      30,
+      1
+     ],
+     "frame_rate_range_max": [
+      30,
+      1
+     ],
+     "sample_size": 614400,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 21,
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "width": 640,
+     "height": 360,
+     "fps_num": 30,
+     "fps_den": 1,
+     "fps": 30,
+     "flags": [],
+     "frame_rate_range_min": [
+      30,
+      1
+     ],
+     "frame_rate_range_max": [
+      30,
+      1
+     ],
+     "sample_size": 460800,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 22,
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "width": 352,
+     "height": 288,
+     "fps_num": 30,
+     "fps_den": 1,
+     "fps": 30,
+     "flags": [],
+     "frame_rate_range_min": [
+      30,
+      1
+     ],
+     "frame_rate_range_max": [
+      30,
+      1
+     ],
+     "sample_size": 202752,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 0,
+     "type_index": 23,
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "width": 320,
+     "height": 240,
+     "fps_num": 30,
+     "fps_den": 1,
+     "fps": 30,
+     "flags": [],
+     "frame_rate_range_min": [
+      30,
+      1
+     ],
+     "frame_rate_range_max": [
+      30,
+      1
+     ],
+     "sample_size": 153600,
+     "major_type": "MFMediaType_Video"
+    }
+   ]
+  },
+  {
+   "stream_index": 1,
+   "type_count": 8,
+   "subtype_counts": {
+    "MJPG": 3,
+    "NV12": 3,
+    "YUY2": 2
+   },
+   "mjpg_sizes": [
+    {
+     "width": 1280,
+     "height": 720,
+     "fps": [
+      1
+     ]
+    },
+    {
+     "width": 640,
+     "height": 480,
+     "fps": [
+      1
+     ]
+    },
+    {
+     "width": 320,
+     "height": 240,
+     "fps": [
+      1
+     ]
+    }
+   ],
+   "types": [
+    {
+     "stream_index": 1,
+     "type_index": 0,
+     "subtype": "NV12",
+     "subtype_guid": "3231564E-0000-0010-8000-00AA00389B71",
+     "width": 1280,
+     "height": 720,
+     "fps_num": 1,
+     "fps_den": 1,
+     "fps": 1,
+     "flags": [
+      "nv12_immediately_before_same_mode_mjpg:likely_mf_synthesized_decode"
+     ],
+     "frame_rate_range_min": [
+      1,
+      1
+     ],
+     "frame_rate_range_max": [
+      1,
+      1
+     ],
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 1,
+     "type_index": 1,
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "width": 1280,
+     "height": 720,
+     "fps_num": 1,
+     "fps_den": 1,
+     "fps": 1,
+     "flags": [],
+     "frame_rate_range_min": [
+      1,
+      1
+     ],
+     "frame_rate_range_max": [
+      1,
+      1
+     ],
+     "sample_size": 2764800,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 1,
+     "type_index": 2,
+     "subtype": "NV12",
+     "subtype_guid": "3231564E-0000-0010-8000-00AA00389B71",
+     "width": 640,
+     "height": 480,
+     "fps_num": 1,
+     "fps_den": 1,
+     "fps": 1,
+     "flags": [
+      "nv12_immediately_before_same_mode_mjpg:likely_mf_synthesized_decode"
+     ],
+     "frame_rate_range_min": [
+      1,
+      1
+     ],
+     "frame_rate_range_max": [
+      1,
+      1
+     ],
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 1,
+     "type_index": 3,
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "width": 640,
+     "height": 480,
+     "fps_num": 1,
+     "fps_den": 1,
+     "fps": 1,
+     "flags": [],
+     "frame_rate_range_min": [
+      1,
+      1
+     ],
+     "frame_rate_range_max": [
+      1,
+      1
+     ],
+     "sample_size": 921600,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 1,
+     "type_index": 4,
+     "subtype": "NV12",
+     "subtype_guid": "3231564E-0000-0010-8000-00AA00389B71",
+     "width": 320,
+     "height": 240,
+     "fps_num": 1,
+     "fps_den": 1,
+     "fps": 1,
+     "flags": [
+      "nv12_immediately_before_same_mode_mjpg:likely_mf_synthesized_decode"
+     ],
+     "frame_rate_range_min": [
+      1,
+      1
+     ],
+     "frame_rate_range_max": [
+      1,
+      1
+     ],
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 1,
+     "type_index": 5,
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "width": 320,
+     "height": 240,
+     "fps_num": 1,
+     "fps_den": 1,
+     "fps": 1,
+     "flags": [],
+     "frame_rate_range_min": [
+      1,
+      1
+     ],
+     "frame_rate_range_max": [
+      1,
+      1
+     ],
+     "sample_size": 230400,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 1,
+     "type_index": 6,
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "width": 640,
+     "height": 480,
+     "fps_num": 1,
+     "fps_den": 1,
+     "fps": 1,
+     "flags": [],
+     "frame_rate_range_min": [
+      1,
+      1
+     ],
+     "frame_rate_range_max": [
+      1,
+      1
+     ],
+     "sample_size": 614400,
+     "major_type": "MFMediaType_Video"
+    },
+    {
+     "stream_index": 1,
+     "type_index": 7,
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "width": 320,
+     "height": 240,
+     "fps_num": 1,
+     "fps_den": 1,
+     "fps": 1,
+     "flags": [],
+     "frame_rate_range_min": [
+      1,
+      1
+     ],
+     "frame_rate_range_max": [
+      1,
+      1
+     ],
+     "sample_size": 153600,
+     "major_type": "MFMediaType_Video"
+    }
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "step": "activate",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 26.4186,
+   "timed_out": false
+  },
+  {
+   "step": "create_presentation_descriptor",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 0.07400000095,
+   "timed_out": false
+  },
+  {
+   "step": "reader_native_types",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 2.362600001,
+   "timed_out": false
+  },
+  {
+   "step": "source_shutdown",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 1.8092,
+   "timed_out": false
+  },
+  {
+   "step": "activate_shutdown_object",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 0.07699999958,
+   "timed_out": false
+  }
+ ],
+ "error": null,
+ "utc_finished": "2026-11-06T17:38:57.710779Z",
+ "exit_code": 0,
+ "abandoned_threads": 0
+}

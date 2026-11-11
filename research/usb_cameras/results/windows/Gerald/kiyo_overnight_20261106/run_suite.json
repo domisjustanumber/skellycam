@@ -1,0 +1,159 @@
+{
+ "argv": [
+  "suite/windows/run_suite.py",
+  "--only",
+  "W-KIYO",
+  "--kiyo-foreground",
+  "--kiyo-minutes",
+  "300",
+  "--camera",
+  "0e05",
+  "--out-dir",
+  "results/windows/Gerald/kiyo_overnight_20261106"
+ ],
+ "args": {
+  "quick": false,
+  "only": "W-KIYO",
+  "skip": "",
+  "cycles": 50,
+  "proc_cycles": 15,
+  "frames": 30,
+  "mjpeg_seconds": 3.0,
+  "flash": false,
+  "out_dir": "results/windows/Gerald/kiyo_overnight_20261106",
+  "raw_dir": null,
+  "wincam": null,
+  "repeats": 20,
+  "no_fault_gate": false,
+  "min_fps": 30.0,
+  "min_height": 720,
+  "all_modes": false,
+  "multi_reps": null,
+  "ts_seconds": null,
+  "ctrl_runs": null,
+  "kiyo_minutes": 300.0,
+  "mjpeg_recapture_s": null,
+  "camera": [
+   "0e05"
+  ],
+  "kiyo_interval": 10.0,
+  "kiyo_foreground": true,
+  "probe_at_start": false,
+  "nograb_hold_ms": 2500,
+  "list": false,
+  "reanalyse": null
+ },
+ "utc_started": "2026-11-07T00:54:45.224179+00:00",
+ "out_dir": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\kiyo_overnight_20261106",
+ "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\kiyo_overnight_20261106",
+ "tests": [
+  "W-KIYO"
+ ],
+ "test_order": [
+  "W-KIYO"
+ ],
+ "background": [],
+ "eta_s": {
+  "W-KIYO": 18005.0
+ },
+ "cameras": [
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": true,
+   "last_arrival": "2026-11-07T00:50:01.798169+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 5,
+   "ds_index": 1
+  }
+ ],
+ "fault_gate": true,
+ "arrivals_since_previous_run": null,
+ "faults": {
+  "faults": {},
+  "currently_faulted": [],
+  "first_failure": {},
+  "events": [],
+  "gated_by_test": {
+   "W-KIYO": {}
+  },
+  "probes_by_test": {},
+  "kiyo": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "name": "USB Video Device",
+    "poller_mode": "foreground",
+    "poller_started_utc": "2026-11-07T00:54:45.228218+00:00",
+    "plug_in_age_at_start_s": 284.1,
+    "last_arrival": "2026-11-07T00:50:01.798169+00:00",
+    "stopped_answering": false,
+    "failed_from_first_poll": false,
+    "first_failure_utc": null,
+    "first_failure_plug_in_age_s": null,
+    "first_failure_test": null,
+    "first_failure_codes": null,
+    "first_failure_vendor_processes": null,
+    "first_failure_activity_processes": null,
+    "per_api": {},
+    "transitions": [],
+    "n_polls": 3602
+   }
+  },
+  "rule": "fault = 0x8007001F (device_error) / unreleasable or hung reader / streaming command killed at its timeout; its streaming commands are gated from the next test on; each later test re-probes it once (1-frame MF capture) and un-faults it if it answers"
+ },
+ "kiyo_onset": {
+  "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+   "control_polls": {
+    "name": "USB Video Device",
+    "poller_mode": "foreground",
+    "poller_started_utc": "2026-11-07T00:54:45.228218+00:00",
+    "plug_in_age_at_start_s": 284.1,
+    "last_arrival": "2026-11-07T00:50:01.798169+00:00",
+    "stopped_answering": false,
+    "failed_from_first_poll": false,
+    "first_failure_utc": null,
+    "first_failure_plug_in_age_s": null,
+    "first_failure_test": null,
+    "first_failure_codes": null,
+    "first_failure_vendor_processes": null,
+    "first_failure_activity_processes": null,
+    "per_api": {},
+    "transitions": [],
+    "n_polls": 3602
+   },
+   "first_device_fault": null,
+   "first_failure": null,
+   "faulted_at_end": false
+  }
+ },
+ "status": [
+  {
+   "test": "W-KIYO",
+   "eta_s": 18005.0,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 18001.3,
+   "n_errors": 0,
+   "errors_head": []
+  }
+ ],
+ "utc_finished": "2026-11-07T05:54:46.556917+00:00",
+ "elapsed_s": 18001.6,
+ "interrupted": false
+}

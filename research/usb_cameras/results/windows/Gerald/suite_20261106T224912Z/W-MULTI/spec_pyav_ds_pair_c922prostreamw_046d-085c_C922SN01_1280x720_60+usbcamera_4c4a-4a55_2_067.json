@@ -1,0 +1,69 @@
+{
+ "commands": [
+  {
+   "label": "046d:085c:sn=C922SN01",
+   "argv": [
+    "uv",
+    "run",
+    "--python",
+    "3.12",
+    "--script",
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_ds.py",
+    "capture",
+    "--device",
+    "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+    "--width",
+    "1280",
+    "--height",
+    "720",
+    "--fps",
+    "60",
+    "--timeout-ms",
+    "5000",
+    "--out-dir",
+    "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261106T224912Z\\W-MULTI\\pyav_ds_pair_c922prostreamw_046d-085c_C922SN01_1280x720_60+usbcamera_4c4a-4a55_2_067\\c922prostreamw_046d-085c_C922SN01",
+    "--save",
+    "none",
+    "--seconds",
+    "5.0"
+   ],
+   "start_at_s": 0.0,
+   "timeout_s": 35.0
+  },
+  {
+   "label": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "argv": [
+    "uv",
+    "run",
+    "--python",
+    "3.12",
+    "--script",
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_ds.py",
+    "capture",
+    "--device",
+    "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+    "--width",
+    "1280",
+    "--height",
+    "720",
+    "--fps",
+    "30",
+    "--timeout-ms",
+    "5000",
+    "--out-dir",
+    "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261106T224912Z\\W-MULTI\\pyav_ds_pair_c922prostreamw_046d-085c_C922SN01_1280x720_60+usbcamera_4c4a-4a55_2_067\\usbcamera_4c4a-4a55_2",
+    "--save",
+    "none",
+    "--seconds",
+    "5.0"
+   ],
+   "start_at_s": 0.0,
+   "timeout_s": 35.0
+  }
+ ],
+ "snapshots_at_s": [
+  4.0
+ ],
+ "descriptor_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261106T224912Z\\descriptors\\descriptors.json",
+ "snapshot_dir": null
+}

@@ -1,0 +1,191 @@
+{
+ "tool": "wincam",
+ "version": "wincam 1.0 (2026-11-06)",
+ "subcommand": "capture",
+ "utc_started": "2026-11-06T16:19:54.510114Z",
+ "pid": 42016,
+ "argv": [
+  "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/suite/windows/native/build/wincam.exe",
+  "capture",
+  "--api",
+  "mf",
+  "--device",
+  "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+  "--width",
+  "1280",
+  "--height",
+  "720",
+  "--fps",
+  "30",
+  "--frames",
+  "60",
+  "--timeout-ms",
+  "300",
+  "--out-dir",
+  "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/wincam/timeout_test_capture_300ms"
+ ],
+ "timeout_ms": 300,
+ "api": "mf",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30,
+  "frames": 60,
+  "seconds": null,
+  "save": "none"
+ },
+ "out_dir": "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/wincam/timeout_test_capture_300ms",
+ "enumerate_ms": 2.4288,
+ "device": {
+  "index": 7,
+  "friendly_name": "Logitech Webcam C930e",
+  "symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+  "usb": {
+   "vid": "046d",
+   "pid": "0843",
+   "mi": "00",
+   "instance": "6&2206973f&0&0000"
+  }
+ },
+ "controls_before": [],
+ "negotiated": {
+  "candidate_rates_same_size": [
+   "30/1",
+   "24/1",
+   "20/1",
+   "15/1",
+   "10/1",
+   "10000000/1333333",
+   "5/1"
+  ],
+  "native_type_index": 294,
+  "stream_selection_hr": "0x00000000",
+  "readback_hr": "0x00000000",
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps_num": 30,
+  "fps_den": 1,
+  "fps": 30,
+  "readback_ok": true
+ },
+ "steps": [
+  {
+   "step": "enumerate",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 2.5677,
+   "timed_out": false
+  },
+  {
+   "step": "activate",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 60.4178,
+   "timed_out": false
+  },
+  {
+   "step": "reader_create",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 1.3936,
+   "timed_out": false
+  },
+  {
+   "step": "set_type",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 1.4918,
+   "timed_out": false
+  },
+  {
+   "step": "read_sample_issue",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 0.1142999995,
+   "timed_out": false
+  },
+  {
+   "step": "first_sample",
+   "hr": null,
+   "hr_name": "timeout",
+   "ms": 329.3159,
+   "timed_out": true
+  },
+  {
+   "step": "flush",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 82.252,
+   "timed_out": false,
+   "on_flush_received": true
+  },
+  {
+   "step": "reader_release",
+   "hr": null,
+   "hr_name": "timeout",
+   "ms": 301.1313,
+   "timed_out": true
+  }
+ ],
+ "timings": {
+  "enumerate_ms": 2.5677,
+  "activate_ms": 60.4178,
+  "reader_ms": 1.3936,
+  "settype_ms": 1.4918,
+  "first_frame_ms": -1,
+  "open_to_first_frame_ms": -1,
+  "flush_ms": 82.252,
+  "reader_release_ms": 301.1313,
+  "shutdown_ms": -1,
+  "shutdown_object_ms": -1,
+  "close_ms": 383.4229
+ },
+ "frames": {
+  "total": 0,
+  "ok": 0,
+  "soi_eoi_ok": 0,
+  "sof0_size_match": 0,
+  "with_uvc_metadata": 0,
+  "with_capture_metadata_attr": 0,
+  "stream_ticks": 0,
+  "null_samples": 0,
+  "discontinuities": 0,
+  "bytes_total": 0,
+  "saved": 0,
+  "reader_flag_counts": {}
+ },
+ "duration_s": 0,
+ "fps_measured": 0,
+ "metadata": {
+  "uvc_pts_present": false,
+  "note": "UVC PTS/SCR appear only when MetadataBufferSizeInKB0 is set on this device instance (tier 1)"
+ },
+ "cpu": {
+  "user_s": 0,
+  "kernel_s": 0,
+  "window_s": 4e-07,
+  "pct_of_one_core": 0,
+  "method": "GetProcessTimes over the streaming window",
+  "process_total_s": 0.03125
+ },
+ "schedule": [],
+ "unreleasable": true,
+ "ok": false,
+ "error": {
+  "stage": "first_sample",
+  "hr": null,
+  "hr_name": "timeout",
+  "message": "no return within --timeout-ms",
+  "class": "timeout",
+  "reason": "call did not return within --timeout-ms"
+ },
+ "files": {
+  "frames_jsonl": "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/wincam/timeout_test_capture_300ms\\frames.jsonl",
+  "frames_mjpeg": null
+ },
+ "utc_finished": "2026-11-06T16:19:55.295326Z",
+ "exit_code": 5,
+ "abandoned_threads": 1
+}

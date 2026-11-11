@@ -1,0 +1,44 @@
+{
+ "tool": "wincam",
+ "version": "wincam 1.0 (2026-11-06)",
+ "subcommand": "capture",
+ "utc_started": "2026-11-06T16:19:58.720910Z",
+ "pid": 47516,
+ "argv": [
+  "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/suite/windows/native/build/wincam.exe",
+  "capture",
+  "--api",
+  "mf",
+  "--device",
+  "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+  "--width",
+  "1280",
+  "--height",
+  "720",
+  "--fps",
+  "30",
+  "--seconds",
+  "6",
+  "--timeout-ms",
+  "5000",
+  "--watchdog-ms",
+  "2500",
+  "--out-dir",
+  "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/wincam/timeout_test_watchdog"
+ ],
+ "timeout_ms": 5000,
+ "watchdog_fired": true,
+ "watchdog_ms": 2500,
+ "stage": "streaming",
+ "error": {
+  "class": "timeout",
+  "reason": "process watchdog expired; a camera call hung beyond every per-call timeout",
+  "stage": "streaming"
+ },
+ "utc_finished": "2026-11-06T16:20:01.229523Z",
+ "exit_code": 5
+,"partial":{
+ "stage": "streaming",
+ "device": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+ "frames": 32
+}}

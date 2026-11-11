@@ -1,0 +1,1936 @@
+{
+ "test": "W-TOPO",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-06T21:09:50.840628+00:00",
+ "utc_finished": "2026-11-06T21:09:51.823491+00:00",
+ "elapsed_s": 0.984,
+ "command": "suite/windows/run_suite.py --quick --camera 085c --camera 0843 --camera 4a55 --out-dir results/windows/Gerald/suite_build_selftest_20261106/fixes_quick (module W-TOPO)",
+ "argv": [
+  "suite/windows/run_suite.py",
+  "--quick",
+  "--camera",
+  "085c",
+  "--camera",
+  "0843",
+  "--camera",
+  "4a55",
+  "--out-dir",
+  "results/windows/Gerald/suite_build_selftest_20261106/fixes_quick",
+  "(module W-TOPO)"
+ ],
+ "environment": {
+  "os": {
+   "platform": "Windows-11-10.0.26300-SP0",
+   "system": "Windows",
+   "release": "11",
+   "version": "10.0.26300",
+   "machine": "AMD64",
+   "windows_build": 26300,
+   "windows_version": "10.0.26300",
+   "windows_edition": "Core",
+   "windows_displayversion": "26H2",
+   "windows_ubr": 9711,
+   "windows_productname": "Windows 10 Home",
+   "windows_currentbuild": "26300"
+  },
+  "python": "3.12.13",
+  "python_implementation": "CPython",
+  "python_executable": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+  "hostname": "Gerald",
+  "pid": 22536,
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0"
+  }
+ },
+ "cameras": [
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "vid": "046d",
+   "pid": "085c",
+   "serial": "C922SN01",
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "c922 Pro Stream Webcam",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+   "speed": "HS",
+   "bcd_device": "0016",
+   "metadata_tier1": true,
+   "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 4,
+   "ds_index": 0
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "name": "USB Camera",
+   "vid": "4c4a",
+   "pid": "4a55",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232e60d4&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Camera",
+   "ds_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "speed": "HS",
+   "bcd_device": "0100",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-06T20:54:40.183039+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 6,
+   "ds_index": 6
+  },
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+   "name": "Logitech Webcam C930e",
+   "vid": "046d",
+   "pid": "0843",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+   "parent_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&2206973f&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "Logitech Webcam C930e",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(7)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+   "speed": "HS",
+   "bcd_device": "0013",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 7
+  }
+ ],
+ "measurements": {
+  "descriptor_reads": [
+   {
+    "camera_key": "046d:085c:sn=C922SN01",
+    "rc": 0,
+    "elapsed_s": 0.078,
+    "timed_out": false,
+    "lock_wait_s": 0.0
+   },
+   {
+    "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "rc": 0,
+    "elapsed_s": 0.063,
+    "timed_out": false,
+    "lock_wait_s": 0.0
+   },
+   {
+    "camera_key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+    "rc": 0,
+    "elapsed_s": 0.078,
+    "timed_out": false,
+    "lock_wait_s": 0.0
+   }
+  ],
+  "collector_run": {
+   "argv": [
+    "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\win_topology.py",
+    "--descriptors",
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\descriptors\\descriptors.json"
+   ],
+   "rc": 0,
+   "elapsed_s": 0.141,
+   "timed_out": false,
+   "killed": false,
+   "lock_wait_s": null,
+   "spawn_error": null,
+   "stderr_tail": ""
+  },
+  "snapshot_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\W-TOPO\\snapshot.json",
+  "collector": {
+   "tool": "suite/windows/helpers/win_topology.py",
+   "elapsed_s": 0.0564,
+   "elevated": false,
+   "n_hubs": 9,
+   "n_ports": 63,
+   "n_devices": 18,
+   "n_phantom_or_present_devnodes": 47,
+   "descriptors_used": true,
+   "errors": [],
+   "requests_to_devices": 0,
+   "note": "cached hub-driver state and CfgMgr only; alt tables come from a separate descriptor read (win_descriptors.py) when given"
+  },
+  "domains": [
+   {
+    "key": "fs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#11",
+    "kind": "fs_root",
+    "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+    "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#11",
+    "cameras": [],
+    "load_us": 0.0,
+    "budget_us": 900.0,
+    "pct_budget": 0.0,
+    "pct_microframe": null,
+    "verdict": "fits",
+    "uncertain": false,
+    "active_tts": null,
+    "members": 1,
+    "policy_basis": "Intel xHCI: per USB 2.0 root port, threshold ~ USB 2.0 80% model (measured on this model, 8086:7A60)"
+   },
+   {
+    "key": "fs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#14",
+    "kind": "fs_root",
+    "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+    "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#14",
+    "cameras": [],
+    "load_us": 0.0,
+    "budget_us": 900.0,
+    "pct_budget": 0.0,
+    "pct_microframe": null,
+    "verdict": "fits",
+    "uncertain": false,
+    "active_tts": null,
+    "members": 1,
+    "policy_basis": "Intel xHCI: per USB 2.0 root port, threshold ~ USB 2.0 80% model (measured on this model, 8086:7A60)"
+   },
+   {
+    "key": "fs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#3",
+    "kind": "fs_root",
+    "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+    "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#3",
+    "cameras": [],
+    "load_us": 0.0,
+    "budget_us": 900.0,
+    "pct_budget": 0.0,
+    "pct_microframe": null,
+    "verdict": "fits",
+    "uncertain": false,
+    "active_tts": null,
+    "members": 1,
+    "policy_basis": "Intel xHCI: per USB 2.0 root port, threshold ~ USB 2.0 80% model (measured on this model, 8086:7A60)"
+   },
+   {
+    "key": "fs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#8",
+    "kind": "fs_root",
+    "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+    "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#8",
+    "cameras": [],
+    "load_us": 0.0,
+    "budget_us": 900.0,
+    "pct_budget": 0.0,
+    "pct_microframe": null,
+    "verdict": "fits",
+    "uncertain": false,
+    "active_tts": null,
+    "members": 1,
+    "policy_basis": "Intel xHCI: per USB 2.0 root port, threshold ~ USB 2.0 80% model (measured on this model, 8086:7A60)"
+   },
+   {
+    "key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+    "kind": "hs_link",
+    "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+    "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+    "cameras": [],
+    "load_us": 0.0,
+    "budget_us": 100.0,
+    "pct_budget": 0.0,
+    "pct_microframe": 0.0,
+    "verdict": "fits",
+    "uncertain": false,
+    "active_tts": 0,
+    "members": 1,
+    "policy_basis": "Intel xHCI: per USB 2.0 root port, threshold ~ USB 2.0 80% model (measured on this model, 8086:7A60)"
+   },
+   {
+    "key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+    "kind": "hs_link",
+    "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+    "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+    "cameras": [
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "046d:085c:sn=C922SN01"
+    ],
+    "load_us": 0.0,
+    "budget_us": 100.0,
+    "pct_budget": 0.0,
+    "pct_microframe": 0.0,
+    "verdict": "fits",
+    "uncertain": false,
+    "active_tts": 2,
+    "members": 8,
+    "policy_basis": "Intel xHCI: per USB 2.0 root port, threshold ~ USB 2.0 80% model (measured on this model, 8086:7A60)"
+   },
+   {
+    "key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#7",
+    "kind": "hs_link",
+    "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+    "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#7",
+    "cameras": [
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7"
+    ],
+    "load_us": 0.0,
+    "budget_us": 100.0,
+    "pct_budget": 0.0,
+    "pct_microframe": 0.0,
+    "verdict": "fits",
+    "uncertain": false,
+    "active_tts": 0,
+    "members": 1,
+    "policy_basis": "Intel xHCI: per USB 2.0 root port, threshold ~ USB 2.0 80% model (measured on this model, 8086:7A60)"
+   },
+   {
+    "key": "ss|PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4|USB\\ROOT_HUB30\\7&37B53FB&0&0#4",
+    "kind": "ss_link",
+    "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+    "root_port_id": "USB\\ROOT_HUB30\\7&37B53FB&0&0#4",
+    "cameras": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "load_us": 0.0,
+    "budget_us": 112.5,
+    "pct_budget": 0.0,
+    "pct_microframe": null,
+    "verdict": "fits",
+    "uncertain": true,
+    "active_tts": null,
+    "members": 4,
+    "policy_basis": "spec default (xHCI: each root port is a primary domain); unverified vendor"
+   }
+  ],
+  "camera_domains": {
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#7",
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "ss|PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4|USB\\ROOT_HUB30\\7&37B53FB&0&0#4",
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+   "046d:085c:sn=C922SN01": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13"
+  },
+  "cameras_in_snapshot": [
+   {
+    "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+    "name": "Logitech Webcam C930e",
+    "speed": "HS",
+    "current_alt": 0,
+    "alt_table_len": 11,
+    "domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#7",
+    "root_port": "USB\\ROOT_HUB30\\4&2FD48294&0&0#7"
+   },
+   {
+    "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "name": "Razer Kiyo Pro",
+    "speed": "SS",
+    "current_alt": null,
+    "alt_table_len": 0,
+    "domain": "ss|PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4|USB\\ROOT_HUB30\\7&37B53FB&0&0#4",
+    "root_port": "USB\\ROOT_HUB30\\7&37B53FB&0&0#4"
+   },
+   {
+    "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "name": "USB Camera",
+    "speed": "HS",
+    "current_alt": 0,
+    "alt_table_len": 1,
+    "domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+    "root_port": "USB\\ROOT_HUB30\\4&2FD48294&0&0#13"
+   },
+   {
+    "key": "046d:085c:sn=C922SN01",
+    "name": "c922 Pro Stream Webcam",
+    "speed": "HS",
+    "current_alt": 0,
+    "alt_table_len": 11,
+    "domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+    "root_port": "USB\\ROOT_HUB30\\4&2FD48294&0&0#13"
+   }
+  ],
+  "free_ports": [
+   {
+    "port_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#1",
+    "label": "port 1 of the hub 'USB2137B' 0424:2137 (on port 13 (HS13))",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": false,
+    "acpi_name": null,
+    "acpi_name_inferred": null,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": null,
+    "socket_evidence_level": "weak",
+    "socket_evidence_detail": {
+     "level": "weak",
+     "strong": [],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#3",
+    "label": "port 3 of the hub 'USB2137B' 0424:2137 (on port 13 (HS13))",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": false,
+    "acpi_name": null,
+    "acpi_name_inferred": null,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": null,
+    "socket_evidence_level": "weak",
+    "socket_evidence_detail": {
+     "level": "weak",
+     "strong": [],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#4",
+    "label": "port 4 of the hub 'USB2137B' 0424:2137 (on port 13 (HS13))",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": false,
+    "acpi_name": null,
+    "acpi_name_inferred": null,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": null,
+    "socket_evidence_level": "weak",
+    "socket_evidence_detail": {
+     "level": "weak",
+     "strong": [],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#1",
+    "label": "port 1 of the hub 'USB2.0 Hub' 05E3:0608 (on port 10 (HS10))",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": false,
+    "acpi_name": null,
+    "acpi_name_inferred": null,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": null,
+    "socket_evidence_level": "weak",
+    "socket_evidence_detail": {
+     "level": "weak",
+     "strong": [],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#2",
+    "label": "port 2 of the hub 'USB2.0 Hub' 05E3:0608 (on port 10 (HS10))",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": false,
+    "acpi_name": null,
+    "acpi_name_inferred": null,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": null,
+    "socket_evidence_level": "weak",
+    "socket_evidence_detail": {
+     "level": "weak",
+     "strong": [],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#3",
+    "label": "port 3 of the hub 'USB2.0 Hub' 05E3:0608 (on port 10 (HS10))",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": false,
+    "acpi_name": null,
+    "acpi_name_inferred": null,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": "_PLD user_visible on a hub port (weak); phantom history of internal-header devices: HX1500i Power Supply",
+    "socket_evidence_level": "header",
+    "socket_evidence_detail": {
+     "level": "header",
+     "strong": [],
+     "weak": [
+      "_PLD user_visible on a hub port",
+      "_UPC connectable"
+     ],
+     "header": [
+      "phantom history: HX1500i Power Supply"
+     ]
+    }
+   },
+   {
+    "port_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#4",
+    "label": "port 4 of the hub 'USB2.0 Hub' 05E3:0608 (on port 10 (HS10))",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": false,
+    "acpi_name": null,
+    "acpi_name_inferred": null,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": null,
+    "socket_evidence_level": "weak",
+    "socket_evidence_detail": {
+     "level": "weak",
+     "strong": [],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#1",
+    "label": "port 1 (HS01, USB 3, not USB-C, user-accessible)",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#1",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": true,
+    "acpi_name": "HS01",
+    "acpi_name_inferred": null,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": "_PLD user_visible; phantom history: USB Receiver",
+    "socket_evidence_level": "strong",
+    "socket_evidence_detail": {
+     "level": "strong",
+     "strong": [
+      "phantom history: USB Receiver",
+      "_PLD user_visible"
+     ],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#2",
+    "label": "port 2 (HS02, USB 3, not USB-C, user-accessible)",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#2",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": true,
+    "acpi_name": "HS02",
+    "acpi_name_inferred": null,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": "_PLD user_visible; phantom history: Microsoft® 2.4GHz Transceiver v8.0",
+    "socket_evidence_level": "strong",
+    "socket_evidence_detail": {
+     "level": "strong",
+     "strong": [
+      "phantom history: Microsoft® 2.4GHz Transceiver v8.0",
+      "_PLD user_visible"
+     ],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#4",
+    "label": "port 4 (HS04, USB 3, not USB-C, user-accessible)",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#4",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": true,
+    "acpi_name": "HS04",
+    "acpi_name_inferred": null,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": "_PLD user_visible; phantom history: USB2.1 Hub",
+    "socket_evidence_level": "strong",
+    "socket_evidence_detail": {
+     "level": "strong",
+     "strong": [
+      "phantom history: USB2.1 Hub",
+      "_PLD user_visible"
+     ],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#5",
+    "label": "port 5 (HS05, USB 3, not USB-C)",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#5",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": true,
+    "acpi_name": "HS05",
+    "acpi_name_inferred": true,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": null,
+    "socket_evidence_level": "weak",
+    "socket_evidence_detail": {
+     "level": "weak",
+     "strong": [],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#6",
+    "label": "port 6 (HS06, USB 3, not USB-C)",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#6",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": true,
+    "acpi_name": "HS06",
+    "acpi_name_inferred": true,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": null,
+    "socket_evidence_level": "weak",
+    "socket_evidence_detail": {
+     "level": "weak",
+     "strong": [],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#9",
+    "label": "port 9 (HS09, USB-C)",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#9",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": true,
+    "acpi_name": "HS09",
+    "acpi_name_inferred": true,
+    "connector": "C",
+    "usb3_companion_occupied": false,
+    "socket_evidence": "Type-C connector flag (_UPC)",
+    "socket_evidence_level": "weak",
+    "socket_evidence_detail": {
+     "level": "weak",
+     "strong": [],
+     "weak": [
+      "Type-C connector flag (_UPC)",
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#12",
+    "label": "port 12 (HS12, USB-C, user-accessible)",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#12",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": true,
+    "acpi_name": "HS12",
+    "acpi_name_inferred": null,
+    "connector": "C",
+    "usb3_companion_occupied": false,
+    "socket_evidence": "_PLD user_visible; _PLD receptacle 8x3 mm oval (USB-C geometry); phantom history: MX Vertical Advanced Ergonomic Mouse; Type-C connector flag (_UPC)",
+    "socket_evidence_level": "strong",
+    "socket_evidence_detail": {
+     "level": "strong",
+     "strong": [
+      "phantom history: MX Vertical Advanced Ergonomic Mouse",
+      "_PLD receptacle 8x3 mm oval (USB-C geometry)",
+      "_PLD user_visible"
+     ],
+     "weak": [
+      "Type-C connector flag (_UPC)",
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#15",
+    "label": "port 15 (HS15, USB 2.0-only)",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#15",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": true,
+    "acpi_name": "HS15",
+    "acpi_name_inferred": true,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": null,
+    "socket_evidence_level": "weak",
+    "socket_evidence_detail": {
+     "level": "weak",
+     "strong": [],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#16",
+    "label": "port 16 (HS16, USB 2.0-only)",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#16",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": true,
+    "acpi_name": "HS16",
+    "acpi_name_inferred": true,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": null,
+    "socket_evidence_level": "weak",
+    "socket_evidence_detail": {
+     "level": "weak",
+     "strong": [],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1#1",
+    "label": "port 1 of the hub 'USB2.1 Hub' 05E3:0610 (on port 13 (HS13))",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": false,
+    "acpi_name": null,
+    "acpi_name_inferred": null,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": "phantom history: Logitech Webcam C930e",
+    "socket_evidence_level": "strong",
+    "socket_evidence_detail": {
+     "level": "strong",
+     "strong": [
+      "phantom history: Logitech Webcam C930e"
+     ],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1#3",
+    "label": "port 3 of the hub 'USB2.1 Hub' 05E3:0610 (on port 13 (HS13))",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": false,
+    "acpi_name": null,
+    "acpi_name_inferred": null,
+    "connector": "unknown",
+    "usb3_companion_occupied": false,
+    "socket_evidence": "phantom history: USB Composite Device",
+    "socket_evidence_level": "strong",
+    "socket_evidence_detail": {
+     "level": "strong",
+     "strong": [
+      "phantom history: USB Composite Device"
+     ],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   },
+   {
+    "port_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13#4",
+    "label": "port 4 of the hub 'USB2.1 Hub' 05E3:0610 (on port 13 (HS13))",
+    "label_tier": "controller_port_number",
+    "hs_domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+    "controller": "Intel(R) USB 3.20 eXtensible Host Controller",
+    "is_root_port": false,
+    "acpi_name": null,
+    "acpi_name_inferred": null,
+    "connector": "unknown",
+    "usb3_companion_occupied": true,
+    "socket_evidence": "phantom history: USB2137B",
+    "socket_evidence_level": "strong",
+    "socket_evidence_detail": {
+     "level": "strong",
+     "strong": [
+      "phantom history: USB2137B"
+     ],
+     "weak": [
+      "_UPC connectable"
+     ],
+     "header": []
+    }
+   }
+  ],
+  "free_port_count": 19,
+  "mode_alt_cache": {
+   "file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\mode_alt_cache.json",
+   "entries": 20,
+   "seed_source": "results/agent_reports/plan_20261106/bandwidth_domain_model.md section 3; results/windows/Gerald/bw_concurrency_rerun_20261027/r02_c922_alt_by_mode.json, r03_c930e_alt_by_mode.json, r04_generic_alt_by_mode.json, r06_c930e_small_modes.json",
+   "seed_observed_source": "results/windows/Gerald/suite_20261106T181941Z W-MULTI.json runs[61] (pyav_ds pair, C922 format_fallback, observed_pipe 1020x3)"
+  },
+  "default_modes": {
+   "046d:085c:sn=C922SN01": "640x480 MJPEG 30 fps",
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": "1920x1080 MJPEG 30 fps",
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": "640x480 MJPEG 30 fps"
+  },
+  "gerald_pairs": [
+   {
+    "pair": "C922 MJPEG 720p30 (alt 9) + generic",
+    "same_domain": true,
+    "expected_if_same_domain": "over",
+    "predicted_verdict": "over",
+    "pair_only_pct_microframe": 81.1,
+    "with_other_load_pct_microframe": 81.1,
+    "other_load_us": 0.0,
+    "agrees": true,
+    "has_required_sentence": true
+   },
+   {
+    "pair": "C922 MJPEG 640x480@30 (alt 4) + generic",
+    "same_domain": true,
+    "expected_if_same_domain": "fits",
+    "predicted_verdict": "fits",
+    "pair_only_pct_microframe": 59.7,
+    "with_other_load_pct_microframe": 59.7,
+    "other_load_us": 0.0,
+    "agrees": true,
+    "has_required_sentence": null
+   },
+   {
+    "pair": "C922 MJPEG 1080p@5 (alt 5) + generic",
+    "same_domain": true,
+    "expected_if_same_domain": "fits",
+    "predicted_verdict": "fits",
+    "pair_only_pct_microframe": 62.2,
+    "with_other_load_pct_microframe": 62.2,
+    "other_load_us": 0.0,
+    "agrees": true,
+    "has_required_sentence": null
+   }
+  ],
+  "scenarios": {
+   "all_cameras_default_mode": {
+    "requests": [
+     {
+      "camera_key": "046d:085c:sn=C922SN01",
+      "mode": "640x480 MJPEG 30 fps"
+     },
+     {
+      "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "mode": "1920x1080 MJPEG 30 fps"
+     },
+     {
+      "camera_key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+      "mode": "640x480 MJPEG 30 fps"
+     }
+    ],
+    "domains": [
+     {
+      "key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "predicted_load_us": 74.665,
+      "other_load_us": 0.0,
+      "pct_budget": 74.7,
+      "pct_microframe": 59.7,
+      "verdict": "fits",
+      "members": [
+       "046d:085c:sn=C922SN01",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+      ],
+      "incomplete": false
+     },
+     {
+      "key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#7",
+      "predicted_load_us": 54.179,
+      "other_load_us": 0.0,
+      "pct_budget": 54.2,
+      "pct_microframe": 43.3,
+      "verdict": "fits",
+      "members": [
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7"
+      ],
+      "incomplete": false
+     }
+    ],
+    "resolved": [
+     {
+      "camera_key": "046d:085c:sn=C922SN01",
+      "mode": {
+       "format": "MJPG",
+       "width": 640,
+       "height": 480,
+       "fps": 30.0
+      },
+      "alt": 4,
+      "max_packet": 640,
+      "mult": 1,
+      "cost_us": 13.081,
+      "cost_source": "cache",
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "device_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "name": "c922 Pro Stream Webcam",
+      "mode_text": "640x480 MJPEG 30 fps"
+     },
+     {
+      "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "mode": {
+       "format": "MJPG",
+       "width": 1920,
+       "height": 1080,
+       "fps": 30.0
+      },
+      "alt": 1,
+      "max_packet": 1023,
+      "mult": 3,
+      "cost_us": 61.584,
+      "cost_source": "cache",
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "device_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "name": "USB Camera",
+      "mode_text": "1920x1080 MJPEG 30 fps"
+     },
+     {
+      "camera_key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+      "mode": {
+       "format": "MJPG",
+       "width": 640,
+       "height": 480,
+       "fps": 30.0
+      },
+      "alt": 10,
+      "max_packet": 896,
+      "mult": 3,
+      "cost_us": 54.179,
+      "cost_source": "cache",
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#7",
+      "device_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+      "name": "Logitech Webcam C930e",
+      "mode_text": "640x480 MJPEG 30 fps"
+     }
+    ],
+    "conflicts": [],
+    "warnings": [],
+    "messages": []
+   },
+   "all_cameras_720p30": {
+    "requests": [
+     {
+      "camera_key": "046d:085c:sn=C922SN01",
+      "mode": "1280x720 MJPEG 30 fps"
+     },
+     {
+      "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "mode": "1280x720 MJPEG 30 fps"
+     },
+     {
+      "camera_key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+      "mode": "1280x720 MJPEG 30 fps"
+     }
+    ],
+    "domains": [
+     {
+      "key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "predicted_load_us": 101.436,
+      "other_load_us": 0.0,
+      "pct_budget": 101.4,
+      "pct_microframe": 81.1,
+      "verdict": "over",
+      "members": [
+       "046d:085c:sn=C922SN01",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+      ],
+      "incomplete": false
+     },
+     {
+      "key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#7",
+      "predicted_load_us": 61.64,
+      "other_load_us": 0.0,
+      "pct_budget": 61.6,
+      "pct_microframe": 49.3,
+      "verdict": "fits",
+      "members": [
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7"
+      ],
+      "incomplete": false
+     }
+    ],
+    "resolved": [
+     {
+      "camera_key": "046d:085c:sn=C922SN01",
+      "mode": "MJPG 1280x720@30",
+      "alt": 9,
+      "max_packet": 992,
+      "mult": 2,
+      "cost_us": 39.852,
+      "cost_source": "cache",
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "device_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "name": "c922 Pro Stream Webcam",
+      "mode_text": "1280x720 MJPEG 30 fps"
+     },
+     {
+      "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "mode": "MJPG 1280x720@30",
+      "alt": 1,
+      "max_packet": 1023,
+      "mult": 3,
+      "cost_us": 61.584,
+      "cost_source": "cache",
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "device_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "name": "USB Camera",
+      "mode_text": "1280x720 MJPEG 30 fps"
+     },
+     {
+      "camera_key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+      "mode": "MJPG 1280x720@30",
+      "alt": 11,
+      "max_packet": 1024,
+      "mult": 3,
+      "cost_us": 61.64,
+      "cost_source": "cache",
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#7",
+      "device_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+      "name": "Logitech Webcam C930e",
+      "mode_text": "1280x720 MJPEG 30 fps"
+     }
+    ],
+    "conflicts": [
+     {
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "cameras": [
+       "046d:085c:sn=C922SN01",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+      ],
+      "pct_total": 101.4,
+      "pct_microframe": 81.1,
+      "verdict": "over",
+      "shared_hop": "the same USB hub (USB2.1 Hub 05E3:0610) on port 13 (HS13) of the Intel(R) USB 3.20 eXtensible Host Controller",
+      "other_load_us": 0.0,
+      "other_devices": [
+       {
+        "device_id": "USB\\VID_046D&PID_C52B\\7&29C31953&0&2",
+        "name": "USB Receiver",
+        "load_us": 0.0
+       },
+       {
+        "device_id": "USB\\VID_04D8&PID_0B2A\\7&29C31953&0&5",
+        "name": "U2717D_0B2A_15091601",
+        "load_us": 0.0
+       },
+       {
+        "device_id": "USB\\VID_194F&PID_0422\\PERIPHSNA001",
+        "name": "Revelator IO 24",
+        "load_us": 0
+       }
+      ]
+     }
+    ],
+    "warnings": [],
+    "messages": [
+     {
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "moving_camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "suggestions": [
+       {
+        "group_label": "Intel(R) USB 3.20 eXtensible Host Controller",
+        "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+        "panel": null,
+        "best_rank": 1,
+        "ports": [
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#1",
+          "label": "port 1 (HS01, USB 3, not USB-C, user-accessible)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#1",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "strong"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#2",
+          "label": "port 2 (HS02, USB 3, not USB-C, user-accessible)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#2",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "strong"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#4",
+          "label": "port 4 (HS04, USB 3, not USB-C, user-accessible)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#4",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "strong"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#12",
+          "label": "port 12 (HS12, USB-C, user-accessible)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#12",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "strong"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#5",
+          "label": "port 5 (HS05, USB 3, not USB-C)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#5",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#6",
+          "label": "port 6 (HS06, USB 3, not USB-C)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#6",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#9",
+          "label": "port 9 (HS09, USB-C)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#9",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#15",
+          "label": "port 15 (HS15, USB 2.0-only)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#15",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#16",
+          "label": "port 16 (HS16, USB 2.0-only)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#16",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#1",
+          "label": "port 1 of the hub 'USB2.0 Hub' 05E3:0608 (on port 10 (HS10))",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": true,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#2",
+          "label": "port 2 of the hub 'USB2.0 Hub' 05E3:0608 (on port 10 (HS10))",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": true,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#4",
+          "label": "port 4 of the hub 'USB2.0 Hub' 05E3:0608 (on port 10 (HS10))",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": true,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#3",
+          "label": "port 3 of the hub 'USB2.0 Hub' 05E3:0608 (on port 10 (HS10))",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": true,
+          "tight": false,
+          "evidence": "header"
+         }
+        ]
+       }
+      ],
+      "alternatives": [
+       {
+        "camera_key": "046d:085c:sn=C922SN01",
+        "name": "c922 Pro Stream Webcam",
+        "mode": {
+         "format": "MJPG",
+         "width": 640,
+         "height": 480,
+         "fps": 30.0
+        },
+        "mode_text": "640x480 MJPEG 30 fps",
+        "alt": 4,
+        "cost_us": 13.081,
+        "pct_budget": 13.1,
+        "domain_pct_after": 74.7,
+        "verified": true,
+        "keeps_fps": true
+       }
+      ],
+      "message": "c922 Pro Stream Webcam and USB Camera share USB bandwidth: both connect through the same USB hub (USB2.1 Hub 05E3:0610) on port 13 (HS13) of the Intel(R) USB 3.20 eXtensible Host Controller.\nIf I open them both at the same time, one of them will probably fail with a USB bandwidth error (predicted from the USB layout, not yet tried).\nAt these settings they need about 101% of what that USB 2.0 link allows (c922 Pro Stream Webcam 1280x720 MJPEG 30 fps: 40%, USB Camera 1280x720 MJPEG 30 fps: 62%).\nSuggest moving one of those cameras to any of the following controller ports:\n  Intel(R) USB 3.20 eXtensible Host Controller: port 1 (HS01, USB 3, not USB-C, user-accessible), port 2 (HS02, USB 3, not USB-C, user-accessible), port 4 (HS04, USB 3, not USB-C, user-accessible), port 12 (HS12, USB-C, user-accessible), port 5 (HS05, USB 3, not USB-C), port 6 (HS06, USB 3, not USB-C), port 9 (HS09, USB-C), port 15 (HS15, USB 2.0-only), and 5 more\nOr, to keep both where they are, lower c922 Pro Stream Webcam to 640x480 MJPEG 30 fps (about 13%)."
+     }
+    ]
+   },
+   "pair: C922 MJPEG 720p30 (alt 9) + generic": {
+    "requests": [
+     {
+      "camera_key": "046d:085c:sn=C922SN01",
+      "mode": "1280x720 MJPEG 30 fps"
+     },
+     {
+      "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "mode": "1280x720 MJPEG 30 fps"
+     }
+    ],
+    "domains": [
+     {
+      "key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "predicted_load_us": 101.436,
+      "other_load_us": 0.0,
+      "pct_budget": 101.4,
+      "pct_microframe": 81.1,
+      "verdict": "over",
+      "members": [
+       "046d:085c:sn=C922SN01",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+      ],
+      "incomplete": false
+     }
+    ],
+    "resolved": [
+     {
+      "camera_key": "046d:085c:sn=C922SN01",
+      "mode": "MJPG 1280x720@30",
+      "alt": 9,
+      "max_packet": 992,
+      "mult": 2,
+      "cost_us": 39.852,
+      "cost_source": "cache",
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "device_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "name": "c922 Pro Stream Webcam",
+      "mode_text": "1280x720 MJPEG 30 fps"
+     },
+     {
+      "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "mode": "MJPG 1280x720@30",
+      "alt": 1,
+      "max_packet": 1023,
+      "mult": 3,
+      "cost_us": 61.584,
+      "cost_source": "cache",
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "device_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "name": "USB Camera",
+      "mode_text": "1280x720 MJPEG 30 fps"
+     }
+    ],
+    "conflicts": [
+     {
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "cameras": [
+       "046d:085c:sn=C922SN01",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+      ],
+      "pct_total": 101.4,
+      "pct_microframe": 81.1,
+      "verdict": "over",
+      "shared_hop": "the same USB hub (USB2.1 Hub 05E3:0610) on port 13 (HS13) of the Intel(R) USB 3.20 eXtensible Host Controller",
+      "other_load_us": 0.0,
+      "other_devices": [
+       {
+        "device_id": "USB\\VID_046D&PID_C52B\\7&29C31953&0&2",
+        "name": "USB Receiver",
+        "load_us": 0.0
+       },
+       {
+        "device_id": "USB\\VID_04D8&PID_0B2A\\7&29C31953&0&5",
+        "name": "U2717D_0B2A_15091601",
+        "load_us": 0.0
+       },
+       {
+        "device_id": "USB\\VID_194F&PID_0422\\PERIPHSNA001",
+        "name": "Revelator IO 24",
+        "load_us": 0
+       }
+      ]
+     }
+    ],
+    "warnings": [],
+    "messages": [
+     {
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "moving_camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "suggestions": [
+       {
+        "group_label": "Intel(R) USB 3.20 eXtensible Host Controller",
+        "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+        "panel": null,
+        "best_rank": 1,
+        "ports": [
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#1",
+          "label": "port 1 (HS01, USB 3, not USB-C, user-accessible)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#1",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "strong"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#2",
+          "label": "port 2 (HS02, USB 3, not USB-C, user-accessible)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#2",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "strong"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#4",
+          "label": "port 4 (HS04, USB 3, not USB-C, user-accessible)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#4",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "strong"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#12",
+          "label": "port 12 (HS12, USB-C, user-accessible)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#12",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "strong"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#5",
+          "label": "port 5 (HS05, USB 3, not USB-C)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#5",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#6",
+          "label": "port 6 (HS06, USB 3, not USB-C)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#6",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#9",
+          "label": "port 9 (HS09, USB-C)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#9",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#15",
+          "label": "port 15 (HS15, USB 2.0-only)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#15",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#16",
+          "label": "port 16 (HS16, USB 2.0-only)",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#16",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": false,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#1",
+          "label": "port 1 of the hub 'USB2.0 Hub' 05E3:0608 (on port 10 (HS10))",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": true,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#2",
+          "label": "port 2 of the hub 'USB2.0 Hub' 05E3:0608 (on port 10 (HS10))",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": true,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#4",
+          "label": "port 4 of the hub 'USB2.0 Hub' 05E3:0608 (on port 10 (HS10))",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": true,
+          "tight": false,
+          "evidence": "weak"
+         },
+         {
+          "port_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#3",
+          "label": "port 3 of the hub 'USB2.0 Hub' 05E3:0608 (on port 10 (HS10))",
+          "rank": 1,
+          "shares_with": [],
+          "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+          "domain_load_us": 0.0,
+          "load_after_us": 61.584,
+          "pct_budget_after": 61.6,
+          "on_hub": true,
+          "tight": false,
+          "evidence": "header"
+         }
+        ]
+       }
+      ],
+      "alternatives": [
+       {
+        "camera_key": "046d:085c:sn=C922SN01",
+        "name": "c922 Pro Stream Webcam",
+        "mode": {
+         "format": "MJPG",
+         "width": 640,
+         "height": 480,
+         "fps": 30.0
+        },
+        "mode_text": "640x480 MJPEG 30 fps",
+        "alt": 4,
+        "cost_us": 13.081,
+        "pct_budget": 13.1,
+        "domain_pct_after": 74.7,
+        "verified": true,
+        "keeps_fps": true
+       }
+      ],
+      "message": "c922 Pro Stream Webcam and USB Camera share USB bandwidth: both connect through the same USB hub (USB2.1 Hub 05E3:0610) on port 13 (HS13) of the Intel(R) USB 3.20 eXtensible Host Controller.\nIf I open them both at the same time, one of them will probably fail with a USB bandwidth error (predicted from the USB layout, not yet tried).\nAt these settings they need about 101% of what that USB 2.0 link allows (c922 Pro Stream Webcam 1280x720 MJPEG 30 fps: 40%, USB Camera 1280x720 MJPEG 30 fps: 62%).\nSuggest moving one of those cameras to any of the following controller ports:\n  Intel(R) USB 3.20 eXtensible Host Controller: port 1 (HS01, USB 3, not USB-C, user-accessible), port 2 (HS02, USB 3, not USB-C, user-accessible), port 4 (HS04, USB 3, not USB-C, user-accessible), port 12 (HS12, USB-C, user-accessible), port 5 (HS05, USB 3, not USB-C), port 6 (HS06, USB 3, not USB-C), port 9 (HS09, USB-C), port 15 (HS15, USB 2.0-only), and 5 more\nOr, to keep both where they are, lower c922 Pro Stream Webcam to 640x480 MJPEG 30 fps (about 13%)."
+     }
+    ]
+   },
+   "pair: C922 MJPEG 640x480@30 (alt 4) + generic": {
+    "requests": [
+     {
+      "camera_key": "046d:085c:sn=C922SN01",
+      "mode": "640x480 MJPEG 30 fps"
+     },
+     {
+      "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "mode": "1280x720 MJPEG 30 fps"
+     }
+    ],
+    "domains": [
+     {
+      "key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "predicted_load_us": 74.665,
+      "other_load_us": 0.0,
+      "pct_budget": 74.7,
+      "pct_microframe": 59.7,
+      "verdict": "fits",
+      "members": [
+       "046d:085c:sn=C922SN01",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+      ],
+      "incomplete": false
+     }
+    ],
+    "resolved": [
+     {
+      "camera_key": "046d:085c:sn=C922SN01",
+      "mode": "MJPG 640x480@30",
+      "alt": 4,
+      "max_packet": 640,
+      "mult": 1,
+      "cost_us": 13.081,
+      "cost_source": "cache",
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "device_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "name": "c922 Pro Stream Webcam",
+      "mode_text": "640x480 MJPEG 30 fps"
+     },
+     {
+      "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "mode": "MJPG 1280x720@30",
+      "alt": 1,
+      "max_packet": 1023,
+      "mult": 3,
+      "cost_us": 61.584,
+      "cost_source": "cache",
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "device_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "name": "USB Camera",
+      "mode_text": "1280x720 MJPEG 30 fps"
+     }
+    ],
+    "conflicts": [],
+    "warnings": [],
+    "messages": []
+   },
+   "pair: C922 MJPEG 1080p@5 (alt 5) + generic": {
+    "requests": [
+     {
+      "camera_key": "046d:085c:sn=C922SN01",
+      "mode": "1920x1080 MJPEG 5 fps"
+     },
+     {
+      "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "mode": "1280x720 MJPEG 30 fps"
+     }
+    ],
+    "domains": [
+     {
+      "key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "predicted_load_us": 77.777,
+      "other_load_us": 0.0,
+      "pct_budget": 77.8,
+      "pct_microframe": 62.2,
+      "verdict": "fits",
+      "members": [
+       "046d:085c:sn=C922SN01",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+      ],
+      "incomplete": false
+     }
+    ],
+    "resolved": [
+     {
+      "camera_key": "046d:085c:sn=C922SN01",
+      "mode": "MJPG 1920x1080@5",
+      "alt": 5,
+      "max_packet": 800,
+      "mult": 1,
+      "cost_us": 16.193,
+      "cost_source": "cache",
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "device_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "name": "c922 Pro Stream Webcam",
+      "mode_text": "1920x1080 MJPEG 5 fps"
+     },
+     {
+      "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "mode": "MJPG 1280x720@30",
+      "alt": 1,
+      "max_packet": 1023,
+      "mult": 3,
+      "cost_us": 61.584,
+      "cost_source": "cache",
+      "domain_key": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+      "device_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "name": "USB Camera",
+      "mode_text": "1280x720 MJPEG 30 fps"
+     }
+    ],
+    "conflicts": [],
+    "warnings": [],
+    "messages": []
+   }
+  },
+  "suggestion_checks": [
+   {
+    "scenario": "all_cameras_720p30",
+    "domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+    "n_ports": 13,
+    "ports_in_conflict_domain": []
+   },
+   {
+    "scenario": "pair: C922 MJPEG 720p30 (alt 9) + generic",
+    "domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+    "n_ports": 13,
+    "ports_in_conflict_domain": []
+   }
+  ],
+  "labels_raw": false,
+  "label_tiers": {
+   "port 1 (HS01, USB 3, not USB-C, user-accessible)": "controller_port_number",
+   "port 2 (HS02, USB 3, not USB-C, user-accessible)": "controller_port_number",
+   "port 4 (HS04, USB 3, not USB-C, user-accessible)": "controller_port_number",
+   "port 5 (HS05, USB 3, not USB-C)": "controller_port_number",
+   "port 6 (HS06, USB 3, not USB-C)": "controller_port_number",
+   "port 9 (HS09, USB-C)": "controller_port_number",
+   "port 12 (HS12, USB-C, user-accessible)": "controller_port_number",
+   "port 15 (HS15, USB 2.0-only)": "controller_port_number",
+   "port 16 (HS16, USB 2.0-only)": "controller_port_number"
+  },
+  "label_rule": "topology_model.label_tier: raw = acpi_or_location_path / location_unknown only (shared with W-MULTI and rate_bw)",
+  "arrivals": {
+   "before": {
+    "utc": "2026-11-06T21:09:50.843626+00:00",
+    "cameras": {
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-06T20:54:40.183039+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+      "present": true,
+      "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "after": {
+    "utc": "2026-11-06T21:09:51.823491+00:00",
+    "cameras": {
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-06T20:54:40.183039+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+      "present": true,
+      "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "changes": [],
+   "unexplained_re_arrival": []
+  }
+ },
+ "verdicts": {
+  "mapper": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "snapshot built without admin and without requests to devices",
+     "met": true,
+     "detail": {
+      "tool": "suite/windows/helpers/win_topology.py",
+      "elapsed_s": 0.0564,
+      "elevated": false,
+      "n_hubs": 9,
+      "n_ports": 63,
+      "n_devices": 18,
+      "n_phantom_or_present_devnodes": 47,
+      "descriptors_used": true,
+      "errors": [],
+      "requests_to_devices": 0,
+      "note": "cached hub-driver state and CfgMgr only; alt tables come from a separate descriptor read (win_descriptors.py) when given"
+     }
+    },
+    {
+     "criterion": "every discovered camera is in the snapshot with a bandwidth domain",
+     "met": true,
+     "detail": {
+      "missing": [],
+      "domains": {
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#7",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "ss|PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4|USB\\ROOT_HUB30\\7&37B53FB&0&0#4",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+       "046d:085c:sn=C922SN01": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13"
+      }
+     }
+    },
+    {
+     "criterion": "camera alt tables available (descriptor read worked for every camera)",
+     "met": true,
+     "detail": {
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": true,
+      "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "not under test",
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": true,
+      "046d:085c:sn=C922SN01": true
+     }
+    },
+    {
+     "criterion": "Gerald pairs predicted as measured on 10-27 (720p30 over; 640x480@30 and 1080p@5 fit)",
+     "met": true,
+     "detail": [
+      {
+       "pair": "C922 MJPEG 720p30 (alt 9) + generic",
+       "same_domain": true,
+       "expected_if_same_domain": "over",
+       "predicted_verdict": "over",
+       "pair_only_pct_microframe": 81.1,
+       "with_other_load_pct_microframe": 81.1,
+       "other_load_us": 0.0,
+       "agrees": true,
+       "has_required_sentence": true
+      },
+      {
+       "pair": "C922 MJPEG 640x480@30 (alt 4) + generic",
+       "same_domain": true,
+       "expected_if_same_domain": "fits",
+       "predicted_verdict": "fits",
+       "pair_only_pct_microframe": 59.7,
+       "with_other_load_pct_microframe": 59.7,
+       "other_load_us": 0.0,
+       "agrees": true,
+       "has_required_sentence": null
+      },
+      {
+       "pair": "C922 MJPEG 1080p@5 (alt 5) + generic",
+       "same_domain": true,
+       "expected_if_same_domain": "fits",
+       "predicted_verdict": "fits",
+       "pair_only_pct_microframe": 62.2,
+       "with_other_load_pct_microframe": 62.2,
+       "other_load_us": 0.0,
+       "agrees": true,
+       "has_required_sentence": null
+      }
+     ]
+    },
+    {
+     "criterion": "suggested ports never in the conflicting domain",
+     "met": true,
+     "detail": [
+      {
+       "scenario": "all_cameras_720p30",
+       "domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+       "n_ports": 13,
+       "ports_in_conflict_domain": []
+      },
+      {
+       "scenario": "pair: C922 MJPEG 720p30 (alt 9) + generic",
+       "domain": "hs|PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0|USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+       "n_ports": 13,
+       "ports_in_conflict_domain": []
+      }
+     ]
+    },
+    {
+     "criterion": "port labels better than raw ACPI names / location paths (shared label_tier rule)",
+     "met": true,
+     "detail": {
+      "port 1 (HS01, USB 3, not USB-C, user-accessible)": "controller_port_number",
+      "port 2 (HS02, USB 3, not USB-C, user-accessible)": "controller_port_number",
+      "port 4 (HS04, USB 3, not USB-C, user-accessible)": "controller_port_number",
+      "port 5 (HS05, USB 3, not USB-C)": "controller_port_number",
+      "port 6 (HS06, USB 3, not USB-C)": "controller_port_number",
+      "port 9 (HS09, USB-C)": "controller_port_number",
+      "port 12 (HS12, USB-C, user-accessible)": "controller_port_number",
+      "port 15 (HS15, USB 2.0-only)": "controller_port_number",
+      "port 16 (HS16, USB 2.0-only)": "controller_port_number"
+     }
+    }
+   ],
+   "evidence": {
+    "note": "pseudo-rating of the mapper only; G-BW needs W-MULTI's observed refusals",
+    "snapshot": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\W-TOPO\\snapshot.json",
+    "label_tiers": {
+     "port 1 (HS01, USB 3, not USB-C, user-accessible)": "controller_port_number",
+     "port 2 (HS02, USB 3, not USB-C, user-accessible)": "controller_port_number",
+     "port 4 (HS04, USB 3, not USB-C, user-accessible)": "controller_port_number",
+     "port 5 (HS05, USB 3, not USB-C)": "controller_port_number",
+     "port 6 (HS06, USB 3, not USB-C)": "controller_port_number",
+     "port 9 (HS09, USB-C)": "controller_port_number",
+     "port 12 (HS12, USB-C, user-accessible)": "controller_port_number",
+     "port 15 (HS15, USB 2.0-only)": "controller_port_number",
+     "port 16 (HS16, USB 2.0-only)": "controller_port_number"
+    },
+    "device_faults": null
+   }
+  },
+  "G-BW": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "W-TOPO predicts only; W-MULTI observes refusals and rates G-BW"
+    }
+   ],
+   "evidence": {
+    "predicted_conflicts": {
+     "all_cameras_default_mode": 0,
+     "all_cameras_720p30": 1,
+     "pair: C922 MJPEG 720p30 (alt 9) + generic": 1,
+     "pair: C922 MJPEG 640x480@30 (alt 4) + generic": 0,
+     "pair: C922 MJPEG 1080p@5 (alt 5) + generic": 0
+    }
+   }
+  }
+ },
+ "errors": [],
+ "device_faults": {
+  "faulted_at_start": {},
+  "faulted_at_end": {},
+  "kiyo_dead_since": null
+ }
+}

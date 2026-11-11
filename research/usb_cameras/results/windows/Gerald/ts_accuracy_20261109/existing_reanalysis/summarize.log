@@ -1,0 +1,126 @@
+T1 flash GT per frame (flash_run1_repositioned), GT ref = seq_env; std / p95 / max in us, offset in ms
+| Method | C922 offset | C922 std | p95 | max | C930e offset | C930e std | p95 | max | C930e std, t>=3 s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| MF sample time, raw | 54.44 | 4784 | 8186 | 8567 | 57.93 | 5155 | 7949 | 23387 | 4590 |
+| MF arrival, raw | 59.49 | 4713 | 7684 | 9095 | 60.46 | 5089 | 7915 | 21451 | 4633 |
+| lattice LSQ (sample time) | 54.26 | 607 | 1396 | 1883 | 59.31 | 2790 | 4932 | 5563 | 2646 |
+| lattice LSQ (arrival) | 59.60 | 564 | 1299 | 1605 | 61.95 | 2712 | 4793 | 5419 | 2571 |
+| lattice robust whole-run (sample time) | 46.58 | 564 | 1327 | 1626 | 48.45 | 2007 | 3528 | 4262 | 1893 |
+| lattice robust whole-run (arrival) | 52.21 | 564 | 1297 | 1610 | 51.90 | 536 | 1085 | 1310 | 525 |
+| lattice fixed-P, 10 s centred (sample time) | 46.59 | 564 | 1323 | 1626 | 49.09 | 668 | 1185 | 2391 | 557 |
+| lattice fixed-P, 10 s centred (arrival) | 52.22 | 561 | 1298 | 1589 | 51.97 | 519 | 1107 | 1361 | 506 |
+| lattice fixed-P, 10 s causal (sample time) | 46.35 | 745 | 1908 | 2217 | 45.90 | 2596 | 5048 | 9186 | 2407 |
+| lattice fixed-P, 10 s causal (arrival) | 52.31 | 565 | 1258 | 1557 | 48.79 | 3322 | 6247 | 9561 | 3022 |
+| tier 1 ref: PTS mapped to arrival envelope | 52.08 | 564 | 1249 | 1658 | 51.90 | 536 | 1081 | 1309 | 525 |
+| tier 1 ref: PTS via SCR (lsq) | 19.05 | 630 | 1386 | 1838 | 20.88 | 564 | 1250 | 1901 | 531 |
+  C922: n=85 (before 3 s: 0), GT span [6.4960618, 29.5041823], ref=pts gives raw arrival std 4710, robust arrival 579
+  C930e: n=95 (before 3 s: 4), GT span [0.0643522, 27.5681259], ref=pts gives raw arrival std 5089, robust arrival 536
+
+T2 window sensitivity vs flash GT (std us; GT ref seq_env)
+| Fit | series | 2 s | 5 s | 10 s | 20 s | whole run |
+| --- | --- | --- | --- | --- | --- | --- |
+| C922 fixP_envq0.02 centred | mf_sample_time | 563 | 563 | 564 | 565 | 564 |
+| C922 fixP_envq0.02 centred | mf_arrival | 564 | 559 | 561 | 561 | 564 |
+| C922 fixP_envq0.02 causal | mf_sample_time | 581 | 744 | 745 | 731 | 564 |
+| C922 fixP_envq0.02 causal | mf_arrival | 566 | 563 | 565 | 566 | 564 |
+| C922 rob_envq0.02 centred | mf_sample_time | 573 | 614 | 653 | 575 | 564 |
+| C922 rob_envq0.02 centred | mf_arrival | 572 | 552 | 581 | 575 | 564 |
+| C922 rob_envq0.02 causal | mf_sample_time | 690 | 684 | 896 | 734 | 564 |
+| C922 rob_envq0.02 causal | mf_arrival | 704 | 679 | 632 | 556 | 564 |
+| C930e fixP_envq0.02 centred | mf_sample_time | 2223 | 1546 | 668 | 1018 | 2007 |
+| C930e fixP_envq0.02 centred | mf_arrival | 2263 | 1339 | 519 | 486 | 536 |
+| C930e fixP_envq0.02 causal | mf_sample_time | 2594 | 2676 | 2596 | 2351 | 2007 |
+| C930e fixP_envq0.02 causal | mf_arrival | 3062 | 2995 | 3322 | 3427 | 536 |
+| C930e rob_envq0.02 centred | mf_sample_time | 2268 | 2571 | 2069 | 914 | 2007 |
+| C930e rob_envq0.02 centred | mf_arrival | 2281 | 2614 | 2079 | 851 | 536 |
+| C930e rob_envq0.02 causal | mf_sample_time | 1516 | 2657 | 2949 | 2622 | 2007 |
+| C930e rob_envq0.02 causal | mf_arrival | 1788 | 2945 | 3204 | 3345 | 536 |
+
+T3 quantile of the lower envelope, whole run (std us | mean offset ms), flash GT
+| Fit | series | C922 q=0 | 0.02 | 0.05 | 0.10 | C930e q=0 | 0.02 | 0.05 | 0.10 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| rob | mf_sample_time | 564 / 46.6 | 564 / 46.6 | 564 / 46.6 | 564 / 47.9 | 2007 / 47.2 | 2007 / 48.4 | 2007 / 49.7 | 2007 / 50.9 |
+| rob | mf_arrival | 564 / 52.1 | 564 / 52.2 | 564 / 52.3 | 564 / 53.5 | 536 / 50.8 | 536 / 51.9 | 536 / 52.5 | 536 / 53.4 |
+| lsqP | mf_sample_time | 607 / 46.3 | 607 / 46.6 | 607 / 47.0 | 607 / 47.9 | 2790 / 46.0 | 2790 / 47.6 | 2790 / 49.1 | 2790 / 51.1 |
+| lsqP | mf_arrival | 564 / 52.1 | 564 / 52.2 | 564 / 52.3 | 564 / 53.5 | 2712 / 47.6 | 2712 / 50.2 | 2712 / 51.7 | 2712 / 53.7 |
+
+T4 vs camera clock (fixed per-camera slope), frames >= 3 s: median [min-max] over runs of std (us)
+| Camera / ref | runs | series | raw | LSQ lattice | robust whole | fixP 2 s centred | fixP 10 s centred | fixP 20 s centred | fixP 10 s causal | rob 10 s causal |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| C930e / pts | 8 | mf_sample_time | 4654 [4618-4721] | 107 [13-2862] | 96 [44-1971] | 448 [191-742] | 211 [123-440] | 100 [32-972] | 335 [201-3376] | 445 [289-3867] |
+| C930e / pts | 8 | arrival | 4664 [4640-4730] | 90 [20-2817] | 53 [1-300] | 432 [227-714] | 145 [74-309] | 60 [42-204] | 340 [225-4107] | 461 [249-4099] |
+| C922 / pts | 12 | mf_sample_time | 4629 [4542-4656] | 183 [120-502] | 134 [120-519] | 259 [120-660] | 156 [120-664] | 156 [120-670] | 288 [240-575] | 423 [389-799] |
+| C922 / pts | 12 | arrival | 4941 [4608-5023] | 172 [121-351] | 142 [120-366] | 717 [145-933] | 376 [140-592] | 229 [140-440] | 501 [150-725] | 598 [241-908] |
+| C922 / stc | 12 | mf_sample_time | 4611 [4604-4659] | 51 [5-499] | 17 [2-517] | 18 [9-659] | 17 [7-660] | 17 [6-666] | 240 [186-570] | 390 [354-801] |
+| C922 / stc | 12 | arrival | 4934 [4596-5017] | 53 [3-208] | 43 [2-355] | 710 [30-927] | 345 [17-587] | 133 [11-420] | 489 [52-722] | 583 [199-896] |
+| Kiyo / pts | 1 | mf_sample_time | 4627 [4627-4627] | 1637 [1637-1637] | 1652 [1652-1652] | 1729 [1729-1729] | 1660 [1660-1660] | 1665 [1665-1665] | 1639 [1639-1639] | 1652 [1652-1652] |
+| Kiyo / pts | 1 | arrival | 4643 [4643-4643] | 1876 [1876-1876] | 1648 [1648-1648] | 1739 [1739-1739] | 1658 [1658-1658] | 1633 [1633-1633] | 6018 [6018-6018] | 6487 [6487-6487] |
+
+T4b camera clock rate vs QPC (ppm vs nominal): fixed slope used, per-run envelope values, slope-estimator spread
+  C930e|pts: median 39.9 ppm; runs [0.8, 42.0, 41.3, -1128.0, 39.9, 34.2, 50.5, 30.6]; estimator spread per run [296, 26, 16, 14, 36, 24, 31, 60]
+  C922|pts: median -0.2 ppm; runs [-7.5, 0.7, -7.4, -0.4, 7.1, 52.6, 0.0, -3.9, 9.1, 0.9, -7.2, -39.1]; estimator spread per run [7, 78, 7, 7, 66, 53, 9, 11, 46, 20, 9, 49]
+  C922|stc: median -1.6 ppm; runs [-7.1, 0.9, -7.7, -1.7, 7.2, 44.1, -1.6, -2.3, 9.2, 1.7, -7.7, -29.0]; estimator spread per run [7, 64, 8, 2, 18, 45, 9, 9, 38, 20, 9, 33]
+  Kiyo|pts: median 42.3 ppm; runs [42.3]; estimator spread per run [51]
+
+T4c camera-clock cadence residual (std us, the camera's own frame timing vs a perfect lattice)
+  C930e/pts: [2, 125, 17, 1, 17, 17, 17, 37]
+  C922/pts: [137, 120, 121, 126, 131, 121, 120, 166, 121, 120, 347, 145]
+  C922/stc: [2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 2, 2]
+  Kiyo/pts: [1636]
+
+T5 slot assignment: tier-0 drops detected, disagreements with camera-clock slots, camera-clock steps corrected
+   {"label": "flash_run1_20261025", "camera": "C930e", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 1}
+   {"label": "flash_run1_20261025", "camera": "C922", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 0}
+   {"label": "20261028T031633Z_flash_c922_c930e_exp-7_a", "camera": "C930e", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 1}
+   {"label": "20261028T031633Z_flash_c922_c930e_exp-7_a", "camera": "C922", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 0}
+   {"label": "20261028T031838Z_flash_c922_c930e_exp-7_b", "camera": "C930e", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 1}
+   {"label": "20261028T031838Z_flash_c922_c930e_exp-7_b", "camera": "C922", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 0}
+   {"label": "20261028T032015Z_flash_c922_generic_exp-7", "camera": "C922", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 0}
+   {"label": "20261028T032015Z_flash_c922_generic_exp-7", "camera": "generic", "ref": "none", "mf_sample_time": {"drops": 1, "disagree": null}, "arrival": {"drops": 0, "disagree": null}}
+   {"label": "20261028T032553Z_flash_c922_c930e_exp-9", "camera": "C930e", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 2}
+   {"label": "20261028T032553Z_flash_c922_c930e_exp-9", "camera": "C922", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 0}
+   {"label": "20261028T032712Z_flash_c922_c930e_exp-6", "camera": "C930e", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 1}
+   {"label": "20261028T032712Z_flash_c922_c930e_exp-6", "camera": "C922", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 0}
+   {"label": "20261028T033043Z_flash_c922_c930e_exp-7_c_afterAE", "camera": "C930e", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 1}
+   {"label": "20261028T033043Z_flash_c922_c930e_exp-7_c_afterAE", "camera": "C922", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 0}
+   {"label": "20261028T033232Z_flash_c922_c930e_exp-7_d", "camera": "C930e", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 1}
+   {"label": "20261028T033232Z_flash_c922_c930e_exp-7_d", "camera": "C922", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 0}
+   {"label": "20261028T033528Z_flash_c922_c930e_exp-7_e", "camera": "C930e", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 1}
+   {"label": "20261028T033528Z_flash_c922_c930e_exp-7_e", "camera": "C922", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 0}
+   {"label": "20261028T033655Z_flash_c922_generic_exp-7_b", "camera": "C922", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 0}
+   {"label": "20261028T033655Z_flash_c922_generic_exp-7_b", "camera": "generic", "ref": "none", "mf_sample_time": {"drops": 0, "disagree": null}, "arrival": {"drops": 0, "disagree": null}}
+   {"label": "suite_20261106T181941Z_W-TS_mf", "camera": "C922", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 0}
+   {"label": "suite_20261106T181941Z_W-TS_ds", "camera": "C922", "ref": "none", "arrival": {"drops": 0, "disagree": null}, "ds_pts": {"drops": 0, "disagree": null}}
+   {"label": "suite_20261106T181941Z_W-TS_mf", "camera": "C930e", "ref": "none", "mf_sample_time": {"drops": 0, "disagree": null}, "arrival": {"drops": 0, "disagree": null}}
+   {"label": "suite_20261106T181941Z_W-TS_ds", "camera": "C930e", "ref": "none", "arrival": {"drops": 0, "disagree": null}, "ds_pts": {"drops": 0, "disagree": null}}
+   {"label": "suite_20261106T181941Z_W-TS_mf", "camera": "generic", "ref": "none", "mf_sample_time": {"drops": 0, "disagree": null}, "arrival": {"drops": 0, "disagree": null}}
+   {"label": "suite_20261106T181941Z_W-TS_ds", "camera": "generic", "ref": "none", "arrival": {"drops": 0, "disagree": null}, "ds_pts": {"drops": 0, "disagree": null}}
+   {"label": "suite_20261106T224912Z_W-TS_mf", "camera": "C922", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 0, "disagree": 0}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 0}
+   {"label": "suite_20261106T224912Z_W-TS_ds", "camera": "C922", "ref": "none", "arrival": {"drops": 0, "disagree": null}, "ds_pts": {"drops": 0, "disagree": null}}
+   {"label": "suite_20261106T224912Z_W-TS_mf", "camera": "Kiyo", "ref": "pts", "mf_sample_time": {"drops": 0, "disagree": 0}, "arrival": {"drops": 2, "disagree": 2}, "camera_clock_missing_slots": 0, "camera_clock_steps_corrected": 0}
+   {"label": "suite_20261106T224912Z_W-TS_ds", "camera": "Kiyo", "ref": "none", "arrival": {"drops": 10, "disagree": null}, "ds_pts": {"drops": 0, "disagree": null}}
+   {"label": "suite_20261106T224912Z_W-TS_mf", "camera": "C930e", "ref": "none", "mf_sample_time": {"drops": 0, "disagree": null}, "arrival": {"drops": 0, "disagree": null}}
+   {"label": "suite_20261106T224912Z_W-TS_ds", "camera": "C930e", "ref": "none", "arrival": {"drops": 1, "disagree": null}, "ds_pts": {"drops": 1, "disagree": null}}
+   {"label": "suite_20261106T224912Z_W-TS_mf", "camera": "generic", "ref": "none", "mf_sample_time": {"drops": 0, "disagree": null}, "arrival": {"drops": 0, "disagree": null}}
+   {"label": "suite_20261106T224912Z_W-TS_ds", "camera": "generic", "ref": "none", "arrival": {"drops": 0, "disagree": null}, "ds_pts": {"drops": 0, "disagree": null}}
+
+T6 MF arrival minus MF sample time (median ms), GT-free
+  C930e: [0.33, 0.23, 0.38, 0.52, 0.22, 0.19, 0.18, 0.46, 0.65, 0.48]
+  C922: [0.37, 0.27, 0.56, 0.57, 0.61, 0.25, 0.23, 0.23, 0.6, 0.23, 0.37, 0.8]
+  generic: [32.29, 32.23, 32.34, 32.46]
+  Kiyo: [0.61]
+
+T7 regularity only (no camera clock): residual std of the LSQ lattice to its own stamps (us), drops
+   20261028T032015Z_flash_c922_generic_exp-7 generic {'mf_sample_time': (4622, 1), 'arrival': (4639, 0)}
+   20261028T033655Z_flash_c922_generic_exp-7_b generic {'mf_sample_time': (4672, 0), 'arrival': (4614, 0)}
+   suite_20261106T181941Z_W-TS_ds C922 {'arrival': (4602, 0), 'ds_pts': (0, 0)}
+   suite_20261106T181941Z_W-TS_mf C930e {'mf_sample_time': (4641, 0), 'arrival': (4662, 0)}
+   suite_20261106T181941Z_W-TS_ds C930e {'arrival': (4622, 0), 'ds_pts': (190, 0)}
+   suite_20261106T181941Z_W-TS_mf generic {'mf_sample_time': (4671, 0), 'arrival': (4624, 0)}
+   suite_20261106T181941Z_W-TS_ds generic {'arrival': (4639, 0), 'ds_pts': (0, 0)}
+   suite_20261106T224912Z_W-TS_ds C922 {'arrival': (4602, 0), 'ds_pts': (0, 0)}
+   suite_20261106T224912Z_W-TS_ds Kiyo {'arrival': (4946, 10), 'ds_pts': (0, 0)}
+   suite_20261106T224912Z_W-TS_mf C930e {'mf_sample_time': (4641, 0), 'arrival': (4645, 0)}
+   suite_20261106T224912Z_W-TS_ds C930e {'arrival': (4631, 1), 'ds_pts': (2909, 1)}
+   suite_20261106T224912Z_W-TS_mf generic {'mf_sample_time': (4709, 0), 'arrival': (4664, 0)}
+   suite_20261106T224912Z_W-TS_ds generic {'arrival': (4617, 0), 'ds_pts': (0, 0)}

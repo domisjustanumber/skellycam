@@ -1,0 +1,57 @@
+{
+ "tool": "wincam",
+ "version": "wincam 1.0 (2026-11-06)",
+ "subcommand": "capture",
+ "utc_started": "2026-11-06T16:20:01.320206Z",
+ "pid": 38148,
+ "argv": [
+  "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+  "capture",
+  "--api",
+  "mf",
+  "--device",
+  "vid_046d",
+  "--width",
+  "1280",
+  "--height",
+  "720",
+  "--fps",
+  "30",
+  "--frames",
+  "5",
+  "--timeout-ms",
+  "1000",
+  "--out-dir",
+  "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/wincam/usage_ambiguous"
+ ],
+ "timeout_ms": 1000,
+ "api": "mf",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30,
+  "frames": 5,
+  "seconds": null,
+  "save": "none"
+ },
+ "out_dir": "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/wincam/usage_ambiguous",
+ "enumerate_ms": 3.0042,
+ "error": {
+  "stage": "match",
+  "reason": "ambiguous --device",
+  "matches": [
+   {
+    "name": "c922 Pro Stream Webcam",
+    "link": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+   },
+   {
+    "name": "Logitech Webcam C930e",
+    "link": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+   }
+  ]
+ },
+ "utc_finished": "2026-11-06T16:20:01.325496Z",
+ "exit_code": 2,
+ "abandoned_threads": 0
+}

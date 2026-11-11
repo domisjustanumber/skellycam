@@ -1,0 +1,123 @@
+{
+ "reanalysis_of": "results\\windows\\Gerald\\suite_20261106T181941Z",
+ "utc": "2026-11-06T20:57:36.290118+00:00",
+ "camera_opened": false,
+ "test_order_original": [
+  "W-ENV",
+  "W-POLICY",
+  "W-TOPO",
+  "W-ID",
+  "W-FMT",
+  "W-CTRL-LIST",
+  "W-MJPEG",
+  "W-CYC",
+  "W-MULTI",
+  "W-TS",
+  "W-CTRL-EFFECT",
+  "W-KIYO"
+ ],
+ "test_order_now": [
+  "W-ENV",
+  "W-POLICY",
+  "W-TOPO",
+  "W-ID",
+  "W-FMT",
+  "W-CTRL-LIST",
+  "W-CYC",
+  "W-CTRL-EFFECT",
+  "W-TS",
+  "W-MULTI",
+  "W-MJPEG"
+ ],
+ "faults": {
+  "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+   "since_utc": "2026-11-06T18:43:39.700547Z",
+   "test": "W-MJPEG",
+   "mode": "MJPG 640x360@5",
+   "code": "timeout",
+   "class": "unreleasable",
+   "stage": "reader_release",
+   "api": "mf",
+   "path": "modes/0/apis/mf",
+   "plug_in_age_s": 13455.1,
+   "name": "USB Video Device",
+   "is_kiyo": true,
+   "source": "reanalysis result scan",
+   "time_basis": "command utc_started"
+  }
+ },
+ "kiyo_onset": {
+  "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+   "first_device_fault": {
+    "since_utc": "2026-11-06T18:43:39.700547Z",
+    "test": "W-MJPEG",
+    "mode": "MJPG 640x360@5",
+    "code": "timeout",
+    "class": "unreleasable",
+    "stage": "reader_release",
+    "api": "mf",
+    "path": "modes/0/apis/mf",
+    "plug_in_age_s": 13455.1,
+    "name": "USB Video Device",
+    "is_kiyo": true,
+    "source": "reanalysis result scan",
+    "time_basis": "command utc_started"
+   },
+   "control_polls": {
+    "plug_in_age_at_start_s": 17814.415482,
+    "plug_in_age_at_end_s": 18414.930031,
+    "failed_from_first_poll": {
+     "mf": true,
+     "ds": true
+    },
+    "onset": {
+     "failed_from_first_poll": true,
+     "window_first_poll_utc": "2026-11-06T19:56:18.533760+00:00",
+     "plug_in_age_at_start_s": 17814.415482,
+     "earlier_device_fault": {
+      "class": "unreleasable",
+      "code": "timeout",
+      "stage": "reader_release",
+      "api": "mf",
+      "mode": "MJPG 640x360@5",
+      "utc": "2026-11-06T18:43:39.700547Z",
+      "path": "modes/0/apis/mf",
+      "test": "W-MJPEG"
+     },
+     "earlier_device_fault_plug_in_age_s": 13455.1
+    },
+    "polls_per_api": {
+     "mf": 61,
+     "ds": 61
+    },
+    "ok_per_api": {
+     "mf": 0,
+     "ds": 0
+    },
+    "failure_codes": {
+     "mf:get 0x80004002": 61,
+     "ds:get 0x80004002": 61
+    }
+   },
+   "note": "the original run had no background poller (W-KIYO ran last), so the control-plane onset is unknown; the first device fault is the first stream failure found in the results"
+  }
+ },
+ "would_have_been_gated": {
+  "W-CYC": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-06T18:43:39.700547Z"
+  },
+  "W-MULTI": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-06T18:43:39.700547Z"
+  },
+  "W-TS": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-06T18:43:39.700547Z"
+  },
+  "W-CTRL-EFFECT": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-06T18:43:39.700547Z"
+  },
+  "W-KIYO": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-06T18:43:39.700547Z"
+  }
+ },
+ "note": "fault = 0x8007001F / unreleasable or hung reader found under measurements.cameras.<key>; with the gate, the cameras listed per test would have had their streaming work skipped after a failed 1-frame re-probe (no recovery was observed in this run)"
+}

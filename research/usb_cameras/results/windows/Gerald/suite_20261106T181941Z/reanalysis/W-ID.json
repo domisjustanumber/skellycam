@@ -1,0 +1,445 @@
+{
+ "test": "W-ID",
+ "reanalysis_of": "..\\..\\..\\results\\windows\\Gerald\\suite_20261106T181941Z\\W-ID.json",
+ "verdicts": {
+  "G-ID": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every API's list maps 1:1 to identity keys",
+     "met": true,
+     "detail": "6/6 APIs"
+    },
+    {
+     "criterion": "identical over >= 20 repeated enumerations",
+     "met": true,
+     "detail": {
+      "mf": 20,
+      "ds": 20,
+      "pyav_dshow": 20,
+      "ffmpeg_cli_dshow": 20,
+      "opencv_msmf": 20,
+      "opencv_dshow": 20
+     }
+    },
+    {
+     "criterion": "key unchanged over reboot / same-port replug / port move (serial cameras)",
+     "met": null,
+     "detail": {
+      "reboot": null,
+      "same_port_replug": null,
+      "port_move_serial": true
+     }
+    }
+   ],
+   "evidence": {
+    "per_api": {
+     "mf": {
+      "runs": 20,
+      "mappable": true,
+      "one_to_one": true,
+      "stable_order": true,
+      "first_run": [
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7"
+      ]
+     },
+     "ds": {
+      "runs": 20,
+      "mappable": true,
+      "one_to_one": true,
+      "stable_order": true,
+      "first_run": [
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7"
+      ]
+     },
+     "pyav_dshow": {
+      "runs": 20,
+      "mappable": true,
+      "one_to_one": true,
+      "stable_order": true,
+      "first_run": [
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7"
+      ]
+     },
+     "ffmpeg_cli_dshow": {
+      "runs": 20,
+      "mappable": true,
+      "one_to_one": true,
+      "stable_order": true,
+      "first_run": [
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7"
+      ]
+     },
+     "opencv_msmf": {
+      "runs": 20,
+      "mappable": true,
+      "one_to_one": true,
+      "stable_order": true,
+      "first_run": [
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7"
+      ]
+     },
+     "opencv_dshow": {
+      "runs": 20,
+      "mappable": true,
+      "one_to_one": true,
+      "stable_order": true,
+      "first_run": [
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7"
+      ]
+     }
+    },
+    "expected_keys": [
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+     "046d:085c:sn=C922SN01",
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+    ]
+   },
+   "note": "provisional yes: attended persistence steps (A1: reboot, replug, port move) not run yet",
+   "provisional": true,
+   "summary_label": "partial (provisional: persistence not measured)"
+  },
+  "G-ID_per_api": {
+   "mf": {
+    "rating": "partial",
+    "criteria": [
+     {
+      "criterion": "every API's list maps 1:1 to identity keys",
+      "met": true,
+      "detail": "1/1 APIs"
+     },
+     {
+      "criterion": "identical over >= 20 repeated enumerations",
+      "met": true,
+      "detail": {
+       "mf": 20
+      }
+     },
+     {
+      "criterion": "key unchanged over reboot / same-port replug / port move (serial cameras)",
+      "met": null,
+      "detail": {
+       "reboot": null,
+       "same_port_replug": null,
+       "port_move_serial": true
+      }
+     }
+    ],
+    "evidence": {
+     "per_api": {
+      "mf": {
+       "runs": 20,
+       "mappable": true,
+       "one_to_one": true,
+       "stable_order": true,
+       "first_run": [
+        "046d:085c:sn=C922SN01",
+        "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+        "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+        "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7"
+       ]
+      }
+     },
+     "expected_keys": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+      "046d:085c:sn=C922SN01",
+      "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    },
+    "note": "provisional yes: attended persistence steps (A1: reboot, replug, port move) not run yet",
+    "provisional": true,
+    "summary_label": "partial (provisional: persistence not measured)"
+   },
+   "ds": {
+    "rating": "partial",
+    "criteria": [
+     {
+      "criterion": "every API's list maps 1:1 to identity keys",
+      "met": true,
+      "detail": "1/1 APIs"
+     },
+     {
+      "criterion": "identical over >= 20 repeated enumerations",
+      "met": true,
+      "detail": {
+       "ds": 20
+      }
+     },
+     {
+      "criterion": "key unchanged over reboot / same-port replug / port move (serial cameras)",
+      "met": null,
+      "detail": {
+       "reboot": null,
+       "same_port_replug": null,
+       "port_move_serial": true
+      }
+     }
+    ],
+    "evidence": {
+     "per_api": {
+      "ds": {
+       "runs": 20,
+       "mappable": true,
+       "one_to_one": true,
+       "stable_order": true,
+       "first_run": [
+        "046d:085c:sn=C922SN01",
+        "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+        "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+        "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7"
+       ]
+      }
+     },
+     "expected_keys": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+      "046d:085c:sn=C922SN01",
+      "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    },
+    "note": "provisional yes: attended persistence steps (A1: reboot, replug, port move) not run yet",
+    "provisional": true,
+    "summary_label": "partial (provisional: persistence not measured)"
+   },
+   "pyav_dshow": {
+    "rating": "partial",
+    "criteria": [
+     {
+      "criterion": "every API's list maps 1:1 to identity keys",
+      "met": true,
+      "detail": "1/1 APIs"
+     },
+     {
+      "criterion": "identical over >= 20 repeated enumerations",
+      "met": true,
+      "detail": {
+       "pyav_dshow": 20
+      }
+     },
+     {
+      "criterion": "key unchanged over reboot / same-port replug / port move (serial cameras)",
+      "met": null,
+      "detail": {
+       "reboot": null,
+       "same_port_replug": null,
+       "port_move_serial": true
+      }
+     }
+    ],
+    "evidence": {
+     "per_api": {
+      "pyav_dshow": {
+       "runs": 20,
+       "mappable": true,
+       "one_to_one": true,
+       "stable_order": true,
+       "first_run": [
+        "046d:085c:sn=C922SN01",
+        "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+        "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+        "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7"
+       ]
+      }
+     },
+     "expected_keys": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+      "046d:085c:sn=C922SN01",
+      "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    },
+    "note": "provisional yes: attended persistence steps (A1: reboot, replug, port move) not run yet",
+    "provisional": true,
+    "summary_label": "partial (provisional: persistence not measured)"
+   },
+   "ffmpeg_cli_dshow": {
+    "rating": "partial",
+    "criteria": [
+     {
+      "criterion": "every API's list maps 1:1 to identity keys",
+      "met": true,
+      "detail": "1/1 APIs"
+     },
+     {
+      "criterion": "identical over >= 20 repeated enumerations",
+      "met": true,
+      "detail": {
+       "ffmpeg_cli_dshow": 20
+      }
+     },
+     {
+      "criterion": "key unchanged over reboot / same-port replug / port move (serial cameras)",
+      "met": null,
+      "detail": {
+       "reboot": null,
+       "same_port_replug": null,
+       "port_move_serial": true
+      }
+     }
+    ],
+    "evidence": {
+     "per_api": {
+      "ffmpeg_cli_dshow": {
+       "runs": 20,
+       "mappable": true,
+       "one_to_one": true,
+       "stable_order": true,
+       "first_run": [
+        "046d:085c:sn=C922SN01",
+        "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+        "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+        "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7"
+       ]
+      }
+     },
+     "expected_keys": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+      "046d:085c:sn=C922SN01",
+      "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    },
+    "note": "provisional yes: attended persistence steps (A1: reboot, replug, port move) not run yet",
+    "provisional": true,
+    "summary_label": "partial (provisional: persistence not measured)"
+   },
+   "opencv_msmf": {
+    "rating": "partial",
+    "criteria": [
+     {
+      "criterion": "every API's list maps 1:1 to identity keys",
+      "met": true,
+      "detail": "1/1 APIs"
+     },
+     {
+      "criterion": "identical over >= 20 repeated enumerations",
+      "met": true,
+      "detail": {
+       "opencv_msmf": 20
+      }
+     },
+     {
+      "criterion": "key unchanged over reboot / same-port replug / port move (serial cameras)",
+      "met": null,
+      "detail": {
+       "reboot": null,
+       "same_port_replug": null,
+       "port_move_serial": true
+      }
+     }
+    ],
+    "evidence": {
+     "per_api": {
+      "opencv_msmf": {
+       "runs": 20,
+       "mappable": true,
+       "one_to_one": true,
+       "stable_order": true,
+       "first_run": [
+        "046d:085c:sn=C922SN01",
+        "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+        "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+        "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7"
+       ]
+      }
+     },
+     "expected_keys": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+      "046d:085c:sn=C922SN01",
+      "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ],
+     "caveat": "index order from cv2_enumerate_cameras 1.4.0 (MFEnumDeviceSources / property bags); no VideoCapture(index) was opened to confirm which device an index opens"
+    },
+    "note": "provisional yes: attended persistence steps (A1: reboot, replug, port move) not run yet",
+    "provisional": true,
+    "summary_label": "partial (provisional: persistence not measured)"
+   },
+   "opencv_dshow": {
+    "rating": "partial",
+    "criteria": [
+     {
+      "criterion": "every API's list maps 1:1 to identity keys",
+      "met": true,
+      "detail": "1/1 APIs"
+     },
+     {
+      "criterion": "identical over >= 20 repeated enumerations",
+      "met": true,
+      "detail": {
+       "opencv_dshow": 20
+      }
+     },
+     {
+      "criterion": "key unchanged over reboot / same-port replug / port move (serial cameras)",
+      "met": null,
+      "detail": {
+       "reboot": null,
+       "same_port_replug": null,
+       "port_move_serial": true
+      }
+     }
+    ],
+    "evidence": {
+     "per_api": {
+      "opencv_dshow": {
+       "runs": 20,
+       "mappable": true,
+       "one_to_one": true,
+       "stable_order": true,
+       "first_run": [
+        "046d:085c:sn=C922SN01",
+        "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+        "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+        "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7"
+       ]
+      }
+     },
+     "expected_keys": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+      "046d:085c:sn=C922SN01",
+      "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ],
+     "caveat": "index order from cv2_enumerate_cameras 1.4.0 (MFEnumDeviceSources / property bags); no VideoCapture(index) was opened to confirm which device an index opens"
+    },
+    "note": "provisional yes: attended persistence steps (A1: reboot, replug, port move) not run yet",
+    "provisional": true,
+    "summary_label": "partial (provisional: persistence not measured)"
+   }
+  }
+ },
+ "changes": [],
+ "fixes_applied": [
+  "B9 G-ID_per_api carries full verdicts",
+  "provisional flag (B8 verifier: stays partial)"
+ ],
+ "runs_rebuilt_from_summary": {
+  "mf": true,
+  "ds": true,
+  "pyav_dshow": true,
+  "ffmpeg_cli_dshow": true,
+  "opencv_msmf": true,
+  "opencv_dshow": true
+ }
+}

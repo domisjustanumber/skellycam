@@ -1,0 +1,21 @@
+# wsl.exe -d Ubuntu -- sh wsl_usb_ro.sh   (run 2026-11-06 on Gerald, WSL2 kernel, read-only; no USB devices attached to vhci_hcd)
+5.15.153.1-microsoft-standard-WSL2
+== /sys/bus/usb/devices/usb1 -> /sys/devices/platform/vhci_hcd.0/usb1
+speed=480 maxchild=8 version= 2.00 busnum=1 devpath=0 product=USB/IP Virtual Host Controller
+usb1-port1: connect_type=unknown  location=0x00000000  state=cat: '/sys/bus/usb/devices/usb1/1-0:1.0/usb1-port1/state': No such file or directory  disable=cat: '/sys/bus/usb/devices/usb1/1-0:1.0/usb1-port1/disable': No such file or directory  quirks=00000000  over_current_count=0  peer=usb2-port1 
+usb1-port2: connect_type=unknown  location=0x00000000  state=cat: '/sys/bus/usb/devices/usb1/1-0:1.0/usb1-port2/state': No such file or directory  disable=cat: '/sys/bus/usb/devices/usb1/1-0:1.0/usb1-port2/disable': No such file or directory  quirks=00000000  over_current_count=0  peer=usb2-port2 
+usb1-port3: connect_type=unknown  location=0x00000000  state=cat: '/sys/bus/usb/devices/usb1/1-0:1.0/usb1-port3/state': No such file or directory  disable=cat: '/sys/bus/usb/devices/usb1/1-0:1.0/usb1-port3/disable': No such file or directory  quirks=00000000  over_current_count=0  peer=usb2-port3 
+usb1-port4: connect_type=unknown  location=0x00000000  state=cat: '/sys/bus/usb/devices/usb1/1-0:1.0/usb1-port4/state': No such file or directory  disable=cat: '/sys/bus/usb/devices/usb1/1-0:1.0/usb1-port4/disable': No such file or directory  quirks=00000000  over_current_count=0  peer=usb2-port4 
+usb1-port5: connect_type=unknown  location=0x00000000  state=cat: '/sys/bus/usb/devices/usb1/1-0:1.0/usb1-port5/state': No such file or directory  disable=cat: '/sys/bus/usb/devices/usb1/1-0:1.0/usb1-port5/disable': No such file or directory  quirks=00000000  over_current_count=0  peer=usb2-port5 
+usb1-port6: connect_type=unknown  location=0x00000000  state=cat: '/sys/bus/usb/devices/usb1/1-0:1.0/usb1-port6/state': No such file or directory  disable=cat: '/sys/bus/usb/devices/usb1/1-0:1.0/usb1-port6/disable': No such file or directory  quirks=00000000  over_current_count=0  peer=usb2-port6 
+== /sys/bus/usb/devices/usb2 -> /sys/devices/platform/vhci_hcd.0/usb2
+speed=5000 maxchild=8 version= 3.00 busnum=2 devpath=0 product=USB/IP Virtual Host Controller
+usb2-port1: connect_type=unknown  location=0x00000000  state=cat: '/sys/bus/usb/devices/usb2/2-0:1.0/usb2-port1/state': No such file or directory  disable=cat: '/sys/bus/usb/devices/usb2/2-0:1.0/usb2-port1/disable': No such file or directory  quirks=00000000  over_current_count=0  peer=usb1-port1 
+usb2-port2: connect_type=unknown  location=0x00000000  state=cat: '/sys/bus/usb/devices/usb2/2-0:1.0/usb2-port2/state': No such file or directory  disable=cat: '/sys/bus/usb/devices/usb2/2-0:1.0/usb2-port2/disable': No such file or directory  quirks=00000000  over_current_count=0  peer=usb1-port2 
+usb2-port3: connect_type=unknown  location=0x00000000  state=cat: '/sys/bus/usb/devices/usb2/2-0:1.0/usb2-port3/state': No such file or directory  disable=cat: '/sys/bus/usb/devices/usb2/2-0:1.0/usb2-port3/disable': No such file or directory  quirks=00000000  over_current_count=0  peer=usb1-port3 
+usb2-port4: connect_type=unknown  location=0x00000000  state=cat: '/sys/bus/usb/devices/usb2/2-0:1.0/usb2-port4/state': No such file or directory  disable=cat: '/sys/bus/usb/devices/usb2/2-0:1.0/usb2-port4/disable': No such file or directory  quirks=00000000  over_current_count=0  peer=usb1-port4 
+usb2-port5: connect_type=unknown  location=0x00000000  state=cat: '/sys/bus/usb/devices/usb2/2-0:1.0/usb2-port5/state': No such file or directory  disable=cat: '/sys/bus/usb/devices/usb2/2-0:1.0/usb2-port5/disable': No such file or directory  quirks=00000000  over_current_count=0  peer=usb1-port5 
+usb2-port6: connect_type=unknown  location=0x00000000  state=cat: '/sys/bus/usb/devices/usb2/2-0:1.0/usb2-port6/state': No such file or directory  disable=cat: '/sys/bus/usb/devices/usb2/2-0:1.0/usb2-port6/disable': No such file or directory  quirks=00000000  over_current_count=0  peer=usb1-port6 
+drwx------ 23 root root 0 Nov  6 09:50 /sys/kernel/debug
+755 root /sys/firmware/acpi/tables
+dmesg_restrict=0

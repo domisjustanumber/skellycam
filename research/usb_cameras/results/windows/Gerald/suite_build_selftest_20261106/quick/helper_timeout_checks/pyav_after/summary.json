@@ -1,0 +1,95 @@
+{
+ "tool": "pyav_ds",
+ "version": "pyav_ds 1.0 (2026-11-06)",
+ "subcommand": "capture",
+ "utc_started": "2026-11-06T17:53:18.112978+00:00",
+ "pid": 11444,
+ "argv": [
+  "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/suite/windows/helpers/pyav_ds.py",
+  "capture",
+  "--device",
+  "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+  "--width",
+  "1280",
+  "--height",
+  "720",
+  "--fps",
+  "30",
+  "--frames",
+  "30",
+  "--timeout-ms",
+  "5000",
+  "--out-dir",
+  "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/quick/helper_timeout_checks/pyav_after"
+ ],
+ "hostname": "Gerald",
+ "timeout_ms": 5000,
+ "api": "ds",
+ "backend": "pyav-dshow",
+ "device": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+ "url": "video=@device_pnp_\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+ "error": null,
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": "30",
+  "frames": 30,
+  "seconds": null,
+  "save": "none",
+  "graph_clock": false
+ },
+ "negotiated": {
+  "codec": "mjpeg",
+  "pix_fmt": "yuvj422p",
+  "width": 1280,
+  "height": 720,
+  "time_base": "1/10000000",
+  "average_rate": "10000000/333333",
+  "t_opened_ns": 12438071993300
+ },
+ "codec_is_mjpeg": true,
+ "timings": {
+  "open_ms": 814.6548,
+  "first_frame_ms": 814.7553,
+  "open_to_first_frame_ms": 814.7553,
+  "close_ms": 398.0393
+ },
+ "frames": {
+  "total": 30,
+  "ok": 30,
+  "soi_eoi_ok": 30,
+  "sof0_size_match": 30,
+  "bytes_total": 2910898,
+  "saved": 0,
+  "pts_none": 0
+ },
+ "fps_measured": 30.264931908599486,
+ "duration_s": 0.9582047,
+ "cpu": {
+  "process_cpu_s": 0.0,
+  "pct_of_one_core": 0.0,
+  "method": "time.process_time over the streaming window (whole Python process)"
+ },
+ "options": {
+  "video_size": "1280x720",
+  "framerate": "30",
+  "vcodec": "mjpeg",
+  "rtbufsize": "256M"
+ },
+ "stage_failed": null,
+ "timed_out": false,
+ "unreleasable": false,
+ "ok": true,
+ "metadata": {
+  "uvc_pts_present": false,
+  "note": "DirectShow via FFmpeg exposes no UVC metadata"
+ },
+ "files": {
+  "frames_jsonl": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_build_selftest_20261106\\quick\\helper_timeout_checks\\pyav_after\\frames.jsonl",
+  "frames_mjpeg": null
+ },
+ "format_fallback": false,
+ "utc_finished": "2026-11-06T17:53:20.284918+00:00",
+ "exit_code": 0
+}

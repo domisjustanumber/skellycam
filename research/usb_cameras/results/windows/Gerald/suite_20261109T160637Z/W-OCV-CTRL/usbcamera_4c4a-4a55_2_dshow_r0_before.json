@@ -1,0 +1,156 @@
+{
+ "events": [
+  {
+   "tag": "initial",
+   "op": "get_all",
+   "got": {
+    "AUTO_EXPOSURE": -1.0,
+    "EXPOSURE": 1.0,
+    "AUTOFOCUS": -1.0,
+    "FOCUS": -1.0
+   },
+   "t_ns": 10849691907600,
+   "side": {
+    "t_start_ns": 10849691914700,
+    "t_end_ns": 10849742956500,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": 1,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "before_ae_off",
+   "op": "set",
+   "prop": "AUTO_EXPOSURE",
+   "value": 0.25,
+   "ret": true,
+   "got": -1.0,
+   "set_ms": 4.89,
+   "t_ns": 10849743248600,
+   "t_end_ns": 10849748208300,
+   "side": {
+    "t_start_ns": 10849748217300,
+    "t_end_ns": 10849800453000,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": 1,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "before_exp",
+   "op": "set",
+   "prop": "EXPOSURE",
+   "value": -2.0,
+   "ret": true,
+   "got": -2.0,
+   "set_ms": 2.87,
+   "t_ns": 10849800636300,
+   "t_end_ns": 10849806416800,
+   "side": {
+    "t_start_ns": 10849806424000,
+    "t_end_ns": 10849858723600,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -2,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "after_first_frame",
+   "op": "get_all",
+   "got": {
+    "AUTO_EXPOSURE": -1.0,
+    "EXPOSURE": -2.0,
+    "AUTOFOCUS": -1.0,
+    "FOCUS": -1.0
+   },
+   "t_ns": 10851882691600,
+   "side": {
+    "t_start_ns": 10851882695600,
+    "t_end_ns": 10851959620700,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -2,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  }
+ ],
+ "segments": [
+  {
+   "label": "first",
+   "t_start_ns": 10849858898300,
+   "frames": 1,
+   "failed_reads": 0,
+   "t_end_ns": 10849861061600
+  },
+  {
+   "label": "before0",
+   "t_start_ns": 10849861071600,
+   "frames": 52,
+   "failed_reads": 0,
+   "t_end_ns": 10851875595600
+  },
+  {
+   "label": "before1",
+   "t_start_ns": 10851959943800,
+   "frames": 53,
+   "failed_reads": 0,
+   "t_end_ns": 10853969200200
+  }
+ ],
+ "convention": null,
+ "format": {
+  "fourcc": true,
+  "w": true,
+  "h": true,
+  "fps": true,
+  "got_fourcc": "MJPG",
+  "got_w": 1280.0,
+  "got_h": 720.0,
+  "got_fps": 30.00003000003,
+  "set_ms": 1889.5
+ },
+ "open_ms": 429.5,
+ "close_ms": 263.9,
+ "error": null,
+ "hung": null,
+ "activity": null,
+ "pid": 40600,
+ "opencv": "4.12.0",
+ "backend": "dshow",
+ "metric_points_ms_after_first_frame": {}
+}

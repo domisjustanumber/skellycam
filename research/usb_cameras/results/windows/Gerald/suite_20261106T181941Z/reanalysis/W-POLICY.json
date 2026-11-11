@@ -1,0 +1,125 @@
+{
+ "test": "W-POLICY",
+ "reanalysis_of": "..\\..\\..\\results\\windows\\Gerald\\suite_20261106T181941Z\\W-POLICY.json",
+ "verdicts": {
+  "policy_traps": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "no Settings video rotation set (rotation strips MJPEG/H.264 on the MF path)",
+     "met": true,
+     "detail": {
+      "found": null,
+      "corroborated_by": "W-FMT: MF lists native MJPG types and more than one native type on every camera",
+      "per_camera": {
+       "046d:085c:sn=C922SN01": {
+        "mf_mjpeg_types": 120,
+        "mf_native_capture_modes": 218,
+        "ok": true
+       },
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+        "mf_mjpeg_types": 28,
+        "mf_native_capture_modes": 112,
+        "ok": true
+       },
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+        "mf_mjpeg_types": 10,
+        "mf_native_capture_modes": 14,
+        "ok": true
+       },
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+        "mf_mjpeg_types": 119,
+        "mf_native_capture_modes": 454,
+        "ok": true
+       }
+      }
+     }
+    },
+    {
+     "criterion": "multi-app camera mode off (forces one media type on MF)",
+     "met": true,
+     "detail": {
+      "found": null,
+      "corroborated_by": "W-FMT: MF lists native MJPG types and more than one native type on every camera",
+      "per_camera": {
+       "046d:085c:sn=C922SN01": {
+        "mf_mjpeg_types": 120,
+        "mf_native_capture_modes": 218,
+        "ok": true
+       },
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+        "mf_mjpeg_types": 28,
+        "mf_native_capture_modes": 112,
+        "ok": true
+       },
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+        "mf_mjpeg_types": 10,
+        "mf_native_capture_modes": 14,
+        "ok": true
+       },
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+        "mf_mjpeg_types": 119,
+        "mf_native_capture_modes": 454,
+        "ok": true
+       }
+      }
+     }
+    },
+    {
+     "criterion": "DirectShow bypasses Frame Server on every camera (ksproxy CLSID, no EnableDshowRedirection)",
+     "met": true,
+     "detail": {
+      "046d:085c:sn=C922SN01": true,
+      "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": true,
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": true,
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": true
+     }
+    },
+    {
+     "criterion": "no DMFT / post-processing plugin active",
+     "met": true,
+     "detail": {
+      "046d:085c:sn=C922SN01": {},
+      "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+       "interface_capture:CameraPostProcessingPluginCLSID": "",
+       "interface_capture:CameraDeviceMftClsidChain": "",
+       "interface_capture:CustomCaptureSourceClsid": "",
+       "interface_video_camera:CameraPostProcessingPluginCLSID": "",
+       "interface_video_camera:CameraDeviceMftClsidChain": "",
+       "interface_video_camera:CustomCaptureSourceClsid": ""
+      },
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {},
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {}
+     }
+    },
+    {
+     "criterion": "camera privacy allows desktop apps",
+     "met": true,
+     "detail": {
+      "HKCU": "Allow",
+      "HKLM": "Allow"
+     }
+    },
+    {
+     "criterion": "EnableFrameServerMode not set",
+     "met": true,
+     "detail": {
+      "HKLM\\SOFTWARE\\Microsoft\\Windows Media Foundation\\Platform": null,
+      "HKLM\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows Media Foundation\\Platform": null
+     }
+    }
+   ],
+   "evidence": {
+    "note": "pseudo-rating: 'yes' = every known trap checked and off; None = unknown, counts as not-yes; not a plan section 3 goal",
+    "active": [],
+    "unverified": []
+   },
+   "summary_label": "yes"
+  }
+ },
+ "changes": [],
+ "fixes_applied": [
+  "B10 rotation met None unless corroborated (W-FMT)",
+  "V2 multi-app found -> not met; None counts as not-yes"
+ ]
+}

@@ -1,0 +1,3115 @@
+{
+ "tool": "wincam",
+ "version": "wincam 1.0 (2026-11-06)",
+ "subcommand": "formats",
+ "utc_started": "2026-11-06T16:19:16.439755Z",
+ "pid": 49964,
+ "argv": [
+  "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/suite/windows/native/build/wincam.exe",
+  "formats",
+  "--api",
+  "ds",
+  "--device",
+  "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+  "--timeout-ms",
+  "8000"
+ ],
+ "timeout_ms": 8000,
+ "api": "ds",
+ "enumerate_ms": 12.408,
+ "device": {
+  "index": 0,
+  "friendly_name": "c922 Pro Stream Webcam",
+  "device_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+  "usb": {
+   "vid": "046d",
+   "pid": "085c",
+   "mi": "00",
+   "instance": "8&268da596&0&0000"
+  }
+ },
+ "steps": [
+  {
+   "step": "bind_filter",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 35.391,
+   "timed_out": false
+  },
+  {
+   "step": "enumerate_pins_and_caps",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 5.3172,
+   "timed_out": false
+  }
+ ],
+ "has_IAMVideoControl": true,
+ "enum_pins_hr": "0x00000000",
+ "pins": [
+  {
+   "pin_index": 0,
+   "name": "Capture",
+   "direction": "output",
+   "category_hr": "0x00000000",
+   "category": "FB6C4281-0353-11D1-905F-0000C0CC16BA",
+   "category_name": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+   "videocontrol_caps_hr": "0x00000000",
+   "videocontrol_caps": 0,
+   "caps_count": 72,
+   "caps": [
+    {
+     "caps_index": 0,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 640,
+     "height": 480,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 1,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 640,
+     "height": 480,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 2,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 160,
+     "height": 90,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 3,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 160,
+     "height": 90,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 4,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 160,
+     "height": 120,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 5,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 160,
+     "height": 120,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 6,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 176,
+     "height": 144,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 7,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 176,
+     "height": 144,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 8,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 320,
+     "height": 180,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 9,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 320,
+     "height": 180,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 10,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 320,
+     "height": 240,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 11,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 320,
+     "height": 240,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 12,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 352,
+     "height": 288,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 13,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 352,
+     "height": 288,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 14,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 432,
+     "height": 240,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 15,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 432,
+     "height": 240,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 16,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 640,
+     "height": 360,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 17,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 640,
+     "height": 360,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 18,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 800,
+     "height": 448,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 19,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 800,
+     "height": 448,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 20,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 800,
+     "height": 600,
+     "avg_time_per_frame_100ns": 416666,
+     "min_interval_100ns": 416666,
+     "max_interval_100ns": 2000000,
+     "max_fps": 24.0000384,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 21,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 800,
+     "height": 600,
+     "avg_time_per_frame_100ns": 416666,
+     "min_interval_100ns": 416666,
+     "max_interval_100ns": 2000000,
+     "max_fps": 24.0000384,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 22,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 864,
+     "height": 480,
+     "avg_time_per_frame_100ns": 416666,
+     "min_interval_100ns": 416666,
+     "max_interval_100ns": 2000000,
+     "max_fps": 24.0000384,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 23,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 864,
+     "height": 480,
+     "avg_time_per_frame_100ns": 416666,
+     "min_interval_100ns": 416666,
+     "max_interval_100ns": 2000000,
+     "max_fps": 24.0000384,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 24,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 960,
+     "height": 720,
+     "avg_time_per_frame_100ns": 666666,
+     "min_interval_100ns": 666666,
+     "max_interval_100ns": 2000000,
+     "max_fps": 15.000015,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 25,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 960,
+     "height": 720,
+     "avg_time_per_frame_100ns": 666666,
+     "min_interval_100ns": 666666,
+     "max_interval_100ns": 2000000,
+     "max_fps": 15.000015,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 26,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 1024,
+     "height": 576,
+     "avg_time_per_frame_100ns": 666666,
+     "min_interval_100ns": 666666,
+     "max_interval_100ns": 2000000,
+     "max_fps": 15.000015,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 27,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 1024,
+     "height": 576,
+     "avg_time_per_frame_100ns": 666666,
+     "min_interval_100ns": 666666,
+     "max_interval_100ns": 2000000,
+     "max_fps": 15.000015,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 28,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 1280,
+     "height": 720,
+     "avg_time_per_frame_100ns": 1000000,
+     "min_interval_100ns": 1000000,
+     "max_interval_100ns": 2000000,
+     "max_fps": 10,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 29,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 1280,
+     "height": 720,
+     "avg_time_per_frame_100ns": 1000000,
+     "min_interval_100ns": 1000000,
+     "max_interval_100ns": 2000000,
+     "max_fps": 10,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 30,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 1600,
+     "height": 896,
+     "avg_time_per_frame_100ns": 1333333,
+     "min_interval_100ns": 1333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 7.500001875,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 31,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 1600,
+     "height": 896,
+     "avg_time_per_frame_100ns": 1333333,
+     "min_interval_100ns": 1333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 7.500001875,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 32,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 1920,
+     "height": 1080,
+     "avg_time_per_frame_100ns": 2000000,
+     "min_interval_100ns": 2000000,
+     "max_interval_100ns": 2000000,
+     "max_fps": 5,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      2000000
+     ]
+    },
+    {
+     "caps_index": 33,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 1920,
+     "height": 1080,
+     "avg_time_per_frame_100ns": 2000000,
+     "min_interval_100ns": 2000000,
+     "max_interval_100ns": 2000000,
+     "max_fps": 5,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      2000000
+     ]
+    },
+    {
+     "caps_index": 34,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 2304,
+     "height": 1296,
+     "avg_time_per_frame_100ns": 4999998,
+     "min_interval_100ns": 4999998,
+     "max_interval_100ns": 4999998,
+     "max_fps": 2.0000008,
+     "min_fps": 2.0000008,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      4999998
+     ]
+    },
+    {
+     "caps_index": 35,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 2304,
+     "height": 1296,
+     "avg_time_per_frame_100ns": 4999998,
+     "min_interval_100ns": 4999998,
+     "max_interval_100ns": 4999998,
+     "max_fps": 2.0000008,
+     "min_fps": 2.0000008,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      4999998
+     ]
+    },
+    {
+     "caps_index": 36,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 2304,
+     "height": 1536,
+     "avg_time_per_frame_100ns": 4999998,
+     "min_interval_100ns": 4999998,
+     "max_interval_100ns": 4999998,
+     "max_fps": 2.0000008,
+     "min_fps": 2.0000008,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      4999998
+     ]
+    },
+    {
+     "caps_index": 37,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "YUY2",
+     "subtype_guid": "32595559-0000-0010-8000-00AA00389B71",
+     "biCompression": "YUY2",
+     "major_type": "MFMediaType_Video",
+     "width": 2304,
+     "height": 1536,
+     "avg_time_per_frame_100ns": 4999998,
+     "min_interval_100ns": 4999998,
+     "max_interval_100ns": 4999998,
+     "max_fps": 2.0000008,
+     "min_fps": 2.0000008,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      4999998
+     ]
+    },
+    {
+     "caps_index": 38,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 640,
+     "height": 480,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 39,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 640,
+     "height": 480,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 40,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 160,
+     "height": 90,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 41,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 160,
+     "height": 90,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 42,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 160,
+     "height": 120,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 43,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 160,
+     "height": 120,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 44,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 176,
+     "height": 144,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 45,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 176,
+     "height": 144,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 46,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 320,
+     "height": 180,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 47,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 320,
+     "height": 180,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 48,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 320,
+     "height": 240,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 49,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 320,
+     "height": 240,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 50,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 352,
+     "height": 288,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 51,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 352,
+     "height": 288,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 52,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 432,
+     "height": 240,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 53,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 432,
+     "height": 240,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 54,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 640,
+     "height": 360,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 55,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 640,
+     "height": 360,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 56,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 800,
+     "height": 448,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 57,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 800,
+     "height": 448,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 58,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 800,
+     "height": 600,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 59,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 800,
+     "height": 600,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 60,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 864,
+     "height": 480,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 61,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 864,
+     "height": 480,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 62,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 960,
+     "height": 720,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 63,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 960,
+     "height": 720,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 64,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 1024,
+     "height": 576,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 65,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 1024,
+     "height": 576,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 66,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 1280,
+     "height": 720,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 166666,
+     "max_interval_100ns": 2000000,
+     "max_fps": 60.00024,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      166666,
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 67,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 1280,
+     "height": 720,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 166666,
+     "max_interval_100ns": 2000000,
+     "max_fps": 60.00024,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      166666,
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 68,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 1600,
+     "height": 896,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 69,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 1600,
+     "height": 896,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 70,
+     "hr": "0x00000000",
+     "header_kind": "VIH",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 1920,
+     "height": 1080,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    },
+    {
+     "caps_index": 71,
+     "hr": "0x00000000",
+     "header_kind": "VIH2",
+     "subtype": "MJPG",
+     "subtype_guid": "47504A4D-0000-0010-8000-00AA00389B71",
+     "biCompression": "MJPG",
+     "major_type": "MFMediaType_Video",
+     "width": 1920,
+     "height": 1080,
+     "avg_time_per_frame_100ns": 333333,
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_hr": "0x00000000",
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ]
+    }
+   ],
+   "modes": [
+    {
+     "subtype": "YUY2",
+     "width": 640,
+     "height": 480,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      0,
+      1
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 160,
+     "height": 90,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      2,
+      3
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 160,
+     "height": 120,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      4,
+      5
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 176,
+     "height": 144,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      6,
+      7
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 320,
+     "height": 180,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      8,
+      9
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 320,
+     "height": 240,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      10,
+      11
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 352,
+     "height": 288,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      12,
+      13
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 432,
+     "height": 240,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      14,
+      15
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 640,
+     "height": 360,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      16,
+      17
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 800,
+     "height": 448,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      18,
+      19
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 800,
+     "height": 600,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      20,
+      21
+     ],
+     "min_interval_100ns": 416666,
+     "max_interval_100ns": 2000000,
+     "max_fps": 24.0000384,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 864,
+     "height": 480,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      22,
+      23
+     ],
+     "min_interval_100ns": 416666,
+     "max_interval_100ns": 2000000,
+     "max_fps": 24.0000384,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 960,
+     "height": 720,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      24,
+      25
+     ],
+     "min_interval_100ns": 666666,
+     "max_interval_100ns": 2000000,
+     "max_fps": 15.000015,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 1024,
+     "height": 576,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      26,
+      27
+     ],
+     "min_interval_100ns": 666666,
+     "max_interval_100ns": 2000000,
+     "max_fps": 15.000015,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 1280,
+     "height": 720,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      28,
+      29
+     ],
+     "min_interval_100ns": 1000000,
+     "max_interval_100ns": 2000000,
+     "max_fps": 10,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 1600,
+     "height": 896,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      30,
+      31
+     ],
+     "min_interval_100ns": 1333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 7.500001875,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 1920,
+     "height": 1080,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      32,
+      33
+     ],
+     "min_interval_100ns": 2000000,
+     "max_interval_100ns": 2000000,
+     "max_fps": 5,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      2000000
+     ],
+     "fps_list": [
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 2304,
+     "height": 1296,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      34,
+      35
+     ],
+     "min_interval_100ns": 4999998,
+     "max_interval_100ns": 4999998,
+     "max_fps": 2.0000008,
+     "min_fps": 2.0000008,
+     "frame_rate_list_100ns": [
+      4999998
+     ],
+     "fps_list": [
+      2.0000008
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "YUY2",
+     "width": 2304,
+     "height": 1536,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      36,
+      37
+     ],
+     "min_interval_100ns": 4999998,
+     "max_interval_100ns": 4999998,
+     "max_fps": 2.0000008,
+     "min_fps": 2.0000008,
+     "frame_rate_list_100ns": [
+      4999998
+     ],
+     "fps_list": [
+      2.0000008
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 640,
+     "height": 480,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      38,
+      39
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 160,
+     "height": 90,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      40,
+      41
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 160,
+     "height": 120,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      42,
+      43
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 176,
+     "height": 144,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      44,
+      45
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 320,
+     "height": 180,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      46,
+      47
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 320,
+     "height": 240,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      48,
+      49
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 352,
+     "height": 288,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      50,
+      51
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 432,
+     "height": 240,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      52,
+      53
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 640,
+     "height": 360,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      54,
+      55
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 800,
+     "height": 448,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      56,
+      57
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 800,
+     "height": 600,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      58,
+      59
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 864,
+     "height": 480,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      60,
+      61
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 960,
+     "height": 720,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      62,
+      63
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 1024,
+     "height": 576,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      64,
+      65
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 1280,
+     "height": 720,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      66,
+      67
+     ],
+     "min_interval_100ns": 166666,
+     "max_interval_100ns": 2000000,
+     "max_fps": 60.00024,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      166666,
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      60.00024,
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 1600,
+     "height": 896,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      68,
+      69
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    },
+    {
+     "subtype": "MJPG",
+     "width": 1920,
+     "height": 1080,
+     "header_kinds": [
+      "VIH",
+      "VIH2"
+     ],
+     "caps_indices": [
+      70,
+      71
+     ],
+     "min_interval_100ns": 333333,
+     "max_interval_100ns": 2000000,
+     "max_fps": 30.00003,
+     "min_fps": 5,
+     "frame_rate_list_100ns": [
+      333333,
+      416666,
+      500000,
+      666666,
+      1000000,
+      1333333,
+      2000000
+     ],
+     "fps_list": [
+      30.00003,
+      24.0000384,
+      20,
+      15.000015,
+      10,
+      7.500001875,
+      5
+     ],
+     "rate_list_available": true
+    }
+   ],
+   "mode_count": 36
+  },
+  {
+   "pin_index": 1,
+   "name": "Video Camera Terminal",
+   "direction": "input",
+   "category_hr": "0x00000000",
+   "category": "3EBC7959-3310-493B-AA81-C7E132D56F71",
+   "category_name": "3EBC7959-3310-493B-AA81-C7E132D56F71",
+   "videocontrol_caps_hr": "0x00000000",
+   "videocontrol_caps": 0,
+   "media_types": []
+  }
+ ],
+ "any_unknown_pin_category": false,
+ "error": null,
+ "utc_finished": "2026-11-06T16:19:16.496126Z",
+ "exit_code": 0,
+ "abandoned_threads": 0
+}

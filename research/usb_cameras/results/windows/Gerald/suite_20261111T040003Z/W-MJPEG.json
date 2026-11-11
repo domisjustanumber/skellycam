@@ -1,0 +1,5356 @@
+{
+ "test": "W-MJPEG",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-11T04:03:47.501499+00:00",
+ "utc_finished": "2026-11-11T04:06:33.584241+00:00",
+ "elapsed_s": 166.062,
+ "command": "research/usb_cameras/suite/windows/run_suite.py --cyc-profile reliability --reliability-cycles 400 --min-fps 30 --min-height 720 --max-height 720",
+ "argv": [
+  "research/usb_cameras/suite/windows/run_suite.py",
+  "--cyc-profile",
+  "reliability",
+  "--reliability-cycles",
+  "400",
+  "--min-fps",
+  "30",
+  "--min-height",
+  "720",
+  "--max-height",
+  "720"
+ ],
+ "environment": {
+  "os": {
+   "platform": "Windows-11-10.0.26300-SP0",
+   "system": "Windows",
+   "release": "11",
+   "version": "10.0.26300",
+   "machine": "AMD64",
+   "windows_build": 26300,
+   "windows_version": "10.0.26300",
+   "windows_edition": "Core",
+   "windows_displayversion": "26H2",
+   "windows_ubr": 9711,
+   "windows_productname": "Windows 10 Home",
+   "windows_currentbuild": "26300"
+  },
+  "python": "3.12.13",
+  "python_implementation": "CPython",
+  "python_executable": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+  "hostname": "Gerald",
+  "pid": 47460,
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0"
+  }
+ },
+ "cameras": [
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-10T22:07:35.509176+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 2
+  },
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "name": "Logitech Webcam C930e",
+   "vid": "046d",
+   "pid": "0843",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+   "parent_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&34c047e4&0&0000",
+   "hub_port": 8,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "Logitech Webcam C930e",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(8)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "speed": "HS",
+   "bcd_device": "0013",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-10T22:07:46.470029+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 0,
+   "ds_index": 3
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "name": "USB Camera",
+   "vid": "4c4a",
+   "pid": "4a55",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232e60d4&0&0000",
+   "hub_port": 2,
+   "mf_symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Camera",
+   "ds_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "speed": "HS",
+   "bcd_device": "0100",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-09T21:34:51.037086+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 5,
+   "ds_index": 0
+  },
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "vid": "046d",
+   "pid": "085c",
+   "serial": "C922SN01",
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "c922 Pro Stream Webcam",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+   "speed": "HS",
+   "bcd_device": "0016",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-09T21:34:51.119106+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 6,
+   "ds_index": 1
+  }
+ ],
+ "measurements": {
+  "mode_scope": {
+   "min_fps": 30.0,
+   "min_height": 720,
+   "max_height": 720,
+   "all_modes": false,
+   "text": "exactly 720 lines at >= 30 fps",
+   "fps_rel_tol": 0.005,
+   "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+  },
+  "seconds_per_mode": 3.0,
+  "default_mode_seconds": 10.0,
+  "recapture_seconds": 10.0,
+  "quick": false,
+  "decoders": {
+   "simplejpeg": true,
+   "turbojpeg": false,
+   "PIL": true
+  },
+  "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG",
+  "cameras": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "name": "USB Video Device",
+    "is_kiyo": true,
+    "modes_info": {
+     "advertised": 28,
+     "in_scope": 2,
+     "selected": 2,
+     "mode_scope": {
+      "scope": {
+       "min_fps": 30.0,
+       "min_height": 720,
+       "max_height": 720,
+       "all_modes": false,
+       "text": "exactly 720 lines at >= 30 fps",
+       "fps_rel_tol": 0.005,
+       "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+      },
+      "advertised": 28,
+      "in_scope": 2,
+      "excluded": 26,
+      "in_scope_modes": [
+       "MJPG 1280x720@30",
+       "MJPG 1280x720@60"
+      ],
+      "excluded_modes": [
+       "MJPG 640x360@5",
+       "MJPG 640x360@10",
+       "MJPG 640x360@15",
+       "MJPG 640x360@20",
+       "MJPG 640x360@24",
+       "MJPG 640x360@30",
+       "MJPG 640x360@60",
+       "MJPG 640x480@5",
+       "MJPG 640x480@10",
+       "MJPG 640x480@15",
+       "MJPG 640x480@20",
+       "MJPG 640x480@24",
+       "MJPG 640x480@30",
+       "MJPG 640x480@60",
+       "MJPG 1280x720@5",
+       "MJPG 1280x720@10",
+       "MJPG 1280x720@15",
+       "MJPG 1280x720@20",
+       "MJPG 1280x720@24",
+       "MJPG 1920x1080@5",
+       "MJPG 1920x1080@10",
+       "MJPG 1920x1080@15",
+       "MJPG 1920x1080@20",
+       "MJPG 1920x1080@24",
+       "MJPG 1920x1080@30",
+       "MJPG 1920x1080@60"
+      ],
+      "excluded_list_truncated": false,
+      "default_mode": "MJPG 1280x720@30"
+     },
+     "formats_run": {
+      "cached_file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\_cache\\formats_mf_usbvideodevice_1532-0e05_4.json"
+     },
+     "formats_error": null,
+     "default_mode": "MJPG 1280x720@30",
+     "order": "default first, then >= 15 fps by size, low-rate modes last"
+    },
+    "default_mode": "MJPG 1280x720@30",
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "mode_detail": {
+       "subtype": "MJPG",
+       "width": 1280,
+       "height": 720,
+       "fps_num": 30,
+       "fps_den": 1,
+       "fps": 30.0,
+       "text": "MJPG 1280x720@30"
+      },
+      "apis": {
+       "mf": {
+        "api": "mf",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "wincam-mf",
+        "frames": 303,
+        "fps_measured_tool": 30.15476634,
+        "fps_steady": 30.096139442036222,
+        "fps_tail_1p5s": 30.056703430760273,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         34,
+         85,
+         119,
+         170,
+         204,
+         255,
+         289
+        ],
+        "saved_total": 18,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "63ad4de8071d39dc4dae72d192aa5fad6324332b",
+        "header_sha1_distinct": 2,
+        "cpu_pct_one_core": 2.652418396,
+        "cpu_resolution_pct": 0.15601596824683134,
+        "cpu_method": "GetProcessTimes over the streaming window",
+        "timings": {
+         "enumerate_ms": 1.743200004,
+         "activate_ms": 26.50650001,
+         "reader_ms": 0.7448000014,
+         "settype_ms": 0.5993999988,
+         "first_frame_ms": 934.7114,
+         "open_to_first_frame_ms": 965.5533,
+         "flush_ms": 0.4435000122,
+         "reader_release_ms": 1123.7386,
+         "shutdown_ms": 1.369200006,
+         "shutdown_object_ms": 0.1146000028,
+         "close_ms": 1125.9689
+        },
+        "open_duration_ms": null,
+        "negotiated_detail": {
+         "requested_subtype": "MJPG",
+         "candidate_rates_same_size": [
+          "60/1",
+          "30/1",
+          "24/1",
+          "20/1",
+          "15/1",
+          "10/1",
+          "5/1"
+         ],
+         "likely_mf_synthesized_candidates": 0,
+         "native_type_index": 43,
+         "likely_mf_synthesized": false,
+         "raw": false,
+         "stream_selection_hr": "0x00000000",
+         "readback_hr": "0x00000000",
+         "subtype": "MJPG",
+         "width": 1280,
+         "height": 720,
+         "fps_num": 30,
+         "fps_den": 1,
+         "fps": 30,
+         "readback_default_stride": null,
+         "readback_ok": true
+        },
+        "format_fallback": null,
+        "pix_fmt": null,
+        "unreleasable": false,
+        "abandoned_threads": 0,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:03:48.178144Z",
+        "utc_finished": "2026-11-11T04:04:00.290052Z",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\usbvideodevice_1532-0e05_4\\mf_1280x720_30",
+        "sample": "W-MJPEG/samples/usbvideodevice_1532-0e05_4_mf_1280x720_30.jpg"
+       },
+       "pyav_ds": {
+        "api": "pyav_ds",
+        "ok": false,
+        "negotiated": false,
+        "rc": 4,
+        "timed_out": false,
+        "backend": "pyav-dshow",
+        "frames": 292,
+        "fps_measured_tool": 29.01042885040294,
+        "fps_steady": 30.009511235391468,
+        "fps_tail_1p5s": 30.07986735043233,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 0.0,
+        "eoi_fraction": 0.0,
+        "sof_match_fraction": 0.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         34,
+         85,
+         119,
+         170,
+         204,
+         255,
+         289
+        ],
+        "saved_total": 18,
+        "strict_ok_fraction": 0.0,
+        "lenient_ok_fraction": 0.0,
+        "strict_fail_reasons": {
+         "ValueError: tjDecompressHeader3(): Could not determine subsampling level of JPEG": 8
+        },
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": null,
+        "header_sha1_distinct": 0,
+        "cpu_pct_one_core": 8.567298038939871,
+        "cpu_resolution_pct": 0.1557690552534522,
+        "cpu_method": "time.process_time over the streaming window (whole Python process)",
+        "timings": {
+         "open_ms": 851.7376,
+         "open_duration_ms": 851.7376,
+         "first_frame_ms": 851.8747,
+         "open_to_first_frame_ms": 851.8747,
+         "close_ms": 933.156
+        },
+        "open_duration_ms": 851.7376,
+        "negotiated_detail": {
+         "codec": "rawvideo",
+         "pix_fmt": "yuyv422",
+         "width": 1280,
+         "height": 720,
+         "time_base": "1/10000000",
+         "average_rate": "10000000/333333",
+         "t_opened_ns": 109775752848500
+        },
+        "format_fallback": true,
+        "pix_fmt": "yuyv422",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": {
+         "stage": "format",
+         "class": "other",
+         "reason": "silent format fallback: stream codec 'rawvideo', not mjpeg, although vcodec=mjpeg was requested (PyAV cannot set FFmpeg's video_codec_id, so dshow takes the first caps entry matching size and rate; use --engine ffmpeg)"
+        },
+        "classification": {
+         "class": "other",
+         "reason": "unrecognised failure None",
+         "code": null,
+         "code_hex": null,
+         "name": null,
+         "retry_advised": false
+        },
+        "fault": null,
+        "utc_started": "2026-11-11T04:04:01.028062+00:00",
+        "utc_finished": "2026-11-11T04:04:12.847322+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\usbvideodevice_1532-0e05_4\\pyav_ds_1280x720_30",
+        "sample": null
+       },
+       "ffmpeg_ds": {
+        "api": "ffmpeg_ds",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "ffmpeg-cli-dshow",
+        "frames": 301,
+        "fps_measured_tool": 30.08790482273009,
+        "fps_steady": 30.102904990896793,
+        "fps_tail_1p5s": 29.98050461399966,
+        "fps_basis": "packet pts",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         34,
+         85,
+         119,
+         170,
+         204,
+         255,
+         289
+        ],
+        "saved_total": 18,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "63ad4de8071d39dc4dae72d192aa5fad6324332b",
+        "header_sha1_distinct": 2,
+        "cpu_pct_one_core": 9.396111569616185,
+        "cpu_resolution_pct": 0.12871385711802993,
+        "cpu_method": "GetProcessTimes(ffmpeg.exe) user+kernel over the process lifetime (includes process start, open/probe, close, and the harness's own framecrc checksums and two output files, so an upper bound for the dshow path)",
+        "timings": {
+         "process_ms": 12142.9434,
+         "open_ms": null,
+         "open_duration_ms": null,
+         "first_frame_ms": 1264.4133567810059,
+         "open_to_first_frame_ms": 1264.4133567810059,
+         "close_ms": null,
+         "note": "open_to_first_frame_ms includes the ffmpeg process start"
+        },
+        "open_duration_ms": null,
+        "negotiated_detail": {
+         "codec": "mjpeg",
+         "pix_fmt": "yuvj420p",
+         "width": 1280,
+         "height": 720
+        },
+        "format_fallback": false,
+        "pix_fmt": "yuvj420p",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:04:13.555806+00:00",
+        "utc_finished": "2026-11-11T04:04:25.760328+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\usbvideodevice_1532-0e05_4\\ffmpeg_ds_1280x720_30"
+       },
+       "ds": {
+        "api": "ffmpeg_ds",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "ffmpeg-cli-dshow",
+        "frames": 301,
+        "fps_measured_tool": 30.08790482273009,
+        "fps_steady": 30.102904990896793,
+        "fps_tail_1p5s": 29.98050461399966,
+        "fps_basis": "packet pts",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         34,
+         85,
+         119,
+         170,
+         204,
+         255,
+         289
+        ],
+        "saved_total": 18,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "63ad4de8071d39dc4dae72d192aa5fad6324332b",
+        "header_sha1_distinct": 2,
+        "cpu_pct_one_core": 9.396111569616185,
+        "cpu_resolution_pct": 0.12871385711802993,
+        "cpu_method": "GetProcessTimes(ffmpeg.exe) user+kernel over the process lifetime (includes process start, open/probe, close, and the harness's own framecrc checksums and two output files, so an upper bound for the dshow path)",
+        "timings": {
+         "process_ms": 12142.9434,
+         "open_ms": null,
+         "open_duration_ms": null,
+         "first_frame_ms": 1264.4133567810059,
+         "open_to_first_frame_ms": 1264.4133567810059,
+         "close_ms": null,
+         "note": "open_to_first_frame_ms includes the ffmpeg process start"
+        },
+        "open_duration_ms": null,
+        "negotiated_detail": {
+         "codec": "mjpeg",
+         "pix_fmt": "yuvj420p",
+         "width": 1280,
+         "height": 720
+        },
+        "format_fallback": false,
+        "pix_fmt": "yuvj420p",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:04:13.555806+00:00",
+        "utc_finished": "2026-11-11T04:04:25.760328+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\usbvideodevice_1532-0e05_4\\ffmpeg_ds_1280x720_30",
+        "route": "ffmpeg_ds"
+       }
+      },
+      "order_index": 0,
+      "seconds": 10.0,
+      "header_sha1_equal": true,
+      "fps_nominal": 30.0,
+      "fps_reference": 30.099522216466507,
+      "fps_reference_basis": "apis_agree",
+      "fps_reference_note": null,
+      "rate_honoured": {
+       "honoured": true,
+       "by_api": {
+        "mf": true,
+        "ds": true
+       },
+       "nominal": 30.0,
+       "tolerance": 0.02
+      },
+      "raw_fallback_rate": {
+       "pix_fmt": "yuyv422",
+       "fps": 30.009511235391468,
+       "honoured": true,
+       "note": "PyAV's silent raw fallback, same session: the camera's raw-format rate at this request (control experiment for the MJPEG rate)"
+      },
+      "fps_misses": []
+     },
+     {
+      "mode": "MJPG 1280x720@60",
+      "mode_detail": {
+       "subtype": "MJPG",
+       "width": 1280,
+       "height": 720,
+       "fps_num": 60,
+       "fps_den": 1,
+       "fps": 60.0,
+       "text": "MJPG 1280x720@60"
+      },
+      "apis": {
+       "mf": {
+        "api": "mf",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "wincam-mf",
+        "frames": 92,
+        "fps_measured_tool": 30.10134528,
+        "fps_steady": 30.317000047638867,
+        "fps_tail_1p5s": 30.65028719034401,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         10,
+         30,
+         40,
+         50,
+         60,
+         80,
+         90
+        ],
+        "saved_total": 10,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "63ad4de8071d39dc4dae72d192aa5fad6324332b",
+        "header_sha1_distinct": 2,
+        "cpu_pct_one_core": 1.550961775,
+        "cpu_resolution_pct": 0.5168500218995556,
+        "cpu_method": "GetProcessTimes over the streaming window",
+        "timings": {
+         "enumerate_ms": 1.696899995,
+         "activate_ms": 26.34890001,
+         "reader_ms": 0.7245000005,
+         "settype_ms": 0.5457000136,
+         "first_frame_ms": 933.8735,
+         "open_to_first_frame_ms": 964.3573,
+         "flush_ms": 0.4610000104,
+         "reader_release_ms": 821.1835,
+         "shutdown_ms": 1.564800009,
+         "shutdown_object_ms": 0.1281999946,
+         "close_ms": 823.6234
+        },
+        "open_duration_ms": null,
+        "negotiated_detail": {
+         "requested_subtype": "MJPG",
+         "candidate_rates_same_size": [
+          "60/1",
+          "30/1",
+          "24/1",
+          "20/1",
+          "15/1",
+          "10/1",
+          "5/1"
+         ],
+         "likely_mf_synthesized_candidates": 0,
+         "native_type_index": 42,
+         "likely_mf_synthesized": false,
+         "raw": false,
+         "stream_selection_hr": "0x00000000",
+         "readback_hr": "0x00000000",
+         "subtype": "MJPG",
+         "width": 1280,
+         "height": 720,
+         "fps_num": 60,
+         "fps_den": 1,
+         "fps": 60,
+         "readback_default_stride": null,
+         "readback_ok": true
+        },
+        "format_fallback": null,
+        "pix_fmt": null,
+        "unreleasable": false,
+        "abandoned_threads": 0,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:04:26.225831Z",
+        "utc_finished": "2026-11-11T04:04:31.042379Z",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\usbvideodevice_1532-0e05_4\\mf_1280x720_60"
+       },
+       "pyav_ds": {
+        "api": "pyav_ds",
+        "ok": false,
+        "negotiated": false,
+        "rc": 4,
+        "timed_out": false,
+        "backend": "pyav-dshow",
+        "frames": 82,
+        "fps_measured_tool": 26.78965566064928,
+        "fps_steady": 30.023447937776123,
+        "fps_tail_1p5s": 30.066730613698176,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 0.0,
+        "eoi_fraction": 0.0,
+        "sof_match_fraction": 0.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         10,
+         20,
+         30,
+         50,
+         60,
+         70,
+         80
+        ],
+        "saved_total": 9,
+        "strict_ok_fraction": 0.0,
+        "lenient_ok_fraction": 0.0,
+        "strict_fail_reasons": {
+         "ValueError: tjDecompressHeader3(): Could not determine subsampling level of JPEG": 8
+        },
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": null,
+        "header_sha1_distinct": 0,
+        "cpu_pct_one_core": 8.268412240941137,
+        "cpu_resolution_pct": 0.5167757650588211,
+        "cpu_method": "time.process_time over the streaming window (whole Python process)",
+        "timings": {
+         "open_ms": 867.0605,
+         "open_duration_ms": 867.0605,
+         "first_frame_ms": 867.1217,
+         "open_to_first_frame_ms": 867.1217,
+         "close_ms": 824.0627
+        },
+        "open_duration_ms": 867.0605,
+        "negotiated_detail": {
+         "codec": "rawvideo",
+         "pix_fmt": "yuyv422",
+         "width": 1280,
+         "height": 720,
+         "time_base": "1/10000000",
+         "average_rate": "5000000/83333",
+         "t_opened_ns": 109806290559700
+        },
+        "format_fallback": true,
+        "pix_fmt": "yuyv422",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": {
+         "stage": "format",
+         "class": "other",
+         "reason": "silent format fallback: stream codec 'rawvideo', not mjpeg, although vcodec=mjpeg was requested (PyAV cannot set FFmpeg's video_codec_id, so dshow takes the first caps entry matching size and rate; use --engine ffmpeg)"
+        },
+        "classification": {
+         "class": "other",
+         "reason": "unrecognised failure None",
+         "code": null,
+         "code_hex": null,
+         "name": null,
+         "retry_advised": false
+        },
+        "fault": null,
+        "utc_started": "2026-11-11T04:04:31.551078+00:00",
+        "utc_finished": "2026-11-11T04:04:36.267874+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\usbvideodevice_1532-0e05_4\\pyav_ds_1280x720_60"
+       },
+       "ffmpeg_ds": {
+        "api": "ffmpeg_ds",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "ffmpeg-cli-dshow",
+        "frames": 91,
+        "fps_measured_tool": 30.052672317014288,
+        "fps_steady": 30.348084003848054,
+        "fps_tail_1p5s": 30.748404211865775,
+        "fps_basis": "packet pts",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         10,
+         30,
+         40,
+         50,
+         60,
+         80,
+         90
+        ],
+        "saved_total": 10,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "63ad4de8071d39dc4dae72d192aa5fad6324332b",
+        "header_sha1_distinct": 2,
+        "cpu_pct_one_core": 20.213831709587147,
+        "cpu_resolution_pct": 0.2972622310233404,
+        "cpu_method": "GetProcessTimes(ffmpeg.exe) user+kernel over the process lifetime (includes process start, open/probe, close, and the harness's own framecrc checksums and two output files, so an upper bound for the dshow path)",
+        "timings": {
+         "process_ms": 5262.9619,
+         "open_ms": null,
+         "open_duration_ms": null,
+         "first_frame_ms": 1272.8755474090576,
+         "open_to_first_frame_ms": 1272.8755474090576,
+         "close_ms": null,
+         "note": "open_to_first_frame_ms includes the ffmpeg process start"
+        },
+        "open_duration_ms": null,
+        "negotiated_detail": {
+         "codec": "mjpeg",
+         "pix_fmt": "yuvj420p",
+         "width": 1280,
+         "height": 720
+        },
+        "format_fallback": false,
+        "pix_fmt": "yuvj420p",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:04:36.786159+00:00",
+        "utc_finished": "2026-11-11T04:04:42.073867+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\usbvideodevice_1532-0e05_4\\ffmpeg_ds_1280x720_60"
+       },
+       "ds": {
+        "api": "ffmpeg_ds",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "ffmpeg-cli-dshow",
+        "frames": 91,
+        "fps_measured_tool": 30.052672317014288,
+        "fps_steady": 30.348084003848054,
+        "fps_tail_1p5s": 30.748404211865775,
+        "fps_basis": "packet pts",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         10,
+         30,
+         40,
+         50,
+         60,
+         80,
+         90
+        ],
+        "saved_total": 10,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "63ad4de8071d39dc4dae72d192aa5fad6324332b",
+        "header_sha1_distinct": 2,
+        "cpu_pct_one_core": 20.213831709587147,
+        "cpu_resolution_pct": 0.2972622310233404,
+        "cpu_method": "GetProcessTimes(ffmpeg.exe) user+kernel over the process lifetime (includes process start, open/probe, close, and the harness's own framecrc checksums and two output files, so an upper bound for the dshow path)",
+        "timings": {
+         "process_ms": 5262.9619,
+         "open_ms": null,
+         "open_duration_ms": null,
+         "first_frame_ms": 1272.8755474090576,
+         "open_to_first_frame_ms": 1272.8755474090576,
+         "close_ms": null,
+         "note": "open_to_first_frame_ms includes the ffmpeg process start"
+        },
+        "open_duration_ms": null,
+        "negotiated_detail": {
+         "codec": "mjpeg",
+         "pix_fmt": "yuvj420p",
+         "width": 1280,
+         "height": 720
+        },
+        "format_fallback": false,
+        "pix_fmt": "yuvj420p",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:04:36.786159+00:00",
+        "utc_finished": "2026-11-11T04:04:42.073867+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\usbvideodevice_1532-0e05_4\\ffmpeg_ds_1280x720_60",
+        "route": "ffmpeg_ds"
+       }
+      },
+      "order_index": 1,
+      "header_sha1_equal": true,
+      "fps_nominal": 60.0,
+      "fps_reference": 30.33254202574346,
+      "fps_reference_basis": "apis_agree",
+      "fps_reference_note": "both APIs deliver 30.33 fps (nominal 60); used as the camera's real rate",
+      "rate_honoured": {
+       "honoured": false,
+       "by_api": {
+        "mf": false,
+        "ds": false
+       },
+       "nominal": 60.0,
+       "tolerance": 0.02
+      },
+      "raw_fallback_rate": {
+       "pix_fmt": "yuyv422",
+       "fps": 30.023447937776123,
+       "honoured": false,
+       "note": "PyAV's silent raw fallback, same session: the camera's raw-format rate at this request (control experiment for the MJPEG rate)"
+      },
+      "fps_misses": []
+     }
+    ],
+    "tool_failed_modes": {
+     "mf": [],
+     "ds": [],
+     "pyav_ds": [
+      "MJPG 1280x720@30",
+      "MJPG 1280x720@60"
+     ]
+    },
+    "skipped_modes": [],
+    "rating_failed_modes": {
+     "mf": [],
+     "ds": [],
+     "pyav_ds": [
+      "MJPG 1280x720@30",
+      "MJPG 1280x720@60"
+     ]
+    },
+    "pyav_format_fallback_modes": [
+     "MJPG 1280x720@30",
+     "MJPG 1280x720@60"
+    ],
+    "rate_control_experiment": {
+     "rows": [
+      {
+       "mode": "MJPG 1280x720@30",
+       "nominal": 30.0,
+       "mjpeg_mf_fps": 30.096139442036222,
+       "raw_fps": 30.009511235391468,
+       "raw_pix_fmt": "yuyv422",
+       "raw_honoured": true,
+       "mjpeg_honoured": true
+      },
+      {
+       "mode": "MJPG 1280x720@60",
+       "nominal": 60.0,
+       "mjpeg_mf_fps": 30.317000047638867,
+       "raw_fps": 30.023447937776123,
+       "raw_pix_fmt": "yuyv422",
+       "raw_honoured": false,
+       "mjpeg_honoured": false
+      }
+     ],
+     "raw_honoured": 1,
+     "mjpeg_honoured_same_modes": 1,
+     "n": 2
+    },
+    "events": [],
+    "health_check_at_start": null,
+    "device_fault": null,
+    "recaptured": 0,
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 28,
+     "in_scope": 2,
+     "excluded": 26,
+     "in_scope_modes": [
+      "MJPG 1280x720@30",
+      "MJPG 1280x720@60"
+     ],
+     "excluded_modes": [
+      "MJPG 640x360@5",
+      "MJPG 640x360@10",
+      "MJPG 640x360@15",
+      "MJPG 640x360@20",
+      "MJPG 640x360@24",
+      "MJPG 640x360@30",
+      "MJPG 640x360@60",
+      "MJPG 640x480@5",
+      "MJPG 640x480@10",
+      "MJPG 640x480@15",
+      "MJPG 640x480@20",
+      "MJPG 640x480@24",
+      "MJPG 640x480@30",
+      "MJPG 640x480@60",
+      "MJPG 1280x720@5",
+      "MJPG 1280x720@10",
+      "MJPG 1280x720@15",
+      "MJPG 1280x720@20",
+      "MJPG 1280x720@24",
+      "MJPG 1920x1080@5",
+      "MJPG 1920x1080@10",
+      "MJPG 1920x1080@15",
+      "MJPG 1920x1080@20",
+      "MJPG 1920x1080@24",
+      "MJPG 1920x1080@30",
+      "MJPG 1920x1080@60"
+     ],
+     "excluded_list_truncated": false,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "activity_at_first_stream": {
+     "utc": "2026-11-11T04:03:47.791175Z",
+     "ok": true,
+     "error": null,
+     "report_received": true,
+     "in_use": false,
+     "streaming_by_other": false,
+     "other_processes": [],
+     "consent_in_use": [],
+     "source": "wincam activity (IMFSensorActivityMonitor: MF/Frame Server clients; ConsentStore: any app)"
+    },
+    "control_state": {
+     "before": {
+      "answering": true,
+      "supported": 16,
+      "with_value": 16,
+      "controls": {
+       "auto_exposure_priority": {
+        "value": 0,
+        "mode": null,
+        "min": 0,
+        "max": 0
+       },
+       "exposure": {
+        "value": -7,
+        "mode": "auto",
+        "min": -11,
+        "max": -2
+       },
+       "gain": {
+        "value": 0,
+        "mode": "manual",
+        "min": 0,
+        "max": 255
+       },
+       "white_balance": {
+        "value": 5000,
+        "mode": "auto",
+        "min": 2000,
+        "max": 7500
+       },
+       "focus": {
+        "value": 0,
+        "mode": "auto",
+        "min": 0,
+        "max": 600
+       },
+       "powerline_frequency": {
+        "value": 2,
+        "mode": null,
+        "min": 1,
+        "max": 2
+       },
+       "backlight_compensation": {
+        "value": 1,
+        "mode": "manual",
+        "min": 0,
+        "max": 1
+       },
+       "brightness": {
+        "value": 159,
+        "mode": "manual",
+        "min": 0,
+        "max": 255
+       }
+      },
+      "error": null,
+      "utc": "2026-11-11T04:03:47.783162+00:00",
+      "rc": 0,
+      "timed_out": false,
+      "method": "wincam controls --api mf --read-only (nothing set)"
+     },
+     "after": {
+      "answering": true,
+      "supported": 16,
+      "with_value": 16,
+      "controls": {
+       "auto_exposure_priority": {
+        "value": 0,
+        "mode": null,
+        "min": 0,
+        "max": 0
+       },
+       "exposure": {
+        "value": -7,
+        "mode": "auto",
+        "min": -11,
+        "max": -2
+       },
+       "gain": {
+        "value": 0,
+        "mode": "manual",
+        "min": 0,
+        "max": 255
+       },
+       "white_balance": {
+        "value": 5000,
+        "mode": "auto",
+        "min": 2000,
+        "max": 7500
+       },
+       "focus": {
+        "value": 0,
+        "mode": "auto",
+        "min": 0,
+        "max": 600
+       },
+       "powerline_frequency": {
+        "value": 2,
+        "mode": null,
+        "min": 1,
+        "max": 2
+       },
+       "backlight_compensation": {
+        "value": 1,
+        "mode": "manual",
+        "min": 0,
+        "max": 1
+       },
+       "brightness": {
+        "value": 159,
+        "mode": "manual",
+        "min": 0,
+        "max": 255
+       }
+      },
+      "error": null,
+      "utc": "2026-11-11T04:04:42.566782+00:00",
+      "rc": 0,
+      "timed_out": false,
+      "method": "wincam controls --api mf --read-only (nothing set)"
+     },
+     "note": "read only; W-MJPEG never sets a control (mjpeg_fmt.md H4)"
+    },
+    "first_failure": null
+   },
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+    "name": "Logitech Webcam C930e",
+    "is_kiyo": false,
+    "modes_info": {
+     "advertised": 119,
+     "in_scope": 1,
+     "selected": 1,
+     "mode_scope": {
+      "scope": {
+       "min_fps": 30.0,
+       "min_height": 720,
+       "max_height": 720,
+       "all_modes": false,
+       "text": "exactly 720 lines at >= 30 fps",
+       "fps_rel_tol": 0.005,
+       "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+      },
+      "advertised": 119,
+      "in_scope": 1,
+      "excluded": 118,
+      "in_scope_modes": [
+       "MJPG 1280x720@30"
+      ],
+      "excluded_modes": [
+       "MJPG 160x120@5",
+       "MJPG 160x120@7.5",
+       "MJPG 160x120@10",
+       "MJPG 160x120@15",
+       "MJPG 160x120@20",
+       "MJPG 160x120@24",
+       "MJPG 160x120@30",
+       "MJPG 176x144@5",
+       "MJPG 176x144@7.5",
+       "MJPG 176x144@10",
+       "MJPG 176x144@15",
+       "MJPG 176x144@20",
+       "MJPG 176x144@24",
+       "MJPG 176x144@30",
+       "MJPG 320x180@5",
+       "MJPG 320x180@7.5",
+       "MJPG 320x180@10",
+       "MJPG 320x180@15",
+       "MJPG 320x180@20",
+       "MJPG 320x180@24",
+       "MJPG 320x180@30",
+       "MJPG 320x240@5",
+       "MJPG 320x240@7.5",
+       "MJPG 320x240@10",
+       "MJPG 320x240@15",
+       "MJPG 320x240@20",
+       "MJPG 320x240@24",
+       "MJPG 320x240@30",
+       "MJPG 352x288@5",
+       "MJPG 352x288@7.5",
+       "MJPG 352x288@10",
+       "MJPG 352x288@15",
+       "MJPG 352x288@20",
+       "MJPG 352x288@24",
+       "MJPG 352x288@30",
+       "MJPG 424x240@5",
+       "MJPG 424x240@7.5",
+       "MJPG 424x240@10",
+       "MJPG 424x240@15",
+       "MJPG 424x240@20",
+       "MJPG 424x240@24",
+       "MJPG 424x240@30",
+       "MJPG 480x270@5",
+       "MJPG 480x270@7.5",
+       "MJPG 480x270@10",
+       "MJPG 480x270@15",
+       "MJPG 480x270@20",
+       "MJPG 480x270@24",
+       "MJPG 480x270@30",
+       "MJPG 640x360@5",
+       "MJPG 640x360@7.5",
+       "MJPG 640x360@10",
+       "MJPG 640x360@15",
+       "MJPG 640x360@20",
+       "MJPG 640x360@24",
+       "MJPG 640x360@30",
+       "MJPG 640x480@5",
+       "MJPG 640x480@7.5",
+       "MJPG 640x480@10",
+       "MJPG 640x480@15"
+      ],
+      "excluded_list_truncated": true,
+      "default_mode": "MJPG 1280x720@30"
+     },
+     "formats_run": {
+      "cached_file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\_cache\\formats_mf_logitechwebcam_046d-0843_8.json"
+     },
+     "formats_error": null,
+     "default_mode": "MJPG 1280x720@30",
+     "order": "default first, then >= 15 fps by size, low-rate modes last"
+    },
+    "default_mode": "MJPG 1280x720@30",
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "mode_detail": {
+       "subtype": "MJPG",
+       "width": 1280,
+       "height": 720,
+       "fps_num": 30,
+       "fps_den": 1,
+       "fps": 30.0,
+       "text": "MJPG 1280x720@30"
+      },
+      "apis": {
+       "mf": {
+        "api": "mf",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "wincam-mf",
+        "frames": 302,
+        "fps_measured_tool": 30.00549081,
+        "fps_steady": 30.019222514090604,
+        "fps_tail_1p5s": 30.002648925572508,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         34,
+         85,
+         119,
+         170,
+         204,
+         255,
+         289
+        ],
+        "saved_total": 18,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "8e230f9e519eacb1e6b9d8ffc7da27c1019ac842",
+        "header_sha1_distinct": 1,
+        "cpu_pct_one_core": 2.492262497,
+        "cpu_resolution_pct": 0.15575939994521057,
+        "cpu_method": "GetProcessTimes over the streaming window",
+        "timings": {
+         "enumerate_ms": 1.789199993,
+         "activate_ms": 40.4533,
+         "reader_ms": 0.8770000041,
+         "settype_ms": 1.085300013,
+         "first_frame_ms": 473.5947,
+         "open_to_first_frame_ms": 518.9395,
+         "flush_ms": 1.160200015,
+         "reader_release_ms": 392.528,
+         "shutdown_ms": 3.017999992,
+         "shutdown_object_ms": 0.1394000053,
+         "close_ms": 397.1179
+        },
+        "open_duration_ms": null,
+        "negotiated_detail": {
+         "requested_subtype": "MJPG",
+         "candidate_rates_same_size": [
+          "30/1",
+          "24/1",
+          "20/1",
+          "15/1",
+          "10/1",
+          "10000000/1333333",
+          "5/1"
+         ],
+         "likely_mf_synthesized_candidates": 0,
+         "native_type_index": 294,
+         "likely_mf_synthesized": false,
+         "raw": false,
+         "stream_selection_hr": "0x00000000",
+         "readback_hr": "0x00000000",
+         "subtype": "MJPG",
+         "width": 1280,
+         "height": 720,
+         "fps_num": 30,
+         "fps_den": 1,
+         "fps": 30,
+         "readback_default_stride": null,
+         "readback_ok": true
+        },
+        "format_fallback": null,
+        "pix_fmt": null,
+        "unreleasable": false,
+        "abandoned_threads": 0,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:04:43.486857Z",
+        "utc_finished": "2026-11-11T04:04:54.439355Z",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\logitechwebcam_046d-0843_8\\mf_1280x720_30",
+        "sample": "W-MJPEG/samples/logitechwebcam_046d-0843_8_mf_1280x720_30.jpg"
+       },
+       "pyav_ds": {
+        "api": "pyav_ds",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "pyav-dshow",
+        "frames": 302,
+        "fps_measured_tool": 30.0559914162485,
+        "fps_steady": 30.024125562142725,
+        "fps_tail_1p5s": 30.00907132711693,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         34,
+         85,
+         119,
+         170,
+         204,
+         255,
+         289
+        ],
+        "saved_total": 18,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "8e230f9e519eacb1e6b9d8ffc7da27c1019ac842",
+        "header_sha1_distinct": 1,
+        "cpu_pct_one_core": 2.496344802013995,
+        "cpu_resolution_pct": 0.15602155012587468,
+        "cpu_method": "time.process_time over the streaming window (whole Python process)",
+        "timings": {
+         "open_ms": 815.6225,
+         "open_duration_ms": 815.6225,
+         "first_frame_ms": 815.7089,
+         "open_to_first_frame_ms": 815.7089,
+         "close_ms": 390.2441
+        },
+        "open_duration_ms": 815.6225,
+        "negotiated_detail": {
+         "codec": "mjpeg",
+         "pix_fmt": "yuvj422p",
+         "width": 1280,
+         "height": 720,
+         "time_base": "1/10000000",
+         "average_rate": "10000000/333333",
+         "t_opened_ns": 109829615068600
+        },
+        "format_fallback": false,
+        "pix_fmt": "yuvj422p",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:04:54.927409+00:00",
+        "utc_finished": "2026-11-11T04:05:06.151236+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\logitechwebcam_046d-0843_8\\pyav_ds_1280x720_30",
+        "sample": "W-MJPEG/samples/logitechwebcam_046d-0843_8_pyav_ds_1280x720_30.jpg"
+       },
+       "ds": {
+        "api": "pyav_ds",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "pyav-dshow",
+        "frames": 302,
+        "fps_measured_tool": 30.0559914162485,
+        "fps_steady": 30.024125562142725,
+        "fps_tail_1p5s": 30.00907132711693,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         34,
+         85,
+         119,
+         170,
+         204,
+         255,
+         289
+        ],
+        "saved_total": 18,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "8e230f9e519eacb1e6b9d8ffc7da27c1019ac842",
+        "header_sha1_distinct": 1,
+        "cpu_pct_one_core": 2.496344802013995,
+        "cpu_resolution_pct": 0.15602155012587468,
+        "cpu_method": "time.process_time over the streaming window (whole Python process)",
+        "timings": {
+         "open_ms": 815.6225,
+         "open_duration_ms": 815.6225,
+         "first_frame_ms": 815.7089,
+         "open_to_first_frame_ms": 815.7089,
+         "close_ms": 390.2441
+        },
+        "open_duration_ms": 815.6225,
+        "negotiated_detail": {
+         "codec": "mjpeg",
+         "pix_fmt": "yuvj422p",
+         "width": 1280,
+         "height": 720,
+         "time_base": "1/10000000",
+         "average_rate": "10000000/333333",
+         "t_opened_ns": 109829615068600
+        },
+        "format_fallback": false,
+        "pix_fmt": "yuvj422p",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:04:54.927409+00:00",
+        "utc_finished": "2026-11-11T04:05:06.151236+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\logitechwebcam_046d-0843_8\\pyav_ds_1280x720_30",
+        "sample": "W-MJPEG/samples/logitechwebcam_046d-0843_8_pyav_ds_1280x720_30.jpg",
+        "route": "pyav_ds"
+       }
+      },
+      "order_index": 0,
+      "seconds": 10.0,
+      "header_sha1_equal": true,
+      "fps_nominal": 30.0,
+      "fps_reference": 30.021674038116664,
+      "fps_reference_basis": "apis_agree",
+      "fps_reference_note": null,
+      "rate_honoured": {
+       "honoured": true,
+       "by_api": {
+        "mf": true,
+        "ds": true
+       },
+       "nominal": 30.0,
+       "tolerance": 0.02
+      },
+      "fps_misses": []
+     }
+    ],
+    "tool_failed_modes": {
+     "mf": [],
+     "ds": [],
+     "pyav_ds": []
+    },
+    "skipped_modes": [],
+    "rating_failed_modes": {
+     "mf": [],
+     "ds": [],
+     "pyav_ds": []
+    },
+    "pyav_format_fallback_modes": [],
+    "rate_control_experiment": {
+     "rows": [],
+     "raw_honoured": 0,
+     "mjpeg_honoured_same_modes": 0,
+     "n": 0
+    },
+    "events": [],
+    "health_check_at_start": null,
+    "device_fault": null,
+    "recaptured": 0,
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 119,
+     "in_scope": 1,
+     "excluded": 118,
+     "in_scope_modes": [
+      "MJPG 1280x720@30"
+     ],
+     "excluded_modes": [
+      "MJPG 160x120@5",
+      "MJPG 160x120@7.5",
+      "MJPG 160x120@10",
+      "MJPG 160x120@15",
+      "MJPG 160x120@20",
+      "MJPG 160x120@24",
+      "MJPG 160x120@30",
+      "MJPG 176x144@5",
+      "MJPG 176x144@7.5",
+      "MJPG 176x144@10",
+      "MJPG 176x144@15",
+      "MJPG 176x144@20",
+      "MJPG 176x144@24",
+      "MJPG 176x144@30",
+      "MJPG 320x180@5",
+      "MJPG 320x180@7.5",
+      "MJPG 320x180@10",
+      "MJPG 320x180@15",
+      "MJPG 320x180@20",
+      "MJPG 320x180@24",
+      "MJPG 320x180@30",
+      "MJPG 320x240@5",
+      "MJPG 320x240@7.5",
+      "MJPG 320x240@10",
+      "MJPG 320x240@15",
+      "MJPG 320x240@20",
+      "MJPG 320x240@24",
+      "MJPG 320x240@30",
+      "MJPG 352x288@5",
+      "MJPG 352x288@7.5",
+      "MJPG 352x288@10",
+      "MJPG 352x288@15",
+      "MJPG 352x288@20",
+      "MJPG 352x288@24",
+      "MJPG 352x288@30",
+      "MJPG 424x240@5",
+      "MJPG 424x240@7.5",
+      "MJPG 424x240@10",
+      "MJPG 424x240@15",
+      "MJPG 424x240@20",
+      "MJPG 424x240@24",
+      "MJPG 424x240@30",
+      "MJPG 480x270@5",
+      "MJPG 480x270@7.5",
+      "MJPG 480x270@10",
+      "MJPG 480x270@15",
+      "MJPG 480x270@20",
+      "MJPG 480x270@24",
+      "MJPG 480x270@30",
+      "MJPG 640x360@5",
+      "MJPG 640x360@7.5",
+      "MJPG 640x360@10",
+      "MJPG 640x360@15",
+      "MJPG 640x360@20",
+      "MJPG 640x360@24",
+      "MJPG 640x360@30",
+      "MJPG 640x480@5",
+      "MJPG 640x480@7.5",
+      "MJPG 640x480@10",
+      "MJPG 640x480@15"
+     ],
+     "excluded_list_truncated": true,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "activity_at_first_stream": {
+     "utc": "2026-11-11T04:04:43.112956Z",
+     "ok": true,
+     "error": null,
+     "report_received": true,
+     "in_use": false,
+     "streaming_by_other": false,
+     "other_processes": [],
+     "consent_in_use": [],
+     "source": "wincam activity (IMFSensorActivityMonitor: MF/Frame Server clients; ConsentStore: any app)"
+    },
+    "control_state": {
+     "before": {
+      "answering": true,
+      "supported": 16,
+      "with_value": 16,
+      "controls": {
+       "auto_exposure_priority": {
+        "value": 1,
+        "mode": null,
+        "min": 0,
+        "max": 0
+       },
+       "exposure": {
+        "value": -5,
+        "mode": "auto",
+        "min": -11,
+        "max": -2
+       },
+       "gain": {
+        "value": 5,
+        "mode": "manual",
+        "min": 0,
+        "max": 255
+       },
+       "white_balance": {
+        "value": 6500,
+        "mode": "auto",
+        "min": 2000,
+        "max": 7500
+       },
+       "focus": {
+        "value": 0,
+        "mode": "auto",
+        "min": 0,
+        "max": 255
+       },
+       "powerline_frequency": {
+        "value": 2,
+        "mode": null,
+        "min": 1,
+        "max": 2
+       },
+       "backlight_compensation": {
+        "value": 0,
+        "mode": "manual",
+        "min": 0,
+        "max": 1
+       },
+       "brightness": {
+        "value": 128,
+        "mode": "manual",
+        "min": 0,
+        "max": 255
+       }
+      },
+      "error": null,
+      "utc": "2026-11-11T04:04:43.105485+00:00",
+      "rc": 0,
+      "timed_out": false,
+      "method": "wincam controls --api mf --read-only (nothing set)"
+     },
+     "after": {
+      "answering": true,
+      "supported": 16,
+      "with_value": 16,
+      "controls": {
+       "auto_exposure_priority": {
+        "value": 1,
+        "mode": null,
+        "min": 0,
+        "max": 0
+       },
+       "exposure": {
+        "value": -5,
+        "mode": "auto",
+        "min": -11,
+        "max": -2
+       },
+       "gain": {
+        "value": 6,
+        "mode": "manual",
+        "min": 0,
+        "max": 255
+       },
+       "white_balance": {
+        "value": 6500,
+        "mode": "auto",
+        "min": 2000,
+        "max": 7500
+       },
+       "focus": {
+        "value": 0,
+        "mode": "auto",
+        "min": 0,
+        "max": 255
+       },
+       "powerline_frequency": {
+        "value": 2,
+        "mode": null,
+        "min": 1,
+        "max": 2
+       },
+       "backlight_compensation": {
+        "value": 0,
+        "mode": "manual",
+        "min": 0,
+        "max": 1
+       },
+       "brightness": {
+        "value": 128,
+        "mode": "manual",
+        "min": 0,
+        "max": 255
+       }
+      },
+      "error": null,
+      "utc": "2026-11-11T04:05:06.611130+00:00",
+      "rc": 0,
+      "timed_out": false,
+      "method": "wincam controls --api mf --read-only (nothing set)"
+     },
+     "note": "read only; W-MJPEG never sets a control (mjpeg_fmt.md H4)"
+    },
+    "first_failure": null
+   },
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+    "name": "USB Camera",
+    "is_kiyo": false,
+    "modes_info": {
+     "advertised": 10,
+     "in_scope": 1,
+     "selected": 1,
+     "mode_scope": {
+      "scope": {
+       "min_fps": 30.0,
+       "min_height": 720,
+       "max_height": 720,
+       "all_modes": false,
+       "text": "exactly 720 lines at >= 30 fps",
+       "fps_rel_tol": 0.005,
+       "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+      },
+      "advertised": 10,
+      "in_scope": 1,
+      "excluded": 9,
+      "in_scope_modes": [
+       "MJPG 1280x720@30"
+      ],
+      "excluded_modes": [
+       "MJPG 352x288@25",
+       "MJPG 352x288@30",
+       "MJPG 640x360@25",
+       "MJPG 640x360@30",
+       "MJPG 640x480@25",
+       "MJPG 640x480@30",
+       "MJPG 1280x720@25",
+       "MJPG 1920x1080@25",
+       "MJPG 1920x1080@30"
+      ],
+      "excluded_list_truncated": false,
+      "default_mode": "MJPG 1280x720@30"
+     },
+     "formats_run": {
+      "cached_file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\_cache\\formats_mf_usbcamera_4c4a-4a55_2.json"
+     },
+     "formats_error": null,
+     "default_mode": "MJPG 1280x720@30",
+     "order": "default first, then >= 15 fps by size, low-rate modes last"
+    },
+    "default_mode": "MJPG 1280x720@30",
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "mode_detail": {
+       "subtype": "MJPG",
+       "width": 1280,
+       "height": 720,
+       "fps_num": 30,
+       "fps_den": 1,
+       "fps": 30.0,
+       "text": "MJPG 1280x720@30"
+      },
+      "apis": {
+       "mf": {
+        "api": "mf",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "wincam-mf",
+        "frames": 259,
+        "fps_measured_tool": 25.7616458,
+        "fps_steady": 25.75599753077401,
+        "fps_tail_1p5s": 25.810255162037315,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         34,
+         68,
+         102,
+         153,
+         187,
+         221,
+         255
+        ],
+        "saved_total": 16,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "aeefc78066682dbbe75f16d73bf07c6cb5c80b1f",
+        "header_sha1_distinct": 3,
+        "cpu_pct_one_core": 2.184341835,
+        "cpu_resolution_pct": 0.15601771925938943,
+        "cpu_method": "GetProcessTimes over the streaming window",
+        "timings": {
+         "enumerate_ms": 1.885800004,
+         "activate_ms": 23.9753,
+         "reader_ms": 0.9602999985,
+         "settype_ms": 0.3715000004,
+         "first_frame_ms": 72.9735,
+         "open_to_first_frame_ms": 102.0027,
+         "flush_ms": 0.965899989,
+         "reader_release_ms": 270.5906,
+         "shutdown_ms": 1.774700001,
+         "shutdown_object_ms": 0.6895999908,
+         "close_ms": 274.3838
+        },
+        "open_duration_ms": null,
+        "negotiated_detail": {
+         "requested_subtype": "MJPG",
+         "candidate_rates_same_size": [
+          "30/1",
+          "25/1"
+         ],
+         "likely_mf_synthesized_candidates": 0,
+         "native_type_index": 5,
+         "likely_mf_synthesized": false,
+         "raw": false,
+         "stream_selection_hr": "0x00000000",
+         "readback_hr": "0x00000000",
+         "subtype": "MJPG",
+         "width": 1280,
+         "height": 720,
+         "fps_num": 30,
+         "fps_den": 1,
+         "fps": 30,
+         "readback_default_stride": null,
+         "readback_ok": true
+        },
+        "format_fallback": null,
+        "pix_fmt": null,
+        "unreleasable": false,
+        "abandoned_threads": 0,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:05:07.530196Z",
+        "utc_finished": "2026-11-11T04:05:17.928796Z",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\usbcamera_4c4a-4a55_2\\mf_1280x720_30",
+        "sample": "W-MJPEG/samples/usbcamera_4c4a-4a55_2_mf_1280x720_30.jpg"
+       },
+       "pyav_ds": {
+        "api": "pyav_ds",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "pyav-dshow",
+        "frames": 259,
+        "fps_measured_tool": 25.76193622399033,
+        "fps_steady": 25.75776794616888,
+        "fps_tail_1p5s": 25.790229534948413,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         34,
+         68,
+         102,
+         153,
+         187,
+         221,
+         255
+        ],
+        "saved_total": 16,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "aeefc78066682dbbe75f16d73bf07c6cb5c80b1f",
+        "header_sha1_distinct": 3,
+        "cpu_pct_one_core": 2.3402921715107494,
+        "cpu_resolution_pct": 0.15601947810071662,
+        "cpu_method": "time.process_time over the streaming window (whole Python process)",
+        "timings": {
+         "open_ms": 387.0532,
+         "open_duration_ms": 387.0532,
+         "first_frame_ms": 387.1485,
+         "open_to_first_frame_ms": 387.1485,
+         "close_ms": 285.5377
+        },
+        "open_duration_ms": 387.0532,
+        "negotiated_detail": {
+         "codec": "mjpeg",
+         "pix_fmt": "yuvj422p",
+         "width": 1280,
+         "height": 720,
+         "time_base": "1/10000000",
+         "average_rate": "10000000/333333",
+         "t_opened_ns": 109852612827800
+        },
+        "format_fallback": false,
+        "pix_fmt": "yuvj422p",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:05:18.354276+00:00",
+        "utc_finished": "2026-11-11T04:05:29.042629+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\usbcamera_4c4a-4a55_2\\pyav_ds_1280x720_30",
+        "sample": "W-MJPEG/samples/usbcamera_4c4a-4a55_2_pyav_ds_1280x720_30.jpg"
+       },
+       "ds": {
+        "api": "pyav_ds",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "pyav-dshow",
+        "frames": 259,
+        "fps_measured_tool": 25.76193622399033,
+        "fps_steady": 25.75776794616888,
+        "fps_tail_1p5s": 25.790229534948413,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         34,
+         68,
+         102,
+         153,
+         187,
+         221,
+         255
+        ],
+        "saved_total": 16,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "aeefc78066682dbbe75f16d73bf07c6cb5c80b1f",
+        "header_sha1_distinct": 3,
+        "cpu_pct_one_core": 2.3402921715107494,
+        "cpu_resolution_pct": 0.15601947810071662,
+        "cpu_method": "time.process_time over the streaming window (whole Python process)",
+        "timings": {
+         "open_ms": 387.0532,
+         "open_duration_ms": 387.0532,
+         "first_frame_ms": 387.1485,
+         "open_to_first_frame_ms": 387.1485,
+         "close_ms": 285.5377
+        },
+        "open_duration_ms": 387.0532,
+        "negotiated_detail": {
+         "codec": "mjpeg",
+         "pix_fmt": "yuvj422p",
+         "width": 1280,
+         "height": 720,
+         "time_base": "1/10000000",
+         "average_rate": "10000000/333333",
+         "t_opened_ns": 109852612827800
+        },
+        "format_fallback": false,
+        "pix_fmt": "yuvj422p",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:05:18.354276+00:00",
+        "utc_finished": "2026-11-11T04:05:29.042629+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\usbcamera_4c4a-4a55_2\\pyav_ds_1280x720_30",
+        "sample": "W-MJPEG/samples/usbcamera_4c4a-4a55_2_pyav_ds_1280x720_30.jpg",
+        "route": "pyav_ds"
+       }
+      },
+      "order_index": 0,
+      "seconds": 10.0,
+      "header_sha1_equal": true,
+      "fps_nominal": 30.0,
+      "fps_reference": 25.756882738471447,
+      "fps_reference_basis": "apis_agree",
+      "fps_reference_note": "both APIs deliver 25.76 fps (nominal 30); used as the camera's real rate",
+      "rate_honoured": {
+       "honoured": false,
+       "by_api": {
+        "mf": false,
+        "ds": false
+       },
+       "nominal": 30.0,
+       "tolerance": 0.02
+      },
+      "fps_misses": []
+     }
+    ],
+    "tool_failed_modes": {
+     "mf": [],
+     "ds": [],
+     "pyav_ds": []
+    },
+    "skipped_modes": [],
+    "rating_failed_modes": {
+     "mf": [],
+     "ds": [],
+     "pyav_ds": []
+    },
+    "pyav_format_fallback_modes": [],
+    "rate_control_experiment": {
+     "rows": [],
+     "raw_honoured": 0,
+     "mjpeg_honoured_same_modes": 0,
+     "n": 0
+    },
+    "events": [],
+    "health_check_at_start": null,
+    "device_fault": null,
+    "recaptured": 0,
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 10,
+     "in_scope": 1,
+     "excluded": 9,
+     "in_scope_modes": [
+      "MJPG 1280x720@30"
+     ],
+     "excluded_modes": [
+      "MJPG 352x288@25",
+      "MJPG 352x288@30",
+      "MJPG 640x360@25",
+      "MJPG 640x360@30",
+      "MJPG 640x480@25",
+      "MJPG 640x480@30",
+      "MJPG 1280x720@25",
+      "MJPG 1920x1080@25",
+      "MJPG 1920x1080@30"
+     ],
+     "excluded_list_truncated": false,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "activity_at_first_stream": {
+     "utc": "2026-11-11T04:05:06.904278Z",
+     "ok": true,
+     "error": null,
+     "report_received": true,
+     "in_use": false,
+     "streaming_by_other": false,
+     "other_processes": [],
+     "consent_in_use": [],
+     "source": "wincam activity (IMFSensorActivityMonitor: MF/Frame Server clients; ConsentStore: any app)"
+    },
+    "control_state": {
+     "before": {
+      "answering": true,
+      "supported": 11,
+      "with_value": 11,
+      "controls": {
+       "exposure": {
+        "value": -7,
+        "mode": "auto",
+        "min": -7,
+        "max": 3
+       },
+       "gain": {
+        "value": 4,
+        "mode": "manual",
+        "min": 1,
+        "max": 7
+       },
+       "white_balance": {
+        "value": 4500,
+        "mode": "manual",
+        "min": 0,
+        "max": 6500
+       },
+       "powerline_frequency": {
+        "value": 0,
+        "mode": null,
+        "min": 0,
+        "max": 0
+       },
+       "backlight_compensation": {
+        "value": 0,
+        "mode": "manual",
+        "min": 0,
+        "max": 255
+       },
+       "brightness": {
+        "value": 0,
+        "mode": "manual",
+        "min": -127,
+        "max": 127
+       }
+      },
+      "error": null,
+      "utc": "2026-11-11T04:05:06.895501+00:00",
+      "rc": 0,
+      "timed_out": false,
+      "method": "wincam controls --api mf --read-only (nothing set)"
+     },
+     "after": {
+      "answering": true,
+      "supported": 11,
+      "with_value": 11,
+      "controls": {
+       "exposure": {
+        "value": -7,
+        "mode": "auto",
+        "min": -7,
+        "max": 3
+       },
+       "gain": {
+        "value": 4,
+        "mode": "manual",
+        "min": 1,
+        "max": 7
+       },
+       "white_balance": {
+        "value": 4500,
+        "mode": "manual",
+        "min": 0,
+        "max": 6500
+       },
+       "powerline_frequency": {
+        "value": 0,
+        "mode": null,
+        "min": 0,
+        "max": 0
+       },
+       "backlight_compensation": {
+        "value": 0,
+        "mode": "manual",
+        "min": 0,
+        "max": 255
+       },
+       "brightness": {
+        "value": 0,
+        "mode": "manual",
+        "min": -127,
+        "max": 127
+       }
+      },
+      "error": null,
+      "utc": "2026-11-11T04:05:29.420698+00:00",
+      "rc": 0,
+      "timed_out": false,
+      "method": "wincam controls --api mf --read-only (nothing set)"
+     },
+     "note": "read only; W-MJPEG never sets a control (mjpeg_fmt.md H4)"
+    },
+    "first_failure": null
+   },
+   "046d:085c:sn=C922SN01": {
+    "name": "c922 Pro Stream Webcam",
+    "is_kiyo": false,
+    "modes_info": {
+     "advertised": 120,
+     "in_scope": 3,
+     "selected": 3,
+     "mode_scope": {
+      "scope": {
+       "min_fps": 30.0,
+       "min_height": 720,
+       "max_height": 720,
+       "all_modes": false,
+       "text": "exactly 720 lines at >= 30 fps",
+       "fps_rel_tol": 0.005,
+       "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+      },
+      "advertised": 120,
+      "in_scope": 3,
+      "excluded": 117,
+      "in_scope_modes": [
+       "MJPG 960x720@30",
+       "MJPG 1280x720@30",
+       "MJPG 1280x720@60"
+      ],
+      "excluded_modes": [
+       "MJPG 160x90@5",
+       "MJPG 160x90@7.5",
+       "MJPG 160x90@10",
+       "MJPG 160x90@15",
+       "MJPG 160x90@20",
+       "MJPG 160x90@24",
+       "MJPG 160x90@30",
+       "MJPG 160x120@5",
+       "MJPG 160x120@7.5",
+       "MJPG 160x120@10",
+       "MJPG 160x120@15",
+       "MJPG 160x120@20",
+       "MJPG 160x120@24",
+       "MJPG 160x120@30",
+       "MJPG 176x144@5",
+       "MJPG 176x144@7.5",
+       "MJPG 176x144@10",
+       "MJPG 176x144@15",
+       "MJPG 176x144@20",
+       "MJPG 176x144@24",
+       "MJPG 176x144@30",
+       "MJPG 320x180@5",
+       "MJPG 320x180@7.5",
+       "MJPG 320x180@10",
+       "MJPG 320x180@15",
+       "MJPG 320x180@20",
+       "MJPG 320x180@24",
+       "MJPG 320x180@30",
+       "MJPG 320x240@5",
+       "MJPG 320x240@7.5",
+       "MJPG 320x240@10",
+       "MJPG 320x240@15",
+       "MJPG 320x240@20",
+       "MJPG 320x240@24",
+       "MJPG 320x240@30",
+       "MJPG 352x288@5",
+       "MJPG 352x288@7.5",
+       "MJPG 352x288@10",
+       "MJPG 352x288@15",
+       "MJPG 352x288@20",
+       "MJPG 352x288@24",
+       "MJPG 352x288@30",
+       "MJPG 432x240@5",
+       "MJPG 432x240@7.5",
+       "MJPG 432x240@10",
+       "MJPG 432x240@15",
+       "MJPG 432x240@20",
+       "MJPG 432x240@24",
+       "MJPG 432x240@30",
+       "MJPG 640x360@5",
+       "MJPG 640x360@7.5",
+       "MJPG 640x360@10",
+       "MJPG 640x360@15",
+       "MJPG 640x360@20",
+       "MJPG 640x360@24",
+       "MJPG 640x360@30",
+       "MJPG 640x480@5",
+       "MJPG 640x480@7.5",
+       "MJPG 640x480@10",
+       "MJPG 640x480@15"
+      ],
+      "excluded_list_truncated": true,
+      "default_mode": "MJPG 1280x720@30"
+     },
+     "formats_run": {
+      "cached_file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\_cache\\formats_mf_c922prostreamw_046d-085c_C922SN01.json"
+     },
+     "formats_error": null,
+     "default_mode": "MJPG 1280x720@30",
+     "order": "default first, then >= 15 fps by size, low-rate modes last"
+    },
+    "default_mode": "MJPG 1280x720@30",
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "mode_detail": {
+       "subtype": "MJPG",
+       "width": 1280,
+       "height": 720,
+       "fps_num": 30,
+       "fps_den": 1,
+       "fps": 30.0,
+       "text": "MJPG 1280x720@30"
+      },
+      "apis": {
+       "mf": {
+        "api": "mf",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "wincam-mf",
+        "frames": 302,
+        "fps_measured_tool": 30.00590927,
+        "fps_steady": 30.000842535276707,
+        "fps_tail_1p5s": 30.05614233816134,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         34,
+         85,
+         119,
+         170,
+         204,
+         255,
+         289
+        ],
+        "saved_total": 18,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "89d46b19bda64347088339d11b16b0fe04ce1864",
+        "header_sha1_distinct": 1,
+        "cpu_pct_one_core": 2.180737533,
+        "cpu_resolution_pct": 0.15576157220756587,
+        "cpu_method": "GetProcessTimes over the streaming window",
+        "timings": {
+         "enumerate_ms": 1.742500007,
+         "activate_ms": 29.1565,
+         "reader_ms": 0.8621000051,
+         "settype_ms": 1.380199999,
+         "first_frame_ms": 298.3794,
+         "open_to_first_frame_ms": 332.9875,
+         "flush_ms": 0.5328999907,
+         "reader_release_ms": 345.5333,
+         "shutdown_ms": 3.1646,
+         "shutdown_object_ms": 0.186499998,
+         "close_ms": 349.9859
+        },
+        "open_duration_ms": null,
+        "negotiated_detail": {
+         "requested_subtype": "MJPG",
+         "candidate_rates_same_size": [
+          "30/1",
+          "60/1",
+          "24/1",
+          "20/1",
+          "15/1",
+          "10/1",
+          "10000000/1333333",
+          "5/1"
+         ],
+         "likely_mf_synthesized_candidates": 0,
+         "native_type_index": 295,
+         "likely_mf_synthesized": false,
+         "raw": false,
+         "stream_selection_hr": "0x00000000",
+         "readback_hr": "0x00000000",
+         "subtype": "MJPG",
+         "width": 1280,
+         "height": 720,
+         "fps_num": 30,
+         "fps_den": 1,
+         "fps": 30,
+         "readback_default_stride": null,
+         "readback_ok": true
+        },
+        "format_fallback": null,
+        "pix_fmt": null,
+        "unreleasable": false,
+        "abandoned_threads": 0,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:05:30.347568Z",
+        "utc_finished": "2026-11-11T04:05:41.067800Z",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\c922prostreamw_046d-085c_C922SN01\\mf_1280x720_30",
+        "sample": "W-MJPEG/samples/c922prostreamw_046d-085c_C922SN01_mf_1280x720_30.jpg"
+       },
+       "pyav_ds": {
+        "api": "pyav_ds",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "pyav-dshow",
+        "frames": 302,
+        "fps_measured_tool": 30.0231587275527,
+        "fps_steady": 29.999701559481057,
+        "fps_tail_1p5s": 29.98753587628391,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         34,
+         85,
+         119,
+         170,
+         204,
+         255,
+         289
+        ],
+        "saved_total": 18,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "89d46b19bda64347088339d11b16b0fe04ce1864",
+        "header_sha1_distinct": 1,
+        "cpu_pct_one_core": 1.870213375885758,
+        "cpu_resolution_pct": 0.1558511146571465,
+        "cpu_method": "time.process_time over the streaming window (whole Python process)",
+        "timings": {
+         "open_ms": 638.805,
+         "open_duration_ms": 638.805,
+         "first_frame_ms": 638.9388,
+         "open_to_first_frame_ms": 638.9388,
+         "close_ms": 361.2546
+        },
+        "open_duration_ms": 638.805,
+        "negotiated_detail": {
+         "codec": "mjpeg",
+         "pix_fmt": "yuvj422p",
+         "width": 1280,
+         "height": 720,
+         "time_base": "1/10000000",
+         "average_rate": "10000000/333333",
+         "t_opened_ns": 109876362823700
+        },
+        "format_fallback": false,
+        "pix_fmt": "yuvj422p",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:05:41.853187+00:00",
+        "utc_finished": "2026-11-11T04:05:52.880231+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\c922prostreamw_046d-085c_C922SN01\\pyav_ds_1280x720_30",
+        "sample": "W-MJPEG/samples/c922prostreamw_046d-085c_C922SN01_pyav_ds_1280x720_30.jpg"
+       },
+       "ds": {
+        "api": "pyav_ds",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "pyav-dshow",
+        "frames": 302,
+        "fps_measured_tool": 30.0231587275527,
+        "fps_steady": 29.999701559481057,
+        "fps_tail_1p5s": 29.98753587628391,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         34,
+         85,
+         119,
+         170,
+         204,
+         255,
+         289
+        ],
+        "saved_total": 18,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "89d46b19bda64347088339d11b16b0fe04ce1864",
+        "header_sha1_distinct": 1,
+        "cpu_pct_one_core": 1.870213375885758,
+        "cpu_resolution_pct": 0.1558511146571465,
+        "cpu_method": "time.process_time over the streaming window (whole Python process)",
+        "timings": {
+         "open_ms": 638.805,
+         "open_duration_ms": 638.805,
+         "first_frame_ms": 638.9388,
+         "open_to_first_frame_ms": 638.9388,
+         "close_ms": 361.2546
+        },
+        "open_duration_ms": 638.805,
+        "negotiated_detail": {
+         "codec": "mjpeg",
+         "pix_fmt": "yuvj422p",
+         "width": 1280,
+         "height": 720,
+         "time_base": "1/10000000",
+         "average_rate": "10000000/333333",
+         "t_opened_ns": 109876362823700
+        },
+        "format_fallback": false,
+        "pix_fmt": "yuvj422p",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:05:41.853187+00:00",
+        "utc_finished": "2026-11-11T04:05:52.880231+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\c922prostreamw_046d-085c_C922SN01\\pyav_ds_1280x720_30",
+        "sample": "W-MJPEG/samples/c922prostreamw_046d-085c_C922SN01_pyav_ds_1280x720_30.jpg",
+        "route": "pyav_ds"
+       }
+      },
+      "order_index": 0,
+      "seconds": 10.0,
+      "header_sha1_equal": true,
+      "fps_nominal": 30.0,
+      "fps_reference": 30.000272047378882,
+      "fps_reference_basis": "apis_agree",
+      "fps_reference_note": null,
+      "rate_honoured": {
+       "honoured": true,
+       "by_api": {
+        "mf": true,
+        "ds": true
+       },
+       "nominal": 30.0,
+       "tolerance": 0.02
+      },
+      "fps_misses": []
+     },
+     {
+      "mode": "MJPG 960x720@30",
+      "mode_detail": {
+       "subtype": "MJPG",
+       "width": 960,
+       "height": 720,
+       "fps_num": 30,
+       "fps_den": 1,
+       "fps": 30.0,
+       "text": "MJPG 960x720@30"
+      },
+      "apis": {
+       "mf": {
+        "api": "mf",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "wincam-mf",
+        "frames": 91,
+        "fps_measured_tool": 29.92175262,
+        "fps_steady": 29.996773561161884,
+        "fps_tail_1p5s": 29.96086420732001,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         15,
+         25,
+         40,
+         50,
+         65,
+         75,
+         90
+        ],
+        "saved_total": 19,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "69aa0735fd41f8728d3be67c8b36bb87de567929",
+        "header_sha1_distinct": 1,
+        "cpu_pct_one_core": 1.558486948,
+        "cpu_resolution_pct": 0.5194748719116262,
+        "cpu_method": "GetProcessTimes over the streaming window",
+        "timings": {
+         "enumerate_ms": 1.7289,
+         "activate_ms": 32.42020001,
+         "reader_ms": 1.10679999,
+         "settype_ms": 1.430899993,
+         "first_frame_ms": 297.4011,
+         "open_to_first_frame_ms": 335.4066,
+         "flush_ms": 0.1353000104,
+         "reader_release_ms": 340.7334,
+         "shutdown_ms": 1.812000006,
+         "shutdown_object_ms": 0.1873999983,
+         "close_ms": 343.4703
+        },
+        "open_duration_ms": null,
+        "negotiated_detail": {
+         "requested_subtype": "MJPG",
+         "candidate_rates_same_size": [
+          "30/1",
+          "24/1",
+          "20/1",
+          "15/1",
+          "10/1",
+          "10000000/1333333",
+          "5/1"
+         ],
+         "likely_mf_synthesized_candidates": 0,
+         "native_type_index": 267,
+         "likely_mf_synthesized": false,
+         "raw": false,
+         "stream_selection_hr": "0x00000000",
+         "readback_hr": "0x00000000",
+         "subtype": "MJPG",
+         "width": 960,
+         "height": 720,
+         "fps_num": 30,
+         "fps_den": 1,
+         "fps": 30,
+         "readback_default_stride": null,
+         "readback_ok": true
+        },
+        "format_fallback": null,
+        "pix_fmt": null,
+        "unreleasable": false,
+        "abandoned_threads": 0,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:05:53.331005Z",
+        "utc_finished": "2026-11-11T04:05:57.023907Z",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\c922prostreamw_046d-085c_C922SN01\\mf_960x720_30"
+       },
+       "pyav_ds": {
+        "api": "pyav_ds",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "pyav-dshow",
+        "frames": 92,
+        "fps_measured_tool": 30.133038025145588,
+        "fps_steady": 30.001637735214054,
+        "fps_tail_1p5s": 30.04891001875447,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         15,
+         25,
+         40,
+         50,
+         65,
+         75,
+         90
+        ],
+        "saved_total": 19,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "69aa0735fd41f8728d3be67c8b36bb87de567929",
+        "header_sha1_distinct": 1,
+        "cpu_pct_one_core": 2.5869709843016473,
+        "cpu_resolution_pct": 0.5173941968603295,
+        "cpu_method": "time.process_time over the streaming window (whole Python process)",
+        "timings": {
+         "open_ms": 635.0396,
+         "open_duration_ms": 635.0396,
+         "first_frame_ms": 635.1614,
+         "open_to_first_frame_ms": 635.1614,
+         "close_ms": 374.5978
+        },
+        "open_duration_ms": 635.0396,
+        "negotiated_detail": {
+         "codec": "mjpeg",
+         "pix_fmt": "yuvj422p",
+         "width": 960,
+         "height": 720,
+         "time_base": "1/10000000",
+         "average_rate": "10000000/333333",
+         "t_opened_ns": 109892259485300
+        },
+        "format_fallback": false,
+        "pix_fmt": "yuvj422p",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:05:57.753807+00:00",
+        "utc_finished": "2026-11-11T04:06:01.785397+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\c922prostreamw_046d-085c_C922SN01\\pyav_ds_960x720_30"
+       },
+       "ds": {
+        "api": "pyav_ds",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "pyav-dshow",
+        "frames": 92,
+        "fps_measured_tool": 30.133038025145588,
+        "fps_steady": 30.001637735214054,
+        "fps_tail_1p5s": 30.04891001875447,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         15,
+         25,
+         40,
+         50,
+         65,
+         75,
+         90
+        ],
+        "saved_total": 19,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "69aa0735fd41f8728d3be67c8b36bb87de567929",
+        "header_sha1_distinct": 1,
+        "cpu_pct_one_core": 2.5869709843016473,
+        "cpu_resolution_pct": 0.5173941968603295,
+        "cpu_method": "time.process_time over the streaming window (whole Python process)",
+        "timings": {
+         "open_ms": 635.0396,
+         "open_duration_ms": 635.0396,
+         "first_frame_ms": 635.1614,
+         "open_to_first_frame_ms": 635.1614,
+         "close_ms": 374.5978
+        },
+        "open_duration_ms": 635.0396,
+        "negotiated_detail": {
+         "codec": "mjpeg",
+         "pix_fmt": "yuvj422p",
+         "width": 960,
+         "height": 720,
+         "time_base": "1/10000000",
+         "average_rate": "10000000/333333",
+         "t_opened_ns": 109892259485300
+        },
+        "format_fallback": false,
+        "pix_fmt": "yuvj422p",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:05:57.753807+00:00",
+        "utc_finished": "2026-11-11T04:06:01.785397+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\c922prostreamw_046d-085c_C922SN01\\pyav_ds_960x720_30",
+        "route": "pyav_ds"
+       }
+      },
+      "order_index": 1,
+      "header_sha1_equal": true,
+      "fps_nominal": 30.0,
+      "fps_reference": 29.999205648187967,
+      "fps_reference_basis": "apis_agree",
+      "fps_reference_note": null,
+      "rate_honoured": {
+       "honoured": true,
+       "by_api": {
+        "mf": true,
+        "ds": true
+       },
+       "nominal": 30.0,
+       "tolerance": 0.02
+      },
+      "fps_misses": []
+     },
+     {
+      "mode": "MJPG 1280x720@60",
+      "mode_detail": {
+       "subtype": "MJPG",
+       "width": 1280,
+       "height": 720,
+       "fps_num": 60,
+       "fps_den": 1,
+       "fps": 60.0,
+       "text": "MJPG 1280x720@60"
+      },
+      "apis": {
+       "mf": {
+        "api": "mf",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "wincam-mf",
+        "frames": 122,
+        "fps_measured_tool": 40.22024339,
+        "fps_steady": 59.426318034481646,
+        "fps_tail_1p5s": 59.452977821072395,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         20,
+         30,
+         50,
+         70,
+         90,
+         100,
+         120
+        ],
+        "saved_total": 13,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "89d46b19bda64347088339d11b16b0fe04ce1864",
+        "header_sha1_distinct": 1,
+        "cpu_pct_one_core": 2.596889921,
+        "cpu_resolution_pct": 0.5193729777070493,
+        "cpu_method": "GetProcessTimes over the streaming window",
+        "timings": {
+         "enumerate_ms": 1.975799993,
+         "activate_ms": 29.63060001,
+         "reader_ms": 0.8457999974,
+         "settype_ms": 1.835999995,
+         "first_frame_ms": 248.4596,
+         "open_to_first_frame_ms": 283.9276,
+         "flush_ms": 0.9787999839,
+         "reader_release_ms": 318.8379,
+         "shutdown_ms": 3.121399999,
+         "shutdown_object_ms": 0.1788000017,
+         "close_ms": 323.9714
+        },
+        "open_duration_ms": null,
+        "negotiated_detail": {
+         "requested_subtype": "MJPG",
+         "candidate_rates_same_size": [
+          "30/1",
+          "60/1",
+          "24/1",
+          "20/1",
+          "15/1",
+          "10/1",
+          "10000000/1333333",
+          "5/1"
+         ],
+         "likely_mf_synthesized_candidates": 0,
+         "native_type_index": 297,
+         "likely_mf_synthesized": false,
+         "raw": false,
+         "stream_selection_hr": "0x00000000",
+         "readback_hr": "0x00000000",
+         "subtype": "MJPG",
+         "width": 1280,
+         "height": 720,
+         "fps_num": 60,
+         "fps_den": 1,
+         "fps": 60,
+         "readback_default_stride": null,
+         "readback_ok": true
+        },
+        "format_fallback": null,
+        "pix_fmt": null,
+        "unreleasable": false,
+        "abandoned_threads": 0,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:06:02.231155Z",
+        "utc_finished": "2026-11-11T04:06:05.854180Z",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\c922prostreamw_046d-085c_C922SN01\\mf_1280x720_60",
+        "fps_steady_short": 44.464705046079196,
+        "fps_tail_short": 55.38716080996798,
+        "fps_source": "10 s recapture"
+       },
+       "pyav_ds": {
+        "api": "pyav_ds",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "pyav-dshow",
+        "frames": 180,
+        "fps_measured_tool": 59.60417566209667,
+        "fps_steady": 59.428031797577376,
+        "fps_tail_1p5s": 59.46862388200638,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         20,
+         50,
+         70,
+         100,
+         120,
+         150,
+         170
+        ],
+        "saved_total": 18,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "89d46b19bda64347088339d11b16b0fe04ce1864",
+        "header_sha1_distinct": 1,
+        "cpu_pct_one_core": 3.121727077274616,
+        "cpu_resolution_pct": 0.5202878462124361,
+        "cpu_method": "time.process_time over the streaming window (whole Python process)",
+        "timings": {
+         "open_ms": 548.0282,
+         "open_duration_ms": 548.0282,
+         "first_frame_ms": 548.1585,
+         "open_to_first_frame_ms": 548.1585,
+         "close_ms": 318.1241
+        },
+        "open_duration_ms": 548.0282,
+        "negotiated_detail": {
+         "codec": "mjpeg",
+         "pix_fmt": "yuvj422p",
+         "width": 1280,
+         "height": 720,
+         "time_base": "1/10000000",
+         "average_rate": "5000000/83333",
+         "t_opened_ns": 109900775146800
+        },
+        "format_fallback": false,
+        "pix_fmt": "yuvj422p",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:06:06.357517+00:00",
+        "utc_finished": "2026-11-11T04:06:10.227899+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\c922prostreamw_046d-085c_C922SN01\\pyav_ds_1280x720_60",
+        "fps_steady_short": 59.40608226217388,
+        "fps_tail_short": 59.39221031322248,
+        "fps_source": "10 s recapture"
+       },
+       "ds": {
+        "api": "pyav_ds",
+        "ok": true,
+        "negotiated": true,
+        "rc": 0,
+        "timed_out": false,
+        "backend": "pyav-dshow",
+        "frames": 180,
+        "fps_measured_tool": 59.60417566209667,
+        "fps_steady": 59.428031797577376,
+        "fps_tail_1p5s": 59.46862388200638,
+        "fps_basis": "qpc arrival",
+        "soi_fraction": 1.0,
+        "eoi_fraction": 1.0,
+        "sof_match_fraction": 1.0,
+        "checked": 8,
+        "checked_seq": [
+         0,
+         20,
+         50,
+         70,
+         100,
+         120,
+         150,
+         170
+        ],
+        "saved_total": 18,
+        "strict_ok_fraction": 1.0,
+        "lenient_ok_fraction": 1.0,
+        "strict_fail_reasons": {},
+        "extra_bytes_before_eoi": null,
+        "known_quirk": null,
+        "header_sha1": "89d46b19bda64347088339d11b16b0fe04ce1864",
+        "header_sha1_distinct": 1,
+        "cpu_pct_one_core": 3.121727077274616,
+        "cpu_resolution_pct": 0.5202878462124361,
+        "cpu_method": "time.process_time over the streaming window (whole Python process)",
+        "timings": {
+         "open_ms": 548.0282,
+         "open_duration_ms": 548.0282,
+         "first_frame_ms": 548.1585,
+         "open_to_first_frame_ms": 548.1585,
+         "close_ms": 318.1241
+        },
+        "open_duration_ms": 548.0282,
+        "negotiated_detail": {
+         "codec": "mjpeg",
+         "pix_fmt": "yuvj422p",
+         "width": 1280,
+         "height": 720,
+         "time_base": "1/10000000",
+         "average_rate": "5000000/83333",
+         "t_opened_ns": 109900775146800
+        },
+        "format_fallback": false,
+        "pix_fmt": "yuvj422p",
+        "unreleasable": false,
+        "abandoned_threads": null,
+        "error": null,
+        "classification": null,
+        "fault": null,
+        "utc_started": "2026-11-11T04:06:06.357517+00:00",
+        "utc_finished": "2026-11-11T04:06:10.227899+00:00",
+        "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\c922prostreamw_046d-085c_C922SN01\\pyav_ds_1280x720_60",
+        "fps_steady_short": 59.40608226217388,
+        "fps_tail_short": 59.39221031322248,
+        "fps_source": "10 s recapture",
+        "route": "pyav_ds"
+       }
+      },
+      "order_index": 2,
+      "header_sha1_equal": true,
+      "fps_nominal": 60.0,
+      "fps_reference": 59.427174916029514,
+      "fps_reference_basis": "apis_agree",
+      "fps_reference_note": null,
+      "rate_honoured": {
+       "honoured": true,
+       "by_api": {
+        "mf": true,
+        "ds": true
+       },
+       "nominal": 60.0,
+       "tolerance": 0.02
+      },
+      "fps_misses": [],
+      "recapture": {
+       "seconds": 10.0,
+       "apis": {
+        "mf": {
+         "ok": true,
+         "frames": 596,
+         "fps_steady": 59.426318034481646,
+         "fps_tail_1p5s": 59.452977821072395,
+         "fps_basis": "qpc arrival",
+         "cpu_pct_one_core": 4.368644889,
+         "cpu_resolution_pct": 0.15601622528802842,
+         "error": null,
+         "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\c922prostreamw_046d-085c_C922SN01\\mf_1280x720_60_10s"
+        },
+        "pyav_ds": {
+         "ok": true,
+         "frames": 596,
+         "fps_steady": 59.428031797577376,
+         "fps_tail_1p5s": 59.46862388200638,
+         "fps_basis": "qpc arrival",
+         "cpu_pct_one_core": 2.9659480984908364,
+         "cpu_resolution_pct": 0.15610253149951772,
+         "error": null,
+         "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-MJPEG\\c922prostreamw_046d-085c_C922SN01\\pyav_ds_1280x720_60_10s"
+        }
+       },
+       "reason": "fps outside 2% of the reference on ['mf']"
+      }
+     }
+    ],
+    "tool_failed_modes": {
+     "mf": [],
+     "ds": [],
+     "pyav_ds": []
+    },
+    "skipped_modes": [],
+    "rating_failed_modes": {
+     "mf": [],
+     "ds": [],
+     "pyav_ds": []
+    },
+    "pyav_format_fallback_modes": [],
+    "rate_control_experiment": {
+     "rows": [],
+     "raw_honoured": 0,
+     "mjpeg_honoured_same_modes": 0,
+     "n": 0
+    },
+    "events": [],
+    "health_check_at_start": null,
+    "device_fault": null,
+    "recaptured": 1,
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 120,
+     "in_scope": 3,
+     "excluded": 117,
+     "in_scope_modes": [
+      "MJPG 960x720@30",
+      "MJPG 1280x720@30",
+      "MJPG 1280x720@60"
+     ],
+     "excluded_modes": [
+      "MJPG 160x90@5",
+      "MJPG 160x90@7.5",
+      "MJPG 160x90@10",
+      "MJPG 160x90@15",
+      "MJPG 160x90@20",
+      "MJPG 160x90@24",
+      "MJPG 160x90@30",
+      "MJPG 160x120@5",
+      "MJPG 160x120@7.5",
+      "MJPG 160x120@10",
+      "MJPG 160x120@15",
+      "MJPG 160x120@20",
+      "MJPG 160x120@24",
+      "MJPG 160x120@30",
+      "MJPG 176x144@5",
+      "MJPG 176x144@7.5",
+      "MJPG 176x144@10",
+      "MJPG 176x144@15",
+      "MJPG 176x144@20",
+      "MJPG 176x144@24",
+      "MJPG 176x144@30",
+      "MJPG 320x180@5",
+      "MJPG 320x180@7.5",
+      "MJPG 320x180@10",
+      "MJPG 320x180@15",
+      "MJPG 320x180@20",
+      "MJPG 320x180@24",
+      "MJPG 320x180@30",
+      "MJPG 320x240@5",
+      "MJPG 320x240@7.5",
+      "MJPG 320x240@10",
+      "MJPG 320x240@15",
+      "MJPG 320x240@20",
+      "MJPG 320x240@24",
+      "MJPG 320x240@30",
+      "MJPG 352x288@5",
+      "MJPG 352x288@7.5",
+      "MJPG 352x288@10",
+      "MJPG 352x288@15",
+      "MJPG 352x288@20",
+      "MJPG 352x288@24",
+      "MJPG 352x288@30",
+      "MJPG 432x240@5",
+      "MJPG 432x240@7.5",
+      "MJPG 432x240@10",
+      "MJPG 432x240@15",
+      "MJPG 432x240@20",
+      "MJPG 432x240@24",
+      "MJPG 432x240@30",
+      "MJPG 640x360@5",
+      "MJPG 640x360@7.5",
+      "MJPG 640x360@10",
+      "MJPG 640x360@15",
+      "MJPG 640x360@20",
+      "MJPG 640x360@24",
+      "MJPG 640x360@30",
+      "MJPG 640x480@5",
+      "MJPG 640x480@7.5",
+      "MJPG 640x480@10",
+      "MJPG 640x480@15"
+     ],
+     "excluded_list_truncated": true,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "activity_at_first_stream": {
+     "utc": "2026-11-11T04:05:29.963179Z",
+     "ok": true,
+     "error": null,
+     "report_received": true,
+     "in_use": false,
+     "streaming_by_other": false,
+     "other_processes": [],
+     "consent_in_use": [],
+     "source": "wincam activity (IMFSensorActivityMonitor: MF/Frame Server clients; ConsentStore: any app)"
+    },
+    "control_state": {
+     "before": {
+      "answering": true,
+      "supported": 16,
+      "with_value": 16,
+      "controls": {
+       "auto_exposure_priority": {
+        "value": 0,
+        "mode": null,
+        "min": 0,
+        "max": 0
+       },
+       "exposure": {
+        "value": -5,
+        "mode": "auto",
+        "min": -11,
+        "max": -2
+       },
+       "gain": {
+        "value": 0,
+        "mode": "manual",
+        "min": 0,
+        "max": 255
+       },
+       "white_balance": {
+        "value": 4000,
+        "mode": "auto",
+        "min": 2000,
+        "max": 6500
+       },
+       "focus": {
+        "value": 0,
+        "mode": "auto",
+        "min": 0,
+        "max": 250
+       },
+       "powerline_frequency": {
+        "value": 2,
+        "mode": null,
+        "min": 1,
+        "max": 2
+       },
+       "backlight_compensation": {
+        "value": 0,
+        "mode": "manual",
+        "min": 0,
+        "max": 1
+       },
+       "brightness": {
+        "value": 128,
+        "mode": "manual",
+        "min": 0,
+        "max": 255
+       }
+      },
+      "error": null,
+      "utc": "2026-11-11T04:05:29.953344+00:00",
+      "rc": 0,
+      "timed_out": false,
+      "method": "wincam controls --api mf --read-only (nothing set)"
+     },
+     "after": {
+      "answering": true,
+      "supported": 16,
+      "with_value": 16,
+      "controls": {
+       "auto_exposure_priority": {
+        "value": 0,
+        "mode": null,
+        "min": 0,
+        "max": 0
+       },
+       "exposure": {
+        "value": -5,
+        "mode": "auto",
+        "min": -11,
+        "max": -2
+       },
+       "gain": {
+        "value": 0,
+        "mode": "manual",
+        "min": 0,
+        "max": 255
+       },
+       "white_balance": {
+        "value": 4000,
+        "mode": "auto",
+        "min": 2000,
+        "max": 6500
+       },
+       "focus": {
+        "value": 0,
+        "mode": "auto",
+        "min": 0,
+        "max": 250
+       },
+       "powerline_frequency": {
+        "value": 2,
+        "mode": null,
+        "min": 1,
+        "max": 2
+       },
+       "backlight_compensation": {
+        "value": 0,
+        "mode": "manual",
+        "min": 0,
+        "max": 1
+       },
+       "brightness": {
+        "value": 128,
+        "mode": "manual",
+        "min": 0,
+        "max": 255
+       }
+      },
+      "error": null,
+      "utc": "2026-11-11T04:06:33.576612+00:00",
+      "rc": 0,
+      "timed_out": false,
+      "method": "wincam controls --api mf --read-only (nothing set)"
+     },
+     "note": "read only; W-MJPEG never sets a control (mjpeg_fmt.md H4)"
+    },
+    "first_failure": null
+   }
+  },
+  "arrivals": {
+   "before": {
+    "utc": "2026-11-11T04:03:47.508498+00:00",
+    "cameras": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-10T22:07:35.509176+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+      "present": true,
+      "last_arrival": "2026-11-10T22:07:46.470029+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-09T21:34:51.037086+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-09T21:34:51.119106+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "after": {
+    "utc": "2026-11-11T04:06:33.583054+00:00",
+    "cameras": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-10T22:07:35.509176+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+      "present": true,
+      "last_arrival": "2026-11-10T22:07:46.470029+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-09T21:34:51.037086+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-09T21:34:51.119106+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "changes": [],
+   "unexplained_re_arrival": false
+  },
+  "device_faults": {
+   "faults": {},
+   "currently_faulted": [],
+   "first_failure": {},
+   "first_any_failure": {},
+   "events": [],
+   "gated_by_test": {
+    "W-ENV": {},
+    "W-POLICY": {},
+    "W-TOPO": {},
+    "W-ID": {},
+    "W-FMT": {},
+    "W-FMT-NOGRAB": {},
+    "W-CTRL-LIST": {},
+    "W-MJPEG": {}
+   },
+   "probes_by_test": {},
+   "kiyo": {},
+   "rule": "fault = 0x8007001F (device_error) / unreleasable or hung reader / streaming command killed at its timeout; its streaming commands are gated from the next test on; each later test re-probes it once (1-frame MF capture) and un-faults it if it answers"
+  },
+  "note": "cameras and modes run one at a time; default mode first, low-rate modes last; fps_steady skips the first 15% of frames; 8 frames decoded per mode, spread across the capture"
+ },
+ "verdicts": {
+  "G-MJPEG|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|mf": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "every advertised mode negotiates",
+     "met": true,
+     "detail": "2/2"
+    },
+    {
+     "criterion": ">= 99% valid JPEG (strict, or lenient with a known quirk)",
+     "met": true,
+     "detail": "2/2"
+    },
+    {
+     "criterion": "SOF0 size = request",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "fps within 2% of the camera's real rate (symmetric reference: the rate both APIs agree on, else nominal)",
+     "met": true,
+     "detail": {
+      "failing_modes": [],
+      "reference_sources": {
+       "both_apis_agree": 2
+      }
+     }
+    },
+    {
+     "criterion": "JPEG header SHA-1 equal across APIs",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "every in-scope MJPEG mode was captured",
+     "met": true,
+     "detail": "2/2 modes captured (2 planned; scope exactly 720 lines at >= 30 fps; 26 of 28 advertised modes excluded)"
+    }
+   ],
+   "evidence": {
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 30.099522216466507,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": false,
+      "rate_honoured": true,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 303,
+      "is_jpeg": true
+     },
+     {
+      "mode": "MJPG 1280x720@60",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 30.33254202574346,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": true,
+      "rate_honoured": false,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 92,
+      "is_jpeg": true
+     }
+    ],
+    "fps_reference_sources": {
+     "both_apis_agree": 2
+    },
+    "rate_honoured": {
+     "true": 1,
+     "false": 1,
+     "unknown": 0,
+     "not_honoured_modes": [
+      "MJPG 1280x720@60"
+     ],
+     "note": "camera behaviour (requested rate not delivered), not an API failure; not part of the G-MJPEG rating"
+    },
+    "tier0_reference_off_nominal_modes": [
+     "MJPG 1280x720@60"
+    ],
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 28,
+     "in_scope": 2,
+     "excluded": 26,
+     "in_scope_modes": [
+      "MJPG 1280x720@30",
+      "MJPG 1280x720@60"
+     ],
+     "excluded_modes": [
+      "MJPG 640x360@5",
+      "MJPG 640x360@10",
+      "MJPG 640x360@15",
+      "MJPG 640x360@20",
+      "MJPG 640x360@24",
+      "MJPG 640x360@30",
+      "MJPG 640x360@60",
+      "MJPG 640x480@5",
+      "MJPG 640x480@10",
+      "MJPG 640x480@15",
+      "MJPG 640x480@20",
+      "MJPG 640x480@24",
+      "MJPG 640x480@30",
+      "MJPG 640x480@60",
+      "MJPG 1280x720@5",
+      "MJPG 1280x720@10",
+      "MJPG 1280x720@15",
+      "MJPG 1280x720@20",
+      "MJPG 1280x720@24",
+      "MJPG 1920x1080@5",
+      "MJPG 1920x1080@10",
+      "MJPG 1920x1080@15",
+      "MJPG 1920x1080@20",
+      "MJPG 1920x1080@24",
+      "MJPG 1920x1080@30",
+      "MJPG 1920x1080@60"
+     ],
+     "excluded_list_truncated": false,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "rating_failed_modes": [],
+    "skipped_modes": [],
+    "modes_captured": 2,
+    "rate_honoured_camera": {
+     "honoured": 1,
+     "not_honoured": [
+      "MJPG 1280x720@60"
+     ],
+     "mixed_or_unmeasured": 0,
+     "note": "camera behaviour: requested rate delivered within 2 % by every measured API (MF and DS); not an API failure, not part of the rating"
+    },
+    "device_fault": false
+   },
+   "note": "tier-0 fps reference (the rate both APIs agree on) is > 2% off nominal in 1 mode(s): camera behaviour (e.g. auto-exposure) or a host cause common to both APIs mode scope exactly 720 lines at >= 30 fps: 26 of 28 advertised modes not streamed (--all-modes restores them)",
+   "summary_label": "yes (in-scope modes; rate not honoured in 1)",
+   "tier": 0
+  },
+  "G-MJPEG|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|ds": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "every advertised mode negotiates",
+     "met": true,
+     "detail": "2/2"
+    },
+    {
+     "criterion": ">= 99% valid JPEG (strict, or lenient with a known quirk)",
+     "met": true,
+     "detail": "2/2"
+    },
+    {
+     "criterion": "SOF0 size = request",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "fps within 2% of the camera's real rate (symmetric reference: the rate both APIs agree on, else nominal)",
+     "met": true,
+     "detail": {
+      "failing_modes": [],
+      "reference_sources": {
+       "both_apis_agree": 2
+      }
+     }
+    },
+    {
+     "criterion": "JPEG header SHA-1 equal across APIs",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "every in-scope MJPEG mode was captured",
+     "met": true,
+     "detail": "2/2 modes captured (2 planned; scope exactly 720 lines at >= 30 fps; 26 of 28 advertised modes excluded)"
+    }
+   ],
+   "evidence": {
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 30.099522216466507,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": false,
+      "rate_honoured": true,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 301,
+      "is_jpeg": true
+     },
+     {
+      "mode": "MJPG 1280x720@60",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 30.33254202574346,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": true,
+      "rate_honoured": false,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 91,
+      "is_jpeg": true
+     }
+    ],
+    "fps_reference_sources": {
+     "both_apis_agree": 2
+    },
+    "rate_honoured": {
+     "true": 1,
+     "false": 1,
+     "unknown": 0,
+     "not_honoured_modes": [
+      "MJPG 1280x720@60"
+     ],
+     "note": "camera behaviour (requested rate not delivered), not an API failure; not part of the G-MJPEG rating"
+    },
+    "tier0_reference_off_nominal_modes": [
+     "MJPG 1280x720@60"
+    ],
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 28,
+     "in_scope": 2,
+     "excluded": 26,
+     "in_scope_modes": [
+      "MJPG 1280x720@30",
+      "MJPG 1280x720@60"
+     ],
+     "excluded_modes": [
+      "MJPG 640x360@5",
+      "MJPG 640x360@10",
+      "MJPG 640x360@15",
+      "MJPG 640x360@20",
+      "MJPG 640x360@24",
+      "MJPG 640x360@30",
+      "MJPG 640x360@60",
+      "MJPG 640x480@5",
+      "MJPG 640x480@10",
+      "MJPG 640x480@15",
+      "MJPG 640x480@20",
+      "MJPG 640x480@24",
+      "MJPG 640x480@30",
+      "MJPG 640x480@60",
+      "MJPG 1280x720@5",
+      "MJPG 1280x720@10",
+      "MJPG 1280x720@15",
+      "MJPG 1280x720@20",
+      "MJPG 1280x720@24",
+      "MJPG 1920x1080@5",
+      "MJPG 1920x1080@10",
+      "MJPG 1920x1080@15",
+      "MJPG 1920x1080@20",
+      "MJPG 1920x1080@24",
+      "MJPG 1920x1080@30",
+      "MJPG 1920x1080@60"
+     ],
+     "excluded_list_truncated": false,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "rating_failed_modes": [],
+    "skipped_modes": [],
+    "modes_captured": 2,
+    "rate_honoured_camera": {
+     "honoured": 1,
+     "not_honoured": [
+      "MJPG 1280x720@60"
+     ],
+     "mixed_or_unmeasured": 0,
+     "note": "camera behaviour: requested rate delivered within 2 % by every measured API (MF and DS); not an API failure, not part of the rating"
+    },
+    "device_fault": false
+   },
+   "note": "tier-0 fps reference (the rate both APIs agree on) is > 2% off nominal in 1 mode(s): camera behaviour (e.g. auto-exposure) or a host cause common to both APIs mode scope exactly 720 lines at >= 30 fps: 26 of 28 advertised modes not streamed (--all-modes restores them)",
+   "summary_label": "yes (in-scope modes; rate not honoured in 1)",
+   "tier": 0,
+   "routes": [
+    "ffmpeg_ds"
+   ]
+  },
+  "G-MJPEG|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|pyav_ds": {
+   "rating": "no",
+   "criteria": [
+    {
+     "criterion": "delivers JPEG bytes",
+     "met": false,
+     "detail": "0 JPEG frames in 2/2 modes (0 with no frame at all)"
+    },
+    {
+     "criterion": "every in-scope MJPEG mode was captured",
+     "met": true,
+     "detail": "2/2 modes captured (2 planned; scope exactly 720 lines at >= 30 fps; 26 of 28 advertised modes excluded)"
+    }
+   ],
+   "evidence": {
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "negotiated": false,
+      "valid_ok": false,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": false,
+      "fps_ok": true,
+      "fps_reference": 30.052825338713845,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": false,
+      "rate_honoured": true,
+      "header_equal_across_apis": null,
+      "ok": false,
+      "frames": 292,
+      "is_jpeg": false
+     },
+     {
+      "mode": "MJPG 1280x720@60",
+      "negotiated": false,
+      "valid_ok": false,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": false,
+      "fps_ok": true,
+      "fps_reference": 30.170223992707495,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": true,
+      "rate_honoured": false,
+      "header_equal_across_apis": null,
+      "ok": false,
+      "frames": 82,
+      "is_jpeg": false
+     }
+    ],
+    "fps_reference_sources": {
+     "both_apis_agree": 2
+    },
+    "rate_honoured": {
+     "true": 1,
+     "false": 1,
+     "unknown": 0,
+     "not_honoured_modes": [
+      "MJPG 1280x720@60"
+     ],
+     "note": "camera behaviour (requested rate not delivered), not an API failure; not part of the G-MJPEG rating"
+    },
+    "tier0_reference_off_nominal_modes": [
+     "MJPG 1280x720@60"
+    ],
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 28,
+     "in_scope": 2,
+     "excluded": 26,
+     "in_scope_modes": [
+      "MJPG 1280x720@30",
+      "MJPG 1280x720@60"
+     ],
+     "excluded_modes": [
+      "MJPG 640x360@5",
+      "MJPG 640x360@10",
+      "MJPG 640x360@15",
+      "MJPG 640x360@20",
+      "MJPG 640x360@24",
+      "MJPG 640x360@30",
+      "MJPG 640x360@60",
+      "MJPG 640x480@5",
+      "MJPG 640x480@10",
+      "MJPG 640x480@15",
+      "MJPG 640x480@20",
+      "MJPG 640x480@24",
+      "MJPG 640x480@30",
+      "MJPG 640x480@60",
+      "MJPG 1280x720@5",
+      "MJPG 1280x720@10",
+      "MJPG 1280x720@15",
+      "MJPG 1280x720@20",
+      "MJPG 1280x720@24",
+      "MJPG 1920x1080@5",
+      "MJPG 1920x1080@10",
+      "MJPG 1920x1080@15",
+      "MJPG 1920x1080@20",
+      "MJPG 1920x1080@24",
+      "MJPG 1920x1080@30",
+      "MJPG 1920x1080@60"
+     ],
+     "excluded_list_truncated": false,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "rating_failed_modes": [
+     "MJPG 1280x720@30",
+     "MJPG 1280x720@60"
+    ],
+    "skipped_modes": [],
+    "modes_captured": 2,
+    "rate_honoured_camera": {
+     "honoured": 1,
+     "not_honoured": [
+      "MJPG 1280x720@60"
+     ],
+     "mixed_or_unmeasured": 0,
+     "note": "camera behaviour: requested rate delivered within 2 % by every measured API (MF and DS); not an API failure, not part of the rating"
+    },
+    "device_fault": false
+   },
+   "tier": 0,
+   "note": "mode scope exactly 720 lines at >= 30 fps: 26 of 28 advertised modes not streamed (--all-modes restores them) 2 mode(s) delivered raw video, not MJPEG: PyAV cannot set FFmpeg's video_codec_id, so dshow takes the first caps entry matching size and rate"
+  },
+  "G-MJPEG|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8|mf": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "every advertised mode negotiates",
+     "met": true,
+     "detail": "1/1"
+    },
+    {
+     "criterion": ">= 99% valid JPEG (strict, or lenient with a known quirk)",
+     "met": true,
+     "detail": "1/1"
+    },
+    {
+     "criterion": "SOF0 size = request",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "fps within 2% of the camera's real rate (symmetric reference: the rate both APIs agree on, else nominal)",
+     "met": true,
+     "detail": {
+      "failing_modes": [],
+      "reference_sources": {
+       "both_apis_agree": 1
+      }
+     }
+    },
+    {
+     "criterion": "JPEG header SHA-1 equal across APIs",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "every in-scope MJPEG mode was captured",
+     "met": true,
+     "detail": "1/1 modes captured (1 planned; scope exactly 720 lines at >= 30 fps; 118 of 119 advertised modes excluded)"
+    }
+   ],
+   "evidence": {
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 30.021674038116664,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": false,
+      "rate_honoured": true,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 302,
+      "is_jpeg": true
+     }
+    ],
+    "fps_reference_sources": {
+     "both_apis_agree": 1
+    },
+    "rate_honoured": {
+     "true": 1,
+     "false": 0,
+     "unknown": 0,
+     "not_honoured_modes": [],
+     "note": "camera behaviour (requested rate not delivered), not an API failure; not part of the G-MJPEG rating"
+    },
+    "tier0_reference_off_nominal_modes": [],
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 119,
+     "in_scope": 1,
+     "excluded": 118,
+     "in_scope_modes": [
+      "MJPG 1280x720@30"
+     ],
+     "excluded_modes": [
+      "MJPG 160x120@5",
+      "MJPG 160x120@7.5",
+      "MJPG 160x120@10",
+      "MJPG 160x120@15",
+      "MJPG 160x120@20",
+      "MJPG 160x120@24",
+      "MJPG 160x120@30",
+      "MJPG 176x144@5",
+      "MJPG 176x144@7.5",
+      "MJPG 176x144@10",
+      "MJPG 176x144@15",
+      "MJPG 176x144@20",
+      "MJPG 176x144@24",
+      "MJPG 176x144@30",
+      "MJPG 320x180@5",
+      "MJPG 320x180@7.5",
+      "MJPG 320x180@10",
+      "MJPG 320x180@15",
+      "MJPG 320x180@20",
+      "MJPG 320x180@24",
+      "MJPG 320x180@30",
+      "MJPG 320x240@5",
+      "MJPG 320x240@7.5",
+      "MJPG 320x240@10",
+      "MJPG 320x240@15",
+      "MJPG 320x240@20",
+      "MJPG 320x240@24",
+      "MJPG 320x240@30",
+      "MJPG 352x288@5",
+      "MJPG 352x288@7.5",
+      "MJPG 352x288@10",
+      "MJPG 352x288@15",
+      "MJPG 352x288@20",
+      "MJPG 352x288@24",
+      "MJPG 352x288@30",
+      "MJPG 424x240@5",
+      "MJPG 424x240@7.5",
+      "MJPG 424x240@10",
+      "MJPG 424x240@15",
+      "MJPG 424x240@20",
+      "MJPG 424x240@24",
+      "MJPG 424x240@30",
+      "MJPG 480x270@5",
+      "MJPG 480x270@7.5",
+      "MJPG 480x270@10",
+      "MJPG 480x270@15",
+      "MJPG 480x270@20",
+      "MJPG 480x270@24",
+      "MJPG 480x270@30",
+      "MJPG 640x360@5",
+      "MJPG 640x360@7.5",
+      "MJPG 640x360@10",
+      "MJPG 640x360@15",
+      "MJPG 640x360@20",
+      "MJPG 640x360@24",
+      "MJPG 640x360@30",
+      "MJPG 640x480@5",
+      "MJPG 640x480@7.5",
+      "MJPG 640x480@10",
+      "MJPG 640x480@15"
+     ],
+     "excluded_list_truncated": true,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "rating_failed_modes": [],
+    "skipped_modes": [],
+    "modes_captured": 1,
+    "rate_honoured_camera": {
+     "honoured": 1,
+     "not_honoured": [],
+     "mixed_or_unmeasured": 0,
+     "note": "camera behaviour: requested rate delivered within 2 % by every measured API (MF and DS); not an API failure, not part of the rating"
+    },
+    "device_fault": false
+   },
+   "summary_label": "yes (in-scope modes)",
+   "tier": 0,
+   "note": "mode scope exactly 720 lines at >= 30 fps: 118 of 119 advertised modes not streamed (--all-modes restores them)"
+  },
+  "G-MJPEG|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8|ds": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "every advertised mode negotiates",
+     "met": true,
+     "detail": "1/1"
+    },
+    {
+     "criterion": ">= 99% valid JPEG (strict, or lenient with a known quirk)",
+     "met": true,
+     "detail": "1/1"
+    },
+    {
+     "criterion": "SOF0 size = request",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "fps within 2% of the camera's real rate (symmetric reference: the rate both APIs agree on, else nominal)",
+     "met": true,
+     "detail": {
+      "failing_modes": [],
+      "reference_sources": {
+       "both_apis_agree": 1
+      }
+     }
+    },
+    {
+     "criterion": "JPEG header SHA-1 equal across APIs",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "every in-scope MJPEG mode was captured",
+     "met": true,
+     "detail": "1/1 modes captured (1 planned; scope exactly 720 lines at >= 30 fps; 118 of 119 advertised modes excluded)"
+    }
+   ],
+   "evidence": {
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 30.021674038116664,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": false,
+      "rate_honoured": true,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 302,
+      "is_jpeg": true
+     }
+    ],
+    "fps_reference_sources": {
+     "both_apis_agree": 1
+    },
+    "rate_honoured": {
+     "true": 1,
+     "false": 0,
+     "unknown": 0,
+     "not_honoured_modes": [],
+     "note": "camera behaviour (requested rate not delivered), not an API failure; not part of the G-MJPEG rating"
+    },
+    "tier0_reference_off_nominal_modes": [],
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 119,
+     "in_scope": 1,
+     "excluded": 118,
+     "in_scope_modes": [
+      "MJPG 1280x720@30"
+     ],
+     "excluded_modes": [
+      "MJPG 160x120@5",
+      "MJPG 160x120@7.5",
+      "MJPG 160x120@10",
+      "MJPG 160x120@15",
+      "MJPG 160x120@20",
+      "MJPG 160x120@24",
+      "MJPG 160x120@30",
+      "MJPG 176x144@5",
+      "MJPG 176x144@7.5",
+      "MJPG 176x144@10",
+      "MJPG 176x144@15",
+      "MJPG 176x144@20",
+      "MJPG 176x144@24",
+      "MJPG 176x144@30",
+      "MJPG 320x180@5",
+      "MJPG 320x180@7.5",
+      "MJPG 320x180@10",
+      "MJPG 320x180@15",
+      "MJPG 320x180@20",
+      "MJPG 320x180@24",
+      "MJPG 320x180@30",
+      "MJPG 320x240@5",
+      "MJPG 320x240@7.5",
+      "MJPG 320x240@10",
+      "MJPG 320x240@15",
+      "MJPG 320x240@20",
+      "MJPG 320x240@24",
+      "MJPG 320x240@30",
+      "MJPG 352x288@5",
+      "MJPG 352x288@7.5",
+      "MJPG 352x288@10",
+      "MJPG 352x288@15",
+      "MJPG 352x288@20",
+      "MJPG 352x288@24",
+      "MJPG 352x288@30",
+      "MJPG 424x240@5",
+      "MJPG 424x240@7.5",
+      "MJPG 424x240@10",
+      "MJPG 424x240@15",
+      "MJPG 424x240@20",
+      "MJPG 424x240@24",
+      "MJPG 424x240@30",
+      "MJPG 480x270@5",
+      "MJPG 480x270@7.5",
+      "MJPG 480x270@10",
+      "MJPG 480x270@15",
+      "MJPG 480x270@20",
+      "MJPG 480x270@24",
+      "MJPG 480x270@30",
+      "MJPG 640x360@5",
+      "MJPG 640x360@7.5",
+      "MJPG 640x360@10",
+      "MJPG 640x360@15",
+      "MJPG 640x360@20",
+      "MJPG 640x360@24",
+      "MJPG 640x360@30",
+      "MJPG 640x480@5",
+      "MJPG 640x480@7.5",
+      "MJPG 640x480@10",
+      "MJPG 640x480@15"
+     ],
+     "excluded_list_truncated": true,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "rating_failed_modes": [],
+    "skipped_modes": [],
+    "modes_captured": 1,
+    "rate_honoured_camera": {
+     "honoured": 1,
+     "not_honoured": [],
+     "mixed_or_unmeasured": 0,
+     "note": "camera behaviour: requested rate delivered within 2 % by every measured API (MF and DS); not an API failure, not part of the rating"
+    },
+    "device_fault": false
+   },
+   "summary_label": "yes (in-scope modes)",
+   "tier": 0,
+   "note": "mode scope exactly 720 lines at >= 30 fps: 118 of 119 advertised modes not streamed (--all-modes restores them)",
+   "routes": [
+    "pyav_ds"
+   ]
+  },
+  "G-MJPEG|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8|pyav_ds": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "every advertised mode negotiates",
+     "met": true,
+     "detail": "1/1"
+    },
+    {
+     "criterion": ">= 99% valid JPEG (strict, or lenient with a known quirk)",
+     "met": true,
+     "detail": "1/1"
+    },
+    {
+     "criterion": "SOF0 size = request",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "fps within 2% of the camera's real rate (symmetric reference: the rate both APIs agree on, else nominal)",
+     "met": true,
+     "detail": {
+      "failing_modes": [],
+      "reference_sources": {
+       "both_apis_agree": 1
+      }
+     }
+    },
+    {
+     "criterion": "JPEG header SHA-1 equal across APIs",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "every in-scope MJPEG mode was captured",
+     "met": true,
+     "detail": "1/1 modes captured (1 planned; scope exactly 720 lines at >= 30 fps; 118 of 119 advertised modes excluded)"
+    }
+   ],
+   "evidence": {
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 30.021674038116664,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": false,
+      "rate_honoured": true,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 302,
+      "is_jpeg": true
+     }
+    ],
+    "fps_reference_sources": {
+     "both_apis_agree": 1
+    },
+    "rate_honoured": {
+     "true": 1,
+     "false": 0,
+     "unknown": 0,
+     "not_honoured_modes": [],
+     "note": "camera behaviour (requested rate not delivered), not an API failure; not part of the G-MJPEG rating"
+    },
+    "tier0_reference_off_nominal_modes": [],
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 119,
+     "in_scope": 1,
+     "excluded": 118,
+     "in_scope_modes": [
+      "MJPG 1280x720@30"
+     ],
+     "excluded_modes": [
+      "MJPG 160x120@5",
+      "MJPG 160x120@7.5",
+      "MJPG 160x120@10",
+      "MJPG 160x120@15",
+      "MJPG 160x120@20",
+      "MJPG 160x120@24",
+      "MJPG 160x120@30",
+      "MJPG 176x144@5",
+      "MJPG 176x144@7.5",
+      "MJPG 176x144@10",
+      "MJPG 176x144@15",
+      "MJPG 176x144@20",
+      "MJPG 176x144@24",
+      "MJPG 176x144@30",
+      "MJPG 320x180@5",
+      "MJPG 320x180@7.5",
+      "MJPG 320x180@10",
+      "MJPG 320x180@15",
+      "MJPG 320x180@20",
+      "MJPG 320x180@24",
+      "MJPG 320x180@30",
+      "MJPG 320x240@5",
+      "MJPG 320x240@7.5",
+      "MJPG 320x240@10",
+      "MJPG 320x240@15",
+      "MJPG 320x240@20",
+      "MJPG 320x240@24",
+      "MJPG 320x240@30",
+      "MJPG 352x288@5",
+      "MJPG 352x288@7.5",
+      "MJPG 352x288@10",
+      "MJPG 352x288@15",
+      "MJPG 352x288@20",
+      "MJPG 352x288@24",
+      "MJPG 352x288@30",
+      "MJPG 424x240@5",
+      "MJPG 424x240@7.5",
+      "MJPG 424x240@10",
+      "MJPG 424x240@15",
+      "MJPG 424x240@20",
+      "MJPG 424x240@24",
+      "MJPG 424x240@30",
+      "MJPG 480x270@5",
+      "MJPG 480x270@7.5",
+      "MJPG 480x270@10",
+      "MJPG 480x270@15",
+      "MJPG 480x270@20",
+      "MJPG 480x270@24",
+      "MJPG 480x270@30",
+      "MJPG 640x360@5",
+      "MJPG 640x360@7.5",
+      "MJPG 640x360@10",
+      "MJPG 640x360@15",
+      "MJPG 640x360@20",
+      "MJPG 640x360@24",
+      "MJPG 640x360@30",
+      "MJPG 640x480@5",
+      "MJPG 640x480@7.5",
+      "MJPG 640x480@10",
+      "MJPG 640x480@15"
+     ],
+     "excluded_list_truncated": true,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "rating_failed_modes": [],
+    "skipped_modes": [],
+    "modes_captured": 1,
+    "rate_honoured_camera": {
+     "honoured": 1,
+     "not_honoured": [],
+     "mixed_or_unmeasured": 0,
+     "note": "camera behaviour: requested rate delivered within 2 % by every measured API (MF and DS); not an API failure, not part of the rating"
+    },
+    "device_fault": false
+   },
+   "summary_label": "yes (in-scope modes)",
+   "tier": 0,
+   "note": "mode scope exactly 720 lines at >= 30 fps: 118 of 119 advertised modes not streamed (--all-modes restores them)"
+  },
+  "G-MJPEG|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|mf": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "every advertised mode negotiates",
+     "met": true,
+     "detail": "1/1"
+    },
+    {
+     "criterion": ">= 99% valid JPEG (strict, or lenient with a known quirk)",
+     "met": true,
+     "detail": "1/1"
+    },
+    {
+     "criterion": "SOF0 size = request",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "fps within 2% of the camera's real rate (symmetric reference: the rate both APIs agree on, else nominal)",
+     "met": true,
+     "detail": {
+      "failing_modes": [],
+      "reference_sources": {
+       "both_apis_agree": 1
+      }
+     }
+    },
+    {
+     "criterion": "JPEG header SHA-1 equal across APIs",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "every in-scope MJPEG mode was captured",
+     "met": true,
+     "detail": "1/1 modes captured (1 planned; scope exactly 720 lines at >= 30 fps; 9 of 10 advertised modes excluded)"
+    }
+   ],
+   "evidence": {
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 25.756882738471447,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": true,
+      "rate_honoured": false,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 259,
+      "is_jpeg": true
+     }
+    ],
+    "fps_reference_sources": {
+     "both_apis_agree": 1
+    },
+    "rate_honoured": {
+     "true": 0,
+     "false": 1,
+     "unknown": 0,
+     "not_honoured_modes": [
+      "MJPG 1280x720@30"
+     ],
+     "note": "camera behaviour (requested rate not delivered), not an API failure; not part of the G-MJPEG rating"
+    },
+    "tier0_reference_off_nominal_modes": [
+     "MJPG 1280x720@30"
+    ],
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 10,
+     "in_scope": 1,
+     "excluded": 9,
+     "in_scope_modes": [
+      "MJPG 1280x720@30"
+     ],
+     "excluded_modes": [
+      "MJPG 352x288@25",
+      "MJPG 352x288@30",
+      "MJPG 640x360@25",
+      "MJPG 640x360@30",
+      "MJPG 640x480@25",
+      "MJPG 640x480@30",
+      "MJPG 1280x720@25",
+      "MJPG 1920x1080@25",
+      "MJPG 1920x1080@30"
+     ],
+     "excluded_list_truncated": false,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "rating_failed_modes": [],
+    "skipped_modes": [],
+    "modes_captured": 1,
+    "rate_honoured_camera": {
+     "honoured": 0,
+     "not_honoured": [
+      "MJPG 1280x720@30"
+     ],
+     "mixed_or_unmeasured": 0,
+     "note": "camera behaviour: requested rate delivered within 2 % by every measured API (MF and DS); not an API failure, not part of the rating"
+    },
+    "device_fault": false
+   },
+   "note": "tier-0 fps reference (the rate both APIs agree on) is > 2% off nominal in 1 mode(s): camera behaviour (e.g. auto-exposure) or a host cause common to both APIs mode scope exactly 720 lines at >= 30 fps: 9 of 10 advertised modes not streamed (--all-modes restores them)",
+   "summary_label": "yes (in-scope modes; rate not honoured in 1)",
+   "tier": 0
+  },
+  "G-MJPEG|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|ds": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "every advertised mode negotiates",
+     "met": true,
+     "detail": "1/1"
+    },
+    {
+     "criterion": ">= 99% valid JPEG (strict, or lenient with a known quirk)",
+     "met": true,
+     "detail": "1/1"
+    },
+    {
+     "criterion": "SOF0 size = request",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "fps within 2% of the camera's real rate (symmetric reference: the rate both APIs agree on, else nominal)",
+     "met": true,
+     "detail": {
+      "failing_modes": [],
+      "reference_sources": {
+       "both_apis_agree": 1
+      }
+     }
+    },
+    {
+     "criterion": "JPEG header SHA-1 equal across APIs",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "every in-scope MJPEG mode was captured",
+     "met": true,
+     "detail": "1/1 modes captured (1 planned; scope exactly 720 lines at >= 30 fps; 9 of 10 advertised modes excluded)"
+    }
+   ],
+   "evidence": {
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 25.756882738471447,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": true,
+      "rate_honoured": false,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 259,
+      "is_jpeg": true
+     }
+    ],
+    "fps_reference_sources": {
+     "both_apis_agree": 1
+    },
+    "rate_honoured": {
+     "true": 0,
+     "false": 1,
+     "unknown": 0,
+     "not_honoured_modes": [
+      "MJPG 1280x720@30"
+     ],
+     "note": "camera behaviour (requested rate not delivered), not an API failure; not part of the G-MJPEG rating"
+    },
+    "tier0_reference_off_nominal_modes": [
+     "MJPG 1280x720@30"
+    ],
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 10,
+     "in_scope": 1,
+     "excluded": 9,
+     "in_scope_modes": [
+      "MJPG 1280x720@30"
+     ],
+     "excluded_modes": [
+      "MJPG 352x288@25",
+      "MJPG 352x288@30",
+      "MJPG 640x360@25",
+      "MJPG 640x360@30",
+      "MJPG 640x480@25",
+      "MJPG 640x480@30",
+      "MJPG 1280x720@25",
+      "MJPG 1920x1080@25",
+      "MJPG 1920x1080@30"
+     ],
+     "excluded_list_truncated": false,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "rating_failed_modes": [],
+    "skipped_modes": [],
+    "modes_captured": 1,
+    "rate_honoured_camera": {
+     "honoured": 0,
+     "not_honoured": [
+      "MJPG 1280x720@30"
+     ],
+     "mixed_or_unmeasured": 0,
+     "note": "camera behaviour: requested rate delivered within 2 % by every measured API (MF and DS); not an API failure, not part of the rating"
+    },
+    "device_fault": false
+   },
+   "note": "tier-0 fps reference (the rate both APIs agree on) is > 2% off nominal in 1 mode(s): camera behaviour (e.g. auto-exposure) or a host cause common to both APIs mode scope exactly 720 lines at >= 30 fps: 9 of 10 advertised modes not streamed (--all-modes restores them)",
+   "summary_label": "yes (in-scope modes; rate not honoured in 1)",
+   "tier": 0,
+   "routes": [
+    "pyav_ds"
+   ]
+  },
+  "G-MJPEG|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|pyav_ds": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "every advertised mode negotiates",
+     "met": true,
+     "detail": "1/1"
+    },
+    {
+     "criterion": ">= 99% valid JPEG (strict, or lenient with a known quirk)",
+     "met": true,
+     "detail": "1/1"
+    },
+    {
+     "criterion": "SOF0 size = request",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "fps within 2% of the camera's real rate (symmetric reference: the rate both APIs agree on, else nominal)",
+     "met": true,
+     "detail": {
+      "failing_modes": [],
+      "reference_sources": {
+       "both_apis_agree": 1
+      }
+     }
+    },
+    {
+     "criterion": "JPEG header SHA-1 equal across APIs",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "every in-scope MJPEG mode was captured",
+     "met": true,
+     "detail": "1/1 modes captured (1 planned; scope exactly 720 lines at >= 30 fps; 9 of 10 advertised modes excluded)"
+    }
+   ],
+   "evidence": {
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 25.756882738471447,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": true,
+      "rate_honoured": false,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 259,
+      "is_jpeg": true
+     }
+    ],
+    "fps_reference_sources": {
+     "both_apis_agree": 1
+    },
+    "rate_honoured": {
+     "true": 0,
+     "false": 1,
+     "unknown": 0,
+     "not_honoured_modes": [
+      "MJPG 1280x720@30"
+     ],
+     "note": "camera behaviour (requested rate not delivered), not an API failure; not part of the G-MJPEG rating"
+    },
+    "tier0_reference_off_nominal_modes": [
+     "MJPG 1280x720@30"
+    ],
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 10,
+     "in_scope": 1,
+     "excluded": 9,
+     "in_scope_modes": [
+      "MJPG 1280x720@30"
+     ],
+     "excluded_modes": [
+      "MJPG 352x288@25",
+      "MJPG 352x288@30",
+      "MJPG 640x360@25",
+      "MJPG 640x360@30",
+      "MJPG 640x480@25",
+      "MJPG 640x480@30",
+      "MJPG 1280x720@25",
+      "MJPG 1920x1080@25",
+      "MJPG 1920x1080@30"
+     ],
+     "excluded_list_truncated": false,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "rating_failed_modes": [],
+    "skipped_modes": [],
+    "modes_captured": 1,
+    "rate_honoured_camera": {
+     "honoured": 0,
+     "not_honoured": [
+      "MJPG 1280x720@30"
+     ],
+     "mixed_or_unmeasured": 0,
+     "note": "camera behaviour: requested rate delivered within 2 % by every measured API (MF and DS); not an API failure, not part of the rating"
+    },
+    "device_fault": false
+   },
+   "note": "tier-0 fps reference (the rate both APIs agree on) is > 2% off nominal in 1 mode(s): camera behaviour (e.g. auto-exposure) or a host cause common to both APIs mode scope exactly 720 lines at >= 30 fps: 9 of 10 advertised modes not streamed (--all-modes restores them)",
+   "summary_label": "yes (in-scope modes; rate not honoured in 1)",
+   "tier": 0
+  },
+  "G-MJPEG|046d:085c:sn=C922SN01|mf": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "every advertised mode negotiates",
+     "met": true,
+     "detail": "3/3"
+    },
+    {
+     "criterion": ">= 99% valid JPEG (strict, or lenient with a known quirk)",
+     "met": true,
+     "detail": "3/3"
+    },
+    {
+     "criterion": "SOF0 size = request",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "fps within 2% of the camera's real rate (symmetric reference: the rate both APIs agree on, else nominal)",
+     "met": true,
+     "detail": {
+      "failing_modes": [],
+      "reference_sources": {
+       "both_apis_agree": 3
+      }
+     }
+    },
+    {
+     "criterion": "JPEG header SHA-1 equal across APIs",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "every in-scope MJPEG mode was captured",
+     "met": true,
+     "detail": "3/3 modes captured (3 planned; scope exactly 720 lines at >= 30 fps; 117 of 120 advertised modes excluded)"
+    }
+   ],
+   "evidence": {
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 30.000272047378882,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": false,
+      "rate_honoured": true,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 302,
+      "is_jpeg": true
+     },
+     {
+      "mode": "MJPG 960x720@30",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 29.999205648187967,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": false,
+      "rate_honoured": true,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 91,
+      "is_jpeg": true
+     },
+     {
+      "mode": "MJPG 1280x720@60",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 59.427174916029514,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": false,
+      "rate_honoured": true,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 122,
+      "is_jpeg": true
+     }
+    ],
+    "fps_reference_sources": {
+     "both_apis_agree": 3
+    },
+    "rate_honoured": {
+     "true": 3,
+     "false": 0,
+     "unknown": 0,
+     "not_honoured_modes": [],
+     "note": "camera behaviour (requested rate not delivered), not an API failure; not part of the G-MJPEG rating"
+    },
+    "tier0_reference_off_nominal_modes": [],
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 120,
+     "in_scope": 3,
+     "excluded": 117,
+     "in_scope_modes": [
+      "MJPG 960x720@30",
+      "MJPG 1280x720@30",
+      "MJPG 1280x720@60"
+     ],
+     "excluded_modes": [
+      "MJPG 160x90@5",
+      "MJPG 160x90@7.5",
+      "MJPG 160x90@10",
+      "MJPG 160x90@15",
+      "MJPG 160x90@20",
+      "MJPG 160x90@24",
+      "MJPG 160x90@30",
+      "MJPG 160x120@5",
+      "MJPG 160x120@7.5",
+      "MJPG 160x120@10",
+      "MJPG 160x120@15",
+      "MJPG 160x120@20",
+      "MJPG 160x120@24",
+      "MJPG 160x120@30",
+      "MJPG 176x144@5",
+      "MJPG 176x144@7.5",
+      "MJPG 176x144@10",
+      "MJPG 176x144@15",
+      "MJPG 176x144@20",
+      "MJPG 176x144@24",
+      "MJPG 176x144@30",
+      "MJPG 320x180@5",
+      "MJPG 320x180@7.5",
+      "MJPG 320x180@10",
+      "MJPG 320x180@15",
+      "MJPG 320x180@20",
+      "MJPG 320x180@24",
+      "MJPG 320x180@30",
+      "MJPG 320x240@5",
+      "MJPG 320x240@7.5",
+      "MJPG 320x240@10",
+      "MJPG 320x240@15",
+      "MJPG 320x240@20",
+      "MJPG 320x240@24",
+      "MJPG 320x240@30",
+      "MJPG 352x288@5",
+      "MJPG 352x288@7.5",
+      "MJPG 352x288@10",
+      "MJPG 352x288@15",
+      "MJPG 352x288@20",
+      "MJPG 352x288@24",
+      "MJPG 352x288@30",
+      "MJPG 432x240@5",
+      "MJPG 432x240@7.5",
+      "MJPG 432x240@10",
+      "MJPG 432x240@15",
+      "MJPG 432x240@20",
+      "MJPG 432x240@24",
+      "MJPG 432x240@30",
+      "MJPG 640x360@5",
+      "MJPG 640x360@7.5",
+      "MJPG 640x360@10",
+      "MJPG 640x360@15",
+      "MJPG 640x360@20",
+      "MJPG 640x360@24",
+      "MJPG 640x360@30",
+      "MJPG 640x480@5",
+      "MJPG 640x480@7.5",
+      "MJPG 640x480@10",
+      "MJPG 640x480@15"
+     ],
+     "excluded_list_truncated": true,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "rating_failed_modes": [],
+    "skipped_modes": [],
+    "modes_captured": 3,
+    "rate_honoured_camera": {
+     "honoured": 3,
+     "not_honoured": [],
+     "mixed_or_unmeasured": 0,
+     "note": "camera behaviour: requested rate delivered within 2 % by every measured API (MF and DS); not an API failure, not part of the rating"
+    },
+    "device_fault": false
+   },
+   "summary_label": "yes (in-scope modes)",
+   "tier": 0,
+   "note": "mode scope exactly 720 lines at >= 30 fps: 117 of 120 advertised modes not streamed (--all-modes restores them)"
+  },
+  "G-MJPEG|046d:085c:sn=C922SN01|ds": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "every advertised mode negotiates",
+     "met": true,
+     "detail": "3/3"
+    },
+    {
+     "criterion": ">= 99% valid JPEG (strict, or lenient with a known quirk)",
+     "met": true,
+     "detail": "3/3"
+    },
+    {
+     "criterion": "SOF0 size = request",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "fps within 2% of the camera's real rate (symmetric reference: the rate both APIs agree on, else nominal)",
+     "met": true,
+     "detail": {
+      "failing_modes": [],
+      "reference_sources": {
+       "both_apis_agree": 3
+      }
+     }
+    },
+    {
+     "criterion": "JPEG header SHA-1 equal across APIs",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "every in-scope MJPEG mode was captured",
+     "met": true,
+     "detail": "3/3 modes captured (3 planned; scope exactly 720 lines at >= 30 fps; 117 of 120 advertised modes excluded)"
+    }
+   ],
+   "evidence": {
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 30.000272047378882,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": false,
+      "rate_honoured": true,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 302,
+      "is_jpeg": true
+     },
+     {
+      "mode": "MJPG 960x720@30",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 29.999205648187967,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": false,
+      "rate_honoured": true,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 92,
+      "is_jpeg": true
+     },
+     {
+      "mode": "MJPG 1280x720@60",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 59.427174916029514,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": false,
+      "rate_honoured": true,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 180,
+      "is_jpeg": true
+     }
+    ],
+    "fps_reference_sources": {
+     "both_apis_agree": 3
+    },
+    "rate_honoured": {
+     "true": 3,
+     "false": 0,
+     "unknown": 0,
+     "not_honoured_modes": [],
+     "note": "camera behaviour (requested rate not delivered), not an API failure; not part of the G-MJPEG rating"
+    },
+    "tier0_reference_off_nominal_modes": [],
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 120,
+     "in_scope": 3,
+     "excluded": 117,
+     "in_scope_modes": [
+      "MJPG 960x720@30",
+      "MJPG 1280x720@30",
+      "MJPG 1280x720@60"
+     ],
+     "excluded_modes": [
+      "MJPG 160x90@5",
+      "MJPG 160x90@7.5",
+      "MJPG 160x90@10",
+      "MJPG 160x90@15",
+      "MJPG 160x90@20",
+      "MJPG 160x90@24",
+      "MJPG 160x90@30",
+      "MJPG 160x120@5",
+      "MJPG 160x120@7.5",
+      "MJPG 160x120@10",
+      "MJPG 160x120@15",
+      "MJPG 160x120@20",
+      "MJPG 160x120@24",
+      "MJPG 160x120@30",
+      "MJPG 176x144@5",
+      "MJPG 176x144@7.5",
+      "MJPG 176x144@10",
+      "MJPG 176x144@15",
+      "MJPG 176x144@20",
+      "MJPG 176x144@24",
+      "MJPG 176x144@30",
+      "MJPG 320x180@5",
+      "MJPG 320x180@7.5",
+      "MJPG 320x180@10",
+      "MJPG 320x180@15",
+      "MJPG 320x180@20",
+      "MJPG 320x180@24",
+      "MJPG 320x180@30",
+      "MJPG 320x240@5",
+      "MJPG 320x240@7.5",
+      "MJPG 320x240@10",
+      "MJPG 320x240@15",
+      "MJPG 320x240@20",
+      "MJPG 320x240@24",
+      "MJPG 320x240@30",
+      "MJPG 352x288@5",
+      "MJPG 352x288@7.5",
+      "MJPG 352x288@10",
+      "MJPG 352x288@15",
+      "MJPG 352x288@20",
+      "MJPG 352x288@24",
+      "MJPG 352x288@30",
+      "MJPG 432x240@5",
+      "MJPG 432x240@7.5",
+      "MJPG 432x240@10",
+      "MJPG 432x240@15",
+      "MJPG 432x240@20",
+      "MJPG 432x240@24",
+      "MJPG 432x240@30",
+      "MJPG 640x360@5",
+      "MJPG 640x360@7.5",
+      "MJPG 640x360@10",
+      "MJPG 640x360@15",
+      "MJPG 640x360@20",
+      "MJPG 640x360@24",
+      "MJPG 640x360@30",
+      "MJPG 640x480@5",
+      "MJPG 640x480@7.5",
+      "MJPG 640x480@10",
+      "MJPG 640x480@15"
+     ],
+     "excluded_list_truncated": true,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "rating_failed_modes": [],
+    "skipped_modes": [],
+    "modes_captured": 3,
+    "rate_honoured_camera": {
+     "honoured": 3,
+     "not_honoured": [],
+     "mixed_or_unmeasured": 0,
+     "note": "camera behaviour: requested rate delivered within 2 % by every measured API (MF and DS); not an API failure, not part of the rating"
+    },
+    "device_fault": false
+   },
+   "summary_label": "yes (in-scope modes)",
+   "tier": 0,
+   "note": "mode scope exactly 720 lines at >= 30 fps: 117 of 120 advertised modes not streamed (--all-modes restores them)",
+   "routes": [
+    "pyav_ds"
+   ]
+  },
+  "G-MJPEG|046d:085c:sn=C922SN01|pyav_ds": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "every advertised mode negotiates",
+     "met": true,
+     "detail": "3/3"
+    },
+    {
+     "criterion": ">= 99% valid JPEG (strict, or lenient with a known quirk)",
+     "met": true,
+     "detail": "3/3"
+    },
+    {
+     "criterion": "SOF0 size = request",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "fps within 2% of the camera's real rate (symmetric reference: the rate both APIs agree on, else nominal)",
+     "met": true,
+     "detail": {
+      "failing_modes": [],
+      "reference_sources": {
+       "both_apis_agree": 3
+      }
+     }
+    },
+    {
+     "criterion": "JPEG header SHA-1 equal across APIs",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "every in-scope MJPEG mode was captured",
+     "met": true,
+     "detail": "3/3 modes captured (3 planned; scope exactly 720 lines at >= 30 fps; 117 of 120 advertised modes excluded)"
+    }
+   ],
+   "evidence": {
+    "modes": [
+     {
+      "mode": "MJPG 1280x720@30",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 30.000272047378882,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": false,
+      "rate_honoured": true,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 302,
+      "is_jpeg": true
+     },
+     {
+      "mode": "MJPG 960x720@30",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 29.999205648187967,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": false,
+      "rate_honoured": true,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 92,
+      "is_jpeg": true
+     },
+     {
+      "mode": "MJPG 1280x720@60",
+      "negotiated": true,
+      "valid_ok": true,
+      "lenient_only": false,
+      "known_quirk": null,
+      "sof_matches": true,
+      "fps_ok": true,
+      "fps_reference": 59.427174916029514,
+      "fps_reference_source": "both_apis_agree",
+      "tier0_reference_off_nominal": false,
+      "rate_honoured": true,
+      "header_equal_across_apis": true,
+      "ok": true,
+      "frames": 180,
+      "is_jpeg": true
+     }
+    ],
+    "fps_reference_sources": {
+     "both_apis_agree": 3
+    },
+    "rate_honoured": {
+     "true": 3,
+     "false": 0,
+     "unknown": 0,
+     "not_honoured_modes": [],
+     "note": "camera behaviour (requested rate not delivered), not an API failure; not part of the G-MJPEG rating"
+    },
+    "tier0_reference_off_nominal_modes": [],
+    "mode_scope": {
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "advertised": 120,
+     "in_scope": 3,
+     "excluded": 117,
+     "in_scope_modes": [
+      "MJPG 960x720@30",
+      "MJPG 1280x720@30",
+      "MJPG 1280x720@60"
+     ],
+     "excluded_modes": [
+      "MJPG 160x90@5",
+      "MJPG 160x90@7.5",
+      "MJPG 160x90@10",
+      "MJPG 160x90@15",
+      "MJPG 160x90@20",
+      "MJPG 160x90@24",
+      "MJPG 160x90@30",
+      "MJPG 160x120@5",
+      "MJPG 160x120@7.5",
+      "MJPG 160x120@10",
+      "MJPG 160x120@15",
+      "MJPG 160x120@20",
+      "MJPG 160x120@24",
+      "MJPG 160x120@30",
+      "MJPG 176x144@5",
+      "MJPG 176x144@7.5",
+      "MJPG 176x144@10",
+      "MJPG 176x144@15",
+      "MJPG 176x144@20",
+      "MJPG 176x144@24",
+      "MJPG 176x144@30",
+      "MJPG 320x180@5",
+      "MJPG 320x180@7.5",
+      "MJPG 320x180@10",
+      "MJPG 320x180@15",
+      "MJPG 320x180@20",
+      "MJPG 320x180@24",
+      "MJPG 320x180@30",
+      "MJPG 320x240@5",
+      "MJPG 320x240@7.5",
+      "MJPG 320x240@10",
+      "MJPG 320x240@15",
+      "MJPG 320x240@20",
+      "MJPG 320x240@24",
+      "MJPG 320x240@30",
+      "MJPG 352x288@5",
+      "MJPG 352x288@7.5",
+      "MJPG 352x288@10",
+      "MJPG 352x288@15",
+      "MJPG 352x288@20",
+      "MJPG 352x288@24",
+      "MJPG 352x288@30",
+      "MJPG 432x240@5",
+      "MJPG 432x240@7.5",
+      "MJPG 432x240@10",
+      "MJPG 432x240@15",
+      "MJPG 432x240@20",
+      "MJPG 432x240@24",
+      "MJPG 432x240@30",
+      "MJPG 640x360@5",
+      "MJPG 640x360@7.5",
+      "MJPG 640x360@10",
+      "MJPG 640x360@15",
+      "MJPG 640x360@20",
+      "MJPG 640x360@24",
+      "MJPG 640x360@30",
+      "MJPG 640x480@5",
+      "MJPG 640x480@7.5",
+      "MJPG 640x480@10",
+      "MJPG 640x480@15"
+     ],
+     "excluded_list_truncated": true,
+     "default_mode": "MJPG 1280x720@30"
+    },
+    "rating_failed_modes": [],
+    "skipped_modes": [],
+    "modes_captured": 3,
+    "rate_honoured_camera": {
+     "honoured": 3,
+     "not_honoured": [],
+     "mixed_or_unmeasured": 0,
+     "note": "camera behaviour: requested rate delivered within 2 % by every measured API (MF and DS); not an API failure, not part of the rating"
+    },
+    "device_fault": false
+   },
+   "summary_label": "yes (in-scope modes)",
+   "tier": 0,
+   "note": "mode scope exactly 720 lines at >= 30 fps: 117 of 120 advertised modes not streamed (--all-modes restores them)"
+  }
+ },
+ "errors": [],
+ "device_faults": {
+  "faulted_at_start": {},
+  "faulted_at_end": {},
+  "kiyo_dead_since": null
+ }
+}

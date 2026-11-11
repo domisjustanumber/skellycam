@@ -1,0 +1,20 @@
+Pre-run scene check, 2026-11-10 ~17:04 local (22:04Z), before the 23:00 full run. NOT suite results.
+One wincam MF capture per camera via camlock: 1280x720 MJPG 30 fps, 90 frames, timeout 20 s, in this order:
+  Kiyo (vid_1532)      exit 5: activate/set_type OK, no first sample in 20 s, reader release 5.26 s.
+                        Kiyo had been replugged ~17:00 (absent from PnP at 16:59), so plug-in age ~4 min.
+  C930e (046d:0843)    exit 4: activate 0x800703E3 after 4.8 s. Signal.exe VideoCaptureService (pid 29564) was a
+                        Frame Server client on the C930e.
+  C922 (046d:085c)     exit 0, 3 JPEGs saved.
+  generic (4c4a:4a55)  exit 0, 3 JPEGs saved.
+LogiTuneAgent.exe (pid 5744, started 2026-11-09 16:34) was a Frame Server client on all four cameras.
+RazerAppEngine not running (only razer_elevation_service). activity_after.json taken right after.
+Retry ~17:06 local (22:06Z) after Dom closed Signal. Only LogiTuneAgent (pid 5744) listed as a client on all four cameras.
+  C930e  22:06:10Z exit 4: activate 0x800703E3 again (no Signal now).
+  Kiyo   22:06:16Z exit 4: first_sample HRESULT_FROM_WIN32(ERROR_GEN_FAILURE) = 0x8007001F, the 11-06 wedge signature.
+No further probes made.
+After Dom replugged the Kiyo and C930e (LastArrivalDate 17:07:35 / 17:07:46 local) and refocused the generic camera.
+Kiyo on .../USBROOT(0)/USB(4)/USB(4) (SS04 path). LogiTuneAgent (pid 5744) still a client on all four; Signal closed.
+  Kiyo   22:09:10Z exit 0, first frame 615 ms, 30.1 fps
+  C930e  22:09:15Z exit 0, first frame 472 ms, 29.9 fps
+  C922   22:09:19Z exit 0, first frame 298 ms, 29.9 fps
+  generic 22:09:23Z exit 0, first frame 152 ms, 25.7 fps (AE lengthening exposure in room light)

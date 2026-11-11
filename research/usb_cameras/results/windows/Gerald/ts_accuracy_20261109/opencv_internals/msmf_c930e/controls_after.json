@@ -1,0 +1,1874 @@
+{
+ "tool": "wincam",
+ "version": "wincam 1.2 (2026-11-08)",
+ "subcommand": "controls",
+ "utc_started": "2026-11-09T13:47:29.009511Z",
+ "pid": 3140,
+ "argv": [
+  "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+  "controls",
+  "--api",
+  "ds",
+  "--device",
+  "vid_046d&pid_0843",
+  "--read-only",
+  "--timeout-ms",
+  "10000",
+  "--out",
+  "C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/d7b5ebd7-23e2-4038-b89c-9e7af70dd7af/scratchpad/opencv_results/msmf_c930e/controls_after.json"
+ ],
+ "timeout_ms": 10000,
+ "api": "ds",
+ "read_only": true,
+ "enumerate_ms": 5.2919,
+ "device": {
+  "index": 3,
+  "friendly_name": "Logitech Webcam C930e",
+  "device_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+  "usb": {
+   "vid": "046d",
+   "pid": "0843",
+   "mi": "00",
+   "instance": "6&34c047e4&0&0000"
+  }
+ },
+ "bind_ms": 19.822,
+ "interfaces": {
+  "IAMCameraControl": true,
+  "IAMVideoProcAmp": true,
+  "IKsControl": true
+ },
+ "controls": [
+  {
+   "set": "camera_control",
+   "id": 0,
+   "name": "pan",
+   "key": "cc.pan",
+   "supported": true,
+   "via": "IAMCameraControl",
+   "min": -10,
+   "max": 10,
+   "step": 1,
+   "default": 0,
+   "caps_flags": 2,
+   "caps_flags_names": [
+    "manual"
+   ],
+   "value": 0,
+   "flags": 2,
+   "flags_names": [
+    "manual"
+   ],
+   "ks_ranges": [
+    {
+     "min": -10,
+     "max": 10,
+     "step": 1
+    }
+   ],
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": -10,
+    "max": 10,
+    "step": 1,
+    "default": 0,
+    "bytes": 72,
+    "members_lists": 1
+   },
+   "iam_ks_range_agree": true,
+   "hr": {
+    "iam_get_range": "0x00000000",
+    "iam_get": "0x00000000",
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": null
+   },
+   "hr_names": {
+    "iam_get_range": "S_OK",
+    "iam_get": "S_OK",
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": null
+   },
+   "call_ms": 0.247,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "camera_control",
+   "id": 1,
+   "name": "tilt",
+   "key": "cc.tilt",
+   "supported": true,
+   "via": "IAMCameraControl",
+   "min": -10,
+   "max": 10,
+   "step": 1,
+   "default": 0,
+   "caps_flags": 2,
+   "caps_flags_names": [
+    "manual"
+   ],
+   "value": 0,
+   "flags": 2,
+   "flags_names": [
+    "manual"
+   ],
+   "ks_ranges": [
+    {
+     "min": -10,
+     "max": 10,
+     "step": 1
+    }
+   ],
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": -10,
+    "max": 10,
+    "step": 1,
+    "default": 0,
+    "bytes": 72,
+    "members_lists": 1
+   },
+   "iam_ks_range_agree": true,
+   "hr": {
+    "iam_get_range": "0x00000000",
+    "iam_get": "0x00000000",
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": null
+   },
+   "hr_names": {
+    "iam_get_range": "S_OK",
+    "iam_get": "S_OK",
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": null
+   },
+   "call_ms": 0.1827,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "camera_control",
+   "id": 2,
+   "name": "roll",
+   "key": "cc.roll",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.05930000008
+  },
+  {
+   "set": "camera_control",
+   "id": 3,
+   "name": "zoom",
+   "key": "cc.zoom",
+   "supported": true,
+   "via": "IAMCameraControl",
+   "min": 100,
+   "max": 400,
+   "step": 1,
+   "default": 100,
+   "caps_flags": 2,
+   "caps_flags_names": [
+    "manual"
+   ],
+   "value": 100,
+   "flags": 2,
+   "flags_names": [
+    "manual"
+   ],
+   "ks_ranges": [
+    {
+     "min": 100,
+     "max": 400,
+     "step": 1
+    }
+   ],
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": 100,
+    "max": 400,
+    "step": 1,
+    "default": 100,
+    "bytes": 72,
+    "members_lists": 1
+   },
+   "iam_ks_range_agree": true,
+   "hr": {
+    "iam_get_range": "0x00000000",
+    "iam_get": "0x00000000",
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": null
+   },
+   "hr_names": {
+    "iam_get_range": "S_OK",
+    "iam_get": "S_OK",
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": null
+   },
+   "call_ms": 0.1481999999,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "camera_control",
+   "id": 4,
+   "name": "exposure",
+   "key": "cc.exposure",
+   "supported": true,
+   "via": "IAMCameraControl",
+   "min": -11,
+   "max": -2,
+   "step": 1,
+   "default": -5,
+   "caps_flags": 3,
+   "caps_flags_names": [
+    "auto",
+    "manual"
+   ],
+   "value": -7,
+   "flags": 2,
+   "flags_names": [
+    "manual"
+   ],
+   "ks_ranges": [
+    {
+     "min": -11,
+     "max": -2,
+     "step": 1
+    }
+   ],
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": -11,
+    "max": -2,
+    "step": 1,
+    "default": -5,
+    "bytes": 72,
+    "members_lists": 1
+   },
+   "iam_ks_range_agree": true,
+   "hr": {
+    "iam_get_range": "0x00000000",
+    "iam_get": "0x00000000",
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": null
+   },
+   "hr_names": {
+    "iam_get_range": "S_OK",
+    "iam_get": "S_OK",
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": null
+   },
+   "call_ms": 0.2426,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "camera_control",
+   "id": 5,
+   "name": "iris",
+   "key": "cc.iris",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.04839999997
+  },
+  {
+   "set": "camera_control",
+   "id": 6,
+   "name": "focus",
+   "key": "cc.focus",
+   "supported": true,
+   "via": "IAMCameraControl",
+   "min": 0,
+   "max": 255,
+   "step": 5,
+   "default": 0,
+   "caps_flags": 3,
+   "caps_flags_names": [
+    "auto",
+    "manual"
+   ],
+   "value": 0,
+   "flags": 1,
+   "flags_names": [
+    "auto"
+   ],
+   "ks_ranges": [
+    {
+     "min": 0,
+     "max": 255,
+     "step": 5
+    }
+   ],
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": 0,
+    "max": 255,
+    "step": 5,
+    "default": 0,
+    "bytes": 72,
+    "members_lists": 1
+   },
+   "iam_ks_range_agree": true,
+   "hr": {
+    "iam_get_range": "0x00000000",
+    "iam_get": "0x00000000",
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": null
+   },
+   "hr_names": {
+    "iam_get_range": "S_OK",
+    "iam_get": "S_OK",
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": null
+   },
+   "call_ms": 0.2541,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "camera_control",
+   "id": 7,
+   "name": "scanmode",
+   "key": "cc.scanmode",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.06960000005
+  },
+  {
+   "set": "camera_control",
+   "id": 8,
+   "name": "privacy",
+   "key": "cc.privacy",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.06520000007
+  },
+  {
+   "set": "camera_control",
+   "id": 9,
+   "name": "pantilt",
+   "key": "cc.pantilt",
+   "supported": true,
+   "via": "IKsControl",
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": 2,
+   "caps_flags_names": [
+    "manual"
+   ],
+   "value": 0,
+   "flags": 2,
+   "flags_names": [
+    "manual"
+   ],
+   "value2": 0,
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null,
+    "bytes": 40,
+    "members_lists": 0,
+    "raw_hex_head": "03000000280000000000000000000000000000000000000000000000000000000000000000000000"
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": "0x00000000"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": "S_OK"
+   },
+   "call_ms": 0.1143999998,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "camera_control",
+   "id": 10,
+   "name": "pan_relative",
+   "key": "cc.pan_relative",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.04760000017
+  },
+  {
+   "set": "camera_control",
+   "id": 11,
+   "name": "tilt_relative",
+   "key": "cc.tilt_relative",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.04850000003
+  },
+  {
+   "set": "camera_control",
+   "id": 12,
+   "name": "roll_relative",
+   "key": "cc.roll_relative",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.09220000007
+  },
+  {
+   "set": "camera_control",
+   "id": 13,
+   "name": "zoom_relative",
+   "key": "cc.zoom_relative",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.06579999998
+  },
+  {
+   "set": "camera_control",
+   "id": 14,
+   "name": "exposure_relative",
+   "key": "cc.exposure_relative",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.05530000012
+  },
+  {
+   "set": "camera_control",
+   "id": 15,
+   "name": "iris_relative",
+   "key": "cc.iris_relative",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.04110000003
+  },
+  {
+   "set": "camera_control",
+   "id": 16,
+   "name": "focus_relative",
+   "key": "cc.focus_relative",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.03910000017
+  },
+  {
+   "set": "camera_control",
+   "id": 17,
+   "name": "pantilt_relative",
+   "key": "cc.pantilt_relative",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.04689999996
+  },
+  {
+   "set": "camera_control",
+   "id": 18,
+   "name": "focal_length",
+   "key": "cc.focal_length",
+   "supported": true,
+   "via": "IKsControl",
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": 0,
+   "caps_flags_names": [],
+   "value": 0,
+   "flags": 0,
+   "flags_names": [],
+   "value2": 0,
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null,
+    "bytes": 40,
+    "members_lists": 0,
+    "raw_hex_head": "01000000280000000000000000000000000000000000000000000000000000000000000000000000"
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": "0x00000000"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": "S_OK"
+   },
+   "call_ms": 0.05149999983,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "camera_control",
+   "id": 19,
+   "name": "auto_exposure_priority",
+   "key": "cc.auto_exposure_priority",
+   "supported": true,
+   "via": "IAMCameraControl",
+   "min": 0,
+   "max": 0,
+   "step": 0,
+   "default": 0,
+   "caps_flags": 0,
+   "caps_flags_names": [],
+   "value": 1,
+   "flags": 0,
+   "flags_names": [],
+   "ks_ranges": [
+    {
+     "min": 0,
+     "max": 0,
+     "step": 0
+    }
+   ],
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": 0,
+    "max": 0,
+    "step": 0,
+    "default": 0,
+    "bytes": 72,
+    "members_lists": 1
+   },
+   "iam_ks_range_agree": true,
+   "hr": {
+    "iam_get_range": "0x00000000",
+    "iam_get": "0x00000000",
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": null
+   },
+   "hr_names": {
+    "iam_get_range": "S_OK",
+    "iam_get": "S_OK",
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": null
+   },
+   "call_ms": 0.1714999999,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "camera_control",
+   "id": 20,
+   "name": "cc_id20",
+   "key": "cc.cc_id20",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.06459999993
+  },
+  {
+   "set": "camera_control",
+   "id": 21,
+   "name": "cc_id21",
+   "key": "cc.cc_id21",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.05829999992
+  },
+  {
+   "set": "camera_control",
+   "id": 22,
+   "name": "cc_id22",
+   "key": "cc.cc_id22",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.05730000022
+  },
+  {
+   "set": "camera_control",
+   "id": 23,
+   "name": "cc_id23",
+   "key": "cc.cc_id23",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.04729999998
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 0,
+   "name": "brightness",
+   "key": "pa.brightness",
+   "supported": true,
+   "via": "IAMVideoProcAmp",
+   "min": 0,
+   "max": 255,
+   "step": 1,
+   "default": 128,
+   "caps_flags": 2,
+   "caps_flags_names": [
+    "manual"
+   ],
+   "value": 128,
+   "flags": 2,
+   "flags_names": [
+    "manual"
+   ],
+   "ks_ranges": [
+    {
+     "min": 0,
+     "max": 255,
+     "step": 1
+    }
+   ],
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": 0,
+    "max": 255,
+    "step": 1,
+    "default": 128,
+    "bytes": 72,
+    "members_lists": 1
+   },
+   "iam_ks_range_agree": true,
+   "hr": {
+    "iam_get_range": "0x00000000",
+    "iam_get": "0x00000000",
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": null
+   },
+   "hr_names": {
+    "iam_get_range": "S_OK",
+    "iam_get": "S_OK",
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": null
+   },
+   "call_ms": 0.1654000001,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 1,
+   "name": "contrast",
+   "key": "pa.contrast",
+   "supported": true,
+   "via": "IAMVideoProcAmp",
+   "min": 0,
+   "max": 255,
+   "step": 1,
+   "default": 128,
+   "caps_flags": 2,
+   "caps_flags_names": [
+    "manual"
+   ],
+   "value": 128,
+   "flags": 2,
+   "flags_names": [
+    "manual"
+   ],
+   "ks_ranges": [
+    {
+     "min": 0,
+     "max": 255,
+     "step": 1
+    }
+   ],
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": 0,
+    "max": 255,
+    "step": 1,
+    "default": 128,
+    "bytes": 72,
+    "members_lists": 1
+   },
+   "iam_ks_range_agree": true,
+   "hr": {
+    "iam_get_range": "0x00000000",
+    "iam_get": "0x00000000",
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": null
+   },
+   "hr_names": {
+    "iam_get_range": "S_OK",
+    "iam_get": "S_OK",
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": null
+   },
+   "call_ms": 0.1461999998,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 2,
+   "name": "hue",
+   "key": "pa.hue",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.06129999994
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 3,
+   "name": "saturation",
+   "key": "pa.saturation",
+   "supported": true,
+   "via": "IAMVideoProcAmp",
+   "min": 0,
+   "max": 255,
+   "step": 1,
+   "default": 128,
+   "caps_flags": 2,
+   "caps_flags_names": [
+    "manual"
+   ],
+   "value": 53,
+   "flags": 2,
+   "flags_names": [
+    "manual"
+   ],
+   "ks_ranges": [
+    {
+     "min": 0,
+     "max": 255,
+     "step": 1
+    }
+   ],
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": 0,
+    "max": 255,
+    "step": 1,
+    "default": 128,
+    "bytes": 72,
+    "members_lists": 1
+   },
+   "iam_ks_range_agree": true,
+   "hr": {
+    "iam_get_range": "0x00000000",
+    "iam_get": "0x00000000",
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": null
+   },
+   "hr_names": {
+    "iam_get_range": "S_OK",
+    "iam_get": "S_OK",
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": null
+   },
+   "call_ms": 0.1498,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 4,
+   "name": "sharpness",
+   "key": "pa.sharpness",
+   "supported": true,
+   "via": "IAMVideoProcAmp",
+   "min": 0,
+   "max": 255,
+   "step": 1,
+   "default": 128,
+   "caps_flags": 2,
+   "caps_flags_names": [
+    "manual"
+   ],
+   "value": 128,
+   "flags": 2,
+   "flags_names": [
+    "manual"
+   ],
+   "ks_ranges": [
+    {
+     "min": 0,
+     "max": 255,
+     "step": 1
+    }
+   ],
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": 0,
+    "max": 255,
+    "step": 1,
+    "default": 128,
+    "bytes": 72,
+    "members_lists": 1
+   },
+   "iam_ks_range_agree": true,
+   "hr": {
+    "iam_get_range": "0x00000000",
+    "iam_get": "0x00000000",
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": null
+   },
+   "hr_names": {
+    "iam_get_range": "S_OK",
+    "iam_get": "S_OK",
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": null
+   },
+   "call_ms": 0.1809,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 5,
+   "name": "gamma",
+   "key": "pa.gamma",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.0699
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 6,
+   "name": "color_enable",
+   "key": "pa.color_enable",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.05070000002
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 7,
+   "name": "white_balance",
+   "key": "pa.white_balance",
+   "supported": true,
+   "via": "IAMVideoProcAmp",
+   "min": 2000,
+   "max": 7500,
+   "step": 1,
+   "default": 4000,
+   "caps_flags": 3,
+   "caps_flags_names": [
+    "auto",
+    "manual"
+   ],
+   "value": 4000,
+   "flags": 1,
+   "flags_names": [
+    "auto"
+   ],
+   "ks_ranges": [
+    {
+     "min": 2000,
+     "max": 7500,
+     "step": 1
+    }
+   ],
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": 2000,
+    "max": 7500,
+    "step": 1,
+    "default": 4000,
+    "bytes": 72,
+    "members_lists": 1
+   },
+   "iam_ks_range_agree": true,
+   "hr": {
+    "iam_get_range": "0x00000000",
+    "iam_get": "0x00000000",
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": null
+   },
+   "hr_names": {
+    "iam_get_range": "S_OK",
+    "iam_get": "S_OK",
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": null
+   },
+   "call_ms": 0.2459,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 8,
+   "name": "backlight_compensation",
+   "key": "pa.backlight_compensation",
+   "supported": true,
+   "via": "IAMVideoProcAmp",
+   "min": 0,
+   "max": 1,
+   "step": 1,
+   "default": 0,
+   "caps_flags": 2,
+   "caps_flags_names": [
+    "manual"
+   ],
+   "value": 0,
+   "flags": 2,
+   "flags_names": [
+    "manual"
+   ],
+   "ks_ranges": [
+    {
+     "min": 0,
+     "max": 1,
+     "step": 1
+    }
+   ],
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "default": 0,
+    "bytes": 72,
+    "members_lists": 1
+   },
+   "iam_ks_range_agree": true,
+   "hr": {
+    "iam_get_range": "0x00000000",
+    "iam_get": "0x00000000",
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": null
+   },
+   "hr_names": {
+    "iam_get_range": "S_OK",
+    "iam_get": "S_OK",
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": null
+   },
+   "call_ms": 0.1539,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 9,
+   "name": "gain",
+   "key": "pa.gain",
+   "supported": true,
+   "via": "IAMVideoProcAmp",
+   "min": 0,
+   "max": 255,
+   "step": 1,
+   "default": 0,
+   "caps_flags": 2,
+   "caps_flags_names": [
+    "manual"
+   ],
+   "value": 255,
+   "flags": 2,
+   "flags_names": [
+    "manual"
+   ],
+   "ks_ranges": [
+    {
+     "min": 0,
+     "max": 255,
+     "step": 1
+    }
+   ],
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": 0,
+    "max": 255,
+    "step": 1,
+    "default": 0,
+    "bytes": 72,
+    "members_lists": 1
+   },
+   "iam_ks_range_agree": true,
+   "hr": {
+    "iam_get_range": "0x00000000",
+    "iam_get": "0x00000000",
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": null
+   },
+   "hr_names": {
+    "iam_get_range": "S_OK",
+    "iam_get": "S_OK",
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": null
+   },
+   "call_ms": 0.1433000001,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 10,
+   "name": "digital_multiplier",
+   "key": "pa.digital_multiplier",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.04639999988
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 11,
+   "name": "digital_multiplier_limit",
+   "key": "pa.digital_multiplier_limit",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.0438000001
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 12,
+   "name": "white_balance_component",
+   "key": "pa.white_balance_component",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.04319999996
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 13,
+   "name": "powerline_frequency",
+   "key": "pa.powerline_frequency",
+   "supported": true,
+   "via": "IAMVideoProcAmp",
+   "min": 1,
+   "max": 2,
+   "step": 1,
+   "default": 2,
+   "caps_flags": 0,
+   "caps_flags_names": [],
+   "value": 2,
+   "flags": 0,
+   "flags_names": [],
+   "ks_ranges": [
+    {
+     "min": 1,
+     "max": 2,
+     "step": 1
+    }
+   ],
+   "ks_basicsupport": {
+    "hr": "0x00000000",
+    "min": 1,
+    "max": 2,
+    "step": 1,
+    "default": 2,
+    "bytes": 72,
+    "members_lists": 1
+   },
+   "iam_ks_range_agree": true,
+   "hr": {
+    "iam_get_range": "0x00000000",
+    "iam_get": "0x00000000",
+    "ks_basicsupport": "0x00000000",
+    "ks_defaultvalues": "0x00000000",
+    "ks_get": null
+   },
+   "hr_names": {
+    "iam_get_range": "S_OK",
+    "iam_get": "S_OK",
+    "ks_basicsupport": "S_OK",
+    "ks_defaultvalues": "S_OK",
+    "ks_get": null
+   },
+   "call_ms": 0.1388999999,
+   "get_ok": true,
+   "get_hr": "0x00000000",
+   "get_hr_name": "S_OK"
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 14,
+   "name": "pa_id14",
+   "key": "pa.pa_id14",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.04370000004
+  },
+  {
+   "set": "video_proc_amp",
+   "id": 15,
+   "name": "pa_id15",
+   "key": "pa.pa_id15",
+   "supported": false,
+   "via": null,
+   "min": null,
+   "max": null,
+   "step": null,
+   "default": null,
+   "caps_flags": null,
+   "caps_flags_names": null,
+   "value": null,
+   "flags": null,
+   "flags_names": null,
+   "ks_basicsupport": {
+    "hr": "0x80070490",
+    "min": null,
+    "max": null,
+    "step": null,
+    "default": null
+   },
+   "hr": {
+    "iam_get_range": "0x80070490",
+    "iam_get": null,
+    "ks_basicsupport": "0x80070490",
+    "ks_defaultvalues": "0x80070490",
+    "ks_get": "0x80070490"
+   },
+   "hr_names": {
+    "iam_get_range": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "iam_get": null,
+    "ks_basicsupport": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_defaultvalues": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED",
+    "ks_get": "HRESULT_FROM_WIN32(ERROR_NOT_FOUND) E_PROP_ID_UNSUPPORTED"
+   },
+   "call_ms": 0.04759999993
+  }
+ ],
+ "supported_count": 16,
+ "get_ok_count": 15,
+ "get_failed_count": 0,
+ "get_failed_controls": [],
+ "device_not_answering": false,
+ "sets": [],
+ "steps": [
+  {
+   "step": "bind_filter",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 19.822,
+   "timed_out": false
+  }
+ ],
+ "elapsed_ms": 30.413,
+ "error": null,
+ "utc_finished": "2026-11-09T13:47:29.040476Z",
+ "exit_code": 0,
+ "abandoned_threads": 0
+}

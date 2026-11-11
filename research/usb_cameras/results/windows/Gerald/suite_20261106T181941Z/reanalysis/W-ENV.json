@@ -1,0 +1,57 @@
+{
+ "test": "W-ENV",
+ "reanalysis_of": "..\\..\\..\\results\\windows\\Gerald\\suite_20261106T181941Z\\W-ENV.json",
+ "verdicts": {},
+ "flags": [
+  "USB 3 LPM is 'Moderate power savings' on AC: the Kiyo control-transfer failure hypothesis (Linux NO_LPM quirk) is in play; attended item A4 turns it off",
+  "USB selective suspend enabled",
+  "Logitech software running (LogiTune vetoes device restarts; may write camera controls)",
+  "Razer software running",
+  "virtual cameras registered: MF 4 at indices 0-3 (NDI Webcam Video x4); DS 11 at indices 2-5, 8-14 (NDI Webcam Video x4, OBS-Camera x4, Camera (NVIDIA Broadcast), SpoutCam, OBS Virtual Camera). Their DirectShow filters load into every process that enumerates DS, and index-based opens (OpenCV VideoCapture(i)) can hit them",
+  "Logitech Webcam C930e: tier-1 metadata ({'MetadataBufferSizeInKB0': 5}) is on old instance(s) USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&1&0000 but not on the current one (USB\\VID_046D&PID_0843&MI_00\\6&2206973f&0&0000): the value is per interface instance, so this camera silently fell back to tier 0 (re-run the one-time admin step for the current instance)"
+ ],
+ "flag_details": {
+  "virtual_cameras": {
+   "mf": {
+    "count": 4,
+    "indices": "0-3",
+    "names": {
+     "NDI Webcam Video": 4
+    }
+   },
+   "ds": {
+    "count": 11,
+    "indices": "2-5, 8-14",
+    "names": {
+     "NDI Webcam Video": 4,
+     "OBS-Camera": 4,
+     "Camera (NVIDIA Broadcast)": 1,
+     "SpoutCam": 1,
+     "OBS Virtual Camera": 1
+    }
+   }
+  },
+  "stale_tier1_metadata": [
+   {
+    "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+    "name": "Logitech Webcam C930e",
+    "current_instance": "USB\\VID_046D&PID_0843&MI_00\\6&2206973f&0&0000",
+    "stale_instances": [
+     "USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&1&0000"
+    ],
+    "stale_values": {
+     "MetadataBufferSizeInKB0": 5
+    },
+    "serial_source": "iSerialNumber=0"
+   }
+  ]
+ },
+ "new_flags": [
+  "virtual cameras registered: MF 4 at indices 0-3 (NDI Webcam Video x4); DS 11 at indices 2-5, 8-14 (NDI Webcam Video x4, OBS-Camera x4, Camera (NVIDIA Broadcast), SpoutCam, OBS Virtual Camera). Their DirectShow filters load into every process that enumerates DS, and index-based opens (OpenCV VideoCapture(i)) can hit them",
+  "Logitech Webcam C930e: tier-1 metadata ({'MetadataBufferSizeInKB0': 5}) is on old instance(s) USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&1&0000 but not on the current one (USB\\VID_046D&PID_0843&MI_00\\6&2206973f&0&0000): the value is per interface instance, so this camera silently fell back to tier 0 (re-run the one-time admin step for the current instance)"
+ ],
+ "fixes_applied": [
+  "B11 virtual camera flag with index ranges",
+  "V3 stale tier-1 metadata flag"
+ ]
+}

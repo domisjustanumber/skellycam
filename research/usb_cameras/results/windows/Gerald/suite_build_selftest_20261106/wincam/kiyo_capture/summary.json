@@ -1,0 +1,209 @@
+{
+ "tool": "wincam",
+ "version": "wincam 1.0 (2026-11-06)",
+ "subcommand": "capture",
+ "utc_started": "2026-11-06T16:19:34.505641Z",
+ "pid": 10632,
+ "argv": [
+  "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/suite/windows/native/build/wincam.exe",
+  "capture",
+  "--api",
+  "mf",
+  "--device",
+  "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+  "--width",
+  "1280",
+  "--height",
+  "720",
+  "--fps",
+  "30",
+  "--subtype",
+  "MJPG",
+  "--frames",
+  "60",
+  "--timeout-ms",
+  "5000",
+  "--out-dir",
+  "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/wincam/kiyo_capture",
+  "--save",
+  "every:30"
+ ],
+ "timeout_ms": 5000,
+ "api": "mf",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30,
+  "frames": 60,
+  "seconds": null,
+  "save": "every:30"
+ },
+ "out_dir": "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/wincam/kiyo_capture",
+ "enumerate_ms": 31.3818,
+ "device": {
+  "index": 5,
+  "friendly_name": "USB Video Device",
+  "symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+  "usb": {
+   "vid": "1532",
+   "pid": "0e05",
+   "mi": "00",
+   "instance": "a&34494d13&0&0000"
+  }
+ },
+ "controls_before": [],
+ "negotiated": {
+  "candidate_rates_same_size": [
+   "60/1",
+   "30/1",
+   "24/1",
+   "20/1",
+   "15/1",
+   "10/1",
+   "5/1"
+  ],
+  "native_type_index": 43,
+  "stream_selection_hr": "0x00000000",
+  "readback_hr": "0x00000000",
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps_num": 30,
+  "fps_den": 1,
+  "fps": 30,
+  "readback_ok": true
+ },
+ "steps": [
+  {
+   "step": "enumerate",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 38.7916,
+   "timed_out": false
+  },
+  {
+   "step": "activate",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 104.1452,
+   "timed_out": false
+  },
+  {
+   "step": "reader_create",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 2.005299999,
+   "timed_out": false
+  },
+  {
+   "step": "set_type",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 16.4738,
+   "timed_out": false
+  },
+  {
+   "step": "read_sample_issue",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 30.6522,
+   "timed_out": false
+  },
+  {
+   "step": "first_sample",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 963.677,
+   "timed_out": false
+  },
+  {
+   "step": "flush",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 0.1871000007,
+   "timed_out": false,
+   "on_flush_received": true
+  },
+  {
+   "step": "reader_release",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 1087.1113,
+   "timed_out": false
+  },
+  {
+   "step": "control_interfaces_release",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 0.1278000008,
+   "timed_out": false
+  },
+  {
+   "step": "source_shutdown",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 2.6509,
+   "timed_out": false
+  },
+  {
+   "step": "activate_shutdown_object",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 0.1052999999,
+   "timed_out": false
+  }
+ ],
+ "timings": {
+  "enumerate_ms": 38.7916,
+  "activate_ms": 104.1452,
+  "reader_ms": 2.005299999,
+  "settype_ms": 16.4738,
+  "first_frame_ms": 963.677,
+  "open_to_first_frame_ms": 1157.3374,
+  "flush_ms": 0.1871000007,
+  "reader_release_ms": 1087.1113,
+  "shutdown_ms": 2.6509,
+  "shutdown_object_ms": 0.1052999999,
+  "close_ms": 1090.2384
+ },
+ "frames": {
+  "total": 60,
+  "ok": 60,
+  "soi_eoi_ok": 60,
+  "sof0_size_match": 60,
+  "with_uvc_metadata": 60,
+  "with_capture_metadata_attr": 60,
+  "stream_ticks": 1,
+  "null_samples": 1,
+  "discontinuities": 1,
+  "bytes_total": 6759867,
+  "saved": 2,
+  "reader_flag_counts": {}
+ },
+ "duration_s": 1.949109,
+ "fps_measured": 30.27024143,
+ "metadata": {
+  "uvc_pts_present": true,
+  "note": "UVC PTS/SCR appear only when MetadataBufferSizeInKB0 is set on this device instance (tier 1)"
+ },
+ "cpu": {
+  "user_s": 0,
+  "kernel_s": 0,
+  "window_s": 1.9488889,
+  "pct_of_one_core": 0,
+  "method": "GetProcessTimes over the streaming window",
+  "process_total_s": 0.015625
+ },
+ "schedule": [],
+ "unreleasable": false,
+ "ok": true,
+ "error": null,
+ "files": {
+  "frames_jsonl": "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/wincam/kiyo_capture\\frames.jsonl",
+  "frames_mjpeg": "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/wincam/kiyo_capture\\frames.mjpeg"
+ },
+ "utc_finished": "2026-11-06T16:19:38.736705Z",
+ "exit_code": 0,
+ "abandoned_threads": 0
+}

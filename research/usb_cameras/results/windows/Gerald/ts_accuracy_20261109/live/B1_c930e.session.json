@@ -1,0 +1,88 @@
+{
+ "label": "B1_c930e",
+ "mode": "free",
+ "argv": [
+  "timing/ts_accuracy/live/dshow_capture.py",
+  "--mode",
+  "free",
+  "--cams",
+  "046D:0843",
+  "--seconds",
+  "75",
+  "--record",
+  "--video-dir",
+  "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\ca7e9b09df19a3f5\\d7b5ebd7-23e2-4038-b89c-9e7af70dd7af\\scratchpad\\vid",
+  "--label",
+  "B1_c930e",
+  "--out",
+  "results/windows/Gerald/ts_accuracy_20261109/live"
+ ],
+ "python": "3.12.13 (main, Apr 14 2026, 14:31:26) [MSC v.1944 64 bit (AMD64)]",
+ "resolved": {
+  "046D:0843": {
+   "index": 3,
+   "name": "Logitech Webcam C930e",
+   "path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global"
+  }
+ },
+ "started_utc": "2026-11-09T13:56:23Z",
+ "opencv": "4.12.0",
+ "go_ns": 2048728284200,
+ "early_stop": false,
+ "cameras": [
+  {
+   "vidpid": "046D:0843",
+   "index": 3,
+   "sets": {
+    "fourcc_1": true,
+    "width_1": true,
+    "height_1": true,
+    "buffersize_1": false,
+    "auto_exposure_2": true,
+    "exposure_2": true,
+    "width_2": true,
+    "height_2": true,
+    "fourcc_2": true
+   },
+   "events": [
+    {
+     "event": "exposure_reset",
+     "t_s": 1.5317891,
+     "set_auto": true,
+     "set_exp": true,
+     "readback": -7.0
+    }
+   ],
+   "open_s": 0.8154498,
+   "first_read_s": 0.2468125,
+   "first_read_ok": true,
+   "fourcc_2_call_s": 1.4029538,
+   "readback": {
+    "fourcc": "MJPG",
+    "width": 1280.0,
+    "height": 720.0,
+    "fps": 0.0,
+    "exposure": -4.0,
+    "auto_exposure": -1.0,
+    "buffersize": -1.0,
+    "pos_msec": -1.0,
+    "convert_rgb": 1.0
+   },
+   "writer": {
+    "codec": "X264",
+    "path": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\ca7e9b09df19a3f5\\d7b5ebd7-23e2-4038-b89c-9e7af70dd7af\\scratchpad\\vid\\B1_c930e_046D0843_X264.mp4",
+    "deleted": true
+   },
+   "first_frame_after_config_ns": 2046155859200,
+   "brightness_mean": {
+    "before_reset": 92.87594907407407,
+    "after_reset": 15.936712962962963
+   },
+   "record_queue_dropped": 0,
+   "would_framerate_reset": 0,
+   "frames": 2257,
+   "csv": "B1_c930e_046D0843.frames.csv"
+  }
+ ],
+ "ended_utc": "2026-11-09T13:57:48Z"
+}

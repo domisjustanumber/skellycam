@@ -1,0 +1,69 @@
+17:42:23 discovering cameras (wincam C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\native\build\wincam.exe)
+17:42:23 camera 046d:085c:sn=C922SN01 'c922 Pro Stream Webcam' speed=HS kiyo=False metadata_tier1=True dn_warn=[]
+17:42:23 camera 1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4 'USB Video Device' speed=SS kiyo=True metadata_tier1=True dn_warn=[]
+17:42:23 camera 4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2 'USB Camera' speed=HS kiyo=False metadata_tier1=False dn_warn=[]
+17:42:23 camera 046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7 'Logitech Webcam C930e' speed=HS kiyo=False metadata_tier1=False dn_warn=[]
+17:42:23 run_suite: quick run of ['W-FMT', 'W-FMT-NOGRAB'] on 4 cameras -> C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\results\windows\Gerald\suite_build_selftest_20261106\scope_nograb_quick\nograb_rerun2
+17:42:23 run_suite: streaming mode scope: >= 30 fps and >= 720 lines
+17:42:23 run_suite: estimated total 3m37s (W-FMT 0m34s, W-FMT-NOGRAB 3m03s)
+17:42:23 run_suite: [1/2] W-FMT (est. 0m34s; remaining 3m37s, done ~17:46)
+17:42:23 camcmd rc=0 0.079s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\win_descriptors.py --instance USB\VID_046D&PID_085C\C922SN01
+17:42:23 camcmd rc=0 0.078s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\win_descriptors.py --instance USB\VID_1532&PID_0E05\9&3A0ECB01&0&4
+17:42:24 camcmd rc=0 0.078s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\win_descriptors.py --instance USB\VID_4C4A&PID_4A55\7&7DCC7CE&0&2
+17:42:24 camcmd rc=0 0.079s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\win_descriptors.py --instance USB\VID_046D&PID_0843\5&CC3F949&0&7
+17:42:24 camcmd rc=0 0.11s (lock wait 0.0s): wincam.exe formats --api mf --device \\?\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --timeout-ms 8000
+17:42:25 camcmd rc=0 0.047s (lock wait 0.0s): wincam.exe formats --api ds --device \\?\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global --timeout-ms 8000
+17:42:25 camcmd rc=0 0.047s (lock wait 0.0s): wincam.exe formats --api mf --device \\?\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --timeout-ms 8000
+17:42:25 camcmd rc=0 0.032s (lock wait 0.0s): wincam.exe formats --api ds --device \\?\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global --timeout-ms 8000
+17:42:25 camcmd rc=0 0.062s (lock wait 0.0s): wincam.exe formats --api mf --device \\?\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --timeout-ms 8000
+17:42:26 camcmd rc=0 0.047s (lock wait 0.0s): wincam.exe formats --api ds --device \\?\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global --timeout-ms 8000
+17:42:26 camcmd rc=0 0.078s (lock wait 0.0s): wincam.exe formats --api mf --device \\?\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --timeout-ms 8000
+17:42:26 camcmd rc=0 0.047s (lock wait 0.0s): wincam.exe formats --api ds --device \\?\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global --timeout-ms 8000
+17:42:26 run_suite: W-FMT ok in 0m03s (est. 0m34s); ratings {'yes': 1}; errors 0
+17:42:26 run_suite: [2/2] W-FMT-NOGRAB (est. 3m03s; remaining 3m03s, done ~17:45)
+17:42:27 camcmd rc=0 0.062s (lock wait 0.0s): wincam.exe formats --api mf --device \\?\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --timeout-ms 8000
+17:42:27 W-FMT-NOGRAB: c922 Pro Stream Webcam: idle (4 methods)
+17:42:41 camcmd rc=0 13.391s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\nograb_session.py C:\Users\Dom\GitHub\freemocap\skellycam\research...
+17:42:41 W-FMT-NOGRAB: c922 Pro Stream Webcam: streaming_native (4 methods)
+17:42:53 camcmd rc=0 12.313s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\nograb_session.py C:\Users\Dom\GitHub\freemocap\skellycam\research...
+17:42:53 W-FMT-NOGRAB: c922 Pro Stream Webcam: streaming_second_api (4 methods)
+17:43:06 camcmd rc=0 13.0s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\nograb_session.py C:\Users\Dom\GitHub\freemocap\skellycam\research...
+17:43:06 W-FMT-NOGRAB: c922 Pro Stream Webcam hub_ioctl: yes
+17:43:06 W-FMT-NOGRAB: c922 Pro Stream Webcam mf: yes
+17:43:06 W-FMT-NOGRAB: c922 Pro Stream Webcam ds: yes
+17:43:06 W-FMT-NOGRAB: c922 Pro Stream Webcam ffmpeg: no (incomplete vs descriptors with the camera idle)
+17:43:07 camcmd rc=0 0.047s (lock wait 0.0s): wincam.exe formats --api mf --device \\?\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --timeout-ms 8000
+17:43:07 W-FMT-NOGRAB: USB Video Device: idle (4 methods)
+17:43:24 camcmd rc=0 17.218s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\nograb_session.py C:\Users\Dom\GitHub\freemocap\skellycam\research...
+17:43:24 W-FMT-NOGRAB: USB Video Device: streaming_native (4 methods)
+17:43:38 camcmd rc=0 13.547s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\nograb_session.py C:\Users\Dom\GitHub\freemocap\skellycam\research...
+17:43:38 W-FMT-NOGRAB: USB Video Device: streaming_second_api (4 methods)
+17:43:52 camcmd rc=0 13.797s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\nograb_session.py C:\Users\Dom\GitHub\freemocap\skellycam\research...
+17:43:52 W-FMT-NOGRAB: USB Video Device hub_ioctl: yes
+17:43:52 W-FMT-NOGRAB: USB Video Device mf: yes
+17:43:52 W-FMT-NOGRAB: USB Video Device ds: yes
+17:43:52 W-FMT-NOGRAB: USB Video Device ffmpeg: no (incomplete vs descriptors with the camera idle)
+17:43:53 camcmd rc=0 0.047s (lock wait 0.0s): wincam.exe formats --api mf --device \\?\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --timeout-ms 8000
+17:43:53 W-FMT-NOGRAB: USB Camera: idle (4 methods)
+17:44:05 camcmd rc=0 12.281s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\nograb_session.py C:\Users\Dom\GitHub\freemocap\skellycam\research...
+17:44:05 W-FMT-NOGRAB: USB Camera: streaming_native (4 methods)
+17:44:17 camcmd rc=0 12.031s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\nograb_session.py C:\Users\Dom\GitHub\freemocap\skellycam\research...
+17:44:18 W-FMT-NOGRAB: USB Camera: streaming_second_api (4 methods)
+17:44:30 camcmd rc=0 12.578s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\nograb_session.py C:\Users\Dom\GitHub\freemocap\skellycam\research...
+17:44:30 W-FMT-NOGRAB: USB Camera hub_ioctl: yes
+17:44:30 W-FMT-NOGRAB: USB Camera mf: yes
+17:44:30 W-FMT-NOGRAB: USB Camera ds: yes
+17:44:30 W-FMT-NOGRAB: USB Camera ffmpeg: yes
+17:44:31 camcmd rc=0 0.063s (lock wait 0.0s): wincam.exe formats --api mf --device \\?\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global --timeout-ms 8000
+17:44:31 W-FMT-NOGRAB: Logitech Webcam C930e: idle (4 methods)
+17:44:45 camcmd rc=0 13.812s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\nograb_session.py C:\Users\Dom\GitHub\freemocap\skellycam\research...
+17:44:45 W-FMT-NOGRAB: Logitech Webcam C930e: streaming_native (4 methods)
+17:44:58 camcmd rc=0 12.563s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\nograb_session.py C:\Users\Dom\GitHub\freemocap\skellycam\research...
+17:44:58 W-FMT-NOGRAB: Logitech Webcam C930e: streaming_second_api (4 methods)
+17:45:11 camcmd rc=0 13.187s (lock wait 0.0s): python.exe C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\suite\windows\helpers\nograb_session.py C:\Users\Dom\GitHub\freemocap\skellycam\research...
+17:45:11 W-FMT-NOGRAB: Logitech Webcam C930e hub_ioctl: yes
+17:45:11 W-FMT-NOGRAB: Logitech Webcam C930e mf: no (incomplete vs descriptors with the camera idle)
+17:45:11 W-FMT-NOGRAB: Logitech Webcam C930e ds: no (incomplete vs descriptors with the camera idle)
+17:45:11 W-FMT-NOGRAB: Logitech Webcam C930e ffmpeg: no (incomplete vs descriptors with the camera idle)
+17:45:12 run_suite: W-FMT-NOGRAB ok in 2m45s (est. 3m03s); ratings {'yes': 11, 'no': 7}; errors 0
+17:45:12 run_suite: done in 2m48s; summary C:\Users\Dom\GitHub\freemocap\skellycam\research\usb_cameras\results\windows\Gerald\suite_build_selftest_20261106\scope_nograb_quick\nograb_rerun2\summary.md

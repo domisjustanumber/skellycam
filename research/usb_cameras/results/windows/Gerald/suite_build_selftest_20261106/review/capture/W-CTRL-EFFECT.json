@@ -1,0 +1,5319 @@
+{
+ "test": "W-CTRL-EFFECT",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-06T18:10:48.774424+00:00",
+ "utc_finished": "2026-11-06T18:13:07.473775+00:00",
+ "elapsed_s": 138.703,
+ "command": "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/suite/windows/run_suite.py --quick --only W-MJPEG,W-CYC,W-TS,W-CTRL-EFFECT --out-dir C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/review/capture",
+ "argv": [
+  "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/suite/windows/run_suite.py",
+  "--quick",
+  "--only",
+  "W-MJPEG,W-CYC,W-TS,W-CTRL-EFFECT",
+  "--out-dir",
+  "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/review/capture"
+ ],
+ "environment": {
+  "os": {
+   "platform": "Windows-11-10.0.26300-SP0",
+   "system": "Windows",
+   "release": "11",
+   "version": "10.0.26300",
+   "machine": "AMD64",
+   "windows_build": 26300,
+   "windows_version": "10.0.26300",
+   "windows_edition": "Core",
+   "windows_displayversion": "26H2",
+   "windows_ubr": 9711,
+   "windows_productname": "Windows 10 Home",
+   "windows_currentbuild": "26300"
+  },
+  "python": "3.12.13",
+  "python_implementation": "CPython",
+  "python_executable": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+  "hostname": "Gerald",
+  "pid": 49088,
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0"
+  }
+ },
+ "cameras": [
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "vid": "046d",
+   "pid": "085c",
+   "serial": "C922SN01",
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "c922 Pro Stream Webcam",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+   "speed": "HS",
+   "bcd_device": "0016",
+   "metadata_tier1": true,
+   "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 4,
+   "ds_index": 0
+  },
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": true,
+   "last_arrival": "2026-11-06T14:59:24.581364+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 5,
+   "ds_index": 1
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "name": "USB Camera",
+   "vid": "4c4a",
+   "pid": "4a55",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232e60d4&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Camera",
+   "ds_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "speed": "HS",
+   "bcd_device": "0100",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-06T17:47:04.819155+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 6,
+   "ds_index": 6
+  },
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+   "name": "Logitech Webcam C930e",
+   "vid": "046d",
+   "pid": "0843",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+   "parent_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&2206973f&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "Logitech Webcam C930e",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(7)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+   "speed": "HS",
+   "bcd_device": "0013",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 7
+  }
+ ],
+ "measurements": {
+  "runs_per_control": 1,
+  "quick": true,
+  "save_every": 3,
+  "cameras": {
+   "046d:085c:sn=C922SN01": {
+    "name": "c922 Pro Stream Webcam",
+    "is_kiyo": false,
+    "mode": "MJPG 1280x720@30",
+    "paths": {
+     "mf": {
+      "initial_read": {
+       "rc": 0,
+       "elapsed_s": 0.063,
+       "timed_out": false,
+       "killed": false,
+       "lock_wait_s": 0.0,
+       "spawn_error": null,
+       "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+      },
+      "controls": {
+       "exposure": {
+        "range": {
+         "min": -11,
+         "max": -2,
+         "step": 1,
+         "default": -5
+        },
+        "original": {
+         "value": -4,
+         "flags": [
+          "auto"
+         ]
+        },
+        "values": [
+         -9,
+         -7,
+         -4
+        ],
+        "runs": [
+         {
+          "path": "mf",
+          "values": [
+           -9,
+           -7,
+           -4
+          ],
+          "fixed": {},
+          "capture_ok": true,
+          "run": {
+           "rc": 0,
+           "elapsed_s": 5.375,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "-s 49.6 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\c922prostreamw_046d-085c_C922SN01\\mf_exposure_r0 --save every:3 --seconds 4.6 --controls-before exposure=-9 --schedule 1000:exposure=-7;2200:exposure=-4\n[camlock] released"
+          },
+          "frames": 106,
+          "before_start_readback": true,
+          "after_start_readback": true,
+          "controls_before": [
+           {
+            "control": "cc.exposure",
+            "requested": "-9",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": -4,
+            "before_flags": 1,
+            "set_value": -9,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": -9,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.1677,
+            "timed_out": false
+           }
+          ],
+          "schedule": [
+           {
+            "control": "cc.exposure",
+            "requested": "-7",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": -9,
+            "before_flags": 2,
+            "set_value": -7,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": -7,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 3.014699999,
+            "timed_out": false,
+            "at_ms": 1000,
+            "item": "1000:exposure=-7",
+            "applied_qpc_ns": 13489710386100,
+            "applied_ms_after_first_frame": 1000.8498,
+            "frames_before_apply": 31,
+            "done_qpc_ns": 13489713843200
+           },
+           {
+            "control": "cc.exposure",
+            "requested": "-4",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": -7,
+            "before_flags": 2,
+            "set_value": -4,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": -4,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.582800001,
+            "timed_out": false,
+            "at_ms": 2200,
+            "item": "2200:exposure=-4",
+            "applied_qpc_ns": 13490909648600,
+            "applied_ms_after_first_frame": 2200.1123,
+            "frames_before_apply": 67,
+            "done_qpc_ns": 13490912589600
+           }
+          ],
+          "segments": [
+           {
+            "n": 5,
+            "value": 5.714838324652778,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 6,
+            "value": 22.026529947916668,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 7,
+            "value": 103.4031265500992,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": true,
+          "effect_after_ok": true,
+          "effect_before_ok": true,
+          "monotonic": true,
+          "ratio_last_first": 18.09379735276794,
+          "ratio_after_start": 4.69448100970073,
+          "required_ratio": 1.25,
+          "metric_values": [
+           5.714838324652778,
+           22.026529947916668,
+           103.4031265500992
+          ],
+          "error": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": -4,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 1,
+        "runs_ok_after_start_only": 1,
+        "runs_total": 1
+       },
+       "gain": {
+        "range": {
+         "min": 0,
+         "max": 255,
+         "step": 1,
+         "default": 0
+        },
+        "original": {
+         "value": 0,
+         "flags": [
+          "manual"
+         ]
+        },
+        "values": [
+         26,
+         128,
+         230
+        ],
+        "runs": [
+         {
+          "path": "mf",
+          "values": [
+           26,
+           128,
+           230
+          ],
+          "fixed": {
+           "exposure": -7
+          },
+          "capture_ok": true,
+          "run": {
+           "rc": 0,
+           "elapsed_s": 5.36,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "ut-s 49.6 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\c922prostreamw_046d-085c_C922SN01\\mf_gain_r0 --save every:3 --seconds 4.6 --controls-before exposure=-7,gain=26 --schedule 1000:gain=128;2200:gain=230\n[camlock] released"
+          },
+          "frames": 140,
+          "before_start_readback": true,
+          "after_start_readback": true,
+          "controls_before": [
+           {
+            "control": "pa.gain",
+            "requested": "26",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 0,
+            "before_flags": 2,
+            "set_value": 26,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 26,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 0.6466000006,
+            "timed_out": false
+           }
+          ],
+          "schedule": [
+           {
+            "control": "pa.gain",
+            "requested": "128",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 26,
+            "before_flags": 2,
+            "set_value": 128,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 128,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 0.7957999986,
+            "timed_out": false,
+            "at_ms": 1000,
+            "item": "1000:gain=128",
+            "applied_qpc_ns": 13495622610800,
+            "applied_ms_after_first_frame": 1000.2426,
+            "frames_before_apply": 31,
+            "done_qpc_ns": 13495623551300
+           },
+           {
+            "control": "pa.gain",
+            "requested": "230",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 128,
+            "before_flags": 2,
+            "set_value": 230,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 230,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.772,
+            "timed_out": false,
+            "at_ms": 2200,
+            "item": "2200:gain=230",
+            "applied_qpc_ns": 13496824145400,
+            "applied_ms_after_first_frame": 2201.7772,
+            "frames_before_apply": 67,
+            "done_qpc_ns": 13496826236600
+           }
+          ],
+          "segments": [
+           {
+            "n": 5,
+            "value": 36.035275607638894,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 6,
+            "value": 75.32929597077546,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 12,
+            "value": 98.561114275897,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": true,
+          "effect_after_ok": true,
+          "effect_before_ok": true,
+          "monotonic": true,
+          "ratio_last_first": 2.7351286375343733,
+          "ratio_after_start": 1.3084034970157492,
+          "required_ratio": 1.15,
+          "metric_values": [
+           36.035275607638894,
+           75.32929597077546,
+           98.561114275897
+          ],
+          "error": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": 230,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 1,
+        "runs_ok_after_start_only": 1,
+        "runs_total": 1
+       },
+       "white_balance": {
+        "range": {
+         "min": 2000,
+         "max": 6500,
+         "step": 1,
+         "default": 4000
+        },
+        "original": {
+         "value": 2731,
+         "flags": [
+          "auto"
+         ]
+        },
+        "values": [
+         2800,
+         4650,
+         6500
+        ],
+        "runs": [
+         {
+          "path": "mf",
+          "values": [
+           2800,
+           4650,
+           6500
+          ],
+          "fixed": {},
+          "capture_ok": true,
+          "run": {
+           "rc": 0,
+           "elapsed_s": 5.297,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "tHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\c922prostreamw_046d-085c_C922SN01\\mf_white_balance_r0 --save every:3 --seconds 4.6 --controls-before white_balance=2800 --schedule 1000:white_balance=4650;2200:white_balance=6500\n[camlock] released"
+          },
+          "frames": 140,
+          "before_start_readback": true,
+          "after_start_readback": true,
+          "controls_before": [
+           {
+            "control": "pa.white_balance",
+            "requested": "2800",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 2894,
+            "before_flags": 1,
+            "set_value": 2800,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 2800,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.3686,
+            "timed_out": false
+           }
+          ],
+          "schedule": [
+           {
+            "control": "pa.white_balance",
+            "requested": "4650",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 2800,
+            "before_flags": 2,
+            "set_value": 4650,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 4650,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.139700001,
+            "timed_out": false,
+            "at_ms": 1000,
+            "item": "1000:white_balance=4650",
+            "applied_qpc_ns": 13501443358200,
+            "applied_ms_after_first_frame": 1000.4097,
+            "frames_before_apply": 31,
+            "done_qpc_ns": 13501444639300
+           },
+           {
+            "control": "pa.white_balance",
+            "requested": "6500",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 4650,
+            "before_flags": 2,
+            "set_value": 6500,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 6500,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.150799999,
+            "timed_out": false,
+            "at_ms": 2200,
+            "item": "2200:white_balance=6500",
+            "applied_qpc_ns": 13502643588600,
+            "applied_ms_after_first_frame": 2200.6401,
+            "frames_before_apply": 67,
+            "done_qpc_ns": 13502646065000
+           }
+          ],
+          "segments": [
+           {
+            "n": 5,
+            "value": 0.9780868248294166,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 6,
+            "value": 1.8666341407531652,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 12,
+            "value": 2.6987646689580433,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": true,
+          "effect_after_ok": true,
+          "effect_before_ok": true,
+          "monotonic": true,
+          "ratio_last_first": 2.7592281180443483,
+          "ratio_after_start": 1.4457919792836977,
+          "required_ratio": 1.1,
+          "metric_values": [
+           0.9780868248294166,
+           1.8666341407531652,
+           2.6987646689580433
+          ],
+          "error": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": 6500,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 1,
+        "runs_ok_after_start_only": 1,
+        "runs_total": 1
+       },
+       "focus": {
+        "range": {
+         "min": 0,
+         "max": 250,
+         "step": 5,
+         "default": 0
+        },
+        "original": {
+         "value": 60,
+         "flags": [
+          "auto"
+         ]
+        },
+        "values": [
+         0,
+         60,
+         125,
+         190,
+         250
+        ],
+        "runs": [
+         {
+          "path": "mf",
+          "values": [
+           0,
+           60,
+           125,
+           190,
+           250
+          ],
+          "fixed": {},
+          "capture_ok": true,
+          "run": {
+           "rc": 0,
+           "elapsed_s": 6.531,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "s\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\c922prostreamw_046d-085c_C922SN01\\mf_focus_r0 --save every:3 --seconds 5.8 --controls-before focus=0 --schedule 1000:focus=60;1900:focus=125;2800:focus=190;3700:focus=250\n[camlock] released"
+          },
+          "frames": 176,
+          "before_start_readback": true,
+          "after_start_readback": true,
+          "controls_before": [
+           {
+            "control": "cc.focus",
+            "requested": "0",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 40,
+            "before_flags": 1,
+            "set_value": 0,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 0,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.113599999,
+            "timed_out": false
+           }
+          ],
+          "schedule": [
+           {
+            "control": "cc.focus",
+            "requested": "60",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 0,
+            "before_flags": 2,
+            "set_value": 60,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 60,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.1555,
+            "timed_out": false,
+            "at_ms": 1000,
+            "item": "1000:focus=60",
+            "applied_qpc_ns": 13507241058300,
+            "applied_ms_after_first_frame": 1000.7741,
+            "frames_before_apply": 31,
+            "done_qpc_ns": 13507242361700
+           },
+           {
+            "control": "cc.focus",
+            "requested": "125",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 60,
+            "before_flags": 2,
+            "set_value": 125,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 125,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 3.1876,
+            "timed_out": false,
+            "at_ms": 1900,
+            "item": "1900:focus=125",
+            "applied_qpc_ns": 13508141512900,
+            "applied_ms_after_first_frame": 1901.2287,
+            "frames_before_apply": 57,
+            "done_qpc_ns": 13508145095800
+           },
+           {
+            "control": "cc.focus",
+            "requested": "190",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 125,
+            "before_flags": 2,
+            "set_value": 190,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 190,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.611200001,
+            "timed_out": false,
+            "at_ms": 2800,
+            "item": "2800:focus=190",
+            "applied_qpc_ns": 13509040563400,
+            "applied_ms_after_first_frame": 2800.2792,
+            "frames_before_apply": 85,
+            "done_qpc_ns": 13509043621700
+           },
+           {
+            "control": "cc.focus",
+            "requested": "250",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 190,
+            "before_flags": 2,
+            "set_value": 250,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 250,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.386499999,
+            "timed_out": false,
+            "at_ms": 3700,
+            "item": "3700:focus=250",
+            "applied_qpc_ns": 13509940863100,
+            "applied_ms_after_first_frame": 3700.5789,
+            "frames_before_apply": 112,
+            "done_qpc_ns": 13509942522600
+           }
+          ],
+          "segments": [
+           {
+            "n": 5,
+            "value": 0.017105899765892968,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 4,
+            "value": 0.0026827539847416784,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 5,
+            "value": 0.0006163701194288248,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 5,
+            "value": 0.0005478035929386138,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 11,
+            "value": 0.000543571630614719,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": true,
+          "effect_after_ok": true,
+          "effect_before_ok": null,
+          "ratio_max_min": 31.469449107467398,
+          "required_ratio": 1.3,
+          "metric_values": [
+           0.017105899765892968,
+           0.0026827539847416784,
+           0.0006163701194288248,
+           0.0005478035929386138,
+           0.000543571630614719
+          ],
+          "best_value": 0,
+          "error": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": 250,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 1,
+        "runs_ok_after_start_only": 1,
+        "runs_total": 1
+       }
+      },
+      "restore": {
+       "auto": {
+        "exposure": "auto",
+        "white_balance": "auto",
+        "focus": "auto"
+       },
+       "manual": {
+        "gain": 0
+       },
+       "steps": [
+        {
+         "sets": {
+          "gain": 0
+         },
+         "run": {
+          "rc": 0,
+          "elapsed_s": 0.063,
+          "timed_out": false,
+          "killed": false,
+          "lock_wait_s": 0.0,
+          "spawn_error": null,
+          "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --set gain=0 --timeout-ms 5000 --set-flags manual\n[camlock] released"
+         },
+         "ok": true,
+         "detail": [
+          {
+           "control": "pa.gain",
+           "requested": "0",
+           "supported": true,
+           "via": "IAMVideoProcAmp",
+           "before_value": 227,
+           "before_flags": 2,
+           "set_value": 0,
+           "set_flags": 2,
+           "set_flags_names": [
+            "manual"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": 0,
+           "readback_flags": 2,
+           "readback_flags_names": [
+            "manual"
+           ],
+           "matches": true,
+           "call_ms": 0.6166000012,
+           "timed_out": false
+          }
+         ]
+        },
+        {
+         "sets": {
+          "exposure": "auto",
+          "white_balance": "auto",
+          "focus": "auto"
+         },
+         "run": {
+          "rc": 0,
+          "elapsed_s": 0.063,
+          "timed_out": false,
+          "killed": false,
+          "lock_wait_s": 0.0,
+          "spawn_error": null,
+          "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --set exposure=auto,white_balance=auto,focus=auto --timeout-ms 5000\n[camlock] released"
+         },
+         "ok": true,
+         "detail": [
+          {
+           "control": "cc.exposure",
+           "requested": "auto",
+           "supported": true,
+           "via": "IAMCameraControl",
+           "before_value": -7,
+           "before_flags": 2,
+           "set_value": -7,
+           "set_flags": 1,
+           "set_flags_names": [
+            "auto"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": -7,
+           "readback_flags": 1,
+           "readback_flags_names": [
+            "auto"
+           ],
+           "matches": true,
+           "call_ms": 0.8465999998,
+           "timed_out": false
+          },
+          {
+           "control": "pa.white_balance",
+           "requested": "auto",
+           "supported": true,
+           "via": "IAMVideoProcAmp",
+           "before_value": 6500,
+           "before_flags": 2,
+           "set_value": 6500,
+           "set_flags": 1,
+           "set_flags_names": [
+            "auto"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": 6500,
+           "readback_flags": 1,
+           "readback_flags_names": [
+            "auto"
+           ],
+           "matches": true,
+           "call_ms": 0.8066000007,
+           "timed_out": false
+          },
+          {
+           "control": "cc.focus",
+           "requested": "auto",
+           "supported": true,
+           "via": "IAMCameraControl",
+           "before_value": 250,
+           "before_flags": 2,
+           "set_value": 250,
+           "set_flags": 1,
+           "set_flags_names": [
+            "auto"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": 250,
+           "readback_flags": 1,
+           "readback_flags_names": [
+            "auto"
+           ],
+           "matches": true,
+           "call_ms": 0.8193999995,
+           "timed_out": false
+          }
+         ]
+        }
+       ],
+       "after": {
+        "exposure": {
+         "value": -7,
+         "flags": [
+          "auto"
+         ]
+        },
+        "gain": {
+         "value": 0,
+         "flags": [
+          "manual"
+         ]
+        },
+        "white_balance": {
+         "value": 6500,
+         "flags": [
+          "auto"
+         ]
+        },
+        "focus": {
+         "value": 250,
+         "flags": [
+          "auto"
+         ]
+        }
+       },
+       "restored": true
+      }
+     },
+     "ds": {
+      "initial_read": {
+       "rc": 0,
+       "elapsed_s": 0.047,
+       "timed_out": false,
+       "killed": false,
+       "lock_wait_s": 0.0,
+       "spawn_error": null,
+       "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api ds --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --read-only --timeout-ms 5000\n[camlock] released"
+      },
+      "controls": {
+       "exposure": {
+        "range": {
+         "min": -11,
+         "max": -2,
+         "step": 1,
+         "default": -5
+        },
+        "original": {
+         "value": -7,
+         "flags": [
+          "auto"
+         ]
+        },
+        "values": [
+         -9,
+         -7,
+         -4
+        ],
+        "runs": [
+         {
+          "path": "ds",
+          "values": [
+           -9,
+           -7,
+           -4
+          ],
+          "fixed": {},
+          "capture_ok": true,
+          "launcher": {
+           "rc": 0,
+           "elapsed_s": 7.781,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "s\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 87.5 -- C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\multi_launch.py C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\c922prostreamw_046d-085c_C922SN01\\ds_exposure_r0_spec.json\n[camlock] released"
+          },
+          "frames": 134,
+          "sets": [
+           {
+            "value": -9,
+            "rc": 0,
+            "t_start_ns": 13514186720500,
+            "t_end_ns": 13514229530500,
+            "matches": true,
+            "hr": [
+             "S_OK"
+            ],
+            "error": null
+           },
+           {
+            "value": -7,
+            "rc": 0,
+            "t_start_ns": 13518686402300,
+            "t_end_ns": 13518745069300,
+            "matches": true,
+            "hr": [
+             "S_OK"
+            ],
+            "error": null
+           },
+           {
+            "value": -4,
+            "rc": 0,
+            "t_start_ns": 13520086601400,
+            "t_end_ns": 13520141701900,
+            "matches": true,
+            "hr": [
+             "S_OK"
+            ],
+            "error": null
+           }
+          ],
+          "before_start_readback": true,
+          "before_start_set_finished_before_open": true,
+          "after_start_readback": true,
+          "segments": [
+           {
+            "n": 11,
+            "value": 5.8739765822285355,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 6,
+            "value": 22.119303385416668,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 3,
+            "value": 102.75822844328702,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": true,
+          "effect_after_ok": true,
+          "effect_before_ok": true,
+          "monotonic": true,
+          "ratio_last_first": 17.493809688342587,
+          "ratio_after_start": 4.645635834582199,
+          "required_ratio": 1.25,
+          "metric_values": [
+           5.8739765822285355,
+           22.119303385416668,
+           102.75822844328702
+          ],
+          "capture_error": null,
+          "capture_stderr": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": -4,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 1,
+        "runs_ok_after_start_only": 1,
+        "runs_total": 1
+       },
+       "gain": {
+        "skipped": "quick run: DS path tests exposure only"
+       },
+       "white_balance": {
+        "skipped": "quick run: DS path tests exposure only"
+       },
+       "focus": {
+        "skipped": "quick run: DS path tests exposure only"
+       }
+      },
+      "restore": {
+       "auto": {
+        "exposure": "auto"
+       },
+       "manual": {},
+       "steps": [
+        {
+         "sets": {
+          "exposure": "auto"
+         },
+         "run": {
+          "rc": 0,
+          "elapsed_s": 0.063,
+          "timed_out": false,
+          "killed": false,
+          "lock_wait_s": 0.0,
+          "spawn_error": null,
+          "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api ds --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --set exposure=auto --timeout-ms 5000\n[camlock] released"
+         },
+         "ok": true,
+         "detail": [
+          {
+           "control": "cc.exposure",
+           "requested": "auto",
+           "supported": true,
+           "via": "IAMCameraControl",
+           "before_value": -4,
+           "before_flags": 2,
+           "set_value": -4,
+           "set_flags": 1,
+           "set_flags_names": [
+            "auto"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": -4,
+           "readback_flags": 1,
+           "readback_flags_names": [
+            "auto"
+           ],
+           "matches": true,
+           "call_ms": 1.312199999,
+           "timed_out": false
+          }
+         ]
+        }
+       ],
+       "after": {
+        "exposure": {
+         "value": -4,
+         "flags": [
+          "auto"
+         ]
+        }
+       },
+       "restored": true
+      }
+     }
+    }
+   },
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "name": "USB Video Device",
+    "is_kiyo": true,
+    "mode": "MJPG 1280x720@30",
+    "paths": {
+     "mf": {
+      "initial_read": {
+       "rc": 0,
+       "elapsed_s": 0.062,
+       "timed_out": false,
+       "killed": false,
+       "lock_wait_s": 0.0,
+       "spawn_error": null,
+       "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+      },
+      "controls": {
+       "exposure": {
+        "range": {
+         "min": -11,
+         "max": -2,
+         "step": 1,
+         "default": -6
+        },
+        "original": {
+         "value": -4,
+         "flags": [
+          "auto"
+         ]
+        },
+        "values": [
+         -9,
+         -7,
+         -4
+        ],
+        "runs": [
+         {
+          "path": "mf",
+          "values": [
+           -9,
+           -7,
+           -4
+          ],
+          "fixed": {},
+          "capture_ok": true,
+          "run": {
+           "rc": 0,
+           "elapsed_s": 6.953,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "timeout-s 49.6 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\usbvideodevice_1532-0e05_4\\mf_exposure_r0 --save every:3 --seconds 4.6 --controls-before exposure=-9 --schedule 1000:exposure=-7;2200:exposure=-4\n[camlock] released"
+          },
+          "frames": 114,
+          "before_start_readback": true,
+          "after_start_readback": true,
+          "controls_before": [
+           {
+            "control": "cc.exposure",
+            "requested": "-9",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": -4,
+            "before_flags": 1,
+            "set_value": -9,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": -9,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.554399999,
+            "timed_out": false
+           }
+          ],
+          "schedule": [
+           {
+            "control": "cc.exposure",
+            "requested": "-7",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": -9,
+            "before_flags": 2,
+            "set_value": -7,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": -7,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.553099999,
+            "timed_out": false,
+            "at_ms": 1000,
+            "item": "1000:exposure=-7",
+            "applied_qpc_ns": 13525063735000,
+            "applied_ms_after_first_frame": 1001.3486,
+            "frames_before_apply": 30,
+            "done_qpc_ns": 13525066587500
+           },
+           {
+            "control": "cc.exposure",
+            "requested": "-4",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": -7,
+            "before_flags": 2,
+            "set_value": -4,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": -4,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.9683,
+            "timed_out": false,
+            "at_ms": 2200,
+            "item": "2200:exposure=-4",
+            "applied_qpc_ns": 13526262886200,
+            "applied_ms_after_first_frame": 2200.4998,
+            "frames_before_apply": 66,
+            "done_qpc_ns": 13526266371900
+           }
+          ],
+          "segments": [
+           {
+            "n": 5,
+            "value": 47.402105034722226,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 6,
+            "value": 119.45005967881944,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 8,
+            "value": 133.4011739095052,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": true,
+          "effect_after_ok": false,
+          "effect_before_ok": null,
+          "monotonic": true,
+          "ratio_last_first": 2.8142457768866658,
+          "ratio_after_start": 1.1167945354585664,
+          "required_ratio": 1.25,
+          "metric_values": [
+           47.402105034722226,
+           119.45005967881944,
+           133.4011739095052
+          ],
+          "error": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": -4,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 1,
+        "runs_ok_after_start_only": 0,
+        "runs_total": 1
+       },
+       "gain": {
+        "range": {
+         "min": 0,
+         "max": 255,
+         "step": 1,
+         "default": 0
+        },
+        "original": {
+         "value": 0,
+         "flags": [
+          "manual"
+         ]
+        },
+        "values": [
+         26,
+         128,
+         230
+        ],
+        "runs": [
+         {
+          "path": "mf",
+          "values": [
+           26,
+           128,
+           230
+          ],
+          "fixed": {
+           "exposure": -7
+          },
+          "capture_ok": true,
+          "run": {
+           "rc": 0,
+           "elapsed_s": 6.656,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "--timeout-s 49.6 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\usbvideodevice_1532-0e05_4\\mf_gain_r0 --save every:3 --seconds 4.6 --controls-before exposure=-7,gain=26 --schedule 1000:gain=128;2200:gain=230\n[camlock] released"
+          },
+          "frames": 139,
+          "before_start_readback": true,
+          "after_start_readback": true,
+          "controls_before": [
+           {
+            "control": "pa.gain",
+            "requested": "26",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 0,
+            "before_flags": 2,
+            "set_value": 26,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 26,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 0.7905000001,
+            "timed_out": false
+           }
+          ],
+          "schedule": [
+           {
+            "control": "pa.gain",
+            "requested": "128",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 26,
+            "before_flags": 2,
+            "set_value": 128,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 128,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.164900001,
+            "timed_out": false,
+            "at_ms": 1000,
+            "item": "1000:gain=128",
+            "applied_qpc_ns": 13532541785900,
+            "applied_ms_after_first_frame": 1000.1234,
+            "frames_before_apply": 29,
+            "done_qpc_ns": 13532544303200
+           },
+           {
+            "control": "pa.gain",
+            "requested": "230",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 128,
+            "before_flags": 2,
+            "set_value": 230,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 230,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.307200002,
+            "timed_out": false,
+            "at_ms": 2200,
+            "item": "2200:gain=230",
+            "applied_qpc_ns": 13533742194400,
+            "applied_ms_after_first_frame": 2200.5319,
+            "frames_before_apply": 66,
+            "done_qpc_ns": 13533744914000
+           }
+          ],
+          "segments": [
+           {
+            "n": 5,
+            "value": 129.13384874131944,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 6,
+            "value": 154.48822247540508,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 13,
+            "value": 155.4270332532051,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": true,
+          "effect_after_ok": false,
+          "effect_before_ok": null,
+          "monotonic": true,
+          "ratio_last_first": 1.2036118706920609,
+          "ratio_after_start": 1.0060769084060728,
+          "required_ratio": 1.15,
+          "metric_values": [
+           129.13384874131944,
+           154.48822247540508,
+           155.4270332532051
+          ],
+          "error": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": 230,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 1,
+        "runs_ok_after_start_only": 0,
+        "runs_total": 1
+       },
+       "white_balance": {
+        "range": {
+         "min": 2000,
+         "max": 7500,
+         "step": 10,
+         "default": 5000
+        },
+        "original": {
+         "value": 6500,
+         "flags": [
+          "auto"
+         ]
+        },
+        "values": [
+         2800,
+         4650,
+         6500
+        ],
+        "runs": [
+         {
+          "path": "mf",
+          "values": [
+           2800,
+           4650,
+           6500
+          ],
+          "fixed": {},
+          "capture_ok": true,
+          "run": {
+           "rc": 0,
+           "elapsed_s": 6.641,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\usbvideodevice_1532-0e05_4\\mf_white_balance_r0 --save every:3 --seconds 4.6 --controls-before white_balance=2800 --schedule 1000:white_balance=4650;2200:white_balance=6500\n[camlock] released"
+          },
+          "frames": 139,
+          "before_start_readback": true,
+          "after_start_readback": true,
+          "controls_before": [
+           {
+            "control": "pa.white_balance",
+            "requested": "2800",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 6500,
+            "before_flags": 1,
+            "set_value": 2800,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 2800,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.557400001,
+            "timed_out": false
+           }
+          ],
+          "schedule": [
+           {
+            "control": "pa.white_balance",
+            "requested": "4650",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 2800,
+            "before_flags": 2,
+            "set_value": 4650,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 4650,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.3566,
+            "timed_out": false,
+            "at_ms": 1000,
+            "item": "1000:white_balance=4650",
+            "applied_qpc_ns": 13539675054800,
+            "applied_ms_after_first_frame": 1001.0534,
+            "frames_before_apply": 30,
+            "done_qpc_ns": 13539677714200
+           },
+           {
+            "control": "pa.white_balance",
+            "requested": "6500",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 4650,
+            "before_flags": 2,
+            "set_value": 6500,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 6500,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.9044,
+            "timed_out": false,
+            "at_ms": 2200,
+            "item": "2200:white_balance=6500",
+            "applied_qpc_ns": 13540874006200,
+            "applied_ms_after_first_frame": 2200.0048,
+            "frames_before_apply": 66,
+            "done_qpc_ns": 13540877286600
+           }
+          ],
+          "segments": [
+           {
+            "n": 5,
+            "value": 0.8735293093210859,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 6,
+            "value": 1.4933736010575485,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 13,
+            "value": 1.9781847227796117,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": true,
+          "effect_after_ok": true,
+          "effect_before_ok": true,
+          "monotonic": true,
+          "ratio_last_first": 2.264588837113059,
+          "ratio_after_start": 1.3246415507671616,
+          "required_ratio": 1.1,
+          "metric_values": [
+           0.8735293093210859,
+           1.4933736010575485,
+           1.9781847227796117
+          ],
+          "error": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": 6500,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 1,
+        "runs_ok_after_start_only": 1,
+        "runs_total": 1
+       },
+       "focus": {
+        "range": {
+         "min": 0,
+         "max": 600,
+         "step": 1,
+         "default": 0
+        },
+        "original": {
+         "value": 600,
+         "flags": [
+          "auto"
+         ]
+        },
+        "values": [
+         0,
+         150,
+         300,
+         450,
+         600
+        ],
+        "runs": [
+         {
+          "path": "mf",
+          "values": [
+           0,
+           150,
+           300,
+           450,
+           600
+          ],
+          "fixed": {},
+          "capture_ok": true,
+          "run": {
+           "rc": 0,
+           "elapsed_s": 7.859,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": ":\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\usbvideodevice_1532-0e05_4\\mf_focus_r0 --save every:3 --seconds 5.8 --controls-before focus=0 --schedule 1000:focus=150;1900:focus=300;2800:focus=450;3700:focus=600\n[camlock] released"
+          },
+          "frames": 174,
+          "before_start_readback": true,
+          "after_start_readback": true,
+          "controls_before": [
+           {
+            "control": "cc.focus",
+            "requested": "0",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 600,
+            "before_flags": 1,
+            "set_value": 0,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 0,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.410800001,
+            "timed_out": false
+           }
+          ],
+          "schedule": [
+           {
+            "control": "cc.focus",
+            "requested": "150",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 0,
+            "before_flags": 2,
+            "set_value": 150,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 150,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.210200001,
+            "timed_out": false,
+            "at_ms": 1000,
+            "item": "1000:focus=150",
+            "applied_qpc_ns": 13546822834100,
+            "applied_ms_after_first_frame": 1000.3374,
+            "frames_before_apply": 29,
+            "done_qpc_ns": 13546825347600
+           },
+           {
+            "control": "cc.focus",
+            "requested": "300",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 150,
+            "before_flags": 2,
+            "set_value": 300,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 300,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 3.027800001,
+            "timed_out": false,
+            "at_ms": 1900,
+            "item": "1900:focus=300",
+            "applied_qpc_ns": 13547722750900,
+            "applied_ms_after_first_frame": 1900.2542,
+            "frames_before_apply": 56,
+            "done_qpc_ns": 13547726160800
+           },
+           {
+            "control": "cc.focus",
+            "requested": "450",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 300,
+            "before_flags": 2,
+            "set_value": 450,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 450,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.3408,
+            "timed_out": false,
+            "at_ms": 2800,
+            "item": "2800:focus=450",
+            "applied_qpc_ns": 13548622611200,
+            "applied_ms_after_first_frame": 2800.1145,
+            "frames_before_apply": 85,
+            "done_qpc_ns": 13548625234300
+           },
+           {
+            "control": "cc.focus",
+            "requested": "600",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 450,
+            "before_flags": 2,
+            "set_value": 600,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 600,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.157,
+            "timed_out": false,
+            "at_ms": 3700,
+            "item": "3700:focus=600",
+            "applied_qpc_ns": 13549522867800,
+            "applied_ms_after_first_frame": 3700.3711,
+            "frames_before_apply": 110,
+            "done_qpc_ns": 13549525322200
+           }
+          ],
+          "segments": [
+           {
+            "n": 5,
+            "value": 0.0009761424644441295,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 4,
+            "value": 0.0008214309064886844,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 5,
+            "value": 0.0018489142735317776,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 4,
+            "value": 0.0011019541904208614,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 10,
+            "value": 0.0007975514988965279,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": true,
+          "effect_after_ok": true,
+          "effect_before_ok": null,
+          "ratio_max_min": 2.3182381026051466,
+          "required_ratio": 1.3,
+          "metric_values": [
+           0.0009761424644441295,
+           0.0008214309064886844,
+           0.0018489142735317776,
+           0.0011019541904208614,
+           0.0007975514988965279
+          ],
+          "best_value": 300,
+          "error": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": 600,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 1,
+        "runs_ok_after_start_only": 1,
+        "runs_total": 1
+       }
+      },
+      "restore": {
+       "auto": {
+        "exposure": "auto",
+        "white_balance": "auto",
+        "focus": "auto"
+       },
+       "manual": {
+        "gain": 0
+       },
+       "steps": [
+        {
+         "sets": {
+          "gain": 0
+         },
+         "run": {
+          "rc": 0,
+          "elapsed_s": 0.047,
+          "timed_out": false,
+          "killed": false,
+          "lock_wait_s": 0.0,
+          "spawn_error": null,
+          "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --set gain=0 --timeout-ms 5000 --set-flags manual\n[camlock] released"
+         },
+         "ok": true,
+         "detail": [
+          {
+           "control": "pa.gain",
+           "requested": "0",
+           "supported": true,
+           "via": "IAMVideoProcAmp",
+           "before_value": 230,
+           "before_flags": 2,
+           "set_value": 0,
+           "set_flags": 2,
+           "set_flags_names": [
+            "manual"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": 0,
+           "readback_flags": 2,
+           "readback_flags_names": [
+            "manual"
+           ],
+           "matches": true,
+           "call_ms": 0.7602999993,
+           "timed_out": false
+          }
+         ]
+        },
+        {
+         "sets": {
+          "exposure": "auto",
+          "white_balance": "auto",
+          "focus": "auto"
+         },
+         "run": {
+          "rc": 0,
+          "elapsed_s": 0.062,
+          "timed_out": false,
+          "killed": false,
+          "lock_wait_s": 0.0,
+          "spawn_error": null,
+          "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --set exposure=auto,white_balance=auto,focus=auto --timeout-ms 5000\n[camlock] released"
+         },
+         "ok": true,
+         "detail": [
+          {
+           "control": "cc.exposure",
+           "requested": "auto",
+           "supported": true,
+           "via": "IAMCameraControl",
+           "before_value": -7,
+           "before_flags": 2,
+           "set_value": -7,
+           "set_flags": 1,
+           "set_flags_names": [
+            "auto"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": -7,
+           "readback_flags": 1,
+           "readback_flags_names": [
+            "auto"
+           ],
+           "matches": true,
+           "call_ms": 1.2223,
+           "timed_out": false
+          },
+          {
+           "control": "pa.white_balance",
+           "requested": "auto",
+           "supported": true,
+           "via": "IAMVideoProcAmp",
+           "before_value": 6500,
+           "before_flags": 2,
+           "set_value": 6500,
+           "set_flags": 1,
+           "set_flags_names": [
+            "auto"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": 6500,
+           "readback_flags": 1,
+           "readback_flags_names": [
+            "auto"
+           ],
+           "matches": true,
+           "call_ms": 1.203299999,
+           "timed_out": false
+          },
+          {
+           "control": "cc.focus",
+           "requested": "auto",
+           "supported": true,
+           "via": "IAMCameraControl",
+           "before_value": 600,
+           "before_flags": 2,
+           "set_value": 600,
+           "set_flags": 1,
+           "set_flags_names": [
+            "auto"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": 600,
+           "readback_flags": 1,
+           "readback_flags_names": [
+            "auto"
+           ],
+           "matches": true,
+           "call_ms": 1.2019,
+           "timed_out": false
+          }
+         ]
+        }
+       ],
+       "after": {
+        "exposure": {
+         "value": -7,
+         "flags": [
+          "auto"
+         ]
+        },
+        "gain": {
+         "value": 0,
+         "flags": [
+          "manual"
+         ]
+        },
+        "white_balance": {
+         "value": 6500,
+         "flags": [
+          "auto"
+         ]
+        },
+        "focus": {
+         "value": 600,
+         "flags": [
+          "auto"
+         ]
+        }
+       },
+       "restored": true
+      }
+     },
+     "ds": {
+      "initial_read": {
+       "rc": 0,
+       "elapsed_s": 0.047,
+       "timed_out": false,
+       "killed": false,
+       "lock_wait_s": 0.0,
+       "spawn_error": null,
+       "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api ds --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --read-only --timeout-ms 5000\n[camlock] released"
+      },
+      "controls": {
+       "exposure": {
+        "range": {
+         "min": -11,
+         "max": -2,
+         "step": 1,
+         "default": -6
+        },
+        "original": {
+         "value": -7,
+         "flags": [
+          "auto"
+         ]
+        },
+        "values": [
+         -9,
+         -7,
+         -4
+        ],
+        "runs": [
+         {
+          "path": "ds",
+          "values": [
+           -9,
+           -7,
+           -4
+          ],
+          "fixed": {},
+          "capture_ok": true,
+          "launcher": {
+           "rc": 0,
+           "elapsed_s": 8.906,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 87.5 -- C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\multi_launch.py C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\usbvideodevice_1532-0e05_4\\ds_exposure_r0_spec.json\n[camlock] released"
+          },
+          "frames": 126,
+          "sets": [
+           {
+            "value": -9,
+            "rc": 0,
+            "t_start_ns": 13554507648600,
+            "t_end_ns": 13554597151000,
+            "matches": true,
+            "hr": [
+             "S_OK"
+            ],
+            "error": null
+           },
+           {
+            "value": -7,
+            "rc": 0,
+            "t_start_ns": 13559007551400,
+            "t_end_ns": 13559054550600,
+            "matches": true,
+            "hr": [
+             "S_OK"
+            ],
+            "error": null
+           },
+           {
+            "value": -4,
+            "rc": 0,
+            "t_start_ns": 13560407263900,
+            "t_end_ns": 13560460541900,
+            "matches": true,
+            "hr": [
+             "S_OK"
+            ],
+            "error": null
+           }
+          ],
+          "before_start_readback": true,
+          "before_start_set_finished_before_open": true,
+          "after_start_readback": true,
+          "segments": [
+           {
+            "n": 10,
+            "value": 47.12278967963324,
+            "error": null,
+            "frame_kinds": [
+             "raw"
+            ]
+           },
+           {
+            "n": 6,
+            "value": 118.69688952410662,
+            "error": null,
+            "frame_kinds": [
+             "raw"
+            ]
+           },
+           {
+            "n": 4,
+            "value": 132.94758097330728,
+            "error": null,
+            "frame_kinds": [
+             "raw"
+            ]
+           }
+          ],
+          "effect_ok": true,
+          "effect_after_ok": false,
+          "effect_before_ok": null,
+          "monotonic": true,
+          "ratio_last_first": 2.8213011554952154,
+          "ratio_after_start": 1.1200595188832343,
+          "required_ratio": 1.25,
+          "metric_values": [
+           47.12278967963324,
+           118.69688952410662,
+           132.94758097330728
+          ],
+          "capture_error": {
+           "stage": "format",
+           "class": "other",
+           "reason": "silent format fallback: stream codec 'rawvideo', not mjpeg, although vcodec=mjpeg was requested (PyAV cannot set FFmpeg's video_codec_id, so dshow takes the first caps entry matching size and rate; use --engine ffmpeg)"
+          },
+          "capture_stderr": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": -4,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 1,
+        "runs_ok_after_start_only": 0,
+        "runs_total": 1
+       },
+       "gain": {
+        "skipped": "quick run: DS path tests exposure only"
+       },
+       "white_balance": {
+        "skipped": "quick run: DS path tests exposure only"
+       },
+       "focus": {
+        "skipped": "quick run: DS path tests exposure only"
+       }
+      },
+      "restore": {
+       "auto": {
+        "exposure": "auto"
+       },
+       "manual": {},
+       "steps": [
+        {
+         "sets": {
+          "exposure": "auto"
+         },
+         "run": {
+          "rc": 0,
+          "elapsed_s": 0.047,
+          "timed_out": false,
+          "killed": false,
+          "lock_wait_s": 0.0,
+          "spawn_error": null,
+          "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api ds --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --set exposure=auto --timeout-ms 5000\n[camlock] released"
+         },
+         "ok": true,
+         "detail": [
+          {
+           "control": "cc.exposure",
+           "requested": "auto",
+           "supported": true,
+           "via": "IAMCameraControl",
+           "before_value": -4,
+           "before_flags": 2,
+           "set_value": -4,
+           "set_flags": 1,
+           "set_flags_names": [
+            "auto"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": -4,
+           "readback_flags": 1,
+           "readback_flags_names": [
+            "auto"
+           ],
+           "matches": true,
+           "call_ms": 1.6152,
+           "timed_out": false
+          }
+         ]
+        }
+       ],
+       "after": {
+        "exposure": {
+         "value": -4,
+         "flags": [
+          "auto"
+         ]
+        }
+       },
+       "restored": true
+      }
+     }
+    }
+   },
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+    "name": "USB Camera",
+    "is_kiyo": false,
+    "mode": "MJPG 1280x720@30",
+    "paths": {
+     "mf": {
+      "initial_read": {
+       "rc": 0,
+       "elapsed_s": 0.063,
+       "timed_out": false,
+       "killed": false,
+       "lock_wait_s": 0.0,
+       "spawn_error": null,
+       "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+      },
+      "controls": {
+       "exposure": {
+        "range": {
+         "min": -7,
+         "max": 3,
+         "step": 1,
+         "default": -7
+        },
+        "original": {
+         "value": 1,
+         "flags": [
+          "auto"
+         ]
+        },
+        "values": [
+         -5,
+         -2,
+         1
+        ],
+        "runs": [
+         {
+          "path": "mf",
+          "values": [
+           -5,
+           -2,
+           1
+          ],
+          "fixed": {},
+          "capture_ok": true,
+          "run": {
+           "rc": 0,
+           "elapsed_s": 5.0,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": ".py --timeout-s 49.6 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\usbcamera_4c4a-4a55_2\\mf_exposure_r0 --save every:3 --seconds 4.6 --controls-before exposure=-5 --schedule 1000:exposure=-2;2200:exposure=1\n[camlock] released"
+          },
+          "frames": 120,
+          "before_start_readback": true,
+          "after_start_readback": true,
+          "controls_before": [
+           {
+            "control": "cc.exposure",
+            "requested": "-5",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 1,
+            "before_flags": 1,
+            "set_value": -5,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": -5,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.2732,
+            "timed_out": false
+           }
+          ],
+          "schedule": [
+           {
+            "control": "cc.exposure",
+            "requested": "-2",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": -5,
+            "before_flags": 2,
+            "set_value": -2,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": -2,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.111299999,
+            "timed_out": false,
+            "at_ms": 1000,
+            "item": "1000:exposure=-2",
+            "applied_qpc_ns": 13565752494700,
+            "applied_ms_after_first_frame": 1000.6346,
+            "frames_before_apply": 26,
+            "done_qpc_ns": 13565755015800
+           },
+           {
+            "control": "cc.exposure",
+            "requested": "1",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": -2,
+            "before_flags": 2,
+            "set_value": 1,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 1,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.633200001,
+            "timed_out": false,
+            "at_ms": 2200,
+            "item": "2200:exposure=1",
+            "applied_qpc_ns": 13566953655900,
+            "applied_ms_after_first_frame": 2201.7958,
+            "frames_before_apply": 57,
+            "done_qpc_ns": 13566956708300
+           }
+          ],
+          "segments": [
+           {
+            "n": 4,
+            "value": 22.66083441840278,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 5,
+            "value": 80.40721028645834,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 10,
+            "value": 203.6165988498264,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": true,
+          "effect_after_ok": true,
+          "effect_before_ok": true,
+          "monotonic": true,
+          "ratio_last_first": 8.985397231642544,
+          "ratio_after_start": 2.5323176631103466,
+          "required_ratio": 1.25,
+          "metric_values": [
+           22.66083441840278,
+           80.40721028645834,
+           203.6165988498264
+          ],
+          "error": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": 1,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 1,
+        "runs_ok_after_start_only": 1,
+        "runs_total": 1
+       },
+       "gain": {
+        "range": {
+         "min": 1,
+         "max": 7,
+         "step": 1,
+         "default": 4
+        },
+        "original": {
+         "value": 4,
+         "flags": [
+          "manual"
+         ]
+        },
+        "values": [
+         2,
+         4,
+         6
+        ],
+        "runs": [
+         {
+          "path": "mf",
+          "values": [
+           2,
+           4,
+           6
+          ],
+          "fixed": {
+           "exposure": -2
+          },
+          "capture_ok": true,
+          "run": {
+           "rc": 0,
+           "elapsed_s": 4.985,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "ed_run.py --timeout-s 49.6 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\usbcamera_4c4a-4a55_2\\mf_gain_r0 --save every:3 --seconds 4.6 --controls-before exposure=-2,gain=2 --schedule 1000:gain=4;2200:gain=6\n[camlock] released"
+          },
+          "frames": 120,
+          "before_start_readback": true,
+          "after_start_readback": true,
+          "controls_before": [
+           {
+            "control": "pa.gain",
+            "requested": "2",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 4,
+            "before_flags": 2,
+            "set_value": 2,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 2,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 0.6105000004,
+            "timed_out": false
+           }
+          ],
+          "schedule": [
+           {
+            "control": "pa.gain",
+            "requested": "4",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 4,
+            "before_flags": 2,
+            "set_value": 4,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 4,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.876899999,
+            "timed_out": false,
+            "at_ms": 1000,
+            "item": "1000:gain=4",
+            "applied_qpc_ns": 13571240815500,
+            "applied_ms_after_first_frame": 1000.9914,
+            "frames_before_apply": 26,
+            "done_qpc_ns": 13571243041600
+           },
+           {
+            "control": "pa.gain",
+            "requested": "6",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 4,
+            "before_flags": 2,
+            "set_value": 6,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 6,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.4364,
+            "timed_out": false,
+            "at_ms": 2200,
+            "item": "2200:gain=6",
+            "applied_qpc_ns": 13572440099100,
+            "applied_ms_after_first_frame": 2200.275,
+            "frames_before_apply": 57,
+            "done_qpc_ns": 13572443050500
+           }
+          ],
+          "segments": [
+           {
+            "n": 4,
+            "value": 81.99966091579861,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 5,
+            "value": 81.88003472222222,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 10,
+            "value": 81.79236653645833,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": false,
+          "effect_after_ok": false,
+          "effect_before_ok": null,
+          "monotonic": true,
+          "ratio_last_first": 0.9974720093104635,
+          "ratio_after_start": 0.9989293093724092,
+          "required_ratio": 1.15,
+          "metric_values": [
+           81.99966091579861,
+           81.88003472222222,
+           81.79236653645833
+          ],
+          "error": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": 6,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 0,
+        "runs_ok_after_start_only": 0,
+        "runs_total": 1
+       },
+       "white_balance": {
+        "range": {
+         "min": 0,
+         "max": 6500,
+         "step": 1,
+         "default": 4500
+        },
+        "original": {
+         "value": 4500,
+         "flags": [
+          "manual"
+         ]
+        },
+        "values": [
+         2800,
+         4650,
+         6500
+        ],
+        "runs": [
+         {
+          "path": "mf",
+          "values": [
+           2800,
+           4650,
+           6500
+          ],
+          "fixed": {},
+          "capture_ok": true,
+          "run": {
+           "rc": 0,
+           "elapsed_s": 5.078,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\usbcamera_4c4a-4a55_2\\mf_white_balance_r0 --save every:3 --seconds 4.6 --controls-before white_balance=2800 --schedule 1000:white_balance=4650;2200:white_balance=6500\n[camlock] released"
+          },
+          "frames": 120,
+          "before_start_readback": true,
+          "after_start_readback": true,
+          "controls_before": [
+           {
+            "control": "pa.white_balance",
+            "requested": "2800",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 4500,
+            "before_flags": 2,
+            "set_value": 2800,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 2800,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 0.7897999994,
+            "timed_out": false
+           }
+          ],
+          "schedule": [
+           {
+            "control": "pa.white_balance",
+            "requested": "4650",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 2800,
+            "before_flags": 2,
+            "set_value": 4650,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 4650,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.3345,
+            "timed_out": false,
+            "at_ms": 1000,
+            "item": "1000:white_balance=4650",
+            "applied_qpc_ns": 13576784451300,
+            "applied_ms_after_first_frame": 1000.1225,
+            "frames_before_apply": 26,
+            "done_qpc_ns": 13576787160700
+           },
+           {
+            "control": "pa.white_balance",
+            "requested": "6500",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 4650,
+            "before_flags": 2,
+            "set_value": 6500,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 6500,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 3.579600001,
+            "timed_out": false,
+            "at_ms": 2200,
+            "item": "2200:white_balance=6500",
+            "applied_qpc_ns": 13577984799900,
+            "applied_ms_after_first_frame": 2200.4711,
+            "frames_before_apply": 57,
+            "done_qpc_ns": 13577988878000
+           }
+          ],
+          "segments": [
+           {
+            "n": 4,
+            "value": 0.8793300888829538,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 5,
+            "value": 0.8757263903555902,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 10,
+            "value": 0.869100835495419,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": false,
+          "effect_after_ok": false,
+          "effect_before_ok": null,
+          "monotonic": true,
+          "ratio_last_first": 0.9883669926494505,
+          "ratio_after_start": 0.9924342181152257,
+          "required_ratio": 1.1,
+          "metric_values": [
+           0.8793300888829538,
+           0.8757263903555902,
+           0.869100835495419
+          ],
+          "error": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": 6500,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 0,
+        "runs_ok_after_start_only": 0,
+        "runs_total": 1
+       },
+       "focus": {
+        "skipped": "not supported"
+       }
+      },
+      "restore": {
+       "auto": {
+        "exposure": "auto"
+       },
+       "manual": {
+        "gain": 4,
+        "white_balance": 4500
+       },
+       "steps": [
+        {
+         "sets": {
+          "gain": 4,
+          "white_balance": 4500
+         },
+         "run": {
+          "rc": 0,
+          "elapsed_s": 0.047,
+          "timed_out": false,
+          "killed": false,
+          "lock_wait_s": 0.0,
+          "spawn_error": null,
+          "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --set gain=4,white_balance=4500 --timeout-ms 5000 --set-flags manual\n[camlock] released"
+         },
+         "ok": true,
+         "detail": [
+          {
+           "control": "pa.gain",
+           "requested": "4",
+           "supported": true,
+           "via": "IAMVideoProcAmp",
+           "before_value": 4,
+           "before_flags": 2,
+           "set_value": 4,
+           "set_flags": 2,
+           "set_flags_names": [
+            "manual"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": 4,
+           "readback_flags": 2,
+           "readback_flags_names": [
+            "manual"
+           ],
+           "matches": true,
+           "call_ms": 0.6338,
+           "timed_out": false
+          },
+          {
+           "control": "pa.white_balance",
+           "requested": "4500",
+           "supported": true,
+           "via": "IAMVideoProcAmp",
+           "before_value": 6500,
+           "before_flags": 2,
+           "set_value": 4500,
+           "set_flags": 2,
+           "set_flags_names": [
+            "manual"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": 4500,
+           "readback_flags": 2,
+           "readback_flags_names": [
+            "manual"
+           ],
+           "matches": true,
+           "call_ms": 0.6009,
+           "timed_out": false
+          }
+         ]
+        },
+        {
+         "sets": {
+          "exposure": "auto"
+         },
+         "run": {
+          "rc": 0,
+          "elapsed_s": 0.063,
+          "timed_out": false,
+          "killed": false,
+          "lock_wait_s": 0.0,
+          "spawn_error": null,
+          "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --set exposure=auto --timeout-ms 5000\n[camlock] released"
+         },
+         "ok": true,
+         "detail": [
+          {
+           "control": "cc.exposure",
+           "requested": "auto",
+           "supported": true,
+           "via": "IAMCameraControl",
+           "before_value": -2,
+           "before_flags": 2,
+           "set_value": -2,
+           "set_flags": 1,
+           "set_flags_names": [
+            "auto"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": -2,
+           "readback_flags": 1,
+           "readback_flags_names": [
+            "auto"
+           ],
+           "matches": true,
+           "call_ms": 0.8215999994,
+           "timed_out": false
+          }
+         ]
+        }
+       ],
+       "after": {
+        "exposure": {
+         "value": -2,
+         "flags": [
+          "auto"
+         ]
+        },
+        "gain": {
+         "value": 4,
+         "flags": [
+          "manual"
+         ]
+        },
+        "white_balance": {
+         "value": 4500,
+         "flags": [
+          "manual"
+         ]
+        }
+       },
+       "restored": true
+      }
+     },
+     "ds": {
+      "initial_read": {
+       "rc": 0,
+       "elapsed_s": 0.047,
+       "timed_out": false,
+       "killed": false,
+       "lock_wait_s": 0.0,
+       "spawn_error": null,
+       "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api ds --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --read-only --timeout-ms 5000\n[camlock] released"
+      },
+      "controls": {
+       "exposure": {
+        "range": {
+         "min": -7,
+         "max": 3,
+         "step": 1,
+         "default": -7
+        },
+        "original": {
+         "value": -2,
+         "flags": [
+          "auto"
+         ]
+        },
+        "values": [
+         -5,
+         -2,
+         1
+        ],
+        "runs": [
+         {
+          "path": "ds",
+          "values": [
+           -5,
+           -2,
+           1
+          ],
+          "fixed": {},
+          "capture_ok": true,
+          "launcher": {
+           "rc": 0,
+           "elapsed_s": 7.454,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": ".0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 87.5 -- C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\multi_launch.py C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\usbcamera_4c4a-4a55_2\\ds_exposure_r0_spec.json\n[camlock] released"
+          },
+          "frames": 130,
+          "sets": [
+           {
+            "value": -5,
+            "rc": 0,
+            "t_start_ns": 13582300843500,
+            "t_end_ns": 13582344804100,
+            "matches": true,
+            "hr": [
+             "S_OK"
+            ],
+            "error": null
+           },
+           {
+            "value": -2,
+            "rc": 0,
+            "t_start_ns": 13586800743000,
+            "t_end_ns": 13586845804900,
+            "matches": true,
+            "hr": [
+             "S_OK"
+            ],
+            "error": null
+           },
+           {
+            "value": 1,
+            "rc": 0,
+            "t_start_ns": 13588200980300,
+            "t_end_ns": 13588243121200,
+            "matches": true,
+            "hr": [
+             "S_OK"
+            ],
+            "error": null
+           }
+          ],
+          "before_start_readback": true,
+          "before_start_set_finished_before_open": true,
+          "after_start_readback": true,
+          "segments": [
+           {
+            "n": 11,
+            "value": 22.729904020675505,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 6,
+            "value": 80.81431297019675,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 5,
+            "value": 203.43994140625,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": true,
+          "effect_after_ok": true,
+          "effect_before_ok": true,
+          "monotonic": true,
+          "ratio_last_first": 8.950321181347602,
+          "ratio_after_start": 2.5173751273648266,
+          "required_ratio": 1.25,
+          "metric_values": [
+           22.729904020675505,
+           80.81431297019675,
+           203.43994140625
+          ],
+          "capture_error": null,
+          "capture_stderr": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": 1,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 1,
+        "runs_ok_after_start_only": 1,
+        "runs_total": 1
+       },
+       "gain": {
+        "skipped": "quick run: DS path tests exposure only"
+       },
+       "white_balance": {
+        "skipped": "quick run: DS path tests exposure only"
+       },
+       "focus": {
+        "skipped": "not supported"
+       }
+      },
+      "restore": {
+       "auto": {
+        "exposure": "auto"
+       },
+       "manual": {},
+       "steps": [
+        {
+         "sets": {
+          "exposure": "auto"
+         },
+         "run": {
+          "rc": 0,
+          "elapsed_s": 0.047,
+          "timed_out": false,
+          "killed": false,
+          "lock_wait_s": 0.0,
+          "spawn_error": null,
+          "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api ds --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --set exposure=auto --timeout-ms 5000\n[camlock] released"
+         },
+         "ok": true,
+         "detail": [
+          {
+           "control": "cc.exposure",
+           "requested": "auto",
+           "supported": true,
+           "via": "IAMCameraControl",
+           "before_value": 1,
+           "before_flags": 2,
+           "set_value": 1,
+           "set_flags": 1,
+           "set_flags_names": [
+            "auto"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": 1,
+           "readback_flags": 1,
+           "readback_flags_names": [
+            "auto"
+           ],
+           "matches": true,
+           "call_ms": 1.0778,
+           "timed_out": false
+          }
+         ]
+        }
+       ],
+       "after": {
+        "exposure": {
+         "value": 1,
+         "flags": [
+          "auto"
+         ]
+        }
+       },
+       "restored": true
+      }
+     }
+    }
+   },
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+    "name": "Logitech Webcam C930e",
+    "is_kiyo": false,
+    "mode": "MJPG 1280x720@30",
+    "paths": {
+     "mf": {
+      "initial_read": {
+       "rc": 0,
+       "elapsed_s": 0.078,
+       "timed_out": false,
+       "killed": false,
+       "lock_wait_s": 0.0,
+       "spawn_error": null,
+       "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+      },
+      "controls": {
+       "exposure": {
+        "range": {
+         "min": -11,
+         "max": -2,
+         "step": 1,
+         "default": -5
+        },
+        "original": {
+         "value": -5,
+         "flags": [
+          "auto"
+         ]
+        },
+        "values": [
+         -9,
+         -7,
+         -4
+        ],
+        "runs": [
+         {
+          "path": "mf",
+          "values": [
+           -9,
+           -7,
+           -4
+          ],
+          "fixed": {},
+          "capture_ok": true,
+          "run": {
+           "rc": 0,
+           "elapsed_s": 5.563,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "timeout-s 49.6 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\logitechwebcam_046d-0843_7\\mf_exposure_r0 --save every:3 --seconds 4.6 --controls-before exposure=-9 --schedule 1000:exposure=-7;2200:exposure=-4\n[camlock] released"
+          },
+          "frames": 105,
+          "before_start_readback": true,
+          "after_start_readback": true,
+          "controls_before": [
+           {
+            "control": "cc.exposure",
+            "requested": "-9",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": -5,
+            "before_flags": 1,
+            "set_value": -9,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": -9,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.065200001,
+            "timed_out": false
+           }
+          ],
+          "schedule": [
+           {
+            "control": "cc.exposure",
+            "requested": "-7",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": -6,
+            "before_flags": 2,
+            "set_value": -7,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": -7,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.6667,
+            "timed_out": false,
+            "at_ms": 1000,
+            "item": "1000:exposure=-7",
+            "applied_qpc_ns": 13592460977900,
+            "applied_ms_after_first_frame": 1001.1427,
+            "frames_before_apply": 31,
+            "done_qpc_ns": 13592464050000
+           },
+           {
+            "control": "cc.exposure",
+            "requested": "-4",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": -7,
+            "before_flags": 2,
+            "set_value": -4,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": -4,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.9454,
+            "timed_out": false,
+            "at_ms": 2200,
+            "item": "2200:exposure=-4",
+            "applied_qpc_ns": 13593660486500,
+            "applied_ms_after_first_frame": 2200.6513,
+            "frames_before_apply": 67,
+            "done_qpc_ns": 13593662736400
+           }
+          ],
+          "segments": [
+           {
+            "n": 5,
+            "value": 68.72589518229168,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 6,
+            "value": 40.27091019241898,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 6,
+            "value": 144.56736924913193,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": false,
+          "effect_after_ok": true,
+          "effect_before_ok": false,
+          "monotonic": false,
+          "ratio_last_first": 2.1035356304297657,
+          "ratio_after_start": 3.5898709157149074,
+          "required_ratio": 1.25,
+          "metric_values": [
+           68.72589518229168,
+           40.27091019241898,
+           144.56736924913193
+          ],
+          "error": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": -4,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 0,
+        "runs_ok_after_start_only": 1,
+        "runs_total": 1
+       },
+       "gain": {
+        "range": {
+         "min": 0,
+         "max": 255,
+         "step": 1,
+         "default": 0
+        },
+        "original": {
+         "value": 7,
+         "flags": [
+          "manual"
+         ]
+        },
+        "values": [
+         26,
+         128,
+         230
+        ],
+        "runs": [
+         {
+          "path": "mf",
+          "values": [
+           26,
+           128,
+           230
+          ],
+          "fixed": {
+           "exposure": -7
+          },
+          "capture_ok": true,
+          "run": {
+           "rc": 0,
+           "elapsed_s": 5.797,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "--timeout-s 49.6 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\logitechwebcam_046d-0843_7\\mf_gain_r0 --save every:3 --seconds 4.6 --controls-before exposure=-7,gain=26 --schedule 1000:gain=128;2200:gain=230\n[camlock] released"
+          },
+          "frames": 141,
+          "before_start_readback": true,
+          "after_start_readback": true,
+          "controls_before": [
+           {
+            "control": "pa.gain",
+            "requested": "26",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 7,
+            "before_flags": 2,
+            "set_value": 26,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 26,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 0.6533000004,
+            "timed_out": false
+           }
+          ],
+          "schedule": [
+           {
+            "control": "pa.gain",
+            "requested": "128",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 9,
+            "before_flags": 2,
+            "set_value": 128,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 128,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.595199998,
+            "timed_out": false,
+            "at_ms": 1000,
+            "item": "1000:gain=128",
+            "applied_qpc_ns": 13598757731900,
+            "applied_ms_after_first_frame": 1000.6723,
+            "frames_before_apply": 31,
+            "done_qpc_ns": 13598759557800
+           },
+           {
+            "control": "pa.gain",
+            "requested": "230",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 127,
+            "before_flags": 2,
+            "set_value": 230,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 230,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.430499999,
+            "timed_out": false,
+            "at_ms": 2200,
+            "item": "2200:gain=230",
+            "applied_qpc_ns": 13599957762900,
+            "applied_ms_after_first_frame": 2200.7033,
+            "frames_before_apply": 68,
+            "done_qpc_ns": 13599959398100
+           }
+          ],
+          "segments": [
+           {
+            "n": 5,
+            "value": 67.77199978298611,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 6,
+            "value": 140.53152126736111,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 12,
+            "value": 168.10346137152777,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": true,
+          "effect_after_ok": true,
+          "effect_before_ok": true,
+          "monotonic": true,
+          "ratio_last_first": 2.480426457974012,
+          "ratio_after_start": 1.1961975495284867,
+          "required_ratio": 1.15,
+          "metric_values": [
+           67.77199978298611,
+           140.53152126736111,
+           168.10346137152777
+          ],
+          "error": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": 230,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 1,
+        "runs_ok_after_start_only": 1,
+        "runs_total": 1
+       },
+       "white_balance": {
+        "range": {
+         "min": 2000,
+         "max": 7500,
+         "step": 1,
+         "default": 4000
+        },
+        "original": {
+         "value": 6500,
+         "flags": [
+          "auto"
+         ]
+        },
+        "values": [
+         2800,
+         4650,
+         6500
+        ],
+        "runs": [
+         {
+          "path": "mf",
+          "values": [
+           2800,
+           4650,
+           6500
+          ],
+          "fixed": {},
+          "capture_ok": true,
+          "run": {
+           "rc": 0,
+           "elapsed_s": 5.5,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\logitechwebcam_046d-0843_7\\mf_white_balance_r0 --save every:3 --seconds 4.6 --controls-before white_balance=2800 --schedule 1000:white_balance=4650;2200:white_balance=6500\n[camlock] released"
+          },
+          "frames": 140,
+          "before_start_readback": true,
+          "after_start_readback": true,
+          "controls_before": [
+           {
+            "control": "pa.white_balance",
+            "requested": "2800",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 6500,
+            "before_flags": 1,
+            "set_value": 2800,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 2800,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.028099999,
+            "timed_out": false
+           }
+          ],
+          "schedule": [
+           {
+            "control": "pa.white_balance",
+            "requested": "4650",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 2800,
+            "before_flags": 2,
+            "set_value": 4650,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 4650,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.5087,
+            "timed_out": false,
+            "at_ms": 1000,
+            "item": "1000:white_balance=4650",
+            "applied_qpc_ns": 13604770553200,
+            "applied_ms_after_first_frame": 1000.6974,
+            "frames_before_apply": 30,
+            "done_qpc_ns": 13604772251900
+           },
+           {
+            "control": "pa.white_balance",
+            "requested": "6500",
+            "supported": true,
+            "via": "IAMVideoProcAmp",
+            "before_value": 4650,
+            "before_flags": 2,
+            "set_value": 6500,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 6500,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 2.8531,
+            "timed_out": false,
+            "at_ms": 2200,
+            "item": "2200:white_balance=6500",
+            "applied_qpc_ns": 13605970230500,
+            "applied_ms_after_first_frame": 2200.3747,
+            "frames_before_apply": 66,
+            "done_qpc_ns": 13605973521000
+           }
+          ],
+          "segments": [
+           {
+            "n": 5,
+            "value": 0.9583404557944887,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 5,
+            "value": 1.2513403445542564,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 12,
+            "value": 1.4341081697878824,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": true,
+          "effect_after_ok": true,
+          "effect_before_ok": true,
+          "monotonic": true,
+          "ratio_last_first": 1.496449577096242,
+          "ratio_after_start": 1.1460576461304222,
+          "required_ratio": 1.1,
+          "metric_values": [
+           0.9583404557944887,
+           1.2513403445542564,
+           1.4341081697878824
+          ],
+          "error": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": 6500,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 1,
+        "runs_ok_after_start_only": 1,
+        "runs_total": 1
+       },
+       "focus": {
+        "range": {
+         "min": 0,
+         "max": 255,
+         "step": 5,
+         "default": 0
+        },
+        "original": {
+         "value": 60,
+         "flags": [
+          "auto"
+         ]
+        },
+        "values": [
+         0,
+         65,
+         130,
+         190,
+         255
+        ],
+        "runs": [
+         {
+          "path": "mf",
+          "values": [
+           0,
+           65,
+           130,
+           190,
+           255
+          ],
+          "fixed": {},
+          "capture_ok": true,
+          "run": {
+           "rc": 0,
+           "elapsed_s": 6.703,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\logitechwebcam_046d-0843_7\\mf_focus_r0 --save every:3 --seconds 5.8 --controls-before focus=0 --schedule 1000:focus=65;1900:focus=130;2800:focus=190;3700:focus=255\n[camlock] released"
+          },
+          "frames": 176,
+          "before_start_readback": true,
+          "after_start_readback": false,
+          "controls_before": [
+           {
+            "control": "cc.focus",
+            "requested": "0",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 65,
+            "before_flags": 1,
+            "set_value": 0,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 0,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.014599999,
+            "timed_out": false
+           }
+          ],
+          "schedule": [
+           {
+            "control": "cc.focus",
+            "requested": "65",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 0,
+            "before_flags": 2,
+            "set_value": 65,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 65,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 0.9833000004,
+            "timed_out": false,
+            "at_ms": 1000,
+            "item": "1000:focus=65",
+            "applied_qpc_ns": 13610784358800,
+            "applied_ms_after_first_frame": 1000.3129,
+            "frames_before_apply": 30,
+            "done_qpc_ns": 13610785505900
+           },
+           {
+            "control": "cc.focus",
+            "requested": "130",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 65,
+            "before_flags": 2,
+            "set_value": 130,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 130,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.665200001,
+            "timed_out": false,
+            "at_ms": 1900,
+            "item": "1900:focus=130",
+            "applied_qpc_ns": 13611684197300,
+            "applied_ms_after_first_frame": 1900.1514,
+            "frames_before_apply": 57,
+            "done_qpc_ns": 13611686146700
+           },
+           {
+            "control": "cc.focus",
+            "requested": "190",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 130,
+            "before_flags": 2,
+            "set_value": 190,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 130,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": false,
+            "call_ms": 1.095100001,
+            "timed_out": false,
+            "at_ms": 2800,
+            "item": "2800:focus=190",
+            "applied_qpc_ns": 13612584777300,
+            "applied_ms_after_first_frame": 2800.7314,
+            "frames_before_apply": 85,
+            "done_qpc_ns": 13612586037300
+           },
+           {
+            "control": "cc.focus",
+            "requested": "255",
+            "supported": true,
+            "via": "IAMCameraControl",
+            "before_value": 190,
+            "before_flags": 2,
+            "set_value": 255,
+            "set_flags": 2,
+            "set_flags_names": [
+             "manual"
+            ],
+            "hr_set": "0x00000000",
+            "hr_set_name": "S_OK",
+            "readback_value": 255,
+            "readback_flags": 2,
+            "readback_flags_names": [
+             "manual"
+            ],
+            "matches": true,
+            "call_ms": 1.767200001,
+            "timed_out": false,
+            "at_ms": 3700,
+            "item": "3700:focus=255",
+            "applied_qpc_ns": 13613484511500,
+            "applied_ms_after_first_frame": 3700.4656,
+            "frames_before_apply": 112,
+            "done_qpc_ns": 13613486592600
+           }
+          ],
+          "segments": [
+           {
+            "n": 5,
+            "value": 0.0037069452292177616,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 4,
+            "value": 0.03053997154224314,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 5,
+            "value": 0.0005904970397215962,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 5,
+            "value": 0.0006567024792843585,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 11,
+            "value": 0.00033024408856811263,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": true,
+          "effect_after_ok": true,
+          "effect_before_ok": null,
+          "ratio_max_min": 92.47696658147535,
+          "required_ratio": 1.3,
+          "metric_values": [
+           0.0037069452292177616,
+           0.03053997154224314,
+           0.0005904970397215962,
+           0.0006567024792843585,
+           0.00033024408856811263
+          ],
+          "best_value": 65,
+          "error": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": 255,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 0,
+        "runs_ok_after_start_only": 0,
+        "runs_total": 1
+       }
+      },
+      "restore": {
+       "auto": {
+        "exposure": "auto",
+        "white_balance": "auto",
+        "focus": "auto"
+       },
+       "manual": {
+        "gain": 7
+       },
+       "steps": [
+        {
+         "sets": {
+          "gain": 7
+         },
+         "run": {
+          "rc": 0,
+          "elapsed_s": 0.078,
+          "timed_out": false,
+          "killed": false,
+          "lock_wait_s": 0.0,
+          "spawn_error": null,
+          "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --set gain=7 --timeout-ms 5000 --set-flags manual\n[camlock] released"
+         },
+         "ok": true,
+         "detail": [
+          {
+           "control": "pa.gain",
+           "requested": "7",
+           "supported": true,
+           "via": "IAMVideoProcAmp",
+           "before_value": 8,
+           "before_flags": 2,
+           "set_value": 7,
+           "set_flags": 2,
+           "set_flags_names": [
+            "manual"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": 7,
+           "readback_flags": 2,
+           "readback_flags_names": [
+            "manual"
+           ],
+           "matches": true,
+           "call_ms": 0.6004999988,
+           "timed_out": false
+          }
+         ]
+        },
+        {
+         "sets": {
+          "exposure": "auto",
+          "white_balance": "auto",
+          "focus": "auto"
+         },
+         "run": {
+          "rc": 0,
+          "elapsed_s": 0.078,
+          "timed_out": false,
+          "killed": false,
+          "lock_wait_s": 0.0,
+          "spawn_error": null,
+          "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --set exposure=auto,white_balance=auto,focus=auto --timeout-ms 5000\n[camlock] released"
+         },
+         "ok": true,
+         "detail": [
+          {
+           "control": "cc.exposure",
+           "requested": "auto",
+           "supported": true,
+           "via": "IAMCameraControl",
+           "before_value": -6,
+           "before_flags": 2,
+           "set_value": -6,
+           "set_flags": 1,
+           "set_flags_names": [
+            "auto"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": -6,
+           "readback_flags": 1,
+           "readback_flags_names": [
+            "auto"
+           ],
+           "matches": true,
+           "call_ms": 0.8387000002,
+           "timed_out": false
+          },
+          {
+           "control": "pa.white_balance",
+           "requested": "auto",
+           "supported": true,
+           "via": "IAMVideoProcAmp",
+           "before_value": 6500,
+           "before_flags": 2,
+           "set_value": 6500,
+           "set_flags": 1,
+           "set_flags_names": [
+            "auto"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": 6500,
+           "readback_flags": 1,
+           "readback_flags_names": [
+            "auto"
+           ],
+           "matches": true,
+           "call_ms": 0.8092,
+           "timed_out": false
+          },
+          {
+           "control": "cc.focus",
+           "requested": "auto",
+           "supported": true,
+           "via": "IAMCameraControl",
+           "before_value": 255,
+           "before_flags": 2,
+           "set_value": 255,
+           "set_flags": 1,
+           "set_flags_names": [
+            "auto"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": 255,
+           "readback_flags": 1,
+           "readback_flags_names": [
+            "auto"
+           ],
+           "matches": true,
+           "call_ms": 0.8258999996,
+           "timed_out": false
+          }
+         ]
+        }
+       ],
+       "after": {
+        "exposure": {
+         "value": -6,
+         "flags": [
+          "auto"
+         ]
+        },
+        "gain": {
+         "value": 7,
+         "flags": [
+          "manual"
+         ]
+        },
+        "white_balance": {
+         "value": 6500,
+         "flags": [
+          "auto"
+         ]
+        },
+        "focus": {
+         "value": 255,
+         "flags": [
+          "auto"
+         ]
+        }
+       },
+       "restored": true
+      }
+     },
+     "ds": {
+      "initial_read": {
+       "rc": 0,
+       "elapsed_s": 0.047,
+       "timed_out": false,
+       "killed": false,
+       "lock_wait_s": 0.0,
+       "spawn_error": null,
+       "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api ds --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --read-only --timeout-ms 5000\n[camlock] released"
+      },
+      "controls": {
+       "exposure": {
+        "range": {
+         "min": -11,
+         "max": -2,
+         "step": 1,
+         "default": -5
+        },
+        "original": {
+         "value": -6,
+         "flags": [
+          "auto"
+         ]
+        },
+        "values": [
+         -9,
+         -7,
+         -4
+        ],
+        "runs": [
+         {
+          "path": "ds",
+          "values": [
+           -9,
+           -7,
+           -4
+          ],
+          "fixed": {},
+          "capture_ok": true,
+          "launcher": {
+           "rc": 0,
+           "elapsed_s": 8.063,
+           "timed_out": false,
+           "killed": false,
+           "lock_wait_s": 0.0,
+           "spawn_error": null,
+           "stderr_tail": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 87.5 -- C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\multi_launch.py C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\review\\capture\\W-CTRL-EFFECT\\logitechwebcam_046d-0843_7\\ds_exposure_r0_spec.json\n[camlock] released"
+          },
+          "frames": 133,
+          "sets": [
+           {
+            "value": -9,
+            "rc": 0,
+            "t_start_ns": 13617815081100,
+            "t_end_ns": 13617862482700,
+            "matches": true,
+            "hr": [
+             "S_OK"
+            ],
+            "error": null
+           },
+           {
+            "value": -7,
+            "rc": 0,
+            "t_start_ns": 13622315192100,
+            "t_end_ns": 13622363524500,
+            "matches": true,
+            "hr": [
+             "S_OK"
+            ],
+            "error": null
+           },
+           {
+            "value": -4,
+            "rc": 0,
+            "t_start_ns": 13623714821200,
+            "t_end_ns": 13623760667800,
+            "matches": true,
+            "hr": [
+             "S_OK"
+            ],
+            "error": null
+           }
+          ],
+          "before_start_readback": true,
+          "before_start_set_finished_before_open": true,
+          "after_start_readback": true,
+          "segments": [
+           {
+            "n": 11,
+            "value": 104.65920928030302,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 6,
+            "value": 40.34111418547454,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           },
+           {
+            "n": 4,
+            "value": 144.97608778211804,
+            "error": null,
+            "frame_kinds": [
+             "jpeg"
+            ]
+           }
+          ],
+          "effect_ok": false,
+          "effect_after_ok": true,
+          "effect_before_ok": false,
+          "monotonic": false,
+          "ratio_last_first": 1.3852205532514252,
+          "ratio_after_start": 3.593755172838508,
+          "required_ratio": 1.25,
+          "metric_values": [
+           104.65920928030302,
+           40.34111418547454,
+           144.97608778211804
+          ],
+          "capture_error": null,
+          "capture_stderr": null
+         }
+        ],
+        "persisted_after_reopen": true,
+        "readback_after_reopen": {
+         "value": -4,
+         "flags": [
+          "manual"
+         ]
+        },
+        "runs_ok": 0,
+        "runs_ok_after_start_only": 1,
+        "runs_total": 1
+       },
+       "gain": {
+        "skipped": "quick run: DS path tests exposure only"
+       },
+       "white_balance": {
+        "skipped": "quick run: DS path tests exposure only"
+       },
+       "focus": {
+        "skipped": "quick run: DS path tests exposure only"
+       }
+      },
+      "restore": {
+       "auto": {
+        "exposure": "auto"
+       },
+       "manual": {},
+       "steps": [
+        {
+         "sets": {
+          "exposure": "auto"
+         },
+         "run": {
+          "rc": 0,
+          "elapsed_s": 0.047,
+          "timed_out": false,
+          "killed": false,
+          "lock_wait_s": 0.0,
+          "spawn_error": null,
+          "stderr_tail": "[camlock] acquired after 0.0s: C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api ds --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --set exposure=auto --timeout-ms 5000\n[camlock] released"
+         },
+         "ok": true,
+         "detail": [
+          {
+           "control": "cc.exposure",
+           "requested": "auto",
+           "supported": true,
+           "via": "IAMCameraControl",
+           "before_value": -4,
+           "before_flags": 2,
+           "set_value": -4,
+           "set_flags": 1,
+           "set_flags_names": [
+            "auto"
+           ],
+           "hr_set": "0x00000000",
+           "hr_set_name": "S_OK",
+           "readback_value": -4,
+           "readback_flags": 1,
+           "readback_flags_names": [
+            "auto"
+           ],
+           "matches": true,
+           "call_ms": 1.0472,
+           "timed_out": false
+          }
+         ]
+        }
+       ],
+       "after": {
+        "exposure": {
+         "value": -4,
+         "flags": [
+          "auto"
+         ]
+        }
+       },
+       "restored": true
+      }
+     }
+    }
+   }
+  },
+  "arrivals": {
+   "before": {
+    "utc": "2026-11-06T18:10:48.777477+00:00",
+    "cameras": {
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-06T14:59:24.581364+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-06T17:47:04.819155+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+      "present": true,
+      "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "after": {
+    "utc": "2026-11-06T18:13:07.473775+00:00",
+    "cameras": {
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-06T14:59:24.581364+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-06T17:47:04.819155+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+      "present": true,
+      "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "changes": [],
+   "unexplained_re_arrival": false
+  },
+  "note": "range_matches_descriptor is evaluated by W-CTRL-LIST; frames stay in raw_dir"
+ },
+ "verdicts": {
+  "G-CTRL|046d:085c:sn=C922SN01|mf": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every descriptor control listed with the descriptor's range",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "set + readback agree",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "effect shows in the image (exposure, gain, WB, focus)",
+     "met": true,
+     "detail": [
+      "exposure",
+      "gain",
+      "white_balance",
+      "focus"
+     ]
+    },
+    {
+     "criterion": "works before and after stream start",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "3/3 runs",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "no workaround needed",
+     "met": true,
+     "detail": []
+    }
+   ],
+   "evidence": {
+    "controls": [
+     {
+      "name": "exposure",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 1,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     },
+     {
+      "name": "gain",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 1,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     },
+     {
+      "name": "white_balance",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 1,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     },
+     {
+      "name": "focus",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 1,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     }
+    ]
+   },
+   "note": " only 1 run(s) per control (quick)",
+   "restore": true
+  },
+  "G-CTRL|046d:085c:sn=C922SN01|ds": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every descriptor control listed with the descriptor's range",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "set + readback agree",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "effect shows in the image (exposure, gain, WB, focus)",
+     "met": true,
+     "detail": [
+      "exposure"
+     ]
+    },
+    {
+     "criterion": "works before and after stream start",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "3/3 runs",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "no workaround needed",
+     "met": true,
+     "detail": []
+    }
+   ],
+   "evidence": {
+    "controls": [
+     {
+      "name": "exposure",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 1,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     }
+    ]
+   },
+   "note": " only 1 run(s) per control (quick)",
+   "restore": true
+  },
+  "G-CTRL|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|mf": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every descriptor control listed with the descriptor's range",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "set + readback agree",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "effect shows in the image (exposure, gain, WB, focus)",
+     "met": false,
+     "detail": [
+      "exposure",
+      "gain",
+      "white_balance",
+      "focus"
+     ]
+    },
+    {
+     "criterion": "works before and after stream start",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "3/3 runs",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "no workaround needed",
+     "met": true,
+     "detail": []
+    }
+   ],
+   "evidence": {
+    "controls": [
+     {
+      "name": "exposure",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": false,
+      "effect_all_segments_ok": true,
+      "before_start_ok": true,
+      "after_start_ok": false,
+      "runs_ok": 1,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     },
+     {
+      "name": "gain",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": false,
+      "effect_all_segments_ok": true,
+      "before_start_ok": true,
+      "after_start_ok": false,
+      "runs_ok": 1,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     },
+     {
+      "name": "white_balance",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 1,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     },
+     {
+      "name": "focus",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 1,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     }
+    ]
+   },
+   "note": " only 1 run(s) per control (quick)",
+   "restore": true
+  },
+  "G-CTRL|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|ds": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every descriptor control listed with the descriptor's range",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "set + readback agree",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "effect shows in the image (exposure, gain, WB, focus)",
+     "met": false,
+     "detail": [
+      "exposure"
+     ]
+    },
+    {
+     "criterion": "works before and after stream start",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "3/3 runs",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "no workaround needed",
+     "met": true,
+     "detail": []
+    }
+   ],
+   "evidence": {
+    "controls": [
+     {
+      "name": "exposure",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": false,
+      "effect_all_segments_ok": true,
+      "before_start_ok": true,
+      "after_start_ok": false,
+      "runs_ok": 1,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     }
+    ]
+   },
+   "note": " only 1 run(s) per control (quick)",
+   "restore": true
+  },
+  "G-CTRL|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|mf": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every descriptor control listed with the descriptor's range",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "set + readback agree",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "effect shows in the image (exposure, gain, WB, focus)",
+     "met": false,
+     "detail": [
+      "exposure",
+      "gain",
+      "white_balance"
+     ]
+    },
+    {
+     "criterion": "works before and after stream start",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "3/3 runs",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "no workaround needed",
+     "met": true,
+     "detail": []
+    }
+   ],
+   "evidence": {
+    "controls": [
+     {
+      "name": "exposure",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 1,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     },
+     {
+      "name": "gain",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": false,
+      "effect_all_segments_ok": false,
+      "before_start_ok": true,
+      "after_start_ok": false,
+      "runs_ok": 0,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     },
+     {
+      "name": "white_balance",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": false,
+      "effect_all_segments_ok": false,
+      "before_start_ok": true,
+      "after_start_ok": false,
+      "runs_ok": 0,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     }
+    ]
+   },
+   "note": " only 1 run(s) per control (quick)",
+   "restore": true
+  },
+  "G-CTRL|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|ds": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every descriptor control listed with the descriptor's range",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "set + readback agree",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "effect shows in the image (exposure, gain, WB, focus)",
+     "met": true,
+     "detail": [
+      "exposure"
+     ]
+    },
+    {
+     "criterion": "works before and after stream start",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "3/3 runs",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "no workaround needed",
+     "met": true,
+     "detail": []
+    }
+   ],
+   "evidence": {
+    "controls": [
+     {
+      "name": "exposure",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 1,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     }
+    ]
+   },
+   "note": " only 1 run(s) per control (quick)",
+   "restore": true
+  },
+  "G-CTRL|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7|mf": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every descriptor control listed with the descriptor's range",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "set + readback agree",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "effect shows in the image (exposure, gain, WB, focus)",
+     "met": true,
+     "detail": [
+      "exposure",
+      "gain",
+      "white_balance",
+      "focus"
+     ]
+    },
+    {
+     "criterion": "works before and after stream start",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "3/3 runs",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "no workaround needed",
+     "met": false,
+     "detail": [
+      "a value set before the stream starts reads back but does not reach the image; re-apply it after the first frame"
+     ]
+    }
+   ],
+   "evidence": {
+    "controls": [
+     {
+      "name": "exposure",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": false,
+      "before_start_ok": false,
+      "after_start_ok": true,
+      "runs_ok": 0,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": "a value set before the stream starts reads back but does not reach the image; re-apply it after the first frame"
+     },
+     {
+      "name": "gain",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 1,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     },
+     {
+      "name": "white_balance",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "before_start_ok": true,
+      "after_start_ok": true,
+      "runs_ok": 1,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     },
+     {
+      "name": "focus",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": false,
+      "effect_ok": true,
+      "effect_all_segments_ok": true,
+      "before_start_ok": true,
+      "after_start_ok": false,
+      "runs_ok": 0,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": null
+     }
+    ]
+   },
+   "note": " only 1 run(s) per control (quick)",
+   "restore": true
+  },
+  "G-CTRL|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7|ds": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every descriptor control listed with the descriptor's range",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "set + readback agree",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "effect shows in the image (exposure, gain, WB, focus)",
+     "met": true,
+     "detail": [
+      "exposure"
+     ]
+    },
+    {
+     "criterion": "works before and after stream start",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "3/3 runs",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "no workaround needed",
+     "met": false,
+     "detail": [
+      "a value set before the stream starts reads back but does not reach the image; re-apply it after the first frame"
+     ]
+    }
+   ],
+   "evidence": {
+    "controls": [
+     {
+      "name": "exposure",
+      "listed": true,
+      "range_matches_descriptor": null,
+      "set_readback_ok": true,
+      "effect_ok": true,
+      "effect_all_segments_ok": false,
+      "before_start_ok": false,
+      "after_start_ok": true,
+      "runs_ok": 0,
+      "runs_total": 1,
+      "persisted_after_reopen": true,
+      "workaround": "a value set before the stream starts reads back but does not reach the image; re-apply it after the first frame"
+     }
+    ]
+   },
+   "note": " only 1 run(s) per control (quick)",
+   "restore": true
+  }
+ },
+ "errors": []
+}

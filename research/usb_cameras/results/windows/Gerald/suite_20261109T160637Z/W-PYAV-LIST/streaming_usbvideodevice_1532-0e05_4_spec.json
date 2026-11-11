@@ -1,0 +1,158 @@
+{
+ "label": "streaming_usbvideodevice_1532-0e05_4",
+ "condition": "streaming:1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+ "cameras": [
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4"
+  },
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "name": "Logitech Webcam C930e",
+   "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8"
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "name": "USB Camera",
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2"
+  },
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "instance_id": "USB\\VID_046D&PID_085C\\C922SN01"
+  }
+ ],
+ "stream_key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+ "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261109T160637Z\\W-PYAV-LIST\\streaming_usbvideodevice_1532-0e05_4",
+ "streamer": {
+  "argv": [
+   "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+   "capture",
+   "--api",
+   "mf",
+   "--device",
+   "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "--width",
+   "1280",
+   "--height",
+   "720",
+   "--fps",
+   "30",
+   "--subtype",
+   "MJPG",
+   "--seconds",
+   "240",
+   "--timeout-ms",
+   "5000",
+   "--out-dir",
+   "{out_dir}",
+   "--save",
+   "none",
+   "--stop-file",
+   "{stop_file}"
+  ],
+  "first_frame_timeout_s": 25,
+  "stop_timeout_s": 20
+ },
+ "baseline_s": 2.0,
+ "settle_s": 1.0,
+ "descriptor_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261109T160637Z\\descriptors\\descriptors.json",
+ "methods": [
+  {
+   "id": "pyav_list_devices",
+   "camera_key": null,
+   "camera_slug": null,
+   "argv": [
+    "uv",
+    "run",
+    "--python",
+    "3.12",
+    "--script",
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_list.py",
+    "pyav_list_devices",
+    "--repeats",
+    "1",
+    "--gap-s",
+    "1.5",
+    "--timeout-s",
+    "20.0"
+   ],
+   "timeout_s": 61.5
+  },
+  {
+   "id": "ffmpeg_list_devices",
+   "camera_key": null,
+   "camera_slug": null,
+   "argv": [
+    "uv",
+    "run",
+    "--python",
+    "3.12",
+    "--script",
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_list.py",
+    "ffmpeg_list_devices",
+    "--repeats",
+    "1",
+    "--gap-s",
+    "1.5",
+    "--timeout-s",
+    "20.0",
+    "--ffmpeg",
+    "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE"
+   ],
+   "timeout_s": 61.5
+  },
+  {
+   "id": "pyav_list_options",
+   "camera_key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "camera_slug": "usbvideodevice_1532-0e05_4",
+   "argv": [
+    "uv",
+    "run",
+    "--python",
+    "3.12",
+    "--script",
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_list.py",
+    "pyav_list_options",
+    "--device",
+    "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+    "--repeats",
+    "1",
+    "--gap-s",
+    "1.5",
+    "--timeout-s",
+    "20.0"
+   ],
+   "timeout_s": 61.5
+  },
+  {
+   "id": "ffmpeg_list_options",
+   "camera_key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "camera_slug": "usbvideodevice_1532-0e05_4",
+   "argv": [
+    "uv",
+    "run",
+    "--python",
+    "3.12",
+    "--script",
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_list.py",
+    "ffmpeg_list_options",
+    "--device",
+    "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+    "--repeats",
+    "1",
+    "--gap-s",
+    "1.5",
+    "--timeout-s",
+    "20.0",
+    "--ffmpeg",
+    "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE"
+   ],
+   "timeout_s": 61.5
+  }
+ ],
+ "sample": {
+  "interval_s": 0.15
+ }
+}

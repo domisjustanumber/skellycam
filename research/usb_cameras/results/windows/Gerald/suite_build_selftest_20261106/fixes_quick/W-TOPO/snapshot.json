@@ -1,0 +1,3247 @@
+{
+ "os": "windows",
+ "collected_utc": "2026-11-06T21:09:51.805810+00:00",
+ "controllers": [
+  {
+   "id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "name": "Intel(R) USB 3.20 eXtensible Host Controller - 1.20 (Microsoft)",
+   "pci_id": "8086:7a60",
+   "vendor": "8086",
+   "kind": "xhci",
+   "policy_hint": null,
+   "location_info": "PCI bus 0, device 20, function 0",
+   "location_paths": [
+    "PCIROOT(0)#PCI(1400)",
+    "ACPI(_SB_)#ACPI(PC00)#ACPI(XHCI)"
+   ],
+   "parent_desc": "PCI Express Root Complex",
+   "behind_pcie_switch": false,
+   "number_of_root_ports_info0": 16,
+   "root_hub_interface": "USB#ROOT_HUB30#4&2fd48294&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8}"
+  },
+  {
+   "id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2ea0dfaf&0&001000E4",
+   "name": "Intel(R) USB 3.10 eXtensible Host Controller - 1.10 (Microsoft)",
+   "pci_id": "8086:1138",
+   "vendor": "8086",
+   "kind": "xhci",
+   "policy_hint": null,
+   "location_info": "PCI bus 11, device 0, function 0",
+   "location_paths": [
+    "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)",
+    "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(PXSX)#ACPI(TBDU)#ACPI(XHCI)",
+    "ACPI(_SB_)#ACPI(PC00)#ACPI(RP05)#ACPI(HRUS)#ACPI(TBDU)#ACPI(XHCI)"
+   ],
+   "parent_desc": "PCI Express Downstream Switch Port",
+   "behind_pcie_switch": true,
+   "number_of_root_ports_info0": 2,
+   "root_hub_interface": "USB#ROOT_HUB30#7&37b53fb&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8}"
+  }
+ ],
+ "ports": [
+  {
+   "id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#1",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "port_number": 1,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.3.1",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3#1",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(3)#USB(1)",
+    "socket_evidence_level": "weak",
+    "usb3_capable": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#2",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "port_number": 2,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.3.2",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3#2",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(3)#USB(2)",
+    "socket_evidence_level": "weak",
+    "usb3_capable": true
+   },
+   "occupant_device_id": "USB\\VID_046D&PID_C52B\\7&29C31953&0&2",
+   "speed_max": "HS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#3",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "port_number": 3,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.3.3",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3#3",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(3)#USB(3)",
+    "socket_evidence_level": "weak",
+    "usb3_capable": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#4",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "port_number": 4,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.3.4",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3#4",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(3)#USB(4)",
+    "socket_evidence_level": "weak",
+    "usb3_capable": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#5",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "port_number": 5,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.3.5",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": null,
+   "connectable": "internal",
+   "connector": "internal",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(3)#USB(5)",
+    "socket_evidence_level": null
+   },
+   "occupant_device_id": "USB\\VID_04D8&PID_0B2A\\7&29C31953&0&5",
+   "speed_max": "HS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#6",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "port_number": 6,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.3.6",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": null,
+   "connectable": "internal",
+   "connector": "internal",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(3)#USB(6)",
+    "socket_evidence_level": null
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#7",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "port_number": 7,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.3.7",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": null,
+   "connectable": "internal",
+   "connector": "internal",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(3)#USB(7)",
+    "socket_evidence_level": null
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#1",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10",
+   "port_number": 1,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/10.1",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": null,
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(10)#USB(1)",
+    "socket_evidence_level": "weak"
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#2",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10",
+   "port_number": 2,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/10.2",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": null,
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(10)#USB(2)",
+    "socket_evidence_level": "weak"
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#3",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10",
+   "port_number": 3,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/10.3",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": null,
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(10)#USB(3)",
+    "pld": {
+     "panel": "top",
+     "vertical_position": "upper",
+     "horizontal_position": "left",
+     "shape": 0,
+     "group_token": 0,
+     "group_position": 43,
+     "user_visible": true,
+     "width_mm": 0,
+     "height_mm": 0,
+     "color_rgb": "#000000",
+     "ignore_color": true,
+     "all_zero_defaults": true,
+     "position_all_zero": true
+    },
+    "user_visible": true,
+    "socket_evidence": "_PLD user_visible on a hub port (weak); phantom history of internal-header devices: HX1500i Power Supply",
+    "socket_evidence_level": "header"
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": [
+    {
+     "instance_id": "USB\\VID_1B1C&PID_1C1F\\6&37929603&0&3",
+     "name": "HX1500i Power Supply",
+     "header_device": true
+    }
+   ]
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10#4",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10",
+   "port_number": 4,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/10.4",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": null,
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(10)#USB(4)",
+    "socket_evidence_level": "weak"
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#1",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 1,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/1",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#17",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "acpi_name": "HS01",
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(1)",
+    "pld": {
+     "panel": "top",
+     "vertical_position": "upper",
+     "horizontal_position": "left",
+     "shape": 0,
+     "group_token": 0,
+     "group_position": 1,
+     "user_visible": true,
+     "width_mm": 0,
+     "height_mm": 0,
+     "color_rgb": "#000000",
+     "ignore_color": true,
+     "all_zero_defaults": true,
+     "position_all_zero": true
+    },
+    "user_visible": true,
+    "socket_evidence": "_PLD user_visible; phantom history: USB Receiver",
+    "socket_evidence_level": "strong",
+    "usb3_capable": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": [
+    {
+     "instance_id": "USB\\VID_046D&PID_C52B\\5&cc3f949&0&1",
+     "name": "USB Receiver",
+     "header_device": false
+    }
+   ]
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#2",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 2,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/2",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#18",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "acpi_name": "HS02",
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(2)",
+    "pld": {
+     "panel": "top",
+     "vertical_position": "upper",
+     "horizontal_position": "left",
+     "shape": 0,
+     "group_token": 0,
+     "group_position": 2,
+     "user_visible": true,
+     "width_mm": 0,
+     "height_mm": 0,
+     "color_rgb": "#000000",
+     "ignore_color": true,
+     "all_zero_defaults": true,
+     "position_all_zero": true
+    },
+    "user_visible": true,
+    "socket_evidence": "_PLD user_visible; phantom history: Microsoft® 2.4GHz Transceiver v8.0",
+    "socket_evidence_level": "strong",
+    "usb3_capable": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": [
+    {
+     "instance_id": "USB\\VID_045E&PID_07B2\\5&cc3f949&0&2",
+     "name": "Microsoft® 2.4GHz Transceiver v8.0",
+     "header_device": false
+    }
+   ]
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#3",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 3,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/3",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#19",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "acpi_name": "HS03",
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(3)",
+    "pld": {
+     "panel": "top",
+     "vertical_position": "upper",
+     "horizontal_position": "left",
+     "shape": 0,
+     "group_token": 0,
+     "group_position": 3,
+     "user_visible": true,
+     "width_mm": 0,
+     "height_mm": 0,
+     "color_rgb": "#000000",
+     "ignore_color": true,
+     "all_zero_defaults": true,
+     "position_all_zero": true
+    },
+    "user_visible": true,
+    "socket_evidence": "_PLD user_visible",
+    "socket_evidence_level": "strong",
+    "usb3_capable": true
+   },
+   "occupant_device_id": "USB\\VID_0922&PID_001F\\PERIPHSNB00001",
+   "speed_max": "HS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#4",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 4,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/4",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#20",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "acpi_name": "HS04",
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(4)",
+    "pld": {
+     "panel": "top",
+     "vertical_position": "upper",
+     "horizontal_position": "left",
+     "shape": 0,
+     "group_token": 0,
+     "group_position": 4,
+     "user_visible": true,
+     "width_mm": 0,
+     "height_mm": 0,
+     "color_rgb": "#000000",
+     "ignore_color": true,
+     "all_zero_defaults": true,
+     "position_all_zero": true
+    },
+    "user_visible": true,
+    "socket_evidence": "_PLD user_visible; phantom history: USB2.1 Hub",
+    "socket_evidence_level": "strong",
+    "usb3_capable": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": [
+    {
+     "instance_id": "USB\\VID_05E3&PID_0610\\5&cc3f949&0&4",
+     "name": "USB2.1 Hub",
+     "header_device": false
+    }
+   ]
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#5",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 5,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/5",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#21",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(5)",
+    "socket_evidence_level": "weak",
+    "usb3_capable": true,
+    "acpi_name": "HS05",
+    "acpi_name_inferred": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#6",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 6,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/6",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#22",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(6)",
+    "socket_evidence_level": "weak",
+    "usb3_capable": true,
+    "acpi_name": "HS06",
+    "acpi_name_inferred": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#7",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 7,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#23",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "acpi_name": "HS07",
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(7)",
+    "pld": {
+     "panel": "top",
+     "vertical_position": "upper",
+     "horizontal_position": "left",
+     "shape": 0,
+     "group_token": 0,
+     "group_position": 7,
+     "user_visible": true,
+     "width_mm": 0,
+     "height_mm": 0,
+     "color_rgb": "#000000",
+     "ignore_color": true,
+     "all_zero_defaults": true,
+     "position_all_zero": true
+    },
+    "user_visible": true,
+    "socket_evidence": "_PLD user_visible; phantom history: Cruzer, Microsoft® 2.4GHz Transceiver v8.0",
+    "socket_evidence_level": "strong",
+    "usb3_capable": true
+   },
+   "occupant_device_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+   "speed_max": "HS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": [
+    {
+     "instance_id": "USB\\VID_045E&PID_07B2\\5&cc3f949&0&7",
+     "name": "Microsoft® 2.4GHz Transceiver v8.0",
+     "header_device": false
+    },
+    {
+     "instance_id": "USB\\VID_0781&PID_5530\\2005173811139B714892",
+     "name": "Cruzer",
+     "header_device": false
+    }
+   ]
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#8",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 8,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#24",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "acpi_name": "HS08",
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(8)",
+    "pld": {
+     "panel": "top",
+     "vertical_position": "upper",
+     "horizontal_position": "left",
+     "shape": 0,
+     "group_token": 0,
+     "group_position": 8,
+     "user_visible": true,
+     "width_mm": 0,
+     "height_mm": 0,
+     "color_rgb": "#000000",
+     "ignore_color": true,
+     "all_zero_defaults": true,
+     "position_all_zero": true
+    },
+    "user_visible": true,
+    "socket_evidence": "_PLD user_visible",
+    "socket_evidence_level": "strong",
+    "usb3_capable": true
+   },
+   "occupant_device_id": "USB\\VID_045E&PID_07B2\\5&CC3F949&0&8",
+   "speed_max": "HS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#9",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 9,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/9",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#25",
+   "connectable": "user",
+   "connector": "C",
+   "label_parts": {
+    "type_c": true,
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(9)",
+    "socket_evidence": "Type-C connector flag (_UPC)",
+    "socket_evidence_level": "weak",
+    "usb3_capable": true,
+    "acpi_name": "HS09",
+    "acpi_name_inferred": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 10,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/10",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": null,
+   "connectable": "internal",
+   "connector": "internal",
+   "label_parts": {
+    "acpi_name": "HS10",
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(10)",
+    "pld": {
+     "panel": "top",
+     "vertical_position": "upper",
+     "horizontal_position": "left",
+     "shape": 0,
+     "group_token": 0,
+     "group_position": 0,
+     "user_visible": false,
+     "width_mm": 0,
+     "height_mm": 0,
+     "color_rgb": "#000000",
+     "ignore_color": true,
+     "all_zero_defaults": true,
+     "position_all_zero": true
+    },
+    "socket_evidence_level": null
+   },
+   "occupant_device_id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10",
+   "speed_max": "HS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#11",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 11,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/11",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": null,
+   "connectable": "internal",
+   "connector": "internal",
+   "label_parts": {
+    "acpi_name": "HS11",
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(11)",
+    "pld": {
+     "panel": "top",
+     "vertical_position": "upper",
+     "horizontal_position": "left",
+     "shape": 0,
+     "group_token": 0,
+     "group_position": 0,
+     "user_visible": false,
+     "width_mm": 0,
+     "height_mm": 0,
+     "color_rgb": "#000000",
+     "ignore_color": true,
+     "all_zero_defaults": true,
+     "position_all_zero": true
+    },
+    "socket_evidence_level": null
+   },
+   "occupant_device_id": "USB\\VID_0B05&PID_19AF\\9876543210",
+   "speed_max": "HS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#12",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 12,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/12",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": "USB\\ROOT_HUB30\\7&37B53FB&0&0#3",
+   "connectable": "user",
+   "connector": "C",
+   "label_parts": {
+    "acpi_name": "HS12",
+    "type_c": true,
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(12)",
+    "pld": {
+     "panel": "top",
+     "vertical_position": "upper",
+     "horizontal_position": "left",
+     "shape": 1,
+     "group_token": 0,
+     "group_position": 18,
+     "user_visible": true,
+     "width_mm": 8,
+     "height_mm": 3,
+     "color_rgb": "#000000",
+     "ignore_color": false,
+     "all_zero_defaults": false,
+     "position_all_zero": true
+    },
+    "user_visible": true,
+    "socket_evidence": "_PLD user_visible; _PLD receptacle 8x3 mm oval (USB-C geometry); phantom history: MX Vertical Advanced Ergonomic Mouse; Type-C connector flag (_UPC)",
+    "socket_evidence_level": "strong",
+    "usb3_capable": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": [
+    {
+     "instance_id": "USB\\VID_046D&PID_C08A\\BD0F8D6E1FD1259F",
+     "name": "MX Vertical Advanced Ergonomic Mouse",
+     "header_device": false
+    }
+   ]
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 13,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": "USB\\ROOT_HUB30\\7&37B53FB&0&0#4",
+   "connectable": "user",
+   "connector": "C",
+   "label_parts": {
+    "acpi_name": "HS13",
+    "type_c": true,
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)",
+    "pld": {
+     "panel": "top",
+     "vertical_position": "upper",
+     "horizontal_position": "left",
+     "shape": 1,
+     "group_token": 0,
+     "group_position": 19,
+     "user_visible": true,
+     "width_mm": 8,
+     "height_mm": 3,
+     "color_rgb": "#000000",
+     "ignore_color": false,
+     "all_zero_defaults": false,
+     "position_all_zero": true
+    },
+    "user_visible": true,
+    "socket_evidence": "_PLD user_visible; _PLD receptacle 8x3 mm oval (USB-C geometry); Type-C connector flag (_UPC)",
+    "socket_evidence_level": "strong",
+    "usb3_capable": true
+   },
+   "occupant_device_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+   "speed_max": "HS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#14",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 14,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/14",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": null,
+   "connectable": "internal",
+   "connector": "internal",
+   "label_parts": {
+    "acpi_name": "HS14",
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(14)",
+    "pld": {
+     "panel": "top",
+     "vertical_position": "upper",
+     "horizontal_position": "left",
+     "shape": 0,
+     "group_token": 0,
+     "group_position": 0,
+     "user_visible": false,
+     "width_mm": 0,
+     "height_mm": 0,
+     "color_rgb": "#000000",
+     "ignore_color": true,
+     "all_zero_defaults": true,
+     "position_all_zero": true
+    },
+    "socket_evidence_level": null
+   },
+   "occupant_device_id": "USB\\VID_8087&PID_0033\\5&CC3F949&0&14",
+   "speed_max": "HS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#15",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 15,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/15",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": null,
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(15)",
+    "socket_evidence_level": "weak",
+    "acpi_name": "HS15",
+    "acpi_name_inferred": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#16",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 16,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/16",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": null,
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(16)",
+    "socket_evidence_level": "weak",
+    "acpi_name": "HS16",
+    "acpi_name_inferred": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#17",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 17,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/17",
+   "is_root_port": true,
+   "half": "usb3",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#1",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(17)",
+    "socket_evidence_level": "weak",
+    "acpi_name": "SS01",
+    "acpi_name_inferred": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#18",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 18,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/18",
+   "is_root_port": true,
+   "half": "usb3",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#2",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(18)",
+    "socket_evidence_level": "weak",
+    "acpi_name": "SS02",
+    "acpi_name_inferred": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#19",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 19,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/19",
+   "is_root_port": true,
+   "half": "usb3",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#3",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(19)",
+    "socket_evidence_level": "weak",
+    "acpi_name": "SS03",
+    "acpi_name_inferred": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#20",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 20,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/20",
+   "is_root_port": true,
+   "half": "usb3",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#4",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "acpi_name": "SS04",
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(20)",
+    "pld": {
+     "panel": "top",
+     "vertical_position": "upper",
+     "horizontal_position": "left",
+     "shape": 0,
+     "group_token": 0,
+     "group_position": 4,
+     "user_visible": true,
+     "width_mm": 0,
+     "height_mm": 0,
+     "color_rgb": "#000000",
+     "ignore_color": true,
+     "all_zero_defaults": true,
+     "position_all_zero": true
+    },
+    "user_visible": true,
+    "socket_evidence": "_PLD user_visible; phantom history: USB3.1 Hub",
+    "socket_evidence_level": "strong"
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": [
+    {
+     "instance_id": "USB\\VID_05E3&PID_0626\\5&cc3f949&0&20",
+     "name": "USB3.1 Hub",
+     "header_device": false
+    }
+   ]
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#21",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 21,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/21",
+   "is_root_port": true,
+   "half": "usb3",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#5",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(21)",
+    "socket_evidence_level": "weak",
+    "acpi_name": "SS05",
+    "acpi_name_inferred": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#22",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 22,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/22",
+   "is_root_port": true,
+   "half": "usb3",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#6",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(22)",
+    "socket_evidence_level": "weak",
+    "acpi_name": "SS06",
+    "acpi_name_inferred": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#23",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 23,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/23",
+   "is_root_port": true,
+   "half": "usb3",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#7",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(23)",
+    "socket_evidence_level": "weak",
+    "acpi_name": "SS07",
+    "acpi_name_inferred": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#24",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 24,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/24",
+   "is_root_port": true,
+   "half": "usb3",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#8",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(24)",
+    "socket_evidence_level": "weak",
+    "acpi_name": "SS08",
+    "acpi_name_inferred": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#25",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": null,
+   "port_number": 25,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/25",
+   "is_root_port": true,
+   "half": "usb3",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#9",
+   "connectable": "user",
+   "connector": "C",
+   "label_parts": {
+    "type_c": true,
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(25)",
+    "socket_evidence": "Type-C connector flag (_UPC)",
+    "socket_evidence_level": "weak",
+    "acpi_name": "SS09",
+    "acpi_name_inferred": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1#1",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1",
+   "port_number": 1,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.1.1",
+   "is_root_port": false,
+   "half": "usb3",
+   "companion_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1#1",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(1)#USB(1)",
+    "socket_evidence_level": "weak"
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1#2",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1",
+   "port_number": 2,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.1.2",
+   "is_root_port": false,
+   "half": "usb3",
+   "companion_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1#2",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(1)#USB(2)",
+    "socket_evidence_level": "weak"
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1#3",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1",
+   "port_number": 3,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.1.3",
+   "is_root_port": false,
+   "half": "usb3",
+   "companion_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1#3",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(1)#USB(3)",
+    "socket_evidence_level": "weak"
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1#4",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1",
+   "port_number": 4,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.1.4",
+   "is_root_port": false,
+   "half": "usb3",
+   "companion_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1#4",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(1)#USB(4)",
+    "socket_evidence_level": "weak"
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3#1",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "port_number": 1,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.3.1",
+   "is_root_port": false,
+   "half": "usb3",
+   "companion_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#1",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(3)#USB(1)",
+    "socket_evidence_level": "weak"
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3#2",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "port_number": 2,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.3.2",
+   "is_root_port": false,
+   "half": "usb3",
+   "companion_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#2",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(3)#USB(2)",
+    "socket_evidence_level": "weak"
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3#3",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "port_number": 3,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.3.3",
+   "is_root_port": false,
+   "half": "usb3",
+   "companion_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#3",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(3)#USB(3)",
+    "socket_evidence_level": "weak"
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3#4",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "port_number": 4,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.3.4",
+   "is_root_port": false,
+   "half": "usb3",
+   "companion_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#4",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(3)#USB(4)",
+    "socket_evidence_level": "weak"
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3#5",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "port_number": 5,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.3.5",
+   "is_root_port": false,
+   "half": "usb3",
+   "companion_id": null,
+   "connectable": "internal",
+   "connector": "internal",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(3)#USB(5)",
+    "socket_evidence_level": null
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3#6",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "port_number": 6,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.3.6",
+   "is_root_port": false,
+   "half": "usb3",
+   "companion_id": null,
+   "connectable": "internal",
+   "connector": "internal",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(3)#USB(6)",
+    "socket_evidence_level": null
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3#7",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "port_number": 7,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.3.7",
+   "is_root_port": false,
+   "half": "usb3",
+   "companion_id": null,
+   "connectable": "internal",
+   "connector": "internal",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(3)#USB(7)",
+    "socket_evidence_level": null
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4#1",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "port_number": 1,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.1",
+   "is_root_port": false,
+   "half": "usb3",
+   "companion_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13#1",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(1)",
+    "socket_evidence_level": "weak"
+   },
+   "occupant_device_id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1",
+   "speed_max": "SS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4#2",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "port_number": 2,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.2",
+   "is_root_port": false,
+   "half": "usb3",
+   "companion_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13#2",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(2)",
+    "socket_evidence_level": "weak"
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4#3",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "port_number": 3,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.3",
+   "is_root_port": false,
+   "half": "usb3",
+   "companion_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13#3",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(3)",
+    "socket_evidence": "phantom history: Razer Kiyo Pro",
+    "socket_evidence_level": "strong"
+   },
+   "occupant_device_id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "speed_max": "SS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": [
+    {
+     "instance_id": "USB\\VID_1532&PID_0E05\\9&3a0ecb01&0&3",
+     "name": "Razer Kiyo Pro",
+     "header_device": false
+    }
+   ]
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4#4",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "port_number": 4,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "is_root_port": false,
+   "half": "usb3",
+   "companion_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13#4",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+    "socket_evidence": "phantom history: USB5537B",
+    "socket_evidence_level": "strong"
+   },
+   "occupant_device_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "speed_max": "SS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": [
+    {
+     "instance_id": "USB\\VID_0424&PID_5537\\9&3a0ecb01&0&4",
+     "name": "USB5537B",
+     "header_device": false
+    }
+   ]
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1#1",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "port_number": 1,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.1",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1#1",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(1)",
+    "socket_evidence": "phantom history: Logitech Webcam C930e",
+    "socket_evidence_level": "strong",
+    "usb3_capable": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": [
+    {
+     "instance_id": "USB\\VID_046D&PID_0843\\7&7dcc7ce&0&1",
+     "name": "Logitech Webcam C930e",
+     "header_device": false
+    }
+   ]
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1#2",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "port_number": 2,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1#2",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+    "socket_evidence_level": "weak",
+    "usb3_capable": true
+   },
+   "occupant_device_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "speed_max": "HS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1#3",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "port_number": 3,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.3",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1#3",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(3)",
+    "socket_evidence": "phantom history: USB Composite Device",
+    "socket_evidence_level": "strong",
+    "usb3_capable": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": [
+    {
+     "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7dcc7ce&0&3",
+     "name": "USB Composite Device",
+     "header_device": false
+    }
+   ]
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1#4",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "port_number": 4,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1#4",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+    "socket_evidence": "phantom history: Logitech Webcam C930e",
+    "socket_evidence_level": "strong",
+    "usb3_capable": true
+   },
+   "occupant_device_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "speed_max": "HS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": [
+    {
+     "instance_id": "USB\\VID_046D&PID_0843\\7&7dcc7ce&0&4",
+     "name": "Logitech Webcam C930e",
+     "header_device": false
+    }
+   ]
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13#1",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+   "port_number": 1,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4#1",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)",
+    "socket_evidence_level": "weak",
+    "usb3_capable": true
+   },
+   "occupant_device_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "speed_max": "HS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13#2",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+   "port_number": 2,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.2",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4#2",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(2)",
+    "socket_evidence_level": "weak",
+    "usb3_capable": true
+   },
+   "occupant_device_id": "USB\\VID_194F&PID_0422\\PERIPHSNA001",
+   "speed_max": "HS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13#3",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+   "port_number": 3,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.3",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4#3",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(3)",
+    "socket_evidence_level": "weak",
+    "usb3_capable": true
+   },
+   "occupant_device_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "speed_max": "HS",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13#4",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "hub_device_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+   "port_number": 4,
+   "path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.4",
+   "is_root_port": false,
+   "half": "usb2",
+   "companion_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4#4",
+   "connectable": "user",
+   "connector": "unknown",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(4)",
+    "socket_evidence": "phantom history: USB2137B",
+    "socket_evidence_level": "strong",
+    "usb3_capable": true
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": [
+    {
+     "instance_id": "USB\\VID_0424&PID_2137\\6&f6f0942&0&4",
+     "name": "USB2137B",
+     "header_device": false
+    }
+   ]
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\7&37B53FB&0&0#1",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": null,
+   "port_number": 1,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/1",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": null,
+   "connectable": "internal",
+   "connector": "internal",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(1)",
+    "socket_evidence_level": null
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\7&37B53FB&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\7&37B53FB&0&0#2",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": null,
+   "port_number": 2,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/2",
+   "is_root_port": true,
+   "half": "usb2",
+   "companion_id": null,
+   "connectable": "internal",
+   "connector": "internal",
+   "label_parts": {
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(2)",
+    "socket_evidence_level": null
+   },
+   "occupant_device_id": null,
+   "speed_max": "HS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\7&37B53FB&0&0",
+   "port_protocols": [
+    "usb1.1",
+    "usb2.0"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\7&37B53FB&0&0#3",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": null,
+   "port_number": 3,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/3",
+   "is_root_port": true,
+   "half": "usb3",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#12",
+   "connectable": "user",
+   "connector": "C",
+   "label_parts": {
+    "acpi_name": "SS03",
+    "type_c": true,
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(3)",
+    "socket_evidence": "Type-C connector flag (_UPC)",
+    "socket_evidence_level": "weak"
+   },
+   "occupant_device_id": null,
+   "speed_max": "SS",
+   "connection_status": "NoDeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\7&37B53FB&0&0",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  },
+  {
+   "id": "USB\\ROOT_HUB30\\7&37B53FB&0&0#4",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "hub_device_id": null,
+   "port_number": 4,
+   "path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4",
+   "is_root_port": true,
+   "half": "usb3",
+   "companion_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+   "connectable": "user",
+   "connector": "C",
+   "label_parts": {
+    "acpi_name": "SS04",
+    "type_c": true,
+    "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)",
+    "pld": {
+     "panel": "top",
+     "vertical_position": "upper",
+     "horizontal_position": "left",
+     "shape": 1,
+     "group_token": 0,
+     "group_position": 19,
+     "user_visible": true,
+     "width_mm": 8,
+     "height_mm": 3,
+     "color_rgb": "#000000",
+     "ignore_color": false,
+     "all_zero_defaults": false,
+     "position_all_zero": true
+    },
+    "user_visible": true,
+    "socket_evidence": "_PLD user_visible; _PLD receptacle 8x3 mm oval (USB-C geometry); Type-C connector flag (_UPC)",
+    "socket_evidence_level": "strong"
+   },
+   "occupant_device_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "speed_max": "SS+",
+   "connection_status": "DeviceConnected",
+   "hub_instance_id": "USB\\ROOT_HUB30\\7&37B53FB&0&0",
+   "port_protocols": [
+    "usb3"
+   ],
+   "phantom_history": null
+  }
+ ],
+ "devices": [
+  {
+   "id": "USB\\VID_046D&PID_C52B\\7&29C31953&0&2",
+   "vid": "046d",
+   "pid": "c52b",
+   "serial": null,
+   "name": "USB Receiver",
+   "speed": "FS",
+   "port_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#2",
+   "parent_device_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "is_hub": false,
+   "hub_tt": null,
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+   "bcd_device": "1211",
+   "periodic_pipes": [
+    {
+     "ep": "0x81",
+     "type": "int",
+     "max_packet": 8,
+     "mult": 1,
+     "interval": 8,
+     "wMaxPacketSize": "0x0008"
+    },
+    {
+     "ep": "0x82",
+     "type": "int",
+     "max_packet": 8,
+     "mult": 1,
+     "interval": 2,
+     "wMaxPacketSize": "0x0008"
+    },
+    {
+     "ep": "0x83",
+     "type": "int",
+     "max_packet": 32,
+     "mult": 1,
+     "interval": 2,
+     "wMaxPacketSize": "0x0020"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(3)#USB(2)",
+   "container_id": "{27f8a5af-f1bd-11f0-8704-00000000003a}",
+   "service": "usbccgp",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "full",
+   "address": 10,
+   "last_arrival": "2026-11-06T14:26:16.485035+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x81",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0008",
+     "max_packet": 8,
+     "mult": 1,
+     "bInterval": 8,
+     "schedule_offset": 0
+    },
+    {
+     "ep": "0x82",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0008",
+     "max_packet": 8,
+     "mult": 1,
+     "bInterval": 2,
+     "schedule_offset": 0
+    },
+    {
+     "ep": "0x83",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0020",
+     "max_packet": 32,
+     "mult": 1,
+     "bInterval": 2,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 0
+  },
+  {
+   "id": "USB\\VID_04D8&PID_0B2A\\7&29C31953&0&5",
+   "vid": "04d8",
+   "pid": "0b2a",
+   "serial": null,
+   "name": "U2717D_0B2A_15091601",
+   "speed": "FS",
+   "port_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3#5",
+   "parent_device_id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "is_hub": false,
+   "hub_tt": null,
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+   "bcd_device": "0002",
+   "periodic_pipes": [
+    {
+     "ep": "0x81",
+     "type": "int",
+     "max_packet": 64,
+     "mult": 1,
+     "interval": 1,
+     "wMaxPacketSize": "0x0040"
+    },
+    {
+     "ep": "0x01",
+     "type": "int",
+     "max_packet": 64,
+     "mult": 1,
+     "interval": 1,
+     "wMaxPacketSize": "0x0040"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(3)#USB(5)",
+   "container_id": "{63736d73-7835-7878-0000-004c49899606}",
+   "service": "HidUsb",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "full",
+   "address": 11,
+   "last_arrival": "2026-11-06T14:26:16.600289+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x81",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0040",
+     "max_packet": 64,
+     "mult": 1,
+     "bInterval": 1,
+     "schedule_offset": 0
+    },
+    {
+     "ep": "0x01",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0040",
+     "max_packet": 64,
+     "mult": 1,
+     "bInterval": 1,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 0
+  },
+  {
+   "id": "USB\\VID_0922&PID_001F\\PERIPHSNB00001",
+   "vid": "0922",
+   "pid": "001f",
+   "serial": "PERIPHSNB00001",
+   "name": "DYMO LabelWriter 4XL",
+   "speed": "FS",
+   "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#3",
+   "parent_device_id": null,
+   "is_hub": false,
+   "hub_tt": null,
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#3",
+   "bcd_device": "0112",
+   "periodic_pipes": [],
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(3)",
+   "container_id": "{44616bbc-e4f0-5b84-b415-aa8b4dba0c31}",
+   "service": "usbprint",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "full",
+   "address": 1,
+   "last_arrival": "2026-11-06T14:26:14.197633+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x82",
+     "type": "bulk",
+     "wMaxPacketSize": "0x0040",
+     "max_packet": 64,
+     "mult": 1,
+     "bInterval": 0,
+     "schedule_offset": 0
+    },
+    {
+     "ep": "0x02",
+     "type": "bulk",
+     "wMaxPacketSize": "0x0040",
+     "max_packet": 64,
+     "mult": 1,
+     "bInterval": 0,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 3
+  },
+  {
+   "id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+   "vid": "046d",
+   "pid": "0843",
+   "serial": null,
+   "name": "Logitech Webcam C930e",
+   "speed": "HS",
+   "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#7",
+   "parent_device_id": null,
+   "is_hub": false,
+   "hub_tt": null,
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#7",
+   "bcd_device": "0013",
+   "periodic_pipes": [
+    {
+     "ep": "0x86",
+     "type": "int",
+     "max_packet": 64,
+     "mult": 1,
+     "interval": 8,
+     "wMaxPacketSize": "0x0040"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(7)",
+   "container_id": "{885b9992-d9f2-11f1-87ab-000000000037}",
+   "service": "usbccgp",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "high",
+   "address": 14,
+   "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x86",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0040",
+     "max_packet": 64,
+     "mult": 1,
+     "bInterval": 8,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 0
+  },
+  {
+   "id": "USB\\VID_045E&PID_07B2\\5&CC3F949&0&8",
+   "vid": "045e",
+   "pid": "07b2",
+   "serial": null,
+   "name": "Microsoft® 2.4GHz Transceiver v8.0",
+   "speed": "FS",
+   "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#8",
+   "parent_device_id": null,
+   "is_hub": false,
+   "hub_tt": null,
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#8",
+   "bcd_device": "0746",
+   "periodic_pipes": [
+    {
+     "ep": "0x81",
+     "type": "int",
+     "max_packet": 8,
+     "mult": 1,
+     "interval": 4,
+     "wMaxPacketSize": "0x0008"
+    },
+    {
+     "ep": "0x82",
+     "type": "int",
+     "max_packet": 10,
+     "mult": 1,
+     "interval": 1,
+     "wMaxPacketSize": "0x000a"
+    },
+    {
+     "ep": "0x83",
+     "type": "int",
+     "max_packet": 32,
+     "mult": 1,
+     "interval": 1,
+     "wMaxPacketSize": "0x0020"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(8)",
+   "container_id": "{20246679-d622-11f1-87a7-000000000037}",
+   "service": "usbccgp",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "full",
+   "address": 4,
+   "last_arrival": "2026-11-06T14:26:14.206680+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x81",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0008",
+     "max_packet": 8,
+     "mult": 1,
+     "bInterval": 4,
+     "schedule_offset": 0
+    },
+    {
+     "ep": "0x82",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x000a",
+     "max_packet": 10,
+     "mult": 1,
+     "bInterval": 1,
+     "schedule_offset": 0
+    },
+    {
+     "ep": "0x83",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0020",
+     "max_packet": 32,
+     "mult": 1,
+     "bInterval": 1,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 0
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0608\\5&CC3F949&0&10",
+   "vid": "05e3",
+   "pid": "0608",
+   "serial": null,
+   "name": "USB2.0 Hub",
+   "speed": "HS",
+   "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+   "parent_device_id": null,
+   "is_hub": true,
+   "hub_tt": "single",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#10",
+   "bcd_device": "6090",
+   "periodic_pipes": [
+    {
+     "ep": "0x81",
+     "type": "int",
+     "max_packet": 1,
+     "mult": 1,
+     "interval": 12,
+     "wMaxPacketSize": "0x0001"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(10)",
+   "container_id": "{00000000-0000-0000-ffff-ffffffffffff}",
+   "service": "USBHUB3",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "high",
+   "address": 3,
+   "last_arrival": "2026-11-06T14:26:14.205680+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x81",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0001",
+     "max_packet": 1,
+     "mult": 1,
+     "bInterval": 12,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 0
+  },
+  {
+   "id": "USB\\VID_0B05&PID_19AF\\9876543210",
+   "vid": "0b05",
+   "pid": "19af",
+   "serial": "9876543210",
+   "name": "AURA LED Controller",
+   "speed": "FS",
+   "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#11",
+   "parent_device_id": null,
+   "is_hub": false,
+   "hub_tt": null,
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#11",
+   "bcd_device": "0100",
+   "periodic_pipes": [
+    {
+     "ep": "0x82",
+     "type": "int",
+     "max_packet": 32,
+     "mult": 1,
+     "interval": 4,
+     "wMaxPacketSize": "0x0020"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(11)",
+   "container_id": "{00000000-0000-0000-ffff-ffffffffffff}",
+   "service": "usbccgp",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "full",
+   "address": 6,
+   "last_arrival": "2026-11-06T14:26:15.043347+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x82",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0020",
+     "max_packet": 32,
+     "mult": 1,
+     "bInterval": 4,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 3
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+   "vid": "05e3",
+   "pid": "0610",
+   "serial": null,
+   "name": "USB2.1 Hub",
+   "speed": "HS",
+   "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+   "parent_device_id": null,
+   "is_hub": true,
+   "hub_tt": "multi",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+   "bcd_device": "9405",
+   "periodic_pipes": [
+    {
+     "ep": "0x81",
+     "type": "int",
+     "max_packet": 1,
+     "mult": 1,
+     "interval": 12,
+     "wMaxPacketSize": "0x0001"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)",
+   "container_id": "{c6399911-09d8-404b-9783-beb2eccd77d0}",
+   "service": "USBHUB3",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "high",
+   "address": 2,
+   "last_arrival": "2026-11-06T14:26:14.204679+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x81",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0001",
+     "max_packet": 1,
+     "mult": 1,
+     "bInterval": 12,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 0
+  },
+  {
+   "id": "USB\\VID_8087&PID_0033\\5&CC3F949&0&14",
+   "vid": "8087",
+   "pid": "0033",
+   "serial": null,
+   "name": "Intel(R) Wireless Bluetooth(R)",
+   "speed": "FS",
+   "port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#14",
+   "parent_device_id": null,
+   "is_hub": false,
+   "hub_tt": null,
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#14",
+   "bcd_device": "0000",
+   "periodic_pipes": [
+    {
+     "ep": "0x81",
+     "type": "int",
+     "max_packet": 64,
+     "mult": 1,
+     "interval": 1,
+     "wMaxPacketSize": "0x0040"
+    },
+    {
+     "ep": "0x03",
+     "type": "iso",
+     "max_packet": 0,
+     "mult": 1,
+     "interval": 1,
+     "wMaxPacketSize": "0x0000"
+    },
+    {
+     "ep": "0x83",
+     "type": "iso",
+     "max_packet": 0,
+     "mult": 1,
+     "interval": 1,
+     "wMaxPacketSize": "0x0000"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(14)",
+   "container_id": "{00000000-0000-0000-ffff-ffffffffffff}",
+   "service": "BTHUSB",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "full",
+   "address": 5,
+   "last_arrival": "2026-11-06T14:26:14.222101+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x81",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0040",
+     "max_packet": 64,
+     "mult": 1,
+     "bInterval": 1,
+     "schedule_offset": 0
+    },
+    {
+     "ep": "0x02",
+     "type": "bulk",
+     "wMaxPacketSize": "0x0040",
+     "max_packet": 64,
+     "mult": 1,
+     "bInterval": 1,
+     "schedule_offset": 0
+    },
+    {
+     "ep": "0x82",
+     "type": "bulk",
+     "wMaxPacketSize": "0x0040",
+     "max_packet": 64,
+     "mult": 1,
+     "bInterval": 1,
+     "schedule_offset": 0
+    },
+    {
+     "ep": "0x03",
+     "type": "iso",
+     "wMaxPacketSize": "0x0000",
+     "max_packet": 0,
+     "mult": 1,
+     "bInterval": 1,
+     "schedule_offset": 0
+    },
+    {
+     "ep": "0x83",
+     "type": "iso",
+     "wMaxPacketSize": "0x0000",
+     "max_packet": 0,
+     "mult": 1,
+     "bInterval": 1,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 0
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0626\\9&3A0ECB01&0&1",
+   "vid": "05e3",
+   "pid": "0626",
+   "serial": null,
+   "name": "USB3.1 Hub",
+   "speed": "SS",
+   "port_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4#1",
+   "parent_device_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "is_hub": true,
+   "hub_tt": "single",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "root_port_id": "USB\\ROOT_HUB30\\7&37B53FB&0&0#4",
+   "bcd_device": "0656",
+   "periodic_pipes": [
+    {
+     "ep": "0x81",
+     "type": "int",
+     "max_packet": 2,
+     "mult": 1,
+     "interval": 8,
+     "wMaxPacketSize": "0x0002"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(1)",
+   "container_id": "{9f4b56f0-1df6-11e0-ac64-0800200c9a66}",
+   "service": "USBHUB3",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "high",
+   "address": 2,
+   "last_arrival": "2026-11-06T14:26:15.091908+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x81",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0002",
+     "max_packet": 2,
+     "mult": 1,
+     "bInterval": 8,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 0
+  },
+  {
+   "id": "USB\\VID_0424&PID_5537\\9&3A0ECB01&0&3",
+   "vid": "0424",
+   "pid": "5537",
+   "serial": null,
+   "name": "USB5537B",
+   "speed": "SS",
+   "port_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4#3",
+   "parent_device_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "is_hub": true,
+   "hub_tt": "single",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "root_port_id": "USB\\ROOT_HUB30\\7&37B53FB&0&0#4",
+   "bcd_device": "6080",
+   "periodic_pipes": [
+    {
+     "ep": "0x81",
+     "type": "int",
+     "max_packet": 2,
+     "mult": 1,
+     "interval": 8,
+     "wMaxPacketSize": "0x0002"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(3)",
+   "container_id": "{63736d73-7835-7878-0000-004c49899606}",
+   "service": "USBHUB3",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "high",
+   "address": 3,
+   "last_arrival": "2026-11-06T14:26:15.091908+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x81",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0002",
+     "max_packet": 2,
+     "mult": 1,
+     "bInterval": 8,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 0
+  },
+  {
+   "id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "name": "Razer Kiyo Pro",
+   "speed": "SS",
+   "port_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4#4",
+   "parent_device_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "is_hub": false,
+   "hub_tt": null,
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "root_port_id": "USB\\ROOT_HUB30\\7&37B53FB&0&0#4",
+   "bcd_device": "0821",
+   "periodic_pipes": [
+    {
+     "ep": "0x85",
+     "type": "int",
+     "max_packet": 64,
+     "mult": 1,
+     "interval": 8,
+     "wMaxPacketSize": "0x0040"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "container_id": "{27f8a5ac-f1bd-11f0-8704-00000000003a}",
+   "service": "usbccgp",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "high",
+   "address": 5,
+   "last_arrival": "2026-11-06T20:32:29.065252+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x85",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0040",
+     "max_packet": 64,
+     "mult": 1,
+     "bInterval": 8,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 0
+  },
+  {
+   "id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "vid": "4c4a",
+   "pid": "4a55",
+   "serial": null,
+   "name": "USB Composite Device",
+   "speed": "HS",
+   "port_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1#2",
+   "parent_device_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "is_hub": false,
+   "hub_tt": null,
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+   "bcd_device": "0100",
+   "periodic_pipes": [
+    {
+     "ep": "0x85",
+     "type": "int",
+     "max_packet": 16,
+     "mult": 1,
+     "interval": 4,
+     "wMaxPacketSize": "0x0010"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+   "container_id": "{885b95ce-d9f2-11f1-87ab-000000000037}",
+   "service": "usbccgp",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "high",
+   "address": 57,
+   "last_arrival": "2026-11-06T20:54:40.183039+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x85",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0010",
+     "max_packet": 16,
+     "mult": 1,
+     "bInterval": 4,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 0
+  },
+  {
+   "id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "vid": "046d",
+   "pid": "085c",
+   "serial": "C922SN01",
+   "name": "C922 Pro Stream Webcam",
+   "speed": "HS",
+   "port_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1#4",
+   "parent_device_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "is_hub": false,
+   "hub_tt": null,
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+   "bcd_device": "0016",
+   "periodic_pipes": [
+    {
+     "ep": "0x83",
+     "type": "int",
+     "max_packet": 64,
+     "mult": 1,
+     "interval": 8,
+     "wMaxPacketSize": "0x0040"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+   "container_id": "{791c9a88-5665-5cbb-9d66-29961bfa28f1}",
+   "service": "usbccgp",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "high",
+   "address": 15,
+   "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x83",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0040",
+     "max_packet": 64,
+     "mult": 1,
+     "bInterval": 8,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 1
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "vid": "05e3",
+   "pid": "0610",
+   "serial": null,
+   "name": "USB2.1 Hub",
+   "speed": "HS",
+   "port_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13#1",
+   "parent_device_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+   "is_hub": true,
+   "hub_tt": "single",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+   "bcd_device": "0656",
+   "periodic_pipes": [
+    {
+     "ep": "0x81",
+     "type": "int",
+     "max_packet": 1,
+     "mult": 1,
+     "interval": 12,
+     "wMaxPacketSize": "0x0001"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)",
+   "container_id": "{9f4b56f0-1df6-11e0-ac64-0800200c9a66}",
+   "service": "USBHUB3",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "high",
+   "address": 7,
+   "last_arrival": "2026-11-06T14:26:15.629765+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x81",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0001",
+     "max_packet": 1,
+     "mult": 1,
+     "bInterval": 12,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 0
+  },
+  {
+   "id": "USB\\VID_194F&PID_0422\\PERIPHSNA001",
+   "vid": "194f",
+   "pid": "0422",
+   "serial": "PERIPHSNA001",
+   "name": "Revelator IO 24",
+   "speed": "HS",
+   "port_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13#2",
+   "parent_device_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+   "is_hub": false,
+   "hub_tt": null,
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+   "bcd_device": "0128",
+   "periodic_pipes": [],
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(2)",
+   "container_id": "{612bc24d-810b-506f-8721-0c0038126397}",
+   "service": "usbccgp",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "high",
+   "address": 8,
+   "last_arrival": "2026-11-06T14:26:15.936518+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x02",
+     "type": "bulk",
+     "wMaxPacketSize": "0x0200",
+     "max_packet": 512,
+     "mult": 1,
+     "bInterval": 0,
+     "schedule_offset": 0
+    },
+    {
+     "ep": "0x82",
+     "type": "bulk",
+     "wMaxPacketSize": "0x0200",
+     "max_packet": 512,
+     "mult": 1,
+     "bInterval": 0,
+     "schedule_offset": 0
+    },
+    {
+     "ep": "0x81",
+     "type": "bulk",
+     "wMaxPacketSize": "0x0200",
+     "max_packet": 512,
+     "mult": 1,
+     "bInterval": 0,
+     "schedule_offset": 0
+    },
+    {
+     "ep": "0x01",
+     "type": "bulk",
+     "wMaxPacketSize": "0x0200",
+     "max_packet": 512,
+     "mult": 1,
+     "bInterval": 0,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 3
+  },
+  {
+   "id": "USB\\VID_0424&PID_2137\\6&F6F0942&0&3",
+   "vid": "0424",
+   "pid": "2137",
+   "serial": null,
+   "name": "USB2137B",
+   "speed": "HS",
+   "port_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13#3",
+   "parent_device_id": "USB\\VID_05E3&PID_0610\\5&CC3F949&0&13",
+   "is_hub": true,
+   "hub_tt": "multi",
+   "controller_id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+   "root_port_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0#13",
+   "bcd_device": "6080",
+   "periodic_pipes": [
+    {
+     "ep": "0x81",
+     "type": "int",
+     "max_packet": 1,
+     "mult": 1,
+     "interval": 12,
+     "wMaxPacketSize": "0x0001"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(3)",
+   "container_id": "{63736d73-7835-7878-0000-004c49899606}",
+   "service": "USBHUB3",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "high",
+   "address": 9,
+   "last_arrival": "2026-11-06T14:26:15.937519+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x81",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0001",
+     "max_packet": 1,
+     "mult": 1,
+     "bInterval": 12,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 0
+  },
+  {
+   "id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "vid": "05e3",
+   "pid": "0625",
+   "serial": null,
+   "name": "USB3.2 Hub",
+   "speed": "SS+",
+   "port_id": "USB\\ROOT_HUB30\\7&37B53FB&0&0#4",
+   "parent_device_id": null,
+   "is_hub": true,
+   "hub_tt": "single",
+   "controller_id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2EA0DFAF&0&001000E4",
+   "root_port_id": "USB\\ROOT_HUB30\\7&37B53FB&0&0#4",
+   "bcd_device": "9405",
+   "periodic_pipes": [
+    {
+     "ep": "0x83",
+     "type": "int",
+     "max_packet": 2,
+     "mult": 1,
+     "interval": 8,
+     "wMaxPacketSize": "0x0002"
+    }
+   ],
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)",
+   "container_id": "{c6399911-09d8-404b-9783-beb2eccd77d0}",
+   "service": "USBHUB3",
+   "connection_status": "DeviceConnected",
+   "legacy_speed": "high",
+   "address": 1,
+   "last_arrival": "2026-11-06T14:26:14.179439+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "all_open_pipes": [
+    {
+     "ep": "0x83",
+     "type": "interrupt",
+     "wMaxPacketSize": "0x0002",
+     "max_packet": 2,
+     "mult": 1,
+     "bInterval": 8,
+     "schedule_offset": 0
+    }
+   ],
+   "i_serial": 0
+  }
+ ],
+ "cameras": [
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+   "device_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+   "name": "Logitech Webcam C930e",
+   "is_kiyo": false,
+   "alt_table": [
+    {
+     "alt": 1,
+     "max_packet": 192,
+     "mult": 1,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 192,
+     "interface": 1
+    },
+    {
+     "alt": 2,
+     "max_packet": 384,
+     "mult": 1,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 384,
+     "interface": 1
+    },
+    {
+     "alt": 3,
+     "max_packet": 512,
+     "mult": 1,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 512,
+     "interface": 1
+    },
+    {
+     "alt": 4,
+     "max_packet": 640,
+     "mult": 1,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 640,
+     "interface": 1
+    },
+    {
+     "alt": 5,
+     "max_packet": 800,
+     "mult": 1,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 800,
+     "interface": 1
+    },
+    {
+     "alt": 6,
+     "max_packet": 944,
+     "mult": 1,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 944,
+     "interface": 1
+    },
+    {
+     "alt": 7,
+     "max_packet": 640,
+     "mult": 2,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 1280,
+     "interface": 1
+    },
+    {
+     "alt": 8,
+     "max_packet": 800,
+     "mult": 2,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 1600,
+     "interface": 1
+    },
+    {
+     "alt": 9,
+     "max_packet": 992,
+     "mult": 2,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 1984,
+     "interface": 1
+    },
+    {
+     "alt": 10,
+     "max_packet": 896,
+     "mult": 3,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 2688,
+     "interface": 1
+    },
+    {
+     "alt": 11,
+     "max_packet": 1024,
+     "mult": 3,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 3072,
+     "interface": 1
+    }
+   ],
+   "current_alt": 0,
+   "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&2206973F&0&0000",
+   "key_kind": "port",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+   "alt_source": "descriptor",
+   "descriptor_errors": []
+  },
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "device_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "name": "Razer Kiyo Pro",
+   "is_kiyo": true,
+   "alt_table": null,
+   "current_alt": null,
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\A&34494D13&0&0000",
+   "key_kind": "port",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "alt_source": null,
+   "descriptor_errors": null
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "device_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "name": "USB Camera",
+   "is_kiyo": false,
+   "alt_table": [
+    {
+     "alt": 1,
+     "max_packet": 1023,
+     "mult": 3,
+     "ep": "0x84",
+     "bInterval": 1,
+     "bytes_per_interval": 3069,
+     "interface": 1
+    }
+   ],
+   "current_alt": 0,
+   "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232E60D4&0&0000",
+   "key_kind": "port",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "alt_source": "descriptor",
+   "descriptor_errors": []
+  },
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "device_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "is_kiyo": false,
+   "alt_table": [
+    {
+     "alt": 1,
+     "max_packet": 192,
+     "mult": 1,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 192,
+     "interface": 1
+    },
+    {
+     "alt": 2,
+     "max_packet": 384,
+     "mult": 1,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 384,
+     "interface": 1
+    },
+    {
+     "alt": 3,
+     "max_packet": 512,
+     "mult": 1,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 512,
+     "interface": 1
+    },
+    {
+     "alt": 4,
+     "max_packet": 640,
+     "mult": 1,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 640,
+     "interface": 1
+    },
+    {
+     "alt": 5,
+     "max_packet": 800,
+     "mult": 1,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 800,
+     "interface": 1
+    },
+    {
+     "alt": 6,
+     "max_packet": 944,
+     "mult": 1,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 944,
+     "interface": 1
+    },
+    {
+     "alt": 7,
+     "max_packet": 640,
+     "mult": 2,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 1280,
+     "interface": 1
+    },
+    {
+     "alt": 8,
+     "max_packet": 800,
+     "mult": 2,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 1600,
+     "interface": 1
+    },
+    {
+     "alt": 9,
+     "max_packet": 992,
+     "mult": 2,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 1984,
+     "interface": 1
+    },
+    {
+     "alt": 10,
+     "max_packet": 896,
+     "mult": 3,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 2688,
+     "interface": 1
+    },
+    {
+     "alt": 11,
+     "max_packet": 1020,
+     "mult": 3,
+     "ep": "0x81",
+     "bInterval": 1,
+     "bytes_per_interval": 3060,
+     "interface": 1
+    }
+   ],
+   "current_alt": 0,
+   "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268DA596&0&0000",
+   "key_kind": "serial",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+   "alt_source": "descriptor",
+   "descriptor_errors": []
+  }
+ ],
+ "collector": {
+  "tool": "suite/windows/helpers/win_topology.py",
+  "elapsed_s": 0.0564,
+  "elevated": false,
+  "n_hubs": 9,
+  "n_ports": 63,
+  "n_devices": 18,
+  "n_phantom_or_present_devnodes": 47,
+  "descriptors_used": true,
+  "errors": [],
+  "requests_to_devices": 0,
+  "note": "cached hub-driver state and CfgMgr only; alt tables come from a separate descriptor read (win_descriptors.py) when given"
+ }
+}

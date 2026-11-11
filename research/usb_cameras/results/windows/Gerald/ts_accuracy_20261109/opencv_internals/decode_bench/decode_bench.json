@@ -1,0 +1,297 @@
+{
+ "tool": "jpeg_decode_bench 1.0 (2026-11-09)",
+ "cv2": "4.12.0",
+ "simplejpeg": "1.9.0",
+ "av": "19.0.2",
+ "cpu": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+ "logical_cpus": 28,
+ "machine_cpu_pct_before": 9.9,
+ "files": [
+  {
+   "file": "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/prior_art_gst_capture-mfvideosrc/sample_046d_085c.jpg",
+   "bytes": 207570,
+   "shape": [
+    720,
+    1280,
+    3
+   ],
+   "cv2.imdecode": {
+    "single_thread_ms": {
+     "p50": 3.131,
+     "p95": 3.332,
+     "min": 3.018
+    },
+    "4_threads": {
+     "decodes_per_s_total": 1144.1,
+     "per_call_ms": {
+      "p50": 3.418,
+      "p95": 3.942,
+      "min": 3.218
+     },
+     "process_cpu_pct_of_one_core": 390.6
+    }
+   },
+   "simplejpeg": {
+    "single_thread_ms": {
+     "p50": 2.502,
+     "p95": 2.706,
+     "min": 2.436
+    },
+    "4_threads": {
+     "decodes_per_s_total": 1504.0,
+     "per_call_ms": {
+      "p50": 2.612,
+      "p95": 2.884,
+      "min": 2.517
+     },
+     "process_cpu_pct_of_one_core": 394.4
+    }
+   },
+   "pyav_mjpeg": {
+    "single_thread_ms": {
+     "p50": 2.951,
+     "p95": 3.067,
+     "min": 2.835
+    },
+    "4_threads": {
+     "decodes_per_s_total": 1148.1,
+     "per_call_ms": {
+      "p50": 3.469,
+      "p95": 3.831,
+      "min": 2.903
+     },
+     "process_cpu_pct_of_one_core": 982.5
+    }
+   }
+  },
+  {
+   "file": "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/prior_art_gst_capture-mfvideosrc/sample_046d_0843.jpg",
+   "bytes": 76214,
+   "shape": [
+    720,
+    1280,
+    3
+   ],
+   "cv2.imdecode": {
+    "single_thread_ms": {
+     "p50": 2.215,
+     "p95": 2.34,
+     "min": 2.173
+    },
+    "4_threads": {
+     "decodes_per_s_total": 1555.2,
+     "per_call_ms": {
+      "p50": 2.543,
+      "p95": 2.71,
+      "min": 2.338
+     },
+     "process_cpu_pct_of_one_core": 398.1
+    }
+   },
+   "simplejpeg": {
+    "single_thread_ms": {
+     "p50": 1.591,
+     "p95": 1.698,
+     "min": 1.558
+    },
+    "4_threads": {
+     "decodes_per_s_total": 2302.7,
+     "per_call_ms": {
+      "p50": 1.703,
+      "p95": 1.881,
+      "min": 1.593
+     },
+     "process_cpu_pct_of_one_core": 392.2
+    }
+   },
+   "pyav_mjpeg": {
+    "single_thread_ms": {
+     "p50": 1.912,
+     "p95": 1.985,
+     "min": 1.79
+    },
+    "4_threads": {
+     "decodes_per_s_total": 1715.7,
+     "per_call_ms": {
+      "p50": 2.293,
+      "p95": 2.69,
+      "min": 1.82
+     },
+     "process_cpu_pct_of_one_core": 1336.3
+    }
+   }
+  },
+  {
+   "file": "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/prior_art_gst_capture-mfvideosrc/sample_1532_0e05.jpg",
+   "bytes": 124044,
+   "shape": [
+    720,
+    1280,
+    3
+   ],
+   "cv2.imdecode": {
+    "single_thread_ms": {
+     "p50": 2.527,
+     "p95": 2.66,
+     "min": 2.451
+    },
+    "4_threads": {
+     "decodes_per_s_total": 1423.2,
+     "per_call_ms": {
+      "p50": 2.782,
+      "p95": 2.941,
+      "min": 2.536
+     },
+     "process_cpu_pct_of_one_core": 395.9
+    }
+   },
+   "simplejpeg": {
+    "single_thread_ms": {
+     "p50": 1.835,
+     "p95": 1.99,
+     "min": 1.765
+    },
+    "4_threads": {
+     "decodes_per_s_total": 2005.2,
+     "per_call_ms": {
+      "p50": 1.955,
+      "p95": 2.186,
+      "min": 1.842
+     },
+     "process_cpu_pct_of_one_core": 393.5
+    }
+   },
+   "pyav_mjpeg": {
+    "single_thread_ms": {
+     "p50": 2.237,
+     "p95": 2.299,
+     "min": 2.155
+    },
+    "4_threads": {
+     "decodes_per_s_total": 1489.7,
+     "per_call_ms": {
+      "p50": 2.663,
+      "p95": 3.03,
+      "min": 2.176
+     },
+     "process_cpu_pct_of_one_core": 1101.9
+    }
+   }
+  },
+  {
+   "file": "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/rust_nokhwa_capture/20261025T180337Z_cams5_1280x720/sample_5_USB_Video_Device_0.jpg",
+   "bytes": 64520,
+   "shape": [
+    720,
+    1280,
+    3
+   ],
+   "cv2.imdecode": {
+    "single_thread_ms": {
+     "p50": 2.165,
+     "p95": 2.381,
+     "min": 2.091
+    },
+    "4_threads": {
+     "decodes_per_s_total": 1580.0,
+     "per_call_ms": {
+      "p50": 2.47,
+      "p95": 2.893,
+      "min": 2.217
+     },
+     "process_cpu_pct_of_one_core": 391.9
+    }
+   },
+   "simplejpeg": {
+    "single_thread_ms": {
+     "p50": 1.492,
+     "p95": 1.597,
+     "min": 1.444
+    },
+    "4_threads": {
+     "decodes_per_s_total": 2410.6,
+     "per_call_ms": {
+      "p50": 1.622,
+      "p95": 1.841,
+      "min": 1.513
+     },
+     "process_cpu_pct_of_one_core": 390.7
+    }
+   },
+   "pyav_mjpeg": {
+    "single_thread_ms": {
+     "p50": 1.685,
+     "p95": 1.808,
+     "min": 1.583
+    },
+    "4_threads": {
+     "decodes_per_s_total": 1900.8,
+     "per_call_ms": {
+      "p50": 2.066,
+      "p95": 2.467,
+      "min": 1.668
+     },
+     "process_cpu_pct_of_one_core": 1409.4
+    }
+   }
+  },
+  {
+   "file": "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/mjpeg_msmf/max_1920x1080at30_c922+kiyo+c930e/sample_cam0_seq52.jpg",
+   "bytes": 227823,
+   "shape": [
+    1080,
+    1920,
+    3
+   ],
+   "cv2.imdecode": {
+    "single_thread_ms": {
+     "p50": 5.607,
+     "p95": 5.929,
+     "min": 5.438
+    },
+    "4_threads": {
+     "decodes_per_s_total": 632.1,
+     "per_call_ms": {
+      "p50": 6.224,
+      "p95": 6.809,
+      "min": 5.751
+     },
+     "process_cpu_pct_of_one_core": 396.0
+    }
+   },
+   "simplejpeg": {
+    "single_thread_ms": {
+     "p50": 4.216,
+     "p95": 4.467,
+     "min": 4.048
+    },
+    "4_threads": {
+     "decodes_per_s_total": 882.3,
+     "per_call_ms": {
+      "p50": 4.435,
+      "p95": 5.025,
+      "min": 4.231
+     },
+     "process_cpu_pct_of_one_core": 391.6
+    }
+   },
+   "pyav_mjpeg": {
+    "single_thread_ms": {
+     "p50": 4.253,
+     "p95": 4.386,
+     "min": 4.116
+    },
+    "4_threads": {
+     "decodes_per_s_total": 868.1,
+     "per_call_ms": {
+      "p50": 4.571,
+      "p95": 4.977,
+      "min": 4.232
+     },
+     "process_cpu_pct_of_one_core": 878.9
+    }
+   }
+  }
+ ],
+ "machine_cpu_pct_after": 7.0
+}

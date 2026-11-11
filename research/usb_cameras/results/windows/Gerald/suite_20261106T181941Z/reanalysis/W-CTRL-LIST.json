@@ -1,0 +1,629 @@
+{
+ "test": "W-CTRL-LIST",
+ "reanalysis_of": "..\\..\\..\\results\\windows\\Gerald\\suite_20261106T181941Z\\W-CTRL-LIST.json",
+ "verdicts": {
+  "ctrl_list_equivalence": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "c922 Pro Stream Webcam: every descriptor control listed via MF and DS, identical ranges/defaults/flags",
+     "met": true,
+     "detail": {
+      "counts": {
+       "descriptor_ct": 7,
+       "descriptor_pu": 9,
+       "mf_supported": 16,
+       "ds_supported": 16,
+       "missing_mf": 0,
+       "missing_ds": 0,
+       "mf_vs_ds_diffs": 0
+      },
+      "missing": {
+       "mf": [],
+       "ds": []
+      },
+      "diffs": [],
+      "unmapped": []
+     }
+    },
+    {
+     "criterion": "USB Video Device: every descriptor control listed via MF and DS, identical ranges/defaults/flags",
+     "met": true,
+     "detail": {
+      "counts": {
+       "descriptor_ct": 7,
+       "descriptor_pu": 9,
+       "mf_supported": 16,
+       "ds_supported": 16,
+       "missing_mf": 0,
+       "missing_ds": 0,
+       "mf_vs_ds_diffs": 0
+      },
+      "missing": {
+       "mf": [],
+       "ds": []
+      },
+      "diffs": [],
+      "unmapped": []
+     }
+    },
+    {
+     "criterion": "USB Camera: every descriptor control listed via MF and DS, identical ranges/defaults/flags",
+     "met": true,
+     "detail": {
+      "counts": {
+       "descriptor_ct": 2,
+       "descriptor_pu": 9,
+       "mf_supported": 11,
+       "ds_supported": 11,
+       "missing_mf": 0,
+       "missing_ds": 0,
+       "mf_vs_ds_diffs": 0
+      },
+      "missing": {
+       "mf": [],
+       "ds": []
+      },
+      "diffs": [],
+      "unmapped": []
+     }
+    },
+    {
+     "criterion": "Logitech Webcam C930e: every descriptor control listed via MF and DS, identical ranges/defaults/flags",
+     "met": true,
+     "detail": {
+      "counts": {
+       "descriptor_ct": 7,
+       "descriptor_pu": 9,
+       "mf_supported": 16,
+       "ds_supported": 16,
+       "missing_mf": 0,
+       "missing_ds": 0,
+       "mf_vs_ds_diffs": 0
+      },
+      "missing": {
+       "mf": [],
+       "ds": []
+      },
+      "diffs": [],
+      "unmapped": []
+     }
+    }
+   ],
+   "evidence": {
+    "note": "answers plan Q 'same controls in DS and MF?'; descriptor bmControls carry no ranges, so ranges are compared MF vs DS; G-CTRL (set/readback/effect) is W-CTRL-EFFECT's"
+   }
+  }
+ },
+ "per_control": {
+  "046d:085c:sn=C922SN01": {
+   "cc.auto_exposure_priority": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.exposure": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.focal_length": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": false,
+    "descriptor_listed_ok": null,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.focus": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.pan": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.pantilt": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.tilt": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.zoom": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.backlight_compensation": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.brightness": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.contrast": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.gain": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.powerline_frequency": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.saturation": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.sharpness": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.white_balance": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   }
+  },
+  "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+   "cc.auto_exposure_priority": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.exposure": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.focal_length": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": false,
+    "descriptor_listed_ok": null,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.focus": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.pan": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.pantilt": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.tilt": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.zoom": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.backlight_compensation": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.brightness": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.contrast": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.gain": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.powerline_frequency": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.saturation": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.sharpness": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.white_balance": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   }
+  },
+  "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+   "cc.exposure": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.focal_length": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": false,
+    "descriptor_listed_ok": null,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.backlight_compensation": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.brightness": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.contrast": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.gain": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.gamma": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.powerline_frequency": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.saturation": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.sharpness": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.white_balance": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   }
+  },
+  "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+   "cc.auto_exposure_priority": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.exposure": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.focal_length": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": false,
+    "descriptor_listed_ok": null,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.focus": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.pan": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.pantilt": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.tilt": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "cc.zoom": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.backlight_compensation": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.brightness": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.contrast": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.gain": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.powerline_frequency": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.saturation": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.sharpness": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   },
+   "pa.white_balance": {
+    "listed_mf": true,
+    "listed_ds": true,
+    "descriptor_backed": true,
+    "descriptor_listed_ok": true,
+    "ranges_equal_mf_ds": true,
+    "range_differences": null
+   }
+  }
+ },
+ "listed_counts": {
+  "c922 Pro Stream Webcam": {
+   "descriptor_ct": 7,
+   "descriptor_pu": 9,
+   "mf_supported": 16,
+   "ds_supported": 16,
+   "missing_mf": 0,
+   "missing_ds": 0,
+   "mf_vs_ds_diffs": 0
+  },
+  "USB Video Device": {
+   "descriptor_ct": 7,
+   "descriptor_pu": 9,
+   "mf_supported": 16,
+   "ds_supported": 16,
+   "missing_mf": 0,
+   "missing_ds": 0,
+   "mf_vs_ds_diffs": 0
+  },
+  "USB Camera": {
+   "descriptor_ct": 2,
+   "descriptor_pu": 9,
+   "mf_supported": 11,
+   "ds_supported": 11,
+   "missing_mf": 0,
+   "missing_ds": 0,
+   "mf_vs_ds_diffs": 0
+  },
+  "Logitech Webcam C930e": {
+   "descriptor_ct": 7,
+   "descriptor_pu": 9,
+   "mf_supported": 16,
+   "ds_supported": 16,
+   "missing_mf": 0,
+   "missing_ds": 0,
+   "mf_vs_ds_diffs": 0
+  }
+ },
+ "changes": [
+  {
+   "cell": "G-CTRL",
+   "from": "untested",
+   "to": "(removed: listing is not a G-CTRL cell)"
+  }
+ ],
+ "fixes_applied": [
+  "B7 G-CTRL cell dropped (counts in listed_counts)",
+  "per_control for W-CTRL-EFFECT"
+ ]
+}

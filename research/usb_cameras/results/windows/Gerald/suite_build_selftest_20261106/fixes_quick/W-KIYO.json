@@ -1,0 +1,114 @@
+{
+ "test": "W-KIYO",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-06T21:20:20.004167+00:00",
+ "utc_finished": "2026-11-06T21:20:20.020416+00:00",
+ "elapsed_s": 0.015,
+ "command": "suite/windows/run_suite.py --quick --camera 085c --camera 0843 --camera 4a55 --out-dir results/windows/Gerald/suite_build_selftest_20261106/fixes_quick",
+ "argv": [
+  "suite/windows/run_suite.py",
+  "--quick",
+  "--camera",
+  "085c",
+  "--camera",
+  "0843",
+  "--camera",
+  "4a55",
+  "--out-dir",
+  "results/windows/Gerald/suite_build_selftest_20261106/fixes_quick"
+ ],
+ "environment": {
+  "os": {
+   "platform": "Windows-11-10.0.26300-SP0",
+   "system": "Windows",
+   "release": "11",
+   "version": "10.0.26300",
+   "machine": "AMD64",
+   "windows_build": 26300,
+   "windows_version": "10.0.26300",
+   "windows_edition": "Core",
+   "windows_displayversion": "26H2",
+   "windows_ubr": 9711,
+   "windows_productname": "Windows 10 Home",
+   "windows_currentbuild": "26300"
+  },
+  "python": "3.12.13",
+  "python_implementation": "CPython",
+  "python_executable": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+  "hostname": "Gerald",
+  "pid": 22536,
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0"
+  }
+ },
+ "cameras": [],
+ "measurements": {
+  "power": {
+   "raw_rc": 0,
+   "scheme": "381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)",
+   "hub_selective_suspend_timeout_ms": {
+    "ac": {
+     "index": 50,
+     "name": null
+    },
+    "dc": {
+     "index": 50,
+     "name": null
+    }
+   },
+   "usb_selective_suspend": {
+    "ac": {
+     "index": 1,
+     "name": "Enabled"
+    },
+    "dc": {
+     "index": 1,
+     "name": "Enabled"
+    }
+   },
+   "498c044a-201b-4631-a522-5c744ed4e678": {
+    "ac": {
+     "index": 1,
+     "name": "Enabled"
+    },
+    "dc": {
+     "index": 0,
+     "name": "Disabled"
+    }
+   },
+   "usb3_link_power_management": {
+    "ac": {
+     "index": 2,
+     "name": "Moderate power savings"
+    },
+    "dc": {
+     "index": 2,
+     "name": "Moderate power savings"
+    }
+   }
+  },
+  "note": "no Razer Kiyo Pro (1532:0E05) present"
+ },
+ "verdicts": {
+  "kiyo": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "no Kiyo attached"
+    }
+   ],
+   "evidence": null
+  }
+ },
+ "errors": [],
+ "device_faults": {
+  "faulted_at_start": {},
+  "faulted_at_end": {},
+  "kiyo_dead_since": null
+ }
+}

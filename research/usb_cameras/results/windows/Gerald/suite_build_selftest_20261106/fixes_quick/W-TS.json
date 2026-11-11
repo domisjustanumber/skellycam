@@ -1,0 +1,3253 @@
+{
+ "test": "W-TS",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-06T21:14:46.077782+00:00",
+ "utc_finished": "2026-11-06T21:15:40.969961+00:00",
+ "elapsed_s": 54.875,
+ "command": "suite/windows/run_suite.py --quick --camera 085c --camera 0843 --camera 4a55 --out-dir results/windows/Gerald/suite_build_selftest_20261106/fixes_quick",
+ "argv": [
+  "suite/windows/run_suite.py",
+  "--quick",
+  "--camera",
+  "085c",
+  "--camera",
+  "0843",
+  "--camera",
+  "4a55",
+  "--out-dir",
+  "results/windows/Gerald/suite_build_selftest_20261106/fixes_quick"
+ ],
+ "environment": {
+  "os": {
+   "platform": "Windows-11-10.0.26300-SP0",
+   "system": "Windows",
+   "release": "11",
+   "version": "10.0.26300",
+   "machine": "AMD64",
+   "windows_build": 26300,
+   "windows_version": "10.0.26300",
+   "windows_edition": "Core",
+   "windows_displayversion": "26H2",
+   "windows_ubr": 9711,
+   "windows_productname": "Windows 10 Home",
+   "windows_currentbuild": "26300"
+  },
+  "python": "3.12.13",
+  "python_implementation": "CPython",
+  "python_executable": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+  "hostname": "Gerald",
+  "pid": 22536,
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0"
+  }
+ },
+ "cameras": [
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "vid": "046d",
+   "pid": "085c",
+   "serial": "C922SN01",
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "c922 Pro Stream Webcam",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+   "speed": "HS",
+   "bcd_device": "0016",
+   "metadata_tier1": true,
+   "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 4,
+   "ds_index": 0
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "name": "USB Camera",
+   "vid": "4c4a",
+   "pid": "4a55",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232e60d4&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Camera",
+   "ds_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "speed": "HS",
+   "bcd_device": "0100",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-06T20:54:40.183039+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 6,
+   "ds_index": 6
+  },
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+   "name": "Logitech Webcam C930e",
+   "vid": "046d",
+   "pid": "0843",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+   "parent_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&2206973f&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "Logitech Webcam C930e",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(7)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+   "speed": "HS",
+   "bcd_device": "0013",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 7
+  }
+ ],
+ "measurements": {
+  "seconds": 8.0,
+  "quick": true,
+  "cameras": {
+   "046d:085c:sn=C922SN01": {
+    "name": "c922 Pro Stream Webcam",
+    "is_kiyo": false,
+    "metadata_tier1": true,
+    "mode": "MJPG 1280x720@30",
+    "apis": {
+     "mf": {
+      "frames": 242,
+      "fields": {
+       "qpc_ns": 242,
+       "sample_time_100ns": 242,
+       "uvc_pts": 242,
+       "uvc_scr_stc": 242,
+       "uvc_scr_sof": 242,
+       "uvc_eof_scr_stc": 242,
+       "has_metadata": 242
+      },
+      "metadata_tier1_flag": true,
+      "uvc_pts_present": true,
+      "pts_matches_tier1_flag": true,
+      "mf_discontinuity_flags_after_frame0": 0,
+      "grid_qpc_arrival": {
+       "n": 242,
+       "quantized": true,
+       "step_ms": 16.0,
+       "on_grid_fraction": 1.0,
+       "phase_concentration": 0.9999,
+       "known_step": "16ms",
+       "ambiguous_with_period": false,
+       "interval_ms": {
+        "n": 241,
+        "mean": 33.327147302904564,
+        "std": 4.421890867114405,
+        "min": 31.8291,
+        "max": 48.0997,
+        "median": 32.0016,
+        "p05": 31.9486,
+        "p95": 47.9841,
+        "rms": 33.61801203100759
+       },
+       "histogram": [
+        {
+         "ms": 31.8,
+         "count": 1
+        },
+        {
+         "ms": 31.9,
+         "count": 14
+        },
+        {
+         "ms": 32.0,
+         "count": 185
+        },
+        {
+         "ms": 32.1,
+         "count": 21
+        },
+        {
+         "ms": 47.9,
+         "count": 2
+        },
+        {
+         "ms": 48.0,
+         "count": 17
+        },
+        {
+         "ms": 48.1,
+         "count": 1
+        }
+       ],
+       "clusters": [
+        {
+         "ms": 31.999726696832578,
+         "count": 221,
+         "share": 0.91701244813278
+        },
+        {
+         "ms": 47.995145,
+         "count": 20,
+         "share": 0.08298755186721991
+        }
+       ],
+       "known_steps": {
+        "windows_timer_15.625ms": 0.008,
+        "16ms": 0.9999,
+        "1ms_usb_frame": 0.9829,
+        "4ms": 0.9989,
+        "0.125ms_usb_microframe": 0.5057
+       }
+      },
+      "frame_index_fit_arrival": {
+       "causal": {
+        "causal": true,
+        "period_ns": 33335845.54260489,
+        "fps": 29.997739182045034,
+        "offset_ns": 24525778478363.02,
+        "residual_stats_ms": {
+         "n": 213,
+         "mean": 6.750809640038145,
+         "std": 4.595944384700086,
+         "min": -3.90625e-09,
+         "max": 14.7510911328125,
+         "median": 6.406839492187499,
+         "p05": 0.0,
+         "p95": 14.446282587499997,
+         "rms": 8.160696536152967
+        },
+        "slots_skipped": 0,
+        "duplicate_slots": 0,
+        "n_estimated": 213,
+        "n": 242,
+        "slotting": "sequence",
+        "gaps_found": 0,
+        "drops_detectable": true,
+        "grid_ms": 16.0,
+        "slotting_residual_std_ms": null,
+        "nominal_period_ns": 33333333.333333332,
+        "rate_vs_nominal_ppm": -75.36059849888588,
+        "fit_unreliable": false,
+        "unreliable_reasons": []
+       },
+       "whole_run": {
+        "causal": false,
+        "period_ns": 33335845.54260489,
+        "fps": 29.997739182045034,
+        "offset_ns": 24525778220263.16,
+        "residual_stats_ms": {
+         "n": 242,
+         "mean": 7.435213005520402,
+         "std": 4.601049280803511,
+         "min": -0.9454205234374999,
+         "max": 15.094272499999999,
+         "median": 7.500403412109375,
+         "p05": 0.19500327851562502,
+         "p95": 14.717710525976562,
+         "rms": 8.738682338359128
+        },
+        "slots_skipped": 0,
+        "duplicate_slots": 0,
+        "n_estimated": 242,
+        "n": 242,
+        "slotting": "sequence",
+        "gaps_found": 0,
+        "drops_detectable": true,
+        "grid_ms": 16.0,
+        "slotting_residual_std_ms": null,
+        "nominal_period_ns": 33333333.333333332,
+        "rate_vs_nominal_ppm": -75.36059849888588,
+        "fit_unreliable": false,
+        "unreliable_reasons": []
+       }
+      },
+      "grid_sample_time": {
+       "n": 242,
+       "quantized": true,
+       "step_ms": 16.0,
+       "on_grid_fraction": 1.0,
+       "phase_concentration": 1.0,
+       "known_step": "16ms",
+       "ambiguous_with_period": false,
+       "interval_ms": {
+        "n": 241,
+        "mean": 33.394114107883816,
+        "std": 4.521378526683001,
+        "min": 31.9579,
+        "max": 48.0444,
+        "median": 32.0001,
+        "p05": 31.984,
+        "p95": 47.9976,
+        "rms": 33.69755029183866
+       },
+       "histogram": [
+        {
+         "ms": 32.0,
+         "count": 219
+        },
+        {
+         "ms": 32.1,
+         "count": 1
+        },
+        {
+         "ms": 48.0,
+         "count": 21
+        }
+       ],
+       "clusters": [
+        {
+         "ms": 32.00010681818182,
+         "count": 220,
+         "share": 0.9128630705394191
+        },
+        {
+         "ms": 47.998,
+         "count": 21,
+         "share": 0.08713692946058091
+        }
+       ],
+       "known_steps": {
+        "windows_timer_15.625ms": 0.0079,
+        "16ms": 1.0,
+        "1ms_usb_frame": 0.9988,
+        "4ms": 0.9999,
+        "0.125ms_usb_microframe": 0.9341
+       }
+      },
+      "drops_sample_time": {
+       "startup_interval_ms": 47.9976,
+       "period_ms": 33.33326625,
+       "slotting": "sequence",
+       "grid_ms": 16.0,
+       "drops_detectable": true,
+       "n": 241,
+       "drops": 0,
+       "gap_events": [],
+       "gap_event_count": 0,
+       "duplicates": 0,
+       "backwards": 0,
+       "max_gap": 0,
+       "index_offset": 1
+      },
+      "arrival_minus_sample_time_ms": {
+       "n": 242,
+       "modes": [
+        {
+         "centre_ms": 0.2561,
+         "count": 142,
+         "share": 0.5867768595041323,
+         "min_ms": 0.2054,
+         "max_ms": 0.3427,
+         "std_ms": 0.024147877308857275
+        },
+        {
+         "centre_ms": 16.2487,
+         "count": 100,
+         "share": 0.4132231404958678,
+         "min_ms": 16.1945,
+         "max_ms": 16.41,
+         "std_ms": 0.033017168399045234
+        }
+       ],
+       "n_modes": 2,
+       "multimodal": true,
+       "minor_share": 0.0,
+       "gap_ms": 3.0,
+       "mean_ms": 6.868457024793389
+      },
+      "device_clock_fit": {
+       "causal": {
+        "causal": true,
+        "n": 242,
+        "nominal_hz": 300000000.0,
+        "pts_zero_fraction": 0.0,
+        "monotonic": true,
+        "pts_period_ticks": {
+         "n": 241,
+         "mean": 9999756.846473029,
+         "std": 85990.3277313627,
+         "min": 9907200.0,
+         "max": 10092200.0,
+         "median": 9941200.0,
+         "p05": 9910200.0,
+         "p95": 10089600.0,
+         "rms": 10000125.031376034
+        },
+        "freq_hz_est": 299978126.43147826,
+        "ppm_vs_nominal": -72.91189507246018,
+        "residual_stats_ms": {
+         "n": 213,
+         "mean": 6.662331801954958,
+         "std": 4.57428750189811,
+         "min": 0.0,
+         "max": 14.7783891640625,
+         "median": 6.6723936796875,
+         "p05": 0.0,
+         "p95": 14.180615637499999,
+         "rms": 8.075427911214408
+        }
+       },
+       "whole_run": {
+        "causal": false,
+        "n": 242,
+        "nominal_hz": 300000000.0,
+        "pts_zero_fraction": 0.0,
+        "monotonic": true,
+        "pts_period_ticks": {
+         "n": 241,
+         "mean": 9999756.846473029,
+         "std": 85990.3277313627,
+         "min": 9907200.0,
+         "max": 10092200.0,
+         "median": 9941200.0,
+         "p05": 9910200.0,
+         "p95": 10089600.0,
+         "rms": 10000125.031376034
+        },
+        "freq_ppm_1sigma": 126.82687573219751,
+        "freq_hz_est": 299978126.4314784,
+        "ppm_vs_nominal": -72.9118950720628,
+        "residual_stats_ms": {
+         "n": 242,
+         "mean": 7.286505352530992,
+         "std": 4.585097685992335,
+         "min": -1.25615208984375,
+         "max": 14.86492108984375,
+         "median": 7.389992302734375,
+         "p05": 0.1867738244140625,
+         "p95": 14.429538024414061,
+         "rms": 8.604034439877376
+        }
+       }
+      },
+      "pts_units": {
+       "freq_hz_est": 299978126.4314784,
+       "nominal_hz": 300000000.0,
+       "units_match": true,
+       "rate_match": true,
+       "match": true,
+       "ppm": -72.91189507208085,
+       "ppm_tolerance": 1000.0,
+       "ratio_est_to_nominal": 0.9999270881049279,
+       "nearest_known_clock": "300 MHz"
+      },
+      "pts_vs_sequence": {
+       "n": 242,
+       "monotonic": true,
+       "step_gcd_ticks": 200,
+       "step_gcd_ms": 0.0006666666666666668,
+       "modal_step_share": 0.05394190871369295,
+       "distinct_steps": 92,
+       "period_ms": 33.33341534828001,
+       "fps": 29.999926186729603,
+       "residual_std_ms": 0.14359318223834744,
+       "residual_min_ms": -0.15260283260726928,
+       "residual_max_ms": 0.17187162458264826,
+       "slots_skipped": 0,
+       "slotting": "sequence"
+      },
+      "pts_period_ticks_median": 9941200,
+      "drops_pts": {
+       "n": 242,
+       "drops": 0,
+       "gap_events": [],
+       "gap_event_count": 0,
+       "duplicates": 0,
+       "backwards": 0,
+       "max_gap": 0
+      },
+      "clock_hz_nominal": 300000000.0,
+      "uvc_scr": {
+       "n": 241,
+       "skipped_first": 1,
+       "notes": [],
+       "clock_hz_nominal": 300000000.0,
+       "first_frame_stc_step_ticks": 10000400,
+       "fit_vs_arrival": {
+        "causal": false,
+        "n": 241,
+        "nominal_hz": 300000000.0,
+        "pts_zero_fraction": 0.0,
+        "monotonic": true,
+        "pts_period_ticks": {
+         "n": 240,
+         "mean": 10000006.666666666,
+         "std": 1498.54787916989,
+         "min": 9996800.0,
+         "max": 10003600.0,
+         "median": 9999800.0,
+         "p05": 9997800.0,
+         "p95": 10002610.0,
+         "rms": 10000006.778481036
+        },
+        "freq_ppm_1sigma": 128.2530136094751,
+        "freq_hz_est": 299975040.9462432,
+        "ppm_vs_nominal": -83.19684585591156,
+        "residual_stats_ms": {
+         "n": 241,
+         "mean": 1.199429453867257e-09,
+         "std": 4.607941869614452,
+         "min": -8.3489408828125,
+         "max": 7.69635541015625,
+         "median": -0.25023678125,
+         "p05": -7.23155674609375,
+         "p95": 7.285696316406249,
+         "rms": 4.5983718865539664
+        }
+       },
+       "units": {
+        "freq_hz_est": 299975040.9462432,
+        "nominal_hz": 300000000.0,
+        "units_match": true,
+        "rate_match": true,
+        "match": true,
+        "ppm": -83.19684585589293,
+        "ppm_tolerance": 1000.0,
+        "ratio_est_to_nominal": 0.9999168031541441,
+        "nearest_known_clock": "300 MHz"
+       },
+       "clock_hz_used": 300000000.0,
+       "monotonic": true,
+       "vs_sequence": {
+        "n": 241,
+        "monotonic": true,
+        "step_gcd_ticks": 200,
+        "step_gcd_ms": 0.0006666666666666668,
+        "modal_step_share": 0.08333333333333333,
+        "distinct_steps": 35,
+        "period_ms": 33.33333353165758,
+        "fps": 29.999999821508183,
+        "residual_std_ms": 0.002912218002425767,
+        "residual_min_ms": -0.0060052181549072265,
+        "residual_max_ms": 0.008017192482948304,
+        "slots_skipped": 0,
+        "slotting": "sequence"
+       },
+       "self_consistent": true,
+       "stc_minus_pts_ms": {
+        "n": 241,
+        "mean": 32.987656984785616,
+        "std": 0.14293483492662065,
+        "min": 32.82533333333333,
+        "max": 33.135333333333335,
+        "median": 33.122,
+        "p05": 32.83133333333333,
+        "p95": 33.132666666666665,
+        "rms": 32.98796536526015
+       },
+       "pts_freq_hz_est": 299975832.2040595,
+       "pts_stc_rate_ratio": 1.0000805658101286,
+       "transfer_ms": {
+        "n": 241,
+        "mean": 7.222052558782849,
+        "std": 0.19404363532785465,
+        "min": 6.562666666666666,
+        "max": 7.494,
+        "median": 7.122,
+        "p05": 6.997333333333334,
+        "p95": 7.467333333333333,
+        "rms": 7.2246480784879115
+       },
+       "eof_stc_vs_sequence": {
+        "n": 241,
+        "monotonic": true,
+        "step_gcd_ticks": 200,
+        "step_gcd_ms": 0.0006666666666666668,
+        "modal_step_share": 0.125,
+        "distinct_steps": 55,
+        "period_ms": 33.33370376530298,
+        "fps": 29.999666614932217,
+        "residual_std_ms": 0.19131245622663717,
+        "residual_min_ms": -0.6244008493076563,
+        "residual_max_ms": 0.27448341963624956,
+        "slots_skipped": 0,
+        "slotting": "sequence"
+       },
+       "transfer_sof_counts": {
+        "n": 241,
+        "mean": 6.224066390041494,
+        "std": 0.42768960190072103,
+        "min": 5.0,
+        "max": 7.0,
+        "median": 6.0,
+        "p05": 6.0,
+        "p95": 7.0,
+        "rms": 6.238682699554942
+       },
+       "sof": {
+        "n": 241,
+        "expected_per_s": 1000.0,
+        "constant": false,
+        "counts_per_s": 884.0374505776953,
+        "ok": false,
+        "steps": {
+         "29": 127,
+         "30": 113
+        },
+        "note": "SOF advances 884/s, not 1000/s: cannot map the device clock to the USB frame number",
+        "time_reference": "stc"
+       }
+      },
+      "capture_ok": true,
+      "capture_error": null,
+      "run": {
+       "rc": 0,
+       "elapsed_s": 8.765,
+       "timed_out": false,
+       "killed": false,
+       "lock_wait_s": 0.0,
+       "spawn_error": null,
+       "stderr_tail": "Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 53.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\W-TS\\c922prostreamw_046d-085c_C922SN01\\mf --save none --seconds 8.0\n[camlock] released"
+      },
+      "frames_jsonl": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\W-TS\\c922prostreamw_046d-085c_C922SN01\\mf\\frames.jsonl",
+      "source_ratings": {
+       "uvc_pts": "partial",
+       "uvc_scr_stc": "partial",
+       "mf_sample_time": "no",
+       "frame_index_fit": "untested"
+      }
+     },
+     "ds": {
+      "frames": 242,
+      "fields": {
+       "qpc_ns": 242,
+       "pts_ns": 242,
+       "uvc_pts": 0
+      },
+      "grid_qpc_arrival": {
+       "n": 242,
+       "quantized": true,
+       "step_ms": 16.0,
+       "on_grid_fraction": 0.9959,
+       "phase_concentration": 0.9991,
+       "known_step": "16ms",
+       "ambiguous_with_period": false,
+       "interval_ms": {
+        "n": 241,
+        "mean": 33.32097759336099,
+        "std": 4.423850525465628,
+        "min": 30.3957,
+        "max": 48.0537,
+        "median": 32.0026,
+        "p05": 31.9468,
+        "p95": 47.9899,
+        "rms": 33.61215250542281
+       },
+       "histogram": [
+        {
+         "ms": 30.4,
+         "count": 1
+        },
+        {
+         "ms": 31.9,
+         "count": 12
+        },
+        {
+         "ms": 32.0,
+         "count": 195
+        },
+        {
+         "ms": 32.1,
+         "count": 13
+        },
+        {
+         "ms": 47.9,
+         "count": 2
+        },
+        {
+         "ms": 48.0,
+         "count": 17
+        },
+        {
+         "ms": 48.1,
+         "count": 1
+        }
+       ],
+       "clusters": [
+        {
+         "ms": 32.00058045454546,
+         "count": 220,
+         "share": 0.9128630705394191
+        },
+        {
+         "ms": 47.99161,
+         "count": 20,
+         "share": 0.08298755186721991
+        }
+       ],
+       "known_steps": {
+        "windows_timer_15.625ms": 0.0089,
+        "16ms": 0.9991,
+        "1ms_usb_frame": 0.9787,
+        "4ms": 0.9915,
+        "0.125ms_usb_microframe": 0.7058
+       }
+      },
+      "frame_index_fit_arrival": {
+       "causal": {
+        "causal": true,
+        "period_ns": 33331376.11078724,
+        "fps": 30.001761603727,
+        "offset_ns": 24535145929404.14,
+        "residual_stats_ms": {
+         "n": 213,
+         "mean": 6.526383571742958,
+         "std": 4.66406919296544,
+         "min": -3.90625e-09,
+         "max": 14.53789671875,
+         "median": 6.15315127734375,
+         "p05": 0.0,
+         "p95": 14.37003593359375,
+         "rms": 8.0153037783833
+        },
+        "slots_skipped": 0,
+        "duplicate_slots": 0,
+        "n_estimated": 213,
+        "n": 242,
+        "slotting": "sequence",
+        "gaps_found": 0,
+        "drops_detectable": true,
+        "grid_ms": 16.0,
+        "slotting_residual_std_ms": null,
+        "nominal_period_ns": 33333333.333333332,
+        "rate_vs_nominal_ppm": 58.720124233246906,
+        "fit_unreliable": false,
+        "unreliable_reasons": []
+       },
+       "whole_run": {
+        "causal": false,
+        "period_ns": 33331376.11078724,
+        "fps": 30.001761603727,
+        "offset_ns": 24535145317222.53,
+        "residual_stats_ms": {
+         "n": 242,
+         "mean": 7.499252399890238,
+         "std": 4.636108114979247,
+         "min": -0.13305975,
+         "max": 16.15397746875,
+         "median": 7.87384025,
+         "p05": 0.1831756240234375,
+         "p95": 14.741197831054686,
+         "rms": 8.811553149231
+        },
+        "slots_skipped": 0,
+        "duplicate_slots": 0,
+        "n_estimated": 242,
+        "n": 242,
+        "slotting": "sequence",
+        "gaps_found": 0,
+        "drops_detectable": true,
+        "grid_ms": 16.0,
+        "slotting_residual_std_ms": null,
+        "nominal_period_ns": 33333333.333333332,
+        "rate_vs_nominal_ppm": 58.720124233246906,
+        "fit_unreliable": false,
+        "unreliable_reasons": []
+       }
+      },
+      "grid_pts": {
+       "n": 242,
+       "quantized": false,
+       "step_ms": null,
+       "on_grid_fraction": null,
+       "phase_concentration": null,
+       "known_step": null,
+       "ambiguous_with_period": false,
+       "interval_ms": {
+        "n": 241,
+        "mean": 33.3333,
+        "std": 0.0,
+        "min": 33.3333,
+        "max": 33.3333,
+        "median": 33.3333,
+        "p05": 33.3333,
+        "p95": 33.3333,
+        "rms": 33.3333
+       },
+       "histogram": [
+        {
+         "ms": 33.3,
+         "count": 241
+        }
+       ],
+       "clusters": [
+        {
+         "ms": 33.3333,
+         "count": 241,
+         "share": 1.0
+        }
+       ],
+       "known_steps": {
+        "windows_timer_15.625ms": 0.0075,
+        "16ms": 0.008,
+        "1ms_usb_frame": 0.0042,
+        "4ms": 0.0041,
+        "0.125ms_usb_microframe": 0.0036
+       }
+      },
+      "pts_synthesized": {
+       "synthesized": true,
+       "n": 242,
+       "reasons": [
+        "intervals 100% modal / 1 distinct values while arrivals jitter (std 4.42 ms)"
+       ],
+       "modal_share": 1.0,
+       "distinct_intervals": 1,
+       "modal_interval_ms": 33.3333,
+       "interval_std_ms": 0.0,
+       "even_intervals": true,
+       "arrival_interval_std_ms": 4.423850525465628,
+       "drift_ms_per_s": -0.05377200699852557
+      },
+      "drops_pts": null,
+      "drops_pts_note": "pts synthesized from a counter: drops cannot be seen in them",
+      "arrival_minus_pts_ms": {
+       "n": 242,
+       "modes": [
+        {
+         "centre_ms": 28.41695,
+         "count": 242,
+         "share": 1.0,
+         "min_ms": 20.4153,
+         "max_ms": 36.7235,
+         "std_ms": 4.638063918995441
+        }
+       ],
+       "n_modes": 1,
+       "multimodal": false,
+       "minor_share": 0.0,
+       "gap_ms": 3.0,
+       "mean_ms": 27.836946280991736
+      },
+      "arrival_minus_pts_drift_ms_per_s": -0.05377200699852557,
+      "capture_ok": true,
+      "capture_error": null,
+      "run": {
+       "rc": 0,
+       "elapsed_s": 9.172,
+       "timed_out": false,
+       "killed": false,
+       "lock_wait_s": 0.0,
+       "spawn_error": null,
+       "stderr_tail": "sers\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 68.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_ds.py capture --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --width 1280 --height 720 --fps 30 --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\W-TS\\c922prostreamw_046d-085c_C922SN01\\ds --save none --seconds 8.0\n[camlock] released"
+      },
+      "frames_jsonl": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\W-TS\\c922prostreamw_046d-085c_C922SN01\\ds\\frames.jsonl",
+      "source_ratings": {
+       "pyav_pts": "no",
+       "frame_index_fit": "untested"
+      }
+     }
+    }
+   },
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+    "name": "USB Camera",
+    "is_kiyo": false,
+    "metadata_tier1": false,
+    "mode": "MJPG 1280x720@30",
+    "apis": {
+     "mf": {
+      "frames": 138,
+      "fields": {
+       "qpc_ns": 138,
+       "sample_time_100ns": 138,
+       "uvc_pts": 0,
+       "uvc_scr_stc": 0,
+       "uvc_scr_sof": 0,
+       "uvc_eof_scr_stc": 0,
+       "has_metadata": 0
+      },
+      "metadata_tier1_flag": false,
+      "uvc_pts_present": false,
+      "pts_matches_tier1_flag": true,
+      "mf_discontinuity_flags_after_frame0": 0,
+      "grid_qpc_arrival": {
+       "n": 138,
+       "quantized": true,
+       "step_ms": 16.0,
+       "on_grid_fraction": null,
+       "phase_concentration": 0.9956,
+       "known_step": "16ms",
+       "ambiguous_with_period": false,
+       "interval_ms": {
+        "n": 137,
+        "mean": 58.27904744525548,
+        "std": 7.699969277995246,
+        "min": 47.3466,
+        "max": 64.9027,
+        "median": 63.798,
+        "p05": 47.72142,
+        "p95": 64.40198,
+        "rms": 58.781835015072446
+       },
+       "histogram": [
+        {
+         "ms": 47.3,
+         "count": 1
+        },
+        {
+         "ms": 47.4,
+         "count": 1
+        },
+        {
+         "ms": 47.5,
+         "count": 1
+        },
+        {
+         "ms": 47.7,
+         "count": 6
+        },
+        {
+         "ms": 47.8,
+         "count": 6
+        },
+        {
+         "ms": 47.9,
+         "count": 5
+        },
+        {
+         "ms": 48.0,
+         "count": 8
+        },
+        {
+         "ms": 48.1,
+         "count": 7
+        },
+        {
+         "ms": 48.2,
+         "count": 2
+        },
+        {
+         "ms": 48.3,
+         "count": 6
+        },
+        {
+         "ms": 48.4,
+         "count": 3
+        },
+        {
+         "ms": 48.5,
+         "count": 1
+        },
+        {
+         "ms": 48.6,
+         "count": 2
+        },
+        {
+         "ms": 63.3,
+         "count": 2
+        },
+        {
+         "ms": 63.4,
+         "count": 1
+        },
+        {
+         "ms": 63.5,
+         "count": 2
+        },
+        {
+         "ms": 63.6,
+         "count": 5
+        },
+        {
+         "ms": 63.7,
+         "count": 6
+        },
+        {
+         "ms": 63.8,
+         "count": 6
+        },
+        {
+         "ms": 63.9,
+         "count": 9
+        },
+        {
+         "ms": 64.0,
+         "count": 22
+        },
+        {
+         "ms": 64.1,
+         "count": 10
+        },
+        {
+         "ms": 64.2,
+         "count": 12
+        },
+        {
+         "ms": 64.3,
+         "count": 4
+        },
+        {
+         "ms": 64.4,
+         "count": 4
+        },
+        {
+         "ms": 64.5,
+         "count": 2
+        },
+        {
+         "ms": 64.6,
+         "count": 2
+        },
+        {
+         "ms": 64.9,
+         "count": 1
+        }
+       ],
+       "clusters": [
+        {
+         "ms": 48.00467551020408,
+         "count": 49,
+         "share": 0.35766423357664234
+        },
+        {
+         "ms": 63.98962873563219,
+         "count": 87,
+         "share": 0.635036496350365
+        }
+       ],
+       "known_steps": {
+        "windows_timer_15.625ms": 0.0082,
+        "16ms": 0.9956,
+        "1ms_usb_frame": 0.3217,
+        "4ms": 0.9321,
+        "0.125ms_usb_microframe": 0.056
+       }
+      },
+      "frame_index_fit_arrival": {
+       "causal": {
+        "causal": true,
+        "period_ns": 58320828.89684444,
+        "fps": 17.14653270392916,
+        "offset_ns": 24543882869712.62,
+        "residual_stats_ms": {
+         "n": 109,
+         "mean": 7.387326986381881,
+         "std": 4.580255877254098,
+         "min": 0.0,
+         "max": 15.446454113281249,
+         "median": 7.68288479296875,
+         "p05": 0.1183819390625001,
+         "p95": 14.3152409875,
+         "rms": 8.68094916264745
+        },
+        "slots_skipped": 0,
+        "duplicate_slots": 0,
+        "n_estimated": 109,
+        "n": 138,
+        "slotting": "sequence",
+        "gaps_found": 0,
+        "drops_detectable": true,
+        "grid_ms": 16.0,
+        "slotting_residual_std_ms": null,
+        "nominal_period_ns": 33333333.333333332,
+        "rate_vs_nominal_ppm": -428448.9098690281,
+        "fit_unreliable": false,
+        "unreliable_reasons": []
+       },
+       "whole_run": {
+        "causal": false,
+        "period_ns": 58320828.89684444,
+        "fps": 17.14653270392916,
+        "offset_ns": 24543883247187.258,
+        "residual_stats_ms": {
+         "n": 138,
+         "mean": 7.573780409759963,
+         "std": 4.632863770075905,
+         "min": -0.48920284375,
+         "max": 15.580500996093749,
+         "median": 7.789449251953124,
+         "p05": 0.4813472408203125,
+         "p95": 14.53826493203125,
+         "rms": 8.869613538915996
+        },
+        "slots_skipped": 0,
+        "duplicate_slots": 0,
+        "n_estimated": 138,
+        "n": 138,
+        "slotting": "sequence",
+        "gaps_found": 0,
+        "drops_detectable": true,
+        "grid_ms": 16.0,
+        "slotting_residual_std_ms": null,
+        "nominal_period_ns": 33333333.333333332,
+        "rate_vs_nominal_ppm": -428448.9098690281,
+        "fit_unreliable": false,
+        "unreliable_reasons": []
+       }
+      },
+      "grid_sample_time": {
+       "n": 138,
+       "quantized": true,
+       "step_ms": 16.0,
+       "on_grid_fraction": 1.0,
+       "phase_concentration": 1.0,
+       "known_step": "16ms",
+       "ambiguous_with_period": false,
+       "interval_ms": {
+        "n": 137,
+        "mean": 58.39405401459854,
+        "std": 7.900886219009704,
+        "min": 47.9229,
+        "max": 79.9631,
+        "median": 63.9805,
+        "p05": 47.98062,
+        "p95": 64.03846,
+        "rms": 58.922269963472395
+       },
+       "histogram": [
+        {
+         "ms": 47.9,
+         "count": 1
+        },
+        {
+         "ms": 48.0,
+         "count": 47
+        },
+        {
+         "ms": 48.1,
+         "count": 1
+        },
+        {
+         "ms": 63.9,
+         "count": 3
+        },
+        {
+         "ms": 64.0,
+         "count": 82
+        },
+        {
+         "ms": 64.1,
+         "count": 2
+        },
+        {
+         "ms": 80.0,
+         "count": 1
+        }
+       ],
+       "clusters": [
+        {
+         "ms": 48.00243673469388,
+         "count": 49,
+         "share": 0.35766423357664234
+        },
+        {
+         "ms": 63.998883908045975,
+         "count": 87,
+         "share": 0.635036496350365
+        }
+       ],
+       "known_steps": {
+        "windows_timer_15.625ms": 0.0063,
+        "16ms": 1.0,
+        "1ms_usb_frame": 0.9894,
+        "4ms": 0.9993,
+        "0.125ms_usb_microframe": 0.6761
+       }
+      },
+      "drops_sample_time": {
+       "startup_interval_ms": 79.9631,
+       "period_ms": 58.2354580882353,
+       "slotting": "sequence",
+       "grid_ms": 16.0,
+       "drops_detectable": true,
+       "n": 137,
+       "drops": 0,
+       "gap_events": [],
+       "gap_event_count": 0,
+       "duplicates": 0,
+       "backwards": 0,
+       "max_gap": 0,
+       "index_offset": 1
+      },
+      "arrival_minus_sample_time_ms": {
+       "n": 138,
+       "modes": [
+        {
+         "centre_ms": 16.4471,
+         "count": 10,
+         "share": 0.07246376811594203,
+         "min_ms": 16.2951,
+         "max_ms": 16.8722,
+         "std_ms": 0.21849450056643901
+        },
+        {
+         "centre_ms": 32.5054,
+         "count": 127,
+         "share": 0.9202898550724637,
+         "min_ms": 32.2361,
+         "max_ms": 33.5261,
+         "std_ms": 0.23649133798277353
+        }
+       ],
+       "n_modes": 2,
+       "multimodal": true,
+       "minor_share": 0.007246376811594203,
+       "gap_ms": 3.0,
+       "mean_ms": 31.485096376811594
+      },
+      "capture_ok": true,
+      "capture_error": null,
+      "run": {
+       "rc": 0,
+       "elapsed_s": 8.421,
+       "timed_out": false,
+       "killed": false,
+       "lock_wait_s": 0.0,
+       "spawn_error": null,
+       "stderr_tail": "thon.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 53.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\W-TS\\usbcamera_4c4a-4a55_2\\mf --save none --seconds 8.0\n[camlock] released"
+      },
+      "frames_jsonl": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\W-TS\\usbcamera_4c4a-4a55_2\\mf\\frames.jsonl",
+      "source_ratings": {
+       "mf_sample_time": "no",
+       "frame_index_fit": "untested"
+      }
+     },
+     "ds": {
+      "frames": 139,
+      "fields": {
+       "qpc_ns": 139,
+       "pts_ns": 139,
+       "uvc_pts": 0
+      },
+      "grid_qpc_arrival": {
+       "n": 139,
+       "quantized": true,
+       "step_ms": 16.0,
+       "on_grid_fraction": null,
+       "phase_concentration": 0.9873,
+       "known_step": "16ms",
+       "ambiguous_with_period": false,
+       "interval_ms": {
+        "n": 138,
+        "mean": 58.27733550724638,
+        "std": 7.687965359737624,
+        "min": 47.6316,
+        "max": 64.5348,
+        "median": 63.88249999999999,
+        "p05": 47.81981,
+        "p95": 64.2483,
+        "rms": 58.778604521221
+       },
+       "histogram": [
+        {
+         "ms": 47.6,
+         "count": 2
+        },
+        {
+         "ms": 47.7,
+         "count": 1
+        },
+        {
+         "ms": 47.8,
+         "count": 8
+        },
+        {
+         "ms": 47.9,
+         "count": 7
+        },
+        {
+         "ms": 48.0,
+         "count": 18
+        },
+        {
+         "ms": 48.1,
+         "count": 7
+        },
+        {
+         "ms": 48.2,
+         "count": 6
+        },
+        {
+         "ms": 58.4,
+         "count": 1
+        },
+        {
+         "ms": 63.6,
+         "count": 1
+        },
+        {
+         "ms": 63.7,
+         "count": 3
+        },
+        {
+         "ms": 63.8,
+         "count": 12
+        },
+        {
+         "ms": 63.9,
+         "count": 14
+        },
+        {
+         "ms": 64.0,
+         "count": 25
+        },
+        {
+         "ms": 64.1,
+         "count": 16
+        },
+        {
+         "ms": 64.2,
+         "count": 10
+        },
+        {
+         "ms": 64.3,
+         "count": 5
+        },
+        {
+         "ms": 64.4,
+         "count": 1
+        },
+        {
+         "ms": 64.5,
+         "count": 1
+        }
+       ],
+       "clusters": [
+        {
+         "ms": 47.97589591836735,
+         "count": 49,
+         "share": 0.35507246376811596
+        },
+        {
+         "ms": 64.01202386363637,
+         "count": 88,
+         "share": 0.6376811594202898
+        }
+       ],
+       "known_steps": {
+        "windows_timer_15.625ms": 0.0095,
+        "16ms": 0.9873,
+        "1ms_usb_frame": 0.6937,
+        "4ms": 0.9659,
+        "0.125ms_usb_microframe": 0.3116
+       }
+      },
+      "frame_index_fit_arrival": {
+       "causal": {
+        "causal": true,
+        "period_ns": 58321196.29608115,
+        "fps": 17.146424687917357,
+        "offset_ns": 24552981165665.383,
+        "residual_stats_ms": {
+         "n": 110,
+         "mean": 7.377650928267045,
+         "std": 4.582119256524717,
+         "min": 0.0,
+         "max": 15.32917758203125,
+         "median": 7.362033796875,
+         "p05": 0.20727285117187505,
+         "p95": 14.416382813476561,
+         "rms": 8.673792655915838
+        },
+        "slots_skipped": 0,
+        "duplicate_slots": 0,
+        "n_estimated": 110,
+        "n": 139,
+        "slotting": "sequence",
+        "gaps_found": 0,
+        "drops_detectable": true,
+        "grid_ms": 16.0,
+        "slotting_residual_std_ms": null,
+        "nominal_period_ns": 33333333.333333332,
+        "rate_vs_nominal_ppm": -428452.5104027549,
+        "fit_unreliable": false,
+        "unreliable_reasons": []
+       },
+       "whole_run": {
+        "causal": false,
+        "period_ns": 58321196.29608115,
+        "fps": 17.146424687917357,
+        "offset_ns": 24552981177757.062,
+        "residual_stats_ms": {
+         "n": 139,
+         "mean": 7.697258939551483,
+         "std": 4.624976201800338,
+         "min": -0.2872533515625,
+         "max": 15.60149850390625,
+         "median": 7.6958725742187495,
+         "p05": 0.42780073984375,
+         "p95": 14.783348499609374,
+         "rms": 8.971304935455297
+        },
+        "slots_skipped": 0,
+        "duplicate_slots": 0,
+        "n_estimated": 139,
+        "n": 139,
+        "slotting": "sequence",
+        "gaps_found": 0,
+        "drops_detectable": true,
+        "grid_ms": 16.0,
+        "slotting_residual_std_ms": null,
+        "nominal_period_ns": 33333333.333333332,
+        "rate_vs_nominal_ppm": -428452.5104027549,
+        "fit_unreliable": false,
+        "unreliable_reasons": []
+       }
+      },
+      "grid_pts": {
+       "n": 139,
+       "quantized": false,
+       "step_ms": null,
+       "on_grid_fraction": null,
+       "phase_concentration": null,
+       "known_step": null,
+       "ambiguous_with_period": false,
+       "interval_ms": {
+        "n": 138,
+        "mean": 33.3383,
+        "std": 0.0,
+        "min": 33.3383,
+        "max": 33.3383,
+        "median": 33.3383,
+        "p05": 33.3383,
+        "p95": 33.3383,
+        "rms": 33.3383
+       },
+       "histogram": [
+        {
+         "ms": 33.3,
+         "count": 138
+        }
+       ],
+       "clusters": [
+        {
+         "ms": 33.3383,
+         "count": 138,
+         "share": 1.0
+        }
+       ],
+       "known_steps": {
+        "windows_timer_15.625ms": 0.0171,
+        "16ms": 0.0255,
+        "1ms_usb_frame": 0.0006,
+        "4ms": 0.0083,
+        "0.125ms_usb_microframe": 0.0051
+       }
+      },
+      "pts_synthesized": {
+       "synthesized": true,
+       "n": 139,
+       "reasons": [
+        "intervals 100% modal / 1 distinct values while arrivals jitter (std 7.69 ms)",
+        "drift vs arrival +428.4 ms/s: not the camera's clock"
+       ],
+       "modal_share": 1.0,
+       "distinct_intervals": 1,
+       "modal_interval_ms": 33.3383,
+       "interval_std_ms": 0.0,
+       "even_intervals": true,
+       "arrival_interval_std_ms": 7.687965359737624,
+       "drift_ms_per_s": 428.3695665931013
+      },
+      "drops_pts": null,
+      "drops_pts_note": "pts synthesized from a counter: drops cannot be seen in them",
+      "arrival_minus_pts_ms": {
+       "n": 139,
+       "modes": [],
+       "n_modes": 0,
+       "multimodal": false,
+       "minor_share": 1.0,
+       "gap_ms": 3.0,
+       "mean_ms": 1796.8363604316546
+      },
+      "arrival_minus_pts_drift_ms_per_s": 428.3695665931013,
+      "capture_ok": true,
+      "capture_error": null,
+      "run": {
+       "rc": 0,
+       "elapsed_s": 8.906,
+       "timed_out": false,
+       "killed": false,
+       "lock_wait_s": 0.0,
+       "spawn_error": null,
+       "stderr_tail": "hon.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 68.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_ds.py capture --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --width 1280 --height 720 --fps 30 --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\W-TS\\usbcamera_4c4a-4a55_2\\ds --save none --seconds 8.0\n[camlock] released"
+      },
+      "frames_jsonl": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\W-TS\\usbcamera_4c4a-4a55_2\\ds\\frames.jsonl",
+      "source_ratings": {
+       "pyav_pts": "no",
+       "frame_index_fit": "untested"
+      }
+     }
+    }
+   },
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+    "name": "Logitech Webcam C930e",
+    "is_kiyo": false,
+    "metadata_tier1": false,
+    "mode": "MJPG 1280x720@30",
+    "apis": {
+     "mf": {
+      "frames": 242,
+      "fields": {
+       "qpc_ns": 242,
+       "sample_time_100ns": 242,
+       "uvc_pts": 0,
+       "uvc_scr_stc": 0,
+       "uvc_scr_sof": 0,
+       "uvc_eof_scr_stc": 0,
+       "has_metadata": 0
+      },
+      "metadata_tier1_flag": false,
+      "uvc_pts_present": false,
+      "pts_matches_tier1_flag": true,
+      "mf_discontinuity_flags_after_frame0": 0,
+      "grid_qpc_arrival": {
+       "n": 242,
+       "quantized": true,
+       "step_ms": 16.0,
+       "on_grid_fraction": null,
+       "phase_concentration": 0.9971,
+       "known_step": "16ms",
+       "ambiguous_with_period": false,
+       "interval_ms": {
+        "n": 241,
+        "mean": 33.32599294605809,
+        "std": 4.439383886493527,
+        "min": 30.9349,
+        "max": 48.5037,
+        "median": 32.011,
+        "p05": 31.712,
+        "p95": 48.0105,
+        "rms": 33.61916356279975
+       },
+       "histogram": [
+        {
+         "ms": 30.9,
+         "count": 1
+        },
+        {
+         "ms": 31.4,
+         "count": 1
+        },
+        {
+         "ms": 31.5,
+         "count": 4
+        },
+        {
+         "ms": 31.7,
+         "count": 14
+        },
+        {
+         "ms": 31.8,
+         "count": 23
+        },
+        {
+         "ms": 31.9,
+         "count": 43
+        },
+        {
+         "ms": 32.0,
+         "count": 55
+        },
+        {
+         "ms": 32.1,
+         "count": 42
+        },
+        {
+         "ms": 32.2,
+         "count": 18
+        },
+        {
+         "ms": 32.3,
+         "count": 12
+        },
+        {
+         "ms": 32.4,
+         "count": 3
+        },
+        {
+         "ms": 32.5,
+         "count": 2
+        },
+        {
+         "ms": 32.6,
+         "count": 2
+        },
+        {
+         "ms": 32.7,
+         "count": 1
+        },
+        {
+         "ms": 47.6,
+         "count": 1
+        },
+        {
+         "ms": 47.7,
+         "count": 3
+        },
+        {
+         "ms": 48.0,
+         "count": 6
+        },
+        {
+         "ms": 48.1,
+         "count": 4
+        },
+        {
+         "ms": 48.2,
+         "count": 3
+        },
+        {
+         "ms": 48.3,
+         "count": 2
+        },
+        {
+         "ms": 48.5,
+         "count": 1
+        }
+       ],
+       "clusters": [
+        {
+         "ms": 31.99960090909091,
+         "count": 220,
+         "share": 0.9128630705394191
+        },
+        {
+         "ms": 48.03586,
+         "count": 20,
+         "share": 0.08298755186721991
+        }
+       ],
+       "known_steps": {
+        "windows_timer_15.625ms": 0.0044,
+        "16ms": 0.9971,
+        "1ms_usb_frame": 0.5414,
+        "4ms": 0.9559,
+        "0.125ms_usb_microframe": 0.0505
+       }
+      },
+      "frame_index_fit_arrival": {
+       "causal": {
+        "causal": true,
+        "period_ns": 33288945.64167176,
+        "fps": 30.04000219064254,
+        "offset_ns": 24562074944401.914,
+        "residual_stats_ms": {
+         "n": 213,
+         "mean": 7.061547167015111,
+         "std": 4.777476288534408,
+         "min": -3.90625e-09,
+         "max": 16.02334216015625,
+         "median": 6.79421913671875,
+         "p05": 0.0,
+         "p95": 14.692866415624994,
+         "rms": 8.519540588366446
+        },
+        "slots_skipped": 0,
+        "duplicate_slots": 0,
+        "n_estimated": 213,
+        "n": 242,
+        "slotting": "sequence",
+        "gaps_found": 0,
+        "drops_detectable": true,
+        "grid_ms": 16.0,
+        "slotting_residual_std_ms": null,
+        "nominal_period_ns": 33333333.333333332,
+        "rate_vs_nominal_ppm": 1333.4063547512098,
+        "fit_unreliable": false,
+        "unreliable_reasons": []
+       },
+       "whole_run": {
+        "causal": false,
+        "period_ns": 33288945.64167176,
+        "fps": 30.04000219064254,
+        "offset_ns": 24562073969656.23,
+        "residual_stats_ms": {
+         "n": 242,
+         "mean": 7.942441881956999,
+         "std": 4.713458729416929,
+         "min": -0.7468547812499999,
+         "max": 16.7662504296875,
+         "median": 7.984377302734375,
+         "p05": 0.7207683611328125,
+         "p95": 15.038052388867186,
+         "rms": 9.23077850047606
+        },
+        "slots_skipped": 0,
+        "duplicate_slots": 0,
+        "n_estimated": 242,
+        "n": 242,
+        "slotting": "sequence",
+        "gaps_found": 0,
+        "drops_detectable": true,
+        "grid_ms": 16.0,
+        "slotting_residual_std_ms": null,
+        "nominal_period_ns": 33333333.333333332,
+        "rate_vs_nominal_ppm": 1333.4063547512098,
+        "fit_unreliable": false,
+        "unreliable_reasons": []
+       }
+      },
+      "grid_sample_time": {
+       "n": 242,
+       "quantized": true,
+       "step_ms": 16.0,
+       "on_grid_fraction": 1.0,
+       "phase_concentration": 1.0,
+       "known_step": "16ms",
+       "ambiguous_with_period": false,
+       "interval_ms": {
+        "n": 241,
+        "mean": 33.32763153526971,
+        "std": 4.42205834092014,
+        "min": 31.863,
+        "max": 48.039,
+        "median": 32.0014,
+        "p05": 31.9678,
+        "p95": 47.9924,
+        "rms": 33.618514010917266
+       },
+       "histogram": [
+        {
+         "ms": 31.9,
+         "count": 4
+        },
+        {
+         "ms": 32.0,
+         "count": 212
+        },
+        {
+         "ms": 32.1,
+         "count": 5
+        },
+        {
+         "ms": 48.0,
+         "count": 20
+        }
+       ],
+       "clusters": [
+        {
+         "ms": 32.00013484162896,
+         "count": 221,
+         "share": 0.91701244813278
+        },
+        {
+         "ms": 47.99647,
+         "count": 20,
+         "share": 0.08298755186721991
+        }
+       ],
+       "known_steps": {
+        "windows_timer_15.625ms": 0.0069,
+        "16ms": 1.0,
+        "1ms_usb_frame": 0.9922,
+        "4ms": 0.9995,
+        "0.125ms_usb_microframe": 0.6951
+       }
+      },
+      "drops_sample_time": {
+       "startup_interval_ms": 31.9779,
+       "period_ms": 33.33325541666667,
+       "slotting": "sequence",
+       "grid_ms": 16.0,
+       "drops_detectable": true,
+       "n": 241,
+       "drops": 0,
+       "gap_events": [],
+       "gap_event_count": 0,
+       "duplicates": 0,
+       "backwards": 0,
+       "max_gap": 0,
+       "index_offset": 1
+      },
+      "arrival_minus_sample_time_ms": {
+       "n": 242,
+       "modes": [
+        {
+         "centre_ms": 0.39415,
+         "count": 192,
+         "share": 0.7933884297520661,
+         "min_ms": 0.1797,
+         "max_ms": 1.4481,
+         "std_ms": 0.17619686209909907
+        },
+        {
+         "centre_ms": 16.4262,
+         "count": 50,
+         "share": 0.2066115702479339,
+         "min_ms": 16.1903,
+         "max_ms": 16.9346,
+         "std_ms": 0.19587923210853325
+        }
+       ],
+       "n_modes": 2,
+       "multimodal": true,
+       "minor_share": 0.0,
+       "gap_ms": 3.0,
+       "mean_ms": 3.7390987603305783
+      },
+      "capture_ok": true,
+      "capture_error": null,
+      "run": {
+       "rc": 0,
+       "elapsed_s": 8.984,
+       "timed_out": false,
+       "killed": false,
+       "lock_wait_s": 0.0,
+       "spawn_error": null,
+       "stderr_tail": "exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 53.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\W-TS\\logitechwebcam_046d-0843_7\\mf --save none --seconds 8.0\n[camlock] released"
+      },
+      "frames_jsonl": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\W-TS\\logitechwebcam_046d-0843_7\\mf\\frames.jsonl",
+      "source_ratings": {
+       "mf_sample_time": "no",
+       "frame_index_fit": "untested"
+      }
+     },
+     "ds": {
+      "frames": 242,
+      "fields": {
+       "qpc_ns": 242,
+       "pts_ns": 242,
+       "uvc_pts": 0
+      },
+      "grid_qpc_arrival": {
+       "n": 242,
+       "quantized": true,
+       "step_ms": 16.0,
+       "on_grid_fraction": null,
+       "phase_concentration": 0.9975,
+       "known_step": "16ms",
+       "ambiguous_with_period": false,
+       "interval_ms": {
+        "n": 241,
+        "mean": 33.2531846473029,
+        "std": 4.331541808810305,
+        "min": 30.0929,
+        "max": 48.1888,
+        "median": 32.0079,
+        "p05": 31.744,
+        "p95": 47.9944,
+        "rms": 33.532949347632886
+       },
+       "histogram": [
+        {
+         "ms": 30.1,
+         "count": 1
+        },
+        {
+         "ms": 31.2,
+         "count": 1
+        },
+        {
+         "ms": 31.5,
+         "count": 1
+        },
+        {
+         "ms": 31.6,
+         "count": 3
+        },
+        {
+         "ms": 31.7,
+         "count": 7
+        },
+        {
+         "ms": 31.8,
+         "count": 18
+        },
+        {
+         "ms": 31.9,
+         "count": 32
+        },
+        {
+         "ms": 32.0,
+         "count": 89
+        },
+        {
+         "ms": 32.1,
+         "count": 47
+        },
+        {
+         "ms": 32.2,
+         "count": 11
+        },
+        {
+         "ms": 32.3,
+         "count": 9
+        },
+        {
+         "ms": 32.4,
+         "count": 2
+        },
+        {
+         "ms": 32.5,
+         "count": 1
+        },
+        {
+         "ms": 47.6,
+         "count": 1
+        },
+        {
+         "ms": 47.8,
+         "count": 1
+        },
+        {
+         "ms": 47.9,
+         "count": 1
+        },
+        {
+         "ms": 48.0,
+         "count": 10
+        },
+        {
+         "ms": 48.1,
+         "count": 3
+        },
+        {
+         "ms": 48.2,
+         "count": 3
+        }
+       ],
+       "clusters": [
+        {
+         "ms": 31.998479638009048,
+         "count": 221,
+         "share": 0.91701244813278
+        },
+        {
+         "ms": 48.01371578947368,
+         "count": 19,
+         "share": 0.07883817427385892
+        }
+       ],
+       "known_steps": {
+        "windows_timer_15.625ms": 0.0022,
+        "16ms": 0.9975,
+        "1ms_usb_frame": 0.733,
+        "4ms": 0.9702,
+        "0.125ms_usb_microframe": 0.2378
+       }
+      },
+      "frame_index_fit_arrival": {
+       "causal": {
+        "causal": true,
+        "period_ns": 33304029.856213335,
+        "fps": 30.026396334539555,
+        "offset_ns": 24571665797533.285,
+        "residual_stats_ms": {
+         "n": 213,
+         "mean": 6.937890819193809,
+         "std": 4.658268883411667,
+         "min": 0.0,
+         "max": 15.5390515546875,
+         "median": 6.54100295703125,
+         "p05": 0.15099338593750022,
+         "p95": 14.649003735156246,
+         "rms": 8.350564206563934
+        },
+        "slots_skipped": 0,
+        "duplicate_slots": 0,
+        "n_estimated": 213,
+        "n": 242,
+        "slotting": "sequence",
+        "gaps_found": 0,
+        "drops_detectable": true,
+        "grid_ms": 16.0,
+        "slotting_residual_std_ms": null,
+        "nominal_period_ns": 33333333.333333332,
+        "rate_vs_nominal_ppm": 879.8778179850419,
+        "fit_unreliable": false,
+        "unreliable_reasons": []
+       },
+       "whole_run": {
+        "causal": false,
+        "period_ns": 33304029.856213335,
+        "fps": 30.026396334539555,
+        "offset_ns": 24571665162744.33,
+        "residual_stats_ms": {
+         "n": 242,
+         "mean": 7.682480312225594,
+         "std": 4.62192285381605,
+         "min": -0.65616412109375,
+         "max": 16.13608696484375,
+         "median": 7.6933646523437496,
+         "p05": 0.523795504296875,
+         "p95": 14.848732858203125,
+         "rms": 8.96071432314566
+        },
+        "slots_skipped": 0,
+        "duplicate_slots": 0,
+        "n_estimated": 242,
+        "n": 242,
+        "slotting": "sequence",
+        "gaps_found": 0,
+        "drops_detectable": true,
+        "grid_ms": 16.0,
+        "slotting_residual_std_ms": null,
+        "nominal_period_ns": 33333333.333333332,
+        "rate_vs_nominal_ppm": 879.8778179850419,
+        "fit_unreliable": false,
+        "unreliable_reasons": []
+       }
+      },
+      "grid_pts": {
+       "n": 242,
+       "quantized": false,
+       "step_ms": null,
+       "on_grid_fraction": null,
+       "phase_concentration": null,
+       "known_step": null,
+       "ambiguous_with_period": false,
+       "interval_ms": {
+        "n": 241,
+        "mean": 33.3333,
+        "std": 0.0,
+        "min": 33.3333,
+        "max": 33.3333,
+        "median": 33.3333,
+        "p05": 33.3333,
+        "p95": 33.3333,
+        "rms": 33.3333
+       },
+       "histogram": [
+        {
+         "ms": 33.3,
+         "count": 241
+        }
+       ],
+       "clusters": [
+        {
+         "ms": 33.3333,
+         "count": 241,
+         "share": 1.0
+        }
+       ],
+       "known_steps": {
+        "windows_timer_15.625ms": 0.0075,
+        "16ms": 0.008,
+        "1ms_usb_frame": 0.0042,
+        "4ms": 0.0041,
+        "0.125ms_usb_microframe": 0.0036
+       }
+      },
+      "pts_synthesized": {
+       "synthesized": true,
+       "n": 242,
+       "reasons": [
+        "intervals 100% modal / 1 distinct values while arrivals jitter (std 4.33 ms)"
+       ],
+       "modal_share": 1.0,
+       "distinct_intervals": 1,
+       "modal_interval_ms": 33.3333,
+       "interval_std_ms": 0.0,
+       "even_intervals": true,
+       "arrival_interval_std_ms": 4.331541808810305,
+       "drift_ms_per_s": -0.8749433287043135
+      },
+      "drops_pts": null,
+      "drops_pts_note": "pts synthesized from a counter: drops cannot be seen in them",
+      "arrival_minus_pts_ms": {
+       "n": 242,
+       "modes": [
+        {
+         "centre_ms": 22.46325,
+         "count": 242,
+         "share": 1.0,
+         "min_ms": 13.0025,
+         "max_ms": 34.4979,
+         "std_ms": 5.055752336881812
+        }
+       ],
+       "n_modes": 1,
+       "multimodal": false,
+       "minor_share": 0.0,
+       "gap_ms": 3.0,
+       "mean_ms": 22.780672314049585
+      },
+      "arrival_minus_pts_drift_ms_per_s": -0.8749433287043135,
+      "capture_ok": true,
+      "capture_error": null,
+      "run": {
+       "rc": 0,
+       "elapsed_s": 9.375,
+       "timed_out": false,
+       "killed": false,
+       "lock_wait_s": 0.0,
+       "spawn_error": null,
+       "stderr_tail": "xe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 68.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_ds.py capture --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --width 1280 --height 720 --fps 30 --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\W-TS\\logitechwebcam_046d-0843_7\\ds --save none --seconds 8.0\n[camlock] released"
+      },
+      "frames_jsonl": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\fixes_quick\\W-TS\\logitechwebcam_046d-0843_7\\ds\\frames.jsonl",
+      "source_ratings": {
+       "pyav_pts": "no",
+       "frame_index_fit": "untested"
+      }
+     }
+    }
+   }
+  },
+  "arrivals": {
+   "before": {
+    "utc": "2026-11-06T21:14:46.082292+00:00",
+    "cameras": {
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-06T20:54:40.183039+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+      "present": true,
+      "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "after": {
+    "utc": "2026-11-06T21:15:40.969961+00:00",
+    "cameras": {
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-06T20:54:40.183039+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+      "present": true,
+      "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "changes": [],
+   "unexplained_re_arrival": false
+  },
+  "ground_truth": null,
+  "device_faults": {}
+ },
+ "verdicts": {
+  "G-TS|046d:085c:sn=C922SN01|mf:uvc_pts": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "causal per-frame error <= 0.5 ms (1 sigma) vs ground truth",
+     "met": null,
+     "detail": null
+    },
+    {
+     "criterion": "drops detectable",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "tier 0 (no admin configuration)",
+     "met": false,
+     "detail": 1
+    },
+    {
+     "criterion": "not synthesized and not on a host-time grid",
+     "met": true,
+     "detail": {
+      "synthesized": false,
+      "host_grid_ms": null
+     }
+    },
+    {
+     "criterion": "device timestamps monotonic and self-consistent",
+     "met": true,
+     "detail": {
+      "monotonic": true,
+      "self_consistent": true
+     }
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": true,
+    "ground_truth": false,
+    "tier": 1,
+    "synthesized": false,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": true,
+    "device_ts_monotonic": true
+   },
+   "note": "no ground truth yet; device timestamps self-consistent",
+   "detail": {
+    "residual_vs_arrival_std_ms": 4.585097685992335,
+    "monotonic": true,
+    "pts_step_std_ms": 0.28665532635428603,
+    "ppm_vs_dwClockFrequency": -72.9118950720628,
+    "freq_hz_est": 299978126.4314784,
+    "clock_hz_nominal": 300000000.0,
+    "pts_units": {
+     "freq_hz_est": 299978126.4314784,
+     "nominal_hz": 300000000.0,
+     "units_match": true,
+     "rate_match": true,
+     "match": true,
+     "ppm": -72.91189507208085,
+     "ppm_tolerance": 1000.0,
+     "ratio_est_to_nominal": 0.9999270881049279,
+     "nearest_known_clock": "300 MHz"
+    },
+    "pts_vs_sequence_residual_std_ms": 0.14359318223834744,
+    "drops": 0,
+    "note": null
+   },
+   "source": "uvc_pts",
+   "tier": 1
+  },
+  "G-TS|046d:085c:sn=C922SN01|mf:uvc_scr_stc": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "causal per-frame error <= 0.5 ms (1 sigma) vs ground truth",
+     "met": null,
+     "detail": null
+    },
+    {
+     "criterion": "drops detectable",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "tier 0 (no admin configuration)",
+     "met": false,
+     "detail": 1
+    },
+    {
+     "criterion": "not synthesized and not on a host-time grid",
+     "met": true,
+     "detail": {
+      "synthesized": false,
+      "host_grid_ms": null
+     }
+    },
+    {
+     "criterion": "device timestamps monotonic and self-consistent",
+     "met": true,
+     "detail": {
+      "monotonic": true,
+      "self_consistent": true
+     }
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": true,
+    "ground_truth": false,
+    "tier": 1,
+    "synthesized": false,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": true,
+    "device_ts_monotonic": true
+   },
+   "note": "no ground truth yet; device timestamps self-consistent",
+   "detail": {
+    "stc_vs_sequence_residual_std_ms": 0.002912218002425767,
+    "stc_step_gcd_ms": 0.0006666666666666668,
+    "units": {
+     "freq_hz_est": 299975040.9462432,
+     "nominal_hz": 300000000.0,
+     "units_match": true,
+     "rate_match": true,
+     "match": true,
+     "ppm": -83.19684585589293,
+     "ppm_tolerance": 1000.0,
+     "ratio_est_to_nominal": 0.9999168031541441,
+     "nearest_known_clock": "300 MHz"
+    },
+    "stc_minus_pts_ms": {
+     "n": 241,
+     "mean": 32.987656984785616,
+     "std": 0.14293483492662065,
+     "min": 32.82533333333333,
+     "max": 33.135333333333335,
+     "median": 33.122,
+     "p05": 32.83133333333333,
+     "p95": 33.132666666666665,
+     "rms": 32.98796536526015
+    },
+    "transfer_ms": {
+     "n": 241,
+     "mean": 7.222052558782849,
+     "std": 0.19404363532785465,
+     "min": 6.562666666666666,
+     "max": 7.494,
+     "median": 7.122,
+     "p05": 6.997333333333334,
+     "p95": 7.467333333333333,
+     "rms": 7.2246480784879115
+    },
+    "sof": {
+     "n": 241,
+     "expected_per_s": 1000.0,
+     "constant": false,
+     "counts_per_s": 884.0374505776953,
+     "ok": false,
+     "steps": {
+      "29": 127,
+      "30": 113
+     },
+     "note": "SOF advances 884/s, not 1000/s: cannot map the device clock to the USB frame number",
+     "time_reference": "stc"
+    },
+    "skipped_first": 1,
+    "notes": [],
+    "note": "SCR source clock latched at the first payload of each frame (frame 0 skipped: stale SCR)"
+   },
+   "source": "uvc_scr_stc",
+   "tier": 1
+  },
+  "G-TS|046d:085c:sn=C922SN01|mf:mf_sample_time": {
+   "rating": "no",
+   "criteria": [
+    {
+     "criterion": "causal per-frame error <= 0.5 ms (1 sigma) vs ground truth",
+     "met": null,
+     "detail": null
+    },
+    {
+     "criterion": "drops detectable",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "tier 0 (no admin configuration)",
+     "met": true,
+     "detail": 0
+    },
+    {
+     "criterion": "not synthesized and not on a host-time grid",
+     "met": false,
+     "detail": {
+      "synthesized": false,
+      "host_grid_ms": 16.0
+     }
+    },
+    {
+     "criterion": "device timestamps monotonic and self-consistent",
+     "met": false,
+     "detail": {
+      "monotonic": null,
+      "self_consistent": false
+     }
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": true,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": false,
+    "host_grid_ms": 16.0,
+    "device_ts_self_consistent": false,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "grid_step_ms": 16.0,
+    "measured_period_ms": 33.33326625,
+    "drops": 0,
+    "startup_interval_ms": 47.9976
+   },
+   "source": "mf_sample_time",
+   "tier": 0
+  },
+  "G-TS|046d:085c:sn=C922SN01|mf:frame_index_fit": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "no ground truth and no device timestamps evaluated"
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": null,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": false,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": null,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "causal_residual_ms": {
+     "n": 213,
+     "mean": 6.750809640038145,
+     "std": 4.595944384700086,
+     "min": -3.90625e-09,
+     "max": 14.7510911328125,
+     "median": 6.406839492187499,
+     "p05": 0.0,
+     "p95": 14.446282587499997,
+     "rms": 8.160696536152967
+    },
+    "fps": 29.997739182045034,
+    "slotting": "sequence",
+    "slots_skipped": 0,
+    "drops_detectable": true,
+    "fit_unreliable": false,
+    "unreliable_reasons": [],
+    "note": "arrival jitter only; error vs truth needs the flash/rig run"
+   },
+   "source": "frame_index_fit",
+   "tier": 0
+  },
+  "G-TS|046d:085c:sn=C922SN01|mf": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "causal per-frame error <= 0.5 ms (1 sigma) vs ground truth",
+     "met": null,
+     "detail": null
+    },
+    {
+     "criterion": "drops detectable",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "tier 0 (no admin configuration)",
+     "met": false,
+     "detail": 1
+    },
+    {
+     "criterion": "not synthesized and not on a host-time grid",
+     "met": true,
+     "detail": {
+      "synthesized": false,
+      "host_grid_ms": null
+     }
+    },
+    {
+     "criterion": "device timestamps monotonic and self-consistent",
+     "met": true,
+     "detail": {
+      "monotonic": true,
+      "self_consistent": true
+     }
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": true,
+    "ground_truth": false,
+    "tier": 1,
+    "synthesized": false,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": true,
+    "device_ts_monotonic": true
+   },
+   "note": "no ground truth yet; device timestamps self-consistent",
+   "detail": {
+    "residual_vs_arrival_std_ms": 4.585097685992335,
+    "monotonic": true,
+    "pts_step_std_ms": 0.28665532635428603,
+    "ppm_vs_dwClockFrequency": -72.9118950720628,
+    "freq_hz_est": 299978126.4314784,
+    "clock_hz_nominal": 300000000.0,
+    "pts_units": {
+     "freq_hz_est": 299978126.4314784,
+     "nominal_hz": 300000000.0,
+     "units_match": true,
+     "rate_match": true,
+     "match": true,
+     "ppm": -72.91189507208085,
+     "ppm_tolerance": 1000.0,
+     "ratio_est_to_nominal": 0.9999270881049279,
+     "nearest_known_clock": "300 MHz"
+    },
+    "pts_vs_sequence_residual_std_ms": 0.14359318223834744,
+    "drops": 0,
+    "note": null
+   },
+   "source": "uvc_pts",
+   "tier": 1,
+   "source_ratings": {
+    "uvc_pts": "partial",
+    "uvc_scr_stc": "partial",
+    "mf_sample_time": "no",
+    "frame_index_fit": "untested"
+   },
+   "aggregate_note": "best available route for this API, including untested ones (the frame-index model stays untested until the flash/rig run); per-source verdicts are in the '<api>:<source>' columns"
+  },
+  "G-TS|046d:085c:sn=C922SN01|ds:pyav_pts": {
+   "rating": "no",
+   "criteria": [
+    {
+     "criterion": "causal per-frame error <= 0.5 ms (1 sigma) vs ground truth",
+     "met": null,
+     "detail": null
+    },
+    {
+     "criterion": "drops detectable",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "tier 0 (no admin configuration)",
+     "met": true,
+     "detail": 0
+    },
+    {
+     "criterion": "not synthesized and not on a host-time grid",
+     "met": false,
+     "detail": {
+      "synthesized": true,
+      "host_grid_ms": null
+     }
+    },
+    {
+     "criterion": "device timestamps monotonic and self-consistent",
+     "met": false,
+     "detail": {
+      "monotonic": null,
+      "self_consistent": false
+     }
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": false,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": true,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": false,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "grid_step_ms": null,
+    "synthesized": true,
+    "interval_std_ms": 0.0,
+    "modal_share": 1.0,
+    "distinct_intervals": 1,
+    "drift_vs_arrival_ms_per_s": -0.05377200699852557,
+    "reasons": [
+     "intervals 100% modal / 1 distinct values while arrivals jitter (std 4.42 ms)"
+    ],
+    "drops": null,
+    "note": "IMediaSample time from the DirectShow graph: host time, not the camera's"
+   },
+   "source": "pyav_pts",
+   "tier": 0
+  },
+  "G-TS|046d:085c:sn=C922SN01|ds:frame_index_fit": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "no ground truth and no device timestamps evaluated"
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": null,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": false,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": null,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "causal_residual_ms": {
+     "n": 213,
+     "mean": 6.526383571742958,
+     "std": 4.66406919296544,
+     "min": -3.90625e-09,
+     "max": 14.53789671875,
+     "median": 6.15315127734375,
+     "p05": 0.0,
+     "p95": 14.37003593359375,
+     "rms": 8.0153037783833
+    },
+    "fps": 30.001761603727,
+    "slotting": "sequence",
+    "slots_skipped": 0,
+    "drops_detectable": true,
+    "fit_unreliable": false,
+    "unreliable_reasons": [],
+    "note": "arrival jitter only; error vs truth needs the flash/rig run"
+   },
+   "source": "frame_index_fit",
+   "tier": 0
+  },
+  "G-TS|046d:085c:sn=C922SN01|ds": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "no ground truth and no device timestamps evaluated"
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": null,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": false,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": null,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "causal_residual_ms": {
+     "n": 213,
+     "mean": 6.526383571742958,
+     "std": 4.66406919296544,
+     "min": -3.90625e-09,
+     "max": 14.53789671875,
+     "median": 6.15315127734375,
+     "p05": 0.0,
+     "p95": 14.37003593359375,
+     "rms": 8.0153037783833
+    },
+    "fps": 30.001761603727,
+    "slotting": "sequence",
+    "slots_skipped": 0,
+    "drops_detectable": true,
+    "fit_unreliable": false,
+    "unreliable_reasons": [],
+    "note": "arrival jitter only; error vs truth needs the flash/rig run"
+   },
+   "source": "frame_index_fit",
+   "tier": 0,
+   "source_ratings": {
+    "pyav_pts": "no",
+    "frame_index_fit": "untested"
+   },
+   "aggregate_note": "best available route for this API, including untested ones (the frame-index model stays untested until the flash/rig run); per-source verdicts are in the '<api>:<source>' columns"
+  },
+  "G-TS|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|mf:mf_sample_time": {
+   "rating": "no",
+   "criteria": [
+    {
+     "criterion": "causal per-frame error <= 0.5 ms (1 sigma) vs ground truth",
+     "met": null,
+     "detail": null
+    },
+    {
+     "criterion": "drops detectable",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "tier 0 (no admin configuration)",
+     "met": true,
+     "detail": 0
+    },
+    {
+     "criterion": "not synthesized and not on a host-time grid",
+     "met": false,
+     "detail": {
+      "synthesized": false,
+      "host_grid_ms": 16.0
+     }
+    },
+    {
+     "criterion": "device timestamps monotonic and self-consistent",
+     "met": false,
+     "detail": {
+      "monotonic": null,
+      "self_consistent": false
+     }
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": true,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": false,
+    "host_grid_ms": 16.0,
+    "device_ts_self_consistent": false,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "grid_step_ms": 16.0,
+    "measured_period_ms": 58.2354580882353,
+    "drops": 0,
+    "startup_interval_ms": 79.9631
+   },
+   "source": "mf_sample_time",
+   "tier": 0
+  },
+  "G-TS|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|mf:frame_index_fit": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "no ground truth and no device timestamps evaluated"
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": null,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": false,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": null,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "causal_residual_ms": {
+     "n": 109,
+     "mean": 7.387326986381881,
+     "std": 4.580255877254098,
+     "min": 0.0,
+     "max": 15.446454113281249,
+     "median": 7.68288479296875,
+     "p05": 0.1183819390625001,
+     "p95": 14.3152409875,
+     "rms": 8.68094916264745
+    },
+    "fps": 17.14653270392916,
+    "slotting": "sequence",
+    "slots_skipped": 0,
+    "drops_detectable": true,
+    "fit_unreliable": false,
+    "unreliable_reasons": [],
+    "note": "arrival jitter only; error vs truth needs the flash/rig run"
+   },
+   "source": "frame_index_fit",
+   "tier": 0
+  },
+  "G-TS|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|mf": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "no ground truth and no device timestamps evaluated"
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": null,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": false,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": null,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "causal_residual_ms": {
+     "n": 109,
+     "mean": 7.387326986381881,
+     "std": 4.580255877254098,
+     "min": 0.0,
+     "max": 15.446454113281249,
+     "median": 7.68288479296875,
+     "p05": 0.1183819390625001,
+     "p95": 14.3152409875,
+     "rms": 8.68094916264745
+    },
+    "fps": 17.14653270392916,
+    "slotting": "sequence",
+    "slots_skipped": 0,
+    "drops_detectable": true,
+    "fit_unreliable": false,
+    "unreliable_reasons": [],
+    "note": "arrival jitter only; error vs truth needs the flash/rig run"
+   },
+   "source": "frame_index_fit",
+   "tier": 0,
+   "source_ratings": {
+    "mf_sample_time": "no",
+    "frame_index_fit": "untested"
+   },
+   "aggregate_note": "best available route for this API, including untested ones (the frame-index model stays untested until the flash/rig run); per-source verdicts are in the '<api>:<source>' columns"
+  },
+  "G-TS|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|ds:pyav_pts": {
+   "rating": "no",
+   "criteria": [
+    {
+     "criterion": "causal per-frame error <= 0.5 ms (1 sigma) vs ground truth",
+     "met": null,
+     "detail": null
+    },
+    {
+     "criterion": "drops detectable",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "tier 0 (no admin configuration)",
+     "met": true,
+     "detail": 0
+    },
+    {
+     "criterion": "not synthesized and not on a host-time grid",
+     "met": false,
+     "detail": {
+      "synthesized": true,
+      "host_grid_ms": null
+     }
+    },
+    {
+     "criterion": "device timestamps monotonic and self-consistent",
+     "met": false,
+     "detail": {
+      "monotonic": null,
+      "self_consistent": false
+     }
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": false,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": true,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": false,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "grid_step_ms": null,
+    "synthesized": true,
+    "interval_std_ms": 0.0,
+    "modal_share": 1.0,
+    "distinct_intervals": 1,
+    "drift_vs_arrival_ms_per_s": 428.3695665931013,
+    "reasons": [
+     "intervals 100% modal / 1 distinct values while arrivals jitter (std 7.69 ms)",
+     "drift vs arrival +428.4 ms/s: not the camera's clock"
+    ],
+    "drops": null,
+    "note": "IMediaSample time from the DirectShow graph: host time, not the camera's"
+   },
+   "source": "pyav_pts",
+   "tier": 0
+  },
+  "G-TS|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|ds:frame_index_fit": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "no ground truth and no device timestamps evaluated"
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": null,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": false,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": null,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "causal_residual_ms": {
+     "n": 110,
+     "mean": 7.377650928267045,
+     "std": 4.582119256524717,
+     "min": 0.0,
+     "max": 15.32917758203125,
+     "median": 7.362033796875,
+     "p05": 0.20727285117187505,
+     "p95": 14.416382813476561,
+     "rms": 8.673792655915838
+    },
+    "fps": 17.146424687917357,
+    "slotting": "sequence",
+    "slots_skipped": 0,
+    "drops_detectable": true,
+    "fit_unreliable": false,
+    "unreliable_reasons": [],
+    "note": "arrival jitter only; error vs truth needs the flash/rig run"
+   },
+   "source": "frame_index_fit",
+   "tier": 0
+  },
+  "G-TS|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|ds": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "no ground truth and no device timestamps evaluated"
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": null,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": false,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": null,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "causal_residual_ms": {
+     "n": 110,
+     "mean": 7.377650928267045,
+     "std": 4.582119256524717,
+     "min": 0.0,
+     "max": 15.32917758203125,
+     "median": 7.362033796875,
+     "p05": 0.20727285117187505,
+     "p95": 14.416382813476561,
+     "rms": 8.673792655915838
+    },
+    "fps": 17.146424687917357,
+    "slotting": "sequence",
+    "slots_skipped": 0,
+    "drops_detectable": true,
+    "fit_unreliable": false,
+    "unreliable_reasons": [],
+    "note": "arrival jitter only; error vs truth needs the flash/rig run"
+   },
+   "source": "frame_index_fit",
+   "tier": 0,
+   "source_ratings": {
+    "pyav_pts": "no",
+    "frame_index_fit": "untested"
+   },
+   "aggregate_note": "best available route for this API, including untested ones (the frame-index model stays untested until the flash/rig run); per-source verdicts are in the '<api>:<source>' columns"
+  },
+  "G-TS|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7|mf:mf_sample_time": {
+   "rating": "no",
+   "criteria": [
+    {
+     "criterion": "causal per-frame error <= 0.5 ms (1 sigma) vs ground truth",
+     "met": null,
+     "detail": null
+    },
+    {
+     "criterion": "drops detectable",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "tier 0 (no admin configuration)",
+     "met": true,
+     "detail": 0
+    },
+    {
+     "criterion": "not synthesized and not on a host-time grid",
+     "met": false,
+     "detail": {
+      "synthesized": false,
+      "host_grid_ms": 16.0
+     }
+    },
+    {
+     "criterion": "device timestamps monotonic and self-consistent",
+     "met": false,
+     "detail": {
+      "monotonic": null,
+      "self_consistent": false
+     }
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": true,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": false,
+    "host_grid_ms": 16.0,
+    "device_ts_self_consistent": false,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "grid_step_ms": 16.0,
+    "measured_period_ms": 33.33325541666667,
+    "drops": 0,
+    "startup_interval_ms": 31.9779
+   },
+   "source": "mf_sample_time",
+   "tier": 0
+  },
+  "G-TS|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7|mf:frame_index_fit": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "no ground truth and no device timestamps evaluated"
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": null,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": false,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": null,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "causal_residual_ms": {
+     "n": 213,
+     "mean": 7.061547167015111,
+     "std": 4.777476288534408,
+     "min": -3.90625e-09,
+     "max": 16.02334216015625,
+     "median": 6.79421913671875,
+     "p05": 0.0,
+     "p95": 14.692866415624994,
+     "rms": 8.519540588366446
+    },
+    "fps": 30.04000219064254,
+    "slotting": "sequence",
+    "slots_skipped": 0,
+    "drops_detectable": true,
+    "fit_unreliable": false,
+    "unreliable_reasons": [],
+    "note": "arrival jitter only; error vs truth needs the flash/rig run"
+   },
+   "source": "frame_index_fit",
+   "tier": 0
+  },
+  "G-TS|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7|mf": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "no ground truth and no device timestamps evaluated"
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": null,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": false,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": null,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "causal_residual_ms": {
+     "n": 213,
+     "mean": 7.061547167015111,
+     "std": 4.777476288534408,
+     "min": -3.90625e-09,
+     "max": 16.02334216015625,
+     "median": 6.79421913671875,
+     "p05": 0.0,
+     "p95": 14.692866415624994,
+     "rms": 8.519540588366446
+    },
+    "fps": 30.04000219064254,
+    "slotting": "sequence",
+    "slots_skipped": 0,
+    "drops_detectable": true,
+    "fit_unreliable": false,
+    "unreliable_reasons": [],
+    "note": "arrival jitter only; error vs truth needs the flash/rig run"
+   },
+   "source": "frame_index_fit",
+   "tier": 0,
+   "source_ratings": {
+    "mf_sample_time": "no",
+    "frame_index_fit": "untested"
+   },
+   "aggregate_note": "best available route for this API, including untested ones (the frame-index model stays untested until the flash/rig run); per-source verdicts are in the '<api>:<source>' columns"
+  },
+  "G-TS|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7|ds:pyav_pts": {
+   "rating": "no",
+   "criteria": [
+    {
+     "criterion": "causal per-frame error <= 0.5 ms (1 sigma) vs ground truth",
+     "met": null,
+     "detail": null
+    },
+    {
+     "criterion": "drops detectable",
+     "met": false,
+     "detail": null
+    },
+    {
+     "criterion": "tier 0 (no admin configuration)",
+     "met": true,
+     "detail": 0
+    },
+    {
+     "criterion": "not synthesized and not on a host-time grid",
+     "met": false,
+     "detail": {
+      "synthesized": true,
+      "host_grid_ms": null
+     }
+    },
+    {
+     "criterion": "device timestamps monotonic and self-consistent",
+     "met": false,
+     "detail": {
+      "monotonic": null,
+      "self_consistent": false
+     }
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": false,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": true,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": false,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "grid_step_ms": null,
+    "synthesized": true,
+    "interval_std_ms": 0.0,
+    "modal_share": 1.0,
+    "distinct_intervals": 1,
+    "drift_vs_arrival_ms_per_s": -0.8749433287043135,
+    "reasons": [
+     "intervals 100% modal / 1 distinct values while arrivals jitter (std 4.33 ms)"
+    ],
+    "drops": null,
+    "note": "IMediaSample time from the DirectShow graph: host time, not the camera's"
+   },
+   "source": "pyav_pts",
+   "tier": 0
+  },
+  "G-TS|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7|ds:frame_index_fit": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "no ground truth and no device timestamps evaluated"
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": null,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": false,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": null,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "causal_residual_ms": {
+     "n": 213,
+     "mean": 6.937890819193809,
+     "std": 4.658268883411667,
+     "min": 0.0,
+     "max": 15.5390515546875,
+     "median": 6.54100295703125,
+     "p05": 0.15099338593750022,
+     "p95": 14.649003735156246,
+     "rms": 8.350564206563934
+    },
+    "fps": 30.026396334539555,
+    "slotting": "sequence",
+    "slots_skipped": 0,
+    "drops_detectable": true,
+    "fit_unreliable": false,
+    "unreliable_reasons": [],
+    "note": "arrival jitter only; error vs truth needs the flash/rig run"
+   },
+   "source": "frame_index_fit",
+   "tier": 0
+  },
+  "G-TS|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7|ds": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "no ground truth and no device timestamps evaluated"
+    }
+   ],
+   "evidence": {
+    "causal_error_ms_1sigma": null,
+    "drops_detectable": null,
+    "ground_truth": false,
+    "tier": 0,
+    "synthesized": false,
+    "host_grid_ms": null,
+    "device_ts_self_consistent": null,
+    "device_ts_monotonic": null
+   },
+   "detail": {
+    "causal_residual_ms": {
+     "n": 213,
+     "mean": 6.937890819193809,
+     "std": 4.658268883411667,
+     "min": 0.0,
+     "max": 15.5390515546875,
+     "median": 6.54100295703125,
+     "p05": 0.15099338593750022,
+     "p95": 14.649003735156246,
+     "rms": 8.350564206563934
+    },
+    "fps": 30.026396334539555,
+    "slotting": "sequence",
+    "slots_skipped": 0,
+    "drops_detectable": true,
+    "fit_unreliable": false,
+    "unreliable_reasons": [],
+    "note": "arrival jitter only; error vs truth needs the flash/rig run"
+   },
+   "source": "frame_index_fit",
+   "tier": 0,
+   "source_ratings": {
+    "pyav_pts": "no",
+    "frame_index_fit": "untested"
+   },
+   "aggregate_note": "best available route for this API, including untested ones (the frame-index model stays untested until the flash/rig run); per-source verdicts are in the '<api>:<source>' columns"
+  }
+ },
+ "errors": [],
+ "device_faults": {
+  "faulted_at_start": {},
+  "faulted_at_end": {},
+  "kiyo_dead_since": null
+ }
+}

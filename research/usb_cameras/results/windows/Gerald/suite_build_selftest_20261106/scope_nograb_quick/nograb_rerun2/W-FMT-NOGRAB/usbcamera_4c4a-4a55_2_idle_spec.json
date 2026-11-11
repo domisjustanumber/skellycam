@@ -1,0 +1,112 @@
+{
+ "label": "usbcamera_4c4a-4a55_2_idle",
+ "condition": "idle",
+ "camera": {
+  "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+  "name": "USB Camera",
+  "mf_symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+  "ds_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+  "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2"
+ },
+ "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_build_selftest_20261106\\scope_nograb_quick\\nograb_rerun2\\W-FMT-NOGRAB\\usbcamera_4c4a-4a55_2\\idle",
+ "streamer": null,
+ "baseline_s": 1.5,
+ "settle_s": 1.0,
+ "descriptor_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_build_selftest_20261106\\scope_nograb_quick\\nograb_rerun2\\descriptors\\descriptors.json",
+ "methods": [
+  {
+   "id": "hub_ioctl",
+   "argv": [
+    "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\win_descriptors.py",
+    "--instance",
+    "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2"
+   ],
+   "timeout_s": 25,
+   "hold": false
+  },
+  {
+   "id": "mf",
+   "argv": [
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+    "formats",
+    "--api",
+    "mf",
+    "--device",
+    "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+    "--timeout-ms",
+    "8000",
+    "--hold-ms",
+    "2500"
+   ],
+   "timeout_s": 47.5,
+   "hold": true
+  },
+  {
+   "id": "ds",
+   "argv": [
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+    "formats",
+    "--api",
+    "ds",
+    "--device",
+    "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+    "--timeout-ms",
+    "8000",
+    "--hold-ms",
+    "2500"
+   ],
+   "timeout_s": 47.5,
+   "hold": true
+  },
+  {
+   "id": "ffmpeg",
+   "argv": [
+    "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE",
+    "-hide_banner",
+    "-list_options",
+    "true",
+    "-f",
+    "dshow",
+    "-i",
+    "video=@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global"
+   ],
+   "timeout_s": 30,
+   "hold": false
+  }
+ ],
+ "blocker": {
+  "argv": [
+   "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+   "capture",
+   "--api",
+   "mf",
+   "--device",
+   "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "--width",
+   "1280",
+   "--height",
+   "720",
+   "--fps",
+   "30",
+   "--subtype",
+   "MJPG",
+   "--frames",
+   "1",
+   "--timeout-ms",
+   "4000",
+   "--out-dir",
+   "OUT_DIR",
+   "--save",
+   "none"
+  ],
+  "out_dir_arg_index": 19,
+  "timeout_s": 30,
+  "delay_after_hold_s": 0.6,
+  "api": "mf",
+  "mode": "MJPG 1280x720@30"
+ },
+ "sample": {
+  "interval_s": 0.12
+ }
+}

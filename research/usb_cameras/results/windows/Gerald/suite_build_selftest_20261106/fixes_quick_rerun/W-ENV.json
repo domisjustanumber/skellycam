@@ -1,0 +1,1067 @@
+{
+ "test": "W-ENV",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-06T21:20:37.815467+00:00",
+ "utc_finished": "2026-11-06T21:20:38.518000+00:00",
+ "elapsed_s": 0.64,
+ "command": "suite/windows/run_suite.py --quick --only W-ENV,W-POLICY,W-ID,W-FMT,W-CTRL-LIST --camera 085c --camera 0843 --camera 4a55 --out-dir results/windows/Gerald/suite_build_selftest_20261106/fixes_quick_rerun (module W-ENV)",
+ "argv": [
+  "suite/windows/run_suite.py",
+  "--quick",
+  "--only",
+  "W-ENV,W-POLICY,W-ID,W-FMT,W-CTRL-LIST",
+  "--camera",
+  "085c",
+  "--camera",
+  "0843",
+  "--camera",
+  "4a55",
+  "--out-dir",
+  "results/windows/Gerald/suite_build_selftest_20261106/fixes_quick_rerun",
+  "(module W-ENV)"
+ ],
+ "environment": {
+  "os": {
+   "platform": "Windows-11-10.0.26300-SP0",
+   "system": "Windows",
+   "release": "11",
+   "version": "10.0.26300",
+   "machine": "AMD64",
+   "windows_build": 26300,
+   "windows_version": "10.0.26300",
+   "windows_edition": "Core",
+   "windows_displayversion": "26H2",
+   "windows_ubr": 9711,
+   "windows_productname": "Windows 10 Home",
+   "windows_currentbuild": "26300"
+  },
+  "python": "3.12.13",
+  "python_implementation": "CPython",
+  "python_executable": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+  "hostname": "Gerald",
+  "pid": 43740,
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0"
+  }
+ },
+ "cameras": [
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "vid": "046d",
+   "pid": "085c",
+   "serial": "C922SN01",
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "c922 Pro Stream Webcam",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+   "speed": "HS",
+   "bcd_device": "0016",
+   "metadata_tier1": true,
+   "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 4,
+   "ds_index": 0
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "name": "USB Camera",
+   "vid": "4c4a",
+   "pid": "4a55",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232e60d4&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Camera",
+   "ds_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "speed": "HS",
+   "bcd_device": "0100",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-06T21:19:13.117126+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 6,
+   "ds_index": 6
+  },
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+   "name": "Logitech Webcam C930e",
+   "vid": "046d",
+   "pid": "0843",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+   "parent_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&2206973f&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "Logitech Webcam C930e",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&2206973f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(7)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+   "speed": "HS",
+   "bcd_device": "0013",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 7
+  }
+ ],
+ "measurements": {
+  "elevated": false,
+  "topology_run": {
+   "argv": [
+    "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\win_topology.py"
+   ],
+   "rc": 0,
+   "elapsed_s": 0.125,
+   "timed_out": false,
+   "killed": false,
+   "lock_wait_s": null,
+   "spawn_error": null,
+   "stderr_tail": ""
+  },
+  "controllers": [
+   {
+    "id": "PCI\\VEN_8086&DEV_7A60&SUBSYS_88821043&REV_11\\3&11583659&0&A0",
+    "name": "Intel(R) USB 3.20 eXtensible Host Controller - 1.20 (Microsoft)",
+    "pci_id": "8086:7a60",
+    "kind": "xhci",
+    "location_info": "PCI bus 0, device 20, function 0",
+    "parent_desc": "PCI Express Root Complex",
+    "behind_pcie_switch": false
+   },
+   {
+    "id": "PCI\\VEN_8086&DEV_1138&SUBSYS_00000000&REV_00\\6&2ea0dfaf&0&001000E4",
+    "name": "Intel(R) USB 3.10 eXtensible Host Controller - 1.10 (Microsoft)",
+    "pci_id": "8086:1138",
+    "kind": "xhci",
+    "location_info": "PCI bus 11, device 0, function 0",
+    "parent_desc": "PCI Express Downstream Switch Port",
+    "behind_pcie_switch": true
+   }
+  ],
+  "cameras_health": [
+   {
+    "key": "046d:085c:sn=C922SN01",
+    "name": "c922 Pro Stream Webcam",
+    "vid": "046d",
+    "pid": "085c",
+    "is_kiyo": false,
+    "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+    "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+    "speed": "HS",
+    "bcd_device": "0016",
+    "bcd_usb": "0200",
+    "service": "usbccgp",
+    "function_service": "usbvideo",
+    "driver_version": "10.0.26100.9711",
+    "driver_provider": "Microsoft",
+    "problem_code": 0,
+    "devnode_status": "0x0180600a",
+    "dn_flags": [
+     "DN_DRIVER_LOADED",
+     "DN_STARTED",
+     "DN_DISABLEABLE",
+     "DN_REMOVABLE",
+     "DN_NT_ENUMERATOR",
+     "DN_NT_DRIVER"
+    ],
+    "dn_warn": [],
+    "function_problem_code": 0,
+    "function_devnode_status": "0x0180600a",
+    "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+    "last_removal": null,
+    "first_install": "2026-05-09T19:06:35.992710+00:00",
+    "metadata_tier1": true,
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+    "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+    "serial_source": "instance_id_suffix",
+    "device_parameters": {
+     "EnumerationRetryCount": 0,
+     "SymbolicName": "\\??\\USB#VID_046D&PID_085C#C922SN01#{a5dcbf10-6530-11d2-901f-00c04fb951ed}"
+    },
+    "function_device_parameters": {
+     "VendorRevision": 0,
+     "RevisionId": 22,
+     "ExtPropDescSemaphore": 1,
+     "DeviceSelectiveSuspended": 1,
+     "PowerlineFrequency": 2
+    },
+    "sources": [
+     "pnp_KSCATEGORY_CAPTURE",
+     "pnp_KSCATEGORY_VIDEO_CAMERA",
+     "wincam_ds",
+     "wincam_mf"
+    ],
+    "minutes_since_arrival": 376.0,
+    "metadata_values_kb": {
+     "KSCATEGORY_CAPTURE:MetadataBufferSizeInKB0": 5,
+     "KSCATEGORY_VIDEO_CAMERA:MetadataBufferSizeInKB0": 5
+    }
+   },
+   {
+    "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "name": "USB Camera",
+    "vid": "4c4a",
+    "pid": "4a55",
+    "is_kiyo": false,
+    "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+    "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232e60d4&0&0000",
+    "speed": "HS",
+    "bcd_device": "0100",
+    "bcd_usb": "0200",
+    "service": "usbccgp",
+    "function_service": "usbvideo",
+    "driver_version": "10.0.26100.9711",
+    "driver_provider": "Microsoft",
+    "problem_code": 0,
+    "devnode_status": "0x0180600a",
+    "dn_flags": [
+     "DN_DRIVER_LOADED",
+     "DN_STARTED",
+     "DN_DISABLEABLE",
+     "DN_REMOVABLE",
+     "DN_NT_ENUMERATOR",
+     "DN_NT_DRIVER"
+    ],
+    "dn_warn": [],
+    "function_problem_code": 0,
+    "function_devnode_status": "0x0180600a",
+    "last_arrival": "2026-11-06T21:19:13.117126+00:00",
+    "last_removal": null,
+    "first_install": "2026-11-06T14:58:37.901545+00:00",
+    "metadata_tier1": false,
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+    "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "serial_source": "iSerialNumber=0",
+    "device_parameters": {
+     "EnumerationRetryCount": 0,
+     "SymbolicName": "\\??\\USB#VID_4C4A&PID_4A55#7&7dcc7ce&0&2#{a5dcbf10-6530-11d2-901f-00c04fb951ed}"
+    },
+    "function_device_parameters": {
+     "VendorRevision": 0,
+     "RevisionId": 256,
+     "ExtPropDescSemaphore": 1,
+     "DeviceSelectiveSuspended": 1,
+     "PowerlineFrequency": 0
+    },
+    "sources": [
+     "pnp_KSCATEGORY_CAPTURE",
+     "pnp_KSCATEGORY_VIDEO_CAMERA",
+     "wincam_ds",
+     "wincam_mf"
+    ],
+    "minutes_since_arrival": 1.4,
+    "metadata_values_kb": {}
+   },
+   {
+    "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+    "name": "Logitech Webcam C930e",
+    "vid": "046d",
+    "pid": "0843",
+    "is_kiyo": false,
+    "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+    "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&2206973f&0&0000",
+    "speed": "HS",
+    "bcd_device": "0013",
+    "bcd_usb": "0200",
+    "service": "usbccgp",
+    "function_service": "usbvideo",
+    "driver_version": "1.2.75.34",
+    "driver_provider": "Logitech",
+    "problem_code": 0,
+    "devnode_status": "0x0180600a",
+    "dn_flags": [
+     "DN_DRIVER_LOADED",
+     "DN_STARTED",
+     "DN_DISABLEABLE",
+     "DN_REMOVABLE",
+     "DN_NT_ENUMERATOR",
+     "DN_NT_DRIVER"
+    ],
+    "dn_warn": [],
+    "function_problem_code": 0,
+    "function_devnode_status": "0x0180600a",
+    "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+    "last_removal": null,
+    "first_install": "2026-11-06T15:00:22.574000+00:00",
+    "metadata_tier1": false,
+    "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(7)",
+    "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+    "serial_source": "iSerialNumber=0",
+    "device_parameters": {
+     "OriginalConfigurationValue": 1,
+     "AltConfigurationValue": 0,
+     "EnumerationRetryCount": 0,
+     "SymbolicName": "\\??\\USB#VID_046D&PID_0843#5&cc3f949&0&7#{a5dcbf10-6530-11d2-901f-00c04fb951ed}"
+    },
+    "function_device_parameters": {
+     "VendorRevision": 0,
+     "RevisionId": 19,
+     "ExtPropDescSemaphore": 1,
+     "DeviceSelectiveSuspended": 1,
+     "PowerlineFrequency": 2
+    },
+    "sources": [
+     "pnp_KSCATEGORY_CAPTURE",
+     "pnp_KSCATEGORY_VIDEO_CAMERA",
+     "wincam_ds",
+     "wincam_mf"
+    ],
+    "minutes_since_arrival": 380.3,
+    "metadata_values_kb": {}
+   }
+  ],
+  "power": {
+   "rc": 0,
+   "settings": {
+    "hub_selective_suspend_timeout_ms": {
+     "guid": "0853a681-27c8-4100-a2fd-82013e970683",
+     "friendly": "Hub Selective Suspend Timeout",
+     "ac_index": 50,
+     "dc_index": 50,
+     "ac_text": null,
+     "dc_text": null,
+     "options": null
+    },
+    "usb_selective_suspend": {
+     "guid": "48e6b7a6-50f5-4782-a5d4-53bb8f07e226",
+     "friendly": "USB selective suspend setting",
+     "ac_index": 1,
+     "dc_index": 1,
+     "ac_text": "Enabled",
+     "dc_text": "Enabled",
+     "options": {
+      "000": "Disabled",
+      "001": "Enabled"
+     }
+    },
+    "ioc_on_all_tds": {
+     "guid": "498c044a-201b-4631-a522-5c744ed4e678",
+     "friendly": "Setting IOC on all TDs",
+     "ac_index": 1,
+     "dc_index": 0,
+     "ac_text": "Enabled",
+     "dc_text": "Disabled",
+     "options": {
+      "000": "Disabled",
+      "001": "Enabled"
+     }
+    },
+    "usb3_link_power_management": {
+     "guid": "d4e98f31-5ffe-4ce1-be31-1b38b384c009",
+     "friendly": "USB 3 Link Power Mangement",
+     "ac_index": 2,
+     "dc_index": 2,
+     "ac_text": "Moderate power savings",
+     "dc_text": "Moderate power savings",
+     "options": {
+      "000": "Off",
+      "001": "Minimum power savings",
+      "002": "Moderate power savings",
+      "003": "Maximum power savings"
+     }
+    }
+   },
+   "scheme_guid": "381b4222-f694-41f0-9685-ff5bb260df2e",
+   "scheme_name": "Balanced"
+  },
+  "usb_service_registry": {
+   "HKLM\\SYSTEM\\CurrentControlSet\\Services\\USB": null
+  },
+  "services": {
+   "FrameServer": {
+    "state": "RUNNING",
+    "pid": 17920,
+    "start_type": "DEMAND_START",
+    "rc": 0
+   },
+   "FrameServerMonitor": {
+    "state": "RUNNING",
+    "pid": 46000,
+    "start_type": "DEMAND_START",
+    "rc": 0
+   }
+  },
+  "processes": {
+   "n_processes": 514,
+   "matches": {
+    "logitech": [
+     {
+      "name": "LogiTuneUpdater.exe",
+      "pid": 6532,
+      "session": "Services"
+     },
+     {
+      "name": "LogiTuneAgent.exe",
+      "pid": 3296,
+      "session": "Console"
+     },
+     {
+      "name": "LogiTune.exe",
+      "pid": 42832,
+      "session": "Console"
+     },
+     {
+      "name": "LogiTune.exe",
+      "pid": 42572,
+      "session": "Console"
+     },
+     {
+      "name": "LogiTune.exe",
+      "pid": 18788,
+      "session": "Console"
+     },
+     {
+      "name": "LogiTune.exe",
+      "pid": 41652,
+      "session": "Console"
+     },
+     {
+      "name": "LogiTune.exe",
+      "pid": 34856,
+      "session": "Console"
+     },
+     {
+      "name": "LogiTune.exe",
+      "pid": 16536,
+      "session": "Console"
+     },
+     {
+      "name": "LogiTune.exe",
+      "pid": 39072,
+      "session": "Console"
+     },
+     {
+      "name": "LogiTune.exe",
+      "pid": 26388,
+      "session": "Console"
+     },
+     {
+      "name": "LogiTune.exe",
+      "pid": 35428,
+      "session": "Console"
+     },
+     {
+      "name": "logioptionsplus_updater.exe",
+      "pid": 3496,
+      "session": "Services"
+     },
+     {
+      "name": "logioptionsplus_agent.exe",
+      "pid": 42752,
+      "session": "Console"
+     },
+     {
+      "name": "logioptionsplus_appbroker.exe",
+      "pid": 11372,
+      "session": "Console"
+     }
+    ],
+    "razer": [
+     {
+      "name": "RazerAppEngine.exe",
+      "pid": 37240,
+      "session": "Console"
+     },
+     {
+      "name": "RazerAppEngine.exe",
+      "pid": 37044,
+      "session": "Console"
+     },
+     {
+      "name": "RazerAppEngine.exe",
+      "pid": 41092,
+      "session": "Console"
+     },
+     {
+      "name": "RazerAppEngine.exe",
+      "pid": 43916,
+      "session": "Console"
+     },
+     {
+      "name": "razer_elevation_service.exe",
+      "pid": 22052,
+      "session": "Services"
+     },
+     {
+      "name": "RazerAppEngine.exe",
+      "pid": 37416,
+      "session": "Console"
+     },
+     {
+      "name": "RazerAppEngine.exe",
+      "pid": 14228,
+      "session": "Console"
+     },
+     {
+      "name": "RazerAppEngine.exe",
+      "pid": 20916,
+      "session": "Console"
+     },
+     {
+      "name": "RazerAppEngine.exe",
+      "pid": 11860,
+      "session": "Console"
+     },
+     {
+      "name": "RazerAppEngine.exe",
+      "pid": 2452,
+      "session": "Console"
+     }
+    ],
+    "conferencing": [
+     {
+      "name": "conferencing_app.exe",
+      "pid": 29196,
+      "session": "Console"
+     },
+     {
+      "name": "conferencing_app.exe",
+      "pid": 29588,
+      "session": "Console"
+     },
+     {
+      "name": "conferencing_app.exe",
+      "pid": 14980,
+      "session": "Console"
+     },
+     {
+      "name": "conferencing_app.exe",
+      "pid": 28284,
+      "session": "Console"
+     },
+     {
+      "name": "conferencing_app.exe",
+      "pid": 31320,
+      "session": "Console"
+     },
+     {
+      "name": "conferencing_app.exe",
+      "pid": 33684,
+      "session": "Console"
+     }
+    ],
+    "browsers_may_hold_camera": [
+     {
+      "name": "firefox.exe",
+      "pid": 27144,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 27616,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 27128,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 28080,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 28300,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 32064,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 32200,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 33600,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 33384,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 35272,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 36756,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 37508,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 36972,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 38884,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 33704,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 42604,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 32976,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 41976,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 49652,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 40092,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 42948,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 36244,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 37332,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 27580,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 47180,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 14724,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 48220,
+      "session": "Console"
+     },
+     {
+      "name": "firefox.exe",
+      "pid": 40820,
+      "session": "Console"
+     }
+    ]
+   },
+   "rc": 0
+  },
+  "tier1_metadata": {
+   "current_instances": {
+    "046d:085c:sn=C922SN01": true,
+    "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": false,
+    "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": false
+   },
+   "all_instances_with_keys": [
+    {
+     "category": "KSCATEGORY_CAPTURE",
+     "interface_key": "##?#USB#VID_046D&PID_0843&MI_00#6&2206973F&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}",
+     "function_instance": "USB\\VID_046D&PID_0843&MI_00\\6&2206973F&0&0000",
+     "is_current_instance": true,
+     "metadata_values": null
+    },
+    {
+     "category": "KSCATEGORY_CAPTURE",
+     "interface_key": "##?#USB#VID_046D&PID_0843&MI_00#8&16BE97FE&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}",
+     "function_instance": "USB\\VID_046D&PID_0843&MI_00\\8&16BE97FE&0&0000",
+     "is_current_instance": false,
+     "metadata_values": null
+    },
+    {
+     "category": "KSCATEGORY_CAPTURE",
+     "interface_key": "##?#USB#VID_046D&PID_0843&MI_00#8&39DEC205&1&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}",
+     "function_instance": "USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&1&0000",
+     "is_current_instance": false,
+     "metadata_values": {
+      "MetadataBufferSizeInKB0": 5
+     }
+    },
+    {
+     "category": "KSCATEGORY_CAPTURE",
+     "interface_key": "##?#USB#VID_046D&PID_0843&MI_03#6&2206973f&0&0003#{65e8773d-8f56-11d0-a3b9-00a0c9223196}",
+     "function_instance": "USB\\VID_046D&PID_0843&MI_03\\6&2206973F&0&0003",
+     "is_current_instance": false,
+     "metadata_values": null
+    },
+    {
+     "category": "KSCATEGORY_CAPTURE",
+     "interface_key": "##?#USB#VID_046D&PID_0843&MI_03#8&16be97fe&0&0003#{65e8773d-8f56-11d0-a3b9-00a0c9223196}",
+     "function_instance": "USB\\VID_046D&PID_0843&MI_03\\8&16BE97FE&0&0003",
+     "is_current_instance": false,
+     "metadata_values": null
+    },
+    {
+     "category": "KSCATEGORY_CAPTURE",
+     "interface_key": "##?#USB#VID_046D&PID_0843&MI_03#8&39dec205&1&0003#{65e8773d-8f56-11d0-a3b9-00a0c9223196}",
+     "function_instance": "USB\\VID_046D&PID_0843&MI_03\\8&39DEC205&1&0003",
+     "is_current_instance": false,
+     "metadata_values": null
+    },
+    {
+     "category": "KSCATEGORY_CAPTURE",
+     "interface_key": "##?#USB#VID_046D&PID_085C&MI_00#8&268DA596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}",
+     "function_instance": "USB\\VID_046D&PID_085C&MI_00\\8&268DA596&0&0000",
+     "is_current_instance": true,
+     "metadata_values": {
+      "MetadataBufferSizeInKB0": 5
+     }
+    },
+    {
+     "category": "KSCATEGORY_CAPTURE",
+     "interface_key": "##?#USB#VID_046D&PID_085C&MI_02#8&268da596&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}",
+     "function_instance": "USB\\VID_046D&PID_085C&MI_02\\8&268DA596&0&0002",
+     "is_current_instance": false,
+     "metadata_values": null
+    },
+    {
+     "category": "KSCATEGORY_CAPTURE",
+     "interface_key": "##?#USB#VID_4C4A&PID_4A55&MI_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}",
+     "function_instance": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232E60D4&0&0000",
+     "is_current_instance": true,
+     "metadata_values": null
+    },
+    {
+     "category": "KSCATEGORY_CAPTURE",
+     "interface_key": "##?#USB#VID_4C4A&PID_4A55&MI_00#8&35e81179&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}",
+     "function_instance": "USB\\VID_4C4A&PID_4A55&MI_00\\8&35E81179&0&0000",
+     "is_current_instance": false,
+     "metadata_values": null
+    },
+    {
+     "category": "KSCATEGORY_CAPTURE",
+     "interface_key": "##?#USB#VID_4C4A&PID_4A55&MI_02#8&232e60d4&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}",
+     "function_instance": "USB\\VID_4C4A&PID_4A55&MI_02\\8&232E60D4&0&0002",
+     "is_current_instance": false,
+     "metadata_values": null
+    },
+    {
+     "category": "KSCATEGORY_CAPTURE",
+     "interface_key": "##?#USB#VID_4C4A&PID_4A55&MI_02#8&35e81179&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}",
+     "function_instance": "USB\\VID_4C4A&PID_4A55&MI_02\\8&35E81179&0&0002",
+     "is_current_instance": false,
+     "metadata_values": null
+    },
+    {
+     "category": "KSCATEGORY_VIDEO_CAMERA",
+     "interface_key": "##?#USB#VID_046D&PID_0843&MI_00#6&2206973F&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}",
+     "function_instance": "USB\\VID_046D&PID_0843&MI_00\\6&2206973F&0&0000",
+     "is_current_instance": true,
+     "metadata_values": null
+    },
+    {
+     "category": "KSCATEGORY_VIDEO_CAMERA",
+     "interface_key": "##?#USB#VID_046D&PID_0843&MI_00#8&16BE97FE&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}",
+     "function_instance": "USB\\VID_046D&PID_0843&MI_00\\8&16BE97FE&0&0000",
+     "is_current_instance": false,
+     "metadata_values": null
+    },
+    {
+     "category": "KSCATEGORY_VIDEO_CAMERA",
+     "interface_key": "##?#USB#VID_046D&PID_0843&MI_00#8&39DEC205&1&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}",
+     "function_instance": "USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&1&0000",
+     "is_current_instance": false,
+     "metadata_values": {
+      "MetadataBufferSizeInKB0": 5
+     }
+    },
+    {
+     "category": "KSCATEGORY_VIDEO_CAMERA",
+     "interface_key": "##?#USB#VID_046D&PID_085C&MI_00#8&268DA596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}",
+     "function_instance": "USB\\VID_046D&PID_085C&MI_00\\8&268DA596&0&0000",
+     "is_current_instance": true,
+     "metadata_values": {
+      "MetadataBufferSizeInKB0": 5
+     }
+    },
+    {
+     "category": "KSCATEGORY_VIDEO_CAMERA",
+     "interface_key": "##?#USB#VID_4C4A&PID_4A55&MI_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}",
+     "function_instance": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232E60D4&0&0000",
+     "is_current_instance": true,
+     "metadata_values": null
+    },
+    {
+     "category": "KSCATEGORY_VIDEO_CAMERA",
+     "interface_key": "##?#USB#VID_4C4A&PID_4A55&MI_00#8&35e81179&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}",
+     "function_instance": "USB\\VID_4C4A&PID_4A55&MI_00\\8&35E81179&0&0000",
+     "is_current_instance": false,
+     "metadata_values": null
+    }
+   ]
+  },
+  "discovery": {
+   "errors": [],
+   "virtual_devices": [
+    {
+     "api": "mf",
+     "index": 0,
+     "friendly_name": "NDI Webcam Video 1",
+     "link": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource0"
+    },
+    {
+     "api": "mf",
+     "index": 1,
+     "friendly_name": "NDI Webcam Video 2",
+     "link": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource1"
+    },
+    {
+     "api": "mf",
+     "index": 2,
+     "friendly_name": "NDI Webcam Video 3",
+     "link": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource2"
+    },
+    {
+     "api": "mf",
+     "index": 3,
+     "friendly_name": "NDI Webcam Video 4",
+     "link": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource3"
+    },
+    {
+     "api": "ds",
+     "index": 2,
+     "friendly_name": "NDI Webcam Video 1",
+     "link": "\\\\?\\root#media#0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\vidsource0"
+    },
+    {
+     "api": "ds",
+     "index": 3,
+     "friendly_name": "NDI Webcam Video 2",
+     "link": "\\\\?\\root#media#0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\vidsource1"
+    },
+    {
+     "api": "ds",
+     "index": 4,
+     "friendly_name": "NDI Webcam Video 3",
+     "link": "\\\\?\\root#media#0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\vidsource2"
+    },
+    {
+     "api": "ds",
+     "index": 5,
+     "friendly_name": "NDI Webcam Video 4",
+     "link": "\\\\?\\root#media#0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\vidsource3"
+    },
+    {
+     "api": "ds",
+     "index": 8,
+     "friendly_name": "OBS-Camera",
+     "link": ""
+    },
+    {
+     "api": "ds",
+     "index": 9,
+     "friendly_name": "OBS-Camera2",
+     "link": ""
+    },
+    {
+     "api": "ds",
+     "index": 10,
+     "friendly_name": "OBS-Camera3",
+     "link": ""
+    },
+    {
+     "api": "ds",
+     "index": 11,
+     "friendly_name": "OBS-Camera4",
+     "link": ""
+    },
+    {
+     "api": "ds",
+     "index": 12,
+     "friendly_name": "Camera (NVIDIA Broadcast)",
+     "link": ""
+    },
+    {
+     "api": "ds",
+     "index": 13,
+     "friendly_name": "SpoutCam",
+     "link": ""
+    },
+    {
+     "api": "ds",
+     "index": 14,
+     "friendly_name": "OBS Virtual Camera",
+     "link": ""
+    }
+   ],
+   "elapsed_s": 0.0275
+  },
+  "flags": [
+   "USB 3 LPM is 'Moderate power savings' on AC: the Kiyo control-transfer failure hypothesis (Linux NO_LPM quirk) is in play; attended item A4 turns it off",
+   "USB selective suspend enabled",
+   "Logitech software running (LogiTune vetoes device restarts; may write camera controls)",
+   "Razer software running",
+   "virtual cameras registered: MF 4 at indices 0-3 (NDI Webcam Video x4); DS 11 at indices 2-5, 8-14 (NDI Webcam Video x4, OBS-Camera x4, Camera (NVIDIA Broadcast), SpoutCam, OBS Virtual Camera). Their DirectShow filters load into every process that enumerates DS, and index-based opens (OpenCV VideoCapture(i)) can hit them",
+   "Logitech Webcam C930e: tier-1 metadata ({'MetadataBufferSizeInKB0': 5}) is on old instance(s) USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&1&0000 but not on the current one (USB\\VID_046D&PID_0843&MI_00\\6&2206973f&0&0000): the value is per interface instance, so this camera silently fell back to tier 0 (re-run the one-time admin step for the current instance)"
+  ],
+  "flag_details": {
+   "virtual_cameras": {
+    "mf": {
+     "count": 4,
+     "indices": "0-3",
+     "names": {
+      "NDI Webcam Video": 4
+     }
+    },
+    "ds": {
+     "count": 11,
+     "indices": "2-5, 8-14",
+     "names": {
+      "NDI Webcam Video": 4,
+      "OBS-Camera": 4,
+      "Camera (NVIDIA Broadcast)": 1,
+      "SpoutCam": 1,
+      "OBS Virtual Camera": 1
+     }
+    }
+   },
+   "stale_tier1_metadata": [
+    {
+     "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7",
+     "name": "Logitech Webcam C930e",
+     "current_instance": "USB\\VID_046D&PID_0843&MI_00\\6&2206973f&0&0000",
+     "stale_instances": [
+      "USB\\VID_046D&PID_0843&MI_00\\8&39DEC205&1&0000"
+     ],
+     "stale_values": {
+      "MetadataBufferSizeInKB0": 5
+     },
+     "serial_source": "iSerialNumber=0"
+    }
+   ]
+  },
+  "camera_count": 3,
+  "kiyo_present": false,
+  "arrivals": {
+   "before": {
+    "utc": "2026-11-06T21:20:37.879935+00:00",
+    "cameras": {
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-06T21:19:13.117126+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+      "present": true,
+      "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "after": {
+    "utc": "2026-11-06T21:20:38.517000+00:00",
+    "cameras": {
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-06T21:19:13.117126+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+      "present": true,
+      "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "changes": [],
+   "unexplained_re_arrival": []
+  }
+ },
+ "verdicts": {},
+ "errors": [],
+ "device_faults": {
+  "faulted_at_start": {},
+  "faulted_at_end": {},
+  "kiyo_dead_since": null
+ }
+}

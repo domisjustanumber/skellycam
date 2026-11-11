@@ -1,0 +1,220 @@
+[camlock] acquired after 0.0s (ticket 674): research\usb_cameras\suite\windows\native\build\wincam.exe capture --api mf --device vid_1532 --width 1280 --height 720 --fps 30 --subtype MJPG --frames 90 --timeout-ms 20000 --out-dir C:\Users\Dom\AppData\Local\Temp\claude\ca7e9b09df19a3f5\8b3538d8-303d-4117-8cfb-3ad1d86baadb\scratchpad\scene_check3\vid_1532 --save every:30
+{
+ "tool": "wincam",
+ "version": "wincam 1.2 (2026-11-08)",
+ "subcommand": "capture",
+ "utc_started": "2026-11-10T22:09:10.397429Z",
+ "pid": 13408,
+ "argv": [
+  "research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+  "capture",
+  "--api",
+  "mf",
+  "--device",
+  "vid_1532",
+  "--width",
+  "1280",
+  "--height",
+  "720",
+  "--fps",
+  "30",
+  "--subtype",
+  "MJPG",
+  "--frames",
+  "90",
+  "--timeout-ms",
+  "20000",
+  "--out-dir",
+  "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\ca7e9b09df19a3f5\\8b3538d8-303d-4117-8cfb-3ad1d86baadb\\scratchpad\\scene_check3\\vid_1532",
+  "--save",
+  "every:30"
+ ],
+ "timeout_ms": 20000,
+ "api": "mf",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30,
+  "frames": 90,
+  "seconds": null,
+  "save": "every:30",
+  "allow_synthesized": false
+ },
+ "out_dir": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\ca7e9b09df19a3f5\\8b3538d8-303d-4117-8cfb-3ad1d86baadb\\scratchpad\\scene_check3\\vid_1532",
+ "enumerate_ms": 2.616599992,
+ "device": {
+  "index": 7,
+  "friendly_name": "USB Video Device",
+  "symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+  "usb": {
+   "vid": "1532",
+   "pid": "0e05",
+   "mi": "00",
+   "instance": "a&34494d13&0&0000"
+  }
+ },
+ "controls_before": [],
+ "negotiated": {
+  "requested_subtype": "MJPG",
+  "candidate_rates_same_size": [
+   "60/1",
+   "30/1",
+   "24/1",
+   "20/1",
+   "15/1",
+   "10/1",
+   "5/1"
+  ],
+  "likely_mf_synthesized_candidates": 0,
+  "native_type_index": 43,
+  "likely_mf_synthesized": false,
+  "raw": false,
+  "stream_selection_hr": "0x00000000",
+  "readback_hr": "0x00000000",
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps_num": 30,
+  "fps_den": 1,
+  "fps": 30,
+  "readback_default_stride": null,
+  "readback_ok": true
+ },
+ "steps": [
+  {
+   "step": "enumerate",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 2.183200002,
+   "timed_out": false
+  },
+  {
+   "step": "activate",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 28.6693,
+   "timed_out": false
+  },
+  {
+   "step": "reader_create",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 0.9828999937,
+   "timed_out": false
+  },
+  {
+   "step": "set_type",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 0.621299997,
+   "timed_out": false
+  },
+  {
+   "step": "read_sample_issue",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 0.06579999626,
+   "timed_out": false
+  },
+  {
+   "step": "first_sample",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 615.1227,
+   "timed_out": false
+  },
+  {
+   "step": "flush",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 0.5215000063,
+   "timed_out": false,
+   "on_flush_received": true
+  },
+  {
+   "step": "reader_release",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 1096.6023,
+   "timed_out": false
+  },
+  {
+   "step": "control_interfaces_release",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 0.08749999106,
+   "timed_out": false
+  },
+  {
+   "step": "source_shutdown",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 0.8853999972,
+   "timed_out": false
+  },
+  {
+   "step": "activate_shutdown_object",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 0.08750000596,
+   "timed_out": false
+  }
+ ],
+ "timings": {
+  "enumerate_ms": 2.183200002,
+  "activate_ms": 28.6693,
+  "reader_ms": 0.9828999937,
+  "settype_ms": 0.621299997,
+  "first_frame_ms": 615.1227,
+  "open_to_first_frame_ms": 648.7925,
+  "flush_ms": 0.5215000063,
+  "reader_release_ms": 1096.6023,
+  "shutdown_ms": 0.8853999972,
+  "shutdown_object_ms": 0.08750000596,
+  "close_ms": 1098.2865
+ },
+ "frames": {
+  "total": 90,
+  "ok": 90,
+  "soi_eoi_ok": 90,
+  "sof0_size_match": 90,
+  "with_uvc_metadata": 0,
+  "with_capture_metadata_attr": 0,
+  "stream_ticks": 1,
+  "null_samples": 1,
+  "discontinuities": 1,
+  "bytes_total": 16893536,
+  "saved": 3,
+  "reader_flag_counts": {},
+  "raw": false,
+  "ok_rule": "jpeg: SOI + EOI + SOF size == request"
+ },
+ "duration_s": 2.9602928,
+ "fps_measured": 30.06459361,
+ "metadata": {
+  "uvc_pts_present": false,
+  "note": "UVC PTS/SCR appear only when MetadataBufferSizeInKB0 is set on this device instance (tier 1)"
+ },
+ "cpu": {
+  "user_s": 0,
+  "kernel_s": 0,
+  "window_s": 2.9602156,
+  "pct_of_one_core": 0,
+  "method": "GetProcessTimes over the streaming window",
+  "process_total_s": 0.015625
+ },
+ "schedule": [],
+ "unreleasable": false,
+ "ok": true,
+ "error": null,
+ "files": {
+  "frames_jsonl": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\ca7e9b09df19a3f5\\8b3538d8-303d-4117-8cfb-3ad1d86baadb\\scratchpad\\scene_check3\\vid_1532\\frames.jsonl",
+  "frames_mjpeg": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\ca7e9b09df19a3f5\\8b3538d8-303d-4117-8cfb-3ad1d86baadb\\scratchpad\\scene_check3\\vid_1532\\frames.mjpeg",
+  "frames_raw": null
+ },
+ "utc_finished": "2026-11-10T22:09:15.109805Z",
+ "exit_code": 0,
+ "abandoned_threads": 0
+}
+[camlock] released

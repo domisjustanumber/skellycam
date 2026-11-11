@@ -1,0 +1,3319 @@
+{
+ "test": "W-PYAV-LIST",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-11T07:01:07.491083+00:00",
+ "utc_finished": "2026-11-11T07:08:17.838108+00:00",
+ "elapsed_s": 430.328,
+ "command": "research/usb_cameras/suite/windows/run_suite.py --cyc-profile reliability --reliability-cycles 400 --min-fps 30 --min-height 720 --max-height 720",
+ "argv": [
+  "research/usb_cameras/suite/windows/run_suite.py",
+  "--cyc-profile",
+  "reliability",
+  "--reliability-cycles",
+  "400",
+  "--min-fps",
+  "30",
+  "--min-height",
+  "720",
+  "--max-height",
+  "720"
+ ],
+ "environment": {
+  "os": {
+   "platform": "Windows-11-10.0.26300-SP0",
+   "system": "Windows",
+   "release": "11",
+   "version": "10.0.26300",
+   "machine": "AMD64",
+   "windows_build": 26300,
+   "windows_version": "10.0.26300",
+   "windows_edition": "Core",
+   "windows_displayversion": "26H2",
+   "windows_ubr": 9711,
+   "windows_productname": "Windows 10 Home",
+   "windows_currentbuild": "26300"
+  },
+  "python": "3.12.13",
+  "python_implementation": "CPython",
+  "python_executable": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+  "hostname": "Gerald",
+  "pid": 47460,
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0"
+  }
+ },
+ "cameras": [
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-10T22:07:35.509176+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 2
+  },
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "name": "Logitech Webcam C930e",
+   "vid": "046d",
+   "pid": "0843",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+   "parent_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&34c047e4&0&0000",
+   "hub_port": 8,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "Logitech Webcam C930e",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(8)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "speed": "HS",
+   "bcd_device": "0013",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-10T22:07:46.470029+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 0,
+   "ds_index": 3
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "name": "USB Camera",
+   "vid": "4c4a",
+   "pid": "4a55",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232e60d4&0&0000",
+   "hub_port": 2,
+   "mf_symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Camera",
+   "ds_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "speed": "HS",
+   "bcd_device": "0100",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-09T21:34:51.037086+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 5,
+   "ds_index": 0
+  },
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "vid": "046d",
+   "pid": "085c",
+   "serial": "C922SN01",
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "c922 Pro Stream Webcam",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+   "speed": "HS",
+   "bcd_device": "0016",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-09T21:34:51.119106+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 6,
+   "ds_index": 1
+  }
+ ],
+ "measurements": {
+  "repeats_per_method": 3,
+  "call_timeout_s": 20.0,
+  "gap_s": 1.5,
+  "kiyo_as_found": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "faulted": true,
+    "fault": {
+     "utc": "2026-11-11T06:53:23.737209+00:00",
+     "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "name": "USB Video Device",
+     "is_kiyo": true,
+     "test": "W-MULTI",
+     "mode": "MJPG 1280x720@30",
+     "code": "watchdog timeout",
+     "api": "ds",
+     "stage": "ds_all_together_028",
+     "class": "hang",
+     "source": "W-MULTI multi_launch child",
+     "plug_in_age_s": 31548.2,
+     "last_arrival": "2026-11-10T22:07:35.509176+00:00",
+     "detail": {
+      "reason": "reader hung past the watchdog and the 1-frame health check failed"
+     },
+     "faulted": true,
+     "since_utc": "2026-11-11T06:53:23.737209+00:00",
+     "history": [
+      {
+       "type": "fault",
+       "utc": "2026-11-11T06:53:23.737209+00:00",
+       "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "name": "USB Video Device",
+       "is_kiyo": true,
+       "test": "W-MULTI",
+       "mode": "MJPG 1280x720@30",
+       "code": "watchdog timeout",
+       "api": "ds",
+       "stage": "ds_all_together_028",
+       "class": "hang",
+       "source": "W-MULTI multi_launch child",
+       "plug_in_age_s": 31548.2,
+       "last_arrival": "2026-11-10T22:07:35.509176+00:00",
+       "detail": {
+        "reason": "reader hung past the watchdog and the 1-frame health check failed"
+       }
+      }
+     ],
+     "repeats": 4
+    },
+    "answering": false,
+    "hr": "timeout",
+    "read": {
+     "rc": 5,
+     "elapsed_s": 3.047,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 3.3,
+     "lock_timed_out": false,
+     "camlock_rc": 5,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 3.3s (ticket 2337): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 30.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api ds --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global --read-only --timeout-ms 3000\n[camlock] released"
+    },
+    "plug_in_age_s": 32018.5,
+    "last_arrival": "2026-11-10T22:07:35.509176+00:00",
+    "w_kiyo_onset": {
+     "name": "USB Video Device",
+     "poller_mode": "background",
+     "poller_started_utc": "2026-11-11T04:00:04.015563+00:00",
+     "plug_in_age_at_start_s": 21149.0,
+     "last_arrival": "2026-11-10T22:07:35.509176+00:00",
+     "stopped_answering": true,
+     "failed_from_first_poll": false,
+     "first_failure_utc": "2026-11-11T06:53:17.540569Z",
+     "first_failure_plug_in_age_s": 31542.0,
+     "first_failure_test": "W-MULTI",
+     "first_failure_codes": [],
+     "first_failure_vendor_processes": [
+      "razer_elevation_service.exe:42144"
+     ],
+     "first_failure_activity_processes": [
+      "?:39608"
+     ],
+     "per_api": {
+      "mf": {
+       "utc": "2026-11-11T06:53:17.540569Z",
+       "plug_in_age_s": 31542.0,
+       "test": "W-MULTI",
+       "codes": [],
+       "real_codes": [],
+       "error_hr": null,
+       "failed_from_first_poll": false
+      },
+      "ds": {
+       "utc": "2026-11-11T06:53:23.836517Z",
+       "plug_in_age_s": 31548.3,
+       "test": "W-MULTI",
+       "codes": [],
+       "real_codes": [],
+       "error_hr": null,
+       "failed_from_first_poll": false
+      }
+     },
+     "transitions": [
+      {
+       "api": "mf",
+       "to": "not_answering",
+       "utc": "2026-11-11T06:53:17.540569Z",
+       "plug_in_age_s": 31542.0,
+       "test": "W-MULTI"
+      },
+      {
+       "api": "ds",
+       "to": "not_answering",
+       "utc": "2026-11-11T06:53:23.836517Z",
+       "plug_in_age_s": 31548.3,
+       "test": "W-MULTI"
+      }
+     ],
+     "n_polls": 693
+    },
+    "wedged": true
+   }
+  },
+  "faulted_cameras": [
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+  ],
+  "sessions": {
+   "idle": {
+    "condition": "idle_kiyo_wedged",
+    "stream_key": null,
+    "run": {
+     "rc": 0,
+     "elapsed_s": 187.828,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 3.0,
+     "lock_timed_out": false,
+     "camlock_rc": 0,
+     "spawn_error": null,
+     "stderr_tail": "red after 3.0s (ticket 2339): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 1095.0 -- C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_list_session.py C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-PYAV-LIST\\idle_spec.json\n[camlock] released"
+    },
+    "parse_error": null,
+    "session_file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-PYAV-LIST\\idle\\session.json",
+    "mode": null,
+    "streamer_runs": []
+   },
+   "streaming_usbvideodevice_1532-0e05_4": {
+    "condition": "streaming:1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "skipped": "untested: device fault since 2026-11-11T06:53:23.737209+00:00 (W-MULTI, MJPG 1280x720@30, watchdog timeout); replug needed"
+   },
+   "streaming_logitechwebcam_046d-0843_8": {
+    "condition": "streaming:046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+    "stream_key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+    "run": {
+     "rc": 0,
+     "elapsed_s": 74.281,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 3.0,
+     "lock_timed_out": false,
+     "camlock_rc": 0,
+     "spawn_error": null,
+     "stderr_tail": ":\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 490.0 -- C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_list_session.py C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-PYAV-LIST\\streaming_logitechwebcam_046d-0843_8_spec.json\n[camlock] released"
+    },
+    "parse_error": null,
+    "session_file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-PYAV-LIST\\streaming_logitechwebcam_046d-0843_8\\session.json",
+    "mode": "MJPG 1280x720@30",
+    "streamer_runs": [
+     {
+      "index": 1,
+      "started_ok": true,
+      "summary": {
+       "ok": true,
+       "error": null,
+       "frames": {
+        "total": 2199,
+        "ok": 2199,
+        "soi_eoi_ok": 2199,
+        "sof0_size_match": 2199,
+        "with_uvc_metadata": 0,
+        "with_capture_metadata_attr": 0,
+        "stream_ticks": 1,
+        "null_samples": 1,
+        "discontinuities": 1,
+        "bytes_total": 247811964,
+        "saved": 0,
+        "reader_flag_counts": {},
+        "raw": false,
+        "ok_rule": "jpeg: SOI + EOI + SOF size == request"
+       },
+       "fps_measured": 30.02036322,
+       "duration_s": 73.2169689,
+       "unreleasable": false,
+       "stopped_by_stop_file": true,
+       "format_fallback": null,
+       "pix_fmt": null,
+       "negotiated": {
+        "requested_subtype": "MJPG",
+        "candidate_rates_same_size": [
+         "30/1",
+         "24/1",
+         "20/1",
+         "15/1",
+         "10/1",
+         "10000000/1333333",
+         "5/1"
+        ],
+        "likely_mf_synthesized_candidates": 0,
+        "native_type_index": 294,
+        "likely_mf_synthesized": false,
+        "raw": false,
+        "stream_selection_hr": "0x00000000",
+        "readback_hr": "0x00000000",
+        "subtype": "MJPG",
+        "width": 1280,
+        "height": 720,
+        "fps_num": 30,
+        "fps_den": 1,
+        "fps": 30,
+        "readback_default_stride": null,
+        "readback_ok": true
+       },
+       "timings": {
+        "enumerate_ms": 1.724899992,
+        "activate_ms": 83.8916,
+        "reader_ms": 0.9483999908,
+        "settype_ms": 1.111499995,
+        "first_frame_ms": 472.5346,
+        "open_to_first_frame_ms": 561.462,
+        "flush_ms": 0.9529999942,
+        "reader_release_ms": 358.5868,
+        "shutdown_ms": 1.982599989,
+        "shutdown_object_ms": 0.07630001009,
+        "close_ms": 361.8324
+       },
+       "stage_failed": null
+      }
+     }
+    ]
+   },
+   "streaming_usbcamera_4c4a-4a55_2": {
+    "condition": "streaming:4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "stream_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "run": {
+     "rc": 0,
+     "elapsed_s": 74.203,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 3.0,
+     "lock_timed_out": false,
+     "camlock_rc": 0,
+     "spawn_error": null,
+     "stderr_tail": "3): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 490.0 -- C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_list_session.py C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-PYAV-LIST\\streaming_usbcamera_4c4a-4a55_2_spec.json\n[camlock] released"
+    },
+    "parse_error": null,
+    "session_file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-PYAV-LIST\\streaming_usbcamera_4c4a-4a55_2\\session.json",
+    "mode": "MJPG 1280x720@30",
+    "streamer_runs": [
+     {
+      "index": 1,
+      "started_ok": true,
+      "summary": {
+       "ok": true,
+       "error": null,
+       "frames": {
+        "total": 1898,
+        "ok": 1898,
+        "soi_eoi_ok": 1898,
+        "sof0_size_match": 1898,
+        "with_uvc_metadata": 0,
+        "with_capture_metadata_attr": 0,
+        "stream_ticks": 1,
+        "null_samples": 1,
+        "discontinuities": 1,
+        "bytes_total": 140678336,
+        "saved": 0,
+        "reader_flag_counts": {},
+        "raw": false,
+        "ok_rule": "jpeg: SOI + EOI + SOF size == request"
+       },
+       "fps_measured": 25.75793882,
+       "duration_s": 73.6471972,
+       "unreleasable": false,
+       "stopped_by_stop_file": true,
+       "format_fallback": null,
+       "pix_fmt": null,
+       "negotiated": {
+        "requested_subtype": "MJPG",
+        "candidate_rates_same_size": [
+         "30/1",
+         "25/1"
+        ],
+        "likely_mf_synthesized_candidates": 0,
+        "native_type_index": 5,
+        "likely_mf_synthesized": false,
+        "raw": false,
+        "stream_selection_hr": "0x00000000",
+        "readback_hr": "0x00000000",
+        "subtype": "MJPG",
+        "width": 1280,
+        "height": 720,
+        "fps_num": 30,
+        "fps_den": 1,
+        "fps": 30,
+        "readback_default_stride": null,
+        "readback_ok": true
+       },
+       "timings": {
+        "enumerate_ms": 1.804700002,
+        "activate_ms": 21.22410001,
+        "reader_ms": 0.8663000017,
+        "settype_ms": 0.3737999946,
+        "first_frame_ms": 88.8536,
+        "open_to_first_frame_ms": 114.2635,
+        "flush_ms": 0.3308000118,
+        "reader_release_ms": 269.5537,
+        "shutdown_ms": 1.124500006,
+        "shutdown_object_ms": 0.1092000008,
+        "close_ms": 271.2607
+       },
+       "stage_failed": null
+      }
+     }
+    ]
+   },
+   "streaming_c922prostreamw_046d-085c_C922SN01": {
+    "condition": "streaming:046d:085c:sn=C922SN01",
+    "stream_key": "046d:085c:sn=C922SN01",
+    "run": {
+     "rc": 0,
+     "elapsed_s": 74.157,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 3.0,
+     "lock_timed_out": false,
+     "camlock_rc": 0,
+     "spawn_error": null,
+     "stderr_tail": "\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 490.0 -- C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\pyav_list_session.py C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-PYAV-LIST\\streaming_c922prostreamw_046d-085c_C922SN01_spec.json\n[camlock] released"
+    },
+    "parse_error": null,
+    "session_file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261111T040003Z\\W-PYAV-LIST\\streaming_c922prostreamw_046d-085c_C922SN01\\session.json",
+    "mode": "MJPG 1280x720@30",
+    "streamer_runs": [
+     {
+      "index": 1,
+      "started_ok": true,
+      "summary": {
+       "ok": true,
+       "error": null,
+       "frames": {
+        "total": 2201,
+        "ok": 2201,
+        "soi_eoi_ok": 2201,
+        "sof0_size_match": 2201,
+        "with_uvc_metadata": 0,
+        "with_capture_metadata_attr": 0,
+        "stream_ticks": 1,
+        "null_samples": 1,
+        "discontinuities": 1,
+        "bytes_total": 508660540,
+        "saved": 0,
+        "reader_flag_counts": {},
+        "raw": false,
+        "ok_rule": "jpeg: SOI + EOI + SOF size == request"
+       },
+       "fps_measured": 29.99548625,
+       "duration_s": 73.3443686,
+       "unreleasable": false,
+       "stopped_by_stop_file": true,
+       "format_fallback": null,
+       "pix_fmt": null,
+       "negotiated": {
+        "requested_subtype": "MJPG",
+        "candidate_rates_same_size": [
+         "30/1",
+         "60/1",
+         "24/1",
+         "20/1",
+         "15/1",
+         "10/1",
+         "10000000/1333333",
+         "5/1"
+        ],
+        "likely_mf_synthesized_candidates": 0,
+        "native_type_index": 295,
+        "likely_mf_synthesized": false,
+        "raw": false,
+        "stream_selection_hr": "0x00000000",
+        "readback_hr": "0x00000000",
+        "subtype": "MJPG",
+        "width": 1280,
+        "height": 720,
+        "fps_num": 30,
+        "fps_den": 1,
+        "fps": 30,
+        "readback_default_stride": null,
+        "readback_ok": true
+       },
+       "timings": {
+        "enumerate_ms": 1.712799996,
+        "activate_ms": 28.17479999,
+        "reader_ms": 0.7060000002,
+        "settype_ms": 1.281800002,
+        "first_frame_ms": 297.7661,
+        "open_to_first_frame_ms": 330.9557,
+        "flush_ms": 1.154100016,
+        "reader_release_ms": 327.3981,
+        "shutdown_ms": 1.729999989,
+        "shutdown_object_ms": 0.1639999896,
+        "close_ms": 330.8184
+       },
+       "stage_failed": null
+      }
+     }
+    ]
+   }
+  },
+  "results": [
+   {
+    "condition": "idle_kiyo_wedged",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 8400.78,
+     "max": 14798.0,
+     "all": [
+      14798.0,
+      8400.78,
+      3469.86
+     ]
+    },
+    "listed": [
+     10,
+     11,
+     10
+    ],
+    "errors": [
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'dummy'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'dummy'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'dummy'"
+    ],
+    "log_tail": "-15E3859DF9D2}\"\n[dshow @ 0000023104eb7000] \"Webcam 2 (NDI Webcam Audio)\" (audio)\n[dshow @ 0000023104eb7000]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{3E0EEBA6-F2E8-46A7-8A21-692298775943}\"\n[dshow @ 0000023104eb7000] \"Microphone (4- Logitech Webcam C930e)\" (audio)\n[dshow @ 0000023104eb7000]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{615AD23F-B353-44AD-B057-9A8FA69FE888}\"\n[dshow @ 0000023104eb7000] \"Stream Mix B L/R (Revelator IO 24)\" (audio)\n[dshow @ 0000023104eb7000]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{850D8C06-DD75-4E07-A3A3-5773B428768A}\"\n[dshow @ 0000023104eb7000] \"Microphone (4- Razer Kiyo Pro)\" (audio)\n[dshow @ 0000023104eb7000]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{9B033EB8-25AA-497F-87EC-CC50C4B8095C}\"\n[dshow @ 0000023104eb7000] \"Webcam 1 (NDI Webcam Audio)\" (audio)\n[dshow @ 0000023104eb7000]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{B4B1ED1C-DDAE-403E-953D-79887671BE1B}\"\n[dshow @ 0000023104eb7000] \"Microphone (C922 Pro Stream Webcam)\" (audio)\n[dshow @ 0000023104eb7000]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3257D4A-0EC4-4C01-8AC6-FB320497FDFA}\"\n[dshow @ 0000023104eb7000] \"Stream Mix A L/R (Revelator IO 24)\" (audio)\n[dshow @ 0000023104eb7000]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3C15DAE-1BB9-4805-A4E1-2EFC7ADDAE22}\"\n",
+    "disturbance": null,
+    "disturbed": null,
+    "streamer_alive_after": null,
+    "pipes": {
+     "samples_in_window": 103,
+     "opened": {},
+     "baseline_active": []
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "pyav_list_devices",
+    "camera_key": null
+   },
+   {
+    "condition": "idle_kiyo_wedged",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 8551.46,
+     "max": 8822.86,
+     "all": [
+      8822.86,
+      3480.04,
+      8551.46
+     ]
+    },
+    "listed": [
+     11,
+     10,
+     11
+    ],
+    "errors": [
+     null,
+     null,
+     null
+    ],
+    "log_tail": "baf1f40] \"Webcam 2 (NDI Webcam Audio)\" (audio)\r\n[in#0 @ 000001e5ebaf1f40]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{3E0EEBA6-F2E8-46A7-8A21-692298775943}\"\r\n[in#0 @ 000001e5ebaf1f40] \"Microphone (4- Logitech Webcam C930e)\" (audio)\r\n[in#0 @ 000001e5ebaf1f40]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{615AD23F-B353-44AD-B057-9A8FA69FE888}\"\r\n[in#0 @ 000001e5ebaf1f40] \"Stream Mix B L/R (Revelator IO 24)\" (audio)\r\n[in#0 @ 000001e5ebaf1f40]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{850D8C06-DD75-4E07-A3A3-5773B428768A}\"\r\n[in#0 @ 000001e5ebaf1f40] \"Microphone (4- Razer Kiyo Pro)\" (audio)\r\n[in#0 @ 000001e5ebaf1f40]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{9B033EB8-25AA-497F-87EC-CC50C4B8095C}\"\r\n[in#0 @ 000001e5ebaf1f40] \"Webcam 1 (NDI Webcam Audio)\" (audio)\r\n[in#0 @ 000001e5ebaf1f40]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{B4B1ED1C-DDAE-403E-953D-79887671BE1B}\"\r\n[in#0 @ 000001e5ebaf1f40] \"Microphone (C922 Pro Stream Webcam)\" (audio)\r\n[in#0 @ 000001e5ebaf1f40]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3257D4A-0EC4-4C01-8AC6-FB320497FDFA}\"\r\n[in#0 @ 000001e5ebaf1f40] \"Stream Mix A L/R (Revelator IO 24)\" (audio)\r\n[in#0 @ 000001e5ebaf1f40]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3C15DAE-1BB9-4805-A4E1-2EFC7ADDAE22}\"\r\nError opening input file dummy.\r\n",
+    "disturbance": null,
+    "disturbed": null,
+    "streamer_alive_after": null,
+    "pipes": {
+     "samples_in_window": 80,
+     "opened": {},
+     "baseline_active": []
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "ffmpeg_list_devices",
+    "camera_key": null
+   },
+   {
+    "condition": "idle_kiyo_wedged",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 4,
+    "elapsed_ms": {
+     "p50": 10548.25,
+     "max": 19067.5,
+     "all": [
+      3512.7,
+      19067.5,
+      10548.25
+     ]
+    },
+    "listed": [
+     0,
+     32,
+     32
+    ],
+    "errors": [
+     "OSError: [Errno 5] I/O error: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'",
+     "OSError: [Errno 5] I/O error: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'",
+     "OSError: [Errno 5] I/O error: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'"
+    ],
+    "log_tail": " min s=640x360 fps=5 max s=640x360 fps=60.0002 (tv, bt470bg/bt709/unknown, topleft)\n[dshow @ 00000200d7e27300]   vcodec=h264  min s=1280x720 fps=5 max s=1280x720 fps=60.0002\n[dshow @ 00000200d7e27300]   vcodec=h264  min s=1280x720 fps=5 max s=1280x720 fps=60.0002 (tv, bt470bg/bt709/unknown, topleft)\n[dshow @ 00000200d7e27300]   vcodec=h264  min s=1920x1080 fps=5 max s=1920x1080 fps=60.0002\n[dshow @ 00000200d7e27300]   vcodec=h264  min s=1920x1080 fps=5 max s=1920x1080 fps=60.0002 (tv, bt470bg/bt709/unknown, topleft)\n[dshow @ 00000200d7e27300]   pixel_format=nv12  min s=640x480 fps=5 max s=640x480 fps=60.0002\n[dshow @ 00000200d7e27300]   pixel_format=nv12  min s=640x480 fps=5 max s=640x480 fps=60.0002 (tv, bt470bg/bt709/unknown, topleft)\n[dshow @ 00000200d7e27300]   pixel_format=nv12  min s=640x360 fps=5 max s=640x360 fps=60.0002\n[dshow @ 00000200d7e27300]   pixel_format=nv12  min s=640x360 fps=5 max s=640x360 fps=60.0002 (tv, bt470bg/bt709/unknown, topleft)\n[dshow @ 00000200d7e27300]   pixel_format=nv12  min s=1280x720 fps=5 max s=1280x720 fps=60.0002\n[dshow @ 00000200d7e27300]   pixel_format=nv12  min s=1280x720 fps=5 max s=1280x720 fps=60.0002 (tv, bt470bg/bt709/unknown, topleft)\n[dshow @ 00000200d7e27300]   pixel_format=nv12  min s=1920x1080 fps=5 max s=1920x1080 fps=60.0002\n[dshow @ 00000200d7e27300]   pixel_format=nv12  min s=1920x1080 fps=5 max s=1920x1080 fps=60.0002 (tv, bt470bg/bt709/unknown, topleft)\n[dshow @ 00000200d7e27300] Could not RenderStream to connect pins\n",
+    "disturbance": null,
+    "disturbed": null,
+    "streamer_alive_after": null,
+    "pipes": {
+     "samples_in_window": 118,
+     "opened": {},
+     "baseline_active": []
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "pyav_list_options",
+    "camera_key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+   },
+   {
+    "condition": "idle_kiyo_wedged",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 19118.47,
+     "max": 19532.1,
+     "all": [
+      19532.1,
+      19078.67,
+      19118.47
+     ]
+    },
+    "listed": [
+     32,
+     32,
+     32
+    ],
+    "errors": [
+     null,
+     null,
+     null
+    ],
+    "log_tail": "ax s=1280x720 fps=60.0002 (tv, bt470bg/bt709/unknown, topleft)\r\n[in#0 @ 000001e8d5121100]   vcodec=h264  min s=1920x1080 fps=5 max s=1920x1080 fps=60.0002\r\n[in#0 @ 000001e8d5121100]   vcodec=h264  min s=1920x1080 fps=5 max s=1920x1080 fps=60.0002 (tv, bt470bg/bt709/unknown, topleft)\r\n[in#0 @ 000001e8d5121100]   pixel_format=nv12  min s=640x480 fps=5 max s=640x480 fps=60.0002\r\n[in#0 @ 000001e8d5121100]   pixel_format=nv12  min s=640x480 fps=5 max s=640x480 fps=60.0002 (tv, bt470bg/bt709/unknown, topleft)\r\n[in#0 @ 000001e8d5121100]   pixel_format=nv12  min s=640x360 fps=5 max s=640x360 fps=60.0002\r\n[in#0 @ 000001e8d5121100]   pixel_format=nv12  min s=640x360 fps=5 max s=640x360 fps=60.0002 (tv, bt470bg/bt709/unknown, topleft)\r\n[in#0 @ 000001e8d5121100]   pixel_format=nv12  min s=1280x720 fps=5 max s=1280x720 fps=60.0002\r\n[in#0 @ 000001e8d5121100]   pixel_format=nv12  min s=1280x720 fps=5 max s=1280x720 fps=60.0002 (tv, bt470bg/bt709/unknown, topleft)\r\n[in#0 @ 000001e8d5121100]   pixel_format=nv12  min s=1920x1080 fps=5 max s=1920x1080 fps=60.0002\r\n[in#0 @ 000001e8d5121100]   pixel_format=nv12  min s=1920x1080 fps=5 max s=1920x1080 fps=60.0002 (tv, bt470bg/bt709/unknown, topleft)\r\n[in#0 @ 000001e8d5121100] Could not RenderStream to connect pins\r\n[in#0 @ 000001e8d5120c80] Error opening input: I/O error\r\nError opening input file video=@device_pnp_\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global.\r\nError opening input files: I/O error\r\n",
+    "disturbance": null,
+    "disturbed": null,
+    "streamer_alive_after": null,
+    "pipes": {
+     "samples_in_window": 202,
+     "opened": {},
+     "baseline_active": []
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "ffmpeg_list_options",
+    "camera_key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+   },
+   {
+    "condition": "idle_kiyo_wedged",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 337.89,
+     "max": 542.43,
+     "all": [
+      337.89,
+      295.75,
+      542.43
+     ]
+    },
+    "listed": [
+     68,
+     68,
+     68
+    ],
+    "errors": [
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'"
+    ],
+    "log_tail": "f9c57580]   vcodec=mjpeg  min s=800x600 fps=5 max s=800x600 fps=30\n[dshow @ 000001c8f9c57580]   vcodec=mjpeg  min s=800x600 fps=5 max s=800x600 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001c8f9c57580]   vcodec=mjpeg  min s=848x480 fps=5 max s=848x480 fps=30\n[dshow @ 000001c8f9c57580]   vcodec=mjpeg  min s=848x480 fps=5 max s=848x480 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001c8f9c57580]   vcodec=mjpeg  min s=960x540 fps=5 max s=960x540 fps=30\n[dshow @ 000001c8f9c57580]   vcodec=mjpeg  min s=960x540 fps=5 max s=960x540 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001c8f9c57580]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30\n[dshow @ 000001c8f9c57580]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001c8f9c57580]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=30\n[dshow @ 000001c8f9c57580]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001c8f9c57580]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30\n[dshow @ 000001c8f9c57580]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001c8f9c57580]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30\n[dshow @ 000001c8f9c57580]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001c8f9c57580]  Pin \"Capture\" (alternative pin name \"1\")\n",
+    "disturbance": null,
+    "disturbed": null,
+    "streamer_alive_after": null,
+    "pipes": {
+     "samples_in_window": 14,
+     "opened": {},
+     "baseline_active": []
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "pyav_list_options",
+    "camera_key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+   },
+   {
+    "condition": "idle_kiyo_wedged",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 364.52,
+     "max": 365.43,
+     "all": [
+      364.52,
+      365.43,
+      358.64
+     ]
+    },
+    "listed": [
+     68,
+     68,
+     68
+    ],
+    "errors": [
+     null,
+     null,
+     null
+    ],
+    "log_tail": "0 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001dcbb9131c0]   vcodec=mjpeg  min s=848x480 fps=5 max s=848x480 fps=30\r\n[in#0 @ 000001dcbb9131c0]   vcodec=mjpeg  min s=848x480 fps=5 max s=848x480 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001dcbb9131c0]   vcodec=mjpeg  min s=960x540 fps=5 max s=960x540 fps=30\r\n[in#0 @ 000001dcbb9131c0]   vcodec=mjpeg  min s=960x540 fps=5 max s=960x540 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001dcbb9131c0]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30\r\n[in#0 @ 000001dcbb9131c0]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001dcbb9131c0]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=30\r\n[in#0 @ 000001dcbb9131c0]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001dcbb9131c0]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30\r\n[in#0 @ 000001dcbb9131c0]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001dcbb9131c0]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30\r\n[in#0 @ 000001dcbb9131c0]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001dcbb9131c0]  Pin \"Capture\" (alternative pin name \"1\")\r\nError opening input file video=@device_pnp_\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global.\r\n",
+    "disturbance": null,
+    "disturbed": null,
+    "streamer_alive_after": null,
+    "pipes": {
+     "samples_in_window": 15,
+     "opened": {},
+     "baseline_active": []
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "ffmpeg_list_options",
+    "camera_key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+   },
+   {
+    "condition": "idle_kiyo_wedged",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 333.59,
+     "max": 583.17,
+     "all": [
+      333.59,
+      294.43,
+      583.17
+     ]
+    },
+    "listed": [
+     18,
+     18,
+     18
+    ],
+    "errors": [
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'"
+    ],
+    "log_tail": "000017188757580]   vcodec=mjpeg  min s=640x480 fps=25 max s=640x480 fps=30\n[dshow @ 0000017188757580]   vcodec=mjpeg  min s=640x480 fps=25 max s=640x480 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 0000017188757580]   vcodec=mjpeg  min s=640x360 fps=25 max s=640x360 fps=30\n[dshow @ 0000017188757580]   vcodec=mjpeg  min s=640x360 fps=25 max s=640x360 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 0000017188757580]   vcodec=mjpeg  min s=352x288 fps=25 max s=352x288 fps=30\n[dshow @ 0000017188757580]   vcodec=mjpeg  min s=352x288 fps=25 max s=352x288 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 0000017188757580]   pixel_format=yuyv422  min s=640x480 fps=30 max s=640x480 fps=30\n[dshow @ 0000017188757580]   pixel_format=yuyv422  min s=640x480 fps=30 max s=640x480 fps=30 (tv, bt470bg/bt709/unknown, topleft)\n[dshow @ 0000017188757580]   pixel_format=yuyv422  min s=640x360 fps=30 max s=640x360 fps=30\n[dshow @ 0000017188757580]   pixel_format=yuyv422  min s=640x360 fps=30 max s=640x360 fps=30 (tv, bt470bg/bt709/unknown, topleft)\n[dshow @ 0000017188757580]   pixel_format=yuyv422  min s=352x288 fps=30 max s=352x288 fps=30\n[dshow @ 0000017188757580]   pixel_format=yuyv422  min s=352x288 fps=30 max s=352x288 fps=30 (tv, bt470bg/bt709/unknown, topleft)\n[dshow @ 0000017188757580]   pixel_format=yuyv422  min s=320x240 fps=30 max s=320x240 fps=30\n[dshow @ 0000017188757580]   pixel_format=yuyv422  min s=320x240 fps=30 max s=320x240 fps=30 (tv, bt470bg/bt709/unknown, topleft)\n",
+    "disturbance": null,
+    "disturbed": null,
+    "streamer_alive_after": null,
+    "pipes": {
+     "samples_in_window": 15,
+     "opened": {},
+     "baseline_active": []
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "pyav_list_options",
+    "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+   },
+   {
+    "condition": "idle_kiyo_wedged",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 357.97,
+     "max": 374.09,
+     "all": [
+      356.35,
+      374.09,
+      357.97
+     ]
+    },
+    "listed": [
+     18,
+     18,
+     18
+    ],
+    "errors": [
+     null,
+     null,
+     null
+    ],
+    "log_tail": " s=640x480 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001975ba31280]   vcodec=mjpeg  min s=640x360 fps=25 max s=640x360 fps=30\r\n[in#0 @ 000001975ba31280]   vcodec=mjpeg  min s=640x360 fps=25 max s=640x360 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001975ba31280]   vcodec=mjpeg  min s=352x288 fps=25 max s=352x288 fps=30\r\n[in#0 @ 000001975ba31280]   vcodec=mjpeg  min s=352x288 fps=25 max s=352x288 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001975ba31280]   pixel_format=yuyv422  min s=640x480 fps=30 max s=640x480 fps=30\r\n[in#0 @ 000001975ba31280]   pixel_format=yuyv422  min s=640x480 fps=30 max s=640x480 fps=30 (tv, bt470bg/bt709/unknown, topleft)\r\n[in#0 @ 000001975ba31280]   pixel_format=yuyv422  min s=640x360 fps=30 max s=640x360 fps=30\r\n[in#0 @ 000001975ba31280]   pixel_format=yuyv422  min s=640x360 fps=30 max s=640x360 fps=30 (tv, bt470bg/bt709/unknown, topleft)\r\n[in#0 @ 000001975ba31280]   pixel_format=yuyv422  min s=352x288 fps=30 max s=352x288 fps=30\r\n[in#0 @ 000001975ba31280]   pixel_format=yuyv422  min s=352x288 fps=30 max s=352x288 fps=30 (tv, bt470bg/bt709/unknown, topleft)\r\n[in#0 @ 000001975ba31280]   pixel_format=yuyv422  min s=320x240 fps=30 max s=320x240 fps=30\r\n[in#0 @ 000001975ba31280]   pixel_format=yuyv422  min s=320x240 fps=30 max s=320x240 fps=30 (tv, bt470bg/bt709/unknown, topleft)\r\nError opening input file video=@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global.\r\n",
+    "disturbance": null,
+    "disturbed": null,
+    "streamer_alive_after": null,
+    "pipes": {
+     "samples_in_window": 15,
+     "opened": {},
+     "baseline_active": []
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "ffmpeg_list_options",
+    "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+   },
+   {
+    "condition": "idle_kiyo_wedged",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 331.53,
+     "max": 557.4,
+     "all": [
+      331.53,
+      285.72,
+      557.4
+     ]
+    },
+    "listed": [
+     72,
+     72,
+     72
+    ],
+    "errors": [
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'"
+    ],
+    "log_tail": "ps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001d3f0d2ebc0]   vcodec=mjpeg  min s=800x600 fps=5 max s=800x600 fps=30\n[dshow @ 000001d3f0d2ebc0]   vcodec=mjpeg  min s=800x600 fps=5 max s=800x600 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001d3f0d2ebc0]   vcodec=mjpeg  min s=864x480 fps=5 max s=864x480 fps=30\n[dshow @ 000001d3f0d2ebc0]   vcodec=mjpeg  min s=864x480 fps=5 max s=864x480 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001d3f0d2ebc0]   vcodec=mjpeg  min s=960x720 fps=5 max s=960x720 fps=30\n[dshow @ 000001d3f0d2ebc0]   vcodec=mjpeg  min s=960x720 fps=5 max s=960x720 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001d3f0d2ebc0]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30\n[dshow @ 000001d3f0d2ebc0]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001d3f0d2ebc0]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=60.0002\n[dshow @ 000001d3f0d2ebc0]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=60.0002 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001d3f0d2ebc0]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30\n[dshow @ 000001d3f0d2ebc0]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001d3f0d2ebc0]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30\n[dshow @ 000001d3f0d2ebc0]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30 (pc, bt470bg/bt709/unknown, center)\n",
+    "disturbance": null,
+    "disturbed": null,
+    "streamer_alive_after": null,
+    "pipes": {
+     "samples_in_window": 14,
+     "opened": {},
+     "baseline_active": []
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "pyav_list_options",
+    "camera_key": "046d:085c:sn=C922SN01"
+   },
+   {
+    "condition": "idle_kiyo_wedged",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 361.92,
+     "max": 363.07,
+     "all": [
+      358.94,
+      361.92,
+      363.07
+     ]
+    },
+    "listed": [
+     72,
+     72,
+     72
+    ],
+    "errors": [
+     null,
+     null,
+     null
+    ],
+    "log_tail": "af37b1c00]   vcodec=mjpeg  min s=800x600 fps=5 max s=800x600 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001aaf37b1c00]   vcodec=mjpeg  min s=864x480 fps=5 max s=864x480 fps=30\r\n[in#0 @ 000001aaf37b1c00]   vcodec=mjpeg  min s=864x480 fps=5 max s=864x480 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001aaf37b1c00]   vcodec=mjpeg  min s=960x720 fps=5 max s=960x720 fps=30\r\n[in#0 @ 000001aaf37b1c00]   vcodec=mjpeg  min s=960x720 fps=5 max s=960x720 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001aaf37b1c00]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30\r\n[in#0 @ 000001aaf37b1c00]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001aaf37b1c00]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=60.0002\r\n[in#0 @ 000001aaf37b1c00]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=60.0002 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001aaf37b1c00]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30\r\n[in#0 @ 000001aaf37b1c00]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000001aaf37b1c00]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30\r\n[in#0 @ 000001aaf37b1c00]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30 (pc, bt470bg/bt709/unknown, center)\r\nError opening input file video=@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global.\r\n",
+    "disturbance": null,
+    "disturbed": null,
+    "streamer_alive_after": null,
+    "pipes": {
+     "samples_in_window": 15,
+     "opened": {},
+     "baseline_active": []
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "ffmpeg_list_options",
+    "camera_key": "046d:085c:sn=C922SN01"
+   },
+   {
+    "id": "pyav_list_devices",
+    "camera_key": null,
+    "condition": "streaming:1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "tested": false,
+    "untested_reason": "untested: device fault since 2026-11-11T06:53:23.737209+00:00 (W-MULTI, MJPG 1280x720@30, watchdog timeout); replug needed"
+   },
+   {
+    "id": "ffmpeg_list_devices",
+    "camera_key": null,
+    "condition": "streaming:1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "tested": false,
+    "untested_reason": "untested: device fault since 2026-11-11T06:53:23.737209+00:00 (W-MULTI, MJPG 1280x720@30, watchdog timeout); replug needed"
+   },
+   {
+    "id": "pyav_list_options",
+    "camera_key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "condition": "streaming:1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "tested": false,
+    "untested_reason": "untested: device fault since 2026-11-11T06:53:23.737209+00:00 (W-MULTI, MJPG 1280x720@30, watchdog timeout); replug needed"
+   },
+   {
+    "id": "ffmpeg_list_options",
+    "camera_key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "condition": "streaming:1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "tested": false,
+    "untested_reason": "untested: device fault since 2026-11-11T06:53:23.737209+00:00 (W-MULTI, MJPG 1280x720@30, watchdog timeout); replug needed"
+   },
+   {
+    "condition": "streaming:046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 8489.89,
+     "max": 8822.81,
+     "all": [
+      8822.81,
+      8449.62,
+      8489.89
+     ]
+    },
+    "listed": [
+     11,
+     11,
+     11
+    ],
+    "errors": [
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'dummy'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'dummy'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'dummy'"
+    ],
+    "log_tail": "-15E3859DF9D2}\"\n[dshow @ 0000027dbfb97b00] \"Webcam 2 (NDI Webcam Audio)\" (audio)\n[dshow @ 0000027dbfb97b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{3E0EEBA6-F2E8-46A7-8A21-692298775943}\"\n[dshow @ 0000027dbfb97b00] \"Microphone (4- Logitech Webcam C930e)\" (audio)\n[dshow @ 0000027dbfb97b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{615AD23F-B353-44AD-B057-9A8FA69FE888}\"\n[dshow @ 0000027dbfb97b00] \"Stream Mix B L/R (Revelator IO 24)\" (audio)\n[dshow @ 0000027dbfb97b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{850D8C06-DD75-4E07-A3A3-5773B428768A}\"\n[dshow @ 0000027dbfb97b00] \"Microphone (4- Razer Kiyo Pro)\" (audio)\n[dshow @ 0000027dbfb97b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{9B033EB8-25AA-497F-87EC-CC50C4B8095C}\"\n[dshow @ 0000027dbfb97b00] \"Webcam 1 (NDI Webcam Audio)\" (audio)\n[dshow @ 0000027dbfb97b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{B4B1ED1C-DDAE-403E-953D-79887671BE1B}\"\n[dshow @ 0000027dbfb97b00] \"Microphone (C922 Pro Stream Webcam)\" (audio)\n[dshow @ 0000027dbfb97b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3257D4A-0EC4-4C01-8AC6-FB320497FDFA}\"\n[dshow @ 0000027dbfb97b00] \"Stream Mix A L/R (Revelator IO 24)\" (audio)\n[dshow @ 0000027dbfb97b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3C15DAE-1BB9-4805-A4E1-2EFC7ADDAE22}\"\n",
+    "disturbance": [
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8822.8,
+      "frames_in_window": 266,
+      "frames_after_window": 1856,
+      "baseline_frames": 59,
+      "baseline_p50_interval_ms": 32.02,
+      "baseline_max_interval_ms": 48.29,
+      "window_max_interval_ms": 48.8,
+      "gap_threshold_ms": 96.07,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 61822.7,
+      "measured": true,
+      "call": 0
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8449.6,
+      "frames_in_window": 253,
+      "frames_after_window": 1558,
+      "baseline_frames": 38,
+      "baseline_p50_interval_ms": 32.01,
+      "baseline_max_interval_ms": 48.46,
+      "window_max_interval_ms": 49.36,
+      "gap_threshold_ms": 96.03,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 51863.5,
+      "measured": true,
+      "call": 1
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8489.9,
+      "frames_in_window": 255,
+      "frames_after_window": 1257,
+      "baseline_frames": 37,
+      "baseline_p50_interval_ms": 32.06,
+      "baseline_max_interval_ms": 48.08,
+      "window_max_interval_ms": 48.86,
+      "gap_threshold_ms": 96.19,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 41864.3,
+      "measured": true,
+      "call": 2
+     }
+    ],
+    "disturbed": false,
+    "streamer_alive_after": true,
+    "pipes": {
+     "samples_in_window": 94,
+     "opened": {},
+     "baseline_active": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+     ]
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "pyav_list_devices",
+    "camera_key": null
+   },
+   {
+    "condition": "streaming:046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 8547.7,
+     "max": 8886.12,
+     "all": [
+      8886.12,
+      8502.07,
+      8547.7
+     ]
+    },
+    "listed": [
+     11,
+     11,
+     11
+    ],
+    "errors": [
+     null,
+     null,
+     null
+    ],
+    "log_tail": "3502140] \"Webcam 2 (NDI Webcam Audio)\" (audio)\r\n[in#0 @ 000001f933502140]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{3E0EEBA6-F2E8-46A7-8A21-692298775943}\"\r\n[in#0 @ 000001f933502140] \"Microphone (4- Logitech Webcam C930e)\" (audio)\r\n[in#0 @ 000001f933502140]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{615AD23F-B353-44AD-B057-9A8FA69FE888}\"\r\n[in#0 @ 000001f933502140] \"Stream Mix B L/R (Revelator IO 24)\" (audio)\r\n[in#0 @ 000001f933502140]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{850D8C06-DD75-4E07-A3A3-5773B428768A}\"\r\n[in#0 @ 000001f933502140] \"Microphone (4- Razer Kiyo Pro)\" (audio)\r\n[in#0 @ 000001f933502140]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{9B033EB8-25AA-497F-87EC-CC50C4B8095C}\"\r\n[in#0 @ 000001f933502140] \"Webcam 1 (NDI Webcam Audio)\" (audio)\r\n[in#0 @ 000001f933502140]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{B4B1ED1C-DDAE-403E-953D-79887671BE1B}\"\r\n[in#0 @ 000001f933502140] \"Microphone (C922 Pro Stream Webcam)\" (audio)\r\n[in#0 @ 000001f933502140]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3257D4A-0EC4-4C01-8AC6-FB320497FDFA}\"\r\n[in#0 @ 000001f933502140] \"Stream Mix A L/R (Revelator IO 24)\" (audio)\r\n[in#0 @ 000001f933502140]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3C15DAE-1BB9-4805-A4E1-2EFC7ADDAE22}\"\r\nError opening input file dummy.\r\n",
+    "disturbance": [
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8886.1,
+      "frames_in_window": 267,
+      "frames_after_window": 955,
+      "baseline_frames": 59,
+      "baseline_p50_interval_ms": 32.04,
+      "baseline_max_interval_ms": 49.08,
+      "window_max_interval_ms": 49.75,
+      "gap_threshold_ms": 96.13,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 31788.3,
+      "measured": true,
+      "call": 0
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8502.1,
+      "frames_in_window": 255,
+      "frames_after_window": 655,
+      "baseline_frames": 38,
+      "baseline_p50_interval_ms": 32.01,
+      "baseline_max_interval_ms": 48.35,
+      "window_max_interval_ms": 48.91,
+      "gap_threshold_ms": 96.03,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 21784.4,
+      "measured": true,
+      "call": 1
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8547.7,
+      "frames_in_window": 256,
+      "frames_after_window": 353,
+      "baseline_frames": 38,
+      "baseline_p50_interval_ms": 31.98,
+      "baseline_max_interval_ms": 49.22,
+      "window_max_interval_ms": 49.19,
+      "gap_threshold_ms": 95.94,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 11736.0,
+      "measured": true,
+      "call": 2
+     }
+    ],
+    "disturbed": false,
+    "streamer_alive_after": true,
+    "pipes": {
+     "samples_in_window": 95,
+     "opened": {},
+     "baseline_active": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+     ]
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "ffmpeg_list_devices",
+    "camera_key": null
+   },
+   {
+    "condition": "streaming:046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 333.68,
+     "max": 606.75,
+     "all": [
+      333.68,
+      294.1,
+      606.75
+     ]
+    },
+    "listed": [
+     68,
+     68,
+     68
+    ],
+    "errors": [
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'"
+    ],
+    "log_tail": "bef27000]   vcodec=mjpeg  min s=800x600 fps=5 max s=800x600 fps=30\n[dshow @ 000001ccbef27000]   vcodec=mjpeg  min s=800x600 fps=5 max s=800x600 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001ccbef27000]   vcodec=mjpeg  min s=848x480 fps=5 max s=848x480 fps=30\n[dshow @ 000001ccbef27000]   vcodec=mjpeg  min s=848x480 fps=5 max s=848x480 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001ccbef27000]   vcodec=mjpeg  min s=960x540 fps=5 max s=960x540 fps=30\n[dshow @ 000001ccbef27000]   vcodec=mjpeg  min s=960x540 fps=5 max s=960x540 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001ccbef27000]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30\n[dshow @ 000001ccbef27000]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001ccbef27000]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=30\n[dshow @ 000001ccbef27000]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001ccbef27000]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30\n[dshow @ 000001ccbef27000]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001ccbef27000]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30\n[dshow @ 000001ccbef27000]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001ccbef27000]  Pin \"Capture\" (alternative pin name \"1\")\n",
+    "disturbance": [
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 333.7,
+      "frames_in_window": 10,
+      "frames_after_window": 306,
+      "baseline_frames": 58,
+      "baseline_p50_interval_ms": 32.04,
+      "baseline_max_interval_ms": 49.19,
+      "window_max_interval_ms": 48.2,
+      "gap_threshold_ms": 96.12,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 10191.5,
+      "measured": true,
+      "call": 0
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 294.1,
+      "frames_in_window": 9,
+      "frames_after_window": 252,
+      "baseline_frames": 38,
+      "baseline_p50_interval_ms": 32.04,
+      "baseline_max_interval_ms": 49.47,
+      "window_max_interval_ms": 48.11,
+      "gap_threshold_ms": 96.11,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 8391.3,
+      "measured": true,
+      "call": 1
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 606.7,
+      "frames_in_window": 18,
+      "frames_after_window": 189,
+      "baseline_frames": 37,
+      "baseline_p50_interval_ms": 32.08,
+      "baseline_max_interval_ms": 47.89,
+      "window_max_interval_ms": 48.06,
+      "gap_threshold_ms": 96.23,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 6278.3,
+      "measured": true,
+      "call": 2
+     }
+    ],
+    "disturbed": false,
+    "streamer_alive_after": true,
+    "pipes": {
+     "samples_in_window": 14,
+     "opened": {},
+     "baseline_active": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+     ]
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "pyav_list_options",
+    "camera_key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+   },
+   {
+    "condition": "streaming:046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 359.32,
+     "max": 363.1,
+     "all": [
+      359.32,
+      356.58,
+      363.1
+     ]
+    },
+    "listed": [
+     68,
+     68,
+     68
+    ],
+    "errors": [
+     null,
+     null,
+     null
+    ],
+    "log_tail": "0 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 0000018efd853340]   vcodec=mjpeg  min s=848x480 fps=5 max s=848x480 fps=30\r\n[in#0 @ 0000018efd853340]   vcodec=mjpeg  min s=848x480 fps=5 max s=848x480 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 0000018efd853340]   vcodec=mjpeg  min s=960x540 fps=5 max s=960x540 fps=30\r\n[in#0 @ 0000018efd853340]   vcodec=mjpeg  min s=960x540 fps=5 max s=960x540 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 0000018efd853340]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30\r\n[in#0 @ 0000018efd853340]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 0000018efd853340]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=30\r\n[in#0 @ 0000018efd853340]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 0000018efd853340]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30\r\n[in#0 @ 0000018efd853340]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 0000018efd853340]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30\r\n[in#0 @ 0000018efd853340]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 0000018efd853340]  Pin \"Capture\" (alternative pin name \"1\")\r\nError opening input file video=@device_pnp_\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global.\r\n",
+    "disturbance": [
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 359.3,
+      "frames_in_window": 11,
+      "frames_after_window": 144,
+      "baseline_frames": 59,
+      "baseline_p50_interval_ms": 32.01,
+      "baseline_max_interval_ms": 48.07,
+      "window_max_interval_ms": 48.16,
+      "gap_threshold_ms": 96.03,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 4783.0,
+      "measured": true,
+      "call": 0
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 356.6,
+      "frames_in_window": 11,
+      "frames_after_window": 88,
+      "baseline_frames": 37,
+      "baseline_p50_interval_ms": 32.09,
+      "baseline_max_interval_ms": 48.07,
+      "window_max_interval_ms": 48.37,
+      "gap_threshold_ms": 96.28,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 2925.7,
+      "measured": true,
+      "call": 1
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 363.1,
+      "frames_in_window": 11,
+      "frames_after_window": 33,
+      "baseline_frames": 38,
+      "baseline_p50_interval_ms": 32.0,
+      "baseline_max_interval_ms": 48.94,
+      "window_max_interval_ms": 48.04,
+      "gap_threshold_ms": 96.01,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 1062.2,
+      "measured": true,
+      "call": 2
+     }
+    ],
+    "disturbed": false,
+    "streamer_alive_after": true,
+    "pipes": {
+     "samples_in_window": 14,
+     "opened": {},
+     "baseline_active": [
+      "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+     ]
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "ffmpeg_list_options",
+    "camera_key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+   },
+   {
+    "condition": "streaming:4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 8493.23,
+     "max": 9267.38,
+     "all": [
+      9267.38,
+      8422.76,
+      8493.23
+     ]
+    },
+    "listed": [
+     11,
+     11,
+     11
+    ],
+    "errors": [
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'dummy'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'dummy'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'dummy'"
+    ],
+    "log_tail": "-15E3859DF9D2}\"\n[dshow @ 000002b2787d7b00] \"Webcam 2 (NDI Webcam Audio)\" (audio)\n[dshow @ 000002b2787d7b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{3E0EEBA6-F2E8-46A7-8A21-692298775943}\"\n[dshow @ 000002b2787d7b00] \"Microphone (4- Logitech Webcam C930e)\" (audio)\n[dshow @ 000002b2787d7b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{615AD23F-B353-44AD-B057-9A8FA69FE888}\"\n[dshow @ 000002b2787d7b00] \"Stream Mix B L/R (Revelator IO 24)\" (audio)\n[dshow @ 000002b2787d7b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{850D8C06-DD75-4E07-A3A3-5773B428768A}\"\n[dshow @ 000002b2787d7b00] \"Microphone (4- Razer Kiyo Pro)\" (audio)\n[dshow @ 000002b2787d7b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{9B033EB8-25AA-497F-87EC-CC50C4B8095C}\"\n[dshow @ 000002b2787d7b00] \"Webcam 1 (NDI Webcam Audio)\" (audio)\n[dshow @ 000002b2787d7b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{B4B1ED1C-DDAE-403E-953D-79887671BE1B}\"\n[dshow @ 000002b2787d7b00] \"Microphone (C922 Pro Stream Webcam)\" (audio)\n[dshow @ 000002b2787d7b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3257D4A-0EC4-4C01-8AC6-FB320497FDFA}\"\n[dshow @ 000002b2787d7b00] \"Stream Mix A L/R (Revelator IO 24)\" (audio)\n[dshow @ 000002b2787d7b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3C15DAE-1BB9-4805-A4E1-2EFC7ADDAE22}\"\n",
+    "disturbance": [
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 9267.4,
+      "frames_in_window": 239,
+      "frames_after_window": 1593,
+      "baseline_frames": 50,
+      "baseline_p50_interval_ms": 32.28,
+      "baseline_max_interval_ms": 48.76,
+      "window_max_interval_ms": 50.11,
+      "gap_threshold_ms": 96.83,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 61839.6,
+      "measured": true,
+      "call": 0
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8422.8,
+      "frames_in_window": 218,
+      "frames_after_window": 1337,
+      "baseline_frames": 32,
+      "baseline_p50_interval_ms": 32.77,
+      "baseline_max_interval_ms": 49.11,
+      "window_max_interval_ms": 49.3,
+      "gap_threshold_ms": 98.3,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 51903.1,
+      "measured": true,
+      "call": 1
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8493.2,
+      "frames_in_window": 219,
+      "frames_after_window": 1080,
+      "baseline_frames": 32,
+      "baseline_p50_interval_ms": 32.33,
+      "baseline_max_interval_ms": 49.28,
+      "window_max_interval_ms": 49.38,
+      "gap_threshold_ms": 97.0,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 41900.6,
+      "measured": true,
+      "call": 2
+     }
+    ],
+    "disturbed": false,
+    "streamer_alive_after": true,
+    "pipes": {
+     "samples_in_window": 96,
+     "opened": {},
+     "baseline_active": [
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "pyav_list_devices",
+    "camera_key": null
+   },
+   {
+    "condition": "streaming:4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 8513.74,
+     "max": 8890.79,
+     "all": [
+      8890.79,
+      8513.74,
+      8492.6
+     ]
+    },
+    "listed": [
+     11,
+     11,
+     11
+    ],
+    "errors": [
+     null,
+     null,
+     null
+    ],
+    "log_tail": "3ab1cc0] \"Webcam 2 (NDI Webcam Audio)\" (audio)\r\n[in#0 @ 000001a813ab1cc0]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{3E0EEBA6-F2E8-46A7-8A21-692298775943}\"\r\n[in#0 @ 000001a813ab1cc0] \"Microphone (4- Logitech Webcam C930e)\" (audio)\r\n[in#0 @ 000001a813ab1cc0]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{615AD23F-B353-44AD-B057-9A8FA69FE888}\"\r\n[in#0 @ 000001a813ab1cc0] \"Stream Mix B L/R (Revelator IO 24)\" (audio)\r\n[in#0 @ 000001a813ab1cc0]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{850D8C06-DD75-4E07-A3A3-5773B428768A}\"\r\n[in#0 @ 000001a813ab1cc0] \"Microphone (4- Razer Kiyo Pro)\" (audio)\r\n[in#0 @ 000001a813ab1cc0]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{9B033EB8-25AA-497F-87EC-CC50C4B8095C}\"\r\n[in#0 @ 000001a813ab1cc0] \"Webcam 1 (NDI Webcam Audio)\" (audio)\r\n[in#0 @ 000001a813ab1cc0]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{B4B1ED1C-DDAE-403E-953D-79887671BE1B}\"\r\n[in#0 @ 000001a813ab1cc0] \"Microphone (C922 Pro Stream Webcam)\" (audio)\r\n[in#0 @ 000001a813ab1cc0]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3257D4A-0EC4-4C01-8AC6-FB320497FDFA}\"\r\n[in#0 @ 000001a813ab1cc0] \"Stream Mix A L/R (Revelator IO 24)\" (audio)\r\n[in#0 @ 000001a813ab1cc0]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3C15DAE-1BB9-4805-A4E1-2EFC7ADDAE22}\"\r\nError opening input file dummy.\r\n",
+    "disturbance": [
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8890.8,
+      "frames_in_window": 229,
+      "frames_after_window": 821,
+      "baseline_frames": 50,
+      "baseline_p50_interval_ms": 32.61,
+      "baseline_max_interval_ms": 49.38,
+      "window_max_interval_ms": 50.24,
+      "gap_threshold_ms": 97.82,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 31831.0,
+      "measured": true,
+      "call": 0
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8513.7,
+      "frames_in_window": 219,
+      "frames_after_window": 563,
+      "baseline_frames": 32,
+      "baseline_p50_interval_ms": 32.41,
+      "baseline_max_interval_ms": 48.93,
+      "window_max_interval_ms": 49.44,
+      "gap_threshold_ms": 97.23,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 21815.6,
+      "measured": true,
+      "call": 1
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8492.6,
+      "frames_in_window": 219,
+      "frames_after_window": 305,
+      "baseline_frames": 32,
+      "baseline_p50_interval_ms": 32.5,
+      "baseline_max_interval_ms": 49.56,
+      "window_max_interval_ms": 50.67,
+      "gap_threshold_ms": 97.51,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 11822.3,
+      "measured": true,
+      "call": 2
+     }
+    ],
+    "disturbed": false,
+    "streamer_alive_after": true,
+    "pipes": {
+     "samples_in_window": 96,
+     "opened": {},
+     "baseline_active": [
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "ffmpeg_list_devices",
+    "camera_key": null
+   },
+   {
+    "condition": "streaming:4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 331.29,
+     "max": 584.11,
+     "all": [
+      331.29,
+      311.97,
+      584.11
+     ]
+    },
+    "listed": [
+     18,
+     18,
+     18
+    ],
+    "errors": [
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'"
+    ],
+    "log_tail": "00001dc0f2a7580]   vcodec=mjpeg  min s=640x480 fps=25 max s=640x480 fps=30\n[dshow @ 000001dc0f2a7580]   vcodec=mjpeg  min s=640x480 fps=25 max s=640x480 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001dc0f2a7580]   vcodec=mjpeg  min s=640x360 fps=25 max s=640x360 fps=30\n[dshow @ 000001dc0f2a7580]   vcodec=mjpeg  min s=640x360 fps=25 max s=640x360 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001dc0f2a7580]   vcodec=mjpeg  min s=352x288 fps=25 max s=352x288 fps=30\n[dshow @ 000001dc0f2a7580]   vcodec=mjpeg  min s=352x288 fps=25 max s=352x288 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001dc0f2a7580]   pixel_format=yuyv422  min s=640x480 fps=30 max s=640x480 fps=30\n[dshow @ 000001dc0f2a7580]   pixel_format=yuyv422  min s=640x480 fps=30 max s=640x480 fps=30 (tv, bt470bg/bt709/unknown, topleft)\n[dshow @ 000001dc0f2a7580]   pixel_format=yuyv422  min s=640x360 fps=30 max s=640x360 fps=30\n[dshow @ 000001dc0f2a7580]   pixel_format=yuyv422  min s=640x360 fps=30 max s=640x360 fps=30 (tv, bt470bg/bt709/unknown, topleft)\n[dshow @ 000001dc0f2a7580]   pixel_format=yuyv422  min s=352x288 fps=30 max s=352x288 fps=30\n[dshow @ 000001dc0f2a7580]   pixel_format=yuyv422  min s=352x288 fps=30 max s=352x288 fps=30 (tv, bt470bg/bt709/unknown, topleft)\n[dshow @ 000001dc0f2a7580]   pixel_format=yuyv422  min s=320x240 fps=30 max s=320x240 fps=30\n[dshow @ 000001dc0f2a7580]   pixel_format=yuyv422  min s=320x240 fps=30 max s=320x240 fps=30 (tv, bt470bg/bt709/unknown, topleft)\n",
+    "disturbance": [
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 331.3,
+      "frames_in_window": 8,
+      "frames_after_window": 265,
+      "baseline_frames": 51,
+      "baseline_p50_interval_ms": 32.31,
+      "baseline_max_interval_ms": 49.79,
+      "window_max_interval_ms": 48.85,
+      "gap_threshold_ms": 96.92,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 10250.0,
+      "measured": true,
+      "call": 0
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 312.0,
+      "frames_in_window": 8,
+      "frames_after_window": 218,
+      "baseline_frames": 33,
+      "baseline_p50_interval_ms": 33.1,
+      "baseline_max_interval_ms": 48.7,
+      "window_max_interval_ms": 48.04,
+      "gap_threshold_ms": 99.3,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 8427.4,
+      "measured": true,
+      "call": 1
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 584.1,
+      "frames_in_window": 15,
+      "frames_after_window": 164,
+      "baseline_frames": 33,
+      "baseline_p50_interval_ms": 32.93,
+      "baseline_max_interval_ms": 48.96,
+      "window_max_interval_ms": 48.54,
+      "gap_threshold_ms": 98.78,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 6334.7,
+      "measured": true,
+      "call": 2
+     }
+    ],
+    "disturbed": false,
+    "streamer_alive_after": true,
+    "pipes": {
+     "samples_in_window": 14,
+     "opened": {},
+     "baseline_active": [
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "pyav_list_options",
+    "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+   },
+   {
+    "condition": "streaming:4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 344.46,
+     "max": 346.01,
+     "all": [
+      344.03,
+      346.01,
+      344.46
+     ]
+    },
+    "listed": [
+     18,
+     18,
+     18
+    ],
+    "errors": [
+     null,
+     null,
+     null
+    ],
+    "log_tail": " s=640x480 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 0000021579404140]   vcodec=mjpeg  min s=640x360 fps=25 max s=640x360 fps=30\r\n[in#0 @ 0000021579404140]   vcodec=mjpeg  min s=640x360 fps=25 max s=640x360 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 0000021579404140]   vcodec=mjpeg  min s=352x288 fps=25 max s=352x288 fps=30\r\n[in#0 @ 0000021579404140]   vcodec=mjpeg  min s=352x288 fps=25 max s=352x288 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 0000021579404140]   pixel_format=yuyv422  min s=640x480 fps=30 max s=640x480 fps=30\r\n[in#0 @ 0000021579404140]   pixel_format=yuyv422  min s=640x480 fps=30 max s=640x480 fps=30 (tv, bt470bg/bt709/unknown, topleft)\r\n[in#0 @ 0000021579404140]   pixel_format=yuyv422  min s=640x360 fps=30 max s=640x360 fps=30\r\n[in#0 @ 0000021579404140]   pixel_format=yuyv422  min s=640x360 fps=30 max s=640x360 fps=30 (tv, bt470bg/bt709/unknown, topleft)\r\n[in#0 @ 0000021579404140]   pixel_format=yuyv422  min s=352x288 fps=30 max s=352x288 fps=30\r\n[in#0 @ 0000021579404140]   pixel_format=yuyv422  min s=352x288 fps=30 max s=352x288 fps=30 (tv, bt470bg/bt709/unknown, topleft)\r\n[in#0 @ 0000021579404140]   pixel_format=yuyv422  min s=320x240 fps=30 max s=320x240 fps=30\r\n[in#0 @ 0000021579404140]   pixel_format=yuyv422  min s=320x240 fps=30 max s=320x240 fps=30 (tv, bt470bg/bt709/unknown, topleft)\r\nError opening input file video=@device_pnp_\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global.\r\n",
+    "disturbance": [
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 344.0,
+      "frames_in_window": 9,
+      "frames_after_window": 122,
+      "baseline_frames": 51,
+      "baseline_p50_interval_ms": 32.56,
+      "baseline_max_interval_ms": 49.05,
+      "window_max_interval_ms": 48.16,
+      "gap_threshold_ms": 97.69,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 4719.2,
+      "measured": true,
+      "call": 0
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 346.0,
+      "frames_in_window": 9,
+      "frames_after_window": 75,
+      "baseline_frames": 32,
+      "baseline_p50_interval_ms": 32.77,
+      "baseline_max_interval_ms": 48.54,
+      "window_max_interval_ms": 48.06,
+      "gap_threshold_ms": 98.31,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 2872.8,
+      "measured": true,
+      "call": 1
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 344.5,
+      "frames_in_window": 9,
+      "frames_after_window": 27,
+      "baseline_frames": 33,
+      "baseline_p50_interval_ms": 32.77,
+      "baseline_max_interval_ms": 48.66,
+      "window_max_interval_ms": 48.15,
+      "gap_threshold_ms": 98.31,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 1028.0,
+      "measured": true,
+      "call": 2
+     }
+    ],
+    "disturbed": false,
+    "streamer_alive_after": true,
+    "pipes": {
+     "samples_in_window": 14,
+     "opened": {},
+     "baseline_active": [
+      "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "ffmpeg_list_options",
+    "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+   },
+   {
+    "condition": "streaming:046d:085c:sn=C922SN01",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 8493.88,
+     "max": 9063.16,
+     "all": [
+      9063.16,
+      8448.29,
+      8493.88
+     ]
+    },
+    "listed": [
+     11,
+     11,
+     11
+    ],
+    "errors": [
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'dummy'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'dummy'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'dummy'"
+    ],
+    "log_tail": "-15E3859DF9D2}\"\n[dshow @ 0000015c24177b00] \"Webcam 2 (NDI Webcam Audio)\" (audio)\n[dshow @ 0000015c24177b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{3E0EEBA6-F2E8-46A7-8A21-692298775943}\"\n[dshow @ 0000015c24177b00] \"Microphone (4- Logitech Webcam C930e)\" (audio)\n[dshow @ 0000015c24177b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{615AD23F-B353-44AD-B057-9A8FA69FE888}\"\n[dshow @ 0000015c24177b00] \"Stream Mix B L/R (Revelator IO 24)\" (audio)\n[dshow @ 0000015c24177b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{850D8C06-DD75-4E07-A3A3-5773B428768A}\"\n[dshow @ 0000015c24177b00] \"Microphone (4- Razer Kiyo Pro)\" (audio)\n[dshow @ 0000015c24177b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{9B033EB8-25AA-497F-87EC-CC50C4B8095C}\"\n[dshow @ 0000015c24177b00] \"Webcam 1 (NDI Webcam Audio)\" (audio)\n[dshow @ 0000015c24177b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{B4B1ED1C-DDAE-403E-953D-79887671BE1B}\"\n[dshow @ 0000015c24177b00] \"Microphone (C922 Pro Stream Webcam)\" (audio)\n[dshow @ 0000015c24177b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3257D4A-0EC4-4C01-8AC6-FB320497FDFA}\"\n[dshow @ 0000015c24177b00] \"Stream Mix A L/R (Revelator IO 24)\" (audio)\n[dshow @ 0000015c24177b00]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3C15DAE-1BB9-4805-A4E1-2EFC7ADDAE22}\"\n",
+    "disturbance": [
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 9063.2,
+      "frames_in_window": 272,
+      "frames_after_window": 1854,
+      "baseline_frames": 58,
+      "baseline_p50_interval_ms": 32.0,
+      "baseline_max_interval_ms": 48.09,
+      "window_max_interval_ms": 48.77,
+      "gap_threshold_ms": 96.01,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 61780.6,
+      "measured": true,
+      "call": 0
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8448.3,
+      "frames_in_window": 253,
+      "frames_after_window": 1555,
+      "baseline_frames": 38,
+      "baseline_p50_interval_ms": 32.03,
+      "baseline_max_interval_ms": 48.27,
+      "window_max_interval_ms": 49.58,
+      "gap_threshold_ms": 96.09,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 51822.4,
+      "measured": true,
+      "call": 1
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8493.9,
+      "frames_in_window": 255,
+      "frames_after_window": 1255,
+      "baseline_frames": 38,
+      "baseline_p50_interval_ms": 32.03,
+      "baseline_max_interval_ms": 48.25,
+      "window_max_interval_ms": 49.98,
+      "gap_threshold_ms": 96.1,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 41817.2,
+      "measured": true,
+      "call": 2
+     }
+    ],
+    "disturbed": false,
+    "streamer_alive_after": true,
+    "pipes": {
+     "samples_in_window": 96,
+     "opened": {},
+     "baseline_active": [
+      "046d:085c:sn=C922SN01"
+     ]
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "pyav_list_devices",
+    "camera_key": null
+   },
+   {
+    "condition": "streaming:046d:085c:sn=C922SN01",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 8536.03,
+     "max": 8903.93,
+     "all": [
+      8903.93,
+      8524.91,
+      8536.03
+     ]
+    },
+    "listed": [
+     11,
+     11,
+     11
+    ],
+    "errors": [
+     null,
+     null,
+     null
+    ],
+    "log_tail": "6c22f80] \"Webcam 2 (NDI Webcam Audio)\" (audio)\r\n[in#0 @ 000001fcb6c22f80]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{3E0EEBA6-F2E8-46A7-8A21-692298775943}\"\r\n[in#0 @ 000001fcb6c22f80] \"Microphone (4- Logitech Webcam C930e)\" (audio)\r\n[in#0 @ 000001fcb6c22f80]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{615AD23F-B353-44AD-B057-9A8FA69FE888}\"\r\n[in#0 @ 000001fcb6c22f80] \"Stream Mix B L/R (Revelator IO 24)\" (audio)\r\n[in#0 @ 000001fcb6c22f80]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{850D8C06-DD75-4E07-A3A3-5773B428768A}\"\r\n[in#0 @ 000001fcb6c22f80] \"Microphone (4- Razer Kiyo Pro)\" (audio)\r\n[in#0 @ 000001fcb6c22f80]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{9B033EB8-25AA-497F-87EC-CC50C4B8095C}\"\r\n[in#0 @ 000001fcb6c22f80] \"Webcam 1 (NDI Webcam Audio)\" (audio)\r\n[in#0 @ 000001fcb6c22f80]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{B4B1ED1C-DDAE-403E-953D-79887671BE1B}\"\r\n[in#0 @ 000001fcb6c22f80] \"Microphone (C922 Pro Stream Webcam)\" (audio)\r\n[in#0 @ 000001fcb6c22f80]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3257D4A-0EC4-4C01-8AC6-FB320497FDFA}\"\r\n[in#0 @ 000001fcb6c22f80] \"Stream Mix A L/R (Revelator IO 24)\" (audio)\r\n[in#0 @ 000001fcb6c22f80]   Alternative name \"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\\wave_{D3C15DAE-1BB9-4805-A4E1-2EFC7ADDAE22}\"\r\nError opening input file dummy.\r\n",
+    "disturbance": [
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8903.9,
+      "frames_in_window": 267,
+      "frames_after_window": 953,
+      "baseline_frames": 58,
+      "baseline_p50_interval_ms": 32.0,
+      "baseline_max_interval_ms": 48.4,
+      "window_max_interval_ms": 49.62,
+      "gap_threshold_ms": 95.99,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 31760.3,
+      "measured": true,
+      "call": 0
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8524.9,
+      "frames_in_window": 256,
+      "frames_after_window": 652,
+      "baseline_frames": 37,
+      "baseline_p50_interval_ms": 31.92,
+      "baseline_max_interval_ms": 49.09,
+      "window_max_interval_ms": 48.48,
+      "gap_threshold_ms": 95.77,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 21733.5,
+      "measured": true,
+      "call": 1
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 8536.0,
+      "frames_in_window": 256,
+      "frames_after_window": 351,
+      "baseline_frames": 37,
+      "baseline_p50_interval_ms": 32.0,
+      "baseline_max_interval_ms": 48.59,
+      "window_max_interval_ms": 48.77,
+      "gap_threshold_ms": 96.0,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 11697.0,
+      "measured": true,
+      "call": 2
+     }
+    ],
+    "disturbed": false,
+    "streamer_alive_after": true,
+    "pipes": {
+     "samples_in_window": 92,
+     "opened": {},
+     "baseline_active": [
+      "046d:085c:sn=C922SN01"
+     ]
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "ffmpeg_list_devices",
+    "camera_key": null
+   },
+   {
+    "condition": "streaming:046d:085c:sn=C922SN01",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 329.85,
+     "max": 552.03,
+     "all": [
+      329.85,
+      288.63,
+      552.03
+     ]
+    },
+    "listed": [
+     72,
+     72,
+     72
+    ],
+    "errors": [
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'",
+     "ExitError: [Errno 1414092869] Immediate exit requested: 'video=@device_pnp_\\\\\\\\?\\\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\\\global'"
+    ],
+    "log_tail": "ps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001ef8712ebc0]   vcodec=mjpeg  min s=800x600 fps=5 max s=800x600 fps=30\n[dshow @ 000001ef8712ebc0]   vcodec=mjpeg  min s=800x600 fps=5 max s=800x600 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001ef8712ebc0]   vcodec=mjpeg  min s=864x480 fps=5 max s=864x480 fps=30\n[dshow @ 000001ef8712ebc0]   vcodec=mjpeg  min s=864x480 fps=5 max s=864x480 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001ef8712ebc0]   vcodec=mjpeg  min s=960x720 fps=5 max s=960x720 fps=30\n[dshow @ 000001ef8712ebc0]   vcodec=mjpeg  min s=960x720 fps=5 max s=960x720 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001ef8712ebc0]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30\n[dshow @ 000001ef8712ebc0]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001ef8712ebc0]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=60.0002\n[dshow @ 000001ef8712ebc0]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=60.0002 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001ef8712ebc0]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30\n[dshow @ 000001ef8712ebc0]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30 (pc, bt470bg/bt709/unknown, center)\n[dshow @ 000001ef8712ebc0]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30\n[dshow @ 000001ef8712ebc0]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30 (pc, bt470bg/bt709/unknown, center)\n",
+    "disturbance": [
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 329.8,
+      "frames_in_window": 10,
+      "frames_after_window": 305,
+      "baseline_frames": 59,
+      "baseline_p50_interval_ms": 32.05,
+      "baseline_max_interval_ms": 48.53,
+      "window_max_interval_ms": 48.02,
+      "gap_threshold_ms": 96.16,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 10151.5,
+      "measured": true,
+      "call": 0
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 288.6,
+      "frames_in_window": 9,
+      "frames_after_window": 251,
+      "baseline_frames": 38,
+      "baseline_p50_interval_ms": 32.06,
+      "baseline_max_interval_ms": 48.38,
+      "window_max_interval_ms": 48.0,
+      "gap_threshold_ms": 96.18,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 8356.9,
+      "measured": true,
+      "call": 1
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 552.0,
+      "frames_in_window": 17,
+      "frames_after_window": 189,
+      "baseline_frames": 38,
+      "baseline_p50_interval_ms": 31.99,
+      "baseline_max_interval_ms": 48.06,
+      "window_max_interval_ms": 48.26,
+      "gap_threshold_ms": 95.97,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 6299.3,
+      "measured": true,
+      "call": 2
+     }
+    ],
+    "disturbed": false,
+    "streamer_alive_after": true,
+    "pipes": {
+     "samples_in_window": 13,
+     "opened": {},
+     "baseline_active": [
+      "046d:085c:sn=C922SN01"
+     ]
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "pyav_list_options",
+    "camera_key": "046d:085c:sn=C922SN01"
+   },
+   {
+    "condition": "streaming:046d:085c:sn=C922SN01",
+    "tested": true,
+    "calls": 3,
+    "hung": false,
+    "hung_call": null,
+    "process_timed_out": false,
+    "rc": 0,
+    "elapsed_ms": {
+     "p50": 355.61,
+     "max": 356.96,
+     "all": [
+      356.96,
+      355.61,
+      353.63
+     ]
+    },
+    "listed": [
+     72,
+     72,
+     72
+    ],
+    "errors": [
+     null,
+     null,
+     null
+    ],
+    "log_tail": "16d123480]   vcodec=mjpeg  min s=800x600 fps=5 max s=800x600 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000002816d123480]   vcodec=mjpeg  min s=864x480 fps=5 max s=864x480 fps=30\r\n[in#0 @ 000002816d123480]   vcodec=mjpeg  min s=864x480 fps=5 max s=864x480 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000002816d123480]   vcodec=mjpeg  min s=960x720 fps=5 max s=960x720 fps=30\r\n[in#0 @ 000002816d123480]   vcodec=mjpeg  min s=960x720 fps=5 max s=960x720 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000002816d123480]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30\r\n[in#0 @ 000002816d123480]   vcodec=mjpeg  min s=1024x576 fps=5 max s=1024x576 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000002816d123480]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=60.0002\r\n[in#0 @ 000002816d123480]   vcodec=mjpeg  min s=1280x720 fps=5 max s=1280x720 fps=60.0002 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000002816d123480]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30\r\n[in#0 @ 000002816d123480]   vcodec=mjpeg  min s=1600x896 fps=5 max s=1600x896 fps=30 (pc, bt470bg/bt709/unknown, center)\r\n[in#0 @ 000002816d123480]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30\r\n[in#0 @ 000002816d123480]   vcodec=mjpeg  min s=1920x1080 fps=5 max s=1920x1080 fps=30 (pc, bt470bg/bt709/unknown, center)\r\nError opening input file video=@device_pnp_\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global.\r\n",
+    "disturbance": [
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 357.0,
+      "frames_in_window": 11,
+      "frames_after_window": 143,
+      "baseline_frames": 59,
+      "baseline_p50_interval_ms": 32.01,
+      "baseline_max_interval_ms": 49.55,
+      "window_max_interval_ms": 47.09,
+      "gap_threshold_ms": 96.04,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 4760.0,
+      "measured": true,
+      "call": 0
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 355.6,
+      "frames_in_window": 11,
+      "frames_after_window": 87,
+      "baseline_frames": 38,
+      "baseline_p50_interval_ms": 32.1,
+      "baseline_max_interval_ms": 48.39,
+      "window_max_interval_ms": 48.05,
+      "gap_threshold_ms": 96.29,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 2904.1,
+      "measured": true,
+      "call": 1
+     },
+     {
+      "disturbed": false,
+      "why": [],
+      "window_ms": 353.6,
+      "frames_in_window": 10,
+      "frames_after_window": 32,
+      "baseline_frames": 38,
+      "baseline_p50_interval_ms": 31.92,
+      "baseline_max_interval_ms": 48.97,
+      "window_max_interval_ms": 47.98,
+      "gap_threshold_ms": 95.76,
+      "bad_frames_in_window": 0,
+      "stream_error_in_window": false,
+      "stream_stopped_in_window": false,
+      "last_frame_after_window_ms": 1050.2,
+      "measured": true,
+      "call": 2
+     }
+    ],
+    "disturbed": false,
+    "streamer_alive_after": true,
+    "pipes": {
+     "samples_in_window": 13,
+     "opened": {},
+     "baseline_active": [
+      "046d:085c:sn=C922SN01"
+     ]
+    },
+    "stream_started_on_idle_camera": false,
+    "faulted_cameras_present": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+    ],
+    "id": "ffmpeg_list_options",
+    "camera_key": "046d:085c:sn=C922SN01"
+   }
+  ],
+  "methods_skipped": {},
+  "ffmpeg": "C:\\Users\\Dom\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.EXE",
+  "arrivals": {
+   "before": {
+    "utc": "2026-11-11T07:01:07.499634+00:00",
+    "cameras": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-10T22:07:35.509176+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+      "present": true,
+      "last_arrival": "2026-11-10T22:07:46.470029+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-11T07:00:52.872268+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-09T21:34:51.119106+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "after": {
+    "utc": "2026-11-11T07:08:17.837107+00:00",
+    "cameras": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-10T22:07:35.509176+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+      "present": true,
+      "last_arrival": "2026-11-10T22:07:46.470029+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-11T07:00:52.872268+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-09T21:34:51.119106+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "changes": [],
+   "unexplained_re_arrival": false
+  },
+  "thresholds": {
+   "gap": "> max(3.0 x baseline p50, 1.5 x baseline max, baseline max + 25.0 ms)"
+  }
+ },
+ "verdicts": {
+  "list_touch|all|pyav_list_devices": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every call returned within the bound",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no frame gap, stop or bad frame in the streaming process during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no isochronous pipe opened on an idle camera during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "idle and streaming conditions measured",
+     "met": true,
+     "detail": [
+      "idle_kiyo_wedged",
+      "streaming:046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "streaming:046d:085c:sn=C922SN01",
+      "streaming:4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    }
+   ],
+   "evidence": {
+    "method": "pyav_list_devices",
+    "conditions": [
+     {
+      "condition": "idle_kiyo_wedged",
+      "camera_key": null,
+      "tested": true,
+      "hung": false,
+      "disturbed": null,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 8400.78,
+       "max": 14798.0,
+       "all": [
+        14798.0,
+        8400.78,
+        3469.86
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       10,
+       11,
+       10
+      ]
+     },
+     {
+      "condition": "streaming:1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "camera_key": null,
+      "tested": false,
+      "hung": null,
+      "disturbed": null,
+      "stream_started_on_idle_camera": null,
+      "elapsed_ms": null,
+      "faulted_cameras_present": null,
+      "untested_reason": "untested: device fault since 2026-11-11T06:53:23.737209+00:00 (W-MULTI, MJPG 1280x720@30, watchdog timeout); replug needed",
+      "listed": null
+     },
+     {
+      "condition": "streaming:046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "camera_key": null,
+      "tested": true,
+      "hung": false,
+      "disturbed": false,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 8489.89,
+       "max": 8822.81,
+       "all": [
+        8822.81,
+        8449.62,
+        8489.89
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       11,
+       11,
+       11
+      ]
+     },
+     {
+      "condition": "streaming:4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "camera_key": null,
+      "tested": true,
+      "hung": false,
+      "disturbed": false,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 8493.23,
+       "max": 9267.38,
+       "all": [
+        9267.38,
+        8422.76,
+        8493.23
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       11,
+       11,
+       11
+      ]
+     },
+     {
+      "condition": "streaming:046d:085c:sn=C922SN01",
+      "camera_key": null,
+      "tested": true,
+      "hung": false,
+      "disturbed": false,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 8493.88,
+       "max": 9063.16,
+       "all": [
+        9063.16,
+        8448.29,
+        8493.88
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       11,
+       11,
+       11
+      ]
+     }
+    ],
+    "touch": "FFmpeg dshow binds the capture filter (IMoniker::BindToObject) of every device to list its media types (list_devices) / of the named device (list_options): inferred from FFmpeg's source, not observable from user mode"
+   },
+   "note": "touches but harmless: every call returned, nothing disturbed (it still binds every capture filter, a wedged camera included)",
+   "summary_label": "partial (touches but harmless)"
+  },
+  "list_touch|all|ffmpeg_list_devices": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every call returned within the bound",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no frame gap, stop or bad frame in the streaming process during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no isochronous pipe opened on an idle camera during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "idle and streaming conditions measured",
+     "met": true,
+     "detail": [
+      "idle_kiyo_wedged",
+      "streaming:046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "streaming:046d:085c:sn=C922SN01",
+      "streaming:4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    }
+   ],
+   "evidence": {
+    "method": "ffmpeg_list_devices",
+    "conditions": [
+     {
+      "condition": "idle_kiyo_wedged",
+      "camera_key": null,
+      "tested": true,
+      "hung": false,
+      "disturbed": null,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 8551.46,
+       "max": 8822.86,
+       "all": [
+        8822.86,
+        3480.04,
+        8551.46
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       11,
+       10,
+       11
+      ]
+     },
+     {
+      "condition": "streaming:1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "camera_key": null,
+      "tested": false,
+      "hung": null,
+      "disturbed": null,
+      "stream_started_on_idle_camera": null,
+      "elapsed_ms": null,
+      "faulted_cameras_present": null,
+      "untested_reason": "untested: device fault since 2026-11-11T06:53:23.737209+00:00 (W-MULTI, MJPG 1280x720@30, watchdog timeout); replug needed",
+      "listed": null
+     },
+     {
+      "condition": "streaming:046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "camera_key": null,
+      "tested": true,
+      "hung": false,
+      "disturbed": false,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 8547.7,
+       "max": 8886.12,
+       "all": [
+        8886.12,
+        8502.07,
+        8547.7
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       11,
+       11,
+       11
+      ]
+     },
+     {
+      "condition": "streaming:4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "camera_key": null,
+      "tested": true,
+      "hung": false,
+      "disturbed": false,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 8513.74,
+       "max": 8890.79,
+       "all": [
+        8890.79,
+        8513.74,
+        8492.6
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       11,
+       11,
+       11
+      ]
+     },
+     {
+      "condition": "streaming:046d:085c:sn=C922SN01",
+      "camera_key": null,
+      "tested": true,
+      "hung": false,
+      "disturbed": false,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 8536.03,
+       "max": 8903.93,
+       "all": [
+        8903.93,
+        8524.91,
+        8536.03
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       11,
+       11,
+       11
+      ]
+     }
+    ],
+    "touch": "FFmpeg dshow binds the capture filter (IMoniker::BindToObject) of every device to list its media types (list_devices) / of the named device (list_options): inferred from FFmpeg's source, not observable from user mode"
+   },
+   "note": "touches but harmless: every call returned, nothing disturbed (it still binds every capture filter, a wedged camera included)",
+   "summary_label": "partial (touches but harmless)"
+  },
+  "list_touch|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|pyav_list_options": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every call returned within the bound",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no frame gap, stop or bad frame in the streaming process during a call",
+     "met": null,
+     "detail": []
+    },
+    {
+     "criterion": "no isochronous pipe opened on an idle camera during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "idle and streaming conditions measured",
+     "met": false,
+     "detail": [
+      "idle_kiyo_wedged"
+     ]
+    }
+   ],
+   "evidence": {
+    "method": "pyav_list_options",
+    "conditions": [
+     {
+      "condition": "idle_kiyo_wedged",
+      "camera_key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "tested": true,
+      "hung": false,
+      "disturbed": null,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 10548.25,
+       "max": 19067.5,
+       "all": [
+        3512.7,
+        19067.5,
+        10548.25
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       0,
+       32,
+       32
+      ]
+     },
+     {
+      "condition": "streaming:1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "camera_key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "tested": false,
+      "hung": null,
+      "disturbed": null,
+      "stream_started_on_idle_camera": null,
+      "elapsed_ms": null,
+      "faulted_cameras_present": null,
+      "untested_reason": "untested: device fault since 2026-11-11T06:53:23.737209+00:00 (W-MULTI, MJPG 1280x720@30, watchdog timeout); replug needed",
+      "listed": null
+     }
+    ],
+    "touch": "FFmpeg dshow binds the capture filter (IMoniker::BindToObject) of every device to list its media types (list_devices) / of the named device (list_options): inferred from FFmpeg's source, not observable from user mode"
+   },
+   "note": "touches but harmless: every call returned, nothing disturbed (it still binds every capture filter, a wedged camera included)",
+   "summary_label": "partial (touches but harmless)"
+  },
+  "list_touch|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|ffmpeg_list_options": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every call returned within the bound",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no frame gap, stop or bad frame in the streaming process during a call",
+     "met": null,
+     "detail": []
+    },
+    {
+     "criterion": "no isochronous pipe opened on an idle camera during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "idle and streaming conditions measured",
+     "met": false,
+     "detail": [
+      "idle_kiyo_wedged"
+     ]
+    }
+   ],
+   "evidence": {
+    "method": "ffmpeg_list_options",
+    "conditions": [
+     {
+      "condition": "idle_kiyo_wedged",
+      "camera_key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "tested": true,
+      "hung": false,
+      "disturbed": null,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 19118.47,
+       "max": 19532.1,
+       "all": [
+        19532.1,
+        19078.67,
+        19118.47
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       32,
+       32,
+       32
+      ]
+     },
+     {
+      "condition": "streaming:1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "camera_key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "tested": false,
+      "hung": null,
+      "disturbed": null,
+      "stream_started_on_idle_camera": null,
+      "elapsed_ms": null,
+      "faulted_cameras_present": null,
+      "untested_reason": "untested: device fault since 2026-11-11T06:53:23.737209+00:00 (W-MULTI, MJPG 1280x720@30, watchdog timeout); replug needed",
+      "listed": null
+     }
+    ],
+    "touch": "FFmpeg dshow binds the capture filter (IMoniker::BindToObject) of every device to list its media types (list_devices) / of the named device (list_options): inferred from FFmpeg's source, not observable from user mode"
+   },
+   "note": "touches but harmless: every call returned, nothing disturbed (it still binds every capture filter, a wedged camera included)",
+   "summary_label": "partial (touches but harmless)"
+  },
+  "list_touch|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8|pyav_list_options": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every call returned within the bound",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no frame gap, stop or bad frame in the streaming process during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no isochronous pipe opened on an idle camera during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "idle and streaming conditions measured",
+     "met": true,
+     "detail": [
+      "idle_kiyo_wedged",
+      "streaming:046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+     ]
+    }
+   ],
+   "evidence": {
+    "method": "pyav_list_options",
+    "conditions": [
+     {
+      "condition": "idle_kiyo_wedged",
+      "camera_key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "tested": true,
+      "hung": false,
+      "disturbed": null,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 337.89,
+       "max": 542.43,
+       "all": [
+        337.89,
+        295.75,
+        542.43
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       68,
+       68,
+       68
+      ]
+     },
+     {
+      "condition": "streaming:046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "camera_key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "tested": true,
+      "hung": false,
+      "disturbed": false,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 333.68,
+       "max": 606.75,
+       "all": [
+        333.68,
+        294.1,
+        606.75
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       68,
+       68,
+       68
+      ]
+     }
+    ],
+    "touch": "FFmpeg dshow binds the capture filter (IMoniker::BindToObject) of every device to list its media types (list_devices) / of the named device (list_options): inferred from FFmpeg's source, not observable from user mode"
+   },
+   "note": "touches but harmless: every call returned, nothing disturbed (it still binds every capture filter, a wedged camera included)",
+   "summary_label": "partial (touches but harmless)"
+  },
+  "list_touch|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8|ffmpeg_list_options": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every call returned within the bound",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no frame gap, stop or bad frame in the streaming process during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no isochronous pipe opened on an idle camera during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "idle and streaming conditions measured",
+     "met": true,
+     "detail": [
+      "idle_kiyo_wedged",
+      "streaming:046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+     ]
+    }
+   ],
+   "evidence": {
+    "method": "ffmpeg_list_options",
+    "conditions": [
+     {
+      "condition": "idle_kiyo_wedged",
+      "camera_key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "tested": true,
+      "hung": false,
+      "disturbed": null,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 364.52,
+       "max": 365.43,
+       "all": [
+        364.52,
+        365.43,
+        358.64
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       68,
+       68,
+       68
+      ]
+     },
+     {
+      "condition": "streaming:046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "camera_key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "tested": true,
+      "hung": false,
+      "disturbed": false,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 359.32,
+       "max": 363.1,
+       "all": [
+        359.32,
+        356.58,
+        363.1
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       68,
+       68,
+       68
+      ]
+     }
+    ],
+    "touch": "FFmpeg dshow binds the capture filter (IMoniker::BindToObject) of every device to list its media types (list_devices) / of the named device (list_options): inferred from FFmpeg's source, not observable from user mode"
+   },
+   "note": "touches but harmless: every call returned, nothing disturbed (it still binds every capture filter, a wedged camera included)",
+   "summary_label": "partial (touches but harmless)"
+  },
+  "list_touch|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|pyav_list_options": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every call returned within the bound",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no frame gap, stop or bad frame in the streaming process during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no isochronous pipe opened on an idle camera during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "idle and streaming conditions measured",
+     "met": true,
+     "detail": [
+      "idle_kiyo_wedged",
+      "streaming:4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    }
+   ],
+   "evidence": {
+    "method": "pyav_list_options",
+    "conditions": [
+     {
+      "condition": "idle_kiyo_wedged",
+      "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "tested": true,
+      "hung": false,
+      "disturbed": null,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 333.59,
+       "max": 583.17,
+       "all": [
+        333.59,
+        294.43,
+        583.17
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       18,
+       18,
+       18
+      ]
+     },
+     {
+      "condition": "streaming:4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "tested": true,
+      "hung": false,
+      "disturbed": false,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 331.29,
+       "max": 584.11,
+       "all": [
+        331.29,
+        311.97,
+        584.11
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       18,
+       18,
+       18
+      ]
+     }
+    ],
+    "touch": "FFmpeg dshow binds the capture filter (IMoniker::BindToObject) of every device to list its media types (list_devices) / of the named device (list_options): inferred from FFmpeg's source, not observable from user mode"
+   },
+   "note": "touches but harmless: every call returned, nothing disturbed (it still binds every capture filter, a wedged camera included)",
+   "summary_label": "partial (touches but harmless)"
+  },
+  "list_touch|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|ffmpeg_list_options": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every call returned within the bound",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no frame gap, stop or bad frame in the streaming process during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no isochronous pipe opened on an idle camera during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "idle and streaming conditions measured",
+     "met": true,
+     "detail": [
+      "idle_kiyo_wedged",
+      "streaming:4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+     ]
+    }
+   ],
+   "evidence": {
+    "method": "ffmpeg_list_options",
+    "conditions": [
+     {
+      "condition": "idle_kiyo_wedged",
+      "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "tested": true,
+      "hung": false,
+      "disturbed": null,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 357.97,
+       "max": 374.09,
+       "all": [
+        356.35,
+        374.09,
+        357.97
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       18,
+       18,
+       18
+      ]
+     },
+     {
+      "condition": "streaming:4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "camera_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "tested": true,
+      "hung": false,
+      "disturbed": false,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 344.46,
+       "max": 346.01,
+       "all": [
+        344.03,
+        346.01,
+        344.46
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       18,
+       18,
+       18
+      ]
+     }
+    ],
+    "touch": "FFmpeg dshow binds the capture filter (IMoniker::BindToObject) of every device to list its media types (list_devices) / of the named device (list_options): inferred from FFmpeg's source, not observable from user mode"
+   },
+   "note": "touches but harmless: every call returned, nothing disturbed (it still binds every capture filter, a wedged camera included)",
+   "summary_label": "partial (touches but harmless)"
+  },
+  "list_touch|046d:085c:sn=C922SN01|pyav_list_options": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every call returned within the bound",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no frame gap, stop or bad frame in the streaming process during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no isochronous pipe opened on an idle camera during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "idle and streaming conditions measured",
+     "met": true,
+     "detail": [
+      "idle_kiyo_wedged",
+      "streaming:046d:085c:sn=C922SN01"
+     ]
+    }
+   ],
+   "evidence": {
+    "method": "pyav_list_options",
+    "conditions": [
+     {
+      "condition": "idle_kiyo_wedged",
+      "camera_key": "046d:085c:sn=C922SN01",
+      "tested": true,
+      "hung": false,
+      "disturbed": null,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 331.53,
+       "max": 557.4,
+       "all": [
+        331.53,
+        285.72,
+        557.4
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       72,
+       72,
+       72
+      ]
+     },
+     {
+      "condition": "streaming:046d:085c:sn=C922SN01",
+      "camera_key": "046d:085c:sn=C922SN01",
+      "tested": true,
+      "hung": false,
+      "disturbed": false,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 329.85,
+       "max": 552.03,
+       "all": [
+        329.85,
+        288.63,
+        552.03
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       72,
+       72,
+       72
+      ]
+     }
+    ],
+    "touch": "FFmpeg dshow binds the capture filter (IMoniker::BindToObject) of every device to list its media types (list_devices) / of the named device (list_options): inferred from FFmpeg's source, not observable from user mode"
+   },
+   "note": "touches but harmless: every call returned, nothing disturbed (it still binds every capture filter, a wedged camera included)",
+   "summary_label": "partial (touches but harmless)"
+  },
+  "list_touch|046d:085c:sn=C922SN01|ffmpeg_list_options": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every call returned within the bound",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no frame gap, stop or bad frame in the streaming process during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "no isochronous pipe opened on an idle camera during a call",
+     "met": true,
+     "detail": []
+    },
+    {
+     "criterion": "idle and streaming conditions measured",
+     "met": true,
+     "detail": [
+      "idle_kiyo_wedged",
+      "streaming:046d:085c:sn=C922SN01"
+     ]
+    }
+   ],
+   "evidence": {
+    "method": "ffmpeg_list_options",
+    "conditions": [
+     {
+      "condition": "idle_kiyo_wedged",
+      "camera_key": "046d:085c:sn=C922SN01",
+      "tested": true,
+      "hung": false,
+      "disturbed": null,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 361.92,
+       "max": 363.07,
+       "all": [
+        358.94,
+        361.92,
+        363.07
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       72,
+       72,
+       72
+      ]
+     },
+     {
+      "condition": "streaming:046d:085c:sn=C922SN01",
+      "camera_key": "046d:085c:sn=C922SN01",
+      "tested": true,
+      "hung": false,
+      "disturbed": false,
+      "stream_started_on_idle_camera": false,
+      "elapsed_ms": {
+       "p50": 355.61,
+       "max": 356.96,
+       "all": [
+        356.96,
+        355.61,
+        353.63
+       ]
+      },
+      "faulted_cameras_present": [
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+      ],
+      "untested_reason": null,
+      "listed": [
+       72,
+       72,
+       72
+      ]
+     }
+    ],
+    "touch": "FFmpeg dshow binds the capture filter (IMoniker::BindToObject) of every device to list its media types (list_devices) / of the named device (list_options): inferred from FFmpeg's source, not observable from user mode"
+   },
+   "note": "touches but harmless: every call returned, nothing disturbed (it still binds every capture filter, a wedged camera included)",
+   "summary_label": "partial (touches but harmless)"
+  }
+ },
+ "errors": [],
+ "device_fault_gate": {
+  "gated_at_start": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-11T06:53:23.737209+00:00"
+  },
+  "note": "streaming commands for these cameras were skipped by the suite's device-fault gate (untested: device fault)"
+ },
+ "device_faults": {
+  "faulted_at_start": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-11T06:53:23.737209+00:00"
+  },
+  "faulted_at_end": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-11T06:53:23.737209+00:00"
+  },
+  "kiyo_dead_since": "2026-11-11T06:53:23.737209+00:00"
+ }
+}

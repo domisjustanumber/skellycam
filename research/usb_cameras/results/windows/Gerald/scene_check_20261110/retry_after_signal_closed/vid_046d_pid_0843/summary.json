@@ -1,0 +1,143 @@
+{
+ "tool": "wincam",
+ "version": "wincam 1.2 (2026-11-08)",
+ "subcommand": "capture",
+ "utc_started": "2026-11-10T22:06:10.931572Z",
+ "pid": 19924,
+ "argv": [
+  "research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+  "capture",
+  "--api",
+  "mf",
+  "--device",
+  "vid_046d&pid_0843",
+  "--width",
+  "1280",
+  "--height",
+  "720",
+  "--fps",
+  "30",
+  "--subtype",
+  "MJPG",
+  "--frames",
+  "90",
+  "--timeout-ms",
+  "20000",
+  "--out-dir",
+  "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\ca7e9b09df19a3f5\\8b3538d8-303d-4117-8cfb-3ad1d86baadb\\scratchpad\\scene_check2\\vid_046d_pid_0843",
+  "--save",
+  "every:30"
+ ],
+ "timeout_ms": 20000,
+ "api": "mf",
+ "requested": {
+  "subtype": "MJPG",
+  "width": 1280,
+  "height": 720,
+  "fps": 30,
+  "frames": 90,
+  "seconds": null,
+  "save": "every:30",
+  "allow_synthesized": false
+ },
+ "out_dir": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\ca7e9b09df19a3f5\\8b3538d8-303d-4117-8cfb-3ad1d86baadb\\scratchpad\\scene_check2\\vid_046d_pid_0843",
+ "enumerate_ms": 2.421399996,
+ "device": {
+  "index": 0,
+  "friendly_name": "Logitech Webcam C930e",
+  "symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+  "usb": {
+   "vid": "046d",
+   "pid": "0843",
+   "mi": "00",
+   "instance": "6&34c047e4&0&0000"
+  }
+ },
+ "controls_before": [],
+ "negotiated": null,
+ "steps": [
+  {
+   "step": "enumerate",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 1.827100009,
+   "timed_out": false
+  },
+  {
+   "step": "activate",
+   "hr": "0x800703E3",
+   "hr_name": "0x800703E3",
+   "ms": 5074.3104,
+   "timed_out": false
+  },
+  {
+   "step": "activate_shutdown_object",
+   "hr": "0x00000000",
+   "hr_name": "S_OK",
+   "ms": 0.2457000017,
+   "timed_out": false
+  }
+ ],
+ "timings": {
+  "enumerate_ms": 1.827100009,
+  "activate_ms": 5074.3104,
+  "reader_ms": -1,
+  "settype_ms": -1,
+  "first_frame_ms": -1,
+  "open_to_first_frame_ms": -1,
+  "flush_ms": -1,
+  "reader_release_ms": -1,
+  "shutdown_ms": -1,
+  "shutdown_object_ms": 0.2457000017,
+  "close_ms": 0.2677000016
+ },
+ "frames": {
+  "total": 0,
+  "ok": 0,
+  "soi_eoi_ok": 0,
+  "sof0_size_match": 0,
+  "with_uvc_metadata": 0,
+  "with_capture_metadata_attr": 0,
+  "stream_ticks": 0,
+  "null_samples": 0,
+  "discontinuities": 0,
+  "bytes_total": 0,
+  "saved": 0,
+  "reader_flag_counts": {},
+  "raw": false,
+  "ok_rule": "jpeg: SOI + EOI + SOF size == request"
+ },
+ "duration_s": 0,
+ "fps_measured": 0,
+ "metadata": {
+  "uvc_pts_present": false,
+  "note": "UVC PTS/SCR appear only when MetadataBufferSizeInKB0 is set on this device instance (tier 1)"
+ },
+ "cpu": {
+  "user_s": 0,
+  "kernel_s": 0,
+  "window_s": 4.9e-06,
+  "pct_of_one_core": 0,
+  "method": "GetProcessTimes over the streaming window",
+  "process_total_s": 0.015625
+ },
+ "schedule": [],
+ "unreleasable": false,
+ "ok": false,
+ "error": {
+  "stage": "activate",
+  "hr": "0x800703E3",
+  "hr_name": "0x800703E3",
+  "message": "The I/O operation has been aborted because of either a thread exit or an application request.",
+  "class": "other",
+  "reason": ""
+ },
+ "files": {
+  "frames_jsonl": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\ca7e9b09df19a3f5\\8b3538d8-303d-4117-8cfb-3ad1d86baadb\\scratchpad\\scene_check2\\vid_046d_pid_0843\\frames.jsonl",
+  "frames_mjpeg": "C:\\Users\\Dom\\AppData\\Local\\Temp\\claude\\ca7e9b09df19a3f5\\8b3538d8-303d-4117-8cfb-3ad1d86baadb\\scratchpad\\scene_check2\\vid_046d_pid_0843\\frames.mjpeg",
+  "frames_raw": null
+ },
+ "utc_finished": "2026-11-10T22:06:16.013215Z",
+ "exit_code": 4,
+ "abandoned_threads": 0
+}

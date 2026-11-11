@@ -1,0 +1,937 @@
+{
+ "test": "W-KIYO",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-06T17:50:43.824179+00:00",
+ "utc_finished": "2026-11-06T17:52:44.370513+00:00",
+ "elapsed_s": 120.547,
+ "command": "suite/windows/run_suite.py --quick --out-dir C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/quick",
+ "argv": [
+  "suite/windows/run_suite.py",
+  "--quick",
+  "--out-dir",
+  "C:/Users/Dom/GitHub/freemocap/skellycam/research/usb_cameras/results/windows/Gerald/suite_build_selftest_20261106/quick"
+ ],
+ "environment": {
+  "os": {
+   "platform": "Windows-11-10.0.26300-SP0",
+   "system": "Windows",
+   "release": "11",
+   "version": "10.0.26300",
+   "machine": "AMD64",
+   "windows_build": 26300,
+   "windows_version": "10.0.26300",
+   "windows_edition": "Core",
+   "windows_displayversion": "26H2",
+   "windows_ubr": 9711,
+   "windows_productname": "Windows 10 Home",
+   "windows_currentbuild": "26300"
+  },
+  "python": "3.12.13",
+  "python_implementation": "CPython",
+  "python_executable": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+  "hostname": "Gerald",
+  "pid": 27464,
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0"
+  }
+ },
+ "cameras": [
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": true,
+   "last_arrival": "2026-11-06T14:59:24.581364+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 5,
+   "ds_index": 1
+  }
+ ],
+ "measurements": {
+  "interval_s": 10.0,
+  "minutes": 2.0,
+  "power": {
+   "raw_rc": 0,
+   "scheme": "381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)",
+   "hub_selective_suspend_timeout_ms": {
+    "ac": {
+     "index": 50,
+     "name": null
+    },
+    "dc": {
+     "index": 50,
+     "name": null
+    }
+   },
+   "usb_selective_suspend": {
+    "ac": {
+     "index": 1,
+     "name": "Enabled"
+    },
+    "dc": {
+     "index": 1,
+     "name": "Enabled"
+    }
+   },
+   "498c044a-201b-4631-a522-5c744ed4e678": {
+    "ac": {
+     "index": 1,
+     "name": "Enabled"
+    },
+    "dc": {
+     "index": 0,
+     "name": "Disabled"
+    }
+   },
+   "usb3_link_power_management": {
+    "ac": {
+     "index": 2,
+     "name": "Moderate power savings"
+    },
+    "dc": {
+     "index": 2,
+     "name": "Moderate power savings"
+    }
+   }
+  },
+  "cameras": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "name": "USB Video Device",
+    "last_arrival": "2026-11-06T14:59:24.581364+00:00",
+    "plug_in_age_at_start_s": 10399.788149,
+    "speed": "SS",
+    "device_parameters": {
+     "EnumerationRetryCount": 0,
+     "SymbolicName": "\\??\\USB#VID_1532&PID_0E05#9&3a0ecb01&0&4#{a5dcbf10-6530-11d2-901f-00c04fb951ed}"
+    },
+    "function_device_parameters": {
+     "VendorRevision": 0,
+     "RevisionId": 2081,
+     "ExtPropDescSemaphore": 1,
+     "DeviceSelectiveSuspended": 1
+    },
+    "metadata_tier1": true,
+    "polls": [
+     {
+      "utc": "2026-11-06T17:50:43.843548+00:00",
+      "api": "mf",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.297,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": 27.4354,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 0,
+      "t_s": 0.3,
+      "plug_in_age_s": 10279.546437
+     },
+     {
+      "utc": "2026-11-06T17:50:44.127801+00:00",
+      "api": "ds",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.25,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": null,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 0,
+      "t_s": 0.55,
+      "plug_in_age_s": 10279.795858
+     },
+     {
+      "utc": "2026-11-06T17:50:53.831141+00:00",
+      "api": "mf",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.265,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": 25.8455,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 1,
+      "t_s": 10.27,
+      "plug_in_age_s": 10289.51981
+     },
+     {
+      "utc": "2026-11-06T17:50:54.101174+00:00",
+      "api": "ds",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.266,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": null,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 1,
+      "t_s": 10.53,
+      "plug_in_age_s": 10289.779844
+     },
+     {
+      "utc": "2026-11-06T17:51:03.831022+00:00",
+      "api": "mf",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.265,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": 25.8768,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 2,
+      "t_s": 20.27,
+      "plug_in_age_s": 10299.525167
+     },
+     {
+      "utc": "2026-11-06T17:51:04.106531+00:00",
+      "api": "ds",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.266,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": null,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 2,
+      "t_s": 20.53,
+      "plug_in_age_s": 10299.782964
+     },
+     {
+      "utc": "2026-11-06T17:51:13.833915+00:00",
+      "api": "mf",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.281,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": 26.3884,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 3,
+      "t_s": 30.28,
+      "plug_in_age_s": 10309.541372
+     },
+     {
+      "utc": "2026-11-06T17:51:14.122736+00:00",
+      "api": "ds",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.266,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": null,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 3,
+      "t_s": 30.55,
+      "plug_in_age_s": 10309.803865
+     },
+     {
+      "utc": "2026-11-06T17:51:23.838831+00:00",
+      "api": "mf",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.281,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": 27.5087,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 4,
+      "t_s": 40.28,
+      "plug_in_age_s": 10319.540558
+     },
+     {
+      "utc": "2026-11-06T17:51:24.121922+00:00",
+      "api": "ds",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.266,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": null,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 4,
+      "t_s": 40.55,
+      "plug_in_age_s": 10319.803671
+     },
+     {
+      "utc": "2026-11-06T17:51:33.839283+00:00",
+      "api": "mf",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.265,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": 26.5077,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 5,
+      "t_s": 50.27,
+      "plug_in_age_s": 10329.523758
+     },
+     {
+      "utc": "2026-11-06T17:51:34.105122+00:00",
+      "api": "ds",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.25,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": null,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 5,
+      "t_s": 50.52,
+      "plug_in_age_s": 10329.775289
+     },
+     {
+      "utc": "2026-11-06T17:51:43.842602+00:00",
+      "api": "mf",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.265,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": 26.6895,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 6,
+      "t_s": 60.27,
+      "plug_in_age_s": 10339.524258
+     },
+     {
+      "utc": "2026-11-06T17:51:44.105622+00:00",
+      "api": "ds",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.25,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": null,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 6,
+      "t_s": 60.52,
+      "plug_in_age_s": 10339.776426
+     },
+     {
+      "utc": "2026-11-06T17:51:53.844460+00:00",
+      "api": "mf",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.281,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": 26.5041,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 7,
+      "t_s": 70.28,
+      "plug_in_age_s": 10349.54329
+     },
+     {
+      "utc": "2026-11-06T17:51:54.124654+00:00",
+      "api": "ds",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.266,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": null,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 7,
+      "t_s": 70.55,
+      "plug_in_age_s": 10349.799972
+     },
+     {
+      "utc": "2026-11-06T17:52:03.835063+00:00",
+      "api": "mf",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.297,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": 26.8788,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 8,
+      "t_s": 80.3,
+      "plug_in_age_s": 10359.552556
+     },
+     {
+      "utc": "2026-11-06T17:52:04.133920+00:00",
+      "api": "ds",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.265,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": null,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 8,
+      "t_s": 80.56,
+      "plug_in_age_s": 10359.814588
+     },
+     {
+      "utc": "2026-11-06T17:52:13.834699+00:00",
+      "api": "mf",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.265,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": 26.4768,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 9,
+      "t_s": 90.27,
+      "plug_in_age_s": 10369.52608
+     },
+     {
+      "utc": "2026-11-06T17:52:14.107444+00:00",
+      "api": "ds",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.25,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": null,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 9,
+      "t_s": 90.52,
+      "plug_in_age_s": 10369.77629
+     },
+     {
+      "utc": "2026-11-06T17:52:23.843177+00:00",
+      "api": "mf",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.281,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": 26.5043,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 10,
+      "t_s": 100.28,
+      "plug_in_age_s": 10379.537406
+     },
+     {
+      "utc": "2026-11-06T17:52:24.118770+00:00",
+      "api": "ds",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.266,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": null,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 10,
+      "t_s": 100.55,
+      "plug_in_age_s": 10379.806962
+     },
+     {
+      "utc": "2026-11-06T17:52:33.842602+00:00",
+      "api": "mf",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.281,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": 28.2003,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 11,
+      "t_s": 110.28,
+      "plug_in_age_s": 10389.53767
+     },
+     {
+      "utc": "2026-11-06T17:52:34.119034+00:00",
+      "api": "ds",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.266,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": null,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 11,
+      "t_s": 110.55,
+      "plug_in_age_s": 10389.799125
+     },
+     {
+      "utc": "2026-11-06T17:52:43.833905+00:00",
+      "api": "mf",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.265,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": 25.613,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 12,
+      "t_s": 120.27,
+      "plug_in_age_s": 10399.522612
+     },
+     {
+      "utc": "2026-11-06T17:52:44.103976+00:00",
+      "api": "ds",
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.266,
+      "lock_wait_s": 0.0,
+      "supported": 16,
+      "exposure": -4,
+      "exposure_flags": [
+       "auto"
+      ],
+      "error_hr": null,
+      "error_name": null,
+      "error_class": null,
+      "error_stage": null,
+      "controls_with_failed_get": [],
+      "failed_get_hr": [],
+      "activate_ms": null,
+      "no_json": false,
+      "stderr_tail": null,
+      "i": 12,
+      "t_s": 120.53,
+      "plug_in_age_s": 10399.788149
+     }
+    ],
+    "polls_per_api": {
+     "mf": 13,
+     "ds": 13
+    },
+    "ok_per_api": {
+     "mf": 13,
+     "ds": 13
+    },
+    "first_failure": null,
+    "failure_codes": {},
+    "stopped_answering": false
+   }
+  },
+  "arrivals": {
+   "before": {
+    "utc": "2026-11-06T17:50:43.842548+00:00",
+    "cameras": {
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-06T14:59:24.581364+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-06T17:47:04.819155+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+      "present": true,
+      "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "after": {
+    "utc": "2026-11-06T17:52:44.369513+00:00",
+    "cameras": {
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-06T15:04:37.661901+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-06T14:59:24.581364+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-06T17:47:04.819155+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/7": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&7",
+      "present": true,
+      "last_arrival": "2026-11-06T15:00:22.388177+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "changes": [],
+   "unexplained_re_arrival": false
+  },
+  "note": "read-only; the LPM-off arm (power plan change) is attended item A4"
+ },
+ "verdicts": {
+  "kiyo|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|all": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "answers every control poll (MF and DS) during the window",
+     "met": true,
+     "detail": {
+      "ok": {
+       "mf": 13,
+       "ds": 13
+      },
+      "polls": {
+       "mf": 13,
+       "ds": 13
+      }
+     }
+    }
+   ],
+   "evidence": {
+    "first_failure": null,
+    "codes": {},
+    "minutes": 2.0
+   }
+  }
+ },
+ "errors": []
+}
