@@ -1,0 +1,28 @@
+{
+ "note": "ms after start_perf_ns (today's anchor). Positive = sample 0 was captured later than skellycam assumes, so today's offset puts audio that much early.",
+ "runs": {
+  "mme_usb_44k1_b1024.json": {
+   "rate": 44100,
+   "first_callback_after_start_ms": 67.27,
+   "sample0_from_callback_envelope_ms": 10.05
+  },
+  "wasapi_c922_48k_b1024.json": {
+   "rate": 48000,
+   "first_callback_after_start_ms": 103.22,
+   "sample0_from_callback_envelope_ms": 74.37,
+   "sample0_from_adc_fit_ms": 93.76
+  },
+  "wasapi_revelator_48k_b1024.json": {
+   "rate": 48000,
+   "first_callback_after_start_ms": 86.34,
+   "sample0_from_callback_envelope_ms": 58.93,
+   "sample0_from_adc_fit_ms": 78.28
+  },
+  "wasapi_usb_48k_b1024.json": {
+   "rate": 48000,
+   "first_callback_after_start_ms": 47.47,
+   "sample0_from_callback_envelope_ms": 9.05,
+   "sample0_from_adc_fit_ms": 27.83
+  }
+ }
+}

@@ -1,0 +1,172 @@
+<!doctype html><meta charset="utf-8"><title>audio test</title>
+<script>
+const RATE = 48000;
+const MIMES = ['audio/ogg; codecs="opus"', 'audio/ogg; codecs="flac"', 'audio/ogg; codecs="vorbis"', 'audio/webm; codecs="opus"',
+  'audio/flac', 'audio/x-flac', 'audio/x-matroska', 'audio/x-matroska; codecs="opus"', 'audio/wav', 'audio/mp4; codecs="opus"', 'audio/mp4; codecs="flac"'];
+
+async function caps() {
+  const a = document.createElement('audio');
+  const out = { canPlayType: {}, mse: {}, audioDecoder: {} };
+  for (const m of MIMES) { out.canPlayType[m] = a.canPlayType(m); out.mse[m] = (window.MediaSource && MediaSource.isTypeSupported(m)) || false; }
+  for (const cfg of [{ codec: 'opus', sampleRate: 48000, numberOfChannels: 1 }, { codec: 'opus', sampleRate: 48000, numberOfChannels: 2 },
+                     { codec: 'vorbis', sampleRate: 48000, numberOfChannels: 2 }, { codec: 'flac', sampleRate: 48000, numberOfChannels: 1 }]) {
+    try { const r = await AudioDecoder.isConfigSupported(cfg); out.audioDecoder[cfg.codec + '/' + cfg.numberOfChannels] = r.supported; }
+    catch (e) { out.audioDecoder[cfg.codec + '/' + cfg.numberOfChannels] = 'throws: ' + e.message.slice(0, 80); }
+  }
+  const ctx = new AudioContext(); out.audioContext = { sampleRate: ctx.sampleRate, baseLatency: ctx.baseLatency, outputLatency: ctx.outputLatency };
+  await ctx.close();
+  return out;
+}
+
+function clicks(x, offsetSamples, n = 10) {
+  const offs = [];
+  for (let k = 0; k < n; k++) {
+    const s = k * RATE, e = Math.min(x.length, s + RATE); if (e - s < RATE / 2) break;
+    let bi = s, bv = 0; for (let i = s; i < e; i++) { const v = Math.abs(x[i]); if (v > bv) { bv = v; bi = i; } }
+    offs.push(bi - (24000 + k * RATE) + (offsetSamples || 0));
+  }
+  return offs;
+}
+
+// ---- minimal Ogg demux + Opus packet duration (RFC 3533, RFC 7845, RFC 6716 §3.1) ----
+function oggPages(u8) {
+  const pages = []; let p = 0;
+  while (p + 27 <= u8.length) {
+    if (!(u8[p] === 0x4f && u8[p + 1] === 0x67 && u8[p + 2] === 0x67 && u8[p + 3] === 0x53)) { p++; continue; }
+    const nseg = u8[p + 26]; if (p + 27 + nseg > u8.length) break;
+    let body = 0; for (let i = 0; i < nseg; i++) body += u8[p + 27 + i];
+    if (p + 27 + nseg + body > u8.length) break; // torn last page
+    const dv = new DataView(u8.buffer, u8.byteOffset + p);
+    const granule = Number(dv.getBigInt64(6, true));
+    const segs = Array.from(u8.subarray(p + 27, p + 27 + nseg));
+    pages.push({ offset: p, granule, flags: u8[p + 5], segs, data: u8.subarray(p + 27 + nseg, p + 27 + nseg + body) });
+    p += 27 + nseg + body;
+  }
+  return pages;
+}
+function oggPackets(pages) { // returns [{data, pageIndex, endsOnPage}]
+  const pk = []; let cur = [];
+  pages.forEach((pg, pi) => {
+    let o = 0, start = 0;
+    pg.segs.forEach((l) => { o += l; if (l < 255) { cur.push(pg.data.subarray(start, o)); const len = cur.reduce((a, c) => a + c.length, 0);
+      const d = new Uint8Array(len); let q = 0; for (const c of cur) { d.set(c, q); q += c.length; } pk.push({ data: d, page: pi }); cur = []; start = o; } });
+    if (start < o) { cur.push(pg.data.subarray(start, o)); }
+  });
+  return pk;
+}
+function opusSamples(d) {
+  const toc = d[0], cfg = toc >> 3, code = toc & 3;
+  let fs; if (cfg < 12) fs = [480, 960, 1920, 2880][cfg & 3]; else if (cfg < 16) fs = [480, 960][cfg & 1]; else fs = [120, 240, 480, 960][cfg & 3];
+  const nf = code === 0 ? 1 : (code === 3 ? (d[1] & 63) : 2);
+  return fs * nf;
+}
+
+// WebCodecs AudioDecoder over Ogg Opus packets; startSample = where playback should begin (seek), preroll 80 ms (RFC 7845 §4.6)
+async function webcodecsOggOpus(u8, startSample, placement = 'ts') {
+  const pages = oggPages(u8); const pkts = oggPackets(pages);
+  const head = pkts[0].data; const preskip = head[10] | (head[11] << 8); const ch = head[9];
+  const audio = pkts.slice(2);
+  // packet start positions (granule units, preskip included): walk forward from 0
+  let pos = 0; for (const p of audio) { p.start = pos; p.n = opusSamples(p.data); pos += p.n; }
+  // check against page granules: the last packet ending on each page should end at the page granule
+  let granMismatch = 0; const lastOnPage = {}; audio.forEach((p) => { lastOnPage[p.page] = p; });
+  for (const [pi, p] of Object.entries(lastOnPage)) { const g = pages[pi].granule; if (g >= 0 && (p.start + p.n) !== g && !(pages[pi].flags & 4)) granMismatch++; }
+  const total = pos - preskip;
+  const out = new Float32Array(Math.max(0, total));
+  const want = startSample + preskip; // granule position of the first sample we keep (pre-roll search only)
+  const firstIdx = Math.max(0, audio.findIndex((p) => p.start + p.n > want - 3840)); // 80 ms preroll
+  let produced = 0; let firstTs = null; const firstOut = [];
+  const dec = new AudioDecoder({ output: (ad) => {
+      const n = ad.numberOfFrames; const buf = new Float32Array(n); ad.copyTo(buf, { planeIndex: 0, format: 'f32-planar' });
+      const g0 = Math.round(ad.timestamp * RATE / 1e6); if (firstTs === null) firstTs = g0;
+      if (firstOut.length < 3) firstOut.push([g0, n]);
+      // measured (E45): with OpusHead as description, Chromium drops the pre-skip itself and the output timestamps
+      // are already on the post-pre-skip timeline, so samples are placed at the output timestamp (placement = 'ts')
+      for (let i = 0; i < n; i++) { const g = g0 + i - (placement === 'ts' ? 0 : preskip); if (g >= startSample && g < out.length && g >= 0) out[g] = buf[i]; }
+      produced += n; ad.close(); }, error: (e) => { throw e; } });
+  dec.configure({ codec: 'opus', sampleRate: RATE, numberOfChannels: ch, description: head });
+  const t0 = performance.now();
+  for (let i = firstIdx; i < audio.length; i++) {
+    const p = audio[i];
+    dec.decode(new EncodedAudioChunk({ type: 'key', timestamp: Math.round(p.start * 1e6 / RATE), duration: Math.round(p.n * 1e6 / RATE), data: p.data }));
+  }
+  await dec.flush(); dec.close();
+  const firstIn = audio.slice(firstIdx, firstIdx + 3).map((p) => [p.start, p.n]);
+  return { out, preskip, packets: audio.length, pages: pages.length, granMismatch, produced, firstTs, firstOut, firstIn, firstIdx, decodeMs: +(performance.now() - t0).toFixed(1), total };
+}
+
+async function testFile(url, dir) {
+  const r = {};
+  let ab;
+  try { ab = await (await fetch(url)).arrayBuffer(); r.fetched = ab.byteLength; } catch (e) { r.fetchError = e.message; return r; }
+  // 1) decodeAudioData at 48 kHz
+  try {
+    const t0 = performance.now();
+    const oc = new OfflineAudioContext(1, RATE, RATE);
+    const buf = await oc.decodeAudioData(ab.slice(0));
+    r.decodeAudioData = { length: buf.length, sampleRate: buf.sampleRate, channels: buf.numberOfChannels, ms: +(performance.now() - t0).toFixed(1) };
+    if (dir === 'aligned') r.decodeAudioData.clickOffsets = clicks(buf.getChannelData(0));
+  } catch (e) { r.decodeAudioData = { error: (e && e.message || String(e)).slice(0, 150) }; }
+  // 2) <audio> element: metadata, duration, a seek, and whether it plays
+  r.audioElement = await new Promise((resolve) => {
+    const a = new Audio(); a.muted = true; a.preload = 'auto'; const res = {}; let done = false;
+    const fin = () => { if (!done) { done = true; a.pause(); a.removeAttribute('src'); a.load(); resolve(res); } };
+    const to = setTimeout(() => { res.timeout = true; fin(); }, 8000);
+    a.onerror = () => { res.error = a.error && a.error.code; res.message = a.error && a.error.message; clearTimeout(to); fin(); };
+    a.onloadedmetadata = async () => {
+      res.duration = a.duration; res.seekableEnd = a.seekable.length ? a.seekable.end(0) : null;
+      const target = Math.min(2.0, (isFinite(a.duration) ? a.duration : 2) / 2);
+      const s0 = performance.now();
+      a.onseeked = async () => {
+        res.seekTo = target; res.seekedAt = a.currentTime; res.seekMs = +(performance.now() - s0).toFixed(1);
+        try { await a.play(); const c0 = a.currentTime, w0 = performance.now(); await new Promise((q) => setTimeout(q, 400));
+          res.playAdvance = +(a.currentTime - c0).toFixed(3); res.wall = +((performance.now() - w0) / 1000).toFixed(3); }
+        catch (e) { res.playError = e.message.slice(0, 100); }
+        clearTimeout(to); fin(); };
+      a.currentTime = target;
+    };
+    a.src = url;
+  });
+  // 3) WebCodecs AudioDecoder on Ogg Opus packets (full decode, and a seek to 5 s with 80 ms pre-roll)
+  if (/\.opus$/.test(url)) {
+    try {
+      const u8 = new Uint8Array(ab);
+      const full = await webcodecsOggOpus(u8, 0);
+      r.webcodecs = { preskip: full.preskip, packets: full.packets, pages: full.pages, granuleMismatch: full.granMismatch, decodedSamples: full.produced,
+        totalAfterPreskip: full.total, decodeMs: full.decodeMs, firstTimestampSamples: full.firstTs };
+      if (dir === 'aligned') {
+        r.webcodecs.clickOffsets = clicks(full.out);
+        r.webcodecs.firstIn = full.firstIn; r.webcodecs.firstOut = full.firstOut;
+        const sk = await webcodecsOggOpus(u8, 5 * RATE);
+        r.webcodecs.seek5sClickOffsets = clicks(sk.out).slice(5);
+        r.webcodecs.seek5s = { firstIdx: sk.firstIdx, firstIn: sk.firstIn, firstOut: sk.firstOut };
+        const dbl = await webcodecsOggOpus(u8, 0, 'ts-minus-preskip');
+        r.webcodecs.clickOffsetsIfAppAlsoSubtractsPreskip = clicks(dbl.out);
+      }
+    } catch (e) { r.webcodecs = { error: (e && e.message || String(e)).slice(0, 150) }; }
+  }
+  return r;
+}
+
+// AudioContext clock vs performance.now(): drift of the audio output clock in ppm (silent output).
+async function clockProbe(seconds) {
+  const ctx = new AudioContext({ latencyHint: 'interactive' });
+  const g = ctx.createGain(); g.gain.value = 0; const o = ctx.createConstantSource(); o.connect(g); g.connect(ctx.destination); o.start();
+  await new Promise((q) => setTimeout(q, 500));
+  const pts = [];
+  const t0 = performance.now();
+  while (performance.now() - t0 < seconds * 1000) {
+    const ts = ctx.getOutputTimestamp(); pts.push([ts.performanceTime, ts.contextTime, ctx.currentTime, performance.now()]);
+    await new Promise((q) => setTimeout(q, 50));
+  }
+  o.stop(); await ctx.close();
+  const xs = pts.map((p) => p[0] / 1000), ys = pts.map((p) => p[1]);
+  const n = xs.length, mx = xs.reduce((a, b) => a + b) / n, my = ys.reduce((a, b) => a + b) / n;
+  let sxy = 0, sxx = 0; for (let i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) ** 2; }
+  const b = sxy / sxx; const res = ys.map((y, i) => y - (my + b * (xs[i] - mx)));
+  const cur = pts.map((p) => p[2] - p[1]);
+  return { seconds, samples: n, sampleRate: ctx.sampleRate, baseLatency: ctx.baseLatency, outputLatency: ctx.outputLatency,
+    ppm_contextTime_vs_performanceTime: +((b - 1) * 1e6).toFixed(2), resid_ms_max: +(1000 * Math.max(...res.map(Math.abs))).toFixed(3),
+    currentTime_minus_contextTime_ms_median: +(1000 * cur.sort((a, c) => a - c)[Math.floor(n / 2)]).toFixed(2) };
+}
+</script>

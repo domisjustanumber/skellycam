@@ -1,0 +1,84 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>flac offsets</title>
+<script src="../../sidecar_embedding/locator.js"></script>
+<script>
+const hex = h => { const b = new Uint8Array(h.length / 2); for (let i = 0; i < b.length; i++) b[i] = parseInt(h.substr(2 * i, 2), 16); return b; };
+async function fetchRange(url, off, size) {
+  const r = await fetch(url, { headers: { Range: `bytes=${off}-${off + size - 1}` } });
+  return new Uint8Array(await r.arrayBuffer());
+}
+async function sha256hex(u8) {
+  const d = new Uint8Array(await crypto.subtle.digest('SHA-256', u8));
+  return Array.from(d, x => x.toString(16).padStart(2, '0')).join('');
+}
+// Decode packets [first, end) by byte range; return planar float arrays.
+async function decodeRange(t, first, end) {
+  const out = []; let err = null, rangeBad = 0;
+  const dec = new AudioDecoder({ output: a => {
+      const n = a.numberOfFrames, planes = [];
+      for (let c = 0; c < a.numberOfChannels; c++) { const p = new Float32Array(n); a.copyTo(p, { planeIndex: c, format: 'f32-planar' }); planes.push(p); }
+      out.push(planes); a.close(); },
+    error: e => { err = String(e); } });
+  const cfg = { codec: 'flac', sampleRate: t.rate, numberOfChannels: t.channels, description: hex(t.description) };
+  const sup = (await AudioDecoder.isConfigSupported(cfg)).supported;
+  dec.configure(cfg);
+  let sample = first * 1024; const t0 = performance.now();
+  for (let i = first; i < end; i++) {
+    const [off, size] = t.packets[i];
+    if (size === 0) continue;                       // encoder's final flush packet is empty
+    const data = await fetchRange(t.url, off, size);
+    if (data.length !== size) rangeBad++;
+    dec.decode(new EncodedAudioChunk({ type: 'key', timestamp: Math.round(sample * 1e6 / t.rate), data }));
+    sample += 1024;
+  }
+  await dec.flush();
+  return { sup, err, rangeBad, ms: Math.round(performance.now() - t0), out };
+}
+function compare(t, ref, out, startSample) {
+  const ch = t.channels; let n = 0, maxd = 0;
+  for (const planes of out) {
+    for (let k = 0; k < planes[0].length; k++, n++) {
+      for (let c = 0; c < ch; c++) {
+        const r = ref[(startSample + n) * ch + c];
+        const d = Math.abs(planes[c][k] - r); if (d > maxd) maxd = d;
+      }
+    }
+  }
+  return { decoded_samples: n, max_abs_diff: maxd };
+}
+async function elementTest(url) {
+  const a = new Audio(); a.muted = true; a.src = url;
+  const r = {};
+  try {
+    await new Promise((ok, bad) => { a.onloadedmetadata = ok; a.onerror = () => bad(a.error && a.error.code); setTimeout(() => bad('timeout'), 5000); });
+    r.duration = a.duration; await a.play(); await new Promise(z => setTimeout(z, 300));
+    r.played_to = +a.currentTime.toFixed(3);
+    a.currentTime = 10; await new Promise(z => { a.onseeked = z; setTimeout(z, 3000); });
+    r.seek_to_10 = +a.currentTime.toFixed(3); a.pause();
+  } catch (e) { r.error = String(e); }
+  return r;
+}
+window.runAll = async function (cfg) {
+  const res = { tests: [] };
+  for (const t of cfg.tests) {
+    const r = { name: t.name };
+    try {
+      const ref = new Float32Array(await (await fetch(t.ref)).arrayBuffer());
+      r.ref_samples = ref.length / t.channels;
+      const all = await decodeRange(t, 0, t.packets.length);
+      r.full = Object.assign({ supported: all.sup, error: all.err, range_short: all.rangeBad, ms: all.ms }, compare(t, ref, all.out, 0));
+      const mid = await decodeRange(t, 700, 760);   // random access: FLAC frames decode independently
+      r.from_packet_700 = Object.assign({ error: mid.err }, compare(t, ref, mid.out, 700 * 1024));
+      r.audio_element = await elementTest(t.url);
+      if (t.skau_sha256) {
+        const loc = await locateAttachment((off, len) => fetchRange(t.url, off, len), { fileName: 'skellycam_audio.skau' });
+        r.locator = { ok: loc.ok, reason: loc.reason, size: loc.fileDataSize,
+                      sha_ok: loc.ok ? (await sha256hex(loc.data)) === t.skau_sha256 : false };
+      }
+    } catch (e) { r.exception = String(e); }
+    res.tests.push(r);
+  }
+  return res;
+};
+</script>

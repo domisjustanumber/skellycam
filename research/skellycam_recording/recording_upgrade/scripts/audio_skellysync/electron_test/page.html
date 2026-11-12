@@ -1,0 +1,144 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>audio in MKV</title></head>
+<body>
+<script>
+// All tests run under file://. Audio output is muted (webContents.setAudioMuted + a zero-gain node).
+const BURST_MS = 4, F_L = 3000;
+
+function burst(sr, freq) {
+  const n = Math.round(sr * BURST_MS / 1000), out = new Float32Array(n);
+  for (let i = 0; i < n; i++) out[i] = 0.5 * Math.pow(Math.sin(Math.PI * i / n), 0.5) * Math.sin(2 * Math.PI * freq * i / sr);
+  return out;
+}
+
+// matched filter around each expected onset (+-150 ms); returns error stats in samples
+function syncErrors(x, sr, timesS) {
+  const tpl = burst(sr, F_L), win = Math.round(0.15 * sr), errs = [];
+  let nExp = 0;
+  for (const t of timesS) {
+    const e = Math.round(t * sr);
+    if (e < 0 || e + tpl.length >= x.length) continue;
+    nExp++;
+    const lo = Math.max(0, e - win), hi = Math.min(x.length - tpl.length, e + win);
+    let best = 0, bk = -1; const mags = [];
+    for (let k = lo; k <= hi; k++) {
+      let s = 0; for (let j = 0; j < tpl.length; j++) s += x[k + j] * tpl[j];
+      const m = Math.abs(s); mags.push(m); if (m > best) { best = m; bk = k; }
+    }
+    mags.sort((a, b) => a - b); const med = mags[mags.length >> 1] + 1e-9;
+    if (best / med > 8) errs.push(bk - e);
+  }
+  errs.sort((a, b) => a - b);
+  return { n_expected: nExp, n_found: errs.length, err_min: errs[0] ?? null, err_max: errs[errs.length - 1] ?? null,
+           err_median: errs.length ? errs[errs.length >> 1] : null };
+}
+
+function hexToBytes(h) { const b = new Uint8Array(h.length / 2); for (let i = 0; i < b.length; i++) b[i] = parseInt(h.substr(2 * i, 2), 16); return b; }
+
+async function fetchRange(url, off, size) {
+  const r = await fetch(url, { headers: { Range: `bytes=${off}-${off + size - 1}` } });
+  const b = new Uint8Array(await r.arrayBuffer());
+  return { status: r.status, bytes: b };
+}
+
+// (a) WebCodecs AudioDecoder over packets fetched by byte range from the MKV, using the index
+async function webcodecsTest(url, index, codec, useDescription, timesS, shiftCodecDelay) {
+  const a = index.audio, res = { codec, useDescription, shiftCodecDelay };
+  const cfg = { codec, sampleRate: a.sample_rate, numberOfChannels: a.channels };
+  if (useDescription) cfg.description = hexToBytes(a.codec_private);
+  try { const s = await AudioDecoder.isConfigSupported(cfg); res.isConfigSupported = s.supported; }
+  catch (e) { res.isConfigSupported = 'throws: ' + e.message; return res; }
+  if (res.isConfigSupported !== true) return res;
+  const chunks = []; let outTs = [], err = null;
+  const dec = new AudioDecoder({
+    output: (ad) => { const n = ad.numberOfFrames; const buf = new Float32Array(n);
+      ad.copyTo(buf, { planeIndex: 0, format: 'f32-planar' }); chunks.push(buf); outTs.push(ad.timestamp); ad.close(); },
+    error: (e) => { err = e.message; } });
+  dec.configure(cfg);
+  const t0 = performance.now(); let fetchMs = 0, bad = 0, status = null;
+  const delayUs = shiftCodecDelay ? a.codec_delay_ns / 1000 : 0;
+  for (const [off, size, ptsNs] of a.packets) {
+    const tf = performance.now(); const r = await fetchRange(url, off, size); fetchMs += performance.now() - tf;
+    status = r.status; if (r.bytes.length !== size) bad++;
+    dec.decode(new EncodedAudioChunk({ type: 'key', timestamp: Math.round(ptsNs / 1000 - delayUs), data: r.bytes }));
+  }
+  try { await dec.flush(); } catch (e) { err = err || e.message; }
+  res.total_ms = Math.round(performance.now() - t0); res.fetch_ms = Math.round(fetchMs);
+  res.packets = a.packets.length; res.range_status = status; res.wrong_length = bad; res.error = err;
+  let n = 0; for (const c of chunks) n += c.length;
+  const x = new Float32Array(n); let p = 0; for (const c of chunks) { x.set(c, p); p += c.length; }
+  res.decoded_frames = n; res.first_output_timestamp_us = outTs[0] ?? null;
+  // sample 0 of the concatenated output is taken as the start of video frame 0
+  if (n) res.sync_vs_sample0 = syncErrors(x, a.sample_rate, timesS);
+  // and with the first output timestamp honoured (a player that places AudioData by timestamp)
+  if (n && outTs[0] != null) {
+    const lead = Math.round(-outTs[0] * a.sample_rate / 1e6);
+    if (lead > 0) res.sync_by_timestamp = syncErrors(x.subarray(lead), a.sample_rate, timesS);
+    else if (lead < 0) { const y = new Float32Array(n - lead); y.set(x, -lead); res.sync_by_timestamp = syncErrors(y, a.sample_rate, timesS); }
+    else res.sync_by_timestamp = res.sync_vs_sample0;
+  }
+  return res;
+}
+
+// (b) media element on the file: does it load, play, and produce sound?
+async function elementTest(url, tag) {
+  const el = document.createElement(tag); el.preload = 'auto'; el.src = url; document.body.appendChild(el);
+  const res = { tag };
+  const ev = await new Promise((resolve) => {
+    const to = setTimeout(() => resolve('timeout'), 8000);
+    el.addEventListener('loadedmetadata', () => { clearTimeout(to); resolve('loadedmetadata'); }, { once: true });
+    el.addEventListener('error', () => { clearTimeout(to); resolve('error'); }, { once: true });
+  });
+  res.event = ev;
+  if (ev === 'error') { res.error = el.error ? { code: el.error.code, message: el.error.message } : null; el.remove(); return res; }
+  if (ev === 'timeout') { el.remove(); return res; }
+  res.duration = el.duration; if (tag === 'video') { res.videoWidth = el.videoWidth; res.videoHeight = el.videoHeight; }
+  const ctx = new AudioContext({ sampleRate: 48000 });
+  const srcNode = ctx.createMediaElementSource(el), an = ctx.createAnalyser(), g = ctx.createGain();
+  g.gain.value = 0; an.fftSize = 2048; srcNode.connect(an); an.connect(g); g.connect(ctx.destination);
+  const buf = new Float32Array(an.fftSize); let peak = 0;
+  try { await ctx.resume(); await el.play(); res.play = 'ok'; } catch (e) { res.play = 'reject: ' + e.message; }
+  const tStart = el.currentTime, w0 = performance.now();
+  while (performance.now() - w0 < 2500) { an.getFloatTimeDomainData(buf); for (const v of buf) peak = Math.max(peak, Math.abs(v)); await new Promise(r => setTimeout(r, 20)); }
+  res.currentTime_advanced_s = +(el.currentTime - tStart).toFixed(3); res.audio_peak = +peak.toFixed(4);
+  // seek test
+  try {
+    el.currentTime = 7.0; await new Promise((r) => { const to = setTimeout(r, 3000); el.addEventListener('seeked', () => { clearTimeout(to); r(); }, { once: true }); });
+    res.after_seek_currentTime = +el.currentTime.toFixed(3);
+  } catch (e) { res.seek = e.message; }
+  if (el.error) res.late_error = { code: el.error.code, message: el.error.message };
+  el.pause(); el.remove(); await ctx.close();
+  return res;
+}
+
+// (b') decodeAudioData on the whole file
+async function decodeAudioDataTest(url, timesS) {
+  const res = {};
+  const t0 = performance.now();
+  const ab = await (await fetch(url)).arrayBuffer();
+  res.bytes = ab.byteLength;
+  const ctx = new OfflineAudioContext(2, 48000, 48000);
+  try {
+    const b = await ctx.decodeAudioData(ab);
+    res.ok = true; res.sampleRate = b.sampleRate; res.channels = b.numberOfChannels; res.length = b.length;
+    res.ms = Math.round(performance.now() - t0);
+    res.sync = syncErrors(b.getChannelData(0), b.sampleRate, timesS);
+  } catch (e) { res.ok = false; res.error = String(e && e.message || e); }
+  return res;
+}
+
+window.runAll = async function (cfg) {
+  const out = { ua: navigator.userAgent, runs: [] };
+  for (const t of cfg.tests) {
+    const r = { name: t.name, kind: t.kind };
+    try {
+      if (t.kind === 'webcodecs') Object.assign(r, await webcodecsTest(t.url, t.index, t.codec, t.description, cfg.times, t.shift));
+      else if (t.kind === 'element') Object.assign(r, await elementTest(t.url, t.tag));
+      else if (t.kind === 'decodeAudioData') Object.assign(r, await decodeAudioDataTest(t.url, cfg.times));
+    } catch (e) { r.exception = String(e && e.stack || e); }
+    out.runs.push(r);
+  }
+  return out;
+};
+</script>
+</body></html>

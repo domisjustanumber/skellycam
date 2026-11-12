@@ -1,0 +1,2884 @@
+{
+ "_versions": {
+  "av": "19.0.2",
+  "ffmpeg_libs": "(63, 1, 102)",
+  "cv2": "5.0.0"
+ },
+ "none_twin": {
+  "source": "cam30_48k",
+  "writer": {
+   "src": "cam30_48k.mp4",
+   "start_frame": 47,
+   "frame_count": 450,
+   "src_fps": "30",
+   "out_fps": "30",
+   "acodec": "none",
+   "write_s": 0.399,
+   "scan_ms": 9.26,
+   "video_blocks": 450,
+   "video_crc_match": 450,
+   "audio_blocks": 0,
+   "audio_crc_match": 0,
+   "audio_laced_blocks": 0,
+   "segment_uid": "04cf4c2097300175fedf876a95d0c2a7",
+   "bytes": 13200075,
+   "video_bytes": 13179802,
+   "audio_bytes": 0
+  },
+  "checks": {
+   "file": "none_twin.mkv",
+   "ffprobe": {
+    "streams": [
+     {
+      "index": 0,
+      "codec_name": "mjpeg",
+      "codec_type": "video",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "8",
+      "nb_read_packets": "450"
+     }
+    ],
+    "format": {
+     "nb_streams": 1,
+     "duration": "15.000000"
+    },
+    "stderr": ""
+   },
+   "ffmpeg_decode": {
+    "rc": 0,
+    "error_lines": 0,
+    "stderr": ""
+   },
+   "pyav": {
+    "video_frames": 450,
+    "video_frame_exact": "450/450"
+   },
+   "opencv": {
+    "cap_prop_frame_count": 450,
+    "frames_read": 450,
+    "seeks_match_sequential": "11/11"
+   },
+   "vlc_play": {
+    "rc": 0,
+    "pngs": 449,
+    "first_frame_number": 47,
+    "last_frame_number": 495,
+    "first_slot": 0,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": false,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": null
+   },
+   "vlc_seek_7s": {
+    "rc": 0,
+    "pngs": 240,
+    "first_frame_number": 47,
+    "last_frame_number": 495,
+    "stale_first_png": true,
+    "first_slot": 210,
+    "first_frame_after_seek": 257,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": false,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": null
+   },
+   "ffplay": {
+    "rc": 0,
+    "warnings": [
+     "Failed to initialize a hardware accelerated renderer: Couldn't find matching render driver",
+     "    nan    :  0.000 fd=   0 aq=    0KB vq=    0KB sq=    0B ",
+     "\u001b[2K",
+     "[swscaler @ 000002a431bb0040] deprecated pixel format used, make sure you did set range correctly"
+    ],
+    "last_av_diff_s": null,
+    "max_abs_av_diff_s": null,
+    "clock_end_s": null
+   },
+   "check_s": 47.2
+  }
+ },
+ "opus_st128": {
+  "source": "cam30_48k",
+  "writer": {
+   "src": "cam30_48k.mp4",
+   "start_frame": 47,
+   "frame_count": 450,
+   "src_fps": "30",
+   "out_fps": "30",
+   "acodec": "opus",
+   "audio_src_rate": 48000,
+   "audio_out_rate": 48000,
+   "audio_channels": 2,
+   "audio_decode_gaps": 0,
+   "audio_window_first_src_sample": 75200,
+   "audio_window_rounding_samples": 0.0,
+   "audio_samples": 720000,
+   "audio_pad_front": 0,
+   "audio_pad_back": 0,
+   "audio_src_first_time_s": 0.0,
+   "video_src_start_time_s": 0.0,
+   "encoder_initial_padding": 312,
+   "write_s": 0.58,
+   "scan_ms": 11.78,
+   "video_blocks": 450,
+   "video_crc_match": 450,
+   "audio_blocks": 751,
+   "audio_crc_match": 751,
+   "audio_laced_blocks": 0,
+   "segment_uid": "c1df36b709b94f14caf90a86fdad3d11",
+   "bytes": 13421114,
+   "video_bytes": 13179802,
+   "audio_bytes": 215145,
+   "audio_track": {
+    "num": 2,
+    "codec_id": "A_OPUS",
+    "codec_delay_ns": 6500000,
+    "seek_preroll_ns": 80000000
+   },
+   "audio_codec_private_len": 19,
+   "audio_first_block_ts_ns": 0,
+   "video_first_block_ts_ns": 0,
+   "embed_ms": 6.78,
+   "after_embed_blocks_unchanged": 1201,
+   "after_embed_uid_same": true
+  },
+  "checks": {
+   "file": "opus_st128.mkv",
+   "ffprobe": {
+    "streams": [
+     {
+      "index": 0,
+      "codec_name": "mjpeg",
+      "codec_type": "video",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "8",
+      "nb_read_packets": "450"
+     },
+     {
+      "index": 1,
+      "codec_name": "opus",
+      "codec_type": "audio",
+      "sample_fmt": "fltp",
+      "sample_rate": "48000",
+      "channels": 2,
+      "channel_layout": "stereo",
+      "start_time": "0.000000",
+      "nb_read_packets": "751"
+     },
+     {
+      "index": 2,
+      "codec_type": "attachment",
+      "start_time": "0.000000"
+     }
+    ],
+    "format": {
+     "nb_streams": 3,
+     "duration": "15.008000"
+    },
+    "stderr": ""
+   },
+   "ffmpeg_decode": {
+    "rc": 0,
+    "error_lines": 0,
+    "stderr": ""
+   },
+   "pyav": {
+    "video_frames": 450,
+    "video_frame_exact": "450/450",
+    "audio_first_frame_pts_s": 0.0,
+    "audio_decoded_samples": 720000,
+    "audio_channels_decoded": 2,
+    "audio_leading_samples_dropped": 0,
+    "sync_L": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "sync_R": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "channel_identity": {
+     "L": {
+      "f3k": 396.21,
+      "f1k5": 7.97
+     },
+     "R": {
+      "f3k": 7.83,
+      "f1k5": 396.35
+     },
+     "ok": true
+    }
+   },
+   "opencv": {
+    "cap_prop_frame_count": 450,
+    "frames_read": 450,
+    "seeks_match_sequential": "11/11",
+    "twin_frame_count": 450,
+    "pixels_identical_to_video_only_twin": "450/450",
+    "seeks_identical_to_twin": "11/11"
+   },
+   "vlc_play": {
+    "rc": 0,
+    "pngs": 450,
+    "first_frame_number": 47,
+    "last_frame_number": 496,
+    "first_slot": 0,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": true,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "opus"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 15.02
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 27,
+     "n_found": 26,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "26/26"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 27,
+     "n_found": 26,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "26/26"
+    }
+   },
+   "vlc_seek_7s": {
+    "rc": 0,
+    "pngs": 240,
+    "first_frame_number": 257,
+    "last_frame_number": 496,
+    "stale_first_png": false,
+    "first_slot": 210,
+    "first_frame_after_seek": 257,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": true,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "opus"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 1,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 8.02
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 15,
+     "n_found": 14,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "14/14"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 15,
+     "n_found": 14,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "14/14"
+    }
+   },
+   "ffplay": {
+    "rc": 0,
+    "warnings": [
+     "Failed to initialize a hardware accelerated renderer: Couldn't find matching render driver",
+     "    nan    :  0.000 fd=   0 aq=    0KB vq=    0KB sq=    0B ",
+     "[matroska,webm @ 0000018ea92e3d40] Could not find codec parameters for stream 2 (Attachment: none): unknown codec",
+     "Consider increasing the value for the 'analyzeduration' (0) and 'probesize' (5000000) options",
+     "\u001b[2K"
+    ],
+    "last_av_diff_s": -0.031,
+    "max_abs_av_diff_s": 0.07,
+    "clock_end_s": 14.97
+   },
+   "check_s": 47.9
+  }
+ },
+ "opus_mono64": {
+  "source": "cam30_48k",
+  "writer": {
+   "src": "cam30_48k.mp4",
+   "start_frame": 47,
+   "frame_count": 450,
+   "src_fps": "30",
+   "out_fps": "30",
+   "acodec": "opus",
+   "audio_src_rate": 48000,
+   "audio_out_rate": 48000,
+   "audio_channels": 1,
+   "audio_decode_gaps": 0,
+   "audio_window_first_src_sample": 75200,
+   "audio_window_rounding_samples": 0.0,
+   "audio_samples": 720000,
+   "audio_pad_front": 0,
+   "audio_pad_back": 0,
+   "audio_src_first_time_s": 0.0,
+   "video_src_start_time_s": 0.0,
+   "encoder_initial_padding": 312,
+   "write_s": 0.529,
+   "scan_ms": 11.84,
+   "video_blocks": 450,
+   "video_crc_match": 450,
+   "audio_blocks": 751,
+   "audio_crc_match": 751,
+   "audio_laced_blocks": 0,
+   "segment_uid": "eb3526e7d52ed0eaa30c2d852475ab44",
+   "bytes": 13305897,
+   "video_bytes": 13179802,
+   "audio_bytes": 100442,
+   "audio_track": {
+    "num": 2,
+    "codec_id": "A_OPUS",
+    "codec_delay_ns": 6500000,
+    "seek_preroll_ns": 80000000
+   },
+   "audio_codec_private_len": 19,
+   "audio_first_block_ts_ns": 0,
+   "video_first_block_ts_ns": 0
+  },
+  "checks": {
+   "file": "opus_mono64.mkv",
+   "ffprobe": {
+    "streams": [
+     {
+      "index": 0,
+      "codec_name": "mjpeg",
+      "codec_type": "video",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "8",
+      "nb_read_packets": "450"
+     },
+     {
+      "index": 1,
+      "codec_name": "opus",
+      "codec_type": "audio",
+      "sample_fmt": "fltp",
+      "sample_rate": "48000",
+      "channels": 1,
+      "channel_layout": "mono",
+      "start_time": "0.000000",
+      "nb_read_packets": "751"
+     }
+    ],
+    "format": {
+     "nb_streams": 2,
+     "duration": "15.008000"
+    },
+    "stderr": ""
+   },
+   "ffmpeg_decode": {
+    "rc": 0,
+    "error_lines": 0,
+    "stderr": ""
+   },
+   "pyav": {
+    "video_frames": 450,
+    "video_frame_exact": "450/450",
+    "audio_first_frame_pts_s": 0.0,
+    "audio_decoded_samples": 720000,
+    "audio_channels_decoded": 1,
+    "audio_leading_samples_dropped": 0,
+    "sync_L": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    }
+   },
+   "opencv": {
+    "cap_prop_frame_count": 450,
+    "frames_read": 450,
+    "seeks_match_sequential": "11/11",
+    "twin_frame_count": 450,
+    "pixels_identical_to_video_only_twin": "450/450",
+    "seeks_identical_to_twin": "11/11"
+   },
+   "vlc_play": {
+    "rc": 0,
+    "pngs": 450,
+    "first_frame_number": 47,
+    "last_frame_number": 496,
+    "first_slot": 0,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": true,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "opus"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 1,
+     "seconds": 15.02
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 27,
+     "n_found": 26,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "26/26"
+    }
+   },
+   "vlc_seek_7s": {
+    "rc": 0,
+    "pngs": 240,
+    "first_frame_number": 257,
+    "last_frame_number": 496,
+    "stale_first_png": false,
+    "first_slot": 210,
+    "first_frame_after_seek": 257,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": true,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "opus"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 1,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 1,
+     "seconds": 8.02
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 15,
+     "n_found": 14,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "14/14"
+    }
+   },
+   "ffplay": {
+    "rc": 0,
+    "warnings": [
+     "Failed to initialize a hardware accelerated renderer: Couldn't find matching render driver",
+     "    nan    :  0.000 fd=   0 aq=    0KB vq=    0KB sq=    0B ",
+     "\u001b[2K",
+     "[swscaler @ 000001ecf87a3e40] deprecated pixel format used, make sure you did set range correctly",
+     "    nan A-V:    nan fd=   0 aq=    6KB vq=  924KB sq=    0B "
+    ],
+    "last_av_diff_s": -0.006,
+    "max_abs_av_diff_s": 0.069,
+    "clock_end_s": 14.98
+   },
+   "check_s": 48.6
+  }
+ },
+ "flac16_st": {
+  "source": "cam30_48k",
+  "writer": {
+   "src": "cam30_48k.mp4",
+   "start_frame": 47,
+   "frame_count": 450,
+   "src_fps": "30",
+   "out_fps": "30",
+   "acodec": "flac",
+   "audio_src_rate": 48000,
+   "audio_out_rate": 48000,
+   "audio_channels": 2,
+   "audio_decode_gaps": 0,
+   "audio_window_first_src_sample": 75200,
+   "audio_window_rounding_samples": 0.0,
+   "audio_samples": 720000,
+   "audio_pad_front": 0,
+   "audio_pad_back": 0,
+   "audio_src_first_time_s": 0.0,
+   "video_src_start_time_s": 0.0,
+   "encoder_initial_padding": 0,
+   "write_s": 0.502,
+   "scan_ms": 11.52,
+   "video_blocks": 450,
+   "video_crc_match": 450,
+   "audio_blocks": 157,
+   "audio_crc_match": 157,
+   "audio_laced_blocks": 0,
+   "segment_uid": "76fe9296132f1ccff668815ff1249485",
+   "bytes": 14689996,
+   "video_bytes": 13179802,
+   "audio_bytes": 1488479,
+   "audio_track": {
+    "num": 2,
+    "codec_id": "A_FLAC"
+   },
+   "audio_codec_private_len": 42,
+   "audio_first_block_ts_ns": 0,
+   "video_first_block_ts_ns": 0,
+   "embed_ms": 7.48,
+   "after_embed_blocks_unchanged": 607,
+   "after_embed_uid_same": true
+  },
+  "checks": {
+   "file": "flac16_st.mkv",
+   "ffprobe": {
+    "streams": [
+     {
+      "index": 0,
+      "codec_name": "mjpeg",
+      "codec_type": "video",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "8",
+      "nb_read_packets": "450"
+     },
+     {
+      "index": 1,
+      "codec_name": "flac",
+      "codec_type": "audio",
+      "sample_fmt": "s16",
+      "sample_rate": "48000",
+      "channels": 2,
+      "channel_layout": "stereo",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "16",
+      "nb_read_packets": "157"
+     },
+     {
+      "index": 2,
+      "codec_type": "attachment",
+      "start_time": "0.000000"
+     }
+    ],
+    "format": {
+     "nb_streams": 3,
+     "duration": "15.000000"
+    },
+    "stderr": ""
+   },
+   "ffmpeg_decode": {
+    "rc": 0,
+    "error_lines": 0,
+    "stderr": ""
+   },
+   "pyav": {
+    "video_frames": 450,
+    "video_frame_exact": "450/450",
+    "audio_first_frame_pts_s": 0.0,
+    "audio_decoded_samples": 720000,
+    "audio_channels_decoded": 2,
+    "audio_leading_samples_dropped": 0,
+    "sync_L": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "sync_R": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "channel_identity": {
+     "L": {
+      "f3k": 395.82,
+      "f1k5": 7.93
+     },
+     "R": {
+      "f3k": 7.82,
+      "f1k5": 396.86
+     },
+     "ok": true
+    }
+   },
+   "opencv": {
+    "cap_prop_frame_count": 450,
+    "frames_read": 450,
+    "seeks_match_sequential": "11/11",
+    "twin_frame_count": 450,
+    "pixels_identical_to_video_only_twin": "450/450",
+    "seeks_identical_to_twin": "11/11"
+   },
+   "vlc_play": {
+    "rc": 0,
+    "pngs": 450,
+    "first_frame_number": 47,
+    "last_frame_number": 496,
+    "first_slot": 0,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": false,
+     "flac_decoder": true,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "flac"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 15.0
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    }
+   },
+   "vlc_seek_7s": {
+    "rc": 0,
+    "pngs": 241,
+    "first_frame_number": 47,
+    "last_frame_number": 496,
+    "stale_first_png": true,
+    "first_slot": 210,
+    "first_frame_after_seek": 257,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": false,
+     "flac_decoder": true,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "flac"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 7.992
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 14,
+     "n_found": 14,
+     "err_samples_min": -384,
+     "err_samples_max": -384,
+     "err_samples_median": -384.0,
+     "err_ms_median": -8.0,
+     "polarity_ok": "14/14"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 14,
+     "n_found": 14,
+     "err_samples_min": -384,
+     "err_samples_max": -384,
+     "err_samples_median": -384.0,
+     "err_ms_median": -8.0,
+     "polarity_ok": "14/14"
+    }
+   },
+   "ffplay": {
+    "rc": 0,
+    "warnings": [
+     "Failed to initialize a hardware accelerated renderer: Couldn't find matching render driver",
+     "    nan    :  0.000 fd=   0 aq=    0KB vq=    0KB sq=    0B ",
+     "[matroska,webm @ 00000226fa8e0640] Could not find codec parameters for stream 2 (Attachment: none): unknown codec",
+     "Consider increasing the value for the 'analyzeduration' (0) and 'probesize' (5000000) options",
+     "\u001b[2K"
+    ],
+    "last_av_diff_s": -0.004,
+    "max_abs_av_diff_s": 0.08,
+    "clock_end_s": 14.95
+   },
+   "check_s": 48.0
+  }
+ },
+ "flac24_st": {
+  "source": "cam30_48k",
+  "writer": {
+   "src": "cam30_48k.mp4",
+   "start_frame": 47,
+   "frame_count": 450,
+   "src_fps": "30",
+   "out_fps": "30",
+   "acodec": "flac",
+   "audio_src_rate": 48000,
+   "audio_out_rate": 48000,
+   "audio_channels": 2,
+   "audio_decode_gaps": 0,
+   "audio_window_first_src_sample": 75200,
+   "audio_window_rounding_samples": 0.0,
+   "audio_samples": 720000,
+   "audio_pad_front": 0,
+   "audio_pad_back": 0,
+   "audio_src_first_time_s": 0.0,
+   "video_src_start_time_s": 0.0,
+   "encoder_initial_padding": 0,
+   "write_s": 0.609,
+   "scan_ms": 9.44,
+   "video_blocks": 450,
+   "video_crc_match": 450,
+   "audio_blocks": 157,
+   "audio_crc_match": 157,
+   "audio_laced_blocks": 0,
+   "segment_uid": "8272d0bc350952e067f71acf0aa31bd2",
+   "bytes": 16130403,
+   "video_bytes": 13179802,
+   "audio_bytes": 2928730,
+   "audio_track": {
+    "num": 2,
+    "codec_id": "A_FLAC"
+   },
+   "audio_codec_private_len": 42,
+   "audio_first_block_ts_ns": 0,
+   "video_first_block_ts_ns": 0
+  },
+  "checks": {
+   "file": "flac24_st.mkv",
+   "ffprobe": {
+    "streams": [
+     {
+      "index": 0,
+      "codec_name": "mjpeg",
+      "codec_type": "video",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "8",
+      "nb_read_packets": "450"
+     },
+     {
+      "index": 1,
+      "codec_name": "flac",
+      "codec_type": "audio",
+      "sample_fmt": "s32",
+      "sample_rate": "48000",
+      "channels": 2,
+      "channel_layout": "stereo",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "24",
+      "nb_read_packets": "157"
+     }
+    ],
+    "format": {
+     "nb_streams": 2,
+     "duration": "15.000000"
+    },
+    "stderr": ""
+   },
+   "ffmpeg_decode": {
+    "rc": 0,
+    "error_lines": 0,
+    "stderr": ""
+   },
+   "pyav": {
+    "video_frames": 450,
+    "video_frame_exact": "450/450",
+    "audio_first_frame_pts_s": 0.0,
+    "audio_decoded_samples": 720000,
+    "audio_channels_decoded": 2,
+    "audio_leading_samples_dropped": 0,
+    "sync_L": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "sync_R": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "channel_identity": {
+     "L": {
+      "f3k": 395.82,
+      "f1k5": 7.93
+     },
+     "R": {
+      "f3k": 7.82,
+      "f1k5": 396.86
+     },
+     "ok": true
+    }
+   },
+   "opencv": {
+    "cap_prop_frame_count": 450,
+    "frames_read": 450,
+    "seeks_match_sequential": "11/11",
+    "twin_frame_count": 450,
+    "pixels_identical_to_video_only_twin": "450/450",
+    "seeks_identical_to_twin": "11/11"
+   },
+   "vlc_play": {
+    "rc": 0,
+    "pngs": 450,
+    "first_frame_number": 47,
+    "last_frame_number": 496,
+    "first_slot": 0,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": false,
+     "flac_decoder": true,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "flac"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 15.0
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    }
+   },
+   "vlc_seek_7s": {
+    "rc": 0,
+    "pngs": 241,
+    "first_frame_number": 47,
+    "last_frame_number": 496,
+    "stale_first_png": true,
+    "first_slot": 210,
+    "first_frame_after_seek": 257,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": false,
+     "flac_decoder": true,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "flac"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 7.992
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 14,
+     "n_found": 14,
+     "err_samples_min": -384,
+     "err_samples_max": -384,
+     "err_samples_median": -384.0,
+     "err_ms_median": -8.0,
+     "polarity_ok": "14/14"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 14,
+     "n_found": 14,
+     "err_samples_min": -384,
+     "err_samples_max": -384,
+     "err_samples_median": -384.0,
+     "err_ms_median": -8.0,
+     "polarity_ok": "14/14"
+    }
+   },
+   "ffplay": {
+    "rc": 0,
+    "warnings": [
+     "Failed to initialize a hardware accelerated renderer: Couldn't find matching render driver",
+     "    nan    :  0.000 fd=   0 aq=    0KB vq=    0KB sq=    0B ",
+     "\u001b[2K",
+     "[swscaler @ 000001d764ec5bc0] deprecated pixel format used, make sure you did set range correctly",
+     "    nan A-V:    nan fd=   0 aq=  474KB vq= 4033KB sq=    0B "
+    ],
+    "last_av_diff_s": 0.005,
+    "max_abs_av_diff_s": 0.08,
+    "clock_end_s": 14.97
+   },
+   "check_s": 48.0
+  }
+ },
+ "vorbis_st": {
+  "source": "cam30_48k",
+  "writer": {
+   "src": "cam30_48k.mp4",
+   "start_frame": 47,
+   "frame_count": 450,
+   "src_fps": "30",
+   "out_fps": "30",
+   "acodec": "vorbis",
+   "audio_src_rate": 48000,
+   "audio_out_rate": 48000,
+   "audio_channels": 2,
+   "audio_decode_gaps": 0,
+   "audio_window_first_src_sample": 75200,
+   "audio_window_rounding_samples": 0.0,
+   "audio_samples": 720000,
+   "audio_pad_front": 0,
+   "audio_pad_back": 0,
+   "audio_src_first_time_s": 0.0,
+   "video_src_start_time_s": 0.0,
+   "encoder_initial_padding": 1024,
+   "write_s": 0.7,
+   "scan_ms": 12.08,
+   "video_blocks": 450,
+   "video_crc_match": 450,
+   "audio_blocks": 705,
+   "audio_crc_match": 705,
+   "audio_laced_blocks": 0,
+   "segment_uid": "2591c6679e3aea8f6d75083f19f3c9e4",
+   "bytes": 14048556,
+   "video_bytes": 13179802,
+   "audio_bytes": 835411,
+   "audio_track": {
+    "num": 2,
+    "codec_id": "A_VORBIS",
+    "codec_delay_ns": 21333333
+   },
+   "audio_codec_private_len": 3296,
+   "audio_first_block_ts_ns": 0,
+   "video_first_block_ts_ns": 0
+  },
+  "checks": {
+   "file": "vorbis_st.mkv",
+   "ffprobe": {
+    "streams": [
+     {
+      "index": 0,
+      "codec_name": "mjpeg",
+      "codec_type": "video",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "8",
+      "nb_read_packets": "450"
+     },
+     {
+      "index": 1,
+      "codec_name": "vorbis",
+      "codec_type": "audio",
+      "sample_fmt": "fltp",
+      "sample_rate": "48000",
+      "channels": 2,
+      "channel_layout": "stereo",
+      "start_time": "0.000000",
+      "nb_read_packets": "705"
+     }
+    ],
+    "format": {
+     "nb_streams": 2,
+     "duration": "15.021000"
+    },
+    "stderr": ""
+   },
+   "ffmpeg_decode": {
+    "rc": 0,
+    "error_lines": 0,
+    "stderr": ""
+   },
+   "pyav": {
+    "video_frames": 450,
+    "video_frame_exact": "450/450",
+    "audio_first_frame_pts_s": 0.0,
+    "audio_decoded_samples": 720000,
+    "audio_channels_decoded": 2,
+    "audio_leading_samples_dropped": 0,
+    "sync_L": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "sync_R": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": -1,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "channel_identity": {
+     "L": {
+      "f3k": 395.91,
+      "f1k5": 7.93
+     },
+     "R": {
+      "f3k": 7.81,
+      "f1k5": 379.4
+     },
+     "ok": true
+    }
+   },
+   "opencv": {
+    "cap_prop_frame_count": 451,
+    "frames_read": 450,
+    "seeks_match_sequential": "11/11",
+    "twin_frame_count": 450,
+    "pixels_identical_to_video_only_twin": "450/450",
+    "seeks_identical_to_twin": "11/11"
+   },
+   "vlc_play": {
+    "rc": 0,
+    "pngs": 450,
+    "first_frame_number": 47,
+    "last_frame_number": 496,
+    "first_slot": 0,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": false,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "vorbis"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 15.019
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 27,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 27,
+     "n_found": 26,
+     "err_samples_min": -1,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    }
+   },
+   "vlc_seek_7s": {
+    "rc": 0,
+    "pngs": 240,
+    "first_frame_number": 257,
+    "last_frame_number": 496,
+    "stale_first_png": false,
+    "first_slot": 210,
+    "first_frame_after_seek": 257,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": false,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "vorbis"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 8.043
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 15,
+     "n_found": 14,
+     "err_samples_min": 1152,
+     "err_samples_max": 1152,
+     "err_samples_median": 1152.0,
+     "err_ms_median": 24.0,
+     "polarity_ok": "14/14"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 15,
+     "n_found": 14,
+     "err_samples_min": 1151,
+     "err_samples_max": 1152,
+     "err_samples_median": 1152.0,
+     "err_ms_median": 24.0,
+     "polarity_ok": "14/14"
+    }
+   },
+   "ffplay": {
+    "rc": 0,
+    "warnings": [
+     "Failed to initialize a hardware accelerated renderer: Couldn't find matching render driver",
+     "    nan    :  0.000 fd=   0 aq=    0KB vq=    0KB sq=    0B ",
+     "\u001b[2K",
+     "[swscaler @ 000001b7a48f7400] deprecated pixel format used, make sure you did set range correctly",
+     "    nan A-V:    nan fd=   0 aq=   56KB vq=  950KB sq=    0B "
+    ],
+    "last_av_diff_s": -0.013,
+    "max_abs_av_diff_s": 0.08,
+    "clock_end_s": 14.97
+   },
+   "check_s": 48.5
+  }
+ },
+ "pcm24_st": {
+  "source": "cam30_48k",
+  "writer": {
+   "src": "cam30_48k.mp4",
+   "start_frame": 47,
+   "frame_count": 450,
+   "src_fps": "30",
+   "out_fps": "30",
+   "acodec": "pcm_s24le",
+   "audio_src_rate": 48000,
+   "audio_out_rate": 48000,
+   "audio_channels": 2,
+   "audio_decode_gaps": 0,
+   "audio_window_first_src_sample": 75200,
+   "audio_window_rounding_samples": 0.0,
+   "audio_samples": 720000,
+   "audio_pad_front": 0,
+   "audio_pad_back": 0,
+   "audio_src_first_time_s": 0.0,
+   "video_src_start_time_s": 0.0,
+   "encoder_initial_padding": 0,
+   "write_s": 0.572,
+   "scan_ms": 17.31,
+   "video_blocks": 450,
+   "video_crc_match": 450,
+   "audio_blocks": 450,
+   "audio_crc_match": 450,
+   "audio_laced_blocks": 0,
+   "segment_uid": "80825c7ff0e3febf09656ddda59b0465",
+   "bytes": 17523830,
+   "video_bytes": 13179802,
+   "audio_bytes": 4320000,
+   "audio_track": {
+    "num": 2,
+    "codec_id": "A_PCM/INT/LIT"
+   },
+   "audio_codec_private_len": 0,
+   "audio_first_block_ts_ns": 0,
+   "video_first_block_ts_ns": 0
+  },
+  "checks": {
+   "file": "pcm24_st.mkv",
+   "ffprobe": {
+    "streams": [
+     {
+      "index": 0,
+      "codec_name": "mjpeg",
+      "codec_type": "video",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "8",
+      "nb_read_packets": "450"
+     },
+     {
+      "index": 1,
+      "codec_name": "pcm_s24le",
+      "codec_type": "audio",
+      "sample_fmt": "s32",
+      "sample_rate": "48000",
+      "channels": 2,
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "24",
+      "nb_read_packets": "450"
+     }
+    ],
+    "format": {
+     "nb_streams": 2,
+     "duration": "15.000000"
+    },
+    "stderr": ""
+   },
+   "ffmpeg_decode": {
+    "rc": 0,
+    "error_lines": 0,
+    "stderr": ""
+   },
+   "pyav": {
+    "video_frames": 450,
+    "video_frame_exact": "450/450",
+    "audio_first_frame_pts_s": 0.0,
+    "audio_decoded_samples": 720000,
+    "audio_channels_decoded": 2,
+    "audio_leading_samples_dropped": 0,
+    "sync_L": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "sync_R": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "channel_identity": {
+     "L": {
+      "f3k": 395.82,
+      "f1k5": 7.93
+     },
+     "R": {
+      "f3k": 7.82,
+      "f1k5": 396.86
+     },
+     "ok": true
+    }
+   },
+   "opencv": {
+    "cap_prop_frame_count": 450,
+    "frames_read": 450,
+    "seeks_match_sequential": "11/11",
+    "twin_frame_count": 450,
+    "pixels_identical_to_video_only_twin": "450/450",
+    "seeks_identical_to_twin": "11/11"
+   },
+   "vlc_play": {
+    "rc": 0,
+    "pngs": 449,
+    "first_frame_number": 47,
+    "last_frame_number": 495,
+    "first_slot": 0,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": false,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "araw"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 15.0
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    }
+   },
+   "vlc_seek_7s": {
+    "rc": 0,
+    "pngs": 240,
+    "first_frame_number": 47,
+    "last_frame_number": 495,
+    "stale_first_png": true,
+    "first_slot": 210,
+    "first_frame_after_seek": 257,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": false,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "araw"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 8.0
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 14,
+     "n_found": 14,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "14/14"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 14,
+     "n_found": 14,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "14/14"
+    }
+   },
+   "ffplay": {
+    "rc": 0,
+    "warnings": [
+     "Failed to initialize a hardware accelerated renderer: Couldn't find matching render driver",
+     "    nan    :  0.000 fd=   0 aq=    0KB vq=    0KB sq=    0B ",
+     "\u001b[2K",
+     "[swscaler @ 0000021ad8071840] deprecated pixel format used, make sure you did set range correctly",
+     "    nan A-V:    nan fd=   0 aq=  291KB vq= 1073KB sq=    0B "
+    ],
+    "last_av_diff_s": 0.003,
+    "max_abs_av_diff_s": 0.071,
+    "clock_end_s": 14.99
+   },
+   "check_s": 50.3
+  }
+ },
+ "opus_from44k_poly": {
+  "source": "cam30_44k",
+  "writer": {
+   "src": "cam30_44k.mp4",
+   "start_frame": 47,
+   "frame_count": 450,
+   "src_fps": "30",
+   "out_fps": "30",
+   "acodec": "opus",
+   "audio_src_rate": 44100,
+   "audio_out_rate": 48000,
+   "audio_channels": 2,
+   "audio_decode_gaps": 0,
+   "audio_window_first_src_sample": 75200,
+   "audio_window_rounding_samples": 0.0,
+   "audio_samples": 720000,
+   "audio_pad_front": 0,
+   "audio_pad_back": 0,
+   "audio_src_first_time_s": 0.0,
+   "video_src_start_time_s": 0.0,
+   "encoder_initial_padding": 312,
+   "write_s": 0.719,
+   "scan_ms": 11.55,
+   "video_blocks": 450,
+   "video_crc_match": 450,
+   "audio_blocks": 751,
+   "audio_crc_match": 751,
+   "audio_laced_blocks": 0,
+   "segment_uid": "50f804aef44d9f58dbd27c58e8290410",
+   "bytes": 13417016,
+   "video_bytes": 13179802,
+   "audio_bytes": 211047,
+   "audio_track": {
+    "num": 2,
+    "codec_id": "A_OPUS",
+    "codec_delay_ns": 6500000,
+    "seek_preroll_ns": 80000000
+   },
+   "audio_codec_private_len": 19,
+   "audio_first_block_ts_ns": 0,
+   "video_first_block_ts_ns": 0
+  },
+  "checks": {
+   "file": "opus_from44k_poly.mkv",
+   "ffprobe": {
+    "streams": [
+     {
+      "index": 0,
+      "codec_name": "mjpeg",
+      "codec_type": "video",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "8",
+      "nb_read_packets": "450"
+     },
+     {
+      "index": 1,
+      "codec_name": "opus",
+      "codec_type": "audio",
+      "sample_fmt": "fltp",
+      "sample_rate": "48000",
+      "channels": 2,
+      "channel_layout": "stereo",
+      "start_time": "0.000000",
+      "nb_read_packets": "751"
+     }
+    ],
+    "format": {
+     "nb_streams": 2,
+     "duration": "15.008000"
+    },
+    "stderr": ""
+   },
+   "ffmpeg_decode": {
+    "rc": 0,
+    "error_lines": 0,
+    "stderr": ""
+   },
+   "pyav": {
+    "video_frames": 450,
+    "video_frame_exact": "450/450",
+    "audio_first_frame_pts_s": 0.0,
+    "audio_decoded_samples": 720000,
+    "audio_channels_decoded": 2,
+    "audio_leading_samples_dropped": 0,
+    "sync_L": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "sync_R": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": -16,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "25/26"
+    },
+    "channel_identity": {
+     "L": {
+      "f3k": 395.01,
+      "f1k5": 7.77
+     },
+     "R": {
+      "f3k": 7.99,
+      "f1k5": 396.58
+     },
+     "ok": true
+    }
+   },
+   "opencv": {
+    "cap_prop_frame_count": 450,
+    "frames_read": 450,
+    "seeks_match_sequential": "11/11"
+   },
+   "vlc_play": {
+    "rc": 0,
+    "pngs": 450,
+    "first_frame_number": 47,
+    "last_frame_number": 496,
+    "first_slot": 0,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": true,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "opus"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 15.02
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 27,
+     "n_found": 26,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "26/26"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 27,
+     "n_found": 26,
+     "err_samples_min": 296,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "25/26"
+    }
+   },
+   "vlc_seek_7s": {
+    "rc": 0,
+    "pngs": 240,
+    "first_frame_number": 257,
+    "last_frame_number": 496,
+    "stale_first_png": false,
+    "first_slot": 210,
+    "first_frame_after_seek": 257,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": true,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "opus"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 1,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 8.02
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 15,
+     "n_found": 14,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "14/14"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 15,
+     "n_found": 14,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "14/14"
+    }
+   },
+   "ffplay": {
+    "rc": 0,
+    "warnings": [
+     "Failed to initialize a hardware accelerated renderer: Couldn't find matching render driver",
+     "    nan    :  0.000 fd=   0 aq=    0KB vq=    0KB sq=    0B ",
+     "\u001b[2K",
+     "[swscaler @ 000001a16a3d6fc0] deprecated pixel format used, make sure you did set range correctly",
+     "    nan A-V:    nan fd=   0 aq=   14KB vq=  924KB sq=    0B "
+    ],
+    "last_av_diff_s": -0.002,
+    "max_abs_av_diff_s": 0.069,
+    "clock_end_s": 14.95
+   },
+   "check_s": 49.9
+  }
+ },
+ "opus_from44k_swr": {
+  "source": "cam30_44k",
+  "writer": {
+   "src": "cam30_44k.mp4",
+   "start_frame": 47,
+   "frame_count": 450,
+   "src_fps": "30",
+   "out_fps": "30",
+   "acodec": "opus",
+   "audio_src_rate": 44100,
+   "audio_out_rate": 48000,
+   "audio_channels": 2,
+   "audio_decode_gaps": 0,
+   "audio_window_first_src_sample": 75200,
+   "audio_window_rounding_samples": 0.0,
+   "audio_samples": 720000,
+   "audio_pad_front": 0,
+   "audio_pad_back": 0,
+   "audio_src_first_time_s": 0.0,
+   "video_src_start_time_s": 0.0,
+   "encoder_initial_padding": 312,
+   "write_s": 0.742,
+   "scan_ms": 11.07,
+   "video_blocks": 450,
+   "video_crc_match": 450,
+   "audio_blocks": 751,
+   "audio_crc_match": 751,
+   "audio_laced_blocks": 0,
+   "segment_uid": "77e66a08721a20cf7237b7805d4054a0",
+   "bytes": 13416968,
+   "video_bytes": 13179802,
+   "audio_bytes": 210999,
+   "audio_track": {
+    "num": 2,
+    "codec_id": "A_OPUS",
+    "codec_delay_ns": 6500000,
+    "seek_preroll_ns": 80000000
+   },
+   "audio_codec_private_len": 19,
+   "audio_first_block_ts_ns": 0,
+   "video_first_block_ts_ns": 0
+  },
+  "checks": {
+   "file": "opus_from44k_swr.mkv",
+   "ffprobe": {
+    "streams": [
+     {
+      "index": 0,
+      "codec_name": "mjpeg",
+      "codec_type": "video",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "8",
+      "nb_read_packets": "450"
+     },
+     {
+      "index": 1,
+      "codec_name": "opus",
+      "codec_type": "audio",
+      "sample_fmt": "fltp",
+      "sample_rate": "48000",
+      "channels": 2,
+      "channel_layout": "stereo",
+      "start_time": "0.000000",
+      "nb_read_packets": "751"
+     }
+    ],
+    "format": {
+     "nb_streams": 2,
+     "duration": "15.008000"
+    },
+    "stderr": ""
+   },
+   "ffmpeg_decode": {
+    "rc": 0,
+    "error_lines": 0,
+    "stderr": ""
+   },
+   "pyav": {
+    "video_frames": 450,
+    "video_frame_exact": "450/450",
+    "audio_first_frame_pts_s": 0.0,
+    "audio_decoded_samples": 720000,
+    "audio_channels_decoded": 2,
+    "audio_leading_samples_dropped": 0,
+    "sync_L": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "sync_R": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": -16,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "25/26"
+    },
+    "channel_identity": {
+     "L": {
+      "f3k": 393.68,
+      "f1k5": 7.76
+     },
+     "R": {
+      "f3k": 7.98,
+      "f1k5": 396.55
+     },
+     "ok": true
+    }
+   },
+   "opencv": {
+    "cap_prop_frame_count": 450,
+    "frames_read": 450,
+    "seeks_match_sequential": "11/11"
+   },
+   "vlc_play": {
+    "rc": 0,
+    "pngs": 450,
+    "first_frame_number": 47,
+    "last_frame_number": 496,
+    "first_slot": 0,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": true,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "opus"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 15.02
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 27,
+     "n_found": 26,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "26/26"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 27,
+     "n_found": 26,
+     "err_samples_min": 296,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "25/26"
+    }
+   },
+   "vlc_seek_7s": {
+    "rc": 0,
+    "pngs": 240,
+    "first_frame_number": 257,
+    "last_frame_number": 496,
+    "stale_first_png": false,
+    "first_slot": 210,
+    "first_frame_after_seek": 257,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": true,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "opus"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 1,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 8.02
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 15,
+     "n_found": 14,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "14/14"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 15,
+     "n_found": 14,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "14/14"
+    }
+   },
+   "ffplay": {
+    "rc": 0,
+    "warnings": [
+     "Failed to initialize a hardware accelerated renderer: Couldn't find matching render driver",
+     "    nan    :  0.000 fd=   0 aq=    0KB vq=    0KB sq=    0B ",
+     "\u001b[2K",
+     "[swscaler @ 0000019076bac8c0] deprecated pixel format used, make sure you did set range correctly",
+     "    nan A-V:    nan fd=   0 aq=   14KB vq=  924KB sq=    0B "
+    ],
+    "last_av_diff_s": -0.001,
+    "max_abs_av_diff_s": 0.071,
+    "clock_end_s": 14.95
+   },
+   "check_s": 51.0
+  }
+ },
+ "flac16_44k": {
+  "source": "cam30_44k",
+  "writer": {
+   "src": "cam30_44k.mp4",
+   "start_frame": 47,
+   "frame_count": 450,
+   "src_fps": "30",
+   "out_fps": "30",
+   "acodec": "flac",
+   "audio_src_rate": 44100,
+   "audio_out_rate": 44100,
+   "audio_channels": 2,
+   "audio_decode_gaps": 0,
+   "audio_window_first_src_sample": 69090,
+   "audio_window_rounding_samples": 0.0,
+   "audio_samples": 661500,
+   "audio_pad_front": 0,
+   "audio_pad_back": 0,
+   "audio_src_first_time_s": 0.0,
+   "video_src_start_time_s": 0.0,
+   "encoder_initial_padding": 0,
+   "write_s": 0.752,
+   "scan_ms": 11.09,
+   "video_blocks": 450,
+   "video_crc_match": 450,
+   "audio_blocks": 144,
+   "audio_crc_match": 144,
+   "audio_laced_blocks": 0,
+   "segment_uid": "278341d38589285646e88c79694b092f",
+   "bytes": 14624658,
+   "video_bytes": 13179802,
+   "audio_bytes": 1423244,
+   "audio_track": {
+    "num": 2,
+    "codec_id": "A_FLAC"
+   },
+   "audio_codec_private_len": 42,
+   "audio_first_block_ts_ns": 0,
+   "video_first_block_ts_ns": 0
+  },
+  "checks": {
+   "file": "flac16_44k.mkv",
+   "ffprobe": {
+    "streams": [
+     {
+      "index": 0,
+      "codec_name": "mjpeg",
+      "codec_type": "video",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "8",
+      "nb_read_packets": "450"
+     },
+     {
+      "index": 1,
+      "codec_name": "flac",
+      "codec_type": "audio",
+      "sample_fmt": "s16",
+      "sample_rate": "44100",
+      "channels": 2,
+      "channel_layout": "stereo",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "16",
+      "nb_read_packets": "144"
+     }
+    ],
+    "format": {
+     "nb_streams": 2,
+     "duration": "15.000000"
+    },
+    "stderr": ""
+   },
+   "ffmpeg_decode": {
+    "rc": 0,
+    "error_lines": 0,
+    "stderr": ""
+   },
+   "pyav": {
+    "video_frames": 450,
+    "video_frame_exact": "450/450",
+    "audio_first_frame_pts_s": 0.0,
+    "audio_decoded_samples": 661500,
+    "audio_channels_decoded": 2,
+    "audio_leading_samples_dropped": 0,
+    "sync_L": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": -7,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "25/26"
+    },
+    "sync_R": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": -14,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "25/26"
+    },
+    "channel_identity": {
+     "L": {
+      "f3k": 361.29,
+      "f1k5": 7.05
+     },
+     "R": {
+      "f3k": 7.21,
+      "f1k5": 363.43
+     },
+     "ok": true
+    }
+   },
+   "opencv": {
+    "cap_prop_frame_count": 450,
+    "frames_read": 450,
+    "seeks_match_sequential": "11/11"
+   },
+   "vlc_play": {
+    "rc": 0,
+    "pngs": 449,
+    "first_frame_number": 47,
+    "last_frame_number": 495,
+    "first_slot": 0,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": false,
+     "flac_decoder": true,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "flac"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 44100,
+     "channels": 2,
+     "seconds": 15.0
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": -7,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "25/26"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": -14,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "25/26"
+    }
+   },
+   "vlc_seek_7s": {
+    "rc": 0,
+    "pngs": 240,
+    "first_frame_number": 47,
+    "last_frame_number": 495,
+    "stale_first_png": true,
+    "first_slot": 210,
+    "first_frame_after_seek": 257,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": false,
+     "flac_decoder": true,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "flac"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 44100,
+     "channels": 2,
+     "seconds": 7.999
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 14,
+     "n_found": 14,
+     "err_samples_min": -36,
+     "err_samples_max": -36,
+     "err_samples_median": -36.0,
+     "err_ms_median": -0.816,
+     "polarity_ok": "14/14"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 14,
+     "n_found": 14,
+     "err_samples_min": -36,
+     "err_samples_max": -36,
+     "err_samples_median": -36.0,
+     "err_ms_median": -0.816,
+     "polarity_ok": "14/14"
+    }
+   },
+   "ffplay": {
+    "rc": 0,
+    "warnings": [
+     "Failed to initialize a hardware accelerated renderer: Couldn't find matching render driver",
+     "    nan    :  0.000 fd=   0 aq=    0KB vq=    0KB sq=    0B ",
+     "\u001b[2K",
+     "[swscaler @ 00000187ff797500] deprecated pixel format used, make sure you did set range correctly",
+     "    nan A-V:    nan fd=   0 aq=  247KB vq= 4379KB sq=    0B "
+    ],
+    "last_av_diff_s": -0.008,
+    "max_abs_av_diff_s": 0.076,
+    "clock_end_s": 14.96
+   },
+   "check_s": 48.4
+  }
+ },
+ "opus_vstart": {
+  "source": "cam30_48k_vstart",
+  "writer": {
+   "src": "cam30_48k_vstart.mp4",
+   "start_frame": 47,
+   "frame_count": 450,
+   "src_fps": "30",
+   "out_fps": "30",
+   "acodec": "opus",
+   "audio_src_rate": 48000,
+   "audio_out_rate": 48000,
+   "audio_channels": 2,
+   "audio_decode_gaps": 0,
+   "audio_window_first_src_sample": 80000,
+   "audio_window_rounding_samples": 0.0,
+   "audio_samples": 720000,
+   "audio_pad_front": 0,
+   "audio_pad_back": 0,
+   "audio_src_first_time_s": 0.0,
+   "video_src_start_time_s": 0.1,
+   "encoder_initial_padding": 312,
+   "write_s": 0.5,
+   "scan_ms": 9.49,
+   "video_blocks": 450,
+   "video_crc_match": 450,
+   "audio_blocks": 751,
+   "audio_crc_match": 751,
+   "audio_laced_blocks": 0,
+   "segment_uid": "66ad9db41ee567f6204335704d8ff658",
+   "bytes": 13419739,
+   "video_bytes": 13179802,
+   "audio_bytes": 213770,
+   "audio_track": {
+    "num": 2,
+    "codec_id": "A_OPUS",
+    "codec_delay_ns": 6500000,
+    "seek_preroll_ns": 80000000
+   },
+   "audio_codec_private_len": 19,
+   "audio_first_block_ts_ns": 0,
+   "video_first_block_ts_ns": 0
+  },
+  "checks": {
+   "file": "opus_vstart.mkv",
+   "ffprobe": {
+    "streams": [
+     {
+      "index": 0,
+      "codec_name": "mjpeg",
+      "codec_type": "video",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "8",
+      "nb_read_packets": "450"
+     },
+     {
+      "index": 1,
+      "codec_name": "opus",
+      "codec_type": "audio",
+      "sample_fmt": "fltp",
+      "sample_rate": "48000",
+      "channels": 2,
+      "channel_layout": "stereo",
+      "start_time": "0.000000",
+      "nb_read_packets": "751"
+     }
+    ],
+    "format": {
+     "nb_streams": 2,
+     "duration": "15.008000"
+    },
+    "stderr": ""
+   },
+   "ffmpeg_decode": {
+    "rc": 0,
+    "error_lines": 0,
+    "stderr": ""
+   },
+   "pyav": {
+    "video_frames": 450,
+    "video_frame_exact": "450/450",
+    "audio_first_frame_pts_s": 0.0,
+    "audio_decoded_samples": 720000,
+    "audio_channels_decoded": 2,
+    "audio_leading_samples_dropped": 0,
+    "sync_L": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "sync_R": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "channel_identity": {
+     "L": {
+      "f3k": 392.91,
+      "f1k5": 7.96
+     },
+     "R": {
+      "f3k": 7.99,
+      "f1k5": 395.49
+     },
+     "ok": true
+    }
+   },
+   "opencv": {
+    "cap_prop_frame_count": 450,
+    "frames_read": 450,
+    "seeks_match_sequential": "11/11"
+   },
+   "vlc_play": {
+    "rc": 0,
+    "pngs": 450,
+    "first_frame_number": 47,
+    "last_frame_number": 496,
+    "first_slot": 0,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": true,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "opus"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 15.02
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 27,
+     "n_found": 26,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "26/26"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 27,
+     "n_found": 26,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "26/26"
+    }
+   },
+   "vlc_seek_7s": {
+    "rc": 0,
+    "pngs": 240,
+    "first_frame_number": 257,
+    "last_frame_number": 496,
+    "stale_first_png": false,
+    "first_slot": 210,
+    "first_frame_after_seek": 257,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": true,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "opus"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 1,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 8.02
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 15,
+     "n_found": 14,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "14/14"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 15,
+     "n_found": 14,
+     "err_samples_min": 312,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "14/14"
+    }
+   },
+   "ffplay": {
+    "rc": 0,
+    "warnings": [
+     "Failed to initialize a hardware accelerated renderer: Couldn't find matching render driver",
+     "    nan    :  0.000 fd=   0 aq=    0KB vq=    0KB sq=    0B ",
+     "\u001b[2K",
+     "[swscaler @ 00000277fc275e80] deprecated pixel format used, make sure you did set range correctly",
+     "    nan A-V:    nan fd=   0 aq=   14KB vq=  924KB sq=    0B "
+    ],
+    "last_av_diff_s": -0.009,
+    "max_abs_av_diff_s": 0.068,
+    "clock_end_s": 14.97
+   },
+   "check_s": 47.4
+  }
+ },
+ "flac16_vstart": {
+  "source": "cam30_48k_vstart",
+  "writer": {
+   "src": "cam30_48k_vstart.mp4",
+   "start_frame": 47,
+   "frame_count": 450,
+   "src_fps": "30",
+   "out_fps": "30",
+   "acodec": "flac",
+   "audio_src_rate": 48000,
+   "audio_out_rate": 48000,
+   "audio_channels": 2,
+   "audio_decode_gaps": 0,
+   "audio_window_first_src_sample": 80000,
+   "audio_window_rounding_samples": 0.0,
+   "audio_samples": 720000,
+   "audio_pad_front": 0,
+   "audio_pad_back": 0,
+   "audio_src_first_time_s": 0.0,
+   "video_src_start_time_s": 0.1,
+   "encoder_initial_padding": 0,
+   "write_s": 0.43,
+   "scan_ms": 7.93,
+   "video_blocks": 450,
+   "video_crc_match": 450,
+   "audio_blocks": 157,
+   "audio_crc_match": 157,
+   "audio_laced_blocks": 0,
+   "segment_uid": "fe869b37d795b5b43b8db78b55c57d87",
+   "bytes": 14695531,
+   "video_bytes": 13179802,
+   "audio_bytes": 1494014,
+   "audio_track": {
+    "num": 2,
+    "codec_id": "A_FLAC"
+   },
+   "audio_codec_private_len": 42,
+   "audio_first_block_ts_ns": 0,
+   "video_first_block_ts_ns": 0
+  },
+  "checks": {
+   "file": "flac16_vstart.mkv",
+   "ffprobe": {
+    "streams": [
+     {
+      "index": 0,
+      "codec_name": "mjpeg",
+      "codec_type": "video",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "8",
+      "nb_read_packets": "450"
+     },
+     {
+      "index": 1,
+      "codec_name": "flac",
+      "codec_type": "audio",
+      "sample_fmt": "s16",
+      "sample_rate": "48000",
+      "channels": 2,
+      "channel_layout": "stereo",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "16",
+      "nb_read_packets": "157"
+     }
+    ],
+    "format": {
+     "nb_streams": 2,
+     "duration": "15.000000"
+    },
+    "stderr": ""
+   },
+   "ffmpeg_decode": {
+    "rc": 0,
+    "error_lines": 0,
+    "stderr": ""
+   },
+   "pyav": {
+    "video_frames": 450,
+    "video_frame_exact": "450/450",
+    "audio_first_frame_pts_s": 0.0,
+    "audio_decoded_samples": 720000,
+    "audio_channels_decoded": 2,
+    "audio_leading_samples_dropped": 0,
+    "sync_L": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "sync_R": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "channel_identity": {
+     "L": {
+      "f3k": 392.69,
+      "f1k5": 7.92
+     },
+     "R": {
+      "f3k": 7.96,
+      "f1k5": 397.11
+     },
+     "ok": true
+    }
+   },
+   "opencv": {
+    "cap_prop_frame_count": 450,
+    "frames_read": 450,
+    "seeks_match_sequential": "11/11"
+   },
+   "vlc_play": {
+    "rc": 0,
+    "pngs": 450,
+    "first_frame_number": 47,
+    "last_frame_number": 496,
+    "first_slot": 0,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": false,
+     "flac_decoder": true,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "flac"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 15.0
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 26,
+     "n_found": 26,
+     "err_samples_min": 0,
+     "err_samples_max": 0,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "26/26"
+    }
+   },
+   "vlc_seek_7s": {
+    "rc": 0,
+    "pngs": 241,
+    "first_frame_number": 47,
+    "last_frame_number": 496,
+    "stale_first_png": true,
+    "first_slot": 210,
+    "first_frame_after_seek": 257,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": false,
+     "flac_decoder": true,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "flac"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 7.992
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 14,
+     "n_found": 14,
+     "err_samples_min": -384,
+     "err_samples_max": -384,
+     "err_samples_median": -384.0,
+     "err_ms_median": -8.0,
+     "polarity_ok": "14/14"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 14,
+     "n_found": 14,
+     "err_samples_min": -384,
+     "err_samples_max": -384,
+     "err_samples_median": -384.0,
+     "err_ms_median": -8.0,
+     "polarity_ok": "14/14"
+    }
+   },
+   "ffplay": {
+    "rc": 0,
+    "warnings": [
+     "Failed to initialize a hardware accelerated renderer: Couldn't find matching render driver",
+     "    nan    :  0.000 fd=   0 aq=    0KB vq=    0KB sq=    0B ",
+     "\u001b[2K",
+     "[swscaler @ 0000019c6bf1c280] deprecated pixel format used, make sure you did set range correctly"
+    ],
+    "last_av_diff_s": -0.005,
+    "max_abs_av_diff_s": 0.069,
+    "clock_end_s": 14.96
+   },
+   "check_s": 47.3
+  }
+ },
+ "opus_r1_60to30": {
+  "source": "cam60_48k",
+  "writer": {
+   "src": "cam60_48k.mp4",
+   "start_frame": 94,
+   "frame_count": 450,
+   "src_fps": "60",
+   "out_fps": "30",
+   "acodec": "opus",
+   "audio_src_rate": 48000,
+   "audio_out_rate": 48000,
+   "audio_channels": 2,
+   "audio_decode_gaps": 0,
+   "audio_window_first_src_sample": 75200,
+   "audio_window_rounding_samples": 0.0,
+   "audio_samples": 720000,
+   "audio_pad_front": 0,
+   "audio_pad_back": 0,
+   "audio_src_first_time_s": 0.0,
+   "video_src_start_time_s": 0.0,
+   "encoder_initial_padding": 312,
+   "write_s": 0.809,
+   "scan_ms": 10.94,
+   "video_blocks": 450,
+   "video_crc_match": 450,
+   "audio_blocks": 751,
+   "audio_crc_match": 751,
+   "audio_laced_blocks": 0,
+   "segment_uid": "726871c45e0e0251318e5fa07b73c09c",
+   "bytes": 13403799,
+   "video_bytes": 13157450,
+   "audio_bytes": 220180,
+   "audio_track": {
+    "num": 2,
+    "codec_id": "A_OPUS",
+    "codec_delay_ns": 6500000,
+    "seek_preroll_ns": 80000000
+   },
+   "audio_codec_private_len": 19,
+   "audio_first_block_ts_ns": 0,
+   "video_first_block_ts_ns": 0
+  },
+  "checks": {
+   "file": "opus_r1_60to30.mkv",
+   "ffprobe": {
+    "streams": [
+     {
+      "index": 0,
+      "codec_name": "mjpeg",
+      "codec_type": "video",
+      "start_time": "0.000000",
+      "bits_per_raw_sample": "8",
+      "nb_read_packets": "450"
+     },
+     {
+      "index": 1,
+      "codec_name": "opus",
+      "codec_type": "audio",
+      "sample_fmt": "fltp",
+      "sample_rate": "48000",
+      "channels": 2,
+      "channel_layout": "stereo",
+      "start_time": "0.000000",
+      "nb_read_packets": "751"
+     }
+    ],
+    "format": {
+     "nb_streams": 2,
+     "duration": "15.008000"
+    },
+    "stderr": ""
+   },
+   "ffmpeg_decode": {
+    "rc": 0,
+    "error_lines": 0,
+    "stderr": ""
+   },
+   "pyav": {
+    "video_frames": 450,
+    "video_frame_exact": "450/450",
+    "audio_first_frame_pts_s": 0.0,
+    "audio_decoded_samples": 720000,
+    "audio_channels_decoded": 2,
+    "audio_leading_samples_dropped": 0,
+    "sync_L": {
+     "n_expected": 51,
+     "n_found": 51,
+     "err_samples_min": -7200,
+     "err_samples_max": 7200,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "51/51"
+    },
+    "sync_R": {
+     "n_expected": 51,
+     "n_found": 51,
+     "err_samples_min": -7200,
+     "err_samples_max": 7200,
+     "err_samples_median": 0.0,
+     "err_ms_median": 0.0,
+     "polarity_ok": "51/51"
+    },
+    "channel_identity": {
+     "L": {
+      "f3k": 775.2,
+      "f1k5": 15.41
+     },
+     "R": {
+      "f3k": 15.47,
+      "f1k5": 778.3
+     },
+     "ok": true
+    }
+   },
+   "opencv": {
+    "cap_prop_frame_count": 450,
+    "frames_read": 450,
+    "seeks_match_sequential": "11/11"
+   },
+   "vlc_play": {
+    "rc": 0,
+    "pngs": 450,
+    "first_frame_number": 94,
+    "last_frame_number": 992,
+    "first_slot": 0,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": true,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "opus"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 0,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 15.02
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 52,
+     "n_found": 51,
+     "err_samples_min": -6888,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "51/51"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 52,
+     "n_found": 51,
+     "err_samples_min": -6888,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "51/51"
+    }
+   },
+   "vlc_seek_7s": {
+    "rc": 0,
+    "pngs": 240,
+    "first_frame_number": 514,
+    "last_frame_number": 992,
+    "stale_first_png": false,
+    "first_slot": 210,
+    "first_frame_after_seek": 514,
+    "monotonic": true,
+    "log": {
+     "demux_mkv": false,
+     "opus_decoder": true,
+     "flac_decoder": false,
+     "avcodec_audio": false,
+     "audio_decoder_lines": [
+      "opus"
+     ],
+     "video_decoder_lines": [
+      "avcodec"
+     ],
+     "too_late": 1,
+     "mkv_error": 0,
+     "discontinuity": 0,
+     "errors": 0
+    },
+    "wav": {
+     "rate": 48000,
+     "channels": 2,
+     "seconds": 8.02
+    },
+    "sync_L_vs_first_png": {
+     "n_expected": 28,
+     "n_found": 27,
+     "err_samples_min": -6888,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "27/27"
+    },
+    "sync_R_vs_first_png": {
+     "n_expected": 28,
+     "n_found": 27,
+     "err_samples_min": -6888,
+     "err_samples_max": 312,
+     "err_samples_median": 312.0,
+     "err_ms_median": 6.5,
+     "polarity_ok": "27/27"
+    }
+   },
+   "ffplay": {
+    "rc": 0,
+    "warnings": [
+     "Failed to initialize a hardware accelerated renderer: Couldn't find matching render driver",
+     "    nan    :  0.000 fd=   0 aq=    0KB vq=    0KB sq=    0B ",
+     "\u001b[2K",
+     "[swscaler @ 00000267c90c6b40] deprecated pixel format used, make sure you did set range correctly",
+     "    nan A-V:    nan fd=   0 aq=   15KB vq=  918KB sq=    0B "
+    ],
+    "last_av_diff_s": 0.009,
+    "max_abs_av_diff_s": 0.071,
+    "clock_end_s": 14.96
+   },
+   "check_s": 50.4
+  }
+ }
+}

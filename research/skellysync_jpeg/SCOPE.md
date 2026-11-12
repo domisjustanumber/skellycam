@@ -180,6 +180,21 @@ Neutral note: R1 fits today's freemocap and the lockstep contract (PLAN 3.1). R2
 
 Whatever the choice, fix the selection bug (always `-map 0:v -map 1:a`, or write the WAV and skip the remux) and the length (frames ÷ rate).
 
+**Audio and the sidecar (added 2026-11-12, from `skellycam_recording/recording_upgrade/results/sidecar_embedding/FINDINGS.md` §6.5–6.7):**
+- Today's reattach pattern (write the video, then remux it with the audio and move the result over the output) moves every JPEG and changes the MKV's Segment UID: 0/1,800 offsets kept in a PyAV test [M]. A sidecar written during the encode is then wrong.
+- Muxing FLAC audio in the same pass also breaks offsets taken live from the file size (0/1,799); PCM in step kept them (1,799/1,799) [M].
+- So with Au2, offsets and the UID must be rebuilt by scanning the final MKV after the audio step: exact, about 0.1 s per 18,000 frames on a warm cache [M].
+
+**Decided 2026-11-12 (Dom; plan D15, §2.8): Au2 with FLAC.**
+- FLAC at the source rate, keeping the source channels, as a second track of each camera MKV, interleaved with the JPEG frames in the same PyAV pass. No remux.
+- Then rebuild offsets by scan, add an audio packet table to the sidecar, and write the Segment UID.
+- Measured in `skellycam_recording/recording_upgrade/results/audio_skellysync/FINDINGS.md`:
+  - VLC plays video and audio in sync and seeks to the exact frame;
+  - OpenCV's count and seeks are unchanged;
+  - every video and audio CRC matched;
+  - skellycam's player decodes the FLAC packets by offset with WebCodecs.
+- That doc also covers the audio-window rule and a latent lag bug (audio start vs video start, its §5.2) to fix in either design.
+
 ### 2.7 Encoder choice
 
 | Route | JPEG encoders available | Sidecar (offset/size/CRC) | Fit with project | Verdict |
@@ -197,7 +212,7 @@ Notes:
 ### 2.8 Sidecar and sync record
 
 - **Reuse skellycam package 1.5's per-frame format; don't invent a second one.** The fixed record holds the frame number, times in integer ns, CRC, offset and size; the header holds the format, encoder and camera key (PLAN 1.5).
-- How the 1.5 writer obtains byte offsets is that package's design. The playback study used "a sidecar index of byte offsets" (CC C28) [NV here].
+- How the 1.5 writer obtains byte offsets is that package's design. The playback study used "a sidecar index of byte offsets" (CC C28). Update 2026-11-12: every producer rebuilds offsets by scanning the final MKV after any remux or audio step, then writes the Segment UID, and can embed the sidecar as an attachment appended at the end of the file (`sidecar_embedding/FINDINGS.md` §7; plan §2.7). The shared format package (D-PKG) should hold the record codec, that scanner and the appender.
 - **Fields skellysync adds:**
   - per record: `source_frame_index` (u64) and `source_pts_ns` (i64), so every output frame can be traced to the original;
   - header: source file name, size and a content hash; source codec, profile, bit depth, range and transfer; `rotation_applied`; `range_converted`; encoder and knob (for example `mjpeg_qsv gq=94`); the quality definition used (D-Q); nominal rate as a rational; and the sync block below.
@@ -406,10 +421,10 @@ S ≈ ≤ 2 days, M ≈ 3–7 days, L ≈ 2+ weeks, for one engineer familiar wi
 | **D-PLAYER** | Which player shows sync results | Canvas player (needs Design A or conversion) · `<video>` import player (needs B; HEVC hardware-decode and seek caveats, §3) · both (preview in `<video>`, process from JPEG) |
 | **D-Q** | What "target A" means for re-encoding an already-lossy source | SSIM-Y 0.9961 against the decoded source, per-clip knob search (182–698 kB/frame at 1080p on phone clips) · fixed knob q94 / gq94, the setting that hits A on raw YUY2 (182–436 kB) · the knob that hits A on decoded webcam MJPEG, q83 (94–250 kB, SSIM-Y 0.986–0.994) [M §8.2] |
 | **D-FPS** | Differing frame rates | R1 resample to the lowest rate, with a source-index map (works with freemocap today) · R2 native rates + mapping (needs PLAN 2.2) · R3 both |
-| **D-AUDIO** | Audio output | Au1 separate WAV · Au2 PCM/FLAC/AAC track in the MKV · Au3 none |
+| **D-AUDIO** | Audio output | **Decided 2026-11-12: Au2 with FLAC** (plan D15; §2.6). Was: Au1 separate WAV · Au2 PCM/FLAC/AAC track in the MKV · Au3 none |
 | **D-HDR** | 10-bit, HDR and Log sources | Refuse with a clear error · tone-map to 8-bit SDR (and record it) · keep the originals (Design B) |
 | **D-PY** | Python floor and timing | Wait for freemocap's 3.13 move (PLAN D3) and use PyAV 19 · use PyAV 18.x now on 3.11 [I] · ship Design B first (no new deps) |
-| **D-PKG** | Where the sidecar format code lives | Small shared package · vendored module with a shared test vector · skellysync depends on skellycam |
+| **D-PKG** | Where the sidecar format code lives | **Decided 2026-11-12: the shared package `skellyformat`** (plan D17), with a detailed spec document; skellysync depends on it, not on skellycam |
 | **D-BACKEND** | Keep any old paths? | Remove deffcode and the MP4 outputs entirely · keep MP4 as a non-default legacy mode (breaks the rule) |
 | **D-DRIFT** | Clock drift (PLAN 2.8) | Out of scope here · add a second sync point and a rate term (cheap in B; needs a re-encode in A) |
 

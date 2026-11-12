@@ -1,10 +1,24 @@
 # Camera capture and recording: phased plan
 
-2026-11-12, revision 3.4 · status: **proposed, for Dom's review.** This plan draws on the USB camera study (`usb_cameras/`), the recording upgrade study (`skellycam_recording/recording_upgrade/`) and the frame ring buffer study (`frame_ring_buffer/`). It is not the recording study's `PLAN.md` (that study's step 5). It adds no new measurements. The only new checks are reads of code, lockfiles and package indexes on 2026-11-11 (§2, §7).
+2026-11-12, revision 3.6 · status: **proposed, for Dom's review.** This plan draws on the USB camera study (`usb_cameras/`), the recording upgrade study (`skellycam_recording/recording_upgrade/`) and the frame ring buffer study (`frame_ring_buffer/`). It is not the recording study's `PLAN.md` (that study's step 5). Up to rev 3.4 it added no new measurements, only reads of code, lockfiles and package indexes on 2026-11-11 (§2, §7). Rev 3.5 adds the measurements in `skellycam_recording/recording_upgrade/results/sidecar_embedding/FINDINGS.md` (SE below). Rev 3.6 adds three audio studies, all under `skellycam_recording/recording_upgrade/results/`: `audio_skellycam/` (AC), `audio_skellysync/` (AS) and `flac_skau/` (FS).
 
 **Labels:** **[M]** measured (result file), **[S]** primary source, **[C]** code read, **[I]** inferred, **[NV]** not verified. All [M] results come from one Windows 11 machine (Gerald). Linux and macOS have had no hardware run.
 
 **Revision history:**
+- **Rev 3.6 (2026-11-12):** audio (new §2.8).
+  - **FLAC is the audio codec** for skellycam and skellysync (D15, Dom).
+  - skellycam records the mic to a separate native `.flac` (0 ms lost per hard kill), then at finalisation stream-copies it into `.audio.mka` and embeds its `.skau` timing sidecar the same way as the video sidecar [M].
+  - skellysync writes FLAC as a second track of each camera MKV, in the same pass [M].
+  - One player audio path: WebCodecs `AudioDecoder` on packets fetched by offset [M].
+  - S3 closed; S9 added; row 1.5 and TP2/TP4 audio tests updated.
+  - Later the same day (Dom): S1, S2, S6, S8 accepted; S9 yes (delete `.flac` after a verified `.mka`); S4 embed and then delete the separate sidecar (D16); S5 shared package `skellyformat` with a detailed spec document (D17). S7: no recorded overlays in skellycam (D18).
+- **Rev 3.5 (2026-11-12):** sidecar embedding and spec status (new §2.7; SE).
+  - VLC 3.0.24 plays JPEG-in-MKV [M].
+  - The sidecar can be embedded as a Matroska attachment appended at the end of the file. Frames don't move; VLC, ffprobe and OpenCV are unaffected; the player finds it in 3 reads [M].
+  - FFmpeg's SeekHead reserve always has room for it, including over 4 GiB [C+M].
+  - Offsets and the Segment UID must be computed against the final bytes, because any remux (crash recovery, audio, skellysync's reattach) moves every frame [M].
+  - Packets need a fixed time base [M].
+  - Rows 1.5, 1.7 and 1.9 and TP2/TP4/release checks updated. Sidecar-spec decisions S1–S8 are open (§2.7).
 - **Rev 3.4 (2026-11-12):** the exposure step looks for the **shortest exposure** at matched brightness that keeps detail D ≥ 0.80 × and noise ρ ≤ 1.5 × the reference, plus ChArUco corner jitter when the board is in view. It replaces the fixed-exposure gain limit, and caches what it learns per device for warm starts (D14; `usb_cameras/docs/exposure_gain_tradeoff.md` §5.2b; evidence `usb_cameras/docs/windows_results_20261112.md` §4.5–4.6).
 - **Rev 3.3 (2026-11-11, later session):** versions pinned exactly (D13). phase 1 is built on upstream `main`, which freemocap pins (D8). Gain has no per-model cap table: the exposure step measures noise against gain and stops raising gain where noise gets worse (D9). White balance is locked at its start value like the other controls, and checked against a loaded calibration (D10). The geometry and image controls are locked at whatever value the camera starts with, and recorded; when a loaded calibration's values differ, the user is asked (D11). Power-line frequency follows local mains, and AE priority is 0 (D12). Upstream `sfn26` noted (§5).
 - **Rev 3.2:** tests split into TP1–TP4. Manual control only, with gain pinned in the exposure step. TP2 runs lockstep only, with all cameras at the lowest common rate; the new timing sync and mixed-rate tests are phase 2. Kiyo Pro wedges are handled, not diagnosed. skelly_synchronize findings added for imported cameras (2.8).
@@ -45,7 +59,7 @@ What dropping H.264 removes:
 What stays:
 - **The licence review before shipping.** The stock PyAV wheel still bundles GPL libx264/libx265 even though they go unused, and deleting them breaks `import av` [M] (EI §2.7).
 - **Lossless and Bayer formats stay deferred.** The only exact option measured was `h264_nvenc` lossless. If a camera ever needs lossless, that reopens a non-JPEG codec.
-- **Playback outside the app:** whether common external players open MJPEG-in-MKV is [NV].
+- **Playback outside the app:** VLC 3.0.24 plays MJPEG-in-MKV, decoding every frame [M] (SE §1). With index timestamps it plays at the nominal rate, not true time. Other FFmpeg-based players [NV]; QuickTime/Safari don't open MKV [I].
 
 ### 2.2 How JPEG-in-MKV plays
 
@@ -112,7 +126,83 @@ Source: `results/intra_playback/FINDINGS.md` F18–F23 and `bench/bench_tables.m
 - other GPUs and CPUs;
 - scrub capacity above 58 frames/s;
 - killed files (NG07);
-- overlay drawing on the player (NG03).
+- frame-label drawing on the player (NG03).
+
+### 2.7 The sidecar: embedding, and what the spec still needs
+
+Measured in SE (PyAV 19.0.2 / FFmpeg 9.0.2):
+
+- **Embedding works and stays compatible.** The sidecar goes in as a Matroska attachment **appended at the end** of the finalised file by our own small appender (standard library only; no MKVToolNix, no remux):
+  - only 25–26 header bytes change, and frame offsets don't move;
+  - VLC, ffprobe and OpenCV 5.0.0 read the file exactly as before (OpenCV: counts and 11/11 seeks unchanged);
+  - the browser player finds it with 3 Range reads from the start of the file, which works under `file://` in E35/E45 [M] (SE §2, §4, §5).
+- **`ffmpeg -attach` places the attachment before the clusters, so don't use it.** That shifts every offset (first JPEG 550 → 5,468); any later `ffmpeg -c copy` remux does the same and changes the Segment UID [M].
+- **There is always room** in a finalised file that FFmpeg wrote to seekable output. Its SeekHead reserve (161 B) is sized for 7 entries including one for Attachments, and FFmpeg itself uses at most 6 (the 6th only when chapters are added after the header, which skellycam doesn't do). Measured worst case: 4.68 GB, 6 FFmpeg entries + ours, positions past 4 GiB, 35 B to spare [C+M] (SE §3).
+- **Offsets and Segment UID must be computed against the final bytes.**
+  - Any remux moves every frame: crash recovery (1.7), adding audio (skellycam's disabled remuxer; skellysync's ReattachAudio, 2.8). Measured: 0/1,800 offsets kept, new UID.
+  - Live offsets work for a video-only MKV, because FFmpeg holds back one packet, so after `mux(i)` the file ends at frame i−1 (2,699/2,699). They break with FLAC audio in the same pass (0/1,799).
+  - Rebuilding all offsets by scanning the final file is exact and cheap: 18,000 frames in 63–116 ms, warm cache [M] (SE §6).
+- **Packets need a fixed time base.** PyAV changes the stream's time base to 1/1000 at the header, so copying `stream.time_base` onto packets spaces frames 1 ms apart; VLC then drops about 87 % of them [M] (SE §1).
+- **Design (SE §7):**
+  - The separate sidecar is primary while recording.
+  - Its header carries the Segment UID (on disk after `start_encoding()` with `flush_packets=1` [M]).
+  - Finalisation for every producer: remux/audio → rebuild offsets by scan, checking CRCs → final UID → CSVs → embed (optional).
+  - After a verified embed the separate sidecar is deleted (S4), so the player reads the embedded copy (3 reads). A separate sidecar exists only before finalisation or after a crash, until recovery. The player rejects any sidecar whose UID doesn't match the file.
+
+**Open decisions to lock the spec (SE §8.2; proposed record layout in SE §8.1):**
+
+| # | Question | Recommendation |
+|---|---|---|
+| S1 | Record content and size | **Accepted (Dom, 2026-11-12):** 64 B: arrival, MF sample time, legacy and fitted times (ns); offset; size; JPEG CRC; source frame number; write index; flags; record CRC |
+| S2 | Which time the player uses; where the fitted time lives | **Accepted:** the fitted time in the sidecar (written at finalisation, with flags), not only in the CSV; arrival until then |
+| S3 | Audio placement (also skellysync D-AUDIO) | **Closed (rev 3.6, D15):** skellycam = separate `.audio.mka` (FLAC) with the `.skau` embedded; skellysync = a FLAC track in each camera MKV. See §2.8 |
+| S4 | Embed by default; keep the separate file? | **Decided (Dom, 2026-11-12):** embed at finalisation; once the embed verifies (attachment SHA, blocks unchanged), delete the separate sidecar. The same rule applies to the audio `.skau` |
+| S5 | Where the format code lives (skellysync D-PKG) | **Decided (Dom, 2026-11-12): a shared package named `skellyformat`.** It holds the record codecs (video sidecar, `.skau`, audio packet table), the MKV scanner, the appender, the JS reader/locator and golden test files. **It must include a detailed descriptive spec document** (byte layouts, field meanings, clocks, finalisation and recovery rules, versioning, test vectors) so others can implement the format without reading the code |
+| S6 | File, attachment and MIME names | **Accepted:** fixed in the `skellyformat` spec |
+| S7 | Overlays (`.skov`) | **Decided (Dom, 2026-11-12; D18): no recorded overlays in skellycam, and no `.skov`.** The only recorded overlay is the burned-in `camera.id…fr{N}` stamp. It was added as a visual workaround for out-of-sync `<video>` playback (commit c4b64f5f3, 2026-03-30: *"callout playback is not-synced even though videos are"*). Only people read it, through the UI warnings; no code reads it from pixels. The canvas player removes that drift, and the sidecar holds every value the stamp shows. `.skov` was a prototype from the overlay study, not a standard. SVG was ruled out: 11× the size, not crash-safe, and it stores drawings rather than data. Any recorded overlay data from freemocap is phase-2 work (e.g. CBOR in CRC-framed records, documented in `skellyformat`) |
+| S8 | Recording-level manifest | **Accepted:** extend the recording info JSON with each camera's MKV, sidecar, key and UID |
+| S9 | Delete skellycam's native `.flac` after a verified `.mka`? | **Closed (Dom, 2026-11-12): yes**, once every frame CRC and the decoded sample count check out (FS §6) |
+
+### 2.8 Audio (rev 3.6)
+
+**Codec: FLAC everywhere (D15, Dom, 2026-11-12).** It is royalty-free ("unencumbered by patents") [S] and in the PyAV 19.0.2 wheel [M]. It's lossless, so there's no second generation on camera AAC, and it keeps full detail for clap and cross-correlation sync. Size is small next to the video: about 172 MB/h mono on synthetic audio, against roughly 18 GB/h for one 1080p30 camera [M/arith]. Opus stays possible as a size option; its catches are in AS §2.3 (end-trim rule) and AC §2.3 (VLC offsets). AAC and MP3 are out.
+
+**skellycam, microphone (AC, FS):**
+- **Device:** open the mic's WASAPI entry at 48 kHz. Today skellycam picks the MME entry at 44.1 kHz, which delivers in bursts and reports no timing [M/C].
+- **Process:** the writer runs in a dedicated audio process. Under GIL load in the same process the writer dropped blocks, and WASAPI lost up to 30 % of samples without flagging it [M].
+- **Recording:** native `<rec>.audio.flac` (`frame_size=1024`, `flush_packets=1`): **0 ms lost in 12/12 hard kills** [M]. Packet offsets are known live: header + running sizes, 1,408/1,408, no hold-back [M].
+- **Timing sidecar `.skau`:**
+  - one 48 B record per callback block (host ns, PortAudio ADC ns, sample index, flags, CRC);
+  - a live packet record per FLAC frame;
+  - after a kill, the records match the bytes on disk, with at most one unindexed frame [M].
+- **Finalisation:**
+  1. stream-copy into `<rec>.audio.mka`: frames byte-identical (1,407/1,407), decoded = source;
+  2. scan and check CRCs;
+  3. write the packet table and the drift fit into the `.skau`;
+  4. append the `.skau` with the §2.7 appender (75 B SeekHead spare after);
+  5. verify every frame CRC and the decoded sample count, then delete the `.flac` (S9, Dom: yes).
+
+  Killed `.flac` files go through the same steps without a header patch [M]. VLC drops the last 26.7 ms of a native `.flac` but plays the `.mka` complete and sample-exact [M].
+- **Sync:**
+  - PortAudio's clock is QPC on Windows (0 ± 7 µs), the video sidecar's timebase [M].
+  - Fit host time against sample index per segment, splitting at change points. The mics drifted up to ±10 ppm (36 ms/h), and one stepped about 9 ms after start [M].
+  - Video frame k at host time T plays sample n = n0 + (T − t0 − latency)·f_eff.
+  - The absolute mic latency comes from a per-model clap test (TP2 A3).
+  - **Today's start anchor makes audio 9–74 ms early** [M]; fixed by the fit.
+
+**skellysync, per-camera audio (AS):**
+- FLAC at the source rate, keeping its channels, as a second track in each camera MKV, interleaved in the same PyAV pass. No remux, so the `-map` bug class goes away.
+- Measured:
+  - VLC plays video and audio in sync and seeks to the exact frame;
+  - OpenCV's count and seeks are unchanged;
+  - the scan matched every video and audio CRC;
+  - the embedded sidecar moved nothing.
+- The audio window equals the video window, in samples. Fix skellysync's audio-start vs video-start lag bug (AS §5.2).
+
+**Player, one path for both (AS §3, FS §4):** WebCodecs `AudioDecoder` (`flac`, `description` = CodecPrivate) on packets fetched by byte range from a packet table. The table lives in the `.skau` (skellycam) or the camera sidecar (skellysync).
+- Measured: E45 sample-exact; E35 within half a 16-bit step (a conversion difference); cold start from any packet; the locator finds the embedded `.skau`.
+- Only a window around the playhead is decoded. While audio plays, the master clock follows the audio output (AC §4.4); scrubbing is muted.
+- Fallback: `<audio src=file>` plays and seeks both file types [M].
 
 ## 3. Phase 1: skellycam only
 
@@ -133,12 +223,12 @@ Source: `results/intra_playback/FINDINGS.md` F18–F23 and `bench/bench_tables.m
 | 1.2 | **Recording reliability inside skellycam** | Ring study ranks 9 (drop the `copy.copy` in `put_data`: 54.1 → 58.8–59.0 fps [M]), 3, 4, 5, 1 and 10. None of them change the ring layout | `frame_ring_buffer/docs/frame_ring_buffer_summary.md` | — |
 | 1.3 | **MF capture backend (Windows)** | Pure-Python MF source reader (comtypes), native format, converters off, behind a capture interface. Decode at source to BGR for the ring (unchanged), and keep the JPEG bytes for the recorder. Controls come from the MF source and are read back and checked on the image, with per-camera rules. **The exposure step turns auto-exposure, auto gain and autofocus off**, then runs the exposure step and the board autofocus (TP1). **Gain is chosen inside the same exposure step**, not exposed as a separate control. Its upper limit is measured on the live image from noise against gain, with no per-model cap table (D9). **Since D14 the step looks for the shortest exposure that keeps detail and noise within limits at matched brightness** (`exposure_gain_tradeoff.md` §5.2b), with a per-device cache for warm starts. skellycam handles no gain today [C]. **Controls lock (D10–D12):** AWB off; power-line frequency set to local mains; AE priority 0; white balance, zoom, pan, tilt and the image controls (brightness, contrast, saturation, sharpness, gamma, backlight compensation) locked at the values the camera starts with. All of these are read back and recorded, and they're checked against a loaded calibration. The C930e resets exposure and gain at stream start, so both are re-applied after the first frame [M]. OpenCV leaves the Windows capture path. DirectShow via the ffmpeg CLI only if TP1's reliability part demands it | MF 400/400 + 100/100 cycles on 4 cameras; pymf = wincam on 3 cameras; OpenCV no first frame in 2 s [M] (`usb_cameras/WINDOWS_RUN_20261110_EXEC_SUMMARY.md`) | TP1 (camera IDs) |
 | 1.4 | **JPEG encoder choice (raw streams only)** | **`mjpeg_qsv` first** (Dom, 2026-11-11): open it, encode one frame at the camera's mode, decode it, and check the quality is at A. Feed it full-range input: expand the camera's limited-range YUY2 first, or the JPEGs come out washed out [M] (`hw_accel_target/FINDINGS.md` F2). Otherwise use libjpeg-turbo in worker processes. Cache the choice; the user can force libjpeg-turbo. `mjpeg_qsv` returns each packet 3 calls later [M], so up to 3 frames sit in the encoder at a crash (T-KILL) | §2.1; `intra_compare/FINDINGS.md` §2.5 | 1.0 |
-| 1.5 | **New recording writer** | One writer thread per camera in the camera process, fed by a bounded queue that counts drops. MKV with `flush_packets=1`. Container timestamps = frame index at the nominal rate. **MJPEG stream → passthrough; raw stream → JPEG encode at A (1.4).** Binary sidecar, one fixed record per frame: frame number, capture times in integer ns, CRC, offset, size, plus a header with format, encoder and stable camera key. **Removes every H.264 writer in skellycam:** the MSMF `cv2.VideoWriter` path, `PyavVideoWriter` (libx264), the libx264 re-encode in `video_audio_remuxer.py:69` (audio is muxed by stream copy instead) and `transcode_to_h264.py` | MKV+fp lost 1 frame per kill, 0 torn frames on cuts; MP4 keeps 0 [M]; torn JPEG decoded silently 5/6, CSV read wrong 6/24 [M]; 0 drops in 77/77 write cells to 16 × 1080p60 [M] (EI §2.2, §2.5) | 1.3, 1.4 |
+| 1.5 | **New recording writer** | One writer thread per camera in the camera process, fed by a bounded queue that counts drops. MKV with `flush_packets=1`. Container timestamps = frame index at the nominal rate, with **packets given a fixed `1/fps` time base**, never `stream.time_base` copied after the header [M] (§2.7). **MJPEG stream → passthrough; raw stream → JPEG encode at A (1.4).** Binary sidecar, one fixed record per frame: frame number, capture times in integer ns, CRC, offset, size, plus a header with format, encoder, stable camera key and the MKV's Segment UID (layout: S1, §2.7). In a video-only MKV, record i−1 is written after `mux(i)` with its live offset; the last record after `close()`. **Finalisation rebuilds every offset by scanning the final file** and can then embed the sidecar as an attachment appended at the end (§2.7). **Removes every H.264 writer in skellycam:** the MSMF `cv2.VideoWriter` path, `PyavVideoWriter` (libx264), the libx264 re-encode in `video_audio_remuxer.py:69` (audio: a separate FLAC `.audio.mka` written by its own process, §2.8; the camera MKVs stay video-only) and `transcode_to_h264.py` | MKV+fp lost 1 frame per kill, 0 torn frames on cuts; MP4 keeps 0 [M]; torn JPEG decoded silently 5/6, CSV read wrong 6/24 [M]; 0 drops in 77/77 write cells to 16 × 1080p60 [M] (EI §2.2, §2.5) | 1.3, 1.4 |
 | 1.6 | **Timestamps without changing what freemocap reads** | Per frame: MF arrival QPC, MF sample time, and today's stamp computed as now. At finalisation, build the timestamp CSVs from the sidecar and **add** columns: fitted camera time (offline lattice fit, start-up exclusion, change-point segments, `fit_unreliable` flag), drop/repeat flags, provenance. The existing columns are unchanged | Fit ≤ 0.56 ms vs flash, one 30 s run [M]; today 4.6–16 ms [M] (`timestamp_accuracy_options.md` §1) | 1.5 |
-| 1.7 | **Crash recovery** | On the next start: remux unfinalised files (about 0.9 s/GB), then rebuild the CSVs and info JSON from the sidecar. Today a crash leaves **no** timestamps [C] | EI §2.2; `skellycam_recording/REPORT.md` §1 | 1.5 |
-| 1.8 | **Overlays out of the video** | Stop the record-time burn-in, which today is drawn into the only copy [C]. Write a `.skov` sidecar (29.3 µs/frame, CRC'd) [M]. The UI draws overlays on the same canvas as the frame | EI §2.3 | 1.5 |
-| 1.9 | **skellycam-ui canvas player** | Replace `SyncedVideoPlayer`'s `<video>` + `frame / fps`, and remove the `.web.mp4` transcode route. One master clock drawing every camera to a canvas, picking the frame at or before the clock (PREV) from sidecar times. Byte-range fetch by sidecar offset + `ImageDecoder`, with every decoded image closed and prefetch bounded. Accept HTTP 200 without `Content-Range` under `file://` | §2.2, §2.6; master clock spread 0 in 28/28, PREV 0 mismatches in 48/48 [M] (EI §2.9) | 1.5 |
-| 1.10 | **Export with burned-in overlays** | Burn the `.skov` overlays into a copy, written as JPEG in MKV with its sidecar | EI §2.3 | 1.8 |
+| 1.7 | **Crash recovery** | On the next start: remux unfinalised files (about 0.9 s/GB), **rebuild the sidecar's offsets and Segment UID against the remuxed file** (the remux moves every frame [M], §2.7), then rebuild the CSVs and info JSON from the sidecar. Today a crash leaves **no** timestamps [C] | EI §2.2; `skellycam_recording/REPORT.md` §1 | 1.5 |
+| 1.8 | **No recorded overlays (D18)** | Remove the burned-in stamp (`opencv_get_frame.py:79-91`), which is drawn into the only copy and into every frame freemocap processes [C]. No overlay file. The canvas player labels each tile with the camera id and the `connection_frame_number` of the frame it actually drew, from the sidecar. Update or remove skellycam-ui's playback-sync warning (`en-english.json:98` and the translations), which tells users to compare the burned-in numbers. freemocap-ui's matching warning (`en-english.json:100`) goes to the phase-2 freemocap session. freemocap's live overlays are unchanged | EI §2.3 | 1.5 |
+| 1.9 | **skellycam-ui canvas player** | Replace `SyncedVideoPlayer`'s `<video>` + `frame / fps`, and remove the `.web.mp4` transcode route. One master clock drawing every camera to a canvas, picking the frame at or before the clock (PREV) from sidecar times. Byte-range fetch by sidecar offset + `ImageDecoder`, with every decoded image closed and prefetch bounded. Accept HTTP 200 without `Content-Range` under `file://`. Read the embedded sidecar through the SeekHead (3 reads, [M]); use a separate sidecar only for unfinalised or crashed files; reject a sidecar whose Segment UID doesn't match the file's (§2.7) | §2.2, §2.6; master clock spread 0 in 28/28, PREV 0 mismatches in 48/48 [M] (EI §2.9) | 1.5 |
+| 1.10 | **Export with burned-in labels (optional)** | On request, burn the camera id and frame label, drawn from the sidecar, into a copy written as JPEG in MKV with its sidecar. Recorded camera files never carry burned-in text | EI §2.3 | 1.8 |
 | 1.11 | **Bandwidth guidance** | Topology mapper (USB 2.0 root-port domains, per-mode bandwidth slot cache, refused-start classification). The UI says which port to move a camera to | `usb_cameras/docs/xplat_capture_plan.md` §5 [M on Intel; policy table for other vendors] | 1.3 |
 | 1.12 | **Linux and macOS (phase 1b)** | Keep OpenCV capture until the native backends (V4L2 ctypes; AVFoundation + CoreMediaIO controls) pass hardware runs. Meanwhile they use the new writer with JPEG encode of decoded frames, because OpenCV gives no JPEG bytes there | `usb_cameras/docs/capture_stack_options_plan.md`; `macos_uvc_controls_review.md` [d, no hardware run] | L/M hardware suites |
 
@@ -186,7 +276,18 @@ Builds on TP1: same backend, with manual controls set and verified first. Real c
 
 - Each set: 3 × 60 s, plus one 10-minute run.
 - Measured per camera: delivered fps against requested; frames written against frames captured; drops (writer queue, plus gaps found by the timestamp fit); writer queue depth and write latency p99.9; CPU per process; disk MB/s; sidecar CRC check; OpenCV read exactness after finalising; timestamp CSVs and the lattice fit at each camera's own rate.
-- Crash (T-KILL): hard kills during M1 and M3. Frames lost per kill for passthrough and for `mjpeg_qsv` (3-frame hold-back); killed files repair, play in skellycam-ui and read in OpenCV.
+- Crash (T-KILL): hard kills during M1 and M3. Frames lost per kill for passthrough and for `mjpeg_qsv` (3-frame hold-back); killed files repair, play in skellycam-ui and read in OpenCV. Sidecar checks (SE §8.3):
+  - after every kill, sidecar records = complete frames on disk, and a torn last record is caught by its CRC (T-S1);
+  - after repair, offsets are rebuilt and the UID matches the file;
+  - with `mjpeg_qsv`, each record pairs with its own source frame (T-S6);
+  - offset rebuild time on a cold cache for a 10-minute 1080p file (T-S3).
+- Audio (AC §6, FS §6):
+  - A1, the mic on every set: samples against elapsed QPC, lost callbacks, drops, CRCs;
+  - A2, T-KILL: 0 ms of FLAC lost; recovery into `.mka` with the `.skau` attached;
+  - A3, clap/flash latency per mic model (needs consent; delete the audio after measuring);
+  - A4, drift over 10 and 60 minutes per mic;
+  - A5, the audio process under TP3 load: zero loss;
+  - A6, unplugging the mic mid-recording.
 - **Lockstep runs never mix 60 and 30 fps** (Dom, 2026-11-11): all cameras start at the lowest common frame rate. The generic camera delivers about 25.7 fps when 30 is requested [M], so lockstep paces the whole group to it. Record how many frames each camera loses at the gate (it dropped 14 % of the C930e's frames beside the generic camera [M]).
 
 #### TP3: Total throughput with simulated cameras (CPU load)
@@ -198,7 +299,7 @@ Builds on TP2: the same capture pipeline and writer, fed by simulated cameras th
 - Quiet machine (Gerald), plus one low-end machine.
 
 #### TP4: Playback
-skellycam-ui's real canvas player, on TP2's real mixed-rate recordings and TP3's 16-camera simulated recordings, plus T-KILL's killed files (NG07) and overlays drawn on the canvas (NG03).
+skellycam-ui's real canvas player, on TP2's real mixed-rate recordings and TP3's 16-camera simulated recordings, plus T-KILL's killed files (NG07) and the per-tile frame label drawn on the canvas (NG03): the label must match the frame actually drawn.
 - At 4, 8 and 16 cameras; 720p30, 720p60, 1080p30 and 1080p60.
 - Measured: CPU (GPU process listed separately), memory, shown fps, seek latency, scrub rate above 58/s, and memory growth over a 30-minute play-and-scrub soak.
 - Run on Gerald plus one low-end laptop, serving byte ranges through skellycam's FastAPI route vs Electron `protocol.handle`.
@@ -208,10 +309,25 @@ skellycam-ui's real canvas player, on TP2's real mixed-rate recordings and TP3's
   - (c) no fetch or decode for hidden or off-screen tiles;
   - (d) an `OffscreenCanvas` in a worker that draws as well as decodes.
 - Record whether any platform reports a JPEG decode accelerator (`jpegDecodeAcceleratorSupported`).
+- Sidecar (SE §8.3):
+  - load time and memory for 16 cameras × 1 h of sidecars (≈ 110 MB at 64 B/record) against a compact time + offset + size index (T-S4);
+  - the embedded-sidecar locator through the FastAPI route and `protocol.handle` (T-S5);
+  - a file remuxed by ffmpeg is rejected by the UID check, then re-indexed (T-S9).
+- Audio (AC §6):
+  - B1, flash + click sync at the start, after 30 minutes and after 20 seeks, within 1 frame;
+  - B2, `AudioDecoder` seek latency on E45 and the low-end laptop;
+  - B3, memory over 1 h;
+  - B4, killed files play;
+  - B5, an export stays in sync in VLC and Chromium over 30 minutes.
 
 #### Release checks
 - **T-FMC:** a freemocap posthoc run on phase-1 lockstep recordings, with outputs identical in structure to today's.
 - **T-BUMP:** the full test suite plus one real recording after each major package bump.
+- **T-MKV (CI, on the pinned PyAV; SE T-S8, T-S10):**
+  - SeekHead + Void span leaves ≥ 23 B free;
+  - the first packets' pts are 0, 33, 67 ms;
+  - after `mux(i)` the file ends at frame i−1 (only while live offsets are used);
+  - a golden MKV + sidecar (separate and embedded) reads identically in the Python and JS readers.
 
 ## 4. Phase 2: skellycam and freemocap
 
@@ -246,7 +362,7 @@ Exit tests for phase 2:
 
 ## 6. Decisions
 
-All resolved (Dom, 2026-11-11):
+All resolved (Dom, 2026-11-11 and 2026-11-12):
 
 | # | Decision | Consequence |
 |---|---|---|
@@ -269,6 +385,10 @@ All resolved (Dom, 2026-11-11):
 | D12 | **Power-line frequency = local mains; AE priority = 0** (Dom) | 1.3 |
 | D13 | **Versions pinned exactly, no ranges** (Dom, 2026-11-11), for Python, Python packages, npm packages, git sources, the build backend and CI tooling | §2.5; replaces the earlier "raise a minimum only" rule |
 | D14 | **Exposure step = shortest exposure at matched brightness within quality limits** (Dom, 2026-11-12). Step down from the measured fps ceiling, matching luma with gain at each step. Keep the last step with D ≥ 0.80 × D_ref and ρ ≤ 1.5 × ρ_ref, plus corner jitter within j_max when the board is in view. Thresholds are provisional until the attended board run. What is learned is cached per device (never per model) and re-verified live | `exposure_gain_tradeoff.md` §5.2b, §6; refines D9 |
+| D15 | **FLAC is the audio codec** for skellycam's mic file and skellysync's per-camera audio (Dom, 2026-11-12). Opus only as a possible size option | §2.8 |
+| D16 | **Embed the sidecar at finalisation, then delete the separate file** once the embed verifies (Dom, 2026-11-12). The same for the audio `.skau` | §2.7 S4 |
+| D17 | **`skellyformat`: a shared package** for the file formats (codecs, scanner, appender, JS reader, golden files) **with a detailed descriptive spec document** so others can implement the format (Dom, 2026-11-12) | §2.7 S5; skellysync D-PKG |
+| D18 | **No recorded overlays in skellycam** (Dom, 2026-11-12): remove the burned-in stamp, no `.skov`. The player draws the frame label from the sidecar. freemocap's live overlays stay | §2.7 S7; rows 1.8, 1.10 |
 | D7 | Phase 1 tests lockstep only: TP2 never mixes frame rates, and all cameras start at the lowest common rate. The new timing sync and its mixed-rate tests are phase 2 (2.2) | §3.3 TP2, §4 |
 
 ## 7. Sources
@@ -276,6 +396,8 @@ All resolved (Dom, 2026-11-11):
 - `results/chromium_codecs/FINDINGS.md` (C1, C2, C27, C28); `results/intra_playback/FINDINGS.md` (F18–F24) and `bench/bench_tables.md`; `results/intra_playback/gapfill/GF10_wc_scrub_memory.md`.
 - `usb_cameras/REPORT.md`, `usb_cameras/WINDOWS_RUN_20261110_EXEC_SUMMARY.md`, `usb_cameras/results/windows/Gerald/suite_20261111T040003Z/summary.md` (G-RAW), `usb_cameras/docs/capture_stack_options_plan.md`, `timestamp_accuracy_options.md`, `xplat_capture_plan.md`, `chromium_comparison.md`, `macos_uvc_controls_review.md`, `windows_timer_resolution.md`, `skellycam_exposure_review.md`.
 - `frame_ring_buffer/docs/frame_ring_buffer_summary.md`; `skellycam_recording/REPORT.md`.
+- **SE** = `skellycam_recording/recording_upgrade/results/sidecar_embedding/FINDINGS.md` (2026-11-12), with scripts in `scripts/sidecar_embedding/`. Also: FFmpeg n9.0.2 `libavformat/matroskaenc.c`, RFC 9559 §6.1, §6.3, §6.7.
+- **AC** = `.../results/audio_skellycam/FINDINGS.md`; **AS** = `.../results/audio_skellysync/FINDINGS.md`; **FS** = `.../results/flac_skau/FINDINGS.md` (all 2026-11-12; scripts under `scripts/` with the same folder names). RFC 9639 (FLAC), RFC 6716/7845 (Opus).
 - Code, lockfiles and package indexes read 2026-11-11:
   - skellycam: `pyproject.toml`, `uv.lock`, `api/http/playback/playback_router.py`, `utilities/transcode_to_h264.py`, `core/recorders/video_audio_remuxer.py`, `core/recorders/videos/{video_recorder,pyav_video_writer}.py`, `skellycam-ui/package.json`, `skellycam-ui/src/components/playback/SyncedVideoPlayer.tsx`;
   - freemocap: `pyproject.toml`, `uv.lock`, `freemocap-ui/src/components/playback/usePlaybackController.ts`, `api/http/playback/playback_router.py`, `api/http/mocap/mocap_router.py`, `core/pipeline/posthoc/video_node.py`, `utilities/extract_camera_id_from_video_path.py`;

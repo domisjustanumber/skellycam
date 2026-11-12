@@ -1,0 +1,43 @@
+<!doctype html><meta charset="utf-8"><title>locator test</title>
+<script src="../locator.js"></script>
+<script>
+// Range reader that does not trust status: works for 206, or for 200 that honours Range (C31a),
+// and caps the body at `len` bytes if a server ignores Range (never downloads a whole multi-GB file).
+function makeReader(url, log) {
+  return async (off, len) => {
+    const t0 = performance.now();
+    const resp = await fetch(url, { headers: { Range: `bytes=${off}-${off + len - 1}` } });
+    const reader = resp.body.getReader(); const chunks = []; let got = 0;
+    while (got < len) { const { done, value } = await reader.read(); if (done) break; chunks.push(value); got += value.length; }
+    const overrun = got > len; try { await reader.cancel(); } catch (e) {}
+    const out = new Uint8Array(Math.min(got, len)); let o = 0;
+    for (const c of chunks) { const n = Math.min(c.length, out.length - o); out.set(c.subarray(0, n), o); o += n; if (o >= out.length) break; }
+    log.push({ off, len, got: out.length, status: resp.status, contentRange: resp.headers.get('content-range'),
+               contentLength: resp.headers.get('content-length'), overrun, ms: +(performance.now() - t0).toFixed(2) });
+    return out;
+  };
+}
+async function sha(u8) { return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', u8)), x => x.toString(16).padStart(2, '0')).join(''); }
+async function runOne(url) {
+  const log = []; const t0 = performance.now();
+  let r; try { r = await locateAttachment(makeReader(url, log), { fileName: 'skellycam_frames.skfr' }); } catch (e) { r = { ok: false, reason: 'exception ' + e.message }; }
+  const ms = +(performance.now() - t0).toFixed(2);
+  return { ok: r.ok, reason: r.reason, fileDataOffset: r.fileDataOffset, fileDataSize: r.fileDataSize, segmentUID: r.segmentUID,
+           sha256: r.data ? await sha(r.data) : null, reads: log.length, log, ms };
+}
+async function probes(url) {
+  const out = {};
+  const tryFetch = async (name, init) => {
+    try { const resp = await fetch(url, init); const reader = resp.body ? resp.body.getReader() : null; let got = 0, first = null;
+      if (reader) { const { value } = await reader.read(); if (value) { got = value.length; first = Array.from(value.subarray(0, 4)); } try { await reader.cancel(); } catch (e) {} }
+      out[name] = { status: resp.status, contentRange: resp.headers.get('content-range'), contentLength: resp.headers.get('content-length'),
+                    acceptRanges: resp.headers.get('accept-ranges'), firstChunkLen: got, firstBytes: first };
+    } catch (e) { out[name] = { error: String(e) }; }
+  };
+  await tryFetch('suffix_last16', { headers: { Range: 'bytes=-16' } });
+  await tryFetch('open_ended_from_6163700', { headers: { Range: 'bytes=6163700-' } });
+  await tryFetch('head', { method: 'HEAD' });
+  await tryFetch('mid_10_19', { headers: { Range: 'bytes=10-19' } });
+  return out;
+}
+</script>

@@ -1,0 +1,624 @@
+{
+ "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) audio-mkv-test/0.0.1 Chrome/156.0.8078.80 Electron/45.2.3 Safari/537.36",
+ "runs": [
+  {
+   "name": "opus_st128.mkv webcodecs desc=False shift_codec_delay=False",
+   "kind": "webcodecs",
+   "codec": "opus",
+   "useDescription": false,
+   "shiftCodecDelay": false,
+   "isConfigSupported": true,
+   "total_ms": 732,
+   "fetch_ms": 723,
+   "packets": 751,
+   "range_status": 200,
+   "wrong_length": 0,
+   "error": null,
+   "decoded_frames": 720960,
+   "first_output_timestamp_us": 0,
+   "sync_vs_sample0": {
+    "n_expected": 27,
+    "n_found": 26,
+    "err_min": 312,
+    "err_max": 312,
+    "err_median": 312
+   },
+   "sync_by_timestamp": {
+    "n_expected": 27,
+    "n_found": 26,
+    "err_min": 312,
+    "err_max": 312,
+    "err_median": 312
+   }
+  },
+  {
+   "name": "opus_st128.mkv webcodecs desc=True shift_codec_delay=False",
+   "kind": "webcodecs",
+   "codec": "opus",
+   "useDescription": true,
+   "shiftCodecDelay": false,
+   "isConfigSupported": true,
+   "total_ms": 657,
+   "fetch_ms": 647,
+   "packets": 751,
+   "range_status": 200,
+   "wrong_length": 0,
+   "error": null,
+   "decoded_frames": 720648,
+   "first_output_timestamp_us": 0,
+   "sync_vs_sample0": {
+    "n_expected": 27,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   },
+   "sync_by_timestamp": {
+    "n_expected": 27,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   }
+  },
+  {
+   "name": "opus_st128.mkv webcodecs desc=False shift_codec_delay=True",
+   "kind": "webcodecs",
+   "codec": "opus",
+   "useDescription": false,
+   "shiftCodecDelay": true,
+   "isConfigSupported": true,
+   "total_ms": 741,
+   "fetch_ms": 729,
+   "packets": 751,
+   "range_status": 200,
+   "wrong_length": 0,
+   "error": null,
+   "decoded_frames": 720960,
+   "first_output_timestamp_us": -6500,
+   "sync_vs_sample0": {
+    "n_expected": 27,
+    "n_found": 26,
+    "err_min": 312,
+    "err_max": 312,
+    "err_median": 312
+   },
+   "sync_by_timestamp": {
+    "n_expected": 27,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   }
+  },
+  {
+   "name": "opus_st128.mkv webcodecs desc=True shift_codec_delay=True",
+   "kind": "webcodecs",
+   "codec": "opus",
+   "useDescription": true,
+   "shiftCodecDelay": true,
+   "isConfigSupported": true,
+   "total_ms": 702,
+   "fetch_ms": 690,
+   "packets": 751,
+   "range_status": 200,
+   "wrong_length": 0,
+   "error": null,
+   "decoded_frames": 720648,
+   "first_output_timestamp_us": 0,
+   "sync_vs_sample0": {
+    "n_expected": 27,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   },
+   "sync_by_timestamp": {
+    "n_expected": 27,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   }
+  },
+  {
+   "name": "opus_mono64.mkv webcodecs desc=True shift_codec_delay=False",
+   "kind": "webcodecs",
+   "codec": "opus",
+   "useDescription": true,
+   "shiftCodecDelay": false,
+   "isConfigSupported": true,
+   "total_ms": 707,
+   "fetch_ms": 692,
+   "packets": 751,
+   "range_status": 200,
+   "wrong_length": 0,
+   "error": null,
+   "decoded_frames": 720648,
+   "first_output_timestamp_us": 0,
+   "sync_vs_sample0": {
+    "n_expected": 27,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   },
+   "sync_by_timestamp": {
+    "n_expected": 27,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   }
+  },
+  {
+   "name": "opus_mono64.mkv webcodecs desc=False shift_codec_delay=True",
+   "kind": "webcodecs",
+   "codec": "opus",
+   "useDescription": false,
+   "shiftCodecDelay": true,
+   "isConfigSupported": true,
+   "total_ms": 663,
+   "fetch_ms": 652,
+   "packets": 751,
+   "range_status": 200,
+   "wrong_length": 0,
+   "error": null,
+   "decoded_frames": 720960,
+   "first_output_timestamp_us": -6500,
+   "sync_vs_sample0": {
+    "n_expected": 27,
+    "n_found": 26,
+    "err_min": 312,
+    "err_max": 312,
+    "err_median": 312
+   },
+   "sync_by_timestamp": {
+    "n_expected": 27,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   }
+  },
+  {
+   "name": "flac16_st.mkv webcodecs desc=True shift_codec_delay=False",
+   "kind": "webcodecs",
+   "codec": "flac",
+   "useDescription": true,
+   "shiftCodecDelay": false,
+   "isConfigSupported": true,
+   "total_ms": 145,
+   "fetch_ms": 141,
+   "packets": 157,
+   "range_status": 200,
+   "wrong_length": 0,
+   "error": null,
+   "decoded_frames": 720000,
+   "first_output_timestamp_us": 0,
+   "sync_vs_sample0": {
+    "n_expected": 26,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   },
+   "sync_by_timestamp": {
+    "n_expected": 26,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   }
+  },
+  {
+   "name": "flac16_st.mkv webcodecs desc=False shift_codec_delay=False",
+   "kind": "webcodecs",
+   "exception": "InvalidStateError: Failed to execute 'decode' on 'AudioDecoder': Cannot call 'decode' on a closed codec.\n    at webcodecsTest (file:///C:/Users/Dom/GitHub/freemocap/skellycam/research/skellycam_recording/recording_upgrade/scripts/audio_skellysync/electron_test/page.html:63:9)\n    at async window.runAll (file:///C:/Users/Dom/GitHub/freemocap/skellycam/research/skellycam_recording/recording_upgrade/scripts/audio_skellysync/electron_test/page.html:135:52)"
+  },
+  {
+   "name": "flac24_st.mkv webcodecs desc=True shift_codec_delay=False",
+   "kind": "webcodecs",
+   "codec": "flac",
+   "useDescription": true,
+   "shiftCodecDelay": false,
+   "isConfigSupported": true,
+   "total_ms": 141,
+   "fetch_ms": 137,
+   "packets": 157,
+   "range_status": 200,
+   "wrong_length": 0,
+   "error": null,
+   "decoded_frames": 720000,
+   "first_output_timestamp_us": 0,
+   "sync_vs_sample0": {
+    "n_expected": 26,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   },
+   "sync_by_timestamp": {
+    "n_expected": 26,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   }
+  },
+  {
+   "name": "vorbis_st.mkv webcodecs desc=True shift_codec_delay=False",
+   "kind": "webcodecs",
+   "codec": "vorbis",
+   "useDescription": true,
+   "shiftCodecDelay": false,
+   "isConfigSupported": true,
+   "total_ms": 627,
+   "fetch_ms": 613,
+   "packets": 705,
+   "range_status": 200,
+   "wrong_length": 0,
+   "error": null,
+   "decoded_frames": 720896,
+   "first_output_timestamp_us": 0,
+   "sync_vs_sample0": {
+    "n_expected": 27,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   },
+   "sync_by_timestamp": {
+    "n_expected": 27,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   }
+  },
+  {
+   "name": "opus_st128.mkv <audio>",
+   "kind": "element",
+   "tag": "audio",
+   "event": "loadedmetadata",
+   "duration": 15.008,
+   "play": "ok",
+   "currentTime_advanced_s": 2.515,
+   "audio_peak": 0.4443,
+   "after_seek_currentTime": 7
+  },
+  {
+   "name": "opus_st128.mkv <video>",
+   "kind": "element",
+   "tag": "video",
+   "event": "loadedmetadata",
+   "duration": 15.008,
+   "videoWidth": 0,
+   "videoHeight": 0,
+   "play": "ok",
+   "currentTime_advanced_s": 2.523,
+   "audio_peak": 0.4443,
+   "after_seek_currentTime": 7
+  },
+  {
+   "name": "opus_st128.mkv decodeAudioData",
+   "kind": "decodeAudioData",
+   "bytes": 13459155,
+   "ok": true,
+   "sampleRate": 48000,
+   "channels": 2,
+   "length": 719976,
+   "ms": 53,
+   "sync": {
+    "n_expected": 26,
+    "n_found": 26,
+    "err_min": -24,
+    "err_max": -24,
+    "err_median": -24
+   }
+  },
+  {
+   "name": "flac16_st.mkv <audio>",
+   "kind": "element",
+   "tag": "audio",
+   "event": "loadedmetadata",
+   "duration": 15,
+   "play": "ok",
+   "currentTime_advanced_s": 2.509,
+   "audio_peak": 0.4425,
+   "after_seek_currentTime": 7
+  },
+  {
+   "name": "flac16_st.mkv <video>",
+   "kind": "element",
+   "tag": "video",
+   "event": "loadedmetadata",
+   "duration": 15,
+   "videoWidth": 0,
+   "videoHeight": 0,
+   "play": "ok",
+   "currentTime_advanced_s": 2.512,
+   "audio_peak": 0.4425,
+   "after_seek_currentTime": 7
+  },
+  {
+   "name": "flac16_st.mkv decodeAudioData",
+   "kind": "decodeAudioData",
+   "bytes": 14711401,
+   "ok": true,
+   "sampleRate": 48000,
+   "channels": 2,
+   "length": 720000,
+   "ms": 56,
+   "sync": {
+    "n_expected": 26,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   }
+  },
+  {
+   "name": "pcm24_st.mkv <audio>",
+   "kind": "element",
+   "tag": "audio",
+   "event": "loadedmetadata",
+   "duration": 15,
+   "play": "ok",
+   "currentTime_advanced_s": 2.497,
+   "audio_peak": 0.4425,
+   "after_seek_currentTime": 7
+  },
+  {
+   "name": "pcm24_st.mkv <video>",
+   "kind": "element",
+   "tag": "video",
+   "event": "loadedmetadata",
+   "duration": 15,
+   "videoWidth": 0,
+   "videoHeight": 0,
+   "play": "ok",
+   "currentTime_advanced_s": 2.5,
+   "audio_peak": 0.4425,
+   "after_seek_currentTime": 7
+  },
+  {
+   "name": "pcm24_st.mkv decodeAudioData",
+   "kind": "decodeAudioData",
+   "bytes": 17523830,
+   "ok": true,
+   "sampleRate": 48000,
+   "channels": 2,
+   "length": 720000,
+   "ms": 38,
+   "sync": {
+    "n_expected": 26,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   }
+  },
+  {
+   "name": "vorbis_st.mkv <audio>",
+   "kind": "element",
+   "tag": "audio",
+   "event": "loadedmetadata",
+   "duration": 15.021,
+   "play": "ok",
+   "currentTime_advanced_s": 2.499,
+   "audio_peak": 0.4445,
+   "after_seek_currentTime": 7
+  },
+  {
+   "name": "vorbis_st.mkv <video>",
+   "kind": "element",
+   "tag": "video",
+   "event": "loadedmetadata",
+   "duration": 15.021,
+   "videoWidth": 0,
+   "videoHeight": 0,
+   "play": "ok",
+   "currentTime_advanced_s": 2.512,
+   "audio_peak": 0.4445,
+   "after_seek_currentTime": 7
+  },
+  {
+   "name": "vorbis_st.mkv decodeAudioData",
+   "kind": "decodeAudioData",
+   "bytes": 14048556,
+   "ok": true,
+   "sampleRate": 48000,
+   "channels": 2,
+   "length": 718848,
+   "ms": 37,
+   "sync": {
+    "n_expected": 26,
+    "n_found": 26,
+    "err_min": -1024,
+    "err_max": -1024,
+    "err_median": -1024
+   }
+  },
+  {
+   "name": "none_twin.mkv <video>",
+   "kind": "element",
+   "tag": "video",
+   "event": "error",
+   "error": {
+    "code": 4,
+    "message": "PipelineStatus::DEMUXER_ERROR_NO_SUPPORTED_STREAMS: FFmpegDemuxer: no supported streams"
+   }
+  },
+  {
+   "name": "separate opus_st128.opus <audio>",
+   "kind": "element",
+   "tag": "audio",
+   "event": "loadedmetadata",
+   "duration": 15.0075,
+   "play": "ok",
+   "currentTime_advanced_s": 2.511,
+   "audio_peak": 0.4443,
+   "after_seek_currentTime": 7
+  },
+  {
+   "name": "separate opus_st128.opus decodeAudioData",
+   "kind": "decodeAudioData",
+   "bytes": 217270,
+   "ok": true,
+   "sampleRate": 48000,
+   "channels": 2,
+   "length": 720024,
+   "ms": 41,
+   "sync": {
+    "n_expected": 26,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   }
+  },
+  {
+   "name": "separate opus_st128.webm <audio>",
+   "kind": "element",
+   "tag": "audio",
+   "event": "loadedmetadata",
+   "duration": 15.008,
+   "play": "ok",
+   "currentTime_advanced_s": 2.531,
+   "audio_peak": 0.4443,
+   "after_seek_currentTime": 7
+  },
+  {
+   "name": "separate opus_st128.webm decodeAudioData",
+   "kind": "decodeAudioData",
+   "bytes": 221000,
+   "ok": true,
+   "sampleRate": 48000,
+   "channels": 2,
+   "length": 719976,
+   "ms": 48,
+   "sync": {
+    "n_expected": 26,
+    "n_found": 26,
+    "err_min": -24,
+    "err_max": -24,
+    "err_median": -24
+   }
+  },
+  {
+   "name": "separate opus_st128.mka <audio>",
+   "kind": "element",
+   "tag": "audio",
+   "event": "loadedmetadata",
+   "duration": 15.008,
+   "play": "ok",
+   "currentTime_advanced_s": 2.501,
+   "audio_peak": 0.4443,
+   "after_seek_currentTime": 7
+  },
+  {
+   "name": "separate opus_st128.mka decodeAudioData",
+   "kind": "decodeAudioData",
+   "bytes": 221071,
+   "ok": true,
+   "sampleRate": 48000,
+   "channels": 2,
+   "length": 719976,
+   "ms": 26,
+   "sync": {
+    "n_expected": 26,
+    "n_found": 26,
+    "err_min": -24,
+    "err_max": -24,
+    "err_median": -24
+   }
+  },
+  {
+   "name": "separate flac16_st.flac <audio>",
+   "kind": "element",
+   "tag": "audio",
+   "event": "loadedmetadata",
+   "duration": 15,
+   "play": "ok",
+   "currentTime_advanced_s": 2.531,
+   "audio_peak": 0.4425,
+   "after_seek_currentTime": 7
+  },
+  {
+   "name": "separate flac16_st.flac decodeAudioData",
+   "kind": "decodeAudioData",
+   "bytes": 1496765,
+   "ok": true,
+   "sampleRate": 48000,
+   "channels": 2,
+   "length": 720000,
+   "ms": 15,
+   "sync": {
+    "n_expected": 26,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   }
+  },
+  {
+   "name": "separate flac16_st.mka <audio>",
+   "kind": "element",
+   "tag": "audio",
+   "event": "loadedmetadata",
+   "duration": 15,
+   "play": "ok",
+   "currentTime_advanced_s": 2.509,
+   "audio_peak": 0.4425,
+   "after_seek_currentTime": 7
+  },
+  {
+   "name": "separate flac16_st.mka decodeAudioData",
+   "kind": "decodeAudioData",
+   "bytes": 1490209,
+   "ok": true,
+   "sampleRate": 48000,
+   "channels": 2,
+   "length": 720000,
+   "ms": 16,
+   "sync": {
+    "n_expected": 26,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   }
+  },
+  {
+   "name": "separate pcm24_st.wav <audio>",
+   "kind": "element",
+   "tag": "audio",
+   "event": "loadedmetadata",
+   "duration": 15,
+   "play": "ok",
+   "currentTime_advanced_s": 2.531,
+   "audio_peak": 0.4425,
+   "after_seek_currentTime": 7
+  },
+  {
+   "name": "separate pcm24_st.wav decodeAudioData",
+   "kind": "decodeAudioData",
+   "bytes": 4320102,
+   "ok": true,
+   "sampleRate": 48000,
+   "channels": 2,
+   "length": 720000,
+   "ms": 13,
+   "sync": {
+    "n_expected": 26,
+    "n_found": 26,
+    "err_min": 0,
+    "err_max": 0,
+    "err_median": 0
+   }
+  }
+ ],
+ "electron": "45.2.3",
+ "chrome": "156.0.8078.80"
+}
