@@ -47,3 +47,13 @@ Provenance: grilling rounds with Dom on 2026-11-12, working from the 22 open cho
 - A header flag says whether packet offsets point into the `.flac` (live) or the `.mka` (final).
 - The `.skat` header carries the packet table's offset and count. Zero-size packets are skipped.
 - Provisional: the drift-fit segment table and `audio_latency_ns` (open-work A3/A4), and the audio → video mapping formula.
+
+## After the sub-agent review (Dom, 2026-11-12, all recommendations accepted)
+
+Review: `spec_v0_review_20261112.md`.
+- **D1** New entry ADR-25VV supersedes ADR-5PP8 in full: the spec fixes only the sidecar, attachment, temporary-file and manifest names; media file and folder names belong to the writer.
+- **D2** No manifest and two takes in one folder: the reader reports each take. With a manifest, the other takes are stale.
+- **D3** Manifest member `clock.freq_hz`.
+- **D4** Fitted times are a MUST for capture writers (files with 2 or more records); conversion writers MAY omit them.
+- **D5** Provisional: SFF-301 (skellysync audio window) and SFF-262 (`adc_ns`/`current_ns` on Linux/macOS). SFF-602 (skellysync rotation) is final.
+- **D6** The drafter's added rules are accepted, plus: the take start times are never INT64_MIN, and `take_uuid` is never all zero.
