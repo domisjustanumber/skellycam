@@ -329,6 +329,49 @@ These are for Dom to decide; the plan is not changed.
 - On tonight's data, with a 0.85 limit, that rule would let the C930e go to 2 ms (−9, gain 191) but keep the C922 within about a stop. With a 0.70 limit, the C922 could reach −6 at gain 26.
 - It is still D9 (measured per camera, no cap table), but it no longer penalises brightness. It needs a validation run in a brighter scene.
 
+### 4.6 Proposed exposure-step method: shortest exposure for the least noise and softness (added 2026-11-12) [I]
+
+**Goal (Dom):** the shortest exposure time that adds the least noise and softness.
+
+**The trade:**
+- Brightness comes from three places: light, exposure time and gain.
+- Light is free.
+- Exposure costs motion blur.
+- Gain costs image quality, in different ways per camera. The C930e turns gain into *noise* (rho ×2.3 at 2 ms/gain 128, sharpness flat). The C922 turns it mostly into *softness* (its processing smooths: D 0.56, rho at most ×1.5) (§4.5).
+- **So the method has to score both noise and softness, at matched brightness.**
+
+**Steps, per camera** (all cameras at once in one pymf process; the scene static):
+1. **Ceiling:** the slowest exposure that keeps delivered fps ≥ 0.99 × nominal, measured (T4): Kiyo Pro −7, C922 and C930e −5 at 30 fps.
+2. **Free speed first:** at gain 0, shorten exposure while the target region still reaches the target brightness. The shortest such step is the reference *e0*. If even the ceiling at gain 0 is too dark, the camera is **light-limited**: tell the user how many stops of light are missing before any gain is used.
+3. **Reference image at e0, gain 0:** record luma L_ref, sharpness D_ref, noise rho_ref and, with the board in view, ChArUco corner jitter (px RMS over about 60 frames) and the corner count. Also measure luma against gain once (6–8 points), to predict gain for later steps.
+4. **Step down one exposure step at a time** (each step halves the time):
+   - set the predicted gain;
+   - wait until luma is stable (< 1 % change over 3 frames, at most about 1.5 s);
+   - correct gain until luma = L_ref ± 3 %;
+   - then score the step (64-frame mean for D, flat-mask σ/μ for rho, corner jitter if the board is visible).
+5. **Accept a step** only if all of these hold:
+   - D ≥ d_min × D_ref;
+   - rho ≤ r_max × rho_ref;
+   - corner jitter ≤ j_max × reference, and no corners lost (board in view);
+   - gain still has headroom.
+6. **Stop** at the first failing step and keep the last passing one. Record the stopping reason: quality, gain range or light.
+7. **Lock and record** exposure, gain and the score ratios with the configuration and the calibration (D10–D12).
+
+**Thresholds are provisional until validated:** d_min 0.80, r_max 1.5. On tonight's matched-brightness cells that would give:
+- **C922:** stays at −5 (−6 has D 0.78), so it is light-limited;
+- **C930e:** about −7 or −8 (rho ×2.3 at −9 fails).
+- **So the C922 is the camera that sets the limit, and more light helps it most.**
+
+**Validation (attended; ChArUco board on its stand):** a new test, for each camera and each exposure step at matched brightness, recording corner jitter, corner count, D and rho.
+- It shows which of D and rho predicts corner jitter on each camera.
+- It sets d_min, r_max and j_max where corner jitter starts to rise.
+- It can be folded into TP1.
+
+**Notes:**
+- **Exposure steps are whole stops on these cameras** (MF/DS log2 control) [M]. Finer steps through the UVC absolute exposure time are untested [NV].
+- **Focus and exposure depend on each other** [I]. The plan runs the exposure step and then the board autofocus. With corner jitter in the score, a coarse focus (or AF on) should come first and the final board AF last.
+- **The Kiyo Pro** needs linear (not binary) gain probing and longer settling (§4.4).
+
 ## 5. Decision 1.0: the package bump (W-TBUMP, 00:38–00:40)
 
 **Untested.** Neither recording ran [M] (`R/W-TBUMP.json errors`, `verdicts["T-BUMP|recording"]`).
@@ -552,6 +595,15 @@ Load is bytes reserved per 125 µs microframe [M] (`mode_alt_cache.json`; µs fr
 - After the move, check with `run_suite.py --only W-TOPO --kiyo-pro-dead 2026-11-12T05:46:24.269472+00:00` (drop the flag if Dom has replugged the Kiyo Pro since). It reads cached hub state and descriptors and opens no stream. In `W-TOPO.json`:
   - `camera_domains` should show the C922 alone on an Intel `hs|…#<n>` domain, with n ≠ 13;
   - `scenarios.all_cameras_720p30` should show every domain as `fits`.
+- **Done 2026-11-12 10:20.** Dom moved the C922 to root port 4 (HS04, direct, no hub) [M] (`--only W-TOPO --kiyo-pro-dead …`, output kept outside the repo):
+
+  | domain | camera | share at 720p30 | verdict |
+  |---|---|---|---|
+  | Intel HS04 | C922 | 31.9 % | fits |
+  | Intel HS08 | C930e | 49.3 % | fits |
+  | Intel HS13 | generic | 49.3 % | fits |
+  | Thunderbolt SS port 4 | Kiyo Pro | – | descriptor read refused by the dead rule, as intended |
+
 - **Not yet measured** [NV]: three USB 2.0 root ports loaded at once (about 49 + 49 + 32 %). Two ports at 98.4 % is the most measured so far, and Linux notes a controller-wide DMI limit.
 - **Confirm with real streams:** W-MULTI and W-PYMF-ALL (all four at 720p30 in one pymf process), then T-BUMP with all four cameras.
 
