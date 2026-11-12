@@ -1,6 +1,6 @@
 # /// script
-# requires-python = ">=3.12"
-# dependencies = ["av==19.0.2", "opencv-contrib-python==4.12.*", "numpy"]
+# requires-python = "==3.12.13"
+# dependencies = ["av==19.0.2", "opencv-contrib-python==5.0.0.93", "numpy==2.5.4"]
 # ///
 """Raw (uncompressed) capture through DirectShow and OpenCV for W-RAW (plan capture_stack_options_plan.md 4.1 row 9a).
 

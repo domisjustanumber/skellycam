@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.10"
-# dependencies = ["opencv-contrib-python==4.12.*", "numpy"]
+# dependencies = ["opencv-contrib-python==5.0.0.93", "numpy==2.5.4"]
 # ///
 """OpenCV camera-control probe for W-OCV-CTRL: CAP_PROP_AUTO_EXPOSURE / EXPOSURE / AUTOFOCUS / FOCUS through
 CAP_DSHOW or CAP_MSMF, set -> get readback -> the camera's real state -> the image.

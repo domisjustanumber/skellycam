@@ -1,5 +1,5 @@
 # /// script
-# requires-python = ">=3.12"
+# requires-python = "==3.12.13"
 # dependencies = ["av==19.0.2"]
 # ///
 """PyAV / FFmpeg DirectShow device and option listing with per-call QPC timestamps and a hang bound (W-PYAV-LIST).

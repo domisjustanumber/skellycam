@@ -31,8 +31,8 @@ defaults to ``reliability``, --quick to ``quick``).
 
 W-CYC-381 (plan 6.1): in the reliability profile mf_inproc, ds_ffmpeg_inproc and mf_newproc rate 'yes' only when the
 Wilson 95 % lower bound of first-frame-within-2-s is >= 0.99 (>= 381 failure-free cycles); below it they are
-'partial (n too small for a 99 % claim ...)' or 'partial (99 % not shown ...)'. mf_newproc runs 100 cycles, a
-smaller sample that cannot back the claim (``reliability_note`` says so). Every other 'yes' is labelled
+'partial (n too small for a 99 % claim ...)' or 'partial (99 % not shown ...)'. mf_newproc runs 400 cycles (Dom 2026-11-11), enough to
+back the claim like the other two. Every other 'yes' is labelled
 'yes (point estimate; n=..., Wilson lower ...)'. XP section 3's point-rate rule stays as its own criterion.
 
 Segments: the Razer Kiyo Pro tends to wedge ~210 min after plug-in once it has streamed, so the runner cycles it in
@@ -121,7 +121,7 @@ UTC_IS_END = {"mf": True, "ds": False, "opencv": False}
 
 PROFILES = ("quick", "standard", "reliability")
 RELIABILITY_CYCLES = 400        # >= 381 failure-free cycles bound success >= 99 % at the Wilson 95 % lower bound
-RELIABILITY_NEWPROC = 100
+RELIABILITY_NEWPROC = 400     # Dom 2026-11-11: >= 381 failure-free cycles for every camera and API in scope
 #: plan 6.1 W-CYC-381: ">= 99 % per camera at the Wilson lower bound" per API (MF in-process and new-process; the
 #: reliability profile adds DirectShow through the ffmpeg CLI). In the reliability profile these variants rate 'yes'
 #: only when the Wilson 95 % lower bound of first-frame-within-2-s is >= 0.99 (in practice >= 381 failure-free

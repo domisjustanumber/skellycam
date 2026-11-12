@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.10"
-# dependencies = ["opencv-contrib-python==4.12.*", "numpy"]
+# dependencies = ["opencv-contrib-python==5.0.0.93", "numpy==2.5.4"]
 # ///
 """OpenCV CAP_DSHOW open/close cycle baseline for W-CYC (skellycam's capture path today).
 

@@ -163,6 +163,14 @@ class SuiteCtx:
     dry_run_commands: list = field(default_factory=list)
     plan_raw_root: Path | None = None                     # where plan mode looks for earlier runs' cached formats
     usb_link: dict = field(default_factory=dict)          # run-start USB link check (run_suite.start_link_check)
+    # ---- Kiyo Pro dead rule (Dom 2026-11-11): once the Kiyo Pro faults it is dead for the rest of the run: every
+    # later command addressed to it is skipped (streaming or not), it is never re-probed, re-opened, reset or
+    # un-faulted, the poller stops polling it, and one diagnostics snapshot is recorded (CAPTURE_AND_RECORDING_PLAN
+    # section 3.3 TP1, "Kiyo Pro wedge" row). Nothing further is done to diagnose it.
+    dead: dict = field(default_factory=dict)              # key -> dead record (+ diagnostics)
+    stream_starts: dict = field(default_factory=dict)     # key -> streaming commands started in this run
+    last_cmd: dict = field(default_factory=dict)          # key -> last camera command (argv, times, rc, timeout)
+    running_cmds: dict = field(default_factory=dict)      # id -> camera command running now (key, argv, utc)
     _gated: set = field(default_factory=set, repr=False)
     _lock: Any = field(default_factory=threading.RLock, repr=False)
 
@@ -191,13 +199,36 @@ class SuiteCtx:
             return self._dry_run_result(argv, timeout_s)
         cam = self.camera_for_argv(argv)
         streaming = is_streaming_argv(argv)
+        if cam is not None and self.camera_dead(cam["key"]):
+            # dead rule: NO command of any kind reaches a dead Kiyo Pro (gate=False does not override this)
+            return self._gated_result(argv, cam, self.camera_dead(cam["key"]))
         if gate and cam is not None and streaming:
             rec = self.camera_gated(cam["key"])
             if rec:
                 return self._gated_result(argv, cam, rec)
-        r = camcmd_run(argv, timeout_s, cwd=cwd, env=env,
-                       camlock_timeout_s=self.camlock_timeout_s if camlock_timeout_s is None else camlock_timeout_s,
-                       log=self.log)
+        cid = object()
+        t_utc = results.utc_now_iso()
+        with self._lock:
+            if cam is not None:
+                if streaming:
+                    self.stream_starts[cam["key"]] = self.stream_starts.get(cam["key"], 0) + 1
+                self.running_cmds[id(cid)] = {"key": cam["key"], "name": cam.get("name"), "argv": _short(argv, 400),
+                                              "api": _argv_api(argv), "streaming": streaming, "utc_started": t_utc,
+                                              "test": self.current_test}
+        try:
+            r = camcmd_run(argv, timeout_s, cwd=cwd, env=env,
+                           camlock_timeout_s=self.camlock_timeout_s if camlock_timeout_s is None else camlock_timeout_s,
+                           log=self.log)
+        finally:
+            with self._lock:
+                self.running_cmds.pop(id(cid), None)
+        if cam is not None:
+            with self._lock:
+                self.last_cmd[cam["key"]] = {"argv": _short(argv, 600), "utc_started": t_utc,
+                                             "utc_ended": results.utc_now_iso(), "rc": r.get("rc"),
+                                             "timed_out": r.get("timed_out"), "killed": r.get("killed"),
+                                             "elapsed_s": r.get("elapsed_s"), "test": self.current_test,
+                                             "stderr_tail": (r.get("stderr") or "")[-800:]}
         if scan and cam is not None:
             try:
                 self._scan_camcmd(cam, argv, r, streaming)
@@ -294,10 +325,81 @@ class SuiteCtx:
 
     def camera_gated(self, key_or_cam: Any) -> dict | None:
         k = self._key(key_or_cam)
+        d = self.camera_dead(k)
+        if d:
+            return d
         with self._lock:
             if not self.fault_gate or k not in self._gated:
                 return None
         return self.camera_faulted(k)
+
+    def camera_dead(self, key_or_cam: Any) -> dict | None:
+        """The dead record when this camera (only ever the Kiyo Pro) is dead for the rest of the run, else None."""
+        k = self._key(key_or_cam)
+        with self._lock:
+            rec = self.dead.get(k)
+            return dict(rec) if rec else None
+
+    def _declare_dead(self, cam: dict, fault_rec: dict) -> None:
+        """Dead rule: mark the Kiyo Pro dead once, record the diagnostics snapshot, write it to the run folder."""
+        with self._lock:
+            if cam["key"] in self.dead:
+                return
+            self.dead[cam["key"]] = {"dead": True, "since_utc": fault_rec.get("since_utc"), "name": cam.get("name"),
+                                     "code": fault_rec.get("code"), "test": fault_rec.get("test"),
+                                     "rule": "Kiyo Pro dead for the rest of the run: no re-probe, re-open, reset "
+                                             "or recovery; diagnostics recorded once (Dom 2026-11-11)"}
+        self.log(f"KIYO PRO DEAD: {cam.get('name')} ({cam['key']}) faulted in {fault_rec.get('test')}: "
+                 f"{fault_rec.get('code') or fault_rec.get('class')}. Marked dead for the rest of the run; no command "
+                 "will reach it again. Recording diagnostics.")
+        try:
+            diag = self._dead_diagnostics(cam, fault_rec)
+        except Exception as e:  # noqa: BLE001 - diagnostics must never break the run
+            diag = {"error": repr(e)}
+        with self._lock:
+            self.dead[cam["key"]]["diagnostics"] = diag
+        try:
+            self.write(f"KIYO_PRO_DEAD_{results.utc_stamp()}", {"key": cam["key"], **self.dead[cam["key"]]})
+        except Exception as e:  # noqa: BLE001
+            self.log(f"could not write the Kiyo Pro dead record: {e!r}")
+
+    def _dead_diagnostics(self, cam: dict, fault_rec: dict) -> dict:
+        """The plan's list, read without touching the dead camera: time, plug-in age, run and test step, the last
+        command and its arguments, every error code and timeout, the other cameras open at that moment and through
+        which API, the Frame Server clients and camera-holding processes, the USB topology, stream starts since
+        plug-in (counted from run start; earlier starts are unknown when it was plugged in before the run)."""
+        age, la = self.plug_in_age_s(cam)
+        with self._lock:
+            hist = [e for e in self.fault_events if e.get("key") == cam["key"]]
+            last = dict(self.last_cmd.get(cam["key"]) or {})
+            running = [dict(v) for v in self.running_cmds.values()]
+            starts = self.stream_starts.get(cam["key"], 0)
+            failures = {"first_failure": self.first_failure.get(cam["key"]),
+                        "first_any_failure": self.first_any_failure.get(cam["key"])}
+        d = {"utc": results.utc_now_iso(), "run_dir": str(self.out_dir), "run_stamp": self.stamp,
+             "test": self.current_test, "fault": {k: v for k, v in fault_rec.items() if k != "history"},
+             "plug_in_age_s": age, "last_arrival": la, "last_command": last,
+             "fault_and_failure_events": hist, **failures,
+             "other_camera_commands_running": [r for r in running if r.get("key") != cam["key"]],
+             "stream_starts_this_run": starts, "camera": camera_summary(cam),
+             "usb_link": (self.usb_link or {}).get(cam["key"]) if isinstance(self.usb_link, dict) else None}
+        try:
+            d["arrival_now"] = self._arrival_for(cam)          # CfgMgr cached state; no device request
+        except Exception as e:  # noqa: BLE001
+            d["arrival_now"] = {"error": repr(e)}
+        try:
+            import capkit as _ck                               # IMFSensorActivityMonitor + ConsentStore; opens no camera
+            d["camera_activity"] = _ck.wincam_activity(self)
+        except Exception as e:  # noqa: BLE001
+            d["camera_activity"] = {"error": repr(e)}
+        for name, argv in (("frame_server", ["tasklist", "/svc", "/fo", "csv", "/fi", "SERVICES eq FrameServer"]),
+                           ("processes", ["tasklist", "/fo", "csv", "/nh"])):
+            try:
+                r = self.run(argv, timeout_s=30)
+                d[name] = (r.get("stdout") or "")[-20000:]
+            except Exception as e:  # noqa: BLE001
+                d[name] = {"error": repr(e)}
+        return d
 
     def fault_reason(self, key_or_cam: Any) -> str | None:
         rec = self.camera_faulted(key_or_cam)
@@ -372,13 +474,19 @@ class SuiteCtx:
             self.fault_events.append(ev)
         self.log(f"FAULT: {cam.get('name')} ({cam['key']}) marked faulted by {source} in {ev['test']}: "
                  f"{code or cls} at {stage} (plug-in age {None if age is None else round(age / 60, 1)} min); "
-                 "its streaming work is skipped from the next test on unless a health probe answers")
+                 + ("Kiyo Pro: dead rule applies" if cam.get("is_kiyo") else
+                    "its streaming work is skipped from the next test on unless a health probe answers"))
+        if cam.get("is_kiyo"):
+            self._declare_dead(cam, rec)
         return dict(rec)
 
     def clear_fault(self, key_or_cam: Any, test: str | None = None, source: str = "health_probe",
                     detail: Any = None) -> dict | None:
         cam = self._cam(key_or_cam)
         if cam is None:
+            return None
+        if self.camera_dead(cam):
+            self.log(f"clear_fault refused: {cam.get('name')} is dead for the rest of the run (Kiyo Pro dead rule)")
             return None
         with self._lock:
             cur = self.faults.get(cam["key"])
@@ -404,6 +512,15 @@ class SuiteCtx:
         t = test or self.current_test
         if cam is None:
             return {"ok": None, "error": f"unknown camera {key_or_cam!r}"}
+        dead = self.camera_dead(cam)
+        if dead:
+            out = {"ok": False, "dead": True, "skipped": "dead (Kiyo Pro dead rule): not probed", "key": cam["key"],
+                   "name": cam.get("name"), "utc": results.utc_now_iso(), "test": t, "reason": reason,
+                   "fault_like": True, "recovered": False, "faulted_after": True, "code": dead.get("code"),
+                   "was_faulted": True}
+            with self._lock:
+                self.probes_by_test.setdefault(t or "-", {}).setdefault(cam["key"], []).append(dict(out))
+            return out
         if not cam.get("mf_symlink"):
             return {"ok": None, "skipped": "camera has no MF symbolic link", "key": cam["key"]}
         pm = _probe_mode(self, cam, mode)
@@ -472,6 +589,8 @@ class SuiteCtx:
             faulted = [k for k, v in self.faults.items() if v.get("faulted")]
             self._gated = set()
         for k in faulted:
+            if self.camera_dead(k):
+                continue                                   # dead rule: never re-probed
             if probe and self.camera(k) is not None:
                 probes[k] = self.health_probe(k, test=test, reason=f"re-probe at the start of {test}")
         with self._lock:
@@ -496,6 +615,8 @@ class SuiteCtx:
                 "events": self.fault_events,
                 "gated_by_test": self.gated_by_test, "probes_by_test": self.probes_by_test,
                 "kiyo": self.kiyo_state,
+                "dead": self.dead,
+                "stream_starts": self.stream_starts,
                 "rule": "fault = 0x8007001F (device_error) / unreleasable or hung reader / streaming command killed "
                         "at its timeout; its streaming commands are gated from the next test on; each later test "
                         "re-probes it once (1-frame MF capture) and un-faults it if it answers"}, default=str))

@@ -158,7 +158,8 @@ def test_fault_adapters_use_suitectx_gate(tmp_path):
     """With suitectx's SuiteCtx, capkit's fault helpers go through ctx.mark_fault / camera_faulted / clear_fault /
     record_failure (one registry for the runner's dead-device gate). No discovery, no camera opened."""
     import suitectx
-    cam = {"key": "1532:0e05:test", "name": "Kiyo", "vid": "1532", "pid": "0e05", "is_kiyo": True}
+    # a non-Kiyo Pro camera: faults can clear (a Kiyo Pro fault is permanent under the dead rule, checked below)
+    cam = {"key": "046d:085c:test", "name": "c922", "vid": "046d", "pid": "085c", "is_kiyo": False}
     ctx = suitectx.build_ctx(suitectx.default_args(), out_dir=tmp_path / "o", raw_dir=tmp_path / "r", cameras=[cam])
     if not ck._has_gate(ctx):
         pytest.skip("this suitectx has no device-fault gate")
@@ -170,6 +171,12 @@ def test_fault_adapters_use_suitectx_gate(tmp_path):
     assert ck.first_failure(ctx, cam)["test"] == "W-MJPEG"
     ck.clear_device_fault(ctx, cam, "W-MJPEG", {"ok": True})
     assert ck.device_fault(ctx, cam) is None and ctx.camera_faulted(cam["key"]) is None
+    kp = {"key": "1532:0e05:test", "name": "Kiyo Pro", "vid": "1532", "pid": "0e05", "is_kiyo": True}
+    ctx2 = suitectx.build_ctx(suitectx.default_args(), out_dir=tmp_path / "o2", raw_dir=tmp_path / "r2", cameras=[kp])
+    ck.mark_device_fault(ctx2, kp, "W-MJPEG", "MJPG 1280x720@30", "mf",
+                         {"kind": "device_error", "code": "0x8007001F", "stage": "first_sample", "reason": "r"})
+    ck.clear_device_fault(ctx2, kp, "W-MJPEG", {"ok": True})
+    assert ctx2.camera_faulted(kp["key"]) and ctx2.camera_dead(kp["key"])
 
 
 def test_gate_skipped_result_is_a_fault():

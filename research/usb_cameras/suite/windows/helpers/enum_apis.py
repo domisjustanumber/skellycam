@@ -1,5 +1,5 @@
 # /// script
-# requires-python = ">=3.12"
+# requires-python = "==3.12.13"
 # dependencies = [
 #   "av==19.0.2",
 #   "cv2-enumerate-cameras==1.4.0",

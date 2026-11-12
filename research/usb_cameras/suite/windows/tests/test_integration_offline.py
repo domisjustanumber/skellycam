@@ -100,9 +100,9 @@ def test_gate_synthetic_result_is_a_fault_for_every_owner(tmp_path, monkeypatch)
         assert v["evidence"]["fault_code"] == "0x8007001F"
     assert "device fault since" in v1["note"] and "device fault since" in v2["note"]
     assert rs.rating_label("G-TS", v2).startswith("untested")
-    # controls are never gated (W-CTRL-LIST / W-KIYO still read the control plane of a faulted camera)
-    ctx.camcmd([WINCAM, "controls", "--api", "mf", "--device", KIYO_MF, "--read-only"], timeout_s=10)
-    assert len(calls) == 1
+    # 2026-11-11 dead rule: a dead Kiyo Pro gets no command at all, controls included
+    r2 = ctx.camcmd([WINCAM, "controls", "--api", "mf", "--device", KIYO_MF, "--read-only"], timeout_s=10)
+    assert not calls and r2["gate_skipped"]
     ctx.end_test("W-TS")
 
 
@@ -276,7 +276,7 @@ def test_wedged_kiyo_is_faulted_once_and_later_tests_skip_it(tmp_path, monkeypat
     for t in ("W-CTRL-EFFECT", "W-TS", "W-MJPEG"):
         st, res, n = by[t]
         assert st["status"] == "ok", (t, st, res.get("errors"))
-        assert n == 1, (t, n)                                          # the runner's single re-probe, nothing else
+        assert n == 0, (t, n)                                          # dead rule: no re-probe, nothing else
         assert st["gated"] == {"kiyo": since}
         cells = {k: v for k, v in (res.get("verdicts") or {}).items()
                  if isinstance(v, dict) and "rating" in v and "kiyo" in k}

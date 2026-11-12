@@ -1,6 +1,6 @@
 # /// script
-# requires-python = ">=3.12"
-# dependencies = ["simplejpeg>=1.8", "pillow>=11", "numpy>=2"]
+# requires-python = "==3.12.13"
+# dependencies = ["simplejpeg==1.9.0", "pillow==13.0.0", "numpy==2.5.4"]
 # ///
 """Windows UVC test suite runner (plan docs/xplat_capture_plan.md section 6; contract 3).
 
@@ -107,23 +107,35 @@ from common import results  # noqa: E402
 #: Dependencies: W-RAW reads this run's W-FMT listing (W-TOPO domains); W-MJPEG,
 #: W-CTRL-EFFECT and W-OCV-CTRL read W-CTRL-LIST.json; all of them come after those. W-KIYO runs as a background
 #: poller for the whole suite.
+#: 2026-11-11 (overnight run for the phase-1 path, CAPTURE_AND_RECORDING_PLAN rev 3.3): W-AUTO leaves the order
+#: (auto-mode recovery is no longer a product test; W-NODRIFT replaces it); the product-path tests (W-PYMF-ALL,
+#: W-TBUMP, W-NODRIFT, W-GAIN) run right after W-PYMF while the Kiyo Pro is most likely alive; W-CYC-KIYO (~1,360
+#: Kiyo Pro stream starts, the test most likely to end in a wedge) moves to second-last, after W-MULTI and
+#: W-PYAV-LIST, so a wedge there costs only the other cameras' W-CYC nothing. Under the dead rule (suitectx) a dead
+#: Kiyo Pro is never touched again; W-PYAV-LIST is skipped whole when a Kiyo Pro is dead (listing would reach it).
 TESTS = [("W-ENV", "w_env"), ("W-POLICY", "w_policy"), ("W-TOPO", "w_topo"), ("W-ID", "w_id"),
          ("W-FMT", "w_fmt"), ("W-FMT-NOGRAB", "w_fmt_nograb"), ("W-CTRL-LIST", "w_ctrl_list"),
          ("W-MJPEG", "w_mjpeg"), ("W-RAW", "w_raw"), ("W-TS", "w_ts"), ("W-PYMF", "w_pymf"),
-         ("W-CTRL-EFFECT", "w_ctrl_effect"), ("W-AUTO", "w_auto"), ("W-OCV-CTRL", "w_ocv_ctrl"),
-         ("W-CYC-KIYO", "w_cyc_kiyo"), ("W-MULTI", "w_multi"),
-         ("W-PYAV-LIST", "w_pyav_list"), ("W-CYC", "w_cyc"), ("W-KIYO", "w_kiyo")]
+         ("W-PYMF-ALL", "w_pymf_all"), ("W-TBUMP", "w_tbump"), ("W-NODRIFT", "w_nodrift"), ("W-GAIN", "w_gain"),
+         ("W-CTRL-EFFECT", "w_ctrl_effect"), ("W-OCV-CTRL", "w_ocv_ctrl"), ("W-MULTI", "w_multi"),
+         ("W-PYAV-LIST", "w_pyav_list"), ("W-CYC-KIYO", "w_cyc_kiyo"), ("W-CYC", "w_cyc"), ("W-KIYO", "w_kiyo")]
+#: not in the default order any more; still runnable with --only W-AUTO
+EXTRA_TESTS = [("W-AUTO", "w_auto")]
+#: skipped whole (rated untested) when any Kiyo Pro is dead: the test would reach the dead camera
+SKIP_IF_KIYO_PRO_DEAD = ("W-PYAV-LIST",)
 #: runs as a background poller for the whole suite (not in the sequential order) unless it is the only test
 BACKGROUND_TESTS = ("W-KIYO",)
 #: tests added 2026-11-08 (docs/capture_stack_options_plan.md section 6.1, and the native-Python backend check)
 #: whose modules other owners write: when the module file is not there the test is left out of the plan with a log
 #: line (named in --only: an error result)
-OPTIONAL_TESTS = ("W-AUTO", "W-OCV-CTRL", "W-RAW", "W-PYAV-LIST", "W-PYMF")
+OPTIONAL_TESTS = ("W-AUTO", "W-OCV-CTRL", "W-RAW", "W-PYAV-LIST", "W-PYMF", "W-PYMF-ALL", "W-TBUMP", "W-NODRIFT",
+                  "W-GAIN")
 
 #: fallback ETA (seconds) for modules without estimate_s: (fixed, per camera)
 DEFAULT_ETA = {"W-ENV": (20, 0), "W-POLICY": (10, 0), "W-TOPO": (30, 8), "W-ID": (40, 10), "W-FMT": (10, 6),
                "W-FMT-NOGRAB": (20, 80), "W-CTRL-LIST": (10, 6), "W-AUTO": (30, 240), "W-OCV-CTRL": (30, 240),
-               "W-RAW": (30, 120), "W-PYAV-LIST": (60, 30), "W-PYMF": (30, 300)}
+               "W-RAW": (30, 120), "W-PYAV-LIST": (60, 30), "W-PYMF": (30, 300), "W-PYMF-ALL": (1200, 0),
+               "W-TBUMP": (360, 0), "W-NODRIFT": (60, 720), "W-GAIN": (120, 900)}
 
 #: --plan warns when a camera-opening test is projected to END past this Kiyo plug-in age (the Kiyo wedged 210-224
 #: min after plug-in on 11-06); W-PYAV-LIST is late on purpose (it is meant to meet a wedged Kiyo)
@@ -131,19 +143,21 @@ KIYO_WEDGE_WARN_S = 200 * 60
 KIYO_LATE_BY_DESIGN = ("W-PYAV-LIST",)
 #: the Kiyo-sensitive captures the order exists for: --plan exits 3 when one of them is projected to end its Kiyo work
 #: past KIYO_WEDGE_WARN_S for a Kiyo plugged in at the run start (an order error, independent of the Kiyo's real age)
-KIYO_EARLY = ("W-MJPEG", "W-RAW", "W-TS", "W-PYMF", "W-CTRL-EFFECT", "W-AUTO", "W-OCV-CTRL")
+KIYO_EARLY = ("W-MJPEG", "W-RAW", "W-TS", "W-PYMF", "W-PYMF-ALL", "W-TBUMP", "W-NODRIFT", "W-GAIN",
+              "W-CTRL-EFFECT", "W-OCV-CTRL")
 #: the stream-start hypothesis (docs/windows_results_20261106.md section 8: ~270 Kiyo stream starts preceded the R2
 #: onset): --plan warns when a Kiyo control test starts after more than KIYO_STARTS_WARN projected Kiyo stream starts
 KIYO_STARTS_WARN = 250
-KIYO_CONTROL_TESTS = ("W-CTRL-EFFECT", "W-AUTO", "W-OCV-CTRL")
+KIYO_CONTROL_TESTS = ("W-NODRIFT", "W-GAIN", "W-CTRL-EFFECT", "W-OCV-CTRL")
 #: approximate Kiyo stream starts per test in a full run (each capture, open/close cycle or OpenCV open that streams
 #: the Kiyo counts one; listing tests stream nothing). W-PYMF and W-CYC-KIYO are computed from the run's settings
 #: (kiyo_stream_starts); a quick run starts fewer, so the projection then over-counts
 KIYO_STARTS_FULL = {"W-MJPEG": 8, "W-RAW": 22, "W-TS": 3, "W-CTRL-EFFECT": 30, "W-AUTO": 16, "W-OCV-CTRL": 16,
-                    "W-MULTI": 20, "W-PYAV-LIST": 2}
+                    "W-MULTI": 20, "W-PYAV-LIST": 2, "W-PYMF-ALL": 4, "W-TBUMP": 2, "W-NODRIFT": 5, "W-GAIN": 60}
 #: per-camera tests that loop over ctx.cameras (Kiyo first): the Kiyo's work ends after ~1/n of the test. Every other
 #: camera-opening test is counted as Kiyo work for its whole length (W-RAW, W-CYC-KIYO, W-MULTI ...)
-KIYO_SHARE_FIRST = ("W-FMT", "W-CTRL-LIST", "W-MJPEG", "W-TS", "W-PYMF", "W-CTRL-EFFECT", "W-AUTO", "W-OCV-CTRL")
+KIYO_SHARE_FIRST = ("W-FMT", "W-CTRL-LIST", "W-MJPEG", "W-TS", "W-PYMF", "W-NODRIFT", "W-GAIN", "W-CTRL-EFFECT",
+                    "W-AUTO", "W-OCV-CTRL")
 
 QUICK = {"cycles": 4, "proc_cycles": 2, "frames": 10, "mjpeg_seconds": 1.5, "repeats": 5, "cyc_profile": "quick"}
 FULL = {"cycles": 50, "proc_cycles": 15, "frames": 30, "mjpeg_seconds": 3.0, "repeats": 20,
@@ -190,6 +204,10 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--camera", action="append", default=[],
                     help="OPT-IN debugging filter: keep only cameras whose key or name contains this text "
                          "(repeatable). Default: every discovered camera, the Kiyo included")
+    ap.add_argument("--kiyo-pro-dead", dest="kiyo_pro_dead", default=None, metavar="UTC",
+                    help="restart after a Kiyo Pro wedge: mark every Kiyo Pro dead from the start (dead rule: no "
+                         "command reaches it; its cells rate untested). Value: the UTC time it died (from the earlier "
+                         "run's KIYO_PRO_DEAD_*.json)")
     ap.add_argument("--kiyo-interval", dest="kiyo_interval", type=float, default=10.0,
                     help="W-KIYO poll interval in seconds (background and foreground)")
     ap.add_argument("--kiyo-foreground", dest="kiyo_foreground", action="store_true",
@@ -233,10 +251,12 @@ def norm_id(s: str) -> str:
 def selected(a: argparse.Namespace) -> list[tuple[str, str]]:
     only = {norm_id(x) for x in (a.only or "").split(",") if x.strip()}
     skip = {norm_id(x) for x in (a.skip or "").split(",") if x.strip()}
-    unknown = (only | skip) - {t for t, _ in TESTS}
+    known = TESTS + EXTRA_TESTS
+    unknown = (only | skip) - {t for t, _ in known}
     if unknown:
-        raise SystemExit(f"unknown test id(s): {sorted(unknown)}; known: {[t for t, _ in TESTS]}")
-    return [(t, m) for t, m in TESTS if (not only or t in only) and t not in skip]
+        raise SystemExit(f"unknown test id(s): {sorted(unknown)}; known: {[t for t, _ in known]}")
+    return ([(t, m) for t, m in TESTS if (not only or t in only) and t not in skip]
+            + [(t, m) for t, m in EXTRA_TESTS if t in only and t not in skip])
 
 
 def module_exists(name: str) -> bool:
@@ -741,8 +761,13 @@ def run_one(ctx, t: str, mod, err: str | None, eta: float) -> tuple[dict, dict, 
     st["gated"] = dict((getattr(ctx, "gated_by_test", {}) or {}).get(t) or {})
     st["probes"] = {k: {kk: p.get(kk) for kk in ("ok", "code", "class", "recovered", "utc")}
                     for k, p in probes.items() if isinstance(p, dict)} if isinstance(probes, dict) else probes
+    dead = [k for k in (getattr(ctx, "dead", {}) or {})]
     try:
-        if mod is None:
+        if t in SKIP_IF_KIYO_PRO_DEAD and dead:
+            res = error_result(ctx, t, "untested: a Kiyo Pro is dead (dead rule: this test would reach it)")
+            res["skipped_dead_rule"] = dead
+            st["status"] = "skipped (Kiyo Pro dead)"
+        elif mod is None:
             res = error_result(ctx, t, err or "module missing")
             st["status"] = "missing"
         else:
@@ -844,6 +869,18 @@ def apply_camera_filter(ctx, a: argparse.Namespace) -> None:
                                              for f in a.camera)]
         ctx.log(f"run_suite: --camera filter {a.camera}: {len(keep)}/{len(ctx.cameras)} cameras kept (opt-in)")
         ctx.cameras = keep
+    if getattr(a, "kiyo_pro_dead", None):
+        for c in ctx.cameras:
+            if c.get("is_kiyo"):
+                rec = {"dead": True, "since_utc": a.kiyo_pro_dead, "name": c.get("name"), "code": None,
+                       "test": "(earlier run)", "rule": "marked dead at start with --kiyo-pro-dead (restart after a "
+                                                        "Kiyo Pro wedge); no command reaches it"}
+                ctx.dead[c["key"]] = rec
+                ctx.faults[c["key"]] = {"faulted": True, "since_utc": a.kiyo_pro_dead, "test": "(earlier run)",
+                                        "code": None, "class": "device_error", "source": "--kiyo-pro-dead",
+                                        "history": [], "repeats": 0}
+                ctx.log(f"run_suite: {c.get('name')} ({c['key']}) marked DEAD from the start (--kiyo-pro-dead "
+                        f"{a.kiyo_pro_dead}); no command will reach it")
     # the Kiyo first, then discovery order (w_cyc.camera_order's rule): every per-camera test loops over ctx.cameras,
     # so the Kiyo's share of each test runs at its start, while the Kiyo is youngest
     ctx.cameras = sorted(ctx.cameras, key=lambda c: 0 if c.get("is_kiyo") else 1)

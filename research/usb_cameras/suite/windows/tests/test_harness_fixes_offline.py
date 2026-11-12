@@ -176,8 +176,9 @@ def test_plan_order_keeps_the_kiyo_sensitive_captures_inside_the_wedge_window(tm
     out = capsys.readouterr().out
     order = [ln.split()[1] for ln in out.splitlines() if re.match(r"\s*\d+\s+W-", ln)]
     # review round 3: the Kiyo control tests before W-CYC-KIYO's ~1,060 Kiyo stream starts
+    # 2026-11-11: W-CYC-KIYO's ~1,360 Kiyo Pro starts come after everything else that needs the Kiyo Pro
     assert order.index("W-RAW") < order.index("W-TS") < order.index("W-PYMF") < order.index("W-CTRL-EFFECT") \
-        < order.index("W-OCV-CTRL") < order.index("W-CYC-KIYO") < order.index("W-MULTI")
+        < order.index("W-OCV-CTRL") < order.index("W-MULTI") < order.index("W-CYC-KIYO")
     assert "ORDER ERROR" not in out
     assert "Kiyo starts" in out and "Kiyo stream starts (" not in out     # no control test after > 250 starts
     cam_lines = [ln for ln in out.splitlines() if "  key " in ln]
@@ -300,7 +301,7 @@ def test_wcyc_profiles_and_estimate(tmp_path):
     ctx.args.cyc_profile = "reliability"
     vc = w_cyc.variant_counts(ctx)
     assert vc["mf_inproc"] >= 381 and vc["ds_ffmpeg_inproc"] >= 381
-    assert vc["mf_newproc"] == 100 and vc["ds_inproc"] == 50 and vc["opencv_skellycam"] == 15
+    assert vc["mf_newproc"] == 400 and vc["ds_inproc"] == 50 and vc["opencv_skellycam"] == 15
     rel = w_cyc.estimate_s(ctx)
     ctx.args.cyc_profile = "standard"
     assert w_cyc.variant_counts(ctx)["mf_inproc"] == 50 and w_cyc.estimate_s(ctx) < rel

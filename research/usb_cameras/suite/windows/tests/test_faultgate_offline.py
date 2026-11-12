@@ -145,6 +145,7 @@ def test_probe_mode_stays_in_the_streaming_scope(tmp_path, monkeypatch):
 
 
 def test_gate_lifecycle(tmp_path, monkeypatch):
+    """A non-Kiyo Pro camera keeps the original gate: fault -> gated + re-probed at each test -> recovered."""
     ctx = _ctx(tmp_path)
     calls = []
     answers = {"probe": DEVERR}
@@ -153,55 +154,115 @@ def test_gate_lifecycle(tmp_path, monkeypatch):
         calls.append(argv)
         if "--frames" in argv and argv[argv.index("--frames") + 1] == "1":
             return _run(answers["probe"], rc=0 if answers["probe"].get("ok") else 4)
-        return _run(DEVERR, rc=4)
+        if C922_MF in argv:
+            return _run(DEVERR, rc=4)
+        return _run(GOOD)
 
     monkeypatch.setattr(suitectx, "camcmd_run", fake_run)
     monkeypatch.setattr(suitectx, "_probe_mode", lambda c, cam, mode=None: (1280, 720, 30.0))
     ctx.begin_test("W-MJPEG")
-    # a streaming command returns 0x8007001F -> fault (scan), but no gate inside the same test
-    ctx.camcmd([str(ctx.wincam), "capture", "--api", "mf", "--device", KIYO_MF, "--width", "640", "--height", "360",
+    ctx.camcmd([str(ctx.wincam), "capture", "--api", "mf", "--device", C922_MF, "--width", "640", "--height", "360",
                 "--fps", "5"], timeout_s=10)
-    f = ctx.camera_faulted("kiyo")
+    f = ctx.camera_faulted("c922")
     assert f and f["test"] == "W-MJPEG" and f["code"] == "0x8007001F" and f["source"] == "camcmd_scan"
-    assert f["plug_in_age_s"] > 0 and f["mode"] == "MJPG 640x360@5"
-    assert ctx.camera_gated("kiyo") is None
-    assert ctx.first_failure["kiyo"]["test"] == "W-MJPEG"
+    assert f["mode"] == "MJPG 640x360@5"
+    assert ctx.camera_gated("c922") is None and ctx.camera_dead("c922") is None
+    assert ctx.first_failure["c922"]["test"] == "W-MJPEG"
     ctx.end_test("W-MJPEG")
-    # next test: re-probe fails -> gated; streaming commands are skipped, controls are not
     n0 = len(calls)
     probes = ctx.begin_test("W-TS")
-    assert probes["kiyo"]["ok"] is False and len(calls) == n0 + 1
-    assert ctx.camera_gated("kiyo") and ctx.gated_by_test["W-TS"] == {"kiyo": f["since_utc"]}
-    r = ctx.camcmd([str(ctx.wincam), "capture", "--device", KIYO_MF], timeout_s=10)
+    assert probes["c922"]["ok"] is False and len(calls) == n0 + 1
+    assert ctx.camera_gated("c922") and ctx.gated_by_test["W-TS"] == {"c922": f["since_utc"]}
+    r = ctx.camcmd([str(ctx.wincam), "capture", "--device", C922_MF], timeout_s=10)
     obj = json.loads(r["stdout"])
     assert r["gate_skipped"] and obj["device_fault"] and obj["error"]["class"] == "device_fault"
     assert len(calls) == n0 + 1                                    # not run
-    ctx.camcmd([str(ctx.wincam), "controls", "--api", "mf", "--device", KIYO_MF, "--read-only"], timeout_s=10)
-    assert len(calls) == n0 + 2                                    # controls are never gated
-    ctx.camcmd([str(ctx.wincam), "capture", "--device", C922_MF], timeout_s=10)
+    ctx.camcmd([str(ctx.wincam), "controls", "--api", "mf", "--device", C922_MF, "--read-only"], timeout_s=10)
+    assert len(calls) == n0 + 2                                    # controls are not gated for a non-dead camera
+    ctx.camcmd([str(ctx.wincam), "capture", "--device", KIYO_MF], timeout_s=10)
     assert len(calls) == n0 + 3                                    # other cameras unaffected
-    u = ctx.fault_untested("kiyo")
+    u = ctx.fault_untested("c922")
     assert u["rating"] == "untested" and "device fault since" in u["note"] and u["evidence"]["device_fault"]
     ctx.end_test("W-TS")
-    # the camera answers again -> recovered, not gated
     answers["probe"] = GOOD
     ctx.begin_test("W-MULTI")
-    assert ctx.camera_faulted("kiyo") is None and ctx.camera_gated("kiyo") is None
+    assert ctx.camera_faulted("c922") is None and ctx.camera_gated("c922") is None
     rep = ctx.fault_report()
-    assert [e["type"] for e in rep["events"] if e["type"] in ("fault", "recovered") and e["key"] == "kiyo"] == \
+    assert [e["type"] for e in rep["events"] if e["type"] in ("fault", "recovered") and e["key"] == "c922"] == \
         ["fault", "recovered"]
-    assert rep["faults"]["c922"]["test"] == "W-TS"        # the fake answered 0x8007001F for the C922 capture too
-    assert rep["faults"]["kiyo"]["recovered_utc"]
+    assert rep["faults"]["c922"]["recovered_utc"] and not rep["dead"]
     json.dumps(rep)
+
+
+def test_kiyo_pro_dead_rule(tmp_path, monkeypatch):
+    """Dom 2026-11-11: a Kiyo Pro fault makes it dead for the run: no re-probe, no recovery, no command of any kind
+    (streaming, controls, formats, probes, gate=False), diagnostics recorded once, other cameras unaffected."""
+    ctx = _ctx(tmp_path)
+    calls = []
+
+    def fake_run(argv, timeout_s, **kw):
+        calls.append(argv)
+        return _run(DEVERR if KIYO_MF in argv else GOOD, rc=4 if KIYO_MF in argv else 0)
+
+    monkeypatch.setattr(suitectx, "camcmd_run", fake_run)
+    monkeypatch.setattr(suitectx, "_probe_mode", lambda c, cam, mode=None: (1280, 720, 30.0))
+    ctx.begin_test("W-MJPEG")
+    ctx.camcmd([str(ctx.wincam), "capture", "--api", "mf", "--device", KIYO_MF, "--width", "1280", "--height",
+                "720", "--fps", "30"], timeout_s=10)
+    d = ctx.camera_dead("kiyo")
+    assert d and d["code"] == "0x8007001F" and d["test"] == "W-MJPEG"
+    diag = d["diagnostics"]
+    for k in ("utc", "test", "plug_in_age_s", "last_command", "fault_and_failure_events",
+              "other_camera_commands_running", "stream_starts_this_run", "camera", "processes", "frame_server",
+              "camera_activity"):
+        assert k in diag, k
+    assert diag["stream_starts_this_run"] == 1 and KIYO_MF in diag["last_command"]["argv"]
+    assert list((tmp_path / "out").glob("KIYO_PRO_DEAD_*.json"))
+    assert ctx.camera_gated("kiyo")                                # gated at once, also inside the same test
+    n0 = sum(1 for a in calls if KIYO_MF in a)
+    ctx.end_test("W-MJPEG")
+    probes = ctx.begin_test("W-TS")
+    assert "kiyo" not in probes                                    # never re-probed
+    for argv in ([str(ctx.wincam), "capture", "--device", KIYO_MF],
+                 [str(ctx.wincam), "controls", "--api", "mf", "--device", KIYO_MF, "--read-only"],
+                 [str(ctx.wincam), "formats", "--api", "mf", "--device", KIYO_MF]):
+        r = ctx.camcmd(argv, timeout_s=10, gate=False)
+        assert r["gate_skipped"]
+    hp = ctx.health_probe("kiyo", reason="test")
+    assert hp["ok"] is False and hp["dead"] and hp["faulted_after"]
+    assert ctx.clear_fault("kiyo") is None and ctx.camera_faulted("kiyo")
+    assert sum(1 for a in calls if KIYO_MF in a) == n0             # nothing reached the dead Kiyo Pro
+    ctx.camcmd([str(ctx.wincam), "capture", "--device", C922_MF], timeout_s=10)
+    assert any(C922_MF in a for a in calls)                        # other cameras unaffected
+    ctx.end_test("W-TS")
+    rep = ctx.fault_report()
+    assert rep["dead"]["kiyo"]["dead"] and rep["stream_starts"]["kiyo"] == 1
+    json.dumps(rep, default=str)
+
+
+def test_kiyo_pro_dead_poller_stops(tmp_path, monkeypatch):
+    import w_kiyo
+    ctx = _ctx(tmp_path)
+    ctx.dead["kiyo"] = {"dead": True, "since_utc": "2026-11-12T03:00:00Z"}
+    polled = []
+    monkeypatch.setattr(w_kiyo, "poll_once", lambda c, cam, api, raw_path=None: polled.append(cam["key"]) or {})
+    poller = w_kiyo.KiyoPoller.__new__(w_kiyo.KiyoPoller)
+    poller.ctx, poller.cams = ctx, [c for c in ctx.cameras if c.get("is_kiyo")]
+    import threading
+    poller.stop_ev, poller.t_start, poller.max_s, poller.interval_s = threading.Event(), None, 3600.0, 1.0
+    poller._loop()                                                  # returns at once: every Kiyo Pro is dead
+    assert polled == []
 
 
 def test_no_fault_gate_flag(tmp_path, monkeypatch):
     ctx = _ctx(tmp_path)
     ctx.fault_gate = False
     monkeypatch.setattr(suitectx, "camcmd_run", lambda argv, t, **kw: _run(DEVERR, rc=4))
-    ctx.mark_fault("kiyo", test="W-X", code="0x8007001F")
+    ctx.mark_fault("c922", test="W-X", code="0x8007001F")
     ctx.begin_test("W-Y", probe=False)
-    assert ctx.camera_faulted("kiyo") and ctx.camera_gated("kiyo") is None
+    assert ctx.camera_faulted("c922") and ctx.camera_gated("c922") is None
+    ctx.mark_fault("kiyo", test="W-X", code="0x8007001F")           # the dead rule ignores --no-fault-gate
+    assert ctx.camera_gated("kiyo") and ctx.camera_dead("kiyo")
 
 
 def test_scan_result_for_faults_finds_onset():
@@ -294,7 +355,8 @@ def test_wcyc_wilson_claim():
     v = w_cyc.rate_variant(_summ(15, 15, 15), False)                        # opencv_inproc 15/15
     assert v["rating"] == "yes" and v["summary_label"].startswith("yes (point estimate; n=15")
     assert set(w_cyc.CLAIM_VARIANTS) == {"mf_inproc", "ds_ffmpeg_inproc", "mf_newproc"}
-    assert "smaller sample" in w_cyc.reliability_note("reliability", w_cyc.variant_counts(
+    # 2026-11-11: mf_newproc runs 400 cycles in the reliability profile, so the "smaller sample" caveat is gone
+    assert "smaller sample" not in w_cyc.reliability_note("reliability", w_cyc.variant_counts(
         types.SimpleNamespace(args=types.SimpleNamespace(cyc_profile="reliability", quick=False, cycles=None,
                                                          proc_cycles=None, frames=None, reliability_cycles=None))))
 
@@ -503,9 +565,12 @@ def test_runner_order_and_labels():
     # W-RAW, the short W-TS and W-PYMF captures), then the control tests (Kiyo share first), then the Kiyo's ~1,060
     # W-CYC reliability cycles in W-CYC-KIYO, W-MULTI and W-PYAV-LIST after them (W-PYAV-LIST meets a wedged Kiyo),
     # the other cameras' W-CYC reliability cycles last (W-KIYO is the background poller)
-    assert order[7:] == ["W-MJPEG", "W-RAW", "W-TS", "W-PYMF", "W-CTRL-EFFECT", "W-AUTO", "W-OCV-CTRL", "W-CYC-KIYO",
-                         "W-MULTI", "W-PYAV-LIST", "W-CYC", "W-KIYO"]
-    assert set(rs.OPTIONAL_TESTS) <= set(order)
+    # 2026-11-11: product-path tests after W-PYMF; W-AUTO out of the order (W-NODRIFT replaces it); W-CYC-KIYO
+    # second-last so a Kiyo Pro wedge there costs the other tests nothing
+    assert order[7:] == ["W-MJPEG", "W-RAW", "W-TS", "W-PYMF", "W-PYMF-ALL", "W-TBUMP", "W-NODRIFT", "W-GAIN",
+                         "W-CTRL-EFFECT", "W-OCV-CTRL", "W-MULTI", "W-PYAV-LIST", "W-CYC-KIYO", "W-CYC", "W-KIYO"]
+    assert [t for t, _ in rs.EXTRA_TESTS] == ["W-AUTO"]
+    assert set(rs.OPTIONAL_TESTS) <= set(order) | {t for t, _ in rs.EXTRA_TESTS}
     assert "W-KIYO" in rs.BACKGROUND_TESTS
     assert rs.rating_label("reliability", {"rating": "no", "evidence": {"success_rate": 1.0}}) == "no (latency)"
     assert rs.rating_label("reliability", {"rating": "no", "evidence": {"success_rate": 0.0}}) == "no (failures)"

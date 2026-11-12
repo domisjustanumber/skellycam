@@ -297,6 +297,10 @@ class KiyoPoller:
         t0 = self.t_start or time.monotonic()
         next_due = t0
         while not self.stop_ev.is_set():
+            dead_fn = getattr(self.ctx, "camera_dead", None)
+            if dead_fn and self.cams and all(dead_fn(c) for c in self.cams):
+                self.ctx.log(f"{TEST}: every polled Kiyo Pro is dead (dead rule); the poller stops polling")
+                break
             sched = next_due - t0
             if sched > self.max_s:
                 self.ctx.log(f"{TEST}: poller reached its {self.max_s / 3600:.1f} h bound; stopping")
@@ -338,8 +342,13 @@ class KiyoPoller:
         at the time each poll ran."""
         ctx = self.ctx
         polls: list[tuple[dict, dict]] = []
+        dead_fn = getattr(ctx, "camera_dead", None)
         for cam in self.cams:
+            if dead_fn and dead_fn(cam):
+                continue                    # dead rule: a dead Kiyo Pro is never polled again
             for api in ("mf", "ds"):
+                if dead_fn and dead_fn(cam):
+                    break                   # it died on the previous API's poll: no further poll
                 if (api == "mf" and not cam.get("mf_symlink")) or (api == "ds" and not cam.get("ds_path")):
                     continue
                 p = poll_once(ctx, cam, api, raw_path=self.raw)

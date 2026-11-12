@@ -1,5 +1,5 @@
 # /// script
-# requires-python = ">=3.12"
+# requires-python = "==3.12.13"
 # dependencies = ["av==19.0.2"]
 # ///
 """PyAV / FFmpeg DirectShow native-MJPEG capture and open/close cycles for the Windows suite.
