@@ -1,0 +1,406 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>sidecar load</title>
+<script src="../../sidecar_embedding/locator.js"></script>
+<script>
+'use strict';
+// ---------- helpers ----------
+const FIT_VALID = 8, HDR = 512, BLK = 256;
+let reads = 0, readBytes = 0;
+async function fetchRange(url, off, len) {
+  reads++;
+  const r = await fetch(url, { headers: { Range: `bytes=${off}-${off + len - 1}` } });
+  const ab = await r.arrayBuffer();
+  readBytes += ab.byteLength;
+  if (ab.byteLength !== len) throw new Error(`short read ${url} @${off}: ${ab.byteLength} != ${len}`);
+  return ab;
+}
+const u8read = url => (off, len) => fetchRange(url, off, len).then(ab => new Uint8Array(ab));
+const now = () => performance.now();
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function u64(dv, o) { return dv.getUint32(o + 4, true) * 4294967296 + dv.getUint32(o, true); }
+function i64(dv, o) { return dv.getInt32(o + 4, true) * 4294967296 + dv.getUint32(o, true); }
+function parseSkfrHeader(ab) { const dv = new DataView(ab); return { n: u64(dv, 16), indexOff: u64(dv, 24), indexN: u64(dv, 32), hdr: dv.getUint16(6, true) }; }
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8, s, e) { let c = 0xFFFFFFFF; for (let i = s; i < e; i++) c = CRC_T[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+window.gcNow = function () { if (window.gc) { gc(); gc(); } const m = performance.memory; return { used_js_heap: m.usedJSHeapSize, total_js_heap: m.totalJSHeapSize }; };
+
+// ---------- parsers: each returns a "f64 camera" {n, t: Float64Array (ns - tbase), off: Float64Array, size: Uint32Array} ----------
+function parseRecDV(ab, n, tbase) {          // layout a, DataView, two u32 reads per i64 (no BigInt)
+  const dv = new DataView(ab), t = new Float64Array(n), off = new Float64Array(n), size = new Uint32Array(n);
+  for (let i = 0, o = 0; i < n; i++, o += 64) {
+    const src = (dv.getUint32(o + 56, true) & FIT_VALID) ? o + 24 : o;
+    t[i] = dv.getInt32(src + 4, true) * 4294967296 + dv.getUint32(src, true) - tbase;
+    off[i] = dv.getUint32(o + 36, true) * 4294967296 + dv.getUint32(o + 32, true);
+    size[i] = dv.getUint32(o + 40, true);
+  }
+  return { n, t, off, size };
+}
+function parseRecDVBig(ab, n, tbaseBig) {     // layout a, DataView getBigInt64 -> Number
+  const dv = new DataView(ab), t = new Float64Array(n), off = new Float64Array(n), size = new Uint32Array(n);
+  for (let i = 0, o = 0; i < n; i++, o += 64) {
+    const src = (dv.getUint32(o + 56, true) & FIT_VALID) ? o + 24 : o;
+    t[i] = Number(dv.getBigInt64(src, true) - tbaseBig);
+    off[i] = Number(dv.getBigUint64(o + 32, true));
+    size[i] = dv.getUint32(o + 40, true);
+  }
+  return { n, t, off, size };
+}
+function parseRecU32(ab, n, tbase) {         // layout a, Uint32Array/Int32Array view (little-endian host)
+  const u = new Uint32Array(ab), s = new Int32Array(ab), t = new Float64Array(n), off = new Float64Array(n), size = new Uint32Array(n);
+  for (let i = 0, w = 0; i < n; i++, w += 16) {
+    const src = (u[w + 14] & FIT_VALID) ? w + 6 : w;
+    t[i] = s[src + 1] * 4294967296 + u[src] - tbase;
+    off[i] = u[w + 9] * 4294967296 + u[w + 8];
+    size[i] = u[w + 10];
+  }
+  return { n, t, off, size };
+}
+function convI64U32(ab, byteOff, n, tbase) { // i64 column -> Float64 (ns - tbase) via 32-bit halves
+  const u = new Uint32Array(ab, byteOff, 2 * n), s = new Int32Array(ab, byteOff, 2 * n), t = new Float64Array(n);
+  for (let i = 0; i < n; i++) t[i] = s[2 * i + 1] * 4294967296 + u[2 * i] - tbase;
+  return t;
+}
+function convI64Big(big, tbaseBig) { const n = big.length, t = new Float64Array(n); for (let i = 0; i < n; i++) t[i] = Number(big[i] - tbaseBig); return t; }
+function convU64U32(ab, byteOff, n) { const u = new Uint32Array(ab, byteOff, 2 * n), o = new Float64Array(n); for (let i = 0; i < n; i++) o[i] = u[2 * i + 1] * 4294967296 + u[2 * i]; return o; }
+
+// ---------- lookups: PREV = largest i with t[i] <= x, else -1 ----------
+function prevF64(t, n, x) {
+  if (n === 0 || t[0] > x) return -1;
+  let lo = 0, hi = n - 1;
+  while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (t[mid] <= x) lo = mid; else hi = mid - 1; }
+  return lo;
+}
+function prevF64Hint(t, n, x, h) {
+  if (h >= 0 && h < n && t[h] <= x) { for (let k = 0; k < 8; k++) { if (h + 1 >= n || t[h + 1] > x) return h; h++; } }
+  return prevF64(t, n, x);
+}
+function prevBigA(c, x) {                    // zero-copy over 64 B records; chosen time per flags
+  const b = c.big, u = c.u32, n = c.n;
+  const T = i => (u[i * 16 + 14] & FIT_VALID) ? b[i * 8 + 3] : b[i * 8];
+  if (n === 0 || T(0) > x) return -1;
+  let lo = 0, hi = n - 1;
+  while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (T(mid) <= x) lo = mid; else hi = mid - 1; }
+  return lo;
+}
+function prevBigCols(c, x) {                 // zero-copy columnar (b): arrival/fitted/flags columns
+  const a = c.arr, f = c.fit, fl = c.flags, n = c.n;
+  const T = i => (fl[i] & FIT_VALID) ? f[i] : a[i];
+  if (n === 0 || T(0) > x) return -1;
+  let lo = 0, hi = n - 1;
+  while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (T(mid) <= x) lo = mid; else hi = mid - 1; }
+  return lo;
+}
+function prevBig(t, n, x) {                  // zero-copy single i64 column (c)
+  if (n === 0 || t[0] > x) return -1;
+  let lo = 0, hi = n - 1;
+  while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (t[mid] <= x) lo = mid; else hi = mid - 1; }
+  return lo;
+}
+
+// ---------- state ----------
+const S = { cams: [], tbase: 0, tbaseBig: 0n, lookupKinds: [] };
+window.S = S;
+function camUrl(cfg, c, ext) { return `${cfg.base}/cam${String(c).padStart(2, '0')}.${ext}`; }
+function rangeFromF64() { let s = -Infinity, e = Infinity; for (const c of S.cams) { s = Math.max(s, c.t[0]); e = Math.min(e, c.t[c.n - 1]); } return [s, e]; }
+
+// ---------- arms ----------
+const ARMS = {};
+// (a) row-major 64 B records, loaded whole, parsed to Float64 (raw buffers dropped)
+ARMS.A_dv = async function (cfg, R) {
+  const t0 = now(); const C = cfg.cams;
+  const hdrs = await Promise.all([...Array(C)].map((_, c) => fetchRange(camUrl(cfg, c, 'skfr'), 0, HDR)));
+  const H = hdrs.map(parseSkfrHeader);
+  const bufs = await Promise.all(H.map((h, c) => fetchRange(camUrl(cfg, c, 'skfr'), HDR, h.n * 64)));
+  R.fetch_ms = now() - t0;
+  { const dv = new DataView(bufs[0]); const src = (dv.getUint32(56, true) & FIT_VALID) ? 24 : 0; S.tbase = i64(dv, src); S.tbaseBig = BigInt(S.tbase); }
+  const p0 = now();
+  S.cams = bufs.map((ab, c) => parseRecDV(ab, H[c].n, S.tbase));
+  R.parse_ms = now() - p0;
+  const [s] = rangeFromF64(); S.cams.forEach(c => prevF64(c.t, c.n, s));
+  R.ttff_ms = now() - t0; R.load_ms = R.ttff_ms;
+  S.lookupKinds = ['f64', 'f64_hint'];
+  if (cfg.lean) return;   // A_dvl: no extra parsers / CRC, so the memory peak is the design's own
+  // extra parse variants (results discarded) and record-CRC verification, timed separately
+  let q = now(); const big = bufs.map((ab, c) => parseRecDVBig(ab, H[c].n, S.tbaseBig)); R.parse_bigint_ms = now() - q;
+  q = now(); const u32 = bufs.map((ab, c) => parseRecU32(ab, H[c].n, S.tbase)); R.parse_u32view_ms = now() - q;
+  let same = true; for (let c = 0; c < C; c++) for (let i = 0; i < S.cams[c].n; i += 997) if (big[c].t[i] !== S.cams[c].t[i] || u32[c].t[i] !== S.cams[c].t[i] || big[c].off[i] !== S.cams[c].off[i]) same = false;
+  R.parsers_agree = same;
+  q = now(); let bad = 0;
+  for (let c = 0; c < C; c++) { const u8 = new Uint8Array(bufs[c]), dv = new DataView(bufs[c]); for (let i = 0, o = 0; i < H[c].n; i++, o += 64) if (crc32(u8, o, o + 60) !== dv.getUint32(o + 60, true)) bad++; }
+  R.crc_verify_ms = now() - q; R.crc_bad = bad;
+  S.lookupKinds = ['f64', 'f64_hint'];
+};
+// (a) streamed: per camera fetch -> parse -> drop the raw buffer, `conc` cameras at a time (caps the peak)
+async function loadAStreamed(cfg, conc) {
+  const C = cfg.cams, cams = new Array(C); let next = 0;
+  { const ab = await fetchRange(camUrl(cfg, 0, 'skfr'), HDR, 64); const dv = new DataView(ab); const src = (dv.getUint32(56, true) & FIT_VALID) ? 24 : 0; S.tbase = i64(dv, src); }
+  async function worker() { for (;;) { const c = next++; if (c >= C) return; const url = camUrl(cfg, c, 'skfr');
+    const h = parseSkfrHeader(await fetchRange(url, 0, HDR)); cams[c] = parseRecDV(await fetchRange(url, HDR, h.n * 64), h.n, S.tbase); } }
+  await Promise.all([...Array(conc)].map(worker));
+  return cams;
+}
+ARMS.A_seq = async function (cfg, R) {
+  const t0 = now();
+  S.cams = await loadAStreamed(cfg, cfg.conc || 4);
+  const [s] = rangeFromF64(); S.cams.forEach(c => prevF64(c.t, c.n, s));
+  R.ttff_ms = now() - t0; R.load_ms = R.ttff_ms; R.fetch_ms = null; R.parse_ms = null;
+  S.lookupKinds = ['f64', 'f64_hint'];
+};
+// hybrid: first frame from header + first block (as D), then the whole S1 records streamed in the background (as A_seq)
+ARMS.A_hyb = async function (cfg, R) {
+  const t0 = now(); const C = cfg.cams;
+  const first = await Promise.all([...Array(C)].map((_, c) => fetchRange(camUrl(cfg, c, 'skfr'), 0, HDR + BLK * 64)));
+  { const dv = new DataView(first[0], HDR); const src = (dv.getUint32(56, true) & FIT_VALID) ? 24 : 0; S.tbase = i64(dv, src); }
+  const blocks = first.map(ab => { const h = parseSkfrHeader(ab), cnt = Math.min(BLK, h.n); return parseRecDV(ab.slice(HDR, HDR + cnt * 64), cnt, S.tbase); });
+  const s0 = Math.max(...blocks.map(b => b.t[0])); blocks.forEach(b => prevF64(b.t, b.n, s0));
+  R.ttff_ms = now() - t0;
+  S.cams = await loadAStreamed(cfg, cfg.conc || 4);
+  R.load_ms = now() - t0; R.fetch_ms = null; R.parse_ms = null;
+  S.lookupKinds = ['f64', 'f64_hint'];
+};
+ARMS.A_dvl = (cfg, R) => ARMS.A_dv(Object.assign({}, cfg, { lean: true }), R);
+// (a) zero-copy: keep the raw 64 B records, BigInt64Array/Uint32Array views, BigInt compares
+ARMS.A_zc = async function (cfg, R) {
+  const t0 = now(); const C = cfg.cams;
+  const hdrs = await Promise.all([...Array(C)].map((_, c) => fetchRange(camUrl(cfg, c, 'skfr'), 0, HDR)));
+  const H = hdrs.map(parseSkfrHeader);
+  const bufs = await Promise.all(H.map((h, c) => fetchRange(camUrl(cfg, c, 'skfr'), HDR, h.n * 64)));
+  R.fetch_ms = now() - t0;
+  const p0 = now();
+  S.cams = bufs.map((ab, c) => ({ n: H[c].n, big: new BigInt64Array(ab), u32: new Uint32Array(ab), ab }));
+  R.parse_ms = now() - p0;
+  const c0 = S.cams[0]; S.tbaseBig = (c0.u32[14] & FIT_VALID) ? c0.big[3] : c0.big[0]; S.tbase = Number(S.tbaseBig);
+  let s = -1n << 62n; for (const c of S.cams) { const v = (c.u32[14] & FIT_VALID) ? c.big[3] : c.big[0]; if (v > s) s = v; }
+  S.cams.forEach(c => prevBigA(c, s));
+  R.ttff_ms = now() - t0; R.load_ms = R.ttff_ms;
+  // range for the clock (as Number rel tbase)
+  let e = Infinity; for (const c of S.cams) { const i = c.n - 1; const v = (c.u32[i * 16 + 14] & FIT_VALID) ? c.big[i * 8 + 3] : c.big[i * 8]; e = Math.min(e, Number(v - S.tbaseBig)); }
+  S.range = [Number(s - S.tbaseBig), e];
+  S.lookupKinds = ['bigA'];
+};
+// (b) columnar: one Range read of the player's five columns (32 B/frame), zero-copy views + Float64 time
+ARMS.B = async function (cfg, R) {
+  const t0 = now(); const C = cfg.cams;
+  const hdrs = await Promise.all([...Array(C)].map((_, c) => fetchRange(camUrl(cfg, c, 'skfc'), 0, HDR)));
+  const H = hdrs.map(ab => { const dv = new DataView(ab); return { n: u64(dv, 16), arr: u64(dv, 64 + 8), fit: u64(dv, 80 + 8), off: u64(dv, 96 + 8), flags: u64(dv, 112 + 8), size: u64(dv, 128 + 8), size_end: u64(dv, 144 + 8) }; });
+  const bufs = await Promise.all(H.map((h, c) => fetchRange(camUrl(cfg, c, 'skfc'), h.arr, h.size_end - h.arr)));
+  R.fetch_ms = now() - t0;
+  const p0 = now();
+  const V = bufs.map((ab, c) => { const h = H[c], n = h.n, b = h.arr; return { n, ab, arr: new BigInt64Array(ab, h.arr - b, n), fit: new BigInt64Array(ab, h.fit - b, n), off64: new BigUint64Array(ab, h.off - b, n), flags: new Uint32Array(ab, h.flags - b, n), size: new Uint32Array(ab, h.size - b, n), offB: h.off - b, arrB: 0, fitB: h.fit - b }; });
+  R.views_ms = now() - p0;
+  const v0 = V[0]; S.tbaseBig = (v0.flags[0] & FIT_VALID) ? v0.fit[0] : v0.arr[0]; S.tbase = Number(S.tbaseBig);
+  const q = now();
+  S.cams = V.map(v => {   // chosen time: per-frame flag picks fitted or arrival
+    const n = v.n, t = new Float64Array(n), ua = new Uint32Array(v.ab, v.arrB, 2 * n), sa = new Int32Array(v.ab, v.arrB, 2 * n), uf = new Uint32Array(v.ab, v.fitB, 2 * n), sf = new Int32Array(v.ab, v.fitB, 2 * n), fl = v.flags, tb = S.tbase;
+    for (let i = 0; i < n; i++) t[i] = (fl[i] & FIT_VALID) ? sf[2 * i + 1] * 4294967296 + uf[2 * i] - tb : sa[2 * i + 1] * 4294967296 + ua[2 * i] - tb;
+    return Object.assign(v, { t, off: convU64U32(v.ab, v.offB, n) });
+  });
+  R.conv_ms = now() - q; R.parse_ms = R.views_ms + R.conv_ms;
+  const [s] = rangeFromF64(); S.cams.forEach(c => prevF64(c.t, c.n, s));
+  R.ttff_ms = now() - t0; R.load_ms = R.ttff_ms;
+  S.lookupKinds = ['f64', 'f64_hint', 'bigCols'];
+};
+function compactViews(ab, base, n, tbase) {   // index section at byte `base` of ab: time i64[n], offset u64[n], size u32[n]
+  return { n, ab, big: new BigInt64Array(ab, base, n), off64: new BigUint64Array(ab, base + 8 * n, n), size: new Uint32Array(ab, base + 16 * n, n), tB: base, offB: base + 8 * n };
+}
+function compactFinish(cams, R, keepRaw) {
+  const q = now();
+  S.cams = cams.map(v => { const o = { n: v.n, t: convI64U32(v.ab, v.tB, v.n, S.tbase), off: convU64U32(v.ab, v.offB, v.n) };
+    if (keepRaw) Object.assign(o, { ab: v.ab, big: v.big, size: v.size }); else o.size = v.size.slice(); return o; });
+  R.conv_ms = now() - q;
+}
+// (c) compact index section after the 64 B records, same file: header read, then one Range read of 20 B/frame
+ARMS.C = async function (cfg, R) {
+  const t0 = now(); const C = cfg.cams;
+  const hdrs = await Promise.all([...Array(C)].map((_, c) => fetchRange(camUrl(cfg, c, 'skfr'), 0, HDR)));
+  const H = hdrs.map(parseSkfrHeader);
+  const bufs = await Promise.all(H.map((h, c) => fetchRange(camUrl(cfg, c, 'skfr'), h.indexOff, h.indexN * 20)));
+  R.fetch_ms = now() - t0;
+  const p0 = now(); const V = bufs.map((ab, c) => compactViews(ab, 0, H[c].indexN)); R.views_ms = now() - p0;
+  S.tbaseBig = V[0].big[0]; S.tbase = Number(S.tbaseBig);
+  compactFinish(V, R, true); R.parse_ms = R.views_ms + R.conv_ms;
+  const [s] = rangeFromF64(); S.cams.forEach(c => prevF64(c.t, c.n, s));
+  R.ttff_ms = now() - t0; R.load_ms = R.ttff_ms;
+  let q = now(); for (const v of S.cams) convI64Big(v.big, S.tbaseBig); R.conv_bigint_ms = now() - q;
+  q = now(); for (const v of S.cams) crc32(new Uint8Array(v.ab), 0, v.ab.byteLength); R.crc_verify_ms = now() - q;
+  S.lookupKinds = ['f64', 'f64_hint', 'big'];
+};
+// embedded (a): locator (no data) -> header -> records, parse as A_dv
+ARMS.E_a = async function (cfg, R) {
+  const t0 = now(); const C = cfg.cams;
+  const out = await Promise.all([...Array(C)].map(async (_, c) => {
+    const url = camUrl(cfg, c, 'mkv');
+    const loc = await locateAttachment(u8read(url), { fileName: 'skellycam_frames.skfr', fetchData: false });
+    if (!loc.ok) throw new Error('locator ' + loc.reason);
+    const h = parseSkfrHeader(await fetchRange(url, loc.fileDataOffset, HDR));
+    return { h, ab: await fetchRange(url, loc.fileDataOffset + HDR, h.n * 64) };
+  }));
+  R.fetch_ms = now() - t0;
+  { const dv = new DataView(out[0].ab); const src = (dv.getUint32(56, true) & FIT_VALID) ? 24 : 0; S.tbase = i64(dv, src); }
+  const p0 = now(); S.cams = out.map(o => parseRecDV(o.ab, o.h.n, S.tbase)); R.parse_ms = now() - p0;
+  const [s] = rangeFromF64(); S.cams.forEach(c => prevF64(c.t, c.n, s));
+  R.ttff_ms = now() - t0; R.load_ms = R.ttff_ms;
+  S.lookupKinds = ['f64'];
+};
+// embedded (c) inside the sidecar attachment: locator (no data) -> header -> index section
+ARMS.E_cin = async function (cfg, R) {
+  const t0 = now(); const C = cfg.cams;
+  const out = await Promise.all([...Array(C)].map(async (_, c) => {
+    const url = camUrl(cfg, c, 'mkv');
+    const loc = await locateAttachment(u8read(url), { fileName: 'skellycam_frames.skfr', fetchData: false });
+    if (!loc.ok) throw new Error('locator ' + loc.reason);
+    const h = parseSkfrHeader(await fetchRange(url, loc.fileDataOffset, HDR));
+    return { h, ab: await fetchRange(url, loc.fileDataOffset + h.indexOff, h.indexN * 20) };
+  }));
+  R.fetch_ms = now() - t0;
+  const p0 = now(); const V = out.map(o => compactViews(o.ab, 0, o.h.indexN)); R.views_ms = now() - p0;
+  S.tbaseBig = V[0].big[0]; S.tbase = Number(S.tbaseBig);
+  compactFinish(V, R); R.parse_ms = R.views_ms + R.conv_ms;
+  const [s] = rangeFromF64(); S.cams.forEach(c => prevF64(c.t, c.n, s));
+  R.ttff_ms = now() - t0; R.load_ms = R.ttff_ms;
+  S.lookupKinds = ['f64'];
+};
+// embedded (c) as a second AttachedFile: locator by name, data fetched by the locator
+ARMS.E_catt = async function (cfg, R) {
+  const t0 = now(); const C = cfg.cams;
+  const out = await Promise.all([...Array(C)].map(async (_, c) => {
+    const url = camUrl(cfg, c, 'mkv');
+    const loc = await locateAttachment(u8read(url), { fileName: 'skellycam_index.skix' });
+    if (!loc.ok) throw new Error('locator ' + loc.reason);
+    const dv = new DataView(loc.data.buffer, loc.data.byteOffset);
+    return { n: u64(dv, 12), ab: loc.data.buffer, base: loc.data.byteOffset + dv.getUint16(6, true) };
+  }));
+  R.fetch_ms = now() - t0;
+  const p0 = now(); const V = out.map(o => compactViews(o.ab, o.base, o.n)); R.views_ms = now() - p0;
+  S.tbaseBig = V[0].big[0]; S.tbase = Number(S.tbaseBig);
+  compactFinish(V, R); R.parse_ms = R.views_ms + R.conv_ms;
+  const [s] = rangeFromF64(); S.cams.forEach(c => prevF64(c.t, c.n, s));
+  R.ttff_ms = now() - t0; R.load_ms = R.ttff_ms;
+  S.lookupKinds = ['f64'];
+};
+// (d) lazy: S1 file unchanged; read header + first block, last record; then 256-record blocks by Range on demand
+function parseBlock(ab, cnt, tbase) { const r = parseRecDV(ab, cnt, tbase); return r; }
+async function loadBlock(c, b) {
+  if (c.blocks.has(b)) return c.blocks.get(b);
+  if (c.pending.has(b)) return c.pending.get(b);
+  const cnt = Math.min(BLK, c.n - b * BLK);
+  const p = fetchRange(c.url, HDR + b * BLK * 64, cnt * 64).then(ab => {
+    const blk = parseBlock(ab, cnt, S.tbase); c.blocks.set(b, blk); c.pending.delete(b); c.loads++;
+    if (c.blocks.size > c.maxBlocks) c.blocks.delete(c.blocks.keys().next().value);   // FIFO eviction
+    return blk;
+  });
+  c.pending.set(b, p); return p;
+}
+function lazySync(c, x) {                     // -> index, -1, or {miss: blockId}
+  if (x < c.tfirst) return -1;
+  if (x >= c.tlast) return c.n - 1;
+  let b = c.hint;
+  const hb = c.blocks.get(b);
+  if (!hb || x < hb.t[0] || (b < c.lastBlock && x >= hb.t[hb.n - 1] + 2 * c.period)) b = Math.floor((x - c.tfirst) / (c.tlast - c.tfirst) * (c.n - 1) / BLK);
+  for (let it = 0; it < 64; it++) {
+    const blk = c.blocks.get(b);
+    if (!blk) return { miss: b };
+    if (x < blk.t[0]) { b--; continue; }
+    if (b < c.lastBlock && x >= blk.t[blk.n - 1]) {
+      const nb = c.blocks.get(b + 1);
+      if (!nb) return { miss: b + 1 };
+      if (x >= nb.t[0]) { b++; continue; }
+      c.hint = b; return b * BLK + blk.n - 1;
+    }
+    c.hint = b;
+    const k = prevF64(blk.t, blk.n, x);
+    if (k > BLK * 3 / 4 && b < c.lastBlock && !c.blocks.has(b + 1) && !c.pending.has(b + 1)) { c.prefetch++; loadBlock(c, b + 1); }
+    return b * BLK + k;
+  }
+  throw new Error('lazy search did not converge');
+}
+async function lazyAsync(c, x) { for (;;) { const r = lazySync(c, x); if (typeof r === 'number') return r; c.misses++; await loadBlock(c, r.miss); } }
+ARMS.D = async function (cfg, R) {
+  const t0 = now(); const C = cfg.cams;
+  const first = await Promise.all([...Array(C)].map((_, c) => fetchRange(camUrl(cfg, c, 'skfr'), 0, HDR + BLK * 64)));
+  { const dv = new DataView(first[0], HDR); const src = (dv.getUint32(56, true) & FIT_VALID) ? 24 : 0; S.tbase = i64(dv, src); }
+  S.cams = first.map((ab, c) => {
+    const h = parseSkfrHeader(ab), cnt = Math.min(BLK, h.n);
+    const blk = parseBlock(ab.slice(HDR, HDR + cnt * 64), cnt, S.tbase);
+    const cam = { n: h.n, url: camUrl(cfg, c, 'skfr'), blocks: new Map([[0, blk]]), pending: new Map(), maxBlocks: cfg.maxBlocks || 32, hint: 0, lastBlock: Math.floor((h.n - 1) / BLK), tfirst: blk.t[0], tlast: Infinity, period: 1e9 / cfg.fps, misses: 0, loads: 1, prefetch: 0 };
+    return cam;
+  });
+  const s0 = Math.max(...S.cams.map(c => c.tfirst));
+  S.cams.forEach(c => { const r = prevF64(c.blocks.get(0).t, c.blocks.get(0).n, s0); });
+  R.ttff_ms = now() - t0;
+  const lasts = await Promise.all(S.cams.map(c => fetchRange(c.url, HDR + (c.n - 1) * 64, 64)));
+  lasts.forEach((ab, i) => { S.cams[i].tlast = parseRecDV(ab, 1, S.tbase).t[0]; });
+  R.load_ms = now() - t0; R.fetch_ms = null; R.parse_ms = null;
+  S.range = [s0, Math.min(...S.cams.map(c => c.tlast))];
+  S.lookupKinds = ['lazy'];
+};
+
+window.runLoad = async function (cfg) {
+  const R = { arm: cfg.arm }; reads = 0; readBytes = 0; S.range = null;
+  await ARMS[cfg.arm](cfg, R);
+  if (!S.range) S.range = rangeFromF64();
+  R.reads = reads; R.read_bytes = readBytes; R.frames = S.cams.reduce((a, c) => a + c.n, 0);
+  return R;
+};
+
+// ---------- lookups ----------
+function lookupFn(kind) {
+  const cams = S.cams;
+  switch (kind) {
+    case 'f64': return x => { let a = 0; for (let k = 0; k < cams.length; k++) a += prevF64(cams[k].t, cams[k].n, x); return a; };
+    case 'f64_hint': { const h = new Int32Array(cams.length).fill(-1); return x => { let a = 0; for (let k = 0; k < cams.length; k++) { const c = cams[k]; const r = prevF64Hint(c.t, c.n, x, h[k]); h[k] = r; a += r; } return a; }; }
+    case 'bigA': return x => { const xb = BigInt(Math.round(x)) + S.tbaseBig; let a = 0; for (let k = 0; k < cams.length; k++) a += prevBigA(cams[k], xb); return a; };
+    case 'bigCols': return x => { const xb = BigInt(Math.round(x)) + S.tbaseBig; let a = 0; for (let k = 0; k < cams.length; k++) a += prevBigCols(cams[k], xb); return a; };
+    case 'big': return x => { const xb = BigInt(Math.round(x)) + S.tbaseBig; let a = 0; for (let k = 0; k < cams.length; k++) a += prevBig(cams[k].big, cams[k].n, xb); return a; };
+  }
+}
+window.runLookups = async function (cfg) {
+  const out = {}; const [s, e] = S.range; const step = 1e9 / 60;
+  const P = cfg.positions || 10, D = cfg.draws || 3600, NS = cfg.seeks || 5000;
+  const r1 = rng(cfg.seed || 7), starts = [...Array(P)].map(() => Math.floor(s + r1() * (e - s - D * step - 1e9)));
+  const r2 = rng((cfg.seed || 7) + 1), seeks = [...Array(NS)].map(() => Math.floor(s + r2() * (e - s)));
+  for (const kind of S.lookupKinds) {
+    const o = {};
+    if (kind === 'lazy') {
+      // steady play: sync path; a miss is awaited (counted); prefetch runs in the background
+      for (const c of S.cams) { c.misses = 0; c.loads = 0; c.prefetch = 0; }
+      let sum = 0, syncMs = 0, wall0 = now(), missDraws = 0;
+      for (const st of starts) {
+        // land on the start position first (a seek), not timed as steady
+        await Promise.all(S.cams.map(c => lazyAsync(c, st)));
+        for (let d = 0; d < D; d++) {
+          const x = st + d * step; const q = now(); let miss = false, a = 0;
+          for (const c of S.cams) { let r = lazySync(c, x); if (typeof r !== 'number') { miss = true; c.misses++; await loadBlock(c, r.miss); r = await lazyAsync(c, x); } a += r; }
+          if (!miss) syncMs += now() - q; else missDraws++;
+          sum += a;
+          if ((d & 255) === 0) await new Promise(z => setTimeout(z, 0));   // let prefetch reads land, as frames would
+        }
+      }
+      o.steady_wall_us_per_draw = (now() - wall0) * 1000 / (P * D);
+      o.steady_us_per_draw = syncMs * 1000 / (P * D - missDraws);
+      o.steady_miss_draws = missDraws; o.steady_checksum = sum;
+      o.steady_loads = S.cams.reduce((a, c) => a + c.loads, 0); o.steady_prefetch = S.cams.reduce((a, c) => a + c.prefetch, 0);
+      // seeks: 16 cameras in parallel, each may need 1-3 block reads
+      const NSL = Math.min(NS, cfg.lazySeeks || 300), lat = []; let ssum = 0; reads = 0;
+      for (let i = 0; i < NSL; i++) { const q = now(); const r = await Promise.all(S.cams.map(c => lazyAsync(c, seeks[i]))); lat.push(now() - q); ssum += r.reduce((a, b) => a + b, 0); }
+      lat.sort((a, b) => a - b);
+      o.seek_ms_p50 = lat[lat.length >> 1]; o.seek_ms_p95 = lat[Math.floor(lat.length * 0.95)]; o.seek_ms_max = lat[lat.length - 1];
+      o.seek_reads_per_seek = reads / NSL; o.seek_n = NSL; o.seek_checksum_first = ssum;
+      o.mem_blocks = S.cams.reduce((a, c) => a + c.blocks.size, 0);
+    } else {
+      const f = lookupFn(kind);
+      for (let w = 0; w < 2000; w++) f(seeks[w % NS]);   // warm-up (JIT)
+      let sum = 0; const q = now();
+      for (const st of starts) for (let d = 0; d < D; d++) sum += f(st + d * step);
+      o.steady_us_per_draw = (now() - q) * 1000 / (P * D); o.steady_checksum = sum;
+      let ss = 0; const q2 = now();
+      for (let i = 0; i < NS; i++) ss += f(seeks[i]);
+      o.seek_us_per_draw = (now() - q2) * 1000 / NS; o.seek_checksum = ss;
+      let ssl = 0; for (let i = 0; i < Math.min(NS, cfg.lazySeeks || 300); i++) ssl += f(seeks[i]); o.seek_checksum_first = ssl;
+    }
+    out[kind] = o;
+  }
+  return out;
+};
+</script>

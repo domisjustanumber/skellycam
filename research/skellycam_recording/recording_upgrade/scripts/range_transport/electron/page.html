@@ -1,0 +1,243 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>T-S5 range transports</title>
+<script src="../../sidecar_embedding/locator.js"></script>
+<script>
+'use strict';
+// ---------- helpers ----------
+const hexToBytes = h => { const b = new Uint8Array(h.length / 2); for (let i = 0; i < b.length; i++) b[i] = parseInt(h.substr(2 * i, 2), 16); return b; };
+const shaHex = async u8 => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', u8)), x => x.toString(16).padStart(2, '0')).join('');
+const pct = (a, p) => { if (!a.length) return null; const s = [...a].sort((x, y) => x - y); return +s[Math.min(s.length - 1, Math.floor(p * (s.length - 1) + 0.5))].toFixed(3); };
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function initFor(t, extra) { const i = Object.assign({}, extra || {}); if (t.endsWith('_nostore')) i.cache = 'no-store'; return i; }
+
+// Capped reader: never downloads more than len (+ one chunk) even if a transport ignores Range.
+async function readCapped(url, off, len, init) {
+  const resp = await fetch(url, Object.assign({}, init, { headers: Object.assign({ Range: `bytes=${off}-${off + len - 1}` }, (init || {}).headers || {}) }));
+  const reader = resp.body.getReader(); const chunks = []; let got = 0;
+  while (got < len) { const { done, value } = await reader.read(); if (done) break; chunks.push(value); got += value.length; }
+  const overrun = got > len; try { await reader.cancel(); } catch (e) {}
+  const out = new Uint8Array(Math.min(got, len)); let o = 0;
+  for (const c of chunks) { const n = Math.min(c.length, out.length - o); out.set(c.subarray(0, n), o); o += n; if (o >= out.length) break; }
+  return { status: resp.status, cr: resp.headers.get('content-range'), cl: resp.headers.get('content-length'), ar: resp.headers.get('accept-ranges'), overrun, bytes: out };
+}
+// Fast reader used for correctness and benchmarks (only after semantics show Range is honoured).
+async function readFast(url, off, len, init) {
+  const r = await fetch(url, Object.assign({}, init, { headers: { Range: `bytes=${off}-${off + len - 1}` } }));
+  return new Uint8Array(await r.arrayBuffer());
+}
+function patternOk(u8, off, full) {
+  if (off % 4 || u8.length % 4) return false;
+  const w = new Uint32Array(u8.buffer, u8.byteOffset, u8.length / 4), b = off / 4;
+  if (!full) return w.length > 0 && w[0] === b && w[w.length - 1] === b + w.length - 1;
+  for (let i = 0; i < w.length; i++) if (w[i] !== b + i) return false;
+  return true;
+}
+
+// ---------- 1. semantics: what a page actually sees ----------
+async function probe(url, init, rangeHdr, method) {
+  const r = { range: rangeHdr, method: method || 'GET' };
+  try {
+    const headers = rangeHdr ? { Range: rangeHdr } : {};
+    const resp = await fetch(url, Object.assign({}, init, { method: r.method, headers }));
+    r.status = resp.status; r.contentRange = resp.headers.get('content-range'); r.contentLength = resp.headers.get('content-length');
+    r.acceptRanges = resp.headers.get('accept-ranges'); r.contentType = resp.headers.get('content-type');
+    if (resp.body && r.method !== 'HEAD') {
+      const reader = resp.body.getReader(); let got = 0, first = null;
+      while (got < 65536) { const { done, value } = await reader.read(); if (done) break; if (!first) first = value.subarray(0, 8); got += value.length; }
+      try { await reader.cancel(); } catch (e) {}
+      r.bodyBytesRead = got; r.first8 = first ? Array.from(first) : null;
+    }
+  } catch (e) { r.error = String(e); }
+  return r;
+}
+window.semantics = async function (cfg) {
+  const out = {};
+  for (const t of cfg.semanticsTransports) {
+    const name = t === 'http_asis' ? 'h264.mp4' : 'pattern.bin';
+    const url = cfg.urls[t][name], size = cfg.sizes[name], init = initFor(t);
+    const P = [];
+    P.push(await probe(url, init, 'bytes=0-15'));
+    P.push(await probe(url, init, `bytes=${size / 2}-${size / 2 + 15}`));
+    P.push(await probe(url, init, 'bytes=-16'));
+    P.push(await probe(url, init, `bytes=${size - 100}-`));
+    P.push(await probe(url, init, null, 'HEAD'));
+    P.push(await probe(url, init, 'bytes=0-15', 'HEAD'));
+    P.push(await probe(url, init, 'bytes=0-15,32-47'));
+    P.push(await probe(url, init, `bytes=${size + 10}-${size + 20}`));
+    P.push(await probe(url, init, null));            // no Range: whole file (only 64 KB read)
+    // byte checks against the pattern / the file:// copy
+    const chk = {};
+    try {
+      const a = await readCapped(url, 0, 16, init), b = await readCapped(url, size - 16, 16, init);
+      if (name === 'pattern.bin') { chk.first16 = patternOk(a.bytes, 0, true); chk.last16 = patternOk(b.bytes, size - 16, true); }
+      else { const fa = await readCapped(cfg.urls.file[name], 0, 16), fb = await readCapped(cfg.urls.file[name], size - 16, 16);
+             chk.first16 = a.bytes.join() === fa.bytes.join(); chk.last16 = b.bytes.join() === fb.bytes.join(); }
+      const s = await readCapped(url, 0, 16, Object.assign({}, init, { headers: {} }));
+      const suf = await fetch(url, Object.assign({}, init, { headers: { Range: 'bytes=-16' } }));
+      const sb = new Uint8Array(await suf.arrayBuffer());
+      chk.suffix16_len = sb.length; chk.suffix16_ok = name === 'pattern.bin' ? patternOk(sb, size - 16, true) : null;
+    } catch (e) { chk.error = String(e); }
+    // offsets past 4 GiB
+    const big = {};
+    if (cfg.urls[t]['big.mkv']) for (const c of cfg.media.big_ranges) {
+      try { const r = await readCapped(cfg.urls[t]['big.mkv'], c.off, c.len, init);
+            big[c.off] = { status: r.status, contentRange: r.cr, len: r.bytes.length, sha_ok: (await shaHex(r.bytes)) === c.sha256 };
+      } catch (e) { big[c.off] = { error: String(e) }; }
+    }
+    out[t] = { url, probes: P, checks: chk, past4GiB: big };
+  }
+  // localhost vs 127.0.0.1 (skellycam-ui uses 'localhost'; this server binds 127.0.0.1 only)
+  if (cfg.urls.http_fixed_bare_localhost) {
+    const lat = {};
+    for (const t of ['http_fixed_bare', 'http_fixed_bare_localhost']) {
+      const u = cfg.urls[t]['pattern.bin'], ms = [];
+      for (let i = 0; i < 100; i++) { const off = 4 * Math.floor(Math.random() * 1e6); const t0 = performance.now(); try { await readFast(u, off, 4096); ms.push(performance.now() - t0); } catch (e) { lat[t] = String(e); break; } }
+      if (!lat[t]) lat[t] = { p50: pct(ms, 0.5), p99: pct(ms, 0.99) };
+    }
+    out.localhost_vs_ipv4_4KB_seq = lat;
+  }
+  return out;
+};
+
+// ---------- 2. correctness ----------
+async function decodeRange(t, url, first, end) {
+  const out = []; let err = null, rangeBad = 0;
+  const dec = new AudioDecoder({ output: a => { const n = a.numberOfFrames, planes = [];
+      for (let c = 0; c < a.numberOfChannels; c++) { const p = new Float32Array(n); a.copyTo(p, { planeIndex: c, format: 'f32-planar' }); planes.push(p); }
+      out.push(planes); a.close(); }, error: e => { err = String(e); } });
+  dec.configure({ codec: 'flac', sampleRate: t.rate, numberOfChannels: t.channels, description: hexToBytes(t.description) });
+  let sample = first * 1024; const t0 = performance.now();
+  for (let i = first; i < end; i++) {
+    const [off, size] = t.packets[i]; if (size === 0) continue;
+    const data = await readFast(url, off, size);
+    if (data.length !== size) rangeBad++;
+    dec.decode(new EncodedAudioChunk({ type: 'key', timestamp: Math.round(sample * 1e6 / t.rate), data }));
+    sample += 1024;
+  }
+  await dec.flush(); dec.close();
+  return { err, rangeBad, ms: Math.round(performance.now() - t0), out };
+}
+function compare(t, ref, out, startSample) {
+  const ch = t.channels; let n = 0, maxd = 0;
+  for (const planes of out) for (let k = 0; k < planes[0].length; k++, n++) for (let c = 0; c < ch; c++) {
+    const d = Math.abs(planes[c][k] - ref[(startSample + n) * ch + c]); if (d > maxd) maxd = d; }
+  return { decoded_samples: n, max_abs_diff: maxd, max_abs_diff_lsb16: +(maxd * 32768).toFixed(4) };
+}
+async function locate(url, fileName, sha) {
+  const log = []; const t0 = performance.now(); let r;
+  const read = async (off, len) => { const x = await readCapped(url, off, len); log.push({ off, len, got: x.bytes.length, status: x.status, cr: x.cr }); return x.bytes; };
+  try { r = await locateAttachment(read, { fileName }); } catch (e) { r = { ok: false, reason: 'exception ' + e.message }; }
+  return { ok: r.ok, reason: r.reason, fileDataOffset: r.fileDataOffset, fileDataSize: r.fileDataSize, sha_ok: r.data ? (await shaHex(r.data)) === sha : false,
+           reads: log.length, ms: +(performance.now() - t0).toFixed(1), log };
+}
+window.correctness = async function (cfg) {
+  const out = {};
+  const refs = {};
+  for (const t of cfg.flac) refs[t.name] = new Float32Array(await (await fetch(t.ref)).arrayBuffer());
+  for (const tr of cfg.correctTransports) {
+    const U = cfg.urls[tr], r = {};
+    try {
+      r.locator_cam0 = U['cam0.mkv'] ? await locate(U['cam0.mkv'], 'skellycam_frames.skfr', cfg.media.cam0_sha) : 'n/a';
+      r.locator_big = U['big.mkv'] ? await locate(U['big.mkv'], 'skellycam_frames.skfr', cfg.media.big_sha) : 'n/a';
+      r.flac = {};
+      for (const t of cfg.flac) {
+        if (!U[t.file]) { r.flac[t.name] = 'n/a'; continue; }
+        const x = {};
+        const probe0 = await fetch(U[t.file], { headers: { Range: 'bytes=0-3' } });
+        x.first_status = probe0.status; await probe0.arrayBuffer();
+        if (probe0.status >= 400) { r.flac[t.name] = x; continue; }
+        const all = await decodeRange(t, U[t.file], 0, t.packets.length);
+        x.full = Object.assign({ error: all.err, range_short: all.rangeBad, ms: all.ms }, compare(t, refs[t.name], all.out, 0));
+        const mid = await decodeRange(t, U[t.file], 700, 760);
+        x.from_packet_700 = Object.assign({ error: mid.err }, compare(t, refs[t.name], mid.out, 700 * 1024));
+        x.ref_samples = refs[t.name].length / t.channels;
+        x.locator_skau = await locate(U[t.file], 'skellycam_audio.skau', t.skau_sha256);
+        delete x.locator_skau.log;
+        r.flac[t.name] = x;
+      }
+      // JPEG-sized reads, concurrency 16, every word checked
+      if (U['pattern.bin']) {
+        const size = cfg.sizes['pattern.bin'], len = 153600, N = 320; let next = 0, bad = 0, short = 0; const t0 = performance.now();
+        await Promise.all(Array.from({ length: 16 }, async () => { while (next < N) { next++; const off = 4 * Math.floor(Math.random() * ((size - len) / 4));
+          const b = await readFast(U['pattern.bin'], off, len, initFor(tr)); if (b.length !== len) short++; else if (!patternOk(b, off, true)) bad++; } }));
+        r.jpeg_conc16 = { reads: N, len, bad, short, ms: Math.round(performance.now() - t0) };
+      } else if (U['h264.mp4']) {
+        const size = cfg.sizes['h264.mp4'], len = 153600, N = 64; let next = 0, bad = 0; const t0 = performance.now();
+        await Promise.all(Array.from({ length: 16 }, async () => { while (next < N) { next++; const off = Math.floor(Math.random() * (size - len));
+          const [a, b] = await Promise.all([readFast(U['h264.mp4'], off, len), readFast(cfg.urls.file['h264.mp4'], off, len)]);
+          if (a.length !== len || a.join() !== b.join()) bad++; } }));
+        r.jpeg_conc16 = { reads: N, len, bad, compared_with: 'file://', ms: Math.round(performance.now() - t0) };
+      }
+    } catch (e) { r.exception = String(e && e.stack || e); }
+    out[tr] = r;
+  }
+  return out;
+};
+
+// ---------- 2b. diagnosis: HTTP failures under concurrency, and the HTTP cache ----------
+window.diag = async function (cfg) {
+  const out = [];
+  const size = cfg.sizes['pattern.bin'];
+  for (const [label, url, init] of [
+      ['bare default cache', cfg.urls.http_fixed_bare['pattern.bin'], {}],
+      ['bare cache:no-store', cfg.urls.http_fixed_bare['pattern.bin'], { cache: 'no-store' }],
+      ['real-app fixed, default cache', cfg.urls.http_fixed_real['pattern.bin'], {}],
+      ['real-app fixed, cache:no-store', cfg.urls.http_fixed_real['pattern.bin'], { cache: 'no-store' }],
+      ['bare, server Cache-Control: no-store', cfg.urls.http_fixed_bare_ns['pattern.bin'], {}],
+      ['real-app, server Cache-Control: no-store', cfg.urls.http_fixed_real_ns['pattern.bin'], {}]]) {
+    for (const [len, conc, N] of [[1536, 1, 300], [153600, 1, 100], [153600, 16, 320], [1536, 16, 640]]) {
+      let next = 0, bad = 0, errs = 0; const msgs = {}; const lat = []; const t0 = performance.now();
+      await Promise.all(Array.from({ length: conc }, async () => { while (next < N) { next++; const off = 4 * Math.floor(Math.random() * ((size - len) / 4)); const a = performance.now();
+        try { const b = await readFast(url, off, len, init); lat.push(performance.now() - a); if (!patternOk(b, off, true)) bad++; } catch (e) { errs++; msgs[String(e)] = (msgs[String(e)] || 0) + 1; } } }));
+      out.push({ label, len, conc, N, bad, errs, msgs, ms: Math.round(performance.now() - t0), p50: pct(lat, 0.5), p99: pct(lat, 0.99) });
+    }
+  }
+  return out;
+};
+
+// ---------- 3. benchmarks ----------
+window.benchPlan = function (cfg) {
+  const B = cfg.bench, plan = [];
+  for (let rep = 0; rep < B.reps; rep++) for (const t of B.transports) {
+    const name = t === 'http_asis' ? 'h264.mp4' : 'pattern.bin';
+    const base = { rep, transport: t, url: cfg.urls[t][name], fileSize: cfg.sizes[name], verify: name === 'pattern.bin', serverPort: cfg.ports[t] || null };
+    for (const len of B.sizes) for (const conc of [1, 16]) plan.push(Object.assign({ kind: 'lat', len, conc, n: conc === 1 ? B.n1 : B.n16 }, base));
+    plan.push(Object.assign({ kind: 'sustained', len: 153600, conc: 16, seconds: B.sustainedS }, base));
+    plan.push(Object.assign({ kind: 'paced', len: 153600, cams: 16, fps: 60, seconds: B.pacedS }, base));
+  }
+  return plan;
+};
+window.benchOne = async function (it) {
+  const init = initFor(it.transport), maxOff = Math.floor((it.fileSize - it.len) / 4);
+  const lat = []; let bad = 0, errors = 0, reads = 0, dropped = 0;
+  const one = async () => { const off = 4 * Math.floor(Math.random() * maxOff); const t0 = performance.now();
+    try { const b = await readFast(it.url, off, it.len, init); const dt = performance.now() - t0; lat.push(dt); reads++;
+          if (b.length !== it.len || (it.verify && !patternOk(b, off, false))) bad++; return dt; } catch (e) { errors++; return 0; } };
+  const T0 = performance.now();
+  if (it.kind === 'lat') {
+    let issued = 0;
+    await Promise.all(Array.from({ length: it.conc }, async () => { while (issued < it.n) { issued++; await one(); } }));
+  } else if (it.kind === 'sustained') {
+    const end = T0 + it.seconds * 1000;
+    await Promise.all(Array.from({ length: it.conc }, async () => { while (performance.now() < end) await one(); }));
+  } else {                                     // paced: 16 cameras x 60 fps, each read due on its tick
+    const period = 1000 / it.fps, end = T0 + it.seconds * 1000;
+    await Promise.all(Array.from({ length: it.cams }, async (_, c) => {
+      let k = 0; const phase = c * period / it.cams;
+      while (true) {
+        const due = T0 + phase + k * period; if (due >= end) break;
+        const w = due - performance.now(); if (w > 0) await sleep(w);
+        await one();
+        const nk = Math.floor((performance.now() - T0 - phase) / period) + 1;   // next tick not yet passed
+        if (nk > k + 1) dropped += nk - k - 1; k = Math.max(k + 1, nk);
+      }
+    }));
+  }
+  const wall = (performance.now() - T0) / 1000;
+  const r = { kind: it.kind, transport: it.transport, rep: it.rep, len: it.len, conc: it.conc || it.cams, reads, bad, errors, wall_s: +wall.toFixed(3),
+              reads_per_s: +(reads / wall).toFixed(1), MB_per_s: +(reads * it.len / wall / 1e6).toFixed(1), p50_ms: pct(lat, 0.5), p99_ms: pct(lat, 0.99) };
+  if (it.kind === 'paced') { r.target_reads = Math.round(it.cams * it.fps * it.seconds); r.dropped_ticks = dropped; }
+  return r;
+};
+</script>

@@ -1,0 +1,1057 @@
+{
+ "time": "2026-11-12T14:25:35",
+ "suites": [
+  {
+   "label": "route_asis_h264_mp4",
+   "path": "/skellycam/playback/rangetest/videos/h264?recording_parent_directory=C%3A%5CUsers%5CDom%5CAppData%5CLocal%5CTemp%5Cclaude%5Cca7e9b09df19a3f5%5Cf535e563-0d11-4407-af32-ec97af3fd139%5Cscratchpad%5Crange_transport%5Crec",
+   "file_size_on_disk": 92719986,
+   "cases": [
+    {
+     "method": "GET",
+     "range": "bytes=0-15",
+     "status": 206,
+     "ms": 31.3,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 0-15/92719986",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "video/mp4",
+      "etag": "\"6236bd9cbebdaafd0989cad37866ac77\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:53 GMT"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=46359993-46513592",
+     "status": 206,
+     "ms": 29.6,
+     "body_len": 153600,
+     "headers": {
+      "content-range": "bytes 46359993-46513592/92719986",
+      "content-length": "153600",
+      "accept-ranges": "bytes",
+      "content-type": "video/mp4",
+      "etag": "\"6236bd9cbebdaafd0989cad37866ac77\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:53 GMT"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=-16",
+     "status": 206,
+     "ms": 29.8,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 92719970-92719985/92719986",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "video/mp4",
+      "etag": "\"6236bd9cbebdaafd0989cad37866ac77\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:53 GMT"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=92719886-",
+     "status": 206,
+     "ms": 28.6,
+     "body_len": 100,
+     "headers": {
+      "content-range": "bytes 92719886-92719985/92719986",
+      "content-length": "100",
+      "accept-ranges": "bytes",
+      "content-type": "video/mp4",
+      "etag": "\"6236bd9cbebdaafd0989cad37866ac77\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:53 GMT"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=0-92720986",
+     "status": 206,
+     "ms": 35.7,
+     "body_len": 8388608,
+     "headers": {
+      "content-range": "bytes 0-92719985/92719986",
+      "content-length": "92719986",
+      "accept-ranges": "bytes",
+      "content-type": "video/mp4",
+      "etag": "\"6236bd9cbebdaafd0989cad37866ac77\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:53 GMT"
+     }
+    },
+    {
+     "method": "HEAD",
+     "range": null,
+     "status": 405,
+     "ms": 36.0,
+     "body_len": 0,
+     "headers": {
+      "content-length": "31",
+      "content-type": "application/json"
+     }
+    },
+    {
+     "method": "HEAD",
+     "range": "bytes=0-15",
+     "status": 405,
+     "ms": 1.8,
+     "body_len": 0,
+     "headers": {
+      "content-length": "31",
+      "content-type": "application/json"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=0-15,32-47",
+     "status": 206,
+     "ms": 30.3,
+     "body_len": 253,
+     "headers": {
+      "content-length": "253",
+      "accept-ranges": "bytes",
+      "content-type": "multipart/byteranges; boundary=84b48d109dc5aa62b879339589",
+      "etag": "\"6236bd9cbebdaafd0989cad37866ac77\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:53 GMT"
+     },
+     "multipart_parts": 2
+    },
+    {
+     "method": "GET",
+     "range": "bytes=92719986-",
+     "status": 416,
+     "ms": 21.1,
+     "body_len": 0,
+     "headers": {
+      "content-range": "bytes */92719986",
+      "content-length": "0",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=92719996-92720006",
+     "status": 416,
+     "ms": 21.1,
+     "body_len": 0,
+     "headers": {
+      "content-range": "bytes */92719986",
+      "content-length": "0",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=-0",
+     "status": 416,
+     "ms": 20.8,
+     "body_len": 0,
+     "headers": {
+      "content-range": "bytes */92719986",
+      "content-length": "0",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=10-5",
+     "status": 400,
+     "ms": 20.6,
+     "body_len": 41,
+     "headers": {
+      "content-length": "41",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "items=0-15",
+     "status": 400,
+     "ms": 21.0,
+     "body_len": 24,
+     "headers": {
+      "content-length": "24",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=0-15",
+     "status": 206,
+     "ms": 21.7,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 0-15/92719986",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "video/mp4",
+      "etag": "\"6236bd9cbebdaafd0989cad37866ac77\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:53 GMT",
+      "access-control-allow-origin": "null",
+      "access-control-allow-credentials": "true",
+      "vary": "Origin"
+     },
+     "req_headers": {
+      "Origin": "null"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=-16",
+     "status": 206,
+     "ms": 21.1,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 92719970-92719985/92719986",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "video/mp4",
+      "etag": "\"6236bd9cbebdaafd0989cad37866ac77\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:53 GMT",
+      "access-control-allow-origin": "http://localhost:5173",
+      "access-control-allow-credentials": "true",
+      "vary": "Origin"
+     },
+     "req_headers": {
+      "Origin": "http://localhost:5173"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "OPTIONS (preflight, Origin null, range)",
+     "status": 200,
+     "headers": {
+      "content-length": "2",
+      "content-type": "text/plain; charset=utf-8",
+      "access-control-allow-origin": "null",
+      "access-control-allow-credentials": "true",
+      "access-control-allow-headers": "range",
+      "access-control-allow-methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT",
+      "vary": "Origin"
+     }
+    }
+   ]
+  },
+  {
+   "label": "fixed_in_real_app_pattern",
+   "path": "/fixed/pattern.bin",
+   "file_size_on_disk": 268435456,
+   "cases": [
+    {
+     "method": "GET",
+     "range": "bytes=0-15",
+     "status": 206,
+     "ms": 8.1,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 0-15/268435456",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=134217728-134371327",
+     "status": 206,
+     "ms": 11.2,
+     "body_len": 153600,
+     "headers": {
+      "content-range": "bytes 134217728-134371327/268435456",
+      "content-length": "153600",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=-16",
+     "status": 206,
+     "ms": 11.8,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 268435440-268435455/268435456",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=268435356-",
+     "status": 206,
+     "ms": 1.5,
+     "body_len": 100,
+     "headers": {
+      "content-range": "bytes 268435356-268435455/268435456",
+      "content-length": "100",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=0-268436456",
+     "status": 206,
+     "ms": 16.9,
+     "body_len": 8388608,
+     "headers": {
+      "content-range": "bytes 0-268435455/268435456",
+      "content-length": "268435456",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     }
+    },
+    {
+     "method": "HEAD",
+     "range": null,
+     "status": 200,
+     "ms": 11.4,
+     "body_len": 0,
+     "headers": {
+      "content-length": "268435456",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     }
+    },
+    {
+     "method": "HEAD",
+     "range": "bytes=0-15",
+     "status": 206,
+     "ms": 11.2,
+     "body_len": 0,
+     "headers": {
+      "content-range": "bytes 0-15/268435456",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=0-15,32-47",
+     "status": 206,
+     "ms": 13.3,
+     "body_len": 285,
+     "headers": {
+      "content-length": "285",
+      "accept-ranges": "bytes",
+      "content-type": "multipart/byteranges; boundary=ba4558946db13c62b454b08bf9",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "multipart_parts": 2
+    },
+    {
+     "method": "GET",
+     "range": "bytes=268435456-",
+     "status": 416,
+     "ms": 1.2,
+     "body_len": 0,
+     "headers": {
+      "content-range": "bytes */268435456",
+      "content-length": "0",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=268435466-268435476",
+     "status": 416,
+     "ms": 11.0,
+     "body_len": 0,
+     "headers": {
+      "content-range": "bytes */268435456",
+      "content-length": "0",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=-0",
+     "status": 416,
+     "ms": 1.2,
+     "body_len": 0,
+     "headers": {
+      "content-range": "bytes */268435456",
+      "content-length": "0",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=10-5",
+     "status": 400,
+     "ms": 1.1,
+     "body_len": 41,
+     "headers": {
+      "content-length": "41",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "items=0-15",
+     "status": 400,
+     "ms": 1.1,
+     "body_len": 24,
+     "headers": {
+      "content-length": "24",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=0-15",
+     "status": 206,
+     "ms": 1.7,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 0-15/268435456",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-allow-origin": "null",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified",
+      "access-control-allow-credentials": "true",
+      "vary": "Origin"
+     },
+     "req_headers": {
+      "Origin": "null"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=-16",
+     "status": 206,
+     "ms": 1.6,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 268435440-268435455/268435456",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-allow-origin": "http://localhost:5173",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified",
+      "access-control-allow-credentials": "true",
+      "vary": "Origin"
+     },
+     "req_headers": {
+      "Origin": "http://localhost:5173"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "OPTIONS (preflight, Origin null, range)",
+     "status": 200,
+     "headers": {
+      "content-length": "2",
+      "content-type": "text/plain; charset=utf-8",
+      "access-control-allow-origin": "null",
+      "access-control-allow-credentials": "true",
+      "access-control-allow-headers": "range",
+      "access-control-allow-methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT",
+      "vary": "Origin"
+     }
+    }
+   ]
+  },
+  {
+   "label": "fixed_bare_pattern",
+   "path": "/fixed/pattern.bin",
+   "file_size_on_disk": 268435456,
+   "cases": [
+    {
+     "method": "GET",
+     "range": "bytes=0-15",
+     "status": 206,
+     "ms": 2.1,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 0-15/268435456",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=134217728-134371327",
+     "status": 206,
+     "ms": 1.5,
+     "body_len": 153600,
+     "headers": {
+      "content-range": "bytes 134217728-134371327/268435456",
+      "content-length": "153600",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=-16",
+     "status": 206,
+     "ms": 0.9,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 268435440-268435455/268435456",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=268435356-",
+     "status": 206,
+     "ms": 1.0,
+     "body_len": 100,
+     "headers": {
+      "content-range": "bytes 268435356-268435455/268435456",
+      "content-length": "100",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=0-268436456",
+     "status": 206,
+     "ms": 20.8,
+     "body_len": 8388608,
+     "headers": {
+      "content-range": "bytes 0-268435455/268435456",
+      "content-length": "268435456",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     }
+    },
+    {
+     "method": "HEAD",
+     "range": null,
+     "status": 200,
+     "ms": 1.0,
+     "body_len": 0,
+     "headers": {
+      "content-length": "268435456",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     }
+    },
+    {
+     "method": "HEAD",
+     "range": "bytes=0-15",
+     "status": 206,
+     "ms": 0.8,
+     "body_len": 0,
+     "headers": {
+      "content-range": "bytes 0-15/268435456",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=0-15,32-47",
+     "status": 206,
+     "ms": 2.0,
+     "body_len": 285,
+     "headers": {
+      "content-length": "285",
+      "accept-ranges": "bytes",
+      "content-type": "multipart/byteranges; boundary=ee2a7a3072ceb1af5648a597bd",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "multipart_parts": 2
+    },
+    {
+     "method": "GET",
+     "range": "bytes=268435456-",
+     "status": 416,
+     "ms": 10.2,
+     "body_len": 0,
+     "headers": {
+      "content-range": "bytes */268435456",
+      "content-length": "0",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=268435466-268435476",
+     "status": 416,
+     "ms": 0.8,
+     "body_len": 0,
+     "headers": {
+      "content-range": "bytes */268435456",
+      "content-length": "0",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=-0",
+     "status": 416,
+     "ms": 1.0,
+     "body_len": 0,
+     "headers": {
+      "content-range": "bytes */268435456",
+      "content-length": "0",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=10-5",
+     "status": 400,
+     "ms": 0.7,
+     "body_len": 41,
+     "headers": {
+      "content-length": "41",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "items=0-15",
+     "status": 400,
+     "ms": 0.7,
+     "body_len": 24,
+     "headers": {
+      "content-length": "24",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=0-15",
+     "status": 206,
+     "ms": 12.2,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 0-15/268435456",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-allow-origin": "*",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "req_headers": {
+      "Origin": "null"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=-16",
+     "status": 206,
+     "ms": 10.8,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 268435440-268435455/268435456",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"85d665dc96720e9fbed8d7ca08290898\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:27 GMT",
+      "access-control-allow-origin": "*",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "req_headers": {
+      "Origin": "http://localhost:5173"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "OPTIONS (preflight, Origin null, range)",
+     "status": 200,
+     "headers": {
+      "content-length": "2",
+      "content-type": "text/plain; charset=utf-8",
+      "access-control-allow-origin": "*",
+      "access-control-allow-headers": "range",
+      "access-control-allow-methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT"
+     }
+    }
+   ]
+  },
+  {
+   "label": "fixed_bare_big_4p7GB",
+   "path": "/fixed/big.mkv",
+   "file_size_on_disk": 4686604210,
+   "cases": [
+    {
+     "method": "GET",
+     "range": "bytes=0-15",
+     "status": 206,
+     "ms": 11.9,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 0-15/4686604210",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"0aebd1a3799d93251f8f47712d8ddae9\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:56 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=2343302105-2343455704",
+     "status": 206,
+     "ms": 4.8,
+     "body_len": 153600,
+     "headers": {
+      "content-range": "bytes 2343302105-2343455704/4686604210",
+      "content-length": "153600",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"0aebd1a3799d93251f8f47712d8ddae9\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:56 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=-16",
+     "status": 206,
+     "ms": 11.4,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 4686604194-4686604209/4686604210",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"0aebd1a3799d93251f8f47712d8ddae9\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:56 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=4686604110-",
+     "status": 206,
+     "ms": 11.6,
+     "body_len": 100,
+     "headers": {
+      "content-range": "bytes 4686604110-4686604209/4686604210",
+      "content-length": "100",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"0aebd1a3799d93251f8f47712d8ddae9\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:56 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=0-4686605210",
+     "status": 206,
+     "ms": 25.4,
+     "body_len": 8388608,
+     "headers": {
+      "content-range": "bytes 0-4686604209/4686604210",
+      "content-length": "4686604210",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"0aebd1a3799d93251f8f47712d8ddae9\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:56 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     }
+    },
+    {
+     "method": "HEAD",
+     "range": null,
+     "status": 200,
+     "ms": 1.1,
+     "body_len": 0,
+     "headers": {
+      "content-length": "4686604210",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"0aebd1a3799d93251f8f47712d8ddae9\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:56 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     }
+    },
+    {
+     "method": "HEAD",
+     "range": "bytes=0-15",
+     "status": 206,
+     "ms": 11.2,
+     "body_len": 0,
+     "headers": {
+      "content-range": "bytes 0-15/4686604210",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"0aebd1a3799d93251f8f47712d8ddae9\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:56 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=0-15,32-47",
+     "status": 206,
+     "ms": 12.6,
+     "body_len": 287,
+     "headers": {
+      "content-length": "287",
+      "accept-ranges": "bytes",
+      "content-type": "multipart/byteranges; boundary=8444fed4432d20fbd63a35b390",
+      "etag": "\"0aebd1a3799d93251f8f47712d8ddae9\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:56 GMT",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "multipart_parts": 2
+    },
+    {
+     "method": "GET",
+     "range": "bytes=4686604210-",
+     "status": 416,
+     "ms": 10.7,
+     "body_len": 0,
+     "headers": {
+      "content-range": "bytes */4686604210",
+      "content-length": "0",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=4686604220-4686604230",
+     "status": 416,
+     "ms": 10.3,
+     "body_len": 0,
+     "headers": {
+      "content-range": "bytes */4686604210",
+      "content-length": "0",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=-0",
+     "status": 416,
+     "ms": 1.0,
+     "body_len": 0,
+     "headers": {
+      "content-range": "bytes */4686604210",
+      "content-length": "0",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=10-5",
+     "status": 400,
+     "ms": 0.8,
+     "body_len": 41,
+     "headers": {
+      "content-length": "41",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "items=0-15",
+     "status": 400,
+     "ms": 10.9,
+     "body_len": 24,
+     "headers": {
+      "content-length": "24",
+      "content-type": "text/plain; charset=utf-8"
+     }
+    },
+    {
+     "method": "GET",
+     "range": "bytes=0-15",
+     "status": 206,
+     "ms": 1.6,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 0-15/4686604210",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"0aebd1a3799d93251f8f47712d8ddae9\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:56 GMT",
+      "access-control-allow-origin": "*",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "req_headers": {
+      "Origin": "null"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "GET",
+     "range": "bytes=-16",
+     "status": 206,
+     "ms": 12.7,
+     "body_len": 16,
+     "headers": {
+      "content-range": "bytes 4686604194-4686604209/4686604210",
+      "content-length": "16",
+      "accept-ranges": "bytes",
+      "content-type": "application/octet-stream",
+      "etag": "\"0aebd1a3799d93251f8f47712d8ddae9\"",
+      "last-modified": "Thu, 12 Nov 2026 19:22:56 GMT",
+      "access-control-allow-origin": "*",
+      "access-control-expose-headers": "Content-Range, Content-Length, Accept-Ranges, ETag, Last-Modified"
+     },
+     "req_headers": {
+      "Origin": "http://localhost:5173"
+     },
+     "bytes_match_file": true
+    },
+    {
+     "method": "OPTIONS (preflight, Origin null, range)",
+     "status": 200,
+     "headers": {
+      "content-length": "2",
+      "content-type": "text/plain; charset=utf-8",
+      "access-control-allow-origin": "*",
+      "access-control-allow-headers": "range",
+      "access-control-allow-methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT"
+     }
+    },
+    {
+     "range": "bytes=4294967288-4294967303",
+     "status": 206,
+     "content_range": "bytes 4294967288-4294967303/4686604210",
+     "sha_ok": true,
+     "ms": 1.8
+    },
+    {
+     "range": "bytes=4500000000-4500153599",
+     "status": 206,
+     "content_range": "bytes 4500000000-4500153599/4686604210",
+     "sha_ok": true,
+     "ms": 11.3
+    },
+    {
+     "range": "bytes=4686604194-4686604209",
+     "status": 206,
+     "content_range": "bytes 4686604194-4686604209/4686604210",
+     "sha_ok": true,
+     "ms": 11.8
+    }
+   ]
+  }
+ ],
+ "route_asis_mjpeg_mkv": {
+  "status": 206,
+  "ms_first_request": 2130,
+  "content_range": "bytes 0-15/22211068",
+  "first16_hex": "000000206674797069736f6d00000200",
+  "cam0_first16_hex": "1a45dfa3a34286810142f7810142f281",
+  "web_mp4_created": true,
+  "web_mp4_size": 22211068,
+  "cam0_mkv_size": 76587890,
+  "ms_second_request": 5.6,
+  "second_matches_mkv": false,
+  "second_matches_web_mp4": true
+ },
+ "route_asis_listing": {
+  "status": 200,
+  "body": [
+   {
+    "video_id": "cam0",
+    "filename": "cam0.mkv",
+    "size_bytes": 76587890,
+    "stream_url": "/skellycam/playback/rangetest/videos/cam0",
+    "camera_id": "cam0",
+    "camera_index": 0,
+    "recording_name": "rangetest"
+   },
+   {
+    "video_id": "h264",
+    "filename": "h264.mp4",
+    "size_bytes": 92719986,
+    "stream_url": "/skellycam/playback/rangetest/videos/h264",
+    "camera_id": "h264",
+    "camera_index": -1,
+    "recording_name": "rangetest"
+   }
+  ]
+ },
+ "route_asis_mka": {
+  "note": ".mka is not in VIDEO_EXTENSIONS; requesting the stem",
+  "status": 404
+ }
+}

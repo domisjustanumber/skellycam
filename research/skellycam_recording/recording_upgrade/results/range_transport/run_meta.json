@@ -1,0 +1,79 @@
+{
+ "test": "T-S5 range transports",
+ "date": "2026-11-12",
+ "machine": "i7-14700K (20C/28T), Windows 11 26300, NVMe C:",
+ "versions": {
+  "electron": [
+   "35.7.5 (Chrome 134.0.6998.205)",
+   "45.2.3 (Chrome 156.0.8078.80)"
+  ],
+  "fastapi": "0.162.5",
+  "starlette": "1.3.1",
+  "uvicorn": "0.54.0 (h11 0.16.0; httptools not installed)",
+  "anyio": "4.14.2",
+  "python": "3.13 (skellycam-phase1 .venv)",
+  "pyav": "19.0.2",
+  "skellycam_phase1_commit": "7d06ba2e1"
+ },
+ "servers": {
+  "real (53190)": "real playback_router + skellycam cors() + add_middleware() + skellylogs TRACE (file + console, no websocket queue)",
+  "bare (53191)": "CORSMiddleware(expose_headers) + FileResponse route only"
+ },
+ "concurrent_load": [
+  "before 2026-11-12T14:34:07 total_cpu_pct=9.4 procs: electronx4 pythonx8",
+  "exit 0; out exists: True",
+  "after_e35 2026-11-12T14:41:34 total_cpu_pct=11.6 procs: electronx4 pythonx8",
+  "exit 0; out exists: True",
+  "after_e45 2026-11-12T14:49:21 total_cpu_pct=16.9 procs: pythonx8",
+  "Two other agents ran Electron/PyAV tests at the same time (8 python + other electron processes visible)."
+ ],
+ "bench_method": "each item repeated 5x, reps interleaved across transports; random 4-aligned offsets in a 256 MiB pattern file (as-is route: 92.7 MB H.264 MP4); lat = 150 reads at c1 / 640 at c16; sustained = 3 s at c16; paced = 16 workers x 60 Hz for 4 s; CPU = delta cumulativeCPUUsage / wall, % of one core (Electron) and process_time delta (uvicorn)",
+ "media": {
+  "av": "19.0.2",
+  "pattern": {
+   "path": "pattern.bin",
+   "size": 268435456
+  },
+  "jpeg_sizes": [
+   211932,
+   256032,
+   296775
+  ],
+  "cam0": {
+   "path": "cam0.mkv",
+   "size": 76587890,
+   "payload_sha256": "d03d517739cbcf92d41d23e7f40a0d55e33b0f71ec44e00f162ddac9dfa978c7",
+   "payload_len": 19264,
+   "filedata_abs": 76568626
+  },
+  "h264": {
+   "path": "h264.mp4",
+   "size": 92719986
+  },
+  "big": {
+   "path": "big.mkv",
+   "size": 4686604210,
+   "frames": 18358,
+   "payload_sha256": "49d4c635abffe9928520eda857aeab8c0a7b120aad1797833c6c76ade0a6db2b",
+   "payload_len": 1174976,
+   "filedata_abs": 4685429234,
+   "range_sha256": [
+    {
+     "off": 4294967288,
+     "len": 16,
+     "sha256": "efacb0bd01f56b4b17f4d53329ad0c59fcb795d5e407c8714c7c0b16d83ae431"
+    },
+    {
+     "off": 4500000000,
+     "len": 153600,
+     "sha256": "3b37c68edc022c63d0a77b482af131a2e2063cc9af9cbfd56475962787d75ce6"
+    },
+    {
+     "off": 4686604194,
+     "len": 16,
+     "sha256": "3ed7f5d790eb707c74c5d3a326aff0f8b5e79bf1b2b79c782a896d4c6c405cdd"
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,2301 @@
+{
+ "E35.7.5": {
+  "electron": "35.7.5",
+  "chrome": "134.0.6998.205",
+  "error": null,
+  "semantics_file_origin": {
+   "file": {
+    "probes": {
+     "GET bytes=0-15": "200 CR=None CL=None AR=None",
+     "GET bytes=134217728-134217743": "200 CR=None CL=None AR=None",
+     "GET bytes=-16": "200 CR=None CL=None AR=None",
+     "GET bytes=268435356-": "200 CR=None CL=None AR=None",
+     "HEAD None": "200 CR=None CL=None AR=None",
+     "HEAD bytes=0-15": "200 CR=None CL=None AR=None",
+     "GET bytes=0-15,32-47": "TypeError: Failed to fetch",
+     "GET bytes=268435466-268435476": "TypeError: Failed to fetch",
+     "GET None": "200 CR=None CL=None AR=None"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "200 sha_ok=True CR=None",
+     "4500000000": "200 sha_ok=True CR=None",
+     "4686604194": "200 sha_ok=True CR=None"
+    }
+   },
+   "http_asis": {
+    "probes": {
+     "GET bytes=0-15": "206 CR=bytes 0-15/92719986 CL=16 AR=bytes",
+     "GET bytes=46359993-46360008": "206 CR=bytes 46359993-46360008/92719986 CL=16 AR=bytes",
+     "GET bytes=-16": "206 CR=bytes 92719970-92719985/92719986 CL=16 AR=bytes",
+     "GET bytes=92719886-": "206 CR=bytes 92719886-92719985/92719986 CL=100 AR=bytes",
+     "HEAD None": "200 CR=None CL=92719986 AR=bytes",
+     "HEAD bytes=0-15": "405 CR=None CL=31 AR=None",
+     "GET bytes=0-15,32-47": "206 CR=None CL=253 AR=bytes",
+     "GET bytes=92719996-92720006": "416 CR=bytes */92719986 CL=0 AR=None",
+     "GET None": "200 CR=None CL=92719986 AR=bytes"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": null
+    },
+    "past4GiB": {}
+   },
+   "http_fixed_real": {
+    "probes": {
+     "GET bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=134217728-134217743": "206 CR=bytes 134217728-134217743/268435456 CL=16 AR=bytes",
+     "GET bytes=-16": "206 CR=bytes 268435440-268435455/268435456 CL=16 AR=bytes",
+     "GET bytes=268435356-": "206 CR=bytes 268435356-268435455/268435456 CL=100 AR=bytes",
+     "HEAD None": "200 CR=None CL=268435456 AR=bytes",
+     "HEAD bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=0-15,32-47": "206 CR=None CL=285 AR=bytes",
+     "GET bytes=268435466-268435476": "416 CR=bytes */268435456 CL=0 AR=None",
+     "GET None": "200 CR=None CL=268435456 AR=bytes"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "206 sha_ok=True CR=bytes 4294967288-4294967303/4686604210",
+     "4500000000": "206 sha_ok=True CR=bytes 4500000000-4500153599/4686604210",
+     "4686604194": "206 sha_ok=True CR=bytes 4686604194-4686604209/4686604210"
+    }
+   },
+   "http_fixed_bare": {
+    "probes": {
+     "GET bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=134217728-134217743": "206 CR=bytes 134217728-134217743/268435456 CL=16 AR=bytes",
+     "GET bytes=-16": "206 CR=bytes 268435440-268435455/268435456 CL=16 AR=bytes",
+     "GET bytes=268435356-": "206 CR=bytes 268435356-268435455/268435456 CL=100 AR=bytes",
+     "HEAD None": "200 CR=None CL=268435456 AR=bytes",
+     "HEAD bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=0-15,32-47": "206 CR=None CL=285 AR=bytes",
+     "GET bytes=268435466-268435476": "416 CR=bytes */268435456 CL=0 AR=None",
+     "GET None": "200 CR=None CL=268435456 AR=bytes"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "206 sha_ok=True CR=bytes 4294967288-4294967303/4686604210",
+     "4500000000": "206 sha_ok=True CR=bytes 4500000000-4500153599/4686604210",
+     "4686604194": "206 sha_ok=True CR=bytes 4686604194-4686604209/4686604210"
+    }
+   },
+   "skr": {
+    "probes": {
+     "GET bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=134217728-134217743": "206 CR=bytes 134217728-134217743/268435456 CL=16 AR=bytes",
+     "GET bytes=-16": "206 CR=bytes 268435440-268435455/268435456 CL=16 AR=bytes",
+     "GET bytes=268435356-": "206 CR=bytes 268435356-268435455/268435456 CL=100 AR=bytes",
+     "HEAD None": "200 CR=None CL=268435456 AR=bytes",
+     "HEAD bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=0-15,32-47": "416 CR=bytes */268435456 CL=None AR=bytes",
+     "GET bytes=268435466-268435476": "416 CR=bytes */268435456 CL=None AR=bytes",
+     "GET None": "200 CR=None CL=268435456 AR=bytes"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "206 sha_ok=True CR=bytes 4294967288-4294967303/4686604210",
+     "4500000000": "206 sha_ok=True CR=bytes 4500000000-4500153599/4686604210",
+     "4686604194": "206 sha_ok=True CR=bytes 4686604194-4686604209/4686604210"
+    }
+   },
+   "skn": {
+    "probes": {
+     "GET bytes=0-15": "200 CR=None CL=None AR=None",
+     "GET bytes=134217728-134217743": "200 CR=None CL=None AR=None",
+     "GET bytes=-16": "200 CR=None CL=None AR=None",
+     "GET bytes=268435356-": "200 CR=None CL=None AR=None",
+     "HEAD None": "200 CR=None CL=None AR=None",
+     "HEAD bytes=0-15": "200 CR=None CL=None AR=None",
+     "GET bytes=0-15,32-47": "TypeError: Failed to fetch",
+     "GET bytes=268435466-268435476": "TypeError: Failed to fetch",
+     "GET None": "200 CR=None CL=None AR=None"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "200 sha_ok=True CR=None",
+     "4500000000": "200 sha_ok=True CR=None",
+     "4686604194": "200 sha_ok=True CR=None"
+    }
+   },
+   "localhost_vs_ipv4_4KB_seq": {
+    "http_fixed_bare": {
+     "p50": 2.2,
+     "p99": 9.1
+    },
+    "http_fixed_bare_localhost": {
+     "p50": 2.3,
+     "p99": 12.5
+    }
+   }
+  },
+  "semantics_skr_origin": {
+   "origin": "skr://media",
+   "http_asis": {
+    "probes": {
+     "GET bytes=0-15": "TypeError: Failed to fetch",
+     "GET bytes=46359993-46360008": "206 CR=None CL=16 AR=None",
+     "GET bytes=-16": "206 CR=None CL=16 AR=None",
+     "GET bytes=92719886-": "206 CR=None CL=100 AR=None",
+     "HEAD None": "200 CR=None CL=92719986 AR=None",
+     "HEAD bytes=0-15": "405 CR=None CL=31 AR=None",
+     "GET bytes=0-15,32-47": "206 CR=None CL=253 AR=None",
+     "GET bytes=92719996-92720006": "416 CR=None CL=0 AR=None",
+     "GET None": "200 CR=None CL=92719986 AR=None"
+    },
+    "checks": {
+     "error": "TypeError: Failed to fetch"
+    },
+    "past4GiB": {}
+   },
+   "http_fixed_real": {
+    "probes": {
+     "GET bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=134217728-134217743": "206 CR=bytes 134217728-134217743/268435456 CL=16 AR=bytes",
+     "GET bytes=-16": "206 CR=bytes 268435440-268435455/268435456 CL=16 AR=bytes",
+     "GET bytes=268435356-": "206 CR=bytes 268435356-268435455/268435456 CL=100 AR=bytes",
+     "HEAD None": "200 CR=None CL=268435456 AR=bytes",
+     "HEAD bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=0-15,32-47": "206 CR=None CL=285 AR=bytes",
+     "GET bytes=268435466-268435476": "416 CR=None CL=0 AR=None",
+     "GET None": "200 CR=None CL=268435456 AR=bytes"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "206 sha_ok=True CR=bytes 4294967288-4294967303/4686604210",
+     "4500000000": "206 sha_ok=True CR=bytes 4500000000-4500153599/4686604210",
+     "4686604194": "206 sha_ok=True CR=bytes 4686604194-4686604209/4686604210"
+    }
+   },
+   "http_fixed_bare": {
+    "probes": {
+     "GET bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=134217728-134217743": "206 CR=bytes 134217728-134217743/268435456 CL=16 AR=bytes",
+     "GET bytes=-16": "206 CR=bytes 268435440-268435455/268435456 CL=16 AR=bytes",
+     "GET bytes=268435356-": "206 CR=bytes 268435356-268435455/268435456 CL=100 AR=bytes",
+     "HEAD None": "200 CR=None CL=268435456 AR=bytes",
+     "HEAD bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=0-15,32-47": "206 CR=None CL=285 AR=bytes",
+     "GET bytes=268435466-268435476": "416 CR=bytes */268435456 CL=0 AR=None",
+     "GET None": "200 CR=None CL=268435456 AR=bytes"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "206 sha_ok=True CR=bytes 4294967288-4294967303/4686604210",
+     "4500000000": "206 sha_ok=True CR=bytes 4500000000-4500153599/4686604210",
+     "4686604194": "206 sha_ok=True CR=bytes 4686604194-4686604209/4686604210"
+    }
+   },
+   "skn": {
+    "probes": {
+     "GET bytes=0-15": "200 CR=None CL=None AR=None",
+     "GET bytes=134217728-134217743": "200 CR=None CL=None AR=None",
+     "GET bytes=-16": "200 CR=None CL=None AR=None",
+     "GET bytes=268435356-": "200 CR=None CL=None AR=None",
+     "HEAD None": "200 CR=None CL=None AR=None",
+     "HEAD bytes=0-15": "200 CR=None CL=None AR=None",
+     "GET bytes=0-15,32-47": "TypeError: Failed to fetch",
+     "GET bytes=268435466-268435476": "TypeError: Failed to fetch",
+     "GET None": "200 CR=None CL=None AR=None"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "200 sha_ok=True CR=None",
+     "4500000000": "200 sha_ok=True CR=None",
+     "4686604194": "200 sha_ok=True CR=None"
+    }
+   },
+   "file": {
+    "probes": {
+     "GET bytes=0-15": "TypeError: Failed to fetch",
+     "GET bytes=134217728-134217743": "TypeError: Failed to fetch",
+     "GET bytes=-16": "TypeError: Failed to fetch",
+     "GET bytes=268435356-": "TypeError: Failed to fetch",
+     "HEAD None": "TypeError: Failed to fetch",
+     "HEAD bytes=0-15": "TypeError: Failed to fetch",
+     "GET bytes=0-15,32-47": "TypeError: Failed to fetch",
+     "GET bytes=268435466-268435476": "TypeError: Failed to fetch",
+     "GET None": "TypeError: Failed to fetch"
+    },
+    "checks": {
+     "error": "TypeError: Failed to fetch"
+    },
+    "past4GiB": {
+     "4294967288": "TypeError: Failed to fetch",
+     "4500000000": "TypeError: Failed to fetch",
+     "4686604194": "TypeError: Failed to fetch"
+    }
+   },
+   "localhost_vs_ipv4_4KB_seq": {
+    "http_fixed_bare": {
+     "p50": 2.2,
+     "p99": 9.6
+    },
+    "http_fixed_bare_localhost": {
+     "p50": 2.3,
+     "p99": 11.9
+    }
+   }
+  },
+  "diag_http_cache": [
+   {
+    "label": "bare default cache",
+    "len": 1536,
+    "conc": 1,
+    "N": 300,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 667,
+    "p50": 2.1,
+    "p99": 3.3
+   },
+   {
+    "label": "bare default cache",
+    "len": 153600,
+    "conc": 1,
+    "N": 100,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 335,
+    "p50": 2.9,
+    "p99": 7.6
+   },
+   {
+    "label": "bare default cache",
+    "len": 153600,
+    "conc": 16,
+    "N": 320,
+    "bad": 0,
+    "errs": 2,
+    "msgs": {
+     "TypeError: Failed to fetch": 2
+    },
+    "ms": 672,
+    "p50": 32.3,
+    "p99": 58.3
+   },
+   {
+    "label": "bare default cache",
+    "len": 1536,
+    "conc": 16,
+    "N": 640,
+    "bad": 0,
+    "errs": 5,
+    "msgs": {
+     "TypeError: Failed to fetch": 5
+    },
+    "ms": 772,
+    "p50": 16.2,
+    "p99": 32.1
+   },
+   {
+    "label": "bare cache:no-store",
+    "len": 1536,
+    "conc": 1,
+    "N": 300,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 391,
+    "p50": 1.3,
+    "p99": 1.9
+   },
+   {
+    "label": "bare cache:no-store",
+    "len": 153600,
+    "conc": 1,
+    "N": 100,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 170,
+    "p50": 1.7,
+    "p99": 1.9
+   },
+   {
+    "label": "bare cache:no-store",
+    "len": 153600,
+    "conc": 16,
+    "N": 320,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 300,
+    "p50": 15.1,
+    "p99": 19.2
+   },
+   {
+    "label": "bare cache:no-store",
+    "len": 1536,
+    "conc": 16,
+    "N": 640,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 462,
+    "p50": 11.5,
+    "p99": 13.2
+   },
+   {
+    "label": "real-app fixed, default cache",
+    "len": 1536,
+    "conc": 1,
+    "N": 300,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 588,
+    "p50": 1.9,
+    "p99": 2.7
+   },
+   {
+    "label": "real-app fixed, default cache",
+    "len": 153600,
+    "conc": 1,
+    "N": 100,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 265,
+    "p50": 2.4,
+    "p99": 5.3
+   },
+   {
+    "label": "real-app fixed, default cache",
+    "len": 153600,
+    "conc": 16,
+    "N": 320,
+    "bad": 0,
+    "errs": 2,
+    "msgs": {
+     "TypeError: Failed to fetch": 2
+    },
+    "ms": 454,
+    "p50": 21.7,
+    "p99": 36.9
+   },
+   {
+    "label": "real-app fixed, default cache",
+    "len": 1536,
+    "conc": 16,
+    "N": 640,
+    "bad": 0,
+    "errs": 3,
+    "msgs": {
+     "TypeError: Failed to fetch": 3
+    },
+    "ms": 914,
+    "p50": 23.2,
+    "p99": 29.6
+   },
+   {
+    "label": "real-app fixed, cache:no-store",
+    "len": 1536,
+    "conc": 1,
+    "N": 300,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 488,
+    "p50": 1.6,
+    "p99": 2.2
+   },
+   {
+    "label": "real-app fixed, cache:no-store",
+    "len": 153600,
+    "conc": 1,
+    "N": 100,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 222,
+    "p50": 2,
+    "p99": 6.9
+   },
+   {
+    "label": "real-app fixed, cache:no-store",
+    "len": 153600,
+    "conc": 16,
+    "N": 320,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 423,
+    "p50": 20.7,
+    "p99": 29.6
+   },
+   {
+    "label": "real-app fixed, cache:no-store",
+    "len": 1536,
+    "conc": 16,
+    "N": 640,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 657,
+    "p50": 16.4,
+    "p99": 22.6
+   },
+   {
+    "label": "bare, server Cache-Control: no-store",
+    "len": 1536,
+    "conc": 1,
+    "N": 300,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 412,
+    "p50": 1.3,
+    "p99": 2.1
+   },
+   {
+    "label": "bare, server Cache-Control: no-store",
+    "len": 153600,
+    "conc": 1,
+    "N": 100,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 191,
+    "p50": 1.8,
+    "p99": 2.7
+   },
+   {
+    "label": "bare, server Cache-Control: no-store",
+    "len": 153600,
+    "conc": 16,
+    "N": 320,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 326,
+    "p50": 16.1,
+    "p99": 20.4
+   },
+   {
+    "label": "bare, server Cache-Control: no-store",
+    "len": 1536,
+    "conc": 16,
+    "N": 640,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 486,
+    "p50": 12,
+    "p99": 14
+   },
+   {
+    "label": "real-app, server Cache-Control: no-store",
+    "len": 1536,
+    "conc": 1,
+    "N": 300,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 476,
+    "p50": 1.6,
+    "p99": 2.2
+   },
+   {
+    "label": "real-app, server Cache-Control: no-store",
+    "len": 153600,
+    "conc": 1,
+    "N": 100,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 200,
+    "p50": 2,
+    "p99": 2.5
+   },
+   {
+    "label": "real-app, server Cache-Control: no-store",
+    "len": 153600,
+    "conc": 16,
+    "N": 320,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 466,
+    "p50": 23.1,
+    "p99": 27.7
+   },
+   {
+    "label": "real-app, server Cache-Control: no-store",
+    "len": 1536,
+    "conc": 16,
+    "N": 640,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 699,
+    "p50": 16.9,
+    "p99": 34.1
+   }
+  ],
+  "correctness": {
+   "file": {
+    "exception": null,
+    "locator_cam0": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 5.5
+    },
+    "locator_big": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 5.9
+    },
+    "flac": {
+     "mka_skau_1ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0.5117,
+      "from_700_max_lsb16": 0.5039,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 656,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 2.2
+      }
+     },
+     "mka_skau_2ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0.5098,
+      "from_700_max_lsb16": 0.5059,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 665,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 1.8
+      }
+     }
+    },
+    "jpeg_conc16": {
+     "reads": 320,
+     "len": 153600,
+     "bad": 0,
+     "short": 0,
+     "ms": 104
+    }
+   },
+   "http_asis": {
+    "exception": null,
+    "locator_cam0": {
+     "ok": false,
+     "reason": "exception bad vint @0",
+     "sha_ok": false,
+     "reads": 1,
+     "ms": 7.5
+    },
+    "locator_big": "n/a",
+    "flac": {
+     "mka_skau_1ch": {
+      "first_status": 404
+     },
+     "mka_skau_2ch": {
+      "first_status": 404
+     }
+    },
+    "jpeg_conc16": {
+     "reads": 64,
+     "len": 153600,
+     "bad": 0,
+     "compared_with": "file://",
+     "ms": 1220
+    }
+   },
+   "http_fixed_real": {
+    "exception": "TypeError: Failed to fetch",
+    "locator_cam0": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 14.1
+    },
+    "locator_big": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 14.4
+    },
+    "flac": {
+     "mka_skau_1ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0.5117,
+      "from_700_max_lsb16": 0.5039,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 7969,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 13.2
+      }
+     },
+     "mka_skau_2ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0.5098,
+      "from_700_max_lsb16": 0.5059,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 8117,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 10.1
+      }
+     }
+    },
+    "jpeg_conc16": null
+   },
+   "http_fixed_real_ns": {
+    "exception": null,
+    "locator_cam0": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 14.3
+    },
+    "locator_big": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 38.9
+    },
+    "flac": {
+     "mka_skau_1ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0.5117,
+      "from_700_max_lsb16": 0.5039,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 2617,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 4.7
+      }
+     },
+     "mka_skau_2ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0.5098,
+      "from_700_max_lsb16": 0.5059,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 2229,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 5.2
+      }
+     }
+    },
+    "jpeg_conc16": {
+     "reads": 320,
+     "len": 153600,
+     "bad": 0,
+     "short": 0,
+     "ms": 425
+    }
+   },
+   "http_fixed_bare_ns": {
+    "exception": null,
+    "locator_cam0": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 5.3
+    },
+    "locator_big": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 9
+    },
+    "flac": {
+     "mka_skau_1ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0.5117,
+      "from_700_max_lsb16": 0.5039,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 1877,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 4.1
+      }
+     },
+     "mka_skau_2ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0.5098,
+      "from_700_max_lsb16": 0.5059,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 2178,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 4.4
+      }
+     }
+    },
+    "jpeg_conc16": {
+     "reads": 320,
+     "len": 153600,
+     "bad": 0,
+     "short": 0,
+     "ms": 357
+    }
+   },
+   "skr": {
+    "exception": null,
+    "locator_cam0": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 2.9
+    },
+    "locator_big": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 6.7
+    },
+    "flac": {
+     "mka_skau_1ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0.5117,
+      "from_700_max_lsb16": 0.5039,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 700,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 1.9
+      }
+     },
+     "mka_skau_2ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0.5098,
+      "from_700_max_lsb16": 0.5059,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 674,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 1.7
+      }
+     }
+    },
+    "jpeg_conc16": {
+     "reads": 320,
+     "len": 153600,
+     "bad": 0,
+     "short": 0,
+     "ms": 97
+    }
+   },
+   "skn": {
+    "exception": null,
+    "locator_cam0": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 2.8
+    },
+    "locator_big": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 7.6
+    },
+    "flac": {
+     "mka_skau_1ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0.5117,
+      "from_700_max_lsb16": 0.5039,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 1203,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 3
+      }
+     },
+     "mka_skau_2ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0.5098,
+      "from_700_max_lsb16": 0.5059,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 1239,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 2.9
+      }
+     }
+    },
+    "jpeg_conc16": {
+     "reads": 320,
+     "len": 153600,
+     "bad": 0,
+     "short": 0,
+     "ms": 207
+    }
+   }
+  },
+  "net_errors": {
+   "counts": {
+    "net::ERR_REQUEST_RANGE_NOT_SATISFIABLE": 2,
+    "net::ERR_ABORTED": 6,
+    "net::ERR_FAILED": 5,
+    "net::ERR_UNEXPECTED": 4,
+    "net::ERR_CACHE_OPERATION_NOT_SUPPORTED": 13
+   },
+   "first": [
+    {
+     "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/f535e563-0d11-4407-af32-ec97af3fd139/scratchpad/range_tr",
+     "error": "net::ERR_REQUEST_RANGE_NOT_SATISFIABLE"
+    },
+    {
+     "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/f535e563-0d11-4407-af32-ec97af3fd139/scratchpad/range_tr",
+     "error": "net::ERR_REQUEST_RANGE_NOT_SATISFIABLE"
+    },
+    {
+     "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/f535e563-0d11-4407-af32-ec97af3fd139/scratchpad/range_tr",
+     "error": "net::ERR_ABORTED",
+     "fromCache": false
+    },
+    {
+     "url": "http://127.0.0.1:53190/skellycam/playback/rangetest/videos/h264?recording_parent_directory=C%3A%5CUsers%5CDom%5CAppData%",
+     "error": "net::ERR_FAILED",
+     "fromCache": false
+    },
+    {
+     "url": "http://127.0.0.1:53190/fixed/pattern.bin",
+     "error": "net::ERR_ABORTED",
+     "fromCache": false
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_FAILED",
+     "fromCache": false
+    },
+    {
+     "url": "skr://media/pattern.bin",
+     "error": "net::ERR_ABORTED",
+     "fromCache": false
+    },
+    {
+     "url": "skn://media/pattern.bin",
+     "error": "net::ERR_UNEXPECTED"
+    },
+    {
+     "url": "skn://media/pattern.bin",
+     "error": "net::ERR_UNEXPECTED"
+    },
+    {
+     "url": "skn://media/pattern.bin",
+     "error": "net::ERR_ABORTED",
+     "fromCache": false
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53190/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53190/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53190/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53190/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53190/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53190/skellycam/playback/rangetest/videos/h264?recording_parent_directory=C%3A%5CUsers%5CDom%5CAppData%",
+     "error": "net::ERR_FAILED",
+     "fromCache": false
+    },
+    {
+     "url": "http://127.0.0.1:53190/skellycam/playback/rangetest/videos/h264?recording_parent_directory=C%3A%5CUsers%5CDom%5CAppData%",
+     "error": "net::ERR_ABORTED",
+     "fromCache": false
+    },
+    {
+     "url": "http://127.0.0.1:53190/fixed/pattern.bin",
+     "error": "net::ERR_FAILED",
+     "fromCache": false
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_FAILED",
+     "fromCache": false
+    },
+    {
+     "url": "skn://media/pattern.bin",
+     "error": "net::ERR_UNEXPECTED"
+    },
+    {
+     "url": "skn://media/pattern.bin",
+     "error": "net::ERR_UNEXPECTED"
+    },
+    {
+     "url": "skn://media/pattern.bin",
+     "error": "net::ERR_ABORTED",
+     "fromCache": false
+    },
+    {
+     "url": "http://127.0.0.1:53190/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    }
+   ]
+  },
+  "handler_counts": {
+   "skr": 3286,
+   "skn": 3300
+  },
+  "handler_first_headers": {
+   "skr": [
+    {
+     "url": "skr://media/pattern.bin",
+     "method": "GET",
+     "range": "bytes=0-15",
+     "headers": {
+      "accept": "*/*",
+      "range": "bytes=0-15",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36"
+     }
+    },
+    {
+     "url": "skr://media/pattern.bin",
+     "method": "GET",
+     "range": "bytes=134217728-134217743",
+     "headers": {
+      "accept": "*/*",
+      "range": "bytes=134217728-134217743",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36"
+     }
+    }
+   ],
+   "skn": [
+    {
+     "url": "skn://media/pattern.bin",
+     "method": "GET",
+     "range": "bytes=0-15",
+     "headers": {
+      "accept": "*/*",
+      "range": "bytes=0-15",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36"
+     }
+    },
+    {
+     "url": "skn://media/pattern.bin",
+     "method": "GET",
+     "range": "bytes=134217728-134217743",
+     "headers": {
+      "accept": "*/*",
+      "range": "bytes=134217728-134217743",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.205 Electron/35.7.5 Safari/537.36"
+     }
+    }
+   ]
+  }
+ },
+ "E45.2.3": {
+  "electron": "45.2.3",
+  "chrome": "156.0.8078.80",
+  "error": null,
+  "semantics_file_origin": {
+   "file": {
+    "probes": {
+     "GET bytes=0-15": "200 CR=None CL=None AR=None",
+     "GET bytes=134217728-134217743": "200 CR=None CL=None AR=None",
+     "GET bytes=-16": "200 CR=None CL=None AR=None",
+     "GET bytes=268435356-": "200 CR=None CL=None AR=None",
+     "HEAD None": "200 CR=None CL=None AR=None",
+     "HEAD bytes=0-15": "200 CR=None CL=None AR=None",
+     "GET bytes=0-15,32-47": "TypeError: Failed to fetch",
+     "GET bytes=268435466-268435476": "TypeError: Failed to fetch",
+     "GET None": "200 CR=None CL=None AR=None"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "200 sha_ok=True CR=None",
+     "4500000000": "200 sha_ok=True CR=None",
+     "4686604194": "200 sha_ok=True CR=None"
+    }
+   },
+   "http_asis": {
+    "probes": {
+     "GET bytes=0-15": "206 CR=bytes 0-15/92719986 CL=16 AR=bytes",
+     "GET bytes=46359993-46360008": "206 CR=bytes 46359993-46360008/92719986 CL=16 AR=bytes",
+     "GET bytes=-16": "206 CR=bytes 92719970-92719985/92719986 CL=16 AR=bytes",
+     "GET bytes=92719886-": "206 CR=bytes 92719886-92719985/92719986 CL=100 AR=bytes",
+     "HEAD None": "200 CR=None CL=92719986 AR=bytes",
+     "HEAD bytes=0-15": "405 CR=None CL=31 AR=None",
+     "GET bytes=0-15,32-47": "206 CR=None CL=253 AR=bytes",
+     "GET bytes=92719996-92720006": "416 CR=bytes */92719986 CL=0 AR=None",
+     "GET None": "200 CR=None CL=92719986 AR=bytes"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": null
+    },
+    "past4GiB": {}
+   },
+   "http_fixed_real": {
+    "probes": {
+     "GET bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=134217728-134217743": "206 CR=bytes 134217728-134217743/268435456 CL=16 AR=bytes",
+     "GET bytes=-16": "206 CR=bytes 268435440-268435455/268435456 CL=16 AR=bytes",
+     "GET bytes=268435356-": "206 CR=bytes 268435356-268435455/268435456 CL=100 AR=bytes",
+     "HEAD None": "200 CR=None CL=268435456 AR=bytes",
+     "HEAD bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=0-15,32-47": "206 CR=None CL=285 AR=bytes",
+     "GET bytes=268435466-268435476": "416 CR=bytes */268435456 CL=0 AR=None",
+     "GET None": "200 CR=None CL=268435456 AR=bytes"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "206 sha_ok=True CR=bytes 4294967288-4294967303/4686604210",
+     "4500000000": "206 sha_ok=True CR=bytes 4500000000-4500153599/4686604210",
+     "4686604194": "206 sha_ok=True CR=bytes 4686604194-4686604209/4686604210"
+    }
+   },
+   "http_fixed_bare": {
+    "probes": {
+     "GET bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=134217728-134217743": "206 CR=bytes 134217728-134217743/268435456 CL=16 AR=bytes",
+     "GET bytes=-16": "206 CR=bytes 268435440-268435455/268435456 CL=16 AR=bytes",
+     "GET bytes=268435356-": "206 CR=bytes 268435356-268435455/268435456 CL=100 AR=bytes",
+     "HEAD None": "200 CR=None CL=268435456 AR=bytes",
+     "HEAD bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=0-15,32-47": "206 CR=None CL=285 AR=bytes",
+     "GET bytes=268435466-268435476": "416 CR=bytes */268435456 CL=0 AR=None",
+     "GET None": "200 CR=None CL=268435456 AR=bytes"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "206 sha_ok=True CR=bytes 4294967288-4294967303/4686604210",
+     "4500000000": "206 sha_ok=True CR=bytes 4500000000-4500153599/4686604210",
+     "4686604194": "206 sha_ok=True CR=bytes 4686604194-4686604209/4686604210"
+    }
+   },
+   "skr": {
+    "probes": {
+     "GET bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=134217728-134217743": "206 CR=bytes 134217728-134217743/268435456 CL=16 AR=bytes",
+     "GET bytes=-16": "206 CR=bytes 268435440-268435455/268435456 CL=16 AR=bytes",
+     "GET bytes=268435356-": "206 CR=bytes 268435356-268435455/268435456 CL=100 AR=bytes",
+     "HEAD None": "200 CR=None CL=268435456 AR=bytes",
+     "HEAD bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=0-15,32-47": "416 CR=bytes */268435456 CL=None AR=bytes",
+     "GET bytes=268435466-268435476": "416 CR=bytes */268435456 CL=None AR=bytes",
+     "GET None": "200 CR=None CL=268435456 AR=bytes"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "206 sha_ok=True CR=bytes 4294967288-4294967303/4686604210",
+     "4500000000": "206 sha_ok=True CR=bytes 4500000000-4500153599/4686604210",
+     "4686604194": "206 sha_ok=True CR=bytes 4686604194-4686604209/4686604210"
+    }
+   },
+   "skn": {
+    "probes": {
+     "GET bytes=0-15": "200 CR=None CL=None AR=None",
+     "GET bytes=134217728-134217743": "200 CR=None CL=None AR=None",
+     "GET bytes=-16": "200 CR=None CL=None AR=None",
+     "GET bytes=268435356-": "200 CR=None CL=None AR=None",
+     "HEAD None": "200 CR=None CL=None AR=None",
+     "HEAD bytes=0-15": "200 CR=None CL=None AR=None",
+     "GET bytes=0-15,32-47": "TypeError: Failed to fetch",
+     "GET bytes=268435466-268435476": "TypeError: Failed to fetch",
+     "GET None": "200 CR=None CL=None AR=None"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "200 sha_ok=True CR=None",
+     "4500000000": "200 sha_ok=True CR=None",
+     "4686604194": "200 sha_ok=True CR=None"
+    }
+   },
+   "localhost_vs_ipv4_4KB_seq": {
+    "http_fixed_bare": {
+     "p50": 5.9,
+     "p99": 20.9
+    },
+    "http_fixed_bare_localhost": {
+     "p50": 5,
+     "p99": 23.6
+    }
+   }
+  },
+  "semantics_skr_origin": {
+   "origin": "skr://media",
+   "http_asis": {
+    "probes": {
+     "GET bytes=0-15": "TypeError: Failed to fetch",
+     "GET bytes=46359993-46360008": "206 CR=None CL=16 AR=None",
+     "GET bytes=-16": "206 CR=None CL=16 AR=None",
+     "GET bytes=92719886-": "206 CR=None CL=100 AR=None",
+     "HEAD None": "200 CR=None CL=92719986 AR=None",
+     "HEAD bytes=0-15": "405 CR=None CL=31 AR=None",
+     "GET bytes=0-15,32-47": "206 CR=None CL=253 AR=None",
+     "GET bytes=92719996-92720006": "416 CR=None CL=0 AR=None",
+     "GET None": "200 CR=None CL=92719986 AR=None"
+    },
+    "checks": {
+     "error": "TypeError: Failed to fetch"
+    },
+    "past4GiB": {}
+   },
+   "http_fixed_real": {
+    "probes": {
+     "GET bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=134217728-134217743": "206 CR=bytes 134217728-134217743/268435456 CL=16 AR=bytes",
+     "GET bytes=-16": "206 CR=bytes 268435440-268435455/268435456 CL=16 AR=bytes",
+     "GET bytes=268435356-": "206 CR=bytes 268435356-268435455/268435456 CL=100 AR=bytes",
+     "HEAD None": "200 CR=None CL=268435456 AR=bytes",
+     "HEAD bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=0-15,32-47": "206 CR=None CL=285 AR=bytes",
+     "GET bytes=268435466-268435476": "416 CR=None CL=0 AR=None",
+     "GET None": "200 CR=None CL=268435456 AR=bytes"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "206 sha_ok=True CR=bytes 4294967288-4294967303/4686604210",
+     "4500000000": "206 sha_ok=True CR=bytes 4500000000-4500153599/4686604210",
+     "4686604194": "206 sha_ok=True CR=bytes 4686604194-4686604209/4686604210"
+    }
+   },
+   "http_fixed_bare": {
+    "probes": {
+     "GET bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=134217728-134217743": "206 CR=bytes 134217728-134217743/268435456 CL=16 AR=bytes",
+     "GET bytes=-16": "206 CR=bytes 268435440-268435455/268435456 CL=16 AR=bytes",
+     "GET bytes=268435356-": "206 CR=bytes 268435356-268435455/268435456 CL=100 AR=bytes",
+     "HEAD None": "200 CR=None CL=268435456 AR=bytes",
+     "HEAD bytes=0-15": "206 CR=bytes 0-15/268435456 CL=16 AR=bytes",
+     "GET bytes=0-15,32-47": "206 CR=None CL=285 AR=bytes",
+     "GET bytes=268435466-268435476": "416 CR=bytes */268435456 CL=0 AR=None",
+     "GET None": "200 CR=None CL=268435456 AR=bytes"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "206 sha_ok=True CR=bytes 4294967288-4294967303/4686604210",
+     "4500000000": "206 sha_ok=True CR=bytes 4500000000-4500153599/4686604210",
+     "4686604194": "206 sha_ok=True CR=bytes 4686604194-4686604209/4686604210"
+    }
+   },
+   "skn": {
+    "probes": {
+     "GET bytes=0-15": "200 CR=None CL=None AR=None",
+     "GET bytes=134217728-134217743": "200 CR=None CL=None AR=None",
+     "GET bytes=-16": "200 CR=None CL=None AR=None",
+     "GET bytes=268435356-": "200 CR=None CL=None AR=None",
+     "HEAD None": "200 CR=None CL=None AR=None",
+     "HEAD bytes=0-15": "200 CR=None CL=None AR=None",
+     "GET bytes=0-15,32-47": "TypeError: Failed to fetch",
+     "GET bytes=268435466-268435476": "TypeError: Failed to fetch",
+     "GET None": "200 CR=None CL=None AR=None"
+    },
+    "checks": {
+     "first16": true,
+     "last16": true,
+     "suffix16_len": 16,
+     "suffix16_ok": true
+    },
+    "past4GiB": {
+     "4294967288": "200 sha_ok=True CR=None",
+     "4500000000": "200 sha_ok=True CR=None",
+     "4686604194": "200 sha_ok=True CR=None"
+    }
+   },
+   "file": {
+    "probes": {
+     "GET bytes=0-15": "TypeError: Failed to fetch",
+     "GET bytes=134217728-134217743": "TypeError: Failed to fetch",
+     "GET bytes=-16": "TypeError: Failed to fetch",
+     "GET bytes=268435356-": "TypeError: Failed to fetch",
+     "HEAD None": "TypeError: Failed to fetch",
+     "HEAD bytes=0-15": "TypeError: Failed to fetch",
+     "GET bytes=0-15,32-47": "TypeError: Failed to fetch",
+     "GET bytes=268435466-268435476": "TypeError: Failed to fetch",
+     "GET None": "TypeError: Failed to fetch"
+    },
+    "checks": {
+     "error": "TypeError: Failed to fetch"
+    },
+    "past4GiB": {
+     "4294967288": "TypeError: Failed to fetch",
+     "4500000000": "TypeError: Failed to fetch",
+     "4686604194": "TypeError: Failed to fetch"
+    }
+   },
+   "localhost_vs_ipv4_4KB_seq": {
+    "http_fixed_bare": {
+     "p50": 6.1,
+     "p99": 17.9
+    },
+    "http_fixed_bare_localhost": {
+     "p50": 6.1,
+     "p99": 18.4
+    }
+   }
+  },
+  "diag_http_cache": [
+   {
+    "label": "bare default cache",
+    "len": 1536,
+    "conc": 1,
+    "N": 300,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 1269,
+    "p50": 1.9,
+    "p99": 15
+   },
+   {
+    "label": "bare default cache",
+    "len": 153600,
+    "conc": 1,
+    "N": 100,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 746,
+    "p50": 7.2,
+    "p99": 26.3
+   },
+   {
+    "label": "bare default cache",
+    "len": 153600,
+    "conc": 16,
+    "N": 320,
+    "bad": 0,
+    "errs": 3,
+    "msgs": {
+     "TypeError: Failed to fetch": 3
+    },
+    "ms": 539,
+    "p50": 27.6,
+    "p99": 66.8
+   },
+   {
+    "label": "bare default cache",
+    "len": 1536,
+    "conc": 16,
+    "N": 640,
+    "bad": 0,
+    "errs": 12,
+    "msgs": {
+     "TypeError: Failed to fetch": 12
+    },
+    "ms": 911,
+    "p50": 22.2,
+    "p99": 40.6
+   },
+   {
+    "label": "bare cache:no-store",
+    "len": 1536,
+    "conc": 1,
+    "N": 300,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 312,
+    "p50": 1,
+    "p99": 1.4
+   },
+   {
+    "label": "bare cache:no-store",
+    "len": 153600,
+    "conc": 1,
+    "N": 100,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 149,
+    "p50": 1.4,
+    "p99": 2.3
+   },
+   {
+    "label": "bare cache:no-store",
+    "len": 153600,
+    "conc": 16,
+    "N": 320,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 292,
+    "p50": 14.9,
+    "p99": 16.8
+   },
+   {
+    "label": "bare cache:no-store",
+    "len": 1536,
+    "conc": 16,
+    "N": 640,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 464,
+    "p50": 11.4,
+    "p99": 14.4
+   },
+   {
+    "label": "real-app fixed, default cache",
+    "len": 1536,
+    "conc": 1,
+    "N": 300,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 1300,
+    "p50": 2,
+    "p99": 16.7
+   },
+   {
+    "label": "real-app fixed, default cache",
+    "len": 153600,
+    "conc": 1,
+    "N": 100,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 731,
+    "p50": 6.3,
+    "p99": 19.3
+   },
+   {
+    "label": "real-app fixed, default cache",
+    "len": 153600,
+    "conc": 16,
+    "N": 320,
+    "bad": 0,
+    "errs": 2,
+    "msgs": {
+     "TypeError: Failed to fetch": 2
+    },
+    "ms": 743,
+    "p50": 31.3,
+    "p99": 118.2
+   },
+   {
+    "label": "real-app fixed, default cache",
+    "len": 1536,
+    "conc": 16,
+    "N": 640,
+    "bad": 0,
+    "errs": 15,
+    "msgs": {
+     "TypeError: Failed to fetch": 15
+    },
+    "ms": 1073,
+    "p50": 26.4,
+    "p99": 42.7
+   },
+   {
+    "label": "real-app fixed, cache:no-store",
+    "len": 1536,
+    "conc": 1,
+    "N": 300,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 422,
+    "p50": 1.4,
+    "p99": 2.2
+   },
+   {
+    "label": "real-app fixed, cache:no-store",
+    "len": 153600,
+    "conc": 1,
+    "N": 100,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 191,
+    "p50": 1.7,
+    "p99": 2.3
+   },
+   {
+    "label": "real-app fixed, cache:no-store",
+    "len": 153600,
+    "conc": 16,
+    "N": 320,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 416,
+    "p50": 20.6,
+    "p99": 27.5
+   },
+   {
+    "label": "real-app fixed, cache:no-store",
+    "len": 1536,
+    "conc": 16,
+    "N": 640,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 628,
+    "p50": 15.6,
+    "p99": 21.6
+   },
+   {
+    "label": "bare, server Cache-Control: no-store",
+    "len": 1536,
+    "conc": 1,
+    "N": 300,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 329,
+    "p50": 1.1,
+    "p99": 2
+   },
+   {
+    "label": "bare, server Cache-Control: no-store",
+    "len": 153600,
+    "conc": 1,
+    "N": 100,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 174,
+    "p50": 1.5,
+    "p99": 2.6
+   },
+   {
+    "label": "bare, server Cache-Control: no-store",
+    "len": 153600,
+    "conc": 16,
+    "N": 320,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 319,
+    "p50": 15.8,
+    "p99": 18.4
+   },
+   {
+    "label": "bare, server Cache-Control: no-store",
+    "len": 1536,
+    "conc": 16,
+    "N": 640,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 552,
+    "p50": 14.3,
+    "p99": 17.3
+   },
+   {
+    "label": "real-app, server Cache-Control: no-store",
+    "len": 1536,
+    "conc": 1,
+    "N": 300,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 574,
+    "p50": 1.9,
+    "p99": 2.6
+   },
+   {
+    "label": "real-app, server Cache-Control: no-store",
+    "len": 153600,
+    "conc": 1,
+    "N": 100,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 258,
+    "p50": 2.6,
+    "p99": 3.1
+   },
+   {
+    "label": "real-app, server Cache-Control: no-store",
+    "len": 153600,
+    "conc": 16,
+    "N": 320,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 489,
+    "p50": 21.1,
+    "p99": 34.1
+   },
+   {
+    "label": "real-app, server Cache-Control: no-store",
+    "len": 1536,
+    "conc": 16,
+    "N": 640,
+    "bad": 0,
+    "errs": 0,
+    "msgs": {},
+    "ms": 650,
+    "p50": 16.3,
+    "p99": 17.2
+   }
+  ],
+  "correctness": {
+   "file": {
+    "exception": null,
+    "locator_cam0": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 2.4
+    },
+    "locator_big": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 4.2
+    },
+    "flac": {
+     "mka_skau_1ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0,
+      "from_700_max_lsb16": 0,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 810,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 2.1
+      }
+     },
+     "mka_skau_2ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0,
+      "from_700_max_lsb16": 0,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 816,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 5.1
+      }
+     }
+    },
+    "jpeg_conc16": {
+     "reads": 320,
+     "len": 153600,
+     "bad": 0,
+     "short": 0,
+     "ms": 80
+    }
+   },
+   "http_asis": {
+    "exception": null,
+    "locator_cam0": {
+     "ok": false,
+     "reason": "exception bad vint @0",
+     "sha_ok": false,
+     "reads": 1,
+     "ms": 5.8
+    },
+    "locator_big": "n/a",
+    "flac": {
+     "mka_skau_1ch": {
+      "first_status": 404
+     },
+     "mka_skau_2ch": {
+      "first_status": 404
+     }
+    },
+    "jpeg_conc16": {
+     "reads": 64,
+     "len": 153600,
+     "bad": 0,
+     "compared_with": "file://",
+     "ms": 1197
+    }
+   },
+   "http_fixed_real": {
+    "exception": "TypeError: Failed to fetch",
+    "locator_cam0": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 11.2
+    },
+    "locator_big": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 16.6
+    },
+    "flac": {
+     "mka_skau_1ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0,
+      "from_700_max_lsb16": 0,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 9647,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 23.1
+      }
+     },
+     "mka_skau_2ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0,
+      "from_700_max_lsb16": 0,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 9770,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 21.4
+      }
+     }
+    },
+    "jpeg_conc16": null
+   },
+   "http_fixed_real_ns": {
+    "exception": null,
+    "locator_cam0": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 16
+    },
+    "locator_big": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 41.5
+    },
+    "flac": {
+     "mka_skau_1ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0,
+      "from_700_max_lsb16": 0,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 2459,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 4.3
+      }
+     },
+     "mka_skau_2ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0,
+      "from_700_max_lsb16": 0,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 2137,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 5
+      }
+     }
+    },
+    "jpeg_conc16": {
+     "reads": 320,
+     "len": 153600,
+     "bad": 0,
+     "short": 0,
+     "ms": 471
+    }
+   },
+   "http_fixed_bare_ns": {
+    "exception": null,
+    "locator_cam0": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 5.6
+    },
+    "locator_big": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 8.5
+    },
+    "flac": {
+     "mka_skau_1ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0,
+      "from_700_max_lsb16": 0,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 1793,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 5
+      }
+     },
+     "mka_skau_2ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0,
+      "from_700_max_lsb16": 0,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 1719,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 3.6
+      }
+     }
+    },
+    "jpeg_conc16": {
+     "reads": 320,
+     "len": 153600,
+     "bad": 0,
+     "short": 0,
+     "ms": 352
+    }
+   },
+   "skr": {
+    "exception": null,
+    "locator_cam0": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 2.2
+    },
+    "locator_big": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 3.8
+    },
+    "flac": {
+     "mka_skau_1ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0,
+      "from_700_max_lsb16": 0,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 523,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 1.2
+      }
+     },
+     "mka_skau_2ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0,
+      "from_700_max_lsb16": 0,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 538,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 1.7
+      }
+     }
+    },
+    "jpeg_conc16": {
+     "reads": 320,
+     "len": 153600,
+     "bad": 0,
+     "short": 0,
+     "ms": 114
+    }
+   },
+   "skn": {
+    "exception": null,
+    "locator_cam0": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 3.8
+    },
+    "locator_big": {
+     "ok": true,
+     "reason": null,
+     "sha_ok": true,
+     "reads": 3,
+     "ms": 6.6
+    },
+    "flac": {
+     "mka_skau_1ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0,
+      "from_700_max_lsb16": 0,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 1459,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 2.9
+      }
+     },
+     "mka_skau_2ch": {
+      "decoded": "1440000/1440000",
+      "max_lsb16": 0,
+      "from_700_max_lsb16": 0,
+      "errors": [
+       null,
+       null
+      ],
+      "range_short": 0,
+      "decode_ms_1406_reads": 1479,
+      "skau_locator": {
+       "ok": true,
+       "sha_ok": true,
+       "reads": 3,
+       "ms": 4
+      }
+     }
+    },
+    "jpeg_conc16": {
+     "reads": 320,
+     "len": 153600,
+     "bad": 0,
+     "short": 0,
+     "ms": 239
+    }
+   }
+  },
+  "net_errors": {
+   "counts": {
+    "net::ERR_REQUEST_RANGE_NOT_SATISFIABLE": 6,
+    "net::ERR_ABORTED": 7,
+    "net::ERR_FAILED": 6,
+    "net::ERR_UNEXPECTED": 4,
+    "net::ERR_CACHE_OPERATION_NOT_SUPPORTED": 34
+   },
+   "first": [
+    {
+     "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/f535e563-0d11-4407-af32-ec97af3fd139/scratchpad/range_tr",
+     "error": "net::ERR_REQUEST_RANGE_NOT_SATISFIABLE"
+    },
+    {
+     "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/f535e563-0d11-4407-af32-ec97af3fd139/scratchpad/range_tr",
+     "error": "net::ERR_REQUEST_RANGE_NOT_SATISFIABLE"
+    },
+    {
+     "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/f535e563-0d11-4407-af32-ec97af3fd139/scratchpad/range_tr",
+     "error": "net::ERR_ABORTED",
+     "fromCache": false
+    },
+    {
+     "url": "http://127.0.0.1:53190/skellycam/playback/rangetest/videos/h264?recording_parent_directory=C%3A%5CUsers%5CDom%5CAppData%",
+     "error": "net::ERR_ABORTED",
+     "fromCache": false
+    },
+    {
+     "url": "http://127.0.0.1:53190/fixed/pattern.bin",
+     "error": "net::ERR_FAILED",
+     "fromCache": false
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_FAILED",
+     "fromCache": false
+    },
+    {
+     "url": "skr://media/pattern.bin",
+     "error": "net::ERR_ABORTED",
+     "fromCache": false
+    },
+    {
+     "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/f535e563-0d11-4407-af32-ec97af3fd139/scratchpad/range_tr",
+     "error": "net::ERR_REQUEST_RANGE_NOT_SATISFIABLE"
+    },
+    {
+     "url": "skn://media/pattern.bin",
+     "error": "net::ERR_UNEXPECTED"
+    },
+    {
+     "url": "file:///C:/Users/Dom/AppData/Local/Temp/claude/ca7e9b09df19a3f5/f535e563-0d11-4407-af32-ec97af3fd139/scratchpad/range_tr",
+     "error": "net::ERR_REQUEST_RANGE_NOT_SATISFIABLE"
+    },
+    {
+     "url": "skn://media/pattern.bin",
+     "error": "net::ERR_UNEXPECTED"
+    },
+    {
+     "url": "skn://media/pattern.bin",
+     "error": "net::ERR_ABORTED",
+     "fromCache": false
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53191/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53190/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53190/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    },
+    {
+     "url": "http://127.0.0.1:53190/fixed/pattern.bin",
+     "error": "net::ERR_CACHE_OPERATION_NOT_SUPPORTED"
+    }
+   ]
+  },
+  "handler_counts": {
+   "skr": 3286,
+   "skn": 3300
+  },
+  "handler_first_headers": {
+   "skr": [
+    {
+     "url": "skr://media/pattern.bin",
+     "method": "GET",
+     "range": "bytes=0-15",
+     "headers": {
+      "accept": "*/*",
+      "range": "bytes=0-15",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.80 Electron/45.2.3 Safari/537.36"
+     }
+    },
+    {
+     "url": "skr://media/pattern.bin",
+     "method": "GET",
+     "range": "bytes=134217728-134217743",
+     "headers": {
+      "accept": "*/*",
+      "range": "bytes=134217728-134217743",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.80 Electron/45.2.3 Safari/537.36"
+     }
+    }
+   ],
+   "skn": [
+    {
+     "url": "skn://media/pattern.bin",
+     "method": "GET",
+     "range": "bytes=0-15",
+     "headers": {
+      "accept": "*/*",
+      "range": "bytes=0-15",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.80 Electron/45.2.3 Safari/537.36"
+     }
+    },
+    {
+     "url": "skn://media/pattern.bin",
+     "method": "GET",
+     "range": "bytes=134217728-134217743",
+     "headers": {
+      "accept": "*/*",
+      "range": "bytes=134217728-134217743",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.80 Electron/45.2.3 Safari/537.36"
+     }
+    }
+   ]
+  }
+ }
+}

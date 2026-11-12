@@ -28,6 +28,8 @@ Dom will pick this up in a separate session. Nothing is decided yet: everything 
 - Phase 2 is freemocap-side work. freemocap stays on Python 3.11 and its current skellycam pin until its phase-2 move to 3.13 (`PLAN` §6, D3).
 
 **Recommendation from the main session** (inferred from this report, not decided):
+**Update 2026-11-12: Dom decided Design A** (see §7 D-DESIGN). The recommendation below is kept for the record.
+
 1. **Design B first:** keep the originals untouched and write a sync sidecar (§3). It is days of work in skellysync, adds no disk and loses no quality. It has no Python/PyAV blocker, and it fits the `<video>` import player.
 2. **Treat untouched imported originals as source data** that the JPEG-only rule does not cover. The rule applies to everything skellysync and freemocap *write*.
 3. **Fix the two existing bugs either way** (§1): the 30 s ffmpeg trim timeout (`core/backends/ffmpeg.py:178`, `config.py:24`), and the audio reattach ignoring the synced WAV for stereo sources (no `-map`).
@@ -416,8 +418,8 @@ S ≈ ≤ 2 days, M ≈ 3–7 days, L ≈ 2+ weeks, for one engineer familiar wi
 
 | # | Decision | Options (neutral) |
 |---|---|---|
-| **D-DESIGN** | Output design | A: JPEG-in-MKV now · B: sidecar only, originals kept · B then convert at import or processing time |
-| **D-RULE** | Do imported originals fall under "JPEG only, I-frames only, everywhere"? | Yes: Design A, or B-convert before any use · No: inputs may stay long-GOP if no derived output is long-GOP |
+| **D-DESIGN** | Output design | **Decided 2026-11-12 (Dom): Design A,** JPEG-in-MKV + `skellyformat` sidecar + FLAC per camera. Built on the shared `skellyformat[write]` layer that skellycam's recorder and its old-recording converter also use (plan §2.9 S10c, D17), which cuts A's cost well below the original 3–5 week estimate. Was: A · B sidecar only · B then convert |
+| **D-RULE** | Do imported originals fall under "JPEG only, I-frames only, everywhere"? | **Settled by Design A (2026-11-12):** originals are inputs only and are never modified; everything skellysync writes, and everything played or processed downstream, is JPEG I-frames |
 | **D-PLAYER** | Which player shows sync results | Canvas player (needs Design A or conversion) · `<video>` import player (needs B; HEVC hardware-decode and seek caveats, §3) · both (preview in `<video>`, process from JPEG) |
 | **D-Q** | What "target A" means for re-encoding an already-lossy source | SSIM-Y 0.9961 against the decoded source, per-clip knob search (182–698 kB/frame at 1080p on phone clips) · fixed knob q94 / gq94, the setting that hits A on raw YUY2 (182–436 kB) · the knob that hits A on decoded webcam MJPEG, q83 (94–250 kB, SSIM-Y 0.986–0.994) [M §8.2] |
 | **D-FPS** | Differing frame rates | R1 resample to the lowest rate, with a source-index map (works with freemocap today) · R2 native rates + mapping (needs PLAN 2.2) · R3 both |
@@ -425,7 +427,7 @@ S ≈ ≤ 2 days, M ≈ 3–7 days, L ≈ 2+ weeks, for one engineer familiar wi
 | **D-HDR** | 10-bit, HDR and Log sources | Refuse with a clear error · tone-map to 8-bit SDR (and record it) · keep the originals (Design B) |
 | **D-PY** | Python floor and timing | Wait for freemocap's 3.13 move (PLAN D3) and use PyAV 19 · use PyAV 18.x now on 3.11 [I] · ship Design B first (no new deps) |
 | **D-PKG** | Where the sidecar format code lives | **Decided 2026-11-12: the shared package `skellyformat`** (plan D17), with a detailed spec document; skellysync depends on it, not on skellycam |
-| **D-BACKEND** | Keep any old paths? | Remove deffcode and the MP4 outputs entirely · keep MP4 as a non-default legacy mode (breaks the rule) |
+| **D-BACKEND** | Keep any old paths? | **Decided 2026-11-12 (Dom; plan D19): new skellysync writes only the new format** (JPEG-in-MKV + `skellyformat` sidecar, FLAC audio). Remove deffcode and the MP4 outputs. freemocap must still read `synced_*.mp4` files made by today's skellysync |
 | **D-DRIFT** | Clock drift (PLAN 2.8) | Out of scope here · add a second sync point and a rate term (cheap in B; needs a re-encode in A) |
 
 Also worth fixing whatever is decided, because these are existing defects [C]/[M]:
