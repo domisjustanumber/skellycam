@@ -1,0 +1,1618 @@
+{
+ "argv": [
+  "research/usb_cameras/suite/windows/run_suite.py",
+  "--cyc-profile",
+  "reliability",
+  "--reliability-cycles",
+  "400",
+  "--min-fps",
+  "30",
+  "--min-height",
+  "720",
+  "--max-height",
+  "720"
+ ],
+ "args": {
+  "quick": false,
+  "only": "",
+  "skip": "",
+  "cycles": 50,
+  "proc_cycles": 15,
+  "frames": 30,
+  "mjpeg_seconds": 3.0,
+  "out_dir": null,
+  "raw_dir": null,
+  "wincam": null,
+  "repeats": 20,
+  "no_fault_gate": false,
+  "min_fps": 30.0,
+  "min_height": 720,
+  "max_height": 720,
+  "all_modes": false,
+  "cyc_profile": "reliability",
+  "reliability_cycles": 400,
+  "auto_toggles": null,
+  "raw_seconds": null,
+  "list_repeats": null,
+  "pymf_cycles": null,
+  "pymf_seconds": null,
+  "plan": false,
+  "plan_cameras": null,
+  "multi_reps": null,
+  "ts_seconds": null,
+  "ctrl_runs": null,
+  "kiyo_minutes": null,
+  "mjpeg_recapture_s": null,
+  "camera": [],
+  "kiyo_pro_dead": null,
+  "kiyo_interval": 10.0,
+  "kiyo_foreground": false,
+  "probe_at_start": false,
+  "nograb_hold_ms": 2500,
+  "list": false,
+  "reanalyse": null
+ },
+ "utc_started": "2026-11-12T02:59:38.809748+00:00",
+ "out_dir": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261112T025937Z",
+ "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z",
+ "tests": [
+  "W-ENV",
+  "W-POLICY",
+  "W-TOPO",
+  "W-ID",
+  "W-FMT",
+  "W-FMT-NOGRAB",
+  "W-CTRL-LIST",
+  "W-MJPEG",
+  "W-RAW",
+  "W-TS",
+  "W-PYMF",
+  "W-PYMF-ALL",
+  "W-NODRIFT",
+  "W-GAIN",
+  "W-CTRL-EFFECT",
+  "W-OCV-CTRL",
+  "W-TBUMP",
+  "W-MULTI",
+  "W-PYAV-LIST",
+  "W-CYC-KIYO",
+  "W-CYC",
+  "W-KIYO"
+ ],
+ "test_order": [
+  "W-ENV",
+  "W-POLICY",
+  "W-TOPO",
+  "W-ID",
+  "W-FMT",
+  "W-FMT-NOGRAB",
+  "W-CTRL-LIST",
+  "W-MJPEG",
+  "W-RAW",
+  "W-TS",
+  "W-PYMF",
+  "W-PYMF-ALL",
+  "W-NODRIFT",
+  "W-GAIN",
+  "W-CTRL-EFFECT",
+  "W-OCV-CTRL",
+  "W-TBUMP",
+  "W-MULTI",
+  "W-PYAV-LIST",
+  "W-CYC-KIYO",
+  "W-CYC"
+ ],
+ "background": [
+  "W-KIYO"
+ ],
+ "eta_s": {
+  "W-ENV": 20,
+  "W-POLICY": 10,
+  "W-TOPO": 62,
+  "W-ID": 80,
+  "W-FMT": 34,
+  "W-FMT-NOGRAB": 235.0,
+  "W-CTRL-LIST": 34,
+  "W-MJPEG": 202.5,
+  "W-RAW": 343.0,
+  "W-TS": 432.0,
+  "W-PYMF": 1127.0,
+  "W-PYMF-ALL": 1008.0,
+  "W-NODRIFT": 2916.0,
+  "W-GAIN": 3042.240740740741,
+  "W-CTRL-EFFECT": 1184.0,
+  "W-OCV-CTRL": 2496.0,
+  "W-TBUMP": 360.0,
+  "W-MULTI": 1389.5,
+  "W-PYAV-LIST": 320.4,
+  "W-CYC-KIYO": 6338.25,
+  "W-CYC": 12676.5,
+  "W-KIYO": 0.0
+ },
+ "cameras": [
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 2
+  },
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "name": "Logitech Webcam C930e",
+   "vid": "046d",
+   "pid": "0843",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+   "parent_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&34c047e4&0&0000",
+   "hub_port": 8,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "Logitech Webcam C930e",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(8)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "speed": "HS",
+   "bcd_device": "0013",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-11T14:11:38.552007+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 0,
+   "ds_index": 3
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "name": "USB Camera",
+   "vid": "4c4a",
+   "pid": "4a55",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232e60d4&0&0000",
+   "hub_port": 2,
+   "mf_symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Camera",
+   "ds_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "speed": "HS",
+   "bcd_device": "0100",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-11T14:11:44.546053+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 5,
+   "ds_index": 0
+  },
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "vid": "046d",
+   "pid": "085c",
+   "serial": "C922SN01",
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "c922 Pro Stream Webcam",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+   "speed": "HS",
+   "bcd_device": "0016",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-12T00:57:22.463265+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 6,
+   "ds_index": 1
+  }
+ ],
+ "fault_gate": true,
+ "arrivals_since_previous_run": {
+  "previous_run": "suite_20261111T040003Z",
+  "cameras": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "previous": "2026-11-10T22:07:35.509176+00:00",
+    "now": "2026-11-11T23:27:22.817345+00:00",
+    "re_arrived_since": true,
+    "in_previous_run": true
+   },
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+    "previous": "2026-11-10T22:07:46.470029+00:00",
+    "now": "2026-11-11T14:11:38.552007+00:00",
+    "re_arrived_since": true,
+    "in_previous_run": true
+   },
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+    "previous": "2026-11-09T21:34:51.037086+00:00",
+    "now": "2026-11-11T14:11:44.546053+00:00",
+    "re_arrived_since": true,
+    "in_previous_run": true
+   },
+   "046d:085c:sn=C922SN01": {
+    "previous": null,
+    "now": "2026-11-12T00:57:22.463265+00:00",
+    "re_arrived_since": false,
+    "in_previous_run": false
+   }
+  }
+ },
+ "usb_link_check": {
+  "utc": "2026-11-12T02:59:37.267291+00:00",
+  "fresh": false,
+  "cameras": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "name": "USB Video Device",
+    "vid": "1532",
+    "pid": "0e05",
+    "is_kiyo": true,
+    "speed": "SS",
+    "superspeed": true,
+    "legacy_speed": "high",
+    "operating_superspeed": true,
+    "operating_superspeed_plus": false,
+    "port_superspeed_capable": true,
+    "port_protocols": [
+     "usb3"
+    ],
+    "bcd_usb": "0320",
+    "device_usb3_capable": true,
+    "hub": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+    "hub_port": 4,
+    "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+    "plug_in_age_s": 12734.4,
+    "source": "discovery"
+   },
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+    "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+    "name": "Logitech Webcam C930e",
+    "vid": "046d",
+    "pid": "0843",
+    "is_kiyo": false,
+    "speed": "HS",
+    "superspeed": false,
+    "legacy_speed": "high",
+    "operating_superspeed": false,
+    "operating_superspeed_plus": false,
+    "port_superspeed_capable": false,
+    "port_protocols": [
+     "usb1.1",
+     "usb2.0"
+    ],
+    "bcd_usb": "0200",
+    "device_usb3_capable": false,
+    "hub": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+    "hub_port": 8,
+    "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+    "last_arrival": "2026-11-11T14:11:38.552007+00:00",
+    "plug_in_age_s": 46078.7,
+    "source": "discovery"
+   },
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+    "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "name": "USB Camera",
+    "vid": "4c4a",
+    "pid": "4a55",
+    "is_kiyo": false,
+    "speed": "HS",
+    "superspeed": false,
+    "legacy_speed": "high",
+    "operating_superspeed": false,
+    "operating_superspeed_plus": false,
+    "port_superspeed_capable": false,
+    "port_protocols": [
+     "usb1.1",
+     "usb2.0"
+    ],
+    "bcd_usb": "0200",
+    "device_usb3_capable": false,
+    "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+    "hub_port": 2,
+    "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "last_arrival": "2026-11-11T14:11:44.546053+00:00",
+    "plug_in_age_s": 46072.7,
+    "source": "discovery"
+   },
+   "046d:085c:sn=C922SN01": {
+    "key": "046d:085c:sn=C922SN01",
+    "name": "c922 Pro Stream Webcam",
+    "vid": "046d",
+    "pid": "085c",
+    "is_kiyo": false,
+    "speed": "HS",
+    "superspeed": false,
+    "legacy_speed": "high",
+    "operating_superspeed": false,
+    "operating_superspeed_plus": false,
+    "port_superspeed_capable": false,
+    "port_protocols": [
+     "usb1.1",
+     "usb2.0"
+    ],
+    "bcd_usb": "0200",
+    "device_usb3_capable": false,
+    "hub": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+    "hub_port": 4,
+    "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+    "last_arrival": "2026-11-12T00:57:22.463265+00:00",
+    "plug_in_age_s": 7334.8,
+    "source": "discovery"
+   }
+  },
+  "kiyo": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "name": "USB Video Device",
+    "vid": "1532",
+    "pid": "0e05",
+    "is_kiyo": true,
+    "speed": "SS",
+    "superspeed": true,
+    "legacy_speed": "high",
+    "operating_superspeed": true,
+    "operating_superspeed_plus": false,
+    "port_superspeed_capable": true,
+    "port_protocols": [
+     "usb3"
+    ],
+    "bcd_usb": "0320",
+    "device_usb3_capable": true,
+    "hub": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+    "hub_port": 4,
+    "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+    "plug_in_age_s": 12734.4,
+    "source": "discovery"
+   }
+  },
+  "warnings": []
+ },
+ "left_out_tests": [],
+ "timestamp_scope": "tier 0 only (Dom 2026-11-09): no registry writes, no UVC PTS/SCR testing; W-ENV records the MetadataBufferSizeInKB0 value read-only as environment context",
+ "faults": {
+  "faults": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "utc": "2026-11-12T05:46:24.269472+00:00",
+    "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "name": "USB Video Device",
+    "is_kiyo": true,
+    "test": "W-MULTI",
+    "mode": "MJPG 1280x720@30",
+    "code": "watchdog timeout",
+    "api": "ds",
+    "stage": "ds_all_together_029",
+    "class": "hang",
+    "source": "W-MULTI multi_launch child",
+    "plug_in_age_s": 22741.5,
+    "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+    "detail": {
+     "reason": "reader hung past the watchdog and the 1-frame health check failed"
+    },
+    "faulted": true,
+    "since_utc": "2026-11-12T05:46:24.269472+00:00",
+    "history": [
+     {
+      "type": "fault",
+      "utc": "2026-11-12T05:46:24.269472+00:00",
+      "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "name": "USB Video Device",
+      "is_kiyo": true,
+      "test": "W-MULTI",
+      "mode": "MJPG 1280x720@30",
+      "code": "watchdog timeout",
+      "api": "ds",
+      "stage": "ds_all_together_029",
+      "class": "hang",
+      "source": "W-MULTI multi_launch child",
+      "plug_in_age_s": 22741.5,
+      "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+      "detail": {
+       "reason": "reader hung past the watchdog and the 1-frame health check failed"
+      }
+     }
+    ],
+    "repeats": 0
+   },
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+    "utc": "2026-11-12T07:09:33.238324+00:00",
+    "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "name": "USB Camera",
+    "is_kiyo": false,
+    "test": "W-CYC",
+    "mode": "MJPG 1280x720@30",
+    "code": "0x8007001F",
+    "api": "mf",
+    "stage": "match",
+    "class": "device_error",
+    "source": "camcmd_scan",
+    "plug_in_age_s": 61068.7,
+    "last_arrival": "2026-11-11T14:11:44.546053+00:00",
+    "detail": {
+     "argv": "wincam.exe capture --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 -...",
+     "why": "error 0x8007001F / device_error"
+    },
+    "command_utc_started": "2026-11-12T07:09:33.219278Z",
+    "faulted": false,
+    "since_utc": "2026-11-12T07:09:33.238324+00:00",
+    "history": [
+     {
+      "type": "fault",
+      "utc": "2026-11-12T07:09:33.238324+00:00",
+      "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "name": "USB Camera",
+      "is_kiyo": false,
+      "test": "W-CYC",
+      "mode": "MJPG 1280x720@30",
+      "code": "0x8007001F",
+      "api": "mf",
+      "stage": "match",
+      "class": "device_error",
+      "source": "camcmd_scan",
+      "plug_in_age_s": 61068.7,
+      "last_arrival": "2026-11-11T14:11:44.546053+00:00",
+      "detail": {
+       "argv": "wincam.exe capture --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 -...",
+       "why": "error 0x8007001F / device_error"
+      },
+      "command_utc_started": "2026-11-12T07:09:33.219278Z"
+     },
+     {
+      "type": "recovered",
+      "utc": "2026-11-12T07:18:38.697559+00:00",
+      "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "name": "USB Camera",
+      "test": "W-CYC",
+      "source": "health_probe",
+      "fault_since": "2026-11-12T07:09:33.238324+00:00",
+      "detail": {
+       "probe_utc": "2026-11-12T07:18:38.697559+00:00"
+      }
+     }
+    ],
+    "repeats": 0,
+    "recovered_utc": "2026-11-12T07:18:38.697559+00:00"
+   }
+  },
+  "currently_faulted": [
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+  ],
+  "first_failure": {
+   "046d:085c:sn=C922SN01": {
+    "utc": "2026-11-12T05:40:51.387999+00:00",
+    "test": "W-MULTI",
+    "mode": "MJPG 1280x720@30",
+    "code": "0x800718CF",
+    "api": "mf",
+    "stage": "first_sample",
+    "class": "bandwidth_certain",
+    "source": "W-MULTI multi_launch child (mf_all_together_001)",
+    "plug_in_age_s": 17016.1,
+    "last_arrival": "2026-11-12T00:57:22.463265+00:00",
+    "detail": {
+     "run": "mf_all_together_001",
+     "counts_as_refusal": true
+    },
+    "is_kiyo": false,
+    "name": "c922 Pro Stream Webcam",
+    "device_level": true
+   },
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+    "utc": "2026-11-12T05:44:42.097467+00:00",
+    "test": "W-MULTI",
+    "mode": "MJPG 1280x720@30",
+    "code": "OSError(5)",
+    "api": "ds",
+    "stage": "open",
+    "class": "bandwidth_probable",
+    "source": "W-MULTI multi_launch child (ds_all_together_024)",
+    "plug_in_age_s": 289.4,
+    "last_arrival": "2026-11-12T05:40:00.380582+00:00",
+    "detail": {
+     "run": "ds_all_together_024",
+     "counts_as_refusal": true
+    },
+    "is_kiyo": false,
+    "name": "USB Camera",
+    "device_level": true
+   },
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "utc": "2026-11-12T05:45:47.327610+00:00",
+    "test": "W-MULTI",
+    "mode": "MJPG 1280x720@30",
+    "code": "timeout",
+    "api": "ds",
+    "stage": "open",
+    "class": "device_not_ready",
+    "source": "W-MULTI multi_launch child (ds_all_together_029)",
+    "plug_in_age_s": 22736.5,
+    "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+    "detail": {
+     "run": "ds_all_together_029",
+     "counts_as_refusal": false
+    },
+    "is_kiyo": true,
+    "name": "USB Video Device",
+    "device_level": true
+   }
+  },
+  "first_any_failure": {
+   "046d:085c:sn=C922SN01": {
+    "utc": "2026-11-12T05:40:51.387999+00:00",
+    "test": "W-MULTI",
+    "mode": "MJPG 1280x720@30",
+    "code": "0x800718CF",
+    "api": "mf",
+    "stage": "first_sample",
+    "class": "bandwidth_certain",
+    "source": "W-MULTI multi_launch child (mf_all_together_001)",
+    "plug_in_age_s": 17016.1,
+    "last_arrival": "2026-11-12T00:57:22.463265+00:00",
+    "detail": {
+     "run": "mf_all_together_001",
+     "counts_as_refusal": true
+    },
+    "is_kiyo": false,
+    "name": "c922 Pro Stream Webcam",
+    "device_level": true
+   },
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+    "utc": "2026-11-12T05:44:42.097467+00:00",
+    "test": "W-MULTI",
+    "mode": "MJPG 1280x720@30",
+    "code": "OSError(5)",
+    "api": "ds",
+    "stage": "open",
+    "class": "bandwidth_probable",
+    "source": "W-MULTI multi_launch child (ds_all_together_024)",
+    "plug_in_age_s": 289.4,
+    "last_arrival": "2026-11-12T05:40:00.380582+00:00",
+    "detail": {
+     "run": "ds_all_together_024",
+     "counts_as_refusal": true
+    },
+    "is_kiyo": false,
+    "name": "USB Camera",
+    "device_level": true
+   },
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "utc": "2026-11-12T05:45:47.327610+00:00",
+    "test": "W-MULTI",
+    "mode": "MJPG 1280x720@30",
+    "code": "timeout",
+    "api": "ds",
+    "stage": "open",
+    "class": "device_not_ready",
+    "source": "W-MULTI multi_launch child (ds_all_together_029)",
+    "plug_in_age_s": 22736.5,
+    "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+    "detail": {
+     "run": "ds_all_together_029",
+     "counts_as_refusal": false
+    },
+    "is_kiyo": true,
+    "name": "USB Video Device",
+    "device_level": true
+   },
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+    "utc": "2026-11-12T06:37:23.572736+00:00",
+    "test": "W-CYC",
+    "mode": "MJPG 1280x720@30",
+    "code": 4,
+    "api": "opencv",
+    "stage": null,
+    "class": null,
+    "source": "camcmd_scan",
+    "plug_in_age_s": 59259.6,
+    "last_arrival": "2026-11-11T14:11:38.552007+00:00",
+    "detail": {
+     "argv": "uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\opencv_ds.py cycle --index 3 --expect-path \\\\?\\...",
+     "rc": 4,
+     "timed_out": false
+    },
+    "is_kiyo": false,
+    "name": "Logitech Webcam C930e",
+    "device_level": false
+   }
+  },
+  "events": [
+   {
+    "type": "probe_failed",
+    "utc": "2026-11-12T05:46:24.269472+00:00",
+    "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "name": "USB Video Device",
+    "test": "W-MULTI",
+    "reason": "W-MULTI ds_all_together_029",
+    "code": null,
+    "stage": "activate",
+    "class": "timeout",
+    "recovered": false
+   },
+   {
+    "type": "fault",
+    "utc": "2026-11-12T05:46:24.269472+00:00",
+    "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "name": "USB Video Device",
+    "is_kiyo": true,
+    "test": "W-MULTI",
+    "mode": "MJPG 1280x720@30",
+    "code": "watchdog timeout",
+    "api": "ds",
+    "stage": "ds_all_together_029",
+    "class": "hang",
+    "source": "W-MULTI multi_launch child",
+    "plug_in_age_s": 22741.5,
+    "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+    "detail": {
+     "reason": "reader hung past the watchdog and the 1-frame health check failed"
+    }
+   },
+   {
+    "type": "probe_ok",
+    "utc": "2026-11-12T05:52:24.461032+00:00",
+    "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+    "name": "Logitech Webcam C930e",
+    "test": "W-CYC",
+    "reason": "W-CYC probe before the camera's variants",
+    "code": null,
+    "stage": null,
+    "class": null,
+    "recovered": false
+   },
+   {
+    "type": "probe_ok",
+    "utc": "2026-11-12T06:43:00.105888+00:00",
+    "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "name": "USB Camera",
+    "test": "W-CYC",
+    "reason": "W-CYC probe before the camera's variants",
+    "code": null,
+    "stage": null,
+    "class": null,
+    "recovered": false
+   },
+   {
+    "type": "fault",
+    "utc": "2026-11-12T07:09:33.238324+00:00",
+    "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "name": "USB Camera",
+    "is_kiyo": false,
+    "test": "W-CYC",
+    "mode": "MJPG 1280x720@30",
+    "code": "0x8007001F",
+    "api": "mf",
+    "stage": "match",
+    "class": "device_error",
+    "source": "camcmd_scan",
+    "plug_in_age_s": 61068.7,
+    "last_arrival": "2026-11-11T14:11:44.546053+00:00",
+    "detail": {
+     "argv": "wincam.exe capture --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 -...",
+     "why": "error 0x8007001F / device_error"
+    },
+    "command_utc_started": "2026-11-12T07:09:33.219278Z"
+   },
+   {
+    "type": "recovered",
+    "utc": "2026-11-12T07:18:38.697559+00:00",
+    "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "name": "USB Camera",
+    "test": "W-CYC",
+    "source": "health_probe",
+    "fault_since": "2026-11-12T07:09:33.238324+00:00",
+    "detail": {
+     "probe_utc": "2026-11-12T07:18:38.697559+00:00"
+    }
+   },
+   {
+    "type": "probe_ok",
+    "utc": "2026-11-12T07:18:38.697559+00:00",
+    "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "name": "USB Camera",
+    "test": "W-CYC",
+    "reason": "fault during W-CYC, before ds_inproc",
+    "code": null,
+    "stage": null,
+    "class": null,
+    "recovered": true
+   },
+   {
+    "type": "probe_ok",
+    "utc": "2026-11-12T07:23:39.515414+00:00",
+    "key": "046d:085c:sn=C922SN01",
+    "name": "c922 Pro Stream Webcam",
+    "test": "W-CYC",
+    "reason": "W-CYC probe before the camera's variants",
+    "code": null,
+    "stage": null,
+    "class": null,
+    "recovered": false
+   }
+  ],
+  "gated_by_test": {
+   "W-ENV": {},
+   "W-POLICY": {},
+   "W-TOPO": {},
+   "W-ID": {},
+   "W-FMT": {},
+   "W-FMT-NOGRAB": {},
+   "W-CTRL-LIST": {},
+   "W-MJPEG": {},
+   "W-RAW": {},
+   "W-TS": {},
+   "W-PYMF": {},
+   "W-PYMF-ALL": {},
+   "W-NODRIFT": {},
+   "W-GAIN": {},
+   "W-CTRL-EFFECT": {},
+   "W-OCV-CTRL": {},
+   "W-TBUMP": {},
+   "W-MULTI": {},
+   "W-PYAV-LIST": {
+    "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-12T05:46:24.269472+00:00"
+   },
+   "W-CYC-KIYO": {
+    "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-12T05:46:24.269472+00:00"
+   },
+   "W-CYC": {
+    "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-12T05:46:24.269472+00:00"
+   }
+  },
+  "probes_by_test": {
+   "W-MULTI": {
+    "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": [
+     {
+      "ok": false,
+      "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "name": "USB Video Device",
+      "utc": "2026-11-12T05:46:24.269472+00:00",
+      "test": "W-MULTI",
+      "reason": "W-MULTI ds_all_together_029",
+      "mode": "MJPG 1280x720@30",
+      "frames": 0,
+      "fault_like": false,
+      "code": null,
+      "stage": "activate",
+      "class": "timeout",
+      "rc": 5,
+      "timed_out": false,
+      "elapsed_s": 3.032,
+      "no_json": false,
+      "open_to_first_frame_ms": -1,
+      "was_faulted": false,
+      "recovered": false,
+      "faulted_after": false
+     },
+     {
+      "ok": false,
+      "dead": true,
+      "skipped": "dead (Kiyo Pro dead rule): not probed",
+      "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "name": "USB Video Device",
+      "utc": "2026-11-12T05:48:43.366476+00:00",
+      "test": "W-MULTI",
+      "reason": "W-MULTI reprobe_pyav_ds",
+      "fault_like": true,
+      "recovered": false,
+      "faulted_after": true,
+      "code": "watchdog timeout",
+      "was_faulted": true
+     }
+    ]
+   },
+   "W-CYC": {
+    "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": [
+     {
+      "ok": true,
+      "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+      "name": "Logitech Webcam C930e",
+      "utc": "2026-11-12T05:52:24.461032+00:00",
+      "test": "W-CYC",
+      "reason": "W-CYC probe before the camera's variants",
+      "mode": "MJPG 1280x720@30",
+      "frames": 1,
+      "fault_like": false,
+      "code": null,
+      "stage": null,
+      "class": null,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.906,
+      "no_json": false,
+      "open_to_first_frame_ms": 557.1965,
+      "was_faulted": false,
+      "recovered": false,
+      "faulted_after": false
+     }
+    ],
+    "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": [
+     {
+      "ok": true,
+      "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "name": "USB Camera",
+      "utc": "2026-11-12T06:43:00.105888+00:00",
+      "test": "W-CYC",
+      "reason": "W-CYC probe before the camera's variants",
+      "mode": "MJPG 1280x720@30",
+      "frames": 1,
+      "fault_like": false,
+      "code": null,
+      "stage": null,
+      "class": null,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.438,
+      "no_json": false,
+      "open_to_first_frame_ms": 139.2835,
+      "was_faulted": false,
+      "recovered": false,
+      "faulted_after": false
+     },
+     {
+      "ok": true,
+      "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+      "name": "USB Camera",
+      "utc": "2026-11-12T07:18:38.697559+00:00",
+      "test": "W-CYC",
+      "reason": "fault during W-CYC, before ds_inproc",
+      "mode": "MJPG 1280x720@30",
+      "frames": 1,
+      "fault_like": false,
+      "code": null,
+      "stage": null,
+      "class": null,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.375,
+      "no_json": false,
+      "open_to_first_frame_ms": 99.4621,
+      "was_faulted": true,
+      "recovered": true,
+      "faulted_after": false
+     }
+    ],
+    "046d:085c:sn=C922SN01": [
+     {
+      "ok": true,
+      "key": "046d:085c:sn=C922SN01",
+      "name": "c922 Pro Stream Webcam",
+      "utc": "2026-11-12T07:23:39.515414+00:00",
+      "test": "W-CYC",
+      "reason": "W-CYC probe before the camera's variants",
+      "mode": "MJPG 1280x720@30",
+      "frames": 1,
+      "fault_like": false,
+      "code": null,
+      "stage": null,
+      "class": null,
+      "rc": 0,
+      "timed_out": false,
+      "elapsed_s": 0.75,
+      "no_json": false,
+      "open_to_first_frame_ms": 371.4398,
+      "was_faulted": false,
+      "recovered": false,
+      "faulted_after": false
+     }
+    ]
+   }
+  },
+  "kiyo": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "name": "USB Video Device",
+    "poller_mode": "background",
+    "poller_started_utc": "2026-11-12T02:59:37.301889+00:00",
+    "plug_in_age_at_start_s": 12735.0,
+    "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+    "stopped_answering": true,
+    "failed_from_first_poll": false,
+    "first_failure_utc": "2026-11-12T05:46:18.002183Z",
+    "first_failure_plug_in_age_s": 22735.2,
+    "first_failure_test": "W-MULTI",
+    "first_failure_codes": [],
+    "first_failure_vendor_processes": [],
+    "first_failure_activity_processes": [
+     "?:17184"
+    ],
+    "per_api": {
+     "mf": {
+      "utc": "2026-11-12T05:46:18.002183Z",
+      "plug_in_age_s": 22735.2,
+      "test": "W-MULTI",
+      "codes": [],
+      "real_codes": [],
+      "error_hr": null,
+      "failed_from_first_poll": false
+     },
+     "ds": {
+      "utc": "2026-11-12T05:46:24.465224Z",
+      "plug_in_age_s": 22741.6,
+      "test": "W-MULTI",
+      "codes": [],
+      "real_codes": [],
+      "error_hr": null,
+      "failed_from_first_poll": false
+     }
+    },
+    "transitions": [
+     {
+      "api": "mf",
+      "to": "not_answering",
+      "utc": "2026-11-12T05:46:18.002183Z",
+      "plug_in_age_s": 22735.2,
+      "test": "W-MULTI"
+     },
+     {
+      "api": "ds",
+      "to": "not_answering",
+      "utc": "2026-11-12T05:46:24.465224Z",
+      "plug_in_age_s": 22741.6,
+      "test": "W-MULTI"
+     }
+    ],
+    "n_polls": 722
+   }
+  },
+  "dead": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "dead": true,
+    "since_utc": "2026-11-12T05:46:24.269472+00:00",
+    "name": "USB Video Device",
+    "code": "watchdog timeout",
+    "test": "W-MULTI",
+    "rule": "Kiyo Pro dead for the rest of the run: no re-probe, re-open, reset or recovery; diagnostics recorded once (Dom 2026-11-11)",
+    "diagnostics": {
+     "utc": "2026-11-12T05:46:24.270473+00:00",
+     "run_dir": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261112T025937Z",
+     "run_stamp": "20261112T025937Z",
+     "test": "W-MULTI",
+     "fault": {
+      "utc": "2026-11-12T05:46:24.269472+00:00",
+      "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "name": "USB Video Device",
+      "is_kiyo": true,
+      "test": "W-MULTI",
+      "mode": "MJPG 1280x720@30",
+      "code": "watchdog timeout",
+      "api": "ds",
+      "stage": "ds_all_together_029",
+      "class": "hang",
+      "source": "W-MULTI multi_launch child",
+      "plug_in_age_s": 22741.5,
+      "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+      "detail": {
+       "reason": "reader hung past the watchdog and the 1-frame health check failed"
+      },
+      "faulted": true,
+      "since_utc": "2026-11-12T05:46:24.269472+00:00",
+      "repeats": 0
+     },
+     "plug_in_age_s": 22741.5,
+     "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+     "last_command": {
+      "argv": "wincam.exe capture --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --frames 1 --timeout-ms 3000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\_health\\usbvideodevice_1532-0e05\\W-MULTI_0000 --save none",
+      "utc_started": "2026-11-12T05:46:19.313813+00:00",
+      "utc_ended": "2026-11-12T05:46:24.269472+00:00",
+      "rc": 5,
+      "timed_out": false,
+      "killed": false,
+      "elapsed_s": 3.032,
+      "test": "W-MULTI",
+      "stderr_tail": "[camlock] acquired after 1.8s (ticket 4798): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 37.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --frames 1 --timeout-ms 3000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\_health\\usbvideodevice_1532-0e05\\W-MULTI_0000 --save none\n[camlock] released"
+     },
+     "fault_and_failure_events": [
+      {
+       "type": "probe_failed",
+       "utc": "2026-11-12T05:46:24.269472+00:00",
+       "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "name": "USB Video Device",
+       "test": "W-MULTI",
+       "reason": "W-MULTI ds_all_together_029",
+       "code": null,
+       "stage": "activate",
+       "class": "timeout",
+       "recovered": false
+      },
+      {
+       "type": "fault",
+       "utc": "2026-11-12T05:46:24.269472+00:00",
+       "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "name": "USB Video Device",
+       "is_kiyo": true,
+       "test": "W-MULTI",
+       "mode": "MJPG 1280x720@30",
+       "code": "watchdog timeout",
+       "api": "ds",
+       "stage": "ds_all_together_029",
+       "class": "hang",
+       "source": "W-MULTI multi_launch child",
+       "plug_in_age_s": 22741.5,
+       "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+       "detail": {
+        "reason": "reader hung past the watchdog and the 1-frame health check failed"
+       }
+      }
+     ],
+     "first_failure": {
+      "utc": "2026-11-12T05:45:47.327610+00:00",
+      "test": "W-MULTI",
+      "mode": "MJPG 1280x720@30",
+      "code": "timeout",
+      "api": "ds",
+      "stage": "open",
+      "class": "device_not_ready",
+      "source": "W-MULTI multi_launch child (ds_all_together_029)",
+      "plug_in_age_s": 22736.5,
+      "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+      "detail": {
+       "run": "ds_all_together_029",
+       "counts_as_refusal": false
+      },
+      "is_kiyo": true,
+      "name": "USB Video Device",
+      "device_level": true
+     },
+     "first_any_failure": {
+      "utc": "2026-11-12T05:45:47.327610+00:00",
+      "test": "W-MULTI",
+      "mode": "MJPG 1280x720@30",
+      "code": "timeout",
+      "api": "ds",
+      "stage": "open",
+      "class": "device_not_ready",
+      "source": "W-MULTI multi_launch child (ds_all_together_029)",
+      "plug_in_age_s": 22736.5,
+      "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+      "detail": {
+       "run": "ds_all_together_029",
+       "counts_as_refusal": false
+      },
+      "is_kiyo": true,
+      "name": "USB Video Device",
+      "device_level": true
+     },
+     "other_camera_commands_running": [],
+     "stream_starts_this_run": 90,
+     "camera": {
+      "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "name": "USB Video Device",
+      "vid": "1532",
+      "pid": "0e05",
+      "serial": null,
+      "is_kiyo": true,
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+      "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+      "hub_port": 4,
+      "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "ds_name": "USB Video Device",
+      "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+      "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+      "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+      "speed": "SS",
+      "bcd_device": "0821",
+      "metadata_tier1": false,
+      "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+      "problem_code": 0,
+      "dn_warn": [],
+      "mf_index": 7,
+      "ds_index": 2
+     },
+     "usb_link": null,
+     "arrival_now": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "camera_activity": {
+      "ok": true,
+      "utc": "2026-11-12T05:46:24.280290Z",
+      "monitor": {
+       "available": true,
+       "hr": "0x00000000",
+       "source": "IMFSensorActivityMonitor (mfsensorgroup.dll)",
+       "report_received": true,
+       "reports": 2,
+       "wait_ms": 1500,
+       "first_report_ms": 1.477900006
+      },
+      "devices": [
+       {
+        "friendly_name": "Logitech Webcam C930e",
+        "match_key": "usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000\\global",
+        "in_use": false,
+        "streaming": false,
+        "processes": []
+       },
+       {
+        "friendly_name": "NDI Webcam Video 1",
+        "match_key": "root#media#0002\\vidsource0",
+        "in_use": false,
+        "streaming": false,
+        "processes": []
+       },
+       {
+        "friendly_name": "NDI Webcam Video 2",
+        "match_key": "root#media#0002\\vidsource1",
+        "in_use": false,
+        "streaming": false,
+        "processes": []
+       },
+       {
+        "friendly_name": "NDI Webcam Video 3",
+        "match_key": "root#media#0002\\vidsource2",
+        "in_use": false,
+        "streaming": false,
+        "processes": []
+       },
+       {
+        "friendly_name": "NDI Webcam Video 4",
+        "match_key": "root#media#0002\\vidsource3",
+        "in_use": false,
+        "streaming": false,
+        "processes": []
+       },
+       {
+        "friendly_name": "USB Camera",
+        "match_key": "usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000\\global",
+        "in_use": false,
+        "streaming": false,
+        "processes": []
+       },
+       {
+        "friendly_name": "c922 Pro Stream Webcam",
+        "match_key": "usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000\\global",
+        "in_use": false,
+        "streaming": false,
+        "processes": []
+       },
+       {
+        "friendly_name": "USB Video Device",
+        "match_key": "usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000\\global",
+        "in_use": true,
+        "streaming": false,
+        "processes": [
+         {
+          "pid": 10072,
+          "name": null,
+          "streaming": false,
+          "self": false
+         },
+         {
+          "pid": 8852,
+          "name": null,
+          "streaming": false,
+          "self": false
+         }
+        ]
+       }
+      ],
+      "consent_in_use": [],
+      "camera_opened": false,
+      "coverage_note": "IMFSensorActivityMonitor reports Frame Server (MF / WinRT) clients only; DirectShow (ksproxy) clients are invisible to it but show in consent_store.in_use (per capability, not per camera)"
+     },
+     "frame_server": "\"Image Name\",\"PID\",\"Services\"\r\n\"svchost.exe\",\"40364\",\"FrameServer\"\r\n",
+     "processes": "\"System Idle Process\",\"0\",\"Services\",\"0\",\"8 K\"\r\n\"System\",\"4\",\"Services\",\"0\",\"37,192 K\"\r\n\"Secure System\",\"384\",\"Services\",\"0\",\"204,064 K\"\r\n\"Registry\",\"424\",\"Services\",\"0\",\"42,828 K\"\r\n\"smss.exe\",\"1248\",\"Services\",\"0\",\"1,868 K\"\r\n\"csrss.exe\",\"1692\",\"Services\",\"0\",\"7,536 K\"\r\n\"wininit.exe\",\"1812\",\"Services\",\"0\",\"9,568 K\"\r\n\"csrss.exe\",\"1820\",\"Console\",\"1\",\"8,392 K\"\r\n\"services.exe\",\"1896\",\"Services\",\"0\",\"23,124 K\"\r\n\"LsaIso.exe\",\"1916\",\"Services\",\"0\",\"3,808 K\"\r\n\"lsass.exe\",\"1924\",\"Services\",\"0\",\"38,392 K\"\r\n\"winlogon.exe\",\"1960\",\"Console\",\"1\",\"17,632 K\"\r\n\"svchost.exe\",\"1680\",\"Services\",\"0\",\"41,100 K\"\r\n\"fontdrvhost.exe\",\"1616\",\"Console\",\"1\",\"16,024 K\"\r\n\"fontdrvhost.exe\",\"1644\",\"Services\",\"0\",\"9,580 K\"\r\n\"svchost.exe\",\"2116\",\"Services\",\"0\",\"23,536 K\"\r\n\"svchost.exe\",\"2164\",\"Services\",\"0\",\"14,272 K\"\r\n\"dwm.exe\",\"2248\",\"Console\",\"1\",\"146,524 K\"\r\n\"svchost.exe\",\"2320\",\"Services\",\"0\",\"7,344 K\"\r\n\"svchost.exe\",\"2424\",\"Services\",\"0\",\"22,064 K\"\r\n\"svchost.exe\",\"2436\",\"Services\",\"0\",\"12,008 K\"\r\n\"svchost.exe\",\"2428\",\"Services\",\"0\",\"19,556 K\"\r\n\"svchost.exe\",\"2524\",\"Services\",\"0\",\"17,852 K\"\r\n\"svchost.exe\",\"2548\",\"Services\",\"0\",\"14,772 K\"\r\n\"svchost.exe\",\"2556\",\"Services\",\"0\",\"14,544 K\"\r\n\"svchost.exe\",\"2564\",\"Services\",\"0\",\"15,696 K\"\r\n\"IntelCpHDCPSvc.exe\",\"2716\",\"Services\",\"0\",\"8,832 K\"\r\n\"svchost.exe\",\"2744\",\"Services\",\"0\",\"16,812 K\"\r\n\"svchost.exe\",\"2872\",\"Services\",\"0\",\"12,904 K\"\r\n\"svchost.exe\",\"2884\",\"Services\",\"0\",\"26,108 K\"\r\n\"svchost.exe\",\"3000\",\"Services\",\"0\",\"22,536 K\"\r\n\"svchost.exe\",\"2028\",\"Services\",\"0\",\"8,500 K\"\r\n\"svchost.exe\",\"3276\",\"Services\",\"0\",\"17,596 K\"\r\n\"svchost.exe\",\"3412\",\"Services\",\"0\",\"16,848 K\"\r\n\"NVDisplay.Container.exe\",\"3444\",\"Services\",\"0\",\"56,160 K\"\r\n\"WUDFHost.exe\",\"3452\",\"Services\",\"0\",\"11,128 K\"\r\n\"AsusCertService.exe\",\"3628\",\"Services\",\"0\",\"9,104 K\"\r\n\"svchost.exe\",\"3644\",\"Services\",\"0\",\"24,628 K\"\r\n\"svchost.exe\",\"3712\",\"Services\",\"0\",\"19,320 K\"\r\n\"svchost.exe\",\"3720\",\"Services\",\"0\",\"7,912 K\"\r\n\"svchost.exe\",\"3728\",\"Services\",\"0\",\"10,912 K\"\r\n\"svchost.exe\",\"3792\",\"Services\",\"0\",\"15,140 K\"\r\n\"svchost.exe\",\"3876\",\"Services\",\"0\",\"24,520 K\"\r\n\"Memory Compression\",\"3884\",\"Services\",\"0\",\"22,044 K\"\r\n\"svchost.exe\",\"3936\",\"Services\",\"0\",\"12,124 K\"\r\n\"svchost.exe\",\"3988\",\"Services\",\"0\",\"13,860 K\"\r\n\"svchost.exe\",\"3996\",\"Services\",\"0\",\"11,948 K\"\r\n\"svchost.exe\",\"3032\",\"Services\",\"0\",\"21,768 K\"\r\n\"svchost.exe\",\"4100\",\"Services\",\"0\",\"26,952 K\"\r\n\"CTAudSvc.exe\",\"4108\",\"Services\",\"0\",\"10,748 K\"\r\n\"WUDFHost.exe\",\"4204\",\"Services\",\"0\",\"13,104 K\"\r\n\"svchost.exe\",\"4388\",\"Services\",\"0\",\"12,328 K\"\r\n\"NVDisplay.Container.exe\",\"4420\",\"Console\",\"1\",\"180,872 K\"\r\n\"svchost.exe\",\"4616\",\"Services\",\"0\",\"9,568 K\"\r\n\"svchost.exe\",\"4920\",\"Services\",\"0\",\"11,692 K\"\r\n\"svchost.exe\",\"4928\",\"Services\",\"0\",\"9,452 K\"\r\n\"svchost.exe\",\"4944\",\"Services\",\"0\",\"32,216 K\"\r\n\"svchost.exe\",\"5028\",\"Services\",\"0\",\"10,716 K\"\r\n\"svchost.exe\",\"5088\",\"Services\",\"0\",\"14,436 K\"\r\n\"svchost.exe\",\"5180\",\"Services\",\"0\",\"27,936 K\"\r\n\"svchost.exe\",\"5212\",\"Services\",\"0\",\"18,692 K\"\r\n\"AsusOptimization.exe\",\"5220\",\"Services\",\"0\",\"12,004 K\"\r\n\"svchost.exe\",\"5272\",\"Services\",\"0\",\"23,832 K\"\r\n\"spoolsv.exe\",\"5524\",\"Services\",\"0\",\"45,096 K\"\r\n\"svchost.exe\",\"5564\",\"Services\",\"0\",\"19,180 K\"\r\n\"svchost.exe\",\"5608\",\"Services\",\"0\",\"28,252 K\"\r\n\"dasHost.exe\",\"5732\",\"Services\",\"0\",\"31,380 K\"\r\n\"svchost.exe\",\"5744\",\"Services\",\"0\",\"9,732 K\"\r\n\"svchost.exe\",\"5964\",\"Services\",\"0\",\"9,472 K\"\r\n\"WmiPrvSE.exe\",\"6116\",\"Services\",\"0\",\"61,464 K\"\r\n\"WUDFHost.exe\",\"6136\",\"Services\",\"0\",\"8,704 K\"\r\n\"WmiPrvSE.exe\",\"6012\",\"Services\",\"0\",\"72,352 K\"\r\n\"svchost.exe\",\"6184\",\"Services\",\"0\",\"11,168 K\"\r\n\"AsusAppService.exe\",\"6384\",\"Services\",\"0\",\"30,128 K\"\r\n\"ArmouryCrate.Service.exe\",\"6448\",\"Services\",\"0\",\"84,792 K\"\r\n\"AsusSystemAnalysis.exe\",\"6504\",\"Services\",\"0\",\"19,008 K\"\r\n\"atkexComSvc.exe\",\"6520\",\"Services\",\"0\",\"20,656 K\"\r\n\"AsusSwitch.exe\",\"6528\",\"Services\",\"0\",\"11,716 K\"\r\n\"AsusSoftwareManager.exe\",\"6540\",\"Services\",\"0\",\"22,872 K\"\r\n\"AsusFanControlService.exe\",\"6548\",\"Services\",\"0\",\"45,484 K\"\r\n\"mDNSResponder.exe\",\"6572\",\"Services\",\"0\",\"10,536 K\"\r\n\"DesignerCompactKeyboardNotificationService.exe\",\"6580\",\"Services\",\"0\",\"10,976 K\"\r\n\"BrYNSvc.exe\",\"6592\",\"Services\",\"0\",\"22,952 K\"\r\n\"DYMO.Connect.PnP.Service.exe\",\"6600\",\"Services\",\"0\",\"41,960 K\"\r\n\"Corsair.Service.exe\",\"6608\",\"Services\",\"0\",\"58,008 K\"\r\n\"GameSDK.exe\",\"6616\",\"Services\",\"0\",\"10,196 K\"\r\n\"HPPrintScanDoctorService.exe\",\"6632\",\"Services\",\"0\",\"28,592 K\"\r\n\"svchost.exe\",\"6640\",\"Services\",\"0\",\"16,140 K\"\r\n\"svchost.exe\",\"6648\",\"Services\",\"0\",\"61,764 K\"\r\n\"svchost.exe\",\"6656\",\"Services\",\"0\",\"65,696 K\"\r\n\"jhi_service.exe\",\"6664\",\"Services\",\"0\",\"9,584 K\"\r\n\"AsusSystemDiagnosis.exe\",\"6680\",\"Services\",\"0\",\"14,836 K\"\r\n\"ThunderboltService.exe\",\"6720\",\"Services\",\"0\",\"24,724 K\"\r\n\"Pen_Tablet.exe\",\"6728\",\"Services\",\"0\",\"10,020 K\"\r\n\"MacriumService.exe\",\"6736\",\"Services\",\"0\",\"32,280 K\"\r\n\"PreSonusHardwareAccessService.exe\",\"6744\",\"Services\",\"0\",\"25,524 K\"\r\n\"pservice.exe\",\"6752\",\"Services\",\"0\",\"13,572 K\"\r\n\"LightingService.exe\",\"6768\",\"Services\",\"0\",\"33,580 K\"\r\n\"SONiXDDRService_x64.exe\",\"6776\",\"Services\",\"0\",\"12,256 K\"\r\n\"ss_conn_service.exe\",\"6784\",\"Services\",\"0\",\"9,708 K\"\r\n\"ss_conn_service2.exe\",\"6792\",\"Services\",\"0\",\"10,720 K\"\r\n\"ROGLiveService.exe\",\"6800\",\"Services\",\"0\",\"44,220 K\"\r\n\"MpDefenderCoreService.exe\",\"6808\",\"Services\",\"0\",\"36,076 K\"\r\n\"TbtP2pShortcutService.exe\",\"6816\",\"Services\",\"0\",\"7,932 K\"\r\n\"updatesvc.exe\",\"6824\",\"Services\",\"0\",\"9,512 K\"\r\n\"WMIRegistrationService.exe\",\"6836\",\"Services\",\"0\",\"16,256 K\"\r\n\"USBAppControl.exe\",\"6852\",\"Services\",\"0\",\"23,924 K\"\r\n\"svchost.exe\",\"6868\",\"Services\",\"0\",\"7,912 K\"\r\n\"Creative.VADMonitorService.exe\",\"6876\",\"Services\",\"0\",\"77,924 K\"\r\n\"RtkAudUService64.exe\",\"6884\",\"Services\",\"0\",\"18,536 K\"\r\n\"RstMwService.exe\",\"6892\",\"Services\",\"0\",\"12,100 K\"\r\n\"WorkflowAppControl.exe\",\"6932\",\"Services\",\"0\",\"29,628 K\"\r\n\"MsMpEng.exe\",\"6948\",\"Services\",\"0\",\"459,936 K\"\r\n\"BrLogRx.exe\",\"7708\",\"Services\",\"0\",\"12,044 K\"\r\n\"svchost.exe\",\"8616\",\"Services\",\"0\",\"23,612 K\"\r\n\"svchost.exe\",\"8488\",\"Services\",\"0\",\"12,900 K\"\r\n\"AggregatorHost.exe\",\"9400\",\"Services\",\"0\",\"19,652 K\"\r\n\"DefenderSessionHelper.exe\",\"9864\",\"Console\",\"1\",\"6,000 K\"\r\n\"dasHost.exe\",\"10064\",\"Services\",\"0\",\"12,440 K\"\r\n\"svchost.exe\",\"10132\",\"Services\",\"0\",\"11,092 K\"\r\n\"WmiPrvSE.exe\",\"10476\",\"Services\",\"0\",\"14,716 K\"\r\n\"AsusOptimizationStartupTask.exe\",\"10536\",\"Console\",\"1\",\"12,060 K\"\r\n\"extensionCardHal_x86.exe\",\"10876\",\"Services\",\"0\",\"12,668 K\"\r\n\"Aac3572MbHal_x86.exe\",\"10884\",\"Services\",\"0\",\"12,844 K\"\r\n\"Aac3572DramHal_x86.exe\",\"10740\",\"Services\",\"0\",\"12,436 K\"\r\n\"ArmouryCrate.UserSessionHelper.exe\",\"11536\",\"Console\",\"1\",\"72,644 K\"\r\n\"conhost.exe\",\"11596\",\"Console\",\"1\",\"7,528 K\"\r\n\"CorsairCpuIdService.exe\",\"11612\",\"Services\",\"0\",\"271,864 K\"\r\n\"crashpad_handler.exe\",\"12196\",\"Services\",\"0\",\"8,240 K\"\r\n\"unsecapp.exe\",\"9264\",\"Services\",\"0\",\"9,672 K\"\r\n\"svchost.exe\",\"12120\",\"Services\",\"0\",\"33,896 K\"\r\n\"cowork-svc.exe\",\"12500\",\"Services\",\"0\",\"27,616 K\"\r\n\"IntelGraphicsSoftware.Service.exe\",\"12512\",\"Services\",\"0\",\"46,740 K\"\r\n\"rundll32.exe\",\"12848\",\"Console\",\"1\",\"14,948 K\"\r\n\"sihost.exe\",\"12352\",\"Console\",\"1\",\"52,312 K\"\r\n\"svchost.exe\",\"8788\",\"Console\",\"1\",\"15,976 K\"\r\n\"svchost.exe\",\"11940\",\"Console\",\"1\",\"29,660 K\"\r\n\"svchost.exe\",\"13012\",\"Console\",\"1\",\"11,180 K\"\r\n\"svchost.exe\",\"12940\",\"Services\",\"0\",\"7,608 K\"\r\n\"svchost.exe\",\"13172\",\"Console\",\"1\",\"42,236 K\"\r\n\"wlanext.exe\",\"12924\",\"Services\",\"0\",\"9,000 K\"\r\n\"itype.exe\",\"13500\",\"Console\",\"1\",\"876 K\"\r\n\"ADU.exe\",\"13532\",\"Console\",\"1\",\"12,664 K\"\r\n\"NoiseCancelingEngine.exe\",\"13544\",\"Console\",\"1\",\"8,844 K\"\r\n\"ipoint.exe\",\"13564\",\"Console\",\"1\",\"6,208 K\"\r\n\"AcPowerNotification.exe\",\"13680\",\"Console\",\"1\",\"22,660 K\"\r\n\"svchost.exe\",\"13704\",\"Services\",\"0\",\"26,332 K\"\r\n\"taskhostw.exe\",\"13736\",\"Console\",\"1\",\"23,876 K\"\r\n\"vmcompute.exe\",\"13792\",\"Services\",\"0\",\"13,820 K\"\r\n\"AacKingstonDramHal_x86.exe\",\"14160\",\"Services\",\"0\",\"12,592 K\"\r\n\"svchost.exe\",\"12344\",\"Services\",\"0\",\"26,508 K\"\r\n\"explorer.exe\",\"13976\",\"Console\",\"1\",\"546,592 K\"\r\n\"svchost.exe\",\"14004\",\"Services\",\"0\",\"26,780 K\"\r\n\"WTabletServicePro.exe\",\"14100\",\"Services\",\"0\",\"12,956 K\"\r\n\"svchost.exe\",\"6516\",\"Services\",\"0\",\"10,756 K\"\r\n\"wslservice.exe\",\"14224\",\"Services\",\"0\",\"30,800 K\"\r\n\"ShellHost.exe\",\"14432\",\"Console\",\"1\",\"63,840 K\"\r\n\"svchost.exe\",\"14500\",\"Services\",\"0\",\"10,488 K\"\r\n\"Wacom_TabletUser.exe\",\"14656\",\"Console\",\"1\",\"12,904 K\"\r\n\"CrossDeviceResume.exe\",\"14840\",\"Console\",\"1\",\"60,648 K\"\r\n\"Pen_TabletUser.exe\",\"15052\",\"Console\",\"1\",\"9,980 K\"\r\n\"DefenderAiPlatformHost.exe\",\"15076\",\"Services\",\"0\",\"7,132 K\"\r\n\"IntelGraphicsSoftware.Service.Graphics.exe\",\"15152\",\"Services\",\"0\",\"48,108 K\"\r\n\"conhost.exe\",\"15184\",\"Services\",\"0\",\"8,408 K\"\r\n\"PresentMonService.exe\",\"15224\",\"Services\",\"0\",\"20,980 K\"\r\n\"conhost.exe\",\"15300\",\"Services\",\"0\",\"6,840 K\"\r\n\"Wacom_UpdateUtil.exe\",\"14940\",\"Console\",\"1\",\"15,368 K\"\r\n\"svchost.exe\",\"15340\",\"Services\",\"0\",\"11,920 K\"\r\n\"WacomHost.exe\",\"14716\",\"Console\",\"1\",\"16,432 K\"\r\n\"svchost.exe\",\"6368\",\"Services\",\"0\",\"43,072 K\"\r\n\"conhost.exe\",\"15596\",\"Console\",\"1\",\"1,652 K\"\r\n\"Wacom_Tablet.exe\",\"15740\",\"Console\",\"1\",\"54,876 K\"\r\n\"svchost.exe\",\"15860\",\"Console\",\"1\",\"33,788 K\"\r\n\"svchost.exe\",\"16020\",\"Services\",\"0\",\"15,812 K\"\r\n\"Pen_Tablet.exe\",\"16168\",\"Console\",\"1\",\"24,968 K\"\r\n\"Wacom_TouchUser.exe\",\"16292\",\"Console\",\"1\",\"20,448 K\"\r\n\"AacKingstonDramHal_x64.exe\",\"13464\",\"Services\",\"0\",\"13,192 K\"\r\n\"SearchHost.exe\",\"16580\",\"Console\",\"1\",\"159,608 K\"\r\n\"StartMenuExperienceHost.exe\",\"16604\",\"Console\",\"1\",\"192,936 K\"\r\n\"ctfmon.exe\",\"16820\",\"Console\",\"1\",\"45,092 K\"\r\n\"TabTip.exe\",\"16900\",\"Console\",\"1\",\"103,396 K\"\r\n\"WidgetBoard.exe\",\"16960\",\"Console\",\"1\",\"30,672 K\"\r\n\"RuntimeBroker.exe\",\"17236\",\"Console\",\"1\",\"71,180 K\"\r\n\"svchost.exe\",\"17288\",\"Console\",\"1\",\"27,416 K\"\r\n\"ReflectUI.exe\",\"17804\",\"Console\",\"1\",\"40,412 K\"\r\n\"ArmourySocketServer.exe\",\"18216\",\"Console\",\"1\",\"4,376 K\"\r\n\"SearchIndexer.exe\",\"18828\",\"Services\",\"0\",\"83,340 K\"\r\n\"ArmouryHtmlDebugServer.exe\",\"19884\",\"Console\",\"1\",\"1,096 K\"\r\n\"NisSrv.exe\",\"20196\",\"Services\",\"0\",\"16,632 K\"\r\n\"PowerToys.exe\",\"20396\",\"Console\",\"1\",\"44,188 K\"\r\n\"MKCHelper.exe\",\"20860\",\"Console\",\"1\",\"3,048 K\"\r\n\"PowerToys.QuickAccess.exe\",\"21004\",\"Console\",\"1\",\"27,884 K\"\r\n\"msedgewebview2.exe\",\"21128\",\"Console\",\"1\",\"137,124 K\"\r\n\"WmiApSrv.exe\",\"21160\",\"Services\",\"0\",\"12,444 K\"\r\n\"LockApp.exe\",\"21168\",\"Console\",\"1\",\"104,632 K\"\r\n\"msedgewebview2.exe\",\"21404\",\"Console\",\"1\",\"16,356 K\"\r\n\"msedgewebview2.exe\",\"21184\",\"Console\",\"1\",\"45,588 K\"\r\n\"msedgewebview2.exe\",\"20620\",\"Console\",\"1\",\"81,244 K\"\r\n\"RuntimeBroker.exe\",\"21536\",\"Console\",\"1\",\"27,708 K\"\r\n\"msedgewebview2.exe\",\"21568\",\"Console\",\"1\",\"24,108 K\"\r\n\"msedgewebview2.exe\",\"21864\",\"Console\",\"1\",\"124,876 K\"\r\n\"WidgetService.exe\",\"21904\",\"Console\",\"1\",\"27,032 K\"\r\n\"svchost.exe\",\"22004\",\"Console\",\"1\",\"21,892 K\"\r\n\"ASUS DriverHub.exe\",\"23012\",\"Console\",\"1\",\"3,260 K\"\r\n\"WmiPrvSE.exe\",\"23520\",\"Services\",\"0\",\"18,540 K\"\r\n\"asus_framework.exe\",\"3300\",\"Console\",\"1\",\"36,976 K\"\r\n\"PhoneExperienceHost.exe\",\"12532\",\"Console\",\"1\",\"183,408 K\"\r\n\"TextInputHost.exe\",\"23956\",\"Console\",\"1\",\"99,236 K\"\r\n\"asus_framework.exe\",\"24136\",\"Console\",\"1\",\"8,552 K\"\r\n\"asus_framework.exe\",\"14772\",\"Console\",\"1\",\"15,592 K\"\r\n\"asus_framework.exe\",\"3264\",\"Console\",\"1\",\"12,672 K\"\r\n\"PowerToys.AlwaysOnTop.exe\",\"6356\",\"Console\",\"1\",\"4,536 K\"\r\n\"PowerToys.AdvancedPaste.exe\",\"23580\",\"Console\",\"1\",\"103,268 K\"\r\n\"PowerToys.ColorPickerUI.exe\",\"21260\",\"Console\",\"1\",\"23,916 K\"\r\n\"PowerToys.CropAndLock.exe\",\"19544\",\"Console\",\"1\",\"2,848 K\"\r\n\"Microsoft.CmdPal.UI.exe\",\"24900\",\"Console\",\"1\",\"248,564 K\"\r\n\"PowerToys.Peek.UI.exe\",\"24648\",\"Console\",\"1\",\"11,872 K\"\r\n\"PowerToys.PowerLauncher.exe\",\"25248\",\"Console\",\"1\",\"80,136 K\"\r\n\"svchost.exe\",\"26020\",\"Services\",\"0\",\"8,372 K\"\r\n\"PowerToys.ShortcutGuide.exe\",\"26292\",\"Console\",\"1\",\"26,620 K\"\r\n\"Microsoft.CmdPal.Ext.PowerToys.exe\",\"27196\",\"Console\",\"1\",\"48,832 K\"\r\n\"ArmourySwAgent.exe\",\"28476\",\"Console\",\"1\",\"1,596 K\"\r\n\"asus_framework.exe\",\"28612\",\"Console\",\"1\",\"15,064 K\"\r\n\"asus_framework.exe\",\"28652\",\"Console\",\"1\",\"15,080 K\"\r\n\"asus_framework.exe\",\"21024\",\"Console\",\"1\",\"14,936 K\"\r\n\"Aac3572MbHal_x86.exe\",\"29672\",\"Console\",\"1\",\"12,716 K\"\r\n\"ReflectMonitor.exe\",\"2800\",\"Console\",\"1\",\"33,080 K\"\r\n\"SecurityHealthSystray.exe\",\"27316\",\"Console\",\"1\",\"13,952 K\"\r\n\"SecurityHealthService.exe\",\"14244\",\"Services\",\"0\",\"26,632 K\"\r\n\"RtkAudUService64.exe\",\"32352\",\"Console\",\"1\",\"19,256 K\"\r\n\"svchost.exe\",\"31456\",\"Services\",\"0\",\"32,696 K\"\r\n\"svchost.exe\",\"30284\",\"Services\",\"0\",\"16,248 K\"\r\n\"Universal Control.exe\",\"14960\",\"Console\",\"1\",\"257,100 K\"\r\n\"svchost.exe\",\"2976\",\"Console\",\"1\",\"24,848 K\"\r\n\"dllhost.exe\",\"7028\",\"Console\",\"1\",\"13,564 K\"\r\n\"nextcloud.exe\",\"36604\",\"Console\",\"1\",\"83,764 K\"\r\n\"MicrosoftStartFeedProvider.exe\",\"36724\",\"Console\",\"1\",\"41,636 K\"\r\n\"svchost.exe\",\"33152\",\"Services\",\"0\",\"20,204 K\"\r\n\"1Password.exe\",\"17364\",\"Console\",\"1\",\"134,632 K\"\r\n\"1Password.exe\",\"36840\",\"Console\",\"1\",\"33,052 K\"\r\n\"1Password.exe\",\"36384\",\"Console\",\"1\",\"71,756 K\"\r\n\"1Password.exe\",\"36440\",\"Console\",\"1\",\"46,352 K\"\r\n\"dllhost.exe\",\"32524\",\"Services\",\"0\",\"15,764 K\"\r\n\"svchost.exe\",\"35724\",\"Services\",\"0\",\"27,696 K\"\r\n\"1Password-Crash-Handler.exe\",\"20876\",\"Console\",\"1\",\"17,564 K\"\r\n\"conhost.exe\",\"34464\",\"Console\",\"1\",\"7,552 K\"\r\n\"iPSMonitor.exe\",\"24276\",\"Console\",\"1\",\"188,844 K\"\r\n\"AsusFCNotification.exe\",\"36812\",\"Console\",\"1\",\"14,704 K\"\r\n\"cmd.exe\",\"24732\",\"Console\",\"1\",\"10,016 K\"\r\n\"conhost.exe\",\"24928\",\"Console\",\"1\",\"15,964 K\"\r\n\"ddm.exe\",\"14416\",\"Console\",\"1\",\"11,776 K\"\r\n\"BrLogRx.exe\",\"24980\",\"Console\",\"1\",\"13,572 K\"\r\n\"SoftwareUpdateNotificationService.exe\",\"33740\",\"Console\",\"1\",\"15,396 K\"\r\n\"RuntimeBroker.exe\",\"35308\",\"Console\",\"1\",\"23,312 K\"\r\n\"svchost.exe\",\"37216\",\"Services\",\"0\",\"34,556 K\"\r\n\"svchost.exe\",\"32136\",\"Services\",\"0\",\"38,552 K\"\r\n\"svchost.exe\",\"5256\",\"Services\",\"0\",\"17,092 K\"\r\n\"svchost.exe\",\"3092\",\"Services\",\"0\",\"11,364 K\"\r\n\"svchost.exe\",\"32468\",\"Services\",\"0\",\"32,552 K\"\r\n\"svchost.exe\",\"14236\",\"Services\",\"0\",\"14,708 K\"\r\n\"svchost.exe\",\"29564\",\"Services\",\"0\",\"8,260 K\"\r\n\"Code.exe\",\"17284\",\"Console\",\"1\",\"189,088 K\"\r\n\"Code.exe\",\"23688\",\"Console\",\"1\",\"35,888 K\"\r\n\"Code.exe\",\"18632\",\"Console\",\"1\",\"356,780 K\"\r\n\"Code.exe\",\"31524\",\"Console\",\"1\",\"55,768 K\"\r\n\"Code.exe\",\"30792\",\"Console\",\"1\",\"400,224 K\"\r\n\"Code.exe\",\"35096\",\"Console\",\"1\",\"171,680 K\"\r\n\"Code.exe\",\"13388\",\"Console\",\"1\",\"506,756 K\"\r\n\"Code.exe\",\"13804\",\"Console\",\"1\",\"138,236 K\"\r\n\"Code.exe\",\"11104\",\"Console\",\"1\",\"891,372 K\"\r\n\"Code.exe\",\"23244\",\"Console\",\"1\",\"145,916 K\"\r\n\"Code.exe\",\"27304\",\"Console\",\"1\",\"132,072 K\"\r\n\"pet.exe\",\"18572\",\"Console\",\"1\",\"15,416 K\"\r\n\"conhost.exe\",\"32176\",\"Console\",\"1\",\"7,664 K\"\r\n\"OpenConsole.exe\",\"23392\",\"Console\",\"1\",\"12,708 K\"\r\n\"pwsh.exe\",\"35592\",\"Console\",\"1\",\"115,260 K\"\r\n\"Code.exe\",\"2308\",\"Console\",\"1\",\"753,288 K\"\r\n\"Code.exe\",\"15584\",\"Console\",\"1\",\"124,552 K\"\r\n\"Code.exe\",\"3332\",\"Console\",\"1\",\"119,336 K\"\r\n\"AsusSoftwareManagerAgent.exe\",\"18488\",\"Console\",\"1\",\"55,532 K\"\r\n\"ApplicationFrameHost.exe\",\"11692\",\"Console\",\"1\",\"63,012 K\"\r\n\"SystemSettings.exe\",\"29436\",\"Console\",\"1\",\"4,752 K\"\r\n\"svchost.exe\",\"22520\",\"Services\",\"0\",\"10,332 K\"\r\n\"svchost.exe\",\"27128\",\"Console\",\"1\",\"15,080 K\"\r\n\"svchost.exe\",\"13444\",\"Services\",\"0\",\"11,504 K\"\r\n\"svchost.exe\",\"11924\",\"Services\",\"0\",\"18,932 K\"\r\n\"ShellExperienceHost.exe\",\"14612\",\"Console\",\"1\",\"106,944 K\"\r\n\"RuntimeBroker.exe\",\"21592\",\"Console\",\"1\",\"35,000 K\"\r\n\"Code.exe\",\"37912\",\"Console\",\"1\",\"129,464 K\"\r\n\"backgroundTaskHost.exe\",\"39448\",\"Console\",\"1\",\"74,464 K\"\r\n\"RuntimeBroker.exe\",\"7300\",\"Console\",\"1\",\"36,072 K\"\r\n\"Code.exe\",\"27736\",\"Console\",\"1\",\"199,996 K\"\r\n\"RuntimeBroker.exe\",\"35432\",\"Console\",\"1\",\"13,104 K\"\r\n\"tail.exe\",\"39600\",\"Console\",\"1\",\"5,692 K\"\r\n\"grep.exe\",\"5248\",\"Console\",\"1\",\"5,728 K\"\r\n\"tail.exe\",\"15592\",\"Console\",\"1\",\"5,656 K\"\r\n\"grep.exe\",\"1944\",\"Console\",\"1\",\"5,744 K\"\r\n\"tail.exe\",\"40176\",\"Console\",\"1\",\"5,652 K\"\r\n\"grep.exe\",\"18552\",\"Console\",\"1\",\"5,772 K\"\r\n\"copilot-runtime.exe\",\"39812\",\"Console\",\"1\",\"93,628 K\"\r\n\"conhost.exe\",\"38996\",\"Console\",\"1\",\"7,784 K\"\r\n\"svchost.exe\",\"14808\",\"Services\",\"0\",\"13,168 K\"\r\n\"claude.exe\",\"36868\",\"Console\",\"1\",\"387,400 K\"\r\n\"conhost.exe\",\"46012\",\"Console\",\"1\",\"8,856 K\"\r\n\"Code.exe\",\"44020\",\"Console\",\"1\",\"338,264 K\"\r\n\"Code.exe\",\"34280\",\"Console\",\"1\",\"437,164 K\"\r\n\"Code.exe\",\"7656\",\"Console\",\"1\",\"133,292 K\"\r\n\"Code.exe\",\"40760\",\"Console\",\"1\",\"153,952 K\"\r\n\"pet.exe\",\"43344\",\"Console\",\"1\",\"14,652 K\"\r\n\"conhost.exe\",\"41552\",\"Console\",\"1\",\"7,652 K\"\r\n\"OpenConsole.exe\",\"41912\",\"Console\",\"1\",\"12,756 K\"\r\n\"pwsh.exe\",\"29976\",\"Console\",\"1\",\"115,548 K\"\r\n\"Code.exe\",\"29088\",\"Console\",\"1\",\"759,484 K\"\r\n\"Code.exe\",\"45916\",\"Console\",\"1\",\"133,088 K\"\r\n\"Code.exe\",\"30556\",\"Console\",\"1\",\"127,632 K\"\r\n\"svchost.exe\",\"16324\",\"Services\",\"0\",\"16,136 K\"\r\n\"claude.exe\",\"9412\",\"Console\",\"1\",\"155,044 K\"\r\n\"conhost.exe\",\"46072\",\"Console\",\"1\",\"11,480 K\"\r\n\"SnippingTool.exe\",\"44976\",\"Console\",\"1\",\"218,964 K\"\r\n\"OpenConsole.exe\",\"18916\",\"Console\",\"1\",\"12,532 K\"\r\n\"pwsh.exe\",\"18844\",\"Console\",\"1\",\"125,888 K\"\r\n\"Code.exe\",\"37840\",\"Console\",\"1\",\"174,220 K\"\r\n\"Code.exe\",\"660\",\"Console\",\"1\",\"136,552 K\"\r\n\"claude.exe\",\"38416\",\"Console\",\"1\",\"288,444 K\"\r\n\"conhost.exe\",\"32336\",\"Console\",\"1\",\"8,860 K\"\r\n\"claude.exe\",\"15896\",\"Console\",\"1\",\"313,244 K\"\r\n\"conhost.exe\",\"7596\",\"Console\",\"1\",\"8,856 K\"\r\n\"svchost.exe\",\"32264\",\"Services\",\"0\",\"9,836 K\"\r\n\"claude.exe\",\"19012\",\"Console\",\"1\",\"254,536 K\"\r\n\"conhost.exe\",\"28160\",\"Console\",\"1\",\"8,840 K\"\r\n\"cmd.exe\",\"30988\",\"Console\",\"1\",\"8,616 K\"\r\n\"conhost.exe\",\"16328\",\"Console\",\"1\",\"7,888 K\"\r\n\"pwsh.exe\",\"40012\",\"Console\",\"1\",\"121,092 K\"\r\n\"uv.exe\",\"45004\",\"Console\",\"1\",\"19,644 K\"\r\n\"python.exe\",\"3104\",\"Console\",\"1\",\"5,820 K\"\r\n\"python.exe\",\"27296\",\"Console\",\"1\",\"86,364 K\"\r\n\"SearchProtocolHost.exe\",\"35660\",\"Services\",\"0\",\"23,640 K\"\r\n\"SearchFilterHost.exe\",\"42744\",\"Services\",\"0\",\"13,284 K\"\r\n\"svchost.exe\",\"38676\",\"Services\",\"0\",\"16,748 K\"\r\n\"bash.exe\",\"27028\",\"Console\",\"1\",\"7,332 K\"\r\n\"bash.exe\",\"33272\",\"Console\",\"1\",\"11,056 K\"\r\n\"conhost.exe\",\"11896\",\"Console\",\"1\",\"7,684 K\"\r\n\"svchost.exe\",\"40364\",\"Services\",\"0\",\"14,264 K\"\r\n\"uv.exe\",\"34448\",\"Console\",\"1\",\"18,988 K\"\r\n\"python.exe\",\"19900\",\"Console\",\"1\",\"5,768 K\"\r\n\"python.exe\",\"41456\",\"Console\",\"1\",\"18,620 K\"\r\n\"sleep.exe\",\"18720\",\"Console\",\"1\",\"5,228 K\"\r\n\"python.exe\",\"40516\",\"Console\",\"1\",\"5,772 K\"\r\n\"python.exe\",\"41872\",\"Console\",\"1\",\"17,696 K\"\r\n\"wincam.exe\",\"17184\",\"Console\",\"1\",\"15,860 K\"\r\n\"svchost.exe\",\"33380\",\"Services\",\"0\",\"13,232 K\"\r\n\"tasklist.exe\",\"29080\",\"Console\",\"1\",\"12,584 K\"\r\n"
+    }
+   }
+  },
+  "stream_starts": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": 90,
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": 471,
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": 475,
+   "046d:085c:sn=C922SN01": 509
+  },
+  "rule": "fault = 0x8007001F (device_error) / unreleasable or hung reader / streaming command killed at its timeout; its streaming commands are gated from the next test on; each later test re-probes it once (1-frame MF capture) and un-faults it if it answers"
+ },
+ "kiyo_onset": {
+  "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+   "control_polls": {
+    "name": "USB Video Device",
+    "poller_mode": "background",
+    "poller_started_utc": "2026-11-12T02:59:37.301889+00:00",
+    "plug_in_age_at_start_s": 12735.0,
+    "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+    "stopped_answering": true,
+    "failed_from_first_poll": false,
+    "first_failure_utc": "2026-11-12T05:46:18.002183Z",
+    "first_failure_plug_in_age_s": 22735.2,
+    "first_failure_test": "W-MULTI",
+    "first_failure_codes": [],
+    "first_failure_vendor_processes": [],
+    "first_failure_activity_processes": [
+     "?:17184"
+    ],
+    "per_api": {
+     "mf": {
+      "utc": "2026-11-12T05:46:18.002183Z",
+      "plug_in_age_s": 22735.2,
+      "test": "W-MULTI",
+      "codes": [],
+      "real_codes": [],
+      "error_hr": null,
+      "failed_from_first_poll": false
+     },
+     "ds": {
+      "utc": "2026-11-12T05:46:24.465224Z",
+      "plug_in_age_s": 22741.6,
+      "test": "W-MULTI",
+      "codes": [],
+      "real_codes": [],
+      "error_hr": null,
+      "failed_from_first_poll": false
+     }
+    },
+    "transitions": [
+     {
+      "api": "mf",
+      "to": "not_answering",
+      "utc": "2026-11-12T05:46:18.002183Z",
+      "plug_in_age_s": 22735.2,
+      "test": "W-MULTI"
+     },
+     {
+      "api": "ds",
+      "to": "not_answering",
+      "utc": "2026-11-12T05:46:24.465224Z",
+      "plug_in_age_s": 22741.6,
+      "test": "W-MULTI"
+     }
+    ],
+    "n_polls": 722
+   },
+   "first_device_fault": {
+    "since_utc": "2026-11-12T05:46:24.269472+00:00",
+    "test": "W-MULTI",
+    "mode": "MJPG 1280x720@30",
+    "code": "watchdog timeout",
+    "class": "hang",
+    "stage": "ds_all_together_029",
+    "api": "ds",
+    "source": "W-MULTI multi_launch child",
+    "plug_in_age_s": 22741.5
+   },
+   "first_failure": {
+    "utc": "2026-11-12T05:45:47.327610+00:00",
+    "test": "W-MULTI",
+    "mode": "MJPG 1280x720@30",
+    "code": "timeout",
+    "api": "ds",
+    "stage": "open",
+    "class": "device_not_ready",
+    "source": "W-MULTI multi_launch child (ds_all_together_029)",
+    "plug_in_age_s": 22736.5,
+    "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+    "detail": {
+     "run": "ds_all_together_029",
+     "counts_as_refusal": false
+    },
+    "is_kiyo": true,
+    "name": "USB Video Device",
+    "device_level": true
+   },
+   "first_any_failure": {
+    "utc": "2026-11-12T05:45:47.327610+00:00",
+    "test": "W-MULTI",
+    "mode": "MJPG 1280x720@30",
+    "code": "timeout",
+    "api": "ds",
+    "stage": "open",
+    "class": "device_not_ready",
+    "source": "W-MULTI multi_launch child (ds_all_together_029)",
+    "plug_in_age_s": 22736.5,
+    "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+    "detail": {
+     "run": "ds_all_together_029",
+     "counts_as_refusal": false
+    },
+    "is_kiyo": true,
+    "name": "USB Video Device",
+    "device_level": true
+   },
+   "faulted_at_end": true
+  }
+ },
+ "status": [
+  {
+   "test": "W-ENV",
+   "eta_s": 20,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 0.6,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-POLICY",
+   "eta_s": 10,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 0.7,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-TOPO",
+   "eta_s": 62,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 1.1,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-ID",
+   "eta_s": 80,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 12.1,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-FMT",
+   "eta_s": 34,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 1.7,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-FMT-NOGRAB",
+   "eta_s": 235.0,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 197.8,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-CTRL-LIST",
+   "eta_s": 34,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 2.1,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-MJPEG",
+   "eta_s": 202.5,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 143.3,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-RAW",
+   "eta_s": 343.0,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 166.0,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-TS",
+   "eta_s": 432.0,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 382.1,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-PYMF",
+   "eta_s": 1127.0,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 682.8,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-PYMF-ALL",
+   "eta_s": 1008.0,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 834.6,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-NODRIFT",
+   "eta_s": 2916.0,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 2719.4,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-GAIN",
+   "eta_s": 3042.240740740741,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 1983.5,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-CTRL-EFFECT",
+   "eta_s": 1184.0,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 825.8,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-OCV-CTRL",
+   "eta_s": 2496.0,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 1577.4,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-TBUMP",
+   "eta_s": 360.0,
+   "gated": {},
+   "probes": {},
+   "status": "ok (with errors)",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 96.5,
+   "n_errors": 2,
+   "errors_head": [
+    {
+     "run": "baseline",
+     "stage": "connect",
+     "error": {
+      "stage": "connect",
+      "class": "api_error",
+      "message": "group/apply failed: HTTP 500 Camera config for b395 must be an instance of CameraConfig, got <class 'NoneType'> instead."
+     }
+    },
+    {
+     "run": "head",
+     "stage": "connect",
+     "error": {
+      "stage": "connect",
+      "class": "api_error",
+      "message": "group/apply failed: HTTP 500 Camera config for b395 must be an instance of CameraConfig, got <class 'NoneType'> instead."
+     }
+    }
+   ]
+  },
+  {
+   "test": "W-MULTI",
+   "eta_s": 1389.5,
+   "gated": {},
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 736.3,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-PYAV-LIST",
+   "eta_s": 320.4,
+   "gated": {
+    "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-12T05:46:24.269472+00:00"
+   },
+   "probes": {},
+   "status": "skipped (Kiyo Pro dead)",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 0.0,
+   "n_errors": 1,
+   "errors_head": [
+    {
+     "runner_error": "untested: a Kiyo Pro is dead (dead rule: this test would reach it)"
+    }
+   ]
+  },
+  {
+   "test": "W-CYC-KIYO",
+   "eta_s": 6338.25,
+   "gated": {
+    "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-12T05:46:24.269472+00:00"
+   },
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 0.0,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-CYC",
+   "eta_s": 12676.5,
+   "gated": {
+    "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": "2026-11-12T05:46:24.269472+00:00"
+   },
+   "probes": {},
+   "status": "ok",
+   "faults_marked_by_result_scan": [],
+   "elapsed_s": 8289.7,
+   "n_errors": 0,
+   "errors_head": []
+  },
+  {
+   "test": "W-KIYO",
+   "eta_s": 0.0,
+   "mode": "background",
+   "status": "ok (background)",
+   "elapsed_s": 0.0,
+   "n_errors": 0,
+   "errors_head": []
+  }
+ ],
+ "utc_finished": "2026-11-12T08:10:33.356700+00:00",
+ "elapsed_s": 18655.3,
+ "interrupted": false
+}

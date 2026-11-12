@@ -1,0 +1,4627 @@
+{
+ "test": "W-PYMF-ALL",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-12T03:26:09.230178+00:00",
+ "utc_finished": "2026-11-12T03:40:03.819532+00:00",
+ "elapsed_s": 834.594,
+ "command": "research/usb_cameras/suite/windows/run_suite.py --cyc-profile reliability --reliability-cycles 400 --min-fps 30 --min-height 720 --max-height 720",
+ "argv": [
+  "research/usb_cameras/suite/windows/run_suite.py",
+  "--cyc-profile",
+  "reliability",
+  "--reliability-cycles",
+  "400",
+  "--min-fps",
+  "30",
+  "--min-height",
+  "720",
+  "--max-height",
+  "720"
+ ],
+ "environment": {
+  "os": {
+   "platform": "Windows-11-10.0.26300-SP0",
+   "system": "Windows",
+   "release": "11",
+   "version": "10.0.26300",
+   "machine": "AMD64",
+   "windows_build": 26300,
+   "windows_version": "10.0.26300",
+   "windows_edition": "Core",
+   "windows_displayversion": "26H2",
+   "windows_ubr": 9711,
+   "windows_productname": "Windows 10 Home",
+   "windows_currentbuild": "26300"
+  },
+  "python": "3.12.13",
+  "python_implementation": "CPython",
+  "python_executable": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+  "hostname": "Gerald",
+  "pid": 27296,
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0"
+  }
+ },
+ "cameras": [
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 2
+  },
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "name": "Logitech Webcam C930e",
+   "vid": "046d",
+   "pid": "0843",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+   "parent_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&34c047e4&0&0000",
+   "hub_port": 8,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "Logitech Webcam C930e",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(8)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "speed": "HS",
+   "bcd_device": "0013",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-11T14:11:38.552007+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 0,
+   "ds_index": 3
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "name": "USB Camera",
+   "vid": "4c4a",
+   "pid": "4a55",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232e60d4&0&0000",
+   "hub_port": 2,
+   "mf_symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Camera",
+   "ds_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "speed": "HS",
+   "bcd_device": "0100",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-11T14:11:44.546053+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 5,
+   "ds_index": 0
+  },
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "vid": "046d",
+   "pid": "085c",
+   "serial": "C922SN01",
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "c922 Pro Stream Webcam",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+   "speed": "HS",
+   "bcd_device": "0016",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-12T00:57:22.463265+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 6,
+   "ds_index": 1
+  }
+ ],
+ "measurements": {
+  "info": {
+   "id": "W-PYMF-ALL",
+   "module": "tests.w_pymf_all",
+   "goal": "pymf_multi",
+   "opens_cameras": true,
+   "tools": [
+    "pymf/cli.py multi (uv, comtypes)",
+    "native/build/wincam.exe (in-use second opener, activity)"
+   ],
+   "flags": {
+    "--quick": "60 s / 30 s / 30 s parts"
+   },
+   "description": "pymf: every camera in one process at 720p30 (10 min) with exposure sets while streaming, 720p60 cameras together (3 min), in-use detection on one camera other than the Kiyo Pro"
+  },
+  "parts_seconds": {
+   "all_720p30": 600.0,
+   "all_720p60": 180.0,
+   "in_use": 45.0
+  },
+  "timeout_ms": 5000,
+  "pymf_cli": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py",
+  "frames_format": {
+   "struct": "<IqqqIIBHH",
+   "size": 41,
+   "fields": [
+    "seq",
+    "qpc_ns",
+    "sample_time_100ns",
+    "sample_duration_100ns",
+    "bytes",
+    "reader_flags",
+    "bits",
+    "sof_w",
+    "sof_h"
+   ],
+   "bits": {
+    "soi": 1,
+    "eoi": 2,
+    "size_ok": 4,
+    "discontinuity": 8,
+    "eoi_trailing": 16,
+    "saved": 32
+   }
+  },
+  "selection": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "name": "USB Video Device",
+    "is_kiyo": true,
+    "excluded_at_start": null,
+    "mode_720p30": "MJPG 1280x720@30",
+    "mode_720p60": "MJPG 1280x720@60",
+    "mode_scope": {
+     "advertised_mjpeg": 28,
+     "in_scope": [
+      "MJPG 1280x720@30",
+      "MJPG 1280x720@60"
+     ],
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "rule": "exactly 720 lines at >= 30 fps by default (Dom 2026-11-08)",
+     "mode": "MJPG 1280x720@30"
+    },
+    "formats_ok": true,
+    "formats_run": {
+     "cached_file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\_cache\\formats_mf_usbvideodevice_1532-0e05_4.json"
+    }
+   },
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+    "name": "Logitech Webcam C930e",
+    "is_kiyo": false,
+    "excluded_at_start": null,
+    "mode_720p30": "MJPG 1280x720@30",
+    "mode_720p60": null,
+    "mode_scope": {
+     "advertised_mjpeg": 119,
+     "in_scope": [
+      "MJPG 1280x720@30"
+     ],
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "rule": "exactly 720 lines at >= 30 fps by default (Dom 2026-11-08)",
+     "mode": "MJPG 1280x720@30"
+    },
+    "formats_ok": true,
+    "formats_run": {
+     "cached_file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\_cache\\formats_mf_logitechwebcam_046d-0843_8.json"
+    }
+   },
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+    "name": "USB Camera",
+    "is_kiyo": false,
+    "excluded_at_start": null,
+    "mode_720p30": "MJPG 1280x720@30",
+    "mode_720p60": null,
+    "mode_scope": {
+     "advertised_mjpeg": 10,
+     "in_scope": [
+      "MJPG 1280x720@30"
+     ],
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "rule": "exactly 720 lines at >= 30 fps by default (Dom 2026-11-08)",
+     "mode": "MJPG 1280x720@30"
+    },
+    "formats_ok": true,
+    "formats_run": {
+     "cached_file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\_cache\\formats_mf_usbcamera_4c4a-4a55_2.json"
+    }
+   },
+   "046d:085c:sn=C922SN01": {
+    "name": "c922 Pro Stream Webcam",
+    "is_kiyo": false,
+    "excluded_at_start": null,
+    "mode_720p30": "MJPG 1280x720@30",
+    "mode_720p60": "MJPG 1280x720@60",
+    "mode_scope": {
+     "advertised_mjpeg": 120,
+     "in_scope": [
+      "MJPG 960x720@30",
+      "MJPG 1280x720@30",
+      "MJPG 1280x720@60"
+     ],
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "rule": "exactly 720 lines at >= 30 fps by default (Dom 2026-11-08)",
+     "mode": "MJPG 1280x720@30"
+    },
+    "formats_ok": true,
+    "formats_run": {
+     "cached_file": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\_cache\\formats_mf_c922prostreamw_046d-085c_C922SN01.json"
+    }
+   }
+  },
+  "parts": {
+   "all_720p30": {
+    "ran": true,
+    "cameras": [
+     "usbvideodevice_1532-0e05_4",
+     "logitechwebcam_046d-0843_8",
+     "usbcamera_4c4a-4a55_2",
+     "c922prostreamw_046d-085c_C922SN01"
+    ],
+    "excluded": {},
+    "run": {
+     "rc": 4,
+     "elapsed_s": 602.454,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.2,
+     "lock_timed_out": false,
+     "camlock_rc": 4,
+     "spawn_error": null,
+     "stderr_tail": "suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 820.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py multi --spec C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30_spec.json --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30 --watchdog-ms 760000\n[camlock] released"
+    },
+    "exit_code": 4,
+    "error_top": {
+     "class": "camera_failure",
+     "reason": "camera(s) failed: ['c922prostreamw_046d-085c_C922SN01']"
+    },
+    "watchdog_fired": null,
+    "partial": null,
+    "cpu": {
+     "user_s": 19.9375,
+     "kernel_s": 23.65625,
+     "window_s": 600.0362594,
+     "pct_of_one_core": 7.265185947861071,
+     "method": "GetProcessTimes of this process over the streaming window (all cameras, callbacks, writer, main loop)",
+     "timeline": [
+      {
+       "t_s": 10.0,
+       "pct_of_one_core": 7.32
+      },
+      {
+       "t_s": 20.1,
+       "pct_of_one_core": 6.54
+      },
+      {
+       "t_s": 30.1,
+       "pct_of_one_core": 5.45
+      },
+      {
+       "t_s": 40.2,
+       "pct_of_one_core": 7.16
+      },
+      {
+       "t_s": 50.2,
+       "pct_of_one_core": 8.25
+      },
+      {
+       "t_s": 60.2,
+       "pct_of_one_core": 7.78
+      },
+      {
+       "t_s": 70.3,
+       "pct_of_one_core": 6.85
+      },
+      {
+       "t_s": 80.3,
+       "pct_of_one_core": 7.16
+      },
+      {
+       "t_s": 90.4,
+       "pct_of_one_core": 7.47
+      },
+      {
+       "t_s": 100.4,
+       "pct_of_one_core": 7.93
+      },
+      {
+       "t_s": 110.4,
+       "pct_of_one_core": 6.23
+      },
+      {
+       "t_s": 120.5,
+       "pct_of_one_core": 6.69
+      },
+      {
+       "t_s": 130.5,
+       "pct_of_one_core": 6.69
+      },
+      {
+       "t_s": 140.6,
+       "pct_of_one_core": 6.85
+      },
+      {
+       "t_s": 150.6,
+       "pct_of_one_core": 7.31
+      },
+      {
+       "t_s": 160.6,
+       "pct_of_one_core": 9.65
+      },
+      {
+       "t_s": 170.7,
+       "pct_of_one_core": 7.94
+      },
+      {
+       "t_s": 180.7,
+       "pct_of_one_core": 6.07
+      },
+      {
+       "t_s": 190.7,
+       "pct_of_one_core": 8.41
+      },
+      {
+       "t_s": 200.8,
+       "pct_of_one_core": 7.63
+      },
+      {
+       "t_s": 210.8,
+       "pct_of_one_core": 5.6
+      },
+      {
+       "t_s": 220.9,
+       "pct_of_one_core": 7.32
+      },
+      {
+       "t_s": 230.9,
+       "pct_of_one_core": 6.54
+      },
+      {
+       "t_s": 240.9,
+       "pct_of_one_core": 6.69
+      },
+      {
+       "t_s": 251.0,
+       "pct_of_one_core": 7.94
+      },
+      {
+       "t_s": 261.0,
+       "pct_of_one_core": 9.03
+      },
+      {
+       "t_s": 271.1,
+       "pct_of_one_core": 8.25
+      },
+      {
+       "t_s": 281.1,
+       "pct_of_one_core": 6.38
+      },
+      {
+       "t_s": 291.1,
+       "pct_of_one_core": 6.85
+      },
+      {
+       "t_s": 301.2,
+       "pct_of_one_core": 7.31
+      },
+      {
+       "t_s": 311.2,
+       "pct_of_one_core": 7.32
+      },
+      {
+       "t_s": 321.3,
+       "pct_of_one_core": 8.25
+      },
+      {
+       "t_s": 331.3,
+       "pct_of_one_core": 5.6
+      },
+      {
+       "t_s": 341.3,
+       "pct_of_one_core": 5.91
+      },
+      {
+       "t_s": 351.4,
+       "pct_of_one_core": 5.91
+      },
+      {
+       "t_s": 361.4,
+       "pct_of_one_core": 9.81
+      },
+      {
+       "t_s": 371.5,
+       "pct_of_one_core": 7.63
+      },
+      {
+       "t_s": 381.5,
+       "pct_of_one_core": 6.54
+      },
+      {
+       "t_s": 391.5,
+       "pct_of_one_core": 8.4
+      },
+      {
+       "t_s": 401.6,
+       "pct_of_one_core": 4.36
+      },
+      {
+       "t_s": 411.6,
+       "pct_of_one_core": 6.69
+      },
+      {
+       "t_s": 421.6,
+       "pct_of_one_core": 7.94
+      },
+      {
+       "t_s": 431.7,
+       "pct_of_one_core": 7.32
+      },
+      {
+       "t_s": 441.7,
+       "pct_of_one_core": 8.4
+      },
+      {
+       "t_s": 451.8,
+       "pct_of_one_core": 5.45
+      },
+      {
+       "t_s": 461.8,
+       "pct_of_one_core": 7.94
+      },
+      {
+       "t_s": 471.8,
+       "pct_of_one_core": 6.07
+      },
+      {
+       "t_s": 481.9,
+       "pct_of_one_core": 6.07
+      },
+      {
+       "t_s": 491.9,
+       "pct_of_one_core": 7.31
+      },
+      {
+       "t_s": 502.0,
+       "pct_of_one_core": 7.94
+      },
+      {
+       "t_s": 512.0,
+       "pct_of_one_core": 6.54
+      },
+      {
+       "t_s": 522.0,
+       "pct_of_one_core": 8.09
+      },
+      {
+       "t_s": 532.1,
+       "pct_of_one_core": 8.56
+      },
+      {
+       "t_s": 542.1,
+       "pct_of_one_core": 7.32
+      },
+      {
+       "t_s": 552.2,
+       "pct_of_one_core": 6.22
+      },
+      {
+       "t_s": 562.2,
+       "pct_of_one_core": 9.18
+      },
+      {
+       "t_s": 572.2,
+       "pct_of_one_core": 9.8
+      },
+      {
+       "t_s": 582.3,
+       "pct_of_one_core": 7.78
+      },
+      {
+       "t_s": 592.3,
+       "pct_of_one_core": 6.38
+      }
+     ],
+     "callback_s_total": 9.5634544
+    },
+    "session": {
+     "t_session_start_qpc_ns": 47688346172600,
+     "t_all_qpc_ns": 47689278174800,
+     "t_stop_qpc_ns": 48289314434200,
+     "open_phase_ms": 932.002,
+     "streaming_window_s": 600.036,
+     "stop_to_all_released_ms": 1116.616,
+     "open_phase_hung": []
+    },
+    "release": {
+     "all_released": true,
+     "hung_camera_threads": [],
+     "max_stop_to_released_ms": 1116.475
+    },
+    "writer": {
+     "queued": 402,
+     "written": 402,
+     "dropped": 0,
+     "errors": 0,
+     "queue_max": 4000,
+     "stopped": true
+    },
+    "kiyo_pro_fault": null,
+    "spec_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30_spec.json",
+    "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30",
+    "watchdog_ms": 760000.0,
+    "abandoned_threads": 0
+   },
+   "all_720p60": {
+    "ran": true,
+    "cameras": [
+     "usbvideodevice_1532-0e05_4",
+     "c922prostreamw_046d-085c_C922SN01"
+    ],
+    "excluded": {
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": "no MJPG 59+ fps mode at the default size",
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": "no MJPG 59+ fps mode at the default size"
+    },
+    "run": {
+     "rc": 0,
+     "elapsed_s": 182.0,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "lock_timed_out": false,
+     "camlock_rc": 0,
+     "spawn_error": null,
+     "stderr_tail": "suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 380.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py multi --spec C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p60_spec.json --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p60 --watchdog-ms 320000\n[camlock] released"
+    },
+    "exit_code": 0,
+    "error_top": null,
+    "watchdog_fired": null,
+    "partial": null,
+    "cpu": {
+     "user_s": 6.140625,
+     "kernel_s": 7.703125,
+     "window_s": 180.0256752,
+     "pct_of_one_core": 7.689875338403953,
+     "method": "GetProcessTimes of this process over the streaming window (all cameras, callbacks, writer, main loop)",
+     "timeline": [
+      {
+       "t_s": 10.0,
+       "pct_of_one_core": 7.01
+      },
+      {
+       "t_s": 20.1,
+       "pct_of_one_core": 6.38
+      },
+      {
+       "t_s": 30.1,
+       "pct_of_one_core": 6.22
+      },
+      {
+       "t_s": 40.2,
+       "pct_of_one_core": 8.71
+      },
+      {
+       "t_s": 50.2,
+       "pct_of_one_core": 6.69
+      },
+      {
+       "t_s": 60.2,
+       "pct_of_one_core": 6.69
+      },
+      {
+       "t_s": 70.3,
+       "pct_of_one_core": 7.94
+      },
+      {
+       "t_s": 80.3,
+       "pct_of_one_core": 8.4
+      },
+      {
+       "t_s": 90.4,
+       "pct_of_one_core": 7.78
+      },
+      {
+       "t_s": 100.4,
+       "pct_of_one_core": 7.78
+      },
+      {
+       "t_s": 110.4,
+       "pct_of_one_core": 7.16
+      },
+      {
+       "t_s": 120.5,
+       "pct_of_one_core": 7.47
+      },
+      {
+       "t_s": 130.5,
+       "pct_of_one_core": 8.41
+      },
+      {
+       "t_s": 140.6,
+       "pct_of_one_core": 8.56
+      },
+      {
+       "t_s": 150.6,
+       "pct_of_one_core": 8.4
+      },
+      {
+       "t_s": 160.6,
+       "pct_of_one_core": 8.72
+      },
+      {
+       "t_s": 170.7,
+       "pct_of_one_core": 8.09
+      }
+     ],
+     "callback_s_total": 2.2818047999999997
+    },
+    "session": {
+     "t_session_start_qpc_ns": 48293646117000,
+     "t_all_qpc_ns": 48294578790000,
+     "t_stop_qpc_ns": 48474604465200,
+     "open_phase_ms": 932.673,
+     "streaming_window_s": 180.026,
+     "stop_to_all_released_ms": 894.502,
+     "open_phase_hung": []
+    },
+    "release": {
+     "all_released": true,
+     "hung_camera_threads": [],
+     "max_stop_to_released_ms": 894.312
+    },
+    "writer": {
+     "queued": 8,
+     "written": 8,
+     "dropped": 0,
+     "errors": 0,
+     "queue_max": 4000,
+     "stopped": true
+    },
+    "kiyo_pro_fault": null,
+    "spec_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p60_spec.json",
+    "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p60",
+    "watchdog_ms": 320000.0,
+    "abandoned_threads": 0
+   },
+   "in_use": {
+    "ran": true,
+    "cameras": [
+     "logitechwebcam_046d-0843_8"
+    ],
+    "excluded": {},
+    "run": {
+     "rc": 0,
+     "elapsed_s": 46.125,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.2,
+     "lock_timed_out": false,
+     "camlock_rc": 0,
+     "spawn_error": null,
+     "stderr_tail": "-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 380.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py multi --spec C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\in_use_spec.json --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\in_use --watchdog-ms 320000\n[camlock] released"
+    },
+    "exit_code": 0,
+    "error_top": null,
+    "watchdog_fired": null,
+    "partial": null,
+    "cpu": {
+     "user_s": 0.59375,
+     "kernel_s": 0.671875,
+     "window_s": 45.0832735,
+     "pct_of_one_core": 2.807305019676533,
+     "method": "GetProcessTimes of this process over the streaming window (all cameras, callbacks, writer, main loop)",
+     "timeline": [
+      {
+       "t_s": 10.0,
+       "pct_of_one_core": 3.27
+      },
+      {
+       "t_s": 20.1,
+       "pct_of_one_core": 2.02
+      },
+      {
+       "t_s": 30.1,
+       "pct_of_one_core": 2.49
+      },
+      {
+       "t_s": 40.2,
+       "pct_of_one_core": 2.96
+      }
+     ],
+     "callback_s_total": 0.2027052
+    },
+    "session": {
+     "t_session_start_qpc_ns": 48476245788500,
+     "t_all_qpc_ns": 48476764242800,
+     "t_stop_qpc_ns": 48521847516300,
+     "open_phase_ms": 518.454,
+     "streaming_window_s": 45.083,
+     "stop_to_all_released_ms": 378.262,
+     "open_phase_hung": []
+    },
+    "release": {
+     "all_released": true,
+     "hung_camera_threads": [],
+     "max_stop_to_released_ms": 378.091
+    },
+    "writer": {
+     "queued": 4,
+     "written": 4,
+     "dropped": 0,
+     "errors": 0,
+     "queue_max": 4000,
+     "stopped": true
+    },
+    "kiyo_pro_fault": null,
+    "spec_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\in_use_spec.json",
+    "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\in_use",
+    "watchdog_ms": 320000.0,
+    "abandoned_threads": 0,
+    "target": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+    "intruders": [
+     {
+      "label": "wincam_activity",
+      "target": "logitechwebcam_046d-0843_8",
+      "at_s": 6.0,
+      "argv": [
+       "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+       "activity",
+       "--wait-ms",
+       "1500"
+      ],
+      "utc_started": "2026-11-12T03:39:24.335357Z",
+      "start_after_t_all_s": 6.01,
+      "qpc_start_ns": 48482773964400,
+      "qpc_end_ns": 48482956827900,
+      "end_after_t_all_s": 6.193,
+      "rc": 0,
+      "elapsed_s": 0.171,
+      "timed_out": false,
+      "killed": false,
+      "spawn_error": null,
+      "stderr_tail": "",
+      "stdout_json": {
+       "tool": "wincam",
+       "version": "wincam 1.2 (2026-11-08)",
+       "subcommand": "activity",
+       "utc_started": "2026-11-12T03:39:24.361104Z",
+       "pid": 29716,
+       "argv": [
+        "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+        "activity",
+        "--wait-ms",
+        "1500"
+       ],
+       "timeout_ms": 5000,
+       "camera_opened": false,
+       "note": "no IMFActivate::ActivateObject, no IMoniker::BindToObject: Frame Server activity reports + read-only registry",
+       "mf_enum_hr": "0x00000000",
+       "monitor": {
+        "available": true,
+        "hr": "0x00000000",
+        "source": "IMFSensorActivityMonitor (mfsensorgroup.dll)",
+        "report_received": true,
+        "reports": 2,
+        "wait_ms": 1500,
+        "first_report_ms": 1.540799998
+       },
+       "devices": [
+        {
+         "friendly_name": "Logitech Webcam C930e",
+         "symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+         "match_key": "usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000\\global",
+         "usb": {
+          "vid": "046d",
+          "pid": "0843",
+          "mi": "00",
+          "instance": "6&34c047e4&0&0000"
+         },
+         "processes": [
+          {
+           "pid": 19072,
+           "streaming": true,
+           "image": "C:\\Users\\Dom\\AppData\\Roaming\\uv\\python\\cpython-3.12.13-windows-x86_64-none\\python.exe",
+           "name": "python.exe",
+           "self": false
+          }
+         ],
+         "in_use": true,
+         "streaming": true
+        },
+        {
+         "friendly_name": "NDI Webcam Video 1",
+         "symlink": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource0",
+         "match_key": "root#media#0002\\vidsource0",
+         "usb": {
+          "vid": null,
+          "pid": null,
+          "mi": null,
+          "instance": "0002"
+         },
+         "processes": [],
+         "in_use": false,
+         "streaming": false
+        },
+        {
+         "friendly_name": "NDI Webcam Video 2",
+         "symlink": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource1",
+         "match_key": "root#media#0002\\vidsource1",
+         "usb": {
+          "vid": null,
+          "pid": null,
+          "mi": null,
+          "instance": "0002"
+         },
+         "processes": [],
+         "in_use": false,
+         "streaming": false
+        },
+        {
+         "friendly_name": "NDI Webcam Video 3",
+         "symlink": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource2",
+         "match_key": "root#media#0002\\vidsource2",
+         "usb": {
+          "vid": null,
+          "pid": null,
+          "mi": null,
+          "instance": "0002"
+         },
+         "processes": [],
+         "in_use": false,
+         "streaming": false
+        },
+        {
+         "friendly_name": "NDI Webcam Video 4",
+         "symlink": "\\\\?\\root#media#0002#{e5323777-f976-4f5b-9b55-b94699c46e44}\\vidsource3",
+         "match_key": "root#media#0002\\vidsource3",
+         "usb": {
+          "vid": null,
+          "pid": null,
+          "mi": null,
+          "instance": "0002"
+         },
+         "processes": [],
+         "in_use": false,
+         "streaming": false
+        },
+        {
+         "friendly_name": "USB Camera",
+         "symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+         "match_key": "usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000\\global",
+         "usb": {
+          "vid": "4c4a",
+          "pid": "4a55",
+          "mi": "00",
+          "instance": "8&232e60d4&0&0000"
+         },
+         "processes": [],
+         "in_use": false,
+         "streaming": false
+        },
+        {
+         "friendly_name": "c922 Pro Stream Webcam",
+         "symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+         "match_key": "usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000\\global",
+         "usb": {
+          "vid": "046d",
+          "pid": "085c",
+          "mi": "00",
+          "instance": "8&268da596&0&0000"
+         },
+         "processes": [],
+         "in_use": false,
+         "streaming": false
+        },
+        {
+         "friendly_name": "USB Video Device",
+         "symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+         "match_key": "usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000\\global",
+         "usb": {
+          "vid": "1532",
+          "pid": "0e05",
+          "mi": "00",
+          "instance": "a&34494d13&0&0000"
+         },
+         "processes": [],
+         "in_use": false,
+         "streaming": false
+        }
+       ],
+       "consent_store": {
+        "hives_opened": {
+         "HKCU": true,
+         "HKLM": true
+        },
+        "apps_with_timestamps": 43,
+        "in_use": [],
+        "note": "privacy ConsentStore (read-only): apps whose LastUsedTimeStop is 0 or before LastUsedTimeStart are using a camera now; per capability, not per camera; covers MF and DirectShow clients"
+       },
+       "coverage_note": "IMFSensorActivityMonitor reports Frame Server (MF / WinRT) clients only; DirectShow (ksproxy) clients are invisible to it but show in consent_store.in_use (per capability, not per camera)",
+       "error": null,
+       "utc_finished": "2026-11-12T03:39:24.516300Z",
+       "exit_code": 0,
+       "abandoned_threads": 0
+      }
+     },
+     {
+      "label": "wincam_capture",
+      "target": "logitechwebcam_046d-0843_8",
+      "at_s": 14.0,
+      "argv": [
+       "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+       "capture",
+       "--api",
+       "mf",
+       "--device",
+       "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+       "--width",
+       "1280",
+       "--height",
+       "720",
+       "--fps",
+       "30",
+       "--subtype",
+       "MJPG",
+       "--frames",
+       "1",
+       "--timeout-ms",
+       "4000",
+       "--save",
+       "none",
+       "--out-dir",
+       "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\in_use\\opener_wincam"
+      ],
+      "utc_started": "2026-11-12T03:39:32.339827Z",
+      "start_after_t_all_s": 14.014,
+      "qpc_start_ns": 48490778705600,
+      "qpc_end_ns": 48490843629800,
+      "end_after_t_all_s": 14.079,
+      "rc": 4,
+      "elapsed_s": 0.062,
+      "timed_out": false,
+      "killed": false,
+      "spawn_error": null,
+      "stderr_tail": "",
+      "stdout_json": {
+       "tool": "wincam",
+       "version": "wincam 1.2 (2026-11-08)",
+       "subcommand": "capture",
+       "utc_started": "2026-11-12T03:39:32.364708Z",
+       "pid": 37520,
+       "argv": [
+        "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+        "capture",
+        "--api",
+        "mf",
+        "--device",
+        "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+        "--width",
+        "1280",
+        "--height",
+        "720",
+        "--fps",
+        "30",
+        "--subtype",
+        "MJPG",
+        "--frames",
+        "1",
+        "--timeout-ms",
+        "4000",
+        "--save",
+        "none",
+        "--out-dir",
+        "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\in_use\\opener_wincam"
+       ],
+       "timeout_ms": 4000,
+       "api": "mf",
+       "requested": {
+        "subtype": "MJPG",
+        "width": 1280,
+        "height": 720,
+        "fps": 30,
+        "frames": 1,
+        "seconds": null,
+        "save": "none",
+        "allow_synthesized": false
+       },
+       "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\in_use\\opener_wincam",
+       "enumerate_ms": 2.2733,
+       "device": {
+        "index": 0,
+        "friendly_name": "Logitech Webcam C930e",
+        "symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+        "usb": {
+         "vid": "046d",
+         "pid": "0843",
+         "mi": "00",
+         "instance": "6&34c047e4&0&0000"
+        }
+       },
+       "controls_before": [],
+       "negotiated": {
+        "requested_subtype": "MJPG",
+        "candidate_rates_same_size": [
+         "30/1",
+         "24/1",
+         "20/1",
+         "15/1",
+         "10/1",
+         "10000000/1333333",
+         "5/1"
+        ],
+        "likely_mf_synthesized_candidates": 0,
+        "native_type_index": 294,
+        "likely_mf_synthesized": false,
+        "raw": false,
+        "stream_selection_hr": "0x00000000",
+        "readback_hr": "0x00000000",
+        "subtype": "MJPG",
+        "width": 1280,
+        "height": 720,
+        "fps_num": 30,
+        "fps_den": 1,
+        "fps": 30,
+        "readback_default_stride": null,
+        "readback_ok": true
+       },
+       "steps": [
+        {
+         "step": "enumerate",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 1.714200005,
+         "timed_out": false
+        },
+        {
+         "step": "activate",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 25.5634,
+         "timed_out": false
+        },
+        {
+         "step": "reader_create",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 1.178500004,
+         "timed_out": false
+        },
+        {
+         "step": "set_type",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 0.6928000003,
+         "timed_out": false
+        },
+        {
+         "step": "read_sample_issue",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 0.05920000374,
+         "timed_out": false
+        },
+        {
+         "step": "first_sample",
+         "hr": "0xC00D3704",
+         "hr_name": "MF_E_HW_MFT_FAILED_START_STREAMING",
+         "ms": 1.5212,
+         "timed_out": false
+        },
+        {
+         "step": "flush",
+         "hr": "0xC00D3704",
+         "hr_name": "MF_E_HW_MFT_FAILED_START_STREAMING",
+         "ms": 0.04659999907,
+         "timed_out": false,
+         "on_flush_received": false
+        },
+        {
+         "step": "reader_release",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 1.127399996,
+         "timed_out": false
+        },
+        {
+         "step": "control_interfaces_release",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 0.06370000541,
+         "timed_out": false
+        },
+        {
+         "step": "source_shutdown",
+         "hr": "0xC00D3E85",
+         "hr_name": "MF_E_SHUTDOWN",
+         "ms": 0.05510000139,
+         "timed_out": false
+        },
+        {
+         "step": "activate_shutdown_object",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 0.06150000542,
+         "timed_out": false
+        }
+       ],
+       "timings": {
+        "enumerate_ms": 1.714200005,
+        "activate_ms": 25.5634,
+        "reader_ms": 1.178500004,
+        "settype_ms": 0.6928000003,
+        "first_frame_ms": -1,
+        "open_to_first_frame_ms": -1,
+        "flush_ms": 0.04659999907,
+        "reader_release_ms": 1.127399996,
+        "shutdown_ms": 0.05510000139,
+        "shutdown_object_ms": 0.06150000542,
+        "close_ms": 1.3869
+       },
+       "frames": {
+        "total": 0,
+        "ok": 0,
+        "soi_eoi_ok": 0,
+        "sof0_size_match": 0,
+        "with_uvc_metadata": 0,
+        "with_capture_metadata_attr": 0,
+        "stream_ticks": 0,
+        "null_samples": 0,
+        "discontinuities": 0,
+        "bytes_total": 0,
+        "saved": 0,
+        "reader_flag_counts": {},
+        "raw": false,
+        "ok_rule": "jpeg: SOI + EOI + SOF size == request"
+       },
+       "duration_s": 0,
+       "fps_measured": 0,
+       "metadata": {
+        "uvc_pts_present": false,
+        "note": "UVC PTS/SCR appear only when MetadataBufferSizeInKB0 is set on this device instance (tier 1)"
+       },
+       "cpu": {
+        "user_s": 0,
+        "kernel_s": 0,
+        "window_s": 1.9e-06,
+        "pct_of_one_core": 0,
+        "method": "GetProcessTimes over the streaming window",
+        "process_total_s": 0.03125
+       },
+       "schedule": [],
+       "unreleasable": false,
+       "ok": false,
+       "error": {
+        "stage": "first_sample",
+        "hr": "0xC00D3704",
+        "hr_name": "MF_E_HW_MFT_FAILED_START_STREAMING",
+        "message": "Hardware MFT failed to start streaming due to lack of hardware resources.",
+        "class": "in_use",
+        "reason": "MF could not start streaming; usually another app holds the camera"
+       },
+       "files": {
+        "frames_jsonl": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\in_use\\opener_wincam\\frames.jsonl",
+        "frames_mjpeg": null,
+        "frames_raw": null
+       },
+       "utc_finished": "2026-11-12T03:39:32.401998Z",
+       "exit_code": 4,
+       "abandoned_threads": 0
+      }
+     },
+     {
+      "label": "pymf_capture",
+      "target": "logitechwebcam_046d-0843_8",
+      "at_s": 26.0,
+      "argv": [
+       "uv",
+       "run",
+       "--python",
+       "3.12",
+       "--script",
+       "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py",
+       "capture",
+       "--device",
+       "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+       "--width",
+       "1280",
+       "--height",
+       "720",
+       "--fps",
+       "30",
+       "--subtype",
+       "MJPG",
+       "--frames",
+       "1",
+       "--timeout-ms",
+       "4000",
+       "--save",
+       "none",
+       "--out-dir",
+       "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\in_use\\opener_pymf"
+      ],
+      "utc_started": "2026-11-12T03:39:44.342586Z",
+      "start_after_t_all_s": 26.017,
+      "qpc_start_ns": 48502781214500,
+      "qpc_end_ns": 48502955211600,
+      "end_after_t_all_s": 26.191,
+      "rc": 4,
+      "elapsed_s": 0.171,
+      "timed_out": false,
+      "killed": false,
+      "spawn_error": null,
+      "stderr_tail": "",
+      "stdout_json": {
+       "tool": "pymf",
+       "version": "pymf 0.3 (2026-11-11)",
+       "subcommand": "capture",
+       "utc_started": "2026-11-12T03:39:44.468915Z",
+       "pid": 38320,
+       "argv": [
+        "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py",
+        "capture",
+        "--device",
+        "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+        "--width",
+        "1280",
+        "--height",
+        "720",
+        "--fps",
+        "30",
+        "--subtype",
+        "MJPG",
+        "--frames",
+        "1",
+        "--timeout-ms",
+        "4000",
+        "--save",
+        "none",
+        "--out-dir",
+        "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\in_use\\opener_pymf"
+       ],
+       "timeout_ms": 4000,
+       "api": "mf",
+       "requested": {
+        "subtype": "MJPG",
+        "width": 1280,
+        "height": 720,
+        "fps": 30.0,
+        "frames": 1,
+        "seconds": null,
+        "save": "none"
+       },
+       "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\in_use\\opener_pymf",
+       "enumerate_ms": 2.3787,
+       "device": {
+        "index": 0,
+        "friendly_name": "Logitech Webcam C930e",
+        "symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+        "usb": {
+         "vid": "046d",
+         "pid": "0843",
+         "mi": "00",
+         "instance": "6&34c047e4&0&0000"
+        }
+       },
+       "negotiated": {
+        "candidate_rates_same_size": [
+         "30/1",
+         "24/1",
+         "20/1",
+         "15/1",
+         "10/1",
+         "10000000/1333333",
+         "5/1"
+        ],
+        "native_type_index": 294,
+        "stream_selection_hr": "0x00000000",
+        "readback_hr": "0x00000000",
+        "subtype": "MJPG",
+        "width": 1280,
+        "height": 720,
+        "fps_num": 30,
+        "fps_den": 1,
+        "fps": 30.0,
+        "readback_ok": true
+       },
+       "steps": [
+        {
+         "step": "enumerate",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 1.7732,
+         "timed_out": false
+        },
+        {
+         "step": "activate",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 21.9384,
+         "timed_out": false
+        },
+        {
+         "step": "reader_create",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 1.3659,
+         "timed_out": false
+        },
+        {
+         "step": "set_type",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 2.7777,
+         "timed_out": false
+        },
+        {
+         "step": "read_sample_issue",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 0.1208,
+         "timed_out": false
+        },
+        {
+         "step": "first_sample",
+         "hr": "0xC00D3704",
+         "hr_name": "MF_E_HW_MFT_FAILED_START_STREAMING",
+         "ms": 0.9124,
+         "timed_out": false
+        },
+        {
+         "step": "flush",
+         "hr": "0xC00D3704",
+         "hr_name": "MF_E_HW_MFT_FAILED_START_STREAMING",
+         "ms": 0.1145,
+         "timed_out": false,
+         "on_flush_received": false
+        },
+        {
+         "step": "reader_release",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 1.2076,
+         "timed_out": false
+        },
+        {
+         "step": "control_interfaces_release",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 0.1462,
+         "timed_out": false
+        },
+        {
+         "step": "source_shutdown",
+         "hr": "0xC00D3E85",
+         "hr_name": "MF_E_SHUTDOWN",
+         "ms": 0.106,
+         "timed_out": false
+        },
+        {
+         "step": "activate_shutdown_object",
+         "hr": "0x00000000",
+         "hr_name": "S_OK",
+         "ms": 0.0986,
+         "timed_out": false
+        }
+       ],
+       "timings": {
+        "enumerate_ms": 1.7732,
+        "activate_ms": 21.9384,
+        "reader_ms": 1.3659,
+        "settype_ms": 2.7777,
+        "first_frame_ms": -1.0,
+        "open_to_first_frame_ms": -1.0,
+        "flush_ms": 0.1145,
+        "reader_release_ms": 1.2076,
+        "shutdown_ms": 0.106,
+        "shutdown_object_ms": 0.0986,
+        "close_ms": 1.744
+       },
+       "frames": {
+        "total": 0,
+        "ok": 0,
+        "soi_eoi_ok": 0,
+        "sof0_size_match": 0,
+        "with_uvc_metadata": 0,
+        "with_capture_metadata_attr": 0,
+        "stream_ticks": 0,
+        "null_samples": 0,
+        "discontinuities": 0,
+        "bytes_total": 0,
+        "saved": 0,
+        "reader_flag_counts": {}
+       },
+       "duration_s": 0.0,
+       "fps_measured": 0.0,
+       "metadata": {
+        "uvc_pts_present": false,
+        "note": "UVC PTS/SCR appear only when MetadataBufferSizeInKB0 is set on this device instance (tier 1, optional); absence is normal"
+       },
+       "cpu": {
+        "user_s": 0.0,
+        "kernel_s": 0.0,
+        "window_s": 3.1e-06,
+        "pct_of_one_core": 0.0,
+        "method": "GetProcessTimes over the streaming window",
+        "callback_s": 0.0,
+        "callback_note": "wall time spent inside the Python OnReadSample (GIL held), streaming window",
+        "process_total_s": 0.0625
+       },
+       "schedule": [],
+       "unreleasable": false,
+       "ok": false,
+       "error": {
+        "stage": "first_sample",
+        "hr": "0xC00D3704",
+        "hr_name": "MF_E_HW_MFT_FAILED_START_STREAMING",
+        "message": "Hardware MFT failed to start streaming due to lack of hardware resources.",
+        "class": "in_use",
+        "reason": "MF could not start streaming; usually another app holds the camera"
+       },
+       "files": {
+        "frames_jsonl": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\in_use\\opener_pymf\\frames.jsonl",
+        "frames_mjpeg": null
+       },
+       "utc_finished": "2026-11-12T03:39:44.509406Z",
+       "exit_code": 4,
+       "abandoned_threads": 0
+      }
+     }
+    ]
+   }
+  },
+  "cameras": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "name": "USB Video Device",
+    "is_kiyo": true,
+    "all_720p30": {
+     "ran": true,
+     "label": "usbvideodevice_1532-0e05_4",
+     "mode": "MJPG 1280x720@30",
+     "ok": true,
+     "closed_by": "stop",
+     "error": null,
+     "fault_kind": null,
+     "unreleasable": false,
+     "kiyo_pro_fault": false,
+     "negotiated": {
+      "candidate_rates_same_size": [
+       "60/1",
+       "30/1",
+       "24/1",
+       "20/1",
+       "15/1",
+       "10/1",
+       "5/1"
+      ],
+      "native_type_index": 43,
+      "stream_selection_hr": "0x00000000",
+      "readback_hr": "0x00000000",
+      "subtype": "MJPG",
+      "width": 1280,
+      "height": 720,
+      "fps_num": 30,
+      "fps_den": 1,
+      "fps": 30.0,
+      "readback_ok": true
+     },
+     "first_frame_ms": 888.407,
+     "open_to_first_frame_ms": 929.7118,
+     "first_sample_after_session_start_ms": 931.578,
+     "stop_to_released_ms": 1116.475,
+     "close_ms": 1090.7313,
+     "timings": {
+      "enumerate_ms": 4.8093,
+      "activate_ms": 27.8291,
+      "reader_ms": 1.1505,
+      "settype_ms": 6.1806,
+      "first_frame_ms": 888.407,
+      "open_to_first_frame_ms": 929.7118,
+      "flush_ms": 0.6754,
+      "reader_release_ms": 1088.7121,
+      "shutdown_ms": 0.9384,
+      "shutdown_object_ms": 0.1266,
+      "close_ms": 1090.7313,
+      "open_start_after_session_start_ms": 1.865,
+      "first_sample_after_session_start_ms": 931.578,
+      "failed_after_session_start_ms": null,
+      "close_start_after_session_start_ms": 600994.0,
+      "stop_to_released_ms": 1116.475
+     },
+     "frames": {
+      "total": 17626,
+      "ok": 17626,
+      "soi_eoi_ok": 17626,
+      "sof0_size_match": 17626,
+      "stream_ticks": 1,
+      "null_samples": 1,
+      "discontinuities": 2,
+      "bytes_total": 3714649475,
+      "bytes_min": 99578,
+      "bytes_max": 237546,
+      "reader_flag_counts": {},
+      "samples_kept": [
+       0,
+       4502,
+       9005,
+       13315
+      ],
+      "window_frames_kept": 120
+     },
+     "callback_s": 2.68389,
+     "cpu_pct_of_one_core_process": 7.265185947861071,
+     "cpu_pct_per_streaming_camera": 2.42,
+     "same_hub_streaming": [],
+     "steps": [
+      {
+       "step": "enumerate",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 4.8093,
+       "timed_out": false
+      },
+      {
+       "step": "activate",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 27.8291,
+       "timed_out": false
+      },
+      {
+       "step": "reader_create",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 1.1505,
+       "timed_out": false
+      },
+      {
+       "step": "set_type",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 6.1806,
+       "timed_out": false
+      },
+      {
+       "step": "read_sample_issue",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.1605,
+       "timed_out": false
+      },
+      {
+       "step": "first_sample",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 888.407,
+       "timed_out": false
+      },
+      {
+       "step": "flush",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.6754,
+       "timed_out": false,
+       "on_flush_received": true
+      },
+      {
+       "step": "reader_release",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 1088.7121,
+       "timed_out": false
+      },
+      {
+       "step": "control_interfaces_release",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.1541,
+       "timed_out": false
+      },
+      {
+       "step": "source_shutdown",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.9384,
+       "timed_out": false
+      },
+      {
+       "step": "activate_shutdown_object",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.1266,
+       "timed_out": false
+      }
+     ],
+     "metrics": {
+      "frames": 17626,
+      "nominal_fps": 30.0,
+      "skip_s": 2.0,
+      "integrity": {
+       "soi": 1.0,
+       "eoi": 1.0,
+       "size_ok": 1.0,
+       "valid": 1.0,
+       "trailing_after_eoi": 0,
+       "discontinuities": 2,
+       "bytes_min": 99578,
+       "bytes_p50": 205373,
+       "bytes_max": 237546
+      },
+      "fps_delivered": 29.372,
+      "seq_gaps": 0,
+      "steady_frames": 17566,
+      "fps_steady": 29.371,
+      "fps_fit": 29.377,
+      "arrival_interval_ms": {
+       "n": 17565,
+       "mean": 34.047,
+       "std": 6.112,
+       "p50": 32.036,
+       "p90": 47.893,
+       "p99": 48.505,
+       "p999": 48.995,
+       "max": 79.425
+      },
+      "arrival_gaps": {
+       "threshold_ms": 50.0,
+       "count": 10,
+       "max_ms": 79.425,
+       "largest": [
+        {
+         "seq": 9209,
+         "gap_ms": 79.425,
+         "t_s": 307.157
+        },
+        {
+         "seq": 16191,
+         "gap_ms": 64.472,
+         "t_s": 550.173
+        },
+        {
+         "seq": 3744,
+         "gap_ms": 64.39,
+         "t_s": 124.796
+        },
+        {
+         "seq": 64,
+         "gap_ms": 64.302,
+         "t_s": 2.176
+        },
+        {
+         "seq": 86,
+         "gap_ms": 64.194,
+         "t_s": 2.912
+        }
+       ],
+       "grid_limited": false
+      },
+      "sample_time": {
+       "n": 17566,
+       "grid_ms": null,
+       "period_ms_measured": 34.047,
+       "drops_detectable": true,
+       "slotting": "sequence (incremental rejected)",
+       "gaps_found": 2,
+       "drops": 0,
+       "frames_short_of_nominal": 376
+      },
+      "sample_time_gaps": {
+       "threshold_ms": 50.0,
+       "count": 2,
+       "max_ms": 64.033,
+       "largest": [
+        {
+         "seq": 16191,
+         "gap_ms": 64.033,
+         "t_s": null
+        },
+        {
+         "seq": 3734,
+         "gap_ms": 64.027,
+         "t_s": null
+        }
+       ],
+       "grid_limited": false
+      },
+      "arrival_minus_sample_ms": {
+       "grid_ms": null,
+       "p50": 0.797,
+       "offset_p50_ms": 0.522,
+       "offset_p99_ms": 47.974,
+       "offset_max_ms": 49.056,
+       "offset_std_ms": 15.681,
+       "note": "arrival (QPC at OnReadSample entry, incl. the GIL wait) minus MF sample time, folded onto the sample-time grid (w_pymf.grid_offsets): the delivery delay a busy Python process would add"
+      }
+     },
+     "samples": {
+      "n": 4,
+      "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\usbvideodevice_1532-0e05_4\\samples",
+      "strict_ok": true,
+      "strict_errors": [],
+      "sof": [
+       "1280x720"
+      ],
+      "header_sha1": [
+       "63ad4de8071d39dc4dae72d192aa5fad6324332b",
+       "926e7cff0ce2ac38c3175aa269e07caf1967342e"
+      ]
+     },
+     "failure": null
+    },
+    "controls": [
+     {
+      "i": 0,
+      "at_s": 120.0,
+      "control": "exposure",
+      "request": {
+       "delta": -2,
+       "flags": "manual"
+      },
+      "key": "cc.exposure",
+      "window": {
+       "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\usbvideodevice_1532-0e05_4\\ctl0_exposure",
+       "pre_seqs": [
+        3599,
+        3600,
+        3601,
+        3602,
+        3603
+       ],
+       "until_seq": 3664
+      },
+      "seq_at_set_start": 3604,
+      "call_ms": 1.7014,
+      "seq_at_set_return": 3604,
+      "timed_out": false,
+      "before": {
+       "supported": true,
+       "via": "IAMCameraControl",
+       "value": -6,
+       "flags": 1,
+       "flags_names": [
+        "auto"
+       ],
+       "min": -11,
+       "max": -2,
+       "step": 1,
+       "default": -6
+      },
+      "supported": true,
+      "value_rule": "current -6 - 2",
+      "set_value": -8,
+      "set_flags": 2,
+      "qpc_set_start_ns": 47809306132900,
+      "qpc_set_return_ns": 47809306459200,
+      "hr_set": "0x00000000",
+      "hr_set_name": "S_OK",
+      "after": {
+       "supported": true,
+       "via": "IAMCameraControl",
+       "value": -8,
+       "flags": 2,
+       "flags_names": [
+        "manual"
+       ],
+       "min": -11,
+       "max": -2,
+       "step": 1,
+       "default": -6
+      },
+      "matches": true,
+      "effect": {
+       "measured": true,
+       "luma_before": 118.69,
+       "luma_before_std": 0.0,
+       "luma_after": 102.8,
+       "luma_step": -15.89,
+       "change_floor": 4.75,
+       "changed": true,
+       "frames_kept": {
+        "before": 5,
+        "after": 60
+       },
+       "expected_direction": "darker",
+       "direction_ok": true,
+       "frames_to_change": 3,
+       "frames_after_set_returned": 3,
+       "ms_to_change": 175.5
+      },
+      "window_check": {
+       "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\usbvideodevice_1532-0e05_4\\ctl0_exposure",
+       "strict_ok": [
+        true,
+        true
+       ],
+       "kept": 65
+      }
+     },
+     {
+      "i": 1,
+      "at_s": 300.0,
+      "control": "exposure",
+      "request": {
+       "value": "start",
+       "flags": "manual"
+      },
+      "key": "cc.exposure",
+      "window": {
+       "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\usbvideodevice_1532-0e05_4\\ctl1_exposure",
+       "pre_seqs": [
+        9000,
+        9001,
+        9002,
+        9003,
+        9004
+       ],
+       "until_seq": 9065
+      },
+      "seq_at_set_start": 9005,
+      "call_ms": 2.1852,
+      "seq_at_set_return": 9005,
+      "timed_out": false,
+      "before": {
+       "supported": true,
+       "via": "IAMCameraControl",
+       "value": -8,
+       "flags": 2,
+       "flags_names": [
+        "manual"
+       ],
+       "min": -11,
+       "max": -2,
+       "step": 1,
+       "default": -6
+      },
+      "supported": true,
+      "value_rule": "start",
+      "set_value": -6,
+      "set_flags": 2,
+      "qpc_set_start_ns": 47989300339700,
+      "qpc_set_return_ns": 47989300777400,
+      "hr_set": "0x00000000",
+      "hr_set_name": "S_OK",
+      "after": {
+       "supported": true,
+       "via": "IAMCameraControl",
+       "value": -6,
+       "flags": 2,
+       "flags_names": [
+        "manual"
+       ],
+       "min": -11,
+       "max": -2,
+       "step": 1,
+       "default": -6
+      },
+      "matches": true,
+      "effect": {
+       "measured": true,
+       "luma_before": 102.77,
+       "luma_before_std": 0.01,
+       "luma_after": 119.28,
+       "luma_step": 16.5,
+       "change_floor": 4.11,
+       "changed": true,
+       "frames_kept": {
+        "before": 5,
+        "after": 60
+       },
+       "expected_direction": "brighter",
+       "direction_ok": true,
+       "frames_to_change": 5,
+       "frames_after_set_returned": 5,
+       "ms_to_change": 191.3
+      },
+      "window_check": {
+       "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\usbvideodevice_1532-0e05_4\\ctl1_exposure",
+       "strict_ok": [
+        true,
+        true
+       ],
+       "kept": 65
+      }
+     }
+    ],
+    "restore": [
+     {
+      "control": "cc.exposure",
+      "restore_value": -6,
+      "restore_flags": 1,
+      "hr_set": "0x00000000",
+      "hr_set_name": "S_OK",
+      "readback_value": -6,
+      "readback_flags": 1,
+      "timed_out": false,
+      "call_ms": 2.2423,
+      "ok": true
+     }
+    ],
+    "restore_skipped": null,
+    "all_720p60": {
+     "ran": true,
+     "label": "usbvideodevice_1532-0e05_4",
+     "mode": "MJPG 1280x720@60",
+     "ok": true,
+     "closed_by": "stop",
+     "error": null,
+     "fault_kind": null,
+     "unreleasable": false,
+     "kiyo_pro_fault": false,
+     "negotiated": {
+      "candidate_rates_same_size": [
+       "60/1",
+       "30/1",
+       "24/1",
+       "20/1",
+       "15/1",
+       "10/1",
+       "5/1"
+      ],
+      "native_type_index": 42,
+      "stream_selection_hr": "0x00000000",
+      "readback_hr": "0x00000000",
+      "subtype": "MJPG",
+      "width": 1280,
+      "height": 720,
+      "fps_num": 60,
+      "fps_den": 1,
+      "fps": 60.0,
+      "readback_ok": true
+     },
+     "first_frame_ms": 888.8084,
+     "open_to_first_frame_ms": 931.4885,
+     "first_sample_after_session_start_ms": 932.001,
+     "stop_to_released_ms": 894.312,
+     "close_ms": 862.0683,
+     "timings": {
+      "enumerate_ms": 3.3822,
+      "activate_ms": 30.4073,
+      "reader_ms": 1.2949,
+      "settype_ms": 5.4467,
+      "first_frame_ms": 888.8084,
+      "open_to_first_frame_ms": 931.4885,
+      "flush_ms": 0.8784000000000001,
+      "reader_release_ms": 859.2922,
+      "shutdown_ms": 1.2319,
+      "shutdown_object_ms": 0.1573,
+      "close_ms": 862.0683,
+      "open_start_after_session_start_ms": 0.51,
+      "first_sample_after_session_start_ms": 932.001,
+      "failed_after_session_start_ms": null,
+      "close_start_after_session_start_ms": 180990.583,
+      "stop_to_released_ms": 894.312
+     },
+     "frames": {
+      "total": 5406,
+      "ok": 5406,
+      "soi_eoi_ok": 5406,
+      "sof0_size_match": 5406,
+      "stream_ticks": 1,
+      "null_samples": 1,
+      "discontinuities": 1,
+      "bytes_total": 1115526104,
+      "bytes_min": 100629,
+      "bytes_max": 207168,
+      "reader_flag_counts": {},
+      "samples_kept": [
+       0,
+       1352,
+       2703,
+       4054
+      ],
+      "window_frames_kept": 0
+     },
+     "callback_s": 0.8066198,
+     "cpu_pct_of_one_core_process": 7.689875338403953,
+     "cpu_pct_per_streaming_camera": 3.84,
+     "same_hub_streaming": [],
+     "steps": [
+      {
+       "step": "enumerate",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 3.3822,
+       "timed_out": false
+      },
+      {
+       "step": "activate",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 30.4073,
+       "timed_out": false
+      },
+      {
+       "step": "reader_create",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 1.2949,
+       "timed_out": false
+      },
+      {
+       "step": "set_type",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 5.4467,
+       "timed_out": false
+      },
+      {
+       "step": "read_sample_issue",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.1659,
+       "timed_out": false
+      },
+      {
+       "step": "first_sample",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 888.8084,
+       "timed_out": false
+      },
+      {
+       "step": "flush",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.8784000000000001,
+       "timed_out": false,
+       "on_flush_received": true
+      },
+      {
+       "step": "reader_release",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 859.2922,
+       "timed_out": false
+      },
+      {
+       "step": "control_interfaces_release",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.3108,
+       "timed_out": false
+      },
+      {
+       "step": "source_shutdown",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 1.2319,
+       "timed_out": false
+      },
+      {
+       "step": "activate_shutdown_object",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.1573,
+       "timed_out": false
+      }
+     ],
+     "metrics": {
+      "frames": 5406,
+      "nominal_fps": 60.0,
+      "skip_s": 2.0,
+      "integrity": {
+       "soi": 1.0,
+       "eoi": 1.0,
+       "size_ok": 1.0,
+       "valid": 1.0,
+       "trailing_after_eoi": 0,
+       "discontinuities": 1,
+       "bytes_min": 100629,
+       "bytes_p50": 206812,
+       "bytes_max": 207168
+      },
+      "fps_delivered": 30.018,
+      "seq_gaps": 0,
+      "steady_frames": 5346,
+      "fps_steady": 30.018,
+      "fps_fit": 30.019,
+      "arrival_interval_ms": {
+       "n": 5345,
+       "mean": 33.313,
+       "std": 6.101,
+       "p50": 32.025,
+       "p90": 47.647,
+       "p99": 48.478,
+       "p999": 48.833,
+       "max": 79.962
+      },
+      "arrival_gaps": {
+       "threshold_ms": 25.0,
+       "count": 5168,
+       "max_ms": 79.962,
+       "largest": [
+        {
+         "seq": 85,
+         "gap_ms": 79.962,
+         "t_s": 2.88
+        },
+        {
+         "seq": 64,
+         "gap_ms": 64.139,
+         "t_s": 2.176
+        },
+        {
+         "seq": 2557,
+         "gap_ms": 48.914,
+         "t_s": 85.198
+        },
+        {
+         "seq": 2227,
+         "gap_ms": 48.881,
+         "t_s": 74.206
+        },
+        {
+         "seq": 2689,
+         "gap_ms": 48.879,
+         "t_s": 89.597
+        }
+       ],
+       "grid_limited": false
+      },
+      "sample_time": {
+       "n": 5346,
+       "grid_ms": null,
+       "period_ms_measured": 33.313,
+       "drops_detectable": true,
+       "slotting": "sequence",
+       "gaps_found": 0,
+       "drops": 0,
+       "frames_short_of_nominal": 5338
+      },
+      "sample_time_gaps": {
+       "threshold_ms": 25.0,
+       "count": 5167,
+       "max_ms": 48.157,
+       "largest": [
+        {
+         "seq": 2046,
+         "gap_ms": 48.157,
+         "t_s": null
+        },
+        {
+         "seq": 3483,
+         "gap_ms": 48.154,
+         "t_s": null
+        },
+        {
+         "seq": 3517,
+         "gap_ms": 48.152,
+         "t_s": null
+        },
+        {
+         "seq": 3215,
+         "gap_ms": 48.15,
+         "t_s": null
+        },
+        {
+         "seq": 3763,
+         "gap_ms": 48.129,
+         "t_s": null
+        }
+       ],
+       "grid_limited": false
+      },
+      "arrival_minus_sample_ms": {
+       "grid_ms": null,
+       "p50": 0.715,
+       "offset_p50_ms": 0.223,
+       "offset_p99_ms": 16.04,
+       "offset_max_ms": 48.172,
+       "offset_std_ms": 3.753,
+       "note": "arrival (QPC at OnReadSample entry, incl. the GIL wait) minus MF sample time, folded onto the sample-time grid (w_pymf.grid_offsets): the delivery delay a busy Python process would add"
+      }
+     },
+     "samples": {
+      "n": 4,
+      "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p60\\usbvideodevice_1532-0e05_4\\samples",
+      "strict_ok": true,
+      "strict_errors": [],
+      "sof": [
+       "1280x720"
+      ],
+      "header_sha1": [
+       "63ad4de8071d39dc4dae72d192aa5fad6324332b",
+       "926e7cff0ce2ac38c3175aa269e07caf1967342e"
+      ]
+     },
+     "failure": null
+    }
+   },
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+    "name": "Logitech Webcam C930e",
+    "is_kiyo": false,
+    "all_720p30": {
+     "ran": true,
+     "label": "logitechwebcam_046d-0843_8",
+     "mode": "MJPG 1280x720@30",
+     "ok": true,
+     "closed_by": "stop",
+     "error": null,
+     "fault_kind": null,
+     "unreleasable": false,
+     "kiyo_pro_fault": false,
+     "negotiated": {
+      "candidate_rates_same_size": [
+       "30/1",
+       "24/1",
+       "20/1",
+       "15/1",
+       "10/1",
+       "10000000/1333333",
+       "5/1"
+      ],
+      "native_type_index": 294,
+      "stream_selection_hr": "0x00000000",
+      "readback_hr": "0x00000000",
+      "subtype": "MJPG",
+      "width": 1280,
+      "height": 720,
+      "fps_num": 30,
+      "fps_den": 1,
+      "fps": 30.0,
+      "readback_ok": true
+     },
+     "first_frame_ms": 473.8849,
+     "open_to_first_frame_ms": 525.3647,
+     "first_sample_after_session_start_ms": 527.171,
+     "stop_to_released_ms": 373.534,
+     "close_ms": 365.1984,
+     "timings": {
+      "enumerate_ms": 5.1082,
+      "activate_ms": 42.1319,
+      "reader_ms": 0.7472,
+      "settype_ms": 3.0746,
+      "first_frame_ms": 473.8849,
+      "open_to_first_frame_ms": 525.3647,
+      "flush_ms": 0.5705,
+      "reader_release_ms": 361.1748,
+      "shutdown_ms": 2.8899,
+      "shutdown_object_ms": 0.1575,
+      "close_ms": 365.1984,
+      "open_start_after_session_start_ms": 1.803,
+      "first_sample_after_session_start_ms": 527.171,
+      "failed_after_session_start_ms": null,
+      "close_start_after_session_start_ms": 600976.591,
+      "stop_to_released_ms": 373.534
+     },
+     "frames": {
+      "total": 18041,
+      "ok": 18041,
+      "soi_eoi_ok": 18041,
+      "sof0_size_match": 18041,
+      "stream_ticks": 1,
+      "null_samples": 1,
+      "discontinuities": 1,
+      "bytes_total": 2225341496,
+      "bytes_min": 68116,
+      "bytes_max": 140945,
+      "reader_flag_counts": {},
+      "samples_kept": [
+       0,
+       4518,
+       9025,
+       13533
+      ],
+      "window_frames_kept": 120
+     },
+     "callback_s": 3.7397257,
+     "cpu_pct_of_one_core_process": 7.265185947861071,
+     "cpu_pct_per_streaming_camera": 2.42,
+     "same_hub_streaming": [],
+     "steps": [
+      {
+       "step": "enumerate",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 5.1082,
+       "timed_out": false
+      },
+      {
+       "step": "activate",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 42.1319,
+       "timed_out": false
+      },
+      {
+       "step": "reader_create",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.7472,
+       "timed_out": false
+      },
+      {
+       "step": "set_type",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 3.0746,
+       "timed_out": false
+      },
+      {
+       "step": "read_sample_issue",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.1142,
+       "timed_out": false
+      },
+      {
+       "step": "first_sample",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 473.8849,
+       "timed_out": false
+      },
+      {
+       "step": "flush",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.5705,
+       "timed_out": false,
+       "on_flush_received": true
+      },
+      {
+       "step": "reader_release",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 361.1748,
+       "timed_out": false
+      },
+      {
+       "step": "control_interfaces_release",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.2521,
+       "timed_out": false
+      },
+      {
+       "step": "source_shutdown",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 2.8899,
+       "timed_out": false
+      },
+      {
+       "step": "activate_shutdown_object",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.1575,
+       "timed_out": false
+      }
+     ],
+     "metrics": {
+      "frames": 18041,
+      "nominal_fps": 30.0,
+      "skip_s": 2.0,
+      "integrity": {
+       "soi": 1.0,
+       "eoi": 1.0,
+       "size_ok": 1.0,
+       "valid": 1.0,
+       "trailing_after_eoi": 0,
+       "discontinuities": 1,
+       "bytes_min": 68116,
+       "bytes_p50": 136392,
+       "bytes_max": 140945
+      },
+      "fps_delivered": 30.044,
+      "seq_gaps": 0,
+      "steady_frames": 17981,
+      "fps_steady": 30.044,
+      "fps_fit": 30.047,
+      "arrival_interval_ms": {
+       "n": 17980,
+       "mean": 33.284,
+       "std": 4.361,
+       "p50": 32.032,
+       "p90": 32.797,
+       "p99": 48.483,
+       "p999": 48.981,
+       "max": 49.598
+      },
+      "arrival_gaps": {
+       "threshold_ms": 50.0,
+       "count": 0,
+       "max_ms": null,
+       "largest": [],
+       "grid_limited": false
+      },
+      "sample_time": {
+       "n": 17981,
+       "grid_ms": 16.0,
+       "period_ms_measured": 33.284,
+       "drops_detectable": true,
+       "slotting": "sequence",
+       "gaps_found": 0,
+       "drops": 0,
+       "frames_short_of_nominal": -27
+      },
+      "sample_time_gaps": {
+       "threshold_ms": 50.0,
+       "count": 0,
+       "max_ms": null,
+       "largest": [],
+       "grid_limited": false
+      },
+      "arrival_minus_sample_ms": {
+       "grid_ms": 16.0,
+       "p50": 0.915,
+       "offset_p50_ms": 0.318,
+       "offset_p99_ms": 0.985,
+       "offset_max_ms": 2.273,
+       "offset_std_ms": 0.377,
+       "note": "arrival (QPC at OnReadSample entry, incl. the GIL wait) minus MF sample time, folded onto the sample-time grid (w_pymf.grid_offsets): the delivery delay a busy Python process would add"
+      }
+     },
+     "samples": {
+      "n": 4,
+      "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\logitechwebcam_046d-0843_8\\samples",
+      "strict_ok": true,
+      "strict_errors": [],
+      "sof": [
+       "1280x720"
+      ],
+      "header_sha1": [
+       "8e230f9e519eacb1e6b9d8ffc7da27c1019ac842"
+      ]
+     },
+     "failure": null
+    },
+    "controls": [
+     {
+      "i": 0,
+      "at_s": 120.0,
+      "control": "exposure",
+      "request": {
+       "delta": -2,
+       "flags": "manual"
+      },
+      "key": "cc.exposure",
+      "window": {
+       "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\logitechwebcam_046d-0843_8\\ctl0_exposure",
+       "pre_seqs": [
+        3611,
+        3612,
+        3613,
+        3614,
+        3615
+       ],
+       "until_seq": 3676
+      },
+      "seq_at_set_start": 3616,
+      "call_ms": 3.3117,
+      "seq_at_set_return": 3616,
+      "timed_out": false,
+      "before": {
+       "supported": true,
+       "via": "IAMCameraControl",
+       "value": -5,
+       "flags": 1,
+       "flags_names": [
+        "auto"
+       ],
+       "min": -11,
+       "max": -2,
+       "step": 1,
+       "default": -5
+      },
+      "supported": true,
+      "value_rule": "current -5 - 2",
+      "set_value": -7,
+      "set_flags": 2,
+      "qpc_set_start_ns": 47809291473100,
+      "qpc_set_return_ns": 47809292053100,
+      "hr_set": "0x00000000",
+      "hr_set_name": "S_OK",
+      "after": {
+       "supported": true,
+       "via": "IAMCameraControl",
+       "value": -7,
+       "flags": 2,
+       "flags_names": [
+        "manual"
+       ],
+       "min": -11,
+       "max": -2,
+       "step": 1,
+       "default": -5
+      },
+      "matches": true,
+      "effect": {
+       "measured": true,
+       "luma_before": 106.71,
+       "luma_before_std": 0.01,
+       "luma_after": 33.87,
+       "luma_step": -72.83,
+       "change_floor": 4.27,
+       "changed": true,
+       "frames_kept": {
+        "before": 5,
+        "after": 60
+       },
+       "expected_direction": "darker",
+       "direction_ok": true,
+       "frames_to_change": 2,
+       "frames_after_set_returned": 2,
+       "ms_to_change": 93.5
+      },
+      "window_check": {
+       "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\logitechwebcam_046d-0843_8\\ctl0_exposure",
+       "strict_ok": [
+        true,
+        true
+       ],
+       "kept": 65
+      }
+     },
+     {
+      "i": 1,
+      "at_s": 300.0,
+      "control": "exposure",
+      "request": {
+       "value": "start",
+       "flags": "manual"
+      },
+      "key": "cc.exposure",
+      "window": {
+       "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\logitechwebcam_046d-0843_8\\ctl1_exposure",
+       "pre_seqs": [
+        9020,
+        9021,
+        9022,
+        9023,
+        9024
+       ],
+       "until_seq": 9085
+      },
+      "seq_at_set_start": 9025,
+      "call_ms": 5.6401,
+      "seq_at_set_return": 9025,
+      "timed_out": false,
+      "before": {
+       "supported": true,
+       "via": "IAMCameraControl",
+       "value": -7,
+       "flags": 2,
+       "flags_names": [
+        "manual"
+       ],
+       "min": -11,
+       "max": -2,
+       "step": 1,
+       "default": -5
+      },
+      "supported": true,
+      "value_rule": "start",
+      "set_value": -5,
+      "set_flags": 2,
+      "qpc_set_start_ns": 47989292903200,
+      "qpc_set_return_ns": 47989293713800,
+      "hr_set": "0x00000000",
+      "hr_set_name": "S_OK",
+      "after": {
+       "supported": true,
+       "via": "IAMCameraControl",
+       "value": -5,
+       "flags": 2,
+       "flags_names": [
+        "manual"
+       ],
+       "min": -11,
+       "max": -2,
+       "step": 1,
+       "default": -5
+      },
+      "matches": true,
+      "effect": {
+       "measured": true,
+       "luma_before": 33.86,
+       "luma_before_std": 0.01,
+       "luma_after": 102.14,
+       "luma_step": 68.28,
+       "change_floor": 3.0,
+       "changed": true,
+       "frames_kept": {
+        "before": 5,
+        "after": 60
+       },
+       "expected_direction": "brighter",
+       "direction_ok": true,
+       "frames_to_change": 2,
+       "frames_after_set_returned": 2,
+       "ms_to_change": 91.9
+      },
+      "window_check": {
+       "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\logitechwebcam_046d-0843_8\\ctl1_exposure",
+       "strict_ok": [
+        true,
+        true
+       ],
+       "kept": 65
+      }
+     }
+    ],
+    "restore": [
+     {
+      "control": "cc.exposure",
+      "restore_value": -5,
+      "restore_flags": 1,
+      "hr_set": "0x00000000",
+      "hr_set_name": "S_OK",
+      "readback_value": -5,
+      "readback_flags": 1,
+      "timed_out": false,
+      "call_ms": 2.0693,
+      "ok": true
+     }
+    ],
+    "restore_skipped": null,
+    "all_720p60": {
+     "excluded": "no MJPG 59+ fps mode at the default size",
+     "scope": true
+    },
+    "in_use": {
+     "target": "logitechwebcam_046d-0843_8",
+     "baseline": {
+      "frames": 121,
+      "max_gap_ms": 48.634,
+      "fps": 29.999
+     },
+     "first_stream": {
+      "ok": true,
+      "closed_by": "stop",
+      "fault_kind": null,
+      "unreleasable": false,
+      "error_class": null
+     },
+     "openers": [
+      {
+       "label": "wincam_activity",
+       "kind": "activity",
+       "start_after_t_all_s": 6.01,
+       "elapsed_s": 0.171,
+       "rc": 0,
+       "timed_out": false,
+       "outcome": "listed",
+       "in_use": true,
+       "streaming": true,
+       "sees_pymf": true,
+       "processes": [
+        {
+         "pid": 19072,
+         "name": "python.exe",
+         "streaming": true
+        }
+       ],
+       "first_stream_window": {
+        "frames": 66,
+        "max_gap_ms": 48.939,
+        "fps": 30.081,
+        "disturbed": false
+       }
+      },
+      {
+       "label": "wincam_capture",
+       "kind": "opener",
+       "start_after_t_all_s": 14.014,
+       "elapsed_s": 0.062,
+       "rc": 4,
+       "timed_out": false,
+       "outcome": "refused (in_use)",
+       "frames": 0,
+       "opener_error": {
+        "stage": "first_sample",
+        "hr": "0xC00D3704",
+        "hr_name": "MF_E_HW_MFT_FAILED_START_STREAMING",
+        "class": "in_use",
+        "reason": "MF could not start streaming; usually another app holds the camera",
+        "message": "Hardware MFT failed to start streaming due to lack of hardware resources."
+       },
+       "first_stream_window": {
+        "frames": 62,
+        "max_gap_ms": 48.035,
+        "fps": 30.01,
+        "disturbed": false
+       }
+      },
+      {
+       "label": "pymf_capture",
+       "kind": "opener",
+       "start_after_t_all_s": 26.017,
+       "elapsed_s": 0.171,
+       "rc": 4,
+       "timed_out": false,
+       "outcome": "refused (in_use)",
+       "frames": 0,
+       "opener_error": {
+        "stage": "first_sample",
+        "hr": "0xC00D3704",
+        "hr_name": "MF_E_HW_MFT_FAILED_START_STREAMING",
+        "class": "in_use",
+        "reason": "MF could not start streaming; usually another app holds the camera",
+        "message": "Hardware MFT failed to start streaming due to lack of hardware resources."
+       },
+       "first_stream_window": {
+        "frames": 64,
+        "max_gap_ms": 47.986,
+        "fps": 30.049,
+        "disturbed": false
+       }
+      }
+     ],
+     "gap_limit_ms": 83.333,
+     "first_stream_disturbed": false
+    }
+   },
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+    "name": "USB Camera",
+    "is_kiyo": false,
+    "all_720p30": {
+     "ran": true,
+     "label": "usbcamera_4c4a-4a55_2",
+     "mode": "MJPG 1280x720@30",
+     "ok": true,
+     "closed_by": "stop",
+     "error": null,
+     "fault_kind": null,
+     "unreleasable": false,
+     "kiyo_pro_fault": false,
+     "negotiated": {
+      "candidate_rates_same_size": [
+       "30/1",
+       "25/1"
+      ],
+      "native_type_index": 5,
+      "stream_selection_hr": "0x00000000",
+      "readback_hr": "0x00000000",
+      "subtype": "MJPG",
+      "width": 1280,
+      "height": 720,
+      "fps_num": 30,
+      "fps_den": 1,
+      "fps": 30.0,
+      "readback_ok": true
+     },
+     "first_frame_ms": 87.9149,
+     "open_to_first_frame_ms": 124.5866,
+     "first_sample_after_session_start_ms": 126.647,
+     "stop_to_released_ms": 304.57,
+     "close_ms": 263.8169,
+     "timings": {
+      "enumerate_ms": 4.7461,
+      "activate_ms": 27.0131,
+      "reader_ms": 1.1273,
+      "settype_ms": 1.5776,
+      "first_frame_ms": 87.9149,
+      "open_to_first_frame_ms": 124.5866,
+      "flush_ms": 0.7147,
+      "reader_release_ms": 260.6469,
+      "shutdown_ms": 1.8928,
+      "shutdown_object_ms": 0.1557,
+      "close_ms": 263.8169,
+      "open_start_after_session_start_ms": 2.059,
+      "first_sample_after_session_start_ms": 126.647,
+      "failed_after_session_start_ms": null,
+      "close_start_after_session_start_ms": 601009.01,
+      "stop_to_released_ms": 304.57
+     },
+     "frames": {
+      "total": 15478,
+      "ok": 15478,
+      "soi_eoi_ok": 15478,
+      "sof0_size_match": 15478,
+      "stream_ticks": 1,
+      "null_samples": 1,
+      "discontinuities": 1,
+      "bytes_total": 1404434788,
+      "bytes_min": 32519,
+      "bytes_max": 114733,
+      "reader_flag_counts": {},
+      "samples_kept": [
+       0,
+       3886,
+       7750,
+       11613
+      ],
+      "window_frames_kept": 120
+     },
+     "callback_s": 3.1398121,
+     "cpu_pct_of_one_core_process": 7.265185947861071,
+     "cpu_pct_per_streaming_camera": 2.42,
+     "same_hub_streaming": [],
+     "steps": [
+      {
+       "step": "enumerate",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 4.7461,
+       "timed_out": false
+      },
+      {
+       "step": "activate",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 27.0131,
+       "timed_out": false
+      },
+      {
+       "step": "reader_create",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 1.1273,
+       "timed_out": false
+      },
+      {
+       "step": "set_type",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 1.5776,
+       "timed_out": false
+      },
+      {
+       "step": "read_sample_issue",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.2001,
+       "timed_out": false
+      },
+      {
+       "step": "first_sample",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 87.9149,
+       "timed_out": false
+      },
+      {
+       "step": "flush",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.7147,
+       "timed_out": false,
+       "on_flush_received": true
+      },
+      {
+       "step": "reader_release",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 260.6469,
+       "timed_out": false
+      },
+      {
+       "step": "control_interfaces_release",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.2097,
+       "timed_out": false
+      },
+      {
+       "step": "source_shutdown",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 1.8928,
+       "timed_out": false
+      },
+      {
+       "step": "activate_shutdown_object",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.1557,
+       "timed_out": false
+      }
+     ],
+     "metrics": {
+      "frames": 15478,
+      "nominal_fps": 30.0,
+      "skip_s": 2.0,
+      "integrity": {
+       "soi": 1.0,
+       "eoi": 1.0,
+       "size_ok": 1.0,
+       "valid": 1.0,
+       "trailing_after_eoi": 0,
+       "discontinuities": 1,
+       "bytes_min": 32519,
+       "bytes_p50": 85804,
+       "bytes_max": 114733
+      },
+      "fps_delivered": 25.757,
+      "seq_gaps": 0,
+      "steady_frames": 15426,
+      "fps_steady": 25.757,
+      "fps_fit": 25.757,
+      "arrival_interval_ms": {
+       "n": 15425,
+       "mean": 38.824,
+       "std": 7.934,
+       "p50": 32.484,
+       "p90": 48.426,
+       "p99": 49.213,
+       "p999": 49.605,
+       "max": 50.343
+      },
+      "arrival_gaps": {
+       "threshold_ms": 50.0,
+       "count": 2,
+       "max_ms": 50.343,
+       "largest": [
+        {
+         "seq": 11594,
+         "gap_ms": 50.343,
+         "t_s": 450.13
+        },
+        {
+         "seq": 3259,
+         "gap_ms": 50.001,
+         "t_s": 126.53
+        }
+       ],
+       "grid_limited": false
+      },
+      "sample_time": {
+       "n": 15426,
+       "grid_ms": 16.0,
+       "period_ms_measured": 38.824,
+       "drops_detectable": true,
+       "slotting": "sequence",
+       "gaps_found": 0,
+       "drops": 0,
+       "frames_short_of_nominal": 2541
+      },
+      "sample_time_gaps": {
+       "threshold_ms": 50.0,
+       "count": 0,
+       "max_ms": null,
+       "largest": [],
+       "grid_limited": false
+      },
+      "arrival_minus_sample_ms": {
+       "grid_ms": 16.0,
+       "p50": 32.78,
+       "offset_p50_ms": 0.437,
+       "offset_p99_ms": 1.069,
+       "offset_max_ms": 1.903,
+       "offset_std_ms": 0.481,
+       "note": "arrival (QPC at OnReadSample entry, incl. the GIL wait) minus MF sample time, folded onto the sample-time grid (w_pymf.grid_offsets): the delivery delay a busy Python process would add"
+      }
+     },
+     "samples": {
+      "n": 4,
+      "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\usbcamera_4c4a-4a55_2\\samples",
+      "strict_ok": true,
+      "strict_errors": [],
+      "sof": [
+       "1280x720"
+      ],
+      "header_sha1": [
+       "3e21fc96e18575de9caf2c824f815b1adf1dcc66",
+       "aeefc78066682dbbe75f16d73bf07c6cb5c80b1f"
+      ]
+     },
+     "failure": null
+    },
+    "controls": [
+     {
+      "i": 0,
+      "at_s": 120.0,
+      "control": "exposure",
+      "request": {
+       "delta": -2,
+       "flags": "manual"
+      },
+      "key": "cc.exposure",
+      "window": {
+       "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\usbcamera_4c4a-4a55_2\\ctl0_exposure",
+       "pre_seqs": [
+        3108,
+        3109,
+        3110,
+        3111,
+        3112
+       ],
+       "until_seq": 3173
+      },
+      "seq_at_set_start": 3113,
+      "call_ms": 2.8803,
+      "seq_at_set_return": 3113,
+      "timed_out": false,
+      "before": {
+       "supported": true,
+       "via": "IAMCameraControl",
+       "value": -6,
+       "flags": 1,
+       "flags_names": [
+        "auto"
+       ],
+       "min": -7,
+       "max": 3,
+       "step": 1,
+       "default": -7
+      },
+      "supported": true,
+      "value_rule": "current -6 + 2 (other direction: range)",
+      "set_value": -4,
+      "set_flags": 2,
+      "qpc_set_start_ns": 47809291841300,
+      "qpc_set_return_ns": 47809292334800,
+      "hr_set": "0x00000000",
+      "hr_set_name": "S_OK",
+      "after": {
+       "supported": true,
+       "via": "IAMCameraControl",
+       "value": -4,
+       "flags": 2,
+       "flags_names": [
+        "manual"
+       ],
+       "min": -7,
+       "max": 3,
+       "step": 1,
+       "default": -7
+      },
+      "matches": true,
+      "effect": {
+       "measured": true,
+       "luma_before": 152.9,
+       "luma_before_std": 0.01,
+       "luma_after": 103.39,
+       "luma_step": -49.51,
+       "change_floor": 6.12,
+       "changed": true,
+       "frames_kept": {
+        "before": 5,
+        "after": 60
+       },
+       "expected_direction": "brighter",
+       "direction_ok": false,
+       "frames_to_change": 2,
+       "frames_after_set_returned": 2,
+       "ms_to_change": 109.1
+      },
+      "window_check": {
+       "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\usbcamera_4c4a-4a55_2\\ctl0_exposure",
+       "strict_ok": [
+        true,
+        true
+       ],
+       "kept": 65
+      }
+     },
+     {
+      "i": 1,
+      "at_s": 300.0,
+      "control": "exposure",
+      "request": {
+       "value": "start",
+       "flags": "manual"
+      },
+      "key": "cc.exposure",
+      "window": {
+       "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\usbcamera_4c4a-4a55_2\\ctl1_exposure",
+       "pre_seqs": [
+        7745,
+        7746,
+        7747,
+        7748,
+        7749
+       ],
+       "until_seq": 7810
+      },
+      "seq_at_set_start": 7750,
+      "call_ms": 1.9866,
+      "seq_at_set_return": 7750,
+      "timed_out": false,
+      "before": {
+       "supported": true,
+       "via": "IAMCameraControl",
+       "value": -4,
+       "flags": 2,
+       "flags_names": [
+        "manual"
+       ],
+       "min": -7,
+       "max": 3,
+       "step": 1,
+       "default": -7
+      },
+      "supported": true,
+      "value_rule": "start",
+      "set_value": -6,
+      "set_flags": 2,
+      "qpc_set_start_ns": 47989321630000,
+      "qpc_set_return_ns": 47989322006200,
+      "hr_set": "0x00000000",
+      "hr_set_name": "S_OK",
+      "after": {
+       "supported": true,
+       "via": "IAMCameraControl",
+       "value": -6,
+       "flags": 2,
+       "flags_names": [
+        "manual"
+       ],
+       "min": -7,
+       "max": 3,
+       "step": 1,
+       "default": -7
+      },
+      "matches": true,
+      "effect": {
+       "measured": true,
+       "luma_before": 103.43,
+       "luma_before_std": 0.04,
+       "luma_after": 44.22,
+       "luma_step": -59.21,
+       "change_floor": 4.14,
+       "changed": true,
+       "frames_kept": {
+        "before": 5,
+        "after": 60
+       },
+       "expected_direction": "darker",
+       "direction_ok": true,
+       "frames_to_change": 2,
+       "frames_after_set_returned": 2,
+       "ms_to_change": 110.6
+      },
+      "window_check": {
+       "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\usbcamera_4c4a-4a55_2\\ctl1_exposure",
+       "strict_ok": [
+        true,
+        true
+       ],
+       "kept": 65
+      }
+     }
+    ],
+    "restore": [
+     {
+      "control": "cc.exposure",
+      "restore_value": -6,
+      "restore_flags": 1,
+      "hr_set": "0x00000000",
+      "hr_set_name": "S_OK",
+      "readback_value": -6,
+      "readback_flags": 1,
+      "timed_out": false,
+      "call_ms": 2.0482,
+      "ok": true
+     }
+    ],
+    "restore_skipped": null,
+    "all_720p60": {
+     "excluded": "no MJPG 59+ fps mode at the default size",
+     "scope": true
+    }
+   },
+   "046d:085c:sn=C922SN01": {
+    "name": "c922 Pro Stream Webcam",
+    "is_kiyo": false,
+    "all_720p30": {
+     "ran": true,
+     "label": "c922prostreamw_046d-085c_C922SN01",
+     "mode": "MJPG 1280x720@30",
+     "ok": false,
+     "closed_by": "failure",
+     "error": {
+      "stage": "first_sample",
+      "hr": "0x800718CF",
+      "hr_name": "HRESULT_FROM_WIN32(6351) USB_INSUFFICIENT_BANDWIDTH",
+      "message": "A camera interface doesn't have the desired bandwidth for data transfer.",
+      "class": "bandwidth_certain",
+      "reason": "usbvideo refused the isochronous bandwidth (Win32 6351)"
+     },
+     "fault_kind": "error",
+     "unreleasable": false,
+     "kiyo_pro_fault": false,
+     "negotiated": {
+      "candidate_rates_same_size": [
+       "30/1",
+       "60/1",
+       "24/1",
+       "20/1",
+       "15/1",
+       "10/1",
+       "10000000/1333333",
+       "5/1"
+      ],
+      "native_type_index": 295,
+      "stream_selection_hr": "0x00000000",
+      "readback_hr": "0x00000000",
+      "subtype": "MJPG",
+      "width": 1280,
+      "height": 720,
+      "fps_num": 30,
+      "fps_den": 1,
+      "fps": 30.0,
+      "readback_ok": true
+     },
+     "first_frame_ms": -1.0,
+     "open_to_first_frame_ms": -1.0,
+     "first_sample_after_session_start_ms": null,
+     "stop_to_released_ms": null,
+     "close_ms": 3.8765,
+     "timings": {
+      "enumerate_ms": 4.1389,
+      "activate_ms": 32.3089,
+      "reader_ms": 0.4257,
+      "settype_ms": 6.0566,
+      "first_frame_ms": -1.0,
+      "open_to_first_frame_ms": -1.0,
+      "flush_ms": 0.4043,
+      "reader_release_ms": 2.5711,
+      "shutdown_ms": 0.2476,
+      "shutdown_object_ms": 0.1829,
+      "close_ms": 3.8765,
+      "open_start_after_session_start_ms": 2.117,
+      "first_sample_after_session_start_ms": null,
+      "failed_after_session_start_ms": 351.239,
+      "close_start_after_session_start_ms": 351.241,
+      "stop_to_released_ms": null
+     },
+     "frames": {
+      "total": 0,
+      "ok": 0,
+      "soi_eoi_ok": 0,
+      "sof0_size_match": 0,
+      "stream_ticks": 0,
+      "null_samples": 0,
+      "discontinuities": 0,
+      "bytes_total": 0,
+      "bytes_min": null,
+      "bytes_max": 0,
+      "reader_flag_counts": {},
+      "samples_kept": [],
+      "window_frames_kept": 0
+     },
+     "callback_s": 2.66e-05,
+     "cpu_pct_of_one_core_process": 7.265185947861071,
+     "cpu_pct_per_streaming_camera": 2.42,
+     "same_hub_streaming": [
+      "usbcamera_4c4a-4a55_2"
+     ],
+     "steps": [
+      {
+       "step": "enumerate",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 4.1389,
+       "timed_out": false
+      },
+      {
+       "step": "activate",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 32.3089,
+       "timed_out": false
+      },
+      {
+       "step": "reader_create",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.4257,
+       "timed_out": false
+      },
+      {
+       "step": "set_type",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 6.0566,
+       "timed_out": false
+      },
+      {
+       "step": "read_sample_issue",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.1605,
+       "timed_out": false
+      },
+      {
+       "step": "first_sample",
+       "hr": "0x800718CF",
+       "hr_name": "HRESULT_FROM_WIN32(6351) USB_INSUFFICIENT_BANDWIDTH",
+       "ms": 305.5823,
+       "timed_out": false
+      },
+      {
+       "step": "flush",
+       "hr": "0x800718CF",
+       "hr_name": "HRESULT_FROM_WIN32(6351) USB_INSUFFICIENT_BANDWIDTH",
+       "ms": 0.4043,
+       "timed_out": false,
+       "on_flush_received": false
+      },
+      {
+       "step": "reader_release",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 2.5711,
+       "timed_out": false
+      },
+      {
+       "step": "control_interfaces_release",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.291,
+       "timed_out": false
+      },
+      {
+       "step": "source_shutdown",
+       "hr": "0xC00D3E85",
+       "hr_name": "MF_E_SHUTDOWN",
+       "ms": 0.2476,
+       "timed_out": false
+      },
+      {
+       "step": "activate_shutdown_object",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.1829,
+       "timed_out": false
+      }
+     ],
+     "metrics": {
+      "frames": 0,
+      "nominal_fps": 30.0,
+      "skip_s": 2.0
+     },
+     "samples": {
+      "n": 0,
+      "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p30\\c922prostreamw_046d-085c_C922SN01\\samples",
+      "strict_ok": null,
+      "strict_errors": [],
+      "sof": [],
+      "header_sha1": []
+     },
+     "failure": {
+      "failed": true,
+      "fault_kind": "error",
+      "code": "0x800718CF",
+      "stage": "first_sample",
+      "class": "bandwidth_certain",
+      "reason": "Media Foundation reported HRESULT_FROM_WIN32(6351): 'A camera interface doesn't have the desired bandwidth for data transfer'",
+      "refusal": true,
+      "others_streaming_same_hub": true
+     }
+    },
+    "controls": [],
+    "restore": [],
+    "restore_skipped": null,
+    "all_720p60": {
+     "ran": true,
+     "label": "c922prostreamw_046d-085c_C922SN01",
+     "mode": "MJPG 1280x720@60",
+     "ok": true,
+     "closed_by": "stop",
+     "error": null,
+     "fault_kind": null,
+     "unreleasable": false,
+     "kiyo_pro_fault": false,
+     "negotiated": {
+      "candidate_rates_same_size": [
+       "30/1",
+       "60/1",
+       "24/1",
+       "20/1",
+       "15/1",
+       "10/1",
+       "10000000/1333333",
+       "5/1"
+      ],
+      "native_type_index": 297,
+      "stream_selection_hr": "0x00000000",
+      "readback_hr": "0x00000000",
+      "subtype": "MJPG",
+      "width": 1280,
+      "height": 720,
+      "fps_num": 60,
+      "fps_den": 1,
+      "fps": 60.0,
+      "readback_ok": true
+     },
+     "first_frame_ms": 218.5215,
+     "open_to_first_frame_ms": 263.38,
+     "first_sample_after_session_start_ms": 264.056,
+     "stop_to_released_ms": 327.382,
+     "close_ms": 318.6378,
+     "timings": {
+      "enumerate_ms": 3.1787,
+      "activate_ms": 30.42,
+      "reader_ms": 1.0668,
+      "settype_ms": 7.8708,
+      "first_frame_ms": 218.5215,
+      "open_to_first_frame_ms": 263.38,
+      "flush_ms": 0.5930000000000001,
+      "reader_release_ms": 313.2786,
+      "shutdown_ms": 3.7495,
+      "shutdown_object_ms": 0.2315,
+      "close_ms": 318.6378,
+      "open_start_after_session_start_ms": 0.674,
+      "first_sample_after_session_start_ms": 264.056,
+      "failed_after_session_start_ms": null,
+      "close_start_after_session_start_ms": 180967.08,
+      "stop_to_released_ms": 327.382
+     },
+     "frames": {
+      "total": 10701,
+      "ok": 10701,
+      "soi_eoi_ok": 10701,
+      "sof0_size_match": 10701,
+      "stream_ticks": 1,
+      "null_samples": 1,
+      "discontinuities": 1,
+      "bytes_total": 1766842551,
+      "bytes_min": 163766,
+      "bytes_max": 185557,
+      "reader_flag_counts": {},
+      "samples_kept": [
+       0,
+       2700,
+       5371,
+       8036
+      ],
+      "window_frames_kept": 0
+     },
+     "callback_s": 1.475185,
+     "cpu_pct_of_one_core_process": 7.689875338403953,
+     "cpu_pct_per_streaming_camera": 3.84,
+     "same_hub_streaming": [],
+     "steps": [
+      {
+       "step": "enumerate",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 3.1787,
+       "timed_out": false
+      },
+      {
+       "step": "activate",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 30.42,
+       "timed_out": false
+      },
+      {
+       "step": "reader_create",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 1.0668,
+       "timed_out": false
+      },
+      {
+       "step": "set_type",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 7.8708,
+       "timed_out": false
+      },
+      {
+       "step": "read_sample_issue",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.1539,
+       "timed_out": false
+      },
+      {
+       "step": "first_sample",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 218.5215,
+       "timed_out": false
+      },
+      {
+       "step": "flush",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.5930000000000001,
+       "timed_out": false,
+       "on_flush_received": true
+      },
+      {
+       "step": "reader_release",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 313.2786,
+       "timed_out": false
+      },
+      {
+       "step": "control_interfaces_release",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.5002,
+       "timed_out": false
+      },
+      {
+       "step": "source_shutdown",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 3.7495,
+       "timed_out": false
+      },
+      {
+       "step": "activate_shutdown_object",
+       "hr": "0x00000000",
+       "hr_name": "S_OK",
+       "ms": 0.2315,
+       "timed_out": false
+      }
+     ],
+     "metrics": {
+      "frames": 10701,
+      "nominal_fps": 60.0,
+      "skip_s": 2.0,
+      "integrity": {
+       "soi": 1.0,
+       "eoi": 1.0,
+       "size_ok": 1.0,
+       "valid": 1.0,
+       "trailing_after_eoi": 0,
+       "discontinuities": 1,
+       "bytes_min": 163766,
+       "bytes_p50": 165202,
+       "bytes_max": 185557
+      },
+      "fps_delivered": 59.213,
+      "seq_gaps": 0,
+      "steady_frames": 10587,
+      "fps_steady": 59.243,
+      "fps_fit": 59.27,
+      "arrival_interval_ms": {
+       "n": 10586,
+       "mean": 16.88,
+       "std": 3.666,
+       "p50": 16.017,
+       "p90": 16.364,
+       "p99": 32.269,
+       "p999": 32.671,
+       "max": 48.218
+      },
+      "arrival_gaps": {
+       "threshold_ms": 25.0,
+       "count": 581,
+       "max_ms": 48.218,
+       "largest": [
+        {
+         "seq": 3287,
+         "gap_ms": 48.218,
+         "t_s": 55.599
+        },
+        {
+         "seq": 9810,
+         "gap_ms": 32.945,
+         "t_s": 165.632
+        },
+        {
+         "seq": 3519,
+         "gap_ms": 32.904,
+         "t_s": 59.504
+        },
+        {
+         "seq": 5664,
+         "gap_ms": 32.89,
+         "t_s": 95.648
+        },
+        {
+         "seq": 647,
+         "gap_ms": 32.788,
+         "t_s": 11.007
+        }
+       ],
+       "grid_limited": true
+      },
+      "sample_time": {
+       "n": 10587,
+       "grid_ms": 16.0,
+       "period_ms_measured": 16.878,
+       "drops_detectable": false,
+       "slotting": "sequence",
+       "gaps_found": 577,
+       "drops": null,
+       "frames_short_of_nominal": 134
+      },
+      "sample_time_gaps": {
+       "threshold_ms": 25.0,
+       "count": 577,
+       "max_ms": 48.059,
+       "largest": [
+        {
+         "seq": 9106,
+         "gap_ms": 48.059,
+         "t_s": null
+        },
+        {
+         "seq": 6440,
+         "gap_ms": 47.981,
+         "t_s": null
+        },
+        {
+         "seq": 10145,
+         "gap_ms": 47.977,
+         "t_s": null
+        },
+        {
+         "seq": 501,
+         "gap_ms": 47.966,
+         "t_s": null
+        },
+        {
+         "seq": 2638,
+         "gap_ms": 32.146,
+         "t_s": null
+        }
+       ],
+       "grid_limited": true
+      },
+      "arrival_minus_sample_ms": {
+       "grid_ms": 16.0,
+       "p50": 0.881,
+       "offset_p50_ms": 0.22,
+       "offset_p99_ms": 0.541,
+       "offset_max_ms": 0.983,
+       "offset_std_ms": 0.28,
+       "note": "arrival (QPC at OnReadSample entry, incl. the GIL wait) minus MF sample time, folded onto the sample-time grid (w_pymf.grid_offsets): the delivery delay a busy Python process would add"
+      }
+     },
+     "samples": {
+      "n": 4,
+      "dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\all_720p60\\c922prostreamw_046d-085c_C922SN01\\samples",
+      "strict_ok": true,
+      "strict_errors": [],
+      "sof": [
+       "1280x720"
+      ],
+      "header_sha1": [
+       "89d46b19bda64347088339d11b16b0fe04ce1864"
+      ]
+     },
+     "failure": null
+    }
+   }
+  },
+  "refusals": [
+   {
+    "part": "all_720p30",
+    "camera": "046d:085c:sn=C922SN01",
+    "name": "c922 Pro Stream Webcam",
+    "failed": true,
+    "fault_kind": "error",
+    "code": "0x800718CF",
+    "stage": "first_sample",
+    "class": "bandwidth_certain",
+    "reason": "Media Foundation reported HRESULT_FROM_WIN32(6351): 'A camera interface doesn't have the desired bandwidth for data transfer'",
+    "refusal": true,
+    "others_streaming_same_hub": true
+   }
+  ],
+  "kiyo_pro_fault": null,
+  "faults_marked": [],
+  "not_covered": [
+   "several pymf processes at once (one process only, as skellycam's camera process)",
+   "decode to BGR in the capture process: the JPEG bytes are kept and checked (markers, strict decode of samples), the decode cost of package 1.3 is not in the CPU figure",
+   "long runs beyond the 10-minute part"
+  ],
+  "pymf_version": "pymf 0.3 (2026-11-11)",
+  "pymf_warmup": {
+   "rc": 0,
+   "elapsed_s": 0.125,
+   "timed_out": false,
+   "killed": false,
+   "lock_wait_s": null,
+   "lock_timed_out": null,
+   "camlock_rc": null,
+   "spawn_error": null,
+   "stderr_tail": ""
+  },
+  "control_plan": {
+   "control": "exposure",
+   "times_s": [
+    120.0,
+    300.0
+   ],
+   "first": "delta -2 steps, manual",
+   "then": "back to the first-read value, manual",
+   "restore": "first-read value and mode",
+   "window": {
+    "pre": 5,
+    "post": 60
+   },
+   "roi": [
+    0.1,
+    0.1,
+    0.9,
+    0.9
+   ]
+  },
+  "session_hangs": [],
+  "arrivals": {
+   "before": {
+    "utc": "2026-11-12T03:26:09.234190+00:00",
+    "cameras": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+      "present": true,
+      "last_arrival": "2026-11-11T14:11:38.552007+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-11T14:11:44.546053+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-12T00:57:22.463265+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "after": {
+    "utc": "2026-11-12T03:40:03.819532+00:00",
+    "cameras": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+      "present": true,
+      "last_arrival": "2026-11-11T14:11:38.552007+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-11T14:11:44.546053+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-12T00:57:22.463265+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "changes": [],
+   "unexplained_re_arrival": false
+  }
+ },
+ "verdicts": {
+  "pymf_multi|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|720p30": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "streamed the whole part and stopped on request (no error, stall or end of stream)",
+     "met": true,
+     "detail": {
+      "closed_by": "stop",
+      "error": null
+     }
+    },
+    {
+     "criterion": "released at the stop within 5 s (stop reads, Flush, reader release, source shutdown; all bounded)",
+     "met": true,
+     "detail": {
+      "stop_to_released_ms": 1116.475,
+      "close_ms": 1090.7313
+     }
+    },
+    {
+     "criterion": "valid JPEG (SOI, EOI, SOF size) >= 99% of frames, kept samples decode strictly",
+     "met": true,
+     "detail": {
+      "valid": 1.0,
+      "samples_strict_ok": true,
+      "samples": 4
+     }
+    },
+    {
+     "criterion": "frames lost in the MF sample-time slots <= max(1, 0.1% of frames)",
+     "met": true,
+     "detail": {
+      "drops": 0,
+      "detectable": true,
+      "limit": 17,
+      "frames_short_of_nominal": 376
+     }
+    },
+    {
+     "criterion": "arrival gaps > 1.5 nominal periods <= max(1, 0.1% of frames) (not rated where the 16 ms host grid makes such intervals normal, i.e. 60 fps)",
+     "met": true,
+     "detail": {
+      "count": 10,
+      "max_ms": 79.425,
+      "grid_limited": false
+     }
+    },
+    {
+     "criterion": "delivered fps >= 98% of nominal (an even lower rate with no lost slot = the camera's rate, not rated; W-MJPEG rates it)",
+     "met": false,
+     "detail": {
+      "fps_fit": 29.377,
+      "nominal": 30.0
+     }
+    }
+   ],
+   "evidence": {
+    "fps_fit": 29.377,
+    "drops": 0,
+    "gaps": 10,
+    "first_frame_ms": 888.407,
+    "cpu_pct_of_one_core_process": 7.265185947861071
+   },
+   "summary_label": "partial (1 criteria)"
+  },
+  "pymf_multi|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|720p60": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "streamed the whole part and stopped on request (no error, stall or end of stream)",
+     "met": true,
+     "detail": {
+      "closed_by": "stop",
+      "error": null
+     }
+    },
+    {
+     "criterion": "released at the stop within 5 s (stop reads, Flush, reader release, source shutdown; all bounded)",
+     "met": true,
+     "detail": {
+      "stop_to_released_ms": 894.312,
+      "close_ms": 862.0683
+     }
+    },
+    {
+     "criterion": "valid JPEG (SOI, EOI, SOF size) >= 99% of frames, kept samples decode strictly",
+     "met": true,
+     "detail": {
+      "valid": 1.0,
+      "samples_strict_ok": true,
+      "samples": 4
+     }
+    },
+    {
+     "criterion": "frames lost in the MF sample-time slots <= max(1, 0.1% of frames)",
+     "met": true,
+     "detail": {
+      "drops": 0,
+      "detectable": true,
+      "limit": 5,
+      "frames_short_of_nominal": 5338
+     }
+    },
+    {
+     "criterion": "arrival gaps > 1.5 nominal periods <= max(1, 0.1% of frames) (not rated where the 16 ms host grid makes such intervals normal, i.e. 60 fps)",
+     "met": false,
+     "detail": {
+      "count": 5168,
+      "max_ms": 79.962,
+      "grid_limited": false
+     }
+    },
+    {
+     "criterion": "delivered fps >= 98% of nominal (an even lower rate with no lost slot = the camera's rate, not rated; W-MJPEG rates it)",
+     "met": false,
+     "detail": {
+      "fps_fit": 30.019,
+      "nominal": 60.0
+     }
+    }
+   ],
+   "evidence": {
+    "fps_fit": 30.019,
+    "drops": 0,
+    "gaps": 5168,
+    "first_frame_ms": 888.8084,
+    "cpu_pct_of_one_core_process": 7.689875338403953
+   },
+   "summary_label": "partial (2 criteria)"
+  },
+  "pymf_streaming_set|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|exposure": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "every set returned within --timeout-ms while the reader streamed",
+     "met": true,
+     "detail": [
+      1.7014,
+      2.1852
+     ]
+    },
+    {
+     "criterion": "readback equals the value set, manual mode",
+     "met": true,
+     "detail": [
+      {
+       "set": -8,
+       "readback": -8,
+       "hr": "S_OK"
+      },
+      {
+       "set": -6,
+       "readback": -6,
+       "hr": "S_OK"
+      }
+     ]
+    },
+    {
+     "criterion": "ROI luma moved in the expected direction after each set",
+     "met": true,
+     "detail": [
+      {
+       "luma_before": 118.69,
+       "luma_after": 102.8,
+       "frames_to_change": 3,
+       "ms_to_change": 175.5,
+       "direction_ok": true
+      },
+      {
+       "luma_before": 102.77,
+       "luma_after": 119.28,
+       "frames_to_change": 5,
+       "ms_to_change": 191.3,
+       "direction_ok": true
+      }
+     ]
+    },
+    {
+     "criterion": "controls restored to their first-read value and mode, read back",
+     "met": true,
+     "detail": [
+      {
+       "control": "cc.exposure",
+       "restore_value": -6,
+       "readback_value": -6,
+       "restore_flags": 1,
+       "readback_flags": 1
+      }
+     ]
+    }
+   ],
+   "evidence": {
+    "frames_to_change": [
+     3,
+     5
+    ],
+    "camera": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4"
+   },
+   "summary_label": "yes"
+  },
+  "pymf_multi|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8|720p30": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "streamed the whole part and stopped on request (no error, stall or end of stream)",
+     "met": true,
+     "detail": {
+      "closed_by": "stop",
+      "error": null
+     }
+    },
+    {
+     "criterion": "released at the stop within 5 s (stop reads, Flush, reader release, source shutdown; all bounded)",
+     "met": true,
+     "detail": {
+      "stop_to_released_ms": 373.534,
+      "close_ms": 365.1984
+     }
+    },
+    {
+     "criterion": "valid JPEG (SOI, EOI, SOF size) >= 99% of frames, kept samples decode strictly",
+     "met": true,
+     "detail": {
+      "valid": 1.0,
+      "samples_strict_ok": true,
+      "samples": 4
+     }
+    },
+    {
+     "criterion": "frames lost in the MF sample-time slots <= max(1, 0.1% of frames)",
+     "met": true,
+     "detail": {
+      "drops": 0,
+      "detectable": true,
+      "limit": 17,
+      "frames_short_of_nominal": -27
+     }
+    },
+    {
+     "criterion": "arrival gaps > 1.5 nominal periods <= max(1, 0.1% of frames) (not rated where the 16 ms host grid makes such intervals normal, i.e. 60 fps)",
+     "met": true,
+     "detail": {
+      "count": 0,
+      "max_ms": null,
+      "grid_limited": false
+     }
+    },
+    {
+     "criterion": "delivered fps >= 98% of nominal (an even lower rate with no lost slot = the camera's rate, not rated; W-MJPEG rates it)",
+     "met": true,
+     "detail": {
+      "fps_fit": 30.047,
+      "nominal": 30.0
+     }
+    }
+   ],
+   "evidence": {
+    "fps_fit": 30.047,
+    "drops": 0,
+    "gaps": 0,
+    "first_frame_ms": 473.8849,
+    "cpu_pct_of_one_core_process": 7.265185947861071
+   },
+   "summary_label": "yes"
+  },
+  "pymf_multi|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8|720p60": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "left out: no MJPG 59+ fps mode at the default size"
+    }
+   ],
+   "evidence": null,
+   "summary_label": "untested (scope)"
+  },
+  "pymf_streaming_set|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8|exposure": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "every set returned within --timeout-ms while the reader streamed",
+     "met": true,
+     "detail": [
+      3.3117,
+      5.6401
+     ]
+    },
+    {
+     "criterion": "readback equals the value set, manual mode",
+     "met": true,
+     "detail": [
+      {
+       "set": -7,
+       "readback": -7,
+       "hr": "S_OK"
+      },
+      {
+       "set": -5,
+       "readback": -5,
+       "hr": "S_OK"
+      }
+     ]
+    },
+    {
+     "criterion": "ROI luma moved in the expected direction after each set",
+     "met": true,
+     "detail": [
+      {
+       "luma_before": 106.71,
+       "luma_after": 33.87,
+       "frames_to_change": 2,
+       "ms_to_change": 93.5,
+       "direction_ok": true
+      },
+      {
+       "luma_before": 33.86,
+       "luma_after": 102.14,
+       "frames_to_change": 2,
+       "ms_to_change": 91.9,
+       "direction_ok": true
+      }
+     ]
+    },
+    {
+     "criterion": "controls restored to their first-read value and mode, read back",
+     "met": true,
+     "detail": [
+      {
+       "control": "cc.exposure",
+       "restore_value": -5,
+       "readback_value": -5,
+       "restore_flags": 1,
+       "readback_flags": 1
+      }
+     ]
+    }
+   ],
+   "evidence": {
+    "frames_to_change": [
+     2,
+     2
+    ],
+    "camera": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8"
+   },
+   "summary_label": "yes"
+  },
+  "pymf_in_use|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "each second opener (wincam, pymf) returned a classified result within its timeout",
+     "met": true,
+     "detail": [
+      {
+       "label": "wincam_capture",
+       "outcome": "refused (in_use)",
+       "opener_error": {
+        "stage": "first_sample",
+        "hr": "0xC00D3704",
+        "hr_name": "MF_E_HW_MFT_FAILED_START_STREAMING",
+        "class": "in_use",
+        "reason": "MF could not start streaming; usually another app holds the camera",
+        "message": "Hardware MFT failed to start streaming due to lack of hardware resources."
+       }
+      },
+      {
+       "label": "pymf_capture",
+       "outcome": "refused (in_use)",
+       "opener_error": {
+        "stage": "first_sample",
+        "hr": "0xC00D3704",
+        "hr_name": "MF_E_HW_MFT_FAILED_START_STREAMING",
+        "class": "in_use",
+        "reason": "MF could not start streaming; usually another app holds the camera",
+        "message": "Hardware MFT failed to start streaming due to lack of hardware resources."
+       }
+      }
+     ]
+    },
+    {
+     "criterion": "the pymf stream streamed through to the stop",
+     "met": true,
+     "detail": {
+      "ok": true,
+      "closed_by": "stop",
+      "fault_kind": null,
+      "unreleasable": false,
+      "error_class": null
+     }
+    },
+    {
+     "criterion": "the pymf stream was not disturbed during any opener's window (gaps, rate)",
+     "met": true,
+     "detail": {
+      "gap_limit_ms": 83.333,
+      "baseline": {
+       "frames": 121,
+       "max_gap_ms": 48.634,
+       "fps": 29.999
+      }
+     }
+    },
+    {
+     "criterion": "IMFSensorActivityMonitor (wincam activity) lists the camera in use by the pymf process (information)",
+     "met": null,
+     "detail": [
+      {
+       "outcome": "listed",
+       "in_use": true,
+       "sees_pymf": true
+      }
+     ]
+    }
+   ],
+   "evidence": {
+    "outcomes": [
+     "refused (in_use)",
+     "refused (in_use)"
+    ]
+   },
+   "summary_label": "yes"
+  },
+  "pymf_multi|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|720p30": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "streamed the whole part and stopped on request (no error, stall or end of stream)",
+     "met": true,
+     "detail": {
+      "closed_by": "stop",
+      "error": null
+     }
+    },
+    {
+     "criterion": "released at the stop within 5 s (stop reads, Flush, reader release, source shutdown; all bounded)",
+     "met": true,
+     "detail": {
+      "stop_to_released_ms": 304.57,
+      "close_ms": 263.8169
+     }
+    },
+    {
+     "criterion": "valid JPEG (SOI, EOI, SOF size) >= 99% of frames, kept samples decode strictly",
+     "met": true,
+     "detail": {
+      "valid": 1.0,
+      "samples_strict_ok": true,
+      "samples": 4
+     }
+    },
+    {
+     "criterion": "frames lost in the MF sample-time slots <= max(1, 0.1% of frames)",
+     "met": true,
+     "detail": {
+      "drops": 0,
+      "detectable": true,
+      "limit": 15,
+      "frames_short_of_nominal": 2541
+     }
+    },
+    {
+     "criterion": "arrival gaps > 1.5 nominal periods <= max(1, 0.1% of frames) (not rated where the 16 ms host grid makes such intervals normal, i.e. 60 fps)",
+     "met": true,
+     "detail": {
+      "count": 2,
+      "max_ms": 50.343,
+      "grid_limited": false
+     }
+    },
+    {
+     "criterion": "delivered fps >= 98% of nominal (an even lower rate with no lost slot = the camera's rate, not rated; W-MJPEG rates it)",
+     "met": false,
+     "detail": {
+      "fps_fit": 25.757,
+      "nominal": 30.0
+     }
+    }
+   ],
+   "evidence": {
+    "fps_fit": 25.757,
+    "drops": 0,
+    "gaps": 2,
+    "first_frame_ms": 87.9149,
+    "cpu_pct_of_one_core_process": 7.265185947861071
+   },
+   "summary_label": "partial (1 criteria)"
+  },
+  "pymf_multi|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|720p60": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "left out: no MJPG 59+ fps mode at the default size"
+    }
+   ],
+   "evidence": null,
+   "summary_label": "untested (scope)"
+  },
+  "pymf_streaming_set|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|exposure": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "every set returned within --timeout-ms while the reader streamed",
+     "met": true,
+     "detail": [
+      2.8803,
+      1.9866
+     ]
+    },
+    {
+     "criterion": "readback equals the value set, manual mode",
+     "met": true,
+     "detail": [
+      {
+       "set": -4,
+       "readback": -4,
+       "hr": "S_OK"
+      },
+      {
+       "set": -6,
+       "readback": -6,
+       "hr": "S_OK"
+      }
+     ]
+    },
+    {
+     "criterion": "ROI luma moved in the expected direction after each set",
+     "met": false,
+     "detail": [
+      {
+       "luma_before": 152.9,
+       "luma_after": 103.39,
+       "frames_to_change": 2,
+       "ms_to_change": 109.1,
+       "direction_ok": false
+      },
+      {
+       "luma_before": 103.43,
+       "luma_after": 44.22,
+       "frames_to_change": 2,
+       "ms_to_change": 110.6,
+       "direction_ok": true
+      }
+     ]
+    },
+    {
+     "criterion": "controls restored to their first-read value and mode, read back",
+     "met": true,
+     "detail": [
+      {
+       "control": "cc.exposure",
+       "restore_value": -6,
+       "readback_value": -6,
+       "restore_flags": 1,
+       "readback_flags": 1
+      }
+     ]
+    }
+   ],
+   "evidence": {
+    "frames_to_change": [
+     2,
+     2
+    ],
+    "camera": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+   },
+   "summary_label": "partial (ROI luma moved in the expected direction after each set)"
+  },
+  "pymf_multi|046d:085c:sn=C922SN01|720p30": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "bandwidth refusal (bandwidth_certain, 0x800718CF at first_sample) while a same-hub camera streamed: a topology result, recorded in refusals"
+    }
+   ],
+   "evidence": {
+    "failure": {
+     "failed": true,
+     "fault_kind": "error",
+     "code": "0x800718CF",
+     "stage": "first_sample",
+     "class": "bandwidth_certain",
+     "reason": "Media Foundation reported HRESULT_FROM_WIN32(6351): 'A camera interface doesn't have the desired bandwidth for data transfer'",
+     "refusal": true,
+     "others_streaming_same_hub": true
+    }
+   },
+   "summary_label": "untested (refused)"
+  },
+  "pymf_multi|046d:085c:sn=C922SN01|720p60": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "streamed the whole part and stopped on request (no error, stall or end of stream)",
+     "met": true,
+     "detail": {
+      "closed_by": "stop",
+      "error": null
+     }
+    },
+    {
+     "criterion": "released at the stop within 5 s (stop reads, Flush, reader release, source shutdown; all bounded)",
+     "met": true,
+     "detail": {
+      "stop_to_released_ms": 327.382,
+      "close_ms": 318.6378
+     }
+    },
+    {
+     "criterion": "valid JPEG (SOI, EOI, SOF size) >= 99% of frames, kept samples decode strictly",
+     "met": true,
+     "detail": {
+      "valid": 1.0,
+      "samples_strict_ok": true,
+      "samples": 4
+     }
+    },
+    {
+     "criterion": "frames lost in the MF sample-time slots <= max(1, 0.1% of frames)",
+     "met": null,
+     "detail": {
+      "drops": null,
+      "detectable": false,
+      "limit": 10,
+      "frames_short_of_nominal": 134
+     }
+    },
+    {
+     "criterion": "arrival gaps > 1.5 nominal periods <= max(1, 0.1% of frames) (not rated where the 16 ms host grid makes such intervals normal, i.e. 60 fps)",
+     "met": null,
+     "detail": {
+      "count": 581,
+      "max_ms": 48.218,
+      "grid_limited": true
+     }
+    },
+    {
+     "criterion": "delivered fps >= 98% of nominal (an even lower rate with no lost slot = the camera's rate, not rated; W-MJPEG rates it)",
+     "met": true,
+     "detail": {
+      "fps_fit": 59.27,
+      "nominal": 60.0
+     }
+    }
+   ],
+   "evidence": {
+    "fps_fit": 59.27,
+    "drops": null,
+    "gaps": 581,
+    "first_frame_ms": 218.5215,
+    "cpu_pct_of_one_core_process": 7.689875338403953
+   },
+   "summary_label": "yes"
+  },
+  "pymf_streaming_set|046d:085c:sn=C922SN01|exposure": {
+   "rating": "untested",
+   "criteria": [
+    {
+     "criterion": "measured",
+     "met": null,
+     "detail": "no control set scheduled (part 1 did not stream this camera long enough)"
+    }
+   ],
+   "evidence": null
+  },
+  "pymf_multi": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "pymf_multi|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|720p30",
+     "met": false,
+     "detail": "partial (1 criteria)"
+    },
+    {
+     "criterion": "pymf_multi|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|720p60",
+     "met": false,
+     "detail": "partial (2 criteria)"
+    },
+    {
+     "criterion": "pymf_multi|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8|720p30",
+     "met": true,
+     "detail": "yes"
+    },
+    {
+     "criterion": "pymf_multi|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8|720p60",
+     "met": null,
+     "detail": "untested (scope)"
+    },
+    {
+     "criterion": "pymf_multi|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|720p30",
+     "met": false,
+     "detail": "partial (1 criteria)"
+    },
+    {
+     "criterion": "pymf_multi|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|720p60",
+     "met": null,
+     "detail": "untested (scope)"
+    },
+    {
+     "criterion": "pymf_multi|046d:085c:sn=C922SN01|720p30",
+     "met": null,
+     "detail": "untested (refused)"
+    },
+    {
+     "criterion": "pymf_multi|046d:085c:sn=C922SN01|720p60",
+     "met": true,
+     "detail": "yes"
+    }
+   ],
+   "evidence": {
+    "cpu_pct_of_one_core_720p30": 7.265185947861071,
+    "refusals": [
+     {
+      "part": "all_720p30",
+      "camera": "046d:085c:sn=C922SN01",
+      "name": "c922 Pro Stream Webcam",
+      "failed": true,
+      "fault_kind": "error",
+      "code": "0x800718CF",
+      "stage": "first_sample",
+      "class": "bandwidth_certain",
+      "reason": "Media Foundation reported HRESULT_FROM_WIN32(6351): 'A camera interface doesn't have the desired bandwidth for data transfer'",
+      "refusal": true,
+      "others_streaming_same_hub": true
+     }
+    ],
+    "kiyo_pro_fault": null,
+    "not_covered": [
+     "several pymf processes at once (one process only, as skellycam's camera process)",
+     "decode to BGR in the capture process: the JPEG bytes are kept and checked (markers, strict decode of samples), the decode cost of package 1.3 is not in the CPU figure",
+     "long runs beyond the 10-minute part"
+    ],
+    "question": "can ONE pure-Python MF process stream every camera (skellycam's camera process, package 1.3)?"
+   },
+   "summary_label": "partial"
+  }
+ },
+ "errors": [],
+ "device_faults": {
+  "faulted_at_start": {},
+  "faulted_at_end": {},
+  "kiyo_dead_since": null
+ }
+}

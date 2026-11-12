@@ -1,0 +1,99 @@
+{
+ "seconds": 45.0,
+ "tail_s": 3.0,
+ "intruders": [
+  {
+   "label": "wincam_activity",
+   "at_s": 6.0,
+   "timeout_s": 25,
+   "target": "logitechwebcam_046d-0843_8",
+   "argv": [
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+    "activity",
+    "--wait-ms",
+    "1500"
+   ]
+  },
+  {
+   "label": "wincam_capture",
+   "at_s": 14.0,
+   "timeout_s": 40,
+   "target": "logitechwebcam_046d-0843_8",
+   "argv": [
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+    "capture",
+    "--api",
+    "mf",
+    "--device",
+    "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+    "--width",
+    "1280",
+    "--height",
+    "720",
+    "--fps",
+    "30",
+    "--subtype",
+    "MJPG",
+    "--frames",
+    "1",
+    "--timeout-ms",
+    "4000",
+    "--save",
+    "none",
+    "--out-dir",
+    "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\in_use\\opener_wincam"
+   ]
+  },
+  {
+   "label": "pymf_capture",
+   "at_s": 26.0,
+   "timeout_s": 70.0,
+   "target": "logitechwebcam_046d-0843_8",
+   "argv": [
+    "uv",
+    "run",
+    "--python",
+    "3.12",
+    "--script",
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py",
+    "capture",
+    "--device",
+    "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+    "--width",
+    "1280",
+    "--height",
+    "720",
+    "--fps",
+    "30",
+    "--subtype",
+    "MJPG",
+    "--frames",
+    "1",
+    "--timeout-ms",
+    "4000",
+    "--save",
+    "none",
+    "--out-dir",
+    "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF-ALL\\in_use\\opener_pymf"
+   ]
+  }
+ ],
+ "cameras": [
+  {
+   "label": "logitechwebcam_046d-0843_8",
+   "device": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "width": 1280,
+   "height": 720,
+   "fps": 30.0,
+   "subtype": "MJPG",
+   "is_kiyo": false,
+   "samples": 4,
+   "window": {
+    "pre": 5,
+    "post": 60
+   },
+   "controls": [],
+   "restore": true
+  }
+ ]
+}

@@ -1,0 +1,3184 @@
+{
+ "tool": "w_gain rule-leg",
+ "utc_started": "2026-11-12T04:37:38.486955+00:00",
+ "runs": [
+  {
+   "label": "as_written",
+   "params": {
+    "v_ceil": -6,
+    "band": [
+     95.0,
+     125.0
+    ],
+    "g_min": 0,
+    "g_max": 255,
+    "g_step": 1,
+    "v_min": -11,
+    "v_max": -2,
+    "label": "as_written",
+    "forced_by": null
+   },
+   "probes": [
+    {
+     "phase": "exposure",
+     "exposure": -6,
+     "gain": 0,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        44,
+        45,
+        46
+       ],
+       "frames": [
+        [
+         6752275,
+         115842
+        ],
+        [
+         6868117,
+         116534
+        ],
+        [
+         6984651,
+         116185
+        ]
+       ],
+       "t_frames_s": 2.71
+      }
+     ],
+     "set": {
+      "label": "e-6 g0",
+      "items": {
+       "exposure": -6,
+       "gain": 0
+      },
+      "t_start_s": 2.267,
+      "t_end_s": 2.308,
+      "call_s": 0.041,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "exposure": {
+        "want": -6,
+        "before": -6,
+        "readback": -6,
+        "ok": true
+       },
+       "gain": {
+        "want": 0,
+        "before": 0,
+        "readback": 0,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "ok": true,
+     "stats": {
+      "n_frames": 3,
+      "roi_luma_median": 130.0,
+      "roi_luma_mean": 123.058,
+      "clip_frac": 0.0
+     },
+     "motion": false
+    },
+    {
+     "phase": "exposure",
+     "exposure": -7,
+     "gain": 0,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        58,
+        59,
+        60
+       ],
+       "frames": [
+        [
+         8368539,
+         113395
+        ],
+        [
+         8481934,
+         107679
+        ],
+        [
+         8589613,
+         103490
+        ]
+       ],
+       "t_frames_s": 3.09
+      }
+     ],
+     "set": {
+      "label": "e-7 g0",
+      "items": {
+       "exposure": -7
+      },
+      "t_start_s": 2.722,
+      "t_end_s": 2.764,
+      "call_s": 0.042,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "exposure": {
+        "want": -7,
+        "before": -6,
+        "readback": -7,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "ok": true,
+     "stats": {
+      "n_frames": 3,
+      "roi_luma_median": 114.0,
+      "roi_luma_mean": 117.666,
+      "clip_frac": 0.0
+     },
+     "motion": false
+    },
+    {
+     "phase": "gain_ref",
+     "exposure": -7,
+     "gain": 0,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76
+       ],
+       "frames": [
+        [
+         9481368,
+         96530
+        ],
+        [
+         9577898,
+         96589
+        ],
+        [
+         9674487,
+         96077
+        ],
+        [
+         9770564,
+         95571
+        ],
+        [
+         9866135,
+         95335
+        ],
+        [
+         9961470,
+         94972
+        ],
+        [
+         10056442,
+         94729
+        ],
+        [
+         10151171,
+         94451
+        ]
+       ],
+       "t_frames_s": 3.624
+      }
+     ],
+     "set": null,
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": true,
+      "mask_px": 237679,
+      "tex_px": 58983,
+      "roi_luma_mean": 117.679,
+      "roi_luma_median": 113.875,
+      "clip_frac": 0.0,
+      "motion_frac_max": 0.0,
+      "motion_frac_mean": 0.0,
+      "frame_mean_sigma": 0.00553,
+      "rowmean_sigma": 0.02737,
+      "mu_mask": 126.2595,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 0.51755,
+      "sigma_flat_row_removed": 0.5176,
+      "flicker_variance_share": 0.0,
+      "rho": 0.0040315,
+      "sigma_two_frame": 0.54754,
+      "D": 0.37214
+     },
+     "motion": false
+    }
+   ],
+   "flags": [],
+   "warnings": [],
+   "v_ceil_used": -6,
+   "exposure": -7,
+   "luma_at_gain_min": 113.875,
+   "rho_ref": 0.0040315,
+   "d_ref": 0.37214,
+   "mu_ref": 126.2595,
+   "gain_needed": false,
+   "gain": 0,
+   "g_lim": null,
+   "limit_reached": false,
+   "luma": 113.875,
+   "note": "luma in or above the band at gain minimum: no gain needed",
+   "time_s": 1.446,
+   "n_probes": 3,
+   "n_exposure_probes": 2,
+   "n_gain_probes": 0,
+   "n_motion_retries": 0
+  },
+  {
+   "label": "forced_1",
+   "params": {
+    "v_ceil": -11,
+    "band": [
+     95.0,
+     125.0
+    ],
+    "g_min": 0,
+    "g_max": 255,
+    "g_step": 1,
+    "v_min": -11,
+    "v_max": -2,
+    "label": "forced_1",
+    "forced_by": "ceiling"
+   },
+   "probes": [
+    {
+     "phase": "exposure",
+     "exposure": -11,
+     "gain": 0,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        88,
+        89,
+        90
+       ],
+       "frames": [
+        [
+         11242128,
+         88324
+        ],
+        [
+         11330452,
+         83609
+        ],
+        [
+         11414061,
+         79896
+        ]
+       ],
+       "t_frames_s": 4.088
+      }
+     ],
+     "set": {
+      "label": "e-11 g0",
+      "items": {
+       "exposure": -11
+      },
+      "t_start_s": 3.713,
+      "t_end_s": 3.758,
+      "call_s": 0.045,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "exposure": {
+        "want": -11,
+        "before": -7,
+        "readback": -11,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "ok": true,
+     "stats": {
+      "n_frames": 3,
+      "roi_luma_median": 24.333,
+      "roi_luma_mean": 37.183,
+      "clip_frac": 0.0
+     },
+     "motion": false
+    },
+    {
+     "phase": "gain_ref",
+     "exposure": -11,
+     "gain": 0,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        98,
+        99,
+        100,
+        101,
+        102,
+        103,
+        104,
+        105
+       ],
+       "frames": [
+        [
+         12025271,
+         74361
+        ],
+        [
+         12099632,
+         74969
+        ],
+        [
+         12174601,
+         75341
+        ],
+        [
+         12249942,
+         74965
+        ],
+        [
+         12324907,
+         74270
+        ],
+        [
+         12399177,
+         73908
+        ],
+        [
+         12473085,
+         73580
+        ],
+        [
+         12546665,
+         73324
+        ]
+       ],
+       "t_frames_s": 4.588
+      }
+     ],
+     "set": null,
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": true,
+      "mask_px": 150373,
+      "tex_px": 58983,
+      "roi_luma_mean": 37.276,
+      "roi_luma_median": 24.25,
+      "clip_frac": 0.0,
+      "motion_frac_max": 2.7e-05,
+      "motion_frac_mean": 1.1e-05,
+      "frame_mean_sigma": 0.01381,
+      "rowmean_sigma": 0.07511,
+      "mu_mask": 42.6929,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 0.64087,
+      "sigma_flat_row_removed": 0.69465,
+      "flicker_variance_share": 0.0,
+      "rho": 0.0164854,
+      "sigma_two_frame": 0.69731,
+      "D": 0.60917
+     },
+     "motion": false
+    },
+    {
+     "phase": "gain",
+     "exposure": -11,
+     "gain": 128,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123
+       ],
+       "frames": [
+        [
+         13457991,
+         179317
+        ],
+        [
+         13637308,
+         170710
+        ],
+        [
+         13808018,
+         166338
+        ],
+        [
+         13974356,
+         162214
+        ],
+        [
+         14136570,
+         160667
+        ],
+        [
+         14297237,
+         159776
+        ],
+        [
+         14457013,
+         158641
+        ],
+        [
+         14615654,
+         158574
+        ]
+       ],
+       "t_frames_s": 5.19
+      }
+     ],
+     "set": {
+      "label": "e-11 g128",
+      "items": {
+       "gain": 128
+      },
+      "t_start_s": 4.661,
+      "t_end_s": 4.71,
+      "call_s": 0.048,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "gain": {
+        "want": 128,
+        "before": 0,
+        "readback": 128,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": false,
+      "mask_px": 150373,
+      "tex_px": 58983,
+      "roi_luma_mean": 117.913,
+      "roi_luma_median": 140.875,
+      "clip_frac": 0.0,
+      "motion_frac_max": 0.00014,
+      "motion_frac_mean": 2.7e-05,
+      "frame_mean_sigma": 0.03456,
+      "rowmean_sigma": 0.37437,
+      "mu_mask": 181.0966,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 1.0351,
+      "sigma_flat_row_removed": 1.10793,
+      "flicker_variance_share": 0.0,
+      "rho": 0.0056075,
+      "sigma_two_frame": 0.95931,
+      "D": 0.132058
+     },
+     "motion": false,
+     "checks": {
+      "rho_ratio": 0.3401,
+      "d_ratio": 0.2168,
+      "gain_response": 4.2418,
+      "rho_ok": true,
+      "detail_ok": false,
+      "rise_ok": true
+     },
+     "valid": false
+    },
+    {
+     "phase": "gain",
+     "exposure": -11,
+     "gain": 64,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        134,
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141
+       ],
+       "frames": [
+        [
+         16318518,
+         152411
+        ],
+        [
+         16470929,
+         146088
+        ],
+        [
+         16617017,
+         141337
+        ],
+        [
+         16758354,
+         139212
+        ],
+        [
+         16897566,
+         137081
+        ],
+        [
+         17034647,
+         135564
+        ],
+        [
+         17170211,
+         135588
+        ],
+        [
+         17305799,
+         135357
+        ]
+       ],
+       "t_frames_s": 5.821
+      }
+     ],
+     "set": {
+      "label": "e-11 g64",
+      "items": {
+       "gain": 64
+      },
+      "t_start_s": 5.242,
+      "t_end_s": 5.284,
+      "call_s": 0.042,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "gain": {
+        "want": 64,
+        "before": 128,
+        "readback": 64,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": false,
+      "mask_px": 150373,
+      "tex_px": 58983,
+      "roi_luma_mean": 104.572,
+      "roi_luma_median": 37.5,
+      "clip_frac": 0.0,
+      "motion_frac_max": 0.000838,
+      "motion_frac_mean": 0.000652,
+      "frame_mean_sigma": 0.01745,
+      "rowmean_sigma": 0.30425,
+      "mu_mask": 187.7645,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 1.0351,
+      "sigma_flat_row_removed": 1.07808,
+      "flicker_variance_share": 0.0,
+      "rho": 0.0055438,
+      "sigma_two_frame": 1.22245,
+      "D": 0.175927
+     },
+     "motion": false,
+     "checks": {
+      "rho_ratio": 0.3363,
+      "d_ratio": 0.2888,
+      "gain_response": 4.398,
+      "rho_ok": true,
+      "detail_ok": false,
+      "rise_ok": true
+     },
+     "valid": false
+    },
+    {
+     "phase": "gain",
+     "exposure": -11,
+     "gain": 32,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        153,
+        154,
+        155,
+        156,
+        157,
+        158,
+        159,
+        160
+       ],
+       "frames": [
+        [
+         18922637,
+         134477
+        ],
+        [
+         19057114,
+         127014
+        ],
+        [
+         19184128,
+         121794
+        ],
+        [
+         19305922,
+         118635
+        ],
+        [
+         19424557,
+         116640
+        ],
+        [
+         19541197,
+         115793
+        ],
+        [
+         19656990,
+         115742
+        ],
+        [
+         19772732,
+         114160
+        ]
+       ],
+       "t_frames_s": 6.462
+      }
+     ],
+     "set": {
+      "label": "e-11 g32",
+      "items": {
+       "gain": 32
+      },
+      "t_start_s": 5.872,
+      "t_end_s": 5.914,
+      "call_s": 0.042,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "gain": {
+        "want": 32,
+        "before": 64,
+        "readback": 32,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": false,
+      "mask_px": 150373,
+      "tex_px": 58983,
+      "roi_luma_mean": 89.344,
+      "roi_luma_median": 29.125,
+      "clip_frac": 0.0,
+      "motion_frac_max": 0.018215,
+      "motion_frac_mean": 0.017735,
+      "frame_mean_sigma": 0.01972,
+      "rowmean_sigma": 0.21508,
+      "mu_mask": 180.0574,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 1.30931,
+      "sigma_flat_row_removed": 1.34084,
+      "flicker_variance_share": 0.0,
+      "rho": 0.0072511,
+      "sigma_two_frame": 5.71321,
+      "D": 0.319919
+     },
+     "motion": false,
+     "checks": {
+      "rho_ratio": 0.4398,
+      "d_ratio": 0.5252,
+      "gain_response": 4.2175,
+      "rho_ok": true,
+      "detail_ok": false,
+      "rise_ok": true
+     },
+     "valid": false
+    },
+    {
+     "phase": "gain",
+     "exposure": -11,
+     "gain": 16,
+     "retries": 3,
+     "attempts": [
+      {
+       "seqs": [
+        171,
+        172,
+        173,
+        174,
+        175,
+        176,
+        177,
+        178
+       ],
+       "frames": [
+        [
+         21013079,
+         130459
+        ],
+        [
+         21143538,
+         130297
+        ],
+        [
+         21273835,
+         125302
+        ],
+        [
+         21399137,
+         121259
+        ],
+        [
+         21520396,
+         118793
+        ],
+        [
+         21639189,
+         116774
+        ],
+        [
+         21755963,
+         116364
+        ],
+        [
+         21872327,
+         115948
+        ]
+       ],
+       "t_frames_s": 7.056
+      },
+      {
+       "seqs": [
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186
+       ],
+       "frames": [
+        [
+         21988275,
+         114332
+        ],
+        [
+         22102607,
+         113529
+        ],
+        [
+         22216136,
+         112456
+        ],
+        [
+         22328592,
+         111913
+        ],
+        [
+         22440505,
+         111554
+        ],
+        [
+         22552059,
+         111403
+        ],
+        [
+         22663462,
+         110299
+        ],
+        [
+         22773761,
+         109659
+        ]
+       ],
+       "t_frames_s": 7.326
+      },
+      {
+       "seqs": [
+        187,
+        188,
+        189,
+        190,
+        191,
+        192,
+        193,
+        194
+       ],
+       "frames": [
+        [
+         22883420,
+         109664
+        ],
+        [
+         22993084,
+         108814
+        ],
+        [
+         23101898,
+         109029
+        ],
+        [
+         23210927,
+         108416
+        ],
+        [
+         23319343,
+         108457
+        ],
+        [
+         23427800,
+         108004
+        ],
+        [
+         23535804,
+         107871
+        ],
+        [
+         23643675,
+         107820
+        ]
+       ],
+       "t_frames_s": 7.599
+      },
+      {
+       "seqs": [
+        195,
+        196,
+        197,
+        198,
+        199,
+        200,
+        201,
+        202
+       ],
+       "frames": [
+        [
+         23751495,
+         107455
+        ],
+        [
+         23858950,
+         107633
+        ],
+        [
+         23966583,
+         107613
+        ],
+        [
+         24074196,
+         107589
+        ],
+        [
+         24181785,
+         107631
+        ],
+        [
+         24289416,
+         107308
+        ],
+        [
+         24396724,
+         106884
+        ],
+        [
+         24503608,
+         107396
+        ]
+       ],
+       "t_frames_s": 7.839
+      }
+     ],
+     "set": {
+      "label": "e-11 g16",
+      "items": {
+       "gain": 16
+      },
+      "t_start_s": 6.513,
+      "t_end_s": 6.562,
+      "call_s": 0.049,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "gain": {
+        "want": 16,
+        "before": 32,
+        "readback": 16,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "motion_frac_max": 0.101441,
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": false,
+      "mask_px": 150373,
+      "tex_px": 58983,
+      "roi_luma_mean": 75.904,
+      "roi_luma_median": 27.25,
+      "clip_frac": 0.0,
+      "motion_frac_max": 0.101441,
+      "motion_frac_mean": 0.100916,
+      "frame_mean_sigma": 0.03911,
+      "rowmean_sigma": 0.30258,
+      "mu_mask": 150.168,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 0.92582,
+      "sigma_flat_row_removed": 1.0317,
+      "flicker_variance_share": 0.0,
+      "rho": 0.006176,
+      "sigma_two_frame": 15.56217,
+      "D": 0.422636
+     },
+     "motion": true
+    }
+   ],
+   "flags": [
+    "gain_limit_unverified"
+   ],
+   "warnings": [
+    "hold still / clear the view: motion in every retry of a gain probe",
+    "about 4.536x too dark at the ceiling: add light, or choose a slower motion setting"
+   ],
+   "v_ceil_used": -11,
+   "exposure": -11,
+   "luma_at_gain_min": 24.25,
+   "rho_ref": 0.0164854,
+   "d_ref": 0.60917,
+   "mu_ref": 42.6929,
+   "gain_needed": true,
+   "gain": 0,
+   "g_lim": 0,
+   "luma": 24.25,
+   "target_reached": false,
+   "limit_reached": false,
+   "limit_is_range_max": false,
+   "probe_step": 32,
+   "rho_at_glim": 0.0164854,
+   "rho_ratio": 1.0,
+   "d_ratio": 1.0,
+   "gain_response": 1.0,
+   "too_dark_factor": 4.536,
+   "time_s": 4.178,
+   "n_probes": 6,
+   "n_exposure_probes": 1,
+   "n_gain_probes": 4,
+   "n_motion_retries": 3
+  },
+  {
+   "label": "forced_2",
+   "params": {
+    "v_ceil": -11,
+    "band": [
+     95.0,
+     125.0
+    ],
+    "g_min": 0,
+    "g_max": 255,
+    "g_step": 1,
+    "v_min": -11,
+    "v_max": -2,
+    "label": "forced_2",
+    "forced_by": "ceiling"
+   },
+   "probes": [
+    {
+     "phase": "exposure",
+     "exposure": -11,
+     "gain": 0,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        214,
+        215,
+        216
+       ],
+       "frames": [
+        [
+         25748928,
+         88579
+        ],
+        [
+         25837507,
+         84092
+        ],
+        [
+         25921599,
+         80293
+        ]
+       ],
+       "t_frames_s": 8.266
+      }
+     ],
+     "set": {
+      "label": "e-11 g0",
+      "items": {
+       "gain": 0
+      },
+      "t_start_s": 7.89,
+      "t_end_s": 7.94,
+      "call_s": 0.049,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "gain": {
+        "want": 0,
+        "before": 16,
+        "readback": 0,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "ok": true,
+     "stats": {
+      "n_frames": 3,
+      "roi_luma_median": 24.333,
+      "roi_luma_mean": 37.11,
+      "clip_frac": 0.0
+     },
+     "motion": false
+    },
+    {
+     "phase": "gain_ref",
+     "exposure": -11,
+     "gain": 0,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        224,
+        225,
+        226,
+        227,
+        228,
+        229,
+        230,
+        231
+       ],
+       "frames": [
+        [
+         26534023,
+         74117
+        ],
+        [
+         26608140,
+         74284
+        ],
+        [
+         26682424,
+         74195
+        ],
+        [
+         26756619,
+         73705
+        ],
+        [
+         26830324,
+         73545
+        ],
+        [
+         26903869,
+         72866
+        ],
+        [
+         26976735,
+         72623
+        ],
+        [
+         27049358,
+         72335
+        ]
+       ],
+       "t_frames_s": 8.807
+      }
+     ],
+     "set": null,
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": true,
+      "mask_px": 151727,
+      "tex_px": 58983,
+      "roi_luma_mean": 37.074,
+      "roi_luma_median": 24.25,
+      "clip_frac": 0.0,
+      "motion_frac_max": 2e-05,
+      "motion_frac_mean": 1.2e-05,
+      "frame_mean_sigma": 0.01732,
+      "rowmean_sigma": 0.08677,
+      "mu_mask": 42.5626,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 0.64087,
+      "sigma_flat_row_removed": 0.68793,
+      "flicker_variance_share": 0.0,
+      "rho": 0.0164956,
+      "sigma_two_frame": 0.70075,
+      "D": 0.602349
+     },
+     "motion": false
+    },
+    {
+     "phase": "gain",
+     "exposure": -11,
+     "gain": 128,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        244,
+        245,
+        246,
+        247,
+        248,
+        249,
+        250,
+        251
+       ],
+       "frames": [
+        [
+         28290681,
+         174999
+        ],
+        [
+         28465680,
+         169670
+        ],
+        [
+         28635350,
+         164457
+        ],
+        [
+         28799807,
+         161572
+        ],
+        [
+         28961379,
+         159104
+        ],
+        [
+         29120483,
+         158076
+        ],
+        [
+         29278559,
+         158258
+        ],
+        [
+         29436817,
+         157619
+        ]
+       ],
+       "t_frames_s": 9.455
+      }
+     ],
+     "set": {
+      "label": "e-11 g128",
+      "items": {
+       "gain": 128
+      },
+      "t_start_s": 8.882,
+      "t_end_s": 8.932,
+      "call_s": 0.051,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "gain": {
+        "want": 128,
+        "before": 0,
+        "readback": 128,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": false,
+      "mask_px": 151727,
+      "tex_px": 58983,
+      "roi_luma_mean": 117.792,
+      "roi_luma_median": 140.875,
+      "clip_frac": 0.0,
+      "motion_frac_max": 0.000165,
+      "motion_frac_mean": 2.9e-05,
+      "frame_mean_sigma": 0.02668,
+      "rowmean_sigma": 0.37959,
+      "mu_mask": 181.0941,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 0.91613,
+      "sigma_flat_row_removed": 1.0191,
+      "flicker_variance_share": 0.0,
+      "rho": 0.0051179,
+      "sigma_two_frame": 0.88997,
+      "D": 0.133228
+     },
+     "motion": false,
+     "checks": {
+      "rho_ratio": 0.3103,
+      "d_ratio": 0.2212,
+      "gain_response": 4.2548,
+      "rho_ok": true,
+      "detail_ok": false,
+      "rise_ok": true
+     },
+     "valid": false
+    },
+    {
+     "phase": "gain",
+     "exposure": -11,
+     "gain": 64,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        262,
+        263,
+        264,
+        265,
+        266,
+        267,
+        268,
+        269
+       ],
+       "frames": [
+        [
+         31128629,
+         152554
+        ],
+        [
+         31281183,
+         145549
+        ],
+        [
+         31426732,
+         141364
+        ],
+        [
+         31568096,
+         139029
+        ],
+        [
+         31707125,
+         136619
+        ],
+        [
+         31843744,
+         136450
+        ],
+        [
+         31980194,
+         135592
+        ],
+        [
+         32115786,
+         135012
+        ]
+       ],
+       "t_frames_s": 10.109
+      }
+     ],
+     "set": {
+      "label": "e-11 g64",
+      "items": {
+       "gain": 64
+      },
+      "t_start_s": 9.506,
+      "t_end_s": 9.555,
+      "call_s": 0.049,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "gain": {
+        "want": 64,
+        "before": 128,
+        "readback": 64,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": false,
+      "mask_px": 151727,
+      "tex_px": 58983,
+      "roi_luma_mean": 104.19,
+      "roi_luma_median": 37.125,
+      "clip_frac": 0.0,
+      "motion_frac_max": 0.000435,
+      "motion_frac_mean": 0.000234,
+      "frame_mean_sigma": 0.05127,
+      "rowmean_sigma": 0.29687,
+      "mu_mask": 187.996,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 1.06066,
+      "sigma_flat_row_removed": 1.09139,
+      "flicker_variance_share": 0.0,
+      "rho": 0.0055951,
+      "sigma_two_frame": 1.07199,
+      "D": 0.18526
+     },
+     "motion": false,
+     "checks": {
+      "rho_ratio": 0.3392,
+      "d_ratio": 0.3076,
+      "gain_response": 4.4169,
+      "rho_ok": true,
+      "detail_ok": false,
+      "rise_ok": true
+     },
+     "valid": false
+    },
+    {
+     "phase": "gain",
+     "exposure": -11,
+     "gain": 32,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        282,
+        283,
+        284,
+        285,
+        286,
+        287,
+        288,
+        289
+       ],
+       "frames": [
+        [
+         33861780,
+         133195
+        ],
+        [
+         33994975,
+         126207
+        ],
+        [
+         34121182,
+         120978
+        ],
+        [
+         34242160,
+         117917
+        ],
+        [
+         34360077,
+         116228
+        ],
+        [
+         34476305,
+         115148
+        ],
+        [
+         34591453,
+         115209
+        ],
+        [
+         34706662,
+         113943
+        ]
+       ],
+       "t_frames_s": 10.74
+      }
+     ],
+     "set": {
+      "label": "e-11 g32",
+      "items": {
+       "gain": 32
+      },
+      "t_start_s": 10.16,
+      "t_end_s": 10.2,
+      "call_s": 0.04,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "gain": {
+        "want": 32,
+        "before": 64,
+        "readback": 32,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": false,
+      "mask_px": 151727,
+      "tex_px": 58983,
+      "roi_luma_mean": 89.561,
+      "roi_luma_median": 29.75,
+      "clip_frac": 0.0,
+      "motion_frac_max": 0.017419,
+      "motion_frac_mean": 0.016443,
+      "frame_mean_sigma": 0.0206,
+      "rowmean_sigma": 0.20316,
+      "mu_mask": 180.548,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 1.30931,
+      "sigma_flat_row_removed": 1.34867,
+      "flicker_variance_share": 0.0,
+      "rho": 0.0072995,
+      "sigma_two_frame": 5.50429,
+      "D": 0.325218
+     },
+     "motion": false,
+     "checks": {
+      "rho_ratio": 0.4425,
+      "d_ratio": 0.5399,
+      "gain_response": 4.2419,
+      "rho_ok": true,
+      "detail_ok": false,
+      "rise_ok": true
+     },
+     "valid": false
+    },
+    {
+     "phase": "gain",
+     "exposure": -11,
+     "gain": 16,
+     "retries": 3,
+     "attempts": [
+      {
+       "seqs": [
+        300,
+        301,
+        302,
+        303,
+        304,
+        305,
+        306,
+        307
+       ],
+       "frames": [
+        [
+         35943258,
+         131714
+        ],
+        [
+         36074972,
+         131433
+        ],
+        [
+         36206405,
+         125550
+        ],
+        [
+         36331955,
+         121342
+        ],
+        [
+         36453297,
+         119237
+        ],
+        [
+         36572534,
+         117553
+        ],
+        [
+         36690087,
+         116940
+        ],
+        [
+         36807027,
+         116151
+        ]
+       ],
+       "t_frames_s": 11.36
+      },
+      {
+       "seqs": [
+        308,
+        309,
+        310,
+        311,
+        312,
+        313,
+        314,
+        315
+       ],
+       "frames": [
+        [
+         36923178,
+         114689
+        ],
+        [
+         37037867,
+         113194
+        ],
+        [
+         37151061,
+         112575
+        ],
+        [
+         37263636,
+         112095
+        ],
+        [
+         37375731,
+         111720
+        ],
+        [
+         37487451,
+         111301
+        ],
+        [
+         37598752,
+         110687
+        ],
+        [
+         37709439,
+         109876
+        ]
+       ],
+       "t_frames_s": 11.648
+      },
+      {
+       "seqs": [
+        316,
+        317,
+        318,
+        319,
+        320,
+        321,
+        322,
+        323
+       ],
+       "frames": [
+        [
+         37819315,
+         109683
+        ],
+        [
+         37928998,
+         109300
+        ],
+        [
+         38038298,
+         108378
+        ],
+        [
+         38146676,
+         108507
+        ],
+        [
+         38255183,
+         107771
+        ],
+        [
+         38362954,
+         108195
+        ],
+        [
+         38471149,
+         107715
+        ],
+        [
+         38578864,
+         107757
+        ]
+       ],
+       "t_frames_s": 11.891
+      },
+      {
+       "seqs": [
+        324,
+        325,
+        326,
+        327,
+        328,
+        329,
+        330,
+        331
+       ],
+       "frames": [
+        [
+         38686621,
+         107547
+        ],
+        [
+         38794168,
+         107580
+        ],
+        [
+         38901748,
+         107459
+        ],
+        [
+         39009207,
+         107270
+        ],
+        [
+         39116477,
+         106999
+        ],
+        [
+         39223476,
+         107184
+        ],
+        [
+         39330660,
+         107068
+        ],
+        [
+         39437728,
+         107162
+        ]
+       ],
+       "t_frames_s": 12.161
+      }
+     ],
+     "set": {
+      "label": "e-11 g16",
+      "items": {
+       "gain": 16
+      },
+      "t_start_s": 10.792,
+      "t_end_s": 10.832,
+      "call_s": 0.04,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "gain": {
+        "want": 16,
+        "before": 32,
+        "readback": 16,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "motion_frac_max": 0.100358,
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": false,
+      "mask_px": 151727,
+      "tex_px": 58983,
+      "roi_luma_mean": 75.412,
+      "roi_luma_median": 27.25,
+      "clip_frac": 0.0,
+      "motion_frac_max": 0.100358,
+      "motion_frac_mean": 0.098947,
+      "frame_mean_sigma": 0.02406,
+      "rowmean_sigma": 0.28964,
+      "mu_mask": 148.8107,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 0.92582,
+      "sigma_flat_row_removed": 1.03545,
+      "flicker_variance_share": 0.0,
+      "rho": 0.0062907,
+      "sigma_two_frame": 15.28278,
+      "D": 0.43597
+     },
+     "motion": true
+    }
+   ],
+   "flags": [
+    "gain_limit_unverified"
+   ],
+   "warnings": [
+    "hold still / clear the view: motion in every retry of a gain probe",
+    "about 4.536x too dark at the ceiling: add light, or choose a slower motion setting"
+   ],
+   "v_ceil_used": -11,
+   "exposure": -11,
+   "luma_at_gain_min": 24.25,
+   "rho_ref": 0.0164956,
+   "d_ref": 0.602349,
+   "mu_ref": 42.5626,
+   "gain_needed": true,
+   "gain": 0,
+   "g_lim": 0,
+   "luma": 24.25,
+   "target_reached": false,
+   "limit_reached": false,
+   "limit_is_range_max": false,
+   "probe_step": 32,
+   "rho_at_glim": 0.0164956,
+   "rho_ratio": 1.0,
+   "d_ratio": 1.0,
+   "gain_response": 1.0,
+   "too_dark_factor": 4.536,
+   "time_s": 4.324,
+   "n_probes": 6,
+   "n_exposure_probes": 1,
+   "n_gain_probes": 4,
+   "n_motion_retries": 3
+  },
+  {
+   "label": "forced_3",
+   "params": {
+    "v_ceil": -11,
+    "band": [
+     95.0,
+     125.0
+    ],
+    "g_min": 0,
+    "g_max": 255,
+    "g_step": 1,
+    "v_min": -11,
+    "v_max": -2,
+    "label": "forced_3",
+    "forced_by": "ceiling"
+   },
+   "probes": [
+    {
+     "phase": "exposure",
+     "exposure": -11,
+     "gain": 0,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        343,
+        344,
+        345
+       ],
+       "frames": [
+        [
+         40685944,
+         90687
+        ],
+        [
+         40776631,
+         85600
+        ],
+        [
+         40862231,
+         82033
+        ]
+       ],
+       "t_frames_s": 12.577
+      }
+     ],
+     "set": {
+      "label": "e-11 g0",
+      "items": {
+       "gain": 0
+      },
+      "t_start_s": 12.214,
+      "t_end_s": 12.254,
+      "call_s": 0.04,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "gain": {
+        "want": 0,
+        "before": 16,
+        "readback": 0,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "ok": true,
+     "stats": {
+      "n_frames": 3,
+      "roi_luma_median": 24.333,
+      "roi_luma_mean": 37.157,
+      "clip_frac": 0.0
+     },
+     "motion": false
+    },
+    {
+     "phase": "gain_ref",
+     "exposure": -11,
+     "gain": 0,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        353,
+        354,
+        355,
+        356,
+        357,
+        358,
+        359,
+        360
+       ],
+       "frames": [
+        [
+         41489552,
+         75965
+        ],
+        [
+         41565517,
+         76495
+        ],
+        [
+         41642012,
+         76257
+        ],
+        [
+         41718269,
+         75943
+        ],
+        [
+         41794212,
+         75305
+        ],
+        [
+         41869517,
+         75117
+        ],
+        [
+         41944634,
+         74760
+        ],
+        [
+         42019394,
+         74223
+        ]
+       ],
+       "t_frames_s": 13.072
+      }
+     ],
+     "set": null,
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": true,
+      "mask_px": 149046,
+      "tex_px": 58983,
+      "roi_luma_mean": 37.193,
+      "roi_luma_median": 24.25,
+      "clip_frac": 0.0,
+      "motion_frac_max": 4e-05,
+      "motion_frac_mean": 1.8e-05,
+      "frame_mean_sigma": 0.02268,
+      "rowmean_sigma": 0.09839,
+      "mu_mask": 42.3038,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 0.64087,
+      "sigma_flat_row_removed": 0.70996,
+      "flicker_variance_share": 0.0,
+      "rho": 0.0164854,
+      "sigma_two_frame": 0.6991,
+      "D": 0.636867
+     },
+     "motion": false
+    },
+    {
+     "phase": "gain",
+     "exposure": -11,
+     "gain": 128,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        371,
+        372,
+        373,
+        374,
+        375,
+        376,
+        377,
+        378
+       ],
+       "frames": [
+        [
+         43096454,
+         171810
+        ],
+        [
+         43268264,
+         166775
+        ],
+        [
+         43435039,
+         163239
+        ],
+        [
+         43598278,
+         161715
+        ],
+        [
+         43759993,
+         160130
+        ],
+        [
+         43920123,
+         160189
+        ],
+        [
+         44080312,
+         159780
+        ],
+        [
+         44240092,
+         159119
+        ]
+       ],
+       "t_frames_s": 13.696
+      }
+     ],
+     "set": {
+      "label": "e-11 g128",
+      "items": {
+       "gain": 128
+      },
+      "t_start_s": 13.149,
+      "t_end_s": 13.192,
+      "call_s": 0.043,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "gain": {
+        "want": 128,
+        "before": 0,
+        "readback": 128,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": false,
+      "mask_px": 149046,
+      "tex_px": 58983,
+      "roi_luma_mean": 117.055,
+      "roi_luma_median": 140.5,
+      "clip_frac": 0.0,
+      "motion_frac_max": 6.7e-05,
+      "motion_frac_mean": 1.4e-05,
+      "frame_mean_sigma": 0.01915,
+      "rowmean_sigma": 0.391,
+      "mu_mask": 180.9138,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 0.91613,
+      "sigma_flat_row_removed": 1.01734,
+      "flicker_variance_share": 0.0,
+      "rho": 0.005051,
+      "sigma_two_frame": 0.8741,
+      "D": 0.125485
+     },
+     "motion": false,
+     "checks": {
+      "rho_ratio": 0.3064,
+      "d_ratio": 0.197,
+      "gain_response": 4.2765,
+      "rho_ok": true,
+      "detail_ok": false,
+      "rise_ok": true
+     },
+     "valid": false
+    },
+    {
+     "phase": "gain",
+     "exposure": -11,
+     "gain": 64,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        389,
+        390,
+        391,
+        392,
+        393,
+        394,
+        395,
+        396
+       ],
+       "frames": [
+        [
+         45951977,
+         152893
+        ],
+        [
+         46104870,
+         146252
+        ],
+        [
+         46251122,
+         142193
+        ],
+        [
+         46393315,
+         139456
+        ],
+        [
+         46532771,
+         137377
+        ],
+        [
+         46670148,
+         136290
+        ],
+        [
+         46806438,
+         136514
+        ],
+        [
+         46942952,
+         135492
+        ]
+       ],
+       "t_frames_s": 14.312
+      }
+     ],
+     "set": {
+      "label": "e-11 g64",
+      "items": {
+       "gain": 64
+      },
+      "t_start_s": 13.747,
+      "t_end_s": 13.787,
+      "call_s": 0.04,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "gain": {
+        "want": 64,
+        "before": 128,
+        "readback": 64,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": false,
+      "mask_px": 149046,
+      "tex_px": 58983,
+      "roi_luma_mean": 104.004,
+      "roi_luma_median": 37.125,
+      "clip_frac": 0.0,
+      "motion_frac_max": 0.002154,
+      "motion_frac_mean": 0.002059,
+      "frame_mean_sigma": 0.01909,
+      "rowmean_sigma": 0.30694,
+      "mu_mask": 187.272,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 1.06066,
+      "sigma_flat_row_removed": 1.09198,
+      "flicker_variance_share": 0.0,
+      "rho": 0.0056264,
+      "sigma_two_frame": 2.35237,
+      "D": 0.168498
+     },
+     "motion": false,
+     "checks": {
+      "rho_ratio": 0.3413,
+      "d_ratio": 0.2646,
+      "gain_response": 4.4268,
+      "rho_ok": true,
+      "detail_ok": false,
+      "rise_ok": true
+     },
+     "valid": false
+    },
+    {
+     "phase": "gain",
+     "exposure": -11,
+     "gain": 32,
+     "retries": 0,
+     "attempts": [
+      {
+       "seqs": [
+        408,
+        409,
+        410,
+        411,
+        412,
+        413,
+        414,
+        415
+       ],
+       "frames": [
+        [
+         48564664,
+         134326
+        ],
+        [
+         48698990,
+         127013
+        ],
+        [
+         48826003,
+         121763
+        ],
+        [
+         48947766,
+         118497
+        ],
+        [
+         49066263,
+         116686
+        ],
+        [
+         49182949,
+         115927
+        ],
+        [
+         49298876,
+         115455
+        ],
+        [
+         49414331,
+         114381
+        ]
+       ],
+       "t_frames_s": 14.947
+      }
+     ],
+     "set": {
+      "label": "e-11 g32",
+      "items": {
+       "gain": 32
+      },
+      "t_start_s": 14.363,
+      "t_end_s": 14.404,
+      "call_s": 0.04,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "gain": {
+        "want": 32,
+        "before": 64,
+        "readback": 32,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": false,
+      "mask_px": 149046,
+      "tex_px": 58983,
+      "roi_luma_mean": 89.236,
+      "roi_luma_median": 29.5,
+      "clip_frac": 0.0,
+      "motion_frac_max": 0.019625,
+      "motion_frac_mean": 0.01866,
+      "frame_mean_sigma": 0.017,
+      "rowmean_sigma": 0.20724,
+      "mu_mask": 179.517,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 1.30931,
+      "sigma_flat_row_removed": 1.35103,
+      "flicker_variance_share": 0.0,
+      "rho": 0.0073558,
+      "sigma_two_frame": 6.00274,
+      "D": 0.307202
+     },
+     "motion": false,
+     "checks": {
+      "rho_ratio": 0.4462,
+      "d_ratio": 0.4824,
+      "gain_response": 4.2435,
+      "rho_ok": true,
+      "detail_ok": false,
+      "rise_ok": true
+     },
+     "valid": false
+    },
+    {
+     "phase": "gain",
+     "exposure": -11,
+     "gain": 16,
+     "retries": 3,
+     "attempts": [
+      {
+       "seqs": [
+        426,
+        427,
+        428,
+        429,
+        430,
+        431,
+        432,
+        433
+       ],
+       "frames": [
+        [
+         50655932,
+         131980
+        ],
+        [
+         50787912,
+         132181
+        ],
+        [
+         50920093,
+         126142
+        ],
+        [
+         51046235,
+         121587
+        ],
+        [
+         51167822,
+         119319
+        ],
+        [
+         51287141,
+         117670
+        ],
+        [
+         51404811,
+         116782
+        ],
+        [
+         51521593,
+         116694
+        ]
+       ],
+       "t_frames_s": 15.554
+      },
+      {
+       "seqs": [
+        434,
+        435,
+        436,
+        437,
+        438,
+        439,
+        440,
+        441
+       ],
+       "frames": [
+        [
+         51638287,
+         114922
+        ],
+        [
+         51753209,
+         113798
+        ],
+        [
+         51867007,
+         112952
+        ],
+        [
+         51979959,
+         112166
+        ],
+        [
+         52092125,
+         111667
+        ],
+        [
+         52203792,
+         111424
+        ],
+        [
+         52315216,
+         111031
+        ],
+        [
+         52426247,
+         110348
+        ]
+       ],
+       "t_frames_s": 15.811
+      },
+      {
+       "seqs": [
+        442,
+        443,
+        444,
+        445,
+        446,
+        447,
+        448,
+        449
+       ],
+       "frames": [
+        [
+         52536595,
+         110091
+        ],
+        [
+         52646686,
+         109478
+        ],
+        [
+         52756164,
+         109569
+        ],
+        [
+         52865733,
+         108893
+        ],
+        [
+         52974626,
+         108266
+        ],
+        [
+         53082892,
+         108292
+        ],
+        [
+         53191184,
+         108214
+        ],
+        [
+         53299398,
+         107953
+        ]
+       ],
+       "t_frames_s": 16.091
+      },
+      {
+       "seqs": [
+        450,
+        451,
+        452,
+        453,
+        454,
+        455,
+        456,
+        457
+       ],
+       "frames": [
+        [
+         53407351,
+         107916
+        ],
+        [
+         53515267,
+         107900
+        ],
+        [
+         53623167,
+         107970
+        ],
+        [
+         53731137,
+         107645
+        ],
+        [
+         53838782,
+         107729
+        ],
+        [
+         53946511,
+         107738
+        ],
+        [
+         54054249,
+         107549
+        ],
+        [
+         54161798,
+         107575
+        ]
+       ],
+       "t_frames_s": 16.354
+      }
+     ],
+     "set": {
+      "label": "e-11 g16",
+      "items": {
+       "gain": 16
+      },
+      "t_start_s": 14.998,
+      "t_end_s": 15.042,
+      "call_s": 0.044,
+      "rc": 0,
+      "timed_out": false,
+      "per": {
+       "gain": {
+        "want": 16,
+        "before": 32,
+        "readback": 16,
+        "ok": true
+       }
+      },
+      "device_not_answering": false,
+      "error": null
+     },
+     "motion_frac_max": 0.104028,
+     "ok": true,
+     "stats": {
+      "n_frames": 8,
+      "roi_shape": [
+       576,
+       1024
+      ],
+      "own_masks": false,
+      "mask_px": 149046,
+      "tex_px": 58983,
+      "roi_luma_mean": 75.619,
+      "roi_luma_median": 27.125,
+      "clip_frac": 0.0,
+      "motion_frac_max": 0.104028,
+      "motion_frac_mean": 0.103123,
+      "frame_mean_sigma": 0.01594,
+      "rowmean_sigma": 0.3025,
+      "mu_mask": 149.6968,
+      "mask_clip_frac": 0.0,
+      "sigma_flat": 0.92582,
+      "sigma_flat_row_removed": 1.04653,
+      "flicker_variance_share": 0.0,
+      "rho": 0.0063729,
+      "sigma_two_frame": 15.54137,
+      "D": 0.406189
+     },
+     "motion": true
+    }
+   ],
+   "flags": [
+    "gain_limit_unverified"
+   ],
+   "warnings": [
+    "hold still / clear the view: motion in every retry of a gain probe",
+    "about 4.536x too dark at the ceiling: add light, or choose a slower motion setting"
+   ],
+   "v_ceil_used": -11,
+   "exposure": -11,
+   "luma_at_gain_min": 24.25,
+   "rho_ref": 0.0164854,
+   "d_ref": 0.636867,
+   "mu_ref": 42.3038,
+   "gain_needed": true,
+   "gain": 0,
+   "g_lim": 0,
+   "luma": 24.25,
+   "target_reached": false,
+   "limit_reached": false,
+   "limit_is_range_max": false,
+   "probe_step": 32,
+   "rho_at_glim": 0.0164854,
+   "rho_ratio": 1.0,
+   "d_ratio": 1.0,
+   "gain_response": 1.0,
+   "too_dark_factor": 4.536,
+   "time_s": 4.192,
+   "n_probes": 6,
+   "n_exposure_probes": 1,
+   "n_gain_probes": 4,
+   "n_motion_retries": 3
+  }
+ ],
+ "ok": true,
+ "lock_reapply": {
+  "label": "locks",
+  "items": {
+   "white_balance": 5000,
+   "focus": 0,
+   "auto_exposure_priority": 0
+  },
+  "t_start_s": 2.174,
+  "t_end_s": 2.226,
+  "call_s": 0.052,
+  "rc": 0,
+  "timed_out": false,
+  "per": {
+   "white_balance": {
+    "want": 5000,
+    "before": 5000,
+    "readback": 5000,
+    "ok": true
+   },
+   "focus": {
+    "want": 0,
+    "before": 0,
+    "readback": 0,
+    "ok": true
+   },
+   "auto_exposure_priority": {
+    "want": 0,
+    "before": 0,
+    "readback": 0,
+    "ok": false
+   }
+  },
+  "device_not_answering": false,
+  "error": null,
+  "reapplied": {
+   "label": "locks re-apply",
+   "items": {
+    "auto_exposure_priority": 0
+   },
+   "t_start_s": 2.226,
+   "t_end_s": 2.266,
+   "call_s": 0.04,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "auto_exposure_priority": {
+     "want": 0,
+     "before": 0,
+     "readback": 0,
+     "ok": false
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  }
+ },
+ "capture": {
+  "run": {
+   "rc": 0,
+   "timed_out": false,
+   "killed": false,
+   "elapsed_s": 17.533,
+   "spawn_error": null,
+   "stderr_tail": ""
+  },
+  "ok": true,
+  "error": null,
+  "frames": 462,
+  "fps_measured": 29.76655896,
+  "unreleasable": false,
+  "exit_code": 0,
+  "controls_before": [
+   {
+    "control": "pa.white_balance",
+    "requested": "5000",
+    "supported": true,
+    "via": "IAMVideoProcAmp",
+    "before_value": 5000,
+    "before_flags": 2,
+    "set_value": 5000,
+    "set_flags": 2,
+    "set_flags_names": [
+     "manual"
+    ],
+    "hr_set": "0x00000000",
+    "hr_set_name": "S_OK",
+    "readback_value": 5000,
+    "readback_flags": 2,
+    "readback_flags_names": [
+     "manual"
+    ],
+    "matches": true,
+    "call_ms": 1.368200004,
+    "timed_out": false
+   },
+   {
+    "control": "cc.focus",
+    "requested": "0",
+    "supported": true,
+    "via": "IAMCameraControl",
+    "before_value": 0,
+    "before_flags": 2,
+    "set_value": 0,
+    "set_flags": 2,
+    "set_flags_names": [
+     "manual"
+    ],
+    "hr_set": "0x00000000",
+    "hr_set_name": "S_OK",
+    "readback_value": 0,
+    "readback_flags": 2,
+    "readback_flags_names": [
+     "manual"
+    ],
+    "matches": true,
+    "call_ms": 1.2786,
+    "timed_out": false
+   },
+   {
+    "control": "cc.auto_exposure_priority",
+    "requested": "0",
+    "supported": true,
+    "via": "IAMCameraControl",
+    "before_value": 0,
+    "before_flags": 0,
+    "set_value": 0,
+    "set_flags": 2,
+    "set_flags_names": [
+     "manual"
+    ],
+    "hr_set": "0x00000000",
+    "hr_set_name": "S_OK",
+    "readback_value": 0,
+    "readback_flags": 0,
+    "readback_flags_names": [],
+    "matches": false,
+    "call_ms": 0.7563999966,
+    "timed_out": false
+   },
+   {
+    "control": "cc.exposure",
+    "requested": "-6",
+    "supported": true,
+    "via": "IAMCameraControl",
+    "before_value": -5,
+    "before_flags": 2,
+    "set_value": -6,
+    "set_flags": 2,
+    "set_flags_names": [
+     "manual"
+    ],
+    "hr_set": "0x00000000",
+    "hr_set_name": "S_OK",
+    "readback_value": -6,
+    "readback_flags": 2,
+    "readback_flags_names": [
+     "manual"
+    ],
+    "matches": true,
+    "call_ms": 1.287900001,
+    "timed_out": false
+   },
+   {
+    "control": "pa.gain",
+    "requested": "0",
+    "supported": true,
+    "via": "IAMVideoProcAmp",
+    "before_value": 255,
+    "before_flags": 2,
+    "set_value": 0,
+    "set_flags": 2,
+    "set_flags_names": [
+     "manual"
+    ],
+    "hr_set": "0x00000000",
+    "hr_set_name": "S_OK",
+    "readback_value": 0,
+    "readback_flags": 2,
+    "readback_flags_names": [
+     "manual"
+    ],
+    "matches": true,
+    "call_ms": 0.7317000031,
+    "timed_out": false
+   }
+  ]
+ },
+ "sets": [
+  {
+   "label": "locks",
+   "items": {
+    "white_balance": 5000,
+    "focus": 0,
+    "auto_exposure_priority": 0
+   },
+   "t_start_s": 2.174,
+   "t_end_s": 2.226,
+   "call_s": 0.052,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "white_balance": {
+     "want": 5000,
+     "before": 5000,
+     "readback": 5000,
+     "ok": true
+    },
+    "focus": {
+     "want": 0,
+     "before": 0,
+     "readback": 0,
+     "ok": true
+    },
+    "auto_exposure_priority": {
+     "want": 0,
+     "before": 0,
+     "readback": 0,
+     "ok": false
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "locks re-apply",
+   "items": {
+    "auto_exposure_priority": 0
+   },
+   "t_start_s": 2.226,
+   "t_end_s": 2.266,
+   "call_s": 0.04,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "auto_exposure_priority": {
+     "want": 0,
+     "before": 0,
+     "readback": 0,
+     "ok": false
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-6 g0",
+   "items": {
+    "exposure": -6,
+    "gain": 0
+   },
+   "t_start_s": 2.267,
+   "t_end_s": 2.308,
+   "call_s": 0.041,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "exposure": {
+     "want": -6,
+     "before": -6,
+     "readback": -6,
+     "ok": true
+    },
+    "gain": {
+     "want": 0,
+     "before": 0,
+     "readback": 0,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-7 g0",
+   "items": {
+    "exposure": -7
+   },
+   "t_start_s": 2.722,
+   "t_end_s": 2.764,
+   "call_s": 0.042,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "exposure": {
+     "want": -7,
+     "before": -6,
+     "readback": -7,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-11 g0",
+   "items": {
+    "exposure": -11
+   },
+   "t_start_s": 3.713,
+   "t_end_s": 3.758,
+   "call_s": 0.045,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "exposure": {
+     "want": -11,
+     "before": -7,
+     "readback": -11,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-11 g128",
+   "items": {
+    "gain": 128
+   },
+   "t_start_s": 4.661,
+   "t_end_s": 4.71,
+   "call_s": 0.048,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "gain": {
+     "want": 128,
+     "before": 0,
+     "readback": 128,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-11 g64",
+   "items": {
+    "gain": 64
+   },
+   "t_start_s": 5.242,
+   "t_end_s": 5.284,
+   "call_s": 0.042,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "gain": {
+     "want": 64,
+     "before": 128,
+     "readback": 64,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-11 g32",
+   "items": {
+    "gain": 32
+   },
+   "t_start_s": 5.872,
+   "t_end_s": 5.914,
+   "call_s": 0.042,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "gain": {
+     "want": 32,
+     "before": 64,
+     "readback": 32,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-11 g16",
+   "items": {
+    "gain": 16
+   },
+   "t_start_s": 6.513,
+   "t_end_s": 6.562,
+   "call_s": 0.049,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "gain": {
+     "want": 16,
+     "before": 32,
+     "readback": 16,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-11 g0",
+   "items": {
+    "gain": 0
+   },
+   "t_start_s": 7.89,
+   "t_end_s": 7.94,
+   "call_s": 0.049,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "gain": {
+     "want": 0,
+     "before": 16,
+     "readback": 0,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-11 g128",
+   "items": {
+    "gain": 128
+   },
+   "t_start_s": 8.882,
+   "t_end_s": 8.932,
+   "call_s": 0.051,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "gain": {
+     "want": 128,
+     "before": 0,
+     "readback": 128,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-11 g64",
+   "items": {
+    "gain": 64
+   },
+   "t_start_s": 9.506,
+   "t_end_s": 9.555,
+   "call_s": 0.049,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "gain": {
+     "want": 64,
+     "before": 128,
+     "readback": 64,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-11 g32",
+   "items": {
+    "gain": 32
+   },
+   "t_start_s": 10.16,
+   "t_end_s": 10.2,
+   "call_s": 0.04,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "gain": {
+     "want": 32,
+     "before": 64,
+     "readback": 32,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-11 g16",
+   "items": {
+    "gain": 16
+   },
+   "t_start_s": 10.792,
+   "t_end_s": 10.832,
+   "call_s": 0.04,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "gain": {
+     "want": 16,
+     "before": 32,
+     "readback": 16,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-11 g0",
+   "items": {
+    "gain": 0
+   },
+   "t_start_s": 12.214,
+   "t_end_s": 12.254,
+   "call_s": 0.04,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "gain": {
+     "want": 0,
+     "before": 16,
+     "readback": 0,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-11 g128",
+   "items": {
+    "gain": 128
+   },
+   "t_start_s": 13.149,
+   "t_end_s": 13.192,
+   "call_s": 0.043,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "gain": {
+     "want": 128,
+     "before": 0,
+     "readback": 128,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-11 g64",
+   "items": {
+    "gain": 64
+   },
+   "t_start_s": 13.747,
+   "t_end_s": 13.787,
+   "call_s": 0.04,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "gain": {
+     "want": 64,
+     "before": 128,
+     "readback": 64,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-11 g32",
+   "items": {
+    "gain": 32
+   },
+   "t_start_s": 14.363,
+   "t_end_s": 14.404,
+   "call_s": 0.04,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "gain": {
+     "want": 32,
+     "before": 64,
+     "readback": 32,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  },
+  {
+   "label": "e-11 g16",
+   "items": {
+    "gain": 16
+   },
+   "t_start_s": 14.998,
+   "t_end_s": 15.042,
+   "call_s": 0.044,
+   "rc": 0,
+   "timed_out": false,
+   "per": {
+    "gain": {
+     "want": 16,
+     "before": 32,
+     "readback": 16,
+     "ok": true
+    }
+   },
+   "device_not_answering": false,
+   "error": null
+  }
+ ],
+ "clock_mode": "qpc",
+ "fault": null,
+ "elapsed_s": 17.544
+}

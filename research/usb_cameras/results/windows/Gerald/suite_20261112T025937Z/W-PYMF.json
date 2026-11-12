@@ -1,0 +1,5517 @@
+{
+ "test": "W-PYMF",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-12T03:14:46.383412+00:00",
+ "utc_finished": "2026-11-12T03:26:09.220966+00:00",
+ "elapsed_s": 682.829,
+ "command": "research/usb_cameras/suite/windows/run_suite.py --cyc-profile reliability --reliability-cycles 400 --min-fps 30 --min-height 720 --max-height 720",
+ "argv": [
+  "research/usb_cameras/suite/windows/run_suite.py",
+  "--cyc-profile",
+  "reliability",
+  "--reliability-cycles",
+  "400",
+  "--min-fps",
+  "30",
+  "--min-height",
+  "720",
+  "--max-height",
+  "720"
+ ],
+ "environment": {
+  "os": {
+   "platform": "Windows-11-10.0.26300-SP0",
+   "system": "Windows",
+   "release": "11",
+   "version": "10.0.26300",
+   "machine": "AMD64",
+   "windows_build": 26300,
+   "windows_version": "10.0.26300",
+   "windows_edition": "Core",
+   "windows_displayversion": "26H2",
+   "windows_ubr": 9711,
+   "windows_productname": "Windows 10 Home",
+   "windows_currentbuild": "26300"
+  },
+  "python": "3.12.13",
+  "python_implementation": "CPython",
+  "python_executable": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+  "hostname": "Gerald",
+  "pid": 27296,
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0"
+  }
+ },
+ "cameras": [
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 2
+  },
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "name": "Logitech Webcam C930e",
+   "vid": "046d",
+   "pid": "0843",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+   "parent_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&34c047e4&0&0000",
+   "hub_port": 8,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "Logitech Webcam C930e",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(8)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "speed": "HS",
+   "bcd_device": "0013",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-11T14:11:38.552007+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 0,
+   "ds_index": 3
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "name": "USB Camera",
+   "vid": "4c4a",
+   "pid": "4a55",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232e60d4&0&0000",
+   "hub_port": 2,
+   "mf_symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Camera",
+   "ds_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "speed": "HS",
+   "bcd_device": "0100",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-11T14:11:44.546053+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 5,
+   "ds_index": 0
+  },
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "vid": "046d",
+   "pid": "085c",
+   "serial": "C922SN01",
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "c922 Pro Stream Webcam",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+   "speed": "HS",
+   "bcd_device": "0016",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-12T00:57:22.463265+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 6,
+   "ds_index": 1
+  }
+ ],
+ "measurements": {
+  "info": {
+   "id": "W-PYMF",
+   "module": "tests.w_pymf",
+   "goal": "pymf_equivalence",
+   "opens_cameras": true,
+   "tools": [
+    "pymf/cli.py (uv, comtypes)",
+    "native/build/wincam.exe"
+   ],
+   "flags": {
+    "--pymf-cycles": "open/close cycles per camera and tool (default 60, quick 6; env SKELLYCAM_PYMF_CYCLES)",
+    "--pymf-seconds": "capture length per tool (default 5 s, quick 2 s; env SKELLYCAM_PYMF_SECONDS)"
+   },
+   "description": "pure-Python Media Foundation probe vs wincam: list, formats, controls, set round trip, 720p30 MJPEG capture, open/close cycles"
+  },
+  "cycles_per_tool": 60,
+  "capture_seconds": 5.0,
+  "pymf_cli": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py",
+  "wincam": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+  "cameras": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "name": "USB Video Device",
+    "is_kiyo": true,
+    "slug": "usbvideodevice_1532-0e05_4",
+    "list": {
+     "in_wincam": true,
+     "in_pymf": true,
+     "name_equal": true,
+     "order_equal": true
+    },
+    "formats_compare": {
+     "compared": true,
+     "equal": true,
+     "same_set": true,
+     "order_equal": true,
+     "n_wincam": 140,
+     "n_pymf": 140,
+     "pymf_synthesized_flagged": 0,
+     "only_wincam": [],
+     "only_pymf": [],
+     "streams_equal": true,
+     "stream_attribute_diffs": [],
+     "stream_started": {
+      "wincam": false,
+      "pymf": false
+     }
+    },
+    "controls_compare": {
+     "compared": true,
+     "equal": true,
+     "n_supported_compared": 16,
+     "diffs": [],
+     "auto_drift": [],
+     "supported_count": {
+      "wincam": 16,
+      "pymf": 16
+     },
+     "device_not_answering": {
+      "wincam": false,
+      "pymf": false
+     },
+     "interfaces": {
+      "wincam": {
+       "IAMCameraControl": true,
+       "IAMVideoProcAmp": true,
+       "IKsControl": true
+      },
+      "pymf": {
+       "IAMCameraControl": true,
+       "IAMVideoProcAmp": true,
+       "IKsControl": true
+      }
+     }
+    },
+    "set_roundtrip": {
+     "ran": true,
+     "ok": true,
+     "sets": [
+      {
+       "control": "cc.exposure",
+       "requested": "-6",
+       "via": "IAMCameraControl",
+       "before_value": -7,
+       "before_flags": 1,
+       "set_value": -6,
+       "hr_set_name": "S_OK",
+       "readback_value": -6,
+       "readback_flags": 2,
+       "matches": true,
+       "timed_out": false
+      },
+      {
+       "control": "cc.focus",
+       "requested": "0",
+       "via": "IAMCameraControl",
+       "before_value": 600,
+       "before_flags": 1,
+       "set_value": 0,
+       "hr_set_name": "S_OK",
+       "readback_value": 0,
+       "readback_flags": 2,
+       "matches": true,
+       "timed_out": false
+      },
+      {
+       "control": "pa.gain",
+       "requested": "1",
+       "via": "IAMVideoProcAmp",
+       "before_value": 0,
+       "before_flags": 2,
+       "set_value": 1,
+       "hr_set_name": "S_OK",
+       "readback_value": 1,
+       "readback_flags": 2,
+       "matches": true,
+       "timed_out": false
+      },
+      {
+       "control": "pa.white_balance",
+       "requested": "5000",
+       "via": "IAMVideoProcAmp",
+       "before_value": 6500,
+       "before_flags": 1,
+       "set_value": 5000,
+       "hr_set_name": "S_OK",
+       "readback_value": 5000,
+       "readback_flags": 2,
+       "matches": true,
+       "timed_out": false
+      }
+     ],
+     "restore_ok": [
+      true,
+      true,
+      true,
+      true
+     ],
+     "as_found_after": [
+      {
+       "control": "cc.exposure",
+       "before_flags": 1,
+       "after_flags": 1,
+       "before_value": -7,
+       "after_value": -6,
+       "as_found": true
+      },
+      {
+       "control": "cc.focus",
+       "before_flags": 1,
+       "after_flags": 1,
+       "before_value": 600,
+       "after_value": 0,
+       "as_found": true
+      },
+      {
+       "control": "pa.gain",
+       "before_flags": 2,
+       "after_flags": 2,
+       "before_value": 0,
+       "after_value": 0,
+       "as_found": true
+      },
+      {
+       "control": "pa.white_balance",
+       "before_flags": 1,
+       "after_flags": 1,
+       "before_value": 6500,
+       "after_value": 5000,
+       "as_found": true
+      }
+     ],
+     "exit_code": 0,
+     "error": null,
+     "requested": {
+      "exposure": -6,
+      "focus": 0,
+      "gain": 1,
+      "white_balance": 5000
+     }
+    },
+    "mode_scope": {
+     "advertised_mjpeg": 28,
+     "in_scope": [
+      "MJPG 1280x720@30",
+      "MJPG 1280x720@60"
+     ],
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "rule": "exactly 720 lines at >= 30 fps by default (Dom 2026-11-08)",
+     "mode": "MJPG 1280x720@30"
+    },
+    "mode": "MJPG 1280x720@30",
+    "capture": {
+     "wincam": {
+      "ok": true,
+      "exit_code": 0,
+      "error": null,
+      "negotiated": {
+       "native_type_index": 43,
+       "subtype": "MJPG",
+       "width": 1280,
+       "height": 720,
+       "fps_num": 30,
+       "fps_den": 1,
+       "readback_ok": true
+      },
+      "frames_total": 151,
+      "frames_ok": 151,
+      "valid_fraction": 1.0,
+      "fps_fit": 30.184273644897818,
+      "fps_measured": 29.95405886,
+      "cpu_pct_of_one_core": 2.184182663,
+      "cpu": {
+       "user_s": 0.0625,
+       "kernel_s": 0.046875,
+       "window_s": 5.007594,
+       "pct_of_one_core": 2.184182663,
+       "method": "GetProcessTimes over the streaming window",
+       "process_total_s": 0.125
+      },
+      "first_frame_ms": 888.7771,
+      "open_to_first_frame_ms": 917.6147,
+      "close_ms": 1080.7784,
+      "process_elapsed_s": 7.031,
+      "header_sha1": "63ad4de8071d39dc4dae72d192aa5fad6324332b",
+      "header_sha1_distinct": 2,
+      "strict_ok_fraction": 1.0,
+      "lenient_ok_fraction": 1.0,
+      "checked": 30,
+      "timing": {
+       "n": 129,
+       "arrival_interval_ms": {
+        "mean": 33.368,
+        "std": 9.569,
+        "p99": 63.626,
+        "max": 64.266
+       },
+       "arrival_minus_sample_ms": {
+        "grid_ms": 16.0,
+        "offset_p99_ms": 0.62,
+        "offset_std_ms": 0.282,
+        "offset_max_ms": 0.768,
+        "modes": [
+         {
+          "centre_ms": 0.594,
+          "count": 75,
+          "share": 0.581,
+          "std_ms": 0.289
+         },
+         {
+          "centre_ms": 16.179,
+          "count": 5,
+          "share": 0.039,
+          "std_ms": 0.244
+         },
+         {
+          "centre_ms": 32.447,
+          "count": 41,
+          "share": 0.318,
+          "std_ms": 0.274
+         },
+         {
+          "centre_ms": 48.269,
+          "count": 8,
+          "share": 0.062,
+          "std_ms": 0.248
+         }
+        ]
+       },
+       "sample_time_slots": {
+        "period_ms": 33.373,
+        "slotting": "sequence",
+        "drops_detectable": true,
+        "grid_ms": 16.0
+       },
+       "sample_time_drops": 0
+      },
+      "unreleasable": false,
+      "abandoned_threads": 0,
+      "fault": null,
+      "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\usbvideodevice_1532-0e05_4\\wincam_capture_1280x720_30"
+     },
+     "pymf": {
+      "ok": true,
+      "exit_code": 0,
+      "error": null,
+      "negotiated": {
+       "native_type_index": 43,
+       "subtype": "MJPG",
+       "width": 1280,
+       "height": 720,
+       "fps_num": 30,
+       "fps_den": 1,
+       "readback_ok": true
+      },
+      "frames_total": 151,
+      "frames_ok": 151,
+      "valid_fraction": 1.0,
+      "fps_fit": 30.172369644044537,
+      "fps_measured": 29.954662420240467,
+      "cpu_pct_of_one_core": 2.1842425080931305,
+      "cpu": {
+       "user_s": 0.0625,
+       "kernel_s": 0.046875,
+       "window_s": 5.0074568,
+       "pct_of_one_core": 2.1842425080931305,
+       "method": "GetProcessTimes over the streaming window",
+       "callback_s": 0.0428813,
+       "callback_note": "wall time spent inside the Python OnReadSample (GIL held), streaming window",
+       "process_total_s": 0.21875
+      },
+      "first_frame_ms": 888.0302,
+      "open_to_first_frame_ms": 916.7473,
+      "close_ms": 1079.7285,
+      "process_elapsed_s": 7.141,
+      "header_sha1": "63ad4de8071d39dc4dae72d192aa5fad6324332b",
+      "header_sha1_distinct": 2,
+      "strict_ok_fraction": 1.0,
+      "lenient_ok_fraction": 1.0,
+      "checked": 30,
+      "timing": {
+       "n": 129,
+       "arrival_interval_ms": {
+        "mean": 33.254,
+        "std": 9.681,
+        "p99": 64.326,
+        "max": 64.478
+       },
+       "arrival_minus_sample_ms": {
+        "grid_ms": 16.0,
+        "offset_p99_ms": 0.657,
+        "offset_std_ms": 0.298,
+        "offset_max_ms": 0.693,
+        "modes": [
+         {
+          "centre_ms": 0.831,
+          "count": 70,
+          "share": 0.543,
+          "std_ms": 0.283
+         },
+         {
+          "centre_ms": 16.652,
+          "count": 10,
+          "share": 0.078,
+          "std_ms": 0.296
+         },
+         {
+          "centre_ms": 32.798,
+          "count": 39,
+          "share": 0.302,
+          "std_ms": 0.327
+         },
+         {
+          "centre_ms": 48.528,
+          "count": 10,
+          "share": 0.078,
+          "std_ms": 0.237
+         }
+        ]
+       },
+       "sample_time_slots": {
+        "period_ms": 33.373,
+        "slotting": "sequence",
+        "drops_detectable": true,
+        "grid_ms": 16.0
+       },
+       "sample_time_drops": 0
+      },
+      "unreleasable": false,
+      "abandoned_threads": 0,
+      "fault": null,
+      "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\usbvideodevice_1532-0e05_4\\pymf_capture_1280x720_30"
+     }
+    },
+    "pymf_sample_jpeg": "W-PYMF/samples/usbvideodevice_1532-0e05_4_pymf_1280x720_30.jpg",
+    "capture_compare": {
+     "compared": true,
+     "valid_ok": true,
+     "header_sha1_equal": true,
+     "fps_ratio": 0.9996056224180404,
+     "fps_ok": true,
+     "latency_delta_ms": -0.8673999999999751,
+     "latency_ok": true,
+     "cpu_delta_pp": 5.98450931303951e-05,
+     "cpu_ok": true,
+     "timing": {
+      "arrival_jitter_ok": true,
+      "arrival_jitter_ms": {
+       "wincam": 0.62,
+       "pymf": 0.657
+      },
+      "offset_std_ok": true,
+      "offset_std_ms": {
+       "wincam": 0.282,
+       "pymf": 0.298
+      },
+      "drops_ok": true,
+      "sample_time_drops": {
+       "wincam": 0,
+       "pymf": 0
+      }
+     }
+    },
+    "cycles": {
+     "requested": 60,
+     "wincam": {
+      "summary": {
+       "n": 60,
+       "n_ok": 60,
+       "success_rate": 1.0,
+       "wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "open_to_first_frame_ms_p50": 911.318,
+       "format_mismatch_count": 0,
+       "size_mismatch_count": 0,
+       "fps_mismatch_count": 0,
+       "device_reset_count": 0,
+       "n_fps_judged": 0,
+       "n_ok_as_requested": 60,
+       "first_frame_within_s": 2.0,
+       "n_first_frame_within": 60,
+       "first_frame_within_rate": 1.0,
+       "first_frame_within_wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "timings_ms": {
+        "activate_ms": {
+         "n": 60,
+         "min": 20.4171,
+         "p50": 21.384650004999997,
+         "p90": 23.375750000000004,
+         "p95": 24.8830700095,
+         "p99": 26.79580599999999,
+         "max": 29.0771,
+         "mean": 21.878170000333334
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 634.2588,
+         "p50": 1040.08395,
+         "p90": 1142.83825,
+         "p95": 1161.4239399999997,
+         "p99": 1239.023377,
+         "max": 1240.0616,
+         "mean": 1000.7011166666667
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.709799998,
+         "p50": 1.960699998,
+         "p90": 2.4067799991000003,
+         "p95": 2.5560950045999995,
+         "p99": 3.025148998359999,
+         "max": 3.195599996,
+         "mean": 2.0580966668166667
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 885.7591,
+         "p50": 886.6738,
+         "p90": 887.44171,
+         "p95": 887.66813,
+         "p99": 888.0701720000001,
+         "max": 888.2762,
+         "mean": 886.7092733333334
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.09899999946,
+         "p50": 0.3884500042,
+         "p90": 0.53519999612,
+         "p95": 0.5798599925,
+         "p99": 0.6446949997129997,
+         "max": 0.6856999993,
+         "mean": 0.35986166794933333
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 909.4333,
+         "p50": 911.318,
+         "p90": 913.3066,
+         "p95": 914.319615,
+         "p99": 917.804445,
+         "max": 919.0638,
+         "mean": 911.5685433333333
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.2526999936,
+         "p50": 0.28510000184999995,
+         "p90": 0.3155700028,
+         "p95": 0.3252199984649999,
+         "p99": 0.5401390041819987,
+         "max": 0.7749000043,
+         "mean": 0.2971416670816666
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 632.9911,
+         "p50": 1037.95615,
+         "p90": 1140.785,
+         "p95": 1159.572045,
+         "p99": 1236.998904,
+         "max": 1238.0753,
+         "mean": 998.732315
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 0.4430999979,
+         "p50": 0.49525000155,
+         "p90": 0.54951000067,
+         "p95": 0.556309999865,
+         "p99": 0.569632996616,
+         "max": 0.5762999952,
+         "mean": 0.5004433337616666
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 0.8559999987,
+         "p50": 1.2488499995,
+         "p90": 1.6282099967,
+         "p95": 1.6759249970499999,
+         "p99": 2.745690002179993,
+         "max": 4.031300001,
+         "mean": 1.2913683328349999
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.0700000003,
+         "p50": 0.10019999742999999,
+         "p90": 0.15361000225000002,
+         "p95": 0.1857750021399999,
+         "p99": 0.28499899820499963,
+         "max": 0.3462999985,
+         "mean": 0.11255333361533333
+        }
+       },
+       "timings_ms_all_cycles": {
+        "activate_ms": {
+         "n": 60,
+         "min": 20.4171,
+         "p50": 21.384650004999997,
+         "p90": 23.375750000000004,
+         "p95": 24.8830700095,
+         "p99": 26.79580599999999,
+         "max": 29.0771,
+         "mean": 21.878170000333334
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 634.2588,
+         "p50": 1040.08395,
+         "p90": 1142.83825,
+         "p95": 1161.4239399999997,
+         "p99": 1239.023377,
+         "max": 1240.0616,
+         "mean": 1000.7011166666667
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.709799998,
+         "p50": 1.960699998,
+         "p90": 2.4067799991000003,
+         "p95": 2.5560950045999995,
+         "p99": 3.025148998359999,
+         "max": 3.195599996,
+         "mean": 2.0580966668166667
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 885.7591,
+         "p50": 886.6738,
+         "p90": 887.44171,
+         "p95": 887.66813,
+         "p99": 888.0701720000001,
+         "max": 888.2762,
+         "mean": 886.7092733333334
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.09899999946,
+         "p50": 0.3884500042,
+         "p90": 0.53519999612,
+         "p95": 0.5798599925,
+         "p99": 0.6446949997129997,
+         "max": 0.6856999993,
+         "mean": 0.35986166794933333
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 909.4333,
+         "p50": 911.318,
+         "p90": 913.3066,
+         "p95": 914.319615,
+         "p99": 917.804445,
+         "max": 919.0638,
+         "mean": 911.5685433333333
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.2526999936,
+         "p50": 0.28510000184999995,
+         "p90": 0.3155700028,
+         "p95": 0.3252199984649999,
+         "p99": 0.5401390041819987,
+         "max": 0.7749000043,
+         "mean": 0.2971416670816666
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 632.9911,
+         "p50": 1037.95615,
+         "p90": 1140.785,
+         "p95": 1159.572045,
+         "p99": 1236.998904,
+         "max": 1238.0753,
+         "mean": 998.732315
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 0.4430999979,
+         "p50": 0.49525000155,
+         "p90": 0.54951000067,
+         "p95": 0.556309999865,
+         "p99": 0.569632996616,
+         "max": 0.5762999952,
+         "mean": 0.5004433337616666
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 0.8559999987,
+         "p50": 1.2488499995,
+         "p90": 1.6282099967,
+         "p95": 1.6759249970499999,
+         "p99": 2.745690002179993,
+         "max": 4.031300001,
+         "mean": 1.2913683328349999
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.0700000003,
+         "p50": 0.10019999742999999,
+         "p90": 0.15361000225000002,
+         "p95": 0.1857750021399999,
+         "p99": 0.28499899820499963,
+         "max": 0.3462999985,
+         "mean": 0.11255333361533333
+        }
+       },
+       "failure_classes": [],
+       "hangs": 0,
+       "unreleasable": 0,
+       "recovery_after_failure": {
+        "failures_followed": 0,
+        "recovered": 0,
+        "rate": null
+       },
+       "longest_failure_run": 0,
+       "failure_indices": [],
+       "trailing_failures": 0
+      },
+      "tool_summary": {
+       "cycles_requested": 60,
+       "cycles_run": 60,
+       "ok": 60,
+       "failed": 0,
+       "timeouts": 0,
+       "success_rate": 1,
+       "longest_failure_run": 0,
+       "cycles_after_a_failure": 0,
+       "recovered_after_failure": 0,
+       "first_frame_ms_p50": 886.6738,
+       "first_frame_ms_p95": 887.66813,
+       "first_frame_ms_max": 888.2762,
+       "first_frame_within_2s": 60,
+       "fps_measured_p50": 25.59871119,
+       "fps_measured_min": 25.50546157,
+       "open_to_first_frame_ms_p50": 911.318,
+       "activate_ms_p50": 21.38465,
+       "close_ms_p50": 1040.08395,
+       "close_ms_max": 1240.0616,
+       "failures_by_stage": {},
+       "failures_by_class": {},
+       "unreleasable": false,
+       "stopped_after_hung_setups": false
+      },
+      "fault": null,
+      "exit_code": 0,
+      "rows": 60,
+      "fps_measured_p50": 25.59871119
+     },
+     "pymf": {
+      "summary": {
+       "n": 60,
+       "n_ok": 60,
+       "success_rate": 1.0,
+       "wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "open_to_first_frame_ms_p50": 910.09225,
+       "format_mismatch_count": 0,
+       "size_mismatch_count": 0,
+       "fps_mismatch_count": 0,
+       "device_reset_count": 0,
+       "n_fps_judged": 0,
+       "n_ok_as_requested": 60,
+       "first_frame_within_s": 2.0,
+       "n_first_frame_within": 60,
+       "first_frame_within_rate": 1.0,
+       "first_frame_within_wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "timings_ms": {
+        "activate_ms": {
+         "n": 60,
+         "min": 18.05,
+         "p50": 18.8509,
+         "p90": 19.69726,
+         "p95": 19.93386,
+         "p99": 21.227891999999994,
+         "max": 22.444,
+         "mean": 19.009103333333332
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 658.735,
+         "p50": 1035.3692,
+         "p90": 1234.78047,
+         "p95": 1254.54816,
+         "p99": 1338.777141,
+         "max": 1342.8836,
+         "mean": 1006.3310616666666
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.778,
+         "p50": 2.01545,
+         "p90": 2.5892,
+         "p95": 2.8345999999999996,
+         "p99": 2.9936979999999997,
+         "max": 3.0278,
+         "mean": 2.1427816666666666
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 885.9053,
+         "p50": 886.7782,
+         "p90": 887.69838,
+         "p95": 887.82539,
+         "p99": 888.148032,
+         "max": 888.275,
+         "mean": 886.8302533333333
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.2193,
+         "p50": 0.8191999999999999,
+         "p90": 1.1627300000000003,
+         "p95": 1.2462449999999992,
+         "p99": 1.5854599999999996,
+         "max": 1.6598,
+         "mean": 0.7104333333333333
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 908.6479,
+         "p50": 910.09225,
+         "p90": 911.21909,
+         "p95": 911.6311900000001,
+         "p99": 913.928101,
+         "max": 916.4451,
+         "mean": 910.199895
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.331,
+         "p50": 0.3724,
+         "p90": 0.4019,
+         "p95": 0.40906,
+         "p99": 0.6217259999999989,
+         "max": 0.8097,
+         "mean": 0.3833283333333333
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 655.7213,
+         "p50": 1033.2543999999998,
+         "p90": 1231.71898,
+         "p95": 1252.24847,
+         "p99": 1336.289317,
+         "max": 1340.5159,
+         "mean": 1003.7892616666667
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 1.3576,
+         "p50": 1.41205,
+         "p90": 1.47961,
+         "p95": 1.50484,
+         "p99": 1.528608,
+         "max": 1.5397,
+         "mean": 1.420035
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 0.865,
+         "p50": 1.1663999999999999,
+         "p90": 1.59996,
+         "p95": 1.6834849999999995,
+         "p99": 2.149314,
+         "max": 2.1584,
+         "mean": 1.2443033333333333
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.1101,
+         "p50": 0.16815000000000002,
+         "p90": 0.22475,
+         "p95": 0.243605,
+         "p99": 0.308946,
+         "max": 0.3093,
+         "mean": 0.17254
+        }
+       },
+       "timings_ms_all_cycles": {
+        "activate_ms": {
+         "n": 60,
+         "min": 18.05,
+         "p50": 18.8509,
+         "p90": 19.69726,
+         "p95": 19.93386,
+         "p99": 21.227891999999994,
+         "max": 22.444,
+         "mean": 19.009103333333332
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 658.735,
+         "p50": 1035.3692,
+         "p90": 1234.78047,
+         "p95": 1254.54816,
+         "p99": 1338.777141,
+         "max": 1342.8836,
+         "mean": 1006.3310616666666
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.778,
+         "p50": 2.01545,
+         "p90": 2.5892,
+         "p95": 2.8345999999999996,
+         "p99": 2.9936979999999997,
+         "max": 3.0278,
+         "mean": 2.1427816666666666
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 885.9053,
+         "p50": 886.7782,
+         "p90": 887.69838,
+         "p95": 887.82539,
+         "p99": 888.148032,
+         "max": 888.275,
+         "mean": 886.8302533333333
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.2193,
+         "p50": 0.8191999999999999,
+         "p90": 1.1627300000000003,
+         "p95": 1.2462449999999992,
+         "p99": 1.5854599999999996,
+         "max": 1.6598,
+         "mean": 0.7104333333333333
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 908.6479,
+         "p50": 910.09225,
+         "p90": 911.21909,
+         "p95": 911.6311900000001,
+         "p99": 913.928101,
+         "max": 916.4451,
+         "mean": 910.199895
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.331,
+         "p50": 0.3724,
+         "p90": 0.4019,
+         "p95": 0.40906,
+         "p99": 0.6217259999999989,
+         "max": 0.8097,
+         "mean": 0.3833283333333333
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 655.7213,
+         "p50": 1033.2543999999998,
+         "p90": 1231.71898,
+         "p95": 1252.24847,
+         "p99": 1336.289317,
+         "max": 1340.5159,
+         "mean": 1003.7892616666667
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 1.3576,
+         "p50": 1.41205,
+         "p90": 1.47961,
+         "p95": 1.50484,
+         "p99": 1.528608,
+         "max": 1.5397,
+         "mean": 1.420035
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 0.865,
+         "p50": 1.1663999999999999,
+         "p90": 1.59996,
+         "p95": 1.6834849999999995,
+         "p99": 2.149314,
+         "max": 2.1584,
+         "mean": 1.2443033333333333
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.1101,
+         "p50": 0.16815000000000002,
+         "p90": 0.22475,
+         "p95": 0.243605,
+         "p99": 0.308946,
+         "max": 0.3093,
+         "mean": 0.17254
+        }
+       },
+       "failure_classes": [],
+       "hangs": 0,
+       "unreleasable": 0,
+       "recovery_after_failure": {
+        "failures_followed": 0,
+        "recovered": 0,
+        "rate": null
+       },
+       "longest_failure_run": 0,
+       "failure_indices": [],
+       "trailing_failures": 0
+      },
+      "tool_summary": {
+       "cycles_requested": 60,
+       "cycles_run": 60,
+       "ok": 60,
+       "failed": 0,
+       "timeouts": 0,
+       "success_rate": 1.0,
+       "longest_failure_run": 0,
+       "cycles_after_a_failure": 0,
+       "recovered_after_failure": 0,
+       "first_frame_ms_p50": 886.7782,
+       "first_frame_ms_p95": 887.82539,
+       "first_frame_ms_max": 888.275,
+       "first_frame_within_2s": 60,
+       "fps_measured_p50": 25.605036347533634,
+       "fps_measured_min": 25.50888091689122,
+       "open_to_first_frame_ms_p50": 910.09225,
+       "activate_ms_p50": 18.8509,
+       "close_ms_p50": 1035.3692,
+       "close_ms_max": 1342.8836,
+       "failures_by_stage": {},
+       "failures_by_class": {},
+       "unreleasable": false,
+       "stopped_after_hung_setups": false
+      },
+      "fault": null,
+      "exit_code": 0,
+      "rows": 60,
+      "fps_measured_p50": 25.605036347533634
+     }
+    },
+    "cycles_compare": {
+     "compared": true,
+     "success_rate": {
+      "wincam": 1.0,
+      "pymf": 1.0
+     },
+     "success_ok": true,
+     "open_to_first_frame_ms_p50": {
+      "wincam": 911.318,
+      "pymf": 910.09225
+     },
+     "latency_ok": true,
+     "hang_ok": true,
+     "fps_measured_p50": {
+      "wincam": 25.59871119,
+      "pymf": 25.605036347533634
+     },
+     "fps_ok": true,
+     "ok": true
+    },
+    "runs": {
+     "wincam_formats": {
+      "rc": 0,
+      "elapsed_s": 0.047,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.2s (ticket 3461): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 45.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe formats --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --timeout-ms 8000\n[camlock] released"
+     },
+     "pymf_formats": {
+      "rc": 0,
+      "elapsed_s": 0.172,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.0s (ticket 3462): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 75.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py formats --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --timeout-ms 8000\n[camlock] released"
+     },
+     "wincam_controls": {
+      "rc": 0,
+      "elapsed_s": 0.062,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.2s (ticket 3464): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+     },
+     "pymf_controls": {
+      "rc": 0,
+      "elapsed_s": 0.187,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.2s (ticket 3466): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 70.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py controls --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+     },
+     "pymf_set": {
+      "rc": 0,
+      "elapsed_s": 0.188,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "k] acquired after 0.0s (ticket 3467): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 90.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py controls --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --set exposure=-6,focus=0,gain=1,white_balance=5000 --set-flags manual --restore --timeout-ms 5000\n[camlock] released"
+     },
+     "wincam_controls_after": {
+      "rc": 0,
+      "elapsed_s": 0.063,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.0s (ticket 3468): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+     },
+     "wincam_capture": {
+      "rc": 0,
+      "elapsed_s": 7.031,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "rs\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 50.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --seconds 5.0 --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\usbvideodevice_1532-0e05_4\\wincam_capture_1280x720_30 --save every:5\n[camlock] released"
+     },
+     "pymf_capture": {
+      "rc": 0,
+      "elapsed_s": 7.141,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 80.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py capture --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --seconds 5.0 --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\usbvideodevice_1532-0e05_4\\pymf_capture_1280x720_30 --save every:5\n[camlock] released"
+     },
+     "wincam_cycle": {
+      "rc": 0,
+      "elapsed_s": 135.578,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": " MJPG 1280x720@30: ok\n\n[wincam] cycle 48/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 49/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 50/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 51/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 52/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 53/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 54/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 55/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 56/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 57/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 58/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 59/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 60/60 MJPG 1280x720@30: ok\n\n[camlock] released"
+     },
+     "pymf_cycle": {
+      "rc": 0,
+      "elapsed_s": 135.922,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "30: ok\n\n[pymf] cycle 47/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 48/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 49/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 50/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 51/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 52/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 53/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 54/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 55/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 56/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 57/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 58/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 59/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 60/60 MJPG 1280x720@30: ok\n\n[camlock] released"
+     }
+    }
+   },
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+    "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+    "name": "Logitech Webcam C930e",
+    "is_kiyo": false,
+    "slug": "logitechwebcam_046d-0843_8",
+    "list": {
+     "in_wincam": true,
+     "in_pymf": true,
+     "name_equal": true,
+     "order_equal": true
+    },
+    "formats_compare": {
+     "compared": true,
+     "equal": true,
+     "same_set": true,
+     "order_equal": true,
+     "n_wincam": 811,
+     "n_pymf": 811,
+     "pymf_synthesized_flagged": 119,
+     "only_wincam": [],
+     "only_pymf": [],
+     "streams_equal": true,
+     "stream_attribute_diffs": [],
+     "stream_started": {
+      "wincam": false,
+      "pymf": false
+     }
+    },
+    "controls_compare": {
+     "compared": true,
+     "equal": true,
+     "n_supported_compared": 16,
+     "diffs": [],
+     "auto_drift": [],
+     "supported_count": {
+      "wincam": 16,
+      "pymf": 16
+     },
+     "device_not_answering": {
+      "wincam": false,
+      "pymf": false
+     },
+     "interfaces": {
+      "wincam": {
+       "IAMCameraControl": true,
+       "IAMVideoProcAmp": true,
+       "IKsControl": true
+      },
+      "pymf": {
+       "IAMCameraControl": true,
+       "IAMVideoProcAmp": true,
+       "IKsControl": true
+      }
+     }
+    },
+    "set_roundtrip": {
+     "ran": true,
+     "ok": true,
+     "sets": [
+      {
+       "control": "cc.exposure",
+       "requested": "-4",
+       "via": "IAMCameraControl",
+       "before_value": -5,
+       "before_flags": 1,
+       "set_value": -4,
+       "hr_set_name": "S_OK",
+       "readback_value": -4,
+       "readback_flags": 2,
+       "matches": true,
+       "timed_out": false
+      },
+      {
+       "control": "cc.focus",
+       "requested": "0",
+       "via": "IAMCameraControl",
+       "before_value": 60,
+       "before_flags": 1,
+       "set_value": 0,
+       "hr_set_name": "S_OK",
+       "readback_value": 0,
+       "readback_flags": 2,
+       "matches": true,
+       "timed_out": false
+      },
+      {
+       "control": "pa.gain",
+       "requested": "1",
+       "via": "IAMVideoProcAmp",
+       "before_value": 0,
+       "before_flags": 2,
+       "set_value": 1,
+       "hr_set_name": "S_OK",
+       "readback_value": 1,
+       "readback_flags": 2,
+       "matches": true,
+       "timed_out": false
+      },
+      {
+       "control": "pa.white_balance",
+       "requested": "4001",
+       "via": "IAMVideoProcAmp",
+       "before_value": 4000,
+       "before_flags": 1,
+       "set_value": 4001,
+       "hr_set_name": "S_OK",
+       "readback_value": 4001,
+       "readback_flags": 2,
+       "matches": true,
+       "timed_out": false
+      }
+     ],
+     "restore_ok": [
+      true,
+      true,
+      true,
+      true
+     ],
+     "as_found_after": [
+      {
+       "control": "cc.exposure",
+       "before_flags": 1,
+       "after_flags": 1,
+       "before_value": -5,
+       "after_value": -4,
+       "as_found": true
+      },
+      {
+       "control": "cc.focus",
+       "before_flags": 1,
+       "after_flags": 1,
+       "before_value": 60,
+       "after_value": 0,
+       "as_found": true
+      },
+      {
+       "control": "pa.gain",
+       "before_flags": 2,
+       "after_flags": 2,
+       "before_value": 0,
+       "after_value": 0,
+       "as_found": true
+      },
+      {
+       "control": "pa.white_balance",
+       "before_flags": 1,
+       "after_flags": 1,
+       "before_value": 4000,
+       "after_value": 4001,
+       "as_found": true
+      }
+     ],
+     "exit_code": 0,
+     "error": null,
+     "requested": {
+      "exposure": -4,
+      "focus": 0,
+      "gain": 1,
+      "white_balance": 4001
+     }
+    },
+    "mode_scope": {
+     "advertised_mjpeg": 119,
+     "in_scope": [
+      "MJPG 1280x720@30"
+     ],
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "rule": "exactly 720 lines at >= 30 fps by default (Dom 2026-11-08)",
+     "mode": "MJPG 1280x720@30"
+    },
+    "mode": "MJPG 1280x720@30",
+    "capture": {
+     "wincam": {
+      "ok": true,
+      "exit_code": 0,
+      "error": null,
+      "negotiated": {
+       "native_type_index": 294,
+       "subtype": "MJPG",
+       "width": 1280,
+       "height": 720,
+       "fps_num": 30,
+       "fps_den": 1,
+       "readback_ok": true
+      },
+      "frames_total": 151,
+      "frames_ok": 151,
+      "valid_fraction": 1.0,
+      "fps_fit": 30.025727864346774,
+      "fps_measured": 29.95669341,
+      "cpu_pct_of_one_core": 1.872447966,
+      "cpu": {
+       "user_s": 0.046875,
+       "kernel_s": 0.046875,
+       "window_s": 5.0068147,
+       "pct_of_one_core": 1.872447966,
+       "method": "GetProcessTimes over the streaming window",
+       "process_total_s": 0.1875
+      },
+      "first_frame_ms": 473.3896,
+      "open_to_first_frame_ms": 515.3908,
+      "close_ms": 392.8307,
+      "process_elapsed_s": 5.953,
+      "header_sha1": "8e230f9e519eacb1e6b9d8ffc7da27c1019ac842",
+      "header_sha1_distinct": 1,
+      "strict_ok_fraction": 1.0,
+      "lenient_ok_fraction": 1.0,
+      "checked": 30,
+      "timing": {
+       "n": 129,
+       "arrival_interval_ms": {
+        "mean": 33.374,
+        "std": 4.521,
+        "p99": 48.381,
+        "max": 48.402
+       },
+       "arrival_minus_sample_ms": {
+        "grid_ms": 16.0,
+        "offset_p99_ms": 0.568,
+        "offset_std_ms": 0.295,
+        "offset_max_ms": 0.881,
+        "modes": [
+         {
+          "centre_ms": 0.683,
+          "count": 81,
+          "share": 0.628,
+          "std_ms": 0.291
+         },
+         {
+          "centre_ms": 16.624,
+          "count": 48,
+          "share": 0.372,
+          "std_ms": 0.307
+         }
+        ]
+       },
+       "sample_time_slots": {
+        "period_ms": 33.25,
+        "slotting": "sequence",
+        "drops_detectable": true,
+        "grid_ms": 16.0
+       },
+       "sample_time_drops": 0
+      },
+      "unreleasable": false,
+      "abandoned_threads": 0,
+      "fault": null,
+      "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\logitechwebcam_046d-0843_8\\wincam_capture_1280x720_30"
+     },
+     "pymf": {
+      "ok": true,
+      "exit_code": 0,
+      "error": null,
+      "negotiated": {
+       "native_type_index": 294,
+       "subtype": "MJPG",
+       "width": 1280,
+       "height": 720,
+       "fps_num": 30,
+       "fps_den": 1,
+       "readback_ok": true
+      },
+      "frames_total": 151,
+      "frames_ok": 151,
+      "valid_fraction": 1.0,
+      "fps_fit": 30.01895376418134,
+      "fps_measured": 29.959213526704744,
+      "cpu_pct_of_one_core": 2.8092463870194817,
+      "cpu": {
+       "user_s": 0.03125,
+       "kernel_s": 0.109375,
+       "window_s": 5.0057909,
+       "pct_of_one_core": 2.8092463870194817,
+       "method": "GetProcessTimes over the streaming window",
+       "callback_s": 0.0408255,
+       "callback_note": "wall time spent inside the Python OnReadSample (GIL held), streaming window",
+       "process_total_s": 0.234375
+      },
+      "first_frame_ms": 474.2348,
+      "open_to_first_frame_ms": 516.975,
+      "close_ms": 349.6286,
+      "process_elapsed_s": 6.016,
+      "header_sha1": "8e230f9e519eacb1e6b9d8ffc7da27c1019ac842",
+      "header_sha1_distinct": 1,
+      "strict_ok_fraction": 1.0,
+      "lenient_ok_fraction": 1.0,
+      "checked": 30,
+      "timing": {
+       "n": 129,
+       "arrival_interval_ms": {
+        "mean": 33.371,
+        "std": 4.524,
+        "p99": 48.442,
+        "max": 48.763
+       },
+       "arrival_minus_sample_ms": {
+        "grid_ms": 16.0,
+        "offset_p99_ms": 0.6,
+        "offset_std_ms": 0.298,
+        "offset_max_ms": 0.644,
+        "modes": [
+         {
+          "centre_ms": 0.796,
+          "count": 81,
+          "share": 0.628,
+          "std_ms": 0.301
+         },
+         {
+          "centre_ms": 16.781,
+          "count": 48,
+          "share": 0.372,
+          "std_ms": 0.3
+         }
+        ]
+       },
+       "sample_time_slots": {
+        "period_ms": 33.25,
+        "slotting": "sequence",
+        "drops_detectable": true,
+        "grid_ms": 16.0
+       },
+       "sample_time_drops": 0
+      },
+      "unreleasable": false,
+      "abandoned_threads": 0,
+      "fault": null,
+      "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\logitechwebcam_046d-0843_8\\pymf_capture_1280x720_30"
+     }
+    },
+    "pymf_sample_jpeg": "W-PYMF/samples/logitechwebcam_046d-0843_8_pymf_1280x720_30.jpg",
+    "capture_compare": {
+     "compared": true,
+     "valid_ok": true,
+     "header_sha1_equal": true,
+     "fps_ratio": 0.9997743901431453,
+     "fps_ok": true,
+     "latency_delta_ms": 1.5842000000000098,
+     "latency_ok": true,
+     "cpu_delta_pp": 0.9367984210194817,
+     "cpu_ok": true,
+     "timing": {
+      "arrival_jitter_ok": true,
+      "arrival_jitter_ms": {
+       "wincam": 0.568,
+       "pymf": 0.6
+      },
+      "offset_std_ok": true,
+      "offset_std_ms": {
+       "wincam": 0.295,
+       "pymf": 0.298
+      },
+      "drops_ok": true,
+      "sample_time_drops": {
+       "wincam": 0,
+       "pymf": 0
+      }
+     }
+    },
+    "cycles": {
+     "requested": 60,
+     "wincam": {
+      "summary": {
+       "n": 60,
+       "n_ok": 60,
+       "success_rate": 1.0,
+       "wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "open_to_first_frame_ms_p50": 510.39279999999997,
+       "format_mismatch_count": 0,
+       "size_mismatch_count": 0,
+       "fps_mismatch_count": 0,
+       "device_reset_count": 0,
+       "n_fps_judged": 0,
+       "n_ok_as_requested": 60,
+       "first_frame_within_s": 2.0,
+       "n_first_frame_within": 60,
+       "first_frame_within_rate": 1.0,
+       "first_frame_within_wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "timings_ms": {
+        "activate_ms": {
+         "n": 60,
+         "min": 33.0841,
+         "p50": 34.52865,
+         "p90": 35.538579991,
+         "p95": 36.561275,
+         "p99": 37.79284399999999,
+         "max": 39.5029,
+         "mean": 34.645709999833336
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 356.5483,
+         "p50": 364.71680000000003,
+         "p90": 398.39831,
+         "p95": 401.21857,
+         "p99": 403.49301099999997,
+         "max": 404.1049,
+         "mean": 372.090575
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.723699994,
+         "p50": 1.845600005,
+         "p90": 2.0967400004000005,
+         "p95": 2.4376549973499984,
+         "p99": 3.07758799787,
+         "max": 3.093400002,
+         "mean": 1.93909666675
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 455.6873,
+         "p50": 472.353,
+         "p90": 473.32295,
+         "p95": 473.38138000000004,
+         "p99": 473.5919,
+         "max": 473.6981,
+         "mean": 470.9463783333333
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.1032999977,
+         "p50": 0.40664999560000004,
+         "p90": 0.57142000199,
+         "p95": 0.608339993305,
+         "p99": 0.6478709982679999,
+         "max": 0.6792000011,
+         "mean": 0.36712499931666664
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 492.7838,
+         "p50": 510.39279999999997,
+         "p90": 511.87059,
+         "p95": 512.28716,
+         "p99": 514.52224,
+         "max": 515.1205,
+         "mean": 509.1859983333333
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.4305000007,
+         "p50": 0.47809999810000003,
+         "p90": 0.52460999787,
+         "p95": 0.568180001895,
+         "p99": 0.8435680019979995,
+         "max": 0.9349000007,
+         "mean": 0.4957150001116667
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 353.8259,
+         "p50": 361.56355,
+         "p90": 394.98098,
+         "p95": 397.99026000000003,
+         "p99": 400.216704,
+         "max": 400.6382,
+         "mean": 369.0343166666667
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 0.9614999965,
+         "p50": 1.0184499955000001,
+         "p90": 1.0693600003000001,
+         "p95": 1.1281699971,
+         "p99": 1.266294000999999,
+         "max": 1.451200001,
+         "mean": 1.0309433327233333
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 1.862499997,
+         "p50": 2.3078499995,
+         "p90": 2.9769699975,
+         "p95": 3.1423099981,
+         "p99": 3.3917330054099994,
+         "max": 3.451500006,
+         "mean": 2.4121549997666665
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.06419999897,
+         "p50": 0.08554999902499999,
+         "p90": 0.12632999946,
+         "p95": 0.140645001445,
+         "p99": 0.152246998197,
+         "max": 0.1561999992,
+         "mean": 0.094126666338
+        }
+       },
+       "timings_ms_all_cycles": {
+        "activate_ms": {
+         "n": 60,
+         "min": 33.0841,
+         "p50": 34.52865,
+         "p90": 35.538579991,
+         "p95": 36.561275,
+         "p99": 37.79284399999999,
+         "max": 39.5029,
+         "mean": 34.645709999833336
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 356.5483,
+         "p50": 364.71680000000003,
+         "p90": 398.39831,
+         "p95": 401.21857,
+         "p99": 403.49301099999997,
+         "max": 404.1049,
+         "mean": 372.090575
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.723699994,
+         "p50": 1.845600005,
+         "p90": 2.0967400004000005,
+         "p95": 2.4376549973499984,
+         "p99": 3.07758799787,
+         "max": 3.093400002,
+         "mean": 1.93909666675
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 455.6873,
+         "p50": 472.353,
+         "p90": 473.32295,
+         "p95": 473.38138000000004,
+         "p99": 473.5919,
+         "max": 473.6981,
+         "mean": 470.9463783333333
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.1032999977,
+         "p50": 0.40664999560000004,
+         "p90": 0.57142000199,
+         "p95": 0.608339993305,
+         "p99": 0.6478709982679999,
+         "max": 0.6792000011,
+         "mean": 0.36712499931666664
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 492.7838,
+         "p50": 510.39279999999997,
+         "p90": 511.87059,
+         "p95": 512.28716,
+         "p99": 514.52224,
+         "max": 515.1205,
+         "mean": 509.1859983333333
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.4305000007,
+         "p50": 0.47809999810000003,
+         "p90": 0.52460999787,
+         "p95": 0.568180001895,
+         "p99": 0.8435680019979995,
+         "max": 0.9349000007,
+         "mean": 0.4957150001116667
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 353.8259,
+         "p50": 361.56355,
+         "p90": 394.98098,
+         "p95": 397.99026000000003,
+         "p99": 400.216704,
+         "max": 400.6382,
+         "mean": 369.0343166666667
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 0.9614999965,
+         "p50": 1.0184499955000001,
+         "p90": 1.0693600003000001,
+         "p95": 1.1281699971,
+         "p99": 1.266294000999999,
+         "max": 1.451200001,
+         "mean": 1.0309433327233333
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 1.862499997,
+         "p50": 2.3078499995,
+         "p90": 2.9769699975,
+         "p95": 3.1423099981,
+         "p99": 3.3917330054099994,
+         "max": 3.451500006,
+         "mean": 2.4121549997666665
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.06419999897,
+         "p50": 0.08554999902499999,
+         "p90": 0.12632999946,
+         "p95": 0.140645001445,
+         "p99": 0.152246998197,
+         "max": 0.1561999992,
+         "mean": 0.094126666338
+        }
+       },
+       "failure_classes": [],
+       "hangs": 0,
+       "unreleasable": 0,
+       "recovery_after_failure": {
+        "failures_followed": 0,
+        "recovered": 0,
+        "rate": null
+       },
+       "longest_failure_run": 0,
+       "failure_indices": [],
+       "trailing_failures": 0
+      },
+      "tool_summary": {
+       "cycles_requested": 60,
+       "cycles_run": 60,
+       "ok": 60,
+       "failed": 0,
+       "timeouts": 0,
+       "success_rate": 1,
+       "longest_failure_run": 0,
+       "cycles_after_a_failure": 0,
+       "recovered_after_failure": 0,
+       "first_frame_ms_p50": 472.353,
+       "first_frame_ms_p95": 473.38138,
+       "first_frame_ms_max": 473.6981,
+       "first_frame_within_2s": 60,
+       "fps_measured_p50": 29.61059113,
+       "fps_measured_min": 29.54169991,
+       "open_to_first_frame_ms_p50": 510.3928,
+       "activate_ms_p50": 34.52865,
+       "close_ms_p50": 364.7168,
+       "close_ms_max": 404.1049,
+       "failures_by_stage": {},
+       "failures_by_class": {},
+       "unreleasable": false,
+       "stopped_after_hung_setups": false
+      },
+      "fault": null,
+      "exit_code": 0,
+      "rows": 60,
+      "fps_measured_p50": 29.610591130000003
+     },
+     "pymf": {
+      "summary": {
+       "n": 60,
+       "n_ok": 60,
+       "success_rate": 1.0,
+       "wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "open_to_first_frame_ms_p50": 511.0498,
+       "format_mismatch_count": 0,
+       "size_mismatch_count": 0,
+       "fps_mismatch_count": 0,
+       "device_reset_count": 0,
+       "n_fps_judged": 0,
+       "n_ok_as_requested": 60,
+       "first_frame_within_s": 2.0,
+       "n_first_frame_within": 60,
+       "first_frame_within_rate": 1.0,
+       "first_frame_within_wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "timings_ms": {
+        "activate_ms": {
+         "n": 60,
+         "min": 31.3078,
+         "p50": 32.19905,
+         "p90": 32.886790000000005,
+         "p95": 33.45749,
+         "p99": 34.59205599999999,
+         "max": 35.8202,
+         "mean": 32.34247
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 355.6681,
+         "p50": 366.04525,
+         "p90": 400.45276,
+         "p95": 401.64367,
+         "p99": 402.593463,
+         "max": 403.2037,
+         "mean": 378.58054
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.7582,
+         "p50": 1.9504,
+         "p90": 2.3074100000000004,
+         "p95": 2.425805,
+         "p99": 2.892426999999998,
+         "max": 3.2433,
+         "mean": 2.0272633333333334
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 456.2126,
+         "p50": 472.64160000000004,
+         "p90": 473.5715,
+         "p95": 473.96153499999997,
+         "p99": 474.284228,
+         "max": 474.621,
+         "mean": 470.4736066666666
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.2177,
+         "p50": 0.68635,
+         "p90": 1.0938700000000001,
+         "p95": 1.1513,
+         "p99": 1.180845,
+         "max": 1.1835,
+         "mean": 0.6785566666666667
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 494.176,
+         "p50": 511.0498,
+         "p90": 512.38149,
+         "p95": 512.6773400000001,
+         "p99": 514.890666,
+         "max": 517.205,
+         "mean": 509.00392999999997
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.5341,
+         "p50": 0.5849,
+         "p90": 0.6126,
+         "p95": 0.61937,
+         "p99": 0.9958829999999994,
+         "max": 1.094,
+         "mean": 0.5942966666666667
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 352.6428,
+         "p50": 362.22275,
+         "p90": 397.06629000000004,
+         "p95": 397.98330999999996,
+         "p99": 398.949418,
+         "max": 399.3328,
+         "mean": 374.94262499999996
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 3.0358,
+         "p50": 3.11775,
+         "p90": 3.21055,
+         "p95": 3.332664999999999,
+         "p99": 3.730163,
+         "max": 3.7681,
+         "mean": 3.145685
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 1.8741,
+         "p50": 2.3411,
+         "p90": 2.90488,
+         "p95": 3.066104999999999,
+         "p99": 3.583685999999998,
+         "max": 3.9227,
+         "mean": 2.4244133333333333
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.108,
+         "p50": 0.1376,
+         "p90": 0.17878,
+         "p95": 0.19829999999999998,
+         "p99": 0.21745099999999987,
+         "max": 0.2417,
+         "mean": 0.14640333333333333
+        }
+       },
+       "timings_ms_all_cycles": {
+        "activate_ms": {
+         "n": 60,
+         "min": 31.3078,
+         "p50": 32.19905,
+         "p90": 32.886790000000005,
+         "p95": 33.45749,
+         "p99": 34.59205599999999,
+         "max": 35.8202,
+         "mean": 32.34247
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 355.6681,
+         "p50": 366.04525,
+         "p90": 400.45276,
+         "p95": 401.64367,
+         "p99": 402.593463,
+         "max": 403.2037,
+         "mean": 378.58054
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.7582,
+         "p50": 1.9504,
+         "p90": 2.3074100000000004,
+         "p95": 2.425805,
+         "p99": 2.892426999999998,
+         "max": 3.2433,
+         "mean": 2.0272633333333334
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 456.2126,
+         "p50": 472.64160000000004,
+         "p90": 473.5715,
+         "p95": 473.96153499999997,
+         "p99": 474.284228,
+         "max": 474.621,
+         "mean": 470.4736066666666
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.2177,
+         "p50": 0.68635,
+         "p90": 1.0938700000000001,
+         "p95": 1.1513,
+         "p99": 1.180845,
+         "max": 1.1835,
+         "mean": 0.6785566666666667
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 494.176,
+         "p50": 511.0498,
+         "p90": 512.38149,
+         "p95": 512.6773400000001,
+         "p99": 514.890666,
+         "max": 517.205,
+         "mean": 509.00392999999997
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.5341,
+         "p50": 0.5849,
+         "p90": 0.6126,
+         "p95": 0.61937,
+         "p99": 0.9958829999999994,
+         "max": 1.094,
+         "mean": 0.5942966666666667
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 352.6428,
+         "p50": 362.22275,
+         "p90": 397.06629000000004,
+         "p95": 397.98330999999996,
+         "p99": 398.949418,
+         "max": 399.3328,
+         "mean": 374.94262499999996
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 3.0358,
+         "p50": 3.11775,
+         "p90": 3.21055,
+         "p95": 3.332664999999999,
+         "p99": 3.730163,
+         "max": 3.7681,
+         "mean": 3.145685
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 1.8741,
+         "p50": 2.3411,
+         "p90": 2.90488,
+         "p95": 3.066104999999999,
+         "p99": 3.583685999999998,
+         "max": 3.9227,
+         "mean": 2.4244133333333333
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.108,
+         "p50": 0.1376,
+         "p90": 0.17878,
+         "p95": 0.19829999999999998,
+         "p99": 0.21745099999999987,
+         "max": 0.2417,
+         "mean": 0.14640333333333333
+        }
+       },
+       "failure_classes": [],
+       "hangs": 0,
+       "unreleasable": 0,
+       "recovery_after_failure": {
+        "failures_followed": 0,
+        "recovered": 0,
+        "rate": null
+       },
+       "longest_failure_run": 0,
+       "failure_indices": [],
+       "trailing_failures": 0
+      },
+      "tool_summary": {
+       "cycles_requested": 60,
+       "cycles_run": 60,
+       "ok": 60,
+       "failed": 0,
+       "timeouts": 0,
+       "success_rate": 1.0,
+       "longest_failure_run": 0,
+       "cycles_after_a_failure": 0,
+       "recovered_after_failure": 0,
+       "first_frame_ms_p50": 472.64160000000004,
+       "first_frame_ms_p95": 473.96153499999997,
+       "first_frame_ms_max": 474.621,
+       "first_frame_within_2s": 60,
+       "fps_measured_p50": 29.626059872343298,
+       "fps_measured_min": 29.51825228331881,
+       "open_to_first_frame_ms_p50": 511.0498,
+       "activate_ms_p50": 32.19905,
+       "close_ms_p50": 366.04525,
+       "close_ms_max": 403.2037,
+       "failures_by_stage": {},
+       "failures_by_class": {},
+       "unreleasable": false,
+       "stopped_after_hung_setups": false
+      },
+      "fault": null,
+      "exit_code": 0,
+      "rows": 60,
+      "fps_measured_p50": 29.626059872343298
+     }
+    },
+    "cycles_compare": {
+     "compared": true,
+     "success_rate": {
+      "wincam": 1.0,
+      "pymf": 1.0
+     },
+     "success_ok": true,
+     "open_to_first_frame_ms_p50": {
+      "wincam": 510.39279999999997,
+      "pymf": 511.0498
+     },
+     "latency_ok": true,
+     "hang_ok": true,
+     "fps_measured_p50": {
+      "wincam": 29.610591130000003,
+      "pymf": 29.626059872343298
+     },
+     "fps_ok": true,
+     "ok": true
+    },
+    "runs": {
+     "wincam_formats": {
+      "rc": 0,
+      "elapsed_s": 0.078,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.2s (ticket 3477): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 45.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe formats --api mf --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --timeout-ms 8000\n[camlock] released"
+     },
+     "pymf_formats": {
+      "rc": 0,
+      "elapsed_s": 0.187,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.0s (ticket 3478): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 75.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py formats --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --timeout-ms 8000\n[camlock] released"
+     },
+     "wincam_controls": {
+      "rc": 0,
+      "elapsed_s": 0.078,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.5,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.5s (ticket 3480): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+     },
+     "pymf_controls": {
+      "rc": 0,
+      "elapsed_s": 0.187,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.2s (ticket 3482): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 70.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py controls --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+     },
+     "pymf_set": {
+      "rc": 0,
+      "elapsed_s": 0.188,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "k] acquired after 0.0s (ticket 3483): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 90.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py controls --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --set exposure=-4,focus=0,gain=1,white_balance=4001 --set-flags manual --restore --timeout-ms 5000\n[camlock] released"
+     },
+     "wincam_controls_after": {
+      "rc": 0,
+      "elapsed_s": 0.063,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.0s (ticket 3484): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+     },
+     "wincam_capture": {
+      "rc": 0,
+      "elapsed_s": 5.953,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "rs\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 50.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --seconds 5.0 --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\logitechwebcam_046d-0843_8\\wincam_capture_1280x720_30 --save every:5\n[camlock] released"
+     },
+     "pymf_capture": {
+      "rc": 0,
+      "elapsed_s": 6.016,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 80.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py capture --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --seconds 5.0 --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\logitechwebcam_046d-0843_8\\pymf_capture_1280x720_30 --save every:5\n[camlock] released"
+     },
+     "wincam_cycle": {
+      "rc": 0,
+      "elapsed_s": 71.047,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": " MJPG 1280x720@30: ok\n\n[wincam] cycle 48/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 49/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 50/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 51/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 52/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 53/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 54/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 55/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 56/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 57/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 58/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 59/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 60/60 MJPG 1280x720@30: ok\n\n[camlock] released"
+     },
+     "pymf_cycle": {
+      "rc": 0,
+      "elapsed_s": 71.5,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "30: ok\n\n[pymf] cycle 47/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 48/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 49/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 50/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 51/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 52/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 53/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 54/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 55/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 56/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 57/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 58/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 59/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 60/60 MJPG 1280x720@30: ok\n\n[camlock] released"
+     }
+    }
+   },
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+    "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "name": "USB Camera",
+    "is_kiyo": false,
+    "slug": "usbcamera_4c4a-4a55_2",
+    "list": {
+     "in_wincam": true,
+     "in_pymf": true,
+     "name_equal": true,
+     "order_equal": true
+    },
+    "formats_compare": {
+     "compared": true,
+     "equal": true,
+     "same_set": true,
+     "order_equal": true,
+     "n_wincam": 32,
+     "n_pymf": 32,
+     "pymf_synthesized_flagged": 13,
+     "only_wincam": [],
+     "only_pymf": [],
+     "streams_equal": true,
+     "stream_attribute_diffs": [],
+     "stream_started": {
+      "wincam": false,
+      "pymf": false
+     }
+    },
+    "controls_compare": {
+     "compared": true,
+     "equal": true,
+     "n_supported_compared": 11,
+     "diffs": [],
+     "auto_drift": [],
+     "supported_count": {
+      "wincam": 11,
+      "pymf": 11
+     },
+     "device_not_answering": {
+      "wincam": false,
+      "pymf": false
+     },
+     "interfaces": {
+      "wincam": {
+       "IAMCameraControl": true,
+       "IAMVideoProcAmp": true,
+       "IKsControl": true
+      },
+      "pymf": {
+       "IAMCameraControl": true,
+       "IAMVideoProcAmp": true,
+       "IKsControl": true
+      }
+     }
+    },
+    "set_roundtrip": {
+     "ran": true,
+     "ok": true,
+     "sets": [
+      {
+       "control": "cc.exposure",
+       "requested": "-6",
+       "via": "IAMCameraControl",
+       "before_value": -7,
+       "before_flags": 1,
+       "set_value": -6,
+       "hr_set_name": "S_OK",
+       "readback_value": -6,
+       "readback_flags": 2,
+       "matches": true,
+       "timed_out": false
+      },
+      {
+       "control": "pa.gain",
+       "requested": "5",
+       "via": "IAMVideoProcAmp",
+       "before_value": 4,
+       "before_flags": 2,
+       "set_value": 5,
+       "hr_set_name": "S_OK",
+       "readback_value": 5,
+       "readback_flags": 2,
+       "matches": true,
+       "timed_out": false
+      },
+      {
+       "control": "pa.white_balance",
+       "requested": "4501",
+       "via": "IAMVideoProcAmp",
+       "before_value": 4500,
+       "before_flags": 2,
+       "set_value": 4501,
+       "hr_set_name": "S_OK",
+       "readback_value": 4501,
+       "readback_flags": 2,
+       "matches": true,
+       "timed_out": false
+      }
+     ],
+     "restore_ok": [
+      true,
+      true,
+      true
+     ],
+     "as_found_after": [
+      {
+       "control": "cc.exposure",
+       "before_flags": 1,
+       "after_flags": 1,
+       "before_value": -7,
+       "after_value": -6,
+       "as_found": true
+      },
+      {
+       "control": "pa.gain",
+       "before_flags": 2,
+       "after_flags": 2,
+       "before_value": 4,
+       "after_value": 4,
+       "as_found": true
+      },
+      {
+       "control": "pa.white_balance",
+       "before_flags": 2,
+       "after_flags": 2,
+       "before_value": 4500,
+       "after_value": 4500,
+       "as_found": true
+      }
+     ],
+     "exit_code": 0,
+     "error": null,
+     "requested": {
+      "exposure": -6,
+      "gain": 5,
+      "white_balance": 4501
+     }
+    },
+    "mode_scope": {
+     "advertised_mjpeg": 10,
+     "in_scope": [
+      "MJPG 1280x720@30"
+     ],
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "rule": "exactly 720 lines at >= 30 fps by default (Dom 2026-11-08)",
+     "mode": "MJPG 1280x720@30"
+    },
+    "mode": "MJPG 1280x720@30",
+    "capture": {
+     "wincam": {
+      "ok": true,
+      "exit_code": 0,
+      "error": null,
+      "negotiated": {
+       "native_type_index": 5,
+       "subtype": "MJPG",
+       "width": 1280,
+       "height": 720,
+       "fps_num": 30,
+       "fps_den": 1,
+       "readback_ok": true
+      },
+      "frames_total": 130,
+      "frames_ok": 130,
+      "valid_fraction": 1.0,
+      "fps_fit": 25.75684245167294,
+      "fps_measured": 25.75951069,
+      "cpu_pct_of_one_core": 1.560148295,
+      "cpu": {
+       "user_s": 0.015625,
+       "kernel_s": 0.0625,
+       "window_s": 5.0075368,
+       "pct_of_one_core": 1.560148295,
+       "method": "GetProcessTimes over the streaming window",
+       "process_total_s": 0.109375
+      },
+      "first_frame_ms": 73.112,
+      "open_to_first_frame_ms": 100.3764,
+      "close_ms": 263.3972,
+      "process_elapsed_s": 5.406,
+      "header_sha1": "aeefc78066682dbbe75f16d73bf07c6cb5c80b1f",
+      "header_sha1_distinct": 4,
+      "strict_ok_fraction": 1.0,
+      "lenient_ok_fraction": 1.0,
+      "checked": 26,
+      "timing": {
+       "n": 111,
+       "arrival_interval_ms": {
+        "mean": 38.689,
+        "std": 7.842,
+        "p99": 48.496,
+        "max": 48.624
+       },
+       "arrival_minus_sample_ms": {
+        "grid_ms": 16.0,
+        "offset_p99_ms": 0.544,
+        "offset_std_ms": 0.322,
+        "offset_max_ms": 0.549,
+        "modes": [
+         {
+          "centre_ms": 16.929,
+          "count": 6,
+          "share": 0.054,
+          "std_ms": 0.284
+         },
+         {
+          "centre_ms": 32.7,
+          "count": 105,
+          "share": 0.946,
+          "std_ms": 0.325
+         }
+        ]
+       },
+       "sample_time_slots": {
+        "period_ms": 38.837,
+        "slotting": "sequence",
+        "drops_detectable": true,
+        "grid_ms": 16.0
+       },
+       "sample_time_drops": 0
+      },
+      "unreleasable": false,
+      "abandoned_threads": 0,
+      "fault": null,
+      "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\usbcamera_4c4a-4a55_2\\wincam_capture_1280x720_30"
+     },
+     "pymf": {
+      "ok": true,
+      "exit_code": 0,
+      "error": null,
+      "negotiated": {
+       "native_type_index": 5,
+       "subtype": "MJPG",
+       "width": 1280,
+       "height": 720,
+       "fps_num": 30,
+       "fps_den": 1,
+       "readback_ok": true
+      },
+      "frames_total": 130,
+      "frames_ok": 130,
+      "valid_fraction": 1.0,
+      "fps_fit": 25.759225392396537,
+      "fps_measured": 25.75576344605087,
+      "cpu_pct_of_one_core": 1.8716972778513945,
+      "cpu": {
+       "user_s": 0.015625,
+       "kernel_s": 0.078125,
+       "window_s": 5.0088228,
+       "pct_of_one_core": 1.8716972778513945,
+       "method": "GetProcessTimes over the streaming window",
+       "callback_s": 0.031816,
+       "callback_note": "wall time spent inside the Python OnReadSample (GIL held), streaming window",
+       "process_total_s": 0.203125
+      },
+      "first_frame_ms": 71.9067,
+      "open_to_first_frame_ms": 98.2923,
+      "close_ms": 274.1347,
+      "process_elapsed_s": 5.532,
+      "header_sha1": "aeefc78066682dbbe75f16d73bf07c6cb5c80b1f",
+      "header_sha1_distinct": 4,
+      "strict_ok_fraction": 1.0,
+      "lenient_ok_fraction": 1.0,
+      "checked": 26,
+      "timing": {
+       "n": 111,
+       "arrival_interval_ms": {
+        "mean": 38.836,
+        "std": 7.911,
+        "p99": 48.893,
+        "max": 48.949
+       },
+       "arrival_minus_sample_ms": {
+        "grid_ms": 16.0,
+        "offset_p99_ms": 0.753,
+        "offset_std_ms": 0.39,
+        "offset_max_ms": 0.927,
+        "modes": [
+         {
+          "centre_ms": 16.791,
+          "count": 5,
+          "share": 0.045,
+          "std_ms": 0.395
+         },
+         {
+          "centre_ms": 32.629,
+          "count": 106,
+          "share": 0.955,
+          "std_ms": 0.393
+         }
+        ]
+       },
+       "sample_time_slots": {
+        "period_ms": 38.836,
+        "slotting": "sequence",
+        "drops_detectable": true,
+        "grid_ms": 16.0
+       },
+       "sample_time_drops": 0
+      },
+      "unreleasable": false,
+      "abandoned_threads": 0,
+      "fault": null,
+      "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\usbcamera_4c4a-4a55_2\\pymf_capture_1280x720_30"
+     }
+    },
+    "pymf_sample_jpeg": "W-PYMF/samples/usbcamera_4c4a-4a55_2_pymf_1280x720_30.jpg",
+    "capture_compare": {
+     "compared": true,
+     "valid_ok": true,
+     "header_sha1_equal": true,
+     "fps_ratio": 1.0000925168031782,
+     "fps_ok": true,
+     "latency_delta_ms": -2.0841000000000065,
+     "latency_ok": true,
+     "cpu_delta_pp": 0.31154898285139443,
+     "cpu_ok": true,
+     "timing": {
+      "arrival_jitter_ok": true,
+      "arrival_jitter_ms": {
+       "wincam": 0.544,
+       "pymf": 0.753
+      },
+      "offset_std_ok": true,
+      "offset_std_ms": {
+       "wincam": 0.322,
+       "pymf": 0.39
+      },
+      "drops_ok": true,
+      "sample_time_drops": {
+       "wincam": 0,
+       "pymf": 0
+      }
+     }
+    },
+    "cycles": {
+     "requested": 60,
+     "wincam": {
+      "summary": {
+       "n": 60,
+       "n_ok": 60,
+       "success_rate": 1.0,
+       "wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "open_to_first_frame_ms_p50": 79.15275,
+       "format_mismatch_count": 0,
+       "size_mismatch_count": 0,
+       "fps_mismatch_count": 0,
+       "device_reset_count": 0,
+       "n_fps_judged": 0,
+       "n_ok_as_requested": 60,
+       "first_frame_within_s": 2.0,
+       "n_first_frame_within": 60,
+       "first_frame_within_rate": 1.0,
+       "first_frame_within_wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "timings_ms": {
+        "activate_ms": {
+         "n": 60,
+         "min": 18.66,
+         "p50": 19.67675,
+         "p90": 20.462759992000002,
+         "p95": 21.18229,
+         "p99": 22.731803995899995,
+         "max": 23.71969999,
+         "mean": 19.821998333
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 262.1821,
+         "p50": 267.75739999999996,
+         "p90": 272.56451,
+         "p95": 273.410365,
+         "p99": 275.512307,
+         "max": 275.6732,
+         "mean": 267.7714133333333
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.698700003,
+         "p50": 1.800900001,
+         "p90": 2.0684300038999996,
+         "p95": 2.20287999995,
+         "p99": 2.32312400072,
+         "max": 2.338699996,
+         "mean": 1.8568200001833333
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 54.9843,
+         "p50": 56.194900000000004,
+         "p90": 88.27138,
+         "p95": 91.71493499999987,
+         "p99": 142.96422999999996,
+         "max": 152.3057,
+         "mean": 68.96186833333333
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.1062000021,
+         "p50": 0.37970000505,
+         "p90": 0.55465999771,
+         "p95": 0.5957500100550001,
+         "p99": 0.6325920042329999,
+         "max": 0.645100005,
+         "mean": 0.3343133341533333
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 76.5314,
+         "p50": 79.15275,
+         "p90": 111.09995,
+         "p95": 118.06221999999988,
+         "p99": 165.23764999999995,
+         "max": 174.8104,
+         "mean": 91.48492
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.3710999936,
+         "p50": 0.42670000345000003,
+         "p90": 0.47168000337,
+         "p95": 0.479015004245,
+         "p99": 0.6597460020529986,
+         "max": 0.890200004,
+         "mean": 0.43637500045
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 260.3735,
+         "p50": 266.31085,
+         "p90": 270.82122,
+         "p95": 271.982395,
+         "p99": 273.699968,
+         "max": 273.7441,
+         "mean": 266.1489666666667
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 0.2405999973,
+         "p50": 0.27434999495,
+         "p90": 0.31230999902999995,
+         "p95": 0.34493000286500003,
+         "p99": 0.36383000240599994,
+         "max": 0.3715000004,
+         "mean": 0.28313166610333335
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 0.8439999968,
+         "p50": 1.0075500015,
+         "p90": 1.2556699973,
+         "p95": 1.27336500485,
+         "p99": 1.4040519967699991,
+         "max": 1.549899995,
+         "mean": 1.0435966662866667
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.06300000101,
+         "p50": 0.07935000211,
+         "p90": 0.1057899974,
+         "p95": 0.1215000004,
+         "p99": 0.152447999307,
+         "max": 0.1541000009,
+         "mean": 0.08570333322200001
+        }
+       },
+       "timings_ms_all_cycles": {
+        "activate_ms": {
+         "n": 60,
+         "min": 18.66,
+         "p50": 19.67675,
+         "p90": 20.462759992000002,
+         "p95": 21.18229,
+         "p99": 22.731803995899995,
+         "max": 23.71969999,
+         "mean": 19.821998333
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 262.1821,
+         "p50": 267.75739999999996,
+         "p90": 272.56451,
+         "p95": 273.410365,
+         "p99": 275.512307,
+         "max": 275.6732,
+         "mean": 267.7714133333333
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.698700003,
+         "p50": 1.800900001,
+         "p90": 2.0684300038999996,
+         "p95": 2.20287999995,
+         "p99": 2.32312400072,
+         "max": 2.338699996,
+         "mean": 1.8568200001833333
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 54.9843,
+         "p50": 56.194900000000004,
+         "p90": 88.27138,
+         "p95": 91.71493499999987,
+         "p99": 142.96422999999996,
+         "max": 152.3057,
+         "mean": 68.96186833333333
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.1062000021,
+         "p50": 0.37970000505,
+         "p90": 0.55465999771,
+         "p95": 0.5957500100550001,
+         "p99": 0.6325920042329999,
+         "max": 0.645100005,
+         "mean": 0.3343133341533333
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 76.5314,
+         "p50": 79.15275,
+         "p90": 111.09995,
+         "p95": 118.06221999999988,
+         "p99": 165.23764999999995,
+         "max": 174.8104,
+         "mean": 91.48492
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.3710999936,
+         "p50": 0.42670000345000003,
+         "p90": 0.47168000337,
+         "p95": 0.479015004245,
+         "p99": 0.6597460020529986,
+         "max": 0.890200004,
+         "mean": 0.43637500045
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 260.3735,
+         "p50": 266.31085,
+         "p90": 270.82122,
+         "p95": 271.982395,
+         "p99": 273.699968,
+         "max": 273.7441,
+         "mean": 266.1489666666667
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 0.2405999973,
+         "p50": 0.27434999495,
+         "p90": 0.31230999902999995,
+         "p95": 0.34493000286500003,
+         "p99": 0.36383000240599994,
+         "max": 0.3715000004,
+         "mean": 0.28313166610333335
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 0.8439999968,
+         "p50": 1.0075500015,
+         "p90": 1.2556699973,
+         "p95": 1.27336500485,
+         "p99": 1.4040519967699991,
+         "max": 1.549899995,
+         "mean": 1.0435966662866667
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.06300000101,
+         "p50": 0.07935000211,
+         "p90": 0.1057899974,
+         "p95": 0.1215000004,
+         "p99": 0.152447999307,
+         "max": 0.1541000009,
+         "mean": 0.08570333322200001
+        }
+       },
+       "failure_classes": [],
+       "hangs": 0,
+       "unreleasable": 0,
+       "recovery_after_failure": {
+        "failures_followed": 0,
+        "recovered": 0,
+        "rate": null
+       },
+       "longest_failure_run": 0,
+       "failure_indices": [],
+       "trailing_failures": 0
+      },
+      "tool_summary": {
+       "cycles_requested": 60,
+       "cycles_run": 60,
+       "ok": 60,
+       "failed": 0,
+       "timeouts": 0,
+       "success_rate": 1,
+       "longest_failure_run": 0,
+       "cycles_after_a_failure": 0,
+       "recovered_after_failure": 0,
+       "first_frame_ms_p50": 56.1949,
+       "first_frame_ms_p95": 91.714935,
+       "first_frame_ms_max": 152.3057,
+       "first_frame_within_2s": 60,
+       "fps_measured_p50": 25.56722306,
+       "fps_measured_min": 25.49159117,
+       "open_to_first_frame_ms_p50": 79.15275,
+       "activate_ms_p50": 19.67675,
+       "close_ms_p50": 267.7574,
+       "close_ms_max": 275.6732,
+       "failures_by_stage": {},
+       "failures_by_class": {},
+       "unreleasable": false,
+       "stopped_after_hung_setups": false
+      },
+      "fault": null,
+      "exit_code": 0,
+      "rows": 60,
+      "fps_measured_p50": 25.56722306
+     },
+     "pymf": {
+      "summary": {
+       "n": 60,
+       "n_ok": 60,
+       "success_rate": 1.0,
+       "wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "open_to_first_frame_ms_p50": 78.12935,
+       "format_mismatch_count": 0,
+       "size_mismatch_count": 0,
+       "fps_mismatch_count": 0,
+       "device_reset_count": 0,
+       "n_fps_judged": 0,
+       "n_ok_as_requested": 60,
+       "first_frame_within_s": 2.0,
+       "n_first_frame_within": 60,
+       "first_frame_within_rate": 1.0,
+       "first_frame_within_wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "timings_ms": {
+        "activate_ms": {
+         "n": 60,
+         "min": 16.6949,
+         "p50": 17.3461,
+         "p90": 17.99649,
+         "p95": 18.219045,
+         "p99": 19.81613799999999,
+         "max": 21.599,
+         "mean": 17.456251666666667
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 262.0334,
+         "p50": 267.66745000000003,
+         "p90": 272.5717,
+         "p95": 272.81234,
+         "p99": 273.559074,
+         "max": 273.7015,
+         "mean": 268.07885833333336
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.7793,
+         "p50": 1.8959000000000001,
+         "p90": 2.11081,
+         "p95": 2.300464999999999,
+         "p99": 2.967821,
+         "max": 3.0139,
+         "mean": 1.9652850000000002
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 55.0526,
+         "p50": 56.7513,
+         "p90": 136.12902,
+         "p95": 137.31524999999996,
+         "p99": 158.66465099999994,
+         "max": 168.0581,
+         "mean": 75.78974333333333
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.1946,
+         "p50": 0.7198,
+         "p90": 1.1245500000000002,
+         "p95": 1.188805,
+         "p99": 1.2398389999999997,
+         "max": 1.3094000000000001,
+         "mean": 0.7000283333333334
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 75.3002,
+         "p50": 78.12935,
+         "p90": 156.88794,
+         "p95": 158.57059499999997,
+         "p99": 182.17201799999992,
+         "max": 195.3348,
+         "mean": 96.73053833333333
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.462,
+         "p50": 0.5287999999999999,
+         "p90": 0.55732,
+         "p95": 0.564105,
+         "p99": 0.7725429999999985,
+         "max": 1.0335,
+         "mean": 0.5346816666666666
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 259.4586,
+         "p50": 265.70245,
+         "p90": 270.54136,
+         "p95": 270.75713,
+         "p99": 271.10511,
+         "max": 271.265,
+         "mean": 265.79583833333334
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 0.5127,
+         "p50": 0.5639000000000001,
+         "p90": 0.60318,
+         "p95": 0.6158399999999999,
+         "p99": 0.6726769999999997,
+         "max": 0.7079,
+         "mean": 0.5680466666666667
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 0.904,
+         "p50": 1.04465,
+         "p90": 1.32445,
+         "p95": 1.37964,
+         "p99": 1.464915,
+         "max": 1.4835,
+         "mean": 1.0841583333333333
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.109,
+         "p50": 0.14084999999999998,
+         "p90": 0.18798,
+         "p95": 0.19682499999999997,
+         "p99": 0.21266799999999997,
+         "max": 0.2214,
+         "mean": 0.14806833333333333
+        }
+       },
+       "timings_ms_all_cycles": {
+        "activate_ms": {
+         "n": 60,
+         "min": 16.6949,
+         "p50": 17.3461,
+         "p90": 17.99649,
+         "p95": 18.219045,
+         "p99": 19.81613799999999,
+         "max": 21.599,
+         "mean": 17.456251666666667
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 262.0334,
+         "p50": 267.66745000000003,
+         "p90": 272.5717,
+         "p95": 272.81234,
+         "p99": 273.559074,
+         "max": 273.7015,
+         "mean": 268.07885833333336
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.7793,
+         "p50": 1.8959000000000001,
+         "p90": 2.11081,
+         "p95": 2.300464999999999,
+         "p99": 2.967821,
+         "max": 3.0139,
+         "mean": 1.9652850000000002
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 55.0526,
+         "p50": 56.7513,
+         "p90": 136.12902,
+         "p95": 137.31524999999996,
+         "p99": 158.66465099999994,
+         "max": 168.0581,
+         "mean": 75.78974333333333
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.1946,
+         "p50": 0.7198,
+         "p90": 1.1245500000000002,
+         "p95": 1.188805,
+         "p99": 1.2398389999999997,
+         "max": 1.3094000000000001,
+         "mean": 0.7000283333333334
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 75.3002,
+         "p50": 78.12935,
+         "p90": 156.88794,
+         "p95": 158.57059499999997,
+         "p99": 182.17201799999992,
+         "max": 195.3348,
+         "mean": 96.73053833333333
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.462,
+         "p50": 0.5287999999999999,
+         "p90": 0.55732,
+         "p95": 0.564105,
+         "p99": 0.7725429999999985,
+         "max": 1.0335,
+         "mean": 0.5346816666666666
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 259.4586,
+         "p50": 265.70245,
+         "p90": 270.54136,
+         "p95": 270.75713,
+         "p99": 271.10511,
+         "max": 271.265,
+         "mean": 265.79583833333334
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 0.5127,
+         "p50": 0.5639000000000001,
+         "p90": 0.60318,
+         "p95": 0.6158399999999999,
+         "p99": 0.6726769999999997,
+         "max": 0.7079,
+         "mean": 0.5680466666666667
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 0.904,
+         "p50": 1.04465,
+         "p90": 1.32445,
+         "p95": 1.37964,
+         "p99": 1.464915,
+         "max": 1.4835,
+         "mean": 1.0841583333333333
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.109,
+         "p50": 0.14084999999999998,
+         "p90": 0.18798,
+         "p95": 0.19682499999999997,
+         "p99": 0.21266799999999997,
+         "max": 0.2214,
+         "mean": 0.14806833333333333
+        }
+       },
+       "failure_classes": [],
+       "hangs": 0,
+       "unreleasable": 0,
+       "recovery_after_failure": {
+        "failures_followed": 0,
+        "recovered": 0,
+        "rate": null
+       },
+       "longest_failure_run": 0,
+       "failure_indices": [],
+       "trailing_failures": 0
+      },
+      "tool_summary": {
+       "cycles_requested": 60,
+       "cycles_run": 60,
+       "ok": 60,
+       "failed": 0,
+       "timeouts": 0,
+       "success_rate": 1.0,
+       "longest_failure_run": 0,
+       "cycles_after_a_failure": 0,
+       "recovered_after_failure": 0,
+       "first_frame_ms_p50": 56.7513,
+       "first_frame_ms_p95": 137.31524999999996,
+       "first_frame_ms_max": 168.0581,
+       "first_frame_within_2s": 60,
+       "fps_measured_p50": 25.57038653773838,
+       "fps_measured_min": 25.488133150007574,
+       "open_to_first_frame_ms_p50": 78.12935,
+       "activate_ms_p50": 17.3461,
+       "close_ms_p50": 267.66745000000003,
+       "close_ms_max": 273.7015,
+       "failures_by_stage": {},
+       "failures_by_class": {},
+       "unreleasable": false,
+       "stopped_after_hung_setups": false
+      },
+      "fault": null,
+      "exit_code": 0,
+      "rows": 60,
+      "fps_measured_p50": 25.57038653773838
+     }
+    },
+    "cycles_compare": {
+     "compared": true,
+     "success_rate": {
+      "wincam": 1.0,
+      "pymf": 1.0
+     },
+     "success_ok": true,
+     "open_to_first_frame_ms_p50": {
+      "wincam": 79.15275,
+      "pymf": 78.12935
+     },
+     "latency_ok": true,
+     "hang_ok": true,
+     "fps_measured_p50": {
+      "wincam": 25.56722306,
+      "pymf": 25.57038653773838
+     },
+     "fps_ok": true,
+     "ok": true
+    },
+    "runs": {
+     "wincam_formats": {
+      "rc": 0,
+      "elapsed_s": 0.047,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.2s (ticket 3492): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 45.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe formats --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --timeout-ms 8000\n[camlock] released"
+     },
+     "pymf_formats": {
+      "rc": 0,
+      "elapsed_s": 0.172,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.2s (ticket 3494): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 75.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py formats --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --timeout-ms 8000\n[camlock] released"
+     },
+     "wincam_controls": {
+      "rc": 0,
+      "elapsed_s": 0.047,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.0s (ticket 3495): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+     },
+     "pymf_controls": {
+      "rc": 0,
+      "elapsed_s": 0.187,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.2s (ticket 3497): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 70.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py controls --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+     },
+     "pymf_set": {
+      "rc": 0,
+      "elapsed_s": 0.187,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.2s (ticket 3499): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 90.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py controls --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --set exposure=-6,gain=5,white_balance=4501 --set-flags manual --restore --timeout-ms 5000\n[camlock] released"
+     },
+     "wincam_controls_after": {
+      "rc": 0,
+      "elapsed_s": 0.062,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.0s (ticket 3500): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+     },
+     "wincam_capture": {
+      "rc": 0,
+      "elapsed_s": 5.406,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": ":\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 50.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --seconds 5.0 --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\usbcamera_4c4a-4a55_2\\wincam_capture_1280x720_30 --save every:5\n[camlock] released"
+     },
+     "pymf_capture": {
+      "rc": 0,
+      "elapsed_s": 5.532,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 80.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py capture --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --seconds 5.0 --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\usbcamera_4c4a-4a55_2\\pymf_capture_1280x720_30 --save every:5\n[camlock] released"
+     },
+     "wincam_cycle": {
+      "rc": 0,
+      "elapsed_s": 42.641,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.3,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": " MJPG 1280x720@30: ok\n\n[wincam] cycle 48/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 49/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 50/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 51/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 52/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 53/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 54/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 55/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 56/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 57/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 58/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 59/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 60/60 MJPG 1280x720@30: ok\n\n[camlock] released"
+     },
+     "pymf_cycle": {
+      "rc": 0,
+      "elapsed_s": 43.078,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "30: ok\n\n[pymf] cycle 47/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 48/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 49/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 50/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 51/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 52/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 53/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 54/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 55/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 56/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 57/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 58/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 59/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 60/60 MJPG 1280x720@30: ok\n\n[camlock] released"
+     }
+    }
+   },
+   "046d:085c:sn=C922SN01": {
+    "key": "046d:085c:sn=C922SN01",
+    "name": "c922 Pro Stream Webcam",
+    "is_kiyo": false,
+    "slug": "c922prostreamw_046d-085c_C922SN01",
+    "list": {
+     "in_wincam": true,
+     "in_pymf": true,
+     "name_equal": true,
+     "order_equal": true
+    },
+    "formats_compare": {
+     "compared": true,
+     "equal": true,
+     "same_set": true,
+     "order_equal": true,
+     "n_wincam": 338,
+     "n_pymf": 338,
+     "pymf_synthesized_flagged": 120,
+     "only_wincam": [],
+     "only_pymf": [],
+     "streams_equal": true,
+     "stream_attribute_diffs": [],
+     "stream_started": {
+      "wincam": false,
+      "pymf": false
+     }
+    },
+    "controls_compare": {
+     "compared": true,
+     "equal": true,
+     "n_supported_compared": 16,
+     "diffs": [],
+     "auto_drift": [],
+     "supported_count": {
+      "wincam": 16,
+      "pymf": 16
+     },
+     "device_not_answering": {
+      "wincam": false,
+      "pymf": false
+     },
+     "interfaces": {
+      "wincam": {
+       "IAMCameraControl": true,
+       "IAMVideoProcAmp": true,
+       "IKsControl": true
+      },
+      "pymf": {
+       "IAMCameraControl": true,
+       "IAMVideoProcAmp": true,
+       "IKsControl": true
+      }
+     }
+    },
+    "set_roundtrip": {
+     "ran": true,
+     "ok": true,
+     "sets": [
+      {
+       "control": "cc.exposure",
+       "requested": "-5",
+       "via": "IAMCameraControl",
+       "before_value": -9,
+       "before_flags": 1,
+       "set_value": -5,
+       "hr_set_name": "S_OK",
+       "readback_value": -5,
+       "readback_flags": 2,
+       "matches": true,
+       "timed_out": false
+      },
+      {
+       "control": "cc.focus",
+       "requested": "5",
+       "via": "IAMCameraControl",
+       "before_value": 0,
+       "before_flags": 1,
+       "set_value": 5,
+       "hr_set_name": "S_OK",
+       "readback_value": 5,
+       "readback_flags": 2,
+       "matches": true,
+       "timed_out": false
+      },
+      {
+       "control": "pa.gain",
+       "requested": "1",
+       "via": "IAMVideoProcAmp",
+       "before_value": 0,
+       "before_flags": 2,
+       "set_value": 1,
+       "hr_set_name": "S_OK",
+       "readback_value": 1,
+       "readback_flags": 2,
+       "matches": true,
+       "timed_out": false
+      },
+      {
+       "control": "pa.white_balance",
+       "requested": "4000",
+       "via": "IAMVideoProcAmp",
+       "before_value": 5441,
+       "before_flags": 1,
+       "set_value": 4000,
+       "hr_set_name": "S_OK",
+       "readback_value": 4000,
+       "readback_flags": 2,
+       "matches": true,
+       "timed_out": false
+      }
+     ],
+     "restore_ok": [
+      true,
+      true,
+      true,
+      true
+     ],
+     "as_found_after": [
+      {
+       "control": "cc.exposure",
+       "before_flags": 1,
+       "after_flags": 1,
+       "before_value": -9,
+       "after_value": -5,
+       "as_found": true
+      },
+      {
+       "control": "cc.focus",
+       "before_flags": 1,
+       "after_flags": 1,
+       "before_value": 0,
+       "after_value": 5,
+       "as_found": true
+      },
+      {
+       "control": "pa.gain",
+       "before_flags": 2,
+       "after_flags": 2,
+       "before_value": 0,
+       "after_value": 0,
+       "as_found": true
+      },
+      {
+       "control": "pa.white_balance",
+       "before_flags": 1,
+       "after_flags": 1,
+       "before_value": 5441,
+       "after_value": 4000,
+       "as_found": true
+      }
+     ],
+     "exit_code": 0,
+     "error": null,
+     "requested": {
+      "exposure": -5,
+      "focus": 5,
+      "gain": 1,
+      "white_balance": 4000
+     }
+    },
+    "mode_scope": {
+     "advertised_mjpeg": 120,
+     "in_scope": [
+      "MJPG 960x720@30",
+      "MJPG 1280x720@30",
+      "MJPG 1280x720@60"
+     ],
+     "scope": {
+      "min_fps": 30.0,
+      "min_height": 720,
+      "max_height": 720,
+      "all_modes": false,
+      "text": "exactly 720 lines at >= 30 fps",
+      "fps_rel_tol": 0.005,
+      "raw_formats": "no exception: raw modes use the same scope (Dom 2026-11-08)"
+     },
+     "rule": "exactly 720 lines at >= 30 fps by default (Dom 2026-11-08)",
+     "mode": "MJPG 1280x720@30"
+    },
+    "mode": "MJPG 1280x720@30",
+    "capture": {
+     "wincam": {
+      "ok": true,
+      "exit_code": 0,
+      "error": null,
+      "negotiated": {
+       "native_type_index": 295,
+       "subtype": "MJPG",
+       "width": 1280,
+       "height": 720,
+       "fps_num": 30,
+       "fps_den": 1,
+       "readback_ok": true
+      },
+      "frames_total": 151,
+      "frames_ok": 151,
+      "valid_fraction": 1.0,
+      "fps_fit": 29.99619531531908,
+      "fps_measured": 29.95631112,
+      "cpu_pct_of_one_core": 1.872384055,
+      "cpu": {
+       "user_s": 0.046875,
+       "kernel_s": 0.046875,
+       "window_s": 5.0069856,
+       "pct_of_one_core": 1.872384055,
+       "method": "GetProcessTimes over the streaming window",
+       "process_total_s": 0.125
+      },
+      "first_frame_ms": 298.4143,
+      "open_to_first_frame_ms": 330.6922,
+      "close_ms": 342.0584,
+      "process_elapsed_s": 5.703,
+      "header_sha1": "89d46b19bda64347088339d11b16b0fe04ce1864",
+      "header_sha1_distinct": 1,
+      "strict_ok_fraction": 1.0,
+      "lenient_ok_fraction": 1.0,
+      "checked": 30,
+      "timing": {
+       "n": 129,
+       "arrival_interval_ms": {
+        "mean": 33.376,
+        "std": 4.459,
+        "p99": 48.089,
+        "max": 48.141
+       },
+       "arrival_minus_sample_ms": {
+        "grid_ms": 16.0,
+        "offset_p99_ms": 0.552,
+        "offset_std_ms": 0.271,
+        "offset_max_ms": 0.575,
+        "modes": [
+         {
+          "centre_ms": 0.664,
+          "count": 11,
+          "share": 0.085,
+          "std_ms": 0.234
+         },
+         {
+          "centre_ms": 16.674,
+          "count": 118,
+          "share": 0.915,
+          "std_ms": 0.276
+         }
+        ]
+       },
+       "sample_time_slots": {
+        "period_ms": 33.375,
+        "slotting": "sequence",
+        "drops_detectable": true,
+        "grid_ms": 16.0
+       },
+       "sample_time_drops": 0
+      },
+      "unreleasable": false,
+      "abandoned_threads": 0,
+      "fault": null,
+      "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\c922prostreamw_046d-085c_C922SN01\\wincam_capture_1280x720_30"
+     },
+     "pymf": {
+      "ok": true,
+      "exit_code": 0,
+      "error": null,
+      "negotiated": {
+       "native_type_index": 295,
+       "subtype": "MJPG",
+       "width": 1280,
+       "height": 720,
+       "fps_num": 30,
+       "fps_den": 1,
+       "readback_ok": true
+      },
+      "frames_total": 151,
+      "frames_ok": 151,
+      "valid_fraction": 1.0,
+      "fps_fit": 29.996305899423245,
+      "fps_measured": 29.959805924371864,
+      "cpu_pct_of_one_core": 3.1215450115503156,
+      "cpu": {
+       "user_s": 0.09375,
+       "kernel_s": 0.0625,
+       "window_s": 5.0055341,
+       "pct_of_one_core": 3.1215450115503156,
+       "method": "GetProcessTimes over the streaming window",
+       "callback_s": 0.0406715,
+       "callback_note": "wall time spent inside the Python OnReadSample (GIL held), streaming window",
+       "process_total_s": 0.265625
+      },
+      "first_frame_ms": 299.1884,
+      "open_to_first_frame_ms": 332.1164,
+      "close_ms": 340.8894,
+      "process_elapsed_s": 5.828,
+      "header_sha1": "89d46b19bda64347088339d11b16b0fe04ce1864",
+      "header_sha1_distinct": 1,
+      "strict_ok_fraction": 1.0,
+      "lenient_ok_fraction": 1.0,
+      "checked": 30,
+      "timing": {
+       "n": 129,
+       "arrival_interval_ms": {
+        "mean": 33.376,
+        "std": 4.476,
+        "p99": 48.364,
+        "max": 48.619
+       },
+       "arrival_minus_sample_ms": {
+        "grid_ms": 16.0,
+        "offset_p99_ms": 0.593,
+        "offset_std_ms": 0.301,
+        "offset_max_ms": 0.76,
+        "modes": [
+         {
+          "centre_ms": 0.893,
+          "count": 5,
+          "share": 0.039,
+          "std_ms": 0.367
+         },
+         {
+          "centre_ms": 16.766,
+          "count": 124,
+          "share": 0.961,
+          "std_ms": 0.301
+         }
+        ]
+       },
+       "sample_time_slots": {
+        "period_ms": 33.375,
+        "slotting": "sequence",
+        "drops_detectable": true,
+        "grid_ms": 16.0
+       },
+       "sample_time_drops": 0
+      },
+      "unreleasable": false,
+      "abandoned_threads": 0,
+      "fault": null,
+      "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\c922prostreamw_046d-085c_C922SN01\\pymf_capture_1280x720_30"
+     }
+    },
+    "pymf_sample_jpeg": "W-PYMF/samples/c922prostreamw_046d-085c_C922SN01_pymf_1280x720_30.jpg",
+    "capture_compare": {
+     "compared": true,
+     "valid_ok": true,
+     "header_sha1_equal": true,
+     "fps_ratio": 1.0000036866043511,
+     "fps_ok": true,
+     "latency_delta_ms": 1.4241999999999848,
+     "latency_ok": true,
+     "cpu_delta_pp": 1.2491609565503157,
+     "cpu_ok": true,
+     "timing": {
+      "arrival_jitter_ok": true,
+      "arrival_jitter_ms": {
+       "wincam": 0.552,
+       "pymf": 0.593
+      },
+      "offset_std_ok": true,
+      "offset_std_ms": {
+       "wincam": 0.271,
+       "pymf": 0.301
+      },
+      "drops_ok": true,
+      "sample_time_drops": {
+       "wincam": 0,
+       "pymf": 0
+      }
+     }
+    },
+    "cycles": {
+     "requested": 60,
+     "wincam": {
+      "summary": {
+       "n": 60,
+       "n_ok": 60,
+       "success_rate": 1.0,
+       "wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "open_to_first_frame_ms_p50": 326.5757,
+       "format_mismatch_count": 0,
+       "size_mismatch_count": 0,
+       "fps_mismatch_count": 0,
+       "device_reset_count": 0,
+       "n_fps_judged": 0,
+       "n_ok_as_requested": 60,
+       "first_frame_within_s": 2.0,
+       "n_first_frame_within": 60,
+       "first_frame_within_rate": 1.0,
+       "first_frame_within_wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "timings_ms": {
+        "activate_ms": {
+         "n": 60,
+         "min": 23.4143,
+         "p50": 24.9902,
+         "p90": 25.850580001,
+         "p95": 26.124850000000002,
+         "p99": 27.22133,
+         "max": 27.6361,
+         "mean": 25.034013333500003
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 337.6682,
+         "p50": 342.9999,
+         "p90": 348.03442,
+         "p95": 348.58996,
+         "p99": 349.54020299999996,
+         "max": 349.9935,
+         "mean": 343.06363500000003
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.685599998,
+         "p50": 1.8978499995,
+         "p90": 2.3593700016,
+         "p95": 2.5881550018,
+         "p99": 2.90720299982,
+         "max": 2.923900001,
+         "mean": 2.024839999766667
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 297.0615,
+         "p50": 298.11115,
+         "p90": 298.72845,
+         "p95": 298.83104999999995,
+         "p99": 299.061291,
+         "max": 299.0879,
+         "mean": 298.06257
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.09790000319,
+         "p50": 0.22040000185,
+         "p90": 0.46986000016,
+         "p95": 0.5488200019949999,
+         "p99": 0.668026000945,
+         "max": 0.6789999977,
+         "mean": 0.2764833342233333
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 324.097,
+         "p50": 326.5757,
+         "p90": 327.8753,
+         "p95": 328.01808,
+         "p99": 329.200205,
+         "max": 330.3569,
+         "mean": 326.5998833333333
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.2674999982,
+         "p50": 0.2862999961,
+         "p90": 0.33016000542,
+         "p95": 0.34463999942999995,
+         "p99": 0.49932299738399877,
+         "max": 0.7177999988,
+         "mean": 0.3003266666083333
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 336.0408,
+         "p50": 340.70640000000003,
+         "p90": 345.56419999999997,
+         "p95": 346.18377999999996,
+         "p99": 347.014464,
+         "max": 347.7286,
+         "mean": 341.00587666666667
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 0.9893999994,
+         "p50": 1.039399996,
+         "p90": 1.0820100035,
+         "p95": 1.11343500485,
+         "p99": 1.13763099736,
+         "max": 1.148899995,
+         "mean": 1.04573333254
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 1.042499997,
+         "p50": 1.45995,
+         "p90": 2.0093900029,
+         "p95": 2.0905300021499995,
+         "p99": 2.24660699841,
+         "max": 2.248199999,
+         "mean": 1.4939349994
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.06889999658,
+         "p50": 0.09520000219,
+         "p90": 0.13438999955,
+         "p95": 0.15128000452999998,
+         "p99": 0.17360000417799995,
+         "max": 0.1854000017,
+         "mean": 0.10150500001933334
+        }
+       },
+       "timings_ms_all_cycles": {
+        "activate_ms": {
+         "n": 60,
+         "min": 23.4143,
+         "p50": 24.9902,
+         "p90": 25.850580001,
+         "p95": 26.124850000000002,
+         "p99": 27.22133,
+         "max": 27.6361,
+         "mean": 25.034013333500003
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 337.6682,
+         "p50": 342.9999,
+         "p90": 348.03442,
+         "p95": 348.58996,
+         "p99": 349.54020299999996,
+         "max": 349.9935,
+         "mean": 343.06363500000003
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.685599998,
+         "p50": 1.8978499995,
+         "p90": 2.3593700016,
+         "p95": 2.5881550018,
+         "p99": 2.90720299982,
+         "max": 2.923900001,
+         "mean": 2.024839999766667
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 297.0615,
+         "p50": 298.11115,
+         "p90": 298.72845,
+         "p95": 298.83104999999995,
+         "p99": 299.061291,
+         "max": 299.0879,
+         "mean": 298.06257
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.09790000319,
+         "p50": 0.22040000185,
+         "p90": 0.46986000016,
+         "p95": 0.5488200019949999,
+         "p99": 0.668026000945,
+         "max": 0.6789999977,
+         "mean": 0.2764833342233333
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 324.097,
+         "p50": 326.5757,
+         "p90": 327.8753,
+         "p95": 328.01808,
+         "p99": 329.200205,
+         "max": 330.3569,
+         "mean": 326.5998833333333
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.2674999982,
+         "p50": 0.2862999961,
+         "p90": 0.33016000542,
+         "p95": 0.34463999942999995,
+         "p99": 0.49932299738399877,
+         "max": 0.7177999988,
+         "mean": 0.3003266666083333
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 336.0408,
+         "p50": 340.70640000000003,
+         "p90": 345.56419999999997,
+         "p95": 346.18377999999996,
+         "p99": 347.014464,
+         "max": 347.7286,
+         "mean": 341.00587666666667
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 0.9893999994,
+         "p50": 1.039399996,
+         "p90": 1.0820100035,
+         "p95": 1.11343500485,
+         "p99": 1.13763099736,
+         "max": 1.148899995,
+         "mean": 1.04573333254
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 1.042499997,
+         "p50": 1.45995,
+         "p90": 2.0093900029,
+         "p95": 2.0905300021499995,
+         "p99": 2.24660699841,
+         "max": 2.248199999,
+         "mean": 1.4939349994
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.06889999658,
+         "p50": 0.09520000219,
+         "p90": 0.13438999955,
+         "p95": 0.15128000452999998,
+         "p99": 0.17360000417799995,
+         "max": 0.1854000017,
+         "mean": 0.10150500001933334
+        }
+       },
+       "failure_classes": [],
+       "hangs": 0,
+       "unreleasable": 0,
+       "recovery_after_failure": {
+        "failures_followed": 0,
+        "recovered": 0,
+        "rate": null
+       },
+       "longest_failure_run": 0,
+       "failure_indices": [],
+       "trailing_failures": 0
+      },
+      "tool_summary": {
+       "cycles_requested": 60,
+       "cycles_run": 60,
+       "ok": 60,
+       "failed": 0,
+       "timeouts": 0,
+       "success_rate": 1,
+       "longest_failure_run": 0,
+       "cycles_after_a_failure": 0,
+       "recovered_after_failure": 0,
+       "first_frame_ms_p50": 298.11115,
+       "first_frame_ms_p95": 298.83105,
+       "first_frame_ms_max": 299.0879,
+       "first_frame_within_2s": 60,
+       "fps_measured_p50": 29.62079947,
+       "fps_measured_min": 29.53163806,
+       "open_to_first_frame_ms_p50": 326.5757,
+       "activate_ms_p50": 24.9902,
+       "close_ms_p50": 342.9999,
+       "close_ms_max": 349.9935,
+       "failures_by_stage": {},
+       "failures_by_class": {},
+       "unreleasable": false,
+       "stopped_after_hung_setups": false
+      },
+      "fault": null,
+      "exit_code": 0,
+      "rows": 60,
+      "fps_measured_p50": 29.62079947
+     },
+     "pymf": {
+      "summary": {
+       "n": 60,
+       "n_ok": 60,
+       "success_rate": 1.0,
+       "wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "open_to_first_frame_ms_p50": 326.73069999999996,
+       "format_mismatch_count": 0,
+       "size_mismatch_count": 0,
+       "fps_mismatch_count": 0,
+       "device_reset_count": 0,
+       "n_fps_judged": 0,
+       "n_ok_as_requested": 60,
+       "first_frame_within_s": 2.0,
+       "n_first_frame_within": 60,
+       "first_frame_within_rate": 1.0,
+       "first_frame_within_wilson95": [
+        0.9398281469657729,
+        1.0
+       ],
+       "timings_ms": {
+        "activate_ms": {
+         "n": 60,
+         "min": 21.607,
+         "p50": 22.51755,
+         "p90": 23.35644,
+         "p95": 23.793165,
+         "p99": 24.831785999999997,
+         "max": 25.5071,
+         "mean": 22.60577333333333
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 337.7284,
+         "p50": 342.51625,
+         "p90": 347.04441,
+         "p95": 347.35206,
+         "p99": 348.32814299999995,
+         "max": 349.3089,
+         "mean": 342.61564166666665
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.7729,
+         "p50": 1.97495,
+         "p90": 2.5729,
+         "p95": 2.9006299999999996,
+         "p99": 3.867327,
+         "max": 3.9055,
+         "mean": 2.13371
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 296.975,
+         "p50": 298.21745,
+         "p90": 299.00622,
+         "p95": 299.117965,
+         "p99": 299.56247,
+         "max": 299.5784,
+         "mean": 298.1924416666667
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.21699999999999997,
+         "p50": 0.5529,
+         "p90": 1.1185,
+         "p95": 1.2283649999999997,
+         "p99": 1.3292959999999998,
+         "max": 1.3502999999999998,
+         "mean": 0.6434650000000001
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 324.5894,
+         "p50": 326.73069999999996,
+         "p90": 328.11265,
+         "p95": 329.0236,
+         "p99": 330.283039,
+         "max": 330.8187,
+         "mean": 326.87818
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.3498,
+         "p50": 0.37725,
+         "p90": 0.40331,
+         "p95": 0.42303,
+         "p99": 0.6131179999999985,
+         "max": 0.8726,
+         "mean": 0.387725
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 335.1941,
+         "p50": 339.9587,
+         "p90": 343.70009,
+         "p95": 344.232595,
+         "p99": 345.465746,
+         "max": 346.0797,
+         "mean": 339.884585
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 3.0518,
+         "p50": 3.13705,
+         "p90": 3.2028100000000004,
+         "p95": 3.235535,
+         "p99": 3.2959140000000002,
+         "max": 3.3168,
+         "mean": 3.137685
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 1.1233,
+         "p50": 1.4259,
+         "p90": 1.94279,
+         "p95": 2.27653,
+         "p99": 2.444705999999999,
+         "max": 2.6079,
+         "mean": 1.5263300000000002
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.1128,
+         "p50": 0.15175,
+         "p90": 0.19722,
+         "p95": 0.21410499999999996,
+         "p99": 0.2902019999999997,
+         "max": 0.3446,
+         "mean": 0.1585
+        }
+       },
+       "timings_ms_all_cycles": {
+        "activate_ms": {
+         "n": 60,
+         "min": 21.607,
+         "p50": 22.51755,
+         "p90": 23.35644,
+         "p95": 23.793165,
+         "p99": 24.831785999999997,
+         "max": 25.5071,
+         "mean": 22.60577333333333
+        },
+        "close_ms": {
+         "n": 60,
+         "min": 337.7284,
+         "p50": 342.51625,
+         "p90": 347.04441,
+         "p95": 347.35206,
+         "p99": 348.32814299999995,
+         "max": 349.3089,
+         "mean": 342.61564166666665
+        },
+        "enumerate_ms": {
+         "n": 60,
+         "min": 1.7729,
+         "p50": 1.97495,
+         "p90": 2.5729,
+         "p95": 2.9006299999999996,
+         "p99": 3.867327,
+         "max": 3.9055,
+         "mean": 2.13371
+        },
+        "first_frame_ms": {
+         "n": 60,
+         "min": 296.975,
+         "p50": 298.21745,
+         "p90": 299.00622,
+         "p95": 299.117965,
+         "p99": 299.56247,
+         "max": 299.5784,
+         "mean": 298.1924416666667
+        },
+        "flush_ms": {
+         "n": 60,
+         "min": 0.21699999999999997,
+         "p50": 0.5529,
+         "p90": 1.1185,
+         "p95": 1.2283649999999997,
+         "p99": 1.3292959999999998,
+         "max": 1.3502999999999998,
+         "mean": 0.6434650000000001
+        },
+        "open_to_first_frame_ms": {
+         "n": 60,
+         "min": 324.5894,
+         "p50": 326.73069999999996,
+         "p90": 328.11265,
+         "p95": 329.0236,
+         "p99": 330.283039,
+         "max": 330.8187,
+         "mean": 326.87818
+        },
+        "reader_ms": {
+         "n": 60,
+         "min": 0.3498,
+         "p50": 0.37725,
+         "p90": 0.40331,
+         "p95": 0.42303,
+         "p99": 0.6131179999999985,
+         "max": 0.8726,
+         "mean": 0.387725
+        },
+        "reader_release_ms": {
+         "n": 60,
+         "min": 335.1941,
+         "p50": 339.9587,
+         "p90": 343.70009,
+         "p95": 344.232595,
+         "p99": 345.465746,
+         "max": 346.0797,
+         "mean": 339.884585
+        },
+        "settype_ms": {
+         "n": 60,
+         "min": 3.0518,
+         "p50": 3.13705,
+         "p90": 3.2028100000000004,
+         "p95": 3.235535,
+         "p99": 3.2959140000000002,
+         "max": 3.3168,
+         "mean": 3.137685
+        },
+        "shutdown_ms": {
+         "n": 60,
+         "min": 1.1233,
+         "p50": 1.4259,
+         "p90": 1.94279,
+         "p95": 2.27653,
+         "p99": 2.444705999999999,
+         "max": 2.6079,
+         "mean": 1.5263300000000002
+        },
+        "shutdown_object_ms": {
+         "n": 60,
+         "min": 0.1128,
+         "p50": 0.15175,
+         "p90": 0.19722,
+         "p95": 0.21410499999999996,
+         "p99": 0.2902019999999997,
+         "max": 0.3446,
+         "mean": 0.1585
+        }
+       },
+       "failure_classes": [],
+       "hangs": 0,
+       "unreleasable": 0,
+       "recovery_after_failure": {
+        "failures_followed": 0,
+        "recovered": 0,
+        "rate": null
+       },
+       "longest_failure_run": 0,
+       "failure_indices": [],
+       "trailing_failures": 0
+      },
+      "tool_summary": {
+       "cycles_requested": 60,
+       "cycles_run": 60,
+       "ok": 60,
+       "failed": 0,
+       "timeouts": 0,
+       "success_rate": 1.0,
+       "longest_failure_run": 0,
+       "cycles_after_a_failure": 0,
+       "recovered_after_failure": 0,
+       "first_frame_ms_p50": 298.21745,
+       "first_frame_ms_p95": 299.117965,
+       "first_frame_ms_max": 299.5784,
+       "first_frame_within_2s": 60,
+       "fps_measured_p50": 29.61398666433893,
+       "fps_measured_min": 29.523645815974522,
+       "open_to_first_frame_ms_p50": 326.73069999999996,
+       "activate_ms_p50": 22.51755,
+       "close_ms_p50": 342.51625,
+       "close_ms_max": 349.3089,
+       "failures_by_stage": {},
+       "failures_by_class": {},
+       "unreleasable": false,
+       "stopped_after_hung_setups": false
+      },
+      "fault": null,
+      "exit_code": 0,
+      "rows": 60,
+      "fps_measured_p50": 29.61398666433893
+     }
+    },
+    "cycles_compare": {
+     "compared": true,
+     "success_rate": {
+      "wincam": 1.0,
+      "pymf": 1.0
+     },
+     "success_ok": true,
+     "open_to_first_frame_ms_p50": {
+      "wincam": 326.5757,
+      "pymf": 326.73069999999996
+     },
+     "latency_ok": true,
+     "hang_ok": true,
+     "fps_measured_p50": {
+      "wincam": 29.62079947,
+      "pymf": 29.61398666433893
+     },
+     "fps_ok": true,
+     "ok": true
+    },
+    "runs": {
+     "wincam_formats": {
+      "rc": 0,
+      "elapsed_s": 0.063,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.3,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.3s (ticket 3508): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 45.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe formats --api mf --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --timeout-ms 8000\n[camlock] released"
+     },
+     "pymf_formats": {
+      "rc": 0,
+      "elapsed_s": 0.172,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.2s (ticket 3510): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 75.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py formats --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --timeout-ms 8000\n[camlock] released"
+     },
+     "wincam_controls": {
+      "rc": 0,
+      "elapsed_s": 0.063,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.0s (ticket 3511): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+     },
+     "pymf_controls": {
+      "rc": 0,
+      "elapsed_s": 0.187,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.5,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.5s (ticket 3513): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 70.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py controls --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+     },
+     "pymf_set": {
+      "rc": 0,
+      "elapsed_s": 0.187,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "k] acquired after 0.2s (ticket 3515): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 90.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py controls --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --set exposure=-5,focus=5,gain=1,white_balance=4000 --set-flags manual --restore --timeout-ms 5000\n[camlock] released"
+     },
+     "wincam_controls_after": {
+      "rc": 0,
+      "elapsed_s": 0.063,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "[camlock] acquired after 0.0s (ticket 3516): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 40.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api mf --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --read-only --timeout-ms 5000\n[camlock] released"
+     },
+     "wincam_capture": {
+      "rc": 0,
+      "elapsed_s": 5.703,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 50.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe capture --api mf --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --seconds 5.0 --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\c922prostreamw_046d-085c_C922SN01\\wincam_capture_1280x720_30 --save every:5\n[camlock] released"
+     },
+     "pymf_capture": {
+      "rc": 0,
+      "elapsed_s": 5.828,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.0,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 80.0 -- uv run --python 3.12 --script C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\pymf\\cli.py capture --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --width 1280 --height 720 --fps 30 --subtype MJPG --seconds 5.0 --timeout-ms 5000 --out-dir C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-PYMF\\c922prostreamw_046d-085c_C922SN01\\pymf_capture_1280x720_30 --save every:5\n[camlock] released"
+     },
+     "wincam_cycle": {
+      "rc": 0,
+      "elapsed_s": 58.454,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": " MJPG 1280x720@30: ok\n\n[wincam] cycle 48/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 49/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 50/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 51/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 52/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 53/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 54/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 55/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 56/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 57/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 58/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 59/60 MJPG 1280x720@30: ok\n\n[wincam] cycle 60/60 MJPG 1280x720@30: ok\n\n[camlock] released"
+     },
+     "pymf_cycle": {
+      "rc": 0,
+      "elapsed_s": 58.578,
+      "timed_out": false,
+      "killed": false,
+      "lock_wait_s": 0.2,
+      "lock_timed_out": false,
+      "camlock_rc": 0,
+      "spawn_error": null,
+      "stderr_tail": "30: ok\n\n[pymf] cycle 47/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 48/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 49/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 50/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 51/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 52/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 53/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 54/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 55/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 56/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 57/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 58/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 59/60 MJPG 1280x720@30: ok\n\n[pymf] cycle 60/60 MJPG 1280x720@30: ok\n\n[camlock] released"
+     }
+    }
+   }
+  },
+  "pymf_version": "pymf 0.3 (2026-11-11)",
+  "pymf_warmup": {
+   "rc": 0,
+   "elapsed_s": 0.219,
+   "timed_out": false,
+   "killed": false,
+   "lock_wait_s": null,
+   "lock_timed_out": null,
+   "camlock_rc": null,
+   "spawn_error": null,
+   "stderr_tail": ""
+  },
+  "list": {
+   "wincam_n": 8,
+   "pymf_n": 8,
+   "only_wincam": [],
+   "only_pymf": [],
+   "sets_equal": true,
+   "order_equal": true,
+   "per_camera": {
+    "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+     "in_wincam": true,
+     "in_pymf": true,
+     "name_equal": true,
+     "order_equal": true
+    },
+    "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+     "in_wincam": true,
+     "in_pymf": true,
+     "name_equal": true,
+     "order_equal": true
+    },
+    "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+     "in_wincam": true,
+     "in_pymf": true,
+     "name_equal": true,
+     "order_equal": true
+    },
+    "046d:085c:sn=C922SN01": {
+     "in_wincam": true,
+     "in_pymf": true,
+     "name_equal": true,
+     "order_equal": true
+    }
+   },
+   "wincam_ok": true,
+   "pymf_ok": true,
+   "runs": {
+    "wincam": {
+     "rc": 0,
+     "elapsed_s": 0.031,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": null,
+     "lock_timed_out": null,
+     "camlock_rc": null,
+     "spawn_error": null,
+     "stderr_tail": ""
+    },
+    "pymf": {
+     "rc": 0,
+     "elapsed_s": 0.125,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": null,
+     "lock_timed_out": null,
+     "camlock_rc": null,
+     "spawn_error": null,
+     "stderr_tail": ""
+    }
+   },
+   "elapsed_ms": {
+    "wincam": 2.202299997,
+    "pymf": 2.4368
+   }
+  },
+  "arrivals": {
+   "before": {
+    "utc": "2026-11-12T03:14:46.386417+00:00",
+    "cameras": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+      "present": true,
+      "last_arrival": "2026-11-11T14:11:38.552007+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-11T14:11:44.546053+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-12T00:57:22.463265+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "after": {
+    "utc": "2026-11-12T03:26:09.220966+00:00",
+    "cameras": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+      "present": true,
+      "last_arrival": "2026-11-11T14:11:38.552007+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-11T14:11:44.546053+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-12T00:57:22.463265+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "changes": [],
+   "unexplained_re_arrival": false
+  }
+ },
+ "verdicts": {
+  "pymf_equivalence|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|pymf": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "listed by both (MF symlink, friendly name)",
+     "met": true,
+     "detail": {
+      "in_wincam": true,
+      "in_pymf": true,
+      "name_equal": true,
+      "order_equal": true
+     }
+    },
+    {
+     "criterion": "native types equal (every stream, in order, synthesized NV12 flagged alike)",
+     "met": true,
+     "detail": {
+      "n_wincam": 140,
+      "n_pymf": 140,
+      "only_wincam": [],
+      "only_pymf": [],
+      "order_equal": true
+     }
+    },
+    {
+     "criterion": "control readback equal (ranges, defaults, caps, modes; auto-mode value drift not counted)",
+     "met": true,
+     "detail": {
+      "diffs": [],
+      "auto_drift": 0
+     }
+    },
+    {
+     "criterion": "pymf sets exposure/focus/gain/WB, reads back, restores; modes as found afterwards",
+     "met": true,
+     "detail": {
+      "sets": 4,
+      "error": null
+     }
+    },
+    {
+     "criterion": "MJPG MJPG 1280x720@30: pymf valid-JPEG rate >= 99% and >= wincam's - 1 %",
+     "met": true,
+     "detail": {
+      "pymf": 1.0,
+      "wincam": 1.0
+     }
+    },
+    {
+     "criterion": "JPEG header SHA-1 equal to wincam's (same camera, same mode)",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "fps within 2% of wincam's",
+     "met": true,
+     "detail": 0.9996056224180404
+    },
+    {
+     "criterion": "open-to-first-frame within max(150 ms, 30%) of wincam's",
+     "met": true,
+     "detail": -0.8673999999999751
+    },
+    {
+     "criterion": "CPU % of one core <= max(2x wincam, wincam + 5 points)",
+     "met": true,
+     "detail": 5.98450931303951e-05
+    },
+    {
+     "criterion": "arrival jitter (arrival delay off the MF sample-time grid, p99 of |offset - median|) <= wincam's + max(2 ms, 50%)",
+     "met": true,
+     "detail": {
+      "wincam": 0.62,
+      "pymf": 0.657
+     }
+    },
+    {
+     "criterion": "arrival delay std off the MF sample-time grid <= wincam's + max(2 ms, 50%)",
+     "met": true,
+     "detail": {
+      "wincam": 0.282,
+      "pymf": 0.298
+     }
+    },
+    {
+     "criterion": "frames lost (MF sample-time slots, measured period; only where the grid can show a drop) <= wincam's + 1",
+     "met": true,
+     "detail": {
+      "wincam": 0,
+      "pymf": 0
+     }
+    },
+    {
+     "criterion": "pymf never hung or left an unreleasable reader (wincam's own hangs are device evidence, not counted)",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "open/close cycles: success rate >= wincam's - 2 %, no extra hangs, first-frame p50 within tolerance, per-cycle fps p50 >= 90% of wincam's",
+     "met": true,
+     "detail": {
+      "success_rate": {
+       "wincam": 1.0,
+       "pymf": 1.0
+      },
+      "open_to_first_frame_ms_p50": {
+       "wincam": 911.318,
+       "pymf": 910.09225
+      },
+      "fps_measured_p50": {
+       "wincam": 25.59871119,
+       "pymf": 25.605036347533634
+      }
+     }
+    }
+   ],
+   "evidence": {
+    "differences": [],
+    "untested_parts": [],
+    "is_kiyo": true,
+    "not_covered": [
+     "several cameras streaming at once in ONE Python process (skellycam's use: GIL contention between callbacks is not measured; each comparison is one camera alone)",
+     "60 fps modes (the Kiyo's 1280x720@60): only the default 720p30 MJPEG mode is compared",
+     "long runs: captures are --pymf-seconds (5 s) each",
+     "control sets on a streaming source (needed for the C930e, whose exposure holds only when set >= 1 s after the first frame): pymf's set round trip runs on an idle camera; pymf capture has no --schedule / --controls-before yet, so IAMCameraControl calls from Python while a comtypes OnReadSample callback runs on MF work-queue threads are not exercised",
+     "in-use-by-other detection (IMFSensorActivityMonitor): not ported to pymf"
+    ]
+   },
+   "note": null,
+   "summary_label": "yes"
+  },
+  "reliability|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|pymf_inproc": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": ">= 99% of cycles deliver a first frame within 2 s",
+     "met": true,
+     "detail": 1.0
+    },
+    {
+     "criterion": "no hang beyond the watchdog",
+     "met": true,
+     "detail": {
+      "hangs": 0,
+      "unreleasable": 0
+     }
+    },
+    {
+     "criterion": "no state that needs a replug",
+     "met": null,
+     "detail": null
+    },
+    {
+     "criterion": "negotiated the requested format",
+     "met": true,
+     "detail": {
+      "format_mismatch": 0,
+      "size_mismatch": 0,
+      "fps_mismatch": 0
+     }
+    },
+    {
+     "criterion": ">= 99 % at the Wilson 95 % lower bound (W-CYC-381; needs >= 381 failure-free cycles)",
+     "met": null,
+     "detail": {
+      "wilson95_lower": 0.9398,
+      "n": 60,
+      "n_first_frame_within": 60,
+      "required_for_this_variant": false
+     }
+    }
+   ],
+   "evidence": {
+    "n": 60,
+    "n_ok": 60,
+    "success_rate": 1.0,
+    "wilson95": [
+     0.9398281469657729,
+     1.0
+    ],
+    "first_frame_within_rate": 1.0,
+    "first_frame_within_wilson95": [
+     0.9398281469657729,
+     1.0
+    ],
+    "p50_open_to_first_frame_ms": 910.09225,
+    "format_mismatch_count": 0,
+    "fps_mismatch_count": 0,
+    "size_mismatch_count": 0,
+    "hangs": 0,
+    "unreleasable": 0,
+    "recovery_rate": null,
+    "longest_failure_run": 0,
+    "replug_needed": null,
+    "pre_existing_fault": null,
+    "trailing_failures_suspicious": false,
+    "note_381": "a per-camera '>= 99 %' claim needs >= 381 failure-free cycles; this run had 60",
+    "wilson95_lower_first_frame_within": 0.9398,
+    "claim_99_variant": false
+   },
+   "note": "replug state not probed",
+   "summary_label": "yes (point estimate; n=60, Wilson lower 0.940)"
+  },
+  "pymf_equivalence|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8|pymf": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "listed by both (MF symlink, friendly name)",
+     "met": true,
+     "detail": {
+      "in_wincam": true,
+      "in_pymf": true,
+      "name_equal": true,
+      "order_equal": true
+     }
+    },
+    {
+     "criterion": "native types equal (every stream, in order, synthesized NV12 flagged alike)",
+     "met": true,
+     "detail": {
+      "n_wincam": 811,
+      "n_pymf": 811,
+      "only_wincam": [],
+      "only_pymf": [],
+      "order_equal": true
+     }
+    },
+    {
+     "criterion": "control readback equal (ranges, defaults, caps, modes; auto-mode value drift not counted)",
+     "met": true,
+     "detail": {
+      "diffs": [],
+      "auto_drift": 0
+     }
+    },
+    {
+     "criterion": "pymf sets exposure/focus/gain/WB, reads back, restores; modes as found afterwards",
+     "met": true,
+     "detail": {
+      "sets": 4,
+      "error": null
+     }
+    },
+    {
+     "criterion": "MJPG MJPG 1280x720@30: pymf valid-JPEG rate >= 99% and >= wincam's - 1 %",
+     "met": true,
+     "detail": {
+      "pymf": 1.0,
+      "wincam": 1.0
+     }
+    },
+    {
+     "criterion": "JPEG header SHA-1 equal to wincam's (same camera, same mode)",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "fps within 2% of wincam's",
+     "met": true,
+     "detail": 0.9997743901431453
+    },
+    {
+     "criterion": "open-to-first-frame within max(150 ms, 30%) of wincam's",
+     "met": true,
+     "detail": 1.5842000000000098
+    },
+    {
+     "criterion": "CPU % of one core <= max(2x wincam, wincam + 5 points)",
+     "met": true,
+     "detail": 0.9367984210194817
+    },
+    {
+     "criterion": "arrival jitter (arrival delay off the MF sample-time grid, p99 of |offset - median|) <= wincam's + max(2 ms, 50%)",
+     "met": true,
+     "detail": {
+      "wincam": 0.568,
+      "pymf": 0.6
+     }
+    },
+    {
+     "criterion": "arrival delay std off the MF sample-time grid <= wincam's + max(2 ms, 50%)",
+     "met": true,
+     "detail": {
+      "wincam": 0.295,
+      "pymf": 0.298
+     }
+    },
+    {
+     "criterion": "frames lost (MF sample-time slots, measured period; only where the grid can show a drop) <= wincam's + 1",
+     "met": true,
+     "detail": {
+      "wincam": 0,
+      "pymf": 0
+     }
+    },
+    {
+     "criterion": "pymf never hung or left an unreleasable reader (wincam's own hangs are device evidence, not counted)",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "open/close cycles: success rate >= wincam's - 2 %, no extra hangs, first-frame p50 within tolerance, per-cycle fps p50 >= 90% of wincam's",
+     "met": true,
+     "detail": {
+      "success_rate": {
+       "wincam": 1.0,
+       "pymf": 1.0
+      },
+      "open_to_first_frame_ms_p50": {
+       "wincam": 510.39279999999997,
+       "pymf": 511.0498
+      },
+      "fps_measured_p50": {
+       "wincam": 29.610591130000003,
+       "pymf": 29.626059872343298
+      }
+     }
+    }
+   ],
+   "evidence": {
+    "differences": [],
+    "untested_parts": [],
+    "is_kiyo": false,
+    "not_covered": [
+     "several cameras streaming at once in ONE Python process (skellycam's use: GIL contention between callbacks is not measured; each comparison is one camera alone)",
+     "60 fps modes (the Kiyo's 1280x720@60): only the default 720p30 MJPEG mode is compared",
+     "long runs: captures are --pymf-seconds (5 s) each",
+     "control sets on a streaming source (needed for the C930e, whose exposure holds only when set >= 1 s after the first frame): pymf's set round trip runs on an idle camera; pymf capture has no --schedule / --controls-before yet, so IAMCameraControl calls from Python while a comtypes OnReadSample callback runs on MF work-queue threads are not exercised",
+     "in-use-by-other detection (IMFSensorActivityMonitor): not ported to pymf"
+    ]
+   },
+   "note": null,
+   "summary_label": "yes"
+  },
+  "reliability|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8|pymf_inproc": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": ">= 99% of cycles deliver a first frame within 2 s",
+     "met": true,
+     "detail": 1.0
+    },
+    {
+     "criterion": "no hang beyond the watchdog",
+     "met": true,
+     "detail": {
+      "hangs": 0,
+      "unreleasable": 0
+     }
+    },
+    {
+     "criterion": "no state that needs a replug",
+     "met": null,
+     "detail": null
+    },
+    {
+     "criterion": "negotiated the requested format",
+     "met": true,
+     "detail": {
+      "format_mismatch": 0,
+      "size_mismatch": 0,
+      "fps_mismatch": 0
+     }
+    },
+    {
+     "criterion": ">= 99 % at the Wilson 95 % lower bound (W-CYC-381; needs >= 381 failure-free cycles)",
+     "met": null,
+     "detail": {
+      "wilson95_lower": 0.9398,
+      "n": 60,
+      "n_first_frame_within": 60,
+      "required_for_this_variant": false
+     }
+    }
+   ],
+   "evidence": {
+    "n": 60,
+    "n_ok": 60,
+    "success_rate": 1.0,
+    "wilson95": [
+     0.9398281469657729,
+     1.0
+    ],
+    "first_frame_within_rate": 1.0,
+    "first_frame_within_wilson95": [
+     0.9398281469657729,
+     1.0
+    ],
+    "p50_open_to_first_frame_ms": 511.0498,
+    "format_mismatch_count": 0,
+    "fps_mismatch_count": 0,
+    "size_mismatch_count": 0,
+    "hangs": 0,
+    "unreleasable": 0,
+    "recovery_rate": null,
+    "longest_failure_run": 0,
+    "replug_needed": null,
+    "pre_existing_fault": null,
+    "trailing_failures_suspicious": false,
+    "note_381": "a per-camera '>= 99 %' claim needs >= 381 failure-free cycles; this run had 60",
+    "wilson95_lower_first_frame_within": 0.9398,
+    "claim_99_variant": false
+   },
+   "note": "replug state not probed",
+   "summary_label": "yes (point estimate; n=60, Wilson lower 0.940)"
+  },
+  "pymf_equivalence|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|pymf": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "listed by both (MF symlink, friendly name)",
+     "met": true,
+     "detail": {
+      "in_wincam": true,
+      "in_pymf": true,
+      "name_equal": true,
+      "order_equal": true
+     }
+    },
+    {
+     "criterion": "native types equal (every stream, in order, synthesized NV12 flagged alike)",
+     "met": true,
+     "detail": {
+      "n_wincam": 32,
+      "n_pymf": 32,
+      "only_wincam": [],
+      "only_pymf": [],
+      "order_equal": true
+     }
+    },
+    {
+     "criterion": "control readback equal (ranges, defaults, caps, modes; auto-mode value drift not counted)",
+     "met": true,
+     "detail": {
+      "diffs": [],
+      "auto_drift": 0
+     }
+    },
+    {
+     "criterion": "pymf sets exposure/focus/gain/WB, reads back, restores; modes as found afterwards",
+     "met": true,
+     "detail": {
+      "sets": 3,
+      "error": null
+     }
+    },
+    {
+     "criterion": "MJPG MJPG 1280x720@30: pymf valid-JPEG rate >= 99% and >= wincam's - 1 %",
+     "met": true,
+     "detail": {
+      "pymf": 1.0,
+      "wincam": 1.0
+     }
+    },
+    {
+     "criterion": "JPEG header SHA-1 equal to wincam's (same camera, same mode)",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "fps within 2% of wincam's",
+     "met": true,
+     "detail": 1.0000925168031782
+    },
+    {
+     "criterion": "open-to-first-frame within max(150 ms, 30%) of wincam's",
+     "met": true,
+     "detail": -2.0841000000000065
+    },
+    {
+     "criterion": "CPU % of one core <= max(2x wincam, wincam + 5 points)",
+     "met": true,
+     "detail": 0.31154898285139443
+    },
+    {
+     "criterion": "arrival jitter (arrival delay off the MF sample-time grid, p99 of |offset - median|) <= wincam's + max(2 ms, 50%)",
+     "met": true,
+     "detail": {
+      "wincam": 0.544,
+      "pymf": 0.753
+     }
+    },
+    {
+     "criterion": "arrival delay std off the MF sample-time grid <= wincam's + max(2 ms, 50%)",
+     "met": true,
+     "detail": {
+      "wincam": 0.322,
+      "pymf": 0.39
+     }
+    },
+    {
+     "criterion": "frames lost (MF sample-time slots, measured period; only where the grid can show a drop) <= wincam's + 1",
+     "met": true,
+     "detail": {
+      "wincam": 0,
+      "pymf": 0
+     }
+    },
+    {
+     "criterion": "pymf never hung or left an unreleasable reader (wincam's own hangs are device evidence, not counted)",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "open/close cycles: success rate >= wincam's - 2 %, no extra hangs, first-frame p50 within tolerance, per-cycle fps p50 >= 90% of wincam's",
+     "met": true,
+     "detail": {
+      "success_rate": {
+       "wincam": 1.0,
+       "pymf": 1.0
+      },
+      "open_to_first_frame_ms_p50": {
+       "wincam": 79.15275,
+       "pymf": 78.12935
+      },
+      "fps_measured_p50": {
+       "wincam": 25.56722306,
+       "pymf": 25.57038653773838
+      }
+     }
+    }
+   ],
+   "evidence": {
+    "differences": [],
+    "untested_parts": [],
+    "is_kiyo": false,
+    "not_covered": [
+     "several cameras streaming at once in ONE Python process (skellycam's use: GIL contention between callbacks is not measured; each comparison is one camera alone)",
+     "60 fps modes (the Kiyo's 1280x720@60): only the default 720p30 MJPEG mode is compared",
+     "long runs: captures are --pymf-seconds (5 s) each",
+     "control sets on a streaming source (needed for the C930e, whose exposure holds only when set >= 1 s after the first frame): pymf's set round trip runs on an idle camera; pymf capture has no --schedule / --controls-before yet, so IAMCameraControl calls from Python while a comtypes OnReadSample callback runs on MF work-queue threads are not exercised",
+     "in-use-by-other detection (IMFSensorActivityMonitor): not ported to pymf"
+    ]
+   },
+   "note": null,
+   "summary_label": "yes"
+  },
+  "reliability|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2|pymf_inproc": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": ">= 99% of cycles deliver a first frame within 2 s",
+     "met": true,
+     "detail": 1.0
+    },
+    {
+     "criterion": "no hang beyond the watchdog",
+     "met": true,
+     "detail": {
+      "hangs": 0,
+      "unreleasable": 0
+     }
+    },
+    {
+     "criterion": "no state that needs a replug",
+     "met": null,
+     "detail": null
+    },
+    {
+     "criterion": "negotiated the requested format",
+     "met": true,
+     "detail": {
+      "format_mismatch": 0,
+      "size_mismatch": 0,
+      "fps_mismatch": 0
+     }
+    },
+    {
+     "criterion": ">= 99 % at the Wilson 95 % lower bound (W-CYC-381; needs >= 381 failure-free cycles)",
+     "met": null,
+     "detail": {
+      "wilson95_lower": 0.9398,
+      "n": 60,
+      "n_first_frame_within": 60,
+      "required_for_this_variant": false
+     }
+    }
+   ],
+   "evidence": {
+    "n": 60,
+    "n_ok": 60,
+    "success_rate": 1.0,
+    "wilson95": [
+     0.9398281469657729,
+     1.0
+    ],
+    "first_frame_within_rate": 1.0,
+    "first_frame_within_wilson95": [
+     0.9398281469657729,
+     1.0
+    ],
+    "p50_open_to_first_frame_ms": 78.12935,
+    "format_mismatch_count": 0,
+    "fps_mismatch_count": 0,
+    "size_mismatch_count": 0,
+    "hangs": 0,
+    "unreleasable": 0,
+    "recovery_rate": null,
+    "longest_failure_run": 0,
+    "replug_needed": null,
+    "pre_existing_fault": null,
+    "trailing_failures_suspicious": false,
+    "note_381": "a per-camera '>= 99 %' claim needs >= 381 failure-free cycles; this run had 60",
+    "wilson95_lower_first_frame_within": 0.9398,
+    "claim_99_variant": false
+   },
+   "note": "replug state not probed",
+   "summary_label": "yes (point estimate; n=60, Wilson lower 0.940)"
+  },
+  "pymf_equivalence|046d:085c:sn=C922SN01|pymf": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "listed by both (MF symlink, friendly name)",
+     "met": true,
+     "detail": {
+      "in_wincam": true,
+      "in_pymf": true,
+      "name_equal": true,
+      "order_equal": true
+     }
+    },
+    {
+     "criterion": "native types equal (every stream, in order, synthesized NV12 flagged alike)",
+     "met": true,
+     "detail": {
+      "n_wincam": 338,
+      "n_pymf": 338,
+      "only_wincam": [],
+      "only_pymf": [],
+      "order_equal": true
+     }
+    },
+    {
+     "criterion": "control readback equal (ranges, defaults, caps, modes; auto-mode value drift not counted)",
+     "met": true,
+     "detail": {
+      "diffs": [],
+      "auto_drift": 0
+     }
+    },
+    {
+     "criterion": "pymf sets exposure/focus/gain/WB, reads back, restores; modes as found afterwards",
+     "met": true,
+     "detail": {
+      "sets": 4,
+      "error": null
+     }
+    },
+    {
+     "criterion": "MJPG MJPG 1280x720@30: pymf valid-JPEG rate >= 99% and >= wincam's - 1 %",
+     "met": true,
+     "detail": {
+      "pymf": 1.0,
+      "wincam": 1.0
+     }
+    },
+    {
+     "criterion": "JPEG header SHA-1 equal to wincam's (same camera, same mode)",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "fps within 2% of wincam's",
+     "met": true,
+     "detail": 1.0000036866043511
+    },
+    {
+     "criterion": "open-to-first-frame within max(150 ms, 30%) of wincam's",
+     "met": true,
+     "detail": 1.4241999999999848
+    },
+    {
+     "criterion": "CPU % of one core <= max(2x wincam, wincam + 5 points)",
+     "met": true,
+     "detail": 1.2491609565503157
+    },
+    {
+     "criterion": "arrival jitter (arrival delay off the MF sample-time grid, p99 of |offset - median|) <= wincam's + max(2 ms, 50%)",
+     "met": true,
+     "detail": {
+      "wincam": 0.552,
+      "pymf": 0.593
+     }
+    },
+    {
+     "criterion": "arrival delay std off the MF sample-time grid <= wincam's + max(2 ms, 50%)",
+     "met": true,
+     "detail": {
+      "wincam": 0.271,
+      "pymf": 0.301
+     }
+    },
+    {
+     "criterion": "frames lost (MF sample-time slots, measured period; only where the grid can show a drop) <= wincam's + 1",
+     "met": true,
+     "detail": {
+      "wincam": 0,
+      "pymf": 0
+     }
+    },
+    {
+     "criterion": "pymf never hung or left an unreleasable reader (wincam's own hangs are device evidence, not counted)",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "open/close cycles: success rate >= wincam's - 2 %, no extra hangs, first-frame p50 within tolerance, per-cycle fps p50 >= 90% of wincam's",
+     "met": true,
+     "detail": {
+      "success_rate": {
+       "wincam": 1.0,
+       "pymf": 1.0
+      },
+      "open_to_first_frame_ms_p50": {
+       "wincam": 326.5757,
+       "pymf": 326.73069999999996
+      },
+      "fps_measured_p50": {
+       "wincam": 29.62079947,
+       "pymf": 29.61398666433893
+      }
+     }
+    }
+   ],
+   "evidence": {
+    "differences": [],
+    "untested_parts": [],
+    "is_kiyo": false,
+    "not_covered": [
+     "several cameras streaming at once in ONE Python process (skellycam's use: GIL contention between callbacks is not measured; each comparison is one camera alone)",
+     "60 fps modes (the Kiyo's 1280x720@60): only the default 720p30 MJPEG mode is compared",
+     "long runs: captures are --pymf-seconds (5 s) each",
+     "control sets on a streaming source (needed for the C930e, whose exposure holds only when set >= 1 s after the first frame): pymf's set round trip runs on an idle camera; pymf capture has no --schedule / --controls-before yet, so IAMCameraControl calls from Python while a comtypes OnReadSample callback runs on MF work-queue threads are not exercised",
+     "in-use-by-other detection (IMFSensorActivityMonitor): not ported to pymf"
+    ]
+   },
+   "note": null,
+   "summary_label": "yes"
+  },
+  "reliability|046d:085c:sn=C922SN01|pymf_inproc": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": ">= 99% of cycles deliver a first frame within 2 s",
+     "met": true,
+     "detail": 1.0
+    },
+    {
+     "criterion": "no hang beyond the watchdog",
+     "met": true,
+     "detail": {
+      "hangs": 0,
+      "unreleasable": 0
+     }
+    },
+    {
+     "criterion": "no state that needs a replug",
+     "met": null,
+     "detail": null
+    },
+    {
+     "criterion": "negotiated the requested format",
+     "met": true,
+     "detail": {
+      "format_mismatch": 0,
+      "size_mismatch": 0,
+      "fps_mismatch": 0
+     }
+    },
+    {
+     "criterion": ">= 99 % at the Wilson 95 % lower bound (W-CYC-381; needs >= 381 failure-free cycles)",
+     "met": null,
+     "detail": {
+      "wilson95_lower": 0.9398,
+      "n": 60,
+      "n_first_frame_within": 60,
+      "required_for_this_variant": false
+     }
+    }
+   ],
+   "evidence": {
+    "n": 60,
+    "n_ok": 60,
+    "success_rate": 1.0,
+    "wilson95": [
+     0.9398281469657729,
+     1.0
+    ],
+    "first_frame_within_rate": 1.0,
+    "first_frame_within_wilson95": [
+     0.9398281469657729,
+     1.0
+    ],
+    "p50_open_to_first_frame_ms": 326.73069999999996,
+    "format_mismatch_count": 0,
+    "fps_mismatch_count": 0,
+    "size_mismatch_count": 0,
+    "hangs": 0,
+    "unreleasable": 0,
+    "recovery_rate": null,
+    "longest_failure_run": 0,
+    "replug_needed": null,
+    "pre_existing_fault": null,
+    "trailing_failures_suspicious": false,
+    "note_381": "a per-camera '>= 99 %' claim needs >= 381 failure-free cycles; this run had 60",
+    "wilson95_lower_first_frame_within": 0.9398,
+    "claim_99_variant": false
+   },
+   "note": "replug state not probed",
+   "summary_label": "yes (point estimate; n=60, Wilson lower 0.940)"
+  },
+  "pymf_equivalence": {
+   "rating": "partial",
+   "criteria": [
+    {
+     "criterion": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4: pymf equivalent to wincam",
+     "met": true,
+     "detail": "yes"
+    },
+    {
+     "criterion": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8: pymf equivalent to wincam",
+     "met": true,
+     "detail": "yes"
+    },
+    {
+     "criterion": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2: pymf equivalent to wincam",
+     "met": true,
+     "detail": "yes"
+    },
+    {
+     "criterion": "046d:085c:sn=C922SN01: pymf equivalent to wincam",
+     "met": true,
+     "detail": "yes"
+    }
+   ],
+   "evidence": {
+    "differences_by_criterion": {},
+    "device_fault_cameras": [],
+    "not_covered": [
+     "several cameras streaming at once in ONE Python process (skellycam's use: GIL contention between callbacks is not measured; each comparison is one camera alone)",
+     "60 fps modes (the Kiyo's 1280x720@60): only the default 720p30 MJPEG mode is compared",
+     "long runs: captures are --pymf-seconds (5 s) each",
+     "control sets on a streaming source (needed for the C930e, whose exposure holds only when set >= 1 s after the first frame): pymf's set round trip runs on an idle camera; pymf capture has no --schedule / --controls-before yet, so IAMCameraControl calls from Python while a comtypes OnReadSample callback runs on MF work-queue threads are not exercised",
+     "in-use-by-other detection (IMFSensorActivityMonitor): not ported to pymf"
+    ],
+    "question": "can the Windows capture backend be native Python (comtypes/ctypes, no compiled extension) and match wincam?"
+   },
+   "summary_label": "partial (control sets on a streaming source not tested through pymf)"
+  }
+ },
+ "errors": [],
+ "device_faults": {
+  "faulted_at_start": {},
+  "faulted_at_end": {},
+  "kiyo_dead_since": null
+ }
+}

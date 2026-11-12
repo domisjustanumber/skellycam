@@ -5,7 +5,16 @@ Start here in a new session. This covers everything from the 2026-11-11 planning
 **Status:** research and planning are done; none of the phase-1 test plans (TP1–TP4) has been run.
 
 ## 0. Update: second session, later on 2026-11-11 (read this first)
-- **Overnight hardware run (11-11/12):** set up and smoke-tested; a fresh session starts it from [`usb_cameras/suite/windows/HANDOFF_OVERNIGHT_20261111.md`](usb_cameras/suite/windows/HANDOFF_OVERNIGHT_20261111.md). Its results answer the 1.3 backend, reliability, controls-lock, gain-rule and package-bump questions. The suite now enforces the Kiyo Pro dead rule. Morning write-up: `usb_cameras/docs/windows_results_20261112.md`.
+- **Overnight hardware run (11-11/12): done.**
+  - The run: 21:59 → 03:10, `usb_cameras/results/windows/Gerald/suite_20261112T025937Z/` (redacted). Write-up: [`usb_cameras/docs/windows_results_20261112.md`](usb_cameras/docs/windows_results_20261112.md). No plan decision changes.
+  - **1.3:** pymf = wincam on all 4 cameras. One pymf process carried 3 cameras at 720p30 for 10 min with 0 lost frames, with mid-stream control sets and in-use detection.
+    - The C922 was refused for USB bandwidth: it shares the HS13 hub with the generic camera, and every API refuses that pair.
+  - **Reliability:** MF in-process is 400/400 on the C930e, C922 and generic. MF new-process is 400/400 on the C930e and C922, and 397/400 on the generic (it dropped off the bus once).
+  - **D10–D12 lock:** yes on all 4 cameras.
+  - **§5.2a gain rule:** the "rho rises with gain" assumption is wrong; the detail measure D binds at 0.85, which allows only about 20–30 of 255 gain. **Thresholds await Dom** (write-up §4.4).
+  - **Exposure ceiling at 30 fps:** the Kiyo Pro's is −7 (it starts at −6).
+  - **T-BUMP untested:** skellycam (baseline *and* HEAD) failed to open the generic camera through OpenCV with all 4 cameras connected. It then failed the whole group with HTTP 500, which is a skellycam bug in its own right. Rerun it with a bandwidth-feasible camera set.
+  - **Kiyo Pro:** dead at 00:46 in W-MULTI's DS all-at-once round, plug-in age 379 min, the same step as 11-10. The dead rule held; the suite gaps are in write-up §9.
 - **Pre-existing failures on upstream `main`** (23 tests + 4 errors; `tsc` baseUrl): leave them for now (Dom, 11-11). Local uv is 0.13.7.
 - **Decisions made** (plan rev 3.3, §6 D8–D12; all of §3 below is now resolved):
   - **D8: phase 1 is built on upstream `main`.** freemocap pins skellycam `branch = "main"` (`freemocap/pyproject.toml:43`), not `development-streaming`; the claim in §2 below was wrong.

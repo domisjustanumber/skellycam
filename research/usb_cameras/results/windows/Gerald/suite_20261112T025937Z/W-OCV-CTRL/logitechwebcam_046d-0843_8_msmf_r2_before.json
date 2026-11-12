@@ -1,0 +1,291 @@
+{
+ "events": [
+  {
+   "tag": "initial",
+   "op": "get_all",
+   "got": {
+    "AUTO_EXPOSURE": 0.0,
+    "EXPOSURE": -5.0,
+    "AUTOFOCUS": 0.0,
+    "FOCUS": 0.0
+   },
+   "t_ns": 54946931484900,
+   "side": {
+    "t_start_ns": 54946931489800,
+    "t_end_ns": 54947020505300,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -5,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 65,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "before_ae_off",
+   "op": "set",
+   "prop": "AUTO_EXPOSURE",
+   "value": 0.0,
+   "ret": true,
+   "got": 0.0,
+   "set_ms": 0.5,
+   "t_ns": 54947020705500,
+   "t_end_ns": 54947021625100,
+   "side": {
+    "t_start_ns": 54947021628800,
+    "t_end_ns": 54947062218200,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -2,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 65,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "before_exp",
+   "op": "set",
+   "prop": "EXPOSURE",
+   "value": -7.0,
+   "ret": true,
+   "got": -5.0,
+   "set_ms": 0.43,
+   "t_ns": 54947062390900,
+   "t_end_ns": 54947063167300,
+   "side": {
+    "t_start_ns": 54947063169900,
+    "t_end_ns": 54947102308700,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 65,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "before_af_off",
+   "op": "set",
+   "prop": "AUTOFOCUS",
+   "value": 0.0,
+   "ret": true,
+   "got": 0.0,
+   "set_ms": 0.45,
+   "t_ns": 54947102477300,
+   "t_end_ns": 54947103308700,
+   "side": {
+    "t_start_ns": 54947103311500,
+    "t_end_ns": 54947143191100,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 0,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "before_focus",
+   "op": "set",
+   "prop": "FOCUS",
+   "value": 255.0,
+   "ret": true,
+   "got": 0.0,
+   "set_ms": 0.29,
+   "t_ns": 54947143398000,
+   "t_end_ns": 54947144059500,
+   "side": {
+    "t_start_ns": 54947144062200,
+    "t_end_ns": 54947182757000,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 255,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "after_first_frame",
+   "op": "get_all",
+   "got": {
+    "AUTO_EXPOSURE": 0.0,
+    "EXPOSURE": -5.0,
+    "AUTOFOCUS": 0.0,
+    "FOCUS": 0.0
+   },
+   "t_ns": 54949781981100,
+   "side": {
+    "t_start_ns": 54949781984000,
+    "t_end_ns": 54949821181900,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -5,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 255,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  }
+ ],
+ "segments": [
+  {
+   "label": "first",
+   "t_start_ns": 54947182932100,
+   "frames": 1,
+   "failed_reads": 0,
+   "t_end_ns": 54947765935700
+  },
+  {
+   "label": "before0",
+   "t_start_ns": 54947765947400,
+   "frames": 61,
+   "failed_reads": 0,
+   "t_end_ns": 54949780166800
+  },
+  {
+   "label": "before1",
+   "t_start_ns": 54949821376600,
+   "frames": 62,
+   "failed_reads": 0,
+   "t_end_ns": 54951843725600
+  }
+ ],
+ "convention": null,
+ "format": {
+  "per_set_ms": {
+   "w": 9714.7,
+   "h": 9658.6,
+   "fps": 9654.4
+  },
+  "w": true,
+  "h": true,
+  "fps": true,
+  "got_fourcc": "\u0016\u0000\u0000\u0000",
+  "got_w": 1280.0,
+  "got_h": 720.0,
+  "got_fps": 30.0,
+  "set_ms": 29027.8
+ },
+ "open_ms": 10113.8,
+ "close_ms": 361.0,
+ "error": null,
+ "hung": null,
+ "activity": [
+  {
+   "match_key": "usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000\\global",
+   "streaming": true,
+   "processes": [
+    {
+     "pid": 22792,
+     "name": "python.exe",
+     "streaming": true
+    }
+   ]
+  },
+  {
+   "match_key": "root#media#0002\\vidsource0",
+   "streaming": false,
+   "processes": []
+  },
+  {
+   "match_key": "root#media#0002\\vidsource1",
+   "streaming": false,
+   "processes": []
+  },
+  {
+   "match_key": "root#media#0002\\vidsource2",
+   "streaming": false,
+   "processes": []
+  },
+  {
+   "match_key": "root#media#0002\\vidsource3",
+   "streaming": false,
+   "processes": []
+  },
+  {
+   "match_key": "usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000\\global",
+   "streaming": false,
+   "processes": []
+  },
+  {
+   "match_key": "usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000\\global",
+   "streaming": false,
+   "processes": []
+  },
+  {
+   "match_key": "usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000\\global",
+   "streaming": false,
+   "processes": []
+  }
+ ],
+ "pid": 22792,
+ "opencv": "5.0.0",
+ "backend": "msmf",
+ "metric_points_ms_after_first_frame": {}
+}

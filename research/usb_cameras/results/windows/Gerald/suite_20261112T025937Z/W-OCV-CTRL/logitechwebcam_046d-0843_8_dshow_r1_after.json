@@ -1,0 +1,2375 @@
+{
+ "events": [
+  {
+   "tag": "initial",
+   "op": "get_all",
+   "got": {
+    "AUTO_EXPOSURE": -1.0,
+    "EXPOSURE": -5.0,
+    "AUTOFOCUS": 1.0,
+    "FOCUS": 55.0
+   },
+   "t_ns": 54482322922600,
+   "side": {
+    "t_start_ns": 54482322926900,
+    "t_end_ns": 54482363671100,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -5,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 0,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "after_baseline",
+   "op": "get_all",
+   "got": {
+    "AUTO_EXPOSURE": -1.0,
+    "EXPOSURE": -5.0,
+    "AUTOFOCUS": 1.0,
+    "FOCUS": 60.0
+   },
+   "t_ns": 54485433625600,
+   "side": {
+    "t_start_ns": 54485433630200,
+    "t_end_ns": 54485487110800,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -5,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 60,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "probe_AUTO_EXPOSURE_from_auto",
+   "op": "set",
+   "prop": "AUTO_EXPOSURE",
+   "value": 0.25,
+   "ret": true,
+   "got": -1.0,
+   "set_ms": 3.57,
+   "t_ns": 54485530885100,
+   "t_end_ns": 54485534497800,
+   "side": {
+    "t_start_ns": 54485534500900,
+    "t_end_ns": 54485574421400,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -5,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 60,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "probe_AUTO_EXPOSURE_from_manual",
+   "op": "set",
+   "prop": "AUTO_EXPOSURE",
+   "value": 0.25,
+   "ret": true,
+   "got": -1.0,
+   "set_ms": 3.22,
+   "t_ns": 54485620626200,
+   "t_end_ns": 54485623892900,
+   "side": {
+    "t_start_ns": 54485623896800,
+    "t_end_ns": 54485673395000,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 60,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "probe_AUTO_EXPOSURE_from_auto",
+   "op": "set",
+   "prop": "AUTO_EXPOSURE",
+   "value": 0.75,
+   "ret": true,
+   "got": -1.0,
+   "set_ms": 3.19,
+   "t_ns": 54485714833100,
+   "t_end_ns": 54485718057900,
+   "side": {
+    "t_start_ns": 54485718060600,
+    "t_end_ns": 54485757236700,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 60,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "probe_AUTO_EXPOSURE_from_manual",
+   "op": "set",
+   "prop": "AUTO_EXPOSURE",
+   "value": 0.75,
+   "ret": true,
+   "got": -1.0,
+   "set_ms": 3.3,
+   "t_ns": 54485797380800,
+   "t_end_ns": 54485800714400,
+   "side": {
+    "t_start_ns": 54485800716700,
+    "t_end_ns": 54485841496100,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 60,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "probe_AUTO_EXPOSURE_from_auto",
+   "op": "set",
+   "prop": "AUTO_EXPOSURE",
+   "value": 0.0,
+   "ret": true,
+   "got": -1.0,
+   "set_ms": 3.42,
+   "t_ns": 54485885448900,
+   "t_end_ns": 54485888905600,
+   "side": {
+    "t_start_ns": 54485888908000,
+    "t_end_ns": 54485927358400,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 60,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "probe_AUTO_EXPOSURE_from_manual",
+   "op": "set",
+   "prop": "AUTO_EXPOSURE",
+   "value": 0.0,
+   "ret": true,
+   "got": -1.0,
+   "set_ms": 3.61,
+   "t_ns": 54485968134700,
+   "t_end_ns": 54485971786900,
+   "side": {
+    "t_start_ns": 54485971789700,
+    "t_end_ns": 54486011449600,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 60,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "probe_AUTO_EXPOSURE_from_auto",
+   "op": "set",
+   "prop": "AUTO_EXPOSURE",
+   "value": 1.0,
+   "ret": true,
+   "got": -1.0,
+   "set_ms": 3.33,
+   "t_ns": 54486054221700,
+   "t_end_ns": 54486057601300,
+   "side": {
+    "t_start_ns": 54486057604100,
+    "t_end_ns": 54486104165600,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 60,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "probe_AUTO_EXPOSURE_from_manual",
+   "op": "set",
+   "prop": "AUTO_EXPOSURE",
+   "value": 1.0,
+   "ret": true,
+   "got": -1.0,
+   "set_ms": 3.42,
+   "t_ns": 54486147656200,
+   "t_end_ns": 54486151113700,
+   "side": {
+    "t_start_ns": 54486151116400,
+    "t_end_ns": 54486193075600,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 60,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "probe_AUTO_EXPOSURE_from_auto",
+   "op": "set",
+   "prop": "AUTO_EXPOSURE",
+   "value": 3.0,
+   "ret": true,
+   "got": -1.0,
+   "set_ms": 3.75,
+   "t_ns": 54486235505800,
+   "t_end_ns": 54486239297800,
+   "side": {
+    "t_start_ns": 54486239300600,
+    "t_end_ns": 54486279119000,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 60,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "probe_AUTO_EXPOSURE_from_manual",
+   "op": "set",
+   "prop": "AUTO_EXPOSURE",
+   "value": 3.0,
+   "ret": true,
+   "got": -1.0,
+   "set_ms": 3.3,
+   "t_ns": 54486321100600,
+   "t_end_ns": 54486324439800,
+   "side": {
+    "t_start_ns": 54486324442900,
+    "t_end_ns": 54486364211100,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 60,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "probe_AUTOFOCUS_from_auto",
+   "op": "set",
+   "prop": "AUTOFOCUS",
+   "value": 0.0,
+   "ret": true,
+   "got": 2.0,
+   "set_ms": 3.66,
+   "t_ns": 54486406957100,
+   "t_end_ns": 54486412050400,
+   "side": {
+    "t_start_ns": 54486412053300,
+    "t_end_ns": 54486453504100,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 60,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "probe_AUTOFOCUS_from_manual",
+   "op": "set",
+   "prop": "AUTOFOCUS",
+   "value": 0.0,
+   "ret": true,
+   "got": 2.0,
+   "set_ms": 3.59,
+   "t_ns": 54486498736100,
+   "t_end_ns": 54486503911200,
+   "side": {
+    "t_start_ns": 54486503914300,
+    "t_end_ns": 54486543327200,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 130,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "probe_AUTOFOCUS_from_auto",
+   "op": "set",
+   "prop": "AUTOFOCUS",
+   "value": 1.0,
+   "ret": true,
+   "got": 1.0,
+   "set_ms": 3.52,
+   "t_ns": 54486588769500,
+   "t_end_ns": 54486593789900,
+   "side": {
+    "t_start_ns": 54486593793000,
+    "t_end_ns": 54486641008100,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 130,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "probe_AUTOFOCUS_from_manual",
+   "op": "set",
+   "prop": "AUTOFOCUS",
+   "value": 1.0,
+   "ret": true,
+   "got": 1.0,
+   "set_ms": 3.51,
+   "t_ns": 54486687108400,
+   "t_end_ns": 54486692177000,
+   "side": {
+    "t_start_ns": 54486692179400,
+    "t_end_ns": 54486733868900,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 130,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "ae_off",
+   "op": "set",
+   "prop": "AUTO_EXPOSURE",
+   "value": 0.25,
+   "ret": true,
+   "got": -1.0,
+   "set_ms": 3.91,
+   "t_ns": 54486781081700,
+   "t_end_ns": 54486785042100,
+   "side": {
+    "t_start_ns": 54486785045100,
+    "t_end_ns": 54486830004500,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 130,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "exp0",
+   "op": "set",
+   "prop": "EXPOSURE",
+   "value": -9.0,
+   "ret": true,
+   "got": -9.0,
+   "set_ms": 2.09,
+   "t_ns": 54486830184900,
+   "t_end_ns": 54486833798500,
+   "side": {
+    "t_start_ns": 54486833801700,
+    "t_end_ns": 54486882079100,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -9,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 130,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "exp1",
+   "op": "set",
+   "prop": "EXPOSURE",
+   "value": -7.0,
+   "ret": true,
+   "got": -7.0,
+   "set_ms": 4.99,
+   "t_ns": 54488937518200,
+   "t_end_ns": 54488944440100,
+   "side": {
+    "t_start_ns": 54488944443100,
+    "t_end_ns": 54488993974700,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 30,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "exp2",
+   "op": "set",
+   "prop": "EXPOSURE",
+   "value": -4.0,
+   "ret": true,
+   "got": -4.0,
+   "set_ms": 3.17,
+   "t_ns": 54491037941200,
+   "t_end_ns": 54491043181000,
+   "side": {
+    "t_start_ns": 54491043184200,
+    "t_end_ns": 54491084672400,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -4,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 30,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "exp_pre_ae",
+   "op": "set",
+   "prop": "EXPOSURE",
+   "value": -7.0,
+   "ret": true,
+   "got": -7.0,
+   "set_ms": 3.15,
+   "t_ns": 54493131479200,
+   "t_end_ns": 54493136625800,
+   "side": {
+    "t_start_ns": 54493136628800,
+    "t_end_ns": 54493177456600,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 30,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "ae_on",
+   "op": "set",
+   "prop": "AUTO_EXPOSURE",
+   "value": 0.75,
+   "ret": true,
+   "got": -1.0,
+   "set_ms": 6.66,
+   "t_ns": 54495237165000,
+   "t_end_ns": 54495243878800,
+   "side": {
+    "t_start_ns": 54495243882600,
+    "t_end_ns": 54495299189300,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 30,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "af_off",
+   "op": "set",
+   "prop": "AUTOFOCUS",
+   "value": 0.0,
+   "ret": true,
+   "got": 2.0,
+   "set_ms": 7.35,
+   "t_ns": 54499831275000,
+   "t_end_ns": 54499840240900,
+   "side": {
+    "t_start_ns": 54499840244700,
+    "t_end_ns": 54499881667700,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -5,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 60,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "focus0",
+   "op": "set",
+   "prop": "FOCUS",
+   "value": 0.0,
+   "ret": true,
+   "got": 0.0,
+   "set_ms": 2.02,
+   "t_ns": 54499881848600,
+   "t_end_ns": 54499885429300,
+   "side": {
+    "t_start_ns": 54499885432400,
+    "t_end_ns": 54499924873600,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -5,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 0,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "focus1",
+   "op": "set",
+   "prop": "FOCUS",
+   "value": 65.0,
+   "ret": true,
+   "got": 65.0,
+   "set_ms": 6.0,
+   "t_ns": 54501433426100,
+   "t_end_ns": 54501442027600,
+   "side": {
+    "t_start_ns": 54501442031900,
+    "t_end_ns": 54501483873100,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -5,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 65,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "focus2",
+   "op": "set",
+   "prop": "FOCUS",
+   "value": 130.0,
+   "ret": true,
+   "got": 130.0,
+   "set_ms": 6.24,
+   "t_ns": 54503033712700,
+   "t_end_ns": 54503042888800,
+   "side": {
+    "t_start_ns": 54503042894700,
+    "t_end_ns": 54503104741000,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -5,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 130,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "focus3",
+   "op": "set",
+   "prop": "FOCUS",
+   "value": 190.0,
+   "ret": true,
+   "got": 190.0,
+   "set_ms": 4.89,
+   "t_ns": 54504634424000,
+   "t_end_ns": 54504641484400,
+   "side": {
+    "t_start_ns": 54504641488200,
+    "t_end_ns": 54504687607400,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -5,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 190,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "focus4",
+   "op": "set",
+   "prop": "FOCUS",
+   "value": 255.0,
+   "ret": true,
+   "got": 255.0,
+   "set_ms": 5.8,
+   "t_ns": 54506233394400,
+   "t_end_ns": 54506241877500,
+   "side": {
+    "t_start_ns": 54506241882400,
+    "t_end_ns": 54506284224400,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -5,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 255,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "af_on",
+   "op": "set",
+   "prop": "AUTOFOCUS",
+   "value": 1.0,
+   "ret": true,
+   "got": 1.0,
+   "set_ms": 6.87,
+   "t_ns": 54507829618400,
+   "t_end_ns": 54507839251600,
+   "side": {
+    "t_start_ns": 54507839256200,
+    "t_end_ns": 54507880498000,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -5,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 255,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  }
+ ],
+ "segments": [
+  {
+   "label": "baseline",
+   "t_start_ns": 54482363868100,
+   "frames": 30,
+   "failed_reads": 0,
+   "t_end_ns": 54485428557300
+  },
+  {
+   "label": "exp0",
+   "t_start_ns": 54486882259100,
+   "frames": 22,
+   "failed_reads": 0,
+   "t_end_ns": 54488937502800
+  },
+  {
+   "label": "exp1",
+   "t_start_ns": 54488994166200,
+   "frames": 21,
+   "failed_reads": 0,
+   "t_end_ns": 54491037935300
+  },
+  {
+   "label": "exp2",
+   "t_start_ns": 54491084862000,
+   "frames": 20,
+   "failed_reads": 0,
+   "t_end_ns": 54493131463400
+  },
+  {
+   "label": "exp_pre_ae",
+   "t_start_ns": 54493177660700,
+   "frames": 21,
+   "failed_reads": 0,
+   "t_end_ns": 54495237155800
+  },
+  {
+   "label": "ae_on",
+   "t_start_ns": 54495299375200,
+   "frames": 46,
+   "failed_reads": 0,
+   "t_end_ns": 54499831261100
+  },
+  {
+   "label": "focus0",
+   "t_start_ns": 54499925054700,
+   "frames": 16,
+   "failed_reads": 0,
+   "t_end_ns": 54501433398600
+  },
+  {
+   "label": "focus1",
+   "t_start_ns": 54501484057200,
+   "frames": 16,
+   "failed_reads": 0,
+   "t_end_ns": 54503033693400
+  },
+  {
+   "label": "focus2",
+   "t_start_ns": 54503104959500,
+   "frames": 16,
+   "failed_reads": 0,
+   "t_end_ns": 54504634407300
+  },
+  {
+   "label": "focus3",
+   "t_start_ns": 54504687813600,
+   "frames": 16,
+   "failed_reads": 0,
+   "t_end_ns": 54506233377500
+  },
+  {
+   "label": "focus4",
+   "t_start_ns": 54506284430900,
+   "frames": 16,
+   "failed_reads": 0,
+   "t_end_ns": 54507829605600
+  },
+  {
+   "label": "af_on",
+   "t_start_ns": 54507880680600,
+   "frames": 66,
+   "failed_reads": 0,
+   "t_end_ns": 54514441698300
+  }
+ ],
+ "convention": {
+  "auto_exposure": {
+   "probe": [
+    {
+     "value": 0.25,
+     "from_auto": "manual",
+     "from_auto_pre_mode": "auto",
+     "from_auto_ret": true,
+     "from_auto_got": -1.0,
+     "from_manual": "manual",
+     "from_manual_pre_mode": "manual",
+     "from_manual_ret": true,
+     "from_manual_got": -1.0
+    },
+    {
+     "value": 0.75,
+     "from_auto": "auto",
+     "from_auto_pre_mode": "auto",
+     "from_auto_ret": true,
+     "from_auto_got": -1.0,
+     "from_manual": "auto",
+     "from_manual_pre_mode": "manual",
+     "from_manual_ret": true,
+     "from_manual_got": -1.0
+    },
+    {
+     "value": 0.0,
+     "from_auto": "manual",
+     "from_auto_pre_mode": "auto",
+     "from_auto_ret": true,
+     "from_auto_got": -1.0,
+     "from_manual": "manual",
+     "from_manual_pre_mode": "manual",
+     "from_manual_ret": true,
+     "from_manual_got": -1.0
+    },
+    {
+     "value": 1.0,
+     "from_auto": "auto",
+     "from_auto_pre_mode": "auto",
+     "from_auto_ret": true,
+     "from_auto_got": -1.0,
+     "from_manual": "auto",
+     "from_manual_pre_mode": "manual",
+     "from_manual_ret": true,
+     "from_manual_got": -1.0
+    },
+    {
+     "value": 3.0,
+     "from_auto": "manual",
+     "from_auto_pre_mode": "auto",
+     "from_auto_ret": true,
+     "from_auto_got": -1.0,
+     "from_manual": "manual",
+     "from_manual_pre_mode": "manual",
+     "from_manual_ret": true,
+     "from_manual_got": -1.0
+    }
+   ],
+   "manual_value": 0.25,
+   "auto_value": 0.75,
+   "meanings": {
+    "0.25": "manual",
+    "0.75": "auto",
+    "0.0": "manual",
+    "1.0": "auto",
+    "3.0": "manual"
+   }
+  },
+  "autofocus": {
+   "probe": [
+    {
+     "value": 0.0,
+     "from_auto": "manual",
+     "from_auto_pre_mode": "auto",
+     "from_auto_ret": true,
+     "from_auto_got": 2.0,
+     "from_manual": "manual",
+     "from_manual_pre_mode": "manual",
+     "from_manual_ret": true,
+     "from_manual_got": 2.0
+    },
+    {
+     "value": 1.0,
+     "from_auto": "auto",
+     "from_auto_pre_mode": "auto",
+     "from_auto_ret": true,
+     "from_auto_got": 1.0,
+     "from_manual": "auto",
+     "from_manual_pre_mode": "manual",
+     "from_manual_ret": true,
+     "from_manual_got": 1.0
+    }
+   ],
+   "manual_value": 0.0,
+   "auto_value": 1.0,
+   "meanings": {
+    "0.0": "manual",
+    "1.0": "auto"
+   }
+  }
+ },
+ "format": {
+  "per_set_ms": {
+   "fourcc": 1064.0,
+   "w": 0.0,
+   "h": 1080.3,
+   "fps": 1073.7
+  },
+  "fourcc": true,
+  "w": true,
+  "h": true,
+  "fps": true,
+  "got_fourcc": "YUY2",
+  "got_w": 1280.0,
+  "got_h": 720.0,
+  "got_fps": 30.00003000003,
+  "set_ms": 3218.1
+ },
+ "open_ms": 742.0,
+ "close_ms": 386.8,
+ "error": null,
+ "hung": null,
+ "activity": null,
+ "pid": 20576,
+ "opencv": "5.0.0",
+ "backend": "dshow",
+ "metric_points_ms_after_first_frame": {
+  "exposure": [
+   [
+    0.0,
+    109.185764
+   ],
+   [
+    191.4,
+    107.642985
+   ],
+   [
+    403.1,
+    106.661268
+   ],
+   [
+    596.3,
+    106.554742
+   ],
+   [
+    804.0,
+    106.626383
+   ],
+   [
+    995.9,
+    106.6014
+   ],
+   [
+    1202.6,
+    106.53654
+   ],
+   [
+    1392.4,
+    106.524116
+   ],
+   [
+    1600.8,
+    106.4257
+   ],
+   [
+    1795.7,
+    106.351997
+   ],
+   [
+    2004.6,
+    106.303033
+   ],
+   [
+    2192.1,
+    106.294759
+   ],
+   [
+    2402.8,
+    106.24924
+   ],
+   [
+    2596.2,
+    106.127848
+   ],
+   [
+    2800.7,
+    106.037842
+   ],
+   [
+    4350.1,
+    106.008084
+   ],
+   [
+    4495.3,
+    48.102024
+   ],
+   [
+    4703.2,
+    9.974664
+   ],
+   [
+    4899.6,
+    9.979519
+   ],
+   [
+    5107.8,
+    9.981717
+   ],
+   [
+    5297.6,
+    9.992757
+   ],
+   [
+    5507.6,
+    10.007487
+   ],
+   [
+    5699.6,
+    9.994249
+   ],
+   [
+    5907.8,
+    9.996202
+   ],
+   [
+    6095.2,
+    9.979574
+   ],
+   [
+    6305.1,
+    9.987413
+   ],
+   [
+    6497.3,
+    9.989285
+   ],
+   [
+    6707.9,
+    48.166504
+   ],
+   [
+    6901.4,
+    48.183512
+   ],
+   [
+    7108.7,
+    48.215251
+   ],
+   [
+    7299.4,
+    48.194933
+   ],
+   [
+    7503.2,
+    48.257731
+   ],
+   [
+    7696.7,
+    48.265001
+   ],
+   [
+    7908.2,
+    48.291341
+   ],
+   [
+    8099.7,
+    48.260769
+   ],
+   [
+    8306.7,
+    48.25708
+   ],
+   [
+    8500.1,
+    48.279433
+   ],
+   [
+    8704.2,
+    48.251221
+   ],
+   [
+    8899.2,
+    172.137126
+   ],
+   [
+    9199.2,
+    172.206923
+   ],
+   [
+    9395.3,
+    172.220567
+   ],
+   [
+    9603.2,
+    172.164714
+   ],
+   [
+    9792.0,
+    172.233398
+   ],
+   [
+    10004.2,
+    172.199924
+   ],
+   [
+    10196.4,
+    172.161377
+   ],
+   [
+    10404.2,
+    172.176405
+   ],
+   [
+    10594.5,
+    172.175863
+   ],
+   [
+    10803.4,
+    172.188477
+   ],
+   [
+    10995.8,
+    48.323052
+   ],
+   [
+    11202.9,
+    48.333171
+   ],
+   [
+    11397.6,
+    48.322238
+   ],
+   [
+    11604.1,
+    48.396267
+   ],
+   [
+    11791.5,
+    48.3294
+   ],
+   [
+    11999.2,
+    48.370144
+   ],
+   [
+    12191.8,
+    48.40389
+   ],
+   [
+    12404.3,
+    48.401828
+   ],
+   [
+    12596.7,
+    48.396403
+   ],
+   [
+    12801.8,
+    48.418321
+   ],
+   [
+    12992.6,
+    50.068549
+   ],
+   [
+    13201.6,
+    140.403998
+   ],
+   [
+    13396.6,
+    119.620226
+   ],
+   [
+    13599.2,
+    110.721517
+   ],
+   [
+    13793.9,
+    108.623183
+   ],
+   [
+    14002.5,
+    108.706977
+   ],
+   [
+    14195.7,
+    108.715549
+   ],
+   [
+    14404.3,
+    108.669949
+   ],
+   [
+    14594.8,
+    108.702393
+   ],
+   [
+    14804.4,
+    108.737305
+   ],
+   [
+    14991.2,
+    108.763563
+   ],
+   [
+    15200.6,
+    108.758653
+   ],
+   [
+    15395.5,
+    108.758816
+   ],
+   [
+    15605.9,
+    108.750841
+   ],
+   [
+    15792.8,
+    108.737359
+   ],
+   [
+    16003.1,
+    108.765571
+   ],
+   [
+    16194.8,
+    108.799181
+   ],
+   [
+    16403.4,
+    108.787543
+   ],
+   [
+    16591.2,
+    108.808051
+   ],
+   [
+    16804.3,
+    108.841092
+   ],
+   [
+    16996.2,
+    108.794922
+   ],
+   [
+    17201.9,
+    108.804036
+   ],
+   [
+    17392.9,
+    108.823568
+   ],
+   [
+    17604.6,
+    110.316433
+   ],
+   [
+    17796.7,
+    110.390381
+   ],
+   [
+    17999.4,
+    110.385607
+   ],
+   [
+    18191.3,
+    110.412706
+   ],
+   [
+    18403.6,
+    110.393555
+   ],
+   [
+    18597.1,
+    110.406413
+   ],
+   [
+    18804.3,
+    110.384576
+   ],
+   [
+    18993.4,
+    110.372016
+   ],
+   [
+    19201.7,
+    110.427653
+   ],
+   [
+    19393.0,
+    108.798638
+   ],
+   [
+    19599.2,
+    108.789171
+   ],
+   [
+    19794.8,
+    108.777181
+   ],
+   [
+    20004.3,
+    108.758518
+   ],
+   [
+    20196.3,
+    108.779378
+   ],
+   [
+    20402.8,
+    108.762587
+   ],
+   [
+    20592.0,
+    108.778646
+   ],
+   [
+    20801.8,
+    108.904677
+   ],
+   [
+    20994.7,
+    108.931179
+   ],
+   [
+    21199.1,
+    108.905192
+   ],
+   [
+    21395.2,
+    108.919922
+   ],
+   [
+    21600.4,
+    108.901964
+   ],
+   [
+    21791.2,
+    108.930094
+   ],
+   [
+    22006.2,
+    108.876058
+   ],
+   [
+    22195.0,
+    108.869059
+   ],
+   [
+    22402.7,
+    108.833496
+   ],
+   [
+    22591.9,
+    108.788384
+   ],
+   [
+    22801.8,
+    108.793294
+   ],
+   [
+    22991.2,
+    108.770942
+   ],
+   [
+    23201.2,
+    108.772651
+   ],
+   [
+    23394.2,
+    108.768582
+   ],
+   [
+    23604.5,
+    108.716905
+   ],
+   [
+    23791.1,
+    108.7669
+   ],
+   [
+    24003.4,
+    108.605903
+   ],
+   [
+    24195.3,
+    108.628228
+   ],
+   [
+    24400.1,
+    108.640435
+   ],
+   [
+    24595.8,
+    108.654215
+   ],
+   [
+    24799.5,
+    108.630154
+   ],
+   [
+    24991.5,
+    108.652154
+   ],
+   [
+    25200.8,
+    108.645698
+   ],
+   [
+    25393.5,
+    108.635742
+   ],
+   [
+    25599.1,
+    108.786133
+   ],
+   [
+    25791.2,
+    108.798991
+   ],
+   [
+    26003.9,
+    110.316026
+   ],
+   [
+    26195.1,
+    110.284098
+   ],
+   [
+    26404.5,
+    110.292942
+   ],
+   [
+    26597.2,
+    110.308811
+   ],
+   [
+    26802.6,
+    109.07685
+   ],
+   [
+    26996.4,
+    108.700304
+   ],
+   [
+    27199.5,
+    108.721191
+   ],
+   [
+    27396.7,
+    108.838053
+   ],
+   [
+    27599.3,
+    108.865017
+   ],
+   [
+    27791.4,
+    108.850857
+   ],
+   [
+    28004.5,
+    108.83355
+   ],
+   [
+    28195.5,
+    108.818821
+   ],
+   [
+    28404.2,
+    108.794732
+   ],
+   [
+    28591.2,
+    108.809028
+   ],
+   [
+    28801.5,
+    108.801622
+   ],
+   [
+    28995.7,
+    108.766168
+   ],
+   [
+    29201.3,
+    108.766873
+   ],
+   [
+    29391.9,
+    108.763943
+   ],
+   [
+    29603.2,
+    108.769423
+   ],
+   [
+    29794.5,
+    108.751926
+   ],
+   [
+    30002.0,
+    108.775363
+   ],
+   [
+    30192.9,
+    108.747531
+   ],
+   [
+    30401.3,
+    108.758192
+   ],
+   [
+    30597.4,
+    108.777805
+   ],
+   [
+    30803.4,
+    108.744222
+   ],
+   [
+    30995.6,
+    108.756917
+   ],
+   [
+    31204.2,
+    108.759467
+   ],
+   [
+    31394.4,
+    108.759115
+   ],
+   [
+    31599.1,
+    108.754774
+   ],
+   [
+    31791.9,
+    108.695936
+   ]
+  ],
+  "focus": [
+   [
+    0.0,
+    0.00188
+   ],
+   [
+    191.4,
+    0.005398
+   ],
+   [
+    403.1,
+    0.071167
+   ],
+   [
+    596.3,
+    0.038248
+   ],
+   [
+    804.0,
+    0.072962
+   ],
+   [
+    995.9,
+    0.07318
+   ],
+   [
+    1202.6,
+    0.073221
+   ],
+   [
+    1392.4,
+    0.073227
+   ],
+   [
+    1600.8,
+    0.073106
+   ],
+   [
+    1795.7,
+    0.073338
+   ],
+   [
+    2004.6,
+    0.073001
+   ],
+   [
+    2192.1,
+    0.073338
+   ],
+   [
+    2402.8,
+    0.073575
+   ],
+   [
+    2596.2,
+    0.0736
+   ],
+   [
+    2800.7,
+    0.073688
+   ],
+   [
+    4350.1,
+    0.073825
+   ],
+   [
+    4495.3,
+    0.003179
+   ],
+   [
+    4703.2,
+    0.016446
+   ],
+   [
+    4899.6,
+    0.016341
+   ],
+   [
+    5107.8,
+    0.016404
+   ],
+   [
+    5297.6,
+    0.016093
+   ],
+   [
+    5507.6,
+    0.015909
+   ],
+   [
+    5699.6,
+    0.016156
+   ],
+   [
+    5907.8,
+    0.016348
+   ],
+   [
+    6095.2,
+    0.016199
+   ],
+   [
+    6305.1,
+    0.015988
+   ],
+   [
+    6497.3,
+    0.016372
+   ],
+   [
+    6707.9,
+    0.003176
+   ],
+   [
+    6901.4,
+    0.003198
+   ],
+   [
+    7108.7,
+    0.003199
+   ],
+   [
+    7299.4,
+    0.003192
+   ],
+   [
+    7503.2,
+    0.003185
+   ],
+   [
+    7696.7,
+    0.003181
+   ],
+   [
+    7908.2,
+    0.00318
+   ],
+   [
+    8099.7,
+    0.0032
+   ],
+   [
+    8306.7,
+    0.003195
+   ],
+   [
+    8500.1,
+    0.003183
+   ],
+   [
+    8704.2,
+    0.003166
+   ],
+   [
+    8899.2,
+    0.001168
+   ],
+   [
+    9199.2,
+    0.001165
+   ],
+   [
+    9395.3,
+    0.001164
+   ],
+   [
+    9603.2,
+    0.00116
+   ],
+   [
+    9792.0,
+    0.001166
+   ],
+   [
+    10004.2,
+    0.001156
+   ],
+   [
+    10196.4,
+    0.001183
+   ],
+   [
+    10404.2,
+    0.001156
+   ],
+   [
+    10594.5,
+    0.001175
+   ],
+   [
+    10803.4,
+    0.001167
+   ],
+   [
+    10995.8,
+    0.00316
+   ],
+   [
+    11202.9,
+    0.00321
+   ],
+   [
+    11397.6,
+    0.003182
+   ],
+   [
+    11604.1,
+    0.003198
+   ],
+   [
+    11791.5,
+    0.003155
+   ],
+   [
+    11999.2,
+    0.003245
+   ],
+   [
+    12191.8,
+    0.003174
+   ],
+   [
+    12404.3,
+    0.003209
+   ],
+   [
+    12596.7,
+    0.003142
+   ],
+   [
+    12801.8,
+    0.003164
+   ],
+   [
+    12992.6,
+    0.002619
+   ],
+   [
+    13201.6,
+    0.001459
+   ],
+   [
+    13396.6,
+    0.005652
+   ],
+   [
+    13599.2,
+    0.051198
+   ],
+   [
+    13793.9,
+    0.060095
+   ],
+   [
+    14002.5,
+    0.064641
+   ],
+   [
+    14195.7,
+    0.070923
+   ],
+   [
+    14404.3,
+    0.070985
+   ],
+   [
+    14594.8,
+    0.070813
+   ],
+   [
+    14804.4,
+    0.070915
+   ],
+   [
+    14991.2,
+    0.070775
+   ],
+   [
+    15200.6,
+    0.070879
+   ],
+   [
+    15395.5,
+    0.070934
+   ],
+   [
+    15605.9,
+    0.070931
+   ],
+   [
+    15792.8,
+    0.07094
+   ],
+   [
+    16003.1,
+    0.070898
+   ],
+   [
+    16194.8,
+    0.070852
+   ],
+   [
+    16403.4,
+    0.071084
+   ],
+   [
+    16591.2,
+    0.070717
+   ],
+   [
+    16804.3,
+    0.070892
+   ],
+   [
+    16996.2,
+    0.070892
+   ],
+   [
+    17201.9,
+    0.070757
+   ],
+   [
+    17392.9,
+    0.070754
+   ],
+   [
+    17604.6,
+    0.002296
+   ],
+   [
+    17796.7,
+    0.001892
+   ],
+   [
+    17999.4,
+    0.001872
+   ],
+   [
+    18191.3,
+    0.001871
+   ],
+   [
+    18403.6,
+    0.001882
+   ],
+   [
+    18597.1,
+    0.001875
+   ],
+   [
+    18804.3,
+    0.00188
+   ],
+   [
+    18993.4,
+    0.001892
+   ],
+   [
+    19201.7,
+    0.001876
+   ],
+   [
+    19393.0,
+    0.065315
+   ],
+   [
+    19599.2,
+    0.064614
+   ],
+   [
+    19794.8,
+    0.06441
+   ],
+   [
+    20004.3,
+    0.064429
+   ],
+   [
+    20196.3,
+    0.064314
+   ],
+   [
+    20402.8,
+    0.064332
+   ],
+   [
+    20592.0,
+    0.063976
+   ],
+   [
+    20801.8,
+    0.000295
+   ],
+   [
+    20994.7,
+    0.000267
+   ],
+   [
+    21199.1,
+    0.000269
+   ],
+   [
+    21395.2,
+    0.000267
+   ],
+   [
+    21600.4,
+    0.000267
+   ],
+   [
+    21791.2,
+    0.000266
+   ],
+   [
+    22006.2,
+    0.000266
+   ],
+   [
+    22195.0,
+    0.000265
+   ],
+   [
+    22402.7,
+    0.000173
+   ],
+   [
+    22591.9,
+    0.000174
+   ],
+   [
+    22801.8,
+    0.000173
+   ],
+   [
+    22991.2,
+    0.000171
+   ],
+   [
+    23201.2,
+    0.000171
+   ],
+   [
+    23394.2,
+    0.000171
+   ],
+   [
+    23604.5,
+    0.000173
+   ],
+   [
+    23791.1,
+    0.000171
+   ],
+   [
+    24003.4,
+    0.000158
+   ],
+   [
+    24195.3,
+    0.000157
+   ],
+   [
+    24400.1,
+    0.000155
+   ],
+   [
+    24595.8,
+    0.00016
+   ],
+   [
+    24799.5,
+    0.000156
+   ],
+   [
+    24991.5,
+    0.000157
+   ],
+   [
+    25200.8,
+    0.000156
+   ],
+   [
+    25393.5,
+    0.000156
+   ],
+   [
+    25599.1,
+    0.000172
+   ],
+   [
+    25791.2,
+    0.001507
+   ],
+   [
+    26003.9,
+    0.001908
+   ],
+   [
+    26195.1,
+    0.001882
+   ],
+   [
+    26404.5,
+    0.001889
+   ],
+   [
+    26597.2,
+    0.001903
+   ],
+   [
+    26802.6,
+    0.032383
+   ],
+   [
+    26996.4,
+    0.063847
+   ],
+   [
+    27199.5,
+    0.026424
+   ],
+   [
+    27396.7,
+    0.070643
+   ],
+   [
+    27599.3,
+    0.070489
+   ],
+   [
+    27791.4,
+    0.070613
+   ],
+   [
+    28004.5,
+    0.070311
+   ],
+   [
+    28195.5,
+    0.070565
+   ],
+   [
+    28404.2,
+    0.070726
+   ],
+   [
+    28591.2,
+    0.070507
+   ],
+   [
+    28801.5,
+    0.070391
+   ],
+   [
+    28995.7,
+    0.070853
+   ],
+   [
+    29201.3,
+    0.070805
+   ],
+   [
+    29391.9,
+    0.070646
+   ],
+   [
+    29603.2,
+    0.070545
+   ],
+   [
+    29794.5,
+    0.070532
+   ],
+   [
+    30002.0,
+    0.070693
+   ],
+   [
+    30192.9,
+    0.070563
+   ],
+   [
+    30401.3,
+    0.070691
+   ],
+   [
+    30597.4,
+    0.070539
+   ],
+   [
+    30803.4,
+    0.070867
+   ],
+   [
+    30995.6,
+    0.070467
+   ],
+   [
+    31204.2,
+    0.07081
+   ],
+   [
+    31394.4,
+    0.070585
+   ],
+   [
+    31599.1,
+    0.070677
+   ],
+   [
+    31791.9,
+    0.070799
+   ]
+  ]
+ }
+}

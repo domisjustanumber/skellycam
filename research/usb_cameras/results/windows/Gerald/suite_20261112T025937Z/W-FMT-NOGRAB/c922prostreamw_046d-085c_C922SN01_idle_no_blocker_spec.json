@@ -1,0 +1,56 @@
+{
+ "label": "c922prostreamw_046d-085c_C922SN01_idle_no_blocker",
+ "condition": "idle",
+ "camera": {
+  "key": "046d:085c:sn=C922SN01",
+  "name": "c922 Pro Stream Webcam",
+  "mf_symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+  "ds_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+  "instance_id": "USB\\VID_046D&PID_085C\\C922SN01"
+ },
+ "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261112T025937Z\\W-FMT-NOGRAB\\c922prostreamw_046d-085c_C922SN01\\idle_no_blocker",
+ "streamer": null,
+ "baseline_s": 1.5,
+ "settle_s": 1.0,
+ "descriptor_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261112T025937Z\\descriptors\\descriptors.json",
+ "methods": [
+  {
+   "id": "mf",
+   "argv": [
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+    "formats",
+    "--api",
+    "mf",
+    "--device",
+    "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+    "--timeout-ms",
+    "8000",
+    "--hold-ms",
+    "2500"
+   ],
+   "timeout_s": 47.5,
+   "hold": true
+  },
+  {
+   "id": "ds",
+   "argv": [
+    "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+    "formats",
+    "--api",
+    "ds",
+    "--device",
+    "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+    "--timeout-ms",
+    "8000",
+    "--hold-ms",
+    "2500"
+   ],
+   "timeout_s": 47.5,
+   "hold": true
+  }
+ ],
+ "blocker": null,
+ "sample": {
+  "interval_s": 0.12
+ }
+}

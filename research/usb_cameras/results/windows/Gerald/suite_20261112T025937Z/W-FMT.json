@@ -1,0 +1,2331 @@
+{
+ "test": "W-FMT",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-12T02:59:53.342751+00:00",
+ "utc_finished": "2026-11-12T02:59:55.008262+00:00",
+ "elapsed_s": 1.671,
+ "command": "research/usb_cameras/suite/windows/run_suite.py --cyc-profile reliability --reliability-cycles 400 --min-fps 30 --min-height 720 --max-height 720 (module W-FMT)",
+ "argv": [
+  "research/usb_cameras/suite/windows/run_suite.py",
+  "--cyc-profile",
+  "reliability",
+  "--reliability-cycles",
+  "400",
+  "--min-fps",
+  "30",
+  "--min-height",
+  "720",
+  "--max-height",
+  "720",
+  "(module W-FMT)"
+ ],
+ "environment": {
+  "os": {
+   "platform": "Windows-11-10.0.26300-SP0",
+   "system": "Windows",
+   "release": "11",
+   "version": "10.0.26300",
+   "machine": "AMD64",
+   "windows_build": 26300,
+   "windows_version": "10.0.26300",
+   "windows_edition": "Core",
+   "windows_displayversion": "26H2",
+   "windows_ubr": 9711,
+   "windows_productname": "Windows 10 Home",
+   "windows_currentbuild": "26300"
+  },
+  "python": "3.12.13",
+  "python_implementation": "CPython",
+  "python_executable": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+  "hostname": "Gerald",
+  "pid": 27296,
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0"
+  }
+ },
+ "cameras": [
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 2
+  },
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "name": "Logitech Webcam C930e",
+   "vid": "046d",
+   "pid": "0843",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+   "parent_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&34c047e4&0&0000",
+   "hub_port": 8,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "Logitech Webcam C930e",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(8)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "speed": "HS",
+   "bcd_device": "0013",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-11T14:11:38.552007+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 0,
+   "ds_index": 3
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "name": "USB Camera",
+   "vid": "4c4a",
+   "pid": "4a55",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232e60d4&0&0000",
+   "hub_port": 2,
+   "mf_symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Camera",
+   "ds_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "speed": "HS",
+   "bcd_device": "0100",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-11T14:11:44.546053+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 5,
+   "ds_index": 0
+  },
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "vid": "046d",
+   "pid": "085c",
+   "serial": "C922SN01",
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "c922 Pro Stream Webcam",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.4",
+   "speed": "HS",
+   "bcd_device": "0016",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-12T00:57:22.463265+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 6,
+   "ds_index": 1
+  }
+ ],
+ "measurements": {
+  "cameras": [
+   {
+    "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "name": "USB Video Device",
+    "is_kiyo": true,
+    "descriptor_errors": [],
+    "identity_cross_check": {
+     "serial_string_descriptor": null,
+     "key_from_descriptor_serial": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "discovery_key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "agree": true
+    },
+    "mf_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "formats",
+      "--api",
+      "mf",
+      "--device",
+      "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.047,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s (ticket 3303): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 45.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe formats --api mf --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --timeout-ms 8000\n[camlock] released"
+    },
+    "ds_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "formats",
+      "--api",
+      "ds",
+      "--device",
+      "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.047,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s (ticket 3304): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 45.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe formats --api ds --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global --timeout-ms 8000\n[camlock] released"
+    },
+    "still": {
+     "descriptor_still_sizes": [],
+     "mf_still_stream_sizes": [],
+     "ds_still_pin_sizes": [],
+     "mf_still_modes": [],
+     "ds_still_modes": [],
+     "sizes_equal": true
+    },
+    "counts": {
+     "descriptor_modes": 112,
+     "mf_native_capture_modes": 112,
+     "mf_still_modes": 0,
+     "mf_synthesized": 0,
+     "ds_capture_modes": 112,
+     "ds_still_modes": 0,
+     "descriptor_mjpeg_modes": 28,
+     "mf_mjpeg_types": 28,
+     "ds_mjpeg_modes": 28,
+     "mjpeg_sizes": {
+      "descriptor": 4,
+      "mf": 4,
+      "ds": 4
+     }
+    },
+    "formats": {
+     "descriptor": [
+      "H264",
+      "MJPG",
+      "NV12",
+      "YUY2"
+     ],
+     "mf": [
+      "H264",
+      "MJPG",
+      "NV12",
+      "YUY2"
+     ],
+     "ds": [
+      "H264",
+      "MJPG",
+      "NV12",
+      "YUY2"
+     ]
+    },
+    "mjpeg_equal_everywhere": true,
+    "mjpeg_sizes": {
+     "descriptor": [
+      [
+       1920,
+       1080
+      ],
+      [
+       1280,
+       720
+      ],
+      [
+       640,
+       480
+      ],
+      [
+       640,
+       360
+      ]
+     ],
+     "mf": [
+      [
+       1920,
+       1080
+      ],
+      [
+       1280,
+       720
+      ],
+      [
+       640,
+       480
+      ],
+      [
+       640,
+       360
+      ]
+     ],
+     "ds": [
+      [
+       1920,
+       1080
+      ],
+      [
+       1280,
+       720
+      ],
+      [
+       640,
+       480
+      ],
+      [
+       640,
+       360
+      ]
+     ]
+    },
+    "diff": {
+     "mf": {
+      "missing_vs_descriptor": [],
+      "extra_vs_descriptor": [],
+      "n_missing": 0,
+      "n_extra": 0,
+      "mjpeg_missing": [],
+      "mjpeg_extra": []
+     },
+     "ds": {
+      "missing_vs_descriptor": [],
+      "extra_vs_descriptor": [],
+      "n_missing": 0,
+      "n_extra": 0,
+      "mjpeg_missing": [],
+      "mjpeg_extra": []
+     },
+     "mf_vs_ds": {
+      "only_mf": [],
+      "only_ds": []
+     }
+    },
+    "synthesized_types": [],
+    "synthesized_subtypes": [],
+    "descriptor_streams": {
+     "0": {
+      "interface": 1,
+      "n_modes": 112,
+      "continuous": [],
+      "still": [],
+      "transport": "isochronous"
+     }
+    },
+    "mf_streams": {
+     "0": {
+      "category": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+      "n_native": 112,
+      "n_synthesized": 0,
+      "subtypes": [
+       "H264",
+       "MJPG",
+       "NV12",
+       "YUY2"
+      ]
+     }
+    },
+    "ds_pins": {
+     "0": {
+      "name": "Capture",
+      "category": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+      "caps_count": 32,
+      "mode_count": 16,
+      "header_kinds": [
+       "VIH",
+       "VIH2"
+      ],
+      "range_only_modes": [],
+      "n_modes_with_rates": 112
+     }
+    },
+    "ds_any_unknown_pin_category": false
+   },
+   {
+    "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+    "name": "Logitech Webcam C930e",
+    "is_kiyo": false,
+    "descriptor_errors": [],
+    "identity_cross_check": {
+     "serial_string_descriptor": null,
+     "key_from_descriptor_serial": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "discovery_key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "agree": true
+    },
+    "mf_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "formats",
+      "--api",
+      "mf",
+      "--device",
+      "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.063,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s (ticket 3305): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 45.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe formats --api mf --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --timeout-ms 8000\n[camlock] released"
+    },
+    "ds_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "formats",
+      "--api",
+      "ds",
+      "--device",
+      "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.047,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s (ticket 3306): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 45.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe formats --api ds --device \\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global --timeout-ms 8000\n[camlock] released"
+    },
+    "still": {
+     "descriptor_still_sizes": [],
+     "mf_still_stream_sizes": [],
+     "ds_still_pin_sizes": [],
+     "mf_still_modes": [],
+     "ds_still_modes": [],
+     "sizes_equal": true
+    },
+    "counts": {
+     "descriptor_modes": 218,
+     "mf_native_capture_modes": 454,
+     "mf_still_modes": 0,
+     "mf_synthesized": 119,
+     "ds_capture_modes": 454,
+     "ds_still_modes": 0,
+     "descriptor_mjpeg_modes": 119,
+     "mf_mjpeg_types": 119,
+     "ds_mjpeg_modes": 119,
+     "mjpeg_sizes": {
+      "descriptor": 17,
+      "mf": 17,
+      "ds": 17
+     }
+    },
+    "formats": {
+     "descriptor": [
+      "MJPG",
+      "YUY2"
+     ],
+     "mf": [
+      "H264",
+      "MFVIDEOFORMAT_H264_ES",
+      "MJPG",
+      "YUY2"
+     ],
+     "ds": [
+      "H264",
+      "MFVIDEOFORMAT_H264_ES",
+      "MJPG",
+      "YUY2"
+     ]
+    },
+    "mjpeg_equal_everywhere": true,
+    "mjpeg_sizes": {
+     "descriptor": [
+      [
+       1920,
+       1080
+      ],
+      [
+       1600,
+       896
+      ],
+      [
+       1280,
+       720
+      ],
+      [
+       1024,
+       576
+      ],
+      [
+       960,
+       540
+      ],
+      [
+       800,
+       600
+      ],
+      [
+       848,
+       480
+      ],
+      [
+       800,
+       448
+      ],
+      [
+       640,
+       480
+      ],
+      [
+       640,
+       360
+      ],
+      [
+       480,
+       270
+      ],
+      [
+       424,
+       240
+      ],
+      [
+       352,
+       288
+      ],
+      [
+       320,
+       240
+      ],
+      [
+       320,
+       180
+      ],
+      [
+       176,
+       144
+      ],
+      [
+       160,
+       120
+      ]
+     ],
+     "mf": [
+      [
+       1920,
+       1080
+      ],
+      [
+       1600,
+       896
+      ],
+      [
+       1280,
+       720
+      ],
+      [
+       1024,
+       576
+      ],
+      [
+       960,
+       540
+      ],
+      [
+       800,
+       600
+      ],
+      [
+       848,
+       480
+      ],
+      [
+       800,
+       448
+      ],
+      [
+       640,
+       480
+      ],
+      [
+       640,
+       360
+      ],
+      [
+       480,
+       270
+      ],
+      [
+       424,
+       240
+      ],
+      [
+       352,
+       288
+      ],
+      [
+       320,
+       240
+      ],
+      [
+       320,
+       180
+      ],
+      [
+       176,
+       144
+      ],
+      [
+       160,
+       120
+      ]
+     ],
+     "ds": [
+      [
+       1920,
+       1080
+      ],
+      [
+       1600,
+       896
+      ],
+      [
+       1280,
+       720
+      ],
+      [
+       1024,
+       576
+      ],
+      [
+       960,
+       540
+      ],
+      [
+       800,
+       600
+      ],
+      [
+       848,
+       480
+      ],
+      [
+       800,
+       448
+      ],
+      [
+       640,
+       480
+      ],
+      [
+       640,
+       360
+      ],
+      [
+       480,
+       270
+      ],
+      [
+       424,
+       240
+      ],
+      [
+       352,
+       288
+      ],
+      [
+       320,
+       240
+      ],
+      [
+       320,
+       180
+      ],
+      [
+       176,
+       144
+      ],
+      [
+       160,
+       120
+      ]
+     ]
+    },
+    "diff": {
+     "mf": {
+      "missing_vs_descriptor": [
+       "YUY2 2304x1536@2",
+       "YUY2 2304x1296@2"
+      ],
+      "extra_vs_descriptor": [
+       "H264 1920x1080@30",
+       "H264 1920x1080@24",
+       "H264 1920x1080@20",
+       "H264 1920x1080@15",
+       "H264 1920x1080@10",
+       "H264 1920x1080@7.5",
+       "H264 1920x1080@5",
+       "H264 1600x896@30",
+       "H264 1600x896@24",
+       "H264 1600x896@20",
+       "H264 1600x896@15",
+       "H264 1600x896@10",
+       "H264 1600x896@7.5",
+       "H264 1600x896@5",
+       "H264 1280x720@30",
+       "H264 1280x720@24",
+       "H264 1280x720@20",
+       "H264 1280x720@15",
+       "H264 1280x720@10",
+       "H264 1280x720@7.5",
+       "H264 1280x720@5",
+       "H264 1024x576@30",
+       "H264 1024x576@24",
+       "H264 1024x576@20",
+       "H264 1024x576@15",
+       "H264 1024x576@10",
+       "H264 1024x576@7.5",
+       "H264 1024x576@5",
+       "H264 960x540@30",
+       "H264 960x540@24",
+       "H264 960x540@20",
+       "H264 960x540@15",
+       "H264 960x540@10",
+       "H264 960x540@7.5",
+       "H264 960x540@5",
+       "H264 800x600@30",
+       "H264 800x600@24",
+       "H264 800x600@20",
+       "H264 800x600@15",
+       "H264 800x600@10",
+       "H264 800x600@7.5",
+       "H264 800x600@5",
+       "H264 848x480@30",
+       "H264 848x480@24",
+       "H264 848x480@20",
+       "H264 848x480@15",
+       "H264 848x480@10",
+       "H264 848x480@7.5",
+       "H264 848x480@5",
+       "H264 800x448@30",
+       "H264 800x448@24",
+       "H264 800x448@20",
+       "H264 800x448@15",
+       "H264 800x448@10",
+       "H264 800x448@7.5",
+       "H264 800x448@5",
+       "H264 640x480@30",
+       "H264 640x480@24",
+       "H264 640x480@20",
+       "H264 640x480@15",
+       "H264 640x480@10",
+       "H264 640x480@7.5",
+       "H264 640x480@5",
+       "H264 640x360@30",
+       "H264 640x360@24",
+       "H264 640x360@20",
+       "H264 640x360@15",
+       "H264 640x360@10",
+       "H264 640x360@7.5",
+       "H264 640x360@5",
+       "H264 480x270@30",
+       "H264 480x270@24",
+       "H264 480x270@20",
+       "H264 480x270@15",
+       "H264 480x270@10",
+       "H264 480x270@7.5",
+       "H264 480x270@5",
+       "H264 424x240@30",
+       "H264 424x240@24",
+       "H264 424x240@20",
+       "H264 424x240@15",
+       "H264 424x240@10",
+       "H264 424x240@7.5",
+       "H264 424x240@5",
+       "H264 352x288@30",
+       "H264 352x288@24",
+       "H264 352x288@20",
+       "H264 352x288@15",
+       "H264 352x288@10",
+       "H264 352x288@7.5",
+       "H264 352x288@5",
+       "H264 320x240@30",
+       "H264 320x240@24",
+       "H264 320x240@20",
+       "H264 320x240@15",
+       "H264 320x240@10",
+       "H264 320x240@7.5",
+       "H264 320x240@5",
+       "H264 320x180@30",
+       "H264 320x180@24",
+       "H264 320x180@20",
+       "H264 320x180@15",
+       "H264 320x180@10",
+       "H264 320x180@7.5",
+       "H264 320x180@5",
+       "H264 176x144@30",
+       "H264 176x144@24",
+       "H264 176x144@20",
+       "H264 176x144@15",
+       "H264 176x144@10",
+       "H264 176x144@7.5",
+       "H264 176x144@5",
+       "H264 160x120@30",
+       "H264 160x120@24",
+       "H264 160x120@20",
+       "H264 160x120@15",
+       "H264 160x120@10",
+       "H264 160x120@7.5",
+       "H264 160x120@5",
+       "MFVIDEOFORMAT_H264_ES 1920x1080@30",
+       "MFVIDEOFORMAT_H264_ES 1920x1080@24",
+       "MFVIDEOFORMAT_H264_ES 1920x1080@20",
+       "MFVIDEOFORMAT_H264_ES 1920x1080@15",
+       "MFVIDEOFORMAT_H264_ES 1920x1080@10",
+       "MFVIDEOFORMAT_H264_ES 1920x1080@7.5",
+       "MFVIDEOFORMAT_H264_ES 1920x1080@5",
+       "MFVIDEOFORMAT_H264_ES 1600x896@30",
+       "MFVIDEOFORMAT_H264_ES 1600x896@24",
+       "MFVIDEOFORMAT_H264_ES 1600x896@20",
+       "MFVIDEOFORMAT_H264_ES 1600x896@15",
+       "MFVIDEOFORMAT_H264_ES 1600x896@10",
+       "MFVIDEOFORMAT_H264_ES 1600x896@7.5",
+       "MFVIDEOFORMAT_H264_ES 1600x896@5",
+       "MFVIDEOFORMAT_H264_ES 1280x720@30",
+       "MFVIDEOFORMAT_H264_ES 1280x720@24",
+       "MFVIDEOFORMAT_H264_ES 1280x720@20",
+       "MFVIDEOFORMAT_H264_ES 1280x720@15",
+       "MFVIDEOFORMAT_H264_ES 1280x720@10",
+       "MFVIDEOFORMAT_H264_ES 1280x720@7.5",
+       "MFVIDEOFORMAT_H264_ES 1280x720@5",
+       "MFVIDEOFORMAT_H264_ES 1024x576@30",
+       "MFVIDEOFORMAT_H264_ES 1024x576@24",
+       "MFVIDEOFORMAT_H264_ES 1024x576@20",
+       "MFVIDEOFORMAT_H264_ES 1024x576@15",
+       "MFVIDEOFORMAT_H264_ES 1024x576@10",
+       "MFVIDEOFORMAT_H264_ES 1024x576@7.5",
+       "MFVIDEOFORMAT_H264_ES 1024x576@5",
+       "MFVIDEOFORMAT_H264_ES 960x540@30",
+       "MFVIDEOFORMAT_H264_ES 960x540@24",
+       "MFVIDEOFORMAT_H264_ES 960x540@20",
+       "MFVIDEOFORMAT_H264_ES 960x540@15",
+       "MFVIDEOFORMAT_H264_ES 960x540@10",
+       "MFVIDEOFORMAT_H264_ES 960x540@7.5",
+       "MFVIDEOFORMAT_H264_ES 960x540@5",
+       "MFVIDEOFORMAT_H264_ES 800x600@30",
+       "MFVIDEOFORMAT_H264_ES 800x600@24",
+       "MFVIDEOFORMAT_H264_ES 800x600@20",
+       "MFVIDEOFORMAT_H264_ES 800x600@15",
+       "MFVIDEOFORMAT_H264_ES 800x600@10",
+       "MFVIDEOFORMAT_H264_ES 800x600@7.5",
+       "MFVIDEOFORMAT_H264_ES 800x600@5",
+       "MFVIDEOFORMAT_H264_ES 848x480@30",
+       "MFVIDEOFORMAT_H264_ES 848x480@24",
+       "MFVIDEOFORMAT_H264_ES 848x480@20",
+       "MFVIDEOFORMAT_H264_ES 848x480@15",
+       "MFVIDEOFORMAT_H264_ES 848x480@10",
+       "MFVIDEOFORMAT_H264_ES 848x480@7.5",
+       "MFVIDEOFORMAT_H264_ES 848x480@5",
+       "MFVIDEOFORMAT_H264_ES 800x448@30",
+       "MFVIDEOFORMAT_H264_ES 800x448@24",
+       "MFVIDEOFORMAT_H264_ES 800x448@20",
+       "MFVIDEOFORMAT_H264_ES 800x448@15",
+       "MFVIDEOFORMAT_H264_ES 800x448@10",
+       "MFVIDEOFORMAT_H264_ES 800x448@7.5",
+       "MFVIDEOFORMAT_H264_ES 800x448@5",
+       "MFVIDEOFORMAT_H264_ES 640x480@30",
+       "MFVIDEOFORMAT_H264_ES 640x480@24",
+       "MFVIDEOFORMAT_H264_ES 640x480@20",
+       "MFVIDEOFORMAT_H264_ES 640x480@15",
+       "MFVIDEOFORMAT_H264_ES 640x480@10",
+       "MFVIDEOFORMAT_H264_ES 640x480@7.5",
+       "MFVIDEOFORMAT_H264_ES 640x480@5",
+       "MFVIDEOFORMAT_H264_ES 640x360@30",
+       "MFVIDEOFORMAT_H264_ES 640x360@24",
+       "MFVIDEOFORMAT_H264_ES 640x360@20",
+       "MFVIDEOFORMAT_H264_ES 640x360@15",
+       "MFVIDEOFORMAT_H264_ES 640x360@10",
+       "MFVIDEOFORMAT_H264_ES 640x360@7.5",
+       "MFVIDEOFORMAT_H264_ES 640x360@5",
+       "MFVIDEOFORMAT_H264_ES 480x270@30",
+       "MFVIDEOFORMAT_H264_ES 480x270@24",
+       "MFVIDEOFORMAT_H264_ES 480x270@20",
+       "MFVIDEOFORMAT_H264_ES 480x270@15",
+       "MFVIDEOFORMAT_H264_ES 480x270@10",
+       "MFVIDEOFORMAT_H264_ES 480x270@7.5",
+       "MFVIDEOFORMAT_H264_ES 480x270@5",
+       "MFVIDEOFORMAT_H264_ES 424x240@30",
+       "MFVIDEOFORMAT_H264_ES 424x240@24",
+       "MFVIDEOFORMAT_H264_ES 424x240@20",
+       "MFVIDEOFORMAT_H264_ES 424x240@15",
+       "MFVIDEOFORMAT_H264_ES 424x240@10",
+       "MFVIDEOFORMAT_H264_ES 424x240@7.5",
+       "MFVIDEOFORMAT_H264_ES 424x240@5",
+       "MFVIDEOFORMAT_H264_ES 352x288@30",
+       "MFVIDEOFORMAT_H264_ES 352x288@24",
+       "MFVIDEOFORMAT_H264_ES 352x288@20",
+       "MFVIDEOFORMAT_H264_ES 352x288@15",
+       "MFVIDEOFORMAT_H264_ES 352x288@10",
+       "MFVIDEOFORMAT_H264_ES 352x288@7.5",
+       "MFVIDEOFORMAT_H264_ES 352x288@5",
+       "MFVIDEOFORMAT_H264_ES 320x240@30",
+       "MFVIDEOFORMAT_H264_ES 320x240@24",
+       "MFVIDEOFORMAT_H264_ES 320x240@20",
+       "MFVIDEOFORMAT_H264_ES 320x240@15",
+       "MFVIDEOFORMAT_H264_ES 320x240@10",
+       "MFVIDEOFORMAT_H264_ES 320x240@7.5",
+       "MFVIDEOFORMAT_H264_ES 320x240@5",
+       "MFVIDEOFORMAT_H264_ES 320x180@30",
+       "MFVIDEOFORMAT_H264_ES 320x180@24",
+       "MFVIDEOFORMAT_H264_ES 320x180@20",
+       "MFVIDEOFORMAT_H264_ES 320x180@15",
+       "MFVIDEOFORMAT_H264_ES 320x180@10",
+       "MFVIDEOFORMAT_H264_ES 320x180@7.5",
+       "MFVIDEOFORMAT_H264_ES 320x180@5",
+       "MFVIDEOFORMAT_H264_ES 176x144@30",
+       "MFVIDEOFORMAT_H264_ES 176x144@24",
+       "MFVIDEOFORMAT_H264_ES 176x144@20",
+       "MFVIDEOFORMAT_H264_ES 176x144@15",
+       "MFVIDEOFORMAT_H264_ES 176x144@10",
+       "MFVIDEOFORMAT_H264_ES 176x144@7.5",
+       "MFVIDEOFORMAT_H264_ES 176x144@5",
+       "MFVIDEOFORMAT_H264_ES 160x120@30",
+       "MFVIDEOFORMAT_H264_ES 160x120@24",
+       "MFVIDEOFORMAT_H264_ES 160x120@20",
+       "MFVIDEOFORMAT_H264_ES 160x120@15",
+       "MFVIDEOFORMAT_H264_ES 160x120@10",
+       "MFVIDEOFORMAT_H264_ES 160x120@7.5",
+       "MFVIDEOFORMAT_H264_ES 160x120@5"
+      ],
+      "n_missing": 2,
+      "n_extra": 238,
+      "mjpeg_missing": [],
+      "mjpeg_extra": []
+     },
+     "ds": {
+      "missing_vs_descriptor": [
+       "YUY2 2304x1536@2",
+       "YUY2 2304x1296@2"
+      ],
+      "extra_vs_descriptor": [
+       "H264 1920x1080@30",
+       "H264 1920x1080@24",
+       "H264 1920x1080@20",
+       "H264 1920x1080@15",
+       "H264 1920x1080@10",
+       "H264 1920x1080@7.5",
+       "H264 1920x1080@5",
+       "H264 1600x896@30",
+       "H264 1600x896@24",
+       "H264 1600x896@20",
+       "H264 1600x896@15",
+       "H264 1600x896@10",
+       "H264 1600x896@7.5",
+       "H264 1600x896@5",
+       "H264 1280x720@30",
+       "H264 1280x720@24",
+       "H264 1280x720@20",
+       "H264 1280x720@15",
+       "H264 1280x720@10",
+       "H264 1280x720@7.5",
+       "H264 1280x720@5",
+       "H264 1024x576@30",
+       "H264 1024x576@24",
+       "H264 1024x576@20",
+       "H264 1024x576@15",
+       "H264 1024x576@10",
+       "H264 1024x576@7.5",
+       "H264 1024x576@5",
+       "H264 960x540@30",
+       "H264 960x540@24",
+       "H264 960x540@20",
+       "H264 960x540@15",
+       "H264 960x540@10",
+       "H264 960x540@7.5",
+       "H264 960x540@5",
+       "H264 800x600@30",
+       "H264 800x600@24",
+       "H264 800x600@20",
+       "H264 800x600@15",
+       "H264 800x600@10",
+       "H264 800x600@7.5",
+       "H264 800x600@5",
+       "H264 848x480@30",
+       "H264 848x480@24",
+       "H264 848x480@20",
+       "H264 848x480@15",
+       "H264 848x480@10",
+       "H264 848x480@7.5",
+       "H264 848x480@5",
+       "H264 800x448@30",
+       "H264 800x448@24",
+       "H264 800x448@20",
+       "H264 800x448@15",
+       "H264 800x448@10",
+       "H264 800x448@7.5",
+       "H264 800x448@5",
+       "H264 640x480@30",
+       "H264 640x480@24",
+       "H264 640x480@20",
+       "H264 640x480@15",
+       "H264 640x480@10",
+       "H264 640x480@7.5",
+       "H264 640x480@5",
+       "H264 640x360@30",
+       "H264 640x360@24",
+       "H264 640x360@20",
+       "H264 640x360@15",
+       "H264 640x360@10",
+       "H264 640x360@7.5",
+       "H264 640x360@5",
+       "H264 480x270@30",
+       "H264 480x270@24",
+       "H264 480x270@20",
+       "H264 480x270@15",
+       "H264 480x270@10",
+       "H264 480x270@7.5",
+       "H264 480x270@5",
+       "H264 424x240@30",
+       "H264 424x240@24",
+       "H264 424x240@20",
+       "H264 424x240@15",
+       "H264 424x240@10",
+       "H264 424x240@7.5",
+       "H264 424x240@5",
+       "H264 352x288@30",
+       "H264 352x288@24",
+       "H264 352x288@20",
+       "H264 352x288@15",
+       "H264 352x288@10",
+       "H264 352x288@7.5",
+       "H264 352x288@5",
+       "H264 320x240@30",
+       "H264 320x240@24",
+       "H264 320x240@20",
+       "H264 320x240@15",
+       "H264 320x240@10",
+       "H264 320x240@7.5",
+       "H264 320x240@5",
+       "H264 320x180@30",
+       "H264 320x180@24",
+       "H264 320x180@20",
+       "H264 320x180@15",
+       "H264 320x180@10",
+       "H264 320x180@7.5",
+       "H264 320x180@5",
+       "H264 176x144@30",
+       "H264 176x144@24",
+       "H264 176x144@20",
+       "H264 176x144@15",
+       "H264 176x144@10",
+       "H264 176x144@7.5",
+       "H264 176x144@5",
+       "H264 160x120@30",
+       "H264 160x120@24",
+       "H264 160x120@20",
+       "H264 160x120@15",
+       "H264 160x120@10",
+       "H264 160x120@7.5",
+       "H264 160x120@5",
+       "MFVIDEOFORMAT_H264_ES 1920x1080@30",
+       "MFVIDEOFORMAT_H264_ES 1920x1080@24",
+       "MFVIDEOFORMAT_H264_ES 1920x1080@20",
+       "MFVIDEOFORMAT_H264_ES 1920x1080@15",
+       "MFVIDEOFORMAT_H264_ES 1920x1080@10",
+       "MFVIDEOFORMAT_H264_ES 1920x1080@7.5",
+       "MFVIDEOFORMAT_H264_ES 1920x1080@5",
+       "MFVIDEOFORMAT_H264_ES 1600x896@30",
+       "MFVIDEOFORMAT_H264_ES 1600x896@24",
+       "MFVIDEOFORMAT_H264_ES 1600x896@20",
+       "MFVIDEOFORMAT_H264_ES 1600x896@15",
+       "MFVIDEOFORMAT_H264_ES 1600x896@10",
+       "MFVIDEOFORMAT_H264_ES 1600x896@7.5",
+       "MFVIDEOFORMAT_H264_ES 1600x896@5",
+       "MFVIDEOFORMAT_H264_ES 1280x720@30",
+       "MFVIDEOFORMAT_H264_ES 1280x720@24",
+       "MFVIDEOFORMAT_H264_ES 1280x720@20",
+       "MFVIDEOFORMAT_H264_ES 1280x720@15",
+       "MFVIDEOFORMAT_H264_ES 1280x720@10",
+       "MFVIDEOFORMAT_H264_ES 1280x720@7.5",
+       "MFVIDEOFORMAT_H264_ES 1280x720@5",
+       "MFVIDEOFORMAT_H264_ES 1024x576@30",
+       "MFVIDEOFORMAT_H264_ES 1024x576@24",
+       "MFVIDEOFORMAT_H264_ES 1024x576@20",
+       "MFVIDEOFORMAT_H264_ES 1024x576@15",
+       "MFVIDEOFORMAT_H264_ES 1024x576@10",
+       "MFVIDEOFORMAT_H264_ES 1024x576@7.5",
+       "MFVIDEOFORMAT_H264_ES 1024x576@5",
+       "MFVIDEOFORMAT_H264_ES 960x540@30",
+       "MFVIDEOFORMAT_H264_ES 960x540@24",
+       "MFVIDEOFORMAT_H264_ES 960x540@20",
+       "MFVIDEOFORMAT_H264_ES 960x540@15",
+       "MFVIDEOFORMAT_H264_ES 960x540@10",
+       "MFVIDEOFORMAT_H264_ES 960x540@7.5",
+       "MFVIDEOFORMAT_H264_ES 960x540@5",
+       "MFVIDEOFORMAT_H264_ES 800x600@30",
+       "MFVIDEOFORMAT_H264_ES 800x600@24",
+       "MFVIDEOFORMAT_H264_ES 800x600@20",
+       "MFVIDEOFORMAT_H264_ES 800x600@15",
+       "MFVIDEOFORMAT_H264_ES 800x600@10",
+       "MFVIDEOFORMAT_H264_ES 800x600@7.5",
+       "MFVIDEOFORMAT_H264_ES 800x600@5",
+       "MFVIDEOFORMAT_H264_ES 848x480@30",
+       "MFVIDEOFORMAT_H264_ES 848x480@24",
+       "MFVIDEOFORMAT_H264_ES 848x480@20",
+       "MFVIDEOFORMAT_H264_ES 848x480@15",
+       "MFVIDEOFORMAT_H264_ES 848x480@10",
+       "MFVIDEOFORMAT_H264_ES 848x480@7.5",
+       "MFVIDEOFORMAT_H264_ES 848x480@5",
+       "MFVIDEOFORMAT_H264_ES 800x448@30",
+       "MFVIDEOFORMAT_H264_ES 800x448@24",
+       "MFVIDEOFORMAT_H264_ES 800x448@20",
+       "MFVIDEOFORMAT_H264_ES 800x448@15",
+       "MFVIDEOFORMAT_H264_ES 800x448@10",
+       "MFVIDEOFORMAT_H264_ES 800x448@7.5",
+       "MFVIDEOFORMAT_H264_ES 800x448@5",
+       "MFVIDEOFORMAT_H264_ES 640x480@30",
+       "MFVIDEOFORMAT_H264_ES 640x480@24",
+       "MFVIDEOFORMAT_H264_ES 640x480@20",
+       "MFVIDEOFORMAT_H264_ES 640x480@15",
+       "MFVIDEOFORMAT_H264_ES 640x480@10",
+       "MFVIDEOFORMAT_H264_ES 640x480@7.5",
+       "MFVIDEOFORMAT_H264_ES 640x480@5",
+       "MFVIDEOFORMAT_H264_ES 640x360@30",
+       "MFVIDEOFORMAT_H264_ES 640x360@24",
+       "MFVIDEOFORMAT_H264_ES 640x360@20",
+       "MFVIDEOFORMAT_H264_ES 640x360@15",
+       "MFVIDEOFORMAT_H264_ES 640x360@10",
+       "MFVIDEOFORMAT_H264_ES 640x360@7.5",
+       "MFVIDEOFORMAT_H264_ES 640x360@5",
+       "MFVIDEOFORMAT_H264_ES 480x270@30",
+       "MFVIDEOFORMAT_H264_ES 480x270@24",
+       "MFVIDEOFORMAT_H264_ES 480x270@20",
+       "MFVIDEOFORMAT_H264_ES 480x270@15",
+       "MFVIDEOFORMAT_H264_ES 480x270@10",
+       "MFVIDEOFORMAT_H264_ES 480x270@7.5",
+       "MFVIDEOFORMAT_H264_ES 480x270@5",
+       "MFVIDEOFORMAT_H264_ES 424x240@30",
+       "MFVIDEOFORMAT_H264_ES 424x240@24",
+       "MFVIDEOFORMAT_H264_ES 424x240@20",
+       "MFVIDEOFORMAT_H264_ES 424x240@15",
+       "MFVIDEOFORMAT_H264_ES 424x240@10",
+       "MFVIDEOFORMAT_H264_ES 424x240@7.5",
+       "MFVIDEOFORMAT_H264_ES 424x240@5",
+       "MFVIDEOFORMAT_H264_ES 352x288@30",
+       "MFVIDEOFORMAT_H264_ES 352x288@24",
+       "MFVIDEOFORMAT_H264_ES 352x288@20",
+       "MFVIDEOFORMAT_H264_ES 352x288@15",
+       "MFVIDEOFORMAT_H264_ES 352x288@10",
+       "MFVIDEOFORMAT_H264_ES 352x288@7.5",
+       "MFVIDEOFORMAT_H264_ES 352x288@5",
+       "MFVIDEOFORMAT_H264_ES 320x240@30",
+       "MFVIDEOFORMAT_H264_ES 320x240@24",
+       "MFVIDEOFORMAT_H264_ES 320x240@20",
+       "MFVIDEOFORMAT_H264_ES 320x240@15",
+       "MFVIDEOFORMAT_H264_ES 320x240@10",
+       "MFVIDEOFORMAT_H264_ES 320x240@7.5",
+       "MFVIDEOFORMAT_H264_ES 320x240@5",
+       "MFVIDEOFORMAT_H264_ES 320x180@30",
+       "MFVIDEOFORMAT_H264_ES 320x180@24",
+       "MFVIDEOFORMAT_H264_ES 320x180@20",
+       "MFVIDEOFORMAT_H264_ES 320x180@15",
+       "MFVIDEOFORMAT_H264_ES 320x180@10",
+       "MFVIDEOFORMAT_H264_ES 320x180@7.5",
+       "MFVIDEOFORMAT_H264_ES 320x180@5",
+       "MFVIDEOFORMAT_H264_ES 176x144@30",
+       "MFVIDEOFORMAT_H264_ES 176x144@24",
+       "MFVIDEOFORMAT_H264_ES 176x144@20",
+       "MFVIDEOFORMAT_H264_ES 176x144@15",
+       "MFVIDEOFORMAT_H264_ES 176x144@10",
+       "MFVIDEOFORMAT_H264_ES 176x144@7.5",
+       "MFVIDEOFORMAT_H264_ES 176x144@5",
+       "MFVIDEOFORMAT_H264_ES 160x120@30",
+       "MFVIDEOFORMAT_H264_ES 160x120@24",
+       "MFVIDEOFORMAT_H264_ES 160x120@20",
+       "MFVIDEOFORMAT_H264_ES 160x120@15",
+       "MFVIDEOFORMAT_H264_ES 160x120@10",
+       "MFVIDEOFORMAT_H264_ES 160x120@7.5",
+       "MFVIDEOFORMAT_H264_ES 160x120@5"
+      ],
+      "n_missing": 2,
+      "n_extra": 238,
+      "mjpeg_missing": [],
+      "mjpeg_extra": []
+     },
+     "mf_vs_ds": {
+      "only_mf": [],
+      "only_ds": []
+     }
+    },
+    "synthesized_types": [
+     "NV12 1920x1080@30",
+     "NV12 1920x1080@24",
+     "NV12 1920x1080@20",
+     "NV12 1920x1080@15",
+     "NV12 1920x1080@10",
+     "NV12 1920x1080@7.5",
+     "NV12 1920x1080@5",
+     "NV12 1600x896@30",
+     "NV12 1600x896@24",
+     "NV12 1600x896@20",
+     "NV12 1600x896@15",
+     "NV12 1600x896@10"
+    ],
+    "synthesized_subtypes": [
+     "NV12"
+    ],
+    "descriptor_streams": {
+     "0": {
+      "interface": 1,
+      "n_modes": 218,
+      "continuous": [],
+      "still": [],
+      "transport": "isochronous"
+     }
+    },
+    "mf_streams": {
+     "0": {
+      "category": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+      "n_native": 216,
+      "n_synthesized": 119,
+      "subtypes": [
+       "MJPG",
+       "NV12",
+       "YUY2"
+      ]
+     },
+     "1": {
+      "category": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+      "n_native": 238,
+      "n_synthesized": 0,
+      "subtypes": [
+       "H264",
+       "MFVIDEOFORMAT_H264_ES"
+      ]
+     }
+    },
+    "ds_pins": {
+     "0": {
+      "name": "Capture",
+      "category": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+      "caps_count": 68,
+      "mode_count": 34,
+      "header_kinds": [
+       "VIH",
+       "VIH2"
+      ],
+      "range_only_modes": [],
+      "n_modes_with_rates": 216
+     },
+     "1": {
+      "name": "Capture",
+      "category": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+      "caps_count": 68,
+      "mode_count": 34,
+      "header_kinds": [
+       "H264VI"
+      ],
+      "range_only_modes": [],
+      "n_modes_with_rates": 238
+     }
+    },
+    "ds_any_unknown_pin_category": false
+   },
+   {
+    "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+    "name": "USB Camera",
+    "is_kiyo": false,
+    "descriptor_errors": [],
+    "identity_cross_check": {
+     "serial_string_descriptor": null,
+     "key_from_descriptor_serial": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "discovery_key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "agree": true
+    },
+    "mf_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "formats",
+      "--api",
+      "mf",
+      "--device",
+      "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.046,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s (ticket 3307): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 45.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe formats --api mf --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --timeout-ms 8000\n[camlock] released"
+    },
+    "ds_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "formats",
+      "--api",
+      "ds",
+      "--device",
+      "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.047,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s (ticket 3308): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 45.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe formats --api ds --device \\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global --timeout-ms 8000\n[camlock] released"
+    },
+    "still": {
+     "descriptor_still_sizes": [
+      [
+       320,
+       240
+      ],
+      [
+       640,
+       480
+      ],
+      [
+       1280,
+       720
+      ]
+     ],
+     "mf_still_stream_sizes": [
+      [
+       320,
+       240
+      ],
+      [
+       640,
+       480
+      ],
+      [
+       1280,
+       720
+      ]
+     ],
+     "ds_still_pin_sizes": [
+      [
+       320,
+       240
+      ],
+      [
+       640,
+       480
+      ],
+      [
+       1280,
+       720
+      ]
+     ],
+     "mf_still_modes": [
+      "MJPG 1280x720@1",
+      "MJPG 640x480@1",
+      "MJPG 320x240@1",
+      "YUY2 640x480@1",
+      "YUY2 320x240@1"
+     ],
+     "ds_still_modes": [
+      "MJPG 1280x720@1",
+      "MJPG 640x480@1",
+      "MJPG 320x240@1",
+      "YUY2 640x480@1",
+      "YUY2 320x240@1"
+     ],
+     "sizes_equal": true
+    },
+    "counts": {
+     "descriptor_modes": 14,
+     "mf_native_capture_modes": 14,
+     "mf_still_modes": 5,
+     "mf_synthesized": 13,
+     "ds_capture_modes": 14,
+     "ds_still_modes": 5,
+     "descriptor_mjpeg_modes": 10,
+     "mf_mjpeg_types": 10,
+     "ds_mjpeg_modes": 10,
+     "mjpeg_sizes": {
+      "descriptor": 5,
+      "mf": 5,
+      "ds": 5
+     }
+    },
+    "formats": {
+     "descriptor": [
+      "MJPG",
+      "YUY2"
+     ],
+     "mf": [
+      "MJPG",
+      "YUY2"
+     ],
+     "ds": [
+      "MJPG",
+      "YUY2"
+     ]
+    },
+    "mjpeg_equal_everywhere": true,
+    "mjpeg_sizes": {
+     "descriptor": [
+      [
+       1920,
+       1080
+      ],
+      [
+       1280,
+       720
+      ],
+      [
+       640,
+       480
+      ],
+      [
+       640,
+       360
+      ],
+      [
+       352,
+       288
+      ]
+     ],
+     "mf": [
+      [
+       1920,
+       1080
+      ],
+      [
+       1280,
+       720
+      ],
+      [
+       640,
+       480
+      ],
+      [
+       640,
+       360
+      ],
+      [
+       352,
+       288
+      ]
+     ],
+     "ds": [
+      [
+       1920,
+       1080
+      ],
+      [
+       1280,
+       720
+      ],
+      [
+       640,
+       480
+      ],
+      [
+       640,
+       360
+      ],
+      [
+       352,
+       288
+      ]
+     ]
+    },
+    "diff": {
+     "mf": {
+      "missing_vs_descriptor": [],
+      "extra_vs_descriptor": [],
+      "n_missing": 0,
+      "n_extra": 0,
+      "mjpeg_missing": [],
+      "mjpeg_extra": []
+     },
+     "ds": {
+      "missing_vs_descriptor": [],
+      "extra_vs_descriptor": [],
+      "n_missing": 0,
+      "n_extra": 0,
+      "mjpeg_missing": [],
+      "mjpeg_extra": []
+     },
+     "mf_vs_ds": {
+      "only_mf": [],
+      "only_ds": []
+     }
+    },
+    "synthesized_types": [
+     "NV12 1920x1080@30",
+     "NV12 1920x1080@25",
+     "NV12 1280x720@30",
+     "NV12 1280x720@25",
+     "NV12 1280x720@1",
+     "NV12 640x480@30",
+     "NV12 640x480@25",
+     "NV12 640x480@1",
+     "NV12 640x360@30",
+     "NV12 640x360@25",
+     "NV12 352x288@30",
+     "NV12 352x288@25"
+    ],
+    "synthesized_subtypes": [
+     "NV12"
+    ],
+    "descriptor_streams": {
+     "0": {
+      "interface": 1,
+      "n_modes": 14,
+      "continuous": [],
+      "still": [
+       {
+        "fourcc": "MJPG",
+        "bEndpointAddress": "0x00",
+        "sizes": [
+         {
+          "wWidth": 1280,
+          "wHeight": 720
+         },
+         {
+          "wWidth": 640,
+          "wHeight": 480
+         },
+         {
+          "wWidth": 320,
+          "wHeight": 240
+         }
+        ]
+       },
+       {
+        "fourcc": "YUY2",
+        "bEndpointAddress": "0x00",
+        "sizes": [
+         {
+          "wWidth": 640,
+          "wHeight": 480
+         },
+         {
+          "wWidth": 320,
+          "wHeight": 240
+         }
+        ]
+       }
+      ],
+      "transport": "isochronous"
+     }
+    },
+    "mf_streams": {
+     "0": {
+      "category": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+      "n_native": 14,
+      "n_synthesized": 10,
+      "subtypes": [
+       "MJPG",
+       "NV12",
+       "YUY2"
+      ]
+     },
+     "1": {
+      "category": "PIN_CATEGORY_STILL (PINNAME_VIDEO_STILL)",
+      "n_native": 5,
+      "n_synthesized": 3,
+      "subtypes": [
+       "MJPG",
+       "NV12",
+       "YUY2"
+      ]
+     }
+    },
+    "ds_pins": {
+     "0": {
+      "name": "Capture",
+      "category": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+      "caps_count": 18,
+      "mode_count": 9,
+      "header_kinds": [
+       "VIH",
+       "VIH2"
+      ],
+      "range_only_modes": [],
+      "n_modes_with_rates": 14
+     },
+     "2": {
+      "name": "Still",
+      "category": "PIN_CATEGORY_STILL (PINNAME_VIDEO_STILL)",
+      "caps_count": 5,
+      "mode_count": 5,
+      "header_kinds": [
+       "VIH"
+      ],
+      "range_only_modes": [
+       {
+        "fourcc": "MJPG",
+        "w": 1280,
+        "h": 720,
+        "min": 10000000,
+        "max": 10000000
+       },
+       {
+        "fourcc": "MJPG",
+        "w": 640,
+        "h": 480,
+        "min": 10000000,
+        "max": 10000000
+       },
+       {
+        "fourcc": "MJPG",
+        "w": 320,
+        "h": 240,
+        "min": 10000000,
+        "max": 10000000
+       },
+       {
+        "fourcc": "YUY2",
+        "w": 640,
+        "h": 480,
+        "min": 10000000,
+        "max": 10000000
+       },
+       {
+        "fourcc": "YUY2",
+        "w": 320,
+        "h": 240,
+        "min": 10000000,
+        "max": 10000000
+       }
+      ],
+      "n_modes_with_rates": 5
+     }
+    },
+    "ds_any_unknown_pin_category": false
+   },
+   {
+    "key": "046d:085c:sn=C922SN01",
+    "name": "c922 Pro Stream Webcam",
+    "is_kiyo": false,
+    "descriptor_errors": [],
+    "identity_cross_check": {
+     "serial_string_descriptor": "C922SN01",
+     "key_from_descriptor_serial": "046d:085c:sn=C922SN01",
+     "discovery_key": "046d:085c:sn=C922SN01",
+     "agree": true
+    },
+    "mf_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "formats",
+      "--api",
+      "mf",
+      "--device",
+      "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.062,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s (ticket 3309): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 45.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe formats --api mf --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global --timeout-ms 8000\n[camlock] released"
+    },
+    "ds_run": {
+     "argv": [
+      "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe",
+      "formats",
+      "--api",
+      "ds",
+      "--device",
+      "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+      "--timeout-ms",
+      "8000"
+     ],
+     "rc": 0,
+     "elapsed_s": 0.032,
+     "timed_out": false,
+     "killed": false,
+     "lock_wait_s": 0.0,
+     "spawn_error": null,
+     "stderr_tail": "[camlock] acquired after 0.0s (ticket 3310): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 45.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe formats --api ds --device \\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global --timeout-ms 8000\n[camlock] released"
+    },
+    "still": {
+     "descriptor_still_sizes": [],
+     "mf_still_stream_sizes": [],
+     "ds_still_pin_sizes": [],
+     "mf_still_modes": [],
+     "ds_still_modes": [],
+     "sizes_equal": true
+    },
+    "counts": {
+     "descriptor_modes": 218,
+     "mf_native_capture_modes": 218,
+     "mf_still_modes": 0,
+     "mf_synthesized": 120,
+     "ds_capture_modes": 218,
+     "ds_still_modes": 0,
+     "descriptor_mjpeg_modes": 120,
+     "mf_mjpeg_types": 120,
+     "ds_mjpeg_modes": 120,
+     "mjpeg_sizes": {
+      "descriptor": 17,
+      "mf": 17,
+      "ds": 17
+     }
+    },
+    "formats": {
+     "descriptor": [
+      "MJPG",
+      "YUY2"
+     ],
+     "mf": [
+      "MJPG",
+      "YUY2"
+     ],
+     "ds": [
+      "MJPG",
+      "YUY2"
+     ]
+    },
+    "mjpeg_equal_everywhere": true,
+    "mjpeg_sizes": {
+     "descriptor": [
+      [
+       1920,
+       1080
+      ],
+      [
+       1600,
+       896
+      ],
+      [
+       1280,
+       720
+      ],
+      [
+       960,
+       720
+      ],
+      [
+       1024,
+       576
+      ],
+      [
+       800,
+       600
+      ],
+      [
+       864,
+       480
+      ],
+      [
+       800,
+       448
+      ],
+      [
+       640,
+       480
+      ],
+      [
+       640,
+       360
+      ],
+      [
+       432,
+       240
+      ],
+      [
+       352,
+       288
+      ],
+      [
+       320,
+       240
+      ],
+      [
+       320,
+       180
+      ],
+      [
+       176,
+       144
+      ],
+      [
+       160,
+       120
+      ],
+      [
+       160,
+       90
+      ]
+     ],
+     "mf": [
+      [
+       1920,
+       1080
+      ],
+      [
+       1600,
+       896
+      ],
+      [
+       1280,
+       720
+      ],
+      [
+       960,
+       720
+      ],
+      [
+       1024,
+       576
+      ],
+      [
+       800,
+       600
+      ],
+      [
+       864,
+       480
+      ],
+      [
+       800,
+       448
+      ],
+      [
+       640,
+       480
+      ],
+      [
+       640,
+       360
+      ],
+      [
+       432,
+       240
+      ],
+      [
+       352,
+       288
+      ],
+      [
+       320,
+       240
+      ],
+      [
+       320,
+       180
+      ],
+      [
+       176,
+       144
+      ],
+      [
+       160,
+       120
+      ],
+      [
+       160,
+       90
+      ]
+     ],
+     "ds": [
+      [
+       1920,
+       1080
+      ],
+      [
+       1600,
+       896
+      ],
+      [
+       1280,
+       720
+      ],
+      [
+       960,
+       720
+      ],
+      [
+       1024,
+       576
+      ],
+      [
+       800,
+       600
+      ],
+      [
+       864,
+       480
+      ],
+      [
+       800,
+       448
+      ],
+      [
+       640,
+       480
+      ],
+      [
+       640,
+       360
+      ],
+      [
+       432,
+       240
+      ],
+      [
+       352,
+       288
+      ],
+      [
+       320,
+       240
+      ],
+      [
+       320,
+       180
+      ],
+      [
+       176,
+       144
+      ],
+      [
+       160,
+       120
+      ],
+      [
+       160,
+       90
+      ]
+     ]
+    },
+    "diff": {
+     "mf": {
+      "missing_vs_descriptor": [],
+      "extra_vs_descriptor": [],
+      "n_missing": 0,
+      "n_extra": 0,
+      "mjpeg_missing": [],
+      "mjpeg_extra": []
+     },
+     "ds": {
+      "missing_vs_descriptor": [],
+      "extra_vs_descriptor": [],
+      "n_missing": 0,
+      "n_extra": 0,
+      "mjpeg_missing": [],
+      "mjpeg_extra": []
+     },
+     "mf_vs_ds": {
+      "only_mf": [],
+      "only_ds": []
+     }
+    },
+    "synthesized_types": [
+     "NV12 1920x1080@30",
+     "NV12 1920x1080@24",
+     "NV12 1920x1080@20",
+     "NV12 1920x1080@15",
+     "NV12 1920x1080@10",
+     "NV12 1920x1080@7.5",
+     "NV12 1920x1080@5",
+     "NV12 1600x896@30",
+     "NV12 1600x896@24",
+     "NV12 1600x896@20",
+     "NV12 1600x896@15",
+     "NV12 1600x896@10"
+    ],
+    "synthesized_subtypes": [
+     "NV12"
+    ],
+    "descriptor_streams": {
+     "0": {
+      "interface": 1,
+      "n_modes": 218,
+      "continuous": [],
+      "still": [],
+      "transport": "isochronous"
+     }
+    },
+    "mf_streams": {
+     "0": {
+      "category": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+      "n_native": 218,
+      "n_synthesized": 120,
+      "subtypes": [
+       "MJPG",
+       "NV12",
+       "YUY2"
+      ]
+     }
+    },
+    "ds_pins": {
+     "0": {
+      "name": "Capture",
+      "category": "PIN_CATEGORY_CAPTURE (PINNAME_VIDEO_CAPTURE)",
+      "caps_count": 72,
+      "mode_count": 36,
+      "header_kinds": [
+       "VIH",
+       "VIH2"
+      ],
+      "range_only_modes": [],
+      "n_modes_with_rates": 218
+     }
+    },
+    "ds_any_unknown_pin_category": false
+   }
+  ],
+  "mjpeg_modes_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261112T025937Z\\mjpeg_modes.json",
+  "arrivals": {
+   "before": {
+    "utc": "2026-11-12T02:59:53.346831+00:00",
+    "cameras": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+      "present": true,
+      "last_arrival": "2026-11-11T14:11:38.552007+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-11T14:11:44.546053+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-12T00:57:22.463265+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "after": {
+    "utc": "2026-11-12T02:59:55.008262+00:00",
+    "cameras": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+      "present": true,
+      "last_arrival": "2026-11-11T23:27:22.817345+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+      "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+      "present": true,
+      "last_arrival": "2026-11-11T14:11:38.552007+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+      "present": true,
+      "last_arrival": "2026-11-11T14:11:44.546053+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     },
+     "046d:085c:sn=C922SN01": {
+      "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+      "present": true,
+      "last_arrival": "2026-11-12T00:57:22.463265+00:00",
+      "last_removal": null,
+      "problem_code": 0,
+      "devnode_status": "0x0180600a",
+      "dn_warn": []
+     }
+    }
+   },
+   "changes": [],
+   "unexplained_re_arrival": []
+  }
+ },
+ "verdicts": {
+  "fmt_equivalence": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "USB Video Device: MJPEG sizes and discrete rates equal in descriptors, MF and DS",
+     "met": true,
+     "detail": {
+      "counts": {
+       "descriptor_modes": 112,
+       "mf_native_capture_modes": 112,
+       "mf_still_modes": 0,
+       "mf_synthesized": 0,
+       "ds_capture_modes": 112,
+       "ds_still_modes": 0,
+       "descriptor_mjpeg_modes": 28,
+       "mf_mjpeg_types": 28,
+       "ds_mjpeg_modes": 28,
+       "mjpeg_sizes": {
+        "descriptor": 4,
+        "mf": 4,
+        "ds": 4
+       }
+      },
+      "mf_missing": [],
+      "ds_missing": []
+     }
+    },
+    {
+     "criterion": "Logitech Webcam C930e: MJPEG sizes and discrete rates equal in descriptors, MF and DS",
+     "met": true,
+     "detail": {
+      "counts": {
+       "descriptor_modes": 218,
+       "mf_native_capture_modes": 454,
+       "mf_still_modes": 0,
+       "mf_synthesized": 119,
+       "ds_capture_modes": 454,
+       "ds_still_modes": 0,
+       "descriptor_mjpeg_modes": 119,
+       "mf_mjpeg_types": 119,
+       "ds_mjpeg_modes": 119,
+       "mjpeg_sizes": {
+        "descriptor": 17,
+        "mf": 17,
+        "ds": 17
+       }
+      },
+      "mf_missing": [
+       "YUY2 2304x1536@2",
+       "YUY2 2304x1296@2"
+      ],
+      "ds_missing": [
+       "YUY2 2304x1536@2",
+       "YUY2 2304x1296@2"
+      ]
+     }
+    },
+    {
+     "criterion": "USB Camera: MJPEG sizes and discrete rates equal in descriptors, MF and DS",
+     "met": true,
+     "detail": {
+      "counts": {
+       "descriptor_modes": 14,
+       "mf_native_capture_modes": 14,
+       "mf_still_modes": 5,
+       "mf_synthesized": 13,
+       "ds_capture_modes": 14,
+       "ds_still_modes": 5,
+       "descriptor_mjpeg_modes": 10,
+       "mf_mjpeg_types": 10,
+       "ds_mjpeg_modes": 10,
+       "mjpeg_sizes": {
+        "descriptor": 5,
+        "mf": 5,
+        "ds": 5
+       }
+      },
+      "mf_missing": [],
+      "ds_missing": []
+     }
+    },
+    {
+     "criterion": "c922 Pro Stream Webcam: MJPEG sizes and discrete rates equal in descriptors, MF and DS",
+     "met": true,
+     "detail": {
+      "counts": {
+       "descriptor_modes": 218,
+       "mf_native_capture_modes": 218,
+       "mf_still_modes": 0,
+       "mf_synthesized": 120,
+       "ds_capture_modes": 218,
+       "ds_still_modes": 0,
+       "descriptor_mjpeg_modes": 120,
+       "mf_mjpeg_types": 120,
+       "ds_mjpeg_modes": 120,
+       "mjpeg_sizes": {
+        "descriptor": 17,
+        "mf": 17,
+        "ds": 17
+       }
+      },
+      "mf_missing": [],
+      "ds_missing": []
+     }
+    },
+    {
+     "criterion": "MF synthesized NV12 types flagged (Trap 1: select MJPG by subtype)",
+     "met": null,
+     "detail": {
+      "USB Video Device": 0,
+      "Logitech Webcam C930e": 119,
+      "USB Camera": 13,
+      "c922 Pro Stream Webcam": 120
+     }
+    },
+    {
+     "criterion": "(informational, not rated) every format equal: descriptor vs MF vs DS capture modes",
+     "met": false,
+     "detail": {
+      "USB Video Device": {
+       "mf_missing": [],
+       "mf_extra": [],
+       "ds_missing": [],
+       "ds_extra": []
+      },
+      "Logitech Webcam C930e": {
+       "mf_missing": [
+        "YUY2 2304x1536@2",
+        "YUY2 2304x1296@2"
+       ],
+       "mf_extra": [
+        "H264 1920x1080@30",
+        "H264 1920x1080@24",
+        "H264 1920x1080@20",
+        "H264 1920x1080@15",
+        "H264 1920x1080@10",
+        "H264 1920x1080@7.5"
+       ],
+       "ds_missing": [
+        "YUY2 2304x1536@2",
+        "YUY2 2304x1296@2"
+       ],
+       "ds_extra": [
+        "H264 1920x1080@30",
+        "H264 1920x1080@24",
+        "H264 1920x1080@20",
+        "H264 1920x1080@15",
+        "H264 1920x1080@10",
+        "H264 1920x1080@7.5"
+       ]
+      },
+      "USB Camera": {
+       "mf_missing": [],
+       "mf_extra": [],
+       "ds_missing": [],
+       "ds_extra": []
+      },
+      "c922 Pro Stream Webcam": {
+       "mf_missing": [],
+       "mf_extra": [],
+       "ds_missing": [],
+       "ds_extra": []
+      }
+     }
+    },
+    {
+     "criterion": "(informational) still-image sizes equal in descriptors, MF still stream, DS still pin",
+     "met": true,
+     "detail": {
+      "USB Camera": {
+       "descriptor_still_sizes": [
+        [
+         320,
+         240
+        ],
+        [
+         640,
+         480
+        ],
+        [
+         1280,
+         720
+        ]
+       ],
+       "mf_still_stream_sizes": [
+        [
+         320,
+         240
+        ],
+        [
+         640,
+         480
+        ],
+        [
+         1280,
+         720
+        ]
+       ],
+       "ds_still_pin_sizes": [
+        [
+         320,
+         240
+        ],
+        [
+         640,
+         480
+        ],
+        [
+         1280,
+         720
+        ]
+       ],
+       "mf_still_modes": [
+        "MJPG 1280x720@1",
+        "MJPG 640x480@1",
+        "MJPG 320x240@1",
+        "YUY2 640x480@1",
+        "YUY2 320x240@1"
+       ],
+       "ds_still_modes": [
+        "MJPG 1280x720@1",
+        "MJPG 640x480@1",
+        "MJPG 320x240@1",
+        "YUY2 640x480@1",
+        "YUY2 320x240@1"
+       ],
+       "sizes_equal": true
+      }
+     }
+    }
+   ],
+   "evidence": {
+    "note": "answers plan Q 'same resolutions in DS and MF?'; G-MJPEG (bytes at every mode) is rated by W-MJPEG",
+    "mjpeg_modes_file": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261112T025937Z\\mjpeg_modes.json"
+   }
+  }
+ },
+ "errors": [],
+ "device_faults": {
+  "faulted_at_start": {},
+  "faulted_at_end": {},
+  "kiyo_dead_since": null
+ }
+}

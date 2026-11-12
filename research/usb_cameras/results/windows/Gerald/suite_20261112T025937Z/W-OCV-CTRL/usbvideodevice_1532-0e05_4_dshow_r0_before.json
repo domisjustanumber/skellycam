@@ -1,0 +1,246 @@
+{
+ "events": [
+  {
+   "tag": "initial",
+   "op": "get_all",
+   "got": {
+    "AUTO_EXPOSURE": -1.0,
+    "EXPOSURE": -4.0,
+    "AUTOFOCUS": 1.0,
+    "FOCUS": 600.0
+   },
+   "t_ns": 54105021390300,
+   "side": {
+    "t_start_ns": 54105021395400,
+    "t_end_ns": 54105065383400,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -4,
+      "flags": 1,
+      "mode": "auto"
+     },
+     "focus": {
+      "value": 600,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "before_ae_off",
+   "op": "set",
+   "prop": "AUTO_EXPOSURE",
+   "value": 0.25,
+   "ret": true,
+   "got": -1.0,
+   "set_ms": 3.8,
+   "t_ns": 54105065584400,
+   "t_end_ns": 54105069418500,
+   "side": {
+    "t_start_ns": 54105069422100,
+    "t_end_ns": 54105106760600,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -4,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 600,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "before_exp",
+   "op": "set",
+   "prop": "EXPOSURE",
+   "value": -7.0,
+   "ret": true,
+   "got": -7.0,
+   "set_ms": 2.13,
+   "t_ns": 54105106932200,
+   "t_end_ns": 54105110668300,
+   "side": {
+    "t_start_ns": 54105110671800,
+    "t_end_ns": 54105147700100,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 600,
+      "flags": 1,
+      "mode": "auto"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "before_af_off",
+   "op": "set",
+   "prop": "AUTOFOCUS",
+   "value": 0.0,
+   "ret": true,
+   "got": 2.0,
+   "set_ms": 3.59,
+   "t_ns": 54105147870500,
+   "t_end_ns": 54105152977700,
+   "side": {
+    "t_start_ns": 54105152980700,
+    "t_end_ns": 54105200570500,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 600,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "before_focus",
+   "op": "set",
+   "prop": "FOCUS",
+   "value": 600.0,
+   "ret": true,
+   "got": 600.0,
+   "set_ms": 1.99,
+   "t_ns": 54105200742700,
+   "t_end_ns": 54105204302700,
+   "side": {
+    "t_start_ns": 54105204305600,
+    "t_end_ns": 54105246659600,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 600,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  },
+  {
+   "tag": "after_first_frame",
+   "op": "get_all",
+   "got": {
+    "AUTO_EXPOSURE": -1.0,
+    "EXPOSURE": -7.0,
+    "AUTOFOCUS": 2.0,
+    "FOCUS": 600.0
+   },
+   "t_ns": 54107315531100,
+   "side": {
+    "t_start_ns": 54107315533600,
+    "t_end_ns": 54107357377900,
+    "rc": 0,
+    "timed_out": false,
+    "ok": true,
+    "state": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "mode": "manual"
+     },
+     "focus": {
+      "value": 600,
+      "flags": 2,
+      "mode": "manual"
+     }
+    },
+    "error": null,
+    "device_not_answering": false
+   }
+  }
+ ],
+ "segments": [
+  {
+   "label": "first",
+   "t_start_ns": 54105246842300,
+   "frames": 1,
+   "failed_reads": 0,
+   "t_end_ns": 54105285723200
+  },
+  {
+   "label": "before0",
+   "t_start_ns": 54105285734600,
+   "frames": 51,
+   "failed_reads": 0,
+   "t_end_ns": 54107310125700
+  },
+  {
+   "label": "before1",
+   "t_start_ns": 54107357556700,
+   "frames": 62,
+   "failed_reads": 0,
+   "t_end_ns": 54109376075400
+  }
+ ],
+ "convention": null,
+ "format": {
+  "per_set_ms": {
+   "fourcc": 1840.2,
+   "w": 0.0,
+   "h": 2946.7,
+   "fps": 1847.0
+  },
+  "fourcc": true,
+  "w": true,
+  "h": true,
+  "fps": true,
+  "got_fourcc": "YUY2",
+  "got_w": 1280.0,
+  "got_h": 720.0,
+  "got_fps": 30.00003000003,
+  "set_ms": 6633.9
+ },
+ "open_ms": 588.8,
+ "close_ms": 1294.9,
+ "error": null,
+ "hung": null,
+ "activity": null,
+ "pid": 45908,
+ "opencv": "5.0.0",
+ "backend": "dshow",
+ "metric_points_ms_after_first_frame": {}
+}
