@@ -592,7 +592,11 @@ def restore_state(ctx, cam, api: str, orig: dict, ranges: dict) -> dict:
     for n in orig:
         a = after.get(n) or {}
         if n in manual:
-            by_value[n] = ce.held(a.get("value"), a.get("flags"), manual[n], ranges.get(n) or 1)
+            # a control with no auto/manual mode flag at all (e.g. AE priority: flags 0, caps none) can never read
+            # back the manual flag: verify it by value only (2026-11-11 smoke: false "restore not verified")
+            modeless = not (orig[n].get("flags_names") or []) and not (a.get("flags_names") or [])
+            by_value[n] = ce.held(a.get("value"), None if modeless else a.get("flags"), manual[n],
+                                  ranges.get(n) or 1)
             ok[n] = by_value[n]
         elif n in auto:
             by_value[n] = None if a.get("value") is None else (a.get("value") == auto[n])

@@ -567,8 +567,9 @@ def test_runner_order_and_labels():
     # the other cameras' W-CYC reliability cycles last (W-KIYO is the background poller)
     # 2026-11-11: product-path tests after W-PYMF; W-AUTO out of the order (W-NODRIFT replaces it); W-CYC-KIYO
     # second-last so a Kiyo Pro wedge there costs the other tests nothing
-    assert order[7:] == ["W-MJPEG", "W-RAW", "W-TS", "W-PYMF", "W-PYMF-ALL", "W-TBUMP", "W-NODRIFT", "W-GAIN",
-                         "W-CTRL-EFFECT", "W-OCV-CTRL", "W-MULTI", "W-PYAV-LIST", "W-CYC-KIYO", "W-CYC", "W-KIYO"]
+    assert order[7:] == ["W-MJPEG", "W-RAW", "W-TS", "W-PYMF", "W-PYMF-ALL", "W-NODRIFT", "W-GAIN",
+                         "W-CTRL-EFFECT", "W-OCV-CTRL", "W-TBUMP", "W-MULTI", "W-PYAV-LIST", "W-CYC-KIYO", "W-CYC",
+                         "W-KIYO"]
     assert [t for t, _ in rs.EXTRA_TESTS] == ["W-AUTO"]
     assert set(rs.OPTIONAL_TESTS) <= set(order) | {t for t, _ in rs.EXTRA_TESTS}
     assert "W-KIYO" in rs.BACKGROUND_TESTS

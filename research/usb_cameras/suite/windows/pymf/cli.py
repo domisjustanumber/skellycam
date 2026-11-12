@@ -1,6 +1,6 @@
 # /// script
-# requires-python = ">=3.12"
-# dependencies = ["comtypes>=1.4"]
+# requires-python = "==3.12.13"
+# dependencies = ["comtypes==1.5.0"]
 # ///
 """pymf: pure-Python Media Foundation probe (comtypes + ctypes, no compiled extension). CLI mirroring wincam.exe.
 
@@ -13,6 +13,10 @@
              --out-dir D [--save none|all|every:K] [--stop-file F]
     cycle    --device X --width W --height H --fps F --cycles K --frames N --timeout-ms T --out D
              [--alt-width W2 --alt-height H2 --alt-fps F2] [--gap-ms G]
+    multi    --spec FILE --timeout-ms T [--out-dir D] [--seconds S]
+             several cameras streaming in THIS process, one async source reader per camera on its own thread;
+             per-frame records to <D>/<label>/frames.bin, a few sample JPEGs, scheduled control sets while
+             streaming, optional second-opener commands (in-use test); spec and threading in pymf/multi.py
     common:  --watchdog-ms MS (default derived from the request, as wincam), --api mf (accepted; MF only)
     offline: --url FILE_URL instead of --device (formats / capture / controls on a local media file; opens no
              camera; used by tests/test_pymf_offline.py)
@@ -20,8 +24,8 @@
 JSON field names follow wincam (README "Subcommands"): same header (tool "pymf"), same per-step records, same
 frames.jsonl / cycles.jsonl / summary.json fields. Exit codes: 0 ok, 2 usage, 3 device not found, 4 camera
 failure, 5 timeout (a bounded call, unreleasable, or the watchdog). Not ported: DirectShow (``--api ds``),
-``activity``, ``formats --hold-ms``, ``capture --schedule / --controls-before``, and cycle's
-IMFSensorActivityMonitor (``in_use_by_other`` is always null).
+``activity``, ``formats --hold-ms``, ``capture --schedule / --controls-before`` (``multi`` has a control schedule),
+and cycle's IMFSensorActivityMonitor (``in_use_by_other`` is always null).
 
 Safety (plan 6.1): never restarts / disables a device, never writes the registry, never touches a driver. Every
 blocking camera call is bounded (pymf/bounded.py); the watchdog prints what it has and exits 5; a process with an
@@ -47,6 +51,7 @@ if str(HERE.parent) not in sys.path:
 from pymf import VERSION, bounded  # noqa: E402
 from pymf import com as C  # noqa: E402
 from pymf import mf  # noqa: E402
+from pymf import multi  # noqa: E402
 from pymf import parse as P  # noqa: E402
 
 
@@ -574,6 +579,32 @@ def cmd_cycle(a) -> int:
     return emit(j, out_rc)
 
 
+# ============================================================================================================ multi
+def cmd_multi(a) -> int:
+    """Several cameras in one process (pymf/multi.py). summary.json in the out dir doubles as the watchdog's partial
+    file; stdout carries the same JSON."""
+    j = header("multi")
+    try:
+        spec = json.loads(Path(a.spec).read_text(encoding="utf-8"))
+    except (OSError, ValueError) as e:
+        j["error"] = {"class": "usage", "reason": f"cannot read --spec: {e}"}
+        return emit(j, 2)
+    if a.seconds:
+        spec["seconds"] = a.seconds
+    od = Path(a.out_dir or spec.get("out_dir") or "")
+    if not str(od) or str(od) == ".":
+        j["error"] = {"class": "usage", "reason": "--out-dir (or spec out_dir) required"}
+        return emit(j, 2)
+    od.mkdir(parents=True, exist_ok=True)
+    G.partial_file = str(od / "summary.json")
+    set_partial(stage="multi", cameras={})
+    body, rc = multi.run(spec, od, G.timeout_ms)
+    j.update(body)
+    copy = dict(j, utc_finished=utc_now(), exit_code=rc, abandoned_threads=bounded.abandoned_threads())
+    write_text(G.partial_file, dumps(copy) + "\n")
+    return emit(j, rc)
+
+
 # ============================================================================================================ main
 class _Parser(argparse.ArgumentParser):
     def error(self, message):  # noqa: D102 - argparse hook
@@ -582,7 +613,7 @@ class _Parser(argparse.ArgumentParser):
 
 def build_parser() -> argparse.ArgumentParser:
     ap = _Parser(prog="pymf", description=__doc__.split("\n")[0], add_help=True)
-    ap.add_argument("subcommand", choices=["list", "formats", "controls", "capture", "cycle"])
+    ap.add_argument("subcommand", choices=["list", "formats", "controls", "capture", "cycle", "multi"])
     ap.add_argument("--api", default="mf", choices=["mf"])
     ap.add_argument("--device", default="")
     ap.add_argument("--url", default="", help="offline self-test: a local media file URL instead of --device")
@@ -607,6 +638,7 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--alt-height", dest="alt_height", type=int, default=0)
     ap.add_argument("--alt-fps", dest="alt_fps", type=float, default=0.0)
     ap.add_argument("--gap-ms", dest="gap_ms", type=int, default=0)
+    ap.add_argument("--spec", default="", help="multi: JSON session spec (pymf/multi.py)")
     return ap
 
 
@@ -620,6 +652,12 @@ def usage_error(msg: str) -> int:
 def validate(a) -> str | None:
     """wincam main()'s argument checks. Returns the usage error text or None."""
     sc = a.subcommand
+    if sc == "multi":
+        if not a.spec:
+            return "--spec FILE required"
+        if a.timeout_ms is None:
+            return "--timeout-ms required"
+        return None
     if sc != "list" and not (a.device or a.url):
         return "--device required"
     if a.set:
@@ -687,6 +725,16 @@ def main(argv: list[str] | None = None) -> int:
     if sc == "controls":
         start_watchdog(wd or G.timeout_ms * 12 + 60000)
         return cmd_controls(a)
+    if sc == "multi":
+        try:
+            spec = json.loads(Path(a.spec).read_text(encoding="utf-8"))
+            if a.seconds:
+                spec["seconds"] = a.seconds
+            wd_auto = multi.watchdog_ms(spec, G.timeout_ms)
+        except (OSError, ValueError, TypeError):
+            wd_auto = G.timeout_ms * 20.0 + 60000
+        start_watchdog(wd or wd_auto)
+        return cmd_multi(a)
     if sc == "capture":
         dur_ms = (a.frames / a.fps * 1000.0 * 3) if a.frames else a.seconds * 1000.0
         start_watchdog(wd or dur_ms + G.timeout_ms * 12.0 + 30000)

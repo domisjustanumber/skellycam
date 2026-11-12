@@ -109,15 +109,16 @@ from common import results  # noqa: E402
 #: poller for the whole suite.
 #: 2026-11-11 (overnight run for the phase-1 path, CAPTURE_AND_RECORDING_PLAN rev 3.3): W-AUTO leaves the order
 #: (auto-mode recovery is no longer a product test; W-NODRIFT replaces it); the product-path tests (W-PYMF-ALL,
-#: W-TBUMP, W-NODRIFT, W-GAIN) run right after W-PYMF while the Kiyo Pro is most likely alive; W-CYC-KIYO (~1,360
+#: W-NODRIFT, W-GAIN) run right after W-PYMF; W-TBUMP after W-OCV-CTRL (skellycam leaves exposure at manual -7,
+#: which would change the start values W-NODRIFT/W-GAIN lock) while the Kiyo Pro is most likely alive; W-CYC-KIYO (~1,360
 #: Kiyo Pro stream starts, the test most likely to end in a wedge) moves to second-last, after W-MULTI and
 #: W-PYAV-LIST, so a wedge there costs only the other cameras' W-CYC nothing. Under the dead rule (suitectx) a dead
 #: Kiyo Pro is never touched again; W-PYAV-LIST is skipped whole when a Kiyo Pro is dead (listing would reach it).
 TESTS = [("W-ENV", "w_env"), ("W-POLICY", "w_policy"), ("W-TOPO", "w_topo"), ("W-ID", "w_id"),
          ("W-FMT", "w_fmt"), ("W-FMT-NOGRAB", "w_fmt_nograb"), ("W-CTRL-LIST", "w_ctrl_list"),
          ("W-MJPEG", "w_mjpeg"), ("W-RAW", "w_raw"), ("W-TS", "w_ts"), ("W-PYMF", "w_pymf"),
-         ("W-PYMF-ALL", "w_pymf_all"), ("W-TBUMP", "w_tbump"), ("W-NODRIFT", "w_nodrift"), ("W-GAIN", "w_gain"),
-         ("W-CTRL-EFFECT", "w_ctrl_effect"), ("W-OCV-CTRL", "w_ocv_ctrl"), ("W-MULTI", "w_multi"),
+         ("W-PYMF-ALL", "w_pymf_all"), ("W-NODRIFT", "w_nodrift"), ("W-GAIN", "w_gain"),
+         ("W-CTRL-EFFECT", "w_ctrl_effect"), ("W-OCV-CTRL", "w_ocv_ctrl"), ("W-TBUMP", "w_tbump"), ("W-MULTI", "w_multi"),
          ("W-PYAV-LIST", "w_pyav_list"), ("W-CYC-KIYO", "w_cyc_kiyo"), ("W-CYC", "w_cyc"), ("W-KIYO", "w_kiyo")]
 #: not in the default order any more; still runnable with --only W-AUTO
 EXTRA_TESTS = [("W-AUTO", "w_auto")]
@@ -147,13 +148,13 @@ KIYO_EARLY = ("W-MJPEG", "W-RAW", "W-TS", "W-PYMF", "W-PYMF-ALL", "W-TBUMP", "W-
               "W-CTRL-EFFECT", "W-OCV-CTRL")
 #: the stream-start hypothesis (docs/windows_results_20261106.md section 8: ~270 Kiyo stream starts preceded the R2
 #: onset): --plan warns when a Kiyo control test starts after more than KIYO_STARTS_WARN projected Kiyo stream starts
-KIYO_STARTS_WARN = 250
+KIYO_STARTS_WARN = 400       # 2026-11-11: raised from 250 (the 11-06 hypothesis); working rate ~1 wedge / 1,000 starts
 KIYO_CONTROL_TESTS = ("W-NODRIFT", "W-GAIN", "W-CTRL-EFFECT", "W-OCV-CTRL")
 #: approximate Kiyo stream starts per test in a full run (each capture, open/close cycle or OpenCV open that streams
 #: the Kiyo counts one; listing tests stream nothing). W-PYMF and W-CYC-KIYO are computed from the run's settings
 #: (kiyo_stream_starts); a quick run starts fewer, so the projection then over-counts
 KIYO_STARTS_FULL = {"W-MJPEG": 8, "W-RAW": 22, "W-TS": 3, "W-CTRL-EFFECT": 30, "W-AUTO": 16, "W-OCV-CTRL": 16,
-                    "W-MULTI": 20, "W-PYAV-LIST": 2, "W-PYMF-ALL": 4, "W-TBUMP": 2, "W-NODRIFT": 5, "W-GAIN": 60}
+                    "W-MULTI": 20, "W-PYAV-LIST": 2, "W-PYMF-ALL": 4, "W-TBUMP": 2, "W-NODRIFT": 5, "W-GAIN": 20}
 #: per-camera tests that loop over ctx.cameras (Kiyo first): the Kiyo's work ends after ~1/n of the test. Every other
 #: camera-opening test is counted as Kiyo work for its whole length (W-RAW, W-CYC-KIYO, W-MULTI ...)
 KIYO_SHARE_FIRST = ("W-FMT", "W-CTRL-LIST", "W-MJPEG", "W-TS", "W-PYMF", "W-NODRIFT", "W-GAIN", "W-CTRL-EFFECT",
@@ -163,7 +164,7 @@ QUICK = {"cycles": 4, "proc_cycles": 2, "frames": 10, "mjpeg_seconds": 1.5, "rep
 FULL = {"cycles": 50, "proc_cycles": 15, "frames": 30, "mjpeg_seconds": 3.0, "repeats": 20,
         "cyc_profile": "reliability"}
 
-GOAL_ORDER = ["G-ID", "G-TS", "G-MJPEG", "G-RAW", "G-CTRL", "G-CTRL-AUTO", "reliability", "pymf_equivalence", "G-BW",
+GOAL_ORDER = ["G-ID", "G-TS", "G-MJPEG", "G-RAW", "G-CTRL", "G-CTRL-NODRIFT", "G-CTRL-AUTO", "reliability", "pymf_equivalence", "G-BW",
               "fmt_equivalence", "fmt_nograb", "list_touch", "kiyo"]
 SYMBOL = {"yes": "yes", "partial": "partial", "no": "**no**", "untested": "untested"}
 

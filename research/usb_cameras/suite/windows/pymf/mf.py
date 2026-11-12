@@ -666,6 +666,7 @@ class StreamState:
         self.flag_counts: dict[str, int] = {}
         self.issuing = 0
         self.callback_ns_total = 0      # time spent inside OnReadSample (Python), for the CPU comparison
+        self.sample_fn = None           # per-sample handler (st, arr, flags, ts, sample); None = process_sample
 
     def set_err(self, hr: int, flags: int = 0) -> None:
         if self.err is None:
@@ -717,7 +718,7 @@ class ReaderCallback(COMObject):
                 if psample:
                     s = C.borrow(psample, C.IMFSample)
                     try:
-                        process_sample(st, arr, flags, ts, s)
+                        (st.sample_fn or process_sample)(st, arr, flags, ts, s)
                     finally:
                         C.release(s)
                 else:

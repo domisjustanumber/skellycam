@@ -11,7 +11,9 @@ Modules:
                 docstring), GUIDs, PROPVARIANT / KS structs, MF / ole32 / kernel32 entry points
     bounded.py  bounded calls (worker thread + deadline), wincam's timed()
     mf.py       enumerate / activate / formats / controls / async capture session / safe close order
-    cli.py      PEP 723 entry point: list, formats, controls, capture, cycle (JSON close to wincam's)
+    cli.py      PEP 723 entry point: list, formats, controls, capture, cycle, multi (JSON close to wincam's)
+    multi.py    several cameras in one process (one async reader + thread per camera; W-PYMF-ALL)
+    framerec.py pure: multi's per-frame record file (frames.bin), fault kinds, control value rule, watchdog
     sdk_10.0.22621_reference.json   vtable orders and GUIDs extracted from the SDK 10.0.22621.0 headers
 
 Run:
@@ -21,4 +23,4 @@ Run:
 
 Every camera-opening command must run under tools/camlock.py (the suite's ctx.camcmd does this).
 """
-VERSION = "pymf 0.2 (2026-11-09)"
+VERSION = "pymf 0.3 (2026-11-11)"
