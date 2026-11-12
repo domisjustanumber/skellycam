@@ -5,7 +5,7 @@ For a fresh Claude session that starts and watches tonight's run, and for the mo
 **Context:** `research/HANDOFF_20261111_capture_recording.md` §0 and `research/CAPTURE_AND_RECORDING_PLAN.md` (rev 3.3). Phase 1 is choosing and building skellycam's new capture and recording path. Tonight's run gathers the hardware evidence for the next decisions (§1). No product code is changed by this run.
 
 **Status when written:** ready to run, written 2026-11-11 ~20:00 by the session that built it. **Not started.** Blockers and notes:
-- **The C922 was down:** problem code 10 (USB Composite Device, Status Error) since it arrived at 09:11 on 11-11; Dom was asked to replug it. Check it's back (§4 pre-flight) before starting.
+- **The C922 was down** (problem code 10 since 09:11). **Dom replugged it into the same port at 19:57;** it read OK (problem code 0) on the same Genesys hub, so the HS13 topology is unchanged. The 19:58 pre-flight found all four cameras (Kiyo Pro SS; C930e, generic, C922 HS) with a total estimate of **9h31m**, exit 3 (the old age check: ignore it). Re-check in your own pre-flight; the C922 was never streamed after the replug.
 - **Every new test was smoke-tested on the real cameras** (quick profile, 3 cameras, outputs in the session scratchpad, not in the repo). Results are in §7. Offline tests: 324 passed.
 - **Camera controls at hand-off:** the smoke runs left auto-exposure off on three cameras (skellycam's default MANUAL −7 during W-TBUMP). It was put back to **auto** at ~19:55 on the Kiyo Pro, C930e and generic. Read back: exposure flags `auto`; focus and WB were already auto (the generic has fixed focus and manual WB 4500, as found on 11-11). W-TBUMP now restores as-found controls after its recordings.
 
@@ -62,7 +62,7 @@ uv run --python 3.12 --script research/usb_cameras/suite/windows/run_suite.py --
 Check in its output:
 - **all four cameras** are listed: the Kiyo Pro (`1532:0e05`) at `speed SS`, the C930e, the C922 and the generic `4c4a:4a55`. If the C922 is missing, run a read-only check, `Get-PnpDevice -PresentOnly | ? InstanceId -match 'VID_046D&PID_085C'`. On 2026-11-11 it showed **problem code 10** (USB Composite Device, Status Error) and needed a physical replug: ask Dom; never restart it from software. Don't start a run without the C922 unless Dom says so.
 - the order is W-ENV … W-PYMF, W-PYMF-ALL, W-NODRIFT, W-GAIN, W-CTRL-EFFECT, W-OCV-CTRL, W-TBUMP, W-MULTI, W-PYAV-LIST, W-CYC-KIYO, W-CYC; W-AUTO is not in it.
-- the total estimate: **7h27m with 3 cameras** on 2026-11-11 19:38, so expect **≈ 9 h with 4**. On 11-06 tests ran at 75–80 % of their estimates.
+- the total estimate: **9h31m with 4 cameras** (2026-11-11 19:58 pre-flight). On 11-06 tests ran at 75–80 % of their estimates.
 - Kiyo Pro "wedge window" age warnings come from the old 11-06 theory: **ignore them.** Exit code 3, if it appears, is that age check: ignore it too.
 
 **Then launch the run** with the **PowerShell tool, `run_in_background: true`**. Keep this Claude Code session open all night: the background command belongs to it.
