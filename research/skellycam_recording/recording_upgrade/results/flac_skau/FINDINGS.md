@@ -95,8 +95,39 @@ The FLAC STREAMINFO patch from `audio_skellycam` §2.2 isn't needed on this path
 ## 6. Open
 - **S9, closed (Dom, 2026-11-12):** delete the native `.flac` once the `.mka`'s frame CRCs and decoded sample count verify.
 - Real-microphone FLAC sizes (synthetic ≈ 172 MB/h mono; `audio_skellycam` §1.3) [NV].
-- `TerminateProcess` mid-write for the live packet index [NV] (expected the same, §2).
+- **`TerminateProcess` mid-write, closed (2026-11-12):** see §7.
 - Linux/macOS [NV].
+
+## 7. External `TerminateProcess` at a random time (F4, `terminate_kill.json`)
+Added 2026-11-12 (plan step 4, before the crash-recovery rules of the `skellyfileformat` spec are drafted). Script: `scripts/flac_skau/terminate_kill.py`. Same machine, venv and versions as above (PyAV 19.0.2, Python 3.13.13).
+
+**Method.** F2 killed the writer from inside (`os._exit`) at chosen points. Here a parent kills the writer from outside with `Popen.kill()` (`TerminateProcess` on Windows) after a random delay, so the kill can land anywhere, including inside a write. For each 1,024-sample block the child writes, in this order:
+1. a 48 B timing record to `.skau.live` (block, first sample, two clocks, record CRC);
+2. the FLAC frame (`frame_size=1024`, `flush_packets=1`);
+3. a 32 B packet record to `.pkt.live` (offset, size, first sample, frame CRC-32, record CRC-32).
+
+Each live file is flushed after each record; there is no `fsync`. Two modes:
+- **fast**: no pacing, and the source loops until the kill, so most of the time is spent inside encode, mux and writes; 30 kills after 0.07–1.41 s (3,297–55,542 frames);
+- **realtime**: blocks paced at 48 kHz, as a recorder runs; 10 kills after 0.68–4.76 s (33–225 frames).
+
+Every kill landed (exit code ≠ 0 in 40/40) [M].
+
+| Check | fast (30) | realtime (10) |
+|---|---|---|
+| Torn bytes at the end of `.pkt.live` / `.skau.live` | 0 / 0 in 30/30 | 0 / 0 in 10/10 |
+| Packet or timing records whose own CRC fails | 0 | 0 |
+| Packet records whose frame CRC does not match the FLAC bytes | 0 | 0 |
+| Timing records minus packet records | 0 or 1 (1 in 28/30, which includes the 4 below) | 0 in 10/10 |
+| FLAC frames on disk with no packet record | 0 or 1 (1 in 4/30; the extra bytes, 1,134–1,154, are one whole frame) | 0 in 10/10 |
+| Partial FLAC frame at the end of the file | none (demux errors 0) | none |
+| Recovery: stream copy into `.mka`, decoded audio an exact prefix of the source | 30/30; samples = indexed, or indexed + 1,024 | 10/10; samples = indexed |
+
+**What this means for the spec** [I]:
+- A reader recovering a killed recording must accept **one timing record with no packet record** (the kill landed between the timing write and the FLAC write) and **one complete FLAC frame with no packet record** (the kill landed between the FLAC write and the packet write). It parses at most one frame after the last packet record, as §2 found.
+- Each record was written with one buffered write followed by a flush, and no torn record appeared in 40 kills. The spec should still require readers to drop a trailing partial record and any record whose CRC fails: power loss and OS crashes keep less than `TerminateProcess` does, and they were not tested [NV].
+- In real-time mode the writer is idle between blocks, so the kill almost always lands outside a write (0 extras in 10/10).
+
+**Limits** [NV]: one Windows machine; a Python writer, not skellycam's audio process; synthetic audio; no power-loss or OS-crash test; no Linux or macOS run.
 
 ## 7. Files
 - `scripts/flac_skau/flac_skau.py`: F1–F3; writes `electron_cfg.json`. Run as `python -I flac_skau.py <outdir>` with the `skellycam-phase1` venv.
