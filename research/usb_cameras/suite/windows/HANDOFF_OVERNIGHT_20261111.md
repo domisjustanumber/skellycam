@@ -105,7 +105,7 @@ uv run --python 3.12 --script research/usb_cameras/suite/windows/run_suite.py --
    - **W-PYMF-ALL:** per-camera fps, gaps, jitter, CPU, refusals; control-set latency; in-use error class. Does one pymf process carry all four cameras at 720p30 without drops?
    - **W-CYC / W-CYC-KIYO:** per camera × API (MF in-process, DS-ffmpeg in-process, MF new-process): failures, Wilson lower bound, ≥ 99 % yes/no.
    - **W-NODRIFT:** any drift, and which cameras needed re-apply after start (expect the C930e).
-   - **W-GAIN:** the reference cap per camera, the §5.2a g_lim over 10 runs (agreement), monotonic ρ, bytes vs gain, the delivered-fps ceiling per exposure step at 30/60 fps. Recommend thresholds for §5.2a.
+   - **W-GAIN** (read the 60 fps caveat in §7 first): the reference cap per camera, the §5.2a g_lim over 10 runs (agreement), monotonic ρ, bytes vs gain, the delivered-fps ceiling per exposure step at 30/60 fps. Recommend thresholds for §5.2a.
    - **W-TBUMP:** baseline vs HEAD (fps, frame counts, errors, sizes).
    - **The Kiyo Pro:** alive all night, or dead at what time, in which test, and after how many stream starts (from the dead record). No diagnosis.
 4. Update `research/HANDOFF_20261111_capture_recording.md` §0, and the plan if a decision changed.
@@ -135,6 +135,14 @@ All in `research/usb_cameras/suite/windows/` on `dom/research` (local commits; n
 - **W-TBUMP** (`tests/w_tbump.py`, `helpers/skellycam_record.py`): skellycam records 60 s through its HTTP API, at the baseline worktree `skellycam-tbump-baseline` (commit 2992e64f9: Py 3.12, OpenCV 4.12, numpy 2.2, PyAV 18) and at phase-1 HEAD (Py 3.13, OpenCV 5.0, numpy 2.5, PyAV 19). Detection doesn't open cameras (property bags only). It snapshots and restores the as-found controls.
   - Smoke (10 s): both ok on 3 cameras, equal frame counts, inter-camera spread < 1 ms, lockstep at 25.8 fps (the generic camera's 25.7 sets it), clean shutdown.
   - **Note:** skellycam sends its startup telemetry ping to FreeMoCap's server (dev builds use a placeholder secret, which the server rejects); it carries the install's telemetry id. That's the app's normal behaviour; Dom wasn't asked to opt out.
+
+**C922 smoke after its replug** (20:00–20:06, quick profile, the C922 alone; every test ran, 0 errors, as-found controls restored):
+- W-PYMF-ALL: all **yes**. pymf delivered **1,802 frames in 60 s at 720p30 and 1,725 in 30 s at 720p60 (≈ 57.5 fps)**.
+- W-NODRIFT: **no** only on R/B ratio, −3.0 % and −3.4 % against a provisional ±3 % limit. Exposure, gain, focus, WB and luma held; 0 drops. Judge the threshold on tonight's 10-min soak.
+- W-GAIN: T4 ceiling at 30 fps is −5, as expected; the forced rule gave g_lim 27 (30 fps) and 18 (60 fps). The as-written rule needed no gain in the night scene.
+- W-TBUMP: both recordings ok. Rated partial for one new phase-1 log line at shutdown ("global_kill_flag is set (no worker death detected) — triggering parent shutdown"). It looks like a changed shutdown message, not a fault, but that isn't verified: check it in the morning.
+
+**Caveat for the morning: 60 fps through wincam's MF path is not trustworthy on the C922 (and probably the Kiyo Pro).** wincam negotiated MJPG 1280×720 at 60/1 but delivered **30–35 fps**, whatever the exposure: as found with AE on 35.15; manual −7 29.75; manual −9 (1.95 ms) 29.66 [M, 20:08, 5 s each]. pymf (W-PYMF-ALL) delivered ≈ 57.5 from the same mode, and on 11-10 W-MJPEG got 122 MF frames against 180 DirectShow frames in 3 s. So W-GAIN's 60 fps T4 "ceiling" and any wincam 60 fps rate measure wincam, not the camera. Compare with pymf's rates before concluding anything about exposure at 60 fps. The Kiyo Pro's "60 fps" T4 numbers in the first smoke run matched its 30 fps ones exactly, which fits the same cause [I].
 
 **Tool**
 - `research/usb_cameras/tools/redact_run.py`: privacy redaction for results folders (§6).
