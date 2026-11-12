@@ -275,7 +275,7 @@ Source: `per_mode.*.t4.steps[*].fps` [M]. Measured through wincam's MF path.
 
 ### 4.4 Recommended §5.2a thresholds [I]
 
-These are for Dom to decide; the plan is not changed.
+These were for Dom to decide. **Decided 2026-11-12 (D14):** the matched-brightness method of §4.6 with D ≥ 0.80 and ρ ≤ 1.5, written up in `exposure_gain_tradeoff.md` §5.2b. The list below is kept as the reasoning.
 1. **Measure the ceiling. Don't compute it.** Step exposure down until delivered fps ≥ 0.99 × nominal. The exposure step sets exposure and does not keep the start value: the Kiyo Pro starts past its ceiling.
 2. **Drop "rho rises with gain" from the rule and from the test's pass criterion.** Keep rho ≤ 1.5 × rho(g_min) only as a guard. It never bound on the C930e or C922 (0.46–0.88), but would on the Kiyo Pro (×3.4). Test D for monotonic decrease instead.
 3. **D ≥ 0.85 × D(g_min) is the limit that binds, and it repeats** (spread 2–3 gain units over 10 runs). But it allows only about 20–30 of 255 (under 1 stop). **D ≥ 0.70** would allow about 64 (D ratio at −9/64: C922 0.715, C930e 0.72), about 1.4 stops. **Dom's choice:** how much fine detail to trade for exposure time. At maximum gain the C922 loses 59 % of D at matched brightness.

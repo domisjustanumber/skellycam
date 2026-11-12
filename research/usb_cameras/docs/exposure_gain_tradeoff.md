@@ -1,6 +1,8 @@
 # Exposure and gain for motion capture: how the exposure step should choose
 
 Written 2026-11-11 for plan package 1.3 and TP1 (`research/CAPTURE_AND_RECORDING_PLAN.md` §1, §3.2, §3.3).
+**Update 2026-11-12 (Dom, plan rev 3.4, D14):** the exposure step now looks for the **shortest exposure** whose matched-brightness image keeps D ≥ 0.80 × and ρ ≤ 1.5 × the reference, plus corner jitter when the board is in view (§5.2b). It replaces the §5.2a gain limit, and it caches what it learns per device for fast warm starts. Evidence: [windows_results_20261112.md](windows_results_20261112.md) §4.5–4.6.
+
 **Update, later on 2026-11-11 (Dom's decisions, plan rev 3.3 D9–D12):** no per-model gain caps. The gain limit is measured on the live image in the exposure step (new §5.2a). White balance, zoom, pan, tilt and the image controls are locked at the camera's start values; power-line frequency follows local mains; AE priority is 0. The provisional caps below (128 / 230) are kept only as the evidence that motivated the rule.
 Desk research plus re-analysis of saved result files. **No camera was opened and no setting was changed.**
 
@@ -242,6 +244,9 @@ The other direction, blur per setting at 3 m [arith]:
 7. **Optional common exposure:** use the same exposure on all cameras (the shortest chosen) and let gain differ, so every view has the same blur [I]. Cost: more gain on the brighter-exposed cameras.
 
 ### 5.2a Measuring the gain limit on the live image (D9)
+
+> **Superseded on 2026-11-12 by §5.2b (plan D14).** The 11-11/12 hardware run showed two problems with this rule. ρ *falls* with gain on the C922 and C930e, so the "ρ rises" assumption is wrong. And comparing D at a fixed exposure penalises brightness as well as gain ([windows_results_20261112.md](windows_results_20261112.md) §4.5). This section is kept for the record. §5.2 steps 4–6 are replaced by §5.2b as well.
+
 Dom, 2026-11-11: no list of gain caps per camera model; the gain noise is measured as part of the exposure step. Proposed method [I unless marked]:
 
 - **What ideal gain does.** At a fixed exposure, analog gain scales signal and noise together, so for the same scene pixels the relative noise σ/μ stays about the same, or falls slightly where read noise after the gain stage matters (§2.1–2.2) [S, EMVA 1288]. If σ/μ for the same pixels **rises** as gain goes up, the extra comes from digital gain, quantization or the camera's processing. That's the cost to stop at.
@@ -262,10 +267,100 @@ Dom, 2026-11-11: no list of gain caps per camera model; the gain noise is measur
 - **Cost:** 8 frames + 200 ms ≈ 0.47 s per probe at 30 fps, 0.33 s at 60 fps; about 8 gain probes ≈ 4 s per camera, all cameras in parallel. The whole step goes from ≈ 4–5 s to ≈ 8–9 s [arith].
 - **Record** g_lim, ρ(g_min), ρ(g_lim), the D ratio, the gain response and any flag with the other exposure-step outputs. Each run measures afresh; nothing is looked up by model.
 
+### 5.2b Shortest exposure at matched brightness (D14, Dom 2026-11-12)
+
+**Goal (Dom):** the shortest exposure time that adds the least noise and softness. This replaces §5.2 steps 4–6 and §5.2a. Steps 1–3 of §5.2 (lock auto modes, D10–D12 values, the frame-rate ceiling) are unchanged. D9 still holds: no per-model table; every decision is measured on the live image.
+
+**Evidence** [M] ([windows_results_20261112.md](windows_results_20261112.md) §4.5, `W-GAIN.json`). At matched brightness, trading exposure for gain costs each camera something different:
+
+| camera | what gain costs | at 2 ms with matched brightness |
+|---|---|---|
+| C930e | **noise** | ρ ×2.3, D flat |
+| C922 | mostly **softness** (its processing smooths) | D ×0.56, ρ ≤ ×1.5 |
+
+So the score needs both D and ρ, and it must be taken at matched brightness.
+
+#### Method, per camera
+
+All cameras run at once in one pymf process, on a running stream, after the first frame.
+
+1. **Ceiling** v_max: the longest step that keeps delivered fps ≥ 0.99 × nominal, **measured**. Start at ⌊log2(1/fps)⌋ and step down until it passes (≈ 1.5 s of frames per check). On 11-11/12 [M]: Kiyo Pro −7, C922 and C930e −5 at 30 fps. If the user set a motion preset (§5.1), v_max = min(that ceiling, the motion ceiling): the motion preset is a hard limit.
+2. **Free speed first:** at gain minimum, step down from v_max while the target ROI still reaches the target luma (§5.1 band). The shortest such step is the reference e0.
+   - If v_max at gain minimum is already too dark, the camera is **light-limited**. Use the §5.2 step-6 warning (how many stops are missing) before any gain is used, and continue the search from v_max.
+3. **Reference at e0, gain minimum:** luma L_ref, detail D_ref (§5.2a definition: mean Sobel gradient on the textured mask ÷ its luma, on the probe's frame mean) and noise ρ_ref (median per-pixel σ/μ on the flat mask). With the ChArUco board in view, also corner jitter (px RMS over 60 frames) and the corner count.
+4. **Step down one exposure step at a time.** Set the predicted gain, wait until luma is stable, correct gain until luma = L_ref ± 3 %, then score D, ρ and the gain headroom on the same 8 frames.
+5. **Accept the step** if all of these hold:
+   - D ≥ **0.80** × D_ref;
+   - ρ ≤ **1.5** × ρ_ref;
+   - gain below maximum;
+   - with the board in view: corner jitter ≤ j_max × reference and no corners lost.
+
+   Thresholds are provisional (Dom, 2026-11-12) until the attended board run sets them (§6). j_max is set by that run as well.
+6. **Stop** at the first failing step, keep the last passing one, and record why it stopped: `quality_D`, `quality_rho`, `gain_range`, `light` or `motion_unverified`.
+7. **Lock and record** exposure, gain, L_ref, the D and ρ ratios, jitter, the reason and the timestamp, with the camera config and the calibration (D10–D12).
+
+**Expected on 11-11/12's data** (provisional thresholds, matched luma about 140) [I from M]:
+- **C922:** stops at −5 (its −6 step has D 0.78), so it is light-limited.
+- **C930e:** about −7 to −8 (ρ ×1.9–2.3 at −9 fails).
+- **Generic:** gain has no effect, so it stays at the shortest step that reaches luma at gain minimum.
+- **Kiyo Pro:** unknown (11-11/12 was inconclusive).
+
+The motion guard, the Kiyo Pro's linear probing and the settling rules below apply throughout.
+
+#### Making it fast
+
+Measured parts [M]:
+- a control set returns in 1.7–5.6 ms, and the image changes 2–5 frames (92–191 ms) later (`W-PYMF-ALL.json` `pymf_streaming_set`);
+- the Kiyo Pro was still settling more than 1 s after a gain set (`W-GAIN` rule probes);
+- 8-frame probes repeated g_lim within 2–3 gain units over 10 runs (`W-GAIN` `forced_runs`);
+- listing formats without opening a camera takes about 0.4 s (`W-FMT-NOGRAB`).
+
+| technique | saves |
+|---|---|
+| all cameras in parallel, one pymf process (mid-stream exposure sets: yes on the Kiyo Pro and C930e; partial on the generic, only where the start was in auto; the C922 untested [M]) | the wall time is the slowest camera's, not the sum |
+| **adaptive settling:** stop waiting once luma changes < 1 % over 3 frames; cap at 1.5 s; cache each camera's settle time | ≈ 150–250 ms per probe on the Logitech cameras instead of a fixed wait; the Kiyo Pro stays slow |
+| score D and ρ on the same 8 frames used for luma | no separate scoring capture |
+| **predict gain** from the camera's luma response (each exposure step needs about 2× luma; read the gain off the luma-vs-gain curve), then one correction | about 2 probes per step instead of about 8 for a binary search |
+| **start near the answer** (from the cache, below): confirm the pair "step e passes, e−1 fails" instead of walking down from e0 | 2 steps checked instead of 3–6 |
+| corner jitter (60 frames) only on that confirming pair | about 4 s instead of 2 s per step |
+| skip gain on cameras where it has no effect (generic) | the whole gain search |
+| skip the ceiling check when cached; watch delivered fps passively during the session and flag a drop | 1.5–4.5 s |
+
+**Time per camera** [arith from the measured parts; to be checked in TP1]:
+
+| situation | Logitech (C922, C930e) | Kiyo Pro |
+|---|---|---|
+| first time seen (cold) | ≈ 6–10 s (+ ≈ 4 s for corner jitter) | ≈ 15–25 s (+ ≈ 4 s) |
+| seen before, same light (warm) | ≈ 0.5 s: apply the cached settings, one 8-frame check | ≈ 2 s |
+| light changed by ≤ 1 stop | ≈ 1–3 s: re-tune gain at the cached exposure, check the neighbouring step | ≈ 4–8 s |
+| scene changed or light changed > 1 stop | ≈ 3–6 s: search seeded from the cache | ≈ 8–15 s |
+
+All cameras run together, so the whole rig takes as long as its slowest camera: about 20–30 s cold with a Kiyo Pro, under 1 s warm without one.
+
+#### What to cache once a camera has been seen
+
+**Key:** the stable camera key (serial where the camera has one, port path otherwise), plus firmware (bcdDevice) and the mode (size, fps, format). Any change in the key means a cold start. The cache is **learned on this machine for this device**, never shipped per model (D9). A cached value only *seeds* the search or skips a measurement that is re-checked passively; the final settings are always verified on the live image.
+
+| cached item | depends on | how it's used | invalidated by |
+|---|---|---|---|
+| formats, control ranges, steps, defaults, which auto flags exist | device + firmware | skip the listing (≈ 0.4 s) | firmware change |
+| exposure ceiling per mode (11-11/12: Kiyo Pro −7 @30) | device + mode | skip the ceiling check | a delivered-fps drop seen during a session |
+| gain effect (none on the generic) | device | skip the gain search | firmware change |
+| luma response: ratio per exposure step and the luma-vs-gain curve (normalised) | device + mode, roughly scene-independent [I] | predict gain: 1 probe + 1 correction | prediction off by > 20 % three times |
+| settle time after an exposure set and after a gain set (max seen + margin) | device | adaptive-settling cap | a timeout |
+| start-up quirks: resets at stream start (C930e: re-apply after the first frame), stall after a re-apply (Kiyo Pro about 300 ms: don't re-apply needlessly), auto-mode readback can't be trusted (generic), non-monotonic gain (Kiyo Pro: probe linearly) | device + firmware | what the step does after start and how it probes | firmware change |
+| quality cost per stop of exposure traded for gain (D and ρ ratios at matched luma) | device + mode, partly scene [I] | predict the stopping step; start there and confirm the pair | the prediction misses by > 1 step |
+| USB alt setting and load per mode (`mode_alt_cache.json`, 1.11) | device + mode | bandwidth check before start | firmware change |
+| **last result:** exposure, gain, L_ref, D_ref, ρ_ref, jitter, the reason, time, plus a **scene fingerprint** (a 32×18 luma thumbnail of the reference frame) | device + scene + light | warm start: apply, check once | thumbnail correlation < 0.9 (scene moved), luma off by > 5 %, or a calibration with different locked values |
+
+**Never cached:** the final luma, D and ρ check on the live image, the D10–D12 start values (read at every start), and anything about a Kiyo Pro that has wedged (the dead rule).
+
+**During a session:** watch delivered fps (a drop means the ceiling is wrong) and median luma (a drift > 5 % means the light changed). Offer a quick re-tune between takes, never during a recording (§5.3).
+
 ### 5.3 How it runs
 - **Once, before the session, with AE off.** It is triggered by the user (like today's RECOMMEND button) and never during recording.
   - The resulting exposure and gain are stored in the camera config.
-  - On every later stream start they are **re-applied** (no new search).
+  - On every later stream start they are **re-applied** (no new search). Since D14 (2026-11-12), a start also runs the one-probe warm check of §5.2b, and re-tunes from the cache only if luma or the scene fingerprint moved.
 - **With the stream running.** The C930e and the generic reset controls at stream start, so the step runs after the first frame.
   - For the C930e, sets made ≥ 1 s after the first frame stick [M] ([W-AUTO.json](../results/windows/Gerald/suite_20261111T040003Z/W-AUTO.json) `c930e_note`).
   - In the MF path, re-applying exposure at the first frame also worked: luma at −7 matched in 3/3 runs [M] (W-CTRL-EFFECT `fixed_controls.exposure.reapplied_at_0ms_ok`).
@@ -309,7 +404,13 @@ All run on the phase-1 MF backend, AE/AF/AWB off, fixed focus, MJPEG at the mode
   - detail: MTF50 from the slanted edge, plus gradient energy on the chart;
   - JPEG bytes (T2).
 - **Dark frames:** lens covered, 64 frames per gain, for dark offset and dark σ (read noise in grey levels).
-- **Checking the in-step rule (D9):** T1's full grid is the reference for §5.2a. The reference cap per camera is the highest gain where, at target luma, σ_t ≤ 2 × σ_t at minimum gain **and** MTF50 ≥ 85 % of the minimum-gain value. Report the cap and the noise-vs-gain curve per camera. Then run the §5.2a measurement on the same scene, 10× per camera: pass if its g_lim lands within one probe step of the reference cap every time, and ρ rises monotonically with gain on the grid. Adjust the 1.5 / 0.85 / 3 % thresholds if not.
+- **Validating §5.2b (D14, 2026-11-12; attended, ChArUco board on its stand, steady light).** Per camera, for every exposure step from the ceiling down, at matched brightness:
+  - record corner jitter (px RMS over 60 frames), corner count, D and ρ;
+  - find which of D and ρ predicts corner jitter on each camera;
+  - set d_min, r_max and j_max where corner jitter starts to rise (provisional 0.80 / 1.5 / –);
+  - time the cold and warm paths and check the cache rules (repeat after moving the board, i.e. a scene change, and after dimming the light by one stop);
+  - run in a brighter scene than 11-11/12, with grid gains between 26 and 64.
+- **Checking the in-step rule (D9; superseded by the item above):** T1's full grid is the reference for §5.2a. The reference cap per camera is the highest gain where, at target luma, σ_t ≤ 2 × σ_t at minimum gain **and** MTF50 ≥ 85 % of the minimum-gain value. Report the cap and the noise-vs-gain curve per camera. Then run the §5.2a measurement on the same scene, 10× per camera: pass if its g_lim lands within one probe step of the reference cap every time, and ρ rises monotonically with gain on the grid. Adjust the 1.5 / 0.85 / 3 % thresholds if not.
 
 **T2. JPEG bytes per frame vs gain (same captures as T1).**
 - Mean, p95 and max bytes per frame per cell. MB/s at 30 and 60 fps.

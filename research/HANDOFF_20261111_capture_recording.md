@@ -11,7 +11,10 @@ Start here in a new session. This covers everything from the 2026-11-11 planning
     - The C922 was refused for USB bandwidth: it shares the HS13 hub with the generic camera, and every API refuses that pair.
   - **Reliability:** MF in-process is 400/400 on the C930e, C922 and generic. MF new-process is 400/400 on the C930e and C922, and 397/400 on the generic (it dropped off the bus once).
   - **D10–D12 lock:** yes on all 4 cameras.
-  - **§5.2a gain rule:** the "rho rises with gain" assumption is wrong; the detail measure D binds at 0.85, which allows only about 20–30 of 255 gain. **Thresholds await Dom** (write-up §4.4).
+  - **§5.2a gain rule:** the "rho rises with gain" assumption is wrong; the detail measure D binds at 0.85, which allows only about 20–30 of 255 gain.
+  - **Decided 2026-11-12 (D14, plan rev 3.4):** the exposure step looks for the shortest exposure at matched brightness that keeps D ≥ 0.80 × and ρ ≤ 1.5 × the reference, plus corner jitter when the board is in view. It caches per device for warm starts (`usb_cameras/docs/exposure_gain_tradeoff.md` §5.2b). The thresholds are provisional until an attended board run (§6 of that doc).
+  - **Topology:** the C922 now has Intel root port HS04 to itself (W-TOPO: every domain fits at 720p30). Streaming all four cameras at once hasn't been run yet.
+  - **Suite:** OpenCV work is off by default (`--with-opencv`), and the dead rule now covers descriptor reads.
   - **Exposure ceiling at 30 fps:** the Kiyo Pro's is −7 (it starts at −6).
   - **T-BUMP untested:** skellycam (baseline *and* HEAD) failed to open the generic camera through OpenCV with all 4 cameras connected. It then failed the whole group with HTTP 500, which is a skellycam bug in its own right. Rerun it with a bandwidth-feasible camera set.
   - **Kiyo Pro:** dead at 00:46 in W-MULTI's DS all-at-once round, plug-in age 379 min, the same step as 11-10. The dead rule held; the suite gaps are in write-up §9.
