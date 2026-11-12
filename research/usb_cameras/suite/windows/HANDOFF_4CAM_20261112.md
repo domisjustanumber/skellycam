@@ -131,7 +131,9 @@ For a fresh Claude session that starts and watches tonight's run, and for the mo
 - **If the runner crashes:** read the traceback first. Restart only the unfinished tests (`--only` the remaining ids), and add `--kiyo-pro-dead <UTC from KIYO_PRO_DEAD_*.json>` if the Kiyo Pro had died.
 - **Ctrl-C (or TaskStop) stops cleanly** and keeps partial results.
 
-## 6. Morning: analyse and write up
+## 6. As soon as the run exits: analyse and write up
+
+Do this straight after the exit notification (Dom, 2026-11-12). Don't wait for the morning or for a prompt. Then stop and leave the result for Dom.
 
 1. **Redact first:** `uv run --python 3.12 --script research/usb_cameras/tools/redact_run.py research/usb_cameras/results/windows/Gerald/suite_<stamp> --apply`.
    - Move any media files it lists to `C:\Users\Dom\Documents\skellycam-raw\` with mirrored paths (`skellycam-raw\research\usb_cameras\results\…`, as the 11-11/12 run did).
@@ -162,3 +164,10 @@ For a fresh Claude session that starts and watches tonight's run, and for the mo
 - **Kiyo Pro cycling (W-CYC-KIYO):** no result since it died before its turn on 11-11/12. It needs a fresh replug and its own night.
 - **Suite gaps** from results 11-12 §9: the dead-rule check before camlock, multi-camera commands not mapped to a camera, stream starts counted per command, the stale W-PYMF cap, W-GAIN's ρ criterion, W-GAIN's 60 fps legs through wincam, W-NODRIFT and the C930e reset, W-ENV patterns, and the stale plug-in age after a re-arrival.
 - **W-GAIN rewrite for D14:** the matched-brightness steps with pymf at 60 fps.
+- **skellycam fails the whole camera group when one camera fails to open** (seen 11-11/12 in W-TBUMP, on `main`/baseline and phase-1 HEAD alike) [C]:
+  - `setup_opencv_camera_loop.py:69-77` sets `ipc.should_continue = False` for the whole group;
+  - `camera_group_manager.py:51-64` tears the group down;
+  - the API then answers HTTP 500 from `validate_camera_configs` (`camera_config.py:380-382`, a `None` config).
+
+  The server itself survives. **Not changed tonight:** T-BUMP compares package versions on today's code, and a behaviour fix in HEAD would muddle that. Fix it as its own phase-1 commit (packages 1.3/1.11): keep the other cameras streaming, and report the failed camera with its reason (bandwidth / in use / not found; pymf gives exact HRESULTs).
+- **OpenCV in tonight's run:** only inside skellycam during W-TBUMP. Both baseline and phase-1 HEAD still capture through OpenCV until package 1.3 (pymf) is built. No suite test uses OpenCV tonight.
