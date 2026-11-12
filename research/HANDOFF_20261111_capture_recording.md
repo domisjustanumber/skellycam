@@ -5,6 +5,8 @@ Start here in a new session. This covers everything from the 2026-11-11 planning
 **Status:** research and planning are done; none of the phase-1 test plans (TP1–TP4) has been run.
 
 ## 0. Update: second session, later on 2026-11-11 (read this first)
+- **Overnight hardware run (11-11/12):** set up and smoke-tested; a fresh session starts it from [`usb_cameras/suite/windows/HANDOFF_OVERNIGHT_20261111.md`](usb_cameras/suite/windows/HANDOFF_OVERNIGHT_20261111.md). Its results answer the 1.3 backend, reliability, controls-lock, gain-rule and package-bump questions. The suite now enforces the Kiyo Pro dead rule. Morning write-up: `usb_cameras/docs/windows_results_20261112.md`.
+- **Pre-existing failures on upstream `main`** (23 tests + 4 errors; `tsc` baseUrl): leave them for now (Dom, 11-11). Local uv is 0.13.7.
 - **Decisions made** (plan rev 3.3, §6 D8–D12; all of §3 below is now resolved):
   - **D8: phase 1 is built on upstream `main`.** freemocap pins skellycam `branch = "main"` (`freemocap/pyproject.toml:43`), not `development-streaming`; the claim in §2 below was wrong.
   - **D9: no per-model gain caps.** The exposure step measures noise against gain on the live image (`usb_cameras/docs/exposure_gain_tradeoff.md` new §5.2a); T1 checks that rule instead of producing a cap table.
