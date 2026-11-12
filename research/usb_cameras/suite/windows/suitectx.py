@@ -819,10 +819,13 @@ def is_streaming_argv(argv: Sequence[Any]) -> bool:
 
 
 def camera_for_argv(cameras: Sequence[dict], argv: Sequence[Any]) -> dict | None:
-    """The one camera whose MF symlink or DS DevicePath occurs in argv; None if none or several match."""
+    """The one camera whose MF symlink, DS DevicePath or PnP instance id occurs in argv; None if none or several
+    match. The instance id (2026-11-12) covers the EP0 descriptor reads (helpers/win_descriptors.py --instance), so
+    the dead rule also keeps GET_DESCRIPTOR requests away from a dead Kiyo Pro."""
     text = "\n".join(str(a) for a in argv).lower()
     hits = [c for c in cameras
-            if any(lk and str(lk).lower() in text for lk in (c.get("mf_symlink"), c.get("ds_path")))]
+            if any(lk and str(lk).lower() in text
+                   for lk in (c.get("mf_symlink"), c.get("ds_path"), c.get("instance_id")))]
     return hits[0] if len(hits) == 1 else None
 
 

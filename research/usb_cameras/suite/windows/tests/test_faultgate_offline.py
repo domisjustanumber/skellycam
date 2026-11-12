@@ -240,6 +240,21 @@ def test_kiyo_pro_dead_rule(tmp_path, monkeypatch):
     json.dumps(rep, default=str)
 
 
+def test_kiyo_pro_dead_rule_covers_descriptor_reads(tmp_path, monkeypatch):
+    """2026-11-12: the EP0 descriptor read (win_descriptors.py --instance <PnP id>) names the camera only by its
+    instance id; the dead rule must refuse it too (W-TOPO / W-FMT / W-CTRL-LIST share that read)."""
+    ctx = _ctx(tmp_path)
+    kiyo = next(c for c in ctx.cameras if c["key"] == "kiyo")
+    kiyo.setdefault("instance_id", "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4")
+    calls = []
+    monkeypatch.setattr(suitectx, "camcmd_run", lambda argv, timeout_s, **kw: calls.append(argv) or _run(GOOD))
+    argv = ["python", "win_descriptors.py", "--instance", kiyo["instance_id"]]
+    assert suitectx.camera_for_argv(ctx.cameras, argv)["key"] == "kiyo"
+    ctx.dead["kiyo"] = {"dead": True, "since_utc": "2026-11-12T05:46:24Z", "name": kiyo.get("name")}
+    r = ctx.camcmd(argv, timeout_s=10, gate=False)
+    assert r["gate_skipped"] and calls == []                       # nothing reached the dead Kiyo Pro
+
+
 def test_kiyo_pro_dead_poller_stops(tmp_path, monkeypatch):
     import w_kiyo
     ctx = _ctx(tmp_path)
