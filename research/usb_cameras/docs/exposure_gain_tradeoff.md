@@ -404,7 +404,7 @@ All run on the phase-1 MF backend, AE/AF/AWB off, fixed focus, MJPEG at the mode
   - detail: MTF50 from the slanted edge, plus gradient energy on the chart;
   - JPEG bytes (T2).
 - **Dark frames:** lens covered, 64 frames per gain, for dark offset and dark σ (read noise in grey levels).
-- **Validating §5.2b (D14, 2026-11-12; attended, ChArUco board on its stand, steady light).** Per camera, for every exposure step from the ceiling down, at matched brightness:
+- **Validating §5.2b (D14, 2026-11-12; attended, ChArUco board on its stand, steady light).** **Open to-do: it needs the new board rig Dom is building (2026-11-12).** Per camera, for every exposure step from the ceiling down, at matched brightness:
   - record corner jitter (px RMS over 60 frames), corner count, D and ρ;
   - find which of D and ρ predicts corner jitter on each camera;
   - set d_min, r_max and j_max where corner jitter starts to rise (provisional 0.80 / 1.5 / –);
