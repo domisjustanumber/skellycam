@@ -286,6 +286,49 @@ These are for Dom to decide; the plan is not changed.
    - with grid gains between 26 and 64;
    - with the 60 fps legs judged through pymf.
 
+### 4.5 What D measures, and a caveat on the rule as written (added 2026-11-12)
+
+**The definitions** [C] (`suite/windows/tests/w_gain.py:400-423`):
+- **D** = mean 3×3 Sobel gradient magnitude over the textured part of the scene (the top 10 % of gradients), measured on the *mean of 64 frames*, divided by that region's mean luma.
+- Averaging 64 frames removes temporal noise, so a falling D means the picture is genuinely softer. Noise itself doesn't lower D.
+- **rho** = median σ/μ per pixel over the flat part of the scene: the temporal noise.
+- **Exposure values** are log2 seconds: −5 = 31.2 ms, −7 = 7.8 ms, −9 = 2.0 ms. At 30 fps the frame period is 33.3 ms.
+
+**What the rule sees: gain at one exposure (−9, 2 ms), relative to gain 0** [M] (`W-GAIN.json per_mode["1280x720_30"].grid.cells`; luma is the flat-mask mean):
+
+| gain | C922 luma (stops) | C922 D | C922 rho | C930e luma (stops) | C930e D | C930e rho |
+|---|---|---|---|---|---|---|
+| 0 | 34 (0) | 1.00 | 1.00 | 32 (0) | 1.00 | 1.00 |
+| 26 | 60 (+0.8) | 0.86 | 0.77 | 61 (+0.9) | 0.84 | 1.01 |
+| 64 | 92 (+1.4) | 0.71 | 0.53 | 94 (+1.6) | 0.72 | 0.82 |
+| 128 | 127 (+1.9) | 0.55 | 0.37 | 130 (+2.0) | 0.58 | 0.60 |
+| 255 | 166 (+2.3) | 0.42 | 0.31 | 168 (+2.4) | 0.45 | 0.49 |
+
+- rho *falls* as gain rises, so the cameras smooth harder at higher gain [I: in-camera noise reduction].
+- What a D threshold allows, at −9:
+
+  | D threshold | max gain | brightness |
+  |---|---|---|
+  | 0.85 | about 26 | +0.8 stop (g_lim measured 20–30) |
+  | 0.70 | about 64 | +1.4–1.6 stops |
+  | 0.55 | about 128 | +2 stops |
+
+**What matters for capture: the same brightness reached with shorter exposure plus gain** [M] (same cells, flat-mask luma 127–152):
+
+| exposure (time) | gain | C922 D (vs 31 ms) | C930e D (vs 31 ms) |
+|---|---|---|---|
+| −5 (31.2 ms) | 0 / 26 | 2.009 (1.00) | 0.950 (1.00), gain 26, 6 % clipped |
+| −6 (15.6 ms) | 26 / 64 | 1.574 (0.78) | 0.924 (0.97) |
+| −7 (7.8 ms) | 64 | 1.255 (0.62) | 1.041 (1.10) |
+| −9 (2.0 ms) | 128 | 1.117 (0.56) | 1.102 (1.16) |
+| −9 (2.0 ms) | 191 | 0.975 (0.49) | 0.963 (1.01) |
+
+- **At matched brightness the C922 loses detail steadily with gain. The C930e loses none** over 4 stops [M].
+- **The rule as written** compares D with gain 0 *at the same exposure*, where the image is darker. So D falls partly because brightness rises through the camera's tone curve, not only because of gain [I]. That is why both cameras show similar fixed-exposure ratios.
+- **Suggested alternative rule** [I]: take the reference at the ceiling exposure with gain 0. For a shorter exposure, raise gain until luma matches the reference, then compare D with the reference. All of this can be measured live in the exposure step.
+- On tonight's data, with a 0.85 limit, that rule would let the C930e go to 2 ms (−9, gain 191) but keep the C922 within about a stop. With a 0.70 limit, the C922 could reach −6 at gain 26.
+- It is still D9 (measured per camera, no cap table), but it no longer penalises brightness. It needs a validation run in a brighter scene.
+
 ## 5. Decision 1.0: the package bump (W-TBUMP, 00:38–00:40)
 
 **Untested.** Neither recording ran [M] (`R/W-TBUMP.json errors`, `verdicts["T-BUMP|recording"]`).
@@ -422,7 +465,8 @@ Source: `R/<TEST>.json` [M].
 8. **W-NODRIFT can't see the C930e reset** when the locked values equal the reset values (§3).
 9. **W-ENV's process patterns miss `msedgewebview2`** (`w_env.py:54`).
 10. **Fault records use a stale plug-in age** after an unexplained re-arrival (§2).
-11. **Time:** the run took 54 % of its estimate (5 h 10 min vs 9 h 31 min). Most of the difference is the Kiyo Pro's skipped work [I].
+11. **Descriptor reads bypassed the dead rule (fixed 2026-11-12)** [C]. `win_descriptors.py --instance <PnP id>` names the camera only by its instance id, which `camera_for_argv` didn't match. A W-TOPO run with `--kiyo-pro-dead` would therefore still have sent GET_DESCRIPTOR requests to a dead Kiyo Pro. It didn't happen tonight, because W-TOPO ran before the death. Fix: the instance id is now matched too (`suitectx.camera_for_argv`, offline test `test_kiyo_pro_dead_rule_covers_descriptor_reads`).
+12. **Time:** the run took 54 % of its estimate (5 h 10 min vs 9 h 31 min). Most of the difference is the Kiyo Pro's skipped work [I].
 
 ## 10. What changes, and what's still open
 
@@ -441,3 +485,81 @@ Source: `R/<TEST>.json` [M].
 - whether skipping the re-apply removes the Kiyo Pro's 300 ms stall [NV].
 
 **Not runnable unattended:** focus F1–F11, T3, T5, TP2–TP4 (unchanged from the handoff).
+
+## 11. Moving cameras so all four stream at 720p30 (added 2026-11-12)
+
+Dom wants all four cameras streaming together. Evidence from `R/W-TOPO.json` (`measurements.domains`, `free_ports`, `scenarios`), `R/W-TOPO/snapshot.json`, `R/mode_alt_cache.json`, `R/W-MULTI.json` and [bandwidth_domain_model.md](../results/agent_reports/plan_20261106/bandwidth_domain_model.md).
+
+### 11.1 Where the cameras are now
+
+[M] snapshot `devices[*].root_port_id`, `container_id`.
+
+| Camera | Controller and port | Bandwidth domain | Shares it with |
+|---|---|---|---|
+| Kiyo Pro | Thunderbolt xHCI (8086:1138), port 4, behind a Genesys USB 3 hub chain | SuperSpeed, root port 4 | nothing |
+| C930e | Intel xHCI (8086:7A60), root port 8, direct | USB 2.0, root port 8 | nothing |
+| generic | Intel root port 13, behind 2 hubs | USB 2.0, root port 13 | C922, Revelator IO 24 (audio), USB receiver, the monitor's hub |
+| C922 | Intel root port 13, behind 2 hubs | USB 2.0, root port 13 | generic, Revelator, receiver, monitor |
+
+**Why the C922 and generic share a domain with the Kiyo Pro's hub:**
+- The Kiyo Pro's hub chain is plugged into a Thunderbolt USB-C port. Its SuperSpeed half lands on the Thunderbolt controller, but its USB 2.0 half lands on Intel root port 13. Both halves of the top hub carry ContainerId `c6399911…` [M].
+- That is how Thunderbolt 4 ports route their USB 2.0 wires to the chipset controller [I].
+- So every USB 2.0 device on that hub chain shares root port 13's single 480 Mbit/s domain.
+
+### 11.2 Load per camera at 720p30
+
+Load is bytes reserved per 125 µs microframe [M] (`mode_alt_cache.json`; µs from `W-TOPO scenarios`):
+
+| Camera / mode | alt | bytes per microframe | % of a microframe |
+|---|---|---|---|
+| generic, any mode (it has only one alt setting) | 1 | 3,069 | ≈ 49 % |
+| C930e 720p30 | 11 | 3,072 | 49.3 % |
+| C922 720p30 | 9 | 1,984 | ≈ 32 % |
+| C922 720p60 | 11 | 3,060 | ≈ 49 % |
+
+**Admission limit on this Intel controller: about 80 % of a microframe per USB 2.0 root port** [M]:
+- 75.2 % streamed 2/2 on every API (C922 960×720 plus the generic);
+- 81.1 % was refused every time tonight on every API (C922 720p30 plus the generic). On 11-10 that pair sometimes streamed on DS, so it is borderline.
+
+**So no two of these cameras fit in one USB 2.0 domain at 720p30** [M+I]. 49 + 32 = 81 %, and 49 + 49 = 98 %.
+
+**Each Intel USB 2.0 root port is its own domain** [M]:
+- 11-06 to 11-08: two max-alt cameras on different root ports of this controller streamed together at 98.4 % combined (`bandwidth_domain_model.md` point 2).
+- Tonight: the C930e (port 8) streamed alongside whichever port-13 camera was admitted.
+
+### 11.3 What to move
+
+1. **The C922 must move**, to a free Intel root port, plugged in directly (no hub). It doesn't need its own *controller*, and none is available for USB 2.0 anyway: the only other controller (Thunderbolt) carries SuperSpeed only. A root port is enough.
+   - Free root ports [M] (`free_ports`):
+
+     | port | type |
+     |---|---|
+     | HS01, HS02, HS04, HS05, HS06, HS07 | USB 3 Type-A, user-accessible |
+     | HS09, HS12 | USB-C |
+     | HS15, HS16 | USB 2.0-only, probably internal headers [I] |
+
+   - **Prefer a Type-A port** (HS01/02/04–07).
+   - Avoid the Thunderbolt USB-C port and any socket on the hub chain: that is root port 13 again.
+   - Avoid the hub on root port 10 (only for simplicity: its domain is otherwise empty).
+2. **The generic camera can stay.** With the C922 gone, root port 13 holds the generic (≈ 49 %), the Revelator's audio stream when it's active (not measured; it had no periodic pipe open at the snapshot), and the receiver and monitor (small interrupt traffic) [I: fits].
+   - Moving it to its own root port as well is **optional, but sensible**: it takes the generic off the hub chain, where it dropped off the bus 3 times tonight [M]. The cause is unknown [NV]; moving it removes one variable.
+3. **The C930e and Kiyo Pro stay.** The C930e has root port 8 to itself. The Kiyo Pro is SuperSpeed and uses no USB 2.0 bandwidth. (A direct-port move for the Kiyo Pro is the separate pending decision in the 11-10 write-up, not a bandwidth question.)
+4. **The C922 at 720p60** (≈ 49 %) also fits on its own root port [I].
+
+### 11.4 Which socket is which, and how to check
+
+- **Software can't tell which physical socket is "HS01"** [M]: the label tier is `controller_port_number`, and the socket evidence is weak (ACPI `_UPC` only).
+- After the move, check with `run_suite.py --only W-TOPO --kiyo-pro-dead 2026-11-12T05:46:24.269472+00:00` (drop the flag if Dom has replugged the Kiyo Pro since). It reads cached hub state and descriptors and opens no stream. In `W-TOPO.json`:
+  - `camera_domains` should show the C922 alone on an Intel `hs|…#<n>` domain, with n ≠ 13;
+  - `scenarios.all_cameras_720p30` should show every domain as `fits`.
+- **Not yet measured** [NV]: three USB 2.0 root ports loaded at once (about 49 + 49 + 32 %). Two ports at 98.4 % is the most measured so far, and Linux notes a controller-wide DMI limit.
+- **Confirm with real streams:** W-MULTI and W-PYMF-ALL (all four at 720p30 in one pymf process), then T-BUMP with all four cameras.
+
+### 11.5 What this means for the product (1.11)
+
+The evidence is enough to handle this in skellycam, on this Intel controller:
+- **The mapper predicts it:** W-TOPO's predictions for the 3 Gerald pairs agree with W-MULTI 3/3 [M].
+- **MF names the refusal exactly:** `0x800718CF` at the first sample, about 350 ms after start [M].
+- **The other cameras keep streaming** in one pymf process [M].
+
+So skellycam can predict the conflict before start, classify the refusal when it happens, keep the other cameras running, and name the camera and the free root ports to move it to. Thresholds on other controllers (AMD, ASMedia, Renesas) are unmeasured (`bandwidth_domain_model.md` table).
