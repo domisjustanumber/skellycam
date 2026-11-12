@@ -3,7 +3,7 @@
 Provenance: grilling rounds with Dom on 2026-11-12, working from the 22 open choices in `spec_inputs_digest.md` and the open questions in `research/HANDOFF_20261112_skellyfileformat_spec.md` §5. Every item below was accepted by Dom. `SPEC.md` and `conformance.md` in `skellyfileformat` are drafted from this list (step 5, then gate 1).
 
 ## Structure
-- **Q1** Requirement ids are numbered in blocks per section (§4 = SFF-100…199, §5 = SFF-200…, and so on). The whole-recording section is a new **§15** (SFF-1200…); existing heading numbers stay.
+- **Q1** Requirement ids are numbered in blocks per section. The whole-recording section is a new **§15**; existing heading numbers stay. *Drafting note:* the example blocks of 100 (§15 = SFF-1200) break the three-digit id rule, so the draft uses **blocks of 50**: §2 = SFF-001…049, §N = (N − 2) × 50 onward (§5 = SFF-150, §15 = SFF-650). Flagged for gate 1.
 
 ## Header and record
 - **Q2** Header fields: MFR items 1–11. **`take_uuid`, `group_size` and the take anchor `{take_start_host_ns, take_start_utc_ns, utc_offset_min}` are MUST.** `camera_key` is SHOULD. `group_position` is optional.
