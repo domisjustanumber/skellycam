@@ -1,0 +1,944 @@
+Prototype only: NOT the implementation. Kept as evidence for T-S5 and D20 (option C).
+
+Written 2026-11-12 before any spec existed. The real work follows the spec-first rule:
+spec + written test list (gate 1), then runnable failing tests (gate 2), then code.
+
+Base: skellycam-phase1 worktree, branch dom/capture-recording-phase1 at 7d06ba2e1.
+Apply with: git apply prototype_skrec.patch  (from the worktree root)
+
+What it held:
+- skellycam-ui/electron/main/playback/: Range parser, per-recording grant registry,
+  skrec://<grant id>/<file> protocol handler, Electron registration (grants close on page load).
+- tRPC playback.openRecording / closeRecording; page-side readRange (T-S5 FINDINGS sec. 7).
+- 70 node:test unit tests (Node 24 type stripping; `npm run test:unit`).
+- tsconfig allowImportingTsExtensions (tsc reaches electron/main through the AppAPI type import).
+Results at the time: 70/70 unit tests passed. A smoke test in Electron 35.7.5 and 45.2.3 also passed:
+range semantics + SHA, 640 concurrent reads with the HTTP cache on (0 errors), 404 for refused names,
+grant closed after reload, http:// origin reads Content-Range, <video> plays and seeks an H.264 MP4.
+The smoke harness was not kept.
+
+diff --git a/skellycam-ui/electron/main/api.ts b/skellycam-ui/electron/main/api.ts
+index 016e88c57..ed89072d2 100644
+--- a/skellycam-ui/electron/main/api.ts
++++ b/skellycam-ui/electron/main/api.ts
+@@ -13,6 +13,7 @@ import fs from 'node:fs';
+ import os from 'node:os';
+ import http from 'node:http';
+ import { APP_PATHS } from './app-paths';
++import { recordingGrants } from './playback/register';
+ 
+ // Configure auto-updater (user triggers download manually)
+ autoUpdater.autoDownload = false;
+@@ -79,6 +80,18 @@ export const api = t.router({
+             .query(() => PythonServer.getProcessInfo()),
+     }),
+ 
++    // Recording playback: grant the skrec:// protocol access to one recording folder.
++    // Files are then read as skrec://<id>/<name>, with names from `files`.
++    playback: t.router({
++        openRecording: t.procedure
++            .input(z.object({ path: z.string() }))
++            .mutation(({ input }) => recordingGrants.open(input.path)),
++
++        closeRecording: t.procedure
++            .input(z.object({ id: z.string() }))
++            .mutation(({ input }) => recordingGrants.close(input.id)),
++    }),
++
+     // File System Operations
+     fileSystem: t.router({
+         selectDirectory: t.procedure
+diff --git a/skellycam-ui/electron/main/index.ts b/skellycam-ui/electron/main/index.ts
+index fd32026a8..50a6d86cf 100644
+--- a/skellycam-ui/electron/main/index.ts
++++ b/skellycam-ui/electron/main/index.ts
+@@ -6,6 +6,7 @@ import { PythonServer } from './services/python-server';
+ import { UpdateHandler } from './services/update-handler';
+ import { LifecycleLogger } from './services/logger';
+ import { buildApplicationMenu } from './services/menu-builder';
++import { handleRecordingScheme, registerRecordingSchemePrivileges } from './playback/register';
+ // import os from 'node:os'; // Uncomment if needed for platform-specific checks
+ 
+ // Export environment configuration
+@@ -19,6 +20,9 @@ export const APP_ENVIRONMENT = {
+ // if (os.release().startsWith('6.1')) app.disableHardwareAcceleration();
+ if (process.platform === 'win32') app.setAppUserModelId(app.getName());
+ 
++// The player reads recordings through skrec:// (plan row 1.9); schemes must be registered before ready.
++registerRecordingSchemePrivileges();
++
+ // Prevent multiple instances
+ const gotTheLock = app.requestSingleInstanceLock();
+ 
+@@ -50,6 +54,7 @@ if (!gotTheLock) {
+ 
+         // Setup IPC
+         setupIPC();
++        handleRecordingScheme();
+ 
+         // Build the native application menu with shortcuts
+         buildApplicationMenu();
+diff --git a/skellycam-ui/electron/main/playback/byte-range.ts b/skellycam-ui/electron/main/playback/byte-range.ts
+new file mode 100644
+index 000000000..5363e59db
+--- /dev/null
++++ b/skellycam-ui/electron/main/playback/byte-range.ts
+@@ -0,0 +1,39 @@
++/**
++ * HTTP Range header parsing for the recording protocol (T-S5 FINDINGS §6).
++ *
++ * Only a single byte range is supported; the player never sends multi-range
++ * requests, so those are answered 416 like any other range we won't serve.
++ */
++
++export type RangeRequest =
++    | { kind: 'whole' }
++    | { kind: 'partial'; start: number; end: number }  // inclusive, clamped to size - 1
++    | { kind: 'unsatisfiable' };
++
++const SINGLE_RANGE = /^bytes=(\d*)-(\d*)$/i;
++
++export function parseRangeHeader(header: string | null, size: number): RangeRequest {
++    if (header === null) return { kind: 'whole' };
++
++    const match = SINGLE_RANGE.exec(header.trim());
++    if (!match) return { kind: 'unsatisfiable' };
++    const [, first, last] = match;
++
++    let start: number;
++    let end: number;
++    if (first === '') {
++        if (last === '') return { kind: 'unsatisfiable' };
++        const suffixLength = Number(last);
++        if (suffixLength === 0) return { kind: 'unsatisfiable' };
++        start = Math.max(0, size - suffixLength);
++        end = size - 1;
++    } else {
++        start = Number(first);
++        end = last === '' ? size - 1 : Math.min(Number(last), size - 1);
++        if (!Number.isSafeInteger(start)) return { kind: 'unsatisfiable' };
++        if (last !== '' && Number(last) < start) return { kind: 'unsatisfiable' };
++    }
++
++    if (start >= size) return { kind: 'unsatisfiable' };
++    return { kind: 'partial', start, end };
++}
+diff --git a/skellycam-ui/electron/main/playback/recording-grants.ts b/skellycam-ui/electron/main/playback/recording-grants.ts
+new file mode 100644
+index 000000000..e0fe77285
+--- /dev/null
++++ b/skellycam-ui/electron/main/playback/recording-grants.ts
+@@ -0,0 +1,150 @@
++/**
++ * Per-recording grants for the recording protocol (plan D20, option C).
++ *
++ * The page asks to open one recording folder; we list its media files and hand
++ * back a short id. Protocol URLs name files as `<id>/<name>`, and only names in
++ * that list are served, so there are no paths in URLs and nothing to traverse.
++ * File handles are opened on first read and kept until the grant closes.
++ */
++import fs from 'node:fs';
++import type { FileHandle } from 'node:fs/promises';
++import os from 'node:os';
++import path from 'node:path';
++
++const CONTENT_TYPES: Record<string, string> = {
++    '.mkv': 'video/x-matroska',
++    '.mka': 'audio/x-matroska',
++    '.mp4': 'video/mp4',
++    '.mov': 'video/quicktime',
++    '.avi': 'video/x-msvideo',
++    '.webm': 'video/webm',
++    '.flac': 'audio/flac',
++    '.wav': 'audio/wav',
++    '.skfr': 'application/octet-stream',   // video timing sidecar (separate only until finalised)
++    '.skau': 'application/octet-stream',   // audio timing sidecar
++};
++
++// Old recordings keep their videos here (playback_router._find_video_folder).
++const SUBFOLDERS = ['synchronized_videos'];
++
++export interface RecordingFile {
++    name: string;   // relative to the recording folder, '/'-separated
++    size: number;
++}
++
++export interface Grant {
++    id: string;
++    recordingPath: string;
++    files: RecordingFile[];
++}
++
++export interface GrantedFile {
++    handle: FileHandle;
++    contentType: string;
++}
++
++interface GrantState {
++    id: string;
++    recordingPath: string;
++    files: Map<string, string>;                  // name -> absolute path
++    handles: Map<string, Promise<FileHandle>>;   // name -> open handle
++}
++
++function isRecordingMedia(fileName: string): boolean {
++    if (fileName.startsWith('.')) return false;
++    const lower = fileName.toLowerCase();
++    if (lower.endsWith('.web.mp4')) return false;   // old playback transcode copy (plan §2.9)
++    return path.extname(lower) in CONTENT_TYPES;
++}
++
++function expandHome(p: string): string {
++    return /^~([\\/]|$)/.test(p) ? path.join(os.homedir(), p.slice(1)) : p;
++}
++
++async function listMedia(recordingPath: string): Promise<Map<string, string>> {
++    const files = new Map<string, string>();
++    for (const prefix of ['', ...SUBFOLDERS]) {
++        const dir = path.join(recordingPath, prefix);
++        let entries: fs.Dirent[];
++        try {
++            entries = await fs.promises.readdir(dir, { withFileTypes: true });
++        } catch (error) {
++            if (prefix === '') throw error;
++            continue;   // optional subfolder absent
++        }
++        for (const entry of entries) {
++            if (entry.isFile() && isRecordingMedia(entry.name)) {
++                files.set(prefix ? `${prefix}/${entry.name}` : entry.name, path.join(dir, entry.name));
++            }
++        }
++    }
++    return files;
++}
++
++async function closeHandles(state: GrantState): Promise<void> {
++    const pending = [...state.handles.values()];
++    state.handles.clear();
++    // FileHandle.close() waits for reads already in flight on the handle.
++    await Promise.allSettled(pending.map(async h => (await h).close()));
++}
++
++export class RecordingGrants {
++    private nextId = 1;
++    private byId = new Map<string, GrantState>();
++    private byPath = new Map<string, GrantState>();
++
++    /** Grant access to one recording folder. Opening it again refreshes its file list and keeps its id. */
++    async open(recordingPath: string): Promise<Grant> {
++        const resolved = path.resolve(expandHome(recordingPath));
++        const files = await listMedia(resolved);
++        if (files.size === 0) throw new Error(`No media files in ${resolved}`);
++
++        let state = this.byPath.get(resolved);
++        if (state) {
++            await closeHandles(state);
++            state.files = files;
++        } else {
++            state = { id: `r${this.nextId++}`, recordingPath: resolved, files, handles: new Map() };
++            this.byId.set(state.id, state);
++            this.byPath.set(resolved, state);
++        }
++
++        const listed: RecordingFile[] = [];
++        for (const [name, absolute] of files) {
++            const { size } = await fs.promises.stat(absolute);
++            listed.push({ name, size });
++        }
++        return { id: state.id, recordingPath: resolved, files: listed };
++    }
++
++    async close(id: string): Promise<void> {
++        const state = this.byId.get(id);
++        if (!state) return;
++        this.byId.delete(id);
++        this.byPath.delete(state.recordingPath);
++        await closeHandles(state);
++    }
++
++    async closeAll(): Promise<void> {
++        await Promise.all([...this.byId.keys()].map(id => this.close(id)));
++    }
++
++    /** The open handle for a listed file, or null if the grant or name isn't known or the file is gone. */
++    async lookup(id: string, name: string): Promise<GrantedFile | null> {
++        const state = this.byId.get(id);
++        const absolute = state?.files.get(name);
++        if (!state || !absolute) return null;
++
++        let handle = state.handles.get(name);
++        if (!handle) {
++            handle = fs.promises.open(absolute, 'r');
++            state.handles.set(name, handle);
++        }
++        try {
++            return { handle: await handle, contentType: CONTENT_TYPES[path.extname(name).toLowerCase()] };
++        } catch {
++            state.handles.delete(name);   // e.g. deleted after open; let a later request retry
++            return null;
++        }
++    }
++}
+diff --git a/skellycam-ui/electron/main/playback/recording-protocol.ts b/skellycam-ui/electron/main/playback/recording-protocol.ts
+new file mode 100644
+index 000000000..914bb3c8f
+--- /dev/null
++++ b/skellycam-ui/electron/main/playback/recording-protocol.ts
+@@ -0,0 +1,74 @@
++/**
++ * The `skrec://` protocol handler: serves recording files by byte range to the player
++ * (plan row 1.9, T-S5 FINDINGS §6). URLs are `skrec://<grant id>/<file name>`.
++ *
++ * It takes a standard Request and returns a Response, so it has no Electron
++ * dependency; `register.ts` wires it into `protocol.handle`.
++ */
++import { Readable } from 'node:stream';
++import { parseRangeHeader } from './byte-range.ts';
++import type { RecordingGrants } from './recording-grants.ts';
++
++export const RECORDING_SCHEME = 'skrec';
++
++// Above this, stream from the file instead of one positional read into a buffer.
++const SINGLE_READ_LIMIT = 8 * 1024 * 1024;
++
++const BASE_HEADERS = {
++    'Accept-Ranges': 'bytes',
++    // Chromium's HTTP cache fails 1-2 % of concurrent ranges to one URL without this (T-S5 §3).
++    'Cache-Control': 'no-store',
++    // The packaged page is file://; in dev it is the Vite origin, which needs these to read Content-Range.
++    'Access-Control-Allow-Origin': '*',
++    'Access-Control-Expose-Headers': 'Content-Range, Content-Length, Accept-Ranges',
++};
++
++function fileNameOf(url: URL): string | null {
++    try {
++        return decodeURIComponent(url.pathname.slice(1));
++    } catch {
++        return null;   // malformed percent-encoding
++    }
++}
++
++export function createRecordingProtocolHandler(grants: RecordingGrants) {
++    return async function handleRecordingRequest(req: Request): Promise<Response> {
++        if (req.method !== 'GET' && req.method !== 'HEAD') {
++            return new Response(null, { status: 405, headers: { ...BASE_HEADERS, Allow: 'GET, HEAD' } });
++        }
++
++        const url = new URL(req.url);
++        const name = fileNameOf(url);
++        const file = name === null ? null : await grants.lookup(url.hostname, name);
++        if (!file) return new Response(null, { status: 404, headers: BASE_HEADERS });
++
++        try {
++            const { size } = await file.handle.stat();   // per request: a file being finalised can grow
++            const headers: Record<string, string> = { ...BASE_HEADERS, 'Content-Type': file.contentType };
++            const range = parseRangeHeader(req.headers.get('range'), size);
++
++            if (range.kind === 'unsatisfiable') {
++                return new Response(null, { status: 416, headers: { ...headers, 'Content-Range': `bytes */${size}` } });
++            }
++
++            const [status, start, end] = range.kind === 'whole' ? [200, 0, size - 1] : [206, range.start, range.end];
++            const length = end - start + 1;
++            headers['Content-Length'] = String(length);
++            if (range.kind === 'partial') headers['Content-Range'] = `bytes ${start}-${end}/${size}`;
++
++            if (req.method === 'HEAD' || length === 0) return new Response(null, { status, headers });
++
++            if (length <= SINGLE_READ_LIMIT) {
++                const buffer = Buffer.allocUnsafe(length);
++                const { bytesRead } = await file.handle.read(buffer, 0, length, start);
++                return new Response(bytesRead === length ? buffer : buffer.subarray(0, bytesRead), { status, headers });
++            }
++            // autoClose false: the handle belongs to the grant, not to this stream.
++            const stream = file.handle.createReadStream({ start, end, autoClose: false });
++            return new Response(Readable.toWeb(stream) as ReadableStream, { status, headers });
++        } catch (error) {
++            console.error(`${RECORDING_SCHEME}: failed to serve ${req.url}:`, error);
++            return new Response(null, { status: 500, headers: BASE_HEADERS });
++        }
++    };
++}
+diff --git a/skellycam-ui/electron/main/playback/register.ts b/skellycam-ui/electron/main/playback/register.ts
+new file mode 100644
+index 000000000..c6abaeee4
+--- /dev/null
++++ b/skellycam-ui/electron/main/playback/register.ts
+@@ -0,0 +1,32 @@
++/**
++ * Wires the recording protocol into Electron.
++ *
++ * - `registerRecordingSchemePrivileges()` must run before the app is ready.
++ * - `handleRecordingScheme()` runs after ready. It also closes every grant
++ *   whenever a page loads or reloads, so a reloaded page doesn't leave file handles open.
++ */
++import { app, protocol } from 'electron';
++import { RecordingGrants } from './recording-grants.ts';
++import { createRecordingProtocolHandler, RECORDING_SCHEME } from './recording-protocol.ts';
++
++export const recordingGrants = new RecordingGrants();
++
++export function registerRecordingSchemePrivileges(): void {
++    protocol.registerSchemesAsPrivileged([{
++        scheme: RECORDING_SCHEME,
++        // The set measured in T-S5 (E35 and E45). `stream` lets <video> read it for old recordings.
++        privileges: { standard: true, secure: true, supportFetchAPI: true, stream: true, corsEnabled: true },
++    }]);
++}
++
++export function handleRecordingScheme(): void {
++    protocol.handle(RECORDING_SCHEME, createRecordingProtocolHandler(recordingGrants));
++
++    app.on('web-contents-created', (_event, contents) => {
++        contents.on('did-start-navigation', (details) => {
++            if (details.isMainFrame && !details.isSameDocument) {
++                void recordingGrants.closeAll();
++            }
++        });
++    });
++}
+diff --git a/skellycam-ui/package.json b/skellycam-ui/package.json
+index 3bfe6784c..c0e7fdec3 100644
+--- a/skellycam-ui/package.json
++++ b/skellycam-ui/package.json
+@@ -18,7 +18,8 @@
+     "build:dev": "tsc && vite build && electron-builder --config.mac.hardenedRuntime=false --config.mac.notarize=false",
+     "preview": "vite preview",
+     "pree2e": "vite build --mode=test",
+-    "e2e": "playwright test"
++    "e2e": "playwright test",
++    "test:unit": "node --test \"tests/*.test.ts\""
+   },
+   "dependencies": {
+     "@reduxjs/toolkit": "2.12.0",
+diff --git a/skellycam-ui/src/services/playback/range-reader.ts b/skellycam-ui/src/services/playback/range-reader.ts
+new file mode 100644
+index 000000000..cd3a8c76d
+--- /dev/null
++++ b/skellycam-ui/src/services/playback/range-reader.ts
+@@ -0,0 +1,66 @@
++/**
++ * Byte-range reads for the recording player and the sidecar locator (T-S5 FINDINGS §7).
++ *
++ * Works on every transport the player may be given:
++ * - skrec:// (the Electron protocol) and the HTTP fallback: 206 + Content-Range, 416 past EOF;
++ * - file:// (last resort): 200 with the ranged bytes and no size; a read past EOF throws.
++ *
++ * A read past EOF returns empty bytes rather than throwing, so the locator can report it.
++ */
++
++export interface RangeRead {
++    bytes: Uint8Array;
++    /** Total file size when the transport reports it (206 or 416), else null. */
++    totalSize: number | null;
++}
++
++const CONTENT_RANGE = /^bytes (\d+)-(\d+)\/(\d+|\*)$/;
++const UNSATISFIED_RANGE = /^bytes \*\/(\d+)$/;
++
++const EMPTY = new Uint8Array(0);
++
++export async function readRange(
++    url: string,
++    offset: number,
++    length: number,
++    fetchImpl: typeof fetch = fetch,
++): Promise<RangeRead> {
++    if (length <= 0) return { bytes: EMPTY, totalSize: null };
++    const isFile = url.startsWith('file:');
++
++    let response: Response;
++    try {
++        response = await fetchImpl(url, {
++            headers: { Range: `bytes=${offset}-${offset + length - 1}` },
++            // Chromium's HTTP cache fails some concurrent ranges to one URL (T-S5 §3).
++            cache: 'no-store',
++        });
++    } catch (error) {
++        if (isFile) return { bytes: EMPTY, totalSize: null };   // file:// throws for a range past EOF
++        throw error;
++    }
++
++    if (response.status === 416) {
++        const m = UNSATISFIED_RANGE.exec(response.headers.get('Content-Range') ?? '');
++        return { bytes: EMPTY, totalSize: m ? Number(m[1]) : null };
++    }
++
++    if (response.status === 206) {
++        const header = response.headers.get('Content-Range') ?? '';
++        const m = CONTENT_RANGE.exec(header);
++        if (!m || Number(m[1]) !== offset) {
++            throw new Error(`${url}: asked for bytes from ${offset}, got Content-Range "${header}"`);
++        }
++        const bytes = new Uint8Array(await response.arrayBuffer());
++        return { bytes: bytes.subarray(0, length), totalSize: m[3] === '*' ? null : Number(m[3]) };
++    }
++
++    if (response.status === 200) {
++        const body = new Uint8Array(await response.arrayBuffer());
++        if (isFile) return { bytes: body.subarray(0, length), totalSize: null };
++        // An HTTP server that ignored Range sent the whole file.
++        return { bytes: body.subarray(offset, offset + length), totalSize: body.length };
++    }
++
++    throw new Error(`${url}: HTTP ${response.status} for bytes from ${offset}`);
++}
+diff --git a/skellycam-ui/tests/byte-range.test.ts b/skellycam-ui/tests/byte-range.test.ts
+new file mode 100644
+index 000000000..1fb470120
+--- /dev/null
++++ b/skellycam-ui/tests/byte-range.test.ts
+@@ -0,0 +1,61 @@
++import { test } from 'node:test';
++import assert from 'node:assert/strict';
++import { parseRangeHeader } from '../electron/main/playback/byte-range.ts';
++
++const SIZE = 1000;
++
++test('no Range header asks for the whole file', () => {
++    assert.deepEqual(parseRangeHeader(null, SIZE), { kind: 'whole' });
++});
++
++test('explicit range', () => {
++    assert.deepEqual(parseRangeHeader('bytes=10-19', SIZE), { kind: 'partial', start: 10, end: 19 });
++});
++
++test('end past EOF is clamped to the last byte', () => {
++    assert.deepEqual(parseRangeHeader('bytes=990-5000', SIZE), { kind: 'partial', start: 990, end: 999 });
++});
++
++test('open-ended range runs to EOF', () => {
++    assert.deepEqual(parseRangeHeader('bytes=500-', SIZE), { kind: 'partial', start: 500, end: 999 });
++});
++
++test('suffix range takes the last n bytes', () => {
++    assert.deepEqual(parseRangeHeader('bytes=-100', SIZE), { kind: 'partial', start: 900, end: 999 });
++});
++
++test('suffix longer than the file gives the whole file', () => {
++    assert.deepEqual(parseRangeHeader('bytes=-5000', SIZE), { kind: 'partial', start: 0, end: 999 });
++});
++
++test('ranges past 4 GiB keep exact offsets', () => {
++    const big = 4_685_500_000;
++    assert.deepEqual(parseRangeHeader('bytes=4685429234-4685429333', big),
++        { kind: 'partial', start: 4_685_429_234, end: 4_685_429_333 });
++});
++
++test('the unit name is case-insensitive and whitespace around the value is ignored', () => {
++    assert.deepEqual(parseRangeHeader('  Bytes=0-0 ', SIZE), { kind: 'partial', start: 0, end: 0 });
++});
++
++for (const header of [
++    'bytes=1000-',       // start at EOF
++    'bytes=5000-6000',   // start past EOF
++    'bytes=-0',          // empty suffix
++    'bytes=10-5',        // end before start
++    'bytes=0-1,5-9',     // multi-range: the player never sends it
++    'bytes=-',
++    'items=0-5',
++    'bytes=abc',
++    'bytes=99999999999999999999-',  // beyond Number precision
++]) {
++    test(`unsatisfiable: ${header}`, () => {
++        assert.deepEqual(parseRangeHeader(header, SIZE), { kind: 'unsatisfiable' });
++    });
++}
++
++test('every range of an empty file is unsatisfiable, but a whole read is fine', () => {
++    assert.deepEqual(parseRangeHeader('bytes=0-', 0), { kind: 'unsatisfiable' });
++    assert.deepEqual(parseRangeHeader('bytes=-5', 0), { kind: 'unsatisfiable' });
++    assert.deepEqual(parseRangeHeader(null, 0), { kind: 'whole' });
++});
+diff --git a/skellycam-ui/tests/range-reader.test.ts b/skellycam-ui/tests/range-reader.test.ts
+new file mode 100644
+index 000000000..00cbebfad
+--- /dev/null
++++ b/skellycam-ui/tests/range-reader.test.ts
+@@ -0,0 +1,79 @@
++import { test } from 'node:test';
++import assert from 'node:assert/strict';
++import { readRange } from '../src/services/playback/range-reader.ts';
++
++type Fetch = typeof fetch;
++
++function fakeFetch(respond: (url: string, init: RequestInit) => Response | Promise<Response>) {
++    const calls: { url: string; init: RequestInit }[] = [];
++    const impl = (async (input: RequestInfo | URL, init: RequestInit = {}) => {
++        calls.push({ url: String(input), init });
++        return respond(String(input), init);
++    }) as Fetch;
++    return { impl, calls };
++}
++
++const bytes = (...values: number[]) => new Uint8Array(values);
++
++test('sends one bounded Range with the HTTP cache off', async () => {
++    const f = fakeFetch(() => new Response(bytes(1, 2, 3), { status: 206, headers: { 'Content-Range': 'bytes 10-12/100' } }));
++    await readRange('skrec://r1/cam0.mkv', 10, 3, f.impl);
++    assert.equal(new Headers(f.calls[0].init.headers).get('range'), 'bytes=10-12');
++    assert.equal(f.calls[0].init.cache, 'no-store');
++});
++
++test('206: returns the bytes and the total size', async () => {
++    const f = fakeFetch(() => new Response(bytes(1, 2, 3), { status: 206, headers: { 'Content-Range': 'bytes 10-12/100' } }));
++    assert.deepEqual(await readRange('skrec://r1/cam0.mkv', 10, 3, f.impl), { bytes: bytes(1, 2, 3), totalSize: 100 });
++});
++
++test('206 near EOF returns the shorter read', async () => {
++    const f = fakeFetch(() => new Response(bytes(7, 8), { status: 206, headers: { 'Content-Range': 'bytes 98-99/100' } }));
++    assert.deepEqual(await readRange('skrec://r1/cam0.mkv', 98, 10, f.impl), { bytes: bytes(7, 8), totalSize: 100 });
++});
++
++test('206 that starts somewhere else is an error', async () => {
++    const f = fakeFetch(() => new Response(bytes(1), { status: 206, headers: { 'Content-Range': 'bytes 0-0/100' } }));
++    await assert.rejects(readRange('skrec://r1/cam0.mkv', 10, 1, f.impl), /Content-Range/);
++});
++
++test('206 without Content-Range is an error', async () => {
++    const f = fakeFetch(() => new Response(bytes(1), { status: 206 }));
++    await assert.rejects(readRange('skrec://r1/cam0.mkv', 10, 1, f.impl), /Content-Range/);
++});
++
++test('416 (past EOF) is an empty read with the size', async () => {
++    const f = fakeFetch(() => new Response(null, { status: 416, headers: { 'Content-Range': 'bytes */100' } }));
++    assert.deepEqual(await readRange('skrec://r1/cam0.mkv', 500, 10, f.impl), { bytes: bytes(), totalSize: 100 });
++});
++
++test('file:// 200 carries the ranged bytes but no size; the read is capped', async () => {
++    const f = fakeFetch(() => new Response(bytes(4, 5, 6, 7), { status: 200 }));
++    assert.deepEqual(await readRange('file:///C:/rec/cam0.mkv', 4, 3, f.impl), { bytes: bytes(4, 5, 6), totalSize: null });
++});
++
++test('file:// fetch that throws past EOF is an empty read', async () => {
++    const f = fakeFetch(() => { throw new TypeError('Failed to fetch'); });
++    assert.deepEqual(await readRange('file:///C:/rec/cam0.mkv', 500, 10, f.impl), { bytes: bytes(), totalSize: null });
++});
++
++test('a throw on any other transport is a real error', async () => {
++    const f = fakeFetch(() => { throw new TypeError('Failed to fetch'); });
++    await assert.rejects(readRange('skrec://r1/cam0.mkv', 0, 10, f.impl), /Failed to fetch/);
++});
++
++test('HTTP 200 means the server ignored Range: slice the whole body', async () => {
++    const f = fakeFetch(() => new Response(bytes(0, 1, 2, 3, 4, 5), { status: 200 }));
++    assert.deepEqual(await readRange('http://localhost:53117/x.mkv', 2, 3, f.impl), { bytes: bytes(2, 3, 4), totalSize: 6 });
++});
++
++test('other statuses are errors', async () => {
++    const f = fakeFetch(() => new Response(null, { status: 404 }));
++    await assert.rejects(readRange('skrec://r1/gone.mkv', 0, 10, f.impl), /404/);
++});
++
++test('a zero-length read makes no request', async () => {
++    const f = fakeFetch(() => { throw new Error('should not fetch'); });
++    assert.deepEqual(await readRange('skrec://r1/cam0.mkv', 0, 0, f.impl), { bytes: bytes(), totalSize: null });
++    assert.equal(f.calls.length, 0);
++});
+diff --git a/skellycam-ui/tests/recording-grants.test.ts b/skellycam-ui/tests/recording-grants.test.ts
+new file mode 100644
+index 000000000..de91822b8
+--- /dev/null
++++ b/skellycam-ui/tests/recording-grants.test.ts
+@@ -0,0 +1,133 @@
++import { test, beforeEach, afterEach } from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import { RecordingGrants } from '../electron/main/playback/recording-grants.ts';
++
++let root: string;
++let recording: string;
++let grants: RecordingGrants;
++
++function write(relativePath: string, content = 'x') {
++    const p = path.join(recording, relativePath);
++    fs.mkdirSync(path.dirname(p), { recursive: true });
++    fs.writeFileSync(p, content);
++}
++
++beforeEach(() => {
++    root = fs.mkdtempSync(path.join(os.tmpdir(), 'skrec-grants-'));
++    recording = path.join(root, '2026-11-12_14-03-00');
++    write('cam0.mkv', 'mkv-bytes');
++    write('cam0.skfr');
++    write('2026-11-12_14-03-00.audio.mka');
++    write('2026-11-12_14-03-00.audio.skau');
++    write('synchronized_videos/cam1.mp4');
++    write('notes.txt');                  // not media
++    write('recording_info.json');        // not media
++    write('.cam9.mkv');                  // hidden
++    write('cam0.web.mp4');               // old transcode copy, not a recording file
++    write('some_subfolder/cam5.mkv');    // only synchronized_videos/ is searched
++    fs.writeFileSync(path.join(root, 'outside.mkv'), 'outside');
++    grants = new RecordingGrants();
++});
++
++afterEach(async () => {
++    await grants.closeAll();
++    fs.rmSync(root, { recursive: true, force: true });
++});
++
++test('open lists only the recording\'s media files, with sizes', async () => {
++    const grant = await grants.open(recording);
++    assert.match(grant.id, /^r\d+$/);
++    assert.deepEqual(grant.files.map(f => f.name).sort(), [
++        '2026-11-12_14-03-00.audio.mka',
++        '2026-11-12_14-03-00.audio.skau',
++        'cam0.mkv',
++        'cam0.skfr',
++        'synchronized_videos/cam1.mp4',
++    ]);
++    assert.equal(grant.files.find(f => f.name === 'cam0.mkv')?.size, 'mkv-bytes'.length);
++});
++
++test('lookup gives a readable handle for a listed file', async () => {
++    const { id } = await grants.open(recording);
++    const file = await grants.lookup(id, 'cam0.mkv');
++    assert.ok(file);
++    assert.equal(file.contentType, 'video/x-matroska');
++    const buf = Buffer.alloc(3);
++    await file.handle.read(buf, 0, 3, 4);
++    assert.equal(buf.toString(), 'byt');
++});
++
++test('lookup serves the legacy synchronized_videos/ subfolder', async () => {
++    const { id } = await grants.open(recording);
++    assert.ok(await grants.lookup(id, 'synchronized_videos/cam1.mp4'));
++});
++
++for (const name of [
++    'notes.txt', 'recording_info.json', '.cam9.mkv', 'cam0.web.mp4', 'some_subfolder/cam5.mkv',
++    '../outside.mkv', '..\\outside.mkv', 'synchronized_videos/../cam0.mkv', '', 'CAM0.MKV',
++]) {
++    test(`lookup refuses ${JSON.stringify(name)}`, async () => {
++        const { id } = await grants.open(recording);
++        assert.equal(await grants.lookup(id, name), null);
++    });
++}
++
++test('lookup refuses an id that was never opened', async () => {
++    await grants.open(recording);
++    assert.equal(await grants.lookup('r999', 'cam0.mkv'), null);
++});
++
++test('close ends the grant', async () => {
++    const { id } = await grants.open(recording);
++    assert.ok(await grants.lookup(id, 'cam0.mkv'));
++    await grants.close(id);
++    assert.equal(await grants.lookup(id, 'cam0.mkv'), null);
++});
++
++test('closeAll ends every grant', async () => {
++    const a = await grants.open(recording);
++    const other = path.join(root, 'second');
++    fs.mkdirSync(other);
++    fs.writeFileSync(path.join(other, 'cam0.mkv'), 'x');
++    const b = await grants.open(other);
++    await grants.closeAll();
++    assert.equal(await grants.lookup(a.id, 'cam0.mkv'), null);
++    assert.equal(await grants.lookup(b.id, 'cam0.mkv'), null);
++});
++
++test('opening the same recording again keeps its id and refreshes the file list', async () => {
++    const first = await grants.open(recording);
++    write('cam1.mkv');
++    const second = await grants.open(recording + path.sep);
++    assert.equal(second.id, first.id);
++    assert.ok(second.files.some(f => f.name === 'cam1.mkv'));
++    assert.ok(await grants.lookup(second.id, 'cam1.mkv'));
++});
++
++test('a closed and reopened recording gets a new id, so stale URLs stop working', async () => {
++    const first = await grants.open(recording);
++    await grants.close(first.id);
++    const second = await grants.open(recording);
++    assert.notEqual(second.id, first.id);
++    assert.equal(await grants.lookup(first.id, 'cam0.mkv'), null);
++});
++
++test('open rejects a missing folder', async () => {
++    await assert.rejects(grants.open(path.join(root, 'nope')));
++});
++
++test('open rejects a folder with no media files', async () => {
++    const empty = path.join(root, 'empty');
++    fs.mkdirSync(empty);
++    fs.writeFileSync(path.join(empty, 'notes.txt'), 'x');
++    await assert.rejects(grants.open(empty), /no media files/i);
++});
++
++test('a file removed after open is refused rather than erroring', async () => {
++    const { id } = await grants.open(recording);
++    fs.rmSync(path.join(recording, 'cam0.skfr'));
++    assert.equal(await grants.lookup(id, 'cam0.skfr'), null);
++});
+diff --git a/skellycam-ui/tests/recording-protocol.test.ts b/skellycam-ui/tests/recording-protocol.test.ts
+new file mode 100644
+index 000000000..10a62ae65
+--- /dev/null
++++ b/skellycam-ui/tests/recording-protocol.test.ts
+@@ -0,0 +1,150 @@
++import { test, before, after } from 'node:test';
++import assert from 'node:assert/strict';
++import crypto from 'node:crypto';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import { RecordingGrants } from '../electron/main/playback/recording-grants.ts';
++import { createRecordingProtocolHandler, RECORDING_SCHEME } from '../electron/main/playback/recording-protocol.ts';
++
++let root: string;
++let grants: RecordingGrants;
++let handle: (req: Request) => Promise<Response>;
++let id: string;
++const small = crypto.randomBytes(64 * 1024);
++const large = crypto.randomBytes(9 * 1024 * 1024);   // above the single-read limit, so it streams
++
++before(async () => {
++    root = fs.mkdtempSync(path.join(os.tmpdir(), 'skrec-protocol-'));
++    fs.writeFileSync(path.join(root, 'cam0.mkv'), small);
++    fs.writeFileSync(path.join(root, 'cam 1.mkv'), small);
++    fs.writeFileSync(path.join(root, 'big.mkv'), large);
++    fs.writeFileSync(path.join(root, 'growing.audio.flac'), small);
++    fs.writeFileSync(path.join(root, 'notes.txt'), 'not media');
++    grants = new RecordingGrants();
++    handle = createRecordingProtocolHandler(grants);
++    ({ id } = await grants.open(root));
++});
++
++after(async () => {
++    await grants.closeAll();
++    fs.rmSync(root, { recursive: true, force: true });
++});
++
++function get(name: string, init: RequestInit & { range?: string } = {}) {
++    const headers = new Headers(init.headers);
++    if (init.range) headers.set('range', init.range);
++    return handle(new Request(`${RECORDING_SCHEME}://${id}/${name}`, { ...init, headers }));
++}
++
++async function body(res: Response) {
++    return Buffer.from(await res.arrayBuffer());
++}
++
++test('single range: 206 with exact bytes and headers', async () => {
++    const res = await get('cam0.mkv', { range: 'bytes=100-199' });
++    assert.equal(res.status, 206);
++    assert.equal(res.headers.get('content-range'), `bytes 100-199/${small.length}`);
++    assert.equal(res.headers.get('content-length'), '100');
++    assert.equal(res.headers.get('accept-ranges'), 'bytes');
++    assert.equal(res.headers.get('content-type'), 'video/x-matroska');
++    assert.equal(res.headers.get('cache-control'), 'no-store');
++    assert.equal(res.headers.get('access-control-allow-origin'), '*');
++    assert.equal(res.headers.get('access-control-expose-headers'), 'Content-Range, Content-Length, Accept-Ranges');
++    assert.deepEqual(await body(res), small.subarray(100, 200));
++});
++
++test('suffix and open-ended ranges', async () => {
++    const suffix = await get('cam0.mkv', { range: 'bytes=-16' });
++    assert.equal(suffix.status, 206);
++    assert.deepEqual(await body(suffix), small.subarray(small.length - 16));
++
++    const open = await get('cam0.mkv', { range: `bytes=${small.length - 10}-` });
++    assert.equal(open.headers.get('content-range'), `bytes ${small.length - 10}-${small.length - 1}/${small.length}`);
++    assert.deepEqual(await body(open), small.subarray(small.length - 10));
++});
++
++test('no Range: 200 with the whole file and its length', async () => {
++    const res = await get('cam0.mkv');
++    assert.equal(res.status, 200);
++    assert.equal(res.headers.get('content-length'), String(small.length));
++    assert.equal(res.headers.get('content-range'), null);
++    assert.deepEqual(await body(res), small);
++});
++
++test('large ranges stream the exact bytes', async () => {
++    const start = 123;
++    const end = large.length - 7;
++    const res = await get('big.mkv', { range: `bytes=${start}-${end}` });
++    assert.equal(res.status, 206);
++    assert.equal(res.headers.get('content-length'), String(end - start + 1));
++    assert.deepEqual(await body(res), large.subarray(start, end + 1));
++});
++
++test('HEAD gives the headers without a body', async () => {
++    const whole = await get('cam0.mkv', { method: 'HEAD' });
++    assert.equal(whole.status, 200);
++    assert.equal(whole.headers.get('content-length'), String(small.length));
++    assert.equal((await body(whole)).length, 0);
++
++    const part = await get('cam0.mkv', { method: 'HEAD', range: 'bytes=0-9' });
++    assert.equal(part.status, 206);
++    assert.equal(part.headers.get('content-range'), `bytes 0-9/${small.length}`);
++    assert.equal((await body(part)).length, 0);
++});
++
++for (const range of [`bytes=${64 * 1024}-`, 'bytes=-0', 'bytes=0-1,5-9', 'bytes=junk']) {
++    test(`416 with the size for ${range}`, async () => {
++        const res = await get('cam0.mkv', { range });
++        assert.equal(res.status, 416);
++        assert.equal(res.headers.get('content-range'), `bytes */${small.length}`);
++        assert.equal(res.headers.get('cache-control'), 'no-store');
++    });
++}
++
++test('percent-encoded names are decoded', async () => {
++    const res = await get('cam%201.mkv', { range: 'bytes=0-3' });
++    assert.equal(res.status, 206);
++    assert.deepEqual(await body(res), small.subarray(0, 4));
++});
++
++for (const name of ['notes.txt', 'nope.mkv', '..%2Fcam0.mkv', '%E0%A4%A']) {
++    test(`404 for ${name}`, async () => {
++        assert.equal((await get(name)).status, 404);
++    });
++}
++
++test('404 for an unknown grant id', async () => {
++    const res = await handle(new Request(`${RECORDING_SCHEME}://r999/cam0.mkv`));
++    assert.equal(res.status, 404);
++});
++
++test('405 for methods other than GET and HEAD', async () => {
++    const res = await get('cam0.mkv', { method: 'POST' });
++    assert.equal(res.status, 405);
++    assert.equal(res.headers.get('allow'), 'GET, HEAD');
++});
++
++test('the size is read on every request, so a file that grows is served in full', async () => {
++    const extra = crypto.randomBytes(500);
++    fs.appendFileSync(path.join(root, 'growing.audio.flac'), extra);
++    const res = await get('growing.audio.flac', { range: `bytes=${small.length}-` });
++    assert.equal(res.status, 206);
++    assert.equal(res.headers.get('content-range'), `bytes ${small.length}-${small.length + 499}/${small.length + 500}`);
++    assert.deepEqual(await body(res), extra);
++});
++
++test('64 concurrent reads all return the right bytes', async () => {
++    const offsets = Array.from({ length: 64 }, () => Math.floor(Math.random() * (large.length - 150_000)));
++    const results = await Promise.all(offsets.map(o => get('big.mkv', { range: `bytes=${o}-${o + 149_999}` }).then(body)));
++    results.forEach((buf, i) => assert.ok(buf.equals(large.subarray(offsets[i], offsets[i] + 150_000)), `read ${i}`));
++});
++
++test('a closed grant is 404', async () => {
++    const other = new RecordingGrants();
++    const h = createRecordingProtocolHandler(other);
++    const g = await other.open(root);
++    assert.equal((await h(new Request(`${RECORDING_SCHEME}://${g.id}/cam0.mkv`, { headers: { range: 'bytes=0-0' } }))).status, 206);
++    await other.close(g.id);
++    assert.equal((await h(new Request(`${RECORDING_SCHEME}://${g.id}/cam0.mkv`))).status, 404);
++});
+diff --git a/skellycam-ui/tsconfig.json b/skellycam-ui/tsconfig.json
+index d4d809d22..4af10eb6f 100644
+--- a/skellycam-ui/tsconfig.json
++++ b/skellycam-ui/tsconfig.json
+@@ -18,6 +18,7 @@
+     "resolveJsonModule": true,
+     "isolatedModules": true,
+     "noEmit": true,
++    "allowImportingTsExtensions": true,
+     "jsx": "react-jsx",
+     "baseUrl": "./",
+     "paths": {
