@@ -23,7 +23,9 @@ What it does:
    (alone) or ``--kiyo-foreground`` runs the old fixed foreground window instead;
 3. runs the test modules in this order (integrated 2026-11-09: enumeration first, then the Kiyo-sensitive
    captures while the freshly plugged Kiyo is healthy, W-PYAV-LIST late so it meets a wedged Kiyo, and the long W-CYC
-   reliability test last): W-ENV, W-POLICY, W-TOPO, W-ID, W-FMT, W-FMT-NOGRAB, W-CTRL-LIST, W-MJPEG, W-RAW, W-TS,
+   reliability test last; the current order is ``TESTS`` below, last changed 2026-11-12 when W-OCV-CTRL and the
+   OpenCV variants of W-CYC/W-RAW left the default run, see ``--with-opencv``): W-ENV, W-POLICY, W-TOPO, W-ID, W-FMT,
+   W-FMT-NOGRAB, W-CTRL-LIST, W-MJPEG, W-RAW, W-TS,
    W-PYMF, W-CYC-KIYO, W-CTRL-EFFECT, W-AUTO, W-OCV-CTRL, W-MULTI, W-PYAV-LIST, W-CYC (``--only`` / ``--skip`` take
    comma lists of ids, case-insensitive, the ``W-`` prefix optional). The cameras are put Kiyo first (then discovery
    order), so every per-camera test does its Kiyo share at its start. Each module is ``tests/w_<name>.py`` exposing
@@ -114,14 +116,18 @@ from common import results  # noqa: E402
 #: Kiyo Pro stream starts, the test most likely to end in a wedge) moves to second-last, after W-MULTI and
 #: W-PYAV-LIST, so a wedge there costs only the other cameras' W-CYC nothing. Under the dead rule (suitectx) a dead
 #: Kiyo Pro is never touched again; W-PYAV-LIST is skipped whole when a Kiyo Pro is dead (listing would reach it).
+#: 2026-11-12 (docs/windows_results_20261112.md): OpenCV left skellycam's Windows capture path on 11-10 (plan 1.3),
+#: so the OpenCV work leaves the default run: W-OCV-CTRL moves to EXTRA_TESTS, and W-CYC's three OpenCV variants and
+#: W-RAW's two OpenCV routes run only with --with-opencv. On 11-11/12 they cost ~39 min and 20 Kiyo Pro opens, and
+#: repeated 11-10's findings. W-TBUMP still exercises skellycam's own (OpenCV) path until package 1.3 lands.
 TESTS = [("W-ENV", "w_env"), ("W-POLICY", "w_policy"), ("W-TOPO", "w_topo"), ("W-ID", "w_id"),
          ("W-FMT", "w_fmt"), ("W-FMT-NOGRAB", "w_fmt_nograb"), ("W-CTRL-LIST", "w_ctrl_list"),
          ("W-MJPEG", "w_mjpeg"), ("W-RAW", "w_raw"), ("W-TS", "w_ts"), ("W-PYMF", "w_pymf"),
          ("W-PYMF-ALL", "w_pymf_all"), ("W-NODRIFT", "w_nodrift"), ("W-GAIN", "w_gain"),
-         ("W-CTRL-EFFECT", "w_ctrl_effect"), ("W-OCV-CTRL", "w_ocv_ctrl"), ("W-TBUMP", "w_tbump"), ("W-MULTI", "w_multi"),
+         ("W-CTRL-EFFECT", "w_ctrl_effect"), ("W-TBUMP", "w_tbump"), ("W-MULTI", "w_multi"),
          ("W-PYAV-LIST", "w_pyav_list"), ("W-CYC-KIYO", "w_cyc_kiyo"), ("W-CYC", "w_cyc"), ("W-KIYO", "w_kiyo")]
-#: not in the default order any more; still runnable with --only W-AUTO
-EXTRA_TESTS = [("W-AUTO", "w_auto")]
+#: not in the default order any more; still runnable with --only (W-AUTO since 11-11, W-OCV-CTRL since 11-12)
+EXTRA_TESTS = [("W-AUTO", "w_auto"), ("W-OCV-CTRL", "w_ocv_ctrl")]
 #: skipped whole (rated untested) when any Kiyo Pro is dead: the test would reach the dead camera
 SKIP_IF_KIYO_PRO_DEAD = ("W-PYAV-LIST",)
 #: runs as a background poller for the whole suite (not in the sequential order) unless it is the only test
@@ -183,6 +189,10 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--reliability-cycles", dest="reliability_cycles", type=int, default=None,
                     help="W-CYC reliability profile: in-process cycles per camera for mf_inproc and ds_ffmpeg_inproc "
                          "(default 400; at least 381 are needed for a >= 99%% claim at the Wilson lower bound)")
+    ap.add_argument("--with-opencv", dest="with_opencv", action="store_true", default=False,
+                    help="also run the OpenCV variants of W-CYC and the OpenCV routes of W-RAW (off by default since "
+                         "2026-11-12: OpenCV left skellycam's Windows capture path; W-OCV-CTRL runs with "
+                         "--only W-OCV-CTRL)")
     g = ap.add_argument_group("tests added 2026-11-08 (default: each module's own value)")
     g.add_argument("--auto-toggles", dest="auto_toggles", type=int, default=None, help="W-AUTO toggles per run")
     g.add_argument("--raw-seconds", dest="raw_seconds", type=float, default=None, help="W-RAW capture length")

@@ -286,7 +286,7 @@ def test_wedged_kiyo_is_faulted_once_and_later_tests_skip_it(tmp_path, monkeypat
             ev = v.get("evidence") or {}
             assert ev.get("device_fault") is True and ev.get("first_fault_utc") == since, (t, k, ev)
     cyc = {k: v for k, v in by["W-CYC"][1]["verdicts"].items() if "kiyo" in k}
-    assert len(cyc) == 8 and all(v["rating"] == "untested" for v in cyc.values())
+    assert len(cyc) == 5 and all(v["rating"] == "untested" for v in cyc.values())   # 2026-11-12: no OpenCV variants
     assert ctx.first_failure["kiyo"]["test"] == "W-CYC"
     # the summary marks the gated cells
     p = rs.write_summary(ctx, [st for _, st, _, _ in status], 0.0, [t for t, *_ in status])

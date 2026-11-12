@@ -421,6 +421,7 @@ def test_wcyc_run_skips_a_camera_that_fails_the_pre_probe(tmp_path, monkeypatch)
     monkeypatch.setattr(ck, "get_formats", lambda ctx, cam, cache=None: ({"x": 1}, {}))
     monkeypatch.setattr(ck, "mjpeg_modes", lambda fm: modes)
     ctx = _FakeCtx(tmp_path, [_cams()[0]], probe_ok=False)
+    ctx.args.with_opencv = True                            # the OpenCV variants run only with --with-opencv
     res = w_cyc.run(ctx)
     v = res["verdicts"]
     # 8 variants (incl. ds_ffmpeg_inproc and both skellycam framerates) + 2 mode-switch variants
@@ -429,6 +430,20 @@ def test_wcyc_run_skips_a_camera_that_fails_the_pre_probe(tmp_path, monkeypatch)
     assert ctx.cmds == []                                  # no cycle command ran
     variants = res["measurements"]["cameras"]["kiyo"]["variants"]
     assert {"opencv_skellycam", "opencv_skellycam_fps30", "ds_ffmpeg_inproc", "mf_modeswitch"} <= set(variants)
+
+
+def test_wcyc_leaves_out_opencv_variants_by_default(tmp_path, monkeypatch):
+    """2026-11-12: without --with-opencv, W-CYC plans no OpenCV variant (5 variants + 2 mode-switch)."""
+    import w_cyc
+    import capkit as ck
+    modes = [ck.Mode(1280, 720, 30, 1), ck.Mode(960, 720, 30, 1)]
+    monkeypatch.setattr(ck, "get_formats", lambda ctx, cam, cache=None: ({"x": 1}, {}))
+    monkeypatch.setattr(ck, "mjpeg_modes", lambda fm: modes)
+    ctx = _FakeCtx(tmp_path, [_cams()[0]], probe_ok=False)
+    res = w_cyc.run(ctx)
+    variants = set(res["measurements"]["cameras"]["kiyo"]["variants"])
+    assert len(res["verdicts"]) == 7 and not variants & set(w_cyc.OPENCV_VARIANTS)
+    assert {"mf_inproc", "ds_ffmpeg_inproc", "mf_newproc", "mf_modeswitch"} <= variants
 
 
 def test_wcyc_run_probes_a_camera_whose_format_read_fails(tmp_path, monkeypatch):
@@ -441,7 +456,7 @@ def test_wcyc_run_probes_a_camera_whose_format_read_fails(tmp_path, monkeypatch)
     ctx = _FakeCtx(tmp_path, [_cams()[0]], probe_ok=False)
     res = w_cyc.run(ctx)
     v = res["verdicts"]
-    assert len(v) == 8 and all(x["rating"] == "untested" for x in v.values())       # no alt mode: 8 variants
+    assert len(v) == 5 and all(x["rating"] == "untested" for x in v.values())       # no alt mode, no OpenCV: 5
     assert all(x["evidence"]["pre_existing_fault"] for x in v.values())
     assert ctx.cmds == []
     ctx2 = _FakeCtx(tmp_path, [_cams()[0]], probe_ok=True)                              # healthy: old behaviour
@@ -567,10 +582,11 @@ def test_runner_order_and_labels():
     # the other cameras' W-CYC reliability cycles last (W-KIYO is the background poller)
     # 2026-11-11: product-path tests after W-PYMF; W-AUTO out of the order (W-NODRIFT replaces it); W-CYC-KIYO
     # second-last so a Kiyo Pro wedge there costs the other tests nothing
+    # 2026-11-12: W-OCV-CTRL out of the default order (OpenCV left the Windows capture path; --only still runs it)
     assert order[7:] == ["W-MJPEG", "W-RAW", "W-TS", "W-PYMF", "W-PYMF-ALL", "W-NODRIFT", "W-GAIN",
-                         "W-CTRL-EFFECT", "W-OCV-CTRL", "W-TBUMP", "W-MULTI", "W-PYAV-LIST", "W-CYC-KIYO", "W-CYC",
+                         "W-CTRL-EFFECT", "W-TBUMP", "W-MULTI", "W-PYAV-LIST", "W-CYC-KIYO", "W-CYC",
                          "W-KIYO"]
-    assert [t for t, _ in rs.EXTRA_TESTS] == ["W-AUTO"]
+    assert [t for t, _ in rs.EXTRA_TESTS] == ["W-AUTO", "W-OCV-CTRL"]
     assert set(rs.OPTIONAL_TESTS) <= set(order) | {t for t, _ in rs.EXTRA_TESTS}
     assert "W-KIYO" in rs.BACKGROUND_TESTS
     assert rs.rating_label("reliability", {"rating": "no", "evidence": {"success_rate": 1.0}}) == "no (latency)"

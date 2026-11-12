@@ -178,7 +178,7 @@ def test_plan_order_keeps_the_kiyo_sensitive_captures_inside_the_wedge_window(tm
     # review round 3: the Kiyo control tests before W-CYC-KIYO's ~1,060 Kiyo stream starts
     # 2026-11-11: W-CYC-KIYO's ~1,360 Kiyo Pro starts come after everything else that needs the Kiyo Pro
     assert order.index("W-RAW") < order.index("W-TS") < order.index("W-PYMF") < order.index("W-CTRL-EFFECT") \
-        < order.index("W-OCV-CTRL") < order.index("W-MULTI") < order.index("W-CYC-KIYO")
+        < order.index("W-MULTI") < order.index("W-CYC-KIYO")
     assert "ORDER ERROR" not in out
     assert "Kiyo starts" in out and "Kiyo stream starts (" not in out     # no control test after > 250 starts
     cam_lines = [ln for ln in out.splitlines() if "  key " in ln]
@@ -300,6 +300,11 @@ def test_wcyc_profiles_and_estimate(tmp_path):
     ctx = _ctx(tmp_path, cycles=50, proc_cycles=15, frames=30)
     ctx.args.cyc_profile = "reliability"
     vc = w_cyc.variant_counts(ctx)
+    assert not set(vc) & set(w_cyc.OPENCV_VARIANTS)       # 2026-11-12: OpenCV only with --with-opencv
+    no_ocv = w_cyc.estimate_s(ctx)
+    ctx.args.with_opencv = True
+    vc = w_cyc.variant_counts(ctx)
+    assert w_cyc.estimate_s(ctx) > no_ocv
     assert vc["mf_inproc"] >= 381 and vc["ds_ffmpeg_inproc"] >= 381
     assert vc["mf_newproc"] == 400 and vc["ds_inproc"] == 50 and vc["opencv_skellycam"] == 15
     rel = w_cyc.estimate_s(ctx)
@@ -328,6 +333,9 @@ def test_wcyc_inproc_argv_ffmpeg_engine_and_skellycam_framerate(tmp_path, monkey
                   sk_fps=w_cyc.SKELLYCAM_DEFAULT_FRAMERATE)
     i = seen[-1].index("--skellycam-framerate")
     assert seen[-1][i + 1] == "-1"
+    names = [p[0] for p in w_cyc._plan(w_cyc.variant_counts(ctx), None)]
+    assert names[:2] == ["mf_inproc", "ds_ffmpeg_inproc"] and "opencv_skellycam_fps30" not in names
+    ctx.args.with_opencv = True
     names = [p[0] for p in w_cyc._plan(w_cyc.variant_counts(ctx), None)]
     assert names[:2] == ["mf_inproc", "ds_ffmpeg_inproc"] and "opencv_skellycam_fps30" in names
 
@@ -640,3 +648,17 @@ def test_nothing_in_the_harness_writes_the_registry_or_restarts_devices():
             if bad.search(line) and not line.lstrip().startswith(("#", "-", "*")) and "No device restart" not in line
             and "never" not in line.lower() and "no `pnputil" not in line.lower()]
     assert hits == []
+
+
+def test_opencv_off_by_default_wraw_and_order(tmp_path):
+    """2026-11-12: W-RAW's OpenCV routes are untested without --with-opencv (no command runs), and W-OCV-CTRL is out
+    of the default order but still runnable with --only."""
+    import w_raw
+    import run_suite as rs
+    ctx = _ctx(tmp_path)
+    assert not ck.opencv_enabled(ctx)
+    for api in w_raw.OPENCV_APIS:
+        assert w_raw.run_capture(ctx, ctx.cameras[0], ck.Mode(1280, 720, 30, 1), api, tmp_path / api, 1.0) == ck.OPENCV_OFF
+    assert "W-OCV-CTRL" not in [t for t, _m in rs.TESTS] and ("W-OCV-CTRL", "w_ocv_ctrl") in rs.EXTRA_TESTS
+    ap = rs.build_parser()
+    assert ap.parse_args([]).with_opencv is False and ap.parse_args(["--with-opencv"]).with_opencv is True

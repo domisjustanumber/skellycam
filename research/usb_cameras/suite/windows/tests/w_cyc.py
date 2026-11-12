@@ -127,6 +127,8 @@ RELIABILITY_NEWPROC = 400     # Dom 2026-11-11: >= 381 failure-free cycles for e
 #: only when the Wilson 95 % lower bound of first-frame-within-2-s is >= 0.99 (in practice >= 381 failure-free
 #: cycles); mf_newproc runs RELIABILITY_NEWPROC cycles, so it cannot back the claim and says so in its label
 CLAIM_VARIANTS = ("mf_inproc", "ds_ffmpeg_inproc", "mf_newproc")
+#: run only with run_suite.py --with-opencv (2026-11-12; capkit.opencv_enabled)
+OPENCV_VARIANTS = ("opencv_inproc", "opencv_skellycam", "opencv_skellycam_fps30")
 WILSON_CLAIM = 0.99
 #: seconds per cycle on top of the N frames (calibrated on Gerald 2026-11-06; the ffmpeg CLI starts a process per
 #: cycle: the 11-06 W-MULTI ds runs opened in ~1.4-2.0 s); the Kiyo takes ~1.5x
@@ -157,9 +159,12 @@ def variant_counts(ctx) -> dict[str, int]:
         k, kp = min(k, 4), min(kp, 2)
     rel = int(getattr(getattr(ctx, "args", None), "reliability_cycles", None) or RELIABILITY_CYCLES)
     big = max(rel, k) if prof == "reliability" else k
-    return {"mf_inproc": big, "mf_newproc": max(RELIABILITY_NEWPROC, kp) if prof == "reliability" else kp,
-            "ds_ffmpeg_inproc": big, "ds_inproc": k, "ds_newproc": kp, "opencv_inproc": kp, "opencv_skellycam": kp,
-            "opencv_skellycam_fps30": kp, "mf_modeswitch": max(2, k // 2), "ds_modeswitch": max(2, k // 2)}
+    vc = {"mf_inproc": big, "mf_newproc": max(RELIABILITY_NEWPROC, kp) if prof == "reliability" else kp,
+          "ds_ffmpeg_inproc": big, "ds_inproc": k, "ds_newproc": kp, "opencv_inproc": kp, "opencv_skellycam": kp,
+          "opencv_skellycam_fps30": kp, "mf_modeswitch": max(2, k // 2), "ds_modeswitch": max(2, k // 2)}
+    if not ck.opencv_enabled(ctx):   # 2026-11-12: OpenCV variants only with --with-opencv
+        vc = {v: c for v, c in vc.items() if v not in OPENCV_VARIANTS}
+    return vc
 
 
 def estimate_s(ctx, segment: str | None = None) -> float:
@@ -645,12 +650,13 @@ def _plan(counts_by: dict[str, int], alt) -> list[tuple]:
             ("ds_ffmpeg_inproc", "ds", "in", None, c["ds_ffmpeg_inproc"], {"engine": "ffmpeg"}),
             ("mf_newproc", "mf", "new", None, c["mf_newproc"], {}),
             ("ds_inproc", "ds", "in", None, c["ds_inproc"], {"engine": "pyav"}),
-            ("ds_newproc", "ds", "new", None, c["ds_newproc"], {"engine": "pyav"}),
-            ("opencv_inproc", "opencv", "in", None, c["opencv_inproc"], {"set_order": "skellycam"}),
-            ("opencv_skellycam", "opencv", "in", None, c["opencv_skellycam"],
-             {"set_order": "skellycam-full", "sk_fps": SKELLYCAM_DEFAULT_FRAMERATE}),
-            ("opencv_skellycam_fps30", "opencv", "in", None, c["opencv_skellycam_fps30"],
-             {"set_order": "skellycam-full", "sk_fps": 30.0})]
+            ("ds_newproc", "ds", "new", None, c["ds_newproc"], {"engine": "pyav"})]
+    if all(v in c for v in OPENCV_VARIANTS):   # only with --with-opencv (variant_counts leaves them out otherwise)
+        plan += [("opencv_inproc", "opencv", "in", None, c["opencv_inproc"], {"set_order": "skellycam"}),
+                 ("opencv_skellycam", "opencv", "in", None, c["opencv_skellycam"],
+                  {"set_order": "skellycam-full", "sk_fps": SKELLYCAM_DEFAULT_FRAMERATE}),
+                 ("opencv_skellycam_fps30", "opencv", "in", None, c["opencv_skellycam_fps30"],
+                  {"set_order": "skellycam-full", "sk_fps": 30.0})]
     if alt is not None:
         plan += [("mf_modeswitch", "mf", "in", alt, c["mf_modeswitch"], {}),
                  ("ds_modeswitch", "ds", "in", alt, c["ds_modeswitch"], {"engine": "pyav"})]

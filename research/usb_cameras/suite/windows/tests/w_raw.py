@@ -65,6 +65,8 @@ INFO = {"goal": GOAL, "claim": "capture_stack_options_plan.md 4.1 row 9a: MF del
         "opens_cameras": True}
 RAW_DS = WIN / "helpers" / "raw_ds.py"
 APIS = ("mf", "pyav", "ffmpeg", "ocv_dshow", "ocv_msmf")
+#: run only with run_suite.py --with-opencv (2026-11-12); otherwise rated untested with capkit.OPENCV_OFF
+OPENCV_APIS = ("ocv_dshow", "ocv_msmf")
 FPS_TOL = 0.02
 LEN_OK_MIN = 1.0            # plan: 100 % of frames at the expected length
 TIMEOUT_MS = 5000
@@ -443,6 +445,8 @@ def capture_helper(ctx, cam: dict, mode: ck.Mode, api: str, od: Path, secs: floa
 
 def run_capture(ctx, cam: dict, mode: ck.Mode, api: str, od: Path, secs: float):
     """(summary, run, rows) or a string: why the route could not run."""
+    if api in OPENCV_APIS and not ck.opencv_enabled(ctx):
+        return ck.OPENCV_OFF
     if api == "mf":
         if not cam.get("mf_symlink"):
             return "camera has no MF symbolic link"
@@ -553,7 +557,9 @@ def estimate_s(ctx) -> float:
             n += len(scope_raw(sc, raw_modes(fm)[0])[0])
         else:
             n += 4 if str(cam.get("speed") or "").startswith("SS") else 0
-    per_mode = (secs + 2) + (secs + 5) + (secs + 5) + (secs + 10) + (secs + 45)
+    per_mode = (secs + 2) + (secs + 5) + (secs + 5)                    # mf, pyav, ffmpeg
+    if ck.opencv_enabled(ctx):
+        per_mode += (secs + 10) + (secs + 45)                          # ocv_dshow, ocv_msmf
     return 15 + n * per_mode
 
 

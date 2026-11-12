@@ -960,6 +960,17 @@ def quick(ctx) -> bool:
     return bool(getattr(ctx.args, "quick", False))
 
 
+#: why an OpenCV route or variant was not run (2026-11-12: OpenCV left skellycam's Windows capture path, plan 1.3)
+OPENCV_OFF = "untested: OpenCV routes are off by default (run_suite.py --with-opencv runs them)"
+
+
+def opencv_enabled(ctx) -> bool:
+    """True when the run asked for the OpenCV routes (--with-opencv). Off by default since 2026-11-12: OpenCV is out
+    of skellycam's Windows capture path (CAPTURE_AND_RECORDING_PLAN 1.3), and each OpenCV open is a Kiyo Pro stream
+    start for no decision (docs/windows_results_20261112.md)."""
+    return bool(getattr(getattr(ctx, "args", None), "with_opencv", False))
+
+
 def arg(ctx, name: str, full: Any, quick_value: Any) -> Any:
     v = getattr(ctx.args, name, None)
     if v is not None:
