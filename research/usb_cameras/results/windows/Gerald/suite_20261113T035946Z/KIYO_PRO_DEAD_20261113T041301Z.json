@@ -1,0 +1,244 @@
+{
+ "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+ "dead": true,
+ "since_utc": "2026-11-13T04:13:01.098257+00:00",
+ "name": "USB Video Device",
+ "code": "timeout",
+ "test": "W-PYMF-ALL",
+ "rule": "Kiyo Pro dead for the rest of the run: no re-probe, re-open, reset or recovery; diagnostics recorded once (Dom 2026-11-11)",
+ "diagnostics": {
+  "utc": "2026-11-13T04:13:01.099256+00:00",
+  "run_dir": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\results\\windows\\Gerald\\suite_20261113T035946Z",
+  "run_stamp": "20261113T035946Z",
+  "test": "W-PYMF-ALL",
+  "fault": {
+   "utc": "2026-11-13T04:13:01.098257+00:00",
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "is_kiyo": true,
+   "test": "W-PYMF-ALL",
+   "mode": "MJPG 1280x720@60",
+   "code": "timeout",
+   "api": "pymf",
+   "stage": "first_sample",
+   "class": "unreleasable",
+   "source": "W-PYMF-ALL",
+   "plug_in_age_s": 20738.3,
+   "last_arrival": "2026-11-12T22:27:22.836943+00:00",
+   "detail": {
+    "part": "all_720p60",
+    "rule": "pymf multi closed the Kiyo Pro reader at the fault and never re-opened it"
+   },
+   "faulted": true,
+   "since_utc": "2026-11-13T04:13:01.098257+00:00",
+   "repeats": 0
+  },
+  "plug_in_age_s": 20738.3,
+  "last_arrival": "2026-11-12T22:27:22.836943+00:00",
+  "last_command": {
+   "argv": "wincam.exe controls --api ds --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global --read-only --timeout-ms 3000",
+   "utc_started": "2026-11-13T04:09:52.237399+00:00",
+   "utc_ended": "2026-11-13T04:09:52.434077+00:00",
+   "rc": 0,
+   "timed_out": false,
+   "killed": false,
+   "elapsed_s": 0.046,
+   "test": "W-PYMF-ALL",
+   "stderr_tail": "[camlock] acquired after 0.0s (ticket 6152): C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\helpers\\timed_run.py --timeout-s 20.0 -- C:\\Users\\Dom\\GitHub\\freemocap\\skellycam\\research\\usb_cameras\\suite\\windows\\native\\build\\wincam.exe controls --api ds --device \\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global --read-only --timeout-ms 3000\n[camlock] released"
+  },
+  "fault_and_failure_events": [
+   {
+    "type": "fault",
+    "utc": "2026-11-13T04:13:01.098257+00:00",
+    "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+    "name": "USB Video Device",
+    "is_kiyo": true,
+    "test": "W-PYMF-ALL",
+    "mode": "MJPG 1280x720@60",
+    "code": "timeout",
+    "api": "pymf",
+    "stage": "first_sample",
+    "class": "unreleasable",
+    "source": "W-PYMF-ALL",
+    "plug_in_age_s": 20738.3,
+    "last_arrival": "2026-11-12T22:27:22.836943+00:00",
+    "detail": {
+     "part": "all_720p60",
+     "rule": "pymf multi closed the Kiyo Pro reader at the fault and never re-opened it"
+    }
+   }
+  ],
+  "first_failure": {
+   "utc": "2026-11-13T04:13:01.098257+00:00",
+   "test": "W-PYMF-ALL",
+   "mode": "MJPG 1280x720@60",
+   "code": "timeout",
+   "api": "pymf",
+   "stage": "first_sample",
+   "class": "unreleasable",
+   "source": "W-PYMF-ALL",
+   "plug_in_age_s": 20738.3,
+   "last_arrival": "2026-11-12T22:27:22.836943+00:00",
+   "detail": {
+    "part": "all_720p60",
+    "rule": "pymf multi closed the Kiyo Pro reader at the fault and never re-opened it"
+   },
+   "is_kiyo": true,
+   "name": "USB Video Device",
+   "device_level": true
+  },
+  "first_any_failure": {
+   "utc": "2026-11-13T04:13:01.098257+00:00",
+   "test": "W-PYMF-ALL",
+   "mode": "MJPG 1280x720@60",
+   "code": "timeout",
+   "api": "pymf",
+   "stage": "first_sample",
+   "class": "unreleasable",
+   "source": "W-PYMF-ALL",
+   "plug_in_age_s": 20738.3,
+   "last_arrival": "2026-11-12T22:27:22.836943+00:00",
+   "detail": {
+    "part": "all_720p60",
+    "rule": "pymf multi closed the Kiyo Pro reader at the fault and never re-opened it"
+   },
+   "is_kiyo": true,
+   "name": "USB Video Device",
+   "device_level": true
+  },
+  "other_camera_commands_running": [],
+  "stream_starts_this_run": 0,
+  "camera": {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-12T22:27:22.836943+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 2
+  },
+  "usb_link": null,
+  "arrival_now": {
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "present": true,
+   "last_arrival": "2026-11-12T22:27:22.836943+00:00",
+   "last_removal": null,
+   "problem_code": 0,
+   "devnode_status": "0x0180600a",
+   "dn_warn": []
+  },
+  "camera_activity": {
+   "ok": true,
+   "utc": "2026-11-13T04:13:01.109450Z",
+   "monitor": {
+    "available": true,
+    "hr": "0x00000000",
+    "source": "IMFSensorActivityMonitor (mfsensorgroup.dll)",
+    "report_received": true,
+    "reports": 3,
+    "wait_ms": 1500,
+    "first_report_ms": 1.603500009
+   },
+   "devices": [
+    {
+     "friendly_name": "Logitech Webcam C930e",
+     "match_key": "usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000\\global",
+     "in_use": false,
+     "streaming": false,
+     "processes": []
+    },
+    {
+     "friendly_name": "NDI Webcam Video 1",
+     "match_key": "root#media#0002\\vidsource0",
+     "in_use": false,
+     "streaming": false,
+     "processes": []
+    },
+    {
+     "friendly_name": "NDI Webcam Video 2",
+     "match_key": "root#media#0002\\vidsource1",
+     "in_use": false,
+     "streaming": false,
+     "processes": []
+    },
+    {
+     "friendly_name": "NDI Webcam Video 3",
+     "match_key": "root#media#0002\\vidsource2",
+     "in_use": false,
+     "streaming": false,
+     "processes": []
+    },
+    {
+     "friendly_name": "NDI Webcam Video 4",
+     "match_key": "root#media#0002\\vidsource3",
+     "in_use": false,
+     "streaming": false,
+     "processes": []
+    },
+    {
+     "friendly_name": "USB Camera",
+     "match_key": "usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000\\global",
+     "in_use": false,
+     "streaming": false,
+     "processes": []
+    },
+    {
+     "friendly_name": "c922 Pro Stream Webcam",
+     "match_key": "usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000\\global",
+     "in_use": false,
+     "streaming": false,
+     "processes": []
+    },
+    {
+     "friendly_name": "USB Video Device",
+     "match_key": "usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000\\global",
+     "in_use": true,
+     "streaming": false,
+     "processes": [
+      {
+       "pid": 19036,
+       "name": "wincam.exe",
+       "streaming": false,
+       "self": false
+      }
+     ]
+    },
+    {
+     "friendly_name": null,
+     "match_key": "ǉ",
+     "in_use": true,
+     "streaming": false,
+     "processes": [
+      {
+       "pid": 17184,
+       "name": null,
+       "streaming": false,
+       "self": false
+      }
+     ]
+    }
+   ],
+   "consent_in_use": [],
+   "camera_opened": false,
+   "coverage_note": "IMFSensorActivityMonitor reports Frame Server (MF / WinRT) clients only; DirectShow (ksproxy) clients are invisible to it but show in consent_store.in_use (per capability, not per camera)"
+  },
+  "frame_server": "\"Image Name\",\"PID\",\"Services\"\r\n\"svchost.exe\",\"8156\",\"FrameServer\"\r\n",
+  "processes": ",076 K\"\r\n\"IntelCpHDCPSvc.exe\",\"2716\",\"Services\",\"0\",\"8,092 K\"\r\n\"svchost.exe\",\"2744\",\"Services\",\"0\",\"16,324 K\"\r\n\"svchost.exe\",\"2872\",\"Services\",\"0\",\"9,664 K\"\r\n\"svchost.exe\",\"2884\",\"Services\",\"0\",\"23,040 K\"\r\n\"svchost.exe\",\"3000\",\"Services\",\"0\",\"22,232 K\"\r\n\"svchost.exe\",\"2028\",\"Services\",\"0\",\"8,084 K\"\r\n\"svchost.exe\",\"3276\",\"Services\",\"0\",\"16,248 K\"\r\n\"svchost.exe\",\"3412\",\"Services\",\"0\",\"15,144 K\"\r\n\"NVDisplay.Container.exe\",\"3444\",\"Services\",\"0\",\"41,496 K\"\r\n\"WUDFHost.exe\",\"3452\",\"Services\",\"0\",\"10,096 K\"\r\n\"AsusCertService.exe\",\"3628\",\"Services\",\"0\",\"8,424 K\"\r\n\"svchost.exe\",\"3644\",\"Services\",\"0\",\"22,320 K\"\r\n\"svchost.exe\",\"3712\",\"Services\",\"0\",\"18,904 K\"\r\n\"svchost.exe\",\"3720\",\"Services\",\"0\",\"7,360 K\"\r\n\"svchost.exe\",\"3728\",\"Services\",\"0\",\"9,936 K\"\r\n\"svchost.exe\",\"3792\",\"Services\",\"0\",\"15,660 K\"\r\n\"svchost.exe\",\"3876\",\"Services\",\"0\",\"23,792 K\"\r\n\"Memory Compression\",\"3884\",\"Services\",\"0\",\"1,118,360 K\"\r\n\"svchost.exe\",\"3936\",\"Services\",\"0\",\"11,052 K\"\r\n\"svchost.exe\",\"3988\",\"Services\",\"0\",\"13,076 K\"\r\n\"svchost.exe\",\"3996\",\"Services\",\"0\",\"10,676 K\"\r\n\"svchost.exe\",\"3032\",\"Services\",\"0\",\"20,680 K\"\r\n\"svchost.exe\",\"4100\",\"Services\",\"0\",\"26,452 K\"\r\n\"CTAudSvc.exe\",\"4108\",\"Services\",\"0\",\"9,576 K\"\r\n\"WUDFHost.exe\",\"4204\",\"Services\",\"0\",\"12,576 K\"\r\n\"svchost.exe\",\"4388\",\"Services\",\"0\",\"11,560 K\"\r\n\"NVDisplay.Container.exe\",\"4420\",\"Console\",\"1\",\"50,660 K\"\r\n\"svchost.exe\",\"4616\",\"Services\",\"0\",\"9,228 K\"\r\n\"svchost.exe\",\"4920\",\"Services\",\"0\",\"10,984 K\"\r\n\"svchost.exe\",\"4928\",\"Services\",\"0\",\"8,976 K\"\r\n\"svchost.exe\",\"4944\",\"Services\",\"0\",\"26,668 K\"\r\n\"svchost.exe\",\"5028\",\"Services\",\"0\",\"10,320 K\"\r\n\"svchost.exe\",\"5088\",\"Services\",\"0\",\"13,484 K\"\r\n\"svchost.exe\",\"5180\",\"Services\",\"0\",\"24,220 K\"\r\n\"svchost.exe\",\"5212\",\"Services\",\"0\",\"17,372 K\"\r\n\"AsusOptimization.exe\",\"5220\",\"Services\",\"0\",\"10,912 K\"\r\n\"svchost.exe\",\"5272\",\"Services\",\"0\",\"19,384 K\"\r\n\"spoolsv.exe\",\"5524\",\"Services\",\"0\",\"40,900 K\"\r\n\"svchost.exe\",\"5564\",\"Services\",\"0\",\"17,644 K\"\r\n\"svchost.exe\",\"5608\",\"Services\",\"0\",\"26,568 K\"\r\n\"dasHost.exe\",\"5732\",\"Services\",\"0\",\"22,928 K\"\r\n\"svchost.exe\",\"5744\",\"Services\",\"0\",\"9,044 K\"\r\n\"svchost.exe\",\"5964\",\"Services\",\"0\",\"9,564 K\"\r\n\"WmiPrvSE.exe\",\"6116\",\"Services\",\"0\",\"77,064 K\"\r\n\"WUDFHost.exe\",\"6136\",\"Services\",\"0\",\"7,844 K\"\r\n\"WmiPrvSE.exe\",\"6012\",\"Services\",\"0\",\"71,500 K\"\r\n\"svchost.exe\",\"6184\",\"Services\",\"0\",\"10,396 K\"\r\n\"AsusAppService.exe\",\"6384\",\"Services\",\"0\",\"26,900 K\"\r\n\"ArmouryCrate.Service.exe\",\"6448\",\"Services\",\"0\",\"54,932 K\"\r\n\"AsusSystemAnalysis.exe\",\"6504\",\"Services\",\"0\",\"17,204 K\"\r\n\"atkexComSvc.exe\",\"6520\",\"Services\",\"0\",\"15,276 K\"\r\n\"AsusSwitch.exe\",\"6528\",\"Services\",\"0\",\"10,788 K\"\r\n\"AsusSoftwareManager.exe\",\"6540\",\"Services\",\"0\",\"20,916 K\"\r\n\"AsusFanControlService.exe\",\"6548\",\"Services\",\"0\",\"30,792 K\"\r\n\"mDNSResponder.exe\",\"6572\",\"Services\",\"0\",\"9,752 K\"\r\n\"DesignerCompactKeyboardNotificationService.exe\",\"6580\",\"Services\",\"0\",\"10,296 K\"\r\n\"BrYNSvc.exe\",\"6592\",\"Services\",\"0\",\"19,436 K\"\r\n\"DYMO.Connect.PnP.Service.exe\",\"6600\",\"Services\",\"0\",\"35,492 K\"\r\n\"Corsair.Service.exe\",\"6608\",\"Services\",\"0\",\"54,084 K\"\r\n\"GameSDK.exe\",\"6616\",\"Services\",\"0\",\"9,188 K\"\r\n\"HPPrintScanDoctorService.exe\",\"6632\",\"Services\",\"0\",\"24,440 K\"\r\n\"svchost.exe\",\"6640\",\"Services\",\"0\",\"14,420 K\"\r\n\"svchost.exe\",\"6648\",\"Services\",\"0\",\"58,536 K\"\r\n\"svchost.exe\",\"6656\",\"Services\",\"0\",\"75,176 K\"\r\n\"jhi_service.exe\",\"6664\",\"Services\",\"0\",\"8,872 K\"\r\n\"AsusSystemDiagnosis.exe\",\"6680\",\"Services\",\"0\",\"13,468 K\"\r\n\"ThunderboltService.exe\",\"6720\",\"Services\",\"0\",\"21,204 K\"\r\n\"Pen_Tablet.exe\",\"6728\",\"Services\",\"0\",\"9,168 K\"\r\n\"MacriumService.exe\",\"6736\",\"Services\",\"0\",\"30,092 K\"\r\n\"PreSonusHardwareAccessService.exe\",\"6744\",\"Services\",\"0\",\"18,932 K\"\r\n\"pservice.exe\",\"6752\",\"Services\",\"0\",\"12,128 K\"\r\n\"LightingService.exe\",\"6768\",\"Services\",\"0\",\"30,176 K\"\r\n\"SONiXDDRService_x64.exe\",\"6776\",\"Services\",\"0\",\"11,312 K\"\r\n\"ss_conn_service.exe\",\"6784\",\"Services\",\"0\",\"8,904 K\"\r\n\"ss_conn_service2.exe\",\"6792\",\"Services\",\"0\",\"9,760 K\"\r\n\"ROGLiveService.exe\",\"6800\",\"Services\",\"0\",\"35,636 K\"\r\n\"MpDefenderCoreService.exe\",\"6808\",\"Services\",\"0\",\"31,912 K\"\r\n\"TbtP2pShortcutService.exe\",\"6816\",\"Services\",\"0\",\"7,264 K\"\r\n\"updatesvc.exe\",\"6824\",\"Services\",\"0\",\"8,572 K\"\r\n\"WMIRegistrationService.exe\",\"6836\",\"Services\",\"0\",\"14,972 K\"\r\n\"USBAppControl.exe\",\"6852\",\"Services\",\"0\",\"20,924 K\"\r\n\"svchost.exe\",\"6868\",\"Services\",\"0\",\"7,364 K\"\r\n\"Creative.VADMonitorService.exe\",\"6876\",\"Services\",\"0\",\"24,984 K\"\r\n\"RtkAudUService64.exe\",\"6884\",\"Services\",\"0\",\"17,160 K\"\r\n\"RstMwService.exe\",\"6892\",\"Services\",\"0\",\"10,664 K\"\r\n\"WorkflowAppControl.exe\",\"6932\",\"Services\",\"0\",\"26,952 K\"\r\n\"MsMpEng.exe\",\"6948\",\"Services\",\"0\",\"390,988 K\"\r\n\"BrLogRx.exe\",\"7708\",\"Services\",\"0\",\"10,944 K\"\r\n\"svchost.exe\",\"8616\",\"Services\",\"0\",\"22,784 K\"\r\n\"svchost.exe\",\"8488\",\"Services\",\"0\",\"11,956 K\"\r\n\"AggregatorHost.exe\",\"9400\",\"Services\",\"0\",\"18,424 K\"\r\n\"DefenderSessionHelper.exe\",\"9864\",\"Console\",\"1\",\"5,580 K\"\r\n\"dasHost.exe\",\"10064\",\"Services\",\"0\",\"10,840 K\"\r\n\"svchost.exe\",\"10132\",\"Services\",\"0\",\"9,812 K\"\r\n\"WmiPrvSE.exe\",\"10476\",\"Services\",\"0\",\"13,540 K\"\r\n\"AsusOptimizationStartupTask.exe\",\"10536\",\"Console\",\"1\",\"11,124 K\"\r\n\"extensionCardHal_x86.exe\",\"10876\",\"Services\",\"0\",\"11,432 K\"\r\n\"Aac3572MbHal_x86.exe\",\"10884\",\"Services\",\"0\",\"12,164 K\"\r\n\"Aac3572DramHal_x86.exe\",\"10740\",\"Services\",\"0\",\"11,448 K\"\r\n\"ArmouryCrate.UserSessionHelper.exe\",\"11536\",\"Console\",\"1\",\"66,228 K\"\r\n\"conhost.exe\",\"11596\",\"Console\",\"1\",\"7,072 K\"\r\n\"CorsairCpuIdService.exe\",\"11612\",\"Services\",\"0\",\"174,200 K\"\r\n\"crashpad_handler.exe\",\"12196\",\"Services\",\"0\",\"7,476 K\"\r\n\"unsecapp.exe\",\"9264\",\"Services\",\"0\",\"9,280 K\"\r\n\"svchost.exe\",\"12120\",\"Services\",\"0\",\"33,516 K\"\r\n\"cowork-svc.exe\",\"12500\",\"Services\",\"0\",\"24,372 K\"\r\n\"IntelGraphicsSoftware.Service.exe\",\"12512\",\"Services\",\"0\",\"39,980 K\"\r\n\"rundll32.exe\",\"12848\",\"Console\",\"1\",\"14,428 K\"\r\n\"sihost.exe\",\"12352\",\"Console\",\"1\",\"51,368 K\"\r\n\"svchost.exe\",\"8788\",\"Console\",\"1\",\"15,304 K\"\r\n\"svchost.exe\",\"11940\",\"Console\",\"1\",\"30,060 K\"\r\n\"svchost.exe\",\"13012\",\"Console\",\"1\",\"10,476 K\"\r\n\"svchost.exe\",\"12940\",\"Services\",\"0\",\"7,056 K\"\r\n\"svchost.exe\",\"13172\",\"Console\",\"1\",\"43,140 K\"\r\n\"wlanext.exe\",\"12924\",\"Services\",\"0\",\"8,252 K\"\r\n\"itype.exe\",\"13500\",\"Console\",\"1\",\"408 K\"\r\n\"ADU.exe\",\"13532\",\"Console\",\"1\",\"12,388 K\"\r\n\"NoiseCancelingEngine.exe\",\"13544\",\"Console\",\"1\",\"6,328 K\"\r\n\"ipoint.exe\",\"13564\",\"Console\",\"1\",\"5,300 K\"\r\n\"AcPowerNotification.exe\",\"13680\",\"Console\",\"1\",\"21,656 K\"\r\n\"svchost.exe\",\"13704\",\"Services\",\"0\",\"26,196 K\"\r\n\"taskhostw.exe\",\"13736\",\"Console\",\"1\",\"23,740 K\"\r\n\"vmcompute.exe\",\"13792\",\"Services\",\"0\",\"16,020 K\"\r\n\"AacKingstonDramHal_x86.exe\",\"14160\",\"Services\",\"0\",\"11,400 K\"\r\n\"svchost.exe\",\"12344\",\"Services\",\"0\",\"25,160 K\"\r\n\"explorer.exe\",\"13976\",\"Console\",\"1\",\"403,716 K\"\r\n\"svchost.exe\",\"14004\",\"Services\",\"0\",\"25,400 K\"\r\n\"WTabletServicePro.exe\",\"14100\",\"Services\",\"0\",\"12,104 K\"\r\n\"svchost.exe\",\"6516\",\"Services\",\"0\",\"9,888 K\"\r\n\"wslservice.exe\",\"14224\",\"Services\",\"0\",\"32,996 K\"\r\n\"ShellHost.exe\",\"14432\",\"Console\",\"1\",\"53,224 K\"\r\n\"svchost.exe\",\"14500\",\"Services\",\"0\",\"9,592 K\"\r\n\"Wacom_TabletUser.exe\",\"14656\",\"Console\",\"1\",\"11,908 K\"\r\n\"CrossDeviceResume.exe\",\"14840\",\"Console\",\"1\",\"47,760 K\"\r\n\"Pen_TabletUser.exe\",\"15052\",\"Console\",\"1\",\"9,176 K\"\r\n\"DefenderAiPlatformHost.exe\",\"15076\",\"Services\",\"0\",\"6,520 K\"\r\n\"IntelGraphicsSoftware.Service.Graphics.exe\",\"15152\",\"Services\",\"0\",\"41,780 K\"\r\n\"conhost.exe\",\"15184\",\"Services\",\"0\",\"7,732 K\"\r\n\"PresentMonService.exe\",\"15224\",\"Services\",\"0\",\"12,176 K\"\r\n\"conhost.exe\",\"15300\",\"Services\",\"0\",\"6,288 K\"\r\n\"Wacom_UpdateUtil.exe\",\"14940\",\"Console\",\"1\",\"14,156 K\"\r\n\"svchost.exe\",\"15340\",\"Services\",\"0\",\"11,116 K\"\r\n\"WacomHost.exe\",\"14716\",\"Console\",\"1\",\"14,976 K\"\r\n\"svchost.exe\",\"6368\",\"Services\",\"0\",\"37,192 K\"\r\n\"conhost.exe\",\"15596\",\"Console\",\"1\",\"1,632 K\"\r\n\"Wacom_Tablet.exe\",\"15740\",\"Console\",\"1\",\"46,608 K\"\r\n\"svchost.exe\",\"15860\",\"Console\",\"1\",\"32,524 K\"\r\n\"svchost.exe\",\"16020\",\"Services\",\"0\",\"14,372 K\"\r\n\"Pen_Tablet.exe\",\"16168\",\"Console\",\"1\",\"17,504 K\"\r\n\"Wacom_TouchUser.exe\",\"16292\",\"Console\",\"1\",\"17,804 K\"\r\n\"AacKingstonDramHal_x64.exe\",\"13464\",\"Services\",\"0\",\"12,156 K\"\r\n\"SearchHost.exe\",\"16580\",\"Console\",\"1\",\"143,460 K\"\r\n\"StartMenuExperienceHost.exe\",\"16604\",\"Console\",\"1\",\"197,004 K\"\r\n\"ctfmon.exe\",\"16820\",\"Console\",\"1\",\"45,676 K\"\r\n\"TabTip.exe\",\"16900\",\"Console\",\"1\",\"75,260 K\"\r\n\"WidgetBoard.exe\",\"16960\",\"Console\",\"1\",\"29,104 K\"\r\n\"RuntimeBroker.exe\",\"17236\",\"Console\",\"1\",\"77,692 K\"\r\n\"svchost.exe\",\"17288\",\"Console\",\"1\",\"26,812 K\"\r\n\"ReflectUI.exe\",\"17804\",\"Console\",\"1\",\"39,108 K\"\r\n\"ArmourySocketServer.exe\",\"18216\",\"Console\",\"1\",\"912 K\"\r\n\"SearchIndexer.exe\",\"18828\",\"Services\",\"0\",\"64,892 K\"\r\n\"ArmouryHtmlDebugServer.exe\",\"19884\",\"Console\",\"1\",\"1,092 K\"\r\n\"NisSrv.exe\",\"20196\",\"Services\",\"0\",\"15,440 K\"\r\n\"PowerToys.exe\",\"20396\",\"Console\",\"1\",\"51,012 K\"\r\n\"MKCHelper.exe\",\"20860\",\"Console\",\"1\",\"3,200 K\"\r\n\"PowerToys.QuickAccess.exe\",\"21004\",\"Console\",\"1\",\"35,384 K\"\r\n\"msedgewebview2.exe\",\"21128\",\"Console\",\"1\",\"129,728 K\"\r\n\"WmiApSrv.exe\",\"21160\",\"Services\",\"0\",\"11,456 K\"\r\n\"LockApp.exe\",\"21168\",\"Console\",\"1\",\"86,624 K\"\r\n\"msedgewebview2.exe\",\"21404\",\"Console\",\"1\",\"15,148 K\"\r\n\"msedgewebview2.exe\",\"21184\",\"Console\",\"1\",\"43,152 K\"\r\n\"msedgewebview2.exe\",\"20620\",\"Console\",\"1\",\"72,180 K\"\r\n\"RuntimeBroker.exe\",\"21536\",\"Console\",\"1\",\"26,536 K\"\r\n\"msedgewebview2.exe\",\"21568\",\"Console\",\"1\",\"22,356 K\"\r\n\"msedgewebview2.exe\",\"21864\",\"Console\",\"1\",\"119,128 K\"\r\n\"WidgetService.exe\",\"21904\",\"Console\",\"1\",\"25,432 K\"\r\n\"svchost.exe\",\"22004\",\"Console\",\"1\",\"21,624 K\"\r\n\"ASUS DriverHub.exe\",\"23012\",\"Console\",\"1\",\"3,200 K\"\r\n\"WmiPrvSE.exe\",\"23520\",\"Services\",\"0\",\"16,716 K\"\r\n\"asus_framework.exe\",\"3300\",\"Console\",\"1\",\"28,792 K\"\r\n\"PhoneExperienceHost.exe\",\"12532\",\"Console\",\"1\",\"160,808 K\"\r\n\"TextInputHost.exe\",\"23956\",\"Console\",\"1\",\"84,768 K\"\r\n\"asus_framework.exe\",\"24136\",\"Console\",\"1\",\"8,428 K\"\r\n\"asus_framework.exe\",\"14772\",\"Console\",\"1\",\"14,508 K\"\r\n\"asus_framework.exe\",\"3264\",\"Console\",\"1\",\"11,428 K\"\r\n\"PowerToys.AlwaysOnTop.exe\",\"6356\",\"Console\",\"1\",\"4,880 K\"\r\n\"PowerToys.AdvancedPaste.exe\",\"23580\",\"Console\",\"1\",\"85,940 K\"\r\n\"PowerToys.ColorPickerUI.exe\",\"21260\",\"Console\",\"1\",\"34,180 K\"\r\n\"PowerToys.CropAndLock.exe\",\"19544\",\"Console\",\"1\",\"2,740 K\"\r\n\"Microsoft.CmdPal.UI.exe\",\"24900\",\"Console\",\"1\",\"131,804 K\"\r\n\"PowerToys.Peek.UI.exe\",\"24648\",\"Console\",\"1\",\"12,384 K\"\r\n\"PowerToys.PowerLauncher.exe\",\"25248\",\"Console\",\"1\",\"79,536 K\"\r\n\"svchost.exe\",\"26020\",\"Services\",\"0\",\"7,928 K\"\r\n\"PowerToys.ShortcutGuide.exe\",\"26292\",\"Console\",\"1\",\"25,824 K\"\r\n\"Microsoft.CmdPal.Ext.PowerToys.exe\",\"27196\",\"Console\",\"1\",\"43,944 K\"\r\n\"ArmourySwAgent.exe\",\"28476\",\"Console\",\"1\",\"1,608 K\"\r\n\"asus_framework.exe\",\"28612\",\"Console\",\"1\",\"13,876 K\"\r\n\"asus_framework.exe\",\"28652\",\"Console\",\"1\",\"14,444 K\"\r\n\"asus_framework.exe\",\"21024\",\"Console\",\"1\",\"14,936 K\"\r\n\"Aac3572MbHal_x86.exe\",\"29672\",\"Console\",\"1\",\"11,468 K\"\r\n\"ReflectMonitor.exe\",\"2800\",\"Console\",\"1\",\"36,976 K\"\r\n\"SecurityHealthSystray.exe\",\"27316\",\"Console\",\"1\",\"13,256 K\"\r\n\"SecurityHealthService.exe\",\"14244\",\"Services\",\"0\",\"24,696 K\"\r\n\"RtkAudUService64.exe\",\"32352\",\"Console\",\"1\",\"17,912 K\"\r\n\"svchost.exe\",\"31456\",\"Services\",\"0\",\"29,288 K\"\r\n\"svchost.exe\",\"30284\",\"Services\",\"0\",\"15,580 K\"\r\n\"Universal Control.exe\",\"14960\",\"Console\",\"1\",\"90,704 K\"\r\n\"svchost.exe\",\"2976\",\"Console\",\"1\",\"21,676 K\"\r\n\"dllhost.exe\",\"7028\",\"Console\",\"1\",\"12,556 K\"\r\n\"nextcloud.exe\",\"36604\",\"Console\",\"1\",\"73,876 K\"\r\n\"MicrosoftStartFeedProvider.exe\",\"36724\",\"Console\",\"1\",\"41,308 K\"\r\n\"svchost.exe\",\"33152\",\"Services\",\"0\",\"19,336 K\"\r\n\"1Password.exe\",\"17364\",\"Console\",\"1\",\"150,936 K\"\r\n\"1Password.exe\",\"36840\",\"Console\",\"1\",\"28,936 K\"\r\n\"1Password.exe\",\"36384\",\"Console\",\"1\",\"92,940 K\"\r\n\"1Password.exe\",\"36440\",\"Console\",\"1\",\"42,136 K\"\r\n\"dllhost.exe\",\"32524\",\"Services\",\"0\",\"14,568 K\"\r\n\"svchost.exe\",\"35724\",\"Services\",\"0\",\"25,680 K\"\r\n\"1Password-Crash-Handler.exe\",\"20876\",\"Console\",\"1\",\"16,488 K\"\r\n\"conhost.exe\",\"34464\",\"Console\",\"1\",\"7,012 K\"\r\n\"iPSMonitor.exe\",\"24276\",\"Console\",\"1\",\"163,048 K\"\r\n\"AsusFCNotification.exe\",\"36812\",\"Console\",\"1\",\"13,796 K\"\r\n\"cmd.exe\",\"24732\",\"Console\",\"1\",\"7,700 K\"\r\n\"conhost.exe\",\"24928\",\"Console\",\"1\",\"15,568 K\"\r\n\"ddm.exe\",\"14416\",\"Console\",\"1\",\"12,920 K\"\r\n\"BrLogRx.exe\",\"24980\",\"Console\",\"1\",\"12,484 K\"\r\n\"SoftwareUpdateNotificationService.exe\",\"33740\",\"Console\",\"1\",\"14,448 K\"\r\n\"RuntimeBroker.exe\",\"35308\",\"Console\",\"1\",\"22,904 K\"\r\n\"svchost.exe\",\"37216\",\"Services\",\"0\",\"47,188 K\"\r\n\"svchost.exe\",\"32136\",\"Services\",\"0\",\"38,620 K\"\r\n\"svchost.exe\",\"5256\",\"Services\",\"0\",\"16,768 K\"\r\n\"svchost.exe\",\"3092\",\"Services\",\"0\",\"11,112 K\"\r\n\"svchost.exe\",\"32468\",\"Services\",\"0\",\"34,656 K\"\r\n\"svchost.exe\",\"14236\",\"Services\",\"0\",\"13,508 K\"\r\n\"svchost.exe\",\"29564\",\"Services\",\"0\",\"7,704 K\"\r\n\"Code.exe\",\"17284\",\"Console\",\"1\",\"183,368 K\"\r\n\"Code.exe\",\"23688\",\"Console\",\"1\",\"31,952 K\"\r\n\"Code.exe\",\"18632\",\"Console\",\"1\",\"248,240 K\"\r\n\"Code.exe\",\"31524\",\"Console\",\"1\",\"55,052 K\"\r\n\"Code.exe\",\"30792\",\"Console\",\"1\",\"294,296 K\"\r\n\"Code.exe\",\"35096\",\"Console\",\"1\",\"143,912 K\"\r\n\"Code.exe\",\"13388\",\"Console\",\"1\",\"406,076 K\"\r\n\"Code.exe\",\"13804\",\"Console\",\"1\",\"105,668 K\"\r\n\"Code.exe\",\"11104\",\"Console\",\"1\",\"964,548 K\"\r\n\"Code.exe\",\"23244\",\"Console\",\"1\",\"126,780 K\"\r\n\"Code.exe\",\"27304\",\"Console\",\"1\",\"128,708 K\"\r\n\"pet.exe\",\"18572\",\"Console\",\"1\",\"14,092 K\"\r\n\"conhost.exe\",\"32176\",\"Console\",\"1\",\"7,108 K\"\r\n\"OpenConsole.exe\",\"23392\",\"Console\",\"1\",\"11,484 K\"\r\n\"pwsh.exe\",\"35592\",\"Console\",\"1\",\"80,380 K\"\r\n\"Code.exe\",\"2308\",\"Console\",\"1\",\"609,304 K\"\r\n\"Code.exe\",\"15584\",\"Console\",\"1\",\"100,876 K\"\r\n\"Code.exe\",\"3332\",\"Console\",\"1\",\"106,208 K\"\r\n\"AsusSoftwareManagerAgent.exe\",\"18488\",\"Console\",\"1\",\"47,164 K\"\r\n\"ApplicationFrameHost.exe\",\"11692\",\"Console\",\"1\",\"68,084 K\"\r\n\"svchost.exe\",\"22520\",\"Services\",\"0\",\"9,392 K\"\r\n\"svchost.exe\",\"27128\",\"Console\",\"1\",\"14,296 K\"\r\n\"svchost.exe\",\"13444\",\"Services\",\"0\",\"10,752 K\"\r\n\"svchost.exe\",\"11924\",\"Services\",\"0\",\"17,092 K\"\r\n\"ShellExperienceHost.exe\",\"14612\",\"Console\",\"1\",\"144,192 K\"\r\n\"RuntimeBroker.exe\",\"21592\",\"Console\",\"1\",\"35,472 K\"\r\n\"Code.exe\",\"37912\",\"Console\",\"1\",\"123,436 K\"\r\n\"backgroundTaskHost.exe\",\"39448\",\"Console\",\"1\",\"75,264 K\"\r\n\"RuntimeBroker.exe\",\"7300\",\"Console\",\"1\",\"34,252 K\"\r\n\"Code.exe\",\"27736\",\"Console\",\"1\",\"173,000 K\"\r\n\"RuntimeBroker.exe\",\"35432\",\"Console\",\"1\",\"12,688 K\"\r\n\"tail.exe\",\"39600\",\"Console\",\"1\",\"5,168 K\"\r\n\"grep.exe\",\"5248\",\"Console\",\"1\",\"5,144 K\"\r\n\"tail.exe\",\"15592\",\"Console\",\"1\",\"5,132 K\"\r\n\"grep.exe\",\"1944\",\"Console\",\"1\",\"5,144 K\"\r\n\"tail.exe\",\"40176\",\"Console\",\"1\",\"5,124 K\"\r\n\"grep.exe\",\"18552\",\"Console\",\"1\",\"5,144 K\"\r\n\"copilot-runtime.exe\",\"39812\",\"Console\",\"1\",\"93,476 K\"\r\n\"conhost.exe\",\"38996\",\"Console\",\"1\",\"7,240 K\"\r\n\"svchost.exe\",\"14808\",\"Services\",\"0\",\"12,468 K\"\r\n\"Code.exe\",\"44020\",\"Console\",\"1\",\"325,764 K\"\r\n\"Code.exe\",\"34280\",\"Console\",\"1\",\"328,540 K\"\r\n\"Code.exe\",\"7656\",\"Console\",\"1\",\"134,388 K\"\r\n\"Code.exe\",\"40760\",\"Console\",\"1\",\"148,064 K\"\r\n\"pet.exe\",\"43344\",\"Console\",\"1\",\"10,648 K\"\r\n\"conhost.exe\",\"41552\",\"Console\",\"1\",\"7,108 K\"\r\n\"OpenConsole.exe\",\"41912\",\"Console\",\"1\",\"11,532 K\"\r\n\"pwsh.exe\",\"29976\",\"Console\",\"1\",\"80,852 K\"\r\n\"Code.exe\",\"29088\",\"Console\",\"1\",\"762,336 K\"\r\n\"Code.exe\",\"45916\",\"Console\",\"1\",\"108,880 K\"\r\n\"Code.exe\",\"30556\",\"Console\",\"1\",\"112,128 K\"\r\n\"svchost.exe\",\"16324\",\"Services\",\"0\",\"14,416 K\"\r\n\"SnippingTool.exe\",\"44976\",\"Console\",\"1\",\"89,144 K\"\r\n\"OpenConsole.exe\",\"18916\",\"Console\",\"1\",\"11,680 K\"\r\n\"pwsh.exe\",\"18844\",\"Console\",\"1\",\"85,280 K\"\r\n\"Code.exe\",\"37840\",\"Console\",\"1\",\"158,212 K\"\r\n\"Code.exe\",\"660\",\"Console\",\"1\",\"118,588 K\"\r\n\"claude.exe\",\"38416\",\"Console\",\"1\",\"265,048 K\"\r\n\"conhost.exe\",\"32336\",\"Console\",\"1\",\"8,220 K\"\r\n\"Obsidian.exe\",\"3488\",\"Console\",\"1\",\"109,780 K\"\r\n\"Obsidian.exe\",\"31008\",\"Console\",\"1\",\"77,232 K\"\r\n\"Obsidian.exe\",\"15576\",\"Console\",\"1\",\"47,872 K\"\r\n\"Obsidian.exe\",\"37612\",\"Console\",\"1\",\"166,748 K\"\r\n\"claude.exe\",\"27088\",\"Console\",\"1\",\"290,600 K\"\r\n\"conhost.exe\",\"42652\",\"Console\",\"1\",\"8,188 K\"\r\n\"dllhost.exe\",\"21212\",\"Console\",\"1\",\"21,192 K\"\r\n\"dllhost.exe\",\"37520\",\"Console\",\"1\",\"14,776 K\"\r\n\"dllhost.exe\",\"32288\",\"Console\",\"1\",\"16,872 K\"\r\n\"dllhost.exe\",\"7976\",\"Console\",\"1\",\"16,856 K\"\r\n\"dllhost.exe\",\"42804\",\"Console\",\"1\",\"15,044 K\"\r\n\"dllhost.exe\",\"41844\",\"Console\",\"1\",\"17,156 K\"\r\n\"dllhost.exe\",\"43640\",\"Console\",\"1\",\"17,380 K\"\r\n\"Docker Desktop.exe\",\"33568\",\"Console\",\"1\",\"11,904 K\"\r\n\"com.docker.backend.exe\",\"35916\",\"Console\",\"1\",\"65,180 K\"\r\n\"conhost.exe\",\"2664\",\"Console\",\"1\",\"12,892 K\"\r\n\"com.docker.backend.exe\",\"16152\",\"Console\",\"1\",\"177,192 K\"\r\n\"com.docker.build.exe\",\"46064\",\"Console\",\"1\",\"38,552 K\"\r\n\"Docker Desktop.exe\",\"20164\",\"Console\",\"1\",\"139,152 K\"\r\n\"Docker Desktop.exe\",\"35116\",\"Console\",\"1\",\"91,256 K\"\r\n\"Docker Desktop.exe\",\"40824\",\"Console\",\"1\",\"52,144 K\"\r\n\"wsl.exe\",\"35700\",\"Console\",\"1\",\"12,924 K\"\r\n\"wsl.exe\",\"45416\",\"Console\",\"1\",\"12,756 K\"\r\n\"conhost.exe\",\"11808\",\"Console\",\"1\",\"7,256 K\"\r\n\"conhost.exe\",\"35160\",\"Console\",\"1\",\"7,268 K\"\r\n\"vmwp.exe\",\"24688\",\"Services\",\"0\",\"24,200 K\"\r\n\"vmmemWSL\",\"41388\",\"Services\",\"0\",\"1,631,884 K\"\r\n\"Docker Desktop.exe\",\"5168\",\"Console\",\"1\",\"134,856 K\"\r\n\"dllhost.exe\",\"33092\",\"Console\",\"1\",\"10,936 K\"\r\n\"dllhost.exe\",\"39616\",\"Console\",\"1\",\"11,000 K\"\r\n\"wslrelay.exe\",\"38676\",\"Console\",\"1\",\"10,540 K\"\r\n\"wslhost.exe\",\"17784\",\"Console\",\"1\",\"12,540 K\"\r\n\"conhost.exe\",\"43488\",\"Console\",\"1\",\"9,708 K\"\r\n\"wslhost.exe\",\"44500\",\"Console\",\"1\",\"11,376 K\"\r\n\"wslhost.exe\",\"3180\",\"Console\",\"1\",\"12,104 K\"\r\n\"wslhost.exe\",\"18372\",\"Console\",\"1\",\"12,108 K\"\r\n\"conhost.exe\",\"28800\",\"Console\",\"1\",\"9,704 K\"\r\n\"conhost.exe\",\"10648\",\"Console\",\"1\",\"9,740 K\"\r\n\"conhost.exe\",\"42412\",\"Console\",\"1\",\"9,724 K\"\r\n\"msrdc.exe\",\"38184\",\"Console\",\"1\",\"42,308 K\"\r\n\"wsl.exe\",\"22800\",\"Console\",\"1\",\"12,964 K\"\r\n\"conhost.exe\",\"32140\",\"Console\",\"1\",\"7,256 K\"\r\n\"wslhost.exe\",\"38992\",\"Console\",\"1\",\"11,680 K\"\r\n\"conhost.exe\",\"41144\",\"Console\",\"1\",\"9,676 K\"\r\n\"msrdc.exe\",\"11196\",\"Console\",\"1\",\"42,228 K\"\r\n\"wslhost.exe\",\"41192\",\"Console\",\"1\",\"12,240 K\"\r\n\"conhost.exe\",\"33484\",\"Console\",\"1\",\"9,672 K\"\r\n\"wslhost.exe\",\"41524\",\"Console\",\"1\",\"12,232 K\"\r\n\"conhost.exe\",\"36036\",\"Console\",\"1\",\"9,696 K\"\r\n\"wsl.exe\",\"7872\",\"Console\",\"1\",\"12,948 K\"\r\n\"conhost.exe\",\"20388\",\"Console\",\"1\",\"7,248 K\"\r\n\"wslhost.exe\",\"45680\",\"Console\",\"1\",\"12,240 K\"\r\n\"conhost.exe\",\"39092\",\"Console\",\"1\",\"9,700 K\"\r\n\"svchost.exe\",\"24360\",\"Services\",\"0\",\"9,524 K\"\r\n\"tail.exe\",\"20244\",\"Console\",\"1\",\"5,076 K\"\r\n\"grep.exe\",\"35832\",\"Console\",\"1\",\"5,112 K\"\r\n\"tail.exe\",\"46392\",\"Console\",\"1\",\"5,076 K\"\r\n\"grep.exe\",\"46456\",\"Console\",\"1\",\"5,116 K\"\r\n\"taskhostw.exe\",\"49088\",\"Console\",\"1\",\"33,512 K\"\r\n\"bash.exe\",\"30936\",\"Console\",\"1\",\"6,688 K\"\r\n\"bash.exe\",\"49008\",\"Console\",\"1\",\"10,392 K\"\r\n\"conhost.exe\",\"38136\",\"Console\",\"1\",\"7,216 K\"\r\n\"Code.exe\",\"43112\",\"Console\",\"1\",\"160,460 K\"\r\n\"Code.exe\",\"10608\",\"Console\",\"1\",\"181,420 K\"\r\n\"Code.exe\",\"3748\",\"Console\",\"1\",\"370,132 K\"\r\n\"Code.exe\",\"6380\",\"Console\",\"1\",\"144,904 K\"\r\n\"SnippingTool.exe\",\"43308\",\"Console\",\"1\",\"218,972 K\"\r\n\"SystemSettings.exe\",\"26060\",\"Console\",\"1\",\"3,196 K\"\r\n\"claude.exe\",\"46140\",\"Console\",\"1\",\"363,264 K\"\r\n\"conhost.exe\",\"27156\",\"Console\",\"1\",\"8,844 K\"\r\n\"svchost.exe\",\"49768\",\"Services\",\"0\",\"9,432 K\"\r\n\"svchost.exe\",\"50172\",\"Services\",\"0\",\"9,912 K\"\r\n\"claude.exe\",\"13108\",\"Console\",\"1\",\"323,984 K\"\r\n\"conhost.exe\",\"42348\",\"Console\",\"1\",\"8,932 K\"\r\n\"cmd.exe\",\"23060\",\"Console\",\"1\",\"8,688 K\"\r\n\"conhost.exe\",\"42828\",\"Console\",\"1\",\"7,964 K\"\r\n\"pwsh.exe\",\"46864\",\"Console\",\"1\",\"103,712 K\"\r\n\"uv.exe\",\"47420\",\"Console\",\"1\",\"19,740 K\"\r\n\"python.exe\",\"47788\",\"Console\",\"1\",\"5,892 K\"\r\n\"python.exe\",\"16724\",\"Console\",\"1\",\"69,968 K\"\r\n\"svchost.exe\",\"8156\",\"Services\",\"0\",\"20,344 K\"\r\n\"bash.exe\",\"41016\",\"Console\",\"1\",\"7,400 K\"\r\n\"bash.exe\",\"49644\",\"Console\",\"1\",\"11,140 K\"\r\n\"conhost.exe\",\"27696\",\"Console\",\"1\",\"7,752 K\"\r\n\"SearchProtocolHost.exe\",\"30552\",\"Services\",\"0\",\"22,236 K\"\r\n\"uv.exe\",\"6564\",\"Console\",\"1\",\"19,016 K\"\r\n\"python.exe\",\"17176\",\"Console\",\"1\",\"5,800 K\"\r\n\"python.exe\",\"4364\",\"Console\",\"1\",\"18,444 K\"\r\n\"SearchFilterHost.exe\",\"10456\",\"Services\",\"0\",\"12,324 K\"\r\n\"SearchFilterHost.exe\",\"13428\",\"Services\",\"0\",\"13,024 K\"\r\n\"svchost.exe\",\"49108\",\"Services\",\"0\",\"15,652 K\"\r\n\"sleep.exe\",\"49480\",\"Console\",\"1\",\"5,292 K\"\r\n\"sleep.exe\",\"46084\",\"Console\",\"1\",\"5,296 K\"\r\n\"python.exe\",\"42312\",\"Console\",\"1\",\"5,840 K\"\r\n\"python.exe\",\"24936\",\"Console\",\"1\",\"17,640 K\"\r\n\"wincam.exe\",\"19036\",\"Console\",\"1\",\"12,652 K\"\r\n\"tasklist.exe\",\"5956\",\"Console\",\"1\",\"12,644 K\"\r\n"
+ }
+}

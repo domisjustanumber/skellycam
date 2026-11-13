@@ -13,7 +13,9 @@ For a fresh Claude session that starts and watches tonight's run, and for the mo
 - **Dom moved the C922 to Intel root port HS04 (direct, no hub) on 2026-11-12.** W-TOPO at 10:20 confirmed it: C922 alone on HS04 (31.9 %), C930e alone on HS08 (49.3 %), generic on HS13 (49.3 %), Kiyo Pro on its own SuperSpeed domain. Every domain fits at 720p30 [M].
 - Tonight checks that with real streams.
 
-**Status when written:** ready to run, written 2026-11-12 ~10:50. **Not started.**
+**Status when written:** ready to run, written 2026-11-12 ~10:50.
+
+**Status now: done.** Ran 22:59–23:23 on 2026-11-12 (`results/windows/Gerald/suite_20261113T035946Z/`). Write-up: [`docs/windows_results_20261113.md`](../../docs/windows_results_20261113.md). The Kiyo Pro died at 23:13 in W-PYMF-ALL's 720p60 part.
 
 ## 1. What tonight answers
 

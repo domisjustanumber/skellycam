@@ -5,6 +5,12 @@ Start here in a new session. This covers everything from the 2026-11-11 planning
 **Status:** research and planning are done; none of the phase-1 test plans (TP1–TP4) has been run.
 
 ## 0. Update: second session, later on 2026-11-11 (read this first)
+- **Four-camera run (2026-11-12, 23:00): done.**
+  - The run: 22:59 → 23:23, `usb_cameras/results/windows/Gerald/suite_20261113T035946Z/` (redacted). Write-up: [`usb_cameras/docs/windows_results_20261113.md`](usb_cameras/docs/windows_results_20261113.md). No plan decision changes.
+  - **1.3 answered: one pymf process carried all four cameras at 720p30 for 10 min with 0 lost frames** (69,525 frames, 2.1 % of a core per camera). Mid-stream exposure sets worked on all 4, including the C922 for the first time. In-use detection: yes. The C922 at 720p60: 59.43 fps.
+  - **T-BUMP: yes on 3 cameras** (the Kiyo Pro was dead): equal frame counts, inter-camera spread median 0.26 / 0.28 ms, clean shutdown, no regression. The generic camera opened through OpenCV this time. **HEAD ran on Python 3.13.18, not the pinned 3.13.13:** uv's floating `cpython-3.13` link moved to a new 3.13.18 install at 20:14 on 11-12, and the phase-1 venv follows it (write-up §3.3). Recreating that venv is Dom's call. The 4-camera skellycam recording is still untested.
+  - **W-MULTI:** the three HS cameras streamed at once on MF, DS and PyAV with 0 bandwidth refusals, so the 11-11/12 refusals were the topology. The generic camera dropped off the bus once (PyAV round 039) and re-enumerated.
+  - **Kiyo Pro: dead at 23:13:01 (04:13:01Z)** in W-PYMF-ALL `all_720p60`, a `first_sample` timeout through pymf, plug-in age 345.6 min. That's a new step: not the DS all-at-once loop of both previous nights. The dead rule held, apart from the known queued-poll gap. It needs a replug.
 - **Overnight hardware run (11-11/12): done.**
   - The run: 21:59 → 03:10, `usb_cameras/results/windows/Gerald/suite_20261112T025937Z/` (redacted). Write-up: [`usb_cameras/docs/windows_results_20261112.md`](usb_cameras/docs/windows_results_20261112.md). No plan decision changes.
   - **1.3:** pymf = wincam on all 4 cameras. One pymf process carried 3 cameras at 720p30 for 10 min with 0 lost frames, with mid-stream control sets and in-use detection.
