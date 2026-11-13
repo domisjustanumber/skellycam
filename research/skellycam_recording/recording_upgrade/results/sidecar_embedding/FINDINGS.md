@@ -240,3 +240,17 @@ Finalisation already rewrites every offset, so it can fill `fitted_ns` and the f
   - `electron_test/` (`main.cjs`, `page.html`).
 - `results/sidecar_embedding/`: `matrix.json`, `big.json`, `spec_checks.json`, `audio_offsets.json`, `electron_result_e35.json`, `electron_result_e45.json`.
 - Run `matrix.py`, `big.py`, `spec_checks.py` and `audio_offsets.py` with the `skellycam-phase1` venv (`python -I <script> <outdir> <720p source mkv> …`). The 720p source was `ffmpeg -f lavfi -i testsrc2=size=1280x720:rate=30 -frames:v 90 -c:v mjpeg -q:v 3 -pix_fmt yuvj422p`; the 240p source used 320x240, 900 frames, `-q:v 5`, `yuvj420p`.
+
+## 10. Live offsets with small JPEGs (`small_jpeg_offsets.json`)
+
+Added 2026-11-12 evening, after a skellyfileformat spec review asked whether FFmpeg's Matroska muxer buffers small frames. Script: `scripts/sidecar_embedding/small_jpeg_offsets.py` (reuses `spec_checks.s1_s2`; PyAV 19.0.2, FFmpeg 9.0.2, skellycam-phase1 venv). Synthetic JPEGs, 300 frames per case, `flush_packets=1`.
+
+| Case | JPEG size (median) | `offset[i−1]` = file size − size, default muxer options | with `cluster_size_limit=1` | with `cluster_time_limit=0` |
+|---|---|---|---|---|
+| tiny 32×24 | 573 B | 37/299 | 299/299 | 299/299 |
+| small 96×72 noise | 2,048 B | 140/299 | 299/299 | 299/299 |
+| mixed (small, every 10th 640×360) | 2,050 B | 149/299 | 299/299 | 299/299 |
+| large control 640×360 noise | 47,120 B | 59/59 | — | — |
+
+**Result [M]:** the one-behind rule of §6 item 1 holds for large frames only. With frames of a few KiB, FFmpeg keeps several frames of the Cluster in memory, and the file size gives a wrong offset for most frames. Ending a Cluster after each frame (`cluster_size_limit=1`, or `cluster_time_limit=0`) makes the rule exact again (299/299 in every case). The spec (SFF-402) now requires it. Not measured: the size cost of one Cluster per frame, and OpenCV counts and seeks on such files (spec tests SFT-100/SFT-104 and T-MKV cover them at gate 2).
+

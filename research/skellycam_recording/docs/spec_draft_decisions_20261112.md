@@ -57,3 +57,15 @@ Review: `spec_v0_review_20261112.md`.
 - **D4** Fitted times are a MUST for capture writers (files with 2 or more records); conversion writers MAY omit them.
 - **D5** Provisional: SFF-301 (skellysync audio window) and SFF-262 (`adc_ns`/`current_ns` on Linux/macOS). SFF-602 (skellysync rotation) is final.
 - **D6** The drafter's added rules are accepted, plus: the take start times are never INT64_MIN, and `take_uuid` is never all zero.
+
+## After the second review (Dom, 2026-11-12, all recommendations accepted)
+
+Review: `spec_v0_rereview_20261112.md`.
+- **E1** After an encoder skip, the next record has `gap` (number jumped) and `encode_skip` (why).
+- **E2** Recovery keeps the longest paired prefix (stop at the first record whose block is missing or has another CRC).
+- **E3** Desk test of live offsets with small JPEGs: the one-behind rule fails for frames of a few KiB (37/299 at 573 B, 140/299 at 2 KiB) and holds with one Cluster per frame (`cluster_size_limit=1` or `cluster_time_limit=0`, 299/299). SFF-402 requires it (`results/sidecar_embedding/FINDINGS.md` §10).
+- **E4** Readers read a sidecar whole and close it; writers retry a failed rename and stay in the previous §9.7 state; process kills are in scope, power loss is not.
+- **E5** No ADC times: the drift table is fitted on `host_ns` with a `host_fit` flag (provisional).
+- **E6** SFF-207 withdrawn; audio files pair by `take_uuid` (one audio file per take, SFF-208).
+- **E7** WebCodecs decode is exact for 16-bit integers, within one 16-bit step for floats.
+- One-file audio kill test (ADR-WD1R open work): 40/40 kills, 0 torn bytes, 0 bad CRCs, recovery an exact prefix 40/40 (`results/flac_skau/FINDINGS.md` §8).

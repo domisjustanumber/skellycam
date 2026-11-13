@@ -129,6 +129,23 @@ Every kill landed (exit code ≠ 0 in 40/40) [M].
 
 **Limits** [NV]: one Windows machine; a Python writer, not skellycam's audio process; synthetic audio; no power-loss or OS-crash test; no Linux or macOS run.
 
+## 8. One live audio sidecar instead of two (F5, `terminate_kill_onefile.json`)
+
+Added 2026-11-12 evening, for skellyfileformat ADR-WD1R (one live `.skat.live`) and spec test SFT-453. Script: `scripts/flac_skau/terminate_kill_onefile.py`. Same method, machine and versions as §7 (PyAV 19.0.2, Python 3.13.13, seed 20261112, 30 unpaced + 10 paced kills by `Popen.kill()`), but the child writes one live file `<rec>.audio.skat.live` with 48-byte records in the layout of spec v0 §7.3/§7.4 (type field at offset 40, CRC-32 of bytes 0–43 in the last 4 bytes): per block a timing record, the FLAC frame, then its packet record, each flushed.
+
+| | Unpaced (30) | Paced at 48 kHz (10) |
+|---|---|---|
+| Kills that landed | 30/30 | 10/10 |
+| Torn bytes at the end of the live file | 0 | 0 |
+| Records ignored after a bad CRC | 0 | 0 |
+| Packet records whose frame CRC does not match the FLAC bytes | 0 | 0 |
+| Write order (each packet record after a timing record that covers it) | correct in 30/30 | correct in 10/10 |
+| Timing records minus packet records | 0 or 1 | 0 |
+| FLAC frames on disk with no packet record | 0 or 1 (6 of 30) | 0 |
+| Recovered `.mka` is an exact prefix of the source | 30/30 | 10/10 |
+
+**Result [M]:** one interleaved live file behaves the same as the two files of §7. The recovery rules of the spec (stop at the first bad record; accept one timing record and one FLAC frame with no packet record) hold. Limits as in §7.
+
 ## 7. Files
 - `scripts/flac_skau/flac_skau.py`: F1–F3; writes `electron_cfg.json`. Run as `python -I flac_skau.py <outdir>` with the `skellycam-phase1` venv.
 - `scripts/flac_skau/electron/main.cjs` and `page.html`: run with `FLAC_CFG`/`FLAC_OUT` set and `ELECTRON_RUN_AS_NODE` unset. It loads `../../sidecar_embedding/locator.js`.
