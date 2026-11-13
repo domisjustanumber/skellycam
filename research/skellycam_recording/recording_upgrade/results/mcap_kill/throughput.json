@@ -1,0 +1,357 @@
+{
+ "test": "mcap_throughput",
+ "env": {
+  "python": "3.13.18",
+  "platform": "win32",
+  "cpu_count": 28,
+  "packages": {
+   "mcap": "1.6.0",
+   "mcap-protobuf-support": "0.6.0",
+   "foxglove-schemas-protobuf": "0.4.0",
+   "protobuf": "7.36.2",
+   "av": "19.0.2",
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "psutil": "7.2.2"
+  },
+  "mcap_cli": "mcap 0.4.0 (4b0a12b0e) mcap-rust/0.25.1",
+  "date": "2026-11-13T12:23:10-0500"
+ },
+ "media": {
+  "jpeg_bytes_mean": 163154.03333333333,
+  "jpeg_bytes_min": 162811,
+  "jpeg_bytes_max": 163534,
+  "frames": 30,
+  "jpeg_quality": 85,
+  "noise_sigma": 3.272,
+  "opus_packets": 6001,
+  "opus_bytes_mean": 230.88235294117646,
+  "opus_bitrate": 64000,
+  "pre_skip": 312
+ },
+ "seconds": 120.0,
+ "load_before": {
+  "system_cpu_pct": 9.3,
+  "top": [
+   [
+    94.7,
+    "electron.exe",
+    40536
+   ],
+   [
+    30.8,
+    "electron.exe",
+    19412
+   ],
+   [
+    19.4,
+    "System",
+    4
+   ],
+   [
+    14.8,
+    "AsusFanControlService.exe",
+    6548
+   ],
+   [
+    9.3,
+    "MsMpEng.exe",
+    6948
+   ],
+   [
+    7.0,
+    "PreSonusHardwareAccessService.exe",
+    6744
+   ],
+   [
+    6.2,
+    "WmiPrvSE.exe",
+    6012
+   ],
+   [
+    6.1,
+    "claude.exe",
+    47192
+   ]
+  ],
+  "node_procs": 1
+ },
+ "load_after_top": [
+  [
+   34.6,
+   "System",
+   4
+  ],
+  [
+   26.1,
+   "electron.exe",
+   40536
+  ],
+  [
+   15.3,
+   "AsusFanControlService.exe",
+   6548
+  ],
+  [
+   14.9,
+   "Corsair.Service.exe",
+   6608
+  ],
+  [
+   10.2,
+   "electron.exe",
+   19412
+  ],
+  [
+   9.3,
+   "WmiPrvSE.exe",
+   6012
+  ],
+  [
+   8.2,
+   "PreSonusHardwareAccessService.exe",
+   6744
+  ],
+  [
+   7.4,
+   "svchost.exe",
+   32136
+  ]
+ ],
+ "truncated_copy_recover": {
+  "cut_bytes": 352896519,
+  "walk": {
+   "records": 4324,
+   "chunks": 2161,
+   "tail_bytes": 16254
+  },
+  "streaming_messages": 2161,
+  "recover_exit": 3,
+  "recover_stderr_tail": [
+   "[WARN] MCAP file ended in the middle of a record -- stopping recovery scan",
+   "Recovered 2161 messages, 0 attachments, and 1 metadata record.",
+   "Recovery was lossy: stopped early (input truncated), so trailing data may be lost."
+  ],
+  "recovered_file_summary": true,
+  "recovered_file_messages": 2161,
+  "recover_same_messages": true,
+  "doctor_exit_on_recovered": 0
+ },
+ "system_cpu_pct_during": {
+  "mean": 11.408333333333333,
+  "max": 34.0,
+  "n": 120
+ },
+ "processes": [
+  {
+   "kind": "cam",
+   "label": "cam0",
+   "messages": 3600,
+   "wall_s": 119.96707519999472,
+   "cpu_s": 1.65625,
+   "cpu_pct_one_core": 1.3805871296261067,
+   "payload_bytes": 587354520,
+   "protobuf_bytes": 587460840,
+   "file_bytes": 588160865,
+   "write_ms_p50": 0.2036,
+   "write_ms_p99": 0.41701099999999974,
+   "write_ms_max": 0.7464,
+   "late_ms_p99": 1.5823726763483135,
+   "late_ms_max": 2.1428666659630835,
+   "late_over_5ms": 0,
+   "late_over_one_period": 0,
+   "expected_messages": 3600,
+   "exit_code": 0,
+   "psutil_cpu_pct_mean": 1.4008547008547008,
+   "write_MB_per_s": 4.9026857078868415,
+   "overhead_per_msg_vs_payload": 223.98472222222222,
+   "overhead_per_msg_vs_protobuf": 194.45138888888889,
+   "summary_present": true,
+   "summary_message_count": 3600,
+   "summary_chunk_count": 3600,
+   "statistics_chunk_count": 3600,
+   "seeking_reader_messages": 3600,
+   "metadata_records": [
+    [
+     "skellyfileformat",
+     {
+      "take_uuid": "00000000-0000-4000-8000-000000000001",
+      "camera_label": "cam0",
+      "clock_id": "1",
+      "nominal_rate": "30/1"
+     }
+    ]
+   ],
+   "doctor_exit": 0,
+   "chunks_equal_messages": true
+  },
+  {
+   "kind": "cam",
+   "label": "cam1",
+   "messages": 3600,
+   "wall_s": 119.96739509998588,
+   "cpu_s": 1.484375,
+   "cpu_pct_one_core": 1.2373153545285027,
+   "payload_bytes": 587354520,
+   "protobuf_bytes": 587460840,
+   "file_bytes": 588160865,
+   "write_ms_p50": 0.20395,
+   "write_ms_p99": 0.39461499999999966,
+   "write_ms_max": 1.7259,
+   "late_ms_p99": 1.5818813387886617,
+   "late_ms_max": 1.8094666593242437,
+   "late_over_5ms": 0,
+   "late_over_one_period": 0,
+   "expected_messages": 3600,
+   "exit_code": 0,
+   "psutil_cpu_pct_mean": 1.2384615384615385,
+   "write_MB_per_s": 4.902672634592107,
+   "overhead_per_msg_vs_payload": 223.98472222222222,
+   "overhead_per_msg_vs_protobuf": 194.45138888888889,
+   "summary_present": true,
+   "summary_message_count": 3600,
+   "summary_chunk_count": 3600,
+   "statistics_chunk_count": 3600,
+   "seeking_reader_messages": 3600,
+   "metadata_records": [
+    [
+     "skellyfileformat",
+     {
+      "take_uuid": "00000000-0000-4000-8000-000000000001",
+      "camera_label": "cam1",
+      "clock_id": "1",
+      "nominal_rate": "30/1"
+     }
+    ]
+   ],
+   "doctor_exit": 0,
+   "chunks_equal_messages": true
+  },
+  {
+   "kind": "cam",
+   "label": "cam2",
+   "messages": 3600,
+   "wall_s": 119.9673270000203,
+   "cpu_s": 2.703125,
+   "cpu_pct_one_core": 2.253217661505072,
+   "payload_bytes": 587354520,
+   "protobuf_bytes": 587460840,
+   "file_bytes": 588160865,
+   "write_ms_p50": 0.2131,
+   "write_ms_p99": 0.43510099999999996,
+   "write_ms_max": 1.3834,
+   "late_ms_p99": 1.5649423361173829,
+   "late_ms_max": 2.034866687608883,
+   "late_over_5ms": 0,
+   "late_over_one_period": 0,
+   "expected_messages": 3600,
+   "exit_code": 0,
+   "psutil_cpu_pct_mean": 2.244915254237289,
+   "write_MB_per_s": 4.902675417615169,
+   "overhead_per_msg_vs_payload": 223.98472222222222,
+   "overhead_per_msg_vs_protobuf": 194.45138888888889,
+   "summary_present": true,
+   "summary_message_count": 3600,
+   "summary_chunk_count": 3600,
+   "statistics_chunk_count": 3600,
+   "seeking_reader_messages": 3600,
+   "metadata_records": [
+    [
+     "skellyfileformat",
+     {
+      "take_uuid": "00000000-0000-4000-8000-000000000001",
+      "camera_label": "cam2",
+      "clock_id": "1",
+      "nominal_rate": "30/1"
+     }
+    ]
+   ],
+   "doctor_exit": 0,
+   "chunks_equal_messages": true
+  },
+  {
+   "kind": "cam",
+   "label": "cam3",
+   "messages": 3600,
+   "wall_s": 119.96777560000191,
+   "cpu_s": 2.015625,
+   "cpu_pct_one_core": 1.6801386788403267,
+   "payload_bytes": 587354520,
+   "protobuf_bytes": 587460840,
+   "file_bytes": 588160865,
+   "write_ms_p50": 0.2019,
+   "write_ms_p99": 0.39025699999999863,
+   "write_ms_max": 1.8446,
+   "late_ms_p99": 1.57676969160093,
+   "late_ms_max": 2.0729666866827756,
+   "late_over_5ms": 0,
+   "late_over_one_period": 0,
+   "expected_messages": 3600,
+   "exit_code": 0,
+   "psutil_cpu_pct_mean": 1.6533898305084744,
+   "write_MB_per_s": 4.902657084857966,
+   "overhead_per_msg_vs_payload": 223.98472222222222,
+   "overhead_per_msg_vs_protobuf": 194.45138888888889,
+   "summary_present": true,
+   "summary_message_count": 3600,
+   "summary_chunk_count": 3600,
+   "statistics_chunk_count": 3600,
+   "seeking_reader_messages": 3600,
+   "metadata_records": [
+    [
+     "skellyfileformat",
+     {
+      "take_uuid": "00000000-0000-4000-8000-000000000001",
+      "camera_label": "cam3",
+      "clock_id": "1",
+      "nominal_rate": "30/1"
+     }
+    ]
+   ],
+   "doctor_exit": 0,
+   "chunks_equal_messages": true
+  },
+  {
+   "kind": "mic",
+   "label": "mic",
+   "messages": 6000,
+   "wall_s": 119.98079390000203,
+   "cpu_s": 1.546875,
+   "cpu_pct_one_core": 1.28926884855358,
+   "payload_bytes": 1385208,
+   "protobuf_bytes": 1520928,
+   "file_bytes": 2686764,
+   "write_ms_p50": 0.0643,
+   "write_ms_p99": 0.13750300000000007,
+   "write_ms_max": 0.5286,
+   "late_ms_p99": 1.5796030079945922,
+   "late_ms_max": 1.8183000211138278,
+   "late_over_5ms": 0,
+   "late_over_one_period": 0,
+   "expected_messages": 6000,
+   "exit_code": 0,
+   "psutil_cpu_pct_mean": 1.294915254237288,
+   "write_MB_per_s": 0.0223932840637751,
+   "overhead_per_msg_vs_payload": 216.926,
+   "overhead_per_msg_vs_protobuf": 194.306,
+   "summary_present": true,
+   "summary_message_count": 6000,
+   "summary_chunk_count": 6000,
+   "statistics_chunk_count": 6000,
+   "seeking_reader_messages": 6000,
+   "metadata_records": [
+    [
+     "skellyfileformat",
+     {
+      "take_uuid": "00000000-0000-4000-8000-000000000001",
+      "camera_label": "mic",
+      "clock_id": "1",
+      "nominal_rate": "50/1"
+     }
+    ]
+   ],
+   "doctor_exit": 0,
+   "chunks_equal_messages": true
+  }
+ ]
+}

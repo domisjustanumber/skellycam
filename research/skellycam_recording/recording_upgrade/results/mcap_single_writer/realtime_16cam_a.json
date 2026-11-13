@@ -1,0 +1,164 @@
+{
+ "test": "realtime",
+ "strat": "a",
+ "ncam": 16,
+ "seconds": 60.0,
+ "messages": 31800,
+ "wall_s": 59.98177069998928,
+ "cpu_s": 8.546875,
+ "cpu_pct_one_core": 14.249120858316921,
+ "payload_bytes": 4699522260,
+ "file_bytes": 4706642826,
+ "MB_per_s": 78.46788734432678,
+ "finish_s": 0.052948700002161786,
+ "flush_latency_ms": {
+  "n": 31800,
+  "p50": 0.1616,
+  "p99": 0.694,
+  "max": 2.0141
+ },
+ "add_message_ms": null,
+ "window_write_ms": null,
+ "late_cam_ms": {
+  "p50": 2.6542669802438468,
+  "p99": 8.866617992753143,
+  "max": 13.385966973146424,
+  "over_5ms": 3352,
+  "over_one_period": 0
+ },
+ "late_mic_ms": {
+  "p99": 2.2873029828770064,
+  "max": 7.2122999699786305,
+  "over_one_period": 0
+ },
+ "load_before": {
+  "system_cpu_pct": 39.9,
+  "top": [
+   [
+    883.3,
+    "chrome-headless-shell.exe",
+    32144
+   ],
+   [
+    47.8,
+    "chrome-headless-shell.exe",
+    45364
+   ],
+   [
+    16.6,
+    "AsusFanControlService.exe",
+    6548
+   ],
+   [
+    13.1,
+    "Corsair.Service.exe",
+    6608
+   ],
+   [
+    12.1,
+    "svchost.exe",
+    32136
+   ],
+   [
+    9.6,
+    "WmiPrvSE.exe",
+    6012
+   ],
+   [
+    6.6,
+    "PreSonusHardwareAccessService.exe",
+    6744
+   ],
+   [
+    6.2,
+    "System",
+    4
+   ]
+  ],
+  "disk_free_gb": 731.1
+ },
+ "load_after_top": [
+  [
+   26.9,
+   "SearchIndexer.exe",
+   18828
+  ],
+  [
+   13.7,
+   "PreSonusHardwareAccessService.exe",
+   6744
+  ],
+  [
+   12.0,
+   "Corsair.Service.exe",
+   6608
+  ],
+  [
+   12.0,
+   "AsusFanControlService.exe",
+   6548
+  ],
+  [
+   11.2,
+   "System",
+   4
+  ],
+  [
+   8.3,
+   "firefox.exe",
+   6220
+  ],
+  [
+   8.2,
+   "CorsairCpuIdService.exe",
+   11612
+  ],
+  [
+   6.5,
+   "firefox.exe",
+   34316
+  ]
+ ],
+ "system_cpu_pct_during": {
+  "mean": 16.910169491525423,
+  "max": 48.2,
+  "n": 59
+ },
+ "layout": {
+  "file_bytes": 4706642826,
+  "summary_start": 4704001177,
+  "summary_bytes": 2641649,
+  "records_by_opcode": {
+   "0x3": 2,
+   "0x4": 17,
+   "0xb": 1,
+   "0x8": 31800,
+   "0xe": 6
+  },
+  "bytes_by_opcode": {
+   "0x3": 1008,
+   "0x4": 823,
+   "0xb": 225,
+   "0x8": 2639400,
+   "0xe": 156
+  },
+  "chunk_indexes": 31800,
+  "message_index_offset_entries": 31800,
+  "chunk_index_bytes_mean": 83.0
+ },
+ "env": {
+  "python": "3.13.18",
+  "cpu_count": 28,
+  "ram_gb": 63.7,
+  "ram_avail_gb": 34.1,
+  "packages": {
+   "mcap": "1.6.0",
+   "mcap-protobuf-support": "0.6.0",
+   "foxglove-schemas-protobuf": "0.4.0",
+   "protobuf": "7.36.2",
+   "numpy": "2.5.4",
+   "psutil": "7.2.2"
+  },
+  "date": "2026-11-13T12:40:38-0500"
+ }
+}

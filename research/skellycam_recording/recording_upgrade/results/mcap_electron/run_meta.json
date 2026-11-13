@@ -1,0 +1,20 @@
+{
+ "date": "2026-11-13",
+ "machine": "i7-14700K (28 logical CPUs), Windows 11 Home 10.0.26300",
+ "electron": "35.7.5 (Chrome 134.0.6998.205), skellycam-ui/node_modules/electron/dist/electron.exe, used read-only",
+ "npm": {"@mcap/core": "2.4.0 (--save-exact)", "@foxglove/crc": "0.0.3 (transitive dep of @mcap/core)", "heap-js": "transitive", "tslib": "transitive"},
+ "python": "3.13 via uv 0.13.7; mcap==1.6.0 mcap-protobuf-support==0.6.0 foxglove-schemas-protobuf==0.4.0 av==19.0.2 numpy==2.5.4 (protobuf 7.36.2 pulled in)",
+ "node": "v24.15.0, npm 10.9.2 (install only)",
+ "transport": "Electron protocol.handle, scheme skr://, single-range handler from range_transport study; page loaded from file://; fetch cache:'no-store'",
+ "renderer": "nodeIntegration on, contextIsolation off (only to require @mcap/core without a bundler)",
+ "load_total_cpu_pct_during_run": {
+  "run1": {"samples_2s": 82, "min": 7.2, "mean": 18.1, "max": 35.2},
+  "run2": {"samples_2s": 77, "min": 4.2, "mean": 11.2, "max": 31.2},
+  "before_runs": "11.3-11.7 % (3 x 1 s samples); includes this test's own Electron during runs"
+ },
+ "files": {
+  "electron_run1.json / electron_run2.json": "renderer results (page.js), two identical full runs",
+  "audio_analysis_run1.json / audio_analysis_run2.json": "analyze_audio.py on the decodes of each run",
+  "media.json": "generator facts: CRC32 per frame, frame times, click positions, chunk layout, cut offset"
+ }
+}
