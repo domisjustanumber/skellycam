@@ -17,6 +17,8 @@ Short names for evidence files:
 
 ---
 
+> **Update 2026-11-13 (Dom): the output format changes to MCAP.** The recording format is now an MCAP profile: JPEG frames in `foxglove.CompressedImage` messages, timing in MCAP fields, facts in MCAP metadata, and **Opus** audio in `foxglove.CompressedAudio` (no MKV, no sidecar, no FLAC). skellysync writes this format too (capture plan rev 3.11, D27–D30; skellyfileformat ADRs SFK5, HD8Z, X1G6). Design A's container, sidecar and FLAC parts (§2.1, §2.6, §2.8) no longer apply; its JPEG and timing work does. Review D-Q, D-FPS, D-HDR, D-DRIFT, D-AUDIO and D-PKG against MCAP before implementing. VLC playback of the output is no longer a goal; Lichtblick is the external test viewer. Evidence: `research/skellycam_recording/docs/mcap_check_20261113.md`.
+
 ## Handoff (2026-11-11): start here in a new session
 
 Dom will pick this up in a separate session. Nothing is decided yet: everything below is for that session to settle with Dom.
