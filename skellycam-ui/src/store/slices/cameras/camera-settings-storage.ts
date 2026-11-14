@@ -1,6 +1,16 @@
-import { CameraConfig, extractConfigSettings } from './cameras-types';
+import { type CameraBackend, CameraConfig, extractConfigSettings } from './cameras-types';
 
 const STORAGE_KEY = 'skellycam-camera-settings';
+
+const BACKEND_KEY = 'skellycam-camera-backend';
+
+export function loadCameraBackend(): CameraBackend {
+    return typeof localStorage !== 'undefined' && localStorage.getItem(BACKEND_KEY) === 'rust' ? 'rust' : 'python';
+}
+
+export function saveCameraBackend(backend: CameraBackend): void {
+    if (typeof localStorage !== 'undefined') localStorage.setItem(BACKEND_KEY, backend);
+}
 
 // What we persist per camera: the user-tunable settings + selection state
 export interface PersistedCameraSettings {

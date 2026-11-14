@@ -12,6 +12,8 @@ import {
 } from './cameras-thunks';
 import { serverStateReceived, serverDisconnected } from '../connection/connection-slice';
 import {
+    loadCameraBackend,
+    saveCameraBackend,
     savePersistedCameraSettings,
     clearPersistedCameraSettings,
     buildPersistedEntry,
@@ -28,7 +30,7 @@ function persistAllCameraSettings(state: CamerasState): void {
 }
 
 const initialState: CamerasState = {
-    backend: 'python',
+    backend: loadCameraBackend(),
     cameras: [],
     isPaused: false,
     isLoading: false,
@@ -42,6 +44,7 @@ export const cameraSlice = createSlice({
         cameraBackendSelected(state, action: PayloadAction<CameraBackend>) {
             if (!state.isLoading && !state.cameras.some(camera => camera.connectionStatus === 'connected')) {
                 state.backend = action.payload;
+                saveCameraBackend(action.payload);
             }
         },
         // ========== Selection ==========
