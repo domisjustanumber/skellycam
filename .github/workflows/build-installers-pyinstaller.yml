@@ -63,7 +63,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # ── Windows code-signing prereqs ──
       - name: Validate code signing prerequisites
@@ -160,18 +160,19 @@ jobs:
 
       # ── Common setup ──
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '22'
+          node-version: '26.13.1'
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version-file: ".python-version"
 
       - name: Install uv and enable cache
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
+          version: "0.13.9"
           enable-cache: false
 
       - name: Create venv
@@ -211,7 +212,7 @@ jobs:
       # ── PyInstaller build ──
       - name: Build with PyInstaller
         run: |
-          uv pip install pyinstaller
+          uv pip install pyinstaller==6.22.3
           uv run pyinstaller ./skellycam.spec --clean
 
       # ── Move server directory into skellycam-ui/ ──
@@ -231,7 +232,7 @@ jobs:
       # ── Windows code signing (server binary) ──
       - name: Sign ${{ matrix.server-exe }} with Trusted Signing
         if: matrix.platform == 'windows'
-        uses: azure/trusted-signing-action@v0
+        uses: Azure/artifact-signing-action@c7ab2a863ab5f9a846ddb8265964877ef296ee82 # v2.0.0
         with:
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -260,7 +261,7 @@ jobs:
           echo "Server binary signed and verified successfully"
       # ── Upload server-only artifact ──
       - name: Upload server binary artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: server-${{ matrix.label }}
           path: |
@@ -271,7 +272,7 @@ jobs:
       - name: Install UI dependencies
         run: |
           cd skellycam-ui
-          npm install
+          npm ci
 
       - name: Build UI (Windows)
         if: matrix.platform == 'windows'
@@ -308,7 +309,7 @@ jobs:
       # ── Windows installer signing ──
       - name: Sign Electron installer with Trusted Signing
         if: matrix.platform == 'windows'
-        uses: azure/trusted-signing-action@v0
+        uses: Azure/artifact-signing-action@c7ab2a863ab5f9a846ddb8265964877ef296ee82 # v2.0.0
         with:
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -326,7 +327,7 @@ jobs:
       # ── Upload final installer artifacts (uses label for human-readable names) ──
       - name: Upload installer artifacts (Windows)
         if: matrix.platform == 'windows'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: installer-${{ matrix.label }}
           path: |
@@ -335,7 +336,7 @@ jobs:
 
       - name: Upload installer artifacts (macOS)
         if: matrix.platform == 'macos'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: installer-${{ matrix.label }}
           path: |
@@ -345,7 +346,7 @@ jobs:
 
       - name: Upload installer artifacts (Linux)
         if: matrix.platform == 'linux'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: installer-${{ matrix.label }}
           path: |
@@ -356,7 +357,7 @@ jobs:
       # ── Upload auto-update metadata (latest*.yml) ──
       - name: Upload auto-update metadata (Windows)
         if: matrix.platform == 'windows'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: update-metadata-${{ matrix.label }}
           path: |
@@ -365,7 +366,7 @@ jobs:
 
       - name: Upload auto-update metadata (macOS)
         if: matrix.platform == 'macos' && matrix.arch == 'x64'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: update-metadata-${{ matrix.label }}
           path: |
@@ -374,7 +375,7 @@ jobs:
 
       - name: Upload auto-update metadata (macOS ARM)
         if: matrix.platform == 'macos' && matrix.arch == 'arm64'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: update-metadata-${{ matrix.label }}
           path: |
@@ -383,7 +384,7 @@ jobs:
 
       - name: Upload auto-update metadata (Linux)
         if: matrix.platform == 'linux' && matrix.arch == 'x64'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: update-metadata-${{ matrix.label }}
           path: |
@@ -415,10 +416,10 @@ jobs:
       contents: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           path: artifacts
 
