@@ -6,7 +6,10 @@ Tier-1 items (hwtimestamps, quirks, nodrop, usbcore NO_LPM quirk, video group) a
 from __future__ import annotations
 
 import glob
-import grp
+try:
+    import grp  # POSIX only; the module must still load for --dry-run on another OS
+except ImportError:  # pragma: no cover
+    grp = None  # type: ignore[assignment]
 import os
 import re
 from typing import Any

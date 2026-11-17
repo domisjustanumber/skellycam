@@ -10,7 +10,7 @@ import math
 from pathlib import Path
 from typing import Any, Iterable, Iterator
 
-from common import jpegcheck, results
+from common import cycstats, jpegcheck, results
 
 # descriptor control name (naming/usbdesc.py bmControls bits) -> V4L2 control ids uvcvideo maps it to
 DESC_TO_CID: dict[str, list[int]] = {
@@ -157,6 +157,9 @@ def check_frames(rows: list[dict[str, Any]], raw_file: Path | str | None, want_w
             hdr[r["hdr_sha1"]] = hdr.get(r["hdr_sha1"], 0) + 1
     s["rows_header_sha1"] = hdr
     s["dominant_header_sha1"] = max(hdr, key=hdr.get) if hdr else None
+    s["n_distinct_header_sha1"] = len(hdr)
+    # ring-buffer sizing: JPEG bytes per delivered frame (all rows, flagged ones too: the buffer must hold them)
+    s["bytes_per_frame"] = cycstats.percentiles(r.get("bytes") for r in rows if r.get("bytes"))
     s["examples_failed"] = [{k: c.get(k) for k in ("bytes", "soi", "eoi", "marker_issues", "strict_error",
                                                    "extra_bytes_before_eoi")}
                             for c in checks if c.get("strict_ok") is False or not c.get("marker_ok")][:3]

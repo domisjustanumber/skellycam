@@ -78,7 +78,7 @@ def test_simulated_suite(sim_results):
     assert mjc["mode_scope"]["n_excluded"] > 0
     assert all(int(e["mode"].split()[1].split("x")[1].split("@")[0]) >= 720 for e in mjc["modes"])
     cyc = next(v for k, v in r["L-CYC"]["measurements"]["cameras"].items() if k.startswith("046d:085c"))
-    assert cyc["modes"] == ["MJPG 1280x720@30", "MJPG 1920x1080@30"]
+    assert cyc["modes"] == ["MJPG 1280x720@30", "MJPG 1280x720@60"]  # exactly 720 lines since 2026-11-08
     assert c["mode"] == "MJPG 1280x720@30"
     tsr = next(v for k, v in r["L-TS"]["measurements"]["cameras"].items() if k.startswith("046d:085c"))
     assert set(tsr["runs"]) == {"main"} and [x["label"] for x in tsr["excluded_runs"]] == ["lowfps_15"]

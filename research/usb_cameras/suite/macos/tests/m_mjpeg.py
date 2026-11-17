@@ -47,6 +47,15 @@ def cell_fps(ctx, f: dict) -> float | None:
     return max(rs) if rs else suitectx.max_fps(f)
 
 
+def cell_rates(ctx, f: dict) -> list[float | None]:
+    """--plan: the format's lowest in-scope rate (30 where offered) and its highest (60 where offered); else the
+    highest only."""
+    rs = mac_modescope.scoped_rates(f, ctx.args)
+    if getattr(ctx.args, "plan", False) and rs:
+        return sorted({min(rs), max(rs)})
+    return [cell_fps(ctx, f)]
+
+
 def plan(ctx) -> list[str]:
     v = ",".join(ctx.args.mjpeg_variant_list)
     out = [mac_modescope.text(ctx.args) + " (listing tests still compare every mode)",
@@ -82,13 +91,12 @@ def run(ctx) -> dict:
             per_cam.append(crec)
             errors.append({"camera": cam["key"], "warning": "no in-scope MJPEG mode: untested (scope)"})
             continue
-        for f in fmts:
-            fps = cell_fps(ctx, f)
+        for f, fps in [(f, r) for f in fmts for r in cell_rates(ctx, f)]:
             mode = suitectx._mode(f, fps)
             cells: dict[str, dict] = {}
             raw_cells = {}
             for var in ctx.args.mjpeg_variant_list:
-                tag = f"{suitectx.cam_tag(cam)}/{f['index']:02d}_{f['subtype']}_{f['w']}x{f['h']}_{var}"
+                tag = f"{suitectx.cam_tag(cam)}/{f['index']:02d}_{f['subtype']}_{f['w']}x{f['h']}_{fps or 0:g}_{var}"
                 od, rd = ctx.subdir("mjpeg", tag), ctx.rawsub("mjpeg", tag)
                 sched = ["1000:probe:ioreg_alt"] + (["1200:probe:ep0_commit"] if ctx.ep0_enabled else [])
                 args = ["capture", "--device", cam["unique_id"], "--variant", var, "--seconds", ctx.args.mjpeg_seconds,
@@ -109,6 +117,10 @@ def run(ctx) -> dict:
                         cell["commit"] = [s.get("commit") for s in (ev.get("result") or {}).get("streams") or []]
                 cells[var] = cell
                 raw_cells[var] = {k: j.get(k) for k in ("stream", "copy", "jpeg", "dropped_callbacks")}
+                cell["bytes_stats"] = (j.get("jpeg") or {}).get("bytes_stats")
+                cell["first_header"] = (j.get("jpeg") or {}).get("first_header")
+                cell["frames_expected"] = round(ctx.args.mjpeg_seconds * fps) if fps else None
+                cell["skipped"] = r.get("skipped")
                 if cell.get("ioreg_alt") and j.get("frames"):
                     tbl = (cam.get("uvc") or {}).get("alt_table") or []
                     ent = next((a for a in tbl if a.get("alt") == cell["ioreg_alt"]), {})

@@ -43,7 +43,8 @@ bash research/usb_cameras/suite/macos/run_suite.sh --edge-light-off --ep0       
 What `run_suite.sh` does:
 - finds uv, or installs it into `~/.local/bin` with the official installer after saying so;
 - records `sw_vers`, `uname -m`, `hw.model`, the CPU, whether Rosetta is translating, the launching app and whether this is an SSH session, and passes all of it to every result;
-- runs `uv run --python 3.12 --script run_suite.py`.
+- runs `uv run --python 3.12.13 --script run_suite.py` (PEP 723 pins are exact).
+- `--plan`: the capture-plan preset, see [RUNBOOK_PLAN.md](RUNBOOK_PLAN.md).
 
 The PEP 723 environment of `run_suite.py` pins PyObjC 13.0 (`pyobjc-core`, `-Cocoa`, `-AVFoundation`, `-CoreMedia`, `-Quartz` and `-libdispatch`, all `==13.0`), plus numpy, Pillow, simplejpeg and libusb1. The runner itself imports only the standard library and `suite/common`. It starts the camera helpers with its own interpreter, so they share that environment. `run_suite.py --help`, `--list-tests` and `--dry-run` work on any OS without PyObjC; `--dry-run --fake-ioreg DIR --fake-avf FILE` plans against fake data.
 

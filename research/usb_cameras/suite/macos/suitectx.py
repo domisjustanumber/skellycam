@@ -70,6 +70,10 @@ class SuiteCtx:
     suite_dir: Path = SUITE_DIR
     child_log: list[dict] = field(default_factory=list)
     store: dict = field(default_factory=dict)  # results one test hands to a later one (e.g. ctrl ranges)
+    current_test: str | None = None
+    dead: dict = field(default_factory=dict)           # Kiyo Pro dead rule: key -> diagnostics (never revived)
+    suspect: dict = field(default_factory=dict)        # key -> first failed stream start, awaiting confirmation
+    stream_starts: dict = field(default_factory=dict)  # key -> stream commands started this run
     _lock: threading.Lock = field(default_factory=threading.Lock)
 
     # ---------------------------------------------------------------- logging / output
@@ -114,7 +118,57 @@ class SuiteCtx:
         return out
 
     def avf(self, args: list[Any], timeout_s: float, label: str | None = None) -> dict:
-        return self.helper("mac_avf.py", args, timeout_s, label)
+        """mac_avf.py, under the Kiyo Pro dead rule (Dom 2026-11-11): a dead Kiyo Pro gets no command at all."""
+        sargs = [str(a) for a in args]
+        uid = sargs[sargs.index("--device") + 1] if "--device" in sargs[:-1] else None
+        cam = next((c for c in self.cameras if uid and c.get("unique_id") == uid), None)
+        kiyo = bool(cam and cam.get("is_kiyo"))
+        if kiyo and cam["key"] in self.dead:
+            why = f"skipped: Kiyo Pro dead since {self.dead[cam['key']]['since_test']}"
+            return {"argv": sargs, "rc": None, "timed_out": False, "killed": False, "elapsed_s": 0.0, "label": label,
+                    "json": {"ok": False, "skipped": why, "error": why, "frames": 0}, "stderr_tail": "",
+                    "spawn_error": None, "ok": False, "hung": False, "skipped": why}
+        r = self.helper("mac_avf.py", args, timeout_s, label)
+        if kiyo and sargs and sargs[0] in ("capture", "cycle"):
+            self.kiyo_stream_result(cam, r, label)
+        return r
+
+    def kiyo_stream_result(self, cam: dict, r: dict, label: str | None) -> None:
+        """Dead rule bookkeeping: a failed/hung stream start makes the Kiyo Pro a suspect; the next stream command
+        failing too (it stays failed) makes it dead, with one diagnostics snapshot. A success clears the suspicion.
+        Concurrent M-MULTI launches and kIOReturnNoBandwidth do not count (bandwidth, not a wedge)."""
+        key = cam["key"]
+        self.stream_starts[key] = self.stream_starts.get(key, 0) + 1
+        j = r.get("json") or {}
+        if j.get("cmd") == "cycle" or "n_ok" in j:
+            failed = bool(r.get("hung")) or not j.get("n_ok")
+        else:
+            failed = bool(r.get("hung")) or not j.get("frames")
+        codes = json.dumps(j.get("runtime_errors") or j.get("error") or "", default=str)
+        lb = label or ""
+        if (lb.startswith("multi ") and not lb.startswith("multi retry")) or lb.startswith(("nograb", "tcc")):
+            return  # concurrent launches, and probes that expect zero frames (blocking / no permission)
+        if "0xE00002EC" in codes.upper():
+            return
+        if not failed:
+            self.suspect.pop(key, None)
+            return
+        outcome = {k: r.get(k) for k in ("label", "rc", "timed_out", "elapsed_s", "stderr_tail")} | {
+            "error": j.get("error"), "stage_failed": j.get("stage_failed"), "runtime_errors": j.get("runtime_errors")}
+        if key not in self.suspect:
+            self.suspect[key] = {"test": self.current_test, "first_failure": outcome}
+            return
+        diag: dict[str, Any] = {"since_test": self.current_test, "first_failure": self.suspect[key],
+                                "confirming_failure": outcome, "stream_starts_this_run": self.stream_starts[key],
+                                "utc": results.utc_now_iso(), "time_since_plug_in": "unknown on macOS (not in IORegistry)"}
+        try:
+            import mac_ioreg
+            st = mac_ioreg.read_device_states(runner=lambda argv, t: self.runner(argv, t))
+            diag["ioregistry_state"] = (st.get("devices") or {}).get(cam.get("location_hex")) or st.get("error")
+        except Exception as e:  # diagnostics must never break the run
+            diag["ioregistry_state"] = f"error: {e!r}"
+        self.dead[key] = diag
+        self.log(f"Kiyo Pro {key} marked DEAD for the rest of the run (since {self.current_test}); not revived")
 
     def ep0(self, cam: dict, cmd: str, extra: list[Any] | None = None, timeout_s: float = 30.0) -> dict:
         """mac_ep0.py for one camera. Callers check ctx.ep0_enabled first (opt-in)."""
@@ -211,14 +265,16 @@ class SuiteCtx:
         return [{k: c.get(k) for k in keep} for c in (self.cameras if cams is None else cams)]
 
     def openable(self) -> list[dict]:
-        """USB cameras that AVFoundation lists (only those can be opened). Never filters by model: the Kiyo is in."""
-        return [c for c in self.cameras if c.get("unique_id")]
+        """USB cameras that AVFoundation lists (only those can be opened). Never filters by model: the Kiyo Pro is
+        in, until the dead rule marks it dead (then every result's suite.dead says so)."""
+        return [c for c in self.cameras if c.get("unique_id") and c["key"] not in self.dead]
 
     def new_result(self, test: str, cams: list[dict] | None = None) -> dict:
         res = results.new_result(test, "macos", self.command, self.cameras_brief(cams))
         res["suite"] = {"reduced": self.reduced, "quick": bool(getattr(self.args, "quick", False)),
                         "ep0": self.ep0_enabled, "ep0_backend": getattr(self.args, "ep0_backend", None),
-                        "tcc_video": self.tcc}
+                        "tcc_video": self.tcc,
+                        "dead": {k: f"Kiyo Pro dead since {v['since_test']}: not tested" for k, v in self.dead.items()}}
         return res
 
 

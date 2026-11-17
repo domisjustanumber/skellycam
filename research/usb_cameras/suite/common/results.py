@@ -274,6 +274,65 @@ def default_results_dir(stamp: str | None = None, hostname: str | None = None,
     return root / "results" / platform_name() / (hostname or socket.gethostname()) / f"suite_{stamp or utc_stamp()}"
 
 
+def scrub_private(folder: str | os.PathLike) -> dict[str, int]:
+    """Privacy pass over a run folder's text files (rule 2026-11-11), for runs whose results are copied back from
+    another machine: tools/redact_run.py's redactions (private IPs, MAC-derived container ids, emails, telemetry ids,
+    Windows serial forms) plus this machine's home path (-> '~'), hostname (-> '<host>') and user name (-> '<user>').
+    USB serial numbers on Linux/macOS are kept (camera identity needs their exact form; redact_run.py, run before a
+    commit, is the step that handles them on Windows). Returns replacement counts. Never raises."""
+    import getpass
+    import importlib.util
+    import re
+    counts: dict[str, int] = {}
+    try:
+        spec = importlib.util.spec_from_file_location("redact_run", RESEARCH_ROOT / "tools" / "redact_run.py")
+        rr = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(rr)  # type: ignore[union-attr]
+    except Exception as e:  # noqa: BLE001
+        rr = None
+        counts["redact_run_unavailable"] = 1
+        print(f"scrub_private: tools/redact_run.py not loaded ({e}); only host/user/home are scrubbed", file=sys.stderr)
+    subs: list[tuple[re.Pattern, str, str]] = []
+    home = str(Path.home())
+    if len(home) > 1:
+        for h in dict.fromkeys([home.replace("\\", "\\\\"), home]):  # JSON-escaped form first (Windows)
+            subs.append((re.compile(re.escape(h)), "~", "home"))
+    host = socket.gethostname()
+    generic = {"localhost", "ubuntu", "fedora", "debian", "linux", "macos", "mac"}  # not personal; would hit OS names
+    for h in sorted({host, host.split(".")[0]}, key=len, reverse=True):
+        if len(h) >= 3 and h.lower() not in generic:
+            subs.append((re.compile(r"(?<![\w-])" + re.escape(h) + r"(?![\w-])"), "<host>", "hostname"))
+    try:
+        user = getpass.getuser()
+    except Exception:  # noqa: BLE001
+        user = ""
+    if len(user) >= 3 and user.lower() not in generic | {"root", "user", "admin"}:
+        subs.append((re.compile(r"(?<![\w.-])" + re.escape(user) + r"(?![\w-])"), "<user>", "user"))
+    exts = {".json", ".jsonl", ".md", ".txt", ".log", ".csv", ".plist", ".xml", ""}
+    for f in sorted(Path(folder).rglob("*")):
+        if not f.is_file() or f.suffix.lower() not in exts:
+            continue
+        try:
+            t = f.read_text(encoding="utf-8", errors="surrogateescape")
+        except OSError:
+            continue
+        t2 = t
+        for rx, rep, name in subs:
+            t2, n = rx.subn(rep, t2)
+            if n:
+                counts[name] = counts.get(name, 0) + n
+        if rr is not None:
+            t2, c = rr.redact_text(t2, {})
+            for k, v in c.items():
+                counts[k] = counts.get(k, 0) + v
+        if t2 != t:
+            try:
+                f.write_text(t2, encoding="utf-8", errors="surrogateescape")
+            except OSError:
+                pass
+    return counts
+
+
 def raw_root() -> Path:
     """Root for big raw frame data, outside the repo. $SKELLYCAM_RAW_ROOT overrides."""
     env = os.environ.get("SKELLYCAM_RAW_ROOT")

@@ -11,7 +11,10 @@ This test runs before the camera tests so that the only holders are other applic
 """
 from __future__ import annotations
 
-import grp
+try:
+    import grp  # POSIX only; the module must still load for --dry-run on another OS
+except ImportError:  # pragma: no cover
+    grp = None  # type: ignore[assignment]
 import os
 import stat
 from typing import Any

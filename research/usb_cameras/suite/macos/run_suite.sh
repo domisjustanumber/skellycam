@@ -16,7 +16,7 @@
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PY_VERSION="${SKELLYCAM_SUITE_PYTHON:-3.12}"
+PY_VERSION="${SKELLYCAM_SUITE_PYTHON:-3.12.13}"
 
 if [[ "$(uname -s)" != "Darwin" ]]; then
   echo "note: not macOS; only --help / --dry-run / --list-tests are useful here" >&2

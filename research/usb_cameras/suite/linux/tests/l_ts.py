@@ -141,7 +141,8 @@ def device_clock(rows: list[dict], meta: list[dict], clock_hz: float | None, fps
     return out
 
 
-def analyse(rows: list[dict], meta: list[dict], fps: float, clock_hz: float | None) -> dict[str, Any]:
+def analyse(rows: list[dict], meta: list[dict], fps: float, clock_hz: float | None,
+            use_meta: bool = True) -> dict[str, Any]:
     period = 1e9 / fps
     tsn = [r["ts_ns"] for r in rows if r.get("ts_ns")]
     host = [r["host_ns"] for r in rows if r.get("host_ns")]
@@ -162,6 +163,19 @@ def analyse(rows: list[dict], meta: list[dict], fps: float, clock_hz: float | No
                                       "n_estimated", "error")}
     out["seq_drops"] = ts.detect_drops([r["v4l2_seq"] for r in rows if r.get("v4l2_seq") is not None])
     out["error_flag_frames"] = sum(1 for r in rows if r.get("error"))
+    # tier-0 clock facts (skellyfileformat SFF-773): the buffer stamp is CLOCK_MONOTONIC when the flag says
+    # MONOTONIC and the DQBUF arrival (camworker reads CLOCK_MONOTONIC) follows it by a small positive lag
+    dom = max(kinds, key=kinds.get) if kinds else None
+    lag = out["arrival_minus_soe_ms"].get("median")
+    mono = bool(dom and dom.startswith("MONOTONIC") and lag is not None and 0 <= lag < 1000)
+    out["clock"] = {"buffer_ts_flags": dom, "arrival_clock": "CLOCK_MONOTONIC (camworker clock_gettime)",
+                    "arrival_minus_buffer_ts_median_ms": lag, "stamp_resolution": "1 us (struct timeval)",
+                    "clock_name": "linux_monotonic" if mono else None,
+                    "basis": "flag MONOTONIC and 0 <= arrival - stamp < 1 s" if mono else
+                    "undetermined: flag not MONOTONIC or arrival lag outside [0, 1 s)"}
+    out["interval_ms"] = ts.stats([(b - a) / 1e6 for a, b in zip(tsn, tsn[1:])])
+    if not use_meta:
+        return out
     out["meta"] = {"buffers": len(meta), "error_flag": sum(1 for m in meta if m.get("meta_error")),
                    "empty": sum(1 for m in meta if not m.get("meta_bytes")),
                    "seq_gaps": ts.detect_drops([m["meta_seq"] for m in meta])["drops"] if meta else None,
@@ -178,6 +192,7 @@ def run(ctx) -> dict[str, Any]:
     errors: list[dict] = []
     per_cam: dict[str, Any] = {}
     v_soe, v_meta = {}, {}
+    use_meta = getattr(ctx.args, "ts_meta", True)
     hwts = (ctx.env_facts.get("uvc_params") or {}).get("hwtimestamps")
     for cam in ctx.cameras:
         skip = gate(ctx, cam, TEST)
@@ -198,16 +213,20 @@ def run(ctx) -> dict[str, Any]:
                                "host_sof_substitution_needed": (cam["vid"], cam["pid"]) in INVALID_DEVICE_SOF,
                                "mode_scope": sc, "excluded_runs": excluded_runs(ctx, cam)}
         for rr in ts_runs(ctx, cam):
+            if not use_meta and rr["label"] != "main":
+                continue
             od = ctx.test_dir(TEST, cs, rr["label"])
             extra = ["--meta", "auto"] + (["--meta-node", cam["meta_node"]] if cam.get("meta_node") else [])
+            if not use_meta:
+                extra = ["--meta", "off"]
             if rr.get("buffersize"):
                 extra += ["--meta-buffersize", str(rr["buffersize"])]
             ctx.log(f"{cam['name']} {rr['label']} {mode_text(rr['mode'])} {rr['seconds']}s")
             cap = apis.capture(ctx, "v4l2", cam, rr["mode"], rr["seconds"], od, None, save="none", extra=extra,
                                analyse=False)
             rows = analysis.read_rows(od / "frames.jsonl")
-            meta = analysis.read_rows(od / "meta.jsonl")
-            a = analyse(rows, meta, float(rr["mode"]["fps"]), clock) if rows else {"error": "no frames"}
+            meta = analysis.read_rows(od / "meta.jsonl") if use_meta else []
+            a = analyse(rows, meta, float(rr["mode"]["fps"]), clock, use_meta) if rows else {"error": "no frames"}
             a.update({"mode": mode_text(rr["mode"]), "meta_info": cap.get("meta"), "error": cap.get("error"),
                       "child": cap.get("child"), "buffersize_requested": rr.get("buffersize")})
             ent["runs"][rr["label"]] = a
@@ -221,7 +240,9 @@ def run(ctx) -> dict[str, Any]:
                                            host_grid_ms=g.get("step_ms") if g.get("quantized") else None,
                                            device_ts_self_consistent=None) if main.get("frames") else \
             rating.untested("no frames", main.get("error"))
-        if dc.get("frames_with_pts"):
+        if not use_meta:
+            pass  # --plan / tier-0 rule (Dom 2026-11-09): no UVC metadata / PTS / SCR cells
+        elif dc.get("frames_with_pts"):
             v_meta[cam["key"]] = rating.rate_ts(None, drops_detectable=bool(dc.get("pts_drops") is not None),
                                                 ground_truth=False, tier=0,
                                                 device_ts_self_consistent=dc.get("self_consistent"))
@@ -231,7 +252,10 @@ def run(ctx) -> dict[str, Any]:
     meas = {"cameras": per_cam, "mode_scope": scope.settings(ctx.args), "hwtimestamps_param": hwts, "hwtimestamps_note": "tier 1, read only (never written)",
             "ground_truth": "unavailable (no Linux flash/LED rig yet; attended item A5)" if not ctx.args.flash
             else "--flash given but no Linux flash tool exists yet: not used"}
-    verdicts = {"G-TS:soe_buffer_timestamp": combine(v_soe, "SOE buffer ts") if v_soe else rating.untested("none"),
-                "G-TS:uvc_metadata_pts": combine(v_meta, "metadata PTS") if v_meta else rating.untested("none")}
+    verdicts = {"G-TS:soe_buffer_timestamp": combine(v_soe, "SOE buffer ts") if v_soe else rating.untested("none")}
+    if use_meta:
+        verdicts["G-TS:uvc_metadata_pts"] = combine(v_meta, "metadata PTS") if v_meta else rating.untested("none")
+    else:
+        meas["uvc_metadata"] = "not tested (--plan, tier-0 rule 2026-11-09: no UVC metadata / PTS / SCR)"
     results.finish_result(res, measurements=meas, verdicts=verdicts, errors=errors)
     return res

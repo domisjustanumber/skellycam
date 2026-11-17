@@ -1,24 +1,33 @@
 # /// script
-# requires-python = ">=3.11"
+# requires-python = "==3.12.13"
 # dependencies = [
 #   "pyobjc-core==13.0; sys_platform == 'darwin'",
 #   "pyobjc-framework-Cocoa==13.0; sys_platform == 'darwin'",
 #   "pyobjc-framework-AVFoundation==13.0; sys_platform == 'darwin'",
+#   "pyobjc-framework-CoreAudio==13.0; sys_platform == 'darwin'",
 #   "pyobjc-framework-CoreMedia==13.0; sys_platform == 'darwin'",
 #   "pyobjc-framework-Quartz==13.0; sys_platform == 'darwin'",
 #   "pyobjc-framework-libdispatch==13.0; sys_platform == 'darwin'",
-#   "libusb1>=3.1; sys_platform == 'darwin'",
-#   "numpy>=2.0",
-#   "pillow>=11.0",
-#   "simplejpeg>=1.8",
+#   "libusb1==3.4.0; sys_platform == 'darwin'",
+#   "numpy==2.2.6",
+#   "pillow==12.0.0",
+#   "simplejpeg==1.8.2",
 # ]
 # ///
 """macOS UVC test suite runner (docs/xplat_capture_plan.md sections 2.5 and 6; plan_20261106/macos.md).
 
 Normally started by run_suite.sh (records sw_vers / arch / model first). Direct use:
 
-    uv run --python 3.12 --script research/usb_cameras/suite/macos/run_suite.py [flags]
-    uv run --python 3.12 --script research/usb_cameras/suite/macos/run_suite.py --dry-run
+    uv run --python 3.12.13 --script research/usb_cameras/suite/macos/run_suite.py [flags]
+    uv run --python 3.12.13 --script research/usb_cameras/suite/macos/run_suite.py --dry-run
+    bash research/usb_cameras/suite/macos/run_suite.sh --plan      # the capture-plan preset (RUNBOOK_PLAN.md)
+
+--plan (2026-11-17): only what the native-MJPEG capture plan needs, ~25 min with four cameras: M-ENV, M-TCC,
+M-TOPO, M-ID, M-FMT, M-CTRL-LIST, M-MJPEG (720-line modes at 30 and at the top rate, variants nil/{}/dmb1/chromium),
+M-CYC (20 in-process cycles, nothing else), M-CTRL-EFFECT (AVFoundation locks only, one run), M-MULTI (all cameras
+together for 90 s, once), M-TS (30 s, tier 0). No endpoint 0 unless --ep0 is added. Asks for Camera permission at
+the start. Results go to results/macos/plan/suite_<stamp>/ (no hostname), are scrubbed of host/user/home names,
+and summary.md (also printed at the end) is the short pasteable digest.
 
 This process imports only the standard library and suite/common. PyObjC is imported only inside the camera
 child processes (helpers/mac_avf.py), which this runner starts with its own interpreter (the PEP 723
@@ -113,6 +122,8 @@ def build_parser() -> argparse.ArgumentParser:
     g.add_argument("--reduced", action="store_true", help="run the reduced suite (plan 2.5 legs M3/M4)")
     g.add_argument("--quick", action="store_true", help="fewer cycles, modes and seconds (a smoke run)")
     g.add_argument("--list-tests", action="store_true")
+    g.add_argument("--plan", action="store_true", help="capture-plan preset: the tests and sizes the native-MJPEG "
+                   "capture plan needs (~25 min); results/macos/plan/suite_<stamp>/ + a pasteable summary.md")
     g.add_argument("--dry-run", action="store_true", help="print what would run; open nothing, write nothing")
     g.add_argument("--fake-ioreg", type=Path, default=None, help="dry-run: folder with ioreg_*.plist files")
     g.add_argument("--fake-avf", type=Path, default=None, help="dry-run: JSON {devices:[...]} as mac_avf list/formats")
@@ -169,7 +180,20 @@ def build_parser() -> argparse.ArgumentParser:
     return ap
 
 
+PLAN_TESTS = ("M-ENV", "M-TCC", "M-TOPO", "M-ID", "M-FMT", "M-CTRL-LIST", "M-MJPEG", "M-CYC", "M-CTRL-EFFECT",
+              "M-MULTI", "M-TS")
+#: --plan sizes (an explicit flag still wins)
+PLAN_DEFAULTS = {"cycles": 20, "proc_cycles": 0, "frames": 10, "mjpeg_seconds": 4.0, "mjpeg_modes": "all",
+                 "ts_seconds": 30.0, "ctrl_runs": 1, "multi_repeats": 1, "multi_seconds": 90.0, "id_proc_repeats": 2,
+                 "kiyo_minutes": 0.0}
+
+
 def apply_defaults(a: argparse.Namespace) -> argparse.Namespace:
+    if getattr(a, "plan", False):
+        for k, v in PLAN_DEFAULTS.items():
+            if getattr(a, k, None) is None:
+                setattr(a, k, v)
+        a.full, a.request_camera = True, True
     q = a.quick
     defaults = {"cycles": (20, 5), "proc_cycles": (10, 3), "frames": (10, 5), "mjpeg_seconds": (3.0, 1.5),
                 "mjpeg_modes": ("all", "ends"), "ts_seconds": (20.0, 8.0), "ctrl_runs": (3, 1),
@@ -203,6 +227,8 @@ def select_tests(a: argparse.Namespace, reduced: bool) -> list[tuple]:
         if t[0] in skip:
             continue
         if reduced and not t[2] and not only:
+            continue
+        if getattr(a, "plan", False) and not only and t[0] not in PLAN_TESTS:
             continue
         out.append(t)
     return out
@@ -405,6 +431,142 @@ def summary_md(ctx: suitectx.SuiteCtx, rows: list[dict], notes: dict, started: s
     return "\n".join(lines) + "\n"
 
 
+# ================================================================================================ --plan
+def plan_estimate_s(ctx: suitectx.SuiteCtx) -> dict:
+    """Rough seconds per test for --plan (child start ~4 s each: Python + PyObjC import + session start)."""
+    a = ctx.args
+    cams = ctx.openable()
+    mj = load_test_module("m_mjpeg")
+    n_cells = sum(len(mj.cell_rates(ctx, f)) for c in cams for f in mj.formats_to_test(ctx, c)[0])
+    est = {"M-ENV": 60, "M-TCC": 10, "M-TOPO": 10, "M-ID": 20 + 5 * a.id_proc_repeats, "M-FMT": 10,
+           "M-CTRL-LIST": 6 * len(cams),
+           "M-MJPEG": n_cells * len(a.mjpeg_variant_list) * (a.mjpeg_seconds + 5),
+           "M-CYC": len(cams) * (8 + a.cycles * 2.0 + 6),
+           "M-CTRL-EFFECT": len(cams) * (a.ctrl_runs * 16 + 12),
+           "M-MULTI": a.multi_repeats * (a.multi_seconds + 10) if len(cams) > 1 else 0,
+           "M-TS": len(cams) * (a.ts_seconds + 6)}
+    return {k: round(v) for k, v in est.items()}
+
+
+def _serial_form(s: str | None) -> str:
+    if not s:
+        return "none"
+    cls = ("digits" if s.isdigit() else "hex" if all(ch in "0123456789abcdefABCDEF" for ch in s) else
+           "alnum" if s.isalnum() else "mixed")
+    return f"{len(s)} chars, {cls}"
+
+
+def _g(d: Any, *path, default=None):
+    for p in path:
+        if isinstance(d, list) and isinstance(p, int):
+            d = d[p] if -len(d) <= p < len(d) else None
+        elif isinstance(d, dict):
+            d = d.get(p)
+        else:
+            return default
+        if d is None:
+            return default
+    return d
+
+
+def _n(x: Any) -> Any:
+    return f"{x:.4g}" if isinstance(x, float) else x
+
+
+def _on(d: dict | None) -> list:
+    return [k for k, v in (d or {}).items() if v is True]
+
+
+def _fmt_bytes(b: dict | None) -> str:
+    if not b:
+        return "-"
+    return "/".join(f"{b[k] / 1000:.0f}" for k in ("min", "median", "p99", "max")) + f" kB (n={b['n']})"
+
+
+def plan_summary(ctx: suitectx.SuiteCtx, res: dict[str, dict], rows: list[dict], started: str, minutes: float) -> str:
+    """The short pasteable digest of a --plan run (summary.md and the end of the console output). No hostname, no
+    home path, serials as their form only (the JSON files keep the exact strings)."""
+    env = results.env_info()
+    pre = ctx.prelude
+    app = pre.get("term_program") or pre.get("bundle_id") or "the app that launched the script"
+    L = [f"# macOS capture-plan run {ctx.out_dir.name}", "",
+         f"- macOS {pre.get('product_version') or platform.mac_ver()[0]} ({pre.get('build_version') or '?'}), "
+         f"{pre.get('hw_model') or '?'} {pre.get('arch') or platform.machine()} {pre.get('cpu') or ''}".rstrip(),
+         f"- Python {env['python']}; " + ", ".join(f"{k} {v}" for k, v in sorted(env["packages"].items())),
+         f"- started {started}, {minutes:.1f} min; tests run: {len(rows)}; ep0 {'on' if ctx.ep0_enabled else 'off'}"]
+    if ctx.tcc != "authorized":
+        L.append(f"- **CAMERA PERMISSION MISSING ({ctx.tcc})**: grant Camera to {app} in System Settings > Privacy & "
+                 "Security > Camera, quit and reopen it, run again. Camera results below are NOT measurements.")
+    else:
+        L.append(f"- camera permission: authorized (app: {app})")
+    for k, d in ctx.dead.items():
+        L.append(f"- **Kiyo Pro dead** since {d['since_test']} ({k}): stream starts {d['stream_starts_this_run']}; "
+                 "not tested afterwards (diagnostics in kiyo_pro_dead.json)")
+    mj = {c["key"]: c for c in _g(res, "M-MJPEG", "measurements", "cameras", default=[])}
+    cyc = {c["key"]: c for c in _g(res, "M-CYC", "measurements", "cameras", default=[])}
+    ts = {c["key"]: c for c in _g(res, "M-TS", "measurements", "cameras", default=[])}
+    ce = {c["key"]: c for c in _g(res, "M-CTRL-EFFECT", "measurements", "cameras", default=[])}
+    multi = {m["camera"]: m for m in _g(res, "M-MULTI", "measurements", "attempts", 0, "cameras", default=[])}
+    doms = _g(res, "M-TOPO", "measurements", "camera_domains", default={}) or {}
+    for c in ctx.cameras:
+        k = c["key"]
+        L += ["", f"## {c.get('name')} {c.get('vid')}:{c.get('pid')}" + (" (Kiyo Pro)" if c.get("is_kiyo") else ""),
+              f"- identity: serial {_serial_form(c.get('serial'))} ({c.get('serial_reason') or c.get('key_kind')}); "
+              f"locationID {c.get('location_hex')}; port_path {c.get('port_path')}; uniqueID {c.get('unique_id')}; "
+              f"modelID {c.get('model_id')}; speed {c.get('speed')}; domain {doms.get(k)}"]
+        for mo in _g(mj, k, "modes", default=[]) or []:
+            row = mo.get("row") or {}
+            L.append(f"- MJPEG {_g(mo, 'mode', 'mode_text')}: JPEG bytes from AVFoundation: "
+                     f"{'YES' if row.get('is_jpeg') else 'no'} (best variant {row.get('best_variant')})")
+            for var, cell in (mo.get("cells") or {}).items():
+                hdr = cell.get("first_header") or {}
+                L.append(f"  - {var}: {cell.get('delivered')} subtypes {cell.get('sample_subtypes')} cv "
+                         f"{cell.get('cv_pixel_formats')}; frames {cell.get('frames')}/{cell.get('frames_expected')} "
+                         f"fps {_n(cell.get('fps_measured'))}; strict {cell.get('strict_valid_fraction')}; headers "
+                         f"{cell.get('n_header_sha1')} ({(cell.get('header_sha1') or '')[:10]}); APP0 {hdr.get('app0')} "
+                         f"DHT {hdr.get('has_dht')}; bytes min/med/p99/max {_fmt_bytes(cell.get('bytes_stats'))}"
+                         + (f"; settings error {str(cell.get('video_settings_error'))[:80]}"
+                            if cell.get("video_settings_error") else "")
+                         + (f"; {cell['skipped']}" if cell.get("skipped") else ""))
+        if k in mj and not mj[k].get("modes"):
+            L.append(f"- MJPEG: {_g(mj, k, 'rating', 'rating')} ({_g(mj, k, 'selection')})")
+        for v in _g(cyc, k, "variants", default=[]) or []:
+            s = v.get("summary") or {}
+            ff = _g(s, "timings_ms", "first_frame_ms", default={}) or {}
+            L.append(f"- cycles {v['variant']}: {s.get('n_ok')}/{s.get('n')} ok, first frame p50 {ff.get('p50')} "
+                     f"p95 {ff.get('p95')} ms, hangs {s.get('hangs')}, failures "
+                     f"{[(x.get('stage'), x.get('code'), x.get('count')) for x in s.get('failure_classes') or []][:3]}")
+        an = _g(ts, k, "analysis", default=None)
+        if an:
+            fit = an.get("pts_fit_whole") or {}
+            L.append(f"- timestamps: clock {an.get('clock_name') or 'undetermined'} {an.get('clock_name_basis')}; "
+                     f"PTS grid {_g(an, 'pts_grid', 'step_ms') if _g(an, 'pts_grid', 'quantized') else 'none'}; "
+                     f"interval sd {_n(_g(an, 'pts_interval_ms', 'std'))} ms; fit residual sd "
+                     f"{_n(_g(fit, 'residual_stats_ms', 'std'))} ms (fps {_n(fit.get('fps'))}); arrival-PTS median "
+                     f"{_n(_g(an, 'arrival_minus_pts_ms', 'median'))} ms; dropped callbacks {an.get('dropped_callbacks')}")
+        cr = ce.get(k)
+        if cr:
+            fl = cr.get("avf_flags") or {}
+            runs = cr.get("avf_runs") or []
+            L.append(f"- controls (AVFoundation modes supported): exposure {_on(fl.get('exposure_modes_supported'))}, "
+                     f"focus {_on(fl.get('focus_modes_supported'))}, wb {_on(fl.get('wb_modes_supported'))}; lock readback ok "
+                     f"{[r.get('all_readback_ok') for r in runs]}; luma {[r.get('luma_median') for r in runs]}; "
+                     f"restore ok {_g(cr, 'avf_restore', 'ok')}; absolute exposure/focus: "
+                     + (f"ep0 runs {len(cr.get('ep0_runs') or [])}" if ctx.ep0_enabled else "skipped (no ep0)"))
+        mm = multi.get(k)
+        if mm:
+            L.append(f"- multi (all at once): frames {mm.get('frames')}/{mm.get('frames_expected')} fps {mm.get('fps')}, "
+                     f"dropped {mm.get('dropped_callbacks')}, signal {_g(mm, 'signal', 'signal')} "
+                     f"{_g(mm, 'signal', 'code') or ''}, alt {_g(mm, 'granted', 'ioreg_alt')}")
+    L += ["", "| Test | Verdicts | Errors | s |", "| --- | --- | --- | --- |"]
+    for r in rows:
+        v = "; ".join(f"{g}: {x.get('rating')}" for g, x in (r.get("verdicts") or {}).items() if isinstance(x, dict))
+        L.append(f"| {r['test']} | {v or '-'} | {r.get('n_errors', 0)} | {r.get('elapsed_s')} |")
+    L += ["", "Left out: endpoint-0 UVC controls (unless --ep0), CoreMediaIO controls (not implemented), auto-mode "
+              "toggling, UVC header/PTS/SCR, per-process cycles, mode switching, FMT-NOGRAB, FX, KIYO polling."]
+    return "\n".join(L) + "\n"
+
+
 def main(argv: list[str] | None = None, runner=None) -> int:
     """``runner`` replaces common.procutil.run (unit tests inject a fake; never used in a real run)."""
     ap = build_parser()
@@ -422,7 +584,7 @@ def main(argv: list[str] | None = None, runner=None) -> int:
     reduced, why = decide_reduced(a, prelude)
     tests = select_tests(a, reduced)
     stamp = results.utc_stamp()
-    out_dir = a.out_dir or results.default_results_dir(stamp)
+    out_dir = a.out_dir or results.default_results_dir(stamp, hostname="plan" if a.plan else None)
     raw_dir = a.raw_dir or results.default_raw_dir(out_dir)
     cache_dir = results.raw_root() / "suite_cache" / socket.gethostname()
     ctx = suitectx.SuiteCtx(out_dir=Path(out_dir), raw_dir=Path(raw_dir), args=a, prelude=prelude, reduced=reduced,
@@ -443,11 +605,16 @@ def main(argv: list[str] | None = None, runner=None) -> int:
             print(f"snapshot: {json.dumps(notes.get('snapshot_report'), default=str)[:400]}")
         else:
             print("cameras: discovered at run time (ioreg + AVFoundation); none hard-coded")
+        est = plan_estimate_s(ctx) if a.plan else {}
         for name, mod, _, opens in tests:
             m = load_test_module(mod)
-            print(f"\n== {name} ({'opens cameras' if opens else 'no camera opened'})")
+            print(f"\n== {name} ({'opens cameras' if opens else 'no camera opened'})"
+                  + (f" ~{est[name] / 60:.1f} min" if name in est else ""))
             for line in (m.plan(ctx) if hasattr(m, "plan") else [m.__doc__.splitlines()[0]]):
                 print(f"   - {line}")
+        if a.plan:
+            print(f"\nestimated total: ~{sum(est.get(t[0], 0) for t in tests) / 60:.0f} min with "
+                  f"{len(ctx.openable())} camera(s) (plus the uv environment build on a first run)")
         if not a.ep0:
             print("\nep0 is OFF: UVC descriptors/controls via endpoint 0 are skipped (add --ep0 to opt in).")
         return 0
@@ -458,6 +625,7 @@ def main(argv: list[str] | None = None, runner=None) -> int:
     ctx.out_dir.mkdir(parents=True, exist_ok=True)
     ctx.raw_dir.mkdir(parents=True, exist_ok=True)
     started = results.utc_now_iso()
+    t_run = time.monotonic()
     lock = None
     if not a.no_camlock:
         lock = CamLock(a.camlock_timeout_s)
@@ -486,8 +654,10 @@ def main(argv: list[str] | None = None, runner=None) -> int:
                     "on every USB device and libusb_open seizes the camera (it never claims or detaches). Starting in "
                     "10 s; press Ctrl-C to abort.")
             time.sleep(10)
+        res_by_test: dict[str, dict] = {}
         for name, mod, _, opens in tests:
             ctx.log(f"== {name}")
+            ctx.current_test = name
             t0 = time.monotonic()
             try:
                 m = load_test_module(mod)
@@ -512,12 +682,21 @@ def main(argv: list[str] | None = None, runner=None) -> int:
                 res.setdefault("errors", []).append({"warning": "unexplained re-arrival during this test",
                                                      "detail": flagged})
             ctx.write(name.lower().replace("-", "_"), res)
+            res_by_test[name] = res
             rows.append({"test": name, "verdicts": res.get("verdicts"), "n_errors": len(res.get("errors") or []),
                          "n_rearrivals": len(flagged), "elapsed_s": round(time.monotonic() - t0, 1)})
             ctx.log(f"   {name}: " + ", ".join(f"{g}={v.get('rating')}" for g, v in (res.get("verdicts") or {}).items()
                                                if isinstance(v, dict)))
         results.write_json(ctx.out_dir / "children.json", ctx.child_log)
-        (ctx.out_dir / "summary.md").write_text(summary_md(ctx, rows, notes, started), encoding="utf-8")
+        if ctx.dead:
+            results.write_json(ctx.out_dir / "kiyo_pro_dead.json", ctx.dead)
+        if a.plan:
+            text = plan_summary(ctx, res_by_test, rows, started, (time.monotonic() - t_run) / 60)
+            (ctx.out_dir / "summary.md").write_text(text, encoding="utf-8")
+            ctx.log(f"privacy scrub of {ctx.out_dir.name}: {results.scrub_private(ctx.out_dir)}")
+            print("\n" + (ctx.out_dir / "summary.md").read_text(encoding="utf-8"))
+        else:
+            (ctx.out_dir / "summary.md").write_text(summary_md(ctx, rows, notes, started), encoding="utf-8")
         ctx.log(f"wrote {ctx.out_dir}")
     finally:
         if lock is not None:

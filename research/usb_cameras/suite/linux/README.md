@@ -8,6 +8,9 @@ The Linux suite of [docs/xplat_capture_plan.md](../../docs/xplat_capture_plan.md
 | L2 | Ubuntu 26.04 | 7.0 |
 | L3 | Fedora 45 KDE | 7.2 |
 
+Capture-plan preset (one command, ~15 min): `bash research/usb_cameras/suite/linux/run_suite.sh --plan`, see
+[RUNBOOK_PLAN.md](RUNBOOK_PLAN.md).
+
 All three run on Gerald from an external SSD; an AMD PC is added for TOPO and MULTI. Status: built and unit-tested on a fake sysfs tree and a simulated camera. It has not run on camera hardware yet.
 
 ## Run

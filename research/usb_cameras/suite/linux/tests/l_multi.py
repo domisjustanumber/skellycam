@@ -39,6 +39,12 @@ SECS = 5.0
 
 
 def plan(ctx) -> dict[str, Any]:
+    if not getattr(ctx.args, "multi_pairs", True):
+        s = getattr(ctx.args, "multi_seconds", SECS)
+        return {"child_runs": len(ctx.cameras), "est_seconds": round(ctx.args.multi_reps * (s + 10)),
+                "steps": [f"{ctx.args.multi_reps} x all cameras at once for {s:g} s, one process per camera "
+                          "(--plan: no staggered start, no pairs)"], "mode_scope": scope.settings(ctx.args),
+                "per_camera_default": {c["key"]: mode_text(scope.picks(ctx, c)["default"]) for c in ctx.cameras}}
     pairs = len(domain_pairs(ctx, ctx.topology or {}))
     reps = ctx.args.multi_reps
     return {"child_runs": reps * 2 * len(ctx.cameras) + pairs * 2 * 4 + 2,
@@ -61,8 +67,11 @@ def _summ(r: dict[str, Any], cam: dict[str, Any], mode: dict[str, Any]) -> dict[
     j = r.get("json") or {}
     st = j.get("stream") or {}
     frames = (st.get("counts") or {}).get("frames", 0)
+    cnt = st.get("counts") or {}
     return {"camera": cam["key"], "name": cam["name"], "mode": mode_text(mode), "ok": bool(frames),
             "frames": frames, "fps": st.get("fps_host"), "error": worker_error(r),
+            "seq_missing": cnt.get("seq_missing"), "error_flag_frames": cnt.get("error_flag"),
+            "bad_markers": cnt.get("bad_markers"), "stream_seconds": st.get("stream_seconds"),
             "first_frame_ms": (j.get("timings") or {}).get("first_frame_ms"),
             "streamon_ms": (j.get("timings") or {}).get("streamon_ms"),
             "granted_alt": (((st.get("granted") or {}).get("alts") or [{}])[0]).get("alt"),
@@ -125,12 +134,16 @@ def phase_a(ctx, snap, cache, errors) -> tuple[list[dict], list[dict]]:
     pred = predicted(snap, cache, reqs) if reqs else {"domains": []}
     order = sorted(cams, key=lambda c: (domain_of(snap, c["key"]) or "", c["key"]))
     runs, events = [], []
+    secs = getattr(ctx.args, "multi_seconds", SECS)
+    kinds = getattr(ctx.args, "multi_kinds", ("together", "staggered"))
     for rep in range(ctx.args.multi_reps):
         for kind, seq in (("together", cams), ("staggered", order)):
+            if kind not in kinds:
+                continue
             jobs = []
             for i, c in enumerate(seq):
                 od = ctx.test_dir(TEST, f"A_{kind}_{rep}", ctx.slug(c))
-                jobs.append(_cap_job(ctx, c, dm[c["key"]], SECS, od,
+                jobs.append(_cap_job(ctx, c, dm[c["key"]], secs, od,
                                      delay=0.0 if kind == "together" else 1.5 * i))
             ctx.log(f"phase A rep {rep + 1} {kind}: {len(jobs)} camera(s)")
             rs = ctx.camcmd_parallel(jobs)
@@ -328,8 +341,12 @@ def run(ctx) -> dict[str, Any]:
                             "mode_scope": scope.test_record(ctx, ctx.cameras)}
     runs_a, events = phase_a(ctx, snap, cache, errors)
     meas["phase_a"] = runs_a
+    meas["camera_domains"] = {c["key"]: domain_of(snap, c["key"]) for c in ctx.cameras}
     pairs_out = []
-    for a_cam, b_cam in domain_pairs(ctx, snap):
+    do_pairs = getattr(ctx.args, "multi_pairs", True)   # --plan: phase A only (all cameras at once)
+    if not do_pairs:
+        meas["pairs_note"] = "--plan: predicted pairs and the cross-domain pair not run"
+    for a_cam, b_cam in (domain_pairs(ctx, snap) if do_pairs else []):
         if gate(ctx, a_cam, TEST) or gate(ctx, b_cam, TEST):
             pairs_out.append({"pair": [a_cam["key"], b_cam["key"]], "skipped": "camera busy"})
             continue
@@ -365,7 +382,7 @@ def run(ctx) -> dict[str, Any]:
                 events.append({"pair": label, "api": "v4l2", "predicted_verdict": p["predicted"]["verdict"],
                                "observed_refused": False, "classified_class": None, "expected_bandwidth": False})
     meas["pairs"] = pairs_out
-    cp = cross_pair(ctx, snap)
+    cp = cross_pair(ctx, snap) if do_pairs else None
     if cp and not (gate(ctx, cp[0], TEST) or gate(ctx, cp[1], TEST)):
         if scope.settings(ctx.args)["all_modes"]:
             ma, mb = cp[0]["modes"]["large"], cp[1]["modes"]["large"]

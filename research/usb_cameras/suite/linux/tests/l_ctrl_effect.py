@@ -41,7 +41,7 @@ SCHED = (1500, 3000)
 
 
 def plan(ctx) -> dict[str, Any]:
-    n = len(ctx.cameras) * 4 * ctx.args.ctrl_runs
+    n = len(ctx.cameras) * len(getattr(ctx.args, "ctrl_experiments", None) or ("exposure", "gain", "white_balance", "focus")) * ctx.args.ctrl_runs
     return {"child_runs": n + 4 * len(ctx.cameras), "est_seconds": round(n * (SECONDS + 4) + 20 * len(ctx.cameras)),
             "steps": ["EACCES check", f"{ctx.args.ctrl_runs} x (exposure, gain, WB, focus) captures",
                       "persistence read + capture", "restore originals"],
@@ -178,10 +178,16 @@ def run(ctx) -> dict[str, Any]:
                                                         CID["exposure_dynamic_framerate"]) if cid in walk}
         ent["originals"] = {f"0x{k:08x}": v for k, v in orig.items()}
         exps = experiments(walk, float(mode["fps"]))
+        only = getattr(ctx.args, "ctrl_experiments", None)   # --plan: manual exposure and focus only
+        if only:
+            ent["experiments_not_run"] = sorted(set(exps) - set(only))
+            exps = {k: v for k, v in exps.items() if k in only}
+        ent["api_path"] = "V4L2 VIDIOC_S_EXT_CTRLS / G_EXT_CTRLS (camworker, raw ioctl)"
         try:
-            # EACCES check: a slave set while its master is auto
+            # EACCES check: a slave set while its master is auto (sets auto exposure on: not in --plan, which
+            # tests manual control only)
             ae, ex = walk.get(CID["auto_exposure"]), walk.get(CID["exposure_time_absolute"])
-            if ae and ex:
+            if ae and ex and getattr(ctx.args, "ctrl_eacces_check", True):
                 auto_idx = 3 if any(m.get("index") == 3 for m in ae.get("menu") or []) else 0
                 r = ctx.camcmd(ctx.worker_cmd("controls", "--device", cam["node"], "--no-walk", "--total-timeout-s",
                                               "35", "--set",

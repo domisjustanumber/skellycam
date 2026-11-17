@@ -1,12 +1,15 @@
 # /// script
-# requires-python = ">=3.10"
-# dependencies = ["pillow>=10", "numpy>=1.26", "simplejpeg>=1.7"]
+# requires-python = "==3.12.13"
+# dependencies = ["pillow==12.0.0", "numpy==2.2.6", "simplejpeg==1.8.2"]
 # ///
 """Linux UVC test suite runner (docs/xplat_capture_plan.md sections 2.6 and 6; legs L1 Ubuntu 24.04.5 / 6.8,
 L2 Ubuntu 26.04 / 7.0, L3 Fedora 45 KDE / 7.2).
 
     bash research/usb_cameras/suite/linux/run_suite.sh [flags]          # bootstraps uv, then runs this file
-    uv run --python 3.12 --script research/usb_cameras/suite/linux/run_suite.py [flags]
+    uv run --python 3.12.13 --script research/usb_cameras/suite/linux/run_suite.py [flags]
+    ... --plan             the capture-plan preset (RUNBOOK_PLAN.md): PLAN_TESTS with PLAN_SETTINGS, results in
+                           results/linux/plan/suite_<stamp>/ (no hostname), privacy-scrubbed, short summary.md
+                           printed at the end
     ... --dry-run          list the plan (tests, cameras found in sysfs, child runs, rough time); opens no /dev node
     ... --list-tests       test ids and what each answers
     ... --min-fps 30 --min-height 720 --max-height 720   mode scope of the streaming tests (default: exactly 720
@@ -58,6 +61,17 @@ DEFAULTS = {  # full, quick
     "mjpeg_modes": ("all", "sizes"), "ts_seconds": (10.0, 4.0), "multi_reps": (3, 1), "kiyo_minutes": (5.0, 1.0),
     "ctrl_runs": (3, 1), "id_repeats": (20, 5), "hold_ms": (2000.0, 1500.0),
 }
+#: --plan (native-MJPEG capture plan, 2026-11-17): what the plan needs, ~10-15 min with four cameras. L-FMT-NOGRAB
+#: and L-KIYO are left out; the Kiyo Pro dead rule (suitectx) replaces the Kiyo poller.
+PLAN_TESTS = ["L-ENV", "L-TOPO", "L-ID", "L-DESK", "L-FMT", "L-CTRL-LIST", "L-MJPEG", "L-CYC", "L-CTRL-EFFECT",
+              "L-TS", "L-MULTI"]
+#: CLI-visible sizes the preset sets when the flag was not given ...
+PLAN_SIZES = {"cycles": 20, "frames": 10, "mjpeg_seconds": 5.0, "mjpeg_modes": "all", "ts_seconds": 20.0,
+              "multi_reps": 1, "ctrl_runs": 1, "id_repeats": 5, "wrappers": ""}
+#: ... and test switches with no CLI flag (each test reads them with getattr and the full-suite default)
+PLAN_SWITCHES = {"cyc_inprocess_only": True, "multi_seconds": 90.0, "multi_kinds": ("together",),
+                 "multi_pairs": False, "ctrl_experiments": ("exposure", "focus"), "ctrl_eacces_check": False,
+                 "ts_meta": False}
 KERNEL_LOG_RE = re.compile(r"usb|uvc|xhci|video|ehci|hub|bandwidth", re.I)
 
 
@@ -93,6 +107,8 @@ def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0],
                                  formatter_class=argparse.RawDescriptionHelpFormatter, epilog=__doc__.split("\n\n", 1)[1])
     ap.add_argument("--quick", action="store_true", help="short run: fewer cycles/frames/modes/minutes")
+    ap.add_argument("--plan", action="store_true", help="capture-plan preset (see RUNBOOK_PLAN.md); explicit size "
+                                                        "flags still win")
     ap.add_argument("--only", default=None, help="comma list of tests (ENV,TOPO,... or L-ENV,...)")
     ap.add_argument("--skip", default=None, help="comma list of tests to skip")
     ap.add_argument("--cycles", type=int, default=None, help="in-process open/close cycles per camera x API (30)")
@@ -101,7 +117,8 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--mjpeg-seconds", type=float, default=None, help="capture length per MJPEG mode (3)")
     ap.add_argument("--mjpeg-modes", choices=("all", "sizes", "common"), default=None,
                     help="raw V4L2 reference: every (size, rate) / every size at its top rate / default+small only")
-    ap.add_argument("--wrappers", default="pyav,opencv,gst", help="wrapper APIs to compare in L-MJPEG/L-CYC")
+    ap.add_argument("--wrappers", default=None, help="wrapper APIs to compare in L-MJPEG/L-CYC (pyav,opencv,gst; "
+                                                     "--plan: none)")
     ap.add_argument("--ts-seconds", type=float, default=None, help="L-TS capture length per run (10)")
     ap.add_argument("--multi-reps", type=int, default=None, help="L-MULTI repetitions (3)")
     ap.add_argument("--kiyo-minutes", type=float, default=None, help="L-KIYO polling duration (5)")
@@ -127,7 +144,7 @@ def build_parser() -> argparse.ArgumentParser:
                                                             "capture are kept after analysis)")
     ap.add_argument("--no-camlock", action="store_true")
     ap.add_argument("--lock-timeout-s", type=float, default=600.0)
-    ap.add_argument("--helper-python", default="3.12", help="Python for the PyAV/OpenCV helpers (PyAV 19 needs 3.12+)")
+    ap.add_argument("--helper-python", default="3.12.13", help="Python for the PyAV/OpenCV helpers (PyAV 19 needs 3.12+)")
     ap.add_argument("--no-prewarm", action="store_true", help="do not pre-build the helper environments")
     ap.add_argument("--dry-run", action="store_true", help="print the plan and exit; opens no /dev node")
     ap.add_argument("--list-tests", action="store_true")
@@ -135,11 +152,19 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def finalize_args(a: argparse.Namespace) -> argparse.Namespace:
+    if getattr(a, "plan", False):
+        for k, v in PLAN_SIZES.items():
+            if getattr(a, k, None) is None:
+                setattr(a, k, v)
+        for k, v in PLAN_SWITCHES.items():
+            setattr(a, k, v)
     for k, (full, quick) in DEFAULTS.items():
         if getattr(a, k, None) is None:
             setattr(a, k, quick if a.quick else full)
+    if a.wrappers is None:
+        a.wrappers = "pyav,opencv,gst"
     a.wrapper_list = [w.strip() for w in (a.wrappers or "").split(",") if w.strip()]
-    sel = norm_tests(a.only) or list(TESTS)
+    sel = norm_tests(a.only) or list(PLAN_TESTS if getattr(a, "plan", False) else TESTS)
     skip = set(norm_tests(a.skip))
     a.selected = [t for t in sel if t not in skip]
     return a
@@ -282,7 +307,7 @@ def main(argv: list[str] | None = None) -> int:
     if a.list_tests:
         return list_tests()
     stamp = results.utc_stamp()
-    out_dir = (a.out_dir or results.default_results_dir(stamp)).resolve()
+    out_dir = (a.out_dir or results.default_results_dir(stamp, hostname="plan" if a.plan else None)).resolve()
     raw_dir = (a.raw_dir or results.default_raw_dir(out_dir)).resolve()
     all_cams = sysfs.discover_cameras()
     cams = select_cameras(all_cams, a.cameras)
@@ -310,6 +335,7 @@ def main(argv: list[str] | None = None) -> int:
         ctx.log("no USB video4linux camera found in /sys/class/video4linux (tests still run and record that)")
     run_info["prewarm"] = prewarm(ctx, build=not a.no_prewarm)
     rows = []
+    done: dict[str, dict[str, Any]] = {}
     for t in a.selected:
         ctx.current_test = t
         ctx.refresh_cameras()
@@ -333,6 +359,10 @@ def main(argv: list[str] | None = None) -> int:
         if ctx.lock.waits:
             res["camlock_waits_s"] = list(ctx.lock.waits)
             ctx.lock.waits.clear()
+        if ctx.dead:
+            res["kiyo_pro_dead"] = {k: {"since_test": d.get("since_test"), "utc": d.get("utc")}
+                                    for k, d in ctx.dead.items()}
+        done[t] = res
         path = ctx.write(t, res)
         rows.append({"test": t, "file": path.name, "verdicts": verdict_line(res), "errors": len(res.get("errors") or []),
                      "rearrivals": len(ev), "elapsed_s": res.get("elapsed_s")})
@@ -341,10 +371,26 @@ def main(argv: list[str] | None = None) -> int:
     if len(ctx.mode_alt_cache):
         ctx.mode_alt_cache.save(out_dir / "mode_alt_cache.json")
     run_info["utc_finished"] = results.utc_now_iso()
+    run_info["kiyo_pro_dead"] = ctx.dead or None
+    run_info["kiyo_pro_suspect_at_end"] = ctx.suspect or None
+    run_info["stream_starts"] = ctx.stream_starts
     results.write_json(out_dir / "run.json", run_info)
     write_summary(ctx, rows, run_info)
+    rc = 0
+    if a.plan:
+        import plansummary
+        try:
+            text = plansummary.build(ctx, done, run_info)
+        except Exception:  # the results are on disk; say so loudly instead of losing the run
+            text = "# PLAN SUMMARY FAILED (results are complete on disk)\n\n```\n" + traceback.format_exc() + "```\n"
+            rc = 3
+        old = (out_dir / "summary.md").read_text(encoding="utf-8")
+        (out_dir / "summary.md").write_text(text + "\n\n---\n\n" + old, encoding="utf-8")
+        counts = results.scrub_private(out_dir)
+        ctx.log(f"privacy scrub: {counts}")
+        print("\n" + "=" * 100 + "\n" + (out_dir / "summary.md").read_text(encoding="utf-8").split("\n---\n")[0])
     ctx.log(f"summary: {out_dir / 'summary.md'}")
-    return 0
+    return rc
 
 
 if __name__ == "__main__":

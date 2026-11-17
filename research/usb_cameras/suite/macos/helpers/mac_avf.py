@@ -1,15 +1,16 @@
 # /// script
-# requires-python = ">=3.11"
+# requires-python = "==3.12.13"
 # dependencies = [
 #   "pyobjc-core==13.0; sys_platform == 'darwin'",
 #   "pyobjc-framework-Cocoa==13.0; sys_platform == 'darwin'",
 #   "pyobjc-framework-AVFoundation==13.0; sys_platform == 'darwin'",
+#   "pyobjc-framework-CoreAudio==13.0; sys_platform == 'darwin'",
 #   "pyobjc-framework-CoreMedia==13.0; sys_platform == 'darwin'",
 #   "pyobjc-framework-Quartz==13.0; sys_platform == 'darwin'",
 #   "pyobjc-framework-libdispatch==13.0; sys_platform == 'darwin'",
-#   "numpy>=2.0",
-#   "pillow>=11.0",
-#   "simplejpeg>=1.8",
+#   "numpy==2.2.6",
+#   "pillow==12.0.0",
+#   "simplejpeg==1.8.2",
 # ]
 # ///
 """AVFoundation worker for the macOS suite (child process; one camera operation per invocation).
@@ -270,8 +271,10 @@ def cpu_now() -> float:
 # ============================================================================================ devices
 def discovery_types() -> list:
     AVF = FW["AVF"]
-    names = ["AVCaptureDeviceTypeExternal", "AVCaptureDeviceTypeExternalUnknown",
-             "AVCaptureDeviceTypeBuiltInWideAngleCamera", "AVCaptureDeviceTypeContinuityCamera",
+    # Apple docs: ExternalUnknown is deprecated in macOS 14 and replaced by External (macOS 14+); pass only one
+    ext = "AVCaptureDeviceTypeExternal" if hasattr(AVF, "AVCaptureDeviceTypeExternal") else \
+        "AVCaptureDeviceTypeExternalUnknown"
+    names = [ext, "AVCaptureDeviceTypeBuiltInWideAngleCamera", "AVCaptureDeviceTypeContinuityCamera",
              "AVCaptureDeviceTypeDeskViewCamera"]
     return [getattr(AVF, n) for n in names if hasattr(AVF, n)]
 
@@ -492,6 +495,28 @@ def _sharp(y) -> float:
     return float(lap.var() / max(m * m, 1e-6))
 
 
+def jpeg_markers(b: bytes) -> dict:
+    """Header segments before SOS of one JPEG: marker list, APP0 identifier, DHT present, DQT SHA-1. Camera-like
+    hint: UVC MJPEG often has no DHT and an 'AVI1' APP0; a re-encoder (Apple's included) writes DHT and JFIF."""
+    import hashlib
+    out: dict[str, Any] = {"markers": [], "app0": None, "has_dht": False, "dqt_sha1": None}
+    i, dqt = 2, b""
+    while i + 4 <= len(b) and b[i] == 0xFF:
+        m, ln = b[i + 1], (b[i + 2] << 8) | b[i + 3]
+        out["markers"].append(f"{m:02X}")
+        if m == 0xE0:
+            out["app0"] = b[i + 4:i + 9].split(b"\0")[0].decode("latin-1")
+        elif m == 0xC4:
+            out["has_dht"] = True
+        elif m == 0xDB:
+            dqt += b[i + 4:i + 2 + ln]
+        if m == 0xDA or len(out["markers"]) > 40:
+            break
+        i += 2 + ln
+    out["dqt_sha1"] = hashlib.sha1(dqt).hexdigest() if dqt else None
+    return out
+
+
 def jpeg_metrics(b: bytes) -> dict | None:
     try:
         from common import imgmetrics
@@ -584,6 +609,8 @@ class Recorder:
                 chk = jpegcheck.check_jpeg(payload, decode=do_strict)
                 row.update({k: chk.get(k) for k in ("soi", "eoi", "sof0_w", "sof0_h", "header_sha1", "lenient_ok",
                                                      "strict_ok", "extra_bytes_before_eoi", "marker_ok")})
+                if chk.get("soi") and "first_jpeg_header" not in self.stats:
+                    self.stats["first_jpeg_header"] = jpeg_markers(payload)
                 if self.fp_raw is not None and self._want_save() and self.saved_bytes + len(payload) <= self.max_save_bytes:
                     row["raw_offset"] = self.saved_bytes
                     self.fp_raw.write(payload)
@@ -1261,6 +1288,15 @@ def cmd_fx(a) -> dict:
     return out
 
 
+def bytes_stats(v: list[int]) -> dict | None:
+    """min / median / p99 / max JPEG bytes per frame (ring-buffer sizing)."""
+    if not v:
+        return None
+    s = sorted(v)
+    return {"n": len(s), "min": s[0], "median": s[len(s) // 2], "p99": s[min(len(s) - 1, int(0.99 * len(s)))],
+            "max": s[-1]}
+
+
 def _capture_summary(rec: Recorder, st: Stream, t_wall: float, cpu0: float, extra: dict) -> dict:
     rows = rec.rows
     n = len(rows)
@@ -1293,7 +1329,9 @@ def _capture_summary(rec: Recorder, st: Stream, t_wall: float, cpu0: float, extr
                                         / len(jp)) if jp else None,
                  "header_sha1_set": sha[:8], "n_header_sha1": len(sha),
                  "extra_bytes_before_eoi_max": max((r.get("extra_bytes_before_eoi") or 0 for r in jp), default=None),
-                 "bytes_median": sorted(r["bytes"] for r in jp if r.get("bytes"))[len(jp) // 2] if jp else None},
+                 "bytes_median": sorted(r["bytes"] for r in jp if r.get("bytes"))[len(jp) // 2] if jp else None,
+                 "bytes_stats": bytes_stats([r["bytes"] for r in jp_soi if r.get("bytes")]),
+                 "first_header": rec.stats.get("first_jpeg_header")},
         "dropped_callbacks": len(rec.dropped), "dropped_reasons": sorted({str(d.get("reason")) for d in rec.dropped})[:10],
         "first_frame_ms": round((rec.t_first_host - st.info["host_ns_start_call"]) / 1e6, 3)
         if rec.t_first_host and st.info.get("host_ns_start_call") else None,

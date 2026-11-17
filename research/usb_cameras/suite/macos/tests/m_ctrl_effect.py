@@ -95,8 +95,9 @@ def listing_inputs(pc: dict | None, path: str, name: str, source: str) -> dict |
 
 
 def plan(ctx) -> list[str]:
-    out = [mac_modescope.text(ctx.args), f"per camera x {ctx.args.ctrl_runs} run(s): AVF mode schedule capture (exposure/WB/focus locked<->auto, "
-           "metrics every 2nd frame)",
+    lock = "locked only (--plan: no auto toggling)" if getattr(ctx.args, "plan", False) else "locked<->auto"
+    out = [mac_modescope.text(ctx.args), f"per camera x {ctx.args.ctrl_runs} run(s): AVF mode schedule capture "
+           f"(exposure/WB/focus {lock}, metrics every 2nd frame)",
            "finally: mac_avf.py ctrl-avf --set-modes <original exposure/WB/focus modes> (restore)"]
     if ctx.ep0_enabled:
         out += ["per camera x run: ep0 schedule capture (exposure x3, gain x3, WB x3, focus x3; autos restored)",
@@ -108,7 +109,9 @@ def plan(ctx) -> list[str]:
     return out
 
 
-def avf_schedule(flags: dict) -> str:
+def avf_schedule(flags: dict, back_to_auto: bool = True) -> str:
+    """Lock each supported mode; back_to_auto False (--plan: manual only, no auto toggling) leaves it locked until
+    the restore after the capture."""
     parts = []
     t = 1500
     for key, which in (("exposure_modes_supported", "exposure"), ("wb_modes_supported", "wb"),
@@ -117,9 +120,10 @@ def avf_schedule(flags: dict) -> str:
         if sup.get("locked") is True:
             parts.append(f"{t}:avf:{which}=locked")
             t += 2000
-            back = "auto" if any(sup.get(n) is True for n in sup if n.startswith("continuous")) else "once"
-            parts.append(f"{t}:avf:{which}={back}")
-            t += 1500
+            if back_to_auto:
+                back = "auto" if any(sup.get(n) is True for n in sup if n.startswith("continuous")) else "once"
+                parts.append(f"{t}:avf:{which}={back}")
+                t += 1500
     return ";".join(parts)
 
 
@@ -156,7 +160,7 @@ def run(ctx) -> dict:
         fl = ctx.avf(["ctrl-avf", "--device", cam["unique_id"]], 30, label=f"ctrl-avf {cam['key']}")
         flags = ((fl.get("json") or {}).get("flags")) or {}
         crec["avf_flags"] = flags
-        sched = avf_schedule(flags)
+        sched = avf_schedule(flags, back_to_auto=not getattr(ctx.args, "plan", False))
         avf_ok_runs = 0
         try:
             for run_i in range(ctx.args.ctrl_runs):
@@ -170,8 +174,16 @@ def run(ctx) -> dict:
                 evs = j.get("schedule_events") or []
                 ok = bool(evs) and all((e.get("result") or {}).get("readback_matches") for e in evs)
                 avf_ok_runs += int(ok)
+                rows = results.read_jsonl(od / "frames.jsonl")
+                t1 = min((e.get("host_ns_after") or 0 for e in evs), default=0)
+                lum = {"before_lock": macanalysis.window_values(rows, 0, t1, "luma") if t1 else [],
+                       "after_lock": macanalysis.window_values(rows, t1 + 600_000_000, 1 << 62, "luma") if t1 else []}
                 crec["avf_runs"].append({"run": run_i, "frames": j.get("frames"), "events": evs, "all_readback_ok": ok,
-                                         "timed_out": r.get("timed_out")})
+                                         "timed_out": r.get("timed_out"), "skipped": r.get("skipped"),
+                                         "luma_median": {k: (sorted(v)[len(v) // 2] if v else None)
+                                                         for k, v in lum.items()},
+                                         "luma_note": "AVFoundation has no absolute exposure: with the lock the image "
+                                                      "should stay as it was (no brightness-change test possible)"})
         finally:
             # a killed / timed-out capture can leave a mode locked: put the original modes back explicitly
             crec["avf_restore"] = restore_avf_modes(ctx, cam, flags, errors) if sched else None
@@ -195,11 +207,15 @@ def run(ctx) -> dict:
         per.append(crec)
     m = {"cameras": per, "edge_light_confirmed_off": bool(ctx.args.edge_light_off),
          "mode_scope": suitectx.scope_for_test(ctx.openable(), ctx.args)}
-    v = {"G-CTRL": rating.rate_ctrl(controls_for_rating, runs_required=3)}
+    v = {"G-CTRL": rating.rate_ctrl(controls_for_rating, runs_required=max(1, int(ctx.args.ctrl_runs)))}
     v["G-CTRL"]["tier"] = 0
     v["G-CTRL"]["mode_scope"] = mac_modescope.text(ctx.args)
     v["G-CTRL"]["criterion1_source"] = sorted({c.get("listing_source") for c in controls_for_rating
                                                if c.get("listing_source")})
+    m["api_path"] = {"avfoundation_modes": "used (exposure/WB/focus locked vs auto; no absolute values on macOS)",
+                     "coremediaio_feature_controls": "not implemented in this suite: skipped",
+                     "iokit_ep0_unopened": "used (--ep0)" if ctx.ep0_enabled else
+                     "skipped (opt-in --ep0, not in the plan preset)"}
     v["G-CTRL"]["note_macos"] = ("AVFoundation offers only locked/auto modes on macOS; absolute values need the "
                                  "endpoint-0 path" + ("" if ctx.ep0_enabled else " (not run: --ep0 off)"))
     return results.finish_result(res, m, v, errors)

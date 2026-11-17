@@ -1,5 +1,5 @@
 # /// script
-# requires-python = ">=3.11"
+# requires-python = "==3.12.13"
 # ///
 """macOS IORegistry USB topology collector -> the common topology snapshot (stdlib only; never opens a device).
 

@@ -10,13 +10,13 @@
 #      set SKELLYCAM_NO_BOOTSTRAP=1 to refuse, or SKELLYCAM_PYTHON_ONLY=1 to run with the system python3
 #      (then strict JPEG decode and image metrics are unavailable unless pillow/numpy/simplejpeg are installed);
 #   2. prints distro, kernel and session to stderr (run_suite.py records them in run.json too);
-#   3. runs: uv run --python 3.12 --script run_suite.py "$@"
+#   3. runs: uv run --python 3.12.13 --script run_suite.py "$@"   (--plan: the capture-plan preset, RUNBOOK_PLAN.md)
 #
 # Never uses sudo. Run it from the desktop session (logind gives the active seat an ACL on /dev/video*); over SSH
 # the user needs the 'video' group (tier 1, reported by L-ENV / L-DESK).
 set -u
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PY_VERSION="${SKELLYCAM_PYTHON:-3.12}"
+PY_VERSION="${SKELLYCAM_PYTHON:-3.12.13}"   # pinned: run_suite.py PEP 723 requires ==3.12.13
 say() { echo "$@" >&2; }   # banner on stderr: stdout stays the runner's (pure JSON for --dry-run)
 
 say "== skellycam Linux UVC suite =="

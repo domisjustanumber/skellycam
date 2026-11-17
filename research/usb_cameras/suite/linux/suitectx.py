@@ -99,6 +99,13 @@ class LinuxCtx:
     shared: dict[str, Any] = field(default_factory=dict)      # results earlier tests leave for later ones
     _log_lock: threading.Lock = field(default_factory=threading.Lock)
     current_test: str | None = None
+    # Kiyo Pro dead rule (Dom 2026-11-11, same as the Windows suite): a Kiyo Pro stream command that hangs or fails
+    # makes it a suspect; if its next stream command fails too (it stays failed), it is dead for the rest of the
+    # run: diagnostics recorded once, every later command addressed to it skipped, never reopened or diagnosed.
+    dead: dict = field(default_factory=dict)            # key -> dead record (+ diagnostics)
+    suspect: dict = field(default_factory=dict)         # key -> first failure record
+    stream_starts: dict = field(default_factory=dict)   # key -> stream starts sent to it in this run
+    _dead_lock: threading.Lock = field(default_factory=threading.Lock)
 
     # ------------------------------------------------------------------------------------------- basics
     @property
@@ -155,14 +162,70 @@ class LinuxCtx:
 
     def camcmd(self, argv: list[str], timeout_s: float, env: dict[str, str] | None = None) -> dict[str, Any]:
         """Run a camera-opening child under the camera lock; the timeout applies to the child only."""
+        skip = self._dead_skip(argv)
+        if skip:
+            return skip
         if not self.lock.acquire():
             return {"argv": argv, "rc": 75, "stdout": "", "stderr": "camera lock not acquired",
                     "elapsed_s": 0, "timed_out": False, "killed": False, "spawn_error": "camlock timeout",
                     "json": None}
         try:
-            return self.run_child(argv, timeout_s, env)
+            r = self.run_child(argv, timeout_s, env)
         finally:
             self.lock.release()
+        self._kiyo_watch(argv, r)
+        return r
+
+    # ------------------------------------------------------------------------------------------- Kiyo Pro dead rule
+    def _kiyo_of(self, argv: list[Any]) -> dict[str, Any] | None:
+        a = [str(x) for x in argv]
+        if "--device" not in a or a.index("--device") + 1 >= len(a):
+            return None
+        node = a[a.index("--device") + 1]
+        return next((c for c in self.cameras if c.get("is_kiyo") and c.get("node") == node), None)
+
+    def _dead_skip(self, argv: list[Any]) -> dict[str, Any] | None:
+        cam = self._kiyo_of(argv)
+        d = self.dead.get(cam["key"]) if cam else None
+        if not d:
+            return None
+        msg = f"skipped: Kiyo Pro dead since {d.get('since_test')} (wedge rule: never reopened or diagnosed)"
+        return {"argv": [str(x) for x in argv], "rc": None, "stdout": "", "stderr": msg, "elapsed_s": 0,
+                "timed_out": False, "killed": False, "spawn_error": None, "skipped": msg,
+                "json": {"error": {"stage": "kiyo_pro_dead", "errno": None, "errno_name": "kiyo_pro_dead",
+                                   "message": msg}}}
+
+    def _kiyo_watch(self, argv: list[Any], r: dict[str, Any]) -> None:
+        """Track Kiyo Pro stream commands (capture / cycle): fail, then fail again -> dead. A bandwidth refusal
+        (ENOSPC) is neither a success nor a wedge."""
+        cam = self._kiyo_of(argv)
+        a = [str(x) for x in argv]
+        if cam is None or not ({"capture", "cycle"} & set(a)):
+            return
+        j = r.get("json") if isinstance(r.get("json"), dict) else {}
+        err = j.get("error") if isinstance(j.get("error"), dict) else None
+        n_start = int(a[a.index("--cycles") + 1]) if "--cycles" in a else 1
+        frames = ((j.get("stream") or {}).get("counts") or {}).get("frames") or j.get("frames") or j.get("n_ok") or 0
+        with self._dead_lock:
+            k = cam["key"]
+            self.stream_starts[k] = self.stream_starts.get(k, 0) + n_start
+            if (err or {}).get("errno_name") == "ENOSPC":
+                return
+            if not r.get("timed_out") and not err and frames:
+                self.suspect.pop(k, None)
+                return
+            rec = {"test": self.current_test, "utc": results.utc_now_iso(), "child": child_outcome(r),
+                   "error": err}
+            if k not in self.suspect:
+                self.suspect[k] = rec
+                self.log(f"Kiyo Pro {k}: stream command failed (suspect; dead if the next one fails too)")
+                return
+            ud = sysfs.P(cam["sysfs_dir"]) if cam.get("sysfs_dir") else None
+            self.dead[k] = {"key": k, "since_test": self.current_test, "utc": rec["utc"],
+                            "failures": [self.suspect.pop(k), rec], "stream_starts": self.stream_starts.get(k),
+                            "usb_state": sysfs.usb_attrs(ud) if ud and ud.exists() else "usb device gone from sysfs",
+                            "rule": "Kiyo Pro dead rule: diagnostics recorded once; no later command reaches it"}
+            self.log(f"Kiyo Pro {k} marked DEAD (two stream commands failed in a row); skipped for the rest of the run")
 
     @contextlib.contextmanager
     def camera_lock(self) -> Iterator[bool]:
@@ -180,11 +243,16 @@ class LinuxCtx:
         t0 = time.monotonic()
 
         def one(i: int, j: dict[str, Any]) -> None:
+            skip = self._dead_skip(j["argv"])
+            if skip:
+                out[i] = skip
+                return
             if j.get("delay_s"):
                 time.sleep(j["delay_s"])
             st = time.monotonic() - t0
             r = self.run_child(j["argv"], j["timeout_s"], j.get("env"))
             r["started_at_s"] = round(st, 3)
+            self._kiyo_watch(j["argv"], r)
             out[i] = r
 
         with self.camera_lock() as ok:

@@ -1,5 +1,5 @@
 # /// script
-# requires-python = ">=3.10"
+# requires-python = "==3.12.13"
 # ///
 """COPIED UNCHANGED (apart from this note) from research/usb_cameras/naming/usbdesc.py on 2026-11-06 so the macOS
 suite does not depend on naming/ being on sys.path. Pure-python parser for USB device / configuration / BOS descriptors with UVC class detail.

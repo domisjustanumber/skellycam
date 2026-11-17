@@ -1,7 +1,7 @@
 # /// script
-# requires-python = ">=3.11"
+# requires-python = "==3.12.13"
 # dependencies = [
-#   "libusb1>=3.1; sys_platform == 'darwin'",
+#   "libusb1==3.4.0; sys_platform == 'darwin'",
 # ]
 # ///
 """Endpoint-0 UVC control probe for macOS (child process of the macOS suite). OPT-IN: the runner calls it only

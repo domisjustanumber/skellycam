@@ -49,6 +49,10 @@ def gate(ctx, cam: dict[str, Any], test: str) -> dict[str, Any] | None:
     someone else streams: linux.md verifier L27), or if the camera disappeared. None = go ahead."""
     if cam.get("missing"):
         return {"skipped": True, "reason": "camera no longer present (re-enumerated or unplugged)"}
+    dead = (getattr(ctx, "dead", None) or {}).get(cam["key"])
+    if dead:
+        return {"skipped": True, "kiyo_pro_dead": True,
+                "reason": f"Kiyo Pro dead since {dead.get('since_test')} (wedge rule: not reopened)"}
     b = ctx.busy(cam)
     if b["streamed_by_other"]:
         return {"skipped": True, "reason": "another process is streaming this camera (VS alt != 0); not opened",

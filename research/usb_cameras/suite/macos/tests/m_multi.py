@@ -28,9 +28,11 @@ NAME = "M-MULTI"
 
 def plan(ctx) -> list[str]:
     a = ctx.args
+    pm = bool(getattr(a, "plan", False))
     return [mac_modescope.text(a),
             f"{a.multi_repeats} x all cameras together (one mac_avf.py capture per camera, {a.multi_seconds} s, scoped "
-            "default mode), then the same staggered 1 s",
+            "default mode)" + ("" if pm else ", then the same staggered 1 s"),
+            "--plan: no shared-domain pair runs" if pm else
             "each shared-domain group: largest in-scope mode per camera (over side); cheapest in-scope combination "
             "predicted to fit (fits side), else 'fits-side not testable under mode scope'",
             "per capture: 1500:probe:ioreg_alt" + (" + 1700:probe:ep0_stream_state" if ctx.ep0_enabled else ""),
@@ -107,6 +109,8 @@ def _attempt(ctx, label: str, cams_modes: list[tuple[dict, dict]], stagger_s: fl
         per.append({"camera": x["camera"], "mode": x["mode"].get("mode_text"), "frames": j.get("frames"),
                     "fps": j.get("fps_measured"), "first_frame_ms": j.get("first_frame_ms"),
                     "runtime_errors": j.get("runtime_errors"), "signal": sig, "granted": _granted_alt(j),
+                    "dropped_callbacks": j.get("dropped_callbacks"), "skipped": x["res"].get("skipped"),
+                    "frames_expected": round(a.multi_seconds * x["mode"]["fps"]) if x["mode"].get("fps") else None,
                     "domain": cam_dom.get(x["camera"]), "rc": x["res"].get("rc")})
     events = []
     non_bw = []
@@ -246,9 +250,11 @@ def run(ctx) -> dict:
             default.append((c, mo))
         else:
             scoped_out.append({"camera": c["key"], "is_kiyo": c.get("is_kiyo"), "untested": "scope", "why": info["why"]})
+    plan_mode = bool(getattr(ctx.args, "plan", False))  # --plan: all together only, no staggered run, no pairs
     for k in range(ctx.args.multi_repeats):
         attempts.append(_attempt(ctx, f"all_together_{k}", default, 0.0, topo))
-        attempts.append(_attempt(ctx, f"all_staggered_{k}", default, 1.0, topo))
+        if not plan_mode:
+            attempts.append(_attempt(ctx, f"all_staggered_{k}", default, 1.0, topo))
     # predicted groups: cameras sharing a domain (each with at least one in-scope mode)
     in_scope_keys = {c["key"] for c, _ in default}
     by_dom: dict[str, list[dict]] = {}
@@ -256,7 +262,7 @@ def run(ctx) -> dict:
         d = (topo.get("camera_domains") or {}).get(c["key"])
         if d and d.startswith("hs|") and c["key"] in in_scope_keys:
             by_dom.setdefault(d, []).append(c)
-    groups = [v for v in by_dom.values() if len(v) >= 2]
+    groups = [v for v in by_dom.values() if len(v) >= 2] if not plan_mode else []
     group_plans = []
     for grp in groups:
         gp = plan_group(ctx, grp)

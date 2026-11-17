@@ -210,6 +210,16 @@ def ts_analysis(rows: list[dict], fps: float | None, clocks: dict | None = None)
     out["clocks"] = {k: c.get(k) for k in ("sync_api", "sync_is_host_clock", "port_clock_is_host_clock",
                                            "port_rate_vs_host", "port_minus_host_ns_start", "port_minus_host_ns_end")}
     out["port_clock_ppm_vs_host"] = round((rate - 1.0) * 1e6, 3) if isinstance(rate, (int, float)) else None
+    # CMClockGetHostTimeClock is mach_absolute_time (Apple docs) = CLOCK_UPTIME_RAW: both are read per sample, so
+    # their difference shows it; with the PTS on the host clock the skellyfileformat clock name is macos_uptime_raw
+    hm = [float(r["host_ns"]) - float(r["mach_ns"]) for r in rows if r.get("mach_ns") is not None]
+    out["host_minus_mach_us"] = tsanalysis.stats(hm, 1e-3) if hm else None
+    hm_ok = bool(hm) and max(abs(x) for x in hm) < 1e6
+    lat = (out.get("arrival_minus_pts_ms") or {}).get("median")
+    out["clock_name"] = ("macos_uptime_raw" if c.get("sync_is_host_clock") and hm_ok and lat is not None
+                         and 0 <= lat < 1000 else None)
+    out["clock_name_basis"] = {"sync_is_host_clock": c.get("sync_is_host_clock"), "host_equals_mach": hm_ok if hm
+                               else None, "arrival_minus_pts_median_ms": lat}
     pts_grid = (out.get("pts_grid") or {})
     pi = out.get("pts_interval_ms") or {}
     out["pts_self_consistent"] = bool(out.get("pts_monotonic") and pi.get("std") is not None and pi["std"] < 0.2

@@ -21,8 +21,9 @@ def plan(ctx) -> list[str]:
     a = ctx.args
     out = [mac_modescope.text(a),
            f"per camera: mac_avf.py cycle --cycles {a.cycles} --frames {a.frames} (in-process, default mode)",
-           f"per camera: {a.proc_cycles} x mac_avf.py cycle --cycles 1 (one process per cycle)"]
-    if not a.quick:
+           f"per camera: {a.proc_cycles} x mac_avf.py cycle --cycles 1 (one process per cycle)" if a.proc_cycles
+           else "no per-process cycles (--proc-cycles 0)"]
+    if not (a.quick or getattr(a, "plan", False)):
         out += ["per camera: --gap-ms 500 variant; mode-switching variant (default <-> another in-scope mode)"]
     for cam in ctx.openable():
         m, info = suitectx.pick_scoped_default(cam, a)
@@ -107,7 +108,7 @@ def run(ctx) -> dict:
         crec = {"key": cam["key"], "is_kiyo": cam.get("is_kiyo"), "mode": mode, "mode_choice": minfo,
                 "mode_scope": suitectx.camera_scope(cam, a), "variants": []}
         crec["variants"].append(_variant(ctx, cam, "in_process", base, 40 + 25 * a.cycles, cycles=a.cycles))
-        if not a.quick:
+        if not (a.quick or getattr(a, "plan", False)):
             crec["variants"].append(_variant(ctx, cam, "in_process_gap500", base + ["--gap-ms", 500],
                                              40 + 26 * a.cycles, cycles=a.cycles))
             crec["alt_mode_choice"] = alt_why
@@ -129,10 +130,11 @@ def run(ctx) -> dict:
             row["i"] = i
             row["process_ms"] = round((r.get("elapsed_s") or 0) * 1000, 1)
             rows.append(row)
-        _classify(rows)
-        s = cycstats.summarize_cycles(rows)
-        crec["variants"].append({"variant": "per_process", "summary": s, "rating": rating.rate_reliability(s),
-                                 "rows": rows})
+        if rows:  # --proc-cycles 0 (--plan): no per-process variant
+            _classify(rows)
+            s = cycstats.summarize_cycles(rows)
+            crec["variants"].append({"variant": "per_process", "summary": s, "rating": rating.rate_reliability(s),
+                                     "rows": rows})
         # health probe after the variants: does the camera still stream? (replug-needed evidence)
         h = ctx.avf(base + ["--cycles", 1], 50, label=f"cyc health {cam['key']}")
         healthy = bool((h.get("json") or {}).get("ok"))

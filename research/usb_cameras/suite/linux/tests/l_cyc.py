@@ -28,6 +28,11 @@ INFO = {"goal": "reliability", "summary": "in-process / per-process / mode-switc
 
 def plan(ctx) -> dict[str, Any]:
     a = ctx.args
+    if getattr(a, "cyc_inprocess_only", False):
+        return {"child_runs": 2 * len(ctx.cameras), "est_seconds": round(len(ctx.cameras) * (a.cycles * (a.frames / 30 + 1.0) + 10)),
+                "steps": [f"v4l2 in-process x{a.cycles} (--plan: no per-process, mode-switch or wrapper batches)",
+                          "health check"], "mode_scope": scope.settings(a),
+                "per_camera_modes": {c["key"]: mode_text(modes_for(ctx, c)[0]) for c in ctx.cameras}}
     per = (3 * a.cycles + a.proc_cycles) * (a.frames / 30 + 1.0)
     if "pyav" in a.wrapper_list:
         per += a.cycles * (a.frames / 30 + 1.5) + a.proc_cycles * (a.frames / 30 + 4)
@@ -145,10 +150,12 @@ def run(ctx) -> dict[str, Any]:
         batches.append(("v4l2_inprocess", _batch(ctx, cam, "v4l2 in-process", ctx.worker_cmd(
             "cycle", "--device", cam["node"], *mode_args(ma), "--cycles", a.cycles, "--frames", a.frames,
             "--out-dir", od), 30 + a.cycles * t_cycle * 1.5, od)))
-        ctx.log(f"{cam['name']} v4l2 per-process x{a.proc_cycles}")
-        batches.append(("v4l2_perprocess", _per_process(ctx, cam, "v4l2", ma, a.proc_cycles, a.frames,
-                                                        ctx.test_dir(TEST, cs, "v4l2_perproc"))))
-        if mb:
+        only_inproc = getattr(a, "cyc_inprocess_only", False)   # --plan: native in-process cycles only
+        if not only_inproc:
+            ctx.log(f"{cam['name']} v4l2 per-process x{a.proc_cycles}")
+            batches.append(("v4l2_perprocess", _per_process(ctx, cam, "v4l2", ma, a.proc_cycles, a.frames,
+                                                            ctx.test_dir(TEST, cs, "v4l2_perproc"))))
+        if mb and not only_inproc:
             od = ctx.test_dir(TEST, cs, "v4l2_modeswitch")
             ctx.log(f"{cam['name']} v4l2 mode switch {mode_text(ma)} <-> {mode_text(mb)}")
             batches.append(("v4l2_modeswitch", _batch(ctx, cam, "v4l2 mode switch", ctx.worker_cmd(

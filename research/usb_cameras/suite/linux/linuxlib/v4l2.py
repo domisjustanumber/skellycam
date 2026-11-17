@@ -280,7 +280,7 @@ CID_CAMERA_BASE = 0x009A0900
 CID = {
     "brightness": CID_BASE + 0, "contrast": CID_BASE + 1, "saturation": CID_BASE + 2, "hue": CID_BASE + 3,
     "white_balance_automatic": CID_BASE + 12, "red_balance": CID_BASE + 14, "blue_balance": CID_BASE + 15,
-    "gamma": CID_BASE + 16, "gain": CID_BASE + 19, "power_line_frequency": CID_BASE + 24,
+    "gamma": CID_BASE + 16, "gain_automatic": CID_BASE + 18, "gain": CID_BASE + 19, "power_line_frequency": CID_BASE + 24,
     "hue_auto": CID_BASE + 25, "white_balance_temperature": CID_BASE + 26, "sharpness": CID_BASE + 27,
     "backlight_compensation": CID_BASE + 28,
     "auto_exposure": CID_CAMERA_BASE + 1, "exposure_time_absolute": CID_CAMERA_BASE + 2,
