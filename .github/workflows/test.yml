@@ -19,14 +19,12 @@ jobs:
       fail-fast: true
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.11"]
+        python-version: ["3.13.18"]
         include:
           - os: windows-latest
-            python-version: "3.11"
+            python-version: "3.13.18"
           - os: macos-latest
-            python-version: "3.11"
-          - os: ubuntu-latest
-            python-version: "3.12"
+            python-version: "3.13.18"
 
     steps:
       - uses: actions/checkout@v4

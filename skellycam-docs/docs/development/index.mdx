@@ -19,7 +19,7 @@ This section is for developers and contributors who want to run SkellyCam from t
 
 ### Prerequisites
 
-- **Python 3.11+** (3.12 recommended) — [python.org/downloads](https://www.python.org/downloads/)
+- **Python 3.13.18** (pinned exactly) — [python.org/downloads](https://www.python.org/downloads/)
 - **uv** — Fast Python package manager: [astral.sh/uv](https://github.com/astral-sh/uv)
 - **Node.js 18+** — Required for the React/Electron UI: [nodejs.org](https://nodejs.org/)
 - **USB cameras or built-in webcams**
@@ -197,7 +197,7 @@ uv run poe tc          # Apply imports + run tests to verify
 
 GitHub Actions runs on every push and pull request (`.github/workflows/test.yml`):
 
-- **Backend tests** — Python 3.11 and 3.12 on Ubuntu, Windows, and macOS
+- **Backend tests** — Python 3.13.18 on Ubuntu, Windows, and macOS
 - **Linting** — Ruff check on all platforms
 - **Frontend typecheck** — TypeScript `tsc --noEmit` on Ubuntu
 
