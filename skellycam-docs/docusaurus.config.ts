@@ -45,6 +45,17 @@ const config: Config = {
         },
       };
     },
+    // theme-mermaid 3.10 imports its optional ELK layout inside a branch that is
+    // off when the package is absent, but the client bundle still tries to resolve
+    // it. ELK is not used here (as in 3.9), so resolve the import to nothing.
+    function withoutMermaidElkLayout() {
+      return {
+        name: 'without-mermaid-elk-layout',
+        configureWebpack() {
+          return { resolve: { alias: { '@mermaid-js/layout-elk': false } } };
+        },
+      };
+    },
   ],
 
   presets: [
