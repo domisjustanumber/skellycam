@@ -89,6 +89,15 @@ async def main() -> None:
 
 def entry_point() -> None:
     """Sync entry point for the `skellycam` console script."""
+    from skellylogs import configure_logging
+
+    from skellycam import LOG_LEVEL
+    from skellycam.system.default_paths import get_log_file_path
+
+    # the app calls logger.api / logger.success, which exist only after this (a host such as freemocap
+    # configures logging itself; the standalone server must do it here)
+    configure_logging(level=LOG_LEVEL, log_file_path=get_log_file_path())
+
     multiprocessing.freeze_support()
     try:
         asyncio.run(main())
