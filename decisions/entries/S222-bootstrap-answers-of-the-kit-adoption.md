@@ -1,12 +1,12 @@
 # S222 — Answers to the bootstrap questions of the kit adoption
 
-**Status:** proposed, 2026-11-17 (agent; waits for the user).
+**Status:** accepted, 2026-11-17 (user; commit to dom/native-jpeg; was proposed, 2026-11-17 (agent)).
 
 ## Decision
 
 The user asked for the adoption of the agents and ADR kit of freemocap/project in skellycam. Step 1
-of the kit guide asks the user eight questions. The user has not answered them. An agent filled the
-minimum that makes the tools work. Each fill below waits for the user.
+of the kit guide asks the user eight questions. An agent filled the answers, and the user accepted
+them on 2026-11-17.
 
 1. **Public.** The repository is public. The private-data rule applies.
 2. **PR branch.** `development-streaming`, the upstream branch of `dom/native-jpeg`. It is in
@@ -21,17 +21,23 @@ minimum that makes the tools work. Each fill below waits for the user.
 6. **ASD-STE100.** The kit default: yes.
 7. **Push.** The kit default: no push without the approval of the user.
 8. **Modules.** None. `skellycam-ui/` and `skellycam-docs/` have no `AGENTS.md` and no log.
-9. **Other fills.** The purpose paragraph and the path table of `AGENTS.md` section 1, the install
-   and test commands of section 3, the exact-version rule of section 4, `info@freemocap.org` (the
-   author address in `pyproject.toml`) in `ALLOWED_EMAILS`, `pre-commit==4.6.2` (the version of
-   skellytracker and skellyfileformat) in the `dev` group, and `tools/tests` in `testpaths`.
-10. **`CLAUDE.md`.** Not tracked. The `.gitignore` of the repository already ignores `CLAUDE.md`. The
-    local file holds only `@AGENTS.md`. The user decides whether git tracks it.
-11. **AI attribution.** The kit rule in `AGENTS.md` section 6 forbids a `Co-Authored-By:` trailer.
-    The skellycam session instructions ask for one, so the commit that adds this file has one. The
-    user decides which rule applies in this repository.
+9. **AI attribution.** The kit rule of `AGENTS.md` section 6 applies in skellycam: no AI
+   attribution, for example no `Co-Authored-By:` trailer, in a commit or a PR. The two commits that
+   adopted the kit have such a trailer. They are not rewritten.
+
+The other fills of the adoption, and the untracked `CLAUDE.md`, wait for the user in
+[ADR-4A7H](4A7H-other-fills-of-the-kit-adoption.md).
 
 ## Reason
 
-- The kit guide says: stop until the user answers. The user asked for the adoption, and a later
-  session can change each fill when the user answers.
+- The user, 2026-11-17, accepted items 1 to 8 as written.
+- The user, 2026-11-17: no AI attribution in skellycam commits from now on.
+
+## Consequences
+
+- `.github/workflows/test.yml` does not run on a PR to `development-streaming`
+  ([open-work.md](../open-work.md)).
+
+## Open work
+
+See [open-work.md](../open-work.md).

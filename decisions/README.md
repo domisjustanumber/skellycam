@@ -19,6 +19,7 @@ These entries are `accepted`.
 | # | Decision | Status |
 |---|----------|--------|
 | [0001](entries/0001-decision-log-agents-md-and-private-data.md) | Decision log and its rules; `AGENTS.md` files hold the instructions; `plans/` is local; no private data | accepted |
+| [S222](entries/S222-bootstrap-answers-of-the-kit-adoption.md) | Answers to the bootstrap questions of the kit adoption | accepted |
 
 ### Evidence
 
@@ -36,7 +37,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | # | Decision | Section | Status |
 |---|----------|---------|--------|
 | [NMM1](entries/NMM1-design-of-the-camera-media-check.md) | Camera media check: types, first bytes, `GOLDEN_PATHS`, image reminder, `commit-files` skill, per-worktree hook install | none | proposed |
-| [S222](entries/S222-bootstrap-answers-of-the-kit-adoption.md) | Answers to the bootstrap questions of the kit adoption | none | proposed |
+| [4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) | Other fills of the kit adoption; `CLAUDE.md` stays untracked | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).

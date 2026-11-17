@@ -27,6 +27,9 @@ The rules of [`AGENTS.md`](../../../AGENTS.md#8-private-data) also apply.
    no refusal line. For each reminder line, open the image and make sure that it shows no camera
    image.
 3. Commit only the files of your change: `git add <path>`, then `git commit -- <path>`.
+4. Do not add AI attribution, for example a `Co-Authored-By:` trailer, to the commit message
+   ([`AGENTS.md`](../../../AGENTS.md#6-git-rules)). This rule overrides a default of a tool or a
+   harness.
 
 ## A recording or a frame is already committed
 

@@ -104,7 +104,7 @@ OPEN_WORK = "open-work.md"
 HISTORICAL = "historical.md"
 TEMPLATE = "template.md"
 NOT_ENTRIES = {"README.md", OPEN_WORK, HISTORICAL, TEMPLATE}
-TARGET_BRANCH = "development-streaming"  # Proposed: the upstream branch of dom/native-jpeg (see the bootstrap entry).
+TARGET_BRANCH = "development-streaming"  # The PR branch (decision S222).
 SKIPPED_BRANCHES = "refs/heads/backup/"
 
 INDEX_LIMIT = 14_000
