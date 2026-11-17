@@ -58,13 +58,13 @@ GOAL = "T-BUMP"
 INFO = {"goal": GOAL, "opens_cameras": True,
         "claim": "CAPTURE_AND_RECORDING_PLAN.md 3.3 T-BUMP: one real recording after each major package bump",
         "summary": "real skellycam recording (1280x720@30 MJPG, lockstep, all live cameras) at the baseline commit "
-                   "2992e64f9 and at the phase-1 head; compare fps, frame counts, start time, errors, size, codec"}
+                   "169caf637 and at the native-jpeg head; compare fps, frame counts, start time, errors, size, codec"}
 DRIVER = WIN / "helpers" / "skellycam_record.py"
 FREEMOCAP_DIR = Path(r"c:\Users\Dom\GitHub\freemocap")
-BASELINE_DIR = FREEMOCAP_DIR / "skellycam-tbump-baseline"
-BASELINE_COMMIT = "2992e64f971f4c1b305de0e3912a3dd2cbe2a661"
-HEAD_DIR = FREEMOCAP_DIR / "skellycam-phase1"
-HEAD_BRANCH = "dom/capture-recording-phase1"
+BASELINE_DIR = FREEMOCAP_DIR / "skellycam-native-jpeg-baseline"
+BASELINE_COMMIT = "169caf6379277c868d433bdab1a41657f24575e9"
+HEAD_DIR = FREEMOCAP_DIR / "skellycam-native-jpeg"
+HEAD_BRANCH = "dom/native-jpeg"
 WIDTH, HEIGHT, FPS = 1280, 720, 30
 SECONDS_FULL, SECONDS_QUICK = 60.0, 10.0
 OVERHEAD_S = 100.0          # uv + server start, detect, connect, stop/finalise, close, shutdown, verify (per run)

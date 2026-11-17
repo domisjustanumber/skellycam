@@ -217,3 +217,19 @@ to its own UI unopened. All of these go away.
   `skellyfileformat` package (D17, D23's package part); the 3.13.13 pin.
 - The earlier answer in this session that a camera hanging at open is marked failed while the others start.
   Dom's later ruling is in §3.
+
+## 12. Changes since revision 1
+
+- 2026-11-17 [D]: phase 2 (the JPEG ring) also affects the image preprocessing in skellytracker. Dom will set
+  up a skellytracker session for this session to coordinate with for that work.
+- 2026-11-17 [D]: phase 1 started. Worktree `../skellycam-native-jpeg`, branch `dom/native-jpeg`, based on
+  `upstream/development-streaming` at 169caf637.
+- 2026-11-17: phase 1 dependency bumps are committed on `dom/native-jpeg` (7 commits, d3ce158a8 to 3c583e895,
+  not pushed). Python tests: 21 failed / 289 passed at the base, 21 failed / 291 passed after (the same 21;
+  the 2 new tests cover the PyAV 19 fix) [M]. Held back: `react-resizable-panels` at 3.0.6 (4.x is a rewrite
+  that needs a UI change checked by eye). Not run: the Electron app, CI, anything on Linux or macOS, and the
+  four-camera before/after recording (W-TBUMP, now pointed at `../skellycam-native-jpeg-baseline` and
+  `../skellycam-native-jpeg`) [NV]. OpenCV 5.1.0.95 has macOS wheels for macOS 15 and later only.
+- 2026-11-17: the skellyfileformat spec-only change is committed locally in `../skellyfileformat` (6 commits,
+  08e55a3 to d67679a; entries YBT1 and K4Y1, both accepted by Dom). Not pushed: the push was blocked by the
+  permission system and waits for Dom.
