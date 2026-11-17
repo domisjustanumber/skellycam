@@ -104,7 +104,8 @@ It replaces the five current shared-memory classes (nine shared-memory segments 
   contribution to live matching: FreeMoCap decides how to group frames.
 - **Read results.** OK, not yet written, lapped, corrupt, oversize.
 
-The proposed byte layout is in the ring design report of 2026-11-17 (session notes); phase 2's spec fixes it.
+The proposed byte layout, the reasons and the proposed tests are in
+`frame_ring_buffer/docs/jpeg_ring_design_notes_20261117.md`; phase 2's spec fixes them.
 
 ## 5. UI preview
 
@@ -276,3 +277,56 @@ to its own UI unopened. All of these go away.
      `ELECTRON_RUN_AS_NODE=1`; clear it first.
   9. `react-resizable-panels` warns that the layout sizes add up to 84 %.
   Not tested: playback and every page other than the cameras page; the packaged build; CI.
+
+## 13. State at the end of 2026-11-17 (read this first when resuming)
+
+**Phase 1 is done except for the items under "Waiting on Dom".** Phase 2 (the ring spec and test list) has
+not started.
+
+Where the work is:
+
+| Repository and branch | Tip | Pushed |
+|---|---|---|
+| skellycam `dom/research` (this plan, research, test suites) | this commit | no: one commit after 0ce011f2d |
+| skellycam `dom/native-jpeg`, worktree `../skellycam-native-jpeg` (implementation) | 0a66994c3 | yes |
+| skellyfileformat `main` | d67679a | yes |
+| project `dom/agents-and-adr-kit` (the kit) | 1e21f8a | no: the hand-off notes commit after 6ee0444 |
+
+Done in phase 1:
+
+- Dependency bumps on `dom/native-jpeg`: tests 21 failed / 292 passed, the same 21 as the base.
+- Four-camera before/after recording: no measurable change.
+- Standalone fix (`entry_point` configures logging) and the standalone smoke test with the UI: passed.
+- skellyfileformat is a spec only (entries YBT1 and K4Y1, accepted), on Python 3.13.18.
+- Kit: the camera recordings and frames check, the rule and the `commit-files` skill. Hooks are active in the
+  worktrees `skellycam` (camera check only) and `skellycam-native-jpeg` (gitleaks, private data on the files
+  of the commit, camera media, AI-attribution warning). Activation is per worktree:
+  `git config --worktree core.hooksPath .githooks`.
+
+Waiting on Dom:
+
+1. Phase 0: run `bash research/usb_cameras/suite/linux/run_suite.sh --plan` on Ubuntu and
+   `bash research/usb_cameras/suite/macos/run_suite.sh --plan` on the Mac; bring back each results folder and
+   `summary.md`. Neither has run on hardware.
+2. Three private-data findings in upstream files on `dom/native-jpeg` (the whole-repository check and its test
+   fail until decided): a personal email address in the header comment of
+   `skellycam-ui/src/hooks/floatingOnboarding.tsx` and of `useDraggableTooltips.tsx` (line 1 of each), and a
+   real Windows user path in `skellycam/tests/reference_recordings/README.md` line 36.
+3. Two proposed decision entries on `dom/native-jpeg`: NMM1 (the design choices of the camera-media check)
+   and 4A7H (other fills of the kit adoption, and `CLAUDE.md` staying untracked).
+4. CI on `dom/native-jpeg`: `test.yml` runs on pull requests to `main` and `development` only, not
+   `development-streaming`.
+5. The standalone findings 2 to 9 in section 12: which of them this plan fixes, and in which phase.
+6. `react-resizable-panels` is held at 3.0.6; version 4 needs a UI change checked by eye.
+7. The skellytracker session for phase 2 coordination (image preprocessing), and whether 3 seconds of ring
+   history is enough for GPU inference.
+8. Pass the hand-off notes to the other sessions: `../project/HANDOFF-camera-media-check-skellyfileformat.md`
+   and `../project/HANDOFF-camera-media-check-skellytracker.md`.
+9. Pushes: this commit on `dom/research`; `1e21f8a` in `../project`.
+
+Not a result: `usb_cameras/results/windows/Gerald/suite_20261117T221102Z/` (untracked; the server never
+started in that run).
+
+Standing rules made on 2026-11-17: no camera recordings or frames in git unless golden reference files; no AI
+attribution in skellycam commits; Python 3.13.18; skellyfileformat is a spec only; port 53117 may be held by
+another session's process, so test servers use another port and nothing is sent to 53117.
