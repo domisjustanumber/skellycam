@@ -89,6 +89,9 @@ VERIFY_RESERVE_S = 60.0
 
 LAUNCHER = ("import sys; port = int(sys.argv[1]); import skellycam.api.server_constants as sc; "
             "sc.HOSTNAME = '127.0.0.1'; sc.PORT = port; sc.APP_URL = 'http://127.0.0.1:%d' % port; "
+            # development-streaming's entry_point no longer configures logging (upstream/main's did), so its
+            # logger.api / logger.success calls raise before the server starts; configure it here for both runs
+            "from skellylogs import configure_logging, LogLevels; configure_logging(LogLevels.TRACE); "
             "from skellycam.__main__ import entry_point; entry_point()")
 VERSION_PROBE = ("import json, platform, importlib.metadata as m, cv2, numpy; "
                  "d = {(x.metadata['Name'] or '').lower().replace('_', '-'): x.version for x in m.distributions()}; "

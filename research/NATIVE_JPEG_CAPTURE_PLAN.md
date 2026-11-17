@@ -233,3 +233,16 @@ to its own UI unopened. All of these go away.
 - 2026-11-17: the skellyfileformat spec-only change is committed locally in `../skellyfileformat` (6 commits,
   08e55a3 to d67679a; entries YBT1 and K4Y1, both accepted by Dom). Not pushed: the push was blocked by the
   permission system and waits for Dom.
+- 2026-11-17 [M]: four-camera before/after recording (W-TBUMP, `usb_cameras/results/windows/Gerald/suite_20261117T221244Z/`,
+  not yet redacted or committed). Base 169caf637 (Python 3.12.13, OpenCV 4.12.0, numpy 2.2.6, PyAV 18.1.0)
+  against bumped head 3c583e895 (Python 3.13.18, OpenCV 5.1.0, numpy 2.5.5, PyAV 19.0.2), 60 s each, 720p30
+  MJPG, lockstep, all four cameras, CPU not idle (other work running). Both: 1,548 frames per camera, equal
+  counts. Group fps 25.756 against 25.761 (set by the generic camera). Inter-camera grab range median 0.233
+  against 0.237 ms. Connect time 12.0 against 12.2 s. Same codec, CSV headers and log error kinds; no
+  tracebacks; clean shutdown. All five verdicts "yes". The Kiyo Pro (plug-in age about 33 h) did not wedge.
+  The run before it (`suite_20261117T221102Z`) is not a result: the server never started.
+- 2026-11-17 [C, confirmed by running it]: **the skellycam server does not start standalone on
+  `upstream/development-streaming` (169caf637).** `entry_point` no longer calls `configure_logging`
+  (upstream/main's did), so `logger.api` raises while routes are registered. The W-TBUMP launcher now
+  configures logging itself for both runs. Open for Dom: restore the call on `dom/native-jpeg`, and add a
+  standalone smoke test (server by its own command, UI, connect, record, stop) to phase 1.
