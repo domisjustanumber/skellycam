@@ -1,5 +1,7 @@
 # Camera capture and recording: phased plan
 
+> **Superseded on 2026-11-17 by [NATIVE_JPEG_CAPTURE_PLAN.md](NATIVE_JPEG_CAPTURE_PLAN.md).** This file is kept as history and is not updated. Where the two differ, the new plan wins.
+
 2026-11-13, revision 3.12 · status: **proposed, for Dom's review.** This plan draws on the USB camera study (`usb_cameras/`), the recording upgrade study (`skellycam_recording/recording_upgrade/`) and the frame ring buffer study (`frame_ring_buffer/`). It is not the recording study's `PLAN.md` (that study's step 5). Up to rev 3.4 it added no new measurements, only reads of code, lockfiles and package indexes on 2026-11-11 (§2, §7). Rev 3.5 adds the measurements in `skellycam_recording/recording_upgrade/results/sidecar_embedding/FINDINGS.md` (SE below). Rev 3.6 adds three audio studies, all under `skellycam_recording/recording_upgrade/results/`: `audio_skellycam/` (AC), `audio_skellysync/` (AS) and `flac_skau/` (FS).
 
 **Labels:** **[M]** measured (result file), **[S]** primary source, **[C]** code read, **[I]** inferred, **[NV]** not verified. All [M] results come from one Windows 11 machine (Gerald). Linux and macOS have had no hardware run.
