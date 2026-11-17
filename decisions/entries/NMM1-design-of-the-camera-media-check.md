@@ -9,6 +9,7 @@ below. The user has not decided them.
 
 1. **Tool.** A new tool `tools/check_camera_media.py`, next to `tools/check_private_data.py`. It uses
    only the standard library and the git CLI. `check_private_data.py` stays a copy of the kit.
+   [ADR-PEJ0](PEJ0-scope-of-the-private-data-check.md) later adds local changes to that copy.
 2. **Recording types.** `.mp4 .mkv .mka .avi .mov .webm .m4v .m4a .wav .flac .opus .ogg .mp3 .mcap
    .h264 .h265 .mjpeg .mjpg .y4m .yuv`, and `.ts` only when its first bytes are an MPEG transport
    stream. A `.ts` file is usually TypeScript: this repository tracks 87.

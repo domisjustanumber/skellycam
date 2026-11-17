@@ -10,11 +10,11 @@ repos:
       - id: gitleaks
   - repo: local
     hooks:
+      # Only the files of the commit. The doc test and CI check each file of the repo.
       - id: private-data
         name: private data
-        entry: uv run python tools/check_private_data.py
+        entry: uv run python tools/check_private_data.py --files
         language: system
-        pass_filenames: false
       # A camera recording or a camera frame in the files of the commit. Golden reference files pass.
       # The hook also prints a reminder for an image. The reminder does not stop the commit.
       - id: camera-media

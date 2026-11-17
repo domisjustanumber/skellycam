@@ -158,7 +158,9 @@ skill before each commit.
 - If you find private data in a tracked file, remove it with a redaction edit. Then tell the user,
   because git history keeps the data. Also revoke a leaked credential.
 - The pre-commit hook runs `gitleaks`, `tools/check_private_data.py` and
-  `tools/check_camera_media.py`. CI runs `gitleaks` on each push and PR. `.gitleaks.toml` holds the reviewed false positives.
+  `tools/check_camera_media.py` on the files of the commit. CI runs `gitleaks` on each push and PR.
+  `uv run pytest tools/tests` and CI run `tools/check_private_data.py` on each file of the
+  repository. `.gitleaks.toml` holds the reviewed false positives.
 - The commit-msg hook warns about AI attribution. If you are an AI agent and you see
   this warning, tell the user.
 - Turn on secret scanning and push protection for a private repository on the day that it becomes
