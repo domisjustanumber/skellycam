@@ -246,3 +246,33 @@ to its own UI unopened. All of these go away.
   (upstream/main's did), so `logger.api` raises while routes are registered. The W-TBUMP launcher now
   configures logging itself for both runs. Open for Dom: restore the call on `dom/native-jpeg`, and add a
   standalone smoke test (server by its own command, UI, connect, record, stop) to phase 1.
+- 2026-11-17 [D]: camera recordings and camera frames are never committed unless they are golden reference
+  files. The rule, a pre-commit check (`check_camera_media.py`) and a `commit-files` skill are in the kit
+  (`../project`, local commit 6ee0444) and adopted in skellycam: the check alone on `dom/research` (active),
+  the full kit on `dom/native-jpeg`. The 84 sample frames of the slot size study were removed from the history
+  of `dom/research` (force-pushed; tip 83ba43e1e). No AI attribution in skellycam commits from now on.
+- 2026-11-17: **standalone smoke test on `dom/native-jpeg` passed** (Dom at the machine): server started by
+  its own entry point on port 53999, Electron UI in development mode, connected, four cameras detected and
+  connected, live preview, recording started and stopped, app closed. The recording
+  (`skellycam_data/recordings/2026-11-17_18-11-22_GMT-5`, outside the repository) has 771 frames in each of the
+  four cameras and a mean frame rate of 26.9 fps with the frame rate left on automatic (-1) [M]. No tracebacks
+  in the server log. This is the first run of the bumped UI packages (Electron 45, Vite 8, React Router 7,
+  react-i18next 18).
+- 2026-11-17, standalone findings, all present on the base branch (none from the bumps); not fixed unless
+  stated:
+  1. `entry_point` did not configure logging, so the server never started standalone. Fixed (8b5c0d3fb).
+  2. The UI has no working control to set the frame rate (Dom).
+  3. The default port 53117 is shared with other local servers. A fresh UI retries its websocket to
+     `localhost:53117` every 3 s whatever is listening there; the server fails to bind when the port is taken.
+  4. When the UI has started a server itself, it sends the shutdown request to port 53117 on exit, ignoring
+     the configured port (`electron/main/services/python-server.ts`).
+  5. On Windows the UI looks for its bundled server in a folder named `skellycam_server.exe`, so it can never
+     find it; "No valid Python server executable found" is logged at every start.
+  6. A server whose output is a pipe, as a UI-spawned one is, raises UnicodeEncodeError on every log line
+     unless `PYTHONUTF8=1` is set.
+  7. `[tool.setuptools.packages.find] where=["."]` treats `skellycam-ui/dist-electron` as a package: the
+     Python build fails if the UI dev server deletes that folder at the same time, and a wheel could carry it.
+  8. `npm run dev` crashes from a VS Code or Claude Code terminal, because the host sets
+     `ELECTRON_RUN_AS_NODE=1`; clear it first.
+  9. `react-resizable-panels` warns that the layout sizes add up to 84 %.
+  Not tested: playback and every page other than the cameras page; the packaged build; CI.
