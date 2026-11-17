@@ -1,0 +1,3 @@
+#!/bin/sh
+# Runs the commit-msg hooks of .pre-commit-config.yaml. Install: AGENTS.md section 3.
+exec uv run pre-commit run --hook-stage commit-msg --commit-msg-filename "$1"

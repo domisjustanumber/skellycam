@@ -142,6 +142,7 @@ dev = [
     "pyinstaller==6.22.3",
     "ruff==0.17.5",
     "poethepoet==0.49.0",
+    "pre-commit==4.6.2",
 ]
 
 
@@ -206,7 +207,7 @@ test-camera-lifecycle = { cmd = "python -B -m pytest skellycam/tests/test_camera
 # Pytest config
 # =============================================================================
 [tool.pytest.ini_options]
-testpaths = ["skellycam/tests"]
+testpaths = ["skellycam/tests", "tools/tests"]
 asyncio_mode = "auto"
 markers = [
     "real_data: reads reference videos, downloading missing recordings",
