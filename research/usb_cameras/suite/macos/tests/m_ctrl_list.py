@@ -70,10 +70,19 @@ def per_control_record(avf_flags: dict | None, ep0_rows: list[dict] | None, desc
 
 
 def plan(ctx) -> list[str]:
-    out = ["mac_avf.py ctrl-avf per camera (flags only; no lock, no set)"]
-    out.append("mac_ep0.py descriptors (if not cached) + ctrl-list per camera" if ctx.ep0_enabled
-               else "ep0 off: UVC ranges not read (add --ep0)")
+    out = [] if ctx.ep0_phase else ["mac_avf.py ctrl-avf per camera (flags only; no lock, no set)"]
+    if ctx.ep0_enabled:
+        out.append("mac_ep0.py descriptors (if not cached) + ctrl-list per camera"
+                   + (" (advertised selectors only)" if all_selectors_off(ctx) else ""))
+    else:
+        out.append("ep0 off: UVC ranges not read" + (" here (the endpoint-0 phase reads them)"
+                                                     if getattr(ctx.args, "plan", False) else " (add --ep0)"))
     return out
+
+
+def all_selectors_off(ctx) -> bool:
+    """--quick and --plan probe only the selectors the descriptor advertises (bounded time, fewer requests)."""
+    return bool(ctx.args.quick or getattr(ctx.args, "plan", False))
 
 
 def run(ctx) -> dict:
@@ -84,7 +93,9 @@ def run(ctx) -> dict:
     pc_store = ctx.store.setdefault("ctrl_list_per_control", {})
     for cam in ctx.cameras:
         rec: dict = {"key": cam["key"], "is_kiyo": cam.get("is_kiyo")}
-        if cam.get("unique_id"):
+        if ctx.ep0_phase:
+            rec["avf"] = "phase 1 (m_ctrl_list.json)"
+        elif cam.get("unique_id"):
             r = ctx.avf(["ctrl-avf", "--device", cam["unique_id"]], 30, label=f"ctrl-avf {cam['key']}")
             j = r.get("json") or {}
             rec["avf"] = j.get("flags") if j.get("ok") else {"error": j.get("error"), "timed_out": r.get("timed_out"),
@@ -99,7 +110,7 @@ def run(ctx) -> dict:
                     ctx.save_desc(cam, dj)
                 else:
                     rec["descriptor_error"] = {"error": dj.get("error"), "timed_out": d.get("timed_out")}
-            extra = ["--all-selectors"] if not ctx.args.quick else []
+            extra = [] if all_selectors_off(ctx) else ["--all-selectors"]
             c = ctx.ep0(cam, "ctrl-list", extra, timeout_s=90)
             cj = c.get("json") or {}
             rec["ep0"] = {"ok": cj.get("ok"), "setup": cj.get("setup"), "error": cj.get("error"),

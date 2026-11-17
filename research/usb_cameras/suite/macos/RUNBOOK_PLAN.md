@@ -3,7 +3,12 @@
 For Dom. One command on an Apple silicon Mac with the latest macOS. It answers what the native-MJPEG capture
 plan needs from macOS: does AVFoundation hand over the camera's own JPEG bytes (the gating question), open/close
 reliability, all cameras at once, the sample-buffer clock, controls, camera identity strings and the environment.
-**Tier 0 only**: no driver change, no endpoint-0 requests, no sudo, nothing written to the system.
+Then, in the same run, whether absolute exposure, gain and focus can be set on macOS.
+**Tier 0 only**: no driver change, no sudo, nothing written to the system, no camera seized, claimed or detached.
+
+Endpoint-0 requests are the standard UVC control messages (read a control's range, set a value, read it back)
+sent to the camera's control interface. AVFoundation has no absolute exposure or focus, so this is the only way.
+They are sent in a separate last phase, after every other result and a first `summary.md` are saved.
 
 ## 1. Before the run
 
@@ -27,11 +32,20 @@ reliability, all cameras at once, the sample-buffer clock, controls, camera iden
 bash research/usb_cameras/suite/macos/run_suite.sh --plan
 ```
 
-Expected duration: about 15-25 minutes with four cameras (plus a few minutes of package downloads on the first run).
-Leave the Mac alone and awake while it runs (cameras may switch on and off; that is expected).
+Expected duration: about 20-30 minutes with four cameras (the last 4-5 minutes are the endpoint-0 phase), plus a
+few minutes of package downloads on the first run.
+Leave the Mac alone and awake while it runs (cameras may switch on and off, and the image may get darker, brighter
+or blurred during the endpoint-0 phase; that is expected). Every camera's controls are put back as they were.
 
-**If the Kiyo Pro wedges** (stops streaming): do nothing. Let the run finish. The run records it once, marks the
-Kiyo Pro dead, skips it for the rest of the run and tests the other cameras. Do not unplug it during the run.
+**If the Kiyo Pro wedges** (stops streaming or stops answering): do nothing. Let the run finish. The run records it
+once, marks the Kiyo Pro dead, skips it for the rest of the run (endpoint-0 phase included) and tests the other
+cameras. Do not unplug it during the run.
+
+To run it again without any endpoint-0 request:
+
+```text
+bash research/usb_cameras/suite/macos/run_suite.sh --plan --no-ep0
+```
 
 If the run prints `CAMERA PERMISSION MISSING`, grant the permission (step 6) and run the command again.
 
@@ -55,7 +69,9 @@ If the run prints `CAMERA PERMISSION MISSING`, grant the permission (step 6) and
 | M-CTRL-EFFECT | exposure, white balance and focus set to locked (auto off) and read back; image brightness logged; original modes restored. AVFoundation has no absolute exposure or focus on macOS |
 | M-MULTI | all cameras together at 720p30 for 90 s: frames, fps, drops, refusals, granted alt per camera |
 | M-TS | 30 s per camera: the sample-buffer clock (synchronizationClock vs the host clock = mach_absolute_time), its grid, inter-frame jitter against the fitted period |
+| Endpoint-0 phase (last; M-CTRL-LIST and M-CTRL-EFFECT again) | per camera: range of exposure, gain, focus, white balance and their auto switches; auto exposure to manual, then exposure x3, gain x3, white balance x3, focus x3; set accepted, read back, effect on brightness / colour / sharpness; exposure set before the stream starts and read again after the camera is closed; every value and auto mode put back. Results in `m_ctrl_list_ep0.json`, `m_ctrl_effect_ep0.json` and the "Manual controls via endpoint 0" part of `summary.md` |
 
-Left out on purpose: endpoint-0 UVC requests (absolute exposure/focus values; opt-in `--ep0`), CoreMediaIO
-controls (not implemented), turning auto modes back on as a test, UVC header/PTS/SCR, per-process cycles, mode
-switching, M-FMT-NOGRAB, M-FX and the Kiyo Pro polling test.
+Left out on purpose: endpoint-0 requests in every test before the endpoint-0 phase, UVC selectors the camera does
+not advertise, extension-unit controls, CoreMediaIO controls (not implemented), turning AVFoundation auto modes
+back on as a test, UVC header/PTS/SCR, per-process cycles, mode switching, M-FMT-NOGRAB, M-FX and the Kiyo Pro
+polling test.

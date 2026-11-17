@@ -77,6 +77,12 @@ PU_BITS = ["brightness", "contrast", "hue", "saturation", "sharpness", "gamma", 
            "white_balance_temperature_auto", "white_balance_component_auto", "digital_multiplier",
            "digital_multiplier_limit", "analog_video_standard", "analog_video_lock_status", "contrast_auto"]
 AE_MODE_BITS = {1: "manual", 2: "auto", 4: "shutter_priority", 8: "aperture_priority"}
+ALL_GETS = (GET_INFO, GET_MIN, GET_MAX, GET_RES, GET_DEF, GET_CUR)
+# UVC 1.1 section 4.2.2 request lists: AE mode answers GET_RES (the mode bitmap) but has no MIN/MAX; the on/off
+# auto controls (focus_auto, white_balance_*_auto, ...) have only CUR/INFO/DEF; asking for more may STALL and made
+# the whole control 'not ok' (dropped from the ranges, so the effect schedule never switched auto off). Same
+# request sets as Linux uvcvideo's control flags (drivers/media/usb/uvc/uvc_ctrl.c).
+REQUESTS_BY_KIND = {"bitmap": (GET_INFO, GET_RES, GET_DEF, GET_CUR), "bool": (GET_INFO, GET_DEF, GET_CUR)}
 
 #: IOReturn names that matter for ep0 (IOReturn.h + IOUSBHostFamily); signed or unsigned input accepted
 IORETURN = {0: "kIOReturnSuccess", 0xE00002BC: "kIOReturnError", 0xE00002BE: "kIOReturnNoResources",
@@ -205,14 +211,17 @@ class UVCControls:
         self.log.append({"op": "get", "sel": sel, "wIndex": windex, **rec})
         return {**rec, "_bytes": data or b"", "_ok": rc == 0}
 
-    def read(self, name: str, requests: tuple[int, ...] = (GET_INFO, GET_MIN, GET_MAX, GET_RES, GET_DEF, GET_CUR)) -> dict:
-        """All GET_* for one control. Returns {name, supported_by_addr, info, min, max, res, def, cur, calls}."""
+    def read(self, name: str, requests: tuple[int, ...] | None = None) -> dict:
+        """The GET_* requests the control supports (REQUESTS_BY_KIND; default all six). Returns {name,
+        supported_by_addr, info, min, max, res, def, cur, calls}."""
         a = self._addr(name)
         out: dict[str, Any] = {"name": name, "addressable": a is not None, "calls": []}
         if a is None:
             out["error"] = "no entity id / VC interface for this control"
             return out
         sel, windex, size, signed, kind = a
+        if requests is None:
+            requests = REQUESTS_BY_KIND.get(kind, ALL_GETS)
         out.update(selector=sel, wIndex=windex, size=size, signed=signed, kind=kind)
         keymap = {GET_INFO: "info", GET_MIN: "min", GET_MAX: "max", GET_RES: "res", GET_DEF: "def", GET_CUR: "cur"}
         for req in requests:

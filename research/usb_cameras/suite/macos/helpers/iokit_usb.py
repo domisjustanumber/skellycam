@@ -52,9 +52,10 @@ UUIDS = {
     "kIOUSBInterfaceUserClientTypeID": "2d9786c6-9ef3-11d4-ad51-000a27052861",
     "kIOCFPlugInInterfaceID": "c244e858-109c-11d4-91d4-0050e4c6426f",
     "kIOUSBDeviceInterfaceID": "5c8187d0-9ef3-11d4-8b45-000a27052861",
-    "kIOUSBDeviceInterfaceID182": "152fc496-4891-11d5-9d52-000a27052861",
+    # the 182 IIDs end in 000a27801e86 (IOUSBLib.h, IOUSBFamily-560.4.2), not 000a27052861 like the older ones
+    "kIOUSBDeviceInterfaceID182": "152fc496-4891-11d5-9d52-000a27801e86",
     "kIOUSBInterfaceInterfaceID": "73c97ae8-9ef3-11d4-b1d0-000a27052861",
-    "kIOUSBInterfaceInterfaceID182": "4923ac4c-4896-11d5-9208-000a27052861",
+    "kIOUSBInterfaceInterfaceID182": "4923ac4c-4896-11d5-9208-000a27801e86",
     "kIOUSBInterfaceInterfaceID190": "8fdb8455-74a6-11d6-97b1-003065d3608e",
 }
 DEVICE_IIDS = [("kIOUSBDeviceInterfaceID182", True), ("kIOUSBDeviceInterfaceID", False)]

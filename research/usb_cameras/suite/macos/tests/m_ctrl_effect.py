@@ -96,16 +96,19 @@ def listing_inputs(pc: dict | None, path: str, name: str, source: str) -> dict |
 
 def plan(ctx) -> list[str]:
     lock = "locked only (--plan: no auto toggling)" if getattr(ctx.args, "plan", False) else "locked<->auto"
-    out = [mac_modescope.text(ctx.args), f"per camera x {ctx.args.ctrl_runs} run(s): AVF mode schedule capture "
-           f"(exposure/WB/focus {lock}, metrics every 2nd frame)",
-           "finally: mac_avf.py ctrl-avf --set-modes <original exposure/WB/focus modes> (restore)"]
+    out = [mac_modescope.text(ctx.args)]
+    if not ctx.ep0_phase:
+        out += [f"per camera x {ctx.args.ctrl_runs} run(s): AVF mode schedule capture "
+                f"(exposure/WB/focus {lock}, metrics every 2nd frame)",
+                "finally: mac_avf.py ctrl-avf --set-modes <original exposure/WB/focus modes> (restore)"]
     if ctx.ep0_enabled:
         out += ["per camera x run: ep0 schedule capture (exposure x3, gain x3, WB x3, focus x3; autos restored)",
                 "per camera: controls-before capture (exposure set before start, read back after first frame), then "
                 "GET_CUR with no session (persistence across close)",
-                "finally: mac_ep0.py set --set <initial values> (restore)"]
+                "finally: mac_ep0.py set --set <auto modes manual, initial values, initial auto modes> (restore)"]
     else:
-        out += ["ep0 off: absolute exposure/gain/WB/focus not testable on macOS without --ep0"]
+        out += ["ep0 off: absolute exposure/gain/WB/focus not tested here" + (
+            " (the endpoint-0 phase does them)" if getattr(ctx.args, "plan", False) else " (needs --ep0)")]
     return out
 
 
@@ -157,10 +160,13 @@ def run(ctx) -> dict:
             per.append(crec)
             continue
         pc, pc_src = ctrl_list_per_control(ctx, cam)
-        fl = ctx.avf(["ctrl-avf", "--device", cam["unique_id"]], 30, label=f"ctrl-avf {cam['key']}")
-        flags = ((fl.get("json") or {}).get("flags")) or {}
+        if ctx.ep0_phase:  # --plan endpoint-0 phase: the AVFoundation part is in phase 1's m_ctrl_effect.json
+            flags = {}
+        else:
+            fl = ctx.avf(["ctrl-avf", "--device", cam["unique_id"]], 30, label=f"ctrl-avf {cam['key']}")
+            flags = ((fl.get("json") or {}).get("flags")) or {}
         crec["avf_flags"] = flags
-        sched = avf_schedule(flags, back_to_auto=not getattr(ctx.args, "plan", False))
+        sched = "" if ctx.ep0_phase else avf_schedule(flags, back_to_auto=not getattr(ctx.args, "plan", False))
         avf_ok_runs = 0
         try:
             for run_i in range(ctx.args.ctrl_runs):
@@ -191,7 +197,7 @@ def run(ctx) -> dict:
             pc = own_per_control(ctx, cam, flags or None, None)
             pc_src = "M-CTRL-EFFECT own reads (no M-CTRL-LIST result)"
         crec["listing_source"] = pc_src
-        for which in ("exposure", "wb", "focus"):
+        for which in () if ctx.ep0_phase else ("exposure", "wb", "focus"):
             sup = (flags.get(f"{which}_modes_supported") or {}).get("locked")
             li = listing_inputs(pc, "avf", which, pc_src)
             if li is None:
@@ -214,11 +220,29 @@ def run(ctx) -> dict:
                                                if c.get("listing_source")})
     m["api_path"] = {"avfoundation_modes": "used (exposure/WB/focus locked vs auto; no absolute values on macOS)",
                      "coremediaio_feature_controls": "not implemented in this suite: skipped",
-                     "iokit_ep0_unopened": "used (--ep0)" if ctx.ep0_enabled else
-                     "skipped (opt-in --ep0, not in the plan preset)"}
+                     "iokit_ep0_unopened": "used (endpoint 0 on)" if ctx.ep0_enabled else
+                     "skipped in this test (ep0 off; a --plan run does it afterwards in its endpoint-0 phase, "
+                     "m_ctrl_effect_ep0.json, unless --no-ep0)"}
+    if ctx.ep0_phase:
+        m["api_path"]["avfoundation_modes"] = "not run here (phase 1: m_ctrl_effect.json)"
     v["G-CTRL"]["note_macos"] = ("AVFoundation offers only locked/auto modes on macOS; absolute values need the "
-                                 "endpoint-0 path" + ("" if ctx.ep0_enabled else " (not run: --ep0 off)"))
+                                 "endpoint-0 path" + ("" if ctx.ep0_enabled else " (not run in this test: ep0 off)"))
     return results.finish_result(res, m, v, errors)
+
+
+def restore_sets(ranges: dict, initial: dict) -> list[str]:
+    """The SET_CUR list that puts the initial values back. UVC disables a manual value while its auto mode is on
+    (GET_INFO D2; a SET_CUR then STALLs), so the auto controls go to manual first, then the manual values, then
+    the auto modes as found (RESTORE_ORDER)."""
+    pre = []
+    ae = ranges.get("auto_exposure_mode") or {}
+    if "auto_exposure_mode" in initial and "exposure_time_absolute" in initial \
+            and "manual" in (ae.get("modes_supported") or ["manual"]):
+        pre.append("auto_exposure_mode=1")
+    for auto, man in (("white_balance_temperature_auto", "white_balance_temperature"), ("focus_auto", "focus_absolute")):
+        if auto in initial and man in initial:
+            pre.append(f"{auto}=0")
+    return pre + [f"{n}={initial[n]}" for n in RESTORE_ORDER if n in initial]
 
 
 def ep0_part(ctx, cam: dict, mode: dict, crec: dict, errors: list, listing: dict | None = None,
@@ -240,6 +264,10 @@ def ep0_part(ctx, cam: dict, mode: dict, crec: dict, errors: list, listing: dict
     g = ctx.ep0(cam, "get", ["--controls", ",".join(names)], timeout_s=30)
     initial = {v["name"]: v["value"] for v in (g.get("json") or {}).get("values") or [] if v.get("ok")}
     crec["ep0_initial"] = dict(initial)
+    if g.get("hung") or g.get("skipped"):
+        # nothing was set yet: stop here instead of spending every later timeout on a control pipe that is gone
+        crec["ep0_error"] = g.get("skipped") or "GET_CUR of the initial values hung (child timed out)"
+        return []
     # a control whose GET_CUR failed just now still gets restored: fall back to the CUR read by M-CTRL-LIST
     fallback = {n: ranges[n].get("cur") for n in names if n not in initial and isinstance(ranges[n].get("cur"), int)}
     if fallback:
@@ -273,6 +301,11 @@ def ep0_part(ctx, cam: dict, mode: dict, crec: dict, errors: list, listing: dict
                 pc["readback"].append(rb_ok)
                 pc["effect"].append(eff.get("effect_ok"))
                 pc["ok"] += int(rb_ok and eff.get("effect_ok") is True)
+            run_rec["switches"] = {n: [{k: s.get(k) for k in ("value", "set_ok", "rc_name", "readback",
+                                                              "readback_matches")}
+                                       for s in macanalysis.step_medians(rows, evs, n, "luma")]
+                                   for n in ("auto_exposure_mode", "white_balance_temperature_auto", "focus_auto")
+                                   if n in ranges}
             crec["ep0_runs"].append(run_rec)
         # before-start set, read back after the first frame
         before_ok = None
@@ -299,10 +332,14 @@ def ep0_part(ctx, cam: dict, mode: dict, crec: dict, errors: list, listing: dict
                 crec["before_start"]["persists_after_close"] = (
                     after_close.get("exposure_time_absolute") == int(target)) if after_close else None
     finally:
-        restore = [f"{n}={initial[n]}" for n in RESTORE_ORDER if n in initial]
+        restore = restore_sets(ranges, initial)
         if restore:
             rr = ctx.ep0(cam, "set", ["--set", ",".join(restore)], timeout_s=30)
-            crec["restore"] = {"ok": (rr.get("json") or {}).get("ok"), "set": restore, "timed_out": rr.get("timed_out")}
+            rj = rr.get("json") or {}
+            crec["restore"] = {"ok": rj.get("ok"), "set": restore, "timed_out": rr.get("timed_out"),
+                               "skipped": rr.get("skipped"), "error": rj.get("error"),
+                               "per_control": {s.get("name"): {k: s.get(k) for k in ("ok", "rc_name", "readback")}
+                                               for s in rj.get("sets") or []}}
             if not (rr.get("json") or {}).get("ok"):
                 errors.append({"camera": cam["key"], "warning": "restoring the initial control values failed",
                                "detail": crec["restore"]})

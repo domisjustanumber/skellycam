@@ -22,12 +22,16 @@ Normally started by run_suite.sh (records sw_vers / arch / model first). Direct 
     uv run --python 3.12.13 --script research/usb_cameras/suite/macos/run_suite.py --dry-run
     bash research/usb_cameras/suite/macos/run_suite.sh --plan      # the capture-plan preset (RUNBOOK_PLAN.md)
 
---plan (2026-11-17): only what the native-MJPEG capture plan needs, ~25 min with four cameras: M-ENV, M-TCC,
+--plan (2026-11-17): only what the native-MJPEG capture plan needs, ~20-30 min with four cameras: M-ENV, M-TCC,
 M-TOPO, M-ID, M-FMT, M-CTRL-LIST, M-MJPEG (720-line modes at 30 and at the top rate, variants nil/{}/dmb1/chromium),
 M-CYC (20 in-process cycles, nothing else), M-CTRL-EFFECT (AVFoundation locks only, one run), M-MULTI (all cameras
-together for 90 s, once), M-TS (30 s, tier 0). No endpoint 0 unless --ep0 is added. Asks for Camera permission at
-the start. Results go to results/macos/plan/suite_<stamp>/ (no hostname), are scrubbed of host/user/home names,
-and summary.md (also printed at the end) is the short pasteable digest.
+together for 90 s, once), M-TS (30 s, tier 0), all with endpoint 0 OFF. Then, after every one of their JSON files
+and a first summary.md are written, the endpoint-0 phase (~1 min per camera; --no-ep0 skips it): M-CTRL-LIST and
+M-CTRL-EFFECT again for their endpoint-0 halves only (advertised selectors; AE manual, exposure x3, gain x3, WB x3,
+focus x3, readback, image effect, set before start, read after close, restore), backend iokit-intf only, into
+m_ctrl_list_ep0.json / m_ctrl_effect_ep0.json; summary.md is then rewritten with that section. Asks for Camera
+permission at the start. Results go to results/macos/plan/suite_<stamp>/ (no hostname), are scrubbed of
+host/user/home names, and summary.md (also printed at the end) is the short pasteable digest.
 
 This process imports only the standard library and suite/common. PyObjC is imported only inside the camera
 child processes (helpers/mac_avf.py), which this runner starts with its own interpreter (the PEP 723
@@ -45,7 +49,8 @@ of advertised modes it excluded (measurements.mode_scope).
 
 Endpoint-0 UVC requests (descriptors, UVC control ranges, SET_CUR effects, GET_INTERFACE / VS_COMMIT) are OPT-IN
 with --ep0, because they work outside Apple's documented contract (see helpers/mac_ep0.py). Without --ep0 the
-CTRL tests use AVFoundation only and FMT has no descriptor side unless an earlier --ep0 run cached them.
+CTRL tests use AVFoundation only and FMT has no descriptor side unless an earlier endpoint-0 run cached them.
+--plan ignores --ep0 for its tests and runs its own endpoint-0 phase afterwards (above).
 
 Rules (plan 6.1): no driver change (no claim, no detach, no seize unless --ep0-backend libusb is chosen, which
 the operator opts into separately), all cameras as found including the Razer Kiyo Pro, every camera call in a
@@ -123,7 +128,8 @@ def build_parser() -> argparse.ArgumentParser:
     g.add_argument("--quick", action="store_true", help="fewer cycles, modes and seconds (a smoke run)")
     g.add_argument("--list-tests", action="store_true")
     g.add_argument("--plan", action="store_true", help="capture-plan preset: the tests and sizes the native-MJPEG "
-                   "capture plan needs (~25 min); results/macos/plan/suite_<stamp>/ + a pasteable summary.md")
+                   "capture plan needs (~20-30 min), endpoint 0 off, then its endpoint-0 phase (--no-ep0 skips it); "
+                   "results/macos/plan/suite_<stamp>/ + a pasteable summary.md")
     g.add_argument("--dry-run", action="store_true", help="print what would run; open nothing, write nothing")
     g.add_argument("--fake-ioreg", type=Path, default=None, help="dry-run: folder with ioreg_*.plist files")
     g.add_argument("--fake-avf", type=Path, default=None, help="dry-run: JSON {devices:[...]} as mac_avf list/formats")
@@ -158,8 +164,11 @@ def build_parser() -> argparse.ArgumentParser:
     ng.add_argument("--nograb-cond3", choices=["skip", "avf-dmb1"], default="skip",
                    help="condition (iii): skip (macOS has no second capture API) or a second AVFoundation process "
                         "with the dmb1 passthrough videoSettings")
-    e = ap.add_argument_group("endpoint 0 (opt-in)")
-    e.add_argument("--ep0", action="store_true", help="allow UVC class requests on endpoint 0 without a claim")
+    e = ap.add_argument_group("endpoint 0 (opt-in, except --plan's own endpoint-0 phase)")
+    e.add_argument("--ep0", action="store_true", help="allow UVC class requests on endpoint 0 without a claim "
+                   "(ignored with --plan: its tests always run with endpoint 0 off, then its endpoint-0 phase)")
+    e.add_argument("--no-ep0", action="store_true", help="--plan without its endpoint-0 phase (the pre-2026-11-17 "
+                   "plan run: no endpoint-0 request at all)")
     e.add_argument("--ep0-backend", choices=["iokit-intf", "iokit-dev", "libusb"], default="iokit-intf",
                    help="iokit-intf (default, no open/seize), iokit-dev (device request, no open), libusb (SEIZES)")
     e.add_argument("--ep0-allow-seize", action="store_true",
@@ -182,6 +191,9 @@ def build_parser() -> argparse.ArgumentParser:
 
 PLAN_TESTS = ("M-ENV", "M-TCC", "M-TOPO", "M-ID", "M-FMT", "M-CTRL-LIST", "M-MJPEG", "M-CYC", "M-CTRL-EFFECT",
               "M-MULTI", "M-TS")
+#: --plan's endpoint-0 phase: the ep0 halves of these tests, after every phase-1 result file is written
+EP0_PHASE_TESTS = ("M-CTRL-LIST", "M-CTRL-EFFECT")
+EP0_PHASE = "endpoint-0 phase"
 #: --plan sizes (an explicit flag still wins)
 PLAN_DEFAULTS = {"cycles": 20, "proc_cycles": 0, "frames": 10, "mjpeg_seconds": 4.0, "mjpeg_modes": "all",
                  "ts_seconds": 30.0, "ctrl_runs": 1, "multi_repeats": 1, "multi_seconds": 90.0, "id_proc_repeats": 2,
@@ -194,6 +206,8 @@ def apply_defaults(a: argparse.Namespace) -> argparse.Namespace:
             if getattr(a, k, None) is None:
                 setattr(a, k, v)
         a.full, a.request_camera = True, True
+        # isolation: every plan test runs with endpoint 0 off; the ep0 work is a separate phase afterwards
+        a.ep0, a.plan_ep0 = False, not getattr(a, "no_ep0", False)
     q = a.quick
     defaults = {"cycles": (20, 5), "proc_cycles": (10, 3), "frames": (10, 5), "mjpeg_seconds": (3.0, 1.5),
                 "mjpeg_modes": ("all", "ends"), "ts_seconds": (20.0, 8.0), "ctrl_runs": (3, 1),
@@ -232,6 +246,13 @@ def select_tests(a: argparse.Namespace, reduced: bool) -> list[tuple]:
             continue
         out.append(t)
     return out
+
+
+def ep0_phase_tests(a: argparse.Namespace, tests: list[tuple]) -> list[tuple]:
+    """The tests of --plan's endpoint-0 phase (none with --no-ep0 or when neither CTRL test is selected)."""
+    if not (getattr(a, "plan", False) and getattr(a, "plan_ep0", False)):
+        return []
+    return [t for t in tests if t[0] in EP0_PHASE_TESTS]
 
 
 # ================================================================================================ machine facts
@@ -445,6 +466,10 @@ def plan_estimate_s(ctx: suitectx.SuiteCtx) -> dict:
            "M-CTRL-EFFECT": len(cams) * (a.ctrl_runs * 16 + 12),
            "M-MULTI": a.multi_repeats * (a.multi_seconds + 10) if len(cams) > 1 else 0,
            "M-TS": len(cams) * (a.ts_seconds + 6)}
+    if getattr(a, "plan_ep0", False):
+        # per camera: descriptors + ctrl-list + GET_CUR (3 children), the ~27 s ep0 schedule capture, the 3 s
+        # before-start capture, GET_CUR after close, restore SET_CUR (4 s child start each)
+        est[EP0_PHASE] = len(cams) * (3 * 5 + 27 + 8 + 3 + 6 + 4 + 4)
     return {k: round(v) for k, v in est.items()}
 
 
@@ -483,9 +508,100 @@ def _fmt_bytes(b: dict | None) -> str:
     return "/".join(f"{b[k] / 1000:.0f}" for k in ("min", "median", "p99", "max")) + f" kB (n={b['n']})"
 
 
-def plan_summary(ctx: suitectx.SuiteCtx, res: dict[str, dict], rows: list[dict], started: str, minutes: float) -> str:
+def _yn(x: Any) -> str:
+    return {True: "yes", False: "NO", None: "?"}.get(x, str(x))
+
+
+def ep0_summary_lines(cl: dict | None, ce: dict | None, status: str | None) -> list[str]:
+    """summary.md section 'Manual controls via endpoint 0 (IOKit, no seize)' for one camera, from
+    m_ctrl_list_ep0.json (cl: this camera's record) and m_ctrl_effect_ep0.json (ce)."""
+    L = ["", "### Manual controls via endpoint 0 (IOKit, no seize)"]
+    if status != "done":
+        why = {None: "--no-ep0 (or neither CTRL test selected)",
+               "pending": "the endpoint-0 phase did not finish (this is the phase-1 summary)"}.get(status, status)
+        return L + [f"- NOT TESTED: {why}"]
+    e = (cl or {}).get("ep0")
+    if not isinstance(e, dict):
+        return L + [f"- NOT TESTED: {e or 'no endpoint-0 listing for this camera (see m_ctrl_list_ep0.json errors)'}"]
+    setup = e.get("setup") or {}
+    tr = setup.get("transport") or {}
+    L.append(f"- backend {setup.get('backend') or tr.get('backend') or '?'} (control requests on pipe 0 of the "
+             f"VideoControl interface {tr.get('interface')}; opened {tr.get('opened_interface')}, seize "
+             f"{tr.get('seize')}); setup {'ok' if setup.get('ok') else 'FAILED'}"
+             + (f": {e.get('error')}" if e.get("error") else "")
+             + (f"; plug-in kr 0x{tr['create_plugin_kr']:08X}" if tr.get("create_plugin_kr") else "")
+             + (f"; child timed out" if e.get("timed_out") else ""))
+    rcs = [r for r in (cl.get("comparison") or {}).get("rc_names") or [] if r not in ("kIOReturnSuccess", "LIBUSB_SUCCESS")]
+    if rcs:
+        L.append(f"- request errors seen (any control): {', '.join(rcs)}")
+    rows = {r["name"]: r for r in e.get("controls") or []}
+    if not rows:
+        return L + [f"- every control NOT TESTED: the control listing returned nothing ("
+                    f"{e.get('error') or ('child timed out' if e.get('timed_out') else 'no CT/PU control found')})"]
+    ce = ce or {}
+    runs = ce.get("ep0_runs") or []
+    groups = (runs[0].get("groups") if runs else None) or {}
+    switches = (runs[0].get("switches") if runs else None) or {}
+    bs = ce.get("before_start") or {}
+    rest = (ce.get("restore") or {}).get("per_control") or {}
+    not_run = ce.get("ep0_error") or ce.get("error") or ("no effect capture ran" if not runs else None)
+    effect_key = {"exposure_time_absolute": ("exposure", "brightness"), "gain": ("gain", "brightness"),
+                  "focus_absolute": ("focus", "sharpness"), "white_balance_temperature": ("white_balance", "R/B")}
+    for n in ("exposure_time_absolute", "gain", "focus_absolute", "white_balance_temperature", "auto_exposure_mode",
+              "focus_auto", "white_balance_temperature_auto"):
+        r = rows.get(n)
+        if r is None:
+            L.append(f"- {n}: not advertised by the descriptor (not read)")
+            continue
+        bad = sorted({x.get("rc_name") for x in r.get("calls") or [] if x.get("rc") not in (0, None)})
+        rng = ("/".join(str(r.get(k)) for k in ("min", "max", "res", "def")) if r.get("kind") == "range"
+               else f"modes {r.get('modes_supported')}" if n == "auto_exposure_mode" else f"def {r.get('def')}")
+        s = (f"- {n}: advertised {_yn(r.get('advertised_in_descriptor'))}; GET_INFO lists it "
+             f"{_yn(r.get('listed_by_device'))}; every GET answered {_yn(r.get('ok'))}"
+             + (f" ({', '.join(map(str, bad))})" if bad else "")
+             + f"; {'min/max/res/def ' if r.get('kind') == 'range' else ''}{rng}; cur {r.get('cur')}")
+        g = groups.get(effect_key[n][0]) if n in effect_key else None
+        steps = (g or {}).get("steps") if g else switches.get(n)
+        if steps:
+            fails = sorted({x.get("rc_name") for x in steps if not x.get("set_ok")})
+            s += (f"; set accepted {_yn(all(x.get('set_ok') for x in steps))}" + (f" ({', '.join(map(str, fails))})"
+                                                                                  if fails else "")
+                  + f"; readback matched {_yn(all(x.get('readback_matches') for x in steps))}")
+            if g:
+                eff = g.get("effect") or {}
+                s += (f"; effect on image ({effect_key[n][1]}) {_yn(eff.get('effect_ok'))}"
+                      + (f" ({eff.get('relative_change') if 'relative_change' in eff else eff.get('max_min_ratio')})"
+                         if eff.get("effect_ok") is not None else f" ({eff.get('reason')})"))
+        else:
+            s += f"; set NOT TESTED: {not_run or 'not in the effect schedule'}"
+        if n in ("exposure_time_absolute", "auto_exposure_mode") and not bs:
+            s += f"; persisted across close NOT TESTED: {not_run or 'the set-before-start capture did not run'}"
+        elif n in ("exposure_time_absolute", "auto_exposure_mode"):
+            want = bs.get("target") if n == "exposure_time_absolute" else 1
+            got = (bs.get("after_close") or {}).get(n)
+            s += f"; kept from before stream start {_yn(bs.get('kept'))}" if n == "exposure_time_absolute" else ""
+            s += "; persisted across close " + (_yn(got == want) if got is not None else
+                                                "NOT TESTED: GET_CUR after close failed or timed out")
+        else:
+            s += "; persisted across close NOT TESTED: only exposure and AE mode are read back after close"
+        if n in rest:
+            s += f"; restored {_yn(rest[n].get('ok'))}" + (f" ({rest[n].get('rc_name')})" if not rest[n].get("ok") else "")
+        else:
+            s += "; restored NOT TESTED: " + ("not in the restore list (initial value unknown)" if ce.get("restore")
+                                              else "no restore ran (nothing was set)")
+        L.append(s)
+    rs = ce.get("restore") or {}
+    if rs and not rs.get("ok"):
+        L.append(f"- restore of the initial values FAILED or incomplete: "
+                 f"{rs.get('skipped') or rs.get('error') or ('child timed out' if rs.get('timed_out') else 'see above')}")
+    return L
+
+
+def plan_summary(ctx: suitectx.SuiteCtx, res: dict[str, dict], rows: list[dict], started: str, minutes: float,
+                 ep0_status: str | None = None) -> str:
     """The short pasteable digest of a --plan run (summary.md and the end of the console output). No hostname, no
-    home path, serials as their form only (the JSON files keep the exact strings)."""
+    home path, serials as their form only (the JSON files keep the exact strings). ep0_status: None (no
+    endpoint-0 phase), 'pending' (phase-1 summary), 'done', or the phase's crash text."""
     env = results.env_info()
     pre = ctx.prelude
     app = pre.get("term_program") or pre.get("bundle_id") or "the app that launched the script"
@@ -493,7 +609,10 @@ def plan_summary(ctx: suitectx.SuiteCtx, res: dict[str, dict], rows: list[dict],
          f"- macOS {pre.get('product_version') or platform.mac_ver()[0]} ({pre.get('build_version') or '?'}), "
          f"{pre.get('hw_model') or '?'} {pre.get('arch') or platform.machine()} {pre.get('cpu') or ''}".rstrip(),
          f"- Python {env['python']}; " + ", ".join(f"{k} {v}" for k, v in sorted(env["packages"].items())),
-         f"- started {started}, {minutes:.1f} min; tests run: {len(rows)}; ep0 {'on' if ctx.ep0_enabled else 'off'}"]
+         f"- started {started}, {minutes:.1f} min; tests run: {len(rows)}; endpoint 0 off for every gating test; "
+         f"{EP0_PHASE} (iokit-intf, nothing opened/seized/claimed/detached): "
+         + {None: "not run (--no-ep0)", "pending": "NOT FINISHED (phase-1 summary)", "done": "done"}.get(
+             ep0_status, str(ep0_status))]
     if ctx.tcc != "authorized":
         L.append(f"- **CAMERA PERMISSION MISSING ({ctx.tcc})**: grant Camera to {app} in System Settings > Privacy & "
                  "Security > Camera, quit and reopen it, run again. Camera results below are NOT measurements.")
@@ -506,6 +625,8 @@ def plan_summary(ctx: suitectx.SuiteCtx, res: dict[str, dict], rows: list[dict],
     cyc = {c["key"]: c for c in _g(res, "M-CYC", "measurements", "cameras", default=[])}
     ts = {c["key"]: c for c in _g(res, "M-TS", "measurements", "cameras", default=[])}
     ce = {c["key"]: c for c in _g(res, "M-CTRL-EFFECT", "measurements", "cameras", default=[])}
+    cl0 = {c["key"]: c for c in _g(res, "M-CTRL-LIST (ep0)", "measurements", "cameras", default=[])}
+    ce0 = {c["key"]: c for c in _g(res, "M-CTRL-EFFECT (ep0)", "measurements", "cameras", default=[])}
     multi = {m["camera"]: m for m in _g(res, "M-MULTI", "measurements", "attempts", 0, "cameras", default=[])}
     doms = _g(res, "M-TOPO", "measurements", "camera_domains", default={}) or {}
     for c in ctx.cameras:
@@ -551,19 +672,24 @@ def plan_summary(ctx: suitectx.SuiteCtx, res: dict[str, dict], rows: list[dict],
             L.append(f"- controls (AVFoundation modes supported): exposure {_on(fl.get('exposure_modes_supported'))}, "
                      f"focus {_on(fl.get('focus_modes_supported'))}, wb {_on(fl.get('wb_modes_supported'))}; lock readback ok "
                      f"{[r.get('all_readback_ok') for r in runs]}; luma {[r.get('luma_median') for r in runs]}; "
-                     f"restore ok {_g(cr, 'avf_restore', 'ok')}; absolute exposure/focus: "
-                     + (f"ep0 runs {len(cr.get('ep0_runs') or [])}" if ctx.ep0_enabled else "skipped (no ep0)"))
+                     f"restore ok {_g(cr, 'avf_restore', 'ok')}; absolute exposure/gain/focus: none in AVFoundation "
+                     "on macOS (endpoint-0 section below)")
         mm = multi.get(k)
         if mm:
             L.append(f"- multi (all at once): frames {mm.get('frames')}/{mm.get('frames_expected')} fps {mm.get('fps')}, "
                      f"dropped {mm.get('dropped_callbacks')}, signal {_g(mm, 'signal', 'signal')} "
                      f"{_g(mm, 'signal', 'code') or ''}, alt {_g(mm, 'granted', 'ioreg_alt')}")
+        st = ep0_status
+        if st == "done" and k in ctx.dead and not str(ctx.dead[k].get("since_test")).endswith("(ep0)"):
+            st = f"Kiyo Pro dead since {ctx.dead[k]['since_test']}: no endpoint-0 request sent"
+        L += ep0_summary_lines(cl0.get(k), ce0.get(k), st)
     L += ["", "| Test | Verdicts | Errors | s |", "| --- | --- | --- | --- |"]
     for r in rows:
         v = "; ".join(f"{g}: {x.get('rating')}" for g, x in (r.get("verdicts") or {}).items() if isinstance(x, dict))
         L.append(f"| {r['test']} | {v or '-'} | {r.get('n_errors', 0)} | {r.get('elapsed_s')} |")
-    L += ["", "Left out: endpoint-0 UVC controls (unless --ep0), CoreMediaIO controls (not implemented), auto-mode "
-              "toggling, UVC header/PTS/SCR, per-process cycles, mode switching, FMT-NOGRAB, FX, KIYO polling."]
+    L += ["", "Left out: endpoint-0 requests in the gating tests (only the separate endpoint-0 phase sends them), "
+              "unadvertised UVC selectors, extension-unit controls, CoreMediaIO controls (not implemented), AVFoundation "
+              "auto-mode toggling, UVC header/PTS/SCR, per-process cycles, mode switching, FMT-NOGRAB, FX, KIYO polling."]
     return "\n".join(L) + "\n"
 
 
@@ -580,9 +706,14 @@ def main(argv: list[str] | None = None, runner=None) -> int:
               "on every device, and libusb_open on the camera). Plan 6.1 forbids seizing. Use the default backend "
               "(iokit-intf), or add --ep0-allow-seize if you really accept the seize.", file=sys.stderr)
         return 2
+    if a.plan and a.plan_ep0 and a.ep0_backend != "iokit-intf":
+        print(f"refused: --plan's {EP0_PHASE} uses only the iokit-intf backend (nothing opened or seized); drop "
+              "--ep0-backend, or add --no-ep0 to run the plan without endpoint-0 requests.", file=sys.stderr)
+        return 2
     prelude = load_prelude()
     reduced, why = decide_reduced(a, prelude)
     tests = select_tests(a, reduced)
+    ep0_tests = ep0_phase_tests(a, tests)
     stamp = results.utc_stamp()
     out_dir = a.out_dir or results.default_results_dir(stamp, hostname="plan" if a.plan else None)
     raw_dir = a.raw_dir or results.default_raw_dir(out_dir)
@@ -612,11 +743,24 @@ def main(argv: list[str] | None = None, runner=None) -> int:
                   + (f" ~{est[name] / 60:.1f} min" if name in est else ""))
             for line in (m.plan(ctx) if hasattr(m, "plan") else [m.__doc__.splitlines()[0]]):
                 print(f"   - {line}")
+        if ep0_tests:
+            print(f"\n== {EP0_PHASE} ~{est.get(EP0_PHASE, 0) / 60:.1f} min: starts only after every result file above "
+                  "and a first summary.md are written; backend iokit-intf (UVC GET/SET_CUR on pipe 0 of the "
+                  "VideoControl interface; nothing opened, seized, claimed or detached; no sudo); a dead Kiyo Pro "
+                  "gets nothing; results in m_ctrl_list_ep0.json / m_ctrl_effect_ep0.json; --no-ep0 skips it")
+            a.ep0, ctx.ep0_phase = True, True
+            for name, mod, _, opens in ep0_tests:
+                print(f"   {name}:")
+                for line in load_test_module(mod).plan(ctx):
+                    print(f"   - {line}")
+            a.ep0, ctx.ep0_phase = False, False
         if a.plan:
-            print(f"\nestimated total: ~{sum(est.get(t[0], 0) for t in tests) / 60:.0f} min with "
+            total = sum(est.get(t[0], 0) for t in tests) + (est.get(EP0_PHASE, 0) if ep0_tests else 0)
+            print(f"\nestimated total: ~{total / 60:.0f} min with "
                   f"{len(ctx.openable())} camera(s) (plus the uv environment build on a first run)")
-        if not a.ep0:
-            print("\nep0 is OFF: UVC descriptors/controls via endpoint 0 are skipped (add --ep0 to opt in).")
+        if not a.ep0 and not ep0_tests:
+            print("\nep0 is OFF: UVC descriptors/controls via endpoint 0 are skipped"
+                  + (" (--no-ep0)." if a.plan else " (add --ep0 to opt in)."))
         return 0
 
     if sys.platform != "darwin":
@@ -655,9 +799,11 @@ def main(argv: list[str] | None = None, runner=None) -> int:
                     "10 s; press Ctrl-C to abort.")
             time.sleep(10)
         res_by_test: dict[str, dict] = {}
-        for name, mod, _, opens in tests:
-            ctx.log(f"== {name}")
-            ctx.current_test = name
+
+        def run_test(name: str, mod: str, opens: bool, file_name: str, key: str) -> None:
+            nonlocal state
+            ctx.log(f"== {key}")
+            ctx.current_test = key
             t0 = time.monotonic()
             try:
                 m = load_test_module(mod)
@@ -681,21 +827,46 @@ def main(argv: list[str] | None = None, runner=None) -> int:
             if flagged:
                 res.setdefault("errors", []).append({"warning": "unexplained re-arrival during this test",
                                                      "detail": flagged})
-            ctx.write(name.lower().replace("-", "_"), res)
-            res_by_test[name] = res
-            rows.append({"test": name, "verdicts": res.get("verdicts"), "n_errors": len(res.get("errors") or []),
+            ctx.write(file_name, res)
+            res_by_test[key] = res
+            rows.append({"test": key, "verdicts": res.get("verdicts"), "n_errors": len(res.get("errors") or []),
                          "n_rearrivals": len(flagged), "elapsed_s": round(time.monotonic() - t0, 1)})
-            ctx.log(f"   {name}: " + ", ".join(f"{g}={v.get('rating')}" for g, v in (res.get("verdicts") or {}).items()
-                                               if isinstance(v, dict)))
-        results.write_json(ctx.out_dir / "children.json", ctx.child_log)
-        if ctx.dead:
-            results.write_json(ctx.out_dir / "kiyo_pro_dead.json", ctx.dead)
-        if a.plan:
-            text = plan_summary(ctx, res_by_test, rows, started, (time.monotonic() - t_run) / 60)
+            ctx.log(f"   {key}: " + ", ".join(f"{g}={v.get('rating')}" for g, v in (res.get("verdicts") or {}).items()
+                                              if isinstance(v, dict)))
+
+        def write_plan_outputs(ep0_status: str | None) -> None:
+            results.write_json(ctx.out_dir / "children.json", ctx.child_log)
+            if ctx.dead:
+                results.write_json(ctx.out_dir / "kiyo_pro_dead.json", ctx.dead)
+            text = plan_summary(ctx, res_by_test, rows, started, (time.monotonic() - t_run) / 60, ep0_status)
             (ctx.out_dir / "summary.md").write_text(text, encoding="utf-8")
             ctx.log(f"privacy scrub of {ctx.out_dir.name}: {results.scrub_private(ctx.out_dir)}")
+
+        # phase 1: every selected test with endpoint 0 off (--plan forces a.ep0 False), each JSON written at once
+        for name, mod, _, opens in tests:
+            run_test(name, mod, opens, name.lower().replace("-", "_"), name)
+        if a.plan:
+            # a usable summary is on disk before the first endpoint-0 request (a crash or hang later keeps it)
+            write_plan_outputs("pending" if ep0_tests else None)
+            ep0_status = None
+            if ep0_tests:
+                ctx.log(f"== {EP0_PHASE}: iokit-intf, nothing opened/seized/claimed/detached; phase-1 results written")
+                a.ep0, ctx.ep0_phase = True, True
+                try:
+                    for name, mod, _, opens in ep0_tests:
+                        run_test(name, mod, opens, name.lower().replace("-", "_") + "_ep0", f"{name} (ep0)")
+                    ep0_status = "done"
+                except Exception as e:  # run_test catches test errors; this is the runner's own failure
+                    ep0_status = f"CRASHED: {type(e).__name__}: {e}"
+                    ctx.log(f"{EP0_PHASE} crashed: {traceback.format_exc()[-2000:]}")
+                finally:
+                    a.ep0, ctx.ep0_phase = False, False
+                write_plan_outputs(ep0_status)
             print("\n" + (ctx.out_dir / "summary.md").read_text(encoding="utf-8"))
         else:
+            results.write_json(ctx.out_dir / "children.json", ctx.child_log)
+            if ctx.dead:
+                results.write_json(ctx.out_dir / "kiyo_pro_dead.json", ctx.dead)
             (ctx.out_dir / "summary.md").write_text(summary_md(ctx, rows, notes, started), encoding="utf-8")
         ctx.log(f"wrote {ctx.out_dir}")
     finally:

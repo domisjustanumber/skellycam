@@ -71,6 +71,7 @@ class SuiteCtx:
     child_log: list[dict] = field(default_factory=list)
     store: dict = field(default_factory=dict)  # results one test hands to a later one (e.g. ctrl ranges)
     current_test: str | None = None
+    ep0_phase: bool = False  # --plan's endpoint-0 phase (after every phase-1 result is on disk): ep0 work only
     dead: dict = field(default_factory=dict)           # Kiyo Pro dead rule: key -> diagnostics (never revived)
     suspect: dict = field(default_factory=dict)        # key -> first failed stream start, awaiting confirmation
     stream_starts: dict = field(default_factory=dict)  # key -> stream commands started this run
@@ -133,14 +134,18 @@ class SuiteCtx:
             self.kiyo_stream_result(cam, r, label)
         return r
 
-    def kiyo_stream_result(self, cam: dict, r: dict, label: str | None) -> None:
+    def kiyo_stream_result(self, cam: dict, r: dict, label: str | None, stream: bool = True) -> None:
         """Dead rule bookkeeping: a failed/hung stream start makes the Kiyo Pro a suspect; the next stream command
         failing too (it stays failed) makes it dead, with one diagnostics snapshot. A success clears the suspicion.
-        Concurrent M-MULTI launches and kIOReturnNoBandwidth do not count (bandwidth, not a wedge)."""
+        Concurrent M-MULTI launches and kIOReturnNoBandwidth do not count (bandwidth, not a wedge).
+        stream=False: a hung endpoint-0 child (no stream), counted as a failure but not as a stream start."""
         key = cam["key"]
-        self.stream_starts[key] = self.stream_starts.get(key, 0) + 1
+        if stream:
+            self.stream_starts[key] = self.stream_starts.get(key, 0) + 1
         j = r.get("json") or {}
-        if j.get("cmd") == "cycle" or "n_ok" in j:
+        if not stream:
+            failed = True
+        elif j.get("cmd") == "cycle" or "n_ok" in j:
             failed = bool(r.get("hung")) or not j.get("n_ok")
         else:
             failed = bool(r.get("hung")) or not j.get("frames")
@@ -159,7 +164,7 @@ class SuiteCtx:
             self.suspect[key] = {"test": self.current_test, "first_failure": outcome}
             return
         diag: dict[str, Any] = {"since_test": self.current_test, "first_failure": self.suspect[key],
-                                "confirming_failure": outcome, "stream_starts_this_run": self.stream_starts[key],
+                                "confirming_failure": outcome, "stream_starts_this_run": self.stream_starts.get(key, 0),
                                 "utc": results.utc_now_iso(), "time_since_plug_in": "unknown on macOS (not in IORegistry)"}
         try:
             import mac_ioreg
@@ -171,7 +176,14 @@ class SuiteCtx:
         self.log(f"Kiyo Pro {key} marked DEAD for the rest of the run (since {self.current_test}); not revived")
 
     def ep0(self, cam: dict, cmd: str, extra: list[Any] | None = None, timeout_s: float = 30.0) -> dict:
-        """mac_ep0.py for one camera. Callers check ctx.ep0_enabled first (opt-in)."""
+        """mac_ep0.py for one camera. Callers check ctx.ep0_enabled first. Kiyo Pro dead rule as in avf(): a dead
+        Kiyo Pro gets no command; a hung ep0 child on the Kiyo Pro counts as a failure towards 'dead'."""
+        kiyo = bool(cam.get("is_kiyo"))
+        if kiyo and cam["key"] in self.dead:
+            why = f"skipped: Kiyo Pro dead since {self.dead[cam['key']]['since_test']}"
+            return {"argv": [cmd], "rc": None, "timed_out": False, "killed": False, "elapsed_s": 0.0,
+                    "label": f"ep0 {cmd} {cam['key']}", "json": {"ok": False, "skipped": why, "error": why},
+                    "stderr_tail": "", "spawn_error": None, "ok": False, "hung": False, "skipped": why}
         args = [cmd, "--location", cam["location_hex"], "--vid", cam["vid"], "--pid", cam["pid"],
                 "--backend", self.args.ep0_backend]
         if cam.get("vc_interface") is not None:
@@ -181,7 +193,10 @@ class SuiteCtx:
             args += ["--entities", ent]
         if self.ep0_allow_seize:
             args += ["--allow-seize"]
-        return self.helper("mac_ep0.py", args + list(extra or []), timeout_s, label=f"ep0 {cmd} {cam['key']}")
+        r = self.helper("mac_ep0.py", args + list(extra or []), timeout_s, label=f"ep0 {cmd} {cam['key']}")
+        if kiyo and r.get("hung"):
+            self.kiyo_stream_result(cam, r, r.get("label"), stream=False)
+        return r
 
     @property
     def ep0_enabled(self) -> bool:

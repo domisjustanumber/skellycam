@@ -27,6 +27,11 @@ def test_read_set_readback():
     assert r["info"]["get"] and r["info"]["set"] and r["info"]["autoupdate"]
     ae = c.read("auto_exposure_mode")
     assert ae["modes_supported"] == ["manual", "aperture_priority"]
+    # UVC request sets: AE mode has no MIN/MAX, the on/off autos only INFO/DEF/CUR (more would STALL)
+    assert [x["req"] for x in ae["calls"]] == ["GET_INFO", "GET_RES", "GET_DEF", "GET_CUR"] and ae["ok"]
+    wb = c.read("white_balance_temperature_auto")
+    assert [x["req"] for x in wb["calls"]] == ["GET_INFO", "GET_DEF", "GET_CUR"] and wb["ok"]
+    assert len(r["calls"]) == 6  # a range control still gets all six
     b = c.read("brightness")
     assert b["cur"] == -10 and b["min"] == -64  # signed
     s = c.set_cur("exposure_time_absolute", 300)
@@ -81,6 +86,10 @@ def test_iokit_never_exposes_forbidden_slots():
     assert 29 not in iokit_usb.ALLOWED_DEVICE_SLOTS and 8 not in iokit_usb.ALLOWED_DEVICE_SLOTS  # open/seize
     assert 8 not in iokit_usb.ALLOWED_INTERFACE_SLOTS and 22 not in iokit_usb.ALLOWED_INTERFACE_SLOTS  # open/SetAlt
     assert bytes(iokit_usb.uuid_bytes("kIOCFPlugInInterfaceID").b).hex() == "c244e858109c11d491d40050e4c6426f"
+    # IOUSBLib.h (IOUSBFamily-560.4.2): the 182 IIDs end in 000a27801e86
+    assert iokit_usb.UUIDS["kIOUSBDeviceInterfaceID182"] == "152fc496-4891-11d5-9d52-000a27801e86"
+    assert iokit_usb.UUIDS["kIOUSBInterfaceInterfaceID182"] == "4923ac4c-4896-11d5-9208-000a27801e86"
+    assert iokit_usb.UUIDS["kIOUSBInterfaceInterfaceID190"] == "8fdb8455-74a6-11d6-97b1-003065d3608e"
     import ctypes
     assert ctypes.sizeof(iokit_usb.IOUSBDevRequestTO) == ctypes.sizeof(iokit_usb.IOUSBDevRequest) + 8
 
