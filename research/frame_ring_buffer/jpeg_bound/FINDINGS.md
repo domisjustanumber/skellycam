@@ -1,8 +1,9 @@
 # Ring slot size from resolution alone (2026-11-17)
 
-Status: Dom reviewed the frames and approved committing them (2026-11-17). `frames/` holds 84 real camera frames
-(the largest and the median frame per camera and mode). `scan_files.jsonl` (8.6 MB, rebuilt by
-`scan.py` from `skellycam-raw`) is not committed.
+Status: the sample frames are not in git. Dom ruled on 2026-11-17 that camera frames and recordings are
+never committed unless they are golden reference files. `frames/` (84 camera frames: the largest and the
+median per camera and mode) stays on the local disk only and is ignored. `scan_files.jsonl` (8.6 MB, rebuilt
+by `scan.py` from `skellycam-raw`) is not committed either.
 
 ## Rule (accepted by Dom, 2026-11-17)
 
