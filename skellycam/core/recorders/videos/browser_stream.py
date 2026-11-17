@@ -51,7 +51,8 @@ def browser_video_chunks(*, request: BrowserStreamRequest) -> Generator[bytes, N
         if len(source.streams.video) != 1:
             raise ValueError("Browser playback requires exactly one video track per file")
         video = source.streams.video[0]
-        if video.time_base is None or video.average_rate is None:
+        # PyAV 19+ reports an unset rational as the falsy AVRational(0, 1), never None.
+        if not video.time_base or not video.average_rate:
             raise ValueError("Video is missing its time base or nominal frame rate")
         origin = video.start_time or 0
         start = origin + int(request.start_seconds / video.time_base)
