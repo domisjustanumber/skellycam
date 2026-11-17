@@ -13,10 +13,8 @@ class BackendSelectionEnum(enum.Enum):
     CAP_OPENCV_MJPEG = cv2.CAP_OPENCV_MJPEG
     CAP_DSHOW = cv2.CAP_DSHOW
     CAP_MSMF = cv2.CAP_MSMF
-    CAP_VFW = cv2.CAP_VFW
     CAP_V4L = cv2.CAP_V4L
     CAP_V4L2 = cv2.CAP_V4L2
-    CAP_QT = cv2.CAP_QT
 
 def check_resolution(video_capture: cv2.VideoCapture, width: int, height: int) -> bool:
     return int(video_capture.get(cv2.CAP_PROP_FRAME_WIDTH)) == width and int(

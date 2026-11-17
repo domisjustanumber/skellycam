@@ -68,9 +68,9 @@ class TimebaseMapping:
         if rec_array.dtype != TIMEBASE_MAPPING_DTYPE:
             raise ValueError(f"Expected rec_array to have dtype {TIMEBASE_MAPPING_DTYPE}, but got {rec_array.dtype}")
         return cls(
-            utc_time_ns=int(rec_array["utc_time_ns"]),
-            perf_counter_ns=int(rec_array["perf_counter_ns"]),
-            local_time_utc_offset=int(rec_array["local_time_utc_offset"]),
+            utc_time_ns=int(rec_array["utc_time_ns"].item()),
+            perf_counter_ns=int(rec_array["perf_counter_ns"].item()),
+            local_time_utc_offset=int(rec_array["local_time_utc_offset"].item()),
         )
 
     def __eq__(self, other):
