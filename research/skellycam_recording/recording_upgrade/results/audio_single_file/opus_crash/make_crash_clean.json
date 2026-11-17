@@ -1,0 +1,117 @@
+{
+ "seed": 20261116,
+ "set": "clean",
+ "python": "3.12.13",
+ "av": "19.0.2",
+ "codec_options": {
+  "b": "128000",
+  "frame_duration": "20",
+  "application": "audio",
+  "vbr": "on",
+  "compression_level": "10"
+ },
+ "writers": {
+  "wav": [
+   "wav",
+   ".wav",
+   "pcm_s16le",
+   {},
+   {
+    "flush_packets": "1",
+    "rf64": "auto"
+   }
+  ],
+  "fragpkt": [
+   "mp4",
+   ".m4a",
+   "libopus",
+   {
+    "b": "128000",
+    "frame_duration": "20",
+    "application": "audio",
+    "vbr": "on",
+    "compression_level": "10"
+   },
+   {
+    "flush_packets": "1",
+    "movflags": "empty_moov+default_base_moof+frag_every_frame"
+   }
+  ],
+  "frag100": [
+   "mp4",
+   ".m4a",
+   "libopus",
+   {
+    "b": "128000",
+    "frame_duration": "20",
+    "application": "audio",
+    "vbr": "on",
+    "compression_level": "10"
+   },
+   {
+    "flush_packets": "1",
+    "movflags": "empty_moov+default_base_moof",
+    "frag_duration": "100000"
+   }
+  ],
+  "mka": [
+   "matroska",
+   ".mka",
+   "libopus",
+   {
+    "b": "128000",
+    "frame_duration": "20",
+    "application": "audio",
+    "vbr": "on",
+    "compression_level": "10"
+   },
+   {
+    "flush_packets": "1",
+    "cluster_time_limit": "1"
+   }
+  ]
+ },
+ "wall_s": 22.0,
+ "files": [
+  {
+   "file": "wav__clean.wav",
+   "writer": "wav",
+   "kill_s": null,
+   "acked_samples": 960512,
+   "acked_rows": 938,
+   "exitcode": 0,
+   "term_ok": null,
+   "bytes": 1921138
+  },
+  {
+   "file": "fragpkt__clean.m4a",
+   "writer": "fragpkt",
+   "kill_s": null,
+   "acked_samples": 960512,
+   "acked_rows": 938,
+   "exitcode": 0,
+   "term_ok": null,
+   "bytes": 418787
+  },
+  {
+   "file": "frag100__clean.m4a",
+   "writer": "frag100",
+   "kill_s": null,
+   "acked_samples": 960512,
+   "acked_rows": 938,
+   "exitcode": 0,
+   "term_ok": null,
+   "bytes": 321187
+  },
+  {
+   "file": "mka__clean.mka",
+   "writer": "mka",
+   "kill_s": null,
+   "acked_samples": 960512,
+   "acked_rows": 938,
+   "exitcode": 0,
+   "term_ok": null,
+   "bytes": 333230
+  }
+ ]
+}

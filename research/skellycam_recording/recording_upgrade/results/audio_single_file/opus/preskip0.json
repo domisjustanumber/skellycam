@@ -1,0 +1,297 @@
+{
+ "note": "expected if obeyed: click offset +312 in every reader (priming played)",
+ "files": {
+  "mka_ct1__preskip0.mka": {
+   "patched": [
+    "OpusHead.pre_skip",
+    "CodecDelay(3 bytes)"
+   ],
+   "pyav": {
+    "samples": 480568,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.89,
+    "snr_db": 5.81,
+    "error": null
+   },
+   "ffmpeg": {
+    "samples": 480568,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.631,
+    "snr_db": -1.83
+   },
+   "vlc_play": {
+    "samples": 480960,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.89,
+    "snr_db": 5.79
+   },
+   "vlc_start_time_5s": {
+    "landed": 239688,
+    "error_samples": -312,
+    "timeline_error_samples": -312,
+    "jump_at_output_sample": 0,
+    "silence_after_jump": 0,
+    "convergence_samples": 0,
+    "lag_post": 239688,
+    "lag_pre": null,
+    "peak": 0.889,
+    "gain": 0.811
+   }
+  },
+  "mp4_frag100__preskip0.m4a": {
+   "patched": [
+    "dOps.PreSkip"
+   ],
+   "pyav": {
+    "samples": 480960,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.89,
+    "snr_db": 5.79,
+    "error": null
+   },
+   "ffmpeg": {
+    "samples": 480960,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.631,
+    "snr_db": -1.83
+   },
+   "vlc_play": {
+    "samples": 480568,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.89,
+    "snr_db": 5.81
+   },
+   "vlc_start_time_5s": {
+    "landed": 239693,
+    "error_samples": -307,
+    "timeline_error_samples": -307,
+    "jump_at_output_sample": 5,
+    "silence_after_jump": 0,
+    "convergence_samples": 0,
+    "lag_post": 239688,
+    "lag_pre": null,
+    "peak": 0.891,
+    "gain": 0.814
+   }
+  },
+  "mp4_fragpkt__preskip0.m4a": {
+   "patched": [
+    "dOps.PreSkip"
+   ],
+   "pyav": {
+    "samples": 480960,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.89,
+    "snr_db": 5.79,
+    "error": null
+   },
+   "ffmpeg": {
+    "samples": 480960,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.631,
+    "snr_db": -1.83
+   },
+   "vlc_play": {
+    "samples": 480568,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.89,
+    "snr_db": 5.81
+   },
+   "vlc_start_time_5s": {
+    "landed": 239693,
+    "error_samples": -307,
+    "timeline_error_samples": -307,
+    "jump_at_output_sample": 5,
+    "silence_after_jump": 0,
+    "convergence_samples": 0,
+    "lag_post": 239688,
+    "lag_pre": null,
+    "peak": 0.891,
+    "gain": 0.814
+   }
+  },
+  "mp4_plain__preskip0.m4a": {
+   "patched": [
+    "dOps.PreSkip",
+    "elst.media_time 312->0"
+   ],
+   "pyav": {
+    "samples": 480648,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.89,
+    "snr_db": 5.81,
+    "error": null
+   },
+   "ffmpeg": {
+    "samples": 480648,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.631,
+    "snr_db": -1.83
+   },
+   "vlc_play": {
+    "samples": 480568,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.89,
+    "snr_db": 5.81
+   },
+   "vlc_start_time_5s": {
+    "landed": 239688,
+    "error_samples": -312,
+    "timeline_error_samples": -312,
+    "jump_at_output_sample": 0,
+    "silence_after_jump": 0,
+    "convergence_samples": 0,
+    "lag_post": 239688,
+    "lag_pre": null,
+    "peak": 0.891,
+    "gain": 0.814
+   }
+  },
+  "ogg_pd20__preskip0.opus": {
+   "patched": [
+    "OpusHead.pre_skip",
+    "ogg_page_crc"
+   ],
+   "pyav": {
+    "samples": 480568,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.89,
+    "snr_db": 5.81,
+    "error": null
+   },
+   "ffmpeg": {
+    "samples": 480568,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.631,
+    "snr_db": -1.83
+   },
+   "vlc_play": {
+    "samples": 476728,
+    "click_offsets": [
+     -3528
+    ],
+    "click_n": 9,
+    "corr_lag": -3528,
+    "corr_peak": 0.89,
+    "snr_db": 5.81
+   },
+   "vlc_start_time_5s": {
+    "landed": 246408,
+    "error_samples": 6408,
+    "timeline_error_samples": 6408,
+    "jump_at_output_sample": 0,
+    "silence_after_jump": 0,
+    "convergence_samples": 0,
+    "lag_post": 246408,
+    "lag_pre": null,
+    "peak": 0.888,
+    "gain": 0.808
+   }
+  },
+  "webm_ct1__preskip0.webm": {
+   "patched": [
+    "OpusHead.pre_skip",
+    "CodecDelay(3 bytes)"
+   ],
+   "pyav": {
+    "samples": 480568,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.89,
+    "snr_db": 5.81,
+    "error": null
+   },
+   "ffmpeg": {
+    "samples": 480568,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.631,
+    "snr_db": -1.83
+   },
+   "vlc_play": {
+    "samples": 480960,
+    "click_offsets": [
+     312
+    ],
+    "click_n": 10,
+    "corr_lag": 312,
+    "corr_peak": 0.89,
+    "snr_db": 5.79
+   },
+   "vlc_start_time_5s": {
+    "landed": 239688,
+    "error_samples": -312,
+    "timeline_error_samples": -312,
+    "jump_at_output_sample": 0,
+    "silence_after_jump": 0,
+    "convergence_samples": 0,
+    "lag_post": 239688,
+    "lag_pre": null,
+    "peak": 0.889,
+    "gain": 0.811
+   }
+  }
+ }
+}

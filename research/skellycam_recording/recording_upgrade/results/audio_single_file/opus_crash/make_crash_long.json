@@ -1,0 +1,117 @@
+{
+ "seed": 20261116,
+ "set": "long",
+ "python": "3.12.13",
+ "av": "19.0.2",
+ "codec_options": {
+  "b": "128000",
+  "frame_duration": "20",
+  "application": "audio",
+  "vbr": "on",
+  "compression_level": "10"
+ },
+ "writers": {
+  "wav": [
+   "wav",
+   ".wav",
+   "pcm_s16le",
+   {},
+   {
+    "flush_packets": "1",
+    "rf64": "auto"
+   }
+  ],
+  "fragpkt": [
+   "mp4",
+   ".m4a",
+   "libopus",
+   {
+    "b": "128000",
+    "frame_duration": "20",
+    "application": "audio",
+    "vbr": "on",
+    "compression_level": "10"
+   },
+   {
+    "flush_packets": "1",
+    "movflags": "empty_moov+default_base_moof+frag_every_frame"
+   }
+  ],
+  "frag100": [
+   "mp4",
+   ".m4a",
+   "libopus",
+   {
+    "b": "128000",
+    "frame_duration": "20",
+    "application": "audio",
+    "vbr": "on",
+    "compression_level": "10"
+   },
+   {
+    "flush_packets": "1",
+    "movflags": "empty_moov+default_base_moof",
+    "frag_duration": "100000"
+   }
+  ],
+  "mka": [
+   "matroska",
+   ".mka",
+   "libopus",
+   {
+    "b": "128000",
+    "frame_duration": "20",
+    "application": "audio",
+    "vbr": "on",
+    "compression_level": "10"
+   },
+   {
+    "flush_packets": "1",
+    "cluster_time_limit": "1"
+   }
+  ]
+ },
+ "wall_s": 1867.4,
+ "files": [
+  {
+   "file": "wav__long.wav",
+   "writer": "wav",
+   "kill_s": 1860.274,
+   "acked_samples": 89283584,
+   "acked_rows": 87191,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 178567282
+  },
+  {
+   "file": "fragpkt__long.m4a",
+   "writer": "fragpkt",
+   "kill_s": 1829.396,
+   "acked_samples": 87800832,
+   "acked_rows": 85743,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 36434057
+  },
+  {
+   "file": "frag100__long.m4a",
+   "writer": "frag100",
+   "kill_s": 1862.52,
+   "acked_samples": 89391104,
+   "acked_rows": 87296,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 29417904
+  },
+  {
+   "file": "mka__long.mka",
+   "writer": "mka",
+   "kill_s": 1867.362,
+   "acked_samples": 89623552,
+   "acked_rows": 87523,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 29344337
+  }
+ ]
+}

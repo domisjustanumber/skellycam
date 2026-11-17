@@ -1,0 +1,192 @@
+{
+ "target_bytes": 4600000000,
+ "seek_s": 23500.0,
+ "seek_sample": 1128000000,
+ "files": {
+  "rf64auto_clean": {
+   "header": {
+    "magic": "RF64",
+    "riff_size": 4294967295,
+    "file_size": 4600320114,
+    "ds64_riff": 4600320106,
+    "ds64_data": 4600320000,
+    "ds64_samples": 1150080000,
+    "chunks": [
+     "ds64:28",
+     "fmt :16",
+     "LIST:26"
+    ],
+    "data_size": 4294967295,
+    "data_offset": 114
+   },
+   "ffprobe": {
+    "rc": 0,
+    "stderr": "",
+    "format": "wav",
+    "duration": "23960.000000",
+    "stream_duration": "23960.000000"
+   },
+   "pyav_seek": {
+    "n0": 1128000000,
+    "exact": true,
+    "matched": 4096,
+    "error_samples": 0
+   },
+   "ffmpeg_seek": {
+    "n0": 1128000000,
+    "exact": true,
+    "matched": 24000,
+    "samples": 24000,
+    "rc": 0,
+    "error_samples": 0
+   },
+   "vlc_seek": {
+    "n0": null,
+    "exact": false,
+    "matched": 0,
+    "rc": 0,
+    "samples": 28800,
+    "error_samples": null
+   },
+   "libvlc": {
+    "parsed_duration_ms": 23960000,
+    "state": "State.Playing",
+    "length_ms": 23960000,
+    "seekable": true,
+    "time_after_pos50_ms": 11980301,
+    "pos_after": 0.5
+   }
+  },
+  "rf64auto_killed": {
+   "header": {
+    "magic": "RIFF",
+    "riff_size": 4294967295,
+    "file_size": 4600320114,
+    "chunks": [
+     "fmt :16",
+     "JUNK:28",
+     "LIST:26"
+    ],
+    "data_size": 4294967295,
+    "data_offset": 114
+   },
+   "ffprobe": {
+    "rc": 0,
+    "stderr": "",
+    "format": "wav",
+    "duration": "23960.000000",
+    "stream_duration": "23960.000000"
+   },
+   "pyav_seek": {
+    "n0": 1128000000,
+    "exact": true,
+    "matched": 4096,
+    "error_samples": 0
+   },
+   "ffmpeg_seek": {
+    "n0": 1128000000,
+    "exact": true,
+    "matched": 24000,
+    "samples": 24000,
+    "rc": 0,
+    "error_samples": 0
+   },
+   "vlc_seek": {
+    "rc": 0,
+    "samples": 0
+   },
+   "libvlc": {
+    "parsed_duration_ms": 22369621,
+    "state": "State.Playing",
+    "length_ms": 22369621,
+    "seekable": true,
+    "time_after_pos50_ms": 11185111,
+    "pos_after": 0.5
+   }
+  },
+  "rf64auto_killed_repaired": {
+   "header": {
+    "magic": "RF64",
+    "riff_size": 4294967295,
+    "file_size": 4600320114,
+    "ds64_riff": 4600320106,
+    "ds64_data": 4600320000,
+    "ds64_samples": 1150080000,
+    "chunks": [
+     "ds64:28",
+     "fmt :16",
+     "LIST:26"
+    ],
+    "data_size": 4294967295,
+    "data_offset": 114
+   },
+   "ffprobe": {
+    "rc": 0,
+    "stderr": "",
+    "format": "wav",
+    "duration": "23960.000000",
+    "stream_duration": "23960.000000"
+   },
+   "pyav_seek": {
+    "n0": 1128000000,
+    "exact": true,
+    "matched": 4096,
+    "error_samples": 0
+   },
+   "ffmpeg_seek": {
+    "n0": 1128000000,
+    "exact": true,
+    "matched": 24000,
+    "samples": 24000,
+    "rc": 0,
+    "error_samples": 0
+   },
+   "vlc_seek": {
+    "n0": null,
+    "exact": false,
+    "matched": 0,
+    "rc": 0,
+    "samples": 28800,
+    "error_samples": null
+   },
+   "libvlc": {
+    "parsed_duration_ms": 23960000,
+    "state": "State.Playing",
+    "length_ms": 23960000,
+    "seekable": true,
+    "time_after_pos50_ms": 11980300,
+    "pos_after": 0.5
+   }
+  }
+ },
+ "write_s_clean": 14.0,
+ "write_s_killed": 15.5,
+ "killed_exit": 1,
+ "repair": {
+  "kind": "rf64_sizes",
+  "data_bytes": 4600320000,
+  "ms": 0.32
+ },
+ "stdlib": {
+  "samples_written_before_error": 1073280000,
+  "error": "error: 'L' format requires 0 <= number <= 4294967295 | close: error: 'L' format requires 0 <= number <= 4294967295",
+  "write_s": 13.8,
+  "header": {
+   "magic": "RIFF",
+   "riff_size": 4293120036,
+   "file_size": 4295040044,
+   "chunks": [
+    "fmt :16"
+   ],
+   "data_size": 4293120000,
+   "data_offset": 44
+  },
+  "ffprobe": {
+   "rc": 0,
+   "stderr": "",
+   "format": "wav",
+   "duration": "22360.000000",
+   "stream_duration": "22360.000000"
+  }
+ }
+}

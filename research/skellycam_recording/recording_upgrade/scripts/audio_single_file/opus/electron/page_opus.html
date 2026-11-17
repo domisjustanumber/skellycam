@@ -1,0 +1,78 @@
+<!doctype html><meta charset="utf-8"><title>opus audio test</title>
+<script>
+// Opus leg of audio_single_file. Per file: decodeAudioData (length + channel 0 as base64 s16 for timing analysis in
+// Python), the <audio> element (duration, seekable, seek currentTime, as scripts/audio_skellycam/electron/page.html),
+// and what <audio> actually renders: a MediaElementAudioSourceNode -> ScriptProcessor capture of 1.2 s after
+// play() from 0 and after a seek, in a 48 kHz AudioContext (no resampling). A blob: URL keeps the element same-origin.
+const RATE = 48000;
+const MIMES = ['audio/ogg; codecs="opus"', 'audio/webm; codecs="opus"', 'audio/x-matroska; codecs="opus"', 'audio/mp4; codecs="opus"', 'audio/wav', 'audio/flac'];
+
+async function caps() {
+  const a = document.createElement('audio');
+  const out = { canPlayType: {}, mse: {} };
+  for (const m of MIMES) { out.canPlayType[m] = a.canPlayType(m); out.mse[m] = (window.MediaSource && MediaSource.isTypeSupported(m)) || false; }
+  return out;
+}
+
+function b64(f32) {
+  const i16 = new Int16Array(f32.length);
+  for (let i = 0; i < f32.length; i++) i16[i] = Math.max(-32768, Math.min(32767, Math.round(f32[i] * 32768)));
+  const u8 = new Uint8Array(i16.buffer); let s = '';
+  for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+
+async function capture(blobUrl, seekTo) {
+  const ctx = new AudioContext({ sampleRate: RATE });
+  const a = new Audio(); a.preload = 'auto'; a.src = blobUrl;
+  try {
+    await new Promise((res, rej) => { a.onloadedmetadata = res; a.onerror = () => rej(new Error('media error ' + (a.error && a.error.code))); setTimeout(() => rej(new Error('timeout')), 8000); });
+    const src = ctx.createMediaElementSource(a);
+    const sp = ctx.createScriptProcessor(1024, 1, 1);
+    const g = ctx.createGain(); g.gain.value = 0;
+    src.connect(sp); sp.connect(g); g.connect(ctx.destination);
+    const chunks = []; let n = 0, rec = false;
+    sp.onaudioprocess = (e) => { if (rec) { chunks.push(new Float32Array(e.inputBuffer.getChannelData(0))); n += e.inputBuffer.length; } };
+    await ctx.resume();
+    if (seekTo > 0) await new Promise((r) => { a.onseeked = r; a.currentTime = seekTo; });
+    const ct0 = a.currentTime;
+    rec = true; await a.play();
+    const w0 = performance.now();
+    while (n < 1.2 * RATE && performance.now() - w0 < 5000) await new Promise((r) => setTimeout(r, 20));
+    a.pause(); rec = false;
+    const all = new Float32Array(n); let o = 0; for (const c of chunks) { all.set(c, o); o += c.length; }
+    return { seekTo, currentTimeAtPlay: ct0, samples: n, data: b64(all), duration: a.duration };
+  } catch (e) { return { seekTo, error: (e && e.message || String(e)).slice(0, 150) }; }
+  finally { a.pause(); a.removeAttribute('src'); a.load(); await ctx.close(); }
+}
+
+async function testFile(url, dir) {
+  const r = {};
+  let ab;
+  try { ab = await (await fetch(url)).arrayBuffer(); r.fetched = ab.byteLength; } catch (e) { r.fetchError = e.message; return r; }
+  try {
+    const oc = new OfflineAudioContext(1, RATE, RATE);
+    const buf = await oc.decodeAudioData(ab.slice(0));
+    r.decodeAudioData = { length: buf.length, sampleRate: buf.sampleRate, channels: buf.numberOfChannels, data: b64(buf.getChannelData(0)) };
+  } catch (e) { r.decodeAudioData = { error: (e && e.message || String(e)).slice(0, 150) }; }
+  r.audioElement = await new Promise((resolve) => {
+    const a = new Audio(); a.muted = true; a.preload = 'auto'; const res = {}; let done = false;
+    const fin = () => { if (!done) { done = true; a.pause(); a.removeAttribute('src'); a.load(); resolve(res); } };
+    const to = setTimeout(() => { res.timeout = true; fin(); }, 8000);
+    a.onerror = () => { res.error = a.error && a.error.code; res.message = a.error && a.error.message; clearTimeout(to); fin(); };
+    a.onloadedmetadata = () => {
+      res.duration = a.duration; res.seekableEnd = a.seekable.length ? a.seekable.end(0) : null;
+      const target = Math.min(2.0, (isFinite(a.duration) ? a.duration : 2) / 2);
+      a.onseeked = () => { res.seekTo = target; res.seekedAt = a.currentTime; clearTimeout(to); fin(); };
+      a.currentTime = target;
+    };
+    a.src = url;
+  });
+  const blobUrl = URL.createObjectURL(new Blob([ab]));
+  const d = r.audioElement.duration;
+  r.capturePlay0 = await capture(blobUrl, 0);
+  r.captureSeek = await capture(blobUrl, Math.min(2.0, (isFinite(d) && d > 0 ? d : 4) / 2));
+  URL.revokeObjectURL(blobUrl);
+  return r;
+}
+</script>

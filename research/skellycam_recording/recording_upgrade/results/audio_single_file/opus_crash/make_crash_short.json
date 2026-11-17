@@ -1,0 +1,197 @@
+{
+ "seed": 20261116,
+ "set": "short",
+ "python": "3.12.13",
+ "av": "19.0.2",
+ "codec_options": {
+  "b": "128000",
+  "frame_duration": "20",
+  "application": "audio",
+  "vbr": "on",
+  "compression_level": "10"
+ },
+ "writers": {
+  "wav": [
+   "wav",
+   ".wav",
+   "pcm_s16le",
+   {},
+   {
+    "flush_packets": "1",
+    "rf64": "auto"
+   }
+  ],
+  "fragpkt": [
+   "mp4",
+   ".m4a",
+   "libopus",
+   {
+    "b": "128000",
+    "frame_duration": "20",
+    "application": "audio",
+    "vbr": "on",
+    "compression_level": "10"
+   },
+   {
+    "flush_packets": "1",
+    "movflags": "empty_moov+default_base_moof+frag_every_frame"
+   }
+  ],
+  "frag100": [
+   "mp4",
+   ".m4a",
+   "libopus",
+   {
+    "b": "128000",
+    "frame_duration": "20",
+    "application": "audio",
+    "vbr": "on",
+    "compression_level": "10"
+   },
+   {
+    "flush_packets": "1",
+    "movflags": "empty_moov+default_base_moof",
+    "frag_duration": "100000"
+   }
+  ],
+  "mka": [
+   "matroska",
+   ".mka",
+   "libopus",
+   {
+    "b": "128000",
+    "frame_duration": "20",
+    "application": "audio",
+    "vbr": "on",
+    "compression_level": "10"
+   },
+   {
+    "flush_packets": "1",
+    "cluster_time_limit": "1"
+   }
+  ]
+ },
+ "wall_s": 54.7,
+ "files": [
+  {
+   "file": "wav__term0.wav",
+   "writer": "wav",
+   "kill_s": 21.046,
+   "acked_samples": 997376,
+   "acked_rows": 974,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 1994866
+  },
+  {
+   "file": "wav__term1.wav",
+   "writer": "wav",
+   "kill_s": 21.201,
+   "acked_samples": 1004544,
+   "acked_rows": 981,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 2009202
+  },
+  {
+   "file": "wav__term2.wav",
+   "writer": "wav",
+   "kill_s": 29.395,
+   "acked_samples": 1397760,
+   "acked_rows": 1365,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 2795634
+  },
+  {
+   "file": "fragpkt__term0.m4a",
+   "writer": "fragpkt",
+   "kill_s": 52.008,
+   "acked_samples": 2483200,
+   "acked_rows": 2425,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 1030715
+  },
+  {
+   "file": "fragpkt__term1.m4a",
+   "writer": "fragpkt",
+   "kill_s": 33.682,
+   "acked_samples": 1603584,
+   "acked_rows": 1566,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 665797
+  },
+  {
+   "file": "fragpkt__term2.m4a",
+   "writer": "fragpkt",
+   "kill_s": 25.834,
+   "acked_samples": 1227776,
+   "acked_rows": 1199,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 509531
+  },
+  {
+   "file": "frag100__term0.m4a",
+   "writer": "frag100",
+   "kill_s": 12.566,
+   "acked_samples": 589824,
+   "acked_rows": 576,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 193639
+  },
+  {
+   "file": "frag100__term1.m4a",
+   "writer": "frag100",
+   "kill_s": 20.12,
+   "acked_samples": 953344,
+   "acked_rows": 931,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 313596
+  },
+  {
+   "file": "frag100__term2.m4a",
+   "writer": "frag100",
+   "kill_s": 12.282,
+   "acked_samples": 576512,
+   "acked_rows": 563,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 188904
+  },
+  {
+   "file": "mka__term0.mka",
+   "writer": "mka",
+   "kill_s": 34.42,
+   "acked_samples": 1639424,
+   "acked_rows": 1601,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 535092
+  },
+  {
+   "file": "mka__term1.mka",
+   "writer": "mka",
+   "kill_s": 39.01,
+   "acked_samples": 1859584,
+   "acked_rows": 1816,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 607134
+  },
+  {
+   "file": "mka__term2.mka",
+   "writer": "mka",
+   "kill_s": 54.633,
+   "acked_samples": 2609152,
+   "acked_rows": 2548,
+   "exitcode": 15,
+   "term_ok": true,
+   "bytes": 851422
+  }
+ ]
+}

@@ -1,0 +1,1315 @@
+{
+ "seed": 20261115,
+ "python": "3.12.13",
+ "av": "19.0.2",
+ "codec_options": {
+  "b": "256000",
+  "frame_duration": "20",
+  "application": "audio",
+  "vbr": "on",
+  "compression_level": "10"
+ },
+ "writers": {
+  "ogg_pd20": [
+   "ogg",
+   ".opus",
+   {
+    "flush_packets": "1",
+    "page_duration": "20000"
+   }
+  ],
+  "mka_ct1": [
+   "matroska",
+   ".mka",
+   {
+    "flush_packets": "1",
+    "cluster_time_limit": "1"
+   }
+  ],
+  "webm_ct1": [
+   "webm",
+   ".webm",
+   {
+    "flush_packets": "1",
+    "cluster_time_limit": "1"
+   }
+  ],
+  "mp4_fragpkt": [
+   "mp4",
+   ".m4a",
+   {
+    "flush_packets": "1",
+    "movflags": "empty_moov+default_base_moof+frag_every_frame"
+   }
+  ],
+  "mp4_frag100": [
+   "mp4",
+   ".m4a",
+   {
+    "flush_packets": "1",
+    "movflags": "empty_moov+default_base_moof",
+    "frag_duration": "100000"
+   }
+  ],
+  "mp4_plain": [
+   "mp4",
+   ".m4a",
+   {
+    "flush_packets": "1"
+   }
+  ]
+ },
+ "wall_s": 117.5,
+ "kills": [
+  {
+   "file": "ogg_pd20__exit__00.opus",
+   "format": "ogg_pd20",
+   "method": "exit",
+   "kill_s": 2.756,
+   "acked_samples": 132096,
+   "acked_rows": 129,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "ogg_pd20__exit__01.opus",
+   "format": "ogg_pd20",
+   "method": "exit",
+   "kill_s": 4.068,
+   "acked_samples": 194560,
+   "acked_rows": 190,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "ogg_pd20__exit__02.opus",
+   "format": "ogg_pd20",
+   "method": "exit",
+   "kill_s": 6.247,
+   "acked_samples": 299008,
+   "acked_rows": 292,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "ogg_pd20__exit__03.opus",
+   "format": "ogg_pd20",
+   "method": "exit",
+   "kill_s": 5.458,
+   "acked_samples": 261120,
+   "acked_rows": 255,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "ogg_pd20__exit__04.opus",
+   "format": "ogg_pd20",
+   "method": "exit",
+   "kill_s": 5.038,
+   "acked_samples": 241664,
+   "acked_rows": 236,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "ogg_pd20__exit__05.opus",
+   "format": "ogg_pd20",
+   "method": "exit",
+   "kill_s": 3.137,
+   "acked_samples": 150528,
+   "acked_rows": 147,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "ogg_pd20__exit__06.opus",
+   "format": "ogg_pd20",
+   "method": "exit",
+   "kill_s": 5.731,
+   "acked_samples": 274432,
+   "acked_rows": 268,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "ogg_pd20__exit__07.opus",
+   "format": "ogg_pd20",
+   "method": "exit",
+   "kill_s": 6.346,
+   "acked_samples": 304128,
+   "acked_rows": 297,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "ogg_pd20__exit__08.opus",
+   "format": "ogg_pd20",
+   "method": "exit",
+   "kill_s": 3.892,
+   "acked_samples": 186368,
+   "acked_rows": 182,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "ogg_pd20__exit__09.opus",
+   "format": "ogg_pd20",
+   "method": "exit",
+   "kill_s": 1.943,
+   "acked_samples": 93184,
+   "acked_rows": 91,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "ogg_pd20__term__00.opus",
+   "format": "ogg_pd20",
+   "method": "term",
+   "kill_s": 7.615,
+   "acked_samples": 356352,
+   "acked_rows": 348,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "ogg_pd20__term__01.opus",
+   "format": "ogg_pd20",
+   "method": "term",
+   "kill_s": 7.941,
+   "acked_samples": 371712,
+   "acked_rows": 363,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "ogg_pd20__term__02.opus",
+   "format": "ogg_pd20",
+   "method": "term",
+   "kill_s": 7.09,
+   "acked_samples": 330752,
+   "acked_rows": 323,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "ogg_pd20__term__03.opus",
+   "format": "ogg_pd20",
+   "method": "term",
+   "kill_s": 2.299,
+   "acked_samples": 101376,
+   "acked_rows": 99,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "ogg_pd20__term__04.opus",
+   "format": "ogg_pd20",
+   "method": "term",
+   "kill_s": 5.614,
+   "acked_samples": 260096,
+   "acked_rows": 254,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "ogg_pd20__term__05.opus",
+   "format": "ogg_pd20",
+   "method": "term",
+   "kill_s": 1.625,
+   "acked_samples": 68608,
+   "acked_rows": 67,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "ogg_pd20__term__06.opus",
+   "format": "ogg_pd20",
+   "method": "term",
+   "kill_s": 4.578,
+   "acked_samples": 209920,
+   "acked_rows": 205,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "ogg_pd20__term__07.opus",
+   "format": "ogg_pd20",
+   "method": "term",
+   "kill_s": 4.212,
+   "acked_samples": 192512,
+   "acked_rows": 188,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "ogg_pd20__term__08.opus",
+   "format": "ogg_pd20",
+   "method": "term",
+   "kill_s": 7.031,
+   "acked_samples": 327680,
+   "acked_rows": 320,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "ogg_pd20__term__09.opus",
+   "format": "ogg_pd20",
+   "method": "term",
+   "kill_s": 6.689,
+   "acked_samples": 311296,
+   "acked_rows": 304,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mka_ct1__exit__00.mka",
+   "format": "mka_ct1",
+   "method": "exit",
+   "kill_s": 5.885,
+   "acked_samples": 281600,
+   "acked_rows": 275,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mka_ct1__exit__01.mka",
+   "format": "mka_ct1",
+   "method": "exit",
+   "kill_s": 3.024,
+   "acked_samples": 144384,
+   "acked_rows": 141,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mka_ct1__exit__02.mka",
+   "format": "mka_ct1",
+   "method": "exit",
+   "kill_s": 6.888,
+   "acked_samples": 329728,
+   "acked_rows": 322,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mka_ct1__exit__03.mka",
+   "format": "mka_ct1",
+   "method": "exit",
+   "kill_s": 6.3,
+   "acked_samples": 302080,
+   "acked_rows": 295,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mka_ct1__exit__04.mka",
+   "format": "mka_ct1",
+   "method": "exit",
+   "kill_s": 3.237,
+   "acked_samples": 154624,
+   "acked_rows": 151,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mka_ct1__exit__05.mka",
+   "format": "mka_ct1",
+   "method": "exit",
+   "kill_s": 3.249,
+   "acked_samples": 155648,
+   "acked_rows": 152,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mka_ct1__exit__06.mka",
+   "format": "mka_ct1",
+   "method": "exit",
+   "kill_s": 5.216,
+   "acked_samples": 249856,
+   "acked_rows": 244,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mka_ct1__exit__07.mka",
+   "format": "mka_ct1",
+   "method": "exit",
+   "kill_s": 4.586,
+   "acked_samples": 219136,
+   "acked_rows": 214,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mka_ct1__exit__08.mka",
+   "format": "mka_ct1",
+   "method": "exit",
+   "kill_s": 5.08,
+   "acked_samples": 243712,
+   "acked_rows": 238,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mka_ct1__exit__09.mka",
+   "format": "mka_ct1",
+   "method": "exit",
+   "kill_s": 0.562,
+   "acked_samples": 26624,
+   "acked_rows": 26,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mka_ct1__term__00.mka",
+   "format": "mka_ct1",
+   "method": "term",
+   "kill_s": 7.441,
+   "acked_samples": 348160,
+   "acked_rows": 340,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mka_ct1__term__01.mka",
+   "format": "mka_ct1",
+   "method": "term",
+   "kill_s": 2.745,
+   "acked_samples": 122880,
+   "acked_rows": 120,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mka_ct1__term__02.mka",
+   "format": "mka_ct1",
+   "method": "term",
+   "kill_s": 6.205,
+   "acked_samples": 288768,
+   "acked_rows": 282,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mka_ct1__term__03.mka",
+   "format": "mka_ct1",
+   "method": "term",
+   "kill_s": 7.217,
+   "acked_samples": 336896,
+   "acked_rows": 329,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mka_ct1__term__04.mka",
+   "format": "mka_ct1",
+   "method": "term",
+   "kill_s": 3.151,
+   "acked_samples": 141312,
+   "acked_rows": 138,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mka_ct1__term__05.mka",
+   "format": "mka_ct1",
+   "method": "term",
+   "kill_s": 7.571,
+   "acked_samples": 354304,
+   "acked_rows": 346,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mka_ct1__term__06.mka",
+   "format": "mka_ct1",
+   "method": "term",
+   "kill_s": 6.565,
+   "acked_samples": 305152,
+   "acked_rows": 298,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mka_ct1__term__07.mka",
+   "format": "mka_ct1",
+   "method": "term",
+   "kill_s": 1.153,
+   "acked_samples": 46080,
+   "acked_rows": 45,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mka_ct1__term__08.mka",
+   "format": "mka_ct1",
+   "method": "term",
+   "kill_s": 2.075,
+   "acked_samples": 90112,
+   "acked_rows": 88,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mka_ct1__term__09.mka",
+   "format": "mka_ct1",
+   "method": "term",
+   "kill_s": 6.271,
+   "acked_samples": 291840,
+   "acked_rows": 285,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "webm_ct1__exit__00.webm",
+   "format": "webm_ct1",
+   "method": "exit",
+   "kill_s": 0.758,
+   "acked_samples": 35840,
+   "acked_rows": 35,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "webm_ct1__exit__01.webm",
+   "format": "webm_ct1",
+   "method": "exit",
+   "kill_s": 5.295,
+   "acked_samples": 253952,
+   "acked_rows": 248,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "webm_ct1__exit__02.webm",
+   "format": "webm_ct1",
+   "method": "exit",
+   "kill_s": 3.836,
+   "acked_samples": 183296,
+   "acked_rows": 179,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "webm_ct1__exit__03.webm",
+   "format": "webm_ct1",
+   "method": "exit",
+   "kill_s": 7.726,
+   "acked_samples": 370688,
+   "acked_rows": 362,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "webm_ct1__exit__04.webm",
+   "format": "webm_ct1",
+   "method": "exit",
+   "kill_s": 7.744,
+   "acked_samples": 371712,
+   "acked_rows": 363,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "webm_ct1__exit__05.webm",
+   "format": "webm_ct1",
+   "method": "exit",
+   "kill_s": 6.061,
+   "acked_samples": 290816,
+   "acked_rows": 284,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "webm_ct1__exit__06.webm",
+   "format": "webm_ct1",
+   "method": "exit",
+   "kill_s": 6.941,
+   "acked_samples": 332800,
+   "acked_rows": 325,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "webm_ct1__exit__07.webm",
+   "format": "webm_ct1",
+   "method": "exit",
+   "kill_s": 2.265,
+   "acked_samples": 108544,
+   "acked_rows": 106,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "webm_ct1__exit__08.webm",
+   "format": "webm_ct1",
+   "method": "exit",
+   "kill_s": 1.347,
+   "acked_samples": 64512,
+   "acked_rows": 63,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "webm_ct1__exit__09.webm",
+   "format": "webm_ct1",
+   "method": "exit",
+   "kill_s": 2.821,
+   "acked_samples": 135168,
+   "acked_rows": 132,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "webm_ct1__term__00.webm",
+   "format": "webm_ct1",
+   "method": "term",
+   "kill_s": 5.141,
+   "acked_samples": 237568,
+   "acked_rows": 232,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "webm_ct1__term__01.webm",
+   "format": "webm_ct1",
+   "method": "term",
+   "kill_s": 6.513,
+   "acked_samples": 303104,
+   "acked_rows": 296,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "webm_ct1__term__02.webm",
+   "format": "webm_ct1",
+   "method": "term",
+   "kill_s": 3.126,
+   "acked_samples": 140288,
+   "acked_rows": 137,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "webm_ct1__term__03.webm",
+   "format": "webm_ct1",
+   "method": "term",
+   "kill_s": 0.507,
+   "acked_samples": 15360,
+   "acked_rows": 15,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "webm_ct1__term__04.webm",
+   "format": "webm_ct1",
+   "method": "term",
+   "kill_s": 2.473,
+   "acked_samples": 109568,
+   "acked_rows": 107,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "webm_ct1__term__05.webm",
+   "format": "webm_ct1",
+   "method": "term",
+   "kill_s": 2.843,
+   "acked_samples": 126976,
+   "acked_rows": 124,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "webm_ct1__term__06.webm",
+   "format": "webm_ct1",
+   "method": "term",
+   "kill_s": 5.57,
+   "acked_samples": 258048,
+   "acked_rows": 252,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "webm_ct1__term__07.webm",
+   "format": "webm_ct1",
+   "method": "term",
+   "kill_s": 6.795,
+   "acked_samples": 317440,
+   "acked_rows": 310,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "webm_ct1__term__08.webm",
+   "format": "webm_ct1",
+   "method": "term",
+   "kill_s": 7.517,
+   "acked_samples": 351232,
+   "acked_rows": 343,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "webm_ct1__term__09.webm",
+   "format": "webm_ct1",
+   "method": "term",
+   "kill_s": 4.838,
+   "acked_samples": 223232,
+   "acked_rows": 218,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_fragpkt__exit__00.m4a",
+   "format": "mp4_fragpkt",
+   "method": "exit",
+   "kill_s": 5.662,
+   "acked_samples": 271360,
+   "acked_rows": 265,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_fragpkt__exit__01.m4a",
+   "format": "mp4_fragpkt",
+   "method": "exit",
+   "kill_s": 2.861,
+   "acked_samples": 137216,
+   "acked_rows": 134,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_fragpkt__exit__02.m4a",
+   "format": "mp4_fragpkt",
+   "method": "exit",
+   "kill_s": 5.225,
+   "acked_samples": 249856,
+   "acked_rows": 244,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_fragpkt__exit__03.m4a",
+   "format": "mp4_fragpkt",
+   "method": "exit",
+   "kill_s": 4.546,
+   "acked_samples": 218112,
+   "acked_rows": 213,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_fragpkt__exit__04.m4a",
+   "format": "mp4_fragpkt",
+   "method": "exit",
+   "kill_s": 1.731,
+   "acked_samples": 82944,
+   "acked_rows": 81,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_fragpkt__exit__05.m4a",
+   "format": "mp4_fragpkt",
+   "method": "exit",
+   "kill_s": 4.461,
+   "acked_samples": 214016,
+   "acked_rows": 209,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_fragpkt__exit__06.m4a",
+   "format": "mp4_fragpkt",
+   "method": "exit",
+   "kill_s": 1.422,
+   "acked_samples": 67584,
+   "acked_rows": 66,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_fragpkt__exit__07.m4a",
+   "format": "mp4_fragpkt",
+   "method": "exit",
+   "kill_s": 6.695,
+   "acked_samples": 320512,
+   "acked_rows": 313,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_fragpkt__exit__08.m4a",
+   "format": "mp4_fragpkt",
+   "method": "exit",
+   "kill_s": 3.945,
+   "acked_samples": 188416,
+   "acked_rows": 184,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_fragpkt__exit__09.m4a",
+   "format": "mp4_fragpkt",
+   "method": "exit",
+   "kill_s": 5.052,
+   "acked_samples": 241664,
+   "acked_rows": 236,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_fragpkt__term__00.m4a",
+   "format": "mp4_fragpkt",
+   "method": "term",
+   "kill_s": 2.685,
+   "acked_samples": 119808,
+   "acked_rows": 117,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_fragpkt__term__01.m4a",
+   "format": "mp4_fragpkt",
+   "method": "term",
+   "kill_s": 4.791,
+   "acked_samples": 220160,
+   "acked_rows": 215,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_fragpkt__term__02.m4a",
+   "format": "mp4_fragpkt",
+   "method": "term",
+   "kill_s": 5.496,
+   "acked_samples": 253952,
+   "acked_rows": 248,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_fragpkt__term__03.m4a",
+   "format": "mp4_fragpkt",
+   "method": "term",
+   "kill_s": 7.465,
+   "acked_samples": 348160,
+   "acked_rows": 340,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_fragpkt__term__04.m4a",
+   "format": "mp4_fragpkt",
+   "method": "term",
+   "kill_s": 6.375,
+   "acked_samples": 295936,
+   "acked_rows": 289,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_fragpkt__term__05.m4a",
+   "format": "mp4_fragpkt",
+   "method": "term",
+   "kill_s": 5.87,
+   "acked_samples": 272384,
+   "acked_rows": 266,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_fragpkt__term__06.m4a",
+   "format": "mp4_fragpkt",
+   "method": "term",
+   "kill_s": 3.398,
+   "acked_samples": 153600,
+   "acked_rows": 150,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_fragpkt__term__07.m4a",
+   "format": "mp4_fragpkt",
+   "method": "term",
+   "kill_s": 1.391,
+   "acked_samples": 57344,
+   "acked_rows": 56,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_fragpkt__term__08.m4a",
+   "format": "mp4_fragpkt",
+   "method": "term",
+   "kill_s": 0.918,
+   "acked_samples": 34816,
+   "acked_rows": 34,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_fragpkt__term__09.m4a",
+   "format": "mp4_fragpkt",
+   "method": "term",
+   "kill_s": 3.836,
+   "acked_samples": 174080,
+   "acked_rows": 170,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_frag100__exit__00.m4a",
+   "format": "mp4_frag100",
+   "method": "exit",
+   "kill_s": 1.598,
+   "acked_samples": 75776,
+   "acked_rows": 74,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_frag100__exit__01.m4a",
+   "format": "mp4_frag100",
+   "method": "exit",
+   "kill_s": 1.914,
+   "acked_samples": 91136,
+   "acked_rows": 89,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_frag100__exit__02.m4a",
+   "format": "mp4_frag100",
+   "method": "exit",
+   "kill_s": 6.942,
+   "acked_samples": 332800,
+   "acked_rows": 325,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_frag100__exit__03.m4a",
+   "format": "mp4_frag100",
+   "method": "exit",
+   "kill_s": 6.388,
+   "acked_samples": 306176,
+   "acked_rows": 299,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_frag100__exit__04.m4a",
+   "format": "mp4_frag100",
+   "method": "exit",
+   "kill_s": 6.212,
+   "acked_samples": 297984,
+   "acked_rows": 291,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_frag100__exit__05.m4a",
+   "format": "mp4_frag100",
+   "method": "exit",
+   "kill_s": 7.13,
+   "acked_samples": 342016,
+   "acked_rows": 334,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_frag100__exit__06.m4a",
+   "format": "mp4_frag100",
+   "method": "exit",
+   "kill_s": 7.813,
+   "acked_samples": 374784,
+   "acked_rows": 366,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_frag100__exit__07.m4a",
+   "format": "mp4_frag100",
+   "method": "exit",
+   "kill_s": 7.644,
+   "acked_samples": 366592,
+   "acked_rows": 358,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_frag100__exit__08.m4a",
+   "format": "mp4_frag100",
+   "method": "exit",
+   "kill_s": 2.597,
+   "acked_samples": 123904,
+   "acked_rows": 121,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_frag100__exit__09.m4a",
+   "format": "mp4_frag100",
+   "method": "exit",
+   "kill_s": 1.957,
+   "acked_samples": 93184,
+   "acked_rows": 91,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_frag100__term__00.m4a",
+   "format": "mp4_frag100",
+   "method": "term",
+   "kill_s": 3.486,
+   "acked_samples": 157696,
+   "acked_rows": 154,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_frag100__term__01.m4a",
+   "format": "mp4_frag100",
+   "method": "term",
+   "kill_s": 5.862,
+   "acked_samples": 271360,
+   "acked_rows": 265,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_frag100__term__02.m4a",
+   "format": "mp4_frag100",
+   "method": "term",
+   "kill_s": 6.841,
+   "acked_samples": 318464,
+   "acked_rows": 311,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_frag100__term__03.m4a",
+   "format": "mp4_frag100",
+   "method": "term",
+   "kill_s": 4.69,
+   "acked_samples": 216064,
+   "acked_rows": 211,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_frag100__term__04.m4a",
+   "format": "mp4_frag100",
+   "method": "term",
+   "kill_s": 4.608,
+   "acked_samples": 211968,
+   "acked_rows": 207,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_frag100__term__05.m4a",
+   "format": "mp4_frag100",
+   "method": "term",
+   "kill_s": 7.482,
+   "acked_samples": 350208,
+   "acked_rows": 342,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_frag100__term__06.m4a",
+   "format": "mp4_frag100",
+   "method": "term",
+   "kill_s": 5.034,
+   "acked_samples": 232448,
+   "acked_rows": 227,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_frag100__term__07.m4a",
+   "format": "mp4_frag100",
+   "method": "term",
+   "kill_s": 5.031,
+   "acked_samples": 232448,
+   "acked_rows": 227,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_frag100__term__08.m4a",
+   "format": "mp4_frag100",
+   "method": "term",
+   "kill_s": 2.387,
+   "acked_samples": 105472,
+   "acked_rows": 103,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_frag100__term__09.m4a",
+   "format": "mp4_frag100",
+   "method": "term",
+   "kill_s": 3.769,
+   "acked_samples": 171008,
+   "acked_rows": 167,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_plain__exit__00.m4a",
+   "format": "mp4_plain",
+   "method": "exit",
+   "kill_s": 6.575,
+   "acked_samples": 315392,
+   "acked_rows": 308,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_plain__exit__01.m4a",
+   "format": "mp4_plain",
+   "method": "exit",
+   "kill_s": 3.777,
+   "acked_samples": 181248,
+   "acked_rows": 177,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_plain__exit__02.m4a",
+   "format": "mp4_plain",
+   "method": "exit",
+   "kill_s": 1.213,
+   "acked_samples": 57344,
+   "acked_rows": 56,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_plain__exit__03.m4a",
+   "format": "mp4_plain",
+   "method": "exit",
+   "kill_s": 3.522,
+   "acked_samples": 168960,
+   "acked_rows": 165,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_plain__exit__04.m4a",
+   "format": "mp4_plain",
+   "method": "exit",
+   "kill_s": 5.118,
+   "acked_samples": 244736,
+   "acked_rows": 239,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_plain__exit__05.m4a",
+   "format": "mp4_plain",
+   "method": "exit",
+   "kill_s": 0.669,
+   "acked_samples": 31744,
+   "acked_rows": 31,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_plain__exit__06.m4a",
+   "format": "mp4_plain",
+   "method": "exit",
+   "kill_s": 2.275,
+   "acked_samples": 108544,
+   "acked_rows": 106,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_plain__exit__07.m4a",
+   "format": "mp4_plain",
+   "method": "exit",
+   "kill_s": 5.938,
+   "acked_samples": 284672,
+   "acked_rows": 278,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_plain__exit__08.m4a",
+   "format": "mp4_plain",
+   "method": "exit",
+   "kill_s": 0.71,
+   "acked_samples": 33792,
+   "acked_rows": 33,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_plain__exit__09.m4a",
+   "format": "mp4_plain",
+   "method": "exit",
+   "kill_s": 7.803,
+   "acked_samples": 373760,
+   "acked_rows": 365,
+   "exitcode": 1,
+   "term_ok": null
+  },
+  {
+   "file": "mp4_plain__term__00.m4a",
+   "format": "mp4_plain",
+   "method": "term",
+   "kill_s": 4.217,
+   "acked_samples": 192512,
+   "acked_rows": 188,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_plain__term__01.m4a",
+   "format": "mp4_plain",
+   "method": "term",
+   "kill_s": 5.348,
+   "acked_samples": 246784,
+   "acked_rows": 241,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_plain__term__02.m4a",
+   "format": "mp4_plain",
+   "method": "term",
+   "kill_s": 4.527,
+   "acked_samples": 207872,
+   "acked_rows": 203,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_plain__term__03.m4a",
+   "format": "mp4_plain",
+   "method": "term",
+   "kill_s": 5.159,
+   "acked_samples": 238592,
+   "acked_rows": 233,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_plain__term__04.m4a",
+   "format": "mp4_plain",
+   "method": "term",
+   "kill_s": 5.636,
+   "acked_samples": 260096,
+   "acked_rows": 254,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_plain__term__05.m4a",
+   "format": "mp4_plain",
+   "method": "term",
+   "kill_s": 0.507,
+   "acked_samples": 14336,
+   "acked_rows": 14,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_plain__term__06.m4a",
+   "format": "mp4_plain",
+   "method": "term",
+   "kill_s": 7.591,
+   "acked_samples": 354304,
+   "acked_rows": 346,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_plain__term__07.m4a",
+   "format": "mp4_plain",
+   "method": "term",
+   "kill_s": 4.961,
+   "acked_samples": 228352,
+   "acked_rows": 223,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_plain__term__08.m4a",
+   "format": "mp4_plain",
+   "method": "term",
+   "kill_s": 3.557,
+   "acked_samples": 160768,
+   "acked_rows": 157,
+   "exitcode": 15,
+   "term_ok": true
+  },
+  {
+   "file": "mp4_plain__term__09.m4a",
+   "format": "mp4_plain",
+   "method": "term",
+   "kill_s": 6.248,
+   "acked_samples": 290816,
+   "acked_rows": 284,
+   "exitcode": 15,
+   "term_ok": true
+  }
+ ],
+ "clean": [
+  {
+   "file": "ogg_pd20__clean.opus",
+   "format": "ogg_pd20",
+   "samples": 480256,
+   "exitcode": 0
+  },
+  {
+   "file": "mka_ct1__clean.mka",
+   "format": "mka_ct1",
+   "samples": 480256,
+   "exitcode": 0
+  },
+  {
+   "file": "webm_ct1__clean.webm",
+   "format": "webm_ct1",
+   "samples": 480256,
+   "exitcode": 0
+  },
+  {
+   "file": "mp4_fragpkt__clean.m4a",
+   "format": "mp4_fragpkt",
+   "samples": 480256,
+   "exitcode": 0
+  },
+  {
+   "file": "mp4_frag100__clean.m4a",
+   "format": "mp4_frag100",
+   "samples": 480256,
+   "exitcode": 0
+  },
+  {
+   "file": "mp4_plain__clean.m4a",
+   "format": "mp4_plain",
+   "samples": 480256,
+   "exitcode": 0
+  },
+  {
+   "file": "wav_pyav__clean.wav",
+   "format": "wav_pyav",
+   "samples": 480256,
+   "exitcode": 0
+  },
+  {
+   "file": "flac_pyav__clean.flac",
+   "format": "flac_pyav",
+   "samples": 480256,
+   "exitcode": 0
+  }
+ ]
+}

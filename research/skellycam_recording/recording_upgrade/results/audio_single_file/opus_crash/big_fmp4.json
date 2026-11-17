@@ -1,0 +1,172 @@
+{
+ "grow": {
+  "fragments_per_copy": 4861248,
+  "copy_untrimmed_samples": 4666798080,
+  "bytes": 5809471008,
+  "s": 7.3
+ },
+ "scale": [
+  {
+   "fragments": 45000,
+   "hours": 0.25,
+   "bytes": 17926118,
+   "ffprobe_s": 1.28,
+   "vlc_open_s": 1.48
+  },
+  {
+   "fragments": 90000,
+   "hours": 0.5,
+   "bytes": 35853004,
+   "ffprobe_s": 2.0,
+   "vlc_open_s": 2.93
+  },
+  {
+   "fragments": 180000,
+   "hours": 1.0,
+   "bytes": 71703479,
+   "ffprobe_s": 3.99,
+   "vlc_open_s": 5.99
+  },
+  {
+   "fragments": 360000,
+   "hours": 2.0,
+   "bytes": 143407755,
+   "ffprobe_s": 8.76,
+   "vlc_open_s": 12.77
+  },
+  {
+   "fragments": 720000,
+   "hours": 4.0,
+   "bytes": 286815925,
+   "ffprobe_s": 16.86,
+   "vlc_open_s": 26.33
+  }
+ ],
+ "frag1s_write": {
+  "hours": 6,
+  "bytes": 320645758,
+  "s": 87.4
+ },
+ "frag1s_grow": {
+  "copies": 14,
+  "fragments_per_copy": 21601,
+  "copy_untrimmed_samples": 1036800312,
+  "bytes": 4483285065,
+  "s": 2.8
+ },
+ "frag1s_x14": {
+  "struct": {
+   "boxes": 604830,
+   "boxes_past_4GiB": 25406,
+   "walk_end": 4483285065,
+   "file": 4483285065,
+   "last": [
+    [
+     "moof",
+     4483284391,
+     100
+    ],
+    [
+     "mdat",
+     4483284491,
+     574
+    ]
+   ],
+   "last_tfdt_version": 1,
+   "last_tfdt": 14515204056,
+   "last_tfdt_over_2_32": true
+  },
+  "moofs_past_4GiB": 12703,
+  "ffprobe_duration": "302400.091000",
+  "ffprobe_s": 9.47,
+  "target": 14513763933,
+  "target_h": 83.99,
+  "ref_in_copy1": 1035359877,
+  "pyav_seek": {
+   "open_s": 8.593,
+   "seek_decode_s": 8.633,
+   "first_pts": 14513753808,
+   "landed": 1035359565,
+   "error_samples": -312,
+   "timeline_error_samples": -312,
+   "jump_at_output_sample": 0,
+   "silence_after_jump": 0,
+   "convergence_samples": 0,
+   "lag_post": 575688,
+   "lag_pre": null,
+   "peak": 0.885,
+   "gain": 0.807
+  },
+  "vlc_start_time": {
+   "rc": 0,
+   "wall_s": 3.08,
+   "samples": 60480,
+   "landed": 1035359693,
+   "error_samples": -184,
+   "timeline_error_samples": -184,
+   "jump_at_output_sample": 5,
+   "silence_after_jump": 0,
+   "convergence_samples": 0,
+   "lag_post": 575811,
+   "lag_pre": null,
+   "peak": 0.888,
+   "gain": 0.808
+  },
+  "vlc_open_s": 2.9,
+  "mfra": {
+   "bytes": 5745914,
+   "max_moof_offset": 4483284391,
+   "pyav_seek": {
+    "open_s": 8.816,
+    "seek_decode_s": 8.859,
+    "first_pts": 14513753808,
+    "landed": 1035359565,
+    "error_samples": -312,
+    "timeline_error_samples": -312,
+    "jump_at_output_sample": 0,
+    "silence_after_jump": 0,
+    "convergence_samples": 0,
+    "lag_post": 575688,
+    "lag_pre": null,
+    "peak": 0.885,
+    "gain": 0.807
+   }
+  },
+  "remux": {
+   "rc": 0,
+   "stderr": "",
+   "s": 1445.9,
+   "s_per_gb": 322.52,
+   "bytes": 4450699159,
+   "co64": true,
+   "stco": false,
+   "pyav_seek": {
+    "open_s": 0.476,
+    "seek_decode_s": 0.503,
+    "first_pts": 14513753808,
+    "landed": 1035359565,
+    "error_samples": -312,
+    "timeline_error_samples": -312,
+    "jump_at_output_sample": 0,
+    "silence_after_jump": 0,
+    "convergence_samples": 0,
+    "lag_post": 575688,
+    "lag_pre": null,
+    "peak": 0.885,
+    "gain": 0.807
+   }
+  }
+ },
+ "check_aborted": {
+  "note": "big_fmp4.py check on the killed 25.8 h per-packet file (fragpkt__big.m4a, 1,936,490,798 B, 4,861,248 fragments) and the x3 file was stopped at 10:56 local; nothing it measured was written. Observed by hand during the run:",
+  "timeline_local": [
+   "10:06:53 check started (walk, ffprobe, 3 PyAV seeks)",
+   "10:34:31 first VLC --start-time run started (the steps before it took ~28 min)",
+   "VLC process for that run: 4,152 MB working set, 110 s CPU at 10:35",
+   "10:45:31 ffmpeg -c copy -f mp4 remux started",
+   "10:55 remux: 589 s CPU, 1,075 MB working set, output file still 0 bytes; stopped"
+  ],
+  "x3_file": "fragpkt__big_x3.m4a (5,809,471,008 B, 14.6 M fragments, built by grow in 7.3 s) was never checked and was deleted"
+ },
+ "media_deleted": "fragpkt__big.m4a, fragpkt__big_x3.m4a, frag1s.m4a, frag1s_x14.m4a deleted after the run (rebuildable with write/grow/frag1s)"
+}
