@@ -22,8 +22,9 @@ Linux and macOS have had no hardware run.
 
 - **Repos.** This plan covers skellycam only. FreeMoCap is updated on a new branch by a separate session in
   the freemocap repo. skellycam gives that session an interface note after phase 4 (§9).
-- **No backwards compatibility.** The ring carries JPEG only. There is no BGR ring mode, no legacy read call,
-  no decode helper. FreeMoCap decodes JPEG itself, on the GPU, and keeps frames in VRAM for skellytracker.
+- **No backwards compatibility.** There is no legacy read call. Every camera has a JPEG ring; a BGR ring
+  exists only when the consumer asks for it [D 2026-11-18, replaces "the ring carries JPEG only, no BGR ring
+  mode, no decode helper"; see §4]. FreeMoCap takes JPEG or BGR, whichever is the camera's native format.
   The old frontend-payload calls and BGR `put_frame` are deleted. D26 (2026-11-12) stands: freemocap does not
   use this skellycam until its own branch is ready.
 - **Base.** A new branch in Dom's fork, in a new worktree, based on `upstream/development-streaming`. Nothing
@@ -92,8 +93,16 @@ It replaces the five current shared-memory classes (nine shared-memory segments 
   slot is flagged oversize and a counter goes up. The ring also carries the driver's error flag.
 - **Self-check** [D]. skellycam logs each camera's largest frame as a fraction of its slot, warns above 50 %,
   and shows the oversize count in the UI.
-- **History** [D]: about 3 seconds per camera, as a setting. At 720p60 that is 180 slots, about 159 MiB of
-  address space per camera, against 1 GiB today. The freemocap session says if GPU inference needs more.
+- **History** [D 2026-11-18, replaces "about 3 seconds"]: 1 second by default, one setting for both rings. At
+  720p60 that is 60 slots, about 53 MiB per camera for the JPEG ring, against 1 GiB today. FreeMoCap treats a
+  lapped read as a skip and counts its lapped reads, which checks the default against real pipelines.
+- **BGR ring on request** [D 2026-11-18]. The consumer can ask, per camera and at session start, for a second
+  ring of BGR 24-bit frames (158 MiB at 720p60 for 1 s). It is never on by default. For an MJPG mode the
+  frames are decoded with `cv2.imdecode` in their own thread, after the recorder queue and the JPEG ring; if
+  the decode falls behind, the BGR ring skips frames and capture is not delayed. For an uncompressed mode the
+  BGR ring needs a colour conversion only. skellycam lists each camera mode with its format, so the consumer
+  can tell which cameras are natively uncompressed. The full decision table and the evidence are in the
+  design notes ("Two rings per camera"). The decode stage is built only after Dom's approval and guidance.
 - **Torn and lapped reads** [D]. Every reader copies the frame out, then checks a CRC-32 of the header and of
   the JPEG against the values the writer stored. One read path on all three OSes; no Intel-only fast path.
   Measured cost: 53 to 71 µs for a 210 kB frame on Python 3.12 [M, scratch benchmark]. The Apple Silicon
@@ -192,7 +201,10 @@ and `usb_cameras/suite/macos/RUNBOOK_PLAN.md`. Neither preset has run on hardwar
 
 It will state: how to attach to a camera's ring; the frame header fields; the three lookups and the read
 results; that frames are JPEG and unrotated, with a rotation value; the UI websocket message layout; and the
-recording folder (by reference to the skellyfileformat spec).
+recording folder (by reference to the skellyfileformat spec). From 2026-11-18 it also states: the mode list
+with each mode's format; how to ask for a camera's BGR ring; that both rings share frame numbers; that a
+"lapped" read is a normal result which every reader path handles as a skip; and that FreeMoCap counts and
+logs its lapped reads.
 
 What FreeMoCap reads today [C]: `CameraSharedMemoryRingBuffer.get_data_by_index(index=, rec_array=)` in two
 worker types, taking `.image[0]` as a BGR array, plus `latest_multiframe_number` and `valid` in a third; and
@@ -278,7 +290,17 @@ to its own UI unopened. All of these go away.
   9. `react-resizable-panels` warns that the layout sizes add up to 84 %.
   Not tested: playback and every page other than the cameras page; the packaged build; CI.
 
+- 2026-11-18 [D], grilling session on mixed-format rings: "the ring carries JPEG only" and "about 3 seconds of
+  history" are replaced. Every camera has a JPEG ring; a BGR 24-bit ring exists on request only; history is
+  1 second by default; the decoder is `cv2.imdecode` (benchmark in `frame_ring_buffer/decode_bench/`); H.264
+  modes are listed but never selected. §2, §4 and §9 are edited in place; the decision table is in
+  `frame_ring_buffer/docs/jpeg_ring_design_notes_20261117.md`, "Two rings per camera". Nothing is built: the
+  decode stage waits for Dom's approval and guidance.
+
 ## 13. State at the end of 2026-11-17 (read this first when resuming)
+
+Changed on 2026-11-18: the ring decisions (two rings per camera, 1 second of history). See the last entry of
+§12. Not committed.
 
 **Phase 1 is done except for the items under "Waiting on Dom".** Phase 2 (the ring spec and test list) has
 not started.

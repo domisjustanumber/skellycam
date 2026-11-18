@@ -1,0 +1,391 @@
+{
+ "info": {
+  "cpu": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+  "logical_cores": 28,
+  "pre_run_cpu_percent": 9.8,
+  "versions": {
+   "python": "3.13.18",
+   "numpy": "2.5.5",
+   "opencv": "5.1.0",
+   "av": "19.0.2",
+   "simplejpeg": "1.9.0",
+   "PyTurboJPEG": "2.6.1",
+   "pillow": "13.0.0",
+   "turbojpeg_dll": "turbojpeg.dll"
+  }
+ },
+ "dropped_frames": [
+  "generic_1920x1080_max.jpg",
+  "generic_1920x1080_median.jpg"
+ ],
+ "frames": {
+  "1280x720": [
+   {
+    "frame": "C922_max",
+    "bytes": 263745,
+    "subsampling": "4:2:2"
+   },
+   {
+    "frame": "C922_median",
+    "bytes": 142536,
+    "subsampling": "4:2:2"
+   },
+   {
+    "frame": "C930e_max",
+    "bytes": 156448,
+    "subsampling": "4:2:2"
+   },
+   {
+    "frame": "C930e_median",
+    "bytes": 99469,
+    "subsampling": "4:2:2"
+   },
+   {
+    "frame": "KiyoPro_max",
+    "bytes": 276269,
+    "subsampling": "4:2:0"
+   },
+   {
+    "frame": "KiyoPro_median",
+    "bytes": 144432,
+    "subsampling": "4:2:0"
+   },
+   {
+    "frame": "generic_max",
+    "bytes": 114583,
+    "subsampling": "4:2:2"
+   },
+   {
+    "frame": "generic_median",
+    "bytes": 74922,
+    "subsampling": "4:2:2"
+   }
+  ],
+  "1920x1080": [
+   {
+    "frame": "C922_max",
+    "bytes": 199138,
+    "subsampling": "4:2:2"
+   },
+   {
+    "frame": "C922_median",
+    "bytes": 196849,
+    "subsampling": "4:2:2"
+   },
+   {
+    "frame": "C930e_max",
+    "bytes": 180089,
+    "subsampling": "4:2:2"
+   },
+   {
+    "frame": "C930e_median",
+    "bytes": 144378,
+    "subsampling": "4:2:2"
+   },
+   {
+    "frame": "KiyoPro_max",
+    "bytes": 386468,
+    "subsampling": "4:2:0"
+   },
+   {
+    "frame": "KiyoPro_median",
+    "bytes": 329843,
+    "subsampling": "4:2:0"
+   }
+  ]
+ },
+ "single": {
+  "1280x720": {
+   "cv2_1thread": {
+    "median": 2.59945,
+    "p95": 3.39378,
+    "p99": 3.507246,
+    "max": 3.628,
+    "fps_per_core": 370.42747793988605
+   },
+   "cv2_default": {
+    "median": 2.64075,
+    "p95": 3.423915,
+    "p99": 3.5545459999999998,
+    "max": 3.7976,
+    "fps_per_core": 364.9690980664667
+   },
+   "turbo": {
+    "median": 2.10695,
+    "p95": 2.94541,
+    "p99": 3.0906519999999995,
+    "max": 3.2813,
+    "fps_per_core": 452.78284297140095
+   },
+   "turbo_fast": {
+    "median": 1.9035000000000002,
+    "p95": 2.7358199999999995,
+    "p99": 3.0321579999999995,
+    "max": 3.2216,
+    "fps_per_core": 496.87070827925714
+   },
+   "turbo_fastdct": {
+    "median": 2.03355,
+    "p95": 2.859455,
+    "p99": 2.993216,
+    "max": 3.123,
+    "fps_per_core": 467.78116308406715
+   },
+   "turbo_fastup": {
+    "median": 1.9935,
+    "p95": 2.82682,
+    "p99": 2.899412999999999,
+    "max": 3.3097,
+    "fps_per_core": 481.76559381885113
+   },
+   "turbo_yuv_only": {
+    "median": 1.77255,
+    "p95": 2.623605,
+    "p99": 2.712523,
+    "max": 3.3284,
+    "fps_per_core": 538.5856203025236
+   },
+   "simplejpeg": {
+    "median": 2.0998,
+    "p95": 2.89173,
+    "p99": 2.918996,
+    "max": 3.4153,
+    "fps_per_core": 454.9552761902682
+   },
+   "simplejpeg_fast": {
+    "median": 1.8729,
+    "p95": 2.64885,
+    "p99": 2.699663,
+    "max": 2.7326,
+    "fps_per_core": 509.8232748600025
+   },
+   "pillow": {
+    "median": 6.7379999999999995,
+    "p95": 7.715324999999999,
+    "p99": 8.146657,
+    "max": 9.4576,
+    "fps_per_core": 147.1408383180051
+   },
+   "pyav": {
+    "median": 2.4946,
+    "p95": 5.17491,
+    "p99": 5.454047,
+    "max": 5.681,
+    "fps_per_core": 330.2396483079841
+   },
+   "pyav_decode_only": {
+    "median": 1.94885,
+    "p95": 3.149605,
+    "p99": 3.277195,
+    "max": 3.5408,
+    "fps_per_core": 472.82273993685453
+   }
+  },
+  "1920x1080": {
+   "cv2_1thread": {
+    "median": 5.424950000000001,
+    "p95": 6.118705,
+    "p99": 6.419455999999999,
+    "max": 7.4185,
+    "fps_per_core": 184.28692294466174
+   },
+   "cv2_default": {
+    "median": 5.4186499999999995,
+    "p95": 6.09244,
+    "p99": 6.227901999999999,
+    "max": 8.0616,
+    "fps_per_core": 184.8618652063072
+   },
+   "turbo": {
+    "median": 4.17005,
+    "p95": 4.833234999999999,
+    "p99": 4.980753,
+    "max": 5.4687,
+    "fps_per_core": 241.8877354270652
+   },
+   "turbo_fast": {
+    "median": 3.6465,
+    "p95": 4.3001499999999995,
+    "p99": 4.508623999999999,
+    "max": 4.5939,
+    "fps_per_core": 275.1005337706881
+   },
+   "turbo_fastdct": {
+    "median": 3.96155,
+    "p95": 4.669555,
+    "p99": 4.819756,
+    "max": 5.7322,
+    "fps_per_core": 254.49560117078155
+   },
+   "turbo_fastup": {
+    "median": 3.92855,
+    "p95": 4.5342649999999995,
+    "p99": 4.692684999999999,
+    "max": 5.3944,
+    "fps_per_core": 258.05947148258974
+   },
+   "turbo_yuv_only": {
+    "median": 3.4216499999999996,
+    "p95": 4.124289999999999,
+    "p99": 4.475611999999999,
+    "max": 5.4659,
+    "fps_per_core": 293.9304177052514
+   },
+   "simplejpeg": {
+    "median": 4.151199999999999,
+    "p95": 4.83564,
+    "p99": 5.020312,
+    "max": 5.5247,
+    "fps_per_core": 241.91428710702084
+   },
+   "simplejpeg_fast": {
+    "median": 3.7764499999999996,
+    "p95": 4.8687249999999995,
+    "p99": 5.653633,
+    "max": 5.8781,
+    "fps_per_core": 259.92575220888153
+   },
+   "pillow": {
+    "median": 14.43295,
+    "p95": 15.67746,
+    "p99": 16.184150000000002,
+    "max": 16.3808,
+    "fps_per_core": 69.1002233612895
+   },
+   "pyav": {
+    "median": 4.4261,
+    "p95": 7.652559999999999,
+    "p99": 8.054267,
+    "max": 8.2761,
+    "fps_per_core": 198.32072914202638
+   },
+   "pyav_decode_only": {
+    "median": 3.77965,
+    "p95": 5.32207,
+    "p99": 5.4645220000000005,
+    "max": 6.3343,
+    "fps_per_core": 257.83648886520234
+   }
+  }
+ },
+ "validation": {
+  "1280x720": {
+   "cv2_1thread": {
+    "mean_abs_diff_max_over_frames": 0.0
+   },
+   "cv2_default": {
+    "mean_abs_diff_max_over_frames": 0.0
+   },
+   "turbo": {
+    "mean_abs_diff_max_over_frames": 0.0
+   },
+   "turbo_fast": {
+    "mean_abs_diff_max_over_frames": 1.3120844184027778
+   },
+   "turbo_fastdct": {
+    "mean_abs_diff_max_over_frames": 1.0210221354166666
+   },
+   "turbo_fastup": {
+    "mean_abs_diff_max_over_frames": 0.7072612847222223
+   },
+   "simplejpeg": {
+    "mean_abs_diff_max_over_frames": 0.0
+   },
+   "simplejpeg_fast": {
+    "mean_abs_diff_max_over_frames": 1.3120844184027778
+   },
+   "pillow": {
+    "mean_abs_diff_max_over_frames": 0.0
+   },
+   "pyav": {
+    "mean_abs_diff_max_over_frames": 1.1185051359953704
+   }
+  },
+  "1920x1080": {
+   "cv2_1thread": {
+    "mean_abs_diff_max_over_frames": 0.0
+   },
+   "cv2_default": {
+    "mean_abs_diff_max_over_frames": 0.0
+   },
+   "turbo": {
+    "mean_abs_diff_max_over_frames": 0.0
+   },
+   "turbo_fast": {
+    "mean_abs_diff_max_over_frames": 1.0400048225308642
+   },
+   "turbo_fastdct": {
+    "mean_abs_diff_max_over_frames": 1.021202739197531
+   },
+   "turbo_fastup": {
+    "mean_abs_diff_max_over_frames": 0.0935471322016461
+   },
+   "simplejpeg": {
+    "mean_abs_diff_max_over_frames": 0.0
+   },
+   "simplejpeg_fast": {
+    "mean_abs_diff_max_over_frames": 1.0400048225308642
+   },
+   "pillow": {
+    "mean_abs_diff_max_over_frames": 0.0
+   },
+   "pyav": {
+    "mean_abs_diff_max_over_frames": 0.7118632651748971
+   }
+  }
+ },
+ "concurrent": {
+  "1280x720": {
+   "cv2_1thread": {
+    "per_proc_median_ms": 3.174975,
+    "per_proc_p99_ms_worst": 5.702393,
+    "per_proc_p99_ms_median": 5.209941499999999,
+    "fps_per_proc": 296.41861050603285
+   },
+   "turbo": {
+    "per_proc_median_ms": 2.3194,
+    "per_proc_p99_ms_worst": 4.21506,
+    "per_proc_p99_ms_median": 4.1639955,
+    "fps_per_proc": 400.98992727225885
+   },
+   "turbo_fast": {
+    "per_proc_median_ms": 2.0966500000000003,
+    "per_proc_p99_ms_worst": 3.8218449999999997,
+    "per_proc_p99_ms_median": 3.5294999999999996,
+    "fps_per_proc": 449.8569039418718
+   },
+   "simplejpeg_fast": {
+    "per_proc_median_ms": 2.268025,
+    "per_proc_p99_ms_worst": 4.186336999999998,
+    "per_proc_p99_ms_median": 3.8481615,
+    "fps_per_proc": 420.97410790523963
+   }
+  },
+  "1920x1080": {
+   "cv2_1thread": {
+    "per_proc_median_ms": 7.11365,
+    "per_proc_p99_ms_worst": 10.932636999999998,
+    "per_proc_p99_ms_median": 10.383329999999999,
+    "fps_per_proc": 137.5420593295824
+   },
+   "turbo": {
+    "per_proc_median_ms": 4.4665,
+    "per_proc_p99_ms_worst": 7.475565,
+    "per_proc_p99_ms_median": 7.032205999999999,
+    "fps_per_proc": 218.80859882454854
+   },
+   "turbo_fast": {
+    "per_proc_median_ms": 4.053775,
+    "per_proc_p99_ms_worst": 5.96169,
+    "per_proc_p99_ms_median": 5.8656334999999995,
+    "fps_per_proc": 243.5444309171762
+   },
+   "simplejpeg_fast": {
+    "per_proc_median_ms": 3.8834,
+    "per_proc_p99_ms_worst": 5.8283689999999995,
+    "per_proc_p99_ms_median": 5.655849999999999,
+    "fps_per_proc": 253.25298023122912
+   }
+  }
+ }
+}
