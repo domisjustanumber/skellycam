@@ -24,7 +24,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   Run the timed and kill tests with `-m ring_slow`. `SKELLYCAM_RING_FULL=1` gives the durations of
   the spec, for example 60 s for T-RING-08. The tests use the API of
   [ADR-9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md). The user
-  decides that entry. Then step 2a writes the code. Before step 2a keeps the change of the
+  accepted that entry and five clarifications of the spec (items 52 to 56) on 2026-11-18. Next,
+  step 2a writes the code. Before step 2a keeps the change of the
   10 µs wait of the OpenCV loop (item 45), it compares the frame timing before and after the change
   on the four test cameras. It keeps the change only if the grab timing is not worse. Phase 2 makes
   the measurements M1 to M8 of section 11.3 before it fixes a performance number. The build of step

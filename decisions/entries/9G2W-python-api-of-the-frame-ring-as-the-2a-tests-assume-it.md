@@ -1,13 +1,13 @@
-# 9G2W — Python API of the frame ring, as the 2a tests assume it
+# 9G2W — Python API of the frame ring, as the 2a tests assume it; five clarifications of the spec
 
-**Status:** proposed, 2026-11-18 (agent; waits for the user).
+**Status:** accepted, 2026-11-18 (user; commit to dom/native-jpeg; was proposed, 2026-11-18 (agent)).
 
 ## Decision
 
 [ADR-50G8](50G8-phase-2-frame-ring-spec.md) accepts [`specs/frame-ring.md`](../../specs/frame-ring.md).
 The spec does not give each Python signature. The failing tests of step 2a in
-`skellycam/tests/frame_ring/` use the signatures below. An agent chose them. The user has not
-decided them. Each name is in `skellycam.core.ipc.frame_ring`, except items 13 to 15.
+`skellycam/tests/frame_ring/` use the signatures below. An agent chose them. The user accepted all
+16 items on 2026-11-18. Each name is in `skellycam.core.ipc.frame_ring`, except items 13 to 15.
 
 1. `FrameRingCreator.create(*, camera_id, camera_index, pixel_format, width, height, fps_num,
    fps_den, history_s=1.0, generation=0)`. It has `name` and `total_size`. It writes
@@ -50,6 +50,20 @@ decided them. Each name is in `skellycam.core.ipc.frame_ring`, except items 13 t
 16. A size in a log line or an error message is `n` or `f"{n:,}"` bytes and
     `f"{n / 2**20:.1f} MiB"`. The largest-payload line holds the fraction as `0.60` or `60 %`.
 
+The user also decided five clarifications of the spec on 2026-11-18. Section 14 of the spec lists
+them as items 52 to 56:
+
+1. Unknown frame rate: the slot count uses 60 (3.7). The ring header holds `fps_num = 0` and
+   `fps_den = 1`, which means "unknown".
+2. A skipped frame number that a reader asks for before the ring has wrapped one time reads as
+   `LAPPED`, not `MISSING` (R7: the slot still holds -1). This behaviour is accepted.
+3. The generation in a ring name counts up per skellycam process, not per session. A name is never
+   used again while the app runs.
+4. The first frame of a new ring does not get `DISCONTINUITY`.
+5. Step 2a does not delete `core/types/frontend_payload_bytearray.py`. The file keeps only the
+   wire-format types that the interim relay (item 4 of the spec) needs. Its resize and encode
+   functions are deleted.
+
 ## Reason
 
 - The tests must fix one signature for each call that they make. The user decides the API
@@ -60,6 +74,9 @@ decided them. Each name is in `skellycam.core.ipc.frame_ring`, except items 13 t
   readers count their own results.
 - Items 13 to 15 are the seams that T-RING-25 to 27, T-RING-23, T-RING-31 and T-RING-33 need
   outside the ring package.
+- The clarifications fix five points that the tests or the code must decide and that the spec left
+  open. This entry holds them because its commits are not pushed (Rules of the index), and items 1
+  to 4 are behaviour that the 2a tests assume.
 
 ## Alternatives rejected
 

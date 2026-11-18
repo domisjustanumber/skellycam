@@ -17,7 +17,8 @@ Marks:
   citation of a line cites that row.
 - **[An]**: the draft of this spec proposed item n, and the user accepted it on 2026-11-18.
   Section 14, item n, gives each accepted item again. The draft used the mark `[Pn]` with the same
-  number.
+  number. Items 52 to 56 are clarifications that the user decided on 2026-11-18, after the first 51
+  ([ADR-9G2W](../decisions/entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md)).
 - **[M file]**: measured. The file holds the result. Each such file is on branch `dom/research` at
   commit 04322eace of this repository. **[NV]**: not verified.
 
@@ -88,11 +89,12 @@ The callers come from branch `dom/native-jpeg`, read on 2026-11-18.
 | `CameraSharedMemoryRingBuffer` (`camera_shared_memory_ring_buffer.py`): `from_config`, `put_frame`, `retrieve_latest_frame`, `retrieve_next_frame`, `latest_frame_number` | `CameraGroupSharedMemory`; `opencv_camera_loop.run_opencv_camera_loop` (`put_frame`, line 103); `setup_opencv_camera_loop` (`recreate`, line 49); `opencv_camera_worker_method` (type); FreeMoCap (`get_data_by_index`, `.image[0]`) [P:213] | Writer in the camera process; readers in consumers. |
 | `CameraGroupSharedMemory`, `CameraGroupSharedMemoryDTO` (`camera_group_shared_memory.py`): `create`, `recreate`, `get_latest_multiframe`, `get_images_by_frame_number`, `latest_multiframe_number`, `valid`, `unlink_and_close` | `CameraGroup.start` (line 121), `.close` (line 275), `.get_latest_frames` (line 137), `.get_frontend_payload_by_frame_number` (lines 164-166); `CameraGroupIPC.publish_shm_message`; `pubsub_topics.SetShmMessage`; FreeMoCap (`latest_multiframe_number`, `valid`) [P:213-216] | Per-camera ring info (section 9) and a dict of ring creators that `CameraGroup` holds [A32, A34]. |
 | `SetShmMessage.camera_group_shm_dto`, `get_shm_dto_by_camera_id` (`core/ipc/pubsub/pubsub_topics.py`) | `CameraGroupIPC.publish_shm_message`; `setup_opencv_camera_loop` (lines 39-50) | The same topic carries a dict of `CameraRingInfo` by camera id [A34]. |
-| `frontend_payload_bytearray.py`: `create_frontend_payload`, `encode_image_payload`, `ImagePayloadFrame`, `ImagePayloadRequest`, `JPEG_ENCODING_PARAMETERS` (quality 60) | `CameraGroup.get_latest_frontend_payload`, `.get_frontend_payload_by_frame_number`; `CameraGroupManager.get_latest_frontend_payloads`; `websocket_server._frontend_image_relay`; FreeMoCap [P:214] | Phase 4. Until then, the interim relay [A4]. |
+| `core/types/frontend_payload_bytearray.py`: only `create_frontend_payload`, `encode_image_payload`, `ImagePayloadFrame`, `ImagePayloadRequest`, `JPEG_ENCODING_PARAMETERS` (quality 60): the resize and encode code. The file stays with the wire-format types (`MessageType`, `FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE`, `FRONTEND_FRAME_HEADER_DTYPE`) that the interim relay needs [A4, A56]. | `CameraGroup.get_latest_frontend_payload`, `.get_frontend_payload_by_frame_number`; `CameraGroupManager.get_latest_frontend_payloads`; `websocket_server._frontend_image_relay`; FreeMoCap [P:214] | Phase 4. Until then, the interim relay [A4]. |
 | `CameraGroup.get_latest_frames`, `.get_latest_frontend_payload`, `.get_frontend_payload_by_frame_number` | `CameraGroupManager.get_latest_frontend_payloads`, `.get_latest_performance_data` (`api/websocket/performance_data.extract_performance_data_from_frames`) | Interim relay [A4]; performance page from slot-header times [A5]. |
 | `system/diagnostics/check_shm_speed.py` | none (a script) | Deleted. |
 
-Step 2a deletes about 1,000 lines: 318 + 59 + 168 + 218 + 77 + 159.
+Step 2a deletes about 950 lines: 318 + 59 + 168 + 218 + 77, and about 110 of the 159 lines of
+`frontend_payload_bytearray.py` [A56].
 
 Tests that change in 2a [A1]:
 
@@ -263,7 +265,8 @@ The largest real frames that were measured fill 0.29 of the slot at 720p and 108
   [D N:33-34].
 - `slot_count = max(2, ceil(history_s x fps))`. `fps` is the frame rate of the opened mode. If
   capture reports no frame rate (for example the OpenCV "auto" value -1), skellycam uses 60 and
-  logs it [A11].
+  logs it [A11]. Then the ring header holds `fps_num = 0` and `fps_den = 1`, which means "unknown"
+  [A52].
 
 ### 3.8 Total size
 
@@ -328,6 +331,8 @@ The writer sets `DISCONTINUITY` on the first frame after these events:
 
 - a rotation change between upright (0, 180) and sideways (90, 270) [D N:74];
 - a switch to `cv2.imencode` after an encoder failure (phase 3) [D N:82].
+
+The first frame of a new ring does not get `DISCONTINUITY` [A55].
 
 A BGR slot copies `DISCONTINUITY` and the error flags of its JPEG frame [A15].
 
@@ -475,6 +480,9 @@ The wording of the rule comes from the details of the 2026-10-28 study (N:228-23
 | R12 | Check `payload_crc32` over that object. | retry rule |
 | R13 | Return the header fields and the object. | `OK` |
 
+A skipped frame number that a reader asks for before the ring has wrapped one time reads as
+`LAPPED`, not `MISSING`, because its slot still holds -1 (R7). This behaviour is accepted [A53].
+
 `head` is only a hint. A stale, early or torn `head` can only cause `NOT_YET_WRITTEN`, `LAPPED`,
 `MISSING` or a retry. It can never make the reader accept wrong bytes, because R5, R6/R7 and R12
 check the private copy.
@@ -557,7 +565,8 @@ rotation per frame, and the oversize count in the header.
 
 - Format: `skc<creator pid, hex>_<camera index>_<J|B><generation>`, for example `skc1a2f3c_3_J0`.
 - The generation increases by one each time that the ring of a camera is recreated in the same
-  process.
+  process. It counts up per skellycam process, not per session. Thus a name is never used again
+  while the app runs [A54].
 - At most 30 characters. macOS limits a POSIX shared-memory name to 31 bytes, including the leading
   slash [NV]. For this reason, the default names of Python have 14 characters.
 - The prefix lets the Linux sweep (7.7) find stale rings.
@@ -949,7 +958,7 @@ Conflicts between the sources, and how this spec resolves them:
 
 ## 14. Accepted decisions
 
-The user accepted these 51 items on 2026-11-18. The user accepted items 3, 4, 17, 18, 23, 26, 27,
+The user accepted items 1 to 51 on 2026-11-18. The user accepted items 3, 4, 17, 18, 23, 26, 27,
 29, 32, 36, 37, 42 and 45 one by one. The user accepted items 1, 2, 5 to 16, 19 to 22, 24, 25, 28,
 30, 31, 33 to 35, 38 to 41, 43, 44 and 46 to 51 in bulk. Each item accepted in bulk can be reopened
 when the tests are written. Item 45 has a condition. The acceptance of items 39 to 45 and of the 2b
@@ -1063,3 +1072,18 @@ parts of other items is not an approval to build step 2b (section 8).
 49. Phase 2 makes measurements M1 to M8 before it fixes a performance number.
 50. The pass thresholds in the test table of section 12.
 51. The arm64 CI run uses the `ubuntu-24.04-arm` runner of GitHub, pinned by exact label.
+
+The user accepted items 52 to 56 on 2026-11-18, after the first 51. They are clarifications
+([ADR-9G2W](../decisions/entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md)).
+
+52. Unknown frame rate: the slot count uses 60 (item 11). The ring header then holds `fps_num = 0`
+    and `fps_den = 1`, which means "unknown".
+53. A skipped frame number that a reader asks for before the ring has wrapped one time reads as
+    `LAPPED`, not `MISSING`. This behaviour is accepted.
+54. The generation in a ring name counts up per skellycam process, not per session. A name is never
+    used again while the app runs.
+55. The first frame of a new ring does not get `DISCONTINUITY`.
+56. Step 2a does not delete `core/types/frontend_payload_bytearray.py`. The file keeps only the
+    wire-format types that the interim relay (item 4) needs. Its resize and encode functions are
+    deleted. This corrects the count of six modules in item 1 and section 2.1 to five modules and
+    a part of this file.
