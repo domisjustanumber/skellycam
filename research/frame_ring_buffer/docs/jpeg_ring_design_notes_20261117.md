@@ -82,7 +82,8 @@ Details decided later the same day (rounds 7 to 12 of the grilling) [D]:
 | Encoder check | The main skellycam process checks once per app run, by encoding one small test frame, and only if a camera of the session is in an uncompressed mode. The camera processes are told the result. A camera whose own encoder does not open, or fails during a take, uses `cv2.imencode` from then on; the frames the encoder still held are re-encoded from the raw frames, which the process keeps until their JPEG has come out. The event is counted, logged and flagged `DISCONTINUITY`. |
 | Encoder settings | Quality 90 by default, one setting passed to both encoders. Chroma layout of the source (4:2:2 from YUY2, 4:2:0 from NV12). `IMWRITE_JPEG_OPTIMIZE` off. Quick Sync `async_depth` 2 (one frame held). |
 | Conversion to BGR | With Quick Sync: only when the BGR ring was requested, as ring work that may be skipped. With `cv2.imencode`: on the recorder's path for every frame, because that encoder takes BGR. |
-| Input range | Read per mode from the operating system; limited range is assumed if it does not say. The JPEG is always full range: for limited-range input Quick Sync gets a range-expanding table first and `cv2` converts as it does by default; for full-range input Quick Sync gets the frame unchanged and `cv2` uses a full-range conversion. The range of the test cameras' YUY2 modes is measured before the spec fixes this. |
+| Input range | The operating system's range flag is not trusted: it was wrong for two of the four test cameras (`../yuy2_range/FINDINGS.md`). Each camera has a range setting for uncompressed modes: `auto` (default), `limited` or `full`. `auto` starts from the flag (limited if not set); during the frames discarded at camera start skellycam counts the Y values outside 16 to 235, and if more than 1 % are outside, the camera is treated as full range. The decision is made once, before the first recorded frame, and never changes in a session. The range used is written to the recording's capture info. No table of camera models. The JPEG is always full range: for limited-range input Quick Sync gets a range-expanding table first and `cv2` converts as it does by default; for full-range input Quick Sync gets the frame unchanged and `cv2` uses a full-range conversion. |
+| Mode list labels | No "not recommended" label on uncompressed modes (Dom: the range check covers it, and many USB cameras report wrong flags). |
 | Too-large request | The total shared memory is always logged. If an allocation fails, the session does not start, and the message names the total size. No automatic shortening of the history. |
 | Tests | The JPEG ring suite runs again with BGR payloads (laps, torn reads, CRC, find by time). New: a slow decode skips BGR frames and delays neither capture nor the JPEG ring; a flagged JPEG frame gives a flagged BGR slot with no pixels and the decoder is not called; each BGR frame has its JPEG frame's number and capture times; a JPEG that fails to decode sets `DECODE_ERROR` and the counter. Also a rule with a test: no thread in the camera process spins. |
 | Huffman tables | Q78 stands: inserted at capture when a frame has none. |
@@ -101,7 +102,13 @@ Evidence for these rows:
 - The 2026-11-10 study measured Quick Sync and libjpeg-turbo, not `cv2.imencode`
   (`../../skellycam_recording/recording_upgrade/results/encoder_pairing/FINDINGS.md`).
 
-Still to measure: the range of real YUY2 modes; the CRC cost on BGR frames; Quick Sync on Linux; the image
+- Range of the test cameras' uncompressed modes (`../yuy2_range/FINDINGS.md`): C930e and C922 send limited
+  range; the Kiyo Pro and the generic camera send full range while Media Foundation reports limited for their
+  YUY2 modes (3.8 to 18.7 % of Y values outside 16 to 235). The Logitech cameras offer YUY2 at 1280x720 only
+  up to 10 frames/s.
+
+Still to measure: whether a camera's range changes with the scene or the exposure mode, and the 1 % threshold
+on other scenes; the CRC cost on BGR frames; Quick Sync on Linux; the image
 quality of `cv2.imencode` after the YUY2 to BGR to YUV round trip.
 
 Sizes per camera (MiB), JPEG ring / BGR ring:

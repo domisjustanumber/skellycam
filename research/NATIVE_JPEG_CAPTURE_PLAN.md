@@ -304,8 +304,10 @@ to its own UI unopened. All of these go away.
   ring, 2b the BGR ring and decode stage); the recorder comes first and never loses a frame, rings may skip;
   uncompressed modes are encoded with Quick Sync where available and `cv2.imencode` otherwise (§3); the slot
   header gets a named rotation field and the ring header a `pixel_format` field. The table is in the design
-  notes. Benchmarks: `frame_ring_buffer/encode_bench/` and `frame_ring_buffer/encode_qsv_bench/`. A run that
-  measures the range of the test cameras' YUY2 modes was started (`frame_ring_buffer/yuy2_range/`).
+  notes. Benchmarks: `frame_ring_buffer/encode_bench/` and `frame_ring_buffer/encode_qsv_bench/`. The range of the
+  test cameras' uncompressed modes was measured (`frame_ring_buffer/yuy2_range/`) [M]: the operating
+  system's range flag is wrong for the Kiyo Pro and the generic camera, so the range is checked from the
+  pixels at camera start, with a per-camera setting to override it [D].
 
 ## 13. State at the end of 2026-11-17 (read this first when resuming)
 
