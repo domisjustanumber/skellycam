@@ -16,3 +16,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
   `development` only, so the package tests do not run on a PR to `development-streaming`, the PR
   branch of [ADR-S222](entries/S222-bootstrap-answers-of-the-kit-adoption.md). A CI change needs the
   user.
+- **Phase 2 of the frame ring.** [ADR-50G8](entries/50G8-phase-2-frame-ring-spec.md) accepts
+  [`specs/frame-ring.md`](../specs/frame-ring.md). Nothing is built. Step 2a first writes the failing
+  tests of section 12 of the spec. Then it writes the code. Before step 2a keeps the change of the
+  10 µs wait of the OpenCV loop (item 45), it compares the frame timing before and after the change
+  on the four test cameras. It keeps the change only if the grab timing is not worse. Phase 2 makes
+  the measurements M1 to M8 of section 11.3 before it fixes a performance number. The build of step
+  2b waits for the approval and guidance of the user. Section 13 of the spec holds the open
+  questions.
