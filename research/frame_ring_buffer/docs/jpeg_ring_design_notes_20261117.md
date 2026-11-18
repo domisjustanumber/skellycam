@@ -57,12 +57,52 @@ Input for the phase 2 spec. The decode stage is built only after Dom's approval 
 | Uncompressed mode | JPEG ring: JPEG encoded at capture, also while not recording; the recorder uses the same JPEG. BGR ring: colour conversion only. |
 | BGR ring | BGR 24-bit only, unrotated, the same rotation value in the frame header, slots of exactly `width x height x 3` bytes, no oversize guard. |
 | History | 1 second by default for both rings, one setting. skellycam logs the total shared memory at start. |
-| Decode stage | One function, in its own thread in the camera process, after the frame has gone to the recorder queue and the JPEG ring. If it falls behind, the BGR ring skips frames (counted and logged); capture and recording are not delayed. `cv2.setNumThreads(1)` in the camera process. No Media Foundation decoder, no QSV. |
+| Decode stage | One function, in its own thread in the camera process, after the frame has gone to the recorder queue and the JPEG ring. If it falls behind, the BGR ring skips frames (counted and logged); capture and recording are not delayed. `cv2.setNumThreads(1)` in the camera process. No Media Foundation decoder and no Quick Sync decode. |
 | Frame numbers | Both rings use the camera's frame numbers and capture times, so a BGR frame can be matched to its JPEG. |
 | Errors | A JPEG frame flagged capture-error or cut-off is not decoded; its BGR slot is flagged and has no pixels. A failed decode sets a new `DECODE_ERROR` flag and a counter. |
 | Reads | The same read path for both rings: copy out, then CRC-32. Phase 2 measures the cost on BGR frames before anything cheaper is considered. |
 | UI | Unchanged: the JPEG ring's frames over the websocket, untouched. |
 | FreeMoCap | Accepts JPEG or BGR and takes the native format per camera: it asks for the BGR ring on cameras whose mode is labelled uncompressed. It treats "lapped" as a skip in every reader path, and counts and logs its lapped reads. This goes into the interface note; the work is the freemocap session's. |
+
+Details decided later the same day (rounds 7 to 12 of the grilling) [D]:
+
+| Topic | Decision [D] |
+|---|---|
+| Owner | The skellycam research session writes the phase 2 ring spec and test list for both rings. |
+| Build order | Step 2a is the JPEG ring; step 2b is the BGR ring with the decode stage. One spec covers both. Dom's approval and guidance for the decode stage is given at the spec review. |
+| Layout | Both rings share the ring header and the 64-byte slot header. New: a `pixel_format` field in the ring header (JPEG or BGR24), a named rotation field in the slot header (degrees clockwise to make the stored image upright: 0, 90, 180, 270), `payload_crc32` as the name of the payload CRC, and a `DECODE_ERROR` flag. For a BGR ring `payload_len` is the same in every slot. |
+| Frame size | Width and height are in the ring header only. A rotation change between upright (0/180) and sideways (90/270) sets `DISCONTINUITY`. |
+| Error flags | One rule: a frame with any error flag (`OVERSIZE`, `CAPTURE_ERROR`, `NO_SOI_EOI`, `DECODE_ERROR`) never reaches a decoder or tracking. `NO_SOI_EOI` covers a cut-off frame. |
+| Ring names | skellycam gives the consumer each ring's shared-memory name in the per-camera info (a JPEG ring name always, a BGR ring name or none). The consumer never builds a name. |
+| Recorder first | A frame goes to the recorder queue before any ring is written. The recorder never loses a frame. A ring write never blocks or waits, and is skipped and counted when the camera process is behind. The recorder's path uses the camera process's own buffers; each ring gets a copy (no conversion straight into a ring slot). |
+| MJPG mode, BGR ring | One waiting place between capture and the decode thread. The newest frame wins; a replaced frame is counted as skipped. |
+| Times | A BGR slot copies `arrival_ns` and `sample_ns` from its JPEG frame and sets its own `published_ns`. |
+| Uncompressed modes | YUY2 and NV12 are converted. Other uncompressed formats (for example Bayer RAW) are listed and not selected, as with H.264. |
+| JPEG encoder | Intel Quick Sync (`mjpeg_qsv` through PyAV) where available, on Windows and Linux; `cv2.imencode` otherwise, and always on macOS (Apple Silicon only is supported). No separate libjpeg-turbo package: OpenCV contains it. This replaces the fallback of 2026-11-11. |
+| Encoder check | The main skellycam process checks once per app run, by encoding one small test frame, and only if a camera of the session is in an uncompressed mode. The camera processes are told the result. A camera whose own encoder does not open, or fails during a take, uses `cv2.imencode` from then on; the frames the encoder still held are re-encoded from the raw frames, which the process keeps until their JPEG has come out. The event is counted, logged and flagged `DISCONTINUITY`. |
+| Encoder settings | Quality 90 by default, one setting passed to both encoders. Chroma layout of the source (4:2:2 from YUY2, 4:2:0 from NV12). `IMWRITE_JPEG_OPTIMIZE` off. Quick Sync `async_depth` 2 (one frame held). |
+| Conversion to BGR | With Quick Sync: only when the BGR ring was requested, as ring work that may be skipped. With `cv2.imencode`: on the recorder's path for every frame, because that encoder takes BGR. |
+| Input range | Read per mode from the operating system; limited range is assumed if it does not say. The JPEG is always full range: for limited-range input Quick Sync gets a range-expanding table first and `cv2` converts as it does by default; for full-range input Quick Sync gets the frame unchanged and `cv2` uses a full-range conversion. The range of the test cameras' YUY2 modes is measured before the spec fixes this. |
+| Too-large request | The total shared memory is always logged. If an allocation fails, the session does not start, and the message names the total size. No automatic shortening of the history. |
+| Tests | The JPEG ring suite runs again with BGR payloads (laps, torn reads, CRC, find by time). New: a slow decode skips BGR frames and delays neither capture nor the JPEG ring; a flagged JPEG frame gives a flagged BGR slot with no pixels and the decoder is not called; each BGR frame has its JPEG frame's number and capture times; a JPEG that fails to decode sets `DECODE_ERROR` and the counter. Also a rule with a test: no thread in the camera process spins. |
+| Huffman tables | Q78 stands: inserted at capture when a frame has none. |
+| Start-up | Up to about 1.2 s more for a session with uncompressed cameras on a Quick Sync machine is accepted. |
+
+Evidence for these rows:
+
+- `cv2.imencode` (`../encode_bench/FINDINGS.md`): quality 90, 4:2:2, one thread: 1.79 ms at 720p and 3.63 ms
+  at 1080p; YUY2 to BGR 0.64 and 1.45 ms; no real frame above 32 % of its slot; the cameras' own JPEGs match
+  `cv2` quality 87 to 91 by size.
+- Quick Sync against `cv2` (`../encode_qsv_bench/FINDINGS.md`): 1080p YUY2 at 30 fps costs 1.64 ms of CPU per
+  frame against 6.41 ms; 16 cameras 2.57 cores against 5.75; depth 2 is as fast as depth 4 and holds one
+  frame; depth 1 blocks about 17 ms per call. The two encoders assume opposite input ranges.
+- AMD and Apple (a short web study, mostly not verified): FFmpeg has no JPEG encoder for AMD AMF or for
+  Apple VideoToolbox, so a hardware JPEG encoder reachable through PyAV is Intel only.
+- The 2026-11-10 study measured Quick Sync and libjpeg-turbo, not `cv2.imencode`
+  (`../../skellycam_recording/recording_upgrade/results/encoder_pairing/FINDINGS.md`).
+
+Still to measure: the range of real YUY2 modes; the CRC cost on BGR frames; Quick Sync on Linux; the image
+quality of `cv2.imencode` after the YUY2 to BGR to YUV round trip.
 
 Sizes per camera (MiB), JPEG ring / BGR ring:
 
@@ -200,22 +240,48 @@ still applies while any OpenCV decode remains.
 On the 84 sample frames, `cv2.imdecode` 5.0.0 and nvJPEG (nvImageCodec 0.10.0.9, RTX 3070) both decode
 all of them. What it means for the ring spec (proposed, not decided):
 
+Corrected on 2026-11-18 from that session's check of this section (skellytracker-95). The GPU decode
+(nvImageCodec) is planned for the cuda and trt-rtx providers (Dom confirmed it there on 2026-11-18; not built
+yet); the CPU decode is the path for every other provider and the fallback.
+
 - A decoder cannot be the detector of a cut-off frame: nvJPEG returned a full-size image with garbage and
-  no error for a 4:2:0 frame cut in memory at 50 %. The writer must validate at capture (SOI at the start,
-  EOI at the end, delivered length) and set the `NO_SOI_EOI` / `CAPTURE_ERROR` flag; a reader must not hand
-  a flagged frame to a decoder.
-- The reader returns `bytes`. nvImageCodec rejects a `memoryview` (TypeError); it accepts `bytes`,
-  `bytearray` and a 1-D uint8 numpy array.
-- No DHT: `cv2` decodes it; nvJPEG does not and nvImageCodec silently falls back to the CPU. This supports
-  Q78 (insert the tables at capture).
+  no error for a 4:2:0 frame (Kiyo Pro) cut in memory at 50 %. A cut-off 4:2:2 frame (C922) fails properly
+  on nvJPEG. `cv2.imdecode` returns None for both, and skellytracker then refuses the whole call. The writer
+  must validate at capture (SOI at the start, EOI at the end, delivered length) and set the `NO_SOI_EOI` /
+  `CAPTURE_ERROR` flag; a reader must not hand a flagged frame to a decoder.
+- The reader returns `bytes`. The skellytracker call accepts JPEG data only as `bytes` or `bytearray`. A
+  numpy array is always read as a decoded BGR image, also a 1-D uint8 array. A `memoryview` is refused.
+- No DHT: `cv2` decodes it. On the RTX 3070 the default nvImageCodec path also decodes it on the GPU (at
+  most 3 uint8 steps from `cv2`, on a C922 and a Kiyo Pro frame); only a decoder limited to the GPU-only
+  backend fails. So Q78 (insert the tables at capture) is not forced by the decoder on this hardware; it
+  remains the safe choice for other backends and GPUs.
+- A decoded BGR array can also carry the rotation value; the run turns it before the first node, as for a
+  decoded JPEG. An unturned BGR ring frame with the ring's rotation value goes straight into the call.
+- The rotation must reach the call as a Python int, one of 0, 90, 180, 270. A float, a bool or another value
+  refuses the call.
+- Requests for the slot header and the reader steps: the rotation in a fixed field with a fixed meaning, for
+  both rings; a frame with any error flag (oversize, capture error, cut-off, no SOI/EOI, `DECODE_ERROR`) is
+  never passed to a call; a reader can see each frame's stored width and height without decoding, or is told
+  when they change (it batches JPEG decodes by stored size).
+- Timing from that session: three `cv2.imdecode` calls in a row on one thread take 8.2 ms at 720p and
+  17.0 ms at 1080p (one synthetic JPEG), which agrees with 2.60 and 5.42 ms per frame in `../decode_bench/`.
+  nvJPEG for the same three frames, including the wait: 2.3 ms at both sizes.
+- Threaded CPU decode (that session, 2026-11-18, the 8 real frames per resolution): `cv2.imdecode` releases
+  the GIL and scales in a thread pool, 2.3x with 3 threads and 3.9x with 6. Three 1080p frames: 15.1 ms in a
+  row, 6.5 ms in a pool; six: 30.5 and 7.8 ms.
+- Two points for skellycam's camera process from the same run: a pure-Python thread that never sleeps slows
+  every decode about 15 times (GIL hand-back), so no thread in the camera process may spin; and libjpeg
+  prints a warning to stderr on every decode of the generic camera's 1080p frames (extra bytes before EOI),
+  which the decode stage must not let flood the log.
 - Bytes after EOI (1 KiB of zeros or 0xFF) harm neither decoder. Two of the 84 frames make `cv2` print
   "extraneous bytes before marker 0xd9" and still decode.
 - Rotation, as relayed by that session (Dom's decision there, later the same day; it replaces an Exif
   orientation-tag idea that was measured and withdrawn): FreeMoCap passes the header's rotation value to
   the skellytracker run with the JPEG bytes, and the run turns the decoded frame right after the decode
-  (0.06 to 0.15 ms per frame on the GPU). Nobody writes an Exif tag; both decoders ignore one. The ring and
-  the MKV stay unturned. A lossless turn of the JPEG data is ruled out (slower, drops restart markers,
-  fails at 1920x1080 4:2:0).
+  (0.06 to 0.15 ms per frame on the GPU; on the CPU the turn is `cv2.rotate`). Nobody writes an Exif tag;
+  both decoders ignore one. The ring and the MKV stay unturned. A lossless turn of the JPEG data is ruled
+  out: it cannot turn every size because of a partial block at the edge, and it is slower than decode plus
+  turn.
 - Proposed header rotation value, which that session now takes as its input: degrees clockwise that the
   stored image must be turned to be upright (0, 90, 180, 270). Today's enum: NO_ROTATION -> 0,
   CLOCKWISE_90 -> 90, ROTATE_180 -> 180, COUNTERCLOCKWISE_90 -> 270.

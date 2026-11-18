@@ -51,8 +51,11 @@ Linux and macOS have had no hardware run.
 
 - **One process per camera** stays [D]. A hung camera call or a crash then affects one camera.
 - **OpenCV capture is deleted per OS** once native capture passes there; it is not kept as a fallback [D].
-- **Cameras that send only raw frames** are JPEG-encoded at capture (Intel `mjpeg_qsv` first, libjpeg-turbo
-  fallback) [D 2026-11-11].
+- **Cameras in an uncompressed mode** (YUY2, NV12) are JPEG-encoded at capture: Intel `mjpeg_qsv` where
+  available on Windows and Linux, `cv2.imencode` otherwise and always on macOS [D 2026-11-18, replaces the
+  libjpeg-turbo fallback of 2026-11-11]. Quality 90 by default, chroma layout of the source, Quick Sync at
+  depth 2. The main process checks for Quick Sync once per app run. The input range rule and the evidence are
+  in the design notes ("Two rings per camera").
 - **Controls.** Resolution, frame rate, manual exposure, gain and focus: set and read back through the native
   API, auto modes off. No automation [D].
 - **A camera that fails or hangs at open** stops the session from starting, so the user can fix it. The
@@ -138,7 +141,8 @@ The proposed byte layout, the reasons and the proposed tests are in
   crash repair, opening a folder and recognising old formats, the "upgrade recording" converter, and the
   JavaScript reader inside skellycam-ui.
 - **Where the recorder runs** [D]: a writer thread in each camera process, fed by a bounded queue of about
-  3 seconds of frames. The capture callback stamps the frame, publishes it to the ring and queues it.
+  3 seconds of frames. The capture callback stamps the frame, queues it for the recorder, and then publishes
+  it to the ring [D 2026-11-18: recorder first; a ring write never blocks and is skipped under load].
 - **MKV writer** [D]: PyAV 19.0.2. A small hand-written Matroska writer replaces it only if the once-a-second
   force-to-disk or live byte offsets cannot be done through PyAV (the SFF-788 test decides).
 - **Full queue** [D]: capture slows down (frame requests are held back). The event is counted, logged, shown
@@ -296,6 +300,12 @@ to its own UI unopened. All of these go away.
   modes are listed but never selected. §2, §4 and §9 are edited in place; the decision table is in
   `frame_ring_buffer/docs/jpeg_ring_design_notes_20261117.md`, "Two rings per camera". Nothing is built: the
   decode stage waits for Dom's approval and guidance.
+- 2026-11-18 [D], later rounds of the same session: this session writes the phase 2 ring spec (2a the JPEG
+  ring, 2b the BGR ring and decode stage); the recorder comes first and never loses a frame, rings may skip;
+  uncompressed modes are encoded with Quick Sync where available and `cv2.imencode` otherwise (§3); the slot
+  header gets a named rotation field and the ring header a `pixel_format` field. The table is in the design
+  notes. Benchmarks: `frame_ring_buffer/encode_bench/` and `frame_ring_buffer/encode_qsv_bench/`. A run that
+  measures the range of the test cameras' YUY2 modes was started (`frame_ring_buffer/yuy2_range/`).
 
 ## 13. State at the end of 2026-11-17 (read this first when resuming)
 
