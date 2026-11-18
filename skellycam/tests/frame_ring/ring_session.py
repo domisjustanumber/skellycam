@@ -17,12 +17,18 @@ from skellycam.tests.frame_ring.ring_spec import WAIT_TIMEOUT_S
 from skellycam.tests.mocks.camera_mock import MockVideoCapture
 
 
+# OpenCV 5.1.0 crashes the process (access violation) when the garbage collector frees an instance
+# of a Python subclass of cv2.VideoCapture. Thus each FakeCapture stays alive until the process ends.
+_LIVE_CAPTURES = []
+
+
 class FakeCapture(cv2.VideoCapture):
     """A `cv2.VideoCapture` (beartype checks the type) that serves the frames of
     `MockVideoCapture`, with the grab/retrieve pair that `opencv_get_frame` calls."""
 
     def __init__(self, width=640, height=480, fps=30.0):
         super().__init__()  # not opened: no device
+        _LIVE_CAPTURES.append(self)
         self._mock = MockVideoCapture()
         self._mock._width, self._mock._height, self._mock._fps = float(width), float(height), float(fps)
         self._pending = None
