@@ -17,7 +17,7 @@ Marks:
   citation of a line cites that row.
 - **[An]**: the draft of this spec proposed item n, and the user accepted it on 2026-11-18.
   Section 14, item n, gives each accepted item again. The draft used the mark `[Pn]` with the same
-  number. Items 52 to 56 are clarifications that the user decided on 2026-11-18, after the first 51
+  number. Items 52 to 57 are clarifications that the user decided on 2026-11-18, after the first 51
   ([ADR-9G2W](../decisions/entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md)).
 - **[M file]**: measured. The file holds the result. Each such file is on branch `dom/research` at
   commit 04322eace of this repository. **[NV]**: not verified.
@@ -865,7 +865,7 @@ are written.
 | T-RING-05 | 2a | Round trip | Synthetic payloads of 0, 1, random and `slot_capacity` bytes. | Each read is `OK` with identical bytes. |
 | T-RING-06 | 2a | Oversize | Payload of `slot_capacity + 1`. | Slot bytes unchanged; `OVERSIZE` set; counter 1; reader gets `OVERSIZE`, no payload. |
 | T-RING-07 | 2a | Read results | Empty ring; `k > head`; `head - k >= N`; skipped number; closed ring. | `NOT_YET_WRITTEN`, `NOT_YET_WRITTEN`, `LAPPED`, `MISSING`, `CLOSED`. |
-| T-RING-08 | 2a | Adversarial lap | Unthrottled writer process; slot counts 2, 8 and 60; readers at the oldest, the newest and by number; 60 s (N:306-307). | Zero wrong bytes accepted; at least one torn copy detected (proves the race ran). |
+| T-RING-08 | 2a | Adversarial lap | Unthrottled writer process; slot counts 2, 8 and 60; readers at the oldest, the newest and by number; 60 s for each slot count, thus 3 minutes in total (N:306-307) [A57]. | Zero wrong bytes accepted; at least one torn copy detected (proves the race ran). |
 | T-RING-09 | 2a | Reordering injection | Test writer publishes the header and `head` before the payload; and writes the payload in halves with a sleep between (N:308-309). | No read returns `OK` with wrong bytes. |
 | T-RING-10 | 2a | Bit flip | Flip one payload bit after commit; separately one header bit. | `CORRUPT` both times (6.4). |
 | T-RING-11 | 2a | Writer killed | Kill the writer process in the middle of a payload copy (N:311). | That frame never reads `OK`; earlier frames still read `OK`; no reader hangs. |
@@ -1073,7 +1073,7 @@ parts of other items is not an approval to build step 2b (section 8).
 50. The pass thresholds in the test table of section 12.
 51. The arm64 CI run uses the `ubuntu-24.04-arm` runner of GitHub, pinned by exact label.
 
-The user accepted items 52 to 56 on 2026-11-18, after the first 51. They are clarifications
+The user accepted items 52 to 57 on 2026-11-18, after the first 51. They are clarifications
 ([ADR-9G2W](../decisions/entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md)).
 
 52. Unknown frame rate: the slot count uses 60 (item 11). The ring header then holds `fps_num = 0`
@@ -1087,3 +1087,5 @@ The user accepted items 52 to 56 on 2026-11-18, after the first 51. They are cla
     wire-format types that the interim relay (item 4) needs. Its resize and encode functions are
     deleted. This corrects the count of six modules in item 1 and section 2.1 to five modules and
     a part of this file.
+57. T-RING-08 runs 60 s for each slot count (2, 8 and 60), thus 3 minutes in total at the full
+    duration.

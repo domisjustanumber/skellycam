@@ -1,4 +1,4 @@
-# 9G2W — Python API of the frame ring, as the 2a tests assume it; five clarifications of the spec
+# 9G2W — Python API of the frame ring, as the 2a tests assume it; six clarifications of the spec
 
 **Status:** accepted, 2026-11-18 (user; commit to dom/native-jpeg; was proposed, 2026-11-18 (agent)).
 
@@ -50,8 +50,8 @@ The spec does not give each Python signature. The failing tests of step 2a in
 16. A size in a log line or an error message is `n` or `f"{n:,}"` bytes and
     `f"{n / 2**20:.1f} MiB"`. The largest-payload line holds the fraction as `0.60` or `60 %`.
 
-The user also decided five clarifications of the spec on 2026-11-18. Section 14 of the spec lists
-them as items 52 to 56:
+The user also decided six clarifications of the spec on 2026-11-18. Section 14 of the spec lists
+them as items 52 to 57:
 
 1. Unknown frame rate: the slot count uses 60 (3.7). The ring header holds `fps_num = 0` and
    `fps_den = 1`, which means "unknown".
@@ -63,6 +63,8 @@ them as items 52 to 56:
 5. Step 2a does not delete `core/types/frontend_payload_bytearray.py`. The file keeps only the
    wire-format types that the interim relay (item 4 of the spec) needs. Its resize and encode
    functions are deleted.
+6. T-RING-08 runs 60 s for each slot count (2, 8 and 60), thus 3 minutes in total at the full
+   duration.
 
 ## Reason
 
@@ -74,9 +76,9 @@ them as items 52 to 56:
   readers count their own results.
 - Items 13 to 15 are the seams that T-RING-25 to 27, T-RING-23, T-RING-31 and T-RING-33 need
   outside the ring package.
-- The clarifications fix five points that the tests or the code must decide and that the spec left
+- The clarifications fix six points that the tests or the code must decide and that the spec left
   open. This entry holds them because its commits are not pushed (Rules of the index), and items 1
-  to 4 are behaviour that the 2a tests assume.
+  to 4 and 6 are behaviour or durations that the 2a tests assume.
 
 ## Alternatives rejected
 
