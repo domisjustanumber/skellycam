@@ -212,6 +212,8 @@ asyncio_mode = "auto"
 markers = [
     "real_data: reads reference videos, downloading missing recordings",
     "sample_data: full 1108-frame sample recording capture reads",
+    "ring_portable: frame ring tests that T-RING-34 (Apple Silicon) and T-RING-35 (arm64 CI) run again",
+    "ring_slow: frame ring tests that measure time, kill processes or run long; SKELLYCAM_RING_FULL=1 gives the spec durations",
 ]
 
 # =============================================================================
