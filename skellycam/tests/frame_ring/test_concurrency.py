@@ -179,8 +179,9 @@ def test_t_ring_11_writer_killed(cleanup, spawn, procs):
     copy. That frame never reads `OK`; the earlier frames still read `OK`; no reader hangs.
 
     The kill time is random. A trial hit the copy when the next slot has `frame_number = -1`
-    (after W2, before W5). The test repeats up to KILL_TRIALS (20; 100 with
-    SKELLYCAM_RING_FULL=1) trials, checks each one, and needs one hit.
+    (after W2, before W5). The test repeats up to KILL_TRIALS (100) trials, checks each one, and
+    needs one hit. A hit is rare (about 1 trial in 10 on one Windows test machine), so 20 trials
+    often gave no hit.
     """
     fr = ring()
     size = 8_000_000  # 3840x2160 slot: the copy is a large part of each write
