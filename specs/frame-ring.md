@@ -1,9 +1,9 @@
 # Phase 2 ring specification: JPEG ring (2a), BGR ring and decode stage (2b)
 
 Status: accepted by the user on 2026-11-18
-([ADR-50G8](../decisions/entries/50G8-phase-2-frame-ring-spec.md)). Nothing in this file is built.
-No test exists yet. The next step of 2a is the failing tests of section 12. Then the 2a code
-follows. Step 2b (section 8) is specified. The build of step 2b waits for a separate approval and
+([ADR-50G8](../decisions/entries/50G8-phase-2-frame-ring-spec.md)). The tests of step 2a
+(section 12) are in `skellycam/tests/frame_ring/`. The ring package of step 2a is in
+`skellycam/core/ipc/frame_ring/`. The app does not use it yet (see `decisions/open-work.md`). Step 2b (section 8) is specified. The build of step 2b waits for a separate approval and
 guidance of the user on the decode stage [D N:72].
 
 ## 0. How to read this spec
