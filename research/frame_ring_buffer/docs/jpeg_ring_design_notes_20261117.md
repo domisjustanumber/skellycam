@@ -251,17 +251,19 @@ Corrected on 2026-11-18 from that session's check of this section (skellytracker
 (nvImageCodec) is planned for the cuda and trt-rtx providers (Dom confirmed it there on 2026-11-18; not built
 yet); the CPU decode is the path for every other provider and the fallback.
 
-- A decoder cannot be the detector of a cut-off frame: nvJPEG returned a full-size image with garbage and
-  no error for a 4:2:0 frame (Kiyo Pro) cut in memory at 50 %. A cut-off 4:2:2 frame (C922) fails properly
-  on nvJPEG. `cv2.imdecode` returns None for both, and skellytracker then refuses the whole call. The writer
+- A decoder cannot be the detector of a cut-off frame: the skellytracker GPU decoder as built (limited to
+  the nvJPEG backends) returns a full-size image with garbage and no error for a JPEG cut at half, both
+  4:2:0 and 4:2:2. `cv2.imdecode` returns None for both, and skellytracker then refuses the whole call. The writer
   must validate at capture (SOI at the start, EOI at the end, delivered length) and set the `NO_SOI_EOI` /
   `CAPTURE_ERROR` flag; a reader must not hand a flagged frame to a decoder.
 - The reader returns `bytes`. The skellytracker call accepts JPEG data only as `bytes` or `bytearray`. A
   numpy array is always read as a decoded BGR image, also a 1-D uint8 array. A `memoryview` is refused.
-- No DHT: `cv2` decodes it. On the RTX 3070 the default nvImageCodec path also decodes it on the GPU (at
-  most 3 uint8 steps from `cv2`, on a C922 and a Kiyo Pro frame); only a decoder limited to the GPU-only
-  backend fails. So Q78 (insert the tables at capture) is not forced by the decoder on this hardware; it
-  remains the safe choice for other backends and GPUs.
+- No DHT: `cv2` decodes it. A frame with no DHT is refused by the skellytracker GPU decoder (nvJPEG error
+  "Jpeg not supported", on the RTX 3070 too) and falls back to the CPU decode; insert DHT at capture. So Q78
+  is needed for the GPU decode path. (An earlier probe with nvImageCodec's default backends decoded such a
+  frame on the GPU; skellytracker does not use that configuration.)
+- The GPU decoder module is built there (not wired into the run yet): at most 3 uint8 steps from `cv2` on
+  the real frames; a batch of 3 takes 2.6 to 3.3 ms, or 2.8 to 3.9 ms with a 90-degree turn in GPU memory.
 - A decoded BGR array can also carry the rotation value; the run turns it before the first node, as for a
   decoded JPEG. An unturned BGR ring frame with the ring's rotation value goes straight into the call.
 - The rotation must reach the call as a Python int, one of 0, 90, 180, 270. A float, a bool or another value

@@ -364,3 +364,11 @@ started in that run).
 Standing rules made on 2026-11-17: no camera recordings or frames in git unless golden reference files; no AI
 attribution in skellycam commits; Python 3.13.18; skellyfileformat is a spec only; port 53117 may be held by
 another session's process, so test servers use another port and nothing is sent to 53117.
+
+Changed on 2026-11-18 (later): Dom accepted the phase 2 ring spec with all 51 of its proposals (P45, the longer
+wait in the OpenCV loop, only if a timing measurement on the four cameras shows no harm; the 40 mechanical
+ones can be reopened when the tests are written). On his instruction the spec and the phase 2 work are in the
+implementation worktree (`../skellycam-native-jpeg`, branch `dom/native-jpeg`), not in this folder. The draft
+cited `frame_ring_buffer/docs/jpeg_ring_design_notes_20261117.md` and this file by line number as they are in
+this commit. Queued after phase 2: skellycam's part of the skellytracker volunteer "certify suite", on a new
+branch `dom/jpeg-testing`, spec first.
