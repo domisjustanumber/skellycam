@@ -99,6 +99,20 @@ def test_t_ring_07_read_results(cleanup):
 
 
 @pytest.mark.ring_portable
+def test_t_ring_07_slot_being_written_is_lapped(cleanup):
+    """T-RING-07, sections 6.2 and 6.4 [A58]: a committed frame whose slot header then holds
+    `frame_number = -1` (writer step W2, or a writer killed in mid-write) reads as `LAPPED`, not
+    `CORRUPT`, although the header CRC fails on both copies."""
+    fr, creator, writer, reader = new_ring(cleanup, fps_num=8)
+    writer.write(synthetic_payload(0, 50_000), **write_kwargs(0))
+    shm = cleanup.handle(open_raw(creator.name))
+    shm.buf[4096:4104] = (-1).to_bytes(8, "little", signed=True)  # slot 0, frame_number
+    read = reader.read(0)
+    assert read.result == fr.ReadResult.LAPPED
+    assert read.payload is None
+
+
+@pytest.mark.ring_portable
 @pytest.mark.parametrize("where", ["payload", "header"])
 def test_t_ring_10_bit_flip_after_commit_is_corrupt(cleanup, where):
     """T-RING-10, sections 6.2 and 6.4: one payload bit flipped after the commit, and separately

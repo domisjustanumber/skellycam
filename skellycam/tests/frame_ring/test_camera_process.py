@@ -139,7 +139,8 @@ def test_t_ring_23_failing_ring_write_leaves_the_recorder_unaffected(monkeypatch
 @pytest.mark.ring_slow
 def test_t_ring_23_write_p99_with_four_readers(cleanup, spawn, procs):
     """T-RING-23, sections 5.3 and 11.3 [A48]: 4 reader processes read the newest frame without a
-    pause. The JPEG write p99 stays within the provisional M2 target (0.5 ms at 1080p).
+    pause. The JPEG write p99 stays within the provisional M2 target under this load (1.0 ms at
+    1080p [A59]; 0.5 ms with no reader load).
 
     The writer writes 1080p-size payloads (607,032 bytes, the largest measured frame) at about
     200 frames/s for TIMING_SECONDS (2 s; 10 s with SKELLYCAM_RING_FULL=1).
@@ -172,7 +173,7 @@ def test_t_ring_23_write_p99_with_four_readers(cleanup, spawn, procs):
         stop.set()
     assert all(process.is_alive() for process in procs), "a reader died"
     p99_ms = np.percentile(durations, 99) / 1e6
-    assert p99_ms <= 0.5, f"JPEG write p99 {p99_ms:.3f} ms > 0.5 ms (M2 target)"
+    assert p99_ms <= 1.0, f"JPEG write p99 {p99_ms:.3f} ms > 1.0 ms (M2 target with four readers)"
 
 
 @pytest.mark.ring_slow

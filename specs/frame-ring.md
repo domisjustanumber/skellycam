@@ -17,7 +17,8 @@ Marks:
   citation of a line cites that row.
 - **[An]**: the draft of this spec proposed item n, and the user accepted it on 2026-11-18.
   Section 14, item n, gives each accepted item again. The draft used the mark `[Pn]` with the same
-  number. Items 52 to 57 are clarifications that the user decided on 2026-11-18, after the first 51
+  number. Items 52 to 57 are clarifications, and items 58 and 59 are corrections, that the user
+  decided on 2026-11-18, after the first 51
   ([ADR-9G2W](../decisions/entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md)).
 - **[M file]**: measured. The file holds the result. Each such file is on branch `dom/research` at
   commit 04322eace of this repository. **[NV]**: not verified.
@@ -470,9 +471,9 @@ The wording of the rule comes from the details of the 2026-10-28 study (N:228-23
 | R2 | `h = head`. If `h < 0` or `k > h`. | `NOT_YET_WRITTEN` |
 | R3 | If `h - k >= N`. | `LAPPED` |
 | R4 | Copy the 64-byte slot header `s = k % N` into a private buffer. | |
-| R5 | Check `header_crc32` over bytes 0 to 59 of the copy. | retry rule |
-| R6 | Header `frame_number < k` (and not -1). | `MISSING` (the writer skipped k) |
-| R7 | Header `frame_number > k` or -1. | `LAPPED` |
+| R5 | If `frame_number` of the copy is -1, stop before any CRC check [A58]. Else check `header_crc32` over bytes 0 to 59 of the copy. | `LAPPED` (-1); retry rule (CRC) |
+| R6 | Header `frame_number < k`. | `MISSING` (the writer skipped k) |
+| R7 | Header `frame_number > k`. | `LAPPED` |
 | R8 | `OVERSIZE` set. | `OVERSIZE`, header only |
 | R9 | Another error flag set. | `FLAGGED`, header only |
 | R10 | If `payload_len > slot_capacity`: treat as a CRC failure. Never copy past the slot. | retry rule |
@@ -481,7 +482,7 @@ The wording of the rule comes from the details of the 2026-10-28 study (N:228-23
 | R13 | Return the header fields and the object. | `OK` |
 
 A skipped frame number that a reader asks for before the ring has wrapped one time reads as
-`LAPPED`, not `MISSING`, because its slot still holds -1 (R7). This behaviour is accepted [A53].
+`LAPPED`, not `MISSING`, because its slot still holds -1 (R5). This behaviour is accepted [A53].
 
 `head` is only a hint. A stale, early or torn `head` can only cause `NOT_YET_WRITTEN`, `LAPPED`,
 `MISSING` or a retry. It can never make the reader accept wrong bytes, because R5, R6/R7 and R12
@@ -495,7 +496,7 @@ check the private copy.
 | `NOT_YET_WRITTEN` | `k > head` | no |
 | `LAPPED` | overwritten or being overwritten | no |
 | `MISSING` | the writer skipped this frame number (5.3, 8.3) | no |
-| `CORRUPT` | the same bad bytes on two reads (6.4) | no |
+| `CORRUPT` | the slot is not being written, and its bytes fail a CRC check on two identical copies (6.4) | no |
 | `OVERSIZE` | the frame did not fit the slot | no, header only |
 | `FLAGGED` | `CAPTURE_ERROR`, `NO_SOI_EOI` or `DECODE_ERROR` | no, header only |
 | `CLOSED` | the ring is closed; get the per-camera info again | no |
@@ -511,11 +512,16 @@ gives "corrupt" (N:310). This rule satisfies both:
 
 1. On a failed check (R5, R10 or R12), copy the header and the payload again, one time,
    immediately.
-2. If the second copy passes, return `OK`.
-3. If the two header copies are byte-identical, carry `frame_number == k`, and pass the header CRC,
+2. A copy whose `frame_number` is -1 gives `LAPPED` at once, on the first copy or on the retry
+   (R5). The writer is in the slot (step W2), or a writer was killed in the slot [A58].
+3. If the second copy passes, return `OK`.
+4. If the two header copies are byte-identical, carry `frame_number == k`, and pass the header CRC,
    the writer did not touch the slot. Thus the payload is bad. Return `CORRUPT`. Also return
    `CORRUPT` if the two header copies are identical and fail the header CRC.
-4. If not, return `LAPPED`.
+5. If not, return `LAPPED`.
+
+Thus `CORRUPT` means only one thing: the slot is not being written, and its stored bytes fail a
+CRC check two times with identical copies [A58].
 
 ### 6.5 Lookups [D N:26-27, P:115] [A28]
 
@@ -840,7 +846,8 @@ holds only the opened mode, with the FOURCC of the config as its format [A47].
 
 Provisional targets. The measured numbers will replace them [A48]:
 
-- JPEG write: p99 at most 0.5 ms per frame at 1080p.
+- JPEG write: p99 at most 0.5 ms per frame at 1080p, with no reader load. With four readers that
+  read as fast as they can (the p99 case of T-RING-23), p99 at most 1.0 ms [A59].
 - JPEG read: p99 at most 0.5 ms per frame at 1080p.
 - BGR write, decode not included: p99 at most 3 ms at 1080p.
 - BGR read: p99 at most 3 ms at 1080p.
@@ -864,7 +871,7 @@ are written.
 | T-RING-04 | 2a | Slot count and size | History 1 s at 30 and 60 fps; history 0.01 s; fps unknown. | Table 3.8; minimum 2 slots; unknown fps uses 60 and logs it. |
 | T-RING-05 | 2a | Round trip | Synthetic payloads of 0, 1, random and `slot_capacity` bytes. | Each read is `OK` with identical bytes. |
 | T-RING-06 | 2a | Oversize | Payload of `slot_capacity + 1`. | Slot bytes unchanged; `OVERSIZE` set; counter 1; reader gets `OVERSIZE`, no payload. |
-| T-RING-07 | 2a | Read results | Empty ring; `k > head`; `head - k >= N`; skipped number; closed ring. | `NOT_YET_WRITTEN`, `NOT_YET_WRITTEN`, `LAPPED`, `MISSING`, `CLOSED`. |
+| T-RING-07 | 2a | Read results | Empty ring; `k > head`; `head - k >= N`; skipped number; closed ring; a committed frame whose slot header then holds `frame_number = -1` [A58]. | `NOT_YET_WRITTEN`, `NOT_YET_WRITTEN`, `LAPPED`, `MISSING`, `CLOSED`, `LAPPED`. |
 | T-RING-08 | 2a | Adversarial lap | Unthrottled writer process; slot counts 2, 8 and 60; readers at the oldest, the newest and by number; 60 s for each slot count, thus 3 minutes in total (N:306-307) [A57]. | Zero wrong bytes accepted; at least one torn copy detected (proves the race ran). |
 | T-RING-09 | 2a | Reordering injection | Test writer publishes the header and `head` before the payload; and writes the payload in halves with a sleep between (N:308-309). | No read returns `OK` with wrong bytes. |
 | T-RING-10 | 2a | Bit flip | Flip one payload bit after commit; separately one header bit. | `CORRUPT` both times (6.4). |
@@ -880,7 +887,7 @@ are written.
 | T-RING-20 | 2a | Error-flag rule | Commit frames with each error flag; read by number, newest and nearest. | No lookup returns a payload for them. |
 | T-RING-21 | 2a | Rotation | Config enum to `rotation_cw_deg`; change 0 to 180, 0 to 90, 90 to 270. | Values 0/90/180/270 as Python `int`; `DISCONTINUITY` only on the 0 to 90 change. |
 | T-RING-22 | 2a | Self-check | Feed frames at 20 %, 51 % and 60 % of the slot. | One warning at the 51 % frame; periodic log line with the fraction; counters match. |
-| T-RING-23 | 2a | Recorder first; no blocking | Instrumented recorder queue and ring; 4 readers hammering the ring. | Queue put precedes every ring write; write p99 within the M2 target; a failing ring write leaves the queue unaffected. |
+| T-RING-23 | 2a | Recorder first; no blocking | Instrumented recorder queue and ring; 4 readers hammering the ring. | Queue put precedes every ring write; write p99 within the M2 target for that load (1.0 ms [A59]); a failing ring write leaves the queue unaffected. |
 | T-RING-24 | 2a | Skipped write | Fake capture layer reports a newer frame waiting. | `skipped_count` up; reader gets `MISSING` for that number. |
 | T-RING-25 | 2a | Creation and names | Start a session with fake cameras. | Total and per-ring sizes logged; names in `CameraRingInfo`; a reader attaches by name alone; header matches the config. |
 | T-RING-26 | 2a | Recreation | Change the resolution of a fake camera. | New name; old ring `closed = 1`; old readers get `CLOSED`; old segment gone after unlink (Linux: no `/dev/shm` entry; Windows: open by name fails). |
@@ -1024,7 +1031,7 @@ parts of other items is not an approval to build step 2b (section 8).
 26. The read results `OK`, `NOT_YET_WRITTEN`, `LAPPED`, `MISSING`, `CORRUPT`, `OVERSIZE`, `FLAGGED`,
     `CLOSED`. The interface note asks FreeMoCap to treat `MISSING` like `LAPPED`.
 27. The reader steps R1 to R13 and the retry rule of 6.4 (one retry; identical bad copies give
-    `CORRUPT`, all other cases `LAPPED`).
+    `CORRUPT`, all other cases `LAPPED`). Item 58 corrects it.
 28. The lookups of 6.5: newest with one retry; by number; nearest to t on `arrival_ns`, only rows
     whose header CRC passes, ties to the lower frame number.
 29. The reader returns a frozen `FrameRead`. The JPEG payload is `bytes`. The BGR payload is a
@@ -1089,3 +1096,17 @@ The user accepted items 52 to 57 on 2026-11-18, after the first 51. They are cla
     a part of this file.
 57. T-RING-08 runs 60 s for each slot count (2, 8 and 60), thus 3 minutes in total at the full
     duration.
+
+The user accepted items 58 and 59 on 2026-11-18, after items 52 to 57. They are corrections
+([ADR-9G2W](../decisions/entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md)).
+
+58. A reader copy of a slot header that holds `frame_number == -1` gives `LAPPED`. The reader
+    decides this before any CRC check, on the first copy or on the retry (R5, 6.4). Before this
+    correction, a reader that asked for frame k while the writer overwrote its slot got `CORRUPT`
+    through the retry rule: -1 also breaks the header CRC. This also covers a writer that was killed
+    in mid-write. `CORRUPT` now means only: the slot is not being written, and its stored bytes
+    fail a CRC check two times with identical copies.
+59. The provisional JPEG write target (p99 at most 0.5 ms at 1080p) stays for a writer with no
+    reader load. With four readers that read as fast as they can (the p99 case of T-RING-23), the
+    target is 1.0 ms. Measured on a Windows test machine: 0.58 to 0.64 ms under that load, and
+    0.28 ms without it.

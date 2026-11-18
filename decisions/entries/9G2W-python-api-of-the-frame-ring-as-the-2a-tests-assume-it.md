@@ -1,4 +1,4 @@
-# 9G2W — Python API of the frame ring, as the 2a tests assume it; six clarifications of the spec
+# 9G2W — Python API of the frame ring, as the 2a tests assume it; six clarifications and two corrections of the spec
 
 **Status:** accepted, 2026-11-18 (user; commit to dom/native-jpeg; was proposed, 2026-11-18 (agent)).
 
@@ -66,6 +66,13 @@ them as items 52 to 57:
 6. T-RING-08 runs 60 s for each slot count (2, 8 and 60), thus 3 minutes in total at the full
    duration.
 
+The user accepted two corrections on 2026-11-18. The spec lists them as items 58 and 59:
+
+1. A slot header copy with `frame_number == -1` gives `LAPPED`, before any CRC check (R5, 6.4).
+   `CORRUPT` then means only two identical bad copies of a slot that is not written.
+2. The JPEG write target at 1080p is p99 at most 1.0 ms with four readers (T-RING-23), and 0.5 ms
+   with no reader load. Measured: 0.58 to 0.64 ms, and 0.28 ms.
+
 ## Reason
 
 - The tests must fix one signature for each call that they make. The user decides the API
@@ -77,8 +84,8 @@ them as items 52 to 57:
 - Items 13 to 15 are the seams that T-RING-25 to 27, T-RING-23, T-RING-31 and T-RING-33 need
   outside the ring package.
 - The clarifications fix six points that the tests or the code must decide and that the spec left
-  open. This entry holds them because its commits are not pushed (Rules of the index), and items 1
-  to 4 and 6 are behaviour or durations that the 2a tests assume.
+  open. This entry holds them and the corrections because its commits are not pushed (Rules of
+  the index), and items 1 to 4 and 6 are behaviour or durations that the 2a tests assume.
 
 ## Alternatives rejected
 

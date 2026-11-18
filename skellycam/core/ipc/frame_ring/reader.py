@@ -85,6 +85,8 @@ class FrameRingReader:
             header = view[header_at:header_at + SLOT_HEADER_SIZE].tobytes()  # R4
             fields = _SLOT.unpack(header)
             number, payload_len, flags, payload_crc, _, header_crc = fields[0], *fields[5:]
+            if number == -1:  # R5, before the CRC check: the writer is in this slot, or died in it [A58]
+                return _no_frame(ReadResult.LAPPED, frame_number)
             if zlib.crc32(header[:_CRC_END]) == header_crc:  # R5
                 if 0 <= number < frame_number:  # R6
                     return _no_frame(ReadResult.MISSING, frame_number)
