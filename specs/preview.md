@@ -7,7 +7,8 @@ choices. An agent wrote it on 2026-11-19. The user decided P1 to P7 and answered
 ([ADR-G651](../decisions/entries/G651-phase-4-live-preview-decisions-p1-to-p7.md)). Section 15
 gives each one. The second revision of 2026-11-19 applies A1 to A7 and the faults of an independent
 review. The third revision applies the fixes of a second review, and A8. No review has read the
-third revision. No question is open. The agent choices of section 13 wait for the acceptance of the
+third revision. No question is open. A dated note of 2026-11-20 in section 8.4 applies the answers
+A9 and A10. The agent choices of section 13 wait for the acceptance of the
 user. The failing tests of step 4a come before the product code of step 4a.
 
 ## 0. How to read this spec
@@ -15,7 +16,8 @@ user. The failing tests of step 4a come before the product code of step 4a.
 Marks:
 
 - **[Pn]**: decision n of the user for phase 4, 2026-11-19 (section 15).
-- **[An]**: answer n of the user to the first draft of this spec, 2026-11-19 (section 15).
+- **[An]**: answer n of the user: A1 to A8 to the drafts of this spec, 2026-11-19; A9 and A10 to the
+  measurements of 4a, 2026-11-20 (section 15).
 - **[E]**: a binding statement of the user from before P1 to P7 (section 15).
 - **[ring x.y]**: section x.y of [`frame-ring.md`](frame-ring.md), the accepted phase 2 spec
   ([ADR-50G8](../decisions/entries/50G8-phase-2-frame-ring-spec.md)). **[ring An]**: item n of
@@ -502,15 +504,23 @@ the user decides it.
 
 ### 8.4 Targets of 4a (each one to measure in 4a)
 
-No number below is measured.
+No number below is measured, except the row marked [A10].
 
 | Item | Target | Basis |
 |---|---|---|
 | `read` of a 1080p JPEG, p99 | at most 0.5 ms | the provisional read target of [ring 11.3]. To measure in 4a. |
-| Event-loop time of the sender, 4 cameras at 1080p30, one client that keeps up | at most 10 % of one core | 120 messages/s x about 0.6 ms. To measure in 4a. |
+| Event-loop time of the sender, 4 cameras at 1080p30, one client that keeps up | at most 19 % of one core [A10] | Measured in 4a with compression off [A9]: 13 to 19 %, median 16 %, in six runs. The first target was 10 % (120 messages/s x about 0.6 ms). |
 | HTTP response time of `GET /health` while the sender runs, 8 cameras at 1080p60, one client that keeps up, p99 | at most 50 ms | To measure in 4a. |
 | Time from `published_ns` to the start of the send, client that keeps up, p99 | at most 25 ms | 10 ms between passes plus the sleep error of 8.1. To measure in 4a. |
 | Frames sent, client that keeps up, 30 fps | each frame (T-PRV-10 allows more loss on a CI runner) | The period (33 ms) is longer than a pass. At 60 fps: to measure in 4a. |
+
+Note of 2026-11-20 [A9, A10]: the measurements of 4a
+([ADR-HDC9](../decisions/entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md))
+found that uvicorn turns on permessage-deflate by default. Each JPEG was compressed on the event-loop
+thread: 12.7 ms for a 1080p message, against 0.31 ms with compression off (16.9 ms against 0.23 ms
+with the websocket implementation of the product). A9 turns compression off.
+A10 sets the event-loop target to the number measured with compression off. The table above has the
+changed target. The estimate "about 0.6 ms" for each message (8.2) holds only with compression off.
 
 ### 8.5 Measurements of 4a
 
@@ -814,6 +824,12 @@ Answers A1 to A8 to the first draft:
 - A8 (answer to Q1): The ring reader gets a second read-only property, `skipped_count`, of the same
   kind as `oversize_count`, for display only. This adds to the reader API of ADR-9G2W by decision of
   the user.
+
+Answers A9 and A10 to the measurements of 4a (2026-11-20), recorded in ADR-G651:
+
+- A9: Turn off websocket compression: the server starts uvicorn with `ws_per_message_deflate=False`.
+- A10: The event-loop target of 8.4 (4 cameras at 1080p30, one client that keeps up) becomes the
+  number measured in 4a with compression off.
 
 Decision on the tile thread (relayed with A1 to A7): the tile runs on the main thread of the page
 with ImageDecoder. 4b measures 8 cameras at 60 fps. A worker only if the target is missed.

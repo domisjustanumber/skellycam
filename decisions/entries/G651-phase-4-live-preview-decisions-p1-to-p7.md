@@ -62,6 +62,21 @@ question of the revised draft (A8), on 2026-11-19:
 9. **Tile thread.** The shared tile runs on the main thread of the page with ImageDecoder. 4b
    measures 8 cameras at 60 fps. A worker only if the target is missed.
 
+## Answers of the user to the measurements of step 4a (2026-11-20)
+
+The user answered on 2026-11-20, after the measurements of step 4a
+([ADR-HDC9](HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)):
+
+1. **A9.** Turn off websocket compression. The server starts uvicorn with
+   `ws_per_message_deflate=False`. A JPEG does not compress, and permessage-deflate cost 12.7 to
+   16.9 ms of the event loop for each 1080p frame.
+2. **A10.** The target "event-loop time of the sender, 4 cameras at 1080p30, one client that keeps
+   up" of section 8.4 of the spec becomes the number measured in step 4a with compression off. The
+   user saw 12 %. That run used the legacy websockets implementation of uvicorn. With the
+   implementation of the product (`ws="auto"`), six runs gave 13 to 19 %, median 16 %. The spec
+   target is thus "at most 19 % of one core". This correction waits for the confirmation of the
+   user.
+
 ## Consequences
 
 - [`specs/preview.md`](../../specs/preview.md) applies these decisions and answers to step 4a. It is
