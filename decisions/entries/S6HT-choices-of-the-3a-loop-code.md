@@ -59,6 +59,9 @@ the items below. An agent chose them.
     apply response carry the failure. T-CAP-11 counts each line at WARNING that names the camera.
 18. **Recorder rate.** When the rate is "auto" (-1 or 0) or unknown, the old recorder writes the
     video at 30 fps.
+19. **End order.** A camera that fails or dies first reports the failure object, then closes the
+    source, then sets `failed` or `dead`, then finishes its recording files. A hung call skips the
+    close. After a hang, the state is set at once.
 
 ## Reason
 

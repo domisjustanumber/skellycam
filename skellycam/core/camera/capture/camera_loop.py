@@ -125,6 +125,7 @@ class CameraLoop:
         self.files_done = threading.Event()
         self._failure_lock = threading.Lock()
         self.failed = False
+        self.end_state: str | None = None  # the state that the end sets after the close
         self.initialized_ns = perf_counter_ns()
 
     # ----- the run -----
@@ -141,10 +142,10 @@ class CameraLoop:
             hung = True
         except CaptureFailure as failure:
             hung = failure.hung
-            self._fail(failure)
+            self._fail(failure, at_end=not hung)
         except Exception as error:
             logger.exception(f"Camera {self.camera_id} loop error: {error}")
-            self._fail(CaptureFailure(self.stage, f"{type(error).__name__}: {error}"))
+            self._fail(CaptureFailure(self.stage, f"{type(error).__name__}: {error}"), at_end=True)
         finally:
             self._end(hung)
 
@@ -466,7 +467,7 @@ class CameraLoop:
 
     # ----- failures and the end -----
 
-    def _fail(self, failure: CaptureFailure) -> None:
+    def _fail(self, failure: CaptureFailure, at_end: bool = False) -> None:
         """Report the first failure (section 12): the failure object, then the state (8.2)."""
         with self._failure_lock:
             if self.failed:
@@ -479,7 +480,11 @@ class CameraLoop:
         self.ipc.report_setup_failure(report)
         self.status.update_info(failure=dict(camera_id=report.camera_id, stage=report.stage,
                                              reason=report.reason[:2048]))
-        self.status.set_state("dead" if self.started else "failed")
+        state = "dead" if self.started else "failed"
+        if at_end:
+            self.end_state = state  # after the close, so that the other cameras keep their time (virtual clock)
+        else:
+            self.status.set_state(state)
         logger.info(str(report))  # the status and the apply response carry the failure (8.4)
 
     def _finish_files(self) -> None:
@@ -504,24 +509,26 @@ class CameraLoop:
         os._exit(1)
 
     def _end(self, hung: bool) -> None:
+        if not hung:
+            self._stop_control()
+            self._add_replaced()
+            if self.source is not None:
+                try:
+                    self.source.close()  # first: it frees the device; the files need no source (6.9)
+                except CaptureFailure as failure:
+                    self._fail(failure)
+                    hung = failure.hung
+        if self.end_state:
+            self.status.set_state(self.end_state)
         try:
-            self._finish_files()  # after a hang of the control thread, that thread waits for this, then ends hard
+            self._finish_files()  # after a hang, the files get at most 5 s (U12)
         finally:
-            if not hung:
-                self._stop_control()
             self._close_rings()
             self._add_replaced()
             logger.info(f"Camera {self.camera_id} stop: replaced {self.replaced_total} frames since its first "
                         f"frame in the gate")
             if hung:
                 self.hard_end()
-            elif self.source is not None:
-                try:
-                    self.source.close()
-                except CaptureFailure as failure:
-                    self._fail(failure)
-                    if failure.hung:
-                        self.hard_end()
             self.status.connected.value = False
             self.status.closed.value = True
             logger.debug(f"Camera {self.camera_id} loop ended")
