@@ -1,6 +1,7 @@
-"""COM declarations of the Media Foundation source (specs/windows-capture.md, sections 6.2, 6.5, 6.8).
+"""COM declarations of the Media Foundation source (specs/windows-capture.md, sections 6.2, 6.5, 6.8),
+and the Media Foundation calls that detection and the source share (6.2, 6.3).
 
-Ported from the research prototype `pymf/com.py`. Each `_methods_` list is the vtable after the
+Ported from the research prototype `pymf/com.py` and `pymf/mf.py`. Each `_methods_` list is the vtable after the
 three methods of IUnknown, in the order of the Windows SDK 10.0.22621 headers; the prototype checks
 each order against those headers. Each method returns the raw HRESULT as an int. A pointer argument
 that this package does not use is declared `c_void_p`.
@@ -13,12 +14,12 @@ The DLLs load at the first call, not at import (section 15).
 """
 
 import ctypes
-import sys
 from ctypes import POINTER, Structure, Union, byref, c_int, c_long, c_longlong, c_uint, c_ulong, c_ulonglong, c_void_p
 
-if "comtypes" not in sys.modules:
-    sys.coinit_flags = 0  # comtypes joins the multithreaded apartment (MTA) at import (agent 43)
-from comtypes import GUID, IUnknown, STDMETHOD  # noqa: E402
+from comtypes import GUID, IUnknown, STDMETHOD
+
+from skellycam.core.camera.capture.media_foundation.errors import check
+from skellycam.core.camera.capture.modes import NativeMode
 
 HR = c_long
 REFGUID = POINTER(GUID)
@@ -29,6 +30,7 @@ LONGLONG = c_longlong
 BOOL = c_int
 
 COINIT_MULTITHREADED = 0x0
+RPC_E_CHANGED_MODE = 0x80010106
 MF_VERSION = (0x0002 << 16) | 0x0070
 MFSTARTUP_FULL = 0
 MF_SOURCE_READER_FIRST_VIDEO_STREAM = 0xFFFFFFFC
@@ -276,7 +278,11 @@ def coinit_mta() -> bool:
 def startup() -> None:
     """Process set-up of 6.1: this thread joins the MTA, then MFStartup."""
     global _joined_mta
-    _joined_mta = coinit_mta()
+    hresult = CoInitializeEx(None, COINIT_MULTITHREADED) & 0xFFFFFFFF
+    if hresult == RPC_E_CHANGED_MODE:
+        raise OSError("this thread is in a single-threaded apartment (RPC_E_CHANGED_MODE); "
+                      "comtypes was imported before this package set sys.coinit_flags")
+    _joined_mta = hresult in (0, 1)
     hresult = MFStartup(MF_VERSION, MFSTARTUP_FULL) & 0xFFFFFFFF
     if hresult & 0x80000000:
         raise OSError(f"MFStartup failed: 0x{hresult:08X}")
@@ -359,3 +365,77 @@ def fourcc(subtype: GUID) -> str:
     """The FOURCC of a video subtype (MJPG, YUY2, NV12, H264), else the GUID text."""
     text = str(subtype).upper()
     return subtype.Data1.to_bytes(4, "little").decode("latin-1") if text.endswith(FOURCC_SUFFIX) else text
+
+
+def enumerate_devices(stage: str) -> list:
+    """6.2 step 1: [(friendly name, symbolic link, IMFActivate)]. The caller releases each IMFActivate."""
+    raw = c_void_p()
+    check(MFCreateAttributes(byref(raw), 1), stage)
+    attributes = own(raw, IMFAttributes)
+    array, count = POINTER(c_void_p)(), UINT32()
+    try:
+        check(attributes.SetGUID(byref(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE),
+                                 byref(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID)), stage)
+        check(MFEnumDeviceSources(attributes, byref(array), byref(count)), stage)
+    finally:
+        release(attributes)
+    try:
+        devices = []
+        for k in range(count.value):
+            activate = own(array[k], IMFActivate)
+            devices.append((get_string(activate, MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME),
+                            get_string(activate, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK), activate))
+        return devices
+    finally:
+        CoTaskMemFree(array)
+
+
+def activate_source(activate, stage: str):
+    """6.2 step 3: IMFActivate::ActivateObject(IID_IMFMediaSource)."""
+    raw = c_void_p()
+    check(activate.ActivateObject(byref(IMFMediaSource._iid_), byref(raw)), stage)
+    return own(raw, IMFMediaSource)
+
+
+def create_reader(media_source, callback, stage: str):
+    """6.2 step 5: a source reader with no converters. With `callback`, the reader is async."""
+    raw = c_void_p()
+    check(MFCreateAttributes(byref(raw), 3), stage)
+    attributes = own(raw, IMFAttributes)
+    try:
+        check(attributes.SetUINT32(byref(MF_READWRITE_DISABLE_CONVERTERS), 1), stage)
+        check(attributes.SetUINT32(byref(MF_SOURCE_READER_DISCONNECT_MEDIASOURCE_ON_SHUTDOWN), 1), stage)
+        if callback is not None:
+            unknown = callback.QueryInterface(IUnknown)
+            try:
+                check(attributes.SetUnknown(byref(MF_SOURCE_READER_ASYNC_CALLBACK), unknown), stage)
+            finally:
+                release(unknown)
+        raw = c_void_p()
+        check(MFCreateSourceReaderFromMediaSource(media_source, attributes, byref(raw)), stage)
+        return own(raw, IMFSourceReader)
+    finally:
+        release(attributes)
+
+
+def mode_of(media_type) -> NativeMode:
+    """Subtype, size and rate of an IMFMediaType. A missing rate gives 0/1."""
+    subtype = GUID()
+    media_type.GetGUID(byref(MF_MT_SUBTYPE), byref(subtype))
+    width, height = get_pair(media_type, MF_MT_FRAME_SIZE) or (0, 0)
+    fps_num, fps_den = get_pair(media_type, MF_MT_FRAME_RATE) or (0, 1)
+    return NativeMode(width, height, fps_num, fps_den or 1, fourcc(subtype))
+
+
+def native_types(reader) -> list[NativeMode]:
+    """6.3 step 1: the native types of the first video stream, in list order (index k is type k)."""
+    modes = []
+    while True:
+        raw = c_void_p()
+        if reader.GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, len(modes), byref(raw)) & 0x80000000:
+            return modes
+        media_type = own(raw, IMFMediaType)
+        try:
+            modes.append(mode_of(media_type))
+        finally:
+            release(media_type)

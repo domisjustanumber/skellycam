@@ -6,6 +6,7 @@ thread of Media Foundation, and the callback puts the frame in the waiting place
 The process set-up of 6.1 (`com.startup()`) is the job of the camera process, before `open`.
 """
 
+import logging
 import threading
 import time
 from ctypes import byref, c_long, c_ulong, c_void_p, sizeof, string_at
@@ -20,13 +21,15 @@ from skellycam.core.camera.capture.source import (
     ControlSetting, ControlState, ControlValue, OpenedMode)
 from skellycam.core.ipc.frame_ring import NO_SAMPLE_NS
 
+logger = logging.getLogger(__name__)
 FIRST = com.MF_SOURCE_READER_FIRST_VIDEO_STREAM
 FLAGS_AUTO, FLAGS_MANUAL = 1, 2  # CameraControl_Flags_Auto, CameraControl_Flags_Manual
 SAMPLE_TIME_LIMIT_NS = 200_000_000  # 4.2: a sample time more than 200 ms before its arrival is not used
 
-# name: (index into the control interfaces (0 IAMCameraControl, 1 IAMVideoProcAmp), property ID)
-CONTROLS = {"exposure": (0, 4), "focus": (0, 6), "gain": (1, 9), "white_balance": (1, 7), "power_line_frequency": (1, 13)}
-SETTABLE = ("exposure", "focus", "gain")  # white balance and power line frequency are read only (11.5)
+# The controls of step 3a (11.4): name: (index into the control interfaces (0 IAMCameraControl,
+# 1 IAMVideoProcAmp), property ID). White balance and power line frequency come in step 3c.
+CONTROLS = {"exposure": (0, 4), "focus": (0, 6), "gain": (1, 9)}
+ABSENT = ControlValue(present=False, auto=False, value=None)
 
 
 class _ReaderCallback(COMObject):
@@ -39,6 +42,8 @@ class _ReaderCallback(COMObject):
 
     def OnReadSample(self, this, hr, stream_index, flags, timestamp, sample):  # noqa: N802 - COM name
         arrival_ns = time.perf_counter_ns()  # 6.5 step 1: first
+        if self._source._callback is not self:
+            return 0  # a late call of the reader of an earlier open
         try:
             self._source._on_sample(arrival_ns, hr, flags, sample)
         except CaptureFailure as failure:
@@ -48,7 +53,8 @@ class _ReaderCallback(COMObject):
         return 0
 
     def OnFlush(self, this, stream_index):  # noqa: N802
-        self._source._flushed.set()
+        if self._source._callback is self:
+            self._source._flushed.set()
         return 0
 
     def OnEvent(self, this, stream_index, event):  # noqa: N802
@@ -99,8 +105,11 @@ class MediaFoundationSource:
         """Set each change, then read every control back (D20), in one bounded call (6.8)."""
         if self._hung:  # 6.8: after a hang, the source does not touch the interfaces again
             raise CaptureFailure("set controls", "an earlier call did not return", hung=True)
-        interfaces = [com.ref(pointer, kind) for pointer, kind in
-                      zip(self._interfaces, (com.IAMCameraControl, com.IAMVideoProcAmp, com.IKsControl))]
+        with self._lock:  # the close swaps the interfaces out under this lock, then releases them
+            if self._closing:
+                return {name: ABSENT for name in CONTROLS}
+            interfaces = [com.ref(pointer, kind) for pointer, kind in
+                          zip(self._interfaces, (com.IAMCameraControl, com.IAMVideoProcAmp, com.IKsControl))]
 
         def run():
             try:
@@ -118,6 +127,7 @@ class MediaFoundationSource:
             return  # a hung call can still use these objects; the camera process ends hard (6.6)
         with self._lock:
             self._closing = True
+            interfaces, self._interfaces = self._interfaces, (None, None, None)
         deadline = time.perf_counter() + BOUNDED_CALL_LIMIT_S
         while self._issuing:  # 6.9 step 1
             if time.perf_counter() > deadline:
@@ -128,11 +138,13 @@ class MediaFoundationSource:
         if self._reader is not None:
             self._flushed.clear()
             reader = com.ref(self._reader, com.IMFSourceReader)
-            if not self._call("close", "Flush", lambda: _flush(reader)) & 0x80000000:
-                self._flushed.wait(BOUNDED_CALL_LIMIT_S)  # as the prototype: no OnFlush does not stop the close
+            hresult = self._call("close", "Flush", lambda: _flush(reader))
+            if hresult & 0x80000000:
+                logger.warning(f"close: Flush failed: {hresult_reason(hresult)}")
+            elif not self._flushed.wait(BOUNDED_CALL_LIMIT_S):
+                logger.warning(f"close: no OnFlush in {BOUNDED_CALL_LIMIT_S:g} s")  # as the prototype: the close goes on
             reader, self._reader = self._reader, None
             self._call("close", "the reader release", lambda: com.release(reader))
-        interfaces, self._interfaces = self._interfaces, (None, None, None)
         self._call("close", "the control interface release", lambda: [com.release(p) for p in interfaces])
         media_source, self._media_source = self._media_source, None
         if media_source is not None:
@@ -151,7 +163,7 @@ class MediaFoundationSource:
         self._format = request.capture_fourcc
 
         def find():
-            found = detect.enumerate_devices("open")
+            found = com.enumerate_devices("open")
             keep = [(link, activate) for _, link, activate in found if detect.camera_id_of(link) == request.camera_id]
             for _, _, activate in found:
                 if len(keep) != 1 or activate is not keep[0][1]:
@@ -168,7 +180,7 @@ class MediaFoundationSource:
 
         def activate_source():
             try:
-                return detect.activate_source(activate, "open")
+                return com.activate_source(activate, "open")
             finally:
                 com.release(activate)
         self._media_source = self._call("open", "ActivateObject", activate_source,
@@ -181,7 +193,7 @@ class MediaFoundationSource:
             try:
                 interfaces = tuple(com.query(media_source, kind)
                                    for kind in (com.IAMCameraControl, com.IAMVideoProcAmp, com.IKsControl))
-                return interfaces, detect.create_reader(media_source, self._callback, "open")
+                return interfaces, com.create_reader(media_source, self._callback, "open")
             finally:
                 com.release(media_source)
         self._interfaces, self._reader = self._call("open", "the reader creation", create_reader)
@@ -281,7 +293,7 @@ class MediaFoundationSource:
 
 def _set_mode(reader, request):
     """6.3: choose by 7.5, set the type, read it back."""
-    native = detect.native_types(reader)
+    native = com.native_types(reader)
     chosen = choose_mode(native, request)
     raw = c_void_p()
     check(reader.GetNativeMediaType(FIRST, native.index(chosen), byref(raw)), "set mode")
@@ -296,7 +308,7 @@ def _set_mode(reader, request):
     check(reader.GetCurrentMediaType(FIRST, byref(raw)), "set mode")
     current = com.own(raw, com.IMFMediaType)
     try:
-        got = detect.mode_of(current)
+        got = com.mode_of(current)
     finally:
         com.release(current)
     if got != chosen:
@@ -330,27 +342,25 @@ def _end(pointer, shutdown):
 
 
 def _read_control(interfaces, name):
-    """(ControlValue, the interface that answered): IAM first, else IKsControl (6.8)."""
+    """(ControlValue, the interface that answered): IAM `Get` first, else IKsControl (6.8)."""
     kind, prop = CONTROLS[name]
     iam, ks = interfaces[kind], interfaces[2]
     value, flags = c_long(), c_long()
     if iam is not None:
-        low, high, step, default, caps = (c_long() for _ in range(5))
-        if (not iam.GetRange(prop, byref(low), byref(high), byref(step), byref(default), byref(caps)) & 0x80000000
-                and not iam.Get(prop, byref(value), byref(flags)) & 0x80000000):
+        if not iam.Get(prop, byref(value), byref(flags)) & 0x80000000:
             return ControlValue(present=True, auto=bool(flags.value & FLAGS_AUTO), value=value.value), iam
     if ks is not None:
         request = _ks_property(kind, prop, com.KSPROPERTY_TYPE_GET)
         if not ks.KsProperty(byref(request), sizeof(request), byref(request), sizeof(request),
                              byref(c_ulong())) & 0x80000000:
             return ControlValue(present=True, auto=bool(request.Flags & FLAGS_AUTO), value=request.Value), ks
-    return ControlValue(present=False, auto=False, value=None), None
+    return ABSENT, None
 
 
 def _set_control(interfaces, name, setting):
     """Set one control through the interface that read it. The read-back follows in `set_controls`."""
-    if name not in SETTABLE:
-        raise CaptureFailure("set controls", f"{name} is read only")
+    if name not in CONTROLS:
+        raise CaptureFailure("set controls", f"no {name} control")
     before, via = _read_control(interfaces, name)
     if not before.present:
         raise CaptureFailure("set controls", f"no {name} control")
