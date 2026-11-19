@@ -7,13 +7,12 @@ import numpy as np
 from skellylogs import LogRecordModel, get_websocket_log_queue
 
 from skellycam.core.camera.config.camera_config import CameraConfig, CameraConfigs
+from skellycam.core.ipc.frame_ring import CameraRingInfo
 from skellycam.core.ipc.pubsub.pubsub_abcs import TopicMessageABC, PubSubTopicABC
-from skellycam.core.ipc.shared_memory.camera_group_shared_memory import CameraGroupSharedMemoryDTO
 from skellycam.core.recorders.framerate_tracker import CurrentFramerate
 from skellycam.core.recorders.videos.recording_info import RecordingInfo
 from skellycam.core.types.numpy_record_dtypes import FRAME_METADATA_DTYPE
 from skellycam.core.types.type_overloads import TopicPublicationQueue, CameraIdString
-from skellycam.core.ipc.shared_memory.ring_buffer_shared_memory import SharedMemoryRingBufferDTO
 
 @dataclass
 class DeviceExtractedConfigMessage(TopicMessageABC):
@@ -27,9 +26,7 @@ class UpdateCamerasSettingsMessage(TopicMessageABC):
 
 @dataclass
 class SetShmMessage(TopicMessageABC):
-    camera_group_shm_dto: CameraGroupSharedMemoryDTO
-    def get_shm_dto_by_camera_id(self, camera_id: CameraIdString) -> SharedMemoryRingBufferDTO:
-        return self.camera_group_shm_dto.camera_shm_dtos[camera_id]
+    ring_infos: dict[CameraIdString, CameraRingInfo]
 
 @dataclass
 class RecordingInfoMessage(TopicMessageABC):

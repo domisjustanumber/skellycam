@@ -4,6 +4,7 @@ import os
 import struct
 import sys
 import time
+from dataclasses import dataclass
 from fractions import Fraction
 from multiprocessing import shared_memory
 
@@ -21,6 +22,7 @@ from skellycam.core.ipc.frame_ring.layout import (
     format_size,
     payload_offset,
     ring_total_size,
+    rotation_to_cw_deg,
     slot_capacity,
     slot_count,
 )
@@ -31,9 +33,52 @@ NAME_PREFIX = "skc"
 LINUX_SHM_DIR = "/dev/shm"
 CREATOR_PID_OFFSET = RING_HEADER_DTYPE.fields["creator_pid"][1]
 
+UNCOMPRESSED_FORMATS = ("YUY2", "NV12", "RAW")
+UNSELECTABLE_FORMATS = ("H264", "RAW")
+
 # The next generation of each camera index in this process. It never resets, so a name is never
 # used again while the app runs (A54).
 _next_generation: dict[int, int] = {}
+
+
+@dataclass(frozen=True)
+class CameraMode:
+    """One capture mode (section 9). In 2a, the mode list holds only the opened mode [A47]."""
+    width: int
+    height: int
+    fps_num: int
+    fps_den: int
+    format: str
+    uncompressed: bool
+    selectable: bool
+
+
+@dataclass(frozen=True)
+class CameraRingInfo:
+    """What a consumer needs to read the rings of one camera (sections 7.3 and 9) [A34, A46]."""
+    camera_id: str
+    camera_index: int
+    mode: CameraMode
+    jpeg_ring_name: str
+    bgr_ring_name: str | None
+    rotation_cw_deg: int
+
+
+def camera_ring_info(config: CameraConfig, creator: "FrameRingCreator") -> CameraRingInfo:
+    fps = _fps_fraction(config.framerate)
+    fourcc = config.capture_fourcc
+    mode = CameraMode(width=config.resolution.width, height=config.resolution.height,
+                      fps_num=fps.numerator, fps_den=fps.denominator, format=fourcc,
+                      uncompressed=fourcc in UNCOMPRESSED_FORMATS,
+                      selectable=fourcc not in UNSELECTABLE_FORMATS)
+    return CameraRingInfo(camera_id=config.camera_id, camera_index=config.camera_index, mode=mode,
+                          jpeg_ring_name=creator.name, bgr_ring_name=None,
+                          rotation_cw_deg=rotation_to_cw_deg(config.rotation))
+
+
+def _fps_fraction(framerate: float) -> Fraction:
+    """The frame rate as a fraction; 0 when capture reports none (fps_num = 0 means unknown, A52)."""
+    return Fraction(framerate).limit_denominator(1001) if framerate > 0 else Fraction(0)
 
 
 class FrameRingCreator:
@@ -86,7 +131,7 @@ def create_session_rings(camera_configs: dict[str, CameraConfig],
     """
     plans = {}
     for camera_id, config in camera_configs.items():
-        fps = Fraction(config.framerate).limit_denominator(1001) if config.framerate > 0 else Fraction(0)
+        fps = _fps_fraction(config.framerate)
         width, height = config.resolution.width, config.resolution.height
         size = ring_total_size(slot_count(history_s, float(fps) or None),
                                slot_capacity(PixelFormat.JPEG, width, height))

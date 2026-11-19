@@ -7,10 +7,11 @@ from multiprocessing.synchronize import Lock
 from skellycam.core.camera_group.camera_setup_failure import CameraSetupFailure
 from dataclasses import dataclass, field
 
+from skellycam.core.ipc.frame_ring import CameraRingInfo
 from skellycam.core.timestamps.timebase_mapping import TimebaseMapping
 from skellycam.core.ipc.pubsub.pubsub_manager import create_camera_group_pubsub_manager, TopicTypes, PubSubTopicManager
 from skellycam.core.ipc.pubsub.pubsub_topics import SetShmMessage
-from skellycam.core.types.type_overloads import CameraGroupIdString, TopicSubscriptionQueue
+from skellycam.core.types.type_overloads import CameraGroupIdString, CameraIdString, TopicSubscriptionQueue
 from skellycam.utilities.check_main_processs_heartbeat import check_main_process_heartbeat
 from skellycam.utilities.create_camera_group_id import create_camera_group_id
 
@@ -84,11 +85,6 @@ class CameraGroupIPC:
         logger.info(f"Setting should_continue to {value} for camera group {self.group_id}")
         self.shutdown_camera_group_flag.value = not value
 
-    def publish_shm_message(self, shm_dto) -> None:
-        """
-        Publish a shared memory message to the pubsub system.
-        """
-        shm_update_message = SetShmMessage(
-            camera_group_shm_dto=shm_dto,
-        )
-        self.pubsub.topics[TopicTypes.SHM_UPDATES].publish(shm_update_message)
+    def publish_shm_message(self, ring_infos: dict[CameraIdString, CameraRingInfo]) -> None:
+        """Give the ring names to the camera processes (spec section 7.3)."""
+        self.pubsub.topics[TopicTypes.SHM_UPDATES].publish(SetShmMessage(ring_infos=ring_infos))

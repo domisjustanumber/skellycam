@@ -3,7 +3,7 @@ import logging
 from skellycam.core.camera_group.camera_setup_failure import CameraSetupFailedException
 import multiprocessing
 from multiprocessing.sharedctypes import Synchronized
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 from pydantic import BaseModel, ConfigDict
@@ -19,13 +19,26 @@ from skellycam.core.ipc.pubsub.pubsub_topics import (
     RecordingInfoMessage,
     RecordingFinishedMessage,
 )
-from skellycam.core.ipc.shared_memory.camera_group_shared_memory import CameraGroupSharedMemory
+from skellycam.core.ipc.frame_ring import (
+    CameraRingInfo,
+    FrameRead,
+    FrameRingCreator,
+    FrameRingReader,
+    ReadResult,
+    camera_ring_info,
+    create_session_rings,
+    sweep_stale_rings,
+)
 from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
 from skellycam.core.recorders.recording_finalizer import RecordingFinalizer
 from skellycam.core.recorders.audio.audio_recorder import AudioRecorder
 from skellycam.core.recorders.videos.recording_info import RecordingInfo
 from skellycam.core.timestamps.recording_timestamp_stats import RecordingTimestampsStats
-from skellycam.core.types.frontend_payload_bytearray import create_frontend_payload
+from skellycam.core.types.frontend_payload_bytearray import (
+    FRONTEND_FRAME_HEADER_DTYPE,
+    FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE,
+    MessageType,
+)
 from skellycam.core.types.type_overloads import (
     CameraIdString,
     CameraGroupIdString,
@@ -57,7 +70,9 @@ class CameraGroup:
     ipc: CameraGroupIPC
     configs: CameraConfigs
     cameras: CameraManager
-    shm: CameraGroupSharedMemory | None = None
+    rings: dict[CameraIdString, FrameRingCreator] = field(default_factory=dict)
+    ring_infos: dict[CameraIdString, CameraRingInfo] = field(default_factory=dict)
+    ring_readers: dict[CameraIdString, FrameRingReader] = field(default_factory=dict)
     started: bool = False
     _audio_recorder: AudioRecorder | None = None
 
@@ -114,65 +129,85 @@ class CameraGroup:
         self.started = True
         logger.info(f"Starting camera group ID: {self.id} with cameras: {list(self.configs.keys())}")
         self.cameras.start()
-        logger.debug("Awaiting extracted configs so we can create shared memory...")
+        logger.debug("Awaiting extracted configs so we can create the frame rings...")
         extracted_configs: CameraConfigs = await await_extracted_configs(
             ipc=self.ipc, requested_configs=self.configs
         )
-        self.shm = CameraGroupSharedMemory.create(
-            camera_configs=extracted_configs,
-            timebase_mapping=self.ipc.timebase_mapping,
-            read_only=True,
-        )
-        self.ipc.publish_shm_message(shm_dto=self.shm.to_dto())
+        sweep_stale_rings()
+        self._open_rings(extracted_configs)
         self.configs = extracted_configs
         return extracted_configs
+
+    def _open_rings(self, configs: CameraConfigs) -> None:
+        """Create the ring of each camera in `configs`, attach a reader, and give the ring names to
+        the camera processes (spec 7.1 and 7.3)."""
+        for camera_id, ring in create_session_rings(configs).items():
+            self.rings[camera_id] = ring
+            self.ring_readers[camera_id] = FrameRingReader.attach(ring.name)
+        self._update_ring_infos(configs)
+        self.ipc.publish_shm_message(ring_infos=self.ring_infos)
+
+    def _update_ring_infos(self, configs: CameraConfigs) -> None:
+        self.ring_infos.update({camera_id: camera_ring_info(config, self.rings[camera_id])
+                                for camera_id, config in configs.items()})
+
+    def _close_rings(self, camera_ids: list[CameraIdString]) -> None:
+        """Close the reader, then set `closed`, close and unlink the ring of each camera (spec 7.4).
+
+        A writer that has not detached keeps the block: a POSIX mapping stays after an unlink, and
+        Windows frees the block when its last handle closes (spec 7.7)."""
+        for camera_id in camera_ids:
+            self.ring_readers.pop(camera_id).close()
+            self.rings.pop(camera_id).close_and_unlink()
 
     @property
     def camera_ids(self) -> list[CameraIdString]:
         return list(self.configs.keys())
 
-    def get_latest_frames(self) -> dict[CameraIdString, np.recarray] | None:
-        if self.shm is None or not self.shm.valid:
+    def read_latest_ring_frames(self) -> dict[CameraIdString, FrameRead] | None:
+        """The ring frame of each camera at the newest frame number that all cameras have [A4]."""
+        if not self.ring_readers or not self.cameras.all_ready:
             return None
-        latest_frames = self.shm.get_latest_multiframe()
-        if not latest_frames:
+        newest = {camera_id: reader.read_newest() for camera_id, reader in self.ring_readers.items()}
+        if any(read.result is not ReadResult.OK for read in newest.values()):
             return None
-        return latest_frames
+        frame_number = min(read.frame_number for read in newest.values())
+        reads = {camera_id: read if read.frame_number == frame_number
+                 else self.ring_readers[camera_id].read(frame_number)
+                 for camera_id, read in newest.items()}
+        if any(read.result is not ReadResult.OK for read in reads.values()):
+            return None
+        return reads
 
-    def get_latest_frontend_payload(
-        self,
-        if_newer_than: int,
-        display_image_sizes: dict[CameraIdString, dict[str, float]] | None = None,
-    ) -> tuple[FrameNumberInt, MultiframeTimestampFloat, memoryview] | None:
-        if not self.cameras.all_ready:
+    def get_latest_ring_payload(self) -> tuple[FrameNumberInt, MultiframeTimestampFloat, memoryview] | None:
+        """A websocket message in the wire format of today, with the ring JPEG of each camera,
+        untouched: no resize, no re-encode and no rotation (spec 2.3) [A4]."""
+        reads = self.read_latest_ring_frames()
+        if reads is None:
             return None
-        latest_frames = self.get_latest_frames()
-        if not latest_frames:
-            return None
-        return create_frontend_payload(
-            latest_frames=latest_frames,
-            display_image_sizes=display_image_sizes,
-        )
-
-    def get_frontend_payload_by_frame_number(
-        self,
-        frame_number: FrameNumberInt,
-        display_image_sizes: dict[CameraIdString, dict[str, float]] | None = None,
-    ) -> tuple[memoryview, MultiframeTimestampFloat] | None:
-        if not self.cameras.all_ready:
-            return None
-        if frame_number > self.shm.latest_multiframe_number:
-            return None
-        latest_frames = self.shm.get_images_by_frame_number(frame_number=frame_number)
-        if not latest_frames:
-            return None
-        frame_number_out, mf_timestamp, frames_bytearray = create_frontend_payload(
-            latest_frames=latest_frames,
-            display_image_sizes=display_image_sizes,
-        )
-        if frame_number_out != frame_number:
-            logger.warning(f"Requested frame number {frame_number} but got {frame_number_out}")
-        return frames_bytearray, float(mf_timestamp)
+        frame_number = next(iter(reads.values())).frame_number
+        header = np.zeros(1, dtype=FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE)
+        header["message_type"] = MessageType.PAYLOAD_HEADER
+        header["frame_number"] = frame_number
+        header["number_of_cameras"] = len(reads)
+        payload = bytearray(header.tobytes())
+        for camera_id, read in reads.items():
+            info = self.ring_infos[camera_id]
+            frame_header = np.zeros(1, dtype=FRONTEND_FRAME_HEADER_DTYPE)
+            frame_header["message_type"] = MessageType.FRAME_HEADER
+            frame_header["frame_number"] = frame_number
+            frame_header["camera_id"] = camera_id.encode("ascii")
+            frame_header["camera_index"] = info.camera_index
+            frame_header["image_width"] = info.mode.width
+            frame_header["image_height"] = info.mode.height
+            frame_header["color_channels"] = 3
+            frame_header["jpeg_string_length"] = read.payload_len
+            payload += frame_header.tobytes()
+            payload += read.payload
+        header["message_type"] = MessageType.PAYLOAD_FOOTER
+        payload += header.tobytes()
+        timestamp = float(np.mean([read.arrival_ns for read in reads.values()]))
+        return frame_number, timestamp, memoryview(payload).toreadonly()
 
     async def pause_unpause(self, await_state_change: bool = True) -> None:
         await self.cameras.pause_unpause(await_state_change)
@@ -185,6 +220,14 @@ class CameraGroup:
         updated_configs = await await_extracted_configs(
             ipc=self.ipc, requested_configs=requested_configs
         )
+        changed = {camera_id: config for camera_id, config in updated_configs.items()
+                   if (config.resolution, config.framerate)
+                   != (self.configs[camera_id].resolution, self.configs[camera_id].framerate)}
+        if changed:
+            # A new mode gets a new ring under a new name (spec 7.5).
+            self._close_rings(list(changed))
+            self._open_rings(changed)
+        self._update_ring_infos(updated_configs)
         self.configs = updated_configs
         logger.info(f"Updated camera configs - {list(requested_configs.keys())}")
         return self.configs
@@ -268,14 +311,15 @@ class CameraGroup:
             self._audio_recorder = None
 
         self.ipc.should_continue = False
+        for ring in self.rings.values():
+            ring.set_closed()
         self.cameras.close()
 
-        if self.shm is not None:
-            try:
-                self.shm.unlink_and_close()
-            except Exception as e:
-                logger.error(f"Error closing shared memory: {type(e).__name__} - {e}")
-            logger.success("Shared memory closed and unlinked if applicable.")
+        try:
+            self._close_rings(list(self.rings))
+        except Exception as e:
+            logger.error(f"Error closing the frame rings: {type(e).__name__} - {e}")
+        logger.success("Frame rings closed and unlinked.")
 
         logger.success("Camera group closed successfully.")
 

@@ -18,6 +18,7 @@ SLOT_HEADER_SIZE = 64
 TABLE_OFFSET = RING_HEADER_SIZE
 PAGE_SIZE = 4096
 FALLBACK_FPS = 60
+NO_SAMPLE_NS = -2 ** 63  # INT64_MIN: `sample_ns` when capture gives no sample time (table 3.4)
 
 
 class PixelFormat(enum.IntEnum):
