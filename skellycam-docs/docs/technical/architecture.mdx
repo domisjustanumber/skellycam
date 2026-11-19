@@ -66,7 +66,7 @@ graph TB
             Orch["CameraOrchestrator\n(sync logic)"]
             CW1["CameraWorker Process 1\n+ VideoRecorder"]
             CW2["CameraWorker Process 2\n+ VideoRecorder"]
-            SHM["SharedMemory\nRing Buffers"]
+            SHM["JPEG Frame Rings\n(one per camera)"]
             USB1["USB Camera 0"] --> CW1
             USB2["USB Camera 1"] --> CW2
             CW1 --> SHM
@@ -134,16 +134,17 @@ The main process runs the FastAPI/Uvicorn server and manages:
 
 - **WorkerRegistry** — Tracks all spawned worker processes and provides a heartbeat mechanism for health monitoring.
 - **CameraGroupManager** — Singleton that creates/destroys camera groups and routes API calls to the correct group.
-- **WebSocket Server** — Reads synchronized multi-frame data from shared memory, JPEG-compresses each camera's image, and sends binary payloads to connected clients. JSON messages (logs, state updates, framerate statistics) are encoded with [msgspec](https://jcristharif.com/msgspec/) for fast serialization.
+- **WebSocket Server** — Sends binary payloads to connected clients. Each payload holds the JPEG of each camera from its frame ring, at the newest frame number that all cameras have. The server does not resize, encode or rotate the JPEG. JSON messages (logs, state updates, framerate statistics) are encoded with [msgspec](https://jcristharif.com/msgspec/) for fast serialization.
 
 ### Camera Worker Processes
 
 Each camera gets its own `CameraWorker` running in a separate `multiprocessing.Process`:
 
 1. **OpenCV Capture Loop** — Calls `cv2.VideoCapture.grab()` and `.retrieve()` in a coordinated two-phase protocol, with synchronization gating between cameras.
-2. **Frame Metadata** — Each frame is annotated with slim camera identification (camera ID, index, rotation, color channels) and high-resolution `perf_counter_ns` timestamps at multiple lifecycle stages (pre-grab, post-grab, pre-retrieve, post-retrieve, pre/post shared memory copy, pre/post record). The full camera configuration lives in the `CameraGroup`'s config dictionary — only the fields needed per-frame are embedded in the metadata to minimize shared memory footprint.
-3. **Shared Memory Write** — The raw frame data is written to a shared memory ring buffer, making it available to the main process without copying.
-4. **Video Recording** — When recording is active, frames are written to `cv2.VideoWriter` directly in the camera process, gated by the orchestrator's recording frame boundaries.
+2. **Frame Metadata** — Each frame is annotated with slim camera identification (camera ID, index, rotation, color channels) and high-resolution `perf_counter_ns` timestamps at multiple lifecycle stages (pre-grab, post-grab, pre-retrieve, post-retrieve, pre/post JPEG encode, pre/post record). The full camera configuration lives in the `CameraGroup`'s config dictionary — only the fields needed per-frame are embedded in the metadata.
+3. **JPEG Encode and Capture Check** — The loop encodes each frame with `cv2.imencode` at quality 90. The capture check (`check_jpeg`) then sets the error flags of a cut-off frame.
+4. **Video Recording** — When recording is active, frames are written to `cv2.VideoWriter` directly in the camera process, gated by the orchestrator's recording frame boundaries. The recorder gets each frame before the ring write.
+5. **Frame Ring Write** — The loop writes the JPEG to the frame ring of the camera (`FrameRingWriter`). A ring write never blocks or waits. A failed ring write does not stop capture or recording.
 
 For the full capture loop internals, see the [Frame Synchronization](/docs/technical/frame-synchronization) reference.
 
@@ -152,17 +153,17 @@ For the full capture loop internals, see the [Frame Synchronization](/docs/techn
 ```mermaid
 graph TB
     A["USB Camera Sensor"] --> B["CameraWorker\ngrab() + retrieve()"]
-    B --> C["Per-Camera SharedMemory\nRing Buffer"]
-    C --> D["CameraGroup\nMulti-Frame Assembly"]
-    D --> E["WebSocket Server\nJPEG compress + pack"]
+    B --> C["Per-Camera JPEG\nFrame Ring"]
+    C --> D["CameraGroup\nRing readers"]
+    D --> E["WebSocket Server\nPack ring JPEGs"]
     E --> F["Frontend\nBinary parse"]
     F --> G["FrameProcessor\nWeb Worker → ImageBitmap"]
     G --> H["OffscreenCanvas\nWeb Workers"]
 ```
 
-1. **Camera → SharedMemory** — Each camera worker writes its frame into a per-camera shared memory ring buffer.
-2. **SharedMemory → MultiFrame buffer** — The camera group reads frames from all cameras and writes a synchronized multi-frame to a second shared memory buffer.
-3. **MultiFrame → WebSocket** — The WebSocket server reads the latest multi-frame, JPEG-compresses each camera's image (quality 80, resized to match client display dimensions or 50% of native resolution), and packs them into a binary payload.
+1. **Camera → Frame ring** — Each camera worker writes the JPEG of its frame into the frame ring of the camera.
+2. **Frame rings → CameraGroup** — The camera group reads the newest frame number that all rings have. It reads that frame from each ring.
+3. **CameraGroup → WebSocket** — The WebSocket server packs the JPEG of each camera into a binary payload, unchanged. The frames are full size. A rotated camera shows unrotated until the UI rotates the image.
 4. **WebSocket → Frontend** — The binary payload is sent over WebSocket. The frontend's `FrameProcessor` Web Worker parses the binary protocol and creates `ImageBitmap` objects. These are transferred to per-camera `OffscreenCanvas` workers for GPU-accelerated rendering.
 
 ## Data Flow: Recording
@@ -175,18 +176,20 @@ When recording is active:
 
 ## IPC Mechanisms
 
-### Shared Memory Ring Buffers
+### Frame Rings
 
-[//]: # (NOTE - Should Move this to its own page and add more detail about the implementation. Specifically noting the use of numpy.recarrays and dto create/recreate methodsto handle the shared memory. Using built in Python shared memory stuff still touches the pickle layer sometimes, so we made this whole thing to encure max performance. Note that we might move the SHM stuff to its own utility repo called 'skellyshm' like skellydocs, skellylogs, etc )
+Frame data goes between processes in frame rings. A frame ring is one `multiprocessing.shared_memory.SharedMemory` block for each camera. It holds a ring header, a table of 64-byte slot headers and fixed slots. The file `specs/frame-ring.md` of the repository gives the layout and the rules.
 
-Frame data is transferred between processes using `multiprocessing.shared_memory.SharedMemory`. Ring buffers allow the producer (camera worker) and consumer (main process) to operate independently. Critically, the ring buffer supports **overwrite semantics**: if the consumer (streaming to the frontend) falls behind, old frames are silently overwritten rather than blocking the producer (camera capture). This is what protects the hot loop from soft loop latency.
-
-The shared memory infrastructure (`SharedMemoryElement`, `SharedMemoryRingBuffer`, and their DTOs) is implemented using Python dataclasses for minimal construction overhead — these objects hold numpy recarrays and multiprocessing primitives, so Pydantic validation would add cost with no benefit. Cross-process reconstruction is handled via lightweight DTO dataclasses that carry shared memory names and dtype information.
+- The main process creates each ring when the cameras report their opened configs. It logs the size of each ring and the total. It unlinks each ring at the end of the session.
+- A change of resolution or frame rate makes a new ring with a new name. Frame numbers start at 0 in each new ring.
+- The `SetShmMessage` topic gives a `CameraRingInfo` for each camera to the camera processes. `CameraGroup.ring_infos` holds the same information.
+- The camera process is the one writer of its ring. The writer overwrites the oldest slot. It never waits for a reader. This protects the hot loop from soft loop latency.
+- A reader (`FrameRingReader`) copies the slot header and the JPEG out of the block. Then it checks two CRC-32 values on its copy. A reader never writes to the block.
 
 <details>
 <summary>What is shared memory?</summary>
 
-Shared memory is a region of memory that multiple processes can access directly, without copying data between them. This is much faster than sending data through pipes or queues. In SkellyCam, camera frames (which can be several megabytes each) are written to shared memory by the camera process and read by the main process for streaming — all without any data copying.
+Shared memory is a region of memory that multiple processes can access directly. This is much faster than sending data through pipes or queues. In SkellyCam, the camera process writes each JPEG frame to shared memory one time. A reader copies the frame out one time and checks it.
 
 Learn more: [Shared memory (Wikipedia)](https://en.wikipedia.org/wiki/Shared_memory)
 </details>
