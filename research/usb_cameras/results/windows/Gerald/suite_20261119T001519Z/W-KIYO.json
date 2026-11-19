@@ -1,0 +1,439 @@
+{
+ "test": "W-KIYO",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-19T00:18:23.848650+00:00",
+ "utc_finished": "2026-11-19T00:18:23.864531+00:00",
+ "elapsed_s": 0.015,
+ "command": "research/usb_cameras/suite/windows/run_suite.py --only W-ENV,W-TOPO,W-TBUMP,W-KIYO --min-fps 30 --min-height 720 --max-height 720",
+ "argv": [
+  "research/usb_cameras/suite/windows/run_suite.py",
+  "--only",
+  "W-ENV,W-TOPO,W-TBUMP,W-KIYO",
+  "--min-fps",
+  "30",
+  "--min-height",
+  "720",
+  "--max-height",
+  "720"
+ ],
+ "environment": {
+  "os": {
+   "platform": "Windows-11-10.0.26300-SP0",
+   "system": "Windows",
+   "release": "11",
+   "version": "10.0.26300",
+   "machine": "AMD64",
+   "windows_build": 26300,
+   "windows_version": "10.0.26300",
+   "windows_edition": "Core",
+   "windows_displayversion": "26H2",
+   "windows_ubr": 9974,
+   "windows_productname": "Windows 10 Home",
+   "windows_currentbuild": "26300"
+  },
+  "python": "3.12.13",
+  "python_implementation": "CPython",
+  "python_executable": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+  "hostname": "Gerald",
+  "pid": 4140,
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0"
+  }
+ },
+ "cameras": [
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-18T16:50:53.375992+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 2
+  }
+ ],
+ "measurements": {
+  "interval_s": 10.0,
+  "mode": "background",
+  "minutes": 3.07,
+  "utc_started": "2026-11-19T00:15:19.398881+00:00",
+  "utc_stopped": "2026-11-19T00:18:23.864531+00:00",
+  "power": {
+   "raw_rc": 0,
+   "scheme": "381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)",
+   "hub_selective_suspend_timeout_ms": {
+    "ac": {
+     "index": 50,
+     "name": null
+    },
+    "dc": {
+     "index": 50,
+     "name": null
+    }
+   },
+   "usb_selective_suspend": {
+    "ac": {
+     "index": 1,
+     "name": "Enabled"
+    },
+    "dc": {
+     "index": 1,
+     "name": "Enabled"
+    }
+   },
+   "498c044a-201b-4631-a522-5c744ed4e678": {
+    "ac": {
+     "index": 1,
+     "name": "Enabled"
+    },
+    "dc": {
+     "index": 0,
+     "name": "Disabled"
+    }
+   },
+   "usb3_link_power_management": {
+    "ac": {
+     "index": 2,
+     "name": "Moderate power savings"
+    },
+    "dc": {
+     "index": 2,
+     "name": "Moderate power savings"
+    }
+   }
+  },
+  "cameras": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "name": "USB Video Device",
+    "mode": "background",
+    "last_arrival": "2026-11-18T16:50:53.375992+00:00",
+    "plug_in_age_at_start_s": 26666.2,
+    "speed": "SS",
+    "device_parameters": {
+     "EnumerationRetryCount": 0,
+     "SymbolicName": "\\??\\USB#VID_1532&PID_0E05#9&3a0ecb01&0&4#{a5dcbf10-6530-11d2-901f-0000000000ed}"
+    },
+    "function_device_parameters": {
+     "VendorRevision": 0,
+     "RevisionId": 2081,
+     "ExtPropDescSemaphore": 1,
+     "DeviceSelectiveSuspended": 1,
+     "PowerlineFrequency": 2
+    },
+    "polls": [
+     {
+      "i": 0,
+      "api": "mf",
+      "utc": "2026-11-19T00:15:19.593624Z",
+      "utc_requested": "2026-11-19T00:15:19.399381+00:00",
+      "t_s": 0.3,
+      "sched_t_s": 0.0,
+      "late_s": 0.0,
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "lock_busy": false,
+      "elapsed_s": 0.297,
+      "lock_wait_s": 0.0,
+      "plug_in_age_s": 26666.2,
+      "test": "W-ENV",
+      "problem_code": 0,
+      "present": true,
+      "supported": 16,
+      "exposure": -7,
+      "codes": [],
+      "device_error": false,
+      "error_hr": null,
+      "error_class": null,
+      "n_failing": 0,
+      "n_answered": 16
+     },
+     {
+      "i": 0,
+      "api": "ds",
+      "utc": "2026-11-19T00:15:19.855937Z",
+      "utc_requested": "2026-11-19T00:15:19.703525+00:00",
+      "t_s": 0.5,
+      "sched_t_s": 0.0,
+      "late_s": 0.0,
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "lock_busy": false,
+      "elapsed_s": 0.203,
+      "lock_wait_s": 0.0,
+      "plug_in_age_s": 26666.5,
+      "test": "W-ENV",
+      "problem_code": 0,
+      "present": true,
+      "supported": 16,
+      "exposure": -7,
+      "codes": [],
+      "device_error": false,
+      "error_hr": null,
+      "error_class": null,
+      "n_failing": 0,
+      "n_answered": 16
+     },
+     {
+      "i": 1,
+      "api": "mf",
+      "utc": "2026-11-19T00:16:54.247988Z",
+      "utc_requested": "2026-11-19T00:15:29.407795+00:00",
+      "t_s": 94.91,
+      "sched_t_s": 10.0,
+      "late_s": 0.0,
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "lock_busy": false,
+      "elapsed_s": 84.906,
+      "lock_wait_s": 84.7,
+      "plug_in_age_s": 26760.9,
+      "test": "W-TBUMP",
+      "problem_code": 0,
+      "present": true,
+      "supported": 16,
+      "exposure": -7,
+      "codes": [],
+      "device_error": false,
+      "error_hr": null,
+      "error_class": null,
+      "n_failing": 0,
+      "n_answered": 16
+     },
+     {
+      "i": 1,
+      "api": "ds",
+      "utc": "2026-11-19T00:18:20.888282Z",
+      "utc_requested": "2026-11-19T00:16:54.316747+00:00",
+      "t_s": 181.53,
+      "sched_t_s": 10.0,
+      "late_s": 0.0,
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "lock_busy": false,
+      "elapsed_s": 86.625,
+      "lock_wait_s": 86.4,
+      "plug_in_age_s": 26847.5,
+      "test": "W-TBUMP",
+      "problem_code": 0,
+      "present": true,
+      "supported": 16,
+      "exposure": -7,
+      "codes": [],
+      "device_error": false,
+      "error_hr": null,
+      "error_class": null,
+      "n_failing": 0,
+      "n_answered": 16
+     },
+     {
+      "i": 2,
+      "api": "mf",
+      "utc": "2026-11-19T00:18:22.067170Z",
+      "utc_requested": "2026-11-19T00:18:21.672564+00:00",
+      "t_s": 182.72,
+      "sched_t_s": 182.27,
+      "late_s": 0.0,
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "lock_busy": false,
+      "elapsed_s": 0.453,
+      "lock_wait_s": 0.2,
+      "plug_in_age_s": 26848.7,
+      "test": "W-TBUMP",
+      "problem_code": 0,
+      "present": true,
+      "supported": 16,
+      "exposure": -7,
+      "codes": [],
+      "device_error": false,
+      "error_hr": null,
+      "error_class": null,
+      "n_failing": 0,
+      "n_answered": 16
+     },
+     {
+      "i": 2,
+      "api": "ds",
+      "utc": "2026-11-19T00:18:22.525056Z",
+      "utc_requested": "2026-11-19T00:18:22.130700+00:00",
+      "t_s": 183.17,
+      "sched_t_s": 182.27,
+      "late_s": 0.0,
+      "ok": true,
+      "rc": 0,
+      "timed_out": false,
+      "lock_busy": false,
+      "elapsed_s": 0.453,
+      "lock_wait_s": 0.2,
+      "plug_in_age_s": 26849.1,
+      "test": "W-TBUMP",
+      "problem_code": 0,
+      "present": true,
+      "supported": 16,
+      "exposure": -7,
+      "codes": [],
+      "device_error": false,
+      "error_hr": null,
+      "error_class": null,
+      "n_failing": 0,
+      "n_answered": 16
+     }
+    ],
+    "polls_per_api": {
+     "mf": 3,
+     "ds": 3
+    },
+    "lock_busy_per_api": {
+     "mf": 0,
+     "ds": 0
+    },
+    "ok_per_api": {
+     "mf": 3,
+     "ds": 3
+    },
+    "first_failure": null,
+    "failure_codes": {},
+    "stopped_answering": false,
+    "failed_from_first_poll": null,
+    "transitions": [],
+    "arrivals_seen": [
+     {
+      "utc": "2026-11-19T00:15:20.621622+00:00",
+      "i": 0,
+      "last_arrival": "2026-11-18T16:50:53.375992+00:00",
+      "present": true,
+      "problem_code": 0
+     }
+    ],
+    "vendor_process_changes": [
+     {
+      "utc": "2026-11-19T00:15:20.443242+00:00",
+      "i": 0,
+      "processes": [
+       "LogiTuneAgent.exe:10996",
+       "LogiTuneUpdater.exe:6560",
+       "logioptionsplus_agent.exe:16660",
+       "logioptionsplus_appbroker.exe:23416",
+       "logioptionsplus_updater.exe:6708",
+       "razer_elevation_service.exe:32396"
+      ]
+     }
+    ],
+    "activity_changes": [
+     {
+      "utc": "2026-11-19T00:15:20.621120+00:00",
+      "i": 0,
+      "processes": [
+       "LogiTuneAgent.exe:10996"
+      ],
+      "in_use": true,
+      "report_received": true,
+      "consent_in_use": [],
+      "error": null
+     }
+    ],
+    "onset": {
+     "name": "USB Video Device",
+     "poller_mode": "background",
+     "poller_started_utc": "2026-11-19T00:15:19.398881+00:00",
+     "plug_in_age_at_start_s": 26666.2,
+     "last_arrival": "2026-11-18T16:50:53.375992+00:00",
+     "stopped_answering": false,
+     "failed_from_first_poll": false,
+     "first_failure_utc": null,
+     "first_failure_plug_in_age_s": null,
+     "first_failure_test": null,
+     "first_failure_codes": null,
+     "first_failure_vendor_processes": null,
+     "first_failure_activity_processes": null,
+     "per_api": {},
+     "transitions": [],
+     "n_polls": 6
+    }
+   }
+  },
+  "poll_timeout_ms": 3000,
+  "poller_errors": [],
+  "note": "read-only; the LPM-off arm (power plan change) is attended item A4. In background mode the polls ran during the other tests (each under camlock, so never concurrently with another camera command)."
+ },
+ "verdicts": {
+  "kiyo|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4|all": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "answers every control poll (MF and DS) during the window",
+     "met": true,
+     "detail": {
+      "ok": {
+       "mf": 3,
+       "ds": 3
+      },
+      "polls": {
+       "mf": 3,
+       "ds": 3
+      }
+     }
+    },
+    {
+     "criterion": "onset observed inside the window (the first poll answered)",
+     "met": null,
+     "detail": null
+    }
+   ],
+   "evidence": {
+    "first_failure": null,
+    "codes": {},
+    "minutes": 3.1,
+    "failed_from_first_poll": null,
+    "onset": {
+     "name": "USB Video Device",
+     "poller_mode": "background",
+     "poller_started_utc": "2026-11-19T00:15:19.398881+00:00",
+     "plug_in_age_at_start_s": 26666.2,
+     "last_arrival": "2026-11-18T16:50:53.375992+00:00",
+     "stopped_answering": false,
+     "failed_from_first_poll": false,
+     "first_failure_utc": null,
+     "first_failure_plug_in_age_s": null,
+     "first_failure_test": null,
+     "first_failure_codes": null,
+     "first_failure_vendor_processes": null,
+     "first_failure_activity_processes": null,
+     "per_api": {},
+     "transitions": [],
+     "n_polls": 6
+    },
+    "plug_in_age_at_start_s": 26666.2,
+    "mode": "background",
+    "lock_busy_per_api": {
+     "mf": 0,
+     "ds": 0
+    }
+   }
+  }
+ },
+ "errors": []
+}

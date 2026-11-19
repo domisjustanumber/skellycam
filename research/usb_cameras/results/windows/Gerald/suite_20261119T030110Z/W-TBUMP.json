@@ -1,0 +1,4612 @@
+{
+ "test": "W-TBUMP",
+ "platform": "windows",
+ "hostname": "Gerald",
+ "utc_started": "2026-11-19T03:01:12.794757+00:00",
+ "utc_finished": "2026-11-19T03:04:21.190986+00:00",
+ "elapsed_s": 188.391,
+ "command": "research/usb_cameras/suite/windows/run_suite.py --only W-ENV,W-TOPO,W-TBUMP,W-KIYO --min-fps 30 --min-height 720 --max-height 720",
+ "argv": [
+  "research/usb_cameras/suite/windows/run_suite.py",
+  "--only",
+  "W-ENV,W-TOPO,W-TBUMP,W-KIYO",
+  "--min-fps",
+  "30",
+  "--min-height",
+  "720",
+  "--max-height",
+  "720"
+ ],
+ "environment": {
+  "os": {
+   "platform": "Windows-11-10.0.26300-SP0",
+   "system": "Windows",
+   "release": "11",
+   "version": "10.0.26300",
+   "machine": "AMD64",
+   "windows_build": 26300,
+   "windows_version": "10.0.26300",
+   "windows_edition": "Core",
+   "windows_displayversion": "26H2",
+   "windows_ubr": 9974,
+   "windows_productname": "Windows 10 Home",
+   "windows_currentbuild": "26300"
+  },
+  "python": "3.12.13",
+  "python_implementation": "CPython",
+  "python_executable": "C:\\Users\\Dom\\AppData\\Local\\uv\\cache\\environments-v2\\run-suite-9198111ec5c14995\\Scripts\\python.exe",
+  "hostname": "Gerald",
+  "pid": 52080,
+  "packages": {
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "simplejpeg": "1.9.0"
+  }
+ },
+ "cameras": [
+  {
+   "key": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "name": "USB Video Device",
+   "vid": "1532",
+   "pid": "0e05",
+   "serial": null,
+   "is_kiyo": true,
+   "instance_id": "USB\\VID_1532&PID_0E05\\9&3A0ECB01&0&4",
+   "parent_instance_id": "USB\\VID_05E3&PID_0625\\8&27A25471&0&4",
+   "function_instance_id": "USB\\VID_1532&PID_0E05&MI_00\\a&34494d13&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Video Device",
+   "ds_path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)#USB(4)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "speed": "SS",
+   "bcd_device": "0821",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-19T02:59:35.739355+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 7,
+   "ds_index": 2
+  },
+  {
+   "key": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "name": "Logitech Webcam C930e",
+   "vid": "046d",
+   "pid": "0843",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_0843\\5&CC3F949&0&8",
+   "parent_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "function_instance_id": "USB\\VID_046D&PID_0843&MI_00\\6&34c047e4&0&0000",
+   "hub_port": 8,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "Logitech Webcam C930e",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(8)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "speed": "HS",
+   "bcd_device": "0013",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-16T12:43:00.420074+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 0,
+   "ds_index": 3
+  },
+  {
+   "key": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "name": "USB Camera",
+   "vid": "4c4a",
+   "pid": "4a55",
+   "serial": null,
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_4C4A&PID_4A55\\7&7DCC7CE&0&2",
+   "parent_instance_id": "USB\\VID_05E3&PID_0610\\6&F6F0942&0&1",
+   "function_instance_id": "USB\\VID_4C4A&PID_4A55&MI_00\\8&232e60d4&0&0000",
+   "hub_port": 2,
+   "mf_symlink": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "USB Camera",
+   "ds_path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(13)#USB(1)#USB(2)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "speed": "HS",
+   "bcd_device": "0100",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-16T12:43:12.254372+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 5,
+   "ds_index": 0
+  },
+  {
+   "key": "046d:085c:sn=C922SN01",
+   "name": "c922 Pro Stream Webcam",
+   "vid": "046d",
+   "pid": "085c",
+   "serial": "C922SN01",
+   "is_kiyo": false,
+   "instance_id": "USB\\VID_046D&PID_085C\\C922SN01",
+   "parent_instance_id": "USB\\ROOT_HUB30\\4&2FD48294&0&0",
+   "function_instance_id": "USB\\VID_046D&PID_085C&MI_00\\8&268da596&0&0000",
+   "hub_port": 4,
+   "mf_symlink": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+   "ds_name": "c922 Pro Stream Webcam",
+   "ds_path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+   "location_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)#USB(4)",
+   "port_path": "PCIROOT(0)#PCI(1400)#USBROOT(0)/4",
+   "speed": "HS",
+   "bcd_device": "0016",
+   "metadata_tier1": false,
+   "last_arrival": "2026-11-16T12:43:01.549968+00:00",
+   "problem_code": 0,
+   "dn_warn": [],
+   "mf_index": 6,
+   "ds_index": 1
+  }
+ ],
+ "measurements": {
+  "settings": {
+   "width": 1280,
+   "height": 720,
+   "fps": 30,
+   "seconds": 60.0,
+   "capture_fourcc": "MJPG",
+   "exposure": "skellycam default (MANUAL -7)",
+   "writer_fourcc": "skellycam default",
+   "lockstep": true
+  },
+  "excluded": {},
+  "eligible": [
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+   "046d:085c:sn=C922SN01"
+  ],
+  "raw_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP",
+  "runs": {
+   "baseline": {
+    "label": "baseline",
+    "checkout": "c:\\Users\\Dom\\GitHub\\freemocap\\skellycam-2a-before",
+    "cameras": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "046d:085c:sn=C922SN01"
+    ],
+    "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline",
+    "camcmd": {
+     "rc": 0,
+     "timed_out": false,
+     "killed": false,
+     "elapsed_s": 92.281,
+     "lock_wait_s": 0.0,
+     "lock_timed_out": false,
+     "gate_skipped": null,
+     "dry_run": null,
+     "spawn_error": null
+    },
+    "timeout_s": 570.0,
+    "driver": {
+     "tool": "skellycam_record",
+     "ok": true,
+     "utc_started": "2026-11-19T03:01:13.996Z",
+     "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline",
+     "request": {
+      "checkout": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam-2a-before",
+      "cameras": [
+       "ds:\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "ds:\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "ds:\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "ds:\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global"
+      ],
+      "width": 1280,
+      "height": 720,
+      "fps": 30.0,
+      "seconds": 60.0,
+      "warmup_s": 3.0,
+      "capture_fourcc": "MJPG",
+      "exposure_mode": "MANUAL",
+      "exposure": -7,
+      "writer_fourcc": "(skellycam default)",
+      "deadline_s": 480.0,
+      "media_check": "full"
+     },
+     "stage_failed": null,
+     "error": null,
+     "phases_s": {
+      "start_to_health": 2.531,
+      "detect": 0.031,
+      "connect": 11.891,
+      "record_start_call": 1.062,
+      "recorded_wall": 60.0,
+      "stop_and_finalise": 1.781,
+      "verify": 9.406
+     },
+     "resolution": [
+      {
+       "spec": "ds:\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "kind": "ds",
+       "how": "device_path_exact",
+       "camera_id": "fbf5",
+       "camera_index": 2,
+       "name": "USB Video Device",
+       "path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "vendor_id": 5426,
+       "product_id": 3589,
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "is_kiyo_pro": true
+      },
+      {
+       "spec": "ds:\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "kind": "ds",
+       "how": "device_path_exact",
+       "camera_id": "0100",
+       "camera_index": 3,
+       "name": "Logitech Webcam C930e",
+       "path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "vendor_id": 1133,
+       "product_id": 2115,
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "is_kiyo_pro": false
+      },
+      {
+       "spec": "ds:\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "kind": "ds",
+       "how": "device_path_exact",
+       "camera_id": "b395",
+       "camera_index": 0,
+       "name": "USB Camera",
+       "path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "vendor_id": 19530,
+       "product_id": 19029,
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "is_kiyo_pro": false
+      },
+      {
+       "spec": "ds:\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "kind": "ds",
+       "how": "device_path_exact",
+       "camera_id": "1c81",
+       "camera_index": 1,
+       "name": "c922 Pro Stream Webcam",
+       "path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "vendor_id": 1133,
+       "product_id": 2140,
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "is_kiyo_pro": false
+      }
+     ],
+     "fault_hints": [],
+     "checkout": {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam-2a-before",
+      "commit": "0a66994c37e54d310a0e2921cfb9230c4b93793b",
+      "dirty": false,
+      "python_version_file": "3.13.18",
+      "versions": {
+       "python": "3.13.18",
+       "opencv": "5.1.0",
+       "numpy": "2.5.5",
+       "av": "19.0.2",
+       "skellycam": "2.0.0a6",
+       "opencv-contrib-python": "5.1.0.95",
+       "fastapi": "0.163.2",
+       "uvicorn": "0.54.0",
+       "pydantic": "2.14.3",
+       "polars": "2.1.0",
+       "cv2-enumerate-cameras": "1.4.0"
+      }
+     },
+     "server": {
+      "port": 51671,
+      "argv": [
+       "C:\\Users\\Dom\\.local\\bin\\uv.EXE",
+       "run",
+       "--no-sync",
+       "python",
+       "-c",
+       "import sys; port = int(sys.argv[1]); import skellycam.api.server_constants as sc; sc.HOSTNAME = '127.0.0.1'; sc.PORT = port; sc.APP_URL = 'http://127.0.0.1:%d' % port; from skellylogs import configure_logging, LogLevels; configure_logging(LogLevels.TRACE); from skellycam.__main__ import entry_point; entry_point()",
+       "51671"
+      ],
+      "cwd": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam-2a-before",
+      "stdout_log": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\server_stdout.log",
+      "stderr_log": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\server_stderr.log",
+      "pid": 55292,
+      "app_pid": 66236,
+      "close_groups": {
+       "ok": true,
+       "status": 200,
+       "error": null,
+       "elapsed_s": 1.204
+      },
+      "shutdown_call": {
+       "ok": true,
+       "status": 200,
+       "error": null,
+       "elapsed_s": 0.015
+      },
+      "exit": "exited",
+      "killed": false,
+      "job_processes_after_exit": {
+       "active": 0,
+       "total": 26
+      },
+      "leftover_processes": 0,
+      "rc": 15,
+      "kill_method": null,
+      "clean": true,
+      "stop_elapsed_s": 2.094
+     },
+     "detected": [
+      {
+       "index": 0,
+       "name": "USB Camera",
+       "vendor_id": 19530,
+       "product_id": 19029,
+       "path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "camera_id": "b395"
+      },
+      {
+       "index": 1,
+       "name": "c922 Pro Stream Webcam",
+       "vendor_id": 1133,
+       "product_id": 2140,
+       "path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "camera_id": "1c81"
+      },
+      {
+       "index": 2,
+       "name": "USB Video Device",
+       "vendor_id": 5426,
+       "product_id": 3589,
+       "path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "camera_id": "fbf5"
+      },
+      {
+       "index": 3,
+       "name": "Logitech Webcam C930e",
+       "vendor_id": 1133,
+       "product_id": 2115,
+       "path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "camera_id": "0100"
+      }
+     ],
+     "group_request": {
+      "camera_configs": {
+       "fbf5": {
+        "camera_id": "fbf5",
+        "camera_index": 2,
+        "camera_name": "USB Video Device",
+        "use_this_camera": true,
+        "resolution": {
+         "width": 1280,
+         "height": 720
+        },
+        "framerate": 30.0,
+        "capture_fourcc": "MJPG",
+        "exposure_mode": "MANUAL",
+        "exposure": -7,
+        "rotation": -1
+       },
+       "0100": {
+        "camera_id": "0100",
+        "camera_index": 3,
+        "camera_name": "Logitech Webcam C930e",
+        "use_this_camera": true,
+        "resolution": {
+         "width": 1280,
+         "height": 720
+        },
+        "framerate": 30.0,
+        "capture_fourcc": "MJPG",
+        "exposure_mode": "MANUAL",
+        "exposure": -7,
+        "rotation": -1
+       },
+       "b395": {
+        "camera_id": "b395",
+        "camera_index": 0,
+        "camera_name": "USB Camera",
+        "use_this_camera": true,
+        "resolution": {
+         "width": 1280,
+         "height": 720
+        },
+        "framerate": 30.0,
+        "capture_fourcc": "MJPG",
+        "exposure_mode": "MANUAL",
+        "exposure": -7,
+        "rotation": -1
+       },
+       "1c81": {
+        "camera_id": "1c81",
+        "camera_index": 1,
+        "camera_name": "c922 Pro Stream Webcam",
+        "use_this_camera": true,
+        "resolution": {
+         "width": 1280,
+         "height": 720
+        },
+        "framerate": 30.0,
+        "capture_fourcc": "MJPG",
+        "exposure_mode": "MANUAL",
+        "exposure": -7,
+        "rotation": -1
+       }
+      }
+     },
+     "group": {
+      "group_id": "d50472",
+      "extracted_configs": {
+       "fbf5": {
+        "camera_id": "fbf5",
+        "camera_index": 2,
+        "camera_name": "USB Video Device",
+        "use_this_camera": true,
+        "resolution": {
+         "height": 720,
+         "width": 1280
+        },
+        "color_channels": 3,
+        "pixel_format": "RGB",
+        "exposure_mode": "MANUAL",
+        "exposure": -7,
+        "framerate": 30.00003000003,
+        "rotation": -1,
+        "capture_fourcc": "MJPG",
+        "writer_fourcc": "X264"
+       },
+       "0100": {
+        "camera_id": "0100",
+        "camera_index": 3,
+        "camera_name": "Logitech Webcam C930e",
+        "use_this_camera": true,
+        "resolution": {
+         "height": 720,
+         "width": 1280
+        },
+        "color_channels": 3,
+        "pixel_format": "RGB",
+        "exposure_mode": "MANUAL",
+        "exposure": -5,
+        "framerate": 30.00003000003,
+        "rotation": -1,
+        "capture_fourcc": "MJPG",
+        "writer_fourcc": "X264"
+       },
+       "b395": {
+        "camera_id": "b395",
+        "camera_index": 0,
+        "camera_name": "USB Camera",
+        "use_this_camera": true,
+        "resolution": {
+         "height": 720,
+         "width": 1280
+        },
+        "color_channels": 3,
+        "pixel_format": "RGB",
+        "exposure_mode": "MANUAL",
+        "exposure": -7,
+        "framerate": 30.00003000003,
+        "rotation": -1,
+        "capture_fourcc": "MJPG",
+        "writer_fourcc": "X264"
+       },
+       "1c81": {
+        "camera_id": "1c81",
+        "camera_index": 1,
+        "camera_name": "c922 Pro Stream Webcam",
+        "use_this_camera": true,
+        "resolution": {
+         "height": 720,
+         "width": 1280
+        },
+        "color_channels": 3,
+        "pixel_format": "RGB",
+        "exposure_mode": "MANUAL",
+        "exposure": -7,
+        "framerate": 30.00003000003,
+        "rotation": -1,
+        "capture_fourcc": "MJPG",
+        "writer_fourcc": "X264"
+       }
+      }
+     },
+     "stop_response": [
+      {
+       "recording_name": "tbump_baseline",
+       "recording_path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\recording\\tbump_baseline",
+       "number_of_cameras": 4,
+       "number_of_frames": 1548,
+       "total_duration_sec": 60.056,
+       "mean_framerate": 26.81,
+       "mean_inter_camera_sync_ms": 0.23,
+       "framerate_stats": {
+        "median": 30.635075983154707,
+        "mean": 26.8074978318703,
+        "std": 5.153993824926693,
+        "min": 18.85275597248485,
+        "max": 36.500970959064915
+       },
+       "frame_duration_stats": {
+        "median": 32.643075,
+        "mean": 38.821214964447314,
+        "std": 7.899479393516213,
+        "min": 27.396774999999998,
+        "max": 53.043125
+       },
+       "inter_camera_grab_range_ms_stats": {
+        "median": 0.204875,
+        "mean": 0.2286782299741602,
+        "std": 0.14042095411610528,
+        "min": 0.00905,
+        "max": 0.9232
+       }
+      }
+     ],
+     "api_calls": [
+      {
+       "method": "GET",
+       "path": "/health",
+       "status": 200,
+       "error": null,
+       "polls": true,
+       "elapsed_s": 2.531
+      },
+      {
+       "method": "POST",
+       "path": "/skellycam/camera/detect?filter_virtual=false",
+       "status": 200,
+       "error": null,
+       "timeout_s": 45.0,
+       "utc": "2026-11-19T03:01:16.842Z",
+       "elapsed_s": 0.031
+      },
+      {
+       "method": "POST",
+       "path": "/skellycam/camera/group/apply",
+       "status": 200,
+       "error": null,
+       "timeout_s": 150.0,
+       "utc": "2026-11-19T03:01:16.878Z",
+       "elapsed_s": 11.891
+      },
+      {
+       "method": "POST",
+       "path": "/skellycam/camera/group/all/record/start",
+       "status": 200,
+       "error": null,
+       "timeout_s": 30.0,
+       "utc": "2026-11-19T03:01:31.768Z",
+       "elapsed_s": 1.062
+      },
+      {
+       "method": "GET",
+       "path": "/skellycam/camera/group/all/record/stop",
+       "status": 200,
+       "error": null,
+       "timeout_s": 240.0,
+       "utc": "2026-11-19T03:02:32.833Z",
+       "elapsed_s": 1.781
+      },
+      {
+       "method": "DELETE",
+       "path": "/skellycam/camera/group/close/all",
+       "status": 200,
+       "error": null,
+       "timeout_s": 60.0,
+       "utc": "2026-11-19T03:02:34.606Z",
+       "elapsed_s": 1.204
+      },
+      {
+       "method": "GET",
+       "path": "/shutdown",
+       "status": 200,
+       "error": null,
+       "timeout_s": 10.0,
+       "utc": "2026-11-19T03:02:35.812Z",
+       "elapsed_s": 0.015
+      }
+     ],
+     "verify": {
+      "recording_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\recording\\tbump_baseline",
+      "recording_name": "tbump_baseline",
+      "media_check": "full",
+      "cameras": {
+       "fbf5": {
+        "camera_index": 2,
+        "name": "USB Video Device",
+        "problems": [],
+        "video": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\recording\\tbump_baseline\\synchronized_videos\\tbump_baseline.id-fbf5.idx-2.mp4",
+         "ext": "mp4",
+         "size_bytes": 175118579
+        },
+        "pyav": {
+         "ok": true,
+         "pyav_version": "19.0.2",
+         "container": "mov,mp4,m4a,3gp,3g2,mj2",
+         "codec": "h264",
+         "pix_fmt": "yuv420p",
+         "width": 1280,
+         "height": 720,
+         "average_rate": 32.19,
+         "header_frames": 1548,
+         "duration_s": 48.0894,
+         "bit_rate": 29132148,
+         "packets": 1548,
+         "keyframes": 49,
+         "first_frame": {
+          "width": 1280,
+          "height": 720,
+          "format": "yuv420p"
+         },
+         "truncated_by_deadline": false
+        },
+        "opencv": {
+         "ok": true,
+         "opencv_version": "5.0.0",
+         "opened": true,
+         "fourcc": "h264",
+         "frame_count_prop": 1548,
+         "fps_prop": 32.19,
+         "width": 1280,
+         "height": 720,
+         "decoded_frames": 1548,
+         "first_frame_shape": [
+          720,
+          1280,
+          3
+         ],
+         "truncated_by_deadline": false
+        },
+        "csv": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\recording\\tbump_baseline\\synchronized_videos\\timestamps\\camera_timestamps\\tbump_baseline.camerafbf5.timestamps.csv",
+         "exists": true,
+         "problems": [],
+         "columns": 27,
+         "header_sha1": "2124f46bf0eb",
+         "columns_missing": [],
+         "rows": 1548,
+         "frame_numbers_contiguous": true,
+         "first_recording_frame_number": 0,
+         "connection_frame_gaps": 0,
+         "connection_frames_skipped": 0,
+         "timestamps": {
+          "n": 1548,
+          "duration_s": 60.0564,
+          "fps": 25.7591,
+          "non_increasing_steps": 0,
+          "interval_ms": {
+           "median": 32.639,
+           "mean": 38.8212,
+           "p95": 48.6578,
+           "p99": 49.1734,
+           "min": 27.5231,
+           "max": 52.834,
+           "std": 7.8968
+          },
+          "long_intervals_gt_1p5x_median": 42,
+          "short_intervals_lt_0p5x_median": 0
+         },
+         "monotonic": true,
+         "fps_from_timestamps": 25.7591,
+         "utc_decreasing_steps": 0,
+         "utc_first": 1795057292.852,
+         "first_frame_from_recording_start_s": 0.0
+        },
+        "frames": {
+         "csv_rows": 1548,
+         "pyav_packets": 1548,
+         "opencv_decoded": 1548,
+         "count": 1548
+        },
+        "fps_from_timestamps": 25.7591,
+        "ok": true
+       },
+       "0100": {
+        "camera_index": 3,
+        "name": "Logitech Webcam C930e",
+        "problems": [],
+        "video": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\recording\\tbump_baseline\\synchronized_videos\\tbump_baseline.id-0100.idx-3.mp4",
+         "ext": "mp4",
+         "size_bytes": 176462289
+        },
+        "pyav": {
+         "ok": true,
+         "pyav_version": "19.0.2",
+         "container": "mov,mp4,m4a,3gp,3g2,mj2",
+         "codec": "h264",
+         "pix_fmt": "yuv420p",
+         "width": 1280,
+         "height": 720,
+         "average_rate": 32.376,
+         "header_frames": 1548,
+         "duration_s": 47.8132,
+         "bit_rate": 29525306,
+         "packets": 1548,
+         "keyframes": 49,
+         "first_frame": {
+          "width": 1280,
+          "height": 720,
+          "format": "yuv420p"
+         },
+         "truncated_by_deadline": false
+        },
+        "opencv": {
+         "ok": true,
+         "opencv_version": "5.0.0",
+         "opened": true,
+         "fourcc": "h264",
+         "frame_count_prop": 1548,
+         "fps_prop": 32.376,
+         "width": 1280,
+         "height": 720,
+         "decoded_frames": 1548,
+         "first_frame_shape": [
+          720,
+          1280,
+          3
+         ],
+         "truncated_by_deadline": false
+        },
+        "csv": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\recording\\tbump_baseline\\synchronized_videos\\timestamps\\camera_timestamps\\tbump_baseline.camera0100.timestamps.csv",
+         "exists": true,
+         "problems": [],
+         "columns": 27,
+         "header_sha1": "2124f46bf0eb",
+         "columns_missing": [],
+         "rows": 1548,
+         "frame_numbers_contiguous": true,
+         "first_recording_frame_number": 0,
+         "connection_frame_gaps": 0,
+         "connection_frames_skipped": 0,
+         "timestamps": {
+          "n": 1548,
+          "duration_s": 60.0564,
+          "fps": 25.7591,
+          "non_increasing_steps": 0,
+          "interval_ms": {
+           "median": 32.6658,
+           "mean": 38.8212,
+           "p95": 48.6769,
+           "p99": 49.1992,
+           "min": 27.3335,
+           "max": 53.0448,
+           "std": 7.9046
+          },
+          "long_intervals_gt_1p5x_median": 40,
+          "short_intervals_lt_0p5x_median": 0
+         },
+         "monotonic": true,
+         "fps_from_timestamps": 25.7591,
+         "utc_decreasing_steps": 0,
+         "utc_first": 1795057292.852,
+         "first_frame_from_recording_start_s": 0.0
+        },
+        "frames": {
+         "csv_rows": 1548,
+         "pyav_packets": 1548,
+         "opencv_decoded": 1548,
+         "count": 1548
+        },
+        "fps_from_timestamps": 25.7591,
+        "ok": true
+       },
+       "b395": {
+        "camera_index": 0,
+        "name": "USB Camera",
+        "problems": [],
+        "video": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\recording\\tbump_baseline\\synchronized_videos\\tbump_baseline.id-b395.idx-0.mp4",
+         "ext": "mp4",
+         "size_bytes": 176066564
+        },
+        "pyav": {
+         "ok": true,
+         "pyav_version": "19.0.2",
+         "container": "mov,mp4,m4a,3gp,3g2,mj2",
+         "codec": "h264",
+         "pix_fmt": "yuv420p",
+         "width": 1280,
+         "height": 720,
+         "average_rate": 32.466,
+         "header_frames": 1548,
+         "duration_s": 47.6806,
+         "bit_rate": 29540985,
+         "packets": 1548,
+         "keyframes": 49,
+         "first_frame": {
+          "width": 1280,
+          "height": 720,
+          "format": "yuv420p"
+         },
+         "truncated_by_deadline": false
+        },
+        "opencv": {
+         "ok": true,
+         "opencv_version": "5.0.0",
+         "opened": true,
+         "fourcc": "h264",
+         "frame_count_prop": 1548,
+         "fps_prop": 32.466,
+         "width": 1280,
+         "height": 720,
+         "decoded_frames": 1548,
+         "first_frame_shape": [
+          720,
+          1280,
+          3
+         ],
+         "truncated_by_deadline": false
+        },
+        "csv": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\recording\\tbump_baseline\\synchronized_videos\\timestamps\\camera_timestamps\\tbump_baseline.camerab395.timestamps.csv",
+         "exists": true,
+         "problems": [],
+         "columns": 27,
+         "header_sha1": "2124f46bf0eb",
+         "columns_missing": [],
+         "rows": 1548,
+         "frame_numbers_contiguous": true,
+         "first_recording_frame_number": 0,
+         "connection_frame_gaps": 0,
+         "connection_frames_skipped": 0,
+         "timestamps": {
+          "n": 1548,
+          "duration_s": 60.0565,
+          "fps": 25.7591,
+          "non_increasing_steps": 0,
+          "interval_ms": {
+           "median": 32.6734,
+           "mean": 38.8212,
+           "p95": 48.6785,
+           "p99": 49.254,
+           "min": 27.4141,
+           "max": 53.2831,
+           "std": 7.8987
+          },
+          "long_intervals_gt_1p5x_median": 31,
+          "short_intervals_lt_0p5x_median": 0
+         },
+         "monotonic": true,
+         "fps_from_timestamps": 25.7591,
+         "utc_decreasing_steps": 0,
+         "utc_first": 1795057292.852,
+         "first_frame_from_recording_start_s": 0.0
+        },
+        "frames": {
+         "csv_rows": 1548,
+         "pyav_packets": 1548,
+         "opencv_decoded": 1548,
+         "count": 1548
+        },
+        "fps_from_timestamps": 25.7591,
+        "ok": true
+       },
+       "1c81": {
+        "camera_index": 1,
+        "name": "c922 Pro Stream Webcam",
+        "problems": [],
+        "video": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\recording\\tbump_baseline\\synchronized_videos\\tbump_baseline.id-1c81.idx-1.mp4",
+         "ext": "mp4",
+         "size_bytes": 161894160
+        },
+        "pyav": {
+         "ok": true,
+         "pyav_version": "19.0.2",
+         "container": "mov,mp4,m4a,3gp,3g2,mj2",
+         "codec": "h264",
+         "pix_fmt": "yuv420p",
+         "width": 1280,
+         "height": 720,
+         "average_rate": 32.665,
+         "header_frames": 1548,
+         "duration_s": 47.3902,
+         "bit_rate": 27329574,
+         "packets": 1548,
+         "keyframes": 49,
+         "first_frame": {
+          "width": 1280,
+          "height": 720,
+          "format": "yuv420p"
+         },
+         "truncated_by_deadline": false
+        },
+        "opencv": {
+         "ok": true,
+         "opencv_version": "5.0.0",
+         "opened": true,
+         "fourcc": "h264",
+         "frame_count_prop": 1548,
+         "fps_prop": 32.665,
+         "width": 1280,
+         "height": 720,
+         "decoded_frames": 1548,
+         "first_frame_shape": [
+          720,
+          1280,
+          3
+         ],
+         "truncated_by_deadline": false
+        },
+        "csv": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\recording\\tbump_baseline\\synchronized_videos\\timestamps\\camera_timestamps\\tbump_baseline.camera1c81.timestamps.csv",
+         "exists": true,
+         "problems": [],
+         "columns": 27,
+         "header_sha1": "2124f46bf0eb",
+         "columns_missing": [],
+         "rows": 1548,
+         "frame_numbers_contiguous": true,
+         "first_recording_frame_number": 0,
+         "connection_frame_gaps": 0,
+         "connection_frames_skipped": 0,
+         "timestamps": {
+          "n": 1548,
+          "duration_s": 60.0564,
+          "fps": 25.7591,
+          "non_increasing_steps": 0,
+          "interval_ms": {
+           "median": 32.6534,
+           "mean": 38.8212,
+           "p95": 48.7034,
+           "p99": 49.229,
+           "min": 27.3163,
+           "max": 53.0106,
+           "std": 7.9021
+          },
+          "long_intervals_gt_1p5x_median": 43,
+          "short_intervals_lt_0p5x_median": 0
+         },
+         "monotonic": true,
+         "fps_from_timestamps": 25.7591,
+         "utc_decreasing_steps": 0,
+         "utc_first": 1795057292.852,
+         "first_frame_from_recording_start_s": 0.0
+        },
+        "frames": {
+         "csv_rows": 1548,
+         "pyav_packets": 1548,
+         "opencv_decoded": 1548,
+         "count": 1548
+        },
+        "fps_from_timestamps": 25.7591,
+        "ok": true
+       }
+      },
+      "problems": [],
+      "camera_source": "request",
+      "recording_info_json": true,
+      "stats_json": true,
+      "stats": {
+       "recording_info": {
+        "recording_name": "tbump_baseline",
+        "recording_directory": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\recording",
+        "recording_uuid": "084a3fdb-71d0-4fb3-8d77-d66219b2961b",
+        "mic_device_index": -1,
+        "recording_start_timestamp": {
+         "unix_timestamp_utc": 1795057291.770861,
+         "unix_timestamp_local": 1795057291.770861,
+         "unix_timestamp_utc_isoformat": "2026-11-19T03:01:31.770861+00:00",
+         "unix_timestamp_local_isoformat": "2026-11-18T22:01:31.770861-05:00",
+         "local_time_zone": "America/New_York",
+         "human_friendly_utc": "2026-11-19 03:01:31.770861",
+         "human_friendly_local": "2026-11-18 22:01:31.770861",
+         "day_of_week": "Wednesday",
+         "calendar_week": 47,
+         "day_of_year": 322,
+         "is_leap_year": false,
+         "perf_counter_ns": 224321238720000
+        }
+       },
+       "number_of_cameras": 4,
+       "number_of_frames": 1548,
+       "total_duration_sec": 60.0564485,
+       "framerate_stats": {
+        "mean": 26.8074978318703,
+        "median": 30.635075983154707,
+        "standard_deviation": 5.153993824926693,
+        "coefficient_of_variation": 0.19225941403599883,
+        "min": 18.85275597248485,
+        "max": 36.500970959064915,
+        "range": 17.648214986580065
+       },
+       "frame_duration_stats": {
+        "mean": 38.821214964447314,
+        "median": 32.643075,
+        "standard_deviation": 7.899479393516213,
+        "coefficient_of_variation": 0.2034835695057612,
+        "min": 27.396774999999998,
+        "max": 53.043125,
+        "range": 25.646350000000005
+       },
+       "inter_camera_grab_range_ms": {
+        "mean": 0.2286782299741602,
+        "median": 0.204875,
+        "standard_deviation": 0.14042095411610528,
+        "coefficient_of_variation": 0.6140547534060078,
+        "min": 0.00905,
+        "max": 0.9232,
+        "range": 0.91415
+       },
+       "idle_before_frame_grab_ms": {
+        "mean": 35.38557315891473,
+        "median": 29.790425,
+        "standard_deviation": 7.783154075051025,
+        "coefficient_of_variation": 0.2199527485423874,
+        "min": 18.20985,
+        "max": 50.00465,
+        "range": 31.7948
+       },
+       "during_frame_grab_ms": {
+        "mean": 0.0496327842377261,
+        "median": 0.046950000000000006,
+        "standard_deviation": 0.009442854909935208,
+        "coefficient_of_variation": 0.19025438638918127,
+        "min": 0.031149999999999997,
+        "max": 0.10095000000000001,
+        "range": 0.06980000000000001
+       },
+       "idle_before_retrieve_ms": {
+        "mean": 0.013862822997416023,
+        "median": 0.012725,
+        "standard_deviation": 0.004458519554431594,
+        "coefficient_of_variation": 0.321617000755376,
+        "min": 0.00895,
+        "max": 0.0357,
+        "range": 0.026750000000000003
+       },
+       "during_frame_retrieve_ms": {
+        "mean": 1.0211105620155039,
+        "median": 0.60225,
+        "standard_deviation": 1.5580084265402483,
+        "coefficient_of_variation": 1.525797973791395,
+        "min": 0.33795,
+        "max": 15.0667,
+        "range": 14.728750000000002
+       },
+       "idle_before_copy_to_camera_shm_ms": {
+        "mean": 0.34271531007751943,
+        "median": 0.33132500000000004,
+        "standard_deviation": 0.06149522828776907,
+        "coefficient_of_variation": 0.1794353111153959,
+        "min": 0.2291,
+        "max": 0.5884,
+        "range": 0.35930000000000006
+       },
+       "during_copy_to_camera_shm_ms": {
+        "mean": 1.0866283914728683,
+        "median": 1.0053,
+        "standard_deviation": 0.22625317869295422,
+        "coefficient_of_variation": 0.2082157805450673,
+        "min": 0.7391,
+        "max": 2.49485,
+        "range": 1.75575
+       },
+       "idle_before_frame_record_ms": {
+        "mean": 0.07209005167958656,
+        "median": 0.06845000000000001,
+        "standard_deviation": 0.013321104416134058,
+        "coefficient_of_variation": 0.18478422619727627,
+        "min": 0.0503,
+        "max": 0.1533,
+        "range": 0.103
+       },
+       "during_frame_record_ms": {
+        "mean": 0.4497002583979328,
+        "median": 0.439075,
+        "standard_deviation": 0.04748446158808681,
+        "coefficient_of_variation": 0.10559135935845636,
+        "min": 0.36615,
+        "max": 0.8144,
+        "range": 0.44825000000000004
+       },
+       "total_frame_processing_time_ms": {
+        "mean": 3.1850603359173126,
+        "median": 2.81305,
+        "standard_deviation": 1.533854328722488,
+        "coefficient_of_variation": 0.4815777934959372,
+        "min": 2.1298500000000002,
+        "max": 17.31745,
+        "range": 15.1876
+       },
+       "total_camera_idle_time_ms": {
+        "mean": 35.38557315891473,
+        "median": 29.790425,
+        "standard_deviation": 7.783154075051025,
+        "coefficient_of_variation": 0.2199527485423874,
+        "min": 18.20985,
+        "max": 50.00465,
+        "range": 31.7948
+       }
+      },
+      "frame_counts": {
+       "fbf5": 1548,
+       "0100": 1548,
+       "b395": 1548,
+       "1c81": 1548
+      },
+      "frame_counts_equal": true,
+      "multiframe_csv": {
+       "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\recording\\tbump_baseline\\synchronized_videos\\timestamps\\tbump_baseline_timestamps.csv",
+       "exists": true,
+       "problems": [],
+       "columns": 103,
+       "header_sha1": "f208f075ce4a",
+       "columns_missing": [],
+       "rows": 1548,
+       "multiframe_numbers_contiguous": true,
+       "timestamps": {
+        "n": 1548,
+        "duration_s": 60.0564,
+        "fps": 25.7591,
+        "non_increasing_steps": 0,
+        "interval_ms": {
+         "median": 32.6431,
+         "mean": 38.8212,
+         "p95": 48.6446,
+         "p99": 49.2139,
+         "min": 27.3968,
+         "max": 53.0431,
+         "std": 7.8995
+        },
+        "long_intervals_gt_1p5x_median": 41,
+        "short_intervals_lt_0p5x_median": 0
+       },
+       "fps_from_timestamps": 25.7591,
+       "monotonic": true,
+       "inter_camera_grab_range_ms": {
+        "median": 0.2049,
+        "p95": 0.4797,
+        "max": 0.9232,
+        "mean": 0.2287
+       }
+      },
+      "frames": 1548,
+      "ok": true
+     },
+     "recording_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\recording\\tbump_baseline",
+     "server_log": {
+      "lines": 522,
+      "error_lines": 1,
+      "errors": [
+       {
+        "line": 464,
+        "text": "└>> global_kill_flag is set (no worker death detected) — triggering parent shutdown |  ERROR |  855.502ms |  skellycam.core.ipc.process_management.worker_registry._child_monitor_loop():110 |  2026-11-18T22:02:36.679 |  PID:66236:MainProcess |  TID:41084:WorkerRegistry-ChildMonitor"
+       }
+      ],
+      "error_kinds": {
+       "global_kill_flag is set (no worker death detected) — triggering parent shutdown": 1
+      },
+      "tracebacks": 0,
+      "logging_errors": 0,
+      "hr_0x8007001F_lines": [],
+      "writer_codec_lines": []
+     },
+     "exit_code": 0,
+     "utc_finished": "2026-11-19T03:02:46.122Z",
+     "elapsed_s": 92.125
+    },
+    "parse_error": null,
+    "spec_to_key": {
+     "ds:\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "ds:\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "ds:\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "ds:\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global": "046d:085c:sn=C922SN01"
+    },
+    "ok": true,
+    "fault_reports": []
+   },
+   "head": {
+    "label": "head",
+    "checkout": "c:\\Users\\Dom\\GitHub\\freemocap\\skellycam-native-jpeg",
+    "cameras": [
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "046d:085c:sn=C922SN01"
+    ],
+    "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head",
+    "camcmd": {
+     "rc": 0,
+     "timed_out": false,
+     "killed": false,
+     "elapsed_s": 90.89,
+     "lock_wait_s": 0.5,
+     "lock_timed_out": false,
+     "gate_skipped": null,
+     "dry_run": null,
+     "spawn_error": null
+    },
+    "timeout_s": 570.0,
+    "driver": {
+     "tool": "skellycam_record",
+     "ok": true,
+     "utc_started": "2026-11-19T03:02:46.945Z",
+     "out_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head",
+     "request": {
+      "checkout": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam-native-jpeg",
+      "cameras": [
+       "ds:\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "ds:\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "ds:\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "ds:\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global"
+      ],
+      "width": 1280,
+      "height": 720,
+      "fps": 30.0,
+      "seconds": 60.0,
+      "warmup_s": 3.0,
+      "capture_fourcc": "MJPG",
+      "exposure_mode": "MANUAL",
+      "exposure": -7,
+      "writer_fourcc": "(skellycam default)",
+      "deadline_s": 480.0,
+      "media_check": "full"
+     },
+     "stage_failed": null,
+     "error": null,
+     "phases_s": {
+      "start_to_health": 1.547,
+      "detect": 0.031,
+      "connect": 12.266,
+      "record_start_call": 1.265,
+      "recorded_wall": 60.0,
+      "stop_and_finalise": 1.672,
+      "verify": 9.063
+     },
+     "resolution": [
+      {
+       "spec": "ds:\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "kind": "ds",
+       "how": "device_path_exact",
+       "camera_id": "fbf5",
+       "camera_index": 2,
+       "name": "USB Video Device",
+       "path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "vendor_id": 5426,
+       "product_id": 3589,
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "is_kiyo_pro": true
+      },
+      {
+       "spec": "ds:\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "kind": "ds",
+       "how": "device_path_exact",
+       "camera_id": "0100",
+       "camera_index": 3,
+       "name": "Logitech Webcam C930e",
+       "path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "vendor_id": 1133,
+       "product_id": 2115,
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "is_kiyo_pro": false
+      },
+      {
+       "spec": "ds:\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "kind": "ds",
+       "how": "device_path_exact",
+       "camera_id": "b395",
+       "camera_index": 0,
+       "name": "USB Camera",
+       "path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "vendor_id": 19530,
+       "product_id": 19029,
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "is_kiyo_pro": false
+      },
+      {
+       "spec": "ds:\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "kind": "ds",
+       "how": "device_path_exact",
+       "camera_id": "1c81",
+       "camera_index": 1,
+       "name": "c922 Pro Stream Webcam",
+       "path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "vendor_id": 1133,
+       "product_id": 2140,
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "is_kiyo_pro": false
+      }
+     ],
+     "fault_hints": [],
+     "checkout": {
+      "path": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam-native-jpeg",
+      "commit": "8a1f9b517ba887c972d2cb8f9c0a51a3e753ba29",
+      "dirty": false,
+      "python_version_file": "3.13.18",
+      "versions": {
+       "python": "3.13.18",
+       "opencv": "5.1.0",
+       "numpy": "2.5.5",
+       "av": "19.0.2",
+       "skellycam": "2.0.0a6",
+       "opencv-contrib-python": "5.1.0.95",
+       "fastapi": "0.163.2",
+       "uvicorn": "0.54.0",
+       "pydantic": "2.14.3",
+       "polars": "2.1.0",
+       "cv2-enumerate-cameras": "1.4.0"
+      }
+     },
+     "server": {
+      "port": 36057,
+      "argv": [
+       "C:\\Users\\Dom\\.local\\bin\\uv.EXE",
+       "run",
+       "--no-sync",
+       "python",
+       "-c",
+       "import sys; port = int(sys.argv[1]); import skellycam.api.server_constants as sc; sc.HOSTNAME = '127.0.0.1'; sc.PORT = port; sc.APP_URL = 'http://127.0.0.1:%d' % port; from skellylogs import configure_logging, LogLevels; configure_logging(LogLevels.TRACE); from skellycam.__main__ import entry_point; entry_point()",
+       "36057"
+      ],
+      "cwd": "C:\\Users\\Dom\\GitHub\\freemocap\\skellycam-native-jpeg",
+      "stdout_log": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\server_stdout.log",
+      "stderr_log": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\server_stderr.log",
+      "pid": 34728,
+      "app_pid": 63420,
+      "close_groups": {
+       "ok": true,
+       "status": 200,
+       "error": null,
+       "elapsed_s": 1.25
+      },
+      "shutdown_call": {
+       "ok": true,
+       "status": 200,
+       "error": null,
+       "elapsed_s": 0.0
+      },
+      "exit": "exited",
+      "killed": false,
+      "job_processes_after_exit": {
+       "active": 0,
+       "total": 25
+      },
+      "leftover_processes": 0,
+      "rc": 15,
+      "kill_method": null,
+      "clean": true,
+      "stop_elapsed_s": 1.547
+     },
+     "detected": [
+      {
+       "index": 0,
+       "name": "USB Camera",
+       "vendor_id": 19530,
+       "product_id": 19029,
+       "path": "\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "camera_id": "b395"
+      },
+      {
+       "index": 1,
+       "name": "c922 Pro Stream Webcam",
+       "vendor_id": 1133,
+       "product_id": 2140,
+       "path": "\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "camera_id": "1c81"
+      },
+      {
+       "index": 2,
+       "name": "USB Video Device",
+       "vendor_id": 5426,
+       "product_id": 3589,
+       "path": "\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "camera_id": "fbf5"
+      },
+      {
+       "index": 3,
+       "name": "Logitech Webcam C930e",
+       "vendor_id": 1133,
+       "product_id": 2115,
+       "path": "\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global",
+       "backend_id": 700,
+       "backend_name": "DSHOW",
+       "camera_id": "0100"
+      }
+     ],
+     "group_request": {
+      "camera_configs": {
+       "fbf5": {
+        "camera_id": "fbf5",
+        "camera_index": 2,
+        "camera_name": "USB Video Device",
+        "use_this_camera": true,
+        "resolution": {
+         "width": 1280,
+         "height": 720
+        },
+        "framerate": 30.0,
+        "capture_fourcc": "MJPG",
+        "exposure_mode": "MANUAL",
+        "exposure": -7,
+        "rotation": -1
+       },
+       "0100": {
+        "camera_id": "0100",
+        "camera_index": 3,
+        "camera_name": "Logitech Webcam C930e",
+        "use_this_camera": true,
+        "resolution": {
+         "width": 1280,
+         "height": 720
+        },
+        "framerate": 30.0,
+        "capture_fourcc": "MJPG",
+        "exposure_mode": "MANUAL",
+        "exposure": -7,
+        "rotation": -1
+       },
+       "b395": {
+        "camera_id": "b395",
+        "camera_index": 0,
+        "camera_name": "USB Camera",
+        "use_this_camera": true,
+        "resolution": {
+         "width": 1280,
+         "height": 720
+        },
+        "framerate": 30.0,
+        "capture_fourcc": "MJPG",
+        "exposure_mode": "MANUAL",
+        "exposure": -7,
+        "rotation": -1
+       },
+       "1c81": {
+        "camera_id": "1c81",
+        "camera_index": 1,
+        "camera_name": "c922 Pro Stream Webcam",
+        "use_this_camera": true,
+        "resolution": {
+         "width": 1280,
+         "height": 720
+        },
+        "framerate": 30.0,
+        "capture_fourcc": "MJPG",
+        "exposure_mode": "MANUAL",
+        "exposure": -7,
+        "rotation": -1
+       }
+      }
+     },
+     "group": {
+      "group_id": "d410af",
+      "extracted_configs": {
+       "fbf5": {
+        "camera_id": "fbf5",
+        "camera_index": 2,
+        "camera_name": "USB Video Device",
+        "use_this_camera": true,
+        "resolution": {
+         "height": 720,
+         "width": 1280
+        },
+        "color_channels": 3,
+        "pixel_format": "RGB",
+        "exposure_mode": "MANUAL",
+        "exposure": -7,
+        "framerate": 30.00003000003,
+        "rotation": -1,
+        "capture_fourcc": "MJPG",
+        "writer_fourcc": "X264"
+       },
+       "0100": {
+        "camera_id": "0100",
+        "camera_index": 3,
+        "camera_name": "Logitech Webcam C930e",
+        "use_this_camera": true,
+        "resolution": {
+         "height": 720,
+         "width": 1280
+        },
+        "color_channels": 3,
+        "pixel_format": "RGB",
+        "exposure_mode": "MANUAL",
+        "exposure": -5,
+        "framerate": 30.00003000003,
+        "rotation": -1,
+        "capture_fourcc": "MJPG",
+        "writer_fourcc": "X264"
+       },
+       "b395": {
+        "camera_id": "b395",
+        "camera_index": 0,
+        "camera_name": "USB Camera",
+        "use_this_camera": true,
+        "resolution": {
+         "height": 720,
+         "width": 1280
+        },
+        "color_channels": 3,
+        "pixel_format": "RGB",
+        "exposure_mode": "MANUAL",
+        "exposure": -7,
+        "framerate": 30.00003000003,
+        "rotation": -1,
+        "capture_fourcc": "MJPG",
+        "writer_fourcc": "X264"
+       },
+       "1c81": {
+        "camera_id": "1c81",
+        "camera_index": 1,
+        "camera_name": "c922 Pro Stream Webcam",
+        "use_this_camera": true,
+        "resolution": {
+         "height": 720,
+         "width": 1280
+        },
+        "color_channels": 3,
+        "pixel_format": "RGB",
+        "exposure_mode": "MANUAL",
+        "exposure": -7,
+        "framerate": 30.00003000003,
+        "rotation": -1,
+        "capture_fourcc": "MJPG",
+        "writer_fourcc": "X264"
+       }
+      }
+     },
+     "stop_response": [
+      {
+       "recording_name": "tbump_head",
+       "recording_path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\recording\\tbump_head",
+       "number_of_cameras": 4,
+       "number_of_frames": 1548,
+       "total_duration_sec": 60.058,
+       "mean_framerate": 26.83,
+       "mean_inter_camera_sync_ms": 0.21,
+       "framerate_stats": {
+        "median": 29.915852076538016,
+        "mean": 26.829610575111573,
+        "std": 5.231047221296876,
+        "min": 18.022967325150695,
+        "max": 41.21358417580956
+       },
+       "frame_duration_stats": {
+        "median": 33.428687499999995,
+        "mean": 38.82221080316742,
+        "std": 7.966424299314359,
+        "min": 24.2639375,
+        "max": 55.4853125
+       },
+       "inter_camera_grab_range_ms_stats": {
+        "median": 0.1832,
+        "mean": 0.210824515503876,
+        "std": 0.1358400915642597,
+        "min": 0.00765,
+        "max": 1.3011
+       }
+      }
+     ],
+     "api_calls": [
+      {
+       "method": "GET",
+       "path": "/health",
+       "status": 200,
+       "error": null,
+       "polls": true,
+       "elapsed_s": 1.547
+      },
+      {
+       "method": "POST",
+       "path": "/skellycam/camera/detect?filter_virtual=false",
+       "status": 200,
+       "error": null,
+       "timeout_s": 45.0,
+       "utc": "2026-11-19T03:02:48.788Z",
+       "elapsed_s": 0.031
+      },
+      {
+       "method": "POST",
+       "path": "/skellycam/camera/group/apply",
+       "status": 200,
+       "error": null,
+       "timeout_s": 150.0,
+       "utc": "2026-11-19T03:02:48.822Z",
+       "elapsed_s": 12.266
+      },
+      {
+       "method": "POST",
+       "path": "/skellycam/camera/group/all/record/start",
+       "status": 200,
+       "error": null,
+       "timeout_s": 30.0,
+       "utc": "2026-11-19T03:03:04.099Z",
+       "elapsed_s": 1.265
+      },
+      {
+       "method": "GET",
+       "path": "/skellycam/camera/group/all/record/stop",
+       "status": 200,
+       "error": null,
+       "timeout_s": 240.0,
+       "utc": "2026-11-19T03:04:05.360Z",
+       "elapsed_s": 1.672
+      },
+      {
+       "method": "DELETE",
+       "path": "/skellycam/camera/group/close/all",
+       "status": 200,
+       "error": null,
+       "timeout_s": 60.0,
+       "utc": "2026-11-19T03:04:07.031Z",
+       "elapsed_s": 1.25
+      },
+      {
+       "method": "GET",
+       "path": "/shutdown",
+       "status": 200,
+       "error": null,
+       "timeout_s": 10.0,
+       "utc": "2026-11-19T03:04:08.281Z",
+       "elapsed_s": 0.0
+      }
+     ],
+     "verify": {
+      "recording_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\recording\\tbump_head",
+      "recording_name": "tbump_head",
+      "media_check": "full",
+      "cameras": {
+       "fbf5": {
+        "camera_index": 2,
+        "name": "USB Video Device",
+        "problems": [],
+        "video": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\recording\\tbump_head\\synchronized_videos\\tbump_head.id-fbf5.idx-2.mp4",
+         "ext": "mp4",
+         "size_bytes": 172802450
+        },
+        "pyav": {
+         "ok": true,
+         "pyav_version": "19.0.2",
+         "container": "mov,mp4,m4a,3gp,3g2,mj2",
+         "codec": "h264",
+         "pix_fmt": "yuv420p",
+         "width": 1280,
+         "height": 720,
+         "average_rate": 32.887,
+         "header_frames": 1548,
+         "duration_s": 47.0702,
+         "bit_rate": 29369290,
+         "packets": 1548,
+         "keyframes": 49,
+         "first_frame": {
+          "width": 1280,
+          "height": 720,
+          "format": "yuv420p"
+         },
+         "truncated_by_deadline": false
+        },
+        "opencv": {
+         "ok": true,
+         "opencv_version": "5.0.0",
+         "opened": true,
+         "fourcc": "h264",
+         "frame_count_prop": 1548,
+         "fps_prop": 32.887,
+         "width": 1280,
+         "height": 720,
+         "decoded_frames": 1548,
+         "first_frame_shape": [
+          720,
+          1280,
+          3
+         ],
+         "truncated_by_deadline": false
+        },
+        "csv": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\recording\\tbump_head\\synchronized_videos\\timestamps\\camera_timestamps\\tbump_head.camerafbf5.timestamps.csv",
+         "exists": true,
+         "problems": [],
+         "columns": 27,
+         "header_sha1": "2124f46bf0eb",
+         "columns_missing": [],
+         "rows": 1548,
+         "frame_numbers_contiguous": true,
+         "first_recording_frame_number": 0,
+         "connection_frame_gaps": 0,
+         "connection_frames_skipped": 0,
+         "timestamps": {
+          "n": 1548,
+          "duration_s": 60.0582,
+          "fps": 25.7583,
+          "non_increasing_steps": 0,
+          "interval_ms": {
+           "median": 33.4136,
+           "mean": 38.8224,
+           "p95": 49.3613,
+           "p99": 50.5047,
+           "min": 24.2997,
+           "max": 55.3364,
+           "std": 7.9629
+          },
+          "long_intervals_gt_1p5x_median": 30,
+          "short_intervals_lt_0p5x_median": 0
+         },
+         "monotonic": true,
+         "fps_from_timestamps": 25.7583,
+         "utc_decreasing_steps": 0,
+         "utc_first": 1795057385.37,
+         "first_frame_from_recording_start_s": 0.0
+        },
+        "frames": {
+         "csv_rows": 1548,
+         "pyav_packets": 1548,
+         "opencv_decoded": 1548,
+         "count": 1548
+        },
+        "fps_from_timestamps": 25.7583,
+        "ok": true
+       },
+       "0100": {
+        "camera_index": 3,
+        "name": "Logitech Webcam C930e",
+        "problems": [],
+        "video": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\recording\\tbump_head\\synchronized_videos\\tbump_head.id-0100.idx-3.mp4",
+         "ext": "mp4",
+         "size_bytes": 178287093
+        },
+        "pyav": {
+         "ok": true,
+         "pyav_version": "19.0.2",
+         "container": "mov,mp4,m4a,3gp,3g2,mj2",
+         "codec": "h264",
+         "pix_fmt": "yuv420p",
+         "width": 1280,
+         "height": 720,
+         "average_rate": 33.047,
+         "header_frames": 1548,
+         "duration_s": 46.8423,
+         "bit_rate": 30448875,
+         "packets": 1548,
+         "keyframes": 47,
+         "first_frame": {
+          "width": 1280,
+          "height": 720,
+          "format": "yuv420p"
+         },
+         "truncated_by_deadline": false
+        },
+        "opencv": {
+         "ok": true,
+         "opencv_version": "5.0.0",
+         "opened": true,
+         "fourcc": "h264",
+         "frame_count_prop": 1548,
+         "fps_prop": 33.047,
+         "width": 1280,
+         "height": 720,
+         "decoded_frames": 1548,
+         "first_frame_shape": [
+          720,
+          1280,
+          3
+         ],
+         "truncated_by_deadline": false
+        },
+        "csv": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\recording\\tbump_head\\synchronized_videos\\timestamps\\camera_timestamps\\tbump_head.camera0100.timestamps.csv",
+         "exists": true,
+         "problems": [],
+         "columns": 27,
+         "header_sha1": "2124f46bf0eb",
+         "columns_missing": [],
+         "rows": 1548,
+         "frame_numbers_contiguous": true,
+         "first_recording_frame_number": 0,
+         "connection_frame_gaps": 0,
+         "connection_frames_skipped": 0,
+         "timestamps": {
+          "n": 1548,
+          "duration_s": 60.0582,
+          "fps": 25.7584,
+          "non_increasing_steps": 0,
+          "interval_ms": {
+           "median": 33.438,
+           "mean": 38.8224,
+           "p95": 49.3443,
+           "p99": 50.5884,
+           "min": 24.2969,
+           "max": 55.364,
+           "std": 7.9701
+          },
+          "long_intervals_gt_1p5x_median": 27,
+          "short_intervals_lt_0p5x_median": 0
+         },
+         "monotonic": true,
+         "fps_from_timestamps": 25.7584,
+         "utc_decreasing_steps": 0,
+         "utc_first": 1795057385.37,
+         "first_frame_from_recording_start_s": 0.0001
+        },
+        "frames": {
+         "csv_rows": 1548,
+         "pyav_packets": 1548,
+         "opencv_decoded": 1548,
+         "count": 1548
+        },
+        "fps_from_timestamps": 25.7584,
+        "ok": true
+       },
+       "b395": {
+        "camera_index": 0,
+        "name": "USB Camera",
+        "problems": [],
+        "video": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\recording\\tbump_head\\synchronized_videos\\tbump_head.id-b395.idx-0.mp4",
+         "ext": "mp4",
+         "size_bytes": 174767322
+        },
+        "pyav": {
+         "ok": true,
+         "pyav_version": "19.0.2",
+         "container": "mov,mp4,m4a,3gp,3g2,mj2",
+         "codec": "h264",
+         "pix_fmt": "yuv420p",
+         "width": 1280,
+         "height": 720,
+         "average_rate": 32.735,
+         "header_frames": 1548,
+         "duration_s": 47.2888,
+         "bit_rate": 29565953,
+         "packets": 1548,
+         "keyframes": 49,
+         "first_frame": {
+          "width": 1280,
+          "height": 720,
+          "format": "yuv420p"
+         },
+         "truncated_by_deadline": false
+        },
+        "opencv": {
+         "ok": true,
+         "opencv_version": "5.0.0",
+         "opened": true,
+         "fourcc": "h264",
+         "frame_count_prop": 1548,
+         "fps_prop": 32.735,
+         "width": 1280,
+         "height": 720,
+         "decoded_frames": 1548,
+         "first_frame_shape": [
+          720,
+          1280,
+          3
+         ],
+         "truncated_by_deadline": false
+        },
+        "csv": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\recording\\tbump_head\\synchronized_videos\\timestamps\\camera_timestamps\\tbump_head.camerab395.timestamps.csv",
+         "exists": true,
+         "problems": [],
+         "columns": 27,
+         "header_sha1": "2124f46bf0eb",
+         "columns_missing": [],
+         "rows": 1548,
+         "frame_numbers_contiguous": true,
+         "first_recording_frame_number": 0,
+         "connection_frame_gaps": 0,
+         "connection_frames_skipped": 0,
+         "timestamps": {
+          "n": 1548,
+          "duration_s": 60.0576,
+          "fps": 25.7586,
+          "non_increasing_steps": 0,
+          "interval_ms": {
+           "median": 33.4529,
+           "mean": 38.822,
+           "p95": 49.3366,
+           "p99": 50.475,
+           "min": 24.1834,
+           "max": 55.7782,
+           "std": 7.9645
+          },
+          "long_intervals_gt_1p5x_median": 27,
+          "short_intervals_lt_0p5x_median": 0
+         },
+         "monotonic": true,
+         "fps_from_timestamps": 25.7586,
+         "utc_decreasing_steps": 0,
+         "utc_first": 1795057385.37,
+         "first_frame_from_recording_start_s": 0.0005
+        },
+        "frames": {
+         "csv_rows": 1548,
+         "pyav_packets": 1548,
+         "opencv_decoded": 1548,
+         "count": 1548
+        },
+        "fps_from_timestamps": 25.7586,
+        "ok": true
+       },
+       "1c81": {
+        "camera_index": 1,
+        "name": "c922 Pro Stream Webcam",
+        "problems": [],
+        "video": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\recording\\tbump_head\\synchronized_videos\\tbump_head.id-1c81.idx-1.mp4",
+         "ext": "mp4",
+         "size_bytes": 166092951
+        },
+        "pyav": {
+         "ok": true,
+         "pyav_version": "19.0.2",
+         "container": "mov,mp4,m4a,3gp,3g2,mj2",
+         "codec": "h264",
+         "pix_fmt": "yuv420p",
+         "width": 1280,
+         "height": 720,
+         "average_rate": 32.714,
+         "header_frames": 1548,
+         "duration_s": 47.3192,
+         "bit_rate": 28080456,
+         "packets": 1548,
+         "keyframes": 49,
+         "first_frame": {
+          "width": 1280,
+          "height": 720,
+          "format": "yuv420p"
+         },
+         "truncated_by_deadline": false
+        },
+        "opencv": {
+         "ok": true,
+         "opencv_version": "5.0.0",
+         "opened": true,
+         "fourcc": "h264",
+         "frame_count_prop": 1548,
+         "fps_prop": 32.714,
+         "width": 1280,
+         "height": 720,
+         "decoded_frames": 1548,
+         "first_frame_shape": [
+          720,
+          1280,
+          3
+         ],
+         "truncated_by_deadline": false
+        },
+        "csv": {
+         "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\recording\\tbump_head\\synchronized_videos\\timestamps\\camera_timestamps\\tbump_head.camera1c81.timestamps.csv",
+         "exists": true,
+         "problems": [],
+         "columns": 27,
+         "header_sha1": "2124f46bf0eb",
+         "columns_missing": [],
+         "rows": 1548,
+         "frame_numbers_contiguous": true,
+         "first_recording_frame_number": 0,
+         "connection_frame_gaps": 0,
+         "connection_frames_skipped": 0,
+         "timestamps": {
+          "n": 1548,
+          "duration_s": 60.0578,
+          "fps": 25.7585,
+          "non_increasing_steps": 0,
+          "interval_ms": {
+           "median": 33.4665,
+           "mean": 38.8221,
+           "p95": 49.3339,
+           "p99": 50.5239,
+           "min": 24.2757,
+           "max": 55.4626,
+           "std": 7.9721
+          },
+          "long_intervals_gt_1p5x_median": 26,
+          "short_intervals_lt_0p5x_median": 0
+         },
+         "monotonic": true,
+         "fps_from_timestamps": 25.7585,
+         "utc_decreasing_steps": 0,
+         "utc_first": 1795057385.37,
+         "first_frame_from_recording_start_s": 0.0005
+        },
+        "frames": {
+         "csv_rows": 1548,
+         "pyav_packets": 1548,
+         "opencv_decoded": 1548,
+         "count": 1548
+        },
+        "fps_from_timestamps": 25.7585,
+        "ok": true
+       }
+      },
+      "problems": [],
+      "camera_source": "request",
+      "recording_info_json": true,
+      "stats_json": true,
+      "stats": {
+       "recording_info": {
+        "recording_name": "tbump_head",
+        "recording_directory": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\recording",
+        "recording_uuid": "b723617d-2bdd-4289-b015-3c69fac49fd9",
+        "mic_device_index": -1,
+        "recording_start_timestamp": {
+         "unix_timestamp_utc": 1795057384.111794,
+         "unix_timestamp_local": 1795057384.111794,
+         "unix_timestamp_utc_isoformat": "2026-11-19T03:03:04.111794+00:00",
+         "unix_timestamp_local_isoformat": "2026-11-18T22:03:04.111794-05:00",
+         "local_time_zone": "America/New_York",
+         "human_friendly_utc": "2026-11-19 03:03:04.111794",
+         "human_friendly_local": "2026-11-18 22:03:04.111794",
+         "day_of_week": "Wednesday",
+         "calendar_week": 47,
+         "day_of_year": 322,
+         "is_leap_year": false,
+         "perf_counter_ns": 224413577631200
+        }
+       },
+       "number_of_cameras": 4,
+       "number_of_frames": 1548,
+       "total_duration_sec": 60.0582387875,
+       "framerate_stats": {
+        "mean": 26.829610575111573,
+        "median": 29.915852076538016,
+        "standard_deviation": 5.231047221296876,
+        "coefficient_of_variation": 0.1949729090048532,
+        "min": 18.022967325150695,
+        "max": 41.21358417580956,
+        "range": 23.190616850658863
+       },
+       "frame_duration_stats": {
+        "mean": 38.82221080316742,
+        "median": 33.428687499999995,
+        "standard_deviation": 7.966424299314359,
+        "coefficient_of_variation": 0.20520274694568386,
+        "min": 24.2639375,
+        "max": 55.4853125,
+        "range": 31.221375
+       },
+       "inter_camera_grab_range_ms": {
+        "mean": 0.210824515503876,
+        "median": 0.1832,
+        "standard_deviation": 0.1358400915642597,
+        "coefficient_of_variation": 0.644327777723565,
+        "min": 0.00765,
+        "max": 1.3011,
+        "range": 1.29345
+       },
+       "idle_before_frame_grab_ms": {
+        "mean": 34.11202512919896,
+        "median": 29.260475,
+        "standard_deviation": 7.9597052976356055,
+        "coefficient_of_variation": 0.2333401569531067,
+        "min": 5.6091999999999995,
+        "max": 49.8686,
+        "range": 44.2594
+       },
+       "during_frame_grab_ms": {
+        "mean": 0.050006718346253226,
+        "median": 0.046725,
+        "standard_deviation": 0.009387905247782541,
+        "coefficient_of_variation": 0.18773287986584974,
+        "min": 0.0288,
+        "max": 0.12865000000000001,
+        "range": 0.09985000000000002
+       },
+       "idle_before_retrieve_ms": {
+        "mean": 0.014835658914728683,
+        "median": 0.014325000000000001,
+        "standard_deviation": 0.004597699586847316,
+        "coefficient_of_variation": 0.3099086877956441,
+        "min": 0.00925,
+        "max": 0.02735,
+        "range": 0.018099999999999998
+       },
+       "during_frame_retrieve_ms": {
+        "mean": 0.9750678294573644,
+        "median": 0.6005,
+        "standard_deviation": 1.720745850913301,
+        "coefficient_of_variation": 1.7647447684443802,
+        "min": 0.3423,
+        "max": 27.72515,
+        "range": 27.382849999999998
+       },
+       "idle_before_copy_to_camera_shm_ms": {
+        "mean": 0.35020478036175706,
+        "median": 0.345875,
+        "standard_deviation": 0.06135865416526369,
+        "coefficient_of_variation": 0.17520792863501458,
+        "min": 0.23335,
+        "max": 0.62375,
+        "range": 0.3904
+       },
+       "during_copy_to_camera_shm_ms": {
+        "mean": 2.067904005167959,
+        "median": 1.911425,
+        "standard_deviation": 0.43694915669848156,
+        "coefficient_of_variation": 0.21130050312127122,
+        "min": 1.5294,
+        "max": 3.4945000000000004,
+        "range": 1.9651000000000003
+       },
+       "idle_before_frame_record_ms": {
+        "mean": 0.08188691860465115,
+        "median": 0.0791,
+        "standard_deviation": 0.012885004269073668,
+        "coefficient_of_variation": 0.1573511922127914,
+        "min": 0.0589,
+        "max": 0.1444,
+        "range": 0.08549999999999999
+       },
+       "during_frame_record_ms": {
+        "mean": 0.44009344315245486,
+        "median": 0.433575,
+        "standard_deviation": 0.03554539924644461,
+        "coefficient_of_variation": 0.08076784555531577,
+        "min": 0.35645,
+        "max": 0.7377,
+        "range": 0.38125000000000003
+       },
+       "total_frame_processing_time_ms": {
+        "mean": 4.316085626614987,
+        "median": 3.8899999999999997,
+        "standard_deviation": 1.8128340536520575,
+        "coefficient_of_variation": 0.4200180928926158,
+        "min": 2.89885,
+        "max": 30.27655,
+        "range": 27.3777
+       },
+       "total_camera_idle_time_ms": {
+        "mean": 34.11202512919896,
+        "median": 29.260475,
+        "standard_deviation": 7.9597052976356055,
+        "coefficient_of_variation": 0.2333401569531067,
+        "min": 5.6091999999999995,
+        "max": 49.8686,
+        "range": 44.2594
+       }
+      },
+      "frame_counts": {
+       "fbf5": 1548,
+       "0100": 1548,
+       "b395": 1548,
+       "1c81": 1548
+      },
+      "frame_counts_equal": true,
+      "multiframe_csv": {
+       "path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\recording\\tbump_head\\synchronized_videos\\timestamps\\tbump_head_timestamps.csv",
+       "exists": true,
+       "problems": [],
+       "columns": 103,
+       "header_sha1": "f208f075ce4a",
+       "columns_missing": [],
+       "rows": 1548,
+       "multiframe_numbers_contiguous": true,
+       "timestamps": {
+        "n": 1548,
+        "duration_s": 60.058,
+        "fps": 25.7585,
+        "non_increasing_steps": 0,
+        "interval_ms": {
+         "median": 33.4287,
+         "mean": 38.8222,
+         "p95": 49.3771,
+         "p99": 50.4938,
+         "min": 24.2639,
+         "max": 55.4853,
+         "std": 7.9664
+        },
+        "long_intervals_gt_1p5x_median": 29,
+        "short_intervals_lt_0p5x_median": 0
+       },
+       "fps_from_timestamps": 25.7585,
+       "monotonic": true,
+       "inter_camera_grab_range_ms": {
+        "median": 0.1832,
+        "p95": 0.4732,
+        "max": 1.3011,
+        "mean": 0.2108
+       }
+      },
+      "frames": 1548,
+      "ok": true
+     },
+     "recording_dir": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\recording\\tbump_head",
+     "server_log": {
+      "lines": 527,
+      "error_lines": 1,
+      "errors": [
+       {
+        "line": 469,
+        "text": "└>> global_kill_flag is set (no worker death detected) — triggering parent shutdown |  ERROR |  283.410ms |  skellycam.core.ipc.process_management.worker_registry._child_monitor_loop():110 |  2026-11-18T22:04:08.566 |  PID:63420:MainProcess |  TID:55824:WorkerRegistry-ChildMonitor"
+       }
+      ],
+      "error_kinds": {
+       "global_kill_flag is set (no worker death detected) — triggering parent shutdown": 1
+      },
+      "tracebacks": 0,
+      "logging_errors": 0,
+      "hr_0x8007001F_lines": [],
+      "writer_codec_lines": []
+     },
+     "exit_code": 0,
+     "utc_finished": "2026-11-19T03:04:17.667Z",
+     "elapsed_s": 90.719
+    },
+    "parse_error": null,
+    "spec_to_key": {
+     "ds:\\\\?\\usb#vid_1532&pid_0e05&mi_00#a&34494d13&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global": "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "ds:\\\\?\\usb#vid_046d&pid_0843&mi_00#6&34c047e4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global": "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "ds:\\\\?\\usb#vid_4c4a&pid_4a55&mi_00#8&232e60d4&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global": "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2",
+     "ds:\\\\?\\usb#vid_046d&pid_085c&mi_00#8&268da596&0&0000#{65e8773d-8f56-11d0-a3b9-000000000096}\\global": "046d:085c:sn=C922SN01"
+    },
+    "ok": true,
+    "fault_reports": []
+   }
+  },
+  "preflight": {
+   "baseline": {
+    "label": "baseline",
+    "path": "c:\\Users\\Dom\\GitHub\\freemocap\\skellycam-2a-before",
+    "ok": true,
+    "branch": "HEAD",
+    "commit": "0a66994c37e54d310a0e2921cfb9230c4b93793b"
+   },
+   "head": {
+    "label": "head",
+    "path": "c:\\Users\\Dom\\GitHub\\freemocap\\skellycam-native-jpeg",
+    "ok": true,
+    "branch": "dom/native-jpeg",
+    "commit": "8a1f9b517ba887c972d2cb8f9c0a51a3e753ba29"
+   }
+  },
+  "as_found_controls": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "exposure": {
+     "value": -7,
+     "flags": 1,
+     "flags_names": [
+      "auto"
+     ]
+    },
+    "gain": {
+     "value": 0,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "focus": {
+     "value": 600,
+     "flags": 1,
+     "flags_names": [
+      "auto"
+     ]
+    },
+    "white_balance": {
+     "value": 6500,
+     "flags": 1,
+     "flags_names": [
+      "auto"
+     ]
+    },
+    "brightness": {
+     "value": 159,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "contrast": {
+     "value": 201,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "saturation": {
+     "value": 110,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "sharpness": {
+     "value": 128,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "backlight_compensation": {
+     "value": 1,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "auto_exposure_priority": {
+     "value": 0,
+     "flags": 0,
+     "flags_names": []
+    },
+    "powerline_frequency": {
+     "value": 2,
+     "flags": 0,
+     "flags_names": []
+    }
+   },
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+    "exposure": {
+     "value": -3,
+     "flags": 1,
+     "flags_names": [
+      "auto"
+     ]
+    },
+    "gain": {
+     "value": 0,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "focus": {
+     "value": 30,
+     "flags": 1,
+     "flags_names": [
+      "auto"
+     ]
+    },
+    "white_balance": {
+     "value": 4000,
+     "flags": 1,
+     "flags_names": [
+      "auto"
+     ]
+    },
+    "brightness": {
+     "value": 128,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "contrast": {
+     "value": 128,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "saturation": {
+     "value": 53,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "sharpness": {
+     "value": 128,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "backlight_compensation": {
+     "value": 0,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "auto_exposure_priority": {
+     "value": 1,
+     "flags": 0,
+     "flags_names": []
+    },
+    "powerline_frequency": {
+     "value": 2,
+     "flags": 0,
+     "flags_names": []
+    }
+   },
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+    "exposure": {
+     "value": -7,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "gain": {
+     "value": 4,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "white_balance": {
+     "value": 4500,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "brightness": {
+     "value": 0,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "contrast": {
+     "value": 250,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "saturation": {
+     "value": 475,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "sharpness": {
+     "value": 180,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "backlight_compensation": {
+     "value": 0,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "powerline_frequency": {
+     "value": 0,
+     "flags": 0,
+     "flags_names": []
+    }
+   },
+   "046d:085c:sn=C922SN01": {
+    "exposure": {
+     "value": -7,
+     "flags": 1,
+     "flags_names": [
+      "auto"
+     ]
+    },
+    "gain": {
+     "value": 0,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "focus": {
+     "value": 0,
+     "flags": 1,
+     "flags_names": [
+      "auto"
+     ]
+    },
+    "white_balance": {
+     "value": 3830,
+     "flags": 1,
+     "flags_names": [
+      "auto"
+     ]
+    },
+    "brightness": {
+     "value": 128,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "contrast": {
+     "value": 128,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "saturation": {
+     "value": 128,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "sharpness": {
+     "value": 128,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "backlight_compensation": {
+     "value": 0,
+     "flags": 2,
+     "flags_names": [
+      "manual"
+     ]
+    },
+    "auto_exposure_priority": {
+     "value": 1,
+     "flags": 0,
+     "flags_names": []
+    },
+    "powerline_frequency": {
+     "value": 2,
+     "flags": 0,
+     "flags_names": []
+    }
+   }
+  },
+  "restore": {
+   "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+    "restored": true,
+    "after": {
+     "exposure": {
+      "value": -7,
+      "flags": 1,
+      "flags_names": [
+       "auto"
+      ]
+     },
+     "gain": {
+      "value": 0,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "focus": {
+      "value": 600,
+      "flags": 1,
+      "flags_names": [
+       "auto"
+      ]
+     },
+     "white_balance": {
+      "value": 6500,
+      "flags": 1,
+      "flags_names": [
+       "auto"
+      ]
+     },
+     "brightness": {
+      "value": 159,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "contrast": {
+      "value": 201,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "saturation": {
+      "value": 110,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "sharpness": {
+      "value": 128,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "backlight_compensation": {
+      "value": 1,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "auto_exposure_priority": {
+      "value": 0,
+      "flags": 0,
+      "flags_names": []
+     },
+     "powerline_frequency": {
+      "value": 2,
+      "flags": 0,
+      "flags_names": []
+     }
+    }
+   },
+   "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+    "restored": true,
+    "after": {
+     "exposure": {
+      "value": -5,
+      "flags": 1,
+      "flags_names": [
+       "auto"
+      ]
+     },
+     "gain": {
+      "value": 0,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "focus": {
+      "value": 55,
+      "flags": 1,
+      "flags_names": [
+       "auto"
+      ]
+     },
+     "white_balance": {
+      "value": 4000,
+      "flags": 1,
+      "flags_names": [
+       "auto"
+      ]
+     },
+     "brightness": {
+      "value": 128,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "contrast": {
+      "value": 128,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "saturation": {
+      "value": 53,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "sharpness": {
+      "value": 128,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "backlight_compensation": {
+      "value": 0,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "auto_exposure_priority": {
+      "value": 1,
+      "flags": 0,
+      "flags_names": []
+     },
+     "powerline_frequency": {
+      "value": 2,
+      "flags": 0,
+      "flags_names": []
+     }
+    }
+   },
+   "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+    "restored": true,
+    "after": {
+     "exposure": {
+      "value": -7,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "gain": {
+      "value": 4,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "white_balance": {
+      "value": 4500,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "brightness": {
+      "value": 0,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "contrast": {
+      "value": 250,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "saturation": {
+      "value": 475,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "sharpness": {
+      "value": 180,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "backlight_compensation": {
+      "value": 0,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "powerline_frequency": {
+      "value": 0,
+      "flags": 0,
+      "flags_names": []
+     }
+    }
+   },
+   "046d:085c:sn=C922SN01": {
+    "restored": true,
+    "after": {
+     "exposure": {
+      "value": -7,
+      "flags": 1,
+      "flags_names": [
+       "auto"
+      ]
+     },
+     "gain": {
+      "value": 0,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "focus": {
+      "value": 0,
+      "flags": 1,
+      "flags_names": [
+       "auto"
+      ]
+     },
+     "white_balance": {
+      "value": 5661,
+      "flags": 1,
+      "flags_names": [
+       "auto"
+      ]
+     },
+     "brightness": {
+      "value": 128,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "contrast": {
+      "value": 128,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "saturation": {
+      "value": 128,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "sharpness": {
+      "value": 128,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "backlight_compensation": {
+      "value": 0,
+      "flags": 2,
+      "flags_names": [
+       "manual"
+      ]
+     },
+     "auto_exposure_priority": {
+      "value": 1,
+      "flags": 0,
+      "flags_names": []
+     },
+     "powerline_frequency": {
+      "value": 2,
+      "flags": 0,
+      "flags_names": []
+     }
+    }
+   }
+  },
+  "comparison": {
+   "baseline": {
+    "ok": true,
+    "stage_failed": null,
+    "error": null,
+    "rerun_without_kiyo_pro": false,
+    "commit": "0a66994c37e54d310a0e2921cfb9230c4b93793b",
+    "versions": {
+     "python": "3.13.18",
+     "opencv": "5.1.0",
+     "numpy": "2.5.5",
+     "av": "19.0.2",
+     "skellycam": "2.0.0a6",
+     "opencv-contrib-python": "5.1.0.95",
+     "fastapi": "0.163.2",
+     "uvicorn": "0.54.0",
+     "pydantic": "2.14.3",
+     "polars": "2.1.0",
+     "cv2-enumerate-cameras": "1.4.0"
+    },
+    "phases_s": {
+     "start_to_health": 2.531,
+     "detect": 0.031,
+     "connect": 11.891,
+     "record_start_call": 1.062,
+     "recorded_wall": 60.0,
+     "stop_and_finalise": 1.781,
+     "verify": 9.406
+    },
+    "frames": 1548,
+    "frame_counts_equal": true,
+    "group_fps": 25.7591,
+    "inter_camera_grab_range_ms": {
+     "median": 0.2049,
+     "p95": 0.4797,
+     "max": 0.9232,
+     "mean": 0.2287
+    },
+    "multiframe_csv_header_sha1": "f208f075ce4a",
+    "stop_response": [
+     {
+      "recording_name": "tbump_baseline",
+      "recording_path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\baseline\\recording\\tbump_baseline",
+      "number_of_cameras": 4,
+      "number_of_frames": 1548,
+      "total_duration_sec": 60.056,
+      "mean_framerate": 26.81,
+      "mean_inter_camera_sync_ms": 0.23,
+      "framerate_stats": {
+       "median": 30.635075983154707,
+       "mean": 26.8074978318703,
+       "std": 5.153993824926693,
+       "min": 18.85275597248485,
+       "max": 36.500970959064915
+      },
+      "frame_duration_stats": {
+       "median": 32.643075,
+       "mean": 38.821214964447314,
+       "std": 7.899479393516213,
+       "min": 27.396774999999998,
+       "max": 53.043125
+      },
+      "inter_camera_grab_range_ms_stats": {
+       "median": 0.204875,
+       "mean": 0.2286782299741602,
+       "std": 0.14042095411610528,
+       "min": 0.00905,
+       "max": 0.9232
+      }
+     }
+    ],
+    "server_log": {
+     "error_lines": 1,
+     "error_kinds": {
+      "global_kill_flag is set (no worker death detected) — triggering parent shutdown": 1
+     },
+     "tracebacks": 0,
+     "logging_errors": 0,
+     "writer_codec_lines": []
+    },
+    "clean_shutdown": true,
+    "leftover_processes": 0,
+    "verify_problems": [],
+    "cameras": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "skellycam_camera_id": "fbf5",
+      "camera_index": 2,
+      "ok": true,
+      "problems": [],
+      "frames": 1548,
+      "fps_from_timestamps": 25.7591,
+      "interval_ms": {
+       "median": 32.639,
+       "mean": 38.8212,
+       "p95": 48.6578,
+       "p99": 49.1734,
+       "min": 27.5231,
+       "max": 52.834,
+       "std": 7.8968
+      },
+      "long_intervals": 42,
+      "connection_frames_skipped": 0,
+      "first_frame_from_recording_start_s": 0.0,
+      "csv_header_sha1": "2124f46bf0eb",
+      "csv_columns": 27,
+      "ext": "mp4",
+      "size_bytes": 175118579,
+      "bytes_per_frame": 113126,
+      "codec": "h264",
+      "pix_fmt": "yuv420p",
+      "container": "mov,mp4,m4a,3gp,3g2,mj2",
+      "width": 1280,
+      "height": 720,
+      "average_rate": 32.19,
+      "keyframes": 49,
+      "opencv_fourcc": "h264",
+      "opencv_decoded": 1548,
+      "extracted_resolution": {
+       "height": 720,
+       "width": 1280
+      },
+      "extracted_framerate": 30.00003000003,
+      "extracted_exposure": -7
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+      "skellycam_camera_id": "0100",
+      "camera_index": 3,
+      "ok": true,
+      "problems": [],
+      "frames": 1548,
+      "fps_from_timestamps": 25.7591,
+      "interval_ms": {
+       "median": 32.6658,
+       "mean": 38.8212,
+       "p95": 48.6769,
+       "p99": 49.1992,
+       "min": 27.3335,
+       "max": 53.0448,
+       "std": 7.9046
+      },
+      "long_intervals": 40,
+      "connection_frames_skipped": 0,
+      "first_frame_from_recording_start_s": 0.0,
+      "csv_header_sha1": "2124f46bf0eb",
+      "csv_columns": 27,
+      "ext": "mp4",
+      "size_bytes": 176462289,
+      "bytes_per_frame": 113994,
+      "codec": "h264",
+      "pix_fmt": "yuv420p",
+      "container": "mov,mp4,m4a,3gp,3g2,mj2",
+      "width": 1280,
+      "height": 720,
+      "average_rate": 32.376,
+      "keyframes": 49,
+      "opencv_fourcc": "h264",
+      "opencv_decoded": 1548,
+      "extracted_resolution": {
+       "height": 720,
+       "width": 1280
+      },
+      "extracted_framerate": 30.00003000003,
+      "extracted_exposure": -5
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "skellycam_camera_id": "b395",
+      "camera_index": 0,
+      "ok": true,
+      "problems": [],
+      "frames": 1548,
+      "fps_from_timestamps": 25.7591,
+      "interval_ms": {
+       "median": 32.6734,
+       "mean": 38.8212,
+       "p95": 48.6785,
+       "p99": 49.254,
+       "min": 27.4141,
+       "max": 53.2831,
+       "std": 7.8987
+      },
+      "long_intervals": 31,
+      "connection_frames_skipped": 0,
+      "first_frame_from_recording_start_s": 0.0,
+      "csv_header_sha1": "2124f46bf0eb",
+      "csv_columns": 27,
+      "ext": "mp4",
+      "size_bytes": 176066564,
+      "bytes_per_frame": 113738,
+      "codec": "h264",
+      "pix_fmt": "yuv420p",
+      "container": "mov,mp4,m4a,3gp,3g2,mj2",
+      "width": 1280,
+      "height": 720,
+      "average_rate": 32.466,
+      "keyframes": 49,
+      "opencv_fourcc": "h264",
+      "opencv_decoded": 1548,
+      "extracted_resolution": {
+       "height": 720,
+       "width": 1280
+      },
+      "extracted_framerate": 30.00003000003,
+      "extracted_exposure": -7
+     },
+     "046d:085c:sn=C922SN01": {
+      "skellycam_camera_id": "1c81",
+      "camera_index": 1,
+      "ok": true,
+      "problems": [],
+      "frames": 1548,
+      "fps_from_timestamps": 25.7591,
+      "interval_ms": {
+       "median": 32.6534,
+       "mean": 38.8212,
+       "p95": 48.7034,
+       "p99": 49.229,
+       "min": 27.3163,
+       "max": 53.0106,
+       "std": 7.9021
+      },
+      "long_intervals": 43,
+      "connection_frames_skipped": 0,
+      "first_frame_from_recording_start_s": 0.0,
+      "csv_header_sha1": "2124f46bf0eb",
+      "csv_columns": 27,
+      "ext": "mp4",
+      "size_bytes": 161894160,
+      "bytes_per_frame": 104583,
+      "codec": "h264",
+      "pix_fmt": "yuv420p",
+      "container": "mov,mp4,m4a,3gp,3g2,mj2",
+      "width": 1280,
+      "height": 720,
+      "average_rate": 32.665,
+      "keyframes": 49,
+      "opencv_fourcc": "h264",
+      "opencv_decoded": 1548,
+      "extracted_resolution": {
+       "height": 720,
+       "width": 1280
+      },
+      "extracted_framerate": 30.00003000003,
+      "extracted_exposure": -7
+     }
+    }
+   },
+   "head": {
+    "ok": true,
+    "stage_failed": null,
+    "error": null,
+    "rerun_without_kiyo_pro": false,
+    "commit": "8a1f9b517ba887c972d2cb8f9c0a51a3e753ba29",
+    "versions": {
+     "python": "3.13.18",
+     "opencv": "5.1.0",
+     "numpy": "2.5.5",
+     "av": "19.0.2",
+     "skellycam": "2.0.0a6",
+     "opencv-contrib-python": "5.1.0.95",
+     "fastapi": "0.163.2",
+     "uvicorn": "0.54.0",
+     "pydantic": "2.14.3",
+     "polars": "2.1.0",
+     "cv2-enumerate-cameras": "1.4.0"
+    },
+    "phases_s": {
+     "start_to_health": 1.547,
+     "detect": 0.031,
+     "connect": 12.266,
+     "record_start_call": 1.265,
+     "recorded_wall": 60.0,
+     "stop_and_finalise": 1.672,
+     "verify": 9.063
+    },
+    "frames": 1548,
+    "frame_counts_equal": true,
+    "group_fps": 25.7585,
+    "inter_camera_grab_range_ms": {
+     "median": 0.1832,
+     "p95": 0.4732,
+     "max": 1.3011,
+     "mean": 0.2108
+    },
+    "multiframe_csv_header_sha1": "f208f075ce4a",
+    "stop_response": [
+     {
+      "recording_name": "tbump_head",
+      "recording_path": "C:\\Users\\Dom\\Documents\\skellycam-raw\\results\\windows\\Gerald\\suite_20261119T030110Z\\W-TBUMP\\head\\recording\\tbump_head",
+      "number_of_cameras": 4,
+      "number_of_frames": 1548,
+      "total_duration_sec": 60.058,
+      "mean_framerate": 26.83,
+      "mean_inter_camera_sync_ms": 0.21,
+      "framerate_stats": {
+       "median": 29.915852076538016,
+       "mean": 26.829610575111573,
+       "std": 5.231047221296876,
+       "min": 18.022967325150695,
+       "max": 41.21358417580956
+      },
+      "frame_duration_stats": {
+       "median": 33.428687499999995,
+       "mean": 38.82221080316742,
+       "std": 7.966424299314359,
+       "min": 24.2639375,
+       "max": 55.4853125
+      },
+      "inter_camera_grab_range_ms_stats": {
+       "median": 0.1832,
+       "mean": 0.210824515503876,
+       "std": 0.1358400915642597,
+       "min": 0.00765,
+       "max": 1.3011
+      }
+     }
+    ],
+    "server_log": {
+     "error_lines": 1,
+     "error_kinds": {
+      "global_kill_flag is set (no worker death detected) — triggering parent shutdown": 1
+     },
+     "tracebacks": 0,
+     "logging_errors": 0,
+     "writer_codec_lines": []
+    },
+    "clean_shutdown": true,
+    "leftover_processes": 0,
+    "verify_problems": [],
+    "cameras": {
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+      "skellycam_camera_id": "fbf5",
+      "camera_index": 2,
+      "ok": true,
+      "problems": [],
+      "frames": 1548,
+      "fps_from_timestamps": 25.7583,
+      "interval_ms": {
+       "median": 33.4136,
+       "mean": 38.8224,
+       "p95": 49.3613,
+       "p99": 50.5047,
+       "min": 24.2997,
+       "max": 55.3364,
+       "std": 7.9629
+      },
+      "long_intervals": 30,
+      "connection_frames_skipped": 0,
+      "first_frame_from_recording_start_s": 0.0,
+      "csv_header_sha1": "2124f46bf0eb",
+      "csv_columns": 27,
+      "ext": "mp4",
+      "size_bytes": 172802450,
+      "bytes_per_frame": 111629,
+      "codec": "h264",
+      "pix_fmt": "yuv420p",
+      "container": "mov,mp4,m4a,3gp,3g2,mj2",
+      "width": 1280,
+      "height": 720,
+      "average_rate": 32.887,
+      "keyframes": 49,
+      "opencv_fourcc": "h264",
+      "opencv_decoded": 1548,
+      "extracted_resolution": {
+       "height": 720,
+       "width": 1280
+      },
+      "extracted_framerate": 30.00003000003,
+      "extracted_exposure": -7
+     },
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+      "skellycam_camera_id": "0100",
+      "camera_index": 3,
+      "ok": true,
+      "problems": [],
+      "frames": 1548,
+      "fps_from_timestamps": 25.7584,
+      "interval_ms": {
+       "median": 33.438,
+       "mean": 38.8224,
+       "p95": 49.3443,
+       "p99": 50.5884,
+       "min": 24.2969,
+       "max": 55.364,
+       "std": 7.9701
+      },
+      "long_intervals": 27,
+      "connection_frames_skipped": 0,
+      "first_frame_from_recording_start_s": 0.0001,
+      "csv_header_sha1": "2124f46bf0eb",
+      "csv_columns": 27,
+      "ext": "mp4",
+      "size_bytes": 178287093,
+      "bytes_per_frame": 115173,
+      "codec": "h264",
+      "pix_fmt": "yuv420p",
+      "container": "mov,mp4,m4a,3gp,3g2,mj2",
+      "width": 1280,
+      "height": 720,
+      "average_rate": 33.047,
+      "keyframes": 47,
+      "opencv_fourcc": "h264",
+      "opencv_decoded": 1548,
+      "extracted_resolution": {
+       "height": 720,
+       "width": 1280
+      },
+      "extracted_framerate": 30.00003000003,
+      "extracted_exposure": -5
+     },
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+      "skellycam_camera_id": "b395",
+      "camera_index": 0,
+      "ok": true,
+      "problems": [],
+      "frames": 1548,
+      "fps_from_timestamps": 25.7586,
+      "interval_ms": {
+       "median": 33.4529,
+       "mean": 38.822,
+       "p95": 49.3366,
+       "p99": 50.475,
+       "min": 24.1834,
+       "max": 55.7782,
+       "std": 7.9645
+      },
+      "long_intervals": 27,
+      "connection_frames_skipped": 0,
+      "first_frame_from_recording_start_s": 0.0005,
+      "csv_header_sha1": "2124f46bf0eb",
+      "csv_columns": 27,
+      "ext": "mp4",
+      "size_bytes": 174767322,
+      "bytes_per_frame": 112899,
+      "codec": "h264",
+      "pix_fmt": "yuv420p",
+      "container": "mov,mp4,m4a,3gp,3g2,mj2",
+      "width": 1280,
+      "height": 720,
+      "average_rate": 32.735,
+      "keyframes": 49,
+      "opencv_fourcc": "h264",
+      "opencv_decoded": 1548,
+      "extracted_resolution": {
+       "height": 720,
+       "width": 1280
+      },
+      "extracted_framerate": 30.00003000003,
+      "extracted_exposure": -7
+     },
+     "046d:085c:sn=C922SN01": {
+      "skellycam_camera_id": "1c81",
+      "camera_index": 1,
+      "ok": true,
+      "problems": [],
+      "frames": 1548,
+      "fps_from_timestamps": 25.7585,
+      "interval_ms": {
+       "median": 33.4665,
+       "mean": 38.8221,
+       "p95": 49.3339,
+       "p99": 50.5239,
+       "min": 24.2757,
+       "max": 55.4626,
+       "std": 7.9721
+      },
+      "long_intervals": 26,
+      "connection_frames_skipped": 0,
+      "first_frame_from_recording_start_s": 0.0005,
+      "csv_header_sha1": "2124f46bf0eb",
+      "csv_columns": 27,
+      "ext": "mp4",
+      "size_bytes": 166092951,
+      "bytes_per_frame": 107295,
+      "codec": "h264",
+      "pix_fmt": "yuv420p",
+      "container": "mov,mp4,m4a,3gp,3g2,mj2",
+      "width": 1280,
+      "height": 720,
+      "average_rate": 32.714,
+      "keyframes": 49,
+      "opencv_fourcc": "h264",
+      "opencv_decoded": 1548,
+      "extracted_resolution": {
+       "height": 720,
+       "width": 1280
+      },
+      "extracted_framerate": 30.00003000003,
+      "extracted_exposure": -7
+     }
+    }
+   },
+   "criteria": [
+    {
+     "criterion": "same camera set (cameras dropped after a fault excluded)",
+     "met": true,
+     "detail": {
+      "baseline": [
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+      ],
+      "head": [
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+      ],
+      "common": [
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+      ],
+      "dropped_after_fault": []
+     }
+    },
+    {
+     "criterion": "lockstep: equal frame counts across cameras in both",
+     "met": true,
+     "detail": {
+      "baseline": true,
+      "head": true
+     }
+    },
+    {
+     "criterion": "group fps within 2 %",
+     "met": true,
+     "detail": {
+      "baseline": 25.7591,
+      "head": 25.7585
+     }
+    },
+    {
+     "criterion": "start time (camera connect) not > 1.5x + 10 s",
+     "met": true,
+     "detail": {
+      "baseline_s": 11.891,
+      "head_s": 12.266,
+      "start_to_health_s": {
+       "baseline": 2.531,
+       "head": 1.547
+      },
+      "first_frame_from_recording_start_s": {
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+        "baseline": 0.0,
+        "head": 0.0001
+       },
+       "046d:085c:sn=C922SN01": {
+        "baseline": 0.0,
+        "head": 0.0005
+       },
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+        "baseline": 0.0,
+        "head": 0.0
+       },
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+        "baseline": 0.0,
+        "head": 0.0005
+       }
+      }
+     }
+    },
+    {
+     "criterion": "no new server-log error kinds",
+     "met": true,
+     "detail": {
+      "new_in_head": [],
+      "gone_in_head": [],
+      "error_lines": {
+       "baseline": 1,
+       "head": 1
+      }
+     }
+    },
+    {
+     "criterion": "no more tracebacks / logging errors",
+     "met": true,
+     "detail": {
+      "tracebacks": {
+       "baseline": 0,
+       "head": 0
+      },
+      "logging_errors": {
+       "baseline": 0,
+       "head": 0
+      }
+     }
+    },
+    {
+     "criterion": "same writer-codec resolution",
+     "met": true,
+     "detail": {
+      "baseline": [],
+      "head": []
+     }
+    },
+    {
+     "criterion": "same multi-frame CSV header",
+     "met": true,
+     "detail": {
+      "baseline": "f208f075ce4a",
+      "head": "f208f075ce4a"
+     }
+    },
+    {
+     "criterion": "head server shut down cleanly (no kill, no leftover process)",
+     "met": true,
+     "detail": {
+      "baseline": {
+       "clean": true,
+       "leftover": 0
+      },
+      "head": {
+       "clean": true,
+       "leftover": 0
+      }
+     }
+    }
+   ],
+   "per_camera": {
+    "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": [
+     {
+      "criterion": "fps within 2 %",
+      "met": true,
+      "detail": {
+       "baseline": 25.7591,
+       "head": 25.7584,
+       "rel": -0.0
+      }
+     },
+     {
+      "criterion": "frame count within 2 %",
+      "met": true,
+      "detail": {
+       "baseline": 1548,
+       "head": 1548
+      }
+     },
+     {
+      "criterion": "same codec, container and frame size",
+      "met": true,
+      "detail": {
+       "codec": {
+        "baseline": "h264",
+        "head": "h264"
+       },
+       "container": {
+        "baseline": "mov,mp4,m4a,3gp,3g2,mj2",
+        "head": "mov,mp4,m4a,3gp,3g2,mj2"
+       },
+       "ext": {
+        "baseline": "mp4",
+        "head": "mp4"
+       },
+       "pix_fmt": {
+        "baseline": "yuv420p",
+        "head": "yuv420p"
+       },
+       "width": {
+        "baseline": 1280,
+        "head": 1280
+       },
+       "height": {
+        "baseline": 720,
+        "head": 720
+       }
+      }
+     },
+     {
+      "criterion": "bytes per frame within 35 % (scene-dependent)",
+      "met": true,
+      "detail": {
+       "baseline": 113994,
+       "head": 115173,
+       "rel": 0.01
+      }
+     },
+     {
+      "criterion": "same timestamps CSV header",
+      "met": true,
+      "detail": {
+       "baseline": "2124f46bf0eb",
+       "head": "2124f46bf0eb"
+      }
+     },
+     {
+      "criterion": "head video readable and CSV checks pass",
+      "met": true,
+      "detail": null
+     }
+    ],
+    "046d:085c:sn=C922SN01": [
+     {
+      "criterion": "fps within 2 %",
+      "met": true,
+      "detail": {
+       "baseline": 25.7591,
+       "head": 25.7585,
+       "rel": -0.0
+      }
+     },
+     {
+      "criterion": "frame count within 2 %",
+      "met": true,
+      "detail": {
+       "baseline": 1548,
+       "head": 1548
+      }
+     },
+     {
+      "criterion": "same codec, container and frame size",
+      "met": true,
+      "detail": {
+       "codec": {
+        "baseline": "h264",
+        "head": "h264"
+       },
+       "container": {
+        "baseline": "mov,mp4,m4a,3gp,3g2,mj2",
+        "head": "mov,mp4,m4a,3gp,3g2,mj2"
+       },
+       "ext": {
+        "baseline": "mp4",
+        "head": "mp4"
+       },
+       "pix_fmt": {
+        "baseline": "yuv420p",
+        "head": "yuv420p"
+       },
+       "width": {
+        "baseline": 1280,
+        "head": 1280
+       },
+       "height": {
+        "baseline": 720,
+        "head": 720
+       }
+      }
+     },
+     {
+      "criterion": "bytes per frame within 35 % (scene-dependent)",
+      "met": true,
+      "detail": {
+       "baseline": 104583,
+       "head": 107295,
+       "rel": 0.026
+      }
+     },
+     {
+      "criterion": "same timestamps CSV header",
+      "met": true,
+      "detail": {
+       "baseline": "2124f46bf0eb",
+       "head": "2124f46bf0eb"
+      }
+     },
+     {
+      "criterion": "head video readable and CSV checks pass",
+      "met": true,
+      "detail": null
+     }
+    ],
+    "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": [
+     {
+      "criterion": "fps within 2 %",
+      "met": true,
+      "detail": {
+       "baseline": 25.7591,
+       "head": 25.7583,
+       "rel": -0.0
+      }
+     },
+     {
+      "criterion": "frame count within 2 %",
+      "met": true,
+      "detail": {
+       "baseline": 1548,
+       "head": 1548
+      }
+     },
+     {
+      "criterion": "same codec, container and frame size",
+      "met": true,
+      "detail": {
+       "codec": {
+        "baseline": "h264",
+        "head": "h264"
+       },
+       "container": {
+        "baseline": "mov,mp4,m4a,3gp,3g2,mj2",
+        "head": "mov,mp4,m4a,3gp,3g2,mj2"
+       },
+       "ext": {
+        "baseline": "mp4",
+        "head": "mp4"
+       },
+       "pix_fmt": {
+        "baseline": "yuv420p",
+        "head": "yuv420p"
+       },
+       "width": {
+        "baseline": 1280,
+        "head": 1280
+       },
+       "height": {
+        "baseline": 720,
+        "head": 720
+       }
+      }
+     },
+     {
+      "criterion": "bytes per frame within 35 % (scene-dependent)",
+      "met": true,
+      "detail": {
+       "baseline": 113126,
+       "head": 111629,
+       "rel": -0.013
+      }
+     },
+     {
+      "criterion": "same timestamps CSV header",
+      "met": true,
+      "detail": {
+       "baseline": "2124f46bf0eb",
+       "head": "2124f46bf0eb"
+      }
+     },
+     {
+      "criterion": "head video readable and CSV checks pass",
+      "met": true,
+      "detail": null
+     }
+    ],
+    "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": [
+     {
+      "criterion": "fps within 2 %",
+      "met": true,
+      "detail": {
+       "baseline": 25.7591,
+       "head": 25.7586,
+       "rel": -0.0
+      }
+     },
+     {
+      "criterion": "frame count within 2 %",
+      "met": true,
+      "detail": {
+       "baseline": 1548,
+       "head": 1548
+      }
+     },
+     {
+      "criterion": "same codec, container and frame size",
+      "met": true,
+      "detail": {
+       "codec": {
+        "baseline": "h264",
+        "head": "h264"
+       },
+       "container": {
+        "baseline": "mov,mp4,m4a,3gp,3g2,mj2",
+        "head": "mov,mp4,m4a,3gp,3g2,mj2"
+       },
+       "ext": {
+        "baseline": "mp4",
+        "head": "mp4"
+       },
+       "pix_fmt": {
+        "baseline": "yuv420p",
+        "head": "yuv420p"
+       },
+       "width": {
+        "baseline": 1280,
+        "head": 1280
+       },
+       "height": {
+        "baseline": 720,
+        "head": 720
+       }
+      }
+     },
+     {
+      "criterion": "bytes per frame within 35 % (scene-dependent)",
+      "met": true,
+      "detail": {
+       "baseline": 113738,
+       "head": 112899,
+       "rel": -0.007
+      }
+     },
+     {
+      "criterion": "same timestamps CSV header",
+      "met": true,
+      "detail": {
+       "baseline": "2124f46bf0eb",
+       "head": "2124f46bf0eb"
+      }
+     },
+     {
+      "criterion": "head video readable and CSV checks pass",
+      "met": true,
+      "detail": null
+     }
+    ]
+   },
+   "version_changes": {},
+   "comparable": true,
+   "camera_sets": {
+    "baseline": [
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "046d:085c:sn=C922SN01",
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+    ],
+    "head": [
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "046d:085c:sn=C922SN01",
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+    ],
+    "common": [
+     "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+     "046d:085c:sn=C922SN01",
+     "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+     "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+    ],
+    "dropped_after_fault": []
+   }
+  }
+ },
+ "verdicts": {
+  "T-BUMP|046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "fps within 2 %",
+     "met": true,
+     "detail": {
+      "baseline": 25.7591,
+      "head": 25.7584,
+      "rel": -0.0
+     }
+    },
+    {
+     "criterion": "frame count within 2 %",
+     "met": true,
+     "detail": {
+      "baseline": 1548,
+      "head": 1548
+     }
+    },
+    {
+     "criterion": "same codec, container and frame size",
+     "met": true,
+     "detail": {
+      "codec": {
+       "baseline": "h264",
+       "head": "h264"
+      },
+      "container": {
+       "baseline": "mov,mp4,m4a,3gp,3g2,mj2",
+       "head": "mov,mp4,m4a,3gp,3g2,mj2"
+      },
+      "ext": {
+       "baseline": "mp4",
+       "head": "mp4"
+      },
+      "pix_fmt": {
+       "baseline": "yuv420p",
+       "head": "yuv420p"
+      },
+      "width": {
+       "baseline": 1280,
+       "head": 1280
+      },
+      "height": {
+       "baseline": 720,
+       "head": 720
+      }
+     }
+    },
+    {
+     "criterion": "bytes per frame within 35 % (scene-dependent)",
+     "met": true,
+     "detail": {
+      "baseline": 113994,
+      "head": 115173,
+      "rel": 0.01
+     }
+    },
+    {
+     "criterion": "same timestamps CSV header",
+     "met": true,
+     "detail": {
+      "baseline": "2124f46bf0eb",
+      "head": "2124f46bf0eb"
+     }
+    },
+    {
+     "criterion": "head video readable and CSV checks pass",
+     "met": true,
+     "detail": null
+    }
+   ],
+   "evidence": {
+    "baseline": {
+     "skellycam_camera_id": "0100",
+     "camera_index": 3,
+     "ok": true,
+     "problems": [],
+     "frames": 1548,
+     "fps_from_timestamps": 25.7591,
+     "interval_ms": {
+      "median": 32.6658,
+      "mean": 38.8212,
+      "p95": 48.6769,
+      "p99": 49.1992,
+      "min": 27.3335,
+      "max": 53.0448,
+      "std": 7.9046
+     },
+     "long_intervals": 40,
+     "connection_frames_skipped": 0,
+     "first_frame_from_recording_start_s": 0.0,
+     "csv_header_sha1": "2124f46bf0eb",
+     "csv_columns": 27,
+     "ext": "mp4",
+     "size_bytes": 176462289,
+     "bytes_per_frame": 113994,
+     "codec": "h264",
+     "pix_fmt": "yuv420p",
+     "container": "mov,mp4,m4a,3gp,3g2,mj2",
+     "width": 1280,
+     "height": 720,
+     "average_rate": 32.376,
+     "keyframes": 49,
+     "opencv_fourcc": "h264",
+     "opencv_decoded": 1548,
+     "extracted_resolution": {
+      "height": 720,
+      "width": 1280
+     },
+     "extracted_framerate": 30.00003000003,
+     "extracted_exposure": -5
+    },
+    "head": {
+     "skellycam_camera_id": "0100",
+     "camera_index": 3,
+     "ok": true,
+     "problems": [],
+     "frames": 1548,
+     "fps_from_timestamps": 25.7584,
+     "interval_ms": {
+      "median": 33.438,
+      "mean": 38.8224,
+      "p95": 49.3443,
+      "p99": 50.5884,
+      "min": 24.2969,
+      "max": 55.364,
+      "std": 7.9701
+     },
+     "long_intervals": 27,
+     "connection_frames_skipped": 0,
+     "first_frame_from_recording_start_s": 0.0001,
+     "csv_header_sha1": "2124f46bf0eb",
+     "csv_columns": 27,
+     "ext": "mp4",
+     "size_bytes": 178287093,
+     "bytes_per_frame": 115173,
+     "codec": "h264",
+     "pix_fmt": "yuv420p",
+     "container": "mov,mp4,m4a,3gp,3g2,mj2",
+     "width": 1280,
+     "height": 720,
+     "average_rate": 33.047,
+     "keyframes": 47,
+     "opencv_fourcc": "h264",
+     "opencv_decoded": 1548,
+     "extracted_resolution": {
+      "height": 720,
+      "width": 1280
+     },
+     "extracted_framerate": 30.00003000003,
+     "extracted_exposure": -5
+    }
+   }
+  },
+  "T-BUMP|046d:085c:sn=C922SN01": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "fps within 2 %",
+     "met": true,
+     "detail": {
+      "baseline": 25.7591,
+      "head": 25.7585,
+      "rel": -0.0
+     }
+    },
+    {
+     "criterion": "frame count within 2 %",
+     "met": true,
+     "detail": {
+      "baseline": 1548,
+      "head": 1548
+     }
+    },
+    {
+     "criterion": "same codec, container and frame size",
+     "met": true,
+     "detail": {
+      "codec": {
+       "baseline": "h264",
+       "head": "h264"
+      },
+      "container": {
+       "baseline": "mov,mp4,m4a,3gp,3g2,mj2",
+       "head": "mov,mp4,m4a,3gp,3g2,mj2"
+      },
+      "ext": {
+       "baseline": "mp4",
+       "head": "mp4"
+      },
+      "pix_fmt": {
+       "baseline": "yuv420p",
+       "head": "yuv420p"
+      },
+      "width": {
+       "baseline": 1280,
+       "head": 1280
+      },
+      "height": {
+       "baseline": 720,
+       "head": 720
+      }
+     }
+    },
+    {
+     "criterion": "bytes per frame within 35 % (scene-dependent)",
+     "met": true,
+     "detail": {
+      "baseline": 104583,
+      "head": 107295,
+      "rel": 0.026
+     }
+    },
+    {
+     "criterion": "same timestamps CSV header",
+     "met": true,
+     "detail": {
+      "baseline": "2124f46bf0eb",
+      "head": "2124f46bf0eb"
+     }
+    },
+    {
+     "criterion": "head video readable and CSV checks pass",
+     "met": true,
+     "detail": null
+    }
+   ],
+   "evidence": {
+    "baseline": {
+     "skellycam_camera_id": "1c81",
+     "camera_index": 1,
+     "ok": true,
+     "problems": [],
+     "frames": 1548,
+     "fps_from_timestamps": 25.7591,
+     "interval_ms": {
+      "median": 32.6534,
+      "mean": 38.8212,
+      "p95": 48.7034,
+      "p99": 49.229,
+      "min": 27.3163,
+      "max": 53.0106,
+      "std": 7.9021
+     },
+     "long_intervals": 43,
+     "connection_frames_skipped": 0,
+     "first_frame_from_recording_start_s": 0.0,
+     "csv_header_sha1": "2124f46bf0eb",
+     "csv_columns": 27,
+     "ext": "mp4",
+     "size_bytes": 161894160,
+     "bytes_per_frame": 104583,
+     "codec": "h264",
+     "pix_fmt": "yuv420p",
+     "container": "mov,mp4,m4a,3gp,3g2,mj2",
+     "width": 1280,
+     "height": 720,
+     "average_rate": 32.665,
+     "keyframes": 49,
+     "opencv_fourcc": "h264",
+     "opencv_decoded": 1548,
+     "extracted_resolution": {
+      "height": 720,
+      "width": 1280
+     },
+     "extracted_framerate": 30.00003000003,
+     "extracted_exposure": -7
+    },
+    "head": {
+     "skellycam_camera_id": "1c81",
+     "camera_index": 1,
+     "ok": true,
+     "problems": [],
+     "frames": 1548,
+     "fps_from_timestamps": 25.7585,
+     "interval_ms": {
+      "median": 33.4665,
+      "mean": 38.8221,
+      "p95": 49.3339,
+      "p99": 50.5239,
+      "min": 24.2757,
+      "max": 55.4626,
+      "std": 7.9721
+     },
+     "long_intervals": 26,
+     "connection_frames_skipped": 0,
+     "first_frame_from_recording_start_s": 0.0005,
+     "csv_header_sha1": "2124f46bf0eb",
+     "csv_columns": 27,
+     "ext": "mp4",
+     "size_bytes": 166092951,
+     "bytes_per_frame": 107295,
+     "codec": "h264",
+     "pix_fmt": "yuv420p",
+     "container": "mov,mp4,m4a,3gp,3g2,mj2",
+     "width": 1280,
+     "height": 720,
+     "average_rate": 32.714,
+     "keyframes": 49,
+     "opencv_fourcc": "h264",
+     "opencv_decoded": 1548,
+     "extracted_resolution": {
+      "height": 720,
+      "width": 1280
+     },
+     "extracted_framerate": 30.00003000003,
+     "extracted_exposure": -7
+    }
+   }
+  },
+  "T-BUMP|1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "fps within 2 %",
+     "met": true,
+     "detail": {
+      "baseline": 25.7591,
+      "head": 25.7583,
+      "rel": -0.0
+     }
+    },
+    {
+     "criterion": "frame count within 2 %",
+     "met": true,
+     "detail": {
+      "baseline": 1548,
+      "head": 1548
+     }
+    },
+    {
+     "criterion": "same codec, container and frame size",
+     "met": true,
+     "detail": {
+      "codec": {
+       "baseline": "h264",
+       "head": "h264"
+      },
+      "container": {
+       "baseline": "mov,mp4,m4a,3gp,3g2,mj2",
+       "head": "mov,mp4,m4a,3gp,3g2,mj2"
+      },
+      "ext": {
+       "baseline": "mp4",
+       "head": "mp4"
+      },
+      "pix_fmt": {
+       "baseline": "yuv420p",
+       "head": "yuv420p"
+      },
+      "width": {
+       "baseline": 1280,
+       "head": 1280
+      },
+      "height": {
+       "baseline": 720,
+       "head": 720
+      }
+     }
+    },
+    {
+     "criterion": "bytes per frame within 35 % (scene-dependent)",
+     "met": true,
+     "detail": {
+      "baseline": 113126,
+      "head": 111629,
+      "rel": -0.013
+     }
+    },
+    {
+     "criterion": "same timestamps CSV header",
+     "met": true,
+     "detail": {
+      "baseline": "2124f46bf0eb",
+      "head": "2124f46bf0eb"
+     }
+    },
+    {
+     "criterion": "head video readable and CSV checks pass",
+     "met": true,
+     "detail": null
+    }
+   ],
+   "evidence": {
+    "baseline": {
+     "skellycam_camera_id": "fbf5",
+     "camera_index": 2,
+     "ok": true,
+     "problems": [],
+     "frames": 1548,
+     "fps_from_timestamps": 25.7591,
+     "interval_ms": {
+      "median": 32.639,
+      "mean": 38.8212,
+      "p95": 48.6578,
+      "p99": 49.1734,
+      "min": 27.5231,
+      "max": 52.834,
+      "std": 7.8968
+     },
+     "long_intervals": 42,
+     "connection_frames_skipped": 0,
+     "first_frame_from_recording_start_s": 0.0,
+     "csv_header_sha1": "2124f46bf0eb",
+     "csv_columns": 27,
+     "ext": "mp4",
+     "size_bytes": 175118579,
+     "bytes_per_frame": 113126,
+     "codec": "h264",
+     "pix_fmt": "yuv420p",
+     "container": "mov,mp4,m4a,3gp,3g2,mj2",
+     "width": 1280,
+     "height": 720,
+     "average_rate": 32.19,
+     "keyframes": 49,
+     "opencv_fourcc": "h264",
+     "opencv_decoded": 1548,
+     "extracted_resolution": {
+      "height": 720,
+      "width": 1280
+     },
+     "extracted_framerate": 30.00003000003,
+     "extracted_exposure": -7
+    },
+    "head": {
+     "skellycam_camera_id": "fbf5",
+     "camera_index": 2,
+     "ok": true,
+     "problems": [],
+     "frames": 1548,
+     "fps_from_timestamps": 25.7583,
+     "interval_ms": {
+      "median": 33.4136,
+      "mean": 38.8224,
+      "p95": 49.3613,
+      "p99": 50.5047,
+      "min": 24.2997,
+      "max": 55.3364,
+      "std": 7.9629
+     },
+     "long_intervals": 30,
+     "connection_frames_skipped": 0,
+     "first_frame_from_recording_start_s": 0.0,
+     "csv_header_sha1": "2124f46bf0eb",
+     "csv_columns": 27,
+     "ext": "mp4",
+     "size_bytes": 172802450,
+     "bytes_per_frame": 111629,
+     "codec": "h264",
+     "pix_fmt": "yuv420p",
+     "container": "mov,mp4,m4a,3gp,3g2,mj2",
+     "width": 1280,
+     "height": 720,
+     "average_rate": 32.887,
+     "keyframes": 49,
+     "opencv_fourcc": "h264",
+     "opencv_decoded": 1548,
+     "extracted_resolution": {
+      "height": 720,
+      "width": 1280
+     },
+     "extracted_framerate": 30.00003000003,
+     "extracted_exposure": -7
+    }
+   }
+  },
+  "T-BUMP|4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "fps within 2 %",
+     "met": true,
+     "detail": {
+      "baseline": 25.7591,
+      "head": 25.7586,
+      "rel": -0.0
+     }
+    },
+    {
+     "criterion": "frame count within 2 %",
+     "met": true,
+     "detail": {
+      "baseline": 1548,
+      "head": 1548
+     }
+    },
+    {
+     "criterion": "same codec, container and frame size",
+     "met": true,
+     "detail": {
+      "codec": {
+       "baseline": "h264",
+       "head": "h264"
+      },
+      "container": {
+       "baseline": "mov,mp4,m4a,3gp,3g2,mj2",
+       "head": "mov,mp4,m4a,3gp,3g2,mj2"
+      },
+      "ext": {
+       "baseline": "mp4",
+       "head": "mp4"
+      },
+      "pix_fmt": {
+       "baseline": "yuv420p",
+       "head": "yuv420p"
+      },
+      "width": {
+       "baseline": 1280,
+       "head": 1280
+      },
+      "height": {
+       "baseline": 720,
+       "head": 720
+      }
+     }
+    },
+    {
+     "criterion": "bytes per frame within 35 % (scene-dependent)",
+     "met": true,
+     "detail": {
+      "baseline": 113738,
+      "head": 112899,
+      "rel": -0.007
+     }
+    },
+    {
+     "criterion": "same timestamps CSV header",
+     "met": true,
+     "detail": {
+      "baseline": "2124f46bf0eb",
+      "head": "2124f46bf0eb"
+     }
+    },
+    {
+     "criterion": "head video readable and CSV checks pass",
+     "met": true,
+     "detail": null
+    }
+   ],
+   "evidence": {
+    "baseline": {
+     "skellycam_camera_id": "b395",
+     "camera_index": 0,
+     "ok": true,
+     "problems": [],
+     "frames": 1548,
+     "fps_from_timestamps": 25.7591,
+     "interval_ms": {
+      "median": 32.6734,
+      "mean": 38.8212,
+      "p95": 48.6785,
+      "p99": 49.254,
+      "min": 27.4141,
+      "max": 53.2831,
+      "std": 7.8987
+     },
+     "long_intervals": 31,
+     "connection_frames_skipped": 0,
+     "first_frame_from_recording_start_s": 0.0,
+     "csv_header_sha1": "2124f46bf0eb",
+     "csv_columns": 27,
+     "ext": "mp4",
+     "size_bytes": 176066564,
+     "bytes_per_frame": 113738,
+     "codec": "h264",
+     "pix_fmt": "yuv420p",
+     "container": "mov,mp4,m4a,3gp,3g2,mj2",
+     "width": 1280,
+     "height": 720,
+     "average_rate": 32.466,
+     "keyframes": 49,
+     "opencv_fourcc": "h264",
+     "opencv_decoded": 1548,
+     "extracted_resolution": {
+      "height": 720,
+      "width": 1280
+     },
+     "extracted_framerate": 30.00003000003,
+     "extracted_exposure": -7
+    },
+    "head": {
+     "skellycam_camera_id": "b395",
+     "camera_index": 0,
+     "ok": true,
+     "problems": [],
+     "frames": 1548,
+     "fps_from_timestamps": 25.7586,
+     "interval_ms": {
+      "median": 33.4529,
+      "mean": 38.822,
+      "p95": 49.3366,
+      "p99": 50.475,
+      "min": 24.1834,
+      "max": 55.7782,
+      "std": 7.9645
+     },
+     "long_intervals": 27,
+     "connection_frames_skipped": 0,
+     "first_frame_from_recording_start_s": 0.0005,
+     "csv_header_sha1": "2124f46bf0eb",
+     "csv_columns": 27,
+     "ext": "mp4",
+     "size_bytes": 174767322,
+     "bytes_per_frame": 112899,
+     "codec": "h264",
+     "pix_fmt": "yuv420p",
+     "container": "mov,mp4,m4a,3gp,3g2,mj2",
+     "width": 1280,
+     "height": 720,
+     "average_rate": 32.735,
+     "keyframes": 49,
+     "opencv_fourcc": "h264",
+     "opencv_decoded": 1548,
+     "extracted_resolution": {
+      "height": 720,
+      "width": 1280
+     },
+     "extracted_framerate": 30.00003000003,
+     "extracted_exposure": -7
+    }
+   }
+  },
+  "T-BUMP|recording": {
+   "rating": "yes",
+   "criteria": [
+    {
+     "criterion": "same camera set (cameras dropped after a fault excluded)",
+     "met": true,
+     "detail": {
+      "baseline": [
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+      ],
+      "head": [
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+      ],
+      "common": [
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8",
+       "046d:085c:sn=C922SN01",
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4",
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2"
+      ],
+      "dropped_after_fault": []
+     }
+    },
+    {
+     "criterion": "lockstep: equal frame counts across cameras in both",
+     "met": true,
+     "detail": {
+      "baseline": true,
+      "head": true
+     }
+    },
+    {
+     "criterion": "group fps within 2 %",
+     "met": true,
+     "detail": {
+      "baseline": 25.7591,
+      "head": 25.7585
+     }
+    },
+    {
+     "criterion": "start time (camera connect) not > 1.5x + 10 s",
+     "met": true,
+     "detail": {
+      "baseline_s": 11.891,
+      "head_s": 12.266,
+      "start_to_health_s": {
+       "baseline": 2.531,
+       "head": 1.547
+      },
+      "first_frame_from_recording_start_s": {
+       "046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8": {
+        "baseline": 0.0,
+        "head": 0.0001
+       },
+       "046d:085c:sn=C922SN01": {
+        "baseline": 0.0,
+        "head": 0.0005
+       },
+       "1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4": {
+        "baseline": 0.0,
+        "head": 0.0
+       },
+       "4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2": {
+        "baseline": 0.0,
+        "head": 0.0005
+       }
+      }
+     }
+    },
+    {
+     "criterion": "no new server-log error kinds",
+     "met": true,
+     "detail": {
+      "new_in_head": [],
+      "gone_in_head": [],
+      "error_lines": {
+       "baseline": 1,
+       "head": 1
+      }
+     }
+    },
+    {
+     "criterion": "no more tracebacks / logging errors",
+     "met": true,
+     "detail": {
+      "tracebacks": {
+       "baseline": 0,
+       "head": 0
+      },
+      "logging_errors": {
+       "baseline": 0,
+       "head": 0
+      }
+     }
+    },
+    {
+     "criterion": "same writer-codec resolution",
+     "met": true,
+     "detail": {
+      "baseline": [],
+      "head": []
+     }
+    },
+    {
+     "criterion": "same multi-frame CSV header",
+     "met": true,
+     "detail": {
+      "baseline": "f208f075ce4a",
+      "head": "f208f075ce4a"
+     }
+    },
+    {
+     "criterion": "head server shut down cleanly (no kill, no leftover process)",
+     "met": true,
+     "detail": {
+      "baseline": {
+       "clean": true,
+       "leftover": 0
+      },
+      "head": {
+       "clean": true,
+       "leftover": 0
+      }
+     }
+    },
+    {
+     "criterion": "camera 046d:0843:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/8: per-camera criteria met",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "camera 046d:085c:sn=C922SN01: per-camera criteria met",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "camera 1532:0e05:port=PCIROOT(0)#PCI(1C04)#PCI(0000)#PCI(0200)#PCI(0000)#USBROOT(0)/4.4: per-camera criteria met",
+     "met": true,
+     "detail": null
+    },
+    {
+     "criterion": "camera 4c4a:4a55:port=PCIROOT(0)#PCI(1400)#USBROOT(0)/13.1.2: per-camera criteria met",
+     "met": true,
+     "detail": null
+    }
+   ],
+   "evidence": {
+    "version_changes": {},
+    "baseline": {
+     "ok": true,
+     "stage_failed": null,
+     "error": null,
+     "commit": "0a66994c37e54d310a0e2921cfb9230c4b93793b",
+     "frames": 1548,
+     "group_fps": 25.7591,
+     "rerun_without_kiyo_pro": false
+    },
+    "head": {
+     "ok": true,
+     "stage_failed": null,
+     "error": null,
+     "commit": "8a1f9b517ba887c972d2cb8f9c0a51a3e753ba29",
+     "frames": 1548,
+     "group_fps": 25.7585,
+     "rerun_without_kiyo_pro": false
+    },
+    "fault_reports": null
+   }
+  }
+ },
+ "errors": [],
+ "fault_reports": [],
+ "kiyo_pro_fault": null,
+ "device_faults": {
+  "faulted_at_start": {},
+  "faulted_at_end": {},
+  "kiyo_dead_since": null
+ }
+}

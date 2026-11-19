@@ -372,3 +372,17 @@ implementation worktree (`../skellycam-native-jpeg`, branch `dom/native-jpeg`), 
 cited `frame_ring_buffer/docs/jpeg_ring_design_notes_20261117.md` and this file by line number as they are in
 this commit. Queued after phase 2: skellycam's part of the skellytracker volunteer "certify suite", on a new
 branch `dom/jpeg-testing`, spec first.
+
+Measured on 2026-11-18 (four-camera before/after comparison of step 2a): before = commit 0a66994c3, after =
+8a1f9b517, both of branch `dom/native-jpeg`. In the two lit runs, each camera gave 1548 and 1547 frames before
+and 1548 and 1548 after. The group frame rate was 25.76 and 25.76 before and 25.76 and 25.77 after. The median
+spread of the grab times between the cameras was 0.205 and 0.189 ms before and 0.183 and 0.194 ms after. The
+ring step (before: copy of a decoded frame to the old ring; after: JPEG encode at quality 90 and the capture
+check) had a median of 1.02 and 1.24 ms before and 1.87 and 1.81 ms after. The four JPEG rings take 106.0 MiB in
+total. The largest frame filled 0.22 of its slot. No frame was oversize, cut off or a capture error. The two
+dim-room runs gave 8.00 frames per second before and after (the cameras were on automatic exposure in low light;
+the cause is not verified). The folders are `research/usb_cameras/results/windows/Gerald/suite_20261119T001519Z`
+and `suite_20261119T001824Z` (dim room) and `suite_20261119T030110Z` and `suite_20261119T030441Z` (lights on).
+The same day's write-time remeasurement of the ring writer (600 kB payload) gave a p99 of 224 us in a tight loop,
+744 us when paced by a sleep at 60 fps, and 419 us with four readers that read once per frame. It was done with
+a scratch script that is not kept.
