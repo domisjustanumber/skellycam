@@ -214,6 +214,8 @@ markers = [
     "sample_data: full 1108-frame sample recording capture reads",
     "ring_portable: frame ring tests that T-RING-34 (Apple Silicon) and T-RING-35 (arm64 CI) run again",
     "ring_slow: frame ring tests that measure time, kill processes or run long; SKELLYCAM_RING_FULL=1 gives the spec durations",
+    "recorder_slow: recorder tests that run longer than 10 s (specs/recorder.md 12.1)",
+    "recorder_bench: recorder benchmarks of section 11; they run only with SKELLYCAM_BENCH=1 (specs/recorder.md 12.1)",
 ]
 
 # =============================================================================
