@@ -44,8 +44,16 @@ task. Delete an item when its work is done. The PR that closes an item records t
     T-RING-48 has no test of its own: it runs the T-RING-36 tests (marker `ring_portable`) on ARM.
     Run the 2b tests with
     `uv run pytest skellycam/tests/frame_ring/test_bgr_ring.py skellycam/tests/frame_ring/test_decode_stage.py skellycam/tests/frame_ring/test_bgr_camera.py`.
-    Add `-m "not ring_slow"` for a short run. Until the 2b code exists, each 2b test fails.
-  - Next: the 2b code.
+    Add `-m "not ring_slow"` for a short run.
+  - Done: the code of step 2b (2026-11-19, not pushed). This is `decode.py` of the ring package,
+    BGR support in `FrameRingWriter` and `FrameRingReader`, `CameraConfig.bgr_ring`, the BGR rings
+    of `create_session_rings` and the hand-over in the OpenCV loop. The proposed entry
+    [ADR-E817](entries/E817-choices-of-the-2b-code.md) holds the choices of the code. The user
+    decides it.
+  - Known failure: T-RING-46 (libjpeg warnings) fails on Windows. The OpenCV 5.1.0 wheel has its own
+    C runtime, so a redirect of descriptor 2 does not reach libjpeg there (ADR-E817 item 7). The
+    user decides the Windows behaviour. The Linux code was checked in WSL without OpenCV.
+  - Next: the review of the 2b code by the user, and the measurements M5 to M7 of section 11.3.
   - Known failure: T-RING-31 (idle CPU, limit 2 % of one core) fails (items 60 and 65). On
     2026-11-18, the paused loop used 3.9 to 7.0 % of one core on a Windows test machine. The user
     dropped the redesign of the wait of the OpenCV loop, because native capture deletes that loop.
