@@ -1,22 +1,26 @@
-"""Step 3c: the full mode list, the gain and focus controls, white balance and the power line
-frequency, and the deletion of the OpenCV source on Windows (specs/windows-capture.md, sections 7.4,
-11, 14.2 and 16).
+"""The full mode list (step 3b by V1), the gain and focus controls, white balance and the power line
+frequency, and the deletion of the OpenCV source on Windows (step 3c) (specs/windows-capture.md,
+sections 7.4, 11, 14 and 16).
 
-T-CAP-71 to T-CAP-76. T-CAP-71 to T-CAP-75 run on Windows, Linux and macOS; T-CAP-76 runs on Windows
-only, after the last commit of phase 3 (16.1, 16.7). The session tests run fake cameras through the
-HTTP endpoints with THREAD workers (`capture_session`).
+T-CAP-71 (step 3b) and T-CAP-72 to T-CAP-76, T-CAP-107 and T-CAP-108 (step 3c). All run on Windows,
+Linux and macOS, except T-CAP-76: it runs on Windows only, after the last commit of phase 3 (16.1,
+16.7). The session tests run fake cameras through the HTTP endpoints with THREAD workers
+(`capture_session`). T-CAP-107 and T-CAP-108 use the product `OpenCVSource` with the OpenCV fake, in
+real time (V5).
 """
 
 import importlib
 import json
 import subprocess
 import sys
+import time
 from pathlib import Path
 
+import cv2
 import pytest
 
 from skellycam.tests.capture.capture_session import (
-    Spies, capture_app, product, ready_app_steps, recording_info_json)
+    CaptureApp, OpenCVFakeFactory, Spies, capture_app, product, ready_app_steps, recording_info_json)
 from skellycam.tests.capture.fake_source import FakeScript
 from skellycam.tests.capture.test_detection_and_modes import NATIVE_25
 
@@ -69,7 +73,7 @@ EXPECTED_71 = [
 
 
 def test_t_cap_71_capture_modes_json():
-    """T-CAP-71, section 7.4 [D4, D14, U8, U11, agent 19, agent 53]: build `capture_modes` from the native
+    """T-CAP-71, section 7.4, step 3b [V1, D4, D14, U8, U11, agent 19, agent 53]: build `capture_modes` from the native
     types of T-CAP-25. The JSON of 7.4: MJPG and YUY2 both listed, MJPG first; H.264 and RAW
     `selectable: false` with "never opened"; modes below 29.97 fps `selectable: false` with "below
     30 fps"; synthesized NV12 left out.
@@ -190,6 +194,72 @@ def test_t_cap_75_status_shows_gain_and_focus_values_in_auto(monkeypatch):
                     and controls["focus"] == {"present": True, "auto": True, "value": 45})
 
         app.wait(shown, "the new gain and focus values with auto: true")
+
+
+# ---------------------------------------------------------------------------
+# T-CAP-107, T-CAP-108: controls with the OpenCV source (11.5, 14.1, V5)
+# ---------------------------------------------------------------------------
+
+def test_t_cap_107_opencv_gain_and_focus(monkeypatch):
+    """T-CAP-107, sections 11.5 and 14.1 [V5, U14]: the OpenCV fake: (1) config with gain 4 and focus 40;
+    (2) a live change to gain 6, and the fake reads back 5. (1) the fake gets `CAP_PROP_GAIN` 4 and
+    `CAP_PROP_FOCUS` 40, and the status shows 4 and 40; (2) the camera stays `ready` with the same
+    ring, the config keeps gain 4, and the apply response has a `control_change_failed` item for it.
+
+    Real time: about 5 s."""
+    factory = OpenCVFakeFactory(monkeypatch, misread=((cv2.CAP_PROP_GAIN, 6, 5),))
+    app = CaptureApp(monkeypatch, factory)
+    try:
+        camera_id = factory.camera_ids[0]
+        ready_app_steps(app, [app.config(camera_id, gain=4, focus=40)])
+        sets = factory.captures[camera_id].sets
+        assert (cv2.CAP_PROP_GAIN, 4.0) in sets and (cv2.CAP_PROP_FOCUS, 40.0) in sets, sets
+        controls = app.status(camera_id)["controls"]
+        assert (controls["gain"]["value"], controls["focus"]["value"]) == (4, 40), controls
+        ring = app.ring_name(camera_id)
+        response = app.apply([app.config(camera_id, gain=6, focus=40)])
+        assert response.status_code == 200, response.text
+        items = [w for w in response.json()["warnings"] if w["kind"] == "control_change_failed"]
+        assert len(items) == 1 and items[0]["camera_ids"] == [camera_id], items
+        assert response.json()["camera_configs"][camera_id]["gain"] == 4 and app.group.configs[camera_id].gain == 4
+        time.sleep(1.0)
+        assert app.state(camera_id) == "ready" and app.ring_name(camera_id) == ring
+        assert factory.opens[camera_id] == 1
+    finally:
+        app.close()
+
+
+WHITE_BALANCE_CASES = {
+    "a value": ({cv2.CAP_PROP_WB_TEMPERATURE: 4600, cv2.CAP_PROP_AUTO_WB: 1}, {"auto": True, "value": 4600}),
+    "no value": ({}, None),
+}
+
+
+@pytest.mark.parametrize("case", list(WHITE_BALANCE_CASES))
+def test_t_cap_108_opencv_white_balance_and_power_line_frequency(monkeypatch, tmp_path, case):
+    """T-CAP-108, sections 11.5, 11.6 and 14.1 [V5]: the OpenCV fake records: (1) the fake gives
+    `CAP_PROP_WB_TEMPERATURE` 4600 and `CAP_PROP_AUTO_WB` 1; (2) it gives no white balance value.
+    (1) `white_balance` is {"auto": true, "value": 4600}; (2) it is null; in both, `power_line_frequency`
+    is null (OpenCV has no property for it); the fake gets no set call for white balance.
+
+    "No value": `CAP_PROP_WB_TEMPERATURE` reads 0 (ADR-3WCA). Real time: about 5 s."""
+    properties, expected = WHITE_BALANCE_CASES[case]
+    factory = OpenCVFakeFactory(monkeypatch, properties=properties)
+    app = CaptureApp(monkeypatch, factory)
+    try:
+        spies = Spies(monkeypatch, app)
+        camera_id = factory.camera_ids[0]
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        app.wait(lambda: len(spies.of("record", camera_id)) >= 30, "30 recorded frames")
+        assert app.record_stop().status_code == 200
+        capture = recording_info_json(tmp_path)["capture"][camera_id]
+        assert capture["white_balance"] == expected
+        assert capture["power_line_frequency"] is None
+        white_balance = (cv2.CAP_PROP_WB_TEMPERATURE, cv2.CAP_PROP_AUTO_WB)
+        assert not [s for s in factory.captures[camera_id].sets if s[0] in white_balance]
+    finally:
+        app.close()
 
 
 # ---------------------------------------------------------------------------

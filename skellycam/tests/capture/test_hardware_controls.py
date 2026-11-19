@@ -1,5 +1,5 @@
-"""Hardware tests of step 3c: T-CAP-77 to T-CAP-79 (specs/windows-capture.md, sections 2.3, 7.4, 11 and
-16.3).
+"""Hardware tests of the controls and the mode list: T-CAP-77 and T-CAP-78 (step 3c) and T-CAP-79 (step
+3b by V1) (specs/windows-capture.md, sections 2.2, 2.3, 7.4, 11 and 16.3).
 
 Each test has the marker `camera_hardware` and runs only with `SKELLYCAM_HARDWARE=1`, on the word of
 the user, on the Windows development machine (16.7: no counterpart on Linux and macOS until phase 7,
@@ -101,22 +101,22 @@ def test_t_cap_77_auto_values_and_the_image_after_manual(monkeypatch, label):
 
 @pytest.mark.parametrize("label", LABELS)
 def test_t_cap_78_gain_focus_white_balance_power_line_frequency(monkeypatch, tmp_path, label):
-    """T-CAP-78, sections 11.5 and 11.6 [D43, D44]: set and read back gain and focus; read white balance
-    and power line frequency, on four cameras. Each control that a camera has reads back the set
-    value; absent ones show `present: false`; the read-only values are recorded.
+    """T-CAP-78, sections 11.5 and 11.6 [D43, D44, V7]: set and read back gain and focus; read white
+    balance and power line frequency, on the C922, the C930e and the Kiyo Pro. Each control that a
+    camera has reads back the set value; absent ones show `present: false`; the read-only values are
+    recorded. The generic camera fails the 30 fps check and never reaches `ready` (D24): the test
+    records only its status.
 
     The set value differs from the current value: 0, or 1 for gain and 10 for focus when the current
-    value is 0. The read-only values come from the recording info of a take of 1 s (11.6). A camera
-    that does not reach `ready` (the generic camera fails the rate check, D24) gives its status
-    and failure as a result, with no check of the values."""
+    value is 0. The read-only values come from the recording info of a take of 1 s (11.6)."""
     with hardware_app(monkeypatch) as app:
         with kiyo_pro_rule(app, label, "T-CAP-78"):
             camera_id = app.camera_id(label)
             status = open_alone(app, camera_id)
-            if status["state"] != "ready":
-                record_result("T-CAP-78", camera=label, state=status["state"], failure=status.get("failure"),
-                              controls=status.get("controls"))
+            if label not in GOOD:
+                record_result("T-CAP-78", camera=label, status=status)
                 return
+            assert status["state"] == "ready", status
             controls = status["controls"]
             targets = {name: (0 if controls[name]["value"] != 0 else step)
                        for name, step in (("gain", 1), ("focus", 10)) if controls[name]["present"]}
@@ -142,7 +142,7 @@ def test_t_cap_78_gain_focus_white_balance_power_line_frequency(monkeypatch, tmp
 @pytest.mark.skipif(not PROTOTYPE_MODES, reason="needs the descriptor list of the prototype: "
                                                 "SKELLYCAM_HARDWARE_PROTOTYPE_MODES (ADR-3WCA)")
 def test_t_cap_79_capture_modes_agree_with_the_prototype(monkeypatch):
-    """T-CAP-79, sections 2.3 item 3 and 7.4 [D14]: detect the four cameras. `capture_modes` agrees with
+    """T-CAP-79, sections 2.2 item 5 and 7.4, step 3b [D14, V1]: detect the four cameras. `capture_modes` agrees with
     the descriptor list of the prototype for each camera.
 
     The descriptor list is a JSON file outside the repository (`SKELLYCAM_HARDWARE_PROTOTYPE_MODES`):
