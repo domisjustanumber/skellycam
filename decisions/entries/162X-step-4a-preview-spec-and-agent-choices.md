@@ -5,7 +5,7 @@
 ## Decision
 
 [`specs/preview.md`](../../specs/preview.md) is the spec of step 4a of phase 4, with its test list
-T-PRV-01 to T-PRV-24. It follows P1 to P7 and the answers A1 to A7 of
+T-PRV-01 to T-PRV-24. It follows P1 to P7 and the answers A1 to A8 of
 [ADR-G651](G651-phase-4-live-preview-decisions-p1-to-p7.md), the ring spec and the capture spec. The
 second revision of 2026-11-19 applies A1 to A7 and the faults of an independent review.
 
@@ -45,8 +45,9 @@ in full, and the body marks each one [agent n]:
 26. No reads while the manager closes.
 27. Sends of one connection in series.
 
-One question waits for the user (section 14 of the spec): Q1, the read-only reader property
-`skipped_count`, which A7 needs and A5 does not name.
+No question is open. The user answered Q1 (the reader property `skipped_count`) with A8 of
+[ADR-G651](G651-phase-4-live-preview-decisions-p1-to-p7.md). The spec waits for the acceptance of
+the user.
 
 ## Reason
 

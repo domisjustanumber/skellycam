@@ -1,13 +1,13 @@
 # Phase 4 preview specification: the per-camera websocket message and its sender (4a)
 
-Status: proposed by an agent on 2026-11-19. It waits for the user
-([ADR-162X](../decisions/entries/162X-step-4a-preview-spec-and-agent-choices.md)). The user decided
-P1 to P7 and answered A1 to A7 on 2026-11-19
+Status: proposed, waits for the acceptance of the user
+([ADR-162X](../decisions/entries/162X-step-4a-preview-spec-and-agent-choices.md)). An agent wrote
+it on 2026-11-19. The user decided P1 to P7 and answered A1 to A8 on 2026-11-19
 ([ADR-G651](../decisions/entries/G651-phase-4-live-preview-decisions-p1-to-p7.md)). Section 15
 gives each one. The second revision of 2026-11-19 applies A1 to A7 and the faults of an independent
-review. The third revision applies the fixes of a second review. No review has read the third revision. The agent choices of section 13 and the
-question of section 14 wait for the user. The failing tests of step 4a come before the product code
-of step 4a.
+review. The third revision applies the fixes of a second review, and A8. No review has read the
+third revision. No question is open. The agent choices of section 13 wait for the acceptance of the
+user. The failing tests of step 4a come before the product code of step 4a.
 
 ## 0. How to read this spec
 
@@ -94,7 +94,7 @@ depend on the lockstep gate [E].
 | Path | Content |
 |---|---|
 | `skellycam/api/websocket/preview_relay.py` | `CAMERA_FRAME_VERSION`, `CAMERA_FRAME_HEADER` (a `struct.Struct`), `pack_camera_frame`, `PreviewRelay` (section 7). |
-| `skellycam/core/ipc/frame_ring/reader.py` | One read-only property of `FrameRingReader`: `oversize_count` [A5]. The source of the ring skipped count is the Q1 line of 5.2. |
+| `skellycam/core/ipc/frame_ring/reader.py` | Two read-only properties of `FrameRingReader`: `oversize_count` [A5] and `skipped_count` [A8]. |
 | `skellycam/core/recorders/framerate_tracker.py` | `ServerFramerateCalculator`, moved from `api/websocket/websocket_server.py`, with the two changes of 6.3 [agent 19]. The old relay and `tests/test_websocket_internals.py` import it from here. Thus `preview_relay.py` and `websocket_server.py` do not import each other in a circle. |
 | `skellycam/tests/preview/` | The tests of section 9, a fake group manager, and a test route that wires `PreviewRelay` to a websocket as 4b will. |
 
@@ -326,11 +326,9 @@ The sender keeps no queue. A connection has at most one camera message in flight
 | `FrameRingReader.read(k)` | yes [ring 6.2] | The check (step 4) and the probe (step 5). `k > head` gives `NOT_YET_WRITTEN` with no copy (R2); `head - k >= N` gives `LAPPED` with no copy (R3). |
 | `FrameRingReader.read_newest()` | yes [ring 6.5] | The newest frame (step 5) and the tick read (6.3). |
 | `FrameRingReader.oversize_count` | new [A5] | The `oversize_count` field of the ring header, one 8-byte load [ring 3.3, 5.8]. This adds to the reader API of [ADR-9G2W](../decisions/entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md) by decision of the user. |
+| `FrameRingReader.skipped_count` | new [A8] | The `skipped_count` field of the ring header, one 8-byte load [ring 3.3]. For display only. This adds to the reader API of ADR-9G2W by decision of the user. |
 
-**Q1 line** (the only line that changes with the answer to Q1): the ring skipped count is
-`reader.skipped_count`, a new read-only property, one 8-byte load of the `skipped_count` field of
-the ring header [ring 3.3]. If the answer is no, this line becomes: the ring skipped count is not
-available; `framerate_update` gives `null`, and the formula of 6.1 uses 0.
+The ring skipped count is `reader.skipped_count` [A8].
 
 There is no `head` property [A5].
 
@@ -376,7 +374,7 @@ in `failed_checks`.
 | State, all eight of [cap 8.1] [P4, A4] | `state` of the camera status [cap 8.4] | `app_state` (existing; phase 3 adds the key) |
 | Mark of a flagged frame [P4] | `flags & 0x0F` of the camera message | the camera message (3.2) |
 | Not shown [A7] | The sender: at each camera message, `not_shown += (frame_number - last_sent - 1) - (ring skipped count - skipped_at_send)`, when `last_sent >= 0` in the same ring [agent 20] | `framerate_update` (6.2) |
-| Ring skipped count [A7] | The Q1 line of 5.2 | `framerate_update` (6.2) |
+| Ring skipped count [A7] | `reader.skipped_count` (5.2) [A8] | `framerate_update` (6.2) |
 | Replaced count [P4, A2] | `replaced_count` of the camera status, counted from the first frame that the camera takes in the gate. Step 3a adds it [A2]. The sender does not compute it. | `app_state` (existing) |
 | Oversize count [P4] | `oversize_count` of the ring header [ring 5.8, A5] | `framerate_update` (6.2) |
 
@@ -587,9 +585,9 @@ change when the tests are written.
 | T-PRV-19 | fake | (1) Flip one payload bit of A's newest frame after commit (`CORRUPT`); run 20 passes; then write the next frame. A spy counts the reads of the passes by frame number; it does not count the tick reads. (2) A stub reader whose `read` gives `NOT_YET_WRITTEN` for the check and `LAPPED` for the probe two times, then `OK`; the test calls the passes directly, with no tick. | (1) No message for the bad frame; the passes read it in one pass only; the next frame goes out. (2) No message for the two `LAPPED` passes; the `OK` frame goes out. No log record at WARNING or above in either case. |
 | T-PRV-20 | fake | (1) Slow send. Cameras A, B, C in group 1; camera D in group 2. While the send of A waits: remove and close B's reader; replace C's reader with a new ring; remove group 2; call `handle_text` with a ready message for A. Then release the send. (2) A slow `send_json`: while the first `framerate_update` of a tick waits, remove and close B's reader and remove group 2. Then release it. | No exception, and `run` continues; no read through a closed reader (the closed reader raises if it is read); no message for B or D; C's next message is from the new ring; A is `ready` after the send (the ready message is not lost). (2) The same, for the tick: no read after its first `send_json`. |
 | T-PRV-21 | fake | `handle_text` with: a valid ready message; `camera_id` missing; `camera_id` 7; an unknown camera id; text that is not JSON; `{"frameNumber": 3}`; `ping`. | Valid: `True`, camera `ready`. Missing and 7: `True`, one WARNING record each, nothing changes. Unknown id: `True`, no record. Not JSON, `frameNumber` and `ping`: `False`. No exception. |
-| T-PRV-22 | fake | Ring 1: `arrival_ns` in steps of 33,333,333 ns and `source_frame_number` in steps of 2; three frames flagged `OVERSIZE`; one write skipped with `newer_frame_waiting=True`. Ring 2: `arrival_ns` in steps of 33,333,333 ns and `source_frame_number` -1. Two runs of 1.1 s: the fake client answers at once; the fake client never answers. | 3 or more `framerate_update` messages for the group in each run; `delivered_framerate.mean_frames_per_second` is 60.0 ± 0.5 for ring 1 and 30.0 ± 0.5 for ring 2, in both runs; `oversize_count` is 3; `ring_skipped_count` is 1 (the Q1 line of 5.2); for ring 1, `not_shown_count` equals (last sent − first sent + 1) − the frames sent − the skipped writes between the first and the last sent frame; no `backend_framerate` key. |
+| T-PRV-22 | fake | Ring 1: `arrival_ns` in steps of 33,333,333 ns and `source_frame_number` in steps of 2; three frames flagged `OVERSIZE`; one write skipped with `newer_frame_waiting=True`. Ring 2: `arrival_ns` in steps of 33,333,333 ns and `source_frame_number` -1. Two runs of 1.1 s: the fake client answers at once; the fake client never answers. | 3 or more `framerate_update` messages for the group in each run; `delivered_framerate.mean_frames_per_second` is 60.0 ± 0.5 for ring 1 and 30.0 ± 0.5 for ring 2, in both runs; `oversize_count` is 3; `ring_skipped_count` is 1 [A8]; for ring 1, `not_shown_count` equals (last sent − first sent + 1) − the frames sent − the skipped writes between the first and the last sent frame; no `backend_framerate` key. |
 | T-PRV-23 | fake | Set `closing = True` on the fake manager for 0.5 s, then `False`. | No read and no message while it is `True`; messages again after. |
-| T-PRV-24 | fake | `ServerFramerateCalculator`: update, `clear()`, update; also one update with a jump of 10^9 frames. `oversize_count` of a ring after two oversize frames. | After `clear()`, one update gives one exact interval; the jump returns at once and keeps at most `maxlen` durations; `oversize_count` is 2. |
+| T-PRV-24 | fake | `ServerFramerateCalculator`: update, `clear()`, update; also one update with a jump of 10^9 frames. `oversize_count` of a ring after two oversize frames; `skipped_count` of a ring after three writes with `newer_frame_waiting=True`. | After `clear()`, one update gives one exact interval; the jump returns at once and keeps at most `maxlen` durations; `oversize_count` is 2; `skipped_count` is 3. |
 
 ### 9.3 Parity of the systems [P7]
 
@@ -690,7 +688,7 @@ The earlier specs are accepted, so this spec does not edit them:
    not have it yet. They must get it with the code of step 3a.
 3. A5 adds `oversize_count` to the reader API of
    [ADR-9G2W](../decisions/entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md).
-   Q1 asks about `skipped_count` (the Q1 line of 5.2).
+   A8 adds `skipped_count` in the same way (5.2).
 4. T-RING-33 [ring 12] and T-CAP-86 [cap 16.2] test the old relay. 4b deletes them. T-PRV-02,
    T-PRV-09, T-PRV-14 and T-PRV-15 keep their rules.
 5. [ring 2.1] keeps `frontend_payload_bytearray.py` for the interim relay [ring A56]. 4b deletes the
@@ -760,13 +758,7 @@ marks each one [agent n].
 
 ## 14. Questions for the user
 
-The question is worded so that "yes" accepts the recommendation.
-
-- **Q1.** A7 asks for the ring's own skipped count in the frame rate viewer. A5 allows one new
-  property of the reader, `oversize_count`. The count is in the ring header, and the reader has no
-  call that gives it. Should the reader also get the read-only property `skipped_count`, of the same
-  form (one 8-byte load of the ring header)? Recommendation: yes. It is the smallest way to satisfy
-  A7, and "not shown" then never mixes in a ring skip.
+None open. The user answered Q1 on 2026-11-19 (A8).
 
 ## 15. Decisions and answers of the user
 
@@ -800,7 +792,7 @@ Decisions P1 to P7 (Q233 to Q239):
 - P7 (Q239): Parity. The Python tests of 4a run on Windows, Linux and macOS in CI with fake rings.
   The UI tests of 4b run in the TypeScript test runner of the player, on the three systems.
 
-Answers A1 to A7 to the first draft:
+Answers A1 to A8 to the first draft:
 
 - A1: 4a adds the sender and its tests with no route. The endpoint keeps the old relay. 4b connects
   the sender, deletes the old code and changes the UI together. The branch goes to
@@ -818,6 +810,9 @@ Answers A1 to A7 to the first draft:
 - A7: The frame rate viewer shows two separate numbers with clear names: "not shown" (frames that
   the server did not send because the screen was slower than the camera) and the ring's own skipped
   count. Never one mixed number.
+- A8 (answer to Q1): The ring reader gets a second read-only property, `skipped_count`, of the same
+  kind as `oversize_count`, for display only. This adds to the reader API of ADR-9G2W by decision of
+  the user.
 
 Decision on the tile thread (relayed with A1 to A7): the tile runs on the main thread of the page
 with ImageDecoder. 4b measures 8 cameras at 60 fps. A worker only if the target is missed.
