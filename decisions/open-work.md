@@ -35,14 +35,17 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Step 2b (the BGR ring and the decode stage). The user approved the build on 2026-11-19
     (item 63). The failing tests of step 2b (T-RING-36 to 47) are in
     `skellycam/tests/frame_ring/test_bgr_ring.py`, `test_decode_stage.py` and
-    `test_bgr_camera.py`. They use the API of the proposed entry
-    [ADR-5MYA](entries/5MYA-python-api-of-the-bgr-ring-and-the-decode-stage-as-the-2b-tests-assume-it.md).
+    `test_bgr_camera.py`. They use the API of
+    [ADR-5MYA](entries/5MYA-python-api-of-the-bgr-ring-and-the-decode-stage-as-the-2b-tests-assume-it.md),
+    which the user accepted on 2026-11-19, with the four decisions of
+    [ADR-467Z](entries/467Z-step-2b-self-check-stop-opencv-threads-and-yuv-conversion.md).
+    One more test in `test_bgr_camera.py` checks that a mode change (7.5) recreates the BGR ring
+    with the new shape (user, 2026-11-19).
     T-RING-48 has no test of its own: it runs the T-RING-36 tests (marker `ring_portable`) on ARM.
     Run the 2b tests with
     `uv run pytest skellycam/tests/frame_ring/test_bgr_ring.py skellycam/tests/frame_ring/test_decode_stage.py skellycam/tests/frame_ring/test_bgr_camera.py`.
     Add `-m "not ring_slow"` for a short run. Until the 2b code exists, each 2b test fails.
-  - Next: the user decides ADR-5MYA and the open points that it lists. Then the review of each
-    point that section 8 of the spec leaves open, then the 2b code.
+  - Next: the 2b code.
   - Known failure: T-RING-31 (idle CPU, limit 2 % of one core) fails (items 60 and 65). On
     2026-11-18, the paused loop used 3.9 to 7.0 % of one core on a Windows test machine. The user
     dropped the redesign of the wait of the OpenCV loop, because native capture deletes that loop.

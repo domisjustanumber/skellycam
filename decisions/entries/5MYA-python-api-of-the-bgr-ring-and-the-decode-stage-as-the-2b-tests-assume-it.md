@@ -1,6 +1,6 @@
 # 5MYA — Python API of the BGR ring and the decode stage, as the 2b tests assume it
 
-**Status:** proposed, 2026-11-19 (agent).
+**Status:** accepted, 2026-11-19 (user; commit to dom/native-jpeg; was proposed, 2026-11-19 (agent)).
 
 ## Decision
 
