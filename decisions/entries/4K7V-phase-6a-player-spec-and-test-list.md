@@ -5,8 +5,8 @@
 ## Decision
 
 [`specs/player.md`](../../specs/player.md), revision 2, is proposed as the spec of step 6a, with its
-test list T-PLAY-01 to T-PLAY-70 (39 unit, 15 component, 10 electron, 6 benchmark). It follows the
-decisions Y1 to Y7 of [ADR-J2BQ](J2BQ-phase-6-player-decisions-y1-to-y7.md), M1 to M10 and L1 to L8 of
+test list T-PLAY-01 to T-PLAY-72 (40 unit, 16 component, 10 electron, 6 benchmark). It follows the
+decisions Y1 to Y7 of [ADR-J2BQ](J2BQ-phase-6-player-decisions-y1-to-y7.md), M1 to M10, L1 to L8 and the answers U1 and U2 of
 [ADR-4HNY](4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md), the earlier decisions that
 they cite, the format spec of skellyfileformat (draft v2, commit d67679a) and the research evidence of
 branch `dom/research`. Revision 2 also applies the faults of an independent review (section 15.2 of

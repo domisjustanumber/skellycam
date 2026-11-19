@@ -117,7 +117,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
     (14 tests with no counterpart yet).
 - **Phase 6a (the canvas player for new takes).** The user decided Y1 to Y7 on 2026-11-19
   ([ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md)). The spec
-  [`specs/player.md`](../specs/player.md) (revision 2) and its test list T-PLAY-01 to T-PLAY-70 wait
+  [`specs/player.md`](../specs/player.md) (revision 2) and its test list T-PLAY-01 to T-PLAY-72 wait
   for the user ([ADR-4K7V](entries/4K7V-phase-6a-player-spec-and-test-list.md)): 39 agent choices
   (section 16), no open question. It applies M1 to M10 and L1 to L8
   ([ADR-4HNY](entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md)). The player

@@ -1,20 +1,22 @@
 # Phase 6 player specification: step 6a, the canvas player for new takes (video only)
 
-Status: proposed by an agent on 2026-11-19, revision 2
-([ADR-4K7V](../decisions/entries/4K7V-phase-6a-player-spec-and-test-list.md)). The user reviews it
-before any code. The decisions Y1 to Y7
-([ADR-J2BQ](../decisions/entries/J2BQ-phase-6-player-decisions-y1-to-y7.md)) and the later decisions
-M1 to M10 and L1 to L8 ([ADR-4HNY](../decisions/entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md))
-are accepted. Section 18 gives each one in full. Revision 2 applies M1 to M10, L1 to L8 and the
-faults of an independent review (section 15.2). The failing tests of step 6a come before the product
-code of step 6a.
+Status: proposed, waits for the acceptance of the user (revision 2, 2026-11-20;
+[ADR-4K7V](../decisions/entries/4K7V-phase-6a-player-spec-and-test-list.md)). No code comes before
+the acceptance. The decisions Y1 to Y7
+([ADR-J2BQ](../decisions/entries/J2BQ-phase-6-player-decisions-y1-to-y7.md)), the later decisions
+M1 to M10 and L1 to L8, and the answers U1 and U2
+([ADR-4HNY](../decisions/entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md))
+are accepted. Section 18 gives each one in full. Revision 2 applies them, the faults of an
+independent review (section 15.2) and a cross-check against the recorder spec. The failing tests of
+step 6a come before the product code of step 6a.
 
 ## 0. How to read this spec
 
 Marks:
 
-- **[Yn]**, **[Mn]**, **[Ln]**: a decision of the user, 2026-11-19 (section 18).
-- **[En]**: an earlier decision of the user that the decision list of 2026-11-19 cites (section 18.4).
+- **[Yn]**, **[Mn]**, **[Ln]**: a decision of the user, 2026-11-19 (section 18). **[Un]**: an answer
+  of the user, 2026-11-20 (section 18.4).
+- **[En]**: an earlier decision of the user that the decision list of 2026-11-19 cites (section 18.5).
   This spec numbers them for reference only.
 - **[SFF-nnn]**: a requirement of the format spec `../skellyfileformat/spec/SPEC.md`, draft v2, read
   at commit d67679a of that repository. This spec cites it. It does not repeat it.
@@ -358,9 +360,10 @@ the user picked in the system folder dialog [L7]:
 - A picked folder is a folder that `dialog.showOpenDialog` returned in the main process, through the
   existing call `fileSystem.selectDirectory` [C `electron/main/api.ts`]. The main process adds each
   such folder to a list, and keeps the list in the file `pickedFoldersFile` in the user data folder of
-  the app (`app.getPath('userData')`). Only the main process writes this list. Thus a folder that the
-  user picked in an earlier run, for example the base recording folder of the recording browser, stays
-  allowed.
+  the app (`app.getPath('userData')`). A folder that the user picked in an earlier run, for example the
+  base recording folder of the recording browser, stays allowed [U1].
+- Only a dialog pick in the main process adds a folder to the list. No bridge call, IPC message or
+  request of a page can add a folder, change the list or read it [U1]. T-PLAY-62 tests this.
 - "Inside" compares real paths (`fs.realpath`): the folder is the allowed folder or below it. On
   Windows the comparison ignores case.
 - Any other folder: the open fails with the error "folder not allowed", and no token is made.
@@ -559,7 +562,7 @@ The rebuild needs `<rec>` only to find the folder files [SFF-868]. The player re
   SFF-886. The reader ignores the keys of the `# end` line that it does not need, also `missing=`
   [SFF-709, M3].
 - The flags: bit 0 `gap`, bit 1 `filled`, bit 2 `encode_skip`, bit 3 `repeat` [SFF-756], and the flag
-  `missing` [M3] at the bit that the F-list gives (bit 4 in the current draft of the recorder spec). A
+  `missing`, bit 4 (16) [M3, F-1 of the recorder spec]. A
   usable row with `gap` gives the file warning `gap`; with `encode_skip`, the file warning
   `encode_skip` [SFF-887]. The player shows the frames with `gap`, `filled`, `encode_skip` or
   `repeat` as all other frames.
@@ -570,8 +573,8 @@ The rebuild needs `<rec>` only to find the folder files [SFF-868]. The player re
   `missingRows`.
 - In a camera file of M1, each row has one block, also a `missing` row: its byte fields point at the
   placeholder [M1, M3]. The row-to-block rule of SFF-740 and the count of SFF-759 stay as they are.
-- In the short file of a killed camera process, the late `missing` rows have empty byte fields and
-  no block [M5]. The row-to-block rule counts only the rows with byte fields: the j-th row with byte
+- In the short file of a killed camera process [M5], and in the short file of a write error on one
+  camera file [U2], the late `missing` rows have empty byte fields and no block. The row-to-block rule counts only the rows with byte fields: the j-th row with byte
   fields belongs to the j-th complete block [M5]. The count of SFF-759 compares the rows with byte
   fields with the blocks.
 - The player never shows a placeholder [M9]. It never decodes the block of a `missing` row. It reads
@@ -616,6 +619,11 @@ The rebuild needs `<rec>` only to find the folder files [SFF-868]. The player re
   later. It checks the EBML header, DocType `matroska`, one Segment and the Tracks element. It notes
   the number of the video track and the start of the first Cluster. It ignores each Matroska element
   that the format spec does not name [SFF-709].
+- The Segment can have an unknown size [SFF-740]. The recorder writes with PyAV (FFmpeg) and
+  `cluster_size_limit=1`: while the file is live, and in the file of a killed process, the Segment has
+  an unknown size, and each Cluster has a known size, holds one block and has a CRC-32 child element
+  (ID `BF`) [recorder spec 6.3]. A Cluster of unknown size is also allowed [SFF-740]. The reader
+  handles each of these forms.
 - Tail, for a finished or repaired file: the reader reads from the end of the last block that a row
   points at to the end of the snapshot, in reads of 1 MiB. It walks the elements. When it finds a
   SimpleBlock, the rows and the blocks differ, and the file is `invalid` with `bad_metadata`
@@ -631,7 +639,8 @@ The rebuild needs `<rec>` only to find the folder files [SFF-868]. The player re
 - It reads one range from the end of the block of the previous row with byte fields to the end of the
   payload of this row. For the first row with byte fields, the range starts at the first Cluster.
 - It walks the elements of the range forward. It enters a Cluster (known or unknown size [SFF-740]),
-  and it skips each other element of known size, also the placeholder block of a `missing` row. At the
+  and it skips each other element of known size: the Cluster Timestamp, the CRC-32 child, a Void
+  element, and the placeholder block of a `missing` row. At the
   SimpleBlock of the row, it parses the track number as an EBML variable-size integer, then 2 bytes of
   timestamp, then 1 byte of flags [SFF-739]. It assumes no fixed header length [SFF-739].
 - The block is correct when: the track number is the video track; no lacing bit is set [SFF-733]; the
@@ -691,8 +700,9 @@ N = 4 [M `IP` F21].
 
 ### 7.2 Multi-camera frame time and the frame number [agent 19]
 
-- T_k = the largest p_c(k) over the cameras c whose row k has a player time. When no camera has a
-  player time at row k, T_k = T_(k-1). A take starts at the first group frame [M7], so row 0 has a
+- T_k = max(T_(k-1), the largest p_c(k) over the cameras c whose row k has a player time). Thus T_k
+  never goes down, also when the camera with the latest times loses its times, and a row where no
+  camera has a time gets T_k = T_(k-1). A take starts at the first group frame [M7], so row 0 has a
   time in at least one camera; when it has none, T_0 is the smallest player time of the take.
 - At t = T_k, each camera with a player time at row k shows row k or a later row.
 - The clock range is [T_0, T_(K-1)].
@@ -721,12 +731,18 @@ the image. This is a known effect of a mark from k* and an image from t (14.3).
 
 Dead camera [M8] [agent 21]:
 
-- With a manifest that the reader uses: a camera with a warning `camera_dead` is dead. N =
-  `last_frame` + 1, the first group frame with no image [M8].
-- With no manifest that the reader uses: a camera whose rows are `missing` from one row to the last
-  row of the file is dead. N is the first row of that run.
-- With a manifest and no `camera_dead` for a camera, a run of `missing` rows at the end is a run of
-  damaged frames: the mark is "no frame".
+- With a finished manifest that the reader uses: a camera with a warning `camera_dead` is dead. The
+  `detail` of the warning is `last_frame=<p> reason=<text>` [F-5 of the recorder spec]. p is the last
+  row of the camera that is not `missing`. N = p + 1, the first group frame with no image [M8]. When p
+  is `none`, N = 0. A `detail` that does not have this form gives the rule of the next item for that
+  camera [agent 21].
+- With no manifest that the reader uses, or with a manifest whose `state` is `recording` (it has no
+  warnings yet): a camera whose rows are `missing` from one row to the last row of the file is dead.
+  N is the first row of that run.
+- With a finished manifest and no `camera_dead` for a camera, a run of `missing` rows at the end is
+  not a dead camera: the mark is "no frame". This is the case of damaged frames at the end, and of
+  the short file of a write error, which has `camera_file_short` and `take_error` and no
+  `camera_dead` [recorder spec 7.5].
 
 The search is a binary search on integer nanoseconds. The rule is PREV of the evidence: it was exact on
 every tick, camera and path (0 mismatches over 456 ticks × 4 cameras, Electron 35.7.5 and 45.2.3) [M
@@ -954,12 +970,15 @@ refreshes, at the current rate. It skips the rows between them. The cost at 8 ti
   of today as it is [L5], and it does not show the sync information warning of F16 [L4]. It holds its
   own grid with the behaviour of F1 to F3 and its own keys with the behaviour of F9 to F12 and F20. It
   does not import code from `SyncedVideoPlayer.tsx`.
-- The route [L1]: the playback page calls `electronTakeFiles(path)` and `isTakeFolder(files)`. A folder
-  in the new format opens in `CanvasTakePlayer`; each other folder opens in the player of today. The
-  rest of the switch is step 6c [L1].
+- The route [L1]: when the user opens a recording, the UI calls `electronTakeFiles(path)` and
+  `isTakeFolder(files)` before any backend video call. A folder in the new format opens in
+  `CanvasTakePlayer`; each other folder opens in the player of today. The rest of the switch is step
+  6c [L1].
+- The backend playback list of the recorder spec shows a new-format take with `needs_new_player: true`,
+  and its video endpoints give HTTP 409 [recorder spec 10, item 13]. The recording browser shows the
+  mark as information only. The mark never stops the UI from opening the take in the new player.
 - The loading message (F18) counts the cameras whose first image is drawn.
 - The host gives `initialFrame` and gets `frame` events for F19.
-- The recording browser and its backend route do not change in 6a.
 
 ## 11. Performance
 
@@ -1047,15 +1066,19 @@ npm scripts: `test:player:unit` and `test:player:browser`. No new npm package is
   with `missing=`; and the manifest of section 5 with the warning `camera_dead` and `last_frame`. It
   does not use the recorder code, so the tests check the recorder and the player against the spec, not
   against each other.
-- Synthetic JPEGs: a small baseline JPEG encoder that codes each 8 × 8 block as one flat colour (DC
-  coefficients only). Its Huffman codes are the standard tables of ITU-T T.81 Annex K.3. A row of
-  blocks is a barcode of the camera index and the position. Four quadrants of four colours show the
-  rotation. Options: 4:4:4, 4:2:2 or 4:2:0 sampling; no DHT segment (the data still uses the Annex K
-  tables, so it decodes [M review]); the DHT inserted before the first SOS, as the ring does [M6]; no
-  APP0 segment; an EXIF orientation tag; bytes after the EOI.
-- Placeholders [M2]: for each camera file, one black JPEG with the width, the height and the sampling
-  factors of the SOF segment of the first frame of that camera, made once and written for each
-  `missing` row.
+- Synthetic JPEGs: the flat-block encoder of 12.2.1. A row of blocks is a barcode of the camera index
+  and the position. Four quadrants of four colours show the rotation. Options: the sampling factors;
+  no DHT segment (the data still uses the Annex K tables, so it decodes [M review]); the DHT inserted
+  before the first SOS, as the ring does [M6]; no APP0 segment; an EXIF orientation tag; bytes after
+  the EOI.
+- Placeholders [M2]: for each camera file, one black JPEG from the same encoder, with the width, the
+  height, the component count and the sampling factors of the SOF segment of the first frame of that
+  camera that is not `missing`, made once and written for each `missing` row [F-1 of the recorder
+  spec].
+- The MKV of the fixtures `unfinished`, `dead_short` and `write_error_short` has the form that FFmpeg
+  writes live (6.9): a Segment of unknown size, and one Cluster of known size for each block, with a
+  CRC-32 child. The other fixtures have a finished file with known sizes. One `block_*` fixture has a
+  Cluster of unknown size.
 - A Node implementation of `TakeFiles` (`tests/fixtures/node-take-files.ts`) reads the temporary folder
   for the unit tests.
 - The benchmarks make larger JPEGs at run time with the JPEG encoder of Chromium
@@ -1071,9 +1094,10 @@ The takes that the builder makes:
 | `missing` | `normal` with damaged frames in camera 1 at rows 0, 10 and 40 to 59: `missing` rows with placeholders, times kept at rows 10 and 40 to 59, no time at row 0; `missing=22` |
 | `dead` | `normal` with camera 2 dead after row 69: placeholders and `missing` rows with no time from row 70 to 119; the manifest warning `camera_dead` with `last_frame` 69; `missing=50` |
 | `dead_no_manifest` | `dead` with no manifest |
-| `dead_short` | `normal` with camera 3 from a killed process: 80 blocks in the MKV; rows 80 to 119 `missing` with empty byte fields and no time; a `# repair` line and a `# end` line |
+| `dead_short` | `normal` with camera 3 from a killed process: 80 blocks in the MKV; rows 80 to 119 `missing` with empty byte fields and no time; a `# repair` line and a `# end` line; the manifest warnings `camera_dead` (`last_frame=79 reason=hang`) and `camera_file_short` (`blocks=80 rows=120`) |
+| `write_error_short` | as `dead_short`, for a write error on the file of camera 3: the manifest warnings `camera_file_short` and `take_error`, and no `camera_dead` [U2] |
 | `trailing_damage` | `normal` with a manifest, no `camera_dead`, and camera 1 `missing` (with times) from row 115 to 119 |
-| `unfinished` | manifest `state` `recording`; no `# end`; usable counts 120, 97, 120 and 110: camera 1 with its last blocks cut in the MKV after row 96, camera 3 with a torn last line after row 109 and an unknown-size Cluster |
+| `unfinished` | manifest `state` `recording`; no `# end`; usable counts 120, 97, 120 and 110: camera 1 with its last blocks cut in the MKV after row 96, camera 3 with a torn last line after row 109 |
 | `recording_finished` | manifest `state` `recording`; each sidecar finished |
 | `no_manifest` | `normal` with no manifest; `bad_manifest_*`: not JSON, not a manifest, another `take_uuid` |
 | `bad_crc` | `normal` with a wrong CRC in row 50 of camera 1 |
@@ -1085,6 +1109,30 @@ The takes that the builder makes:
 | `jpeg_forms` | JPEGs with no DHT, with an inserted DHT, with no APP0, with an EXIF orientation 6, with 1 KiB of bytes after the EOI |
 | `pairs` | a lone MKV, a lone sidecar, a sidecar with no mark, a `.tmp` file, an audio pair, two takes |
 | `counts` | fewer and more camera files than `group_size`, a duplicate label, a take key that differs |
+
+#### 12.2.1 The flat-block JPEG encoder [agent 32]
+
+The recorder spec uses this description as the model of its placeholder, so it is exact:
+
+- Markers in this order: SOI; optional APP1 (EXIF, only for the EXIF option); one DQT segment with two
+  8-bit tables, table 0 (Y) and table 1 (Cb and Cr), each with all 64 entries equal to 16; SOF0
+  (baseline sequential DCT, sample precision 8); one DHT segment with the four tables of ITU-T T.81
+  Annex K.3 (DC luminance as class 0 id 0, AC luminance as class 1 id 0, DC chrominance as class 0 id
+  1, AC chrominance as class 1 id 1), left out by the option "no DHT"; SOS; the entropy-coded data;
+  EOI. No APP0, no DRI, no restart marker.
+- SOF0 holds the height, the width and the components: either 1 component (id 1, Y) or 3 components
+  (ids 1, 2 and 3: Y, Cb, Cr). Each component has its own H and V from 1 to 4, with the sum of H × V
+  over the components at most 10 (T.81 B.2.2); the Y component uses quantisation table 0, Cb and Cr use
+  table 1. The fixtures use Y 1x1, 2x1 and 2x2 with Cb and Cr 1x1 (4:4:4, 4:2:2 and 4:2:0), and 1
+  component.
+- SOS holds all components of SOF0, in SOF0 order (interleaved), with Y on DC table 0 and AC table 0,
+  Cb and Cr on DC table 1 and AC table 1; Ss = 0, Se = 63, Ah = Al = 0.
+- The image is padded to whole MCUs. Each 8 × 8 block holds one flat value v (0 to 255) for its
+  component, so its DC coefficient is (v − 128) × 8 / 16, rounded to the nearest integer, and each AC
+  coefficient is 0. The encoder codes each block as the DC difference from the previous block of the
+  same component (Annex F.1.2.1), then the AC code 0x00 (EOB). It inserts a 0x00 byte after each 0xFF
+  byte of the data, and pads the last byte with 1 bits.
+- A black placeholder has Y = 0 and Cb = Cr = 128 in each block (Y only for 1 component).
 
 ### 12.3 Test list
 
@@ -1110,7 +1158,7 @@ The takes that the builder makes:
 | T-PLAY-18 | unit | Open `dead`. | Camera 2 is not refused; `deadFrom` = 70 from the manifest; for k* ≥ 70 the image is row 69 and the mark "camera lost at frame 70"; T_k for k ≥ 70 comes from cameras 0, 1 and 3; K = 120. |
 | T-PLAY-19 | unit | Open `dead_no_manifest` and `trailing_damage`. | `dead_no_manifest`: `deadFrom` = 70 from the run of `missing` rows at the end; `trailing_damage`: no dead camera, the mark at rows 115 to 119 is "no frame". |
 | T-PLAY-20 | unit | In `missing`: row 10 (a `missing` row with a time) and row 0 (with no time), against a reference; a variant in which no camera has a time at one row. | T_10 uses the time of camera 1 at row 10; T_0 ignores camera 1; at the row with no time T_k = T_(k-1); images as T-PLAY-17. |
-| T-PLAY-21 | unit | Open `dead_short`. | Camera 3 is not refused; rows 80 to 119 have no block; the SFF-759 count compares 80 rows with byte fields and 80 blocks and passes; `deadFrom` = 80. |
+| T-PLAY-21 | unit | Open `dead_short`; also a copy whose `camera_dead` has `last_frame=none`. | Camera 3 is `repaired` and not refused; rows 80 to 119 have no block; the SFF-759 count compares 80 rows with byte fields and 80 blocks and passes; the unknown-size Segment and the CRC-32 children are read; `deadFrom` = 80 from `camera_dead`; with `none`, `deadFrom` = 0. |
 | T-PLAY-22 | unit | Open `unfinished`. | Usable counts 120, 97, 120 and 110; K = 97; T_k and k* only to 96. |
 | T-PLAY-23 | unit | Open `unfinished` and `recording_finished`. | `take.unfinished` true in both; camera 1 uses no row with byte fields after its last complete block; `torn_bytes` adds the bytes after that block; no file is written. |
 | T-PLAY-24 | unit | Open `normal` with a `TakeFiles` whose snapshot sizes are smaller than the files: half of the last block and 2 rows are past the snapshot. | The rows and the block past the snapshot are not used; the file is read as unfinished. |
@@ -1124,7 +1172,7 @@ The takes that the builder makes:
 | T-PLAY-32 | unit | 100 seeks within 200 ms to one tile, with a test decoder of random delay 1 to 30 ms. | At most one decode in flight; after the last decode, the tile shows the last target; no draw of an older request after a newer draw. |
 | T-PLAY-33 | unit | Play at rates 1 and 8 with a slow test decoder. | The drawn position never goes down during play; each image that is not drawn is closed. |
 | T-PLAY-34 | unit | `offsets` and `missing`: 456 fixed ticks in a shuffled order (exact times, midpoints, ±1 ns, ±1 ms, inside `missing` runs, at the start, at the end), after `GF08` §1.4. | Each image and each mark equal a brute-force reference written independently in the test. |
-| T-PLAY-35 | unit | Scan the imports of each file of `src/player/` and each import of a module file from the rest of `src/`; load each module file under Node type stripping. | Only the imports of 4.2; each type import is `import type`; each file loads; the rest of the UI imports only `index.ts` and the two files of `main/`. |
+| T-PLAY-35 | unit | Scan the imports of each file of `src/player/` and each import of a module file from the rest of `src/`; load each module file outside `main/` under Node type stripping. The files of `main/` import `electron`, which does not load under Node: the Electron harness loads them, and T-PLAY-55 to T-PLAY-64 use them. | Only the imports of 4.2; each type import is `import type`; each file outside `main/` loads; the rest of the UI imports only `index.ts` and the two files of `main/`. |
 | T-PLAY-36 | unit | `counts`: a duplicate label; a take key that differs in camera 2. | `duplicate_label` and both kept; `take_fact_mismatch` and the values of `group_position` 0. |
 | T-PLAY-37 | unit | The overlay text of `tile/format.ts`: `frameDigits` 1, 3 and 5; times 0.0334 s and 3,725.5 s; rates 30 and 29.97; both formats; `timeNs` null. | `F` with 1, 3 and 5 digits; `0.033s` and `3725.500s`; timecode `00:00:00:01` and `01:02:05:15` (14 at 29.97); no time part for null. |
 | T-PLAY-38 | unit | N = 4 and N = 16 with a counting test decoder; play, seek and close. | Open images never exceed min(8, max(2, ⌊64/N⌋)) + 2 for each camera; 0 open images after `close()`. |
@@ -1151,7 +1199,7 @@ The takes that the builder makes:
 | T-PLAY-59 | electron | A test variant of the handler answers 200 with the exact length, 200 with the whole file, and 206 with a wrong `Content-Range` start. | The page client accepts only the first; the two others are read errors. |
 | T-PLAY-60 | electron | A sparse file of 5 GiB; read 3 ranges past 4 GiB. | The bytes equal the bytes that the test wrote at those offsets. |
 | T-PLAY-61 | electron | Open `normal`, play it to the end, seek 50 times, close. | Each file of the folder has the same bytes and modification time as before [SFF-799]. |
-| T-PLAY-62 | electron | Open a folder outside the test `recordingsFolder` and not picked; the same folder after the test hook records a dialog pick; a folder inside the `recordingsFolder`; a link inside the `recordingsFolder` to an outside folder. | Refused with "folder not allowed" and no token; allowed after the pick, also after a restart of the harness (the list file); allowed inside; the link is refused [L7]. |
+| T-PLAY-62 | electron | Open a folder outside the test `recordingsFolder` and not picked; the page calls each bridge and IPC channel of the module with that folder; the same folder after the test hook records a dialog pick; a folder inside the `recordingsFolder`; a link inside the `recordingsFolder` to an outside folder. | Refused with "folder not allowed" and no token, also after the page calls (the list file does not change); allowed after the pick, also after a restart of the harness (the list file); allowed inside; the link is refused [L7, U1]. |
 | T-PLAY-63 | electron | Open a take in window A; navigate A; open a take in window B, then open a second take in B; close B. | A's token gets 404 after the navigation; B's first token gets 404 after the second open; B's second token gets 404 after the close. |
 | T-PLAY-64 | electron | The shared `TakeFiles` check suite of T-PLAY-39 on the Electron implementation. | The same results as T-PLAY-39 [L8]. |
 | T-PLAY-65 | benchmark | 16 readers × 60 fps × 150 kB for 60 s through the handler; CPU of the main, renderer and GPU processes. | Target 11.3; results recorded [M `RT` §8 item 3]. |
@@ -1160,6 +1208,8 @@ The takes that the builder makes:
 | T-PLAY-68 | benchmark | Scrub at 90 frames/s for 8 s at N = 4 and 8. | Target 11.3; shown/s, lag and CPU recorded. |
 | T-PLAY-69 | benchmark | IPC round trips and window events of the host while T-PLAY-65 runs. | Target 11.3 [M `RT` §8 item 4]. |
 | T-PLAY-70 | benchmark | Cases that nobody measured: 720p60 at N = 4; 720p30 at N = 16; speed 8 at N = 4, 1080p30. | No target; results recorded for the user. |
+| T-PLAY-71 | unit | Open `write_error_short`; choose at frame numbers 79, 80 and 119. | The take plays to K = 120; camera 3 is `repaired` and not refused; rows 80 to 119 have no block; no dead camera (`deadFrom` null); at 80 and 119 the image is row 79 with "no frame", never "camera lost"; the take warnings hold `camera_file_short` and `take_error` [U2]. |
+| T-PLAY-72 | component | Player on `write_error_short`: play from frame 70 to the end. | The other tiles play to the end; camera 3 holds the image of row 79 with "no frame" from frame 80 [U2]. |
 
 ### 12.4 Decisions and reader rules to tests
 
@@ -1175,6 +1225,8 @@ The takes that the builder makes:
 | M1, M2, M3 | T-PLAY-01, T-PLAY-17, T-PLAY-20, T-PLAY-26, T-PLAY-46 |
 | M4, M6 | T-PLAY-42 (inserted DHT) |
 | M5 | T-PLAY-21 |
+| U1 | T-PLAY-62 |
+| U2 | T-PLAY-71, T-PLAY-72 |
 | M7 | T-PLAY-20 (T_0) |
 | M10 | No test here: it is a rule of the shared Python reader. |
 | L1 | T-PLAY-53 |
@@ -1220,7 +1272,7 @@ The takes that the builder makes:
 | SFF-890 | T-PLAY-02 |
 | F1 to F21 | T-PLAY-31, T-PLAY-37, T-PLAY-44, T-PLAY-50 to T-PLAY-53 |
 
-Counts: 39 unit, 15 component, 10 electron, 6 benchmark: 70 tests.
+Counts: 40 unit, 16 component, 10 electron, 6 benchmark: 72 tests.
 
 ### 12.5 Parity of the systems [Y7]
 
@@ -1297,14 +1349,15 @@ Section 14.2 lists the cases that the format still leaves open.
 
 ### 14.2 Open points
 
-1. **The F-list of the recorder spec** is being revised. This spec reads M1 to M10 from the decisions:
-   the bit of `missing`, the place of `missing=` in the `# end` line, the form of `last_frame` in
-   `camera_dead`, and how the manifest marks the short file of M5. When the F-list fixes them, this
+1. **The F-list of the recorder spec** waits for the user. This spec follows its current text: the
+   bit 4 of `missing` and `missing=` before the last key of `# end` (F-1), the short file (F-2), and
+   the `detail` forms of `camera_dead` and `camera_file_short` (F-5). When the F-list changes, this
    spec follows it.
-2. **Cases that the format leaves open** (for the merged list): a missing column that a reader needs;
-   a `frame` value that is not the position; a player time that decreases; a camera file whose track
-   is not `V_MJPEG`. The player does not refuse a file for the last three (6.5, 6.6, 6.8). For the
-   first, it cannot read the file.
+2. **Cases that the format leaves open**: a missing column that a reader needs; a `frame` value that
+   is not the position; a player time that decreases; a camera file whose track is not `V_MJPEG`.
+   None of the four is in the merged list F-1 to F-10 of the recorder spec. They stay open. The
+   player does not refuse a file for the last three (6.5, 6.6, 6.8). For the first, it cannot read the
+   file. The three items that the player gives (section 13) are in that list as F-8, F-9 and F-10.
 3. The Chromium version of Electron 45.3.4 [NV].
 4. A page from `http://` (Vite dev server) that reads the custom scheme was not tested [M `RT` §4].
 5. The exact `xvfb` version for the Linux job [NV]; Node 26.13.1 [NV].
@@ -1365,6 +1418,16 @@ Section 14.2 lists the cases that the format still leaves open.
    two (M-PLAY-1).
 9. **M8 against the time rule.** A dead camera's rows have no time, so a choice by time alone would
    show its last image with no mark. The mark comes from k* (7.3).
+10. **The recorder spec against the backend route.** The recorder spec says that the UI shows the mark
+    `needs_new_player` and plays nothing [recorder spec 10, item 13]. L1 opens such a take in the new
+    player; the UI routes by the folder before any backend video call, and the mark is information
+    only (10).
+
+The cross-check against the recorder spec on 2026-11-20 also gave: `missing` is bit 4; the live and
+short MKV forms of FFmpeg (unknown-size Segment, known-size Clusters with a CRC-32 child); T_k that
+never goes down; the dead-camera rules for a manifest in the state `recording` and for the `detail`
+form; `camera_dead` in `dead_short`; T-PLAY-35 with `main/` loaded in Electron; the write-error short
+file (U2, T-PLAY-71, T-PLAY-72); the exact flat-block encoder (12.2.1). No item was rejected.
 
 ### 15.2 Faults of the independent review and what this revision did
 
@@ -1400,8 +1463,9 @@ each one [agent n].
 4. The names of the public interface, the state and the events (4.4).
 5. The scheme `skellycam-take`, its privileges, the token of 32 lower-case hexadecimal characters, tied
    to the window that asked (5.2, 5.4).
-6. The recordings folder computed with the backend rule; picked folders kept by the main process in a
-   list file in the user data folder; "inside" by real path, without case on Windows (5.3).
+6. The recordings folder computed with the backend rule; the list file of picked folders in the user
+   data folder (U1 decides that picks are remembered); "inside" by real path, without case on Windows
+   (5.3).
 7. The open: a scan of the root and the media folder only, regular files only, no links or junctions,
    an allow-list by exact relative path, identities by `stat` with `bigint`, no absolute path to the
    page (5.4, 5.5).
@@ -1568,7 +1632,18 @@ The user decided these on 2026-11-19, after revision 1 of this spec and its revi
 - L8: Y2 stands: every file read of the player goes through one small interface; one shared check suite
   runs against both implementations (Node and Electron).
 
-### 18.4 Earlier decisions (cited, not repeated)
+### 18.4 Answers U1 and U2 (2026-11-20)
+
+The user gave these answers on 2026-11-20, relayed by the supervisor
+([ADR-4HNY](../decisions/entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md)):
+
+- U1: A folder that the user picked in the system folder dialog is remembered across restarts of the
+  app. A page must not be able to add to the list without a dialog pick.
+- U2: A write error on one camera file is a second short-file case: the same short pair as a killed
+  process (`missing` rows with empty byte fields and no block, `# repair`, `# end`), with the manifest
+  warnings `camera_file_short` and `take_error`, and no `camera_dead`.
+
+### 18.5 Earlier decisions (cited, not repeated)
 
 The decision list of 2026-11-19 cites these as decided before the grilling. This spec numbers them
 E1 to E9 for reference only:
