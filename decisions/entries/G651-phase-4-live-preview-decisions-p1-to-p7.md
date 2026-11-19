@@ -31,14 +31,39 @@ cameras.
 
 ## Reason
 
-- The user, 2026-11-19. Only these decisions are accepted. The spec of step 4a waits for the user.
+- The user, 2026-11-19. Only these decisions and the answers below are accepted. The spec of step 4a
+  waits for the user.
+
+## Answers of the user to the first draft of the step 4a spec (2026-11-19)
+
+The user answered the four questions of the first draft, and gave three more rules, on 2026-11-19:
+
+1. **A1.** 4a adds the sender and its tests with no route. The endpoint keeps the old relay. 4b
+   connects the sender, deletes the old code and changes the UI together. The branch goes to
+   `development-streaming` only after 4b.
+2. **A2.** Step 3a adds `replaced_count` to the status of each camera, counted from the first frame
+   that the camera takes in the gate. The app state carries it. The sender does not compute it.
+3. **A3.** The frame rate of the tile is the rate at which the camera delivers frames to skellycam,
+   not the rate that reaches the screen. It must not depend on the client.
+4. **A4.** The tile shows all eight states of the capture spec.
+5. **A5.** The ring reader gets one new read-only property, `oversize_count`. No `head` property: the
+   sender uses `reader.read(last_sent + 1)` and its `NOT_YET_WRITTEN` result. This adds to the
+   reader API of [ADR-9G2W](9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md) by
+   decision of the user.
+6. **A6.** Safety net: when a camera has had no ready message for 1 s, the server sends its newest
+   unsent frame anyway.
+7. **A7.** The frame rate viewer shows two separate numbers with clear names: "not shown" (frames
+   that the server did not send because the screen was slower than the camera) and the ring's own
+   skipped count. Never one mixed number.
+8. **Tile thread.** The shared tile runs on the main thread of the page with ImageDecoder. 4b
+   measures 8 cameras at 60 fps. A worker only if the target is missed.
 
 ## Consequences
 
-- [`specs/preview.md`](../../specs/preview.md) applies these decisions to step 4a. It is proposed
-  ([ADR-162X](162X-step-4a-preview-spec-and-agent-choices.md)).
-- P1 and P5 together need a rule for the time between 4a and 4b. Question Q1 of the spec asks the
-  user.
+- [`specs/preview.md`](../../specs/preview.md) applies these decisions and answers to step 4a. It is
+  proposed ([ADR-162X](162X-step-4a-preview-spec-and-agent-choices.md)).
+- A2 changes step 3a: the capture spec and the 3a tests must get `replaced_count`.
+- A5 and A7 together need the ring `skipped_count`. Question Q1 of the spec asks the user.
 
 ## Open work
 
