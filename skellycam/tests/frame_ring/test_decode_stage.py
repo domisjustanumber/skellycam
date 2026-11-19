@@ -340,8 +340,6 @@ def test_t_ring_44_decode_speed_with_the_capture_stub(cleanup, stages):
 LIBJPEG_WARNING = re.compile(r"Corrupt JPEG data: \d+ extraneous bytes before marker 0xd9")
 
 
-@pytest.mark.xfail(sys.platform == "win32", strict=True,
-                   reason="No limit on Windows until phase 3 (ADR-E817 item 7; user, 2026-11-19)")
 def test_t_ring_46_libjpeg_warnings_do_not_flood_the_log():
     """T-RING-46, section 8.9 [A44]: decode 1,000 JPEGs with extra bytes before EOI (two
     different counts, thus two different warning lines). At most one log line per distinct
@@ -352,20 +350,52 @@ def test_t_ring_46_libjpeg_warnings_do_not_flood_the_log():
     warning exists: exactly that one warning line is on descriptor 2. A forwarded log line has the
     form `<line> (count <n>)` (ADR-5MYA). If the OpenCV log level silences the lines, no line is
     forwarded, and that also passes.
+
+    Windows (specs/windows-capture.md, 5.6; U17): the test is the main process. It gives the child
+    the warning pipe of the product (`warning_pipe.child_stderr_pipe`), and the product forwards the
+    lines in this process. Thus no warning line, also not the one of the set-up decode, is on the
+    descriptor 2 of the child, and the set-up decode is the first forwarded line.
     """
     for count in LIBJPEG_EXTRA_BYTES:
         jpeg = junk_before_eoi(synthetic_jpeg(), count)
         assert ring().check_jpeg(jpeg, delivered_len=len(jpeg), driver_error=False)[1] == 0
         assert _imdecode(jpeg).shape == (480, 640, 3), "cv2.imdecode must still decode the frame"
-    process = subprocess.run(
-        [sys.executable, "-c", "from skellycam.tests.frame_ring.ring_children import libjpeg_flood_main;"
-                               " libjpeg_flood_main()"],
-        capture_output=True, text=True, timeout=120)
+    command = [sys.executable, "-c", "from skellycam.tests.frame_ring.ring_children import libjpeg_flood_main;"
+                                     " libjpeg_flood_main()"]
+    windows = sys.platform == "win32"
+    relayed = []
+    if windows:
+        import logging
+
+        from skellycam.core.camera.capture.warning_pipe import child_stderr_pipe
+
+        class Keep(logging.Handler):
+            def emit(self, record):
+                relayed.append(record.getMessage())
+
+        relay_logger = logging.getLogger("skellycam.core.ipc.frame_ring.decode")
+        keep, old_level = Keep(), relay_logger.level
+        relay_logger.addHandler(keep)
+        relay_logger.setLevel(logging.WARNING)
+        try:
+            with child_stderr_pipe("t-ring-46"):
+                child = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            stdout, stderr = child.communicate(timeout=120)
+            time.sleep(1.0)  # the relay thread reads the end of the pipe
+        finally:
+            relay_logger.removeHandler(keep)
+            relay_logger.setLevel(old_level)
+        process = subprocess.CompletedProcess(command, child.returncode, stdout, stderr)
+    else:
+        process = subprocess.run(command, capture_output=True, text=True, timeout=120)
     assert process.returncode == 0, process.stderr[-2000:]
     stderr_warnings = LIBJPEG_WARNING.findall(process.stderr)
-    assert len(stderr_warnings) == 1, (
-        f"{len(stderr_warnings)} libjpeg warning lines on descriptor 2 (1 expected, from the set-up decode)")
+    assert len(stderr_warnings) == (0 if windows else 1), (
+        f"{len(stderr_warnings)} libjpeg warning lines on descriptor 2")
     report = json.loads(process.stdout.strip().splitlines()[-1])
+    if windows:
+        assert relayed and LIBJPEG_WARNING.search(relayed[0]), "the set-up warning was not forwarded"
+        report["messages"] += relayed
     allowed = 1 + int(report["elapsed_s"] // 60)
     forwarded = {}
     for message in report["messages"]:

@@ -2,7 +2,6 @@ import logging
 import multiprocessing
 import time
 from dataclasses import dataclass
-from copy import deepcopy
 from multiprocessing.sharedctypes import Synchronized
 
 import numpy as np
@@ -33,12 +32,21 @@ class CameraOrchestrator:
                    last_recording_frame_number=multiprocessing.Value("q", -1))
 
     @property
+    def gate_statuses(self) -> dict[CameraIdString, CameraStatus]:
+        """The cameras that hold the gate back (5.2): `checking`, `too_slow`, `ready` and `recording`."""
+        return {camera_id: status for camera_id, status in list(self.camera_statuses.items()) if status.in_gate}
+
+    @property
     def all_ready(self) -> bool:
-        return all([status.ready for status in self.camera_statuses.values()])
+        return all([status.ready for status in list(self.camera_statuses.values())])
 
     @property
     def all_cameras_recording(self):
-        return all([status.recording_in_progress.value for status in self.camera_statuses.values()])
+        return all([status.recording_in_progress.value for status in self.gate_statuses.values()])
+
+    def largest_gate_count(self) -> int:
+        """A camera that joins the gate starts with the largest gate count of the group (5.2)."""
+        return max((status.frame_count.value for status in self.gate_statuses.values()), default=-1)
 
     @property
     def all_cameras_paused(self):
@@ -60,7 +68,7 @@ class CameraOrchestrator:
 
     async def pause(self, await_paused: bool = True) -> None:
         logger.info("Pausing all cameras...")
-        for status in self.camera_statuses.values():
+        for status in self.gate_statuses.values():
             status.should_pause.value = True
 
         if await_paused:
@@ -83,14 +91,14 @@ class CameraOrchestrator:
         deadline = time.monotonic() + CAMERA_STATE_TIMEOUT_SECONDS
         while True:
             unavailable = [
-                camera_id for camera_id, status in self.camera_statuses.items()
+                camera_id for camera_id, status in self.gate_statuses.items()
                 if status.error.value or status.closing.value
                 or status.closed.value or status.should_close.value
             ]
             if unavailable:
                 raise RuntimeError(f"Cannot {action}: cameras failed or closed: {unavailable}")
             pending = [
-                camera_id for camera_id, status in self.camera_statuses.items()
+                camera_id for camera_id, status in self.gate_statuses.items()
                 if bool(status.is_paused.value) != paused
             ]
             if not pending:
@@ -119,16 +127,18 @@ class CameraOrchestrator:
         if not camera_id in self.camera_statuses:
             raise ValueError(f"Camera ID {camera_id} not found in orchestrator: {self.camera_statuses.keys()}")
 
-        if not self.all_ready:
+        statuses = list(self.camera_statuses.values())
+        states = [status.state for status in statuses]
+        if None in states:  # the phase 2 loop sets no state: its rule, each camera ready
+            return self.all_ready and all(self.camera_statuses[camera_id].frame_count.value <= status.frame_count.value
+                                          for status in statuses)
+        if "waiting" in states and "starting" not in states:
+            return False  # the waiting cameras join now; they all start with the same gate count (9.4)
+        gate = self.gate_statuses
+        if any(status.should_pause.value for status in gate.values()):
             return False
-
-        return self._all_camera_counts_greater_than_or_equal_to_camera(camera_id)
-
-    def _all_camera_counts_greater_than_or_equal_to_camera(self, camera_id: CameraIdString) -> bool:
-        counts = deepcopy(self.camera_frame_counts)
-        if all(counts[camera_id] <= count for count in counts.values()):
-            return True
-        return False
+        own = self.camera_statuses[camera_id].frame_count.value
+        return all(own <= status.frame_count.value for status in gate.values())
 
     def close(self):
         """Signal closure; CameraManager owns bounded worker joins and escalation."""

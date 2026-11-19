@@ -17,6 +17,7 @@ from skellycam.core.types.type_overloads import TopicPublicationQueue, CameraIdS
 @dataclass
 class DeviceExtractedConfigMessage(TopicMessageABC):
     extracted_config: CameraConfig
+    control_change_failed: str | None = None  # the text of a failed live change (11.2, U14)
 
 
 @dataclass

@@ -31,6 +31,7 @@ from enum import Enum
 from typing import Callable
 
 from skellycam import LOG_LEVEL
+from skellycam.utilities.utf8_console import utf8_console
 from skellylogs import configure_logging
 
 logger = logging.getLogger(__name__)
@@ -223,6 +224,7 @@ def _process_entry_point(
     signal.signal(signal.SIGINT, _on_signal)
 
     if log_queue is not None:
+        utf8_console()
         configure_logging(LOG_LEVEL, ws_queue=log_queue)
 
     clean_exit = False

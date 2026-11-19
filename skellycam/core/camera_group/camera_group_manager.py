@@ -2,13 +2,25 @@ import logging
 import multiprocessing
 from multiprocessing.sharedctypes import Synchronized
 from dataclasses import dataclass, field
+from collections.abc import Callable
 
 import numpy as np
 from fastapi import FastAPI
 
 from skellycam.api.websocket.performance_data import extract_performance_data_from_frames
+from skellycam.core.camera.capture.modes import (
+    FLOOR_FPS,
+    NO_FLOOR_MODE,
+    choose_mode,
+    group_rate_problem,
+    mixed_rate_text,
+    native_from_supported,
+    rates_equal,
+)
+from skellycam.core.camera.capture.source import CaptureFailure, CaptureRequest
 from skellycam.core.camera.config.camera_config import CameraConfigs
-from skellycam.core.camera_group.camera_group import CameraGroup
+from skellycam.core.camera_group.camera_group import CameraGroup, RequestRefused, same_config
+from skellycam.core.device_detection.detect_cameras_devices import CameraDeviceInfo
 from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes
 from skellycam.core.ipc.pubsub.pubsub_topics import FramerateMessage
 from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
@@ -30,6 +42,8 @@ logger = logging.getLogger(__name__)
 class CameraGroupManager:
     global_kill_flag: Synchronized
     worker_registry: WorkerRegistry
+    source_factory: Callable | None = None  # ADR-HP7D item 10; None: the source of 14.2
+    detected_cameras: dict[CameraIdString, CameraDeviceInfo] = field(default_factory=dict)  # U17 (c)
     closing: bool = False
     camera_groups: dict[CameraGroupIdString, CameraGroup] = field(default_factory=dict)
     camera_group_framerate_subscriptions: dict[CameraGroupIdString, TopicSubscriptionQueue] = field(
@@ -38,23 +52,26 @@ class CameraGroupManager:
 
     async def create_and_start_camera_group(self, camera_configs: CameraConfigs) -> CameraGroup:
         """Create a camera group with the provided configuration settings."""
+        camera_group, _ = await self._create_and_start(camera_configs)
+        return camera_group
+
+    async def _create_and_start(self, camera_configs: CameraConfigs) -> tuple:
         camera_group = CameraGroup.create(
             camera_configs=camera_configs,
             heartbeat_timestamp=self.worker_registry.heartbeat_timestamp,
             global_kill_flag=self.global_kill_flag,
             worker_registry=self.worker_registry,
+            source_factory=self.source_factory,
         )
         self.camera_group_framerate_subscriptions[camera_group.id] = (
             camera_group.ipc.pubsub.get_subscription(TopicTypes.FRAMERATE)
         )
         self.camera_groups[camera_group.id] = camera_group
         try:
-            await self.camera_groups[camera_group.id].start()
+            failures = await self.camera_groups[camera_group.id].start()
         except Exception:
-            # Startup failed (e.g. a camera couldn't open) — tear the
-            # half-started group down so a retry creates a fresh group instead
-            # of finding this one and trying to "update" a group whose workers
-            # already exited.
+            # Startup failed (e.g. the group stopped) — tear the half-started group down so a
+            # retry creates a fresh group.
             logger.error(f"Camera group {camera_group.id} failed to start, tearing it down")
             try:
                 await camera_group.close()
@@ -68,19 +85,92 @@ class CameraGroupManager:
             f"Creating camera group with ID: {camera_group.id} "
             f"and cameras: {camera_group.camera_ids}"
         )
-        return camera_group
+        return camera_group, failures
 
-    async def create_or_update_camera_group(self, camera_configs: CameraConfigs) -> CameraGroup:
-        """Create a camera group with the provided configuration settings."""
+    async def create_or_update_camera_group(self, camera_configs: CameraConfigs) -> tuple[CameraGroup, dict, list]:
+        """Check the request as a whole (8.3), then apply it to each camera on its own (U10).
+
+        Return the group, the failure object of each camera that failed (8.4) and the warnings (11.3).
+        Raise `RequestRefused` (422 or 409) before any change.
+        """
         camera_groups = self._get_configs_by_group(camera_configs)
-        if not camera_groups:
-            return await self.create_and_start_camera_group(camera_configs)
         if len(camera_groups) > 1:
             raise NotImplementedError("Cannot update multiple camera groups at once (yet).")
-        camera_group_id, configs = next(iter(camera_groups.items()))
-        camera_group = self.get_camera_group(camera_group_id)
-        await camera_group.update_camera_settings(requested_configs=configs)
-        return camera_group
+        camera_group = self.get_camera_group(next(iter(camera_groups))) if camera_groups else None
+        warnings, rates_known = self._check_request(camera_configs, camera_group)
+        if camera_group is None:
+            selected = {camera_id: config for camera_id, config in camera_configs.items() if config.use_this_camera}
+            camera_group, failures = await self._create_and_start(selected)
+        else:
+            failures, change_warnings = await camera_group.apply(camera_configs)
+            warnings += change_warnings
+        if not rates_known:
+            # agent 56, user 2026-11-19: different real rates after the open give a warning, not a refusal
+            rates = {camera_id: config.framerate for camera_id, config in camera_group.configs.items()
+                     if config.framerate > 0 and camera_id not in failures}
+            text = mixed_rate_text(rates) if rates else None
+            if text:
+                warnings.append(dict(kind="mixed_rate", camera_ids=sorted(rates), text=text))
+                logger.warning(text)
+        return camera_group, failures, warnings
+
+    def _check_request(self, camera_configs: CameraConfigs, camera_group: CameraGroup | None) -> tuple[list, bool]:
+        """The whole-request check of 8.3: 422 by content (7.5, U11), then 409 by the camera states.
+
+        Return the warnings and whether the mode rates came from the detection data.
+        """
+        selected = {camera_id: config for camera_id, config in camera_configs.items() if config.use_this_camera}
+        if camera_group is None and not selected:
+            raise RequestRefused(422, "The request selects no camera")
+        problems = [f"camera {camera_id}: {NO_FLOOR_MODE}" for camera_id, config in selected.items()
+                    if config.framerate not in (-1, 0) and config.framerate < FLOOR_FPS - 0.5]  # agent 55
+        infos = {camera_id: self.detected_cameras.get(camera_id) for camera_id in selected}
+        problems += [f"camera {camera_id} is a virtual camera; virtual cameras cannot be selected"
+                     for camera_id, info in infos.items() if info is not None and info.virtual]  # user, 2026-11-19
+        rates_known = bool(selected) and all(info is not None and info.supported_modes for info in infos.values())
+        warnings = []
+        if rates_known:  # ADR-HP7D item 2: the mode rates that 7.5 gives from the detection data
+            rates = {}
+            for camera_id, config in selected.items():
+                request = CaptureRequest(camera_id=camera_id, width=config.resolution.width,
+                                         height=config.resolution.height, framerate=config.framerate,
+                                         capture_fourcc=config.capture_fourcc)
+                try:
+                    rates[camera_id] = choose_mode(native_from_supported(infos[camera_id].supported_modes),
+                                                   request).fps
+                except CaptureFailure as failure:
+                    problems.append(f"camera {camera_id}: {failure.reason}")
+            if not problems and rates:
+                problem = group_rate_problem(rates)
+                if problem:
+                    problems.append(problem)
+                elif text := mixed_rate_text(rates):  # U15: 29.97 with 30 is allowed, with a warning
+                    warnings.append(dict(kind="mixed_rate", camera_ids=sorted(rates), text=text))
+        else:  # agent 56: the requested rates must be all equal or all auto
+            requested = [config.framerate for config in selected.values()]
+            autos = [rate in (-1, 0) for rate in requested]
+            if not all(autos) and (any(autos) or not all(rates_equal(rate, requested[0]) for rate in requested)):
+                problems.append("all cameras of a group must request one frame rate, or each 'auto': "
+                                + ", ".join(f"camera {camera_id} {config.framerate:g}"
+                                            for camera_id, config in selected.items()))
+        if problems:
+            raise RequestRefused(422, "; ".join(problems))
+        if camera_group is not None:
+            statuses = camera_group.cameras.orchestrator.camera_statuses
+            recording = [camera_id for camera_id, status in list(statuses.items())
+                         if status.recording_in_progress.value]
+            if recording:  # D36
+                raise RequestRefused(409, "A recording runs: no change is possible; recording cameras: "
+                                          + ", ".join(recording))
+            blocked = [f"camera {camera_id} is {statuses[camera_id].state}"
+                       for camera_id, config in camera_configs.items()
+                       if camera_id in camera_group.configs and statuses[camera_id].state in ("starting", "waiting")
+                       and config.use_this_camera and not same_config(config, camera_group.configs[camera_id])]
+            if blocked:  # agent 45
+                raise RequestRefused(409, "A camera that starts cannot take a changed config: " + "; ".join(blocked))
+        for item in warnings:
+            logger.warning(item["text"])
+        return warnings, rates_known
 
     def get_camera_group(self, camera_group_id: CameraGroupIdString) -> CameraGroup:
         """Retrieve a camera group by its ID."""
@@ -114,11 +204,13 @@ class CameraGroupManager:
         self.camera_groups.clear()
         self.closing = False
 
-    async def start_recording_all_groups(self, recording_info: RecordingInfo) -> None:
-        """Start recording for all camera groups."""
+    async def start_recording_all_groups(self, recording_info: RecordingInfo) -> list:
+        """Start recording for all camera groups. Return the warnings of 11.3."""
+        warnings = []
         for camera_group in self.camera_groups.values():
-            await camera_group.start_recording(recording_info=recording_info)
+            warnings += await camera_group.start_recording(recording_info=recording_info)
             logger.info(f"Started recording for camera group ID: {camera_group.id}")
+        return warnings
 
     async def stop_recording_all_groups(self) -> list[tuple["RecordingInfo", "RecordingTimestampsStats"]]:
         """Stop recording for all camera groups."""

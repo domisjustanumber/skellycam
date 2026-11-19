@@ -2,11 +2,15 @@ import logging
 import sys
 import time
 from dataclasses import dataclass
+from collections.abc import Callable
+
 from skellycam.core.camera.camera_worker import CameraWorker, CameraState
-from skellycam.core.camera.config.camera_config import CameraConfigs
+from skellycam.core.camera.capture.source import BOUNDED_CALL_LIMIT_S
+from skellycam.core.camera.config.camera_config import CameraConfig, CameraConfigs
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 from skellycam.core.camera_group.camera_status import CameraStatus
+from skellycam.core.ipc.process_management.managed_worker import ManagedProcess
 from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
 from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes
 from skellycam.core.types.type_overloads import CameraIdString
@@ -19,6 +23,8 @@ class CameraManager:
     ipc: CameraGroupIPC
     orchestrator: CameraOrchestrator
     camera_workers: dict[CameraIdString, CameraWorker]
+    worker_registry: WorkerRegistry | None = None
+    source_factory: Callable | None = None
 
     @property
     def all_ready(self) -> bool:
@@ -31,6 +37,7 @@ class CameraManager:
         ipc: CameraGroupIPC,
         worker_registry: WorkerRegistry,
         camera_configs: CameraConfigs,
+        source_factory: Callable | None = None,
     ) -> "CameraManager":
         logger.info(f"Starting camera manager process with {len(camera_configs)} cameras")
 
@@ -39,31 +46,42 @@ class CameraManager:
         }
         orchestrator = CameraOrchestrator.from_statuses(camera_statuses=camera_statuses)
 
-        camera_workers = {
-            camera_id: CameraWorker.create(
-                camera_id=camera_id,
-                ipc=ipc,
-                worker_registry=worker_registry,
-                orchestrator=orchestrator,
-                config=camera_config,
-                update_camera_settings_subscription=ipc.pubsub.topics[
-                    TopicTypes.UPDATE_CAMERA_SETTINGS
-                ].get_subscription(),
-                shm_subscription=ipc.pubsub.topics[
-                    TopicTypes.SHM_UPDATES
-                ].get_subscription(),
-                recording_info_subscription=ipc.pubsub.topics[
-                    TopicTypes.RECORDING_INFO
-                ].get_subscription(),
-            )
-            for camera_id, camera_config in camera_configs.items()
-        }
+        manager = cls(ipc=ipc, camera_workers={}, orchestrator=orchestrator, worker_registry=worker_registry,
+                      source_factory=source_factory)
+        for camera_id, camera_config in camera_configs.items():
+            manager.camera_workers[camera_id] = manager._create_worker(camera_id, camera_config)
+        return manager
 
-        return cls(
-            ipc=ipc,
-            camera_workers=camera_workers,
-            orchestrator=orchestrator,
+    def _create_worker(self, camera_id: CameraIdString, config: CameraConfig) -> CameraWorker:
+        topics = self.ipc.pubsub.topics
+        return CameraWorker.create(
+            camera_id=camera_id,
+            ipc=self.ipc,
+            worker_registry=self.worker_registry,
+            orchestrator=self.orchestrator,
+            config=config,
+            update_camera_settings_subscription=topics[TopicTypes.UPDATE_CAMERA_SETTINGS].get_subscription(),
+            shm_subscription=topics[TopicTypes.SHM_UPDATES].get_subscription(),
+            recording_info_subscription=topics[TopicTypes.RECORDING_INFO].get_subscription(),
+            source_factory=self.source_factory,
         )
+
+    def restart_camera(self, camera_id: CameraIdString, config: CameraConfig) -> None:
+        """"Apply again" for a `failed` or `dead` camera: a new camera process with the same status (8.2, D23)."""
+        self.camera_workers[camera_id].join(timeout=BOUNDED_CALL_LIMIT_S)
+        self.orchestrator.camera_statuses[camera_id].reset_for_start()
+        self.camera_workers[camera_id] = self._create_worker(camera_id, config)
+        self.camera_workers[camera_id].start()
+
+    def remove_camera(self, camera_id: CameraIdString) -> None:
+        """Unselect (8.3, agent 24): close the camera and remove it from the gate and the record check."""
+        status = self.orchestrator.camera_statuses[camera_id]
+        status.should_close.value = True
+        worker = self.camera_workers.pop(camera_id)
+        worker.worker.mark_stopping()
+        worker.join(timeout=2 * BOUNDED_CALL_LIMIT_S)
+        status.set_state("failed")  # not in the gate of the other camera processes, which keep this status
+        del self.orchestrator.camera_statuses[camera_id]
 
     def start(self) -> None:
         logger.info("Starting camera processes...")
@@ -75,8 +93,10 @@ class CameraManager:
         # finish its import phase before the next one starts.
         _SPAWN_STAGGER_SECONDS: float = 0.25 if sys.platform == "win32" else 0.0
 
+        for status in self.orchestrator.camera_statuses.values():
+            status.set_state("starting")  # each camera, so that no camera joins the gate before the others start
         for worker in self.camera_workers.values():
-            if _SPAWN_STAGGER_SECONDS >= 0:
+            if isinstance(worker.worker, ManagedProcess):  # threads do not import again
                 time.sleep(_SPAWN_STAGGER_SECONDS)
             worker.start()
 

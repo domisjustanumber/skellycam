@@ -80,10 +80,7 @@ def setup_opencv_camera_loop(config: CameraConfig,
         logger.exception(f"Failed to create cv2.VideoCapture for camera {config.camera_id}: {e}")
         self_status.signal_error()
         # Stop only this camera group's siblings, not the whole backend.
-        failure = CameraSetupFailure(
-            camera_id=config.camera_id, phase=phase,
-            exception_type=type(e).__name__, message=str(e),
-        )
+        failure = CameraSetupFailure(camera_id=config.camera_id, stage=phase, reason=f"{type(e).__name__}: {e}")
         ipc.report_setup_failure(failure)
         # This function owns the capture until it returns successfully.
         if cv2_video_capture is not None:

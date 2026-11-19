@@ -16,6 +16,10 @@ __package_root__ = str(__import__("pathlib").Path(__file__).parent)
 from beartype.claw import beartype_this_package
 beartype_this_package()
 
+# Before any module loads OpenCV: a camera process on Windows takes the warning pipe of the main process (5.6).
+from skellycam.core.camera.capture.warning_pipe import attach_stderr_pipe
+attach_stderr_pipe()
+
 import multiprocessing
 
 

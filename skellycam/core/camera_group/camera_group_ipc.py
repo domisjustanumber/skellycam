@@ -34,18 +34,19 @@ class CameraGroupIPC:
     # shared shutdown flag changes. A Queue feeder thread would race that flag.
     setup_failures: SimpleQueue = field(default_factory=multiprocessing.SimpleQueue)
     setup_failure_lock: Lock = field(default_factory=multiprocessing.Lock)
+    # The cameras that reported in this process; a new camera process reports again (spec 12, U9).
+    reported_camera_ids: set = field(default_factory=set)
 
     def report_setup_failure(self, failure: CameraSetupFailure) -> None:
+        """Keep the first failure of each camera. The other cameras stay open, so no shutdown flag (D23)."""
         with self.setup_failure_lock:
-            # Preserve the initiating failure, not a sibling's shutdown error.
-            if not self.shutdown_camera_group_flag.value:
-                # Keep the first record below pipe capacity, even for verbose
-                # native errors, so publishing never waits for the parent reader.
-                self.setup_failures.put(CameraSetupFailure(
-                    camera_id=failure.camera_id[:128], phase=failure.phase[:128],
-                    exception_type=failure.exception_type[:128], message=failure.message[:512],
-                ))
-                self.shutdown_camera_group_flag.value = True
+            if failure.camera_id in self.reported_camera_ids:
+                return
+            self.reported_camera_ids.add(failure.camera_id)
+            # Keep the record below pipe capacity, even for verbose native errors,
+            # so publishing never waits for the parent reader.
+            self.setup_failures.put(CameraSetupFailure(camera_id=failure.camera_id[:128],
+                                                       stage=failure.stage[:128], reason=failure.reason[:2048]))
 
     def take_setup_failure(self) -> CameraSetupFailure | None:
         with self.setup_failure_lock:

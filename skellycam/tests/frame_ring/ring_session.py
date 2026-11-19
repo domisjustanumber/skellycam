@@ -80,6 +80,9 @@ def patch_fakes(monkeypatch):
     monkeypatch.setattr(logging.Logger, "success", logging.Logger.info, raising=False)
     monkeypatch.setattr(setup_module, "create_cv2_video_capture", fake_create_cv2_video_capture)
     monkeypatch.setattr(loop_module, "create_cv2_video_capture", fake_create_cv2_video_capture)
+    # Phase 3: a camera session runs the shared loop with the OpenCV source (ADR-HP7D item 13).
+    import skellycam.core.camera.capture.opencv_source as opencv_source_module
+    monkeypatch.setattr(opencv_source_module, "create_cv2_video_capture", fake_create_cv2_video_capture)
 
 
 def fake_configs(count=2, width=640, height=480, fps=30.0, bgr_ids=()):

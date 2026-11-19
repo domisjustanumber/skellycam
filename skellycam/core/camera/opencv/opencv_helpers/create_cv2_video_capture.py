@@ -1,3 +1,4 @@
+import hashlib
 import logging
 
 import cv2
@@ -28,8 +29,29 @@ logger = logging.getLogger(__name__)
 _PREFERRED_BUFFER_SIZE = 1
 
 
+MEDIA_FOUNDATION_VIDEO_INTERFACE = "#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global"
+
+
+def directshow_index(camera_id: str) -> int:
+    """U1 (specs/windows-capture.md, 14.2): the DirectShow device whose device instance part (the part of
+    the link before the interface class GUID) is that of the Media Foundation link of `camera_id` (7.2).
+
+    shortcut: assumes that the Media Foundation link is `<instance part>#{video GUID}\\global` [NV];
+    T-CAP-88 checks it on the cameras.
+    """
+    from cv2_enumerate_cameras import enumerate_cameras
+
+    for camera in enumerate_cameras(cv2.CAP_DSHOW):
+        link = camera.path.lower().split("#{")[0] + MEDIA_FOUNDATION_VIDEO_INTERFACE
+        if format(int.from_bytes(hashlib.sha256(link.encode()).digest()[:2], "big"), "04x") == camera_id:
+            return camera.index
+    raise FailedToOpenCameraException(f"Camera {camera_id}: camera not found")
+
+
 def create_cv2_video_capture(config: CameraConfig, retry_count: int = 5) -> tuple[cv2.VideoCapture, CameraConfig]:
     cap_backend = determine_opencv_camera_backend()
+    if cap_backend.id == cv2.CAP_DSHOW:  # Windows: detection is Media Foundation (D11), so find the device by its link
+        config = config.model_copy(update=dict(camera_index=directshow_index(config.camera_id)))
     attempts = -1
     capture: cv2.VideoCapture | None = None
     while attempts < retry_count and capture is None:

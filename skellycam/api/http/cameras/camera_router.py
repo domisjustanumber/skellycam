@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 import numpy as np
 
 from skellycam.core.camera.config.camera_config import CameraConfig, DEFAULT_CAMERA_ID, CameraConfigs
+from skellycam.core.camera_group.camera_group import RequestRefused
 from skellycam.core.camera_group.camera_group_manager import get_or_create_camera_group_manager
 from skellycam.core.device_detection.detect_cameras_devices import CameraDeviceInfo, detect_available_cameras
 from skellycam.core.device_detection.detect_microphone_devices import get_available_microphones
@@ -55,6 +56,13 @@ class StartRecordingRequest(BaseModel):
 class CreateCameraGroupResponse(BaseModel):
     group_id: CameraGroupIdString
     camera_configs: CameraConfigs
+    camera_failures: dict[CameraIdString, dict] = Field(default_factory=dict)  # spec 8.4, section 12
+    warnings: list[dict] = Field(default_factory=list)  # spec 11.3
+
+
+class StartRecordingResponse(BaseModel):
+    started: bool
+    warnings: list[dict]  # spec 11.3
 
 
 class DetectedCamerasResponse(BaseModel):
@@ -94,6 +102,9 @@ def cameras_detect_endpoint(
 ) -> DetectedCamerasResponse:
     try:
         cameras = detect_available_cameras(backend_id=backend_id, filter_virtual=filter_virtual)
+        # The last detection result, for the whole-request check of the apply request (7.1, U17)
+        get_or_create_camera_group_manager(app=request.app).detected_cameras = {
+            camera.camera_id: camera for camera in cameras}
         return DetectedCamerasResponse(cameras=cameras)
     except Exception as e:
         logger.error(f"Error in {request.url}: {type(e).__name__} - {e}", exc_info=True)
@@ -120,13 +131,17 @@ async def camera_group_apply_post_endpoint(
         logger.info(f"Request to {request.url}: {raw_body.decode('utf-8')}")
 
         configs = request_body.camera_configs
-        camera_group = await get_or_create_camera_group_manager(app=request.app).create_or_update_camera_group(
-            camera_configs=configs)
+        camera_group, failures, warnings = await get_or_create_camera_group_manager(
+            app=request.app).create_or_update_camera_group(camera_configs=configs)
 
         return CreateCameraGroupResponse(
             group_id=camera_group.id,
-            camera_configs=camera_group.configs
+            camera_configs=camera_group.configs,
+            camera_failures=failures,
+            warnings=warnings,
         )
+    except RequestRefused as e:
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
     except Exception as e:
         logger.error(f"Error in {request.url}: {type(e).__name__} - {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
@@ -136,7 +151,7 @@ async def camera_group_apply_post_endpoint(
 async def start_recording(
         request: Request,
         request_body: StartRecordingRequest = Body(..., examples=[StartRecordingRequest()])
-) -> bool:
+) -> StartRecordingResponse:
     try:
         if request_body.recording_directory.startswith("~"):
             request_body.recording_directory = str(
@@ -144,10 +159,12 @@ async def start_recording(
             )
 
         Path(request_body.recording_directory).mkdir(parents=True, exist_ok=True)
-        await get_or_create_camera_group_manager(app=request.app).start_recording_all_groups(
+        warnings = await get_or_create_camera_group_manager(app=request.app).start_recording_all_groups(
             RecordingInfo(**request_body.model_dump()))
 
-        return True
+        return StartRecordingResponse(started=True, warnings=warnings)
+    except RequestRefused as e:
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
     except Exception as e:
         logger.error(f"Error in {request.url}: {type(e).__name__} - {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))

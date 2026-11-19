@@ -1,8 +1,12 @@
-import asyncio
-import logging
-import multiprocessing
-import os
-import signal
+from skellycam.utilities.utf8_console import utf8_console
+
+utf8_console()  # first: before an import configures the logging
+
+import asyncio  # noqa: E402
+import logging  # noqa: E402
+import multiprocessing  # noqa: E402
+import os  # noqa: E402
+import signal  # noqa: E402
 
 logger = logging.getLogger(__name__)
 

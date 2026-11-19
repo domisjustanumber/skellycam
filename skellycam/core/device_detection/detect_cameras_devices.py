@@ -9,6 +9,7 @@ from cv2_enumerate_cameras.camera_info import CameraInfo
 from pydantic import BaseModel, computed_field
 from tabulate import tabulate
 
+from skellycam.core.camera.capture.modes import CaptureMode  # ADR-HP7D item 3: also reachable here
 from skellycam.core.camera.determine_backend import determine_opencv_camera_backend, OpenCVBackend
 from skellycam.core.types.type_overloads import CameraIndexInt, CameraNameString, CameraBackendInt, CameraVendorIdInt, \
     CameraProductIdInt, CameraDevicePathString, CameraBackendNameString, CameraIdString
@@ -40,12 +41,15 @@ class CameraDeviceInfo(BaseModel):
     path: CameraDevicePathString | None = None
     backend_id: CameraBackendInt | None = None
     backend_name: CameraBackendNameString | None = None
+    supported_modes: list[CaptureMode] = []  # spec 7.3; empty when the mode list cannot be read
+    virtual: bool = False  # user, 2026-11-19: detection shows a virtual camera; a request cannot select it
 
     @computed_field
     @property
     def camera_id(self) -> CameraIdString:
         if self.path:
-            raw = self.path
+            # 7.2: the lower-case Media Foundation link; the path itself stays as the OS gives it (user, 2026-11-19)
+            raw = self.path.lower() if self.path.startswith(r"\\?" + "\\") else self.path
         elif self.vendor_id is not None and self.product_id is not None:
             raw = f"{self.vendor_id:04x}_{self.product_id:04x}_{self.index}"
         else:
@@ -87,7 +91,13 @@ def detect_available_cameras(backend_id: CameraBackendInt|None=None, filter_virt
     """
     Detects available cameras using the cv2_enumerate_cameras package.
     Returns a list of CameraInfo objects for each detected camera.
+
+    On Windows, detection uses Media Foundation, also while the OpenCV source is chosen (7.1, D11).
     """
+    if platform.system() == "Windows":
+        # Windows only, and it can load comtypes (U18): import it only here.
+        from skellycam.core.camera.capture.media_foundation.detect import detect_media_foundation_cameras
+        return detect_media_foundation_cameras()
     if backend_id is None:
         backend = determine_opencv_camera_backend()
     else:
@@ -97,8 +107,8 @@ def detect_available_cameras(backend_id: CameraBackendInt|None=None, filter_virt
     cameras: list[CameraDeviceInfo] =  []
     for camera_info in enumerate_cameras(apiPreference=backend.id):
         device = CameraDeviceInfo.from_camera_info(camera_info)
-        if filter_virtual and 'virtual' in camera_info.name.lower():
-            continue
+        # user, 2026-11-19: a virtual camera is listed and marked; the request check refuses it
+        device.virtual = filter_virtual and 'virtual' in camera_info.name.lower()
         if 'darwin' not in platform.system().lower():
             # On Windows/Linux, VID/PID is reliably provided - skip cameras without it.
             # On macOS (AVFoundation), VID/PID are often unavailable even for real USB cameras.
