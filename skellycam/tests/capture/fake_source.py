@@ -3,7 +3,9 @@
 `FakeSource` has the four calls of section 4.1 and `replaced_count`. A `FakeScript` gives the
 native modes, the arrival times, the controls and the faults of one camera. Each frame is a
 synthetic JPEG that `cv2.imencode` makes at test time. A JPEG comment segment holds the source frame
-number, so each payload is different. No camera and no camera frame is used.
+number, so each payload is different. In a YUY2 or NV12 mode (step 3b), each frame is a synthetic
+raw frame of `uncompressed.synthetic_raw`, and `OpenedMode` gets the OS range flag `os_range`
+(ADR-3WCA). No camera and no camera frame is used.
 
 The fake uses the product names of `skellycam.core.camera.capture` (ADR-HP7D). It puts each frame
 into `CaptureWaitingPlace` (4.3), and it chooses its mode with `modes.choose_mode` (7.5). Thus a
@@ -35,6 +37,8 @@ from types import SimpleNamespace
 
 import cv2
 import numpy as np
+
+from skellycam.tests.capture.uncompressed import RAW_FORMATS, synthetic_raw
 
 HOLD_LIMIT_S = 60.0  # a held call continues after this time, so that a failed test cannot hang
 MEDIA_FOUNDATION_VIDEO_GUID = "{e5323777-f976-4f5b-9b55-b94699c46e44}"
@@ -223,6 +227,9 @@ class FakeScript:
     rate_windows: tuple = ()  # (from_s, to_s, rate): the delivered rate between two clock times
     drop_at_window_end: bool = False  # the camera drops one frame when a rate window ends
     recorder_close_delay_s: float | None = None  # the old recorder of this camera needs this long to close
+    os_range: str | None = None  # YUY2, NV12: the range flag of the OS ("limited", "full"; None: not set)
+    y_outside: tuple = ()  # YUY2, NV12: (from frame, share of Y outside 16 to 235) pairs; else 0
+    short_frames: tuple = ()  # YUY2, NV12: frames that are 100 bytes short
 
 
 class FakeLog:
@@ -320,6 +327,8 @@ class FakeSource:
         self._stop_ns = None if script.stop_at_s is None else self._base_ns + round(script.stop_at_s * 1e9)
         self.slow_finished_ns = None
         self.cut_frames = []
+        self._short_next = False
+        self.short = []  # frames that were 100 bytes short
         self.removed_frame = None
 
     # ----- the capture interface (4.1) -----
@@ -372,8 +381,9 @@ class FakeSource:
         self._event("first_frame", None)
         if number in self.script.hold_opens:
             self._hold()
+        extra = {"os_range": self.script.os_range} if mode.format in RAW_FORMATS else {}
         return types.OpenedMode(width=mode.width, height=mode.height, fps_num=mode.fps_num,
-                                fps_den=mode.fps_den, format=mode.format, device_path=self.link)
+                                fps_den=mode.fps_den, format=mode.format, device_path=self.link, **extra)
 
     def read_frame(self, timeout_s):
         if self.on_read is not None:
@@ -466,6 +476,11 @@ class FakeSource:
     def cut_off_next(self):
         with self._lock:
             self._cut_next = True
+
+    def short_next(self):
+        """YUY2, NV12: the next frame is 100 bytes short."""
+        with self._lock:
+            self._short_next = True
 
     def remove_now(self):
         """Device removed after the next frame."""
@@ -597,6 +612,8 @@ class FakeSource:
     def _make_frame(self, k, arrival):
         types = self.types
         width, height = self._mode.width, self._mode.height
+        if self._mode.format in RAW_FORMATS:
+            return self._make_raw_frame(k, arrival)
         payload = with_comment(synthetic_jpeg(width, height, self._gray()), k)
         if k in self.script.cut_off_frames or self._cut_next:
             self._cut_next = False
@@ -607,6 +624,26 @@ class FakeSource:
         return types.CapturedFrame(
             payload=payload, format=self._mode.format, arrival_ns=arrival, sample_ns=sample,
             delivered_len=len(payload), driver_error=False, source_frame_number=k,
+            discontinuity=k in self._drops or k in self.script.discontinuity_frames)
+
+    def _make_raw_frame(self, k, arrival):
+        """A raw frame as one new object (13.2). A short frame is a 1-D uint8 array of the delivered
+        bytes (ADR-3WCA); `delivered_len` is its length."""
+        types = self.types
+        share = 0.0
+        for first, value in self.script.y_outside:
+            if k >= first:
+                share = value
+        payload = synthetic_raw(self._mode.format, self._mode.width, self._mode.height, share)
+        if k in self.script.short_frames or self._short_next:
+            self._short_next = False
+            self.short.append(k)
+            payload = payload.reshape(-1)[:-100].copy()
+        offset = self.script.sample_offset_ms
+        sample = types.NO_SAMPLE_NS if offset is None else arrival + round(offset * 1e6)
+        return types.CapturedFrame(
+            payload=payload, format=self._mode.format, arrival_ns=arrival, sample_ns=sample,
+            delivered_len=payload.nbytes, driver_error=False, source_frame_number=k,
             discontinuity=k in self._drops or k in self.script.discontinuity_frames)
 
     def _gray(self):
@@ -694,11 +731,14 @@ def _delay_recorder_close(seconds):
 class FakeSourceFactory:
     """The `source_factory` of `CameraGroupManager` (ADR-HP7D): `factory(config)` gives a new
     FakeSource for the camera of `config`. Camera i has the link `fake_link(i)` and the
-    `camera_id` of 7.2. It can be pickled for camera processes when `clock` and `on_read` are None."""
+    `camera_id` of 7.2. It can be pickled for camera processes when `clock` and `on_read` are None.
+    `full_modes=True` (steps 3b and 3c) also gives the full mode list `capture_modes` of 7.4 in the
+    detection result, which the whole-request check of a YUY2 or NV12 request uses (7.5, ADR-3WCA)."""
     scripts: list
     clock: object = None
     types: object = None
     on_read: object = None
+    full_modes: bool = False
     logs: dict = field(default_factory=dict)
     sources: dict = field(default_factory=dict)
 
@@ -731,7 +771,8 @@ class FakeSourceFactory:
         infos = []
         for index, script in enumerate(self.scripts):
             native = [modes.NativeMode(*m) for m in (script.detected_modes or script.modes)]
+            extra = {"capture_modes": modes.capture_modes(native)} if self.full_modes else {}
             infos.append(CameraDeviceInfo(index=index, name=f"Fake camera {index}", vendor_id=0xFEED,
                                           product_id=index, path=self.links[index],
-                                          supported_modes=modes.supported_modes(native)))
+                                          supported_modes=modes.supported_modes(native), **extra))
         return infos

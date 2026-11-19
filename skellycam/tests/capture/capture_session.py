@@ -124,8 +124,10 @@ class Spies:
         put, imdecode = decode_module.WaitingPlace.put, cv2.imdecode
 
         def spy_write(writer, payload, **kwargs):
-            kind = "bgr" if isinstance(payload, np.ndarray) or payload is None else "jpeg"
-            event = spies._add(kind, camera=spies._camera_of_ring(writer.name), ring=writer.name,
+            camera, kind = spies._ring_of(writer.name)
+            if kind is None:
+                kind = "bgr" if isinstance(payload, np.ndarray) or payload is None else "jpeg"
+            event = spies._add(kind, camera=camera, ring=writer.name,
                                frame_number=kwargs["frame_number"], arrival_ns=kwargs["arrival_ns"],
                                sample_ns=kwargs["sample_ns"], sfn=kwargs["source_frame_number"],
                                flags=int(kwargs["flags"]),
@@ -140,7 +142,7 @@ class Spies:
             image = frame.image[0]
             spies._add("record", camera=recorder.camera_id, frame_number=int(frame.frame_metadata.frame_number[0]),
                        arrival_ns=int(frame.frame_metadata.timestamps.post_frame_grab_ns[0]),
-                       hash=digest(image))
+                       hash=digest(image), shape=tuple(np.shape(image)), dtype=str(np.asarray(image).dtype))
             return record_frame(recorder, frame)
 
         def spy_put(place, item):
@@ -167,14 +169,17 @@ class Spies:
             self.events.append(event)
         return event
 
-    def _camera_of_ring(self, name):
+    def _ring_of(self, name):
+        """(camera_id, "jpeg" or "bgr") of a ring name, from `ring_infos`; (None, None) if unknown."""
         group = self.app.group_or_none() if self.app is not None else None
         if group is None:
-            return None
+            return None, None
         for camera_id, info in list(group.ring_infos.items()):
-            if name in (info.jpeg_ring_name, info.bgr_ring_name):
-                return camera_id
-        return None
+            if name == info.jpeg_ring_name:
+                return camera_id, "jpeg"
+            if name == info.bgr_ring_name:
+                return camera_id, "bgr"
+        return None, None
 
     def of(self, kind, camera=None):
         return [e for e in list(self.events) if e["kind"] == kind and (camera is None or e.get("camera") == camera)]
@@ -465,13 +470,15 @@ def numbers_in(text):
     return [float(value) for value in re.findall(r"-?\d+(?:\.\d+)?", text)]
 
 
-def stop_line_count(messages, camera_id):
-    """The count of the stop line of 5.2 (ADR-HP7D): the camera ID, then `replaced`, then the count."""
+def stop_line_count(messages, camera_id, word="replaced"):
+    """The count of a stop line: the camera ID, then `word`, then the count. The stop line of 5.2 has
+    the word `replaced` (ADR-HP7D); the stop line of the encoder of 13.2 has `encoder fallbacks`
+    (ADR-3WCA)."""
     import re
 
-    pattern = re.compile(rf"\b{re.escape(camera_id)}\b.*?\breplaced\b\D*(\d+)", re.IGNORECASE)
+    pattern = re.compile(rf"\b{re.escape(camera_id)}\b.*?\b{re.escape(word)}\b\D*(\d+)", re.IGNORECASE)
     counts = [int(match.group(1)) for message in messages if (match := pattern.search(message))]
-    assert len(counts) == 1, f"{len(counts)} stop lines with the replaced count for camera {camera_id}"
+    assert len(counts) == 1, f"{len(counts)} stop lines with the {word} count for camera {camera_id}"
     return counts[0]
 
 
