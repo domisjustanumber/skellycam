@@ -214,6 +214,8 @@ markers = [
     "sample_data: full 1108-frame sample recording capture reads",
     "ring_portable: frame ring tests that T-RING-34 (Apple Silicon) and T-RING-35 (arm64 CI) run again",
     "ring_slow: frame ring tests that measure time, kill processes or run long; SKELLYCAM_RING_FULL=1 gives the spec durations",
+    "camera_hardware: capture tests that need the cameras; they run only with SKELLYCAM_HARDWARE=1 (specs/windows-capture.md 16.1)",
+    "capture_local: capture tests for the Windows development machine only; CI leaves them out (specs/windows-capture.md 16.1)",
 ]
 
 # =============================================================================

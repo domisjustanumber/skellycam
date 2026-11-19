@@ -1,0 +1,658 @@
+"""Camera states, start-up, live changes, recordings with warnings and dead cameras, and the group
+rules (specs/windows-capture.md, sections 5.2, 5.7, 5.8, 7.5, 8 to 12).
+
+T-CAP-13, 14, 19 to 21, 29 to 38, 42, 81, 83, 84, 86, 90 and 91. Each test runs fake cameras
+through the HTTP endpoints with THREAD workers and a virtual clock (`capture_session`). A
+`StateTracker` keeps the state of each camera at each read of a fake, with the virtual time.
+"""
+
+import dataclasses
+import json
+import logging
+import threading
+
+import pytest
+
+from skellycam.tests.capture.capture_session import (
+    Spies, capture_app, capture_logs, column, numbers_in, one_camera, parse_relay, ready_app_steps, recording_info,
+    recording_info_json, video_frame_count)
+from skellycam.tests.capture.fake_source import FakeScript
+
+FRAME_NS = round(1e9 / 30)
+MODES_30_60 = ((640, 480, 30, 1, "MJPG"), (640, 480, 60, 1, "MJPG"), (320, 240, 30, 1, "MJPG"))
+
+
+def opens(app, camera_id):
+    return app.factory.logs[camera_id].opens.value
+
+
+def detail(response):
+    return json.dumps(response.json().get("detail"))
+
+
+# ---------------------------------------------------------------------------
+# Start-up: warm-up, wait for the others, ready limit
+# ---------------------------------------------------------------------------
+
+def test_t_cap_13_warm_up_and_wait_for_the_others(monkeypatch):
+    """T-CAP-13, sections 9.2 and 9.4 [D21, agent 51]: two fake cameras; one opens 3 s later. The first
+    90 frames after read-back reach neither the ring nor the recorder; the first camera is `waiting`
+    and paused until the second has passed its check; then both are `ready`."""
+    with capture_app(monkeypatch, [FakeScript(), FakeScript(open_delay_s=3.0)], track=True) as app:
+        spies = Spies(monkeypatch, app)
+        ready_app_steps(app)
+        first, second = app.factory.camera_ids
+        for camera_id in (first, second):
+            start = app.factory.logs[camera_id].first_sfn_after_readback
+            writes = spies.of("jpeg", camera_id)
+            assert writes and writes[0]["sfn"] >= start + 90, f"camera {camera_id}: a warm-up frame reached the ring"
+        assert not spies.of("record")
+        passed = min(t for t, s in app.tracker.states(second) if s in ("waiting", "ready"))
+        waited = [t for t, s in app.tracker.states(first) if s == "waiting"]
+        assert waited and waited[0] < passed, "the first camera was not `waiting` while the second started"
+        early = [e for e in spies.of("jpeg", first) if e["arrival_ns"] < passed - FRAME_NS - 1_000_000]
+        assert not early, "the first camera was not paused while it waited"
+
+
+def test_t_cap_14_not_ready_in_15_s(monkeypatch):
+    """T-CAP-14, section 9.3 [D21, agent 14, agent 48]: one fake with mode rate 30. Its first frame comes
+    0.2 s after the first `ReadSample`; from then on it delivers 5 fps, so that 90 warm-up frames
+    need 18 s. Failed, stage `warm-up`, reason "not ready in 15 s", at 15.0 to 15.5 s after the open.
+
+    The failed camera stops reading, so the virtual clock stops at the time of the decision."""
+    with one_camera(monkeypatch, FakeScript(first_frame_delay_s=0.2, rate=5.0)) as (app, camera_id, response):
+        status = app.status(camera_id)
+        assert status["state"] == "failed"
+        assert status["failure"] == {"camera_id": camera_id, "stage": "warm-up", "reason": "not ready in 15 s"}
+        open_ns = next(t for name, t, _ in app.factory.logs[camera_id].events if name == "open")
+        elapsed = (app.clock.now_ns() - open_ns) / 1e9
+        assert 15.0 <= elapsed <= 15.5, f"failed {elapsed:.3f} s after the open"
+
+
+# ---------------------------------------------------------------------------
+# A failed camera: T-CAP-19 to T-CAP-21
+# ---------------------------------------------------------------------------
+
+def start_with_one_in_use(app):
+    """The set-up of T-CAP-19: three fakes; the third is in use at its first open."""
+    app.detect()
+    response = app.apply([app.config(cid) for cid in app.factory.camera_ids])
+    assert response.status_code == 200, response.text
+    good, failed = app.factory.camera_ids[:2], app.factory.camera_ids[2]
+    for camera_id in good:
+        app.wait_state(camera_id, "ready")
+    app.wait_state(failed, "failed")
+    return response, good, failed
+
+
+IN_USE_ONCE = [FakeScript(), FakeScript(), FakeScript(fail_opens=(1,))]
+
+
+def test_t_cap_19_a_camera_in_use_fails_alone(monkeypatch, tmp_path):
+    """T-CAP-19, sections 8.2, 8.3 and 12 [D13, D23]: three fakes; one is in use at open. That camera is
+    `failed` with "in use by another program"; the other two reach `ready` with preview; a record
+    start returns 409 and names it; after 60 s, its open count is still 1."""
+    with capture_app(monkeypatch, IN_USE_ONCE) as app:
+        spies = Spies(monkeypatch, app)
+        response, good, failed = start_with_one_in_use(app)
+        assert app.status(failed)["failure"] == {"camera_id": failed, "stage": "open",
+                                                 "reason": "in use by another program"}
+        assert response.json()["camera_failures"][failed]["reason"] == "in use by another program"
+        for camera_id in good:
+            count = len(spies.of("jpeg", camera_id))
+            app.wait(lambda: len(spies.of("jpeg", camera_id)) > count + 10, f"preview of {camera_id}")
+        refused = app.record_start(tmp_path)
+        assert refused.status_code == 409 and failed in detail(refused)
+        app.wait_clock(60.0)
+        assert opens(app, failed) == 1, "skellycam opened the failed camera again by itself"
+
+
+def test_t_cap_20_apply_again_reopens_only_the_failed_camera(monkeypatch):
+    """T-CAP-20, sections 8.2 and 8.3 [D23, D25]: after T-CAP-19: (1) apply the same configs again;
+    (2) fail the camera again and apply it with a changed exposure; (3) apply a request that gives all
+    three cameras the rate 60. (1) and (2): only the failed camera opens again, in (2) with the new
+    exposure; the ring names and the process IDs of the others do not change. (3): each camera reopens
+    at 60.
+
+    The camera fails again at its second open, the reopen of (1). With THREAD workers, the "process"
+    of a camera is its worker object; the test compares the object and its `pid`."""
+    scripts = [FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60),
+               FakeScript(modes=MODES_30_60, fail_opens=(1, 2))]
+    with capture_app(monkeypatch, scripts) as app:
+        _, good, failed = start_with_one_in_use(app)
+        before = {cid: (app.ring_name(cid), app.worker(cid), app.worker(cid).worker.pid) for cid in good}
+
+        def others_unchanged():
+            for camera_id in good:
+                assert opens(app, camera_id) == 1
+                ring, worker, pid = before[camera_id]
+                assert app.ring_name(camera_id) == ring
+                assert app.worker(camera_id) is worker and worker.worker.pid == pid
+
+        assert app.apply([app.config(cid) for cid in app.factory.camera_ids]).status_code == 200  # (1)
+        app.wait(lambda: opens(app, failed) == 2, "the failed camera opens again")
+        app.wait_state(failed, "failed")
+        others_unchanged()
+        configs = [app.config(cid) for cid in good] + [app.config(failed, exposure=-6)]
+        assert app.apply(configs).status_code == 200  # (2)
+        app.wait_state(failed, "ready")
+        assert opens(app, failed) == 3
+        settings = [s["exposure"] for s in app.factory.logs[failed].settings if "exposure" in s]
+        assert settings[-1].value == -6, "the reopen did not use the new exposure"
+        others_unchanged()
+        assert app.apply([app.config(cid, framerate=60.0) for cid in app.factory.camera_ids]).status_code == 200  # (3)
+        for camera_id in app.factory.camera_ids:
+            app.wait(lambda: app.state(camera_id) == "ready" and app.status(camera_id)["mode"]["fps_num"] == 60,
+                     f"camera {camera_id} at 60")
+        assert [opens(app, cid) for cid in app.factory.camera_ids] == [2, 2, 4]
+
+
+def test_t_cap_21_unselect_the_failed_camera(monkeypatch, tmp_path):
+    """T-CAP-21, sections 8.2 and 8.3 [D23, agent 24]: after T-CAP-19, apply with `use_this_camera:
+    false` for the failed camera. The camera leaves the group; a record start succeeds with two
+    cameras."""
+    with capture_app(monkeypatch, IN_USE_ONCE) as app:
+        _, good, failed = start_with_one_in_use(app)
+        configs = [app.config(cid) for cid in good] + [app.config(failed, use_this_camera=False)]
+        assert app.apply(configs).status_code == 200
+        app.wait(lambda: failed not in app.group.configs, "the camera leaves the group")
+        started = app.record_start(tmp_path)
+        assert started.status_code == 200, started.text
+        assert started.json()["started"] is True
+        assert app.record_stop().status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# One rate per group, live changes, checks: T-CAP-29 to T-CAP-33
+# ---------------------------------------------------------------------------
+
+def test_t_cap_29_one_mode_rate_per_group(monkeypatch):
+    """T-CAP-29, section 7.5 [D18, U7]: group of two with mode rates 30 and 60; group of two with -1 that
+    both give 30. The first apply fails and opens no camera; the second opens both."""
+    with capture_app(monkeypatch, [FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60)]) as app:
+        app.detect()
+        first, second = app.factory.camera_ids
+        refused = app.apply([app.config(first, framerate=30.0), app.config(second, framerate=60.0)])
+        assert refused.status_code == 422, refused.text
+        assert opens(app, first) == opens(app, second) == 0
+        response = app.apply([app.config(first, framerate=-1.0), app.config(second, framerate=-1.0)])
+        assert response.status_code == 200, response.text
+        for camera_id in (first, second):
+            app.wait_state(camera_id, "ready")
+            assert app.status(camera_id)["mode"]["fps_num"] == 30
+
+
+def test_t_cap_30_live_exposure_change_and_resolution_reopen(monkeypatch):
+    """T-CAP-30, sections 8.2 and 11.2 [D31]: change the exposure, then the resolution, of one camera of
+    two. Exposure: no reopen, same ring name, state `checking`; resolution: only that camera reopens,
+    new rings, warm-up and rate check again; the other camera keeps its preview."""
+    with capture_app(monkeypatch, [FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60)], track=True) as app:
+        spies = Spies(monkeypatch, app)
+        ready_app_steps(app)
+        changed, other = app.factory.camera_ids
+        ring = app.ring_name(changed)
+        t_exposure = app.clock.now_ns()
+        assert app.apply([app.config(changed, exposure=-6), app.config(other)]).status_code == 200
+        app.wait(lambda: app.tracker.first(changed, "checking", t_exposure) is not None, "state checking")
+        app.wait_state(changed, "ready")
+        assert opens(app, changed) == 1 and app.ring_name(changed) == ring
+        t_resize = app.clock.now_ns()
+        assert app.apply([app.config(changed, width=320, height=240), app.config(other)]).status_code == 200
+        app.wait(lambda: app.ring_name(changed) != ring and app.state(changed) == "ready", "the reopen")
+        t_starting = app.tracker.first(changed, "starting", t_resize)
+        t_ready = app.tracker.first(changed, "ready", t_starting)
+        assert t_starting is not None and t_ready is not None
+        assert (opens(app, changed), opens(app, other)) == (2, 1)
+        new_ring = [e for e in spies.of("jpeg", changed) if e["ring"] == app.ring_name(changed)]
+        assert new_ring[0]["sfn"] >= app.factory.logs[changed].first_sfn_after_readback + 90, "no warm-up after the reopen"
+        assert app.status(changed)["measured_fps"] is not None
+        assert [e for e in spies.of("jpeg", other) if t_starting <= e["arrival_ns"] <= t_ready], \
+            "the other camera had no preview while the camera reopened"
+
+
+def test_t_cap_31_too_slow_after_a_live_change(monkeypatch, tmp_path):
+    """T-CAP-31, section 10.2 [D32, D33]: after a live change, the fake goes to 20 fps; after a later
+    change, to 30 fps. State `checking`, then `too_slow` at t_a + 59 / (0.97 x 30) s = t_a + 2.0275 s,
+    within +/-25 ms, where t_a is the arrival of the first frame of the window; this is before the
+    window could end at 20 fps (t_a + 2.95 s); preview continues; record start returns 409; the next
+    change at 30 fps gives `ready`.
+
+    The window starts at the 16th frame that the fake delivers after the change (skip 15)."""
+    script = FakeScript(rate_after_change=(20.0, 30.0))
+    with one_camera(monkeypatch, script, track=True) as (app, camera_id, _):
+        spies = Spies(monkeypatch, app)
+        log = app.factory.logs[camera_id]
+        assert app.apply([app.config(camera_id, exposure=-6)]).status_code == 200
+        app.wait_state(camera_id, "too_slow")
+        t_change = [t for name, t, d in log.events if name == "set_controls" and d.get("exposure")][-1]
+        first_after = min(k for k, (arrival, _) in log.frames.items() if arrival > t_change)
+        t_a = log.frames[first_after + 15][0]
+        t_slow = app.tracker.first(camera_id, "too_slow")
+        assert app.tracker.first(camera_id, "checking", t_change) < t_slow
+        expected = t_a + round(59 / (0.97 * 30) * 1e9)
+        assert abs(t_slow - expected) <= 25_000_000, f"too_slow {(t_slow - t_a) / 1e9:.4f} s after t_a"
+        assert t_slow < t_a + round(59 / 20 * 1e9)
+        app.wait(lambda: any(e["arrival_ns"] > t_slow for e in spies.of("jpeg")), "preview after too_slow")
+        refused = app.record_start(tmp_path)
+        assert refused.status_code == 409 and camera_id in detail(refused)
+        assert app.apply([app.config(camera_id, exposure=-5)]).status_code == 200
+        app.wait_state(camera_id, "ready")
+
+
+def test_t_cap_32_no_recording_while_checking(monkeypatch, tmp_path):
+    """T-CAP-32, sections 8.3 and 10.2 [D33]: start a recording while a camera is `checking`. 409, the
+    detail names the camera and `checking`.
+
+    The fake holds its first read after the change, so the check cannot end before the request."""
+    with capture_app(monkeypatch, [FakeScript(hold_after_change=True), FakeScript()]) as app:
+        ready_app_steps(app)
+        checking, other = app.factory.camera_ids
+        assert app.apply([app.config(checking, exposure=-6), app.config(other)]).status_code == 200
+        source = app.factory.sources[checking]
+        assert source.holding.wait(30)
+        try:
+            assert app.state(checking) == "checking"
+            refused = app.record_start(tmp_path)
+            assert refused.status_code == 409
+            assert checking in detail(refused) and "checking" in detail(refused)
+        finally:
+            source.release()
+        app.wait_state(checking, "ready")
+
+
+def test_t_cap_33_no_change_during_a_recording(monkeypatch, tmp_path):
+    """T-CAP-33, sections 8.3 and 11.2 [D36]: apply a change during a recording. 409; the camera config
+    and the ring name do not change."""
+    with capture_app(monkeypatch, [FakeScript()]) as app:
+        ready_app_steps(app)
+        camera_id = app.factory.camera_ids[0]
+        config, ring = app.group.configs[camera_id], app.ring_name(camera_id)
+        settings = len(app.factory.logs[camera_id].settings)
+        assert app.record_start(tmp_path).status_code == 200
+        try:
+            refused = app.apply([app.config(camera_id, exposure=-5)])
+            assert refused.status_code == 409, refused.text
+            assert app.group.configs[camera_id] == config and app.ring_name(camera_id) == ring
+            assert not [s for s in app.factory.logs[camera_id].settings[settings:] if s]
+        finally:
+            assert app.record_stop().status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# Recordings: auto warning, dead camera, stall, slow camera (T-CAP-34 to T-CAP-37)
+# ---------------------------------------------------------------------------
+
+def test_t_cap_34_auto_exposure_at_record_start(monkeypatch, tmp_path):
+    """T-CAP-34, sections 11.3 and 11.6 [D37, agent 33]: start a recording with exposure in `AUTO`. The
+    recording starts; the response `warnings` holds the camera, `exposure` and the text of 11.3; the
+    status shows the same item; the log has the text; the recording info lists `exposure` in
+    `auto_controls_at_start`."""
+    with capture_logs() as logs, capture_app(monkeypatch, [FakeScript()]) as app:
+        camera_id = app.factory.camera_ids[0]
+        ready_app_steps(app, [app.config(camera_id, exposure_mode="AUTO")])
+        text = f"Camera {camera_id}: exposure is in auto mode at the start of the recording"
+        item = {"kind": "auto_control", "camera_ids": [camera_id], "control": "exposure", "text": text}
+        started = app.record_start(tmp_path)
+        assert started.status_code == 200, started.text
+        assert started.json() == {"started": True, "warnings": [item]}
+        status = app.status(camera_id)
+        assert item in status["warnings"] and status["controls"]["exposure"]["auto"] is True
+        assert any(text in message for message in logs.messages(logging.WARNING))
+        assert app.record_stop().status_code == 200
+        capture = recording_info_json(tmp_path)["capture"][camera_id]
+        assert "exposure" in capture["auto_controls_at_start"]
+
+
+def test_t_cap_35_a_camera_dies_during_a_recording(monkeypatch, tmp_path):
+    """T-CAP-35, sections 5.7, 8.2 and 11.6 [D38, U4, agent 52]: three fakes record; one gives device
+    removed (at frame 300 of the spec; here at the next frame after 60 recorded frames, because the
+    virtual time runs ahead of the test). That camera is `dead` at once; its files are finished; its
+    timing file ends at its last frame; the multi-frame rows after it hold the two live cameras; the
+    two keep recording to the stop; `dead_cameras` holds its ID and `last_frame_number`."""
+    with capture_app(monkeypatch, [FakeScript(), FakeScript(), FakeScript()], track=True) as app:
+        spies = Spies(monkeypatch, app)
+        ready_app_steps(app)
+        live, dead = app.factory.camera_ids[:2], app.factory.camera_ids[2]
+        assert app.record_start(tmp_path).status_code == 200
+        app.wait(lambda: len(spies.of("record", dead)) >= 60, "60 recorded frames")
+        source = app.factory.sources[dead]
+        source.remove_now()
+        app.wait_state(dead, "dead")
+        log = app.factory.logs[dead]
+        removed_ns = log.frames[source.removed_frame][0] + FRAME_NS
+        t_dead = app.tracker.first(dead, "dead")
+        assert t_dead - removed_ns < 100_000_000, f"dead {(t_dead - removed_ns) / 1e9:.3f} s after the removal"
+        for camera_id in live:
+            app.wait(lambda: any(e["arrival_ns"] > t_dead + 10**9 for e in spies.of("record", camera_id)),
+                     f"camera {camera_id} records after the dead camera")
+        assert app.record_stop().status_code == 200
+        info = recording_info(tmp_path)
+        dead_rows = column(info.camera_timestamps_file_path_from_camera_id(dead), "connection_frame_number")
+        entry = [d for d in recording_info_json(tmp_path)["dead_cameras"] if d["camera_id"] == dead]
+        assert len(entry) == 1 and entry[0]["last_frame_number"] == int(dead_rows[-1])
+        assert video_frame_count(tmp_path, dead) == len(dead_rows), "the file of the dead camera is not finished"
+        live_times = [[float(v) for v in column(info.camera_timestamps_file_path_from_camera_id(cid),
+                                                 "timestamp.perf_counter_ns.ns")] for cid in live]
+        assert len(live_times[0]) == len(live_times[1]) > len(dead_rows)
+        multi = [float(v) for v in column(info.timestamp_file_path, "timestamp.perf_counter_ns.ns")]
+        assert len(multi) == len(live_times[0])
+        for row in range(len(dead_rows), len(multi)):
+            assert multi[row] == pytest.approx((live_times[0][row] + live_times[1][row]) / 2, abs=1.0), row
+
+
+def test_t_cap_36_dead_after_2_s_without_a_frame(monkeypatch):
+    """T-CAP-36, sections 9.5 and 6.7 [D38]: one fake stops delivering at frame 100. `dead` between 2.0
+    and 2.25 s after its last arrival, not before.
+
+    The dead camera stops reading, so the virtual clock stops at the time of the decision."""
+    with one_camera(monkeypatch, FakeScript(stop_after_frame=100)) as (app, camera_id, _):
+        app.wait_state(camera_id, "dead")
+        elapsed = (app.clock.now_ns() - app.factory.logs[camera_id].frames[100][0]) / 1e9
+        assert 2.0 <= elapsed <= 2.25, f"dead {elapsed:.3f} s after the last arrival"
+
+
+def test_t_cap_37_slow_camera_during_a_recording(monkeypatch, tmp_path):
+    """T-CAP-37, section 10.3 [D39, agent 28]: during a recording, one fake goes to 27 fps for 5 s, then
+    back to 30. One warning with the camera and the rate; the recording continues; a later slow period
+    gives one more warning.
+
+    The warned rate is the rate of the first block below the limit: from 27 to 29.1 fps."""
+    with capture_logs() as logs, capture_app(monkeypatch, [FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        ready_app_steps(app)
+        camera_id = app.factory.camera_ids[0]
+        source = app.factory.sources[camera_id]
+        assert app.record_start(tmp_path).status_code == 200
+
+        def slow_warnings():
+            return [m for m in logs.messages(logging.WARNING)
+                    if camera_id in m and any(26.9 <= n < 29.1 for n in numbers_in(m))]
+
+        for period in (1, 2):
+            source.slow_period(rate=27.0, seconds=5.0)
+            app.wait(lambda: source.slow_finished_ns is not None, f"slow period {period}")
+            app.wait_clock(5.0, "normal rate after the slow period")
+            assert len(slow_warnings()) == period, slow_warnings()
+        count = len(spies.of("record"))
+        app.wait(lambda: len(spies.of("record")) > count + 30, "the recording continues")
+        assert app.record_stop().status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# T-CAP-38: failure object and its queue
+# ---------------------------------------------------------------------------
+
+def test_t_cap_38_failure_object_first_failure_and_order():
+    """T-CAP-38, section 12 [D40, U9, agent 35]: two failures of one camera, then a group shutdown. The
+    object has `camera_id`, `stage`, `reason`; the text is `Camera {id} failed during {stage}:
+    {reason}`; the first failure stays; it is in the queue before the flag changes."""
+    import multiprocessing
+    import time
+
+    from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
+    from skellycam.core.camera_group.camera_setup_failure import CameraSetupFailure
+    from skellycam.core.ipc.pubsub.pubsub_manager import PubSubTopicManager
+
+    ipc = CameraGroupIPC(group_id="t-cap-38", pubsub=PubSubTopicManager(topics={}),
+                         extracted_config_subscription=multiprocessing.Queue(),
+                         recording_finished_subscription=multiprocessing.Queue(),
+                         global_kill_flag=multiprocessing.Value("b", False),
+                         heartbeat_timestamp=multiprocessing.Value("d", time.perf_counter()))
+    first = CameraSetupFailure(camera_id="a1b2", stage="open", reason="in use by another program")
+    second = CameraSetupFailure(camera_id="a1b2", stage="close", reason="close did not return in 5 s")
+    assert dataclasses.asdict(first) == {"camera_id": "a1b2", "stage": "open", "reason": "in use by another program"}
+    assert str(first) == "Camera a1b2 failed during open: in use by another program"
+    seen = []
+
+    def watch():
+        while not ipc.shutdown_camera_group_flag.value:
+            time.sleep(0.0001)
+        seen.append(ipc.take_setup_failure())
+
+    watcher = threading.Thread(target=watch)
+    watcher.start()
+    ipc.report_setup_failure(first)
+    assert not ipc.shutdown_camera_group_flag.value, "a start failure must not shut down the group [D23]"
+    ipc.report_setup_failure(second)
+    ipc.should_continue = False  # the group shutdown
+    watcher.join(5)
+    assert seen == [first]
+    assert ipc.take_setup_failure() is None, "the second failure of the camera was kept"
+
+
+# ---------------------------------------------------------------------------
+# T-CAP-42: current control values in auto mode
+# ---------------------------------------------------------------------------
+
+def test_t_cap_42_status_shows_values_that_change_in_auto(monkeypatch):
+    """T-CAP-42, sections 8.4 and 11.4 [D30, agent 31]: exposure in `AUTO`; the fake changes its exposure
+    from -6 to -5, its gain from 0 to 4 and its focus from 30 to 40, with no set through the config.
+    Within 2 s, the status shows `exposure` with `auto: true` and `value: -5`, and the new gain and
+    focus values."""
+    with capture_app(monkeypatch, [FakeScript()], track=True) as app:
+        camera_id = app.factory.camera_ids[0]
+        ready_app_steps(app, [app.config(camera_id, exposure_mode="AUTO")])
+        source = app.factory.sources[camera_id]
+        t_drift = app.clock.now_ns()
+        source.drift(exposure=-5, gain=4, focus=40)
+
+        def shown():
+            for t, cid, _, controls in app.tracker.history:
+                if cid == camera_id and t >= t_drift and controls and controls["exposure"] == \
+                        {"present": True, "auto": True, "value": -5} and controls["gain"]["value"] == 4 \
+                        and controls["focus"]["value"] == 40:
+                    return t
+            return None
+
+        app.wait(lambda: shown() is not None, "the new values in the status")
+        assert (shown() - t_drift) / 1e9 <= 2.0
+
+
+# ---------------------------------------------------------------------------
+# T-CAP-81, T-CAP-83, T-CAP-84: dead without recording; floor of 30 fps; whole request
+# ---------------------------------------------------------------------------
+
+def test_t_cap_81_dead_without_recording_is_treated_as_failed(monkeypatch, tmp_path):
+    """T-CAP-81, sections 8.2 and 8.3 [U6, D38]: two fakes, no recording; one stops delivering. It is
+    `dead` and treated as `failed`: a record start returns 409; an apply reopens only it."""
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        ready_app_steps(app)
+        alive, dying = app.factory.camera_ids
+        app.factory.sources[dying].stop_now()
+        app.wait_state(dying, "dead")
+        refused = app.record_start(tmp_path)
+        assert refused.status_code == 409 and dying in detail(refused)
+        assert app.apply([app.config(cid) for cid in app.factory.camera_ids]).status_code == 200
+        app.wait_state(dying, "ready")
+        assert (opens(app, alive), opens(app, dying)) == (1, 2)
+
+
+FLOOR_CASES = {
+    "25": (FakeScript(modes=((640, 480, 30, 1, "MJPG"),)), 25.0, "refused"),
+    "only 15 and 24 detected": (FakeScript(modes=((640, 480, 15, 1, "MJPG"), (640, 480, 24, 1, "MJPG"))), 30.0, "refused"),
+    "30 detected, 24 at the open": (FakeScript(modes=((640, 480, 24, 1, "MJPG"),),
+                                              detected_modes=((640, 480, 30, 1, "MJPG"),)), 30.0, "set mode"),
+    "29.97": (FakeScript(modes=((640, 480, 30000, 1001, "MJPG"),)), 29.97, "29.97"),
+    "auto with 29.97 and 60": (FakeScript(modes=((640, 480, 30000, 1001, "MJPG"), (640, 480, 60, 1, "MJPG"))), -1.0, "29.97"),
+}
+
+
+@pytest.mark.parametrize("case", list(FLOOR_CASES))
+def test_t_cap_83_floor_of_30_fps(monkeypatch, case):
+    """T-CAP-83, section 7.5 [U11, agent 55, agent 57, agent 58]: each fake camera in its own group:
+    (1) a request of 25; (2) a request of 30 for a camera whose detection data has only 15 and 24 at
+    the size; (3) the same, but the detection data shows 30 and the open finds only 24; (4) a request
+    of 29.97 where the camera has 29.97; (5) auto for a camera with 29.97 and 60 at the size. (1) and
+    (2) get 422 and change nothing; (3) fails, stage `set mode`, "no mode at 30 fps or more"; (4)
+    opens at 29.97; (5) opens at 29.97."""
+    script, framerate, outcome = FLOOR_CASES[case]
+    with capture_app(monkeypatch, [script]) as app:
+        app.detect()
+        camera_id = app.factory.camera_ids[0]
+        response = app.apply([app.config(camera_id, framerate=framerate)])
+        if outcome == "refused":
+            assert response.status_code == 422, response.text
+            assert opens(app, camera_id) == 0 and not app.manager.camera_groups
+            return
+        assert response.status_code == 200, response.text
+        app.wait_state(camera_id, "ready", "failed")
+        status = app.status(camera_id)
+        if outcome == "set mode":
+            assert status["state"] == "failed"
+            assert status["failure"] == {"camera_id": camera_id, "stage": "set mode",
+                                         "reason": "no mode at 30 fps or more"}
+        else:
+            assert status["state"] == "ready"
+            assert (status["mode"]["fps_num"], status["mode"]["fps_den"]) == (30000, 1001)
+
+
+def test_t_cap_84_whole_request_check_then_each_camera_alone(monkeypatch):
+    """T-CAP-84, section 8.3 [U10]: three fakes run at 30 fps: (1) a request asks one for 60; (2) a
+    request changes the size of two cameras, and the open of one fails in the fake. (1) gets 422, and
+    all three keep running at 30 with unchanged rings; (2) the failing camera is `failed`, the other
+    has the new size, and the third is not touched."""
+    scripts = [FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60, fail_opens=(2,)), FakeScript(modes=MODES_30_60)]
+    with capture_app(monkeypatch, scripts) as app:
+        ready_app_steps(app)
+        resized, failing, untouched = app.factory.camera_ids
+        rings = {cid: app.ring_name(cid) for cid in app.factory.camera_ids}
+        refused = app.apply([app.config(resized, framerate=60.0), app.config(failing), app.config(untouched)])
+        assert refused.status_code == 422, refused.text
+        for camera_id in app.factory.camera_ids:
+            assert app.state(camera_id) == "ready" and app.status(camera_id)["mode"]["fps_num"] == 30
+            assert app.ring_name(camera_id) == rings[camera_id] and opens(app, camera_id) == 1
+        configs = [app.config(resized, width=320, height=240), app.config(failing, width=320, height=240),
+                   app.config(untouched)]
+        assert app.apply(configs).status_code == 200
+        app.wait_state(failing, "failed")
+        app.wait(lambda: app.state(resized) == "ready" and app.status(resized)["mode"]["width"] == 320, "new size")
+        assert app.state(untouched) == "ready"
+        assert app.ring_name(untouched) == rings[untouched] and opens(app, untouched) == 1
+
+
+# ---------------------------------------------------------------------------
+# T-CAP-86: the interim relay during a reopen
+# ---------------------------------------------------------------------------
+
+def test_t_cap_86_relay_sends_each_camera_on_its_own(monkeypatch):
+    """T-CAP-86, section 5.8 [U13, agent 54]: three fakes with preview; reopen one camera by a change of
+    its resolution. Capture relay messages during the reopen. Each message holds the newest frame of
+    each camera that has one; the frames of the other two cameras keep advancing while the third is
+    `starting`; the third comes back after `ready`.
+
+    The reopened fake holds after its first frame, so the camera stays in `starting` while the test
+    reads the relay."""
+    scripts = [FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60, hold_opens=(2,))]
+    with capture_app(monkeypatch, scripts) as app:
+        ready_app_steps(app)
+        a, b, reopened = app.factory.camera_ids
+        result = []
+        configs = [app.config(a), app.config(b), app.config(reopened, width=320, height=240)]
+        thread = threading.Thread(target=lambda: result.append(app.apply(configs)))
+        thread.start()
+        source = None
+        try:
+            app.wait(lambda: reopened in app.factory.sources and app.factory.sources[reopened].holding.is_set(),
+                     "the reopened camera holds in `starting`")
+            source = app.factory.sources[reopened]
+            assert app.state(reopened) == "starting"
+            messages = []
+            app.wait(lambda: _collect(app, messages) >= 20, "20 relay messages")
+            for header, frames in messages:
+                assert reopened not in frames and {a, b} <= set(frames), frames
+                assert header == max(frames.values())
+            for camera_id in (a, b):
+                assert messages[-1][1][camera_id] > messages[0][1][camera_id], f"camera {camera_id} did not advance"
+        finally:
+            if source is not None:
+                source.release()
+            thread.join(60)
+        assert result and result[0].status_code == 200
+        app.wait_state(reopened, "ready")
+        after = []
+        app.wait(lambda: _collect(app, after) and reopened in after[-1][1], "the reopened camera in the relay")
+
+
+def _collect(app, messages):
+    payload = app.group.get_latest_ring_payload()
+    if payload is not None:
+        message = parse_relay(payload[2])
+        if not messages or message != messages[-1]:
+            messages.append(message)
+    return len(messages)
+
+
+# ---------------------------------------------------------------------------
+# T-CAP-90, T-CAP-91: failed live change; rate class 30
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("fault", ["error", "readback:-6"], ids=["set error", "wrong read-back"])
+def test_t_cap_90_failed_live_change_keeps_the_camera_running(monkeypatch, fault):
+    """T-CAP-90, sections 8.2, 8.3 and 11.2 [U14, agent 64]: a camera is `ready` with `MANUAL -7`. (1) A
+    live exposure change to -5: the fake set call returns an error. (2) The same change: the set
+    returns success, but the read-back is -6. In both cases: the camera stays `ready` with exposure -7
+    and the same ring name; the apply response has a `control_change_failed` item for that camera; no
+    other camera changes.
+
+    "Exposure -7" is the exposure of the camera config."""
+    with capture_app(monkeypatch, [FakeScript(live_set_faults=(fault,)), FakeScript()], track=True) as app:
+        ready_app_steps(app)
+        changed, other = app.factory.camera_ids
+        rings = {cid: app.ring_name(cid) for cid in app.factory.camera_ids}
+        other_config = app.group.configs[other]
+        t_change = app.clock.now_ns()
+        response = app.apply([app.config(changed, exposure=-5), app.config(other)])
+        assert response.status_code == 200, response.text
+        items = [w for w in response.json()["warnings"] if w["kind"] == "control_change_failed"]
+        assert len(items) == 1 and items[0]["camera_ids"] == [changed] and items[0]["text"]
+        assert response.json()["camera_configs"][changed]["exposure"] == -7
+        assert app.group.configs[changed].exposure == -7
+        app.wait_clock(3.0)
+        assert app.state(changed) == "ready"
+        assert not [s for t, s in app.tracker.states(changed) if t > t_change and s != "ready"]
+        assert {cid: app.ring_name(cid) for cid in app.factory.camera_ids} == rings
+        assert app.group.configs[other] == other_config and opens(app, other) == opens(app, changed) == 1
+
+
+def test_t_cap_91_rate_class_30(monkeypatch):
+    """T-CAP-91, section 7.5 [U15, agent 63]: one group: a fake at 30000/1001 and a fake at 30/1; run for a
+    simulated 100 s. Then a request that adds a camera at 60. The apply response has one `mixed_rate`
+    item with the camera IDs, "29.97 fps", "30 fps" and "about every 33 s"; the log has the text; the
+    group rate is 29.97; the `replaced_count` of the 30 fps camera is 3 (+/-1); the request with 60
+    gets 422.
+
+    The 100 s start at the first frame that the 30 fps camera takes in the gate (5.2). A probe reads
+    `replaced_count` of that fake at each of its reads. The group rate is the rate of the gate frames
+    of each camera in the same 100 s."""
+    scripts = [FakeScript(modes=((640, 480, 30000, 1001, "MJPG"),)), FakeScript(modes=((640, 480, 30, 1, "MJPG"),)),
+               FakeScript(modes=((640, 480, 60, 1, "MJPG"),))]
+    samples = []
+
+    def probe(source, now_ns):
+        if source.camera_id == fast:
+            samples.append((now_ns, source.replaced_count))
+
+    with capture_logs() as logs, capture_app(monkeypatch, scripts, on_read=probe) as app:
+        spies = Spies(monkeypatch, app)
+        app.detect()
+        slow, fast, sixty = app.factory.camera_ids
+        response = app.apply([app.config(slow), app.config(fast)])
+        assert response.status_code == 200, response.text
+        items = [w for w in response.json()["warnings"] if w["kind"] == "mixed_rate"]
+        assert len(items) == 1
+        assert set(items[0]["camera_ids"]) == {slow, fast}
+        for part in (slow, fast, "29.97 fps", "30 fps", "about every 33 s"):
+            assert part in items[0]["text"], part
+        assert any(items[0]["text"] in message for message in logs.messages(logging.WARNING))
+        refused = app.apply([app.config(slow), app.config(fast), app.config(sixty)])
+        assert refused.status_code == 422, refused.text
+        app.wait(lambda: spies.of("jpeg", fast), "the first gate frame")
+        t0 = spies.of("jpeg", fast)[0]["arrival_ns"]
+        t1 = t0 + 100 * 10**9
+        app.wait(lambda: samples and samples[-1][0] > t1, "100 simulated seconds")
+        replaced = next(r for t, r in samples if t > t1) - next(r for t, r in samples if t > t0)
+        assert 2 <= replaced <= 4, f"{replaced} frames replaced in 100 s"
+        for camera_id in (slow, fast):
+            arrivals = [e["arrival_ns"] for e in spies.of("jpeg", camera_id) if t0 <= e["arrival_ns"] <= t1]
+            rate = (len(arrivals) - 1) / ((arrivals[-1] - arrivals[0]) / 1e9)
+            assert abs(rate - 30000 / 1001) < 0.01, f"camera {camera_id}: gate rate {rate:.4f}"
