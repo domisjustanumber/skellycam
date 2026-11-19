@@ -1,13 +1,14 @@
 # HP7D — Python API of capture, as the 3a tests assume it
 
-**Status:** proposed, 2026-11-19 (agent).
+**Status:** accepted, 2026-11-19 (user; commit to dom/native-jpeg; was proposed, 2026-11-19 (agent)).
 
 ## Decision
 
 [ADR-4CQC](4CQC-phase-3-windows-capture-spec-and-test-list.md) accepts
 [`specs/windows-capture.md`](../../specs/windows-capture.md). The spec does not give each Python
 name of step 3a. The failing tests of step 3a in `skellycam/tests/capture/` use the names below. An
-agent chose them. `capture` is `skellycam.core.camera.capture`, with the modules of spec section 3.
+agent chose them. The user accepted them on 2026-11-19, with item 9 corrected by U18. `capture` is
+`skellycam.core.camera.capture`, with the modules of spec section 3.
 
 What a consumer sees:
 
@@ -43,8 +44,10 @@ The Python names:
    `detect.detect_media_foundation_cameras(*, backend=None) -> list[CameraDeviceInfo]`. A backend has
    `devices() -> [(friendly name, link)]` and `native_modes(link) -> list[NativeMode]`; `None` is
    `detect.MediaFoundationBackend`. A hang raises `CaptureFailure` with stage `detection`. A
-   `camera_id` collision raises `ValueError`. `errors.py` and `detect.py` import on each OS. `com.py`
-   has the interfaces of 6.2, 6.5 and 6.8 by their COM names, and `startup()` and `shutdown()`.
+   `camera_id` collision raises `ValueError`. The whole package is Windows only, and its tests run
+   on Windows only ([ADR-HB4Z](HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md),
+   U18). `com.py` has the interfaces of 6.2, 6.5 and 6.8 by their COM names, and `startup()` and
+   `shutdown()`.
 10. `CameraGroupManager.source_factory: Callable[[CameraConfig], CaptureSource] | None = None`. The
     group gives it to each camera process, so it can be pickled. `None` is the source of 14.2.
 11. `camera_worker.select_capture_source() -> str` gives `"opencv"` or `"media_foundation"`. A wrong

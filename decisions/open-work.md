@@ -100,12 +100,21 @@ task. Delete an item when its work is done. The PR that closes an item records t
   lists seven differences from the ring spec.
   - The failing tests of step 3a are in `skellycam/tests/capture/`, with the fake source
     `fake_source.py`. They use the API of
-    [ADR-HP7D](entries/HP7D-python-api-of-capture-as-the-3a-tests-assume-it.md). Next: the user
-    reviews the tests and decides ADR-HP7D. Then the product code of step 3a follows.
+    [ADR-HP7D](entries/HP7D-python-api-of-capture-as-the-3a-tests-assume-it.md), which the user
+    accepted on 2026-11-19 with the answers U16 to U23
+    ([ADR-HB4Z](entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md)). Next:
+    the product code of step 3a.
+  - The user decides items 65 to 78 of section 18 of the spec: the agent choices that came with the
+    answers U16 to U23.
   - Run the fake-source tests with
     `uv run pytest skellycam/tests/capture -m "not camera_hardware and not capture_local"`. The
     hardware tests run only with `SKELLYCAM_HARDWARE=1`. The workflow
-    `.github/workflows/capture.yml` (section 15) has not run yet.
+    `.github/workflows/capture.yml` (section 15: Windows, Linux and macOS) has not run yet. The macOS
+    job also runs the portable ring tests.
+  - Phase 0 (the user, through the certify suite): the Linux and macOS hardware tests T-CAP-92 to
+    T-CAP-98.
+  - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
+    (14 tests with no counterpart yet).
 - **Phase 5: remove three interim rules of phase 3.** The new recorder of phase 5 must remove the three
   interim rules of [ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md):
   U4 (a recording with a dead camera: timing files of unequal length, multi-frame rows with the live
