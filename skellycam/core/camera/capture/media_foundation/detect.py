@@ -25,7 +25,9 @@ def camera_id_of(link: str) -> str:
 
 
 class MediaFoundationDeviceInfo(CameraDeviceInfo):
-    """`path` is the symbolic link as Media Foundation gives it; `camera_id` hashes it in lower case (7.2)."""
+    """`path` is the symbolic link as Media Foundation gives it; `camera_id` hashes it in lower case (7.2).
+    `virtual` marks a virtual camera: detection shows it, but a request cannot select it yet."""
+    virtual: bool = False
 
     @computed_field
     @property
@@ -119,7 +121,7 @@ def _child_result(receiver, child):
 
 
 def detect_media_foundation_cameras(*, backend=None) -> list[CameraDeviceInfo]:
-    """7.1: the Media Foundation cameras, without virtual cameras (as `filter_virtual=True` today).
+    """7.1: the Media Foundation cameras. A virtual camera is listed with `virtual=True`.
     Raises `CaptureFailure` (stage `detection`) after a hang, and `ValueError` when two devices have
     one `camera_id`."""
     context = multiprocessing.get_context("spawn")
@@ -138,10 +140,9 @@ def detect_media_foundation_cameras(*, backend=None) -> list[CameraDeviceInfo]:
         raise result
     cameras, links = [], {}
     for index, (name, link, native) in enumerate(result):
-        if "virtual" in name.lower():
-            continue
         camera = MediaFoundationDeviceInfo(index=index, name=name, path=link, vendor_id=_usb_id(link, "vid"),
-                                           product_id=_usb_id(link, "pid"), supported_modes=supported_modes(native))
+                                           product_id=_usb_id(link, "pid"), supported_modes=supported_modes(native),
+                                           virtual="virtual" in name.lower())  # the rule of `filter_virtual` today
         if camera.camera_id in links:
             raise ValueError(f"Detected devices have colliding camera IDs: {camera.camera_id}. "
                              f"Device paths: {links[camera.camera_id]} and {link}")
