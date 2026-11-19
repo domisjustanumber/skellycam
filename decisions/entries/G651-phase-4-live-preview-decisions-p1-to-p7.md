@@ -35,7 +35,8 @@ cameras.
 
 ## Consequences
 
-- The spec of step 4a applies these decisions.
+- [`specs/preview.md`](../../specs/preview.md) applies these decisions to step 4a. It is proposed
+  ([ADR-162X](162X-step-4a-preview-spec-and-agent-choices.md)).
 - P1 and P5 together need a rule for the time between 4a and 4b. Question Q1 of the spec asks the
   user.
 
