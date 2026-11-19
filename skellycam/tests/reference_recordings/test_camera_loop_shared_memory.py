@@ -1,4 +1,4 @@
-"""Real video -> production camera worker/loop -> separately attached shared memory."""
+"""Real video -> production camera worker/loop -> frame ring, read by a separate reader."""
 
 from contextlib import ExitStack, nullcontext
 import logging
@@ -18,7 +18,7 @@ from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 from skellycam.core.camera_group.camera_status import CameraStatus
 from skellycam.core.ipc.pubsub.pubsub_manager import PubSubTopicManager
-from skellycam.core.ipc.shared_memory.camera_shared_memory_ring_buffer import CameraSharedMemoryRingBuffer
+from skellycam.core.ipc.frame_ring import FrameRingCreator, FrameRingReader, FrameRingWriter, PixelFormat, ReadResult
 from skellycam.core.types.frame_dtype_factories import create_frame_dtype
 from skellycam.tests.reference_recordings.datasets import TEST, acquire
 
@@ -55,19 +55,16 @@ def test_video_camera_loop_publishes_frames_and_cleans_up(test_videos, camera_in
         frame = np.zeros(1, dtype=create_frame_dtype(config)).view(np.recarray)
         frame.frame_metadata.camera_info = config.to_frame_camera_info()[0]
         frame.frame_metadata.frame_number[0] = -1
-        owner = CameraSharedMemoryRingBuffer.create(
-            example_data=frame, read_only=False, ring_buffer_length=4,
+        owner = FrameRingCreator.create(  # 4 slots
+            camera_id=config.camera_id, camera_index=camera_index, pixel_format=PixelFormat.JPEG,
+            width=width, height=height, fps_num=4, fps_den=1,
         )
         cleanup.callback(owner.close_and_unlink)
-        dto = owner.to_dto()
-        for element in (dto.ring_shm_dto, dto.last_written_index_shm_dto, dto.last_read_index_shm_dto):
-            names.extend((element.shm_name, element.shm_valid_name, element.first_written_shm_name))
-        writer = CameraSharedMemoryRingBuffer.recreate(dto=dto, read_only=False)
+        names.append(owner.name)
+        writer = FrameRingWriter.attach(owner.name)
         cleanup.callback(writer.close)
-        reader = CameraSharedMemoryRingBuffer.recreate(dto=dto, read_only=False)
+        reader = FrameRingReader.attach(owner.name)
         cleanup.callback(reader.close)
-        assert owner.ring_buffer_length == 4
-        assert not writer.original and not reader.original
         updates = multiprocessing.Queue()
         cleanup.callback(updates.close)
         recording = multiprocessing.Queue()
@@ -83,22 +80,22 @@ def test_video_camera_loop_publishes_frames_and_cleans_up(test_videos, camera_in
         orchestrator = CameraOrchestrator.from_statuses({config.camera_id: status})
         received = []
         paused_ticks = 0
-        output = np.zeros_like(frame).view(np.recarray)
-        put_frame = writer.put_frame
+        write = writer.write
 
-        def publish_and_observe(frame_rec_array, overwrite):
-            put_frame(frame_rec_array=frame_rec_array, overwrite=overwrite)
-            actual = reader.retrieve_next_frame(output)
+        def publish_and_observe(payload, **kwargs):
+            write(payload, **kwargs)
             number = len(received)
-            assert owner.last_written_index.value == number
-            assert int(actual.frame_metadata.frame_number[0]) == number
-            assert actual.frame_metadata.camera_info.camera_id[0] == config.camera_id
-            assert int(actual.frame_metadata.camera_info.camera_index[0]) == camera_index
+            read = reader.read(number)
+            assert read.result is ReadResult.OK
+            assert read.frame_number == kwargs["frame_number"] == number
+            assert read.payload == payload
             ok, expected = baseline.read()
             assert ok, f"Baseline ended before published frame {number}"
-            # The production capture helper overlays text within the first 80 rows.
-            np.testing.assert_array_equal(actual.image[0, 80:], expected[80:])
-            stamps = actual.frame_metadata.timestamps
+            # The production capture helper overlays text within the first 80 rows. JPEG q90 (spec 2.3).
+            actual = cv2.imdecode(np.frombuffer(read.payload, np.uint8), cv2.IMREAD_COLOR)
+            assert float(np.abs(actual[80:].astype(np.int16) - expected[80:].astype(np.int16)).mean()) < 8
+            stamps = frame.frame_metadata.timestamps
+            assert read.arrival_ns == stamps.post_frame_grab_ns[0]
             assert 0 < stamps.pre_frame_grab_ns[0] <= stamps.post_frame_grab_ns[0]
             assert stamps.post_frame_grab_ns[0] <= stamps.pre_frame_retrieve_ns[0]
             assert stamps.pre_frame_retrieve_ns[0] <= stamps.post_frame_retrieve_ns[0]
@@ -113,7 +110,7 @@ def test_video_camera_loop_publishes_frames_and_cleans_up(test_videos, camera_in
             nonlocal paused_ticks
             assert status.is_paused.value
             assert received == list(range(11))
-            assert owner.last_written_index.value == 10
+            assert reader.read_newest().frame_number == 10
             assert int(capture.get(cv2.CAP_PROP_POS_FRAMES)) == 11
             paused_ticks += 1
             if paused_ticks == 3:
@@ -126,7 +123,7 @@ def test_video_camera_loop_publishes_frames_and_cleans_up(test_videos, camera_in
         # Replace hardware setup and add synchronous observation/control hooks.
         # Capture, loop, orchestration, shared-memory copies and cleanup stay real.
         monkeypatch.setattr(worker_module, "setup_opencv_camera_loop", file_setup)
-        monkeypatch.setattr(writer, "put_frame", publish_and_observe)
+        monkeypatch.setattr(writer, "write", publish_and_observe)
         monkeypatch.setattr(loop_module, "wait_1ms", observe_pause_and_resume)
         outcome = (
             pytest.raises(RuntimeError, match="failed to capture a frame after 30 attempts")
@@ -141,18 +138,13 @@ def test_video_camera_loop_publishes_frames_and_cleans_up(test_videos, camera_in
         assert received == list(range(TEST.frames))
         assert paused_ticks == 3
         assert not baseline.read()[0]
-        assert owner.last_written_index.value == TEST.frames - 1
-        assert owner.last_read_index.value == TEST.frames - 1
-        with pytest.raises(IndexError, match="overwritten"):
-            reader.get_data_by_index(0)
+        assert reader.read_newest().frame_number == TEST.frames - 1
+        assert reader.read(0).result is ReadResult.LAPPED
         assert status.closed.value and not status.connected.value
         assert bool(status.error.value) == (ending == "eof-failure")
         assert ipc.shutdown_camera_group_flag.value and not ipc.global_kill_flag.value
         assert not capture.isOpened()  # Production worker released it, before fallback cleanup.
-        for element in (writer.ring_shm, writer.last_written_index, writer.last_read_index):
-            assert element.shm.buf is None
-            assert element.valid_flag_shm.buf is None
-            assert element.first_data_written_shm.buf is None
+        assert writer._shm.buf is None  # the production loop closed its ring handle
     assert not baseline.isOpened()
     for name in names:
         try:

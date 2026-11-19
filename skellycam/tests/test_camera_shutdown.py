@@ -17,7 +17,7 @@ from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 from skellycam.core.camera_group.camera_status import CameraStatus
 from skellycam.core.ipc.process_management.managed_worker import ManagedWorker
 from skellycam.core.ipc.pubsub.pubsub_manager import PubSubTopicManager
-from skellycam.core.ipc.shared_memory.camera_group_shared_memory import CameraGroupSharedMemory
+from skellycam.core.ipc.frame_ring import FrameRingCreator, FrameRingReader
 from skellycam.core.types.type_overloads import TopicSubscriptionQueue
 
 
@@ -139,10 +139,13 @@ async def test_group_close_after_recording_failure_releases_shared_memory(manage
     status = manager.orchestrator.camera_statuses["camera1"]
     status.recording_in_progress.value = True
     status.signal_error()
-    shm = Mock(spec=CameraGroupSharedMemory)
-    group = CameraGroup(ipc=manager.ipc, configs={}, cameras=manager, shm=shm)
+    ring, reader = Mock(spec=FrameRingCreator), Mock(spec=FrameRingReader)
+    group = CameraGroup(ipc=manager.ipc, configs={}, cameras=manager,
+                        rings={"camera1": ring}, ring_readers={"camera1": reader})
     await asyncio.wait_for(group.close(), timeout=1)
-    shm.unlink_and_close.assert_called_once()
+    ring.set_closed.assert_called_once()
+    reader.close.assert_called_once()
+    ring.close_and_unlink.assert_called_once()
     assert status.error.value
     assert not manager.ipc.global_kill_flag.value
 

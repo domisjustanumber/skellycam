@@ -1,15 +1,10 @@
-"""Tests for frontend payload serialization, recording info, and descriptive statistics."""
+"""Tests for recording info, frame dtypes, rotation names and descriptive statistics."""
 
 import uuid
-import asyncio
-from unittest.mock import MagicMock
 from pathlib import Path
 
 import numpy as np
 import pytest
-from starlette.websockets import WebSocketState
-from skellycam.api.websocket.websocket_server import WebsocketServer
-from skellycam.core.camera_group.camera_group_manager import CameraGroupManager
 
 from skellycam.core.camera.config.camera_config import CameraConfig
 from skellycam.core.camera.config.image_resolution import ImageResolution
@@ -18,12 +13,6 @@ from skellycam.core.camera.config.image_rotation_types import (
     rotation_int_to_name,
 )
 from skellycam.core.recorders.videos.recording_info import RecordingInfo
-from skellycam.core.types.frontend_payload_bytearray import (
-    FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE,
-    FRONTEND_FRAME_HEADER_DTYPE,
-    MessageType,
-    create_frontend_payload,
-)
 from skellycam.core.types.frame_dtype_factories import (
     create_frame_dtype,
     create_multiframe_dtype,
@@ -33,172 +22,6 @@ from skellycam.core.types.numpy_record_dtypes import (
     FRAME_CAMERA_INFO_DTYPE,
 )
 from skellycam.utilities.descriptive_statistics import DescriptiveStatistics
-
-
-# ---------------------------------------------------------------------------
-# Frontend Payload Protocol
-# ---------------------------------------------------------------------------
-
-
-class TestFrontendPayloadProtocol:
-    def test_manager_keeps_payloads_and_cursors_independent(self) -> None:
-        manager = MagicMock(spec=CameraGroupManager)
-        manager.closing = False
-        groups: dict[str, MagicMock] = {}
-        for name, frame_number in (("fast", 120), ("slow", 30)):
-            group = MagicMock()
-            group.id = name
-            frames = self._make_fake_frames([name], frame_number=frame_number)
-
-            def build_payload(
-                *,
-                if_newer_than: int,
-                display_image_sizes: dict[str, dict[str, float]] | None,
-                frames: dict[str, np.recarray] = frames,
-            ) -> tuple[int, float, memoryview]:
-                number, timestamp, payload = create_frontend_payload(
-                    latest_frames=frames
-                )
-                return int(number), float(timestamp), payload
-
-            group.get_latest_frontend_payload.side_effect = build_payload
-            groups[name] = group
-        manager.camera_groups = groups
-        results = CameraGroupManager.get_latest_frontend_payloads(
-            manager,
-            if_newer_than={"fast": 119, "slow": 29},
-        )
-        for name, expected in (("fast", 120), ("slow", 30)):
-            groups[name].get_latest_frontend_payload.assert_called_once_with(
-                if_newer_than=expected - 1,
-                display_image_sizes=None,
-            )
-            header = np.frombuffer(
-                results[name][2], dtype=FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE, count=1
-            )
-            assert int(header["frame_number"][0]) == expected
-
-    @staticmethod
-    def _make_fake_frames(
-        camera_ids: list[str],
-        frame_number: int = 42,
-    ) -> dict[str, np.recarray]:
-        """Create minimal fake frame recarrays for payload testing."""
-        frames: dict[str, np.recarray] = {}
-        for i, cam_id in enumerate(camera_ids):
-            config = CameraConfig(
-                camera_id=cam_id,
-                camera_index=i,
-                resolution=ImageResolution(height=48, width=64),
-            )
-            frame_dtype = create_frame_dtype(config)
-            frame = np.recarray(1, dtype=frame_dtype)
-            frame.frame_metadata.camera_info[0] = config.to_frame_camera_info()
-            frame.frame_metadata.frame_number[0] = frame_number
-            frame.frame_metadata.timestamps.pre_frame_grab_ns[0] = 1_000_000_000
-            frame.frame_metadata.timestamps.post_frame_grab_ns[0] = 1_001_000_000
-            frame.image[0] = np.random.randint(0, 255, (48, 64, 3), dtype=np.uint8)
-            frames[cam_id] = frame
-        return frames
-
-    def test_single_camera_payload_structure(self) -> None:
-        frames = self._make_fake_frames(["cam0"], frame_number=10)
-        frame_number, timestamp, payload_bytes = create_frontend_payload(
-            latest_frames=frames,
-        )
-
-        assert frame_number == 10
-        assert isinstance(payload_bytes, memoryview)
-        assert payload_bytes.readonly
-        assert len(payload_bytes) > 0
-
-        # Parse the header
-        header_size = FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE.itemsize
-        header = np.frombuffer(
-            payload_bytes[:header_size], dtype=FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE
-        )
-        assert int(header["message_type"][0]) == MessageType.PAYLOAD_HEADER
-        assert int(header["frame_number"][0]) == 10
-        assert int(header["number_of_cameras"][0]) == 1
-
-        # Parse the footer (last N bytes)
-        footer_size = FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE.itemsize
-        footer = np.frombuffer(
-            payload_bytes[len(payload_bytes) - footer_size :],
-            dtype=FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE,
-        )
-        assert int(footer["message_type"][0]) == MessageType.PAYLOAD_FOOTER
-        assert int(footer["frame_number"][0]) == 10
-
-    def test_multi_camera_payload(self) -> None:
-        frames = self._make_fake_frames(["cam0", "cam1", "cam2"], frame_number=99)
-        frame_number, timestamp, payload_bytes = create_frontend_payload(
-            latest_frames=frames,
-        )
-
-        assert frame_number == 99
-        header_size = FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE.itemsize
-        header = np.frombuffer(
-            payload_bytes[:header_size], dtype=FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE
-        )
-        assert int(header["number_of_cameras"][0]) == 3
-
-    def test_retained_payload_survives_other_groups_and_buffer_growth(self) -> None:
-        _, _, first = create_frontend_payload(
-            latest_frames=self._make_fake_frames(["first"], frame_number=10)
-        )
-        original = bytes(first)
-        for count in (1, 8, 2):
-            _, _, other = create_frontend_payload(
-                latest_frames=self._make_fake_frames(
-                    [f"other{i}" for i in range(count)], frame_number=99
-                )
-            )
-            assert first.obj is not other.obj
-            assert bytes(first) == original
-
-    async def test_suspended_websocket_send_survives_another_client(self) -> None:
-        entered = asyncio.Event()
-        resume = asyncio.Event()
-        received: list[bytes] = []
-
-        async def send_bytes(data: bytes | bytearray | memoryview) -> None:
-            entered.set()
-            await resume.wait()
-            received.append(bytes(data))
-
-        server = object.__new__(WebsocketServer)
-        server._send_lock = asyncio.Lock()
-        server.websocket = MagicMock()
-        server.websocket.client_state = WebSocketState.CONNECTED
-        server.websocket.send_bytes = send_bytes
-        _, _, first = create_frontend_payload(
-            latest_frames=self._make_fake_frames(["first"], frame_number=10)
-        )
-        expected = bytes(first)
-        task = asyncio.create_task(server._send_bytes(first))
-        await asyncio.wait_for(entered.wait(), timeout=2)
-        try:
-            _, _, second = create_frontend_payload(
-                latest_frames=self._make_fake_frames(["second"], frame_number=20)
-            )
-            assert bytes(second) != expected
-        finally:
-            resume.set()
-            await asyncio.wait_for(task, timeout=2)
-        assert received == [expected]
-
-    def test_payload_contains_jpeg_data(self) -> None:
-        frames = self._make_fake_frames(["cam0"], frame_number=1)
-        _, _, payload_bytes = create_frontend_payload(latest_frames=frames)
-
-        # After header + frame_header, there should be JPEG data
-        # JPEG files start with 0xFF 0xD8
-        header_size = FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE.itemsize
-        frame_header_size = FRONTEND_FRAME_HEADER_DTYPE.itemsize
-        jpeg_start = header_size + frame_header_size
-        assert payload_bytes[jpeg_start] == 0xFF
-        assert payload_bytes[jpeg_start + 1] == 0xD8
 
 
 # ---------------------------------------------------------------------------

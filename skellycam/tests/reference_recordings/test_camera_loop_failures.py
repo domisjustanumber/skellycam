@@ -18,9 +18,7 @@ from skellycam.core.camera.opencv.opencv_camera_loop import (
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 from skellycam.core.camera_group.camera_status import CameraStatus
-from skellycam.core.ipc.shared_memory.camera_shared_memory_ring_buffer import (
-    CameraSharedMemoryRingBuffer,
-)
+from skellycam.core.ipc.frame_ring import FrameRingWriter
 from skellycam.core.types.type_overloads import TopicSubscriptionQueue
 from skellycam.core.ipc.pubsub.pubsub_manager import PubSubTopicManager
 from skellycam.tests.reference_recordings.test_capture_reads import frame_buffer
@@ -36,7 +34,7 @@ def test_failed_reads_never_publish_stale_frames(stop_during_read):
     capture.isOpened.return_value = True
     orchestrator = Mock(spec=CameraOrchestrator)
     orchestrator.should_grab_by_id.return_value = True
-    shm = Mock(spec=CameraSharedMemoryRingBuffer)
+    writer = Mock(spec=FrameRingWriter)
     updates = Mock(spec=TopicSubscriptionQueue)
     updates.empty.return_value = True
     recording = Mock(spec=TopicSubscriptionQueue)
@@ -63,7 +61,7 @@ def test_failed_reads_never_publish_stale_frames(stop_during_read):
     )
     with outcome:
         run_opencv_camera_loop(
-            camera_shm=shm,
+            ring_writer=writer,
             config=CameraConfig(camera_id="replay", camera_index=0),
             cv2_video_capture=capture,
             frame_rec_array=frame,
@@ -74,7 +72,8 @@ def test_failed_reads_never_publish_stale_frames(stop_during_read):
             recording_info_subscription=recording,
         )
 
-    shm.put_frame.assert_not_called()
+    writer.write.assert_not_called()
+    writer.close.assert_called_once()
     orchestrator.should_record_frame_number.assert_not_called()
     assert capture.grab.call_count == (1 if stop_during_read else MAX_FAIL_COUNT)
     assert frame.frame_metadata.frame_number[0] == 7
@@ -107,7 +106,7 @@ def test_camera_failure_stops_sibling_and_preserves_error(monkeypatch):
     orchestrator = CameraOrchestrator.from_statuses(statuses)
     captures = {name: Mock(spec=cv2.VideoCapture) for name in statuses}
     memories = {
-        name: Mock(spec=CameraSharedMemoryRingBuffer) for name in statuses
+        name: Mock(spec=FrameRingWriter) for name in statuses
     }
     sibling_waiting = threading.Event()
     errors = {}
@@ -170,7 +169,7 @@ def test_camera_failure_stops_sibling_and_preserves_error(monkeypatch):
             assert not status.grabbing_frame.value
             captures[name].release.assert_called_once()
             memories[name].close.assert_called_once()
-            memories[name].put_frame.assert_not_called()
+            memories[name].write.assert_not_called()
     finally:
         ipc.should_continue = False
         for thread in threads:
