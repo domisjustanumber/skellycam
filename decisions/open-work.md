@@ -26,17 +26,21 @@ task. Delete an item when its work is done. The PR that closes an item records t
   Run the timed and kill tests with `-m ring_slow`. `SKELLYCAM_RING_FULL=1` gives the durations of
   the spec, for example 60 s for each slot count of T-RING-08. T-RING-49 needs cameras and is not
   written.
-  - Done: the ring package `skellycam/core/ipc/frame_ring/` (part A of step 2a). The tests that use
-    only the package pass, except one timing test (below).
-  - Next, part B of step 2a: use the package in `CameraGroup` (`ring_infos`, session start and
-    close, recreation), in the OpenCV loop (`ring_writer`, `cv2.imencode` feed, recorder first) and
-    in the interim relay (item 4). Delete the old ring code and the resize and encode functions of
-    `frontend_payload_bytearray.py` (section 2.1). Then T-RING-23 (loop tests), 25 to 27, 31, 32
-    and 33 must pass. The test helper `FakeCapture` stays alive until the process ends, because
-    OpenCV 5.1.0 crashes when the garbage collector frees a subclass of `cv2.VideoCapture`.
-  - Before step 2a keeps the change of the 10 µs wait of the OpenCV loop (item 45), it compares
-    the frame timing before and after the change on the four test cameras. It keeps the change only
-    if the grab timing is not worse.
-  - Phase 2 makes the measurements M1 to M8 of section 11.3 before it fixes a performance number.
+  - Done: the code of step 2a. This is the ring package `skellycam/core/ipc/frame_ring/`, the
+    rings in `CameraGroup` (session start and close, recreation, `ring_infos`), the
+    `cv2.imencode` feed of the OpenCV loop (recorder first), the interim relay (item 4), the
+    performance page (item 5) and the deletions of section 2.1. The test helper `FakeCapture` stays
+    alive until the process ends, because OpenCV 5.1.0 crashes when the garbage collector frees a
+    subclass of `cv2.VideoCapture`.
+  - Item 45: before step 2a changes the 10 µs wait of the OpenCV loop, it compares the frame timing
+    before and after the change on the four test cameras. It keeps the change only if the grab
+    timing is not worse. T-RING-31 (the idle test of item 45) fails until then. On a Windows test
+    machine, the paused loop uses 3.9 to 7.0 % of one core, against 2 %. The paused loop already
+    sleeps 1 ms on each pass. Its two queue polls on each pass cost the CPU. A 10 ms paused wait
+    gave 0.3 to 4.7 %, because Windows counts CPU time in 15.6 ms ticks.
+  - The user runs T-RING-49, the optional four-camera smoke test. It needs cameras.
+  - The T-RING-34 (Apple Silicon) and T-RING-35 (arm64 CI) runs are not done.
+  - The measurements M4 and M8 of section 11.3 are not done. Phase 2 makes them before it fixes a
+    performance number.
   - The build of step 2b waits for the approval and guidance of the user.
   - Section 13 of the spec holds the open questions.
