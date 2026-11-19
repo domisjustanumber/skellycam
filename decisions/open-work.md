@@ -53,7 +53,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
     C runtime, so a redirect of descriptor 2 does not reach libjpeg there (ADR-E817 item 7). The
     limit stays off on Windows until phase 3 (user, 2026-11-19). A possible fix: the main process
     gives each camera process a pipe as its stderr before OpenCV loads. The Linux code was checked in WSL without OpenCV.
-  - Next: the measurements M5 to M7 of section 11.3.
+  - Done: the measurements M5 to M7 of section 11.3 on Windows
+    ([ADR-ETJ1](entries/ETJ1-measurements-m5-to-m7-of-the-bgr-ring.md)). M8 (Apple Silicon) is open.
+  - Open: the BGR read at 1080p does not meet its target (p99 3.13 to 4.05 ms, target 3 ms). The
+    user decided on 2026-11-19 that the reader does not change in phase 2. A read call that copies
+    into a buffer of the reader waits for the first consumer that reads the BGR ring.
   - Known failure: T-RING-31 (idle CPU, limit 2 % of one core) fails (items 60 and 65). On
     2026-11-18, the paused loop used 3.9 to 7.0 % of one core on a Windows test machine. The user
     dropped the redesign of the wait of the OpenCV loop, because native capture deletes that loop.

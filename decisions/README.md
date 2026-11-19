@@ -35,6 +35,7 @@ you make a measurement ([Rules](#rules)).
 
 | # | Decision | Status |
 |---|----------|--------|
+| [ETJ1](entries/ETJ1-measurements-m5-to-m7-of-the-bgr-ring.md) | Measurements M5 to M7 of the BGR ring: CRC-32 cost, decode thread CPU and skip rate, capture jitter and the GIL (Windows) | evidence |
 
 ### Proposed
 
