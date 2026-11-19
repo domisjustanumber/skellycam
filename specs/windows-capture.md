@@ -4,7 +4,7 @@ Status: proposed by an agent on 2026-11-19. It waits for the review of the user
 ([ADR-4CQC](../decisions/entries/4CQC-phase-3-windows-capture-spec-and-test-list.md)). No product
 code and no test code is written before the user accepts it. The decisions D1 to D49 are accepted
 by the user ([ADR-EN7A](../decisions/entries/EN7A-phase-3-windows-capture-decisions.md)). Section
-20 gives each one in full. The user gave thirteen answers on 2026-11-19, to the questions of the two
+20 gives each one in full. The user gave fifteen answers on 2026-11-19, to the questions of the three
 drafts and to one agent choice
 ([ADR-QKX1](../decisions/entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md)).
 
@@ -603,7 +603,23 @@ fields of `CameraMode` [ring 9] plus the rounded rate:
 - After the open, OpenCV can report different real rates for the cameras. That gives a warning only.
   It is not a refusal, and no camera is closed [agent 56]. Linux and macOS behaviour is not
   tested until phase 0 [D46].
-- A group with one camera in a 29.97 fps mode and one in a 30 fps mode is open (section 19, Q-f).
+- **Rate class 30** [U15]: the one-rate rule treats 30000/1001 (29.97) and 30/1 (30) as one rate
+  class. This is the exception to the tolerance of 0.0001 of D17 for D18. Each other difference is
+  still refused, for example 30 with 60, or 29.97 with 60. The rate check of each camera uses its own
+  mode rate [U15].
+- A group that mixes the two rates of the class is allowed, with a warning [U15]:
+  - Under the gate, the group runs at the lower rate: 29.97 rounds per second. A camera at the higher
+    rate delivers one frame more than the gate takes about every `1 / (r_high - r_low)` seconds.
+    That frame is replaced, counted in `replaced_count` and in the gaps of `source_frame_number`
+    (D27), and missing from the recording. No frame is repeated, because the gate waits for the next
+    frame.
+  - The interval uses the exact mode rates (`fps_num / fps_den`). For 30000/1001 and 30/1 it is
+    1001/30 s = 33.4 s. The text gives it in whole seconds [agent 63].
+  - The text has this form, with camera IDs: "Cameras a1b2 and c3d4 run at 29.97 fps, cameras e5f6
+    and a7b8 at 30 fps. The group runs at 29.97 fps. Cameras e5f6 and a7b8 skip one frame about
+    every 33 s; each skipped frame is counted and is missing from the recording." [U15]
+  - The warning goes into the `warnings` list of the response of the apply request and into the
+    log, in the form of 11.3, with the kind `mixed_rate` [U15] [agent 63].
 - On a running group, the rule is part of the check of the whole request (8.3) [U10]. Example: three
   cameras run at 30 fps, and a request asks one of them for 60. The one-rate rule refuses the
   request, and all three cameras keep running at 30 [U10].
@@ -638,7 +654,7 @@ fields of `CameraMode` [ring 9] plus the rounded rate:
 | `checking` | rate check passed | `ready` |
 | `checking` | rate check failed | `too_slow` [D32] |
 | `ready`, `too_slow`, `checking` | change of resolution or rate [D31] | `starting` (only this camera) |
-| `ready`, `too_slow`, `checking` | a live control change fails without a hang | open: section 19, Q-e |
+| `ready`, `too_slow`, `checking` | a live control change fails without a hang | the same state: the camera keeps running with its earlier values; the response reports the failed change [U14] |
 | `failed`, `dead` | "apply again", with the same config or a changed config (8.3) | `starting` (only this camera) [D23] |
 | `ready` | recording starts | `recording` |
 | `recording` | recording stops | `ready` |
@@ -689,7 +705,10 @@ A camera that dies while no recording runs is treated as a `failed` camera [U6].
 - After the check, the main process applies the change of each camera on its own. A camera whose
   reopen-type change fails (a resolution or rate change, "apply again") becomes `failed`, and the
   other cameras are not touched [U10].
-- A live control change that fails without a hang is open (section 19, Q-e).
+- A live control change (exposure, gain, focus) that fails without a hang leaves the camera running
+  in its earlier state. The set call returned an error, or the read-back differs from the value that
+  was set. The response reports the failed change for that camera. The camera does not become
+  `failed` [U14]. A change that needs a reopen and fails still gives a `failed` camera [U10].
 
 ### 8.4 Status report [agent 21]
 
@@ -859,6 +878,9 @@ The reason gives the declared rate, the measured rate and two hints in this orde
 
 - A change of exposure, gain or focus is applied live, without a reopen [D31]. Then the check of
   10.2 runs.
+- A live change that fails without a hang leaves the camera in its earlier state (8.3) [U14]. The
+  response of the apply request carries an item of the kind `control_change_failed` in its
+  `warnings` list, in the form of 11.3 [agent 64].
 - A change of resolution or frame rate reopens only that camera, recreates its rings [ring 7.5] and
   repeats the warm-up and the rate check [D31].
 - During a recording, each setting change is refused [D36].
@@ -872,10 +894,13 @@ The reason gives the declared rate, the measured rate and two hints in this orde
 
   ```json
   {"started": true,
-   "warnings": [{"camera_id": "a1b2", "control": "exposure",
+   "warnings": [{"kind": "auto_control", "camera_ids": ["a1b2"], "control": "exposure",
                  "text": "Camera a1b2: exposure is in auto mode at the start of the recording"}]}
   ```
 
+- Each warning item has the same form: `kind`, `camera_ids`, `text`, and `control` where a control
+  applies [agent 33]. The kinds are `auto_control`, `mixed_rate` (7.5) and
+  `control_change_failed` (11.2).
 - The status (8.4) shows the same items in `warnings`, and `auto: true` for the control [agent 33].
 - The camera process also logs the text as a warning.
 - The recording info records that the control was in auto for this take (11.6) [D37].
@@ -1182,6 +1207,8 @@ T-CAP-36) are [agent 41]. They can be changed when the tests are written.
 | T-CAP-87 | 3a | fake | Shared loop with the OpenCV fake on each OS: 60 frames, each 70 ms late (more than 2 x the period). | No reopen: the open count stays 1; each ring JPEG decodes to the fake image, with no stamp [U2]. |
 | T-CAP-88 | 3a | hardware | With `SKELLYCAM_WINDOWS_CAPTURE=opencv` in the new loop, open the C922, the C930e and the Kiyo Pro. | Each opens the DirectShow device whose device instance part equals that of the Media Foundation link that detection named for its `camera_id`, and the friendly names agree [U1]. |
 | T-CAP-89 | 3b | fake | A YUY2 request at 1280x720 for a fake with YUY2 only at 10 fps there; then at 640x480 where it has 30. | The first gets 422 with "no mode at 30 fps or more"; the second opens [U11]. |
+| T-CAP-90 | 3a | fake | A camera is `ready` with `MANUAL -7`. (1) A live exposure change to -5: the fake set call returns an error. (2) The same change: the set returns success, but the read-back is -6. | In both cases: the camera stays `ready` with exposure -7 and the same ring name; the apply response has a `control_change_failed` item for that camera; no other camera changes [U14]. |
+| T-CAP-91 | 3a | fake | One group: a fake at 30000/1001 and a fake at 30/1; run for a simulated 100 s. Then a request that adds a camera at 60. | The apply response has one `mixed_rate` item with the camera IDs, "29.97 fps", "30 fps" and "about every 33 s"; the log has the text; the group rate is 29.97; the `replaced_count` of the 30 fps camera is 3 (±1); the request with 60 gets 422 [U15]. |
 
 ### 16.3 Hardware tests of D49
 
@@ -1225,7 +1252,7 @@ results. They have no fixed pass value, because the decisions do not give one.
 | D15 | T-CAP-26, T-CAP-83 |
 | D16 | T-CAP-27, T-CAP-83 |
 | D17 | T-CAP-28 |
-| D18 | T-CAP-29, T-CAP-70, T-CAP-84 |
+| D18 | T-CAP-29, T-CAP-70, T-CAP-84, T-CAP-91 |
 | D19 | T-CAP-61, T-CAP-70 |
 | D20 | T-CAP-12 |
 | D21 | T-CAP-13, T-CAP-14, T-CAP-65 |
@@ -1238,7 +1265,7 @@ results. They have no fixed pass value, because the decisions do not give one.
 | D28 | T-CAP-07, T-CAP-59 |
 | D29 | T-CAP-41 |
 | D30 | T-CAP-42, T-CAP-75, T-CAP-77 |
-| D31 | T-CAP-30, T-CAP-72 |
+| D31 | T-CAP-30, T-CAP-72, T-CAP-90 |
 | D32 | T-CAP-31, T-CAP-57 |
 | D33 | T-CAP-32 |
 | D34 | T-CAP-11 |
@@ -1270,17 +1297,19 @@ results. They have no fixed pass value, because the decisions do not give one.
 | U11 | T-CAP-25, T-CAP-27, T-CAP-54, T-CAP-71, T-CAP-83, T-CAP-89 |
 | U12 | T-CAP-85 |
 | U13 | T-CAP-86 |
+| U14 | T-CAP-90 |
+| U15 | T-CAP-91 |
 
 ### 16.6 Counts
 
 | Step | fake | hardware | CI | local | Total |
 |---|---|---|---|---|---|
-| 3a | 54 | 11 | 2 | 2 | 69 |
+| 3a | 56 | 11 | 2 | 2 | 71 |
 | 3b | 9 | 2 | 0 | 0 | 11 |
 | 3c | 6 | 3 | 0 | 0 | 9 |
-| All | 69 | 16 | 2 | 2 | 89 |
+| All | 71 | 16 | 2 | 2 | 91 |
 
-T-CAP-80 to T-CAP-89 are at the end of the table; their step is in the table.
+T-CAP-80 to T-CAP-91 are at the end of the table; their step is in the table.
 
 ## 17. Measurements, open points, weak points
 
@@ -1340,6 +1369,11 @@ Other open points:
 - Opens during control changes showed dips to 20 to 25 fps on the C930e and the Kiyo Pro in a few
   percent of opens in older data. The cause is not known.
 
+- No test camera declares 29.97 fps. All four declare 30.00003 and 60.0002 fps (frame intervals
+  333333 and 166666 in units of 100 ns) in the USB descriptors of the suite run of 2026-11-19
+  (`research/usb_cameras/results/windows/`, branch `dom/research`). Thus the rate class of U15 rests
+  on fake-source tests only.
+
 A known effect of this spec: until phase 7, each Linux recording gives the auto warning of D37 one
 time for each camera, because the OpenCV source forces auto exposure on Linux (14.1).
 
@@ -1398,7 +1432,9 @@ not fix. The body marks each one [agent n].
     second.
 32. Phase 3 writes the camera data into the existing recording info JSON (`capture`,
     `dead_cameras`).
-33. The `warnings` list in the response of the record start and in the status, and its fixed text.
+33. The `warnings` list in the responses of the record start and the apply request and in the
+    status: one item form (`kind`, `camera_ids`, `text`, `control`), the kind `auto_control`, and the
+    fixed text of D37.
 34. The stage names of section 12.
 35. The reason of an exception is `{type}: {message}`; the diagnostics go to the log.
 36. 3b: the field `input_range`; a raw frame of the wrong length is flagged `CAPTURE_ERROR`; one BGR
@@ -1439,26 +1475,12 @@ not fix. The body marks each one [agent n].
 60. A bounded call that times out while the camera is open gives `dead`, stage `streaming`.
 61. The interim decode runs on the loop thread.
 62. A stream error or the end of the stream makes the camera dead at once, not after 2 s.
+63. The kind `mixed_rate`, and the interval in whole seconds in its text.
+64. A failed live change is reported as a `warnings` item of the kind `control_change_failed`.
 
 ## 19. Questions for the user
 
-Each question gives the options and a recommended answer. "Yes" accepts the recommendation.
-
-**Q-e. A live control change that fails without a hang.** The set call of exposure, gain or focus
-returns an error, or the read-back differs from the value that was set.
-
-- Option 1: the camera keeps running in its earlier state. The response reports the change as failed
-  for that camera. The camera does not become `failed`.
-- Option 2: the camera becomes `failed` and is closed, as the wording of U10 says literally.
-- Recommended: option 1.
-
-**Q-f. A group with one camera in a 29.97 fps mode and one in a 30 fps mode.**
-
-- Option 1: allowed, because 29.97 counts as 30 (U11). The rate check of each camera uses its own
-  mode rate. Under lockstep the group runs at 29.97 fps, and about one frame of the 30 fps camera is
-  replaced every 33 s.
-- Option 2: refused by the one-rate rule (D18, with the tolerance of 0.0001 of D17).
-- Recommended: option 1.
+None open. The user answered Q-e and Q-f of the third draft on 2026-11-19 (U14, U15).
 
 ## 20. Decisions of the user (D1 to D49)
 
@@ -1531,6 +1553,8 @@ and D38 replace the two older plan statements of 1.4.
   compared with a relative tolerance of 0.0001.
 - D18: While the lockstep gate exists, all cameras of a group must have the same mode frame rate; a
   group with different rates is refused. The rule compares mode rates, not measured rates.
+  - Note: the user added on 2026-11-19 ([ADR-QKX1](../decisions/entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md), U15) that 29.97 and 30 fps are one
+    rate class for this rule. A group that mixes them is allowed, with a warning.
 - D19: Step 3b: the existing `capture_fourcc` setting asks for YUY2 or NV12 (default MJPG), until the
   mode list of 3c gives a proper choice.
 
@@ -1647,7 +1671,7 @@ and D38 replace the two older plan statements of 1.4.
   auto exposure; with auto exposure and auto focus on, does each camera report its true current
   value, and does the image stay the same after the switch to manual with that value?
 
-**Answers of the user to the two drafts, 2026-11-19 ([ADR-QKX1](../decisions/entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md))**
+**Answers of the user to the three drafts, 2026-11-19 ([ADR-QKX1](../decisions/entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md))**
 
 - U1: While OpenCV is the default on Windows during the build, the OpenCV source finds its camera by
   the device part of the Media Foundation link.
@@ -1680,3 +1704,12 @@ and D38 replace the two older plan statements of 1.4.
 - U13: The interim preview relay sends the newest frame of each camera on its own, without waiting for
   equal frame numbers. Preview frames of different cameras can then be one gate round apart. Phase 4
   replaces this relay.
+- U14: A live control change that fails without a hang leaves the camera running in its earlier
+  state. The failed change is reported for that camera in the response. The camera does not become
+  `failed`. A change that needs a reopen and fails still gives a `failed` camera (U10).
+- U15: A group with a camera in a 29.97 fps mode and a camera in a 30 fps mode is allowed, and
+  skellycam warns the user. The warning says that the 30 fps cameras skip one frame about every
+  1 / (30 - 29.97) s (1001/30 s = 33.4 s for the exact rates), that each skipped frame is counted and
+  is missing from the recording, and that the group runs at 29.97 fps. The interval comes from the
+  exact mode rates. The warning goes into the `warnings` list of the apply response and into the log.
+  The one-rate rule treats 29.97 and 30 as one rate class; each other difference is refused.

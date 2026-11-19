@@ -93,12 +93,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Phase 3 (Windows native capture).** The user decided D1 to D49 on 2026-11-19
   ([ADR-EN7A](entries/EN7A-phase-3-windows-capture-decisions.md)). D23 and D38 replace two statements
   of the plan. The spec [`specs/windows-capture.md`](../specs/windows-capture.md) and its test list
-  T-CAP-01 to T-CAP-89 are proposed
+  T-CAP-01 to T-CAP-91 are proposed
   ([ADR-4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md)). The user answered the
-  questions of two drafts on 2026-11-19 (thirteen answers)
+  questions of three drafts on 2026-11-19 (fifteen answers)
   ([ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md)). The revised spec
-  waits for the user, with 62 agent choices (section 18) and two questions open (section 19: Q-e,
-  Q-f). No product code or
+  waits for the user, with 64 agent choices (section 18) and no open question. No product code or
   test code is written before the user accepts the spec. Section 17.2 of the spec lists seven
   differences from the ring spec.
 - **Phase 5: remove three interim rules of phase 3.** The new recorder of phase 5 must remove the three

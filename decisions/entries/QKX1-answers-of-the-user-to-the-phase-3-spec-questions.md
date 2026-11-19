@@ -1,13 +1,13 @@
-# QKX1 — Thirteen answers of the user to the phase 3 spec drafts; three interim rules
+# QKX1 — Fifteen answers of the user to the phase 3 spec drafts; three interim rules
 
 **Status:** accepted, 2026-11-19 (user; commit to dom/native-jpeg).
 
 ## Decision
 
-The user gave thirteen answers on 2026-11-19 to the drafts of
+The user gave fifteen answers on 2026-11-19 to the drafts of
 [`specs/windows-capture.md`](../../specs/windows-capture.md): to the eight questions of the first
-draft (U1 to U4, U6 to U9), to one agent choice of it (U5), and to the four questions of the second
-draft (U10 to U13)
+draft (U1 to U4, U6 to U9), to one agent choice of it (U5), to the four questions of the second
+draft (U10 to U13), and to the two questions of the third draft (U14, U15)
 ([ADR-4CQC](4CQC-phase-3-windows-capture-spec-and-test-list.md)). The spec marks each answer [Un].
 They add to the decisions of [ADR-EN7A](EN7A-phase-3-windows-capture-decisions.md).
 
@@ -51,6 +51,18 @@ They add to the decisions of [ADR-EN7A](EN7A-phase-3-windows-capture-decisions.m
 13. **U13.** The interim preview relay sends the newest frame of each camera on its own, without a
     wait for equal frame numbers. The preview frames of different cameras can then be one gate round
     apart. Phase 4 replaces this relay.
+14. **U14.** A live control change (exposure, gain, focus) that fails without a hang (the set call
+    returns an error, or the read-back differs from the value set) leaves the camera running in its
+    earlier state. The failed change is reported for that camera in the response. The camera does not
+    become `failed`. A change that needs a reopen and fails still gives a `failed` camera (U10).
+15. **U15.** A group with a camera in a 29.97 fps mode and a camera in a 30 fps mode is allowed, and
+    skellycam warns the user. The one-rate rule (D18) treats 30000/1001 and 30/1 as one rate class;
+    this is the exception to the tolerance of D17 for D18. Each other difference is still refused.
+    Each rate check uses the own mode rate of the camera. The warning names the cameras of each rate
+    and says that the group runs at 29.97 fps, and that the 30 fps cameras skip one frame about every
+    `1 / (r_high - r_low)` s (1001/30 s = 33.4 s), each counted and missing from the recording. The
+    interval comes from the exact mode rates. The warning goes into the `warnings` list of the apply
+    response and into the log.
 
 ## Reason
 

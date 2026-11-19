@@ -5,11 +5,11 @@
 ## Decision
 
 [`specs/windows-capture.md`](../../specs/windows-capture.md) is proposed as the spec of phase 3, with
-its test list T-CAP-01 to T-CAP-89. It follows the decisions D1 to D49 of
-[ADR-EN7A](EN7A-phase-3-windows-capture-decisions.md), the answers U1 to U13 of
+its test list T-CAP-01 to T-CAP-91. It follows the decisions D1 to D49 of
+[ADR-EN7A](EN7A-phase-3-windows-capture-decisions.md), the answers U1 to U15 of
 [ADR-QKX1](QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md), the ring spec and the plan.
 It waits for the acceptance of the user. No product code and no test code is written before that.
-The three revisions of 2026-11-19 apply the answers of the user and the fixes of an independent
+The four revisions of 2026-11-19 apply the answers of the user and the fixes of an independent
 reviews.
 
 An agent made these choices where the sources leave a gap. Section 18 of the spec states each one in
@@ -47,7 +47,7 @@ full, and the body marks each one [agent n]:
 30. Config names `gain`, `gain_auto`, `focus`, `focus_auto`.
 31. Exposure, gain and focus in the status from 3a, read each second.
 32. Camera data in the recording info JSON until phase 5.
-33. The `warnings` list of the record start and the status.
+33. The `warnings` lists: one item form, the kind `auto_control`.
 34. Stage names.
 35. Reason `{type}: {message}`; diagnostics to the log.
 36. 3b: `input_range`, short raw frames flagged, one shared BGR conversion.
@@ -77,17 +77,17 @@ full, and the body marks each one [agent n]:
 60. A hang while open gives `dead`, stage `streaming`.
 61. The interim decode on the loop thread.
 62. A stream error or end of stream: dead at once.
+63. The kind `mixed_rate` and the interval in whole seconds.
+64. A failed live change as a `warnings` item of the kind `control_change_failed`.
 
-Two questions for the user are open (section 19 of the spec; "yes" accepts the recommendation):
-
-1. Q-e: a live control change that fails without a hang keeps the camera in its earlier state.
-2. Q-f: a group with a 29.97 fps camera and a 30 fps camera is allowed.
+No question for the user is open. The user answered the last two questions on 2026-11-19 (U14 and
+U15 of [ADR-QKX1](QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md)).
 
 ## Reason
 
 - D3: a spec and a test list before any code. The user reviews it.
-- Each choice is the smallest that the spec needs to be complete. Each of the two open questions
-  is a point where two readings are possible and the choice matters to the user.
+- Each choice is the smallest that the spec needs to be complete. The user decided each point where
+  two readings were possible and the choice mattered (U1 to U15).
 
 ## Open work
 
