@@ -492,12 +492,16 @@ def opencv_fake_class():
     from skellycam.tests.frame_ring.ring_session import FakeCapture
 
     class OpenCVFake(FakeCapture):
-        """`FakeCapture` of the ring tests with a reported rate and late grabs. It keeps the hash of
-        each image it gives and of the q90 JPEG of that image."""
+        """`FakeCapture` of the ring tests with a reported rate, a delivered rate, late grabs and a
+        stop (`stop()`: each later grab fails, as after an unplug). It keeps the hash of each image it
+        gives and of the q90 JPEG of that image."""
 
-        def __init__(self, width, height, reported_fps=30.0, late_grabs=(), late_s=0.0):
-            super().__init__(width, height, 30.0)
+        def __init__(self, width, height, reported_fps=30.0, delivered_fps=None, late_grabs=(), late_s=0.0):
+            if delivered_fps is None:
+                delivered_fps = reported_fps if reported_fps > 0 else 30.0
+            super().__init__(width, height, delivered_fps)
             self.reported_fps = reported_fps
+            self.stopped = False
             self.late_grabs, self.late_s = late_grabs, late_s
             self.grabs = 0
             self.jpeg_hashes, self.image_hashes = set(), set()
@@ -507,7 +511,13 @@ def opencv_fake_class():
                 return float(self.reported_fps)
             return super().get(prop_id)
 
+        def stop(self):
+            self.stopped = True
+
         def grab(self):
+            if self.stopped:
+                time.sleep(0.01)
+                return False
             if self.grabs in self.late_grabs:
                 time.sleep(self.late_s)
             ok = super().grab()
@@ -517,6 +527,9 @@ def opencv_fake_class():
             return ok
 
         def read(self, image=None):
+            if self.stopped:
+                time.sleep(0.01)
+                return False, None
             ok, frame = super().read(image)
             if ok:
                 self.grabs += 1
@@ -532,9 +545,14 @@ def opencv_fake_class():
 
 class OpenCVFakeFactory:
     """A `source_factory` (ADR-HP7D) that gives the product `OpenCVSource`. The tests replace
-    `opencv_source.create_cv2_video_capture` with the OpenCV fake (ADR-HP7D). Real time."""
+    `opencv_source.create_cv2_video_capture` with the OpenCV fake (ADR-HP7D). Real time.
 
-    def __init__(self, monkeypatch, count=1, width=640, height=480, **fake_args):
+    Its detection result has `supported_modes = []`, as `cv2_enumerate_cameras` gives on Linux and
+    macOS, so the whole-request check compares the requested rates (7.5, ADR-HP7D item 2).
+    `fake_args` go to each OpenCV fake; `per_camera` gives other arguments to camera i;
+    `fail_open` holds the indexes of cameras whose open fails."""
+
+    def __init__(self, monkeypatch, count=1, width=640, height=480, per_camera=None, fail_open=(), **fake_args):
         from skellycam.tests.capture.fake_source import FakeScript, fake_link, spec_camera_id
 
         opencv_source = product("skellycam.core.camera.capture.opencv_source")
@@ -545,12 +563,17 @@ class OpenCVFakeFactory:
         self.opens = {camera_id: 0 for camera_id in self.camera_ids}
         self.captures = {}
         self._fake_class, self._fake_args = opencv_fake_class(), fake_args
+        self._per_camera, self._fail_open = per_camera or {}, fail_open
         self._source_class = opencv_source.OpenCVSource
         monkeypatch.setattr(opencv_source, "create_cv2_video_capture", self._create)
 
     def _create(self, config):
         self.opens[config.camera_id] += 1
-        capture = self._fake_class(config.resolution.width, config.resolution.height, **self._fake_args)
+        index = self.camera_ids.index(config.camera_id)
+        if index in self._fail_open:
+            raise RuntimeError(f"the fake camera {config.camera_id} cannot open")
+        args = {**self._fake_args, **self._per_camera.get(index, {})}
+        capture = self._fake_class(config.resolution.width, config.resolution.height, **args)
         self.captures[config.camera_id] = capture
         return capture, config
 
@@ -558,10 +581,11 @@ class OpenCVFakeFactory:
         return self._source_class(config)
 
     def device_infos(self):
-        from skellycam.tests.capture.fake_source import FakeSourceFactory
+        from skellycam.core.device_detection.detect_cameras_devices import CameraDeviceInfo
 
-        infos = FakeSourceFactory.device_infos(self)
-        return infos
+        product("skellycam.core.camera.capture.modes")
+        return [CameraDeviceInfo(index=index, name=f"Fake OpenCV camera {index}", vendor_id=0xFEED, product_id=index,
+                                 path=link, supported_modes=[]) for index, link in enumerate(self.links)]
 
 
 # ---------------------------------------------------------------------------

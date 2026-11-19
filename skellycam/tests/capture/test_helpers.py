@@ -80,16 +80,17 @@ class StandInFailure(Exception):
 
 class StandInPlace:
     """The rules of 4.3: newest wins, a replaced frame counts, its discontinuity moves on, and an
-    error marker raises in `take`."""
+    error marker waits behind a frame that waits; `take` then raises at the next call [agent 66]."""
 
     def __init__(self):
         self._condition = threading.Condition()
         self._item = None
+        self._error = None
         self.replaced = 0
 
     def put(self, frame):
         with self._condition:
-            if isinstance(self._item, StandInFrame):
+            if self._item is not None:
                 self.replaced += 1
                 if self._item.discontinuity:
                     frame = replace(frame, discontinuity=True)
@@ -98,17 +99,16 @@ class StandInPlace:
 
     def put_error(self, failure):
         with self._condition:
-            self._item = failure
+            self._error = failure
             self._condition.notify()
 
     def take(self, timeout_s):
         with self._condition:
-            if self._item is None:
+            if self._item is None and self._error is None:
                 self._condition.wait(timeout_s)
-            item = self._item
-            if isinstance(item, Exception):
-                raise item
-            self._item = None
+            item, self._item = self._item, None
+            if item is None and self._error is not None:
+                raise self._error
             return item
 
 
@@ -290,6 +290,35 @@ def test_fake_discontinuity_moves_to_the_replacing_frame():
     source.open(request())
     numbers = [(f.source_frame_number, f.discontinuity) for f in (source.read_frame(1.0) for _ in range(6))]
     assert (5, True) in numbers and all(n != 4 for n, _ in numbers)
+
+
+def test_fake_grid_stop_time_rate_window_and_drop():
+    clock = VirtualClock()
+    clock.advance_to(VirtualClock.START_NS + 1_234_000_000)
+    script = FakeScript(align_ms=100.0, stop_at_s=3.0, rate_windows=((2.0, 2.5, 60.0),), drop_at_window_end=True)
+    source, _ = virtual_source(script, clock=clock)
+    source.open(request())
+    frames = []
+    while (frame := source.read_frame(2.5)) is not None:
+        frames.append(frame)
+    seconds = [(f.arrival_ns - VirtualClock.START_NS) / 1e9 for f in frames]
+    assert seconds[0] == pytest.approx(1.3), "frame 0 is on the 100 ms grid"
+    assert seconds[-1] <= 3.0 < seconds[-1] + 1 / 30
+    fast = [b - a for a, b in zip(seconds, seconds[1:]) if 2.0 <= a < 2.5]
+    assert fast and all(d == pytest.approx(1 / 60, abs=1e-6) for d in fast)
+    dropped = [f for f in frames if f.discontinuity]
+    assert len(dropped) == 1 and (dropped[0].arrival_ns - VirtualClock.START_NS) / 1e9 == pytest.approx(2.5 + 1 / 15, abs=1e-6)
+    assert all(abs(x * 30 - round(x * 30)) < 1e-4 for x in seconds if x > 2.5), "back on the 30 fps grid"
+
+
+def test_stand_in_error_marker_waits_behind_a_frame():
+    place = StandInPlace()
+    frame = StandInFrame(b"", "MJPG", 1, 1, 0, False, 7, False)
+    place.put(frame)
+    place.put_error(StandInFailure("streaming", "device removed"))
+    assert place.take(0.0) is frame
+    with pytest.raises(StandInFailure):
+        place.take(0.0)
 
 
 def test_fake_first_frame_timeout_after_five_seconds():

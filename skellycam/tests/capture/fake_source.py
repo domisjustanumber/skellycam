@@ -218,6 +218,10 @@ class FakeScript:
     brightness: tuple = ()  # (exposure, mean gray) pairs: the image follows the exposure
     hang_at: str | None = None  # "open", "set_controls" or "close": hangs when the hang is armed
     hang_armed: bool = False  # armed from the start; else FakeLog.arm_hang()
+    align_ms: float | None = None  # frame 0 comes at the next multiple of this on the clock (a common grid)
+    stop_at_s: float | None = None  # no frame after this clock time (s from VirtualClock.START_NS)
+    rate_windows: tuple = ()  # (from_s, to_s, rate): the delivered rate between two clock times
+    drop_at_window_end: bool = False  # the camera drops one frame when a rate window ends
     recorder_close_delay_s: float | None = None  # the old recorder of this camera needs this long to close
 
 
@@ -309,6 +313,11 @@ class FakeSource:
         self._remove_after = script.removed_after_frame
         self._stop_after = script.stop_after_frame
         self._slow = None  # [rate, seconds, start_ns or None]
+        self._drops = set(script.drop_before_frames)  # frames after a camera drop
+        self._drop_next = False
+        self._in_window = False
+        self._base_ns = getattr(self.clock, "START_NS", 0)
+        self._stop_ns = None if script.stop_at_s is None else self._base_ns + round(script.stop_at_s * 1e9)
         self.slow_finished_ns = None
         self.cut_frames = []
         self.removed_frame = None
@@ -347,6 +356,9 @@ class FakeSource:
             self.log.first_read_sample_ns.value = t0
             self._event("read_sample", None)
             self._last_arrival = t0 + round(self.script.first_frame_delay_s * 1e9)
+            if self.script.align_ms:
+                grid = round(self.script.align_ms * 1e6)
+                self._last_arrival = self._base_ns + -(-(self._last_arrival - self._base_ns) // grid) * grid
             self._upcoming.append((0, self._last_arrival))
         if self.script.first_frame_delay_s > types.FIRST_FRAME_TIMEOUT_S:
             self._wait(types.FIRST_FRAME_TIMEOUT_S)
@@ -505,6 +517,17 @@ class FakeSource:
                 for name, (present, auto, value) in self._controls.items()}
 
     def _interval_ns(self, previous_arrival):
+        if self.script.rate_windows:
+            clock_s = (previous_arrival - self._base_ns) / 1e9
+            for start, end, rate in self.script.rate_windows:
+                if start <= clock_s < end:
+                    self._in_window = True
+                    return round(1e9 / rate)
+            if self._in_window:
+                self._in_window = False
+                if self.script.drop_at_window_end:
+                    self._drop_next = True
+                    return 2 * round(1e9 / self._rate)
         if self._slow is not None:
             rate, seconds, start = self._slow
             if start is None:
@@ -526,6 +549,9 @@ class FakeSource:
             arrival += self._interval_ns(arrival)
             if k + 1 in self.script.drop_before_frames:
                 arrival += self._interval_ns(arrival)  # the dropped frame's place in time
+            if self._drop_next:
+                self._drop_next = False
+                self._drops.add(k + 1)
             self._upcoming.append((k + 1, arrival))
         for k, arrival in self._upcoming:
             if k == sfn:
@@ -542,7 +568,8 @@ class FakeSource:
         with self._lock:
             if self._ended or (self._stop_after is not None and self._next_sfn > self._stop_after):
                 return None
-            return self._due(self._next_sfn)
+            due = self._due(self._next_sfn)
+            return None if self._stop_ns is not None and due > self._stop_ns else due
 
     def _deliver_until(self, t_ns):
         types = self.types
@@ -551,7 +578,7 @@ class FakeSource:
                 k = self._next_sfn
                 if self._stop_after is not None and k > self._stop_after:
                     return
-                if self._due(k) > t_ns:
+                if self._due(k) > t_ns or (self._stop_ns is not None and self._due(k) > self._stop_ns):
                     return
                 if self._remove_after is not None and k > self._remove_after:
                     # the device goes away between frame k - 1 and the time of frame k
@@ -580,7 +607,7 @@ class FakeSource:
         return types.CapturedFrame(
             payload=payload, format=self._mode.format, arrival_ns=arrival, sample_ns=sample,
             delivered_len=len(payload), driver_error=False, source_frame_number=k,
-            discontinuity=k in self.script.drop_before_frames or k in self.script.discontinuity_frames)
+            discontinuity=k in self._drops or k in self.script.discontinuity_frames)
 
     def _gray(self):
         if not self.script.brightness:
