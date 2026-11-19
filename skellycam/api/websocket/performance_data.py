@@ -1,5 +1,5 @@
 """
-Extracts per-camera frame lifecycle timestamps from frame recarrays
+Extracts per-camera frame times from the slot headers of the newest ring frames (spec 2.3, A5)
 and packages them as JSON-serializable performance data for the frontend.
 
 Structured for direct ingestion into Perspective tables on the frontend:
@@ -12,6 +12,7 @@ import time
 import numpy as np
 
 from skellycam.api.websocket.websocket_message_types import WebsocketMessageType
+from skellycam.core.ipc.frame_ring import NO_SAMPLE_NS, FrameRead
 from skellycam.core.types.type_overloads import CameraIdString
 
 logger = logging.getLogger(__name__)
@@ -28,11 +29,12 @@ def _safe_duration_ms(start_ns: int | float, end_ns: int | float) -> float:
 
 
 def extract_performance_data_from_frames(
-    latest_frames: dict[CameraIdString, np.recarray],
+    latest_frames: dict[CameraIdString, FrameRead],
     session_start_perf_ns: int,
 ) -> dict:
     """
-    Extract per-camera frame lifecycle timestamps from the latest multi-frame.
+    Extract per-camera frame times from the ring frames of one frame number (`arrival_ns`,
+    `sample_ns` and `published_ns` of the slot headers).
 
     Returns a JSON-serializable dict structured for Perspective table ingestion.
     """
@@ -46,41 +48,18 @@ def extract_performance_data_from_frames(
     now_perf_ns = time.perf_counter_ns()
     timestamp_ms = _ns_to_ms(now_perf_ns - session_start_perf_ns)
 
-    for camera_id, frame_recarray in latest_frames.items():
-        metadata = frame_recarray.frame_metadata
-        frame_number = int(metadata.frame_number[0])
-        frame_numbers.append(frame_number)
-
-        ts = metadata.timestamps
-
-        # Extract lifecycle timestamps from the numpy recarray
-        initialized_ns = int(ts.initialized_ns[0])
-        pre_grab_ns = int(ts.pre_frame_grab_ns[0])
-        post_grab_ns = int(ts.post_frame_grab_ns[0])
-        pre_retrieve_ns = int(ts.pre_frame_retrieve_ns[0])
-        post_retrieve_ns = int(ts.post_frame_retrieve_ns[0])
-        pre_shm_ns = int(ts.pre_copy_to_camera_shm_ns[0])
-        post_shm_ns = int(ts.post_copy_to_camera_shm_ns[0])
-        pre_record_ns = int(ts.pre_frame_record_ns[0])
-        post_record_ns = int(ts.post_frame_record_ns[0])
-
-        grab_mid_ns = (pre_grab_ns + post_grab_ns) // 2
-        grab_timestamps_ns.append(float(grab_mid_ns))
+    for camera_id, read in latest_frames.items():
+        frame_numbers.append(read.frame_number)
+        grab_timestamps_ns.append(float(read.arrival_ns))
+        sample_ns = read.sample_ns if read.sample_ns != NO_SAMPLE_NS else 0
 
         row = {
             "timestamp_ms": round(timestamp_ms, 3),
-            "frame_number": frame_number,
+            "frame_number": read.frame_number,
             "camera_id": str(camera_id),
-            "grab_duration_ms": round(_safe_duration_ms(pre_grab_ns, post_grab_ns), 4),
-            "idle_before_retrieve_ms": round(_safe_duration_ms(post_grab_ns, pre_retrieve_ns), 4),
-            "retrieve_duration_ms": round(_safe_duration_ms(pre_retrieve_ns, post_retrieve_ns), 4),
-            "idle_before_shm_copy_ms": round(_safe_duration_ms(post_retrieve_ns, pre_shm_ns), 4),
-            "shm_copy_duration_ms": round(_safe_duration_ms(pre_shm_ns, post_shm_ns), 4),
-            "idle_before_record_ms": round(_safe_duration_ms(post_shm_ns, pre_record_ns), 4),
-            "record_duration_ms": round(_safe_duration_ms(pre_record_ns, post_record_ns), 4),
-            "total_processing_ms": round(_safe_duration_ms(pre_grab_ns, post_record_ns), 4),
-            "total_idle_ms": round(_safe_duration_ms(initialized_ns, pre_grab_ns), 4),
-            "grab_timestamp_from_start_ms": round(_ns_to_ms(grab_mid_ns - session_start_perf_ns), 3),
+            "sample_to_arrival_ms": round(_safe_duration_ms(sample_ns, read.arrival_ns), 4),
+            "arrival_to_published_ms": round(_safe_duration_ms(read.arrival_ns, read.published_ns), 4),
+            "arrival_from_start_ms": round(_ns_to_ms(read.arrival_ns - session_start_perf_ns), 3),
         }
         per_camera_rows.append(row)
 

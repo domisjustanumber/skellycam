@@ -131,7 +131,6 @@ class CameraGroupManager:
     def get_latest_frontend_payloads(
         self,
         if_newer_than: dict[CameraGroupIdString, int],
-        display_image_sizes: dict[CameraIdString, dict[str, float]] | None = None,
     ) -> dict[CameraGroupIdString, tuple[FrameNumberInt, MultiframeTimestampFloat, memoryview]]:
         if self.closing:
             return {}
@@ -139,10 +138,7 @@ class CameraGroupManager:
             CameraGroupIdString, tuple[FrameNumberInt, MultiframeTimestampFloat, memoryview]
         ] = {}
         for camera_group in self.camera_groups.values():
-            fe_return = camera_group.get_latest_frontend_payload(
-                if_newer_than=if_newer_than.get(camera_group.id, -1),
-                display_image_sizes=display_image_sizes,
-            )
+            fe_return = camera_group.get_latest_ring_payload()
             if fe_return is None:
                 continue
             frame_number, multiframe_timestamp, fe_payload = fe_return
@@ -179,7 +175,7 @@ class CameraGroupManager:
             return {}
         result: dict[CameraGroupIdString, dict] = {}
         for camera_group in self.camera_groups.values():
-            latest_frames = camera_group.get_latest_frames()
+            latest_frames = camera_group.read_latest_ring_frames()
             if latest_frames is None:
                 continue
             try:

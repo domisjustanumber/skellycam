@@ -203,8 +203,7 @@ class WebsocketServer:
                         new_frontend_payloads: dict[
                             CameraGroupIdString, tuple[
                                 FrameNumberInt, MultiframeTimestampFloat, memoryview]] = self._cgm.get_latest_frontend_payloads(
-                            if_newer_than=self._last_sent_by_group,
-                            display_image_sizes=self._display_image_sizes)
+                            if_newer_than=self._last_sent_by_group)
 
                         for camera_group_id, (frame_number,
                                               multiframe_timestamp,

@@ -1,5 +1,4 @@
 """Tests for WebSocket server-side framerate calculation and performance data extraction."""
-import numpy as np
 import pytest
 
 from skellycam.api.websocket.websocket_server import ServerFramerateCalculator
@@ -8,9 +7,7 @@ from skellycam.api.websocket.performance_data import (
     _ns_to_ms,
     _safe_duration_ms,
 )
-from skellycam.core.camera.config.camera_config import CameraConfig
-from skellycam.core.camera.config.image_resolution import ImageResolution
-from skellycam.core.types.frame_dtype_factories import create_frame_dtype
+from skellycam.core.ipc.frame_ring import FrameRead, ReadResult
 
 
 # ---------------------------------------------------------------------------
@@ -99,30 +96,11 @@ class TestExtractPerformanceData:
         camera_index: int,
         frame_number: int,
         base_ts_ns: int,
-    ) -> np.recarray:
-        config = CameraConfig(
-            camera_id=camera_id,
-            camera_index=camera_index,
-            resolution=ImageResolution(height=48, width=64),
-        )
-        frame_dtype = create_frame_dtype(config)
-        frame = np.recarray(1, dtype=frame_dtype)
-        frame.frame_metadata.camera_info[0] = config.to_frame_camera_info()
-        frame.frame_metadata.frame_number[0] = frame_number
-
-        ts = frame.frame_metadata.timestamps
-        ts.initialized_ns[0] = base_ts_ns
-        ts.pre_frame_grab_ns[0] = base_ts_ns + 1_000_000
-        ts.post_frame_grab_ns[0] = base_ts_ns + 2_000_000
-        ts.pre_frame_retrieve_ns[0] = base_ts_ns + 3_000_000
-        ts.post_frame_retrieve_ns[0] = base_ts_ns + 10_000_000
-        ts.pre_copy_to_camera_shm_ns[0] = base_ts_ns + 11_000_000
-        ts.post_copy_to_camera_shm_ns[0] = base_ts_ns + 12_000_000
-        ts.pre_frame_record_ns[0] = base_ts_ns + 13_000_000
-        ts.post_frame_record_ns[0] = base_ts_ns + 14_000_000
-
-        frame.image[0] = np.zeros((48, 64, 3), dtype=np.uint8)
-        return frame
+    ) -> FrameRead:
+        """A ring frame with the slot-header times only (spec 2.3, A5)."""
+        return FrameRead(ReadResult.OK, frame_number, arrival_ns=base_ts_ns + 2_000_000,
+                         sample_ns=base_ts_ns + 1_000_000, published_ns=base_ts_ns + 3_000_000,
+                         source_frame_number=-1, flags=0, rotation_cw_deg=0, payload_len=0, payload=b"")
 
     def test_single_camera(self) -> None:
         frame = self._make_fake_frame("cam0", 0, frame_number=5, base_ts_ns=100_000_000)
@@ -140,8 +118,8 @@ class TestExtractPerformanceData:
         row = result["camera_lifecycle_rows"][0]
         assert row["camera_id"] == "cam0"
         assert row["frame_number"] == 5
-        assert row["grab_duration_ms"] > 0
-        assert row["retrieve_duration_ms"] > 0
+        assert row["sample_to_arrival_ms"] == pytest.approx(1.0)
+        assert row["arrival_to_published_ms"] == pytest.approx(1.0)
 
         sync = result["inter_camera_sync"]
         assert sync["num_cameras"] == 1
