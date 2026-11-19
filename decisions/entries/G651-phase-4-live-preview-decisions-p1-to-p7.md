@@ -36,7 +36,8 @@ cameras.
 
 ## Answers of the user to the first draft of the step 4a spec (2026-11-19)
 
-The user answered the four questions of the first draft, and gave three more rules, on 2026-11-19:
+The user answered the four questions of the first draft, gave three more rules, and answered the
+question of the revised draft (A8), on 2026-11-19:
 
 1. **A1.** 4a adds the sender and its tests with no route. The endpoint keeps the old relay. 4b
    connects the sender, deletes the old code and changes the UI together. The branch goes to
@@ -55,7 +56,10 @@ The user answered the four questions of the first draft, and gave three more rul
 7. **A7.** The frame rate viewer shows two separate numbers with clear names: "not shown" (frames
    that the server did not send because the screen was slower than the camera) and the ring's own
    skipped count. Never one mixed number.
-8. **Tile thread.** The shared tile runs on the main thread of the page with ImageDecoder. 4b
+8. **A8** (answer to question Q1 of the spec). The ring reader gets a second read-only property,
+   `skipped_count`, of the same kind as `oversize_count`, for display only. This adds to the reader
+   API of ADR-9G2W by decision of the user.
+9. **Tile thread.** The shared tile runs on the main thread of the page with ImageDecoder. 4b
    measures 8 cameras at 60 fps. A worker only if the target is missed.
 
 ## Consequences
@@ -63,7 +67,7 @@ The user answered the four questions of the first draft, and gave three more rul
 - [`specs/preview.md`](../../specs/preview.md) applies these decisions and answers to step 4a. It is
   proposed ([ADR-162X](162X-step-4a-preview-spec-and-agent-choices.md)).
 - A2 changes step 3a: the capture spec and the 3a tests must get `replaced_count`.
-- A5 and A7 together need the ring `skipped_count`. Question Q1 of the spec asks the user.
+- A8 gives the ring `skipped_count` that A7 needs. No question of the spec is open.
 
 ## Open work
 
