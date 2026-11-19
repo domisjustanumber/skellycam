@@ -36,6 +36,12 @@ jobs:
       - name: Set up Python 3.13.18
         run: uv python install 3.13.18
 
+      # The tests' conftest imports sounddevice. Its Linux wheel does not hold PortAudio.
+      - name: Install PortAudio
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libportaudio2=19.6.0-1.2build3
+
       - name: Install dependencies
         run: uv sync --group dev --python 3.13.18
 
