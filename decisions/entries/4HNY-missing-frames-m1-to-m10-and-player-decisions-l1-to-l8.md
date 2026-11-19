@@ -1,6 +1,6 @@
 # 4HNY — Missing frames M1 to M10 and player decisions L1 to L8
 
-**Status:** accepted, 2026-11-19 (user; relayed by the supervisor after the first drafts of the recorder and player specs and their reviews; commit to dom/player).
+**Status:** accepted, 2026-11-19 (user; relayed by the supervisor after the first drafts of the recorder and player specs and their reviews; answers U1 and U2 on 2026-11-20; commit to dom/player).
 
 ## Decision
 
@@ -19,8 +19,10 @@ each one in full. M1 to M10 are shared with the recorder spec of step 5a.
    for a damaged frame and empty for a dead camera; a row with no time has no player time.
 3. M4, M6: two stated exceptions to "the stored bytes are the camera's bytes": the placeholder, and
    the DHT table that the ring inserted.
-4. M5: the file of a killed or hung camera process is short; its late `missing` rows have empty byte
-   fields and no block; the manifest says that the file is shorter.
+4. M5: the file of a killed or hung camera process is short. The main process completes its files
+   only after the process has ended: its late `missing` rows have empty byte fields and no block, and
+   the manifest says that the file is shorter. This is the one exception to "one block for each row"
+   (U2 adds a write error as a second case of the same short pair).
 5. M7: a take starts at the first group frame.
 6. M8: a dead camera has the manifest warning `camera_dead` with `last_frame`; in the player, N of
    "camera lost at frame N" is the first group frame with no image.
@@ -45,6 +47,14 @@ each one in full. M1 to M10 are shared with the recorder spec of step 5a.
 7. L7: the file handler opens a folder only inside the recordings folder or a folder that the user
    picked in the system folder dialog.
 8. L8: Y2 stands; one shared check suite runs against both `TakeFiles` implementations.
+
+**Answers of 2026-11-20** (relayed by the supervisor):
+
+1. U1: a folder that the user picked in the system folder dialog is remembered across restarts. A
+   page must not be able to add to the list without a dialog pick.
+2. U2: a write error on one camera file is a second short-file case: the same short pair as a killed
+   process (`missing` rows with empty byte fields and no block, `# repair`, `# end`), with the
+   manifest warnings `camera_file_short` and `take_error`, and no `camera_dead`.
 
 ## Reason
 
