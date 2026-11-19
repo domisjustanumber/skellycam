@@ -68,7 +68,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
       committed there yet.
   - The user runs T-RING-49, the optional four-camera smoke test. It needs cameras.
   - T-RING-34 (Apple Silicon) is on hold. It goes into the certify suite of a later task and is not
-    run by hand now (item 67). T-RING-35 (arm64 CI) is not decided.
+    run by hand now (item 67). The job `ring-portable` of `.github/workflows/ring-arm64.yml` runs T-RING-35 and T-RING-48 on
+    each push to `dom/native-jpeg` ([ADR-7DE6](entries/7DE6-arm64-ci-job-for-the-portable-frame-ring-tests.md)).
+    It has not run yet.
   - The measurements M4 and M8 of section 11.3 are not done. Phase 2 makes them before it fixes a
     performance number.
   - Section 13 of the spec holds the open questions.

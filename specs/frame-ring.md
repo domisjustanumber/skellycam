@@ -910,7 +910,7 @@ are written.
 | T-RING-32 | 2a | Old code gone | Import the deleted modules; search for the deleted names. | Imports fail; no names left outside history docs. |
 | T-RING-33 | 2a | Interim UI relay ([A4]) | Fake cameras; capture one websocket message. | JPEG bytes in the message equal the bytes of the ring. |
 | T-RING-34 | 2a | Apple Silicon | Run T-RING-05 to T-RING-14, T-RING-28 and T-RING-30 on an Apple Silicon Mac [D P:111-112, P:174, N:313]. | All pass. On hold: goes into the certify suite of a later task; not run by hand now [A67]. |
-| T-RING-35 | 2a | arm64 CI | Same set on an arm64 Linux CI runner [D N:313; runner A51]. | All pass. |
+| T-RING-35 | 2a | arm64 CI | Same set on an arm64 Linux CI runner [D N:313; runner A51]. | All pass. The job `ring-portable` of `.github/workflows/ring-arm64.yml` runs this set [A68]. It has not run yet. |
 | T-RING-36 | 2b | BGR suite | T-RING-05, 07 to 14 with BGR payloads at 640x480 and one 1920x1080 case [D N:88]. | As the JPEG rules; T-RING-06 does not apply (no oversize guard). |
 | T-RING-37 | 2b | BGR request | Config with and without `bgr_ring`. | Ring and name only when asked; size logged. |
 | T-RING-38 | 2b | Slow decode skips | Decoder stub that sleeps 100 ms; synthetic capture at 60 frames/s [D N:88]. | JPEG ring gets every frame; capture interval p99 unchanged within 10 %; BGR skips counted; BGR frames are a subset. |
@@ -923,7 +923,7 @@ are written.
 | T-RING-45 | 2b | One OpenCV thread | Query in the camera process. | `cv2.getNumThreads() == 1`. |
 | T-RING-46 | 2b | Log flooding | Decode 1,000 JPEGs with extra bytes before EOI. | At most one log line per distinct message per minute, with a count. |
 | T-RING-47 | 2b | Uncompressed path | Synthetic YUY2 and NV12 frames; BGR ring requested; both hand-over cases of 8.7. | BGR matches a reference conversion; ring array never shares memory with the recorder buffer; BGR skips leave the encoder path untouched. |
-| T-RING-48 | 2b | BGR on ARM | T-RING-36 on Apple Silicon and on arm64 CI. | All pass. |
+| T-RING-48 | 2b | BGR on ARM | T-RING-36 on Apple Silicon and on arm64 CI. | All pass. The arm64 CI job runs it with the marker `ring_portable` [A68]. It has not run yet. |
 | T-RING-49 | 2a | Four-camera smoke (optional; needs cameras and the user) | Four cameras at 720p30, 10 min, UI open. | Oversize 0; cut-off count logged; UI shows all four; no traceback. |
 
 ## 13. Open questions and unverified items
@@ -1166,3 +1166,8 @@ The user decided items 63 to 67 on 2026-11-19, after items 60 to 62
 67. The runs of the ring tests on other machines are on hold. T-RING-34 (Apple Silicon) goes into
     the certify suite of a later task and is not run by hand now. The user has not decided
     T-RING-35 (arm64 CI) yet.
+68. The user decided on 2026-11-19 to add the arm64 CI job now ([ADR-7DE6](../decisions/entries/7DE6-arm64-ci-job-for-the-portable-frame-ring-tests.md)).
+    The workflow `.github/workflows/ring-arm64.yml` has one job on `ubuntu-24.04-arm`. It runs on
+    each push to `dom/native-jpeg` that changes the ring, its tests, this spec, `pyproject.toml`
+    or `uv.lock`, and by hand. The job has not run yet. This item applies items 51 and 67 to
+    T-RING-35 and T-RING-48.

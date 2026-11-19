@@ -1,0 +1,45 @@
+name: Ring on arm64
+
+on:
+  push:
+    branches: [dom/native-jpeg]
+    paths:
+      - "skellycam/core/ipc/frame_ring/**"
+      - "skellycam/tests/frame_ring/**"
+      - "specs/frame-ring.md"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/ring-arm64.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: ring-arm64-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ring-portable:
+    name: Portable frame ring tests (Python 3.13.18, ubuntu-24.04-arm)
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.9"
+          enable-cache: true
+
+      - name: Set up Python 3.13.18
+        run: uv python install 3.13.18
+
+      - name: Install dependencies
+        run: uv sync --group dev --python 3.13.18
+
+      - name: Run the portable ring tests
+        env:
+          SKELLYCAM_RING_FULL: "1"
+        run: uv run pytest skellycam/tests/frame_ring -m ring_portable -q
