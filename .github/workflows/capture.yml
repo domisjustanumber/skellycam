@@ -1,0 +1,80 @@
+name: Capture
+
+# specs/windows-capture.md section 15: the fake-source tests of phase 3 on a Windows runner and on a
+# plain Linux runner. The tests with the markers camera_hardware and capture_local do not run here.
+on:
+  push:
+    branches: [dom/native-jpeg]
+    paths:
+      - "skellycam/core/camera/**"
+      - "skellycam/core/camera_group/**"
+      - "skellycam/core/device_detection/**"
+      - "skellycam/core/recorders/**"
+      - "skellycam/core/timestamps/**"
+      - "skellycam/core/ipc/frame_ring/**"
+      - "skellycam/api/**"
+      - "skellycam/tests/**"
+      - "specs/windows-capture.md"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/capture.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: capture-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  capture-windows:
+    name: Capture fake-source tests (Python 3.13.18, windows-2025)
+    runs-on: windows-2025
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.9"
+          enable-cache: true
+
+      - name: Set up Python 3.13.18
+        run: uv python install 3.13.18
+
+      - name: Install dependencies
+        run: uv sync --group dev --python 3.13.18
+
+      # T-CAP-46 (load the Media Foundation module) is one of these tests; it runs on Windows only.
+      - name: Run the fake-source tests
+        run: uv run pytest skellycam/tests/capture -m "not camera_hardware and not capture_local"
+
+  capture-linux:
+    name: Capture fake-source tests (Python 3.13.18, ubuntu-24.04)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.9"
+          enable-cache: true
+
+      - name: Set up Python 3.13.18
+        run: uv python install 3.13.18
+
+      # The tests' conftest imports sounddevice. Its Linux wheel does not hold PortAudio.
+      - name: Install PortAudio
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libportaudio2=19.6.0-1.2build3
+
+      - name: Install dependencies
+        run: uv sync --group dev --python 3.13.18
+
+      - name: Run the fake-source tests
+        run: uv run pytest skellycam/tests/capture -m "not camera_hardware and not capture_local"
