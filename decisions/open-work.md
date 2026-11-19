@@ -96,9 +96,16 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([ADR-4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md)). The user answered the
   questions of three drafts on 2026-11-19 (fifteen answers)
   ([ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md)). The user accepted
-  the revised spec on 2026-11-19, with its 64 agent choices (section 18). Next: the failing tests
-  of step 3a, then the product code of step 3a. Section 17.2 of the spec lists seven
-  differences from the ring spec.
+  the revised spec on 2026-11-19, with its 64 agent choices (section 18). Section 17.2 of the spec
+  lists seven differences from the ring spec.
+  - The failing tests of step 3a are in `skellycam/tests/capture/`, with the fake source
+    `fake_source.py`. They use the API of
+    [ADR-HP7D](entries/HP7D-python-api-of-capture-as-the-3a-tests-assume-it.md). Next: the user
+    reviews the tests and decides ADR-HP7D. Then the product code of step 3a follows.
+  - Run the fake-source tests with
+    `uv run pytest skellycam/tests/capture -m "not camera_hardware and not capture_local"`. The
+    hardware tests run only with `SKELLYCAM_HARDWARE=1`. The workflow
+    `.github/workflows/capture.yml` (section 15) has not run yet.
 - **Phase 5: remove three interim rules of phase 3.** The new recorder of phase 5 must remove the three
   interim rules of [ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md):
   U4 (a recording with a dead camera: timing files of unequal length, multi-frame rows with the live
