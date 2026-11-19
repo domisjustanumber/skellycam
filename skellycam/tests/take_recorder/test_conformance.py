@@ -76,7 +76,8 @@ def test_t_rec_37_conformance_subset(tmp_path):
     root = tmp_path / "skellyfileformat"
     export(folder, root)
     junit = tmp_path / "conformance.xml"
-    env = dict(os.environ, SKELLYFILEFORMAT_ADAPTER="skellycam.tests.take_recorder.sff_adapter", PYTHONPATH=str(REPO_ROOT))
+    path = os.pathsep.join(filter(None, [str(REPO_ROOT), os.environ.get("PYTHONPATH", "")]))
+    env = dict(os.environ, SKELLYFILEFORMAT_ADAPTER="skellycam.tests.take_recorder.sff_adapter", PYTHONPATH=path)
     command = [sys.executable, "-m", "pytest", str(root / "tests" / "conformance"), "-p",
                "skellycam.tests.take_recorder.sff_select", "-p", "no:cacheprovider", "--rootdir", str(root), "-c",
                str(root / "pyproject.toml"), f"--junitxml={junit}", "-q", "-o", "junit_family=xunit2"]

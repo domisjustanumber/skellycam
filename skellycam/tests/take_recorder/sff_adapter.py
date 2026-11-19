@@ -14,17 +14,34 @@ conformance tests of skellyfileformat (`spec/conformance.md`, "The test adapter"
   and `fsync`, with paths relative to the take folder.
 - `close()` ends each camera writer with the frame count of the take (the largest number of frames
   of a camera), then calls `finish`.
-- Audio, a conversion run, a raw YUYV frame and `add_warning` raise `NotImplementedError`.
+- Audio, a conversion run, a camera with `capture_format` `YUYV` and `add_warning` raise
+  `NotImplementedError`. At exit, the adapter ends the writers of each take that a failed test did
+  not close, so that no writer thread keeps the test process alive.
 """
 
 import importlib
 import math
+import threading
 import time
 from pathlib import Path
 
 from skellycam.tests.take_recorder.fake_disk import FakeDisk
 
 FORWARDED = {"lock", "unlock", "read", "replace", "write", "flush", "fsync"}
+_OPEN = set()  # the TakeWriters that are not closed: the exit hook ends their writer threads
+
+
+def _end_open_writers():
+    for take_writer in list(_OPEN):
+        try:
+            take_writer.close()
+        except Exception:  # noqa: BLE001 - a test that failed left the take; end its threads only
+            pass
+
+
+# The interpreter joins each non-daemon thread before the `atexit` hooks run. This hook of the
+# threading module runs before that join (as in concurrent.futures).
+threading._register_atexit(_end_open_writers)
 
 
 class _TraceDisk(FakeDisk):
@@ -71,6 +88,9 @@ class TakeWriter:
             raise NotImplementedError("audio recording returns in step 5b")
         if mode != "capture":
             raise NotImplementedError("the conversion writer of skellycam is phase 6")
+        for camera in cameras:
+            if (camera.get("requested") or {}).get("capture_format") == "YUYV":
+                raise NotImplementedError("raw YUYV input: the recorder takes JPEG only (3b encodes in the loop)")
         module = _module()
         self._module, self.folder = module, Path(folder)
         self._patch = None
@@ -107,6 +127,7 @@ class TakeWriter:
         self._ids = [t.camera_id for t in takes]
         self._writers = [module.CameraTakeWriter.start(self._take.camera_spec(c)) for c in self._ids]
         self._rows = [0] * len(takes)
+        _OPEN.add(self)
 
     def write_frame(self, index, data, host_ns, *, source_frame_number, sample_ns=None):
         if self._formats[index] != "MJPG":
@@ -128,6 +149,7 @@ class TakeWriter:
         raise NotImplementedError("Take.finish adds the warnings of 5a; it has no call for other warnings")
 
     def close(self):
+        _OPEN.discard(self)
         try:
             frame_count = max(self._rows, default=0)
             results = [w.end(frame_count) for w in self._writers]

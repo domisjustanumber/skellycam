@@ -281,11 +281,12 @@ class FakeDisk:
             self.events.append((time.perf_counter_ns(), threading.current_thread().name, event, self._rel(path), extra))
 
     def _write(self, handle, data):
-        data = bytes(data)
+        if not isinstance(data, str):
+            data = bytes(data)
         with self.lock:
             self.writes[handle.path] = self.writes.get(handle.path, 0) + 1
             active = None
-            is_row = handle.kind == ".csv" and data[:1].isdigit()
+            is_row = handle.kind == ".csv" and data[:1].isdigit()  # bytes or str
             for rule in self.rules:
                 if rule.kind != handle.kind or (rule.row_only and not is_row) or rule.match not in handle.path.name:
                     continue

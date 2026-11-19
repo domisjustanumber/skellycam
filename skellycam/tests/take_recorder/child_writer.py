@@ -49,9 +49,17 @@ def install_rules(config):
         return None
     disk = FakeDisk(config["root"]).install()
     for rule in config.get("rules", ()):
-        rule = dict(rule)
-        disk.add(rule.pop("kind"), rule.pop("action"), **rule)
+        add_rule(disk, rule)
     return disk
+
+
+def add_rule(disk, rule):
+    """A rule dict of the parent: FakeDisk.add arguments; `before: true` with `exit` is `exit_before`."""
+    rule = dict(rule)
+    kind, action = rule.pop("kind"), rule.pop("action")
+    if rule.pop("before", False) and action == "exit":
+        action = "exit_before"
+    disk.add(kind, action, **rule)
 
 
 def result_fields(result):
@@ -123,8 +131,7 @@ def run_writer(config):
     for command in commands():
         cmd = command["cmd"]
         if cmd == "arm":  # add a fake disk rule now, for example after frame k was given
-            rule = dict(command["rule"])
-            disk.add(rule.pop("kind"), rule.pop("action"), **rule)
+            add_rule(disk, command["rule"])
             emit("armed")
         elif cmd == "give":
             every = command.get("missing_every", 0)  # T-REC-KILL: every second item a placeholder
