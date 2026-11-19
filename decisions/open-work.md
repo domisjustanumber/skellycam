@@ -121,10 +121,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([ADR-WB08](entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md)). The agent
   choices of its section 13 wait for the user
   ([ADR-162X](entries/162X-step-4a-preview-spec-and-agent-choices.md)).
-  - The failing tests of step 4a (T-PRV-01 to T-PRV-24) are in `skellycam/tests/preview/`, with the
+  - The tests of step 4a (T-PRV-01 to T-PRV-24) are in `skellycam/tests/preview/`, with the
     helpers of spec section 9.1 in `preview_helpers.py`. Run them with
-    `uv run pytest skellycam/tests/preview`. They fail until the product code of step 4a exists.
-    Next: the product code of step 4a, then the measurements M-PRV-1 to M-PRV-5.
+    `uv run pytest skellycam/tests/preview`. The product code of step 4a is done. The user decides
+    its choices ([ADR-MZ02](entries/MZ02-choices-of-the-4a-code.md)). Next: the measurements M-PRV-1
+    to M-PRV-5 and their evidence entry.
   - The user decides
     [ADR-24FZ](entries/24FZ-python-api-of-the-preview-sender-as-the-4a-tests-assume-it.md): the
     Python items that the failing tests of step 4a use and that the spec does not fix.
