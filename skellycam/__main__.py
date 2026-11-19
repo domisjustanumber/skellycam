@@ -66,6 +66,8 @@ async def main() -> None:
             port=PORT,
             log_level="warning",
             reload=False,
+            # A JPEG does not compress: deflate cost 12.7 ms of the event loop for each 1080p frame (ADR-HDC9)
+            ws_per_message_deflate=False,
         )
         server = uvicorn.Server(config)
 
