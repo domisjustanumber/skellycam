@@ -1,5 +1,12 @@
 """Frame rings: one shared-memory block per camera and pixel format (specs/frame-ring.md)."""
 from skellycam.core.ipc.frame_ring.capture_check import check_jpeg
+from skellycam.core.ipc.frame_ring.decode import (
+    DecodeInput,
+    DecodeStage,
+    WaitingPlace,
+    decode_jpeg,
+    limit_libjpeg_warnings,
+)
 from skellycam.core.ipc.frame_ring.layout import (
     ERROR_FLAGS,
     LAYOUT_VERSION,

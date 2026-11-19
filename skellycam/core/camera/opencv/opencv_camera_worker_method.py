@@ -1,5 +1,7 @@
 import logging
 
+import cv2
+
 from skellycam.core.camera.config.camera_config import CameraConfig
 from skellycam.core.camera.opencv.opencv_camera_loop import run_opencv_camera_loop
 from skellycam.core.camera.opencv.opencv_helpers.setup_opencv_camera_loop import (
@@ -8,6 +10,7 @@ from skellycam.core.camera.opencv.opencv_helpers.setup_opencv_camera_loop import
 )
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
+from skellycam.core.ipc.frame_ring import limit_libjpeg_warnings
 from skellycam.core.types.type_overloads import CameraIdString, TopicSubscriptionQueue
 from skellycam.core.camera_group.camera_status import CameraStatus  # noqa: TC001 — beartype checks annotations at runtime
 
@@ -25,6 +28,8 @@ def opencv_camera_worker_method(
 ) -> None:
 
     logger.trace(f"Camera {camera_id} worker started")
+    cv2.setNumThreads(1)  # spec 8.2, with or without a BGR ring (ADR-467Z item 3)
+    limit_libjpeg_warnings()  # spec 8.9
     self_status: CameraStatus = orchestrator.camera_statuses[camera_id]
     cv2_video_capture = None
 
@@ -32,7 +37,8 @@ def opencv_camera_worker_method(
         (ring_writer,
          config,
          cv2_video_capture,
-         frame_rec_array) = setup_opencv_camera_loop(
+         frame_rec_array,
+         bgr_ring_writer) = setup_opencv_camera_loop(
             config=config,
             ipc=ipc,
             orchestrator=orchestrator,
@@ -43,6 +49,7 @@ def opencv_camera_worker_method(
         logger.debug(f"Camera {config.camera_id} frame grab loop starting...")
         run_opencv_camera_loop(
             ring_writer=ring_writer,
+            bgr_ring_writer=bgr_ring_writer,
             config=config,
             cv2_video_capture=cv2_video_capture,
             frame_rec_array=frame_rec_array,

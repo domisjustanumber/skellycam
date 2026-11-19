@@ -122,6 +122,11 @@ class CameraConfig(BaseModel):
         description="The fourcc code to use for the video codec in the `cv2.VideoWriter` object",
     )
 
+    bgr_ring: bool = Field(
+        default=False,
+        description="Whether this camera also gets a BGR frame ring (specs/frame-ring.md, section 8.1)",
+    )
+
     @model_validator(mode="after")
     def validate(self) -> Self:
         if self.camera_name == DEFAULT_CAMERA_NAME:

@@ -15,7 +15,14 @@ from skellycam.core.camera.opencv.opencv_helpers.setup_opencv_camera_loop import
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 from skellycam.core.camera_group.camera_status import CameraStatus
-from skellycam.core.ipc.frame_ring import NO_SAMPLE_NS, FrameRingWriter, check_jpeg, rotation_to_cw_deg
+from skellycam.core.ipc.frame_ring import (
+    NO_SAMPLE_NS,
+    DecodeInput,
+    DecodeStage,
+    FrameRingWriter,
+    check_jpeg,
+    rotation_to_cw_deg,
+)
 from skellycam.core.types.type_overloads import TopicSubscriptionQueue
 from skellycam.utilities.wait_functions import wait_1ms, wait_10us
 from skellycam.core.recorders.videos.video_recorder import VideoRecorder  # noqa: TC001 — beartype checks annotations at runtime
@@ -34,8 +41,10 @@ def run_opencv_camera_loop(ring_writer: FrameRingWriter,
                            self_status: CameraStatus,
                            update_camera_settings_subscription: TopicSubscriptionQueue,
                            recording_info_subscription: TopicSubscriptionQueue,
-                           shm_subscription: TopicSubscriptionQueue | None = None):
+                           shm_subscription: TopicSubscriptionQueue | None = None,
+                           bgr_ring_writer: FrameRingWriter | None = None):
     video_recorder: VideoRecorder | None = None
+    decode_stage = _start_decode_stage(bgr_ring_writer)
     previous_tik = time.perf_counter_ns()
 
     number_of_frames_outside_acceptable_range = 0
@@ -45,7 +54,7 @@ def run_opencv_camera_loop(ring_writer: FrameRingWriter,
     ring_frame_offset = 0  # frame numbers start at 0 in each new ring (spec 7.5) [A17]
     try:
         while ipc.should_continue:
-            ring_mode = (config.resolution, config.framerate)
+            ring_mode = (config.resolution, config.framerate, config.bgr_ring)
             (config,
              frame_rec_array,
              video_recorder,
@@ -61,15 +70,20 @@ def run_opencv_camera_loop(ring_writer: FrameRingWriter,
                                            video_recorder=video_recorder,
                                            framerate=framerate
                                            )
-            if (config.resolution, config.framerate) != ring_mode:
-                # The main process recreates the ring of this camera under a new name (spec 7.5).
+            if (config.resolution, config.framerate, config.bgr_ring) != ring_mode:
+                # The main process recreates the rings of this camera under new names (spec 7.5).
                 if shm_subscription is None:
                     raise RuntimeError(f"Camera {config.camera_id} changed its mode, but has no shm subscription")
                 old_ring_name = ring_writer.name
                 ring_writer.close()
-                ring_writer = await_ring_writer(config=config, ipc=ipc, self_status=self_status,
-                                                shm_subscription=shm_subscription,
-                                                old_ring_name=old_ring_name)
+                if decode_stage is not None:
+                    decode_stage.stop()
+                    bgr_ring_writer.close()
+                    decode_stage = None
+                ring_writer, bgr_ring_writer = await_ring_writer(config=config, ipc=ipc, self_status=self_status,
+                                                                 shm_subscription=shm_subscription,
+                                                                 old_ring_name=old_ring_name)
+                decode_stage = _start_decode_stage(bgr_ring_writer)
                 ring_frame_offset = int(frame_rec_array.frame_metadata.frame_number[0]) + 1
 
             if self_status.should_close.value:
@@ -129,13 +143,17 @@ def run_opencv_camera_loop(ring_writer: FrameRingWriter,
                                                     should_record_frame=should_record_frame,
                                                     video_recorder=video_recorder)
             try:
-                ring_writer.write(payload,
-                                  frame_number=int(frame_rec_array.frame_metadata.frame_number[0]) - ring_frame_offset,
-                                  arrival_ns=int(frame_rec_array.frame_metadata.timestamps.post_frame_grab_ns[0]),
-                                  sample_ns=NO_SAMPLE_NS,
-                                  source_frame_number=-1,
-                                  flags=flags,
-                                  rotation_cw_deg=rotation_to_cw_deg(config.rotation))
+                frame = dict(frame_number=int(frame_rec_array.frame_metadata.frame_number[0]) - ring_frame_offset,
+                             arrival_ns=int(frame_rec_array.frame_metadata.timestamps.post_frame_grab_ns[0]),
+                             sample_ns=NO_SAMPLE_NS,
+                             source_frame_number=-1,
+                             flags=flags,
+                             rotation_cw_deg=rotation_to_cw_deg(config.rotation))
+                ring_writer.write(payload, **frame)
+                if decode_stage is not None:
+                    # Spec 8.8: OpenCV gives BGR, so the waiting place gets a new copy of it, not the JPEG.
+                    decode_stage.waiting_place.put(DecodeInput(payload=frame_rec_array.image[0].copy(),
+                                                               source="BGR", **frame))
             except Exception as e:  # a failing ring write must not stop capture or recording
                 logger.exception(f"Frame ring write failed for camera {config.camera_id}: {e}")
             (config,
@@ -166,7 +184,19 @@ def run_opencv_camera_loop(ring_writer: FrameRingWriter,
             self_status.connected.value = False
             self_status.closed.value = True
             ring_writer.close()
+            if decode_stage is not None:
+                decode_stage.stop()
+                bgr_ring_writer.close()
         logger.debug(f"Camera {config.camera_id} loop ended.")
+
+
+def _start_decode_stage(bgr_ring_writer: FrameRingWriter | None) -> DecodeStage | None:
+    """The decode stage of the BGR ring (spec 8.2), or `None` when the camera has no BGR ring."""
+    if bgr_ring_writer is None:
+        return None
+    decode_stage = DecodeStage(bgr_ring_writer)
+    decode_stage.start()
+    return decode_stage
 
 
 def initialize_frame_recarray(frame_rec_array: np.recarray) -> np.recarray:

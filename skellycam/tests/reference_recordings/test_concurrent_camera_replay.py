@@ -154,7 +154,7 @@ async def run_concurrent_replay(monkeypatch, fail_camera, recording_directory=No
 
         def file_setup(**kwargs):
             config, capture, _, frame, _, writer = cameras[kwargs["config"].camera_id]
-            return writer, config, capture, frame
+            return writer, config, capture, frame, None  # no BGR ring
 
         monkeypatch.setattr(worker_module, "setup_opencv_camera_loop", file_setup)
 

@@ -118,7 +118,7 @@ def test_video_camera_loop_publishes_frames_and_cleans_up(test_videos, camera_in
 
         def file_setup(**kwargs):
             assert kwargs["config"] is config
-            return writer, config, capture, frame
+            return writer, config, capture, frame, None  # no BGR ring
 
         # Replace hardware setup and add synchronous observation/control hooks.
         # Capture, loop, orchestration, shared-memory copies and cleanup stay real.

@@ -221,8 +221,9 @@ class CameraGroup:
             ipc=self.ipc, requested_configs=requested_configs
         )
         changed = {camera_id: config for camera_id, config in updated_configs.items()
-                   if (config.resolution, config.framerate)
-                   != (self.configs[camera_id].resolution, self.configs[camera_id].framerate)}
+                   if (config.resolution, config.framerate, config.bgr_ring)
+                   != (self.configs[camera_id].resolution, self.configs[camera_id].framerate,
+                       self.configs[camera_id].bgr_ring)}
         if changed:
             # A new mode gets a new ring under a new name (spec 7.5).
             self._close_rings(list(changed))

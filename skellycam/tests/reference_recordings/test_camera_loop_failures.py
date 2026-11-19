@@ -126,7 +126,7 @@ def test_camera_failure_stops_sibling_and_preserves_error(monkeypatch):
     def setup(**kwargs):
         config = kwargs["config"]
         name = config.camera_id
-        return memories[name], config, captures[name], frame_buffer(64, 48)
+        return memories[name], config, captures[name], frame_buffer(64, 48), None  # no BGR ring
 
     monkeypatch.setattr(worker_module, "setup_opencv_camera_loop", setup)
 

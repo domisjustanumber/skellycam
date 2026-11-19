@@ -72,7 +72,8 @@ def camera_ring_info(config: CameraConfig, creator: "FrameRingCreator") -> Camer
                       uncompressed=fourcc in UNCOMPRESSED_FORMATS,
                       selectable=fourcc not in UNSELECTABLE_FORMATS)
     return CameraRingInfo(camera_id=config.camera_id, camera_index=config.camera_index, mode=mode,
-                          jpeg_ring_name=creator.name, bgr_ring_name=None,
+                          jpeg_ring_name=creator.name,
+                          bgr_ring_name=creator.bgr.name if creator.bgr else None,
                           rotation_cw_deg=rotation_to_cw_deg(config.rotation))
 
 
@@ -82,12 +83,17 @@ def _fps_fraction(framerate: float) -> Fraction:
 
 
 class FrameRingCreator:
-    """Creates a ring, sets `closed` and unlinks it. Only the main skellycam process creates rings (A32)."""
+    """Creates a ring, sets `closed` and unlinks it. Only the main skellycam process creates rings (A32).
+
+    `bgr` is the BGR ring of the same camera, or `None` (8.1). `set_closed` and `close_and_unlink`
+    also apply to it.
+    """
 
     def __init__(self, shm: shared_memory.SharedMemory, total_size: int):
         self._shm = shm
         self.name = shm.name
         self.total_size = total_size
+        self.bgr: FrameRingCreator | None = None
 
     @classmethod
     def create(cls, *, camera_id: str, camera_index: int, pixel_format: PixelFormat, width: int,
@@ -115,31 +121,38 @@ class FrameRingCreator:
     def set_closed(self) -> None:
         """The single `closed` store of the creator (7.4)."""
         struct.pack_into("<I", self._shm.buf, CLOSED_OFFSET, 1)
+        if self.bgr:
+            self.bgr.set_closed()
 
     def close_and_unlink(self) -> None:
         self.set_closed()
         self._shm.close()
         self._shm.unlink()
+        if self.bgr:
+            self.bgr.close_and_unlink()
 
 
 def create_session_rings(camera_configs: dict[str, CameraConfig],
                          history_s: float = 1.0) -> dict[str, FrameRingCreator]:
-    """Create the JPEG ring of each camera (7.1, 7.8).
+    """Create the JPEG ring of each camera, and its BGR ring when its config asks for one (7.1, 7.8, 8.1).
 
     Log the sizes, check the free space of /dev/shm on Linux, then allocate. On a failure, unlink
-    the rings already made and raise `MemoryError` with the total size.
+    the rings already made and raise `MemoryError` with the total size. Each BGR ring is the `bgr`
+    of the JPEG creator of its camera.
     """
     plans = {}
     for camera_id, config in camera_configs.items():
         fps = _fps_fraction(config.framerate)
         width, height = config.resolution.width, config.resolution.height
-        size = ring_total_size(slot_count(history_s, float(fps) or None),
-                               slot_capacity(PixelFormat.JPEG, width, height))
-        plans[camera_id] = (config.camera_index, width, height, fps, size)
-    total = sum(plan[-1] for plan in plans.values())
+        count = slot_count(history_s, float(fps) or None)
+        formats = (PixelFormat.JPEG, PixelFormat.BGR24) if config.bgr_ring else (PixelFormat.JPEG,)
+        sizes = {pixel_format: ring_total_size(count, slot_capacity(pixel_format, width, height))
+                 for pixel_format in formats}
+        plans[camera_id] = (config.camera_index, width, height, fps, sizes)
+    total = sum(sum(plan[-1].values()) for plan in plans.values())
     logger.info(f"Frame rings: total shared memory {format_size(total)} for {len(plans)} cameras; "
-                + "; ".join(f"camera {camera_id} JPEG ring {format_size(plan[-1])}"
-                            for camera_id, plan in plans.items()))
+                + "; ".join(f"camera {camera_id} {pixel_format.name} ring {format_size(size)}"
+                            for camera_id, plan in plans.items() for pixel_format, size in plan[-1].items()))
     failure = f"Cannot allocate the frame rings: total {format_size(total)}"
     if sys.platform.startswith("linux"):
         stat = os.statvfs(LINUX_SHM_DIR)
@@ -148,13 +161,18 @@ def create_session_rings(camera_configs: dict[str, CameraConfig],
             raise MemoryError(f"{failure}, but {LINUX_SHM_DIR} has {format_size(free)} free")
     creators = {}
     try:
-        for camera_id, (camera_index, width, height, fps, _) in plans.items():
+        for camera_id, (camera_index, width, height, fps, sizes) in plans.items():
             generation = _next_generation.get(camera_index, 0)
             _next_generation[camera_index] = generation + 1
-            creators[camera_id] = FrameRingCreator.create(
-                camera_id=camera_id, camera_index=camera_index, pixel_format=PixelFormat.JPEG,
-                width=width, height=height, fps_num=fps.numerator, fps_den=fps.denominator,
-                history_s=history_s, generation=generation)
+            for pixel_format in sizes:  # JPEG first: the BGR ring is its `bgr`
+                creator = FrameRingCreator.create(
+                    camera_id=camera_id, camera_index=camera_index, pixel_format=pixel_format,
+                    width=width, height=height, fps_num=fps.numerator, fps_den=fps.denominator,
+                    history_s=history_s, generation=generation)
+                if pixel_format == PixelFormat.JPEG:
+                    creators[camera_id] = creator
+                else:
+                    creators[camera_id].bgr = creator
     except OSError as error:
         for creator in creators.values():
             creator.close_and_unlink()

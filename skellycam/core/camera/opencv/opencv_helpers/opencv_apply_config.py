@@ -94,6 +94,7 @@ def apply_camera_configuration(cv2_vid_capture: cv2.VideoCapture,
             raise FailedToApplyCameraConfigurationError(
                 f"Failed to apply configuration to Camera {config.camera_index} - Camera closed when applying configuration"
             )
+        extracted_config.bgr_ring = config.bgr_ring  # a request of the consumer, not a device value (8.1)
         logger.trace(f"Camera {config.camera_index} configuration applied, extracted config: {extracted_config}")
         return extracted_config
     except Exception as e:

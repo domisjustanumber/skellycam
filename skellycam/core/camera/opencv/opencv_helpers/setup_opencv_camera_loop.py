@@ -24,8 +24,10 @@ def await_ring_writer(config: CameraConfig,
                       ipc: CameraGroupIPC,
                       self_status: CameraStatus,
                       shm_subscription: TopicSubscriptionQueue,
-                      old_ring_name: str | None = None) -> FrameRingWriter:
-    """Wait for the JPEG ring of this camera in a `SetShmMessage` and attach as its writer.
+                      old_ring_name: str | None = None) -> tuple[FrameRingWriter, FrameRingWriter | None]:
+    """Wait for the rings of this camera in a `SetShmMessage` and attach as their writer.
+
+    Return the JPEG ring writer, and the BGR ring writer or `None` (spec 7.3 and 8.1).
 
     A message that still names `old_ring_name` for this camera is stale: the main process sent it
     for a change of another camera. Ring names are never used again (spec 7.2).
@@ -39,10 +41,11 @@ def await_ring_writer(config: CameraConfig,
                 raise RuntimeError(
                     f"Expected SetShmMessage for camera {config.camera_id}, but received {type(shm_message)}"
                 )
-            ring_name = shm_message.ring_infos[config.camera_id].jpeg_ring_name
-            if ring_name != old_ring_name:
-                logger.debug(f"Camera {config.camera_id} attaching to frame ring {ring_name}...")
-                return FrameRingWriter.attach(ring_name)
+            info = shm_message.ring_infos[config.camera_id]
+            if info.jpeg_ring_name != old_ring_name:
+                logger.debug(f"Camera {config.camera_id} attaching to frame ring {info.jpeg_ring_name}...")
+                bgr_writer = FrameRingWriter.attach(info.bgr_ring_name) if info.bgr_ring_name else None
+                return FrameRingWriter.attach(info.jpeg_ring_name), bgr_writer
     raise RuntimeError(f"Camera {config.camera_id} closed before it received its frame ring")
 
 
@@ -51,18 +54,18 @@ def setup_opencv_camera_loop(config: CameraConfig,
                              orchestrator: CameraOrchestrator,
                              self_status: CameraStatus,
                              shm_subscription: TopicSubscriptionQueue) -> tuple[
-    FrameRingWriter, CameraConfig, cv2.VideoCapture, np.recarray]:
+    FrameRingWriter, CameraConfig, cv2.VideoCapture, np.recarray, FrameRingWriter | None]:
     # Create cv2.VideoCapture object
     phase = "opening camera and reading first frame"
     cv2_video_capture = None
-    ring_writer = None
+    ring_writer = bgr_ring_writer = None
     try:
         cv2_video_capture, config = create_cv2_video_capture(config)
 
         phase = "joining camera group shared memory"
         ipc.pubsub.topics[TopicTypes.EXTRACTED_CONFIG].publish(DeviceExtractedConfigMessage(extracted_config=config))
-        ring_writer = await_ring_writer(config=config, ipc=ipc, self_status=self_status,
-                                        shm_subscription=shm_subscription)
+        ring_writer, bgr_ring_writer = await_ring_writer(config=config, ipc=ipc, self_status=self_status,
+                                                         shm_subscription=shm_subscription)
         if not cv2_video_capture.isOpened():
             raise RuntimeError(f"cv2.VideoCapture for camera {config.camera_id} is not opened")
         self_status.connected.value = True
@@ -87,5 +90,7 @@ def setup_opencv_camera_loop(config: CameraConfig,
             cv2_video_capture.release()
         if ring_writer is not None:
             ring_writer.close()
+        if bgr_ring_writer is not None:
+            bgr_ring_writer.close()
         raise CameraSetupFailedException(str(failure)) from e
-    return ring_writer, config, cv2_video_capture, frame_rec_array
+    return ring_writer, config, cv2_video_capture, frame_rec_array, bgr_ring_writer

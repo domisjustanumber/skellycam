@@ -8,6 +8,8 @@ import struct
 import zlib
 from dataclasses import dataclass
 
+import numpy as np
+
 from skellycam.core.ipc.frame_ring.layout import (
     CLOSED_OFFSET,
     ERROR_FLAGS,
@@ -15,6 +17,7 @@ from skellycam.core.ipc.frame_ring.layout import (
     SLOT_HEADER_FORMAT,
     SLOT_HEADER_SIZE,
     FrameFlag,
+    PixelFormat,
     attach_ring,
 )
 
@@ -46,7 +49,7 @@ class FrameRead:
     flags: int
     rotation_cw_deg: int
     payload_len: int
-    payload: bytes | None
+    payload: bytes | np.ndarray | None
 
 
 def _no_frame(result: ReadResult, frame_number: int) -> FrameRead:
@@ -61,6 +64,8 @@ class FrameRingReader:
         self._slot_capacity = header["slot_capacity"]
         self._table_offset = header["table_offset"]
         self._payload_offset = header["payload_offset"]
+        self._bgr_shape = ((header["height"], header["width"], 3)
+                           if header["pixel_format"] == PixelFormat.BGR24 else None)
         self.failed_checks = 0
 
     @classmethod
@@ -97,8 +102,12 @@ class FrameRingReader:
                 if flags & ERROR_FLAGS:  # R9
                     return _header_only(ReadResult.FLAGGED, fields)
                 if payload_len <= self._slot_capacity:  # R10
-                    payload = view[payload_at:payload_at + payload_len].tobytes()  # R11
+                    # R11. BGR: a bytearray, so that the array of 6.6 is writable with no second copy.
+                    payload = view[payload_at:payload_at + payload_len]
+                    payload = payload.tobytes() if self._bgr_shape is None else bytearray(payload)
                     if zlib.crc32(payload) == payload_crc:  # R12
+                        if self._bgr_shape is not None:
+                            payload = np.frombuffer(payload, np.uint8).reshape(self._bgr_shape)
                         return FrameRead(ReadResult.OK, *fields[:5], flags, fields[8], payload_len, payload)  # R13
             self.failed_checks += 1
             if first_header is None:
