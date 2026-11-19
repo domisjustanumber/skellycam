@@ -340,6 +340,8 @@ def test_t_ring_44_decode_speed_with_the_capture_stub(cleanup, stages):
 LIBJPEG_WARNING = re.compile(r"Corrupt JPEG data: \d+ extraneous bytes before marker 0xd9")
 
 
+@pytest.mark.xfail(sys.platform == "win32", strict=True,
+                   reason="No limit on Windows until phase 3 (ADR-E817 item 7; user, 2026-11-19)")
 def test_t_ring_46_libjpeg_warnings_do_not_flood_the_log():
     """T-RING-46, section 8.9 [A44]: decode 1,000 JPEGs with extra bytes before EOI (two
     different counts, thus two different warning lines). At most one log line per distinct
