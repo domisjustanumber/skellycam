@@ -111,8 +111,11 @@ task. Delete an item when its work is done. The PR that closes an item records t
   R1 to R4 and M1 to M5 replace U4, U5 and U12 from the connection of step 5a. The user accepted
   the spec [`specs/recorder.md`](../specs/recorder.md) and its test list on 2026-11-20
   ([ADR-Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md),
-  [ADR-Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md)). The failing tests come
-  next, then the product code (R12). The merged list of proposed skellyfileformat changes
+  [ADR-Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md)). The failing tests are
+  in `skellycam/tests/take_recorder/`. They use the API of the proposed entry
+  [ADR-QEQ8](entries/QEQ8-python-api-of-the-recorder-as-the-5a-tests-assume-it.md), which waits for
+  the user. The product code comes next (R12). Run the benchmarks with `SKELLYCAM_BENCH=1` and
+  `SKELLYCAM_BENCH_OUT` set to a folder outside the repository. The merged list of proposed skellyfileformat changes
   F-1 to F-10 for the recorder and the player (section 13) still waits for the user (R6).
   Branch `dom/recorder`. The
   connection to the shared loop waits for step 3a. Section 14 lists the edits of
