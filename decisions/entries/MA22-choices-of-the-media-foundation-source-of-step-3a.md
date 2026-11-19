@@ -1,6 +1,6 @@
 # MA22 — Choices of the Media Foundation source of step 3a
 
-**Status:** proposed, 2026-11-19 (agent).
+**Status:** proposed, 2026-11-19 (agent). Items 1 and 9 are decided by the user, 2026-11-19.
 
 ## Decision
 
@@ -9,7 +9,7 @@ The package `skellycam/core/camera/capture/media_foundation/` follows
 [ADR-HP7D](HP7D-python-api-of-capture-as-the-3a-tests-assume-it.md). An agent made the choices
 below. The spec and ADR-HP7D do not fix them.
 
-1. Open: this item waits for the user. Detection writes `path` as Media Foundation gives the
+1. Decided by the user, 2026-11-19. Detection writes `path` as Media Foundation gives the
    symbolic link. Only the input of the `camera_id` hash is in lower case (7.2). The result type
    `MediaFoundationDeviceInfo` is a `CameraDeviceInfo` whose `camera_id` hashes the lower-case path,
    because `detect_cameras_devices.py` is not in this package. When `CameraDeviceInfo.camera_id`
@@ -28,8 +28,10 @@ below. The spec and ADR-HP7D do not fix them.
 7. When `open` fails without a hang, the source runs the close. When a close step then hangs, `open`
    raises the first failure with `hung=True`, so that the camera process ends hard (6.6).
 8. `MF_SOURCE_READERF_ERROR` with a successful HRESULT gives the reason `E_FAIL`.
-9. Open: this item waits for the user. Detection removes each device whose friendly name contains
-   "virtual", as `filter_virtual=True` does today. It does not remove a device with no VID and PID.
+9. Decided by the user, 2026-11-19. Detection shows each virtual camera, but a request cannot
+   select it yet. A device whose friendly name contains "virtual" (the rule of `filter_virtual=True`
+   today) gets `virtual=True` in `MediaFoundationDeviceInfo`. The refusal of a virtual camera in a
+   request (HTTP 422) is not in this package. Detection does not remove a device with no VID and PID.
 10. When `ActivateObject` returns after its time limit, the bounded call shuts down only the new
     `IMFMediaSource`. It does not call `IMFActivate::ShutdownObject`. The camera process ends hard
     after each hang.
@@ -50,7 +52,8 @@ Two points wait for the camera tests:
 ## Reason
 
 - Each choice is the smallest change that agrees with the spec and the prototype.
-- Items 1 and 9: these are the conservative forms. They keep the path and the filter of today.
+- Items 1 and 9: the user decided them. Item 1 keeps the path that the OS gives. Item 9 lets a
+  user see each camera before the support of virtual cameras comes.
 - Item 7: a failure must not hide a hung close step, because only a hard end is safe after a hang.
 
 ## Alternatives rejected
