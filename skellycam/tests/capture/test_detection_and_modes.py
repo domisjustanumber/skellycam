@@ -3,9 +3,14 @@ and the mode choice (specs/windows-capture.md, sections 6.7, 7 and 12).
 
 Detection uses a fake Media Foundation enumeration (`FakeDetectionBackend`). The mode choice runs
 through `FakeSource.open`, which calls `modes.choose_mode` of the product.
+
+The package `media_foundation/` is Windows only [U18]. Thus T-CAP-22, T-CAP-23, T-CAP-24 and T-CAP-48
+run on the Windows development machine and on the Windows CI job, and are skipped on other systems
+(16.1). The tests of `modes.py` run on each system.
 """
 
 import json
+import sys
 import time
 
 import psutil
@@ -18,6 +23,7 @@ from skellycam.tests.capture.fake_source import (
 ERRORS_MODULE = "skellycam.core.camera.capture.media_foundation.errors"
 DETECT_MODULE = "skellycam.core.camera.capture.media_foundation.detect"
 MODES_MODULE = "skellycam.core.camera.capture.modes"
+WINDOWS_ONLY = pytest.mark.skipif(sys.platform != "win32", reason="the media_foundation package is Windows only (U18, 16.1)")
 
 
 # ---------------------------------------------------------------------------
@@ -29,6 +35,7 @@ REMOVED = (0xC00D3EA2, 0x80070651, 0x8007048F, 0x800701B1)
 OTHER = {0x80004005: "E_FAIL", 0xC00D3E85: "MF_E_SHUTDOWN"}
 
 
+@WINDOWS_ONLY
 def test_t_cap_22_hresult_reasons():
     """T-CAP-22, sections 6.7 and 12 [D13, agent 15]: map each HRESULT of 6.7 (pure function, no COM).
     In-use codes give "in use by another program"; device-removed codes give "device removed"; other
@@ -61,6 +68,7 @@ def _colliding_links():
 MODES_720 = ((1280, 720, 30, 1, "MJPG"),)
 
 
+@WINDOWS_ONLY
 def test_t_cap_23_detection_refuses_two_links_with_one_camera_id():
     """T-CAP-23, section 7.1 [D13]: a detection result with two links that give the same `camera_id`.
     Refused with an error that names both links."""
@@ -72,6 +80,7 @@ def test_t_cap_23_detection_refuses_two_links_with_one_camera_id():
     assert first in str(error.value) and second in str(error.value)
 
 
+@WINDOWS_ONLY
 def test_t_cap_24_camera_id_hashes_the_lower_case_link():
     """T-CAP-24, section 7.2 [D11, agent 13]: hash known Media Foundation links in mixed case.
     `camera_id` equals the SHA-256 rule of today on the lower-case link."""
@@ -87,6 +96,7 @@ def test_t_cap_24_camera_id_hashes_the_lower_case_link():
         assert info.index == links.index(link)
 
 
+@WINDOWS_ONLY
 def test_t_cap_48_a_hung_device_does_not_block_detection():
     """T-CAP-48, sections 6.6 and 7.1 [D10, agent 17]: detection with a fake enumeration that hangs for
     one device. The detection child ends; the call returns within the limit plus 2 s with an error;

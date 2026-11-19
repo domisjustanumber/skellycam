@@ -105,8 +105,9 @@ def test_t_cap_82_hung_control_read_while_ready(monkeypatch):
     of one hangs past its limit. That camera reports stage `streaming` and its process ends hard; the
     main process cleans up only it; the other camera has no gap above 100 ms.
 
-    The fake raises its failure from `set_controls` with stage `set controls`; the loop reports
-    `streaming` for a failure after the start-up (ADR-HP7D)."""
+    The periodic control read runs on the control thread of the camera process [U16], so the hung
+    call does not hold the gate. The fake raises its failure from `set_controls` with stage `set
+    controls`; the camera process reports `streaming` for a failure after the start-up (ADR-HP7D)."""
     scripts = [FakeScript(hang_at="set_controls"), FakeScript()]
     with capture_app(monkeypatch, scripts, workers="process") as app:
         ready_app_steps(app)
@@ -141,10 +142,11 @@ def test_t_cap_85_hang_during_a_recording(monkeypatch, tmp_path, close_s):
     """T-CAP-85, section 6.6 [U12]: during a recording, a bounded call of one fake hangs. Case 1: the
     recorder of that camera needs 1 s to close its file. Case 2: it needs 8 s. The failure is reported;
     case 1: the file is finished, and the process ends hard within 1.5 s of the report; case 2: the
-    process ends hard 5.0 to 5.5 s after the report; in both cases the other cameras keep recording.
+    process ends hard 5.0 to 5.5 s after the report; in both cases the other cameras keep recording,
+    with no gap above 100 ms [U16].
 
-    The hung call is the periodic control read. The report time is the time when the main process
-    first sees the failure in the status."""
+    The hung call is the periodic control read on the control thread [U16]. The report time is the
+    time when the main process first sees the failure in the status."""
     scripts = [FakeScript(hang_at="set_controls", recorder_close_delay_s=close_s), FakeScript()]
     with capture_app(monkeypatch, scripts, workers="process") as app:
         ready_app_steps(app)
@@ -155,6 +157,7 @@ def test_t_cap_85_hang_during_a_recording(monkeypatch, tmp_path, close_s):
             worker = app.worker(hung)
             assert app.record_start(tmp_path).status_code == 200
             time.sleep(1.0)
+            armed_ns = time.perf_counter_ns()
             app.factory.logs[hung].arm_hang()
             app.wait(lambda: watcher.failure is not None, "the failure is reported")
             exited = wait_exit(worker)
@@ -169,6 +172,8 @@ def test_t_cap_85_hang_during_a_recording(monkeypatch, tmp_path, close_s):
         finally:
             watcher.stop()
             ring.stop()
+        gap = ring.largest_gap_s(armed_ns, exited + 10**9)
+        assert gap <= 0.1, f"the other camera had a gap of {gap * 1000:.0f} ms"
         other_frames = video_frame_count(tmp_path, other)
         if close_s == 1.0:
             hung_frames = video_frame_count(tmp_path, hung)

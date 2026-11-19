@@ -46,29 +46,35 @@ def record(app, spies, directory, frames=30, camera_id=None):
 # ---------------------------------------------------------------------------
 
 def test_t_cap_05_replaced_count_matches_the_gaps(monkeypatch):
-    """T-CAP-05, sections 5.2 and 5.3 [D26, D27, agent 49]: three fake cameras at 30 fps in one group
-    for 10 s; one delivers late by 10 ms per frame. Equal ring frame counts; for each camera, the sum
-    of the gaps of `source_frame_number` between taken frames, from the first frame taken in the gate,
-    equals the increase of `replaced_count` from that frame; one log line per camera at stop with that
-    count.
+    """T-CAP-05, sections 5.2 and 5.3 [D26, D27, agent 49, agent 65]: three fake cameras in one group,
+    each in a 30 fps mode. Equal ring frame counts; for each camera, the sum of the gaps of
+    `source_frame_number` between taken frames, from the first frame taken in the gate, equals the
+    increase of `replaced_count` from that frame; one log line per camera at stop with that count.
 
-    "Late by 10 ms per frame": each frame of the third camera comes 10 ms after the frames of the
-    others. Each fake stops after frame 420 (more than 10 s after the warm-up), so the gate ends on a
+    The script (agent 65): the frames of each fake are on one 100 ms grid of the virtual clock. The
+    third fake delivers 60 frames per second from 20 s to 30 s of the clock, while the two others hold
+    the gate at 30 rounds per second, so about 300 of its frames are replaced. At 30 s it drops one
+    frame and goes back to 30 fps. Each fake delivers its last frame at 40 s, so the gate ends on a
     whole round; the stall watch then ends each camera."""
-    scripts = [FakeScript(stop_after_frame=420), FakeScript(stop_after_frame=420),
-               FakeScript(stop_after_frame=420, first_frame_delay_s=0.010)]
+    grid = dict(align_ms=100.0, stop_at_s=40.005)
+    scripts = [FakeScript(**grid), FakeScript(**grid),
+               FakeScript(rate_windows=((20.0, 30.0, 60.0),), drop_at_window_end=True, **grid)]
     with capture_logs() as logs, capture_app(monkeypatch, scripts) as app:
         spies = Spies(monkeypatch, app)
         ready_app_steps(app)
+        assert app.clock.now_ns() < app.clock.START_NS + 19 * 10**9, "the start-up took past 19 s of the clock"
         app.wait(lambda: all(app.state(cid) in ("dead", "failed") for cid in app.factory.camera_ids),
                  "each fake ran out of frames")
         app.client.delete("/skellycam/camera/group/close/all")
         counts = {cid: len(spies.of("jpeg", cid)) for cid in app.factory.camera_ids}
         assert len(set(counts.values())) == 1, f"ring frame counts differ: {counts}"
-        assert min(counts.values()) >= 300, f"less than 10 s of frames in the gate: {counts}"
+        assert min(counts.values()) >= 600, f"less than 20 s of frames in the gate: {counts}"
+        replaced = {}
         for camera_id in app.factory.camera_ids:
             sfns = [event["sfn"] for event in spies.of("jpeg", camera_id)]
-            assert stop_line_count(logs.messages(), camera_id) == sfn_gaps(sfns), camera_id
+            replaced[camera_id] = stop_line_count(logs.messages(), camera_id)
+            assert replaced[camera_id] == sfn_gaps(sfns), camera_id
+        assert replaced[app.factory.camera_ids[2]] >= 200, f"the fast camera lost too few frames: {replaced}"
 
 
 def test_t_cap_06_frame_numbers_across_a_resolution_change(monkeypatch):
