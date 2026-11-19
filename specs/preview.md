@@ -5,7 +5,7 @@ Status: proposed by an agent on 2026-11-19. It waits for the user
 P1 to P7 and answered A1 to A7 on 2026-11-19
 ([ADR-G651](../decisions/entries/G651-phase-4-live-preview-decisions-p1-to-p7.md)). Section 15
 gives each one. The second revision of 2026-11-19 applies A1 to A7 and the faults of an independent
-review. No independent review has read this revision. The agent choices of section 13 and the
+review. The third revision applies the fixes of a second review. No review has read the third revision. The agent choices of section 13 and the
 question of section 14 wait for the user. The failing tests of step 4a come before the product code
 of step 4a.
 
@@ -94,7 +94,7 @@ depend on the lockstep gate [E].
 | Path | Content |
 |---|---|
 | `skellycam/api/websocket/preview_relay.py` | `CAMERA_FRAME_VERSION`, `CAMERA_FRAME_HEADER` (a `struct.Struct`), `pack_camera_frame`, `PreviewRelay` (section 7). |
-| `skellycam/core/ipc/frame_ring/reader.py` | One read-only property of `FrameRingReader`: `oversize_count` [A5]. A second one, `skipped_count`, waits for Q1. |
+| `skellycam/core/ipc/frame_ring/reader.py` | One read-only property of `FrameRingReader`: `oversize_count` [A5]. The source of the ring skipped count is the Q1 line of 5.2. |
 | `skellycam/core/recorders/framerate_tracker.py` | `ServerFramerateCalculator`, moved from `api/websocket/websocket_server.py`, with the two changes of 6.3 [agent 19]. The old relay and `tests/test_websocket_internals.py` import it from here. Thus `preview_relay.py` and `websocket_server.py` do not import each other in a circle. |
 | `skellycam/tests/preview/` | The tests of section 9, a fake group manager, and a test route that wires `PreviewRelay` to a websocket as 4b will. |
 
@@ -212,6 +212,11 @@ The client sends one text message for each camera message that it has handled:
 - The client sends it after the tile has drawn the frame [P2]. It also sends it after a header-only
   message, and after a JPEG that it cannot decode. If it does not, the tile of that camera gets only
   the safety net: one frame each second [A6].
+- The client must keep only the newest pending camera message of each camera. A new message
+  replaces a message that waits to be drawn. The client sends one ready message after each draw, not
+  one for each received message. Thus a client that draws slower than one frame each second (for
+  example a hidden tab) gets the safety-net messages and never falls behind by more than one message
+  for each camera.
 - A ready message has no frame number [P2].
 - A message whose `message_type` is `camera_ready` and whose `camera_id` is not a string: the sender
   logs one WARNING record and ignores the message. The connection stays open [agent 21].
@@ -230,7 +235,7 @@ The client sends one text message for each camera message that it has handled:
 | `last_sent` | -1 | The `frame_number` of the last camera message of this ring. |
 | `ready` | `True` | The sender can send the next camera message [agent 10]. |
 | `sent_at` | none | The `time.monotonic()` of the last camera message. |
-| `skipped_at_send` | none | The ring `skipped_count` at the last camera message (6.1, Q1). |
+| `skipped_at_send` | none | The ring skipped count (5.2) at the last camera message (6.1). |
 | `not_shown` | 0 | The count of frames not shown on this connection (6.1) [A7]. |
 | `rate` | a new `ServerFramerateCalculator` | Section 6.3. |
 | `bad_id_logged` | `False` | Section 3.3. |
@@ -251,13 +256,16 @@ and for each camera id of `list(group.ring_readers)` [agent 14]:
    camera. After 1 s, the camera is ready for this pass: the safety net [A6].
 3. **Camera id.** If the camera id does not fit the message (3.3), log it one time (`bad_id_logged`)
    and go to the next camera.
-4. **Probe.** `p = reader.read(last_tried + 1)`. If `p.result` is `NOT_YET_WRITTEN` or `CLOSED`, go
-   to the next camera. `NOT_YET_WRITTEN` comes from step R2 of [ring 6.2], before any copy. Thus a
-   camera with no new frame costs no copy [A5].
-5. **Newest.** If `p.result` is not `LAPPED` and `reader.read(last_tried + 2).result` is
-   `NOT_YET_WRITTEN`, then `p` is the newest frame: `read = p`. Else
-   `read = reader.read_newest()` [ring 6.5] [agent 15].
-6. Set `last_tried = read.frame_number`.
+4. **Check.** `q = reader.read(last_tried + 2)`. If `q.result` is `CLOSED`, go to the next camera.
+5. **Probe and newest** [A5] [agent 15]:
+   - If `q.result` is `NOT_YET_WRITTEN`: `p = reader.read(last_tried + 1)`. If `p.result` is
+     `NOT_YET_WRITTEN` or `CLOSED`, go to the next camera. Else `p` is the newest frame: `read = p`.
+   - Else: `read = reader.read_newest()` [ring 6.5].
+
+   `NOT_YET_WRITTEN` comes from step R2 of [ring 6.2], before any copy. Thus a camera with no new
+   frame costs no copy.
+6. Set `last_tried = read.frame_number`, except when `read.result` is `LAPPED`. A frame that
+   `read_newest` gives as `LAPPED` is thus tried again in the next pass.
 7. **Send.** If `read.result` is `OK`, `FLAGGED` or `OVERSIZE`, and `read.frame_number > last_sent`:
    1. Build the camera message (3.2).
    2. Before the send, update the state: `not_shown` (6.1), `skipped_at_send`,
@@ -283,7 +291,7 @@ The sender keeps no queue. A connection has at most one camera message in flight
 | A camera appears (a new camera, a new group, or a reopen with a new process) | A new key in `ring_readers` gets a new state, `ready`. Its newest frame goes out at the first pass with a frame. |
 | A ring is recreated (a mode change [ring 7.5], or "apply again" [cap 8.3]) | `CameraGroup` puts a new reader under the same camera id. Step 1 of 4.3 applies the new-ring rule. The next camera message holds a frame of the new ring. Its `frame_number` can be lower than the last one. |
 | A reader is removed or replaced while a send waits | Step 1 looks the reader up again after the `await`. The sender never reads through a reader that it found before an `await`. |
-| A camera fails or dies [cap 8.1] | Its ring gets no new frame. Step 4 finds nothing new. The tile keeps the last frame. `app_state` gives the state (section 6). |
+| A camera fails or dies [cap 8.1] | Its ring gets no new frame. Steps 4 and 5 find nothing new. The tile keeps the last frame. `app_state` gives the state (section 6). |
 | A camera is removed (unselect [cap 8.3]) | Its key leaves `ring_readers`. The sender removes its state. A late ready message for it is ignored (4.1). The UI removes the tile from `app_state`. |
 | A ring is closed while its reader is still in `ring_readers` | The probe gives `CLOSED`. No message (5.3). |
 | Several clients | Each connection has its own sender and its own state. A slow client does not hold back another client [agent 17]. Each sender reads the rings for itself. |
@@ -307,6 +315,7 @@ The sender keeps no queue. A connection has at most one camera message in flight
     finds is open.
   - The reads of one camera (steps 4 to 6) are synchronous calls with no `await` between them. No
     other coroutine can close the reader during them.
+  - A tick (6.3) reads all cameras before its first `send_json`. It does not read after an `await`.
   - A closed ring whose reader is still in the dict gives `CLOSED` (5.3): no frame.
 - The sends of one connection are in series, under the send lock of the connection [agent 27].
 
@@ -314,19 +323,24 @@ The sender keeps no queue. A connection has at most one camera message in flight
 
 | Call | Exists | Use |
 |---|---|---|
-| `FrameRingReader.read(k)` | yes [ring 6.2] | The probe (step 4) and the check of step 5. `k > head` gives `NOT_YET_WRITTEN` with no copy (R2); `head - k >= N` gives `LAPPED` with no copy (R3). |
+| `FrameRingReader.read(k)` | yes [ring 6.2] | The check (step 4) and the probe (step 5). `k > head` gives `NOT_YET_WRITTEN` with no copy (R2); `head - k >= N` gives `LAPPED` with no copy (R3). |
 | `FrameRingReader.read_newest()` | yes [ring 6.5] | The newest frame (step 5) and the tick read (6.3). |
 | `FrameRingReader.oversize_count` | new [A5] | The `oversize_count` field of the ring header, one 8-byte load [ring 3.3, 5.8]. This adds to the reader API of [ADR-9G2W](../decisions/entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md) by decision of the user. |
-| `FrameRingReader.skipped_count` | waits for Q1 | The `skipped_count` field of the ring header, one 8-byte load [ring 3.3]. A7 needs it. |
+
+**Q1 line** (the only line that changes with the answer to Q1): the ring skipped count is
+`reader.skipped_count`, a new read-only property, one 8-byte load of the `skipped_count` field of
+the ring header [ring 3.3]. If the answer is no, this line becomes: the ring skipped count is not
+available; `framerate_update` gives `null`, and the formula of 6.1 uses 0.
 
 There is no `head` property [A5].
 
-Copies for each camera message (step 5):
+Copies for each camera message (steps 4 and 5):
 
-- The client keeps up: frame `last_tried + 1` is the newest. One copy, and one check with no copy.
-- The client is more than 1 s behind (slot count of 1 s [ring 3.7]): the probe gives `LAPPED` with no
+- The client keeps up: frame `last_tried + 1` is the newest. The check gives `NOT_YET_WRITTEN` with no
+  copy. One copy, by the probe.
+- The client is more than 1 s behind (slot count of 1 s [ring 3.7]): the check gives `LAPPED` with no
   copy. One copy, by `read_newest`.
-- Between these two: three copies (the probe, the check, `read_newest`).
+- Between these two: two copies (the check, `read_newest`).
 
 ### 5.3 Read results
 
@@ -334,9 +348,9 @@ Copies for each camera message (step 5):
 |---|---|
 | `OK` | Send the header and the JPEG. |
 | `FLAGGED`, `OVERSIZE` | Send the header only (3.3). |
-| `NOT_YET_WRITTEN` (probe) | Nothing. No copy. |
-| `LAPPED` (probe) | Go to `read_newest` (step 5). |
-| `LAPPED` (after the second `read(head)` of `read_newest`) | Nothing. `last_tried` is set, and a newer frame exists, so the next probe finds it. |
+| `NOT_YET_WRITTEN` (check or probe) | The check: go to the probe. The probe: nothing. No copy. |
+| `LAPPED` (check) | Go to `read_newest` (step 5). |
+| `LAPPED` (probe, or after the second `read(head)` of `read_newest`) | Nothing. `last_tried` does not change, so the next pass tries again. |
 | `MISSING`, `CORRUPT` | Nothing. `last_tried` is set, so the next pass does not read this frame again [agent 7]. |
 | `CLOSED` | Nothing. A new reader replaces it, or the camera leaves `ring_readers`. |
 
@@ -361,8 +375,8 @@ in `failed_checks`.
 | Frame rate of the camera [P4, A3] | The rate at which the camera delivers frames to skellycam: `source_frame_number` and `arrival_ns` (6.3). It does not depend on the client [A3]. | `framerate_update`, new shape (6.2) |
 | State, all eight of [cap 8.1] [P4, A4] | `state` of the camera status [cap 8.4] | `app_state` (existing; phase 3 adds the key) |
 | Mark of a flagged frame [P4] | `flags & 0x0F` of the camera message | the camera message (3.2) |
-| Not shown [A7] | The sender: at each camera message, `not_shown += (frame_number - last_sent - 1) - (skipped_count - skipped_at_send)`, when `last_sent >= 0` in the same ring [agent 20] | `framerate_update` (6.2) |
-| Ring skipped count [A7] | `skipped_count` of the ring header [ring 3.3] (Q1) | `framerate_update` (6.2) |
+| Not shown [A7] | The sender: at each camera message, `not_shown += (frame_number - last_sent - 1) - (ring skipped count - skipped_at_send)`, when `last_sent >= 0` in the same ring [agent 20] | `framerate_update` (6.2) |
+| Ring skipped count [A7] | The Q1 line of 5.2 | `framerate_update` (6.2) |
 | Replaced count [P4, A2] | `replaced_count` of the camera status, counted from the first frame that the camera takes in the gate. Step 3a adds it [A2]. The sender does not compute it. | `app_state` (existing) |
 | Oversize count [P4] | `oversize_count` of the ring header [ring 5.8, A5] | `framerate_update` (6.2) |
 
@@ -409,6 +423,13 @@ The sender sends one message for each camera group at each tick (every 0.25 s, a
 - It feeds `rate` at each camera message, and at each tick with one `read_newest()` of each camera.
   The tick read sends nothing. Thus `rate` gets at least four observations each second, also from a
   client that never answers [A3].
+- A tick has two parts. First, for each camera, it looks the reader up, reads the newest frame, feeds
+  `rate`, and reads `oversize_count` and the ring skipped count (5.2). Then it builds the messages
+  and sends them. It reads nothing after its first `send_json` (5.1).
+- The tick read does not change `last_sent`, `last_tried`, `ready` or `sent_at`. Thus it has no
+  effect on the flow control or on the safety net.
+- The tick read copies one JPEG for each camera, each tick and each connection, also when no camera
+  is ready: about 16 ms each second for 8 cameras (8 x 4 x 0.5 ms, from 8.1).
 - The formula is exact over skipped frames: `(s_b - s_a) / (t_b - t_a)`, as the rate check
   [cap 10.1].
 - After each `framerate_update`, the sender calls `clear()` on each calculator, as the old relay
@@ -466,9 +487,10 @@ class PreviewRelay:
   uvicorn, when the client keeps up (one read, 5.2).
 - 8 cameras at 60 fps with one client that keeps up: about a quarter of the event-loop thread
   [M review estimate]. Each more client adds the same again.
-- A client between 1 frame and 1 s behind costs up to three reads for each message (5.2), at a lower
-  message rate.
-- The tick reads cost four reads each second for each camera and client.
+- A client between 1 frame and 1 s behind costs two reads for each message (5.2), at a lower message
+  rate.
+- The tick reads cost four reads each second for each camera and client: about 16 ms each second for
+  8 cameras (6.3).
 - A camera with no new frame costs no copy (step 4 of 4.3).
 
 ### 8.3 No worker thread now
@@ -554,18 +576,18 @@ change when the tests are written.
 | T-PRV-08 | ws | A ready message while the newest frame is the last sent frame; then write one frame. | No camera message before the write; one camera message with the new frame within 0.5 s after the write. |
 | T-PRV-09 | ws | Three rings at 30 fps for 5 s; the client answers at once for cameras A and B; it never answers for camera C. | A and B each get at least 80 % of the frames written in that time; C gets 4 to 7 camera messages (the safety net). |
 | T-PRV-10 | ws | Four rings at 30 fps for 10 s; the client answers at once. | Each camera gets at least 80 % of its frames; `frame_number` increases in the camera messages of each camera. |
-| T-PRV-11 | ws | Two rings at 30 fps; the client never answers; 5.5 s. | Each camera gets 5 to 7 camera messages; each holds a frame that was written after the previous camera message of that camera; the intervals are 0.9 to 1.6 s. |
+| T-PRV-11 | ws | Two rings at 30 fps; the client never answers; 5.5 s. | Each camera gets 4 to 7 camera messages; each holds a frame that was written after the previous camera message of that camera; the intervals are 0.9 to 1.6 s. |
 | T-PRV-12 | ws | Connect, receive, close; connect again with a new client; send no ready message. | The `run` task of the first connection has ended within 1 s of the close; the new client gets the newest frame of each camera. |
 | T-PRV-13 | ws | Two clients on two rings at 30 fps for 5 s. Client 1 answers at once; client 2 never. | Client 1 gets at least 80 % of the frames; client 2 gets only safety-net camera messages (4 to 7 per camera). |
 | T-PRV-14 | ws | Two rings; after 1 s, add a third reader to the fake manager and write frames to it. | The newest frame of the third camera arrives with no ready message, within 0.5 s after its first commit. |
-| T-PRV-15 | ws | Ring A at frame 500, sent. (1) The client has answered; replace A's reader with a new ring at frames 0 to 3. (2) The client has not answered; replace it in the same way, then answer within 0.5 s. | (1) The next camera message for A has frame 3 of the new ring. (2) No camera message for A before the answer; then frame 3 or newer of the new ring. B continues in both cases (the rule of T-CAP-86). |
+| T-PRV-15 | ws | Ring A at frame 500, sent. (1) The client has answered; replace A's reader with a new ring at frames 0 to 3. (2) The client has not answered; replace it in the same way, then answer within 0.5 s of the last camera message for A (before the safety net). | (1) The next camera message for A has frame 3 of the new ring. (2) No camera message for A before the answer; then frame 3 or newer of the new ring. B continues in both cases (the rule of T-CAP-86). |
 | T-PRV-16 | ws | Two rings at 30 fps; A's writer stops (a failed or dead camera); the client answers at once. | After A's last frame, no camera message for A in 2 s; B gets at least 30 camera messages in those 2 s. |
 | T-PRV-17 | ws | Remove A's reader from the fake manager, then close it, as `_close_rings` does; then send a ready message for A. | No exception; no camera message for A; no log record at WARNING or above; B continues. |
 | T-PRV-18 | fake | Set A's ring `closed` while its reader stays in the fake manager; later replace the reader with a new ring. | No camera message for A while it is closed, and no exception; A's frames come again from the new ring. |
-| T-PRV-19 | fake | (1) Flip one payload bit of A's newest frame after commit (`CORRUPT`); run 20 passes; then write the next frame. (2) A stub reader whose `read_newest` gives `LAPPED` two times, then `OK`. A spy counts reads by frame number. | (1) No message for the bad frame; it is read in one pass only; the next frame goes out. (2) No message for the two `LAPPED` passes; the `OK` frame goes out. No log record at WARNING or above in either case. |
-| T-PRV-20 | fake | Slow send. Cameras A, B, C in group 1; camera D in group 2. While the send of A waits: remove and close B's reader; replace C's reader with a new ring; remove group 2; call `handle_text` with a ready message for A. Then release the send. | No exception, and `run` continues; no read through a closed reader (the closed reader raises if it is read); no message for B or D; C's next message is from the new ring; A is `ready` after the send (the ready message is not lost). |
+| T-PRV-19 | fake | (1) Flip one payload bit of A's newest frame after commit (`CORRUPT`); run 20 passes; then write the next frame. A spy counts the reads of the passes by frame number; it does not count the tick reads. (2) A stub reader whose `read` gives `NOT_YET_WRITTEN` for the check and `LAPPED` for the probe two times, then `OK`; the test calls the passes directly, with no tick. | (1) No message for the bad frame; the passes read it in one pass only; the next frame goes out. (2) No message for the two `LAPPED` passes; the `OK` frame goes out. No log record at WARNING or above in either case. |
+| T-PRV-20 | fake | (1) Slow send. Cameras A, B, C in group 1; camera D in group 2. While the send of A waits: remove and close B's reader; replace C's reader with a new ring; remove group 2; call `handle_text` with a ready message for A. Then release the send. (2) A slow `send_json`: while the first `framerate_update` of a tick waits, remove and close B's reader and remove group 2. Then release it. | No exception, and `run` continues; no read through a closed reader (the closed reader raises if it is read); no message for B or D; C's next message is from the new ring; A is `ready` after the send (the ready message is not lost). (2) The same, for the tick: no read after its first `send_json`. |
 | T-PRV-21 | fake | `handle_text` with: a valid ready message; `camera_id` missing; `camera_id` 7; an unknown camera id; text that is not JSON; `{"frameNumber": 3}`; `ping`. | Valid: `True`, camera `ready`. Missing and 7: `True`, one WARNING record each, nothing changes. Unknown id: `True`, no record. Not JSON, `frameNumber` and `ping`: `False`. No exception. |
-| T-PRV-22 | fake | Ring 1: `arrival_ns` in steps of 33,333,333 ns and `source_frame_number` in steps of 2; three frames flagged `OVERSIZE`; one write skipped with `newer_frame_waiting=True`. Ring 2: `source_frame_number` -1. Two runs of 1.1 s: the fake client answers at once; the fake client never answers. | 3 or more `framerate_update` messages for the group in each run; `delivered_framerate.mean_frames_per_second` is 60.0 ± 0.5 for ring 1 and 30.0 ± 0.5 for ring 2, in both runs; `oversize_count` is 3; `ring_skipped_count` is 1 (Q1); `not_shown_count` equals the frames written minus the frames sent minus the skipped write; no `backend_framerate` key. |
+| T-PRV-22 | fake | Ring 1: `arrival_ns` in steps of 33,333,333 ns and `source_frame_number` in steps of 2; three frames flagged `OVERSIZE`; one write skipped with `newer_frame_waiting=True`. Ring 2: `arrival_ns` in steps of 33,333,333 ns and `source_frame_number` -1. Two runs of 1.1 s: the fake client answers at once; the fake client never answers. | 3 or more `framerate_update` messages for the group in each run; `delivered_framerate.mean_frames_per_second` is 60.0 ± 0.5 for ring 1 and 30.0 ± 0.5 for ring 2, in both runs; `oversize_count` is 3; `ring_skipped_count` is 1 (the Q1 line of 5.2); for ring 1, `not_shown_count` equals (last sent − first sent + 1) − the frames sent − the skipped writes between the first and the last sent frame; no `backend_framerate` key. |
 | T-PRV-23 | fake | Set `closing = True` on the fake manager for 0.5 s, then `False`. | No read and no message while it is `True`; messages again after. |
 | T-PRV-24 | fake | `ServerFramerateCalculator`: update, `clear()`, update; also one update with a jump of 10^9 frames. `oversize_count` of a ring after two oversize frames. | After `clear()`, one update gives one exact interval; the jump returns at once and keeps at most `maxlen` durations; `oversize_count` is 2. |
 
@@ -624,7 +646,9 @@ reason to skip. The rings use `multiprocessing.shared_memory` on each system [ri
    is exact only up to 2^53, and `perf_counter_ns` values can be larger.
 3. **Tile.** One tile for each camera, from the shared tile module of `specs/player.md` [P6], fed as
    section 11 states. After each draw, after a header-only message and after a failed decode, it
-   sends the ready message of 4.1 for its camera [P2]. Delete the `frameAcknowledgment` message.
+   sends the ready message of 4.1 for its camera [P2]. It keeps only the newest pending camera
+   message of each camera, and sends one ready message for each draw (4.1). Delete the
+   `frameAcknowledgment` message.
 4. **Overlay** [P4]: the camera label, the frame rate of the camera (6.2), the state (all eight
    [A4]), and a mark while the last message of the camera has a bit of 0x0F.
 5. **Frame rate viewer** [P4, A7]: per camera, "not shown" and the ring skipped count as two numbers
@@ -666,7 +690,7 @@ The earlier specs are accepted, so this spec does not edit them:
    not have it yet. They must get it with the code of step 3a.
 3. A5 adds `oversize_count` to the reader API of
    [ADR-9G2W](../decisions/entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md).
-   Q1 asks about `skipped_count`.
+   Q1 asks about `skipped_count` (the Q1 line of 5.2).
 4. T-RING-33 [ring 12] and T-CAP-86 [cap 16.2] test the old relay. 4b deletes them. T-PRV-02,
    T-PRV-09, T-PRV-14 and T-PRV-15 keep their rules.
 5. [ring 2.1] keeps `frontend_payload_bytearray.py` for the interim relay [ring A56]. 4b deletes the
@@ -680,7 +704,8 @@ The earlier specs are accepted, so this spec does not edit them:
   a quarter of that thread for each client [M review estimate]. M-PRV-3 measures the effect on the
   HTTP response time.
 - Each client reads the rings for itself. Two clients double the read cost.
-- A client between 1 frame and 1 s behind costs up to three reads for each message (5.2).
+- A client between 1 frame and 1 s behind costs two reads for each message (5.2).
+- The tick reads copy JPEGs also when no client is ready (6.3).
 - "Not shown" also counts a frame that a failed read stopped (6.1).
 - Phase 3 must keep `CameraGroup.ring_readers` as a dict from camera id to reader, and must put a
   new reader object there for each new ring. 4b adapts the sender if phase 3 changes it.
@@ -699,8 +724,8 @@ marks each one [agent n].
 5. "The camera's frame number" of P3 is the ring `frame_number` [ring 1.4], not
    `source_frame_number`.
 6. The 32 bits of `flags` are copied, also the bits that are not errors.
-7. `last_tried`: the probe starts after the last frame read with any result, so a `CORRUPT` or
-   `MISSING` frame is read one time only.
+7. `last_tried`: the probe starts after the last frame read with any result except `LAPPED`, so a
+   `CORRUPT` or `MISSING` frame is read one time only by the passes.
 8. A flagged or oversize frame goes out as a header-only message with `jpeg_len` 0. `jpeg_len` is
    the count of bytes in the message, not the ring `payload_len`.
 9. The ready message `{"message_type": "camera_ready", "camera_id": ...}`.
@@ -713,13 +738,14 @@ marks each one [agent n].
     message.
 14. The sender runs on the event-loop thread, loops over copies of the dicts, and looks each reader
     up again after each `await`.
-15. Step 5 of 4.3: `read(last_tried + 2)` tells with no copy if the probe frame is the newest, so a
-    client that keeps up costs one copy for each message.
+15. Steps 4 and 5 of 4.3: `read(last_tried + 2)` first tells with no copy if frame
+    `last_tried + 1` is the newest, so a client that keeps up costs one copy for each message, and a
+    client that is behind costs two.
 16. The state of a camera changes before the `await` of its send.
 17. Each connection has its own sender, state and reads.
 18. A failed read sends nothing and writes no log record.
 19. The new shape of `framerate_update`; the frame rate fed at each message and by one tick read for
-    each camera; the move of `ServerFramerateCalculator` to `framerate_tracker.py`; `clear()` keeps
+    each camera; a tick reads all cameras before its first send; the move of `ServerFramerateCalculator` to `framerate_tracker.py`; `clear()` keeps
     the last observation; the duration loop is bounded by `maxlen`.
 20. The formula of "not shown": the gap of `frame_number` minus the increase of the ring
     `skipped_count`, for each connection, since the connection started.
