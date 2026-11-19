@@ -4,7 +4,8 @@ Status: proposed by an agent on 2026-11-19. It waits for the review of the user
 ([ADR-4CQC](../decisions/entries/4CQC-phase-3-windows-capture-spec-and-test-list.md)). No product
 code and no test code is written before the user accepts it. The decisions D1 to D49 are accepted
 by the user ([ADR-EN7A](../decisions/entries/EN7A-phase-3-windows-capture-decisions.md)). Section
-20 gives each one in full.
+20 gives each one in full. The user answered the eight questions of the first draft on 2026-11-19
+([ADR-QKX1](../decisions/entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md)).
 
 ## 0. How to read this spec
 
@@ -12,6 +13,8 @@ Marks:
 
 - **[Dn]**: decision n of the user, 2026-11-19 (section 20,
   [ADR-EN7A](../decisions/entries/EN7A-phase-3-windows-capture-decisions.md)).
+- **[Un]**: answer n of the user to a question of the first draft, 2026-11-19 (section 20,
+  [ADR-QKX1](../decisions/entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md)).
 - **[ring x.y]**: section x.y of [`frame-ring.md`](frame-ring.md), the accepted phase 2 spec
   ([ADR-50G8](../decisions/entries/50G8-phase-2-frame-ring-spec.md)). This spec cites the ring spec.
   It does not repeat it.
@@ -32,7 +35,7 @@ This spec uses British spelling. Code names (`CameraConfig`, `should_grab_by_id`
 ### 1.1 Purpose
 
 Phase 3 replaces OpenCV capture on Windows with pure-Python Media Foundation through `comtypes`,
-with no compiled extension [D1]. The camera JPEG goes untouched to the recorder path and to the JPEG
+with no compiled extension, built on `development-streaming` [D1]. The camera JPEG goes untouched to the recorder path and to the JPEG
 ring [D2]. One shared camera loop serves three sources: Media Foundation, OpenCV and a fake source
 for tests [D6].
 
@@ -48,7 +51,8 @@ Each step has its own tests and its own camera run [D2].
 
 ### 1.3 Non-goals
 
-- H.264 modes: not selectable and not opened [D4].
+- H.264 modes: listed as not selectable in the 3c list, never opened; `supported_modes` of 3a stays
+  MJPG only [D4, U8].
 - A merge of upstream `sfn26`. It is a source of ideas only [D1]. No Rust [D1].
 - The recorder of phase 5. The old recorder (decoded image in, H.264 out) stays [D9].
 - The USB link display and the Windows event-log check [D45].
@@ -73,9 +77,9 @@ Each step has its own tests and its own camera run [D2].
 | Encoder, Quick Sync check, range rule | [notes: JPEG encoder, Encoder check, Encoder settings, Input range] | Section 13. |
 | One process per camera; no fallback | [P §3] | Kept. |
 
-D23 replaces the plan statement "a camera that fails or hangs at open stops the session from
-starting" [P §3]. D38 settles the mid-take rule of the plan ("native capture reports a slow or
-stalled camera") [P §3].
+D23 replaces the plan statement "a camera that fails at open stops the session from starting"
+[P §3]. D38 replaces the plan statement that native capture only "reports a slow or stalled camera"
+mid-take [P §3].
 
 ### 1.5 Terms
 
@@ -102,13 +106,14 @@ Step 3a is done when:
 1. All fake-source tests pass on the Windows development machine, the Windows CI runner and the plain
    Linux runner.
 2. The hardware tests pass on the C922, the C930e and the Kiyo Pro, and the rate check refuses the
-   generic camera.
+   generic camera. T-CAP-54 and T-CAP-55 (D49) are part of this item. They record results and have
+   no pass value (16.3).
 3. A three-camera recording, OpenCV loop against native loop, gives equal frame counts across
    cameras, a group rate within 1 % of 30 fps, and no lost camera frame that the replaced-frame count
-   does not explain. Section 16.4 gives the run [agent 41].
+   does not explain. Section 16.4 gives the run [agent 40].
 4. T-RING-31 (idle CPU under 2 % of one core) and T-RING-46 pass on Windows.
 
-### 2.2 Step 3b [agent 38]
+### 2.2 Step 3b [agent 37]
 
 Step 3b is done when:
 
@@ -121,13 +126,13 @@ Step 3b is done when:
    replaced-frame count does not explain, and no encoder fallback.
 4. T-RING-47 passes, and T-RING-31 still passes on Windows.
 
-### 2.3 Step 3c [agent 38]
+### 2.3 Step 3c [agent 37]
 
 Step 3c is done when:
 
 1. All fake-source tests of 3a, 3b and 3c pass on the three platforms of 2.1 item 1.
-2. The hardware tests of D49 run on the C922, the C930e and the Kiyo Pro, and their results are
-   recorded (section 16.3). Gain and focus set and read back on each camera that has them. White
+2. The 3c hardware test of D49 (T-CAP-77) runs on the C922, the C930e and the Kiyo Pro, and its
+   results are recorded (16.3). Gain and focus set and read back on each camera that has them. White
    balance and power line frequency are read and written to the recording info.
 3. The full mode list of each of the four test cameras agrees with the descriptor list of the
    prototype for the same camera.
@@ -173,7 +178,8 @@ A source has four calls [D6]:
 | `close() -> None` | Closes in the order of section 6.9. Each step is bounded. | Raises `CaptureFailure` with stage `close` after a hung step. |
 
 The source also has `replaced_count` (an int): the frames that a newer frame replaced since the open
-[D26, D27].
+[D26, D27]. The loop reads it when the camera enters the gate, and it reports the difference from
+then on (5.2) [agent 49].
 
 `request` holds the requested width, height, rate (a value of -1 or 0 means "auto" [D16]), the
 format (`capture_fourcc`, MJPG unless 3b [D19]) and the device to open (section 6.2).
@@ -193,17 +199,24 @@ format (`capture_fourcc`, MJPG unless 3b [D19]) and the device to open (section 
 | `source_frame_number` | int | the running count of delivered frames since the open, from 0 [D27] | the count of successful grabs since the open, from 0 [agent 5] | as scripted |
 | `discontinuity` | bool | `MFSampleExtension_Discontinuity` is non-zero [proto mf.py] | `False` | as scripted |
 
-A gap in `source_frame_number` between two taken frames shows the frames that the gate did not take
-[D27]. The shared loop computes `frame_number` itself (section 5.3).
+A gap in `source_frame_number` between two taken frames shows only the frames that the gate did not
+take, because the count counts delivered samples [D27]. A frame that the camera drops leaves no gap
+there. It shows only in the `DISCONTINUITY` flag [D34] [NV: that Media Foundation sets the
+discontinuity attribute on the next sample after a drop]. The shared loop computes `frame_number`
+itself (section 5.3).
+
+The `sample_ns` rule [agent 10]: the source writes `NO_SAMPLE_NS` for the rest of the open when a
+sample time is later than its arrival time, or more than 200 ms earlier. T-CAP-59 checks the rule on
+the cameras.
 
 ### 4.3 Threading rules
 
 | Thread | Rule |
 |---|---|
 | Media Foundation callback thread (a work-queue thread of Media Foundation) | `OnReadSample` takes `arrival_ns` first. It copies the buffer into one `bytes` object, puts the frame in the waiting place, and issues the next `ReadSample` [proto mf.py `ReaderCallback`]. It does no file I/O, no logging per frame, no decode and no wait other than the waiting-place lock. It never raises into Media Foundation. |
-| Waiting place | One place per source, at most one frame. A new frame replaces a waiting frame, and the replaced frame counts in `replaced_count` [D26]. The source reuses `WaitingPlace` of the ring package (`skellycam/core/ipc/frame_ring/decode.py`) [agent 4]. The put never waits longer than the time to take the lock [ring 8.3]. |
+| Waiting place | One place per source, at most one frame. A new frame replaces a waiting frame, and the replaced frame counts in `replaced_count` [D26]. When the replaced frame carried a discontinuity, the frame that replaces it carries it too. Thus the next taken frame has the flag [D34] [agent 46]. A source error puts an error marker in the place. The marker wakes the loop at once, and `read_frame` raises `CaptureFailure` [agent 50]. The source uses the rules of `WaitingPlace` of the ring package (`skellycam/core/ipc/frame_ring/decode.py`), with these two additions [agent 4]. The put never waits longer than the time to take the lock [ring 8.3]. |
 | Camera loop thread | Waits only in `read_frame`, on the condition of the waiting place, with a timeout [ring 8.10]. It never polls in a loop without a block or a sleep of at least 1 ms. |
-| Bounded-call workers | One short-lived thread per bounded call [proto bounded.py]. Each joins the multithreaded apartment (MTA) first [agent 45]. |
+| Bounded-call workers | One short-lived thread per bounded call [proto bounded.py]. Each joins the multithreaded apartment (MTA) first [agent 43]. |
 | Decode thread (BGR ring) | As [ring 8.2, 8.3]. |
 
 No thread of the camera process spins [ring 8.10]. T-RING-31 applies to the shared loop [D48].
@@ -244,10 +257,14 @@ A failing ring write does not stop capture or recording, as in the 2a loop [ring
   there is none, it waits for the next one [D26].
 - Frames that arrive while the gate is closed are replaced by newer frames and counted in
   `replaced_count` [D26].
-- At stop, the loop logs one line per camera with the number of replaced frames [D27].
+- At stop, the loop logs one line per camera with the number of frames replaced since the camera
+  entered the gate [D27] [agent 49]. Thus this count and the gaps of
+  `source_frame_number` between taken frames cover the same span.
 - The gate counts only cameras in the states `checking`, `too_slow`, `ready` and `recording`
-  (section 8). A camera in `starting`, `failed` or `dead` does not hold the gate back. This follows
-  from D23 and D38: the other cameras keep their preview and their recording.
+  (section 8). A camera in `starting`, `waiting`, `failed` or `dead` does not hold the gate back
+  [agent 47]. This follows from D23 and D38: the other cameras keep their preview and
+  their recording. `should_grab_by_id` and `CameraOrchestrator.all_ready` must change for this.
+  Today they need the status of every camera to be ready.
 - A camera that joins the gate again (after "apply again" or a mode change) starts with the largest
   gate count of the group [agent 5].
 
@@ -285,10 +302,11 @@ A failing ring write does not stop capture or recording, as in the 2a loop [ring
 - When the camera has a BGR ring, the same decoded image goes to the BGR ring, as a new copy through
   the waiting place (`DecodeInput` with `source="BGR"`) [ring 8.8]. There is no second decode [D9].
 - The loop decodes a frame only when the frame is recorded or the camera has a BGR ring
-  [agent 8].
+  [agent 8]. The decode runs on the loop thread. Thus, while a recording runs, it delays capture by
+  the decode time [D9]. Section 17.2 lists this difference from [ring 8.2 to 8.4].
 - A frame with an error flag never reaches the decoder [ring 4]. The old recorder then gets the last
-  decoded image again, and the camera process logs the count of such frames at the stop of the
-  recording [agent 8].
+  good image again, and the camera process logs the count of such frames at the stop of the
+  recording [U5]. This is an interim rule of phase 3. It must change back in phase 5 [U5].
 - Cost: 2.60 ms at 720p, 5.42 ms at 1080p, one thread
   [M `research/frame_ring_buffer/decode_bench/FINDINGS.md`]. Phase 5 removes this decode [D9].
 
@@ -297,10 +315,23 @@ A failing ring write does not stop capture or recording, as in the 2a loop [ring
 - The main process gives each camera process a pipe as its error output before OpenCV loads [D42].
   This applies the fix of [ADR-E817](../decisions/entries/E817-choices-of-the-2b-code.md) item 7 and [ring 8.9] on Windows.
 - The main process holds the read end. One thread per camera process reads the pipe and logs each
-  different line one time per minute at most, with a count [ring 8.9] [agent 43].
+  different line one time per minute at most, with a count [ring 8.9] [agent 42]. In [ring 8.9] the
+  camera process reads the pipe. Section 17.2 lists this difference.
 - How a spawned process gets the pipe as its standard error handle is [NV]. `multiprocessing` does
   not pass standard handles on Windows by default. The code must show a method, and T-RING-46 must
   pass on Windows [D48].
+
+### 5.7 A recording with a dead camera (interim rule of phase 3) [U4]
+
+- The timing file of each camera ends at its own last frame [U4].
+- The multi-frame timing rows after the last frame of a dead camera continue with the cameras that
+  are still alive [U4].
+- The recording info names the dead camera and its last frame (11.6) [D38, U4].
+- `last_frame_number` is the frame number of the last recorded frame of that camera in the old frame
+  record. This is the gate count of 5.3, the counter of the timing files [agent 52].
+- This is an interim rule of phase 3. It must change back when the recorder of phase 5 comes [U4].
+- The finaliser (`recorders/recording_finalizer.py`) and the timing files need equal frame counts
+  today. Phase 3 changes them for this rule.
 
 ## 6. The Media Foundation source
 
@@ -310,7 +341,7 @@ Each call and interface below is in the prototype [proto mf.py, com.py, bounded.
 ### 6.1 Process set-up
 
 - Each camera process calls `CoInitializeEx` with the MTA and `MFStartup(MF_VERSION)` one time, before
-  the first Media Foundation call [proto com.py] [agent 45].
+  the first Media Foundation call [proto com.py] [agent 43].
 - At the end, it calls `MFShutdown` and `CoUninitialize` only when no bounded call was abandoned
   [proto bounded.py]. Otherwise it ends hard (6.6).
 
@@ -322,7 +353,7 @@ Each call and interface below is in the prototype [proto mf.py, com.py, bounded.
    of each `IMFActivate` [proto mf.py `enum_mf`]. Each open enumerates again [proto mf.py
    `open_session`].
 2. Match: keep the one device whose `camera_id` (7.2) equals the `camera_id` of the config. Release the
-   other `IMFActivate` objects. No device: failure, stage `open`, reason "camera not found". Two
+   other `IMFActivate` objects. No device: failure, stage `open`, reason "camera not found" [agent 48]. Two
    devices: failure, stage `open` [D13] [agent 12].
 3. Activate: `IMFActivate::ActivateObject(IID_IMFMediaSource)`, bounded. A call that returns after its
    time limit shuts down its own source [proto mf.py `activate`].
@@ -362,8 +393,8 @@ The camera is never opened by its index [D12].
 `OnReadSample(hr, stream_index, flags, timestamp, sample)` [proto mf.py `ReaderCallback`]:
 
 1. `arrival_ns = perf_counter_ns()`.
-2. A failed `hr`, or `MF_SOURCE_READERF_ERROR`: record the first error, wake the loop, do not issue a
-   new read. `MF_SOURCE_READERF_ENDOFSTREAM`: the same, with the reason "end of stream".
+2. A failed `hr`, or `MF_SOURCE_READERF_ERROR`: record the first error, put the error marker in the
+   waiting place (it wakes the loop, 4.3), and do not issue a new read. `MF_SOURCE_READERF_ENDOFSTREAM`: the same, with the reason "end of stream".
 3. A sample: `IMFSample::ConvertToContiguousBuffer`, lock the `IMFMediaBuffer`, copy the current
    length into one `bytes` object, unlock. Read `GetSampleTime` and `MFSampleExtension_Discontinuity`.
    Increment the source count. Put the frame in the waiting place.
@@ -373,22 +404,26 @@ The camera is never opened by its index [D12].
 ### 6.6 Bounded calls and the hard end of the process [D10]
 
 - These calls are bounded: enumerate, `ActivateObject`, the reader creation, the mode set, the first
-  `ReadSample` and the first frame, each control call, `Flush`, each release and each `Shutdown`
-  [D10, proto bounded.py].
-- The time limit of each call is 5 s [agent 14]. The prototype used 5 s
-  [M `research/usb_cameras/docs/windows_results_20261113.md` §2.2]. A first frame took 75 to 597 ms
-  on the four test cameras (same file, §2.1).
-- On a hang, the camera process:
-  1. reports the failure (section 12) to the main process;
-  2. finishes the recording files of this camera, if a recording runs [agent 16];
-  3. ends itself with `os._exit` and a non-zero exit code, without `MFShutdown`, `CoUninitialize` or
-     interpreter finalisation [D10, proto bounded.py] [agent 16].
-- The main process treats the exit of a camera process that reported a failure as the failure of
-  that camera, not as a crash of the backend. It cleans up only that camera: rings, worker, status
-  [D10] [agent 16].
+  `ReadSample`, the first frame, each control call, `Flush`, each release and each `Shutdown` [D10,
+  proto bounded.py].
+- Each bounded call has a time limit of 5 s [agent 14]. The first frame has its own limit of 5 s from
+  the first `ReadSample`. The prototype used 5 s
+  [M `research/usb_cameras/docs/windows_results_20261113.md` §2.2]. On the four test cameras, the
+  first frame took 75 to 597 ms (same file, §2.1).
+- On a hang, the camera process first reports the failure (section 12) to the main process. Then it
+  ends itself with `os._exit` and a non-zero exit code [D10, proto bounded.py] [agent 16]. It does not
+  call `MFShutdown` or `CoUninitialize`. It does not run the finalisation of the interpreter.
+- For a hang during a recording, there are two options. Section 19, question Q-c, asks the user:
+  - Option 1: end at once after the report. The video file of that camera from the old recorder can
+    then be unreadable.
+  - Option 2: first try to finish the recording files of that camera, with a short time limit. Then
+    end hard.
+- The main process treats the exit of a camera process that reported a failure as the failure of that
+  camera. It does not treat it as a crash of the backend [D10] [agent 16].
+- The main process cleans up only that camera: its rings, its worker and its status [D10].
 - Other cameras are not touched [D10].
-- A bounded call keeps its own COM reference, so that a hung call never uses an object that the
-  caller released [proto mf.py `ref`].
+- A bounded call keeps its own COM reference. Thus a hung call never uses an object that the caller
+  released [proto mf.py `ref`].
 
 ### 6.7 Errors: in use, device removed, stall
 
@@ -494,7 +529,8 @@ fields of `CameraMode` [ring 9] plus the rounded rate:
 
 - MJPG, YUY2 and NV12 modes are listed. A size and rate in MJPG and YUY2 is listed two times [ring 9].
 - YUY2, NV12 and RAW have `uncompressed: true` [ring 9].
-- H.264 and RAW modes have `selectable: false` [ring 9, D4]. Section 19, question 7.
+- H.264 and RAW modes are listed with `selectable: false`. They are never opened [ring 9, D4, U8].
+  `supported_modes` of 3a stays MJPG only.
 - An NV12 type that comes immediately before an MJPG type of the same size and rate is left out: Media
   Foundation made it from the MJPG type [proto parse.py `flag_types`] [agent 19] [NV for cameras
   other than the four test cameras].
@@ -514,11 +550,15 @@ fields of `CameraMode` [ring 9] plus the rounded rate:
 - **Tolerance** [D17]: frame rates compare with a relative tolerance of 0.0001
   (`math.isclose(a, b, rel_tol=1e-4)`).
 - **One rate per group** [D18]: while the gate exists, all cameras of a group must have the same mode
-  rate. The rule compares mode rates, not measured rates. A group with different mode rates is refused:
-  the apply request fails, and no camera of the request stays open [agent 20]. With Media Foundation,
-  the main process applies the rule before it opens a camera, from `supported_modes` and the rules
-  above. With OpenCV, it applies the rule after the open, to the rates that OpenCV reports above 0
-  [D46] [agent 20]. Section 19, question 6.
+  rate. The rule compares mode rates, not measured rates. A request for a group with different mode
+  rates is refused as a whole, and no camera is opened [U7].
+- With Media Foundation, the main process applies the rule before it opens a camera [agent 20]. For
+  MJPG it uses `supported_modes` and the rules above. For a YUY2 or NV12 request of 3b, it uses the
+  full native type list that detection keeps: the list that 3c publishes as `capture_modes`
+  [agent 20].
+- With OpenCV, the main process applies the rule after the open, to the rates that OpenCV reports
+  above 0 [D46] [agent 20]. A refusal then closes the cameras of the request.
+- How the rule applies to a running group is open (section 19, question Q-a).
 - **H.264** [D4]: never chosen and never opened.
 
 ## 8. Camera states
@@ -528,6 +568,7 @@ fields of `CameraMode` [ring 9] plus the rounded rate:
 | State | Meaning | Preview | In the gate |
 |---|---|---|---|
 | `starting` | Open, mode, stream start, first frame, controls, read-back, warm-up, rate check [D20, D21, D22]. Also after "apply again" and after a resolution or rate change [D23, D31]. | no | no |
+| `waiting` | Warm-up done and rate check passed. The camera waits paused for the other selected cameras [D21] [agent 51]. | no | no |
 | `failed` | The start failed: cannot open, in use, no mode, not ready in 15 s, rate check failed [D23]. The camera is closed. | no | no |
 | `checking` | The rate check after a live control change runs [D32, D33]. | yes | yes |
 | `too_slow` | The rate check after a live change failed [D32]. The camera stays open. | yes | yes |
@@ -541,46 +582,57 @@ fields of `CameraMode` [ring 9] plus the rounded rate:
 |---|---|---|
 | (none) | group apply; "apply again" of a `failed` or `dead` camera | `starting` |
 | `starting` | a start failure (section 9, 10.1) | `failed` |
-| `starting` | 2 s without a frame after the first frame | `failed`, stage `warm-up` [agent 23] |
-| `starting` | warm-up done, rate check passed, all selected cameras that did not fail are ready | `ready` [D21] |
+| `starting` | device removed; 2 s without a frame after the first frame | `failed`, with the current stage [agent 23] |
+| `starting` | a bounded call times out (a hang) | `failed`; the process ends hard (6.6) |
+| `starting` | warm-up done and rate check passed | `waiting` [agent 51] |
+| `waiting` | no selected camera is in `starting` | `ready` [D21] |
 | `ready`, `too_slow`, `checking` | live change of exposure, gain or focus [D31] | `checking` |
 | `checking` | rate check passed | `ready` |
 | `checking` | rate check failed | `too_slow` [D32] |
 | `ready`, `too_slow`, `checking` | change of resolution or rate [D31] | `starting` (only this camera) |
+| `failed`, `dead` | "apply again", with the same config or a changed config (8.3) | `starting` (only this camera) [D23] |
 | `ready` | recording starts | `recording` |
 | `recording` | recording stops | `ready` |
 | `recording` | camera slows down | `recording`, with a warning [D39] |
-| any open state | device removed; 2 s without a frame | `dead` [D38] (from `starting`: see above) |
+| `waiting`, `checking`, `too_slow`, `ready`, `recording` | device removed; 2 s without a frame | `dead` [D38] |
+| `waiting`, `checking`, `too_slow`, `ready`, `recording` | a bounded call times out (a hang) | `dead`, stage `streaming`; the process ends hard (6.6) |
 | `failed`, `dead` | unselect | removed from the group [D23] |
 
 skellycam never moves a camera from `failed` or `dead` to `starting` by itself [D23]. A failed camera
 records its diagnostics, is marked, and is never revived (Kiyo Pro wedge rule) [D23].
 
 The camera process of a camera that fails at start reports the failure, closes the camera and ends.
-"Apply again" starts a new camera process [agent 22]. A hang ends the process hard (6.6).
+The process of a dead camera reports, finishes its recording files [D38], closes the source with the
+bounded steps of 6.9 and ends. Thus a dead process lives at most for the close steps. "Apply again"
+starts a new camera process [agent 22].
 
-A `dead` camera outside a recording is treated as a `failed` camera [agent 44]. Section 19, question 5.
+A camera that dies while no recording runs is treated as a `failed` camera [U6].
 
 ### 8.3 What each state allows
 
-| State | Start a recording | Live control change | Resolution or rate change | Apply again | Unselect |
-|---|---|---|---|---|---|
-| `starting` | blocked [agent 25] | refused | refused | no effect | allowed |
-| `failed` | blocked [D23] | refused | refused | reopens only this camera [D23] | allowed [D23] |
-| `checking` | blocked [D33] | allowed (restarts the check) [agent 27] | allowed | no effect | allowed |
-| `too_slow` | blocked [D32] | allowed [D32] | allowed | no effect | allowed |
-| `ready` | allowed, when every selected camera is `ready` | allowed [D31] | allowed [D31] | no effect | allowed |
-| `recording` | (runs) | refused [D36] | refused [D36] | refused [D36] | refused [D36] |
-| `dead` | blocked [agent 44] | refused | refused | reopens only this camera | allowed |
+| State | Start a recording | A changed config in an apply request | The same config in an apply request | Unselect |
+|---|---|---|---|---|
+| `starting` | blocked [agent 25] | refused [agent 45] | no effect [agent 45] | allowed |
+| `waiting` | blocked [agent 25] | refused [agent 45] | no effect | allowed |
+| `failed` | blocked [D23] | reopens only this camera with the new config [D23, D25] [agent 45] | reopens only this camera [D23] | allowed [D23] |
+| `checking` | blocked [D33] | live change (restarts the check) [agent 27], or reopen for a resolution or rate | no effect | allowed |
+| `too_slow` | blocked [D32] | live change, or reopen for a resolution or rate [D31, D32] | no effect | allowed |
+| `ready` | allowed, when every selected camera is `ready` | live change, or reopen for a resolution or rate [D31] | no effect | allowed |
+| `recording` | (runs) | refused [D36] | refused [D36] | refused [D36] |
+| `dead` | blocked [U6] | reopens only this camera with the new config [U6] | reopens only this camera [U6] | allowed |
 
 - A recording starts only when every selected camera is `ready` [D23, D32, D33] [agent 25].
 - A refused recording start and a refused change return HTTP status 409. The detail names each camera
   that blocks and its state [agent 25].
-- "Apply again" is a new request to `/camera/group/apply` with the config of the camera. It reopens
-  only the cameras in `failed` or `dead`. The other cameras keep their process, rings and preview
-  [D23].
+- "Apply again" is a new request to `/camera/group/apply`. For a camera in `failed` or `dead`, the
+  request can carry the same config or a changed config: rate, resolution, exposure or other
+  controls. It reopens only that camera, with the config of the request [D23, D25]. The other cameras
+  keep their process, rings and preview [D23].
+- For a camera in `ready`, `checking` or `too_slow`, a changed config is a live change or a reopen of
+  that camera (11.2) [D31].
 - "Unselect" is `use_this_camera: false` for the camera in a request to `/camera/group/apply`. The
   group closes the camera and removes it from the gate and from the record check [agent 24].
+- How the main process checks a request as a whole is open (section 19, question Q-a).
 
 ### 8.4 Status report [agent 21]
 
@@ -592,6 +644,7 @@ A `dead` camera outside a recording is treated as a `failed` camera [agent 44]. 
   "failure": null,
   "mode": {"width": 1280, "height": 720, "fps_num": 30, "fps_den": 1, "format": "MJPG"},
   "measured_fps": 28.71,
+  "warnings": [],
   "controls": {
     "exposure": {"present": true, "auto": false, "value": -6},
     "gain": {"present": true, "auto": false, "value": 0},
@@ -602,7 +655,10 @@ A `dead` camera outside a recording is treated as a `failed` camera [agent 44]. 
 
 - `failure` is null or the object of section 12.
 - `measured_fps` is the result of the last rate check, or null.
-- `controls` holds `exposure` in 3a, and `gain` and `focus` from 3c [D30, D43] [agent 31].
+- `state` is one of the states of 8.1.
+- `controls` holds `exposure`, `gain` and `focus` from 3a, read only. skellycam sets gain and focus
+  through the config from 3c [D30, D43] [agent 31].
+- `warnings` holds the items of 11.3 for the recording that runs [agent 33].
 - The response of `/camera/group/apply` adds `camera_failures`: a dict from `camera_id` to the
   failure object of section 12 [agent 21].
 
@@ -615,7 +671,8 @@ A `dead` camera outside a recording is treated as a `failed` camera [agent 44]. 
 3. Start the stream (6.4).
 4. Wait for the first frame (6.4).
 5. Set every control of the config (section 11). RECOMMEND runs here (11.1).
-6. Read each control back. The config stores the read-back values.
+6. Read each control back. The config stores the read-back values, as today: the config comes from
+   `extract_config_from_cv2_capture`, which reads the device [agent 44].
 7. Count the warm-up frames (9.2).
 
 Reason: on the C930e the gain read 6 before the stream started and 0 after it started [D20]
@@ -631,11 +688,18 @@ Reason: on the C930e the gain read 6 before the stream started and 0 after it st
 
 - Each camera must be ready within 15 s [D21]. The time counts from the start of the open (9.1 step 1)
   to the end of the rate check [agent 14].
-- A camera that is not ready in time fails, stage `warm-up`, reason "not ready in 15 s".
+- A camera that is not ready in time fails, stage `warm-up`, reason "not ready in 15 s"
+  [agent 48].
+- The shared loop in the camera process owns the 15 s timer. It checks the deadline between the steps
+  of 9.1 and on each warm-up frame. A bounded call that runs at the deadline is not cut short. The
+  camera fails when the call returns. If the call does not return, its own 5 s limit applies (6.6)
+  [agent 14].
+- The first frame has its own 5 s limit (6.6). A camera that fails it has the stage `first frame`.
+- At 6 fps or less, 90 frames do not fit in 15 s. Section 19, question Q-b, asks the user.
 
 ### 9.4 Wait for the others [D21]
 
-- Cameras wait paused until all are ready [D21]. "All" means every selected camera that has not
+- Cameras wait paused until all are ready [D21]. The state of a camera that waits is `waiting` (8.1). "All" means every selected camera that has not
   failed [D23].
 - A camera that waits keeps its stream. Its waiting place keeps the newest frame only.
 
@@ -676,8 +740,8 @@ Reason: on the C930e the gain read 6 before the stream started and 0 after it st
   later change passes the check [D32].
 - A new change while a check runs starts a new check [agent 27].
 - A change can lower the frame rate for a moment while the camera adjusts [D31]. A frame that a camera
-  drops after a change is normal: it shows in the gap of `source_frame_number` and in the
-  `DISCONTINUITY` flag, with no warning [D34].
+  drops after a change is normal, with no warning [D34]. It shows only in the `DISCONTINUITY` flag
+  (4.2). `source_frame_number` counts delivered samples, so it has no gap for such a frame.
 
 ### 10.3 During a recording [D39]
 
@@ -729,7 +793,9 @@ The reason gives the declared rate, the measured rate and two hints in this orde
 - `RECOMMEND` runs in the shared loop through the capture interface: the same exposure range (-12 to
   -4), 10 frames to settle at each value, and the mean of the decoded image against 127.5, as
   `recommend_camera_exposure_setting.py` does today. It runs at step 5 of 9.1. Its frames are not
-  warm-up frames [agent 29].
+  warm-up frames [agent 29]. As today (`_apply_exposure` in
+  `opencv_apply_config.py`), the stored config then holds `exposure_mode: MANUAL` and the value that
+  the search found [agent 29].
 
 ### 11.2 Live changes [D31]
 
@@ -743,11 +809,20 @@ The reason gives the declared rate, the measured rate and two hints in this orde
 
 - If a control is still in an auto mode when a recording starts, the recording starts, and the auto
   mode stays on [D37].
-- The camera process logs a warning with a fixed text [agent 33]:
-  `Camera {camera_id}: {control} is in auto mode at the start of the recording`.
-- The status (8.4) shows `auto: true` for the control. The recording info records that the control was
-  in auto for this take (11.6) [D37].
-- The response of the record start does not change [agent 33].
+- The warning is machine-readable [D37]. The response of the record start carries a `warnings` list
+  [agent 33]:
+
+  ```json
+  {"started": true,
+   "warnings": [{"camera_id": "a1b2", "control": "exposure",
+                 "text": "Camera a1b2: exposure is in auto mode at the start of the recording"}]}
+  ```
+
+- The status (8.4) shows the same items in `warnings`, and `auto: true` for the control [agent 33].
+- The camera process also logs the text as a warning.
+- The recording info records that the control was in auto for this take (11.6) [D37].
+- Today the endpoint returns `true`. The new response shape changes this for each consumer
+  [agent 33].
 
 ### 11.4 Read-back and current values [D20, D30]
 
@@ -755,7 +830,9 @@ The reason gives the declared rate, the measured rate and two hints in this orde
 - While a camera is open, the status reports the current value of exposure, gain and focus, also
   when the control is in auto. Thus a consumer can show the value and set manual with exactly that
   value [D30].
-- The loop reads the controls one time per second, with `set_controls({})` [agent 31].
+- From 3a, the status reports exposure, gain and focus, read only. The loop reads them one time per
+  second with `set_controls({})` [D30] [agent 31]. Gain and focus are set through the config from 3c
+  [D43].
 - Whether a camera in auto mode reports its true current value is not known (section 17.3).
 
 ### 11.5 Gain, focus, white balance, power line frequency (3c) [D43, D44]
@@ -764,7 +841,7 @@ The reason gives the declared rate, the measured rate and two hints in this orde
   None` and `focus_auto: bool = False` [D43] [agent 30]. `None` means that skellycam does not set the
   value.
 - A control that a camera lacks is reported as absent (`present: false`). A request to set it is an
-  error with a clear message: `Camera {camera_id} has no {control} control` [D43].
+  error with a clear message: `Camera {camera_id} has no {control} control` [D43] [agent 48].
 - White balance is read only. Its value and auto flag go to the recording info [D43].
 - The power line frequency control is never set in phase 3. Step 3c reads it and writes it to the
   recording info [D44].
@@ -805,7 +882,7 @@ into the existing recording info JSON (`RecordingInfo.save_to_file`):
 
   `Camera a1b2 failed during rate check: declared 30.00 fps, measured 25.76 fps. ...`
 
-- The first failure of each camera is kept [D40] [agent 36]. Section 19, question 8.
+- The first failure of each camera is kept [D40, U9].
 - The failure is written before any shutdown flag is set [D40]. The current `report_setup_failure`
   (`camera_group/camera_group_ipc.py`) keeps this order. It must stop setting
   `shutdown_camera_group_flag` for a start failure, because the other cameras stay open [D23].
@@ -827,8 +904,9 @@ into the existing recording info JSON (`RecordingInfo.save_to_file`):
   | `streaming` | device removed, 2 s without a frame, a hung control call while open |
   | `close` | a hung close step |
 
-- The reasons of D13, D25 and D38 are fixed texts: "in use by another program", the text of 10.4,
-  "device removed", "no frame for 2 s".
+- "In use by another program" is the text of D13. The text of 10.4 follows D25. The texts "camera not
+  found", "not ready in 15 s", "device removed", "no frame for 2 s" and the control error of 11.5
+  are [agent 48].
 
 ## 13. Uncompressed modes (3b) [D2, D19]
 
@@ -849,7 +927,7 @@ section adds only what capture adds.
 - The source gives the raw frame as one new object: YUY2 as `(height, width, 2)` uint8, NV12 as
   `(height x 3 / 2, width)` uint8, as `DecodeInput` expects [ring 8.7].
 - A raw frame whose length is not the expected size is not encoded. Its slot is flagged
-  `CAPTURE_ERROR` [agent 37]. Whether the contiguous buffer has row padding is [NV].
+  `CAPTURE_ERROR` [agent 36]. Whether the contiguous buffer has row padding is [NV].
 - The JPEG encoder runs at capture, also when not recording [notes: Uncompressed modes]. The settings
   are those of the notes: quality 90, the chroma of the source, Quick Sync at depth 2
   [notes: Encoder settings].
@@ -859,12 +937,14 @@ section adds only what capture adds.
   again from the raw frames, and the first frame after the event gets `DISCONTINUITY` [notes: Encoder
   check] [ring 4].
 - The old recorder takes BGR in phase 3 (D9). In an uncompressed mode, the loop converts each
-  recorded frame to BGR on the path of the recorder, also with Quick Sync, until phase 5 [agent 37].
+  recorded frame to BGR on the path of the recorder, also with Quick Sync, until phase 5 [agent 36].
+  The loop converts a frame to BGR one time. The old recorder and the BGR ring share that image: the
+  ring gets its copy as in [ring 8.7]. A frame is never converted two times [agent 36].
 
 ### 13.3 Range rule
 
 - The camera config gets `input_range: "auto" | "limited" | "full"`, default `auto`
-  [notes: Input range] [agent 37 for the field name].
+  [notes: Input range] [agent 36 for the field name].
 - `auto`: during the 90 discarded warm-up frames, count the Y values outside 16 to 235. If more than
   1 % are outside, the camera is full range. Else, the flag of the OS decides (limited if not set)
   [notes: Input range] [D21].
@@ -880,7 +960,8 @@ section adds only what capture adds.
   (section 8) and one rate per group (7.5) [D46].
 - The rate check runs only when OpenCV reports a rate above 0 for the camera [D46]. The reported rate
   is the reference.
-- The forced auto exposure on Linux (`opencv_apply_config.py`) stays.
+- The forced auto exposure on Linux (`opencv_apply_config.py`) stays. With D37, each Linux recording
+  then gives the auto warning one time for each camera, until phase 7 (17.3).
 - Linux and macOS behaviour is not tested on hardware until phase 0 [D46]. The fake-source tests and
   the tests with the OpenCV fake (`FakeCapture` of `skellycam/tests/frame_ring/ring_session.py`) run on
   the Linux CI runner.
@@ -888,32 +969,36 @@ section adds only what capture adds.
 ### 14.2 Windows: the temporary setting and the deletion [D8]
 
 - While phase 3 is built, the environment variable `SKELLYCAM_WINDOWS_CAPTURE` chooses the source on
-  Windows: `opencv` (the default) or `media_foundation` [D8] [agent 39].
+  Windows: `opencv` (the default) or `media_foundation` [D8] [agent 38].
 - The last commit of phase 3 deletes the OpenCV source on Windows and the setting, after the
   comparison run passes [D8]. On Windows there is then no fallback [P §3, D8].
-- The "reset after 30 slow frames" reopen (`check_framerate_reset`) and the burned-in frame stamp
-  (`draw_doubled_text`) go with it [D8]. Section 19, question 2, asks about them on Linux and macOS.
-- While the setting chooses OpenCV on Windows, detection is Media Foundation [D11]. Section 19,
-  question 1, gives how the OpenCV source finds its DirectShow index.
+- The shared loop has no "reset after 30 slow frames" reopen (`check_framerate_reset`) and no
+  burned-in frame stamp (`draw_doubled_text`), on each OS, from step 3a [D8, U2].
+- While the setting chooses OpenCV on Windows, detection is Media Foundation [D11]. The OpenCV source
+  finds its DirectShow device by the device instance part of the Media Foundation link: the part
+  before the interface class GUID [U1] [NV: that both links hold the same instance part].
 
 ## 15. CI [D47]
 
-- A new workflow `.github/workflows/capture.yml` [agent 40], made on the pattern of
+- A new workflow `.github/workflows/capture.yml` [agent 39], made on the pattern of
   `.github/workflows/ring-arm64.yml`: the same pinned actions (by full SHA), uv `0.13.9`, Python
   `3.13.18`, `permissions: contents: read`, a concurrency group.
 - Trigger: each push to `dom/native-jpeg` that changes `skellycam/core/camera/**`,
   `skellycam/core/camera_group/**`, `skellycam/core/device_detection/**`,
-  `skellycam/core/ipc/frame_ring/**`, `skellycam/tests/capture/**`, this spec, `pyproject.toml`,
-  `uv.lock` or the workflow; and by hand [agent 40].
-- Job `capture-windows` on the runner label `windows-2025` [agent 40]: run the fake-source tests
-  (`uv run pytest skellycam/tests/capture -m "not camera_hardware"`), and load the Media Foundation
+  `skellycam/core/recorders/**`, `skellycam/core/timestamps/**`, `skellycam/core/ipc/frame_ring/**`,
+  `skellycam/api/**`, `skellycam/tests/**`, `specs/windows-capture.md`, `pyproject.toml`, `uv.lock` or
+  `.github/workflows/capture.yml`; and by hand [D47] [agent 39].
+- Job `capture-windows` on the runner label `windows-2025` [agent 39]: run the fake-source tests
+  (`uv run pytest skellycam/tests/capture -m "not camera_hardware and not capture_local"`), and load the Media Foundation
   module (T-CAP-46) [D47].
-- Job `capture-linux` on the runner label `ubuntu-24.04` [agent 40]: install PortAudio as the arm64
+- Job `capture-linux` on the runner label `ubuntu-24.04` [agent 39]: install PortAudio as the arm64
   job does, then run the same fake-source tests [D47].
+- The hosted runners do not run the tests with the marker `capture_local` (T-CAP-49, T-CAP-50).
+  They need the Windows development machine [D48] [agent 2].
 - The arm64 job stays as it is (ring tests only) [D47].
 - The Media Foundation module loads `mfplat.dll` at the first Media Foundation call, not at import.
   Whether a hosted Windows runner has Media Foundation is [NV]. T-CAP-46 passes without it
-  [agent 40].
+  [agent 39].
 
 ## 16. Tests
 
@@ -930,33 +1015,40 @@ section adds only what capture adds.
   [D23].
 - **CI**: a check of the CI job itself.
 
+Markers and run rules [agent 2]:
+
+- T-CAP-49 and T-CAP-50 have the marker `capture_local`. They run only on the Windows development
+  machine. The hosted runners leave them out (section 15).
+- T-CAP-43 runs only before the last commit of phase 3. That commit deletes it with the setting.
+- T-CAP-76 comes in the last commit of phase 3. It runs only after that commit.
+
 The pass thresholds that this table adds to the decisions (for example the times of T-CAP-03 and
-T-CAP-36) are [agent 42]. They can be changed when the tests are written.
+T-CAP-36) are [agent 41]. They can be changed when the tests are written.
 
 ### 16.2 Test list
 
 | ID | Step | Kind | What it does | Pass criterion |
 |---|---|---|---|---|
 | T-CAP-01 | 3a | fake | Read 100 frames from a fake source. | Each `CapturedFrame` has every field of 4.2 with its type; `source_frame_number` increases by 1 per delivered frame; `arrival_ns` increases. |
-| T-CAP-02 | 3a | fake | The fake delivers 5 frames before the first `read_frame`, then 1 more after it. | The read gives frame 5; `replaced_count` is 4; the next read waits and gives frame 6. |
+| T-CAP-02 | 3a | fake | The fake delivers frames 0 to 4 before the first `read_frame`, then frame 5 after it. | The read gives frame 4; `replaced_count` is 4; the next read waits and gives frame 5. |
 | T-CAP-03 | 3a | fake | A consumer holds the waiting place busy; the producer puts 1,000 frames. | Each put takes at most 1 ms at p99; no put waits on the consumer. |
 | T-CAP-04 | 3a | fake | `read_frame(2.0)` with no frame. | It returns `None` after 2.0 s (±0.1 s); the thread uses under 2 % of one core while it waits. |
-| T-CAP-05 | 3a | fake | Three fake cameras at 30 fps in one group for 10 s; one delivers late by 10 ms per frame. | Equal ring frame counts; for each camera, the sum of the gaps of `source_frame_number` equals `replaced_count`; one log line per camera at stop with the count. |
+| T-CAP-05 | 3a | fake | Three fake cameras at 30 fps in one group for 10 s; one delivers late by 10 ms per frame. | Equal ring frame counts; for each camera, the sum of the gaps of `source_frame_number` between taken frames since gate entry equals the increase of `replaced_count` since gate entry; one log line per camera at stop with that count. |
 | T-CAP-06 | 3a | fake | Run, change the resolution, run again. | Ring `frame_number` is 0, 1, 2, ... in each ring; `source_frame_number` is the source count; the gate count continues across the change. |
 | T-CAP-07 | 3a | fake | Fake with scripted arrival and sample times; record 30 frames. | Slot `arrival_ns` and `sample_ns` equal the source values; the CSV time of each recorded frame is its `arrival_ns`; a source with no sample time writes `NO_SAMPLE_NS`. |
 | T-CAP-08 | 3a | fake | Spy on the recorder, the JPEG ring write and the BGR hand-over. | For each frame: recorder, then JPEG ring, then BGR [ring 5.3]; a ring write that raises leaves the recorder and the next frame unaffected. |
 | T-CAP-09 | 3a | fake | MJPG fake, with and without recording, with and without a BGR ring; count `cv2.imdecode` calls. | One decode per recorded frame or per frame with a BGR ring, else none; the BGR ring frame equals the decoded image. |
 | T-CAP-10 | 3a | fake | The fake delivers a cut-off JPEG during a recording. | The slot is flagged `NO_SOI_EOI`; the decoder call count is 0 for it; the recorder gets the previous image; the count is logged at stop. |
-| T-CAP-11 | 3a | fake | The fake marks frame 50 as a discontinuity and leaves out one source number. | Slot 50 has `DISCONTINUITY`; no warning is logged. |
-| T-CAP-12 | 3a | fake | Fake with a gain that resets to 0 when the stream starts; config gain 6. | Call order: open with first frame, set controls, read back, warm-up; the config holds the read-back value 6. |
-| T-CAP-13 | 3a | fake | Two fake cameras; one opens 3 s later. | The first 90 frames after read-back reach neither the ring nor the recorder; the first camera stays paused until the second is ready. |
-| T-CAP-14 | 3a | fake | Fake whose first frame comes after 14 s. | Failed, stage `warm-up`, reason "not ready in 15 s"; the other camera of the group is `ready`. |
+| T-CAP-11 | 3a | fake | (1) The fake drops a frame on the camera side: the next delivered sample has the discontinuity attribute. (2) A sample with the attribute is replaced in the waiting place before the loop takes it. | In both cases the next taken frame has `DISCONTINUITY`; in case 1, `source_frame_number` has no gap; no warning is logged. |
+| T-CAP-12 | 3a | fake | Fake with an exposure that resets to -5 when the stream starts; config `MANUAL -7`. | Call order: open with first frame, set controls, read back, warm-up; the config holds the read-back value -7. |
+| T-CAP-13 | 3a | fake | Two fake cameras; one opens 3 s later. | The first 90 frames after read-back reach neither the ring nor the recorder; the first camera is `waiting` and paused until the second has passed its check; then both are `ready`. |
+| T-CAP-14 | 3a | fake | One fake with mode rate 5 that delivers 5 fps from 1 s after the open, so that 90 warm-up frames need 18 s. | Failed, stage `warm-up`, reason "not ready in 15 s", at 15.0 to 15.5 s after the open. |
 | T-CAP-15 | 3a | fake | Fake with scripted arrival times; the loop misses frames 40 to 45. | The start-up rate equals `(n - 1) / (t_90 - t_6)` over the delivered frames 6 to 90, to 0.001 fps. |
-| T-CAP-16 | 3a | fake | Fakes at 29.2, 29.0, 30.9, 31.0 fps with mode rate 30; and a fake with request 60, mode rate 30, delivery 30. | 29.2 and 30.9 pass; 29.0 and 31.0 fail; the last one passes. |
+| T-CAP-16 | 3a | fake | Fakes at 29.2, 29.0, 30.8 and 31.0 fps with mode rate 30; a fake whose auto rate (-1) gives mode rate 24, and that delivers 24 fps. | 29.2 and 30.8 pass; 29.0 and 31.0 fail; the auto case passes against 24, not against 30. |
 | T-CAP-17 | 3a | fake | Arrival times on a 16 ms grid: 56 % 32 ms and 43 % 48 ms (generic camera); 92 % 32 ms and 8 % 48 ms (good camera). | The generic pattern fails, the good pattern passes; a median of the same intervals gives above 29.1 fps for the generic pattern (proves the pattern). |
 | T-CAP-18 | 3a | fake | The generic pattern of T-CAP-17 at start. | The reason is the text of 10.4 with 30.00 and the measured rate, the light hint first. |
 | T-CAP-19 | 3a | fake | Three fakes; one is in use at open. | That camera is `failed` with "in use by another program"; the other two reach `ready` with preview; a record start returns 409 and names it; after 60 s, its open count is still 1. |
-| T-CAP-20 | 3a | fake | After T-CAP-19, apply the same configs again. | Only the failed camera opens again; the ring names and the process IDs of the others do not change. |
+| T-CAP-20 | 3a | fake | After T-CAP-19, apply the same configs again; then fail the camera again and apply it with a changed rate. | Each time, only the failed camera opens again, the second time with the new rate; the ring names and the process IDs of the others do not change. |
 | T-CAP-21 | 3a | fake | After T-CAP-19, apply with `use_this_camera: false` for the failed camera. | The camera leaves the group; a record start succeeds with two cameras. |
 | T-CAP-22 | 3a | fake | Map each HRESULT of 6.7 (pure function, no COM). | In-use codes give "in use by another program"; device-removed codes give "device removed"; other codes give their name. |
 | T-CAP-23 | 3a | fake | A detection result with two links that give the same `camera_id`. | Refused with an error that names both links. |
@@ -967,26 +1059,26 @@ T-CAP-36) are [agent 42]. They can be changed when the tests are written.
 | T-CAP-28 | 3a | fake | Open with -1; compare 30.0 and 30.00003, 30 and 29.97. | The config stores the mode rate; the first pair is equal, the second is not. |
 | T-CAP-29 | 3a | fake | Group of two with mode rates 30 and 60; group of two with -1 that both give 30. | The first apply fails and opens no camera; the second opens both. |
 | T-CAP-30 | 3a | fake | Change the exposure, then the resolution, of one camera of two. | Exposure: no reopen, same ring name, state `checking`; resolution: only that camera reopens, new rings, warm-up and rate check again; the other camera keeps its preview. |
-| T-CAP-31 | 3a | fake | After a live change, the fake goes to 28.7 fps; later to 30. | State `checking`, then `too_slow` before the 60-frame window ends at 30 fps; preview continues; record start returns 409; the next change at 30 fps gives `ready`. |
+| T-CAP-31 | 3a | fake | After a live change, the fake goes to 20 fps; after a later change, to 30 fps. | State `checking`, then `too_slow` at t_a + 2.03 s to t_a + 2.08 s, where t_a is the arrival of the first frame of the window and 2.03 s = 59 / (0.97 x 30); this is before the window could end at 20 fps (t_a + 2.95 s); preview continues; record start returns 409; the next change at 30 fps gives `ready`. |
 | T-CAP-32 | 3a | fake | Start a recording while a camera is `checking`. | 409, the detail names the camera and `checking`. |
 | T-CAP-33 | 3a | fake | Apply a change during a recording. | 409; the camera config and the ring name do not change. |
-| T-CAP-34 | 3a | fake | Start a recording with exposure in `AUTO`. | The recording starts; the log has the warning text of 11.3 with the camera and `exposure`; the recording info lists `exposure` in `auto_controls_at_start`. |
-| T-CAP-35 | 3a | fake | Three fakes record; one gives device removed at frame 300. | That camera is `dead` at once; its files are finished; the other two keep recording to the stop; `dead_cameras` holds its ID and last frame number. |
+| T-CAP-34 | 3a | fake | Start a recording with exposure in `AUTO`. | The recording starts; the response `warnings` holds the camera, `exposure` and the text of 11.3; the status shows the same item; the log has the text; the recording info lists `exposure` in `auto_controls_at_start`. |
+| T-CAP-35 | 3a | fake | Three fakes record; one gives device removed at frame 300. | That camera is `dead` at once; its files are finished; its timing file ends at its last frame; the multi-frame rows after it hold the two live cameras; the two keep recording to the stop; `dead_cameras` holds its ID and `last_frame_number`. |
 | T-CAP-36 | 3a | fake | One fake stops delivering at frame 100. | `dead` between 2.0 and 2.25 s after its last arrival, not before. |
 | T-CAP-37 | 3a | fake | During a recording, one fake goes to 27 fps for 5 s, then back to 30. | One warning with the camera and the rate; the recording continues; a later slow period gives one more warning. |
 | T-CAP-38 | 3a | fake | Two failures of one camera, then a group shutdown. | The object has `camera_id`, `stage`, `reason`; the text is `Camera {id} failed during {stage}: {reason}`; the first failure stays; it is in the queue before the flag changes. |
 | T-CAP-39 | 3a | fake | Record with the fake source and with the OpenCV fake; give the recorder a frame with a wrong camera ID. | Native CSV has no retrieve columns; OpenCV CSV has them; the wrong frame is refused with an error. |
 | T-CAP-40 | 3a | fake | A fake source in a real camera process hangs in `open` past the limit; a second camera streams. | The failure arrives with stage `open`; the process exits within the limit plus 2 s; the main process cleans up only that camera; the second camera has no gap above 100 ms. |
 | T-CAP-41 | 3a | fake | `MANUAL -7`, `AUTO`, `RECOMMEND` with a brightness model in the fake. | The fake gets the values in log2 seconds; `RECOMMEND` ends in `MANUAL` with the value nearest to 127.5. |
-| T-CAP-42 | 3a | fake | Exposure in `AUTO`; the fake changes its value from -6 to -5. | Within 2 s, the status shows `auto: true`, `value: -5`. |
-| T-CAP-43 | 3a | fake | On Windows: no setting, `opencv`, `media_foundation`, a wrong value. | OpenCV, OpenCV, Media Foundation, an error that names the allowed values. |
-| T-CAP-44 | 3a | fake | The OpenCV fake under the shared loop, with a reported rate of 30 and of 0. | Warm-up in both; rate check only with 30; the ring gets a q90 JPEG; the BGR ring gets the OpenCV image. |
+| T-CAP-42 | 3a | fake | Exposure in `AUTO`; the fake changes its exposure from -6 to -5, its gain from 0 to 4 and its focus from 30 to 40, with no set through the config. | Within 2 s, the status shows `exposure` with `auto: true` and `value: -5`, and the new gain and focus values. |
+| T-CAP-43 | 3a | fake | On Windows: no setting, `opencv`, `media_foundation`, a wrong value. Runs only before the last commit of phase 3. | OpenCV, OpenCV, Media Foundation, an error that names the allowed values. |
+| T-CAP-44 | 3a | fake | The OpenCV fake under the shared loop, with a reported rate of 30 and of 0. | Warm-up in both; rate check only with 30; the ring gets a q90 JPEG with no burned-in stamp (it decodes to the fake image); the BGR ring gets the OpenCV image. |
 | T-CAP-45 | 3a | CI | Read `pyproject.toml` and `uv.lock`. | `comtypes==1.5.0` with the marker `sys_platform == "win32"`; locked at 1.5.0. |
 | T-CAP-46 | 3a | CI | On the Windows runner: import the Media Foundation module; if `mfplat.dll` loads, call `MFStartup`, enumerate, `MFShutdown`. | The import passes; the interface declarations exist; an enumeration returns a list. |
 | T-CAP-47 | 3a | fake | Search the package. | No compiled extension of its own and no `_skellycam_rust` import. |
 | T-CAP-48 | 3a | fake | Detection with a fake enumeration that hangs for one device. | The detection child ends; the call returns within the limit plus 2 s with an error; the main process keeps running. |
-| T-CAP-49 | 3a | fake | Run T-RING-31 with the shared loop on the Windows development machine. | Process CPU under 2 % of one core [D48]. |
-| T-CAP-50 | 3a | fake | Run T-RING-46 on the Windows development machine. | It passes [D42, D48]. |
+| T-CAP-49 | 3a | fake | Marker `capture_local`. Run T-RING-31 with the shared loop on the Windows development machine. | Process CPU under 2 % of one core [D48]. |
+| T-CAP-50 | 3a | fake | Marker `capture_local`. Run T-RING-46 on the Windows development machine. | It passes [D42, D48]. |
 | T-CAP-51 | 3a | hardware | Detect with four cameras connected; then detect again while two of them stream. | Four cameras with new IDs and the `supported_modes` of 7.3; the streaming cameras show no arrival gap above 100 ms. |
 | T-CAP-52 | 3a | hardware | Open the C922, the C930e and the Kiyo Pro at 1280x720 MJPG 30 through Media Foundation, one at a time. | Each reaches `ready`; for 300 frames the ring payload is byte-equal to the bytes that the callback copied; the rate check passes. |
 | T-CAP-53 | 3a | hardware | Open the generic camera at 1280x720 MJPG 30. | `failed`, stage `rate check`, the reason of 10.4 with a measured rate near 25.76 [D24]. |
@@ -995,7 +1087,7 @@ T-CAP-36) are [agent 42]. They can be changed when the tests are written.
 | T-CAP-56 | 3a | hardware | Another program holds the C930e; apply a group with it and the C922. | The C930e is `failed` with "in use by another program"; the C922 is `ready`. |
 | T-CAP-57 | 3a | hardware | Exposure steps -7, -6, -5, -4 on each camera while open. | Each change gives `checking`, then `ready` or `too_slow` as table 10.5 predicts; the Kiyo Pro at -6 is recorded. |
 | T-CAP-58 | 3a | hardware | Record with the C922 and the C930e; the user unplugs the C922 at 20 s. | The C922 is `dead` at once; the C930e records to the stop; the recording info names the C922 and its last frame. |
-| T-CAP-59 | 3a | hardware | Compare `sample_ns` and `arrival_ns` for 300 frames per camera. | The difference is recorded per camera. If a `sample_ns` is later than its `arrival_ns`, or more than 200 ms earlier, the source writes `NO_SAMPLE_NS` from then on [agent 10]. |
+| T-CAP-59 | 3a | hardware | Compare `sample_ns` and `arrival_ns` for 300 frames per camera. | The difference is recorded per camera; the source applies the `NO_SAMPLE_NS` rule of 4.2 as the recorded values require. |
 | T-CAP-60 | 3a | hardware | The comparison run of 16.4 [D48]. | 16.4. |
 | T-CAP-61 | 3b | fake | Request YUY2 and NV12 where the fake lists native and synthesized types. | Native types are chosen; a synthesized NV12 is never chosen; a missing format fails at `set mode`. |
 | T-CAP-62 | 3b | fake | YUY2 and NV12 fakes with `cv2.imencode`. | The ring gets a q90 JPEG with the chroma of the source (4:2:2 from YUY2, 4:2:0 from NV12). |
@@ -1012,10 +1104,13 @@ T-CAP-36) are [agent 42]. They can be changed when the tests are written.
 | T-CAP-73 | 3c | fake | A fake without focus; config with `focus: 40`. | Status `present: false`; the set returns the error text of 11.5. |
 | T-CAP-74 | 3c | fake | Record with white balance and power line frequency values in the fake. | Both are in the recording info; the fake gets no set call for either. |
 | T-CAP-75 | 3c | fake | Gain and focus in auto; the fake changes their values. | The status shows the new values with `auto: true`. |
-| T-CAP-76 | 3c | fake | After the last commit of phase 3: import the OpenCV source on Windows; search for `SKELLYCAM_WINDOWS_CAPTURE`, `check_framerate_reset`, `draw_doubled_text`. | The import fails on Windows; no name is left outside history documents. |
+| T-CAP-76 | 3c | fake | Comes in the last commit of phase 3 and runs only after it: import the OpenCV source on Windows; search for `SKELLYCAM_WINDOWS_CAPTURE`, `check_framerate_reset`, `draw_doubled_text`. | The import fails on Windows; no name is left outside history documents. |
 | T-CAP-77 | 3c | hardware | With auto exposure and auto focus on, read the reported values; set manual with those values; compare the mean image before and after [D49]. | For each camera: whether the reported values are true, and the image difference, are recorded. |
 | T-CAP-78 | 3c | hardware | Set and read back gain and focus; read white balance and power line frequency, on four cameras. | Each control that a camera has reads back the set value; absent ones show `present: false`; the read-only values are recorded. |
 | T-CAP-79 | 3c | hardware | Detect the four cameras. | `capture_modes` agrees with the descriptor list of the prototype for each camera. |
+| T-CAP-80 | 3a | fake | A fake whose first frame comes 6 s after the first `ReadSample`. | Failed, stage `first frame`, 5.0 to 5.25 s after the first `ReadSample`; the close runs with bounded steps. |
+| T-CAP-81 | 3a | fake | Two fakes, no recording; one stops delivering. | It is `dead` and treated as `failed` [U6]: a record start returns 409; an apply reopens only it. |
+| T-CAP-82 | 3a | fake | Two fakes are `ready`; a control read of one hangs past its limit. | That camera reports stage `streaming` and its process ends hard; the main process cleans up only it; the other camera has no gap above 100 ms. |
 
 ### 16.3 Hardware tests of D49
 
@@ -1026,12 +1121,14 @@ results. They have no fixed pass value, because the decisions do not give one.
 ### 16.4 Comparison run [D48]
 
 - Three cameras: the C922, the C930e and the Kiyo Pro, at 1280x720 MJPG 30 fps, lockstep, lights on,
-  one recording of 60 s for each source [agent 41].
-- First the shared loop with the OpenCV source (`SKELLYCAM_WINDOWS_CAPTURE=opencv`), then with the
-  Media Foundation source.
-- Pass, for the Media Foundation run: equal frame counts across cameras; a group rate within 1 % of 30
-  fps (29.7 to 30.3); for each camera, each gap of `source_frame_number` is explained by
-  `replaced_count` [D48]. The OpenCV run is the reference [agent 41]. Section 19, question 3.
+  one recording of 60 s for each run [agent 40].
+- The reference run uses the OpenCV loop of today: the last commit of `dom/native-jpeg` before phase
+  3, in a second worktree, as the comparison of step 2a did [agent 40].
+- The native run uses the shared loop with the Media Foundation source.
+- Pass, for the native run: equal frame counts across cameras; a group rate within 1 % of 30 fps
+  (29.7 to 30.3); for each camera, the gaps of `source_frame_number` since gate entry equal the
+  increase of its `replaced_count` since gate entry (5.2) [D48]. The OpenCV run is the reference
+  [U3].
 - The result goes to an evidence entry, as the summary of the 2026-11-18 comparison in
   `decisions/open-work.md`.
 
@@ -1048,7 +1145,7 @@ results. They have no fixed pass value, because the decisions do not give one.
 | D7 | T-CAP-45, T-CAP-46 |
 | D8 | T-CAP-43, T-CAP-76 |
 | D9 | T-CAP-09, T-CAP-10, T-CAP-67 |
-| D10 | T-CAP-40, T-CAP-48 |
+| D10 | T-CAP-40, T-CAP-48, T-CAP-80, T-CAP-82 |
 | D11 | T-CAP-24, T-CAP-51 |
 | D12 | T-CAP-52 (opens by path); no index call exists in the source |
 | D13 | T-CAP-19, T-CAP-22, T-CAP-23, T-CAP-56 |
@@ -1063,7 +1160,7 @@ results. They have no fixed pass value, because the decisions do not give one.
 | D22 | T-CAP-15, T-CAP-16, T-CAP-17 |
 | D23 | T-CAP-19, T-CAP-20, T-CAP-21 |
 | D24 | T-CAP-17, T-CAP-53 |
-| D25 | T-CAP-18, T-CAP-53 |
+| D25 | T-CAP-18, T-CAP-20, T-CAP-53 |
 | D26 | T-CAP-02, T-CAP-03, T-CAP-04, T-CAP-05 |
 | D27 | T-CAP-05, T-CAP-06 |
 | D28 | T-CAP-07, T-CAP-59 |
@@ -1076,7 +1173,7 @@ results. They have no fixed pass value, because the decisions do not give one.
 | D35 | T-CAP-41 |
 | D36 | T-CAP-33 |
 | D37 | T-CAP-34 |
-| D38 | T-CAP-35, T-CAP-36, T-CAP-58 |
+| D38 | T-CAP-35, T-CAP-36, T-CAP-58, T-CAP-81, T-CAP-82 |
 | D39 | T-CAP-37 |
 | D40 | T-CAP-38 |
 | D41 | T-CAP-39 |
@@ -1088,15 +1185,26 @@ results. They have no fixed pass value, because the decisions do not give one.
 | D47 | T-CAP-46; the jobs of section 15 run the fake tests |
 | D48 | T-CAP-49, T-CAP-50, T-CAP-52, T-CAP-53, T-CAP-60 |
 | D49 | T-CAP-54, T-CAP-55, T-CAP-77 |
+| U1 | no fake test: the link match needs both APIs; the comparison run T-CAP-60 opens the cameras through OpenCV on Windows |
+| U2 | T-CAP-76 (names gone on Windows); no stamp in the ring JPEG of T-CAP-44 |
+| U3 | T-CAP-60 |
+| U4 | T-CAP-35 |
+| U5 | T-CAP-10 |
+| U6 | T-CAP-81 |
+| U7 | T-CAP-29, T-CAP-70 |
+| U8 | T-CAP-71 |
+| U9 | T-CAP-38 |
 
 ### 16.6 Counts
 
 | Step | fake | hardware | CI | Total |
 |---|---|---|---|---|
-| 3a | 48 | 10 | 2 | 60 |
+| 3a | 51 | 10 | 2 | 63 |
 | 3b | 8 | 2 | 0 | 10 |
 | 3c | 6 | 3 | 0 | 9 |
-| All | 62 | 15 | 2 | 79 |
+| All | 65 | 15 | 2 | 82 |
+
+T-CAP-80 to T-CAP-82 are 3a tests that this revision added at the end of the table.
 
 ## 17. Measurements, open points, weak points
 
@@ -1114,30 +1222,38 @@ results. They have no fixed pass value, because the decisions do not give one.
 
 ### 17.2 Open points
 
-Changes of the ring spec that this spec needs. The ring spec is accepted, so this spec does not edit
-it. The user decides each one:
+Differences from the ring spec. The ring spec is accepted, so this spec does not edit it. The user
+decides each one:
 
 1. [ring 4] lists two events that set `DISCONTINUITY`. D34 adds a third: a discontinuity that capture
-   reports.
+   reports, also when it came with a replaced frame (4.3).
 2. [ring 5.1] says "+1 per frame that capture delivers" [A17]. With a push source, this spec counts
    the frames that the loop takes (5.3), and `source_frame_number` counts the delivered frames [D27].
 3. [ring 5.3] and its open question 3 (the skip trigger). While the gate exists, this spec never sets
    `newer_frame_waiting` (5.1 step 7). Phase 8 decides.
 4. [ring 9] says that in 2a the mode list holds only the opened mode. In 3c, `capture_modes` fills it,
    with the format from the Media Foundation subtype.
+5. [ring 8.2 to 8.4] put each decode on the decode thread. By D9, the decode of a recorded MJPG frame
+   moves to the loop thread (5.5). While a recording runs, capture is then delayed by the decode.
+6. [ring 8.9] reads the libjpeg pipe in the camera process. On Windows, D42 puts the read end in the
+   main process (5.6).
 
 Other open points:
 
-5. The finaliser (`recorders/recording_finalizer.py`) and the timing files need equal frame counts
-   today. A dead camera (D38) gives unequal counts. Section 19, question 4.
-6. The child monitor of the worker registry treats an unexpected exit as a crash of the backend today
+7. The interim preview relay [ring 2.3] (`CameraGroup.read_latest_ring_frames`) uses the smallest
+   newest `frame_number` of the cameras, and it needs `all_ready`. After a reopen of one camera, the
+   ring of that camera starts again at 0. Then the preview stops for all cameras. This spec does not
+   choose a fix. Section 19, question Q-d, asks the user.
+8. The child monitor of the worker registry treats an unexpected exit as a crash of the backend today
    (comment in `opencv_camera_worker_method.py`). Section 6.6 needs it to treat a reported failure as
    a camera failure.
-7. How a spawned camera process gets a pipe as its standard error handle on Windows (5.6) [NV].
-8. `RECOMMEND` searches exposures from -12 to -4. At -4 the Logitech cameras give 16 fps (10.5), so a
-   recommended value can fail the rate check after the open. The search range is today's.
-9. The in-use codes at stages other than the first frame are [NV]. Only `0xC00D3704` at the first frame
-   is measured.
+9. How a spawned camera process gets a pipe as its standard error handle on Windows (5.6) [NV].
+10. `RECOMMEND` searches exposures from -12 to -4. At -4 the Logitech cameras give 16 fps (10.5), so a
+    recommended value can fail the rate check after the open. The search range is today's.
+11. The in-use codes at stages other than the first frame are [NV]. Only `0xC00D3704` at the first
+    frame is measured.
+12. Phase 5 must remove the two interim rules of phase 3: 5.5 (the last good image for a flagged
+    frame, U5) and 5.7 (a recording with a dead camera, U4).
 
 ### 17.3 Known weak points (from the decisions)
 
@@ -1149,43 +1265,48 @@ Other open points:
 - Opens during control changes showed dips to 20 to 25 fps on the C930e and the Kiyo Pro in a few
   percent of opens in older data. The cause is not known.
 
+A known effect of this spec: until phase 7, each Linux recording gives the auto warning of D37 one
+time for each camera, because the OpenCV source forces auto exposure on Linux (14.1).
+
 ## 18. Choices of the agent
 
-Each item fills a gap that the decisions, the ring spec and the plan do not fix. The body marks each
-one [agent n].
+Each item fills a gap that the decisions, the answers of the user, the ring spec and the plan do
+not fix. The body marks each one [agent n].
 
 1. The module layout and names of section 3.
-2. The fake source in `skellycam/tests/capture/fake_source.py`; the marker `camera_hardware` and the
-   variable `SKELLYCAM_HARDWARE=1` for the hardware tests.
+2. The fake source in `skellycam/tests/capture/fake_source.py`; the markers `camera_hardware` (with
+   `SKELLYCAM_HARDWARE=1`) and `capture_local`; the run rules of T-CAP-43 and T-CAP-76.
 3. `set_controls({})` reads all controls, so the interface keeps the four calls of D6.
-4. The source reuses `WaitingPlace` of the ring package for "newest wins" (D26).
+4. The source uses the rules of `WaitingPlace` of the ring package for "newest wins" (D26), with two
+   additions (items 46 and 50).
 5. Ring `frame_number` counts the frames that the loop takes; the OpenCV source count is its grab
-   count; the gate count continues across a ring recreation; a camera that joins the gate again takes
-   the largest gate count of the group.
+   count; the gate count continues across a ring recreation; a camera that joins the gate again
+   takes the largest gate count of the group.
 6. `newer_frame_waiting=False` while the gate exists.
 7. The old frame record gets `arrival_ns` in both grab stamps.
-8. The interim decode runs only for a recorded frame or a camera with a BGR ring; a flagged frame
-   gives the old recorder the last decoded image, counted at stop.
+8. The interim decode runs only for a recorded frame or a camera with a BGR ring.
 9. The old recorder gets the mode rate as its frame rate.
-10. `sample_ns = 100 x GetSampleTime`; T-CAP-59 checks it, else `NO_SAMPLE_NS`.
+10. `sample_ns = 100 x GetSampleTime`, and the `NO_SAMPLE_NS` rule of 4.2.
 11. `driver_error` is always `False` for Media Foundation.
-12. The source opens the device whose hashed link equals the `camera_id` of the config (no new config
-    field); a second match is a failure.
+12. The source opens the device whose hashed link equals the `camera_id` of the config (no new
+    config field); a second match is a failure.
 13. `camera_id` hashes the lower-case link.
-14. A time limit of 5 s for each bounded call; the 15 s of D21 counts from the open to the end of the
-    rate check.
+14. A time limit of 5 s for each bounded call and for the first frame; the 15 s of D21 count from
+    the open to the end of the rate check; the shared loop owns this timer, and a call that runs at
+    the deadline is not cut short.
 15. The HRESULT sets for "in use" and "device removed" (from `parse.py` of the prototype).
-16. On a hang: report, finish the recording files, then `os._exit` with a non-zero code; the main
-    process treats this as a camera failure.
+16. On a hang: report, then `os._exit` with a non-zero code; the main process treats this as a
+    camera failure. Whether the files are finished first is question Q-c.
 17. Detection runs in a short-lived child process.
 18. Rates rounded to 2 decimal places.
 19. The field name `capture_modes`, its fields, its order, and leaving out a synthesized NV12; a 3b
     request never takes a synthesized NV12.
-20. The group rate rule runs before the open (Media Foundation) or after it (OpenCV); a refusal fails
-    the apply and leaves no camera open.
+20. The group rate rule runs before the open (Media Foundation; from `supported_modes`, or from the
+    full native type list for a 3b request) or after it (OpenCV).
 21. The state names, the status fields and `camera_failures` in the apply response.
-22. A camera that fails at start ends its process; "apply again" starts a new process.
-23. A 2 s stall in `starting` is `failed` (stage `warm-up`), not `dead`.
+22. A camera that fails at start ends its process; a dead camera process ends after its close steps;
+    "apply again" starts a new process.
+23. Device removed or a 2 s stall in `starting` is `failed` with the current stage, not `dead`.
 24. "Unselect" is `use_this_camera: false` in an apply request.
 25. A recording starts only when every selected camera is `ready`; HTTP 409 for a refused start or
     change.
@@ -1193,56 +1314,85 @@ one [agent n].
 27. No early decision at start-up; a new live change restarts the check.
 28. The rule of the slow warning during a recording (blocks of 60 frames, one warning per slow
     period).
-29. `RECOMMEND` runs in the shared loop with today's range and settle count, before the read-back.
+29. `RECOMMEND` runs in the shared loop with today's range and settle count, before the read-back;
+    the stored config then holds `MANUAL` and the found value, as today.
 30. The config names `gain`, `gain_auto`, `focus`, `focus_auto`; `None` means "not set".
-31. The status reports exposure from 3a, gain and focus from 3c; controls are read one time per
+31. The status reports exposure, gain and focus from 3a, read only; the loop reads them one time per
     second.
 32. Phase 3 writes the camera data into the existing recording info JSON (`capture`,
     `dead_cameras`).
-33. The fixed warning text of D37; the record start response does not change.
+33. The `warnings` list in the response of the record start and in the status, and its fixed text.
 34. The stage names of section 12.
 35. The reason of an exception is `{type}: {message}`; the diagnostics go to the log.
-36. The first failure is kept per camera.
-37. 3b: the field `input_range`; a raw frame of the wrong length is flagged `CAPTURE_ERROR`; the old
-    recorder gets a BGR conversion of each recorded frame.
-38. The done lists of 3b and 3c.
-39. The setting of D8 is the environment variable `SKELLYCAM_WINDOWS_CAPTURE`.
-40. The CI file name, the runner labels `windows-2025` and `ubuntu-24.04`, the paths, the test
-    selection, and the late load of `mfplat.dll`.
-41. The comparison run: three cameras, 60 s for each source, the criteria applied to the Media
-    Foundation run.
-42. The pass thresholds that the test table adds.
-43. The main process reads the error pipe of each camera process and limits the lines.
-44. A dead camera outside a recording is treated as a failed camera.
-45. COM: the MTA in the loop thread and in the bounded-call workers; `MFStartup` in each camera
+36. 3b: the field `input_range`; a raw frame of the wrong length is flagged `CAPTURE_ERROR`; one BGR
+    conversion for each recorded frame, shared by the old recorder and the BGR ring.
+37. The done lists of 3b and 3c.
+38. The setting of D8 is the environment variable `SKELLYCAM_WINDOWS_CAPTURE`.
+39. The CI file name, the runner labels `windows-2025` and `ubuntu-24.04`, the test selection, and
+    the late load of `mfplat.dll`.
+40. The comparison run: three cameras, 60 s for each run, the OpenCV loop of today in a second
+    worktree as the reference.
+41. The pass thresholds that the test table adds.
+42. The main process reads the error pipe of each camera process and limits the lines.
+43. COM: the MTA in the loop thread and in the bounded-call workers; `MFStartup` in each camera
     process.
+44. The config stores the read-back values (today's behaviour).
+45. The cells of `starting`, `waiting` and `failed` in table 8.3.
+46. A discontinuity of a replaced frame moves to the frame that replaces it.
+47. The states that the gate counts (5.2); `should_grab_by_id` and `all_ready` change for them.
+48. The reason texts "camera not found", "not ready in 15 s", "device removed", "no frame for 2 s"
+    and the control error of 11.5.
+49. `replaced_count` is reported from the entry of the camera into the gate, so that it covers the
+    span of the gaps.
+50. A source error puts an error marker in the waiting place, which wakes the loop.
+51. The state `waiting` between the passed rate check and `ready`.
+52. `last_frame_number` in the recording info is the gate count of the last recorded frame.
 
 ## 19. Questions for the user
 
-Each question has a recommended answer. "Yes" accepts it.
+Each question gives the options and a recommended answer. "Yes" accepts the recommendation.
 
-1. **D11 and D8 together.** While OpenCV is the default on Windows, it opens DirectShow devices by
-   index, but detection gives the Media Foundation order. Should the OpenCV source find its DirectShow
-   index by the device instance part of the link (the part before the interface class GUID), so that
-   both rules hold? Recommended: yes.
-2. **Stamp and reopen on Linux and macOS.** Should the shared loop have no burned-in frame stamp and no
-   "reset after 30 slow frames" reopen on any OS from step 3a? The plan forbids overlays in recorded
-   frames, and D23 forbids a reopen by skellycam itself. Recommended: yes.
-3. **Comparison criteria.** Do the pass criteria of D48 item 3 apply to the Media Foundation run only,
-   with the OpenCV run as the reference? Recommended: yes.
-4. **Timing files with a dead camera.** Should the finaliser write the timing file of each camera up to
-   its own last frame, and write multi-frame rows after the last frame of a dead camera with the
-   cameras that are still alive, while the recording info names the dead camera and its last frame?
-   Recommended: yes.
-5. **Dead outside a recording.** Should D38 also apply while no recording runs, with a dead camera
-   treated as a failed camera (recording blocked until "apply again" or "unselect")? Recommended: yes.
-6. **Group rate refusal.** Under D18, should a group with different mode rates fail the whole apply
-   request, with no camera left open, although D23 keeps other cameras open after a start failure?
-   Recommended: yes.
-7. **H.264 in the full mode list.** D4 says that H.264 modes are "not listed as selectable". Should 3c
-   list them with `selectable: false`, as [ring 9] does, and not leave them out? Recommended: yes.
-8. **First failure.** Should D40 "the first failure is kept" apply per camera, so that the failure of
-   one camera no longer stops the group (D23)? Recommended: yes.
+**Q-a. Apply requests.**
+
+- Option 1: the main process first checks a request as a whole: the config values, the one-rate rule
+  (7.5) and the states of 8.3. A refused request gets HTTP 409 (a state blocks it) or 422 (a value is
+  wrong). It changes nothing, also on a running group. After the check, the main process applies the
+  change of each camera on its own. A camera whose change then fails becomes `failed`. The other
+  cameras are not touched.
+- Option 2: no check of the whole request. Each camera applies its change on its own, and a camera
+  whose change breaks a rule fails alone.
+- Example: one camera of a running group asks for a new rate that breaks the one-rate rule. With
+  option 1, the request is refused, and nothing changes. With option 2, that camera fails.
+- Recommended: option 1.
+
+**Q-b. Warm-up at low frame rates.** 90 frames do not fit in 15 s at 6 fps or less. `RECOMMEND` adds
+about 99 frames (9 values with 11 frames each).
+
+- Option 1: the warm-up is 3 s of frames at the mode rate, at least 30 frames and at most 90. The ready
+  limit is the larger of 15 s and 5 s + 1.5 x the warm-up time. The time of `RECOMMEND` does not count
+  against it. The floor of 30 frames keeps the rate check sound: arrival times sit on a grid of about
+  16 ms, so the elapsed time of the window has an error of about 16 ms. At 30 frames and 5 fps, the
+  window (frames 6 to 30) is 4.8 s long, and 16 ms is 0.3 % of it. That is one tenth of the 3 % limit.
+- Option 2: refuse each mode below 10 fps with a clear message. Then 90 frames take at most 9 s. With
+  `RECOMMEND` at 10 fps (about 9.9 s), 15 s is still too short. Thus option 2 also needs a rule for
+  `RECOMMEND`.
+- Recommended: option 1.
+
+**Q-c. A hang during a recording (D10).**
+
+- Option 1: end the process at once after the report. The video file of the old recorder for that
+  camera can then be unreadable.
+- Option 2: after the report, try to finish the recording files of that camera for at most 3 s. Then
+  end hard. The hung call is on a worker thread, so the loop thread can still close the files.
+- Recommended: option 2.
+
+**Q-d. The interim preview relay after a reopen of one camera (17.2, item 7).**
+
+- Option 1: the relay takes the newest frame of each camera on its own. The frames of one preview
+  message can then differ by about one frame time. Phase 4 replaces the relay.
+- Option 2: the relay matches the frames by the gate count, not by the ring frame number. This needs
+  the gate count in each frame or an offset for each camera.
+- Recommended: option 1.
 
 ## 20. Decisions of the user (D1 to D49)
 
@@ -1263,6 +1413,9 @@ and D38 replace the two older plan statements of 1.4.
   that run everywhere and in CI; hardware tests with a marker that need the cameras and run only on
   the user's word.
 - D4: No H.264 modes in phase 3: not listed as selectable, not opened.
+  - Note: the user corrected the wording on 2026-11-19 ([ADR-QKX1](../decisions/entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md), U8). H.264 and RAW
+    modes are listed as not selectable in the 3c list, and never opened. `supported_modes` of 3a
+    stays MJPG only.
 - D5: Phase order: 3, 4, 5, 6, the certify part of skellycam, phase 0 (Linux and macOS hardware runs,
   done through the certify suite), 7, 8. Passing certify is the gate before phase 8.
 
@@ -1422,3 +1575,21 @@ and D38 replace the two older plan statements of 1.4.
   its declared MJPG rates at 720p (does it deliver that rate?); each camera opened in a dark room with
   auto exposure; with auto exposure and auto focus on, does each camera report its true current
   value, and does the image stay the same after the switch to manual with that value?
+
+**Answers of the user to the first draft, 2026-11-19 ([ADR-QKX1](../decisions/entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md))**
+
+- U1: While OpenCV is the default on Windows during the build, the OpenCV source finds its camera by
+  the device part of the Media Foundation link.
+- U2: The shared loop has no burned-in frame stamp and no "reopen after 30 slow frames" on any OS,
+  from step 3a.
+- U3: The pass limits of the comparison run apply to the native run. The OpenCV run is the reference.
+- U4: A dead camera during a recording: the timing file of each camera ends at its own last frame;
+  the multi-frame rows continue with the cameras that are alive; the recording info names the dead
+  camera and its last frame. This is an interim rule of phase 3. It must change back in phase 5.
+- U5: A flagged frame gives the old recorder the last good image again, and the count is logged at
+  stop. This is an interim rule of phase 3. It must change back in phase 5.
+- U6: A camera that dies while no recording runs is treated as a failed camera.
+- U7: A request for a group with different mode rates is refused as a whole, and no camera is opened.
+- U8: The 3c list holds H.264 and RAW modes with `selectable: false`. They are never opened. This
+  corrects the wording of D4.
+- U9: The first failure is kept for each camera.

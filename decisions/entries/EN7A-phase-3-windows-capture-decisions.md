@@ -58,8 +58,7 @@ The user decided D1 to D49 for phase 3 on 2026-11-19. In short (section 20 of
    stays. 3a is done with the four conditions of D48; 3b and 3c get matching lists. D49 lists the
    hardware tests.
 
-D23 replaces the plan statement "a camera that fails or hangs at open stops the session from
-starting". D38 replaces the plan statement that native capture only "reports a slow or stalled
+D23 replaces the plan statement "a camera that fails at open stops the session from starting". D38 replaces the plan statement that native capture only "reports a slow or stalled
 camera" mid-take. Both are in `research/NATIVE_JPEG_CAPTURE_PLAN.md` §3 on branch `dom/research`.
 
 ## Reason

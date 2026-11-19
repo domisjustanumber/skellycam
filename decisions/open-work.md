@@ -93,8 +93,15 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Phase 3 (Windows native capture).** The user decided D1 to D49 on 2026-11-19
   ([ADR-EN7A](entries/EN7A-phase-3-windows-capture-decisions.md)). D23 and D38 replace two statements
   of the plan. The spec [`specs/windows-capture.md`](../specs/windows-capture.md) and its test list
-  T-CAP-01 to T-CAP-79 are proposed
-  ([ADR-4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md)). They wait for the user,
-  with 45 agent choices (section 18) and 8 questions (section 19). No product code or test code is
-  written before the user accepts the spec. Section 17.2 of the spec lists four changes of the ring
-  spec that it needs.
+  T-CAP-01 to T-CAP-82 are proposed
+  ([ADR-4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md)). The user answered the
+  eight questions of the first draft on 2026-11-19
+  ([ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md)). The revised spec
+  waits for the user, with 52 agent choices (section 18) and 4 questions (section 19). No product
+  code or test code is written before the user accepts the spec. Section 17.2 of the spec lists six
+  differences from the ring spec.
+- **Phase 5: remove two interim rules of phase 3.** The new recorder of phase 5 must remove the two
+  interim rules of [ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md):
+  U4 (a recording with a dead camera: timing files of unequal length, multi-frame rows with the live
+  cameras) and U5 (a flagged frame gives the old recorder the last good image again). The user: they
+  "must change back once we have the new recorder".
