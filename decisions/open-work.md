@@ -115,6 +115,18 @@ task. Delete an item when its work is done. The PR that closes an item records t
     T-CAP-98.
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
+- **Phase 6a (the canvas player for new takes).** The user decided Y1 to Y7 on 2026-11-19
+  ([ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md)). The spec
+  [`specs/player.md`](../specs/player.md) and its test list T-PLAY-01 to T-PLAY-63 wait for the user
+  ([ADR-4K7V](entries/4K7V-phase-6a-player-spec-and-test-list.md)): 42 agent choices (section 16),
+  4 questions (section 17) and 7 proposed texts for skellyfileformat (section 13). The user decides
+  those texts in skellyfileformat. Next, after the review: the failing tests of 6a.
+- **Option B for the take files of the player (not part of 6a).** Review how the Python server can
+  serve the take files with a performance on par with the Electron handler of 6a: threads, process
+  splits, no request log and no folder listing on the route, `Cache-Control: no-store`, HEAD and the
+  expose header (user, Y2 of [ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md); section
+  14.4 of [`specs/player.md`](../specs/player.md)). The measured gap at 16 cameras × 60 fps × 150 kB:
+  the bare FastAPI route was 4 % short and 25 % short behind the logging middleware.
 - **Phase 5: remove three interim rules of phase 3.** The new recorder of phase 5 must remove the three
   interim rules of [ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md):
   U4 (a recording with a dead camera: timing files of unequal length, multi-frame rows with the live
