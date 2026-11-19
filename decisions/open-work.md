@@ -116,13 +116,19 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
 - **Phase 6a (the canvas player for new takes).** The user decided Y1 to Y7 on 2026-11-19
-  ([ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md)). The spec
-  [`specs/player.md`](../specs/player.md) (revision 2) and its test list T-PLAY-01 to T-PLAY-72 wait
-  for the user ([ADR-4K7V](entries/4K7V-phase-6a-player-spec-and-test-list.md)): 39 agent choices
-  (section 16), no open question. It applies M1 to M10 and L1 to L8
-  ([ADR-4HNY](entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md)). The player
-  gives three items to the merged format list of the recorder spec (section 13). Next, after the
-  review: the failing tests of 6a.
+  ([ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md)). The user accepted the spec
+  [`specs/player.md`](../specs/player.md) (revision 2) and its test list T-PLAY-01 to T-PLAY-72 on
+  2026-11-20 ([ADR-YV3V](entries/YV3V-acceptance-of-the-phase-6a-player-spec-and-test-list.md)). The
+  39 agent choices of section 16 stay in
+  [ADR-4K7V](entries/4K7V-phase-6a-player-spec-and-test-list.md). The player gives three items to the
+  merged format list of the recorder spec (section 13).
+  - The failing tests of 6a are in `skellycam-ui/src/player/tests/` and
+    `skellycam-ui/src/components/playback/tests/`. Run `npm run test:player:unit` and
+    `npm run test:player:browser` in `skellycam-ui/`. The benchmarks T-PLAY-65 to T-PLAY-70 run by
+    hand with `playwright.player-bench.config.ts`. The TypeScript names that the tests assume wait for
+    the user ([ADR-4MJ4](entries/4MJ4-typescript-names-of-the-player-as-the-6a-tests-assume-them.md)).
+  - The `xvfb` version of `.github/workflows/player.yml` is not verified. No test ran on Node 26.13.1.
+  - Next, after the review of the tests: the product code of 6a.
 - **The full reader result and the conformance run of the JavaScript reader.** They come with step 6c
   (L2 of [ADR-4HNY](entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md)).
 - **Option B for the take files of the player (not part of 6a).** Review how the Python server can
