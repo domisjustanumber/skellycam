@@ -105,7 +105,8 @@ def capture_logs():
 class Spies:
     """Class-level spies on the frame path (THREAD workers): JPEG and BGR ring writes, the old
     recorder, the hand-over to the decode stage and `cv2.imdecode`. Each event has a sequence
-    number and a hash of its payload or image; `keep_payloads` also keeps each JPEG payload.
+    number and a hash of its payload or image; `keep_payloads` also keeps each JPEG payload
+    and a copy of each BGR ring image.
     `fail_jpeg_write(event)` can make a JPEG ring write raise."""
 
     def __init__(self, monkeypatch, app=None, keep_payloads=False):
@@ -132,7 +133,8 @@ class Spies:
                                sample_ns=kwargs["sample_ns"], sfn=kwargs["source_frame_number"],
                                flags=int(kwargs["flags"]),
                                hash=None if payload is None else digest(payload),
-                               payload=payload if spies.keep_payloads and kind == "jpeg" else None)
+                               payload=None if not spies.keep_payloads or payload is None
+                               else (np.array(payload) if kind == "bgr" else payload))
             if kind == "jpeg" and spies.fail_jpeg_write is not None and spies.fail_jpeg_write(event):
                 event["raised"] = True
                 raise RuntimeError("test: this ring write fails")
@@ -501,9 +503,18 @@ def opencv_fake_class():
     class OpenCVFake(FakeCapture):
         """`FakeCapture` of the ring tests with a reported rate, a delivered rate, late grabs and a
         stop (`stop()`: each later grab fails, as after an unplug). It keeps the hash of each image it
-        gives and of the q90 JPEG of that image."""
+        gives and of the q90 JPEG of that image.
 
-        def __init__(self, width, height, reported_fps=30.0, delivered_fps=None, late_grabs=(), late_s=0.0):
+        Control properties (V5, ADR-3WCA): gain, focus, auto focus, white balance temperature and auto
+        white balance are kept in `properties` (initial values from the argument; 0 if not given).
+        `sets` lists each (property, value) set. `misread` holds (property, set value, read value):
+        after a set of that value, the property reads back the other value."""
+
+        CONTROLS = (cv2.CAP_PROP_GAIN, cv2.CAP_PROP_FOCUS, cv2.CAP_PROP_AUTOFOCUS, cv2.CAP_PROP_WB_TEMPERATURE,
+                    cv2.CAP_PROP_AUTO_WB)
+
+        def __init__(self, width, height, reported_fps=30.0, delivered_fps=None, late_grabs=(), late_s=0.0,
+                     properties=None, misread=()):
             if delivered_fps is None:
                 delivered_fps = reported_fps if reported_fps > 0 else 30.0
             super().__init__(width, height, delivered_fps)
@@ -512,11 +523,24 @@ def opencv_fake_class():
             self.late_grabs, self.late_s = late_grabs, late_s
             self.grabs = 0
             self.jpeg_hashes, self.image_hashes = set(), set()
+            self.properties = {prop: 0.0 for prop in self.CONTROLS}
+            self.properties.update({prop: float(value) for prop, value in (properties or {}).items()})
+            self.misread = {(prop, float(set_value)): float(read) for prop, set_value, read in misread}
+            self.sets = []
 
         def get(self, prop_id):
             if prop_id == cv2.CAP_PROP_FPS:
                 return float(self.reported_fps)
+            if prop_id in self.properties:
+                return self.properties[prop_id]
             return super().get(prop_id)
+
+        def set(self, prop_id, value):
+            if prop_id in self.properties:
+                self.sets.append((prop_id, float(value)))
+                self.properties[prop_id] = self.misread.get((prop_id, float(value)), float(value))
+                return True
+            return super().set(prop_id, value)
 
         def stop(self):
             self.stopped = True

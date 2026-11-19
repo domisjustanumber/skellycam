@@ -69,8 +69,31 @@ def share_outside(raw, fmt):
 
 
 def to_bgr(raw, fmt):
-    """The default OpenCV conversion (ADR-467Z item 4)."""
+    """The default OpenCV conversion (ADR-467Z item 4). It takes the input as limited range, so it
+    gives the full-range BGR of a limited-range frame."""
     return cv2.cvtColor(raw, _TO_BGR[fmt])
+
+
+def full_range_to_bgr(raw, fmt):
+    """The BGR of a full-range frame: BT.601 with no level change (JFIF), each chroma sample used for
+    the pixels that it covers."""
+    if fmt == "YUY2":
+        y = raw[:, :, 0].astype(np.float32)
+        u = np.repeat(raw[:, 0::2, 1], 2, axis=1).astype(np.float32) - 128
+        v = np.repeat(raw[:, 1::2, 1], 2, axis=1).astype(np.float32) - 128
+    else:
+        height = raw.shape[0] * 2 // 3
+        y = raw[:height].astype(np.float32)
+        uv = raw[height:]
+        u = np.repeat(np.repeat(uv[:, 0::2], 2, axis=1), 2, axis=0).astype(np.float32) - 128
+        v = np.repeat(np.repeat(uv[:, 1::2], 2, axis=1), 2, axis=0).astype(np.float32) - 128
+    bgr = np.stack([y + 1.772 * u, y - 0.344136 * u - 0.714136 * v, y + 1.402 * v], axis=2)
+    return np.clip(np.rint(bgr), 0, 255).astype(np.uint8)
+
+
+def mean_difference(a, b):
+    """The mean absolute difference of two images, in levels."""
+    return float(np.abs(np.asarray(a, np.int16) - np.asarray(b, np.int16)).mean())
 
 
 # ---------------------------------------------------------------------------
@@ -149,7 +172,9 @@ class FakeQuickSyncEncoder:
     """A stand-in for the Quick Sync encoder of 13.2 (ADR-3WCA). It holds one frame, as Quick Sync at
     `async_depth` 2 [notes: Encoder settings]: `encode(raw)` gives the JPEG of the frame before it,
     and `flush()` gives the JPEG of the held frame. Each JPEG is a q90 `cv2.imencode` JPEG of the
-    frame with a comment segment that holds `QUICK_SYNC_MARK` and the input number.
+    frame with a comment segment that holds `QUICK_SYNC_MARK` and the input number. As Quick Sync,
+    it takes its input as full range (`full_range_to_bgr`): a limited-range frame must get the
+    range-expanding table first [notes: Input range].
 
     `encode` raises `RuntimeError` at the first call for which the `fail_when` of its owner gives
     true. After that, `flush()` also raises, as a failed device does: the held frame must be encoded
@@ -184,7 +209,8 @@ class FakeQuickSyncEncoder:
             return []
         number, raw = self._held
         self._held = None
-        jpeg = cv2.imencode(".jpg", to_bgr(raw, self.format), [int(cv2.IMWRITE_JPEG_QUALITY), 90])[1].tobytes()
+        bgr = full_range_to_bgr(raw, self.format)
+        jpeg = cv2.imencode(".jpg", bgr, [int(cv2.IMWRITE_JPEG_QUALITY), 90])[1].tobytes()
         self.outputs += 1
         return [with_mark(jpeg, QUICK_SYNC_MARK + b" %d" % number)]
 

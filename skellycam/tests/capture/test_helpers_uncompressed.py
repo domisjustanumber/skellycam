@@ -184,3 +184,35 @@ def test_stop_line_count_with_another_word():
     messages = ["Camera ab12 replaced 3 frames", "Camera ab12: encoder fallbacks 1"]
     assert cs.stop_line_count(messages, "ab12") == 3
     assert cs.stop_line_count(messages, "ab12", word="encoder fallbacks") == 1
+
+
+# ---------------------------------------------------------------------------
+# Range conversions and the control properties of the OpenCV fake
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("fmt", un.RAW_FORMATS)
+def test_full_range_conversion_keeps_the_levels_and_differs_from_the_default(fmt):
+    frame = un.synthetic_raw(fmt, 64, 48)
+    gray = frame.copy()
+    un.y_values(gray, fmt)[...] = 77
+    if fmt == "YUY2":
+        gray[:, :, 1] = 128
+    else:
+        gray[48:] = 128
+    assert np.all(un.full_range_to_bgr(gray, fmt) == 77), "a full-range gray must keep its level"
+    assert np.all(np.abs(un.to_bgr(gray, fmt).astype(int) - round((77 - 16) * 255 / 219)) <= 1), \
+        "the default conversion expands a limited-range level"
+    assert un.mean_difference(un.full_range_to_bgr(frame, fmt), un.to_bgr(frame, fmt)) > 3.0
+    assert un.mean_difference(frame, frame) == 0.0
+
+
+def test_opencv_fake_keeps_control_properties_and_misreads():
+    import cv2
+
+    fake = cs.opencv_fake_class()(64, 48, properties={cv2.CAP_PROP_WB_TEMPERATURE: 4600},
+                                  misread=((cv2.CAP_PROP_GAIN, 6, 5),))
+    assert fake.get(cv2.CAP_PROP_WB_TEMPERATURE) == 4600.0 and fake.get(cv2.CAP_PROP_GAIN) == 0.0
+    assert fake.set(cv2.CAP_PROP_GAIN, 4) and fake.get(cv2.CAP_PROP_GAIN) == 4.0
+    assert fake.set(cv2.CAP_PROP_GAIN, 6) and fake.get(cv2.CAP_PROP_GAIN) == 5.0
+    assert fake.sets == [(cv2.CAP_PROP_GAIN, 4.0), (cv2.CAP_PROP_GAIN, 6.0)]
+    assert fake.get(cv2.CAP_PROP_FPS) == 30.0
