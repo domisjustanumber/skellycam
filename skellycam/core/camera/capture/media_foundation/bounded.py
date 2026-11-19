@@ -9,11 +9,14 @@ A function that calls a COM object must use its own reference (`com.ref`) and re
 returns. Then a hung call never uses an object that the caller released.
 """
 
+import logging
 import threading
+import time
 
 from skellycam.core.camera.capture.media_foundation import com
 from skellycam.core.camera.capture.source import BOUNDED_CALL_LIMIT_S, CaptureFailure
 
+logger = logging.getLogger(__name__)
 _abandoned = 0
 _lock = threading.Lock()
 
@@ -53,15 +56,21 @@ def call(stage: str, what: str, function, on_late=None):
             if joined:
                 com.CoUninitialize()
 
+    t0 = time.perf_counter_ns()
     threading.Thread(target=worker, name=f"bounded: {what}", daemon=True).start()
     done.wait(BOUNDED_CALL_LIMIT_S)
+    ms = (time.perf_counter_ns() - t0) / 1e6
     with state:
         if "result" not in box:
             box["gave up"] = True
             with _lock:
                 _abandoned += 1
+            logger.error(f"{stage}: {what}: no return in {ms:.1f} ms (hung)")
             raise CaptureFailure(stage, f"{what} did not return in {BOUNDED_CALL_LIMIT_S:g} s", hung=True)
     kind, value = box.pop("result")
     if kind == "error":
+        # section 12: the diagnostics of each step (its HRESULT name in the reason, and its time) go to the log
+        logger.warning(f"{stage}: {what}: {getattr(value, 'reason', None) or repr(value)} after {ms:.1f} ms")
         raise value
+    logger.debug(f"{stage}: {what}: ok in {ms:.1f} ms")
     return value
