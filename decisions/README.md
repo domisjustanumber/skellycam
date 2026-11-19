@@ -31,6 +31,7 @@ These entries are `accepted`.
 | [QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md) | Fifteen answers U1 to U15 of the user to the phase 3 spec drafts; three interim rules of phase 3 that phase 5 removes | accepted |
 | [4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md) | Phase 3 spec `specs/windows-capture.md` and its test list (91 tests), with the 64 agent choices of its section 18 | accepted |
 | [VPF8](entries/VPF8-phase-5-recorder-decisions.md) | Phase 5 decisions R1 to R12: steps 5a, 5d, 5b, 5c; equal rows for dead and hung cameras; no image for a damaged frame; no old files | accepted |
+| [J3QP](entries/J3QP-missing-frames-as-black-placeholders-and-the-end-of-a-take.md) | Missing frames as black placeholder blocks on `missing` rows (M1 to M10); recorder rules C1 to C7 (microphone, completion, key, CI, disk stall) | accepted |
 
 ### Evidence
 
@@ -49,7 +50,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | # | Decision | Section | Status |
 |---|----------|---------|--------|
 | [NMM1](entries/NMM1-design-of-the-camera-media-check.md) | Camera media check: types, first bytes, `GOLDEN_PATHS`, image reminder, `commit-files` skill, per-worktree hook install | none | proposed |
-| [Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md) | Step 5a spec `specs/recorder.md` and its test list; six proposed format changes; 33 agent choices; three questions | `recorder` | proposed |
+| [Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md) | Step 5a spec `specs/recorder.md` and its test list; the merged format list F-1 to F-10; 34 agent choices; one question | `recorder` | proposed |
 | [4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) | Other fills of the kit adoption; `CLAUDE.md` stays untracked | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,

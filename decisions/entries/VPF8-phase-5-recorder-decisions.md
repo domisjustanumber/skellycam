@@ -58,8 +58,11 @@ read old formats and never write them, and Opus in fragmented MP4.
 
 ## Consequences
 
-- R2 and R3 need a format rule for a row with no image. The draft has none (R6).
-- No audio is recorded between steps 5a and 5b (R5 with R1).
+- R2 and R3 need a format rule for the "gap row". The draft has none (R6). The later decisions M1 to
+  M5 of [ADR-J3QP](J3QP-missing-frames-as-black-placeholders-and-the-end-of-a-take.md) give it: a
+  black placeholder block on a row flagged `missing`.
+- No audio is recorded between steps 5a and 5b (R5 with R1). C1 of ADR-J3QP refuses a start with a
+  microphone.
 - The decisions D9, D38 and D41 and the answers U4, U5 and U12 of phase 3 keep their text. R1 to R5
   replace their effect from the connection of step 5a.
 

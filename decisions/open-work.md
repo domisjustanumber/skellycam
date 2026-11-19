@@ -106,11 +106,13 @@ task. Delete an item when its work is done. The PR that closes an item records t
   during a recording, finish the files for at most 5 s, then end hard). The files of the new recorder
   survive a hard stop. The user: U4 and U5 "must change back once we have the new recorder".
 - **Phase 5 step 5a (the new recorder).** The user decided R1 to R12 on 2026-11-19
-  ([ADR-VPF8](entries/VPF8-phase-5-recorder-decisions.md)). R1 to R4 replace U4, U5 and U12 from
-  the connection of step 5a. The spec [`specs/recorder.md`](../specs/recorder.md) and its test list
-  wait for the review of the user
+  ([ADR-VPF8](entries/VPF8-phase-5-recorder-decisions.md)), and M1 to M10 and C1 to C7 the same
+  day ([ADR-J3QP](entries/J3QP-missing-frames-as-black-placeholders-and-the-end-of-a-take.md)).
+  R1 to R4 and M1 to M5 replace U4, U5 and U12 from the connection of step 5a. The revised spec
+  [`specs/recorder.md`](../specs/recorder.md) and its test list wait for the review of the user
   ([ADR-Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md)): the agent choices
-  (section 16), the questions Q1 to Q3 (section 17) and the proposed skellyfileformat changes P-1
-  to P-6 (section 13). No code before the user accepts it (R12). Branch `dom/recorder`. The
+  (section 16), question Q1 (section 17) and the merged list of proposed skellyfileformat changes
+  F-1 to F-10 for the recorder and the player (section 13). No code before the user accepts it
+  (R12). Branch `dom/recorder`. The
   connection to the shared loop waits for step 3a. Section 14 lists the edits of
   `specs/windows-capture.md` that the connection needs.
