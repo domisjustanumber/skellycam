@@ -1101,7 +1101,9 @@ Each test of the kinds unit and process uses at least two cameras unless it says
   | `test_sft_726_fit` | fail | audio and fit lines (5b) |
   | `test_sft_730_whole_files_and_live_files` | fail | audio (5b) and `repair_take` (5c) |
   | `test_sft_730_fsync_provisional` | skip | provisional in the format |
+  | `test_sft_733_camera_file_provisional[*]` | skip | provisional in the format |
   | `test_sft_735_capture_info_json` | fail | audio (5b); `user_name` (5d) |
+  | `test_sft_766_writer_part` | fail | it records audio (5b) |
 
 - When the user accepts a format change of section 13, the format repository changes its tests, and
   this table changes in the same commit as the new pin.
