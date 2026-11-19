@@ -386,3 +386,16 @@ and `suite_20261119T001824Z` (dim room) and `suite_20261119T030110Z` and `suite_
 The same day's write-time remeasurement of the ring writer (600 kB payload) gave a p99 of 224 us in a tight loop,
 744 us when paced by a sleep at 60 fps, and 419 us with four readers that read once per frame. It was done with
 a scratch script that is not kept.
+
+Measured on 2026-11-19 (four cameras, 720p30, 60 s, BGR ring off and then on): both runs used commit 2e5a5895e
+of branch `dom/native-jpeg` (step 2b), with one more log line that later became commit dea6a2991. The runs
+used `research/usb_cameras/suite/windows/helpers/skellycam_record.py` directly, with the new `--bgr-ring` flag
+for the second run. Each camera gave 1549 frames with the BGR ring off and 1547 with it on, and the frame
+counts were equal across the cameras in both runs. The group frame rate was 25.77 with the ring off. The spread
+of the grab times between the cameras was 0.21 ms (median), 0.49 ms (p95) and 1.09 ms (max) with the ring off,
+and 0.17, 0.49 and 1.02 ms with it on. With the ring on, each decode stage committed 1657 or 1658 BGR frames,
+skipped 0 and had 0 decode errors. The rings took 422.4 MiB in total (26.5 MiB for each JPEG ring and 79.1 MiB
+for each BGR ring). The largest JPEG filled 0.19 of its slot. Both runs shut down clean. Limits: one run for
+each setting; until phase 3 the BGR path copies the frame of OpenCV and decodes no JPEG, so this run does not
+show the decode cost. The run summaries are not committed (they hold local paths); the recordings are outside
+the repository.

@@ -328,7 +328,8 @@ def resolve_specs(specs: list[str], detected: list[dict]) -> tuple[list[dict], l
 
 
 def camera_configs_body(resolved: list[dict], width: int, height: int, fps: float, capture_fourcc: str,
-                        exposure_mode: str, exposure: int, writer_fourcc: str | None) -> dict:
+                        exposure_mode: str, exposure: int, writer_fourcc: str | None,
+                        bgr_ring: bool = False) -> dict:
     """The /camera/group/apply body: {"camera_configs": {camera_id: CameraConfig fields}}."""
     cfgs = {}
     for r in resolved:
@@ -339,6 +340,8 @@ def camera_configs_body(resolved: list[dict], width: int, height: int, fps: floa
              "exposure": int(exposure), "rotation": -1}
         if writer_fourcc:
             c["writer_fourcc"] = writer_fourcc
+        if bgr_ring:  # only when asked: an older checkout does not know the field
+            c["bgr_ring"] = True
         cfgs[r["camera_id"]] = c
     return {"camera_configs": cfgs}
 
@@ -998,7 +1001,7 @@ def record(args: argparse.Namespace) -> tuple[dict, int]:
                                      for r in resolved))
         # ---- connect exactly these cameras
         body = camera_configs_body(resolved, args.width, args.height, args.fps, args.capture_fourcc,
-                                   args.exposure_mode, args.exposure, args.writer_fourcc)
+                                   args.exposure_mode, args.exposure, args.writer_fourcc, args.bgr_ring)
         summ["group_request"] = body
         group_maybe = True
         connect = api.call("POST", f"{API}/camera/group/apply", body=body,
@@ -1163,6 +1166,7 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--exposure", type=int, default=-7, help="skellycam DEFAULT_EXPOSURE")
     ap.add_argument("--writer-fourcc", dest="writer_fourcc", default=None,
                     help="skellycam writer fourcc (default: skellycam's own default)")
+    ap.add_argument("--bgr-ring", dest="bgr_ring", action="store_true", help="ask for a BGR ring per camera")
     ap.add_argument("--media-check", dest="media_check", default="full", choices=("full", "ends", "none"))
     ap.add_argument("--start-timeout-s", dest="start_timeout_s", type=float, default=150.0)
     ap.add_argument("--detect-timeout-s", dest="detect_timeout_s", type=float, default=45.0)
