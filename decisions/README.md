@@ -33,6 +33,7 @@ These entries are `accepted`.
 | [HP7D](entries/HP7D-python-api-of-capture-as-the-3a-tests-assume-it.md) | Python API of capture, as the 3a tests assume it: names, seams for fake sources and a virtual clock, log line forms | accepted |
 | [HB4Z](entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md) | Answers U16 to U23: control thread, warm-up count, Windows-only `media_foundation/`, CI and tests on Linux and macOS, parity table | accepted |
 | [J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md) | Phase 6 player decisions Y1 to Y7: steps 6a to 6d, Electron file handler, one `ImageDecoder` tile, gap and unfinished marks, module, tests | accepted |
+| [4HNY](entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md) | Missing frames as black placeholder blocks with the flag `missing` (M1 to M10); player decisions L1 to L8 | accepted |
 
 ### Evidence
 
@@ -52,7 +53,7 @@ These entries wait for a decision of the user. Section is the section or area of
 |---|----------|---------|--------|
 | [NMM1](entries/NMM1-design-of-the-camera-media-check.md) | Camera media check: types, first bytes, `GOLDEN_PATHS`, image reminder, `commit-files` skill, per-worktree hook install | none | proposed |
 | [4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) | Other fills of the kit adoption; `CLAUDE.md` stays untracked | none | proposed |
-| [4K7V](entries/4K7V-phase-6a-player-spec-and-test-list.md) | Phase 6a spec `specs/player.md` and its test list (63 tests), with 42 agent choices and 4 questions | `player` | proposed |
+| [4K7V](entries/4K7V-phase-6a-player-spec-and-test-list.md) | Phase 6a spec `specs/player.md` (revision 2) and its test list (70 tests), with 39 agent choices | `player` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).

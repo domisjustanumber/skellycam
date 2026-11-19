@@ -20,7 +20,9 @@ The user decided Y1 to Y7 for phase 6 (the player) on 2026-11-19. In short (sect
    preview of phase 4. One place for rotation and for the frame label.
 4. **Gaps** (Y4). When the frame at time t is a gap row, the tile keeps the last real image and marks
    it clearly as "no frame". For a dead camera, the tile shows "camera lost at frame N" from that point
-   to the end.
+   to the end. M1 to M10 of
+   [ADR-4HNY](4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md) replace the reading of
+   a gap row as a row with no image: a missing frame is a `missing` row with a black placeholder block.
 5. **Unfinished takes** (Y5). Until the repair step (recorder 5c) exists, the player opens such a take
    read only, plays the complete rows and frames, and shows an "unfinished" mark. No repair yet.
 6. **Module** (Y6). A self-contained TypeScript module inside `skellycam-ui`, on branch `dom/player`
