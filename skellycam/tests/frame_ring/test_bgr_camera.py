@@ -119,6 +119,43 @@ async def test_t_ring_37_bgr_ring_only_when_asked(monkeypatch, caplog, cleanup):
     assert _wait_gone(name, timeout=5), f"BGR ring {name} left after the session"
 
 
+async def test_t_ring_37_bgr_ring_recreated_on_a_mode_change(monkeypatch, cleanup):
+    """T-RING-37 with T-RING-26, sections 7.2, 7.4, 7.5 and 8.1 [A17, A33, A35, A39] (user,
+    2026-11-19): change the resolution of a fake camera with `bgr_ring=True`. Its BGR ring is
+    recreated as its JPEG ring is: a new name (generation + 1); the old ring has `closed = 1`; old
+    readers get `CLOSED`; the old segment is gone; the new ring has the new shape."""
+    fr = ring()
+    async with fake_session(monkeypatch, fake_configs(2, 640, 480, 30.0, bgr_ids=("0",))) as group:
+        old = group.ring_infos["0"].bgr_ring_name
+        old_reader = cleanup.handle(fr.FrameRingReader.attach(old))
+        old_raw = cleanup.handle(open_raw(old))
+        await wait_until(lambda: old_reader.read_newest().result == fr.ReadResult.OK, "first BGR frame")
+        await group.update_camera_settings(fake_configs(2, 320, 240, 30.0, bgr_ids=("0",)))
+        new = group.ring_infos["0"].bgr_ring_name
+        assert new is not None and new != old
+        assert int(new.rsplit("B", 1)[1]) == int(old.rsplit("B", 1)[1]) + 1
+        assert group.ring_infos["1"].bgr_ring_name is None
+        assert parse_ring_header(old_raw.buf)["closed"] == 1
+        assert old_reader.read_newest().result == fr.ReadResult.CLOSED
+        old_reader.close()
+        old_raw.close()
+        assert _wait_gone(old), f"old BGR ring {old} still opens by name"
+        raw = open_raw(new)
+        try:
+            header = parse_ring_header(raw.buf)
+        finally:
+            raw.close()
+        assert header["pixel_format"] == PIXEL_FORMAT_BGR24
+        assert (header["width"], header["height"]) == (320, 240)
+        assert header["slot_capacity"] == bgr_size(320, 240)
+        new_reader = cleanup.handle(fr.FrameRingReader.attach(new))
+        await wait_until(lambda: new_reader.read_newest().result == fr.ReadResult.OK, "first new BGR frame")
+        read = new_reader.read_newest()
+        assert read.frame_number >= 0
+        assert type(read.payload) is np.ndarray and read.payload.shape == (240, 320, 3)
+        new_reader.close()
+
+
 def test_t_ring_38_slow_bgr_stage_in_the_camera_loop(monkeypatch, cleanup):
     """T-RING-38, sections 5.3, 8.3 and 8.8 [D N:60, N:78, A42]: the OpenCV loop with a fake camera
     at 60 frames/s and a slow BGR stage (each BGR write sleeps 100 ms). The JPEG ring gets every

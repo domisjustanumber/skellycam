@@ -451,6 +451,8 @@ def test_t_ring_47_imencode_case_hands_over_a_copy(cleanup, stages, source):
     assert encoded == expected_jpegs, "the BGR stage changed the encoder path"
     header = parse_ring_header(shm.buf)
     assert header["skipped_count"] >= 1, "the slow BGR writer caused no skip"
+    # ADR-467Z item 2: stop() drops a frame that waits and counts it as skipped.
+    assert header["frames_committed"] + header["skipped_count"] == frames, header
     numbers = committed_frame_numbers(shm)
     assert numbers, "no BGR frame was written"
     for k in numbers:
