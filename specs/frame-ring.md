@@ -18,8 +18,8 @@ Marks:
   citation of a line cites that row.
 - **[An]**: the draft of this spec proposed item n, and the user accepted it on 2026-11-18.
   Section 14, item n, gives each accepted item again. The draft used the mark `[Pn]` with the same
-  number. Items 52 to 57 are clarifications, and items 58 and 59 are corrections, that the user
-  decided on 2026-11-18, after the first 51
+  number. Items 52 to 57 are clarifications, items 58 and 59 are corrections, and items 60 to 62
+  are decisions on the finished 2a code, that the user decided on 2026-11-18, after the first 51
   ([ADR-9G2W](../decisions/entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md)).
 - **[M file]**: measured. The file holds the result. Each such file is on branch `dom/research` at
   commit 04322eace of this repository. **[NV]**: not verified.
@@ -110,6 +110,8 @@ Tests that change in 2a [A1]:
 | `tests/reference_recordings/test_camera_loop_shared_memory.py`, `test_concurrent_camera_replay.py`, `test_camera_loop_failures.py` | Rewritten against the new writer. |
 
 Docs: `skellycam-docs/docs/technical/architecture.mdx` names the old classes. Step 2a updates it.
+The translated copies of this page (`zh-CN`, `es`, `ar`) are not updated in 2a. The translation
+process updates them [A61].
 The websocket protocol pages (and their `zh-CN`, `es`, `ar` copies) and
 `skellycam-ui/.../binary-protocol.ts` change in phase 4 [A7].
 
@@ -599,7 +601,11 @@ rotation per frame, and the oversize count in the header.
 - The resolution, frame rate, format and BGR request are fixed when the camera session starts. A
   change recreates the ring [D N:55].
 - The new ring gets a new name (generation + 1) [A33, from the proposed layout N:163]. The creator
-  closes the old ring (7.4). Then it unlinks the old ring when its writer has detached.
+  closes the old ring (7.4). Then it unlinks the old ring at once. It does not wait for its writer
+  to detach. A process that is attached keeps its mapping [A62].
+- The camera loop gets the new ring name through the optional argument `shm_subscription` of
+  `run_opencv_camera_loop` [A62].
+- `FrameRingWriter.name` is public, and `NO_SAMPLE_NS` is exported by the ring package [A62].
 - Frame numbers start again at 0 in the new ring [A17].
 - A rotation change does not recreate the ring. Rotation is per frame. An upright/sideways change
   sets `DISCONTINUITY` [D N:74].
@@ -753,6 +759,9 @@ at 1080p, one thread; 3.17 and 7.11 ms with 8 processes at the same time
 - Condition of the user on [A45]: step 2a first compares the frame timing before and after the
   change on the four test cameras. Step 2a keeps the change only if the grab timing is not worse.
 - Tests: T-RING-31 (idle) and T-RING-44 (decode speed under load).
+- Status of the 2a code: T-RING-31 fails, and it stays a known failure until the camera loop waits
+  in another way. The fix is a blocking wait on the queues of the loop. It belongs to the same
+  change as [A45], and the same four-camera timing comparison decides both [A60].
 
 ## 9. Mode list and per-camera info
 
@@ -896,7 +905,7 @@ are written.
 | T-RING-28 | 2a | Crash cleanup | Kill the main process (Linux, Windows, macOS); on Linux also kill the tracker, then start again. | Windows: gone when processes exit. Linux: tracker unlinks; after a group kill, the sweep removes it. macOS: result recorded [NV]. |
 | T-RING-29 | 2a | Too-large request | Ask for a history that cannot fit (Linux: a small tmpfs mounted for the test). | Session does not start; message has the total in bytes and MiB; no ring left. |
 | T-RING-30 | 2a | Reader exit | A reader process attaches and exits (Linux, macOS). | Ring still readable by another process. |
-| T-RING-31 | 2a | No spinning thread, idle | Camera process with a fake capture source, paused for 5 s. | Process CPU under 2 % of one core. |
+| T-RING-31 | 2a | No spinning thread, idle | Camera process with a fake capture source, paused for 5 s. | Process CPU under 2 % of one core. Known failure in 2a [A60]. |
 | T-RING-32 | 2a | Old code gone | Import the deleted modules; search for the deleted names. | Imports fail; no names left outside history docs. |
 | T-RING-33 | 2a | Interim UI relay ([A4]) | Fake cameras; capture one websocket message. | JPEG bytes in the message equal the bytes of the ring. |
 | T-RING-34 | 2a | Apple Silicon | Run T-RING-05 to T-RING-14, T-RING-28 and T-RING-30 on an Apple Silicon Mac [D P:111-112, P:174, N:313]. | All pass. |
@@ -1111,3 +1120,20 @@ The user accepted items 58 and 59 on 2026-11-18, after items 52 to 57. They are 
     reader load. With four readers that read as fast as they can (the p99 case of T-RING-23), the
     target is 1.0 ms. Measured on a Windows test machine: 0.58 to 0.64 ms under that load, and
     0.28 ms without it.
+
+The user accepted items 60 to 62 on 2026-11-18, after items 58 and 59. They are decisions on the
+finished 2a code ([ADR-9G2W](../decisions/entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md)).
+
+60. T-RING-31 (idle CPU, limit 2 % of one core) stays failing as a known failure until the waiting
+    of the camera loop is redesigned. The fix is a blocking wait on the queues of the loop. It
+    belongs to the same change as item 45 (the 10 µs wait), and the same four-camera timing
+    comparison decides both. Measured on 2026-11-18: the paused loop uses 3.9 to 7.0 % of one core.
+    The loop sleeps 1 ms and makes two queue polls in each pass. A 10 ms wait gave 0.3 to 4.7 %.
+    Windows counts CPU time in steps of 15.6 ms.
+61. The translated copies of the architecture page (`zh-CN`, `es`, `ar`) are not updated in step 2a.
+    The translation process updates them.
+62. Three additions of the 2a code are accepted. `run_opencv_camera_loop` has an optional argument
+    `shm_subscription`, through which the loop receives the new ring name after a mode change. At a
+    recreation, the creator unlinks the old ring at once and does not wait for its writer to detach
+    (an attached process keeps its mapping). `FrameRingWriter.name` is public, and `NO_SAMPLE_NS`
+    is exported.

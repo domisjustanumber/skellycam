@@ -20,26 +20,47 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [`specs/frame-ring.md`](../specs/frame-ring.md). The tests of step 2a (T-RING-01 to 33) are in
   `skellycam/tests/frame_ring/`. They use the API of
   [ADR-9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md), which the
-  user accepted with six clarifications and two corrections of the spec (items 52 to 59) on
+  user accepted with clarifications, corrections and decisions on the 2a code (items 52 to 62) on
   2026-11-18. Run the T-RING-34 and T-RING-35 set with
   `uv run pytest -m ring_portable skellycam/tests/frame_ring`.
   Run the timed and kill tests with `-m ring_slow`. `SKELLYCAM_RING_FULL=1` gives the durations of
   the spec, for example 60 s for each slot count of T-RING-08. T-RING-49 needs cameras and is not
   written.
-  - Done: the code of step 2a. This is the ring package `skellycam/core/ipc/frame_ring/`, the
-    rings in `CameraGroup` (session start and close, recreation, `ring_infos`), the
-    `cv2.imencode` feed of the OpenCV loop (recorder first), the interim relay (item 4), the
-    performance page (item 5) and the deletions of section 2.1. The test helper `FakeCapture` stays
-    alive until the process ends, because OpenCV 5.1.0 crashes when the garbage collector frees a
-    subclass of `cv2.VideoCapture`.
-  - Item 45: before step 2a changes the 10 µs wait of the OpenCV loop, it compares the frame timing
-    before and after the change on the four test cameras. It keeps the change only if the grab
-    timing is not worse. T-RING-31 (the idle test of item 45) fails until then. On a Windows test
-    machine, the paused loop uses 3.9 to 7.0 % of one core, against 2 %. The paused loop already
-    sleeps 1 ms on each pass. Its two queue polls on each pass cost the CPU. A 10 ms paused wait
-    gave 0.3 to 4.7 %, because Windows counts CPU time in 15.6 ms ticks.
+  - Done: the code of step 2a is complete. This is the ring package
+    `skellycam/core/ipc/frame_ring/`, the rings in `CameraGroup` (session start and close,
+    recreation, `ring_infos`), the `cv2.imencode` feed of the OpenCV loop (recorder first), the
+    interim relay (item 4), the performance page (item 5) and the deletions of section 2.1. The
+    test helper `FakeCapture` stays alive until the process ends, because OpenCV 5.1.0 crashes when
+    the garbage collector frees a subclass of `cv2.VideoCapture`.
+  - Known failure: T-RING-31 (idle CPU, limit 2 % of one core) fails (item 60). On 2026-11-18, the
+    paused loop used 3.9 to 7.0 % of one core on a Windows test machine. The loop sleeps 1 ms and
+    makes two queue polls in each pass. A 10 ms wait gave 0.3 to 4.7 %. Windows counts CPU time in
+    steps of 15.6 ms.
+  - Open: the change of the waiting of the camera loop. The fix is a blocking wait on the queues of
+    the loop. It belongs to the same change as item 45 (the 10 µs wait). The same four-camera
+    timing comparison decides both.
+  - Fact, 2026-11-18: the four-camera comparison of the timing. Before is commit 0a66994c3, after
+    is commit 8a1f9b517. Each had two runs of 60 s, with a 720p30 MJPG request, lockstep and
+    four cameras (Logitech C922, Logitech C930e, Razer Kiyo Pro and a generic camera), lights on.
+    The values below are before (run 1 and 2), then after (run 1 and 2).
+    - Frames per camera: 1548 and 1547, then 1548 and 1548.
+    - Group frame rate: 25.76 and 25.76, then 25.76 and 25.77.
+    - Median spread of the grab times between cameras: 0.205 and 0.189 ms, then 0.183 and 0.194 ms.
+    - The step that copied a frame to the old ring now holds the JPEG encode and the capture check.
+      Median: 1.02 and 1.24 ms, then 1.87 and 1.81 ms. 95th percentile: 1.58 and 1.92 ms, then
+      3.39 and 3.41 ms.
+    - Whole processing of a frame, median: 2.86 and 3.24 ms, then 3.97 and 3.91 ms.
+    - No traceback. Four JPEG rings of 27,779,072 bytes each, 111,116,288 bytes in total. The
+      largest frame is 0.10 to 0.22 of its slot. There was no oversize frame, no cut-off frame, no
+      capture-error frame and no failed ring write.
+    - An earlier pair of runs the same day in a dim room gave 8.00 frames per second before and
+      after. The cause is not verified.
+    - The result files are in the research branch `dom/research` of this repository. They are not
+      committed there yet.
   - The user runs T-RING-49, the optional four-camera smoke test. It needs cameras.
   - The T-RING-34 (Apple Silicon) and T-RING-35 (arm64 CI) runs are not done.
+  - The measurement M2 (write time without reader load) gave 0.98 ms p99 in one run and 0.28 ms in
+    another. Measure it again.
   - The measurements M4 and M8 of section 11.3 are not done. Phase 2 makes them before it fixes a
     performance number.
   - The build of step 2b waits for the approval and guidance of the user.

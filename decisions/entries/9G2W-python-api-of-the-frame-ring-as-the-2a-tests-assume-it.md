@@ -1,4 +1,4 @@
-# 9G2W — Python API of the frame ring, as the 2a tests assume it; six clarifications and two corrections of the spec
+# 9G2W — Python API of the frame ring, as the 2a tests assume it; clarifications, corrections and decisions on the 2a code
 
 **Status:** accepted, 2026-11-18 (user; commit to dom/native-jpeg; was proposed, 2026-11-18 (agent)).
 
@@ -50,28 +50,24 @@ The spec does not give each Python signature. The failing tests of step 2a in
 16. A size in a log line or an error message is `n` or `f"{n:,}"` bytes and
     `f"{n / 2**20:.1f} MiB"`. The largest-payload line holds the fraction as `0.60` or `60 %`.
 
-The user also decided six clarifications of the spec on 2026-11-18. Section 14 of the spec lists
-them as items 52 to 57:
+The user also decided, on 2026-11-18, six clarifications (items 52 to 57 of the spec), two
+corrections (58 and 59) and three decisions on the finished 2a code (60 to 62). Section 14 of the
+spec states each one in full. In short:
 
-1. Unknown frame rate: the slot count uses 60 (3.7). The ring header holds `fps_num = 0` and
-   `fps_den = 1`, which means "unknown".
-2. A skipped frame number that a reader asks for before the ring has wrapped one time reads as
-   `LAPPED`, not `MISSING` (R7: the slot still holds -1). This behaviour is accepted.
-3. The generation in a ring name counts up per skellycam process, not per session. A name is never
-   used again while the app runs.
-4. The first frame of a new ring does not get `DISCONTINUITY`.
-5. Step 2a does not delete `core/types/frontend_payload_bytearray.py`. The file keeps only the
-   wire-format types that the interim relay (item 4 of the spec) needs. Its resize and encode
-   functions are deleted.
-6. T-RING-08 runs 60 s for each slot count (2, 8 and 60), thus 3 minutes in total at the full
-   duration.
-
-The user accepted two corrections on 2026-11-18. The spec lists them as items 58 and 59:
-
-1. A slot header copy with `frame_number == -1` gives `LAPPED`, before any CRC check (R5, 6.4).
-   `CORRUPT` then means only two identical bad copies of a slot that is not written.
-2. The JPEG write target at 1080p is p99 at most 1.0 ms with four readers (T-RING-23), and 0.5 ms
-   with no reader load. Measured: 0.58 to 0.64 ms, and 0.28 ms.
+1. Unknown frame rate: 60 slots, and the header holds `fps_num = 0`, `fps_den = 1`.
+2. A skipped frame number before the first wrap reads as `LAPPED`.
+3. The generation in a ring name counts per process.
+4. The first frame of a new ring has no `DISCONTINUITY`.
+5. `frontend_payload_bytearray.py` stays with its wire-format types only.
+6. T-RING-08 runs 60 s for each slot count.
+7. A slot header copy with `frame_number == -1` gives `LAPPED` before any CRC check.
+8. The JPEG write target at 1080p is p99 at most 1.0 ms with four readers, and 0.5 ms with none.
+9. T-RING-31 (idle CPU) is a known failure until the waiting of the camera loop is redesigned (a
+   blocking wait, with item 45). Measured: 3.9 to 7.0 % of one core.
+10. The translated copies of the architecture page are not updated in 2a.
+11. `run_opencv_camera_loop` has the optional argument `shm_subscription`. At a recreation, the
+    creator unlinks the old ring at once. `FrameRingWriter.name` is public, and `NO_SAMPLE_NS` is
+    exported.
 
 ## Reason
 
