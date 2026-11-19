@@ -1,8 +1,9 @@
 # Phase 4 preview specification: the per-camera websocket message and its sender (4a)
 
-Status: proposed, waits for the acceptance of the user
-([ADR-162X](../decisions/entries/162X-step-4a-preview-spec-and-agent-choices.md)). An agent wrote
-it on 2026-11-19. The user decided P1 to P7 and answered A1 to A8 on 2026-11-19
+Status: accepted by the user on 2026-11-19, with its test list
+([ADR-WB08](../decisions/entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md)).
+[ADR-162X](../decisions/entries/162X-step-4a-preview-spec-and-agent-choices.md) holds the agent
+choices. An agent wrote it on 2026-11-19. The user decided P1 to P7 and answered A1 to A8 on 2026-11-19
 ([ADR-G651](../decisions/entries/G651-phase-4-live-preview-decisions-p1-to-p7.md)). Section 15
 gives each one. The second revision of 2026-11-19 applies A1 to A7 and the faults of an independent
 review. The third revision applies the fixes of a second review, and A8. No review has read the

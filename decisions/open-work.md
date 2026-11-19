@@ -115,6 +115,13 @@ task. Delete an item when its work is done. The PR that closes an item records t
     T-CAP-98.
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
+- **Phase 4 (live preview).** The user decided P1 to P7 and answered A1 to A8 on 2026-11-19
+  ([ADR-G651](entries/G651-phase-4-live-preview-decisions-p1-to-p7.md)). The user accepted the step 4a
+  spec [`specs/preview.md`](../specs/preview.md) and its test list T-PRV-01 to T-PRV-24 on 2026-11-19
+  ([ADR-WB08](entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md)). The agent
+  choices of its section 13 wait for the user
+  ([ADR-162X](entries/162X-step-4a-preview-spec-and-agent-choices.md)). Next: the failing tests of
+  step 4a, then the product code of step 4a.
 - **Phase 5: remove three interim rules of phase 3.** The new recorder of phase 5 must remove the three
   interim rules of [ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md):
   U4 (a recording with a dead camera: timing files of unequal length, multi-frame rows with the live

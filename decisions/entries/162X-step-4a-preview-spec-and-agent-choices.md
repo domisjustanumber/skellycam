@@ -46,8 +46,9 @@ in full, and the body marks each one [agent n]:
 27. Sends of one connection in series.
 
 No question is open. The user answered Q1 (the reader property `skipped_count`) with A8 of
-[ADR-G651](G651-phase-4-live-preview-decisions-p1-to-p7.md). The spec waits for the acceptance of
-the user.
+[ADR-G651](G651-phase-4-live-preview-decisions-p1-to-p7.md). The user accepted the spec and its
+test list on 2026-11-19
+([ADR-WB08](WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md)).
 
 ## Reason
 

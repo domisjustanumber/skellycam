@@ -33,6 +33,7 @@ These entries are `accepted`.
 | [HP7D](entries/HP7D-python-api-of-capture-as-the-3a-tests-assume-it.md) | Python API of capture, as the 3a tests assume it: names, seams for fake sources and a virtual clock, log line forms | accepted |
 | [HB4Z](entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md) | Answers U16 to U23: control thread, warm-up count, Windows-only `media_foundation/`, CI and tests on Linux and macOS, parity table | accepted |
 | [G651](entries/G651-phase-4-live-preview-decisions-p1-to-p7.md) | Phase 4 decisions P1 to P7 and answers A1 to A8: steps, flow control and safety net, header, tile, counts, reader properties, deletion, parity | accepted |
+| [WB08](entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md) | The user accepted the step 4a spec `specs/preview.md` and its test list T-PRV-01 to T-PRV-24 | accepted |
 
 ### Evidence
 
