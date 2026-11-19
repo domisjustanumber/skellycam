@@ -1,7 +1,8 @@
 name: Capture
 
-# specs/windows-capture.md section 15: the fake-source tests of phase 3 on a Windows runner and on a
-# plain Linux runner. The tests with the markers camera_hardware and capture_local do not run here.
+# specs/windows-capture.md section 15: the fake-source and OpenCV-source tests of phase 3 on Windows,
+# Linux and macOS (U20). The macOS job also runs the portable frame ring tests. The tests with the
+# markers camera_hardware and capture_local do not run here.
 on:
   push:
     branches: [dom/native-jpeg]
@@ -15,6 +16,7 @@ on:
       - "skellycam/api/**"
       - "skellycam/tests/**"
       - "specs/windows-capture.md"
+      - "specs/frame-ring.md"
       - "pyproject.toml"
       - "uv.lock"
       - ".github/workflows/capture.yml"
@@ -78,3 +80,37 @@ jobs:
 
       - name: Run the fake-source tests
         run: uv run pytest skellycam/tests/capture -m "not camera_hardware and not capture_local"
+
+  # Apple Silicon (U20). opencv-contrib-python 5.1.0.95 has macOS wheels for macOS 15 and later only.
+  # GitHub has few of these runners: no other job waits for this job, and a newer push cancels it.
+  # The sounddevice wheel for macOS holds PortAudio, so no install step is necessary.
+  capture-macos:
+    name: Capture fake-source tests and portable ring tests (Python 3.13.18, macos-15 arm64)
+    runs-on: macos-15
+    timeout-minutes: 40
+    concurrency:
+      group: capture-macos-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.9"
+          enable-cache: true
+
+      - name: Set up Python 3.13.18
+        run: uv python install 3.13.18
+
+      - name: Install dependencies
+        run: uv sync --group dev --python 3.13.18
+
+      - name: Run the fake-source tests
+        run: uv run pytest skellycam/tests/capture -m "not camera_hardware and not capture_local"
+
+      - name: Run the portable ring tests
+        if: ${{ !cancelled() }}
+        env:
+          SKELLYCAM_RING_FULL: "1"
+        run: uv run pytest skellycam/tests/frame_ring -m ring_portable -q
