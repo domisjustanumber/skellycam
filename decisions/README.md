@@ -32,6 +32,7 @@ These entries are `accepted`.
 | [4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md) | Phase 3 spec `specs/windows-capture.md` and its test list (91 tests), with the 64 agent choices of its section 18 | accepted |
 | [HP7D](entries/HP7D-python-api-of-capture-as-the-3a-tests-assume-it.md) | Python API of capture, as the 3a tests assume it: names, seams for fake sources and a virtual clock, log line forms | accepted |
 | [HB4Z](entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md) | Answers U16 to U23: control thread, warm-up count, Windows-only `media_foundation/`, CI and tests on Linux and macOS, parity table | accepted |
+| [8MTY](entries/8MTY-answers-v1-to-v7-of-the-user-to-the-3b-and-3c-tests.md) | Answers V1 to V7: `capture_modes` in 3b, auto rate of a raw format, `jpeg_encoder`, OpenCV parity, range tests | accepted |
 
 ### Evidence
 
@@ -51,7 +52,7 @@ These entries wait for a decision of the user. Section is the section or area of
 |---|----------|---------|--------|
 | [NMM1](entries/NMM1-design-of-the-camera-media-check.md) | Camera media check: types, first bytes, `GOLDEN_PATHS`, image reminder, `commit-files` skill, per-worktree hook install | none | proposed |
 | [4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) | Other fills of the kit adoption; `CLAUDE.md` stays untracked | none | proposed |
-| [3WCA](entries/3WCA-python-api-of-capture-as-the-3b-and-3c-tests-assume-it.md) | Python API of capture, as the 3b and 3c tests assume it: the encoder seams, `jpeg_encoder`, `capture_modes` from 3b | none | proposed |
+| [3WCA](entries/3WCA-python-api-of-capture-as-the-3b-and-3c-tests-assume-it.md) | Python API of capture, as the 3b and 3c tests assume it: the encoder seams, `encoder_fallback`, `capture_modes` order | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
