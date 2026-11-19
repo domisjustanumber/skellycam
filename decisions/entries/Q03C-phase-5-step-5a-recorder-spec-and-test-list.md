@@ -36,7 +36,7 @@ Agent choices (section 16 of the spec, marked [agent n] in the body):
 11. The camera writer pads with placeholders and writes its `# end` line; frame count from the
     orchestrator.
 12. The completion of a short file after the join.
-13. `last_frame` is the last row with a camera frame.
+13. `last_frame` is the last row that is not `missing`.
 14. The stop response fields from the CSVs.
 15. The lock calls and the timeout at the end.
 16. An empty take folder; HTTP 422 and 409.

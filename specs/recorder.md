@@ -1,9 +1,10 @@
 # Phase 5 step 5a specification: the new video recorder
 
-Status: proposed, waits for the acceptance of the user. Proposed by an agent on 2026-11-19 and
-revised on 2026-11-19 and 2026-11-20
+Status: accepted by the user on 2026-11-20
+([ADR-Z3Y7](../decisions/entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md)).
+Proposed by an agent on 2026-11-19 and revised on 2026-11-19 and 2026-11-20
 ([ADR-Q03C](../decisions/entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md)). The user
-reviews and accepts this spec and its test list before any code [R12]. The decisions R1 to R12
+accepted this spec and its test list before any code [R12]. The decisions R1 to R12
 ([ADR-VPF8](../decisions/entries/VPF8-phase-5-recorder-decisions.md)) and the later decisions M1 to
 M10 and C1 to C7 ([ADR-J3QP](../decisions/entries/J3QP-missing-frames-as-black-placeholders-and-the-end-of-a-take.md))
 are accepted. Section 18 gives each one in full. The revision applies M1 to M10, C1 to C7 and the
@@ -1488,7 +1489,7 @@ fix. The body marks each one [agent n]. Items of the first draft that are now de
     `last − first + 1` of the orchestrator; a row count that differs is a defect.
 12. The completion of 7.4: after the join, cut both files to equal rows and blocks, `missing` rows
     with no block, `# repair`, `# end`.
-13. `last_frame` is the position of the last row with a camera frame.
+13. `last_frame` is the position of the last row that is not `missing`.
 14. The definitions of the stop response fields (8.2); `missing` rows left out;
     `total_duration_sec` is the summary `duration_s`.
 15. The lock calls (`msvcrt.locking`, `fcntl.flock`), retries every 50 ms up to 10 s, and what a

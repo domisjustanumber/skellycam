@@ -108,11 +108,12 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Phase 5 step 5a (the new recorder).** The user decided R1 to R12 on 2026-11-19
   ([ADR-VPF8](entries/VPF8-phase-5-recorder-decisions.md)), and M1 to M10 and C1 to C7 the same
   day ([ADR-J3QP](entries/J3QP-missing-frames-as-black-placeholders-and-the-end-of-a-take.md)).
-  R1 to R4 and M1 to M5 replace U4, U5 and U12 from the connection of step 5a. The revised spec
-  [`specs/recorder.md`](../specs/recorder.md) and its test list wait for the review of the user
-  ([ADR-Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md)): the agent choices
-  (section 16) and the merged list of proposed skellyfileformat changes
-  F-1 to F-10 for the recorder and the player (section 13). No code before the user accepts it
-  (R12). Branch `dom/recorder`. The
+  R1 to R4 and M1 to M5 replace U4, U5 and U12 from the connection of step 5a. The user accepted
+  the spec [`specs/recorder.md`](../specs/recorder.md) and its test list on 2026-11-20
+  ([ADR-Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md),
+  [ADR-Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md)). The failing tests come
+  next, then the product code (R12). The merged list of proposed skellyfileformat changes
+  F-1 to F-10 for the recorder and the player (section 13) still waits for the user (R6).
+  Branch `dom/recorder`. The
   connection to the shared loop waits for step 3a. Section 14 lists the edits of
   `specs/windows-capture.md` that the connection needs.
