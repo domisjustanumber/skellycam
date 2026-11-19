@@ -1,11 +1,13 @@
-# QKX1 — Answers of the user to the twelve questions of the phase 3 spec drafts; three interim rules
+# QKX1 — Thirteen answers of the user to the phase 3 spec drafts; three interim rules
 
 **Status:** accepted, 2026-11-19 (user; commit to dom/native-jpeg).
 
 ## Decision
 
-The user answered the eight questions of the first draft and the four questions of the second draft
-of [`specs/windows-capture.md`](../../specs/windows-capture.md) on 2026-11-19
+The user gave thirteen answers on 2026-11-19 to the drafts of
+[`specs/windows-capture.md`](../../specs/windows-capture.md): to the eight questions of the first
+draft (U1 to U4, U6 to U9), to one agent choice of it (U5), and to the four questions of the second
+draft (U10 to U13)
 ([ADR-4CQC](4CQC-phase-3-windows-capture-spec-and-test-list.md)). The spec marks each answer [Un].
 They add to the decisions of [ADR-EN7A](EN7A-phase-3-windows-capture-decisions.md).
 

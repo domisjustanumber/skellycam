@@ -5,12 +5,12 @@
 ## Decision
 
 [`specs/windows-capture.md`](../../specs/windows-capture.md) is proposed as the spec of phase 3, with
-its test list T-CAP-01 to T-CAP-86. It follows the decisions D1 to D49 of
+its test list T-CAP-01 to T-CAP-89. It follows the decisions D1 to D49 of
 [ADR-EN7A](EN7A-phase-3-windows-capture-decisions.md), the answers U1 to U13 of
 [ADR-QKX1](QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md), the ring spec and the plan.
 It waits for the acceptance of the user. No product code and no test code is written before that.
-The two revisions of 2026-11-19 apply the answers of the user and the fixes of an independent
-review.
+The three revisions of 2026-11-19 apply the answers of the user and the fixes of an independent
+reviews.
 
 An agent made these choices where the sources leave a gap. Section 18 of the spec states each one in
 full, and the body marks each one [agent n]:
@@ -34,12 +34,12 @@ full, and the body marks each one [agent n]:
 17. Detection in a short-lived child process.
 18. Rates rounded to 2 decimal places.
 19. `capture_modes`: fields, order, no synthesized NV12.
-20. When and from which list the group rate rule runs.
+20. The one-rate rule in the whole-request check, from the detection data.
 21. State names, status fields, `camera_failures`.
 22. Process ends of failed and dead cameras.
 23. Device removed or a stall in `starting` is `failed`.
 24. Unselect is `use_this_camera: false`.
-25. Recording only when every selected camera is `ready`; HTTP 409.
+25. Recording only when every selected camera is `ready`; one HTTP rule (422 or 409).
 26. Rate through `source_frame_number` differences.
 27. No early decision at start-up; a new change restarts the check.
 28. Slow warning rule during a recording.
@@ -63,23 +63,31 @@ full, and the body marks each one [agent n]:
 46. A discontinuity moves from a replaced frame to the next frame.
 47. The states that the gate counts.
 48. Reason texts.
-49. `replaced_count` from the entry into the gate.
+49. `replaced_count` from the first frame taken in the gate.
 50. An error marker wakes the loop.
 51. The state `waiting`.
 52. `last_frame_number` is the gate count.
 53. The field `reason` of `capture_modes` and its texts.
 54. Relay details: a camera with no frame is left out; the header frame number.
-55. HTTP 422 for a request below 29.97 fps.
+55. HTTP 422 for a request more than 0.5 fps below the floor.
+56. OpenCV one-rate check on the requested rates; real-rate differences warn only.
+57. Auto chooses 29.97 when there is no 30.
+58. The floor on the exact chosen mode rate; where each floor case is decided.
+59. OpenCV and the floor after the open.
+60. A hang while open gives `dead`, stage `streaming`.
+61. The interim decode on the loop thread.
+62. A stream error or end of stream: dead at once.
 
-No question for the user is open. The user answered the four questions of the second draft on
-2026-11-19 (U10 to U13 of
-[ADR-QKX1](QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md)).
+Two questions for the user are open (section 19 of the spec; "yes" accepts the recommendation):
+
+1. Q-e: a live control change that fails without a hang keeps the camera in its earlier state.
+2. Q-f: a group with a 29.97 fps camera and a 30 fps camera is allowed.
 
 ## Reason
 
 - D3: a spec and a test list before any code. The user reviews it.
-- Each choice is the smallest that the spec needs to be complete. Each question is a point where two
-  readings are possible and the choice matters to the user.
+- Each choice is the smallest that the spec needs to be complete. Each of the two open questions
+  is a point where two readings are possible and the choice matters to the user.
 
 ## Open work
 

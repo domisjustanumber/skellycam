@@ -28,7 +28,7 @@ These entries are `accepted`.
 | [E817](entries/E817-choices-of-the-2b-code.md) | Choices of the 2b code: `bgr` on the JPEG creator, `set_skipped_count`, `None` payload for a flagged BGR frame, no libjpeg limit on Windows until phase 3 | accepted |
 | [CE8C](entries/CE8C-count-line-of-the-bgr-ring-at-the-stop-of-the-decode-stage.md) | `DecodeStage.stop()` logs one count line for its BGR ring: frames committed, skipped, decode errors | accepted |
 | [EN7A](entries/EN7A-phase-3-windows-capture-decisions.md) | Phase 3 decisions D1 to D49: Media Foundation through `comtypes`, one shared loop, start-up rate check, failed and dead cameras | accepted |
-| [QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md) | Answers U1 to U13 of the user to the questions of the phase 3 spec drafts; three interim rules of phase 3 that phase 5 removes | accepted |
+| [QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md) | Thirteen answers U1 to U13 of the user to the phase 3 spec drafts; three interim rules of phase 3 that phase 5 removes | accepted |
 
 ### Evidence
 
@@ -48,7 +48,7 @@ These entries wait for a decision of the user. Section is the section or area of
 |---|----------|---------|--------|
 | [NMM1](entries/NMM1-design-of-the-camera-media-check.md) | Camera media check: types, first bytes, `GOLDEN_PATHS`, image reminder, `commit-files` skill, per-worktree hook install | none | proposed |
 | [4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) | Other fills of the kit adoption; `CLAUDE.md` stays untracked | none | proposed |
-| [4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md) | Phase 3 spec `specs/windows-capture.md` and its test list; 55 agent choices wait for the user; no question open | none | proposed |
+| [4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md) | Phase 3 spec `specs/windows-capture.md` and its test list; 62 agent choices and two questions open wait for the user | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
