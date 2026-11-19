@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 
 from skellycam.core.camera.config.camera_config import CameraConfig
+from skellycam.core.camera.opencv.opencv_helpers.create_initial_frame_recarray import create_initial_frame_rec_array
 from skellycam.core.camera.opencv.opencv_helpers.opencv_apply_config import apply_camera_configuration
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 from skellycam.core.camera_group.camera_status import CameraStatus
@@ -33,8 +34,14 @@ def check_for_new_config(current_config: CameraConfig,
             extracted_config = apply_camera_configuration(cv2_vid_capture=cv2_video_capture,
                                                           prior_config=current_config,
                                                           config=new_config, )
-            # Update the slim per-frame camera info in the recarray
-            frame_rec_array.frame_metadata.camera_info[0] = extracted_config.to_frame_camera_info()
+            if extracted_config.resolution != current_config.resolution:
+                # The image of the record has the old shape: make a new record, same frame number.
+                frame_number = frame_rec_array.frame_metadata.frame_number[0]
+                frame_rec_array = create_initial_frame_rec_array(config=extracted_config, ipc=ipc)
+                frame_rec_array.frame_metadata.frame_number[0] = frame_number
+            else:
+                # Update the slim per-frame camera info in the recarray
+                frame_rec_array.frame_metadata.camera_info[0] = extracted_config.to_frame_camera_info()
             ipc.pubsub.topics[TopicTypes.EXTRACTED_CONFIG].publish(
                 DeviceExtractedConfigMessage(extracted_config=extracted_config))
             self_status.updating.value = False

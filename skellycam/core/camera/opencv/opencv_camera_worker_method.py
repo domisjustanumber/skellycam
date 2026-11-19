@@ -10,7 +10,6 @@ from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 from skellycam.core.types.type_overloads import CameraIdString, TopicSubscriptionQueue
 from skellycam.core.camera_group.camera_status import CameraStatus  # noqa: TC001 — beartype checks annotations at runtime
-from skellycam.core.ipc.shared_memory.camera_shared_memory_ring_buffer import CameraSharedMemoryRingBuffer  # noqa: TC001 — beartype checks annotations at runtime
 
 logger = logging.getLogger(__name__)
 
@@ -27,15 +26,13 @@ def opencv_camera_worker_method(
 
     logger.trace(f"Camera {camera_id} worker started")
     self_status: CameraStatus = orchestrator.camera_statuses[camera_id]
-    camera_shm: CameraSharedMemoryRingBuffer | None = None
     cv2_video_capture = None
 
     try:
-        (camera_shm,
+        (ring_writer,
          config,
          cv2_video_capture,
          frame_rec_array) = setup_opencv_camera_loop(
-            camera_shm=camera_shm,
             config=config,
             ipc=ipc,
             orchestrator=orchestrator,
@@ -45,7 +42,7 @@ def opencv_camera_worker_method(
 
         logger.debug(f"Camera {config.camera_id} frame grab loop starting...")
         run_opencv_camera_loop(
-            camera_shm=camera_shm,
+            ring_writer=ring_writer,
             config=config,
             cv2_video_capture=cv2_video_capture,
             frame_rec_array=frame_rec_array,
@@ -54,6 +51,7 @@ def opencv_camera_worker_method(
             self_status=self_status,
             update_camera_settings_subscription=update_camera_settings_subscription,
             recording_info_subscription=recording_info_subscription,
+            shm_subscription=shm_subscription,
         )
 
     except CameraSetupFailedException as e:
@@ -76,8 +74,5 @@ def opencv_camera_worker_method(
         ipc.should_continue = False
         if cv2_video_capture:
             cv2_video_capture.release()
-        if camera_shm:
-            logger.trace(f"Closing camera {config.camera_index} shared memory")
-            camera_shm.close()  # close, don't unlink - parent will unlink
         self_status.closed.value = True
         logger.debug(f"Camera {config.camera_index} process completed")

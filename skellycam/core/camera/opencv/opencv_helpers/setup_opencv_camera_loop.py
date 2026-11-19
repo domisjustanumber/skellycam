@@ -12,45 +12,57 @@ from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 from skellycam.core.camera_group.camera_status import CameraStatus
 from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes
+from skellycam.core.ipc.frame_ring import FrameRingWriter
 from skellycam.core.ipc.pubsub.pubsub_topics import DeviceExtractedConfigMessage, SetShmMessage
-from skellycam.core.ipc.shared_memory.camera_shared_memory_ring_buffer import CameraSharedMemoryRingBuffer
 from skellycam.core.types.type_overloads import TopicSubscriptionQueue
 from skellycam.utilities.wait_functions import wait_10ms
 
 logger = logging.getLogger(__name__)
 
 
-def setup_opencv_camera_loop(camera_shm: CameraSharedMemoryRingBuffer | None,
-                             config: CameraConfig,
+def await_ring_writer(config: CameraConfig,
+                      ipc: CameraGroupIPC,
+                      self_status: CameraStatus,
+                      shm_subscription: TopicSubscriptionQueue,
+                      old_ring_name: str | None = None) -> FrameRingWriter:
+    """Wait for the JPEG ring of this camera in a `SetShmMessage` and attach as its writer.
+
+    A message that still names `old_ring_name` for this camera is stale: the main process sent it
+    for a change of another camera. Ring names are never used again (spec 7.2).
+    """
+    logger.debug(f"Camera {config.camera_id} awaiting its frame ring...")
+    while ipc.should_continue and not self_status.should_close.value:
+        wait_10ms()
+        if not shm_subscription.empty():
+            shm_message: SetShmMessage = shm_subscription.get()
+            if not isinstance(shm_message, SetShmMessage):
+                raise RuntimeError(
+                    f"Expected SetShmMessage for camera {config.camera_id}, but received {type(shm_message)}"
+                )
+            ring_name = shm_message.ring_infos[config.camera_id].jpeg_ring_name
+            if ring_name != old_ring_name:
+                logger.debug(f"Camera {config.camera_id} attaching to frame ring {ring_name}...")
+                return FrameRingWriter.attach(ring_name)
+    raise RuntimeError(f"Camera {config.camera_id} closed before it received its frame ring")
+
+
+def setup_opencv_camera_loop(config: CameraConfig,
                              ipc: CameraGroupIPC,
                              orchestrator: CameraOrchestrator,
                              self_status: CameraStatus,
                              shm_subscription: TopicSubscriptionQueue) -> tuple[
-    CameraSharedMemoryRingBuffer, CameraConfig, cv2.VideoCapture, np.recarray]:
+    FrameRingWriter, CameraConfig, cv2.VideoCapture, np.recarray]:
     # Create cv2.VideoCapture object
     phase = "opening camera and reading first frame"
     cv2_video_capture = None
+    ring_writer = None
     try:
         cv2_video_capture, config = create_cv2_video_capture(config)
 
         phase = "joining camera group shared memory"
         ipc.pubsub.topics[TopicTypes.EXTRACTED_CONFIG].publish(DeviceExtractedConfigMessage(extracted_config=config))
-        logger.debug(f"Camera {config.camera_id} connected, awaiting shm message...")
-        while camera_shm is None and ipc.should_continue and not self_status.should_close.value:
-            wait_10ms()
-            if not shm_subscription.empty():
-                shm_message: SetShmMessage = shm_subscription.get()
-                if not isinstance(shm_message, SetShmMessage):
-                    raise RuntimeError(
-                        f"Expected SetShmMessage for camera {config.camera_id}, but received {type(shm_message)}"
-                    )
-                camera_shm_dto = shm_message.camera_group_shm_dto.camera_shm_dtos[config.camera_id]
-                logger.debug(f"Creating camera shared memory for camera {config.camera_id}...")
-                camera_shm = CameraSharedMemoryRingBuffer.recreate(dto=camera_shm_dto,
-                                                                   read_only=False)
-        # Ensure camera_group_shm is properly initialized before proceeding
-        if camera_shm is None or not camera_shm.valid:
-            raise RuntimeError("Failed to initialize camera_group_shm")
+        ring_writer = await_ring_writer(config=config, ipc=ipc, self_status=self_status,
+                                        shm_subscription=shm_subscription)
         if not cv2_video_capture.isOpened():
             raise RuntimeError(f"cv2.VideoCapture for camera {config.camera_id} is not opened")
         self_status.connected.value = True
@@ -73,5 +85,7 @@ def setup_opencv_camera_loop(camera_shm: CameraSharedMemoryRingBuffer | None,
         # This function owns the capture until it returns successfully.
         if cv2_video_capture is not None:
             cv2_video_capture.release()
+        if ring_writer is not None:
+            ring_writer.close()
         raise CameraSetupFailedException(str(failure)) from e
-    return camera_shm, config, cv2_video_capture, frame_rec_array
+    return ring_writer, config, cv2_video_capture, frame_rec_array

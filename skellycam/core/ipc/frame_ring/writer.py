@@ -34,7 +34,7 @@ _FLAG_COUNTERS = ((1, FrameFlag.OVERSIZE), (2, FrameFlag.CAPTURE_ERROR), (3, Fra
 class FrameRingWriter:
     def __init__(self, name: str):
         self._shm, header = attach_ring(name)
-        self._name = name
+        self.name = name
         self._buf = self._shm.buf
         self._slot_count = header["slot_count"]
         self._slot_capacity = header["slot_capacity"]
@@ -94,7 +94,7 @@ class FrameRingWriter:
         self._last_rotation = rotation_cw_deg
         if not self._warned and length > WARN_FRACTION * self._slot_capacity:
             self._warned = True
-            logger.warning(f"Frame ring {self._name}: frame {frame_number} is {format_size(length)}, "
+            logger.warning(f"Frame ring {self.name}: frame {frame_number} is {format_size(length)}, "
                            f"{length / self._slot_capacity:.2f} of its slot of "
                            f"{format_size(self._slot_capacity)} (warning limit {WARN_FRACTION:.2f})")
         if published_ns - self._last_log_ns >= LARGEST_PAYLOAD_LOG_INTERVAL_NS:
@@ -104,7 +104,7 @@ class FrameRingWriter:
         """Log the largest frame as a fraction of the slot (5.8)."""
         self._last_log_ns = time.perf_counter_ns()
         largest = self._counters[_LARGEST]
-        logger.info(f"Frame ring {self._name}: largest frame {format_size(largest)} is "
+        logger.info(f"Frame ring {self.name}: largest frame {format_size(largest)} is "
                     f"{largest / self._slot_capacity:.2f} of its slot of {format_size(self._slot_capacity)}; "
                     f"{self._counters[1]} oversize")
 

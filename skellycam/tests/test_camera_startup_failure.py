@@ -108,7 +108,7 @@ def test_worker_setup_reports_original_open_error(ipc):
     with patch('skellycam.core.camera.opencv.opencv_helpers.setup_opencv_camera_loop.create_cv2_video_capture',
                side_effect=FailedToOpenCameraException('camera access denied')):
         with pytest.raises(CameraSetupFailedException, match='FailedToOpenCameraException: camera access denied'):
-            setup_opencv_camera_loop(camera_shm=None, config=config, ipc=ipc,
+            setup_opencv_camera_loop(config=config, ipc=ipc,
                                      orchestrator=Mock(spec=CameraOrchestrator), self_status=status,
                                      shm_subscription=ipc.extracted_config_subscription)
     assert status.error.value
