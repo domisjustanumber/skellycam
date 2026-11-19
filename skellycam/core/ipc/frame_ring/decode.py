@@ -90,6 +90,8 @@ class DecodeStage:
         if self.waiting_place.take(0.0) is not None:
             self.waiting_place.skipped += 1
         self._writer.set_skipped_count(self.waiting_place.skipped)
+        logger.info(f"BGR ring {self._writer.name}: {self._writer._counters[0]} frames committed, "
+                    f"{self.waiting_place.skipped} skipped, {self._writer._counters[4]} decode errors")
 
     def _run(self) -> None:
         place, writer = self.waiting_place, self._writer
