@@ -8,6 +8,7 @@ implementation. Do not import the layout of `skellycam.core.ipc.frame_ring` into
 import importlib
 import os
 import struct
+import time
 import zlib
 from multiprocessing import shared_memory
 
@@ -185,7 +186,7 @@ class RawRing:
     It can break the writer rules of section 5.4 on purpose.
     """
 
-    def __init__(self, slot_count, slot_capacity, width=640, height=480):
+    def __init__(self, slot_count, slot_capacity, width=640, height=480, pixel_format=PIXEL_FORMAT_JPEG):
         self.slot_count = slot_count
         self.slot_capacity = slot_capacity
         self.payload_offset = expected_payload_offset(slot_count)
@@ -194,7 +195,7 @@ class RawRing:
         self.name = self.shm.name
         buf = self.shm.buf
         values = dict(magic=MAGIC, layout_version=LAYOUT_VERSION, header_size=RING_HEADER_SIZE,
-                      pixel_format=PIXEL_FORMAT_JPEG, slot_count=slot_count, slot_capacity=slot_capacity,
+                      pixel_format=pixel_format, slot_count=slot_count, slot_capacity=slot_capacity,
                       table_offset=TABLE_OFFSET, payload_offset=self.payload_offset,
                       total_size=self.total_size, width=width, height=height, fps_num=30, fps_den=1,
                       camera_key=b"raw-test", camera_index=0, creator_pid=os.getpid(), utc_ns=0,
@@ -259,12 +260,13 @@ def write_kwargs(k, flags=0, rotation=0):
 
 
 def new_ring(cleanup, *, fps_num=30, fps_den=1, width=640, height=480, history_s=1.0,
-             camera_id="cam0", camera_index=0, generation=0):
-    """Create a JPEG ring, attach a writer and a reader. This uses the API of the proposed entry
-    (the 2a tests' API), never the layout of the implementation."""
+             camera_id="cam0", camera_index=0, generation=0, bgr=False):
+    """Create a JPEG ring (a BGR ring if `bgr`), attach a writer and a reader. This uses the API of
+    the proposed entry (the 2a tests' API), never the layout of the implementation."""
     fr = ring()
     creator = cleanup.own(fr.FrameRingCreator.create(
-        camera_id=camera_id, camera_index=camera_index, pixel_format=fr.PixelFormat.JPEG,
+        camera_id=camera_id, camera_index=camera_index,
+        pixel_format=fr.PixelFormat.BGR24 if bgr else fr.PixelFormat.JPEG,
         width=width, height=height, fps_num=fps_num, fps_den=fps_den, history_s=history_s,
         generation=generation))
     writer = cleanup.handle(fr.FrameRingWriter.attach(creator.name))
@@ -368,3 +370,97 @@ def sampling_of(data):
         if marker == 0xC0:
             return data[start + 11]
     raise AssertionError("no SOF0")
+
+
+# ---------------------------------------------------------------------------
+# Step 2b: the BGR ring and the decode stage (section 8). The names of the decode stage are those
+# of the proposed entry ADR-5MYA.
+# ---------------------------------------------------------------------------
+
+def bgr_size(width=640, height=480):
+    """Table 3.6, BGR24 row: exactly width x height x 3."""
+    return width * height * 3
+
+
+def as_bgr(payload, shape):
+    """The first `h x w x 3` bytes of a synthetic payload as the array that a BGR writer takes
+    (5.1): shape `(h, w, 3)`, uint8, C-contiguous. No copy."""
+    return np.frombuffer(payload, np.uint8, count=shape[0] * shape[1] * shape[2]).reshape(shape)
+
+
+def ring_payload(maker, k, size, shape=None):
+    """`maker(k, size)` for a JPEG ring; for a BGR ring (`shape` given), that payload as an array."""
+    payload = maker(k, size)
+    return payload if shape is None else as_bgr(payload, shape)
+
+
+def as_bytes(payload):
+    """The bytes of a JPEG payload (`bytes`) or of a BGR payload (`ndarray`), for a comparison."""
+    return payload.tobytes() if isinstance(payload, np.ndarray) else payload
+
+
+def bgr_payload(k, width=640, height=480):
+    """Synthetic BGR frame k (a function of k), as the array that a BGR writer takes."""
+    return as_bgr(synthetic_payload(k, bgr_size(width, height)), (height, width, 3))
+
+
+def junk_before_eoi(jpeg, count):
+    """A synthetic JPEG with `count` junk bytes inserted before its EOI marker (the bytes of the
+    generic camera at 1920x1080, N:299-300). The bytes are 01 to FE, so no marker is made."""
+    eoi = len(jpeg) - 2
+    assert jpeg[eoi:] == b"\xff\xd9"
+    junk = (bytes(range(1, 255)) * (count // 254 + 1))[:count]
+    return jpeg[:eoi] + junk + jpeg[eoi:]
+
+
+def wait_committed(shm, count, timeout=WAIT_TIMEOUT_S):
+    """Wait until `frames_committed` of a ring is at least `count`. Return the ring header."""
+    deadline = time.monotonic() + timeout
+    while True:
+        header = parse_ring_header(shm.buf)
+        if header["frames_committed"] >= count:
+            return header
+        assert time.monotonic() < deadline, f"frames_committed {header['frames_committed']} < {count}"
+        time.sleep(0.001)
+
+
+def committed_frame_numbers(shm):
+    """The frame numbers in the slot headers of a ring whose header CRC passes (-1 left out)."""
+    header = parse_ring_header(shm.buf)
+    numbers = []
+    for slot in range(header["slot_count"]):
+        raw = slot_header_bytes(shm.buf, slot)
+        fields = parse_slot_header(shm.buf, slot)
+        if fields["frame_number"] >= 0 and zlib.crc32(raw[:60]) == fields["header_crc32"]:
+            numbers.append(fields["frame_number"])
+    return sorted(numbers)
+
+
+def decode_input(payload, source, k, flags=0, rotation=0):
+    """A frame for the waiting place (ADR-5MYA): the payload, its source and the numbers and times
+    of the JPEG frame k (table 5.1)."""
+    return ring().DecodeInput(payload=payload, source=source, **write_kwargs(k, flags, rotation))
+
+
+def start_stage(stages, writer, decode=None):
+    """Make and start a decode stage on a BGR ring writer (ADR-5MYA). The `stages` fixture stops
+    it, also when the test fails."""
+    fr = ring()
+    stage = fr.DecodeStage(writer) if decode is None else fr.DecodeStage(writer, decode=decode)
+    stages.append(stage)
+    stage.start()
+    return stage
+
+
+def attach_slow_writer(name, sleep_s=0.1):
+    """A writer of ring `name` whose each write sleeps `sleep_s` first: a slow BGR stage
+    (T-RING-38, T-RING-47). It is a subclass of `FrameRingWriter`, so that a type check of the
+    product code accepts it."""
+    base = ring().FrameRingWriter
+
+    class SlowWriter(base):
+        def write(self, payload, **kwargs):
+            time.sleep(sleep_s)
+            return super().write(payload, **kwargs)
+
+    return SlowWriter.attach(name)

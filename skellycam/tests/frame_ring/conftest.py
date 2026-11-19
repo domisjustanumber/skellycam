@@ -68,6 +68,18 @@ def spawn():
 
 
 @pytest.fixture()
+def stages():
+    """Each decode stage that a test starts (ring_spec.start_stage). Teardown stops each one."""
+    started = []
+    yield started
+    for stage in started:
+        try:
+            stage.stop()
+        except Exception:
+            pass
+
+
+@pytest.fixture()
 def procs():
     """Each process that a test starts. Teardown kills each live process."""
     started = []
