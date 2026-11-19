@@ -54,6 +54,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [NMM1](entries/NMM1-design-of-the-camera-media-check.md) | Camera media check: types, first bytes, `GOLDEN_PATHS`, image reminder, `commit-files` skill, per-worktree hook install | none | proposed |
 | [4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) | Other fills of the kit adoption; `CLAUDE.md` stays untracked | none | proposed |
 | [162X](entries/162X-step-4a-preview-spec-and-agent-choices.md) | Step 4a spec `specs/preview.md`: per-camera preview message, its sender and 24 tests, with 27 agent choices; no open question | `preview` | proposed |
+| [24FZ](entries/24FZ-python-api-of-the-preview-sender-as-the-4a-tests-assume-it.md) | Python API of the preview sender, as the 4a tests assume it: duck-typed readers, `msgspec` JSON, tick reads with no frame, log records, calculator deque | `preview` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).

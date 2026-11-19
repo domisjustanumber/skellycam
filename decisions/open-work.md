@@ -120,8 +120,10 @@ task. Delete an item when its work is done. The PR that closes an item records t
   spec [`specs/preview.md`](../specs/preview.md) and its test list T-PRV-01 to T-PRV-24 on 2026-11-19
   ([ADR-WB08](entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md)). The agent
   choices of its section 13 wait for the user
-  ([ADR-162X](entries/162X-step-4a-preview-spec-and-agent-choices.md)). Next: the failing tests of
-  step 4a, then the product code of step 4a.
+  ([ADR-162X](entries/162X-step-4a-preview-spec-and-agent-choices.md)).
+  - The user decides
+    [ADR-24FZ](entries/24FZ-python-api-of-the-preview-sender-as-the-4a-tests-assume-it.md): the
+    Python items that the failing tests of step 4a use and that the spec does not fix.
 - **Phase 5: remove three interim rules of phase 3.** The new recorder of phase 5 must remove the three
   interim rules of [ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md):
   U4 (a recording with a dead camera: timing files of unequal length, multi-frame rows with the live
