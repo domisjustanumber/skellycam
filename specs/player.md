@@ -1,8 +1,9 @@
 # Phase 6 player specification: step 6a, the canvas player for new takes (video only)
 
-Status: proposed, waits for the acceptance of the user (revision 2, 2026-11-20;
-[ADR-4K7V](../decisions/entries/4K7V-phase-6a-player-spec-and-test-list.md)). No code comes before
-the acceptance. The decisions Y1 to Y7
+Status: accepted by the user, 2026-11-20 (revision 2;
+[ADR-YV3V](../decisions/entries/YV3V-acceptance-of-the-phase-6a-player-spec-and-test-list.md); the
+agent choices are in
+[ADR-4K7V](../decisions/entries/4K7V-phase-6a-player-spec-and-test-list.md)). The decisions Y1 to Y7
 ([ADR-J2BQ](../decisions/entries/J2BQ-phase-6-player-decisions-y1-to-y7.md)), the later decisions
 M1 to M10 and L1 to L8, and the answers U1 and U2
 ([ADR-4HNY](../decisions/entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md))

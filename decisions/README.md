@@ -34,6 +34,7 @@ These entries are `accepted`.
 | [HB4Z](entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md) | Answers U16 to U23: control thread, warm-up count, Windows-only `media_foundation/`, CI and tests on Linux and macOS, parity table | accepted |
 | [J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md) | Phase 6 player decisions Y1 to Y7: steps 6a to 6d, Electron file handler, one `ImageDecoder` tile, gap and unfinished marks, module, tests | accepted |
 | [4HNY](entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md) | Missing frames as black placeholder blocks with the flag `missing` (M1 to M10); player decisions L1 to L8 | accepted |
+| [YV3V](entries/YV3V-acceptance-of-the-phase-6a-player-spec-and-test-list.md) | The user accepted `specs/player.md` and its test list (step 6a) | accepted |
 
 ### Evidence
 
