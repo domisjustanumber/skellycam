@@ -1,0 +1,166 @@
+{
+ "machine": {
+  "cpu": "Intel(R) Core(TM) i7-14700K",
+  "logical_cores": 28,
+  "physical_cores": 20,
+  "os": "Windows 11 10.0.26300",
+  "python": "3.13.18",
+  "opencv": "5.1.0",
+  "numpy": "2.5.5",
+  "zlib_runtime": "1.3.2",
+  "psutil": "7.2.2",
+  "pre_run_cpu_percent": 9.6,
+  "top_processes_pre_run": [
+   {
+    "name": "WmiPrvSE.exe",
+    "cpu_percent_of_one_core": 20.9
+   },
+   {
+    "name": "MsMpEng.exe",
+    "cpu_percent_of_one_core": 19.1
+   },
+   {
+    "name": "System",
+    "cpu_percent_of_one_core": 17.7
+   },
+   {
+    "name": "AsusFanControlService.exe",
+    "cpu_percent_of_one_core": 14.8
+   },
+   {
+    "name": "CorsairCpuIdService.exe",
+    "cpu_percent_of_one_core": 10.5
+   }
+  ]
+ },
+ "switch_interval_s": 0.005,
+ "gil": {
+  "zlib.crc32 6 MB bytes": {
+   "one_thread_s": 0.28811389999464154,
+   "two_threads_s": 0.29198139999061823,
+   "ratio": 1.0134235106187124,
+   "releases_gil": true
+  },
+  "zlib.crc32 1080p BGR ndarray": {
+   "one_thread_s": 0.30097029998432845,
+   "two_threads_s": 0.3532184000359848,
+   "ratio": 1.1735988569449443,
+   "releases_gil": true
+  },
+  "cv2.imdecode 1080p JPEG": {
+   "one_thread_s": 1.1309481999487616,
+   "two_threads_s": 1.2243118000333197,
+   "ratio": 1.0825533831600669,
+   "releases_gil": true
+  },
+  "writer slot copy (memoryview slice assignment) 6.2 MB": {
+   "one_thread_s": 0.043904899968765676,
+   "two_threads_s": 0.07333679997827858,
+   "ratio": 1.6703557013101273,
+   "releases_gil": false
+  },
+  "reader copy (bytearray of a memoryview) 6.2 MB": {
+   "one_thread_s": 0.16897930001141503,
+   "two_threads_s": 0.3557655999902636,
+   "ratio": 2.1053797711686024,
+   "releases_gil": false
+  },
+  "np.copyto 1080p BGR": {
+   "one_thread_s": 0.03502459998708218,
+   "two_threads_s": 0.05892360000871122,
+   "ratio": 1.6823489784449643,
+   "releases_gil": false
+  },
+  "pure Python loop (control)": {
+   "one_thread_s": 0.184666000015568,
+   "two_threads_s": 0.3710252000018954,
+   "ratio": 2.009168986010509,
+   "releases_gil": false
+  }
+ },
+ "jitter": [
+  {
+   "decode": "off",
+   "lateness": {
+    "n": 2400,
+    "median": 0.3642005,
+    "p95": 0.6115067,
+    "p99": 0.6668153399999995,
+    "max": 4.199067,
+    "mean": 0.36632604166666666
+   },
+   "job": {
+    "n": 2400,
+    "median": 0.09054999999999999,
+    "p95": 0.149605,
+    "p99": 0.19373299999999924,
+    "max": 0.5309,
+    "mean": 0.09952216666666668
+   },
+   "ticks_late_over_1ms": 1,
+   "ticks_late_over_2ms": 1
+  },
+  {
+   "decode": "720p",
+   "lateness": {
+    "n": 2400,
+    "median": 0.362634,
+    "p95": 0.6102666999999996,
+    "p99": 0.6744749999999998,
+    "max": 0.887334,
+    "mean": 0.3597084166666667
+   },
+   "job": {
+    "n": 2400,
+    "median": 0.0819,
+    "p95": 0.13370999999999997,
+    "p99": 0.1732199999999995,
+    "max": 0.524,
+    "mean": 0.08807995833333335
+   },
+   "ticks_late_over_1ms": 0,
+   "ticks_late_over_2ms": 0,
+   "put": {
+    "n": 2400,
+    "median": 0.0176,
+    "p95": 0.026504999999999973,
+    "p99": 0.03460599999999986,
+    "max": 0.0945,
+    "mean": 0.018202
+   },
+   "bgr_committed": 2400,
+   "bgr_skipped": 0
+  },
+  {
+   "decode": "1080p",
+   "lateness": {
+    "n": 2400,
+    "median": 0.33213349999999997,
+    "p95": 0.5747053499999998,
+    "p99": 0.662209999999999,
+    "max": 0.786867,
+    "mean": 0.33177308333333333
+   },
+   "job": {
+    "n": 2400,
+    "median": 0.078,
+    "p95": 0.12160999999999994,
+    "p99": 0.1580039999999999,
+    "max": 0.2227,
+    "mean": 0.08369008333333333
+   },
+   "ticks_late_over_1ms": 0,
+   "ticks_late_over_2ms": 0,
+   "put": {
+    "n": 2400,
+    "median": 0.0161,
+    "p95": 0.0248,
+    "p99": 0.031300999999999975,
+    "max": 0.057,
+    "mean": 0.016813875000000002
+   },
+   "bgr_committed": 2400,
+   "bgr_skipped": 0
+  }
+ ]
+}

@@ -1,0 +1,923 @@
+{
+ "machine": {
+  "cpu": "Intel(R) Core(TM) i7-14700K",
+  "logical_cores": 28,
+  "physical_cores": 20,
+  "os": "Windows 11 10.0.26300",
+  "python": "3.13.18",
+  "opencv": "5.1.0",
+  "numpy": "2.5.5",
+  "zlib_runtime": "1.3.2",
+  "psutil": "7.2.2",
+  "pre_run_cpu_percent": 11.9,
+  "top_processes_pre_run": [
+   {
+    "name": "python.exe",
+    "cpu_percent_of_one_core": 96.0
+   },
+   {
+    "name": "MsMpEng.exe",
+    "cpu_percent_of_one_core": 16.0
+   },
+   {
+    "name": "AsusFanControlService.exe",
+    "cpu_percent_of_one_core": 13.0
+   },
+   {
+    "name": "System",
+    "cpu_percent_of_one_core": 12.4
+   },
+   {
+    "name": "WmiPrvSE.exe",
+    "cpu_percent_of_one_core": 10.8
+   }
+  ]
+ },
+ "duration_s": 20.0,
+ "cases": [
+  {
+   "size": "720p",
+   "fps": 60,
+   "processes": 4,
+   "machine_cpu_pct_all_cores": 15.4,
+   "machine_cpu_cores_busy": 4.312,
+   "cameras": [
+    {
+     "index": 0,
+     "offered": 1201,
+     "elapsed_s": 20.0004012,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.3423,
+      "p95": 0.563,
+      "p99": 0.63193334375,
+      "max": 1.10353334375,
+      "mean": 0.3385661948376353
+     },
+     "decode_thread_cpu_pct": 21.71831433061453,
+     "feeder_thread_cpu_pct": 0.3124937313757486,
+     "process_cpu_pct": 22.030808061990278,
+     "decode_ms": {
+      "n": 1201,
+      "median": 2.7176,
+      "p95": 3.2135,
+      "p99": 3.5936,
+      "max": 4.4476
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 1,
+     "offered": 1201,
+     "elapsed_s": 20.0006374,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.37433334375,
+      "p95": 0.5141,
+      "p99": 0.56833334375,
+      "max": 0.655,
+      "mean": 0.3497766860949209
+     },
+     "decode_thread_cpu_pct": 20.546220191962483,
+     "feeder_thread_cpu_pct": 0.390612551177994,
+     "process_cpu_pct": 20.936832743140478,
+     "decode_ms": {
+      "n": 1201,
+      "median": 2.7108,
+      "p95": 3.289,
+      "p99": 3.6199,
+      "max": 5.2701
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 2,
+     "offered": 1201,
+     "elapsed_s": 20.0008442,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.41423334375,
+      "p95": 0.64506665625,
+      "p99": 0.7177,
+      "max": 0.8735,
+      "mean": 0.3628815154038301
+     },
+     "decode_thread_cpu_pct": 22.18656350515445,
+     "feeder_thread_cpu_pct": 0.5468519173805674,
+     "process_cpu_pct": 22.733415422535014,
+     "decode_ms": {
+      "n": 1201,
+      "median": 2.674,
+      "p95": 3.2696,
+      "p99": 3.5813,
+      "max": 5.1542
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 3,
+     "offered": 1201,
+     "elapsed_s": 20.0007674,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.37816665625,
+      "p95": 0.60173334375,
+      "p99": 0.6598,
+      "max": 1.07126665625,
+      "mean": 0.3643789342214821
+     },
+     "decode_thread_cpu_pct": 20.467964644196602,
+     "feeder_thread_cpu_pct": 1.562440049175313,
+     "process_cpu_pct": 22.030404693371914,
+     "decode_ms": {
+      "n": 1201,
+      "median": 2.6693,
+      "p95": 3.0456,
+      "p99": 3.4044,
+      "max": 4.5131
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    }
+   ],
+   "total_offered": 4804,
+   "total_skipped": 0,
+   "skip_rate": 0.0,
+   "decode_thread_cpu_pct_median": 21.71831433061453,
+   "decode_thread_cpu_pct_max": 22.18656350515445,
+   "decode_ms_median_of_medians": 2.7108,
+   "decode_ms_p99_worst": 3.6199,
+   "feeder_lateness_ms_p99_worst": 0.7177,
+   "feeder_lateness_ms_max": 1.10353334375,
+   "camera_processes_cores": 0.8773146092103769,
+   "other_load_cores": 3.4346853907896233
+  },
+  {
+   "size": "720p",
+   "fps": 60,
+   "processes": 8,
+   "machine_cpu_pct_all_cores": 17.3,
+   "machine_cpu_cores_busy": 4.844,
+   "cameras": [
+    {
+     "index": 0,
+     "offered": 1201,
+     "elapsed_s": 20.0001563,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.33873334375,
+      "p95": 0.50996665625,
+      "p99": 0.54306665625,
+      "max": 1.20326665625,
+      "mean": 0.32199750208159866
+     },
+     "decode_thread_cpu_pct": 25.390426573816324,
+     "feeder_thread_cpu_pct": 0.3906219472894819,
+     "process_cpu_pct": 25.781048521105806,
+     "decode_ms": {
+      "n": 1201,
+      "median": 2.9719,
+      "p95": 3.3989,
+      "p99": 3.851,
+      "max": 4.2815
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 1,
+     "offered": 1201,
+     "elapsed_s": 20.0004374,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.2969,
+      "p95": 0.51896665625,
+      "p99": 0.57076665625,
+      "max": 0.75633334375,
+      "mean": 0.30979883430474603
+     },
+     "decode_thread_cpu_pct": 25.468193010618858,
+     "feeder_thread_cpu_pct": 0.39061645721808064,
+     "process_cpu_pct": 25.858809467836938,
+     "decode_ms": {
+      "n": 1201,
+      "median": 2.9506,
+      "p95": 3.2742,
+      "p99": 3.7018,
+      "max": 4.8412
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 2,
+     "offered": 1201,
+     "elapsed_s": 20.0006538,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.33336665625,
+      "p95": 0.5893,
+      "p99": 0.65013334375,
+      "max": 0.7984,
+      "mean": 0.34212564529558703
+     },
+     "decode_thread_cpu_pct": 23.671101191702046,
+     "feeder_thread_cpu_pct": 2.031183600608096,
+     "process_cpu_pct": 25.70228479231014,
+     "decode_ms": {
+      "n": 1201,
+      "median": 2.917,
+      "p95": 3.1743,
+      "p99": 3.4144,
+      "max": 4.295
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 3,
+     "offered": 1201,
+     "elapsed_s": 20.0002953,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.40213334375,
+      "p95": 0.64036665625,
+      "p99": 0.6872,
+      "max": 0.7197,
+      "mean": 0.36178517901748547
+     },
+     "decode_thread_cpu_pct": 24.921507033948643,
+     "feeder_thread_cpu_pct": 0.8593623115154704,
+     "process_cpu_pct": 25.78086934546411,
+     "decode_ms": {
+      "n": 1201,
+      "median": 2.8947,
+      "p95": 3.1616,
+      "p99": 3.5206,
+      "max": 4.0201
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 4,
+     "offered": 1201,
+     "elapsed_s": 20.0001982,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.37443334375,
+      "p95": 0.56606665625,
+      "p99": 0.61643334375,
+      "max": 1.67936665625,
+      "mean": 0.36299175686927554
+     },
+     "decode_thread_cpu_pct": 23.281019285098886,
+     "feeder_thread_cpu_pct": 1.249987612622759,
+     "process_cpu_pct": 24.531006897721642,
+     "decode_ms": {
+      "n": 1201,
+      "median": 2.9609,
+      "p95": 3.4489,
+      "p99": 3.8551,
+      "max": 4.182
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 5,
+     "offered": 1201,
+     "elapsed_s": 20.000467,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.23696665625,
+      "p95": 0.5121,
+      "p99": 0.57316665625,
+      "max": 0.98756665625,
+      "mean": 0.25617601998334716
+     },
+     "decode_thread_cpu_pct": 24.999416263630245,
+     "feeder_thread_cpu_pct": 1.3280939890053567,
+     "process_cpu_pct": 26.3275102526356,
+     "decode_ms": {
+      "n": 1201,
+      "median": 2.9796,
+      "p95": 3.4347,
+      "p99": 3.7872,
+      "max": 4.1412
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 6,
+     "offered": 1201,
+     "elapsed_s": 20.0001966,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.33646665625,
+      "p95": 0.576,
+      "p99": 0.6466,
+      "max": 1.45756665625,
+      "mean": 0.34507318900915906
+     },
+     "decode_thread_cpu_pct": 24.687257324260504,
+     "feeder_thread_cpu_pct": 0.31249692815519625,
+     "process_cpu_pct": 24.999754252415702,
+     "decode_ms": {
+      "n": 1201,
+      "median": 2.8807,
+      "p95": 3.1682,
+      "p99": 3.4117,
+      "max": 4.0853
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 7,
+     "offered": 1201,
+     "elapsed_s": 20.0005723,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.30006665625,
+      "p95": 0.5897,
+      "p99": 0.63466665625,
+      "max": 0.7437,
+      "mean": 0.31880724396336385
+     },
+     "decode_thread_cpu_pct": 24.53054805836731,
+     "feeder_thread_cpu_pct": 0.46873658710256,
+     "process_cpu_pct": 24.999284645469867,
+     "decode_ms": {
+      "n": 1201,
+      "median": 2.9436,
+      "p95": 3.2256,
+      "p99": 3.6982,
+      "max": 4.9645
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    }
+   ],
+   "total_offered": 9608,
+   "total_skipped": 0,
+   "skip_rate": 0.0,
+   "decode_thread_cpu_pct_median": 24.921507033948643,
+   "decode_thread_cpu_pct_max": 25.468193010618858,
+   "decode_ms_median_of_medians": 2.9506,
+   "decode_ms_p99_worst": 3.8551,
+   "feeder_lateness_ms_p99_worst": 0.6872,
+   "feeder_lateness_ms_max": 1.67936665625,
+   "camera_processes_cores": 2.039805681749598,
+   "other_load_cores": 2.8041943182504023
+  },
+  {
+   "size": "1080p",
+   "fps": 60,
+   "processes": 4,
+   "machine_cpu_pct_all_cores": 20.7,
+   "machine_cpu_cores_busy": 5.795999999999999,
+   "cameras": [
+    {
+     "index": 0,
+     "offered": 1201,
+     "elapsed_s": 20.0007936,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.32253334375,
+      "p95": 0.59396665625,
+      "p99": 0.6557,
+      "max": 0.71533334375,
+      "mean": 0.33638309741881767
+     },
+     "decode_thread_cpu_pct": 47.263749574416885,
+     "feeder_thread_cpu_pct": 3.0467541047971216,
+     "process_cpu_pct": 50.31050367921401,
+     "decode_ms": {
+      "n": 1201,
+      "median": 5.6971,
+      "p95": 6.5614,
+      "p99": 7.2353,
+      "max": 8.4906
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 1,
+     "offered": 1201,
+     "elapsed_s": 20.0006464,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.3219,
+      "p95": 0.5798,
+      "p99": 0.6558,
+      "max": 0.9749,
+      "mean": 0.32986894254787674
+     },
+     "decode_thread_cpu_pct": 48.1234446502689,
+     "feeder_thread_cpu_pct": 0.31248990032642143,
+     "process_cpu_pct": 48.43593455059532,
+     "decode_ms": {
+      "n": 1201,
+      "median": 5.742,
+      "p95": 6.678,
+      "p99": 7.2551,
+      "max": 8.9303
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 2,
+     "offered": 1201,
+     "elapsed_s": 20.0003711,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.31076665625,
+      "p95": 0.57163334375,
+      "p99": 0.63013334375,
+      "max": 0.91906665625,
+      "mean": 0.3255289758534554
+     },
+     "decode_thread_cpu_pct": 48.20223060761108,
+     "feeder_thread_cpu_pct": 1.9530887604380502,
+     "process_cpu_pct": 50.15531936804913,
+     "decode_ms": {
+      "n": 1201,
+      "median": 5.7976,
+      "p95": 6.5802,
+      "p99": 7.176,
+      "max": 9.1785
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 3,
+     "offered": 1201,
+     "elapsed_s": 20.0006734,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.3606,
+      "p95": 0.59683334375,
+      "p99": 0.643,
+      "max": 0.77983334375,
+      "mean": 0.35614121565362195
+     },
+     "decode_thread_cpu_pct": 45.77970859721153,
+     "feeder_thread_cpu_pct": 1.9530592404953726,
+     "process_cpu_pct": 47.7327678377069,
+     "decode_ms": {
+      "n": 1201,
+      "median": 5.6304,
+      "p95": 6.2212,
+      "p99": 6.707,
+      "max": 8.4501
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    }
+   ],
+   "total_offered": 4804,
+   "total_skipped": 0,
+   "skip_rate": 0.0,
+   "decode_thread_cpu_pct_median": 48.1234446502689,
+   "decode_thread_cpu_pct_max": 48.20223060761108,
+   "decode_ms_median_of_medians": 5.742,
+   "decode_ms_p99_worst": 7.2551,
+   "feeder_lateness_ms_p99_worst": 0.6558,
+   "feeder_lateness_ms_max": 0.9749,
+   "camera_processes_cores": 1.9663452543556537,
+   "other_load_cores": 3.829654745644346
+  },
+  {
+   "size": "1080p",
+   "fps": 60,
+   "processes": 8,
+   "machine_cpu_pct_all_cores": 30.4,
+   "machine_cpu_cores_busy": 8.512,
+   "cameras": [
+    {
+     "index": 0,
+     "offered": 1201,
+     "elapsed_s": 20.0007246,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.34943334375,
+      "p95": 0.5871,
+      "p99": 0.73583334375,
+      "max": 2.14163334375,
+      "mean": 0.35471507077435466
+     },
+     "decode_thread_cpu_pct": 55.93547345779662,
+     "feeder_thread_cpu_pct": 4.14047499059109,
+     "process_cpu_pct": 60.07594844838771,
+     "decode_ms": {
+      "n": 1201,
+      "median": 6.8727,
+      "p95": 7.8593,
+      "p99": 9.7293,
+      "max": 13.9594
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 1,
+     "offered": 1201,
+     "elapsed_s": 20.0007162,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.3969,
+      "p95": 0.6106,
+      "p99": 0.68086665625,
+      "max": 2.18813334375,
+      "mean": 0.3859574521232306
+     },
+     "decode_thread_cpu_pct": 52.65436444720915,
+     "feeder_thread_cpu_pct": 3.3592547050890107,
+     "process_cpu_pct": 56.013619152298155,
+     "decode_ms": {
+      "n": 1201,
+      "median": 6.1569,
+      "p95": 6.911,
+      "p99": 7.7083,
+      "max": 10.7885
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 2,
+     "offered": 1201,
+     "elapsed_s": 20.0005055,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.42563334375,
+      "p95": 0.66196665625,
+      "p99": 0.7843,
+      "max": 1.02396665625,
+      "mean": 0.3861793505412156
+     },
+     "decode_thread_cpu_pct": 56.6391934443857,
+     "feeder_thread_cpu_pct": 2.031198661453832,
+     "process_cpu_pct": 58.670392105839525,
+     "decode_ms": {
+      "n": 1201,
+      "median": 6.6352,
+      "p95": 7.9708,
+      "p99": 9.7503,
+      "max": 14.7981
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 3,
+     "offered": 1201,
+     "elapsed_s": 20.0005357,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.2786,
+      "p95": 0.67246665625,
+      "p99": 0.7484,
+      "max": 3.16013334375,
+      "mean": 0.31381040799333887
+     },
+     "decode_thread_cpu_pct": 57.420336996273555,
+     "feeder_thread_cpu_pct": 0.8593519822571553,
+     "process_cpu_pct": 58.27968897853071,
+     "decode_ms": {
+      "n": 1201,
+      "median": 6.665,
+      "p95": 7.8565,
+      "p99": 10.2563,
+      "max": 15.0963
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 4,
+     "offered": 1201,
+     "elapsed_s": 20.0007914,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.3722,
+      "p95": 0.6236,
+      "p99": 0.7185,
+      "max": 1.0408,
+      "mean": 0.374999417152373
+     },
+     "decode_thread_cpu_pct": 55.31031137097905,
+     "feeder_thread_cpu_pct": 3.4373639835071725,
+     "process_cpu_pct": 58.74767535448622,
+     "decode_ms": {
+      "n": 1201,
+      "median": 6.5709,
+      "p95": 7.704,
+      "p99": 9.4311,
+      "max": 16.0827
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 5,
+     "offered": 1201,
+     "elapsed_s": 20.0007421,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.38396665625,
+      "p95": 0.6271,
+      "p99": 0.74413334375,
+      "max": 0.92843334375,
+      "mean": 0.3859960033305579
+     },
+     "decode_thread_cpu_pct": 56.09166871863219,
+     "feeder_thread_cpu_pct": 4.140471367809897,
+     "process_cpu_pct": 60.232140086442094,
+     "decode_ms": {
+      "n": 1201,
+      "median": 6.8682,
+      "p95": 8.0119,
+      "p99": 9.8624,
+      "max": 14.6225
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 6,
+     "offered": 1201,
+     "elapsed_s": 20.000516,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.40446665625,
+      "p95": 0.6348,
+      "p99": 0.69153334375,
+      "max": 2.40613334375,
+      "mean": 0.39457318900915905
+     },
+     "decode_thread_cpu_pct": 54.607966114474245,
+     "feeder_thread_cpu_pct": 0.6249838754160142,
+     "process_cpu_pct": 55.23294998989026,
+     "decode_ms": {
+      "n": 1201,
+      "median": 6.3291,
+      "p95": 7.6029,
+      "p99": 8.8241,
+      "max": 12.3851
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 7,
+     "offered": 1201,
+     "elapsed_s": 20.0008076,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 1201,
+      "median": 0.3935,
+      "p95": 0.65203334375,
+      "p99": 0.75023334375,
+      "max": 6.73873334375,
+      "mean": 0.416081848459617
+     },
+     "decode_thread_cpu_pct": 51.09168691768226,
+     "feeder_thread_cpu_pct": 1.7186805996773848,
+     "process_cpu_pct": 52.810367517359644,
+     "decode_ms": {
+      "n": 1201,
+      "median": 6.0822,
+      "p95": 6.7297,
+      "p99": 7.8856,
+      "max": 10.6153
+     },
+     "committed": 1201,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    }
+   ],
+   "total_offered": 9608,
+   "total_skipped": 0,
+   "skip_rate": 0.0,
+   "decode_thread_cpu_pct_median": 55.93547345779662,
+   "decode_thread_cpu_pct_max": 57.420336996273555,
+   "decode_ms_median_of_medians": 6.6352,
+   "decode_ms_p99_worst": 10.2563,
+   "feeder_lateness_ms_p99_worst": 0.7843,
+   "feeder_lateness_ms_max": 6.73873334375,
+   "camera_processes_cores": 4.600627816332343,
+   "other_load_cores": 3.911372183667657
+  },
+  {
+   "size": "720p",
+   "fps": 30,
+   "processes": 4,
+   "machine_cpu_pct_all_cores": 12.6,
+   "machine_cpu_cores_busy": 3.528,
+   "cameras": [
+    {
+     "index": 0,
+     "offered": 601,
+     "elapsed_s": 20.0006881,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 601,
+      "median": 0.3497,
+      "p95": 0.60143334375,
+      "p99": 0.64616665625,
+      "max": 0.9824,
+      "mean": 0.35456772046589013
+     },
+     "decode_thread_cpu_pct": 10.077778274038481,
+     "feeder_thread_cpu_pct": 0.31248924880739476,
+     "process_cpu_pct": 10.390267522845877,
+     "decode_ms": {
+      "n": 601,
+      "median": 2.6406,
+      "p95": 3.0283,
+      "p99": 4.4331,
+      "max": 5.2546
+     },
+     "committed": 601,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 1,
+     "offered": 601,
+     "elapsed_s": 20.0002418,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 601,
+      "median": 0.30036665625,
+      "p95": 0.506,
+      "p99": 0.52503334375,
+      "max": 0.56133334375,
+      "mean": 0.30708785357737106
+     },
+     "decode_thread_cpu_pct": 10.781119656263355,
+     "feeder_thread_cpu_pct": 1.0937367767223694,
+     "process_cpu_pct": 11.874856432985725,
+     "decode_ms": {
+      "n": 601,
+      "median": 2.6611,
+      "p95": 3.0059,
+      "p99": 4.1059,
+      "max": 4.5736
+     },
+     "committed": 601,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 2,
+     "offered": 601,
+     "elapsed_s": 20.0006803,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 601,
+      "median": 0.3355,
+      "p95": 0.5781,
+      "p99": 0.62423334375,
+      "max": 0.7184,
+      "mean": 0.34064625623960065
+     },
+     "decode_thread_cpu_pct": 11.796473742945635,
+     "feeder_thread_cpu_pct": 0.624978741348113,
+     "process_cpu_pct": 12.421452484293747,
+     "decode_ms": {
+      "n": 601,
+      "median": 2.6451,
+      "p95": 3.0887,
+      "p99": 4.1201,
+      "max": 4.6742
+     },
+     "committed": 601,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    },
+    {
+     "index": 3,
+     "offered": 601,
+     "elapsed_s": 20.0005072,
+     "late_resync": 0,
+     "feeder_lateness_ms": {
+      "n": 601,
+      "median": 0.35773334375,
+      "p95": 0.60533334375,
+      "p99": 0.67946665625,
+      "max": 1.0399,
+      "mean": 0.36336272878535775
+     },
+     "decode_thread_cpu_pct": 9.843500368830647,
+     "feeder_thread_cpu_pct": 0.6249841504019458,
+     "process_cpu_pct": 10.468484519232591,
+     "decode_ms": {
+      "n": 601,
+      "median": 2.6023,
+      "p95": 2.7735,
+      "p99": 2.8677,
+      "max": 3.0677
+     },
+     "committed": 601,
+     "skipped": 0,
+     "decode_errors": 0,
+     "skip_rate": 0.0
+    }
+   ],
+   "total_offered": 2404,
+   "total_skipped": 0,
+   "skip_rate": 0.0,
+   "decode_thread_cpu_pct_median": 10.781119656263355,
+   "decode_thread_cpu_pct_max": 11.796473742945635,
+   "decode_ms_median_of_medians": 2.6451,
+   "decode_ms_p99_worst": 4.4331,
+   "feeder_lateness_ms_p99_worst": 0.67946665625,
+   "feeder_lateness_ms_max": 1.0399,
+   "camera_processes_cores": 0.4515506095935794,
+   "other_load_cores": 3.0764493904064207
+  }
+ ]
+}
