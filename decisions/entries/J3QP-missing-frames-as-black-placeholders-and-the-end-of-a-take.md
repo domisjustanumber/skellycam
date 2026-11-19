@@ -1,7 +1,7 @@
 # J3QP — Missing frames as black placeholders (M1 to M10) and the end of a take (C1 to C7)
 
 **Status:** accepted, 2026-11-19 (user; relayed after the first spec drafts and their reviews;
-commit to dom/recorder).
+commit to dom/recorder; the second case of M5 added 2026-11-20 by the user).
 
 ## Decision
 
@@ -25,7 +25,11 @@ player spec and are not in this entry.
 5. **M5.** A killed or hung camera process leaves a short video file. The main process completes its
    timing rows (`missing`, no block) only after the process has ended. The manifest says that the
    file is shorter than the rows. Step 5c may fill it later. This is the one exception to "one block
-   for each row".
+   for each row". **Second case (user, 2026-11-20, answer to Q1 of the second spec draft):** a write
+   error on one file gives that camera a short pair (rows to the frame count, the MKV cut after its
+   last block with a row, `missing` rows with no block, `# repair`, `# end`), with the warnings
+   `camera_file_short` and `take_error` and no `camera_dead`. The camera stays `ready`. The other
+   cameras get normal finished pairs. A full disk leaves the take unfinished (`state` `recording`).
 6. **M6.** The recorder stores the JPEG with the DHT that the ring inserted.
 7. **M7.** A take starts at the first group frame; the first block is never smaller than the camera
    frames.

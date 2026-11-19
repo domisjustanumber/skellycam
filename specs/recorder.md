@@ -1,6 +1,7 @@
 # Phase 5 step 5a specification: the new video recorder
 
-Status: proposed by an agent on 2026-11-19 and revised on the same day
+Status: proposed, waits for the acceptance of the user. Proposed by an agent on 2026-11-19 and
+revised on 2026-11-19 and 2026-11-20
 ([ADR-Q03C](../decisions/entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md)). The user
 reviews and accepts this spec and its test list before any code [R12]. The decisions R1 to R12
 ([ADR-VPF8](../decisions/entries/VPF8-phase-5-recorder-decisions.md)) and the later decisions M1 to
@@ -142,7 +143,7 @@ level in the main process and the camera level in each camera process [agent 2]:
 | `skellycam/core/take_recorder/take.py` | The take level: `start_take`, `Take`, `CameraTakeSpec`, `TakeSummary` (4.2). |
 | `skellycam/core/take_recorder/camera_writer.py` | The camera level: `CameraTakeWriter`, `CameraTakeResult`, the queue and the writer thread (4.3, 5). |
 | `skellycam/core/take_recorder/mkv.py` | The PyAV calls (6.3). |
-| `skellycam/core/take_recorder/placeholder.py` | The SOF parse and the placeholder (6.4). |
+| `skellycam/core/take_recorder/placeholder.py` | The SOF parse (`parse_sof`) and the hand-built placeholder (6.4). |
 | `skellycam/core/take_recorder/sidecar.py` | Header, row, footer and CRC of the CSV; the strict read of a CSV (6.5, 8.1). |
 | `skellycam/core/take_recorder/completion.py` | The completion of a short file (7.4). |
 | `skellycam/core/take_recorder/folder_files.py` | Manifest, capture info, the whole-file write and the lock (6.6 to 6.8). |
@@ -150,8 +151,8 @@ level in the main process and the camera level in each camera process [agent 2]:
 | `skellycam/tests/take_recorder/` | The tests of section 12, the synthetic JPEG source, the child-process writer of the kill and stall tests (`child_writer.py`) and the conformance adapter (12.3). |
 
 Dependencies: only what `pyproject.toml` pins today. `av==19.0.2` writes the MKV.
-`opencv-contrib-python==5.1.0.95`, a main dependency, encodes the placeholder (6.4) and makes the
-synthetic JPEGs of the tests. The standard library gives `zlib`, `threading`, `queue`, `json`,
+`opencv-contrib-python==5.1.0.95`, a main dependency, makes the synthetic JPEGs of the tests and
+decodes in them. The placeholder needs no encoder (6.4). The standard library gives `zlib`, `threading`, `queue`, `json`,
 `hashlib`, `uuid`, and `msvcrt` or `fcntl`. No new package.
 
 ## 4. Public interface
@@ -186,7 +187,9 @@ summary = take.finish(results, *, frame_count, ended_by_error=None) -> TakeSumma
 - `rec` is `<rec>`. `start_take` refuses a value that breaks SFF-715.
 - `cameras` is a list of `TakeCamera`, in the order of `group_position` [agent 19]: `camera_id`,
   `nominal_rate` (`num`, `den`) [agent 20], `width` and `height` of the opened mode,
-  `rotation_cw_deg`, the capture-info facts of 6.7, and `capture_format`.
+  `rotation_cw_deg`, the capture-info facts of 6.7, `capture_format`, and `layout`: the width, the
+  height and the H/V sampling factors of each component from the SOF of the camera's last good frame
+  before the take, or `None` when the camera gave no good frame (6.4) [agent 22].
 - `writer` is the writer string, `skellycam <version>` [SFF-712].
 - `clock` is a test seam: two callables for the host clock and UTC. The default is
   `time.perf_counter_ns` and `time.time_ns`.
@@ -195,7 +198,7 @@ summary = take.finish(results, *, frame_count, ended_by_error=None) -> TakeSumma
   lock [SFF-724, SFF-801]. It returns after the two writes. A refusal raises `ValueError` before the
   first write.
 - `camera_spec` gives the picklable `CameraTakeSpec` of one camera: the paths of its MKV and CSV,
-  the header values of 6.5, the mode size, the queue size and the stall limit.
+  the header values of 6.5, the mode size, the layout, the queue size and the stall limit.
 - `finish` takes one `CameraTakeResult` or `None` for each camera, and the frame count of the take.
   `None` means that the camera process ended without a result. The caller passes a result or `None`
   only after the rule of 8.1 step 4 [review B2]. `finish` runs the end of the take (8.1) and returns a
@@ -212,8 +215,9 @@ result = writer.end(frame_count) -> CameraTakeResult
 ```
 
 - `start` opens the MKV and calls `start_encoding()`, so the MKV header is in the file before the
-  first frame (6.3) [review S5]. It opens the CSV, writes the header and the column line, and starts
-  the writer thread. It returns before the first frame.
+  first frame (6.3) [review S5]. It builds the placeholder from the layout of the spec (6.4). It opens
+  the CSV, writes the header and the column line, and starts the writer thread. It returns before the
+  first frame.
 - `give` puts the frame in the queue. It returns at once when the queue has space. When the queue is
   full, `give` waits for space, at most the stall limit (5.2, 5.3) [agent 3]. It never drops a frame.
   After the stall limit, it raises `RecorderStalled`. After a write error of the writer thread, it
@@ -223,11 +227,16 @@ result = writer.end(frame_count) -> CameraTakeResult
 - `end` puts the end marker in the queue, with `frame_count`. The writer thread writes each queued
   item, then a `missing` row with a placeholder for each group frame up to `frame_count` (7.6), then
   closes the MKV, writes the rows that wait (6.3), writes the `# end` line (6.5), forces both files
-  to disk and closes them (5.6) [agent 11]. `end` waits for the writer thread at most the stall
-  limit. It returns a `CameraTakeResult`. When the writer thread did not finish in that time, the
-  result has `error="disk stall"`, and section 5.3 applies [C6].
+  to disk and closes them (5.6) [agent 11]. One deadline covers the put of the end marker (the queue
+  can be full) and the wait for the writer thread together: `end` returns at most the stall limit
+  after it was called. It returns a `CameraTakeResult`. When the writer thread did not finish by the
+  deadline, the result has `error="disk stall"`, and section 5.3 applies [C6].
+- After `give` or `give_missing` raised `RecorderStalled` or `RecorderWriteError`, the caller calls
+  only `end`, never `give` again. `end` pads the rest with `missing` rows; else each later row would
+  move by one [agent 3].
 - `CameraTakeResult`: `camera_id`, `rows`, `blocks`, `missing_rows`, `last_real_row` (the position of
-  the last row with a camera frame, or `None`), `queue_high_water` (items), `give_wait_count`,
+  the last row that is not `missing`, or `None`; a damaged frame's row is `missing`),
+  `queue_high_water` (items), `give_wait_count`,
   `give_wait_ms_max`, `files_closed` (true when the writer thread ended and both files are closed),
   and `error` (`None`, `"disk stall"` or the text of a write error).
 - The writer is not reusable. A call of `give` or `give_missing` before `start` or after `end`, or a
@@ -278,11 +287,13 @@ process [R10]. The kill and stall tests run the camera level in a child process 
 - With the OpenCV source (pull, Linux and macOS until phase 7), the driver drops the frames and
   `source_frame_number` counts grabs [cap 4.2]. Thus the gap does not show in the flag. It shows only
   in `arrival_ns` (section 15.3).
-- The 2 s stall watch of [cap 9.5] must not count the time that the loop spends in `give`. With the
-  OpenCV source, the last arrival is the last grab, so a `give` wait of more than 2 s would mark a
-  healthy camera `dead`. The connection commit restarts the stall watch after each `give` that
-  waited (section 10 item 9) [agent 32]. With a push source, arrivals continue during the wait, so
-  the watch is not affected.
+- The 2 s stall watch of [cap 9.5] must not count the time that a loop does not grab. With the
+  OpenCV source, the last arrival is the last grab. A `give` wait of more than 2 s stops the grabs of
+  that camera, and it also stops the grabs of each other camera, which waits at the gate for it
+  (item 1 above). Thus a healthy camera would be marked `dead`. The connection commit makes the watch
+  of a pull source count from the later of the last arrival and the end of the last wait of its loop
+  (in `give` or at the gate) (section 10 item 10) [agent 32]. With a push source, arrivals continue
+  during the wait, so the watch is not affected.
 - The camera writer counts each wait (`give_wait_count`, `give_wait_ms_max`) and the queue high-water.
   The camera process logs them at the end of the take [P §6].
 
@@ -290,7 +301,8 @@ process [R10]. The kill and stall tests run the camera level in a child process 
 
 - The stall limit is the longest time that one `give` call waits [agent 3]. Its starting value is
   10 s [P §6, R11]. Section 11 measures it before the value is fixed [R11].
-- After the limit, `give` raises `RecorderStalled`. The frame in hand is not written.
+- After the limit, `give` raises `RecorderStalled`. The frame in hand is not written. The loop then
+  calls only `end` for this camera (4.3).
 - A disk stall ends the take for all cameras, with a clear error [C5]:
   1. The camera process reports `RecorderStalled` with its camera ID to the main process.
   2. The main process ends the take for every camera, as a stop request does. The manifest gets the
@@ -316,9 +328,11 @@ process [R10]. The kill and stall tests run the camera level in a child process 
   `RecorderWriteError` at once [P §6].
 - The camera process reports it. The main process ends the take for every camera, as in 5.3 items
   2 and 3, with the warning `take_error` and the text of the error [C5].
-- The camera returns normally from `end` with the error in its result, and it stays `ready` [C6].
-- The MKV cannot be written further. Thus that camera's files are completed as a short file (7.4)
-  [agent 31] (question Q1).
+- The loop calls only `end` for this camera (4.3). The camera returns normally from `end` with the
+  error in its result, and it stays `ready` [C6].
+- The MKV cannot be written further. A write error on one file is the second short-file case of M5
+  [M5]: that camera gets a short pair (7.4), with the warnings `camera_file_short` and `take_error`,
+  and no `camera_dead`. The other cameras get normal finished pairs.
 - When the take level cannot write either (the disk is full), the files stay unfinished and the
   manifest stays `recording`. Step 5c repairs such a take (section 9).
 
@@ -454,42 +468,54 @@ raw.close()
   the muxer, and each item in the queue, are lost [M `RU/results/EVIDENCE_INDEX.md` §2.2: MKV with
   `flush_packets` lost 1 frame per kill in 48 kills]. Whether `cluster_size_limit=1` changes this is
   [NV] until T-REC-KILL.
+- The structure of a live or killed file, as the pinned FFmpeg writes it: the Segment has an unknown
+  size; each Cluster has a known size and holds one block (with `cluster_size_limit=1`); the first
+  child of each Cluster is a CRC-32 element. A file read after 5 muxed blocks held 4 such Clusters
+  [review]. The completion of 7.4 and the readers must walk these elements [SFF-739, SFF-740].
 
 ### 6.4 The placeholder [M1, M2]
 
-- The placeholder has the width, the height, the number of components and the sampling factors of
-  each component of the camera's own frames. They come from the SOF segment (`FFC0`, `FFC1` or
-  `FFC2`) of the camera's first frame of the take that is not damaged [M2].
-- The writer thread makes it once for each camera file: `cv2.imencode(".jpg", zeros, params)` of an
-  all-zero image of that size, with `IMWRITE_JPEG_QUALITY` 90, `IMWRITE_JPEG_OPTIMIZE` 1 (optimised
-  Huffman tables) [M2] and the `IMWRITE_JPEG_SAMPLING_FACTOR` of the layout [agent 21]:
-
-  | Y sampling (Cb and Cr are 1x1) | OpenCV value | Layout |
-  |---|---|---|
-  | 1x1 | `IMWRITE_JPEG_SAMPLING_FACTOR_444` | 4:4:4 |
-  | 2x1 | `IMWRITE_JPEG_SAMPLING_FACTOR_422` | 4:2:2 |
-  | 2x2 | `IMWRITE_JPEG_SAMPLING_FACTOR_420` | 4:2:0 |
-  | 4x1 | `IMWRITE_JPEG_SAMPLING_FACTOR_411` | 4:1:1 |
-  | 1x2 | `IMWRITE_JPEG_SAMPLING_FACTOR_440` | 4:4:0 |
-  | one component | a one-channel zero image | grey |
-
-- The writer parses the SOF of the placeholder that it made, and checks that it equals the SOF of the
-  camera frame. Measured with OpenCV 5.1.0: each layout of the table gives the same SOF, decodes to
-  0, and has the sizes of the evidence (640x480 4:2:2: 2,684 bytes; 1920x1080 4:2:2: 16,484 bytes)
-  [review; M `RS/mkv_black_placeholder/FINDINGS.md`].
-- A frame whose layout is not in the table (for example chroma factors other than 1x1, or four
-  components), or a check that fails: the writer uses a 4:2:0 placeholder of the camera's size and
-  logs one warning for the take [agent 22]. Blender then shows that file wrongly
-  [M `RS/mkv_black_placeholder/FINDINGS.md`]. No test camera sends such a frame: the 88 real camera
-  JPEGs of the research are 4:2:2 baseline [`RU/results/EVIDENCE_INDEX.md` §2.1].
-- Before the first frame that is not damaged, the layout is not known. The rows that come before it
-  (damaged frames, `give_missing` items) wait in the writer thread. Their placeholders go into the
-  MKV when the first good frame comes, before that frame [agent 22]. Thus the first block always has
-  the camera's size and layout [M7].
-- When no frame that is not damaged comes before `end` (the camera died or gave only damaged frames),
-  the writer uses the mode size of the take spec and the layout 4:2:2 [agent 22].
+- The placeholder has the width, the height, the number of components and the H/V sampling factors
+  of each component of the camera's own frames [M2].
+- Their source is the `layout` of the take spec: the SOF segment (`FFC0`, `FFC1` or `FFC2`) of the
+  camera's last good frame before the take [agent 22]. Each camera streams before a take: it passes
+  the warm-up and the rate check, and a take starts only when each selected camera is `ready`
+  [cap 8.3]. Thus the layout is known at `start`, the placeholder is built in `start`, and every row is
+  written live from row 0. The first block always has the camera's size and layout [M7].
+- When `layout` is `None` (a test, or a camera that never gave a good frame), the writer holds the
+  rows until the first good frame of the take, and takes its SOF. It holds at most the queue size of
+  rows (about 3 s). When no good frame came in that time, it builds the placeholder from the mode size
+  with the factors 2x1, 1x1, 1x1 (4:2:2, the layout of all 88 real camera JPEGs of the research
+  [`RU/results/EVIDENCE_INDEX.md` §2.1]), writes the held rows with it, and logs one warning
+  [agent 22].
+- A good frame whose layout differs from the layout of the placeholder (size, number of components
+  or H/V factors) is a defect, because a setting change is refused during a take [D36]. The writer
+  logs one warning and keeps the placeholder.
+- The SOF compare uses the size, the number of components and the H/V factors of each component
+  only. It never compares bytes: cameras and encoders differ in component IDs and table selectors.
+- The writer builds the placeholder by hand, with no encoder [agent 21]. It is a flat black baseline
+  JPEG: SOI; one DQT with all 64 values 1; the SOF with the camera's size and factors (component IDs
+  1, 2, 3, all on table 0); one DC table with two codes (category 0: `0`; category 11: `10`); one AC
+  table with one code (EOB: `0`); one SOS with all components; then the entropy-coded data in MCU
+  order (interleaved for 3 components, one block per MCU for 1 component). The first Y block has the
+  DC difference −1024 (Y = 0); each other block has the difference 0; each block ends with EOB; the
+  last byte is padded with 1 bits, and a byte 0xFF gets a 0x00 after it; then EOI. Thus each block
+  costs 2 bits.
+- Measured with a synthetic prototype (not kept), PyAV 19.0.2 and OpenCV 5.1.0 [review]: for 4:4:4,
+  4:2:2, 4:2:0, 4:4:0, 4:1:1 and grey, at 640x480, 1920x1080 and 1278x719, each placeholder decodes to
+  Y = 0 in OpenCV and PyAV, with the same pixel format as an OpenCV JPEG of that layout (for example
+  `yuvj422p`). Sizes: 16,353 bytes at 1920x1080 4:2:2 and 2,553 bytes at 640x480 4:2:2. With the
+  standard tables of ITU-T T.81 Annex K.3, the same placeholders were 48,926 and 7,526 bytes. The
+  OpenCV placeholder with optimised tables was 16,484 bytes [M `RS/mkv_black_placeholder/FINDINGS.md`].
+  Thus the minimal tables are used.
+- The player spec builds its fixtures with a flat DC-only encoder of the same structure, with the
+  Annex K tables (`specs/player.md` section 12.2, branch `dom/player`). A reader decodes either
+  table set. The two specs agree on the image; the tables of a placeholder are not a format rule.
+- A layout with more than 3 components, or with a sum of H × V above 10 over the components (the
+  limit of ITU-T T.81 for one MCU), cannot be built. `start_take` refuses such a camera with
+  `ValueError` [agent 22]. No test camera sends such a frame.
 - The same `bytes` object is muxed for each `missing` row of the file. At 1080p 4:2:2 and 30 fps, one
-  hour of placeholders is 1.8 GB [M2; M `RS/mkv_black_placeholder/FINDINGS.md`].
+  hour of placeholders is about 1.8 GB [M2].
 
 ### 6.5 The timing sidecar (CSV)
 
@@ -556,8 +582,8 @@ Rows:
   ```
   0,1000,1203311,1180002,0,4127,61234,5b1e0c2a
   1,1003,1303311,1280002,1,65438,60911,0c41aa07
-  2,1004,1336644,1313335,16,126426,16484,9e01b2c3
-  300,,,,16,9480122,16484,77a0f1d2
+  2,1004,1336644,1313335,16,126426,16353,9e01b2c3
+  300,,,,16,9480122,16353,77a0f1d2
   301,,,,16,,,3a9c0d11
   ```
 
@@ -597,7 +623,7 @@ Footer lines [SFF-745]:
 | `files` | One item: `{"path": "<rec>_info.json", "role": "capture_info", "owner": "skellycam", "sha256": <SHA-256 of the file>}` [SFF-723]. |
 | `warnings` | `[]` at the start. At the end: `camera_gap` for each camera with `gaps` > 0 [SFF-727]; `camera_dead` for each camera that stopped during the take, with `last_frame` [M8, F-5]; `camera_file_short` for each short file, with the block and row counts [M5, F-5]; `take_error` when an error ended the take [C5, F-5]. `source` is `"skellycam"`. |
 | `privacy` | `fields`: `/camera_configs/<key>/device/os_name` of the capture info when not null, `utc_offset_min` of each timing sidecar, `/recording_name` of the manifest; sorted [SFF-881, SFF-882]. `media_shows_people`: `true`. |
-| `summary` | SFF-728, with `missing` for each camera: the `missing` count of its `# end` line [M3, F-1]. In the state `recording`: each `duration_s`, `stored_px`, `gaps`, `filled` and `missing` is null. At the end: computed from the CSVs; `stored_px` is the size of the first block that is not a placeholder (or of the placeholder when there is no such block), from its SOF; `user_name` and `model` are null (5d); `exposure_us` from the capture info (6.7). F-1 gives `duration_s` when the last rows have no time. |
+| `summary` | SFF-728, with `missing` for each camera, after `filled`: the `missing` count of its `# end` line [M3, F-1]. In the state `recording`: each `duration_s`, `stored_px`, `gaps`, `filled` and `missing` is null. At the end: computed from the CSVs; `stored_px` is the size of the first block that is not a placeholder (or of the placeholder when there is no such block), from its SOF; `user_name` and `model` are null (5d); `exposure_us` from the capture info (6.7). F-1 gives `duration_s` when the last rows have no time. |
 
 - Written by `start_take` before the first frame, and by `finish` after the last media file is
   closed [SFF-724]. Each write reads the file when it exists, changes it, and writes it whole, under
@@ -704,14 +730,17 @@ A frame with no bit of the error mask 0x0F gives one block and one row. `flags` 
 - A camera dies during a take [D38]. The other cameras keep recording [D38]. Its camera process
   still runs.
 - The writer keeps writing placeholders to the end of the take [M1]. The camera loop calls
-  `give_missing` once for each group frame of the take after the death (section 10 item 6), and `end`
+  `give_missing` once for each group frame of the take after the death (section 10 item 7), and `end`
   adds a placeholder for each group frame that is still missing at the end (4.3) [agent 24].
 - Each such row has `frame`, `flags` (16), `byte_offset`, `byte_size` and `crc32`. The times and the
   source frame number are empty [M3, F-1].
 - The MKV is closed normally, with its index, and has one block for each row [M1].
-- The manifest gets a warning `camera_dead` with `last_frame`: the position of the last row with a
-  camera frame (`last_real_row`) [M8] [agent 13]. The player shows "camera lost at frame N" with
-  N = `last_frame` + 1, the first group frame with no image from that camera [M8].
+- The manifest gets a warning `camera_dead` with `last_frame`: the position of the last row that is
+  not `missing` (`last_real_row`), or `none` [M8, F-5]. A damaged frame's row is `missing`, so it does
+  not count. The player shows "camera lost at frame N" with N = `last_frame` + 1, the first group
+  frame with no image from that camera, and N = 0 for `none` [M8].
+- The camera process sends its result at once after `end` returns, before it closes the source
+  [cap 6.9] (section 10 item 7).
 - Thus every camera file of the take has the same number of rows and of blocks [R2, M1]. U4 goes.
 
 ### 7.4 A killed or hung camera process: the short file [R4, M5, C2]
@@ -722,7 +751,8 @@ A frame with no bit of the error mask 0x0F gives one block and one row. `flags` 
 - Nothing can write its video file then. That file ends early [M5].
 - The take level completes the files of that camera in `finish`, at the end of the same take, in
   the same run of the app [R4, C2] [agent 12]. It does this only after the camera's process has been
-  joined, or after the camera's result says `files_closed` (5.4) [M5, review B2]:
+  joined, or after the camera's result says `files_closed` (5.4) [M5, review B2]. It skips a CSV that
+  already ends with an `# end` line (a camera that ended normally before its process ended):
   1. It walks the EBML elements of the MKV from the start of the Segment data and finds the complete
      blocks [SFF-740].
   2. It reads the CSV strictly [SFF-746]. It keeps the rows up to the first row that is not
@@ -741,6 +771,9 @@ A frame with no bit of the error mask 0x0F gives one block and one row. `flags` 
   the header of 6.3. Its sidecar holds only `missing` rows with empty byte fields [F-2].
 - The manifest gets the warnings `camera_dead` (reason "hang", "disk stall", or the exit code) and
   `camera_file_short` with `blocks=<n> rows=<frame count>` [M5, M8, F-5].
+- A write error on one file (5.4) is the second short-file case [M5]. The same steps 1 to 6 apply
+  after `end` returned with `files_closed`. The manifest gets `camera_file_short` and `take_error`,
+  and no `camera_dead`: the camera stays `ready` [C6].
 - The user is not asked: the program that records a take may complete that take's files [C2, F-4].
   Step 5c reuses the steps 1 to 4 for its repair, and may fill the short file later [M5].
 
@@ -749,8 +782,8 @@ A frame with no bit of the error mask 0x0F gives one block and one row. `flags` 
 - A disk stall: a camera whose writer finishes within the limit of 5.3 ends normally. Its `end`
   pads with placeholders to the frame count, as 7.3 does. A camera whose writer stays stuck gets the
   short file of 7.4 [C6, M5].
-- A write error: the MKV cannot be written further, so the camera's files are completed as a short
-  file (7.4) [agent 31] (question Q1). The camera stays `ready` [C6].
+- A write error: the MKV cannot be written further, so the camera gets a short pair (7.4), the second
+  short-file case of M5 [M5]. The camera stays `ready` [C6].
 
 ### 7.6 Equal row counts
 
@@ -870,42 +903,48 @@ commit, with the connection tests of 12.2, does these steps:
    from the capture check [cap 4.2, ring 5.2].
 2. **The bytes.** `payload` is the object that the capture check gives to the ring: the camera's
    bytes, with the standard DHT when the check inserted it [M6, ring 5.2, ring 5.7].
-3. **The first frame.** The first frame of a take is one agreed group frame for every camera. The
+3. **The layout.** The loop keeps the payload of its last good frame. When the take starts, the
+   camera process parses its SOF (`parse_sof`) and gives the `layout` to the take level (6.4).
+4. **The first frame.** The first frame of a take is one agreed group frame for every camera. The
    rule of today stays: `first_recording_frame_number` is the gate count plus 3
    (`CameraGroup.start_recording` in `camera_group.py`) [M7, review B4]. Row 0 of each camera is
    that group frame.
-4. **Start and end.** The recording-info message to the camera processes carries the
+5. **Start and end.** The recording-info message to the camera processes carries the
    `CameraTakeSpec`. The camera process calls `start` when it gets it. After the last group frame of
    the take, it calls `end(frame_count)` with the frame count of 7.6. The finished message carries the
    `CameraTakeResult`.
-5. **The interim decode goes** [D9]: the decode of [cap 5.5] for the old recorder, and the BGR
+6. **The interim decode goes** [D9]: the decode of [cap 5.5] for the old recorder, and the BGR
    conversion of [cap 13.2] for the old recorder. A camera with a BGR ring keeps one decode, in the
    decode stage on its own thread [ring 8.2 to 8.4]. Item 5 of [cap 17.2] then no longer applies.
-6. **A dead camera.** U4 goes. During a take, a camera that becomes `dead` does not end its process
+7. **A dead camera.** U4 goes. During a take, a camera that becomes `dead` does not end its process
    [M1]. Its loop waits on the group frame counter of the orchestrator (the largest gate count of the
    cameras in the gate), with blocking sleeps of 1 ms or more [cap 4.3], and calls `give_missing`
-   once for each new group frame up to the last frame of the take (7.3). Then it calls `end`, closes
-   the source with the bounded steps of [cap 6.9], reports and ends [D38] [agent 24].
-7. **U5 goes.** A damaged frame gives a placeholder on a `missing` row (7.2).
-8. **U12 goes.** On a hang during a take, the camera process reports, then ends at once with
+   once for each new group frame up to the last frame of the take (7.3). Then it calls `end`, sends
+   its result at once, closes the source with the bounded steps of [cap 6.9], reports and ends [D38]
+   [agent 24]. Thus a slow close of the source does not delay the end of the take.
+8. **U5 goes.** A damaged frame gives a placeholder on a `missing` row (7.2).
+9. **U12 goes.** On a hang during a take, the camera process reports, then ends at once with
    `os._exit` (7.4).
-9. **The stall watch.** The loop restarts the 2 s stall watch of [cap 9.5] after each `give` that
-   waited (5.2) [agent 32].
-10. **The stall and the write error.** The loop catches `RecorderStalled` and `RecorderWriteError`
-    and reports them. The main process ends the take (5.3, 5.4) [C5]. The state transitions are those
+10. **The stall watch.** For a pull source, the 2 s stall watch of [cap 9.5] counts from the later of
+    the last arrival and the end of the last wait of the loop, in `give` or at the gate (5.2)
+    [agent 32].
+11. **The stall and the write error.** The loop catches `RecorderStalled` and `RecorderWriteError`,
+    reports them, and from then on calls only `end` for that camera (4.3). The main process ends the take (5.3, 5.4) [C5]. The state transitions are those
     of 5.3 and 5.4 [C6]. Section 14 adds them to section 8 of `windows-capture.md`.
-11. **The end of a take.** `CameraGroup.stop_recording` follows 8.1 and calls `Take.finish`. The stop
+12. **The end of a take.** `CameraGroup.stop_recording` follows 8.1 and calls `Take.finish`. The stop
     endpoint builds `StopRecordingResponse` from `TakeSummary` (8.2). The old finaliser goes (8.3).
-12. **The start of a take.** The start endpoint calls `start_take`. A `<rec>` that breaks SFF-715 gets
+13. **The start of a take.** The start endpoint calls `start_take`. A `<rec>` that breaks SFF-715 gets
     HTTP 422. A take folder that holds files gets HTTP 409 [agent 16]. A request that names a
     microphone (`mic_device_index` 0 or more) gets HTTP 422 with the text "audio recording returns in
     step 5b; start again with no microphone" [C1].
-13. **Playback list.** `list_recordings` shows a folder whose `recording_manifest.json` has
+14. **Playback list.** `list_recordings` shows a folder whose `recording_manifest.json` has
     `"skellyfileformat": "recording_manifest"` with the mark "needs the new player" [C7]: the entry
     gets `needs_new_player: true`, `video_count` from the manifest `cameras`, and null statistics.
-    The video list and the stream endpoints of such a take give HTTP 409 with the same text. The UI
-    shows the mark and plays nothing [agent 33]. Old recordings do not change.
-14. **Deletions** of 8.3, after a search for each caller.
+    Only the old video endpoints (the video list and the stream of today's player) give HTTP 409 with
+    the same text for such a take. The mark never blocks opening: when the new player exists, the UI
+    sends a new-format folder to it before any call to the old video endpoints [agent 33]. Old
+    recordings do not change.
+15. **Deletions** of 8.3, after a search for each caller.
 
 The tests of `windows-capture.md` that change are in section 14.
 
@@ -993,9 +1032,9 @@ Each test of the kinds unit and process uses at least two cameras unless it says
 | T-REC-18 | unit | Inject the two clocks of `start_take`. | The host clock is read first, the UTC clock at once after it, both before the first frame; `utc_offset_min` is the local offset [SFF-774]. |
 | T-REC-19 | unit | Hold the writer thread. Give frames until the queue is full, then one more from a second thread. Release the writer. | The extra `give` waits; while it waits, the process uses under 2 % of one core; it returns when space comes; each frame is in the CSV; the counts of 5.2 are right [P §6, ring 8.10]. |
 | T-REC-20 | unit | Queue sizes at 30/1, 30000/1001 and 60/1. | 90, 90 and 180 items (5.1) [agent 4]. |
-| T-REC-21 | process | Camera A writes in a child process; its MKV file object blocks forever. The stall limit is scaled down. A second camera writes in the main process. | `give` of A raises `RecorderStalled` at the limit (±10 %); the take ends for both; B ends normally with placeholders to the frame count; A's process is ended at the time of its end message plus the limit plus the margin; A's result is `"disk stall"`; A's files are completed as a short file only after the join; the manifest has `take_error` "disk stall on camera <id>", `camera_dead` and `camera_file_short` [C5, C6, M5, review B2, review S8]. |
-| T-REC-22 | unit | The MKV file object of one camera raises `OSError(ENOSPC)` at frame 50; the container close then raises. | No exception leaves the writer thread; the next `give` raises `RecorderWriteError`; `end` returns with the error and `files_closed`; the take level completes a short file (7.5); the other camera is finished; the manifest has `take_error` with the error text [C5, C6, review]. |
-| T-REC-23 | unit | Camera B dies at row 300 of a take of 600 group frames: the test calls `give_missing` for rows 300 to 549, then `end(600)`. | B's CSV has 600 rows; rows 300 to 599 are `missing` rows with empty times and placeholder byte fields; B's MKV has 600 blocks and a normal end; `missing=300`; `camera_dead` with `last_frame=299`; the stop statistics leave out the `missing` rows [R2, M1, M3, M8, F-5]. |
+| T-REC-21 | process | Camera A writes in a child process; its MKV file object blocks forever. The stall limit is scaled down. A second camera writes in the main process. | `give` of A raises `RecorderStalled` at the limit (±10 %); A gets no `give` after it; the take ends for both; B ends normally with placeholders to the frame count; A's process is ended no later than the time of its end message plus the limit plus the margin; A's result is `"disk stall"`; A's files are completed as a short file only after the join; the manifest has `take_error` "disk stall on camera <id>", `camera_dead` and `camera_file_short` [C5, C6, M5, review B2, review S8]. |
+| T-REC-22 | unit | The MKV file object of one camera raises `OSError(ENOSPC)` at frame 50; the container close then raises. | No exception leaves the writer thread; the next `give` raises `RecorderWriteError`; `end` returns with the error and `files_closed`; the take level completes a short pair for that camera (rows to the frame count, MKV cut after its last block with a row, `missing` rows with no block, `# repair`, `# end`); the other camera is a normal finished pair; the manifest has `take_error` with the error text and `camera_file_short`, and no `camera_dead` [C5, C6, M5, review]. |
+| T-REC-23 | unit | Camera B dies at row 300 of a take of 600 group frames: the test calls `give_missing` for rows 300 to 549, then `end(600)`. Case 2: rows 297 to 299 of B are damaged frames before the death. Case 3: B dies before its first frame. | B's CSV has 600 rows; rows 300 to 599 are `missing` rows with empty times and placeholder byte fields; B's MKV has 600 blocks and a normal end; `missing=300`; `camera_dead` with `last_frame=299` (case 2: `last_frame=296`, `missing=303`; case 3: `last_frame=none`); the stop statistics leave out the `missing` rows [R2, M1, M3, M8, F-5]. |
 | T-REC-24 | process | Camera B writes in a child process (`child_writer.py`). It ends with `os._exit` at 20 kill points: during a `mux`, between a `mux` and its row write, during a row write. The take ends 100 frames later. | `finish` runs only after the join; B's MKV is cut after its last block with a row; the CSV keeps each good row; `missing` rows with empty byte fields reach the frame count; `# repair` then `# end`; no fit line; each row's bytes equal the frame given; each kept block parses; `camera_dead` and `camera_file_short` [R4, M5, C2, SFF-794, SFF-795, F-2, F-4]. |
 | T-REC-25 | unit | Mixes: all live; one dead at 10; one short at 20 and one dead at 30; all dead. | Equal rows in every case, equal to the frame count; equal blocks except the short file [R2, M1, M5, SFF-754]. |
 | T-REC-26 | unit | Trace the end of a take. | The order of 8.1: each camera's `end`, then the completions, the CSV reads, the capture info, the manifest last [SFF-724]. |
@@ -1006,8 +1045,8 @@ Each test of the kinds unit and process uses at least two cameras unless it says
 | T-REC-31 | unit | Open each finished MKV of T-REC-12 and T-REC-23 with PyAV 19.0.2, with OpenCV 5.1.0 (`CAP_PROP_FRAME_COUNT`, 11 `POS_FRAMES` seeks, over and after the placeholders) and with `SequentialVideoReader`. | The counts equal the rows; each seek gives the expected row; placeholders decode to 0; `SequentialVideoReader` reads every frame [M `RS/mkv_black_placeholder/FINDINGS.md`, M10]. |
 | T-REC-32 | unit | Call `give` and `give_missing` before `start` and after `end`; call `end` twice. | Each raises `RuntimeError` (4.3). |
 | T-REC-33 | unit | Search the module for PyAV calls. | Only the calls of 6.3; no `add_stream_from_template`, no `add_stream(`; `add_mux_stream` with `rate`, `width` and `height` as keywords; the container options hold `flush_packets` `"1"` and `cluster_size_limit` `"1"`; `start_encoding` in `start` [M `RU/results/jpeg_passthrough/FINDINGS.md` §2.1, review B1, S5, S6]. |
-| T-REC-34 | unit | Placeholders for camera frames in each layout of 6.4 (4:4:4, 4:2:2, 4:2:0, 4:1:1, 4:4:0, grey) at 640x480 and 1920x1080, and for a frame with an unknown layout. | The SOF of each placeholder equals the SOF of the camera frame; each decodes to 0; the sizes are at most those of the evidence plus 1 %; the unknown layout gives 4:2:0 and one warning [M2, agent 21, agent 22]. |
-| T-REC-35 | unit | Takes whose first frames are damaged (frames 0 to 2), and a camera with only `give_missing` items. | Rows 0 to 2 are placeholders with the layout of frame 3, and block 0 is a placeholder of the camera's size; the camera with no frame gets 4:2:2 placeholders of the mode size [M2, M7, agent 22]. |
+| T-REC-34 | unit | Hand-built placeholders for 4:2:2, 4:2:0, 4:4:4, 4:4:0, 4:1:1 and grey, at 640x480, 1920x1080 and 1278x719; and a layout of 4 components. | The size, component count and H/V factors of each placeholder SOF equal the layout; each decodes to Y = 0 in PyAV and in OpenCV, with the same pixel format as an OpenCV JPEG of that layout; 1920x1080 4:2:2 is at most 16,353 bytes plus 1 %; the 4-component layout is refused by `start_take` [M2, agent 21, agent 22]. |
+| T-REC-35 | unit | A take whose spec has a layout and whose frames 0 to 2 are damaged; a spec with `layout` `None` and damaged frames 0 to 2, then good frames; a spec with `layout` `None` and only damaged frames for longer than the queue size. | Case 1: rows 0 to 2 are on disk before frame 3 is given, with the spec's placeholder; case 2: rows 0 to 2 wait and get the layout of frame 3; case 3: after the queue size of rows, the held rows are written with a 4:2:2 placeholder of the mode size and one warning [M2, M7, agent 22]. |
 | T-REC-36 | unit | A take at 1080p with frames of 600 kB at 60/1, 30 s, in one process. | No `give` wait on a free disk; every frame in the CSV (a sanity check, not a measurement). |
 | T-REC-37 | unit | Run the conformance subset of 12.3. | Exactly the expected results of 12.3. |
 | T-REC-STALL | benchmark | Section 11. | Section 11. |
@@ -1019,11 +1058,11 @@ Each test of the kinds unit and process uses at least two cameras unless it says
 | T-REC-42 | connection | The fake delivers a cut-off JPEG during a take. | A placeholder on a `missing` row; the previous image is not stored again; no decode call [R3, M1]. |
 | T-REC-43 | connection | Three fakes record; one gives device removed at frame 300. | That camera is `dead`; its process runs to the end of the take and writes placeholders; its MKV is closed normally; every CSV and MKV has the same rows and blocks; `camera_dead` in the manifest; no recording info JSON [R2, M1, D38]. |
 | T-REC-44 | connection | A bounded call of one fake hangs during a take. | The failure is reported; the process ends within 1 s of the report; the take level completes its short file after the join; the others record to the stop [R4, M5]. |
-| T-REC-45 | connection | Start and stop a take over HTTP with fake sources (not port 53117); then a start request with `mic_device_index` 0. | The stop response has each field of `StopRecordingResponse` with the values of 8.2 [R5]; the second start gets HTTP 422 with the text of section 10 item 12 [C1]. |
+| T-REC-45 | connection | Start and stop a take over HTTP with fake sources (not port 53117); then a start request with `mic_device_index` 0. | The stop response has each field of `StopRecordingResponse` with the values of 8.2 [R5]; the second start gets HTTP 422 with the text of section 10 item 13 [C1]. |
 | T-REC-46 | connection | A fake sends a JPEG with no DHT. | The ring slot and the MKV block hold the same bytes, with the inserted DHT; the row has no flag for it [M6]. |
 | T-REC-47 | connection | Two fakes start a take at gate count 100. | Row 0 of each camera is group frame 103 [review B4, M7]. |
-| T-REC-48 | connection | The OpenCV fake records; its writer is held 3 s; then a fake writer is held past the stall limit and then released; then held for good. | Case 1: the camera is not marked `dead` (the stall watch restarts after the wait); case 2: the take ends with `take_error`, the camera stays `ready`; case 3: the camera is `failed`, stage `recording`, reason "disk stall", and "apply again" reopens it [agent 32, C5, C6]. |
-| T-REC-49 | connection | List the playback recordings with one old recording and one new take; ask for the videos of the new take. | Both are listed; the new take has `needs_new_player: true`; its video list gives HTTP 409 with the mark text [C7]. |
+| T-REC-48 | connection | Two OpenCV fakes record; the writer of one is held 3 s; then a fake writer is held past the stall limit and then released; then held for good. | Case 1: neither camera is marked `dead`, also the one that waited at the gate (5.2); case 2: the take ends with `take_error`, the camera stays `ready`; case 3: the camera is `failed`, stage `recording`, reason "disk stall", and "apply again" reopens it [agent 32, C5, C6]. |
+| T-REC-49 | connection | List the playback recordings with one old recording and one new take; ask for the videos of the new take. | Both are listed; the new take has `needs_new_player: true`; the old video list endpoint gives HTTP 409 with the mark text for it; no endpoint of the take folder itself is blocked [C7]. |
 
 ### 12.3 Conformance check against skellyfileformat
 
@@ -1084,7 +1123,7 @@ Each test of the kinds unit and process uses at least two cameras unless it says
 | M2 | T-REC-34, T-REC-35 |
 | M3 | T-REC-08, T-REC-11, T-REC-12, T-REC-23 |
 | M4 | T-REC-05, T-REC-12 (the two exceptions) |
-| M5 | T-REC-21, T-REC-24, T-REC-25, T-REC-30, T-REC-44 |
+| M5 | T-REC-21, T-REC-22 (the second case), T-REC-24, T-REC-25, T-REC-30, T-REC-44 |
 | M6 | T-REC-05, T-REC-46 |
 | M7 | T-REC-35, T-REC-47 |
 | M8 | T-REC-23 |
@@ -1148,9 +1187,10 @@ SFF-756, SFF-758, SFF-781, SFF-782, SFF-885 and the column table of section 8.
 > writer writes it for a frame with a capture error, and for each multi-camera frame after the last
 > frame of a camera that stopped during the take. The block of a `missing` row is a placeholder: a
 > baseline JPEG of one colour, black, with the width, the height, the number of components and the
-> sampling factors of each component of the SOF of the first frame of that camera file that is not
-> `missing`. When the file has no such frame, the writer uses the mode size and the factors 2x1, 1x1,
-> 1x1. In a `missing` row, `source_frame_number`, `arrival_ns` and `sample_ns` hold the values of the
+> H/V sampling factors of each component of the camera's frames. When the writer knows no frame of
+> the camera, it uses the mode size and the factors 2x1, 1x1, 1x1. Its Huffman and quantisation
+> tables are the writer's choice. The writer compares layouts by the size, the number of components
+> and the H/V factors only. In a `missing` row, `source_frame_number`, `arrival_ns` and `sample_ns` hold the values of the
 > frame that had the error, or are empty when the camera gave no frame.
 >
 > **Section 8 columns** (change): `source_frame_number`: "…, or empty"; `arrival_ns`: "The arrival
@@ -1161,9 +1201,12 @@ SFF-756, SFF-758, SFF-781, SFF-782, SFF-885 and the column table of section 8.
 > **SFF-758** (change): `# end rows=<R> gaps=<G> filled=<F> missing=<M> encode_skips=<E>`. `missing`
 > is the number of rows with the flag `missing`. It comes before the last key (SFF-745).
 >
-> **SFF-728** (change): each item of `cameras` also has `missing`, the count of the `# end` line
-> (null in the state `recording`). `duration_s` uses the largest `arrival_ns` of the last row that
+> **SFF-728** (change): each item of `cameras` also has `missing`, after `filled`: the count of the
+> `# end` line (null in the state `recording`). `duration_s` uses the largest `arrival_ns` of the last row that
 > holds an `arrival_ns` of each video sidecar.
+>
+> **SFF-729** (add): A reader also gives `summary_stale` when `missing` of a summary camera differs
+> from the `# end` line of a finished or repaired sidecar.
 >
 > **SFF-781** (add): A row with no `arrival_ns` has no player time. In the strict player time of
 > SFF-782, the reader skips it.
@@ -1173,8 +1216,9 @@ SFF-756, SFF-758, SFF-781, SFF-782, SFF-885 and the column table of section 8.
 
 **F-2: the short file** [M5]. Touches SFF-740, SFF-754, SFF-759, SFF-795 and SFF-727 (code in F-5).
 
-> **SFF-754** (add): A camera file has one block for each row, with one exception: when the process
-> that writes the camera file is killed or hangs, the file ends early. Each row after its last block
+> **SFF-754** (add): A camera file has one block for each row, with two exceptions: when the process
+> that writes the camera file is killed or hangs, and when a write to the camera file fails, the file
+> ends early. Each row after its last block
 > has the flag `missing` and empty `byte_offset` and `byte_size`. Such a row has no block. A camera
 > file can hold no block: it then holds only the EBML header, the Segment and the Tracks.
 >
@@ -1188,8 +1232,8 @@ SFF-756, SFF-758, SFF-781, SFF-782, SFF-885 and the column table of section 8.
 > cut, and they do not count as blocks. A later repair may replace the tail of a short file with
 > placeholders (F-1).
 
-If the user accepts question Q1, the first sentence of the SFF-754 text also names a write error
-that stops the writer of the camera file.
+The user decided the write error as the second case on 2026-11-20 [M5]. If that decision changes,
+only the words "and when a write to the camera file fails" go.
 
 **F-3: two exceptions to "the stored bytes are the camera's bytes"** [M4, M6]. Touches SFF-734.
 
@@ -1213,9 +1257,16 @@ that stops the writer of the camera file.
 > **SFF-727** (add): skellycam also writes `camera_dead` (a camera stopped during the take; its
 > sidecar holds `missing` rows to the end of the take), `camera_file_short` (F-2) and `take_error`
 > (an error ended the take). The `detail` of `camera_dead` is `last_frame=<p> reason=<text>`, where p
-> is the position of the last row with a camera frame, or `none`. A player shows "camera lost at
-> frame N" with N = p + 1. The `detail` of `camera_file_short` is `blocks=<b> rows=<r>`. The `detail`
-> of `take_error` is the error text, and its `camera_key` is the camera of the error, or null.
+> is the position of the last row that is not `missing`, or `none`. The `detail` of
+> `camera_file_short` is `blocks=<b> rows=<r>`. The `detail` of `take_error` is the error text, and
+> its `camera_key` is the camera of the error, or null. A write error gives `camera_file_short` and
+> `take_error`, and no `camera_dead`.
+>
+> **(new, reader)**: A reader parses the `detail` of `camera_dead` and of `camera_file_short` as keys
+> and values: each key is followed by `=`, the keys are separated by one space, the values of `p`,
+> `b` and `r` are integers in the form of SFF-701 (or `none` for `p`), and the value of `reason` is
+> the rest of the text. A player shows "camera lost at frame N" with N = p + 1, and N = 0 for `none`.
+> A `detail` that does not parse gives the take warning of the code with no frame number.
 
 **F-6: a provisional key** [C3]. Touches SFF-752, SFF-803 and the camera config table of section 13.
 
@@ -1239,8 +1290,17 @@ that stops the writer of the camera file.
 
 **F-9: when a player checks the block count** (from the player spec). Touches SFF-759.
 
-> **SFF-759** (add): A player MAY check the rule at each frame that it reads and at the tail of the
-> file, in place of a walk of the whole file when it opens it.
+> **SFF-759** (add): A player MAY show the frames of a finished or repaired camera file before it has
+> counted its blocks. It then checks, for each frame that it reads, that the block of the frame is the
+> next block after the block of the previous row with byte fields (SFF-739), and, at the open, that no
+> block follows the last block that a row points at. When a check fails, the player stops showing
+> images of that camera file and reports the file as `invalid` with `bad_metadata`. The reader result
+> of SFF-885 does not use this order.
+
+**Out of the list.** The player spec (section 14.2, branch `dom/player`) names four cases that the
+format leaves open: a missing column that a reader needs; a `frame` value that is not the position; a
+player time that decreases; a camera file whose track is not `V_MJPEG`. They are not in F-1 to F-10.
+They stay open.
 
 **F-10: a `missing` row in a player** [M9] (from the player spec). Touches SFF-783.
 
@@ -1318,10 +1378,10 @@ VPF8 and J3QP record that R1 to R5, M1 to M5 and C5, C6 replace their effect.
   no gap [cap 4.2]. Only `arrival_ns` shows the pause. This lasts until native capture on Linux and
   macOS (phase 7).
 - While `give` waits, the camera writes no ring slot. The preview of the group stops for that time.
-- A camera with a JPEG layout outside the table of 6.4 gets a 4:2:0 placeholder, and Blender shows
-  that file wrongly [M `RS/mkv_black_placeholder/FINDINGS.md`].
-- The rows before the first good frame of a camera wait in memory (6.4). A kill in that time loses
-  them.
+- A camera that gave no good frame before the take holds its first rows in memory (6.4). A kill in
+  that time loses them. In the app this does not occur: each camera is `ready` before a take.
+- The placeholder encoder is new code. T-REC-34 checks it in two decoders; Blender is checked by the
+  user (15.1).
 - One hour of placeholders at 1080p 4:2:2 and 30 fps is 1.8 GB [M2].
 - The 3 s queue and the 10 s stall limit are starting values until section 11 [R11].
 - The research numbers come from one machine with one NVMe drive [M `RU/results/EVIDENCE_INDEX.md`
@@ -1367,9 +1427,9 @@ VPF8 and J3QP record that R1 to R5, M1 to M5 and C5, C6 replace their effect.
     finished. M1 keeps it until the take ends, writing placeholders (section 14).
 18. **[cap 9.5] with a long `give` wait.** The 2 s stall watch of the OpenCV pull source would mark a
     healthy camera `dead` (5.2) [agent 32].
-19. **M5 ("one case stays short") against a write error.** After a write error (for example a full
-    disk), nothing can write that MKV either. Thus a write error also gives a short file (7.5)
-    [agent 31]. Question Q1.
+19. **M5 ("one case stays short") against a write error.** After a write error, nothing can write
+    that MKV either. The user decided on 2026-11-20 that a write error is the second short-file case
+    [M5].
 20. **[ring 5.1] `frame_number` against [cap 5.3].** Already in [cap 17.2] item 2. The recorder does
     not write `frame_number`, so it does not matter here.
 
@@ -1383,7 +1443,7 @@ Each fault was checked. Faults B1, S5 and S6 were measured again with a syntheti
 | B1 small JPEGs held by the muxer | Accepted. `cluster_size_limit=1` (6.3); small frames in T-REC-10 and T-REC-KILL; T-REC-33. |
 | B2 completion before the join | Accepted. 4.2, 7.4, 8.1 step 4. |
 | B3 the stall limit | Replaced by C5 and C6 (5.3); transitions in section 14. |
-| B4 the first frame of a take | Accepted. Section 10 item 3; T-REC-47. |
+| B4 the first frame of a take | Accepted. Section 10 item 4; T-REC-47. |
 | S5 a camera file with no block | Accepted. `start_encoding()` in `start`; T-REC-30 rewritten; rule in F-2. |
 | S6 the positional form | Accepted. The old T-REC-34 and its note are gone; keywords in 6.3. Its number now holds the placeholder test. |
 | S7 lock timeout at the start | Accepted. The case is dropped (6.8, T-REC-16). |
@@ -1400,7 +1460,7 @@ Each fault was checked. Faults B1, S5 and S6 were measured again with a syntheti
 | T-REC-24 needs a child script | Accepted. `child_writer.py` (section 3). |
 | P-6 and `LockFile` | Accepted. F-7. |
 | Status member and `ValueError` (old choices 31 and 33) | Accepted. Both dropped. |
-| The 2 s stall watch of the OpenCV source | Accepted: the fault is real (contradiction 18). 5.2, section 10 item 9, T-REC-48. |
+| The 2 s stall watch of the OpenCV source | Accepted: the fault is real (contradiction 18). 5.2, section 10 item 10, T-REC-48. |
 
 No fault is rejected.
 
@@ -1441,10 +1501,11 @@ fix. The body marks each one [agent n]. Items of the first draft that are now de
 20. The nominal rate: `fps_num/fps_den` from Media Foundation; for OpenCV, a float rate within 0.01
     of 30000/1001 or 60000/1001 gives that fraction, and each other rate gives its value in
     thousandths, reduced.
-21. The placeholder: `cv2.imencode` at quality 90 with optimised tables and the sampling factor of
-    the table of 6.4; the writer checks its SOF.
-22. The rows before the first good frame wait for it; no good frame before `end`: mode size and
-    4:2:2; a layout outside the table: 4:2:0 of the camera's size and one warning.
+21. The placeholder is built by hand: one DQT of 1s, a DC table of two codes, an AC table of one code
+    (2 bits per block); the SOF compare uses size, component count and H/V factors only.
+22. The `layout` of the take spec from the SOF of the camera's last good frame before the take; with
+    no layout, the rows wait for the first good frame, at most the queue size, then a 4:2:2
+    placeholder of the mode size; a layout that cannot be built is refused at the start.
 23. The capture info values of 6.7, the `device.backend` names, and `input_range` in the log only.
 24. `give_missing` for a dead camera, and `end(frame_count)` pads the rest; the dead camera's loop
     follows the group frame counter with sleeps of 1 ms or more.
@@ -1458,8 +1519,9 @@ fix. The body marks each one [agent n]. Items of the first draft that are now de
     `device.os_index`, and the commit pin.
 29. `exposure_us` = 2^v × 10^6 from the log2 exposure value.
 30. The ring flags `DISCONTINUITY` and `DHT_INSERTED` do not go into the CSV in 5a.
-31. A write error also gives a short file (question Q1).
-32. The stall watch of [cap 9.5] restarts after each `give` that waited.
+31. (now M5, second case: the user decided it on 2026-11-20)
+32. The stall watch of a pull source counts from the later of the last arrival and the end of the last
+    wait of its loop (in `give` or at the gate).
 33. The playback list field `needs_new_player` and HTTP 409 on the video endpoints of a new take.
 34. The workflow `recorder.yml`: its trigger paths, the runner labels `windows-2025`, `ubuntu-24.04`
     and `macos-15`, and its test selection.
@@ -1469,14 +1531,8 @@ fix. The body marks each one [agent n]. Items of the first draft that are now de
 Each question is worded so that "yes" accepts the recommended answer. The questions Q1 to Q3 of the
 first draft are answered: C1 (microphone), M1 (the placeholder makes the old Q2 moot) and C4 (CI).
 
-- **Q1. A write error gives a short file.** M5 names one short-file case: a killed or hung camera
-  process. After a write error (for example a full disk), the camera process stays and the camera
-  stays `ready` [C6], but nothing can write its MKV further. Option A: treat it as a second
-  short-file case: the take level completes the files as in 7.4, and the manifest warning
-  `camera_file_short` names it. Option B: try to keep writing placeholders into the same file, which
-  fails while the disk is full and gives no more data. Recommended: A, because it is the only option
-  that ends with finished files on a full disk. **Question: is a write error a second short-file
-  case (option A)?**
+No question is open. The user answered Q1 of the second draft on 2026-11-20: a write error on one
+file is the second short-file case [M5].
 
 ## 18. Decisions of the user
 
@@ -1554,6 +1610,11 @@ They are binding. M1 to M5 replace the "row with no image" reading of R2, R3 and
   block) only after the process has ended, and the manifest says that the video file is shorter than
   the row count. Crash repair in step 5c may fill it later. This is the one exception to "one block
   for each row", and readers get the rule: a `missing` row whose byte fields are empty has no block.
+  Second case (2026-11-20, answer to Q1): a write error on one file gives that camera a short pair
+  (rows to the frame count, the MKV cut after its last block with a row, `missing` rows with no
+  block, `# repair`, `# end`), with `camera_file_short` and `take_error` and no `camera_dead`; the
+  camera stays `ready`; the other cameras get normal finished pairs. A full disk leaves the take
+  unfinished (`state` `recording`).
 - M6: The recorder stores the JPEG bytes with the DHT table that the ring inserted when the camera
   sent none (the ring flag DHT_INSERTED says which frames). The format rule changes to allow this one
   insertion.

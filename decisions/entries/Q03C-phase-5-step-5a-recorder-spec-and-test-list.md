@@ -1,6 +1,6 @@
 # Q03C — Phase 5 step 5a spec and test list: the new video recorder
 
-**Status:** proposed, 2026-11-19 (agent; commit to dom/recorder; revised the same day).
+**Status:** proposed, 2026-11-19 (agent; commit to dom/recorder; revised on 2026-11-19 and 2026-11-20).
 
 ## Decision
 
@@ -44,8 +44,8 @@ Agent choices (section 16 of the spec, marked [agent n] in the body):
 18. `clock_hz` empty.
 19. `group_position` by `camera_index`.
 20. The nominal rate as a fraction.
-21. The placeholder encode and its SOF check.
-22. Rows wait for the first good frame; fallbacks 4:2:2 and 4:2:0.
+21. The hand-built placeholder (minimal tables) and its SOF compare by size, components and H/V.
+22. The layout from the camera's last good frame before the take; a bounded wait only without it.
 23. The capture info values; `input_range` in the log.
 24. `give_missing` and the padding of `end`.
 25. The end wait margin of 5 s; stage `recording`.
@@ -54,13 +54,15 @@ Agent choices (section 16 of the spec, marked [agent n] in the body):
 28. The conformance adapter.
 29. `exposure_us` from the log2 value.
 30. `DISCONTINUITY` and `DHT_INSERTED` not in the CSV.
-31. A write error gives a short file.
-32. The stall watch restarts after a `give` wait.
+31. (now M5, second case)
+32. The stall watch of a pull source counts from the end of the last wait (in `give` or at the gate).
 33. `needs_new_player` and HTTP 409 for new takes in the playback API.
 34. The workflow `recorder.yml`.
 
-Question for the user (section 17 of the spec): Q1, a write error is a second short-file case
-(recommended yes). The three questions of the first draft are answered by C1, M1 and C4.
+No question is open. The questions of the first draft are answered by C1, M1 and C4; Q1 of the
+second draft (a write error is a second short-file case) by the user on 2026-11-20 (M5 of
+[ADR-J3QP](J3QP-missing-frames-as-black-placeholders-and-the-end-of-a-take.md)). A third revision
+on 2026-11-20 applies the fixes of a cross-check against the player spec.
 
 ## Reason
 

@@ -111,7 +111,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   R1 to R4 and M1 to M5 replace U4, U5 and U12 from the connection of step 5a. The revised spec
   [`specs/recorder.md`](../specs/recorder.md) and its test list wait for the review of the user
   ([ADR-Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md)): the agent choices
-  (section 16), question Q1 (section 17) and the merged list of proposed skellyfileformat changes
+  (section 16) and the merged list of proposed skellyfileformat changes
   F-1 to F-10 for the recorder and the player (section 13). No code before the user accepts it
   (R12). Branch `dom/recorder`. The
   connection to the shared loop waits for step 3a. Section 14 lists the edits of
