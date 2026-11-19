@@ -4,9 +4,8 @@ This file holds the open work of the [decision log](README.md). Read the items t
 task. Delete an item when its work is done. The PR that closes an item records the result.
 
 - **The fills that wait for the user.** The user must decide
-  [ADR-4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md),
-  [ADR-NMM1](entries/NMM1-design-of-the-camera-media-check.md) and
-  [ADR-4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md).
+  [ADR-4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) and
+  [ADR-NMM1](entries/NMM1-design-of-the-camera-media-check.md).
 - **Private-data findings.** `tools/check_private_data.py` reports 3 lines in upstream files: an
   email address in `skellycam-ui/src/hooks/floatingOnboarding.tsx` and in
   `skellycam-ui/src/hooks/useDraggableTooltips.tsx`, and a user path in
@@ -93,12 +92,12 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Phase 3 (Windows native capture).** The user decided D1 to D49 on 2026-11-19
   ([ADR-EN7A](entries/EN7A-phase-3-windows-capture-decisions.md)). D23 and D38 replace two statements
   of the plan. The spec [`specs/windows-capture.md`](../specs/windows-capture.md) and its test list
-  T-CAP-01 to T-CAP-91 are proposed
+  T-CAP-01 to T-CAP-91 are accepted
   ([ADR-4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md)). The user answered the
   questions of three drafts on 2026-11-19 (fifteen answers)
-  ([ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md)). The revised spec
-  waits for the user, with 64 agent choices (section 18) and no open question. No product code or
-  test code is written before the user accepts the spec. Section 17.2 of the spec lists seven
+  ([ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md)). The user accepted
+  the revised spec on 2026-11-19, with its 64 agent choices (section 18). Next: the failing tests
+  of step 3a, then the product code of step 3a. Section 17.2 of the spec lists seven
   differences from the ring spec.
 - **Phase 5: remove three interim rules of phase 3.** The new recorder of phase 5 must remove the three
   interim rules of [ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md):

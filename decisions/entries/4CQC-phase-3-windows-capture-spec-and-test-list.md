@@ -1,16 +1,17 @@
-# 4CQC — Phase 3 spec and test list: Windows native capture (proposed)
+# 4CQC — Phase 3 spec and test list: Windows native capture
 
-**Status:** proposed, 2026-11-19 (agent; waits for the user).
+**Status:** accepted, 2026-11-19 (user; commit to dom/native-jpeg; was proposed, 2026-11-19 (agent)).
 
 ## Decision
 
-[`specs/windows-capture.md`](../../specs/windows-capture.md) is proposed as the spec of phase 3, with
+[`specs/windows-capture.md`](../../specs/windows-capture.md) is the spec of phase 3, with
 its test list T-CAP-01 to T-CAP-91. It follows the decisions D1 to D49 of
 [ADR-EN7A](EN7A-phase-3-windows-capture-decisions.md), the answers U1 to U15 of
 [ADR-QKX1](QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md), the ring spec and the plan.
-It waits for the acceptance of the user. No product code and no test code is written before that.
-The four revisions of 2026-11-19 apply the answers of the user and the fixes of an independent
-reviews.
+The user accepted it on 2026-11-19, with the agent choices of its section 18, after the last
+revision. The four revisions of 2026-11-19 apply the answers of the user and the fixes of two
+independent reviews. No independent review read the changes of the last two revisions. The failing
+tests of step 3a come before the product code of step 3a.
 
 An agent made these choices where the sources leave a gap. Section 18 of the spec states each one in
 full, and the body marks each one [agent n]:

@@ -1,8 +1,8 @@
 # Phase 3 capture specification: Windows native capture (3a, 3b, 3c)
 
-Status: proposed by an agent on 2026-11-19. It waits for the review of the user
-([ADR-4CQC](../decisions/entries/4CQC-phase-3-windows-capture-spec-and-test-list.md)). No product
-code and no test code is written before the user accepts it. The decisions D1 to D49 are accepted
+Status: accepted by the user on 2026-11-19, with the agent choices of section 18
+([ADR-4CQC](../decisions/entries/4CQC-phase-3-windows-capture-spec-and-test-list.md)). The failing
+tests of a step come before the product code of that step. The decisions D1 to D49 are accepted
 by the user ([ADR-EN7A](../decisions/entries/EN7A-phase-3-windows-capture-decisions.md)). Section
 20 gives each one in full. The user gave fifteen answers on 2026-11-19, to the questions of the three
 drafts and to one agent choice
