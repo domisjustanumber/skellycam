@@ -5,11 +5,12 @@
 ## Decision
 
 [`specs/windows-capture.md`](../../specs/windows-capture.md) is proposed as the spec of phase 3, with
-its test list T-CAP-01 to T-CAP-82. It follows the decisions D1 to D49 of
-[ADR-EN7A](EN7A-phase-3-windows-capture-decisions.md), the answers U1 to U9 of
+its test list T-CAP-01 to T-CAP-86. It follows the decisions D1 to D49 of
+[ADR-EN7A](EN7A-phase-3-windows-capture-decisions.md), the answers U1 to U13 of
 [ADR-QKX1](QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md), the ring spec and the plan.
 It waits for the acceptance of the user. No product code and no test code is written before that.
-The revision of 2026-11-19 applies the answers of the user and the fixes of an independent review.
+The two revisions of 2026-11-19 apply the answers of the user and the fixes of an independent
+review.
 
 An agent made these choices where the sources leave a gap. Section 18 of the spec states each one in
 full, and the body marks each one [agent n]:
@@ -66,14 +67,13 @@ full, and the body marks each one [agent n]:
 50. An error marker wakes the loop.
 51. The state `waiting`.
 52. `last_frame_number` is the gate count.
+53. The field `reason` of `capture_modes` and its texts.
+54. Relay details: a camera with no frame is left out; the header frame number.
+55. HTTP 422 for a request below 29.97 fps.
 
-Questions for the user (section 19 of the spec; "yes" accepts the recommendation):
-
-1. Q-a: check an apply request as a whole first (a refusal changes nothing); then apply each camera
-   on its own.
-2. Q-b: a warm-up of 3 s of frames (30 to 90) and a ready limit that grows at low rates.
-3. Q-c: on a hang during a recording, try to finish the files for at most 3 s, then end hard.
-4. Q-d: the interim preview relay takes the newest frame of each camera on its own.
+No question for the user is open. The user answered the four questions of the second draft on
+2026-11-19 (U10 to U13 of
+[ADR-QKX1](QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md)).
 
 ## Reason
 
