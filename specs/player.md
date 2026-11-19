@@ -228,8 +228,10 @@ checks the imports.
 The module uses only TypeScript syntax that a type stripper can remove (no `enum`, no `namespace`, no
 parameter properties). Each import names the `.ts` file. Each import of a type only uses
 `import type`: under Node type stripping, an import of an interface without `import type` crashes at
-load [M review]. `tsconfig.json` gets `allowImportingTsExtensions` and `verbatimModuleSyntax`, so that
-`tsc` reports a missing `import type`. Then Node runs the unit tests with no build step.
+load [M review]. The module has its own `src/player/tsconfig.json` with `allowImportingTsExtensions` and
+`verbatimModuleSyntax`, so that `tsc -p src/player/tsconfig.json` reports a missing `import type`. The
+root `tsconfig.json` gets only `allowImportingTsExtensions`: `verbatimModuleSyntax` in the root file gives
+73 errors in the code of today [C, 2026-11-20]. Then Node runs the unit tests with no build step.
 
 ### 4.3 How a host mounts the module [agent 3]
 
@@ -1359,7 +1361,8 @@ Section 14.2 lists the cases that the format still leaves open.
    None of the four is in the merged list F-1 to F-10 of the recorder spec. They stay open. The
    player does not refuse a file for the last three (6.5, 6.6, 6.8). For the first, it cannot read the
    file. The three items that the player gives (section 13) are in that list as F-8, F-9 and F-10.
-3. The Chromium version of Electron 45.3.4 [NV].
+3. The Chromium version of Electron 45.3.4: `process.versions` gives Chrome 156.0.8078.100 and Node
+   24.22.3 (read on the Windows test machine, 2026-11-20). The timing on 45.3.4 is still [NV].
 4. A page from `http://` (Vite dev server) that reads the custom scheme was not tested [M `RT` §4].
 5. The exact `xvfb` version for the Linux job [NV]; Node 26.13.1 [NV].
 6. That no other page can learn a token (5.4) [NV].
