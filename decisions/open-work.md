@@ -106,6 +106,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
     the product code of step 3a.
   - The user decides items 65 to 78 of section 18 of the spec: the agent choices that came with the
     answers U16 to U23.
+  - The failing tests of steps 3b and 3c are in `skellycam/tests/capture/`. The user decides
+    [ADR-3WCA](entries/3WCA-python-api-of-capture-as-the-3b-and-3c-tests-assume-it.md), the API
+    that they use, before the product code of these steps.
   - Run the fake-source tests with
     `uv run pytest skellycam/tests/capture -m "not camera_hardware and not capture_local"`. The
     hardware tests run only with `SKELLYCAM_HARDWARE=1`. The workflow
