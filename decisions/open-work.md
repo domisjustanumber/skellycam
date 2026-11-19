@@ -121,3 +121,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   cameras), U5 (a flagged frame gives the old recorder the last good image again) and U12 (on a hang
   during a recording, finish the files for at most 5 s, then end hard). The files of the new recorder
   survive a hard stop. The user: U4 and U5 "must change back once we have the new recorder".
+- **Support virtual cameras.** Media Foundation detection shows a virtual camera with
+  `virtual=True`, but a request cannot select it yet
+  ([ADR-MA22](entries/MA22-choices-of-the-media-foundation-source-of-step-3a.md) item 9, decided by
+  the user on 2026-11-19). A later task makes a virtual camera selectable.

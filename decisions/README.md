@@ -52,6 +52,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [NMM1](entries/NMM1-design-of-the-camera-media-check.md) | Camera media check: types, first bytes, `GOLDEN_PATHS`, image reminder, `commit-files` skill, per-worktree hook install | none | proposed |
 | [4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) | Other fills of the kit adoption; `CLAUDE.md` stays untracked | none | proposed |
 | [S6HT](entries/S6HT-choices-of-the-3a-loop-code.md) | Choices of the 3a loop code: shared status, join of the gate, one stop flag per camera, Windows warning pipe, apply response | none | proposed |
+| [MA22](entries/MA22-choices-of-the-media-foundation-source-of-step-3a.md) | Choices of the Media Foundation source of step 3a that the spec and ADR-HP7D do not fix | `skellycam.core.camera.capture.media_foundation` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
