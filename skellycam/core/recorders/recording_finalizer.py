@@ -38,21 +38,28 @@ class RecordingFinalizer:
     recording_info: RecordingInfo
     camera_configs: CameraConfigs
     frame_metadatas_by_camera: dict[CameraIdString, list[np.recarray]]
+    capture: dict | None = None
+    dead_cameras: list | None = None
 
     @classmethod
     def create(cls,
                recording_info: RecordingInfo,
                camera_configs: CameraConfigs,
                frame_metadatas_by_camera: dict[CameraIdString, list[np.recarray]],
+               capture: dict | None = None,
+               dead_cameras: list | None = None,
                ):
         return cls(recording_info=recording_info,
                    frame_metadatas_by_camera=frame_metadatas_by_camera,
                    camera_configs=camera_configs,
+                   capture=capture,
+                   dead_cameras=dead_cameras,
                    )
 
     async def finalize_recording(self) -> "RecordingTimestampsStats":
         logger.debug(f"Finalizing recording: `{self.recording_info.recording_name}`...")
-        self.recording_info.save_to_file(camera_configs=self.camera_configs)
+        self.recording_info.save_to_file(camera_configs=self.camera_configs, capture=self.capture,
+                                         dead_cameras=self.dead_cameras)
 
         timestamp_stats: RecordingTimestampsStats = await process_and_save_recording_timestamps(
             recording_info=self.recording_info,
@@ -165,11 +172,13 @@ class RecordingFinalizer:
 
             logger.trace(f"Recording Validation Check#2 - Camera {camera_id} video has {frame_count} frames")
 
-        if len(set(frame_counts.values())) > 1:
+        # interim (U4): removed in phase 5; the video of a dead camera ends at its own last frame
+        dead_ids = {dead["camera_id"] for dead in self.dead_cameras or []}
+        if len({count for camera_id, count in frame_counts.items() if camera_id not in dead_ids}) > 1:
             frame_count_str = ", ".join([f"{camera_id}: {count}" for camera_id, count in frame_counts.items()])
             raise ValueError(f"Videos have different frame counts: {frame_count_str}")
 
-        expected_frame_count = next(iter(frame_counts.values())) if frame_counts else 0
+        expected_frame_count = max(frame_counts.values(), default=0)
         logger.trace(f"Recording Validation Check#2 - All videos have {expected_frame_count} frames")
 
         # Check 3: Verify timestamp files exist

@@ -21,7 +21,9 @@ async def process_recording_timestamps(
     # Fill the array with data from each camera on each frame
     for frame_number in range(num_frames):
         for camera_index, camera_id in enumerate(camera_ids):
-            all_timestamps[camera_index, frame_number] = frame_metadatas_by_camera[camera_id][frame_number].timestamps[0]
+            metadatas = frame_metadatas_by_camera[camera_id]
+            # interim (U4): removed in phase 5; a dead camera repeats its last row, which no file uses
+            all_timestamps[camera_index, frame_number] = metadatas[min(frame_number, len(metadatas) - 1)].timestamps[0]
 
     # Calculate durations
     all_durations = await calculate_durations(all_timestamps=all_timestamps)

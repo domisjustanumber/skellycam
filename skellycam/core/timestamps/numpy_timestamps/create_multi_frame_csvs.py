@@ -11,7 +11,8 @@ logger = logging.getLogger(__name__)
 
 
 def create_and_save_multiframe_csv(timestamps_rows_by_camera: np.recarray,
-                                   recording_info: RecordingInfo) -> np.recarray:
+                                   recording_info: RecordingInfo,
+                                   present: np.ndarray | None = None) -> np.recarray:
     """
     Create a multiframe CSV that combines timestamps from all cameras.
 
@@ -26,6 +27,12 @@ def create_and_save_multiframe_csv(timestamps_rows_by_camera: np.recarray,
                          f"got {type(timestamps_rows_by_camera)} with dtype {timestamps_rows_by_camera.dtype}")
 
     (number_of_cameras, number_of_frames) = timestamps_rows_by_camera.shape
+    if present is None:
+        present = np.ones((number_of_cameras, number_of_frames), dtype=bool)
+
+    def by_camera(column_name: str) -> np.ndarray:
+        """The values of the cameras that have the frame; NaN for a dead camera (interim U4, spec 5.7)."""
+        return np.where(present, timestamps_rows_by_camera[column_name].astype(np.float64), np.nan)
     multiframe_csv_rows = np.recarray(
         number_of_frames,
         dtype=MULTI_FRAME_TIMESTAMP_CSV_ROW
@@ -42,7 +49,7 @@ def create_and_save_multiframe_csv(timestamps_rows_by_camera: np.recarray,
 
     # Process simple mean-based columns
     for column_name in ['timestamp.from_recording_start.sec', 'timestamp.utc.seconds', 'timestamp.perf_counter_ns.ns']:
-        multiframe_csv_rows[column_name] = np.mean(timestamps_rows_by_camera[column_name], axis=0)
+        multiframe_csv_rows[column_name] = np.nanmean(by_camera(column_name), axis=0)
 
     # Calculate local ISO timestamps from UTC seconds
     utc_seconds = multiframe_csv_rows['timestamp.utc.seconds']
@@ -52,7 +59,7 @@ def create_and_save_multiframe_csv(timestamps_rows_by_camera: np.recarray,
         multiframe_csv_rows[i]['timestamp.local.iso8601'] = local_dt.isoformat()
 
     # Calculate inter-camera frame grab range
-    perf_counter_ns = timestamps_rows_by_camera['timestamp.perf_counter_ns.ns']
+    perf_counter_ns = by_camera('timestamp.perf_counter_ns.ns')
     multiframe_csv_rows['inter_camera.frame_grab_range.ms'] = ns_to_ms(
         np.nanmax(perf_counter_ns, axis=0) - np.nanmin(perf_counter_ns, axis=0)
     )
@@ -61,7 +68,7 @@ def create_and_save_multiframe_csv(timestamps_rows_by_camera: np.recarray,
     for column_name in ['from_previous.frame_duration.ms', 'from_previous.framerate.hz']:
         column_data = np.zeros(number_of_frames)
         for i in range(number_of_frames):
-            slice_data = timestamps_rows_by_camera[column_name][:, i]
+            slice_data = by_camera(column_name)[:, i]
             if np.any(~np.isnan(slice_data)):
                 column_data[i] = np.nanmean(slice_data)
             else:
@@ -76,7 +83,7 @@ def create_and_save_multiframe_csv(timestamps_rows_by_camera: np.recarray,
 
     for column_name in timestamp_columns:
         # Get data for all cameras and frames for this column
-        column_data = timestamps_rows_by_camera[column_name]
+        column_data = by_camera(column_name)
 
         # Convert to ms if needed
         if '.ns' in column_name:

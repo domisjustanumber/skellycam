@@ -1,6 +1,7 @@
 import logging
 
 import numpy as np
+from numpy.lib.recfunctions import repack_fields
 
 from skellycam.core.camera.config.camera_config import CameraConfigs
 from skellycam.core.timestamps.timebase_mapping import TimebaseMapping
@@ -19,7 +20,8 @@ def create_and_save_camera_csvs(
         recording_info: RecordingInfo,
         camera_configs: CameraConfigs,
         connection_frame_numbers: list[int],
-        timebase_mapping: TimebaseMapping
+        timebase_mapping: TimebaseMapping,
+        frame_counts: list[int] | None = None,
 ) -> np.recarray:
     """
     Create and save per-camera CSV files with frame timestamps and durations.
@@ -98,13 +100,51 @@ def create_and_save_camera_csvs(
             all_camera_csv_rows[camera_number][csv_field] = camera_frame_durations[
                 field_name]
 
-        # Save to CSV
+    # Save to CSV: each camera file ends at the last frame of that camera (interim U4, spec 5.7)
+    frame_counts = frame_counts or [num_frames] * num_cameras
+    names = stamped_columns(all_timestamps, frame_counts)
+    for camera_number, camera_id in enumerate(camera_configs.keys()):
+        rows = all_camera_csv_rows[camera_number][:frame_counts[camera_number]]
         csv_file_path = recording_info.camera_timestamps_file_path_from_camera_id(camera_id)
-        np.savetxt(csv_file_path, all_camera_csv_rows[camera_number], delimiter=',', fmt='%s',
-                   header=",".join(CAMERA_TIMESTAMPS_CSV_ROW_DTYPE.names),
+        np.savetxt(csv_file_path, repack_fields(rows[names]), delimiter=',', fmt='%s', header=",".join(names),
                    comments='')
 
     return all_camera_csv_rows
+
+
+# The lifecycle inputs of each duration column (FRAME_DURATION_DTYPE, calculate_durations).
+_GRAB, _RETRIEVE, _COPY, _RECORD = (("pre_frame_grab_ns", "post_frame_grab_ns"),
+                                    ("pre_frame_retrieve_ns", "post_frame_retrieve_ns"),
+                                    ("pre_copy_to_camera_shm_ns", "post_copy_to_camera_shm_ns"),
+                                    ("pre_frame_record_ns", "post_frame_record_ns"))
+DURATION_INPUTS = {
+    "duration.idle_before_frame_grab.ns": ("initialized_ns", _GRAB[0]),
+    "duration.during_frame_grab.ns": _GRAB,
+    "duration.idle_before_retrieve.ns": (_GRAB[1], _RETRIEVE[0]),
+    "duration.during_frame_retrieve.ns": _RETRIEVE,
+    "duration.idle_before_copy_to_camera_shm.ns": (_RETRIEVE[1], _COPY[0]),
+    "duration.during_copy_to_camera_shm.ns": _COPY,
+    "duration.idle_before_frame_record.ns": (_COPY[1], _RECORD[0]),
+    "duration.during_frame_record.ns": _RECORD,
+    "total.frame_processing_time.ns": _GRAB + _RETRIEVE + _COPY + _RECORD,
+    "total.camera_idle_time.ns": ("initialized_ns", _GRAB[0]),
+}
+
+
+def stamped_columns(all_timestamps: np.recarray, frame_counts: list[int]) -> list[str]:
+    """D41, the rule of upstream sfn26: a lifecycle column is written when any camera stamped it on
+    any frame; a duration column only when each of its inputs is stamped."""
+    stamped = {name for name in FRAME_LIFECYCLE_TIMESTAMPS_DTYPE.names
+               if any(np.any(all_timestamps[camera][:count][name] != 0) for camera, count in enumerate(frame_counts))}
+    names = []
+    for column in CAMERA_TIMESTAMPS_CSV_ROW_DTYPE.names:
+        if column.startswith("frame."):
+            if column.removeprefix("frame.").removesuffix(".ns") + "_ns" not in stamped:
+                continue
+        elif column in DURATION_INPUTS and not set(DURATION_INPUTS[column]) <= stamped:
+            continue
+        names.append(column)
+    return names
 
 
 def create_camera_frame_csv_row_recarray(camera_frame_timestamps: np.recarray,

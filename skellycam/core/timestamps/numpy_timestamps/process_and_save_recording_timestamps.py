@@ -29,19 +29,13 @@ def validate_frame_metadatas(frame_metadatas_by_camera: dict[CameraIdString, lis
     Raises:
         ValueError: If the number of frames is inconsistent across cameras.
     """
-    num_frames = None
-
-    frame_count_by_camera = {camera_id: len(frame_metadatas) for camera_id, frame_metadatas in
-                             frame_metadatas_by_camera.items()}
-    number_of_frames_set = set(frame_count_by_camera.values())
-    if len(number_of_frames_set) != 1:
-        raise ValueError(f"Inconsistent number of frames found across cameras: {frame_count_by_camera}. "
-                         f"Expected all cameras to have the same number of frames.")
-    number_of_frames = number_of_frames_set.pop()
+    # interim (U4): removed in phase 5; a dead camera has fewer frames, from the same first frame (spec 5.7)
+    number_of_frames = max(len(frame_metadatas) for frame_metadatas in frame_metadatas_by_camera.values())
     # Check that frame numbers are consistent across cameras
     frame_numbers = []
     for frame_number in range(number_of_frames):
-        frame_number = set([metadata[frame_number].frame_number[0] for metadata in frame_metadatas_by_camera.values()])
+        frame_number = set([metadata[frame_number].frame_number[0] for metadata in frame_metadatas_by_camera.values()
+                            if frame_number < len(metadata)])
         if len(frame_number) != 1:
             raise ValueError(f"Inconsistent frame numbers found across cameras: {frame_number}. "
                              f"Expected all cameras to have the same frame numbers.")
@@ -58,7 +52,7 @@ def validate_frame_metadatas(frame_metadatas_by_camera: dict[CameraIdString, lis
 
     timebase_mapping_recarray: np.recarray | None = None
     for camera_id, metadata in frame_metadatas_by_camera.items():
-        for frame_index in range(number_of_frames):
+        for frame_index in range(len(metadata)):
             if timebase_mapping_recarray is None:
                 timebase_mapping_recarray = metadata[frame_index].timebase_mapping[0]
             elif metadata[frame_index].timebase_mapping[0] != timebase_mapping_recarray:
@@ -90,7 +84,9 @@ async def process_and_save_recording_timestamps(
         frame_numbers=frame_numbers,
     )
 
+    frame_counts = [len(metadata) for metadata in frame_metadatas_by_camera.values()]
     timestamps_rows_by_camera = create_and_save_camera_csvs(
+        frame_counts=frame_counts,
         all_timestamps=all_timestamps,
         all_durations=all_durations,
         recording_info=recording_info,
@@ -103,7 +99,9 @@ async def process_and_save_recording_timestamps(
     print(f"Processed timestamps for {len(frame_metadatas_by_camera)} cameras in {tok_cams - tik_cams:.3f} seconds.")
 
     tik_mf = time.perf_counter()
+    present = np.arange(len(frame_numbers))[None, :] < np.array(frame_counts)[:, None]
     multiframe_rows = create_and_save_multiframe_csv(timestamps_rows_by_camera=timestamps_rows_by_camera,
+                                                     present=present,
                                                      recording_info=recording_info,
                                                      )
     tok_mf = time.perf_counter()

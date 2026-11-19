@@ -77,7 +77,9 @@ class RecordingInfo(BaseModel):
     def timestamp_stats_json_file_path(self) -> str:
         return f"{self.timestamps_folder}/{self.recording_name}_stats.json"
 
-    def save_to_file(self, camera_configs: CameraConfigs) -> None:
+    def save_to_file(self, camera_configs: CameraConfigs, capture: dict | None = None,
+                     dead_cameras: list | None = None) -> None:
+        """`capture` and `dead_cameras`: the interim camera data of phase 3 (spec 11.6, U4)."""
         logger.debug(f"Saving recording info to [{self.recording_info_path}]")
         recording_info_dict = self.model_dump()
         for camera_id, config in camera_configs.items():
@@ -100,6 +102,10 @@ class RecordingInfo(BaseModel):
         for camera_id, config in recording_info_dict["camera_configs"].items():
             recording_info_dict["camera_configs"][camera_id]["rotation"] = rotation_int_to_name(recording_info_dict["camera_configs"][camera_id]["rotation"])
 
+        if capture is not None:
+            recording_info_dict["capture"] = capture
+        if dead_cameras is not None:
+            recording_info_dict["dead_cameras"] = dead_cameras
         with open(self.recording_info_path, "w") as f:
             f.write(json.dumps(recording_info_dict, indent=4))
 

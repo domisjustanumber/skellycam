@@ -77,7 +77,8 @@ class VideoRecorder:
             camera_index=config.camera_index,
             video_file_path=video_file_path,
             video_image_shape=video_image_shape,
-            framerate=config.framerate if framerate is None else framerate,
+            # "auto" (-1 or 0) is no rate for a video file: 30, as the rate check takes for "auto"
+            framerate=next((rate for rate in (framerate, config.framerate) if rate is not None and rate > 0), 30.0),
             writer_fourcc=working_fourcc,
             recording_info=recording_info,
         )
@@ -92,6 +93,9 @@ class VideoRecorder:
         if not self.video_writer.isOpened():
             raise RuntimeError("VideoWriter not open (before adding frame)!")
 
+        frame_camera_id = str(frame.frame_metadata.camera_info.camera_id[0])
+        if frame_camera_id != self.camera_id:  # D41
+            raise ValueError(f"Camera {self.camera_id} refuses a frame of camera {frame_camera_id}")
         self._validate_frame_number(frame)
         if frame.frame_metadata.camera_info.rotation != -1:
             image = cv2.rotate(
