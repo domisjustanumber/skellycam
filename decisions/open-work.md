@@ -89,3 +89,7 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - The measurements M4 and M8 of section 11.3 are not done. Phase 2 makes them before it fixes a
     performance number.
   - Section 13 of the spec holds the open questions.
+- **Phase 3 (Windows native capture).** The user decided D1 to D49 on 2026-11-19
+  ([ADR-EN7A](entries/EN7A-phase-3-windows-capture-decisions.md)). D23 and D38 replace two statements
+  of the plan. The spec `specs/windows-capture.md` and its test list come next. No product code or
+  test code is written before the user accepts the spec.
