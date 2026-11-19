@@ -20,8 +20,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [`specs/frame-ring.md`](../specs/frame-ring.md). The tests of step 2a (T-RING-01 to 33) are in
   `skellycam/tests/frame_ring/`. They use the API of
   [ADR-9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md), which the
-  user accepted with clarifications, corrections and decisions on the 2a code (items 52 to 62) on
-  2026-11-18. Run the T-RING-34 and T-RING-35 set with
+  user accepted with clarifications, corrections and decisions on the 2a code (items 52 to 67) on
+  2026-11-18 and 2026-11-19. Run the T-RING-34 and T-RING-35 set with
   `uv run pytest -m ring_portable skellycam/tests/frame_ring`.
   Run the timed and kill tests with `-m ring_slow`. `SKELLYCAM_RING_FULL=1` gives the durations of
   the spec, for example 60 s for each slot count of T-RING-08. T-RING-49 needs cameras and is not
@@ -32,13 +32,14 @@ task. Delete an item when its work is done. The PR that closes an item records t
     interim relay (item 4), the performance page (item 5) and the deletions of section 2.1. The
     test helper `FakeCapture` stays alive until the process ends, because OpenCV 5.1.0 crashes when
     the garbage collector frees a subclass of `cv2.VideoCapture`.
-  - Known failure: T-RING-31 (idle CPU, limit 2 % of one core) fails (item 60). On 2026-11-18, the
-    paused loop used 3.9 to 7.0 % of one core on a Windows test machine. The loop sleeps 1 ms and
-    makes two queue polls in each pass. A 10 ms wait gave 0.3 to 4.7 %. Windows counts CPU time in
-    steps of 15.6 ms.
-  - Open: the change of the waiting of the camera loop. The fix is a blocking wait on the queues of
-    the loop. It belongs to the same change as item 45 (the 10 µs wait). The same four-camera
-    timing comparison decides both.
+  - Next: step 2b (the BGR ring and the decode stage). The user approved the build on 2026-11-19
+    (item 63). Failing tests first (T-RING-36 to 48), then the review of each point that the spec
+    leaves open, then the code.
+  - Known failure: T-RING-31 (idle CPU, limit 2 % of one core) fails (items 60 and 65). On
+    2026-11-18, the paused loop used 3.9 to 7.0 % of one core on a Windows test machine. The user
+    dropped the redesign of the wait of the OpenCV loop, because native capture deletes that loop.
+    The test applies to the native capture loop from phase 3, and it stays a known failure until
+    then. Windows counts CPU time in steps of 15.6 ms.
   - Fact, 2026-11-18: the four-camera comparison of the timing. Before is commit 0a66994c3, after
     is commit 8a1f9b517. Each had two runs of 60 s, with a 720p30 MJPG request, lockstep and
     four cameras (Logitech C922, Logitech C930e, Razer Kiyo Pro and a generic camera), lights on.
@@ -58,10 +59,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
     - The result files are in the research branch `dom/research` of this repository. They are not
       committed there yet.
   - The user runs T-RING-49, the optional four-camera smoke test. It needs cameras.
-  - The T-RING-34 (Apple Silicon) and T-RING-35 (arm64 CI) runs are not done.
-  - The measurement M2 (write time without reader load) gave 0.98 ms p99 in one run and 0.28 ms in
-    another. Measure it again.
+  - T-RING-34 (Apple Silicon) is on hold. It goes into the certify suite of a later task and is not
+    run by hand now (item 67). T-RING-35 (arm64 CI) is not decided.
   - The measurements M4 and M8 of section 11.3 are not done. Phase 2 makes them before it fixes a
     performance number.
-  - The build of step 2b waits for the approval and guidance of the user.
   - Section 13 of the spec holds the open questions.

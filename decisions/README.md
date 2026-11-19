@@ -20,8 +20,8 @@ These entries are `accepted`.
 |---|----------|--------|
 | [0001](entries/0001-decision-log-agents-md-and-private-data.md) | Decision log and its rules; `AGENTS.md` files hold the instructions; `plans/` is local; no private data | accepted |
 | [S222](entries/S222-bootstrap-answers-of-the-kit-adoption.md) | Answers to the bootstrap questions of the kit adoption | accepted |
-| [50G8](entries/50G8-phase-2-frame-ring-spec.md) | Phase 2 follows `specs/frame-ring.md`: two rings per camera, copy then CRC-32 reads, recorder first; the 2b build waits | accepted |
-| [9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md) | Python API of the frame ring, as the 2a tests assume it; clarifications, corrections and decisions on the 2a code (items 52 to 62) | accepted |
+| [50G8](entries/50G8-phase-2-frame-ring-spec.md) | Phase 2 follows `specs/frame-ring.md`: two rings per camera, copy then CRC-32 reads, recorder first; the 2b build is approved | accepted |
+| [9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md) | Python API of the frame ring, as the 2a tests assume it; clarifications, corrections and decisions on the 2a code (items 52 to 67) | accepted |
 
 ### Evidence
 

@@ -24,11 +24,10 @@ items. The main rules are:
    `slot_count = max(2, ceil(history_s x fps))`.
 7. Layout version rule: `layout_version` is 1. Each layout or meaning change increases it by one.
    A reader refuses an unknown `magic` or `layout_version` with an error that names both values.
-8. Step 2a (the JPEG ring) comes first: failing tests, then code. The build of step 2b (the BGR ring
-   and the decode stage) waits for a separate approval and guidance of the user.
-9. Item 45 has a condition. Step 2a compares the frame timing on the four test cameras before and
-   after the change of the 10 µs wait of the OpenCV loop. It keeps the change only if the grab
-   timing is not worse.
+8. Step 2a (the JPEG ring) comes first: failing tests, then code. The user approved the build of step 2b
+   (the BGR ring and the decode stage) on 2026-11-19, with the same process (items 63 to 67 of the spec).
+9. The user dropped the redesign of the 10 µs wait of the OpenCV loop on 2026-11-19 (item 65 of
+   the spec). The old condition of item 45 no longer applies.
 10. Each item that the user accepted in bulk can be reopened when the tests are written. Section 14
     of the spec lists these items.
 

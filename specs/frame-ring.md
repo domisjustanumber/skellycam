@@ -4,8 +4,8 @@ Status: accepted by the user on 2026-11-18
 ([ADR-50G8](../decisions/entries/50G8-phase-2-frame-ring-spec.md)). The tests of step 2a
 (section 12) are in `skellycam/tests/frame_ring/`. The ring package of step 2a is in
 `skellycam/core/ipc/frame_ring/`. The app uses it (step 2a, part B). `decisions/open-work.md` holds
-the open items of step 2a. Step 2b (section 8) is specified. The build of step 2b waits for a separate approval and
-guidance of the user on the decode stage [D N:72].
+the open items of step 2a. Step 2b (section 8) is specified. The user approved its build on 2026-11-19 (item 63): failing
+tests first, then the review of each open point, then the code.
 
 ## 0. How to read this spec
 
@@ -645,9 +645,11 @@ rotation per frame, and the oversize count in the header.
 
 ## 8. Step 2b: BGR ring and decode stage
 
-This section specifies step 2b. The build of step 2b waits for the approval and guidance of the
-user [D N:72]. The acceptance of the items of this section on 2026-11-18 is not an approval to build
-step 2b.
+This section specifies step 2b. The user approved the build of step 2b on 2026-11-19, and accepted
+the decode stage as this section gives it (item 63). The process is the process of 2a: failing
+tests first (T-RING-36 to 48), then the review of each point that the spec leaves open, then the
+code. The decode path (`cv2.imdecode` on a JPEG) is built and tested on synthetic JPEGs now,
+although no real camera uses it before phase 3 (item 64, item 42).
 
 ### 8.1 The BGR ring request
 
@@ -755,13 +757,12 @@ at 1080p, one thread; 3.17 and 7.11 ms with 8 processes at the same time
   or it must sleep at least 1 ms per loop [A45].
 - The OpenCV loop calls `wait_10us()` (`time.sleep(1e-5)`) on each pass while the gate is closed
   (`opencv_camera_loop.py` line 68). That is almost a spin. It is not measured if it slows a decode
-  [NV]. Step 2a raises it to at least 1 ms, or replaces it with a blocking wait [A45].
-- Condition of the user on [A45]: step 2a first compares the frame timing before and after the
-  change on the four test cameras. Step 2a keeps the change only if the grab timing is not worse.
+  [NV]. The user dropped the redesign of this wait on 2026-11-19 (item 65, which replaces [A45] and
+  [A60] for this loop): the 10 us wait stays, and no four-camera timing comparison is made for it.
+  Native capture deletes the OpenCV loop (phase 3 on Windows, phase 7 on Linux and macOS). The
+  no-spin rule and T-RING-31 apply to the native capture loop from phase 3.
 - Tests: T-RING-31 (idle) and T-RING-44 (decode speed under load).
-- Status of the 2a code: T-RING-31 fails, and it stays a known failure until the camera loop waits
-  in another way. The fix is a blocking wait on the queues of the loop. It belongs to the same
-  change as [A45], and the same four-camera timing comparison decides both [A60].
+- Status of the 2a code: T-RING-31 fails, and it stays a known failure until phase 3 [A65].
 
 ## 9. Mode list and per-camera info
 
@@ -846,7 +847,7 @@ holds only the opened mode, with the FOURCC of the config as its format [A47].
 | ID | Measurement | Step |
 |---|---|---|
 | M1 | CRC-32 on JPEG sizes on Python 3.13.18, Windows | 2a |
-| M2 | Writer cost per frame (p50, p99), JPEG, 720p and 1080p, 1 and 16 writer processes | 2a |
+| M2 | Writer cost per frame (p50, p99), JPEG, 720p and 1080p, 1 and 16 writer processes. Closed on 2026-11-19 (item 66) | 2a |
 | M3 | Reader cost per frame, JPEG, with 1 and 4 readers per ring | 2a |
 | M4 | Resident and committed memory after creation and after one lap, per OS | 2a |
 | M5 | CRC-32 on BGR frames, 720p and 1080p, Python 3.13.18 [D N:63] | 2b |
@@ -856,8 +857,8 @@ holds only the opened mode, with the FOURCC of the config as its format [A47].
 
 Provisional targets. The measured numbers will replace them [A48]:
 
-- JPEG write: p99 at most 0.5 ms per frame at 1080p, with no reader load. With four readers that
-  read as fast as they can (the p99 case of T-RING-23), p99 at most 1.0 ms [A59].
+- JPEG write: p99 at most 1.0 ms per frame at 1080p, for a writer that is paced at 60 frames per
+  second, with or without readers [A66]. This one target replaces the two targets of [A59].
 - JPEG read: p99 at most 0.5 ms per frame at 1080p.
 - BGR write, decode not included: p99 at most 3 ms at 1080p.
 - BGR read: p99 at most 3 ms at 1080p.
@@ -897,7 +898,7 @@ are written.
 | T-RING-20 | 2a | Error-flag rule | Commit frames with each error flag; read by number, newest and nearest. | No lookup returns a payload for them. |
 | T-RING-21 | 2a | Rotation | Config enum to `rotation_cw_deg`; change 0 to 180, 0 to 90, 90 to 270. | Values 0/90/180/270 as Python `int`; `DISCONTINUITY` only on the 0 to 90 change. |
 | T-RING-22 | 2a | Self-check | Feed frames at 20 %, 51 % and 60 % of the slot. | One warning at the 51 % frame; periodic log line with the fraction; counters match. |
-| T-RING-23 | 2a | Recorder first; no blocking | Instrumented recorder queue and ring; 4 readers hammering the ring. | Queue put precedes every ring write; write p99 within the M2 target for that load (1.0 ms [A59]); a failing ring write leaves the queue unaffected. |
+| T-RING-23 | 2a | Recorder first; no blocking | Instrumented recorder queue and ring; 4 readers hammering the ring. | Queue put precedes every ring write; write p99 at most 1.0 ms with the writer paced at 60 frames/s by a sleep [A66]; a failing ring write leaves the queue unaffected. |
 | T-RING-24 | 2a | Skipped write | Fake capture layer reports a newer frame waiting. | `skipped_count` up; reader gets `MISSING` for that number. |
 | T-RING-25 | 2a | Creation and names | Start a session with fake cameras. | Total and per-ring sizes logged; names in `CameraRingInfo`; a reader attaches by name alone; header matches the config. |
 | T-RING-26 | 2a | Recreation | Change the resolution of a fake camera. | New name; old ring `closed = 1`; old readers get `CLOSED`; old segment gone after unlink (Linux: no `/dev/shm` entry; Windows: open by name fails). |
@@ -905,10 +906,10 @@ are written.
 | T-RING-28 | 2a | Crash cleanup | Kill the main process (Linux, Windows, macOS); on Linux also kill the tracker, then start again. | Windows: gone when processes exit. Linux: tracker unlinks; after a group kill, the sweep removes it. macOS: result recorded [NV]. |
 | T-RING-29 | 2a | Too-large request | Ask for a history that cannot fit (Linux: a small tmpfs mounted for the test). | Session does not start; message has the total in bytes and MiB; no ring left. |
 | T-RING-30 | 2a | Reader exit | A reader process attaches and exits (Linux, macOS). | Ring still readable by another process. |
-| T-RING-31 | 2a | No spinning thread, idle | Camera process with a fake capture source, paused for 5 s. | Process CPU under 2 % of one core. Known failure in 2a [A60]. |
+| T-RING-31 | 2a | No spinning thread, idle | Camera process with a fake capture source, paused for 5 s. | Process CPU under 2 % of one core. Known failure until phase 3 [A65]. |
 | T-RING-32 | 2a | Old code gone | Import the deleted modules; search for the deleted names. | Imports fail; no names left outside history docs. |
 | T-RING-33 | 2a | Interim UI relay ([A4]) | Fake cameras; capture one websocket message. | JPEG bytes in the message equal the bytes of the ring. |
-| T-RING-34 | 2a | Apple Silicon | Run T-RING-05 to T-RING-14, T-RING-28 and T-RING-30 on an Apple Silicon Mac [D P:111-112, P:174, N:313]. | All pass. |
+| T-RING-34 | 2a | Apple Silicon | Run T-RING-05 to T-RING-14, T-RING-28 and T-RING-30 on an Apple Silicon Mac [D P:111-112, P:174, N:313]. | All pass. On hold: goes into the certify suite of a later task; not run by hand now [A67]. |
 | T-RING-35 | 2a | arm64 CI | Same set on an arm64 Linux CI runner [D N:313; runner A51]. | All pass. |
 | T-RING-36 | 2b | BGR suite | T-RING-05, 07 to 14 with BGR payloads at 640x480 and one 1920x1080 case [D N:88]. | As the JPEG rules; T-RING-06 does not apply (no oversize guard). |
 | T-RING-37 | 2b | BGR request | Config with and without `bgr_ring`. | Ring and name only when asked; size logged. |
@@ -978,8 +979,7 @@ Conflicts between the sources, and how this spec resolves them:
 The user accepted items 1 to 51 on 2026-11-18. The user accepted items 3, 4, 17, 18, 23, 26, 27,
 29, 32, 36, 37, 42 and 45 one by one. The user accepted items 1, 2, 5 to 16, 19 to 22, 24, 25, 28,
 30, 31, 33 to 35, 38 to 41, 43, 44 and 46 to 51 in bulk. Each item accepted in bulk can be reopened
-when the tests are written. Item 45 has a condition. The acceptance of items 39 to 45 and of the 2b
-parts of other items is not an approval to build step 2b (section 8).
+when the tests are written. Items 63 to 67 of 2026-11-19 approve the build of step 2b and change items 45, 59 and 60.
 
 1. Step 2a deletes the six modules, `check_shm_speed.py` and the tests listed in 2.1. It rewrites
    the listed tests against the new ring.
@@ -1078,10 +1078,8 @@ parts of other items is not an approval to build step 2b (section 8).
 44. libjpeg warnings: first check the log level of OpenCV. If it does not silence them, redirect
     descriptor 2 of the camera process to a pipe. A blocking thread reads the pipe and logs each
     different line one time per minute at most, with a count.
-45. No-spin mechanics: each thread of the camera process blocks or sleeps at least 1 ms per loop. In
-    2a, the 10 µs wait of the OpenCV loop is raised to at least 1 ms or replaced by a blocking wait.
-    Condition: step 2a first compares the frame timing before and after the change on the four test
-    cameras. Step 2a keeps the change only if the grab timing is not worse.
+45. No-spin mechanics: each thread of the camera process blocks or sleeps at least 1 ms per loop.
+    Item 65 replaces the part on the 10 µs wait of the OpenCV loop and its condition.
 46. `CameraRingInfo` has the fields of section 9.
 47. `CameraMode` has the fields of section 9. In 2a, the list holds only the opened mode, with the
     FOURCC of the config as its format.
@@ -1124,10 +1122,8 @@ The user accepted items 58 and 59 on 2026-11-18, after items 52 to 57. They are 
 The user accepted items 60 to 62 on 2026-11-18, after items 58 and 59. They are decisions on the
 finished 2a code ([ADR-9G2W](../decisions/entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md)).
 
-60. T-RING-31 (idle CPU, limit 2 % of one core) stays failing as a known failure until the waiting
-    of the camera loop is redesigned. The fix is a blocking wait on the queues of the loop. It
-    belongs to the same change as item 45 (the 10 µs wait), and the same four-camera timing
-    comparison decides both. Measured on 2026-11-18: the paused loop uses 3.9 to 7.0 % of one core.
+60. T-RING-31 (idle CPU, limit 2 % of one core) stays failing as a known failure. Item 65 changes
+    the end of it: until phase 3, not until a redesign of the loop. Measured on 2026-11-18: the paused loop uses 3.9 to 7.0 % of one core.
     The loop sleeps 1 ms and makes two queue polls in each pass. A 10 ms wait gave 0.3 to 4.7 %.
     Windows counts CPU time in steps of 15.6 ms.
 61. The translated copies of the architecture page (`zh-CN`, `es`, `ar`) are not updated in step 2a.
@@ -1137,3 +1133,36 @@ finished 2a code ([ADR-9G2W](../decisions/entries/9G2W-python-api-of-the-frame-r
     recreation, the creator unlinks the old ring at once and does not wait for its writer to detach
     (an attached process keeps its mapping). `FrameRingWriter.name` is public, and `NO_SAMPLE_NS`
     is exported.
+
+The user decided items 63 to 67 on 2026-11-19, after items 60 to 62
+([ADR-9G2W](../decisions/entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md)).
+
+63. The build of step 2b is approved. The process is the process of 2a: failing tests first
+    (T-RING-36 to 48), then the review of each point that the spec leaves open, then the code. The
+    user accepted the decode stage as section 8 gives it: one decode thread in each camera process
+    that has a BGR ring request; `cv2.imdecode`; one waiting place where the newest frame wins and
+    skipped frames are counted; a flagged frame is never decoded; a failed decode sets
+    `DECODE_ERROR`; the request is the config field `bgr_ring`, default off; the skellycam UI has
+    no control for it.
+64. Step 2b builds and tests the decode path (`cv2.imdecode` on a JPEG) now, on synthetic JPEGs,
+    although no real camera uses that path before phase 3 (item 42 gives the BGR ring a copy of
+    the OpenCV frame until then).
+65. The redesign of the waiting of the OpenCV camera loop is dropped. This replaces item 45 and the
+    plan in item 60 for that loop: the 10 µs wait stays as it is, and no four-camera timing
+    comparison is made for it. Reason: native capture deletes the OpenCV loop (phase 3 on Windows,
+    phase 7 on Linux and macOS). The no-spin rule and the idle CPU test T-RING-31 apply to the
+    native capture loop from phase 3. T-RING-31 stays a known failure until then.
+66. One write-time target replaces the two targets of item 59 and section 11.3: the p99 of a JPEG
+    write at 1080p is at most 1.0 ms for a writer that is paced at 60 frames per second, with or
+    without readers. Measured on 2026-11-19 (i7-14700K, Windows power plan "Balanced", 600 kB
+    payload, 3,000 writes for each case, one run each): tight loop p50 185 µs and p99 224 µs;
+    paced by a busy wait p99 331 µs; paced by a sleep p99 744 µs; paced by a sleep with four
+    readers that read without a pause p99 575 µs; paced by a sleep with four readers that read one
+    time for each frame p99 419 µs. The pacing sleep makes the tail longer, and the growth is in
+    the CRC. Readers do not make the writer slower. This closes measurement M2. The T-RING-23 p99
+    test now paces its writer at 60 frames per second by a sleep, with its four readers and the
+    limit 1.0 ms. Measured with that test on 2026-11-19: p99 0.76 ms (2 s run) and 0.75 ms (10 s
+    run).
+67. The runs of the ring tests on other machines are on hold. T-RING-34 (Apple Silicon) goes into
+    the certify suite of a later task and is not run by hand now. The user has not decided
+    T-RING-35 (arm64 CI) yet.

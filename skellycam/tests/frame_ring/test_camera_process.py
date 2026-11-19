@@ -139,11 +139,11 @@ def test_t_ring_23_failing_ring_write_leaves_the_recorder_unaffected(monkeypatch
 @pytest.mark.ring_slow
 def test_t_ring_23_write_p99_with_four_readers(cleanup, spawn, procs):
     """T-RING-23, sections 5.3 and 11.3 [A48]: 4 reader processes read the newest frame without a
-    pause. The JPEG write p99 stays within the provisional M2 target under this load (1.0 ms at
-    1080p [A59]; 0.5 ms with no reader load).
+    pause. The JPEG write p99 stays within the target of 1.0 ms at 1080p for a writer that is paced
+    at 60 frames/s by a sleep [A66].
 
-    The writer writes 1080p-size payloads (607,032 bytes, the largest measured frame) at about
-    200 frames/s for TIMING_SECONDS (2 s; 10 s with SKELLYCAM_RING_FULL=1).
+    The writer writes 1080p-size payloads (607,032 bytes, the largest measured frame) at 60
+    frames/s for TIMING_SECONDS (2 s; 10 s with SKELLYCAM_RING_FULL=1).
     """
     fr = ring()
     creator = cleanup.own(fr.FrameRingCreator.create(
@@ -168,12 +168,12 @@ def test_t_ring_23_write_p99_with_four_readers(cleanup, spawn, procs):
             writer.write(payloads[k % 8], **kwargs)
             durations.append(time.perf_counter_ns() - t0)
             k += 1
-            time.sleep(0.005)
+            time.sleep(1 / 60)
     finally:
         stop.set()
     assert all(process.is_alive() for process in procs), "a reader died"
     p99_ms = np.percentile(durations, 99) / 1e6
-    assert p99_ms <= 1.0, f"JPEG write p99 {p99_ms:.3f} ms > 1.0 ms (M2 target with four readers)"
+    assert p99_ms <= 1.0, f"JPEG write p99 {p99_ms:.3f} ms > 1.0 ms (target with four readers, paced at 60 frames/s)"
 
 
 @pytest.mark.ring_slow

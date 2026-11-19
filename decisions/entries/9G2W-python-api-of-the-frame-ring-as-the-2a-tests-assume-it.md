@@ -51,8 +51,8 @@ The spec does not give each Python signature. The failing tests of step 2a in
     `f"{n / 2**20:.1f} MiB"`. The largest-payload line holds the fraction as `0.60` or `60 %`.
 
 The user also decided, on 2026-11-18, six clarifications (items 52 to 57 of the spec), two
-corrections (58 and 59) and three decisions on the finished 2a code (60 to 62). Section 14 of the
-spec states each one in full. In short:
+corrections (58 and 59) and three decisions on the finished 2a code (60 to 62). On 2026-11-19 the
+user decided five more (63 to 67). Section 14 of the spec states each one in full. In short:
 
 1. Unknown frame rate: 60 slots, and the header holds `fps_num = 0`, `fps_den = 1`.
 2. A skipped frame number before the first wrap reads as `LAPPED`.
@@ -61,27 +61,29 @@ spec states each one in full. In short:
 5. `frontend_payload_bytearray.py` stays with its wire-format types only.
 6. T-RING-08 runs 60 s for each slot count.
 7. A slot header copy with `frame_number == -1` gives `LAPPED` before any CRC check.
-8. The JPEG write target at 1080p is p99 at most 1.0 ms with four readers, and 0.5 ms with none.
-9. T-RING-31 (idle CPU) is a known failure until the waiting of the camera loop is redesigned (a
-   blocking wait, with item 45). Measured: 3.9 to 7.0 % of one core.
+8. One JPEG write target: p99 at most 1.0 ms at 1080p for a writer paced at 60 frames per second,
+   with or without readers. M2 is closed (items 59 and 66).
+9. T-RING-31 (idle CPU) is a known failure until phase 3. The redesign of the wait of the OpenCV
+   loop is dropped (items 60 and 65).
 10. The translated copies of the architecture page are not updated in 2a.
-11. `run_opencv_camera_loop` has the optional argument `shm_subscription`. At a recreation, the
-    creator unlinks the old ring at once. `FrameRingWriter.name` is public, and `NO_SAMPLE_NS` is
-    exported.
+11. `run_opencv_camera_loop` has the optional argument `shm_subscription`. `FrameRingWriter.name`
+    is public, and `NO_SAMPLE_NS` is exported.
+12. The build of step 2b is approved: tests first, then the review of each open point, then the
+    code. The decode path is built and tested on synthetic JPEGs now (items 63 and 64).
+13. T-RING-34 (Apple Silicon) is on hold for the certify suite of a later task. T-RING-35 (arm64
+    CI) is not decided (item 67).
 
 ## Reason
 
 - The tests must fix one signature for each call that they make. The user decides the API
   before the 2a code, as for each item of the spec.
-- Each choice is the smallest that the tests need. The spec fixes the module, the class names, the
-  layout, the flags, the results and the procedures.
+- Each choice is the smallest that the tests need. The spec fixes the rest.
 - `failed_checks` lets T-RING-08 detect a torn copy through the public API. Section 3.10 lets
   readers count their own results.
 - Items 13 to 15 are the seams that T-RING-25 to 27, T-RING-23, T-RING-31 and T-RING-33 need
   outside the ring package.
-- The clarifications fix six points that the tests or the code must decide and that the spec left
-  open. This entry holds them and the corrections because its commits are not pushed (Rules of
-  the index), and items 1 to 4 and 6 are behaviour or durations that the 2a tests assume.
+- The clarifications fix points that the tests or the code must decide and that the spec left
+  open. This entry holds them because its commits are not pushed (Rules of the index).
 
 ## Alternatives rejected
 
