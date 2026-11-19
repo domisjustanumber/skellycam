@@ -117,13 +117,17 @@ task. Delete an item when its work is done. The PR that closes an item records t
     (14 tests with no counterpart yet).
 - **Phase 6a (the canvas player for new takes).** The user decided Y1 to Y7 on 2026-11-19
   ([ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md)). The spec
-  [`specs/player.md`](../specs/player.md) and its test list T-PLAY-01 to T-PLAY-63 wait for the user
-  ([ADR-4K7V](entries/4K7V-phase-6a-player-spec-and-test-list.md)): 42 agent choices (section 16),
-  4 questions (section 17) and 7 proposed texts for skellyfileformat (section 13). The user decides
-  those texts in skellyfileformat. Next, after the review: the failing tests of 6a.
+  [`specs/player.md`](../specs/player.md) (revision 2) and its test list T-PLAY-01 to T-PLAY-70 wait
+  for the user ([ADR-4K7V](entries/4K7V-phase-6a-player-spec-and-test-list.md)): 39 agent choices
+  (section 16), no open question. It applies M1 to M10 and L1 to L8
+  ([ADR-4HNY](entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md)). The player
+  gives three items to the merged format list of the recorder spec (section 13). Next, after the
+  review: the failing tests of 6a.
+- **The full reader result and the conformance run of the JavaScript reader.** They come with step 6c
+  (L2 of [ADR-4HNY](entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md)).
 - **Option B for the take files of the player (not part of 6a).** Review how the Python server can
   serve the take files with a performance on par with the Electron handler of 6a: threads, process
-  splits, no request log and no folder listing on the route, `Cache-Control: no-store`, HEAD and the
+  splits, no request log and no folder listing on the route, `Cache-Control: no-store` and the
   expose header (user, Y2 of [ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md); section
   14.4 of [`specs/player.md`](../specs/player.md)). The measured gap at 16 cameras × 60 fps × 150 kB:
   the bare FastAPI route was 4 % short and 25 % short behind the logging middleware.
