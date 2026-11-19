@@ -14,6 +14,8 @@
   "type": "module",
   "scripts": {
     "test:recording-shutdown": "node --experimental-strip-types --test tests/graceful-python-shutdown.test.mjs",
+    "test:player:unit": "node --experimental-strip-types --test \"src/player/tests/unit/**/*.test.ts\"",
+    "test:player:browser": "vite build -c vite.player-harness.config.ts && playwright test -c playwright.player.config.ts",
     "dev": "cross-env NODE_ENV=development vite",
     "build": "tsc && vite build && electron-builder",
     "build:dev": "tsc && vite build && electron-builder --config.mac.hardenedRuntime=false --config.mac.notarize=false",

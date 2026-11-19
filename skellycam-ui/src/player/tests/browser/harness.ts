@@ -1,0 +1,79 @@
+// The Playwright side of the test Electron app: launch, temporary folders, close. Each test gets a new
+// recordings folder and picked-folders file, and the app is closed after the test.
+import {_electron, test as base} from '@playwright/test';
+import type {ElectronApplication, Page} from '@playwright/test';
+import {mkdtempSync, rmSync} from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {writeTake} from '../fixtures/take.ts';
+import type {BuiltTake, TakePlan} from '../fixtures/take.ts';
+import {planOf} from '../fixtures/takes.ts';
+import type {TileUpdate} from '../../index.ts';
+
+const UI = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
+export const HARNESS_MAIN = path.join(UI, 'dist-player-harness', 'main', 'main.js');
+
+export interface Harness {
+    app: ElectronApplication;
+    page: Page;
+    root: string;              // the temporary folder of the test
+    recordings: string;        // the test recordingsFolder
+    picked: string;            // the test pickedFoldersFile
+    build(plan: TakePlan | string): BuiltTake;
+    relaunch(): Promise<void>;
+    /** Fail with the product error when the product is missing. */
+    requireProduct(): Promise<void>;
+}
+
+export async function launch(recordings: string, picked: string, pageName: 'harness' | 'host'): Promise<{app: ElectronApplication; page: Page}> {
+    const env: Record<string, string> = {};
+    for (const [k, v] of Object.entries(process.env)) if (v !== undefined && k !== 'ELECTRON_RUN_AS_NODE') env[k] = v;
+    Object.assign(env, {PLAYER_HARNESS_RECORDINGS: recordings, PLAYER_HARNESS_PICKED: picked, PLAYER_HARNESS_PAGE: pageName});
+    const app = await _electron.launch({args: [HARNESS_MAIN, '--no-sandbox'], env});
+    const page = await app.firstWindow();
+    await page.waitForFunction(name => name in window, pageName);
+    return {app, page};
+}
+
+export function harnessTest(pageName: 'harness' | 'host') {
+    return base.extend<{harness: Harness}>({
+        harness: async ({}, use) => {
+            const root = mkdtempSync(path.join(os.tmpdir(), 'skellycam-player-e2e-'));
+            const recordings = path.join(root, 'skellycam_data', 'recordings');
+            const picked = path.join(root, 'userData', 'picked-folders.json');
+            let {app, page} = await launch(recordings, picked, pageName);
+            const h: Harness = {
+                get app() {
+                    return app;
+                },
+                get page() {
+                    return page;
+                },
+                root, recordings, picked,
+                build: plan => writeTake(recordings, typeof plan === 'string' ? planOf(plan) : plan),
+                relaunch: async () => {
+                    await app.close();
+                    ({app, page} = await launch(recordings, picked, pageName));
+                },
+                requireProduct: async () => {
+                    const error = await page.evaluate(() => window.harnessIpc.productError());
+                    if (error) throw new Error(error);
+                },
+            };
+            try {
+                await use(h);
+            } finally {
+                await app.close();
+                rmSync(root, {recursive: true, force: true});
+            }
+        },
+    });
+}
+
+export const toBase64 = (b: Uint8Array) => Buffer.from(b).toString('base64');
+
+/** A TileUpdate for the wire: the JPEG as base64. */
+export function wire(u: Partial<TileUpdate> & {jpeg: Uint8Array | null}) {
+    return {rotationCwDeg: 0 as const, label: null, rateText: null, cameraState: null, mark: null, ...u, jpeg: u.jpeg ? toBase64(u.jpeg) : null};
+}
