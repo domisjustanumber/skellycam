@@ -1,6 +1,6 @@
 # E817 — Choices of the 2b code that the spec and ADR-5MYA do not fix
 
-**Status:** proposed, 2026-11-19 (agent).
+**Status:** accepted, 2026-11-19 (user; commit to dom/native-jpeg; was proposed, 2026-11-19 (agent)).
 
 ## Decision
 
@@ -34,7 +34,9 @@ choices below. Items 1 to 4 answer the four points that ADR-5MYA leaves to the c
 7. `limit_libjpeg_warnings()` on Windows does nothing and logs one line. The OpenCV 5.1.0 wheel
    has its own C runtime with its own copy of the stderr handle. `os.dup2` closes that handle.
    Then libjpeg writes to a closed handle, which the OS can give to another object. Thus
-   T-RING-46 fails on Windows.
+   T-RING-46 fails on Windows. The user decided on 2026-11-19: the limit stays off on Windows
+   until phase 3, and T-RING-46 is an expected failure on Windows until then. Until phase 3, the
+   decode stage gets BGR frames and decodes no JPEG, so libjpeg gives no warning there.
 8. In the OpenCV loop, the hand-over to the waiting place is in the same `try` as the JPEG ring
    write. When that write raises, the BGR ring does not get the frame, and no skip is counted.
 9. The three test helpers that replace `setup_opencv_camera_loop` in
