@@ -43,6 +43,7 @@ you make a measurement ([Rules](#rules)).
 | # | Decision | Status |
 |---|----------|--------|
 | [ETJ1](entries/ETJ1-measurements-m5-to-m7-of-the-bgr-ring.md) | Measurements M5 to M7 of the BGR ring: CRC-32 cost, decode thread CPU and skip rate, capture jitter and the GIL (Windows) | evidence |
+| [HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md) | M-PRV-1 to M-PRV-5 of the preview sender: uvicorn deflate compresses each JPEG (16.9 against 0.23 ms at 1080p); targets met with it off (Windows) | evidence |
 
 ### Proposed
 
