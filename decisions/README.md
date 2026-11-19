@@ -32,7 +32,7 @@ These entries are `accepted`.
 | [4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md) | Phase 3 spec `specs/windows-capture.md` and its test list (91 tests), with the 64 agent choices of its section 18 | accepted |
 | [HP7D](entries/HP7D-python-api-of-capture-as-the-3a-tests-assume-it.md) | Python API of capture, as the 3a tests assume it: names, seams for fake sources and a virtual clock, log line forms | accepted |
 | [HB4Z](entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md) | Answers U16 to U23: control thread, warm-up count, Windows-only `media_foundation/`, CI and tests on Linux and macOS, parity table | accepted |
-| [G651](entries/G651-phase-4-live-preview-decisions-p1-to-p7.md) | Phase 4 decisions P1 to P7: steps 4a and 4b, flow control for each camera, message header, tile and counts, deletion, shared tile, parity | accepted |
+| [G651](entries/G651-phase-4-live-preview-decisions-p1-to-p7.md) | Phase 4 decisions P1 to P7 and answers A1 to A7: steps, flow control and safety net, header, tile, counts, reader property, deletion, parity | accepted |
 
 ### Evidence
 
@@ -52,7 +52,7 @@ These entries wait for a decision of the user. Section is the section or area of
 |---|----------|---------|--------|
 | [NMM1](entries/NMM1-design-of-the-camera-media-check.md) | Camera media check: types, first bytes, `GOLDEN_PATHS`, image reminder, `commit-files` skill, per-worktree hook install | none | proposed |
 | [4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) | Other fills of the kit adoption; `CLAUDE.md` stays untracked | none | proposed |
-| [162X](entries/162X-step-4a-preview-spec-and-agent-choices.md) | Step 4a spec `specs/preview.md`: per-camera preview message, its sender and 25 tests, with 27 agent choices and 4 questions | `preview` | proposed |
+| [162X](entries/162X-step-4a-preview-spec-and-agent-choices.md) | Step 4a spec `specs/preview.md`: per-camera preview message, its sender and 24 tests, with 27 agent choices and 1 question | `preview` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
