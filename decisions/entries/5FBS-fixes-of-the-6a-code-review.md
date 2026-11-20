@@ -39,6 +39,14 @@ Format (section 6.4):
     T-PLAY-76). This replaces item 8 of ADR-1ACK. The `header_uuid_dashes` case of T-PLAY-08 and
     its spec row now expect the same: 3 cameras and `incomplete_take`.
 
+CI (`.github/workflows/player.yml`):
+
+11. The Linux job does not install a pinned `xvfb`. The `ubuntu-24.04` runner image has it
+    (2:21.1.12-1ubuntu1.9 in the first run), and the step prints and checks the installed version.
+    An apt pin in `noble-updates` goes away at the next update and would break CI. The image label
+    is the pin. This is a choice against the rule "pin each toolchain to one exact version", for the
+    user. The test steps run only when `npm ci` passed.
+
 Minor: the sidecar reader no longer decodes the whole file into an unused string; the decoder closes
 the first frame when the `VideoFrame` constructor fails.
 

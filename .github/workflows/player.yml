@@ -56,13 +56,14 @@ jobs:
           cache-dependency-path: skellycam-ui/package-lock.json
 
       - name: Install dependencies
+        id: deps
         run: npm ci
 
       - name: Run the unit tests
         run: npm run test:player:unit
 
       - name: Run the component and electron tests
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
         run: npm run test:player:browser
 
   player-linux:
@@ -72,10 +73,6 @@ jobs:
     defaults:
       run:
         working-directory: skellycam-ui
-    env:
-      # The exact version of the runner image was not verified when this file was written (spec 12.6,
-      # NV). The install step prints the candidate version before the install.
-      XVFB_VERSION: "2:21.1.12-1ubuntu1.4"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -86,21 +83,22 @@ jobs:
           cache: npm
           cache-dependency-path: skellycam-ui/package-lock.json
 
-      # Electron needs a display on Linux (spec 12.5).
-      - name: Install xvfb
+      # Electron needs a display on Linux (spec 12.5). The runner image has xvfb, and the image label
+      # ubuntu-24.04 is the pin: an apt pin in noble-updates goes away at the next update (ADR-5FBS).
+      - name: Check xvfb
         run: |
-          sudo apt-get update
-          apt-cache policy xvfb
-          sudo apt-get install -y --no-install-recommends "xvfb=${XVFB_VERSION}"
+          echo "xvfb $(dpkg-query -W -f='${Version}' xvfb)"
+          command -v xvfb-run
 
       - name: Install dependencies
+        id: deps
         run: npm ci
 
       - name: Run the unit tests
         run: npm run test:player:unit
 
       - name: Run the component and electron tests
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
         run: xvfb-run --auto-servernum npm run test:player:browser
 
   # GitHub has few macOS runners: no other job waits for this job, and a newer push cancels it.
@@ -125,11 +123,12 @@ jobs:
           cache-dependency-path: skellycam-ui/package-lock.json
 
       - name: Install dependencies
+        id: deps
         run: npm ci
 
       - name: Run the unit tests
         run: npm run test:player:unit
 
       - name: Run the component and electron tests
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
         run: npm run test:player:browser
