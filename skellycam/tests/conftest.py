@@ -44,7 +44,8 @@ def mock_camera_group_manager():
     All async methods are AsyncMock so they can be awaited without error.
     Sync methods return sensible defaults.
     """
-    mgr = MagicMock()
+    from skellycam.core.camera_group.camera_group_manager import CameraGroupManager
+    mgr = MagicMock(spec=CameraGroupManager)  # beartype checks the type of the manager in WebsocketServer
     # Async methods
     mgr.create_or_update_camera_group = AsyncMock()
     mgr.create_and_start_camera_group = AsyncMock()
