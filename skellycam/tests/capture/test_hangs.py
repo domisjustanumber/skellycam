@@ -236,3 +236,32 @@ def test_record_stop_after_a_hang_then_close(monkeypatch, tmp_path):
         app.client.delete("/skellycam/camera/group/close/all")
         assert status.info_dict().get("failure") is None, status.info_dict().get("failure")
         assert not app.group_or_none() or app.group.take is None
+
+
+@pytest.mark.parametrize("end", ["hang", "crash"])
+def test_apply_and_a_new_take_after_a_hard_end_during_a_take(monkeypatch, tmp_path, end):
+    """Review fault 1 of the connection (2026-11-20): a camera process that ends hard during a take (a hang,
+    or `os._exit(3)` as after a native crash) left its recording flag set, so each later apply and record
+    start got 409 "A recording runs" (D36). After the stop, an apply that unselects that camera is
+    accepted, and a new take of the other camera starts and stops."""
+    ending = FakeScript(hang_at="set_controls") if end == "hang" else FakeScript(exit_at="frame:300")
+    with capture_app(monkeypatch, [ending, FakeScript()], workers="process") as app:
+        ready_app_steps(app)
+        ended, other = app.factory.camera_ids
+        worker = app.worker(ended)
+        assert app.record_start(tmp_path).status_code == 200
+        if end == "hang":
+            time.sleep(1.0)
+            app.factory.logs[ended].arm_hang()
+        wait_exit(worker)
+        stopped = app.record_stop()
+        assert stopped.status_code == 200, stopped.text
+        response = app.apply([app.config(ended, use_this_camera=False), app.config(other)])
+        assert response.status_code == 200, response.text
+        app.wait_state(other, "ready")
+        started = app.record_start(tmp_path, name="take2")
+        assert started.status_code == 200, started.text
+        time.sleep(0.5)
+        stopped = app.record_stop()
+        assert stopped.status_code == 200, stopped.text
+    assert len(take_rows(tmp_path, other, "take2")) == stopped.json()[0]["number_of_frames"] > 0

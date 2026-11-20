@@ -20,11 +20,18 @@ generated lock files and Adobe Illustrator files (``SKIPPED_SUFFIXES``). The pre
   comment). Use it for a hostname or a user name. Git must ignore it: a tracked list publishes
   the terms.
 
-A placeholder such as ``C:\\Users\\<you>`` or ``/home/$USER`` or ``/home/user`` is not reported. Standard library only.
+A placeholder such as ``C:\\Users\\<you>`` or ``/home/$USER`` or ``/home/user`` is not reported.
+
+``ALLOWED_LINES`` allows the findings of one line of one file: a path, a line number, the SHA-256 of
+the exact text of that line (with no line end) and a reason. A finding passes only when all three
+match, so an edited or moved line is checked again. The value itself is never copied into this file
+(decision I of JMS0). A term of ``.private-terms`` is reported also on an allowed line. Standard
+library only.
 """
 
 from __future__ import annotations
 
+import hashlib
 import re
 import shutil
 import subprocess
@@ -44,6 +51,14 @@ ALLOWED_EMAIL_DOMAINS = re.compile(
 )
 # Add the public contact address of the project here, for example the one in pyproject.toml.
 ALLOWED_EMAILS = {"info@freemocap.org", "noreply@anthropic.com"}
+
+# (path, line number): (SHA-256 of the exact line text, reason). Decision I of JMS0 (2026-11-20).
+ALLOWED_LINES = {
+    ("skellycam-ui/src/hooks/floatingOnboarding.tsx", 1):
+        ("70d514cd447c3acfa67678f424813f7219a6820a0d1bb02bd319800e482e93b0", "upstream author credit"),
+    ("skellycam-ui/src/hooks/useDraggableTooltips.tsx", 1):
+        ("2b9a3455ee945850201dde0ba48d187a94f492d5fdf3964dfe818d1b3252ee4e", "upstream author credit"),
+}
 
 # A user folder that starts with <, {, % or $, or that is the word "user", is a placeholder.
 PLACEHOLDER = r"(?![<{%$]|user(?![\w.-]))"
@@ -122,7 +137,9 @@ def scan_text(rel: str, text: str, terms: list[str]) -> list[Finding]:
     findings = []
     lowered_terms = [(t, t.lower()) for t in terms]
     for number, line in enumerate(text.splitlines(), start=1):
-        for kind, pattern in PATTERNS.items():
+        allowed = ALLOWED_LINES.get((rel, number))
+        unchanged = allowed is not None and hashlib.sha256(line.encode("utf-8")).hexdigest() == allowed[0]
+        for kind, pattern in ({} if unchanged else PATTERNS).items():
             for match in pattern.finditer(line):
                 if kind == "email address" and is_allowed_email(match.group(0)):
                     continue

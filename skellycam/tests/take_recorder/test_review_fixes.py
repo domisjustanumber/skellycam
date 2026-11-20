@@ -312,3 +312,58 @@ def test_item_12b_the_manifest_keeps_the_summary_members_of_freemocap(tmp_path, 
     summary = run.manifest()["summary"]
     assert summary["calibration"] == manifest["summary"]["calibration"]
     assert summary["processing_runs"] == manifest["summary"]["processing_runs"]
+
+
+def test_finish_does_not_touch_the_files_of_a_camera_whose_process_runs(tmp_path):
+    """Review fault 6 of the connection [8.1 step 4, review B2]: `finish` with `running_cameras` leaves the
+    files of that camera as they are; the other camera is finished. Second review, R2 [8.1, SFF-724]: the
+    manifest stays `recording`, with a `take_error` that names that camera."""
+    from skellycam.core.take_recorder import CameraTakeWriter, start_take
+    from skellycam.tests.capture.fake_source import synthetic_jpeg
+    from skellycam.tests.take_recorder.rec_api import recorder_frame, take_camera
+
+    take = start_take(tmp_path / "take", "take", [take_camera("0a1b", layout=None),
+                                                  take_camera("ff00", os_index=1, layout=None)],
+                      writer="skellycam 2.0.0")
+    writers = [CameraTakeWriter.start(take.camera_spec(camera_id)) for camera_id in ("0a1b", "ff00")]
+    for k in range(3):
+        for writer in writers:
+            writer.give(recorder_frame(synthetic_jpeg(640, 480), k, arrival_ns=take.take_start_host_ns + k * 33_333_333))
+    result = writers[0].end(3)
+    writers[1].abandon()  # its files as a process left them that still runs
+    running = [writers[1].spec.mkv_path, writers[1].spec.csv_path]
+    before = [path.read_bytes() for path in running]
+    summary = take.finish([result, None], frame_count=3, running_cameras={"ff00"})
+    assert [path.read_bytes() for path in running] == before
+    manifest = json.loads((tmp_path / "take" / "recording_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["state"] == "recording"
+    errors = [w for w in manifest["warnings"] if w["code"] == "take_error"]
+    assert [w["camera_key"][:4] for w in errors] == ["ff00"] and "still runs" in errors[0]["detail"], errors
+    assert summary.warnings == manifest["warnings"]
+    assert writers[0].spec.csv_path.read_text(encoding="utf-8").splitlines()[-1].startswith("# end ")
+
+
+def test_abandon_writes_each_queued_frame(tmp_path, monkeypatch):
+    """Second review of the connection fixes, R1 (a): `abandon` with 30 frames in the queue of a slow disk
+    writes each of them (block and row) before the writer ends; it writes no `# end` line (7.4 completes the
+    pair). Before, the writer thread dropped each queued frame at its next item."""
+    from skellycam.core.take_recorder import CameraTakeWriter, start_take
+    from skellycam.tests.capture.fake_source import synthetic_jpeg
+    from skellycam.tests.take_recorder.rec_api import recorder_frame, take_camera
+
+    take = start_take(tmp_path / "take", "take", [take_camera("0a1b", layout=None)], writer="skellycam 2.0.0")
+    writer = CameraTakeWriter.start(take.camera_spec("0a1b"))
+    take_item = CameraTakeWriter._take
+
+    def slow_take(w, item):
+        time.sleep(0.02)  # a slow disk
+        return take_item(w, item)
+
+    monkeypatch.setattr(CameraTakeWriter, "_take", slow_take)
+    jpeg = synthetic_jpeg(640, 480)
+    for k in range(30):
+        writer.give(recorder_frame(jpeg, k, arrival_ns=take.take_start_host_ns + k * 33_333_333))
+    writer.abandon()
+    lines = writer.spec.csv_path.read_text(encoding="utf-8").splitlines()
+    assert sum(1 for line in lines if line[:1].isdigit()) == 30 and not lines[-1].startswith("# end")
+    assert len(ebml.payloads(writer.spec.mkv_path)) == 30

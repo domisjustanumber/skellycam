@@ -40,6 +40,7 @@ These entries are `accepted`.
 | [J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md) | Phase 6 player decisions Y1 to Y7: steps 6a to 6d, Electron file handler, one `ImageDecoder` tile, gap and unfinished marks, module, tests | accepted |
 | [4HNY](entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md) | Missing frames as black placeholder blocks with the flag `missing` (M1 to M10); player decisions L1 to L8 | accepted |
 | [YV3V](entries/YV3V-acceptance-of-the-phase-6a-player-spec-and-test-list.md) | The user accepted `specs/player.md` and its test list (step 6a) | accepted |
+| [JMS0](entries/JMS0-review-decisions.md) | Connection review decisions | accepted |
 
 ### Evidence
 
@@ -59,23 +60,24 @@ These entries wait for a decision of the user. Section is the section or area of
 
 | # | Decision | Section | Status |
 |---|----------|---------|--------|
-| [NMM1](entries/NMM1-design-of-the-camera-media-check.md) | Camera media check: types, first bytes, `GOLDEN_PATHS`, image reminder, `commit-files` skill, hooks | none | proposed |
-| [Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md) | Step 5a spec `specs/recorder.md`, its test list, format list F-1 to F-10, agent choices | `recorder` | proposed |
+| [NMM1](entries/NMM1-design-of-the-camera-media-check.md) | Camera media check: types, first bytes, `GOLDEN_PATHS`, image reminder, skill, hooks | none | proposed |
+| [Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md) | Step 5a spec `specs/recorder.md`, test list, format list F-1 to F-10, agent choices | `recorder` | proposed |
 | [4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) | Other fills of the kit adoption; `CLAUDE.md` stays untracked | none | proposed |
-| [S6HT](entries/S6HT-choices-of-the-3a-loop-code.md) | Choices of the 3a loop code: shared status, gate join, one stop flag per camera, warning pipe, apply response | none | proposed |
-| [MA22](entries/MA22-choices-of-the-media-foundation-source-of-step-3a.md) | Choices of the Media Foundation source of step 3a that the spec and ADR-HP7D do not fix | `skellycam.core.camera.capture.media_foundation` | proposed |
-| [6EKB](entries/6EKB-choices-of-the-3a-review-fixes.md) | Choices of the 3a review fixes: detection in the apply request, `modes_read`, end order, files after a hang | none | proposed |
-| [037V](entries/037V-completion-of-w8-the-phase-2-loop-and-its-tests.md) | Completion of W8: phase 2 loop deleted; its tests moved to the shared loop or retired | none | proposed |
-| [BM73](entries/BM73-fixes-of-the-first-ci-run-of-the-capture-workflow.md) | Fixes of the first capture CI run: stats float, codec alarm, test fixes, OpenCV fake clock, macOS timing step, group watch | none | proposed |
-| [R60B](entries/R60B-fixes-of-the-first-hardware-run-of-step-3a.md) | Fixes of the first 3a hardware run: DirectShow device path of the OpenCV source, hardware test labels by USB IDs | none | proposed |
-| [FTC3](entries/FTC3-fixes-of-the-second-capture-ci-run-and-the-first-hardware-run.md) | Fixes of the second capture CI run and the 3a hardware run: clock step, T-CAP-86 clock join, empty timing values, virtual links | none | proposed |
-| [QEQ8](entries/QEQ8-python-api-of-the-recorder-as-the-5a-tests-assume-it.md) | Python API of the recorder for the 5a tests; `dead_cameras` of `finish`; test interpretations | `recorder` | proposed |
-| [YNM2](entries/YNM2-connection-of-the-take-recorder-to-the-shared-loop.md) | Take recorder joined to the shared loop; U4, U5, U12 and old writer gone | none | proposed |
-| [T24F](entries/T24F-choices-of-the-5a-recorder-code.md) | Choices of the 5a recorder code: writer after a write error, completion walk, manifest merge, lock hold, empty statistics | `recorder` | proposed |
-| [4K7V](entries/4K7V-phase-6a-player-spec-and-test-list.md) | Phase 6a spec `specs/player.md` (revision 2) and its test list (72 tests), with 39 agent choices | `player` | proposed |
-| [4MJ4](entries/4MJ4-typescript-names-of-the-player-as-the-6a-tests-assume-them.md) | TypeScript names of the player, as the 6a tests assume them: test seams, pure functions, bridge, host view, test set-up | `player` | proposed |
-| [1ACK](entries/1ACK-corrections-and-choices-of-the-6a-player-code.md) | Corrections and choices of the 6a player code: back to black, decoded prefetch images in the tile, EXIF orientation undone, manifest warnings | `player` | proposed |
-| [5FBS](entries/5FBS-fixes-of-the-6a-code-review.md) | Fixes of the 6a code review: hard links, UNC paths, streamed reads, decode failure mark, loading message, refused take folders, unreadable `take_uuid` | `player` | proposed |
+| [S6HT](entries/S6HT-choices-of-the-3a-loop-code.md) | Choices of the 3a loop code: shared status, gate join, stop flag per camera, warning pipe, apply reply | none | proposed |
+| [MA22](entries/MA22-choices-of-the-media-foundation-source-of-step-3a.md) | Media Foundation source choices of step 3a, not fixed by spec or HP7D | `skellycam.core.camera.capture.media_foundation` | proposed |
+| [6EKB](entries/6EKB-choices-of-the-3a-review-fixes.md) | Choices of the 3a review fixes: detection in apply, `modes_read`, end order, files after a hang | none | proposed |
+| [037V](entries/037V-completion-of-w8-the-phase-2-loop-and-its-tests.md) | W8 done: phase 2 loop deleted; tests moved to the shared loop or retired | none | proposed |
+| [BM73](entries/BM73-fixes-of-the-first-ci-run-of-the-capture-workflow.md) | Fixes of the 1st capture CI run: stats float, codec alarm, tests, fake clock, macOS timing step, watch | none | proposed |
+| [R60B](entries/R60B-fixes-of-the-first-hardware-run-of-step-3a.md) | Fixes of the 1st 3a hardware run: DirectShow path of OpenCV, test labels by USB IDs | none | proposed |
+| [FTC3](entries/FTC3-fixes-of-the-second-capture-ci-run-and-the-first-hardware-run.md) | 2nd capture CI run and 3a hardware run fixes: clock step, T-CAP-86 join, empty timings, virtual links | none | proposed |
+| [QEQ8](entries/QEQ8-python-api-of-the-recorder-as-the-5a-tests-assume-it.md) | Recorder Python API for the 5a tests; `dead_cameras` of `finish`; test readings | `recorder` | proposed |
+| [YNM2](entries/YNM2-connection-of-the-take-recorder-to-the-shared-loop.md) | Take recorder joined to the shared loop; U4, U5, U12, old writer gone | none | proposed |
+| [P5VE](entries/P5VE-review-fix-choices.md) | Review fix choices | `recorder` | proposed |
+| [T24F](entries/T24F-choices-of-the-5a-recorder-code.md) | Choices of the 5a recorder code: write error, completion walk, manifest merge, lock hold, empty stats | `recorder` | proposed |
+| [4K7V](entries/4K7V-phase-6a-player-spec-and-test-list.md) | Phase 6a spec `specs/player.md` (revision 2), test list (72 tests), 39 agent choices | `player` | proposed |
+| [4MJ4](entries/4MJ4-typescript-names-of-the-player-as-the-6a-tests-assume-them.md) | Player TypeScript names for the 6a tests: test seams, pure functions, bridge, host view, set-up | `player` | proposed |
+| [1ACK](entries/1ACK-corrections-and-choices-of-the-6a-player-code.md) | 6a player code fixes and choices: back to black, decoded prefetch in the tile, EXIF undone, manifest warnings | `player` | proposed |
+| [5FBS](entries/5FBS-fixes-of-the-6a-code-review.md) | 6a review fixes: hard links, UNC paths, streamed reads, decode failure mark, loading text, refused folders, bad `take_uuid` | `player` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).

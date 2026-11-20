@@ -3,3 +3,30 @@
 
 [extend]
 useDefault = true
+
+# The three tables below: classified one by one on 2026-11-20: USB device identifiers, synthetic test
+# keys, a file hash, sample keys; no credential (decision JMS0, item K). All the hits were of the rule
+# generic-api-key, under research/ in the history.
+
+[[allowlists]]
+description = "Windows camera keys: USB device identifiers (VID, PID, interface, instance), no credential"
+targetRules = ["generic-api-key"]
+regexes = ['''^vid_[0-9a-f]{4}_pid_[0-9a-f]{4}_mi_[0-9a-f]{2}_\d+_[0-9a-f]{8}_\d+_[0-9a-f]{4}$''']
+
+[[allowlists]]
+description = "Synthetic test keys of the rig anchor self-test, no credential"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^research/usb_cameras/(results/windows/[^/]+/rig_anchor_selftest/|timing/rig/selftest_anchor\.py$)''']
+regexes = ['''^syn[AB]_v\w+$''']
+
+[[allowlists]]
+description = "Sample keys, codec paths and a file hash in three research notes, no credential"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = [
+  '''^research/skellycam_recording/docs/camera_info_placement_20261115\.md$''',
+  '''^research/skellycam_recording/recording_upgrade/results/hw_accel_target/NOTES_sources_nvidia_intel\.md$''',
+  '''^research/skellycam_recording/recording_upgrade/results/hw_accel_target/gapfill/GF07_sources/GF07_manifest\.json$''',
+]
+regexes = ['''^[0-9a-f]{16}$''', '''^h264/h[\w/]+$''', '''^[0-9a-f]{64}$''']

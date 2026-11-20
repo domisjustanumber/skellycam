@@ -27,7 +27,6 @@ from skellycam.core.camera.capture.source import (
 from skellycam.core.camera.config.camera_config import CameraConfig
 from skellycam.core.camera.config.image_resolution import ImageResolution
 from skellycam.core.camera.opencv.opencv_helpers.recommend_camera_exposure_setting import (
-    MAX_EXPOSURE,
     MIN_EXPOSURE,
     NUMBER_OF_FRAMES_TO_SETTLE,
     TARGET_BRIGHTNESS,
@@ -64,6 +63,8 @@ STALL_NS = 2_000_000_000  # 9.5, D38
 READY_LIMIT_NS = 15_000_000_000  # 9.3, D21
 CONTROL_READ_INTERVAL_S = 1.0  # 11.4, U16
 JPEG_Q90 = [int(cv2.IMWRITE_JPEG_QUALITY), 90]  # ring 2.3, 8.8
+RECOMMEND_MAX_EXPOSURE = -5  # 11.1, decision H (ADR-JMS0): -4 gives about 16 fps on the Logitech cameras
+RECOMMEND_OFFSET = -1  # 11.1, decision H: one step darker than the nearest value, as the old helper
 
 
 class _Stop(Exception):
@@ -122,7 +123,7 @@ class CameraLoop:
         self.started = False
         self.take_writer: CameraTakeWriter | None = None
         self.take_failed = False  # after a stall or a write error the loop calls only `end` (recorder.md 4.3)
-        self.take_rows = 0
+        self.take_rows = 0  # the rows given in this take: the frame count when no take level follows
         self.last_good_payload: bytes | None = None  # its SOF gives the placeholder layout (recorder.md 6.4)
         self.check: dict | None = None  # the check after a live change (10.2)
         self.block: tuple[int, int] | None = None  # the block of a recording (10.3)
@@ -282,9 +283,10 @@ class CameraLoop:
         self.config = self.config.model_copy(update=dict(exposure_mode=mode, exposure=value))
 
     def _recommend(self, deadline: int) -> int:
-        """RECOMMEND (11.1): -12 to -4, 10 frames to settle, the mean of the image nearest to 127.5."""
+        """RECOMMEND (11.1): -12 to -5, 10 frames to settle, the mean of the image nearest to 127.5, then one
+        step darker, in the range."""
         best = None
-        for value in range(MIN_EXPOSURE, MAX_EXPOSURE + 1):
+        for value in range(MIN_EXPOSURE, RECOMMEND_MAX_EXPOSURE + 1):
             set_ns = perf_counter_ns()
             self.source.set_controls({"exposure": ControlSetting(auto=False, value=value)})
             seen, frame = 0, None
@@ -296,7 +298,7 @@ class CameraLoop:
             error = abs(float(np.mean(image)) - TARGET_BRIGHTNESS) if image is not None else float("inf")
             if best is None or error < best[0]:
                 best = (error, value)
-        return best[1]
+        return max(MIN_EXPOSURE, best[1] + RECOMMEND_OFFSET)
 
     def _wait_pass(self) -> None:
         """`waiting` (9.4): keep the stream, take no frame to the rings, join the gate with the others."""
@@ -475,7 +477,20 @@ class CameraLoop:
     def _start_take(self, spec) -> None:
         if self.take_writer is not None:
             self._end_take()
-        self.take_writer = start_take_writer(self.camera_id, spec, self.status.writer_progress_at)
+        orchestrator = self.orchestrator
+        if orchestrator.first_recording_frame_number.value == -1 or orchestrator.last_recording_frame_number.value != -1:
+            # The take ended (or its start failed) before this spec came: no writer (ADR-P5VE).
+            text = f"camera {self.camera_id}: the take ended before its writer started"
+            logger.warning(text)
+            self.status.update_info(writer_failure=text)
+            return
+        try:
+            self.take_writer = start_take_writer(self.camera_id, spec, self.status.writer_progress_at)
+        except Exception as error:  # the camera runs on; the record start fails with this text (ADR-P5VE)
+            text = f"camera {self.camera_id}: the take writer did not start: {error}"
+            logger.error(text)
+            self.status.update_info(writer_failure=text)
+            return
         self.take_failed, self.take_rows = False, 0
         self.status.recording_in_progress.value = True  # the main process unpauses when each camera has it
 
@@ -500,13 +515,21 @@ class CameraLoop:
             self.last_wait_end = perf_counter_ns()
 
     def _end_take(self) -> None:
-        """End the camera writer with the frame count of the take (7.6) and send its result at once."""
+        """End the camera writer with the frame count of the take (7.6) and send its result at once.
+
+        With no last frame, the take did not end, and the frame count of the take is not known. When the take
+        goes on (this camera ends alone), `abandon` writes the queued frames and the take level completes the
+        pair after the join (7.4). When no take level follows (the group stops, the main process is gone),
+        the camera finishes its pair with the rows that it gave."""
         writer, self.take_writer = self.take_writer, None
-        orchestrator = self.orchestrator
-        frame_count = (orchestrator.take_frame_count() if orchestrator.last_recording_frame_number.value != -1
-                       else self.take_rows)
         try:
-            result = writer.end(frame_count)
+            if self.orchestrator.last_recording_frame_number.value == -1:
+                if self.ipc.should_continue:
+                    writer.abandon()
+                    return
+                result = writer.end(self.take_rows)
+            else:
+                result = writer.end(self.orchestrator.take_frame_count())
             self.ipc.pubsub.topics[TopicTypes.RECORDING_FINISHED].publish(
                 RecordingFinishedMessage(camera_id=self.camera_id, result=result))
         finally:

@@ -27,6 +27,7 @@ from multiprocessing.sharedctypes import Synchronized
 import os
 import signal
 import threading
+import time
 from enum import Enum
 from typing import Callable
 
@@ -35,6 +36,10 @@ from skellycam.utilities.utf8_console import utf8_console
 from skellylogs import configure_logging
 
 logger = logging.getLogger(__name__)
+
+# The stall limit of a take (10 s) plus the margin of recorder.md 5.3 item 4 (5 s): a writer with no progress
+# for that time is stuck by that rule.
+RECORDING_SAVE_LIMIT_S = 15.0
 
 
 class WorkerMode(Enum):
@@ -59,19 +64,28 @@ class ManagedWorker(abc.ABC):
         self._intentionally_terminated: bool = False
         self._failure_exitcode: int | None = None
         self._recording_in_progress: Synchronized | None = None
+        self._writer_progress_at: Synchronized | None = None
 
-    def protect_recording(self, recording_in_progress: Synchronized) -> None:
-        """Prevent automatic force termination while a camera owns an open writer."""
+    def protect_recording(self, recording_in_progress: Synchronized, writer_progress_at: Synchronized | None = None) -> None:
+        """Prevent automatic force termination while a camera owns an open writer. `writer_progress_at` is the
+        `time.monotonic()` of the last progress of that writer (recorder.md 5.3 item 4)."""
         self._recording_in_progress = recording_in_progress
+        self._writer_progress_at = writer_progress_at
 
     def wait_for_recording_save(self) -> None:
         if self._recording_in_progress is None or not self._recording_in_progress.value:
             return
         self.signal_owner_shutdown()
         logger.warning(f"Waiting for {self.name} to finish saving video; force termination is deferred")
-        # Deliberately no timeout: corrupting an active recording is worse than
-        # a slow shutdown. An already-dead process cannot finish saving.
+        # An already-dead process cannot finish saving. A process stuck on its disk must not hang the exit of
+        # the app: the wait ends after the limit with no writer progress; a writer that still makes progress is
+        # left to finish (C6DE D1, ADR-P5VE).
+        started = time.monotonic()
         while self.is_alive() and self._recording_in_progress.value:
+            progress = self._writer_progress_at.value if self._writer_progress_at is not None else 0.0
+            if time.monotonic() - max(started, progress) >= RECORDING_SAVE_LIMIT_S:
+                logger.error(f"{self.name} made no save progress for {RECORDING_SAVE_LIMIT_S:g} s; its end goes on")
+                return
             self.join(timeout=0.1)
 
     @property

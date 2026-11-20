@@ -19,6 +19,8 @@ import threading
 import time
 from types import SimpleNamespace
 
+import pytest
+
 from skellycam.core.camera_group.camera_group import CameraGroup
 from skellycam.core.camera_group.camera_status import CameraStatus
 from skellycam.core.ipc.frame_ring import FrameRingCreator, ReadResult
@@ -168,3 +170,49 @@ def test_a_late_close_leaves_the_ring_of_a_restart_open():
     group.rings["aaaa"] = new_ring
     group._close_ended_ring("aaaa", old_ring)
     assert group.rings["aaaa"] is new_ring and new_ring.unlinks == 0
+
+
+class UnendingWorker:
+    """A camera process that `terminate` and `kill` do not end, for example one stuck in the kernel."""
+
+    def __init__(self):
+        self.calls = []
+        self.worker = SimpleNamespace(terminate=lambda: self.calls.append("terminate"),
+                                      kill=lambda: self.calls.append("kill"), exitcode=None)
+
+    def join(self, timeout=None):
+        self.calls.append("join")
+
+    def is_alive(self):
+        return True
+
+
+def test_a_stuck_camera_whose_process_does_not_end_is_killed_and_reported(monkeypatch):
+    """Review fault 6 [recorder.md 5.3 item 6, 8.1 step 4, review B2]: after `terminate` and the join, a process
+    that still runs gets `kill`. When it still runs after that, the main process reports it, so that the
+    take level does not touch its files."""
+    import skellycam.core.camera_group.camera_group as module
+
+    monkeypatch.setattr(module, "BOUNDED_JOIN_S", 0.01)
+    worker = UnendingWorker()
+    status = status_in("recording")
+    group = bare_group({"cam0": worker}, {"cam0": status})
+    assert group._end_stuck_camera("cam0") is False
+    assert worker.calls == ["terminate", "join", "kill", "join"]
+    assert status.state == "failed" and status.info_dict()["failure"]["reason"] == "disk stall"
+
+
+@pytest.mark.parametrize("case", ["cameras starting", "every camera failed", "every camera died in a take"])
+def test_the_app_state_says_a_recording_runs_while_a_take_runs(case):
+    """NEW-A and the second review, R3: the app state has `recording_in_progress` true while a take runs, also
+    when every camera died during it (the UI then shows Stop, not a Start that gets 409), and false with
+    no take, also while the cameras start or when each camera failed."""
+    from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
+
+    state = {"cameras starting": "starting", "every camera failed": "failed"}.get(case, "dead")
+    statuses = {"cam0": status_in(state), "cam1": status_in(state)}
+    group = bare_group({}, statuses)
+    group.cameras.orchestrator = CameraOrchestrator.from_statuses(statuses)
+    group.ipc.should_continue = True
+    group.take = object() if case == "every camera died in a take" else None
+    assert group.to_state().recording_in_progress is (case == "every camera died in a take")

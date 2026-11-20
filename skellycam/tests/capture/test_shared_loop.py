@@ -270,8 +270,9 @@ BRIGHTNESS = ((-12, 2), (-11, 4), (-10, 8), (-9, 16), (-8, 32), (-7, 64), (-6, 1
 @pytest.mark.parametrize("mode", ["MANUAL", "AUTO", "RECOMMEND"])
 def test_t_cap_41_exposure_modes(monkeypatch, mode):
     """T-CAP-41, sections 11.1 and 9.1 [D29, D35, agent 29]: `MANUAL -7`, `AUTO`, `RECOMMEND` with a
-    brightness model in the fake. The fake gets the values in log2 seconds; `RECOMMEND` ends in
-    `MANUAL` with the value nearest to 127.5 (-6 in this model)."""
+    brightness model in the fake. The fake gets the values in log2 seconds; `RECOMMEND` tries -12 to -5
+    and ends in `MANUAL` with one step darker than the value nearest to 127.5 (-6 in this model, so -7)
+    (decision H of the user, 2026-11-20)."""
     with capture_app(monkeypatch, [FakeScript(brightness=BRIGHTNESS)]) as app:
         camera_id = app.factory.camera_ids[0]
         response = ready_app_steps(app, [app.config(camera_id, exposure_mode=mode, exposure=-7)])
@@ -287,8 +288,24 @@ def test_t_cap_41_exposure_modes(monkeypatch, mode):
             assert settings[0].auto is True
             assert config["exposure_mode"] == "AUTO"
         else:
-            assert set(range(-12, -3)) <= set(values), f"the search did not try -12 to -4: {sorted(set(values))}"
-            assert (config["exposure_mode"], config["exposure"]) == ("MANUAL", -6)
+            assert set(range(-12, -4)) <= set(values), f"the search did not try -12 to -5: {sorted(set(values))}"
+            assert -4 not in values, "the search tried -4 (about 16 fps on the Logitech cameras)"
+            assert (config["exposure_mode"], config["exposure"]) == ("MANUAL", -7)
+
+
+@pytest.mark.parametrize("scene", ["dark", "bright"])
+def test_t_cap_41_recommend_offset_and_range(monkeypatch, scene):
+    """T-CAP-41, section 11.1, decision H of the user (2026-11-20): in a dark scene the nearest value is the
+    brightest that the search tries, -5 (never -4), and the result is -6; in a bright scene the nearest
+    value is -12, and the step darker stays in the range: -12."""
+    brightness = tuple((v, 2 * (v + 13)) for v in range(-12, -3)) if scene == "dark" else         tuple((v, 130 + 15 * (v + 12)) for v in range(-12, -3))
+    with capture_app(monkeypatch, [FakeScript(brightness=brightness)]) as app:
+        camera_id = app.factory.camera_ids[0]
+        response = ready_app_steps(app, [app.config(camera_id, exposure_mode="RECOMMEND", exposure=-7)])
+        values = [s.value for s in app.factory.logs[camera_id].settings if "exposure" in s for s in [s["exposure"]]]
+        config = response.json()["camera_configs"][camera_id]
+    assert -4 not in values and max(v for v in values if v is not None) == -5
+    assert (config["exposure_mode"], config["exposure"]) == ("MANUAL", -6 if scene == "dark" else -12)
 
 
 # ---------------------------------------------------------------------------

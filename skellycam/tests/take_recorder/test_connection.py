@@ -9,6 +9,7 @@ after it says how the test meets it. T-REC-38 and T-REC-39 are not used (12.6).
 """
 
 import importlib
+import logging
 import math
 import threading
 import time
@@ -48,9 +49,17 @@ def stop(app):
     return stopped.json()[0]
 
 
+class _Killed(BaseException):
+    """The end of a held writer thread when the main process ends its camera (THREAD workers)."""
+
+
 class WriterHold:
     """Holds the writer thread of one camera before its next row (the disk takes nothing). `stalled` is set
-    when `give` of that camera raises `RecorderStalled`; `in_give` is true while its `give` waits."""
+    when `give` of that camera raises `RecorderStalled`; `in_give` is true while its `give` waits.
+
+    With `kill_flag` (the stop flag of the camera), a held writer thread ends as a killed process ends when
+    the flag is set: its file handles close with no write, and the thread ends. A THREAD worker cannot be
+    killed, so else the take level would complete the files while the writer thread lives (review item 15)."""
 
     def __init__(self, monkeypatch, camera_id):
         from skellycam.core.take_recorder import CameraTakeWriter, RecorderStalled
@@ -58,13 +67,24 @@ class WriterHold:
         self.camera_id = camera_id
         self.held, self.release, self.stalled = threading.Event(), threading.Event(), threading.Event()
         self.in_give = False
+        self.kill_flag = None
         take, give = CameraTakeWriter._take, CameraTakeWriter.give
+        hook = threading.excepthook
         hold = self
 
         def held_take(writer, item):
             if writer.spec.camera_id == hold.camera_id and hold.held.is_set():
-                hold.release.wait(120)
+                deadline = time.monotonic() + 120
+                while not hold.release.wait(0.001) and time.monotonic() < deadline:
+                    if hold.kill_flag is not None and hold.kill_flag.value:
+                        writer._mkv.raw.close()
+                        writer._csv.close()
+                        raise _Killed()
             return take(writer, item)
+
+        def quiet_kill(args):
+            if not issubclass(args.exc_type, _Killed):
+                hook(args)
 
         def watched_give(writer, frame):
             mine = writer.spec.camera_id == hold.camera_id
@@ -82,6 +102,7 @@ class WriterHold:
 
         monkeypatch.setattr(CameraTakeWriter, "_take", held_take)
         monkeypatch.setattr(CameraTakeWriter, "give", watched_give)
+        monkeypatch.setattr(threading, "excepthook", quiet_kill)
 
     def start(self):
         self.release.clear()
@@ -223,7 +244,8 @@ def test_t_rec_43_dead_camera_runs_to_the_end_of_the_take(monkeypatch, tmp_path)
     normally; every CSV and MKV has the same rows and blocks; `camera_dead` in the manifest; no
     recording info JSON."""
     # The removal comes at the next frame after 60 recorded frames, not at source frame 300: the virtual
-    # time runs ahead of the test (as in the old T-CAP-35). "Its process runs": its THREAD worker.
+    # time runs ahead of the test (as in the old T-CAP-35). "Its process runs": its THREAD worker. "Dead" is
+    # within 100 ms of the removal (the rule of the old T-CAP-35, review item 11).
     from skellycam.tests.take_recorder.ebml import walk_file
 
     with capture_app(monkeypatch, [FakeScript(), FakeScript(), FakeScript()], track=True) as app:
@@ -232,9 +254,12 @@ def test_t_rec_43_dead_camera_runs_to_the_end_of_the_take(monkeypatch, tmp_path)
         live, dead = app.factory.camera_ids[:2], app.factory.camera_ids[2]
         assert app.record_start(tmp_path).status_code == 200
         record_until(app, spies, 60, [dead])
-        app.factory.sources[dead].remove_now()
+        source = app.factory.sources[dead]
+        source.remove_now()
         app.wait(lambda: app.tracker.first(dead, "dead") is not None, "the camera is dead")
         t_dead = app.tracker.first(dead, "dead")
+        removed_ns = app.factory.logs[dead].frames[source.removed_frame][0] + round(1e9 / 30)
+        assert t_dead - removed_ns < 100_000_000, f"dead {(t_dead - removed_ns) / 1e9:.3f} s after the removal"
         for camera_id in live:
             app.wait(lambda: any(e["arrival_ns"] > t_dead + 10**9 for e in spies.of("record", camera_id)),
                      f"camera {camera_id} records after the dead camera")
@@ -255,12 +280,15 @@ def test_t_rec_43_dead_camera_runs_to_the_end_of_the_take(monkeypatch, tmp_path)
     assert '"skellyfileformat": "capture_info"' in info and "dead_cameras" not in info, "a recording info JSON"
 
 
+@pytest.mark.capture_timing
 def test_t_rec_44_hang_ends_the_process_and_the_take_level_completes_its_file(monkeypatch, tmp_path):
     """T-REC-44 [R4, M5]: a bounded call of one fake hangs during a take. The failure is reported; the
     process ends within 1 s of the report; the take level completes its short file after the join;
     the others record to the stop."""
     # PROCESS workers in real time: the hard end of a camera thread would end the test process. The hung
     # call is the periodic control read on the control thread [U16]. It replaces T-CAP-85 (section 14).
+    # "Record to the stop": the other camera has no gap above 100 ms in its ring from the start of the take
+    # to the stop (U16, decision G of the user, 2026-11-20); real time, so the marker `capture_timing`.
     scripts = [FakeScript(hang_at="set_controls"), FakeScript()]
     with capture_app(monkeypatch, scripts, workers="process") as app:
         ready_app_steps(app)
@@ -270,6 +298,7 @@ def test_t_rec_44_hang_ends_the_process_and_the_take_level_completes_its_file(mo
         try:
             worker = app.worker(hung)
             assert app.record_start(tmp_path).status_code == 200
+            started_ns = time.perf_counter_ns()
             time.sleep(1.0)
             app.factory.logs[hung].arm_hang()
             app.wait(lambda: watcher.failure is not None, "the failure is reported")
@@ -278,7 +307,10 @@ def test_t_rec_44_hang_ends_the_process_and_the_take_level_completes_its_file(mo
             after_report = (exited - watcher.failure_ns) / 1e9
             assert after_report <= 1.0, f"the process ended {after_report:.2f} s after the report"
             app.wait(lambda: any(f[1] > exited + 2 * 10**9 for f in ring.frames), "the other camera records on")
+            stop_ns = time.perf_counter_ns()
             summary = stop(app)
+            largest, before = ring.largest_gap(started_ns, stop_ns)
+            assert largest <= 0.1, f"the other camera had a gap of {largest * 1000:.0f} ms at {before}"
         finally:
             watcher.stop()
             ring.stop()
@@ -321,6 +353,8 @@ def test_t_rec_45_stop_response_and_microphone_refusal_over_http(monkeypatch, tm
     expected = stop_response_fields(paths, recording_name="take", recording_path=tmp_path / "take",
                                     frame_count=len(take_rows(tmp_path, app.factory.camera_ids[0])))
     assert summary["number_of_frames"] >= 60 and summary["number_of_cameras"] == 2
+    assert summary["total_duration_sec"] > 0, "the take start and the arrivals are on two clocks"
+    assert all(row.arrival_ns >= 0 for cid in app.factory.camera_ids for row in take_rows(tmp_path, cid))
 
     def same(value, wanted):
         if isinstance(wanted, dict):
@@ -404,7 +438,9 @@ def test_t_rec_48_stall_watch_stall_end_and_failed_state(monkeypatch, tmp_path):
     `take_error`, the camera stays `ready`; case 3: the camera is `failed`, stage `recording`, reason
     "disk stall", and "apply again" reopens it."""
     # Case 1 holds the writer while the loops wait 3 s of the virtual clock (the stall watch counts that
-    # clock). Cases 2 and 3 use a stall limit of 1 s (real time, 5.3); each case has a queue of 0.2 s.
+    # clock). Then each grab fails for 100 ms: a read of the OpenCV source with no time left still grabs once,
+    # so with no failed grab a watch that counts from the last arrival would not fire either (review item
+    # 14). Cases 2 and 3 use a stall limit of 1 s (real time, 5.3); each case has a queue of 0.2 s.
     module = group_module()
     monkeypatch.setattr(module, "TAKE_QUEUE_SECONDS", 0.2)
     app = CaptureApp(monkeypatch, OpenCVFakeFactory(monkeypatch, count=2))
@@ -422,6 +458,8 @@ def test_t_rec_48_stall_watch_stall_end_and_failed_state(monkeypatch, tmp_path):
         wait_blocked_in_give(app, spies, hold)
         app.clock.advance_to(app.clock.now_ns() + 3 * 10**9)
         time.sleep(0.5)
+        for capture in app.factory.captures.values():
+            capture.fail_until_ns = app.clock.now_ns() + 100_000_000
         hold.stop()
         count = len(spies.of("record", held_id))
         app.wait(lambda: len(spies.of("record", held_id)) > count + 30, "the take goes on")
@@ -445,13 +483,17 @@ def test_t_rec_48_stall_watch_stall_end_and_failed_state(monkeypatch, tmp_path):
         assert errors[0]["camera_key"] == camera_key_of(tmp_path, held_id, "take2")
         assert app.state(held_id) == "ready" and app.state(other) == "ready"
         assert summary["number_of_frames"] == len(take_rows(tmp_path, held_id, "take2"))
-        # case 3
+        # case 3: the writer of the held camera ends as its process would end at the kill of 5.3 item 6
         hold.stalled.clear()
+        hold.kill_flag = app.group.cameras.orchestrator.camera_statuses[held_id].should_close
         assert app.record_start(tmp_path, name="take3").status_code == 200
         record_until(app, spies, len(spies.of("record", held_id)) + 30)
+        writer_thread = spies.writers[held_id]._thread
         hold.start()
         app.wait(lambda: app.group.ended_take is not None, "the take ends", timeout=60)
-        stop(app)
+        frame_count = stop(app)["number_of_frames"]
+        assert not writer_thread.is_alive(), "the take level completed the files while the writer thread lived"
+        assert [len(take_rows(tmp_path, cid, "take3")) for cid in (held_id, other)] == [frame_count] * 2
         status = app.status(held_id)
         assert status["state"] == "failed" and status["failure"] == {
             "camera_id": held_id, "stage": "recording", "reason": "disk stall"}, status
@@ -520,3 +562,337 @@ def test_t_rec_49_playback_list_marks_new_takes(tmp_path):
     assert stream.status_code == 409 and stream.json()["detail"] == NEEDS_NEW_PLAYER, stream.text
     assert client.get("/skellycam/playback/old_rec/videos", params=params).status_code == 200
     assert client.get("/skellycam/playback/new_take/timestamps", params=params).status_code != 409
+
+
+# ---------------------------------------------------------------------------
+# Faults of the independent review of the connection (2026-11-20)
+# ---------------------------------------------------------------------------
+
+def stop_in_thread(app):
+    result = []
+    thread = threading.Thread(target=lambda: result.append(app.record_stop()), daemon=True)
+    thread.start()
+    return thread, result
+
+
+@pytest.mark.parametrize("error", ["stall in give", "write error at the end"])
+def test_an_error_during_the_stop_gives_take_error(monkeypatch, tmp_path, error):
+    """Review fault 2 [C5, recorder.md 5.3, 5.4]: a stall or a write error that comes while the stop runs.
+    The stop response is 200, and the manifest has `take_error` with the text of 5.3 or 5.4 and the key
+    of that camera. Before the fix, the stop finished the take with no error, and the error end that the
+    watch started found no take."""
+    from skellycam.core.take_recorder import CameraTakeWriter
+
+    module = group_module()
+    monkeypatch.setattr(module, "TAKE_QUEUE_SECONDS", 0.2)
+    monkeypatch.setattr(module, "TAKE_STALL_LIMIT_S", 1.0)
+    stall = error == "stall in give"
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        failing = app.factory.camera_ids[0]
+        hold = WriterHold(monkeypatch, failing)
+        if not stall:
+            finish = CameraTakeWriter._finish
+
+            def failing_finish(writer, frame_count):
+                if writer.spec.camera_id == failing:
+                    raise OSError("test: the disk is full")
+                return finish(writer, frame_count)
+
+            monkeypatch.setattr(CameraTakeWriter, "_finish", failing_finish)
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 30)
+        if stall:
+            hold.start()
+            wait_blocked_in_give(app, spies, hold)
+        thread, result = stop_in_thread(app)
+        if stall:
+            app.wait(lambda: hold.stalled.is_set(), "`give` raises RecorderStalled")
+            hold.stop()
+        thread.join(60)
+        assert result and result[0].status_code == 200, result and result[0].text
+        assert app.state(failing) == "ready" and app.group.take is None
+    errors = take_warnings(tmp_path, "take_error")
+    expected = f"disk stall on camera {failing}" if stall else "test: the disk is full"
+    assert [w["detail"] for w in errors] == [expected], errors
+    assert errors[0]["camera_key"] == camera_key_of(tmp_path, failing)
+
+
+def test_a_stop_whose_pause_times_out_ends_the_take(monkeypatch, tmp_path):
+    """Review fault 5 [recorder.md 5.3, 8.1]: the writer of one camera is held while the stop pauses the
+    cameras, and the pause limit ends before the stall limit. The stop ends the take as after an error,
+    with no pause: 200, the manifest is `finished` with `take_error`, and the group runs on. Before the
+    fix, the pause timeout stopped the group, and the take stayed with the manifest `recording`."""
+    import skellycam.core.camera_group.camera_orchestrator as orchestrator_module
+
+    module = group_module()
+    monkeypatch.setattr(module, "TAKE_QUEUE_SECONDS", 0.2)
+    monkeypatch.setattr(module, "TAKE_STALL_LIMIT_S", 3.0)
+    monkeypatch.setattr(orchestrator_module, "CAMERA_STATE_TIMEOUT_SECONDS", 0.5)
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        held = app.factory.camera_ids[0]
+        hold = WriterHold(monkeypatch, held)
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 30)
+        hold.start()
+        wait_blocked_in_give(app, spies, hold)
+        thread, result = stop_in_thread(app)
+        app.wait(lambda: hold.stalled.is_set(), "`give` raises RecorderStalled")
+        hold.stop()
+        thread.join(60)
+        assert result and result[0].status_code == 200, result and result[0].text
+        frame_count = result[0].json()[0]["number_of_frames"]
+        assert app.group.take is None and app.group.ipc.should_continue
+        assert all(app.state(cid) == "ready" for cid in app.factory.camera_ids)
+    assert take_manifest(tmp_path)["state"] == "finished"
+    assert [w["detail"] for w in take_warnings(tmp_path, "take_error")] == [f"disk stall on camera {held}"]
+    assert all(len(take_rows(tmp_path, cid)) == frame_count for cid in app.factory.camera_ids)
+
+
+def test_two_stops_at_once_and_a_lost_error_end(monkeypatch, tmp_path):
+    """Review fault 7: (1) two stop requests at once give one summary and one 409 "No recording runs", not
+    an HTTP 500; (2) an exception of the error end is logged, and a later stop gets 409."""
+    from skellycam.core.take_recorder import Take
+    from skellycam.tests.capture.capture_session import capture_logs
+
+    module = group_module()
+    monkeypatch.setattr(module, "TAKE_QUEUE_SECONDS", 0.2)
+    monkeypatch.setattr(module, "TAKE_STALL_LIMIT_S", 1.0)
+    finish = Take.finish
+    mode = {"slow": True, "fail": False}
+
+    def watched_finish(take, *args, **kwargs):
+        if mode["fail"]:
+            raise RuntimeError("test: the finish fails")
+        if mode["slow"]:
+            time.sleep(0.5)  # the second stop arrives while the first one runs
+        return finish(take, *args, **kwargs)
+
+    monkeypatch.setattr(Take, "finish", watched_finish)
+    with capture_logs() as logs, capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        held = app.factory.camera_ids[0]
+        hold = WriterHold(monkeypatch, held)
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 30)
+        stops = [stop_in_thread(app) for _ in range(2)]
+        for thread, _ in stops:
+            thread.join(60)
+        responses = sorted((result[0] for _, result in stops), key=lambda r: r.status_code)
+        assert [r.status_code for r in responses] == [200, 409], [r.text for r in responses]
+        assert responses[1].json()["detail"] == "No recording runs"
+        # (2)
+        mode.update(slow=False, fail=True)
+        assert app.record_start(tmp_path, name="take2").status_code == 200
+        record_until(app, spies, len(spies.of("record", held)) + 30)
+        hold.start()
+        app.wait(lambda: hold.stalled.is_set(), "`give` raises RecorderStalled")
+        hold.stop()
+        app.wait(lambda: any("test: the finish fails" in m for m in logs.messages(logging.ERROR)), "the logged error end")
+        app.wait(lambda: app.group.take is None, "the take ends")
+        late = app.record_stop()
+        assert late.status_code == 409 and late.json()["detail"] == "No recording runs", late.text
+
+
+def test_a_camera_that_ends_with_no_last_frame_leaves_its_files_to_the_take_level(monkeypatch, tmp_path):
+    """Review fault 3 [R2, recorder.md 7.4, 7.6]: the loop of one camera ends during a take with no last frame
+    (its stop flag, as when the group closes with no stop). It does not finish its pair with its own row
+    count: the take level completes it at the stop, so each sidecar has the frame count of the take and
+    the manifest has no `take_error`."""
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        ready_app_steps(app)
+        closing, other = app.factory.camera_ids
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 30)
+        worker = app.worker(closing)
+        app.group.cameras.orchestrator.camera_statuses[closing].should_close.value = True
+        app.wait(lambda: not worker.is_alive(), "the loop of the camera ends")
+        record_until(app, spies, len(spies.of("record", other)) + 30, [other])
+        summary = stop(app)
+    frame_count = summary["number_of_frames"]
+    assert [len(take_rows(tmp_path, cid)) for cid in (closing, other)] == [frame_count, frame_count]
+    assert take_warnings(tmp_path, "take_error") == []
+    lines = take_files(tmp_path)[closing][1].read_text(encoding="utf-8").splitlines()
+    assert lines[-2].startswith("# repair "), "the take level did not complete the pair (7.4)"
+
+
+def test_a_writer_that_cannot_start_fails_the_record_start(monkeypatch, tmp_path):
+    """Review fault 9 and decision D of the user (2026-11-20): the camera writer of one camera cannot open its
+    files. The record start fails with the error text of that camera (not 200 with a take that runs with
+    no writer); the take folder is finished at once with zero rows and a `take_error`; the camera stays
+    `ready` (not `dead` with the reason "exit code 0"), and a later take starts."""
+    from skellycam.core.take_recorder import CameraTakeWriter
+
+    start = CameraTakeWriter.start.__func__
+    refuse = {"on": True}
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        failing = app.factory.camera_ids[0]
+
+        def refusing_start(cls, spec, **kwargs):
+            if refuse["on"] and spec.camera_id == failing:
+                raise OSError("test: the disk refuses the file")
+            return start(cls, spec, **kwargs)
+
+        monkeypatch.setattr(CameraTakeWriter, "start", classmethod(refusing_start))
+        ready_app_steps(app)
+        response = app.record_start(tmp_path)
+        assert response.status_code == 500, response.text
+        detail = response.json()["detail"]
+        assert f"camera {failing}" in detail and "test: the disk refuses the file" in detail, detail
+        assert app.group.take is None
+        assert all(app.state(cid) == "ready" for cid in app.factory.camera_ids), \
+            {cid: app.status(cid) for cid in app.factory.camera_ids}
+        refuse["on"] = False
+        assert app.record_start(tmp_path, name="take2").status_code == 200
+        stop(app)
+    manifest = take_manifest(tmp_path)
+    assert manifest["state"] == "finished"
+    assert all(take_rows(tmp_path, cid) == [] for cid in app.factory.camera_ids)
+    errors = take_warnings(tmp_path, "take_error")
+    assert len(errors) == 1 and "test: the disk refuses the file" in errors[0]["detail"], errors
+    assert take_warnings(tmp_path, "camera_dead") == []
+
+
+def test_stall_watch_of_a_push_source_counts_from_the_end_of_the_wait(monkeypatch, tmp_path):
+    """Decision E of the user (2026-11-20, recorder.md 5.2 and 10 item 10): the 2 s stall watch of each source
+    counts from the later of the last frame and the end of the last wait. Two push fakes record; the writer of
+    one is held 3 s of the clock, and its source gives its next frame 4 s after its last frame, 1 s after
+    the hold. No camera is `dead`: counted from the last frame alone, the watch fires (checked by hand)."""
+    monkeypatch.setattr(group_module(), "TAKE_QUEUE_SECONDS", 0.2)
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        held, other = app.factory.camera_ids
+        hold = WriterHold(monkeypatch, held)
+        ready_app_steps(app)
+        watchers = {cid: StateWatcher(app, cid) for cid in app.factory.camera_ids}
+        try:
+            assert app.record_start(tmp_path).status_code == 200
+            record_until(app, spies, 30)
+            hold.start()
+            wait_blocked_in_give(app, spies, hold)
+            app.factory.sources[held].slow_period(rate=0.25, seconds=1.0)  # one interval of 4 s
+            app.clock.advance_to(app.clock.now_ns() + 3 * 10**9)
+            time.sleep(0.3)
+            hold.stop()
+            count = len(spies.of("record", held))
+            app.wait(lambda: len(spies.of("record", held)) > count + 3, "the take goes on")
+            stop(app)
+        finally:
+            for watcher in watchers.values():
+                watcher.stop()
+    assert all("dead" not in watcher.first for watcher in watchers.values()), \
+        {cid: watcher.first for cid, watcher in watchers.items()}
+
+
+def test_an_exit_during_a_take_leaves_finished_camera_files(monkeypatch, tmp_path):
+    """Second review of the connection fixes, R1 (b): the camera loops end during a take with no stop and no
+    take level to follow (the group stops, as at an exit of the app). Each camera finishes its own pair with
+    the rows that it gave, and its `# end` line, as before the first fixes."""
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 30)
+        workers = [app.worker(cid) for cid in app.factory.camera_ids]
+        app.group.ipc.should_continue = False
+        for worker in workers:
+            app.wait(lambda: not worker.is_alive(), "the loop ends")
+        app.group.take = None  # no stop: the take level does not follow (the close then stops no take)
+    for camera_id in app.factory.camera_ids:
+        lines = take_files(tmp_path)[camera_id][1].read_text(encoding="utf-8").splitlines()
+        rows = sum(1 for line in lines if line[:1].isdigit())
+        assert lines[-1].startswith("# end ") and rows == len(spies.of("record", camera_id)) >= 30, (rows, lines[-1])
+
+
+@pytest.mark.parametrize("case", ["late writer", "unpause timeout"])
+def test_a_failed_start_waits_for_a_late_writer_before_it_finishes_the_folder(monkeypatch, tmp_path, case):
+    """Second review, R8 (a) and (b), decision D: the writer of one camera opens its files at once but returns
+    2 s after the take spec, past the start limit (1 s here). The record start fails, and the take folder is finished only after that
+    camera ended its late writer: `finish` never completes the files of a live writer. With an unpause limit
+    of 0.5 s, the camera that still opens its files cannot unpause in time: the folder is still finished,
+    and the group runs on (before, the unpause timeout stopped the group and the manifest stayed
+    `recording`)."""
+    import skellycam.core.camera_group.camera_orchestrator as orchestrator_module
+    from skellycam.core.take_recorder import CameraTakeWriter, Take
+
+    monkeypatch.setattr(group_module(), "TAKE_START_LIMIT_S", 1.0)
+    if case == "unpause timeout":
+        monkeypatch.setattr(orchestrator_module, "CAMERA_STATE_TIMEOUT_SECONDS", 0.5)
+    start, end, finish = CameraTakeWriter.start.__func__, CameraTakeWriter.end, Take.finish
+    times = {}
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        slow = app.factory.camera_ids[0]
+
+        def slow_start(cls, spec, **kwargs):
+            writer = start(cls, spec, **kwargs)
+            if spec.camera_id == slow and spec.csv_path.parent.parent.name == "take":
+                time.sleep(2.0)  # a slow start after the open (disk, antivirus, network share)
+            return writer
+
+        def timed_end(writer, frame_count):
+            if writer.spec.camera_id == slow:
+                time.sleep(0.5)  # and a slow end: a finish that does not wait for it overlaps it
+            result = end(writer, frame_count)
+            times.setdefault(writer.spec.camera_id, time.monotonic())
+            return result
+
+        def timed_finish(take, *args, **kwargs):
+            times.setdefault("finish", time.monotonic())
+            return finish(take, *args, **kwargs)
+
+        monkeypatch.setattr(CameraTakeWriter, "start", classmethod(slow_start))
+        monkeypatch.setattr(CameraTakeWriter, "end", timed_end)
+        monkeypatch.setattr(Take, "finish", timed_finish)
+        ready_app_steps(app)
+        response = app.record_start(tmp_path)
+        assert response.status_code == 500, response.text
+        assert app.group.ipc.should_continue and app.group.take is None
+        assert take_manifest(tmp_path)["state"] == "finished"
+        app.wait(lambda: not app.group.cameras.orchestrator.camera_statuses[slow].recording_in_progress.value,
+                 "the late writer ends")
+        assert times.get(slow, math.inf) < times["finish"], "finish completed the files of a live writer"
+        app.wait(lambda: all(app.state(cid) == "ready" for cid in app.factory.camera_ids), "both cameras ready")
+        assert app.record_start(tmp_path, name="take2").status_code == 200
+        stop(app)
+    assert all(take_rows(tmp_path, cid) == [] for cid in app.factory.camera_ids)
+
+
+def test_a_stop_whose_unpause_fails_still_finishes_the_take(monkeypatch, tmp_path):
+    """Second review, R8 (c): the stop paused the cameras, then one camera cannot unpause within the limit
+    (0.5 s here; its loop is held 2 s). The stop still finishes the take: 200, the manifest is `finished`,
+    and the group runs on. Before, the unpause timeout stopped the group, and the take ended with no finish."""
+    import types
+
+    import skellycam.core.camera_group.camera_orchestrator as orchestrator_module
+
+    loop_module = importlib.import_module("skellycam.core.camera.capture.camera_loop")
+    monkeypatch.setattr(orchestrator_module, "CAMERA_STATE_TIMEOUT_SECONDS", 0.5)
+    hold = {"on": False}
+    real_sleep = time.sleep
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        held = app.factory.camera_ids[0]
+
+        def held_sleep(seconds):
+            if hold["on"] and seconds == 0.05 and held in threading.current_thread().name:
+                hold["on"] = False
+                real_sleep(2.0)  # paused, and held: it cannot unpause in time
+            real_sleep(seconds)
+
+        names = {name: getattr(time, name) for name in dir(time) if not name.startswith("_")}
+        monkeypatch.setattr(loop_module, "time", types.SimpleNamespace(**{**names, "sleep": held_sleep}))
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 30)
+        hold["on"] = True
+        stopped = app.record_stop()
+        assert stopped.status_code == 200, stopped.text
+        assert app.group.ipc.should_continue and app.group.take is None
+    assert take_manifest(tmp_path)["state"] == "finished"
+    frame_count = stopped.json()[0]["number_of_frames"]
+    assert all(len(take_rows(tmp_path, cid)) == frame_count for cid in app.factory.camera_ids)
