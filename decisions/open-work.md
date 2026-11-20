@@ -233,6 +233,5 @@ task. Delete an item when its work is done. The PR that closes an item records t
     [`specs/windows-capture.md`](../specs/windows-capture.md) say that no merge of `sfn26` is planned.
   - `TARGET_BRANCH` of `tools/check_decision_log.py`, the Rules of the index and answer A1 of
     [`specs/preview-4b.md`](../specs/preview-4b.md) still name `development-streaming`.
-  - The index is over its size limit. It waits for a decision of the user to raise the limit.
   - The UI does not show the USB link or the `start_failure` warning item.
   - Not verified: real cameras, Linux, macOS and the installer build.
