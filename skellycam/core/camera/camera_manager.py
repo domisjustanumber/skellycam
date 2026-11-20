@@ -1,3 +1,4 @@
+import dataclasses
 import logging
 import sys
 import time
@@ -57,11 +58,15 @@ class CameraManager:
 
     def _create_worker(self, camera_id: CameraIdString, config: CameraConfig) -> CameraWorker:
         topics = self.ipc.pubsub.topics
+        # A camera process keeps the status table of its start. It also gets the status of each unselected
+        # camera, so that it gates on that camera when it is selected again (5.2, 8.3).
+        orchestrator = dataclasses.replace(
+            self.orchestrator, camera_statuses={**self.orchestrator.camera_statuses, **self.removed_statuses})
         return CameraWorker.create(
             camera_id=camera_id,
             ipc=self.ipc,
             worker_registry=self.worker_registry,
-            orchestrator=self.orchestrator,
+            orchestrator=orchestrator,
             config=config,
             update_camera_settings_subscription=topics[TopicTypes.UPDATE_CAMERA_SETTINGS].get_subscription(),
             shm_subscription=topics[TopicTypes.SHM_UPDATES].get_subscription(),

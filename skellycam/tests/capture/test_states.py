@@ -16,7 +16,7 @@ import pytest
 
 from skellycam.tests.capture.capture_session import (
     Spies, camera_key_of, capture_app, capture_logs, numbers_in, one_camera, parse_relay, product, ready_app_steps,
-    sfn_gaps, stop_line_count)
+    sfn_gaps, stop_line_count, take_rows)
 from skellycam.tests.capture.fake_source import FakeScript
 
 FRAME_NS = round(1e9 / 30)
@@ -796,3 +796,39 @@ def test_t_cap_113_a_frame_that_waits_at_the_gate_is_not_too_slow(monkeypatch):
                  and app.tracker.first(changed, "checking") is not None, "the end of the check")
         assert app.state(changed) == "ready", app.status(changed)
         assert abs(app.status(changed)["measured_fps"] - 30.0) <= 0.9
+
+
+def test_a_camera_selected_again_shares_the_gate_with_a_restarted_camera(monkeypatch, tmp_path):
+    """Suspected fault NEW-B (coordinator, 2026-11-20), sections 5.2 and 8.3: each camera process gets the
+    status table of the group as it was at its own start. Camera A is unselected; camera B is killed and
+    started again ("apply again"), so the table of B has no A; then A is selected again. In a take, A has
+    a gap of 500 ms (its source); B must wait for A at the gate, so that row k of both cameras is one
+    moment: the arrivals of a row differ by at most 100 ms, except at the gap, where the gate lets B take
+    one frame before A (5.2). PROCESS workers: THREAD workers share one table."""
+    from skellycam.core.take_recorder.sidecar import MISSING
+
+    gap_after_frame_299 = FakeScript(intervals_ms=(1000 / 30,) * 299 + (500.0,))  # 10 s after each open
+    with capture_app(monkeypatch, [gap_after_frame_299, FakeScript()], workers="process") as app:
+        ready_app_steps(app)
+        a, b = app.factory.camera_ids
+        response = app.apply([app.config(a, use_this_camera=False), app.config(b)])
+        assert response.status_code == 200, response.text
+        app.worker(b).worker.kill()
+        app.wait_state(b, "dead")
+        response = app.apply([app.config(b)])
+        assert response.status_code == 200, response.text
+        app.wait_state(b, "ready")
+        response = app.apply([app.config(a), app.config(b)])
+        assert response.status_code == 200, response.text
+        reopened = time.monotonic()
+        app.wait_state(a, "ready")
+        app.wait_state(b, "ready")
+        assert app.record_start(tmp_path).status_code == 200
+        time.sleep(max(0.0, reopened + 12.0 - time.monotonic()))  # past the gap of A at 10 s
+        stopped = app.record_stop()
+        assert stopped.status_code == 200, stopped.text
+    rows = {cid: take_rows(tmp_path, cid) for cid in (a, b)}
+    assert len(rows[a]) == len(rows[b]) == stopped.json()[0]["number_of_frames"] > 200
+    apart = [(ra.frame, round((rb.arrival_ns - ra.arrival_ns) / 1e6)) for ra, rb in zip(rows[a], rows[b])
+             if not (ra.flags | rb.flags) & MISSING and abs(ra.arrival_ns - rb.arrival_ns) > 100_000_000]
+    assert len(apart) <= 1, f"{len(apart)} rows of the two cameras differ by more than 100 ms: {apart[:5]}"
