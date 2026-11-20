@@ -76,9 +76,11 @@ export async function decodeJpeg(jpeg: Uint8Array): Promise<DecodedImage> {
         const {image} = await decoder.decode();
         const {rotation, flip} = image as VideoFrame & {rotation: number; flip: boolean};
         if (!rotation && !flip) return image;
-        const upright = new VideoFrame(image, {rotation: flip ? rotation : (360 - rotation) % 360, flip} as VideoFrameInit);
-        image.close();
-        return upright;
+        try {
+            return new VideoFrame(image, {rotation: flip ? rotation : (360 - rotation) % 360, flip} as VideoFrameInit);
+        } finally {
+            image.close();
+        }
     } finally {
         decoder.close();
     }

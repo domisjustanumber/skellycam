@@ -73,7 +73,6 @@ function headerFault(h: Record<string, string>): string | null {
 
 /** Read the sidecar bytes of the snapshot. The caller knows that the first line is the video mark. */
 export function readSidecar(bytes: Uint8Array): Sidecar {
-    const text = new TextDecoder().decode(bytes);
     const out: Sidecar = {
         header: {}, state: 'unfinished', reason: null, warnings: [], sfn: [], arrival: [], flags: [], offset: [], size: [],
         tornBytes: 0, damagedAt: null, fit: null, endLast: false,

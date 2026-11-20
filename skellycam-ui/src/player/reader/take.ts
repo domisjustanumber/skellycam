@@ -101,8 +101,8 @@ export async function readTake(files: TakeFiles): Promise<Take> {
     const uuids = sort(found.filter(f => f.paired && UUID.test(f.sc.header.take_uuid ?? '')).map(f => f.sc.header.take_uuid));
     if (uuids.length > 1) warnings.push('multiple_takes');
     const chosen = uuids[0];
-    // a pair whose take_uuid does not read joins the take as a refused camera, so its tile tells why
-    let members = chosen === undefined ? [] : found.filter(f => f.sc.header.take_uuid === chosen || (f.paired && !UUID.test(f.sc.header.take_uuid ?? '')));
+    // a pair whose take_uuid does not read is in no take (SFF-865, SFF-889)
+    let members = chosen === undefined ? [] : found.filter(f => f.sc.header.take_uuid === chosen);
 
     const manifest = sizes.has(MANIFEST) ? await readManifest(files) : null;
     const used = manifest !== null && manifest.takeUuid === chosen ? manifest : null;

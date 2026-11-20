@@ -79,6 +79,7 @@ interface Slot {
     pump: Promise<void> | null;    // the running read and decode loop, for close()
     busy: boolean;
     readError: boolean;
+    undecodable: Set<number>;      // rows whose JPEG did not decode; each one shows "damaged at frame N" 
 }
 
 const refused = (s: string) => s === 'invalid' || s === 'unsupported_version';
@@ -89,8 +90,12 @@ const defaultLoop: FrameLoop = {
 };
 
 export async function openTake(files: TakeFiles, options: OpenTakeOptions = {}): Promise<TakePlayer> {
-    const take = await readTake(files);
-    return new Player(files, take, options);
+    try {
+        return new Player(files, await readTake(files), options);
+    } catch (e) {
+        await files.close();
+        throw e;
+    }
 }
 
 class Player implements TakePlayer {
@@ -126,7 +131,7 @@ class Player implements TakePlayer {
                 starts.push(end);
                 if (o !== null) end = o + cam.size[k]!;
             });
-            return {cam, choose: imageChooser(cam.times, cam.missing), starts, tile: null, queue: [], shownRow: undefined, shownKey: '', shownGen: -1, gen: 0, pump: null, busy: false, readError: false};
+            return {cam, choose: imageChooser(cam.times, cam.missing), starts, tile: null, queue: [], shownRow: undefined, shownKey: '', shownGen: -1, gen: 0, pump: null, busy: false, readError: false, undecodable: new Set()};
         });
         const K = take.frameCount;
         this.#frame = K ? Math.max(0, Math.min(K - 1, options.initialFrame ?? 0)) : 0;
@@ -284,11 +289,12 @@ class Player implements TakePlayer {
 
     // ---- the tiles ----
 
-    #mark(s: Slot): TileMark | null {
+    #mark(s: Slot, target: number | null = null): TileMark | null {
         const info = s.cam.info;
         if (refused(info.state)) return {kind: 'not_readable', reason: info.reason ?? info.state};
         if (s.readError) return {kind: 'read_error'};
         if (info.state === 'damaged') return {kind: 'damaged', frame: info.damagedAt!};
+        if (target !== null && s.undecodable.has(target)) return {kind: 'damaged', frame: target};
         const m = chooseMark(s.cam.missing, info.deadFrom, this.#frame);
         if (m) return m;
         return info.state === 'unfinished' || this.#take.recording ? {kind: 'unfinished'} : null;
@@ -297,9 +303,11 @@ class Player implements TakePlayer {
     /** Give the tile the image that the rule of 7.3 gives for t, when it is decoded, and the mark of k*. */
     #present(s: Slot): void {
         if (!s.tile || this.#closed) return;
-        const mark = this.#mark(s);
         const playable = !refused(s.cam.info.state) && !s.readError && this.#K > 0;
         const target = playable ? s.choose(this.#time, this.#K) : s.shownRow ?? null;
+        const mark = this.#mark(s, target);
+        // a row that did not decode keeps the last image, with its mark (5FBS)
+        if (target !== null && s.undecodable.has(target)) return this.#send(s, s.shownRow ?? null, undefined, mark, s.gen);
         let entry: Queued | undefined;
         if (target !== null && target !== s.shownRow) {
             entry = s.queue.find(q => q.row === target);
@@ -349,7 +357,7 @@ class Player implements TakePlayer {
         s.queue = s.queue.filter(q => !drop.includes(q));
         const space = Math.min(8, Math.max(2, Math.floor(64 / this.#slots.length))) - s.queue.length;
         if (space <= 0) return [];
-        const have = (r: number) => r === s.shownRow || s.queue.some(q => q.row === r);
+        const have = (r: number) => r === s.shownRow || s.undecodable.has(r) || s.queue.some(q => q.row === r);
         const rows: number[] = [];
         if (target !== null && !have(target)) rows.push(target);
         const end = this.#take.frameTimes[K - 1];
@@ -376,7 +384,12 @@ class Player implements TakePlayer {
                         // a newer seek ends the prefetch of an older one, but not the read of its target
                         if (this.#closed || (gen !== s.gen && row !== rows[0])) break;
                         const jpeg = payloads.get(row)!;
-                        const image = await this.#decode(jpeg);
+                        const image = await this.#decode(jpeg).catch(() => null);
+                        if (!image) {
+                            s.undecodable.add(row);
+                            this.#present(s);
+                            continue;
+                        }
                         if (gen !== s.gen || this.#closed) {
                             // 7.5: a finished decode of an older request is drawn when no newer image is on the tile
                             if (!this.#closed && s.tile && gen > s.shownGen) this.#send(s, row, {row, jpeg, image}, this.#mark(s), gen);
