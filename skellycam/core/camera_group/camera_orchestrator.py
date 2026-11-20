@@ -41,8 +41,10 @@ class CameraOrchestrator:
         return all([status.ready for status in list(self.camera_statuses.values())])
 
     @property
-    def all_cameras_recording(self):
-        return all([status.recording_in_progress.value for status in self.gate_statuses.values()])
+    def all_cameras_recording(self) -> bool:
+        """For the app state only. With no camera in the gate (starting, or each camera failed), no recording runs."""
+        gate = self.gate_statuses.values()
+        return bool(gate) and all(status.recording_in_progress.value for status in gate)
 
     def largest_gate_count(self) -> int:
         """A camera that joins the gate starts with the largest gate count of the group (5.2)."""

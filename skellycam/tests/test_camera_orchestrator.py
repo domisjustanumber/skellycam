@@ -171,6 +171,16 @@ class TestCameraOrchestratorRecording:
         orch.last_recording_frame_number.value = 20
         assert orch.should_record_frame_number(frame_number=15) == (False, False)
 
+    @pytest.mark.parametrize("state", ["starting", "failed"], ids=["cameras starting", "every camera failed"])
+    def test_no_camera_in_the_gate_is_not_recording(self, state) -> None:
+        """With no camera in the gate, the app state does not say that a recording runs: `all([])` is True,
+        and the UI showed an enabled Stop Recording button (hardware run of 2026-11-20)."""
+        orch = _make_orchestrator(["cam0", "cam1"])
+        for status in orch.camera_statuses.values():
+            status.set_state(state)
+            status.recording_in_progress.value = state == "failed"  # a flag that a hard end left set
+        assert orch.all_cameras_recording is False
+
     def test_recording_past_stop_boundary(self) -> None:
         orch = _make_orchestrator(["cam0"])
         orch.first_recording_frame_number.value = 10
