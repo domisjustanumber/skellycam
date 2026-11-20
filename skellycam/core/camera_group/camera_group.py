@@ -725,6 +725,6 @@ class CameraGroup:
                 for camera_id, worker in self.cameras.camera_workers.items()
             },
             alive=self.alive,
-            recording_in_progress=orchestrator.all_cameras_recording,
+            recording_in_progress=self.take is not None,  # also when each camera died during the take
             paused=orchestrator.any_cameras_paused,
         )

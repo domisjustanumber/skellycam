@@ -19,6 +19,8 @@ import threading
 import time
 from types import SimpleNamespace
 
+import pytest
+
 from skellycam.core.camera_group.camera_group import CameraGroup
 from skellycam.core.camera_group.camera_status import CameraStatus
 from skellycam.core.ipc.frame_ring import FrameRingCreator, ReadResult
@@ -198,3 +200,19 @@ def test_a_stuck_camera_whose_process_does_not_end_is_killed_and_reported(monkey
     assert group._end_stuck_camera("cam0") is False
     assert worker.calls == ["terminate", "join", "kill", "join"]
     assert status.state == "failed" and status.info_dict()["failure"]["reason"] == "disk stall"
+
+
+@pytest.mark.parametrize("case", ["cameras starting", "every camera failed", "every camera died in a take"])
+def test_the_app_state_says_a_recording_runs_while_a_take_runs(case):
+    """NEW-A and the second review, R3: the app state has `recording_in_progress` true while a take runs, also
+    when every camera died during it (the UI then shows Stop, not a Start that gets 409), and false with
+    no take, also while the cameras start or when each camera failed."""
+    from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
+
+    state = {"cameras starting": "starting", "every camera failed": "failed"}.get(case, "dead")
+    statuses = {"cam0": status_in(state), "cam1": status_in(state)}
+    group = bare_group({}, statuses)
+    group.cameras.orchestrator = CameraOrchestrator.from_statuses(statuses)
+    group.ipc.should_continue = True
+    group.take = object() if case == "every camera died in a take" else None
+    assert group.to_state().recording_in_progress is (case == "every camera died in a take")
