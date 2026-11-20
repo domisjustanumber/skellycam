@@ -894,6 +894,32 @@ The next stop request returns that summary, one time. Each later stop request, a
 with no take, gets HTTP 409 with the text "No recording runs". Two stop requests at the same time
 end the take one time: the second gets the 409 (B of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), added on 2026-11-20).
 
+### 8.4 The state "ended with an error" (added on 2026-11-20)
+
+The user decided: when a take ends by itself with an error, the state changes to "ended with an
+error". The app state no longer says that a recording runs, the record button of the UI returns to
+"Start", and the error and the summary of the take show at once, with no click on "Stop" ([ADR-H0BQ](../decisions/entries/H0BQ-user-rulings-of-the-spec-integration.md)).
+
+Today `CameraGroup.to_state()` gives `recording_in_progress: self.take is not None`, and the summary
+of a take that an error ended reaches a client only through the next stop request (8.2). The new rule:
+
+- `CameraGroupState` gets the field `take_state`: `"none"`, `"recording"` or `"ended_with_error"`.
+  `recording_in_progress` is true only for `"recording"`.
+- `"recording"` starts when the record start succeeds. A stop request that ends the take gives
+  `"none"`. A take that the error of 5.3 or 5.4 ends gives `"ended_with_error"` as soon as
+  `Take.finish` returns (8.1 step 5).
+- `CameraGroupState` gets the field `ended_take`: `null`, or, while `take_state` is
+  `"ended_with_error"`, the object `{"take_error": <the text of the error>, "camera_id": <the camera of
+  the error, or null>, "summary": <the fields of the stop response of 8.2>}`.
+- The live state (the `app_state` message of the websocket and `GET /camera/group/state`) carries
+  both fields. The server sends the state each second when it changes, so a client sees the change
+  within about 1 s.
+- `"ended_with_error"` stays until the next record start (`"recording"`), the stop request that
+  returns the summary (8.2; then `"none"`), or the close of the group. The stop request keeps the rule
+  of 8.2 for a client with no websocket.
+- The UI takes the error and the summary from the live state: [`camera-requests.md`](camera-requests.md)
+  8.4.
+
 ### 8.3 What is no longer written, and the code that goes
 
 Step 5a writes none of these [R5]: the H.264 MP4; the 28-column timestamp CSV of each camera; the
@@ -1122,6 +1148,8 @@ Each test of the kinds unit and process uses at least two cameras unless it says
 | T-REC-46 | connection | A fake sends a JPEG with no DHT. | The ring slot and the MKV block hold the same bytes, with the inserted DHT; the row has no flag for it [M6]. |
 | T-REC-47 | connection | Two fakes start a take at gate count 100. | Row 0 of each camera is group frame 103 [review B4, M7]. |
 | T-REC-48 | connection | Two OpenCV fakes record; the writer of one is held 3 s; then a fake writer is held past the stall limit and then released; then held for good. | Case 1: neither camera is marked `dead`, also the one that waited at the gate (5.2); case 2: the take ends with `take_error`, the camera stays `ready`; case 3: the camera is `failed`, stage `recording`, reason "disk stall", and "apply again" reopens it [agent 32, C5, C6]. |
+| T-REC-50 | connection | Two fakes record; the writer of one is held past the stall limit; read the live state each 0.5 s, then send a stop request, then start and stop a new take. | `take_state` is `"recording"`, then `"ended_with_error"` within 1.5 s after `Take.finish` returns, with `recording_in_progress` false and `ended_take` holding `take_error` "disk stall on camera <id>", the camera ID and the fields of 8.2; the stop request returns that summary and the state becomes `"none"` with `ended_take` null; the new take gives `"recording"`, then `"none"` (8.4). |
+| T-REC-51 | connection | A take ends with a write error; no stop request; then a record start. | `take_state` stays `"ended_with_error"` until the record start, which gives `"recording"` and `ended_take` null; a stop request after that ends the new take normally (8.4). |
 | T-REC-49 | connection | List the playback recordings with one old recording and one new take; ask for the videos of the new take. | Both are listed; the new take has `needs_new_player: true`; the old video list endpoint gives HTTP 409 with the mark text for it; no endpoint of the take folder itself is blocked [C7]. |
 
 ### 12.3 Conformance check against skellyfileformat
@@ -1198,6 +1226,7 @@ Each test of the kinds unit and process uses at least two cameras unless it says
 | C5 | T-REC-21, T-REC-22, T-REC-48 |
 | C6 | T-REC-21, T-REC-22, T-REC-48 |
 | C7 | T-REC-49 |
+| 8.4 ([ADR-H0BQ](../decisions/entries/H0BQ-user-rulings-of-the-spec-integration.md)) | T-REC-50, T-REC-51 |
 
 ### 12.5 Format rules to tests
 
@@ -1228,8 +1257,8 @@ Each test of the kinds unit and process uses at least two cameras unless it says
 | unit | 33 (T-REC-01 to T-REC-15, T-REC-17 to T-REC-20, T-REC-22, T-REC-23, T-REC-25 to T-REC-29, T-REC-31 to T-REC-37) |
 | process | 5 (T-REC-16, T-REC-21, T-REC-24, T-REC-30, T-REC-KILL) |
 | benchmark | 3 (T-REC-STALL, T-REC-FSYNC, T-REC-GIL) |
-| connection | 10 (T-REC-40 to T-REC-49) |
-| All | 51 |
+| connection | 12 (T-REC-40 to T-REC-51) |
+| All | 53 |
 
 The short pass parts of T-REC-STALL also run in CI (12.1). T-REC-38 and T-REC-39 are not used, so
 that the connection tests keep their numbers.
@@ -1562,7 +1591,10 @@ fix. The body marks each one [agent n]. Items of the first draft that are now de
     with files.
 17. `purpose` is always `motion_capture` in 5a.
 18. `clock_hz` is empty.
-19. `group_position` is the order of the cameras in the take (the order of `camera_index`).
+19. `group_position` is the order of the cameras in the take: the order of the `camera_index` of the
+    apply request, which is the camera number of the camera list of the UI
+    ([`camera-requests.md`](camera-requests.md) 8.1; changed on 2026-11-20, H6 of
+    [ADR-6QFG](../decisions/entries/6QFG-pause-in-the-ui-search-on-native-sources-and-restore-at-close.md)).
 20. The nominal rate: `fps_num/fps_den` from Media Foundation; for OpenCV, a float rate within 0.01
     of 30000/1001 or 60000/1001 gives that fraction, and each other rate gives its value in
     thousandths, reduced.

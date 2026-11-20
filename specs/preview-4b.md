@@ -128,7 +128,7 @@ The sections that the new base changes:
 | 5.3 rule 7, 5.4 | The group pause `PUT /group/all/pause` stops new frames at the server. The tiles keep their last image. The UI pause of rule 7 does not change. |
 | 5.5, 5.6, 5.7 | The demo commits move onto `dom/integration` (5.7). |
 | 7.8 | The CI triggers name `dom/integration`. The PR goes against upstream `development` [PR]. |
-| 10 | A1 names `development-streaming`; [PR] replaces it. Section 6 of `AGENTS.md` still names `development-streaming` (section 12.2). |
+| 10 | A1 names `development-streaming`; [PR] replaces it. Section 6 of `AGENTS.md` names upstream `development` (section 12.2). |
 
 Import path of the tile:
 
@@ -1240,7 +1240,7 @@ these headings, each with the facts of 4b:
     Resolved: the player shows `Camera <os_index> · <os_name>` from the take [Q11]. Still open: the
     `os_index` of a take can differ from the list number (section 12.2). Q14.
 15. **The PR target.** A1 said `development-streaming`. Resolved: upstream `development` [PR].
-    Section 6 of `AGENTS.md` still says `development-streaming` (section 12.2).
+    Section 6 of `AGENTS.md` names upstream `development` (section 12.2).
 
 ## 10. Decisions that bind 4b
 
@@ -1381,14 +1381,16 @@ These notes are not decisions of the user. The supervisor relayed them on 2026-1
 
 - **The base.** A later decision of 2026-11-20 moves the work onto a new integration branch,
   `dom/integration` (section 2). Section 2 lists the sections of 4b that this changes.
-- **Open for the supervisor.** The contents of `dom/integration` do not name the 4a commits of
-  `dom/preview`. 4b needs them (section 2, item 3).
-- **Open for the supervisor.** Section 6 of `AGENTS.md` still says "Open each PR against
-  `development-streaming`". [PR] replaces it for 4b. A change of `AGENTS.md` needs its own commit.
+- **Done.** `dom/integration` holds the 4a commits of `dom/preview` (the merge commits "Merge
+  dom/preview into dom/integration" and "Merge dom/preview again"). 4b needs them (section 2,
+  item 3).
+- **Done.** Section 6 of `AGENTS.md` says "Open each PR against `development` of upstream"
+  ([ADR-EQY4](../decisions/entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md)), as [PR]
+  says for 4b.
 - **Other decisions of 2026-11-20.** The exposure modes become Manual and Auto only (Auto: SkellyCam
   finds a manual value). One frame rate control for all cameras at the top of the camera list; 60
   fps only when each ticked camera passed a real 60 fps check. A USB 2 or USB 3 label next to each
-  camera; a virtual camera reads "virtual". `specs/camera-requests.md` (another branch) specifies
+  camera; a virtual camera reads "virtual". [`camera-requests.md`](camera-requests.md) specifies
   them. 4b only refers to them (1.3, 5.6, 6.1).
 - **The check of `os_index`** [Q11], code of `dom/integration` read on 2026-11-20:
   - The list number. The UI shows `Camera {camera.index}`. `camera.index` is `index` of the

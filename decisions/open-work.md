@@ -215,15 +215,12 @@ task. Delete an item when its work is done. The PR that closes an item records t
     ([ADR-EE0E](entries/EE0E-step-4b-preview-spec-and-agent-choices.md),
     [ADR-R1TD](entries/R1TD-revision-2-of-the-step-4b-preview-spec.md),
     [ADR-W674](entries/W674-choices-of-revision-3-of-the-step-4b-spec-and-its-test-list.md)).
-    The supervisor decides the two open points of section 12.2: the 4a commits in
-    `dom/integration`, and the change of section 6 of `AGENTS.md` to upstream `development`.
+    The two open points of section 12.2 are done.
 - **The `sfn26` integration on `dom/integration`.** The user decided the base on 2026-11-20
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md)). The agent choices wait
   for the user ([ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:
   - D1 of [ADR-EN7A](entries/EN7A-phase-3-windows-capture-decisions.md) says that no merge of `sfn26`
     is planned. The spec has a changed-on note.
-  - Section 12.2 of [`specs/preview-4b.md`](../specs/preview-4b.md) says that `AGENTS.md` names
-    `development-streaming`; it does not any more.
   - The DirectShow open order of `sfn26` (item 1 of ADR-6T78) waits for a check on the cameras.
   - The UI does not show the USB link or the `start_failure` warning item.
   - Not verified: real cameras, Linux, macOS and the installer build.
@@ -234,7 +231,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [ADR-BVK7](entries/BVK7-certify-rulings-of-the-user-one-test-one-row.md). The choices of the agents
   wait for the user: [ADR-KY81](entries/KY81-certify-spec-choices-of-the-agent.md) (the items that the
   later entries do not rule) and [ADR-8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md),
-  with the 11 questions of section 14 of the spec. The spec is written against format 1.4.0 of the
-  contract `skellycertify` (commit `1c9c191`). Question 6 waits for the owner of the contract (a
+  with the open questions of section 14 of the spec. The spec is written against format 1.4.0 of the
+  contract `skellycertify` (commit `1c9c191`). Commit `9e6d575` of the contract answers question 6 (a
   `partial` item and a reviewed row). The specs `camera-requests.md`, `unix-capture.md` and `certify.md` are
-  merged on `dom/integration`. A cross-spec review found differences; their fixes follow.
+  merged on `dom/integration` and agree
+  ([ADR-H0BQ](entries/H0BQ-user-rulings-of-the-spec-integration.md),
+  [ADR-FC1C](entries/FC1C-choices-of-the-spec-integration.md), which waits for the user).

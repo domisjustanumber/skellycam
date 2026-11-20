@@ -55,6 +55,7 @@ These entries are `accepted`.
 | [KG00](entries/KG00-certify-decisions-of-the-user-on-draft-2.md) | Certify decisions of the user on draft 2: C1 to C9 as recommended; OpenCV fallback for now; one check per model; cancel, progress, run order, exposure rule | accepted |
 | [C5BR](entries/C5BR-macos-approach-probes-in-certify.md) | macOS certify run tries each approach for exposure and for the camera's JPEG, for now; trimmed when one works | accepted |
 | [BVK7](entries/BVK7-certify-rulings-of-the-user-one-test-one-row.md) | Certify rulings of the user: one test one row, native gate at the base mode, macOS widest route, probes pass/fail, 29.97 is 30 | accepted |
+| [H0BQ](entries/H0BQ-user-rulings-of-the-spec-integration.md) | Spec integration rulings: summary item, progress of each check, re-check after a cancel, sequence gate, probe module, take error state, 30 s quick | accepted |
 
 ### Evidence
 
@@ -105,6 +106,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [AT04](entries/AT04-choices-of-the-linux-and-macos-capture-spec.md) | Spec `specs/unix-capture.md`, tests T-UNX: stdlib V4L2, PyObjC 13.0, identity, exposure map, controls, JPEG fallback, failure codes, diagnostics | `skellycam.core.camera.capture` | proposed |
 | [KY81](entries/KY81-certify-spec-choices-of-the-agent.md) | Certify spec draft 2 `specs/certify.md`, its test list T-CERT-01 to T-CERT-40 and 15 agent choices; 9 questions in its section 14 | `certify` | proposed |
 | [8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md) | Certify spec draft 3 on format 1.4.0, tests T-CERT-01 to 67, 15 agent choices: split checks, model item, gate roll-ups, local record, macOS probes | `certify` | proposed |
+| [FC1C](entries/FC1C-choices-of-the-spec-integration.md) | Spec integration choices: hash set, route results, no record in certify, model turn-on, waits, steps, quick order, take error state | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
