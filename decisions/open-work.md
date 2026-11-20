@@ -212,8 +212,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
     ([ADR-RA16](entries/RA16-step-4b-choices-of-the-preview-ui.md)). The two open points of section
     12.2 are done.
 - **The `sfn26` integration on `dom/integration`.** The user decided the base on 2026-11-20
-  ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md)). The agent choices wait
-  for the user ([ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:
+  ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md)), and accepted the
+  agent choices ([ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:
   - D1 of [ADR-EN7A](entries/EN7A-phase-3-windows-capture-decisions.md) says that no merge of `sfn26`
     is planned. The spec has a changed-on note.
   - The DirectShow open order of `sfn26` (item 1 of ADR-6T78) waits for a check on the cameras.

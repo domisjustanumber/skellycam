@@ -1,6 +1,8 @@
 # 6T78 — Choices of the sfn26 integration
 
-**Status:** proposed, 2026-11-20 (agent).
+**Status:** accepted, 2026-11-20 (user: items 1 and 9 ruled on review sheet 5 of 2026-11-20; the
+other items accepted through the review sheets of 2026-11-20; commit to dom/integration; was
+proposed, 2026-11-20 (agent)).
 
 ## Decision
 
@@ -17,7 +19,8 @@ choices:
    back to YUY2 without that order (sfn26 saw it on OpenCV 4.12); a check on the cameras is open. The
    user accepted this item on 2026-11-20, subject to that check.
 2. **RECOMMEND at the open.** `opencv_apply_config.py` skips `RECOMMEND`. The camera loop runs the
-   search (11.1). Before, the OpenCV source also ran the old helper search at the open.
+   search (11.1), at each open of a camera in Auto (G1 of
+   [ADR-JK79](JK79-exposure-search-at-each-open-and-camera-requests.md)). Before, the OpenCV source also ran the old helper search at the open.
 3. **Constants.** `MIN_EXPOSURE`, `NUMBER_OF_FRAMES_TO_SETTLE` and `TARGET_BRIGHTNESS` are in
    `camera_loop.py`, because `sfn26` deletes `recommend_camera_exposure_setting.py`.
 4. **Pins.** Our exact pins stay, also the `skellylogs` and `skellypings` revisions. The version is
@@ -60,8 +63,8 @@ choices:
     to the Rust recorder. `exclude = ["skellycam-ui*"]` stays.
 15. **Commits.** While `skellycam-rust` was in `pyproject.toml`, the commit hooks ran with
     `UV_NO_SYNC=1`: the Rust build fails on the test machine.
-16. **PR target.** Only `AGENTS.md` changes to upstream `development`. `TARGET_BRANCH` of
-    `tools/check_decision_log.py` and the Rules of the index still name `development-streaming`.
+16. **PR target.** Upstream `development`: section 6 of `AGENTS.md`, `TARGET_BRANCH` of
+    `tools/check_decision_log.py` and the Rules of the index (the change of review sheet 5; done).
 
 ## Reason
 
