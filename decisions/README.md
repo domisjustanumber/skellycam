@@ -5,9 +5,7 @@ file and [open-work.md](open-work.md) before you change the code, the CI or the 
 [Rules](#rules) tell you which entries to read
 ([ADR-0001](entries/0001-decision-log-agents-md-and-private-data.md)).
 
-Each entry gives the decision, its reason, the evidence (when there is evidence), the alternatives
-rejected and a "Not repeated" section for pitfalls already found. When a decision changes, add a new
-entry that supersedes the old entry in full. The body of a decided entry changes only by the edits
+When a decision changes, add a new entry that supersedes the old entry in full. The body of a decided entry changes only by the edits
 that the [Rules](#rules) allow. To write an entry, use [template.md](template.md).
 
 ## Index
@@ -38,11 +36,11 @@ These entries are `accepted`.
 | [Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md) | The user accepted `specs/recorder.md` and its test list (step 5a); the format changes F-1 to F-10 still wait | accepted |
 | [C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) | Recorder decisions D1 to D3: a stall is no writer progress for the limit; 3 s and 10 s stay as starting values; no take on a FAT disk | accepted |
 | [JMS0](entries/JMS0-review-decisions.md) | Connection review decisions | accepted |
+| [C4FZ](entries/C4FZ-camera-requests.md) | Exposure modes and search, one frame rate, USB link label | accepted |
 
 ### Evidence
 
-These entries are `evidence`: measurements. They are not in the read path. Scan these rows before
-you make a measurement ([Rules](#rules)).
+These entries are `evidence`: measurements ([Rules](#rules)).
 
 | # | Decision | Status |
 |---|----------|--------|
@@ -71,6 +69,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [YNM2](entries/YNM2-connection-of-the-take-recorder-to-the-shared-loop.md) | Take recorder joined to the shared loop; U4, U5, U12, old writer gone | none | proposed |
 | [P5VE](entries/P5VE-review-fix-choices.md) | Review fix choices | `recorder` | proposed |
 | [T24F](entries/T24F-choices-of-the-5a-recorder-code.md) | Choices of the 5a recorder code: write error, completion walk, manifest merge, lock hold, empty stats | `recorder` | proposed |
+| [Y6F6](entries/Y6F6-camera-request-choices.md) | Choices of `specs/camera-requests.md` | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
