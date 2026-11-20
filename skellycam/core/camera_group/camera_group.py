@@ -1,4 +1,6 @@
+import asyncio
 import logging
+import queue
 import threading
 import time
 
@@ -103,6 +105,7 @@ class CameraGroup:
     started: bool = False
     recording_ids: list = field(default_factory=list)
     capture_info: dict = field(default_factory=dict)
+    finished: list = field(default_factory=list)  # the files messages that the watch took from their queue
     _audio_recorder: AudioRecorder | None = None
     _ring_lock: Any = field(default_factory=threading.RLock)
     _stop_watch: Any = field(default_factory=threading.Event)
@@ -177,12 +180,17 @@ class CameraGroup:
     async def apply(self, requested: CameraConfigs) -> tuple[dict, list]:
         """Apply a checked request to each camera on its own (8.3, U10). Return the failures and the warnings.
 
-        A camera of the request that is not in the group is left out, as before phase 3.
+        A camera that was unselected and is selected again starts again (8.3). Each other camera of the
+        request that is not in the group is left out, as before phase 3: the other camera processes have
+        no status for it, so it cannot join their gate.
         """
         statuses = self.cameras.orchestrator.camera_statuses
         restart, changed, removed = [], {}, []
         for camera_id, config in requested.items():
             if camera_id not in self.configs:
+                if config.use_this_camera and camera_id in self.cameras.removed_statuses:
+                    self.configs[camera_id] = config
+                    restart.append(camera_id)
                 continue
             worker = self.cameras.camera_workers.get(camera_id)
             if not config.use_this_camera:
@@ -192,15 +200,16 @@ class CameraGroup:
                 restart.append(camera_id)
             elif not same_config(config, self.configs[camera_id]):
                 changed[camera_id] = config
+        # The joins of a camera process take seconds: not on the event loop, which serves the preview.
         for camera_id in removed:
-            self.cameras.remove_camera(camera_id)
+            await asyncio.to_thread(self.cameras.remove_camera, camera_id)
             with self._ring_lock:
                 self._close_rings([camera_id])
             del self.configs[camera_id]
         for camera_id in restart:
             with self._ring_lock:
                 self._close_rings([camera_id])
-            self.cameras.restart_camera(camera_id, requested[camera_id])
+            await asyncio.to_thread(self.cameras.restart_camera, camera_id, requested[camera_id])
         if changed:
             self.ipc.pubsub.topics[TopicTypes.UPDATE_CAMERA_SETTINGS].publish(
                 UpdateCamerasSettingsMessage(requested_configs=changed))
@@ -235,12 +244,11 @@ class CameraGroup:
                     if message.control_change_failed:
                         warnings.append(dict(kind="control_change_failed", camera_ids=[camera_id],
                                              control="exposure", text=message.control_change_failed))
-            while self.ipc.take_setup_failure() is not None:
-                pass  # the status of each camera holds its failure; keep the pipe empty
             for camera_id in list(pending):
                 worker = self.cameras.camera_workers.get(camera_id)
-                if (statuses[camera_id].state in ("failed", "dead") or worker is None
-                        or worker.worker.exitcode is not None):
+                if worker is not None and worker.worker.exitcode is not None:
+                    self._mark_ended(camera_id, worker)
+                if worker is None or statuses[camera_id].state in ("failed", "dead"):
                     pending.discard(camera_id)
             await await_10ms()
         return configs, warnings
@@ -249,9 +257,12 @@ class CameraGroup:
         """Wait until each camera has passed its rate check or failed (9.1, 10.1)."""
         statuses = self.cameras.orchestrator.camera_statuses
         while self.ipc.should_continue:
+            for camera_id in camera_ids:
+                worker = self.cameras.camera_workers.get(camera_id)
+                if worker is not None and worker.worker.exitcode is not None:
+                    self._mark_ended(camera_id, worker)
             pending = [camera_id for camera_id in camera_ids if camera_id in statuses
-                       and statuses[camera_id].state not in SETTLED_STATES
-                       and self.cameras.camera_workers[camera_id].worker.exitcode is None]
+                       and statuses[camera_id].state not in SETTLED_STATES]
             if not pending:
                 return
             await await_10ms()
@@ -263,13 +274,48 @@ class CameraGroup:
                 and statuses[camera_id].info_dict().get("failure")}
 
     def _watch_workers(self) -> None:
-        """6.6: the main process cleans up only the camera whose process ended: its rings (D10)."""
+        """6.6: the main process cleans up only the camera whose process ended: its state and rings (D10).
+
+        It also reads the queues that the camera processes write, so that no write waits on a full pipe.
+        """
         while not self._stop_watch.wait(WATCH_INTERVAL_S):
+            while self.ipc.take_setup_failure() is not None:
+                pass  # the status of each camera holds its failure
+            self._take_finished()
             for camera_id, worker in list(self.cameras.camera_workers.items()):
-                if worker.worker.exitcode is not None and camera_id in self.rings:
+                if worker.worker.exitcode is None:
+                    continue
+                self._mark_ended(camera_id, worker)
+                if camera_id in self.rings:
                     logger.info(f"The process of camera {camera_id} ended; its rings close")
                     with self._ring_lock:
                         self._close_rings([camera_id])
+
+    def _mark_ended(self, camera_id: CameraIdString, worker) -> None:
+        """A camera process that ended with no final state (a native crash, a kill, an error before the loop)
+        gets one, so that the gate and the waits of the group do not wait for it (8.2)."""
+        status = self.cameras.orchestrator.camera_statuses.get(camera_id)
+        if (status is None or status.state in ("failed", "dead")
+                or self.cameras.camera_workers.get(camera_id) is not worker):
+            return
+        stage, state = ("open", "failed") if status.state in ("starting", None) else ("streaming", "dead")
+        reason = f"camera process ended (exit code {worker.worker.exitcode})"
+        status.update_info(failure=dict(camera_id=camera_id, stage=stage, reason=reason))
+        status.set_state(state)
+        logger.warning(f"Camera {camera_id} failed during {stage}: {reason}")
+
+    def _take_finished(self) -> None:
+        """Move each files message from its queue to `finished`. A large message waits in the feeder thread of
+        the camera process until it is read, and a hard end of that process would drop it (U12)."""
+        while True:
+            try:
+                self.finished.append(self.ipc.recording_finished_subscription.get_nowait())
+            except queue.Empty:
+                return
+
+    def _next_finished(self) -> RecordingFinishedMessage | None:
+        self._take_finished()
+        return self.finished.pop(0) if self.finished else None
 
     def _open_rings(self, configs: CameraConfigs) -> None:
         """Create the ring of each camera in `configs`, attach a reader, and give the ring names to
@@ -358,6 +404,7 @@ class CameraGroup:
         if blocking:  # a recording starts only when each selected camera is `ready` (8.3, agent 25)
             raise RequestRefused(409, "A recording needs each selected camera ready: " + "; ".join(blocking))
         warnings, self.capture_info = [], {}
+        self.finished.clear()  # a late message of an earlier take
         for camera_id, status in list(statuses.items()):
             info = status.info_dict()
             controls = info.get("controls") or {}
@@ -422,7 +469,7 @@ class CameraGroup:
         try:
             recording_info, timestamp_stats = await finalize_recording(
                 ipc=self.ipc, cameras=self.cameras, camera_configs=self.configs,
-                recording_ids=self.recording_ids, capture_info=self.capture_info)
+                recording_ids=self.recording_ids, capture_info=self.capture_info, next_message=self._next_finished)
         finally:
             for status in list(self.cameras.orchestrator.camera_statuses.values()):
                 status.set_warning_items([])
@@ -528,14 +575,14 @@ async def finalize_recording(
     camera_configs: CameraConfigs,
     recording_ids: list,
     capture_info: dict,
+    next_message: Callable[[], RecordingFinishedMessage | None],
 ) -> tuple[RecordingInfo, RecordingTimestampsStats]:
     """Wait for the files of each recording camera. A camera process that ended without its files
     message is left out (interim U12, removed in phase 5). A dead camera is named in the recording info (5.7)."""
     messages: dict[CameraIdString, RecordingFinishedMessage] = {}
     pending, ended_since = set(recording_ids), {}
     while pending and ipc.should_continue:
-        while not ipc.recording_finished_subscription.empty():
-            message = ipc.recording_finished_subscription.get()
+        while (message := next_message()) is not None:
             if not isinstance(message, RecordingFinishedMessage):
                 raise RuntimeError(f"Received unexpected message type: {type(message)}")
             if message.camera_id in messages:

@@ -1,7 +1,7 @@
 import logging
 import sys
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from collections.abc import Callable
 
 from skellycam.core.camera.camera_worker import CameraWorker, CameraState
@@ -25,6 +25,9 @@ class CameraManager:
     camera_workers: dict[CameraIdString, CameraWorker]
     worker_registry: WorkerRegistry | None = None
     source_factory: Callable | None = None
+    # The status of an unselected camera. The other camera processes keep it, so a camera that is
+    # selected again joins their gate with it (8.3).
+    removed_statuses: dict[CameraIdString, CameraStatus] = field(default_factory=dict)
 
     @property
     def all_ready(self) -> bool:
@@ -67,8 +70,17 @@ class CameraManager:
         )
 
     def restart_camera(self, camera_id: CameraIdString, config: CameraConfig) -> None:
-        """"Apply again" for a `failed` or `dead` camera: a new camera process with the same status (8.2, D23)."""
-        self.camera_workers[camera_id].join(timeout=BOUNDED_CALL_LIMIT_S)
+        """"Apply again" for a `failed` or `dead` camera, or a camera selected again after an unselect: a new
+        camera process with the same status (8.2, 8.3, D23)."""
+        if camera_id in self.removed_statuses:
+            self.orchestrator.camera_statuses[camera_id] = self.removed_statuses.pop(camera_id)
+        else:
+            # After a hang, the old process finishes its files for at most 5 s (U12) and still holds the device.
+            worker = self.camera_workers[camera_id].worker
+            worker.join(timeout=2 * BOUNDED_CALL_LIMIT_S)
+            if worker.is_alive() and isinstance(worker, ManagedProcess):
+                worker.kill()
+                worker.join(timeout=BOUNDED_CALL_LIMIT_S)
         self.orchestrator.camera_statuses[camera_id].reset_for_start()
         self.camera_workers[camera_id] = self._create_worker(camera_id, config)
         self.camera_workers[camera_id].start()
@@ -81,7 +93,7 @@ class CameraManager:
         worker.worker.mark_stopping()
         worker.join(timeout=2 * BOUNDED_CALL_LIMIT_S)
         status.set_state("failed")  # not in the gate of the other camera processes, which keep this status
-        del self.orchestrator.camera_statuses[camera_id]
+        self.removed_statuses[camera_id] = self.orchestrator.camera_statuses.pop(camera_id)
 
     def start(self) -> None:
         logger.info("Starting camera processes...")

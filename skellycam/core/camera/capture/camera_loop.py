@@ -124,6 +124,7 @@ class CameraLoop:
         self.hung = threading.Event()
         self.files_done = threading.Event()
         self._failure_lock = threading.Lock()
+        self._hard_end_lock = threading.Lock()
         self.failed = False
         self.end_state: str | None = None  # the state that the end sets after the close
         self.initialized_ns = perf_counter_ns()
@@ -158,7 +159,7 @@ class CameraLoop:
             return
         if self.status.should_pause.value:
             self.status.is_paused.value = True
-            time.sleep(0.01)  # T-RING-31: a paused camera process uses under 2 % of one core
+            time.sleep(0.05)  # T-CAP-49: a paused camera process uses under 2 % of one core
             return
         self.status.is_paused.value = False
         if not self.orchestrator.should_grab_by_id(camera_id=self.camera_id):
@@ -178,6 +179,9 @@ class CameraLoop:
         if frame is None:
             if perf_counter_ns() - self.last_arrival >= STALL_NS:
                 raise CaptureFailure(self.stage, "no frame for 2 s")
+            check = self.check
+            if check is not None and check["deadline"] is not None and perf_counter_ns() >= check["deadline"]:
+                self._too_slow()  # 10.2: no frame came by the deadline, so frame s_a + 59 cannot be in time
             return None
         self.last_arrival, self.last_number = frame.arrival_ns, frame.source_frame_number
         return frame
@@ -200,7 +204,7 @@ class CameraLoop:
         rate = opened.fps_num / opened.fps_den if opened.fps_num > 0 else 0.0
         if rate and not at_floor(rate):
             raise CaptureFailure("set mode", NO_FLOOR_MODE)  # 14.1: OpenCV reports a rate under the floor
-        # D22; with no reported rate (OpenCV), the requested rate and 30 for "auto" (user, 2026-11-19)
+        # D22; with no reported rate (OpenCV), the requested rate and 30 for "auto" (ADR-PDD3 W2)
         self.reference_rate = rate or (config.framerate if config.framerate > 0 else rate_check.AUTO_REFERENCE_FPS)
         self.status.update_info(mode=dict(width=opened.width, height=opened.height, fps_num=opened.fps_num,
                                           fps_den=opened.fps_den, format=opened.format))
@@ -228,7 +232,8 @@ class CameraLoop:
             warm_up_frame = frame.source_frame_number - s0 + 1
             if window_start is None and warm_up_frame >= rate_check.WINDOW_FIRST:
                 window_start = (frame.source_frame_number, frame.arrival_ns)
-            if warm_up_frame >= rate_check.WARM_UP_FRAMES and window_start is not None:
+            # an empty window (the first frame seen is frame 90 or later) waits for one more frame
+            if warm_up_frame >= rate_check.WARM_UP_FRAMES and frame.source_frame_number > window_start[0]:
                 break
         self.stage = "rate check"
         measured = rate_check.measured_rate(*window_start, frame.source_frame_number, frame.arrival_ns)
@@ -380,20 +385,23 @@ class CameraLoop:
                 check["start"] = (frame.source_frame_number, frame.arrival_ns)
                 check["deadline"] = rate_check.early_deadline_ns(frame.arrival_ns, self.reference_rate)
             return
-        if frame.source_frame_number >= check["start"][0] + rate_check.CHECK_FRAMES - 1:
-            measured = rate_check.measured_rate(*check["start"], frame.source_frame_number, frame.arrival_ns)
-            self.check = None
-            self.status.update_info(measured_fps=measured)
-            if self.signals.empty():  # a newer change starts a new check (agent 27)
-                self.status.set_state("ready" if rate_check.within_limit(measured, self.reference_rate)
-                                      else "too_slow")
+        if frame.source_frame_number < check["start"][0] + rate_check.CHECK_FRAMES - 1:
+            if frame.arrival_ns > check["deadline"]:
+                self._too_slow()  # 10.2: a later frame came after the deadline, so frame s_a + 59 did not come in time
+            return
+        measured = rate_check.measured_rate(*check["start"], frame.source_frame_number, frame.arrival_ns)
+        self.check = None
+        self.status.update_info(measured_fps=measured)
+        if self.signals.empty():  # a newer change starts a new check (agent 27)
+            self.status.set_state("ready" if rate_check.within_limit(measured, self.reference_rate)
+                                  else "too_slow")
 
-    def _check_early_decision(self) -> None:
-        check = self.check
-        if check is not None and check["deadline"] is not None and perf_counter_ns() >= check["deadline"]:
-            self.check = None
-            if self.signals.empty():
-                self.status.set_state("too_slow")
+    def _too_slow(self) -> None:
+        """The early decision of 10.2. Only a frame that did not come decides it: a frame that came in time
+        but waits (paused, or at the gate) gives no decision."""
+        self.check = None
+        if self.signals.empty():
+            self.status.set_state("too_slow")
 
     def _feed_block(self, frame: CapturedFrame) -> None:
         """10.3: one warning for each slow period of a recording; blocks of 60 delivered frames."""
@@ -431,7 +439,6 @@ class CameraLoop:
             self.config = config
             self.check = dict(after=after_ns, first=None, start=None, deadline=None)
             self.status.set_state("checking")
-        self._check_early_decision()
 
     def _apply_change(self, requested: CameraConfig) -> None:
         current = self.config
@@ -468,7 +475,10 @@ class CameraLoop:
     # ----- failures and the end -----
 
     def _fail(self, failure: CaptureFailure, at_end: bool = False) -> None:
-        """Report the first failure (section 12): the failure object, then the state (8.2)."""
+        """Report the first failure (section 12): the failure object, then the state (8.2).
+
+        A started camera is `dead` at once, so that it leaves the gate before its files and its close (6.7).
+        A camera that fails at start is `failed` after its close (8.2), when `at_end`."""
         with self._failure_lock:
             if self.failed:
                 return
@@ -480,12 +490,11 @@ class CameraLoop:
         self.ipc.report_setup_failure(report)
         self.status.update_info(failure=dict(camera_id=report.camera_id, stage=report.stage,
                                              reason=report.reason[:2048]))
-        state = "dead" if self.started else "failed"
-        if at_end:
-            self.end_state = state  # after the close, so that the other cameras keep their time (virtual clock)
+        if at_end and not self.started:
+            self.end_state = "failed"
         else:
-            self.status.set_state(state)
-        logger.info(str(report))  # the status and the apply response carry the failure (8.4)
+            self.status.set_state("dead" if self.started else "failed")
+        logger.warning(str(report))
 
     def _finish_files(self) -> None:
         """Finish the files of a recording: a dead camera (D38), or a hang for at most 5 s (U12)."""
@@ -505,26 +514,36 @@ class CameraLoop:
         """6.6: after a hang, end the camera process with no clean-up. THREAD workers only end the thread."""
         if parent_process() is None:
             return
-        self.files_done.wait(HANG_FINISH_S)  # interim (U12): removed in phase 5
+        # One thread only: a second `join_thread` returns at once, and its os._exit would cut the first one short.
+        self._hard_end_lock.acquire()
+        deadline = time.monotonic() + HANG_FINISH_S  # interim (U12): removed in phase 5
+        self.files_done.wait(HANG_FINISH_S)
+        # The feeder thread of the queue writes the files message; os._exit would drop it (U12).
+        for queue_ in self.ipc.pubsub.topics[TopicTypes.RECORDING_FINISHED].subscriptions:
+            queue_.close()
+            flush = threading.Thread(target=queue_.join_thread, daemon=True)
+            flush.start()
+            flush.join(max(deadline - time.monotonic(), 0))
         os._exit(1)
 
     def _end(self, hung: bool) -> None:
-        if not hung:
-            self._stop_control()
-            self._add_replaced()
-            if self.source is not None:
-                try:
-                    self.source.close()  # first: it frees the device; the files need no source (6.9)
-                except CaptureFailure as failure:
-                    self._fail(failure)
-                    hung = failure.hung
-        if self.end_state:
-            self.status.set_state(self.end_state)
         try:
-            self._finish_files()  # after a hang, the files get at most 5 s (U12)
+            self._finish_files()  # D38: the files first (8.2); after a hang, at most 5 s (U12)
         finally:
+            if not hung:
+                self._stop_control()
+                self._add_replaced()
+                if self.source is not None:
+                    try:
+                        self.source.close()
+                    except CaptureFailure as failure:
+                        self._fail(failure)
+                        hung = failure.hung
+            if self.end_state:
+                self.status.set_state(self.end_state)
             self._close_rings()
             self._add_replaced()
+            self.status.replaced_count.value = self.replaced_total
             logger.info(f"Camera {self.camera_id} stop: replaced {self.replaced_total} frames since its first "
                         f"frame in the gate")
             if hung:
@@ -582,6 +601,7 @@ class _ControlThread:
 
     def _run(self) -> None:
         loop = self.loop
+        failing = False
         while not self.stop.is_set():
             try:
                 request = self.requests.get(timeout=CONTROL_READ_INTERVAL_S)
@@ -600,9 +620,14 @@ class _ControlThread:
                     loop.hung.set()
                     loop.hard_end()
                     return
-                logger.warning(f"Camera {loop.camera_id}: control read failed: {failure.reason}")
+                # one warning for each run of failed reads, not one each second
+                (logger.debug if failing else logger.warning)(
+                    f"Camera {loop.camera_id}: control read failed: {failure.reason}")
+                failing = True
+                continue
             except Exception as error:
                 logger.exception(f"Camera {loop.camera_id} control thread error: {error}")
+            failing = False
 
     def _live_change(self, config: CameraConfig, changes: dict[str, ControlSetting]) -> None:
         """11.2, U14: a change that fails without a hang leaves the camera in its earlier state."""

@@ -93,7 +93,7 @@ def _detect_in_child(backend, sender) -> None:
             except Exception as error:
                 if getattr(error, "hung", False):
                     raise
-                native = []  # 7.3: a mode list that cannot be read gives []
+                native = None  # 7.3: a mode list that cannot be read gives []
             found.append((name, link, native))
         sender.send(("ok", found))
     except CaptureFailure as failure:
@@ -141,7 +141,8 @@ def detect_media_foundation_cameras(*, backend=None) -> list[CameraDeviceInfo]:
     cameras, links = [], {}
     for index, (name, link, native) in enumerate(result):
         camera = MediaFoundationDeviceInfo(index=index, name=name, path=link, vendor_id=_usb_id(link, "vid"),
-                                           product_id=_usb_id(link, "pid"), supported_modes=supported_modes(native),
+                                           product_id=_usb_id(link, "pid"), supported_modes=supported_modes(native or []),
+                                           modes_read=native is not None,
                                            virtual="virtual" in name.lower())  # the rule of `filter_virtual` today
         if camera.camera_id in links:
             raise ValueError(f"Detected devices have colliding camera IDs: {camera.camera_id}. "

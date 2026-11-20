@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import multiprocessing
 from multiprocessing.sharedctypes import Synchronized
@@ -20,7 +21,7 @@ from skellycam.core.camera.capture.modes import (
 from skellycam.core.camera.capture.source import CaptureFailure, CaptureRequest
 from skellycam.core.camera.config.camera_config import CameraConfigs
 from skellycam.core.camera_group.camera_group import CameraGroup, RequestRefused, same_config
-from skellycam.core.device_detection.detect_cameras_devices import CameraDeviceInfo
+from skellycam.core.device_detection.detect_cameras_devices import CameraDeviceInfo, detect_available_cameras
 from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes
 from skellycam.core.ipc.pubsub.pubsub_topics import FramerateMessage
 from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
@@ -97,6 +98,11 @@ class CameraGroupManager:
         if len(camera_groups) > 1:
             raise NotImplementedError("Cannot update multiple camera groups at once (yet).")
         camera_group = self.get_camera_group(next(iter(camera_groups))) if camera_groups else None
+        if any(camera_id not in self.detected_cameras for camera_id, config in camera_configs.items()
+               if config.use_this_camera):
+            # 7.1, U17: the check needs the detection data, also to refuse a virtual camera (ADR-PDD3 W5)
+            self.detected_cameras = {camera.camera_id: camera
+                                     for camera in await asyncio.to_thread(detect_available_cameras)}
         warnings, rates_known = self._check_request(camera_configs, camera_group)
         if camera_group is None:
             selected = {camera_id: config for camera_id, config in camera_configs.items() if config.use_this_camera}
@@ -105,7 +111,7 @@ class CameraGroupManager:
             failures, change_warnings = await camera_group.apply(camera_configs)
             warnings += change_warnings
         if not rates_known:
-            # agent 56, user 2026-11-19: different real rates after the open give a warning, not a refusal
+            # agent 56, ADR-PDD3 W3: different real rates after the open give a warning item and a log record
             rates = {camera_id: config.framerate for camera_id, config in camera_group.configs.items()
                      if config.framerate > 0 and camera_id not in failures}
             text = mixed_rate_text(rates) if rates else None
@@ -117,16 +123,22 @@ class CameraGroupManager:
     def _check_request(self, camera_configs: CameraConfigs, camera_group: CameraGroup | None) -> tuple[list, bool]:
         """The whole-request check of 8.3: 422 by content (7.5, U11), then 409 by the camera states.
 
+        A camera of the group that the request does not name counts with its current config.
         Return the warnings and whether the mode rates came from the detection data.
         """
-        selected = {camera_id: config for camera_id, config in camera_configs.items() if config.use_this_camera}
+        effective = dict(camera_group.configs) if camera_group is not None else {}
+        effective.update(camera_configs)
+        selected = {camera_id: config for camera_id, config in effective.items() if config.use_this_camera}
         if camera_group is None and not selected:
             raise RequestRefused(422, "The request selects no camera")
         problems = [f"camera {camera_id}: {NO_FLOOR_MODE}" for camera_id, config in selected.items()
                     if config.framerate not in (-1, 0) and config.framerate < FLOOR_FPS - 0.5]  # agent 55
         infos = {camera_id: self.detected_cameras.get(camera_id) for camera_id in selected}
         problems += [f"camera {camera_id} is a virtual camera; virtual cameras cannot be selected"
-                     for camera_id, info in infos.items() if info is not None and info.virtual]  # user, 2026-11-19
+                     for camera_id, info in infos.items() if info is not None and info.virtual]  # ADR-PDD3 W5
+        # 7.5: the modes were read and none is at the floor (an unread list is also [])
+        problems += [f"camera {camera_id}: {NO_FLOOR_MODE}" for camera_id, info in infos.items()
+                     if info is not None and info.modes_read and not info.supported_modes]
         rates_known = bool(selected) and all(info is not None and info.supported_modes for info in infos.values())
         warnings = []
         if rates_known:  # ADR-HP7D item 2: the mode rates that 7.5 gives from the detection data

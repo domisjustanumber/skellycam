@@ -42,13 +42,14 @@ class CameraDeviceInfo(BaseModel):
     backend_id: CameraBackendInt | None = None
     backend_name: CameraBackendNameString | None = None
     supported_modes: list[CaptureMode] = []  # spec 7.3; empty when the mode list cannot be read
-    virtual: bool = False  # user, 2026-11-19: detection shows a virtual camera; a request cannot select it
+    virtual: bool = False  # ADR-PDD3 W5: detection shows a virtual camera; a request cannot select it
+    modes_read: bool = False  # the native mode list was read: [] then means no mode at the floor (7.5)
 
     @computed_field
     @property
     def camera_id(self) -> CameraIdString:
         if self.path:
-            # 7.2: the lower-case Media Foundation link; the path itself stays as the OS gives it (user, 2026-11-19)
+            # 7.2: the lower-case Media Foundation link; the path itself stays as the OS gives it (ADR-PDD3 W6)
             raw = self.path.lower() if self.path.startswith(r"\\?" + "\\") else self.path
         elif self.vendor_id is not None and self.product_id is not None:
             raw = f"{self.vendor_id:04x}_{self.product_id:04x}_{self.index}"
@@ -107,8 +108,8 @@ def detect_available_cameras(backend_id: CameraBackendInt|None=None, filter_virt
     cameras: list[CameraDeviceInfo] =  []
     for camera_info in enumerate_cameras(apiPreference=backend.id):
         device = CameraDeviceInfo.from_camera_info(camera_info)
-        # user, 2026-11-19: a virtual camera is listed and marked; the request check refuses it
-        device.virtual = filter_virtual and 'virtual' in camera_info.name.lower()
+        # ADR-PDD3 W5: a virtual camera is listed and marked, whatever `filter_virtual` says; the check refuses it
+        device.virtual = 'virtual' in camera_info.name.lower()
         if 'darwin' not in platform.system().lower():
             # On Windows/Linux, VID/PID is reliably provided - skip cameras without it.
             # On macOS (AVFoundation), VID/PID are often unavailable even for real USB cameras.

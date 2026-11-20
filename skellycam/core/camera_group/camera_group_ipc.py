@@ -43,16 +43,18 @@ class CameraGroupIPC:
             if failure.camera_id in self.reported_camera_ids:
                 return
             self.reported_camera_ids.add(failure.camera_id)
-            # Keep the record below pipe capacity, even for verbose native errors,
-            # so publishing never waits for the parent reader.
-            self.setup_failures.put(CameraSetupFailure(camera_id=failure.camera_id[:128],
-                                                       stage=failure.stage[:128], reason=failure.reason[:2048]))
+        # Not under the lock: a put to a full pipe waits until the main process reads.
+        # A record below pipe capacity (8 KiB on Windows) keeps that wait short, even for verbose native
+        # errors: the reason is bounded in UTF-8 bytes, because 2048 characters can be 8 KiB.
+        reason = failure.reason.encode("utf-8")[:2048].decode("utf-8", errors="ignore")
+        self.setup_failures.put(CameraSetupFailure(camera_id=failure.camera_id[:128],
+                                                   stage=failure.stage[:128], reason=reason))
 
     def take_setup_failure(self) -> CameraSetupFailure | None:
-        with self.setup_failure_lock:
-            if self.setup_failures.empty():
-                return None
-            return self.setup_failures.get()
+        """The main process only; one reader thread (the watch of the group drains the queue)."""
+        if self.setup_failures.empty():
+            return None
+        return self.setup_failures.get()
 
     @classmethod
     def create(cls,

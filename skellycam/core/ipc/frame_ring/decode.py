@@ -138,9 +138,11 @@ def limit_libjpeg_warnings() -> None:
     `<line> (count <n>)`. `sys.stderr` stays on the old descriptor 2, so that the output of
     Python is not limited. A second call does nothing.
 
-    Windows: nothing changes. The OpenCV wheel has its own C runtime with its own copy of the
+    Windows: no redirect here. The OpenCV wheel has its own C runtime with its own copy of the
     descriptor 2 handle. A redirect would close that handle, and libjpeg would then write to a
-    closed handle, which the OS can give again to another object (ADR-E817).
+    closed handle, which the OS can give again to another object (ADR-E817). Instead, the main
+    process gives the camera process a pipe as its standard error before OpenCV loads, and limits
+    the lines (`skellycam/core/camera/capture/warning_pipe.py`, D42).
     """
     global _libjpeg_limited
     with _libjpeg_lock:
@@ -148,7 +150,7 @@ def limit_libjpeg_warnings() -> None:
             return
         _libjpeg_limited = True
         if sys.platform == "win32":
-            logger.info("libjpeg warnings are not limited on Windows (ADR-E817)")
+            logger.debug("libjpeg warnings: on Windows, the main process limits them (warning_pipe, D42)")
             return
         sys.stderr.flush()
         old_stderr = os.dup(2)
@@ -163,7 +165,7 @@ def _forward_lines(read_fd: int) -> None:
     """Block on the pipe (8.10). Log a line at its first time, then one time per minute at most."""
     last_logged: dict[str, float] = {}
     counts: dict[str, int] = {}
-    with open(read_fd, errors="replace") as pipe:
+    with open(read_fd, encoding="utf-8", errors="replace") as pipe:  # UTF-8 on each OS (ADR-PDD3 W7)
         for line in pipe:
             line = line.rstrip()
             if not line:

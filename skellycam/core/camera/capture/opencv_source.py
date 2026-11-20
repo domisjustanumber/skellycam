@@ -4,6 +4,7 @@ A pull source for Linux and macOS, and on Windows while `SKELLYCAM_WINDOWS_CAPTU
 """
 import logging
 import sys
+import threading
 import time
 from fractions import Fraction
 
@@ -38,6 +39,8 @@ class OpenCVSource:
         self._capture: cv2.VideoCapture | None = None
         self._grabs = 0
         self._exposure_auto = False
+        # The control thread and the loop thread share one cv2.VideoCapture, which is not thread-safe (4.3).
+        self._lock = threading.Lock()
         # The loop stamps the retrieve columns of the timing file from this (5.4, D41).
         self.retrieve_ns: tuple[int, int] | None = None
 
@@ -60,22 +63,28 @@ class OpenCVSource:
     def read_frame(self, timeout_s: float) -> CapturedFrame | None:
         deadline = time.perf_counter() + timeout_s
         while True:
-            if self._capture.grab():
-                arrival_ns = time.perf_counter_ns()
-                pre_ns = time.perf_counter_ns()
-                ok, image = self._capture.retrieve()
-                post_ns = time.perf_counter_ns()
-                if ok and image is not None:
-                    number, self._grabs = self._grabs, self._grabs + 1
-                    self.retrieve_ns = (pre_ns, post_ns)
-                    return CapturedFrame(payload=image, format="BGR", arrival_ns=arrival_ns, sample_ns=NO_SAMPLE_NS,
-                                         delivered_len=0, driver_error=False, source_frame_number=number,
-                                         discontinuity=False)
+            with self._lock:
+                ok = image = None
+                if self._capture.grab():
+                    arrival_ns = time.perf_counter_ns()
+                    pre_ns = time.perf_counter_ns()
+                    ok, image = self._capture.retrieve()
+                    post_ns = time.perf_counter_ns()
+            if ok and image is not None:
+                number, self._grabs = self._grabs, self._grabs + 1
+                self.retrieve_ns = (pre_ns, post_ns)
+                return CapturedFrame(payload=image, format="BGR", arrival_ns=arrival_ns, sample_ns=NO_SAMPLE_NS,
+                                     delivered_len=0, driver_error=False, source_frame_number=number,
+                                     discontinuity=False)
             if time.perf_counter() >= deadline:
                 return None
             time.sleep(0.001)  # a failed grab can return at once; no spin (4.3)
 
     def set_controls(self, changes: dict[str, ControlSetting]) -> ControlState:
+        with self._lock:
+            return self._set_controls(changes)
+
+    def _set_controls(self, changes: dict[str, ControlSetting]) -> ControlState:
         capture = self._capture
         for name, setting in changes.items():
             if name != "exposure":
@@ -91,11 +100,13 @@ class OpenCVSource:
                 if setting.value is not None:
                     capture.set(cv2.CAP_PROP_EXPOSURE, float(setting.value))
                 self._exposure_auto = False
+        gain, focus = capture.get(cv2.CAP_PROP_GAIN), capture.get(cv2.CAP_PROP_FOCUS)
+        # 11.5: a control that the camera lacks is absent; OpenCV reads -1 for it
         return {"exposure": ControlValue(present=True, auto=self._exposure_auto,
                                          value=int(capture.get(cv2.CAP_PROP_EXPOSURE))),
-                "gain": ControlValue(present=True, auto=False, value=int(capture.get(cv2.CAP_PROP_GAIN))),
-                "focus": ControlValue(present=True, auto=bool(capture.get(cv2.CAP_PROP_AUTOFOCUS)),
-                                      value=int(capture.get(cv2.CAP_PROP_FOCUS)))}
+                "gain": ControlValue(present=gain != -1, auto=False, value=int(gain) if gain != -1 else None),
+                "focus": ControlValue(present=focus != -1, auto=focus != -1 and bool(capture.get(cv2.CAP_PROP_AUTOFOCUS)),
+                                      value=int(focus) if focus != -1 else None)}
 
     def close(self) -> None:
         if self._capture is not None:

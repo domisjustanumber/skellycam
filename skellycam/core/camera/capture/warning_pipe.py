@@ -10,13 +10,9 @@ most, with a count (ring 8.9).
 """
 import contextlib
 import itertools
-import logging
 import os
 import sys
 import threading
-import time
-
-logger = logging.getLogger("skellycam.core.ipc.frame_ring.decode")  # the logger of the ring 8.9 lines
 
 ENV_NAME = "SKELLYCAM_STDERR_PIPE"
 STD_ERROR_HANDLE = -12
@@ -47,7 +43,7 @@ def _relay(handle: int) -> None:
     import _winapi
     import msvcrt
 
-    from skellycam.core.ipc.frame_ring.decode import WARNING_INTERVAL_S
+    from skellycam.core.ipc.frame_ring.decode import _forward_lines
 
     try:
         _winapi.ConnectNamedPipe(handle, False)
@@ -55,19 +51,7 @@ def _relay(handle: int) -> None:
         if error.winerror != ERROR_PIPE_CONNECTED:  # the child connected first: that is normal
             _winapi.CloseHandle(handle)
             return
-    last_logged: dict[str, float] = {}
-    counts: dict[str, int] = {}
-    # UTF-8 (user, 2026-11-19); the same rule as the camera process pipe of Linux (ring 8.9)
-    with open(msvcrt.open_osfhandle(handle, os.O_RDONLY), encoding="utf-8", errors="replace") as pipe:
-        for line in pipe:
-            line = line.rstrip()
-            if not line:
-                continue
-            counts[line] = counts.get(line, 0) + 1
-            now = time.monotonic()
-            if now - last_logged.get(line, -WARNING_INTERVAL_S) >= WARNING_INTERVAL_S:
-                logger.warning(f"{line} (count {counts[line]})")
-                last_logged[line], counts[line] = now, 0
+    _forward_lines(msvcrt.open_osfhandle(handle, os.O_RDONLY))  # the rule of ring 8.9
 
 
 def attach_stderr_pipe() -> None:

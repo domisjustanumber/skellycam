@@ -6,7 +6,7 @@ WINDOW_FIRST = 6  # D22: warm-up frames 6 to 90
 CHECK_SKIP = 15  # D32: after a live change, skip 15 frames
 CHECK_FRAMES = 60  # D32: then measure over 60 frames
 BLOCK_FRAMES = 60  # 10.3: one block during a recording
-AUTO_REFERENCE_FPS = 30.0  # user, 2026-11-19: "auto" with no reported rate is checked against 30
+AUTO_REFERENCE_FPS = 30.0  # ADR-PDD3 W2: "auto" with no reported rate is checked against 30
 
 
 def measured_rate(s_a: int, t_a: int, s_b: int, t_b: int) -> float:
