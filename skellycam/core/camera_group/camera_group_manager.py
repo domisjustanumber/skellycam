@@ -217,14 +217,15 @@ class CameraGroupManager:
             logger.warning("No camera groups to close.")
             return  # `closing` stays False: else the payloads stay empty after a close with no group (sfn26)
         self.closing = True
-
-        for camera_group_id in list(self.camera_groups.keys()):
-            await self.camera_groups[camera_group_id].close()
-        logger.success(
-            f"Successfully closed all camera groups ids - {list(self.camera_groups.keys())}"
-        )
-        self.camera_groups.clear()
-        self.closing = False
+        try:
+            # sfn26 43e2b968a: a group whose close raises stays listed, so that a retry closes it
+            for camera_group_id in list(self.camera_groups):
+                await self.camera_groups[camera_group_id].close()
+                self.camera_groups.pop(camera_group_id)
+                self.camera_group_framerate_subscriptions.pop(camera_group_id, None)
+                logger.info(f"Closed camera group ID: {camera_group_id}")
+        finally:
+            self.closing = False
 
     async def start_recording_all_groups(self, recording_info: RecordingInfo) -> list:
         """Start recording for all camera groups. Return the warnings of 11.3."""

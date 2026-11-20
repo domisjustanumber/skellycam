@@ -56,6 +56,39 @@ class TestCameraGroupManagerInit:
         assert isinstance(state, dict)
 
 
+class TestCloseAll:
+    @pytest.mark.asyncio
+    async def test_a_close_that_raises_keeps_the_payloads_on_and_the_failed_group_listed(self, manager):
+        """sfn26 43e2b968a: each group and its subscription go after their own close; `closing` goes back to
+        False also after an error; the group whose close raised stays listed, so that a retry closes it."""
+        from unittest.mock import AsyncMock, Mock
+
+        from skellycam.core.camera_group.camera_group import CameraGroup
+
+        good = Mock(spec=CameraGroup, id="g1", close=AsyncMock())
+        bad = Mock(spec=CameraGroup, id="g2",
+                   close=AsyncMock(side_effect=RuntimeError("1 camera process(es) could not be killed")))
+        manager.camera_groups.update(g1=good, g2=bad)
+        manager.camera_group_framerate_subscriptions.update(g1=Mock(), g2=Mock())
+        with pytest.raises(RuntimeError, match="could not be killed"):
+            await manager.close_all_camera_groups()
+        assert manager.closing is False
+        assert list(manager.camera_groups) == ["g2"]
+        assert list(manager.camera_group_framerate_subscriptions) == ["g2"]
+
+    @pytest.mark.asyncio
+    async def test_a_good_close_removes_each_group_and_subscription(self, manager):
+        from unittest.mock import AsyncMock, Mock
+
+        from skellycam.core.camera_group.camera_group import CameraGroup
+
+        manager.camera_groups.update(g1=Mock(spec=CameraGroup, id="g1", close=AsyncMock()))
+        manager.camera_group_framerate_subscriptions.update(g1=Mock())
+        await manager.close_all_camera_groups()
+        assert manager.camera_groups == {} and manager.camera_group_framerate_subscriptions == {}
+        assert manager.closing is False
+
+
 class TestSetPaused:
     """PUT /group/all/pause with {paused} sets one state; it does not toggle (port from sfn26)."""
 
