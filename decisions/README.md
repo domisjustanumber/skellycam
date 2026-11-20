@@ -32,6 +32,7 @@ These entries are `accepted`.
 | [4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md) | Phase 3 spec `specs/windows-capture.md` and its test list (91 tests), with the 64 agent choices of its section 18 | accepted |
 | [HP7D](entries/HP7D-python-api-of-capture-as-the-3a-tests-assume-it.md) | Python API of capture, as the 3a tests assume it: names, seams for fake sources and a virtual clock, log line forms | accepted |
 | [HB4Z](entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md) | Answers U16 to U23: control thread, warm-up count, Windows-only `media_foundation/`, CI and tests on Linux and macOS, parity table | accepted |
+| [PDD3](entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md) | W1 to W8 after the 3a review: items 65 to 78, OpenCV rate check without a reported rate, virtual cameras, phase 2 loop | accepted |
 
 ### Evidence
 
@@ -53,6 +54,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) | Other fills of the kit adoption; `CLAUDE.md` stays untracked | none | proposed |
 | [S6HT](entries/S6HT-choices-of-the-3a-loop-code.md) | Choices of the 3a loop code: shared status, join of the gate, one stop flag per camera, Windows warning pipe, apply response | none | proposed |
 | [MA22](entries/MA22-choices-of-the-media-foundation-source-of-step-3a.md) | Choices of the Media Foundation source of step 3a that the spec and ADR-HP7D do not fix | `skellycam.core.camera.capture.media_foundation` | proposed |
+| [6EKB](entries/6EKB-choices-of-the-3a-review-fixes.md) | Choices of the fixes of the 3a review: detection in the apply request, `modes_read`, end order, files message after a hang | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).

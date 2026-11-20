@@ -906,7 +906,7 @@ are written.
 | T-RING-28 | 2a | Crash cleanup | Kill the main process (Linux, Windows, macOS); on Linux also kill the tracker, then start again. | Windows: gone when processes exit. Linux: tracker unlinks; after a group kill, the sweep removes it. macOS: result recorded [NV]. |
 | T-RING-29 | 2a | Too-large request | Ask for a history that cannot fit (Linux: a small tmpfs mounted for the test). | Session does not start; message has the total in bytes and MiB; no ring left. |
 | T-RING-30 | 2a | Reader exit | A reader process attaches and exits (Linux, macOS). | Ring still readable by another process. |
-| T-RING-31 | 2a | No spinning thread, idle | Camera process with a fake capture source, paused for 5 s. | Process CPU under 2 % of one core. Known failure until phase 3 [A65]. |
+| T-RING-31 | 2a | No spinning thread, idle | Camera process with a fake capture source, paused for 5 s. | Process CPU under 2 % of one core. Known failure until phase 3 [A65]. Note, 2026-11-20: retired with the phase 2 loop by decision of the user; T-CAP-49 of [`windows-capture.md`](windows-capture.md) checks the rule on the shared loop ([ADR-PDD3](../decisions/entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md) W8). |
 | T-RING-32 | 2a | Old code gone | Import the deleted modules; search for the deleted names. | Imports fail; no names left outside history docs. |
 | T-RING-33 | 2a | Interim UI relay ([A4]) | Fake cameras; capture one websocket message. | JPEG bytes in the message equal the bytes of the ring. |
 | T-RING-34 | 2a | Apple Silicon | Run T-RING-05 to T-RING-14, T-RING-28 and T-RING-30 on an Apple Silicon Mac [D P:111-112, P:174, N:313]. | All pass. On hold: goes into the certify suite of a later task; not run by hand now [A67]. |

@@ -8,8 +8,9 @@ by the user ([ADR-EN7A](../decisions/entries/EN7A-phase-3-windows-capture-decisi
 drafts and to one agent choice
 ([ADR-QKX1](../decisions/entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md)). The user
 gave eight more answers U16 to U23 on 2026-11-19, after the review of the failing tests of step 3a
-([ADR-HB4Z](../decisions/entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md)). They correct this spec. Items 65 to 78 of section 18 came with that pass. They wait for a
-decision of the user.
+([ADR-HB4Z](../decisions/entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md)). They correct this spec. Items 65 to 78 of section 18 came with that pass. The user gave eight
+more decisions W1 to W8 on 2026-11-19 and 2026-11-20, after the review of the 3a code ([ADR-PDD3](../decisions/entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md)).
+W1 accepts items 65 to 78, with the changes of W2 and W3.
 
 ## 0. How to read this spec
 
@@ -20,6 +21,8 @@ Marks:
 - **[Un]**: answer n of the user to a question of a draft or to an agent choice, 2026-11-19 (section 20,
   [ADR-QKX1](../decisions/entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md) for U1 to
   U15, [ADR-HB4Z](../decisions/entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md) for U16 to U23).
+- **[Wn]**: decision n of the user after the review of the 3a code, 2026-11-19 and 2026-11-20
+  (section 20, [ADR-PDD3](../decisions/entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md)).
 - **[ring x.y]**: section x.y of [`frame-ring.md`](frame-ring.md), the accepted phase 2 spec
   ([ADR-50G8](../decisions/entries/50G8-phase-2-frame-ring-spec.md)). This spec cites the ring spec.
   It does not repeat it.
@@ -120,7 +123,8 @@ Step 3a is done when:
    cameras, a group rate within 1 % of 30 fps, and no lost camera frame that the replaced-frame count
    does not explain. Both counts start at the first frame that the camera takes in the gate (5.2).
    Section 16.4 gives the run [agent 40].
-4. T-RING-31 (idle CPU under 2 % of one core) and T-RING-46 pass on Windows. The product code of step
+4. T-CAP-49 (idle CPU of the shared loop under 2 % of one core, the rule of T-RING-31) and T-RING-46
+   pass on Windows. T-RING-31 is retired with the phase 2 loop [W8]. The product code of step
    3a changes T-RING-46 and removes its expected-failure mark on Windows, because the warning pipe
    moves to the main process (5.6) [U17].
 
@@ -139,7 +143,7 @@ Step 3b is done when:
 3. A recording with one mode rate for the group and at least one camera in an uncompressed mode
    gives equal frame counts, a group rate within 1 % of the mode rate, no lost frame that the
    replaced-frame count does not explain, and no encoder fallback.
-4. T-RING-47 passes, and T-RING-31 still passes on Windows.
+4. T-RING-47 passes, and T-CAP-49 still passes on Windows [W8].
 
 ### 2.3 Step 3c [agent 37]
 
@@ -235,7 +239,8 @@ the cameras.
 | Bounded-call workers | One short-lived thread per bounded call [proto bounded.py]. Each joins the multithreaded apartment (MTA) first [agent 43]. |
 | Decode thread (BGR ring) | As [ring 8.2, 8.3]. |
 
-No thread of the camera process spins [ring 8.10]. T-RING-31 applies to the shared loop [D48].
+No thread of the camera process spins [ring 8.10]. T-CAP-49 checks this on the shared loop [D48]. T-RING-31,
+the test of the phase 2 loop, is retired [W8].
 
 ### 4.4 The three sources
 
@@ -515,15 +520,21 @@ Measured: stop to released took 272 to 1,122 ms on the four test cameras
   parse.py `parse_usb_ids`].
 - A detection result in which two cameras have the same `camera_id` is refused, as the code does
   today [D13].
+- `path` is the link as the OS gives it [W6]. `modes_read` is true when detection read the native
+  mode list [agent 80].
+- Detection shows a virtual camera (its friendly name contains "virtual") with `virtual: true`, on
+  each OS. A request that names a virtual camera gets HTTP 422 [W5].
 - The main process keeps the last detection result, by `camera_id`, for the whole-request check of
-  8.3 and 7.5 [U17].
+  8.3 and 7.5 [U17]. When that result does not hold each selected camera of a request, the apply
+  request runs the detection first [agent 79].
 
 ### 7.2 `camera_id` [D11]
 
 - `camera_id` uses the same hash function as today (`CameraDeviceInfo.camera_id`: SHA-256, the first 2
   bytes as 4 hex digits) of the Media Foundation symbolic link [D11].
 - The input is the symbolic link in lower case [agent 13]. The prototype matches links without case
-  [proto mf.py `open_session`].
+  [proto mf.py `open_session`]. Only the hash input is in lower case; `path` keeps the case of the OS
+  [W6].
 - Every Windows camera gets a new ID one time [D11].
 
 ### 7.3 `supported_modes` (3a) [D14]
@@ -597,7 +608,8 @@ fields of `CameraMode` [ring 9] plus the rounded rate:
     (HTTP 422) [agent 55].
   - Where each case is decided [agent 58]: in the whole-request check (HTTP 422) when the
     detection data already shows that the camera has no mode at the floor or above at that size, or
-    that the nearest mode is below the floor; else at the open, stage `set mode`. The reason is "no
+    that the nearest mode is below the floor; else at the open, stage `set mode`. A camera with
+    `modes_read` and an empty `supported_modes` has no mode at the floor [agent 80]. The reason is "no
     mode at 30 fps or more" in both cases [U11].
 - **Auto rate** [D16]: a requested rate of -1 or 0 means 30 fps if the camera has 30 in MJPG at the
   requested size, else the highest rate that it has there. No region rule. Only the modes at the
@@ -618,7 +630,8 @@ fields of `CameraMode` [ring 9] plus the rounded rate:
   or all auto [agent 56]. On Windows during the build, the check uses the Media Foundation
   detection data for both sources [agent 56].
 - After the open, OpenCV can report different real rates for the cameras. That gives a warning only.
-  It is not a refusal, and no camera is closed [agent 56]. Linux and macOS behaviour is not
+  It is not a refusal, and no camera is closed [agent 56]. The warning is a log record at WARNING and
+  an item of the kind `mixed_rate` in the `warnings` list of the apply response [W3]. Linux and macOS behaviour is not
   tested until phase 0 [D46].
 - **Rate class 30** [U15]: the one-rate rule treats 30000/1001 (29.97) and 30/1 (30) as one rate
   class. This is the exception to the tolerance of 0.0001 of D17 for D18. Each other difference is
@@ -715,9 +728,11 @@ A camera that dies while no recording runs is treated as a `failed` camera [U6].
 - For a camera in `ready`, `checking` or `too_slow`, a changed config is a live change or a reopen of
   that camera (11.2) [D31].
 - "Unselect" is `use_this_camera: false` for the camera in a request to `/camera/group/apply`. The
-  group closes the camera and removes it from the gate and from the record check [agent 24].
+  group closes the camera and removes it from the gate and from the record check [agent 24]. A later
+  request that selects it again starts it again [agent 87].
 - The main process first checks a request as a whole: the config values, the one-rate rule (7.5) and
-  the states of this table. A refused request gets 422 or 409 by the rule above. It changes
+  the states of this table. A camera of the group that the request does not name counts with its
+  current config [agent 87]. A refused request gets 422 or 409 by the rule above. It changes
   nothing, also on a running group [U10].
 - After the check, the main process applies the change of each camera on its own. A camera whose
   reopen-type change fails (a resolution or rate change, "apply again") becomes `failed`, and the
@@ -748,6 +763,9 @@ A camera that dies while no recording runs is treated as a `failed` camera [U6].
 
 - `failure` is null or the object of section 12.
 - `measured_fps` is the result of the last rate check, or null. It is not rounded [U17].
+- `replaced_count` is the count of the stop line of 5.2: the frames replaced since the first frame
+  that the camera took in the gate. The camera process sets it at each taken frame and at the stop
+  [W4].
 - `state` is one of the states of 8.1.
 - `controls` holds `exposure`, `gain` and `focus` from 3a, read only. skellycam sets gain and focus
   through the config from 3c [D30, D43] [agent 31].
@@ -806,6 +824,7 @@ Reason: on the C930e the gain read 6 before the stream started and 0 after it st
   delivered frame on each pass. `read_frame` waits at most until 2 s after the last arrival.
 - The watch does not depend on the gate. A camera that waits at the gate still sees its frames arrive.
 - 2 s without a frame: `dead` in an open state, `failed` in `starting` [D38] [agent 23].
+- A started camera that fails is `dead` at once, before its files and its close [agent 82].
 
 ## 10. Rate check
 
@@ -822,7 +841,11 @@ Reason: on the C930e the gain read 6 before the stream started and 0 after it st
 - The start-up check has no early decision. The 15 s limit (9.3) bounds it [agent 27].
 - A camera that fails gets the message of 10.4. The generic camera fails by design. There is no
   override [D24].
-- The OpenCV source runs the check only when OpenCV reports a rate above 0 [D46].
+- With the OpenCV source and no reported rate (0 or less), the reference is the requested rate of
+  the config, and 30 fps for "auto". The check runs as above, and the status reports the measured
+  rate [W2]. This replaces the rule of D46 that runs the check only with a reported rate.
+- When the first frame of the window is also frame 90 or later, the window ends at the next
+  delivered frame, so that it is never empty [agent 26].
 
 ### 10.2 After a live control change [D32]
 
@@ -830,7 +853,8 @@ Reason: on the C930e the gain read 6 before the stream started and 0 after it st
   [D32].
 - Early decision: the camera is too slow as soon as the 60 frames can no longer arrive in time
   [D32]. With `t_a` the arrival of the first frame of the window and `r` the mode rate, that is when
-  `now - t_a > 59 / (0.97 x r)` and frame `s_a + 59` has not arrived.
+  `now - t_a > 59 / (0.97 x r)` and frame `s_a + 59` has not arrived. A frame that arrived in time and
+  waits at the gate or in a pause gives no decision [agent 88].
 - A rate above the limit is known when the window is complete. That is the earliest time.
 - While the check runs, the state is `checking`. A recording cannot start [D33].
 - A camera that fails is `too_slow`. It stays open with its preview, and recording is blocked until a
@@ -1062,8 +1086,8 @@ section adds only what capture adds.
 - The OpenCV source stays on Linux and macOS, with the JPEG re-encode of [ring 2.3, 8.8] [D6].
 - The start-up rules apply to it: warm-up (9.2), the ready limit (9.3), the failed-camera flag
   (section 8) and one rate per group (7.5) [D46].
-- The rate check runs only when OpenCV reports a rate above 0 for the camera [D46]. The reported rate
-  is the reference.
+- The rate check runs on each OpenCV camera. The reference is the reported rate, or the requested
+  rate (30 fps for "auto") when OpenCV reports no rate [W2].
 - The floor of U11: a request below the floor is refused in the whole-request check, as on each
   source. When OpenCV reports a real rate above 0 and below 29.97 after the open, the camera fails,
   stage `set mode`, reason "no mode at 30 fps or more". When OpenCV reports no rate (0 or less), the
@@ -1181,13 +1205,13 @@ T-CAP-36) are [agent 41]. They can be changed when the tests are written.
 | T-CAP-02 | 3a | fake | The fake delivers frames 0 to 4 before the first `read_frame`, then frame 5 after it. | The read gives frame 4; `replaced_count` is 4; the next read waits and gives frame 5. |
 | T-CAP-03 | 3a | fake | A consumer holds the waiting place busy; the producer puts 1,000 frames. | Each put takes at most 1 ms at p99; no put waits on the consumer. |
 | T-CAP-04 | 3a | fake | `read_frame(2.0)` with no frame. | It returns `None` after 2.0 s (±0.1 s); the thread uses under 2 % of one core while it waits. |
-| T-CAP-05 | 3a | fake | Three fake cameras, each in a 30 fps mode, in one group. The frames of each fake are on one 100 ms grid of the clock. One fake delivers 60 frames per second from 20 s to 30 s of the clock while the two others hold the gate at 30 rounds per second; at 30 s it drops one frame and goes back to 30 fps. Each fake delivers its last frame at 40 s [agent 65]. | Equal ring frame counts; for each camera, the sum of the gaps of `source_frame_number` between taken frames, from the first frame taken in the gate, equals the increase of `replaced_count` from that frame; the fast camera has 200 or more replaced frames; one log line per camera at stop with that count. |
+| T-CAP-05 | 3a | fake | Three fake cameras, each in a 30 fps mode, in one group. The frames of each fake are on one 100 ms grid of the clock. One fake delivers 60 frames per second from 20 s to 30 s of the clock while the two others hold the gate at 30 rounds per second; at 30 s it drops one frame and goes back to 30 fps. Each fake delivers its last frame at 40 s [agent 65]. | Equal ring frame counts; for each camera, the sum of the gaps of `source_frame_number` between taken frames, from the first frame taken in the gate, equals the increase of `replaced_count` from that frame; the fast camera has 200 or more replaced frames; one log line per camera at stop with that count; the last frames of the three fakes are on one gate round. The window ends at 29.995 s, because the fake rounds each interval to whole ns ([ADR-6EKB](../decisions/entries/6EKB-choices-of-the-3a-review-fixes.md)). |
 | T-CAP-06 | 3a | fake | Run, change the resolution, run again. | Ring `frame_number` is 0, 1, 2, ... in each ring; `source_frame_number` is the source count; the gate count continues across the change. |
 | T-CAP-07 | 3a | fake | Fake with scripted arrival and sample times; record 30 frames. | Slot `arrival_ns` and `sample_ns` equal the source values; the CSV time of each recorded frame is its `arrival_ns`; a source with no sample time writes `NO_SAMPLE_NS`. |
 | T-CAP-08 | 3a | fake | Spy on the recorder, the JPEG ring write and the BGR hand-over. | For each frame: recorder, then JPEG ring, then BGR [ring 5.3]; a ring write that raises leaves the recorder and the next frame unaffected. |
 | T-CAP-09 | 3a | fake | MJPG fake, with and without recording, with and without a BGR ring; count `cv2.imdecode` calls. | One decode per recorded frame or per frame with a BGR ring, else none; the BGR ring frame equals the decoded image. |
 | T-CAP-10 | 3a | fake | The fake delivers a cut-off JPEG during a recording. | The slot is flagged `NO_SOI_EOI`; the decoder call count is 0 for it; the recorder gets the previous image; the count is logged at stop. |
-| T-CAP-11 | 3a | fake | (1) The fake drops a frame on the camera side: the next delivered sample has the discontinuity attribute. (2) A sample with the attribute is replaced in the waiting place before the loop takes it. | In both cases the next taken frame has `DISCONTINUITY`; in case 1, `source_frame_number` has no gap; no warning is logged. |
+| T-CAP-11 | 3a | fake | (1) The fake drops a frame on the camera side: the next delivered sample has the discontinuity attribute. (2) A sample with the attribute is replaced in the waiting place before the loop takes it. | In both cases the next taken frame has `DISCONTINUITY`; in case 1, `source_frame_number` has no gap; no warning is logged up to frame 200 (the fake then stops, and the dead camera logs a warning). |
 | T-CAP-12 | 3a | fake | Fake with an exposure that resets to -5 when the stream starts; config `MANUAL -7`. | Call order: open with first frame, set controls, read back, warm-up; the config holds the read-back value -7. |
 | T-CAP-13 | 3a | fake | Two fake cameras; one opens 3 s later. | The first 90 frames after read-back reach neither the ring nor the recorder; the first camera is `waiting` and paused until the second has passed its check; then both are `ready`. |
 | T-CAP-14 | 3a | fake | One fake with mode rate 30. Its first frame comes 0.2 s after the first `ReadSample`; from then on it delivers 5 fps, so that 90 warm-up frames need 18 s. | Failed, stage `warm-up`, reason "not ready in 15 s", at 15.0 to 15.5 s after the open. |
@@ -1212,7 +1236,7 @@ T-CAP-36) are [agent 41]. They can be changed when the tests are written.
 | T-CAP-33 | 3a | fake | Apply a change during a recording. | 409; the camera config and the ring name do not change. |
 | T-CAP-34 | 3a | fake | Start a recording with exposure in `AUTO`. | The recording starts; the response `warnings` holds the camera, `exposure` and the text of 11.3; the status shows the same item; the log has the text; the recording info lists `exposure` in `auto_controls_at_start`. |
 | T-CAP-35 | 3a | fake | Three fakes record; one gives device removed at its next frame after 60 recorded frames [agent 68]. | That camera is `dead` at once; its files are finished; its timing file ends at its last frame; the multi-frame rows after it hold the two live cameras: the time of each such row is the mean of the times of the two live cameras [agent 68]; the two keep recording to the stop; `dead_cameras` holds its ID and `last_frame_number`. |
-| T-CAP-36 | 3a | fake | One fake stops delivering at frame 100. | `dead` between 2.0 and 2.25 s after its last arrival, not before. |
+| T-CAP-36 | 3a | fake | One fake stops delivering after `ready`. | `dead` between 2.0 and 2.25 s after its last arrival, not before. |
 | T-CAP-37 | 3a | fake | During a recording, one fake goes to 27 fps for 5 s, then back to 30. | One warning with the camera and the rate, from 27 to under 29.1 fps (the first block below the limit can hold slow and normal frames) [agent 72]; the recording continues; a later slow period gives one more warning. |
 | T-CAP-38 | 3a | fake | Two failures of one camera, then a group shutdown. | The object has `camera_id`, `stage`, `reason`; the text is `Camera {id} failed during {stage}: {reason}`; the first failure stays; it is in the queue before the flag changes. |
 | T-CAP-39 | 3a | fake | Record with the fake source and with the OpenCV fake; give the recorder a frame with a wrong camera ID. | Native CSV has no retrieve columns; OpenCV CSV has them; the wrong frame is refused with an error. |
@@ -1220,12 +1244,12 @@ T-CAP-36) are [agent 41]. They can be changed when the tests are written.
 | T-CAP-41 | 3a | fake | `MANUAL -7`, `AUTO`, `RECOMMEND` with a brightness model in the fake. | The fake gets the values in log2 seconds; `RECOMMEND` ends in `MANUAL` with the value nearest to 127.5. |
 | T-CAP-42 | 3a | fake | Exposure in `AUTO`; the fake changes its exposure from -6 to -5, its gain from 0 to 4 and its focus from 30 to 40, with no set through the config. | Within 2 s, the status shows `exposure` with `auto: true` and `value: -5`, and the new gain and focus values. |
 | T-CAP-43 | 3a | fake | On Windows: no setting, `opencv`, `media_foundation`, a wrong value. Runs only before the last commit of phase 3. | OpenCV, OpenCV, Media Foundation, an error that names the allowed values. |
-| T-CAP-44 | 3a | fake | The OpenCV fake under the shared loop, with a reported rate of 30 and of 0. | Warm-up in both; rate check only with 30; the ring gets a q90 JPEG with no burned-in stamp (it decodes to the fake image); the BGR ring gets the OpenCV image. |
+| T-CAP-44 | 3a | fake | The OpenCV fake under the shared loop, with a reported rate of 30 and of 0. | Warm-up and rate check in both: with 0, against the requested rate, and `ready` with `measured_fps` within 3 % of 30 [W2]; the ring gets a q90 JPEG with no burned-in stamp (it decodes to the fake image); the BGR ring gets the OpenCV image. |
 | T-CAP-45 | 3a | CI | Read `pyproject.toml` and `uv.lock`. | `comtypes==1.5.0` with the marker `sys_platform == "win32"`; locked at 1.5.0. |
 | T-CAP-46 | 3a | CI | On the Windows runner: import the Media Foundation module; if `mfplat.dll` loads, call `MFStartup`, enumerate, `MFShutdown`. | The import passes; the interface declarations exist; an enumeration returns a list. |
 | T-CAP-47 | 3a | fake | Search the package. | No compiled extension of its own and no `_skellycam_rust` import. |
 | T-CAP-48 | 3a | fake | Detection with a fake enumeration that hangs for one device. Windows only [U18]. | The detection child ends; the call returns within the limit plus 2 s with an error; the main process keeps running. |
-| T-CAP-49 | 3a | local | Marker `capture_local`. Run T-RING-31 with the shared loop on the Windows development machine. | Process CPU under 2 % of one core [D48]. |
+| T-CAP-49 | 3a | local | Marker `capture_local`. Run the rule of T-RING-31 with the shared loop on the Windows development machine: a camera process paused for 10 s. | Process CPU under 2 % of one core [D48]. It replaces T-RING-31 [W8]. |
 | T-CAP-50 | 3a | local | Marker `capture_local`. Run T-RING-46 on the Windows development machine. | It passes [D42, D48]. |
 | T-CAP-51 | 3a | hardware | Detect with four cameras connected; then detect again while two of them stream. | Four cameras with new IDs and the `supported_modes` of 7.3; the streaming cameras show no arrival gap above 100 ms. |
 | T-CAP-52 | 3a | hardware | Open the C922, the C930e and the Kiyo Pro at 1280x720 MJPG 30 through Media Foundation, one at a time. | Each reaches `ready`; for 300 frames the ring payload is byte-equal to the bytes that the callback copied; the rate check passes. |
@@ -1269,21 +1293,31 @@ T-CAP-36) are [agent 41]. They can be changed when the tests are written.
 | T-CAP-90 | 3a | fake | A camera is `ready` with `MANUAL -7`. (1) A live exposure change to -5: the fake set call returns an error. (2) The same change: the set returns success, but the read-back is -6. | In both cases: the camera stays `ready`; its config keeps exposure -7 (the test does not check the value that the status reads) [agent 67]; the ring name stays; the apply response has a `control_change_failed` item for that camera; no other camera changes [U14]. |
 | T-CAP-91 | 3a | fake | One group: a fake at 30000/1001 and a fake at 30/1; run for a simulated 100 s. Then a request that adds a camera at 60. | The apply response has one `mixed_rate` item with the camera IDs, "29.97 fps", "30 fps" and "about every 33 s"; the log has the text; the group rate is 29.97; the `replaced_count` of the 30 fps camera is 3 (±1); the request with 60 gets 422 [U15]. |
 
-| T-CAP-92 | 3a | hardware | Linux and macOS, counterpart of T-CAP-52 [U21]: open the C922, the C930e and the Kiyo Pro at 1280x720 30 through the OpenCV source, one at a time. | Each reaches `ready`; for 300 frames the ring JPEG decodes to a 1280x720 image; with a reported rate, `measured_fps` is within 3 % of 30; with no reported rate, it is null [D46] [agent 76]. |
-| T-CAP-93 | 3a | hardware | Linux and macOS, counterpart of T-CAP-54 [U21]: each camera at 1280x720: 30 on each camera, 60 on the C922 and the Kiyo Pro. | For each rate: state, measured rate (null with no reported rate) and failure are recorded; a rate-check failure gives the reason of 10.4. No pass value. |
-| T-CAP-94 | 3a | hardware | Linux and macOS, counterpart of T-CAP-53 [U21]: open the generic camera at 1280x720 30. | With a reported rate: `failed`, stage `rate check`, the reason of 10.4 with a measured rate within 0.5 fps of 25.76; with no reported rate: `ready` with `measured_fps` null (D46), recorded [agent 76]. |
+| T-CAP-92 | 3a | hardware | Linux and macOS, counterpart of T-CAP-52 [U21]: open the C922, the C930e and the Kiyo Pro at 1280x720 30 through the OpenCV source, one at a time. | Each reaches `ready`; for 300 frames the ring JPEG decodes to a 1280x720 image; `measured_fps` is within 3 % of 30, also with no reported rate [W2]. |
+| T-CAP-93 | 3a | hardware | Linux and macOS, counterpart of T-CAP-54 [U21]: each camera at 1280x720: 30 on each camera, 60 on the C922 and the Kiyo Pro. | For each rate: state, measured rate and failure are recorded; a rate-check failure gives the reason of 10.4. No pass value. |
+| T-CAP-94 | 3a | hardware | Linux and macOS, counterpart of T-CAP-53 [U21]: open the generic camera at 1280x720 30. | `failed`, stage `rate check`, the reason of 10.4 with a measured rate within 0.5 fps of 25.76; with no reported rate, the check uses the requested rate [W2]. |
 | T-CAP-95 | 3a | hardware | Linux and macOS, counterpart of T-CAP-58 [U21]: record with the C922 and the C930e; the user unplugs the C922 at 20 s. | OpenCV gives no device-removed event: the C922 is `dead` 2.0 to 2.5 s after its last ring frame [agent 76]; the C930e records to the stop; the recording info names the C922 and its last frame. |
 | T-CAP-96 | 3a | hardware | Linux and macOS, counterpart of T-CAP-55 [U21]: each camera opened in a dark room with auto exposure. | For each camera: state, measured rate and reason are recorded; no traceback. |
-| T-CAP-97 | 3a | hardware | Linux and macOS, counterpart of T-CAP-57 [U21]: open at `MANUAL -8`; exposure steps -7, -6, -5, -4 while open. | With a reported rate: each change gives `checking`, then `ready` or `too_slow`; with no reported rate: no check, the camera stays `ready` (D46). States, rates and read-back values are recorded; no predicted state, because table 10.5 holds Media Foundation values and Linux forces auto exposure (14.1) [agent 76]. |
+| T-CAP-97 | 3a | hardware | Linux and macOS, counterpart of T-CAP-57 [U21]: open at `MANUAL -8`; exposure steps -7, -6, -5, -4 while open. | Each change gives `checking`, then `ready` or `too_slow`; with no reported rate, the check uses the requested rate [W2]. States, rates and read-back values are recorded; no predicted state, because table 10.5 holds Media Foundation values and Linux forces auto exposure (14.1) [agent 76]. |
 | T-CAP-98 | 3a | hardware | Linux and macOS, counterpart of T-CAP-60 [U21]: the C922, the C930e and the Kiyo Pro at 1280x720 30 through the OpenCV source, lockstep, one recording of 60 s. | Equal frame counts; a group rate from 29.7 to 30.3; for each camera, the gaps of `source_frame_number` equal its replaced count of the stop line. The reference run with the OpenCV loop of today is a separate run. |
-| T-CAP-99 | 3a | fake | OpenCV fake [U23]: (1) a request of 25; (2) a request of 30, and OpenCV reports a real rate of 24 after the open; (3) a request of 30, and OpenCV reports no rate. | (1) 422, and no camera opens; (2) failed, stage `set mode`, "no mode at 30 fps or more"; (3) `ready`, with `measured_fps` null: no rate check and no floor check [D46, agent 59]. |
-| T-CAP-100 | 3a | fake | Two OpenCV fakes [U23]: (1) requests of 30 and 60; (2) both requests auto, and OpenCV reports 30 for one and 60 for the other after the open. | (1) 422, and no camera opens; (2) both reach `ready`; a log record at WARNING names both camera IDs [agent 75]; no camera is closed [agent 56]. |
-| T-CAP-101 | 3a | fake | The OpenCV fake delivers 25 fps [U23]. (1) OpenCV reports 30. (2) OpenCV reports no rate. | (1) failed, stage `rate check`, the reason of 10.4 with declared 30.00 and a measured rate within 0.75 fps of 25 [agent 78]; (2) `ready`, with `measured_fps` null [D46]. |
+| T-CAP-99 | 3a | fake | OpenCV fake [U23]: (1) a request of 25; (2) a request of 30, and OpenCV reports a real rate of 24 after the open; (3) a request of 30, and OpenCV reports no rate. | (1) 422, and no camera opens; (2) failed, stage `set mode`, "no mode at 30 fps or more"; (3) `ready`, with no floor check, and `measured_fps` within 3 % of 30: the check uses the requested rate [W2, agent 59]. |
+| T-CAP-100 | 3a | fake | Two OpenCV fakes [U23]: (1) requests of 30 and 60; (2) both requests auto, and OpenCV reports 30 for one and 60 for the other after the open. | (1) 422, and no camera opens; (2) both reach `ready`; a log record at WARNING names both camera IDs, and the apply response has one `mixed_rate` item with both [agent 75, W3]; no camera is closed [agent 56]. |
+| T-CAP-101 | 3a | fake | The OpenCV fake delivers 25 fps [U23]. (1) OpenCV reports 30. (2) OpenCV reports no rate. | (1) failed, stage `rate check`, the reason of 10.4 with declared 30.00 and a measured rate within 0.75 fps of 25 [agent 78]; (2) the same: the check uses the requested rate [W2]. |
 | T-CAP-102 | 3a | fake | Three OpenCV fakes; one cannot open [U23]. | That camera is `failed` with stage `open`; the other two reach `ready` with preview; a record start returns 409 and names it [D23]. |
 | T-CAP-103 | 3a | fake | Two OpenCV fakes record; the grabs of one start to fail, as after an unplug [U23]. | That camera is `dead` 2.0 to 2.25 s after its last ring frame [agent 78]; the other camera keeps recording to the stop; `dead_cameras` names it [D38, U4]. |
 | T-CAP-104 | 3a | fake | Two OpenCV fakes, two recordings [U23]. (1) The config asks for `AUTO`. (2) The config asks for `MANUAL`; Linux only, because the OpenCV source forces auto exposure there (14.1). | Each record start gives the `auto_control` warning for `exposure` one time for each camera [D37]. |
+| T-CAP-105 | 3a | fake | Two fakes; the friendly name of one contains "virtual". (1) Detect, then apply both. (2) Apply both with no detection result. | Detection shows `virtual: true`; both requests get 422 that names the camera; no camera opens; in (2), the apply request ran the detection [W5, agent 79]. |
+| T-CAP-106 | 3a | fake | A Media Foundation link in mixed case, in `CameraDeviceInfo` and in `MediaFoundationDeviceInfo` (the second on Windows only [U18]). | The mixed-case and the lower-case link give one `camera_id`, the rule of 7.2; `path` keeps the case [W6]. |
+| T-CAP-107 | 3a | fake | Two fakes on a 100 ms grid; one delivers 60 fps from 8 s to 12 s of the clock. | The status shows `replaced_count` above 0; at the end, it equals the count of the stop line and the gaps of `source_frame_number` [W4]. |
+| T-CAP-108 | 3a | fake | Three fakes record; one gives device removed, and its close takes 2 s. | It is `dead` before its close starts; the two others record on with no gap above 100 ms [D38, agent 82]. |
+| T-CAP-109 | 3a | fake | Two fakes in camera processes; the process of one ends with `os._exit(3)`: (1) at the open; (2) at frame 300 during a recording. | (1) `failed`, stage `open`, and the apply response holds it; the other is `ready`. (2) `dead`, stage `streaming`; the other records on; the stop returns 200 and `dead_cameras` names it. The reason is "camera process ended (exit code 3)" [agent 81]. |
+| T-CAP-110 | 3a | fake | A recording of 10 s; then the control read of one fake hangs. Its files message is larger than 64 KiB. | The process ends hard; `dead_cameras` gives the `last_frame_number` of the last row of its timing file, not null [U12, agent 83]. |
+| T-CAP-111 | 3a | fake | `OpenCVSource` with a stand-in capture: the loop thread reads 300 frames while a second thread reads the controls. | No two calls on the capture overlap [agent 85]. |
+| T-CAP-112 | 3a | fake | Frames 2 to 95 arrive together, 94 ms after frame 1. | `ready`, with `measured_fps` within 3 % of 30; no failure of an empty window [agent 26]. |
+| T-CAP-113 | 3a | fake | Two fakes are `ready`; the second delivers 1.6 fps for 12 s, so the first waits at the gate. A live exposure change of the first. | The check ends `ready`, with `measured_fps` within 3 % of 30, not `too_slow` [agent 88]. |
 
-T-CAP-92 to T-CAP-104 come from the answers U21 and U23 of the user; their step is 3a.
+T-CAP-92 to T-CAP-104 come from the answers U21 and U23 of the user; their step is 3a. T-CAP-105 to
+T-CAP-113 come with the fixes of the review of the 3a code (W4 to W6, [ADR-6EKB](../decisions/entries/6EKB-choices-of-the-3a-review-fixes.md)); their step is 3a.
 
 ### 16.3 Hardware tests of D49
 
@@ -1347,7 +1381,7 @@ results. They have no fixed pass value, because the decisions do not give one.
 | D35 | T-CAP-41 |
 | D36 | T-CAP-33 |
 | D37 | T-CAP-34 |
-| D38 | T-CAP-35, T-CAP-36, T-CAP-58, T-CAP-81, T-CAP-82 |
+| D38 | T-CAP-35, T-CAP-36, T-CAP-58, T-CAP-81, T-CAP-82, T-CAP-108, T-CAP-109 |
 | D39 | T-CAP-37 |
 | D40 | T-CAP-38 |
 | D41 | T-CAP-39 |
@@ -1382,6 +1416,14 @@ results. They have no fixed pass value, because the decisions do not give one.
 | U21 | T-CAP-92 to T-CAP-98 |
 | U22 | no test: the parity table of 16.7 |
 | U23 | T-CAP-99 to T-CAP-104 |
+| W1 | no test: the acceptance of items 65 to 78 |
+| W2 | T-CAP-44, T-CAP-99, T-CAP-101; hardware: T-CAP-92, T-CAP-94, T-CAP-97 |
+| W3 | T-CAP-100 |
+| W4 | T-CAP-107 |
+| W5 | T-CAP-105 |
+| W6 | T-CAP-106 |
+| W7 | `skellycam/tests/test_utf8_console.py` |
+| W8 | T-CAP-49 (T-RING-31 is retired) |
 
 ### 16.6 Counts
 
@@ -1389,12 +1431,13 @@ By step and kind. A cell gives the tests on Windows / Linux / macOS (16.1, 16.7)
 
 | Step | fake | hardware | CI | local | Total |
 |---|---|---|---|---|---|
-| 3a | 62 (62 / 57 / 57) | 18 (11 / 7 / 7) | 2 (2 / 1 / 1) | 2 (2 / 0 / 0) | 84 (77 / 65 / 65) |
+| 3a | 71 (71 / 66 / 66) | 18 (11 / 7 / 7) | 2 (2 / 1 / 1) | 2 (2 / 0 / 0) | 93 (86 / 74 / 74) |
 | 3b | 9 (9 / 9 / 9) | 2 (2 / 0 / 0) | 0 | 0 | 11 (11 / 9 / 9) |
 | 3c | 6 (6 / 5 / 5) | 3 (3 / 0 / 0) | 0 | 0 | 9 (9 / 5 / 5) |
-| All | 77 (77 / 71 / 71) | 23 (16 / 7 / 7) | 2 (2 / 1 / 1) | 2 (2 / 0 / 0) | 104 (97 / 79 / 79) |
+| All | 86 (86 / 80 / 80) | 23 (16 / 7 / 7) | 2 (2 / 1 / 1) | 2 (2 / 0 / 0) | 113 (106 / 88 / 88) |
 
-T-CAP-80 to T-CAP-104 are at the end of the table; their step is in the table. 25 tests run on
+T-CAP-80 to T-CAP-113 are at the end of the table; their step is in the table. T-CAP-106 runs on each
+system; its case for `MediaFoundationDeviceInfo` runs on Windows only. 25 tests run on
 Windows only: T-CAP-22, 23, 24, 43, 46, 48, 49, 50, the 11 Windows hardware tests of 3a, and T-CAP-68,
 69, 76, 77, 78 and 79. 7 tests run on Linux and macOS only: T-CAP-92 to T-CAP-98.
 
@@ -1410,8 +1453,8 @@ Reasons:
 
 - (a) The package `media_foundation/` is Windows only [U18]. On Linux and macOS, detection is
   `cv2_enumerate_cameras`, with no mode list and no device link.
-- (b) A local test of the Windows development machine. T-RING-31 runs in the ring tests on each
-  system.
+- (b) A local test of the Windows development machine. T-RING-31, the test of the phase 2 loop on each
+  system, is retired [W8].
 - (c) The setting and its deletion exist on Windows only (14.2).
 - (d) OpenCV gives no sample time (`NO_SAMPLE_NS`) and no in-use reason; they come from Media
   Foundation.
@@ -1527,8 +1570,17 @@ Reasons:
 | T-CAP-102 | runs | runs | runs |
 | T-CAP-103 | runs | runs | runs |
 | T-CAP-104 | runs (case 1) | runs (cases 1 and 2) | runs (case 1) |
+| T-CAP-105 | runs | runs | runs |
+| T-CAP-106 | runs | runs (`CameraDeviceInfo` case) | runs (`CameraDeviceInfo` case) |
+| T-CAP-107 | runs | runs | runs |
+| T-CAP-108 | runs | runs | runs |
+| T-CAP-109 | runs | runs | runs |
+| T-CAP-110 | runs | runs | runs |
+| T-CAP-111 | runs | runs | runs |
+| T-CAP-112 | runs | runs | runs |
+| T-CAP-113 | runs | runs | runs |
 
-Short form: Windows runs 97 tests, Linux 79 and macOS 79. 7 Windows hardware tests have a counterpart
+Short form: Windows runs 106 tests, Linux 88 and macOS 88. 7 Windows hardware tests have a counterpart
 on Linux and macOS. 14 tests have no counterpart there until phase 7 (reasons a, b, d, e), and 4 tests
 are not applicable there (reasons c, f, g).
 
@@ -1704,7 +1756,7 @@ not fix. The body marks each one [agent n].
 63. The kind `mixed_rate`, and the interval in whole seconds in its text.
 64. A failed live change is reported as a `warnings` item of the kind `control_change_failed`.
 
-Items 65 to 78 came with the answers U16 to U23 ([ADR-HB4Z](../decisions/entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md)). They wait for a decision of the user.
+Items 65 to 78 came with the answers U16 to U23 ([ADR-HB4Z](../decisions/entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md)). The user accepted them on 2026-11-20 [W1], with the changes of W2 (item 76) and W3 (item 75).
 
 65. The script of T-CAP-05: a 100 ms grid, one fake at 60 fps from 20 s to 30 s of the clock, one
     dropped frame at 30 s, the last frame at 40 s, and 200 or more replaced frames.
@@ -1721,12 +1773,33 @@ Items 65 to 78 came with the answers U16 to U23 ([ADR-HB4Z](../decisions/entries
 74. The macOS job: the label `macos-15`, its own job and concurrency group with `cancel-in-progress`, a
     time limit of 40 minutes, and the portable ring tests in that job.
 75. T-CAP-100: the warning of different real rates is a log record at WARNING that names both cameras.
+    W3 adds the `mixed_rate` item of the apply response.
 76. The criteria of T-CAP-92 to T-CAP-98 where OpenCV cannot give what the Windows test needs: no rate
     check with no reported rate, an unplug is dead 2.0 to 2.5 s after the last frame, no predicted
-    state from table 10.5.
+    state from table 10.5. W2 rejects the first part: the check uses the requested rate.
 77. The state "not applicable" of the parity table (16.7).
 78. The OpenCV fake has `supported_modes = []` in its detection result (as on Linux and macOS);
     T-CAP-101 accepts 25 +/- 0.75 fps; T-CAP-103 accepts 2.0 to 2.25 s.
+
+Items 79 to 90 came with the fixes of the review of the 3a code. [ADR-6EKB](../decisions/entries/6EKB-choices-of-the-3a-review-fixes.md) holds them in full. They wait
+for a decision of the user.
+
+79. An apply request runs the detection first when the kept result does not hold each selected camera.
+80. `CameraDeviceInfo.modes_read`; with an empty `supported_modes` it gives 422 "no mode at 30 fps or
+    more".
+81. A camera process that ends with no final state: `failed` (stage `open`) in `starting`, else
+    `dead` (stage `streaming`), reason "camera process ended (exit code N)".
+82. A started camera that fails is `dead` at once; then its files, its control thread and its close.
+83. The main process takes each files message from its queue at once; the hard end flushes the queue
+    within the 5 s of U12, in one thread.
+84. "Apply again" waits 10 s for the old camera process, then kills it.
+85. The OpenCV source: one lock for the capture; gain and focus are absent when OpenCV reads -1.
+86. One WARNING for each run of failed periodic control reads.
+87. A camera selected again after an unselect starts again with its status; the whole-request check
+    uses the current config of each camera that a request does not name.
+88. The early decision of 10.2 comes only from a frame that did not come in time.
+89. A paused camera sleeps 50 ms between its passes.
+90. The phase 2 loop stays until the user decides the tests that also call it (W8).
 
 ## 19. Questions for the user
 
@@ -1903,6 +1976,8 @@ and D38 replace the two older plan statements of 1.4.
 - D46: The start-up rules (warm-up, rate check, failed-camera flag, one rate per group) apply to the
   OpenCV source too (Linux, macOS), but the rate check runs there only when OpenCV reports a real
   frame rate (> 0) for the camera. Linux and macOS behaviour is not tested until phase 0.
+  - Note: W2 replaces "the rate check runs there only when OpenCV reports a real frame rate": with no
+    reported rate, the check uses the requested rate, and 30 fps for "auto" ([ADR-PDD3](../decisions/entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md)).
   - Note: U21 writes the Linux and macOS hardware tests now; they run in phase 0. U20 and U23 run the
     OpenCV-source tests with the OpenCV fake on Linux and macOS in CI ([ADR-HB4Z](../decisions/entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md)).
 
@@ -1922,7 +1997,8 @@ and D38 replace the two older plan statements of 1.4.
   fps, and no camera frame lost that the replaced-frame count does not explain; (4) T-RING-31 (idle
   CPU under 2 % of one core) and T-RING-46 pass on Windows. Matching lists for 3b and 3c.
   - Note: U20 adds the macOS CI runner to item (1). The Linux and macOS hardware tests of U21 are not
-    in this list; they wait for phase 0. By U17, T-RING-46 changes with the 3a code ([ADR-HB4Z](../decisions/entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md)).
+    in this list; they wait for phase 0. By W8, T-CAP-49 replaces T-RING-31 in item (4). By U17,
+    T-RING-46 changes with the 3a code ([ADR-HB4Z](../decisions/entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md)).
 - D49: Hardware tests that the spec must hold (they run on the user's word): each camera at each of
   its declared MJPG rates at 720p (does it deliver that rate?); each camera opened in a dark room with
   auto exposure; with auto exposure and auto focus on, does each camera report its true current
@@ -1997,3 +2073,23 @@ and D38 replace the two older plan statements of 1.4.
   rule on requested rates and the warning for different real rates, the start-up rate check with and
   without a reported rate, a camera that fails at open, a camera that stops during a recording, and
   the auto-exposure warning on Linux. They run on the three CI systems.
+
+**Decisions of the user after the review of the 3a code, 2026-11-19 and 2026-11-20 ([ADR-PDD3](../decisions/entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md))**
+
+- W1: Items 65 to 78 of section 18 are accepted as written, except as W2 and W3 change them.
+- W2: The first part of item 76 is rejected. When OpenCV reports no frame rate, the start-up check
+  still measures the rate over the warm-up frames 6 to 90 and compares it with the requested rate of
+  the config (30 for "auto"), with the 3 % limit. A slower camera fails at start-up, as on Windows.
+  The status reports the measured rate.
+- W3: Item 75: the warning of different real rates on OpenCV is a log record at WARNING and an item
+  of the `warnings` list of the apply response, with the kind `mixed_rate`.
+- W4: Step 3a adds `replaced_count` to the status of each camera, counted from the first frame that
+  the camera takes in the gate.
+- W5: Detection shows a virtual camera with `virtual: true`. A request that names one is refused
+  with 422. The support of virtual cameras is a later task.
+- W6: The device `path` is stored and shown as the OS gives it. Only the input of the `camera_id`
+  hash is in lower case.
+- W7: `stdout` and `stderr` are reconfigured to UTF-8 at the entry point of skellycam and in each
+  worker, before the logging is configured.
+- W8: The phase 2 camera loop is dead code. It is deleted, with the code that only it uses, together
+  with T-RING-31, which tests only that loop. T-CAP-49 covers the same rule on the shared loop.

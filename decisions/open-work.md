@@ -58,11 +58,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Open: the BGR read at 1080p does not meet its target (p99 3.13 to 4.05 ms, target 3 ms). The
     user decided on 2026-11-19 that the reader does not change in phase 2. A read call that copies
     into a buffer of the reader waits for the first consumer that reads the BGR ring.
-  - Known failure: T-RING-31 (idle CPU, limit 2 % of one core) fails (items 60 and 65). On
-    2026-11-18, the paused loop used 3.9 to 7.0 % of one core on a Windows test machine. The user
-    dropped the redesign of the wait of the OpenCV loop, because native capture deletes that loop.
-    The test applies to the native capture loop from phase 3, and it stays a known failure until
-    then. Windows counts CPU time in steps of 15.6 ms.
+  - Done: T-RING-31 is retired with the phase 2 loop. T-CAP-49 checks its rule on the shared loop
+    ([ADR-PDD3](entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md) W8).
   - Fact, 2026-11-18: the four-camera comparison of the timing. Before is commit 0a66994c3, after
     is commit 8a1f9b517. Each had two runs of 60 s, with a 720p30 MJPG request, lockstep and
     four cameras (Logitech C922, Logitech C930e, Razer Kiyo Pro and a generic camera), lights on.
@@ -104,8 +101,18 @@ task. Delete an item when its work is done. The PR that closes an item records t
     accepted on 2026-11-19 with the answers U16 to U23
     ([ADR-HB4Z](entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md)). Next:
     the product code of step 3a.
-  - The user decides items 65 to 78 of section 18 of the spec: the agent choices that came with the
-    answers U16 to U23.
+  - Done: the user decided items 65 to 78 of section 18 of the spec, and W1 to W8 after the review of
+    the 3a code ([ADR-PDD3](entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md)).
+  - The user decides the proposed entries of the 3a code:
+    [ADR-S6HT](entries/S6HT-choices-of-the-3a-loop-code.md),
+    [ADR-MA22](entries/MA22-choices-of-the-media-foundation-source-of-step-3a.md) and
+    [ADR-6EKB](entries/6EKB-choices-of-the-3a-review-fixes.md) (items 79 to 90 of section 18).
+  - W8 deletes the phase 2 loop (`skellycam/core/camera/opencv/opencv_camera_loop.py`, its worker
+    method, its set-up helper, the `state is None` rules and `await_extracted_configs`). These tests
+    also call it: T-RING-23 (two tests), T-RING-38, T-RING-39, T-RING-40, T-RING-47, five tests of
+    `skellycam/tests/reference_recordings/` and `skellycam/tests/test_camera_startup_failure.py`.
+    The user decides these tests first ([ADR-6EKB](entries/6EKB-choices-of-the-3a-review-fixes.md)
+    item 12).
   - Run the fake-source tests with
     `uv run pytest skellycam/tests/capture -m "not camera_hardware and not capture_local"`. The
     hardware tests run only with `SKELLYCAM_HARDWARE=1`. The workflow
@@ -121,7 +128,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   cameras), U5 (a flagged frame gives the old recorder the last good image again) and U12 (on a hang
   during a recording, finish the files for at most 5 s, then end hard). The files of the new recorder
   survive a hard stop. The user: U4 and U5 "must change back once we have the new recorder".
-- **Support virtual cameras.** Media Foundation detection shows a virtual camera with
-  `virtual=True`, but a request cannot select it yet
-  ([ADR-MA22](entries/MA22-choices-of-the-media-foundation-source-of-step-3a.md) item 9, decided by
-  the user on 2026-11-19). A later task makes a virtual camera selectable.
+- **Support virtual cameras.** Detection shows a virtual camera with `virtual=True`, and a request
+  that names it gets HTTP 422
+  ([ADR-PDD3](entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md) W5,
+  [ADR-MA22](entries/MA22-choices-of-the-media-foundation-source-of-step-3a.md) item 9). A later task
+  makes a virtual camera selectable.
