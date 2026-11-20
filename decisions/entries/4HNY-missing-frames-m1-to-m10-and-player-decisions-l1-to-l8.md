@@ -1,6 +1,6 @@
 # 4HNY — Missing frames M1 to M10 and player decisions L1 to L8
 
-**Status:** accepted, 2026-11-19 (user; relayed by the supervisor after the first drafts of the recorder and player specs and their reviews; answers U1 and U2 on 2026-11-20; commit to dom/player).
+**Status:** accepted, 2026-11-19 (user; relayed by the supervisor after the first drafts of the recorder and player specs and their reviews; answers U1, U2 and U3 on 2026-11-20; commit to dom/player).
 
 ## Decision
 
@@ -55,6 +55,9 @@ each one in full. M1 to M10 are shared with the recorder spec of step 5a.
 2. U2: a write error on one camera file is a second short-file case: the same short pair as a killed
    process (`missing` rows with empty byte fields and no block, `# repair`, `# end`), with the
    manifest warnings `camera_file_short` and `take_error`, and no `camera_dead`.
+3. U3 (2026-11-20): `PlaybackControls` of today gets one optional prop that hides the "may not be
+   frame-perfect" sync button. The player of today does not give it, so nothing changes there. The
+   view of the new player gives it. No other change of the player of today (L5).
 
 ## Reason
 

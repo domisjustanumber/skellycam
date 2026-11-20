@@ -16,7 +16,9 @@ step 6a come before the product code of step 6a.
 Marks:
 
 - **[Yn]**, **[Mn]**, **[Ln]**: a decision of the user, 2026-11-19 (section 18). **[Un]**: an answer
-  of the user, 2026-11-20 (section 18.4).
+  of the user, 2026-11-20 (section 18.4). The corrections of 2026-11-20 after the acceptance are in
+  [ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md) (proposed),
+  except U3.
 - **[En]**: an earlier decision of the user that the decision list of 2026-11-19 cites (section 18.5).
   This spec numbers them for reference only.
 - **[SFF-nnn]**: a requirement of the format spec `../skellyfileformat/spec/SPEC.md`, draft v2, read
@@ -86,7 +88,8 @@ recorder step 5a opens, so the two can land together [Y1].
 - A change in skellyfileformat. The merged list of the recorder spec holds the proposals (section 13).
 - Any feature beyond the features of today (section 3), unless a decision names it. Examples: zoom,
   pan, full screen, frame export, an A-B loop, a camera offset, a seek to a time.
-- A change of the player of today [L5].
+- A change of the player of today [L5], except the one optional prop of `PlaybackControls` [U3]
+  (section 10).
 - A reload of a take that is still being written. The reader reads a snapshot at open [agent 12].
 - The capture info JSON, the processing info JSON, the calibration TOML, the Parquet and the journal.
   The player needs none of them in 6a [agent 14].
@@ -211,6 +214,10 @@ The module is the folder `skellycam-ui/src/player/`:
 | `tile/` | `tile.ts` (decode and draw), `format.ts` (the overlay text). |
 | `main/` | `take-scheme.ts` (the handler, main process), `bridge.ts` (the preload bridge). |
 | `tests/` | `unit/`, `browser/`, `bench/`, `fixtures/`, `harness/` (section 12). |
+
+The root `.gitignore` of the repository ignores each file with the name `index.ts` or `tsconfig.json`.
+Add `index.ts` and `tsconfig.json` of the module with `git add -f`. Do not change the `.gitignore`
+([ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)).
 
 ### 4.2 The boundary rule [Y6] [agent 2]
 
@@ -491,7 +498,9 @@ of option B with threads and process splits is open work, not 6a (14.4) [Y2].
   `cameras[].video` and `cameras[].timing`. It checks that each path names a file of the snapshot and
   that the two files are a device pair (6.4) [SFF-730].
 - It uses the manifest only for the take whose `take_uuid` it holds [SFF-867].
-- It reads the warnings `camera_dead` with `last_frame` [M8] (7.3).
+- It reads the warnings `camera_dead` with `last_frame` [M8] (7.3). It adds the code of each warning
+  of the manifest to `take.warnings` of the state, for example `camera_file_short` and `take_error`
+  (T-PLAY-71) ([ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)).
 - `state` = `recording` makes the take unfinished (6.11) [Y5].
 - It does not use `summary` for playback [SFF-729]. It does not check `sha256` [SFF-730].
 
@@ -738,7 +747,9 @@ Dead camera [M8] [agent 21]:
   `detail` of the warning is `last_frame=<p> reason=<text>` [F-5 of the recorder spec]. p is the last
   row of the camera that is not `missing`. N = p + 1, the first group frame with no image [M8]. When p
   is `none`, N = 0. A `detail` that does not have this form gives the rule of the next item for that
-  camera [agent 21].
+  camera [agent 21], and the take warning `camera_dead` with no frame number [F-5]. The take warnings
+  hold the code of each manifest warning, so they hold `camera_dead` in each case
+  ([ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)).
 - With no manifest that the reader uses, or with a manifest whose `state` is `recording` (it has no
   warnings yet): a camera whose rows are `missing` from one row to the last row of the file is dead.
   N is the first row of that run.
@@ -800,7 +811,14 @@ the harness, about 58 shown frames per second for each tile at N = 4 and N = 8, 
   uses the standard tables of ITU-T T.81 Annex K.3 [M review]. T-PLAY-42 checks both cases.
 - A corrupted JPEG decodes with no error, with grey pixels [M review]. The tile does not use the
   decode result to find damage [L3].
-- The tile ignores an EXIF orientation tag [SFF-738].
+- The tile ignores an EXIF orientation tag [SFF-738]. It shows the stored pixels unturned and takes
+  the rotation only from `rotationCwDeg` (T-PLAY-43). Chromium applies the tag: for orientation 6,
+  `ImageDecoder` gives a `VideoFrame` with `rotation` 90, and `drawImage` turns it. `ImageDecoder` of
+  Electron 45.3.4 has no option to ignore the tag. Thus the decoder of the tile undoes it: when the
+  frame has a `rotation` or a `flip`, it makes `new VideoFrame(frame, {rotation: r, flip})` with
+  r = `rotation` when `flip` is true, else (360 − `rotation`) mod 360, and closes the first frame.
+  The result has `rotation` 0 and `flip` false [M: orientations 1 to 8, Electron 45.3.4, 2026-11-20,
+  [ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)].
 
 ### 8.2 Draw and rotation [SFF-751] [E5] [agent 24]
 
@@ -834,7 +852,11 @@ interface TileUpdate {
   rateText: string | null;                   // the frame rate text of the camera, shown as given
   cameraState: CameraStateName | null;       // the eight states of windows-capture.md 8.1
   mark: TileMark | null;
+  image?: DecodedImage;                      // the decoded image of `jpeg`, made ahead (9.1)
+  blank?: boolean;                           // true: drop the image and draw black
 }
+
+interface DecodedImage { displayWidth: number; displayHeight: number; close(): void }  // a VideoFrame fits
 
 interface TileLabel {
   frame: number;          // k* for the player; the ring frame number for the preview
@@ -864,6 +886,15 @@ type TileMark =
   draws it again with the new label, rate text, camera state and mark. When the tile has no image yet,
   it draws black. Thus a flagged frame of the preview and a `missing` row of the player keep the last
   image and change only the overlay [L6, M9].
+- **Back to black** (`blank` true, `jpeg` null): the tile closes its image and draws black with the new
+  overlay. The player uses it when no image applies at t, for example after a seek to a frame before
+  the first real row of a camera (7.3, T-PLAY-46)
+  ([ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)).
+- **An image made ahead** (`image` with `jpeg`): the tile does not decode. It draws `image` at once and
+  owns it: it closes it when a newer image replaces it, or at `close()`. The promise resolves with
+  `'drawn'`. `jpeg` holds the bytes of the same frame. The player uses it for the images of its
+  prefetch queue (9.1); the preview gives `jpeg` only
+  ([ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)).
 - **One mark.** An update has at most one mark. When more than one applies, the player gives the first
   in the order of the type above [agent 25].
 - **Newest wins.** A new `update` supersedes an update whose decode has not ended. The promise of the
@@ -937,7 +968,12 @@ same. By Y3 and L6, phase 4 changes it to this tile.
 
 ### 9.1 Prefetch during play
 
-- Each camera has a queue of decoded images ahead of t. The queue holds at most
+- Each camera has a queue of decoded images ahead of t. The player decodes them with its decoder
+  (`ImageDecoder` by default, with the orientation rule of 8.1). It gives each image to the tile in
+  `TileUpdate.image`, with its JPEG bytes in `jpeg`, so that the tile draws it in the same display
+  refresh with no decode (8.3)
+  ([ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)). The queue
+  holds at most
   min(8, max(2, ⌊64 / N⌋)) images, with N the number of cameras. The evidence used 8 decoded frames
   ahead for each camera at N = 4 and N = 8 [C `harness.mjs` `JpegPlayer`, M `IP` F19, F20].
 - Each camera has at most one range read in flight. One read holds the frames that the queue needs, up
@@ -970,7 +1006,10 @@ refreshes, at the current rate. It skips the rows between them. The cost at 8 ti
 
 - The player of today does not change [L5].
 - The new host view is `src/components/playback/CanvasTakePlayer.tsx`. It uses `PlaybackControls.tsx`
-  of today as it is [L5], and it does not show the sync information warning of F16 [L4]. It holds its
+  of today as it is [L5], and it does not show the sync information warning of F16 [L4]. For this,
+  `PlaybackControls` gets one optional prop `hideSyncInfo`. The player of today does not give it, so
+  the player of today does not change. `CanvasTakePlayer` gives `hideSyncInfo` true [U3]. No other
+  change of the player of today [L5]. It holds its
   own grid with the behaviour of F1 to F3 and its own keys with the behaviour of F9 to F12 and F20. It
   does not import code from `SyncedVideoPlayer.tsx`.
 - The route [L1]: when the user opens a recording, the UI calls `electronTakeFiles(path)` and
@@ -1646,6 +1685,9 @@ The user gave these answers on 2026-11-20, relayed by the supervisor
 - U2: A write error on one camera file is a second short-file case: the same short pair as a killed
   process (`missing` rows with empty byte fields and no block, `# repair`, `# end`), with the manifest
   warnings `camera_file_short` and `take_error`, and no `camera_dead`.
+- U3 (2026-11-20, relayed by the supervisor): `PlaybackControls` of today gets one optional prop that
+  hides the "may not be frame-perfect" sync button. The player of today does not give it, so nothing
+  changes there. The view of the new player gives it. No other change of the player of today (L5).
 
 ### 18.5 Earlier decisions (cited, not repeated)
 
