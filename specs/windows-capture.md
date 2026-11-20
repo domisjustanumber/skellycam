@@ -67,8 +67,11 @@ Each step has its own tests and its own camera run [D2].
 
 - H.264 modes: listed as not selectable in the 3c list, never opened; `supported_modes` of 3a stays
   MJPG only [D4, U8].
-- A merge of upstream `sfn26`. It is a source of ideas only [D1]. No Rust [D1].
-- The USB link display and the Windows event-log check [D45].
+- Rust [D1]. (Changed on 2026-11-20: the work is based on upstream `sfn26`. The merge keeps this
+  camera layer and the recorder, and each Rust part is removed [ADR-EQY4](../decisions/entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md).)
+- The USB link display [D45]. (Changed on 2026-11-20: detection gives the USB link of each camera, and
+  a failed start gets an explanation that uses the Windows event-log check, ports from `sfn26`
+  [ADR-EQY4](../decisions/entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md).)
 - A change of the UVC power line frequency control, a flicker measurement, exposure advice [D44].
 - Linux and macOS native capture (phase 7) and the hardware runs of phase 0 [D5, D46].
 - The removal of the lockstep gate (phase 8) [D5, ring 2.2].
@@ -1777,6 +1780,8 @@ and D38 replace the two older plan statements of 1.4.
 - D1: Phase 3 is next. Pure-Python Media Foundation through comtypes, no compiled extension, built on
   `development-streaming`. It is meant to replace the Python capture work of the upstream branch
   `sfn26` later. No Rust. No merge of `sfn26` is planned; `sfn26` is a source of ideas only.
+  (Changed on 2026-11-20: the work is based on upstream `sfn26`; pull requests go against upstream
+  `development` [ADR-EQY4](../decisions/entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md).)
 - D2: Three steps, each with its own tests and its own camera run. 3a: MJPG modes, the camera's JPEG
   passes untouched to the recorder path and the JPEG ring. 3b: uncompressed modes (YUY2, NV12):
   encoder, central Quick Sync check, range rule (already decided in the ring spec and the design
@@ -1934,6 +1939,7 @@ and D38 replace the two older plan statements of 1.4.
   to the capture info. A flicker measurement and exposure advice are a later item outside phase 3.
 - D45: Not in phase 3 (later, with the camera identity work of phase 5): the USB link display (USB 2
   or 3 per camera) and the Windows event-log check that explains a start failure as a USB removal.
+  (Changed on 2026-11-20: both are ported from `sfn26`; the UI does not show the link yet [ADR-EQY4](../decisions/entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md).)
 - D46: The start-up rules (warm-up, rate check, failed-camera flag, one rate per group) apply to the
   OpenCV source too (Linux, macOS), but the rate check runs there only when OpenCV reports a real
   frame rate (> 0) for the camera. Linux and macOS behaviour is not tested until phase 0.
