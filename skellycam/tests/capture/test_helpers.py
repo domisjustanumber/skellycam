@@ -456,11 +456,13 @@ def _child_opens(factory, camera_id, frames):
     source.close()
 
 
-def test_factory_works_in_a_spawned_camera_process():
+def test_factory_works_in_a_camera_process():
+    """The factory goes to a camera process as `ManagedProcess` starts one: with the default start method
+    (spawn on Windows and macOS, fork on Linux with Python 3.13). The fake log has `multiprocessing.Value`
+    fields of the default context, so the process must come from that context too."""
     factory = FakeSourceFactory([FakeScript(rate=60.0)], types=STAND_INS)
-    context = multiprocessing.get_context("spawn")
     frames = multiprocessing.Value("i", 0)
-    process = context.Process(target=_child_opens, args=(factory, factory.camera_ids[0], frames))
+    process = multiprocessing.Process(target=_child_opens, args=(factory, factory.camera_ids[0], frames))
     process.start()
     process.join(60)
     assert process.exitcode == 0
