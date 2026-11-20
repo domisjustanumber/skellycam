@@ -216,9 +216,14 @@ def test_t_cap_30_live_exposure_change_and_resolution_reopen(monkeypatch):
         assert app.apply([app.config(changed, width=320, height=240), app.config(other)]).status_code == 200
         app.wait(lambda: app.ring_name(changed) != ring and app.state(changed) == "ready", "the reopen")
         t_starting = app.tracker.first(changed, "starting", t_resize)
+        assert t_starting is not None
+        # The tracker samples on a fake read; the wait above reads the status directly (review item 8)
+        app.wait(lambda: app.tracker.first(changed, "ready", t_starting) is not None, "the tracker sees ready")
         t_ready = app.tracker.first(changed, "ready", t_starting)
-        assert t_starting is not None and t_ready is not None
         assert (opens(app, changed), opens(app, other)) == (2, 1)
+        # `ready` can come before the first JPEG reaches the new ring (review item 8)
+        app.wait(lambda: any(e["ring"] == app.ring_name(changed) for e in spies.of("jpeg", changed)),
+                 "a frame in the new ring")
         new_ring = [e for e in spies.of("jpeg", changed) if e["ring"] == app.ring_name(changed)]
         assert new_ring[0]["sfn"] >= app.factory.logs[changed].first_sfn_after_readback + 90, "no warm-up after the reopen"
         assert app.status(changed)["measured_fps"] is not None
@@ -798,6 +803,7 @@ def test_t_cap_113_a_frame_that_waits_at_the_gate_is_not_too_slow(monkeypatch):
         assert abs(app.status(changed)["measured_fps"] - 30.0) <= 0.9
 
 
+@pytest.mark.capture_timing  # real time with process workers: rows differ under load (review item 8)
 def test_a_camera_selected_again_shares_the_gate_with_a_restarted_camera(monkeypatch, tmp_path):
     """Suspected fault NEW-B (coordinator, 2026-11-20), sections 5.2 and 8.3: each camera process gets the
     status table of the group as it was at its own start. Camera A is unselected; camera B is killed and
