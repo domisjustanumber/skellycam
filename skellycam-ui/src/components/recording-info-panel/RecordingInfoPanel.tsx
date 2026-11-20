@@ -15,6 +15,8 @@ import {RecordingPathModal} from "@/components/recording-info-panel/RecordingPat
 import ButtonSm from "@/components/ui-components/ButtonSm";
 import TextSelector from "@/components/ui-components/TextSelector";
 import { useTranslation } from "react-i18next";
+import { selectCameras } from "@/store/slices/cameras/cameras-selectors";
+import { withCameraLabels } from "@/store/slices/cameras/camera-labels";
 
 interface RecordingOperation {
     type: 'start' | 'stop';
@@ -24,6 +26,7 @@ interface RecordingOperation {
 export const RecordingInfoPanel: React.FC = () => {
     const dispatch = useAppDispatch();
     const recordingInfo = useAppSelector((state) => state.recording);
+    const cameras = useAppSelector(selectCameras);
     const { t } = useTranslation();
 
     const [createSubfolder, setCreateSubfolder] = useState<boolean>(false);
@@ -222,7 +225,7 @@ export const RecordingInfoPanel: React.FC = () => {
                     onClick={handleRecordButtonClick}
                 />
             </div>
-            {startError && <p className="text sm text-error">{startError}</p>}
+            {startError && <p className="text sm text-error">{withCameraLabels(startError, cameras)}</p>}
 
             {/* Microphone: the new recorder refuses a microphone until step 5b */}
             <MicrophoneSelector

@@ -8,6 +8,8 @@ import { ROTATION_DEGREE_LABELS, RotationValue, useAppDispatch, useAppSelector }
 import { cameraSelectionToggled } from "@/store/slices/cameras/cameras-slice";
 import { openCameraSettings, closeCameraSettings } from "@/store/slices/ui/ui-slice";
 import { Camera } from "@/store/slices/cameras/cameras-types";
+import { selectCameras } from "@/store/slices/cameras/cameras-selectors";
+import { withCameraLabels } from "@/store/slices/cameras/camera-labels";
 import { useServer } from "@/services/server";
 
 interface CameraTreeItemProps {
@@ -37,6 +39,7 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({ camera }) => {
     
     const openCameraSettingsId = useAppSelector(state => state.ui.openCameraSettingsId);
     const settingsOpen = openCameraSettingsId === camera.id;
+    const cameras = useAppSelector(selectCameras);
 
     const isStreaming = connectedCameraIds.includes(camera.id);
 
@@ -122,7 +125,7 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({ camera }) => {
 
                     {camera.connectionStatus === 'error' && (
                         <p className="text sm text-warning" style={{ whiteSpace: 'normal', paddingRight: 24 }}>
-                            Failed: {camera.failure ?? 'unknown reason'}
+                            Failed: {camera.failure ? withCameraLabels(camera.failure, cameras) : 'unknown reason'}
                         </p>
                     )}
                 </div>
