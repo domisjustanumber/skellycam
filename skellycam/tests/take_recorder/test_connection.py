@@ -11,6 +11,7 @@ after it says how the test meets it. T-REC-38 and T-REC-39 are not used (12.6).
 import importlib
 import logging
 import math
+import sys
 import threading
 import time
 
@@ -1219,3 +1220,93 @@ def test_the_stop_costs_no_source_frame_before_the_last_rows(monkeypatch, tmp_pa
         assert len(rows) == summary["number_of_frames"]
         gaps = [row.frame for row in rows[-5:] if row.flags & sidecar.GAP]
         assert gaps == [], f"camera {camera_id}: gap rows {gaps} of {len(rows)}"
+
+
+# ---------------------------------------------------------------------------
+# Fix round 4 (2026-11-20)
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("fps", [30, 60])
+@pytest.mark.parametrize("delay", [0.05, 0.2, 1.0])
+def test_a_slow_stop_ends_each_camera_at_the_last_frame(monkeypatch, tmp_path, fps, delay):
+    """Round 4, item 1: the main process is busy for `delay` between the read of the largest gate count and
+    the write of the last frame (real time). The stop reads and writes the last frame under its lock, so no
+    camera decides a new frame between them: each sidecar has `number_of_frames` rows, with no warning."""
+    from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
+
+    largest = CameraOrchestrator.largest_gate_count
+
+    def slow_largest(orchestrator):
+        value = largest(orchestrator)
+        if sys._getframe(1).f_code.co_name == "_end_take":
+            time.sleep(delay)
+        return value
+
+    monkeypatch.setattr(CameraOrchestrator, "largest_gate_count", slow_largest)
+    modes = ((640, 480, fps, 1, "MJPG"),)
+    with capture_app(monkeypatch, [FakeScript(modes=modes), FakeScript(modes=modes)], virtual=False) as app:
+        ready_app_steps(app, [app.config(cid, framerate=float(fps)) for cid in app.factory.camera_ids])
+        assert app.record_start(tmp_path).status_code == 200
+        time.sleep(1.0)
+        summary = stop(app)
+    assert all(len(take_rows(tmp_path, cid)) == summary["number_of_frames"] for cid in app.factory.camera_ids)
+    assert take_manifest(tmp_path)["warnings"] == []
+
+
+def test_the_stop_keeps_a_last_frame_that_a_camera_set(monkeypatch, tmp_path):
+    """Round 4, item 1: a camera set the last frame of the take before the stop (the end with no take level).
+    The stop keeps it: number_of_frames is that last frame minus the first frame."""
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()], virtual=False) as app:
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        time.sleep(0.5)
+        orchestrator = app.group.cameras.orchestrator
+        last = orchestrator.largest_gate_count() + 10
+        orchestrator.last_recording_frame_number.value = last
+        expected = last - orchestrator.first_recording_frame_number.value
+        summary = stop(app)
+    assert summary["number_of_frames"] == expected
+    assert all(len(take_rows(tmp_path, cid)) == expected for cid in app.factory.camera_ids)
+
+
+def test_a_stop_while_the_cameras_are_paused_ends_the_take(monkeypatch, tmp_path):
+    """Round 4, item 2: the cameras are paused (the pause endpoint) during a take, then the stop comes. The
+    stop unpauses them after it sets the last frame: it ends in normal time with a finished take, and the
+    cameras stay `ready`. Before, it waited 15 s and ended the cameras as failed."""
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()], virtual=False) as app:
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        time.sleep(1.0)
+        assert app.client.get("/skellycam/camera/group/all/pause_unpause").status_code == 200
+        time.sleep(0.5)
+        started = time.monotonic()
+        summary = stop(app)
+        took = time.monotonic() - started
+        assert all(app.state(cid) == "ready" for cid in app.factory.camera_ids), \
+            {cid: app.status(cid) for cid in app.factory.camera_ids}
+    assert took < 5.0, f"the stop took {took:.1f} s"
+    assert take_manifest(tmp_path)["state"] == "finished"
+    assert all(len(take_rows(tmp_path, cid)) == summary["number_of_frames"] for cid in app.factory.camera_ids)
+
+
+def test_a_start_after_an_error_end_logs_the_unfetched_summary(monkeypatch, tmp_path):
+    """Round 4, item 7: a record start while the summary of an error end waits for its stop request does not
+    discard it silently: a WARNING names the take."""
+    from skellycam.tests.capture.capture_session import capture_logs
+
+    module = group_module()
+    monkeypatch.setattr(module, "TAKE_QUEUE_SECONDS", 0.2)
+    monkeypatch.setattr(module, "TAKE_STALL_LIMIT_S", 1.0)
+    with capture_logs() as logs, capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        hold = WriterHold(monkeypatch, app.factory.camera_ids[0])
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 30)
+        hold.start()
+        app.wait(lambda: hold.stalled.is_set(), "`give` raises RecorderStalled")
+        hold.stop()
+        app.wait(lambda: app.group.ended_take is not None, "the error end")
+        assert app.record_start(tmp_path, name="take2").status_code == 200
+        stop(app)
+    assert any("summary" in m and "take" in m for m in logs.messages(logging.WARNING)), logs.messages(logging.WARNING)

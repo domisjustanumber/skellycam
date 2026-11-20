@@ -469,6 +469,9 @@ class CameraGroup:
             status.set_warning_items(items)
             warnings += items
         self.recording_ids = list(statuses)
+        if self.ended_take is not None:  # its files and manifest are finished; only the stop response goes
+            logger.warning(f"A new take starts: the summary of the take {self.ended_take.stop_response.get('recording_name')} "
+                           f"that an error ended was not fetched by a stop request")
         self.ended_take = self.take_error = None
         self.finished.clear()  # a late message of an earlier take
         await self.cameras.pause(await_paused=True)  # each camera gives the layout of its last good frame
@@ -605,11 +608,20 @@ class CameraGroup:
             # No pause (S11, ADR-F8C0): a paused camera does not read, and the waiting place of a push source
             # replaces each frame that comes in the pause, so the first frame after it had `gap`. The gate lets a
             # camera hold one frame more than the largest count, so the take ends two group frames after it.
-            count = orchestrator.largest_gate_count()
-            if count == -1:  # no camera left in the gate: the take ends after the latest group frame
-                count = max(statuses[camera_id].frame_count.value for camera_id in self.recording_ids if camera_id in statuses) - 1
-            # At least the first frame: when no camera reached it, the take has no row, not a negative count.
-            orchestrator.last_recording_frame_number.value = max(count + 2, orchestrator.first_recording_frame_number.value)
+            # The read of the gate count and the write of the last frame are under the lock of the last frame: a
+            # camera reads that value with its lock, so it decides no new frame between them. A last frame that a
+            # camera set first (the end with no take level) stays.
+            last = orchestrator.last_recording_frame_number
+            with last.get_lock():
+                if last.value == -1:
+                    count = orchestrator.largest_gate_count()
+                    if count == -1:  # no camera left in the gate: the take ends after the latest group frame
+                        count = max(statuses[camera_id].frame_count.value for camera_id in self.recording_ids
+                                    if camera_id in statuses) - 1
+                    # At least the first frame: when no camera reached it, the take has no row, not a negative count.
+                    last.value = max(count + 2, orchestrator.first_recording_frame_number.value)
+            # A camera that the pause endpoint paused records to the last frame (round 4, item 2). No wait.
+            await orchestrator.unpause(await_unpaused=False)
             frame_count = orchestrator.take_frame_count()
             results, dead, running = await asyncio.to_thread(self._collect_results)
             error, error_camera = self.take_error or (None, None)
