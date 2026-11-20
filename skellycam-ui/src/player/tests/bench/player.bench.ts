@@ -29,18 +29,83 @@ interface Metrics {
     workingSetMB: number;
 }
 
-/** Electron process metrics over `run`: CPU by process type, and the largest working set. */
+/** Electron process metrics over `run`: CPU by process type, and the largest working set. The CPU is the
+ * change of `cumulativeCPUUsage` over the whole run; `percentCPUUsage` covered only the interval since
+ * the last sample of the timer (at most 1 s). */
 async function measure<T>(app: ElectronApplication, run: () => Promise<T>): Promise<{result: T; metrics: Metrics}> {
-    const sample = () => app.evaluate(({app: a}) => a.getAppMetrics().map(m => ({type: m.type, cpu: m.cpu.percentCPUUsage, ws: m.memory.workingSetSize})));
-    await sample();
+    const sample = () => app.evaluate(({app: a}) => a.getAppMetrics().map(m => ({pid: m.pid, type: m.type, cpu: m.cpu.cumulativeCPUUsage ?? 0, ws: m.memory.workingSetSize})));
+    const first = await sample();
+    const t0 = performance.now();
     let peak = 0;
     const timer = setInterval(() => void sample().then(s => (peak = Math.max(peak, s.reduce((a, m) => a + m.ws, 0) / 1024))), 1000);
     const result = await run();
     clearInterval(timer);
     const end = await sample();
+    const seconds = (performance.now() - t0) / 1000;
     const cpuPercentByType: Record<string, number> = {};
-    for (const m of end) cpuPercentByType[m.type] = (cpuPercentByType[m.type] ?? 0) + m.cpu;
+    for (const m of end) {
+        const before = first.find(f => f.pid === m.pid)?.cpu ?? 0;
+        cpuPercentByType[m.type] = (cpuPercentByType[m.type] ?? 0) + (100 * (m.cpu - before)) / seconds;
+    }
     return {result, metrics: {cpuPercentByType, workingSetMB: Math.max(peak, end.reduce((a, m) => a + m.ws, 0) / 1024)}};
+}
+
+type Geometry = Awaited<ReturnType<Window['bench']['layout']>>;
+
+/** Lay out the tiles in a grid and size the window, so that each tile is in the window for the observer. */
+async function layout(h: Harness, n: number): Promise<Geometry> {
+    const cols = n === 1 ? 1 : n <= 4 ? 2 : 4;
+    const width = cols * 520 + 20;
+    await h.app.evaluate(({BrowserWindow}, [w, hh]) => BrowserWindow.getAllWindows()[0].setContentSize(w, hh), [width, Math.ceil(n / cols) * 264 + 40] as const);
+    await h.page.waitForFunction(w => innerWidth === w, width);
+    return h.page.evaluate(c => window.bench.layout(c), cols);
+}
+
+/** The observer outside the page: the main process takes each composited frame of the window
+ * (`beginFrameSubscription`, about 30 frames/s, so a time resolution of about 33 ms) and reads from it the
+ * reference strip (k*) and the barcode of each tile. */
+async function observe(app: ElectronApplication, geo: Geometry) {
+    await app.evaluate(({BrowserWindow}, g) => {
+        const G = globalThis as never as {__observed: number[][]};
+        G.__observed = [];
+        BrowserWindow.getAllWindows()[0].webContents.beginFrameSubscription(false, image => {
+            const s = image.getSize().width / g.innerWidth;
+            const out = [performance.timeOrigin + performance.now()];
+            for (const pts of [g.ref, ...g.tiles]) {
+                const x0 = Math.floor(pts[0][0] * s);
+                const bmp = image.crop({x: x0, y: Math.round(pts[0][1] * s), width: Math.ceil(pts[pts.length - 1][0] * s) - x0 + 1, height: 1}).toBitmap();
+                let v = 0;
+                for (const [x] of pts) {
+                    const i = (Math.round(x * s) - x0) * 4;
+                    v = v * 2 + ((bmp[i] + bmp[i + 1] + bmp[i + 2]) / 3 > 128 ? 1 : 0);
+                }
+                out.push(v);
+            }
+            G.__observed.push(out);
+        });
+    }, geo);
+}
+
+/** Stop the observer. For each tile: the percent of the frames in [from, to] that show the image of k*. */
+async function observed(app: ElectronApplication, from: number, to: number) {
+    const frames = (await app.evaluate(({BrowserWindow}) => {
+        BrowserWindow.getAllWindows()[0].webContents.endFrameSubscription();
+        return (globalThis as never as {__observed: number[][]}).__observed;
+    })).filter(f => f[0] >= from && f[0] <= to);
+    const n = frames.length ? frames[0].length - 2 : 0;
+    // a tile value is the camera index in 4 bits, then the position in 12 bits
+    const shownPercent = Array.from({length: n}, (_, i) =>
+        (100 * frames.filter(f => (f[i + 2] & 4095) === f[1] % CYCLE && f[i + 2] >> 12 === i % 16).length) / Math.max(1, frames.length));
+    return {frames: frames.length, framesPerSecond: frames.length / ((to - from) / 1000), shownPercent};
+}
+
+/** Play for `seconds` and measure: the page draws k* at each refresh, the observer reads the tiles. */
+async function watchPlay(h: Harness, geo: Geometry, seconds: number) {
+    await observe(h.app, geo);
+    await h.page.evaluate(() => window.harness.command('play'));
+    const {result: w, metrics} = await measure(h.app, () => h.page.evaluate(s => window.bench.watch(s, 1), seconds));
+    const o = await observed(h.app, w.from, w.to);
+    return {refreshes: w.refreshes, refreshesPerSecond: w.refreshesPerSecond, observerFrames: o.frames, observerFramesPerSecond: o.framesPerSecond, shownPercent: o.shownPercent, metrics};
 }
 
 const totalCores = (m: Metrics) => Object.values(m.cpuPercentByType).reduce((a, b) => a + b, 0) / 100;
@@ -59,8 +124,10 @@ async function benchTake(h: Harness, name: string, n: number, width: number, hei
     }
     const built = h.build(plan);
     await h.page.evaluate(([w, hh]) => window.bench.setImageSize(w, hh), [width, height] as const);
+    // closePlayer keeps the canvases of the take before
+    await h.page.evaluate(() => document.querySelectorAll('#tiles canvas').forEach(c => c.remove()));
     await h.page.evaluate(f => window.harness.openPlayer(f), built.dir);
-    return built;
+    return layout(h, n);
 }
 
 test('T-PLAY-65 transport: 16 readers x 60 fps x 150 kB for 60 s through the handler', async ({harness: h}) => {
@@ -79,13 +146,13 @@ test('T-PLAY-66 play N = 4 and N = 8, 1080p30, 60 s', async ({harness: h}) => {
     test.setTimeout(60 * 60_000);
     await h.requireProduct();
     for (const n of [4, 8]) {
-        await benchTake(h, `play_${n}`, n, 1920, 1080, 30, 62);
-        await h.page.evaluate(() => window.harness.command('play'));
-        const {result, metrics} = await measure(h.app, () => h.page.evaluate(() => window.bench.watch(60, 60, 1)));
+        const geo = await benchTake(h, `play_${n}`, n, 1920, 1080, 30, 62);
+        const result = await watchPlay(h, geo, 60);
+        const {metrics} = result;
         await h.page.evaluate(() => window.harness.closePlayer());
-        record(`T-PLAY-66-N${n}`, {...result, metrics});
+        record(`T-PLAY-66-N${n}`, result);
         if (n === 8) {
-            for (const p of result.shownPercent) expect.soft(p, 'target: 99 % of refreshes').toBeGreaterThanOrEqual(99);
+            for (const p of result.shownPercent) expect.soft(p, 'target: 99 % of refreshes (observer frames)').toBeGreaterThanOrEqual(99);
             expect.soft(totalCores(metrics), 'target: at most 2.0 cores').toBeLessThanOrEqual(2.0);
             expect.soft(metrics.workingSetMB, 'target: at most 1.5 GB').toBeLessThanOrEqual(1536);
         }
@@ -161,12 +228,10 @@ test('T-PLAY-70 cases that nobody measured: 720p60 N = 4, 720p30 N = 16, speed 8
         ['720p60_N4', 4, 1280, 720, 60, 1], ['720p30_N16', 16, 1280, 720, 30, 1], ['1080p30_N4_speed8', 4, 1920, 1080, 30, 8],
     ];
     for (const [id, n, w, hh, fps, speed] of cases) {
-        await benchTake(h, id, n, w, hh, fps, speed === 8 ? 62 : 32);
+        const geo = await benchTake(h, id, n, w, hh, fps, speed === 8 ? 62 : 32);
         await h.page.evaluate(s => window.harness.command('setSpeed', s), speed);
-        await h.page.evaluate(() => window.harness.command('play'));
-        const {result, metrics} = await measure(h.app, () => h.page.evaluate(sec => window.bench.watch(sec, 60, 1), speed === 8 ? 7 : 30));
+        results[id] = await watchPlay(h, geo, speed === 8 ? 7 : 30);
         await h.page.evaluate(() => window.harness.closePlayer());
-        results[id] = {...result, metrics};
     }
     record('T-PLAY-70', results);
 });

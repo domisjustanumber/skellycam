@@ -1,7 +1,7 @@
 // The page side of the benchmarks T-PLAY-65 to T-PLAY-70 (specs/player.md sections 11.3 and 12). The
 // JPEGs come from the JPEG encoder of Chromium: a smooth noise pattern with the barcode of the fixtures,
 // about 190 kB at 1080p [agent 33].
-import {readTile} from '../fixtures/barcode.ts';
+import {canvasPoint, readTile} from '../fixtures/barcode.ts';
 import type {Rgb} from '../fixtures/barcode.ts';
 import {barcodeBits, BARCODE_Y, CELL, IMAGE_HEIGHT, IMAGE_WIDTH} from '../fixtures/jpeg.ts';
 import type {TakePlayer} from '../../index.ts';
@@ -22,16 +22,27 @@ export interface BenchContext {
     canvases(): HTMLCanvasElement[];
 }
 
+const REF_BITS = 12;
+const REF_CELL = 8;   // CSS pixels of one cell of the reference strip
+
 export function makeBench(ctx: BenchContext) {
     let imageSize: [number, number] = [1920, 1080];
-    // One check reads each tile with one getImageData of the whole canvas, as the evidence harness read
-    // each frame once. Cost of one check, measured with performance.now() on the Windows test machine
-    // (2026-11-20, 512 x 256 tiles): before, about 20 one-pixel getImageData calls per tile at 2.1 to
-    // 4.5 ms each; now 1.4 to 1.9 ms per tile. The barcode is still read from the pixels.
+    let ref: HTMLCanvasElement | null = null;   // the reference strip: k* as 12 black or white cells
+    // A getImageData of a tile canvas itself changes the player: after 10 s of such reads at N = 8, play
+    // fell from 57 to 20 display refreshes/s and from 100 % to 0 % correct tiles, also after the reads
+    // stopped (2026-11-19, Windows test machine). So the reader copies the barcode row of the tile into a
+    // scratch canvas and reads the copy (no change of the play rate in the same test), and the play
+    // benchmarks use the observer outside the page. Only `position` of the reading is valid.
+    const scratch = document.createElement('canvas');
+    const sg = scratch.getContext('2d', {willReadFrequently: true})!;
     const read = (i: number) => {
         const c = ctx.canvases()[i];
         const {width: w, height: h} = c;
-        const d = c.getContext('2d')!.getImageData(0, 0, w, h).data;
+        if (scratch.width !== w) scratch.width = w;
+        if (scratch.height !== h) scratch.height = h;
+        const y = canvasPoint(w, h, 0, 0, BARCODE_Y + CELL / 2, imageSize)[1];
+        sg.drawImage(c, 0, y, w, 1, 0, y, w, 1);
+        const d = sg.getImageData(0, 0, w, h).data;
         return readTile((x, y) => {
             const p = (Math.max(0, Math.min(h - 1, y)) * w + Math.max(0, Math.min(w - 1, x))) * 4;
             return [d[p], d[p + 1], d[p + 2]] as Rgb;
@@ -93,6 +104,33 @@ export function makeBench(ctx: BenchContext) {
             imageSize = [width, height];
         },
 
+        /** Lay the tiles out in `cols` columns with the reference strip under them. Gives the window points
+         * (CSS pixels) of the barcode cells of each tile and of the strip cells, for the observer. */
+        layout(cols: number) {
+            const box = document.getElementById('tiles')!;
+            box.style.cssText = `display:flex;flex-wrap:wrap;width:${cols * 520}px`;
+            ref?.remove();
+            ref = document.createElement('canvas');
+            ref.width = REF_BITS * REF_CELL;
+            ref.height = REF_CELL;
+            ref.style.cssText = `display:block;margin:4px;width:${REF_BITS * REF_CELL}px;height:${REF_CELL}px`;
+            document.body.append(ref);
+            const r = (e: Element) => {
+                const b = e.getBoundingClientRect();
+                return {x: b.left, y: b.top, w: b.width, h: b.height};
+            };
+            const tiles = ctx.canvases().map(c => {
+                const b = r(c);
+                return Array.from({length: 16}, (_, i) => {
+                    const [x, y] = canvasPoint(c.width, c.height, 0, i * CELL + CELL / 2, BARCODE_Y + CELL / 2, imageSize);
+                    return [b.x + (x * b.w) / c.width, b.y + (y * b.h) / c.height];
+                });
+            });
+            const rb = r(ref);
+            const refPts = Array.from({length: REF_BITS}, (_, i) => [rb.x + i * REF_CELL + REF_CELL / 2, rb.y + REF_CELL / 2]);
+            return {tiles, ref: refPts, innerWidth};
+        },
+
         /** T-PLAY-65: readers x fps range reads of `size` bytes for `seconds`; a tick is dropped when
          * the read of the tick before is still in flight. */
         async transport(url: string, fileSize: number, readers: number, fps: number, size: number, seconds: number) {
@@ -141,43 +179,52 @@ export function makeBench(ctx: BenchContext) {
             return {count: rtts.length, p50: percentile(rtts, 50), p95: percentile(rtts, 95), max: Math.max(...rtts)};
         },
 
-        /** T-PLAY-66, T-PLAY-70: at each display refresh, does each tile show the chosen image? */
-        async watch(seconds: number, cycle: number, warmupSeconds = 1) {
-            const n = ctx.canvases().length;
+        /** T-PLAY-66, T-PLAY-70: at each display refresh, draw k* into the reference strip. The observer
+         * outside the page compares the strip with each tile in the same captured frame; the page reads no
+         * tile. Call it after play(): its frame callback then runs after the clock tick of the player. */
+        async watch(seconds: number, warmupSeconds = 1) {
+            const g = ref!.getContext('2d')!;
             let refreshes = 0;
-            const good = new Array(n).fill(0);
             const start = performance.now();
             await new Promise<void>(resolve => {
                 const step = () => {
                     const now = performance.now();
                     if (now - start > seconds * 1000) return resolve();
-                    if (now - start > warmupSeconds * 1000) {
-                        refreshes++;
-                        const want = ctx.player().state.frame % cycle;
-                        for (let i = 0; i < n; i++) if (read(i).position === want) good[i]++;
+                    const k = ctx.player().state.frame;
+                    for (let i = 0; i < REF_BITS; i++) {
+                        g.fillStyle = (k >> (REF_BITS - 1 - i)) & 1 ? '#fff' : '#000';
+                        g.fillRect(i * REF_CELL, 0, REF_CELL, REF_CELL);
                     }
+                    if (now - start > warmupSeconds * 1000) refreshes++;
                     requestAnimationFrame(step);
                 };
                 requestAnimationFrame(step);
             });
-            return {refreshes, shownPercent: good.map(g => (100 * g) / Math.max(1, refreshes))};
+            const end = performance.now();
+            return {refreshes, refreshesPerSecond: refreshes / ((end - start) / 1000 - warmupSeconds),
+                from: performance.timeOrigin + start + warmupSeconds * 1000, to: performance.timeOrigin + end};
         },
 
-        /** T-PLAY-67: seeks; the time from seekFrame to the draw of every tile. */
+        /** T-PLAY-67: seeks; the time from seekFrame to the draw of every tile. It polls with a task loop, not
+         * with requestAnimationFrame, which gave a floor of one refresh (about 17 ms) to each time. */
         async seeks(count: number, frameCount: number, cycle: number) {
             const n = ctx.canvases().length;
             const times: number[] = [];
+            const channel = new MessageChannel();
+            const nextTask = () => new Promise<void>(resolve => {
+                channel.port1.onmessage = () => resolve();
+                channel.port2.postMessage(0);
+            });
             for (let s = 0; s < count; s++) {
                 const k = (s * 7919) % frameCount;
                 const t0 = performance.now();
                 ctx.player().seekFrame(k);
-                await new Promise<void>(resolve => {
-                    const check = () => {
-                        if ([...Array(n).keys()].every(i => read(i).position === k % cycle) || performance.now() - t0 > 2000) resolve();
-                        else requestAnimationFrame(check);
-                    };
-                    requestAnimationFrame(check);
-                });
+                const pending = new Set(Array.from({length: n}, (_, i) => i));
+                while (performance.now() - t0 <= 2000) {
+                    for (const i of pending) if (read(i).position === k % cycle) pending.delete(i);
+                    if (!pending.size) break;
+                    await nextTask();
+                }
                 times.push(performance.now() - t0);
             }
             return {p50: percentile(times, 50), p95: percentile(times, 95), max: Math.max(...times)};
@@ -190,6 +237,7 @@ export function makeBench(ctx: BenchContext) {
             const lags: number[] = [];
             const start = performance.now();
             let target = 0;
+            let refreshes = 0;
             const input = setInterval(() => {
                 target = Math.floor(((performance.now() - start) / 1000) * fps) % frameCount;
                 ctx.player().seekFrame(target);
@@ -197,6 +245,7 @@ export function makeBench(ctx: BenchContext) {
             await new Promise<void>(resolve => {
                 const step = () => {
                     if (performance.now() - start > seconds * 1000) return resolve();
+                    refreshes++;
                     for (let i = 0; i < n; i++) {
                         const p = read(i).position;
                         shown[i].add(Math.floor((performance.now() - start) / 1000) * 100000 + p);
@@ -207,7 +256,7 @@ export function makeBench(ctx: BenchContext) {
                 requestAnimationFrame(step);
             });
             clearInterval(input);
-            return {shownPerSecond: shown.map(s => s.size / seconds), lagMedian: percentile(lags.filter(l => l >= 0), 50)};
+            return {shownPerSecond: shown.map(s => s.size / seconds), refreshesPerSecond: refreshes / seconds, lagMedian: percentile(lags.filter(l => l >= 0), 50)};
         },
     };
 }
