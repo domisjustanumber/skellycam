@@ -6,6 +6,8 @@ import logging
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
+from skellycam.core.camera_group.camera_group_manager import close_camera_groups_before_exit
+
 
 logger = logging.getLogger(__name__)
 
@@ -31,8 +33,9 @@ async def shutdown_server(
     """
     logger.api(f"Shutdown requested via API - {request.url}")
 
-    # The worker monitor waits for active video saves before signaling the server.
-    # Self-termination here would bypass that protection (especially on Windows).
+    # A running take ends through the take level before the kill flag (recorder.md 8.1). The worker monitor
+    # then waits for active saves before signaling the server; self-termination would bypass that.
+    await close_camera_groups_before_exit()
     request.app.state.global_kill_flag.value = True
     logger.info("Requested shutdown after active video saves finish")
     return JSONResponse(

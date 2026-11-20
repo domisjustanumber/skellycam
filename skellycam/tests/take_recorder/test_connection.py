@@ -1103,3 +1103,33 @@ def test_a_write_error_while_abandon_drains_reaches_the_take_level(monkeypatch, 
     errors = take_warnings(tmp_path, "take_error")
     assert [w["detail"] for w in errors] == ["test: the disk is full"], errors
     assert errors[0]["camera_key"] == camera_key_of(tmp_path, closing)
+
+
+@pytest.mark.parametrize("workers", ["thread", "process"])
+def test_the_shutdown_endpoint_finishes_a_running_take(monkeypatch, tmp_path, workers):
+    """Third review, S4: GET /shutdown during a take. The take level stops the take (recorder.md 8.1) and the
+    groups close before the kill flag is set: the manifest is `finished`, and each camera has the frame
+    count of the take. Before, /shutdown only set the kill flag: the manifest stayed `recording`."""
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    import skellycam.core.camera_group.camera_group_manager as manager_module
+    from skellycam.api.http.app.shutdown import shutdown_router
+
+    monkeypatch.setattr(logging.Logger, "api", logging.Logger.info, raising=False)  # a level of the app logger
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()], workers=workers) as app:
+        ready_app_steps(app)
+        monkeypatch.setattr(manager_module, "_CAMERA_GROUP_MANAGER", app.manager)
+        server = FastAPI()
+        server.state.global_kill_flag = app.kill
+        server.include_router(shutdown_router, prefix="/skellycam")
+        assert app.record_start(tmp_path).status_code == 200
+        time.sleep(1.0)
+        with TestClient(server) as client:
+            response = client.get("/skellycam/shutdown")
+        assert response.status_code == 200, response.text
+        assert app.kill.value and not app.manager.camera_groups
+    manifest = take_manifest(tmp_path)
+    assert manifest["state"] == "finished"
+    counts = [len(take_rows(tmp_path, cid)) for cid in app.factory.camera_ids]
+    assert counts[0] == counts[1] > 0, counts

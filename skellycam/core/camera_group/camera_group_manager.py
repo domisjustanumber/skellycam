@@ -332,6 +332,19 @@ class CameraGroupManager:
 _CAMERA_GROUP_MANAGER: CameraGroupManager | None = None
 
 
+async def close_camera_groups_before_exit() -> None:
+    """An exit of the app (the shutdown endpoint, the lifespan end, Ctrl-C) stops a running take through the
+    take level (recorder.md 8.1) and closes the camera groups before the kill flag ends the camera
+    processes: else the manifest stays `recording` (third review S4, ADR-P5VE). Each wait of the stop and
+    of the close has its own limit, so the exit cannot hang."""
+    if _CAMERA_GROUP_MANAGER is None or not _CAMERA_GROUP_MANAGER.camera_groups:
+        return
+    try:
+        await _CAMERA_GROUP_MANAGER.close_all_camera_groups()
+    except Exception as error:
+        logger.exception(f"The camera groups could not close before the exit: {error!r}")
+
+
 def get_or_create_camera_group_manager(app: FastAPI) -> CameraGroupManager:
     """Create the singleton CameraGroupManager instance."""
     global _CAMERA_GROUP_MANAGER
