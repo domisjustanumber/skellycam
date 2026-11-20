@@ -3,10 +3,8 @@ import json
 import logging
 import os
 import time
-from collections import deque
 
 import msgspec
-import numpy as np
 from starlette.websockets import WebSocket, WebSocketState, WebSocketDisconnect
 from fastapi import FastAPI
 
@@ -15,7 +13,7 @@ from skellylogs.handlers.websocket_log_queue_handler import get_websocket_log_qu
 
 from skellycam.api.websocket.websocket_message_types import WebsocketMessageType
 from skellycam.core.camera_group.camera_group_manager import CameraGroupManager, get_or_create_camera_group_manager
-from skellycam.core.recorders.framerate_tracker import FramerateTracker, CurrentFramerate
+from skellycam.core.recorders.framerate_tracker import FramerateTracker, CurrentFramerate, ServerFramerateCalculator
 from skellycam.utilities.wait_functions import await_10ms
 from skellycam.core.types.type_overloads import CameraGroupIdString, FrameNumberInt, MultiframeTimestampFloat  # noqa: TC001 — beartype checks annotations at runtime
 
@@ -32,48 +30,6 @@ class FramerateUpdateMessage(msgspec.Struct):
     camera_group_id: str = ""
     backend_framerate: CurrentFramerate | None = None
     frontend_framerate: CurrentFramerate | None = None
-
-
-class ServerFramerateCalculator:
-    """Compute true camera capture framerate from (frame_number, capture_timestamp_ns) pairs.
-
-    frame_number increments by 1 for every camera capture at the hardware level.
-    capture_timestamp_ns is perf_counter_ns at the moment of camera grab.
-    When the websocket skips frames due to backpressure, frame_number jumps
-    but we can still compute the true per-frame duration from the gap.
-    """
-
-    def __init__(self, source_name: str, max_observations: int = 200):
-        self._source_name: str = source_name
-        self._observations: deque[tuple[int, float]] = deque(maxlen=max_observations)
-        self._per_frame_durations_ms: deque[float] = deque(maxlen=1000)
-
-    def update(self, frame_number: int|np.integer, capture_timestamp_ns: float) -> None:
-        if self._observations:
-            prev_fn, prev_ts = self._observations[-1]
-            frame_delta = frame_number - prev_fn
-            if frame_delta > 0:
-                per_frame_ns = (capture_timestamp_ns - prev_ts) / frame_delta
-                per_frame_ms = per_frame_ns / 1e6
-                # Record one duration entry per actual frame captured
-                for _ in range(frame_delta):
-                    self._per_frame_durations_ms.append(per_frame_ms)
-        self._observations.append((frame_number, capture_timestamp_ns))
-
-    @property
-    def current_framerate(self) -> CurrentFramerate | None:
-        if len(self._per_frame_durations_ms) < 2:
-            return None
-        durations = np.array(self._per_frame_durations_ms)
-        return CurrentFramerate.from_durations_ms(
-            durations_ms=durations,
-            framerate_source=self._source_name,
-        )
-
-    def clear(self) -> None:
-        """Reset accumulated durations. The next update() will begin a fresh interval."""
-        self._observations.clear()
-        self._per_frame_durations_ms.clear()
 
 
 class WebsocketServer:

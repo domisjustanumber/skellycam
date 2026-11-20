@@ -14,6 +14,7 @@ from skellycam.core.ipc.frame_ring.layout import (
     CLOSED_OFFSET,
     ERROR_FLAGS,
     HEAD_OFFSET,
+    RING_HEADER_DTYPE,
     SLOT_HEADER_FORMAT,
     SLOT_HEADER_SIZE,
     FrameFlag,
@@ -25,6 +26,9 @@ _SLOT = struct.Struct(SLOT_HEADER_FORMAT)
 _CRC_END = SLOT_HEADER_SIZE - 4
 _U32 = struct.Struct("<I")
 _I64 = struct.Struct("<q")
+_U64 = struct.Struct("<Q")
+_OVERSIZE_COUNT_OFFSET = RING_HEADER_DTYPE.fields["oversize_count"][1]
+_SKIPPED_COUNT_OFFSET = RING_HEADER_DTYPE.fields["skipped_count"][1]
 
 
 class ReadResult(enum.Enum):
@@ -71,6 +75,16 @@ class FrameRingReader:
     @classmethod
     def attach(cls, name: str) -> "FrameRingReader":
         return cls(name)
+
+    @property
+    def oversize_count(self) -> int:
+        """The `oversize_count` of the ring header (3.3, 5.8)."""
+        return _U64.unpack_from(self._view, _OVERSIZE_COUNT_OFFSET)[0]
+
+    @property
+    def skipped_count(self) -> int:
+        """The `skipped_count` of the ring header (3.3). For display only."""
+        return _U64.unpack_from(self._view, _SKIPPED_COUNT_OFFSET)[0]
 
     def read(self, frame_number: int) -> FrameRead:
         """Read frame `frame_number` (steps R1 to R13 of 6.2, retry rule of 6.4)."""

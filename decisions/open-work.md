@@ -184,3 +184,39 @@ task. Delete an item when its work is done. The PR that closes an item records t
   expose header (user, Y2 of [ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md); section
   14.4 of [`specs/player.md`](../specs/player.md)). The measured gap at 16 cameras × 60 fps × 150 kB:
   the bare FastAPI route was 4 % short and 25 % short behind the logging middleware.
+- **Phase 4 (live preview).** The user decided P1 to P7 and answered A1 to A8 on 2026-11-19
+  ([ADR-G651](entries/G651-phase-4-live-preview-decisions-p1-to-p7.md)). The user accepted the step 4a
+  spec [`specs/preview.md`](../specs/preview.md) and its test list T-PRV-01 to T-PRV-24 on 2026-11-19
+  ([ADR-WB08](entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md)). The agent
+  choices of its section 13 wait for the user
+  ([ADR-162X](entries/162X-step-4a-preview-spec-and-agent-choices.md)).
+  - The tests of step 4a (T-PRV-01 to T-PRV-24) are in `skellycam/tests/preview/`, with the
+    helpers of spec section 9.1 in `preview_helpers.py`. Run them with
+    `uv run pytest skellycam/tests/preview`. The product code of step 4a is done. The user decides
+    its choices ([ADR-MZ02](entries/MZ02-choices-of-the-4a-code.md)). The measurements M-PRV-1 to
+    M-PRV-5 are done on Windows
+    ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)). Open: M-PRV-4
+    on Linux. The user must confirm the target of A10 of
+    [ADR-G651](entries/G651-phase-4-live-preview-decisions-p1-to-p7.md): 19 %, not the 12 % of the
+    first run.
+  - The user decides
+    [ADR-24FZ](entries/24FZ-python-api-of-the-preview-sender-as-the-4a-tests-assume-it.md): the
+    Python items that the failing tests of step 4a use and that the spec does not fix.
+  - Step 4b: the user answered the nine questions of the spec
+    [`specs/preview-4b.md`](../specs/preview-4b.md), accepted it in principle and gave the
+    go-ahead for its tests, not its code, on 2026-11-20
+    ([ADR-VYS7](entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)).
+    Revision 3 has the full test list (section 7.4). Next: the failing 4b tests, on top of
+    `dom/integration` when it exists (section 2). The user decides the four new questions Q10 to Q13
+    (section 12.3) and the agent choices
+    ([ADR-EE0E](entries/EE0E-step-4b-preview-spec-and-agent-choices.md),
+    [ADR-R1TD](entries/R1TD-revision-2-of-the-step-4b-preview-spec.md),
+    [ADR-W674](entries/W674-choices-of-revision-3-of-the-step-4b-spec-and-its-test-list.md)).
+    The supervisor decides the two open points of section 12.2: the 4a commits in
+    `dom/integration`, and the PR target in `AGENTS.md`.
+- **Phase 5: remove three interim rules of phase 3.** The new recorder of phase 5 must remove the three
+  interim rules of [ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md):
+  U4 (a recording with a dead camera: timing files of unequal length, multi-frame rows with the live
+  cameras), U5 (a flagged frame gives the old recorder the last good image again) and U12 (on a hang
+  during a recording, finish the files for at most 5 s, then end hard). The files of the new recorder
+  survive a hard stop. The user: U4 and U5 "must change back once we have the new recorder".
