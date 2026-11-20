@@ -216,6 +216,7 @@ markers = [
     "ring_slow: frame ring tests that measure time, kill processes or run long; SKELLYCAM_RING_FULL=1 gives the spec durations",
     "camera_hardware: capture tests that need the cameras; they run only with SKELLYCAM_HARDWARE=1 (specs/windows-capture.md 16.1)",
     "capture_local: capture tests for the Windows development machine only; CI leaves them out (specs/windows-capture.md 16.1)",
+    "capture_timing: capture tests that measure real-time gaps; the macOS job runs them in their own step (ADR-BM73)",
 ]
 
 # =============================================================================

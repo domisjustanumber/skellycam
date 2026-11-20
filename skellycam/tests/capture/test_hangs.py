@@ -5,6 +5,7 @@ first-frame limit (specs/windows-capture.md, sections 6.4, 6.6, 8.2 and 12).
 These tests run PROCESS workers in real time: a hard end (`os._exit`) of a camera thread would end
 the test process. The fake simulates a hung bounded call: it raises `CaptureFailure(..., hung=True)`
 after `BOUNDED_CALL_LIMIT_S`, and a stuck thread stays (see `fake_source`). Each test takes 10 to 30 s.
+T-CAP-40, T-CAP-82 and T-CAP-85 measure real gaps of 100 ms (U16): they have the marker `capture_timing`.
 """
 
 import threading
@@ -59,6 +60,7 @@ def test_t_cap_80_first_frame_limit_without_a_hard_end(monkeypatch):
             watcher.stop()
 
 
+@pytest.mark.capture_timing
 def test_t_cap_40_hang_in_open_ends_only_that_process(monkeypatch):
     """T-CAP-40, sections 6.6 and 8.2 [D10, agent 16]: a fake source in a real camera process hangs in
     `open` past the limit; a second camera streams. The failure arrives with stage `open`; the process
@@ -101,6 +103,7 @@ def test_t_cap_40_hang_in_open_ends_only_that_process(monkeypatch):
         assert gap <= 0.1, f"the streaming camera had a gap of {gap * 1000:.0f} ms"
 
 
+@pytest.mark.capture_timing
 def test_t_cap_82_hung_control_read_while_ready(monkeypatch):
     """T-CAP-82, sections 6.6, 8.2 and 11.4 [D10, D38, agent 60]: two fakes are `ready`; a control read
     of one hangs past its limit. That camera reports stage `streaming` and its process ends hard; the
@@ -138,6 +141,7 @@ def test_t_cap_82_hung_control_read_while_ready(monkeypatch):
         assert gap <= 0.1, f"the other camera had a gap of {gap * 1000:.0f} ms"
 
 
+@pytest.mark.capture_timing
 @pytest.mark.parametrize("close_s", [1.0, 8.0], ids=["file closes in 1 s", "file closes in 8 s"])
 def test_t_cap_85_hang_during_a_recording(monkeypatch, tmp_path, close_s):
     """T-CAP-85, section 6.6 [U12]: during a recording, a bounded call of one fake hangs. Case 1: the
