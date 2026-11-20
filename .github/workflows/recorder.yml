@@ -131,4 +131,10 @@ jobs:
         run: uv sync --group dev --python 3.13.18
 
       - name: Run the recorder tests
-        run: uv run pytest skellycam/tests/take_recorder -m "not recorder_bench"
+        run: uv run pytest skellycam/tests/take_recorder -m "not recorder_bench and not capture_timing"
+
+      # The tests of real-time gaps of 100 ms in their own step, as in capture.yml: this runner can be slow
+      # (ADR-BM73). T-REC-44 is one of them.
+      - name: Run the real-time gap tests
+        if: ${{ !cancelled() }}
+        run: uv run pytest skellycam/tests/take_recorder -m "capture_timing and not recorder_bench"
