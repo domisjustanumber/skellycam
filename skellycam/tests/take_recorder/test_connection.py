@@ -9,6 +9,7 @@ after it says how the test meets it. T-REC-38 and T-REC-39 are not used (12.6).
 """
 
 import importlib
+import logging
 import math
 import threading
 import time
@@ -520,3 +521,138 @@ def test_t_rec_49_playback_list_marks_new_takes(tmp_path):
     assert stream.status_code == 409 and stream.json()["detail"] == NEEDS_NEW_PLAYER, stream.text
     assert client.get("/skellycam/playback/old_rec/videos", params=params).status_code == 200
     assert client.get("/skellycam/playback/new_take/timestamps", params=params).status_code != 409
+
+
+# ---------------------------------------------------------------------------
+# Faults of the independent review of the connection (2026-11-20)
+# ---------------------------------------------------------------------------
+
+def stop_in_thread(app):
+    result = []
+    thread = threading.Thread(target=lambda: result.append(app.record_stop()), daemon=True)
+    thread.start()
+    return thread, result
+
+
+@pytest.mark.parametrize("error", ["stall in give", "write error at the end"])
+def test_an_error_during_the_stop_gives_take_error(monkeypatch, tmp_path, error):
+    """Review fault 2 [C5, recorder.md 5.3, 5.4]: a stall or a write error that comes while the stop runs.
+    The stop response is 200, and the manifest has `take_error` with the text of 5.3 or 5.4 and the key
+    of that camera. Before the fix, the stop finished the take with no error, and the error end that the
+    watch started found no take."""
+    from skellycam.core.take_recorder import CameraTakeWriter
+
+    module = group_module()
+    monkeypatch.setattr(module, "TAKE_QUEUE_SECONDS", 0.2)
+    monkeypatch.setattr(module, "TAKE_STALL_LIMIT_S", 1.0)
+    stall = error == "stall in give"
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        failing = app.factory.camera_ids[0]
+        hold = WriterHold(monkeypatch, failing)
+        if not stall:
+            finish = CameraTakeWriter._finish
+
+            def failing_finish(writer, frame_count):
+                if writer.spec.camera_id == failing:
+                    raise OSError("test: the disk is full")
+                return finish(writer, frame_count)
+
+            monkeypatch.setattr(CameraTakeWriter, "_finish", failing_finish)
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 30)
+        if stall:
+            hold.start()
+            wait_blocked_in_give(app, spies, hold)
+        thread, result = stop_in_thread(app)
+        if stall:
+            app.wait(lambda: hold.stalled.is_set(), "`give` raises RecorderStalled")
+            hold.stop()
+        thread.join(60)
+        assert result and result[0].status_code == 200, result and result[0].text
+        assert app.state(failing) == "ready" and app.group.take is None
+    errors = take_warnings(tmp_path, "take_error")
+    expected = f"disk stall on camera {failing}" if stall else "test: the disk is full"
+    assert [w["detail"] for w in errors] == [expected], errors
+    assert errors[0]["camera_key"] == camera_key_of(tmp_path, failing)
+
+
+def test_a_stop_whose_pause_times_out_ends_the_take(monkeypatch, tmp_path):
+    """Review fault 5 [recorder.md 5.3, 8.1]: the writer of one camera is held while the stop pauses the
+    cameras, and the pause limit ends before the stall limit. The stop ends the take as after an error,
+    with no pause: 200, the manifest is `finished` with `take_error`, and the group runs on. Before the
+    fix, the pause timeout stopped the group, and the take stayed with the manifest `recording`."""
+    import skellycam.core.camera_group.camera_orchestrator as orchestrator_module
+
+    module = group_module()
+    monkeypatch.setattr(module, "TAKE_QUEUE_SECONDS", 0.2)
+    monkeypatch.setattr(module, "TAKE_STALL_LIMIT_S", 3.0)
+    monkeypatch.setattr(orchestrator_module, "CAMERA_STATE_TIMEOUT_SECONDS", 0.5)
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        held = app.factory.camera_ids[0]
+        hold = WriterHold(monkeypatch, held)
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 30)
+        hold.start()
+        wait_blocked_in_give(app, spies, hold)
+        thread, result = stop_in_thread(app)
+        app.wait(lambda: hold.stalled.is_set(), "`give` raises RecorderStalled")
+        hold.stop()
+        thread.join(60)
+        assert result and result[0].status_code == 200, result and result[0].text
+        frame_count = result[0].json()[0]["number_of_frames"]
+        assert app.group.take is None and app.group.ipc.should_continue
+        assert all(app.state(cid) == "ready" for cid in app.factory.camera_ids)
+    assert take_manifest(tmp_path)["state"] == "finished"
+    assert [w["detail"] for w in take_warnings(tmp_path, "take_error")] == [f"disk stall on camera {held}"]
+    assert all(len(take_rows(tmp_path, cid)) == frame_count for cid in app.factory.camera_ids)
+
+
+def test_two_stops_at_once_and_a_lost_error_end(monkeypatch, tmp_path):
+    """Review fault 7: (1) two stop requests at once give one summary and one 409 "No recording runs", not
+    an HTTP 500; (2) an exception of the error end is logged, and a later stop gets 409."""
+    from skellycam.core.take_recorder import Take
+    from skellycam.tests.capture.capture_session import capture_logs
+
+    module = group_module()
+    monkeypatch.setattr(module, "TAKE_QUEUE_SECONDS", 0.2)
+    monkeypatch.setattr(module, "TAKE_STALL_LIMIT_S", 1.0)
+    finish = Take.finish
+    mode = {"slow": True, "fail": False}
+
+    def watched_finish(take, *args, **kwargs):
+        if mode["fail"]:
+            raise RuntimeError("test: the finish fails")
+        if mode["slow"]:
+            time.sleep(0.5)  # the second stop arrives while the first one runs
+        return finish(take, *args, **kwargs)
+
+    monkeypatch.setattr(Take, "finish", watched_finish)
+    with capture_logs() as logs, capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        held = app.factory.camera_ids[0]
+        hold = WriterHold(monkeypatch, held)
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 30)
+        stops = [stop_in_thread(app) for _ in range(2)]
+        for thread, _ in stops:
+            thread.join(60)
+        responses = sorted((result[0] for _, result in stops), key=lambda r: r.status_code)
+        assert [r.status_code for r in responses] == [200, 409], [r.text for r in responses]
+        assert responses[1].json()["detail"] == "No recording runs"
+        # (2)
+        mode.update(slow=False, fail=True)
+        assert app.record_start(tmp_path, name="take2").status_code == 200
+        record_until(app, spies, len(spies.of("record", held)) + 30)
+        hold.start()
+        app.wait(lambda: hold.stalled.is_set(), "`give` raises RecorderStalled")
+        hold.stop()
+        app.wait(lambda: any("test: the finish fails" in m for m in logs.messages(logging.ERROR)), "the logged error end")
+        app.wait(lambda: app.group.take is None, "the take ends")
+        late = app.record_stop()
+        assert late.status_code == 409 and late.json()["detail"] == "No recording runs", late.text
+

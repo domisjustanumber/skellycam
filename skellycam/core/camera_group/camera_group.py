@@ -115,6 +115,7 @@ class CameraGroup:
     finished: list = field(default_factory=list)  # the result messages that the watch took from their queue
     take: Take | None = None  # the take that runs
     ended_take: TakeSummary | None = None  # a take that an error ended; the next stop request returns it
+    take_error: tuple | None = None  # (text, camera_id) of the first stall or write error of the take (5.3, 5.4)
     _end_lock: Any = field(default_factory=asyncio.Lock)
     _ring_lock: Any = field(default_factory=threading.RLock)
     _stop_watch: Any = field(default_factory=threading.Event)
@@ -345,12 +346,21 @@ class CameraGroup:
                 message = self.ipc.recording_finished_subscription.get_nowait()
             except queue.Empty:
                 return
-            if message.result is None and message.error is not None and self.take is not None:
-                logger.error(f"The take ends: {message.error}")
-                asyncio.run_coroutine_threadsafe(
-                    self._end_take(error=message.error, error_camera=message.camera_id), self._loop)
+            if message.result is None and message.error is not None:
+                if self.take is not None and self.take_error is None:
+                    self.take_error = (message.error, message.camera_id)
+                    logger.error(f"The take ends: {message.error}")
+                    future = asyncio.run_coroutine_threadsafe(self._end_after_error(), self._loop)
+                    future.add_done_callback(self._log_failed_end)
             else:
                 self.finished.append(message)
+
+    @staticmethod
+    def _log_failed_end(future) -> None:
+        """`run_coroutine_threadsafe` keeps an exception in its future; nothing else would see it."""
+        error = None if future.cancelled() else future.exception()
+        if error is not None:
+            logger.error(f"The end of the take after an error failed: {error!r}", exc_info=error)
 
     def _open_rings(self, configs: CameraConfigs) -> None:
         """Create the ring of each camera in `configs`, attach a reader, and give the ring names to
@@ -454,7 +464,7 @@ class CameraGroup:
             status.set_warning_items(items)
             warnings += items
         self.recording_ids = list(statuses)
-        self.ended_take = None
+        self.ended_take = self.take_error = None
         self.finished.clear()  # a late message of an earlier take
         await self.cameras.pause(await_paused=True)  # each camera gives the layout of its last good frame
         try:
@@ -529,47 +539,57 @@ class CameraGroup:
             await await_10ms()
 
     async def stop_recording(self) -> TakeSummary:
-        """Stop the take (recorder.md 8.1). After a take that an error ended, return its summary."""
-        if self.take is None:
-            if self.ended_take is None:
-                raise RequestRefused(409, "No recording runs")
-            summary, self.ended_take = self.ended_take, None
-            return summary
-        return await self._end_take()
+        """Stop the take (recorder.md 8.1). After a take that an error ended, return its summary once."""
+        async with self._end_lock:  # one end at a time: a second stop waits, then gets the 409
+            if self.take is None:
+                if self.ended_take is None:
+                    raise RequestRefused(409, "No recording runs")
+                summary, self.ended_take = self.ended_take, None
+                return summary
+            return await self._end_take()
 
-    async def _end_take(self, error: str | None = None, error_camera: str | None = None) -> TakeSummary:
-        """8.1: set the last frame, wait for each camera (D1), then `Take.finish`. One end at a time."""
+    async def _end_after_error(self) -> None:
+        """A stall or a write error ends the take at once for every camera (5.3, 5.4) [C5]."""
         async with self._end_lock:
-            take = self.take
-            if take is None:
-                return self.ended_take
-            orchestrator = self.cameras.orchestrator
-            statuses = orchestrator.camera_statuses
+            if self.take is not None:
+                self.ended_take = await self._end_take()
+
+    async def _end_take(self) -> TakeSummary:
+        """8.1, under `_end_lock`: set the last frame, wait for each camera (D1), then `Take.finish`."""
+        take = self.take
+        orchestrator = self.cameras.orchestrator
+        statuses = orchestrator.camera_statuses
+        try:
             # After an error, a stalled camera does not pause and holds the gate, so no camera passes the last frame.
-            if error is None:
-                await self.cameras.pause(await_paused=True)
+            paused = self.take_error is None
+            if paused:
+                try:
+                    await orchestrator.pause(await_paused=True)
+                except (RuntimeError, TimeoutError) as error:
+                    # A camera that waits in `give` cannot pause (5.3): end as after an error, with no pause.
+                    logger.warning(f"The stop could not pause the cameras ({error}); it ends the take with no pause")
+                    paused = False
+                    await orchestrator.unpause(await_unpaused=False)
             count = orchestrator.largest_gate_count()
             if count == -1:  # no camera left in the gate: the take ends after the latest group frame
                 count = max(statuses[camera_id].frame_count.value for camera_id in self.recording_ids if camera_id in statuses) - 2
             orchestrator.last_recording_frame_number.value = count + 3
-            if error is None:
+            if paused:
                 await self.cameras.unpause(await_unpaused=True)
             frame_count = orchestrator.take_frame_count()
-            try:
-                results, dead = await asyncio.to_thread(self._collect_results)
-                summary = await asyncio.to_thread(
-                    take.finish, [results.get(camera_id) for camera_id in self.recording_ids], frame_count=frame_count,
-                    ended_by_error=error, dead_cameras=dead, error_camera=error_camera)
-            finally:
-                self.take = None
-                orchestrator.first_recording_frame_number.value = -1
-                orchestrator.last_recording_frame_number.value = -1
-                for status in list(statuses.values()):
-                    status.set_warning_items([])
-            if error is not None:
-                self.ended_take = summary
-            logger.info(f"Stopped recording for camera group ID: {self.id} with recording name: {take.rec}")
-            return summary
+            results, dead = await asyncio.to_thread(self._collect_results)
+            error, error_camera = self.take_error or (None, None)
+            summary = await asyncio.to_thread(
+                take.finish, [results.get(camera_id) for camera_id in self.recording_ids], frame_count=frame_count,
+                ended_by_error=error, dead_cameras=dead, error_camera=error_camera)
+        finally:
+            self.take = self.take_error = None
+            orchestrator.first_recording_frame_number.value = -1
+            orchestrator.last_recording_frame_number.value = -1
+            for status in list(statuses.values()):
+                status.set_warning_items([])
+        logger.info(f"Stopped recording for camera group ID: {self.id} with recording name: {take.rec}")
+        return summary
 
     def _collect_results(self) -> tuple[dict, dict]:
         """8.1 step 4: wait for the result of each camera while its writer makes progress [C6DE D1]. A camera
@@ -588,6 +608,9 @@ class CameraGroup:
                     pending.discard(message.camera_id)
                     if message.result.error == "disk stall":
                         stuck.append(message.camera_id)
+                    if message.result.error is not None and self.take_error is None:  # an error during the stop
+                        self.take_error = (f"disk stall on camera {message.camera_id}" if message.result.error
+                                           == "disk stall" else message.result.error, message.camera_id)
             now = time.monotonic()
             for camera_id in list(pending):
                 worker, status = workers.get(camera_id), statuses.get(camera_id)
@@ -604,6 +627,8 @@ class CameraGroup:
                 elif status is None or now - max(status.writer_progress_at.value, started) > TAKE_STALL_LIMIT_S + STALL_MARGIN_S:
                     stuck.append(camera_id)
                     pending.discard(camera_id)
+                    if self.take_error is None:
+                        self.take_error = (f"disk stall on camera {camera_id}", camera_id)
             if pending:
                 time.sleep(WATCH_INTERVAL_S)
         for camera_id in stuck:
