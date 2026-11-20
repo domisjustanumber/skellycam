@@ -441,7 +441,12 @@ class CameraGroup:
         await self.cameras.pause_unpause(await_state_change)
 
     async def start_recording(self, recording_info: RecordingInfo, devices: dict | None = None) -> list:
-        """Start a take (recorder.md section 10 items 3 to 5, 13). Return the warnings of 11.3."""
+        """Start a take (recorder.md section 10 items 3 to 5, 13). Return the warnings of 11.3. One start, stop or
+        error end at a time: a second start waits for the finish of a failed start (ADR-P5VE)."""
+        async with self._end_lock:
+            return await self._start_recording(recording_info, devices)
+
+    async def _start_recording(self, recording_info: RecordingInfo, devices: dict | None) -> list:
         statuses = self.cameras.orchestrator.camera_statuses
         if recording_info.mic_device_index >= 0:
             raise RequestRefused(422, MICROPHONE_REFUSED)  # [C1]
@@ -467,6 +472,8 @@ class CameraGroup:
         self.ended_take = self.take_error = None
         self.finished.clear()  # a late message of an earlier take
         await self.cameras.pause(await_paused=True)  # each camera gives the layout of its last good frame
+        orchestrator = self.cameras.orchestrator
+        take, sent = None, False
         try:
             cameras = [self._take_camera(camera_id, (devices or {}).get(camera_id)) for camera_id in self.recording_ids]
             try:
@@ -474,22 +481,21 @@ class CameraGroup:
                                                queue_seconds=TAKE_QUEUE_SECONDS, stall_limit_s=TAKE_STALL_LIMIT_S)
             except ValueError as error:  # a bad name, a FAT disk (D3), a camera that the format refuses
                 raise RequestRefused(422, str(error))
-            orchestrator = self.cameras.orchestrator
+            specs = {camera_id: take.camera_spec(camera_id) for camera_id in self.recording_ids}  # before any goes out
             orchestrator.last_recording_frame_number.value = -1
             orchestrator.first_recording_frame_number.value = orchestrator.largest_gate_count() + 3  # [M7, review B4]
             self.take = take
             for camera_id in self.recording_ids:
                 statuses[camera_id].update_info(writer_failure=None)
-            self.ipc.pubsub.topics[TopicTypes.RECORDING_INFO].publish(RecordingInfoMessage(
-                take_specs={camera_id: take.camera_spec(camera_id) for camera_id in self.recording_ids}))
+            sent = True  # from here, a camera can have a writer
+            self.ipc.pubsub.topics[TopicTypes.RECORDING_INFO].publish(RecordingInfoMessage(take_specs=specs))
             await self._await_writers()
         except BaseException as error:
             for status in list(statuses.values()):
                 status.set_warning_items([])
-            take, self.take = self.take, None
-            orchestrator = self.cameras.orchestrator
+            self.take = None
             try:
-                if take is not None:
+                if sent:
                     # Each camera with a writer ends it at its next frame, with no row; a camera that gets its take
                     # spec from now on refuses it (`CameraLoop._start_take`).
                     orchestrator.last_recording_frame_number.value = orchestrator.first_recording_frame_number.value
@@ -497,25 +503,28 @@ class CameraGroup:
                 await orchestrator.unpause(await_unpaused=False)
             finally:
                 if take is not None:
-                    await self._finish_failed_start(take, error)
+                    await self._finish_failed_start(take, error, wait=sent)
             raise
-        await self.cameras.unpause(await_unpaused=True)
+        try:
+            await orchestrator.unpause(await_unpaused=True)
+        except (RuntimeError, TimeoutError) as error:  # each writer started: the take runs on
+            logger.warning(f"The record start could not unpause each camera in time ({error}); the take runs on")
         for item in warnings:
             logger.warning(item["text"])
         logger.info(f"Started recording for camera group ID: {self.id} with recording name: "
                     f"{recording_info.recording_name}")
         return warnings
 
-    async def _finish_failed_start(self, take: Take, error: BaseException) -> None:
+    async def _finish_failed_start(self, take: Take, error: BaseException, wait: bool) -> None:
         """Decision D of the user (2026-11-20): a record start that fails finishes the take folder at once, with
         zero rows and a `take_error`. It waits first for each camera that has a writer or can still start one
         (in the gate): its result, or its refusal (`writer_failure`). Thus no live writer has its files
-        completed (8.1 step 4)."""
+        completed (8.1 step 4). With `wait` false, no take spec went out, so no camera is waited for."""
         orchestrator, ids = self.cameras.orchestrator, self.recording_ids
         statuses = orchestrator.camera_statuses
         try:
-            self.recording_ids = [camera_id for camera_id in ids if statuses[camera_id].recording_in_progress.value
-                                  or statuses[camera_id].in_gate]
+            self.recording_ids = [camera_id for camera_id in ids if wait and (
+                statuses[camera_id].recording_in_progress.value or statuses[camera_id].in_gate)]
             results, dead, running = await asyncio.to_thread(self._collect_results)
             await asyncio.to_thread(take.finish, [results.get(camera_id) for camera_id in ids], frame_count=0,
                                     ended_by_error=f"the record start failed: {error}", dead_cameras=dead,
@@ -606,7 +615,8 @@ class CameraGroup:
             count = orchestrator.largest_gate_count()
             if count == -1:  # no camera left in the gate: the take ends after the latest group frame
                 count = max(statuses[camera_id].frame_count.value for camera_id in self.recording_ids if camera_id in statuses) - 2
-            orchestrator.last_recording_frame_number.value = count + 3
+            # At least the first frame: when no camera reached it, the take has no row, not a negative count.
+            orchestrator.last_recording_frame_number.value = max(count + 3, orchestrator.first_recording_frame_number.value)
             if paused:
                 try:
                     await orchestrator.unpause(await_unpaused=True)
@@ -738,6 +748,7 @@ class CameraGroup:
                 for camera_id, worker in self.cameras.camera_workers.items()
             },
             alive=self.alive,
-            recording_in_progress=self.take is not None,  # also when each camera died during the take
+            # Also when each camera died during the take, and until the stop fetched the summary of an error end.
+            recording_in_progress=self.take is not None or self.ended_take is not None,
             paused=orchestrator.any_cameras_paused,
         )
