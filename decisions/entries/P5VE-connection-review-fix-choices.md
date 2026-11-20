@@ -47,6 +47,11 @@ these choices. The user decides them.
     16 item 32. Section 9.5 of `windows-capture.md` had no such limit; it gets a note.
 13. Items 1, 4, 8 and 10 of YNM2 are now A, E, D and B of JMS0. D replaces "the folder stays
     `recording`" of YNM2 item 8.
+14. Each camera process gets the union of the member statuses and the removed statuses
+    (`CameraManager._create_worker`). A removed status is `failed`, so it is not in the gate.
+15. H is in the loop only (`RECOMMEND_MAX_EXPOSURE`, `RECOMMEND_OFFSET` in `camera_loop.py`). The
+    old helper `recommend_camera_exposure_setting.py` and its `MAX_EXPOSURE` (-4) do not change.
+16. The 100 ms watch of a killed process (review item 16) is from step 3a. It is not changed.
 
 ## Reason
 
