@@ -10,6 +10,15 @@ the first draft; C4FZ holds the answers, and the choices that they decided are n
 agent made these choices A1 to A23. Section 4 of the spec holds the same list, and its sections give
 the detail. The user decides them.
 
+Added on 2026-11-20, after
+[ADR-JK79](JK79-exposure-search-at-each-open-and-camera-requests.md): the user decided items 3, 10
+and 19, and the names of item 11 (JK79 G5, G6 and G8). The other parts of item 11 stay proposed.
+Decision G1 of JK79 replaces the part "It does not search by itself. Its row offers the search." of
+item 7, and item 9. Decision G3 replaces the texts of item 12. Item 16 now applies only to a camera
+in `MANUAL`, and item 17 gets one more case
+([ADR-4Z7T](4Z7T-choices-after-the-search-at-each-open.md) items 1 and 7). The other items stay
+proposed.
+
 1. The early decision of the check after a live change, for each value, with 30 frames.
 2. The time limit of a search is 20 s.
 3. The config keeps `exposure_mode: "AUTO"` with the held value in `exposure`, and the new field

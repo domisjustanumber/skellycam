@@ -1,6 +1,7 @@
 # C4FZ — Exposure modes and search, one frame rate, USB link label
 
-**Status:** accepted, 2026-11-20 (user, relayed by the supervisor).
+**Status:** superseded by [JK79](JK79-exposure-search-at-each-open-and-camera-requests.md), 2026-11-20
+(commit to dom/requests-spec; was accepted, 2026-11-20 (user, relayed by the supervisor)).
 
 ## Decision
 

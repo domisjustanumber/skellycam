@@ -1,9 +1,13 @@
 # Camera requests of 2026-11-20: exposure, one frame rate, USB link label
 
 Status: proposed by an agent on 2026-11-20, then revised on the same day with the answers of the
-user to its 14 questions (section 5). The decisions of the user are in
-[ADR-C4FZ](../decisions/entries/C4FZ-camera-requests.md). The choices of the agent that are still
-open are in [ADR-Y6F6](../decisions/entries/Y6F6-camera-request-choices.md). This file holds the spec
+user to its 14 questions (section 5). Revised again on the same day with the decisions G1 to G9 of
+the user (section 5a): Auto now searches at each open. The decisions of the user are in
+[ADR-JK79](../decisions/entries/JK79-exposure-search-at-each-open-and-camera-requests.md), which
+supersedes [ADR-C4FZ](../decisions/entries/C4FZ-camera-requests.md) and keeps each item of C4FZ that
+G1 to G9 do not change. The choices of the agent that are still open are in
+[ADR-Y6F6](../decisions/entries/Y6F6-camera-request-choices.md) and
+[ADR-4Z7T](../decisions/entries/4Z7T-choices-after-the-search-at-each-open.md). This file holds the spec
 text and the test list only. The user accepts them before any code is written. This file does not
 change [`windows-capture.md`](windows-capture.md) yet. Each part gives the text of each change to
 that spec as "Change to section N".
@@ -16,7 +20,15 @@ Marks:
   (F) and the USB link label (L) ([ADR-C4FZ](../decisions/entries/C4FZ-camera-requests.md)).
 - **[Qn]**: the answer of the user to question n of the first draft, 2026-11-20 (section 5,
   [ADR-C4FZ](../decisions/entries/C4FZ-camera-requests.md)). It is a decision.
+- [ADR-JK79](../decisions/entries/JK79-exposure-search-at-each-open-and-camera-requests.md) keeps
+  each [En], [Fn], [Ln] and [Qn] with its ID, except these: E3 (the search runs only when the user
+  asks), E5, the text of E7, Q3 and Q8. [Gn] changes them.
+- **[Gn]**: decision n of the user of 2026-11-20, second set (section 5a,
+  [ADR-JK79](../decisions/entries/JK79-exposure-search-at-each-open-and-camera-requests.md)).
 - **[An]**: choice n of the agent (section 4). The user decides it.
+- **[Bn]**: choice n of the agent after the decisions [Gn] (section 4,
+  [ADR-4Z7T](../decisions/entries/4Z7T-choices-after-the-search-at-each-open.md)). The user decides
+  it.
 - **[UI 11-20]**: a decision of the user of 2026-11-20 on the UI, relayed by the supervisor, that
   this spec must agree with. No entry on this branch holds it yet (section 6).
 - **[cap x.y]**: section x.y of [`windows-capture.md`](windows-capture.md). **[Dn]**, **[Un]**,
@@ -42,42 +54,49 @@ This spec uses British spelling.
 ### 1.1 The rule
 
 - The UI and the API have two exposure modes: `MANUAL` and `AUTO` [E1].
-- `MANUAL`: the camera uses the value of the config. The unit stays log2 of seconds (-7 = 1/128 s)
-  [D35].
-- `AUTO`: SkellyCam finds the value with the exposure search of 1.3, one time, when the user asks.
-  Then SkellyCam holds that value. The camera control stays in its manual setting at all times
-  [E1, E3, Q3].
+- `MANUAL`: the camera uses the value of the config. It never searches [G1]. The unit stays log2 of
+  seconds (-7 = 1/128 s) [D35].
+- `AUTO`: SkellyCam finds a manual value with the exposure search of 1.3. The search runs at each
+  open of the camera, at a change of the frame rate and when the user asks (1.2) [G1]. Each search is
+  one shot on the open stream. SkellyCam holds its value until the next search. The camera control
+  stays in its manual setting at all times [E1, E3, G4].
 - The auto exposure of the camera is never a mode. On Windows, SkellyCam never turns it on, also not
   at the start-up [E1, Q1].
 - Exception until phase 7: on Linux and macOS, the OpenCV source of today forces the auto exposure of
   the camera. This is an exception to the rule above. It stays until phase 7 [Q11]. Section 1.7
   gives the detail.
 - The sfn26 label "Recommend" and the sfn26 `AUTO` (the auto exposure of the camera) go away [E1].
-- The exposure of a camera never changes during a take [E3]. Each request that changes it during a
-  take is refused (1.5).
-- The default for a new camera stays `MANUAL` -7 [E5].
+- The exposure of a camera never changes during a take [E3, G4]. Each request that changes it during
+  a take is refused (1.5).
+- A new camera starts in `AUTO` [G1]. Its first value is -7, the value of the open before its first
+  search (1.3a) [A7]. This replaces the default `MANUAL` -7 of E5.
 
 ### 1.2 When the search runs
 
-The search runs only when the user asks [E3, Q3]:
+A camera in `AUTO` runs the search in these cases [G1]:
 
-1. The user presses the button "Auto-set exposure (all cameras)" [E4]. Each selected camera that
-   streams goes to `AUTO`, and each one runs the search on its open stream.
-2. The user presses the link "Search again" in the settings of one camera [Q2]. That camera runs the
-   search on its open stream.
-3. The user switches a camera that streams from `MANUAL` to `AUTO` (an apply request) [Q3]. That
-   camera runs the search on its open stream.
+1. (a) At each open of the camera: a connect; "Update Cameras" when it adds or reopens the camera; a
+   reopen for a change of size; "apply again" of a `failed` or `dead` camera; the reopen of the fall
+   back to 30 fps of 2.4. The search runs after the warm-up, in the gate (1.3b).
+2. (b) When the user changes the frame rate. The camera reopens at the new rate, and the search runs
+   before the rate check judges the camera (1.3b, 2.3).
+3. (c) When the user asks, on the open stream:
+   - The user presses the button "Auto-set exposure (all cameras)" [E4]. Each selected camera that
+     streams goes to `AUTO`, and each one runs the search.
+   - The user presses the link "Search again" in the settings of one camera [Q2]. That camera runs
+     the search.
+   - The user switches a camera that streams from `MANUAL` to `AUTO` (an apply request). That camera
+     runs the search.
 
-The search never reopens a camera. It never runs by itself. These events do not run it, and the
-camera uses its held value [Q3]:
+A camera in `MANUAL` never searches [G1]. The search itself never reopens a camera. These events do
+not run it:
 
-- a connect;
-- a reopen for a change of size or rate, also the fall back to 30 fps of 2.4;
-- "apply again" of a `failed` or `dead` camera;
-- an apply request with the same config (`AUTO` with `AUTO`), which has no effect [cap 8.3].
+- an apply request with the same config (`AUTO` with `AUTO`), which has no effect [cap 8.3];
+- a live change of another control;
+- the read of the controls each second.
 
-A switch to `AUTO` while the camera does not stream only changes the stored config. The next connect
-does not search (1.3a).
+A switch to `AUTO` while the camera does not stream only changes the stored config. The next open
+searches (a).
 
 ### 1.3 The search
 
@@ -157,25 +176,99 @@ Who does what:
   button, "Search again"), the UI copies `exposure` and `exposure_found_at_fps` of each camera in
   `AUTO` into its desired config. Thus the held value is kept across a close and across a restart of
   the app [A6].
-- At the start-up, a camera in `AUTO` sets `exposure` as a manual value at step 5 of [cap 9.1]. No
-  search runs [Q3].
-- A camera in `AUTO` with no held value (`exposure_found_at_fps` is `None`) starts at its `exposure`
-  value: -7 for a new camera. It does not search by itself. Its row says "Auto: not searched yet" and
-  offers the search (1.8) [A7].
+- At an open, a camera in `AUTO` sets its held value as a manual value at step 5 of [cap 9.1]. Then
+  it searches after the warm-up (1.3b) [G1].
+- The held value is not a start point of the search: the search tries -12 to -5 in order [E6]. The
+  held value has two uses [B2]:
+  - the warm-up and the first frames of the preview are near the last result;
+  - a failed search sets it again (1.3 item 6).
+- A camera in `AUTO` with no held value (`exposure_found_at_fps` is `None`) opens at its `exposure`
+  value: -7 for a new camera [A7]. Then it searches, as each camera in `AUTO` [G1]. Until a search
+  finds a value, its row says "Auto: no value found yet" (1.8) [B9].
 - A reopen of a running camera (size or rate) uses the held value of its current config, not the
-  `exposure` of the request, so that an old value in a request cannot replace it [A8].
-- A held value found at another rate: the value keeps its brightness at the new rate, because the
-  exposure time does not change. Its rate guard does not hold at the new rate. The start-up rate check
-  at the new rate is the only check (2.4). When the rate class of `exposure_found_at_fps` differs from
-  the mode rate, the row says "Found at 30 fps: search again" (or "at 60 fps") [A9].
+  `exposure` of the request, so that an old value in a request cannot replace it [A8]. With [G1],
+  this value is only the value at the open and the value after a failed search.
+- A held value found at another rate: each change of the rate searches again at the new rate, before
+  the rate check judges the camera (1.3b) [G1]. After each search that finds a value,
+  `exposure_found_at_fps` is the mode rate. It differs from the mode rate only after a failed search
+  at a new rate. The row then shows the chip of `exposure_search_failed` (1.8). The row text "Found
+  at 30 fps: search again" of the earlier draft goes [B9].
+
+### 1.3b The search at an open
+
+The order of an open of a camera in `AUTO` [G1, G2, B1]:
+
+1. `starting`: the steps 1 to 7 of [cap 9.1] with the held value set at step 5, and the 90 warm-up
+   frames of [cap 9.2]. A camera in `AUTO` has no start-up rate check of [cap 10.1].
+2. `waiting`: the warm-up is done. The camera waits for the other selected cameras [cap 9.4].
+3. `adjusting`: when no selected camera is `starting`, the camera goes into the gate and runs the
+   search of 1.3 on its open stream. All cameras that open together search at the same time [G2].
+   The preview shows [G2].
+4. `checking`: the search has set its result, or the held value again after a failure. The check of
+   [cap 10.2] judges the camera. This is the rate check of (b) in 1.2: it judges the value that the
+   search found.
+5. `ready` or `too_slow`, as after a live change.
+
+A camera in `MANUAL` keeps the order of [cap 9.1] and its start-up rate check of [cap 10.1]: it goes
+from `waiting` to `ready`.
+
+Why: a camera in `starting` has no preview and is not in the gate [cap 8.1]. A start-up rate check at
+the held value would judge the camera before the search, and fail it (stage `rate check`, closed)
+before the search can find a value that keeps the rate [B1].
+
+The limits [B3]:
+
+- For a camera in `AUTO`, the ready limit of 15 s of [cap 9.3] counts from the open to the end of the
+  warm-up.
+- The search keeps its own limit of 20 s from its first set (1.3 item 6) [A2].
+- The check after the search has the early decision of [cap 10.2].
+- The time of an open in `AUTO` at 30 fps, for each camera: about 1 s to open, 3 s of warm-up, 10.7 s
+  of search and 2.5 s of check, so about 17 s. The worst case: 15 s, then 20 s, then about 3 s, so
+  about 38 s. At 60 fps: about 1 s, 1.5 s, 5.3 s and 1.3 s, so about 9 s. The cameras of one apply
+  search at the same time, so the group takes about as long as its slowest camera.
+
+What a client sees [B4]:
+
+- An apply request that opens a camera in `AUTO` returns when each search of the request has ended:
+  each such camera is then `checking`, `ready`, `too_slow`, `failed` or `dead`. Its response carries
+  the held values and the warnings, as the endpoint of 1.5. Thus the UI copies the held values as
+  1.3a says [A6].
+- While the request waits, the status of each searching camera has `state: "adjusting"` and
+  `exposure_search.state: "running"` (1.5). The preview of each camera shows.
+- A record start is refused with HTTP 409 until each camera is `ready` [G2, cap 8.3]. The UI disables
+  the record button while a camera is `adjusting`, with the tooltip "Setting exposure…" (1.8).
+- A consumer with an HTTP time limit below about 40 s must raise it for an apply with cameras in
+  `AUTO`.
+
+The other cameras [B5]:
+
+- Only a camera that opens searches. When "Update Cameras" adds a camera, or reopens a camera for a
+  changed size, only that camera searches. The other cameras get no set call. They keep their state,
+  their values and their preview.
+- The new camera joins the gate in `adjusting`. Thus at a value at which it is slow, it slows the
+  rounds of the gate and the preview of each camera, for about 1 s for each slow value [E9].
+- A record start waits for it: HTTP 409 until it is `ready` [G2].
+
+A failed search at an open [B6]:
+
+- The search sets the held value again (or -7 with no held value), and the warning
+  `exposure_search_failed` comes (1.5). `exposure_found_at_fps` keeps its old value. Then the check
+  of [cap 10.2] judges the camera: `ready` or `too_slow`.
+- A search that finds too little light holds its result with the flag `add_light` (1.3 item 5)
+  [Q6]. The check then judges the result.
+- A search never makes a camera `failed`. A camera that is `too_slow` keeps its preview and counts
+  as streaming [UI 11-20]. Its row shows the text of 1.5a.
+- A hang, a stall or a removed device during the search: 1.3 item 7.
 
 ### 1.4 States and the other cameras
 
 - The searching camera stays in the gate, with its preview. The other cameras keep streaming, with
   their preview. The gate still waits for each camera [E9]. Thus a value at which one camera is slow
   also slows the rounds of the gate, and the preview of each camera, for that value (about 1 s).
-- A new state `adjusting` holds a camera while its search runs [Q7]: preview yes, in the gate yes,
-  as `ready`. A recording cannot start, and a changed config of that camera is refused (HTTP 409).
+- A new state `adjusting` holds a camera while its search runs [Q7, G2]: preview yes, in the gate
+  yes, as `ready`. A recording cannot start until each camera is done [G2], and a changed config of
+  that camera is refused (HTTP 409).
+- At an open, all cameras in `AUTO` that open together search at the same time (1.3b) [G2].
 - After the search, the camera sets its result value. Its state goes to `checking`, and the check of
   [cap 10.2] decides `ready` or `too_slow`, as after a live change.
 - A `too_slow` camera keeps its tile and counts as streaming [UI 11-20]. This agrees with
@@ -191,11 +284,15 @@ Who does what:
 Config:
 
 - `CameraConfig.exposure_mode`: `"MANUAL"` or `"AUTO"`. A request with `"RECOMMEND"` is read as
-  `"AUTO"`, so that old saved configs keep working [A10]. Each other value gets HTTP 422.
+  `"AUTO"`, so that old saved configs keep working. Thus it searches at the open [G6]. Each other
+  value gets HTTP 422.
+- The default of `CameraConfig()` is `exposure_mode: "AUTO"`, `exposure: -7` and
+  `exposure_found_at_fps: None` [G1, B13]. A consumer that sends no mode (freemocap) then gets the
+  search at each open. It sends `MANUAL` to keep its value.
 - `exposure`: for `MANUAL` the value to set. For `AUTO` the held value (1.3a).
-- `exposure_found_at_fps`: 1.3a.
+- `exposure_found_at_fps`: 1.3a. The name is a decision [G5].
 
-New endpoint [A11]:
+New endpoint. Its path is a decision [G5]. Its body, its response and its codes are [A11]:
 
 ```
 POST /camera/group/exposure/auto
@@ -221,11 +318,16 @@ POST /camera/group/exposure/auto
 - HTTP 422 on Linux and macOS: `the exposure search runs only on Windows until phase 7` (1.7).
 - The switch from `MANUAL` to `AUTO` in an apply request runs the same search for that camera. The
   apply response then carries its result in `warnings` and in the status.
+- An apply request that opens a camera in `AUTO` runs the search at the open, and it returns when
+  each search has ended (1.3b) [G1, B4].
 
-Status ([cap 8.4]) adds `exposure_search`: null before the first search, else the `results` object
-of one camera above. `"state"` is `"running"`, `"done"` or `"failed"`.
+Status ([cap 8.4]) adds `exposure_search` (the name is a decision [G5]): null before the first
+search, else the `results` object of one camera above. `"state"` is `"running"`, `"done"` or
+`"failed"`.
 
-Warnings ([cap 11.3] form: `kind`, `camera_ids`, `text`, `control`) [A11]:
+Warnings ([cap 11.3] form: `kind`, `camera_ids`, `text`, `control`). The kinds `add_light` and
+`exposure_search_failed` are a decision [G5]. Their texts are [A11]. They are not texts of a slow
+camera, so they stay [B8]:
 
 - `add_light`, control `exposure`:
   `Camera a1b2: add light. At 30 fps the brightest exposure that keeps the rate is -6, and the image is too dark (mean 41 of 255).`
@@ -241,19 +343,26 @@ codes. This spec does not name them.
 
 ### 1.5a The texts of a slow camera
 
-One set of texts [Q8] [A12]. The texts of [Q8] stay. The text of the user for a `too_slow` row
-[UI 11-20] is added. For one camera in `MANUAL`, the server reason and the row then give the same
-hint ("lower the exposure"), so the `MANUAL` reason adds it:
+In every case, the text of a slow camera is exactly `Camera is slow. Try adding more light` [G3].
+It replaces the texts of [Q8], the `too_slow` row text of [UI 11-20] and the texts of [A12]: "Add
+light or lower the exposure, or set the exposure to Auto.", "Add light, then run the exposure search
+again.", "Too slow at this exposure: lower the exposure" and "Too slow at this exposure: add light,
+then search again".
 
-| Where | `MANUAL` | `AUTO` |
-|---|---|---|
-| Reason of a camera that fails the start-up rate check ([cap 10.4], server) | `declared 30.00 fps, measured 25.76 fps. Add light or lower the exposure, or set the exposure to Auto.` | `declared 30.00 fps, measured 25.76 fps. Add light, then run the exposure search again.` |
-| Row of a `too_slow` camera (UI) | `Too slow at this exposure: lower the exposure` [UI 11-20] | `Too slow at this exposure: add light, then search again` |
+| Where | `MANUAL` and `AUTO` |
+|---|---|
+| Reason of a camera that fails the start-up rate check ([cap 10.4], server) | `declared 30.00 fps, measured 25.76 fps. Camera is slow. Try adding more light` [B8] |
+| Row of a `too_slow` camera (UI) | `Camera is slow. Try adding more light` [G3] |
 
-- When the mode rate is above 31 fps, the reason adds ` Or choose 30 fps.` [Q8].
-- "Lower the exposure" is the usual help at 30 fps: the Logitech cameras give 16 fps at -4 and 30 fps
-  at -5 [cap 10.5]. It is not always right: the C922 at 60 fps is slower at -8 than at -7 (1.3 item
-  3). The `AUTO` search finds such a value; the `MANUAL` text does not try to.
+- The server reason keeps the declared and the measured rates of D25 before the text [B8]. The text
+  replaces the hints of D25.
+- The addition ` Or choose 30 fps.` of [Q8] goes, because the text is exact [G3]. At 60 fps the fall
+  back of 2.4 runs.
+- A camera in `AUTO` has no start-up rate check (1.3b). Thus in practice only a camera in `MANUAL`
+  gets the server reason. A camera in `AUTO` that is slow is `too_slow` after its search and its
+  check, and its row has the text.
+- The text names no exposure value. A shorter exposure is not always faster: the C922 at 60 fps is
+  slower at -8 than at -7 (1.3 item 3).
 
 ### 1.6 The auto exposure of the camera
 
@@ -276,7 +385,9 @@ The rule until phase 7 [Q11]:
   exception. Phase 7 ends it.
 - The UI shows the exposure row as "Set by the camera on this system" and hides the mode choice, the
   link "Search again" and the button. The endpoint of 1.5 gives HTTP 422. A config with `AUTO` opens
-  with no search. The warning of [cap 11.3] comes at each record start (T-CAP-104).
+  with no search, and the state `adjusting` never comes: this is the exception to [G1] until
+  phase 7. A new camera starts in `AUTO` there too [G1]. The warning of [cap 11.3] comes at each
+  record start (T-CAP-104).
 - Phase 7 adds the search on Linux with the conversion below.
 
 What the OpenCV source can do:
@@ -296,13 +407,15 @@ What the OpenCV source can do:
 - Camera settings (`CameraGridSettingsModal.tsx`): the row "Exposure" keeps the two choices Manual
   and Auto. Manual shows the value selector, as today. Auto shows the held value as text, "Auto: -8",
   and the link "Search again", which runs the search for this camera only [Q2]. With no held value,
-  the text is "Auto: not searched yet", and the link reads "Search". The link is disabled while the
-  camera does not stream or a recording runs.
+  the text is "Auto: no value found yet" [B9], and the link reads "Search". The link is disabled
+  while the camera does not stream or a recording runs.
 - `CameraConfigExposure.tsx` (the panel): the third choice "Recommend" goes. `isDisabled` becomes
   `exposureMode === 'AUTO'`.
 - `cameras-types.ts`: `EXPOSURE_MODES = ['MANUAL', 'AUTO']`; `CameraConfigSchema` gets
   `exposure_found_at_fps` (number or null). A saved config with `RECOMMEND` becomes `AUTO` when the
-  store loads it. The i18n key `recommend` stays unused until a cleanup of the locale files.
+  store loads it [G6]. The i18n key `recommend` stays unused until a cleanup of the locale files.
+  `createDefaultCameraConfig` sets `exposure_mode: 'AUTO'`, `exposure: -7` and
+  `exposure_found_at_fps: null` [G1].
 - The camera list (`CameraConfigSidebarPanel.tsx`): a button "Auto-set exposure (all cameras)" in
   the header, next to the stream buttons. It is enabled when at least one selected camera streams
   and no recording runs, as the "Update Cameras" button is disabled during a recording [UI 11-20].
@@ -310,14 +423,18 @@ What the OpenCV source can do:
   shows the loader icon and the text "Setting exposure…".
 - Each camera row (`CameraTreeItem.tsx`):
   - the chip `E:-8` for `MANUAL` as today, and `E:-8 auto` for `AUTO`;
-  - "Auto: not searched yet" for `AUTO` with no held value;
-  - "Found at 30 fps: search again" for a held value found at another rate class (1.3a);
+  - "Auto: no value found yet" for `AUTO` with no held value [B9];
   - the chip "Add light" in the warning colour for an `add_light` warning, and "Exposure search
     failed" for `exposure_search_failed`, each with its text as the tooltip;
-  - the texts of 1.5a for a `too_slow` camera.
+  - the text of 1.5a for a `too_slow` camera, in each mode [G3];
+  - "Setting exposure…" for a camera in `adjusting`.
   A pure function `exposureRowText(config, modeRate, state, warnings)` in
-  `skellycam-ui/src/store/slices/cameras/exposure-row.ts` gives these texts.
-- A camera in `adjusting` shows "Setting exposure…" over its preview.
+  `skellycam-ui/src/store/slices/cameras/exposure-row.ts` gives these texts. The row text "Found at
+  30 fps: search again" of the earlier draft goes, because each change of the rate searches again
+  (1.3a) [B9].
+- A camera in `adjusting` shows "Setting exposure…" over its preview [G2].
+- The record button is disabled while a camera is `adjusting`, with the tooltip "Setting exposure…"
+  [G2, B4].
 - Camera names in the UI: a tooltip or a line that shows a text of the server replaces each camera ID
   of the item's `camera_ids` with `Camera <list number> · <name>`, and drops the word "Camera" or
   "camera" just before the ID. A pure function `labelText(text, cameras)` does it [A13].
@@ -326,7 +443,8 @@ What the OpenCV source can do:
 ### 1.9 Edge cases
 
 - A camera without an exposure control (`present: false`): the search fails at once with
-  `Camera a1b2 has no exposure control` (the text of [cap 11.5]). Its mode stays as it was.
+  `Camera a1b2 has no exposure control` (the text of [cap 11.5]). Its mode stays as it was. At an
+  open in `AUTO`, this comes at each open, and the camera goes on to its check (1.3b).
 - A camera dies during the search: it is `dead` [cap 8.2]. The other searches go on. The response
   has its failure in `camera_failures`.
 - A second press of the button, or "Search again", while a search runs: HTTP 409.
@@ -337,7 +455,11 @@ What the OpenCV source can do:
   A camera that needs longer can fail a value that it can keep. T-REQ-23 records this.
 - The button when some selected cameras do not stream (`failed`, `dead`): only the cameras that
   stream search. The response names the others in its detail as "not streaming".
-- A camera in `AUTO` held at a value found at 30 fps, when the user picks 60 fps: 2.4.
+- A camera in `AUTO` held at a value found at 30 fps, when the user picks 60 fps: it reopens at 60 fps
+  and searches there before its check (1.3b, 2.4) [G1].
+- "Update Cameras" adds a camera while the others run: only the new camera searches (1.3b) [B5].
+- A camera is unselected while the other cameras search at an open: the others go on. A record
+  start waits for each selected camera only [cap 9.4].
 
 ### 1.10 Changes to windows-capture.md
 
@@ -352,14 +474,20 @@ with the frame feed of the loop."
 Change to section 4.3, row "Control thread": add "During an exposure search, it does each set of the
 search, and it holds its read each second (`camera-requests.md` 1.3)."
 
-Change to section 8.1: add the row "| `adjusting` | The exposure search runs on the open stream
-(`camera-requests.md` 1.4). | yes | yes |".
+Change to section 8.1: add the row "| `adjusting` | The exposure search runs on the open stream: at
+an open of a camera in `AUTO`, after a change of the rate, or on request (`camera-requests.md` 1.2,
+1.4). | yes | yes |". In the row `starting`, add "A camera in `AUTO` has no rate check here
+(`camera-requests.md` 1.3b)." In the row `waiting`, write "Warm-up done and rate check passed (a
+camera in `AUTO`: warm-up done)."
 
-Change to section 8.2: add the rows "| `ready`, `too_slow`, `checking` | the button, "Search again",
-or a change of the mode from `MANUAL` to `AUTO` | `adjusting` |" and "| `adjusting` | the search
-ended (with its result, or with the old setting after a failure) | `checking` |". Add `adjusting` to
-the "From" cells of the rows "device removed; 2 s without a frame", "a bounded call times out" and
-"unselect".
+Change to section 8.2: the row "| `waiting` | no selected camera is in `starting` | `ready` |" becomes
+two rows: "| `waiting` (a camera in `MANUAL`) | no selected camera is in `starting` | `ready` [D21]
+|" and "| `waiting` (a camera in `AUTO`) | no selected camera is in `starting` | `adjusting`
+(`camera-requests.md` 1.3b) |". Add the rows "| `ready`, `too_slow`, `checking` | the button,
+"Search again", or a change of the mode from `MANUAL` to `AUTO` | `adjusting` |" and "| `adjusting` |
+the search ended (with its result, or with the old setting after a failure) | `checking` |". Add
+`adjusting` to the "From" cells of the rows "device removed; 2 s without a frame", "a bounded call
+times out" and "unselect".
 
 Change to section 8.3: add the row "| `adjusting` | blocked | refused | no effect | allowed |".
 
@@ -368,31 +496,40 @@ Change to section 8.4: add "`exposure_search` is null or the result object of `c
 exposure change of the camera."
 
 Change to section 9.1, step 5: "Set every control of the config (section 11). A camera in `AUTO`
-sets its held value as a manual value. No exposure search runs at the start-up
-(`camera-requests.md` 1.3a)."
+sets its held value as a manual value. Its exposure search runs after the warm-up, in the state
+`adjusting` (`camera-requests.md` 1.3b)."
 
-Change to section 10.4: replace the text with the two reasons and the 60 fps addition of
-`camera-requests.md` 1.5a.
+Change to section 9.3: add "For a camera in `AUTO`, the 15 s count from the open to the end of the
+warm-up. The exposure search has its own limit (`camera-requests.md` 1.3b)."
+
+Change to section 10.1: add "A camera in `AUTO` has no start-up rate check. The check of 10.2 after
+its exposure search judges it (`camera-requests.md` 1.3b)."
+
+Change to section 10.4: replace the text with the server reason of `camera-requests.md` 1.5a:
+`declared 30.00 fps, measured 25.76 fps. Camera is slow. Try adding more light`.
 
 Change to section 11.1: replace the section with:
 
 "- Modes: `MANUAL` and `AUTO` (`camera-requests.md` 1.1). `AUTO` is the exposure search of
-  SkellyCam. It runs only when the user asks and holds its result. The auto exposure of the camera is
-  never set on Windows. This replaces the modes of D29 for exposure.
+  SkellyCam. It runs at each open, at a change of the rate and when the user asks, and it holds its
+  result. A camera in `MANUAL` never searches. The auto exposure of the camera is never set on
+  Windows. This replaces the modes of D29 for exposure.
 - The value keeps the unit of today: a power of two in seconds (-7 = 1/128 s) [D35].
 - The search, its values, its frames and its rate guard: `camera-requests.md` 1.3. The held value:
-  1.3a."
+  1.3a. The search at an open: 1.3b."
 
 Change to section 11.2: add "A change of the mode from `MANUAL` to `AUTO` of a camera that streams
 starts the exposure search on the open stream (`camera-requests.md` 1.2). A change from `AUTO` to
-`MANUAL` is a live set of the value."
+`MANUAL` is a live set of the value. A reopen of a camera in `AUTO` for a change of resolution or
+rate runs the exposure search after the warm-up, in place of the start-up rate check
+(`camera-requests.md` 1.3b)."
 
 Change to section 11.3: the kinds are `auto_control`, `mixed_rate`, `control_change_failed`,
 `add_light`, `exposure_search_failed` and `rate_fallback`. On Windows, `auto_control` no longer comes
 for exposure.
 
 Change to section 12, row `set controls`: "each control set and read-back at start". The example
-reason becomes the `MANUAL` reason of `camera-requests.md` 1.5a.
+reason becomes the server reason of `camera-requests.md` 1.5a.
 
 Change to section 14.1: add "Until phase 7, the forced auto exposure of Linux stays as an exception to
 the rule of `camera-requests.md` 1.1, and the exposure mode choice and the exposure search are not
@@ -400,23 +537,28 @@ offered on Linux and macOS (`camera-requests.md` 1.7)."
 
 Change to section 16.2:
 
-- T-CAP-18: the reason is the `MANUAL` reason of `camera-requests.md` 1.5a.
+- Each test that does not name an exposure mode uses `MANUAL -7`, so that the new default `AUTO` does
+  not change its result [B12].
+- T-CAP-18: the reason is the server reason of `camera-requests.md` 1.5a.
 - T-CAP-34: the fake camera reports its exposure in auto (a script value), with the config in
   `MANUAL`; the rest stays. The reason: a config cannot ask for the camera auto exposure now.
-- T-CAP-41: `MANUAL -7` and `AUTO` held at -9 with a brightness model in the fake: both open with
-  one manual set, and no search runs. `RECOMMEND` is read as `AUTO`.
+- T-CAP-41: `MANUAL -7` and `AUTO` held at -9 with a brightness model in the fake. `MANUAL` opens
+  with one manual set and no search. `AUTO` opens with one set of -9, then searches after the warm-up
+  [G1]. `RECOMMEND` is read as `AUTO`, and it searches [G6].
 - T-CAP-42: the fake reports its exposure in auto with no set through the config; the rest stays.
-- T-CAP-53, T-CAP-94: the reason is the `MANUAL` reason.
-- T-CAP-55, T-CAP-96: "with the exposure search (the button) after the open" in place of "with auto
+- T-CAP-53, T-CAP-94: the reason is the server reason of 1.5a.
+- T-CAP-55, T-CAP-96: "in `AUTO`, with the exposure search at the open" in place of "with auto
   exposure".
 - T-CAP-77: exposure leaves the test; it reads the auto focus only.
 - `skellycam/tests/capture/capture_hardware.py` `SLOW_REASON`: the new forms.
 
 Change to section 16.3: T-CAP-55 is "a dark room with the exposure search".
 
-Change to section 20: add a note after D29: "Note: for exposure, C4FZ of 2026-11-20 replaces the
-modes of D29 ([ADR-C4FZ](../decisions/entries/C4FZ-camera-requests.md))." Add the same note after
-D44 for the "exposure advice", and after D45 for the USB link display.
+Change to section 20: add a note after D29: "Note: for exposure, JK79 of 2026-11-20 (which
+supersedes C4FZ) replaces the modes of D29
+([ADR-JK79](../decisions/entries/JK79-exposure-search-at-each-open-and-camera-requests.md))." Add the
+same note after D44 for the "exposure advice", after D45 for the USB link display, and after D25 for
+the text of a slow camera.
 
 ### 1.11 Tests
 
@@ -427,30 +569,35 @@ D44 for the "exposure advice", and after D45 for the USB link display.
 | T-REQ-03 | fake | The C922 pattern: mode 60 fps; `rate_by_exposure` 60 at -7 only, 29.7 at each other value; brightness nearest to 127.5 at -6; press the button. | Result -7 (-6 did not keep the rate; -8 did not keep it, so no offset). A rate is measured at each of the 8 values. |
 | T-REQ-04 | fake | Brightness 50 at -5, darker below; rate 30 at each value; press the button. | Result -6; `add_light` true; the response and the status `warnings` hold `add_light` with the text of 1.5; the camera is `ready`. |
 | T-REQ-05 | fake | The generic camera: 25.76 fps at each value; `ready` with `MANUAL -7`; press the button. | The search fails; the last set is `MANUAL -7`; the warning `exposure_search_failed` with its text; the camera then runs the check of [cap 10.2] and is `too_slow`, and it stays in the gate with its preview. |
-| T-REQ-06 | fake | Connect one fake with `AUTO`, `exposure` -7 and `exposure_found_at_fps` `None`. | One set of -7 at step 5; no search; `ready`; the config keeps `exposure_found_at_fps` `None`. |
+| T-REQ-06 | fake | Connect one fake with `AUTO`, `exposure` -7 and `exposure_found_at_fps` `None`, with the brightness and the rates of T-REQ-01. | One set of -7 at step 5; no start-up rate check; the states `starting`, `waiting`, `adjusting`, `checking`, `ready`; the sets -12 to -5, then -9; open count 1; the ring gets frames during the search; the apply response comes after the search and holds `AUTO`, -9 and `exposure_found_at_fps` 30 [G1, G2, B1, B4]. |
 | T-REQ-07 | fake | The image follows a new exposure only from the 3rd frame after the set; frames that arrived before the set returned have the old brightness; press the button. | Result as in T-REQ-01; the brightness of each trial is the value of the 10th frame that arrived after the set returned. |
 | T-REQ-08 | fake | One value at 10 fps, the others at 30, on the virtual clock; press the button. | The search leaves the slow value at `t_a + 30 / (0.97 x 30)` s, ±25 ms; that trial has `kept_rate: false`. |
 | T-REQ-09 | fake | Each value at 5 fps (the fake still delivers); press the button. | The search fails at 20 s (±0.25 s) of the virtual clock; the old setting is set again. |
 | T-REQ-10 | fake | Two fakes `ready`, A and B in `MANUAL`; apply B with `AUTO` only. During the search of B: a record start; an apply that changes the size of B. | Only B searches; A gets no set call; the rings of A and B get frames at each gate round during the search; the record start gets 409 that names B and `adjusting`; the apply gets 409. |
 | T-REQ-11 | fake | A recording runs with two fakes. Press the button; send "Search again" for one camera; send an apply with `AUTO` for one camera. | Each gets 409; the fakes get no set call; the configs do not change. |
-| T-REQ-12 | fake | Connect, reopen by a size change, reopen by a rate change, and "apply again" after a fail, each with one fake in `AUTO` held at -9 (`exposure_found_at_fps` 30). In the reopens, the request holds `exposure` -5. | Each start-up gives one set of -9 and no search; the reopens keep -9, not -5. |
+| T-REQ-12 | fake | Connect, reopen by a size change, reopen by a rate change, and "apply again" after a fail, each with one fake in `AUTO` held at -9 (`exposure_found_at_fps` 30) and the brightness of T-REQ-01 at each rate. In the reopens, the request holds `exposure` -5. | Each open gives one set of -9 at step 5, not -5 [A8], then a search after the warm-up [G1]; each ends with -9 and `exposure_found_at_fps` at the mode rate of that open. |
 | T-REQ-13 | fake | Three fakes `ready`: two `MANUAL`, one `AUTO`; press the button; then press it again while it runs. | Each camera searches one time and ends in `AUTO` with its own value; the response has `results` for the three; the second press gets 409. |
-| T-REQ-14 | fake | Apply requests with `RECOMMEND`, `AUTO`, `MANUAL`, `CAMERA`; a new `CameraConfig()`. | `RECOMMEND` is stored as `AUTO`; `CAMERA` gets 422; the default is `MANUAL`, -7, `exposure_found_at_fps` `None`. |
+| T-REQ-14 | fake | Apply requests with `RECOMMEND`, `AUTO`, `MANUAL`, `CAMERA`; a connect with `RECOMMEND`; a new `CameraConfig()`. | `RECOMMEND` is stored as `AUTO`, and the connect searches [G6]; `CAMERA` gets 422; the default is `AUTO`, -7, `exposure_found_at_fps` `None` [G1, B13]. |
 | T-REQ-15 | fake | A spy on `set_controls` of the fake in each test of this table and in T-CAP-41. | No call with `ControlSetting(auto=True)` for exposure. |
 | T-REQ-16 | fake | `ready` with `AUTO -9`, found at 30; apply `MANUAL -7`. | One live set of -7; no search; state `checking`, then `ready`; `exposure_found_at_fps` is `None`. |
 | T-REQ-17 | fake | `live_set_faults`: the set of -9 returns an error; press the button. | The search fails; the last set is the old setting; `exposure_search_failed` names the error; the camera stays open. |
 | T-REQ-18 | fake | Three fakes search; one gives device removed during its search. | That camera is `dead`, with no restore set; the two others end their searches; `camera_failures` holds it. |
-| T-REQ-19 | fake | Cameras that fail the start-up rate check: `MANUAL` at 30, `AUTO` at 30, `MANUAL` at 60. | The reasons of 1.5a, to the character. |
+| T-REQ-19 | fake | Cameras in `MANUAL` that fail the start-up rate check at 30 and at 60; one camera in `AUTO` at 30 that delivers 25.76 fps at each value. | The two reasons have the form `declared 30.00 fps, measured 25.76 fps. Camera is slow. Try adding more light`, to the character, with no ` Or choose 30 fps.` [G3, B8]; the `AUTO` camera gets no start-up reason, and it is `too_slow` after its search and its check (1.3b). |
 | T-REQ-20 | fake | A fake without an exposure control; press the button. | The search fails at once with `Camera a1b2 has no exposure control`; the mode does not change. |
-| T-REQ-21 | fake | OpenCV fake with the platform read as Linux, then as macOS; press the button; send "Search again"; apply `AUTO` on a running camera. | The button and "Search again" get 422 with the text of 1.5; the apply sets no value through a search. |
+| T-REQ-21 | fake | OpenCV fake with the platform read as Linux, then as macOS; press the button; send "Search again"; apply `AUTO` on a running camera; connect a fake in `AUTO`. | The button and "Search again" get 422 with the text of 1.5; the apply sets no value through a search; the connect runs no search, and no camera is `adjusting` (1.7). |
 | T-REQ-22 | fake | "Search again" for one of three `ready` fakes; then the body with a camera ID that is not selected. | Only that camera searches; the others get no set call; the second request gets 422. |
-| T-REQ-27 | ui-unit | `exposureRowText`: `MANUAL -8`; `AUTO -8` found at 30 with mode rate 30; `AUTO` with no held value; `AUTO` found at 30 with mode rate 60; found at 30 with mode rate 29.97; `too_slow` in `MANUAL` and in `AUTO`; an `add_light` warning. | `E:-8`; `E:-8 auto`; "Auto: not searched yet"; "Found at 30 fps: search again"; no "found at" text (one rate class); the two row texts of 1.5a, to the character; "Add light". |
+| T-REQ-42 | fake | Three fakes connect in `AUTO` at 30 (a new group), each with its own brightness model; one fake takes 1 s longer to open. During the searches, a record start. | No camera is `adjusting` before the last camera leaves `starting`; then the three are `adjusting` together; the record start gets 409 that names each camera and `adjusting`; during its search, the status of each camera has `exposure_search.state` `"running"`; the rings get frames; the apply response comes after the last search and holds the three results [G2, B1, B4]. |
+| T-REQ-43 | fake | Two fakes `ready` in `AUTO`, held at -9 and -8. An apply adds a third fake in `AUTO` ("Update Cameras"). | Only the third camera searches; the two others get no set call and stay `ready` at -9 and -8; their rings get frames during the search; a record start during the search gets 409 that names the third camera [B5]. |
+| T-REQ-44 | fake | The generic camera (25.76 fps at each value) connects in `AUTO` held at -7, found at 30. | No `failed` state and no start-up reason; the search fails with `exposure_search_failed`; the last set is -7; `exposure_found_at_fps` stays 30; the check gives `too_slow`; the camera stays in the gate with its preview [B6]. |
+| T-REQ-45 | fake | One fake in `MANUAL -6`: connect; a reopen by a rate change; "apply again" after a fail. | No search in any case; one set of -6 at each open; the start-up rate check of [cap 10.1] judges each open; `waiting`, then `ready` [G1]. |
+| T-REQ-46 | fake | On the virtual clock: one fake in `AUTO` whose warm-up ends 4 s after the open, and whose search takes 13 s (one value kept, each other value slow). | The camera does not fail with "not ready in 15 s"; the search ends with the kept value; the limit of 20 s of the search counts from its first set [B3]. |
+| T-REQ-27 | ui-unit | `exposureRowText`: `MANUAL -8`; `AUTO -8` found at 30 with mode rate 30; `AUTO` with no held value; a camera in `adjusting`; `too_slow` in `MANUAL` and in `AUTO`; an `add_light` warning. | `E:-8`; `E:-8 auto`; "Auto: no value found yet"; "Setting exposure…"; `Camera is slow. Try adding more light` for both `too_slow` cases, to the character [G3]; "Add light". No case gives a "Found at" text [B9]. |
 | T-REQ-28 | ui-unit | `labelText` with the text `Camera a1b2: add light. ...` and the list where a1b2 is number 2, "Logitech C922"; a text with two IDs. | `Camera 2 · Logitech C922: add light. ...`; each ID replaced. |
-| T-REQ-29 | ui-manual | The app with three cameras: the button, "Search again", a switch to Auto while not streaming, then a connect, then a restart of the app. | The button and link states and tooltips of 1.8; no search at the connect; "Auto: not searched yet"; after a search and a restart, the held value comes back from the stored settings and a connect sets it with no search. |
-| T-REQ-23 | hardware | Windows. The C922, the C930e and the Kiyo Pro at 1280x720 30 fps, `ready` in `MANUAL -7`; press the button. | Each camera ends `ready` with its 10.2 check passed; no reopen (open count 1); each search under 20 s. The trials of each camera are recorded, so that the 10 frames to settle and the 30-frame window can be confirmed [Q4]. |
+| T-REQ-29 | ui-manual | The app with three cameras in `AUTO`: a connect; the button; "Search again"; a switch to Auto while not streaming, then a connect; a restart of the app, then a connect. | At each connect, "Setting exposure…" shows over each preview, and the record button is disabled with that tooltip until each search ends [G2]; the button and link states and tooltips of 1.8; after the restart, the held value comes back from the stored settings, and the connect sets it first and then searches [B2]. |
+| T-REQ-23 | hardware | Windows. The C922, the C930e and the Kiyo Pro at 1280x720 30 fps, `ready` in `MANUAL -7`; press the button. Then close, and connect the three in `AUTO`. | Each camera ends `ready` with its 10.2 check passed; no reopen during a search (open count 1); each search under 20 s. At the connect, the three search at the same time after their warm-up; the time from the apply to its response and the time of each search are recorded (1.3b). The trials of each camera are recorded, so that the 10 frames to settle and the 30-frame window can be confirmed [Q4]. |
 | T-REQ-24 | hardware | Windows. The C922 alone at 1280x720 60 fps in `MANUAL -7`; press the button. | The result keeps 58.2 fps or more, or the search fails with its text. The trials are recorded (the notes predict -7). |
 | T-REQ-25 | hardware | Windows, `SKELLYCAM_HARDWARE_DARK=1`. Each camera at 30 fps; press the button. | No camera holds a value at which its 10.2 check fails; the flag `add_light` and the brightness at the brightest kept value are recorded, so that the user can set the limit of 64 [Q6]. |
-| T-REQ-26 | hardware | Windows. The Kiyo Pro alone; press the button five times, with a close and a connect between. | Each search ends, and each connect reaches `ready` with the held value, or records its diagnostics; the Kiyo Pro wedge rule applies [cap 16.1]. |
+| T-REQ-26 | hardware | Windows. The Kiyo Pro alone in `AUTO`; connect and close five times; then press the button. | Each connect searches and reaches `ready` with its value, or records its diagnostics; the Kiyo Pro wedge rule applies [cap 16.1]. |
 
 ## 2. Part 2: one frame rate for all cameras
 
@@ -480,20 +627,28 @@ D44 for the "exposure advice", and after D45 for the USB link display.
   for a rate change [D31]. A reopen recreates the rings of that camera and repeats the warm-up and
   the rate check [cap 11.2]. Thus each selected camera reopens. A camera that is not selected does
   not open.
-- A camera in `AUTO` reopens with its held value. No search runs [Q3]. A value found at another rate
-  gets only the start-up rate check at the new rate (1.3a).
+- A camera in `AUTO` reopens with its held value. After the warm-up, it searches at the new rate,
+  before the check of [cap 10.2] judges it (1.3b) [G1]. It has no start-up rate check.
+- A camera in `MANUAL` reopens with its value, and the start-up rate check of [cap 10.1] judges it.
 
 ### 2.4 The real 60 fps check and the fall back
 
 - When the user picks 60 fps while cameras stream, the UI sends the apply request at once. When no
   camera streams, the UI keeps the choice, and the next connect sends it.
-- The check is the start-up rate check of [cap 10.1] at 60 fps, over the warm-up frames 6 to 90 of
-  each camera, with the exposure of its config. No other probe runs [A16].
-- The fall back [Q10]: when the group rate of a request is 60 fps, and a selected camera fails at the
-  stage `set mode` or `rate check`, the main process applies the configs from before the request to
-  each selected camera [A17]. For a new group, these are the configs of the request with `framerate`
-  30. Each camera then reopens at 30 fps (`failed` cameras by "apply again" [cap 8.3]), with its held
-  value and no search [Q3].
+- For a camera in `MANUAL`, the check is the start-up rate check of [cap 10.1] at 60 fps, over the
+  warm-up frames 6 to 90 of each camera, with the exposure of its config. No other probe runs [A16].
+- For a camera in `AUTO`, the check at 60 fps is its search at 60 fps and the check of [cap 10.2]
+  after it (1.3b) [G1].
+- The fall back [Q10]: when the group rate of a request is 60 fps, the main process applies the
+  configs from before the request to each selected camera [A17] in these cases:
+  - a selected camera fails at the stage `set mode` or `rate check` [A17];
+  - the search of a camera in `AUTO` finds no value that keeps 60 fps [B7]. The fall back then starts
+    at once, with no check of that camera;
+  - the check of [cap 10.2] after the search of a camera in `AUTO` fails [B7].
+
+  For a new group, the configs from before the request are the configs of the request with
+  `framerate` 30. Each camera then reopens at 30 fps (`failed` cameras by "apply again" [cap 8.3]),
+  with its held value. Each camera in `AUTO` searches again at 30 fps (1.2 item 1) [G1].
 - The fall back runs one time. A camera that also fails at 30 fps stays `failed`.
 - A failure at another stage (`open`, for example "in use by another program") gives no fall back.
   That camera is `failed`, and the others run at 60 fps [A17].
@@ -502,19 +657,29 @@ D44 for the "exposure advice", and after D45 for the USB link display.
   `The group runs at 30 fps. Camera a1b2 measured 29.66 fps in its 60 fps mode at exposure -7.`
   The UI shows it with the label form, for example `Camera 2 · Razer Kiyo Pro measured ...` (1.8).
   `camera_failures` does not hold these failures, because the cameras run again.
-- A camera in `AUTO` whose held value was found at another rate gets one more sentence [A9]:
-  ` Its exposure -9 was found at 30 fps. To try 60 fps: set it to Manual with a shorter exposure, pick 60 fps, then switch it to Auto.`
-  The switch to `AUTO` then runs the search at 60 fps (1.2 item 3). The search cannot run at 60 fps
-  before the camera runs at 60 fps, because it needs the open stream at that rate.
+- For a camera in `AUTO` whose search found no value, the measured rate and the exposure of the text
+  are those of the trial with the highest measured rate [B7].
+- The extra sentence of the earlier draft for a value found at another rate goes [B9]: a camera in
+  `AUTO` searches at each rate (1.3a) [G1].
 - Measured: the Kiyo Pro gave 29.7 to 30.4 fps in its 60 fps mode at each exposure from -7 to -10
   [M `research/usb_cameras/docs/free_run_log_20261120.md` §9]. Thus a group with the Kiyo Pro falls
   back to 30 fps.
 
 The cost: each camera closes (272 to 1,122 ms [cap 6.9]), opens (about 0.9 s on the Kiyo Pro, same
-file), and counts 90 warm-up frames (1.5 s at 60 fps). That is about 3 to 4 s. A fall back adds about
-5 s more (warm-up of 3 s at 30 fps). No search runs in either. The worst case is about 9 s. During
-this time, the selector shows "Checking 60 fps…", and each camera tile shows its state (`starting`)
-with no preview.
+file), and counts 90 warm-up frames (1.5 s at 60 fps). That is about 3 to 4 s for a group in
+`MANUAL`. A fall back adds about 5 s more (warm-up of 3 s at 30 fps). The worst case is about 9 s.
+
+With cameras in `AUTO`, each open also has a search and a check (1.3b) [G1]:
+
+- At 60 fps: about 5.3 s of search and 1.3 s of check, so about 10 s in total. A camera that is slow
+  at each value but one (the C922 pattern of 1.3 item 3) takes about 0.85 s for each slow value, so
+  about 7 s of search.
+- A fall back after a failed search at 60 fps (about 7 s): about 2 s to close and open, 3 s of
+  warm-up, 10.7 s of search and 2.5 s of check at 30 fps, so about 18 s more.
+- The worst case of a usual group is then about 30 s.
+
+During this time, the selector shows "Checking 60 fps…". Each camera tile shows its state:
+`starting` and `waiting` with no preview, then `adjusting` and `checking` with the preview.
 
 How the result is kept [A18]:
 
@@ -566,12 +731,15 @@ How the result is kept [A18]:
 Change to section 7.5, item "Auto rate": add "The UI does not send the auto rate. It writes one rate,
 30 or 60, to each camera (`camera-requests.md` 2.2). The API keeps -1 and 0 for other consumers."
 
-Change to section 7.5: add the item "**Fall back to 30 fps**: a request whose group rate is 60 fps,
-in which a selected camera fails at `set mode` or `rate check`, falls back to the configs from before
-the request, one time (`camera-requests.md` 2.4)."
+Change to section 7.5: add the item "**Fall back to 30 fps**: a request whose group rate is 60 fps
+falls back to the configs from before the request, one time, when a selected camera fails at
+`set mode` or `rate check`, or when a camera in `AUTO` finds no exposure that keeps 60 fps or fails
+the check after its search (`camera-requests.md` 2.4)."
 
-Change to section 8.2: add the row "| `failed` at 60 fps (stage `set mode` or `rate check`) | the
-fall back of `camera-requests.md` 2.4 | `starting` at 30 fps |".
+Change to section 8.2: add the rows "| `failed` at 60 fps (stage `set mode` or `rate check`) | the
+fall back of `camera-requests.md` 2.4 | `starting` at 30 fps |" and "| `adjusting`, `checking` or
+`too_slow` at 60 fps (a camera in `AUTO`) | the fall back of `camera-requests.md` 2.4 | `starting` at
+30 fps |".
 
 Change to section 11.3: the kind `rate_fallback` (see 1.10).
 
@@ -582,18 +750,18 @@ Change to section 16.2, T-CAP-20 item (3): "apply a request that gives all three
 
 | ID | Kind | Set-up | Pass criterion |
 |---|---|---|---|
-| T-REQ-30 | fake | Three fakes `ready` at 30, each with 60 in its modes and delivering 60; apply 60 for each. | Each camera reopens one time; the group rate is 60; no `rate_fallback`; each is `ready`. |
+| T-REQ-30 | fake | Three fakes `ready` at 30 in `MANUAL -7`, each with 60 in its modes and delivering 60; apply 60 for each. | Each camera reopens one time; the group rate is 60; no `rate_fallback`; each is `ready`. |
 | T-REQ-31 | fake | As T-REQ-30, but one fake delivers 29.66 fps in its 60 mode. | Each camera reopens two times (60, then 30); the response has configs at 30 and one `rate_fallback` item for that camera with "29.66"; `camera_failures` is empty; each is `ready`. |
-| T-REQ-32 | fake | As T-REQ-31, with the slow camera in `AUTO` held at -9, found at 30. | At 60 it gets one set of -9 and no search; in the fall back, one set of -9 and no search; its `rate_fallback` text has the sentence of 2.4 with "-9" and "30 fps". |
+| T-REQ-32 | fake | Three fakes `ready` at 30 in `AUTO`, each with 60 in its modes and the brightness of T-REQ-01; one delivers 29.66 fps at each value in its 60 mode; apply 60 for each. | Each camera reopens at 60 and searches there; the search of the slow camera fails because no value keeps 60 fps, and the fall back starts with no check of that camera [B7]; each camera reopens at 30 and searches again [G1]; the response has configs at 30 with `exposure_found_at_fps` 30 and one `rate_fallback` item for that camera, with no sentence on a value found at another rate [B9]. |
 | T-REQ-33 | fake | As T-REQ-30, but one fake is in use at the reopen. | No fall back; that camera is `failed`, stage `open`; the two others run at 60. |
 | T-REQ-34 | fake | As T-REQ-31, and the slow fake also fails at 30. | One fall back only; that camera is `failed`, stage `rate check`, at 30; the others run at 30. |
-| T-REQ-35 | fake | A new group (no group runs) connects at 60; one fake delivers 29.66 at 60. | The group runs at 30; the response has `rate_fallback`. |
+| T-REQ-35 | fake | A new group (no group runs) connects at 60 in `MANUAL -7`; one fake delivers 29.66 at 60. | The group runs at 30; the response has `rate_fallback`. |
 | T-REQ-36 | fake | A recording runs at 30; apply 60. | 409; nothing reopens. |
 | T-REQ-37 | fake | A camera is `adjusting`; apply 60. | 409; the detail names the camera and `adjusting`. |
-| T-REQ-41 | fake | A fake in `AUTO` held at -7, found at 30, delivering 60 at -7; apply 60; then press the button. | The 60 check passes with no search; the config keeps `exposure_found_at_fps` 30 until the search; after the search it is 60. |
+| T-REQ-41 | fake | A fake in `AUTO` held at -7, found at 30, delivering 60 at -7 and 30 at each other value at 60 fps; apply 60. | The camera reopens at 60 and searches before its check judges it [G1]: the result is -7, and `exposure_found_at_fps` is 60 in the apply response; then the check of [cap 10.2] passes, and the camera is `ready` at 60. |
 | T-REQ-38 | ui-unit | `rateChoice`: (1) all with 60 at their sizes; (2) one with 60 at 1280x720 only and set to 1920x1080; (3) one with 59.94 and one with 60; (4) no selected camera. | (1) `can60` true; (2) false, the reason has the label form and 1920x1080; (3) false; (4) false. |
-| T-REQ-39 | ui-manual | The app with the C922 and the Kiyo Pro streaming at 30; pick 60; pick 60 again. | "Checking 60 fps…" shows; then 30 fps is the choice, with the `rate_fallback` text for `Camera n · Razer Kiyo Pro` under the selector; 60 stays available, and the second pick runs the check again. |
-| T-REQ-40 | hardware | Windows. The C922 and the C930e at 1280x720 in `MANUAL -7`; pick 60, then 30. | The result (60 or the fall back) and the time of each change are recorded; no camera stays `failed`. |
+| T-REQ-39 | ui-manual | The app with the C922 and the Kiyo Pro streaming at 30 in `AUTO`; pick 60; pick 60 again. | "Checking 60 fps…" shows; the previews show while the cameras search at 60, then at 30; then 30 fps is the choice, with the `rate_fallback` text for `Camera n · Razer Kiyo Pro` under the selector; 60 stays available, and the second pick runs the check again. |
+| T-REQ-40 | hardware | Windows. The C922 and the C930e at 1280x720 in `MANUAL -7`; pick 60, then 30. Then the same in `AUTO`. | The result (60 or the fall back) and the time of each change are recorded; no camera stays `failed`. In `AUTO`, the time of each search at 60 fps and at 30 fps is recorded. |
 
 ## 3. Part 3: USB link label
 
@@ -609,7 +777,7 @@ Change to section 16.2, T-CAP-20 item (3): "apply a request that gives all three
 
 ### 3.2 The field
 
-`CameraDeviceInfo` gets [A19]:
+`CameraDeviceInfo` gets one field. Its name and its values are a decision [G8] (they were [A19]):
 
 ```python
 usb_link: Literal["USB 1", "USB 2", "USB 3", "unknown"] = "unknown"
@@ -622,8 +790,8 @@ usb_link: Literal["USB 1", "USB 2", "USB 3", "unknown"] = "unknown"
 - A virtual camera keeps `usb_link: "unknown"`. The field gets no value `virtual`, because the
   detection result already has `virtual: true` [W5], and the UI reads that flag. This is the smallest
   change [A20].
-- The name is `usb_link`, not the sfn26 `usb_version`: the value is the speed of the link now, not the
-  USB version of the device. The values are the sfn26 values, with `unknown` in place of `None`, so
+- The name is `usb_link`, not the sfn26 `usb_version` [G8]: the value is the speed of the link now,
+  not the USB version of the device. The values are the sfn26 values, with `unknown` in place of `None`, so
   that the UI shows the value as it comes.
 - The lookup runs in the detection, one time for each camera. The value is the speed at the time of
   the detection. A camera that moves to another port is a new device at the next detection [cap 7.2].
@@ -684,7 +852,11 @@ each camera:
 - `unknown` on a camera that is not virtual: the chip `USB ?`, with the tooltip "SkellyCam could not
   read the USB link of this camera" [Q12].
 - A virtual camera (`virtual: true`): the chip `virtual`, with the tooltip "A virtual camera: it has
-  no USB link" [Q12].
+  no USB link" [Q12]. Its row is greyed [G9], and its tick box is disabled, because a request that
+  names it gets HTTP 422 [W5] [B11].
+- Which camera is virtual: the detection decides it, by the name or by the device link [G9]. The rule
+  is in [`windows-capture.md`](windows-capture.md) 7.1 (the change of 3.7). This spec has no second
+  definition [B11]. Thus an NDI camera, whose link is under `\\?\root#`, shows greyed as `virtual`.
 - A pure function `linkChip(deviceInfo)` gives the chip text and the tooltip.
 
 ### 3.6 API and UI changes
@@ -703,6 +875,15 @@ Change to section 1.3: delete the item "The USB link display" from the D45 item.
 Change to section 7.1: add "`usb_link` is the speed of the USB link now (`camera-requests.md` 3.2).
 The lookup runs in the detection child, bounded at 1 s for each camera."
 
+Change to section 7.1, the item of W5 [G9]: "Detection marks a camera virtual (`virtual: true`) when
+its friendly name contains "virtual", on each OS, or, on Windows, when its link starts with
+`\\?\root#` (a root-enumerated device with no hardware bus, for example an NDI camera) or
+`\\?\swd#vcamdevapi#` (the virtual camera API of Windows 11). Each other link stays real. A request
+that names a virtual camera gets HTTP 422 [W5]." This is the rule that item 6 of
+[ADR-FTC3](../decisions/entries/FTC3-fixes-of-the-second-capture-ci-run-and-the-first-hardware-run.md)
+proposes, and that `media_foundation/detect.py` has. Change to section 16.2, T-CAP-105: add a fake
+whose link starts with `\\?\root#` and whose name does not contain "virtual"; it is virtual too.
+
 Change to section 16.5, row D45: "T-REQ-50 to T-REQ-59 (the USB link label of `camera-requests.md`)".
 
 ### 3.8 Future work (not now)
@@ -719,47 +900,53 @@ No spec and no test now.
 | T-REQ-51 | fake | macOS function with a stand-in `ioreg` plist: location IDs with `USBSpeed` 4 and 3; the unique ID `FaceTime HD Camera`; an `ioreg` call that times out. Runs on each OS. | `USB 3`, `USB 2`, `unknown`, `unknown`. |
 | T-REQ-52 | fake | Windows parse: a Media Foundation link with `#{e5323777-f976-4f5b-9b55-b94699c46e44}\global`; a `root#image#` link. Runs on each OS (pure). | The instance, `vid` and `pid` of the link; the second gives `unknown`. |
 | T-REQ-53 | fake | Windows decode with the IOCTL seam: V2 flag 1 set; flag clear and speed byte 2; speed byte 0; USB IDs at the port that differ from the camera. Runs on each OS (pure). | `USB 3`, `USB 2`, `USB 1`, `unknown`. Only the two connection-information codes are sent; no descriptor request. |
-| T-REQ-54 | fake | Detection with a lookup that raises, and with a virtual camera. | The detection returns each camera; the field is `unknown` for both; the virtual camera has `virtual: true` and gets no lookup call. |
+| T-REQ-54 | fake | Detection with a lookup that raises, with a virtual camera by its name, and with a camera whose link starts with `\\?\root#` and whose name does not contain "virtual". | The detection returns each camera; the field is `unknown` for each; the two virtual cameras have `virtual: true` and get no lookup call [G9]. |
 | T-REQ-55 | fake | Windows only [U18]: the detection child with a lookup that hangs. | That camera has `unknown`; the detection returns within the limit of [cap 7.1] plus 2 s. |
 | T-REQ-59 | ui-unit | `linkChip` with `USB 3`, `USB 2`, `USB 1`, `unknown`, and `unknown` with `virtual: true`. | The chips `USB 3`, `USB 2`, `USB 1`, `USB ?`, `virtual`, with the tooltips of 3.5. |
 | T-REQ-56 | hardware | Windows. The Kiyo Pro in a USB 3 port, then the same Kiyo Pro in a USB 2 port (or behind a USB 2 hub); the C922 and the C930e. Compare with the output of the research script. | `USB 3`, then `USB 2`; `USB 2` for the C922 and the C930e; each value agrees with the speed of the research script. |
 | T-REQ-57 | hardware | Linux and macOS (phase 0, the user): the same cameras and ports as T-REQ-56. Compare with `lsusb -t` (Linux) or `system_profiler SPUSBDataType` (macOS). | Each value agrees with the speed that the system tool gives. |
-| T-REQ-58 | ui-manual | The app after a detection, and during a second detection, with a virtual camera present. | The chips and tooltips of 3.5; the chip `virtual` on the virtual camera; old chips stay during the second detection. |
+| T-REQ-58 | ui-manual | The app after a detection, and during a second detection, with a virtual camera present and an NDI camera (Windows). | The chips and tooltips of 3.5; the chip `virtual` on the virtual camera and on the NDI camera; their rows are greyed and their tick boxes are disabled [G9, B11]; old chips stay during the second detection. |
 
 ## 4. Choices of the agent
 
 Each choice is [An]. [ADR-Y6F6](../decisions/entries/Y6F6-camera-request-choices.md) holds the same
-list. The choices of the first draft that the user decided are in section 5.
+list. The choices of the first draft that the user decided are in section 5. The decisions [Gn] of
+section 5a decided or replaced some choices. Each such choice has its mark below.
 
 1. The early decision of 10.2 for each value, with 30 frames (1.3).
 2. The time limit of a search is 20 s (1.3).
 3. The config keeps `exposure_mode: "AUTO"` with the held value in `exposure`, and the new field
-   `exposure_found_at_fps` (1.3, 1.3a).
+   `exposure_found_at_fps` (1.3, 1.3a). **Decided by [G5].**
 4. The control thread does the sets and the loop measures; the read each second waits (1.3).
 5. Each camera searches on its own, not one value on all cameras at a time; in the gate, the 10th and
    40th frames are the first taken frames at or after those counts (1.3).
 6. The UI copies the held value from each response into its stored settings (1.3a).
 7. A camera in `AUTO` with no held value starts at its `exposure` value (-7 for a new camera); its
-   row offers the search (1.3a).
+   row offers the search (1.3a). **The part "it does not search by itself" is replaced by [G1]: it
+   searches at the open. The start value -7 stays proposed.**
 8. A reopen of a running camera keeps the held value of its current config, not the value of the
    request (1.3a).
 9. A held value found at another rate: the row says "Found at N fps: search again"; the
-   `rate_fallback` text tells how to reach 60 fps (1.3a, 2.4).
-10. `RECOMMEND` in a request is read as `AUTO` (1.5).
+   `rate_fallback` text tells how to reach 60 fps (1.3a, 2.4). **Replaced by [G1] and [B9].**
+10. `RECOMMEND` in a request is read as `AUTO` (1.5). **Decided by [G6].**
 11. The endpoint `POST /camera/group/exposure/auto` with the optional body `camera_ids`, its
     response, its codes, the status field `exposure_search`, and the warning kinds `add_light` and
-    `exposure_search_failed` with their texts (1.5).
+    `exposure_search_failed` with their texts (1.5). **The names are decided by [G5]. The body, the
+    response, the codes and the texts stay proposed.**
 12. The one set of texts of a slow camera: the `MANUAL` reason adds "or lower the exposure", and the
-    `AUTO` row text "Too slow at this exposure: add light, then search again" (1.5a).
+    `AUTO` row text "Too slow at this exposure: add light, then search again" (1.5a). **Replaced by
+    [G3] and [B8].**
 13. Server texts keep camera IDs; the UI replaces each listed ID with the label form (1.8).
 14. No rate above 60 fps is offered (2.1).
 15. The UI never sends -1 or 0; the API keeps them; `CameraConfigFramerate.tsx` goes; the UI default
     is 30 (2.2, 2.8).
-16. The real 60 fps check is the start-up rate check at 60 fps; no other probe (2.4).
+16. The real 60 fps check is the start-up rate check at 60 fps; no other probe (2.4). **Now for a
+    camera in `MANUAL` only; a camera in `AUTO`: [G1], [B1].**
 17. The fall back runs only for the stages `set mode` and `rate check`, with the warning
-    `rate_fallback` (2.4).
+    `rate_fallback` (2.4). **[B7] adds the cases of a camera in `AUTO`.**
 18. Only the UI keeps the last fall back text, for the app run (2.4).
-19. The field `usb_link` with the values `USB 1`, `USB 2`, `USB 3`, `unknown` (3.2).
+19. The field `usb_link` with the values `USB 1`, `USB 2`, `USB 3`, `unknown` (3.2). **Decided by
+    [G8].**
 20. A virtual camera keeps `usb_link: "unknown"`; the UI shows `virtual` from the flag `virtual`
     (3.2, 3.5).
 21. The label sends no request to the camera: only the connection-information calls at the hub
@@ -767,10 +954,40 @@ list. The choices of the first draft that the user decided are in section 5.
 22. Port the sfn26 module as `skellycam/core/device_detection/usb_link.py` (3.4).
 23. On Windows, a bounded lookup of 1 s for each camera in the detection child (3.4).
 
+Choices after the decisions [Gn]. Each choice is [Bn].
+[ADR-4Z7T](../decisions/entries/4Z7T-choices-after-the-search-at-each-open.md) holds the same list.
+
+1. A camera in `AUTO` has no start-up rate check: `starting` to the end of the warm-up, `waiting`,
+   `adjusting` when no selected camera is `starting`, then the check of 10.2 (1.3b).
+2. The held value is not a start point of the search. It is the value at the open and the value
+   after a failed search (1.3a).
+3. For a camera in `AUTO`, the ready limit of 15 s ends at the end of the warm-up; the search keeps
+   its limit of 20 s (1.3b).
+4. An apply request that opens a camera in `AUTO` returns when each search has ended; the tile and
+   the record button show "Setting exposure…" (1.3b, 1.8).
+5. Only a camera that opens searches; "Update Cameras" does not touch the other cameras (1.3b).
+6. A failed search at an open sets the held value again and goes on to the check; a search never
+   makes a camera `failed` (1.3b).
+7. At 60 fps, the fall back also runs when a camera in `AUTO` finds no value that keeps 60 fps, or
+   fails the check after its search; the text then uses its trial with the highest rate (2.4).
+8. The server reason keeps the declared and measured rates before the text of [G3]; " Or choose
+   30 fps." goes; the warnings keep their own texts (1.5, 1.5a).
+9. The row text "Found at N fps", and the `rate_fallback` sentence for a value found at another
+   rate, go; "Auto: no value found yet" (1.3a, 1.8, 2.4).
+10. The UI fills `camera_index` and `camera_name` from the current detection; the recorder uses the
+    `camera_index` of the request for the order of `group_position`; no new field in the take files
+    (section 8).
+11. The rule of [G9] stays in the capture spec (a change to its 7.1); the UI greys the row of a
+    virtual camera and disables its tick box (3.5, 3.7).
+12. Each T-CAP and T-REQ test that does not name an exposure mode uses `MANUAL -7` (1.10, 1.11,
+    2.10).
+13. The default of `CameraConfig()` in the API is also `AUTO` (1.5).
+
 ## 5. Decisions of the user of 2026-11-20
 
 The user answered the 14 questions of the first draft on 2026-11-20
-([ADR-C4FZ](../decisions/entries/C4FZ-camera-requests.md)). The body of this spec applies each one.
+([ADR-C4FZ](../decisions/entries/C4FZ-camera-requests.md)). The body of this spec applies each one,
+except Q3 and Q8, which the decisions of section 5a replace.
 
 1. **Q1.** SkellyCam never turns on the auto exposure of the camera, also not at the start-up (1.1,
    1.6).
@@ -779,7 +996,8 @@ The user answered the 14 questions of the first draft on 2026-11-20
 3. **Q3.** The search runs only when the user asks: the button for all cameras, "Search again" for
    one camera, or a switch of a camera to Auto. A connect, a reopen for a size or rate change, and
    "apply again" use the held value and do not search. The user accepted the recommendation of the
-   supervisor, not of the first draft (1.2, 1.3a, 2.3, 2.4).
+   supervisor, not of the first draft (1.2, 1.3a, 2.3, 2.4). **Replaced by [G1]: Auto searches at
+   each open, at a change of the rate and when the user asks.**
 4. **Q4.** The search waits 10 frames after each set, takes the brightness from the 10th frame, and
    measures the rate over the next 30 frames. These are starting values; a camera run confirms them
    (1.3, T-REQ-23).
@@ -788,7 +1006,8 @@ The user answered the 14 questions of the first draft on 2026-11-20
    255. The search still holds its result. A camera run in a dim room sets the limit (1.3,
    T-REQ-25).
 7. **Q7.** The new state `adjusting` (1.4).
-8. **Q8.** The texts of a slow camera of the first draft (1.5a).
+8. **Q8.** The texts of a slow camera of the first draft (1.5a). **Replaced by [G3]: "Camera is
+   slow. Try adding more light".**
 9. **Q9.** After a fall back to 30 fps, the 60 fps choice stays available, and a new pick runs the
    check again (2.4).
 10. **Q10.** The main process returns the whole group to 30 fps, one time, and says which camera
@@ -800,13 +1019,45 @@ The user answered the 14 questions of the first draft on 2026-11-20
 13. **Q13.** The UI writes the one rate into each camera config; no new group field (2.2).
 14. **Q14.** A group with 59.94 fps against 60 fps is not offered 60 fps (2.5).
 
+## 5a. Decisions of the user of 2026-11-20, second set
+
+The user decided G1 to G9 on 2026-11-20
+([ADR-JK79](../decisions/entries/JK79-exposure-search-at-each-open-and-camera-requests.md), which
+supersedes ADR-C4FZ). The body of this spec applies each one.
+
+1. **G1.** A camera in Auto runs the search (a) at each open, (b) when the user changes the frame
+   rate, before the rate check judges the camera, and (c) when the user asks. A camera in Manual
+   never searches. A new camera starts in Auto. This reverses Q3 and the "one time, when the user
+   asks" of E3, and it replaces E5 (1.1, 1.2, 1.3a, 1.3b, 2.3, 2.4).
+2. **G2.** During the search (about 10 s for each camera at 30 fps; all cameras search at the same
+   time), the preview shows, the state is `adjusting`, and a recording cannot start until each
+   camera is done (1.3b, 1.4, 1.8).
+3. **G3.** The text of a slow camera is exactly "Camera is slow. Try adding more light", in every
+   case (1.5a).
+4. **G4.** No change: the exposure does not change during a take; Auto is the one-shot search of
+   SkellyCam on the open stream; the auto exposure of the camera is never a mode (1.1).
+5. **G5.** The names `exposure_found_at_fps`, `POST /camera/group/exposure/auto`,
+   `exposure_search`, `add_light` and `exposure_search_failed` (1.5). Items 3 and 11 of section 4,
+   for the names only.
+6. **G6.** An old `RECOMMEND` is read as Auto, and so it searches at the open (1.5). Item 10 of
+   section 4.
+7. **G7.** A take uses the camera number of the camera list. The UI sends the number and the name
+   of the current detection with each apply request, and the recorder writes the number of the
+   request (section 8).
+8. **G8.** One field `usb_link` with `USB 1`, `USB 2`, `USB 3`, `unknown` (3.2). Item 19 of
+   section 4.
+9. **G9.** A camera is virtual also by its device link (on Windows, `\\?\root#` or
+   `\\?\swd#vcamdevapi#`), so that NDI cameras show greyed as "virtual". The rule belongs to the
+   detection of `windows-capture.md` 7.1 (3.5, 3.7).
+
 ## 6. Other decisions of the same day that this spec must agree with
 
 These decisions of the user of 2026-11-20 on the UI were relayed by the supervisor. No entry on this
 branch holds them yet. This spec agrees with them:
 
 - A `too_slow` camera keeps its tile and counts as streaming. Its row says "Too slow at this
-  exposure: lower the exposure" (1.4, 1.5a).
+  exposure: lower the exposure" (1.4, 1.5a). **The row text is replaced by [G3]: "Camera is slow.
+  Try adding more light".**
 - The "Update Cameras" button is disabled during a recording (1.8, 2.7).
 - Camera failure reasons will get a fixed failure code beside the text. Not accepted yet (1.5).
 - The label form for a camera everywhere in the UI is `Camera <list number> · <name>` (0, 1.8).
@@ -817,12 +1068,45 @@ branch holds them yet. This spec agrees with them:
 2. The limit of 64 for "Add light", in a dim room (T-REQ-25) [Q6].
 3. The C922 at 60 fps through the search: the notes measured -6 to -10 only; -12, -11 and -5 are not
    known (T-REQ-24).
-4. A held value found at 30 fps at a pick of 60 fps, and the way to 60 fps of 2.4 (T-REQ-40, with
-   one camera in `AUTO`).
+4. The search at 60 fps after a pick of 60 fps, and the fall back of 2.4 with cameras in `AUTO`
+   (T-REQ-40).
 5. The C922 with the Kiyo Pro open at 60 fps: one test gave 46.5 fps over frames 6 to 90 and 58.7 fps
    over 10 s (not repeated). The start-up check can then fail a camera that reaches 60 fps later.
-6. The Kiyo Pro under five searches with closes and connects between (T-REQ-26, the wedge rule).
+6. The Kiyo Pro under five searches at five connects (T-REQ-26, the wedge rule).
 7. The USB link of each test camera through its Media Foundation link, and the Kiyo Pro in a USB 2
    port (T-REQ-56).
 8. The Linux and macOS link lookups (phase 0, T-REQ-57).
 9. Phase 7, not before: the Linux V4L2 exposure units, and whether macOS sets exposure at all.
+10. The time of a connect with three cameras in `AUTO`, with the search at the open (T-REQ-23,
+    1.3b).
+
+## 8. Part 4: the camera number of a take
+
+### 8.1 The rule
+
+- A take uses the camera number of the camera list [G7]. The camera list shows `Camera <n>`, where n
+  is `index` of the detection result of the camera (`CameraTreeItem.tsx`).
+- The UI sends the number and the name of the current detection with each apply request [G7]: it
+  sets `camera_index` and `camera_name` of each config from the current detection result. A stored
+  desired config can hold the values of an earlier detection. The request never sends them [B10].
+- The server keeps the `camera_index` of the request. It does not replace it with a value of its
+  own detection or of the source [B10]. `camera_index` stays unique in a group, as today.
+- The recorder writes the number of the request [G7]: `group_position` follows the order of the
+  `camera_index` of the request (item 19 of section 16 of [`recorder.md`](recorder.md), a choice of
+  its agent). No new
+  field goes into the take files [B10]. A new field needs a change of the file format.
+- A pure function `withDetectionNumbers(configs, cameras)` in
+  `skellycam-ui/src/store/slices/cameras/camera-number.ts` sets the two fields [B10].
+
+### 8.2 Changes to recorder.md
+
+Change to item 19 of section 16: "`group_position` is the order of the cameras in the take:
+the order of the `camera_index` of the apply request, which is the camera number of the camera list
+of the UI (`camera-requests.md` 8.1)."
+
+### 8.3 Tests
+
+| ID | Kind | Set-up | Pass criterion |
+|---|---|---|---|
+| T-REQ-60 | ui-unit | `withDetectionNumbers`: a stored config of camera a1b2 with `camera_index` 0 and the name "Old name"; a detection result that lists a1b2 with `index` 2 and the name "Logitech C922". | The request config has `camera_index` 2 and `camera_name` "Logitech C922"; each other field does not change [G7]. |
+| T-REQ-61 | fake | Two fakes; the apply request gives camera A `camera_index` 2 and camera B `camera_index` 0; the source order is A, then B. Start a take. | The configs of the response keep 2 and 0; in the manifest, B has `group_position` 0 and A has 1 [G7, B10]. |
