@@ -1,6 +1,17 @@
 # 50G8 — Phase 2 follows the frame ring spec: two rings per camera, copy then CRC-32 reads
 
-**Status:** accepted, 2026-11-18 (user; commit to dom/native-jpeg).
+**Status:** absorbed into
+[`specs/frame-ring.md#phase-2-ring-specification-jpeg-ring-2a-bgr-ring-and-decode-stage-2b`](../../specs/frame-ring.md#phase-2-ring-specification-jpeg-ring-2a-bgr-ring-and-decode-stage-2b),
+[`specs/frame-ring.md#11-purpose`](../../specs/frame-ring.md#11-purpose),
+[`specs/frame-ring.md#31-block-overview`](../../specs/frame-ring.md#31-block-overview),
+[`specs/frame-ring.md#37-slot-count`](../../specs/frame-ring.md#37-slot-count),
+[`specs/frame-ring.md#39-layout-version-rule-a13`](../../specs/frame-ring.md#39-layout-version-rule-a13),
+[`specs/frame-ring.md#4-flags`](../../specs/frame-ring.md#4-flags),
+[`specs/frame-ring.md#53-order-recorder-first-d-n77`](../../specs/frame-ring.md#53-order-recorder-first-d-n77),
+[`specs/frame-ring.md#62-readk-steps-a27`](../../specs/frame-ring.md#62-readk-steps-a27),
+[`specs/frame-ring.md#81-the-bgr-ring-request`](../../specs/frame-ring.md#81-the-bgr-ring-request),
+[`specs/frame-ring.md#14-accepted-decisions`](../../specs/frame-ring.md#14-accepted-decisions),
+2026-11-20 (commit to dom/integration; was accepted, 2026-11-18 (user; commit to dom/native-jpeg)).
 
 ## Decision
 
