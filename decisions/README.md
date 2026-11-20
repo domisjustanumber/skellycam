@@ -37,7 +37,7 @@ These entries are `accepted`.
 | [J3QP](entries/J3QP-missing-frames-as-black-placeholders-and-the-end-of-a-take.md) | Missing frames as black placeholders on `missing` rows (M1 to M10); recorder rules C1 to C7 | accepted |
 | [Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md) | The user accepted `specs/recorder.md` and its test list (step 5a); the format changes F-1 to F-10 still wait | accepted |
 | [C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) | D1 to D3: a stall is no writer progress; 3 s and 10 s stay; no FAT disk | accepted |
-| [JMS0](entries/JMS0-connection-review-decisions.md) | Connection review: rows, error end, start, stall watch, gap detail, U16 | accepted |
+| [JMS0](entries/JMS0-connection-review-decisions.md) | Connection review A to K: rows, error end, start, stall watch, gap detail, U16, exposure, scans | accepted |
 
 ### Evidence
 

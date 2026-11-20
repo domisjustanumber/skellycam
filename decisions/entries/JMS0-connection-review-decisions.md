@@ -28,3 +28,16 @@ take recorder to the shared loop:
   value whose mean brightness is nearest the target, it goes one step darker (offset -1, clamped to
   the range), as the old helper `get_recommended_cv2_cap_exposure(offset_from_midrange=-1)` and sfn26
   do. When the search runs (at open) and the mode names do not change.
+- **I.** Private-data check: the two upstream author-credit comment lines (line 1 of
+  `skellycam-ui/src/hooks/floatingOnboarding.tsx` and of
+  `skellycam-ui/src/hooks/useDraggableTooltips.tsx`) stay exactly as upstream wrote them. They go on
+  the allow-list of the check with the reason "upstream author credit"
+  ([ADR-PEJ0](PEJ0-scope-of-the-private-data-check.md)). The address is not copied into a new file,
+  entry, commit message or report.
+- **J.** `skellycam/tests/reference_recordings/README.md` line 36: the absolute home folder path of an
+  upstream developer changes to the words "the user's home folder".
+- **K.** Secret scan: the 14,551 gitleaks hits (rule `generic-api-key` only, all under `research/` in
+  the history) are false positives. `.gitleaks.toml` gets three `[[allowlists]]` tables for that
+  rule: the Windows camera key shape; the synthetic keys of the rig anchor self-test; the sample keys,
+  codec paths and file hash of three research notes. A folder that is named after a machine is
+  `[^/]+` in a path pattern.
