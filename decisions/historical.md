@@ -36,3 +36,5 @@ the reason for a decision. The [index](README.md) has the Active and Proposed en
 | [4MJ4](entries/4MJ4-typescript-names-of-the-player-as-the-6a-tests-assume-them.md) | TypeScript names of the player, as the 6a tests assume them: test seams, pure functions, bridge, host view, test set-up | superseded by 4D94 |
 | [1ACK](entries/1ACK-corrections-and-choices-of-the-6a-player-code.md) | Corrections and choices of the 6a player code: back to black, decoded prefetch images in the tile, EXIF orientation undone, manifest warnings | superseded by 4D94 |
 | [5FBS](entries/5FBS-fixes-of-the-6a-code-review.md) | Fixes of the 6a code review: hard links, UNC paths, streamed reads, decode failure mark, loading message, refused take folders, unreadable `take_uuid` | superseded by 4D94 |
+| [NMM1](entries/NMM1-design-of-the-camera-media-check.md) | Camera media check: types, first bytes, `GOLDEN_PATHS`, image reminder, `commit-files` skill, per-worktree hook install | superseded by XT31 |
+| [4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) | Other fills of the kit adoption; `CLAUDE.md` stays untracked | superseded by XT31 |

@@ -1,6 +1,6 @@
 # NMM1 — Design of the camera media check, the commit skill and the hook install
 
-**Status:** proposed, 2026-11-17 (agent; waits for the user).
+**Status:** superseded by [XT31](XT31-kit-adoption-choices-camera-media-check-and-fills.md), 2026-11-20 (commit to dom/integration; was accepted, 2026-11-20 (user, through the review sheets of 2026-11-20); was proposed, 2026-11-17 (agent; waits for the user)).
 
 ## Decision
 
