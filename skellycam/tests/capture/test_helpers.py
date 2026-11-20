@@ -425,11 +425,17 @@ def test_fake_triggers_slow_period_cut_off_remove_and_drift():
 def test_fake_real_time_delivery_thread():
     source = FakeSource(FakeScript(rate=50.0), clock=RealClock(), types=STAND_INS)
     source.open(request())
-    frames = [source.read_frame(1.0) for _ in range(10)]
-    t0 = time.perf_counter()
+    frames, read_ns = [], []
+    for _ in range(10):
+        frames.append(source.read_frame(1.0))
+        read_ns.append(time.perf_counter_ns())
     assert all(f is not None for f in frames)
+    # The waiting place keeps the newest frame only: a reader that is late (a slow machine) misses frames.
+    numbers = [f.source_frame_number for f in frames]
+    assert numbers == sorted(set(numbers)), numbers
     span = (frames[-1].arrival_ns - frames[0].arrival_ns) / 1e9
-    assert abs(span - 9 / 50) < 0.002
+    assert abs(span - (numbers[-1] - numbers[0]) / 50) < 0.002, "an arrival time is not on the 50 fps schedule"
+    assert all(f.arrival_ns <= t for f, t in zip(frames, read_ns, strict=True)), "a frame came before its time"
     source.stop_now()
     while source.read_frame(0.05) is not None:
         pass
