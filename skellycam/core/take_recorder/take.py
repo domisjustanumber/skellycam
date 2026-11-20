@@ -217,8 +217,10 @@ class Take:
                                                                  f"expected {frame_count}"))
             sidecars.append((rows, stored_px))
             gaps, _ = sidecar.counts(rows)
-            if gaps:
-                warnings.append(self._warning("camera_gap", key, None))
+            if gaps:  # decision F of the user (2026-11-20): the first gap, by its row and its two source frame numbers
+                k = next(i for i, r in enumerate(rows) if r.flags & sidecar.GAP)
+                warnings.append(self._warning("camera_gap", key, f"row={k} from={rows[k - 1].source_frame_number} "
+                                                                 f"to={rows[k].source_frame_number}"))
             if camera.camera_id in dead_cameras:
                 last = next((r.frame for r in reversed(rows) if not r.flags & sidecar.MISSING), "none")
                 warnings.append(self._warning("camera_dead", key,

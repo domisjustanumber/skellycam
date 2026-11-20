@@ -74,7 +74,8 @@ def test_t_rec_14_manifest_at_start_during_and_after(tmp_path, runs):
     """T-REC-14 [SFF-702, SFF-723, SFF-724, SFF-727, SFF-728, SFF-881, SFF-882]: the members of
     SFF-723 in order; `state` `recording`, then `finished`; `files` with the SHA-256 of the capture
     info; the summary nulls at the start and the values at the end; `camera_gap` for the camera with
-    a gap; the `privacy` of 6.6; the JSON form of SFF-702."""
+    a gap, with the detail of its first gap (decision F of the user, 2026-11-20, recorder.md 6.6); the
+    `privacy` of 6.6; the JSON form of SFF-702."""
     ids = ("0a1b", "ff00")
     run = simple_take(tmp_path / "take", runs, frames=0, finish=False)
     keys = [camera_key(c) for c in ids]
@@ -104,7 +105,7 @@ def test_t_rec_14_manifest_at_start_during_and_after(tmp_path, runs):
     info_sha = hashlib.sha256((run.folder / "take_info.json").read_bytes()).hexdigest()
     assert manifest["files"][0]["sha256"] == info_sha
     gap = warnings_of(manifest, "camera_gap")
-    assert [(w["source"], w["camera_key"]) for w in gap] == [("skellycam", keys[0])]
+    assert [(w["source"], w["camera_key"], w["detail"]) for w in gap] == [("skellycam", keys[0], "row=5 from=1004 to=1008")]
     assert manifest["privacy"] == expected_privacy(run, keys)
     summary = manifest["summary"]
     assert summary["take_start_utc"] == datetime.datetime.fromtimestamp(UTC0 // 10**9, datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
