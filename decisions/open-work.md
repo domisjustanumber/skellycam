@@ -133,6 +133,10 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - The user decides
     [ADR-24FZ](entries/24FZ-python-api-of-the-preview-sender-as-the-4a-tests-assume-it.md): the
     Python items that the failing tests of step 4a use and that the spec does not fix.
+  - Step 4b: the proposed spec [`specs/preview-4b.md`](../specs/preview-4b.md) waits for the user,
+    with its six questions (section 12)
+    ([ADR-EE0E](entries/EE0E-step-4b-preview-spec-and-agent-choices.md)). The merges of its
+    section 2 come before the failing 4b tests.
 - **Phase 5: remove three interim rules of phase 3.** The new recorder of phase 5 must remove the three
   interim rules of [ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md):
   U4 (a recording with a dead camera: timing files of unequal length, multi-frame rows with the live
