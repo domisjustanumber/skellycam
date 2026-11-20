@@ -211,7 +211,7 @@ class RecordingTimestampsStats:
             pct = (
                 (stats.median_value / median_stage_total) * 100
                 if median_stage_total > 0
-                else 0
+                else 0.0
             )
             rows.append(_format_stats_row(stage_name=stage_name, stats=stats, percentage=pct))
 
