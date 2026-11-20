@@ -12,7 +12,10 @@ choices:
 1. **OpenCV open helpers.** `create_cv2_video_capture.py` and `opencv_apply_config.py` stay ours,
    because our OpenCV source opens through them. The `sfn26` DirectShow order (frame rate first,
    MJPG last), its boolean DirectShow exposure and their two tests are dropped. The two files change
-   together: one of them alone leaves a DirectShow stream in YUY2.
+   together: one of them alone leaves a DirectShow stream in YUY2. The open order fix of `sfn26`
+   2e29f8cbc is dropped by this choice. Not verified: whether OpenCV 5.1.0.95 with DirectShow falls
+   back to YUY2 without that order (sfn26 saw it on OpenCV 4.12); a check on the cameras is open. The
+   user accepted this item on 2026-11-20, subject to that check.
 2. **RECOMMEND at the open.** `opencv_apply_config.py` skips `RECOMMEND`. The camera loop runs the
    search (11.1). Before, the OpenCV source also ran the old helper search at the open.
 3. **Constants.** `MIN_EXPOSURE`, `NUMBER_OF_FRAMES_TO_SETTLE` and `TARGET_BRIGHTNESS` are in
