@@ -29,11 +29,10 @@ take recorder to the shared loop:
   the range), as the old helper `get_recommended_cv2_cap_exposure(offset_from_midrange=-1)` and sfn26
   do.
 - **I.** The two upstream author-credit lines (line 1 of `skellycam-ui/src/hooks/floatingOnboarding.tsx`
-  and of `skellycam-ui/src/hooks/useDraggableTooltips.tsx`) stay as upstream wrote them, and pass the
-  private-data check through an allow-list with the reason "upstream author credit"
-  ([ADR-PEJ0](PEJ0-scope-of-the-private-data-check.md)). Not done: the check has no allow-list form
-  that does not copy the address. How (for example a path-and-line form of the check) is a question
-  for the user.
+  and of `skellycam-ui/src/hooks/useDraggableTooltips.tsx`) stay as upstream wrote them. The
+  private-data check ([ADR-PEJ0](PEJ0-scope-of-the-private-data-check.md)) gets a this-file-this-line
+  form, so that the two credit lines pass without the address being copied. Reason: upstream author
+  credit.
 - **J.** `skellycam/tests/reference_recordings/README.md` line 36: the absolute home folder path of an
   upstream developer changes to the words "the user's home folder".
 - **K.** The secret scan gets three narrow allow-list rules for the classified false positives. The

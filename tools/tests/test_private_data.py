@@ -113,3 +113,23 @@ def test_files_mode_checks_only_the_given_files_and_skips_lock_and_illustrator_f
     assert cpd.check(tmp_path, ["b.md", "package-lock.json", "logo.ai", "gone.md"]) == []
     assert [f.path for f in cpd.check(tmp_path, ["a.md", "b.md"])] == ["a.md"]
     assert cpd.main(["check_private_data.py", "--files"]) == 0
+
+
+def test_an_allowed_line_passes_only_while_its_text_is_unchanged(monkeypatch) -> None:
+    """Decision I of the user (2026-11-20): an allow entry is a path, a line number and the SHA-256 of the exact
+    text of that line, with a reason. A finding on that line passes only when all three match: an edited
+    line, the same text on another line, or the same line in another file is checked again."""
+    import hashlib
+
+    line = "// by " + USER + "@" + "corp-mail.org"
+    digest = hashlib.sha256(line.encode("utf-8")).hexdigest()
+    monkeypatch.setattr(cpd, "ALLOWED_LINES", {("ui/credit.tsx", 1): (digest, "upstream author credit")})
+    assert cpd.scan_text("ui/credit.tsx", line + "\nok\n", []) == []
+    assert [f.line for f in cpd.scan_text("ui/credit.tsx", "ok\n" + line + "\n", [])] == [2]
+    assert [f.kind for f in cpd.scan_text("ui/other.tsx", line + "\n", [])] == ["email address"]
+    assert [f.kind for f in cpd.scan_text("ui/credit.tsx", line + " edited\n", [])] == ["email address"]
+
+
+def test_each_allowed_line_has_a_hash_and_a_reason() -> None:
+    for (path, number), (digest, reason) in cpd.ALLOWED_LINES.items():
+        assert number >= 1 and len(digest) == 64 and int(digest, 16) >= 0 and reason, path
