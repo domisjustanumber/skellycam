@@ -39,7 +39,7 @@ These entries are `accepted`.
 | [Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md) | The user accepted `specs/recorder.md` and its test list (step 5a); the format changes F-1 to F-10 still wait | accepted |
 | [C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) | Recorder decisions D1 to D3: a stall is no writer progress for the limit; 3 s and 10 s stay as starting values; no take on a FAT disk | accepted |
 | [JMS0](entries/JMS0-review-decisions.md) | Connection review decisions | accepted |
-| [22EJ](entries/22EJ-decisions-of-the-user-for-linux-and-macos-native-capture.md) | Linux and macOS native capture: sources written now and validated by certify; certify tests native capture only, not OpenCV; `media_foundation/` is Windows only and Linux and macOS get their own folders; parity tests on each OS; the camera never sets its own exposure (Manual and SkellyCam Auto only); the binding earlier rules; a failed camera is never opened again in one certify run | accepted |
+| [22EJ](entries/22EJ-decisions-of-the-user-for-linux-and-macos-native-capture.md) | Linux and macOS native capture: written now, certify validates it (native only); own OS folders; test parity; the camera never sets its own exposure | accepted |
 
 ### Evidence
 
@@ -73,7 +73,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [YNM2](entries/YNM2-connection-of-the-take-recorder-to-the-shared-loop.md) | Take recorder joined to the shared loop; U4, U5, U12, old writer gone | none | proposed |
 | [P5VE](entries/P5VE-review-fix-choices.md) | Review fix choices | `recorder` | proposed |
 | [T24F](entries/T24F-choices-of-the-5a-recorder-code.md) | Choices of the 5a recorder code: write error, completion walk, manifest merge, lock hold, empty stats | `recorder` | proposed |
-| [AT04](entries/AT04-choices-of-the-linux-and-macos-capture-spec.md) | Spec `specs/unix-capture.md` and test list T-UNX-01 to T-UNX-60: V4L2 through the standard library, AVFoundation through PyObjC 13.0, `camera_id` inputs, exposure unit map, CoreMediaIO controls, JPEG variants and OpenCV fallback, failure codes, `diagnostics()` keys, restore option, source selection, CI markers | `skellycam.core.camera.capture` | proposed |
+| [AT04](entries/AT04-choices-of-the-linux-and-macos-capture-spec.md) | Spec `specs/unix-capture.md`, tests T-UNX: stdlib V4L2, PyObjC 13.0, identity, exposure map, controls, JPEG fallback, failure codes, diagnostics | `skellycam.core.camera.capture` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
