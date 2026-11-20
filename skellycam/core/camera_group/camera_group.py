@@ -437,8 +437,12 @@ class CameraGroup:
         timestamp = float(np.mean([read.arrival_ns for read in reads.values()]))
         return frame_number, timestamp, memoryview(payload).toreadonly()
 
-    async def pause_unpause(self, await_state_change: bool = True) -> None:
-        await self.cameras.pause_unpause(await_state_change)
+    async def set_paused(self, paused: bool, await_state_change: bool = True) -> None:
+        """Set the pause state of each camera: PUT /group/all/pause with {paused} (port from sfn26)."""
+        if paused:
+            await self.cameras.pause(await_paused=await_state_change)
+        else:
+            await self.cameras.unpause(await_unpaused=await_state_change)
 
     async def start_recording(self, recording_info: RecordingInfo, devices: dict | None = None) -> list:
         """Start a take (recorder.md section 10 items 3 to 5, 13). Return the warnings of 11.3."""

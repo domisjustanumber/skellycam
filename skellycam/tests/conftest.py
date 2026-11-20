@@ -63,9 +63,6 @@ def mock_camera_group_manager():
         return_value=[TakeSummary(stop_response=stop_response, results=[], warnings=[])])
     mgr.close_all_camera_groups = AsyncMock()
     mgr.set_paused_all_groups = AsyncMock()
-    mgr.pause_unpause_all_groups = AsyncMock()
-    mgr.pause_all_groups = AsyncMock()
-    mgr.unpause_all_groups = AsyncMock()
 
     # Sync methods
     mgr.get_latest_frontend_payloads = MagicMock(return_value={})

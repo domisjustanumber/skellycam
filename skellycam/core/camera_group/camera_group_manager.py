@@ -303,23 +303,11 @@ class CameraGroupManager:
                 logger.debug(f"Error extracting performance data for group {camera_group.id}: {e}")
         return result
 
-    def pause_all_groups(self, await_paused: bool = True) -> None:
-        """Pause all camera groups."""
+    async def set_paused_all_groups(self, *, paused: bool, await_state_change: bool = True) -> None:
+        """Set the pause state of all camera groups (PUT /group/all/pause)."""
         for camera_group in self.camera_groups.values():
-            camera_group.pause(await_paused=await_paused)
-            logger.info(f"Paused camera group ID: {camera_group.id}")
-
-    async def pause_unpause_all_groups(self, await_state_change: bool = True) -> None:
-        """Pause/Unpause all camera groups."""
-        for camera_group in self.camera_groups.values():
-            await camera_group.pause_unpause(await_state_change=await_state_change)
-            logger.info(f"Paused camera group ID: {camera_group.id}")
-
-    def unpause_all_groups(self, await_unpaused: bool = True) -> None:
-        """Unpause all camera groups."""
-        for camera_group in self.camera_groups.values():
-            camera_group.unpause(await_unpaused=await_unpaused)
-            logger.info(f"Unpaused camera group ID: {camera_group.id}")
+            await camera_group.set_paused(paused=paused, await_state_change=await_state_change)
+            logger.info(f"{'Paused' if paused else 'Unpaused'} camera group ID: {camera_group.id}")
 
     def find_camera_group_by_camera_ids(
         self, camera_ids: list[CameraIdString]

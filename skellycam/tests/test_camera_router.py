@@ -96,8 +96,8 @@ class TestRecording:
         assert response.json() == {"started": True, "warnings": []}
 
     def test_stop_recording(self, client, mock_camera_group_manager):
-        """GET /skellycam/camera/group/all/record/stop returns list of StopRecordingResponse."""
-        response = client.get("/skellycam/camera/group/all/record/stop")
+        """POST /skellycam/camera/group/all/record/stop returns list of StopRecordingResponse."""
+        response = client.post("/skellycam/camera/group/all/record/stop")
         assert response.status_code == 200
         data = response.json()
         assert len(data) == 1
@@ -114,7 +114,15 @@ class TestCameraGroupManagement:
         assert response.json() is True
 
     def test_pause_unpause(self, client, mock_camera_group_manager):
-        """GET /skellycam/camera/group/all/pause_unpause returns true."""
-        response = client.get("/skellycam/camera/group/all/pause_unpause")
+        """PUT explicitly sets pause state."""
+        response = client.put("/skellycam/camera/group/all/pause", json={"paused": True})
         assert response.status_code == 200
-        assert response.json() is True
+        assert response.json() == {"paused": True}
+        mock_camera_group_manager.set_paused_all_groups.assert_awaited_once_with(paused=True)
+
+    def test_old_pause_toggle_and_stop_get_are_gone(self, client, mock_camera_group_manager):
+        """The contract of sfn26: no toggle, no GET stop, and the pause state must be a bool."""
+        assert client.get("/skellycam/camera/group/all/pause_unpause").status_code == 404
+        assert client.get("/skellycam/camera/group/all/record/stop").status_code == 405
+        assert client.put("/skellycam/camera/group/all/pause", json={"paused": "yes"}).status_code == 422
+        mock_camera_group_manager.set_paused_all_groups.assert_not_awaited()

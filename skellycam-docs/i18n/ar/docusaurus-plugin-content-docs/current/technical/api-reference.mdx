@@ -134,7 +134,7 @@ import { AiGeneratedBanner } from '@freemocap/skellydocs';
 
 **الاستجابة:** `true` (200 OK)
 
-### `GET /skellycam/camera/group/all/record/stop`
+### `POST /skellycam/camera/group/all/record/stop`
 
 يوقف التسجيل لجميع مجموعات الكاميرات النشطة. يُفعّل معالجة الطوابع الزمنية وتوليد الإحصائيات.
 
@@ -146,7 +146,7 @@ import { AiGeneratedBanner } from '@freemocap/skellydocs';
 
 **الاستجابة:** `true` (200 OK)
 
-### `GET /skellycam/camera/group/all/pause_unpause`
+### `PUT /skellycam/camera/group/all/pause`
 
 يُبدّل الإيقاف المؤقت/الاستئناف على جميع مجموعات الكاميرات. عند الإيقاف المؤقت، تتوقف الكاميرات عن التقاط الإطارات لكنها تبقى مفتوحة.
 

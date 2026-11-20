@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 
 from fastapi import APIRouter, Body, HTTPException, Request
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StrictBool
 
 from skellycam.core.camera.config.camera_config import CameraConfig, DEFAULT_CAMERA_ID, CameraConfigs
 from skellycam.core.camera_group.camera_group import RequestRefused
@@ -169,7 +169,7 @@ async def start_recording(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@camera_router.get("/group/all/record/stop", summary="Stop recording")
+@camera_router.post("/group/all/record/stop", summary="Stop recording")
 async def stop_recording(request: Request) -> list[StopRecordingResponse]:
     try:
         summaries = await get_or_create_camera_group_manager(app=request.app).stop_recording_all_groups()
@@ -192,11 +192,15 @@ async def close_all_camera_groups(request: Request) -> bool:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@camera_router.get("/group/all/pause_unpause", summary="Pause/unpause cameras")
-async def pause_camera_groups(request: Request) -> bool:
+class CameraPauseState(BaseModel):
+    paused: StrictBool
+
+
+@camera_router.put("/group/all/pause", summary="Set camera pause state")
+async def pause_camera_groups(request: Request, desired: CameraPauseState) -> CameraPauseState:
     try:
-        await get_or_create_camera_group_manager(app=request.app).pause_unpause_all_groups()
-        return True
+        await get_or_create_camera_group_manager(app=request.app).set_paused_all_groups(paused=desired.paused)
+        return desired
     except Exception as e:
         logger.error(f"Error in {request.url}: {type(e).__name__} - {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))

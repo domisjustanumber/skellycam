@@ -134,7 +134,7 @@ Todos los campos tienen valores predeterminados. `mic_device_index: -1` desactiv
 
 **Respuesta:** `true` (200 OK)
 
-### `GET /skellycam/camera/group/all/record/stop`
+### `POST /skellycam/camera/group/all/record/stop`
 
 Detiene la grabacion para todos los grupos de camaras activos. Activa el procesamiento de marcas de tiempo y la generacion de estadisticas.
 
@@ -146,7 +146,7 @@ Cierra todos los grupos de camaras, liberando todos los recursos de camara y det
 
 **Respuesta:** `true` (200 OK)
 
-### `GET /skellycam/camera/group/all/pause_unpause`
+### `PUT /skellycam/camera/group/all/pause`
 
 Alterna pausa/reanudacion en todos los grupos de camaras. Cuando esta en pausa, las camaras dejan de capturar fotogramas pero permanecen abiertas.
 

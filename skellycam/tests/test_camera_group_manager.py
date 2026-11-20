@@ -55,6 +55,39 @@ class TestCameraGroupManagerInit:
         assert isinstance(state, dict)
 
 
+class TestSetPaused:
+    """PUT /group/all/pause with {paused} sets one state; it does not toggle (port from sfn26)."""
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("paused", [True, False])
+    async def test_each_group_gets_the_state(self, manager, paused):
+        from unittest.mock import AsyncMock, Mock
+
+        from skellycam.core.camera_group.camera_group import CameraGroup
+
+        groups = [Mock(spec=CameraGroup, id=name, set_paused=AsyncMock()) for name in ("g1", "g2")]
+        manager.camera_groups.update({group.id: group for group in groups})
+        await manager.set_paused_all_groups(paused=paused)
+        for group in groups:
+            group.set_paused.assert_awaited_once_with(paused=paused, await_state_change=True)
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("paused", [True, False])
+    async def test_the_group_sets_the_state_twice_without_a_toggle(self, paused):
+        from unittest.mock import AsyncMock, Mock
+
+        from skellycam.core.camera_group.camera_group import CameraGroup
+
+        group = CameraGroup.__new__(CameraGroup)
+        group.cameras = Mock(pause=AsyncMock(), unpause=AsyncMock())
+        await group.set_paused(paused=paused)
+        await group.set_paused(paused=paused)
+        wanted, other = (group.cameras.pause, group.cameras.unpause) if paused else (group.cameras.unpause,
+                                                                                       group.cameras.pause)
+        assert wanted.await_count == 2
+        other.assert_not_awaited()
+
+
 class TestSingletonFactory:
     def test_returns_same_instance(self, kill_flag, worker_registry):
         """get_or_create_camera_group_manager returns the same instance on repeated calls."""

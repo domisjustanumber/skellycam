@@ -332,7 +332,7 @@ class CaptureApp:
                                 json={"recording_name": name, "recording_directory": str(directory)})
 
     def record_stop(self):
-        return self.client.get("/skellycam/camera/group/all/record/stop")
+        return self.client.post("/skellycam/camera/group/all/record/stop")
 
     # ----- state -----
 

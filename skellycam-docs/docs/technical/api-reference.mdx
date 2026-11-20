@@ -151,11 +151,11 @@ All fields have defaults. `mic_device_index: -1` disables audio recording. `mic_
 
 **Response:** `true` (200 OK)
 
-### `GET /skellycam/camera/group/all/record/stop`
+### `POST /skellycam/camera/group/all/record/stop`
 
-Stops recording for all active camera groups. Triggers timestamp processing and statistics generation.
+Stops recording for all active camera groups. A `GET` gives 405.
 
-**Response:** `true` (200 OK)
+**Response:** a list with one summary of the take for each camera group (200 OK)
 
 ### `DELETE /skellycam/camera/group/close/all`
 
@@ -163,11 +163,14 @@ Closes all camera groups, releasing all camera resources and stopping all worker
 
 **Response:** `true` (200 OK)
 
-### `GET /skellycam/camera/group/all/pause_unpause`
+### `PUT /skellycam/camera/group/all/pause`
 
-Toggles pause/unpause on all camera groups. When paused, cameras stop capturing frames but remain open.
+Sets the pause state of all camera groups. When paused, cameras stop capturing frames but remain open. The
+request sets one state; two requests with the same body give the same state.
 
-**Response:** `true` (200 OK)
+**Request body:** `{"paused": true}` or `{"paused": false}`. Another value gives 422.
+
+**Response:** the same object (200 OK)
 
 ## WebSocket Endpoint
 

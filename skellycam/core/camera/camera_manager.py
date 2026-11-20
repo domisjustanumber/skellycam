@@ -117,12 +117,6 @@ class CameraManager:
                 time.sleep(_SPAWN_STAGGER_SECONDS)
             worker.start()
 
-    async def pause_unpause(self, await_state: bool = True) -> None:
-        if self.orchestrator.any_cameras_paused:
-            await self.unpause(await_unpaused=await_state)
-        else:
-            await self.pause(await_paused=await_state)
-
     async def pause(self, await_paused: bool) -> None:
         await self._set_paused(paused=True, await_state=await_paused)
 
