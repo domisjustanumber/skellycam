@@ -399,3 +399,33 @@ for each BGR ring). The largest JPEG filled 0.19 of its slot. Both runs shut dow
 each setting; until phase 3 the BGR path copies the frame of OpenCV and decodes no JPEG, so this run does not
 show the decode cost. The run summaries are not committed (they hold local paths); the recordings are outside
 the repository.
+
+## 14. Decisions of the user of 2026-11-20 (after the first end-to-end demo)
+
+The state of each phase on this date is in the memory notes of the main session, not here. This section
+records only the decisions that change the plan.
+
+- **Base and pull requests.** The work is based on upstream `development-streaming`, not on upstream
+  `sfn26`. The user decided: merge upstream `sfn26` into our line, keep our side for the camera layer and
+  the recorder, then remove every Rust file, the backend selector of the UI, the Rust CI step and the Rust
+  tests in one follow-up commit. The Rust commits stay in the history. Pull requests go against upstream
+  `development`; upstream will merge `sfn26` into it.
+- **Items to port from `sfn26`:** the USB link of each camera (USB 2 or USB 3), the start-failure
+  explanation, the exposure limit of -5 with the offset of one step darker, the restore of the settings
+  when the exposure search fails, and the `PUT` pause and `POST` stop contract.
+- **Exposure.** The UI has two modes: Manual and Auto. Auto always means that SkellyCam finds a manual
+  exposure value. The camera's own auto exposure is never a mode; it may be used only for a moment at
+  start-up to find a start value. The search is one-shot, runs on the open stream, never keeps a value at
+  which the frame rate falls, and reports "Add light" when no value is bright enough. The exposure does
+  not change during a take.
+- **Frame rate.** One frame rate control for all cameras, at the top of the camera list.
+- **New stage: cameras free-run, pairing by time.** Today each camera waits for the others (lockstep).
+  That causes three problems: a camera cannot be added to a running group, the frames of one group frame
+  arrive about 36 ms apart, and about 0.2 % of the frames are replaced. The stage starts as a study: the
+  design, the changes to the recording format, the player and the ring readers, and a camera run that logs
+  each frame with its times. No product code before the user accepts its spec. Place: after the `sfn26`
+  merge, step 3b and audio (5b); before the player switch-over (6b, 6c) and before freemocap is joined.
+- **Withdrawn until that stage:** the proposal to add a camera to a running group with spare status slots,
+  and the camera trial of the pairing rule amendment. Until then, a new camera restarts the group, as
+  `sfn26` does.
+- **Later:** a click on the USB label opens a diagram of the cameras on their USB controllers.
