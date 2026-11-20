@@ -702,3 +702,40 @@ def test_a_camera_that_ends_with_no_last_frame_leaves_its_files_to_the_take_leve
     assert take_warnings(tmp_path, "take_error") == []
     lines = take_files(tmp_path)[closing][1].read_text(encoding="utf-8").splitlines()
     assert lines[-2].startswith("# repair "), "the take level did not complete the pair (7.4)"
+
+
+def test_a_writer_that_cannot_start_fails_the_record_start(monkeypatch, tmp_path):
+    """Review fault 9 and decision D of the user (2026-11-20): the camera writer of one camera cannot open its
+    files. The record start fails with the error text of that camera (not 200 with a take that runs with
+    no writer); the take folder is finished at once with zero rows and a `take_error`; the camera stays
+    `ready` (not `dead` with the reason "exit code 0"), and a later take starts."""
+    from skellycam.core.take_recorder import CameraTakeWriter
+
+    start = CameraTakeWriter.start.__func__
+    refuse = {"on": True}
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        failing = app.factory.camera_ids[0]
+
+        def refusing_start(cls, spec, **kwargs):
+            if refuse["on"] and spec.camera_id == failing:
+                raise OSError("test: the disk refuses the file")
+            return start(cls, spec, **kwargs)
+
+        monkeypatch.setattr(CameraTakeWriter, "start", classmethod(refusing_start))
+        ready_app_steps(app)
+        response = app.record_start(tmp_path)
+        assert response.status_code == 500, response.text
+        detail = response.json()["detail"]
+        assert f"camera {failing}" in detail and "test: the disk refuses the file" in detail, detail
+        assert app.group.take is None
+        assert all(app.state(cid) == "ready" for cid in app.factory.camera_ids), \
+            {cid: app.status(cid) for cid in app.factory.camera_ids}
+        refuse["on"] = False
+        assert app.record_start(tmp_path, name="take2").status_code == 200
+        stop(app)
+    manifest = take_manifest(tmp_path)
+    assert manifest["state"] == "finished"
+    assert all(take_rows(tmp_path, cid) == [] for cid in app.factory.camera_ids)
+    errors = take_warnings(tmp_path, "take_error")
+    assert len(errors) == 1 and "test: the disk refuses the file" in errors[0]["detail"], errors
+    assert take_warnings(tmp_path, "camera_dead") == []

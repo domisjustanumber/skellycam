@@ -478,18 +478,22 @@ class CameraGroup:
             orchestrator.last_recording_frame_number.value = -1
             orchestrator.first_recording_frame_number.value = orchestrator.largest_gate_count() + 3  # [M7, review B4]
             self.take = take
+            for camera_id in self.recording_ids:
+                statuses[camera_id].update_info(writer_failure=None)
             self.ipc.pubsub.topics[TopicTypes.RECORDING_INFO].publish(RecordingInfoMessage(
                 take_specs={camera_id: take.camera_spec(camera_id) for camera_id in self.recording_ids}))
             await self._await_writers()
-        except BaseException:
+        except BaseException as error:
             for status in list(statuses.values()):
                 status.set_warning_items([])
-            if self.take is not None:
-                # A camera with a writer ends it at its next frame; the folder stays `recording` (step 5c).
+            take, self.take = self.take, None
+            started = [camera_id for camera_id in self.recording_ids if statuses[camera_id].recording_in_progress.value]
+            if take is not None:  # a camera with a writer ends it at its next frame, with no row
                 self.cameras.orchestrator.last_recording_frame_number.value = (
                     self.cameras.orchestrator.first_recording_frame_number.value)
-                self.take = None
             await self.cameras.unpause(await_unpaused=True)
+            if take is not None:
+                await self._finish_failed_start(take, started, error)
             raise
         await self.cameras.unpause(await_unpaused=True)
         for item in warnings:
@@ -497,6 +501,23 @@ class CameraGroup:
         logger.info(f"Started recording for camera group ID: {self.id} with recording name: "
                     f"{recording_info.recording_name}")
         return warnings
+
+    async def _finish_failed_start(self, take: Take, started: list, error: BaseException) -> None:
+        """Decision D of the user (2026-11-20): a record start that fails finishes the take folder at once, with
+        zero rows and a `take_error`, after each camera that started its writer ended it."""
+        orchestrator, ids = self.cameras.orchestrator, self.recording_ids
+        try:
+            self.recording_ids = started
+            results, dead, running = await asyncio.to_thread(self._collect_results)
+            await asyncio.to_thread(take.finish, [results.get(camera_id) for camera_id in ids], frame_count=0,
+                                    ended_by_error=f"the record start failed: {error}", dead_cameras=dead,
+                                    running_cameras=running)
+        except Exception as finish_error:
+            logger.exception(f"The take folder of the failed record start could not be finished: {finish_error!r}")
+        finally:
+            self.recording_ids = ids
+            orchestrator.first_recording_frame_number.value = -1
+            orchestrator.last_recording_frame_number.value = -1
 
     def _take_camera(self, camera_id: CameraIdString, device) -> TakeCamera:
         """The take facts of one camera (recorder.md 4.2, 6.7) from its config, status and detection."""
@@ -530,9 +551,13 @@ class CameraGroup:
         statuses = self.cameras.orchestrator.camera_statuses
         deadline = time.monotonic() + TAKE_START_LIMIT_S
         while True:
-            pending = [camera_id for camera_id in self.recording_ids
-                       if not statuses[camera_id].recording_in_progress.value and statuses[camera_id].in_gate]
+            failures = [statuses[camera_id].info_dict().get("writer_failure") for camera_id in self.recording_ids]
+            pending = [camera_id for camera_id, failure in zip(self.recording_ids, failures)
+                       if not failure and not statuses[camera_id].recording_in_progress.value
+                       and statuses[camera_id].in_gate]
             if not pending:
+                if any(failures):
+                    raise RuntimeError("; ".join(failure for failure in failures if failure))
                 return
             if time.monotonic() >= deadline or not self.ipc.should_continue:
                 raise RuntimeError(f"Cameras did not start their take writer: {pending}")

@@ -474,7 +474,13 @@ class CameraLoop:
     def _start_take(self, spec) -> None:
         if self.take_writer is not None:
             self._end_take()
-        self.take_writer = start_take_writer(self.camera_id, spec, self.status.writer_progress_at)
+        try:
+            self.take_writer = start_take_writer(self.camera_id, spec, self.status.writer_progress_at)
+        except Exception as error:  # the camera runs on; the record start fails with this text (ADR-P5VE)
+            text = f"camera {self.camera_id}: the take writer did not start: {error}"
+            logger.error(text)
+            self.status.update_info(writer_failure=text)
+            return
         self.take_failed = False
         self.status.recording_in_progress.value = True  # the main process unpauses when each camera has it
 
