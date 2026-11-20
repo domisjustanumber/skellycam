@@ -41,11 +41,20 @@ def record_result(test_id, **data):
     print(f"{test_id}: result written to {RESULTS}")
 
 
-def label_of(name):
+# Media Foundation names the Kiyo Pro "USB Video Device" (first hardware run, 2026-11-20): match by USB IDs first.
+USB_IDS = {(0x046D, 0x085C): "C922", (0x046D, 0x0843): "C930e", (0x1532, 0x0E05): "Kiyo Pro"}
+
+
+def label_of(camera):
+    """The test label of a detected camera; None for a camera that is not a test camera (a virtual or
+    software camera, for example NDI, which has no USB vendor ID)."""
+    found = USB_IDS.get((camera.get("vendor_id"), camera.get("product_id")))
+    if found:
+        return found
     for label in GOOD:
-        if label.lower() in name.lower():
+        if label.lower() in camera["name"].lower():
             return label
-    return "generic"
+    return "generic" if camera.get("vendor_id") is not None and not camera.get("virtual") else None
 
 
 class HardwareApp(CaptureApp):
@@ -79,7 +88,7 @@ class HardwareApp(CaptureApp):
 
     def detect(self):
         cameras = super().detect()["cameras"]
-        self.devices = {label_of(c["name"]): c for c in cameras}
+        self.devices = {label_of(c): c for c in cameras if label_of(c)}
         return cameras
 
     def camera_id(self, label):

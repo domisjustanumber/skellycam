@@ -48,6 +48,16 @@ def directshow_index(camera_id: str) -> int:
     raise FailedToOpenCameraException(f"Camera {camera_id}: camera not found")
 
 
+def opened_device_path(camera_index: int) -> str:
+    """The device path of `OpenedMode` (4.1) for an OpenCV capture: the DirectShow device path of the
+    opened index on Windows (U1), else the index."""
+    if determine_opencv_camera_backend().id != cv2.CAP_DSHOW:
+        return str(camera_index)
+    from cv2_enumerate_cameras import enumerate_cameras
+
+    return next((c.path for c in enumerate_cameras(cv2.CAP_DSHOW) if c.index == camera_index), str(camera_index))
+
+
 def create_cv2_video_capture(config: CameraConfig, retry_count: int = 5) -> tuple[cv2.VideoCapture, CameraConfig]:
     cap_backend = determine_opencv_camera_backend()
     if cap_backend.id == cv2.CAP_DSHOW:  # Windows: detection is Media Foundation (D11), so find the device by its link

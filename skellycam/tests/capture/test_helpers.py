@@ -543,3 +543,15 @@ def test_log_capture_keeps_records_of_other_threads():
         thread.start()
         thread.join()
     assert "from a thread" in logs.messages(logging.WARNING)
+
+
+def test_hardware_labels_come_from_the_usb_ids():
+    """The hardware tests find each test camera by its USB IDs: Media Foundation names the Kiyo Pro
+    "USB Video Device", and NDI software cameras (no USB vendor ID) are not test cameras."""
+    from skellycam.tests.capture.capture_hardware import label_of
+
+    assert label_of(dict(name="USB Video Device", vendor_id=0x1532, product_id=0x0E05)) == "Kiyo Pro"
+    assert label_of(dict(name="c922 Pro Stream Webcam", vendor_id=0x046D, product_id=0x085C)) == "C922"
+    assert label_of(dict(name="Logitech Webcam C930e", vendor_id=None, product_id=None)) == "C930e"
+    assert label_of(dict(name="USB Camera", vendor_id=0x4C4A, product_id=0x4A55)) == "generic"
+    assert label_of(dict(name="NDI Webcam Video 1", vendor_id=None, product_id=None)) is None

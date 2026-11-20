@@ -236,3 +236,33 @@ def test_t_cap_111_one_opencv_call_at_a_time(monkeypatch):
         controls.join(5)
         source.close()
     assert capture.most == 1, f"{capture.most} calls on the capture ran at one time"
+
+
+def test_opencv_source_reports_the_directshow_path_it_opened(monkeypatch):
+    """Sections 4.1 and 14.2 [U1], the fake part of T-CAP-88: on DirectShow, `OpenedMode.device_path` is the
+    DirectShow device path of the index that the lookup by link opened, not the index of the detection
+    result. The first hardware run (2026-11-20) found the detection index there."""
+    from types import SimpleNamespace
+
+    import cv2
+    import cv2_enumerate_cameras
+
+    from skellycam.core.camera import determine_backend
+    from skellycam.core.camera.capture import opencv_source
+    from skellycam.core.camera.capture.source import CaptureRequest
+    from skellycam.core.camera.config.camera_config import CameraConfig
+    from skellycam.core.camera.opencv.opencv_helpers import create_cv2_video_capture as helpers
+
+    class StandInCapture:
+        def get(self, prop):
+            return {cv2.CAP_PROP_FPS: 30.0, cv2.CAP_PROP_FRAME_WIDTH: 4.0, cv2.CAP_PROP_FRAME_HEIGHT: 4.0}.get(prop, 0.0)
+
+    monkeypatch.setattr(helpers, "determine_opencv_camera_backend",
+                        lambda: determine_backend.OpenCVBackend.from_backend_id(cv2.CAP_DSHOW))
+    monkeypatch.setattr(cv2_enumerate_cameras, "enumerate_cameras", lambda backend: [
+        SimpleNamespace(index=0, path="ds-path-0"), SimpleNamespace(index=3, path="ds-path-3")])
+    monkeypatch.setattr(opencv_source, "create_cv2_video_capture",
+                        lambda config: (StandInCapture(), config.model_copy(update=dict(camera_index=3))))
+    source = opencv_source.OpenCVSource(CameraConfig(camera_id="a1b2", camera_index=6))
+    opened = source.open(CaptureRequest(camera_id="a1b2", width=4, height=4, framerate=30.0))
+    assert opened.device_path == "ds-path-3"
