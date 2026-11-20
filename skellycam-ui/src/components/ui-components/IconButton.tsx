@@ -1,6 +1,6 @@
 import React from "react";
 import clsx from "clsx";
-import { TooltipPosition } from "./types";
+import type { TooltipPosition } from "./types";
 
 /**
  * =========================================
