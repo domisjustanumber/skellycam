@@ -3,12 +3,17 @@ import contextlib
 import datetime
 import errno
 import json
+import logging
 import os
+import re
 import sys
 import time
+from pathlib import Path
 
 from skellycam.core.take_recorder.sidecar import FILLED, counts
 from skellycam.core.take_recorder.stop_stats import duration_s
+
+logger = logging.getLogger(__name__)
 
 if sys.platform == "win32":
     import msvcrt
@@ -23,6 +28,78 @@ LOCK_RETRY_S = 0.05
 LOCK_BUSY = {errno.EACCES, errno.EAGAIN, errno.EDEADLK}
 CONTROLS = (("exposure", "exposure_us"), ("gain", "gain"), ("focus", "focus"))  # TakeCamera name, SFF-802 name
 REQUESTED = ("width", "height", "framerate", "capture_format", "exposure_mode")
+# File systems with a file size limit of 4 GiB or less (D3): the names that Windows (GetVolumeInformationW),
+# Linux (/proc/self/mountinfo) and macOS (statfs f_fstypename) give, in lower case. exFAT has no such limit.
+FAT_NAMES = {"fat", "fat12", "fat16", "fat32", "vfat", "msdos", "umsdos"}
+
+
+def file_system(path) -> str | None:
+    """The name of the file system that holds `path` (or its nearest existing parent), or None when
+    it cannot be found. Standard library only."""
+    path = Path(path).absolute()
+    while not path.exists() and path.parent != path:
+        path = path.parent
+    try:
+        if sys.platform == "win32":
+            return _windows_file_system(path)
+        if sys.platform == "darwin":
+            return _macos_file_system(path)
+        with open("/proc/self/mountinfo", encoding="utf-8") as handle:
+            return linux_file_system(path.resolve(), handle.read())
+    except (OSError, ValueError, AttributeError):
+        return None
+
+
+def _windows_file_system(path):
+    import ctypes
+
+    kernel32 = ctypes.windll.kernel32
+    root, name = ctypes.create_unicode_buffer(261), ctypes.create_unicode_buffer(261)
+    if not kernel32.GetVolumePathNameW(str(path), root, 261):
+        return None
+    if not kernel32.GetVolumeInformationW(root.value, None, 0, None, None, None, name, 261):
+        return None
+    return name.value or None
+
+
+def linux_file_system(path, mountinfo: str):
+    """The file system type of the mount point of `path` in the text of /proc/self/mountinfo."""
+    best, best_type = None, None
+    for line in mountinfo.splitlines():
+        fields, _, rest = line.partition(" - ")
+        parts = fields.split(" ")
+        if len(parts) < 5 or not rest:
+            continue
+        mount = type(path)(re.sub(r"\\([0-7]{3})", lambda m: chr(int(m.group(1), 8)), parts[4]))
+        if (path == mount or path.is_relative_to(mount)) and (best is None or len(mount.parts) >= len(best.parts)):
+            best, best_type = mount, rest.split(" ")[0]
+    return best_type
+
+
+def _macos_file_system(path):
+    """`f_fstypename` of `statfs` (64-bit inode layout: the name is at offset 72)."""
+    import ctypes
+    import ctypes.util
+    import platform
+
+    libc = ctypes.CDLL(ctypes.util.find_library("c"), use_errno=True)
+    statfs = libc["statfs$INODE64"] if platform.machine() == "x86_64" else libc["statfs"]
+    buffer = ctypes.create_string_buffer(4096)
+    if statfs(os.fsencode(path), buffer) != 0:
+        return None
+    return buffer.raw[72:88].split(b"\0")[0].decode("ascii") or None
+
+
+def check_file_system(folder) -> None:
+    """D3: refuse a take folder on a file system with a 4 GiB file size limit. When the file system
+    cannot be found, log a warning and go on."""
+    name = file_system(folder)
+    if name is None:
+        logger.warning("the file system of %s is not known; a FAT disk would end each camera file at 4 GiB", folder)
+    elif name.lower() in FAT_NAMES:
+        label = name if name.upper().startswith("FAT") else f"FAT ({name})"
+        raise ValueError(f"The folder is on a {label} disk. {label} cannot hold a file larger than 4 GiB, and one "
+                         f"camera reaches that in minutes. Choose a folder on another disk.")
 
 
 def _numbers(value):

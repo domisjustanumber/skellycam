@@ -98,6 +98,7 @@ def start_take(folder, rec, cameras, *, writer, clock=None, lock_timeout_s=10.0,
         _check_camera(camera)
     if folder.exists() and (not folder.is_dir() or any(folder.iterdir())):  # SFF-719 [agent 16]
         raise ValueError(f"the take folder is not empty: {folder}")
+    folder_files.check_file_system(folder)  # D3: no FAT disk
     (folder / folder_files.MEDIA).mkdir(parents=True, exist_ok=True)
     open(folder / folder_files.LOCK_NAME, "xb").close()
     host_clock, utc_clock = clock or (time.perf_counter_ns, time.time_ns)
