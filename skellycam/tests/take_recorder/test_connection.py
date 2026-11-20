@@ -1157,6 +1157,8 @@ def test_the_cameras_end_their_take_10_s_after_the_server_died(monkeypatch, tmp_
         assert app.record_start(tmp_path).status_code == 200
         time.sleep(1.0)
         workers_ = [app.worker(cid) for cid in app.factory.camera_ids]
+        # A dead main process: no heartbeat, and no take level (round 4: a live one ends the take itself).
+        monkeypatch.setattr(group_module().CameraGroup, "_take_finished", lambda group: None)
         app.registry._heartbeat_stop.set()  # the heartbeat writer of the main process stops
         stopped = time.monotonic()
         for worker in workers_:
@@ -1287,6 +1289,51 @@ def test_a_stop_while_the_cameras_are_paused_ends_the_take(monkeypatch, tmp_path
     assert took < 5.0, f"the stop took {took:.1f} s"
     assert take_manifest(tmp_path)["state"] == "finished"
     assert all(len(take_rows(tmp_path, cid)) == summary["number_of_frames"] for cid in app.factory.camera_ids)
+
+
+@pytest.mark.parametrize("during_take", [True, False], ids=["during a take", "no take"])
+def test_a_lost_heartbeat_ends_only_the_cameras(monkeypatch, tmp_path, during_take):
+    """Round 4, item 3, decision L of the user: the heartbeat thread of a live main process stalls 12 s. Each
+    camera process ends its own loop (no global kill flag), finishes its files and releases its camera; its
+    status says "lost the server's heartbeat". The app stays up; a running take ends with a `take_error` and
+    is not left running in the group; "apply again" opens the cameras again."""
+    armed = {"on": False}
+
+    class StallingEvent(threading.Event):
+        def wait(self, timeout=None):
+            if armed["on"] and threading.current_thread().name == "WorkerRegistry-Heartbeat":
+                armed["on"] = False
+                time.sleep(12.0)  # a long GIL hold, a debugger pause or a resume from sleep
+            return super().wait(timeout)
+
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()], workers="process") as app:
+        app.registry._heartbeat_stop = StallingEvent()
+        ready_app_steps(app)
+        if during_take:
+            assert app.record_start(tmp_path).status_code == 200
+        time.sleep(1.0)
+        workers = [app.worker(cid) for cid in app.factory.camera_ids]
+        armed["on"] = True
+        for worker in workers:
+            app.wait(lambda: not worker.is_alive(), "the camera ends", timeout=40)
+        assert not app.kill.value, "the lost heartbeat set the global kill flag"
+        for camera_id in app.factory.camera_ids:
+            status = app.status(camera_id)
+            assert status["state"] == "dead" and status["failure"]["reason"] == "lost the server's heartbeat", status
+        app.wait(lambda: time.perf_counter() - app.registry.heartbeat_timestamp.value < 2.0, "the heartbeat beats again")
+        if during_take:
+            app.wait(lambda: app.group.take is None, "the take ends in the group")
+            assert app.record_stop().status_code == 200  # the stored summary of the error end
+        response = app.apply([app.config(cid) for cid in app.factory.camera_ids])
+        assert response.status_code == 200, response.text
+        for camera_id in app.factory.camera_ids:
+            app.wait_state(camera_id, "ready")
+    if during_take:
+        manifest = take_manifest(tmp_path)
+        assert manifest["state"] == "finished"
+        assert any("lost the server's heartbeat" in (w["detail"] or "") for w in take_warnings(tmp_path, "take_error"))
+        counts = [len(take_rows(tmp_path, cid)) for cid in app.factory.camera_ids]
+        assert counts[0] == counts[1] > 0, counts
 
 
 def test_a_start_after_an_error_end_logs_the_unfetched_summary(monkeypatch, tmp_path):

@@ -155,7 +155,18 @@ class CameraLoop:
             logger.exception(f"Camera {self.camera_id} loop error: {error}")
             self._fail(CaptureFailure(self.stage, f"{type(error).__name__}: {error}"), at_end=True)
         finally:
+            if not hung and self.ipc.heartbeat_lost:
+                self._lost_heartbeat()
             self._end(hung)
+
+    def _lost_heartbeat(self) -> None:
+        """Decision L: no heartbeat of the server for 10 s. This camera ends; its take files are finished and its
+        camera released by `_end`. A live main process gets the reason in the status and ends the take with it."""
+        text = "lost the server's heartbeat"
+        if self.take_writer is not None:
+            self.ipc.pubsub.topics[TopicTypes.RECORDING_FINISHED].publish(
+                RecordingFinishedMessage(camera_id=self.camera_id, error=f"camera {self.camera_id} {text}"))
+        self._fail(CaptureFailure(self.stage, text))
 
     def _pass(self) -> None:
         if self.hung.is_set():

@@ -79,9 +79,13 @@ class CameraGroupIPC:
     def should_continue(self) -> bool:
         return (not self.shutdown_camera_group_flag.value
                 and not self.global_kill_flag.value
-                and check_main_process_heartbeat(global_kill_flag=self.global_kill_flag,
-                                                 heartbeat_timestamp=self.heartbeat_timestamp, )
+                and check_main_process_heartbeat(heartbeat_timestamp=self.heartbeat_timestamp)
                 )
+
+    @property
+    def heartbeat_lost(self) -> bool:
+        """No heartbeat of the main process for HEARTBEAT_TIMEOUT_SECONDS (decision L)."""
+        return not check_main_process_heartbeat(heartbeat_timestamp=self.heartbeat_timestamp)
 
     @should_continue.setter
     def should_continue(self, value: bool) -> None:
