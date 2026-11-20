@@ -180,6 +180,18 @@ class CameraTakeWriter:
                     self.spec.queue_size, result.give_wait_count, result.give_wait_ms_max, result.error)
         return result
 
+    def abandon(self) -> None:
+        """End the writer thread with no end of the files, as a kill does: the take level completes them
+        (7.4). For a take that did not end: the frame count is not known."""
+        if not self._started or self._ended:
+            raise RuntimeError("abandon before start or after end")
+        self._ended = self._abandoned = True
+        try:
+            self.queue.put_nowait(0)  # wakes a writer that waits on an empty queue
+        except queue.Full:
+            pass  # the writer takes an item, sees `_abandoned` and stops
+        self._thread.join(self.spec.stall_limit_s)
+
     # --- the writer thread ---
 
     def _run(self) -> None:

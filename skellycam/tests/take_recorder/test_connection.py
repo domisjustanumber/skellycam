@@ -656,3 +656,25 @@ def test_two_stops_at_once_and_a_lost_error_end(monkeypatch, tmp_path):
         late = app.record_stop()
         assert late.status_code == 409 and late.json()["detail"] == "No recording runs", late.text
 
+
+def test_a_camera_that_ends_with_no_last_frame_leaves_its_files_to_the_take_level(monkeypatch, tmp_path):
+    """Review fault 3 [R2, recorder.md 7.4, 7.6]: the loop of one camera ends during a take with no last frame
+    (its stop flag, as when the group closes with no stop). It does not finish its pair with its own row
+    count: the take level completes it at the stop, so each sidecar has the frame count of the take and
+    the manifest has no `take_error`."""
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        ready_app_steps(app)
+        closing, other = app.factory.camera_ids
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 30)
+        worker = app.worker(closing)
+        app.group.cameras.orchestrator.camera_statuses[closing].should_close.value = True
+        app.wait(lambda: not worker.is_alive(), "the loop of the camera ends")
+        record_until(app, spies, len(spies.of("record", other)) + 30, [other])
+        summary = stop(app)
+    frame_count = summary["number_of_frames"]
+    assert [len(take_rows(tmp_path, cid)) for cid in (closing, other)] == [frame_count, frame_count]
+    assert take_warnings(tmp_path, "take_error") == []
+    lines = take_files(tmp_path)[closing][1].read_text(encoding="utf-8").splitlines()
+    assert lines[-2].startswith("# repair "), "the take level did not complete the pair (7.4)"
