@@ -119,6 +119,12 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({ camera }) => {
                             ))}
                         </div>
                     )}
+
+                    {camera.connectionStatus === 'error' && (
+                        <p className="text sm text-warning" style={{ whiteSpace: 'normal', paddingRight: 24 }}>
+                            Failed: {camera.failure ?? 'unknown reason'}
+                        </p>
+                    )}
                 </div>
             </div>
 

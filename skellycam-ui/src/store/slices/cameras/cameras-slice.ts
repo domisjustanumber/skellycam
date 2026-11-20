@@ -137,7 +137,9 @@ export const cameraSlice = createSlice({
                             camera.actualConfig = config as CameraConfig;
                             camera.desiredConfig = { ...config as CameraConfig };
                             camera.hasConfigMismatch = false;
-                            camera.connectionStatus = 'connected';
+                            const failure = action.payload.camera_failures?.[cameraId];
+                            camera.connectionStatus = failure ? 'error' : 'connected';
+                            camera.failure = failure ? `${failure.stage}: ${failure.reason}` : undefined;
                         }
                     }
                 );
@@ -169,17 +171,27 @@ export const cameraSlice = createSlice({
             .addCase(serverStateReceived, (state, action) => {
                 const groups = Object.values(action.payload.state.camera_groups);
                 const connectedIds = new Set<string>();
+                const failures = new Map<string, string>();
                 let anyPaused = false;
                 for (const group of groups) {
                     if (group.paused) anyPaused = true;
-                    if (group.alive) {
-                        for (const cameraId of Object.keys(group.configs)) {
+                    // `group.alive` is false as soon as one camera process ended, so judge each camera
+                    // by its own state: the other cameras of the group keep streaming.
+                    for (const cameraId of Object.keys(group.configs)) {
+                        const cam = group.cameras?.[cameraId];
+                        const camState = cam?.status?.state;
+                        if (camState === 'failed' || camState === 'dead' || camState === 'too_slow') {
+                            const failure = cam?.status?.failure;
+                            failures.set(cameraId, failure ? `${failure.stage}: ${failure.reason}` : camState);
+                        } else if (group.alive || (cam?.alive && (camState === 'ready' || camState === 'recording'))) {
                             connectedIds.add(cameraId);
                         }
                     }
                 }
                 state.cameras.forEach(camera => {
-                    camera.connectionStatus = connectedIds.has(camera.id) ? 'connected' : 'available';
+                    camera.connectionStatus = connectedIds.has(camera.id) ? 'connected'
+                        : failures.has(camera.id) ? 'error' : 'available';
+                    camera.failure = failures.get(camera.id);
                 });
                 state.isPaused = anyPaused;
             })

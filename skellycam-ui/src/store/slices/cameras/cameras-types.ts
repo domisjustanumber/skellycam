@@ -72,6 +72,7 @@ export interface Camera {
     hasConfigMismatch: boolean;     // Whether actual differs from desired
     connectionStatus: 'available' | 'connected' | 'error';  // Connection state
     selected: boolean;              // UI selection state
+    failure?: string;               // Server failure "stage: reason" while connectionStatus is 'error'
 
     // Device info (from detection)
     deviceInfo: {
@@ -118,6 +119,7 @@ export interface CamerasConnectOrUpdateRequest {
 
 export interface ConnectCamerasResponse {
     camera_configs: Record<string, CameraConfig>;
+    camera_failures?: Record<string, { stage: string; reason: string }>;
 }
 
 // ==================== Helper Functions ====================

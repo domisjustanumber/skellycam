@@ -1,10 +1,16 @@
 import { CameraConfig } from '@/store/slices/cameras/cameras-types';
 
+/** One camera process in a group snapshot (server CameraState; `status` is CameraStatus.serialize()). */
+export interface CameraProcessSnapshot {
+    alive: boolean;
+    status?: { state?: string; failure?: { stage: string; reason: string } | null };
+}
+
 /** One camera group as reported in the server's pushed APP_STATE snapshot. */
 export interface CameraGroupSnapshot {
     id: string;
     configs: Record<string, CameraConfig>;
-    cameras: Record<string, unknown>;
+    cameras: Record<string, CameraProcessSnapshot>;
     alive: boolean;
     recording_in_progress: boolean;
     paused: boolean;
