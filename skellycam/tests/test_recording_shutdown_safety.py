@@ -70,7 +70,7 @@ def test_camera_worker_registers_save_protection():
         update_camera_settings_subscription=queue, shm_subscription=queue,
         recording_info_subscription=queue,
     )
-    worker.protect_recording.assert_called_once_with(status.recording_in_progress)
+    worker.protect_recording.assert_called_once_with(status.recording_in_progress, status.writer_progress_at)
     assert registry.create_worker.call_args.kwargs["daemon"] is False
 
 
@@ -89,14 +89,23 @@ class StuckOnItsDisk(ManagedWorker):
 
 
 def test_the_wait_for_a_recording_save_has_a_time_limit(monkeypatch, caplog):
-    """A camera stuck on its disk does not hang the exit of the app: the wait ends at its limit, with an
-    error log line."""
+    """A camera stuck on its disk does not hang the exit of the app: the wait ends after the limit with no
+    writer progress, with an error log line. A writer that still makes progress is left to finish [C6DE D1]
+    (second review, R7): here it makes progress for 1 s, and the limit is 0.3 s."""
     monkeypatch.setattr(managed_worker, "RECORDING_SAVE_LIMIT_S", 0.3)
     flag = multiprocessing.Value("b", True)
+    progress = multiprocessing.Value("d", time.monotonic())
     worker = StuckOnItsDisk(name="stuck", shutdown_flag=multiprocessing.Value("b", False))
-    worker.protect_recording(flag)
+    worker.protect_recording(flag, progress)
     started = time.monotonic()
+
+    def writes_slowly():
+        while time.monotonic() < started + 1.0:
+            progress.value = time.monotonic()
+            time.sleep(0.05)
+
+    threading.Thread(target=writes_slowly, daemon=True).start()
     with caplog.at_level(logging.ERROR):
         worker.wait_for_recording_save()
-    assert 0.3 <= time.monotonic() - started < 5.0
+    assert 1.3 <= time.monotonic() - started < 5.0
     assert any("stuck" in record.getMessage() for record in caplog.records if record.levelno >= logging.ERROR)

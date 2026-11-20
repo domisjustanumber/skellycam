@@ -138,7 +138,7 @@ class CameraWorker:
                 source_factory=source_factory,
             ),
         )
-        worker.protect_recording(status.recording_in_progress)
+        worker.protect_recording(status.recording_in_progress, status.writer_progress_at)
         return cls(
             camera_id=camera_id,
             ipc=ipc,
