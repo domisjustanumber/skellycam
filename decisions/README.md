@@ -39,6 +39,7 @@ These entries are `accepted`.
 | [Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md) | The user accepted `specs/recorder.md` and its test list (step 5a); the format changes F-1 to F-10 still wait | accepted |
 | [C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) | Recorder decisions D1 to D3: a stall is no writer progress for the limit; 3 s and 10 s stay as starting values; no take on a FAT disk | accepted |
 | [JMS0](entries/JMS0-review-decisions.md) | Connection review A to K: frame count, error end, start wait, failed start, stall watch, gap detail, hang rule, exposure, credit lines, home path, secret scan | accepted |
+| [GVC0](entries/GVC0-certify-decisions-of-the-user.md) | Certify run of skellycam: levels, quick camera checks and 3 s take, camera summary list, rules that hold everywhere, fake cameras, functions, draft 1 answers | accepted |
 
 ### Evidence
 
@@ -72,6 +73,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [YNM2](entries/YNM2-connection-of-the-take-recorder-to-the-shared-loop.md) | Take recorder joined to the shared loop; U4, U5, U12 and old writer gone | none | proposed |
 | [P5VE](entries/P5VE-review-fix-choices.md) | Choices of the connection review fixes: app state, error end, abandon, kill, writer start, gap detail, save limit, status union, exposure constants, scan | `recorder` | proposed |
 | [T24F](entries/T24F-choices-of-the-5a-recorder-code.md) | Choices of the 5a recorder code: the writer after a write error, the completion walk, the manifest merge, the lock hold, empty statistics | `recorder` | proposed |
+| [KY81](entries/KY81-certify-spec-choices-of-the-agent.md) | Certify spec draft 2 `specs/certify.md`, its test list T-CERT-01 to T-CERT-40 and 15 agent choices; 9 questions in its section 14 | `certify` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
