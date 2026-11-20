@@ -10,6 +10,12 @@ M10 and C1 to C7 ([ADR-J3QP](../decisions/entries/J3QP-missing-frames-as-black-p
 are accepted. Section 18 gives each one in full. The revision applies M1 to M10, C1 to C7 and the
 faults of an independent review (section 15.5).
 
+Note of 2026-11-20: the user decided D1 to D3 after the code review ([ADR-C6DE](../decisions/entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md)): a stall is no progress of
+the writer for the stall limit (D1); the queue of 3 s and the stall limit of 10 s stay as starting
+values (D2); a take folder on a FAT disk is refused (D3). They are cited as [C6DE D1] to [C6DE D3],
+so that they differ from the decisions [Dn] of the capture spec. Dated notes apply them in sections
+1.5, 4.2, 4.3, 5.3, 8.1, 10, 11, 15.1, 15.3 and 18.
+
 ## 0. How to read this spec
 
 Marks:
@@ -117,7 +123,8 @@ of `windows-capture.md` that change.
 | `missing` row | A row with the flag `missing` [M3, F-1]. Its block is a placeholder, or it has no block in a short file [M5]. |
 | short file | A camera file that ends before the last row of its sidecar, because nothing could write it (7.4) [M5]. |
 | dead camera | A camera in the state `dead` of [cap 8.1] whose camera process still runs. |
-| stall limit | The longest time that `give` may wait for space in the queue (5.3). |
+| stall limit | The longest time that the writer may make no progress while `give` or `end` waits for it (5.3) [C6DE D1]. Changed on 2026-11-20: before, the longest time of one wait. |
+| progress | A write call on the MKV or the CSV file object, or an `os.fsync` call, that returned. A call that has not returned is no progress [C6DE D1]. |
 
 ## 2. Done list
 
@@ -198,6 +205,10 @@ summary = take.finish(results, *, frame_count, ended_by_error=None) -> TakeSumma
   (6.5), writes the capture info JSON, then the manifest with `state` `recording`, both under the
   lock [SFF-724, SFF-801]. It returns after the two writes. A refusal raises `ValueError` before the
   first write.
+- Added on 2026-11-20 [C6DE D3]: `start_take` refuses a take folder on a file system with a file size
+  limit of 4 GiB (FAT12, FAT16, FAT32: `FAT…` on Windows, `vfat` or `msdos` on Linux, `msdos` on
+  macOS). exFAT is accepted. The text names the file system and the limit. When the file system
+  cannot be found, `start_take` logs a warning and goes on.
 - `camera_spec` gives the picklable `CameraTakeSpec` of one camera: the paths of its MKV and CSV,
   the header values of 6.5, the mode size, the layout, the queue size and the stall limit.
 - `finish` takes one `CameraTakeResult` or `None` for each camera, and the frame count of the take.
@@ -220,18 +231,21 @@ result = writer.end(frame_count) -> CameraTakeResult
   the CSV, writes the header and the column line, and starts the writer thread. It returns before the
   first frame.
 - `give` puts the frame in the queue. It returns at once when the queue has space. When the queue is
-  full, `give` waits for space, at most the stall limit (5.2, 5.3) [agent 3]. It never drops a frame.
-  After the stall limit, it raises `RecorderStalled`. After a write error of the writer thread, it
-  raises `RecorderWriteError` at once (5.4).
+  full, `give` waits for space (5.2, 5.3) [agent 3]. It never drops a frame. When the writer made no
+  progress for the stall limit, counted from the start of the wait or from the last progress,
+  whichever is later, it raises `RecorderStalled` [C6DE D1, changed on 2026-11-20]. After a write
+  error of the writer thread, it raises `RecorderWriteError` at once (5.4).
 - `give_missing` puts one `missing` row with no frame in the queue: a placeholder block, and empty
   times and source frame number (7.3) [M1, M3] [agent 24]. It waits as `give` does.
 - `end` puts the end marker in the queue, with `frame_count`. The writer thread writes each queued
   item, then a `missing` row with a placeholder for each group frame up to `frame_count` (7.6), then
   closes the MKV, writes the rows that wait (6.3), writes the `# end` line (6.5), forces both files
-  to disk and closes them (5.6) [agent 11]. One deadline covers the put of the end marker (the queue
-  can be full) and the wait for the writer thread together: `end` returns at most the stall limit
-  after it was called. It returns a `CameraTakeResult`. When the writer thread did not finish by the
-  deadline, the result has `error="disk stall"`, and section 5.3 applies [C6].
+  to disk and closes them (5.6) [agent 11]. `end` waits for the put of the end marker (the queue can
+  be full) and for the writer thread while the writer makes progress, however slowly. It returns a
+  `CameraTakeResult`. When the writer made no progress for the stall limit (counted from the call or
+  from the last progress, whichever is later), the result has `error="disk stall"`, and section 5.3
+  applies [C6] [C6DE D1, changed on 2026-11-20: before, one deadline of the stall limit after the
+  call].
 - After `give` or `give_missing` raised `RecorderStalled` or `RecorderWriteError`, the caller calls
   only `end`, never `give` again. `end` pads the rest with `missing` rows; else each later row would
   move by one [agent 3].
@@ -300,8 +314,10 @@ process [R10]. The kill and stall tests run the camera level in a child process 
 
 ### 5.3 The stall limit and a disk stall [C5, C6]
 
-- The stall limit is the longest time that one `give` call waits [agent 3]. Its starting value is
-  10 s [P §6, R11]. Section 11 measures it before the value is fixed [R11].
+- The stall limit is the longest time with no progress of the writer (1.5) while `give` or `end`
+  waits for it [C6DE D1, changed on 2026-11-20]. A writer that writes slowly is never a stall. Its
+  starting value is 10 s, and the queue stays 3 s [P §6, R11]; the user keeps both as starting
+  values [C6DE D2].
 - After the limit, `give` raises `RecorderStalled`. The frame in hand is not written. The loop then
   calls only `end` for this camera (4.3).
 - A disk stall ends the take for all cameras, with a clear error [C5]:
@@ -311,8 +327,10 @@ process [R10]. The kill and stall tests run the camera level in a child process 
      same text [C5].
   3. Each camera is told to end, with the frame count of the take (7.6). The stalled camera calls
      `end` (4.3).
-  4. The main process waits for the result of each camera until the time at which it told that
-     camera to end, plus the stall limit, plus a margin of 5 s [C6] [agent 25].
+  4. The main process waits for the result of each camera while that camera's writer makes
+     progress. It stops the wait when no result came and the camera reported no progress for the
+     stall limit plus a margin of 5 s [C6] [agent 25] [C6DE D1, changed on 2026-11-20]. The connection
+     commit sends the progress time of the writer to the main process with the camera's status.
   5. A camera whose writer finished in that time returns normally. It stays `ready` [C6].
   6. A camera whose writer is still stuck after that time (a result with `error="disk stall"`, or no
      result) has its process ended (`terminate`, then `join`). It gets the state `failed`, stage
@@ -811,8 +829,9 @@ A frame with no bit of the error mask 0x0F gives one block and one row. `flags` 
    gives placeholders to that frame (7.3).
 2. The main process tells each camera to end, with the frame count of the take (7.6).
 3. Each camera process calls `end(frame_count)` and sends its `CameraTakeResult` (4.3).
-4. The main process waits for each camera until the time at which it told that camera to end, plus
-   the stall limit, plus 5 s [C6] [agent 25]:
+4. The main process waits for each camera while its writer makes progress, and at most the stall
+   limit plus 5 s after the last progress that the camera reported (5.3 item 4) [C6] [agent 25]
+   [C6DE D1, changed on 2026-11-20]:
    - a result with no error and `files_closed`: the camera is done;
    - a result with a write error and `files_closed`: the camera is done, and its files wait for 7.4;
    - a process that has already ended (hang, crash): the main process joins it;
@@ -937,7 +956,10 @@ commit, with the connection tests of 12.2, does these steps:
 13. **The start of a take.** The start endpoint calls `start_take`. A `<rec>` that breaks SFF-715 gets
     HTTP 422. A take folder that holds files gets HTTP 409 [agent 16]. A request that names a
     microphone (`mic_device_index` 0 or more) gets HTTP 422 with the text "audio recording returns in
-    step 5b; start again with no microphone" [C1].
+    step 5b; start again with no microphone" [C1]. Added on 2026-11-20: a take folder on a FAT disk
+    gets HTTP 422 with the text of `start_take` (4.2), for example "The folder is on a FAT32 disk.
+    FAT32 cannot hold a file larger than 4 GiB, and one camera reaches that in minutes. Choose a
+    folder on another disk." [C6DE D3].
 14. **Playback list.** `list_recordings` shows a folder whose `recording_manifest.json` has
     `"skellyfileformat": "recording_manifest"` with the mark "needs the new player" [C7]: the entry
     gets `needs_new_player: true`, `video_count` from the manifest `cameras`, and null statistics.
@@ -966,6 +988,10 @@ outside the repository. An evidence entry reports the summary with the tool vers
 | T-REC-KILL | 1 camera process, 720p30, and a 640x480 case where every second item is a placeholder. 20 kills during normal writing and 20 kills with a full queue (a blocked writer), at random frames; `TerminateProcess` on Windows, `SIGKILL` on Linux and macOS. | Frames given minus rows written, against the queue depth at the kill; torn bytes. | Process test with pass parts: each row has a correct CRC and its block bytes equal the frame given or the placeholder; blocks − rows is 0 or 1; each complete block parses. | The cost of a larger queue on a kill; it confirms the file-object writer with `cluster_size_limit=1` [agent 6]. |
 | T-REC-FSYNC | 16 camera processes at 1080p60, fsync once per second on and off, 3 runs of 60 s each, and one run of 10 min with fsync on. | Per-frame write time (p50, p99, p99.9, max); fsync time (p50, max); queue high-water; capture lateness; CPU of each process. | Benchmark, no pass value. | Whether SFF-788 (once per second) stays; input for the queue size and the stall limit [R11]. |
 | T-REC-GIL | 4 camera processes at 720p30 and 1 at 720p60, 10 min, writer on and off [P §7]. In each process: the source thread, the loop thread and the writer thread. | Arrival lateness against the schedule, interval jitter, loop step time (p50, p99, max), writer on against off. | Benchmark, no pass value. | Whether the writer thread delays capture [R11]. |
+
+Note of 2026-11-20: the measurements ran (ADR-8RES). The user keeps the queue of 3 s and the stall
+limit of 10 s as starting values [C6DE D2]. A slow disk (USB, spinning) is still to be measured on
+the user's hardware (15.1).
 
 The plan names T-REC-GIL with cameras [P §7]. R11 moves it to synthetic frames. The mix of 30 and
 60 fps is allowed here, because these processes have no gate. In the app, D18 refuses that mix. The
@@ -1354,6 +1380,7 @@ VPF8 and J3QP record that R1 to R5, M1 to M5 and C5, C6 replace their effect.
 | T-REC-STALL, T-REC-KILL, T-REC-FSYNC, T-REC-GIL | Section 11 [R11] | Step 5a |
 | T-REC-MF-DEFER | How Media Foundation behaves while the loop holds a frame for 0.5, 2 and 5 s [P §7]. With D26 the source keeps reading, so frames are replaced, not held back. A camera is needed. | After the connection |
 | DT5 | The live byte offsets (T-REC-10) on each OS [SFF-757] | Step 5a |
+| Slow disk | T-REC-STALL on a USB disk and on a spinning disk of the user, for the two starting values [C6DE D2] (added on 2026-11-20) | By the user |
 | Real camera JPEGs | Placeholders next to real camera JPEGs (their own tables, restart markers, APP variants) in OpenCV and Blender; the evidence used synthetic frames only [`RS/mkv_black_placeholder/FINDINGS.md`, "Not tested"] | After the connection |
 | Blender | The frame count of a 5a MKV with placeholders in Blender 5.2.3 (SFT-711 external) | By the user, one time |
 
@@ -1386,7 +1413,8 @@ VPF8 and J3QP record that R1 to R5, M1 to M5 and C5, C6 replace their effect.
 - The placeholder encoder is new code. T-REC-34 checks it in two decoders; Blender is checked by the
   user (15.1).
 - One hour of placeholders at 1080p 4:2:2 and 30 fps is 1.8 GB [M2].
-- The 3 s queue and the 10 s stall limit are starting values until section 11 [R11].
+- The 3 s queue and the 10 s stall limit are starting values that the user chose after section 11
+  [R11, C6DE D2]. The data supports 3 s on one NVMe drive only. Nothing measured chooses 10 s.
 - The research numbers come from one machine with one NVMe drive [M `RU/results/EVIDENCE_INDEX.md`
   §1].
 
@@ -1644,6 +1672,18 @@ They are binding. M1 to M5 replace the "row with no image" reading of R2, R3 and
   that camera was told to end, plus a margin.
 - C7: Today's playback list shows new-format takes with a mark "needs the new player"; they are not
   playable there and not hidden.
+
+Added on 2026-11-20, after the code review
+([ADR-C6DE](../decisions/entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md)):
+
+- C6DE D1: a stall is no progress of the writer for the stall limit, not a total time. At the end of
+  a take, a camera whose writer still writes, however slowly, is left to finish. Only a writer with
+  no progress for the stall limit is a disk stall (C6). The same rule applies to `give` during the
+  take. The margin of the main process stays.
+- C6DE D2: the queue of 3 s and the stall limit of 10 s stay as starting values.
+- C6DE D3: a take is refused at its start when the file system of the take folder has a file size
+  limit of 4 GiB (FAT). exFAT is accepted. When the file system cannot be found, the take starts and a
+  warning is logged.
 
 Decided before these (cited, not repeated): the format (skellyfileformat SPEC, draft v2: one MKV per
 camera with `V_MJPEG`, camera bytes unchanged; one CSV per camera with a CRC and a flush for each

@@ -33,6 +33,7 @@ These entries are `accepted`.
 | [VPF8](entries/VPF8-phase-5-recorder-decisions.md) | Phase 5 decisions R1 to R12: steps 5a, 5d, 5b, 5c; equal rows for dead and hung cameras; no image for a damaged frame; no old files | accepted |
 | [J3QP](entries/J3QP-missing-frames-as-black-placeholders-and-the-end-of-a-take.md) | Missing frames as black placeholder blocks on `missing` rows (M1 to M10); recorder rules C1 to C7 (microphone, completion, key, CI, disk stall) | accepted |
 | [Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md) | The user accepted `specs/recorder.md` and its test list (step 5a); the format changes F-1 to F-10 still wait | accepted |
+| [C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) | Recorder decisions D1 to D3: a stall is no writer progress for the limit; 3 s and 10 s stay as starting values; no take on a FAT disk | accepted |
 
 ### Evidence
 
