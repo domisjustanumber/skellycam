@@ -40,6 +40,7 @@ These entries are `accepted`.
 | [C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) | Recorder decisions D1 to D3: a stall is no writer progress for the limit; 3 s and 10 s stay as starting values; no take on a FAT disk | accepted |
 | [JMS0](entries/JMS0-review-decisions.md) | Connection review A to K: frame count, error end, start wait, failed start, stall watch, gap detail, hang rule, exposure, credit lines, home path, secret scan | accepted |
 | [JK79](entries/JK79-exposure-search-at-each-open-and-camera-requests.md) | Supersedes C4FZ: Auto searches at each open, at a rate change and on request (G1); one slow-camera text; camera number; `usb_link`; virtual links | accepted |
+| [379P](entries/379P-answers-on-the-choices-after-the-search-at-each-open.md) | Answers on B4 to B13: the apply does not wait for the search (B4 rejected); B5 to B7, B10, B13 accepted; row text; pause stays | accepted |
 
 ### Evidence
 
@@ -74,7 +75,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [P5VE](entries/P5VE-review-fix-choices.md) | Choices of the connection review fixes: app state, error end, abandon, kill, writer start, gap detail, save limit, status union, exposure constants, scan | `recorder` | proposed |
 | [T24F](entries/T24F-choices-of-the-5a-recorder-code.md) | Choices of the 5a recorder code: the writer after a write error, the completion walk, the manifest merge, the lock hold, empty statistics | `recorder` | proposed |
 | [Y6F6](entries/Y6F6-camera-request-choices.md) | Choices A1 to A23 of `specs/camera-requests.md`: search limits, held value, endpoint and texts, slow-camera texts, 60 fps check, fall back, `usb_link` | none | proposed |
-| [4Z7T](entries/4Z7T-choices-after-the-search-at-each-open.md) | Choices B1 to B13 after the search at each open: order and limits of an open, apply return, fall back, slow text, camera number | none | proposed |
+| [4Z7T](entries/4Z7T-choices-after-the-search-at-each-open.md) | Choices B1 to B17 after the search at each open: order and limits of an open, held value, state route, pause, fall back case | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
