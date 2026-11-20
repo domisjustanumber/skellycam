@@ -36,8 +36,8 @@ choices:
    (`test_camera_startup_failures`, `test_camera_startup_responsiveness`,
    `test_opencv_loop_measured_frame_rate`, `test_recording_timestamp_identity`,
    `test_timestamp_stamped_stages`, `test_rust_pixel_builder`).
-9. **USB link.** `CameraDeviceInfo.usb_version`: `"USB 3"`, `"USB 2"`, `"USB 1"` or `None`. The UI
-   does not show it.
+9. **USB link.** `CameraDeviceInfo.usb_link`: `"USB 3"`, `"USB 2"`, `"USB 1"` or `"unknown"`, never
+   `None` (the user decided the name and the values on 2026-11-20). The UI does not show it.
 10. **Start-failure explanation.** One warning item of kind `start_failure` in the apply response,
     also logged. A USB reset (Windows events, or a camera that a device list does not find) has
     its own text. The device list activates no camera; the USB links come from the detection before

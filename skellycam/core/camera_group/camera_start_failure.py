@@ -39,13 +39,14 @@ def explain_start_failure(failures: dict, configs: dict, detected: list | None,
     failure finds (None if it failed). `links`: camera ID to the USB link of the detection before the start; by
     default the links of `detected`. None when no explanation adds a cause."""
     present = {camera.camera_id for camera in detected or []}
-    connections = links if links is not None else {camera.camera_id: camera.usb_version for camera in detected or []}
+    connections = links if links is not None else {camera.camera_id: camera.usb_link for camera in detected or []}
     requested_ids = [camera_id for camera_id, config in configs.items() if config.use_this_camera]
     requested = []
     for camera_id in requested_ids:
         config = configs[camera_id]
         rate = f"{config.framerate:g} fps" if config.framerate > 0 else "the camera's default frame rate"
-        connection = connections.get(camera_id) or "USB connection unknown"
+        link = connections.get(camera_id, "unknown")
+        connection = "USB link unknown" if link == "unknown" else link
         requested.append(f"{camera_id} ({connection}): {config.capture_fourcc} "
                          f"{config.resolution.width}×{config.resolution.height} at {rate}")
     # Camera IDs come from detection; when none of them match, they are not detection IDs (or every

@@ -11,7 +11,7 @@ from tabulate import tabulate
 
 from skellycam.core.camera.capture.modes import CaptureMode  # ADR-HP7D item 3: also reachable here
 from skellycam.core.camera.determine_backend import determine_opencv_camera_backend, OpenCVBackend
-from skellycam.core.device_detection.usb_connection import usb_version
+from skellycam.core.device_detection.usb_connection import usb_link
 from skellycam.core.types.type_overloads import CameraIndexInt, CameraNameString, CameraBackendInt, CameraVendorIdInt, \
     CameraProductIdInt, CameraDevicePathString, CameraBackendNameString, CameraIdString
 
@@ -45,7 +45,7 @@ class CameraDeviceInfo(BaseModel):
     supported_modes: list[CaptureMode] = []  # spec 7.3; empty when the mode list cannot be read
     virtual: bool = False  # ADR-PDD3 W5: detection shows a virtual camera; a request cannot select it
     modes_read: bool = False  # the native mode list was read: [] then means no mode at the floor (7.5)
-    usb_version: str | None = None  # "USB 3", "USB 2" or "USB 1"; None when the link is unknown
+    usb_link: str = "unknown"  # "USB 3", "USB 2", "USB 1" or "unknown"
 
     @computed_field
     @property
@@ -91,10 +91,10 @@ class CameraDeviceInfo(BaseModel):
         return cap
 
 
-def _add_usb_versions(cameras: list[CameraDeviceInfo]) -> list[CameraDeviceInfo]:
+def _add_usb_links(cameras: list[CameraDeviceInfo]) -> list[CameraDeviceInfo]:
     """Set the USB link of each camera from its device path. The lookup never fails the detection."""
     for camera in cameras:
-        camera.usb_version = usb_version(camera.path)
+        camera.usb_link = usb_link(camera.path)
     return cameras
 
 
@@ -110,7 +110,7 @@ def detect_available_cameras(backend_id: CameraBackendInt|None=None, filter_virt
     if platform.system() == "Windows":
         # Windows only, and it can load comtypes (U18): import it only here.
         from skellycam.core.camera.capture.media_foundation.detect import detect_media_foundation_cameras
-        return _add_usb_versions(detect_media_foundation_cameras(modes=modes))
+        return _add_usb_links(detect_media_foundation_cameras(modes=modes))
     if backend_id is None:
         backend = determine_opencv_camera_backend()
     else:
@@ -130,7 +130,7 @@ def detect_available_cameras(backend_id: CameraBackendInt|None=None, filter_virt
         if any(camera.camera_id == device.camera_id for camera in cameras):
             raise ValueError(f"Detected devices have colliding camera IDs: {device.camera_id}. Device paths: {[camera.path for camera in cameras]} and {device.path}")
         cameras.append(device)
-    _add_usb_versions(cameras)
+    _add_usb_links(cameras)
     logger.debug(f"Detected {len(cameras)} cameras:\n {tabulate([camera.model_dump() for camera in cameras], headers='keys')}\n)")
     return cameras
 

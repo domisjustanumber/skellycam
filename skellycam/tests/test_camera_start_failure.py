@@ -27,7 +27,7 @@ def failure(camera_id, stage, reason):
 
 
 def detected(**connections):
-    return [SimpleNamespace(camera_id=camera_id, usb_version=version) for camera_id, version in connections.items()]
+    return [SimpleNamespace(camera_id=camera_id, usb_link=version) for camera_id, version in connections.items()]
 
 
 def test_usb_reset_is_explained_with_connections_and_advice():
@@ -35,7 +35,7 @@ def test_usb_reset_is_explained_with_connections_and_advice():
                                  detected(**{"1b2b": "USB 3", "891e": "USB 2"}), usb_disconnects=11)
     assert "Could not start 1 of 3 camera(s) with these settings." in text
     assert "1b2b (USB 3): MJPG 1280×720 at 90 fps" in text and "891e (USB 2)" in text
-    assert "a272 (USB connection unknown)" in text
+    assert "a272 (USB link unknown)" in text
     assert "Camera a272 failed during first frame: no frame for 2 s." in text
     assert "Windows reported 11 USB device disconnection(s) during the start." in text
     assert "Not detected after the failure: a272." in text
@@ -81,7 +81,7 @@ def test_a_failed_detection_still_gives_the_explanation(monkeypatch):
     text = start_failure.describe_start_failure(failure("1b2b", "open", "camera not found"), configs("1b2b"),
                                                 start_failure.datetime.now(start_failure.timezone.utc),
                                                 detection_fails)
-    assert "1b2b (USB connection unknown)" in text and "could not be opened" in text
+    assert "1b2b (USB link unknown)" in text and "could not be opened" in text
 
 
 def test_the_manager_adds_one_start_failure_warning(monkeypatch):
@@ -99,7 +99,7 @@ def test_the_manager_adds_one_start_failure_warning(monkeypatch):
 
     def device_list(**kwargs):
         requests.append(kwargs)
-        return detected(**{"1b2b": None, "891e": None})  # a device list has no link: the stored detection has it
+        return detected(**{"1b2b": "unknown", "891e": "unknown"})  # a device list has no link; the stored detection has it
 
     monkeypatch.setattr(manager_module, "detect_available_cameras", device_list)
     monkeypatch.setattr(start_failure, "usb_disconnects_since", lambda started: None)

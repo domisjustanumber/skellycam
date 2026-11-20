@@ -1,7 +1,7 @@
-"""Which USB generation a camera is connected through: "USB 3", "USB 2" or "USB 1".
+"""The USB link of a camera: "USB 3", "USB 2", "USB 1" or "unknown".
 
 Reported as a fact for the camera list and error messages; it says nothing about which settings
-will work. Returns None whenever the connection cannot be determined, so camera detection never
+will work. Returns "unknown" whenever the link cannot be determined, so camera detection never
 fails because of it.
 
 - Windows: the camera's DirectShow device path leads (Configuration Manager) to the USB device and
@@ -32,74 +32,74 @@ WINDOWS_DEVICE_PATH = re.compile(
 MACOS_USB_UNIQUE_ID = re.compile(r"0x(?P<location>[0-9a-f]{8})[0-9a-f]{8}", re.IGNORECASE)
 
 
-def usb_version(device_path: str | None) -> str | None:
-    """The USB generation of the camera at OpenCV/cv2_enumerate_cameras `device_path`, or None."""
+def usb_link(device_path: str | None) -> str:
+    """The USB link of the camera at the detection `device_path`, or "unknown"."""
     if not device_path:
-        return None
+        return "unknown"
     try:
         system = platform.system()
         if system == "Windows":
-            return _windows_usb_version(device_path)
+            return _windows_usb_link(device_path)
         if system == "Linux":
-            return _linux_usb_version(device_path)
+            return _linux_usb_link(device_path)
         if system == "Darwin":
-            return _macos_usb_version(device_path)
+            return _macos_usb_link(device_path)
     except Exception as error:  # a missing fact must not break camera detection
         logger.debug(f"USB connection of {device_path} unknown: {type(error).__name__} - {error}")
-    return None
+    return "unknown"
 
 
-def usb_version_from_megabits(megabits_per_second: float | int) -> str:
+def usb_link_from_megabits(megabits_per_second: float | int) -> str:
     """Kernel sysfs speeds: 1.5/12 (USB 1), 480 (USB 2), 5000/10000/20000 (USB 3)."""
     if megabits_per_second >= 5000:
         return "USB 3"
     return "USB 2" if megabits_per_second >= 480 else "USB 1"
 
 
-def usb_version_from_iokit_speed(speed: int | None) -> str | None:
+def usb_link_from_iokit_speed(speed: int | None) -> str:
     """tIOUSBHostConnectionSpeed: 1 full, 2 low, 3 high, 4 super, 5 super+, 6 super+ x2."""
     if speed is None or speed <= 0:
-        return None
+        return "unknown"
     if speed >= 4:
         return "USB 3"
     return "USB 2" if speed == 3 else "USB 1"
 
 
-def _linux_usb_version(device_path: str, sys_root: Path = Path("/sys")) -> str | None:
+def _linux_usb_link(device_path: str, sys_root: Path = Path("/sys")) -> str:
     # /sys/class/video4linux/videoN/device is the USB interface; the USB device above it has `speed`.
     device = sys_root / "class" / "video4linux" / Path(device_path).name / "device"
     if not device.exists():
-        return None
+        return "unknown"
     resolved = device.resolve()
     for directory in (resolved, *resolved.parents):
         speed = directory / "speed"
         if speed.is_file():
-            return usb_version_from_megabits(float(speed.read_text().strip()))
+            return usb_link_from_megabits(float(speed.read_text().strip()))
         if directory == sys_root:
             break
-    return None
+    return "unknown"
 
 
-def _macos_usb_version(device_path: str) -> str | None:
+def _macos_usb_link(device_path: str) -> str:
     match = MACOS_USB_UNIQUE_ID.fullmatch(device_path)
     if not match:
-        return None  # not a USB camera (built-in, Continuity or virtual)
+        return "unknown"  # not a USB camera (built-in, Continuity or virtual)
     location = int(match.group("location"), 16)
     listing = subprocess.run(["ioreg", "-a", "-r", "-c", "IOUSBHostDevice", "-d", "1"],
                              capture_output=True, check=True, timeout=5).stdout
     for device in plistlib.loads(listing):
         if device.get("locationID") == location:
-            return usb_version_from_iokit_speed(device.get("USBSpeed"))
-    return None
+            return usb_link_from_iokit_speed(device.get("USBSpeed"))
+    return "unknown"
 
 
-def _windows_usb_version(device_path: str) -> str | None:
+def _windows_usb_link(device_path: str) -> str:
     import ctypes
     from ctypes import wintypes
 
     match = WINDOWS_DEVICE_PATH.match(device_path)
     if not match:
-        return None  # not a USB camera (built-in PCI, network or virtual)
+        return "unknown"  # not a USB camera (built-in PCI, network or virtual)
     vendor, product = int(match.group("vid"), 16), int(match.group("pid"), 16)
     cfgmgr = ctypes.WinDLL("cfgmgr32")
     kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
@@ -127,11 +127,11 @@ def _windows_usb_version(device_path: str) -> str | None:
 
     node = wintypes.DWORD()
     if cfgmgr.CM_Locate_DevNodeW(ctypes.byref(node), match.group("instance").replace("#", "\\"), 0) != 0:
-        return None
+        return "unknown"
     for _ in range(4):  # video interface -> USB device -> hub (composite devices add one level)
         parent = wintypes.DWORD()
         if cfgmgr.CM_Get_Parent(ctypes.byref(parent), node, 0) != 0:
-            return None
+            return "unknown"
         hub_path = "\\\\?\\" + device_id(parent).replace("\\", "#") + "#" + USB_HUB_INTERFACE
         hub = kernel32.CreateFileW(hub_path, 0x40000000, 0x2, None, 3, 0, None)  # GENERIC_WRITE, FILE_SHARE_WRITE, OPEN_EXISTING
         if hub == invalid_handle:
@@ -141,17 +141,17 @@ def _windows_usb_version(device_path: str) -> str | None:
             address, length = wintypes.DWORD(), wintypes.ULONG(4)
             if cfgmgr.CM_Get_DevNode_Registry_PropertyW(node, CM_DRP_ADDRESS, None, ctypes.byref(address),
                                                         ctypes.byref(length), 0) != 0:
-                return None
+                return "unknown"
             port = address.value
             info = ioctl(hub, IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX, struct.pack("<I", port) + b"\0" * 600, 604)
             port_vendor, port_product = struct.unpack_from("<HH", info, 12)
             if (port_vendor, port_product) != (vendor, product):
-                return None  # the address did not identify this camera's port
+                return "unknown"  # the address did not identify this camera's port
             flags = struct.unpack_from("<I", ioctl(hub, IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX_V2,
                                                     struct.pack("<IIII", port, 16, 0x7, 0), 16), 12)[0]
             if flags & OPERATING_AT_SUPERSPEED_OR_HIGHER:
                 return "USB 3"
-            return {0: "USB 1", 1: "USB 1", 2: "USB 2", 3: "USB 3"}.get(info[23])
+            return {0: "USB 1", 1: "USB 1", 2: "USB 2", 3: "USB 3"}.get(info[23], "unknown")
         finally:
             kernel32.CloseHandle(hub)
-    return None
+    return "unknown"
