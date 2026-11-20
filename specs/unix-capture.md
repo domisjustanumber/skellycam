@@ -7,7 +7,10 @@ The choices of the agent are in
 [ADR-AT04](../decisions/entries/AT04-choices-of-the-linux-and-macos-capture-spec.md). Section 9
 holds the questions that wait for the user. Draft 2 fixes the 16 findings of an independent review of
 draft 1, applies the rulings of the user of 2026-11-20, and takes the names and values of the certify
-spec for each key, value, check name and code that certify reads.
+spec for each key, value, check name and code that certify reads. A later ruling of the same day
+accepts seven recommendations of draft 2, computes the V4L2 layout for 32-bit systems too, makes
+certify try each macOS approach for exposure and JPEG, and lets the apply request answer before the
+exposure search ends.
 
 The user moved this work up on 2026-11-20: "certify runs to validate assumptions about linux and mac
 code. Ideally as much real code is implemented as possible now so a single test run provides as much
@@ -76,13 +79,15 @@ Each source was read on 2026-11-20. The kernel sources are `torvalds/linux` mast
 | K24 | https://lkml.iu.edu/hypermail/linux/kernel/2503.3/06002.html | The uvcvideo series "Implement Granular Power Saving" (v6, 2025-03). The kernel release that holds it is not shown. |
 | K25 | `uvcvideo.h` and `videobuf2-v4l2.c`, `videobuf2-core.c` of the same tree | `UVC_CTRL_CONTROL_TIMEOUT` and `UVC_CTRL_STREAMING_TIMEOUT` are 5000 ms; `REQBUFS` returns `EBUSY` for a file that does not own the queue; after a queue error `DQBUF` returns `EIO`. |
 | K26 | `uvc_v4l2.c` and `uvc_ctrl.c` of the same tree | `S_FMT` runs the probe of `uvc_v4l2_try_format`, then returns `EBUSY` when the queue is busy; inside one `S_EXT_CTRLS` the value of the master (auto) control in the same call decides, and an absolute value with the master not manual gives `EACCES`. |
+| K27 | https://raw.githubusercontent.com/torvalds/linux/master/include/uapi/linux/videodev2.h | `v4l2_buffer` holds `struct timeval timestamp` for user space and `struct __kernel_v4l2_timeval` (two `long long`) in the kernel, "the user space version of timeval for 64-bit time_t"; `m.userptr` is `unsigned long`, `m.planes` a pointer; `v4l2_format.fmt` holds `v4l2_window` with pointers; `v4l2_ext_controls.controls` is a pointer; `v4l2_ext_control` and its union are packed. |
+| K28 | https://raw.githubusercontent.com/torvalds/linux/master/drivers/media/v4l2-core/v4l2-compat-ioctl32.c and `v4l2-ioctl.c` of the same tree | A 64-bit kernel takes `v4l2_buffer32` (timestamp of two `compat_s64`), "correct for all architectures including i386, but not x32", and `v4l2_buffer32_time32` with `old_timeval32` only with `CONFIG_COMPAT_32BIT_TIME`; a 32-bit kernel translates the `VIDIOC_*_TIME32` numbers only when `!CONFIG_64BIT && CONFIG_COMPAT_32BIT_TIME`. |
 
 ## 1. Purpose, scope, method
 
 ### 1.1 Purpose
 
 This step replaces OpenCV capture on Linux with V4L2 through the standard library, and on macOS with
-AVFoundation through PyObjC [A, Q 3]. The camera JPEG goes byte-true to the recorder and the JPEG
+AVFoundation through PyObjC [A, U]. The camera JPEG goes byte-true to the recorder and the JPEG
 ring; the shared loop inserts a DHT when the camera sends none [U, rec 4.1]. The sources plug into the
 shared loop of [W 5] through the capture interface of [W 4]. The shared changes of section 4.2 apply
 to each source, Media Foundation included.
@@ -97,8 +102,8 @@ certify [U].
 | Step | Delivers |
 |---|---|
 | 7s (shared) | The failure code beside the failure text; `diagnostics()` on each source; the exposure rules of 4.5 on each source; the restore of the controls at the close; the generic bounded call; the exposure unit map; the local record of certify-checked camera models; the source selection; the evidence fields; the native detection dispatch; the USB link label (section 4). |
-| 7a (Linux) | `skellycam/core/camera/capture/v4l2/`: detection, `camera_id`, `supported_modes`, `V4L2Source` (MJPG, mmap streaming), manual exposure, gain, focus, white balance and power line read (section 4.3). 64-bit only [Q 6]. |
-| 7b (macOS) | `skellycam/core/camera/capture/avfoundation/`: detection, `camera_id`, `supported_modes`, `AVFoundationSource` (MJPG block buffers if M-5 holds), exposure through CoreMediaIO controls, permission state (section 4.4). macOS 12.3 and later [Q 6]. |
+| 7a (Linux) | `skellycam/core/camera/capture/v4l2/`: detection, `camera_id`, `supported_modes`, `V4L2Source` (MJPG, mmap streaming), manual exposure, gain, focus, white balance and power line read (section 4.3). 64-bit and 32-bit userspace: the layout is computed for the host (A-23) [U]. |
+| 7b (macOS) | `skellycam/core/camera/capture/avfoundation/`: detection, `camera_id`, `supported_modes`, `AVFoundationSource` (MJPG block buffers if M-5 holds), exposure through CoreMediaIO controls, permission state (section 4.4). macOS 12.3 and later [U]. |
 
 Each step has its own fake-layer tests (section 6). Its hardware validation is a certify run (6.7) [U].
 
@@ -109,11 +114,11 @@ Each step has its own fake-layer tests (section 6). Its hardware validation is a
 - UVC PTS/SCR timestamps and the uvcvideo metadata node: "tier 0 only, no PTS testing" of 2026-11-09
   stays [R plan §2].
 - Uncompressed modes (YUY2, NV12) on Linux and macOS. They follow step 3b of Windows [W 13].
-- UVC requests on endpoint 0 on macOS in the product [Q 7].
+- UVC requests on endpoint 0 on macOS in the product [U].
 - Hot-unplug tests [U]. The source still maps a removal to `dead` (4.3.8, 4.4.9).
 - Modes below 30 fps; any group rate other than one rate (30 or 60) for all cameras [U, W U11].
 - H.264 modes [W D4]. The removal of the lockstep gate (phase 8).
-- Linux on a 32-bit userspace, and macOS before 12.3: these systems keep the OpenCV source [Q 6].
+- macOS before 12.3 and the x32 ABI of Linux: these systems keep the OpenCV source [U, A].
 
 ### 1.4 Method
 
@@ -150,7 +155,7 @@ V4L2_CAP_STREAMING` [K10]; detection skips it.
 of the camera [K10]; its parent is the USB device with `idVendor`, `idProduct`, `busnum`, `devpath`
 (the port chain, for example `2.3`), `speed` and, if the camera has one, `serial`. The `camera_id`
 input is `v4l2:serial:<vid>:<pid>:<serial>:<interface>` when the camera has a serial, else
-`v4l2:port:<busnum>-<devpath>:<interface>` [A, Q 4]. When two detected cameras give the same serial
+`v4l2:port:<busnum>-<devpath>:<interface>` [A, U]. When two detected cameras give the same serial
 input (a firmware fault), both use the port input, and detection logs it; only in that fault case
 does the input of one camera depend on the other cameras [A]. The `/dev/v4l/by-id` names collide for
 identical cameras with no serial [R xplat §2.6 G-ID]; this spec does not use them.
@@ -283,7 +288,8 @@ caught there; `S_FMT` then returns `EBUSY` after its PROBE. `EBUSY` at any open 
 `camera-in-use` and the reason "in use by another program" [W D13].
 - Confidence: high.
 - Diagnostics: `busy_call` (`reqbufs`, `s-fmt`, `s-parm`, `streamon`, or null).
-- Certify: `<label>:in-use` (`outcome`, `call`); `probe:camera-holders`.
+- Certify: `<label>:in-use` (`outcome`, `call`); `probe:camera-holders`. A camera that another
+  program holds is `skipped` with the reason `busy` in the certify format 1.3.0 [U].
 
 **A-15. A USB bandwidth refusal fails `STREAMON`.** uvcvideo returns `EIO` when no alternate setting is
 fast enough [K8]. A refusal of the host controller at `usb_set_interface` or at the URB submit comes
@@ -377,12 +383,33 @@ with two non-zero values, `usb_alt` is null [A].
 - Diagnostics: `usb_link`, `usb_alt` (D-9).
 - Certify: `system:usb`, `group:open`.
 
-**A-23. 64-bit userspace.** The struct layouts and ioctl numbers of `abi.py` are those of LP64
-(x86_64 and arm64) [R linuxlib]. On a 32-bit userspace `v4l2_buffer` has another size and the ioctl
-numbers differ. Native detection refuses when `ctypes.sizeof(ctypes.c_void_p)` is not 8: the native
-backend is missing, and the OpenCV source is used [Q 6].
-- Confidence: high.
-- Certify: `detect` (`backend-missing`).
+**A-23. The binary layout is computed for the host.** `abi.py` builds each struct with
+`ctypes.Structure` from the C types of `videodev2.h` (`c_uint32`, `c_int64`, `c_ulong`, `c_void_p`),
+and each ioctl number with the `_IOC` arithmetic from `ctypes.sizeof` of its struct [U]. Thus the
+layout and the numbers follow the C ABI of the system that runs the code [A]:
+- `v4l2_buffer.timestamp` has the 64-bit time layout: two 64-bit integers, as
+  `__kernel_v4l2_timeval` "for 64-bit time_t" [K27]. On LP64 this is the `struct timeval` of today.
+  On a 32-bit userspace it is the layout of a program built with a 64-bit `time_t`, which uses the
+  standard ioctl numbers [K27]. The source never uses the old 32-bit `timeval` layout and its
+  `_TIME32` numbers: a 32-bit kernel translates those only with `CONFIG_COMPAT_32BIT_TIME`, and a
+  64-bit kernel takes the 64-bit time layout of a 32-bit program as `v4l2_buffer32` (two
+  `compat_s64`), "correct for all architectures including i386, but not x32" [K28].
+- `m.userptr` is an `unsigned long` and `m.planes` a pointer [K27]: 4 bytes on a 32-bit userspace.
+- `v4l2_format.fmt` holds `struct v4l2_window`, which has pointers [K27]; the ctypes union holds a
+  `c_void_p` member, so that `fmt` gets the alignment of a pointer (offset 8 on LP64, 4 on ILP32).
+- `v4l2_ext_controls.controls` is a pointer (`c_void_p`); `v4l2_ext_control` and its union are
+  packed [K27, K28].
+- The alignment of a 64-bit integer differs: 8 on 32-bit arm (EABI), 4 on i386. `ctypes` takes it from
+  the host [A]. By this arithmetic `v4l2_buffer` is 88 bytes on LP64 (`VIDIOC_DQBUF` 0xC0585611), 80
+  bytes on 32-bit arm (0xC0505611) and 76 bytes on i386 (0xC04C5611) [NV for the 32-bit values].
+- The research layer (linuxlib) fixes LP64 with `u64` stand-ins for the pointers; the port replaces
+  them with `c_void_p` and `c_ulong` [A].
+- The x32 ABI of x86_64 has other alignment rules [K28]. Native detection refuses there (a 4-byte
+  pointer on an x86_64 machine): the native backend is missing, and the OpenCV source is used [A].
+- A 32-bit system is unverified, as any system: it keeps the OpenCV source until a certify run passes
+  there (4.9) [U]. The local record and the evidence key hold the ABI (`lp64`, `ilp32`) [A].
+- Confidence: high for LP64; medium for 32-bit.
+- Certify: `detect` (`backend-missing` on x32), and the camera checks on a 32-bit system.
 
 **A-24. Spawned processes and file handles.** Camera processes use `spawn` [U]. The node opens with
 `O_CLOEXEC`, so no child inherits it. Confidence: high.
@@ -398,7 +425,7 @@ cameras, with no camera permission [R mac_avf] [NV].
 
 **M-2. Identity.** For a USB camera, `uniqueID` is the hex form of `locationID << 32 | VID << 16 |
 PID`; it holds the port [R xplat §2.5 item 4] [NV]. The `camera_id` input is `avf:` plus the
-lower-case `uniqueID` [A, Q 4]. VID and PID come from `uniqueID`, else from `modelID` [R mac_avf]
+lower-case `uniqueID` [A, U]. VID and PID come from `uniqueID`, else from `modelID` [R mac_avf]
 [NV]. A built-in or Continuity camera has no USB IDs.
 - Confidence: medium.
 - Diagnostics: `id_source` (`unique-id`), `has_serial` (false: AVFoundation gives no serial).
@@ -434,6 +461,7 @@ extension made again, no source shows [NV].
   `sha256_00` to `sha256_29`, `dqt_sha256` (D-1, D-11).
 - Certify: `<label>:native-jpeg`. Byte-true is shown when `dqt_sha256` equals the value of the same
   camera model on Windows or Linux in the evidence file [cert 11.2] [A].
+- Certify also tries each other approach of 4.4.10 as a probe [U].
 
 **M-6. Session order, mode and rate.** The session preset is applied when the input is added [NV]. Thus the order is: `beginConfiguration`; `addInput`; `addOutput`;
 `lockForConfiguration` of the device; `activeFormat`; `activeVideoMinFrameDuration` and
@@ -463,7 +491,7 @@ or `lockForConfiguration` must not stop the other threads of the camera process,
 and the 100 ms rule fail [U, W 6.6] [NV].
 - Confidence: medium.
 - If false: a hung call stops the camera process, and its camera holds the gate until the stall watch
-  of the main process [Q 5].
+  of the main process [U].
 - Certify: `self:hang-100ms`; T-UNX-84 checks the GIL release on the macOS runner.
 
 **M-9. The sample time is host time on the clock of `perf_counter_ns`.** Each sample time is on
@@ -538,12 +566,13 @@ needed undocumented control classes [R macctl §1, §3 R1] [NV].
   then sets `2^v` seconds directly. It never assumes the unit of `NativeValue` [A].
 - A camera with no such control has no manual exposure: no Manual, no Auto and no exposure control in
   native capture; the camera keeps the exposure that macOS gives it; the warning `no-manual-exposure`
-  says so [Q 1]. "Auto by lock" of draft 1 is removed [Q 1].
+  says so [U]. "Auto by lock" of draft 1 is removed [U]. Certify tries every other approach for
+  exposure as a probe (4.4.10) [U].
 - Confidence: low.
 - Diagnostics: `control_path` (`cmio`, `none`), `exposure_unit` (`seconds`, `none`), the set and get
   return codes (`native_domain` `osstatus`) (D-4).
 - Certify: `<label>:controls`, `<label>:settings-stick` (`no-manual-exposure`), and the endpoint-0
-  probe `probe:control-ep0` [Q 7].
+  probe `probe:control-ep0` [U].
 
 **M-16. Video effects.** Center Stage, Portrait, Studio Light and Reactions change the frames, and
 AVFoundation reports them; Edge Light (macOS 26.2 and later) is not reported [R xplat §2.5 item 5].
@@ -565,7 +594,7 @@ bounded. The close takes under 1 s [NV].
 
 **M-19. macOS 12.3 and later.** `synchronizationClock` needs macOS 12.3 [K14]; the PyObjC wheels allow
 macOS 10.13 [K21]. Native detection refuses on an older macOS: the native backend is missing, and the
-OpenCV source is used [Q 6]. No `masterClock` fallback is written [A].
+OpenCV source is used [U]. No `masterClock` fallback is written [A].
 - Confidence: high. Certify: `detect` (`backend-missing`).
 
 **M-20. PyObjC in the frozen app.** PyInstaller 6.22.3 collects the PyObjC frameworks that the source
@@ -598,7 +627,7 @@ imports [NV]. T-UNX-88 finds a gap; then `skellycam.spec` adds hidden imports on
 | A-20 | Controls hold while streaming | med | `<label>:settings-stick` |
 | A-21 | Close under 1 s; reopen works; Kiyo Pro quirk by kernel | low | `<label>:cycles`, `probe:kernel` |
 | A-22 | USB link from sysfs; alternate setting of the VideoStreaming interface | med | `system:usb`, `group:open` |
-| A-23 | 64-bit userspace only | high | `detect` |
+| A-23 | Layout and ioctl numbers computed for the host; 64-bit time layout; x32 refused | high / med | `detect` |
 | A-24 | `spawn` and `O_CLOEXEC` | high | — |
 | M-1 | Discovery session lists cameras with no permission | med | `detect` |
 | M-2 | `uniqueID` = locationID, VID, PID (holds the port) | med | `<label>:identity` |
@@ -642,11 +671,11 @@ imports [NV]. T-UNX-88 finds a gap; then `skellycam.spec` adds hidden imports on
 | `skellycam/core/camera/capture/failure_codes.py` | The failure codes of 4.6.3. Pure. |
 | `skellycam/core/camera/capture/exposure_units.py` | The map of A-18 and the seconds map of M-15. Pure. |
 | `skellycam/core/camera/capture/camera_checks.py` | The local record of certify-checked camera models (4.9). Pure file I/O. |
-| `skellycam/core/camera/capture/v4l2/` | Linux only at run time. `abi.py` (ctypes structs, ioctl numbers, constants, LP64, ported from linuxlib with its reference values); `device.py` (the seam: `V4L2System`, with the real calls `os.open`, `fcntl.ioctl`, `mmap`, `select.poll`, `os.close`, and sysfs reads under a root path); `detect.py`; `controls.py`; `errors.py` (errno to code, pure); `source.py` (`V4L2Source`). |
+| `skellycam/core/camera/capture/v4l2/` | Linux only at run time. `abi.py` (ctypes structs and ioctl numbers computed for the host (A-23), and constants; ported from linuxlib, whose LP64 reference values become test values); `device.py` (the seam: `V4L2System`, with the real calls `os.open`, `fcntl.ioctl`, `mmap`, `select.poll`, `os.close`, and sysfs reads under a root path); `detect.py`; `controls.py`; `errors.py` (errno to code, pure); `source.py` (`V4L2Source`). |
 | `skellycam/core/camera/capture/avfoundation/` | macOS only at run time. `layer.py` (the seam: `AVLayer`, and `PyObjCLayer`, the real calls); `detect.py`; `controls.py` (CoreMediaIO); `errors.py` (AVError name to code, pure); `iokit.py` (the USB link, `ctypes`); `source.py` (`AVFoundationSource`). |
 | `skellycam/tests/capture/fake_v4l2.py`, `fake_avfoundation.py` | The fake layers of 6.2. |
 
-Import rule [A, Q 8]. `media_foundation/` is Windows only [U]; Linux and macOS each get their own
+Import rule [A, Q 1]. `media_foundation/` is Windows only [U]; Linux and macOS each get their own
 folder [U]. `v4l2/` runs only on Linux and `avfoundation/` only on macOS. Each of their modules imports
 only the standard library at module level: `fcntl`, `mmap` and `select.poll` load inside
 `V4L2System` methods; `objc` and the PyObjC frameworks load inside `PyObjCLayer.__init__`. Thus the
@@ -680,7 +709,7 @@ fake-layer tests run on Windows, Linux and macOS, as the parity ruling asks [U].
    for its model on this OS key). The status gets `system_evidence` [cert 11.3]. The app uses them
    for the prompt to run certify [cert 11.4].
 9. The `camera_id` hash stays the function of today; its input changes on Linux and macOS (A-2,
-   M-2). Each Linux and macOS camera gets a new ID one time, as on Windows [W D11] [Q 4].
+   M-2). Each Linux and macOS camera gets a new ID one time, as on Windows [W D11] [U].
 
 ### 4.3 The V4L2 source (step 7a)
 
@@ -688,7 +717,7 @@ fake-layer tests run on Windows, Linux and macOS, as the parity ruling asks [U].
 
 In a short-lived `spawn` child, each call bounded, as on Windows [W 7.1, A]:
 
-1. Refuse on a 32-bit userspace (A-23).
+1. Refuse on the x32 ABI (A-23).
 2. List `/dev/video*`. For each node: `open(O_RDWR | O_NONBLOCK | O_CLOEXEC)`, `VIDIOC_QUERYCAP`
    (A-1). Skip a node with no video capture in `device_caps`.
 3. Read the sysfs data of A-2 and A-22. A node that cannot be opened (`EACCES`) is listed from sysfs
@@ -822,7 +851,7 @@ Each step is bounded:
    `'dmb1'` [K18]), take the device lock again, `startRunning`, unlock (M-6).
 3. When the second variant is decoded too, or the output refuses it: failure `no-native-jpeg`, stage
    `start stream` [A]. Outside certify, the camera process then opens the OpenCV source for this
-   camera [Q 2]. Inside certify it does not [U].
+   camera [U]. Inside certify it does not [U].
 
 #### 4.4.4 The delegate
 
@@ -847,7 +876,7 @@ As in 4.3.4.
 
 | skellycam control | Path | When absent |
 |---|---|---|
-| `exposure` (a value) | CoreMediaIO exposure feature control: `AutomaticManual = 0` (manual), then `AbsoluteValue` = `2^v` s; and AVFoundation `exposureMode = locked` when `isExposureModeSupported(.locked)`, so that AVFoundation does not apply its own auto mode again [R macctl §1 item 3] | `no-manual-exposure` [Q 1] |
+| `exposure` (a value) | CoreMediaIO exposure feature control: `AutomaticManual = 0` (manual), then `AbsoluteValue` = `2^v` s; and AVFoundation `exposureMode = locked` when `isExposureModeSupported(.locked)`, so that AVFoundation does not apply its own auto mode again [R macctl §1 item 3] | `no-manual-exposure` [U] |
 | `gain` | CoreMediaIO gain feature control, manual, `NativeValue` (raw, as UVC) [NV] | absent |
 | `focus` | CoreMediaIO focus feature control; with `auto: true`, `AutomaticManual = 1` | absent |
 | `white_balance`, `power_line` | CoreMediaIO read, if published | absent |
@@ -885,6 +914,26 @@ As in 4.3.4.
 
 The removal notification makes the camera dead at once [W D38]. Else the stall rule applies.
 
+#### 4.4.10 Approaches for exposure and for the camera's JPEG [U]
+
+The user ruled that, for now, a certify run on macOS tries every approach that might work for
+exposure control and for the delivery of the camera's own JPEG; the test is trimmed once a working
+one is found [U]. The product uses only the approaches that the rulings allow:
+
+| Need | Product (allowed) | Certify only (probes) |
+|---|---|---|
+| The camera's JPEG | `videoSettings = {}`, then `kCVPixelBufferPixelFormatTypeKey = 'dmb1'` (4.4.3) | each other approach of the list |
+| Exposure | CoreMediaIO exposure feature control with an absolute value in seconds (4.4.6) | each other approach of the list, endpoint 0 included (`probe:control-ep0`) [U] |
+
+**Approaches to try: see the certify probes, to be filled from the approaches list.** A research job
+writes that list with a certify check for each approach. It did not exist when this draft was written.
+Candidates that the research already names, for that list to confirm or extend [R mac_avf, macctl]:
+for the JPEG, the `videoSettings` variants `nil`, `jpeg4cc`, `dmb1_sized` (with the size, as
+Chromium), `chromium`, and an `AVVideoCodecKey` from `availableVideoCodecTypes`; for exposure,
+CoreMediaIO `NativeValue`, CoreMediaIO `NativeData` on the `uc**` classes, and endpoint-0 class
+requests through the IOKit interface (`ControlRequest`) and device (`DeviceRequest`) with no open.
+Each probe is record-only and runs in the risky phase of certify when it can change the camera.
+
 ### 4.5 Exposure on each source (the rulings of the user)
 
 The user ruled on 2026-11-20 [U, R plan §14]. These rules apply to Media Foundation, V4L2 and
@@ -903,7 +952,9 @@ AVFoundation, through the shared loop and `set_controls`:
 5. The open of a camera in Auto runs the warm-up and the start-up rate check of [W 9, W 10.1] at -7
    (7.8 ms) [A]. Then the search runs.
 6. During the search the state is `adjusting`: the camera is in the gate, the preview shows, and a
-   record start is refused with 409 [U]. `adjusting` joins the states of [W 8.1] with the same rights
+   record start is refused with 409 [U]. The apply or open request answers when the cameras are open
+   and streaming; it does not wait for the search. The result of the search (`exposure_found`, or the
+   `too_slow` failure) arrives through the camera status [U]. `adjusting` joins the states of [W 8.1] with the same rights
    as `checking` in [W 8.3].
 7. The search: the range -12 to -5, 10 frames to settle at each value, the mean of the decoded image
    against 127.5, and one step darker than the nearest value [W 11.1]. Then the guard: the rate check
@@ -919,7 +970,7 @@ AVFoundation, through the shared loop and `set_controls`:
 11. Nothing below 30 fps; one frame rate (30 or 60) for all cameras [U].
 12. A macOS camera with no manual exposure (M-15) has no Manual, no Auto and no exposure control in
     native capture. The apply response and the status carry a warning of the kind
-    `no-manual-exposure` in the form of [W 11.3]; the camera does not fail [Q 1].
+    `no-manual-exposure` in the form of [W 11.3]; the camera does not fail [U].
 
 Changes for Media Foundation: the same rules, in a separate commit [U]. Draft 2 adds a note to
 [`windows-capture.md`](windows-capture.md) that names the sections and tests that change: D29, 8.1 to
@@ -996,8 +1047,11 @@ Call names (`call`, `busy_call`): the values of [cert 10.2] `open`, `s-fmt`, `re
 | D-11 | 30 frames after `ready` or a record start, after the DHT insertion, with `source_frame_number` | "the first 30 raw buffers" | change the text; compare by frame number |
 | `grain_ms`, `jitter_p95_ms` | certify computes them from `frame_log` | listed as numbers of `<label>:clock` | compute from `frame_log` |
 | `probe:usb-alt` | the source gives `usb_alt` (A-22) | probe when the source does not | keep only as a fallback, or drop |
-| `<label>:control-ep0` and 10.1 | endpoint 0 only as a certify probe [Q 7] | 10.1 puts endpoint-0 controls in the product; `control-ep0` is a camera check | rename to `probe:control-ep0`, owned and coded by certify; change 10.1 |
-| macOS camera with no manual exposure | opens; warning `no-manual-exposure` [Q 1] | `opens` at manual -7 | accept the warning in `opens`; `settings-stick` `fail` `no-manual-exposure`; row `partial` |
+| `<label>:control-ep0` and 10.1 | endpoint 0 only as a certify probe [U] | 10.1 puts endpoint-0 controls in the product; `control-ep0` is a camera check | rename to `probe:control-ep0`, owned and coded by certify; change 10.1 |
+| macOS camera with no manual exposure | opens; warning `no-manual-exposure` [U] | `opens` at manual -7 | accept the warning in `opens`; `settings-stick` `fail` `no-manual-exposure`; camera item `partial` |
+| A camera that another program holds | failure code `camera-in-use` | format 1.3.0: result `skipped`, reason `busy` [U] | map `camera-in-use` to `skipped` with `busy` |
+| Evidence and local pass key | the ABI (`lp64`, `ilp32`) beside the OS key (A-23) | OS key and backend | add `abi` to the keys of 11.2 and 11.3 |
+| macOS approaches | the product uses only the approaches of 4.4.10 that the rulings allow; certify tries each other one as a probe [U] | `native-jpeg` with three variants; `control-ep0` | one probe check for each approach of 4.4.10 |
 | Local pass | per camera model (VID:PID), OS key and backend, full only [U] | per OS key (11.3) | key the local pass by model |
 | Exposure at open | Auto searches; `adjusting` state; `exposure_found` [U] | `auto-exposure` reads the found value | read `exposure_found`; wait while `adjusting` |
 | Slow text | "Camera is slow. Try adding more light" [U] | 10.4 text of cap | certify maps by `rate-low`; no text change needed |
@@ -1041,21 +1095,22 @@ No thread spins [W 4.3].
   - File: `camera_checks.json` in the skellycam base folder (`get_default_skellycam_base_folder_path()`
     of `skellycam/system/default_paths.py`).
   - Format: `{"schema": 1, "checks": [{"device": "046d:085c", "backend": "v4l2", "os_key": "7.0",
-    "level": "full", "result": "pass", "skellycam": "2.0.0a6", "date": "2026-11-20"}]}`.
-  - Certify writes one row for each camera model that a full run checked: `result` is the camera row
-    (`pass`, `partial`, `fail`) [cert 3.3]. A quick run writes no row [cert 11.3].
-  - Rule 2 applies when a row with the camera's device, backend and current OS key has `pass` or
-    `partial`. A row with another OS key does not apply: on Linux a new kernel major or minor version
+    "abi": "lp64", "level": "full", "result": "pass", "skellycam": "2.0.0a6", "date": "2026-11-20"}]}`.
+  - Certify writes one row for each camera model that a full run checked: `result` is the camera
+    item of that model (`pass`, `partial`, `fail`, `record-only`, `skipped`) [U: certify format
+    1.3.0]. A quick run writes no row [cert 11.3].
+  - Rule 2 applies when a row with the camera's device, backend, ABI and current OS key has `pass` or
+    `partial`. The evidence rows of rule 3 match the ABI too (4.6.4). A row with another OS key does not apply: on Linux a new kernel major or minor version
     is a new OS key [cert 11.2].
   - A newer row for the same key replaces the older one.
 - A camera whose native open fails with `no-native-jpeg`, or whose evidence row is `known-bad` for the
-  native backend, opens with OpenCV when the default (not the setting) chose native [Q 2]. The status
+  native backend, opens with OpenCV when the default (not the setting) chose native [U]. The status
   shows `backend: opencv`.
 - Certify always uses the native source, and the per-camera OpenCV fallback never runs inside certify
   [U].
 - Detection is always native (4.2 item 7).
 
-### 4.10 Main-process stall watch [Q 5]
+### 4.10 Main-process stall watch [U]
 
 The main process removes from the gate a camera in an open state whose status shows no new frame and
 no report for 2 s, marks it `dead` with `stalled`, and ends its process. This guards the 100 ms rule
@@ -1086,7 +1141,7 @@ States: **same**; **differs** (how); **n/a** (why); **unknown** (certify must sh
 | D4, U8 (no H.264) | same | same |
 | D5 (phase order) | differs: phase 7 moves before phase 0 [U] | the same |
 | D6 | same: `V4L2Source` | same: `AVFoundationSource` |
-| D7 (comtypes) | n/a: no dependency | differs: PyObjC (7.2) [Q 3] |
+| D7 (comtypes) | n/a: no dependency | differs: PyObjC (7.2) [U] |
 | D8, U1, T-CAP-43, T-CAP-76, T-CAP-88 | differs: `SKELLYCAM_LINUX_CAPTURE`; OpenCV until a model is checked [U] | differs: `SKELLYCAM_MACOS_CAPTURE` |
 | D9 | n/a | n/a |
 | D10, U12, U16 | same: A-13 | same if M-8 holds |
@@ -1097,7 +1152,7 @@ States: **same**; **differs** (how); **n/a** (why); **unknown** (certify must sh
 | D25 (slow text) | differs: "Camera is slow. Try adding more light" on each source [U] | the same |
 | D26, D27 | same | same |
 | D28 | same; `sample_ns` from A-9 | same; `sample_ns` from M-9 (unknown until certified) |
-| D29, D35 (exposure modes, unit) | differs: 4.5 on each source [U]; unit map A-18 | differs: 4.5 with CoreMediaIO seconds; no manual exposure without it [Q 1] |
+| D29, D35 (exposure modes, unit) | differs: 4.5 on each source [U]; unit map A-18 | differs: 4.5 with CoreMediaIO seconds; no manual exposure without it [U] |
 | D30, D31, D32, D33, D36 | same; `adjusting` added (4.5) | same |
 | D37 | differs: never fires for exposure (no camera auto) | the same |
 | D34 | differs: also from `sequence` gaps (A-10) | differs: from drops and sequence numbers (M-10) |
@@ -1112,7 +1167,7 @@ States: **same**; **differs** (how); **n/a** (why); **unknown** (certify must sh
 | U2, U13, U14, U17 | same | same |
 | U3 | differs: certify `group:take-30` | the same |
 | U4, U5 | n/a | n/a |
-| U18 | differs: the package runs on Linux only; its tests run on each OS [Q 8] | the same |
+| U18 | differs: the package runs on Linux only; its tests run on each OS [Q 1] | the same |
 | U19 to U22, W1, W3 to W5, W7, W8 | same | same |
 
 ### 5.2 Rules of the body of the Windows spec
@@ -1193,7 +1248,7 @@ The pass thresholds that this list adds are [A]. They can change when the tests 
 - `V4L2System` (`v4l2/device.py`): `open(path, flags)`, `ioctl(handle, request, struct)` (mutates the
   struct, raises `OSError` with an errno), `mmap(handle, length, offset)`, `poll(handle, timeout_ms)`,
   `close(handle)`, `listdir(path)`, `read_text(path)`, `exists(path)`, `realpath(path)`,
-  `pointer_size()`, `getgroups()`, `geteuid()`, `kernel_release()`. Each real method is one
+  `abi()` (`lp64`, `ilp32`, `x32`), `getgroups()`, `geteuid()`, `kernel_release()`. Each real method is one
   standard-library call. Paths are under `dev_root` (default `/dev`) and `sys_root` (default `/sys`).
 - `FakeV4L2System` scripts: nodes with `QUERYCAP` data; a sysfs tree with USB devices, VideoControl
   and VideoStreaming interfaces and module parameters; formats, sizes and intervals; `S_FMT` and
@@ -1217,8 +1272,8 @@ The pass thresholds that this list adds are [A]. They can change when the tests 
 
 | ID | What it does | Pass criterion |
 |---|---|---|
-| T-UNX-01 | Size, offset and alignment of each struct of `abi.py`. | Each equals the reference values of linuxlib, for example `v4l2_buffer` 88 bytes, `timestamp` at 24, `sequence` at 56; each struct is 1024 bytes or less (A-13). |
-| T-UNX-02 | Compute each ioctl number. | Each equals the reference of linuxlib, for example `VIDIOC_DQBUF` 0xC0585611, `VIDIOC_S_EXT_CTRLS` 0xC0205648. |
+| T-UNX-01 | Size, offset and alignment of each struct of `abi.py`, built with LP64 types. | Each equals the reference values of linuxlib, for example `v4l2_buffer` 88 bytes, `timestamp` at 24, `sequence` at 56; each struct is 1024 bytes or less (A-13). |
+| T-UNX-02 | Compute each ioctl number with `_IOC` from the LP64 struct sizes. | Each equals the reference of linuxlib, for example `VIDIOC_DQBUF` 0xC0585611, `VIDIOC_S_EXT_CTRLS` 0xC0205648. |
 | T-UNX-03 | Pack a `v4l2_buffer`, a `v4l2_format` with MJPG 1280x720 and a `v4l2_ext_controls` with two controls. | The bytes equal golden bytes in the test. |
 | T-UNX-04 | Detection on a fake tree: a C922 (serial), two identical cameras with no serial on two ports, a metadata node per camera, a v4l2loopback node, a node with `EACCES`. | Five cameras; metadata nodes skipped; the loopback `virtual: true`; the `EACCES` camera with `modes_read: false`; `id_source` `serial` and `id-path`; `has_serial` set; no serial or path in `diagnostics()`. |
 | T-UNX-05 | Mode lists: discrete 1/30, 1/60, 1/15, 1001/30000; a stepwise range 1/60 to 1/5; YUYV formats; a size with only 15 fps. | `supported_modes` is the JSON of [W 7.3]: MJPG only, 29.97, 30.0 and 60.0, no 15; the stepwise range gives 29.97, 30 and 60 only. |
@@ -1246,7 +1301,7 @@ The pass thresholds that this list adds are [A]. They can change when the tests 
 | T-UNX-27 | The close order; with the restore on (default) and with `SKELLYCAM_RESTORE_CONTROLS=0`; a restore set that fails. | Stop, join (under 1 s), restore (each changed control set back to its "before" value and auto flag, and read back), `STREAMOFF`, `munmap` x4, `REQBUFS(0)`, `close`; with the setting 0 no restore; a failed restore is logged and the close goes on. |
 | T-UNX-28 | `diagnostics()` after 100 frames, with fake groups, euid and module parameters: (1) user in `video`; (2) not in `video`, access works; (3) euid 0; (4) `EACCES`. VideoStreaming sibling with alternate setting 3 after `STREAMON`. | Every key of 4.6.2 is present with its type; `access` `video-group`, `seat-acl`, `root`, `none`; `usb_alt` 3 (from the VideoStreaming interface, not the VideoControl one); `nodrop_param`, `clock_param`, `hwtimestamps_param` from the fake files; `frame_log` 64 rows; no value matches a path, a serial or a name of the fake. |
 | T-UNX-29 | Three `V4L2Source` cameras over the fake through the shared loop, 30 s of virtual time at 30 fps. | Equal ring frame counts; payload bytes equal the fake bytes; the rules of T-CAP-05 on the gaps and `replaced_count`. |
-| T-UNX-30 | Detection with `pointer_size()` 4. | The native backend is missing (`backend-missing`); the OpenCV source is chosen [Q 6]. |
+| T-UNX-30 | `abi.py` built with ILP32 stand-in types (pointer and `long` of 4 bytes) and a 64-bit alignment of 8, then of 4; detection with `abi()` `x32`. | `v4l2_buffer` 80 and 76 bytes, `VIDIOC_DQBUF` 0xC0505611 and 0xC04C5611, `timestamp` two 64-bit integers; x32: `backend-missing` and the OpenCV source. |
 
 ### 6.4 macOS fake tests (step 7b)
 
@@ -1261,7 +1316,7 @@ The pass thresholds that this list adds are [A]. They can change when the tests 
 | T-UNX-37 | T-UNX-16 | 300 samples with PTS on the host clock 3 ms before arrival; then a sync clock that is not the host clock; then one sample 1 ms after arrival. | `sample_ns` from `to_host_ns`; with the other clock the PTS goes through `CMSyncConvertTime` and is kept, `clock` `device`; `later_than_arrival` 1, then `NO_SAMPLE_NS`. |
 | T-UNX-38 | T-UNX-15 | A drop callback at sample 100; a sequence gap at sample 200; a layer with no sequence numbers. | The next frames have `discontinuity`; `drops_reported` 1; `sequence_gaps` 1; with no numbers `sequence_available` false. |
 | T-UNX-39 | — | The format of the samples changes to 640x480 at sample 50. | `format-changed`, stage `streaming`; `format_changes` 1. |
-| T-UNX-40 | T-UNX-21, T-UNX-22 | Controls: CoreMediaIO exposure in seconds; in another unit; absent; present but the set is ignored; lock supported and not supported. | Seconds: -7 sets `2^-7` s and reads back, the AVFoundation mode is locked when supported and left alone when not; another unit or absent: no exposure control, warning `no-manual-exposure`, the camera opens [Q 1]; ignored: `control-failed`, the camera keeps its state. |
+| T-UNX-40 | T-UNX-21, T-UNX-22 | Controls: CoreMediaIO exposure in seconds; in another unit; absent; present but the set is ignored; lock supported and not supported. | Seconds: -7 sets `2^-7` s and reads back, the AVFoundation mode is locked when supported and left alone when not; another unit or absent: no exposure control, warning `no-manual-exposure`, the camera opens [U]; ignored: `control-failed`, the camera keeps its state. |
 | T-UNX-41 | T-UNX-07 | `camera_id` inputs: `uniqueID` in mixed case; two identical cameras on two ports. | `avf:` plus the lower-case `uniqueID`; two IDs; the hash function of today. |
 | T-UNX-42 | T-UNX-08 | A forced duplicate `camera_id`. | Refused with an error that names both devices [W D13]. |
 | T-UNX-43 | T-UNX-09 | Detection where `devices()` hangs. | The detection child ends within 5 s + 2 s with `hung`; the main process runs on. |
@@ -1277,7 +1332,7 @@ The pass thresholds that this list adds are [A]. They can change when the tests 
 | T-UNX-53 | T-UNX-29 | Three `AVFoundationSource` cameras over the fake through the shared loop, 30 s of virtual time. | As T-UNX-29. |
 | T-UNX-54 | T-UNX-06 | USB speed values from the fake IORegistry: full, high, super, missing. | `usb1`, `usb2`, `usb3`, `unknown`. |
 | T-UNX-55 | — | The delegate raises inside the copy. | The error marker; `read_frame` raises `CaptureFailure` with `stream-error`; nothing raises into the layer. |
-| T-UNX-56 | T-UNX-30 | Detection with `macos_version()` 12.2. | The native backend is missing; the OpenCV source is chosen [Q 6]. |
+| T-UNX-56 | T-UNX-30 | Detection with `macos_version()` 12.2. | The native backend is missing; the OpenCV source is chosen [U]. |
 | T-UNX-57 | — | `PyObjCLayer` construction order with a stand-in of the frameworks. | `kCMIOHardwarePropertyRunLoop` is set to NULL before any other CoreMediaIO call (M-7). |
 | T-UNX-58 | T-UNX-20 | Permission `authorized`, but no sample ever arrives. | `first-frame-timeout`; `tcc` `granted`; the diagnostics show `t_first_frame_ms` null. |
 
@@ -1289,21 +1344,21 @@ T-UNX-55 and T-UNX-57 have no Linux counterpart: they test facts of macOS only.
 
 | ID | Kind | What it does | Pass criterion |
 |---|---|---|---|
-| T-UNX-61 | fake | `select_capture_source()` for each `sys.platform` with the settings unset, valid and wrong; with a local record row `pass`, `partial`, `fail`, with another OS key, from a quick run; with an evidence row `verified` and `known-bad`; inside certify. | The order of 4.9; a wrong value names the allowed values; another OS key or a quick run does not apply; certify always gets the native source; Windows unchanged. |
-| T-UNX-62 | fake | Write and read `camera_checks.json` after a fake full run of two models and a quick run. | One row per model with the fields of 4.9; no row for the quick run; a newer run replaces the row of its key; a broken file reads as empty with a log line. |
-| T-UNX-63 | fake | Read `pyproject.toml` and `uv.lock`. | The PyObjC pins of 7.2 with `==` and the marker `sys_platform == "darwin"` [Q 3]; no new Linux dependency; locked at the same versions. |
+| T-UNX-61 | fake | `select_capture_source()` for each `sys.platform` with the settings unset, valid and wrong; with a local record row `pass`, `partial`, `fail`, `skipped`, with another OS key, with another ABI, from a quick run; with an evidence row `verified` and `known-bad`; inside certify. | The order of 4.9; a wrong value names the allowed values; another OS key, another ABI or a quick run does not apply; certify always gets the native source; Windows unchanged. |
+| T-UNX-62 | fake | Write and read `camera_checks.json` after a fake full run of two models and a quick run. | One row per model with the fields of 4.9, `abi` included; no row for the quick run; a newer run replaces the row of its key; a broken file reads as empty with a log line. |
+| T-UNX-63 | fake | Read `pyproject.toml` and `uv.lock`. | The PyObjC pins of 7.2 with `==` and the marker `sys_platform == "darwin"` [U]; no new Linux dependency; locked at the same versions. |
 | T-UNX-64 | fake | `CaptureFailure` across a process boundary; each code of 4.6.3; `_mark_ended`. | `code` survives pickling; the failure object has `code`; a process that ended gives `process-ended`. |
 | T-UNX-65 | fake | `exposure_units` for each v from -14 to -2 with ranges (3, 2047, 1) and (1, 5000, 1); the seconds map. | The table of A-18; the clamp; the read-back; `floor(x + 0.5)`; seconds `2^v` exactly. |
-| T-UNX-66 | fake | `no-native-jpeg` from a native open with the default selection, with the setting, and inside certify. | Default: the camera opens with OpenCV, `backend: opencv`, a log line [Q 2]; setting: `failed` with `no-native-jpeg`; certify: `failed`, no OpenCV open. |
-| T-UNX-67 | fake | An evidence row `known-bad` for a camera model and the native backend. | Default: that camera opens with OpenCV; the others native [Q 2]. |
+| T-UNX-66 | fake | `no-native-jpeg` from a native open with the default selection, with the setting, and inside certify. | Default: the camera opens with OpenCV, `backend: opencv`, a log line [U]; setting: `failed` with `no-native-jpeg`; certify: `failed`, no OpenCV open. |
+| T-UNX-67 | fake | An evidence row `known-bad` for a camera model and the native backend. | Default: that camera opens with OpenCV; the others native [U]. |
 | T-UNX-68 | fake | "Apply again" for a camera whose old process is still alive. | `previous-process-alive`, stage `open`; no open of the camera. |
-| T-UNX-69 | fake | The exposure rules of 4.5 with the fake source: a new camera; a camera in Auto at open; a rate change; an apply with `exposure_search: true`; a camera in Manual at open and at a rate change; a record start during `adjusting`; a search whose best value is too slow at 30 fps; a camera slow at every value; a search request during a take. | New camera in Auto; the search runs at open, at the rate change and on request, never in Manual; state `adjusting` with preview, record start 409; the guard steps darker until the rate check passes; a camera slow at every value gets its old exposure back, `too_slow`, reason exactly "Camera is slow. Try adding more light"; the request during a take gets 409 and nothing changes; the config keeps `AUTO` with `exposure_found`. |
+| T-UNX-69 | fake | The exposure rules of 4.5 with the fake source: a new camera; a camera in Auto at open; a rate change; an apply with `exposure_search: true`; a camera in Manual at open and at a rate change; a record start during `adjusting`; a search whose best value is too slow at 30 fps; a camera slow at every value; a search request during a take. | New camera in Auto; the apply response comes when the cameras stream, before the search ends, and the search result arrives in the status; the search runs at open, at the rate change and on request, never in Manual; state `adjusting` with preview, record start 409; the guard steps darker until the rate check passes; a camera slow at every value gets its old exposure back, `too_slow`, reason exactly "Camera is slow. Try adding more light"; the request during a take gets 409 and nothing changes; the config keeps `AUTO` with `exposure_found`. |
 | T-UNX-70 | fake | `CameraStatus.serialize()` with a fake source and with the OpenCV fake. | `diagnostics` is present each second; the OpenCV status has `backend` `opencv` and null for every other source key. |
 | T-UNX-71 | fake | MJPG passthrough with the fake source; the OpenCV fake (re-encode); a BGR ring on. | `encoded_by_skellycam` 0 and the frame count; `decoded_by_skellycam` counts the decode stage. |
 | T-UNX-72 | fake | D-11: a camera reaches `ready`, then records; one camera sends no DHT. | 30 hashes after `ready` with their `source_frame_number`, then a new set at the record start; each hash equals the SHA-256 of the ring slot and of the MKV block of that frame; no warm-up frame is hashed; `dht_inserted` counts the DHT camera. |
 | T-UNX-73 | fake | The OpenCV source on Linux with a native detection result; on macOS with a device order. | Linux: `cv2.VideoCapture('/dev/videoN', CAP_V4L2)` of the detected node; macOS: the index of the matching `uniqueID`. |
 | T-UNX-74 | fake | Detection with an evidence file and a local record. | `evidence`, `checked`, `id_source`, `has_serial`, `backend`, `usb_link` in `CameraDeviceInfo`; `system_evidence` in the status. |
-| T-UNX-75 | fake | Two fake cameras; one camera process stops giving frames and reports nothing (its source holds a lock in a stand-in for a GIL hold) [Q 5]. | The main process removes it from the gate and ends it 2.0 to 2.5 s after its last frame; `stalled`; the other camera has no gap longer than 2.5 s. |
+| T-UNX-75 | fake | Two fake cameras; one camera process stops giving frames and reports nothing (its source holds a lock in a stand-in for a GIL hold) [U]. | The main process removes it from the gate and ends it 2.0 to 2.5 s after its last frame; `stalled`; the other camera has no gap longer than 2.5 s. |
 | T-UNX-76 | windows | `MediaFoundationSource.diagnostics()` with the stand-in interfaces of the Windows tests. | Every key of 4.6.2; `id_source` `mf-link`; `native_domain` `hresult`; `clock` `unknown`; `t_*_ms` filled. |
 | T-UNX-77 | windows | Map the HRESULTs of [W 6.7] and `0x800718CF` to codes. | In-use codes give `camera-in-use`; removal codes give `device-removed`; `0x800718CF` gives `usb-bandwidth`; `0x80004005` gives `open-failed` at open and `stream-error` in streaming. |
 | T-UNX-78 | windows | The restore of the Media Foundation source at the close, with stand-in control interfaces. | Each changed control is set back to its "before" value and flags before the flush, and read back; on by default. |
@@ -1343,7 +1398,7 @@ tests; it does not repeat the certify spec.
 | A-14, M-11, M-12 | `<label>:in-use`, `probe:camera-holders` | T-CAP-56 |
 | A-15, A-22, M-13 | `group:open`, `group:contention` | none (new) |
 | A-16, M-14 | `system:camera-access` | none (new) |
-| A-17, A-18, M-15 | `<label>:controls`, `<label>:auto-off`, `<label>:settings-stick`, `<label>:exposure:<base>`, `<label>:auto-exposure`, `<label>:control:*`, `probe:control-ep0` [Q 7] | T-CAP-57, T-CAP-78 |
+| A-17, A-18, M-15 | `<label>:controls`, `<label>:auto-off`, `<label>:settings-stick`, `<label>:exposure:<base>`, `<label>:auto-exposure`, `<label>:control:*`, `probe:control-ep0` [U] | T-CAP-57, T-CAP-78 |
 | A-19, A-20 | `<label>:settings-stick` | T-CAP-57 |
 | A-21, M-17 | `<label>:cycles`, `<label>:timings`, `probe:kernel` | T-CAP-54 |
 | A-22, M-18 | `system:usb` | none (new) |
@@ -1372,7 +1427,7 @@ tests; it does not repeat the certify spec.
 | linuxpy 0.25.0 (GPL-3.0-or-later [K22]) | A dependency that the research never tested, for code the research already has | Rejected |
 | v4l2py, pyv4l2 | "Do not take" [R xplat §2.4] | Rejected |
 
-### 7.2 macOS: PyObjC, pinned exactly [Q 3]
+### 7.2 macOS: PyObjC, pinned exactly [U]
 
 ```toml
 "pyobjc-core==13.0; sys_platform == \"darwin\"",
@@ -1389,7 +1444,7 @@ Quartz and CoreAudio are listed because AVFoundation 13.0 requires them [K21].
 
 | Option | Cost | Choice |
 |---|---|---|
-| PyObjC 13.0 | cp313 universal2 wheels, about 7.5 MB together [K21]. The frozen app grows by about 8 to 12 MB [NV]. CI install: seconds from the uv cache [NV]. | **Proposed** |
+| PyObjC 13.0 | cp313 universal2 wheels, about 7.5 MB together [K21]. The frozen app grows by about 8 to 12 MB [NV]. CI install: seconds from the uv cache [NV]. | **Chosen** [U] |
 | `ctypes` to the Objective-C runtime | No dependency, but a delegate class made at run time, blocks by hand, and struct returns of `objc_msgSend` per architecture: several hundred lines that nobody tested | Rejected |
 | rubicon-objc | A dependency too, with less coverage of CoreMedia and CoreMediaIO [NV] | Rejected |
 
@@ -1399,14 +1454,14 @@ T-UNX-88 finds a gap.
 ### 7.3 Risks, ranked
 
 1. **No native JPEG through AVFoundation (M-5).** Plan: `no-native-jpeg`, and the camera opens with
-   OpenCV outside certify [Q 2]; after step 3b the source could encode the decoded samples; the plan of
+   OpenCV outside certify [U]; after step 3b the source could encode the decoded samples; the plan of
    2026-11-17 already says "If it does not, macOS stays on decode then re-encode" [R plan §3].
 2. **No manual exposure on macOS (M-15).** Plan: no exposure control and the warning
-   `no-manual-exposure` [Q 1]; certify shows `partial`; the endpoint-0 probe shows whether that route
-   works [Q 7].
+   `no-manual-exposure` [U]; certify shows the camera item `partial`; the endpoint-0 probe shows whether that route
+   works [U].
 3. **Timestamps not on a usable clock (A-9, M-9).** The 200 ms rule gives `NO_SAMPLE_NS`, and the
    recorder keeps `arrival_ns` [W D28]. Low on Linux, medium on macOS.
-4. **PyObjC holds the GIL (M-8).** Plan: the stall watch of 4.10 [Q 5]; T-UNX-84 shows it in CI.
+4. **PyObjC holds the GIL (M-8).** Plan: the stall watch of 4.10 [U]; T-UNX-84 shows it in CI.
 5. **No real system before certify.** Each struct, ioctl number and PyObjC call comes from documents
    and research code. Plan: the reference-value tests; the first certify run gives every diagnostic;
    OpenCV stays until a model is checked [U].
@@ -1442,7 +1497,7 @@ T-UNX-88 finds a gap.
 16. The AVError map by PyObjC names.
 17. `CMSyncConvertTime` for a sync clock that is not the host clock; no `masterClock` fallback.
 18. The CoreMediaIO run loop set to NULL at the layer start.
-19. Fake-testable modules that import only the standard library at module level [Q 8].
+19. Fake-testable modules that import only the standard library at module level [Q 1].
 20. The generic bounded call in `capture/bounded.py`.
 21. The diagnostic keys that certify does not name (4.6.2), `frame_log` of 64 rows, and the D-11
     trigger and frame numbers.
@@ -1461,29 +1516,14 @@ T-UNX-88 finds a gap.
 ## 9. Questions for the user
 
 Each question waits for the user. Each is worded so that "yes" accepts the recommendation, and the
-spec is written to that recommendation. The most important is first.
+spec is written to that recommendation. The user accepted the seven other recommendations of draft 2
+on 2026-11-20 ([ADR-22EJ](../decisions/entries/22EJ-decisions-of-the-user-for-linux-and-macos-native-capture.md), item 14).
 
-1. A macOS camera with no manual exposure through CoreMediaIO (an absolute value in seconds) gets no
-   Manual, no Auto and no exposure control in native capture: it opens, the warning
-   `no-manual-exposure` says that skellycam cannot set its exposure, and certify shows the camera as
-   `partial`. "Auto by lock" is removed from the product. Yes?
-2. A camera that fails with `no-native-jpeg` (macOS), or whose evidence row is `known-bad` for native
-   capture, opens with OpenCV for now, when the default (not the setting) chose native. Never inside
-   certify. Yes?
-3. The macOS dependencies are the eight PyObjC 13.0 packages of 7.2, pinned with `==` and marked
-   `darwin`; Linux gets no new dependency. Yes?
-4. The `camera_id` on Linux hashes the USB serial when the camera has one, else the USB port chain; on
-   macOS it hashes `uniqueID`. Each Linux and macOS camera then gets a new ID one time. Yes?
-5. A main-process stall watch removes from the gate a camera whose process gives no frame and no
-   report for 2 s, marks it `dead` with `stalled`, and ends that process. Yes?
-6. Linux native capture runs only on a 64-bit userspace, and macOS native capture only on macOS 12.3
-   and later; other systems keep the OpenCV source. Yes?
-7. UVC requests on endpoint 0 on macOS run only as a certify probe (`probe:control-ep0`, owned by
-   certify, in its risky phase), and enter the product only after a run shows that they work and you
-   say so. Yes?
-8. The folders `v4l2/` and `avfoundation/` run only on their OS, but their modules import only the
+1. The folders `v4l2/` and `avfoundation/` run only on their OS, but their modules import only the
    standard library at module level, so that their fake tests run on Windows, Linux and macOS. Yes?
-9. The diagnostic keys of 4.6.2, with `frame_log` of 64 rows and the 30 frame hashes, go into the
+2. The diagnostic keys of 4.6.2, with `frame_log` of 64 rows and the 30 frame hashes, go into the
    camera status each second. Yes?
-10. CI adds no new job: the fake tests join the three capture jobs, the Linux job tries
-    `modprobe vivid` without failing, and the macOS build jobs run T-UNX-88. Yes?
+3. CI adds no new job: the fake tests join the three capture jobs, the Linux job tries
+   `modprobe vivid` without failing, and the macOS build jobs run T-UNX-88. Yes?
+4. The x32 ABI of Linux keeps the OpenCV source, and 32-bit arm and i386 use the computed layout of
+   A-23. Yes?

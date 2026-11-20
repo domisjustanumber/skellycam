@@ -42,18 +42,33 @@ spec [`specs/unix-capture.md`](../../specs/unix-capture.md) builds on them.
    This is on by default, on all three systems.
 10. The certify checks are the hardware tests of the Linux and macOS sources. T-CAP-92 to T-CAP-98
     are retired.
-11. These earlier decisions bind the spec and are not reopened: pure Python, no compiled extension of
-    our own, no Rust; exact pins; each dependency must be justified; MJPG frames pass through byte-true
-    (the recorder stores the camera's JPEG bytes, with a DHT inserted when the camera sends none); no
-    mode below 30 fps is offered; one frame rate for the group, and 60 fps only when proven; virtual
-    cameras are shown (label "virtual") but cannot be selected; each camera shows a USB link label (USB
-    2, USB 3 or unknown); a camera process that hangs costs the other cameras at most 100 ms; the
-    camera processes use `spawn` on every system; a camera failure reason gets a fixed failure code
-    beside the text; hot-unplug tests are not run; the OpenCV source stays in the tree as the fallback
-    until a system is verified.
+11. Earlier decisions bind the spec: pure Python, no own compiled extension, no Rust; exact pins; a
+    justified dependency; byte-true MJPG, with a DHT inserted when the camera sends none; no mode
+    below 30 fps; one group rate, 60 fps only when proven; virtual cameras shown, not selectable; a
+    USB link label; a hung camera costs the others at most 100 ms; `spawn` on each system; a fixed
+    failure code; no hot-unplug test; OpenCV stays as the fallback until a system is verified.
 12. A camera that failed is never opened again in the same certify run.
 13. The certify spec owns the names and values of each key, value, check name and reason code that
     certify reads; the capture spec uses them.
+14. Accepted recommendations of draft 2: a macOS camera with no manual exposure gets no Auto and no
+    exposure control (warning `no-manual-exposure`; camera item `partial`), and "Auto by lock" goes;
+    a `no-native-jpeg` macOS camera opens with OpenCV for now, never inside certify; the eight PyObjC
+    13.0 pins; the one-time `camera_id` change; the 2 s main-process stall watch; macOS 12.3 or later;
+    endpoint-0 requests only as a certify probe.
+15. The V4L2 layout is not fixed to 64-bit. Each struct layout and ioctl number is computed for the
+    system that runs the code, so that native capture can run on 32-bit Linux too. A test checks the
+    computed 64-bit values against the known constants (88 bytes, 0xC0585611, 0xC0205648). A 32-bit
+    system is unverified like any other and keeps OpenCV until a certify run passes there.
+16. On macOS, every approach that might work for exposure control and for the delivery of the
+    camera's own JPEG is tried in a certify run for now; the test is trimmed once a working one is
+    found. The product uses only the approaches that the earlier rulings allow; the others are
+    certify probes.
+17. The apply or open request answers when the cameras are open and streaming. The exposure search
+    then runs with the camera in `adjusting`, and its result arrives through the status. The request
+    does not wait for the search.
+18. The certify contract is format 1.3.0: the results are `pass`, `fail`, `record-only`, `partial`
+    and `skipped`; a camera that another program holds is `skipped` with the reason `busy`; there is
+    one camera item for each camera model.
 
 ## Reason
 
@@ -64,5 +79,5 @@ capture usable on that system at once when it passes. OpenCV capture is already 
 
 - Each assumption of the native sources needs a run-time check, a diagnostic and a certify check.
 - The exposure rules change the Windows spec (D29, the states, the slow text and some tests).
-- Ten points wait for the user: section 9 of the spec and
+- Four points wait for the user: section 9 of the spec and
   [ADR-AT04](AT04-choices-of-the-linux-and-macos-capture-spec.md).
