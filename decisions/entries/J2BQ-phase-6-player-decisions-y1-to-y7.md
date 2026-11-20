@@ -1,6 +1,10 @@
 # J2BQ — Phase 6 player decisions Y1 to Y7: steps, file access, tile, gaps, unfinished takes, module, tests
 
-**Status:** accepted, 2026-11-19 (user; grilling session of 2026-11-19, Q217 to Q226; commit to dom/player).
+**Status:** absorbed into
+[`specs/player.md#181-y1-to-y7-grilling-of-2026-11-19-q217-to-q226`](../../specs/player.md#181-y1-to-y7-grilling-of-2026-11-19-q217-to-q226),
+[`specs/player.md#185-earlier-decisions-cited-not-repeated`](../../specs/player.md#185-earlier-decisions-cited-not-repeated),
+2026-11-20 (commit to dom/integration; was accepted, 2026-11-19 (user; grilling session of
+2026-11-19, Q217 to Q226; commit to dom/player)).
 
 ## Decision
 

@@ -37,7 +37,6 @@ These entries are `accepted`.
 | [J3QP](entries/J3QP-missing-frames-as-black-placeholders-and-the-end-of-a-take.md) | Missing frames as black placeholder blocks on `missing` rows (M1 to M10); recorder rules C1 to C7 (microphone, completion, key, CI, disk stall) | accepted |
 | [Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md) | The user accepted `specs/recorder.md` and its test list (step 5a); the format changes F-1 to F-10 still wait | accepted |
 | [C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) | Recorder decisions D1 to D3: a stall is no writer progress for the limit; 3 s and 10 s stay as starting values; no take on a FAT disk | accepted |
-| [J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md) | Phase 6 player decisions Y1 to Y7: steps 6a to 6d, Electron file handler, one `ImageDecoder` tile, gap and unfinished marks, module, tests | accepted |
 | [4HNY](entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md) | Missing frames as black placeholder blocks with the flag `missing` (M1 to M10); player decisions L1 to L8 | accepted |
 | [YV3V](entries/YV3V-acceptance-of-the-phase-6a-player-spec-and-test-list.md) | The user accepted `specs/player.md` and its test list (step 6a) | accepted |
 | [JMS0](entries/JMS0-review-decisions.md) | Connection review: frame count, error end, start wait, failed start, stall watch, gap detail, hang rule, exposure, allow-lists, dead server, summary rate | accepted |
