@@ -168,3 +168,33 @@ def test_a_late_close_leaves_the_ring_of_a_restart_open():
     group.rings["aaaa"] = new_ring
     group._close_ended_ring("aaaa", old_ring)
     assert group.rings["aaaa"] is new_ring and new_ring.unlinks == 0
+
+
+class UnendingWorker:
+    """A camera process that `terminate` and `kill` do not end, for example one stuck in the kernel."""
+
+    def __init__(self):
+        self.calls = []
+        self.worker = SimpleNamespace(terminate=lambda: self.calls.append("terminate"),
+                                      kill=lambda: self.calls.append("kill"), exitcode=None)
+
+    def join(self, timeout=None):
+        self.calls.append("join")
+
+    def is_alive(self):
+        return True
+
+
+def test_a_stuck_camera_whose_process_does_not_end_is_killed_and_reported(monkeypatch):
+    """Review fault 6 [recorder.md 5.3 item 6, 8.1 step 4, review B2]: after `terminate` and the join, a process
+    that still runs gets `kill`. When it still runs after that, the main process reports it, so that the
+    take level does not touch its files."""
+    import skellycam.core.camera_group.camera_group as module
+
+    monkeypatch.setattr(module, "BOUNDED_JOIN_S", 0.01)
+    worker = UnendingWorker()
+    status = status_in("recording")
+    group = bare_group({"cam0": worker}, {"cam0": status})
+    assert group._end_stuck_camera("cam0") is False
+    assert worker.calls == ["terminate", "join", "kill", "join"]
+    assert status.state == "failed" and status.info_dict()["failure"]["reason"] == "disk stall"

@@ -312,3 +312,26 @@ def test_item_12b_the_manifest_keeps_the_summary_members_of_freemocap(tmp_path, 
     summary = run.manifest()["summary"]
     assert summary["calibration"] == manifest["summary"]["calibration"]
     assert summary["processing_runs"] == manifest["summary"]["processing_runs"]
+
+
+def test_finish_does_not_touch_the_files_of_a_camera_whose_process_runs(tmp_path):
+    """Review fault 6 of the connection [8.1 step 4, review B2]: `finish` with `running_cameras` leaves the
+    files of that camera as they are; the other camera is finished."""
+    from skellycam.core.take_recorder import CameraTakeWriter, start_take
+    from skellycam.tests.capture.fake_source import synthetic_jpeg
+    from skellycam.tests.take_recorder.rec_api import recorder_frame, take_camera
+
+    take = start_take(tmp_path / "take", "take", [take_camera("0a1b", layout=None),
+                                                  take_camera("ff00", os_index=1, layout=None)],
+                      writer="skellycam 2.0.0")
+    writers = [CameraTakeWriter.start(take.camera_spec(camera_id)) for camera_id in ("0a1b", "ff00")]
+    for k in range(3):
+        for writer in writers:
+            writer.give(recorder_frame(synthetic_jpeg(640, 480), k, arrival_ns=take.take_start_host_ns + k * 33_333_333))
+    result = writers[0].end(3)
+    writers[1].abandon()  # its files as a process left them that still runs
+    running = [writers[1].spec.mkv_path, writers[1].spec.csv_path]
+    before = [path.read_bytes() for path in running]
+    take.finish([result, None], frame_count=3, running_cameras={"ff00"})
+    assert [path.read_bytes() for path in running] == before
+    assert writers[0].spec.csv_path.read_text(encoding="utf-8").splitlines()[-1].startswith("# end ")

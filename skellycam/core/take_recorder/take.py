@@ -178,10 +178,11 @@ class Take:
         return complete_pair(mkv, csv, frame_count, self.writer, spec.header)
 
     def finish(self, results, *, frame_count, ended_by_error=None, dead_cameras=None,
-               error_camera=None) -> TakeSummary:
+               error_camera=None, running_cameras=()) -> TakeSummary:
         """The end of the take (8.1 step 5). The caller passes a result, or None, for each camera only
         after the camera's writer ended or its process was joined [review B2]. `error_camera` is the
-        `camera_id` of the camera of `ended_by_error`, when the caller knows it (F-5)."""
+        `camera_id` of the camera of `ended_by_error`, when the caller knows it (F-5). The files of each
+        camera of `running_cameras` (a process that a kill did not end) are not completed (8.1 step 4)."""
         dead_cameras = dead_cameras or {}
         mkvs = [self.folder / self.video_path(label) for label in self.labels]
         paths = [self.folder / self.timing_path(label) for label in self.labels]
@@ -189,6 +190,9 @@ class Take:
         # of one camera is logged and reported, and never stops the others or the manifest.
         shorts, faults = [], {}
         for camera, mkv, csv in zip(self.cameras, mkvs, paths):
+            if camera.camera_id in running_cameras:
+                shorts.append(None)
+                continue
             try:
                 shorts.append(self._complete(camera, mkv, csv, frame_count))
             except Exception as error:

@@ -577,11 +577,11 @@ class CameraGroup:
             if paused:
                 await self.cameras.unpause(await_unpaused=True)
             frame_count = orchestrator.take_frame_count()
-            results, dead = await asyncio.to_thread(self._collect_results)
+            results, dead, running = await asyncio.to_thread(self._collect_results)
             error, error_camera = self.take_error or (None, None)
             summary = await asyncio.to_thread(
                 take.finish, [results.get(camera_id) for camera_id in self.recording_ids], frame_count=frame_count,
-                ended_by_error=error, dead_cameras=dead, error_camera=error_camera)
+                ended_by_error=error, dead_cameras=dead, error_camera=error_camera, running_cameras=running)
         finally:
             self.take = self.take_error = None
             orchestrator.first_recording_frame_number.value = -1
@@ -591,10 +591,11 @@ class CameraGroup:
         logger.info(f"Stopped recording for camera group ID: {self.id} with recording name: {take.rec}")
         return summary
 
-    def _collect_results(self) -> tuple[dict, dict]:
+    def _collect_results(self) -> tuple[dict, dict, set]:
         """8.1 step 4: wait for the result of each camera while its writer makes progress [C6DE D1]. A camera
         whose writer stays stuck has its process ended and is `failed` (5.3 item 6). The files of a camera are
-        touched only after its result came or its process was joined [review B2]."""
+        touched only after its result came or its process was joined [review B2]: the third item holds each
+        camera whose process still runs after a kill."""
         statuses, workers = self.cameras.orchestrator.camera_statuses, self.cameras.camera_workers
         pending, results, dead, ended_since = set(self.recording_ids), {}, {}, {}
         started = time.monotonic()
@@ -631,26 +632,37 @@ class CameraGroup:
                         self.take_error = (f"disk stall on camera {camera_id}", camera_id)
             if pending:
                 time.sleep(WATCH_INTERVAL_S)
+        running = set()
         for camera_id in stuck:
-            self._end_stuck_camera(camera_id)
+            if not self._end_stuck_camera(camera_id):
+                running.add(camera_id)
             dead[camera_id] = "disk stall"
         for camera_id in results:
             status = statuses.get(camera_id)
             if camera_id not in dead and status is not None and status.state in ("dead", "failed"):
                 dead[camera_id] = ((status.info_dict().get("failure") or {}).get("reason")) or status.state
-        return results, dead
+        return results, dead, running
 
-    def _end_stuck_camera(self, camera_id: CameraIdString) -> None:
-        """5.3 item 6 [C6]: end the process (terminate, then join); the camera is `failed`, stage `recording`."""
+    def _end_stuck_camera(self, camera_id: CameraIdString) -> bool:
+        """5.3 item 6 [C6]: end the process (terminate, join, and kill when it still runs); the camera is `failed`,
+        stage `recording`. Return False when the process still runs: the take level must not touch its files."""
         status, worker = self.cameras.orchestrator.camera_statuses[camera_id], self.cameras.camera_workers.get(camera_id)
         status.recording_in_progress.value = False  # the take level completes its files after the join (7.4)
         status.should_close.value = True
+        ended = True
         if worker is not None:
             worker.worker.terminate()
             worker.join(timeout=BOUNDED_JOIN_S)
+            if worker.is_alive():
+                worker.worker.kill()
+                worker.join(timeout=BOUNDED_JOIN_S)
+                ended = not worker.is_alive()
+            if not ended:
+                logger.error(f"The process of camera {camera_id} still runs after a kill; its files stay as they are")
         status.update_info(failure=dict(camera_id=camera_id, stage="recording", reason="disk stall"))
         status.set_state("failed")
         logger.error(f"Camera {camera_id} failed during recording: disk stall")
+        return ended
 
     async def close(self) -> None:
         logger.debug("Closing camera group")

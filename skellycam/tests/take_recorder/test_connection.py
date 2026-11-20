@@ -49,9 +49,17 @@ def stop(app):
     return stopped.json()[0]
 
 
+class _Killed(BaseException):
+    """The end of a held writer thread when the main process ends its camera (THREAD workers)."""
+
+
 class WriterHold:
     """Holds the writer thread of one camera before its next row (the disk takes nothing). `stalled` is set
-    when `give` of that camera raises `RecorderStalled`; `in_give` is true while its `give` waits."""
+    when `give` of that camera raises `RecorderStalled`; `in_give` is true while its `give` waits.
+
+    With `kill_flag` (the stop flag of the camera), a held writer thread ends as a killed process ends when
+    the flag is set: its file handles close with no write, and the thread ends. A THREAD worker cannot be
+    killed, so else the take level would complete the files while the writer thread lives (review item 15)."""
 
     def __init__(self, monkeypatch, camera_id):
         from skellycam.core.take_recorder import CameraTakeWriter, RecorderStalled
@@ -59,13 +67,24 @@ class WriterHold:
         self.camera_id = camera_id
         self.held, self.release, self.stalled = threading.Event(), threading.Event(), threading.Event()
         self.in_give = False
+        self.kill_flag = None
         take, give = CameraTakeWriter._take, CameraTakeWriter.give
+        hook = threading.excepthook
         hold = self
 
         def held_take(writer, item):
             if writer.spec.camera_id == hold.camera_id and hold.held.is_set():
-                hold.release.wait(120)
+                deadline = time.monotonic() + 120
+                while not hold.release.wait(0.001) and time.monotonic() < deadline:
+                    if hold.kill_flag is not None and hold.kill_flag.value:
+                        writer._mkv.raw.close()
+                        writer._csv.close()
+                        raise _Killed()
             return take(writer, item)
+
+        def quiet_kill(args):
+            if not issubclass(args.exc_type, _Killed):
+                hook(args)
 
         def watched_give(writer, frame):
             mine = writer.spec.camera_id == hold.camera_id
@@ -83,6 +102,7 @@ class WriterHold:
 
         monkeypatch.setattr(CameraTakeWriter, "_take", held_take)
         monkeypatch.setattr(CameraTakeWriter, "give", watched_give)
+        monkeypatch.setattr(threading, "excepthook", quiet_kill)
 
     def start(self):
         self.release.clear()
@@ -446,13 +466,17 @@ def test_t_rec_48_stall_watch_stall_end_and_failed_state(monkeypatch, tmp_path):
         assert errors[0]["camera_key"] == camera_key_of(tmp_path, held_id, "take2")
         assert app.state(held_id) == "ready" and app.state(other) == "ready"
         assert summary["number_of_frames"] == len(take_rows(tmp_path, held_id, "take2"))
-        # case 3
+        # case 3: the writer of the held camera ends as its process would end at the kill of 5.3 item 6
         hold.stalled.clear()
+        hold.kill_flag = app.group.cameras.orchestrator.camera_statuses[held_id].should_close
         assert app.record_start(tmp_path, name="take3").status_code == 200
         record_until(app, spies, len(spies.of("record", held_id)) + 30)
+        writer_thread = spies.writers[held_id]._thread
         hold.start()
         app.wait(lambda: app.group.ended_take is not None, "the take ends", timeout=60)
-        stop(app)
+        frame_count = stop(app)["number_of_frames"]
+        assert not writer_thread.is_alive(), "the take level completed the files while the writer thread lived"
+        assert [len(take_rows(tmp_path, cid, "take3")) for cid in (held_id, other)] == [frame_count] * 2
         status = app.status(held_id)
         assert status["state"] == "failed" and status["failure"] == {
             "camera_id": held_id, "stage": "recording", "reason": "disk stall"}, status
