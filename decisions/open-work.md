@@ -163,21 +163,21 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Phase 6a (the canvas player for new takes).** The user decided Y1 to Y7 on 2026-11-19
   ([ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md)). The user accepted the spec
   [`specs/player.md`](../specs/player.md) (revision 2) and its test list T-PLAY-01 to T-PLAY-72 on
-  2026-11-20 ([ADR-YV3V](entries/YV3V-acceptance-of-the-phase-6a-player-spec-and-test-list.md)). The
-  39 agent choices of section 16 stay in
-  [ADR-4K7V](entries/4K7V-phase-6a-player-spec-and-test-list.md). The player gives three items to the
-  merged format list of the recorder spec (section 13).
+  2026-11-20 ([ADR-YV3V](entries/YV3V-acceptance-of-the-phase-6a-player-spec-and-test-list.md)), and
+  the 6a choices ([ADR-4D94](entries/4D94-step-6a-choices-of-the-canvas-player.md)). The player
+  gives three items to the merged format list of the recorder spec (section 13).
   - The failing tests of 6a are in `skellycam-ui/src/player/tests/` and
     `skellycam-ui/src/components/playback/tests/`. Run `npm run test:player:unit` and
     `npm run test:player:browser` in `skellycam-ui/`. The benchmarks T-PLAY-65 to T-PLAY-70 run by
-    hand with `playwright.player-bench.config.ts`. The TypeScript names that the tests assume wait for
-    the user ([ADR-4MJ4](entries/4MJ4-typescript-names-of-the-player-as-the-6a-tests-assume-them.md)).
+    hand with `playwright.player-bench.config.ts`.
   - The `xvfb` version of `.github/workflows/player.yml` is not verified. The unit tests ran on Node
     26.13.1 on the Windows test machine only.
-  - The product code of 6a is on `dom/player` (2026-11-20). Its corrections and choices wait for the
-    user ([ADR-1ACK](entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)). Some tests
-    still fail; the report of the code lists each one. The recorder spec needs one sentence for a
-    `camera_dead` detail that does not parse (item 4 of ADR-1ACK).
+  - The product code of 6a is on `dom/player` (2026-11-20). Some tests still fail; the report of the
+    code lists each one. The recorder spec needs one sentence for a `camera_dead` detail that does
+    not parse (item 4 of ADR-1ACK).
+  - ADR-4D94 changes the player: no `picked-take-folders.json` in 6a (section 5.3 and item 6 of the
+    spec must change); `xvfb` from the runner image (section 12.6 must change); a `.gitignore`
+    exception for `skellycam-ui/src/player/`.
 - **The full reader result and the conformance run of the JavaScript reader.** They come with step 6c
   (L2 of [ADR-4HNY](entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md)).
 - **Option B for the take files of the player (not part of 6a).** Review how the Python server can

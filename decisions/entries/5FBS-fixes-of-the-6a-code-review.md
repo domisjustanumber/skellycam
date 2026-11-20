@@ -1,6 +1,6 @@
 # 5FBS — Fixes of the 6a code review
 
-**Status:** proposed, 2026-11-20 (agent; waits for the user).
+**Status:** superseded by [4D94](4D94-step-6a-choices-of-the-canvas-player.md), 2026-11-20 (commit to dom/integration; was accepted, 2026-11-20 (user, through the review sheets of 2026-11-20); was proposed, 2026-11-20 (agent; waits for the user)).
 
 ## Decision
 

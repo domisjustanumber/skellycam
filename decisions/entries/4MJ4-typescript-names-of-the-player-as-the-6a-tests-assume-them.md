@@ -1,6 +1,6 @@
 # 4MJ4 — TypeScript names of the player, as the 6a tests assume them
 
-**Status:** proposed, 2026-11-20 (agent; waits for the user).
+**Status:** superseded by [4D94](4D94-step-6a-choices-of-the-canvas-player.md), 2026-11-20 (commit to dom/integration; was accepted, 2026-11-20 (user, through the review sheets of 2026-11-20); was proposed, 2026-11-20 (agent; waits for the user)).
 
 ## Decision
 
