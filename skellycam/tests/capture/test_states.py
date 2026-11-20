@@ -563,7 +563,10 @@ def test_t_cap_86_relay_sends_each_camera_on_its_own(monkeypatch):
     `starting`; the third comes back after `ready`.
 
     The reopened fake holds after its first frame, so the camera stays in `starting` while the test
-    reads the relay."""
+    reads the relay. The test thread joins the virtual clock from before the reopen until the held
+    camera runs again. Else the other two loops run the virtual time on alone while the test thread
+    does not run, and the held camera passes its 15 s ready limit (CI runs of d8989972d, macOS, and
+    6d496aa24, Linux)."""
     scripts = [FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60), FakeScript(modes=MODES_30_60, hold_opens=(2,))]
     with capture_app(monkeypatch, scripts) as app:
         ready_app_steps(app)
@@ -571,9 +574,10 @@ def test_t_cap_86_relay_sends_each_camera_on_its_own(monkeypatch):
         result = []
         configs = [app.config(a), app.config(b), app.config(reopened, width=320, height=240)]
         thread = threading.Thread(target=lambda: result.append(app.apply(configs)))
-        thread.start()
+        app.clock.wait_until(app.clock.now_ns())  # join the clock: the time moves only when this thread waits on it
         source = None
         try:
+            thread.start()
             app.wait(lambda: reopened in app.factory.sources and app.factory.sources[reopened].holding.is_set(),
                      "the reopened camera holds in `starting`")
             source = app.factory.sources[reopened]
@@ -588,27 +592,27 @@ def test_t_cap_86_relay_sends_each_camera_on_its_own(monkeypatch):
         finally:
             if source is not None:
                 source.release()
+                app.wait(lambda: not source.holding.is_set(), "the held camera runs again")
+            app.clock.leave()
             thread.join(60)
         assert result and result[0].status_code == 200
+        # The virtual times of the reopen (s from the open), for the CI log if the next wait fails.
+        events = [(name, t) for name, t, _ in app.factory.logs[reopened].events]
+        open_ns = [t for name, t in events if name == "open"][-1]
+        print("T-CAP-86 reopen:", [(name, round((t - open_ns) / 1e9, 3)) for name, t in events if t >= open_ns])
         app.wait_state(reopened, "ready")
         after = []
         app.wait(lambda: _collect(app, after) and reopened in after[-1][1], "the reopened camera in the relay")
 
 
 def _collect_one_frame_apart(app, messages, count):
-    """Collect relay messages one frame of virtual time apart. The test thread joins the clock while it
-    collects, so the virtual time does not run on while a poll builds a payload. Else, on a slow
-    machine, the held camera passes its 15 s ready limit before the test has its messages (CI run of
-    d8989972d, macOS)."""
-    try:
-        app.clock.wait_until(app.clock.now_ns())  # join the clock before the first poll
-        for _ in range(50 * count):
-            if _collect(app, messages) >= count:
-                return
-            app.clock.wait_until(app.clock.now_ns() + FRAME_NS)
-        raise AssertionError(f"{len(messages)} relay messages, not {count}")
-    finally:
-        app.clock.leave()
+    """Collect relay messages one frame of virtual time apart. The caller has joined the clock, so the
+    virtual time does not run on while a poll builds a payload."""
+    for _ in range(50 * count):
+        if _collect(app, messages) >= count:
+            return
+        app.clock.wait_until(app.clock.now_ns() + FRAME_NS)
+    raise AssertionError(f"{len(messages)} relay messages, not {count}")
 
 
 def _collect(app, messages):
