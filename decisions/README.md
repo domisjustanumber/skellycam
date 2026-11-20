@@ -34,7 +34,7 @@ These entries are `accepted`.
 | [HB4Z](entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md) | Answers U16 to U23: control thread, warm-up count, Windows-only `media_foundation/`, CI and tests on Linux and macOS, parity table | accepted |
 | [G651](entries/G651-phase-4-live-preview-decisions-p1-to-p7.md) | Phase 4 decisions P1 to P7 and answers A1 to A8: steps, flow control and safety net, header, tile, counts, reader properties, deletion, parity | accepted |
 | [WB08](entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md) | The user accepted the step 4a spec `specs/preview.md` and its test list T-PRV-01 to T-PRV-24 | accepted |
-| [VYS7](entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md) | Answers Q1 to Q9 to the 4b spec: Captured and Displayed, list label, 30 fps outside proof; spec accepted, go-ahead for its tests | accepted |
+| [VYS7](entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md) | Answers Q1 to Q13 to the 4b spec: Captured and Displayed, list label, 30 fps outside proof; PR to `development`; go-ahead for tests | accepted |
 
 ### Evidence
 
@@ -60,7 +60,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [MZ02](entries/MZ02-choices-of-the-4a-code.md) | Choices of the 4a code: `no_type_check` on the sender constructor, the loop order of `run`, `closing` per camera, a send error ends `run` | `preview` | proposed |
 | [EE0E](entries/EE0E-step-4b-preview-spec-and-agent-choices.md) | Step 4b spec `specs/preview-4b.md`: UI parser, flow control, shared tile, deletion, 8 x 60 fps measurement, 27 tests; 6 questions | `preview` | proposed |
 | [R1TD](entries/R1TD-revision-2-of-the-step-4b-preview-spec.md) | Revision 2 of the 4b spec: grid list without `alive`, ring close on the loop, outside-observer limits; replaces 5 items of EE0E; 9 questions | `preview` | proposed |
-| [W674](entries/W674-choices-of-revision-3-of-the-step-4b-spec-and-its-test-list.md) | Revision 3 of the 4b spec: choices for the answers, the full list of 27 tests, no canvas read-back; 4 new questions | `preview` | proposed |
+| [W674](entries/W674-choices-of-revision-3-of-the-step-4b-spec-and-its-test-list.md) | Revision 3 of the 4b spec: choices for the answers, the full list of 27 tests, no canvas read-back; Q14 on `os_index` | `preview` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).

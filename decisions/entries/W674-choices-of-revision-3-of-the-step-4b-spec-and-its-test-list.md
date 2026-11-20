@@ -38,10 +38,15 @@ changes 6 and 9 of [ADR-R1TD](R1TD-revision-2-of-the-step-4b-preview-spec.md) ch
     settled.
 11. Section 2 states the base branch `dom/integration` as a note of the supervisor, with the sections
     that it changes.
+12. The unit glob also runs `src/store/slices/cameras/**/*.test.ts`, so that the label test of the
+    demo commits, changed for Q13, runs in CI.
 
-The spec asks four new questions (section 12.3): Q10, one meaning of "streaming" for a `too_slow`
-camera; Q11, the label and the order in the player; Q12, no recorder warning in 4b; Q13, one label
-form in the server reasons of the demo.
+The user answered the four new questions Q10 to Q13 on 2026-11-20
+([ADR-VYS7](VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)). The spec
+asks one question (section 12.3): Q14, the take writes the list number of the apply request as
+`os_index`. An agent read the code: the take value and the list number come from the same
+detection in the normal case, and can differ after a new detection on the server, a detection by
+another window, or a stale `camera_index` in a kept `desiredConfig` (section 12.2 of the spec).
 
 ## Reason
 

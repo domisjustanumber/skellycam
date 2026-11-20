@@ -9,8 +9,10 @@ later go-ahead. An agent wrote revisions 1 and 2 on 2026-11-20
 [ADR-R1TD](../decisions/entries/R1TD-revision-2-of-the-step-4b-preview-spec.md)). Revision 3 of
 2026-11-20 puts the answers into the body and gives the full test list (section 7).
 [ADR-W674](../decisions/entries/W674-choices-of-revision-3-of-the-step-4b-spec-and-its-test-list.md)
-holds the agent choices of revision 3. The new questions of section 12.3 wait for the user. The
-accepted step 4a spec [`preview.md`](preview.md) does not change. This file adds step 4b.
+holds the agent choices of revision 3. The user answered the four new questions Q10 to Q13 of
+revision 3 on 2026-11-20, and decided the pull request target (section 12.1). One question, Q14,
+is open (section 12.3). The accepted step 4a spec [`preview.md`](preview.md) does not change. This
+file adds step 4b.
 
 ## 0. How to read this spec
 
@@ -25,10 +27,12 @@ Marks:
   measured in 4b with an observer outside the page; a worker only if the target is missed; the
   counts in the frame rate viewer under separate names; the newest pending message per camera and
   one ready message per draw; the old group message deleted with no period of two formats; the
-  branch to `development-streaming` only after 4b; an interface note at the end of 4b; no read-back
-  of a tile canvas; websocket compression off.
+  branch to `development-streaming` only after 4b (now upstream `development` [PR]); an interface
+  note at the end of 4b; no read-back of a tile canvas; websocket compression off.
 - **[Q1]** to **[Q9]**: the answer of the user of 2026-11-20 to question n of revision 2
-  (section 12.1). **[Q10]** to **[Q13]**: a new question (section 12.3).
+  (section 12.1). **[Q10]** to **[Q13]**: the answer of the user of 2026-11-20 to question n of
+  revision 3 (section 12.1). **[Q14]**: an open question (section 12.3).
+- **[PR]**: the decision of the user of 2026-11-20 on the pull request target (section 12.1).
 - **[S]**: a note of the supervisor (section 12.2). It is not a decision of the user.
 - **[4a x.y]**: section x.y of [`preview.md`](preview.md), accepted
   ([ADR-WB08](../decisions/entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md)).
@@ -73,15 +77,18 @@ tile [P1, P5, P6]. After 4b, the wire carries one format, and the UI reads it [A
 - A change of the flow rules of the sender [4a 4]. A lock in the sender: fix F8 of the capture
   branch keeps each reader close on the event loop (4.3) [Q4].
 - A change of the player, the take reader or the tile, except `TileLabel.frame` `null` [Q1]. The
-  label and the tile order in the player [Q5] belong to the player spec (Q11).
+  label and the tile order in the player [Q5] belong to `specs/player.md` and the recorder spec
+  [Q11].
 - A display of `measured_fps` of the camera status [agent 14].
 - The performance page and `CameraGroup.read_latest_ring_frames` [ring A5].
 - A change of the Redux camera slice (`connectionStatus`, `failure`). The demo commits change it
   (5.7).
 - A warning of the recorder in the UI. "Captured" does not show a recorder problem as a lower line
-  [Q3]. The recorder work adds the warning (Q12).
+  [Q3]. The recorder work adds the warning [Q12].
 - The exposure modes, the frame rate control and the USB label of the camera list.
   `specs/camera-requests.md` (another branch) specifies them (5.6).
+- The row text of a `too_slow` camera and the rule of "Update Cameras" for it [Q10]. 4b changes
+  only the "N Streaming" count (5.7).
 - A translation of new text into the 40 other UI locales and into the docs copies [Q8].
 
 ## 2. The base branch [Q2, S]
@@ -96,7 +103,9 @@ A later decision of the same day changes the base. The supervisor relays it [S]:
   new recorder, the new player and the merge of upstream `sfn26`. Each Rust part is removed. The
   camera "backend" selector of the UI is removed. The pause becomes `PUT /group/all/pause` with
   `{paused}`. The record stop becomes `POST`.
-- Pull requests go against upstream `development`.
+- Pull requests go against upstream `development`. This is a decision of the user of 2026-11-20
+  [PR]. It replaces `development-streaming` in the wording of A1 of ADR-G651. ADR-G651 does not
+  change.
 
 Thus the tests and the code of 4b are written on top of `dom/integration` when it exists. Before
 that, no 4b test commit. The merges of Q2 then happen as part of `dom/integration`, not into
@@ -118,8 +127,8 @@ The sections that the new base changes:
 | 4.3, 4.5 | The code facts are from `dom/native-jpeg`. The test writer checks them on `dom/integration`. |
 | 5.3 rule 7, 5.4 | The group pause `PUT /group/all/pause` stops new frames at the server. The tiles keep their last image. The UI pause of rule 7 does not change. |
 | 5.5, 5.6, 5.7 | The demo commits move onto `dom/integration` (5.7). |
-| 7.8 | The CI triggers name `dom/integration`. The PR goes against upstream `development`. |
-| 10 | A1 and section 6 of `AGENTS.md` name `development-streaming` (section 12.2). |
+| 7.8 | The CI triggers name `dom/integration`. The PR goes against upstream `development` [PR]. |
+| 10 | A1 names `development-streaming`; [PR] replaces it. Section 6 of `AGENTS.md` still names `development-streaming` (section 12.2). |
 
 Import path of the tile:
 
@@ -390,6 +399,9 @@ The update of rule 3 of 5.3:
   `cameraListLabel({ index, name })` in `camera-labels.ts`, makes it. The separator is
   `" · "` (U+00B7 with one space on each side). This replaces the label `camera_name` of [4a 6.1]
   for the UI; the 4a spec does not change.
+- **One label form everywhere** [Q13]. `withCameraLabels` of `camera-labels.ts` [demo] also uses
+  `cameraListLabel`. Thus a server reason text says `Camera 1 · USB Camera`, not
+  `Camera 1 (USB Camera)`.
 - `timeNs` is `null`, so the label has no time part. `arrival_ns` is a `perf_counter_ns` value, not
   a time from a start.
 - The rate text and the state come from `framerate_update` and `app_state`. `setOverlay` stores
@@ -425,8 +437,8 @@ The product never reads a tile canvas back (`getImageData`, `toDataURL`, `toBlob
     list: ascending camera list number (5.4), then the camera id [Q5] [agent 21]. The grid shows
     one tile for each [Q7].
   - `connectedCameraIds`: the ids of `gridCameraIds` whose state is `checking`, `too_slow`,
-    `ready` or `recording`: the states that have a preview [cap 8.1] [Q7]. Q10 asks about
-    `too_slow`.
+    `ready` or `recording`: the states that have a preview [cap 8.1] [Q7]. A `too_slow` camera
+    keeps its tile and counts as streaming [Q10].
 - `framerate_update`: for each camera of `cameras`, `setOverlay(id, { rateText })`, and the
   frame rate store (5.8). The guard checks `message_type` and that `cameras` is an object.
 - `log_record`, `pong`: as today.
@@ -449,6 +461,7 @@ marks a camera connected only when its group is `alive` (4.5). In 4b, the grid s
 | User | Use |
 |---|---|
 | `CameraTreeItem.tsx` | `isStreaming`, the streaming mark of a camera |
+| `CameraConfigSidebarPanel.tsx`, `CameraConfigModal.tsx` | the count "N Streaming" of the camera list. It changes from `selectConnectedCameras` to `connectedCameraIds` [Q10]. |
 | `CamerasViewSettingsOverlay.tsx` | the count "Connected Cameras" and `getAutoColumns`. The columns change to `gridCameraIds.length`, because they lay out the grid [agent 8]. |
 | `ConnectionSettingsModal.tsx`, `ServerConnectionStatus.tsx` | the count of cameras in the status text |
 | `RecordingInfoPanel.tsx`, `LeftSidePanelContent.tsx` | "no camera" checks |
@@ -459,8 +472,9 @@ place"]. Its label and frame rate box in the DOM go (3.1).
 
 The camera list (`camera-config-tree-view/`) also gets the changes of `specs/camera-requests.md`
 (another branch): the exposure modes Manual and Auto, one frame rate control at the top of the
-list, and a USB 2 or USB 3 label next to each camera. That spec specifies them. 4b changes nothing
-in the rows of the camera list, except through `connectedCameraIds`.
+list, and a USB 2 or USB 3 label next to each camera; the label of a virtual camera reads
+"virtual". That spec specifies them. 4b changes nothing in the rows of the camera list, except
+through `connectedCameraIds`.
 
 ### 5.7 Overlap with the demo commits [Q7, S]
 
@@ -469,18 +483,26 @@ and they move onto `dom/integration` [S]. 4b keeps each of their changes.
 
 | Demo commit (subject) | Change | 4b sections that it touches |
 |---|---|---|
-| "Keep the tiles of the other cameras when one camera fails; show the failure in its row" | The cameras slice judges each camera by its own server state. A `failed`, `dead` or `too_slow` camera gets `connectionStatus` `'error'` and `failure` (`stage: reason`). Its row shows the reason. The "N Streaming" count of the camera list leaves it out. | 1.3, 4.5, 5.5, 5.6, T-PRV-40, T-PRV-44; Q10 |
-| "Show the camera list label in place of the camera id in server reasons" | `camera-labels.ts` with `withCameraLabels`: `Camera 1 (USB Camera)` in the server reasons | 5.1, 5.4; Q13 |
+| "Keep the tiles of the other cameras when one camera fails; show the failure in its row" | The cameras slice judges each camera by its own server state. A `failed`, `dead` or `too_slow` camera gets `connectionStatus` `'error'` and `failure` (`stage: reason`). Its row shows the reason. The "N Streaming" count of the camera list leaves it out. | 1.3, 4.5, 5.5, 5.6, T-PRV-40, T-PRV-44; [Q10] |
+| "Show the camera list label in place of the camera id in server reasons" | `camera-labels.ts` with `withCameraLabels`: `Camera 1 (USB Camera)` in the server reasons | 5.1, 5.4; [Q13] changes the form to `Camera 1 · USB Camera` |
 | "Start virtual cameras (NDI) unticked in the camera list"; "Grey out virtual cameras and keep them unselectable" | A virtual camera is never selected, so it is never in a group | 5.5: it gets no tile. No 4b change. |
 | "Add a Retry button to the row of a failed camera"; "Update Cameras: open, close or retry only the changed cameras" | One "Update Cameras" button sends only the differences: retry the failed cameras, close the unticked cameras, add the ticked cameras | 5.4 (a ring recreated), T-PRV-48. No 4b change. |
 
-Two differences stay:
+The user settled the differences on 2026-11-20:
 
-- **"Streaming" of a `too_slow` or `checking` camera.** The demo counts a camera as streaming
-  (`connectionStatus` `'connected'`) when its group is alive, or when the camera is alive and
-  `ready` or `recording`. 4b counts `checking`, `too_slow`, `ready` and `recording` [Q7]. Thus a
-  `too_slow` camera has the streaming mark of `isStreaming` and the failure text of the demo in one
-  row, and the "N Streaming" count leaves it out. Q10 asks for one rule.
+- **A `too_slow` camera** [Q10], in the accepted words: "A too-slow camera keeps its tile and counts
+  as streaming. Its row says "Too slow at this exposure: lower the exposure", not "Failed". Update
+  Cameras does not reopen it; the remedy is a changed setting." Thus:
+  - 4b: the "N Streaming" count uses `connectedCameraIds` (5.6), so it counts `checking`,
+    `too_slow`, `ready` and `recording` [Q7].
+  - Not 4b: the row text and the rule of "Update Cameras" change the demo commits, which re-add a
+    `too_slow` camera and show `Failed: <stage>: <reason>`. That change goes with the demo commits
+    onto `dom/integration` [S]. The row of a `too_slow` camera shows the sentence above, not the
+    failure text.
+- **The label form** [Q13]: one form, `Camera <n> · <name>`, also in the server reasons (5.4).
+
+One difference stays:
+
 - **The key set.** The demo reads `group.configs`. 4b reads `group.cameras` [Q7]. The two hold the
   same ids while a group runs [NV].
 
@@ -493,7 +515,8 @@ The viewer has two series for each camera, named for what they mean [Q3]:
   `source_frame_number` and `arrival_ns` of the ring slots [4a 6.3], so it is measured where the
   frames enter the ring, and it does not depend on the client [A3]. During a take, the recorder
   reads the same ring first [ring], so this is what goes to disk. A problem of the recorder shows
-  as a warning, not as a lower line [Q3]. 4b has no recorder warning (Q12).
+  as a warning, not as a lower line [Q3]. 4b has no recorder warning; the recorder work adds it
+  [Q12].
 - **Displayed**: the frames that this window drew. The source is `onDrawn` of `PreviewTiles`
   (rule 4 of 5.3) [agent 22]. It is a count of the product about itself (6.1). A hidden window and
   a paused window draw nothing, so the series gets no new value.
@@ -928,10 +951,14 @@ order [Q5, Q7].
   fourth camera `c4` that is in `app_state` and not in the camera list, with `camera_index` 4 and
   `camera_name` `USB Camera`. Give `framerate_update` objects with `delivered_framerate` `null` and
   29.97.
-- Pass: `cameraState` is each state, then `null`, `null`, `null`; `gridCameraIds` holds all four
-  ids, in the order `c2`, `c4`, `c3`, `c1` (list numbers 2, 4, 6, 9); `connectedCameraIds` holds
-  only `c3`; the label of `c3` is `Camera 6 · c922 Pro Stream Webcam`; the label of `c4` is
-  `Camera 4 · USB Camera`; no label holds a camera id; `rateText` is `null` and `"30.0 fps"`.
+- Pass: `cameraState` is each state, then `null`, `null`, `null`; for the eight states,
+  `connectedCameraIds` holds the camera exactly for `checking`, `too_slow`, `ready` and
+  `recording` [Q10]; `gridCameraIds` holds all four ids, in the order `c2`, `c4`, `c3`, `c1` (list
+  numbers 2, 4, 6, 9); for the group that is not alive, `connectedCameraIds` holds only `c3`; the
+  label of `c3` is
+  `Camera 6 · c922 Pro Stream Webcam`; the label of `c4` is `Camera 4 · USB Camera`; no label holds
+  a camera id; `withCameraLabels('camera c3 is failed', list)` gives
+  `Camera 6 · c922 Pro Stream Webcam is failed` [Q13]; `rateText` is `null` and `"30.0 fps"`.
 - Must not: import the store or React.
 
 **T-PRV-41** (unit). The frame rate store keeps each camera and each count apart.
@@ -1112,6 +1139,10 @@ The player owns these tests. They change on the branch that holds the player (`d
 The change of `tile.ts`, `format.ts` and section 8.3 of `specs/player.md` for `frame: null` goes
 with them [Q1].
 
+One test of the demo commits changes too [Q13]: `src/store/slices/cameras/camera-labels.test.ts`
+expects `Camera 1 · USB Camera` and `Camera 5 · Kiyo Pro` in place of `Camera 1 (USB Camera)` and
+`Camera 5 (Kiyo Pro)`. The unit glob of 7.8 runs it in CI.
+
 ### 7.7 What T-PRV-30 searches
 
 Files: `skellycam/**/*.py`, `skellycam-ui/src/**`, `skellycam-docs/docs/**` and
@@ -1139,9 +1170,11 @@ The test writer checks each name and path on `dom/integration` first [S].
 - UI: T-PRV-32 to T-PRV-42 and T-PRV-53 (unit): 12. T-PRV-43, T-PRV-44, T-PRV-47 to T-PRV-50
   (component): 6.
 - Benchmarks: T-PRV-51 and T-PRV-52: 2. Total: 27. T-PRV-45 and T-PRV-46 are cut.
-- Changed tests of the player: T-PLAY-35, T-PLAY-37, T-PLAY-44 (7.6).
-- The npm script `test:player:unit` adds the glob
-  `src/services/server/preview/tests/unit/**/*.test.ts`. `playwright.player.config.ts` adds
+- Changed tests of the player: T-PLAY-35, T-PLAY-37, T-PLAY-44 (7.6). Changed test of the demo
+  commits: `camera-labels.test.ts` (7.6).
+- The npm script `test:player:unit` adds the globs
+  `src/services/server/preview/tests/unit/**/*.test.ts` and `src/store/slices/cameras/**/*.test.ts`
+  (the label tests of the demo commits) [agent 31]. `playwright.player.config.ts` adds
   `components/camera-views/tests/browser/**/*.spec.ts` to `testMatch`.
   `playwright.player-bench.config.ts` changes `testDir` to `./src` and its `testMatch` to the
   benches of the player and `components/camera-views/tests/bench/**/*.bench.ts`.
@@ -1198,22 +1231,22 @@ these headings, each with the facts of 4b:
 10. **Two cameras of one model have one `camera_name`.** Resolved: the label holds the camera list
     number [Q5].
 11. **The websocket tests fail today.** `logger.success` needs `configure_logging` (3.2).
-12. **"Streaming" of a `too_slow` camera.** The demo and Q7 differ (5.7). Q10.
-13. **Two label forms.** The demo writes `Camera 1 (USB Camera)` in the server reasons; Q5 gives
-    `Camera 6 · c922 Pro Stream Webcam` on the tile (5.7). Q13.
+12. **"Streaming" of a `too_slow` camera.** The demo and Q7 differed. Resolved: a `too_slow` camera
+    counts as streaming [Q10] (5.7).
+13. **Two label forms.** The demo wrote `Camera 1 (USB Camera)` in the server reasons. Resolved: one
+    form, `Camera 1 · USB Camera` [Q13] (5.4).
 14. **The label in the player.** The player shows `camera_label` of the take, which is 6 to 8 hex
     characters or `cam<N>` by the format (SFF-720, SFF-753 of `../skellyfileformat/spec/SPEC.md`).
-    Q5 asks for the list number and name in the player too. The take has
-    `camera_configs.<key>.device.os_index` and `device.os_name`, or null [NV: that these equal the
-    list number and the name of the camera list]. Q11.
-15. **The PR target.** A1 and section 6 of `AGENTS.md` say `development-streaming`. The note of the
-    supervisor says upstream `development` [S] (section 12.2).
+    Resolved: the player shows `Camera <os_index> · <os_name>` from the take [Q11]. Still open: the
+    `os_index` of a take can differ from the list number (section 12.2). Q14.
+15. **The PR target.** A1 said `development-streaming`. Resolved: upstream `development` [PR].
+    Section 6 of `AGENTS.md` still says `development-streaming` (section 12.2).
 
 ## 10. Decisions that bind 4b
 
 P1, P2, P4, P5, P6, P7, A1 to A10 and the tile thread decision of
-[ADR-G651](../decisions/entries/G651-phase-4-live-preview-decisions-p1-to-p7.md); the answers Q1 to
-Q9 of 2026-11-20
+[ADR-G651](../decisions/entries/G651-phase-4-live-preview-decisions-p1-to-p7.md), with A1 changed by
+[PR]; the answers Q1 to Q13 and the decision [PR] of 2026-11-20
 ([ADR-VYS7](../decisions/entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md));
 the accepted 4a spec [`preview.md`](preview.md) with its sections 10 and 11; the decisions [T] of
 section 0; `specs/player.md` section 8 on `dom/player`; the camera states and status of
@@ -1223,7 +1256,7 @@ section 0; `specs/player.md` section 8 on `dom/player`; the camera states and st
 
 Each item fills a gap. The body marks each one [agent n]. Items 1 to 19 are of revisions 1 and 2
 ([ADR-EE0E](../decisions/entries/EE0E-step-4b-preview-spec-and-agent-choices.md),
-[ADR-R1TD](../decisions/entries/R1TD-revision-2-of-the-step-4b-preview-spec.md)). Items 20 to 30
+[ADR-R1TD](../decisions/entries/R1TD-revision-2-of-the-step-4b-preview-spec.md)). Items 20 to 31
 are of revision 3
 ([ADR-W674](../decisions/entries/W674-choices-of-revision-3-of-the-step-4b-spec-and-its-test-list.md)).
 Revision 3 replaces items 10, 11 and 17.
@@ -1281,12 +1314,14 @@ Revision 3 replaces items 10, 11 and 17.
 29. The test files, the items of each test and the CI jobs of 7.4 and 7.8; the new unit test
     T-PRV-53; T-PRV-29 has only its first part [Q4].
 30. Section 2 states the new base as a note of the supervisor, with the sections that it changes.
+31. The unit glob also runs `src/store/slices/cameras/**/*.test.ts`, so that the changed label test
+    of the demo commits runs in CI [Q13].
 
 ## 12. Decisions of the user of 2026-11-20
 
-### 12.1 The answers to the nine questions of revision 2
+### 12.1 The answers of the user
 
-The user answered on 2026-11-20
+The user answered the nine questions of revision 2 on 2026-11-20
 ([ADR-VYS7](../decisions/entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)).
 Then he accepted the spec with these answers, and gave the go-ahead for the tests of 4b, not the
 code.
@@ -1320,43 +1355,70 @@ code.
   counts only: the ready messages that the server counts, and the draw count of the product. 30 fps
   is the frame rate of the cameras of the user, and his floor (6.1, 6.3).
 
+The user answered the four questions of revision 3 on 2026-11-20:
+
+- **Q10, settled** by an earlier decision of the same day, in these accepted words: "A too-slow
+  camera keeps its tile and counts as streaming. Its row says "Too slow at this exposure: lower the
+  exposure", not "Failed". Update Cameras does not reopen it; the remedy is a changed setting."
+  Thus the "N Streaming" count uses `connectedCameraIds`, and the row text is that sentence, not
+  the failure text of the demo (5.6, 5.7).
+- **Q11, yes.** The player label is `Camera <os_index> · <os_name>` from the camera config of the
+  take, and the tiles are in the order of `group_position`. An older take without them shows
+  `camera_label`. The change goes into `specs/player.md` and the recorder spec, not 4b (1.3). The
+  user was told that nobody had checked that `os_index` equals the list number. Section 12.2 gives
+  the check, and Q14 asks for the fix.
+- **Q12, yes.** 4b shows no recorder warning. The recorder work adds it (1.3, 5.8).
+- **Q13, yes.** One label form everywhere: the server reason texts use `Camera 1 · USB Camera`
+  through `cameraListLabel` (5.4, 7.6).
+
+Decision **[PR]** of 2026-11-20: the pull request target is upstream `development`. It replaces
+`development-streaming` in the wording of A1. ADR-G651 does not change; ADR-VYS7 records the
+decision (section 2).
+
 ### 12.2 Notes of the supervisor [S]
 
 These notes are not decisions of the user. The supervisor relayed them on 2026-11-20.
 
 - **The base.** A later decision of 2026-11-20 moves the work onto a new integration branch,
-  `dom/integration` (section 2). Pull requests go against upstream `development`. Section 2 lists
-  the sections of 4b that this changes.
+  `dom/integration` (section 2). Section 2 lists the sections of 4b that this changes.
 - **Open for the supervisor.** The contents of `dom/integration` do not name the 4a commits of
   `dom/preview`. 4b needs them (section 2, item 3).
-- **Open for the supervisor.** A1 of ADR-G651 and section 6 of `AGENTS.md` say that the branch goes
-  to `development-streaming`. The note says upstream `development`. A change of `AGENTS.md` needs
-  the user.
+- **Open for the supervisor.** Section 6 of `AGENTS.md` still says "Open each PR against
+  `development-streaming`". [PR] replaces it for 4b. A change of `AGENTS.md` needs its own commit.
 - **Other decisions of 2026-11-20.** The exposure modes become Manual and Auto only (Auto: SkellyCam
   finds a manual value). One frame rate control for all cameras at the top of the camera list; 60
   fps only when each ticked camera passed a real 60 fps check. A USB 2 or USB 3 label next to each
-  camera. `specs/camera-requests.md` (another branch) specifies them. 4b only refers to them (1.3,
-  5.6, 6.1).
+  camera; a virtual camera reads "virtual". `specs/camera-requests.md` (another branch) specifies
+  them. 4b only refers to them (1.3, 5.6, 6.1).
+- **The check of `os_index`** [Q11], code of `dom/integration` read on 2026-11-20:
+  - The list number. The UI shows `Camera {camera.index}`. `camera.index` is `index` of the
+    detection response (`cameras-thunks.ts`). The server gives the position of the camera in the
+    Media Foundation list on Windows, or the index of `cv2_enumerate_cameras` on Linux and macOS
+    (`detect_cameras_devices.py`, `media_foundation/detect.py`).
+  - The take value. `CameraGroup._take_camera` writes
+    `os_index=device.index if device is not None else config.camera_index`, where `device` is
+    `CameraGroupManager.detected_cameras[camera_id]`: the last detection of the server.
+  - Normal case: equal. The detect route stores the same detection result that it gives to the UI.
+  - They can differ:
+    1. The apply request detects again on the server when a ticked camera is not in
+       `detected_cameras` (for example after a replug). The positions can change. The list of the
+       UI keeps the old numbers until the UI detects again.
+    2. A detection by another window or client replaces `detected_cameras` for all windows.
+    3. The fallback `config.camera_index` comes from `desiredConfig`. The UI keeps an older
+       `desiredConfig` from memory (`existing.desiredConfig`) or from local storage
+       (`saved.desiredConfig` over the defaults), so its `camera_index` can be a number of an older
+       detection. The same stale value can reach the label fallback of 5.4.
+  - Q14 proposes the smallest fix.
 
-### 12.3 New questions
+### 12.3 New question
 
-Each question is worded so that "yes" accepts the recommendation.
+The question is worded so that "yes" accepts the recommendation.
 
-- **Q10.** A `too_slow` camera streams frames, so 4b counts it in `connectedCameraIds` [Q7]. The
-  demo counts it as failed: its row shows the failure, and the "N Streaming" count leaves it out
-  (5.7). Make the "N Streaming" count of the camera list use `connectedCameraIds` too, and keep the
-  failure text of the demo in the row of a `too_slow` camera. Yes? Recommendation: yes. Then
-  "streaming" has one meaning (frames flow), and the row still tells the user to act. With "no",
-  4b removes `too_slow` from `connectedCameraIds`, against Q7 as accepted.
-- **Q11.** For the player, the label is `Camera <os_index> · <os_name>` from the camera config of
-  the take (`device.os_index`, `device.os_name`), and the tiles are in the order of
-  `group_position`, which the recorder writes in the order of the camera list. When the take has no
-  `os_index`, the player shows `camera_label`. The change goes into `specs/player.md` and the
-  recorder spec, not into 4b. Yes? Recommendation: yes. The take holds no camera list number of
-  its own, and the hex `camera_label` is the form of the format (9, item 14).
-- **Q12.** 4b shows no warning of the recorder. The recorder work adds it, from the take warnings
-  of the recorder spec (`take_error`, `camera_dead`, `camera_file_short`). Yes? Recommendation:
-  yes. 4b has no recorder, and "Captured" does not change for a recorder problem [Q3].
-- **Q13.** The server reasons of the demo (`withCameraLabels`) use the tile form
-  `Camera 1 · USB Camera` in place of `Camera 1 (USB Camera)`, through `cameraListLabel`. Yes?
-  Recommendation: yes. Then the UI has one label form for a camera.
+- **Q14.** The take writes the number that the camera list showed when the cameras were applied.
+  Two one-line changes, outside 4b: (1) in `cameras-thunks.ts`, `camera_index` and `camera_name`
+  of `desiredConfig` always come from the current detection (`index`, `name`), also over a kept or
+  stored `desiredConfig`; (2) in `CameraGroup._take_camera`, `os_index` is `config.camera_index`
+  (the number of the apply request), not `device.index`. Yes? Recommendation: yes. Then the
+  player label of [Q11] equals the list label at the apply, in the three cases of 12.2. A detection
+  after the apply, with no new apply, can still change the list number while the take keeps the
+  old one. With change (1) only, cases 1 and 2 stay.

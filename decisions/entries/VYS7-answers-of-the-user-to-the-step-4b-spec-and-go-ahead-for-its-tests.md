@@ -1,4 +1,4 @@
-# VYS7 — Answers of the user to the nine questions of the step 4b spec; acceptance in principle and go-ahead for its tests
+# VYS7 — Answers of the user to the questions of the step 4b spec, and the PR target; acceptance in principle and go-ahead for its tests
 
 **Status:** accepted, 2026-11-20 (user).
 
@@ -37,6 +37,25 @@ product code of step 4b.
    inside counts only: the ready messages that the server counts, and the draw count of the
    product.
 
+The user answered the questions Q10 to Q13 of section 12.3 of revision 3 on 2026-11-20:
+
+10. **Q10, settled** by an earlier decision of the same day, in these accepted words: "A too-slow
+    camera keeps its tile and counts as streaming. Its row says "Too slow at this exposure: lower
+    the exposure", not "Failed". Update Cameras does not reopen it; the remedy is a changed
+    setting." Thus the "N Streaming" count uses `connectedCameraIds`, and the row text is that
+    sentence, not the failure text of the demo.
+11. **Q11, yes.** The player label is `Camera <os_index> · <os_name>` from the camera config of the
+    take, and the tiles are in the order of `group_position`. An older take without them shows
+    `camera_label`. The change goes into `specs/player.md` and the recorder spec, not 4b. Open:
+    that `os_index` in a take equals the list number (section 12.2 of the spec).
+12. **Q12, yes.** 4b shows no recorder warning. The recorder work adds it.
+13. **Q13, yes.** One label form everywhere: the server reason texts use `Camera 1 · USB Camera`
+    through `cameraListLabel`.
+
+**PR target** (decision of the user, 2026-11-20): pull requests go against upstream `development`.
+This replaces `development-streaming` in the wording of A1 of
+[ADR-G651](G651-phase-4-live-preview-decisions-p1-to-p7.md). ADR-G651 does not change.
+
 ## Reason
 
 - The user, 2026-11-20. The rule "a spec and a test list before code": the failing tests of step 4b
@@ -48,6 +67,7 @@ product code of step 4b.
 ## Consequences
 
 - Revision 3 of the spec puts these answers into its body (section 12.1).
+- Section 6 of `AGENTS.md` still says `development-streaming`. A later commit changes it.
 - Section 12.2 of the spec holds a note of the supervisor on the base branch. That note is not part
   of this entry.
 - [ADR-EE0E](EE0E-step-4b-preview-spec-and-agent-choices.md),
