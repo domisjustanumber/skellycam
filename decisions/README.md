@@ -58,6 +58,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [24FZ](entries/24FZ-python-api-of-the-preview-sender-as-the-4a-tests-assume-it.md) | Python API of the preview sender, as the 4a tests assume it: duck-typed readers, `msgspec` JSON, tick reads with no frame, log records, calculator deque | `preview` | proposed |
 | [MZ02](entries/MZ02-choices-of-the-4a-code.md) | Choices of the 4a code: `no_type_check` on the sender constructor, the loop order of `run`, `closing` per camera, a send error ends `run` | `preview` | proposed |
 | [EE0E](entries/EE0E-step-4b-preview-spec-and-agent-choices.md) | Step 4b spec `specs/preview-4b.md`: UI parser, flow control, shared tile, deletion, 8 x 60 fps measurement, 27 tests; 6 questions | `preview` | proposed |
+| [R1TD](entries/R1TD-revision-2-of-the-step-4b-preview-spec.md) | Revision 2 of the 4b spec: grid list without `alive`, ring close on the loop, outside-observer limits; replaces 5 items of EE0E; 9 questions | `preview` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
