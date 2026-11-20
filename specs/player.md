@@ -901,6 +901,12 @@ type TileMark =
   superseded update resolves with `'superseded'`; the promise of a drawn update resolves with
   `'drawn'` after the draw. The preview uses the second as its signal after each draw
   (`specs/preview.md` section 11).
+- **No read back** (2026-11-20,
+  [ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)): the
+  product never reads a tile canvas back (`getImageData`, `toDataURL`, `toBlob`, `readPixels`). After
+  10 s of `getImageData` reads of the tile canvases at N = 8, play fell from 57 to 20 display
+  refreshes per second and from 100 % to 0 % correct tiles, and it stayed there after the reads
+  stopped (the 0 % of the first T-PLAY-66 runs). A test reads tile pixels only to check them.
 - **One place.** Rotation, the label text, the rate text, the camera state and the marks are drawn only
   in `tile/` [Y3]. The callers give raw values; the tile formats them (8.4).
 
@@ -1252,6 +1258,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | T-PLAY-70 | benchmark | Cases that nobody measured: 720p60 at N = 4; 720p30 at N = 16; speed 8 at N = 4, 1080p30. | No target; results recorded for the user. |
 | T-PLAY-71 | unit | Open `write_error_short`; choose at frame numbers 79, 80 and 119. | The take plays to K = 120; camera 3 is `repaired` and not refused; rows 80 to 119 have no block; no dead camera (`deadFrom` null); at 80 and 119 the image is row 79 with "no frame", never "camera lost"; the take warnings hold `camera_file_short` and `take_error` [U2]. |
 | T-PLAY-72 | component | Player on `write_error_short`: play from frame 70 to the end. | The other tiles play to the end; camera 3 holds the image of row 79 with "no frame" from frame 80 [U2]. |
+| T-PLAY-73 | unit | 40 seeks to frames 1 to 40, one each 5 ms, with a test decoder of 30 ms ([ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)). | The tile draws 3 or more images during the seeks (7.5: a finished decode of an older request is drawn when no newer image is on the tile); no older request after a newer one; the last image is frame 40. |
 
 ### 12.4 Decisions and reader rules to tests
 
@@ -1314,7 +1321,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | SFF-890 | T-PLAY-02 |
 | F1 to F21 | T-PLAY-31, T-PLAY-37, T-PLAY-44, T-PLAY-50 to T-PLAY-53 |
 
-Counts: 40 unit, 16 component, 10 electron, 6 benchmark: 72 tests.
+Counts: 41 unit, 16 component, 10 electron, 6 benchmark: 73 tests.
 
 ### 12.5 Parity of the systems [Y7]
 

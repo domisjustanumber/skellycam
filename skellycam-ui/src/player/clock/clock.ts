@@ -74,6 +74,7 @@ interface Slot {
     queue: Queued[];
     shownRow: number | null | undefined;   // undefined: the tile has nothing from the player
     shownKey: string;
+    shownGen: number;              // the request (seek) whose image is on the tile
     gen: number;
     pump: Promise<void> | null;    // the running read and decode loop, for close()
     busy: boolean;
@@ -125,7 +126,7 @@ class Player implements TakePlayer {
                 starts.push(end);
                 if (o !== null) end = o + cam.size[k]!;
             });
-            return {cam, choose: imageChooser(cam.times, cam.missing), starts, tile: null, queue: [], shownRow: undefined, shownKey: '', gen: 0, pump: null, busy: false, readError: false};
+            return {cam, choose: imageChooser(cam.times, cam.missing), starts, tile: null, queue: [], shownRow: undefined, shownKey: '', shownGen: -1, gen: 0, pump: null, busy: false, readError: false};
         });
         const K = take.frameCount;
         this.#frame = K ? Math.max(0, Math.min(K - 1, options.initialFrame ?? 0)) : 0;
@@ -310,13 +311,17 @@ class Player implements TakePlayer {
                 return q.row > entry!.row;
             });
         }
-        const row = entry ? entry.row : target;
+        this.#send(s, entry ? entry.row : target, entry, mark, s.gen);
+    }
+
+    #send(s: Slot, row: number | null, entry: Queued | undefined, mark: TileMark | null, gen: number): void {
         const key = `${row}|${this.#frame}|${JSON.stringify(mark)}`;
         if (!entry && key === s.shownKey) return;
         s.shownKey = key;
+        s.shownGen = gen;
         const blank = row === null && s.shownRow !== null;
         s.shownRow = row;
-        void s.tile.update({
+        void s.tile!.update({
             jpeg: entry ? entry.jpeg : null, image: entry?.image, blank: blank || undefined,
             rotationCwDeg: s.cam.info.rotation, rateText: null, cameraState: null, mark,
             label: {
@@ -368,11 +373,14 @@ class Player implements TakePlayer {
                     const gen = s.gen;
                     const payloads = await this.#read(s, rows[0], rows.at(-1)!);
                     for (const row of rows) {
-                        if (gen !== s.gen || this.#closed) break;
+                        // a newer seek ends the prefetch of an older one, but not the read of its target
+                        if (this.#closed || (gen !== s.gen && row !== rows[0])) break;
                         const jpeg = payloads.get(row)!;
                         const image = await this.#decode(jpeg);
                         if (gen !== s.gen || this.#closed) {
-                            image.close();
+                            // 7.5: a finished decode of an older request is drawn when no newer image is on the tile
+                            if (!this.#closed && s.tile && gen > s.shownGen) this.#send(s, row, {row, jpeg, image}, this.#mark(s), gen);
+                            else image.close();
                             break;
                         }
                         s.queue.push({row, jpeg, image});

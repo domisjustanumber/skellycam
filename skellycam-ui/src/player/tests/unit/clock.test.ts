@@ -268,3 +268,30 @@ test('T-PLAY-38 open images for N = 4 and N = 16; none after close', async t => 
         assert.equal(decoder.open(), 0, `N = ${n}: 0 open images after close`);
     }
 });
+
+test('T-PLAY-73 seeks faster than decodes: the tile draws each newest finished image', async t => {
+    const {openTake, Tile} = await player();
+    const built = writeTake(tempRoot(t), defaultTake('fast_seeks'));
+    const files = spyFiles(await nodeTakeFiles(built.dir));
+    const decoder = testDecoder(built, () => 30);
+    const p = await openTake(files, {frameLoop: new FakeLoop().frameLoop, decode: decoder.decode});
+    t.after(() => p.close());
+    const c = fakeCanvas();
+    const tile = new Tile(c.canvas, {}, {decode: decoder.decode});
+    t.after(() => tile.close());
+    p.attachTile(0, tile);
+    await settle(files);
+    const before = c.drawn().length;
+    // one seek each 5 ms, a decode takes 30 ms (7.5)
+    for (let k = 1; k <= 40; k++) {
+        p.seekFrame(k);
+        await new Promise(r => setTimeout(r, 5));
+    }
+    const duringSeeks = c.drawn().slice(before).map(img => img.identity!.row!);
+    await settle(files);
+    await new Promise(r => setTimeout(r, 100));
+    const rows = c.drawn().slice(before).map(img => img.identity!.row!);
+    assert.ok(duringSeeks.length >= 3, `the tile advances during the seeks: ${duringSeeks}`);
+    for (let i = 1; i < rows.length; i++) assert.ok(rows[i] > rows[i - 1], `never an older request after a newer one: ${rows}`);
+    assert.equal(rows.at(-1), 40, 'the tile ends on the last sought frame');
+});
