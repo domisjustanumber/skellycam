@@ -97,7 +97,7 @@ export const cameraSlice = createSlice({
                     camera.name,
                 );
                 camera.desiredConfig = defaultConfig;
-                camera.selected = true;
+                camera.selected = !camera.deviceInfo.virtual;
                 camera.hasConfigMismatch = !areConfigsEqual(camera.actualConfig, defaultConfig);
             }
         },

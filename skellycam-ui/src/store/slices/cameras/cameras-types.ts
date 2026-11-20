@@ -108,6 +108,7 @@ export interface DetectCamerasResponse {
         name: string;
         vendor_id?: string;
         product_id?: string;
+        virtual?: boolean;
     }>;
 }
 
