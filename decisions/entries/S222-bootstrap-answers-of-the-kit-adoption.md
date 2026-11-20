@@ -1,6 +1,8 @@
 # S222 — Answers to the bootstrap questions of the kit adoption
 
-**Status:** accepted, 2026-11-17 (user; commit to dom/native-jpeg; was proposed, 2026-11-17 (agent)).
+**Status:** superseded by [2S1P](2S1P-bootstrap-answers-with-binding-specs.md), 2026-11-20 (commit to
+dom/index-limit; was accepted, 2026-11-17 (user; commit to dom/native-jpeg; was proposed, 2026-11-17
+(agent))).
 
 ## Decision
 
