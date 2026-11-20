@@ -64,6 +64,9 @@ TAKE_QUEUE_SECONDS = 3.0  # recorder.md 5.1; starting value [C6DE D2]
 TAKE_STALL_LIMIT_S = 10.0  # recorder.md 5.3; starting value [C6DE D2]
 STALL_MARGIN_S = 5.0  # recorder.md 5.3 item 4 [agent 25]
 TAKE_START_LIMIT_S = 10.0  # each camera starts its writer within this time of the take spec
+# The parent waits this long for a camera process at the start, as sfn26 549217112. The camera process has its own
+# limit of 15 s (9.3); this one ends a wait on a camera process that does not answer at all.
+PARENT_WAIT_LIMIT_S = 30.0
 MICROPHONE_REFUSED = "audio recording returns in step 5b; start again with no microphone"  # recorder.md 10 item 13
 WRITER = f"skellycam {__version__.lstrip('v')}"  # SFF-712
 
@@ -177,7 +180,7 @@ class CameraGroup:
         self.started = True
         self._loop = asyncio.get_running_loop()
         logger.info(f"Starting camera group ID: {self.id} with cameras: {list(self.configs.keys())}")
-        self.cameras.start()
+        await asyncio.to_thread(self.cameras.start)  # the spawn takes seconds: not on the loop (sfn26 a4d610f62)
         threading.Thread(target=self._watch_workers, name=f"camera group {self.id} watch", daemon=True).start()
         configs, _ = await self._await_results(list(self.configs))
         if not self.ipc.should_continue:
@@ -246,7 +249,11 @@ class CameraGroup:
         pending, configs, warnings = set(camera_ids), {}, []
         statuses = self.cameras.orchestrator.camera_statuses
         subscription = self.ipc.extracted_config_subscription
+        deadline = time.monotonic() + PARENT_WAIT_LIMIT_S
         while pending and self.ipc.should_continue:
+            if time.monotonic() >= deadline:
+                self._give_up(pending, "open")
+                break
             while not subscription.empty():
                 message: DeviceExtractedConfigMessage = subscription.get()
                 camera_id = message.extracted_config.camera_id
@@ -268,6 +275,7 @@ class CameraGroup:
     async def _await_settled(self, camera_ids: list) -> None:
         """Wait until each camera has passed its rate check or failed (9.1, 10.1)."""
         statuses = self.cameras.orchestrator.camera_statuses
+        deadline = time.monotonic() + PARENT_WAIT_LIMIT_S
         while self.ipc.should_continue:
             for camera_id in camera_ids:
                 worker = self.cameras.camera_workers.get(camera_id)
@@ -277,7 +285,22 @@ class CameraGroup:
                        and statuses[camera_id].state not in SETTLED_STATES]
             if not pending:
                 return
+            if time.monotonic() >= deadline:
+                self._give_up(pending, "warm-up")
+                return
             await await_10ms()
+
+    def _give_up(self, camera_ids, stage: str) -> None:
+        """A camera process that gives no answer within PARENT_WAIT_LIMIT_S is `failed`, and it must close."""
+        reason = f"no answer from the camera process in {PARENT_WAIT_LIMIT_S:g} s"
+        for camera_id in list(camera_ids):
+            status = self.cameras.orchestrator.camera_statuses.get(camera_id)
+            if status is None:
+                continue
+            status.should_close.value = True
+            status.update_info(failure=dict(camera_id=camera_id, stage=stage, reason=reason))
+            status.set_state("failed")
+            logger.error(f"Camera {camera_id} failed during {stage}: {reason}")
 
     def _failures(self, camera_ids: list) -> dict:
         statuses = self.cameras.orchestrator.camera_statuses
@@ -721,7 +744,7 @@ class CameraGroup:
         with self._ring_lock:
             for ring in self.rings.values():
                 ring.set_closed()
-        self.cameras.close()
+        await asyncio.to_thread(self.cameras.close)  # the joins take seconds: not on the loop
 
         try:
             with self._ring_lock:
