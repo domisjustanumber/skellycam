@@ -326,8 +326,10 @@ class CameraGroup:
         """A camera process that ended with no final state (a native crash, a kill, an error before the loop)
         gets one, so that the gate and the waits of the group do not wait for it (8.2)."""
         status = self.cameras.orchestrator.camera_statuses.get(camera_id)
-        if (status is None or status.state in ("failed", "dead")
-                or self.cameras.camera_workers.get(camera_id) is not worker):
+        if status is None or self.cameras.camera_workers.get(camera_id) is not worker:
+            return
+        status.recording_in_progress.value = False  # an ended process cannot clear it; else each apply gets 409 (D36)
+        if status.state in ("failed", "dead"):
             return
         stage, state = ("open", "failed") if status.state in ("starting", None) else ("streaming", "dead")
         reason = f"camera process ended (exit code {worker.worker.exitcode})"
@@ -593,6 +595,8 @@ class CameraGroup:
                     if now - ended_since.setdefault(camera_id, now) > GIVE_UP_AFTER_EXIT_S:
                         if worker is not None:
                             worker.join(timeout=BOUNDED_JOIN_S)
+                        if status is not None:
+                            status.recording_in_progress.value = False  # a process that ended hard left it set
                         info = status.info_dict() if status is not None else {}
                         exitcode = None if worker is None else worker.worker.exitcode
                         dead[camera_id] = "hang" if info.get("hung") else f"exit code {exitcode}"
