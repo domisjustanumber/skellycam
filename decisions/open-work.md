@@ -182,21 +182,16 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **Phase 4 (live preview).** The user decided P1 to P7 and answered A1 to A8 on 2026-11-19
   ([ADR-G651](entries/G651-phase-4-live-preview-decisions-p1-to-p7.md)). The user accepted the step 4a
   spec [`specs/preview.md`](../specs/preview.md) and its test list T-PRV-01 to T-PRV-24 on 2026-11-19
-  ([ADR-WB08](entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md)). The agent
-  choices of its section 13 wait for the user
-  ([ADR-162X](entries/162X-step-4a-preview-spec-and-agent-choices.md)).
+  ([ADR-WB08](entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md)), and the
+  4a choices ([ADR-68JT](entries/68JT-step-4a-choices-of-the-preview-sender.md)).
   - The tests of step 4a (T-PRV-01 to T-PRV-24) are in `skellycam/tests/preview/`, with the
     helpers of spec section 9.1 in `preview_helpers.py`. Run them with
-    `uv run pytest skellycam/tests/preview`. The product code of step 4a is done. The user decides
-    its choices ([ADR-MZ02](entries/MZ02-choices-of-the-4a-code.md)). The measurements M-PRV-1 to
-    M-PRV-5 are done on Windows
+    `uv run pytest skellycam/tests/preview`. The product code of step 4a is done. The measurements
+    M-PRV-1 to M-PRV-5 are done on Windows
     ([ADR-HDC9](entries/HDC9-measurements-m-prv-1-to-m-prv-5-of-the-preview-sender.md)). Open: M-PRV-4
     on Linux. The user must confirm the target of A10 of
     [ADR-G651](entries/G651-phase-4-live-preview-decisions-p1-to-p7.md): 19 %, not the 12 % of the
     first run.
-  - The user decides
-    [ADR-24FZ](entries/24FZ-python-api-of-the-preview-sender-as-the-4a-tests-assume-it.md): the
-    Python items that the failing tests of step 4a use and that the spec does not fix.
   - Step 4b: the user answered the questions Q1 to Q13 of the spec
     [`specs/preview-4b.md`](../specs/preview-4b.md), decided the PR target (upstream
     `development`), accepted the spec in principle and gave the go-ahead for its tests, not its

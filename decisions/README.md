@@ -57,6 +57,7 @@ These entries are `accepted`.
 | [BVK7](entries/BVK7-certify-rulings-of-the-user-one-test-one-row.md) | Certify rulings of the user: one test one row, native gate at the base mode, macOS widest route, probes pass/fail, 29.97 is 30 | accepted |
 | [H0BQ](entries/H0BQ-user-rulings-of-the-spec-integration.md) | Spec integration rulings: summary item, progress of each check, re-check after a cancel, sequence gate, probe module, take error state, 30 s quick | accepted |
 | [2GS1](entries/2GS1-step-3a-choices-of-the-capture-code-and-its-fixes.md) | Supersedes S6HT, MA22, 6EKB, 037V, BM73, R60B, FTC3: step 3a choices; virtual by link; macOS timing step; loop, source, review and CI fixes | accepted |
+| [68JT](entries/68JT-step-4a-choices-of-the-preview-sender.md) | Supersedes 162X, 24FZ, MZ02: step 4a choices of the preview sender; spec section 13 items, Python API of the 4a tests, code choices | accepted |
 
 ### Evidence
 
@@ -88,9 +89,6 @@ These entries wait for a decision of the user. Section is the section or area of
 | [4MJ4](entries/4MJ4-typescript-names-of-the-player-as-the-6a-tests-assume-them.md) | TypeScript names of the player, as the 6a tests assume them: test seams, pure functions, bridge, host view, test set-up | `player` | proposed |
 | [1ACK](entries/1ACK-corrections-and-choices-of-the-6a-player-code.md) | Corrections and choices of the 6a player code: back to black, decoded prefetch images in the tile, EXIF orientation undone, manifest warnings | `player` | proposed |
 | [5FBS](entries/5FBS-fixes-of-the-6a-code-review.md) | Fixes of the 6a code review: hard links, UNC paths, streamed reads, decode failure mark, loading message, refused take folders, unreadable `take_uuid` | `player` | proposed |
-| [162X](entries/162X-step-4a-preview-spec-and-agent-choices.md) | Step 4a spec `specs/preview.md`: per-camera preview message, its sender and 24 tests, with 27 agent choices; no open question | `preview` | proposed |
-| [24FZ](entries/24FZ-python-api-of-the-preview-sender-as-the-4a-tests-assume-it.md) | Python API of the preview sender, as the 4a tests assume it: duck-typed readers, `msgspec` JSON, tick reads with no frame, log records, calculator deque | `preview` | proposed |
-| [MZ02](entries/MZ02-choices-of-the-4a-code.md) | Choices of the 4a code: `no_type_check` on the sender constructor, the loop order of `run`, `closing` per camera, a send error ends `run` | `preview` | proposed |
 | [EE0E](entries/EE0E-step-4b-preview-spec-and-agent-choices.md) | Step 4b spec `specs/preview-4b.md`: UI parser, flow control, shared tile, deletion, 8 x 60 fps measurement, 27 tests; 6 questions | `preview` | proposed |
 | [R1TD](entries/R1TD-revision-2-of-the-step-4b-preview-spec.md) | Revision 2 of the 4b spec: grid list without `alive`, ring close on the loop, outside-observer limits; replaces 5 items of EE0E; 9 questions | `preview` | proposed |
 | [W674](entries/W674-choices-of-revision-3-of-the-step-4b-spec-and-its-test-list.md) | Revision 3 of the 4b spec: choices for the answers, the full list of 27 tests, no canvas read-back; Q14 on `os_index` | `preview` | proposed |

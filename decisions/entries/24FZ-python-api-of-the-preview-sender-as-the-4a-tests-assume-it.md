@@ -1,6 +1,6 @@
 # 24FZ — Python API of the preview sender, as the 4a tests assume it
 
-**Status:** proposed, 2026-11-19 (agent).
+**Status:** superseded by [68JT](68JT-step-4a-choices-of-the-preview-sender.md), 2026-11-20 (commit to dom/integration; was accepted, 2026-11-20 (user, through the review sheets of 2026-11-20); was proposed, 2026-11-19 (agent)).
 
 ## Decision
 

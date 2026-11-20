@@ -1,6 +1,6 @@
 # 162X — Step 4a spec: the per-camera preview message and its sender, with the agent choices
 
-**Status:** proposed, 2026-11-19 (agent).
+**Status:** superseded by [68JT](68JT-step-4a-choices-of-the-preview-sender.md), 2026-11-20 (commit to dom/integration; was accepted, 2026-11-20 (user, through the review sheets of 2026-11-20); was proposed, 2026-11-19 (agent)).
 
 ## Decision
 

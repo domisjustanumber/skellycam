@@ -1,6 +1,6 @@
 # MZ02 — Choices of the 4a code that the spec and ADR-24FZ do not fix
 
-**Status:** proposed, 2026-11-20 (agent).
+**Status:** superseded by [68JT](68JT-step-4a-choices-of-the-preview-sender.md), 2026-11-20 (commit to dom/integration; was accepted, 2026-11-20 (user, through the review sheets of 2026-11-20); was proposed, 2026-11-20 (agent)).
 
 ## Decision
 
