@@ -25,8 +25,8 @@ Camera level:
 7. Rows that wait for the layout at `end` get the 4:2:2 placeholder and its warning.
 8. `end` logs the counts of 5.2.
 9. `give` raises ValueError, and queues nothing, when `frame_number` does not increase (4.1).
-10. When `end` cannot put its marker by its deadline, the writer thread closes both files after
-    its current item and ends (no padding, no `# end` line), so that the process can end.
+10. When `end` returns `disk stall`, the writer thread closes both files after its current item
+    and ends (no padding, no `# end` line), so that the process can end.
 
 Take level:
 
@@ -68,9 +68,9 @@ Take level:
 Rejected from the review: one CSV `write` for the whole header. Spec 6.5 and T-REC-13 require one
 `write` for each line; item 13 covers a kill during the header.
 
-Not changed; the user decides: whether the `end` deadline is a total time or a time with no
-progress (today a disk slower than the queue drain turns a stop into a disk stall); the two limits;
-other file systems.
+The user decided the questions of the review on 2026-11-20
+([ADR-C6DE](C6DE-stall-as-no-progress-limits-and-no-fat-disk.md)): a stall is no progress (D1), the
+two limits stay as starting values (D2), no FAT disk (D3).
 
 ## Reason
 
