@@ -173,12 +173,18 @@ def test_t_cap_85_hang_during_a_recording(monkeypatch, tmp_path, close_s):
             else:
                 assert 5.0 <= after_report <= 5.5, f"hard end {after_report:.2f} s after the report"
             app.wait(lambda: any(f[1] > exited + 2 * 10**9 for f in ring.frames), "the other camera records on")
+            replaced = app.status(other)["replaced_count"]
             assert app.record_stop().status_code == 200
         finally:
             watcher.stop()
             ring.stop()
-        gap = ring.largest_gap_s(armed_ns, exited + 10**9)
-        assert gap <= 0.1, f"the other camera had a gap of {gap * 1000:.0f} ms"
+        gap, before_gap = ring.largest_gap(armed_ns, exited + 10**9)
+        # Where the gap is: at the end of the hung camera (a fault of isolation) or elsewhere (a slow machine).
+        assert gap <= 0.1, (f"the other camera had a gap of {gap * 1000:.0f} ms; it starts "
+                            f"{(before_gap - watcher.failure_ns) / 1e9:+.3f} s from the report and "
+                            f"{(before_gap - exited) / 1e9:+.3f} s from the hard end; frames read "
+                            f"{len(ring.frames)}, not read by the test {len(ring.skipped)}; replaced by the "
+                            f"camera {replaced}")
         other_frames = video_frame_count(tmp_path, other)
         if close_s == 1.0:
             hung_frames = video_frame_count(tmp_path, hung)

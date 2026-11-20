@@ -410,6 +410,7 @@ class RingWatcher:
         self._result = ReadResult
         self.reader = FrameRingReader.attach(name)
         self.frames = []
+        self.skipped = []  # (frame_number, result) of each frame that the watcher could not read, for example LAPPED
         self._stop = threading.Event()
         self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
@@ -428,6 +429,7 @@ class RingWatcher:
             elif read.result is self._result.CLOSED:
                 return
             else:
+                self.skipped.append((next_number, read.result.name))
                 next_number += 1
 
     def stop(self):
@@ -436,8 +438,12 @@ class RingWatcher:
         self.reader.close()
 
     def largest_gap_s(self, from_ns=0, to_ns=None):
+        return self.largest_gap(from_ns, to_ns)[0]
+
+    def largest_gap(self, from_ns=0, to_ns=None):
+        """(gap in s, arrival_ns of the frame before the gap) of the largest gap between read frames."""
         times = [f[1] for f in self.frames if f[1] >= from_ns and (to_ns is None or f[1] <= to_ns)]
-        return max((b - a for a, b in zip(times, times[1:])), default=0) / 1e9
+        return max(((b - a) / 1e9, a) for a, b in zip(times, times[1:])) if len(times) > 1 else (0.0, None)
 
 
 def ring_exists(name):
