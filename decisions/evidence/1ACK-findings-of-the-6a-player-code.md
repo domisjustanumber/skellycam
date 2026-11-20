@@ -35,3 +35,12 @@ its first image; section 10 asks only that it counts the drawn cameras); T-PLAY-
 byte 0xee, which the test pattern holds at byte 22); T-PLAY-59 (a reload after the handler variant);
 the harness window (item above). `IconButton.tsx` and `ButtonSm.tsx` import `TooltipPosition` with
 `import type`, so that the module `tsconfig.json` reports no error.
+
+Seek and scrub after the section 7.5 correction (2026-11-20, shown harness window, other work on the
+machine). Before, the player dropped a finished decode of an older seek; section 7.5 draws it when
+no newer image is on the tile. T-PLAY-68 at N = 8: 17 to 20 shown frames/s before, 37 to 39 after
+(three runs); at N = 4: 40 to 45. Each tile has one read and one decode in flight (7.5), so its rate
+is about 1 / (read + decode). Seek at N = 4 inside the T-PLAY-67 loop: the reads start 0.3 ms after
+`seekFrame` and run at the same time; a read ends at p50 10.1 ms (2.8 ms with an observer that does
+not read pixels); the last tile draws at p50 21.6 ms (10.0 ms with that observer). The page waits
+for no display refresh before a draw.
