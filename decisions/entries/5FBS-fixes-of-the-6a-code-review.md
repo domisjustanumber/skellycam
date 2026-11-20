@@ -36,10 +36,8 @@ Data shown (sections 6.10 and 10):
 Format (section 6.4):
 
 10. A pair whose `take_uuid` does not read is in no take and does not count (SFF-865, SFF-889,
-    T-PLAY-76). This replaces item 8 of ADR-1ACK. The `header_uuid_dashes` case of T-PLAY-08 now
-    fails: it expects that pair as a refused camera. Its correction (expect 3 cameras and
-    `incomplete_take`) needs the approval of the user, because the agent did not change an
-    existing test.
+    T-PLAY-76). This replaces item 8 of ADR-1ACK. The `header_uuid_dashes` case of T-PLAY-08 and
+    its spec row now expect the same: 3 cameras and `incomplete_take`.
 
 Minor: the sidecar reader no longer decodes the whole file into an unused string; the decoder closes
 the first frame when the `VideoFrame` constructor fails.
@@ -54,4 +52,6 @@ format spec and L7 allow.
 For the user, not changed: the token on a second open of the same folder (ADR-1ACK item 12); HTTP
 500 for a failed read (ADR-1ACK item 11); each dialog pick is kept with no way to remove it (ADR-1ACK
 item 13); a read that starts while a decode runs, for 50 frames/s in a scrub (a change of section
-7.5). See [open-work.md](../open-work.md).
+7.5); a network share (UNC path) does not open in 6a, also when the user picked it in the folder
+dialog, because UNC paths are refused before any file system call (the alternative: allow a UNC path
+only when the main process recorded it from the dialog). See [open-work.md](../open-work.md).

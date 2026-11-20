@@ -108,6 +108,12 @@ test('T-PLAY-07 pairs: two takes and a .tmp file', async t => {
 test('T-PLAY-08 header forms: each gives invalid with its reason', async t => {
     for (const [name, v] of Object.entries(HEADER_VARIANTS)) {
         const o = await openFixture(t, name);
+        if (v.reason === null) {
+            // SFF-865, SFF-889, SFF-869: the pair is in no take and does not count
+            assert.deepEqual(o.player.state.cameras.map(c => c.name), [0, 2, 3].map(i => o.built.cameras[i].mkv), name);
+            assert.ok(o.player.state.take.warnings.includes('incomplete_take'), name);
+            continue;
+        }
         const c1 = o.player.state.cameras[1];
         assert.equal(c1.state, 'invalid', name);
         assert.equal(c1.reason, v.reason, name);

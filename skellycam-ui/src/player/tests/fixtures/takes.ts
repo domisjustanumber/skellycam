@@ -27,7 +27,8 @@ function shortCamera3(plan: TakePlan): void {
 export const HEADER_VARIANTS: Record<string, {apply: (p: TakePlan) => void; reason: string | null}> = {
     header_leading_zero: {apply: p => (camByIndex(p, 1).header.group_size = '04'), reason: 'bad_metadata'},
     header_plus_sign: {apply: p => (camByIndex(p, 1).header.utc_offset_min = '+60'), reason: 'bad_metadata'},
-    header_uuid_dashes: {apply: p => (camByIndex(p, 1).header.take_uuid = '6f1c2c1e-1d7e-4c47-9a3e-2f2b3c4d5e6f'), reason: 'bad_metadata'},
+    // a take_uuid that does not read: the pair is in no take (SFF-865, SFF-889), so no reason
+    header_uuid_dashes: {apply: p => (camByIndex(p, 1).header.take_uuid = '6f1c2c1e-1d7e-4c47-9a3e-2f2b3c4d5e6f'), reason: null},
     header_row_2p53: {apply: p => (camByIndex(p, 1).rows[5].fields = {byte_size: '9007199254740992'}), reason: 'bad_metadata'},
     header_rate_zero: {apply: p => (camByIndex(p, 1).header.nominal_rate = '0/1'), reason: 'bad_rate'},
     header_rate_big: {apply: p => (camByIndex(p, 1).header.nominal_rate = '1048577/1'), reason: 'bad_rate'},
