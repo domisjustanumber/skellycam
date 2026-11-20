@@ -54,6 +54,9 @@ export const CanvasTakePlayer: React.FC<CanvasTakePlayerProps> = ({ folderPath, 
     onFrameChangeRef.current = onFrameChange;
     const initialFrameRef = useRef(initialFrame);
     const canvases = useRef(new Map<number, HTMLCanvasElement>());
+    // 0 until measured: the grid mounts at its real size, so its tiles do not animate from a default size
+    const [gridWidth, setGridWidth] = useState(0);
+    const [gridHeight, setGridHeight] = useState(0);
     const dragRef = useRef<{ wasPlaying: boolean } | null>(null);
 
     // open the take; close it when the host leaves it
@@ -99,7 +102,7 @@ export const CanvasTakePlayer: React.FC<CanvasTakePlayerProps> = ({ folderPath, 
             detach();
             tile.close();
         });
-    }, [player, cameraKey]);
+    }, [player, cameraKey, gridWidth > 0]);
 
     useEffect(() => {
         player?.setTileOptions({ showLabel: settings.showOverlays, timeFormat: settings.timestampFormat });
@@ -107,9 +110,6 @@ export const CanvasTakePlayer: React.FC<CanvasTakePlayerProps> = ({ folderPath, 
 
     // ---- grid (F1 to F3) ----
     const gridContainerRef = useRef<HTMLDivElement>(null);
-    // 0 until measured: the grid mounts at its real size, so its tiles do not animate from a default size
-    const [gridWidth, setGridWidth] = useState(0);
-    const [gridHeight, setGridHeight] = useState(0);
     // measured before the paint, so the first grid already has the right columns
     useLayoutEffect(() => {
         const el = gridContainerRef.current;
