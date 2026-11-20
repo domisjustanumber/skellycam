@@ -26,7 +26,6 @@ from skellycam.core.camera.config.camera_config import CameraConfig
 from skellycam.core.camera.config.image_resolution import ImageResolution
 from skellycam.core.ipc.frame_ring import FrameRingReader, FrameRingWriter, ReadResult
 from skellycam.core.recorders.videos.fourcc_codec_helpers import PYAV_H264_FOURCC
-from skellycam.core.recorders.videos.video_recorder import VideoRecorder
 from skellycam.tests.capture.capture_session import quiet_logging
 from skellycam.tests.reference_recordings.datasets import TEST, acquire
 
@@ -84,7 +83,6 @@ class Replay:
     catches an exception of a ring write."""
 
     def __init__(self, monkeypatch, paths):
-        import skellycam.core.camera.capture.camera_loop as loop_module
         import skellycam.core.camera.capture.opencv_source as opencv_source
 
         quiet_logging(monkeypatch)
@@ -97,14 +95,13 @@ class Replay:
         self.captures = {}
         self.received = {camera_id: [] for camera_id in self.paths}
         self.arrivals = {camera_id: {} for camera_id in self.paths}  # arrival_ns -> source frame number
-        self.recorded = {camera_id: [] for camera_id in self.paths}
         self.problems = []
         self.ring_names = set()
         self._readers = {}
         self._baselines = {camera_id: [cv2.VideoCapture(str(path), cv2.CAP_FFMPEG), -1, None]
                            for camera_id, path in self.paths.items()}
         self._lock = threading.Lock()
-        write, record_frame, handle = FrameRingWriter.write, VideoRecorder.record_frame, loop_module.handle_video_recording
+        write = FrameRingWriter.write
         replay = self
 
         def spy_write(writer, payload, **kwargs):
@@ -112,22 +109,8 @@ class Replay:
             if payload is not None and not isinstance(payload, np.ndarray):
                 replay._check(writer.name, payload, kwargs)
 
-        def spy_handle(**kwargs):
-            stamps = kwargs["frame_rec_array"].frame_metadata.timestamps
-            if not (0 < stamps.pre_frame_grab_ns[0] <= stamps.post_frame_grab_ns[0] <= stamps.pre_frame_retrieve_ns[0]
-                    <= stamps.post_frame_retrieve_ns[0] <= stamps.pre_copy_to_camera_shm_ns[0]):
-                replay.problems.append("capture stamps out of order")
-            return handle(**kwargs)
-
-        def spy_record_frame(recorder, frame):
-            replay.recorded[recorder.camera_id].append((int(frame.frame_metadata.frame_number[0]),
-                                                        int(frame.frame_metadata.timestamps.post_frame_grab_ns[0])))
-            return record_frame(recorder, frame)
-
         monkeypatch.setattr(opencv_source, "create_cv2_video_capture", self._open)
         monkeypatch.setattr(FrameRingWriter, "write", spy_write)
-        monkeypatch.setattr(loop_module, "handle_video_recording", spy_handle)
-        monkeypatch.setattr(VideoRecorder, "record_frame", spy_record_frame)
 
     def _open(self, config):
         capture = PacedFileCapture(self.paths[config.camera_id])
@@ -171,11 +154,6 @@ class Replay:
 
     def fewest(self):
         return min(len(frames) for frames in self.received.values())
-
-    def recorded_sfns(self, camera_id, first=0, last=None):
-        """The source frame numbers of the recorded frames with a frame number in [first, last)."""
-        return [self.arrivals[camera_id][arrival] for number, arrival in self.recorded[camera_id]
-                if number >= first and (last is None or number < last)]
 
     def positions(self):
         return [(len(self.received[camera_id]), capture.capture.get(cv2.CAP_PROP_POS_FRAMES))

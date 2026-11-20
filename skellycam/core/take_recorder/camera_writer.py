@@ -57,12 +57,15 @@ class CameraTakeWriter:
         self._last_real = None
         self._last_frame_number = None
         self._abandoned = False  # set by `end` when the writer made no progress for the stall limit
+        self._shared_progress = None
         # Progress (D1): the time.monotonic() at which a write call on the MKV or the CSV, or an fsync,
         # last returned. A call that does not return is no progress: the disk took nothing.
         self._progress_at = time.monotonic()
 
     def _progress(self) -> None:
         self._progress_at = time.monotonic()
+        if self._shared_progress is not None:  # the main process applies D1 at the end of a take (5.3 item 4)
+            self._shared_progress.value = self._progress_at
 
     def _wait_with_progress(self, started, attempt) -> bool:
         """Call `attempt(timeout)` until it returns True. Return False when the writer made no
@@ -87,9 +90,12 @@ class CameraTakeWriter:
         return not self._thread.is_alive()
 
     @classmethod
-    def start(cls, spec, *, clock=None):
-        """Open the files, write the MKV header and the CSV header, start the writer thread."""
+    def start(cls, spec, *, clock=None, progress=None):
+        """Open the files, write the MKV header and the CSV header, start the writer thread. `progress` is a
+        shared double that gets the time of each progress, for the main process (recorder.md 5.3 item 4)."""
         self = cls(spec)
+        self._shared_progress = progress
+        self._progress()
         self._clock = clock or time.perf_counter_ns
         self._layout = spec.layout
         self._placeholder = None if spec.layout is None else build_placeholder(spec.layout)

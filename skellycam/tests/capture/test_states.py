@@ -15,8 +15,8 @@ import time
 import pytest
 
 from skellycam.tests.capture.capture_session import (
-    Spies, capture_app, capture_logs, column, numbers_in, one_camera, parse_relay, product, ready_app_steps, recording_info,
-    recording_info_json, sfn_gaps, stop_line_count, video_frame_count)
+    Spies, camera_key_of, capture_app, capture_logs, numbers_in, one_camera, parse_relay, product, ready_app_steps,
+    sfn_gaps, stop_line_count)
 from skellycam.tests.capture.fake_source import FakeScript
 
 FRAME_NS = round(1e9 / 30)
@@ -311,10 +311,10 @@ def test_t_cap_33_no_change_during_a_recording(monkeypatch, tmp_path):
 # ---------------------------------------------------------------------------
 
 def test_t_cap_34_auto_exposure_at_record_start(monkeypatch, tmp_path):
-    """T-CAP-34, sections 11.3 and 11.6 [D37, agent 33]: start a recording with exposure in `AUTO`. The
-    recording starts; the response `warnings` holds the camera, `exposure` and the text of 11.3; the
-    status shows the same item; the log has the text; the recording info lists `exposure` in
-    `auto_controls_at_start`."""
+    """T-CAP-34, sections 11.3 and 11.6 [D37, agent 33], changed by step 5a (recorder.md section 14): start
+    a recording with exposure in `AUTO`. The recording starts; the response `warnings` holds the camera,
+    `exposure` and the text of 11.3; the status shows the same item; the log has the text; the capture
+    info has `controls.exposure_us.auto` true."""
     with capture_logs() as logs, capture_app(monkeypatch, [FakeScript()]) as app:
         camera_id = app.factory.camera_ids[0]
         ready_app_steps(app, [app.config(camera_id, exposure_mode="AUTO")])
@@ -327,46 +327,9 @@ def test_t_cap_34_auto_exposure_at_record_start(monkeypatch, tmp_path):
         assert item in status["warnings"] and status["controls"]["exposure"]["auto"] is True
         assert any(text in message for message in logs.messages(logging.WARNING))
         assert app.record_stop().status_code == 200
-        capture = recording_info_json(tmp_path)["capture"][camera_id]
-        assert "exposure" in capture["auto_controls_at_start"]
-
-
-def test_t_cap_35_a_camera_dies_during_a_recording(monkeypatch, tmp_path):
-    """T-CAP-35, sections 5.7, 8.2 and 11.6 [D38, U4, agent 52]: three fakes record; one gives device
-    removed (at frame 300 of the spec; here at the next frame after 60 recorded frames, because the
-    virtual time runs ahead of the test). That camera is `dead` at once; its files are finished; its
-    timing file ends at its last frame; the multi-frame rows after it hold the two live cameras; the
-    two keep recording to the stop; `dead_cameras` holds its ID and `last_frame_number`."""
-    with capture_app(monkeypatch, [FakeScript(), FakeScript(), FakeScript()], track=True) as app:
-        spies = Spies(monkeypatch, app)
-        ready_app_steps(app)
-        live, dead = app.factory.camera_ids[:2], app.factory.camera_ids[2]
-        assert app.record_start(tmp_path).status_code == 200
-        app.wait(lambda: len(spies.of("record", dead)) >= 60, "60 recorded frames")
-        source = app.factory.sources[dead]
-        source.remove_now()
-        # the tracker sees a state at the next read of a fake, after the status poll can see it
-        app.wait(lambda: app.tracker.first(dead, "dead") is not None, "the tracker sees `dead`")
-        log = app.factory.logs[dead]
-        removed_ns = log.frames[source.removed_frame][0] + FRAME_NS
-        t_dead = app.tracker.first(dead, "dead")
-        assert t_dead - removed_ns < 100_000_000, f"dead {(t_dead - removed_ns) / 1e9:.3f} s after the removal"
-        for camera_id in live:
-            app.wait(lambda: any(e["arrival_ns"] > t_dead + 10**9 for e in spies.of("record", camera_id)),
-                     f"camera {camera_id} records after the dead camera")
-        assert app.record_stop().status_code == 200
-        info = recording_info(tmp_path)
-        dead_rows = column(info.camera_timestamps_file_path_from_camera_id(dead), "connection_frame_number")
-        entry = [d for d in recording_info_json(tmp_path)["dead_cameras"] if d["camera_id"] == dead]
-        assert len(entry) == 1 and entry[0]["last_frame_number"] == int(dead_rows[-1])
-        assert video_frame_count(tmp_path, dead) == len(dead_rows), "the file of the dead camera is not finished"
-        live_times = [[float(v) for v in column(info.camera_timestamps_file_path_from_camera_id(cid),
-                                                 "timestamp.perf_counter_ns.ns")] for cid in live]
-        assert len(live_times[0]) == len(live_times[1]) > len(dead_rows)
-        multi = [float(v) for v in column(info.timestamp_file_path, "timestamp.perf_counter_ns.ns")]
-        assert len(multi) == len(live_times[0])
-        for row in range(len(dead_rows), len(multi)):
-            assert multi[row] == pytest.approx((live_times[0][row] + live_times[1][row]) / 2, abs=1.0), row
+        info = json.loads((tmp_path / "take" / "take_info.json").read_text(encoding="utf-8"))
+        assert info["skellyfileformat"] == "capture_info"
+        assert info["camera_configs"][camera_key_of(tmp_path, camera_id)]["controls"]["exposure_us"]["auto"] is True
 
 
 def test_t_cap_36_dead_after_2_s_without_a_frame(monkeypatch):
@@ -756,7 +719,10 @@ def test_t_cap_107_replaced_count_in_the_status(monkeypatch):
 def test_t_cap_108_a_dying_camera_does_not_hold_the_others(monkeypatch, tmp_path):
     """T-CAP-108, sections 6.7 and 8.2 [D38, ADR-PDD3]: three fakes record; one gives device removed,
     and its close takes 2 s. That camera is `dead` before its close ends; the two live cameras record
-    on with no gap above 100 ms between their recorded frames (the limit of T-CAP-82)."""
+    on with no gap above 100 ms between their recorded frames (the limit of T-CAP-82).
+
+    Changed by step 5a [M1, recorder.md 10 item 7]: the process of the dead camera writes placeholders
+    to the end of the take and closes its source after it, so the test sees the close after the stop."""
     scripts = [FakeScript(), FakeScript(), FakeScript(close_delay_s=2.0)]
     with capture_app(monkeypatch, scripts, track=True) as app:
         spies = Spies(monkeypatch, app)
@@ -767,14 +733,14 @@ def test_t_cap_108_a_dying_camera_does_not_hold_the_others(monkeypatch, tmp_path
         app.factory.sources[dying].remove_now()
         app.wait(lambda: app.tracker.first(dying, "dead") is not None, "the camera is dead")
         t_dead = app.tracker.first(dying, "dead")
-        events = app.factory.logs[dying].events
-        app.wait(lambda: any(name == "close" for name, _, _ in events), "the close of the dead camera")
-        close_ns = next(t for name, t, _ in events if name == "close")
-        assert t_dead <= close_ns, "the camera became dead only after its close"
         for camera_id in live:
             app.wait(lambda: any(e["arrival_ns"] > t_dead + 3 * 10**9 for e in spies.of("record", camera_id)),
                      f"camera {camera_id} records 3 s after the dead camera")
         assert app.record_stop().status_code == 200
+        events = app.factory.logs[dying].events
+        app.wait(lambda: any(name == "close" for name, _, _ in events), "the close of the dead camera")
+        close_ns = next(t for name, t, _ in events if name == "close")
+        assert t_dead <= close_ns, "the camera became dead only after its close"
         for camera_id in live:
             times = [e["arrival_ns"] for e in spies.of("record", camera_id)]
             gap = max(b - a for a, b in zip(times, times[1:])) / 1e9

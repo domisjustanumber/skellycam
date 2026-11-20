@@ -2,22 +2,19 @@
 (specs/windows-capture.md, sections 5, 9, 11.1 and 14.1).
 
 The fake-source tests run THREAD workers with a virtual clock. The spies of `capture_session`
-see each JPEG ring write, each BGR hand-over, each frame of the old recorder and each
-`cv2.imdecode` call. The OpenCV tests use the product `OpenCVSource` with the OpenCV fake, on a virtual clock.
+see each JPEG ring write, each BGR hand-over, each frame of the take recorder and each
+`cv2.imdecode` call. T-CAP-09 and T-CAP-10 are replaced by T-REC-41 and T-REC-42 (specs/recorder.md
+section 14), in `skellycam/tests/take_recorder/test_connection.py`. The OpenCV tests use the product `OpenCVSource` with the OpenCV fake, on a virtual clock.
 """
 
-import json
 import logging
 
 import pytest
 
 from skellycam.tests.capture.capture_session import (
-    OpenCVFakeFactory, CaptureApp, Spies, capture_app, capture_logs, column, digest, read_csv, ready_app_steps,
-    sfn_gaps, stop_line_count)
+    OpenCVFakeFactory, CaptureApp, Spies, capture_app, capture_logs, ready_app_steps, sfn_gaps, stop_line_count,
+    take_files)
 from skellycam.tests.capture.fake_source import FakeScript
-
-RETRIEVE_COLUMNS = ("frame.pre_frame_retrieve.ns", "frame.post_frame_retrieve.ns",
-                    "duration.idle_before_retrieve.ns", "duration.during_frame_retrieve.ns")
 
 
 def ring_flags():
@@ -26,14 +23,8 @@ def ring_flags():
     return FrameFlag, NO_SAMPLE_NS
 
 
-def timing_csv(directory, camera_id, name="take"):
-    from skellycam.core.recorders.videos.recording_info import RecordingInfo
-
-    return RecordingInfo(recording_name=name, recording_directory=str(directory)).camera_timestamps_file_path_from_camera_id(camera_id)
-
-
 def record(app, spies, directory, frames=30, camera_id=None):
-    """Record until the old recorder got `frames` frames, then stop."""
+    """Record until the take recorder got `frames` frames, then stop."""
     response = app.record_start(directory)
     assert response.status_code == 200, response.text
     app.wait(lambda: len(spies.of("record", camera_id)) >= frames, f"{frames} recorded frames")
@@ -118,14 +109,18 @@ def test_t_cap_06_frame_numbers_across_a_resolution_change(monkeypatch):
 
 
 # ---------------------------------------------------------------------------
-# T-CAP-07 to T-CAP-10: timestamps, order, interim decode, flagged frames
+# T-CAP-07, T-CAP-08: timestamps, order
 # ---------------------------------------------------------------------------
 
 @pytest.mark.parametrize("sample_offset_ms", [-4.0, None], ids=["sample time", "no sample time"])
 def test_t_cap_07_slot_and_csv_times(monkeypatch, tmp_path, sample_offset_ms):
-    """T-CAP-07, section 5.4 [D28, agent 7]: a fake with scripted arrival and sample times; record 30
-    frames. Slot `arrival_ns` and `sample_ns` equal the source values; the CSV time of each recorded
-    frame is its `arrival_ns`; a source with no sample time writes `NO_SAMPLE_NS`."""
+    """T-CAP-07, section 5.4 [D28, agent 7], changed by step 5a (recorder.md section 14): a fake with
+    scripted arrival and sample times; record 30 frames. Slot `arrival_ns` and `sample_ns` equal the
+    source values; the `arrival_ns` of each row of the recorder CSV is the `arrival_ns` of its frame
+    (relative to `take_start_host_ns`, SFF-755), and its `sample_ns` the sample time, empty for a source
+    with no sample time; a source with no sample time writes `NO_SAMPLE_NS` in the slot."""
+    from skellycam.core.take_recorder.sidecar import read_strict
+
     _, no_sample = ring_flags()
     with capture_app(monkeypatch, [FakeScript(sample_offset_ms=sample_offset_ms)]) as app:
         spies = Spies(monkeypatch, app)
@@ -137,10 +132,15 @@ def test_t_cap_07_slot_and_csv_times(monkeypatch, tmp_path, sample_offset_ms):
             assert (event["arrival_ns"], event["sample_ns"]) == frames[event["sfn"]]
             if sample_offset_ms is None:
                 assert event["sample_ns"] == no_sample
-        times = [int(value) for value in column(timing_csv(tmp_path, camera_id), "timestamp.perf_counter_ns.ns")]
-        arrivals = {arrival for arrival, _ in frames.values()}
-        assert len(times) == len(spies.of("record", camera_id)) >= 30
-        assert all(t in arrivals for t in times), "a CSV time is not the arrival time of a frame"
+        sidecar = read_strict(take_files(tmp_path)[camera_id][1])
+        start = int(sidecar.data.split(b"take_start_host_ns=")[1].split(b"\n")[0])
+        rows = sidecar.rows
+        assert len(rows) == len(spies.of("record", camera_id)) >= 30
+        for row in rows:
+            arrival, sample = frames[row.source_frame_number]
+            assert row.arrival_ns == arrival - start, "a CSV time is not the arrival time of its frame"
+            assert row.sample_ns == (None if sample_offset_ms is None else sample - start)
+        times = [row.arrival_ns for row in rows]
         assert times == sorted(set(times))
 
 
@@ -177,66 +177,6 @@ def test_t_cap_08_recorder_then_jpeg_ring_then_bgr(monkeypatch, tmp_path):
                 assert kinds == ["record", "jpeg", "bgr_put"], f"frame at {arrival}: {kinds}"
         assert any(e["arrival_ns"] == next_arrival and not e.get("raised") for e in spies.of("jpeg")), \
             "the next frame did not reach the ring"
-
-
-@pytest.mark.parametrize("recording", [False, True], ids=["no recording", "recording"])
-@pytest.mark.parametrize("bgr_ring", [False, True], ids=["no BGR ring", "BGR ring"])
-def test_t_cap_09_one_decode_per_frame_only_when_needed(monkeypatch, tmp_path, recording, bgr_ring):
-    """T-CAP-09, section 5.5 [D9, agent 8]: MJPG fake, with and without recording, with and without a
-    BGR ring; count `cv2.imdecode` calls. One decode per recorded frame or per frame with a BGR ring,
-    else none; the BGR ring frame equals the decoded image."""
-    with capture_app(monkeypatch, [FakeScript(modes=((320, 240, 30, 1, "MJPG"),))]) as app:
-        spies = Spies(monkeypatch, app, keep_payloads=True)
-        camera_id = app.factory.camera_ids[0]
-        ready_app_steps(app, [app.config(camera_id, bgr_ring=bgr_ring)])
-        if recording:
-            record(app, spies, tmp_path, frames=60)
-        else:
-            app.wait(lambda: len(spies.of("jpeg")) >= 60, "60 ring frames")
-        app.client.delete("/skellycam/camera/group/close/all")
-        decodes = {}
-        for event in spies.of("imdecode"):
-            decodes[event["hash"]] = decodes.get(event["hash"], 0) + 1
-        recorded = {event["arrival_ns"] for event in spies.of("record")}
-        bgr_by_arrival = {event["arrival_ns"]: event for event in spies.of("bgr_put")}
-        for event in spies.of("jpeg"):
-            expected = 1 if (bgr_ring or event["arrival_ns"] in recorded) else 0
-            assert decodes.get(event["hash"], 0) == expected, f"frame {event['sfn']}: {decodes.get(event['hash'], 0)} decodes"
-            if bgr_ring and event["arrival_ns"] in bgr_by_arrival:
-                assert bgr_by_arrival[event["arrival_ns"]]["hash"] == digest(spies.decode_image(event["payload"]))
-        assert not bgr_ring or bgr_by_arrival, "no BGR hand-over"
-
-
-def test_t_cap_10_cut_off_jpeg_during_a_recording(monkeypatch, tmp_path):
-    """T-CAP-10, sections 5.5 and 4 [ring 4, U5]: the fake delivers a cut-off JPEG during a recording.
-    The slot is flagged `NO_SOI_EOI`; the decoder call count is 0 for it; the recorder gets the
-    previous image; the count is logged at stop.
-
-    The stop line holds the camera ID, the word "flagged" and the count (ADR-HP7D)."""
-    import re
-
-    flag, _ = ring_flags()
-    with capture_logs() as logs, capture_app(monkeypatch, [FakeScript()]) as app:
-        spies = Spies(monkeypatch, app)
-        ready_app_steps(app)
-        camera_id = app.factory.camera_ids[0]
-        response = app.record_start(tmp_path)
-        assert response.status_code == 200, response.text
-        app.wait(lambda: len(spies.of("record")) >= 10, "10 recorded frames")
-        source = app.factory.sources[camera_id]
-        source.cut_off_next()
-        app.wait(lambda: source.cut_frames, "the cut-off frame")
-        app.wait(lambda: len(spies.of("record")) >= 40, "40 recorded frames")
-        assert app.record_stop().status_code == 200
-        cut_sfn = source.cut_frames[0]
-        writes = [e for e in spies.of("jpeg") if e["sfn"] == cut_sfn]
-        assert len(writes) == 1 and writes[0]["flags"] & flag.NO_SOI_EOI
-        assert not [e for e in spies.of("imdecode") if e["hash"] == writes[0]["hash"]], "the cut-off JPEG was decoded"
-        records = spies.of("record")
-        index = [e["arrival_ns"] for e in records].index(writes[0]["arrival_ns"])
-        assert records[index]["hash"] == records[index - 1]["hash"], "the recorder did not get the previous image"
-        pattern = re.compile(rf"\b{camera_id}\b.*flagged.*\b1\b|\b{camera_id}\b.*\b1\b.*flagged", re.IGNORECASE)
-        assert any(pattern.search(message) for message in logs.messages(logging.INFO)), "no count line at the stop"
 
 
 # ---------------------------------------------------------------------------
@@ -295,100 +235,29 @@ def test_t_cap_12_controls_after_the_first_frame_and_read_back(monkeypatch):
 
 
 # ---------------------------------------------------------------------------
-# T-CAP-39: timestamp columns and the camera ID check of the recorder
+# T-CAP-39: the camera ID check of the recorder
 # ---------------------------------------------------------------------------
 
-def test_t_cap_39_stamped_columns_and_wrong_camera_id(monkeypatch, tmp_path):
-    """T-CAP-39, section 5.4 [D41]: record with the fake source and with the OpenCV fake; give the
-    recorder a frame with a wrong camera ID. Native CSV has no retrieve columns; OpenCV CSV has them;
-    the wrong frame is refused with an error (`ValueError`, ADR-HP7D)."""
-    with capture_app(monkeypatch, [FakeScript()]) as app:
-        spies = Spies(monkeypatch, app)
-        ready_app_steps(app)
-        record(app, spies, tmp_path / "native")
-        header, _ = read_csv(timing_csv(tmp_path / "native", app.factory.camera_ids[0]))
-        assert not set(RETRIEVE_COLUMNS) & set(header), "the native CSV has retrieve columns"
-    with pytest.MonkeyPatch.context() as patch:
-        factory = OpenCVFakeFactory(patch)
-        app = CaptureApp(patch, factory)
-        try:
-            spies = Spies(patch, app)
-            ready_app_steps(app)
-            record(app, spies, tmp_path / "opencv")
-            header, _ = read_csv(timing_csv(tmp_path / "opencv", factory.camera_ids[0]))
-            assert set(RETRIEVE_COLUMNS) <= set(header), "the OpenCV CSV has no retrieve columns"
-        finally:
-            app.close()
-    _wrong_camera_id_is_refused(tmp_path / "wrong")
+def test_t_cap_39_wrong_camera_id(tmp_path):
+    """T-CAP-39, section 5.4 [D41], changed by step 5a (recorder.md section 14): the CSV column part is
+    dropped with the old CSV [R5]. Each camera process has its own camera writer; the connection
+    refuses a take spec whose `camera_id` is not the camera of the process, with a `ValueError` that
+    names both, and opens no file."""
+    from skellycam.core.camera.capture.camera_loop import start_take_writer
+    from skellycam.tests.take_recorder.rec_api import take_camera
+
+    take = product_take(tmp_path, [take_camera("a1b2"), take_camera("c3d4", os_index=1)])
+    spec = take.camera_spec("c3d4")
+    with pytest.raises(ValueError) as error:
+        start_take_writer("a1b2", spec)
+    assert "c3d4" in str(error.value) and "a1b2" in str(error.value)
+    assert not spec.mkv_path.exists() and not spec.csv_path.exists()
 
 
-def test_multi_frame_files_have_no_value_for_a_stage_that_the_source_does_not_stamp(monkeypatch, tmp_path):
-    """Section 5.4 [D41], first hardware run of 3a: the fake source, as Media Foundation, does not stamp the
-    retrieve. The multi-frame timing file and the statistics files then give no value for each stage
-    that uses the retrieve times: `nan` in the CSV (the marker of the file for no value), null in the
-    JSON (strict JSON) and `nan` in the text report. Before the fix they held the difference of a clock
-    value and zero. The test checks the absence of a value, so the clock value of the machine does not
-    change the result (ADR-BM73 F1)."""
-    from skellycam.core.recorders.videos.recording_info import RecordingInfo
+def product_take(directory, cameras):
+    from skellycam.core.take_recorder import start_take
 
-    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
-        spies = Spies(monkeypatch, app)
-        ready_app_steps(app)
-        record(app, spies, tmp_path)
-    info = RecordingInfo(recording_name="take", recording_directory=str(tmp_path))
-    header, rows = read_csv(info.timestamp_file_path)
-    no_value = [name for name in header if "retrieve" in name or "idle_before_copy_to_camera_shm" in name
-                or name.startswith("total.frame_processing_time")]
-    assert len(no_value) == 6 * 5, no_value  # 2 retrieve times, 3 durations and 1 total; 5 statistics each
-    for name in header:
-        values = {row[header.index(name)] for row in rows}
-        if name in no_value:
-            assert values == {"nan"}, f"{name}: {sorted(values)[:3]}"
-        elif name.startswith(("duration.during_frame_grab", "duration.during_copy_to_camera_shm.ms.median")):
-            assert "nan" not in values, name
-    with open(info.timestamp_stats_json_file_path, encoding="utf-8") as file:
-        stats = json.loads(file.read(), parse_constant=lambda token: pytest.fail(f"{token} in the stats JSON"))
-    for name in ("idle_before_retrieve_ms", "during_frame_retrieve_ms", "idle_before_copy_to_camera_shm_ms",
-                 "total_frame_processing_time_ms"):
-        assert set(stats[name].values()) == {None}, (name, stats[name])
-    assert stats["during_copy_to_camera_shm_ms"]["median"] is not None
-    with open(info.timestamp_stats_text_file_path, encoding="utf-8") as file:
-        report = file.read()
-    retrieve_rows = [line for line in report.splitlines() if "retrieve" in line]
-    assert len(retrieve_rows) == 2 and all("nan" in line for line in retrieve_rows), retrieve_rows
-
-
-def _wrong_camera_id_is_refused(directory):
-    import multiprocessing
-    import time
-
-    from skellycam.core.camera.config.camera_config import CameraConfig
-    from skellycam.core.camera.config.image_resolution import ImageResolution
-    from skellycam.core.camera.opencv.opencv_helpers.create_initial_frame_recarray import create_initial_frame_rec_array
-    from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
-    from skellycam.core.ipc.pubsub.pubsub_manager import PubSubTopicManager
-    from skellycam.core.recorders.videos.recording_info import RecordingInfo
-    from skellycam.core.recorders.videos.video_recorder import VideoRecorder
-
-    ipc = CameraGroupIPC(group_id="t-cap-39", pubsub=PubSubTopicManager(topics={}),
-                         extracted_config_subscription=multiprocessing.Queue(),
-                         recording_finished_subscription=multiprocessing.Queue(),
-                         global_kill_flag=multiprocessing.Value("b", False),
-                         heartbeat_timestamp=multiprocessing.Value("d", time.perf_counter()))
-    resolution = ImageResolution(width=320, height=240)
-    mine = CameraConfig(camera_id="a1b2", camera_index=0, resolution=resolution)
-    other = CameraConfig(camera_id="c3d4", camera_index=1, resolution=resolution)
-    directory.mkdir(parents=True, exist_ok=True)
-    recorder = VideoRecorder.create(recording_info=RecordingInfo(recording_name="wrong", recording_directory=str(directory)),
-                                    config=mine)
-    try:
-        frame = create_initial_frame_rec_array(config=other, ipc=ipc)
-        frame.frame_metadata.frame_number[0] = 0
-        with pytest.raises(ValueError) as error:
-            recorder.record_frame(frame)
-        assert "c3d4" in str(error.value) and "a1b2" in str(error.value)
-    finally:
-        recorder.close()
+    return start_take(directory / "take", "take", cameras, writer="skellycam 2.0.0")
 
 
 # ---------------------------------------------------------------------------

@@ -19,7 +19,7 @@ from skellycam.core.ipc.pubsub.pubsub_topics import (
     SetShmMessage,
 )
 from skellycam.core.camera.config.camera_config import CameraConfig, DEFAULT_CAMERA_ID
-from skellycam.core.recorders.videos.recording_info import RecordingInfo
+from skellycam.core.take_recorder import CameraTakeSpec
 from skellycam.core.recorders.framerate_tracker import CurrentFramerate
 
 
@@ -27,6 +27,15 @@ from skellycam.core.recorders.framerate_tracker import CurrentFramerate
 # so queue.empty() can race and return True immediately after put().
 # Always use queue.get(timeout=...) instead of checking empty() first.
 GET_TIMEOUT: float = 2.0
+
+
+def take_spec(camera_id: str) -> CameraTakeSpec:
+    """A camera spec of a take, as the record start sends it (recorder.md section 10 item 5)."""
+    from pathlib import Path
+
+    return CameraTakeSpec(camera_id=camera_id, mkv_path=Path(f"{camera_id}.mkv"), csv_path=Path(f"{camera_id}.csv"),
+                          header=(), take_start_host_ns=0, num=30, den=1, width=640, height=480, layout=None,
+                          queue_size=90, stall_limit_s=10.0)
 
 
 # ---------------------------------------------------------------------------
@@ -105,8 +114,8 @@ class TestPubSubPublishSubscribe:
         manager = PubSubTopicManager()
         sub = manager.get_subscription(TopicTypes.RECORDING_INFO)
 
-        msg1 = RecordingInfoMessage(recording_info=RecordingInfo.create_temp())
-        msg2 = RecordingInfoMessage(recording_info=RecordingInfo.create_temp())
+        msg1 = RecordingInfoMessage(take_specs={"a1b2": take_spec("a1b2")})
+        msg2 = RecordingInfoMessage(take_specs={"c3d4": take_spec("c3d4")})
 
         # Publish msg1, then wait for it to actually land in the queue
         # before publishing msg2 with overwrite. Without this, the overwrite
@@ -114,7 +123,7 @@ class TestPubSubPublishSubscribe:
         # queue because the feeder thread hasn't flushed msg1 yet.
         manager.topics[TopicTypes.RECORDING_INFO].publish(msg1)
         landed = sub.get(timeout=GET_TIMEOUT)
-        assert landed.recording_info.recording_uuid == msg1.recording_info.recording_uuid
+        assert list(landed.take_specs) == ["a1b2"]
         # Put it back so the overwrite drain can find and remove it
         sub.put(landed)
 
@@ -122,7 +131,7 @@ class TestPubSubPublishSubscribe:
         manager.topics[TopicTypes.RECORDING_INFO].publish(msg2, overwrite=True)
 
         received = sub.get(timeout=GET_TIMEOUT)
-        assert received.recording_info.recording_uuid == msg2.recording_info.recording_uuid
+        assert list(received.take_specs) == ["c3d4"]
 
         # Confirm queue is now empty
         with pytest.raises(queue.Empty):
@@ -151,6 +160,5 @@ class TestFramerateMessage:
 
 class TestRecordingInfoMessage:
     def test_recording_info_message(self) -> None:
-        info = RecordingInfo.create_temp()
-        msg = RecordingInfoMessage(recording_info=info)
-        assert msg.recording_info.recording_uuid == info.recording_uuid
+        msg = RecordingInfoMessage(take_specs={"a1b2": take_spec("a1b2")})
+        assert msg.take_specs["a1b2"].camera_id == "a1b2"

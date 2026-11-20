@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import pytest
 import numpy as np
-from skellycam.core.recorders.videos.pyav_video_writer import PyavVideoWriter
+from skellycam.tests.old_video_writer import PyavVideoWriter
 
 
 @pytest.fixture()

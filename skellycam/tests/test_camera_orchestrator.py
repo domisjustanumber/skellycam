@@ -164,6 +164,13 @@ class TestCameraOrchestratorRecording:
         assert should_record is False
         assert should_finish is True
 
+    def test_no_recording_after_the_take_ended(self) -> None:
+        """A last frame with no take (first is -1) records nothing: a second stop after a hang set it
+        again and recorded with no writer (open work, T-CAP-85 case 2)."""
+        orch = _make_orchestrator(["cam0"])
+        orch.last_recording_frame_number.value = 20
+        assert orch.should_record_frame_number(frame_number=15) == (False, False)
+
     def test_recording_past_stop_boundary(self) -> None:
         orch = _make_orchestrator(["cam0"])
         orch.first_recording_frame_number.value = 10

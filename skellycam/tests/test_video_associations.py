@@ -5,8 +5,6 @@ import pytest
 from pydantic import ValidationError
 
 from skellycam.core.recorders.videos.video_associations import VideoAssociations
-from skellycam.core.recorders.videos.recording_info import RecordingInfo
-from skellycam.core.camera.config.camera_config import CameraConfig
 
 
 def test_arbitrary_names_preserve_declared_source_order(tmp_path: Path) -> None:
@@ -75,24 +73,3 @@ def test_conflicting_recording_declarations_fail(tmp_path: Path) -> None:
         )
     with pytest.raises(ValueError, match="Conflicting"):
         VideoAssociations.from_recording_folder(recording_folder=tmp_path)
-
-
-def test_capture_publishes_actual_container_and_source(tmp_path: Path) -> None:
-    recording = RecordingInfo(recording_directory=str(tmp_path), recording_name="capture")
-    config = CameraConfig(camera_id="source", camera_index=2)
-    video = Path(recording.video_file_path_from_camera_config(config=config, extension="avi"))
-    video.touch()
-    recording.save_to_file(camera_configs={config.camera_id: config})
-    metadata = json.loads(Path(recording.recording_info_path).read_text())
-    assert metadata["videos"] == {config.camera_id: video.name}
-
-
-def test_capture_rejects_multiple_container_candidates(tmp_path: Path) -> None:
-    recording = RecordingInfo(recording_directory=str(tmp_path), recording_name="capture")
-    config = CameraConfig(camera_id="source", camera_index=2)
-    video = Path(recording.video_file_path_from_camera_config(config=config, extension="mp4"))
-    video.touch()
-    video.with_suffix(".avi").touch()
-    with pytest.raises(ValueError, match="Multiple videos"):
-        recording.save_to_file(camera_configs={config.camera_id: config})
-    assert not Path(recording.recording_info_path).exists()

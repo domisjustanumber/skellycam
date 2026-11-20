@@ -17,8 +17,8 @@ import pytest
 from skellycam.tests.capture.capture_hardware import (
     GOOD, LABELS, SLOW_REASON, hardware_app, kiyo_pro_rule, label_of, mode_list_follows_7_3, record_result)
 from skellycam.tests.capture.capture_session import (
-    RingWatcher, Spies, StateWatcher, capture_logs, column, digest, product, recording_info, recording_info_json,
-    sfn_gaps, stop_line_count)
+    RingWatcher, Spies, StateWatcher, capture_logs, digest, placeholders_to_the_stop, product, sfn_gaps,
+    stop_line_count, take_rows)
 from skellycam.tests.capture.fake_source import MEDIA_FOUNDATION_VIDEO_GUID, spec_camera_id
 
 pytestmark = [pytest.mark.camera_hardware,
@@ -205,8 +205,9 @@ def test_t_cap_57_exposure_steps_while_open(monkeypatch, label):
 @pytest.mark.skipif(os.environ.get("SKELLYCAM_HARDWARE_UNPLUG") != "1", reason="needs a person to unplug: SKELLYCAM_HARDWARE_UNPLUG=1")
 def test_t_cap_58_unplug_during_a_recording(monkeypatch, tmp_path):
     """T-CAP-58, sections 5.7 and 8.2 [D38, U4]: record with the C922 and the C930e; the user unplugs
-    the C922 at 20 s. The C922 is `dead` at once; the C930e records to the stop; the recording info
-    names the C922 and its last frame. "At once": within 0.5 s of its last ring frame."""
+    the C922 at 20 s. The C922 is `dead` at once; the C930e records to the stop; changed by step 5a
+    (recorder.md section 14): the manifest has `camera_dead` for the C922, and its file has placeholders
+    to the stop [M1, M8]. "At once": within 0.5 s of its last ring frame."""
     with hardware_app(monkeypatch) as app:
         c922, c930e = app.camera_id("C922"), app.camera_id("C930e")
         assert app.apply([app.config(c922), app.config(c930e)]).status_code == 200
@@ -226,10 +227,8 @@ def test_t_cap_58_unplug_during_a_recording(monkeypatch, tmp_path):
         finally:
             watcher.stop()
             ring.stop()
-        dead = [d for d in recording_info_json(tmp_path)["dead_cameras"] if d["camera_id"] == c922]
-        rows = column(recording_info(tmp_path).camera_timestamps_file_path_from_camera_id(c922), "connection_frame_number")
-        assert len(dead) == 1 and dead[0]["last_frame_number"] == int(rows[-1])
-        record_result("T-CAP-58", dead=dead[0])
+        dead, rows = placeholders_to_the_stop(tmp_path, c922)
+        record_result("T-CAP-58", dead=dead, rows=len(rows))
 
 
 @pytest.mark.parametrize("label", GOOD)
@@ -276,9 +275,7 @@ def test_t_cap_60_comparison_run_native_loop(monkeypatch, tmp_path):
         assert stopped.status_code == 200, stopped.text
         app.client.delete("/skellycam/camera/group/close/all")
         summary = stopped.json()[0]
-        info = recording_info(tmp_path)
-        counts = {cid: len(column(info.camera_timestamps_file_path_from_camera_id(cid), "connection_frame_number"))
-                  for cid in ids}
+        counts = {cid: len(take_rows(tmp_path, cid)) for cid in ids}
         replaced = {cid: (stop_line_count(logs.messages(), cid), sfn_gaps([e["sfn"] for e in spies.of("jpeg", cid)]))
                     for cid in ids}
         record_result("T-CAP-60", counts=counts, summary=summary, replaced_and_gaps=replaced)

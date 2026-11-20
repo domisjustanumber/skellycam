@@ -104,24 +104,27 @@ def capture_logs():
 
 
 class Spies:
-    """Class-level spies on the frame path (THREAD workers): JPEG and BGR ring writes, the old
-    recorder, the hand-over to the decode stage and `cv2.imdecode`. Each event has a sequence
-    number and a hash of its payload or image; `keep_payloads` also keeps each JPEG payload.
+    """Class-level spies on the frame path (THREAD workers): JPEG and BGR ring writes, the camera
+    writer of a take (`record` for `give`, `missing` for `give_missing`), the hand-over to the decode
+    stage and `cv2.imdecode`. Each event has a sequence number and a hash of its payload or image;
+    `keep_payloads` also keeps each JPEG payload. `writers` holds the camera writer of each camera.
     `fail_jpeg_write(event)` can make a JPEG ring write raise."""
 
     def __init__(self, monkeypatch, app=None, keep_payloads=False):
         from skellycam.core.ipc.frame_ring import DecodeInput, FrameRingWriter
         from skellycam.core.ipc.frame_ring import decode as decode_module
-        from skellycam.core.recorders.videos.video_recorder import VideoRecorder
+        from skellycam.core.take_recorder import CameraTakeWriter
 
         self.app = app
         self.keep_payloads = keep_payloads
         self.events = []
+        self.writers = {}
         self.fail_jpeg_write = None
         self._seq = 0
         self._lock = threading.Lock()
         spies = self
-        write, record_frame = FrameRingWriter.write, VideoRecorder.record_frame
+        write, give, give_missing = FrameRingWriter.write, CameraTakeWriter.give, CameraTakeWriter.give_missing
+        start = CameraTakeWriter.start.__func__
         put, imdecode = decode_module.WaitingPlace.put, cv2.imdecode
 
         def spy_write(writer, payload, **kwargs):
@@ -137,12 +140,21 @@ class Spies:
                 raise RuntimeError("test: this ring write fails")
             return write(writer, payload, **kwargs)
 
-        def spy_record_frame(recorder, frame):
-            image = frame.image[0]
-            spies._add("record", camera=recorder.camera_id, frame_number=int(frame.frame_metadata.frame_number[0]),
-                       arrival_ns=int(frame.frame_metadata.timestamps.post_frame_grab_ns[0]),
-                       hash=digest(image))
-            return record_frame(recorder, frame)
+        def spy_start(cls, spec, **kwargs):
+            writer = start(cls, spec, **kwargs)
+            spies.writers[spec.camera_id] = writer
+            return writer
+
+        def spy_give(writer, frame):
+            spies._add("record", camera=writer.spec.camera_id, frame_number=frame.frame_number,
+                       arrival_ns=frame.arrival_ns, sample_ns=frame.sample_ns, sfn=frame.source_frame_number,
+                       flags=int(frame.flags), hash=digest(frame.payload),
+                       payload=frame.payload if spies.keep_payloads else None)
+            return give(writer, frame)
+
+        def spy_give_missing(writer):
+            spies._add("missing", camera=writer.spec.camera_id)
+            return give_missing(writer)
 
         def spy_put(place, item):
             if isinstance(item, DecodeInput):
@@ -156,7 +168,9 @@ class Spies:
             return imdecode(buffer, flags)
 
         monkeypatch.setattr(FrameRingWriter, "write", spy_write)
-        monkeypatch.setattr(VideoRecorder, "record_frame", spy_record_frame)
+        monkeypatch.setattr(CameraTakeWriter, "start", classmethod(spy_start))
+        monkeypatch.setattr(CameraTakeWriter, "give", spy_give)
+        monkeypatch.setattr(CameraTakeWriter, "give_missing", spy_give_missing)
         monkeypatch.setattr(decode_module.WaitingPlace, "put", spy_put)
         monkeypatch.setattr(cv2, "imdecode", spy_imdecode)
         self.original_imdecode = imdecode
@@ -238,6 +252,14 @@ class CaptureApp:
         if self.clock is not None and self.clock.virtual:
             monkeypatch.setattr(loop_module, "perf_counter_ns", self.clock.now_ns)
             install_gate_probe(monkeypatch, self.clock)
+            # A dead camera waits on the group frames in real time (recorder.md 10 item 7): not on the clock.
+            missing_until_end = loop_module.CameraLoop._missing_until_end
+
+            def leave_clock_first(loop):
+                self.clock.leave()
+                return missing_until_end(loop)
+
+            monkeypatch.setattr(loop_module.CameraLoop, "_missing_until_end", leave_clock_first)
         if isinstance(factory.on_read, StateTracker):
             factory.on_read.app = self
         self.kill = multiprocessing.Value("b", False)
@@ -457,19 +479,6 @@ def ring_exists(name):
     return True
 
 
-def read_csv(path):
-    """A timing CSV as (header, rows of strings)."""
-    lines = Path(path).read_text(encoding="utf-8").splitlines()
-    header = lines[0].split(",")
-    return header, [line.split(",") for line in lines[1:] if line]
-
-
-def column(path, name):
-    header, rows = read_csv(path)
-    index = header.index(name)
-    return [row[index] for row in rows]
-
-
 def sfn_gaps(sfns):
     """The sum of the gaps of `source_frame_number` between consecutive taken frames (5.2)."""
     return sum(b - a - 1 for a, b in zip(sfns, sfns[1:]))
@@ -654,26 +663,57 @@ def parse_relay(message):
     return int(header["frame_number"]), frames
 
 
-def recording_info(directory, name="take"):
-    from skellycam.core.recorders.videos.recording_info import RecordingInfo
-
-    return RecordingInfo(recording_name=name, recording_directory=str(directory))
-
-
-def recording_info_json(directory, name="take"):
-    return json.loads(Path(recording_info(directory, name).recording_info_path).read_text(encoding="utf-8"))
+def take_manifest(directory, name="take"):
+    """The manifest of a take of the take recorder (recorder.md 6.6)."""
+    return json.loads((Path(directory) / name / "recording_manifest.json").read_text(encoding="utf-8"))
 
 
-def video_frame_count(directory, camera_id, name="take"):
-    """The frames that OpenCV reads from the video of one camera (0 when no file is readable)."""
-    videos = [p for p in Path(recording_info(directory, name).videos_folder).iterdir() if camera_id in p.name]
-    assert len(videos) == 1, f"videos of camera {camera_id}: {videos}"
-    capture = cv2.VideoCapture(str(videos[0]))
-    count = 0
-    while capture.read()[0]:
-        count += 1
-    capture.release()
-    return count
+def take_files(directory, name="take"):
+    """{camera_id: (camera file, timing sidecar)} of a take. The camera key starts with the camera ID (6.2)."""
+    folder = Path(directory) / name
+    return {item["camera_key"][:4]: (folder / item["video"], folder / item["timing"])
+            for item in take_manifest(directory, name)["cameras"]}
+
+
+def take_rows(directory, camera_id, name="take"):
+    """The rows of the timing sidecar of one camera (recorder.md 6.5), by the strict read of the product."""
+    from skellycam.core.take_recorder.sidecar import read_strict
+
+    return read_strict(take_files(directory, name)[camera_id][1]).rows
+
+
+def take_warnings(directory, code, name="take"):
+    return [w for w in take_manifest(directory, name)["warnings"] if w["code"] == code]
+
+
+def camera_key_of(directory, camera_id, name="take"):
+    return next(item["camera_key"] for item in take_manifest(directory, name)["cameras"]
+                if item["camera_key"].startswith(camera_id))
+
+
+def placeholders_to_the_stop(directory, camera_id, name="take"):
+    """A camera that died during a take (recorder.md 7.3): one `camera_dead` warning that names its last row
+    with an image, and `missing` rows with a placeholder block from there to the end of the take.
+    Returns (the warning, the rows)."""
+    from skellycam.core.take_recorder.sidecar import MISSING
+
+    rows = take_rows(directory, camera_id, name)
+    key = camera_key_of(directory, camera_id, name)
+    dead = [w for w in take_warnings(directory, "camera_dead", name) if w["camera_key"] == key]
+    assert len(dead) == 1, dead
+    last = max((row.frame for row in rows if not row.flags & MISSING), default=None)
+    assert dead[0]["detail"].startswith(f"last_frame={'none' if last is None else last} "), dead
+    after = rows[(last + 1) if last is not None else 0:]
+    assert after and all(row.flags & MISSING and row.byte_size for row in after), "no placeholders to the stop"
+    assert len(block_payloads(directory, camera_id, name)) == len(rows), "the file is not closed with a block per row"
+    return dead[0], rows
+
+
+def block_payloads(directory, camera_id, name="take"):
+    """The payload of each complete block of the camera file of one camera (the walker of the recorder tests)."""
+    from skellycam.tests.take_recorder.ebml import payloads
+
+    return payloads(take_files(directory, name)[camera_id][0])
 
 
 class StateWatcher:

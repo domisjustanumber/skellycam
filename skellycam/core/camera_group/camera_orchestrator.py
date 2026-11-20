@@ -108,20 +108,18 @@ class CameraOrchestrator:
             await await_10ms()
 
     def should_record_frame_number(self, frame_number: int | np.integer) -> tuple[bool, bool]:
+        """(record, finish). A take records the group frames first to last - 1. With no take (first is -1)
+        no frame is recorded: a stale last frame must not record again (open work, T-CAP-85 case 2)."""
+        first, last = self.first_recording_frame_number.value, self.last_recording_frame_number.value
+        if first == -1:
+            return False, False
+        if last != -1 and frame_number >= last:
+            return False, True
+        return frame_number >= first, False
 
-        should_record_frame = False
-        should_finish_recording = False
-        if self.first_recording_frame_number.value != -1 and frame_number >= self.first_recording_frame_number.value:
-            should_record_frame = True
-
-        if self.last_recording_frame_number.value != -1:
-            if frame_number < self.last_recording_frame_number.value:
-                should_record_frame = True
-            elif frame_number >= self.last_recording_frame_number.value:
-                should_record_frame = False
-                should_finish_recording = True
-
-        return should_record_frame, should_finish_recording
+    def take_frame_count(self) -> int:
+        """The group frames of the take that the stop ended (recorder.md 7.6): first to last - 1."""
+        return self.last_recording_frame_number.value - self.first_recording_frame_number.value
 
     def should_grab_by_id(self, camera_id: CameraIdString) -> bool:
         if not camera_id in self.camera_statuses:

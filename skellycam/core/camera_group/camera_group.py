@@ -3,6 +3,8 @@ import logging
 import queue
 import threading
 import time
+from fractions import Fraction
+from pathlib import Path
 
 from skellycam.core.camera_group.camera_setup_failure import CameraSetupFailedException
 from multiprocessing.sharedctypes import Synchronized
@@ -13,6 +15,7 @@ from typing import Any
 import numpy as np
 from pydantic import BaseModel, ConfigDict
 
+from skellycam import __version__
 from skellycam.core.camera.camera_manager import CameraManager
 from skellycam.core.camera.camera_worker import CameraState
 from skellycam.core.camera.capture.camera_loop import needs_reopen
@@ -24,8 +27,8 @@ from skellycam.core.ipc.pubsub.pubsub_topics import (
     DeviceExtractedConfigMessage,
     UpdateCamerasSettingsMessage,
     RecordingInfoMessage,
-    RecordingFinishedMessage,
 )
+from skellycam.core.take_recorder import JpegLayout, Take, TakeCamera, TakeSummary, start_take
 from skellycam.core.ipc.frame_ring import (
     CameraRingInfo,
     FrameRead,
@@ -34,13 +37,11 @@ from skellycam.core.ipc.frame_ring import (
     ReadResult,
     camera_ring_info,
     create_session_rings,
+    rotation_to_cw_deg,
     sweep_stale_rings,
 )
 from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
-from skellycam.core.recorders.recording_finalizer import RecordingFinalizer
-from skellycam.core.recorders.audio.audio_recorder import AudioRecorder
 from skellycam.core.recorders.videos.recording_info import RecordingInfo
-from skellycam.core.timestamps.recording_timestamp_stats import RecordingTimestampsStats
 from skellycam.core.types.frontend_payload_bytearray import (
     FRONTEND_FRAME_HEADER_DTYPE,
     FRONTEND_PAYLOAD_HEADER_FOOTER_DTYPE,
@@ -52,12 +53,19 @@ from skellycam.core.types.type_overloads import (
     FrameNumberInt,
     MultiframeTimestampFloat,
 )
-from skellycam.utilities.wait_functions import await_100ms, await_10ms
+from skellycam.utilities.wait_functions import await_10ms
 
 logger = logging.getLogger(__name__)
 
 WATCH_INTERVAL_S = 0.1
-GIVE_UP_AFTER_EXIT_S = 1.0  # the files message of an ended camera process can still be in the queue
+BOUNDED_JOIN_S = 10.0  # the join of an ended or terminated camera process
+GIVE_UP_AFTER_EXIT_S = 1.0  # the result message of an ended camera process can still be in the queue
+TAKE_QUEUE_SECONDS = 3.0  # recorder.md 5.1; starting value [C6DE D2]
+TAKE_STALL_LIMIT_S = 10.0  # recorder.md 5.3; starting value [C6DE D2]
+STALL_MARGIN_S = 5.0  # recorder.md 5.3 item 4 [agent 25]
+TAKE_START_LIMIT_S = 10.0  # each camera starts its writer within this time of the take spec
+MICROPHONE_REFUSED = "audio recording returns in step 5b; start again with no microphone"  # recorder.md 10 item 13
+WRITER = f"skellycam {__version__.lstrip('v')}"  # SFF-712
 
 
 class RequestRefused(Exception):
@@ -104,9 +112,10 @@ class CameraGroup:
     ring_readers: dict[CameraIdString, FrameRingReader] = field(default_factory=dict)
     started: bool = False
     recording_ids: list = field(default_factory=list)
-    capture_info: dict = field(default_factory=dict)
-    finished: list = field(default_factory=list)  # the files messages that the watch took from their queue
-    _audio_recorder: AudioRecorder | None = None
+    finished: list = field(default_factory=list)  # the result messages that the watch took from their queue
+    take: Take | None = None  # the take that runs
+    ended_take: TakeSummary | None = None  # a take that an error ended; the next stop request returns it
+    _end_lock: Any = field(default_factory=asyncio.Lock)
     _ring_lock: Any = field(default_factory=threading.RLock)
     _stop_watch: Any = field(default_factory=threading.Event)
     _loop: Any = None  # the event loop of `start`: a ring reader is closed only on it (ADR-BM73)
@@ -327,17 +336,19 @@ class CameraGroup:
         logger.warning(f"Camera {camera_id} failed during {stage}: {reason}")
 
     def _take_finished(self) -> None:
-        """Move each files message from its queue to `finished`. A large message waits in the feeder thread of
-        the camera process until it is read, and a hard end of that process would drop it (U12)."""
+        """Move each message of the camera writers from its queue to `finished`. A stall or a write error of one
+        camera ends the take for every camera (recorder.md 5.3, 5.4) [C5]."""
         while True:
             try:
-                self.finished.append(self.ipc.recording_finished_subscription.get_nowait())
+                message = self.ipc.recording_finished_subscription.get_nowait()
             except queue.Empty:
                 return
-
-    def _next_finished(self) -> RecordingFinishedMessage | None:
-        self._take_finished()
-        return self.finished.pop(0) if self.finished else None
+            if message.result is None and message.error is not None and self.take is not None:
+                logger.error(f"The take ends: {message.error}")
+                asyncio.run_coroutine_threadsafe(
+                    self._end_take(error=message.error, error_camera=message.camera_id), self._loop)
+            else:
+                self.finished.append(message)
 
     def _open_rings(self, configs: CameraConfigs) -> None:
         """Create the ring of each camera in `configs`, attach a reader, and give the ring names to
@@ -417,110 +428,210 @@ class CameraGroup:
     async def pause_unpause(self, await_state_change: bool = True) -> None:
         await self.cameras.pause_unpause(await_state_change)
 
-    async def start_recording(self, recording_info: RecordingInfo) -> list:
-        """Start recording for the camera group. Return the warnings of 11.3."""
+    async def start_recording(self, recording_info: RecordingInfo, devices: dict | None = None) -> list:
+        """Start a take (recorder.md section 10 items 3 to 5, 13). Return the warnings of 11.3."""
         statuses = self.cameras.orchestrator.camera_statuses
+        if recording_info.mic_device_index >= 0:
+            raise RequestRefused(422, MICROPHONE_REFUSED)  # [C1]
         blocking = [f"camera {camera_id} is {status.serialize()['state']}"
                     for camera_id, status in list(statuses.items())
                     if not status.ready]
-        if blocking:  # a recording starts only when each selected camera is `ready` (8.3, agent 25)
-            raise RequestRefused(409, "A recording needs each selected camera ready: " + "; ".join(blocking))
-        warnings, self.capture_info = [], {}
-        self.finished.clear()  # a late message of an earlier take
+        if blocking or self.take is not None:  # a recording starts only when each selected camera is `ready` (8.3)
+            raise RequestRefused(409, "A recording needs each selected camera ready: " + "; ".join(blocking or ["a recording runs"]))
+        folder = Path(recording_info.recording_directory) / recording_info.recording_name
+        if folder.is_dir() and any(folder.iterdir()):
+            raise RequestRefused(409, f"The take folder holds files: {folder}")  # [agent 16]
+        warnings = []
         for camera_id, status in list(statuses.items()):
-            info = status.info_dict()
-            controls = info.get("controls") or {}
+            controls = status.info_dict().get("controls") or {}
             # 3a sets exposure only; gain and focus come through the config from 3c (D30, D43)
             auto = [name for name in ("exposure",) if (controls.get(name) or {}).get("auto")]
             items = [dict(kind="auto_control", camera_ids=[camera_id], control=name,
-                          text=f"Camera {camera_id}: {name} is in auto mode at the start of the recording")
+                          text=f"Camera {camera_id}: exposure is in auto mode at the start of the recording")
                      for name in auto]
             status.set_warning_items(items)
             warnings += items
-            # interim recording info of 11.6, until the capture info of phase 5
-            self.capture_info[camera_id] = dict(
-                source=info.get("source"), mode=info.get("mode"),
-                controls_at_start={name: dict(auto=value["auto"], value=value["value"])
-                                   for name, value in controls.items() if value.get("present")},
-                auto_controls_at_start=auto, input_range=None)
         self.recording_ids = list(statuses)
-        await self.cameras.pause(await_paused=True)
-        logger.info("Publishing recording info message...")
-        frame_count = self.cameras.orchestrator.largest_gate_count()
-        self.cameras.orchestrator.last_recording_frame_number.value = -1
-        self.cameras.orchestrator.first_recording_frame_number.value = frame_count + 3
-        self.ipc.pubsub.topics[TopicTypes.RECORDING_INFO].publish(
-            RecordingInfoMessage(recording_info=recording_info)
-        )
-
-        # Start audio recording if a microphone is selected
-        if recording_info.mic_device_index >= 0:
-            self._audio_recorder = AudioRecorder(
-                audio_file_path=recording_info.audio_file_path,
-                mic_device_index=recording_info.mic_device_index,
-                timebase_mapping=self.ipc.timebase_mapping,
-            )
-            self._audio_recorder.start()
-            logger.info(f"Audio recording started (mic device {recording_info.mic_device_index})")
-
-        await await_10ms()
+        self.ended_take = None
+        self.finished.clear()  # a late message of an earlier take
+        await self.cameras.pause(await_paused=True)  # each camera gives the layout of its last good frame
+        try:
+            cameras = [self._take_camera(camera_id, (devices or {}).get(camera_id)) for camera_id in self.recording_ids]
+            try:
+                take = await asyncio.to_thread(start_take, folder, recording_info.recording_name, cameras, writer=WRITER,
+                                               queue_seconds=TAKE_QUEUE_SECONDS, stall_limit_s=TAKE_STALL_LIMIT_S)
+            except ValueError as error:  # a bad name, a FAT disk (D3), a camera that the format refuses
+                raise RequestRefused(422, str(error))
+            orchestrator = self.cameras.orchestrator
+            orchestrator.last_recording_frame_number.value = -1
+            orchestrator.first_recording_frame_number.value = orchestrator.largest_gate_count() + 3  # [M7, review B4]
+            self.take = take
+            self.ipc.pubsub.topics[TopicTypes.RECORDING_INFO].publish(RecordingInfoMessage(
+                take_specs={camera_id: take.camera_spec(camera_id) for camera_id in self.recording_ids}))
+            await self._await_writers()
+        except BaseException:
+            for status in list(statuses.values()):
+                status.set_warning_items([])
+            if self.take is not None:
+                # A camera with a writer ends it at its next frame; the folder stays `recording` (step 5c).
+                self.cameras.orchestrator.last_recording_frame_number.value = (
+                    self.cameras.orchestrator.first_recording_frame_number.value)
+                self.take = None
+            await self.cameras.unpause(await_unpaused=True)
+            raise
         await self.cameras.unpause(await_unpaused=True)
         for item in warnings:
             logger.warning(item["text"])
-        logger.info(
-            f"Started recording for camera group ID: {self.id} "
-            f"with recording name: {recording_info.recording_name}"
-        )
+        logger.info(f"Started recording for camera group ID: {self.id} with recording name: "
+                    f"{recording_info.recording_name}")
         return warnings
 
-    async def stop_recording(self) -> tuple[RecordingInfo, RecordingTimestampsStats]:
-        """Stop recording for the camera group."""
-        logger.debug("Stopping recording for all cameras in orchestrator...")
-        await self.cameras.pause(await_paused=True)
+    def _take_camera(self, camera_id: CameraIdString, device) -> TakeCamera:
+        """The take facts of one camera (recorder.md 4.2, 6.7) from its config, status and detection."""
+        config, info = self.configs[camera_id], self.cameras.orchestrator.camera_statuses[camera_id].info_dict()
+        mode, layout, controls = info.get("mode") or {}, info.get("layout"), info.get("controls") or {}
+        if mode.get("fps_num"):
+            rate = (mode["fps_num"], mode["fps_den"])
+        else:  # OpenCV reports no rate: the requested rate, or 30 for "auto" (ADR-PDD3 W2)
+            fraction = Fraction(config.framerate if config.framerate > 0 else 30).limit_denominator(1001)
+            rate = (fraction.numerator, fraction.denominator)
+        source = info.get("source")
+        backend = ((device.backend_name if device is not None and device.backend_name else "opencv").lower()
+                   if source == "opencv" else "media_foundation" if source is None else source)
+        return TakeCamera(
+            camera_id=camera_id, nominal_rate=rate, width=mode.get("width", config.resolution.width),
+            height=mode.get("height", config.resolution.height), rotation_cw_deg=rotation_to_cw_deg(config.rotation),
+            capture_format=config.capture_fourcc,
+            layout=JpegLayout(layout["width"], layout["height"], tuple(map(tuple, layout["factors"]))) if layout else None,
+            os_name=device.name if device is not None else None,
+            vendor_id=f"{device.vendor_id:04x}" if device is not None and device.vendor_id is not None else None,
+            product_id=f"{device.product_id:04x}" if device is not None and device.product_id is not None else None,
+            backend=backend, os_index=device.index if device is not None else config.camera_index,
+            requested=dict(width=config.resolution.width, height=config.resolution.height,
+                           framerate=config.framerate, capture_format=config.capture_fourcc,
+                           exposure_mode=config.exposure_mode.lower()),
+            controls={name: (value["value"], value["auto"]) for name, value in controls.items() if value.get("present")})
 
-        # Stop audio before finalizing video
-        if self._audio_recorder is not None:
-            self._audio_recorder.stop()
-            logger.info("Audio recording stopped.")
-            self._audio_recorder = None
+    async def _await_writers(self) -> None:
+        """Wait, paused, until each live camera of the take started its writer: row 0 is then one agreed group
+        frame for every camera (recorder.md 10 item 4)."""
+        statuses = self.cameras.orchestrator.camera_statuses
+        deadline = time.monotonic() + TAKE_START_LIMIT_S
+        while True:
+            pending = [camera_id for camera_id in self.recording_ids
+                       if not statuses[camera_id].recording_in_progress.value and statuses[camera_id].in_gate]
+            if not pending:
+                return
+            if time.monotonic() >= deadline or not self.ipc.should_continue:
+                raise RuntimeError(f"Cameras did not start their take writer: {pending}")
+            await await_10ms()
 
-        frame_count = self.cameras.orchestrator.largest_gate_count()
-        self.cameras.orchestrator.first_recording_frame_number.value = -1
-        self.cameras.orchestrator.last_recording_frame_number.value = frame_count + 3
-        await self.cameras.unpause(await_unpaused=True)
-        try:
-            recording_info, timestamp_stats = await finalize_recording(
-                ipc=self.ipc, cameras=self.cameras, camera_configs=self.configs,
-                recording_ids=self.recording_ids, capture_info=self.capture_info, next_message=self._next_finished)
-        finally:
-            for status in list(self.cameras.orchestrator.camera_statuses.values()):
-                status.set_warning_items([])
-        logger.info(
-            f"Stopped recording for camera group ID: {self.id} "
-            f"with recording name: {recording_info.recording_name}"
-        )
-        return recording_info, timestamp_stats
+    async def stop_recording(self) -> TakeSummary:
+        """Stop the take (recorder.md 8.1). After a take that an error ended, return its summary."""
+        if self.take is None:
+            if self.ended_take is None:
+                raise RequestRefused(409, "No recording runs")
+            summary, self.ended_take = self.ended_take, None
+            return summary
+        return await self._end_take()
+
+    async def _end_take(self, error: str | None = None, error_camera: str | None = None) -> TakeSummary:
+        """8.1: set the last frame, wait for each camera (D1), then `Take.finish`. One end at a time."""
+        async with self._end_lock:
+            take = self.take
+            if take is None:
+                return self.ended_take
+            orchestrator = self.cameras.orchestrator
+            statuses = orchestrator.camera_statuses
+            # After an error, a stalled camera does not pause and holds the gate, so no camera passes the last frame.
+            if error is None:
+                await self.cameras.pause(await_paused=True)
+            count = orchestrator.largest_gate_count()
+            if count == -1:  # no camera left in the gate: the take ends after the latest group frame
+                count = max(statuses[camera_id].frame_count.value for camera_id in self.recording_ids if camera_id in statuses) - 2
+            orchestrator.last_recording_frame_number.value = count + 3
+            if error is None:
+                await self.cameras.unpause(await_unpaused=True)
+            frame_count = orchestrator.take_frame_count()
+            try:
+                results, dead = await asyncio.to_thread(self._collect_results)
+                summary = await asyncio.to_thread(
+                    take.finish, [results.get(camera_id) for camera_id in self.recording_ids], frame_count=frame_count,
+                    ended_by_error=error, dead_cameras=dead, error_camera=error_camera)
+            finally:
+                self.take = None
+                orchestrator.first_recording_frame_number.value = -1
+                orchestrator.last_recording_frame_number.value = -1
+                for status in list(statuses.values()):
+                    status.set_warning_items([])
+            if error is not None:
+                self.ended_take = summary
+            logger.info(f"Stopped recording for camera group ID: {self.id} with recording name: {take.rec}")
+            return summary
+
+    def _collect_results(self) -> tuple[dict, dict]:
+        """8.1 step 4: wait for the result of each camera while its writer makes progress [C6DE D1]. A camera
+        whose writer stays stuck has its process ended and is `failed` (5.3 item 6). The files of a camera are
+        touched only after its result came or its process was joined [review B2]."""
+        statuses, workers = self.cameras.orchestrator.camera_statuses, self.cameras.camera_workers
+        pending, results, dead, ended_since = set(self.recording_ids), {}, {}, {}
+        started = time.monotonic()
+        stuck = []
+        while pending:
+            self._take_finished()
+            for message in [m for m in self.finished if m.result is not None]:
+                self.finished.remove(message)
+                if message.camera_id in pending:
+                    results[message.camera_id] = message.result
+                    pending.discard(message.camera_id)
+                    if message.result.error == "disk stall":
+                        stuck.append(message.camera_id)
+            now = time.monotonic()
+            for camera_id in list(pending):
+                worker, status = workers.get(camera_id), statuses.get(camera_id)
+                if worker is None or worker.worker.exitcode is not None:
+                    if now - ended_since.setdefault(camera_id, now) > GIVE_UP_AFTER_EXIT_S:
+                        if worker is not None:
+                            worker.join(timeout=BOUNDED_JOIN_S)
+                        info = status.info_dict() if status is not None else {}
+                        exitcode = None if worker is None else worker.worker.exitcode
+                        dead[camera_id] = "hang" if info.get("hung") else f"exit code {exitcode}"
+                        pending.discard(camera_id)
+                elif status is None or now - max(status.writer_progress_at.value, started) > TAKE_STALL_LIMIT_S + STALL_MARGIN_S:
+                    stuck.append(camera_id)
+                    pending.discard(camera_id)
+            if pending:
+                time.sleep(WATCH_INTERVAL_S)
+        for camera_id in stuck:
+            self._end_stuck_camera(camera_id)
+            dead[camera_id] = "disk stall"
+        for camera_id in results:
+            status = statuses.get(camera_id)
+            if camera_id not in dead and status is not None and status.state in ("dead", "failed"):
+                dead[camera_id] = ((status.info_dict().get("failure") or {}).get("reason")) or status.state
+        return results, dead
+
+    def _end_stuck_camera(self, camera_id: CameraIdString) -> None:
+        """5.3 item 6 [C6]: end the process (terminate, then join); the camera is `failed`, stage `recording`."""
+        status, worker = self.cameras.orchestrator.camera_statuses[camera_id], self.cameras.camera_workers.get(camera_id)
+        status.recording_in_progress.value = False  # the take level completes its files after the join (7.4)
+        status.should_close.value = True
+        if worker is not None:
+            worker.worker.terminate()
+            worker.join(timeout=BOUNDED_JOIN_S)
+        status.update_info(failure=dict(camera_id=camera_id, stage="recording", reason="disk stall"))
+        status.set_state("failed")
+        logger.error(f"Camera {camera_id} failed during recording: disk stall")
 
     async def close(self) -> None:
         logger.debug("Closing camera group")
 
-        if any(
-            status.recording_in_progress.value
-            for status in self.cameras.orchestrator.camera_statuses.values()
-        ):
+        if self.take is not None:  # the take, not the status flags: a hard-ended process leaves its flag set
             logger.info("Recording in progress — stopping recording before closing cameras")
             try:
                 await self.stop_recording()
             except Exception as e:
                 logger.error(f"Error stopping recording during close: {type(e).__name__} - {e}")
-
-        # Stop audio if still running (e.g. error during stop_recording)
-        if self._audio_recorder is not None:
-            try:
-                self._audio_recorder.stop()
-            except Exception as e:
-                logger.error(f"Error stopping audio during close: {type(e).__name__} - {e}")
-            self._audio_recorder = None
 
         self._stop_watch.set()
         self.ipc.should_continue = False
@@ -551,60 +662,3 @@ class CameraGroup:
             recording_in_progress=orchestrator.all_cameras_recording,
             paused=orchestrator.any_cameras_paused,
         )
-
-
-async def finalize_recording(
-    ipc: CameraGroupIPC,
-    cameras: CameraManager,
-    camera_configs: CameraConfigs,
-    recording_ids: list,
-    capture_info: dict,
-    next_message: Callable[[], RecordingFinishedMessage | None],
-) -> tuple[RecordingInfo, RecordingTimestampsStats]:
-    """Wait for the files of each recording camera. A camera process that ended without its files
-    message is left out (interim U12, removed in phase 5). A dead camera is named in the recording info (5.7)."""
-    messages: dict[CameraIdString, RecordingFinishedMessage] = {}
-    pending, ended_since = set(recording_ids), {}
-    while pending and ipc.should_continue:
-        while (message := next_message()) is not None:
-            if not isinstance(message, RecordingFinishedMessage):
-                raise RuntimeError(f"Received unexpected message type: {type(message)}")
-            if message.camera_id in messages:
-                raise RuntimeError(f"Received multiple recording finished messages for camera {message.camera_id}.")
-            messages[message.camera_id] = message
-            pending.discard(message.camera_id)
-        now = time.monotonic()
-        for camera_id in list(pending):
-            worker = cameras.camera_workers.get(camera_id)
-            if worker is None or worker.worker.exitcode is not None:
-                if now - ended_since.setdefault(camera_id, now) > GIVE_UP_AFTER_EXIT_S:
-                    logger.error(f"Camera {camera_id} ended without finishing its recording files")
-                    pending.discard(camera_id)
-        await await_100ms()
-
-    if not messages:
-        raise RuntimeError("No camera finished its recording.")
-    infos = {message.recording_info.recording_name for message in messages.values()}
-    if len(infos) > 1:
-        raise RuntimeError(f"Received recording finished messages of different recordings: {infos}")
-    recording_info = next(iter(messages.values())).recording_info
-    statuses = cameras.orchestrator.camera_statuses
-    dead_cameras = []
-    for camera_id in recording_ids:
-        status = statuses.get(camera_id)
-        if camera_id in messages and status is not None and status.state not in ("dead", "failed"):
-            continue
-        failure = (status.info_dict().get("failure") if status is not None else None) or {}
-        last = messages[camera_id].frame_metadatas[-1].frame_number[0] if camera_id in messages else None
-        dead_cameras.append(dict(camera_id=camera_id, last_frame_number=None if last is None else int(last),
-                                 stage=failure.get("stage"), reason=failure.get("reason")))
-
-    recording_finalizer = RecordingFinalizer.create(
-        recording_info=recording_info,
-        camera_configs={camera_id: camera_configs[camera_id] for camera_id in messages},
-        frame_metadatas_by_camera={camera_id: message.frame_metadatas for camera_id, message in messages.items()},
-        capture=capture_info,
-        dead_cameras=dead_cameras,
-    )
-    timestamp_stats = await recording_finalizer.finalize_recording()
-    return recording_info, timestamp_stats

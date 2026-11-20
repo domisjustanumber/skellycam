@@ -229,7 +229,6 @@ class FakeScript:
     stop_at_s: float | None = None  # no frame after this clock time (s from VirtualClock.START_NS)
     rate_windows: tuple = ()  # (from_s, to_s, rate): the delivered rate between two clock times
     drop_at_window_end: bool = False  # the camera drops one frame when a rate window ends
-    recorder_close_delay_s: float | None = None  # the old recorder of this camera needs this long to close
     close_delay_s: float = 0.0  # the close of the source takes this long (clock time)
     exit_at: str | None = None  # "open", or "frame:<n>": the camera process ends there with os._exit(3)
     name: str | None = None  # the friendly name in the detection result; None: "Fake camera <index>"
@@ -686,26 +685,6 @@ class FakeDetectionBackend:
 # The source factory of a camera group
 # ---------------------------------------------------------------------------
 
-_RECORDER_DELAY_APPLIED = False
-
-
-def _delay_recorder_close(seconds):
-    """T-CAP-85: the old recorder of this process needs `seconds` more to close its file."""
-    global _RECORDER_DELAY_APPLIED
-    if _RECORDER_DELAY_APPLIED:
-        return
-    from skellycam.core.recorders.videos.video_recorder import VideoRecorder
-
-    original = VideoRecorder.finish_and_close
-
-    def slow_finish_and_close(self):
-        time.sleep(seconds)
-        return original(self)
-
-    VideoRecorder.finish_and_close = slow_finish_and_close
-    _RECORDER_DELAY_APPLIED = True
-
-
 @dataclass
 class FakeSourceFactory:
     """The `source_factory` of `CameraGroupManager` (ADR-HP7D): `factory(config)` gives a new
@@ -731,8 +710,6 @@ class FakeSourceFactory:
 
     def __call__(self, config):
         index = self.by_id[config.camera_id]
-        if self.scripts[index].recorder_close_delay_s is not None:
-            _delay_recorder_close(self.scripts[index].recorder_close_delay_s)
         source = FakeSource(self.scripts[index], camera_id=config.camera_id, link=self.links[index],
                             clock=self.clock or RealClock(), types=self.types, log=self.logs[config.camera_id],
                             on_read=self.on_read)

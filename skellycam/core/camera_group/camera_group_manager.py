@@ -34,7 +34,7 @@ from skellycam.core.types.type_overloads import (
     MultiframeTimestampFloat,
     TopicSubscriptionQueue,
 )
-from skellycam.core.timestamps.recording_timestamp_stats import RecordingTimestampsStats  # noqa: TC001 — beartype checks annotations at runtime
+from skellycam.core.take_recorder import TakeSummary  # noqa: TC001 — beartype checks annotations at runtime
 
 logger = logging.getLogger(__name__)
 
@@ -220,13 +220,14 @@ class CameraGroupManager:
         """Start recording for all camera groups. Return the warnings of 11.3."""
         warnings = []
         for camera_group in self.camera_groups.values():
-            warnings += await camera_group.start_recording(recording_info=recording_info)
+            warnings += await camera_group.start_recording(recording_info=recording_info,
+                                                           devices=self.detected_cameras)
             logger.info(f"Started recording for camera group ID: {camera_group.id}")
         return warnings
 
-    async def stop_recording_all_groups(self) -> list[tuple["RecordingInfo", "RecordingTimestampsStats"]]:
+    async def stop_recording_all_groups(self) -> list[TakeSummary]:
         """Stop recording for all camera groups."""
-        results: list[tuple[RecordingInfo, RecordingTimestampsStats]] = []
+        results: list[TakeSummary] = []
         for camera_group in self.camera_groups.values():
             results.append(await camera_group.stop_recording())
             logger.info(f"Stopped recording for camera group ID: {camera_group.id}")

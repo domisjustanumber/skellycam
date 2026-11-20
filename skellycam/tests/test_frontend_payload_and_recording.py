@@ -69,44 +69,8 @@ class TestNumpyDtypes:
 
 
 class TestRecordingInfo:
-    def test_create_temp(self) -> None:
-        info = RecordingInfo.create_temp()
-        assert len(info.recording_name) > 0
-        assert len(info.recording_uuid) > 0
-        assert info.mic_device_index == -1
-
-    def test_paths_are_consistent(self) -> None:
-        info = RecordingInfo(
-            recording_name="test_recording",
-            recording_directory="/tmp/skellycam_test",
-        )
-        assert "test_recording" in info.full_recording_path
-        assert "synchronized_videos" in info.videos_folder
-        assert "timestamps" in info.timestamps_folder
-        assert info.recording_name in info.timestamp_file_path
-        assert info.audio_file_path.endswith(".wav")
-
-    def test_video_file_path_from_config(self) -> None:
-        info = RecordingInfo(
-            recording_name="rec",
-            recording_directory="/tmp/test",
-        )
-        config = CameraConfig(camera_id="cam0", camera_index=0)
-        path = info.video_file_path_from_camera_config(config)
-        assert "cam0" in path
-        assert "idx0" in path
-
-    def test_camera_timestamps_path(self) -> None:
-        info = RecordingInfo(
-            recording_name="rec",
-            recording_directory="/tmp/test",
-        )
-        path = info.camera_timestamps_file_path_from_camera_id("cam0")
-        assert "cam0" in path
-        assert path.endswith(".csv")
-
     def test_equality(self) -> None:
-        shared_ts = RecordingInfo.create_temp().recording_start_timestamp
+        shared_ts = RecordingInfo(recording_name="t", recording_directory="/tmp/t").recording_start_timestamp
         a = RecordingInfo(
             recording_name="a",
             recording_directory="/tmp/a",
@@ -129,7 +93,7 @@ class TestRecordingInfo:
         assert a != c
 
     def test_str(self) -> None:
-        info = RecordingInfo.create_temp()
+        info = RecordingInfo(recording_name="rec", recording_directory="/tmp/test")
         s = str(info)
         assert "RecordingInfo" in s
         assert info.recording_name in s

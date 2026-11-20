@@ -22,8 +22,7 @@ import pytest
 from skellycam.tests.capture.capture_hardware import (
     GOOD, LABELS, SLOW_REASON, hardware_app, kiyo_pro_rule, record_result)
 from skellycam.tests.capture.capture_session import (
-    RingWatcher, Spies, StateWatcher, capture_logs, column, recording_info, recording_info_json, sfn_gaps,
-    stop_line_count)
+    RingWatcher, Spies, StateWatcher, capture_logs, placeholders_to_the_stop, sfn_gaps, stop_line_count, take_rows)
 
 pytestmark = [pytest.mark.camera_hardware,
               pytest.mark.skipif(sys.platform == "win32", reason="Linux and macOS; Windows runs T-CAP-51 to T-CAP-60")]
@@ -94,8 +93,8 @@ def test_t_cap_94_generic_camera_with_opencv(monkeypatch):
 def test_t_cap_95_unplug_during_a_recording_with_opencv(monkeypatch, tmp_path):
     """T-CAP-95, counterpart of T-CAP-58, sections 5.7, 8.2 and 9.5 [U21, D38, U4]: record with the C922 and
     the C930e; the user unplugs the C922 at 20 s. OpenCV gives no device-removed event, so the C922 is
-    `dead` 2.0 to 2.5 s after its last ring frame (the stall rule); the C930e records to the stop; the
-    recording info names the C922 and its last frame."""
+    `dead` 2.0 to 2.5 s after its last ring frame (the stall rule); the C930e records to the stop; changed
+    by step 5a: the manifest has `camera_dead` for the C922, and its file has placeholders to the stop."""
     with opencv_app(monkeypatch) as app:
         c922, c930e = app.camera_id("C922"), app.camera_id("C930e")
         assert app.apply([app.config(c922), app.config(c930e)]).status_code == 200
@@ -115,10 +114,8 @@ def test_t_cap_95_unplug_during_a_recording_with_opencv(monkeypatch, tmp_path):
         finally:
             watcher.stop()
             ring.stop()
-        dead = [d for d in recording_info_json(tmp_path)["dead_cameras"] if d["camera_id"] == c922]
-        rows = column(recording_info(tmp_path).camera_timestamps_file_path_from_camera_id(c922), "connection_frame_number")
-        assert len(dead) == 1 and dead[0]["last_frame_number"] == int(rows[-1])
-        record_result("T-CAP-95", platform=sys.platform, dead=dead[0], seconds_after_last_frame=elapsed)
+        dead, rows = placeholders_to_the_stop(tmp_path, c922)
+        record_result("T-CAP-95", platform=sys.platform, dead=dead, rows=len(rows), seconds_after_last_frame=elapsed)
 
 
 @pytest.mark.skipif(os.environ.get("SKELLYCAM_HARDWARE_DARK") != "1", reason="needs a dark room: SKELLYCAM_HARDWARE_DARK=1")
@@ -177,9 +174,7 @@ def test_t_cap_98_comparison_run_with_opencv(monkeypatch, tmp_path):
         assert stopped.status_code == 200, stopped.text
         app.client.delete("/skellycam/camera/group/close/all")
         summary = stopped.json()[0]
-        info = recording_info(tmp_path)
-        counts = {cid: len(column(info.camera_timestamps_file_path_from_camera_id(cid), "connection_frame_number"))
-                  for cid in ids}
+        counts = {cid: len(take_rows(tmp_path, cid)) for cid in ids}
         replaced = {cid: (stop_line_count(logs.messages(), cid), sfn_gaps([e["sfn"] for e in spies.of("jpeg", cid)]))
                     for cid in ids}
         record_result("T-CAP-98", platform=sys.platform, counts=counts, summary=summary, replaced_and_gaps=replaced)

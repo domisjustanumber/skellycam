@@ -289,27 +289,19 @@ def test_t_ring_45_one_opencv_thread():
 async def test_t_ring_47_opencv_source_hands_a_copy_to_the_decode_thread(monkeypatch, cleanup):
     """T-RING-47 and accepted item 42, sections 8.7 (`cv2.imencode` case) and 8.8 [A42, A43]:
     while a camera is on OpenCV capture (the shared loop with the OpenCV source), the waiting place
-    gets the BGR frame of OpenCV as a new array (source "BGR"). That array never shares memory with
-    the buffer of the recorder path (each frame record that the loop gives the recorder); the BGR
+    gets the BGR frame of OpenCV as a new array (source "BGR"), one array for each frame; the BGR
     ring holds that array; it is not a decode of the re-encoded JPEG (no `cv2.imdecode` call, and the
-    pixels differ from a decode of the ring JPEG but are near them)."""
-    import skellycam.core.camera.capture.camera_loop as loop_module
-
+    pixels differ from a decode of the ring JPEG but are near them). The recorder path has no image
+    buffer since step 5a: the take recorder takes the JPEG (recorder.md section 10 item 6)."""
     fr = ring()
-    handed, recorder_buffers = {}, []
-    real_put, real_record = fr.WaitingPlace.put, loop_module.handle_video_recording
+    handed = {}
+    real_put = fr.WaitingPlace.put
 
     def spy_put(self, item):
         handed[item.frame_number] = item
         return real_put(self, item)
 
-    def spy_record(**kwargs):
-        if not any(kwargs["frame_rec_array"] is buffer for buffer in recorder_buffers):
-            recorder_buffers.append(kwargs["frame_rec_array"])
-        return real_record(**kwargs)
-
     monkeypatch.setattr(fr.WaitingPlace, "put", spy_put)
-    monkeypatch.setattr(loop_module, "handle_video_recording", spy_record)
     decodes = _count_imdecode(monkeypatch)
     async with fake_session(monkeypatch, fake_configs(1, bgr_ids=("0",))) as group:
         info = group.ring_infos["0"]
@@ -319,13 +311,11 @@ async def test_t_ring_47_opencv_source_hands_a_copy_to_the_decode_thread(monkeyp
         bgr_reader = cleanup.handle(fr.FrameRingReader.attach(info.bgr_ring_name))
         reads = {k: (bgr_reader.read(k), jpeg_reader.read(k)) for k in committed_frame_numbers(bgr_shm)}
     assert decodes == [], "the BGR ring got a decode of the re-encoded JPEG"
-    assert len(handed) >= 10 and recorder_buffers
+    assert len(handed) >= 10
     for item in handed.values():
         assert item.source == "BGR"
         assert type(item.payload) is np.ndarray and item.payload.shape == (480, 640, 3)
         assert item.payload.dtype == np.uint8 and item.payload.flags.c_contiguous
-        assert not any(np.shares_memory(item.payload, buffer.image) for buffer in recorder_buffers), \
-            "the hand-over shares memory with the recorder buffer"
     assert len({id(item.payload) for item in handed.values()}) == len(handed), "one array for two frames"
     checked = 0
     for k, (bgr, jpeg) in reads.items():

@@ -48,28 +48,17 @@ def mock_camera_group_manager():
     mgr.create_or_update_camera_group = AsyncMock()
     mgr.create_and_start_camera_group = AsyncMock()
     mgr.start_recording_all_groups = AsyncMock()
-    def _mock_stats_recarray(mean=30.0):
-        m = MagicMock()
-        m.median_value = mean
-        m.mean_value = mean
-        m.standard_deviation_value = 1.0
-        m.min_value = mean - 2.0
-        m.max_value = mean + 2.0
-        return m
+    def _stats(mean=30.0):
+        return {"median": mean, "mean": mean, "std": 1.0, "min": mean - 2.0, "max": mean + 2.0}
 
-    mock_recording_info = MagicMock()
-    mock_recording_info.recording_name = "test_recording"
-    mock_recording_info.full_recording_path = "/tmp/test_recording"
+    from skellycam.core.take_recorder import TakeSummary
 
-    mock_timestamp_stats = MagicMock()
-    mock_timestamp_stats.number_of_cameras = 1
-    mock_timestamp_stats.number_of_frames = 100
-    mock_timestamp_stats.total_duration_sec = 10.0
-    mock_timestamp_stats.framerate_stats = _mock_stats_recarray(30.0)
-    mock_timestamp_stats.frame_duration_stats = _mock_stats_recarray(33.3)
-    mock_timestamp_stats.inter_camera_grab_range_ms = _mock_stats_recarray(2.0)
-
-    mgr.stop_recording_all_groups = AsyncMock(return_value=[(mock_recording_info, mock_timestamp_stats)])
+    stop_response = {"recording_name": "test_recording", "recording_path": "/tmp/test_recording",
+                     "number_of_cameras": 1, "number_of_frames": 100, "total_duration_sec": 10.0,
+                     "mean_framerate": 30.0, "mean_inter_camera_sync_ms": 2.0, "framerate_stats": _stats(30.0),
+                     "frame_duration_stats": _stats(33.3), "inter_camera_grab_range_ms_stats": _stats(2.0)}
+    mgr.stop_recording_all_groups = AsyncMock(
+        return_value=[TakeSummary(stop_response=stop_response, results=[], warnings=[])])
     mgr.close_all_camera_groups = AsyncMock()
     mgr.pause_unpause_all_groups = AsyncMock()
     mgr.pause_all_groups = AsyncMock()

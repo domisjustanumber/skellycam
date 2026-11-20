@@ -16,7 +16,7 @@ import pytest
 
 from skellycam.tests.capture.capture_hardware import SLOW_REASON
 from skellycam.tests.capture.capture_session import (
-    CaptureApp, OpenCVFakeFactory, Spies, StateWatcher, capture_logs, recording_info_json, ready_app_steps)
+    CaptureApp, OpenCVFakeFactory, Spies, StateWatcher, camera_key_of, capture_logs, ready_app_steps, take_warnings)
 
 
 class OpenCVApp:
@@ -129,7 +129,8 @@ def test_t_cap_102_a_camera_that_cannot_open_fails_alone(monkeypatch, tmp_path):
 def test_t_cap_103_a_camera_that_stops_during_a_recording(monkeypatch, tmp_path):
     """T-CAP-103, sections 5.7, 8.2, 9.5 and 14.1 [D38, U4, U23]: two OpenCV fakes record; the grabs of
     one start to fail (as after an unplug). That camera is `dead` 2.0 to 2.25 s after its last ring
-    frame; the other camera keeps recording to the stop; `dead_cameras` names it."""
+    frame; the other camera keeps recording to the stop; the manifest has `camera_dead` for it (changed
+    by step 5a from `dead_cameras` of the recording info [M8, R5])."""
     with OpenCVApp(monkeypatch, count=2) as app:
         spies = Spies(monkeypatch, app)
         ready_app_steps(app)
@@ -149,7 +150,7 @@ def test_t_cap_103_a_camera_that_stops_during_a_recording(monkeypatch, tmp_path)
             assert app.record_stop().status_code == 200
         finally:
             watcher.stop()
-        assert [d["camera_id"] for d in recording_info_json(tmp_path)["dead_cameras"]] == [stopping]
+        assert [w["camera_key"] for w in take_warnings(tmp_path, "camera_dead")] == [camera_key_of(tmp_path, stopping)]
 
 
 @pytest.mark.parametrize("case", ["AUTO config", "MANUAL config on Linux"])

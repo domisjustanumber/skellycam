@@ -75,7 +75,7 @@ class BrokenWorker:
 def test_an_error_in_one_pass_does_not_stop_the_watch(caplog):
     """A camera whose worker raises and a queue read that raises once: the watch logs each error at
     ERROR with the camera ID, marks the ended process of the other camera `dead`, and still reads a
-    files message that comes after the errors."""
+    result message that comes after the errors."""
     statuses = {"aaaa": status_in("ready"), "bbbb": status_in("ready")}
     group = bare_group({"aaaa": BrokenWorker(), "bbbb": ended_worker()}, statuses)
     reads = []
@@ -91,9 +91,11 @@ def test_an_error_in_one_pass_does_not_stop_the_watch(caplog):
         try:
             wait_for(lambda: statuses["bbbb"].state == "dead", "the ended process is marked")
             wait_for(lambda: len(reads) >= 3, "later passes read the queues")
-            message = object()
+            from skellycam.core.ipc.pubsub.pubsub_topics import RecordingFinishedMessage
+
+            message = RecordingFinishedMessage(camera_id="aaaa")  # the result message of a camera writer (step 5a)
             group.ipc.recording_finished_subscription.put(message)
-            wait_for(lambda: message in group.finished, "the files message is read")
+            wait_for(lambda: message in group.finished, "the result message is read")
             assert watch.is_alive(), "the watch thread ended"
         finally:
             group._stop_watch.set()

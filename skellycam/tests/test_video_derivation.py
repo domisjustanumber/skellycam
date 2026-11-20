@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from skellycam.core.recorders.videos.pyav_video_writer import PyavVideoWriter
+from skellycam.tests.old_video_writer import PyavVideoWriter
 from skellycam.core.recorders.videos.video_derivation import VideoDerivation
 
 

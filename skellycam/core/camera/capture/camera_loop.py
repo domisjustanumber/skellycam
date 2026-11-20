@@ -26,12 +26,6 @@ from skellycam.core.camera.capture.source import (
 )
 from skellycam.core.camera.config.camera_config import CameraConfig
 from skellycam.core.camera.config.image_resolution import ImageResolution
-from skellycam.core.camera.opencv.opencv_helpers.create_initial_frame_recarray import create_initial_frame_rec_array
-from skellycam.core.camera.opencv.opencv_helpers.handle_recording_updates import (
-    check_for_new_recording_info,
-    finish_recording,
-)
-from skellycam.core.camera.opencv.opencv_helpers.handle_video_recording_loop import handle_video_recording
 from skellycam.core.camera.opencv.opencv_helpers.recommend_camera_exposure_setting import (
     MAX_EXPOSURE,
     MIN_EXPOSURE,
@@ -52,7 +46,14 @@ from skellycam.core.ipc.frame_ring import (
     rotation_to_cw_deg,
 )
 from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes
-from skellycam.core.ipc.pubsub.pubsub_topics import DeviceExtractedConfigMessage
+from skellycam.core.ipc.pubsub.pubsub_topics import DeviceExtractedConfigMessage, RecordingFinishedMessage
+from skellycam.core.take_recorder import (
+    CameraTakeWriter,
+    RecorderFrame,
+    RecorderStalled,
+    RecorderWriteError,
+    parse_sof,
+)
 from skellycam.core.types.type_overloads import TopicSubscriptionQueue
 
 logger = logging.getLogger(__name__)
@@ -61,7 +62,6 @@ perf_counter_ns = time.perf_counter_ns
 
 STALL_NS = 2_000_000_000  # 9.5, D38
 READY_LIMIT_NS = 15_000_000_000  # 9.3, D21
-HANG_FINISH_S = 5.0  # interim (U12): removed in phase 5
 CONTROL_READ_INTERVAL_S = 1.0  # 11.4, U16
 JPEG_Q90 = [int(cv2.IMWRITE_JPEG_QUALITY), 90]  # ring 2.3, 8.8
 
@@ -86,6 +86,13 @@ def camera_loop(source_factory: Callable, config: CameraConfig, ipc: CameraGroup
                recording_info_subscription).run()
 
 
+def start_take_writer(camera_id, spec, progress=None) -> CameraTakeWriter:
+    """Start the camera writer of a take (recorder.md 10 item 5). A spec of another camera is refused (D41)."""
+    if spec.camera_id != camera_id:
+        raise ValueError(f"the take spec of camera {spec.camera_id} came to camera {camera_id}")
+    return CameraTakeWriter.start(spec, progress=progress)
+
+
 def needs_reopen(requested: CameraConfig, current: CameraConfig) -> bool:
     """A change of resolution or rate reopens the camera (D31). Each other change is live (11.2)."""
     return ((requested.resolution, requested.capture_fourcc, requested.bgr_ring)
@@ -101,7 +108,7 @@ class CameraLoop:
         self.camera_id = config.camera_id
         self.status = orchestrator.camera_statuses[config.camera_id]
         self.update_sub, self.shm_sub, self.recording_sub = update_sub, shm_sub, recording_sub
-        self.frame_rec_array = create_initial_frame_rec_array(config=config, ipc=ipc)
+        self.gate_count = -1  # the frame number of the gate (5.3); it continues across a reopen
         self.ring_writer: FrameRingWriter | None = None
         self.bgr_ring_writer: FrameRingWriter | None = None
         self.decode_stage: DecodeStage | None = None
@@ -110,10 +117,13 @@ class CameraLoop:
         self.reference_rate = 0.0
         self.last_arrival = 0
         self.last_number = -1
+        self.last_wait_end = 0  # the end of the last wait of the loop at the gate or in `give` (recorder.md 5.2)
         self.stage = "open"
         self.started = False
-        self.recorder = None
-        self.flagged = 0
+        self.take_writer: CameraTakeWriter | None = None
+        self.take_failed = False  # after a stall or a write error the loop calls only `end` (recorder.md 4.3)
+        self.take_rows = 0
+        self.last_good_payload: bytes | None = None  # its SOF gives the placeholder layout (recorder.md 6.4)
         self.check: dict | None = None  # the check after a live change (10.2)
         self.block: tuple[int, int] | None = None  # the block of a recording (10.3)
         self.slow = False
@@ -122,12 +132,9 @@ class CameraLoop:
         self.control: _ControlThread | None = None
         self.signals = queue.Queue()
         self.hung = threading.Event()
-        self.files_done = threading.Event()
         self._failure_lock = threading.Lock()
-        self._hard_end_lock = threading.Lock()
         self.failed = False
         self.end_state: str | None = None  # the state that the end sets after the close
-        self.initialized_ns = perf_counter_ns()
 
     # ----- the run -----
 
@@ -158,26 +165,31 @@ class CameraLoop:
             self._wait_pass()
             return
         if self.status.should_pause.value:
-            self.status.is_paused.value = True
+            if not self.status.is_paused.value:
+                self._publish_layout()  # a take starts paused: the take level reads the layout then
+                self.status.is_paused.value = True
             time.sleep(0.05)  # T-CAP-49: a paused camera process uses under 2 % of one core
             return
         self.status.is_paused.value = False
         if not self.orchestrator.should_grab_by_id(camera_id=self.camera_id):
             time.sleep(0.001)  # no spin at the gate (4.3)
+            self.last_wait_end = perf_counter_ns()
             return
         frame = self._read()
         if frame is not None:
             self._process(frame)
 
     def _read(self, deadline_ns: int | None = None) -> CapturedFrame | None:
-        """`read_frame` with the stall watch (9.5): it waits at most until 2 s after the last arrival."""
-        wake = self.last_arrival + STALL_NS
+        """`read_frame` with the stall watch (9.5): it waits at most until 2 s after the last arrival, or after
+        the end of the last wait of the loop at the gate or in `give` (recorder.md 5.2, agent 32)."""
+        since = max(self.last_arrival, self.last_wait_end)
+        wake = since + STALL_NS
         for limit in (deadline_ns, self.check and self.check["deadline"]):
             if limit:
                 wake = min(wake, limit)
         frame = self.source.read_frame(max(wake - perf_counter_ns(), 0) / 1e9)
         if frame is None:
-            if perf_counter_ns() - self.last_arrival >= STALL_NS:
+            if perf_counter_ns() - since >= STALL_NS:
                 raise CaptureFailure(self.stage, "no frame for 2 s")
             check = self.check
             now = perf_counter_ns()
@@ -221,9 +233,7 @@ class CameraLoop:
         self.config = self.config.model_copy(update=dict(
             resolution=ImageResolution(width=opened.width, height=opened.height),
             framerate=rate or config.framerate))  # D17: the config stores the mode rate
-        number = int(self.frame_rec_array.frame_metadata.frame_number[0])
-        self.frame_rec_array = create_initial_frame_rec_array(config=self.config, ipc=self.ipc)
-        self.frame_rec_array.frame_metadata.frame_number[0] = number  # the gate count continues (5.3)
+        self.last_good_payload = None
         self._publish_config()
         self.stage = "warm-up"
         window_start = None
@@ -300,7 +310,7 @@ class CameraLoop:
         if any(status.state == "starting" for status in list(self.orchestrator.camera_statuses.values())):
             return
         count = max(int(self.status.frame_count.value), self.orchestrator.largest_gate_count())
-        self.frame_rec_array.frame_metadata.frame_number[0] = count
+        self.gate_count = count
         self.status.frame_count.value = count
         self.ring_count = 0
         self.status.connected.value = True
@@ -321,18 +331,11 @@ class CameraLoop:
     # ----- each frame (5.1) -----
 
     def _process(self, frame: CapturedFrame) -> None:
-        rec = self.frame_rec_array
-        meta, stamps = rec.frame_metadata, rec.frame_metadata.timestamps
         if self.replaced_base is None:
             self.replaced_base = self.source.replaced_count  # the first frame in the gate (5.2, agent 49)
-        meta.frame_number[0] += 1
-        number = int(meta.frame_number[0])
+        self.gate_count += 1
+        number = self.gate_count
         should_record, should_finish = self.orchestrator.should_record_frame_number(frame_number=number)
-        stamps.initialized_ns[0] = self.initialized_ns
-        stamps.pre_frame_grab_ns[0] = stamps.post_frame_grab_ns[0] = frame.arrival_ns  # 5.4, agent 7
-        stamps.pre_frame_retrieve_ns[0], stamps.post_frame_retrieve_ns[0] = (
-            getattr(self.source, "retrieve_ns", None) or (0, 0))  # only OpenCV stamps the retrieve (5.4)
-        stamps.pre_copy_to_camera_shm_ns[0] = perf_counter_ns()
         image = None
         if frame.format == "BGR":
             image = frame.payload
@@ -343,28 +346,24 @@ class CameraLoop:
         payload, flags = check_jpeg(payload, delivered_len=delivered_len, driver_error=frame.driver_error)
         if frame.discontinuity:
             flags |= FrameFlag.DISCONTINUITY  # D34
-        stamps.post_copy_to_camera_shm_ns[0] = perf_counter_ns()
-        if image is None and not flags & ERROR_FLAGS and (should_record or self.decode_stage is not None):
-            image = decode_jpeg(payload)  # interim decode for the old recorder (5.5, D9): one decode
-        good = image is not None and image.shape == rec.image[0].shape
-        if good:
-            rec.image[0] = image
-        elif should_record:
-            self.flagged += 1  # interim (U5): removed in phase 5; the recorder gets the last good image again
-        recorder = self.recorder
-        self.recorder = handle_video_recording(config=self.config, frame_rec_array=rec, ipc=self.ipc,
-                                               self_status=self.status, should_finish_recording=should_finish,
-                                               should_record_frame=should_record, video_recorder=self.recorder)
-        if recorder is not None and self.recorder is None:
-            self._log_flagged()
+        if not flags & ERROR_FLAGS:
+            self.last_good_payload = payload
         fields = dict(frame_number=self.ring_count, arrival_ns=frame.arrival_ns, sample_ns=frame.sample_ns,
                       source_frame_number=frame.source_frame_number, flags=int(flags),
                       rotation_cw_deg=rotation_to_cw_deg(self.config.rotation))
+        if should_record:  # the recorder first, then the ring, with the same bytes (ring 5.3, 5.7)
+            self._give(RecorderFrame(payload=payload, frame_number=number, arrival_ns=frame.arrival_ns,
+                                     sample_ns=frame.sample_ns, source_frame_number=frame.source_frame_number,
+                                     flags=int(flags), delivered_len=delivered_len,
+                                     rotation_cw_deg=fields["rotation_cw_deg"]))
+        elif should_finish and self.take_writer is not None:
+            self._end_take()
         self.ring_count += 1
         try:
             self.ring_writer.write(payload, **fields)
             if self.decode_stage is not None:
-                item = (DecodeInput(payload=image, source="BGR", **fields) if good
+                # The one decode is in the decode stage; the recorder needs none (recorder.md 10 item 6, D9).
+                item = (DecodeInput(payload=image, source="BGR", **fields) if image is not None
                         else DecodeInput(payload=payload, source="JPEG", **fields))
                 self.decode_stage.waiting_place.put(item)
         except Exception as error:  # a failing ring write does not stop capture or recording (ring 5.3)
@@ -373,7 +372,6 @@ class CameraLoop:
         self.status.replaced_count.value = self.replaced_total + self.source.replaced_count - self.replaced_base
         self._feed_check(frame)
         self._feed_block(frame)
-        self.initialized_ns = perf_counter_ns()
 
     def _feed_check(self, frame: CapturedFrame) -> None:
         """The check after a live change (10.2): skip 15 delivered frames, then measure over 60."""
@@ -412,7 +410,7 @@ class CameraLoop:
 
     def _feed_block(self, frame: CapturedFrame) -> None:
         """10.3: one warning for each slow period of a recording; blocks of 60 delivered frames."""
-        if self.recorder is None:
+        if self.take_writer is None:
             self.block, self.slow = None, False
             return
         if self.block is None:
@@ -434,13 +432,10 @@ class CameraLoop:
             requested = self.update_sub.get().requested_configs.get(self.camera_id)
             if requested is not None:
                 self._apply_change(requested)
-        recorder = self.recorder
-        self.recorder = check_for_new_recording_info(
-            config=self.config, ipc=self.ipc, orchestrator=self.orchestrator,
-            recording_info_subscription=self.recording_sub, self_status=self.status, video_recorder=self.recorder,
-            framerate=self.reference_rate)  # agent 9: the mode rate, not the median of the intervals
-        if self.recorder is not recorder:
-            self.flagged = 0
+        while not self.recording_sub.empty():
+            spec = self.recording_sub.get().take_specs.get(self.camera_id)
+            if spec is not None:
+                self._start_take(spec)
         while not self.signals.empty():
             _, after_ns, config = self.signals.get_nowait()
             self.config = config
@@ -475,9 +470,75 @@ class CameraLoop:
         self.config = requested
         self._start_up()
 
-    def _log_flagged(self) -> None:
-        logger.info(f"Camera {self.camera_id}: {self.flagged} flagged frames gave the last good image to the "
-                    f"recorder")  # interim (U5): removed in phase 5
+    # ----- the take (recorder.md section 10) -----
+
+    def _start_take(self, spec) -> None:
+        if self.take_writer is not None:
+            self._end_take()
+        self.take_writer = start_take_writer(self.camera_id, spec, self.status.writer_progress_at)
+        self.take_failed, self.take_rows = False, 0
+        self.status.recording_in_progress.value = True  # the main process unpauses when each camera has it
+
+    def _give(self, frame: RecorderFrame | None) -> None:
+        """Give a frame, or a `missing` row for None. After a stall or a write error, nothing (4.3)."""
+        if self.take_writer is None or self.take_failed:
+            return
+        self.take_rows += 1
+        try:
+            if frame is None:
+                self.take_writer.give_missing()
+            else:
+                self.take_writer.give(frame)
+        except (RecorderStalled, RecorderWriteError) as error:
+            self.take_failed = True
+            text = f"disk stall on camera {self.camera_id}" if isinstance(error, RecorderStalled) else str(error)
+            logger.error(f"Camera {self.camera_id}: the take ends: {text}")
+            # The main process ends the take for every camera (recorder.md 5.3, 5.4) [C5].
+            self.ipc.pubsub.topics[TopicTypes.RECORDING_FINISHED].publish(
+                RecordingFinishedMessage(camera_id=self.camera_id, error=text))
+        finally:
+            self.last_wait_end = perf_counter_ns()
+
+    def _end_take(self) -> None:
+        """End the camera writer with the frame count of the take (7.6) and send its result at once."""
+        writer, self.take_writer = self.take_writer, None
+        orchestrator = self.orchestrator
+        frame_count = (orchestrator.take_frame_count() if orchestrator.last_recording_frame_number.value != -1
+                       else self.take_rows)
+        try:
+            result = writer.end(frame_count)
+            self.ipc.pubsub.topics[TopicTypes.RECORDING_FINISHED].publish(
+                RecordingFinishedMessage(camera_id=self.camera_id, result=result))
+        finally:
+            self.status.recording_in_progress.value = False
+
+    def _missing_until_end(self) -> None:
+        """A camera that died during a take: one placeholder row for each new group frame, up to the last
+        frame of the take (recorder.md 7.3, section 10 item 7) [M1]. Blocking sleeps of 1 ms (4.3)."""
+        number = self.gate_count
+        orchestrator = self.orchestrator
+        while self.ipc.should_continue and not self.status.should_close.value:
+            last = orchestrator.last_recording_frame_number.value
+            # With no camera left in the gate, the last group frame of the stop is the one to reach.
+            group = max(orchestrator.largest_gate_count(), last - 1 if last != -1 else -1)
+            while number < group:
+                number += 1
+                self.status.frame_count.value = number
+                if orchestrator.should_record_frame_number(frame_number=number)[0]:
+                    self._give(None)
+            if orchestrator.should_record_frame_number(frame_number=number + 1)[1]:
+                return
+            time.sleep(0.001)
+
+    def _publish_layout(self) -> None:
+        layout = None
+        if self.last_good_payload is not None:
+            try:
+                sof = parse_sof(self.last_good_payload)
+                layout = dict(width=sof.width, height=sof.height, factors=sof.factors)
+            except ValueError:
+                pass
+        self.status.update_info(layout=layout)
 
     # ----- failures and the end -----
 
@@ -503,39 +564,27 @@ class CameraLoop:
             self.status.set_state("dead" if self.started else "failed")
         logger.warning(str(report))
 
-    def _finish_files(self) -> None:
-        """Finish the files of a recording: a dead camera (D38), or a hang for at most 5 s (U12)."""
-        try:
-            if self.recorder is not None:
-                if self.recorder.any_data_saved:
-                    finish_recording(ipc=self.ipc, video_recorder=self.recorder)
-                    self._log_flagged()
-                else:
-                    self.recorder.close()
-                self.recorder = None
-            self.status.recording_in_progress.value = False
-        finally:
-            self.files_done.set()
+    def _finish_take(self) -> None:
+        if self.take_writer is None:
+            return
+        if self.failed and self.started:  # dead while its process runs: placeholders to the end (M1)
+            self._missing_until_end()
+        if self.take_writer is not None:
+            self._end_take()
 
     def hard_end(self) -> None:
-        """6.6: after a hang, end the camera process with no clean-up. THREAD workers only end the thread."""
+        """6.6: after a hang, end the camera process at once with no clean-up. The main process completes the
+        files of a take after the process ended (recorder.md 7.4) [R4]. THREAD workers only end the thread."""
         if parent_process() is None:
             return
-        # One thread only: a second `join_thread` returns at once, and its os._exit would cut the first one short.
-        self._hard_end_lock.acquire()
-        deadline = time.monotonic() + HANG_FINISH_S  # interim (U12): removed in phase 5
-        self.files_done.wait(HANG_FINISH_S)
-        # The feeder thread of the queue writes the files message; os._exit would drop it (U12).
-        for queue_ in self.ipc.pubsub.topics[TopicTypes.RECORDING_FINISHED].subscriptions:
-            queue_.close()
-            flush = threading.Thread(target=queue_.join_thread, daemon=True)
-            flush.start()
-            flush.join(max(deadline - time.monotonic(), 0))
+        self.status.update_info(hung=True)  # the take level gives the reason "hang" (recorder.md 7.4)
         os._exit(1)
 
     def _end(self, hung: bool) -> None:
+        if hung:
+            self.hard_end()
         try:
-            self._finish_files()  # D38: the files first (8.2); after a hang, at most 5 s (U12)
+            self._finish_take()  # before the close: a slow close does not delay the end of the take (D38)
         finally:
             if not hung:
                 self._stop_control()

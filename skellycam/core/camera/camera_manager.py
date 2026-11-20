@@ -75,7 +75,7 @@ class CameraManager:
         if camera_id in self.removed_statuses:
             self.orchestrator.camera_statuses[camera_id] = self.removed_statuses.pop(camera_id)
         else:
-            # After a hang, the old process finishes its files for at most 5 s (U12) and still holds the device.
+            # The old process can still hold the device, for example while its close steps run (6.9).
             worker = self.camera_workers[camera_id].worker
             worker.join(timeout=2 * BOUNDED_CALL_LIMIT_S)
             if worker.is_alive() and isinstance(worker, ManagedProcess):

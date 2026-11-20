@@ -1,12 +1,8 @@
 import numpy as np
 
 class PyavVideoWriter:
-    """cv2.VideoWriter-compatible wrapper that encodes H264 via pyav/libx264.
-
-    Used on Linux when pip-installed OpenCV's bundled FFmpeg lacks libx264.
-    Presents the same isOpened/write/release interface as cv2.VideoWriter so
-    VideoRecorder can treat both paths identically.
-    """
+    """The H.264 writer of the old recorder, kept only to make old-format recordings for the reader tests:
+    skellycam reads old recordings and writes only the new format (recorder.md 8.3)."""
 
     def __init__(self, path: str, fps: float, width: int, height: int) -> None:
         import av  # noqa: TC002 — runtime import intentional (lazy, optional dep) - can cause issues on Mac if imported at top level

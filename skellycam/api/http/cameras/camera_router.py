@@ -3,7 +3,6 @@ from pathlib import Path
 
 from fastapi import APIRouter, Body, HTTPException, Request
 from pydantic import BaseModel, Field
-import numpy as np
 
 from skellycam.core.camera.config.camera_config import CameraConfig, DEFAULT_CAMERA_ID, CameraConfigs
 from skellycam.core.camera_group.camera_group import RequestRefused
@@ -173,33 +172,11 @@ async def start_recording(
 @camera_router.get("/group/all/record/stop", summary="Stop recording")
 async def stop_recording(request: Request) -> list[StopRecordingResponse]:
     try:
-        results = await get_or_create_camera_group_manager(app=request.app).stop_recording_all_groups()
-
-        def _stats_summary(stats_recarray: np.recarray) -> StatsSummary:
-            return StatsSummary(
-                median=float(stats_recarray.median_value),
-                mean=float(stats_recarray.mean_value),
-                std=float(stats_recarray.standard_deviation_value),
-                min=float(stats_recarray.min_value),
-                max=float(stats_recarray.max_value),
-            )
-
-        responses = []
-        for recording_info, timestamp_stats in results:
-            responses.append(StopRecordingResponse(
-                recording_name=recording_info.recording_name,
-                recording_path=recording_info.full_recording_path,
-                number_of_cameras=timestamp_stats.number_of_cameras,
-                number_of_frames=timestamp_stats.number_of_frames,
-                total_duration_sec=round(timestamp_stats.total_duration_sec, 3),
-                mean_framerate=round(float(timestamp_stats.framerate_stats.mean_value), 2),
-                mean_inter_camera_sync_ms=round(float(timestamp_stats.inter_camera_grab_range_ms.mean_value), 2),
-                framerate_stats=_stats_summary(timestamp_stats.framerate_stats),
-                frame_duration_stats=_stats_summary(timestamp_stats.frame_duration_stats),
-                inter_camera_grab_range_ms_stats=_stats_summary(timestamp_stats.inter_camera_grab_range_ms),
-            ))
-
-        return responses
+        summaries = await get_or_create_camera_group_manager(app=request.app).stop_recording_all_groups()
+        # Each field comes from the timing sidecars of the take (recorder.md 8.2) [R5].
+        return [StopRecordingResponse(**summary.stop_response) for summary in summaries]
+    except RequestRefused as e:
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
     except Exception as e:
         logger.error(f"Error in {request.url}: {type(e).__name__} - {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
