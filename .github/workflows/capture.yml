@@ -119,3 +119,22 @@ jobs:
         env:
           SKELLYCAM_RING_FULL: "1"
         run: uv run pytest skellycam/tests/frame_ring -m ring_portable -q
+
+      # temporary: macOS diagnosis, remove before the branch is merged
+      # ADR-FTC3: three runs with the clock rules and the clock trace, then three runs with the old clock
+      # (SKELLYCAM_CLOCK_RULES_OFF=1), whose failure reports show the participants at each far step.
+      - name: "Temporary: repeat the clock tests of the macOS failures"
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        run: |
+          tests="skellycam/tests/capture/test_states.py::test_t_cap_108_a_dying_camera_does_not_hold_the_others
+          skellycam/tests/capture/test_states.py::test_t_cap_13_warm_up_and_wait_for_the_others
+          skellycam/tests/capture/test_shared_loop.py::test_t_cap_11_discontinuity_reaches_the_next_taken_frame"
+          status=0
+          for run in 1 2 3; do
+            SKELLYCAM_CLOCK_TRACE=1 uv run pytest $tests -v -p no:cacheprovider || status=1
+          done
+          for run in 1 2 3; do
+            SKELLYCAM_CLOCK_RULES_OFF=1 uv run pytest $tests -v -p no:cacheprovider || status=1
+          done
+          exit $status

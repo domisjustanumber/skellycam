@@ -65,7 +65,8 @@ def test_t_cap_13_warm_up_and_wait_for_the_others(monkeypatch, late_first_write)
         assert not spies.of("record")
         passed = min(t for t, s in app.tracker.states(second) if s in ("waiting", "ready"))
         waited = [t for t, s in app.tracker.states(first) if s == "waiting"]
-        assert waited and waited[0] < passed, "the first camera was not `waiting` while the second started"
+        assert waited and waited[0] < passed, (f"the first camera was not `waiting` while the second started: "
+                                               f"{app.tracker.states(first)} {app.tracker.states(second)}")
         early = [e for e in spies.of("jpeg", first) if e["arrival_ns"] < passed - FRAME_NS - 1_000_000]
         assert not early, "the first camera was not paused while it waited"
 
@@ -776,9 +777,14 @@ def test_t_cap_108_a_dying_camera_does_not_hold_the_others(monkeypatch, tmp_path
                      f"camera {camera_id} records 3 s after the dead camera")
         assert app.record_stop().status_code == 200
         for camera_id in live:
-            times = [e["arrival_ns"] for e in spies.of("record", camera_id)]
-            gap = max(b - a for a, b in zip(times, times[1:])) / 1e9
-            assert gap <= 0.1, f"camera {camera_id} had a gap of {gap * 1000:.0f} ms"
+            records = spies.of("record", camera_id)
+            before, after = max(zip(records, records[1:]), key=lambda pair: pair[1]["arrival_ns"] - pair[0]["arrival_ns"])
+            gap = (after["arrival_ns"] - before["arrival_ns"]) / 1e9
+            # where the gap is, in virtual time from the death and in real time (ADR-FTC3)
+            where = (f"frames {before['frame_number']} to {after['frame_number']}, from "
+                     f"{(before['arrival_ns'] - t_dead) / 1e6:.0f} ms after the death (close at "
+                     f"{(close_ns - t_dead) / 1e6:.0f} ms), real {(after['real_ns'] - before['real_ns']) / 1e6:.0f} ms")
+            assert gap <= 0.1, f"camera {camera_id} had a gap of {gap * 1000:.0f} ms: {where}"
 
 
 def test_t_cap_112_first_frame_seen_after_warm_up_frame_90(monkeypatch):

@@ -259,8 +259,11 @@ def test_t_cap_11_discontinuity_reaches_the_next_taken_frame(monkeypatch, case):
         script, marked = FakeScript(discontinuity_frames=(160,), burst=(160, 161), stop_after_frame=200), 161
     with capture_logs() as logs, capture_app(monkeypatch, [script]) as app:
         spies = Spies(monkeypatch, app)
-        ready_app_steps(app)
         camera_id = app.factory.camera_ids[0]
+        # No wait for `ready`: the only camera moves the virtual time alone, so its `ready` state can end at
+        # frame 200 before a poll of the test sees it (CI run of f96de051b, macOS, ADR-FTC3).
+        app.detect()
+        assert app.apply([app.config(camera_id)]).status_code == 200
         app.wait(lambda: any(e["sfn"] >= 200 for e in spies.of("jpeg")), "frame 200 in the ring")
         writes = {e["sfn"]: e for e in spies.of("jpeg")}
         flagged = [sfn for sfn, e in writes.items() if e["flags"] & flag.DISCONTINUITY]

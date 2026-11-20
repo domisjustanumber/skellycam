@@ -56,17 +56,41 @@ def quiet_logging(monkeypatch):
 
 
 def install_gate_probe(monkeypatch, clock):
-    """Tell the virtual clock when a camera loop waits at the lockstep gate (5.2)."""
+    """Tell the virtual clock when a camera loop waits at the lockstep gate (5.2). The clock asks the
+    gate again until the loop calls it next (ADR-FTC3)."""
     from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 
     original = CameraOrchestrator.should_grab_by_id
 
     def should_grab_by_id(self, camera_id):
         result = original(self, camera_id)
-        clock.gate(not result)
+        clock.gate(not result, lambda: not original(self, camera_id))
         return result
 
     monkeypatch.setattr(CameraOrchestrator, "should_grab_by_id", should_grab_by_id)
+
+
+def install_clock_participants(monkeypatch, clock):
+    """Each camera thread is a participant of the virtual clock from its start (ADR-FTC3). The clock
+    notes each state of a camera, with the thread that sets it."""
+    from skellycam.core.camera.camera_worker import CameraWorker
+    from skellycam.core.camera_group.camera_status import CameraStatus
+
+    start, set_state = CameraWorker.start, CameraStatus.set_state
+
+    def start_and_adopt(self):
+        start(self)
+        thread = getattr(self.worker, "_thread", None)  # THREAD workers only
+        if thread is not None:
+            clock.adopt(thread)
+
+    def set_state_noted(self, state):
+        set_state(self, state)
+        with clock._condition:
+            clock._note(f"{threading.current_thread().name} sets {state}")
+
+    monkeypatch.setattr(CameraWorker, "start", start_and_adopt)
+    monkeypatch.setattr(CameraStatus, "set_state", set_state_noted)
 
 
 class LogCapture(logging.Handler):
@@ -164,7 +188,8 @@ class Spies:
     def _add(self, kind, **fields):
         with self._lock:
             self._seq += 1
-            event = dict(seq=self._seq, kind=kind, thread=threading.current_thread().name, **fields)
+            event = dict(seq=self._seq, kind=kind, thread=threading.current_thread().name,
+                         real_ns=time.perf_counter_ns(), **fields)
             self.events.append(event)
         return event
 
@@ -238,6 +263,7 @@ class CaptureApp:
         if self.clock is not None and self.clock.virtual:
             monkeypatch.setattr(loop_module, "perf_counter_ns", self.clock.now_ns)
             install_gate_probe(monkeypatch, self.clock)
+            install_clock_participants(monkeypatch, self.clock)
         if isinstance(factory.on_read, StateTracker):
             factory.on_read.app = self
         self.kill = multiprocessing.Value("b", False)

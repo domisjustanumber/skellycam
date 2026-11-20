@@ -104,18 +104,44 @@ class VirtualClock:
     way (for example a paused loop) only slows the test, and a loop that is slow on a busy machine
     does not let the time jump to a far wake time, for example the end of a 2 s close (CI run of
     6d496aa24, macOS, T-CAP-108).
+
+    Two more rules stop a jump to a far wake time (CI run of f96de051b, macOS, ADR-FTC3):
+
+    - A camera thread is a participant from its start (`adopt`), before it calls the clock. Else a
+      thread that starts late lets the others move the time, for example past the 3 s open of
+      T-CAP-13.
+    - For a step above `gate_hold_s`, a loop at the gate is blocked only while its gate stays closed:
+      `gate` gets a check, and the clock asks it again. A loop that sleeps after a closed gate does not
+      see at once that the gate opened, so both live loops of T-CAP-108 could show `gate` while the
+      dead camera waited 2 s in its close. A shorter step (one frame interval) keeps the old rule, so
+      the order of the loops in the frame rounds does not change (T-CAP-05 needs a whole last round).
+
+    `notes` keeps the joins, each step above `TRACE_STEP_NS` and the steps that the two rules stopped;
+    `stopped` counts them. With `SKELLYCAM_CLOCK_TRACE=1`, `trace` also keeps each state change and
+    step. The capture conftest prints them for a failed test.
     """
     virtual = True
     START_NS = 1_000_000_000_000
+    TRACE_STEP_NS = 100_000_000
+    instances = []  # the clocks of the running test, for the failure report of the capture conftest
 
-    def __init__(self, fallback_s=0.05, forced_step_s=0.01):
+    def __init__(self, fallback_s=0.05, forced_step_s=0.01, gate_hold_s=0.05):
         self._now = self.START_NS
         self._condition = threading.Condition()
         self._states = {}  # thread ident -> "run" | "gate" | "hold" | ("wait", wake_ns)
         self._threads = {}
+        self._gate_checks = {}  # thread ident -> a callable: True while the gate of that loop stays closed
+        self._adopted = set()  # adopted threads that have not called the clock yet
         self._changed = time.monotonic()
         self.fallback_s = fallback_s
         self.forced_step_ns = round(forced_step_s * 1e9)
+        self.gate_hold_ns = round(gate_hold_s * 1e9)
+        self.notes = []  # (perf_counter_ns, text)
+        self.stopped = {}  # rule -> [count of stopped far steps, largest stopped step in ns]
+        self.trace = deque(maxlen=20000) if os.environ.get("SKELLYCAM_CLOCK_TRACE") == "1" else None
+        # temporary: macOS diagnosis, remove before the branch is merged (the old clock, to see its jumps)
+        self.rules_off = os.environ.get("SKELLYCAM_CLOCK_RULES_OFF") == "1"
+        VirtualClock.instances.append(self)
 
     def now_ns(self):
         return self._now
@@ -146,11 +172,14 @@ class VirtualClock:
             with self._condition:
                 self._set(me, "run")
 
-    def gate(self, blocked):
+    def gate(self, blocked, still_blocked=None):
+        """`still_blocked()` is True while the gate of this loop stays closed. With no check, a blocked
+        loop counts as blocked until its next call."""
         me = threading.get_ident()
         with self._condition:
             if me not in self._states:
                 return
+            self._gate_checks[me] = still_blocked
             state = "gate" if blocked else "run"
             if self._states[me] != state:
                 self._set(me, state)
@@ -162,6 +191,15 @@ class VirtualClock:
             self._states.pop(threading.get_ident(), None)
             self._advance()
 
+    def adopt(self, thread):
+        """Make a started thread a participant (`run`) before it calls the clock."""
+        with self._condition:
+            if thread.ident not in self._threads and not self.rules_off:
+                self._threads[thread.ident] = thread
+                self._states[thread.ident] = "run"
+                self._adopted.add(thread.ident)
+                self._note(f"{thread.name} adopted")
+
     def advance_to(self, t_ns):
         """Move the time from a test thread that is not a participant."""
         with self._condition:
@@ -170,28 +208,85 @@ class VirtualClock:
                 self._changed = time.monotonic()
                 self._condition.notify_all()
 
+    def report(self):
+        """The text that the capture conftest prints for a failed test."""
+        lines = [f"virtual clock: now {self._ms(self._now)}; stopped far steps {self.stopped}"]
+        lines += [f"  real {real / 1e6:.1f} ms: {text}" for real, text in self.notes]
+        if self.trace is not None:
+            lines.append(f"  trace, last {min(len(self.trace), 400)} entries:")
+            lines += [f"    real {real / 1e6:.1f} ms: {text}" for real, text in list(self.trace)[-400:]]
+        return "\n".join(lines)
+
+    def _ms(self, t_ns):
+        return f"{(t_ns - self.START_NS) / 1e6:.1f} ms"
+
+    def _note(self, text):
+        self.notes.append((time.perf_counter_ns(), f"{text} at {self._ms(self._now)}"))
+
+    def _snapshot(self):
+        names = {ident: self._threads[ident].name for ident in self._states}
+        return ", ".join(f"{names[i]}={self._ms(s[1]) if isinstance(s, tuple) else s}"
+                         for i, s in self._states.items())
+
     def _join(self):
         thread = threading.current_thread()
+        if thread.ident not in self._threads or thread.ident in self._adopted:
+            self._adopted.discard(thread.ident)
+            self._note(f"{thread.name} joins")
         self._threads[thread.ident] = thread
         return thread.ident
 
     def _set(self, me, state):
         self._states[me] = state
         self._changed = time.monotonic()
+        if self.trace is not None:
+            self.trace.append((time.perf_counter_ns(), f"{self._threads[me].name} {state} at {self._ms(self._now)}"))
+
+    def _gate_open(self, ident):
+        check = None if self.rules_off else self._gate_checks.get(ident)
+        try:
+            return check is not None and not check()
+        except Exception:
+            return False
 
     def _advance(self, force=False):
         for ident in [i for i in self._states if not self._threads[i].is_alive()]:
             del self._states[ident]
         waits = [state[1] for state in self._states.values() if isinstance(state, tuple)]
-        if not waits or (not force and "run" in self._states.values()):
+        if not waits:
             return
         target = min(waits)
         if force:
             target = min(target, self._now + self.forced_step_ns)
+        else:
+            far = target - self._now > self.gate_hold_ns
+            running = [i for i, s in self._states.items() if s == "run" or (s == "gate" and far and self._gate_open(i))]
+            if running:
+                rules = {"adopted" if i in self._adopted else "gate check" if self._states[i] == "gate" else None
+                         for i in running}
+                if None not in rules and target > self._now:
+                    self._stopped(rules, target)
+                return
         if target > self._now:
+            if target - self._now > self.TRACE_STEP_NS:
+                self._note(f"{'forced ' if force else ''}step of {(target - self._now) / 1e6:.1f} ms by "
+                           f"{threading.current_thread().name}; {self._snapshot()}")
+            elif self.trace is not None:
+                self.trace.append((time.perf_counter_ns(), f"step to {self._ms(target)}{' forced' if force else ''}"))
             self._now = target
             self._changed = time.monotonic()
             self._condition.notify_all()
+
+    def _stopped(self, rules, target):
+        """A step that only the rule of `adopt` or of the gate check stopped (diagnosis, ADR-FTC3). Each
+        waiting participant asks every 2 ms, so the count is a count of asks, not of steps."""
+        step = target - self._now
+        for rule in rules:
+            entry = self.stopped.setdefault(rule, [0, 0])
+            if entry[0] == 0 or (step > self.TRACE_STEP_NS and step > entry[1]):
+                self._note(f"{rule} stopped a step of {step / 1e6:.1f} ms; {self._snapshot()}")
+            entry[0] += 1
+            entry[1] = max(entry[1], step)
 
 
 # ---------------------------------------------------------------------------

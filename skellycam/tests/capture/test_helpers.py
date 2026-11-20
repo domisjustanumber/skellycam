@@ -230,6 +230,61 @@ def test_virtual_clock_fallback_does_not_jump_to_a_far_wake_time():
     assert 0 < moved_s <= 0.2, f"the time moved {moved_s:.3f} s in 0.5 s of real time with a busy participant"
 
 
+def test_virtual_clock_a_gate_that_opened_holds_the_time():
+    """Two loops show `gate`, but the gate of one is open again: the time does not jump to the 2 s close
+    of a third thread (CI run of f96de051b, macOS, T-CAP-108, ADR-FTC3)."""
+    clock = VirtualClock(fallback_s=10.0)  # no forced step in this test
+    gated, done = threading.Barrier(3), threading.Event()
+
+    def loop(gate_stays_closed):
+        clock.wait_until(clock.now_ns())  # joins
+        clock.gate(True, lambda: gate_stays_closed)
+        gated.wait(5)
+        done.wait(5)
+        clock.leave()
+
+    loops = [threading.Thread(target=loop, args=(closed,)) for closed in (True, False)]
+    for thread in loops:
+        thread.start()
+    gated.wait(5)
+    closer = threading.Thread(target=lambda: clock.wait_until(clock.now_ns() + 2 * 10**9), daemon=True)
+    closer.start()
+    time.sleep(0.3)
+    moved_ns = clock.now_ns() - VirtualClock.START_NS
+    done.set()
+    for thread in loops:
+        thread.join(5)
+    closer.join(5)
+    assert moved_ns == 0, f"the time moved {moved_ns / 1e6:.0f} ms while the gate of one loop was open"
+    assert clock.now_ns() == VirtualClock.START_NS + 2 * 10**9
+
+
+def test_virtual_clock_an_adopted_thread_holds_the_time_until_it_waits():
+    """A camera thread that starts late holds the time from its start: the time does not jump to the 3 s
+    open of another camera (CI run of f96de051b, macOS, T-CAP-13, ADR-FTC3)."""
+    clock = VirtualClock(fallback_s=10.0)  # no forced step in this test
+    go, woke = threading.Event(), []
+
+    def late_camera():
+        go.wait(5)
+        clock.wait_until(clock.now_ns() + 33 * 10**6)
+        woke.append(clock.now_ns())
+        clock.leave()
+
+    late = threading.Thread(target=late_camera)
+    late.start()
+    clock.adopt(late)
+    opener = threading.Thread(target=lambda: clock.wait_until(clock.now_ns() + 3 * 10**9), daemon=True)
+    opener.start()
+    time.sleep(0.3)
+    moved_ns = clock.now_ns() - VirtualClock.START_NS
+    go.set()
+    late.join(5)
+    opener.join(5)
+    assert moved_ns == 0, f"the time moved {moved_ns / 1e6:.0f} ms before the adopted thread called the clock"
+    assert woke == [VirtualClock.START_NS + 33 * 10**6]
+
+
 def test_real_clock_waits_real_time():
     clock = RealClock()
     t0 = time.perf_counter()
