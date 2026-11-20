@@ -18,10 +18,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
   `skellycam/tests/reference_recordings/README.md`. The user decides each redaction. Until then,
   `test_repository_has_no_private_data` fails, and a commit that changes one of these files stops
   ([ADR-PEJ0](entries/PEJ0-scope-of-the-private-data-check.md)).
-- **CI on PRs to `development-streaming`.** `.github/workflows/test.yml` runs on PRs to `main` and
-  `development` only, so the package tests do not run on a PR to `development-streaming`, the PR
-  branch of [ADR-S222](entries/S222-bootstrap-answers-of-the-kit-adoption.md). A CI change needs the
-  user.
 - **Phase 2 of the frame ring.** [ADR-50G8](entries/50G8-phase-2-frame-ring-spec.md) accepts
   [`specs/frame-ring.md`](../specs/frame-ring.md). The tests of step 2a (T-RING-01 to 33) are in
   `skellycam/tests/frame_ring/`. They use the API of
@@ -221,12 +217,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
     [ADR-W674](entries/W674-choices-of-revision-3-of-the-step-4b-spec-and-its-test-list.md)).
     The supervisor decides the two open points of section 12.2: the 4a commits in
     `dom/integration`, and the change of section 6 of `AGENTS.md` to upstream `development`.
-- **Phase 5: remove three interim rules of phase 3.** The new recorder of phase 5 must remove the three
-  interim rules of [ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md):
-  U4 (a recording with a dead camera: timing files of unequal length, multi-frame rows with the live
-  cameras), U5 (a flagged frame gives the old recorder the last good image again) and U12 (on a hang
-  during a recording, finish the files for at most 5 s, then end hard). The files of the new recorder
-  survive a hard stop. The user: U4 and U5 "must change back once we have the new recorder".
 - **The `sfn26` integration on `dom/integration`.** The user decided the base on 2026-11-20
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md)). The agent choices wait
   for the user ([ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:
@@ -237,3 +227,14 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - The DirectShow open order of `sfn26` (item 1 of ADR-6T78) waits for a check on the cameras.
   - The UI does not show the USB link or the `start_failure` warning item.
   - Not verified: real cameras, Linux, macOS and the installer build.
+- **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3.
+  The user decided [ADR-GVC0](entries/GVC0-certify-decisions-of-the-user.md),
+  [ADR-KG00](entries/KG00-certify-decisions-of-the-user-on-draft-2.md),
+  [ADR-C5BR](entries/C5BR-macos-approach-probes-in-certify.md) and
+  [ADR-BVK7](entries/BVK7-certify-rulings-of-the-user-one-test-one-row.md). The choices of the agents
+  wait for the user: [ADR-KY81](entries/KY81-certify-spec-choices-of-the-agent.md) (the items that the
+  later entries do not rule) and [ADR-8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md),
+  with the 11 questions of section 14 of the spec. The spec is written against format 1.4.0 of the
+  contract `skellycertify` (commit `1c9c191`). Question 6 waits for the owner of the contract (a
+  `partial` item and a reviewed row). The specs `camera-requests.md`, `unix-capture.md` and `certify.md` are
+  merged on `dom/integration`. A cross-spec review found differences; their fixes follow.
