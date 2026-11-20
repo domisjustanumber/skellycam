@@ -1,4 +1,4 @@
-"""T-CAP-22 to T-CAP-28 and T-CAP-48: HRESULT reasons, detection, `camera_id`, `supported_modes`
+"""T-CAP-22 to T-CAP-28, T-CAP-48 and T-CAP-106: HRESULT reasons, detection, `camera_id`, `supported_modes`
 and the mode choice (specs/windows-capture.md, sections 6.7, 7 and 12).
 
 Detection uses a fake Media Foundation enumeration (`FakeDetectionBackend`). The mode choice runs
@@ -241,3 +241,22 @@ def test_t_cap_28_stored_rate_and_tolerance(monkeypatch):
         assert response.status_code == 200, response.text
         stored = response.json()["camera_configs"][camera_id]["framerate"]
         assert stored == pytest.approx(10000000 / 333333, rel=1e-9, abs=0)
+
+
+@pytest.mark.parametrize("kind", ["CameraDeviceInfo", "MediaFoundationDeviceInfo"])
+def test_t_cap_106_one_camera_id_for_a_mixed_case_link(kind):
+    """T-CAP-106, section 7.2 [D11, agent 13, ADR-PDD3 W6]: a Media Foundation link in mixed case, in both
+    device-info classes. `camera_id` is the hash of the lower-case link, so the mixed-case and the
+    lower-case link give one `camera_id`; `path` stays as the OS gives it. The class of the Windows-only
+    package runs on Windows only (U18)."""
+    if kind == "MediaFoundationDeviceInfo":
+        if sys.platform != "win32":
+            pytest.skip("the media_foundation package is Windows only (U18, 16.1)")
+        info_class = product(DETECT_MODULE).MediaFoundationDeviceInfo
+    else:
+        info_class = product("skellycam.core.device_detection.detect_cameras_devices").CameraDeviceInfo
+    link = r"\\?\USB#VID_046D&PID_085C&MI_00#7&1A2B3C4D&0&0000#{E5323777-F976-4F5B-9B55-B94699C46E44}\GLOBAL"
+    mixed = info_class(index=0, name="Camera", path=link)
+    lower = info_class(index=0, name="Camera", path=link.lower())
+    assert mixed.camera_id == lower.camera_id == spec_camera_id(link)
+    assert mixed.path == link

@@ -26,6 +26,7 @@ import contextlib
 import hashlib
 import importlib
 import multiprocessing
+import os
 import struct
 import threading
 import time
@@ -223,6 +224,9 @@ class FakeScript:
     rate_windows: tuple = ()  # (from_s, to_s, rate): the delivered rate between two clock times
     drop_at_window_end: bool = False  # the camera drops one frame when a rate window ends
     recorder_close_delay_s: float | None = None  # the old recorder of this camera needs this long to close
+    close_delay_s: float = 0.0  # the close of the source takes this long (clock time)
+    exit_at: str | None = None  # "open", or "frame:<n>": the camera process ends there with os._exit(3)
+    name: str | None = None  # the friendly name in the detection result; None: "Fake camera <index>"
 
 
 class FakeLog:
@@ -332,6 +336,8 @@ class FakeSource:
             self._event("open", request)
         if self.script.open_delay_s:
             self._wait(self.script.open_delay_s)
+        if self.script.exit_at == "open":
+            os._exit(3)  # a camera process that ends without unwinding (a native crash)
         self._maybe_hang("open", "open")
         if number in self.script.fail_opens:
             raise types.CaptureFailure(*self.script.open_failure)
@@ -436,6 +442,8 @@ class FakeSource:
         with self._lock:
             self.log.closes.value += 1
         self._maybe_hang("close", "close")
+        if self.script.close_delay_s:
+            self._wait(self.script.close_delay_s)
         self._stop.set()
         self._released.set()
         if self._thread is not None and self._thread is not threading.current_thread():
@@ -589,6 +597,8 @@ class FakeSource:
                 arrival = self._arrival(k)
                 while self._upcoming and self._upcoming[0][0] < k:
                     self._upcoming.popleft()
+                if self.script.exit_at == f"frame:{k}":
+                    os._exit(3)  # a camera process that ends without unwinding (a native crash)
                 frame = self._make_frame(k, arrival)
                 self.log.frames[k] = (arrival, frame.sample_ns)
                 self._next_sfn = k + 1
@@ -731,7 +741,8 @@ class FakeSourceFactory:
         infos = []
         for index, script in enumerate(self.scripts):
             native = [modes.NativeMode(*m) for m in (script.detected_modes or script.modes)]
-            infos.append(CameraDeviceInfo(index=index, name=f"Fake camera {index}", vendor_id=0xFEED,
+            infos.append(CameraDeviceInfo(index=index, name=script.name or f"Fake camera {index}", vendor_id=0xFEED,
                                           product_id=index, path=self.links[index],
-                                          supported_modes=modes.supported_modes(native)))
+                                          supported_modes=modes.supported_modes(native), modes_read=True,
+                                          virtual="virtual" in (script.name or "").lower()))
         return infos

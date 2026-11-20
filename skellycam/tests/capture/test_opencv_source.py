@@ -1,4 +1,4 @@
-"""T-CAP-99 to T-CAP-104: the rules of phase 3 for the OpenCV source, with the OpenCV fake [U23]
+"""T-CAP-99 to T-CAP-104 and T-CAP-111: the rules of phase 3 for the OpenCV source, with the OpenCV fake [U23]
 (specs/windows-capture.md, sections 7.5, 8, 9.5, 10.1, 11.3 and 14.1).
 
 Each test runs the product `OpenCVSource` with the OpenCV fake (`OpenCVFakeFactory`) under the real
@@ -41,8 +41,8 @@ def test_t_cap_99_floor_of_30_fps_with_opencv(monkeypatch, case):
     """T-CAP-99, sections 7.5 and 14.1 [U11, U23, agent 55, agent 59]: the OpenCV fake: (1) a request of
     25; (2) a request of 30, and OpenCV reports a real rate of 24 after the open; (3) a request of 30,
     and OpenCV reports no rate (0). (1) gets 422 and opens no camera; (2) fails, stage `set mode`,
-    "no mode at 30 fps or more"; (3) reaches `ready` with no rate check and no floor check
-    (`measured_fps` null) [D46]."""
+    "no mode at 30 fps or more"; (3) reaches `ready` with no floor check; the rate check uses the
+    requested rate, and `measured_fps` is within 3 % of 30 (ADR-PDD3 W2)."""
     reported = {"request 25": 30.0, "reports 24": 24.0, "reports no rate": 0.0}[case]
     with OpenCVApp(monkeypatch, reported_fps=reported, delivered_fps=30.0) as app:
         app.detect()
@@ -59,7 +59,7 @@ def test_t_cap_99_floor_of_30_fps_with_opencv(monkeypatch, case):
             assert status["failure"] == {"camera_id": camera_id, "stage": "set mode",
                                          "reason": "no mode at 30 fps or more"}
         else:
-            assert status["state"] == "ready" and status["measured_fps"] is None
+            assert status["state"] == "ready" and abs(status["measured_fps"] - 30.0) <= 0.9, status
 
 
 def test_t_cap_100_one_rate_rule_on_requested_rates(monkeypatch):
@@ -67,7 +67,8 @@ def test_t_cap_100_one_rate_rule_on_requested_rates(monkeypatch):
     and no camera opens. (2) Both requests auto (-1), and after the open OpenCV reports 30 for one
     and 60 for the other: a warning only; both reach `ready`, and no camera is closed.
 
-    The warning is a log record at WARNING that names both camera IDs (agent 75)."""
+    The warning is a log record at WARNING that names both camera IDs, and an item of the kind
+    `mixed_rate` in the `warnings` list of the apply response (ADR-PDD3 W3)."""
     with capture_logs() as logs, OpenCVApp(monkeypatch, count=2, per_camera={1: dict(reported_fps=60.0)}) as app:
         app.detect()
         first, second = app.factory.camera_ids
@@ -79,6 +80,8 @@ def test_t_cap_100_one_rate_rule_on_requested_rates(monkeypatch):
         for camera_id in (first, second):
             app.wait_state(camera_id, "ready")
         assert any(first in m and second in m for m in logs.messages(logging.WARNING)), "no warning names both cameras"
+        items = [w for w in response.json()["warnings"] if w["kind"] == "mixed_rate"]
+        assert len(items) == 1 and set(items[0]["camera_ids"]) == {first, second}, response.json()["warnings"]
         time.sleep(1.0)
         assert [app.state(cid) for cid in (first, second)] == ["ready", "ready"]
         assert app.factory.opens == {first: 1, second: 1}
@@ -87,21 +90,18 @@ def test_t_cap_100_one_rate_rule_on_requested_rates(monkeypatch):
 @pytest.mark.parametrize("reported", [30.0, 0.0], ids=["reports 30", "reports no rate"])
 def test_t_cap_101_start_up_rate_check_only_with_a_reported_rate(monkeypatch, reported):
     """T-CAP-101, sections 10.1 and 14.1 [D22, D46, U23]: the OpenCV fake delivers 25 fps. (1) OpenCV
-    reports 30: the camera fails, stage `rate check`, with the reason of 10.4 (declared 30.00, measured
-    25 +/- 0.75). (2) OpenCV reports no rate: no rate check; the camera reaches `ready` with
-    `measured_fps` null."""
+    reports 30. (2) OpenCV reports no rate: the check uses the requested rate (ADR-PDD3 W2). In both
+    cases the camera fails, stage `rate check`, with the reason of 10.4 (declared 30.00, measured
+    25 +/- 0.75)."""
     with OpenCVApp(monkeypatch, reported_fps=reported, delivered_fps=25.0) as app:
         app.detect()
         camera_id = app.factory.camera_ids[0]
         assert app.apply([app.config(camera_id)]).status_code == 200
         app.wait_state(camera_id, "ready", "failed")
         status = app.status(camera_id)
-        if reported > 0:
-            assert status["state"] == "failed" and status["failure"]["stage"] == "rate check", status
-            match = SLOW_REASON.match(status["failure"]["reason"])
-            assert match and match.group(1) == "30.00" and abs(float(match.group(2)) - 25.0) <= 0.75
-        else:
-            assert status["state"] == "ready" and status["measured_fps"] is None
+        assert status["state"] == "failed" and status["failure"]["stage"] == "rate check", status
+        match = SLOW_REASON.match(status["failure"]["reason"])
+        assert match and match.group(1) == "30.00" and abs(float(match.group(2)) - 25.0) <= 0.75
 
 
 def test_t_cap_102_a_camera_that_cannot_open_fails_alone(monkeypatch, tmp_path):
@@ -170,3 +170,68 @@ def test_t_cap_104_auto_exposure_warning_once_per_camera_per_recording(monkeypat
             assert sorted(named) == sorted(app.factory.camera_ids), f"{take}: {named}"
             time.sleep(1.0)
             assert app.record_stop().status_code == 200
+
+
+def test_t_cap_111_one_opencv_call_at_a_time(monkeypatch):
+    """T-CAP-111, sections 4.3 and 14.1 [U16, ADR-PDD3]: the loop thread reads frames while the control
+    thread reads the controls, on one `OpenCVSource`. `cv2.VideoCapture` is not thread-safe, so no two
+    calls on the capture overlap. The stand-in capture counts the calls that run at one time."""
+    import threading
+
+    import cv2
+    import numpy as np
+
+    from skellycam.core.camera.capture import opencv_source
+    from skellycam.core.camera.capture.source import CaptureRequest
+    from skellycam.core.camera.config.camera_config import CameraConfig
+
+    class CountingCapture:
+        def __init__(self):
+            self.inside = self.most = 0
+            self.lock = threading.Lock()
+
+        def _call(self, result):
+            with self.lock:
+                self.inside += 1
+                self.most = max(self.most, self.inside)
+            time.sleep(0.001)
+            with self.lock:
+                self.inside -= 1
+            return result
+
+        def grab(self):
+            return self._call(True)
+
+        def retrieve(self):
+            return self._call((True, np.zeros((4, 4, 3), np.uint8)))
+
+        def get(self, prop):
+            return self._call({cv2.CAP_PROP_FPS: 30.0, cv2.CAP_PROP_FRAME_WIDTH: 4.0,
+                               cv2.CAP_PROP_FRAME_HEIGHT: 4.0}.get(prop, 0.0))
+
+        def set(self, prop, value):
+            return self._call(True)
+
+        def release(self):
+            pass
+
+    capture = CountingCapture()
+    monkeypatch.setattr(opencv_source, "create_cv2_video_capture", lambda config: (capture, config))
+    source = opencv_source.OpenCVSource(CameraConfig(camera_id="a1b2", camera_index=0))
+    source.open(CaptureRequest(camera_id="a1b2", width=4, height=4, framerate=30.0))
+    stop = threading.Event()
+
+    def read_controls():
+        while not stop.is_set():
+            source.set_controls({})
+
+    controls = threading.Thread(target=read_controls, daemon=True)
+    controls.start()
+    try:
+        for _ in range(300):
+            assert source.read_frame(0.1) is not None
+    finally:
+        stop.set()
+        controls.join(5)
+        source.close()
+    assert capture.most == 1, f"{capture.most} calls on the capture ran at one time"

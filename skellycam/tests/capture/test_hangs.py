@@ -1,4 +1,5 @@
-"""T-CAP-40, T-CAP-80, T-CAP-82 and T-CAP-85: a hung call, the hard end of a camera process, and the
+"""T-CAP-40, T-CAP-80, T-CAP-82, T-CAP-85, T-CAP-109 and T-CAP-110: a hung call, the hard end of a camera
+process, the files message after a hang, a camera process that ends without unwinding, and the
 first-frame limit (specs/windows-capture.md, sections 6.4, 6.6, 8.2 and 12).
 
 These tests run PROCESS workers in real time: a hard end (`os._exit`) of a camera thread would end
@@ -12,8 +13,8 @@ import time
 import pytest
 
 from skellycam.tests.capture.capture_session import (
-    SOURCE_MODULE, RingWatcher, StateWatcher, capture_app, product, ready_app_steps, ring_exists, video_frame_count,
-    wait_exit)
+    SOURCE_MODULE, RingWatcher, StateWatcher, capture_app, column, product, ready_app_steps, recording_info,
+    recording_info_json, ring_exists, video_frame_count, wait_exit)
 from skellycam.tests.capture.fake_source import FakeScript
 
 MODES = ((640, 480, 30, 1, "MJPG"), (320, 240, 30, 1, "MJPG"))
@@ -180,3 +181,68 @@ def test_t_cap_85_hang_during_a_recording(monkeypatch, tmp_path, close_s):
             assert 0 < hung_frames < other_frames, "the file of the hung camera is not finished"
         else:
             assert other_frames > 0
+
+
+@pytest.mark.parametrize("state", ["starting", "recording"])
+def test_t_cap_109_a_camera_process_that_ends_without_unwinding(monkeypatch, tmp_path, state):
+    """T-CAP-109, sections 6.6 and 8.2 [D10, ADR-PDD3]: the process of one camera ends with `os._exit(3)`, as
+    after a native crash: (1) in `starting`, at the open; (2) in `recording`, at frame 300. The camera
+    gets `failed` (1) or `dead` (2) with the reason "camera process ended (exit code 3)"; (1) the apply
+    response names the failure, and the other camera reaches `ready`; (2) the other camera records on,
+    and the stop of the recording returns 200 and names the camera in `dead_cameras`."""
+    ending = FakeScript(exit_at="open") if state == "starting" else FakeScript(exit_at="frame:300")
+    with capture_app(monkeypatch, [ending, FakeScript()], workers="process") as app:
+        app.detect()
+        ended, other = app.factory.camera_ids
+        response = app.apply([app.config(ended), app.config(other)])
+        assert response.status_code == 200, response.text
+        reason = "camera process ended (exit code 3)"
+        if state == "starting":
+            assert response.json()["camera_failures"][ended] == {"camera_id": ended, "stage": "open", "reason": reason}
+            app.wait_state(other, "ready")
+            assert app.state(ended) == "failed"
+            return
+        app.wait_state(ended, "ready")
+        app.wait_state(other, "ready")
+        ring = RingWatcher(app.ring_name(other))
+        try:
+            assert app.record_start(tmp_path).status_code == 200
+            app.wait_state(ended, "dead")
+            assert app.status(ended)["failure"] == {"camera_id": ended, "stage": "streaming", "reason": reason}
+            count = len(ring.frames)
+            app.wait(lambda: len(ring.frames) > count + 30, "the other camera records on")
+            stopped = app.record_stop()
+            assert stopped.status_code == 200, stopped.text
+        finally:
+            ring.stop()
+        assert [d["camera_id"] for d in recording_info_json(tmp_path)["dead_cameras"]] == [ended]
+
+
+def test_t_cap_110_files_message_after_a_hang(monkeypatch, tmp_path):
+    """T-CAP-110, section 6.6 [U12, ADR-PDD3]: during a recording of 10 s, the control read of one fake
+    hangs. Its files message is larger than a pipe buffer (64 KiB). The message still reaches the main
+    process before the hard end: the recording info names the camera in `dead_cameras` with the
+    `last_frame_number` of the last row of its timing file, not null."""
+    import numpy as np
+
+    from skellycam.core.camera.config.camera_config import CameraConfig
+
+    scripts = [FakeScript(hang_at="set_controls"), FakeScript()]
+    with capture_app(monkeypatch, scripts, workers="process") as app:
+        ready_app_steps(app)
+        hung, other = app.factory.camera_ids
+        worker = app.worker(hung)
+        assert app.record_start(tmp_path).status_code == 200
+        time.sleep(10.0)
+        app.factory.logs[hung].arm_hang()
+        app.wait_state(hung, "dead")
+        wait_exit(worker)
+        assert worker.worker.exitcode not in (0, None), "the process did not end hard"
+        assert app.record_stop().status_code == 200
+    rows = column(recording_info(tmp_path).camera_timestamps_file_path_from_camera_id(hung), "connection_frame_number")
+    dead = [d for d in recording_info_json(tmp_path)["dead_cameras"] if d["camera_id"] == hung]
+    assert len(dead) == 1 and dead[0]["last_frame_number"] == int(rows[-1]), dead
+    # each item of the message is the metadata of one recorded frame; its pickle is larger than its dtype
+    one_row = np.dtype(product("skellycam.core.types.frame_dtype_factories").create_frame_dtype(
+        CameraConfig(camera_id="a1b2", camera_index=0)))["frame_metadata"].itemsize
+    assert len(rows) * one_row > 65536, f"{len(rows)} rows of {one_row} bytes fit in one pipe buffer"

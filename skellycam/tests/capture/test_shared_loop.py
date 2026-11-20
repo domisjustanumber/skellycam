@@ -55,10 +55,13 @@ def test_t_cap_05_replaced_count_matches_the_gaps(monkeypatch):
     third fake delivers 60 frames per second from 20 s to 30 s of the clock, while the two others hold
     the gate at 30 rounds per second, so about 300 of its frames are replaced. At 30 s it drops one
     frame and goes back to 30 fps. Each fake delivers its last frame at 40 s, so the gate ends on a
-    whole round; the stall watch then ends each camera."""
+    whole round; the stall watch then ends each camera.
+
+    The window ends at 29.995 s: the fake rounds each interval to whole ns, so a window end of 30.0 s
+    can take one more 60 fps frame a few ns before 30.0 s and move the fast camera off the grid."""
     grid = dict(align_ms=100.0, stop_at_s=40.005)
     scripts = [FakeScript(**grid), FakeScript(**grid),
-               FakeScript(rate_windows=((20.0, 30.0, 60.0),), drop_at_window_end=True, **grid)]
+               FakeScript(rate_windows=((20.0, 29.995, 60.0),), drop_at_window_end=True, **grid)]
     with capture_logs() as logs, capture_app(monkeypatch, scripts) as app:
         spies = Spies(monkeypatch, app)
         ready_app_steps(app)
@@ -66,6 +69,8 @@ def test_t_cap_05_replaced_count_matches_the_gaps(monkeypatch):
         app.wait(lambda: all(app.state(cid) in ("dead", "failed") for cid in app.factory.camera_ids),
                  "each fake ran out of frames")
         app.client.delete("/skellycam/camera/group/close/all")
+        last = {cid: max(app.factory.logs[cid].frames.values())[0] for cid in app.factory.camera_ids}
+        assert max(last.values()) - min(last.values()) < 1_000_000, f"the last frames are not on one round: {last}"
         counts = {cid: len(spies.of("jpeg", cid)) for cid in app.factory.camera_ids}
         assert len(set(counts.values())) == 1, f"ring frame counts differ: {counts}"
         assert min(counts.values()) >= 600, f"less than 20 s of frames in the gate: {counts}"
@@ -244,7 +249,8 @@ def test_t_cap_11_discontinuity_reaches_the_next_taken_frame(monkeypatch, case):
     is replaced in the waiting place before the loop takes it. In both cases the next taken frame has
     `DISCONTINUITY`; in case 1, `source_frame_number` has no gap; no warning is logged.
 
-    "No warning": no log record at WARNING or above names the camera."""
+    "No warning": no log record at WARNING or above names the camera, up to frame 200. After frame 200
+    the fake stops, and the camera is `dead` with a warning (section 12, ADR-PDD3)."""
     flag, _ = ring_flags()
     if case == "camera drop":
         script, marked = FakeScript(drop_before_frames=(150,), stop_after_frame=200), 150
@@ -262,7 +268,7 @@ def test_t_cap_11_discontinuity_reaches_the_next_taken_frame(monkeypatch, case):
             assert 149 in writes and 150 in writes, "a camera drop leaves no gap in source_frame_number"
         else:
             assert 160 not in writes
-        warnings = [m for m in logs.messages(logging.WARNING) if camera_id in m]
+        warnings = [m for m in logs.messages(logging.WARNING) if camera_id in m and "no frame for 2 s" not in m]
         assert not warnings, warnings
 
 
@@ -386,8 +392,9 @@ def test_t_cap_41_exposure_modes(monkeypatch, mode):
 @pytest.mark.parametrize("reported_fps", [30.0, 0.0], ids=["reports 30", "reports 0"])
 def test_t_cap_44_opencv_source_under_the_shared_loop(monkeypatch, reported_fps):
     """T-CAP-44, sections 14.1 and 10.1 [D46, D6, U2]: the OpenCV fake under the shared loop, with a
-    reported rate of 30 and of 0. Warm-up in both; rate check only with 30; the ring gets a q90 JPEG
-    with no burned-in stamp (it decodes to the fake image); the BGR ring gets the OpenCV image.
+    reported rate of 30 and of 0. Warm-up and rate check in both: with 0, the check uses the requested
+    rate (ADR-PDD3 W2), and `measured_fps` is within 3 % of 30; the ring gets a q90 JPEG with no
+    burned-in stamp (it decodes to the fake image); the BGR ring gets the OpenCV image.
 
     "q90, no stamp": each ring JPEG is byte-equal to `cv2.imencode` at quality 90 of an image that the
     fake gave. Real time: about 4 s."""
@@ -405,10 +412,7 @@ def test_t_cap_44_opencv_source_under_the_shared_loop(monkeypatch, reported_fps)
         assert all(e["hash"] in capture.jpeg_hashes for e in writes), "a ring JPEG is not the q90 JPEG of a fake image"
         puts = [e for e in spies.of("bgr_put") if e["source"] == "BGR"]
         assert puts and all(e["hash"] in capture.image_hashes for e in puts), "the BGR ring did not get the OpenCV image"
-        if reported_fps > 0:
-            assert status["measured_fps"] is not None
-        else:
-            assert status["measured_fps"] is None
+        assert status["state"] == "ready" and abs(status["measured_fps"] - 30.0) <= 0.9, status
     finally:
         app.close()
 

@@ -1,7 +1,7 @@
 """Camera states, start-up, live changes, recordings with warnings and dead cameras, and the group
 rules (specs/windows-capture.md, sections 5.2, 5.7, 5.8, 7.5, 8 to 12).
 
-T-CAP-13, 14, 19 to 21, 29 to 38, 42, 81, 83, 84, 86, 90 and 91. Each test runs fake cameras
+T-CAP-13, 14, 19 to 21, 29 to 38, 42, 81, 83, 84, 86, 90, 91, 105, 107, 108, 112 and 113. Each test runs fake cameras
 through the HTTP endpoints with THREAD workers and a virtual clock (`capture_session`). A
 `StateTracker` keeps the state of each camera at each read of a fake, with the virtual time.
 """
@@ -16,7 +16,7 @@ import pytest
 
 from skellycam.tests.capture.capture_session import (
     Spies, capture_app, capture_logs, column, numbers_in, one_camera, parse_relay, ready_app_steps, recording_info,
-    recording_info_json, video_frame_count)
+    recording_info_json, sfn_gaps, stop_line_count, video_frame_count)
 from skellycam.tests.capture.fake_source import FakeScript
 
 FRAME_NS = round(1e9 / 30)
@@ -318,7 +318,8 @@ def test_t_cap_35_a_camera_dies_during_a_recording(monkeypatch, tmp_path):
         app.wait(lambda: len(spies.of("record", dead)) >= 60, "60 recorded frames")
         source = app.factory.sources[dead]
         source.remove_now()
-        app.wait_state(dead, "dead")
+        # the tracker sees a state at the next read of a fake, after the status poll can see it
+        app.wait(lambda: app.tracker.first(dead, "dead") is not None, "the tracker sees `dead`")
         log = app.factory.logs[dead]
         removed_ns = log.frames[source.removed_frame][0] + FRAME_NS
         t_dead = app.tracker.first(dead, "dead")
@@ -345,10 +346,13 @@ def test_t_cap_36_dead_after_2_s_without_a_frame(monkeypatch):
     """T-CAP-36, sections 9.5 and 6.7 [D38]: one fake stops delivering at frame 100. `dead` between 2.0
     and 2.25 s after its last arrival, not before.
 
-    The dead camera stops reading, so the virtual clock stops at the time of the decision."""
-    with one_camera(monkeypatch, FakeScript(stop_after_frame=100)) as (app, camera_id, _):
+    The fake stops after `ready` (as in T-CAP-81), so that the camera cannot be `dead` before the test
+    sees `ready`. The dead camera stops reading, so the virtual clock stops at the time of the decision."""
+    with one_camera(monkeypatch, FakeScript()) as (app, camera_id, _):
+        app.factory.sources[camera_id].stop_now()
         app.wait_state(camera_id, "dead")
-        elapsed = (app.clock.now_ns() - app.factory.logs[camera_id].frames[100][0]) / 1e9
+        frames = app.factory.logs[camera_id].frames
+        elapsed = (app.clock.now_ns() - frames[max(frames)][0]) / 1e9
         assert 2.0 <= elapsed <= 2.25, f"dead {elapsed:.3f} s after the last arrival"
 
 
@@ -659,3 +663,104 @@ def test_t_cap_91_rate_class_30(monkeypatch):
             arrivals = [e["arrival_ns"] for e in spies.of("jpeg", camera_id) if t0 <= e["arrival_ns"] <= t1]
             rate = (len(arrivals) - 1) / ((arrivals[-1] - arrivals[0]) / 1e9)
             assert abs(rate - 30000 / 1001) < 0.01, f"camera {camera_id}: gate rate {rate:.4f}"
+
+
+# ---------------------------------------------------------------------------
+# T-CAP-105, T-CAP-107, T-CAP-108, T-CAP-112, T-CAP-113: the corrections of the 3a review (ADR-PDD3, ADR-6EKB)
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("detected", [True, False], ids=["detection result", "no detection result"])
+def test_t_cap_105_a_virtual_camera_is_refused(monkeypatch, detected):
+    """T-CAP-105, sections 7.1 and 8.3 [ADR-PDD3 W5]: detection shows a virtual camera with
+    `virtual: true`; a request that names it gets 422, and no camera opens. With no detection result,
+    the apply request detects first, so the refusal holds."""
+    scripts = [FakeScript(name="Fake Virtual Camera"), FakeScript()]
+    with capture_app(monkeypatch, scripts) as app:
+        virtual, real = app.factory.camera_ids
+        if detected:
+            shown = {camera["camera_id"]: camera for camera in app.detect()["cameras"]}
+            assert shown[virtual]["virtual"] is True and shown[real]["virtual"] is False
+        response = app.apply([app.config(virtual), app.config(real)])
+        assert response.status_code == 422, response.text
+        assert virtual in detail(response) and "virtual" in detail(response)
+        assert (opens(app, virtual), opens(app, real)) == (0, 0) and not app.manager.camera_groups
+        assert app.detections == (0 if detected else 1)
+
+
+def test_t_cap_107_replaced_count_in_the_status(monkeypatch):
+    """T-CAP-107, sections 5.2 and 8.4 [ADR-PDD3 W4]: two fakes on one 100 ms grid; one delivers 60 fps
+    from 8 s to 12 s of the clock. While it runs, the status of that camera shows a `replaced_count`
+    above 0; at the end, the status shows the count of its stop line, which equals the sum of the gaps
+    of `source_frame_number` from its first frame in the gate."""
+    grid = dict(align_ms=100.0, stop_at_s=16.005)
+    scripts = [FakeScript(**grid), FakeScript(rate_windows=((8.0, 11.995, 60.0),), drop_at_window_end=True, **grid)]
+    with capture_logs() as logs, capture_app(monkeypatch, scripts) as app:
+        spies = Spies(monkeypatch, app)
+        ready_app_steps(app)
+        assert app.clock.now_ns() < app.clock.START_NS + 75 * 10**8, "the start-up took past 7.5 s of the clock"
+        fast = app.factory.camera_ids[1]
+        app.wait(lambda: app.status(fast)["replaced_count"] > 0, "a replaced frame in the status")
+        app.wait(lambda: stop_line_count(logs.messages(), fast) >= 0, "the stop line")
+        count = stop_line_count(logs.messages(), fast)
+        assert app.status(fast)["replaced_count"] == count == sfn_gaps([e["sfn"] for e in spies.of("jpeg", fast)])
+        assert count >= 100, count
+
+
+def test_t_cap_108_a_dying_camera_does_not_hold_the_others(monkeypatch, tmp_path):
+    """T-CAP-108, sections 6.7 and 8.2 [D38, ADR-PDD3]: three fakes record; one gives device removed,
+    and its close takes 2 s. That camera is `dead` before its close ends; the two live cameras record
+    on with no gap above 100 ms between their recorded frames (the limit of T-CAP-82)."""
+    scripts = [FakeScript(), FakeScript(), FakeScript(close_delay_s=2.0)]
+    with capture_app(monkeypatch, scripts, track=True) as app:
+        spies = Spies(monkeypatch, app)
+        ready_app_steps(app)
+        live, dying = app.factory.camera_ids[:2], app.factory.camera_ids[2]
+        assert app.record_start(tmp_path).status_code == 200
+        app.wait(lambda: len(spies.of("record", dying)) >= 60, "60 recorded frames")
+        app.factory.sources[dying].remove_now()
+        app.wait(lambda: app.tracker.first(dying, "dead") is not None, "the camera is dead")
+        t_dead = app.tracker.first(dying, "dead")
+        events = app.factory.logs[dying].events
+        app.wait(lambda: any(name == "close" for name, _, _ in events), "the close of the dead camera")
+        close_ns = next(t for name, t, _ in events if name == "close")
+        assert t_dead <= close_ns, "the camera became dead only after its close"
+        for camera_id in live:
+            app.wait(lambda: any(e["arrival_ns"] > t_dead + 3 * 10**9 for e in spies.of("record", camera_id)),
+                     f"camera {camera_id} records 3 s after the dead camera")
+        assert app.record_stop().status_code == 200
+        for camera_id in live:
+            times = [e["arrival_ns"] for e in spies.of("record", camera_id)]
+            gap = max(b - a for a, b in zip(times, times[1:])) / 1e9
+            assert gap <= 0.1, f"camera {camera_id} had a gap of {gap * 1000:.0f} ms"
+
+
+def test_t_cap_112_first_frame_seen_after_warm_up_frame_90(monkeypatch):
+    """T-CAP-112, section 10.1 [D22, agent 26]: frames 2 to 95 arrive together, 94 ms after frame 1, so the
+    first warm-up frame that the loop sees in the window is frame 95. The window waits for one more
+    frame: the camera is `ready` with a measured rate within 3 % of 30, not a failure of an empty
+    window."""
+    intervals = (100 / 3,) + (1.0,) * 94 + (100 / 3,) * 3000
+    with one_camera(monkeypatch, FakeScript(intervals_ms=intervals, burst=(2, 95))) as (app, camera_id, _):
+        status = app.status(camera_id)
+        assert status["state"] == "ready" and status["failure"] is None, status
+        assert abs(status["measured_fps"] - 30.0) <= 0.9, status
+
+
+def test_t_cap_113_a_frame_that_waits_at_the_gate_is_not_too_slow(monkeypatch):
+    """T-CAP-113, sections 5.2 and 10.2 [D32, ADR-PDD3]: two fakes are `ready`; the second delivers 1.6 fps
+    for 12 s, so the first waits at the gate and takes one frame each 0.625 s. No gate round falls
+    between the arrival of frame s_a + 59 and the early deadline, so a decision at the deadline would
+    be false. A live exposure change of
+    the first: its frames arrive at 30 fps, so frame s_a + 59 arrives in time, also when the loop
+    takes it after the early deadline. The check ends `ready`, not `too_slow`."""
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()], track=True) as app:
+        ready_app_steps(app)
+        changed, slow = app.factory.camera_ids
+        app.factory.sources[slow].slow_period(rate=1.6, seconds=12.0)
+        app.wait_clock(1.0, "the slow period starts")
+        response = app.apply([app.config(changed, exposure=-6), app.config(slow)])
+        assert response.status_code == 200, response.text
+        app.wait(lambda: app.state(changed) in ("ready", "too_slow")
+                 and app.tracker.first(changed, "checking") is not None, "the end of the check")
+        assert app.state(changed) == "ready", app.status(changed)
+        assert abs(app.status(changed)["measured_fps"] - 30.0) <= 0.9

@@ -98,8 +98,9 @@ def test_t_cap_47_no_compiled_extension():
 @pytest.mark.skipif(not WINDOWS, reason="the Windows development machine only (16.1)")
 def test_t_cap_49_idle_cpu_of_the_shared_loop(monkeypatch):
     """T-CAP-49, sections 4.3 and 2.1 [D48]: marker `capture_local`. Run T-RING-31 with the shared loop
-    on the Windows development machine: a camera process with a fake source, paused for 5 s. Process
-    CPU under 2 % of one core. Real time: about 15 s."""
+    on the Windows development machine: a camera process with a fake source, paused for 10 s. Process
+    CPU under 2 % of one core. Windows counts CPU time in steps of 15.6 ms, so 10 s keeps that step
+    under 0.2 %. Real time: about 20 s."""
     with capture_app(monkeypatch, [FakeScript()], workers="process") as app:
         ready_app_steps(app)
         camera_id = app.factory.camera_ids[0]
@@ -108,7 +109,7 @@ def test_t_cap_49_idle_cpu_of_the_shared_loop(monkeypatch):
         time.sleep(0.5)
         cpu = psutil.Process(app.worker(camera_id).worker.pid)
         before, t0 = cpu.cpu_times(), time.perf_counter()
-        time.sleep(5.0)
+        time.sleep(10.0)
         after, t1 = cpu.cpu_times(), time.perf_counter()
     used = (after.user - before.user + after.system - before.system) / (t1 - t0)
     assert used < 0.02, f"the paused camera process used {used:.1%} of one core"

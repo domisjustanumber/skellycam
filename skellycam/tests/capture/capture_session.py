@@ -224,6 +224,7 @@ class CaptureApp:
         from fastapi.testclient import TestClient
 
         import skellycam.api.http.cameras.camera_router as camera_router
+        import skellycam.core.camera_group.camera_group_manager as manager_module
         from skellycam.core.camera_group.camera_group_manager import CameraGroupManager
         from skellycam.core.ipc.process_management.managed_worker import WorkerMode
         from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
@@ -247,6 +248,14 @@ class CaptureApp:
         monkeypatch.setattr(camera_router, "get_or_create_camera_group_manager", lambda app: self.manager)
         monkeypatch.setattr(camera_router, "detect_available_cameras",
                             lambda *args, **kwargs: self.factory.device_infos())
+        # An apply with no detection result detects first (ADR-PDD3 W5): the fakes, never a real camera.
+        self.detections = 0
+
+        def detect_in_apply(*args, **kwargs):
+            self.detections += 1
+            return self.factory.device_infos()
+
+        monkeypatch.setattr(manager_module, "detect_available_cameras", detect_in_apply)
         app = FastAPI()
         app.include_router(camera_router.camera_router, prefix="/skellycam")
         self.client = TestClient(app, raise_server_exceptions=False)
