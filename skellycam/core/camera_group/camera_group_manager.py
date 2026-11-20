@@ -115,8 +115,10 @@ class CameraGroupManager:
             warnings += change_warnings
         if failures:
             # One explanation of the failed start, where it adds a cause to the reasons (port from sfn26)
+            # Review item 4: the device list only (no camera is activated); the links of the detection before
+            links = {camera_id: getattr(device, "usb_version", None) for camera_id, device in self.detected_cameras.items()}
             text = await asyncio.to_thread(describe_start_failure, failures, camera_configs, started,
-                                           detect_available_cameras)
+                                           lambda: detect_available_cameras(modes=False), links)
             if text:
                 warnings.append(dict(kind="start_failure", camera_ids=sorted(failures), text=text))
                 logger.warning(text)

@@ -86,8 +86,9 @@ def _usb_id(link: str, key: str) -> int | None:
     return int(found.group(1), 16) if found else None
 
 
-def _detect_in_child(backend, sender) -> None:
-    """The detection child: each call bounded, one message after each step; after a hang, report and end hard."""
+def _detect_in_child(backend, sender, modes: bool = True) -> None:
+    """The detection child: each call bounded, one message after each step; after a hang, report and end hard.
+    With `modes` False it lists the devices only and activates none."""
     from skellycam.core.camera.capture.media_foundation import bounded, com
 
     try:
@@ -98,6 +99,9 @@ def _detect_in_child(backend, sender) -> None:
         found = []
         for name, link in bounded.call("detection", "the device list", backend.devices):
             sender.send(("alive", None))
+            if not modes:
+                found.append((name, link, None))
+                continue
             try:
                 native = bounded.call("detection", f"the mode list of {link}", lambda: backend.native_modes(link))
             except Exception as error:
@@ -130,13 +134,14 @@ def _child_result(receiver, child):
             return kind, result
 
 
-def detect_media_foundation_cameras(*, backend=None) -> list[CameraDeviceInfo]:
-    """7.1: the Media Foundation cameras. A virtual camera is listed with `virtual=True`.
+def detect_media_foundation_cameras(*, backend=None, modes: bool = True) -> list[CameraDeviceInfo]:
+    """7.1: the Media Foundation cameras. A virtual camera is listed with `virtual=True`. With `modes` False,
+    the device list only: no camera is activated, and no mode list is read (`modes_read` False).
     Raises `CaptureFailure` (stage `detection`) after a hang, and `ValueError` when two devices have
     one `camera_id`."""
     context = multiprocessing.get_context("spawn")
     receiver, sender = context.Pipe(duplex=False)
-    child = context.Process(target=_detect_in_child, args=(backend, sender), name="skellycam detection", daemon=True)
+    child = context.Process(target=_detect_in_child, args=(backend, sender, modes), name="skellycam detection", daemon=True)
     child.start()
     sender.close()
     try:

@@ -98,17 +98,19 @@ def _add_usb_versions(cameras: list[CameraDeviceInfo]) -> list[CameraDeviceInfo]
     return cameras
 
 
-def detect_available_cameras(backend_id: CameraBackendInt|None=None, filter_virtual:bool=True) -> list[CameraDeviceInfo]:
+def detect_available_cameras(backend_id: CameraBackendInt|None=None, filter_virtual:bool=True,
+                             modes: bool = True) -> list[CameraDeviceInfo]:
     """
     Detects available cameras using the cv2_enumerate_cameras package.
     Returns a list of CameraInfo objects for each detected camera.
 
-    On Windows, detection uses Media Foundation, also while the OpenCV source is chosen (7.1, D11).
+    On Windows, detection uses Media Foundation, also while the OpenCV source is chosen (7.1, D11). With `modes`
+    False it lists the devices only and activates none; elsewhere detection activates no camera in any case.
     """
     if platform.system() == "Windows":
         # Windows only, and it can load comtypes (U18): import it only here.
         from skellycam.core.camera.capture.media_foundation.detect import detect_media_foundation_cameras
-        return _add_usb_versions(detect_media_foundation_cameras())
+        return _add_usb_versions(detect_media_foundation_cameras(modes=modes))
     if backend_id is None:
         backend = determine_opencv_camera_backend()
     else:

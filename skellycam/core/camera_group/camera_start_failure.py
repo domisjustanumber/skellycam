@@ -34,10 +34,12 @@ def usb_disconnects_since(start: datetime) -> int | None:
 
 
 def explain_start_failure(failures: dict, configs: dict, detected: list | None,
-                          usb_disconnects: int | None) -> str | None:
-    """`failures`: camera ID to the failure object of section 12. `detected`: CameraDeviceInfo from a detection
-    after the failure (None if detection failed). None when no explanation adds a cause."""
-    connections = {camera.camera_id: camera.usb_version for camera in detected or []}
+                          usb_disconnects: int | None, links: dict | None = None) -> str | None:
+    """`failures`: camera ID to the failure object of section 12. `detected`: the devices that a list after the
+    failure finds (None if it failed). `links`: camera ID to the USB link of the detection before the start; by
+    default the links of `detected`. None when no explanation adds a cause."""
+    present = {camera.camera_id for camera in detected or []}
+    connections = links if links is not None else {camera.camera_id: camera.usb_version for camera in detected or []}
     requested_ids = [camera_id for camera_id, config in configs.items() if config.use_this_camera]
     requested = []
     for camera_id in requested_ids:
@@ -48,8 +50,8 @@ def explain_start_failure(failures: dict, configs: dict, detected: list | None,
                          f"{config.resolution.width}×{config.resolution.height} at {rate}")
     # Camera IDs come from detection; when none of them match, they are not detection IDs (or every
     # camera vanished, which an empty detection shows).
-    compare = detected is not None and (not detected or any(camera_id in connections for camera_id in requested_ids))
-    missing = [camera_id for camera_id in requested_ids if compare and camera_id not in connections]
+    compare = detected is not None and (not detected or any(camera_id in present for camera_id in requested_ids))
+    missing = [camera_id for camera_id in requested_ids if compare and camera_id not in present]
     stages = {failure["stage"] for failure in failures.values()}
 
     happened = [f"Camera {failure['camera_id']} failed during {failure['stage']}: {failure['reason']}".rstrip(". ")
@@ -83,17 +85,19 @@ def explain_start_failure(failures: dict, configs: dict, detected: list | None,
     ])
 
 
-def describe_start_failure(failures: dict, configs: dict, started: datetime, detect: Callable[[], list]) -> str | None:
+def describe_start_failure(failures: dict, configs: dict, started: datetime, detect: Callable[[], list],
+                           links: dict | None = None) -> str | None:
     """Gather the post-failure facts and explain. Never raises: the failure objects stay as they are.
 
-    `detect` is the detection of the caller, so that a test that replaces it also replaces it here."""
+    `detect` lists the devices of the caller and must activate no camera: a camera of the group can stream.
+    `links` are the USB links of the detection before the start."""
     try:
         detected = detect()
     except Exception as detection_error:
         logger.warning(f"Camera detection after a failed start also failed: {detection_error}")
         detected = None
     try:
-        return explain_start_failure(failures, configs, detected, usb_disconnects_since(started))
+        return explain_start_failure(failures, configs, detected, usb_disconnects_since(started), links)
     except Exception as error:
         logger.warning(f"No explanation of the failed start: {type(error).__name__} - {error}")
         return None

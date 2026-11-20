@@ -283,3 +283,17 @@ def test_t_cap_106_one_camera_id_for_a_mixed_case_link(kind):
     lower = info_class(index=0, name="Camera", path=link.lower())
     assert mixed.camera_id == lower.camera_id == spec_camera_id(link)
     assert mixed.path == link
+
+
+@WINDOWS_ONLY
+def test_the_device_list_activates_no_camera():
+    """Review item 4: the check after a failed start lists the devices only. It activates no camera (a camera
+    that streams in the group must not be opened again), so the mode list of a device is never read: the fake
+    hangs on that call."""
+    detect = product(DETECT_MODULE)
+    links = [fake_link(0), fake_link(1)]
+    backend = FakeDetectionBackend((("Camera 0", links[0], MODES_720), ("Camera 1", links[1], MODES_720)),
+                                   hang_link=links[1])
+    infos = detect.detect_media_foundation_cameras(backend=backend, modes=False)
+    assert [info.path for info in infos] == links
+    assert all(not info.modes_read and info.supported_modes == [] for info in infos)

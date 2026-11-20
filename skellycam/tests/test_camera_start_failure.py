@@ -90,13 +90,18 @@ def test_the_manager_adds_one_start_failure_warning(monkeypatch):
     manager = manager_module.CameraGroupManager(global_kill_flag=multiprocessing.Value("b", False),
                                                 worker_registry=registry)
     requested = configs("1b2b", "891e")
-    manager.detected_cameras = dict.fromkeys(requested)
+    manager.detected_cameras = {camera.camera_id: camera for camera in detected(**{"1b2b": "USB 3", "891e": "USB 2"})}
     failures = failure("891e", "first frame", "no frame for 2 s")
     group = Mock(spec=CameraGroup, configs=requested)
     monkeypatch.setattr(manager, "_check_request", lambda camera_configs, camera_group: ([], True))
     monkeypatch.setattr(manager, "_create_and_start", AsyncMock(return_value=(group, failures)))
-    monkeypatch.setattr(manager_module, "detect_available_cameras",
-                        lambda: detected(**{"1b2b": "USB 3", "891e": "USB 2"}))
+    requests = []
+
+    def device_list(**kwargs):
+        requests.append(kwargs)
+        return detected(**{"1b2b": None, "891e": None})  # a device list has no link: the stored detection has it
+
+    monkeypatch.setattr(manager_module, "detect_available_cameras", device_list)
     monkeypatch.setattr(start_failure, "usb_disconnects_since", lambda started: None)
 
     _, returned_failures, warnings = asyncio.run(manager.create_or_update_camera_group(requested))
@@ -104,3 +109,4 @@ def test_the_manager_adds_one_start_failure_warning(monkeypatch):
     [item] = warnings
     assert item["kind"] == "start_failure" and item["camera_ids"] == ["891e"]
     assert "891e (USB 2): MJPG 1280×720 at 90 fps" in item["text"] and "sends no frames" in item["text"]
+    assert requests == [dict(modes=False)]  # review item 4: the device list only; no camera is activated

@@ -39,8 +39,9 @@ choices:
 9. **USB link.** `CameraDeviceInfo.usb_version`: `"USB 3"`, `"USB 2"`, `"USB 1"` or `None`. The UI
    does not show it.
 10. **Start-failure explanation.** One warning item of kind `start_failure` in the apply response,
-    also logged. A USB reset (Windows events, or a camera that a new detection does not find) has
-    its own text; `start stream`, `first frame` and `warm-up` give "no frames"; `open` gives "cannot
+    also logged. A USB reset (Windows events, or a camera that a device list does not find) has
+    its own text. The device list activates no camera; the USB links come from the detection before
+    the start; `start stream`, `first frame` and `warm-up` give "no frames"; `open` gives "cannot
     open". Other stages give no item. The failure objects of section 12 do not change. The UI does
     not show apply warnings.
 11. **Pause and stop.** `pause_all_groups` and `unpause_all_groups` called a method that did not
