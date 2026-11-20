@@ -185,58 +185,6 @@ def crash_creator_main():
     time.sleep(600)
 
 
-def idle_camera_process(name, pause, paused, close, frames):
-    """T-RING-31: the production OpenCV loop with a fake capture source and a ring writer.
-
-    A helper thread copies the flags of the parent to the camera status every 50 ms.
-    """
-    import logging
-    import multiprocessing
-    import threading
-
-    import skellycam.core.camera.opencv.opencv_camera_loop as loop_module
-    from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
-    from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
-    from skellycam.core.camera_group.camera_status import CameraStatus
-    from skellycam.core.camera.opencv.opencv_helpers.create_initial_frame_recarray import (
-        create_initial_frame_rec_array,
-    )
-    from skellycam.core.ipc.pubsub.pubsub_manager import PubSubTopicManager
-    from skellycam.tests.frame_ring.ring_session import FakeCapture, fake_configs
-
-    logging.Logger.trace = logging.Logger.debug
-    logging.Logger.success = logging.Logger.info
-    writer = ring().FrameRingWriter.attach(name)
-    config = fake_configs(1)["0"]
-    status = CameraStatus()
-    status.connected.value = True
-    orchestrator = CameraOrchestrator.from_statuses({config.camera_id: status})
-    updates, recording = multiprocessing.Queue(), multiprocessing.Queue()
-    ipc = CameraGroupIPC(
-        group_id="ring-idle", pubsub=PubSubTopicManager(topics={}),
-        extracted_config_subscription=updates, recording_finished_subscription=recording,
-        global_kill_flag=multiprocessing.Value("b", False),
-        heartbeat_timestamp=multiprocessing.Value("d", time.perf_counter()))
-
-    def mirror():
-        while not close.value:
-            status.should_pause.value = bool(pause.value)
-            paused.value = bool(status.is_paused.value)
-            frames.value = int(status.frame_count.value)
-            time.sleep(0.05)
-        status.should_close.value = True
-
-    threading.Thread(target=mirror, daemon=True).start()
-    try:
-        loop_module.run_opencv_camera_loop(
-            ring_writer=writer, config=config, cv2_video_capture=FakeCapture(640, 480, 30.0),
-            frame_rec_array=create_initial_frame_rec_array(config=config, ipc=ipc), ipc=ipc,
-            orchestrator=orchestrator, self_status=status,
-            update_camera_settings_subscription=updates, recording_info_subscription=recording)
-    finally:
-        writer.close()
-
-
 LIBJPEG_EXTRA_BYTES = (601, 100)  # T-RING-46: two different warning lines
 
 

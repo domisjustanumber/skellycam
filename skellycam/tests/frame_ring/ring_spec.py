@@ -22,7 +22,6 @@ FULL = os.environ.get("SKELLYCAM_RING_FULL", "") == "1"
 LAP_SECONDS = 60.0 if FULL else 2.0  # T-RING-08, per slot count
 KILL_TRIALS = 100  # T-RING-11, maximum trials; the test stops at the first hit after trial 3
 TIMING_SECONDS = 10.0 if FULL else 2.0  # T-RING-12 and T-RING-23, per phase
-IDLE_SECONDS = 5.0 if FULL else 2.0  # T-RING-31
 
 WAIT_TIMEOUT_S = 30.0
 

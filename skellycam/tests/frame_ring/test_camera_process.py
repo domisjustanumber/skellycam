@@ -1,5 +1,6 @@
-"""Behaviour outside the ring package that step 2a changes: T-RING-23, 31, 32, 33
-(specs/frame-ring.md, sections 2, 5.3, 8.10 and 12).
+"""Behaviour outside the ring package that step 2a changes: T-RING-23, 32, 33
+(specs/frame-ring.md, sections 2, 5.3 and 12). T-RING-31 is retired; T-CAP-49 checks its rule on
+the shared loop (ADR-PDD3 W8).
 
 These tests use the production OpenCV loop and `CameraGroup` with fake cameras
 (ring_session.py). No camera and no camera frame is used.
@@ -13,7 +14,6 @@ import time
 from pathlib import Path
 
 import numpy as np
-import psutil
 import pytest
 
 from skellycam.tests.frame_ring import ring_children
@@ -26,7 +26,6 @@ from skellycam.tests.frame_ring.ring_session import (
     wait_until,
 )
 from skellycam.tests.frame_ring.ring_spec import (
-    IDLE_SECONDS,
     TIMING_SECONDS,
     WAIT_TIMEOUT_S,
     ring,
@@ -174,47 +173,6 @@ def test_t_ring_23_write_p99_with_four_readers(cleanup, spawn, procs):
     assert all(process.is_alive() for process in procs), "a reader died"
     p99_ms = np.percentile(durations, 99) / 1e6
     assert p99_ms <= 1.0, f"JPEG write p99 {p99_ms:.3f} ms > 1.0 ms (target with four readers, paced at 60 frames/s)"
-
-
-@pytest.mark.ring_slow
-def test_t_ring_31_no_spinning_thread_when_idle(cleanup, spawn, procs):
-    """T-RING-31, section 8.10 [A45]: a camera process with a fake capture source, paused for
-    5 s. The process CPU is under 2 % of one core.
-
-    The default pause is IDLE_SECONDS (2 s; 5 s with SKELLYCAM_RING_FULL=1). A helper thread in
-    the child wakes every 50 ms to copy the flags; that cost is part of the measured CPU.
-    """
-    fr = ring()
-    creator = cleanup.own(fr.FrameRingCreator.create(
-        camera_id="0", camera_index=0, pixel_format=fr.PixelFormat.JPEG, width=640, height=480,
-        fps_num=30, fps_den=1))
-    pause, paused, close = spawn.Value("b", 0), spawn.Value("b", 0), spawn.Value("b", 0)
-    frames = spawn.Value("q", 0)
-    process = spawn.Process(target=ring_children.idle_camera_process,
-                            args=(creator.name, pause, paused, close, frames), daemon=True)
-    procs.append(process)
-    process.start()
-    try:
-        _poll(lambda: frames.value > 10, "frames from the fake camera")
-        pause.value = 1
-        _poll(lambda: paused.value, "camera paused")
-        time.sleep(0.5)
-        cpu = psutil.Process(process.pid)
-        before, t0 = cpu.cpu_times(), time.perf_counter()
-        time.sleep(IDLE_SECONDS)
-        after, t1 = cpu.cpu_times(), time.perf_counter()
-    finally:
-        close.value = 1
-    used = (after.user - before.user + after.system - before.system) / (t1 - t0)
-    process.join(timeout=WAIT_TIMEOUT_S)
-    assert used < 0.02, f"paused camera process used {used:.1%} of one core"
-
-
-def _poll(predicate, what):
-    deadline = time.monotonic() + WAIT_TIMEOUT_S
-    while not predicate():
-        assert time.monotonic() < deadline, f"timed out: {what}"
-        time.sleep(0.01)
 
 
 DELETED_MODULES = [
