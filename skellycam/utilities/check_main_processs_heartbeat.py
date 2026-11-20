@@ -7,7 +7,9 @@ from typing import Final
 
 logger = logging.getLogger(__name__)
 HEARTBEAT_INTERVAL_SECONDS: Final[float] = 1.0
-HEARTBEAT_TIMEOUT_SECONDS: Final[float] = 300.0
+# Decision L of the user (2026-11-20): the camera processes notice a dead server after 10 s, not 300 s.
+# The writer is a thread of its own (WorkerRegistry), not the event loop: a busy main process still beats.
+HEARTBEAT_TIMEOUT_SECONDS: Final[float] = 10.0
 def check_main_process_heartbeat(*,
                                  heartbeat_timestamp: Synchronized,
                                  global_kill_flag: Synchronized) -> bool:

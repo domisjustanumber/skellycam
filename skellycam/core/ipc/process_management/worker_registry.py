@@ -55,16 +55,10 @@ class WorkerRegistry:
 
     def start_heartbeat(self) -> None:
         """Start the heartbeat writer and child monitor threads. Call once after construction."""
-        if self._heartbeat_thread is not None:
+        if self._monitor_thread is not None:
             raise RuntimeError("Heartbeat already started")
         self._heartbeat_stop.clear()
-        self._heartbeat_thread = threading.Thread(
-            target=self._heartbeat_loop,
-            name="WorkerRegistry-Heartbeat",
-            daemon=True,
-        )
-        self._heartbeat_thread.start()
-        logger.debug("Heartbeat thread started")
+        self._start_heartbeat_writer()
 
         self._monitor_thread = threading.Thread(
             target=self._child_monitor_loop,
@@ -73,6 +67,19 @@ class WorkerRegistry:
         )
         self._monitor_thread.start()
         logger.debug("Child monitor thread started")
+
+    def _start_heartbeat_writer(self) -> None:
+        """The heartbeat writer runs from the first worker on: a camera process ends 10 s after the last beat
+        (HEARTBEAT_TIMEOUT_SECONDS), also in a program that does not call start_heartbeat."""
+        if self._heartbeat_thread is not None or self._heartbeat_stop.is_set():
+            return
+        self._heartbeat_thread = threading.Thread(
+            target=self._heartbeat_loop,
+            name="WorkerRegistry-Heartbeat",
+            daemon=True,
+        )
+        self._heartbeat_thread.start()
+        logger.debug("Heartbeat thread started")
 
     def _heartbeat_loop(self) -> None:
         while not self._heartbeat_stop.is_set():
@@ -164,6 +171,7 @@ class WorkerRegistry:
             )
         else:
             raise ValueError(f"Unknown worker mode: {worker_mode}")
+        self._start_heartbeat_writer()
         self._workers.append(worker)
         return worker
 

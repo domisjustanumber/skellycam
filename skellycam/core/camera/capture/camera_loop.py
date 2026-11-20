@@ -123,7 +123,6 @@ class CameraLoop:
         self.started = False
         self.take_writer: CameraTakeWriter | None = None
         self.take_failed = False  # after a stall or a write error the loop calls only `end` (recorder.md 4.3)
-        self.take_rows = 0  # the rows given in this take: the frame count when no take level follows
         self.last_good_payload: bytes | None = None  # its SOF gives the placeholder layout (recorder.md 6.4)
         self.check: dict | None = None  # the check after a live change (10.2)
         self.block: tuple[int, int] | None = None  # the block of a recording (10.3)
@@ -491,14 +490,13 @@ class CameraLoop:
             logger.error(text)
             self.status.update_info(writer_failure=text)
             return
-        self.take_failed, self.take_rows = False, 0
+        self.take_failed = False
         self.status.recording_in_progress.value = True  # the main process unpauses when each camera has it
 
     def _give(self, frame: RecorderFrame | None) -> None:
         """Give a frame, or a `missing` row for None. After a stall or a write error, nothing (4.3)."""
         if self.take_writer is None or self.take_failed:
             return
-        self.take_rows += 1
         try:
             if frame is None:
                 self.take_writer.give_missing()
@@ -520,7 +518,8 @@ class CameraLoop:
         With no last frame, the take did not end, and the frame count of the take is not known. When the take
         goes on (this camera ends alone), `abandon` writes the queued frames and the take level completes the
         pair after the join (7.4). When no take level follows (the group stops, the main process is gone),
-        the camera finishes its pair with the rows that it gave."""
+        the first camera that ends sets the last frame of the take after the latest group frame, so that each
+        camera finishes its pair with the same rows (placeholders to that frame, 7.3) and its `# end` line."""
         writer, self.take_writer = self.take_writer, None
         try:
             if self.orchestrator.last_recording_frame_number.value == -1:
@@ -530,9 +529,13 @@ class CameraLoop:
                         self.ipc.pubsub.topics[TopicTypes.RECORDING_FINISHED].publish(
                             RecordingFinishedMessage(camera_id=self.camera_id, error=error))
                     return
-                result = writer.end(self.take_rows)
-            else:
-                result = writer.end(self.orchestrator.take_frame_count())
+                last = self.orchestrator.last_recording_frame_number
+                with last.get_lock():
+                    if last.value == -1:
+                        # The gate lets another camera be one frame ahead, in hand but not yet counted: + 2.
+                        latest = max(self.orchestrator.largest_gate_count(), self.gate_count)
+                        last.value = max(latest + 2, self.orchestrator.first_recording_frame_number.value)
+            result = writer.end(self.orchestrator.take_frame_count())
             self.ipc.pubsub.topics[TopicTypes.RECORDING_FINISHED].publish(
                 RecordingFinishedMessage(camera_id=self.camera_id, result=result))
         finally:

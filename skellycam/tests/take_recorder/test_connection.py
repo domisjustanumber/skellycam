@@ -792,7 +792,8 @@ def test_stall_watch_of_a_push_source_counts_from_the_end_of_the_wait(monkeypatc
 def test_an_exit_during_a_take_leaves_finished_camera_files(monkeypatch, tmp_path):
     """Second review of the connection fixes, R1 (b): the camera loops end during a take with no stop and no
     take level to follow (the group stops, as at an exit of the app). Each camera finishes its own pair with
-    the rows that it gave, and its `# end` line, as before the first fixes."""
+    each frame that it gave and its `# end` line. Third review, L: the first camera that ends sets the last
+    frame, so the pairs have equal rows (a camera pads with placeholders to it)."""
     with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
         spies = Spies(monkeypatch, app)
         ready_app_steps(app)
@@ -803,10 +804,17 @@ def test_an_exit_during_a_take_leaves_finished_camera_files(monkeypatch, tmp_pat
         for worker in workers:
             app.wait(lambda: not worker.is_alive(), "the loop ends")
         app.group.take = None  # no stop: the take level does not follow (the close then stops no take)
+    from skellycam.core.take_recorder.sidecar import MISSING
+
+    counts = []
     for camera_id in app.factory.camera_ids:
-        lines = take_files(tmp_path)[camera_id][1].read_text(encoding="utf-8").splitlines()
-        rows = sum(1 for line in lines if line[:1].isdigit())
-        assert lines[-1].startswith("# end ") and rows == len(spies.of("record", camera_id)) >= 30, (rows, lines[-1])
+        assert take_files(tmp_path)[camera_id][1].read_text(encoding="utf-8").splitlines()[-1].startswith("# end ")
+        rows = take_rows(tmp_path, camera_id)
+        real = [row for row in rows if not row.flags & MISSING]
+        assert len(real) == len(spies.of("record", camera_id)) >= 30, (len(real), camera_id)
+        assert all(row.flags & MISSING for row in rows[len(real):]), "a placeholder before a frame"
+        counts.append(len(rows))
+    assert counts[0] == counts[1], counts
 
 
 @pytest.mark.parametrize("case", ["late writer", "unpause timeout"])
@@ -1133,3 +1141,67 @@ def test_the_shutdown_endpoint_finishes_a_running_take(monkeypatch, tmp_path, wo
     assert manifest["state"] == "finished"
     counts = [len(take_rows(tmp_path, cid)) for cid in app.factory.camera_ids]
     assert counts[0] == counts[1] > 0, counts
+
+
+@pytest.mark.parametrize("workers", ["thread", "process"])
+def test_the_cameras_end_their_take_10_s_after_the_server_died(monkeypatch, tmp_path, workers):
+    """Decision L of the user (2026-11-20, recorder.md 9): the main process writes no heartbeat during a take
+    (as when it dies). Each camera process notices it within about 10 s, finishes its pair with the rows of
+    one last group frame (equal rows, `# end`) and ends. The take level does not run, so the manifest stays
+    `recording` (step 5c)."""
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()], workers=workers, virtual=False) as app:
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        time.sleep(1.0)
+        workers_ = [app.worker(cid) for cid in app.factory.camera_ids]
+        app.registry._heartbeat_stop.set()  # the heartbeat writer of the main process stops
+        stopped = time.monotonic()
+        for worker in workers_:
+            app.wait(lambda: not worker.is_alive(), "the camera ends", timeout=30)
+        took = time.monotonic() - stopped
+        app.group.take = None  # no take level: the main process is "dead"
+    assert 9.0 <= took <= 14.0, f"the cameras ended {took:.1f} s after the last heartbeat"
+    rows = []
+    for camera_id in app.factory.camera_ids:
+        lines = take_files(tmp_path)[camera_id][1].read_text(encoding="utf-8").splitlines()
+        assert lines[-1].startswith("# end "), lines[-1]
+        rows.append(sum(1 for line in lines if line[:1].isdigit()))
+    assert rows[0] == rows[1] > 0, rows
+    assert take_manifest(tmp_path)["state"] == "recording"
+
+
+def test_a_busy_main_process_does_not_look_dead(monkeypatch, tmp_path):
+    """Decision L of the user: the event loop of the main process is blocked 5 s during a take (a long
+    synchronous call). The heartbeat comes from its own thread, so no camera ends, and the take goes on."""
+    import asyncio
+
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()], workers="process") as app:
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+
+        async def busy():
+            time.sleep(5.0)
+
+        asyncio.run_coroutine_threadsafe(busy(), app.group._loop).result(30)
+        time.sleep(1.0)
+        assert all(app.worker(cid).is_alive() for cid in app.factory.camera_ids)
+        summary = stop(app)
+    assert all(len(take_rows(tmp_path, cid)) == summary["number_of_frames"] > 150 for cid in app.factory.camera_ids)
+
+
+def test_the_stop_costs_no_source_frame_before_the_last_rows(monkeypatch, tmp_path):
+    """Third review, S11 (real-camera run of 2026-11-20: a `camera_gap` at row N - 2 in 6 of 7 takes): two push
+    fakes record a take and stop. No row of the last 5 has `gap`: the stop must not pause the cameras, as
+    the waiting place of a push source replaces each frame that comes during a pause (5.2)."""
+    sidecar = sidecar_flags()
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 60)
+        summary = stop(app)
+    for camera_id in app.factory.camera_ids:
+        rows = take_rows(tmp_path, camera_id)
+        assert len(rows) == summary["number_of_frames"]
+        gaps = [row.frame for row in rows[-5:] if row.flags & sidecar.GAP]
+        assert gaps == [], f"camera {camera_id}: gap rows {gaps} of {len(rows)}"
