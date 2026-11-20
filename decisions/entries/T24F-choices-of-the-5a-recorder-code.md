@@ -1,76 +1,85 @@
 # T24F — Choices of the 5a recorder code
 
-**Status:** proposed, 2026-11-20 (agent; commit to dom/recorder).
+**Status:** proposed, 2026-11-20 (agent; commit to dom/recorder; revised the same day after an
+independent review).
 
 ## Decision
 
-The code of step 5a is in `skellycam/core/take_recorder/`. It follows
-[`specs/recorder.md`](../../specs/recorder.md),
+The code in `skellycam/core/take_recorder/` follows [`specs/recorder.md`](../../specs/recorder.md),
 [ADR-Q03C](Q03C-phase-5-step-5a-recorder-spec-and-test-list.md) and
-[ADR-QEQ8](QEQ8-python-api-of-the-recorder-as-the-5a-tests-assume-it.md). These texts do not fix
-the choices below. An agent made them. The user decides them.
+[ADR-QEQ8](QEQ8-python-api-of-the-recorder-as-the-5a-tests-assume-it.md). An agent made these
+choices, which those texts do not fix. The user decides them.
 
-The camera level (`camera_writer.py`):
+Camera level:
 
-1. After a write error, the writer thread takes each item from the queue and discards it, until the
-   end marker. Thus a `give` never waits after a write error. The next `give` raises
-   `RecorderWriteError`.
-2. A `give` wait that ends with `RecorderStalled` counts in `give_wait_count` and
-   `give_wait_ms_max`.
-3. A CSV `write` call that writes fewer bytes than the line is a write error (5.4).
-4. When the writer does not find the last block after `container.close()` (6.3 item 3), it is a
-   write error. The writer writes no last row and no `# end` line. The take level completes the
-   pair (7.4).
-5. The writer checks the fsync clock after each row write, also for the rows that `end` writes.
-   Thus `end` can force the files to disk two times.
-6. A good frame whose SOF does not parse: with no layout, the rows continue to wait (6.4); with a
-   layout, it counts as a frame with another layout (one warning).
-7. When `end` comes while rows wait for the layout, the writer uses the 4:2:2 placeholder of 6.4
-   and logs its warning.
-8. `end` logs one line with the counts of 5.2 (rows, `missing` rows, queue high-water, `give`
-   waits, error).
+1. After a write error, the writer thread discards each queued item until the end marker. The next
+   `give` raises `RecorderWriteError` and never waits.
+2. A `give` wait that ends with `RecorderStalled` counts in the wait counts of 5.2.
+3. A short CSV write is a write error. PyAV writes the MKV through a wrapper that writes each byte
+   or raises (FFmpeg ignores a short count).
+4. The last block not found after the close is a write error: no last row, no `# end` line.
+5. The fsync clock is checked after each row write, also in `end`.
+6. A good frame whose SOF does not parse is stored as a damaged frame (7.2), with one log warning.
+   With no layout it does not end the wait of 6.4. `parse_sof` refuses a short SOF segment, a size
+   of 0, no component and a factor outside 1 to 4.
+7. Rows that wait for the layout at `end` get the 4:2:2 placeholder and its warning.
+8. `end` logs the counts of 5.2.
+9. `give` raises ValueError, and queues nothing, when `frame_number` does not increase (4.1).
+10. When `end` cannot put its marker by its deadline, the writer thread closes both files after
+    its current item and ends (no padding, no `# end` line), so that the process can end.
 
-The take level (`take.py`, `completion.py`, `folder_files.py`, `stop_stats.py`):
+Take level:
 
-9. `finish` completes each pair whose sidecar has no `# end` line (7.4). Each completed pair gets
-   `camera_file_short`.
-10. The completion walk stops at an element of unknown size, at a Cluster with a wrong CRC-32 and
-    at a child that does not parse. It keeps the blocks before that point. A cut EBML header cuts
-    nothing. With no kept block, the cut is at the first Cluster. The completion forces both files
-    to disk.
-11. `last_frame` of `camera_dead` comes from the CSV after the completion, not from the result.
-12. `camera_key` of `take_error` is the key of the camera whose result holds the error text, or
-    null. A row count that is not the frame count (7.6) gives one more `take_error` with the key of
-    that camera and the text `camera <camera_id>: <n> rows, expected <frame count>`.
-13. `detail` of `camera_gap` is null.
-14. A manifest write keeps, from the manifest on disk: each `files` item of another owner, each
-    warning of another source, each `privacy` field of another file or field, `calibration`, each
-    `calibration_camera`, and each member that the format does not name. `files` is sorted by
-    `path` (UTF-8 bytes).
-15. One hold of the lock covers the capture info write and the manifest write of `start_take` and
-    of `finish`. After a lock timeout in `finish`, neither file is written.
-16. JSON files have an indent of 2, characters that are not escaped and an LF at the end.
-17. A statistic of the stop response with no value (for example, a take of one group frame) is
-    NaN. `total_duration_sec` and `duration_s` are null when no row holds an `arrival_ns`.
-18. `stored_px` is the mode size when the SOF of its block does not parse.
-19. SFF-715: a control character is a character of the Unicode category `Cc`. The Windows device
-    names are compared in upper case.
-20. `TakeCamera` does no check. `start_take` makes each refusal.
-21. `TakeSummary` has `stop_response`, `results` (the `CameraTakeResult` or `None` of each camera,
-    as given) and `warnings` (the warnings that `finish` wrote).
-22. `CameraTakeSpec` has `camera_id`, `mkv_path`, `csv_path`, `header` (the key and value pairs of
-    6.5), `take_start_host_ns`, `num`, `den`, `width`, `height`, `layout`, `queue_size` and
-    `stall_limit_s`.
+11. `finish` completes each pair with no `# end` line, and gives it `camera_file_short`. A pair
+    with `# repair` and `# end` lines (an earlier `finish`) is not changed and gets
+    `camera_file_short` again.
+12. The completion maps the camera file into memory. Its walk stops at an element of unknown size,
+    a wrong Cluster CRC-32 or a child that does not parse. A cut EBML header cuts nothing. With no
+    kept block, the cut is at the first Cluster. Both files are forced to disk.
+13. A CSV with no complete column line, or none: the process ended in `start` and wrote no block.
+    The camera file is replaced by one with no block; the CSV is written again from the header of
+    `camera_spec`, with `missing` rows, `# repair cut_bytes=<old size> media_cut_bytes=0` and
+    `# end`; `camera_file_short` has `blocks=0`.
+14. Each camera is completed and read on its own. A fault is logged and gives `take_error` for that
+    camera; the other cameras, the manifest and the stop response are still done.
+15. `last_frame` of `camera_dead` comes from the CSV after the completion.
+16. `camera_key` of `take_error`: the camera of the new `finish` keyword `error_camera`, else the
+    first camera whose result holds an error, else null. A wrong row count (7.6) adds a
+    `take_error` for that camera.
+17. `detail` of `camera_gap` is null.
+18. A manifest write keeps the `files` items, warnings and `privacy` fields of others,
+    `calibration`, each `calibration_camera`, `summary.calibration`, `summary.processing_runs`
+    and unknown members. `files` is sorted by `path`.
+19. One lock hold covers the capture info and the manifest. The lock is tried again only for
+    `EACCES`, `EAGAIN` and `EDEADLK`. A replace that fails with `PermissionError` (a reader holds
+    the file on Windows) is tried again every 50 ms up to `lock_timeout_s`, then its `.tmp` file
+    is removed. Any `OSError` there leaves the manifest `recording`; `finish` logs it and still
+    gives the stop response.
+20. JSON: indent 2, characters not escaped, LF at the end.
+21. A stop statistic with no value is NaN, also `total_duration_sec` (the response model accepts
+    it; the summary `duration_s` is null). A pair whose time does not increase is left out. A fault
+    of the statistics is logged and gives NaN.
+22. `stored_px` is the mode size when its SOF does not parse.
+23. SFF-715: a control character is Unicode category `Cc`; device names are compared in upper case.
+24. `TakeCamera` checks nothing; `start_take` refuses.
+25. `TakeSummary`: `stop_response`, `results`, `warnings`. `CameraTakeSpec`: the paths, the header
+    pairs, the take start, the rate, the size, the layout, the queue size and the stall limit.
+
+Rejected from the review: one CSV `write` for the whole header. Spec 6.5 and T-REC-13 require one
+`write` for each line; item 13 covers a kill during the header.
+
+Not changed; the user decides: whether the `end` deadline is a total time or a time with no
+progress (today a disk slower than the queue drain turns a stop into a disk stall); the two limits;
+other file systems.
 
 ## Reason
 
 - Each choice is the smallest one that completes the spec with no data loss.
-- 1: without it, a `give` after a write error waits for the stall limit, and the error looks like a
-  disk stall.
-- 3 and 4: no row points at a block that is not on disk (6.3).
-- 10: a damaged Cluster or an unknown size cannot occur in a file of the pinned FFmpeg after a
-  process kill. Step 5c walks such files when it repairs a take.
-- 12: F-5 allows null when the camera is not known.
+- 3, 4: no row points at bytes that are not its block (6.3). 6: a block that no decoder reads
+  breaks the readers.
+- 10: a non-daemon thread that waits for ever keeps the process alive.
+- 12: one hour of 1080p60 is tens of GB. 14, 19, 21: the stop request must give its response;
+  step 5c repairs a take that stays `recording`.
 
 ## Open work
 

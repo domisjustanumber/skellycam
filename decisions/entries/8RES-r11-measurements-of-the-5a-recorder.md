@@ -40,9 +40,24 @@ What the results show for the two limits that the user must fix (R11):
 - The once-per-second fsync of SFF-788 did not delay capture (lateness p99 below 1 ms in all runs).
 - The writer thread did not delay a capture loop in the same process (T-REC-GIL).
 
-Limits: one machine, one NVMe drive, Windows only. No slow USB drive (the optional run of T-REC-STALL, section 11 of the spec).
-No gate between the camera processes, so the group pause of 5.2 is not measured here. One run of
-each fsync matrix case.
+Limits of the method (some found by an independent review on 2026-11-20):
+
+- The injected stall sleeps inside the MKV writes of one camera only. A real slow disk stalls all
+  cameras at the same time, and mostly in the fsync calls. This case was not measured.
+- No gate joins the camera processes, so the freeze of the whole group (5.2) was not measured.
+- The frames were 75 kB (720p) and 129 kB (1080p). The spec plans for 600 kB frames at 1080p. 16
+  cameras at 1080p60 write 124 MB/s with 129 kB frames and 576 MB/s with 600 kB frames. At 600 kB,
+  16 full queues of 180 items hold about 1.7 GB of memory.
+- One machine, one NVMe drive, Windows only. Not measured: a spinning disk, a USB disk (the optional
+  run of T-REC-STALL, section 11 of the spec), antivirus software, a nearly full disk, Linux and
+  macOS.
+- One run of each fsync matrix case.
+
+The code of these runs is commit a1541389c. The later fixes of the review
+([ADR-T24F](T24F-choices-of-the-5a-recorder-code.md)) change mostly the take level and the error
+paths. They also add three small steps to the live path that these runs did not measure: a
+`frame_number` check in `give`, an SOF parse of each good frame and a write wrapper on the writer
+thread.
 
 ## Open work
 
