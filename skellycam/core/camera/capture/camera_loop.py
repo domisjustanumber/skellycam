@@ -477,6 +477,13 @@ class CameraLoop:
     def _start_take(self, spec) -> None:
         if self.take_writer is not None:
             self._end_take()
+        orchestrator = self.orchestrator
+        if orchestrator.first_recording_frame_number.value == -1 or orchestrator.last_recording_frame_number.value != -1:
+            # The take ended (or its start failed) before this spec came: no writer (ADR-P5VE).
+            text = f"camera {self.camera_id}: the take ended before its writer started"
+            logger.warning(text)
+            self.status.update_info(writer_failure=text)
+            return
         try:
             self.take_writer = start_take_writer(self.camera_id, spec, self.status.writer_progress_at)
         except Exception as error:  # the camera runs on; the record start fails with this text (ADR-P5VE)

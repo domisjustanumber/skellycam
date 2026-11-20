@@ -807,3 +807,92 @@ def test_an_exit_during_a_take_leaves_finished_camera_files(monkeypatch, tmp_pat
         lines = take_files(tmp_path)[camera_id][1].read_text(encoding="utf-8").splitlines()
         rows = sum(1 for line in lines if line[:1].isdigit())
         assert lines[-1].startswith("# end ") and rows == len(spies.of("record", camera_id)) >= 30, (rows, lines[-1])
+
+
+@pytest.mark.parametrize("case", ["late writer", "unpause timeout"])
+def test_a_failed_start_waits_for_a_late_writer_before_it_finishes_the_folder(monkeypatch, tmp_path, case):
+    """Second review, R8 (a) and (b), decision D: the writer of one camera opens its files at once but returns
+    2 s after the take spec, past the start limit (1 s here). The record start fails, and the take folder is finished only after that
+    camera ended its late writer: `finish` never completes the files of a live writer. With an unpause limit
+    of 0.5 s, the camera that still opens its files cannot unpause in time: the folder is still finished,
+    and the group runs on (before, the unpause timeout stopped the group and the manifest stayed
+    `recording`)."""
+    import skellycam.core.camera_group.camera_orchestrator as orchestrator_module
+    from skellycam.core.take_recorder import CameraTakeWriter, Take
+
+    monkeypatch.setattr(group_module(), "TAKE_START_LIMIT_S", 1.0)
+    if case == "unpause timeout":
+        monkeypatch.setattr(orchestrator_module, "CAMERA_STATE_TIMEOUT_SECONDS", 0.5)
+    start, end, finish = CameraTakeWriter.start.__func__, CameraTakeWriter.end, Take.finish
+    times = {}
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        slow = app.factory.camera_ids[0]
+
+        def slow_start(cls, spec, **kwargs):
+            writer = start(cls, spec, **kwargs)
+            if spec.camera_id == slow and spec.csv_path.parent.parent.name == "take":
+                time.sleep(2.0)  # a slow start after the open (disk, antivirus, network share)
+            return writer
+
+        def timed_end(writer, frame_count):
+            if writer.spec.camera_id == slow:
+                time.sleep(0.5)  # and a slow end: a finish that does not wait for it overlaps it
+            result = end(writer, frame_count)
+            times.setdefault(writer.spec.camera_id, time.monotonic())
+            return result
+
+        def timed_finish(take, *args, **kwargs):
+            times.setdefault("finish", time.monotonic())
+            return finish(take, *args, **kwargs)
+
+        monkeypatch.setattr(CameraTakeWriter, "start", classmethod(slow_start))
+        monkeypatch.setattr(CameraTakeWriter, "end", timed_end)
+        monkeypatch.setattr(Take, "finish", timed_finish)
+        ready_app_steps(app)
+        response = app.record_start(tmp_path)
+        assert response.status_code == 500, response.text
+        assert app.group.ipc.should_continue and app.group.take is None
+        assert take_manifest(tmp_path)["state"] == "finished"
+        app.wait(lambda: not app.group.cameras.orchestrator.camera_statuses[slow].recording_in_progress.value,
+                 "the late writer ends")
+        assert times.get(slow, math.inf) < times["finish"], "finish completed the files of a live writer"
+        app.wait(lambda: all(app.state(cid) == "ready" for cid in app.factory.camera_ids), "both cameras ready")
+        assert app.record_start(tmp_path, name="take2").status_code == 200
+        stop(app)
+    assert all(take_rows(tmp_path, cid) == [] for cid in app.factory.camera_ids)
+
+
+def test_a_stop_whose_unpause_fails_still_finishes_the_take(monkeypatch, tmp_path):
+    """Second review, R8 (c): the stop paused the cameras, then one camera cannot unpause within the limit
+    (0.5 s here; its loop is held 2 s). The stop still finishes the take: 200, the manifest is `finished`,
+    and the group runs on. Before, the unpause timeout stopped the group, and the take ended with no finish."""
+    import types
+
+    import skellycam.core.camera_group.camera_orchestrator as orchestrator_module
+
+    loop_module = importlib.import_module("skellycam.core.camera.capture.camera_loop")
+    monkeypatch.setattr(orchestrator_module, "CAMERA_STATE_TIMEOUT_SECONDS", 0.5)
+    hold = {"on": False}
+    real_sleep = time.sleep
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        held = app.factory.camera_ids[0]
+
+        def held_sleep(seconds):
+            if hold["on"] and seconds == 0.05 and held in threading.current_thread().name:
+                hold["on"] = False
+                real_sleep(2.0)  # paused, and held: it cannot unpause in time
+            real_sleep(seconds)
+
+        names = {name: getattr(time, name) for name in dir(time) if not name.startswith("_")}
+        monkeypatch.setattr(loop_module, "time", types.SimpleNamespace(**{**names, "sleep": held_sleep}))
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 30)
+        hold["on"] = True
+        stopped = app.record_stop()
+        assert stopped.status_code == 200, stopped.text
+        assert app.group.ipc.should_continue and app.group.take is None
+    assert take_manifest(tmp_path)["state"] == "finished"
+    frame_count = stopped.json()[0]["number_of_frames"]
+    assert all(len(take_rows(tmp_path, cid)) == frame_count for cid in app.factory.camera_ids)

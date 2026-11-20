@@ -487,13 +487,17 @@ class CameraGroup:
             for status in list(statuses.values()):
                 status.set_warning_items([])
             take, self.take = self.take, None
-            started = [camera_id for camera_id in self.recording_ids if statuses[camera_id].recording_in_progress.value]
-            if take is not None:  # a camera with a writer ends it at its next frame, with no row
-                self.cameras.orchestrator.last_recording_frame_number.value = (
-                    self.cameras.orchestrator.first_recording_frame_number.value)
-            await self.cameras.unpause(await_unpaused=True)
-            if take is not None:
-                await self._finish_failed_start(take, started, error)
+            orchestrator = self.cameras.orchestrator
+            try:
+                if take is not None:
+                    # Each camera with a writer ends it at its next frame, with no row; a camera that gets its take
+                    # spec from now on refuses it (`CameraLoop._start_take`).
+                    orchestrator.last_recording_frame_number.value = orchestrator.first_recording_frame_number.value
+                # No wait: a camera that still opens its files cannot unpause in time, and the group runs on.
+                await orchestrator.unpause(await_unpaused=False)
+            finally:
+                if take is not None:
+                    await self._finish_failed_start(take, error)
             raise
         await self.cameras.unpause(await_unpaused=True)
         for item in warnings:
@@ -502,12 +506,16 @@ class CameraGroup:
                     f"{recording_info.recording_name}")
         return warnings
 
-    async def _finish_failed_start(self, take: Take, started: list, error: BaseException) -> None:
+    async def _finish_failed_start(self, take: Take, error: BaseException) -> None:
         """Decision D of the user (2026-11-20): a record start that fails finishes the take folder at once, with
-        zero rows and a `take_error`, after each camera that started its writer ended it."""
+        zero rows and a `take_error`. It waits first for each camera that has a writer or can still start one
+        (in the gate): its result, or its refusal (`writer_failure`). Thus no live writer has its files
+        completed (8.1 step 4)."""
         orchestrator, ids = self.cameras.orchestrator, self.recording_ids
+        statuses = orchestrator.camera_statuses
         try:
-            self.recording_ids = started
+            self.recording_ids = [camera_id for camera_id in ids if statuses[camera_id].recording_in_progress.value
+                                  or statuses[camera_id].in_gate]
             results, dead, running = await asyncio.to_thread(self._collect_results)
             await asyncio.to_thread(take.finish, [results.get(camera_id) for camera_id in ids], frame_count=0,
                                     ended_by_error=f"the record start failed: {error}", dead_cameras=dead,
@@ -600,7 +608,10 @@ class CameraGroup:
                 count = max(statuses[camera_id].frame_count.value for camera_id in self.recording_ids if camera_id in statuses) - 2
             orchestrator.last_recording_frame_number.value = count + 3
             if paused:
-                await self.cameras.unpause(await_unpaused=True)
+                try:
+                    await orchestrator.unpause(await_unpaused=True)
+                except (RuntimeError, TimeoutError) as error:  # the last frame is set: the take ends in any case
+                    logger.warning(f"The stop could not unpause each camera in time ({error}); the take ends")
             frame_count = orchestrator.take_frame_count()
             results, dead, running = await asyncio.to_thread(self._collect_results)
             error, error_camera = self.take_error or (None, None)
@@ -655,6 +666,8 @@ class CameraGroup:
                     pending.discard(camera_id)
                     if self.take_error is None:
                         self.take_error = (f"disk stall on camera {camera_id}", camera_id)
+                elif not status.recording_in_progress.value and status.info_dict().get("writer_failure"):
+                    pending.discard(camera_id)  # its writer did not start: no result, and no file of its own
             if pending:
                 time.sleep(WATCH_INTERVAL_S)
         running = set()
