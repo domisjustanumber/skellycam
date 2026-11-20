@@ -58,7 +58,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [037V](entries/037V-completion-of-w8-the-phase-2-loop-and-its-tests.md) | Completion of W8: phase 2 loop deleted; its tests moved to the shared loop or retired for a capture test or a changed rule | none | proposed |
 | [BM73](entries/BM73-fixes-of-the-first-ci-run-of-the-capture-workflow.md) | Fixes of the first capture CI run: stats float, codec alarm on the main thread, test fixes, OpenCV fake on a virtual clock, macOS timing step, group watch | none | proposed |
 | [R60B](entries/R60B-fixes-of-the-first-hardware-run-of-step-3a.md) | Fixes of the first 3a hardware run: DirectShow device path of the OpenCV source, hardware test labels by USB IDs | none | proposed |
-| [44NW](entries/44NW-proposed-gate-rule-newest-frame-at-the-close-of-a-round.md) | Proposed gate rule: a round closes when each camera has a fresh frame, and each camera gives its newest frame (changes D26) | none | proposed |
+| [44NW](entries/44NW-proposed-gate-rule-newest-frame-at-the-close-of-a-round.md) | Proposed gate rule: a round closes when each camera has a fresh frame; each camera gives its newest frame by the close time (changes D26) | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
