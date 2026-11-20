@@ -11,6 +11,7 @@ Endpoints:
   GET  /playback/{recording_id}/videos                   — list videos in a recording
   GET  /playback/{recording_id}/videos/{video_id}        — stream a video file
 """
+import json
 import logging
 from urllib.parse import quote, urlencode
 from skellycam.core.recorders.videos.recording_statistics import read_recording_statistics
@@ -31,6 +32,7 @@ logger = logging.getLogger(__name__)
 playback_router = APIRouter(prefix="/playback", tags=["Playback"])
 
 VIDEO_EXTENSIONS = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
+NEEDS_NEW_PLAYER = "needs the new player"  # a take of the new format (recorder.md 10 item 14) [C7]
 TIMESTAMP_EXTENSIONS = {".csv"}
 
 
@@ -54,11 +56,27 @@ class RecordingListEntry(BaseModel):
     total_frames: Optional[int] = None
     duration_seconds: Optional[float] = None
     fps: Optional[float] = None
+    needs_new_player: bool = False
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+def _new_take_manifest(recording_path: Path) -> dict | None:
+    """The manifest of a take of the new format, or None for an old recording."""
+    try:
+        manifest = json.loads((recording_path / "recording_manifest.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    return manifest if isinstance(manifest, dict) and manifest.get("skellyfileformat") == "recording_manifest" else None
+
+
+def _refuse_new_take(recording_path: Path) -> None:
+    """Today's player cannot play a new take: the old video endpoints give 409 (recorder.md 10 item 14)."""
+    if _new_take_manifest(recording_path) is not None:
+        raise HTTPException(status_code=409, detail=NEEDS_NEW_PLAYER)
+
 
 def _resolve_recording_path(
     recording_id: str,
@@ -168,6 +186,14 @@ def list_recordings(
     for child in sorted(recordings_dir.iterdir(), reverse=True):  # newest first by name
         if not child.is_dir():
             continue
+        manifest = _new_take_manifest(child)
+        if manifest is not None:
+            media = child / "synchronized_videos"
+            entries.append(RecordingListEntry(
+                name=child.name, path=str(child), video_count=len(manifest.get("cameras") or []),
+                total_size_bytes=_get_total_size(media) if media.is_dir() else 0,
+                created_timestamp=_get_created_timestamp(child), needs_new_player=True))
+            continue
         try:
             video_folder = _find_video_folder(child)
             video_count = sum(
@@ -207,6 +233,7 @@ def list_videos(
     ),
 ) -> list[VideoInfo]:
     recording_path = _resolve_recording_path(recording_id, recording_parent_directory)
+    _refuse_new_take(recording_path)
 
     try:
         video_folder = _find_video_folder(recording_path)
@@ -243,6 +270,7 @@ def stream_video(
     ),
 ) -> FileResponse:
     recording_path = _resolve_recording_path(recording_id, recording_parent_directory)
+    _refuse_new_take(recording_path)
 
     try:
         video_folder = _find_video_folder(recording_path)
