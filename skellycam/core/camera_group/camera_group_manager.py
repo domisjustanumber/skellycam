@@ -3,6 +3,7 @@ import logging
 import multiprocessing
 from multiprocessing.sharedctypes import Synchronized
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from collections.abc import Callable
 
 import numpy as np
@@ -21,6 +22,7 @@ from skellycam.core.camera.capture.modes import (
 from skellycam.core.camera.capture.source import CaptureFailure, CaptureRequest
 from skellycam.core.camera.config.camera_config import CameraConfigs
 from skellycam.core.camera_group.camera_group import CameraGroup, RequestRefused, same_config
+from skellycam.core.camera_group.camera_start_failure import describe_start_failure
 from skellycam.core.device_detection.detect_cameras_devices import CameraDeviceInfo, detect_available_cameras
 from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes
 from skellycam.core.ipc.pubsub.pubsub_topics import FramerateMessage
@@ -104,12 +106,20 @@ class CameraGroupManager:
             self.detected_cameras = {camera.camera_id: camera
                                      for camera in await asyncio.to_thread(detect_available_cameras)}
         warnings, rates_known = self._check_request(camera_configs, camera_group)
+        started = datetime.now(timezone.utc)
         if camera_group is None:
             selected = {camera_id: config for camera_id, config in camera_configs.items() if config.use_this_camera}
             camera_group, failures = await self._create_and_start(selected)
         else:
             failures, change_warnings = await camera_group.apply(camera_configs)
             warnings += change_warnings
+        if failures:
+            # One explanation of the failed start, where it adds a cause to the reasons (port from sfn26)
+            text = await asyncio.to_thread(describe_start_failure, failures, camera_configs, started,
+                                           detect_available_cameras)
+            if text:
+                warnings.append(dict(kind="start_failure", camera_ids=sorted(failures), text=text))
+                logger.warning(text)
         if not rates_known:
             # agent 56, ADR-PDD3 W3: different real rates after the open give a warning item and a log record
             rates = {camera_id: config.framerate for camera_id, config in camera_group.configs.items()
