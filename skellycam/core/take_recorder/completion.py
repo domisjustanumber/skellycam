@@ -2,6 +2,7 @@
 
 It runs only after the camera's process was joined, or after its result says `files_closed`.
 """
+import mmap
 import os
 import zlib
 
@@ -25,7 +26,7 @@ def _element(data, pos):
     return eid, pos + size_length, None if size == (1 << (7 * size_length)) - 1 else size
 
 
-def complete_blocks(data: bytes) -> tuple[list, int]:
+def complete_blocks(data: bytes | mmap.mmap) -> tuple[list, int]:
     """Walk the Segment (SFF-740). Returns the end offset of each complete SimpleBlock, in file order,
     and the offset of the first Cluster (or of the end of the walk when the file has no Cluster)."""
     try:
@@ -77,32 +78,58 @@ def _cluster_blocks(data, start, end):
     return found
 
 
-def complete_pair(mkv_path, csv_path, frame_count: int, writer: str) -> int | None:
+def _walk_file(mkv_path):
+    """complete_blocks of the file, read through a map so that memory does not grow with the file.
+    Returns (block ends, first Cluster, file size); the size is 0 for a missing or empty file."""
+    try:
+        with open(mkv_path, "rb") as handle:
+            size = os.fstat(handle.fileno()).st_size
+            if not size:
+                return [], 0, 0
+            with mmap.mmap(handle.fileno(), 0, access=mmap.ACCESS_READ) as data:  # closed before any cut
+                blocks, first_cluster = complete_blocks(data)
+    except FileNotFoundError:
+        return [], 0, 0
+    return blocks, first_cluster, size
+
+
+def complete_pair(mkv_path, csv_path, frame_count: int, writer: str, header) -> int | None:
     """Complete a pair whose sidecar has no `# end` line. Returns n, the blocks kept, or None when the
-    sidecar already ends with an `# end` line."""
-    csv = sidecar.read_strict(csv_path)
-    if csv.has_end:
-        return None
-    with open(mkv_path, "rb") as handle:
-        data = handle.read()
-    blocks, first_cluster = complete_blocks(data)
-    n = min(len(csv.rows), len(blocks))  # SFF-795: the first n rows and the first n blocks
+    sidecar ended normally. A sidecar with no usable header (the process ended in `start`) is written
+    again from `header`, the (key, value) pairs of 6.5, with `missing` rows only."""
+    try:
+        csv = sidecar.read_strict(csv_path)
+    except (FileNotFoundError, ValueError):
+        csv = None
+    if csv is not None and csv.has_end:
+        if b"\n# repair " not in csv.data:
+            return None
+        return sum(1 for r in csv.rows if r.byte_offset is not None)  # an earlier `finish` completed it
+    blocks, first_cluster, media_size = _walk_file(mkv_path)
+    kept = [] if csv is None else csv.rows
+    n = min(len(kept), len(blocks))  # SFF-795: the first n rows and the first n blocks
     media_cut = blocks[n - 1] if n else first_cluster
-    rows = csv.rows[:n]
-    csv_cut = csv.ends[n - 1] if n else csv.header_end
-    with open(mkv_path, "r+b") as handle:  # cut after block n - 1; no byte before it changes, nothing is appended
-        handle.truncate(media_cut)
-        os.fsync(handle.fileno())
+    if media_cut < media_size:
+        with open(mkv_path, "r+b") as handle:  # cut after block n - 1; no byte before it changes, nothing is appended
+            handle.truncate(media_cut)
+            os.fsync(handle.fileno())
     missing_rows = [sidecar.Row(k, None, None, None, sidecar.MISSING, None, None) for k in range(n, frame_count)]
-    rows += missing_rows
+    rows = kept[:n] + missing_rows
     gaps, missing = sidecar.counts(rows)
-    with open(csv_path, "r+b") as handle:
+    if csv is None:
+        old_size = csv_path.stat().st_size if csv_path.exists() else 0
+        lines = [sidecar.header_line(key, value) for key, value in header] + [sidecar.COLUMN_LINE]
+        csv_cut, mode = 0, "wb"
+    else:
+        old_size, lines, csv_cut, mode = len(csv.data), [], csv.ends[n - 1] if n else csv.header_end, "r+b"
+    lines += [sidecar.row_line(row) for row in missing_rows]
+    lines.append(f"# repair cut_bytes={old_size - csv_cut} media_cut_bytes={media_size - min(media_cut, media_size)} "
+                 f"repair_writer={writer}\n".encode())
+    lines.append(sidecar.end_line(len(rows), gaps, missing))
+    with open(csv_path, mode) as handle:
         handle.truncate(csv_cut)
         handle.seek(csv_cut)
-        for row in missing_rows:
-            handle.write(sidecar.row_line(row))
-        handle.write(f"# repair cut_bytes={len(csv.data) - csv_cut} media_cut_bytes={len(data) - media_cut} "
-                     f"repair_writer={writer}\n".encode())
-        handle.write(sidecar.end_line(len(rows), gaps, missing))
+        for line in lines:
+            handle.write(line)
         os.fsync(handle.fileno())
     return n

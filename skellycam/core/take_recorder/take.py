@@ -13,6 +13,7 @@ from pathlib import Path
 
 from skellycam.core.take_recorder import folder_files, sidecar
 from skellycam.core.take_recorder.completion import complete_pair
+from skellycam.core.take_recorder.mkv import MkvFile
 from skellycam.core.take_recorder.placeholder import JpegLayout, can_build, parse_sof
 from skellycam.core.take_recorder.stop_stats import stop_response_fields
 
@@ -153,29 +154,63 @@ class Take:
     def write_folder_files(self, state, summary, warnings) -> None:
         """The capture info, then the manifest; the caller holds the lock (6.8)."""
         info = folder_files.json_bytes(folder_files.capture_info(self))
-        folder_files.write_whole(self.folder / self.info_name, info)
+        folder_files.write_whole(self.folder / self.info_name, info, self.lock_timeout_s)
         manifest_path = self.folder / folder_files.MANIFEST_NAME
         existing = folder_files.read_json(manifest_path)
         manifest = folder_files.manifest(self, existing, state=state, info_sha=hashlib.sha256(info).hexdigest(),
                                          warnings=warnings, summary_value=summary)
-        folder_files.write_whole(manifest_path, folder_files.json_bytes(manifest))
+        folder_files.write_whole(manifest_path, folder_files.json_bytes(manifest), self.lock_timeout_s)
 
-    def finish(self, results, *, frame_count, ended_by_error=None, dead_cameras=None) -> TakeSummary:
+    def _complete(self, camera, mkv, csv, frame_count):
+        """7.4 for one camera. A camera process that ended in `start` left no usable CSV header, so it
+        wrote no block: the take level then writes a camera file with no block in place of what is
+        there (a missing file or a cut header)."""
+        spec = self.camera_spec(camera.camera_id)
+        try:
+            sidecar.read_strict(csv)
+        except (FileNotFoundError, ValueError):
+            mkv.unlink(missing_ok=True)
+        if not mkv.exists():
+            empty = MkvFile(mkv, num=spec.num, den=spec.den, width=spec.width, height=spec.height)
+            empty.close_container()
+            empty.raw.close()
+        return complete_pair(mkv, csv, frame_count, self.writer, spec.header)
+
+    def finish(self, results, *, frame_count, ended_by_error=None, dead_cameras=None,
+               error_camera=None) -> TakeSummary:
         """The end of the take (8.1 step 5). The caller passes a result, or None, for each camera only
-        after the camera's writer ended or its process was joined [review B2]."""
+        after the camera's writer ended or its process was joined [review B2]. `error_camera` is the
+        `camera_id` of the camera of `ended_by_error`, when the caller knows it (F-5)."""
         dead_cameras = dead_cameras or {}
         mkvs = [self.folder / self.video_path(label) for label in self.labels]
         paths = [self.folder / self.timing_path(label) for label in self.labels]
-        # 7.4: complete each pair whose sidecar has no `# end` line; then read each sidecar (8.1 step 5).
-        shorts = [complete_pair(mkv, csv, frame_count, self.writer) for mkv, csv in zip(mkvs, paths)]
+        # 7.4 for each camera first, then the strict reads (8.1 step 5). Each camera on its own: a fault
+        # of one camera is logged and reported, and never stops the others or the manifest.
+        shorts, faults = [], {}
+        for camera, mkv, csv in zip(self.cameras, mkvs, paths):
+            try:
+                shorts.append(self._complete(camera, mkv, csv, frame_count))
+            except Exception as error:
+                logger.exception("camera %s: the files could not be completed", camera.camera_id)
+                shorts.append(None)
+                faults[camera.camera_id] = error
         warnings, sidecars = [], []
         for camera, key, mkv, csv, blocks in zip(self.cameras, self.keys, mkvs, paths, shorts):
-            rows = sidecar.read_strict(csv).rows
+            try:
+                rows = sidecar.read_strict(csv).rows
+                stored_px = self._stored_px(camera, mkv, rows)
+            except Exception as error:
+                logger.exception("camera %s: the timing sidecar could not be read", camera.camera_id)
+                faults.setdefault(camera.camera_id, error)
+                rows, stored_px = [], f"{camera.width}x{camera.height}"
+            if camera.camera_id in faults:
+                warnings.append(self._warning("take_error", key, f"camera {camera.camera_id}: the files could not "
+                                                                 f"be completed: {faults[camera.camera_id]!r}"))
             if len(rows) != frame_count:  # 7.6: a defect
                 logger.error("camera %s: %d rows, expected %d", camera.camera_id, len(rows), frame_count)
                 warnings.append(self._warning("take_error", key, f"camera {camera.camera_id}: {len(rows)} rows, "
                                                                  f"expected {frame_count}"))
-            sidecars.append((rows, self._stored_px(camera, mkv, rows)))
+            sidecars.append((rows, stored_px))
             gaps, _ = sidecar.counts(rows)
             if gaps:
                 warnings.append(self._warning("camera_gap", key, None))
@@ -186,14 +221,17 @@ class Take:
             if blocks is not None:
                 warnings.append(self._warning("camera_file_short", key, f"blocks={blocks} rows={frame_count}"))
         if ended_by_error is not None:
-            # camera_key: the camera whose result holds the error text, or null (F-5).
-            failed = [key for key, r in zip(self.keys, results) if r is not None and r.error == ended_by_error]
-            warnings.append(self._warning("take_error", failed[0] if failed else None, ended_by_error))
+            # camera_key (F-5): the camera that the caller names, else the first camera whose result
+            # holds an error, else null.
+            if error_camera is None:
+                error_camera = next((r.camera_id for r in results if r is not None and r.error is not None), None)
+            keys = {c.camera_id: key for c, key in zip(self.cameras, self.keys)}
+            warnings.append(self._warning("take_error", keys.get(error_camera), ended_by_error))
         try:
             with folder_files.take_lock(self.folder / folder_files.LOCK_NAME, self.lock_timeout_s):
                 self.write_folder_files("finished", folder_files.summary(self, sidecars), warnings)
-        except TimeoutError as error:
-            logger.error("the manifest stays `recording`: %s", error)  # step 5c repairs the take (6.8)
+        except OSError as error:  # a lock timeout, a reader that holds a file open, or a full disk
+            logger.error("the manifest stays `recording`: %r", error)  # step 5c repairs the take (6.8)
         stop = stop_response_fields(paths, recording_name=self.rec, recording_path=self.folder,
                                     frame_count=frame_count)
         return TakeSummary(stop_response=stop, results=list(results), warnings=warnings)

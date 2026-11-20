@@ -1,8 +1,11 @@
 """The fields of the stop response, from the timing sidecars (specs/recorder.md, section 8.2)."""
+import logging
 import math
 import statistics
 
 from skellycam.core.take_recorder.sidecar import MISSING, read_strict
+
+logger = logging.getLogger(__name__)
 
 
 def duration_s(rows_per_camera) -> float | None:
@@ -24,8 +27,7 @@ def _mean(values) -> float:
     return round(statistics.fmean(values), 2) if values else math.nan
 
 
-def stop_response_fields(csv_paths, *, recording_name, recording_path, frame_count) -> dict:
-    """Each field of `StopRecordingResponse`. A `missing` row is left out of each statistic."""
+def _per_frame(csv_paths):
     rows_per_camera = [read_strict(path).rows for path in csv_paths]
     times = [[None if r.flags & MISSING else r.arrival_ns for r in rows] for rows in rows_per_camera]
     rates, durations, ranges = [], [], []
@@ -33,16 +35,29 @@ def stop_response_fields(csv_paths, *, recording_name, recording_path, frame_cou
         live = [t[k] for t in times if k < len(t) and t[k] is not None]
         if live:
             ranges.append((max(live) - min(live)) / 1e6)
-        pairs = [(t[k - 1], t[k]) for t in times if 0 < k < len(t) and t[k - 1] is not None and t[k] is not None]
+        # A pair whose time does not increase (two equal arrival times) has no rate.
+        pairs = [(t[k - 1], t[k]) for t in times
+                 if 0 < k < len(t) and t[k - 1] is not None and t[k] is not None and t[k] > t[k - 1]]
         if pairs:
             rates.append(statistics.fmean([1e9 / (b - a) for a, b in pairs]))
             durations.append(statistics.fmean([(b - a) / 1e6 for a, b in pairs]))
+    return duration_s(rows_per_camera), rates, durations, ranges
+
+
+def stop_response_fields(csv_paths, *, recording_name, recording_path, frame_count) -> dict:
+    """Each field of `StopRecordingResponse`. A `missing` row is left out of each statistic. A value
+    with no data is NaN (a float field that JSON gives as null); a fault is logged, never raised."""
+    try:
+        duration, rates, durations, ranges = _per_frame(csv_paths)
+    except Exception:  # the stop request must not fail because of its statistics
+        logger.exception("the stop statistics of %s could not be computed", recording_name)
+        duration, rates, durations, ranges = None, [], [], []
     return {
         "recording_name": recording_name,
         "recording_path": str(recording_path),
         "number_of_cameras": len(csv_paths),
         "number_of_frames": frame_count,
-        "total_duration_sec": duration_s(rows_per_camera),
+        "total_duration_sec": math.nan if duration is None else duration,
         "mean_framerate": _mean(rates),
         "mean_inter_camera_sync_ms": _mean(ranges),
         "framerate_stats": _stats(rates),

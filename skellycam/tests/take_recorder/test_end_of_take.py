@@ -123,7 +123,7 @@ def test_t_rec_21_disk_stall_ends_the_take(tmp_path, runs, children):
     n = check_short_pair(run, "0a1b", frame_count, child_payload)
     manifest = run.manifest()
     assert [w["detail"] for w in warnings_of(manifest, "take_error")] == ["disk stall on camera 0a1b"]
-    assert warnings_of(manifest, "take_error")[0]["camera_key"] in (camera_key("0a1b"), None)
+    assert warnings_of(manifest, "take_error")[0]["camera_key"] == camera_key("0a1b")
     dead = warnings_of(manifest, "camera_dead")
     assert [(w["camera_key"], w["detail"]) for w in dead] == [(camera_key("0a1b"), f"last_frame={n - 1 if n else 'none'} reason=disk stall")]
     short = warnings_of(manifest, "camera_file_short")

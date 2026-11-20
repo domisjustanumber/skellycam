@@ -1,6 +1,7 @@
 """The manifest, the capture info, the whole-file write and the lock (specs/recorder.md, 6.6 to 6.8)."""
 import contextlib
 import datetime
+import errno
 import json
 import os
 import sys
@@ -17,6 +18,9 @@ else:
 FORMAT_VERSION, FORMAT_PRERELEASE = "2.0", 1  # SFF-707, SFF-710
 LOCK_NAME, MANIFEST_NAME, MEDIA = ".processing.lock", "recording_manifest.json", "synchronized_videos"
 LOCK_RETRY_S = 0.05
+# The errors of a lock that another program holds: msvcrt gives EACCES or EDEADLOCK (= EDEADLK),
+# flock gives EWOULDBLOCK (= EAGAIN). Each other error is reported at once.
+LOCK_BUSY = {errno.EACCES, errno.EAGAIN, errno.EDEADLK}
 CONTROLS = (("exposure", "exposure_us"), ("gain", "gain"), ("focus", "focus"))  # TakeCamera name, SFF-802 name
 REQUESTED = ("width", "height", "framerate", "capture_format", "exposure_mode")
 
@@ -45,13 +49,26 @@ def read_json(path):
         return None
 
 
-def write_whole(path, data: bytes) -> None:
-    """SFF-786: write `<name>.tmp` in the same folder, force it to disk, then replace the file."""
+def write_whole(path, data: bytes, timeout_s: float) -> None:
+    """SFF-786: write `<name>.tmp` in the same folder, force it to disk, then replace the file.
+
+    On Windows the replace fails while a reader holds the file open. It is tried again every 50 ms
+    for `timeout_s`; then the `.tmp` file is removed and TimeoutError is raised."""
     tmp = path.with_name(path.name + ".tmp")
-    with open(tmp, "wb") as handle:
+    with open(tmp, "wb") as handle:  # "wb" also reuses a `.tmp` file that a kill left
         handle.write(data)
         os.fsync(handle.fileno())
-    os.replace(tmp, path)
+    deadline = time.monotonic() + timeout_s
+    while True:
+        try:
+            os.replace(tmp, path)
+            return
+        except PermissionError:
+            if time.monotonic() >= deadline:
+                with contextlib.suppress(OSError):
+                    os.remove(tmp)
+                raise TimeoutError(f"another program holds {path} open for more than {timeout_s} s") from None
+            time.sleep(LOCK_RETRY_S)
 
 
 @contextlib.contextmanager
@@ -68,7 +85,9 @@ def take_lock(path, timeout_s):
                 else:
                     fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
                 break
-            except OSError:
+            except OSError as error:
+                if error.errno not in LOCK_BUSY:
+                    raise
                 if time.monotonic() >= deadline:
                     raise TimeoutError(f"another program holds {path} for more than {timeout_s} s") from None
                 time.sleep(LOCK_RETRY_S)
@@ -160,6 +179,9 @@ def manifest(take, existing, *, state, info_sha, warnings, summary_value) -> dic
     fields = [f for f in existing.get("privacy", {}).get("fields", []) if (f["file"], f["field"]) not in mine] + ours
     fields.sort(key=lambda f: (f["file"].encode("utf-8"), f["field"].encode("utf-8")))
     summary_value["warnings"] = sorted({w["code"] for w in warnings})
+    old_summary = existing.get("summary") or {}  # freemocap fills these two members (SFF-724)
+    summary_value["calibration"] = old_summary.get("calibration")
+    summary_value["processing_runs"] = old_summary.get("processing_runs") or []
     calibration = {c.get("camera_key"): c.get("calibration_camera") for c in existing.get("cameras", [])}
     value = {
         "skellyfileformat": "recording_manifest", "format_version": FORMAT_VERSION,
