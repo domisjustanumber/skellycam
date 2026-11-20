@@ -672,30 +672,23 @@ Each item fills a gap. The body marks each one [agent n].
 
 Each question is worded so that "yes" accepts the recommendation.
 
-- **Q1.** The tile cannot show the camera label without a frame number (section 9, item 1). Allow
-  `TileLabel.frame` to be `null` in the shared tile: then the tile draws no frame part, and shows
-  the label and the state before the first frame and on a camera that failed before any frame.
-  This is a change of `tile/tile.ts`, `tile/format.ts` and section 8.3 of `specs/player.md`, with
-  T-PLAY-37 and T-PLAY-44 extended. It is made on `dom/player` before the merge of section 2. Yes?
-  Recommendation: yes. With "no", the tile shows only the state until the first frame, and a
+- **Q1.** Allow `TileLabel.frame` to be `null` in the shared tile (no frame part). Then a tile shows
+  its label and state before the first frame and on a camera that failed with no frame (section 9,
+  item 1). The change is in `tile.ts`, `format.ts`, section 8.3 of `specs/player.md`, T-PLAY-37 and
+  T-PLAY-44, on `dom/player`, before the merge of section 2. Yes? Recommendation: yes. With "no", a
   failed camera shows "failed" with no name.
-- **Q2.** Merge `dom/native-jpeg`, then `dom/player`, into `dom/preview` with `git merge` before the
-  first 4b test commit, and import the tile from `@/player/index.ts`. The 4b PR to
-  `development-streaming` then also carries phase 3a and the 6a player, unless they land first.
-  Yes? Recommendation: yes. The alternative is to wait until 6a and phase 3a are on
-  `development-streaming`; 6a lands with recorder step 5a [player 1.1], so 4b would wait for 5a.
-- **Q3.** In the frame rate viewer, replace the two series "Server" and "Display" with one series
-  for each camera, the delivered rate, in the timeline and in the histogram, coloured from
-  `d3.schemeTableau10` in camera order. Yes? Recommendation: yes. The alternative is to delete the
-  two charts and keep only the table, which is less code but removes a feature.
+- **Q2.** Before the first 4b test commit, `git merge` `dom/native-jpeg`, then `dom/player`, into
+  `dom/preview`, and import the tile from `@/player/index.ts`. The 4b PR then also carries phase 3a
+  and the 6a player, unless they land first. Yes? Recommendation: yes. Else 4b waits for recorder
+  step 5a, which lands with 6a [player 1.1].
+- **Q3.** In the timeline and the histogram of the frame rate viewer, replace the series "Server"
+  and "Display" with one series of the delivered rate for each camera, coloured from
+  `d3.schemeTableau10`. Yes? Recommendation: yes. The alternative deletes the two charts.
 - **Q4.** `PreviewRelay` holds the ring lock of the group (`_ring_lock`, renamed `ring_lock`) for the
-  reads of each camera and never across an `await`, because phase 3a closes rings from its watch
-  thread (4.3). This changes the rule of [4a 5.1]. Yes? Recommendation: yes. Without it, a read can
-  touch a released buffer after the merge of `dom/native-jpeg`.
-- **Q5.** The camera part of the tile label is `<camera_name> · <camera id>`, not `camera_name` alone
-  as [4a 6.1] says, so that two cameras of one model have different labels. Yes? Recommendation:
-  yes. Today's UI shows the camera id. With "no", the label is `camera_name` only.
-- **Q6.** Accept the targets B-1 to B-4 of 6.3 and the rule of 6.4: a worker only after a miss of
-  B-1, B-2 or B-3 in the median of three runs, by a later spec. Yes? Recommendation: yes. The
-  numbers come from the 4a measurements and the player profile. None is measured for the
-  preview tile.
+  reads of each camera, never across an `await`, because phase 3a closes rings from its watch thread
+  (4.3). This changes [4a 5.1]. Yes? Recommendation: yes. Else a read can touch a released buffer.
+- **Q5.** The tile label is `<camera_name> · <camera id>`, not `camera_name` alone [4a 6.1], so that
+  two cameras of one model have different labels. Yes? Recommendation: yes.
+- **Q6.** Accept the targets B-1 to B-4 (6.3) and the rule of 6.4: a worker only after B-1, B-2 or
+  B-3 misses in the median of three runs, by a later spec. Yes? Recommendation: yes. No number is
+  measured for the preview tile yet.
