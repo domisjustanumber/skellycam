@@ -7,7 +7,7 @@
 The spec [`specs/unix-capture.md`](../../specs/unix-capture.md) (draft 2) and its test list
 T-UNX-01 to T-UNX-88 are proposed. Section 8 of the spec lists 30 choices of the agent that the
 decisions of the user ([ADR-22EJ](22EJ-decisions-of-the-user-for-linux-and-macos-native-capture.md))
-do not fix. Section 9 lists four points that wait for the user; the spec is written to the
+do not fix. Section 9 lists five points that wait for the user; the spec is written to the
 recommendation of each. ADR-22EJ item 14 holds the seven recommendations that the user accepted. The main choices:
 
 1. Linux: V4L2 through the standard library only (`fcntl.ioctl`, `mmap`, `select.poll`, `ctypes`
@@ -36,7 +36,12 @@ recommendation of each. ADR-22EJ item 14 holds the seven recommendations that th
 10. The settings `SKELLYCAM_LINUX_CAPTURE`, `SKELLYCAM_MACOS_CAPTURE` and `SKELLYCAM_RESTORE_CONTROLS`.
 11. Fake-testable modules that import only the standard library at module level.
 12. A main-process stall watch of 2 s (accepted by the user).
-13. No new CI job; markers `capture_linux_runner`, `capture_macos_runner`, `v4l2_vivid` and
+13. macOS approaches (spec 4.4.10): the product uses A2 for exposure (the CoreMediaIO class whose
+    absolute unit is seconds, never `xpsr` in EV), A1 for gain and focus (waits for the user), and B1
+    and B2 `dmb1` for the JPEG; the layer takes the other variants and CoreMediaIO forms as parameters
+    for the certify probes; certify codes A5 to A8, B5 and B6 itself; the proof rules of the
+    approaches list.
+14. No new CI job; markers `capture_linux_runner`, `capture_macos_runner`, `v4l2_vivid` and
     `capture_timing`; a build test of the frozen macOS app.
 
 ## Reason

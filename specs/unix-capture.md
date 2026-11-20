@@ -81,6 +81,7 @@ Each source was read on 2026-11-20. The kernel sources are `torvalds/linux` mast
 | K26 | `uvc_v4l2.c` and `uvc_ctrl.c` of the same tree | `S_FMT` runs the probe of `uvc_v4l2_try_format`, then returns `EBUSY` when the queue is busy; inside one `S_EXT_CTRLS` the value of the master (auto) control in the same call decides, and an absolute value with the master not manual gives `EACCES`. |
 | K27 | https://raw.githubusercontent.com/torvalds/linux/master/include/uapi/linux/videodev2.h | `v4l2_buffer` holds `struct timeval timestamp` for user space and `struct __kernel_v4l2_timeval` (two `long long`) in the kernel, "the user space version of timeval for 64-bit time_t"; `m.userptr` is `unsigned long`, `m.planes` a pointer; `v4l2_format.fmt` holds `v4l2_window` with pointers; `v4l2_ext_controls.controls` is a pointer; `v4l2_ext_control` and its union are packed. |
 | K28 | https://raw.githubusercontent.com/torvalds/linux/master/drivers/media/v4l2-core/v4l2-compat-ioctl32.c and `v4l2-ioctl.c` of the same tree | A 64-bit kernel takes `v4l2_buffer32` (timestamp of two `compat_s64`), "correct for all architectures including i386, but not x32", and `v4l2_buffer32_time32` with `old_timeval32` only with `CONFIG_COMPAT_32BIT_TIME`; a 32-bit kernel translates the `VIDIOC_*_TIME32` numbers only when `!CONFIG_64BIT && CONFIG_COMPAT_32BIT_TIME`. |
+| K29 | The macOS approaches list of 2026-11-20 (a research note of this work, not in the repository), with the macOS 26.5 SDK headers that it read (mirror https://github.com/alexey-lysiuk/macos-sdk): `CMIOHardwareControl.h`, `CMIOHardwareStream.h`, `CMIOHardwareDevice.h`, `AVCaptureVideoDataOutput.h`, `AVCaptureFileOutput.h`, `AVCaptureDevice.h`, `IOUSBLib.h` | The approaches A1 to A10 and B1 to B7, their certify checks, the proof rules, the order and the drop rules. `IOUSBLib.h` L1221: "The device does not have to be open to use this function, but standard requests that change the state of the device may require that the device is opened first". The exposure absolute unit of the `xpsr` class is EV in one report; the `shtr` class carries seconds. |
 
 ## 1. Purpose, scope, method
 
@@ -459,8 +460,10 @@ extension made again, no source shows [NV].
   `empty` and `dmb1` (4.4.3).
 - Diagnostics: `delivered`, `video_settings` (`empty`, `dmb1`), `bytesused_equals_payload`,
   `sha256_00` to `sha256_29`, `dqt_sha256` (D-1, D-11).
-- Certify: `<label>:native-jpeg`. Byte-true is shown when `dqt_sha256` equals the value of the same
-  camera model on Windows or Linux in the evidence file [cert 11.2] [A].
+- Certify: `<label>:native-jpeg`. Byte-true is shown only by the DQT and DHT proof rules of 4.4.10:
+  `dqt_sha256` equals the value of the same model on Windows or Linux in the evidence file
+  [cert 11.2], or `dht_present` is false for a model with no DHT, and the DQT differs from Apple's
+  encoder (B4) [A, K29].
 - Certify also tries each other approach of 4.4.10 as a probe [U].
 
 **M-6. Session order, mode and rate.** The session preset is applied when the input is added [NV]. Thus the order is: `beginConfiguration`; `addInput`; `addOutput`;
@@ -557,13 +560,18 @@ that starts the process [R xplat §2.5 item 5] [NV].
 later), but `setExposureModeCustom` and `exposureDuration` do not exist there [K19]. Thus AVFoundation
 cannot set an absolute exposure on macOS; it can lock the current exposure (`locked`, after
 `isExposureModeSupported(.locked)`) [K19]. Absolute values are possible only through CoreMediaIO
-feature controls (a public API, through Apple's own driver) or UVC requests on endpoint 0 (field
-evidence only) [R macctl §1]. CoreMediaIO coverage on our four cameras is not known; one report
-needed undocumented control classes [R macctl §1, §3 R1] [NV].
-- The source uses the CoreMediaIO exposure control only when it has an absolute value in seconds:
-  `kCMIOFeatureControlPropertyAbsoluteUnitName` names seconds, and
-  `kCMIOFeatureControlPropertyAbsoluteValue` sets it [NV for the unit strings]. The source
-  then sets `2^v` seconds directly. It never assumes the unit of `NativeValue` [A].
+feature controls (a public API, through Apple's own driver) or UVC class requests on endpoint 0
+[R macctl §1, K29]. A device request with no open is documented for requests that do not change the
+state of the device as a standard request does (`IOUSBLib.h`, [K29]); draft 1 called endpoint 0
+"field evidence only", which this draft corrects. CoreMediaIO coverage on our four cameras is not
+known; one report needed undocumented control classes [R macctl §1, §3 R1] [NV].
+- The product uses approach A2 of 4.4.10 only: a CoreMediaIO feature control with an absolute value
+  in seconds. The source sets `fcam` = 0 (manual) and `fcna` = 1 (absolute), reads `fcun` (the unit
+  name) and `fcar` (the range), and writes `fcav` = `2^v` s [K29]. One report gives EV as the absolute
+  unit of the exposure class `xpsr` [K29]; EV is not a time. Thus the source uses the class whose unit
+  is seconds, for example the shutter class `shtr`, and never `xpsr` with EV [A]. Draft 2 said "the
+  CoreMediaIO exposure control"; this draft names the class rule. The source never assumes the unit of
+  `NativeValue` [A].
 - A camera with no such control has no manual exposure: no Manual, no Auto and no exposure control in
   native capture; the camera keeps the exposure that macOS gives it; the warning `no-manual-exposure`
   says so [U]. "Auto by lock" of draft 1 is removed [U]. Certify tries every other approach for
@@ -876,9 +884,9 @@ As in 4.3.4.
 
 | skellycam control | Path | When absent |
 |---|---|---|
-| `exposure` (a value) | CoreMediaIO exposure feature control: `AutomaticManual = 0` (manual), then `AbsoluteValue` = `2^v` s; and AVFoundation `exposureMode = locked` when `isExposureModeSupported(.locked)`, so that AVFoundation does not apply its own auto mode again [R macctl §1 item 3] | `no-manual-exposure` [U] |
-| `gain` | CoreMediaIO gain feature control, manual, `NativeValue` (raw, as UVC) [NV] | absent |
-| `focus` | CoreMediaIO focus feature control; with `auto: true`, `AutomaticManual = 1` | absent |
+| `exposure` (a value) | A2: the CoreMediaIO feature control whose absolute unit is seconds (M-15): `fcam` = 0, `fcna` = 1, `fcav` = `2^v` s; and AVFoundation `exposureMode = locked` when `isExposureModeSupported(.locked)`, so that AVFoundation does not apply its own auto mode again [R macctl §1 item 3] | `no-manual-exposure` [U] |
+| `gain` | A1: the CoreMediaIO `gain` feature control, `fcam` = 0, `fcnv` (raw, as UVC) [A, Q 5] [NV] | absent |
+| `focus` | A1: the CoreMediaIO `fcus` feature control, `fcam` = 0, `fcnv`; with `auto: true`, `fcam` = 1 [A, Q 5] | absent |
 | `white_balance`, `power_line` | CoreMediaIO read, if published | absent |
 
 - The source finds the CoreMediaIO device whose `kCMIODevicePropertyDeviceUID` equals `uniqueID`
@@ -918,21 +926,85 @@ The removal notification makes the camera dead at once [W D38]. Else the stall r
 
 The user ruled that, for now, a certify run on macOS tries every approach that might work for
 exposure control and for the delivery of the camera's own JPEG; the test is trimmed once a working
-one is found [U]. The product uses only the approaches that the rulings allow:
+one is found [U]. The probes run once per camera model (USB vendor id and product id), not per unit,
+and the longer macOS full run is accepted until one approach is proven [U]. The product uses only the
+approaches that the rulings allow. The names A1 to A10 and B1 to B7 are those of the approaches list
+[K29]; its section 2 gives the steps, the numbers and the time of each certify check.
 
-| Need | Product (allowed) | Certify only (probes) |
-|---|---|---|
-| The camera's JPEG | `videoSettings = {}`, then `kCVPixelBufferPixelFormatTypeKey = 'dmb1'` (4.4.3) | each other approach of the list |
-| Exposure | CoreMediaIO exposure feature control with an absolute value in seconds (4.4.6) | each other approach of the list, endpoint 0 included (`probe:control-ep0`) [U] |
+**Proof rules** [A, K29]. Certify judges each approach by these rules:
 
-**Approaches to try: see the certify probes, to be filled from the approaches list.** A research job
-writes that list with a certify check for each approach. It did not exist when this draft was written.
-Candidates that the research already names, for that list to confirm or extend [R mac_avf, macctl]:
-for the JPEG, the `videoSettings` variants `nil`, `jpeg4cc`, `dmb1_sized` (with the size, as
-Chromium), `chromium`, and an `AVVideoCodecKey` from `availableVideoCodecTypes`; for exposure,
-CoreMediaIO `NativeValue`, CoreMediaIO `NativeData` on the `uc**` classes, and endpoint-0 class
-requests through the IOKit interface (`ControlRequest`) and device (`DeviceRequest`) with no open.
-Each probe is record-only and runs in the risky phase of certify when it can change the camera.
+- A control works only when the image changes: the mean luma of the centre 50 % of the frame rises
+  with the value (ratio high to low at least 1.3 when not saturated, judged only for a luma of 10 to
+  240), or the frame rate falls at an exposure of 62.5 ms at 30 fps. A read-back alone is "appears to
+  work", because CoreMediaIO can return a cached value. Where two paths exist, certify reads with the
+  other path too.
+- A JPEG is the camera's own only by the DQT and DHT rules: (1) `dqt_sha256` equals the value of the
+  same model (VID:PID, `bcdDevice`) from a Media Foundation or V4L2 passthrough run in the evidence
+  file; or (2) `dht_present` is false for a model whose Windows frames have no DHT. Then (3) the DQT
+  differs from both Apple encoder references of B4. The APP markers, the SOF sampling, the
+  `VS_COMMIT` wire format and the frame sizes are supporting facts only. A block buffer that starts
+  with `FF D8` is "appears to work": Apple's encoder gives that too.
+
+**Exposure and other controls (Table A of the list):**
+
+| ID | Approach | Product | Certify |
+|---|---|---|---|
+| A1 | CoreMediaIO feature control, `NativeValue` (`fcnv`) on the generic classes | Gain and focus only [A, Q 5]; never exposure (M-15) | probe through the product layer |
+| A2 | CoreMediaIO feature control, `AbsoluteValue` (`fcna` = 1, `fcun`, `fcar`, `fcav`) | Exposure, on the class whose unit is seconds [U: the accepted rule "no manual exposure without an absolute value in seconds"] | probe through the product layer, all classes and units |
+| A3 | CoreMediaIO `NativeData` (`fcnd`, `fcdr`) on the undocumented `uc**` classes | No | probe through the product layer |
+| A4 | CoreMediaIO Tune (`fctn` = 1), one shot | No: it runs the camera's own auto [U] | probe through the product layer |
+| A5 | IOKit interface `ControlRequestTO` on pipe 0, no `USBInterfaceOpen` | No [U: endpoint 0 only as a certify probe] | certify code (`probe:control-ep0`), risky phase |
+| A6 | IOKit device `DeviceRequestTO`, no `USBDeviceOpen` | No [U] | certify code (`probe:control-ep0`), risky phase |
+| A7 | `USBDeviceOpen` (no seize), request, close within 100 ms | No: an exclusive device open | certify code, only when A5 and A6 fail, end of the risky phase |
+| A8 | `IOUSBHostDevice` with no options, `sendDeviceRequest` | No: exclusive ownership | certify code, only when A7 fails, last |
+| A9 | AVFoundation continuous auto, then locked | No: "Auto by lock" is removed [U] | probe through the product layer (record-only) |
+| A10 | The iOS-only AVFoundation selectors at run time (`respondsToSelector:`) | No | probe through the product layer, only when the listing finds a selector |
+
+**The camera's JPEG (Table B of the list):**
+
+| ID | Approach | Product | Certify |
+|---|---|---|---|
+| B1 | `AVCaptureVideoDataOutput`, `videoSettings = {}` on a `'dmb1'` format | Yes, the first variant (4.4.3) [U] | probe through the product layer |
+| B2 | `videoSettings` with `kCVPixelBufferPixelFormatTypeKey`: variants `dmb1`, `jpeg4cc`, `dmb1_sized`, `chromium` | Variant `dmb1` only, the second try (4.4.3) [U] | each variant through the product layer |
+| B3 | `videoSettings = nil` (the decoded control) | No | through the product layer |
+| B4 | `AVVideoCodecKey` = JPEG at `AVVideoQualityKey` 0.5 and 0.9: Apple's encoder, the re-encode reference | No: a re-encode | through the product layer |
+| B5 | `AVCaptureMovieFileOutput` with output settings `{}` and the file-output delegate | No | certify code; the `.mov` is a camera recording, deleted at the end and never in the report |
+| B6 | CoreMediaIO stream direct (`CMIOStreamCopyBufferQueue`, `CMIODeviceStartStream`) | No | certify code, end of the safe phase |
+| B7 | Decode, then a SkellyCam re-encode | The OpenCV fallback of a `no-native-jpeg` camera, outside certify [U] | none: it is the floor, not a passthrough |
+
+**What the product layer exposes for the probes** [A]. `PyObjCLayer` (6.2) takes these parameters;
+the source uses only the allowed values, and certify passes the others:
+
+- `configure(..., variant)` with `variant` one of `nil`, `empty`, `dmb1`, `jpeg4cc`, `dmb1_sized`,
+  `chromium`, `codec-jpeg-q50`, `codec-jpeg-q90` (B1 to B4). The source passes only `empty` and
+  `dmb1`.
+- Each sample gives `has_block_buffer`, `has_image_buffer`, the subtype and `cv_pixel_format` (S0 and
+  B1 to B4).
+- `formats()`, `available_pixel_formats()` and `available_codec_types()` of an output that is not in a
+  session (S0).
+- `cmio_objects()`: the owned control objects of the device and of each stream, with class and base
+  class, and for each property of the list (`fcoo`, `fcam`, `fcna`, `fctn`, `fcnv`, `fcav`, `fcnr`,
+  `fcar`, `fcun`, `fcnd`, `fcdr`, and `eroi`, `etgt`, `eint`, `emax` for reading only) whether it
+  exists, whether it is settable, and its value (S0).
+- `cmio_set(object, form, value)` with `form` one of `native` (A1), `absolute` (A2), `native-data`
+  (A3), `tune` (A4) and `mode` (`fcam`), and `cmio_get(object, form)`. The source uses `absolute` for
+  exposure and `native` for gain and focus.
+- `avf_modes()` and `set_avf_mode(control, mode)` for the exposure, focus and white balance modes,
+  `isExposureModeSupported` for 0 to 3, and `responds_to(selector)` with a guarded `call_selector`
+  (A9, A10). The source uses only `locked` for exposure (4.4.6).
+- Each call records its `OSStatus` or `NSError` code and its time (D-5).
+
+**What certify codes itself** [A]: the endpoint-0 requests A5 and A6 (and the `VS_COMMIT` `GET_CUR`
+read and the IORegistry descriptor read of S0, which use the same IOKit code), the exclusive opens A7
+and A8, the movie file output B5, and the CoreMediaIO direct stream B6. These need no product code
+path; the product ships none of them [U].
+
+**Order and drop rules.** The order of the list applies: the listing S0, then B3, B1, B2, B4, then B5,
+then A9 and A10, then A1 to A4, then B6, then in the risky phase A6 and A5, then A7 and A8 when they
+are needed; the Kiyo Pro last in each step [K29]. The drop rules of the list decide which probes a
+later release removes, per OS key and per model [K29]. A probe that proves an approach the product
+does not use (for example A3 for exposure, or B5 for the JPEG) needs a ruling of the user before the
+product uses it [U].
 
 ### 4.5 Exposure on each source (the rulings of the user)
 
@@ -1009,7 +1081,7 @@ T-CAP-18, T-CAP-34, T-CAP-41, T-CAP-42, T-CAP-53, T-CAP-77, T-CAP-94 and T-CAP-1
 | D-8 | `access` (`seat-acl`, `video-group`, `root`, `none`); `tcc` (`granted`, `denied`, `restricted`, `not-determined`); `center_stage`, `portrait`, `studio_light`, `reactions`, `edge_light` | `access` | `tcc`, effects | null |
 | D-9 | `usb_alt`, `usb_link` | sysfs (A-22) | `usb_alt` null | null; `usb_link` from the `sfn26` port |
 | D-10 | `decoded_by_skellycam`, `encoded_by_skellycam` (the shared loop) | yes | yes | yes |
-| D-11 | `sha256_00` to `sha256_29` and `sha256_frame_00` to `sha256_frame_29` (the `source_frame_number` of each hashed frame), `sha256_trigger` (`ready`, `recording`), `dht_inserted`, `dqt_sha256` (the shared loop) | yes | yes | yes |
+| D-11 | `sha256_00` to `sha256_29` and `sha256_frame_00` to `sha256_frame_29` (the `source_frame_number` of each hashed frame), `sha256_trigger` (`ready`, `recording`), `dht_inserted`, `dqt_sha256`, `dqt_distinct` (distinct DQT hashes over the 30 frames), `dht_present` (a DHT in the camera's bytes) (the shared loop) | yes | yes | yes |
 | Linux | `kernel`, `driver`, `nodrop_param`, `clock_param`, `hwtimestamps_param`, `buffers_requested`, `buffers_granted`, `interval_types`, `nodes_seen`, `nodes_skipped_meta`, `modes_listed`, `mjpg_sizes` | yes | null | null |
 | macOS | `macos`, `subtypes`, `notifications_seen`, `sync_clock_is_host`, `modes_listed`, `mjpg_sizes` | null | yes | null |
 
@@ -1051,7 +1123,7 @@ Call names (`call`, `busy_call`): the values of [cert 10.2] `open`, `s-fmt`, `re
 | macOS camera with no manual exposure | opens; warning `no-manual-exposure` [U] | `opens` at manual -7 | accept the warning in `opens`; `settings-stick` `fail` `no-manual-exposure`; camera item `partial` |
 | A camera that another program holds | failure code `camera-in-use` | format 1.3.0: result `skipped`, reason `busy` [U] | map `camera-in-use` to `skipped` with `busy` |
 | Evidence and local pass key | the ABI (`lp64`, `ilp32`) beside the OS key (A-23) | OS key and backend | add `abi` to the keys of 11.2 and 11.3 |
-| macOS approaches | the product uses only the approaches of 4.4.10 that the rulings allow; certify tries each other one as a probe [U] | `native-jpeg` with three variants; `control-ep0` | one probe check for each approach of 4.4.10 |
+| macOS approaches | 4.4.10: A1 to A10 and B1 to B7; the product uses A2 (exposure), A1 (gain, focus), B1 and B2 `dmb1`; probes once per model [U] | `native-jpeg` with three variants; `control-ep0` | one probe check for each approach, through the product layer where 4.4.10 says so; certify codes A5 to A8, B5 and B6; the proof rules of 4.4.10 |
 | Local pass | per camera model (VID:PID), OS key and backend, full only [U] | per OS key (11.3) | key the local pass by model |
 | Exposure at open | Auto searches; `adjusting` state; `exposure_found` [U] | `auto-exposure` reads the found value | read `exposure_found`; wait while `adjusting` |
 | Slow text | "Camera is slow. Try adding more light" [U] | 10.4 text of cap | certify maps by `rate-low`; no text change needed |
@@ -1257,9 +1329,10 @@ The pass thresholds that this list adds are [A]. They can change when the tests 
   size that the source sends.
 - `AVLayer` (`avfoundation/layer.py`): `macos_version()`, `authorization_status()`, `devices()`,
   `open_device(unique_id)`, `configure(format_index, duration, variant)` (the order of M-6),
-  `start(callback)`, `stop()`, `close()`, `to_host_ns(pts)`, `sync_clock_is_host()`, `cmio_controls()`
-  (list, get, set, unit name), `exposure_lock_supported()`, `effects()`, `usb_speed(location_id)`, and
-  a notification callback.
+  `start(callback)`, `stop()`, `close()`, `to_host_ns(pts)`, `sync_clock_is_host()`, `cmio_objects()`,
+  `cmio_get(object, form)`, `cmio_set(object, form, value)`, `avf_modes()`, `set_avf_mode()`,
+  `responds_to(selector)`, `formats()`, `available_pixel_formats()`, `available_codec_types()`,
+  `effects()`, `usb_speed(location_id)`, and a notification callback (4.4.10).
 - `FakeAVLayer` scripts: devices with `uniqueID`, `modelID`, transport and formats (fixed and ranged
   rates); a permission status; samples (a JPEG block, a decoded array, or none), PTS, a sync clock that
   is or is not the host clock, sequence numbers, drops; errors and notifications at a given time; a
@@ -1335,10 +1408,12 @@ The pass thresholds that this list adds are [A]. They can change when the tests 
 | T-UNX-56 | T-UNX-30 | Detection with `macos_version()` 12.2. | The native backend is missing; the OpenCV source is chosen [U]. |
 | T-UNX-57 | — | `PyObjCLayer` construction order with a stand-in of the frameworks. | `kCMIOHardwarePropertyRunLoop` is set to NULL before any other CoreMediaIO call (M-7). |
 | T-UNX-58 | T-UNX-20 | Permission `authorized`, but no sample ever arrives. | `first-frame-timeout`; `tcc` `granted`; the diagnostics show `t_first_frame_ms` null. |
+| T-UNX-59 | — | `PyObjCLayer` parameters with the fake: each `videoSettings` variant of 4.4.10 and each CoreMediaIO form (`native`, `absolute`, `native-data`, `tune`, `mode`). | The layer accepts each one and records its call; `AVFoundationSource` passes only `empty`, `dmb1`, `absolute` (exposure), `native` (gain, focus), `mode` and the lock. |
+| T-UNX-60 | T-UNX-21 | Exposure classes: `xpsr` with the unit EV and `shtr` with seconds; only `xpsr` with EV. | With both, -7 writes `2^-7` s to `shtr` and nothing to `xpsr`; with only `xpsr` in EV, no exposure control and `no-manual-exposure`. |
 
-Parity [U]: Linux has 30 fake tests and macOS 28. T-UNX-01 to T-UNX-03 (the binary layout) and
+Parity [U]: Linux has 30 fake tests and macOS 30. T-UNX-01 to T-UNX-03 (the binary layout) and
 T-UNX-20 (`EINTR`) have no macOS counterpart: macOS has no ioctl layer. T-UNX-33, T-UNX-36, T-UNX-39,
-T-UNX-55 and T-UNX-57 have no Linux counterpart: they test facts of macOS only.
+T-UNX-55, T-UNX-57 and T-UNX-59 have no Linux counterpart: they test facts of macOS only.
 
 ### 6.5 Shared and Windows tests (step 7s)
 
@@ -1378,7 +1453,6 @@ T-UNX-55 and T-UNX-57 have no Linux counterpart: they test facts of macOS only.
 | T-UNX-87 | macos-runner | The CoreMediaIO constants of 4.4.6 and M-7, `CMIOObjectGetPropertyData`, `CMSyncConvertTime`, the IOKit `ctypes` calls. | Each name exists; setting `kCMIOHardwarePropertyRunLoop` to NULL returns no error; IOKit returns a speed or `unknown`. |
 | T-UNX-88 | build | On the macOS build jobs: the frozen server runs the native detection only (no camera). | The layer loads; detection returns a list; no missing module. |
 
-The IDs T-UNX-59 and T-UNX-60 are not used.
 
 ### 6.7 Certify checks: the hardware tests
 
@@ -1411,7 +1485,7 @@ tests; it does not repeat the certify spec.
 
 | Kind | Linux | macOS | Each OS or Windows |
 |---|---|---|---|
-| fake | 30 (T-UNX-01 to 30) | 28 (T-UNX-31 to 58) | 16 shared (61 to 75, 79), on Windows, Linux and macOS |
+| fake | 30 (T-UNX-01 to 30) | 30 (T-UNX-31 to 60) | 16 shared (61 to 75, 79), on Windows, Linux and macOS |
 | windows | — | — | 3 (76 to 78) |
 | runner, vivid | 4 (80 to 83) | 4 (84 to 87) | — |
 | build | — | 1 (88) | — |
@@ -1527,3 +1601,6 @@ on 2026-11-20 ([ADR-22EJ](../decisions/entries/22EJ-decisions-of-the-user-for-li
    `modprobe vivid` without failing, and the macOS build jobs run T-UNX-88. Yes?
 4. The x32 ABI of Linux keeps the OpenCV source, and 32-bit arm and i386 use the computed layout of
    A-23. Yes?
+5. On macOS, the product sets gain and focus through CoreMediaIO `NativeValue` (A1), in the raw UVC
+   value, as on Linux and Windows; certify checks the image effect, and a camera whose A1 control has
+   no effect reports that control as absent after a certify run. Yes?

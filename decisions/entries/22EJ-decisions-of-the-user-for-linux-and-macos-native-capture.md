@@ -69,6 +69,8 @@ spec [`specs/unix-capture.md`](../../specs/unix-capture.md) builds on them.
 18. The certify contract is format 1.3.0: the results are `pass`, `fail`, `record-only`, `partial`
     and `skipped`; a camera that another program holds is `skipped` with the reason `busy`; there is
     one camera item for each camera model.
+19. The macOS approach probes run once per camera model. The longer macOS full run is accepted until
+    one approach is proven.
 
 ## Reason
 
@@ -79,5 +81,5 @@ capture usable on that system at once when it passes. OpenCV capture is already 
 
 - Each assumption of the native sources needs a run-time check, a diagnostic and a certify check.
 - The exposure rules change the Windows spec (D29, the states, the slow text and some tests).
-- Four points wait for the user: section 9 of the spec and
+- Five points wait for the user: section 9 of the spec and
   [ADR-AT04](AT04-choices-of-the-linux-and-macos-capture-spec.md).
