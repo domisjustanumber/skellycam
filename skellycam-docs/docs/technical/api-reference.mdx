@@ -163,15 +163,6 @@ Closes all camera groups, releasing all camera resources and stopping all worker
 
 **Response:** `true` (200 OK)
 
-### `PUT /skellycam/camera/group/all/pause`
-
-Sets the pause state of all camera groups. When paused, cameras stop capturing frames but remain open. The
-request sets one state; two requests with the same body give the same state.
-
-**Request body:** `{"paused": true}` or `{"paused": false}`. Another value gives 422.
-
-**Response:** the same object (200 OK)
-
 ## WebSocket Endpoint
 
 ### `WS /skellycam/websocket/connect`

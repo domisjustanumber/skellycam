@@ -8,7 +8,6 @@ import {
     detectCameras,
     camerasConnectOrUpdate,
     closeCameras,
-    pauseUnpauseCameras,
 } from './cameras-thunks';
 import { serverStateReceived, serverDisconnected } from '../connection/connection-slice';
 import {
@@ -38,6 +37,10 @@ export const cameraSlice = createSlice({
     name: 'cameras',
     initialState,
     reducers: {
+        // Q495: pause freezes the display only; the cameras and a recording go on. Un-pause shows the current frame.
+        displayPauseToggled(state) {
+            state.isPaused = !state.isPaused;
+        },
         // ========== Selection ==========
         cameraSelectionToggled: (state, action: PayloadAction<string>) => {
             const camera = state.cameras.find(cam => cam.id === action.payload);
@@ -174,20 +177,13 @@ export const cameraSlice = createSlice({
                 state.isPaused = false;
             })
 
-            // ========== Pause / Unpause Cameras ==========
-            .addCase(pauseUnpauseCameras.fulfilled, (state, action) => {
-                state.isPaused = action.payload;
-            })
-
             // ========== Server state snapshot (authoritative) ==========
-            // Reconcile observed connection + pause state from the pushed snapshot.
+            // Reconcile the observed connection state from the pushed snapshot.
             .addCase(serverStateReceived, (state, action) => {
                 const groups = Object.values(action.payload.state.camera_groups);
                 const connectedIds = new Set<string>();
                 const failures = new Map<string, string>();
-                let anyPaused = false;
                 for (const group of groups) {
-                    if (group.paused) anyPaused = true;
                     // `group.alive` is false as soon as one camera process ended, so judge each camera
                     // by its own state: the other cameras of the group keep streaming.
                     for (const cameraId of Object.keys(group.configs)) {
@@ -208,7 +204,6 @@ export const cameraSlice = createSlice({
                         : failures.has(camera.id) ? 'error' : 'available';
                     camera.failure = failures.get(camera.id);
                 });
-                state.isPaused = anyPaused;
             })
 
             // On websocket disconnect, reset to "not connected" so nothing goes stale.
@@ -225,6 +220,7 @@ export const cameraSlice = createSlice({
 });
 
 export const {
+    displayPauseToggled,
     cameraSelectionToggled,
     cameraDesiredConfigUpdated,
     configCopiedToAll,

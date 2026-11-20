@@ -7,9 +7,8 @@ import {
     closeCameras,
     camerasConnectOrUpdate,
     detectCameras,
-    pauseUnpauseCameras,
 } from "@/store/slices/cameras/cameras-thunks";
-import { savedSettingsCleared } from "@/store/slices/cameras/cameras-slice";
+import { savedSettingsCleared, displayPauseToggled } from "@/store/slices/cameras/cameras-slice";
 import { useTranslation } from 'react-i18next';
 import { useRecordingGuard } from '@/components/RecordingGuardProvider';
 
@@ -53,7 +52,7 @@ export const CameraConfigTreeViewHeader: React.FC<CameraConfigTreeViewHeaderProp
                     iconClass={isPaused ? "stream-icon" : "record-icon"}
                     textColor="text-white"
                     title={isPaused ? t("resumeStreaming") : t("pauseStreaming")}
-                    onClick={() => requestGuardedAction('Stop Recording & Pause Cameras', wrap(() => dispatch(pauseUnpauseCameras()).unwrap()))}
+                    onClick={() => dispatch(displayPauseToggled())}
                 />
                 <ButtonSm
                     text=""

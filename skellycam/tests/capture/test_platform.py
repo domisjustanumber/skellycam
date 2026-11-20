@@ -3,6 +3,7 @@ Media Foundation module, no compiled extension, and the two "local" tests (specs
 sections 3, 4.3, 5.6, 14.2, 15 and 16.1).
 """
 
+import asyncio
 import re
 import subprocess
 import sys
@@ -141,7 +142,7 @@ def test_t_cap_49_idle_cpu_of_the_shared_loop(monkeypatch):
     with capture_app(monkeypatch, [FakeScript()], workers="process") as app:
         ready_app_steps(app)
         camera_id = app.factory.camera_ids[0]
-        assert app.client.put("/skellycam/camera/group/all/pause", json={"paused": True}).status_code == 200
+        asyncio.run(app.group.cameras.orchestrator.pause(await_paused=False))  # the internal pause (Q495)
         app.wait(lambda: app.status(camera_id)["is_paused"], "the camera pauses")
         time.sleep(0.5)
         cpu = psutil.Process(app.worker(camera_id).worker.pid)

@@ -13,7 +13,6 @@ export interface CameraGroupSnapshot {
     cameras: Record<string, CameraProcessSnapshot>;
     alive: boolean;
     recording_in_progress: boolean;
-    paused: boolean;
 }
 
 /** The `state` payload of an APP_STATE message. */

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { themeModeToggled } from '@/store/slices/theme';
-import { detectCameras, camerasConnectOrUpdate, closeCameras, pauseUnpauseCameras } from '@/store/slices/cameras';
+import { detectCameras, camerasConnectOrUpdate, closeCameras, displayPauseToggled } from '@/store/slices/cameras';
 import { stopRecording } from '@/store/slices/recording';
 import { selectVideoLoadFolder } from '@/store/slices/videos';
 import { localeChanged, selectLocale, localeToggled } from '@/store/slices/settings';
@@ -138,7 +138,7 @@ export function useMenuActions({ onToggleSidebar }: UseMenuActionsParams): void 
                     requestGuardedAction('Stop Recording & Close Cameras', () => dispatch(closeCameras()));
                     break;
                 case 'pause-unpause-cameras':
-                    requestGuardedAction('Stop Recording & Pause Cameras', () => dispatch(pauseUnpauseCameras()));
+                    dispatch(displayPauseToggled());
                     break;
 
                 // Locale toggle

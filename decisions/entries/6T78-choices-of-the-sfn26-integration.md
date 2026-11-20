@@ -43,9 +43,11 @@ choices:
     its own text; `start stream`, `first frame` and `warm-up` give "no frames"; `open` gives "cannot
     open". Other stages give no item. The failure objects of section 12 do not change. The UI does
     not show apply warnings.
-11. **Pause and stop.** `set_paused_all_groups` and `CameraGroup.set_paused` replace the toggle.
-    `pause_all_groups` and `unpause_all_groups` called a method that did not exist; they are gone.
-    No 409 for a state conflict. The translated docs get only the new methods, paths and anchors.
+11. **Pause and stop.** `pause_all_groups` and `unpause_all_groups` called a method that did not
+    exist; they are gone. No 409 for a state conflict. The translated docs get only the new methods,
+    paths and anchors. The pause route of the port and its methods are gone again
+    ([ADR-V8RS](V8RS-pause-freezes-the-ui-display-only.md)): the UI freezes its display through
+    `setStreamPaused`, and the `paused` field of the group snapshot is gone (only the UI read it).
 12. **Exposure restore.** The search reads the exposure with `set_controls({})` and sets it back on
     an exception, except after a hung control call. A hung set-back call ends the camera as hung.
     Limit: the OpenCV source reports `auto` False until skellycam sets auto, so an OpenCV camera in

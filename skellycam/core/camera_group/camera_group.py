@@ -102,7 +102,6 @@ class CameraGroupState(BaseModel):
     cameras: dict[CameraIdString, CameraState]
     alive: bool
     recording_in_progress: bool
-    paused: bool
 
 
 @dataclass
@@ -460,13 +459,6 @@ class CameraGroup:
         timestamp = float(np.mean([read.arrival_ns for read in reads.values()]))
         return frame_number, timestamp, memoryview(payload).toreadonly()
 
-    async def set_paused(self, paused: bool, await_state_change: bool = True) -> None:
-        """Set the pause state of each camera: PUT /group/all/pause with {paused} (port from sfn26)."""
-        if paused:
-            await self.cameras.pause(await_paused=await_state_change)
-        else:
-            await self.cameras.unpause(await_unpaused=await_state_change)
-
     async def start_recording(self, recording_info: RecordingInfo, devices: dict | None = None) -> list:
         """Start a take (recorder.md section 10 items 3 to 5, 13). Return the warnings of 11.3."""
         statuses = self.cameras.orchestrator.camera_statuses
@@ -526,7 +518,10 @@ class CameraGroup:
                 if take is not None:
                     await self._finish_failed_start(take, error)
             raise
-        await self.cameras.unpause(await_unpaused=True)
+        try:
+            await self.cameras.orchestrator.unpause(await_unpaused=True)
+        except (RuntimeError, TimeoutError) as error:  # as `_end_take`: the take runs; a late camera unpauses later
+            logger.warning(f"The record start could not unpause each camera in time ({error}); the take runs")
         for item in warnings:
             logger.warning(item["text"])
         logger.info(f"Started recording for camera group ID: {self.id} with recording name: "
@@ -756,7 +751,6 @@ class CameraGroup:
         logger.success("Camera group closed successfully.")
 
     def to_state(self) -> CameraGroupState:
-        orchestrator = self.cameras.orchestrator
         return CameraGroupState(
             id=self.id,
             configs=self.configs,
@@ -766,5 +760,4 @@ class CameraGroup:
             },
             alive=self.alive,
             recording_in_progress=self.take is not None,  # also when each camera died during the take
-            paused=orchestrator.any_cameras_paused,
         )

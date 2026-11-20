@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector, selectCameras, selectConnectedCameras, selectIsLoading, detectCameras } from '@/store';
-import { camerasConnectOrUpdate, pauseUnpauseCameras, closeCameras } from '@/store/slices/cameras/cameras-thunks';
-import { savedSettingsCleared } from '@/store/slices/cameras/cameras-slice';
+import { camerasConnectOrUpdate, closeCameras } from '@/store/slices/cameras/cameras-thunks';
+import { savedSettingsCleared, displayPauseToggled } from '@/store/slices/cameras/cameras-slice';
 import { selectIsPaused } from '@/store/slices/cameras/cameras-selectors';
 import { CameraTreeItem } from './CameraTreeItem';
 import { NoCamerasPlaceholder } from './NoCamerasPlaceholder';
@@ -153,11 +153,10 @@ export const CameraConfigSidebarPanel: React.FC = () => {
                                 )}
                                 <IconButton
                                     icon={isPaused ? 'play-icon' : 'pause-icon'}
-                                    onClick={() => requestGuardedAction('Stop Recording & Pause Cameras', () => dispatch(pauseUnpauseCameras()))}
+                                    onClick={() => dispatch(displayPauseToggled())}
                                     tooltip={true}
-                                    tooltipText={isRecording ? t('stopRecordingFirst') : isPaused ? t('resumeStreaming') : t('pauseStreaming')}
+                                    tooltipText={isPaused ? t('resumeStreaming') : t('pauseStreaming')}
                                     tooltipPosition="pos-bottom-right"
-                                    disabled={isRecording}
                                 />
                                 <IconButton
                                     icon={isStoppingCameras ? 'loader-icon' : 'stopstreaming-icon'}

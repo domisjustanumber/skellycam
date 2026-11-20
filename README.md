@@ -120,7 +120,6 @@ For the full architecture (process model, IPC, data flow, playback sync), see th
 | `POST`   | `/skellycam/camera/group/all/record/start`  | Start recording                    |
 | `POST`   | `/skellycam/camera/group/all/record/stop`   | Stop recording                     |
 | `DELETE` | `/skellycam/camera/group/close/all`         | Close all camera groups            |
-| `PUT`    | `/skellycam/camera/group/all/pause`         | Set pause: `{"paused": true}`      |
 | `GET`    | `/skellycam/playback/recordings`            | List recordings with stats         |
 | `POST`   | `/skellycam/playback/load`                  | Load a recording for playback      |
 | `GET`    | `/skellycam/playback/videos`                | List loaded videos                 |

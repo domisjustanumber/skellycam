@@ -46,6 +46,7 @@ These entries are `accepted`.
 | [WB08](entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md) | The user accepted the step 4a spec `specs/preview.md` and its test list T-PRV-01 to T-PRV-24 | accepted |
 | [VYS7](entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md) | Answers Q1 to Q13 to the 4b spec: Captured and Displayed, list label, 30 fps outside proof; PR to `development`; go-ahead for tests | accepted |
 | [EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md) | Base the work on upstream `sfn26`: keep our camera layer and recorder, remove each Rust part, four ports, PRs to upstream `development` | accepted |
+| [V8RS](entries/V8RS-pause-freezes-the-ui-display-only.md) | Pause freezes the UI display only: no public pause route; the internal pause of the record start stays (Q495) | accepted |
 
 ### Evidence
 

@@ -144,6 +144,8 @@ This ordering prevents a race condition where the recording boundary could chang
 
 Pause is controlled by the orchestrator's `pause()` / `unpause()` methods, which set `should_pause` on all cameras and wait for `is_paused` to propagate:
 
+Only the server uses this pause, for example at the start of a recording. The Pause button of the UI and Shift+Space freeze the display only: the cameras and a recording go on, and un-pause shows the current frame.
+
 ```python
 if self_status.is_paused.value:
     wait_1ms()

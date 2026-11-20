@@ -896,3 +896,25 @@ def test_a_stop_whose_unpause_fails_still_finishes_the_take(monkeypatch, tmp_pat
     assert take_manifest(tmp_path)["state"] == "finished"
     frame_count = stopped.json()[0]["number_of_frames"]
     assert all(len(take_rows(tmp_path, cid)) == frame_count for cid in app.factory.camera_ids)
+
+
+def test_a_late_unpause_after_a_good_record_start_does_not_end_the_group(monkeypatch, tmp_path):
+    """Review item 5: the record start pauses the cameras for the layout of the last good frame, then unpauses
+    them. A camera that unpauses late must not end the group, as in `_end_take`: the take runs and stops."""
+    with capture_app(monkeypatch, [FakeScript()]) as app:
+        ready_app_steps(app)
+        group = app.group
+        orchestrator = group.cameras.orchestrator
+        unpause, calls = orchestrator.unpause, []
+
+        async def late_unpause(await_unpaused):
+            calls.append(await_unpaused)
+            await unpause(await_unpaused=False)
+            if await_unpaused and len(calls) == 1:
+                raise TimeoutError("a camera did not unpause in time")
+
+        monkeypatch.setattr(orchestrator, "unpause", late_unpause)
+        response = app.record_start(tmp_path)
+        assert response.status_code == 200, response.text
+        assert group.ipc.should_continue and calls[0] is True
+        stop(app)

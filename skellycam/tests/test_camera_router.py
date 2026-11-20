@@ -113,16 +113,10 @@ class TestCameraGroupManagement:
         assert response.status_code == 200
         assert response.json() is True
 
-    def test_pause_unpause(self, client, mock_camera_group_manager):
-        """PUT explicitly sets pause state."""
-        response = client.put("/skellycam/camera/group/all/pause", json={"paused": True})
-        assert response.status_code == 200
-        assert response.json() == {"paused": True}
-        mock_camera_group_manager.set_paused_all_groups.assert_awaited_once_with(paused=True)
-
-    def test_old_pause_toggle_and_stop_get_are_gone(self, client, mock_camera_group_manager):
-        """The contract of sfn26: no toggle, no GET stop, and the pause state must be a bool."""
+    def test_there_is_no_pause_route(self, client, mock_camera_group_manager):
+        """Q495 of the user: pause freezes the display of the UI only. The server has no pause route; the old
+        toggle is gone too, and a GET does not stop a take."""
+        assert client.put("/skellycam/camera/group/all/pause", json={"paused": True}).status_code == 404
         assert client.get("/skellycam/camera/group/all/pause_unpause").status_code == 404
         assert client.get("/skellycam/camera/group/all/record/stop").status_code == 405
-        assert client.put("/skellycam/camera/group/all/pause", json={"paused": "yes"}).status_code == 422
-        mock_camera_group_manager.set_paused_all_groups.assert_not_awaited()
+        mock_camera_group_manager.stop_recording_all_groups.assert_not_awaited()
