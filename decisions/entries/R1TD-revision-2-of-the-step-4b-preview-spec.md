@@ -35,6 +35,12 @@ Changes:
    item 11.
 10. Item 18 (English-only labels, English prose in the docs copies) is now question Q8.
 
+The user answered the nine questions on 2026-11-20
+([ADR-VYS7](VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)). Q4 is
+settled by fix F8 of the capture branch, so the lock fallback of change 3 and part 2 of T-PRV-29
+are removed. [ADR-W674](W674-choices-of-revision-3-of-the-step-4b-spec-and-its-test-list.md)
+replaces changes 6 and 9 where they touch items 10 and 11.
+
 ## Reason
 
 - Each fault was confirmed in the code of `dom/preview` and `dom/native-jpeg`.

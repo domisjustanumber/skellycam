@@ -44,6 +44,11 @@ The spec asks six questions (section 12): `frame: null` in the shared tile (Q1);
 the ring lock in the sender (Q4); the label `<camera_name> · <camera id>` (Q5); the targets and the
 worker rule (Q6).
 
+The user answered the questions and accepted the spec in principle on 2026-11-20
+([ADR-VYS7](VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)).
+[ADR-W674](W674-choices-of-revision-3-of-the-step-4b-spec-and-its-test-list.md) replaces items 10,
+11 and 17.
+
 ## Reason
 
 - The rule "a spec and a test list before code": the user reviews the spec before the tests.
