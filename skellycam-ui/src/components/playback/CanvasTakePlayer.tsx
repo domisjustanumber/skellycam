@@ -93,7 +93,8 @@ export const CanvasTakePlayer: React.FC<CanvasTakePlayerProps> = ({ folderPath, 
             const update = tile.update.bind(tile);
             tile.update = async (u: TileUpdate) => {
                 const r = await update(u);
-                if (r === 'drawn' && u.jpeg) setDrawn(d => (d.has(i) ? d : new Set(d).add(i)));
+                // ready: a first image, or a mark or black where the camera has no image to show
+                if (r === 'drawn' && (u.jpeg || u.mark || u.blank)) setDrawn(d => (d.has(i) ? d : new Set(d).add(i)));
                 return r;
             };
             return { tile, detach: player.attachTile(i, tile) };

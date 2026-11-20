@@ -9,7 +9,7 @@ import clsx from "clsx";
 import { serverUrls } from "@/services/server/server-helpers/server-urls";
 import { backendFetch } from "@/services/electron-ipc/backend-fetch";
 import { useElectronIPC } from "@/services";
-import { chooseTakePlayer } from "./take-route";
+import { routeTake } from "./take-route";
 import { useTranslation } from "react-i18next";
 import ButtonSm from "../ui-components/ButtonSm";
 import SubactionHeader from "../ui-components/SubactionHeader";
@@ -188,6 +188,7 @@ export const RecordingBrowser: React.FC<RecordingBrowserProps> = ({
   const [isLoadingList, setIsLoadingList] = useState(false);
   const [isLoadingRecording, setIsLoadingRecording] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [needsPick, setNeedsPick] = useState(false);
   const [loadingPath, setLoadingPath] = useState<string | null>(null);
 
   // Manual path input
@@ -249,11 +250,25 @@ export const RecordingBrowser: React.FC<RecordingBrowserProps> = ({
       setLoadingPath(recording.path);
       setError(null);
 
+      setNeedsPick(false);
       try {
         // L1: a take folder of the new format opens in the canvas player, before any backend video call
-        if (recording.path && (await chooseTakePlayer(recording.path)) === "canvas") {
+        const route = recording.path ? await routeTake(recording.path) : "video";
+        if (route === "canvas") {
           onRecordingLoaded([], recording.name, recording.path, recording.fps ?? undefined);
           return;
+        }
+        // L7: the player opens only a folder that the user picked in the dialog; today's player cannot play a new take
+        if (route === "not_allowed" && api) {
+          const media = await api.fileSystem.getFolderContents
+            .query({ path: `${recording.path}/synchronized_videos` })
+            .catch(() => []);
+          const names = new Set(media.map((m: { name: string }) => m.name));
+          if ([...names].some((n) => n.endsWith(".mkv") && names.has(n.slice(0, -4) + ".csv"))) {
+            setError(t("takeFolderNotPicked", "This take is in the new format. Open its folder with the folder dialog to play it."));
+            setNeedsPick(true);
+            return;
+          }
         }
         // If the recording has a full path, derive the parent directory
         // to pass as recording_parent_directory query param for non-standard locations
@@ -307,7 +322,7 @@ export const RecordingBrowser: React.FC<RecordingBrowserProps> = ({
         setLoadingPath(null);
       }
     },
-    [onRecordingLoaded],
+    [onRecordingLoaded, api, t],
   );
 
   // Auto-load a recording if initialLoadPath is provided
@@ -375,6 +390,11 @@ export const RecordingBrowser: React.FC<RecordingBrowserProps> = ({
 
       {/* Error */}
       {error && <p className="pl-2 flex flex-row text sm text-error">{error}</p>}
+      {needsPick && (
+        <button className="button sm ml-2 fit-content" onClick={handleBrowseDirectory}>
+          {t("openFolderDialog", "Open the folder dialog")}
+        </button>
+      )}
 
       {/* Header bar + List wrapper */}
       <div className="flex flex-col flex-1 overflow-hidden bg-middark br-1 p-1 gap-2  ">
