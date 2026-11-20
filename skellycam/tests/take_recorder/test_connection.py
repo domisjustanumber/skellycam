@@ -623,7 +623,8 @@ def test_a_stop_whose_pause_times_out_ends_the_take(monkeypatch, tmp_path):
     """Review fault 5 [recorder.md 5.3, 8.1]: the writer of one camera is held while the stop pauses the
     cameras, and the pause limit ends before the stall limit. The stop ends the take as after an error,
     with no pause: 200, the manifest is `finished` with `take_error`, and the group runs on. Before the
-    fix, the pause timeout stopped the group, and the take stayed with the manifest `recording`."""
+    fix, the pause timeout stopped the group, and the take stayed with the manifest `recording`. Since S11 of
+    the third review the stop does not pause at all; the test keeps the outcome."""
     import skellycam.core.camera_group.camera_orchestrator as orchestrator_module
 
     module = group_module()
@@ -873,7 +874,8 @@ def test_a_failed_start_waits_for_a_late_writer_before_it_finishes_the_folder(mo
 def test_a_stop_whose_unpause_fails_still_finishes_the_take(monkeypatch, tmp_path):
     """Second review, R8 (c): the stop paused the cameras, then one camera cannot unpause within the limit
     (0.5 s here; its loop is held 2 s). The stop still finishes the take: 200, the manifest is `finished`,
-    and the group runs on. Before, the unpause timeout stopped the group, and the take ended with no finish."""
+    and the group runs on. Before, the unpause timeout stopped the group, and the take ended with no finish.
+    Since S11 of the third review the stop does not pause or unpause; the test keeps the outcome."""
     import types
 
     import skellycam.core.camera_group.camera_orchestrator as orchestrator_module
@@ -1190,15 +1192,27 @@ def test_a_busy_main_process_does_not_look_dead(monkeypatch, tmp_path):
 
 
 def test_the_stop_costs_no_source_frame_before_the_last_rows(monkeypatch, tmp_path):
-    """Third review, S11 (real-camera run of 2026-11-20: a `camera_gap` at row N - 2 in 6 of 7 takes): two push
-    fakes record a take and stop. No row of the last 5 has `gap`: the stop must not pause the cameras, as
-    the waiting place of a push source replaces each frame that comes during a pause (5.2)."""
+    """Third review, S11 (real-camera run of 2026-11-20: a `camera_gap` at row N - 2 in 6 of 7 takes): row
+    N - 2 is the first group frame after the unpause of the stop. A paused camera does not read, and the
+    waiting place of a push source replaces each frame that comes during the pause (5.2), so that row had
+    `gap`. Here the pause of the stop takes 200 ms (on the real cameras: the pause wait plus the 50 ms sleep
+    of a paused loop). Two push fakes in real time: no row of the last 5 has `gap`."""
+    import asyncio
+
+    from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
+
+    pause = CameraOrchestrator.pause
+
+    async def slow_pause(orchestrator, await_paused=True):
+        await pause(orchestrator, await_paused=await_paused)
+        await asyncio.sleep(0.2)
+
+    monkeypatch.setattr(CameraOrchestrator, "pause", slow_pause)
     sidecar = sidecar_flags()
-    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
-        spies = Spies(monkeypatch, app)
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()], virtual=False) as app:
         ready_app_steps(app)
         assert app.record_start(tmp_path).status_code == 200
-        record_until(app, spies, 60)
+        time.sleep(2.0)
         summary = stop(app)
     for camera_id in app.factory.camera_ids:
         rows = take_rows(tmp_path, camera_id)

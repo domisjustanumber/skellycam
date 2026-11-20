@@ -602,26 +602,14 @@ class CameraGroup:
         orchestrator = self.cameras.orchestrator
         statuses = orchestrator.camera_statuses
         try:
-            # After an error, a stalled camera does not pause and holds the gate, so no camera passes the last frame.
-            paused = self.take_error is None
-            if paused:
-                try:
-                    await orchestrator.pause(await_paused=True)
-                except (RuntimeError, TimeoutError) as error:
-                    # A camera that waits in `give` cannot pause (5.3): end as after an error, with no pause.
-                    logger.warning(f"The stop could not pause the cameras ({error}); it ends the take with no pause")
-                    paused = False
-                    await orchestrator.unpause(await_unpaused=False)
+            # No pause (S11, ADR-F8C0): a paused camera does not read, and the waiting place of a push source
+            # replaces each frame that comes in the pause, so the first frame after it had `gap`. The gate lets a
+            # camera hold one frame more than the largest count, so the take ends two group frames after it.
             count = orchestrator.largest_gate_count()
             if count == -1:  # no camera left in the gate: the take ends after the latest group frame
-                count = max(statuses[camera_id].frame_count.value for camera_id in self.recording_ids if camera_id in statuses) - 2
+                count = max(statuses[camera_id].frame_count.value for camera_id in self.recording_ids if camera_id in statuses) - 1
             # At least the first frame: when no camera reached it, the take has no row, not a negative count.
-            orchestrator.last_recording_frame_number.value = max(count + 3, orchestrator.first_recording_frame_number.value)
-            if paused:
-                try:
-                    await orchestrator.unpause(await_unpaused=True)
-                except (RuntimeError, TimeoutError) as error:  # the last frame is set: the take ends in any case
-                    logger.warning(f"The stop could not unpause each camera in time ({error}); the take ends")
+            orchestrator.last_recording_frame_number.value = max(count + 2, orchestrator.first_recording_frame_number.value)
             frame_count = orchestrator.take_frame_count()
             results, dead, running = await asyncio.to_thread(self._collect_results)
             error, error_camera = self.take_error or (None, None)
