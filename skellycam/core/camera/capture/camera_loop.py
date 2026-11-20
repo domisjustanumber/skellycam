@@ -525,7 +525,10 @@ class CameraLoop:
         try:
             if self.orchestrator.last_recording_frame_number.value == -1:
                 if self.ipc.should_continue:
-                    writer.abandon()
+                    error = writer.abandon()
+                    if error is not None:  # the take level ends the take with this error (recorder.md 5.4)
+                        self.ipc.pubsub.topics[TopicTypes.RECORDING_FINISHED].publish(
+                            RecordingFinishedMessage(camera_id=self.camera_id, error=error))
                     return
                 result = writer.end(self.take_rows)
             else:

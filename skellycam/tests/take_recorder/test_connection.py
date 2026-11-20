@@ -1068,3 +1068,38 @@ def test_a_second_start_waits_for_the_finish_of_a_failed_start(monkeypatch, tmp_
         summary = stop(app)
     assert summary["number_of_frames"] >= 30
     assert all(len(take_rows(tmp_path, cid, "take2")) == summary["number_of_frames"] for cid in app.factory.camera_ids)
+
+
+def test_a_write_error_while_abandon_drains_reaches_the_take_level(monkeypatch, tmp_path):
+    """Third review, S8 [recorder.md 5.4]: one camera ends alone during a take (its stop flag) with frames in
+    its queue, and a write of its writer fails while `abandon` writes them. The take level gets the error:
+    the manifest has `take_error` with its text and the key of that camera."""
+    from skellycam.core.take_recorder import CameraTakeWriter
+
+    monkeypatch.setattr(group_module(), "TAKE_QUEUE_SECONDS", 1.0)
+    take_item, failing = CameraTakeWriter._take, {"on": False}
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        closing, other = app.factory.camera_ids
+
+        def slow_take(writer, item):
+            if writer.spec.camera_id == closing:
+                time.sleep(0.03)  # a slow disk: the queue holds frames
+                if failing["on"]:
+                    raise OSError("test: the disk is full")
+            return take_item(writer, item)
+
+        monkeypatch.setattr(CameraTakeWriter, "_take", slow_take)
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 60)
+        assert spies.writers[closing].queue.qsize() > 0, "no frame in the queue"
+        worker = app.worker(closing)
+        failing["on"] = True
+        app.group.cameras.orchestrator.camera_statuses[closing].should_close.value = True
+        app.wait(lambda: not worker.is_alive(), "the loop ends")
+        app.wait(lambda: app.group.take is None, "the take ends for every camera (5.4)")
+        stop(app)
+    errors = take_warnings(tmp_path, "take_error")
+    assert [w["detail"] for w in errors] == ["test: the disk is full"], errors
+    assert errors[0]["camera_key"] == camera_key_of(tmp_path, closing)

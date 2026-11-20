@@ -183,10 +183,10 @@ class CameraTakeWriter:
                     self.spec.queue_size, result.give_wait_count, result.give_wait_ms_max, result.error)
         return result
 
-    def abandon(self) -> None:
+    def abandon(self) -> str | None:
         """For a take that goes on with no frame count for this camera (4.3): write each queued item, then
         close both files with no padding and no `# end` line; the take level completes them (7.4). It waits
-        as `end` does, while the writer makes progress (D1)."""
+        as `end` does, while the writer makes progress (D1). Return the text of a write error, or None."""
         if not self._started or self._ended:
             raise RuntimeError("abandon before start or after end")
         self._ended = True
@@ -198,6 +198,7 @@ class CameraTakeWriter:
                 self.queue.put_nowait(_ABANDON)
             except queue.Full:
                 pass
+        return self._error
 
     # --- the writer thread ---
 

@@ -224,7 +224,7 @@ writer = CameraTakeWriter.start(spec) -> CameraTakeWriter
 writer.give(frame) -> None
 writer.give_missing() -> None
 result = writer.end(frame_count) -> CameraTakeResult
-writer.abandon() -> None
+error = writer.abandon() -> str | None
 ```
 
 - `start` opens the MKV and calls `start_encoding()`, so the MKV header is in the file before the
@@ -249,7 +249,7 @@ writer.abandon() -> None
   call].
 - `abandon` puts a marker after the queued items. The writer thread writes each queued item, the row
   of the last block (6.3), and closes both files with no padding and no `# end` line. `abandon` waits
-  for the put and for the writer thread as `end` does (D1). It returns no result. The loop calls it
+  for the put and for the writer thread as `end` does (D1). It returns the text of a write error, or None; the loop sends that error to the main process, which ends the take with it (5.4). The loop calls it
   when its take has no last frame and the take goes on (the camera ends alone): the take level
   completes the pair after the join (7.4). When no take level follows (the group stops, or the main
   process is gone), the loop calls `end` with the number of rows that it gave, as before (added on
