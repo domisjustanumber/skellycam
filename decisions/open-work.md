@@ -107,12 +107,10 @@ task. Delete an item when its work is done. The PR that closes an item records t
     [ADR-S6HT](entries/S6HT-choices-of-the-3a-loop-code.md),
     [ADR-MA22](entries/MA22-choices-of-the-media-foundation-source-of-step-3a.md) and
     [ADR-6EKB](entries/6EKB-choices-of-the-3a-review-fixes.md) (items 79 to 90 of section 18).
-  - W8 deletes the phase 2 loop (`skellycam/core/camera/opencv/opencv_camera_loop.py`, its worker
-    method, its set-up helper, the `state is None` rules and `await_extracted_configs`). These tests
-    also call it: T-RING-23 (two tests), T-RING-38, T-RING-39, T-RING-40, T-RING-47, five tests of
-    `skellycam/tests/reference_recordings/` and `skellycam/tests/test_camera_startup_failure.py`.
-    The user decides these tests first ([ADR-6EKB](entries/6EKB-choices-of-the-3a-review-fixes.md)
-    item 12).
+  - Done: W8 deleted the phase 2 loop. Its tests moved to the shared loop or were retired
+    ([ADR-037V](entries/037V-completion-of-w8-the-phase-2-loop-and-its-tests.md), which the user
+    decides). The `README.md` of `skellycam/tests/reference_recordings/` still names the deleted
+    tests; it changes after the redaction decision of that file.
   - Run the fake-source tests with
     `uv run pytest skellycam/tests/capture -m "not camera_hardware and not capture_local"`. The
     hardware tests run only with `SKELLYCAM_HARDWARE=1`. The workflow

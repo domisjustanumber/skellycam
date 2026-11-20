@@ -166,7 +166,7 @@ proven calls of the prototype [D7]. The layout [agent 1]:
 | Path | Content |
 |---|---|
 | `skellycam/core/camera/capture/source.py` | `CaptureSource` protocol, `CapturedFrame`, `OpenedMode`, `ControlState`, `CaptureFailure` (section 4). No `comtypes` import. |
-| `skellycam/core/camera/capture/camera_loop.py` | The shared loop. It replaces `opencv/opencv_camera_loop.py`. |
+| `skellycam/core/camera/capture/camera_loop.py` | The shared loop. It replaces `opencv/opencv_camera_loop.py`. Note, 2026-11-20: the old loop, its worker method and its own helpers are deleted ([ADR-037V](../decisions/entries/037V-completion-of-w8-the-phase-2-loop-and-its-tests.md)). |
 | `skellycam/core/camera/capture/rate_check.py` | The rate formula, the limits, the early decision (section 10). Pure functions. |
 | `skellycam/core/camera/capture/modes.py` | `supported_modes`, the mode choice, the auto rate, the rate tolerance, the group rate rule (section 7). Pure functions. |
 | `skellycam/core/camera/capture/media_foundation/` | `com.py` (interface declarations), `bounded.py`, `errors.py` (HRESULT to reason, pure), `detect.py`, `source.py` (`MediaFoundationSource`). Windows only: the whole package, and each module can import `comtypes`. Its tests run on Windows only (16.1) [U18]. |

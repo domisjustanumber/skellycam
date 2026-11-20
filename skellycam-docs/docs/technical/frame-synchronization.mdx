@@ -46,16 +46,16 @@ flowchart TD
 
 | Step | Operation | Code location | Notes |
 |------|-----------|---------------|-------|
-| 1 | **Update checks** | `camera_loop_update_checks.py` | Checks for pause commands, config updates, and new recording info |
-| 2 | **Pause gate** | `opencv_camera_loop.py:66-68` | If `is_paused`, spin-wait 1 ms and skip to next iteration |
+| 1 | **Update checks** | `capture/camera_loop.py` (`_check_updates`) | Checks for pause commands, config updates, and new recording info |
+| 2 | **Pause gate** | `capture/camera_loop.py` (`_pass`) | If `should_pause`, set `is_paused`, sleep 50 ms and skip to next iteration |
 | 3 | **Sync gate** | `camera_orchestrator.py:93-106` | `should_grab_by_id()` returns `True` only when this camera's frame count is &le; all others |
-| 4 | **Grab** | `opencv_get_frame.py` | `cv2.VideoCapture.grab()` — latches sensor image in driver buffer |
-| 5 | **Retrieve** | `opencv_get_frame.py` | `cv2.VideoCapture.retrieve()` — decodes frame into pre-allocated numpy recarray |
-| 6 | **Recording flags** | `opencv_camera_loop.py:90-94` | Read flags **before** clearing `grabbing_frame` to prevent race conditions |
+| 4 | **Grab** | `capture/opencv_source.py` (`read_frame`) | `cv2.VideoCapture.grab()` — latches sensor image in driver buffer |
+| 5 | **Retrieve** | `capture/opencv_source.py` (`read_frame`) | `cv2.VideoCapture.retrieve()` — decodes the frame into a new numpy array |
+| 6 | **Recording flags** | `capture/camera_loop.py` (`_process`) | `should_record_frame_number()` for the new frame number |
 | 7 | **Shared memory** | `camera_shared_memory_ring_buffer.py` | `put_frame(overwrite=True)` — streaming consumers can't block capture |
 | 8 | **Record** | `handle_video_recording_loop.py` | Write to `cv2.VideoWriter` if `should_record_frame` is set |
 | 9 | **Finish** | `handle_video_recording_loop.py` | Close writer and flush if `should_finish_recording` is set |
-| 10 | **Increment** | `opencv_camera_loop.py` | Update `frame_count`, ungating other cameras |
+| 10 | **Increment** | `capture/camera_loop.py` (`_process`) | Update `frame_count`, ungating other cameras |
 
 ## The synchronization gate
 

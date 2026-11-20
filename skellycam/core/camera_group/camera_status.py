@@ -44,14 +44,10 @@ class CameraStatus:
 
     @property
     def in_gate(self) -> bool:
-        return self.state in GATE_STATES or self.state is None  # None: the phase 2 loop, which sets no state
+        return self.state in GATE_STATES
 
     @property
     def ready(self) -> bool:
-        if self.state is None:  # the phase 2 loop (opencv_camera_loop.py) and its tests
-            return all([self.connected.value, not self.should_pause.value, not self.should_close.value,
-                        not self.closing.value, not self.closed.value, not self.updating.value,
-                        not self.error.value])
         return self.state == "ready" and not self.should_pause.value and not self.should_close.value
 
     def info_dict(self) -> dict:

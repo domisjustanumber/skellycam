@@ -400,7 +400,7 @@ class CameraGroup:
         statuses = self.cameras.orchestrator.camera_statuses
         blocking = [f"camera {camera_id} is {status.serialize()['state']}"
                     for camera_id, status in list(statuses.items())
-                    if status.state is not None and not status.ready]  # None: the phase 2 loop
+                    if not status.ready]
         if blocking:  # a recording starts only when each selected camera is `ready` (8.3, agent 25)
             raise RequestRefused(409, "A recording needs each selected camera ready: " + "; ".join(blocking))
         warnings, self.capture_info = [], {}
@@ -529,44 +529,6 @@ class CameraGroup:
             recording_in_progress=orchestrator.all_cameras_recording,
             paused=orchestrator.any_cameras_paused,
         )
-
-
-async def await_extracted_configs(
-    ipc: CameraGroupIPC,
-    requested_configs: CameraConfigs,
-) -> CameraConfigs:
-    updated_configs: dict[CameraIdString, CameraConfig | None] = {
-        camera_id: None for camera_id in requested_configs.keys()
-    }
-    while (
-        any(not isinstance(config, CameraConfig) for config in updated_configs.values())
-        and ipc.should_continue
-    ):
-        if not ipc.extracted_config_subscription.empty():
-            extracted_config_message = ipc.extracted_config_subscription.get()
-            if not isinstance(extracted_config_message, DeviceExtractedConfigMessage):
-                raise RuntimeError(
-                    f"Received unexpected message type: {type(extracted_config_message)}"
-                )
-            updated_configs[
-                extracted_config_message.extracted_config.camera_id
-            ] = extracted_config_message.extracted_config
-        await await_100ms()
-        failure = ipc.take_setup_failure()  # a failure no longer stops the group (D23), so stop here
-        if failure is not None:
-            raise CameraSetupFailedException(str(failure))
-
-    failure = ipc.take_setup_failure()
-    if failure is not None:
-        raise CameraSetupFailedException(str(failure))
-    missing = [camera_id for camera_id, config in updated_configs.items() if config is None]
-    if missing or not ipc.should_continue:
-        raise CameraSetupFailedException(
-            f"Camera group startup/update aborted; cameras without configurations: {missing}"
-        )
-    validate_camera_configs(updated_configs)
-
-    return updated_configs
 
 
 async def finalize_recording(

@@ -129,9 +129,6 @@ class CameraOrchestrator:
 
         statuses = list(self.camera_statuses.values())
         states = [status.state for status in statuses]
-        if None in states:  # the phase 2 loop sets no state: its rule, each camera ready
-            return self.all_ready and all(self.camera_statuses[camera_id].frame_count.value <= status.frame_count.value
-                                          for status in statuses)
         if "waiting" in states and "starting" not in states:
             return False  # the waiting cameras join now; they all start with the same gate count (9.4)
         gate = self.gate_statuses
