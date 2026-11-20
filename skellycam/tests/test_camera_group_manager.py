@@ -48,6 +48,7 @@ class TestCameraGroupManagerInit:
         """Closing with no groups should not raise."""
         await manager.close_all_camera_groups()
         assert manager.camera_groups == {}
+        assert manager.closing is False  # sfn26: a close with no group must not stop the payloads
 
     def test_to_state_dict_empty(self, manager):
         """State dict with no groups returns expected structure."""

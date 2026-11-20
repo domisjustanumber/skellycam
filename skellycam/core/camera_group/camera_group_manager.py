@@ -213,10 +213,10 @@ class CameraGroupManager:
 
     async def close_all_camera_groups(self) -> None:
         """Close all camera groups."""
-        self.closing = True
         if not self.camera_groups:
             logger.warning("No camera groups to close.")
-            return
+            return  # `closing` stays False: else the payloads stay empty after a close with no group (sfn26)
+        self.closing = True
 
         for camera_group_id in list(self.camera_groups.keys()):
             await self.camera_groups[camera_group_id].close()
