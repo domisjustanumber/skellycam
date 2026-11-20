@@ -15,7 +15,7 @@ import time
 import pytest
 
 from skellycam.tests.capture.capture_session import (
-    Spies, capture_app, capture_logs, column, numbers_in, one_camera, parse_relay, ready_app_steps, recording_info,
+    Spies, capture_app, capture_logs, column, numbers_in, one_camera, parse_relay, product, ready_app_steps, recording_info,
     recording_info_json, sfn_gaps, stop_line_count, video_frame_count)
 from skellycam.tests.capture.fake_source import FakeScript
 
@@ -35,18 +35,33 @@ def detail(response):
 # Start-up: warm-up, wait for the others, ready limit
 # ---------------------------------------------------------------------------
 
-def test_t_cap_13_warm_up_and_wait_for_the_others(monkeypatch):
+@pytest.mark.parametrize("late_first_write", [False, True], ids=["as it comes", "late first write"])
+def test_t_cap_13_warm_up_and_wait_for_the_others(monkeypatch, late_first_write):
     """T-CAP-13, sections 9.2 and 9.4 [D21, agent 51]: two fake cameras; one opens 3 s later. The first
     90 frames after read-back reach neither the ring nor the recorder; the first camera is `waiting`
-    and paused until the second has passed its check; then both are `ready`."""
+    and paused until the second has passed its check; then both are `ready`.
+
+    "late first write": each camera loop stops for 0.5 s after it sets `ready`, so its first ring write
+    comes after the test sees `ready`. This is the order of the CI failures of d8989972d."""
+    if late_first_write:
+        status_class = product("skellycam.core.camera_group.camera_status").CameraStatus
+        set_state = status_class.set_state
+
+        def set_state_then_stop(self, state):
+            set_state(self, state)
+            if state == "ready":
+                time.sleep(0.5)
+        monkeypatch.setattr(status_class, "set_state", set_state_then_stop)
     with capture_app(monkeypatch, [FakeScript(), FakeScript(open_delay_s=3.0)], track=True) as app:
         spies = Spies(monkeypatch, app)
         ready_app_steps(app)
         first, second = app.factory.camera_ids
         for camera_id in (first, second):
+            # A camera is `ready` before its first ring write: wait for that write, then examine it.
+            app.wait(lambda: spies.of("jpeg", camera_id), f"camera {camera_id}: the first ring write")
             start = app.factory.logs[camera_id].first_sfn_after_readback
             writes = spies.of("jpeg", camera_id)
-            assert writes and writes[0]["sfn"] >= start + 90, f"camera {camera_id}: a warm-up frame reached the ring"
+            assert writes[0]["sfn"] >= start + 90, f"camera {camera_id}: a warm-up frame reached the ring"
         assert not spies.of("record")
         passed = min(t for t, s in app.tracker.states(second) if s in ("waiting", "ready"))
         waited = [t for t, s in app.tracker.states(first) if s == "waiting"]
