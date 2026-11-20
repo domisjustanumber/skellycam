@@ -196,10 +196,38 @@ def test_virtual_clock_fallback_moves_when_a_participant_does_other_work():
     thread.start()
     busy.wait(5)
     start = time.monotonic()
-    clock.wait_until(clock.now_ns() + 10**9)
+    clock.wait_until(clock.now_ns() + 10**8)
     assert time.monotonic() - start < 2.0
     done.set()
     thread.join(5)
+
+
+def test_virtual_clock_fallback_does_not_jump_to_a_far_wake_time():
+    """A participant that is busy (a slow loop) moves the time by one forced step for each `fallback_s`,
+    not to the far wake time of another thread (CI run of 6d496aa24, macOS, T-CAP-108)."""
+    clock = VirtualClock(fallback_s=0.05, forced_step_s=0.01)
+    busy, done = threading.Event(), threading.Event()
+
+    def slow_loop():
+        clock.wait_until(clock.now_ns())  # joins, then is busy without the clock
+        busy.set()
+        done.wait(5)
+        clock.leave()
+
+    def closing_camera():
+        clock.wait_until(clock.now_ns() + 2 * 10**9)  # a close of 2 s
+
+    loop = threading.Thread(target=slow_loop)
+    loop.start()
+    busy.wait(5)
+    closer = threading.Thread(target=closing_camera, daemon=True)
+    closer.start()
+    time.sleep(0.5)
+    moved_s = (clock.now_ns() - VirtualClock.START_NS) / 1e9
+    done.set()
+    loop.join(5)
+    closer.join(5)
+    assert 0 < moved_s <= 0.2, f"the time moved {moved_s:.3f} s in 0.5 s of real time with a busy participant"
 
 
 def test_real_clock_waits_real_time():

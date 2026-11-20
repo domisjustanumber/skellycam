@@ -100,18 +100,22 @@ class VirtualClock:
     of the waiting participants when each live participant waits: in `wait_until`, in `blocked`, or
     at the lockstep gate (`gate`, which `capture_session.install_gate_probe` calls). A participant
     that does other work for `fallback_s` of real time does not stop the clock: the time then moves
-    one step. Thus a loop that waits in another way (for example a paused loop) only slows the test.
+    one step, to the earliest wake time but at most `forced_step_s`. Thus a loop that waits in another
+    way (for example a paused loop) only slows the test, and a loop that is slow on a busy machine
+    does not let the time jump to a far wake time, for example the end of a 2 s close (CI run of
+    6d496aa24, macOS, T-CAP-108).
     """
     virtual = True
     START_NS = 1_000_000_000_000
 
-    def __init__(self, fallback_s=0.05):
+    def __init__(self, fallback_s=0.05, forced_step_s=0.01):
         self._now = self.START_NS
         self._condition = threading.Condition()
         self._states = {}  # thread ident -> "run" | "gate" | "hold" | ("wait", wake_ns)
         self._threads = {}
         self._changed = time.monotonic()
         self.fallback_s = fallback_s
+        self.forced_step_ns = round(forced_step_s * 1e9)
 
     def now_ns(self):
         return self._now
@@ -182,6 +186,8 @@ class VirtualClock:
         if not waits or (not force and "run" in self._states.values()):
             return
         target = min(waits)
+        if force:
+            target = min(target, self._now + self.forced_step_ns)
         if target > self._now:
             self._now = target
             self._changed = time.monotonic()
