@@ -7,9 +7,9 @@
 The user decided these items on 2026-11-20, after the independent review of the connection of the
 take recorder to the shared loop:
 
-- **A.** Spec `specs/recorder.md` 7.6 and the glossary: the frame count of a take is last frame
-  number − first frame number (rows = last − first). Remove the "+ 1"; update 8.1 and 8.2 where
-  they repeat it. The code is right.
+- **A.** The frame count of a take is last frame number − first frame number (rows = last − first):
+  the "+ 1" would invent a row. The spec text (`specs/recorder.md` 7.6 and the glossary) changes to
+  this rule. The code is right.
 - **B.** A take that an error ended is ended at once for all cameras; the next stop request returns
   the stored summary; a stop with no take answers 409 "No recording runs".
 - **C.** Record start pauses the cameras for up to 10 s until each camera has started its writer,
@@ -27,17 +27,14 @@ take recorder to the shared loop:
   `MAX_MANUAL_EXPOSURE = -5`; -4 gives about 16 fps on the Logitech cameras); (2) after it picks the
   value whose mean brightness is nearest the target, it goes one step darker (offset -1, clamped to
   the range), as the old helper `get_recommended_cv2_cap_exposure(offset_from_midrange=-1)` and sfn26
-  do. When the search runs (at open) and the mode names do not change.
-- **I.** Private-data check: the two upstream author-credit comment lines (line 1 of
-  `skellycam-ui/src/hooks/floatingOnboarding.tsx` and of
-  `skellycam-ui/src/hooks/useDraggableTooltips.tsx`) stay exactly as upstream wrote them. They go on
-  the allow-list of the check with the reason "upstream author credit"
-  ([ADR-PEJ0](PEJ0-scope-of-the-private-data-check.md)). The address is not copied into a new file,
-  entry, commit message or report.
+  do.
+- **I.** The two upstream author-credit lines (line 1 of `skellycam-ui/src/hooks/floatingOnboarding.tsx`
+  and of `skellycam-ui/src/hooks/useDraggableTooltips.tsx`) stay as upstream wrote them, and pass the
+  private-data check through an allow-list with the reason "upstream author credit"
+  ([ADR-PEJ0](PEJ0-scope-of-the-private-data-check.md)). Not done: the check has no allow-list form
+  that does not copy the address. How (for example a path-and-line form of the check) is a question
+  for the user.
 - **J.** `skellycam/tests/reference_recordings/README.md` line 36: the absolute home folder path of an
   upstream developer changes to the words "the user's home folder".
-- **K.** Secret scan: the 14,551 gitleaks hits (rule `generic-api-key` only, all under `research/` in
-  the history) are false positives. `.gitleaks.toml` gets three `[[allowlists]]` tables for that
-  rule: the Windows camera key shape; the synthetic keys of the rig anchor self-test; the sample keys,
-  codec paths and file hash of three research notes. A folder that is named after a machine is
-  `[^/]+` in a path pattern.
+- **K.** The secret scan gets three narrow allow-list rules for the classified false positives. The
+  result is accepted only at zero hits in CI.

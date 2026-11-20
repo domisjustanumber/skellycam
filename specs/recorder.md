@@ -114,7 +114,7 @@ of `windows-capture.md` that change.
 | take level | The part of the module in the main process: folder, manifest, capture info, lock, the end of the take. |
 | camera level | The part of the module in a camera process: queue, writer thread, MKV, CSV rows. |
 | group frame | One round of the lockstep gate during a take. Row k of each camera is group frame k [SFF-754]. |
-| frame count of the take | The number of group frames of the take: `last_recording_frame_number − first_recording_frame_number` of the orchestrator (7.6). Changed on 2026-11-20: no "+ 1" (A of [ADR-JMS0](../decisions/entries/JMS0-connection-review-decisions.md)). |
+| frame count of the take | The number of group frames of the take: `last_recording_frame_number − first_recording_frame_number` of the orchestrator (7.6). Changed on 2026-11-20: no "+ 1" (A of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md)). |
 | frame | One `RecorderFrame` (4.1). |
 | damaged frame | A frame with a bit of the error mask 0x0F of [ring 4] in `flags` [R3]. |
 | block | One `SimpleBlock` of an MKV, with one JPEG [SFF-733]. |
@@ -253,7 +253,7 @@ writer.abandon() -> None
   when its take has no last frame and the take goes on (the camera ends alone): the take level
   completes the pair after the join (7.4). When no take level follows (the group stops, or the main
   process is gone), the loop calls `end` with the number of rows that it gave, as before (added on
-  2026-11-20, [ADR-P5VE](../decisions/entries/P5VE-connection-review-fix-choices.md)).
+  2026-11-20, [ADR-P5VE](../decisions/entries/P5VE-review-fix-choices.md)).
 - After `give` or `give_missing` raised `RecorderStalled` or `RecorderWriteError`, the caller calls
   only `end`, never `give` again. `end` pads the rest with `missing` rows; else each later row would
   move by one [agent 3].
@@ -316,7 +316,7 @@ process [R10]. The kill and stall tests run the camera level in a child process 
   (item 1 above). Thus a healthy camera would be marked `dead`. The watch of each source counts from
   the later of the last arrival and the end of the last wait of its loop (in `give` or at the gate)
   (section 10 item 10) [agent 32]. Changed on 2026-11-20: before, of a pull source only; a push source
-  has the same rule (E of [ADR-JMS0](../decisions/entries/JMS0-connection-review-decisions.md)).
+  has the same rule (E of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md)).
 - The camera writer counts each wait (`give_wait_count`, `give_wait_ms_max`) and the queue high-water.
   The camera process logs them at the end of the take [P §6].
 
@@ -346,7 +346,7 @@ process [R10]. The kill and stall tests run the camera level in a child process 
      The user uses "apply again" or unselects it [C6, cap 8.3]. Its files are completed as a short file
      (7.4) [M5]. When its process still runs after the kill, its files are not touched, and the
      manifest stays `recording` with a `take_error` that names the camera (8.1) (added on 2026-11-20,
-     [ADR-P5VE](../decisions/entries/P5VE-connection-review-fix-choices.md)).
+     [ADR-P5VE](../decisions/entries/P5VE-review-fix-choices.md)).
 - The app keeps running. A new take can start [P §6].
 
 ### 5.4 A write error [C5, C6]
@@ -651,7 +651,7 @@ Footer lines [SFF-745]:
 | `audio` | null [R5]. |
 | `calibration` | null. |
 | `files` | One item: `{"path": "<rec>_info.json", "role": "capture_info", "owner": "skellycam", "sha256": <SHA-256 of the file>}` [SFF-723]. |
-| `warnings` | `[]` at the start. At the end: `camera_gap` for each camera with `gaps` > 0 [SFF-727], with the `detail` `row=<k> from=<a> to=<b>` of its first gap row k, where a and b are the `source_frame_number` of rows k − 1 and k (F of [ADR-JMS0](../decisions/entries/JMS0-connection-review-decisions.md); SFF-727 allows a text for people, so no format change; a reader does not parse it); `camera_dead` for each camera that stopped during the take, with `last_frame` [M8, F-5]; `camera_file_short` for each short file, with the block and row counts [M5, F-5]; `take_error` when an error ended the take [C5, F-5]. `source` is `"skellycam"`. |
+| `warnings` | `[]` at the start. At the end: `camera_gap` for each camera with `gaps` > 0 [SFF-727], with the `detail` `row=<k> from=<a> to=<b>` of its first gap row k, where a and b are the `source_frame_number` of rows k − 1 and k (F of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md); SFF-727 allows a text for people, so no format change; a reader does not parse it); `camera_dead` for each camera that stopped during the take, with `last_frame` [M8, F-5]; `camera_file_short` for each short file, with the block and row counts [M5, F-5]; `take_error` when an error ended the take [C5, F-5]. `source` is `"skellycam"`. |
 | `privacy` | `fields`: `/camera_configs/<key>/device/os_name` of the capture info when not null, `utc_offset_min` of each timing sidecar, `/recording_name` of the manifest; sorted [SFF-881, SFF-882]. `media_shows_people`: `true`. |
 | `summary` | SFF-728, with `missing` for each camera, after `filled`: the `missing` count of its `# end` line [M3, F-1]. In the state `recording`: each `duration_s`, `stored_px`, `gaps`, `filled` and `missing` is null. At the end: computed from the CSVs; `stored_px` is the size of the first block that is not a placeholder (or of the placeholder when there is no such block), from its SOF; `user_name` and `model` are null (5d); `exposure_us` from the capture info (6.7). F-1 gives `duration_s` when the last rows have no time. |
 
@@ -822,7 +822,7 @@ A frame with no bit of the error mask 0x0F gives one block and one row. `flags` 
 - The frame count of the take is `last_recording_frame_number − first_recording_frame_number` of
   the orchestrator: the group frames of the take, first to last − 1 [agent 11]. The camera writer gets
   it in `end`, and `finish` gets it from the main process. Changed on 2026-11-20: before, "+ 1", which
-  counted a row with no frame (A of [ADR-JMS0](../decisions/entries/JMS0-connection-review-decisions.md)).
+  counted a row with no frame (A of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md)).
 - A finished CSV with another number of rows is a defect: `finish` logs it and adds `take_error`.
 
 ### 7.7 Rotation
@@ -853,7 +853,7 @@ A frame with no bit of the error mask 0x0F gives one block and one row. `flags` 
    The main process never touches a camera's files before one of these four cases [review B2]. A
    process that still runs after the kill is none of them: `finish` does not complete its files, and
    it writes the manifest with `state` `"recording"` and a `take_error` for that camera (added on
-   2026-11-20, [ADR-P5VE](../decisions/entries/P5VE-connection-review-fix-choices.md)).
+   2026-11-20, [ADR-P5VE](../decisions/entries/P5VE-review-fix-choices.md)).
    A stall or a write error that comes while a stop runs is the `take_error` of that take, as in 5.3
    and 5.4.
 5. `Take.finish(results, frame_count=...)`:
@@ -892,7 +892,7 @@ ended gives the same response; the error text is in the log and in the manifest 
 A take that an error ended is ended at once for all cameras. The main process keeps its summary.
 The next stop request returns that summary, one time. Each later stop request, and a stop request
 with no take, gets HTTP 409 with the text "No recording runs". Two stop requests at the same time
-end the take one time: the second gets the 409 (B of [ADR-JMS0](../decisions/entries/JMS0-connection-review-decisions.md), added on 2026-11-20).
+end the take one time: the second gets the 409 (B of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), added on 2026-11-20).
 
 ### 8.3 What is no longer written, and the code that goes
 
@@ -970,7 +970,7 @@ commit, with the connection tests of 12.2, does these steps:
    `os._exit` (7.4).
 10. **The stall watch.** For each source, the 2 s stall watch of [cap 9.5] counts from the later of
     the last arrival and the end of the last wait of the loop, in `give` or at the gate (5.2)
-    [agent 32]. Changed on 2026-11-20: before, for a pull source only (E of [ADR-JMS0](../decisions/entries/JMS0-connection-review-decisions.md)).
+    [agent 32]. Changed on 2026-11-20: before, for a pull source only (E of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md)).
 11. **The stall and the write error.** The loop catches `RecorderStalled` and `RecorderWriteError`,
     reports them, and from then on calls only `end` for that camera (4.3). The main process ends the take (5.3, 5.4) [C5]. The state transitions are those
     of 5.3 and 5.4 [C6]. Section 14 adds them to section 8 of `windows-capture.md`.
@@ -982,13 +982,13 @@ commit, with the connection tests of 12.2, does these steps:
     step 5b; start again with no microphone" [C1]. Added on 2026-11-20: a take folder on a FAT disk
     gets HTTP 422 with the text of `start_take` (4.2), for example "The folder is on a FAT32 disk.
     FAT32 cannot hold a file larger than 4 GiB, and one camera reaches that in minutes. Choose a
-    folder on another disk." [C6DE D3]. Added on 2026-11-20 (D of [ADR-JMS0](../decisions/entries/JMS0-connection-review-decisions.md)): a record start that fails
+    folder on another disk." [C6DE D3]. Added on 2026-11-20 (D of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md)): a record start that fails
     after `start_take` finishes the take folder at once with zero rows: each camera writer that started
     ends with frame count 0, and `finish` writes `take_error` "the record start failed: <text>". The
     manifest does not stay `recording`. A camera writer that cannot start keeps its camera running; the
     start then fails with HTTP 500 and the text "camera <camera_id>: the take writer did not start:
     <error>"
-    ([ADR-P5VE](../decisions/entries/P5VE-connection-review-fix-choices.md)). The failed start does not wait for the cameras to unpause. Before `finish`, it waits for
+    ([ADR-P5VE](../decisions/entries/P5VE-review-fix-choices.md)). The failed start does not wait for the cameras to unpause. Before `finish`, it waits for
     each camera that has a writer or is in the gate: its result, or its refusal. A camera that gets its
     take spec when the take has ended or its start failed (first frame −1, or a last frame set)
     refuses it with the text "camera <camera_id>: the take ended before its writer started". Thus
@@ -1549,7 +1549,7 @@ fix. The body marks each one [agent n]. Items of the first draft that are now de
 9. The fsync of both live files once per second, on the writer thread, after a row.
 10. (now C3)
 11. The camera writer pads with placeholders and writes its own `# end` line; the frame count is
-    `last − first` of the orchestrator (A of [ADR-JMS0](../decisions/entries/JMS0-connection-review-decisions.md), 2026-11-20); a
+    `last − first` of the orchestrator (A of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), 2026-11-20); a
     row count that differs is a defect.
 12. The completion of 7.4: after the join, cut both files to equal rows and blocks, `missing` rows
     with no block, `# repair`, `# end`.
@@ -1585,7 +1585,7 @@ fix. The body marks each one [agent n]. Items of the first draft that are now de
 29. `exposure_us` = 2^v × 10^6 from the log2 exposure value.
 30. The ring flags `DISCONTINUITY` and `DHT_INSERTED` do not go into the CSV in 5a.
 31. (now M5, second case: the user decided it on 2026-11-20)
-32. (now E of [ADR-JMS0](../decisions/entries/JMS0-connection-review-decisions.md), for each source) The stall watch of a pull source counts from the
+32. (now E of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), for each source) The stall watch of a pull source counts from the
     later of the last arrival and the end of the last wait of its loop (in `give` or at the gate).
 33. The playback list field `needs_new_player` and HTTP 409 on the video endpoints of a new take.
 34. The workflow `recorder.yml`: its trigger paths, the runner labels `windows-2025`, `ubuntu-24.04`

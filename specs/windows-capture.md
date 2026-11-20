@@ -806,7 +806,7 @@ Reason: on the C930e the gain read 6 before the stream started and 0 after it st
 - 2 s without a frame: `dead` in an open state, `failed` in `starting` [D38] [agent 23].
 - A started camera that fails is `dead` at once, before its files and its close [agent 82].
 - The watch restarts after each wait of the loop in the recorder ([`recorder.md`](recorder.md) 5.2), and after each wait at the
-  gate [agent 32]. This applies to each source, push and pull (E of [ADR-JMS0](../decisions/entries/JMS0-connection-review-decisions.md), 2026-11-20).
+  gate [agent 32]. This applies to each source, push and pull (E of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), 2026-11-20).
 
 ## 10. Rate check
 
@@ -898,7 +898,7 @@ The reason gives the declared rate, the measured rate and two hints in this orde
   the decoded image against 127.5. The old helper `recommend_camera_exposure_setting.py` tries -12 to
   -4. The loop then goes one step darker than the value nearest to 127.5 (offset -1, in the range),
   as `get_recommended_cv2_cap_exposure` does. Changed on
-  2026-11-20 (H of [ADR-JMS0](../decisions/entries/JMS0-connection-review-decisions.md)): before, the range ended at -4, and there was no offset. It runs at step 5 of 9.1. Its frames are not
+  2026-11-20 (H of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md)): before, the range ended at -4, and there was no offset. It runs at step 5 of 9.1. Its frames are not
   warm-up frames [agent 29]. As today (`_apply_exposure` in
   `opencv_apply_config.py`), the stored config then holds `exposure_mode: MANUAL` and the value that
   the search found [agent 29].
@@ -1589,7 +1589,7 @@ Other open points:
 9. How a spawned camera process gets a pipe as its standard error handle on Windows (5.6) [NV].
 10. `RECOMMEND` searched exposures from -12 to -4. At -4 the Logitech cameras give 16 fps (10.5), so a
     recommended value could fail the rate check after the open. Resolved on 2026-11-20: the range ends at
-    -5 (H of [ADR-JMS0](../decisions/entries/JMS0-connection-review-decisions.md)).
+    -5 (H of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md)).
 11. The in-use codes at stages other than the first frame are [NV]. Only `0xC00D3704` at the first
     frame is measured.
 13. No test checks the real time limits of the Media Foundation source: the first-frame limit of 6.4
