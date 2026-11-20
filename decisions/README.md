@@ -5,7 +5,9 @@ file and [open-work.md](open-work.md) before you change the code, the CI or the 
 [Rules](#rules) tell you which entries to read
 ([ADR-0001](entries/0001-decision-log-agents-md-and-private-data.md)).
 
-When a decision changes, add a new entry that supersedes the old entry in full. The body of a decided entry changes only by the edits
+Each entry gives the decision, its reason, the evidence (when there is evidence), the alternatives
+rejected and a "Not repeated" section for pitfalls already found. When a decision changes, add a new
+entry that supersedes the old entry in full. The body of a decided entry changes only by the edits
 that the [Rules](#rules) allow. To write an entry, use [template.md](template.md).
 
 ## Index
@@ -16,37 +18,38 @@ These entries are `accepted`.
 
 | # | Decision | Status |
 |---|----------|--------|
-| [0001](entries/0001-decision-log-agents-md-and-private-data.md) | Decision log and its rules; `AGENTS.md` instructions; `plans/` is local; no private data | accepted |
+| [0001](entries/0001-decision-log-agents-md-and-private-data.md) | Decision log and its rules; `AGENTS.md` files hold the instructions; `plans/` is local; no private data | accepted |
 | [2S1P](entries/2S1P-bootstrap-answers-with-binding-specs.md) | Answers to the bootstrap questions of the kit adoption; supersedes S222: the specs in `specs/` are normative (item 4) | accepted |
 | [N2NH](entries/N2NH-index-limit-24000-no-shortened-rows-and-binding-specs.md) | Index limit 24,000 characters until the clean-up; no agent shortens the row of an entry it did not write; specs are binding | accepted |
-| [50G8](entries/50G8-phase-2-frame-ring-spec.md) | Phase 2 follows `specs/frame-ring.md`: two rings per camera, CRC-32 reads, recorder first; 2b approved | accepted |
-| [9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md) | Python API of the frame ring for the 2a tests; decisions on the 2a code (items 52 to 67) | accepted |
-| [7DE6](entries/7DE6-arm64-ci-job-for-the-portable-frame-ring-tests.md) | CI job for the portable frame ring tests on an arm64 Linux runner | accepted |
+| [50G8](entries/50G8-phase-2-frame-ring-spec.md) | Phase 2 follows `specs/frame-ring.md`: two rings per camera, copy then CRC-32 reads, recorder first; the 2b build is approved | accepted |
+| [9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md) | Python API of the frame ring, as the 2a tests assume it; clarifications, corrections and decisions on the 2a code (items 52 to 67) | accepted |
+| [7DE6](entries/7DE6-arm64-ci-job-for-the-portable-frame-ring-tests.md) | CI job that runs the portable frame ring tests on an arm64 Linux runner, on pushes to `dom/native-jpeg` | accepted |
 | [5MYA](entries/5MYA-python-api-of-the-bgr-ring-and-the-decode-stage-as-the-2b-tests-assume-it.md) | Python API of the BGR ring and the decode stage, as the 2b tests assume it | accepted |
-| [467Z](entries/467Z-step-2b-self-check-stop-opencv-threads-and-yuv-conversion.md) | Step 2b: no BGR self-check log, `stop()` counts a waiting frame, `cv2.setNumThreads(1)`, YUY2 and NV12 conversion | accepted |
-| [E817](entries/E817-choices-of-the-2b-code.md) | Choices of the 2b code: `bgr` on the JPEG creator, `set_skipped_count`, `None` payload for a flagged BGR frame | accepted |
-| [CE8C](entries/CE8C-count-line-of-the-bgr-ring-at-the-stop-of-the-decode-stage.md) | `DecodeStage.stop()` logs one count line: frames committed, skipped, decode errors | accepted |
-| [EN7A](entries/EN7A-phase-3-windows-capture-decisions.md) | Phase 3 decisions D1 to D49: Media Foundation through `comtypes`, one shared loop, rate check, failed and dead cameras | accepted |
-| [QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md) | Answers U1 to U15 to the phase 3 spec drafts; three interim rules that phase 5 removes | accepted |
-| [4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md) | Phase 3 spec `specs/windows-capture.md`, its test list and the agent choices of its section 18 | accepted |
-| [HP7D](entries/HP7D-python-api-of-capture-as-the-3a-tests-assume-it.md) | Python API of capture for the 3a tests: names, seams for fake sources and a virtual clock, log lines | accepted |
-| [HB4Z](entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md) | Answers U16 to U23: control thread, warm-up count, Windows-only `media_foundation/`, CI, parity table | accepted |
-| [PDD3](entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md) | W1 to W8 after the 3a review: items 65 to 78, OpenCV rate check, virtual cameras, phase 2 loop | accepted |
-| [VPF8](entries/VPF8-phase-5-recorder-decisions.md) | Phase 5 decisions R1 to R12: steps 5a to 5d; equal rows for dead and hung cameras; no old files | accepted |
-| [J3QP](entries/J3QP-missing-frames-as-black-placeholders-and-the-end-of-a-take.md) | Missing frames as black placeholders on `missing` rows (M1 to M10); recorder rules C1 to C7 | accepted |
+| [467Z](entries/467Z-step-2b-self-check-stop-opencv-threads-and-yuv-conversion.md) | Step 2b: no BGR self-check log, `stop()` drops and counts a waiting frame, `cv2.setNumThreads(1)` in each camera process, default YUY2 and NV12 conversion | accepted |
+| [E817](entries/E817-choices-of-the-2b-code.md) | Choices of the 2b code: `bgr` on the JPEG creator, `set_skipped_count`, `None` payload for a flagged BGR frame, no libjpeg limit on Windows until phase 3 | accepted |
+| [CE8C](entries/CE8C-count-line-of-the-bgr-ring-at-the-stop-of-the-decode-stage.md) | `DecodeStage.stop()` logs one count line for its BGR ring: frames committed, skipped, decode errors | accepted |
+| [EN7A](entries/EN7A-phase-3-windows-capture-decisions.md) | Phase 3 decisions D1 to D49: Media Foundation through `comtypes`, one shared loop, start-up rate check, failed and dead cameras | accepted |
+| [QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md) | Fifteen answers U1 to U15 of the user to the phase 3 spec drafts; three interim rules of phase 3 that phase 5 removes | accepted |
+| [4CQC](entries/4CQC-phase-3-windows-capture-spec-and-test-list.md) | Phase 3 spec `specs/windows-capture.md` and its test list (91 tests), with the 64 agent choices of its section 18 | accepted |
+| [HP7D](entries/HP7D-python-api-of-capture-as-the-3a-tests-assume-it.md) | Python API of capture, as the 3a tests assume it: names, seams for fake sources and a virtual clock, log line forms | accepted |
+| [HB4Z](entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md) | Answers U16 to U23: control thread, warm-up count, Windows-only `media_foundation/`, CI and tests on Linux and macOS, parity table | accepted |
+| [PDD3](entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md) | W1 to W8 after the 3a review: items 65 to 78, OpenCV rate check without a reported rate, virtual cameras, phase 2 loop | accepted |
+| [VPF8](entries/VPF8-phase-5-recorder-decisions.md) | Phase 5 decisions R1 to R12: steps 5a, 5d, 5b, 5c; equal rows for dead and hung cameras; no image for a damaged frame; no old files | accepted |
+| [J3QP](entries/J3QP-missing-frames-as-black-placeholders-and-the-end-of-a-take.md) | Missing frames as black placeholder blocks on `missing` rows (M1 to M10); recorder rules C1 to C7 (microphone, completion, key, CI, disk stall) | accepted |
 | [Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md) | The user accepted `specs/recorder.md` and its test list (step 5a); the format changes F-1 to F-10 still wait | accepted |
 | [C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) | Recorder decisions D1 to D3: a stall is no writer progress for the limit; 3 s and 10 s stay as starting values; no take on a FAT disk | accepted |
-| [JMS0](entries/JMS0-review-decisions.md) | Connection review decisions | accepted |
-| [C4FZ](entries/C4FZ-camera-requests.md) | Exposure modes and search, one frame rate, USB link label | accepted |
+| [JMS0](entries/JMS0-review-decisions.md) | Connection review A to K: frame count, error end, start wait, failed start, stall watch, gap detail, hang rule, exposure, credit lines, home path, secret scan | accepted |
+| [C4FZ](entries/C4FZ-camera-requests.md) | Exposure Manual and Auto (a SkellyCam search, E1 to E9), one frame rate for all cameras (F1 to F4), USB link label (L1 to L5); answers Q1 to Q14 | accepted |
 
 ### Evidence
 
-These entries are `evidence`: measurements ([Rules](#rules)).
+These entries are `evidence`: measurements. They are not in the read path. Scan these rows before
+you make a measurement ([Rules](#rules)).
 
 | # | Decision | Status |
 |---|----------|--------|
-| [ETJ1](entries/ETJ1-measurements-m5-to-m7-of-the-bgr-ring.md) | Measurements M5 to M7 of the BGR ring: CRC-32, decode thread, capture jitter, GIL (Windows) | evidence |
-| [8RES](entries/8RES-r11-measurements-of-the-5a-recorder.md) | R11 measurements of the 5a recorder: disk stalls, kills, fsync cost, the GIL (Windows) | evidence |
+| [ETJ1](entries/ETJ1-measurements-m5-to-m7-of-the-bgr-ring.md) | Measurements M5 to M7 of the BGR ring: CRC-32 cost, decode thread CPU and skip rate, capture jitter and the GIL (Windows) | evidence |
+| [8RES](entries/8RES-r11-measurements-of-the-5a-recorder.md) | R11 measurements of the 5a recorder: disk stalls, kills with a full queue, fsync cost with 1 to 16 writers, the GIL (Windows) | evidence |
 | [953T](entries/953T-r11-measurements-after-the-review-fixes.md) | R11 measurements again after the review fixes and D1; the kill window that loses a second frame | evidence |
 
 ### Proposed
@@ -56,21 +59,21 @@ These entries wait for a decision of the user. Section is the section or area of
 
 | # | Decision | Section | Status |
 |---|----------|---------|--------|
-| [NMM1](entries/NMM1-design-of-the-camera-media-check.md) | Camera media check: types, first bytes, `GOLDEN_PATHS`, image reminder, skill, hooks | none | proposed |
-| [Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md) | Step 5a spec `specs/recorder.md`, test list, format list F-1 to F-10, agent choices | `recorder` | proposed |
+| [NMM1](entries/NMM1-design-of-the-camera-media-check.md) | Camera media check: types, first bytes, `GOLDEN_PATHS`, image reminder, `commit-files` skill, per-worktree hook install | none | proposed |
+| [Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md) | Step 5a spec `specs/recorder.md` and its test list; the merged format list F-1 to F-10; agent choices; no question open | `recorder` | proposed |
 | [4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) | Other fills of the kit adoption; `CLAUDE.md` stays untracked | none | proposed |
-| [S6HT](entries/S6HT-choices-of-the-3a-loop-code.md) | Choices of the 3a loop code: shared status, gate join, stop flag per camera, warning pipe, apply reply | none | proposed |
-| [MA22](entries/MA22-choices-of-the-media-foundation-source-of-step-3a.md) | Media Foundation source choices of step 3a, not fixed by spec or HP7D | `skellycam.core.camera.capture.media_foundation` | proposed |
-| [6EKB](entries/6EKB-choices-of-the-3a-review-fixes.md) | Choices of the 3a review fixes: detection in apply, `modes_read`, end order, files after a hang | none | proposed |
-| [037V](entries/037V-completion-of-w8-the-phase-2-loop-and-its-tests.md) | W8 done: phase 2 loop deleted; tests moved to the shared loop or retired | none | proposed |
-| [BM73](entries/BM73-fixes-of-the-first-ci-run-of-the-capture-workflow.md) | Fixes of the 1st capture CI run: stats float, codec alarm, tests, fake clock, macOS timing step, watch | none | proposed |
-| [R60B](entries/R60B-fixes-of-the-first-hardware-run-of-step-3a.md) | Fixes of the 1st 3a hardware run: DirectShow path of OpenCV, test labels by USB IDs | none | proposed |
-| [FTC3](entries/FTC3-fixes-of-the-second-capture-ci-run-and-the-first-hardware-run.md) | 2nd capture CI run and 3a hardware run fixes: clock step, T-CAP-86 join, empty timings, virtual links | none | proposed |
-| [QEQ8](entries/QEQ8-python-api-of-the-recorder-as-the-5a-tests-assume-it.md) | Recorder Python API for the 5a tests; `dead_cameras` of `finish`; test readings | `recorder` | proposed |
-| [YNM2](entries/YNM2-connection-of-the-take-recorder-to-the-shared-loop.md) | Take recorder joined to the shared loop; U4, U5, U12, old writer gone | none | proposed |
-| [P5VE](entries/P5VE-review-fix-choices.md) | Review fix choices | `recorder` | proposed |
-| [T24F](entries/T24F-choices-of-the-5a-recorder-code.md) | Choices of the 5a recorder code: write error, completion walk, manifest merge, lock hold, empty stats | `recorder` | proposed |
-| [Y6F6](entries/Y6F6-camera-request-choices.md) | Choices of `specs/camera-requests.md` | none | proposed |
+| [S6HT](entries/S6HT-choices-of-the-3a-loop-code.md) | Choices of the 3a loop code: shared status, join of the gate, one stop flag per camera, Windows warning pipe, apply response | none | proposed |
+| [MA22](entries/MA22-choices-of-the-media-foundation-source-of-step-3a.md) | Choices of the Media Foundation source of step 3a that the spec and ADR-HP7D do not fix | `skellycam.core.camera.capture.media_foundation` | proposed |
+| [6EKB](entries/6EKB-choices-of-the-3a-review-fixes.md) | Choices of the fixes of the 3a review: detection in the apply request, `modes_read`, end order, files message after a hang | none | proposed |
+| [037V](entries/037V-completion-of-w8-the-phase-2-loop-and-its-tests.md) | Completion of W8: phase 2 loop deleted; its tests moved to the shared loop or retired for a capture test or a changed rule | none | proposed |
+| [BM73](entries/BM73-fixes-of-the-first-ci-run-of-the-capture-workflow.md) | Fixes of the first capture CI run: stats float, codec alarm on the main thread, test fixes, OpenCV fake on a virtual clock, macOS timing step, group watch | none | proposed |
+| [R60B](entries/R60B-fixes-of-the-first-hardware-run-of-step-3a.md) | Fixes of the first 3a hardware run: DirectShow device path of the OpenCV source, hardware test labels by USB IDs | none | proposed |
+| [FTC3](entries/FTC3-fixes-of-the-second-capture-ci-run-and-the-first-hardware-run.md) | Fixes of the second capture CI run and the 3a hardware run: virtual clock step, T-CAP-86 clock join, empty timing values, virtual camera links | none | proposed |
+| [QEQ8](entries/QEQ8-python-api-of-the-recorder-as-the-5a-tests-assume-it.md) | Python API of the recorder as the 5a tests assume it; `dead_cameras` of `finish`; the test interpretations | `recorder` | proposed |
+| [YNM2](entries/YNM2-connection-of-the-take-recorder-to-the-shared-loop.md) | Take recorder joined to the shared loop; U4, U5, U12 and old writer gone | none | proposed |
+| [P5VE](entries/P5VE-review-fix-choices.md) | Choices of the connection review fixes: app state, error end, abandon, kill, writer start, gap detail, save limit, status union, exposure constants, scan | `recorder` | proposed |
+| [T24F](entries/T24F-choices-of-the-5a-recorder-code.md) | Choices of the 5a recorder code: the writer after a write error, the completion walk, the manifest merge, the lock hold, empty statistics | `recorder` | proposed |
+| [Y6F6](entries/Y6F6-camera-request-choices.md) | Choices A1 to A23 of `specs/camera-requests.md`: search limits, held value, endpoint and texts, slow-camera texts, 60 fps check, fall back, `usb_link` | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
