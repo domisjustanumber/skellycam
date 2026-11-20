@@ -806,7 +806,7 @@ Reason: on the C930e the gain read 6 before the stream started and 0 after it st
 - 2 s without a frame: `dead` in an open state, `failed` in `starting` [D38] [agent 23].
 - A started camera that fails is `dead` at once, before its files and its close [agent 82].
 - The watch restarts after each wait of the loop in the recorder ([`recorder.md`](recorder.md) 5.2), and after each wait at the
-  gate [agent 32].
+  gate [agent 32]. This applies to each source, push and pull (E of [ADR-JMS0](../decisions/entries/JMS0-connection-review-decisions.md), 2026-11-20).
 
 ## 10. Rate check
 
