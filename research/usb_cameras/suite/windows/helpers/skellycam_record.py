@@ -858,7 +858,8 @@ def _job_counts(job: Any) -> dict | None:
         a = _Acct()
         if not k32.QueryInformationJobObject(job.handle, 1, ctypes.byref(a), ctypes.sizeof(a), None):
             return None
-        return {"active": int(a.ActiveProcesses), "total": int(a.TotalProcesses)}
+        return {"active": int(a.ActiveProcesses), "total": int(a.TotalProcesses),
+                "cpu_s": (a.TotalUserTime + a.TotalKernelTime) / 1e7}  # 100 ns units, all processes of the job
     except Exception:  # noqa: BLE001
         return None
 
@@ -1012,7 +1013,17 @@ def record(args: argparse.Namespace) -> tuple[dict, int]:
                  f"group/apply failed: {connect['error']} {connect.get('detail') or ''}", connect["timed_out"])
             raise _Stop()
         g = connect["json"] or {}
-        summ["group"] = {"group_id": g.get("group_id"), "extracted_configs": g.get("camera_configs")}
+        summ["group"] = {"group_id": g.get("group_id"), "extracted_configs": g.get("camera_configs"),
+                         "camera_failures": g.get("camera_failures"), "warnings": g.get("warnings")}
+        failed = sorted(g.get("camera_failures") or {})
+        if failed and args.unselect_failed:  # phase 3: a record start needs every selected camera ready (8.3)
+            ub = {"camera_configs": {cid: {**body["camera_configs"][cid], "use_this_camera": False} for cid in failed}}
+            u = api.call("POST", f"{API}/camera/group/apply", body=ub, timeout_s=dl.bound(60.0, reserve))
+            summ["unselect"] = {"camera_ids": failed, "ok": u["ok"], "status": u["status"], "detail": u.get("detail")}
+            if not u["ok"]:
+                fail("unselect", "api_error", f"unselect of {failed} failed: {u['error']} {u.get('detail') or ''}")
+                raise _Stop()
+            resolved = [r for r in resolved if r["camera_id"] not in failed]
         # ---- warm-up, record
         if args.warmup_s > 0:
             time.sleep(min(args.warmup_s, max(0.0, dl.left() - reserve - args.seconds)))
@@ -1025,7 +1036,8 @@ def record(args: argparse.Namespace) -> tuple[dict, int]:
                  f"record/start failed: {s['error']} {s.get('detail') or ''}", s["timed_out"])
             raise _Stop()
         t_rec = time.monotonic()
-        rec_end = t_rec + min(float(args.seconds), max(1.0, dl.left() - reserve - args.stop_timeout_s * 0.5))
+        cpu0 = _job_counts(bg.job)
+        rec_end =t_rec + min(float(args.seconds), max(1.0, dl.left() - reserve - args.stop_timeout_s * 0.5))
         health_fail = 0
         while time.monotonic() < rec_end:
             time.sleep(min(5.0, max(0.05, rec_end - time.monotonic())))
@@ -1039,6 +1051,9 @@ def record(args: argparse.Namespace) -> tuple[dict, int]:
                     fail("recording", "server_unresponsive", "/health failed 3 times in a row during the recording")
                     raise _Stop()
         summ["phases_s"]["recorded_wall"] = round(time.monotonic() - t_rec, 3)
+        cpu1 = _job_counts(bg.job)
+        if cpu0 and cpu1:
+            summ["cpu_during_recording_cores"] = round((cpu1["cpu_s"] - cpu0["cpu_s"]) / summ["phases_s"]["recorded_wall"], 3)
         api.calls = [c for c in api.calls if c["path"] != "/health" or c.get("polls") or c.get("error")]
         # ---- stop (returns after finalisation)
         st = api.call("GET", f"{API}/camera/group/all/record/stop",
@@ -1167,6 +1182,8 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--writer-fourcc", dest="writer_fourcc", default=None,
                     help="skellycam writer fourcc (default: skellycam's own default)")
     ap.add_argument("--bgr-ring", dest="bgr_ring", action="store_true", help="ask for a BGR ring per camera")
+    ap.add_argument("--unselect-failed", dest="unselect_failed", action="store_true",
+                    help="phase 3: unselect the cameras that the apply response lists as failed, then record")
     ap.add_argument("--media-check", dest="media_check", default="full", choices=("full", "ends", "none"))
     ap.add_argument("--start-timeout-s", dest="start_timeout_s", type=float, default=150.0)
     ap.add_argument("--detect-timeout-s", dest="detect_timeout_s", type=float, default=45.0)
