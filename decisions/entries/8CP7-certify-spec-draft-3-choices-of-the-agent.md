@@ -5,8 +5,9 @@
 ## Decision
 
 An agent wrote draft 3 of [`specs/certify.md`](../../specs/certify.md), with the test list T-CERT-01
-to T-CERT-51, on the decisions of [ADR-GVC0](GVC0-certify-decisions-of-the-user.md) and
-[ADR-KG00](KG00-certify-decisions-of-the-user-on-draft-2.md), against format 1.3.0 of the contract
+to T-CERT-57, on the decisions of [ADR-GVC0](GVC0-certify-decisions-of-the-user.md),
+[ADR-KG00](KG00-certify-decisions-of-the-user-on-draft-2.md) and
+[ADR-C5BR](C5BR-macos-approach-probes-in-certify.md), against format 1.3.0 of the contract
 (`skellycertify` commit `f7a1831`). The agent made these choices. The spec marks them [A]. The
 questions of section 14 of the spec ask the user about the open ones.
 
@@ -34,13 +35,18 @@ questions of section 14 of the spec ask the user about the open ones.
    not touch a camera are `not-run` with it (question 8).
 9. An interrupted run (9.8): each ended check in a progress message also carries `reason`, `module`
    and `numbers`, and freemocap writes the report from its progress file (question 5).
-10. The local pass record of 11.3: what "a passed full run" means (question 9).
-11. The alignment with the Linux and macOS spec: its diagnostics keys and values taken as they are;
-    its failure codes added, with `process-ended` reported as `crashed`; `system:kernel`; `usb_alt`;
-    `<label>:control-ep0` as a record-only camera check of phase F; one `controls` and one `timings`
-    check; the keys `restore_ok` and `restore_failed`; the strip of an inserted DHT before the hash
-    compare; the 20 differences of section 18 (question 10).
-12. On macOS "Auto by lock": `settings-stick` `not-run` with `control-absent` (question 11).
+10. One record file `camera_checks.json` of the Linux and macOS spec for the checked models and the
+    local pass; a `quick` row marks a model as checked, and only a `full` row with `pass` or
+    `partial` is a local pass (2.5, 11.3, question 9).
+11. The alignment with the Linux and macOS spec draft 2: its diagnostics keys and values, call
+    names, failure codes and `abi` taken as they are, with `process-ended` reported as `crashed`;
+    `system:kernel`; `usb_alt`; one `controls` and one `timings` check; the keys `restore_ok` and
+    `restore_failed`; the answers of section 18.1 and the 7 differences of 18.2 (question 10).
+12. The macOS approach probes of 10.7 for the ruling of ADR-C5BR: the names
+    `probe:<model>:<approach>`, the two kinds of probe of 10.4, the order and phases, the proof rules
+    for a control and for a JPEG, the `jpeg_reference` and `approaches` fields of the evidence file,
+    the drop rules only through a maintainer-accepted row, and the time estimates (questions 11 and
+    13).
 13. `setting-lost-on-reopen` means that the config value did not read back at a later open.
 14. `test_media_dir` is accepted and not used. The disk figure stays in `numbers`, not in a
     `benchmark` item. Only a `pass` item counts toward `verified`.
@@ -58,7 +64,8 @@ name the same fact.
 
 The spec cites `report-format.md` of `skellycertify` at commit `f7a1831` (the head of `main` on
 2026-11-20, format 1.3.0), and `specs/unix-capture.md`, draft 1, on branch `dom/unix-capture-spec`,
-sections 4.6.2, 4.6.3 and 6.6.
+sections 4.4.10, 4.5, 4.6 and 4.9 of draft 2 (commit `d08de113a`), and a desk research list of the
+macOS approaches that the supervisor gave (not tracked).
 
 ## Open work
 

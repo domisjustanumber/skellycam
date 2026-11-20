@@ -41,6 +41,7 @@ These entries are `accepted`.
 | [JMS0](entries/JMS0-review-decisions.md) | Connection review A to K: frame count, error end, start wait, failed start, stall watch, gap detail, hang rule, exposure, credit lines, home path, secret scan | accepted |
 | [GVC0](entries/GVC0-certify-decisions-of-the-user.md) | Certify run of skellycam: levels, quick camera checks and 3 s take, camera summary list, rules that hold everywhere, fake cameras, functions, draft 1 answers | accepted |
 | [KG00](entries/KG00-certify-decisions-of-the-user-on-draft-2.md) | Certify decisions of the user on draft 2: C1 to C9 as recommended; OpenCV fallback for now; one check per model; cancel, progress, run order, exposure rule | accepted |
+| [C5BR](entries/C5BR-macos-approach-probes-in-certify.md) | macOS certify run tries each approach for exposure and for the camera's JPEG, for now; trimmed when one works | accepted |
 
 ### Evidence
 
@@ -75,7 +76,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [P5VE](entries/P5VE-review-fix-choices.md) | Choices of the connection review fixes: app state, error end, abandon, kill, writer start, gap detail, save limit, status union, exposure constants, scan | `recorder` | proposed |
 | [T24F](entries/T24F-choices-of-the-5a-recorder-code.md) | Choices of the 5a recorder code: the writer after a write error, the completion walk, the manifest merge, the lock hold, empty statistics | `recorder` | proposed |
 | [KY81](entries/KY81-certify-spec-choices-of-the-agent.md) | Certify spec draft 2 `specs/certify.md`, its test list T-CERT-01 to T-CERT-40 and 15 agent choices; 9 questions in its section 14 | `certify` | proposed |
-| [8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md) | Certify spec draft 3 on format 1.3.0, tests T-CERT-01 to 51, 15 agent choices: model item, checked-model record, progress, alignment with `unix-capture.md` | `certify` | proposed |
+| [8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md) | Certify spec draft 3 on format 1.3.0, tests T-CERT-01 to 57, 15 agent choices: model item, checked-model record, macOS probes, `unix-capture.md` draft 2 | `certify` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).

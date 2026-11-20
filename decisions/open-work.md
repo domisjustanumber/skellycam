@@ -171,5 +171,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   does not rule) and [ADR-8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md), with the
   12 questions of section 14 of the spec. The spec is written against format 1.3.0 of the contract
   `skellycertify` (commit `f7a1831`). The requests for a list of notices and for a risk to a device in
-  `system_changes` are not in that format (question 12). Section 18 of the spec lists 20 differences to
-  `specs/unix-capture.md` (branch `dom/unix-capture-spec`).
+  `system_changes` are not in that format (question 12). Section 18 of the spec answers section 4.6.4 of
+  `specs/unix-capture.md` draft 2 (branch `dom/unix-capture-spec`) and lists 7 differences that
+  remain. The macOS approach probes of section 10.7
+  ([ADR-C5BR](entries/C5BR-macos-approach-probes-in-certify.md)) wait for the answer to question 13
+  (the longer macOS full run).
