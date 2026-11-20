@@ -6,6 +6,12 @@ task. Delete an item when its work is done. The PR that closes an item records t
 - **The fills that wait for the user.** The user must decide
   [ADR-4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) and
   [ADR-NMM1](entries/NMM1-design-of-the-camera-media-check.md).
+- **Lower the index limit again.**
+  [ADR-N2NH](entries/N2NH-index-limit-24000-no-shortened-rows-and-binding-specs.md) raised
+  `INDEX_LIMIT` from 14,000 to 24,000 characters until the clean-up. In the clean-up, the user
+  decides each `proposed` entry. Then the small choice entries of the agents are merged into one
+  entry for each step on the merged branch. After that, lower `INDEX_LIMIT` again. If the index
+  fills again first, give the user the bigger restructurings of decision 4 of ADR-N2NH.
 - **Private-data findings.** `tools/check_private_data.py` reports 3 lines in upstream files: an
   email address in `skellycam-ui/src/hooks/floatingOnboarding.tsx` and in
   `skellycam-ui/src/hooks/useDraggableTooltips.tsx`, and a user path in

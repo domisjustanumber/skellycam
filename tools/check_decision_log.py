@@ -107,7 +107,7 @@ NOT_ENTRIES = {"README.md", OPEN_WORK, HISTORICAL, TEMPLATE}
 TARGET_BRANCH = "development-streaming"  # The PR branch (decision S222).
 SKIPPED_BRANCHES = "refs/heads/backup/"
 
-INDEX_LIMIT = 14_000
+INDEX_LIMIT = 24_000  # Was 14_000. It goes down again after the clean-up (decision N2NH).
 OPEN_WORK_LIMIT = 20_000
 ENTRY_LIMIT = 6_000
 READ_PATH_LIMIT = 220_000

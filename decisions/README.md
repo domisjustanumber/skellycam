@@ -17,7 +17,8 @@ These entries are `accepted`.
 | # | Decision | Status |
 |---|----------|--------|
 | [0001](entries/0001-decision-log-agents-md-and-private-data.md) | Decision log and its rules; `AGENTS.md` instructions; `plans/` is local; no private data | accepted |
-| [S222](entries/S222-bootstrap-answers-of-the-kit-adoption.md) | Bootstrap answers of the kit adoption | accepted |
+| [2S1P](entries/2S1P-bootstrap-answers-with-binding-specs.md) | Answers to the bootstrap questions of the kit adoption; supersedes S222: the specs in `specs/` are normative (item 4) | accepted |
+| [N2NH](entries/N2NH-index-limit-24000-no-shortened-rows-and-binding-specs.md) | Index limit 24,000 characters until the clean-up; no agent shortens the row of an entry it did not write; specs are binding | accepted |
 | [50G8](entries/50G8-phase-2-frame-ring-spec.md) | Phase 2 follows `specs/frame-ring.md`: two rings per camera, CRC-32 reads, recorder first; 2b approved | accepted |
 | [9G2W](entries/9G2W-python-api-of-the-frame-ring-as-the-2a-tests-assume-it.md) | Python API of the frame ring for the 2a tests; decisions on the 2a code (items 52 to 67) | accepted |
 | [7DE6](entries/7DE6-arm64-ci-job-for-the-portable-frame-ring-tests.md) | CI job for the portable frame ring tests on an arm64 Linux runner | accepted |
@@ -99,7 +100,7 @@ The open work is in [open-work.md](open-work.md).
   four edits apply from the first push.
 - A decision that a document or code refers to must be in an entry. "This log" in an older entry or
   in the Rules means all logs.
-- An absorb document is one of these: the root or a nested `AGENTS.md`, the skills, the Rules of this file with [template.md](template.md), and the docstring of a
+- An absorb document is one of these: the root or a nested `AGENTS.md`, the skills, the Rules of this file with [template.md](template.md), the specs in `specs/`, and the docstring of a
   tool in `tools/` for the rules that it checks. A test in `tools/tests/` or in the
   tests of the package is a tool here: its docstring states the rules that it checks.
   `pyproject.toml` is an absorb document for a rule that a test checks. Its `absorbed into` link
@@ -107,6 +108,9 @@ The open work is in [open-work.md](open-work.md).
   documents together state all of its rules. Open work of the entry does not stop the absorb when
   `open-work.md` states that work in full. A link to the entry is not
   enough.
+- A spec in `specs/` is binding text. Read each spec that applies to your task. Absorb an accepted
+  entry into a spec heading only after you check, entry by entry, that the spec states each rule of
+  that entry ([ADR-N2NH](entries/N2NH-index-limit-24000-no-shortened-rows-and-binding-specs.md)).
 - Absorb at landing. The commit group that writes or lands an entry, or that writes the rules of an
   entry into the absorb documents, absorbs the entry in its last commit when the absorb documents
   state all of its rules. This applies in each log, in each skill and without a skill. If an absorb
@@ -146,6 +150,8 @@ The open work is in [open-work.md](open-work.md).
   entry, not in `AGENTS.md`.
 - Put long evidence in a tracked file in `evidence/` of the log folder, and link to it. A PR that raises a limit
   of `tools/check_decision_log.py` must add an entry.
+- Do not shorten the index row of an entry that you did not write
+  ([ADR-N2NH](entries/N2NH-index-limit-24000-no-shortened-rows-and-binding-specs.md)).
 - An ID changes only on a `re-ID:` line of `tools/check_decision_log.py`, to the ID of a new `--new`
   run.
 - Until a commit is on `development-streaming`, cite its PR number and the file path, not its SHA.
