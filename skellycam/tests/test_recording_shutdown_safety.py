@@ -109,3 +109,27 @@ def test_the_wait_for_a_recording_save_has_a_time_limit(monkeypatch, caplog):
         worker.wait_for_recording_save()
     assert 1.3 <= time.monotonic() - started < 5.0
     assert any("stuck" in record.getMessage() for record in caplog.records if record.levelno >= logging.ERROR)
+
+
+def report_signal_handlers(*, sigint_ignored, sigterm_handled):
+    import signal
+
+    sigint_ignored.value = signal.getsignal(signal.SIGINT) == signal.SIG_IGN
+    sigterm_handled.value = callable(signal.getsignal(signal.SIGTERM))
+
+
+def test_a_camera_process_ignores_ctrl_c():
+    """Third review, S5 (ADR-P5VE): Ctrl-C reaches each process of the console. A camera process ignores
+    SIGINT, so that its loop does not end its take alone before the main process stops the take through
+    the take level; SIGTERM still sets its stop flag. Windows checks the handlers in a spawned process; the
+    delivery of the signal itself is not tested here (on Windows it would reach the test process too)."""
+    from skellycam.core.ipc.process_management.managed_worker import ManagedProcess
+
+    sigint_ignored, sigterm_handled = multiprocessing.Value("b", False), multiprocessing.Value("b", False)
+    worker = ManagedProcess(target=report_signal_handlers, name="signal-report",
+                            shutdown_flag=multiprocessing.Value("b", False), log_queue=None, daemon=True,
+                            kwargs=dict(sigint_ignored=sigint_ignored, sigterm_handled=sigterm_handled))
+    worker.start()
+    worker.join(timeout=60.0)
+    assert worker.exitcode == 0
+    assert sigint_ignored.value and sigterm_handled.value
