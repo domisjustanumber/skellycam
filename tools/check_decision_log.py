@@ -104,7 +104,7 @@ OPEN_WORK = "open-work.md"
 HISTORICAL = "historical.md"
 TEMPLATE = "template.md"
 NOT_ENTRIES = {"README.md", OPEN_WORK, HISTORICAL, TEMPLATE}
-TARGET_BRANCH = "development-streaming"  # The PR branch (decision S222).
+TARGET_BRANCH = "development"  # The PR branch: upstream `development` (decision EQY4).
 SKIPPED_BRANCHES = "refs/heads/backup/"
 
 INDEX_LIMIT = 24_000  # Was 14_000. It goes down again after the clean-up (decision N2NH).

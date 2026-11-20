@@ -1132,3 +1132,8 @@ def test_new_id_never_reads_as_a_number() -> None:
     assert cdl.new_id(set(), scripted("1E23", "12E3", "3K7Q")) == "1E23"  # a scripted draw is not filtered
     for _ in range(5000):
         assert not cdl.NUMBER_LIKE.fullmatch(cdl.new_id(set()))
+
+
+def test_the_pr_branch_is_upstream_development() -> None:
+    """Pull requests go against upstream `development` (decision EQY4): an entry there wins a collision."""
+    assert cdl.TARGET_BRANCH == "development"
