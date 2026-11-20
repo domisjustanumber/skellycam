@@ -1,4 +1,8 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import { exposeTakeBridge } from '../../src/player/main/bridge.ts';
+
+// The bridge of the take handler of the player (specs/player.md section 4.3)
+exposeTakeBridge(contextBridge, ipcRenderer);
 
 // Expose a simple tRPC bridge + menu action listener + menu label updater
 contextBridge.exposeInMainWorld('electronAPI', {
