@@ -24,13 +24,18 @@ export interface BenchContext {
 
 export function makeBench(ctx: BenchContext) {
     let imageSize: [number, number] = [1920, 1080];
+    // One check reads each tile with one getImageData of the whole canvas, as the evidence harness read
+    // each frame once. Cost of one check, measured with performance.now() on the Windows test machine
+    // (2026-11-20, 512 x 256 tiles): before, about 20 one-pixel getImageData calls per tile at 2.1 to
+    // 4.5 ms each; now 1.4 to 1.9 ms per tile. The barcode is still read from the pixels.
     const read = (i: number) => {
         const c = ctx.canvases()[i];
-        const g = c.getContext('2d')!;
+        const {width: w, height: h} = c;
+        const d = c.getContext('2d')!.getImageData(0, 0, w, h).data;
         return readTile((x, y) => {
-            const d = g.getImageData(Math.max(0, Math.min(c.width - 1, x)), Math.max(0, Math.min(c.height - 1, y)), 1, 1).data;
-            return [d[0], d[1], d[2]] as Rgb;
-        }, c.width, c.height, 0, imageSize);
+            const p = (Math.max(0, Math.min(h - 1, y)) * w + Math.max(0, Math.min(w - 1, x))) * 4;
+            return [d[p], d[p + 1], d[p + 2]] as Rgb;
+        }, w, h, 0, imageSize);
     };
 
     async function encode(canvas: OffscreenCanvas, camera: number, position: number, amplitude: number, seed: number): Promise<Uint8Array> {
