@@ -1,15 +1,15 @@
 """Behaviour outside the ring package that step 2a changes: T-RING-23, 32, 33
 (specs/frame-ring.md, sections 2, 5.3 and 12). T-RING-31 is retired; T-CAP-49 checks its rule on
-the shared loop (ADR-PDD3 W8).
+the shared loop (ADR-PDD3 W8). The two parts of T-RING-23 in the camera loop are retired with the
+phase 2 loop; T-CAP-08 checks them on the shared loop.
 
-These tests use the production OpenCV loop and `CameraGroup` with fake cameras
-(ring_session.py). No camera and no camera frame is used.
+T-RING-33 uses `CameraGroup` with fake cameras (ring_session.py). No camera and no camera frame is
+used.
 """
 
 import importlib.util
 import multiprocessing
 import re
-import threading
 import time
 from pathlib import Path
 
@@ -18,121 +18,18 @@ import pytest
 
 from skellycam.tests.frame_ring import ring_children
 from skellycam.tests.frame_ring.ring_session import (
-    FakeCapture,
-    decode,
     fake_configs,
     fake_session,
-    patch_fakes,
     wait_until,
 )
 from skellycam.tests.frame_ring.ring_spec import (
     TIMING_SECONDS,
-    WAIT_TIMEOUT_S,
     ring,
     synthetic_payload,
     write_kwargs,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-
-
-def _run_loop_in_thread(monkeypatch, fr, writer, frames_wanted, fail_at=None):
-    """Run the production `run_opencv_camera_loop` with a fake capture source. Record the order
-    of the inline recorder call and the ring write for each frame."""
-    import skellycam.core.camera.opencv.opencv_camera_loop as loop_module
-    from skellycam.core.camera.opencv.opencv_helpers.create_initial_frame_recarray import (
-        create_initial_frame_rec_array,
-    )
-    from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
-    from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
-    from skellycam.core.camera_group.camera_status import CameraStatus
-    from skellycam.core.ipc.pubsub.pubsub_manager import PubSubTopicManager
-
-    patch_fakes(monkeypatch)
-    events = []
-    config = fake_configs(1)["0"]
-    status = CameraStatus()
-    status.connected.value = True
-    orchestrator = CameraOrchestrator.from_statuses({config.camera_id: status})
-    updates, recording = multiprocessing.Queue(), multiprocessing.Queue()
-    ipc = CameraGroupIPC(
-        group_id="ring-order", pubsub=PubSubTopicManager(topics={}),
-        extracted_config_subscription=updates, recording_finished_subscription=recording,
-        global_kill_flag=multiprocessing.Value("b", False),
-        heartbeat_timestamp=multiprocessing.Value("d", time.perf_counter()))
-
-    def recorder(**kwargs):
-        events.append(("record", int(kwargs["frame_rec_array"].frame_metadata.frame_number[0])))
-        return kwargs["video_recorder"]
-
-    real_write = fr.FrameRingWriter.write
-
-    def spy_write(self, payload, **kwargs):
-        events.append(("write", kwargs["frame_number"], payload))
-        if sum(event[0] == "write" for event in events) >= frames_wanted:
-            status.should_close.value = True
-        if kwargs["frame_number"] == fail_at:
-            raise RuntimeError("injected ring write failure")
-        return real_write(self, payload, **kwargs)
-
-    monkeypatch.setattr(loop_module, "handle_video_recording", recorder)
-    monkeypatch.setattr(fr.FrameRingWriter, "write", spy_write)
-    errors = []
-
-    def run():
-        try:
-            loop_module.run_opencv_camera_loop(
-                ring_writer=writer, config=config, cv2_video_capture=FakeCapture(640, 480, 60.0),
-                frame_rec_array=create_initial_frame_rec_array(config=config, ipc=ipc), ipc=ipc,
-                orchestrator=orchestrator, self_status=status,
-                update_camera_settings_subscription=updates, recording_info_subscription=recording)
-        except BaseException as error:
-            errors.append(error)
-
-    thread = threading.Thread(target=run, daemon=True)
-    thread.start()
-    thread.join(timeout=WAIT_TIMEOUT_S)
-    status.should_close.value = True
-    ipc.should_continue = False
-    thread.join(timeout=WAIT_TIMEOUT_S)
-    assert not thread.is_alive(), "the camera loop did not stop"
-    return events, errors
-
-
-def test_t_ring_23_recorder_first_in_the_opencv_loop(monkeypatch, cleanup):
-    """T-RING-23, sections 2.3 and 5.3 [A3, A6]: with an instrumented recorder and ring, the
-    recorder call precedes every ring write. The loop encodes each frame with `cv2.imencode` and
-    writes the JPEG."""
-    fr = ring()
-    creator = cleanup.own(fr.FrameRingCreator.create(
-        camera_id="0", camera_index=0, pixel_format=fr.PixelFormat.JPEG, width=640, height=480,
-        fps_num=60, fps_den=1))
-    writer = cleanup.handle(fr.FrameRingWriter.attach(creator.name))
-    events, errors = _run_loop_in_thread(monkeypatch, fr, writer, frames_wanted=10)
-    assert not errors, errors
-    kinds = [event[0] for event in events]
-    assert kinds.count("write") >= 10
-    assert kinds[: 2 * kinds.count("write")] == ["record", "write"] * kinds.count("write")
-    writes = [event for event in events if event[0] == "write"]
-    assert [event[1] for event in writes] == list(range(len(writes)))  # A17: from 0, +1
-    for _, _, payload in writes:
-        assert type(payload) is bytes and payload[:2] == b"\xff\xd8"
-        assert decode(payload).shape == (480, 640, 3)
-
-
-def test_t_ring_23_failing_ring_write_leaves_the_recorder_unaffected(monkeypatch, cleanup):
-    """T-RING-23, section 5.3: a failing ring write leaves the recorder path unaffected: the
-    recorder already has the frame whose ring write fails."""
-    fr = ring()
-    creator = cleanup.own(fr.FrameRingCreator.create(
-        camera_id="0", camera_index=0, pixel_format=fr.PixelFormat.JPEG, width=640, height=480,
-        fps_num=60, fps_den=1))
-    writer = cleanup.handle(fr.FrameRingWriter.attach(creator.name))
-    events, _ = _run_loop_in_thread(monkeypatch, fr, writer, frames_wanted=10, fail_at=3)
-    kinds = [event[0] for event in events]
-    failing = next(i for i, event in enumerate(events) if event[0] == "write" and event[1] == 3)
-    assert kinds[failing - 1] == "record"
-    assert kinds.count("record") >= 4
 
 
 @pytest.mark.ring_slow

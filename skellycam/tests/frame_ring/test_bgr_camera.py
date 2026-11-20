@@ -1,10 +1,11 @@
 """The BGR ring in the camera process and the session: T-RING-37, 38, 39, 40, 45 and 47
 (specs/frame-ring.md, sections 5.3, 7.1 to 7.3, 7.8, 8 and 9).
 
-These tests use the production OpenCV camera loop (ring_session.camera_loop_thread) and
-`CameraGroup` (ring_session.fake_session) with fake cameras. No camera and no camera frame is
-used. Until phase 3, the BGR ring of a camera on OpenCV capture gets a copy of the BGR frame of
-OpenCV through the waiting place, not a decode of the re-encoded JPEG (8.8 [A42]).
+These tests run the shared camera loop of phase 3: `CameraGroup` with the OpenCV source and a fake
+capture (ring_session.fake_session), or the capture app with the fake source of
+specs/windows-capture.md, section 16.1 (capture_session.capture_app). No camera and no camera frame
+is used. The BGR ring of a camera on OpenCV capture gets the BGR frame of OpenCV through the waiting
+place, not a decode of the re-encoded JPEG (8.8 [A42]).
 """
 
 import json
@@ -19,11 +20,11 @@ import cv2
 import numpy as np
 import pytest
 
+from skellycam.tests.capture.capture_session import capture_app, ready_app_steps
+from skellycam.tests.capture.fake_source import FakeScript
 from skellycam.tests.frame_ring.ring_session import (
-    camera_loop_thread,
     fake_configs,
     fake_session,
-    poll,
     wait_until,
 )
 from skellycam.tests.frame_ring.ring_spec import (
@@ -32,7 +33,6 @@ from skellycam.tests.frame_ring.ring_spec import (
     NO_SOI_EOI,
     PIXEL_FORMAT_BGR24,
     WAIT_TIMEOUT_S,
-    attach_slow_writer,
     bgr_size,
     committed_frame_numbers,
     open_raw,
@@ -46,18 +46,14 @@ from skellycam.tests.frame_ring.test_lifecycle import _bytes_pattern, _wait_gone
 FRAMES_T_RING_40 = 10_000
 
 
-def _rings(cleanup, width=640, height=480, fps_num=60, bgr_writer=None):
-    """A JPEG ring and a BGR ring of camera 0, their writers and a raw view of each block.
-    `bgr_writer(name)` attaches the BGR writer (default: `FrameRingWriter.attach`)."""
-    fr = ring()
-    rings = {}
-    for letter, pixel_format in (("J", fr.PixelFormat.JPEG), ("B", fr.PixelFormat.BGR24)):
-        creator = cleanup.own(fr.FrameRingCreator.create(
-            camera_id="0", camera_index=0, pixel_format=pixel_format, width=width, height=height,
-            fps_num=fps_num, fps_den=1))
-        attach = bgr_writer if letter == "B" and bgr_writer else fr.FrameRingWriter.attach
-        rings[letter] = (creator.name, cleanup.handle(attach(creator.name)), cleanup.handle(open_raw(creator.name)))
-    return fr, rings["J"], rings["B"]
+def _ready_fake_camera(cleanup, app):
+    """Apply the one fake camera of `app` with a BGR ring and wait until it is `ready`. Give its ID,
+    and the names and raw views (open after the close of the session) of its JPEG and BGR rings."""
+    camera_id = app.factory.camera_ids[0]
+    ready_app_steps(app, [app.config(camera_id, bgr_ring=True)])
+    info = app.group.ring_infos[camera_id]
+    names = (info.jpeg_ring_name, info.bgr_ring_name)
+    return camera_id, names, [cleanup.handle(open_raw(name)) for name in names]
 
 
 def _count_imdecode(monkeypatch):
@@ -157,35 +153,49 @@ async def test_t_ring_37_bgr_ring_recreated_on_a_mode_change(monkeypatch, cleanu
 
 
 def test_t_ring_38_slow_bgr_stage_in_the_camera_loop(monkeypatch, cleanup):
-    """T-RING-38, sections 5.3, 8.3 and 8.8 [D N:60, N:78, A42]: the OpenCV loop with a fake camera
+    """T-RING-38, sections 5.3, 8.3 and 8.8 [D N:60, N:78, A42]: the shared loop with a fake source
     at 60 frames/s and a slow BGR stage (each BGR write sleeps 100 ms). The JPEG ring gets every
     frame; the BGR skips are counted; the BGR frames are a subset of the JPEG frames.
 
+    The fake delivers no frame after source frame 200. The loop then ends (`dead` after the stall of
+    2 s of the virtual clock) and stops its decode stage, and the test reads the counters after that
+    end. A close of the group would close the rings first, and a slow BGR write would then be lost.
+
     The timed rule of T-RING-38 (capture interval p99 within 10 %) is in test_decode_stage.py.
     """
-    fr, (_, jpeg_writer, jpeg_shm), (_, bgr_writer, bgr_shm) = _rings(cleanup, bgr_writer=attach_slow_writer)
-    with camera_loop_thread(monkeypatch, ring_writer=jpeg_writer, bgr_ring_writer=bgr_writer) as run:
-        poll(lambda: raw_head(jpeg_shm) >= 60, "60 JPEG frames", run)
-    assert not run.errors, run.errors
+    fr = ring()
+    real_write = fr.FrameRingWriter.write
+
+    def slow_bgr_write(writer, payload, **kwargs):
+        if payload is None or isinstance(payload, np.ndarray):  # a BGR frame
+            time.sleep(0.1)
+        return real_write(writer, payload, **kwargs)
+
+    monkeypatch.setattr(fr.FrameRingWriter, "write", slow_bgr_write)
+    with capture_app(monkeypatch, [FakeScript(modes=((640, 480, 60, 1, "MJPG"),), stop_after_frame=200)]) as app:
+        camera_id, _, (jpeg_shm, bgr_shm) = _ready_fake_camera(cleanup, app)
+        app.wait(lambda: app.status(camera_id)["closed"], "the end of the loop after the last frame")
     jpeg = parse_ring_header(jpeg_shm.buf)
     frames = jpeg["head"] + 1
+    assert frames >= 60, frames
     assert jpeg["frames_committed"] == frames and jpeg["skipped_count"] == 0
     bgr = parse_ring_header(bgr_shm.buf)
-    assert bgr["skipped_count"] >= 1, "no BGR skip counted"
+    assert bgr["skipped_count"] >= 1, ("no BGR skip counted", bgr["frames_committed"], frames)
     assert bgr["frames_committed"] >= 1
     # The loop can stop between the JPEG write and the hand-over, and one frame can wait.
     assert frames - 2 <= bgr["frames_committed"] + bgr["skipped_count"] <= frames, (bgr, frames)
     assert set(committed_frame_numbers(bgr_shm)) <= set(range(frames))
 
 
-def test_t_ring_39_flagged_frame_in_the_camera_loop(monkeypatch, cleanup):
-    """T-RING-39, sections 4, 5.3, 8.5 and 8.8 [D N:62, A15, A42]: in the OpenCV loop, the
-    capture check flags frame 5 `NO_SOI_EOI` and frame 6 `CAPTURE_ERROR` (a wrapper of
-    `check_jpeg`). Their BGR slots are flagged and have no pixels; the frames around them have
-    pixels; `cv2.imdecode` is never called."""
-    import skellycam.core.camera.opencv.opencv_camera_loop as loop_module
+async def test_t_ring_39_flagged_frame_in_the_camera_loop(monkeypatch, cleanup):
+    """T-RING-39, sections 4, 5.3, 8.5 and 8.8 [D N:62, A15, A42]: in the shared loop with the
+    OpenCV source, the capture check flags ring frame 5 `NO_SOI_EOI` and ring frame 6
+    `CAPTURE_ERROR` (a wrapper of `check_jpeg`, which the loop calls once for each ring frame).
+    Their BGR slots are flagged and have no pixels; the frames around them have pixels;
+    `cv2.imdecode` is never called."""
+    import skellycam.core.camera.capture.camera_loop as loop_module
 
-    fr, (_, jpeg_writer, _), (bgr_name, bgr_writer, bgr_shm) = _rings(cleanup)
+    fr = ring()
     real_check = loop_module.check_jpeg
     calls = []
 
@@ -197,46 +207,46 @@ def test_t_ring_39_flagged_frame_in_the_camera_loop(monkeypatch, cleanup):
 
     monkeypatch.setattr(loop_module, "check_jpeg", flagging_check)
     decodes = _count_imdecode(monkeypatch)
-    reader = cleanup.handle(fr.FrameRingReader.attach(bgr_name))
-    with camera_loop_thread(monkeypatch, ring_writer=jpeg_writer, bgr_ring_writer=bgr_writer, fps=30.0) as run:
-        poll(lambda: reader.read(8).result != fr.ReadResult.NOT_YET_WRITTEN, "BGR frame 8", run)
-    assert not run.errors, run.errors
+    async with fake_session(monkeypatch, fake_configs(1, bgr_ids=("0",))) as group:
+        bgr_name = group.ring_infos["0"].bgr_ring_name
+        reader = cleanup.handle(fr.FrameRingReader.attach(bgr_name))
+        bgr_shm = cleanup.handle(open_raw(bgr_name))
+        await wait_until(lambda: reader.read(8).result != fr.ReadResult.NOT_YET_WRITTEN, "BGR frame 8")
+        reads = {k: reader.read(k) for k in (4, 5, 6, 7)}
+        header = parse_ring_header(bgr_shm.buf)
     assert decodes == [], "the BGR stage decoded a JPEG"
     for k, flag in ((5, NO_SOI_EOI), (6, CAPTURE_ERROR)):
-        read = reader.read(k)
+        read = reads[k]
         assert read.result == fr.ReadResult.FLAGGED, (k, read.result)
         assert read.payload is None
         assert read.flags & ERROR_MASK == flag
     for k in (4, 7):
-        read = reader.read(k)
+        read = reads[k]
         assert read.result == fr.ReadResult.OK, (k, read.result)
         assert read.payload.shape == (480, 640, 3)
-    header = parse_ring_header(bgr_shm.buf)
     assert header["cut_off_count"] == 1 and header["capture_error_count"] == 1
 
 
 @pytest.mark.ring_slow
 def test_t_ring_40_both_rings_match(monkeypatch, cleanup):
-    """T-RING-40, sections 3.4, 8.6 and 8.8 [D N:61, N:79, A15]: 10,000 frames of the OpenCV loop
-    with a fake camera; the test reads every number from both rings. For each number that both
+    """T-RING-40, sections 3.4, 8.6 and 8.8 [D N:61, N:79, A15]: 10,000 frames of the shared loop
+    with a fake source; the test reads every number from both rings. For each number that both
     rings give: equal `frame_number`, `arrival_ns`, `sample_ns`, `source_frame_number` and
     `rotation_cw_deg`; the BGR `published_ns` is not earlier than that of the JPEG. Each number
     that the BGR ring does not give is a counted BGR skip.
 
-    The fake camera gives 160x120 frames at up to 1,000 frames/s, and each ring has 1,000 slots,
-    so that the reader keeps up. The run lasts about 10 to 30 s.
+    The fake source gives 160x120 MJPG frames at 1,000 frames/s of a virtual clock, and each ring
+    has 1,000 slots, so that the reader keeps up.
     """
-    fr, (jpeg_name, jpeg_writer, jpeg_shm), (bgr_name, bgr_writer, bgr_shm) = _rings(
-        cleanup, width=160, height=120, fps_num=1000)
-    jpeg_reader = cleanup.handle(fr.FrameRingReader.attach(jpeg_name))
-    bgr_reader = cleanup.handle(fr.FrameRingReader.attach(bgr_name))
+    fr = ring()
     both = not_in_bgr = 0
     k = 0
-    with camera_loop_thread(monkeypatch, ring_writer=jpeg_writer, bgr_ring_writer=bgr_writer,
-                            width=160, height=120, fps=1000.0) as run:
+    with capture_app(monkeypatch, [FakeScript(modes=((160, 120, 1000, 1, "MJPG"),))]) as app:
+        camera_id, names, (jpeg_shm, bgr_shm) = _ready_fake_camera(cleanup, app)
+        jpeg_reader, bgr_reader = (cleanup.handle(fr.FrameRingReader.attach(name)) for name in names)
         deadline = time.monotonic() + max(WAIT_TIMEOUT_S, 180.0)
         while k < FRAMES_T_RING_40:
-            assert not run.errors, run.errors
+            assert app.state(camera_id) == "ready", app.status(camera_id)
             assert time.monotonic() < deadline, f"timed out at frame {k}"
             upto = min(raw_head(jpeg_shm), raw_head(bgr_shm), FRAMES_T_RING_40 - 1)
             while k <= upto:
@@ -255,8 +265,8 @@ def test_t_ring_40_both_rings_match(monkeypatch, cleanup):
                     not_in_bgr += 1
                 k += 1
             time.sleep(0.001)
+        skipped = parse_ring_header(bgr_shm.buf)["skipped_count"]
     assert both >= 1
-    skipped = parse_ring_header(bgr_shm.buf)["skipped_count"]
     assert not_in_bgr <= skipped, f"{not_in_bgr} numbers not in the BGR ring, {skipped} BGR skips counted"
 
 
@@ -276,40 +286,49 @@ def test_t_ring_45_one_opencv_thread():
     assert threads == 1, f"cv2.getNumThreads() is {threads} in the camera process"
 
 
-def test_t_ring_47_opencv_source_hands_a_copy_to_the_decode_thread(monkeypatch, cleanup):
+async def test_t_ring_47_opencv_source_hands_a_copy_to_the_decode_thread(monkeypatch, cleanup):
     """T-RING-47 and accepted item 42, sections 8.7 (`cv2.imencode` case) and 8.8 [A42, A43]:
-    while a camera is on OpenCV capture, the waiting place gets the BGR frame of OpenCV as a new
-    array (source "BGR"). That array never shares memory with the buffer of the recorder path
-    (the frame record of the loop); the BGR ring holds that array; it is not a decode of the
-    re-encoded JPEG (no `cv2.imdecode` call, and the pixels differ from a decode of the ring JPEG
-    but are near them)."""
-    fr, (jpeg_name, jpeg_writer, _), (bgr_name, bgr_writer, bgr_shm) = _rings(cleanup)
-    handed = {}
-    real_put = fr.WaitingPlace.put
+    while a camera is on OpenCV capture (the shared loop with the OpenCV source), the waiting place
+    gets the BGR frame of OpenCV as a new array (source "BGR"). That array never shares memory with
+    the buffer of the recorder path (each frame record that the loop gives the recorder); the BGR
+    ring holds that array; it is not a decode of the re-encoded JPEG (no `cv2.imdecode` call, and the
+    pixels differ from a decode of the ring JPEG but are near them)."""
+    import skellycam.core.camera.capture.camera_loop as loop_module
+
+    fr = ring()
+    handed, recorder_buffers = {}, []
+    real_put, real_record = fr.WaitingPlace.put, loop_module.handle_video_recording
 
     def spy_put(self, item):
         handed[item.frame_number] = item
         return real_put(self, item)
 
+    def spy_record(**kwargs):
+        if not any(kwargs["frame_rec_array"] is buffer for buffer in recorder_buffers):
+            recorder_buffers.append(kwargs["frame_rec_array"])
+        return real_record(**kwargs)
+
     monkeypatch.setattr(fr.WaitingPlace, "put", spy_put)
+    monkeypatch.setattr(loop_module, "handle_video_recording", spy_record)
     decodes = _count_imdecode(monkeypatch)
-    with camera_loop_thread(monkeypatch, ring_writer=jpeg_writer, bgr_ring_writer=bgr_writer, fps=30.0) as run:
-        poll(lambda: parse_ring_header(bgr_shm.buf)["frames_committed"] >= 10, "10 BGR frames", run)
-    assert not run.errors, run.errors
+    async with fake_session(monkeypatch, fake_configs(1, bgr_ids=("0",))) as group:
+        info = group.ring_infos["0"]
+        bgr_shm = cleanup.handle(open_raw(info.bgr_ring_name))
+        await wait_until(lambda: parse_ring_header(bgr_shm.buf)["frames_committed"] >= 10, "10 BGR frames")
+        jpeg_reader = cleanup.handle(fr.FrameRingReader.attach(info.jpeg_ring_name))
+        bgr_reader = cleanup.handle(fr.FrameRingReader.attach(info.bgr_ring_name))
+        reads = {k: (bgr_reader.read(k), jpeg_reader.read(k)) for k in committed_frame_numbers(bgr_shm)}
     assert decodes == [], "the BGR ring got a decode of the re-encoded JPEG"
-    assert len(handed) >= 10
-    recorder_buffer = run.frame_rec_array.image
+    assert len(handed) >= 10 and recorder_buffers
     for item in handed.values():
         assert item.source == "BGR"
         assert type(item.payload) is np.ndarray and item.payload.shape == (480, 640, 3)
         assert item.payload.dtype == np.uint8 and item.payload.flags.c_contiguous
-        assert not np.shares_memory(item.payload, recorder_buffer), "the hand-over is not a copy"
+        assert not any(np.shares_memory(item.payload, buffer.image) for buffer in recorder_buffers), \
+            "the hand-over shares memory with the recorder buffer"
     assert len({id(item.payload) for item in handed.values()}) == len(handed), "one array for two frames"
-    jpeg_reader = cleanup.handle(fr.FrameRingReader.attach(jpeg_name))
-    bgr_reader = cleanup.handle(fr.FrameRingReader.attach(bgr_name))
     checked = 0
-    for k in committed_frame_numbers(bgr_shm):
-        bgr, jpeg = bgr_reader.read(k), jpeg_reader.read(k)
+    for k, (bgr, jpeg) in reads.items():
         if bgr.result != fr.ReadResult.OK or jpeg.result != fr.ReadResult.OK:
             continue
         assert np.array_equal(bgr.payload, handed[k].payload), k
