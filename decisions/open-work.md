@@ -115,7 +115,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   in `skellycam/tests/take_recorder/`. They use the API of the proposed entry
   [ADR-QEQ8](entries/QEQ8-python-api-of-the-recorder-as-the-5a-tests-assume-it.md), which waits for
   the user. The product code of step 5a is in `skellycam/core/take_recorder/`. Its choices are in the
-  proposed entry [ADR-T24F](entries/T24F-choices-of-the-5a-recorder-code.md). Run the benchmarks with `SKELLYCAM_BENCH=1` and
+  proposed entry [ADR-T24F](entries/T24F-choices-of-the-5a-recorder-code.md). The measurements of
+  R11 on Windows are in [ADR-8RES](entries/8RES-r11-measurements-of-the-5a-recorder.md). The user
+  must fix the queue size (3 s now) and the stall limit (10 s now) from them (R11). Run the benchmarks with `SKELLYCAM_BENCH=1` and
   `SKELLYCAM_BENCH_OUT` set to a folder outside the repository. The merged list of proposed skellyfileformat changes
   F-1 to F-10 for the recorder and the player (section 13) still waits for the user (R6).
   Branch `dom/recorder`. The

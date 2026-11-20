@@ -42,6 +42,7 @@ you make a measurement ([Rules](#rules)).
 | # | Decision | Status |
 |---|----------|--------|
 | [ETJ1](entries/ETJ1-measurements-m5-to-m7-of-the-bgr-ring.md) | Measurements M5 to M7 of the BGR ring: CRC-32 cost, decode thread CPU and skip rate, capture jitter and the GIL (Windows) | evidence |
+| [8RES](entries/8RES-r11-measurements-of-the-5a-recorder.md) | R11 measurements of the 5a recorder: disk stalls, kills with a full queue, fsync cost with 1 to 16 writers, the GIL (Windows) | evidence |
 
 ### Proposed
 
