@@ -1,29 +1,38 @@
-"""GA-01 to GA-07: failing tests of the PROPOSED gate rule (specs/windows-capture-gate-amendment.md).
+"""GA-01 to GA-09: failing tests of the PROPOSED gate rule (specs/windows-capture-gate-amendment.md).
 
 The rule is proposed. The user has not decided it. These tests have the marker `gate_amendment`.
-The default selection (`addopts` in `pyproject.toml`) and the CI selections deselect them, so the
-accepted suite stays green. Run them with `uv run pytest skellycam/tests/capture -m gate_amendment`.
-Each test fails on the gate rule of today (D26) with the measured value in its message.
+`conftest.py` deselects them unless `SKELLYCAM_GATE_AMENDMENT=1` is set, also when the command line
+gives its own `-m`. The CI selections also leave them out. Run them with
+`SKELLYCAM_GATE_AMENDMENT=1 uv run pytest skellycam/tests/capture -m gate_amendment`.
+GA-01 to GA-08 fail on the gate rule of today (D26) with the measured value in the message. GA-09
+(the pull source) passes today: it guards the pull-source rule of the amendment (A-3.6).
 
 The proposed rule: a round closes when every camera in the gate has a frame newer than the one it
-gave last. Each camera then gives its newest frame. Frames that it took earlier count as replaced.
+gave last. The close time is the latest arrival time of those first fresh frames. Each camera gives
+its newest frame that arrived by the close time, and keeps a later frame for the next round. The
+other frames that it took count as replaced.
 
-Arrival model (GA-01 to GA-06), from `research/usb_cameras/docs/camera_spread_analysis_20261120.md`
+Arrival model (GA-01 to GA-08), from `research/usb_cameras/docs/camera_spread_analysis_20261120.md`
 (branch `dom/research`): three cameras with true frame periods of 33.333, 33.313 and 33.279 ms. Each
-camera delivers on its own 16 ms grid, so its intervals are 32 or 48 ms. The second camera delivers
-32 ms late, and its sample time is 32.3 ms before its arrival (the Kiyo Pro of T-CAP-59). The
-schedules are absolute on the virtual clock, so the start-up order does not change the phases.
+camera delivers on its own 16 ms grid, so its intervals are 32 or 48 ms. The phase set is fixed:
+true phase 0 for each camera, grid phases 0, 5 and 10 ms, and the second camera 32 ms late, with
+its sample time 32.3 ms before its arrival (the Kiyo Pro of T-CAP-59). The schedules are absolute on
+the virtual clock, so the start-up order does not change the phases. The bounds of the tests follow
+from the model of the rule for THIS phase set (amendment A-8). Other phases give other numbers, and
+a hardware run has its own, wider pass rule (A-9).
 
 Two seams of this file only (no change of `fake_source.py` or `capture_session.py`):
 
 - `absolute_schedules`: a fake whose script has `arrivals_ns` takes its next arrival from that list.
-- `exact_gate_clock`: the virtual clock does not move while a loop that waits at the gate could pass
-  it now. Without it, the clock can move to the next arrival before the loop sees the open gate, and
-  the loop then takes a later frame than the rule gives. It applies to each rule in the same way.
+- `gate_clock`: the virtual clock does not move while a loop that waits at the gate could pass it
+  now. With `delay_ms`, each camera sees the open gate (the close) a random time from 0 to `delay_ms`
+  later, in virtual time: the wake delay of a real camera process.
 """
 
 import bisect
 import logging
+import math
+import random
 import statistics
 import threading
 import time
@@ -33,23 +42,25 @@ import psutil
 import pytest
 
 from skellycam.tests.capture.capture_session import (
-    RingWatcher, Spies, capture_app, capture_logs, ready_app_steps, sfn_gaps)
+    CaptureApp, OpenCVFakeFactory, RingWatcher, Spies, capture_app, capture_logs, ready_app_steps, sfn_gaps)
 from skellycam.tests.capture.fake_source import FakeScript, FakeSource, VirtualClock
 
 pytestmark = pytest.mark.gate_amendment
 
 START_NS = VirtualClock.START_NS
 PERIOD_NS = 1e9 / 30
+PERIOD_MS = PERIOD_NS / 1e6
 GRID_US = 16_000
 SCHEDULE_S = 200  # longer than each run
 PERIODS_US = (33_333, 33_313, 33_279)  # the camera periods of section 4 of the analysis
 LATE_US = (0, 32_000, 0)  # the Kiyo Pro delivers about 32 ms after its sample time
 SAMPLE_OFFSET_MS = (-0.33, -32.3, -0.33)  # T-CAP-59: arrival minus sample time
-OWN_GRID_US = (0, 5_000, 10_000)  # each camera on its own 16 ms grid: reproduces the measured spread
-ONE_GRID_US = (0, 0, 0)  # all cameras on one 16 ms grid: ties at one instant, more replaced frames
-POLL_NS = 1_000_000  # one wait step of 4.3: a loop sees a closed round within 1 ms
+OWN_GRID_US = (0, 5_000, 10_000)  # each camera on its own 16 ms grid, as the cameras of the hardware run
+DELAY_GRID_US = (0, 2_500, 5_000)  # GA-08: arrivals 2.5 ms apart, the smallest offset of the review
+POLL_NS = 1_000_000  # GA-02: a loop may see the close up to 1 ms late
 LIMIT_NS = 100_000_000  # the limit of T-CAP-108: no gap above 100 ms after a camera dies
 SETTLE_ROUNDS = 30
+LOSS_BOUND = 6  # A-6: lost frames per camera per 1,800 with wake delays up to 10 ms (the review replay)
 
 
 # ---------------------------------------------------------------------------
@@ -58,30 +69,29 @@ SETTLE_ROUNDS = 30
 
 def grid_schedule(period_us, grid_us, late_us, phase_us=0):
     """Absolute arrival times (ns): the true time phase + k * period, delivered at the next point of the
-    camera's own 16 ms grid, plus the delivery delay."""
+    camera's own 16 ms grid, plus the delivery delay. A grid of None gives the true times."""
     out, k = [], 0
     while True:
         true_us = phase_us + k * period_us
-        arrival_us = -(-(true_us - grid_us) // GRID_US) * GRID_US + grid_us + late_us
-        out.append(START_NS + arrival_us * 1000)
+        arrival_us = (math.ceil((true_us - grid_us) / GRID_US) * GRID_US + grid_us if grid_us is not None
+                      else true_us) + late_us
+        out.append(START_NS + round(arrival_us * 1000))
         if arrival_us > SCHEDULE_S * 1_000_000:
             return tuple(out)
         k += 1
 
 
-def exact_schedule(period_ns, phase_ns):
-    """Absolute arrival times (ns) with no grid: exact mode periods (29.97 and 30 fps)."""
-    count = int(SCHEDULE_S * 1e9 / period_ns) + 2
-    return tuple(START_NS + round(phase_ns + k * period_ns) for k in range(count))
-
-
-def measured_scripts(grids):
+def scripts_for(periods_us, grids_us, lates_us, phases_us=(0, 0, 0), modes=None, offsets=SAMPLE_OFFSET_MS):
     scripts = []
-    for period, grid, late, offset in zip(PERIODS_US, grids, LATE_US, SAMPLE_OFFSET_MS):
-        script = FakeScript(sample_offset_ms=offset)
-        script.arrivals_ns = grid_schedule(period, grid, late)
+    for index, (period, grid, late, phase) in enumerate(zip(periods_us, grids_us, lates_us, phases_us)):
+        script = FakeScript(sample_offset_ms=offsets[index]) if modes is None else FakeScript(modes=modes[index])
+        script.arrivals_ns = grid_schedule(period, grid, late, phase)
         scripts.append(script)
     return scripts
+
+
+def measured_scripts(grids_us=OWN_GRID_US):
+    return scripts_for(PERIODS_US, grids_us, LATE_US)
 
 
 def absolute_schedules(monkeypatch):
@@ -97,24 +107,34 @@ def absolute_schedules(monkeypatch):
 
 
 def product_gate():
-    """The gate of the product, before `capture_app` wraps it with its clock probe."""
+    """The gate of the product, before `capture_app` wraps it with its clock probe. The loop module is
+    imported first, as `capture_app` does."""
+    import skellycam.core.camera.capture.camera_loop  # noqa: F401
     from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 
     return CameraOrchestrator.should_grab_by_id
 
 
-def exact_gate_clock(monkeypatch, app, should_grab):
+def gate_clock(monkeypatch, app, should_grab, delay_ms=0.0, seed=1):
+    """The two parts of the `gate_clock` seam (module docstring)."""
     from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 
     at_gate = {}  # thread ident -> (orchestrator, camera_id)
+    seen = {}  # (camera_id, gate count) -> the virtual time at which the camera sees the open gate
+    rng = random.Random(seed)
     probe = CameraOrchestrator.should_grab_by_id
+    clock = app.clock
 
     def record(self, camera_id):
         at_gate[threading.get_ident()] = (self, camera_id)
+        if delay_ms and should_grab(self, camera_id):
+            key = (camera_id, self.camera_statuses[camera_id].frame_count.value)
+            if key not in seen:
+                seen[key] = clock.now_ns() + round(rng.uniform(0.0, delay_ms) * 1e6)
+            clock.wait_until(seen[key])
         return probe(self, camera_id)
 
     monkeypatch.setattr(CameraOrchestrator, "should_grab_by_id", record)
-    clock = app.clock
     advance = clock._advance
 
     def exact_advance(force=False):
@@ -153,9 +173,26 @@ def record_writes(monkeypatch, app):
 
 
 def start_group(monkeypatch, scripts, track=False):
-    """The app context manager and the product gate, with the two seams."""
+    """The app context manager and the product gate, with the schedule seam."""
     absolute_schedules(monkeypatch)
     return product_gate(), capture_app(monkeypatch, scripts, track=track)
+
+
+def run_group(monkeypatch, scripts, seconds, delay_ms=0.0, writes=False):
+    """Run the group for `seconds` of the virtual clock. Gives (camera_ids, frames, rounds, delivered, writes)."""
+    gate, app_context = start_group(monkeypatch, scripts)
+    with app_context as app:
+        gate_clock(monkeypatch, app, gate, delay_ms)
+        spies = Spies(monkeypatch, app)
+        written = record_writes(monkeypatch, app) if writes else None
+        ready_app_steps(app)
+        app.wait_clock(seconds, f"{seconds} s of group frames")
+        app.client.delete("/skellycam/camera/group/close/all")
+        cids = app.factory.camera_ids
+        frames, rounds = group_frames(spies, cids)
+        delivered = {cid: [app.factory.logs[cid].frames[k][0] for k in range(len(app.factory.logs[cid].frames))]
+                     for cid in cids}
+    return cids, frames, rounds, delivered, written
 
 
 def group_frames(spies, camera_ids):
@@ -168,7 +205,7 @@ def group_frames(spies, camera_ids):
 def spread_numbers(frames, camera_ids, rounds):
     spreads = sorted((max(frames[c][r]["arrival_ns"] for c in camera_ids)
                       - min(frames[c][r]["arrival_ns"] for c in camera_ids)) / 1e6 for r in rounds)
-    over = sum(s > PERIOD_NS / 1e6 for s in spreads)
+    over = sum(s > PERIOD_MS for s in spreads)
     return dict(median=statistics.median(spreads), p95=spreads[int(0.95 * len(spreads))], max=spreads[-1],
                 over=over, share=over / len(spreads), n=len(spreads))
 
@@ -186,6 +223,35 @@ def stale_rounds(frames, camera_ids, rounds):
     return stale
 
 
+def not_newest_by_close(frames, delivered, camera_ids, rounds):
+    """(round, camera) pairs where the camera gave a frame older than its newest frame that arrived by
+    the latest arrival of the group frame. With the rule, that latest arrival is the close time."""
+    out = []
+    for r in rounds:
+        closed = max(frames[c][r]["arrival_ns"] for c in camera_ids)
+        for c in camera_ids:
+            if bisect.bisect_right(delivered[c], closed) - 1 > frames[c][r]["sfn"]:
+                out.append((r, c))
+    return out
+
+
+def lost_per_1800(frames, camera_ids, rounds):
+    """Lost (replaced) frames of each camera between the given frames of `rounds`, per 1,800 rounds."""
+    scale = 1800 / max(len(rounds) - 1, 1)
+    return {c: sfn_gaps([frames[c][r]["sfn"] for r in rounds]) * scale for c in camera_ids}
+
+
+def check_status_counts(frames, writes, camera_ids):
+    """The `replaced_count` of the status after given frame r equals the gaps from the first given frame."""
+    for cid in camera_ids:
+        numbers = sorted(writes[cid])
+        sfns = [frames[cid][r]["sfn"] for r in numbers]
+        wrong = [(r, writes[cid][numbers[i + 1]][1], sfn_gaps(sfns[:i + 1]))
+                 for i, r in enumerate(numbers[:-1]) if writes[cid][numbers[i + 1]][1] != sfn_gaps(sfns[:i + 1])]
+        assert not wrong, f"camera {cid}: replaced_count differs from the gaps at {len(wrong)} frames, " \
+                          f"first (frame, status, gaps): {wrong[:3]}"
+
+
 def describe(numbers):
     return (f"median {numbers['median']:.1f} ms, p95 {numbers['p95']:.1f} ms, max {numbers['max']:.1f} ms, "
             f"{numbers['over']} of {numbers['n']} group frames ({numbers['share']:.1%}) above one frame period")
@@ -196,77 +262,50 @@ def describe(numbers):
 # ---------------------------------------------------------------------------
 
 def test_ga_01_spread_inside_a_group_frame(monkeypatch):
-    """GA-01, amendment sections 2 and 3: three cameras on the measured arrival model, 60 s of the
-    virtual clock. The spread of arrival times inside each group frame has a median under 17 ms. At
-    most 0.5 % of the group frames are above one frame period, and none is above one period plus one
-    grid step (49.3 ms). The rule of today gives a median above 30 ms on this model.
+    """GA-01, amendment A-2, A-3 and A-8: the arrival model with its fixed phase set, 60 s of the virtual
+    clock, no wake delay. For this phase set, the offline model of the rule gives a spread of 11.0 /
+    27.0 / 38.0 ms (median / p95 / max) and 0.3 % of the group frames above one period. The test
+    allows: median at most 12 ms, p95 at most 28 ms, max at most 40 ms, at most 0.5 % above one
+    period. The rule of today gives 38.0 / 54.0 / 70.0 ms and 64.5 % on the same set.
 
-    With a 16 ms delivery grid, a few group frames exceed one period also under the causal rule of the
-    analysis (fewer than 0.5 %, max 34 to 41 ms). Thus the test uses that measured bound, not "no group
-    frame above one frame period"."""
-    gate, app_context = start_group(monkeypatch, measured_scripts(OWN_GRID_US))
-    with app_context as app:
-        exact_gate_clock(monkeypatch, app, gate)
-        spies = Spies(monkeypatch, app)
-        ready_app_steps(app)
-        app.wait_clock(60.0, "60 s of group frames")
-        app.client.delete("/skellycam/camera/group/close/all")
-        cids = app.factory.camera_ids
-        frames, rounds = group_frames(spies, cids)
+    These bounds hold for this phase set only. Real cameras gave 13.0 to 18.9 ms at the median across
+    four runs (A-2). A hardware run has its own, wider pass rule (A-9)."""
+    cids, frames, rounds, _, _ = run_group(monkeypatch, measured_scripts(), 60.0)
     numbers = spread_numbers(frames, cids, rounds[SETTLE_ROUNDS:])
     assert numbers["n"] >= 1500, f"too few group frames: {numbers['n']}"
-    assert numbers["median"] < 17.0, f"spread too large: {describe(numbers)}"
+    assert numbers["median"] <= 12.0 and numbers["p95"] <= 28.0, f"spread too large: {describe(numbers)}"
     assert numbers["share"] <= 0.005, f"too many group frames above one frame period: {describe(numbers)}"
-    assert numbers["max"] <= PERIOD_NS / 1e6 + 16.0, f"a group frame above one period plus one grid step: " \
-                                                      f"{describe(numbers)}"
+    assert numbers["max"] <= 40.0, f"a group frame above 40 ms: {describe(numbers)}"
 
 
 # ---------------------------------------------------------------------------
-# GA-02: replaced frames equal the gaps; each camera gives its newest frame at the close
+# GA-02: the rule at zero delay; replaced frames equal the gaps
 # ---------------------------------------------------------------------------
 
-def test_ga_02_replaced_count_equals_the_gaps_and_the_rule_choice(monkeypatch):
-    """GA-02, amendment section 3.3 [D27, W4, agent 49]: three cameras on ONE common 16 ms grid, so
-    that arrivals tie and the loop drops many frames that it took and held. 60 s.
+def test_ga_02_newest_frame_by_the_close_time_and_the_status_count(monkeypatch):
+    """GA-02, amendment A-3.1 to A-3.3 [D27, W4, agent 49]: the arrival model, 60 s, no wake delay.
 
     (1) For each camera and each given frame r, the `replaced_count` of the status after frame r
     equals the sum of the gaps of `source_frame_number` from the first frame given in the gate to
-    frame r (the loop sets it at each taken frame, 8.4).
-    (2) The rule: round r closes at the latest of the first arrivals after the frames of round r - 1.
-    Each camera gives the newest frame that arrived by then (or within one wait step after it, 4.3).
-    The rule of today gives older frames: the test counts the rounds that differ."""
-    gate, app_context = start_group(monkeypatch, measured_scripts(ONE_GRID_US))
-    with app_context as app:
-        exact_gate_clock(monkeypatch, app, gate)
-        spies = Spies(monkeypatch, app)
-        writes = record_writes(monkeypatch, app)
-        ready_app_steps(app)
-        app.wait_clock(60.0, "60 s of group frames")
-        app.client.delete("/skellycam/camera/group/close/all")
-        cids = app.factory.camera_ids
-        frames, rounds = group_frames(spies, cids)
-        delivered = {cid: app.factory.logs[cid].frames for cid in cids}
+    frame r (the loop sets it at each given frame, 8.4).
+    (2) The rule: the close time of round r is the latest of the first arrivals after the frames of
+    round r - 1. Each camera gives its newest frame that arrived by the close time (1 ms is allowed for
+    the order of the threads). The rule of today gives older frames: the test counts the rounds."""
+    cids, frames, rounds, delivered, writes = run_group(monkeypatch, measured_scripts(), 60.0, writes=True)
     assert len(rounds) >= 1500, len(rounds)
-    for cid in cids:
-        sfns = [frames[cid][r]["sfn"] for r in sorted(frames[cid])]
-        numbers = sorted(writes[cid])
-        wrong = [(r, writes[cid][numbers[i + 1]][1], sfn_gaps(sfns[:i + 1]))
-                 for i, r in enumerate(numbers[:-1]) if writes[cid][numbers[i + 1]][1] != sfn_gaps(sfns[:i + 1])]
-        assert not wrong, f"camera {cid}: replaced_count differs from the gaps at {len(wrong)} frames, " \
-                          f"first (frame, status, gaps): {wrong[:3]}"
-    arrivals = {cid: [delivered[cid][k][0] for k in range(len(delivered[cid]))] for cid in cids}
+    check_status_counts(frames, writes, cids)
     differ = []
     for previous, current in zip(rounds[SETTLE_ROUNDS:], rounds[SETTLE_ROUNDS + 1:]):
-        closed = max(arrivals[cid][frames[cid][previous]["sfn"] + 1] for cid in cids)
+        closed = max(delivered[cid][frames[cid][previous]["sfn"] + 1] for cid in cids)
         for cid in cids:
-            newest = bisect.bisect_right(arrivals[cid], closed) - 1
-            latest = bisect.bisect_right(arrivals[cid], closed + POLL_NS) - 1
+            newest = bisect.bisect_right(delivered[cid], closed) - 1
+            latest = bisect.bisect_right(delivered[cid], closed + POLL_NS) - 1
             given = frames[cid][current]["sfn"]
             if not newest <= given <= latest:
                 differ.append((current, cid, given, newest))
     checked = len(rounds) - SETTLE_ROUNDS - 1
-    assert not differ, f"{len({d[0] for d in differ})} of {checked} rounds do not give the newest frame at the " \
-                       f"close; first (round, camera, given sfn, newest sfn): {differ[:3]}"
+    assert not differ, f"{len({d[0] for d in differ})} of {checked} rounds do not give the newest frame by the " \
+                       f"close time; first (round, camera, given sfn, newest sfn): {differ[:3]}"
 
 
 # ---------------------------------------------------------------------------
@@ -274,14 +313,13 @@ def test_ga_02_replaced_count_equals_the_gaps_and_the_rule_choice(monkeypatch):
 # ---------------------------------------------------------------------------
 
 def test_ga_03_a_camera_that_dies_mid_round_does_not_hold_the_round(monkeypatch):
-    """GA-03, amendment section 4.2 [D38, agent 82]: after 10 s, the late camera gives device removed.
-    It is `dead`. The round that waited for its fresh frame closes at its death, not before (the live
-    cameras did not give their frames of that round before the error) and within 100 ms after it (the
-    limit of T-CAP-108). The rule of today gives the live frames of that round at its open, before
-    the error."""
-    gate, app_context = start_group(monkeypatch, measured_scripts(OWN_GRID_US))
+    """GA-03, amendment A-4.2 [D38, agent 82]: after 10 s, the late camera gives device removed. It is
+    `dead`. The round that waited for its fresh frame closes at its death, not before (the live cameras
+    did not give their frames of that round before the error) and within 100 ms after it (the limit of
+    T-CAP-108). The rule of today gives the live frames of that round at its open, before the error."""
+    gate, app_context = start_group(monkeypatch, measured_scripts())
     with app_context as app:
-        exact_gate_clock(monkeypatch, app, gate)
+        gate_clock(monkeypatch, app, gate)
         spies = Spies(monkeypatch, app)
         writes = record_writes(monkeypatch, app)
         ready_app_steps(app)
@@ -308,14 +346,14 @@ def test_ga_03_a_camera_that_dies_mid_round_does_not_hold_the_round(monkeypatch)
 
 
 def test_ga_04_a_camera_that_stalls_is_dead_after_2_s_and_the_round_closes(monkeypatch):
-    """GA-04, amendment section 4.2 [D38, 9.5]: after 10 s, the late camera stops delivering. It is
-    `dead` 2.0 to 2.25 s after its last arrival (T-CAP-36). The round that waited for it closes then:
-    each live camera gives a frame that arrived at most one period plus one grid step before the 2 s
-    point, its newest frame. The rule of today gives the frames that the live cameras took at the open
-    of that round, about 2 s older."""
-    gate, app_context = start_group(monkeypatch, measured_scripts(OWN_GRID_US), track=True)
+    """GA-04, amendment A-4.2 [D38, 9.5]: after 10 s, the late camera stops delivering. It is `dead` 2.0
+    to 2.25 s after its last arrival (T-CAP-36). The round that waited for it closes then, with the time
+    of the death as its close time: each live camera gives a frame that arrived at most one period plus
+    one grid step before the 2 s point. The rule of today gives the frames that the live cameras took
+    at the open of that round, about 2 s older."""
+    gate, app_context = start_group(monkeypatch, measured_scripts(), track=True)
     with app_context as app:
-        exact_gate_clock(monkeypatch, app, gate)
+        gate_clock(monkeypatch, app, gate)
         spies = Spies(monkeypatch, app)
         ready_app_steps(app)
         cids = app.factory.camera_ids
@@ -336,30 +374,42 @@ def test_ga_04_a_camera_that_stalls_is_dead_after_2_s_and_the_round_closes(monke
     for cid in live:
         arrival = frames[cid][held_round]["arrival_ns"]
         age = (t_last + 2 * 10**9 - arrival) / 1e6
-        assert age <= PERIOD_NS / 1e6 + 16.0, f"camera {cid}: its frame of round {held_round} arrived {age:.0f} ms " \
-                                               f"before the 2 s point"
+        assert age <= PERIOD_MS + 16.0, f"camera {cid}: its frame of round {held_round} arrived {age:.0f} ms " \
+                                        f"before the 2 s point"
 
 
 # ---------------------------------------------------------------------------
-# GA-05: 29.97 fps with two 30 fps cameras
+# GA-05: 29.97 fps with two 30 fps cameras, on the delivery grid
 # ---------------------------------------------------------------------------
+
+RC30_PERIODS_US = (1001e3 / 30, 1e6 / 30, 1e6 / 30)
+RC30_PHASES_US = (0, 10_000, 20_000)
+
+
+def rule_replay(delivered, camera_ids, first):
+    """The rule at zero delay, replayed on the delivered arrival times from the given frames `first` of
+    one round: the close time is the latest next arrival; each camera takes its newest frame by then."""
+    last, out = dict(first), [dict(first)]
+    while all(last[c] + 1 < len(delivered[c]) for c in camera_ids):
+        closed = max(delivered[c][last[c] + 1] for c in camera_ids)
+        last = {c: bisect.bisect_right(delivered[c], closed) - 1 for c in camera_ids}
+        out.append(dict(last))
+    return out
+
 
 def test_ga_05_rate_class_30_replaced_counts(monkeypatch):
-    """GA-05, amendment section 4.1 [U15, D18, 7.5]: a fake at 30000/1001 and two fakes at 30/1, with
-    exact periods (no grid) and fixed phases (0, 10 and 20 ms). Over 100 s from the first gate frame:
-    each 30 fps camera has 3 (+/-1) replaced frames, as U15 predicts (1001/30 s = 33.4 s for each);
-    the 29.97 fps camera has none; the group gives 2997 (+/-2) frames. These counts are the same under
-    the rule of today. The test fails today because the 30 fps cameras give held frames: no camera may
-    give a frame that arrived before the previous group frame was complete."""
+    """GA-05, amendment A-4.1 [U15, D18, 7.5]: a fake at 30000/1001 and two fakes at 30/1, each on its
+    own 16 ms grid (0, 5 and 10 ms) with true phases 0, 10 and 20 ms. Over 100 s from the first gate
+    frame, the replaced frames of each camera equal those of the rule replayed offline on the same
+    arrival times (+/-1). With the grid, the 29.97 fps camera also loses frames, and a 30 fps camera can
+    lose more than the 3 of the warning text of U15 (A-4.1 gives the numbers). The group gives 2997
+    (+/-3) frames. No camera gives a frame that arrived before the previous group frame was complete:
+    the rule of today fails here."""
     modes = [((640, 480, 30000, 1001, "MJPG"),), ((640, 480, 30, 1, "MJPG"),), ((640, 480, 30, 1, "MJPG"),)]
-    scripts = []
-    for mode, period, phase in zip(modes, (1001e6 / 30, 1e9 / 30, 1e9 / 30), (0, 10_000_000, 20_000_000)):
-        script = FakeScript(modes=mode)
-        script.arrivals_ns = exact_schedule(period, phase)
-        scripts.append(script)
+    scripts = scripts_for(RC30_PERIODS_US, OWN_GRID_US, (0, 0, 0), RC30_PHASES_US, modes=modes)
     gate, app_context = start_group(monkeypatch, scripts)
     with app_context as app:
-        exact_gate_clock(monkeypatch, app, gate)
+        gate_clock(monkeypatch, app, gate)
         spies = Spies(monkeypatch, app)
         ready_app_steps(app)
         cids = app.factory.camera_ids
@@ -368,19 +418,19 @@ def test_ga_05_rate_class_30_replaced_counts(monkeypatch):
         app.wait(lambda: app.clock.now_ns() > t0 + 101 * 10**9, "100 simulated seconds")
         app.client.delete("/skellycam/camera/group/close/all")
         frames, rounds = group_frames(spies, cids)
+        delivered = {cid: [app.factory.logs[cid].frames[k][0] for k in range(len(app.factory.logs[cid].frames))]
+                     for cid in cids}
     t1 = t0 + 100 * 10**9
-    replaced = {}
-    for cid in cids:
-        sfns = [frames[cid][r]["sfn"] for r in rounds if t0 <= frames[cid][r]["arrival_ns"] <= t1]
-        replaced[cid] = sfn_gaps(sfns)
     in_window = [r for r in rounds if t0 <= frames[cids[1]][r]["arrival_ns"] <= t1]
-    assert replaced[cids[0]] == 0, f"the 29.97 fps camera lost frames: {replaced}"
-    for cid in cids[1:]:
-        assert 2 <= replaced[cid] <= 4, f"camera {cid}: {replaced[cid]} frames replaced in 100 s (U15: 3)"
-    assert abs(len(in_window) - 2997) <= 2, f"{len(in_window)} group frames in 100 s"
+    replaced = tuple(sfn_gaps([frames[cid][r]["sfn"] for r in in_window]) for cid in cids)
+    replay = rule_replay(delivered, cids, {cid: frames[cid][rounds[0]]["sfn"] for cid in cids})
+    model_rounds = [rnd for rnd in replay if t0 <= delivered[cids[1]][rnd[cids[1]]] <= t1]
+    expected = tuple(sfn_gaps([rnd[cid] for rnd in model_rounds]) for cid in cids)
+    logging.getLogger(__name__).info(f"GA-05: replaced {replaced}, model {expected}, rounds {len(in_window)}")
+    assert all(abs(got - want) <= 1 for got, want in zip(replaced, expected)),         f"replaced frames in 100 s {replaced}; the rule replayed on the same arrivals gives {expected}"
+    assert abs(len(in_window) - 2997) <= 3, f"{len(in_window)} group frames in 100 s"
     stale = stale_rounds(frames, cids, rounds)
-    assert not stale, f"{len(stale)} of {len(rounds) - 1} group frames hold a frame that arrived before the " \
-                      f"previous group frame was complete; replaced counts {replaced}"
+    assert not stale, f"{len(stale)} of {len(rounds) - 1} group frames hold a frame that arrived before the "                       f"previous group frame was complete; replaced frames {replaced}, model {expected}"
 
 
 # ---------------------------------------------------------------------------
@@ -388,19 +438,11 @@ def test_ga_05_rate_class_30_replaced_counts(monkeypatch):
 # ---------------------------------------------------------------------------
 
 def test_ga_06_frame_order_and_one_frame_of_each_camera(monkeypatch):
-    """GA-06, amendment section 3.2: the measured arrival model, 60 s. Each group frame holds exactly
-    one frame of each live camera; no camera gives a frame older than one it gave before; and no camera
-    gives a frame that arrived before the previous group frame was complete (the frame is fresh). The
-    rule of today breaks the last point in most rounds (61 to 73 % in the analysis)."""
-    gate, app_context = start_group(monkeypatch, measured_scripts(OWN_GRID_US))
-    with app_context as app:
-        exact_gate_clock(monkeypatch, app, gate)
-        spies = Spies(monkeypatch, app)
-        ready_app_steps(app)
-        app.wait_clock(60.0, "60 s of group frames")
-        app.client.delete("/skellycam/camera/group/close/all")
-        cids = app.factory.camera_ids
-        frames, rounds = group_frames(spies, cids)
+    """GA-06, amendment A-3.2: the arrival model, 60 s. Each group frame holds exactly one frame of each
+    live camera; no camera gives a frame older than one it gave before; and no camera gives a frame that
+    arrived before the previous group frame was complete (the frame is fresh). The rule of today breaks
+    the last point in most rounds (61 to 73 % in the analysis)."""
+    cids, frames, rounds, _, _ = run_group(monkeypatch, measured_scripts(), 60.0)
     numbers = [set(frames[cid]) for cid in cids]
     last = min(max(n) for n in numbers)
     assert all(set(range(last + 1)) <= n for n in numbers), "a group frame lacks a camera"
@@ -417,7 +459,7 @@ def test_ga_06_frame_order_and_one_frame_of_each_camera(monkeypatch):
 # ---------------------------------------------------------------------------
 
 def test_ga_07_a_waiting_camera_uses_no_busy_loop(monkeypatch):
-    """GA-07, amendment section 3.5 [ring 8.10, 4.3]: two camera processes on the real clock. The second
+    """GA-07, amendment A-3.5 [ring 8.10, 4.3]: two camera processes on the real clock. The second
     fake delivers 30 fps for 300 frames (the start-up), then 1 fps, so the first camera waits about
     1 s for each round. Over 10 s of the slow part: the process of the first camera uses under 2 % of
     one core (the limit of T-CAP-49), and in each group frame the frame of the first camera arrived at
@@ -446,8 +488,77 @@ def test_ga_07_a_waiting_camera_uses_no_busy_loop(monkeypatch):
                          and by_round[slow][r] - by_round[slow][r - 1] > 900_000_000)
     assert len(slow_rounds) >= 8, f"too few slow rounds: {len(slow_rounds)}"
     ages = [(by_round[slow][r] - by_round[waiting][r]) / 1e6 for r in slow_rounds]
-    old = [a for a in ages if abs(a) > PERIOD_NS / 1e6 + 16.0]
+    old = [a for a in ages if abs(a) > PERIOD_MS + 16.0]
     logging.getLogger(__name__).info(f"GA-07: CPU {used:.2%} of one core; ages {ages}")
     assert used < 0.02, f"the waiting camera process used {used:.1%} of one core"
     assert not old, f"{len(old)} of {len(ages)} group frames: the waiting camera's frame is far from the slow " \
                     f"camera's frame (ms): {old[:5]}"
+
+
+# ---------------------------------------------------------------------------
+# GA-08: a wake delay does not cost frames
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("delay_ms", [5.0, 10.0], ids=["wake delay up to 5 ms", "wake delay up to 10 ms"])
+def test_ga_08_a_wake_delay_does_not_cost_frames(monkeypatch, delay_ms):
+    """GA-08, amendment A-3.2, A-3.5 and A-6: the arrival model with grid phases 0, 2.5 and 5 ms (so that
+    the arrivals of two cameras can be closer than the delay), 60 s, and each camera sees each close a
+    random 0 to `delay_ms` later (virtual time). With the close time of A-3.5, a frame that arrives
+    in the delay is kept for the next round, not given:
+
+    (1) each camera loses at most 2 frames per 1,800 rounds more than the rule at zero delay, replayed
+    on the same arrival times, and at most 6 (the bound of the review replay on the real arrival times,
+    where the first wording of the rule lost 27 to 33 at 5 ms and 62 to 68 at 10 ms);
+    (2) the `replaced_count` of the status equals the gaps at each given frame;
+    (3) in at most 6 rounds per 1,800 for each camera, a camera gives a frame older than its newest
+    frame that arrived by the latest arrival of the group frame (the close time). Such a round needs
+    two arrivals of one camera in its wake delay, and the waiting place holds one frame.
+    The rule of today loses 2 frames or fewer here, but it fails (3) in most rounds."""
+    cids, frames, rounds, delivered, writes = run_group(monkeypatch, measured_scripts(DELAY_GRID_US), 60.0, delay_ms,
+                                                         writes=True)
+    settled = rounds[SETTLE_ROUNDS:]
+    assert len(settled) >= 1500, len(settled)
+    lost = lost_per_1800(frames, cids, settled)
+    replay = rule_replay(delivered, cids, {cid: frames[cid][settled[0]]["sfn"] for cid in cids})
+    end = {cid: frames[cid][settled[-1]]["sfn"] for cid in cids}
+    replay = [rnd for rnd in replay if all(rnd[c] <= end[c] for c in cids)]
+    zero = {c: sfn_gaps([rnd[c] for rnd in replay]) * 1800 / max(len(replay) - 1, 1) for c in cids}
+    over = {c: round(lost[c] - zero[c], 1) for c in cids}
+    assert max(over.values()) <= 2.0 and max(lost.values()) <= LOSS_BOUND, \
+        f"lost frames per camera per 1,800: { {c: round(v, 1) for c, v in lost.items()} }; at zero delay " \
+        f"{ {c: round(v, 1) for c, v in zero.items()} }"
+    check_status_counts(frames, writes, cids)
+    older = not_newest_by_close(frames, delivered, cids, settled)
+    per_camera = {c: sum(1 for _, cc in older if cc == c) * 1800 / len(settled) for c in cids}
+    assert max(per_camera.values()) <= LOSS_BOUND, \
+        f"rounds per 1,800 that give an older frame than the newest by the close: " \
+        f"{ {c: round(v, 1) for c, v in per_camera.items()} }; first {older[:3]}"
+
+
+# ---------------------------------------------------------------------------
+# GA-09: a pull source (OpenCV)
+# ---------------------------------------------------------------------------
+
+def test_ga_09_a_pull_source_reads_one_frame_for_each_round(monkeypatch):
+    """GA-09, amendment A-3.6: two OpenCV fakes (pull sources) in one group on the virtual clock, 20 s.
+    The loop reads one frame after its own give, holds it and gives it at the close. It never reads a
+    pull source while it holds a frame. Thus for each camera: `source_frame_number` has no gap between
+    given frames, and `replaced_count` stays 0. This test passes on the rule of today. It fails on an
+    implementation that reads a pull source while it holds, as for a push source."""
+    factory = OpenCVFakeFactory(monkeypatch, count=2)
+    app = CaptureApp(monkeypatch, factory)
+    try:
+        spies = Spies(monkeypatch, app)
+        ready_app_steps(app)
+        app.wait_clock(20.0, "20 s of group frames")
+        cids = factory.camera_ids
+        replaced = {cid: app.status(cid)["replaced_count"] for cid in cids}
+        app.client.delete("/skellycam/camera/group/close/all")
+        frames, rounds = group_frames(spies, cids)
+    finally:
+        app.close()
+    assert len(rounds) >= 500, len(rounds)
+    for cid in cids:
+        sfns = [frames[cid][r]["sfn"] for r in rounds]
+        assert sfn_gaps(sfns) == 0, f"camera {cid}: the loop dropped {sfn_gaps(sfns)} frames of a pull source"
+    assert replaced == {cid: 0 for cid in cids}, replaced
