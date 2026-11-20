@@ -377,6 +377,8 @@ the user picked in the system folder dialog [L7]:
 - "Inside" compares real paths (`fs.realpath`): the folder is the allowed folder or below it. On
   Windows the comparison ignores case.
 - Any other folder: the open fails with the error "folder not allowed", and no token is made.
+- A relative path, a UNC path (`\\host\share`) and a device path (`\\?\`, `\\.\`) fail the same way
+  before any file system call: a UNC path makes the main process open a network connection ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)).
   T-PLAY-62 tests it.
 
 ### 5.4 Open, tokens and close [agent 5] [agent 7] [agent 12]
@@ -387,12 +389,14 @@ the user picked in the system folder dialog [L7]:
    directory.
 3. It lists the root of the folder and the media folder `synchronized_videos/` only [SFF-721]. It
    keeps each regular file. It leaves out each symbolic link, each junction and each other special
-   file (by `lstat`). It does not follow a media folder that is a link.
+   file (by `lstat`). It does not follow a media folder that is a link. It also leaves out
+   each regular file with more than one hard link: a hard link can name a file outside the take ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)).
 4. It stores, for each kept file: the relative path, the size, the device and the inode (file ID),
    from `stat(path, { bigint: true })`. File IDs can be larger than 2^53. This list is the snapshot. It
    is also the allow-list of the token.
 5. It ties the token to the window that asked (`event.sender`). It closes the token when that window
-   navigates, reloads, closes, or opens another take [agent 5].
+   navigates, reloads, closes, or opens another take [agent 5]. When the window
+   navigated or closed during the open, the open fails and no token is made ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)).
 6. It returns `{ token, folderName, entries }`. `entries` holds the relative paths and the sizes only.
    No absolute path goes to the page.
 7. `close(token)` closes each cached handle and deletes the token. A request with a deleted token gets
@@ -410,7 +414,8 @@ can learn a token].
   rule that matters, and the rule that T-PLAY-57 tests, is: no request can read a byte of a file that
   is not in the allow-list.
 - Camera files (`.mkv`): the handler opens each one at its first read and keeps the handle until
-  `close(token)`. At the open it compares `stat` (bigint) with the device and inode of the snapshot.
+  `close(token)`. At the open it compares `stat` (bigint) with the device and inode of the snapshot, and it
+  refuses a file with more than one hard link ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)).
   When they differ, it refuses the file with 404 and keeps no handle.
 - Each other file (the manifest, the sidecars): each read opens the file, checks its identity as
   above, reads, and closes it. The handler keeps no handle on such a file. On Windows, a rename over a
@@ -421,6 +426,8 @@ can learn a token].
 ### 5.6 Responses [M `RT` §6] [agent 9]
 
 The handler serves only bytes below the snapshot size of the file, also when the file is now longer.
+It reads the body from the file in pieces of at most 1 MiB, so one response does not hold a large
+file in the memory of the main process ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)).
 
 | Request | Response |
 |---|---|
@@ -521,7 +528,9 @@ The rebuild needs `<rec>` only to find the folder files [SFF-868]. The player re
   `1A 45 DF A3` [SFF-864]. The reader does not read an audio pair in 6a [Y1] [agent 14].
 - A camera file with no sidecar is not in the take. A sidecar with no camera file is `invalid` with
   `missing_media`, and it does not count as a camera file [SFF-865].
-- The reader groups the pairs by `take_uuid` [SFF-866]. When the folder holds more than one take, the
+- The reader groups the pairs by `take_uuid` [SFF-866]. A pair whose `take_uuid` does not have the
+  form of SFF-703 is in no take, and it does not count in SFF-869 [SFF-865, SFF-889]
+  ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). When the folder holds more than one take, the
   player opens the first take in the order of `take_uuid` and gives the folder warning
   `multiple_takes` in the state [agent 13].
 - A file whose name ends in `.tmp` is ignored. The folder warning `stray_tmp` goes into the state
@@ -660,6 +669,9 @@ The rebuild needs `<rec>` only to find the folder files [SFF-868]. The player re
 - Else the rows and the blocks differ: the file becomes `invalid` with `bad_metadata` from then on
   [SFF-759]. The tile keeps its last image with the mark "camera file not readable: bad_metadata"
   [L3], and the player sends an `error` event.
+- A block that `ImageDecoder` does not decode: the tile keeps its last image with the mark "damaged at
+  frame N" for that frame only, and the next frames show as usual. The player does not read the
+  block again in the session ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)) (proposed).
 - A frame is the bytes of its block payload [SFF-738]. The reader gives them to the tile unchanged.
 - During play, the reader reads one range that holds several frames (9.1). The check above runs for
   each frame of the range.
@@ -1025,7 +1037,11 @@ refreshes, at the current rate. It skips the rows between them. The cost at 8 ti
 - The backend playback list of the recorder spec shows a new-format take with `needs_new_player: true`,
   and its video endpoints give HTTP 409 [recorder spec 10, item 13]. The recording browser shows the
   mark as information only. The mark never stops the UI from opening the take in the new player.
-- The loading message (F18) counts the cameras whose first image is drawn.
+- The loading message (F18) counts the cameras whose first image is drawn, and each camera whose tile
+  got a mark or black (a refused file, no real row at t, no frame) ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)).
+- A take of the new format in a folder that the handler refuses (L7) does not go to the player of
+  today. The recording browser tells the user to open the folder with the folder dialog and shows a
+  button that opens it ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)).
 - The host gives `initialFrame` and gets `frame` events for F19.
 
 ## 11. Performance
@@ -1259,6 +1275,14 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | T-PLAY-71 | unit | Open `write_error_short`; choose at frame numbers 79, 80 and 119. | The take plays to K = 120; camera 3 is `repaired` and not refused; rows 80 to 119 have no block; no dead camera (`deadFrom` null); at 80 and 119 the image is row 79 with "no frame", never "camera lost"; the take warnings hold `camera_file_short` and `take_error` [U2]. |
 | T-PLAY-72 | component | Player on `write_error_short`: play from frame 70 to the end. | The other tiles play to the end; camera 3 holds the image of row 79 with "no frame" from frame 80 [U2]. |
 | T-PLAY-73 | unit | 40 seeks to frames 1 to 40, one each 5 ms, with a test decoder of 30 ms ([ADR-1ACK](../decisions/entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)). | The tile draws 3 or more images during the seeks (7.5: a finished decode of an older request is drawn when no newer image is on the tile); no older request after a newer one; the last image is frame 40. |
+| T-PLAY-74 | unit | One block of `normal` that the decoder rejects; seek to the frames before, at and after it. | The tile keeps the last image with "damaged at frame 30" at frame 30 only; frame 31 shows with no mark; the camera is not refused ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
+| T-PLAY-75 | unit | `openTake` with a `TakeFiles` whose read of a sidecar fails. | `openTake` rejects and closes the files ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
+| T-PLAY-76 | unit | `header_uuid_dashes`. | The pair is in no take (SFF-889); the take is `incomplete` with `incomplete_take` (SFF-869) ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
+| T-PLAY-77 | electron | A hard link in the media folder to a file outside; a hard link made after the open to a file of the snapshot. | The first is not in the entries; a read of the second gets 404 ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
+| T-PLAY-78 | electron | Open a UNC path, a device path to a folder inside the recordings folder, and a relative path. | Each fails with "folder not allowed" ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
+| T-PLAY-79 | electron | A GET with no `Range` of a sparse file of 512 MiB. | 200 with all bytes; the main process grows by less than 200 MB ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
+| T-PLAY-80 | component | Host view on `counts_refused`. | The loading message goes away ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
+| T-PLAY-81 | unit | The route with a bridge double that refuses the folder, and with an old folder. | `not_allowed` for the first (`chooseTakePlayer` still gives `video`); `video` for the second, and the files close ([ADR-5FBS](../decisions/entries/5FBS-fixes-of-the-6a-code-review.md)). |
 
 ### 12.4 Decisions and reader rules to tests
 
@@ -1321,7 +1345,7 @@ The recorder spec uses this description as the model of its placeholder, so it i
 | SFF-890 | T-PLAY-02 |
 | F1 to F21 | T-PLAY-31, T-PLAY-37, T-PLAY-44, T-PLAY-50 to T-PLAY-53 |
 
-Counts: 41 unit, 16 component, 10 electron, 6 benchmark: 73 tests.
+Counts: 45 unit, 17 component, 13 electron, 6 benchmark: 81 tests.
 
 ### 12.5 Parity of the systems [Y7]
 
