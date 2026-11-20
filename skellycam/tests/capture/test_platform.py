@@ -6,9 +6,11 @@ sections 3, 4.3, 5.6, 14.2, 15 and 16.1).
 import re
 import subprocess
 import sys
+import threading
 import time
 import tomllib
 from pathlib import Path
+from types import SimpleNamespace
 
 import psutil
 import pytest
@@ -76,6 +78,26 @@ def test_t_cap_46_media_foundation_module_loads():
         assert isinstance(detect.MediaFoundationBackend().devices(), list)
     finally:
         com.shutdown()
+
+
+def test_codec_probe_of_a_record_start_on_a_camera_loop_thread(monkeypatch):
+    """A record start probes the video codec on the camera loop thread. With THREAD workers that thread
+    is not the main thread, and CPython refuses `signal.signal` there (CI run of d8989972d, Linux and
+    macOS). The stand-in `signal` module has that rule of CPython, so this test fails without the fix
+    on each system, also on Windows, where the product uses no alarm."""
+    helpers = product("skellycam.core.recorders.videos.fourcc_codec_helpers")
+
+    def main_thread_only(*args):
+        if threading.current_thread() is not threading.main_thread():
+            raise ValueError("signal only works in main thread of the main interpreter")
+
+    monkeypatch.setattr(helpers, "sys", SimpleNamespace(platform="linux"))
+    monkeypatch.setattr(helpers, "signal", SimpleNamespace(SIGALRM=14, signal=main_thread_only, alarm=main_thread_only))
+    result = []
+    thread = threading.Thread(target=lambda: result.append(helpers.resolve_writer_fourcc("MJPG", (64, 48))))
+    thread.start()
+    thread.join(60)
+    assert result == ["MJPG"]
 
 
 def test_t_cap_47_no_compiled_extension():

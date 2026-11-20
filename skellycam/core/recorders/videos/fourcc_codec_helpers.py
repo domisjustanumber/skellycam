@@ -3,6 +3,7 @@ import os
 import signal
 import sys
 import tempfile
+import threading
 from pathlib import Path
 
 import cv2
@@ -113,7 +114,9 @@ def _probe_codec(fourcc_str: str, frame_size: tuple[int, int]) -> bool:
         raise _CodecProbeTimeout(f"Codec probe for '{fourcc_str}' timed out after {_CODEC_PROBE_TIMEOUT_SECONDS}s")
 
     old_handler = None
-    if sys.platform != "win32":
+    # signal.signal works only on the main thread: a camera loop runs on a thread with WorkerMode.THREAD.
+    use_alarm = sys.platform != "win32" and threading.current_thread() is threading.main_thread()
+    if use_alarm:
         old_handler = signal.signal(signal.SIGALRM, _timeout_handler)
         signal.alarm(_CODEC_PROBE_TIMEOUT_SECONDS)
 
@@ -141,7 +144,7 @@ def _probe_codec(fourcc_str: str, frame_size: tuple[int, int]) -> bool:
         logger.debug(f"Codec '{fourcc_str}' probe failed with {type(e).__name__}: {e}")
         return False
     finally:
-        if sys.platform != "win32":
+        if use_alarm:
             signal.alarm(0)
             if old_handler is not None:
                 signal.signal(signal.SIGALRM, old_handler)
