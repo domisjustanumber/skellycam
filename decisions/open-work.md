@@ -144,3 +144,24 @@ task. Delete an item when its work is done. The PR that closes an item records t
   ([ADR-PDD3](entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md) W5,
   [ADR-MA22](entries/MA22-choices-of-the-media-foundation-source-of-step-3a.md) item 9). A later task
   makes a virtual camera selectable.
+- **Phase 5 step 5a (the new recorder).** The user decided R1 to R12 on 2026-11-19
+  ([ADR-VPF8](entries/VPF8-phase-5-recorder-decisions.md)), and M1 to M10 and C1 to C7 the same
+  day ([ADR-J3QP](entries/J3QP-missing-frames-as-black-placeholders-and-the-end-of-a-take.md)).
+  R1 to R4 and M1 to M5 replace U4, U5 and U12 from the connection of step 5a. The user accepted
+  the spec [`specs/recorder.md`](../specs/recorder.md) and its test list on 2026-11-20
+  ([ADR-Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md),
+  [ADR-Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md)). The failing tests are
+  in `skellycam/tests/take_recorder/`. They use the API of the proposed entry
+  [ADR-QEQ8](entries/QEQ8-python-api-of-the-recorder-as-the-5a-tests-assume-it.md), which waits for
+  the user. The product code of step 5a is in `skellycam/core/take_recorder/`. Its choices are in the
+  proposed entry [ADR-T24F](entries/T24F-choices-of-the-5a-recorder-code.md). The measurements of
+  R11 on Windows are in [ADR-8RES](entries/8RES-r11-measurements-of-the-5a-recorder.md). The user
+  keeps 3 s and 10 s as starting values
+  ([ADR-C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) D2). Open: T-REC-STALL on
+  a slow disk (USB, spinning) on the hardware of the user, and the D3 detection on Linux and macOS.
+  Run the benchmarks with `SKELLYCAM_BENCH=1` and
+  `SKELLYCAM_BENCH_OUT` set to a folder outside the repository. The merged list of proposed skellyfileformat changes
+  F-1 to F-10 for the recorder and the player (section 13) still waits for the user (R6).
+  Branch `dom/recorder`. The
+  connection to the shared loop waits for step 3a. Section 14 lists the edits of
+  `specs/windows-capture.md` that the connection needs.

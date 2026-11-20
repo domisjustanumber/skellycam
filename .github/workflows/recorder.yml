@@ -1,0 +1,134 @@
+name: Recorder
+
+# specs/recorder.md section 12.1 [C4, agent 34]: the unit and process tests of step 5a, the short pass
+# parts of T-REC-STALL and T-REC-KILL, and T-REC-37 on Windows, Linux and macOS. The benchmarks
+# (marker recorder_bench) run only on the machines of the user. The connection tests are skipped until
+# the connection commit after step 3a.
+on:
+  push:
+    branches: [dom/recorder]
+    paths:
+      - "skellycam/core/take_recorder/**"
+      - "skellycam/tests/take_recorder/**"
+      - "specs/recorder.md"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/recorder.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: recorder-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # T-REC-37 exports the conformance tests of this commit (specs/recorder.md section 12.3).
+  SKELLYFILEFORMAT_DIR: ${{ github.workspace }}/.skellyfileformat
+  SKELLYFILEFORMAT_COMMIT: d67679ada704caf55c64c2e279081d317205f354
+
+jobs:
+  recorder-windows:
+    name: Recorder tests (Python 3.13.18, windows-2025)
+    runs-on: windows-2025
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # When this checkout fails, T-REC-37 is skipped with its reason; the other tests still run.
+      - name: Check out skellyfileformat for T-REC-37
+        continue-on-error: true
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: domisjustanumber/skellyfileformat
+          ref: ${{ env.SKELLYFILEFORMAT_COMMIT }}
+          path: .skellyfileformat
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.9"
+          enable-cache: true
+
+      - name: Set up Python 3.13.18
+        run: uv python install 3.13.18
+
+      - name: Install dependencies
+        run: uv sync --group dev --python 3.13.18
+
+      - name: Run the recorder tests
+        run: uv run pytest skellycam/tests/take_recorder -m "not recorder_bench"
+
+  recorder-linux:
+    name: Recorder tests (Python 3.13.18, ubuntu-24.04)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # When this checkout fails, T-REC-37 is skipped with its reason; the other tests still run.
+      - name: Check out skellyfileformat for T-REC-37
+        continue-on-error: true
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: domisjustanumber/skellyfileformat
+          ref: ${{ env.SKELLYFILEFORMAT_COMMIT }}
+          path: .skellyfileformat
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.9"
+          enable-cache: true
+
+      - name: Set up Python 3.13.18
+        run: uv python install 3.13.18
+
+      # The tests' conftest imports sounddevice. Its Linux wheel does not hold PortAudio.
+      - name: Install PortAudio
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libportaudio2=19.6.0-1.2build3
+
+      - name: Install dependencies
+        run: uv sync --group dev --python 3.13.18
+
+      - name: Run the recorder tests
+        run: uv run pytest skellycam/tests/take_recorder -m "not recorder_bench"
+
+  # Apple Silicon. opencv-contrib-python 5.1.0.95 has macOS wheels for macOS 15 and later only. The
+  # sounddevice wheel for macOS holds PortAudio, so no install step is necessary.
+  recorder-macos:
+    name: Recorder tests (Python 3.13.18, macos-15 arm64)
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # When this checkout fails, T-REC-37 is skipped with its reason; the other tests still run.
+      - name: Check out skellyfileformat for T-REC-37
+        continue-on-error: true
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: domisjustanumber/skellyfileformat
+          ref: ${{ env.SKELLYFILEFORMAT_COMMIT }}
+          path: .skellyfileformat
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.9"
+          enable-cache: true
+
+      - name: Set up Python 3.13.18
+        run: uv python install 3.13.18
+
+      - name: Install dependencies
+        run: uv sync --group dev --python 3.13.18
+
+      - name: Run the recorder tests
+        run: uv run pytest skellycam/tests/take_recorder -m "not recorder_bench"

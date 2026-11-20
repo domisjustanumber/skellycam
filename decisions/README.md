@@ -33,6 +33,10 @@ These entries are `accepted`.
 | [HP7D](entries/HP7D-python-api-of-capture-as-the-3a-tests-assume-it.md) | Python API of capture, as the 3a tests assume it: names, seams for fake sources and a virtual clock, log line forms | accepted |
 | [HB4Z](entries/HB4Z-answers-u16-to-u23-of-the-user-to-the-review-of-the-3a-tests.md) | Answers U16 to U23: control thread, warm-up count, Windows-only `media_foundation/`, CI and tests on Linux and macOS, parity table | accepted |
 | [PDD3](entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md) | W1 to W8 after the 3a review: items 65 to 78, OpenCV rate check without a reported rate, virtual cameras, phase 2 loop | accepted |
+| [VPF8](entries/VPF8-phase-5-recorder-decisions.md) | Phase 5 decisions R1 to R12: steps 5a, 5d, 5b, 5c; equal rows for dead and hung cameras; no image for a damaged frame; no old files | accepted |
+| [J3QP](entries/J3QP-missing-frames-as-black-placeholders-and-the-end-of-a-take.md) | Missing frames as black placeholder blocks on `missing` rows (M1 to M10); recorder rules C1 to C7 (microphone, completion, key, CI, disk stall) | accepted |
+| [Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md) | The user accepted `specs/recorder.md` and its test list (step 5a); the format changes F-1 to F-10 still wait | accepted |
+| [C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) | Recorder decisions D1 to D3: a stall is no writer progress for the limit; 3 s and 10 s stay as starting values; no take on a FAT disk | accepted |
 
 ### Evidence
 
@@ -42,6 +46,8 @@ you make a measurement ([Rules](#rules)).
 | # | Decision | Status |
 |---|----------|--------|
 | [ETJ1](entries/ETJ1-measurements-m5-to-m7-of-the-bgr-ring.md) | Measurements M5 to M7 of the BGR ring: CRC-32 cost, decode thread CPU and skip rate, capture jitter and the GIL (Windows) | evidence |
+| [8RES](entries/8RES-r11-measurements-of-the-5a-recorder.md) | R11 measurements of the 5a recorder: disk stalls, kills with a full queue, fsync cost with 1 to 16 writers, the GIL (Windows) | evidence |
+| [953T](entries/953T-r11-measurements-after-the-review-fixes.md) | R11 measurements again after the review fixes and D1; the kill window that loses a second frame | evidence |
 
 ### Proposed
 
@@ -51,6 +57,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | # | Decision | Section | Status |
 |---|----------|---------|--------|
 | [NMM1](entries/NMM1-design-of-the-camera-media-check.md) | Camera media check: types, first bytes, `GOLDEN_PATHS`, image reminder, `commit-files` skill, per-worktree hook install | none | proposed |
+| [Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md) | Step 5a spec `specs/recorder.md` and its test list; the merged format list F-1 to F-10; agent choices; no question open | `recorder` | proposed |
 | [4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) | Other fills of the kit adoption; `CLAUDE.md` stays untracked | none | proposed |
 | [S6HT](entries/S6HT-choices-of-the-3a-loop-code.md) | Choices of the 3a loop code: shared status, join of the gate, one stop flag per camera, Windows warning pipe, apply response | none | proposed |
 | [MA22](entries/MA22-choices-of-the-media-foundation-source-of-step-3a.md) | Choices of the Media Foundation source of step 3a that the spec and ADR-HP7D do not fix | `skellycam.core.camera.capture.media_foundation` | proposed |
@@ -59,6 +66,8 @@ These entries wait for a decision of the user. Section is the section or area of
 | [BM73](entries/BM73-fixes-of-the-first-ci-run-of-the-capture-workflow.md) | Fixes of the first capture CI run: stats float, codec alarm on the main thread, test fixes, OpenCV fake on a virtual clock, macOS timing step, group watch | none | proposed |
 | [R60B](entries/R60B-fixes-of-the-first-hardware-run-of-step-3a.md) | Fixes of the first 3a hardware run: DirectShow device path of the OpenCV source, hardware test labels by USB IDs | none | proposed |
 | [FTC3](entries/FTC3-fixes-of-the-second-capture-ci-run-and-the-first-hardware-run.md) | Fixes of the second capture CI run and the 3a hardware run: virtual clock step, T-CAP-86 clock join, empty timing values, virtual camera links | none | proposed |
+| [QEQ8](entries/QEQ8-python-api-of-the-recorder-as-the-5a-tests-assume-it.md) | Python API of the recorder as the 5a tests assume it; `dead_cameras` of `finish`; the test interpretations | `recorder` | proposed |
+| [T24F](entries/T24F-choices-of-the-5a-recorder-code.md) | Choices of the 5a recorder code: the writer after a write error, the completion walk, the manifest merge, the lock hold, empty statistics | `recorder` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
