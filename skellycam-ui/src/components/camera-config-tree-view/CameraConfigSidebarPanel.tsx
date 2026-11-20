@@ -1,8 +1,7 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector, selectCameras, selectConnectedCameras, selectIsLoading, detectCameras } from '@/store';
 import { camerasConnectOrUpdate, pauseUnpauseCameras, closeCameras } from '@/store/slices/cameras/cameras-thunks';
-import { savedSettingsCleared, cameraBackendSelected } from '@/store/slices/cameras/cameras-slice';
-import type { CameraBackend } from '@/store/slices/cameras/cameras-types';
+import { savedSettingsCleared } from '@/store/slices/cameras/cameras-slice';
 import { selectIsPaused } from '@/store/slices/cameras/cameras-selectors';
 import { CameraTreeItem } from './CameraTreeItem';
 import { NoCamerasPlaceholder } from './NoCamerasPlaceholder';
@@ -28,7 +27,6 @@ export const CameraConfigSidebarPanel: React.FC = () => {
     const isLoading = useAppSelector(selectIsLoading);
     const isPaused = useAppSelector(selectIsPaused);
     const isRecording = useAppSelector((state) => state.recording.isRecording);
-    const backend = useAppSelector((state) => state.cameras.backend);
 
     useEffect(() => {
         if (isConnected && cameras.length === 0) {
@@ -93,20 +91,6 @@ export const CameraConfigSidebarPanel: React.FC = () => {
 
     return (
         <div className="camera-config-sidebar-panel flex flex-col flex-1 bg-middark br-2 p-1 min-h-0">
-            <label className="flex flex-row items-center gap-2 p-1 text sm" htmlFor="camera-backend">
-                Camera backend
-                <select
-                    id="camera-backend"
-                    value={backend}
-                    disabled={isLoading || connectedCameras.length > 0 || isRecording}
-                    onChange={(event) => dispatch(cameraBackendSelected(event.target.value as CameraBackend))}
-                    title={connectedCameras.length > 0 ? 'Close cameras to change the backend' : 'Backend for the next camera group'}
-                    style={{ flex: 1, minWidth: 0, padding: '4px', color: 'inherit', background: 'var(--color-middark, #292929)' }}
-                >
-                    <option value="python">Python / OpenCV</option>
-                    <option value="rust">Rust / OpenPNP</option>
-                </select>
-            </label>
             {/* Header */}
             <div className="camera-group-header flex flex-row flex-wrap items-center gap-1 p-1 pos-rel z-2">
                 {/* Row 1 — actions */}

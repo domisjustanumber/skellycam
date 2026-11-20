@@ -112,10 +112,7 @@ export const camerasConnectOrUpdate = createAsyncThunk<
             throw new Error('No cameras selected for connection');
         }
 
-        const request: CamerasConnectOrUpdateRequest = {
-            camera_configs: cameraConfigs,
-            backend: state.cameras.backend,
-        };
+        const request: CamerasConnectOrUpdateRequest = { camera_configs: cameraConfigs };
 
         const response = await backendFetch(serverUrls.endpoints.camerasConnectOrUpdate, {
             method: 'POST',

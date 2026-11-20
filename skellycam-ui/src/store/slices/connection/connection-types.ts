@@ -8,7 +8,6 @@ export interface CameraProcessSnapshot {
 
 /** One camera group as reported in the server's pushed APP_STATE snapshot. */
 export interface CameraGroupSnapshot {
-    backend?: 'python' | 'rust';
     id: string;
     configs: Record<string, CameraConfig>;
     cameras: Record<string, CameraProcessSnapshot>;

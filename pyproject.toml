@@ -73,13 +73,10 @@ dependencies = [
     "beartype==0.23.1",
     "msgspec==0.22.0",
     "comtypes==1.5.0; sys_platform == \"win32\"",
-    "skellycam-rust", # Required native backend, bundled with the application.
-    "imageio-ffmpeg==0.7.0", # Ships the encoder used by native recording.
 ]
 [tool.uv.sources]
 skellylogs = { git = "https://github.com/freemocap/skellylogs", rev = "eeea4fa3710d789790bbc2f49c7599d13e58fa72" }
 skellypings = { git = "https://github.com/freemocap/skellypings", rev = "dbaa4b2f01fdd2c74e4ae4e4143f35ede537455f" }
-skellycam-rust = { path = "skellycam-rust" }
 
 [tool.uv]
 package = true
@@ -97,7 +94,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["."]
-exclude = ["skellycam-rust*", "skellycam-rust-old*", "skellycam-ui*"]
+exclude = ["skellycam-ui*"]
 
 # ---- Version Bumping (bumpver) ----
 # Run with: uv run bumpver update <flag>
@@ -140,7 +137,6 @@ push = true
 
 [dependency-groups]
 dev = [
-    "maturin==1.16.0",
     "bumpver==2026.1132",
     "pip-tools==7.7.0",
     "pytest==9.2.0",
@@ -194,7 +190,6 @@ dev = [
 # =============================================================================
 
 [tool.poe.tasks]
-rebuild  = { cmd = "uv sync -v --reinstall-package skellycam-rust --reinstall-package skellycam", help = "Rebuild Rust engine with full cargo output" }
 tc-check = { cmd = "ruff check --select TC skellycam/", help = "Preview type-only imports that can move behind TYPE_CHECKING" }
 tc-fix   = { cmd = "ruff check --select TC --fix skellycam/", help = "Move type-only imports behind TYPE_CHECKING" }
 tc       = { sequence = ["tc-fix", "test"], help = "Move type-only imports + run tests to verify" }
