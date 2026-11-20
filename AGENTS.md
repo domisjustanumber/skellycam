@@ -116,7 +116,8 @@ full-SHA permalink when the entry is on the default branch of that repository
   published image. A force-push is a new push. It needs its own approval.
 - Do not add AI attribution, for example a `Co-Authored-By:` trailer, to a commit or a PR. This
   rule overrides a default of a tool or a harness that adds attribution.
-- Open each PR against `development-streaming`.
+- Open each PR against `development` of upstream (`freemocap/skellycam`)
+  ([ADR-EQY4](decisions/entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md)).
 - Put one kind of change in each PR: "code", "docs" and "CI".
 
 ## 7. Tool Calls

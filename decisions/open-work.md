@@ -220,3 +220,13 @@ task. Delete an item when its work is done. The PR that closes an item records t
   cameras), U5 (a flagged frame gives the old recorder the last good image again) and U12 (on a hang
   during a recording, finish the files for at most 5 s, then end hard). The files of the new recorder
   survive a hard stop. The user: U4 and U5 "must change back once we have the new recorder".
+- **The `sfn26` integration on `dom/integration`.** The user decided the base on 2026-11-20
+  ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md)). The agent choices wait
+  for the user ([ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:
+  - D1 of [ADR-EN7A](entries/EN7A-phase-3-windows-capture-decisions.md) and sections 1.3 and 20 of
+    [`specs/windows-capture.md`](../specs/windows-capture.md) say that no merge of `sfn26` is planned.
+  - `TARGET_BRANCH` of `tools/check_decision_log.py`, the Rules of the index and answer A1 of
+    [`specs/preview-4b.md`](../specs/preview-4b.md) still name `development-streaming`.
+  - The index is over its size limit. It waits for a decision of the user to raise the limit.
+  - The UI does not show the USB link or the `start_failure` warning item.
+  - Not verified: real cameras, Linux, macOS and the installer build.
