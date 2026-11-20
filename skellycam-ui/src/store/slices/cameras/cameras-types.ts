@@ -73,6 +73,7 @@ export interface Camera {
     connectionStatus: 'available' | 'connected' | 'error';  // Connection state
     selected: boolean;              // UI selection state
     failure?: string;               // Server failure "stage: reason" while connectionStatus is 'error'
+    inGroup?: boolean;              // The server's camera group has this camera (any state)
 
     // Device info (from detection)
     deviceInfo: {

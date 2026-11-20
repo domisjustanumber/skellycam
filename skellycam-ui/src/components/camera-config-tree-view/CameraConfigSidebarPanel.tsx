@@ -10,10 +10,14 @@ import { useTranslation } from 'react-i18next';
 import ButtonSm from '@/components/ui-components/ButtonSm';
 import IconButton from "@/components/ui-components/IconButton";
 import { useRecordingGuard } from '@/components/RecordingGuardProvider';
+import { pendingCameraChanges } from '@/store/slices/cameras/camera-updates';
+import { withCameraLabels } from '@/store/slices/cameras/camera-labels';
 
 
 export const CameraConfigSidebarPanel: React.FC = () => {
     const [isStoppingCameras, setIsStoppingCameras] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [updateError, setUpdateError] = useState<string | null>(null);
     const dispatch = useAppDispatch();
     const { isConnected } = useServer();
     const { t } = useTranslation();
@@ -39,6 +43,40 @@ export const CameraConfigSidebarPanel: React.FC = () => {
     const handleUpdate = useCallback(() => {
         requestGuardedAction('Stop Recording & Update Camera Config', () => dispatch(camerasConnectOrUpdate()));
     }, [dispatch, requestGuardedAction]);
+
+    const changes = pendingCameraChanges(cameras);
+    const hasChanges = Object.values(changes).some(ids => ids.length > 0);
+
+    // Send only the differences (specs/windows-capture.md 8.3): the server keeps each camera that a request does
+    // not name, so open unchanged cameras are not closed or reopened. One request removes, restarts and adds;
+    // a too_slow camera needs a second one (removed, then added again).
+    const handleUpdateCameras = useCallback(() => {
+        requestGuardedAction('Stop Recording & Update Cameras', async () => {
+            const config = (id: string, use: boolean) =>
+                [id, { ...cameras.find(cam => cam.id === id)!.desiredConfig, use_this_camera: use }] as const;
+            setUpdateError(null);
+            setIsUpdating(true);
+            try {
+                const response = await dispatch(camerasConnectOrUpdate(Object.fromEntries([
+                    ...[...changes.close, ...changes.tooSlow].map(id => config(id, false)),
+                    ...[...changes.retry, ...changes.add].map(id => config(id, true)),
+                ]))).unwrap();
+                if (changes.tooSlow.length > 0) {
+                    await dispatch(camerasConnectOrUpdate(Object.fromEntries(changes.tooSlow.map(id => config(id, true))))).unwrap();
+                }
+                // The server adds to a running group only a camera that was in it before; it leaves out a new one
+                // (camera_group.py apply). Then the only way is the full sequence: close all, connect the selected.
+                if (changes.add.some(id => !(id in response.camera_configs))) {
+                    await dispatch(closeCameras()).unwrap();
+                    await dispatch(camerasConnectOrUpdate()).unwrap();
+                }
+            } catch (error) {
+                setUpdateError(withCameraLabels((error as { message?: string })?.message ?? String(error), cameras));
+            } finally {
+                setIsUpdating(false);
+            }
+        });
+    }, [cameras, changes, dispatch, requestGuardedAction]);
 
     const handleDetect = useCallback(() => {
         requestGuardedAction('Stop Recording & Detect Cameras', () => dispatch(detectCameras({ filterVirtual: true })));
@@ -100,6 +138,19 @@ export const CameraConfigSidebarPanel: React.FC = () => {
                             />
                         ) : (
                             <>
+                                {hasChanges && (
+                                    <ButtonSm
+                                        text={isUpdating ? 'Updating...' : 'Update Cameras'}
+                                        iconClass={isUpdating ? 'loader-icon' : 'stream-icon'}
+                                        onClick={handleUpdateCameras}
+                                        textColor="text-black"
+                                        className={isUpdating ? 'disabled primary' : 'primary'}
+                                        disabled={isUpdating}
+                                        tooltip={true}
+                                        tooltipText="Open, close or retry only the changed cameras"
+                                        tooltipPosition="pos-bottom-right"
+                                    />
+                                )}
                                 <IconButton
                                     icon={isPaused ? 'play-icon' : 'pause-icon'}
                                     onClick={() => requestGuardedAction('Stop Recording & Pause Cameras', () => dispatch(pauseUnpauseCameras()))}
@@ -119,8 +170,11 @@ export const CameraConfigSidebarPanel: React.FC = () => {
                             </>
                         )}
                     </div>
-               
+
             </div>
+            {updateError && (
+                <p className="text sm text-error p-1" style={{ whiteSpace: 'normal' }}>{updateError}</p>
+            )}
 
             {/* Camera list */}
             <div className="camera-list-container flex flex-col overflow-y z-1 pos-rel">

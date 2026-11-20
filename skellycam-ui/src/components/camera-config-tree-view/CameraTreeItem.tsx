@@ -8,9 +8,7 @@ import { ROTATION_DEGREE_LABELS, RotationValue, useAppDispatch, useAppSelector }
 import { cameraSelectionToggled } from "@/store/slices/cameras/cameras-slice";
 import { openCameraSettings, closeCameraSettings } from "@/store/slices/ui/ui-slice";
 import { Camera } from "@/store/slices/cameras/cameras-types";
-import { selectCameras, selectIsLoading } from "@/store/slices/cameras/cameras-selectors";
-import { camerasConnectOrUpdate } from "@/store/slices/cameras/cameras-thunks";
-import ButtonSm from "@/components/ui-components/ButtonSm";
+import { selectCameras } from "@/store/slices/cameras/cameras-selectors";
 import { withCameraLabels } from "@/store/slices/cameras/camera-labels";
 import { useServer } from "@/services/server";
 
@@ -42,24 +40,12 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({ camera }) => {
     const openCameraSettingsId = useAppSelector(state => state.ui.openCameraSettingsId);
     const settingsOpen = openCameraSettingsId === camera.id;
     const cameras = useAppSelector(selectCameras);
-    const isLoading = useAppSelector(selectIsLoading);
 
     const isStreaming = connectedCameraIds.includes(camera.id);
 
     const handleToggleSelection = (e: React.ChangeEvent<HTMLInputElement>): void => {
         e.stopPropagation();
         dispatch(cameraSelectionToggled(camera.id));
-    };
-
-    // "Apply again" (specs/windows-capture.md 8.3): a request that names only this camera restarts it if it is
-    // failed or dead; the server keeps the other cameras as they are. too_slow with the same config is "no
-    // effect", so a too_slow camera is first unselected, then selected again, which starts it again.
-    const handleRetry = async (): Promise<void> => {
-        const config = { ...camera.desiredConfig, use_this_camera: true };
-        if (camera.failure === 'too_slow') {
-            await dispatch(camerasConnectOrUpdate({ [camera.id]: { ...config, use_this_camera: false } }));
-        }
-        await dispatch(camerasConnectOrUpdate({ [camera.id]: config }));
     };
 
     const handleOpenSettings = (e: React.MouseEvent): void => {
@@ -150,10 +136,7 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({ camera }) => {
                     )}
 
                     {camera.connectionStatus === 'error' && camera.selected && (
-                        <div onClick={e => e.stopPropagation()} onMouseDown={e => e.stopPropagation()}>
-                            <ButtonSm text="Retry" onClick={handleRetry} disabled={isLoading} tooltip={true}
-                                tooltipText="Start this camera again; the other cameras keep streaming" />
-                        </div>
+                        <p className="text sm text-gray">Click Update Cameras to retry.</p>
                     )}
                 </div>
             </div>

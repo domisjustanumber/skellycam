@@ -129,11 +129,23 @@ export const cameraSlice = createSlice({
             })
             .addCase(camerasConnectOrUpdate.fulfilled, (state, action) => {
                 state.isLoading = false;
+                const named = action.meta.arg;  // undefined: a full apply of the selected cameras
+                state.cameras.forEach(camera => {
+                    camera.inGroup = camera.id in action.payload.camera_configs;
+                    if (!camera.inGroup) {
+                        camera.connectionStatus = 'available';
+                        camera.failure = undefined;
+                    }
+                });
                 // Update both actual and desired configs from server response
                 Object.entries(action.payload.camera_configs).forEach(
                     ([cameraId, config]) => {
                         const camera = state.cameras.find(cam => cam.id === cameraId);
-                        if (camera) {
+                        if (camera && named && !(cameraId in named)) {
+                            // not in a partial request ("Update Cameras"): keep its unsaved edits and its status
+                            camera.actualConfig = config as CameraConfig;
+                            camera.hasConfigMismatch = !areConfigsEqual(camera.actualConfig, camera.desiredConfig);
+                        } else if (camera) {
                             camera.actualConfig = config as CameraConfig;
                             camera.desiredConfig = { ...config as CameraConfig };
                             camera.hasConfigMismatch = false;
@@ -155,6 +167,7 @@ export const cameraSlice = createSlice({
             .addCase(closeCameras.fulfilled, (state) => {
                 state.cameras.forEach(camera => {
                     camera.connectionStatus = 'available';
+                    camera.inGroup = false;
                     camera.metrics = undefined;
                     camera.hasConfigMismatch = false;
                 });
@@ -188,7 +201,9 @@ export const cameraSlice = createSlice({
                         }
                     }
                 }
+                const groupIds = new Set(groups.flatMap(group => Object.keys(group.configs)));
                 state.cameras.forEach(camera => {
+                    camera.inGroup = groupIds.has(camera.id);
                     camera.connectionStatus = connectedIds.has(camera.id) ? 'connected'
                         : failures.has(camera.id) ? 'error' : 'available';
                     camera.failure = failures.get(camera.id);
@@ -200,6 +215,7 @@ export const cameraSlice = createSlice({
             .addCase(serverDisconnected, (state) => {
                 state.cameras.forEach(camera => {
                     camera.connectionStatus = 'available';
+                    camera.inGroup = false;
                     camera.metrics = undefined;
                     camera.hasConfigMismatch = false;
                 });
