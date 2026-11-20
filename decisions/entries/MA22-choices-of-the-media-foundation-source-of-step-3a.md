@@ -1,6 +1,6 @@
 # MA22 — Choices of the Media Foundation source of step 3a
 
-**Status:** proposed, 2026-11-19 (agent). Items 1 and 9 are decided by the user, 2026-11-19.
+**Status:** superseded by [2GS1](2GS1-step-3a-choices-of-the-capture-code-and-its-fixes.md), 2026-11-20 (commit to dom/integration; was accepted, 2026-11-20 (user, through the review sheets of 2026-11-20); was proposed, 2026-11-19 (agent). Items 1 and 9 are decided by the user, 2026-11-19).
 
 ## Decision
 

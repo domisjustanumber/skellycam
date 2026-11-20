@@ -105,24 +105,17 @@ task. Delete an item when its work is done. The PR that closes an item records t
     the product code of step 3a.
   - Done: the user decided items 65 to 78 of section 18 of the spec, and W1 to W8 after the review of
     the 3a code ([ADR-PDD3](entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md)).
-  - The user decides the proposed entries of the 3a code:
-    [ADR-S6HT](entries/S6HT-choices-of-the-3a-loop-code.md),
-    [ADR-MA22](entries/MA22-choices-of-the-media-foundation-source-of-step-3a.md) and
-    [ADR-6EKB](entries/6EKB-choices-of-the-3a-review-fixes.md) (items 79 to 90 of section 18).
-  - Done: W8 deleted the phase 2 loop. Its tests moved to the shared loop or were retired
-    ([ADR-037V](entries/037V-completion-of-w8-the-phase-2-loop-and-its-tests.md), which the user
-    decides). The `README.md` of `skellycam/tests/reference_recordings/` still names the deleted
-    tests; it changes after the redaction decision of that file.
+  - The user accepted the choices of the 3a code and its fixes
+    ([ADR-2GS1](entries/2GS1-step-3a-choices-of-the-capture-code-and-its-fixes.md)). Open: section 15
+    must name the macOS timing step (BM73 7); item 90 of section 18 is stale.
+  - Done: W8 deleted the phase 2 loop. Its tests moved to the shared loop or were retired. The
+    `README.md` of `skellycam/tests/reference_recordings/` still names the deleted tests; it changes
+    after the redaction decision of that file.
   - Run the fake-source tests with
     `uv run pytest skellycam/tests/capture -m "not camera_hardware and not capture_local"`. The
     hardware tests run only with `SKELLYCAM_HARDWARE=1`. The workflow
     `.github/workflows/capture.yml` (section 15: Windows, Linux and macOS) ran one time, on
-    d8989972d. Its failures and their fixes are in
-    [ADR-BM73](entries/BM73-fixes-of-the-first-ci-run-of-the-capture-workflow.md), which the user
-    decides. The second run (6d496aa24) failed T-CAP-86 on Linux, T-CAP-108 and T-CAP-85 on macOS;
-    the fixes and the choices for the user are in
-    [ADR-FTC3](entries/FTC3-fixes-of-the-second-capture-ci-run-and-the-first-hardware-run.md). The
-    next run must show T-CAP-86 and T-CAP-108 pass, and the place of the T-CAP-85 gap on macOS. The
+    d8989972d, and again on 6d496aa24. The next run must show T-CAP-86 and T-CAP-108 pass. The
     macOS job also runs the portable ring tests.
   - The start method on Linux: Python 3.13 forks the camera processes from the main process, which
     has threads (the server and the watch of each group). The product does not mix contexts. Spawn

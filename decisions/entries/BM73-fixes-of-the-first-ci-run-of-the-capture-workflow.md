@@ -1,6 +1,6 @@
 # BM73 — Fixes of the first CI run of the capture workflow
 
-**Status:** proposed, 2026-11-20 (agent; waits for the user).
+**Status:** superseded by [2GS1](2GS1-step-3a-choices-of-the-capture-code-and-its-fixes.md), 2026-11-20 (commit to dom/integration; was accepted, 2026-11-20 (user, through the review sheets of 2026-11-20); was proposed, 2026-11-20 (agent; waits for the user)).
 
 ## Decision
 
