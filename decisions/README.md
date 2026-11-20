@@ -58,6 +58,7 @@ These entries are `accepted`.
 | [H0BQ](entries/H0BQ-user-rulings-of-the-spec-integration.md) | Spec integration rulings: summary item, progress of each check, re-check after a cancel, sequence gate, probe module, take error state, 30 s quick | accepted |
 | [2GS1](entries/2GS1-step-3a-choices-of-the-capture-code-and-its-fixes.md) | Supersedes S6HT, MA22, 6EKB, 037V, BM73, R60B, FTC3: step 3a choices; virtual by link; macOS timing step; loop, source, review and CI fixes | accepted |
 | [68JT](entries/68JT-step-4a-choices-of-the-preview-sender.md) | Supersedes 162X, 24FZ, MZ02: step 4a choices of the preview sender; spec section 13 items, Python API of the 4a tests, code choices | accepted |
+| [RA16](entries/RA16-step-4b-choices-of-the-preview-ui.md) | Supersedes EE0E, R1TD, W674: step 4b choices of the preview UI; Q14 yes (list number, order only); Displayed rate leaves out gaps over 1 s | accepted |
 
 ### Evidence
 
@@ -89,9 +90,6 @@ These entries wait for a decision of the user. Section is the section or area of
 | [4MJ4](entries/4MJ4-typescript-names-of-the-player-as-the-6a-tests-assume-them.md) | TypeScript names of the player, as the 6a tests assume them: test seams, pure functions, bridge, host view, test set-up | `player` | proposed |
 | [1ACK](entries/1ACK-corrections-and-choices-of-the-6a-player-code.md) | Corrections and choices of the 6a player code: back to black, decoded prefetch images in the tile, EXIF orientation undone, manifest warnings | `player` | proposed |
 | [5FBS](entries/5FBS-fixes-of-the-6a-code-review.md) | Fixes of the 6a code review: hard links, UNC paths, streamed reads, decode failure mark, loading message, refused take folders, unreadable `take_uuid` | `player` | proposed |
-| [EE0E](entries/EE0E-step-4b-preview-spec-and-agent-choices.md) | Step 4b spec `specs/preview-4b.md`: UI parser, flow control, shared tile, deletion, 8 x 60 fps measurement, 27 tests; 6 questions | `preview` | proposed |
-| [R1TD](entries/R1TD-revision-2-of-the-step-4b-preview-spec.md) | Revision 2 of the 4b spec: grid list without `alive`, ring close on the loop, outside-observer limits; replaces 5 items of EE0E; 9 questions | `preview` | proposed |
-| [W674](entries/W674-choices-of-revision-3-of-the-step-4b-spec-and-its-test-list.md) | Revision 3 of the 4b spec: choices for the answers, the full list of 27 tests, no canvas read-back; Q14 on `os_index` | `preview` | proposed |
 | [6T78](entries/6T78-choices-of-the-sfn26-integration.md) | Choices of the `sfn26` integration: OpenCV helpers stay ours, kept and dropped items, forms of the four ports, Rust removal | none | proposed |
 | [Y6F6](entries/Y6F6-camera-request-choices.md) | Choices A1 to A23 of `specs/camera-requests.md`: search limits, held value, endpoint and texts, slow-camera texts, 60 fps check, fall back, `usb_link` | none | proposed |
 | [4Z7T](entries/4Z7T-choices-after-the-search-at-each-open.md) | Choices B1 to B21 after the search at each open: order and limits of an open, held value, state route, search count, manager call | none | proposed |

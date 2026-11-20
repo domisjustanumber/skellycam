@@ -198,12 +198,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
     code, on 2026-11-20
     ([ADR-VYS7](entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md)).
     Revision 3 has the full test list (section 7.4). Next: the failing 4b tests, on top of
-    `dom/integration` when it exists (section 2). The user decides Q14 (section 12.3: the take
-    writes the list number as `os_index`) and the agent choices
-    ([ADR-EE0E](entries/EE0E-step-4b-preview-spec-and-agent-choices.md),
-    [ADR-R1TD](entries/R1TD-revision-2-of-the-step-4b-preview-spec.md),
-    [ADR-W674](entries/W674-choices-of-revision-3-of-the-step-4b-spec-and-its-test-list.md)).
-    The two open points of section 12.2 are done.
+    `dom/integration` when it exists (section 2). The user accepted Q14 and the agent choices
+    ([ADR-RA16](entries/RA16-step-4b-choices-of-the-preview-ui.md)). The two open points of section
+    12.2 are done.
 - **The `sfn26` integration on `dom/integration`.** The user decided the base on 2026-11-20
   ([ADR-EQY4](entries/EQY4-base-the-work-on-upstream-sfn26-without-rust.md)). The agent choices wait
   for the user ([ADR-6T78](entries/6T78-choices-of-the-sfn26-integration.md)). Open:

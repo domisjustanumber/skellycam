@@ -1,6 +1,6 @@
 # R1TD — Revision 2 of the step 4b preview spec: the review faults, and the choices it replaces
 
-**Status:** proposed, 2026-11-20 (agent).
+**Status:** superseded by [RA16](RA16-step-4b-choices-of-the-preview-ui.md), 2026-11-20 (commit to dom/integration; was accepted, 2026-11-20 (user, through the review sheets of 2026-11-20); was proposed, 2026-11-20 (agent)).
 
 ## Decision
 
