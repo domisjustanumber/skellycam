@@ -6,6 +6,7 @@ see each JPEG ring write, each BGR hand-over, each frame of the old recorder and
 `cv2.imdecode` call. The OpenCV tests use the product `OpenCVSource` with the OpenCV fake, on a virtual clock.
 """
 
+import json
 import logging
 
 import pytest
@@ -319,6 +320,42 @@ def test_t_cap_39_stamped_columns_and_wrong_camera_id(monkeypatch, tmp_path):
         finally:
             app.close()
     _wrong_camera_id_is_refused(tmp_path / "wrong")
+
+
+def test_multi_frame_files_have_no_value_for_a_stage_that_the_source_does_not_stamp(monkeypatch, tmp_path):
+    """Section 5.4 [D41], first hardware run of 3a: the fake source, as Media Foundation, does not stamp the
+    retrieve. The multi-frame timing file and the statistics files then give no value for each stage
+    that uses the retrieve times: `nan` in the CSV (the marker of the file for no value), null in the
+    JSON (strict JSON) and `nan` in the text report. Before the fix they held the difference of a clock
+    value and zero. The test checks the absence of a value, so the clock value of the machine does not
+    change the result (ADR-BM73 F1)."""
+    from skellycam.core.recorders.videos.recording_info import RecordingInfo
+
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        ready_app_steps(app)
+        record(app, spies, tmp_path)
+    info = RecordingInfo(recording_name="take", recording_directory=str(tmp_path))
+    header, rows = read_csv(info.timestamp_file_path)
+    no_value = [name for name in header if "retrieve" in name or "idle_before_copy_to_camera_shm" in name
+                or name.startswith("total.frame_processing_time")]
+    assert len(no_value) == 6 * 5, no_value  # 2 retrieve times, 3 durations and 1 total; 5 statistics each
+    for name in header:
+        values = {row[header.index(name)] for row in rows}
+        if name in no_value:
+            assert values == {"nan"}, f"{name}: {sorted(values)[:3]}"
+        elif name.startswith(("duration.during_frame_grab", "duration.during_copy_to_camera_shm.ms.median")):
+            assert "nan" not in values, name
+    with open(info.timestamp_stats_json_file_path, encoding="utf-8") as file:
+        stats = json.loads(file.read(), parse_constant=lambda token: pytest.fail(f"{token} in the stats JSON"))
+    for name in ("idle_before_retrieve_ms", "during_frame_retrieve_ms", "idle_before_copy_to_camera_shm_ms",
+                 "total_frame_processing_time_ms"):
+        assert set(stats[name].values()) == {None}, (name, stats[name])
+    assert stats["during_copy_to_camera_shm_ms"]["median"] is not None
+    with open(info.timestamp_stats_text_file_path, encoding="utf-8") as file:
+        report = file.read()
+    retrieve_rows = [line for line in report.splitlines() if "retrieve" in line]
+    assert len(retrieve_rows) == 2 and all("nan" in line for line in retrieve_rows), retrieve_rows
 
 
 def _wrong_camera_id_is_refused(directory):

@@ -32,6 +32,19 @@ def _format_stats_row(
     ]
 
 
+def _share(part: float, whole: float) -> float:
+    """`part` as a percentage of `whole`; NaN when either is NaN (a stage with no value); 0.0 when `whole`
+    is not positive."""
+    if np.isnan(part) or np.isnan(whole):
+        return float("nan")
+    return part / whole * 100 if whole > 0 else 0.0
+
+
+def _no_nan(value: object) -> object:
+    """JSON has no NaN: a statistic with no value is null."""
+    return None if isinstance(value, float) and np.isnan(value) else value
+
+
 @dataclass
 class RecordingTimestampsStats:
     """Statistics about frame lifecycle timestamps in a recording session.
@@ -142,9 +155,11 @@ class RecordingTimestampsStats:
                     for name in obj.dtype.names
                 }
             elif isinstance(obj, np.ndarray):
-                return obj.tolist()
+                return _no_nan(obj.tolist())
             elif isinstance(obj, np.generic):
-                return obj.item()
+                return _no_nan(obj.item())
+            elif isinstance(obj, float):
+                return _no_nan(obj)
             elif isinstance(obj, list):
                 return [_to_serializable(item) for item in obj]
             elif isinstance(obj, dict):
@@ -204,15 +219,12 @@ class RecordingTimestampsStats:
             ("During frame record", self.during_frame_record_ms),
         ]
 
-        median_stage_total = sum(stage.median_value for _, stage in processing_stages)
+        # A stage that the source does not stamp is NaN (D41): it has no share, and it is not in the total.
+        median_stage_total = float(np.nansum([stage.median_value for _, stage in processing_stages]))
 
         rows: list[list[str]] = []
         for stage_name, stats in processing_stages:
-            pct = (
-                (stats.median_value / median_stage_total) * 100
-                if median_stage_total > 0
-                else 0.0
-            )
+            pct = _share(float(stats.median_value), median_stage_total)
             rows.append(_format_stats_row(stage_name=stage_name, stats=stats, percentage=pct))
 
         # Separator
@@ -221,14 +233,9 @@ class RecordingTimestampsStats:
         # Totals
         total_processing = self.total_frame_processing_time_ms
         total_idle = self.total_camera_idle_time_ms
-        total_time = total_processing.median_value + total_idle.median_value
-
-        if total_time > 0:
-            processing_pct = (total_processing.median_value / total_time) * 100
-            idle_pct = (total_idle.median_value / total_time) * 100
-        else:
-            processing_pct = 0.0
-            idle_pct = 0.0
+        total_time = float(total_processing.median_value + total_idle.median_value)
+        processing_pct = _share(float(total_processing.median_value), total_time)
+        idle_pct = _share(float(total_idle.median_value), total_time)
 
         rows.append(
             _format_stats_row(

@@ -12,12 +12,16 @@ logger = logging.getLogger(__name__)
 
 def create_and_save_multiframe_csv(timestamps_rows_by_camera: np.recarray,
                                    recording_info: RecordingInfo,
-                                   present: np.ndarray | None = None) -> np.recarray:
+                                   present: np.ndarray | None = None,
+                                   stamped: list[str] | None = None) -> np.recarray:
     """
     Create a multiframe CSV that combines timestamps from all cameras.
 
     Args:
         timestamps_rows_by_camera: A dictionary mapping camera IDs to their respective CSV row recarrays.
+        stamped: the columns of the camera CSVs (D41). The statistics of each other `frame.`, `duration.`
+            and `total.` column are NaN: the source does not stamp that stage (Media Foundation and the
+            fake source have no retrieve), so no value exists.
 
     Returns:
         A numpy recarray containing the combined multiframe data.
@@ -82,6 +86,12 @@ def create_and_save_multiframe_csv(timestamps_rows_by_camera: np.recarray,
                          if col.startswith(('frame.', 'duration.', 'total.'))]
 
     for column_name in timestamp_columns:
+        if stamped is not None and column_name not in stamped:
+            base_name = column_name.replace('.ns', '')
+            for suffix in ('ms.mean', 'ms.median', 'ms.standard_deviation', 'ms.range',
+                           'proportion.coefficient_of_variation'):
+                multiframe_csv_rows[f'{base_name}.{suffix}'] = np.nan
+            continue
         # Get data for all cameras and frames for this column
         column_data = by_camera(column_name)
 

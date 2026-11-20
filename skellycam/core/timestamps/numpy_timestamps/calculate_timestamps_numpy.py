@@ -102,6 +102,10 @@ def calculate_statistics(data: npt.NDArray, axis: int) -> np.recarray:
     output_shape = list(data.shape)
     output_shape.pop(axis)
     stats = np.recarray(tuple(output_shape), dtype=STATS_DTYPE)
+    if np.all(np.isnan(data)):  # a stage that the source does not stamp (D41): no value, and no warning
+        for name in STATS_DTYPE.names:
+            stats[name] = np.nan
+        return stats
 
     # Calculate statistics
     stats.mean_value = np.nanmean(data, axis=axis)

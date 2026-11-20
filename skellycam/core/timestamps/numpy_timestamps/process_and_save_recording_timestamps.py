@@ -3,7 +3,7 @@ import time
 
 import numpy as np
 from skellycam.core.camera.config.camera_config import CameraConfigs
-from skellycam.core.timestamps.numpy_timestamps.create_camera_csvs import create_and_save_camera_csvs
+from skellycam.core.timestamps.numpy_timestamps.create_camera_csvs import create_and_save_camera_csvs, stamped_columns
 from skellycam.core.timestamps.numpy_timestamps.create_multi_frame_csvs import \
     create_and_save_multiframe_csv
 from skellycam.core.timestamps.numpy_timestamps.process_recording_timestamps import \
@@ -103,6 +103,7 @@ async def process_and_save_recording_timestamps(
     multiframe_rows = create_and_save_multiframe_csv(timestamps_rows_by_camera=timestamps_rows_by_camera,
                                                      present=present,
                                                      recording_info=recording_info,
+                                                     stamped=stamped_columns(all_timestamps, frame_counts),
                                                      )
     tok_mf = time.perf_counter()
     print(f"Processed multiframe timestamps in {tok_mf - tik_mf:.3f} seconds.")
