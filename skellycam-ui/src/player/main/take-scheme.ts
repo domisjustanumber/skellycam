@@ -11,6 +11,7 @@ import {TAKE_CHANNELS} from './bridge.ts';
 
 const SCHEME = 'skellycam-take';
 const MEDIA = 'synchronized_videos';
+const PIECE = 1024 * 1024;   // a response is read from the file in pieces of at most 1 MiB
 const COMMON = {
     'Content-Type': 'application/octet-stream', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*',
     'Access-Control-Expose-Headers': 'Content-Range, Content-Length, Accept-Ranges',
@@ -50,13 +51,14 @@ export function registerTakeScheme(): void {
 
 class Refused extends Error {}
 
-const respond = (status: number, body: Uint8Array | null = null, headers: Record<string, string> = {}) =>
-    new Response(body as BodyInit | null, {status, headers: {...COMMON, ...headers}});
+const respond = (status: number, body: BodyInit | null = null, headers: Record<string, string> = {}) =>
+    new Response(body, {status, headers: {...COMMON, ...headers}});
 
 /** Call after `app` is ready. */
 export async function installTakeHandler(options: TakeHandlerOptions): Promise<TakeHandler> {
     const tokens = new Map<string, Token>();
     const watched = new Set<number>();
+    const navigations = new Map<number, number>();   // the count of navigations of each window
     let readFault: string | null = null;
     let picked: string[] = [];
     try {
@@ -92,7 +94,10 @@ export async function installTakeHandler(options: TakeHandlerOptions): Promise<T
         if (watched.has(wc.id)) return;
         watched.add(wc.id);
         const id = wc.id;
-        wc.on('did-navigate', () => closeSender(id));
+        wc.on('did-navigate', () => {
+            navigations.set(id, (navigations.get(id) ?? 0) + 1);
+            closeSender(id);
+        });
         wc.on('render-process-gone', () => closeSender(id));
         wc.once('destroyed', () => {
             closeSender(id);
@@ -107,7 +112,8 @@ export async function installTakeHandler(options: TakeHandlerOptions): Promise<T
             for (const name of await readdir(path.join(folder, rel))) {
                 const relPath = rel ? `${rel}/${name}` : name;
                 const st = await lstat(path.join(folder, relPath), {bigint: true});
-                if (st.isFile()) entries.set(relPath, {size: Number(st.size), dev: st.dev, ino: st.ino});
+                // a hard link can name a file outside the take: only a file with one link is served
+                if (st.isFile() && st.nlink === 1n) entries.set(relPath, {size: Number(st.size), dev: st.dev, ino: st.ino});
                 else if (!rel && name === MEDIA && st.isDirectory()) await list(MEDIA);
             }
         };
@@ -116,13 +122,17 @@ export async function installTakeHandler(options: TakeHandlerOptions): Promise<T
     };
 
     ipcMain.handle(TAKE_CHANNELS[0], async (event, folderPath: unknown) => {
-        const real = typeof folderPath === 'string' ? await realpath(folderPath).catch(() => null) : null;
+        // no file system call for a relative, UNC or device path: a UNC path opens a network connection
+        if (typeof folderPath !== 'string' || !path.isAbsolute(folderPath) || /^[\\/]{2}/.test(folderPath)) throw new Error('folder not allowed');
+        const sender = event.sender;
+        watch(sender);
+        const navigation = navigations.get(sender.id);
+        const real = await realpath(folderPath).catch(() => null);
         if (!real || !(await allowed(real))) throw new Error('folder not allowed');
         if (!(await stat(real)).isDirectory()) throw new Error('not a folder');
         const entries = await snapshot(real);
+        if (sender.isDestroyed() || navigations.get(sender.id) !== navigation) throw new Error('the window changed during the open');
         const token = randomBytes(16).toString('hex');
-        const sender = event.sender;
-        watch(sender);
         // another take of the same window ends the earlier tokens of that window
         closeSender(sender.id, real);
         tokens.set(token, {sender: sender.id, folder: real, entries, handles: new Map()});
@@ -137,7 +147,7 @@ export async function installTakeHandler(options: TakeHandlerOptions): Promise<T
     const openChecked = async (t: Token, rel: string, entry: Entry) => {
         const fh = await open(path.join(t.folder, ...rel.split('/')), 'r');
         const st = await fh.stat({bigint: true});
-        if (st.dev !== entry.dev || st.ino !== entry.ino) {
+        if (st.dev !== entry.dev || st.ino !== entry.ino || st.nlink !== 1n) {
             await fh.close();
             throw new Refused('the file changed');
         }
@@ -156,17 +166,30 @@ export async function installTakeHandler(options: TakeHandlerOptions): Promise<T
             }
         }
         const fh = await pending;
-        try {
-            const buf = new Uint8Array(end - start);
-            for (let got = 0; got < buf.length;) {
-                const {bytesRead} = await fh.read(buf, got, buf.length - got, start + got);
-                if (bytesRead === 0) throw new Error('short read');
-                got += bytesRead;
-            }
-            return buf;
-        } finally {
-            if (!keep) await fh.close();
-        }
+        // the body is read in pieces, so a large request does not hold the file in one buffer
+        let pos = start;
+        const done = async () => {
+            if (!keep) await fh.close().catch(() => undefined);
+        };
+        return new ReadableStream<Uint8Array>({
+            async pull(c) {
+                try {
+                    if (pos >= end) {
+                        c.close();
+                        return done();
+                    }
+                    const buf = new Uint8Array(Math.min(PIECE, end - pos));
+                    const {bytesRead} = await fh.read(buf, 0, buf.length, pos);
+                    if (bytesRead === 0) throw new Error('short read');
+                    pos += bytesRead;
+                    c.enqueue(buf.subarray(0, bytesRead));
+                } catch (e) {
+                    c.error(e);
+                    await done();
+                }
+            },
+            cancel: done,
+        });
     };
 
     protocol.handle(SCHEME, async req => {
