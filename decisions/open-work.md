@@ -165,14 +165,13 @@ task. Delete an item when its work is done. The PR that closes an item records t
   decides). Next: the first hardware run of the new recorder (a take with three cameras; an ended
   camera process in place of an unplug), and the take in the new player and in Blender.
 - **The certify run of skellycam.** The spec [`specs/certify.md`](../specs/certify.md) is draft 3.
-  The user decided [ADR-GVC0](entries/GVC0-certify-decisions-of-the-user.md) and
-  [ADR-KG00](entries/KG00-certify-decisions-of-the-user-on-draft-2.md). The choices of the agents wait
-  for the user: [ADR-KY81](entries/KY81-certify-spec-choices-of-the-agent.md) (the items that ADR-KG00
-  does not rule) and [ADR-8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md), with the
-  12 questions of section 14 of the spec. The spec is written against format 1.3.0 of the contract
-  `skellycertify` (commit `f7a1831`). The requests for a list of notices and for a risk to a device in
-  `system_changes` are not in that format (question 12). Section 18 of the spec answers section 4.6.4 of
-  `specs/unix-capture.md` draft 2 (branch `dom/unix-capture-spec`) and lists 7 differences that
-  remain. The macOS approach probes of section 10.7
-  ([ADR-C5BR](entries/C5BR-macos-approach-probes-in-certify.md)) wait for the answer to question 13
-  (the longer macOS full run).
+  The user decided [ADR-GVC0](entries/GVC0-certify-decisions-of-the-user.md),
+  [ADR-KG00](entries/KG00-certify-decisions-of-the-user-on-draft-2.md),
+  [ADR-C5BR](entries/C5BR-macos-approach-probes-in-certify.md) and
+  [ADR-BVK7](entries/BVK7-certify-rulings-of-the-user-one-test-one-row.md). The choices of the agents
+  wait for the user: [ADR-KY81](entries/KY81-certify-spec-choices-of-the-agent.md) (the items that the
+  later entries do not rule) and [ADR-8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md),
+  with the 11 questions of section 14 of the spec. The spec is written against format 1.4.0 of the
+  contract `skellycertify` (commit `1c9c191`). Question 6 waits for the owner of the contract (a
+  `partial` item and a reviewed row). Section 18 of the spec answers `specs/unix-capture.md` at
+  `75e030ef6` and `specs/camera-requests.md` at `511dc0914`; no difference remains open.

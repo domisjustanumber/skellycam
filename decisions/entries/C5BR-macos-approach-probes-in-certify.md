@@ -19,7 +19,8 @@ The supervisor relayed with the ruling, as the way to apply it in
 - The probes run once for each camera model, not for each unit, as a model is checked one time on a
   system ([ADR-KG00](KG00-certify-decisions-of-the-user-on-draft-2.md) item 3).
 
-Whether the longer macOS full run is accepted is not decided. Question 13 of the spec asks it.
+The user accepted the longer macOS full run for now, and A7 and A8 run only after A5 and A6 failed
+([ADR-BVK7](BVK7-certify-rulings-of-the-user-one-test-one-row.md)).
 
 ## Reason
 
