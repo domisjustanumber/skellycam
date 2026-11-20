@@ -71,6 +71,16 @@ class MediaFoundationBackend:
             com.release(match)
 
 
+def is_virtual(name: str, link: str) -> bool:
+    """A virtual camera (ADR-PDD3 W5): the name holds "virtual", or the link is under a software-device root:
+    `root#` (a root-enumerated device with no hardware bus, for example the NDI cameras) or
+    `swd#vcamdevapi#` (the virtual camera API of Windows 11). A real camera has the link of its bus
+    (`usb#`, `pci#`, `acpi#`, `display#`, ...). Other `swd#` links stay real, because a sensor group of
+    the frame server can join real cameras under that root (not verified on a device)."""
+    tail = link.lower().removeprefix("\\\\?\\")
+    return "virtual" in name.lower() or tail.startswith(("root#", "swd#vcamdevapi#"))
+
+
 def _usb_id(link: str, key: str) -> int | None:
     found = re.search(key + r"_([0-9a-f]{4})", link.lower())
     return int(found.group(1), 16) if found else None
@@ -143,7 +153,7 @@ def detect_media_foundation_cameras(*, backend=None) -> list[CameraDeviceInfo]:
         camera = MediaFoundationDeviceInfo(index=index, name=name, path=link, vendor_id=_usb_id(link, "vid"),
                                            product_id=_usb_id(link, "pid"), supported_modes=supported_modes(native or []),
                                            modes_read=native is not None,
-                                           virtual="virtual" in name.lower())  # the rule of `filter_virtual` today
+                                           virtual=is_virtual(name, link))
         if camera.camera_id in links:
             raise ValueError(f"Detected devices have colliding camera IDs: {camera.camera_id}. "
                              f"Device paths: {links[camera.camera_id]} and {link}")

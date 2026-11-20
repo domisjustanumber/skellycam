@@ -125,6 +125,29 @@ def test_t_cap_48_a_hung_device_does_not_block_detection():
     assert product(MODES_MODULE).rates_equal(30.0, 30.0), "the main process keeps running"
 
 
+@WINDOWS_ONLY
+def test_detection_marks_a_camera_under_a_software_device_root_virtual():
+    """Section 7.1 [ADR-PDD3 W5], first hardware run of 3a: a software camera with no "virtual" in its
+    name (for example an NDI camera) has its link under `root#`. Detection marks it virtual, and also a
+    camera of the virtual camera API of Windows 11 (`swd#vcamdevapi#`) and a camera with "virtual" in its
+    name. A camera on a hardware bus (USB, PCI, a built-in camera under `display#`) and another `swd#`
+    device stay real. Each link is made up."""
+    detect = product(DETECT_MODULE)
+    guid = "{e5323777-f976-4f5b-9b55-b94699c46e44}"
+    devices = (
+        ("Fake USB camera", fake_link(0), False),
+        ("Fake built-in camera", rf"\\?\DISPLAY#FAKE0001#4&1a2b3c4d&0&UID1#{guid}\{{00000000-0000-0000-0000-000000000001}}", False),
+        ("Fake PCI camera", rf"\\?\pci#ven_feed&dev_0001&subsys_00000000&rev_01#3&1a2b3c4d&0&a0#{guid}\global", False),
+        ("Fake software camera 1", rf"\\?\ROOT#MEDIA#0001#{guid}\global", True),
+        ("Fake virtual camera", fake_link(5), True),
+        ("Fake camera API camera", rf"\\?\swd#vcamdevapi#{{00000000-0000-0000-0000-00000000feed}}#{guid}\global", True),
+        ("Fake sensor group", rf"\\?\SWD#SGDEVAPI#FAKE0007#{guid}\global", False),
+    )
+    backend = FakeDetectionBackend(tuple((name, link, MODES_720) for name, link, _ in devices))
+    infos = detect.detect_media_foundation_cameras(backend=backend)
+    assert [(info.name, info.virtual) for info in infos] == [(name, virtual) for name, _, virtual in devices]
+
+
 # ---------------------------------------------------------------------------
 # T-CAP-25: supported_modes (7.3)
 # ---------------------------------------------------------------------------
