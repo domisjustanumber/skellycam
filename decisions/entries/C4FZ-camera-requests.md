@@ -6,7 +6,7 @@
 
 The user decided these points on 2026-11-20. The quoted text is the text of the user.
 [`specs/camera-requests.md`](../../specs/camera-requests.md) cites them as [E1] to [E9], [F1] to
-[F4] and [L1] to [L5].
+[F4], [L1] to [L5] and [Q1] to [Q14].
 
 Exposure:
 
@@ -54,9 +54,39 @@ USB link label:
 - **L4.** Each operating system has a test.
 - **L5.** Later, not now: a click opens a diagram of the cameras on their USB controllers.
 
+Answers of the user to the questions Q1 to Q14 of the first draft of the spec, 2026-11-20:
+
+- **Q1.** SkellyCam never turns on the auto exposure of the camera, also not at the start-up.
+- **Q2.** A link "Search again" in the camera settings runs the search for that one camera, beside
+  the button for all cameras.
+- **Q3.** The search runs only when the user asks: the button for all cameras, "Search again" for
+  one camera, or when the user switches a camera to Auto. A connect, a reopen for a size or rate
+  change, and "apply again" use the held value again and do not search.
+- **Q4.** As starting values, the search waits 10 frames after each set, takes the brightness from
+  the 10th frame and measures the rate over the next 30 frames. A camera run confirms them.
+- **Q5.** The one-step-darker offset is skipped when the darker value did not keep the rate.
+- **Q6.** "Add light" shows when the brightest value that kept the rate gives a mean below 64 of
+  255. The search still holds its result. A camera run in a dim room sets the limit.
+- **Q7.** The new state `adjusting`.
+- **Q8.** The texts of a slow camera of the first draft.
+- **Q9.** After a fall back to 30 fps, the 60 fps choice stays available, and a new pick runs the
+  check again.
+- **Q10.** The main process returns the whole group to 30 fps, one time, and says which camera could
+  not hold 60 fps.
+- **Q11.** On Linux and macOS, the forced camera auto exposure of today stays until phase 7, and the
+  mode choice and the button are not offered there. The user knows that this is an exception to his
+  rule (E1) until phase 7.
+- **Q12.** A link speed that cannot be read shows `USB ?`. "virtual cameras show "virtual",
+  otherwise yes".
+- **Q13.** The UI writes the one rate into each camera config. No new group field.
+- **Q14.** A group with 59.94 fps against 60 fps is not offered 60 fps.
+
 ## Reason
 
 E3: "Changing exposure during a take may change a frame rate so is to be avoided."
+
+Q3: a search at every start adds about 11 s to every camera start, and the same scene could get a
+different exposure from one session to the next. A search only on request fits "one shot".
 
 ## Open work
 
