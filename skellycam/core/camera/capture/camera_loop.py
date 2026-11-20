@@ -299,11 +299,15 @@ class CameraLoop:
                 if best is None or error < best[0]:
                     best = (error, value)
         except BaseException as error:
-            # Port from sfn26: the device keeps a UVC control after the close, so put back the value of before
+            # Port from sfn26: the device keeps a UVC control after the close, so put back the value of before.
+            # shortcut: the OpenCV source reports auto=False until skellycam sets auto, so a camera in auto mode
+            # before the search goes back to MANUAL at its read value; upgrade when the source reads the mode.
             if before is not None and before.present and not getattr(error, "hung", False):
                 try:
                     self.source.set_controls({"exposure": ControlSetting(auto=before.auto, value=before.value)})
                 except Exception as restore_error:
+                    if getattr(restore_error, "hung", False):
+                        raise restore_error from error  # 9.3: a hung control call ends the camera as hung
                     logger.warning(f"Camera {self.camera_id}: the exposure of before the search was not set back: "
                                    f"{type(restore_error).__name__}: {restore_error}")
             raise

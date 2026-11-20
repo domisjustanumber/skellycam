@@ -44,7 +44,9 @@ choices:
     `pause_all_groups` and `unpause_all_groups` called a method that did not exist; they are gone.
     No 409 for a state conflict. The translated docs get only the new methods, paths and anchors.
 12. **Exposure restore.** The search reads the exposure with `set_controls({})` and sets it back on
-    an exception, except after a hung control call.
+    an exception, except after a hung control call. A hung set-back call ends the camera as hung.
+    Limit: the OpenCV source reports `auto` False until skellycam sets auto, so an OpenCV camera in
+    auto mode goes back to MANUAL at its read value.
 13. **Empty close.** `close_all_camera_groups` with no group keeps `closing` False (a `sfn26` test
     found it).
 14. **Rust removal.** `camera_errors.py` goes (only Rust and the backend manager used it). The

@@ -323,6 +323,36 @@ def test_a_failed_recommend_search_sets_back_the_exposure_of_before(monkeypatch)
     assert (settings[-1].auto, settings[-1].value) == (False, -6)
 
 
+def test_a_hung_set_back_of_the_exposure_ends_the_camera_as_hung():
+    """Section 11.1 and 9.3: when the set-back call of a failed search hangs, the loop gets the hung failure, so
+    that the hard end of a hung camera runs. The first error does not hide it."""
+    from types import SimpleNamespace
+
+    from skellycam.core.camera.capture.camera_loop import CameraLoop
+    from skellycam.core.camera.capture.source import CaptureFailure, ControlValue
+
+    calls = []
+
+    def set_controls(changes):
+        calls.append(changes)
+        if not changes:
+            return {"exposure": ControlValue(present=True, auto=False, value=-6)}
+        if changes["exposure"].value == -6:  # the set-back
+            raise CaptureFailure("set controls", "a control call did not return in 2 s", hung=True)
+        return {"exposure": ControlValue(present=True, auto=False, value=changes["exposure"].value)}
+
+    def read_in_start(deadline):
+        raise CaptureFailure("warm-up", "not ready in 15 s")
+
+    loop = SimpleNamespace(source=SimpleNamespace(set_controls=set_controls), camera_id="c1",
+                           _read_in_start=read_in_start)
+    with pytest.raises(CaptureFailure) as failure:
+        CameraLoop._recommend(loop, 0)
+    assert failure.value.hung and failure.value.stage == "set controls"
+    assert isinstance(failure.value.__cause__, CaptureFailure) and failure.value.__cause__.stage == "warm-up"
+    assert [change["exposure"].value for change in calls[1:]] == [-12, -6]
+
+
 # ---------------------------------------------------------------------------
 # T-CAP-44, T-CAP-87: the OpenCV fake under the shared loop (virtual clock)
 # ---------------------------------------------------------------------------
