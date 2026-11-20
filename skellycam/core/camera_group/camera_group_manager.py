@@ -20,7 +20,7 @@ from skellycam.core.camera.capture.modes import (
     rates_equal,
 )
 from skellycam.core.camera.capture.source import CaptureFailure, CaptureRequest
-from skellycam.core.camera.config.camera_config import CameraConfigs
+from skellycam.core.camera.config.camera_config import CameraConfigs, MAX_MANUAL_EXPOSURE
 from skellycam.core.camera_group.camera_group import CameraGroup, RequestRefused, same_config
 from skellycam.core.camera_group.camera_start_failure import describe_start_failure
 from skellycam.core.device_detection.detect_cameras_devices import CameraDeviceInfo, detect_available_cameras
@@ -96,6 +96,9 @@ class CameraGroupManager:
         Return the group, the failure object of each camera that failed (8.4) and the warnings (11.3).
         Raise `RequestRefused` (422 or 409) before any change.
         """
+        camera_configs = {camera_id: config.model_copy(update=dict(exposure=MAX_MANUAL_EXPOSURE))
+                          if config.exposure_mode == "MANUAL" and config.exposure > MAX_MANUAL_EXPOSURE else config
+                          for camera_id, config in camera_configs.items()}  # sfn26 43e2b968a: the clamp
         camera_groups = self._get_configs_by_group(camera_configs)
         if len(camera_groups) > 1:
             raise NotImplementedError("Cannot update multiple camera groups at once (yet).")

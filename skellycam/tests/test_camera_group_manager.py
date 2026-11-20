@@ -56,6 +56,27 @@ class TestCameraGroupManagerInit:
         assert isinstance(state, dict)
 
 
+class TestExposureClamp:
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(("mode", "requested", "sent"), [("MANUAL", -4, -5), ("MANUAL", -1, -5), ("MANUAL", -5, -5),
+                                                             ("MANUAL", -9, -9), ("AUTO", -4, -4)])
+    async def test_a_manual_exposure_above_minus_5_is_clamped(self, manager, monkeypatch, mode, requested, sent):
+        """sfn26 43e2b968a: a MANUAL exposure above -5 becomes -5 (-4 gives about 16 fps on the Logitech
+        cameras, so the rate check fails). A stored UI setting of -4 still opens the camera."""
+        from unittest.mock import AsyncMock, Mock
+
+        from skellycam.core.camera.config.camera_config import CameraConfig
+        from skellycam.core.camera_group.camera_group import CameraGroup
+
+        config = CameraConfig(camera_id="c1", camera_index=0, exposure_mode=mode, exposure=requested)
+        manager.detected_cameras = {"c1": Mock(virtual=False)}
+        monkeypatch.setattr(manager, "_check_request", lambda camera_configs, camera_group: ([], True))
+        start = AsyncMock(return_value=(Mock(spec=CameraGroup, configs={"c1": config}), {}))
+        monkeypatch.setattr(manager, "_create_and_start", start)
+        await manager.create_or_update_camera_group({"c1": config})
+        assert start.await_args.args[0]["c1"].exposure == sent
+
+
 class TestCloseAll:
     @pytest.mark.asyncio
     async def test_a_close_that_raises_keeps_the_payloads_on_and_the_failed_group_listed(self, manager):

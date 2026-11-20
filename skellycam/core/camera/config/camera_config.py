@@ -1,5 +1,4 @@
 import enum
-import math
 from typing import Tuple, Self, Any
 
 import cv2
@@ -24,7 +23,7 @@ DEFAULT_CAMERA_NAME: CameraNameString = "Default Camera"
 DEFAULT_RESOLUTION: ImageResolution = ImageResolution(height=DEFAULT_IMAGE_HEIGHT, width=DEFAULT_IMAGE_WIDTH)
 DEFAULT_EXPOSURE_MODE: str = ExposureModes.MANUAL.name
 DEFAULT_EXPOSURE: int = -7
-MAX_MANUAL_EXPOSURE: int = -5
+MAX_MANUAL_EXPOSURE: int = -5  # a MANUAL request above it is clamped (sfn26 43e2b968a); -4 gives about 16 fps
 DEFAULT_FRAMERATE: float = -1.0  # Use camera default framerate
 DEFAULT_ROTATION: RotationTypes = RotationTypes.NO_ROTATION
 DEFAULT_CAPTURE_FOURCC: str = "MJPG"  # skellycam/system/diagnostics/run_cv2_video_capture_diagnostics.py
@@ -377,21 +376,6 @@ def default_camera_configs_factory():
 
 
 CameraConfigs = dict[CameraIdString, CameraConfig]
-
-
-class MixedCameraFrameRates(ValueError):
-    """Selected cameras request different rates for one synchronized group."""
-
-def frame_rates_equal(first: float, second: float) -> bool:
-    """Allow driver frame-interval quantization using SkellyCam's existing 1e-4 tolerance."""
-    return math.isclose(first, second, rel_tol=1e-4)
-
-
-def validate_group_frame_rate(camera_configs: CameraConfigs) -> None:
-    rates = {key: config.framerate for key, config in camera_configs.items() if config.use_this_camera}
-    if rates and not frame_rates_equal(min(rates.values()), max(rates.values())):
-        requested = ", ".join(f"{key}: {rate:g} fps" for key, rate in rates.items())
-        raise MixedCameraFrameRates(f"Select the same frame rate for every camera in the group ({requested}).")
 
 
 def validate_camera_configs(camera_configs: CameraConfigs) -> None:

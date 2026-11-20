@@ -23,8 +23,8 @@ choices:
 4. **Pins.** Our exact pins stay, also the `skellylogs` and `skellypings` revisions. The version is
    `v2.0.0-alpha.6` of `sfn26`.
 5. **Kept from `sfn26`** (not camera layer, not recorder): `publish` with no `overwrite`,
-   `signal.raise_signal` in the worker monitor, the timebase shape check, `ms_to_ns`, the frame-rate
-   helpers of `camera_config.py` (our manager does not call them), the `skellycam.spec` changes for
+   `signal.raise_signal` in the worker monitor, the timebase shape check, `ms_to_ns`, the clamp of a
+   MANUAL exposure above -5 to -5 (in `create_or_update_camera_group`), the `skellycam.spec` changes for
    `cv2_enumerate_cameras` and `jaraco`, the server folder of `app-paths.ts`, exposure maximum -5 in
    the UI, the `hardware` marker, the logging fixture of the tests, `CITATIONS.md` and the
    `references.bib` keys of `usb_connection.py`.
