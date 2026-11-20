@@ -40,6 +40,9 @@ class CameraTakeResult:
     error: str | None
 
 
+_ABANDON = object()  # the queue marker of `abandon`
+
+
 class CameraTakeWriter:
     """One camera's MKV and CSV of a take. The camera loop thread calls `give`, `give_missing` and
     `end`; the writer thread does each file write. Not reusable."""
@@ -181,16 +184,20 @@ class CameraTakeWriter:
         return result
 
     def abandon(self) -> None:
-        """End the writer thread with no end of the files, as a kill does: the take level completes them
-        (7.4). For a take that did not end: the frame count is not known."""
+        """For a take that goes on with no frame count for this camera (4.3): write each queued item, then
+        close both files with no padding and no `# end` line; the take level completes them (7.4). It waits
+        as `end` does, while the writer makes progress (D1)."""
         if not self._started or self._ended:
             raise RuntimeError("abandon before start or after end")
-        self._ended = self._abandoned = True
-        try:
-            self.queue.put_nowait(0)  # wakes a writer that waits on an empty queue
-        except queue.Full:
-            pass  # the writer takes an item, sees `_abandoned` and stops
-        self._thread.join(self.spec.stall_limit_s)
+        self._ended = True
+        started = time.monotonic()
+        if not (self._wait_with_progress(started, lambda timeout: self._try_put(_ABANDON, timeout))
+                and self._wait_with_progress(started, self._try_join)):
+            self._abandoned = True  # a stuck writer stops after its current item, as in `end`
+            try:
+                self.queue.put_nowait(_ABANDON)
+            except queue.Full:
+                pass
 
     # --- the writer thread ---
 
@@ -199,6 +206,13 @@ class CameraTakeWriter:
             item = self.queue.get()
             if self._abandoned:
                 self._close_files()
+                return
+            if item is _ABANDON:
+                if self._error is None:
+                    try:
+                        self._finish(None)
+                    except Exception as error:
+                        self._fail(error)
                 return
             if isinstance(item, int):
                 break
@@ -301,13 +315,14 @@ class CameraTakeWriter:
             raise OSError(f"short write of the timing sidecar of camera {self.spec.camera_id}")
         self._progress()
 
-    def _finish(self, frame_count: int) -> None:
-        if self._placeholder is None and (self._held or self._k < frame_count):
+    def _finish(self, frame_count: int | None) -> None:
+        """With `frame_count` None (`abandon`): no padding and no `# end` line."""
+        if self._placeholder is None and (self._held or (frame_count is not None and self._k < frame_count)):
             self._fallback()
             held, self._held = self._held, []
             for entry in held:
                 self._write(entry)
-        while self._k < frame_count:
+        while frame_count is not None and self._k < frame_count:
             self._write((None, None, None, True, None))
         last_cluster = self._mkv.tell()
         self._mkv.close_container()
@@ -321,7 +336,8 @@ class CameraTakeWriter:
             if at < 0:
                 raise OSError(f"camera {self.spec.camera_id}: the last block is not in the camera file after the close")
             self._write_row(last_cluster + at + len(block))
-        self._write_line(sidecar.end_line(self._rows, self._gaps, self._missing))
+        if frame_count is not None:
+            self._write_line(sidecar.end_line(self._rows, self._gaps, self._missing))
         self._fsync_both()
         self._mkv.raw.close()
         self._csv.close()

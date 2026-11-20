@@ -787,3 +787,23 @@ def test_stall_watch_of_a_push_source_counts_from_the_end_of_the_wait(monkeypatc
                 watcher.stop()
     assert all("dead" not in watcher.first for watcher in watchers.values()), \
         {cid: watcher.first for cid, watcher in watchers.items()}
+
+
+def test_an_exit_during_a_take_leaves_finished_camera_files(monkeypatch, tmp_path):
+    """Second review of the connection fixes, R1 (b): the camera loops end during a take with no stop and no
+    take level to follow (the group stops, as at an exit of the app). Each camera finishes its own pair with
+    the rows that it gave, and its `# end` line, as before the first fixes."""
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 30)
+        workers = [app.worker(cid) for cid in app.factory.camera_ids]
+        app.group.ipc.should_continue = False
+        for worker in workers:
+            app.wait(lambda: not worker.is_alive(), "the loop ends")
+        app.group.take = None  # no stop: the take level does not follow (the close then stops no take)
+    for camera_id in app.factory.camera_ids:
+        lines = take_files(tmp_path)[camera_id][1].read_text(encoding="utf-8").splitlines()
+        rows = sum(1 for line in lines if line[:1].isdigit())
+        assert lines[-1].startswith("# end ") and rows == len(spies.of("record", camera_id)) >= 30, (rows, lines[-1])
