@@ -18,8 +18,8 @@ from skellycam.api.middleware.add_middleware import add_middleware
 from skellycam.api.middleware.cors import cors
 from skellycam.api.routers import SKELLYCAM_ROUTERS
 from skellycam.api.server_constants import APP_URL
+from skellycam.core.camera_group.camera_group_manager import close_camera_groups_before_exit
 from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
-from skellycam.core.camera_group.camera_group_manager import close_camera_groups
 from skellycam.system.default_paths import (
     SKELLYCAM_FAVICON_ICO_PATH,
     get_default_skellycam_base_folder_path,
@@ -61,11 +61,13 @@ async def app_lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # ===== SHUTDOWN =====
     logger.api("SkellyCam API shutting down...")
 
-    await close_camera_groups()
-
     shutdown_telemetry()
 
-    # Just set the flag — __main__ owns the WorkerRegistry and calls shutdown_all()
+    # A running take ends through the take level before the kill flag (recorder.md 8.1). Ctrl-C comes here
+    # too: uvicorn ends the server, and __main__ sets the flag after it.
+    await close_camera_groups_before_exit()
+
+    # Then set the flag — __main__ owns the WorkerRegistry and calls shutdown_all()
     app.state.global_kill_flag.value = True
 
     logger.success("SkellyCam API shutdown complete - Goodbye! 👋")

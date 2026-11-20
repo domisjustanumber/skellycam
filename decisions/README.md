@@ -41,7 +41,7 @@ These entries are `accepted`.
 | [J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md) | Phase 6 player decisions Y1 to Y7: steps 6a to 6d, Electron file handler, one `ImageDecoder` tile, gap and unfinished marks, module, tests | accepted |
 | [4HNY](entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md) | Missing frames as black placeholder blocks with the flag `missing` (M1 to M10); player decisions L1 to L8 | accepted |
 | [YV3V](entries/YV3V-acceptance-of-the-phase-6a-player-spec-and-test-list.md) | The user accepted `specs/player.md` and its test list (step 6a) | accepted |
-| [JMS0](entries/JMS0-review-decisions.md) | Connection review A to K: frame count, error end, start wait, failed start, stall watch, gap detail, hang rule, exposure, credit lines, home path, secret scan | accepted |
+| [JMS0](entries/JMS0-review-decisions.md) | Connection review: frame count, error end, start wait, failed start, stall watch, gap detail, hang rule, exposure, allow-lists, dead server, summary rate | accepted |
 | [G651](entries/G651-phase-4-live-preview-decisions-p1-to-p7.md) | Phase 4 decisions P1 to P7 and answers A1 to A8: steps, flow control and safety net, header, tile, counts, reader properties, deletion, parity | accepted |
 | [WB08](entries/WB08-acceptance-of-the-step-4a-preview-spec-and-its-test-list.md) | The user accepted the step 4a spec `specs/preview.md` and its test list T-PRV-01 to T-PRV-24 | accepted |
 | [VYS7](entries/VYS7-answers-of-the-user-to-the-step-4b-spec-and-go-ahead-for-its-tests.md) | Answers Q1 to Q13 to the 4b spec: Captured and Displayed, list label, 30 fps outside proof; PR to `development`; go-ahead for tests | accepted |
@@ -63,6 +63,7 @@ These entries are `accepted`.
 | [4D94](entries/4D94-step-6a-choices-of-the-canvas-player.md) | Supersedes 4K7V, 4MJ4, 1ACK, 5FBS: step 6a player choices; picked folders only for the app run, no list file; test names; review fixes | accepted |
 | [XT31](entries/XT31-kit-adoption-choices-camera-media-check-and-fills.md) | Supersedes NMM1, 4A7H: kit adoption choices; the media check refuses PNG, GIF, WebP, SVG with an allow by path; index limit 24,000 | accepted |
 | [6T78](entries/6T78-choices-of-the-sfn26-integration.md) | Choices of the `sfn26` integration: OpenCV helpers stay ours, kept and dropped items, forms of the four ports, Rust removal | accepted |
+| [82AA](entries/82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) | The stop sets the last frame with no pause, plus 2, under its lock; a surviving process leaves its files to the repair step; the stuck-writer limit is 15 s | accepted |
 
 ### Evidence
 
@@ -89,6 +90,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [KY81](entries/KY81-certify-spec-choices-of-the-agent.md) | Certify spec draft 2 `specs/certify.md`, its test list T-CERT-01 to T-CERT-40 and 15 agent choices; 9 questions in its section 14 | `certify` | proposed |
 | [8CP7](entries/8CP7-certify-spec-draft-3-choices-of-the-agent.md) | Certify spec draft 3 on format 1.4.0, tests T-CERT-01 to 67, 15 agent choices: split checks, model item, gate roll-ups, local record, macOS probes | `certify` | proposed |
 | [FC1C](entries/FC1C-choices-of-the-spec-integration.md) | Spec integration choices: hash set, route results, no record in certify, model turn-on, waits, steps, quick order, take error state | none | proposed |
+| [F8C0](entries/F8C0-third-review-choices.md) | Choices of the third review fixes: start and stop with no lost take, no stop pause, exit through the take level, Ctrl-C, dead-server end, summary rate | `recorder` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).

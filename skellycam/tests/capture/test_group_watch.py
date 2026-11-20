@@ -213,6 +213,6 @@ def test_the_app_state_says_a_recording_runs_while_a_take_runs(case):
     statuses = {"cam0": status_in(state), "cam1": status_in(state)}
     group = bare_group({}, statuses)
     group.cameras.orchestrator = CameraOrchestrator.from_statuses(statuses)
-    group.ipc.should_continue = True
+    group.ipc.running = True
     group.take = object() if case == "every camera died in a take" else None
     assert group.to_state().recording_in_progress is (case == "every camera died in a take")

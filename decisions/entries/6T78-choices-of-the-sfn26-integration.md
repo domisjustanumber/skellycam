@@ -33,7 +33,9 @@ choices:
    `references.bib` keys of `usb_connection.py`.
 6. **Ours, not `sfn26`:** `AGENTS.md`, `__main__.py`, `skellycam-ui/package-lock.json`, the
    router, the detection and the manager tests.
-7. **Shutdown.** `CameraGroupManager` gets `close_camera_groups()` for `app.py` and `shutdown.py`.
+7. **Shutdown.** The module of `CameraGroupManager` gets a close function for `app.py` and
+   `shutdown.py`. The merge of `dom/recorder-connection` keeps its version of it,
+   `close_camera_groups_before_exit` (item 7 of [ADR-F8C0](F8C0-third-review-choices.md)).
 8. **Removed with the dropped items:** the RECOMMEND task (`camera_group/tasks/`), its doc and test;
    the `sfn26` tests of its manager; the tests that import deleted modules
    (`test_camera_startup_failures`, `test_camera_startup_responsiveness`,

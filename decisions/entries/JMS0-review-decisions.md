@@ -37,3 +37,6 @@ take recorder to the shared loop:
   upstream developer changes to the words "the user's home folder".
 - **K.** The secret scan gets three narrow allow-list rules for the classified false positives. The
   result is accepted only at zero hits in CI.
+- **L.** The camera processes notice a dead server after 10 seconds, not 300. They then finish their
+  files and release the cameras.
+- **M.** Compute the frame rate in the take summary as frames divided by elapsed time.

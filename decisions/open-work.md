@@ -12,8 +12,9 @@ task. Delete an item when its work is done. The PR that closes an item records t
   [ADR-N2NH](entries/N2NH-index-limit-24000-no-shortened-rows-and-binding-specs.md) raised
   `INDEX_LIMIT` from 14,000 to 24,000 characters until the clean-up. On 2026-11-20 the user ruled
   that the limit is 24,000 (ADR-XT31), and the small choice entries of this branch were merged into
-  one entry for each step. The entries F8C0 and 82AA (`dom/recorder-connection-fix3`) and 3WCA
-  (`dom/3bc-tests`) join the step entries when their branches merge. If the index fills again, give
+  one entry for each step. The merge of `dom/recorder-connection` brought F8C0 (proposed; it does not
+  fit in ADR-P98T) and 82AA (accepted). 3WCA (`dom/3bc-tests`) joins the step entries when its
+  branch merges. If the index fills again, give
   the user the bigger restructurings of decision 4 of ADR-N2NH.
 - **Private-data findings.** `tools/check_private_data.py` reports 3 lines in upstream files: an
   email address in `skellycam-ui/src/hooks/floatingOnboarding.tsx` and in
@@ -152,8 +153,12 @@ task. Delete an item when its work is done. The PR that closes an item records t
   `SKELLYCAM_BENCH_OUT` set to a folder outside the repository.
   Done: the connection to the shared loop and the edits of section 14 of the spec in
   `specs/windows-capture.md`; U4, U5 and U12 are removed
-  ([ADR-YNM2](entries/YNM2-connection-of-the-take-recorder-to-the-shared-loop.md)). Next: the first hardware run of the new recorder (a take with three cameras; an ended
-  camera process in place of an unplug), and the take in the new player and in Blender.
+  ([ADR-YNM2](entries/YNM2-connection-of-the-take-recorder-to-the-shared-loop.md)), and fix rounds 3
+  to 5 ([ADR-82AA](entries/82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md)). Open:
+  the code does not implement section 8.4 of the spec yet (`take_state`, `ended_take`; today
+  `recording_in_progress` stays true after an error end until a stop fetches the summary). Next: the
+  first hardware run of the new recorder (a take with three cameras; an ended camera process in
+  place of an unplug), and the take in the new player and in Blender.
 - **The change request F-1 to F-10 to skellyfileformat.** The user decided on 2026-11-20 that the
   ten format changes of section 13 of [`specs/recorder.md`](../specs/recorder.md) go to
   skellyfileformat as one change request, and that the user sees its text before it is sent

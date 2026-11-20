@@ -9,6 +9,7 @@ import errno
 import hashlib
 import json
 import logging
+import math
 import statistics
 import time
 
@@ -16,7 +17,7 @@ import pytest
 
 from skellycam.tests.take_recorder import sidecar_check
 from skellycam.tests.take_recorder.rec_api import (
-    MEDIA, T0, UTC0, WRITER, Run, camera_key, camera_label, fixed_clock, rec, rec_module, simple_take,
+    MEDIA, T0, UTC0, WRITER, Run, camera_key, camera_label, fixed_clock, hand_mean_framerate, rec, rec_module, simple_take,
     take_camera, warnings_of)
 
 MANIFEST_MEMBERS = ["skellyfileformat", "format_version", "format_prerelease", "writer", "take_uuid", "recording_name",
@@ -369,7 +370,7 @@ def test_t_rec_27_stop_statistics_from_the_csvs(tmp_path):
     expected = {
         "recording_name": "take", "recording_path": str(folder), "number_of_cameras": 3, "number_of_frames": frames,
         "total_duration_sec": ((last + 500_000) // 10**6) / 1000,
-        "mean_framerate": round(statistics.fmean(rates), 2),
+        "mean_framerate": hand_mean_framerate(ARRIVALS_27),
         "mean_inter_camera_sync_ms": round(statistics.fmean(ranges), 2),
         "framerate_stats": hand_stats(rates), "frame_duration_stats": hand_stats(durations),
         "inter_camera_grab_range_ms_stats": hand_stats(ranges),
@@ -389,3 +390,21 @@ def test_t_rec_27_stop_statistics_from_the_csvs(tmp_path):
         else:
             assert got[key] == value, key
 
+
+
+def test_the_mean_frame_rate_is_frames_over_the_elapsed_time(tmp_path):
+    """Decision M of the user (2026-11-20, 8.2): two frames 1 ms apart do not count as 1000 fps. One camera,
+    frames 0, 1 ms, 33 ms, 66 ms ... at 30 fps: (frames - 1) / (time of the last frame - time of the first),
+    with the arrival times. With one frame, the field is null (NaN)."""
+    folder = tmp_path / "take"
+    (folder / MEDIA).mkdir(parents=True)
+    times = [0, 1_000_000] + [k * 33_333_333 for k in range(1, 30)]
+    path = folder / MEDIA / "take.aaaaaa.csv"
+    write_sidecar(path, 0, [(t, False) for t in times])
+    stop_stats = rec_module("stop_stats")
+    got = stop_stats.stop_response_fields([path], recording_name="take", recording_path=folder, frame_count=len(times))
+    assert got["mean_framerate"] == round((len(times) - 1) / (times[-1] / 1e9), 2)
+    single = folder / MEDIA / "take.bbbbbb.csv"
+    write_sidecar(single, 0, [(0, False)])
+    one = stop_stats.stop_response_fields([single], recording_name="take", recording_path=folder, frame_count=1)
+    assert math.isnan(one["mean_framerate"])

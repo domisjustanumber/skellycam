@@ -224,7 +224,7 @@ writer = CameraTakeWriter.start(spec) -> CameraTakeWriter
 writer.give(frame) -> None
 writer.give_missing() -> None
 result = writer.end(frame_count) -> CameraTakeResult
-writer.abandon() -> None
+error = writer.abandon() -> str | None
 ```
 
 - `start` opens the MKV and calls `start_encoding()`, so the MKV header is in the file before the
@@ -249,11 +249,12 @@ writer.abandon() -> None
   call].
 - `abandon` puts a marker after the queued items. The writer thread writes each queued item, the row
   of the last block (6.3), and closes both files with no padding and no `# end` line. `abandon` waits
-  for the put and for the writer thread as `end` does (D1). It returns no result. The loop calls it
+  for the put and for the writer thread as `end` does (D1). It returns the text of a write error, or None; the loop sends that error to the main process, which ends the take with it (5.4). The loop calls it
   when its take has no last frame and the take goes on (the camera ends alone): the take level
   completes the pair after the join (7.4). When no take level follows (the group stops, or the main
-  process is gone), the loop calls `end` with the number of rows that it gave, as before (added on
-  2026-11-20, [ADR-P5VE](../decisions/entries/P5VE-review-fix-choices.md)).
+  process is gone), the loop does not call `abandon`: it calls `end` with the frame count of the last
+  frame that section 9 gives (added on 2026-11-20, [ADR-P5VE](../decisions/entries/P5VE-review-fix-choices.md),
+  [ADR-82AA](../decisions/entries/82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md)).
 - After `give` or `give_missing` raised `RecorderStalled` or `RecorderWriteError`, the caller calls
   only `end`, never `give` again. `end` pads the rest with `missing` rows; else each later row would
   move by one [agent 3].
@@ -345,8 +346,8 @@ process [R10]. The kill and stall tests run the camera level in a child process 
      still runs). It gets the state `failed`, stage `recording`, reason "disk stall" [C6] [agent 25].
      The user uses "apply again" or unselects it [C6, cap 8.3]. Its files are completed as a short file
      (7.4) [M5]. When its process still runs after the kill, its files are not touched, and the
-     manifest stays `recording` with a `take_error` that names the camera (8.1) (added on 2026-11-20,
-     [ADR-P5VE](../decisions/entries/P5VE-review-fix-choices.md)).
+     manifest stays `recording` with a `take_error` that names the camera, for the repair step (8.1)
+     (added on 2026-11-20, [ADR-82AA](../decisions/entries/82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) item 2).
 - The app keeps running. A new take can start [P §6].
 
 ### 5.4 A write error [C5, C6]
@@ -836,9 +837,16 @@ A frame with no bit of the error mask 0x0F gives one block and one row. `flags` 
 
 ### 8.1 Order of the steps
 
-1. The stop request (or the error of 5.3 or 5.4) sets the last frame of the take in the orchestrator,
-   as today (`last_recording_frame_number`). Each live camera records to that frame. Each dead camera
-   gives placeholders to that frame (7.3).
+1. The stop request (or the error of 5.3 or 5.4) sets the last frame of the take in the orchestrator
+   (`last_recording_frame_number`). Each live camera records to that frame. Each dead camera gives
+   placeholders to that frame (7.3). Changed on 2026-11-20 ([ADR-82AA](../decisions/entries/82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) item 1): the stop does not pause the cameras.
+   The last frame is the largest gate count plus 2 (the gate lets a camera hold one frame more than the
+   largest count), and at least the first frame. Before, the stop paused the cameras, and a push source
+   lost the frames of the pause before row N − 2 (a `gap`).
+   The stop reads the gate count and writes the last frame under the lock of
+   `last_recording_frame_number`, and only when the value is still −1: a last frame that a camera set
+   first stays. Then it unpauses the cameras, with no wait, so that a paused camera records to that
+   frame. (The public pause route is removed: [ADR-V8RS](../decisions/entries/V8RS-pause-freezes-the-ui-display-only.md).)
 2. The main process tells each camera to end, with the frame count of the take (7.6).
 3. Each camera process calls `end(frame_count)` and sends its `CameraTakeResult` (4.3).
 4. The main process waits for each camera while its writer makes progress, and at most the stall
@@ -852,8 +860,8 @@ A frame with no bit of the error mask 0x0F gives one block and one row. `flags` 
      of 5.3 [C6].
    The main process never touches a camera's files before one of these four cases [review B2]. A
    process that still runs after the kill is none of them: `finish` does not complete its files, and
-   it writes the manifest with `state` `"recording"` and a `take_error` for that camera (added on
-   2026-11-20, [ADR-P5VE](../decisions/entries/P5VE-review-fix-choices.md)).
+   it writes the manifest with `state` `"recording"` and a `take_error` for that camera, for the repair
+   step (added on 2026-11-20, [ADR-82AA](../decisions/entries/82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) item 2).
    A stall or a write error that comes while a stop runs is the `take_error` of that take, as in 5.3
    and 5.4.
 5. `Take.finish(results, frame_count=...)`:
@@ -879,9 +887,9 @@ finished [SFF-724].
 | `number_of_cameras` | `group_size`. |
 | `number_of_frames` | The frame count of the take (7.6). |
 | `total_duration_sec` | `duration_s` of the manifest summary [SFF-728, F-1]. |
-| `mean_framerate` | The mean of the frame rate of each group frame k ≥ 1. The rate of frame k is the mean over the cameras of 1 / (`arrival_ns`(k) − `arrival_ns`(k − 1)) in s, for each camera with neither row `missing`. Rounded to 2 decimals, as today. |
+| `mean_framerate` | Frames divided by the elapsed time (M of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), changed on 2026-11-20): for each camera, the group frames from its first to its last row that is not `missing`, divided by the time between their `arrival_ns`, in s; the mean over the cameras. Rounded to 2 decimals. Null (NaN) when no camera has two such rows. Before, the mean of a rate for each frame: two frames 1 ms apart counted as 1000 fps. |
 | `mean_inter_camera_sync_ms` | The mean of the range of frame k: the largest minus the smallest `arrival_ns` of the cameras whose row is not `missing`, in ms. Rounded to 2 decimals. |
-| `framerate_stats` | Median, mean, standard deviation, min and max of the rates of `mean_framerate`. |
+| `framerate_stats` | Median, mean, standard deviation, min and max of the rate of each group frame k ≥ 1: the mean over the cameras of 1 / (`arrival_ns`(k) − `arrival_ns`(k − 1)) in s, for each camera with neither row `missing` ([ADR-F8C0](../decisions/entries/F8C0-third-review-choices.md) item 11). |
 | `frame_duration_stats` | The same of the mean frame duration of each frame k ≥ 1, in ms. |
 | `inter_camera_grab_range_ms_stats` | The same of the ranges of `mean_inter_camera_sync_ms`. |
 
@@ -961,6 +969,26 @@ measures it (section 11).
 At its next start, the app does nothing with an unfinished take. It does not scan for unfinished
 takes, it does not ask the question of SFF-793, and it changes no file. The manifest state
 `recording` marks the take [SFF-724]. Step 5c adds the scan, the question and the repair [R1].
+
+Added on 2026-11-20 (L of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), [ADR-F8C0](../decisions/entries/F8C0-third-review-choices.md), [ADR-82AA](../decisions/entries/82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md)):
+
+- An ordinary exit of the app (the shutdown endpoint, the end of the server, Ctrl-C) stops a running
+  take through the take level (8.1) and closes the camera groups before it sets the kill flag. The
+  manifest is then `finished`. The shutdown endpoint answers at once; the close runs after the
+  answer. A camera process ignores Ctrl-C: the main process drives the exit. A stop or an exit gives
+  up on a stuck writer after 15 s with no progress ([ADR-82AA](../decisions/entries/82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) item 3).
+- The main process writes a heartbeat once a second from a thread of its own. A camera process that
+  sees no heartbeat for 10 s (`HEARTBEAT_TIMEOUT_SECONDS`) takes the main process as dead: the camera
+  processes notice a dead server after 10 seconds, not 300. They then finish their files and release
+  the cameras (L). A lost heartbeat sets no global kill flag. Each such camera gets the state `dead`
+  with the reason "lost the server's heartbeat". When the main process is in fact alive, it ends a
+  running take with the `take_error` "camera `<id>` lost the server's heartbeat", and a later apply
+  opens the camera again.
+- With no take level, the first camera that ends sets the last frame of the take two group frames
+  after the latest group frame, at least the first frame, under the lock of that value (the gate lets
+  one camera be one frame ahead) ([ADR-82AA](../decisions/entries/82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) item 1). Each camera then ends its writer with that frame count:
+  its pair has placeholders to that frame (7.3), the `# end` line, and the same rows as each other
+  pair. When no main process is alive, the manifest stays `recording` (step 5c).
 
 ## 10. Connection to the shared loop (after step 3a)
 

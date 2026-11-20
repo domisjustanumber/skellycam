@@ -15,8 +15,8 @@ import pytest
 
 from skellycam.tests.take_recorder import ebml, jpeg_tools, sidecar_check
 from skellycam.tests.take_recorder.rec_api import (
-    DEAD_REASON, WRITER, Frames, Run, camera_key, camera_label, dead_take, hand_stop_fields, rec, simple_take, take_camera,
-    warnings_of)
+    DEAD_REASON, WRITER, Frames, Run, camera_key, camera_label, dead_take, hand_mean_framerate, hand_stop_fields, rec,
+    simple_take, take_camera, warnings_of)
 
 STALL_LIMIT_S = 1.0  # scaled down by 10 (12.1)
 QUEUE_S = 0.3
@@ -191,7 +191,7 @@ def test_t_rec_23_dead_camera_writes_placeholders_to_the_end(tmp_path, runs, cas
     rows = [[(r.arrival_ns, r.missing) for r in sidecar_check.read(run.csv(c)).rows] for c in ("0a1b", "ff00")]
     rates, durations, ranges = hand_stop_fields(rows)
     response = run.summary.stop_response
-    assert response["mean_framerate"] == pytest.approx(round(statistics.fmean(rates), 2), abs=1e-9)
+    assert response["mean_framerate"] == pytest.approx(hand_mean_framerate(rows), abs=1e-9)
     assert response["mean_inter_camera_sync_ms"] == pytest.approx(round(statistics.fmean(ranges), 2), abs=1e-9)
     assert response["frame_duration_stats"]["max"] == pytest.approx(max(durations), abs=1e-9)
 

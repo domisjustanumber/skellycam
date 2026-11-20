@@ -125,13 +125,13 @@ class CameraManager:
 
     async def _set_paused(self, paused: bool, await_state: bool) -> None:
         try:
-            if not self.ipc.should_continue:
+            if not self.ipc.running:
                 raise RuntimeError("Cannot change camera state: camera group has stopped.")
             if paused:
                 await self.orchestrator.pause(await_paused=await_state)
             else:
                 await self.orchestrator.unpause(await_unpaused=await_state)
-            if not self.ipc.should_continue:
+            if not self.ipc.running:
                 raise RuntimeError("Camera group stopped while changing camera state.")
         except (RuntimeError, TimeoutError):
             self.ipc.should_continue = False

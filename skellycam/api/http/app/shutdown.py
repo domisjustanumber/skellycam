@@ -1,11 +1,13 @@
 """
 Clean shutdown endpoint with proper async handling.
 """
+import asyncio
 import logging
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
-from skellycam.core.camera_group.camera_group_manager import close_camera_groups
+
+from skellycam.core.camera_group.camera_group_manager import close_camera_groups_before_exit
 
 
 logger = logging.getLogger(__name__)
@@ -32,11 +34,19 @@ async def shutdown_server(
     """
     logger.api(f"Shutdown requested via API - {request.url}")
 
-    # The worker monitor waits for active video saves before signaling the server.
-    # Self-termination here would bypass that protection (especially on Windows).
-    await close_camera_groups()
-    request.app.state.global_kill_flag.value = True
-    logger.info("Requested shutdown after active video saves finish")
+    # Answer at once (the Electron app waits 5 s at most), then, in the background, end a running take through
+    # the take level (recorder.md 8.1) and close the groups before the kill flag. The worker monitor then waits
+    # for active saves before signaling the server; self-termination would bypass that.
+    async def close_then_kill() -> None:
+        try:
+            await close_camera_groups_before_exit()
+        finally:
+            request.app.state.global_kill_flag.value = True
+            logger.info("Requested shutdown after the camera groups closed")
+
+    running = getattr(request.app.state, "shutdown_task", None)
+    if running is None or running.done():  # a second request (or Ctrl-C) starts no second close
+        request.app.state.shutdown_task = asyncio.create_task(close_then_kill())  # a reference keeps the task
     return JSONResponse(
         content={
             "status": "shutdown_initiated",

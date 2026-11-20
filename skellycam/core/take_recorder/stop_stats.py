@@ -27,6 +27,18 @@ def _mean(values) -> float:
     return round(statistics.fmean(values), 2) if values else math.nan
 
 
+def _mean_rate(times) -> float:
+    """Decision M of the user (2026-11-20, 8.2): frames divided by the elapsed time. For each camera, the group
+    frames from its first to its last row with an arrival time, divided by the time between them; the mean
+    over the cameras, rounded to 2 decimals. NaN (JSON null) when no camera has two such rows."""
+    rates = []
+    for camera in times:
+        timed = [(k, t) for k, t in enumerate(camera) if t is not None]
+        if len(timed) >= 2 and timed[-1][1] > timed[0][1]:
+            rates.append((timed[-1][0] - timed[0][0]) / ((timed[-1][1] - timed[0][1]) / 1e9))
+    return round(statistics.fmean(rates), 2) if rates else math.nan
+
+
 def _per_frame(csv_paths):
     rows_per_camera = [read_strict(path).rows for path in csv_paths]
     times = [[None if r.flags & MISSING else r.arrival_ns for r in rows] for rows in rows_per_camera]
@@ -41,24 +53,24 @@ def _per_frame(csv_paths):
         if pairs:
             rates.append(statistics.fmean([1e9 / (b - a) for a, b in pairs]))
             durations.append(statistics.fmean([(b - a) / 1e6 for a, b in pairs]))
-    return duration_s(rows_per_camera), rates, durations, ranges
+    return duration_s(rows_per_camera), rates, durations, ranges, _mean_rate(times)
 
 
 def stop_response_fields(csv_paths, *, recording_name, recording_path, frame_count) -> dict:
     """Each field of `StopRecordingResponse`. A `missing` row is left out of each statistic. A value
     with no data is NaN (a float field that JSON gives as null); a fault is logged, never raised."""
     try:
-        duration, rates, durations, ranges = _per_frame(csv_paths)
+        duration, rates, durations, ranges, mean_rate = _per_frame(csv_paths)
     except Exception:  # the stop request must not fail because of its statistics
         logger.exception("the stop statistics of %s could not be computed", recording_name)
-        duration, rates, durations, ranges = None, [], [], []
+        duration, rates, durations, ranges, mean_rate = None, [], [], [], math.nan
     return {
         "recording_name": recording_name,
         "recording_path": str(recording_path),
         "number_of_cameras": len(csv_paths),
         "number_of_frames": frame_count,
         "total_duration_sec": math.nan if duration is None else duration,
-        "mean_framerate": _mean(rates),
+        "mean_framerate": mean_rate,
         "mean_inter_camera_sync_ms": _mean(ranges),
         "framerate_stats": _stats(rates),
         "frame_duration_stats": _stats(durations),

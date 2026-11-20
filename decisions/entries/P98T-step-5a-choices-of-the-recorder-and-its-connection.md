@@ -18,6 +18,8 @@ Ruled by the user:
 - Q03C F-1 to F-10 (R [13](../../specs/recorder.md#13-proposed-format-changes-one-list-for-the-recorder-and-the-player)):
   one change request to skellyfileformat. The user sees its text first. Not sent
   ([open-work.md](../open-work.md)).
+- [ADR-82AA](82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) records items 1 to 3:
+  no stop pauses (YNM2 11, P5VE 4 are stale), P5VE 7 and P5VE 10.
 - P5VE 7: R [8.1](../../specs/recorder.md#81-order-of-the-steps) step 4.
 - P5VE 10: a stop or an exit gives up on a writer after 15 s (`RECORDING_SAVE_LIMIT_S`) with no
   progress since the later of the wait start and the last progress, and logs an error.
@@ -34,9 +36,7 @@ Accepted through the review sheets, by link:
 - QEQ8 12: [T-REC-35](../../skellycam/tests/take_recorder/test_queue_and_writer.py),
   [benchmarks](../../skellycam/tests/take_recorder/test_benchmarks.py),
   [600 kB](../../skellycam/tests/take_recorder/jpeg_tools.py),
-  [T-REC-37](../../skellycam/tests/take_recorder/test_conformance.py); the short T-REC-STALL is two
-  processes, 720p30, 6 s, the stall at frame 30; `SKELLYCAM_BENCH=1` gives 20 + 20 kills. QEQ8 13:
-  item 28, [adapter](../../skellycam/tests/take_recorder/sff_adapter.py). QEQ8 10:
+  [T-REC-37](../../skellycam/tests/take_recorder/test_conformance.py). QEQ8 13: item 28, [adapter](../../skellycam/tests/take_recorder/sff_adapter.py). QEQ8 10:
   [fake disk](../../skellycam/tests/take_recorder/fake_disk.py).
 - P5VE 18: [`check_private_data.py`](../../tools/check_private_data.py) (`ALLOWED_LINES`).
 
@@ -82,8 +82,7 @@ Overturned: P5VE 1 by R
 (P5VE 15) by G6 of [ADR-JK79](JK79-exposure-search-at-each-open-and-camera-requests.md).
 
 Done: YNM2 16 to 18, P5VE 13. P5VE 16: no change (100 ms). Dropped as stale: Q03C
-10, 31 (now C3, M5); YNM2 11, P5VE 4 (the pause at a stop; the third review fix ends it, on its
-own branch).
+10, 31 (now C3, M5); YNM2 11, P5VE 4 (no stop pauses).
 
 ## Reason
 

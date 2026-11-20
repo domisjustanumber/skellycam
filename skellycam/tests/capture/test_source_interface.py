@@ -9,6 +9,7 @@ import threading
 import time
 
 import numpy as np
+import pytest
 
 from skellycam.tests.capture.capture_session import SOURCE_MODULE, product
 from skellycam.tests.capture.fake_source import FakeScript, FakeSource, RealClock, VirtualClock
@@ -95,6 +96,7 @@ def test_t_cap_03_a_put_never_waits_on_the_consumer():
     assert max(durations) < 40e6, f"a put waited {max(durations) / 1e6:.1f} ms: it waited on the consumer"
 
 
+@pytest.mark.capture_timing  # real-time bounds (0.1 s, 2 % of one core)
 def test_t_cap_04_read_frame_times_out_without_spinning():
     """T-CAP-04, sections 4.1 and 4.3 [ring 8.10]: `read_frame(2.0)` with no frame. It returns `None`
     after 2.0 s (+/-0.1 s); the thread uses under 2 % of one core while it waits. Real time."""

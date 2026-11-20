@@ -70,7 +70,8 @@ Accepted through the review sheets, as text:
   write); BM73 5 (T-CAP-46 in a fresh process); BM73 6 (OpenCV fakes on a `VirtualClock`); R60B 2
   (labels by USB IDs; no vendor ID, no test camera); FTC3 1 (a forced clock step is at most 10 ms);
   FTC3 2 (T-CAP-86 joins the clock); FTC3 7 (T-CAP-51 counts labelled real cameras); FTC3 8
-  (T-CAP-60 checks frames / elapsed time).
+  (T-CAP-60 checks frames / elapsed time, as M of [ADR-JMS0](JMS0-review-decisions.md) does for
+  the stop response).
 
 Done: 037V 1 to 6 (the phase 2 loop and its helpers are deleted; its tests moved, retired or
 merged; the English doc changed).

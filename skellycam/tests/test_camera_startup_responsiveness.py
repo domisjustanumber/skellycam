@@ -61,7 +61,7 @@ async def test_the_spawn_of_the_camera_processes_runs_off_the_event_loop(group):
         return await group.start()
 
     task, thread, responsive = await run_while_blocked(group.cameras.start, start)
-    group.ipc.should_continue = False  # the start stops after the spawn: no ring is made
+    group.ipc.running = False  # the start stops after the spawn: no ring is made (the main process reads `running`)
     with pytest.raises(CameraSetupFailedException):
         await task
     assert thread != get_ident() and responsive

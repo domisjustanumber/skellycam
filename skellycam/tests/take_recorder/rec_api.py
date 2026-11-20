@@ -304,6 +304,18 @@ def hand_stop_fields(cameras_rows):
     return rates, durations, ranges
 
 
+def hand_mean_framerate(cameras_rows):
+    """`mean_framerate` of 8.2 by hand (decision M of the user, 2026-11-20): for each camera, the group frames
+    from its first to its last row with a time, divided by the time between them (arrival, s); the mean over
+    the cameras, rounded to 2 decimals. NaN (null) when no camera has two rows with a time."""
+    rates = []
+    for rows in cameras_rows:
+        timed = [(k, t) for k, (t, missing) in enumerate(rows) if not missing and t is not None]
+        if len(timed) >= 2 and timed[-1][1] > timed[0][1]:
+            rates.append((timed[-1][0] - timed[0][0]) / ((timed[-1][1] - timed[0][1]) / 1e9))
+    return round(sum(rates) / len(rates), 2) if rates else float("nan")
+
+
 def tree(root):
     """Each file and folder under `root`, as relative POSIX paths (folders end with `/`)."""
     root = Path(root)

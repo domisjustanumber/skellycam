@@ -803,7 +803,7 @@ def test_t_cap_113_a_frame_that_waits_at_the_gate_is_not_too_slow(monkeypatch):
         assert abs(app.status(changed)["measured_fps"] - 30.0) <= 0.9
 
 
-@pytest.mark.capture_timing  # real time with process workers: rows differ under load (review item 8)
+@pytest.mark.capture_timing  # real time, process workers: rows 100 ms apart at most; load moves them (review item 8)
 def test_a_camera_selected_again_shares_the_gate_with_a_restarted_camera(monkeypatch, tmp_path):
     """Suspected fault NEW-B (coordinator, 2026-11-20), sections 5.2 and 8.3: each camera process gets the
     status table of the group as it was at its own start. Camera A is unselected; camera B is killed and

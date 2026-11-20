@@ -8,7 +8,8 @@ threading.Thread backends. Both provide:
   - Common interface for pid, exitcode, is_alive, join, start, etc.
 
 ManagedProcess additionally:
-  - Installs SIGTERM/SIGINT handlers in child → sets shutdown_flag
+  - Installs a SIGTERM handler in child → sets shutdown_flag; the child ignores SIGINT (Ctrl-C): the main
+    process drives the shutdown, and a running take ends through the take level (ADR-P5VE)
   - Auto child-process logging config (including ws log forwarding)
   - atexit safety net (only fires on unclean exit)
   - Queue feeder thread cancellation so processes exit promptly
@@ -235,7 +236,8 @@ def _process_entry_point(
         shutdown_flag.value = True
 
     signal.signal(signal.SIGTERM, _on_signal)
-    signal.signal(signal.SIGINT, _on_signal)
+    # Ctrl-C reaches each process of the console. The main process stops a running take, then ends the children.
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     if log_queue is not None:
         utf8_console()

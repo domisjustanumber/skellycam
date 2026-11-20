@@ -32,6 +32,9 @@ def add_middleware(app: FastAPI) -> None:
                     f"Status: {response.status_code} - "
                     f"Process time: {process_time:.6f}s"
                 )
+            elif response.status_code < 500:  # an expected refusal: the exception handler logs its one WARNING line
+                logger.api(f"Refused request: {request.method} {request.url} - Status: {response.status_code} - "
+                           f"Process time: {process_time:.6f}s")
             else:
                 # Log failed requests with more details
                 logger.error(
@@ -67,12 +70,9 @@ def add_middleware(app: FastAPI) -> None:
         except Exception:
             body_str = "unable to read"
 
-        logger.error(
-            f"Validation error (422): {request.method} {request.url}\n"
-            f"  Errors: {json.dumps(exc.errors(), indent=2)}\n"
-            f"  Request body: {body_str}",
-            exc_info=True
-        )
+        # An expected refusal: one line with no traceback.
+        logger.warning(f"Validation error (422): {request.method} {request.url} - Errors: "
+                       f"{json.dumps(exc.errors(), default=str)} - Request body: {body_str!r}")
 
         return JSONResponse(
             status_code=422,
@@ -87,11 +87,14 @@ def add_middleware(app: FastAPI) -> None:
         """Handle HTTP exceptions and log details"""
         from fastapi.responses import JSONResponse
 
-        logger.error(
-            f"HTTP {exc.status_code} error: {request.method} {request.url}\n"
-            f"  Detail: {exc.detail}",
-            exc_info=True
-        )
+        if exc.status_code < 500:  # an expected refusal, for example 409 "No recording runs": one line
+            logger.warning(f"HTTP {exc.status_code}: {request.method} {request.url} - Detail: {exc.detail}")
+        else:
+            logger.error(
+                f"HTTP {exc.status_code} error: {request.method} {request.url}\n"
+                f"  Detail: {exc.detail}",
+                exc_info=True
+            )
 
         return JSONResponse(
             status_code=exc.status_code,
