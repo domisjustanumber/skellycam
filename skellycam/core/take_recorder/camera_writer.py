@@ -56,7 +56,35 @@ class CameraTakeWriter:
         self._rows = self._blocks = self._gaps = self._missing = 0
         self._last_real = None
         self._last_frame_number = None
-        self._abandoned = False  # set by `end` when its deadline passed with the writer still busy
+        self._abandoned = False  # set by `end` when the writer made no progress for the stall limit
+        # Progress (D1): the time.monotonic() at which a write call on the MKV or the CSV, or an fsync,
+        # last returned. A call that does not return is no progress: the disk took nothing.
+        self._progress_at = time.monotonic()
+
+    def _progress(self) -> None:
+        self._progress_at = time.monotonic()
+
+    def _wait_with_progress(self, started, attempt) -> bool:
+        """Call `attempt(timeout)` until it returns True. Return False when the writer made no
+        progress for the stall limit, counted from `started` or from its last progress, whichever is
+        later (D1). Each attempt blocks; nothing polls."""
+        while True:
+            remaining = max(started, self._progress_at) + self.spec.stall_limit_s - time.monotonic()
+            if remaining <= 0:
+                return False
+            if attempt(remaining):
+                return True
+
+    def _try_put(self, item, timeout) -> bool:
+        try:
+            self.queue.put(item, timeout=timeout)
+            return True
+        except queue.Full:
+            return False
+
+    def _try_join(self, timeout) -> bool:
+        self._thread.join(timeout)
+        return not self._thread.is_alive()
 
     @classmethod
     def start(cls, spec, *, clock=None):
@@ -68,7 +96,8 @@ class CameraTakeWriter:
         self._held = []  # rows that wait for the first good frame when the spec has no layout (6.4)
         self._layout_warned = self._sof_warned = False
         self._k, self._pending, self._previous_sfn = 0, None, None
-        self._mkv = MkvFile(spec.mkv_path, num=spec.num, den=spec.den, width=spec.width, height=spec.height)
+        self._mkv = MkvFile(spec.mkv_path, num=spec.num, den=spec.den, width=spec.width, height=spec.height,
+                            on_write=self._progress)
         self._csv = None
         try:
             self._csv = open(spec.csv_path, "xb", buffering=0)
@@ -109,28 +138,26 @@ class CameraTakeWriter:
             # A full queue slows capture and never drops a frame (5.2): wait on the queue, no poll.
             started = time.monotonic()
             try:
-                self.queue.put(item, timeout=self.spec.stall_limit_s)
-            except queue.Full:
-                raise RecorderStalled(f"camera {self.spec.camera_id}: the queue stayed full for "
-                                      f"{self.spec.stall_limit_s} s") from None
+                if not self._wait_with_progress(started, lambda timeout: self._try_put(item, timeout)):
+                    raise RecorderStalled(f"camera {self.spec.camera_id}: the writer made no progress for "
+                                          f"{self.spec.stall_limit_s} s")
             finally:
                 self._wait_count += 1
                 self._wait_ms_max = max(self._wait_ms_max, (time.monotonic() - started) * 1000)
         self._high_water = max(self._high_water, self.queue.qsize())
 
     def end(self, frame_count: int) -> CameraTakeResult:
-        """Pad with placeholders to `frame_count`, finish both files. Returns at most the stall limit
-        after the call; a writer that is still busy then gives `error="disk stall"` (4.3) [C6]."""
+        """Pad with placeholders to `frame_count`, finish both files. A writer that still makes
+        progress, however slowly, is left to finish (D1). When it makes no progress for the stall
+        limit, `end` returns with `error="disk stall"` (4.3) [C6]."""
         if not self._started or self._ended:
             raise RuntimeError("end before start or a second end")
         self._ended = True
-        deadline = time.monotonic() + self.spec.stall_limit_s
-        try:
-            self.queue.put(frame_count, timeout=self.spec.stall_limit_s)
-            self._thread.join(max(0.0, deadline - time.monotonic()))
-        except queue.Full:
-            # The non-daemon writer thread must not wait for ever for the marker: it stops after its
-            # current item, so that the process can end. The take level completes the files (7.4).
+        started = time.monotonic()
+        if not (self._wait_with_progress(started, lambda timeout: self._try_put(frame_count, timeout))
+                and self._wait_with_progress(started, self._try_join)):
+            # The non-daemon writer thread must not wait for ever for the marker, and must not finish
+            # files that the take level completes (7.4): it stops after its current item.
             self._abandoned = True
             try:
                 self.queue.put_nowait(frame_count)  # wakes a writer that emptied the queue meanwhile
@@ -242,13 +269,19 @@ class CameraTakeWriter:
             self._last_real = row.frame
         now = self._clock()
         if now - self._last_fsync_ns >= FSYNC_PERIOD_NS:
-            self._mkv.fsync()
-            os.fsync(self._csv.fileno())
+            self._fsync_both()
             self._last_fsync_ns = now
+
+    def _fsync_both(self) -> None:
+        self._mkv.fsync()
+        self._progress()
+        os.fsync(self._csv.fileno())
+        self._progress()
 
     def _write_line(self, line: bytes) -> None:
         if self._csv.write(line) != len(line):
             raise OSError(f"short write of the timing sidecar of camera {self.spec.camera_id}")
+        self._progress()
 
     def _finish(self, frame_count: int) -> None:
         if self._placeholder is None and (self._held or self._k < frame_count):
@@ -271,8 +304,7 @@ class CameraTakeWriter:
                 raise OSError(f"camera {self.spec.camera_id}: the last block is not in the camera file after the close")
             self._write_row(last_cluster + at + len(block))
         self._write_line(sidecar.end_line(self._rows, self._gaps, self._missing))
-        self._mkv.fsync()
-        os.fsync(self._csv.fileno())
+        self._fsync_both()
         self._mkv.raw.close()
         self._csv.close()
         self._closed = True
