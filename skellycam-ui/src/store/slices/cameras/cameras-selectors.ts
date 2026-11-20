@@ -17,7 +17,7 @@ export const selectCameraById = createSelector(
 
 export const selectSelectedCameras = createSelector(
     [selectCameras],
-    (cameras) => cameras.filter(cam => cam.selected)
+    (cameras) => cameras.filter(cam => cam.selected && !cam.deviceInfo.virtual)  // virtual: not supported yet
 );
 
 export const selectConnectedCameras = createSelector(

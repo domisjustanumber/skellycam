@@ -41,7 +41,7 @@ export const cameraSlice = createSlice({
         // ========== Selection ==========
         cameraSelectionToggled: (state, action: PayloadAction<string>) => {
             const camera = state.cameras.find(cam => cam.id === action.payload);
-            if (camera) {
+            if (camera && !camera.deviceInfo.virtual) {  // virtual cameras are not supported yet
                 camera.selected = !camera.selected;
                 camera.desiredConfig.use_this_camera = camera.selected;
             }

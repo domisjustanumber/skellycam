@@ -75,9 +75,8 @@ export const detectCameras = createAsyncThunk<
             const desiredConfig: CameraConfig = existing?.desiredConfig
                 ?? (saved ? { ...defaultConfig, ...saved.desiredConfig } : { ...defaultConfig });
 
-            // A virtual camera (e.g. NDI) starts unticked, also over a stored selection: the server refuses it
-            const selected: boolean = existing?.selected
-                ?? (serverCamera.virtual ? false : saved?.selected ?? true);
+            // A virtual camera (e.g. NDI) is never ticked, also over a stored selection: the server refuses it
+            const selected: boolean = !serverCamera.virtual && (existing?.selected ?? saved?.selected ?? true);
 
             return {
                 id: cameraId,

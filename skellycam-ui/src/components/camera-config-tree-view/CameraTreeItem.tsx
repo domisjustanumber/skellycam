@@ -71,6 +71,7 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({ camera }) => {
 
     return (
         <div className="camera-item-row br-1 flex flex-col gap-1 m-1"
+            style={camera.deviceInfo.virtual ? { opacity: 0.5 } : undefined}
         >
             {/* Row 1 — selection, name, settings */}
             <div className="camera-row-group flex flex-row gap-0 items-center">
@@ -80,6 +81,7 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({ camera }) => {
                         label=""
                         checked={camera.selected}
                         onChange={handleToggleSelection}
+                        disabled={camera.deviceInfo.virtual}
                         inputClassName={isStreaming ? "streaming" : ""}
                     />
                 </div>
@@ -121,6 +123,10 @@ export const CameraTreeItem: React.FC<CameraTreeItemProps> = ({ camera }) => {
                                 <span key={item} className="camera-config-chip">{item}</span>
                             ))}
                         </div>
+                    )}
+
+                    {camera.deviceInfo.virtual && (
+                        <p className="text sm text-gray">Virtual cameras are not supported yet.</p>
                     )}
 
                     {camera.connectionStatus === 'error' && (
