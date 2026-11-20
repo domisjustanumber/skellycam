@@ -22,3 +22,9 @@ take recorder to the shared loop:
   frame numbers.
 - **G.** The 100 ms hang promise (U16) stays as it is and is tested in the hang test of the new
   recorder.
+- **H.** Exposure search (`_recommend` in `skellycam/core/camera/capture/camera_loop.py`, spec
+  `windows-capture.md` 11.1): (1) the brightest value it tries is -5, not -4 (upstream sfn26 has
+  `MAX_MANUAL_EXPOSURE = -5`; -4 gives about 16 fps on the Logitech cameras); (2) after it picks the
+  value whose mean brightness is nearest the target, it goes one step darker (offset -1, clamped to
+  the range), as the old helper `get_recommended_cv2_cap_exposure(offset_from_midrange=-1)` and sfn26
+  do. When the search runs (at open) and the mode names do not change.

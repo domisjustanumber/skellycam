@@ -27,7 +27,6 @@ from skellycam.core.camera.capture.source import (
 from skellycam.core.camera.config.camera_config import CameraConfig
 from skellycam.core.camera.config.image_resolution import ImageResolution
 from skellycam.core.camera.opencv.opencv_helpers.recommend_camera_exposure_setting import (
-    MAX_EXPOSURE,
     MIN_EXPOSURE,
     NUMBER_OF_FRAMES_TO_SETTLE,
     TARGET_BRIGHTNESS,
@@ -64,6 +63,8 @@ STALL_NS = 2_000_000_000  # 9.5, D38
 READY_LIMIT_NS = 15_000_000_000  # 9.3, D21
 CONTROL_READ_INTERVAL_S = 1.0  # 11.4, U16
 JPEG_Q90 = [int(cv2.IMWRITE_JPEG_QUALITY), 90]  # ring 2.3, 8.8
+RECOMMEND_MAX_EXPOSURE = -5  # 11.1, decision H (ADR-JMS0): -4 gives about 16 fps on the Logitech cameras
+RECOMMEND_OFFSET = -1  # 11.1, decision H: one step darker than the nearest value, as the old helper
 
 
 class _Stop(Exception):
@@ -281,9 +282,10 @@ class CameraLoop:
         self.config = self.config.model_copy(update=dict(exposure_mode=mode, exposure=value))
 
     def _recommend(self, deadline: int) -> int:
-        """RECOMMEND (11.1): -12 to -4, 10 frames to settle, the mean of the image nearest to 127.5."""
+        """RECOMMEND (11.1): -12 to -5, 10 frames to settle, the mean of the image nearest to 127.5, then one
+        step darker, in the range."""
         best = None
-        for value in range(MIN_EXPOSURE, MAX_EXPOSURE + 1):
+        for value in range(MIN_EXPOSURE, RECOMMEND_MAX_EXPOSURE + 1):
             set_ns = perf_counter_ns()
             self.source.set_controls({"exposure": ControlSetting(auto=False, value=value)})
             seen, frame = 0, None
@@ -295,7 +297,7 @@ class CameraLoop:
             error = abs(float(np.mean(image)) - TARGET_BRIGHTNESS) if image is not None else float("inf")
             if best is None or error < best[0]:
                 best = (error, value)
-        return best[1]
+        return max(MIN_EXPOSURE, best[1] + RECOMMEND_OFFSET)
 
     def _wait_pass(self) -> None:
         """`waiting` (9.4): keep the stream, take no frame to the rings, join the gate with the others."""
