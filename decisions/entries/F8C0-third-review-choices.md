@@ -15,9 +15,7 @@ L and M of [ADR-JMS0](JMS0-review-decisions.md). It continues
 3. S3: the app state has `recording_in_progress` true until the stop request fetched the stored
    summary of an error end. A failed start does not store a summary.
 4. S7: `start_recording` holds the end lock of the group, as the stop and the error end do.
-5. With no take level (the group stops, or the main process is gone), the first camera that ends
-   sets the last frame two group frames after the latest group frame, at least the first frame, under
-   the lock of that shared value. Each camera ends its writer with that frame count.
+5. Accepted by the user: [ADR-82AA](82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) item 1.
 6. L: the heartbeat writer is the thread `WorkerRegistry-Heartbeat` (once a second, not the event
    loop). It starts with the first worker, so a test registry also beats. A blocked event loop does
    not stop it. Only a C call that holds the GIL for 10 s, or a jump of `time.perf_counter` (for
@@ -32,8 +30,7 @@ L and M of [ADR-JMS0](JMS0-review-decisions.md). It continues
    Linux and macOS (the process group) is not tested.
 9. S8: `abandon` returns the text of a write error; the loop sends it, and the take level ends the
    take with it (recorder.md 5.4).
-10. S11: the stop does not pause the cameras. It sets the last frame two group frames after the
-    largest gate count. The pause cost one source frame of a push source before row N − 2.
+10. S11. Accepted by the user: [ADR-82AA](82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) item 1.
 11. M: `mean_framerate` is, for each camera, the group frames from its first to its last row with an
     arrival time, divided by the time between them; the mean over the cameras, rounded to 2
     decimals; NaN (JSON null) with no camera of two such rows. `framerate_stats` and

@@ -38,6 +38,7 @@ These entries are `accepted`.
 | [J3QP](entries/J3QP-missing-frames-as-black-placeholders-and-the-end-of-a-take.md) | Missing frames as black placeholder blocks on `missing` rows (M1 to M10); recorder rules C1 to C7 (microphone, completion, key, CI, disk stall) | accepted |
 | [Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md) | The user accepted `specs/recorder.md` and its test list (step 5a); the format changes F-1 to F-10 still wait | accepted |
 | [C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) | Recorder decisions D1 to D3: a stall is no writer progress for the limit; 3 s and 10 s stay as starting values; no take on a FAT disk | accepted |
+| [82AA](entries/82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) | The stop sets the last frame with no pause, plus 2, under its lock; a surviving process leaves its files to the repair step; the stuck-writer limit is 15 s | accepted |
 | [JMS0](entries/JMS0-review-decisions.md) | Connection review: frame count, error end, start wait, failed start, stall watch, gap detail, hang rule, exposure, allow-lists, dead server, summary rate | accepted |
 
 ### Evidence

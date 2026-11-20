@@ -18,8 +18,7 @@ the choices of the third review.
 3. `CameraGroup.take_error` keeps the first error of a take: the text of the camera message, the
    `error` of a result ("disk stall" gives "disk stall on camera `<id>`"), or "disk stall on camera
    `<id>`" for a camera with no result past the limit of recorder.md 5.3 item 4. `finish` gets it.
-4. A stop whose pause times out or fails ends the take as after an error, with no pause. It does not
-   stop the group. It clears the pause flags first.
+4. (Gone: the stop does not pause the cameras, [ADR-82AA](82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) item 1.)
 5. `stop_recording` holds the end lock while it reads the take. The error end sets `ended_take`
    under the same lock. An exception of the error end is logged from its future.
 6. `CameraTakeWriter.abandon` writes each queued item and the row of the last block, closes both files
@@ -28,19 +27,19 @@ the choices of the third review.
    join (recorder.md 4.3, 7.4). When the group does not run, see F8C0 item 5.
 7. A stuck camera whose process runs after `terminate` and the join gets `kill`. When it runs after
    that, `Take.finish` gets it in `running_cameras` and does not complete its files. The manifest
-   stays `recording`, with null summary values and a `take_error` that names the camera.
+   stays `recording`, with null summary values and a `take_error` that names the camera. Accepted by the user: [ADR-82AA](82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) item 2.
 8. A camera writer that cannot start keeps its camera running, with the text "camera `<id>`: the take
    writer did not start: `<error>`" in its status info (`writer_failure`). The record start waits
    until each camera started its writer or failed, then fails with HTTP 500 and that text. The folder
    of D gets `take_error` "the record start failed: `<text>`". Before `finish`, the failed start waits
    for each camera with a writer or in the gate (its result or its refusal), and it unpauses with no
    wait. A camera that gets its take spec when the first frame is −1 or a last frame is set refuses
-   it. A stop whose unpause fails logs it and ends the take.
+   it.
 9. The `detail` of `camera_gap` is `row=<k> from=<a> to=<b>`, for the first gap row k of the camera;
    a and b are the source frame numbers of rows k − 1 and k. SFF-727 allows a text for people.
 10. `wait_for_recording_save` ends after 15 s (`RECORDING_SAVE_LIMIT_S`) with no progress of the
     camera writer (`CameraStatus.writer_progress_at`), counted from the later of the start of the wait
-    and the last progress [C6DE D1]: the stall limit (10 s) plus the margin of recorder.md 5.3 item 4.
+    and the last progress [C6DE D1]: the stall limit (10 s) plus the margin of recorder.md 5.3 item 4. Accepted by the user: [ADR-82AA](82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) item 3.
 11. Tests: in THREAD mode, a held writer thread ends as a killed process ends when its camera's stop
     flag is set. The OpenCV fake has `fail_until_ns` on the virtual clock. The take start of a THREAD
     test reads the virtual clock.
