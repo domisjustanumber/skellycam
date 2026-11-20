@@ -39,7 +39,9 @@ export const startRecording = createAsyncThunk<
         });
 
         if (!response.ok) {
-            throw new Error(`Failed to start recording: ${response.statusText}`);
+            // the server gives the reason in `detail` (for example the 422 for a microphone)
+            const detail = await response.json().then((b) => b?.detail, () => null);
+            throw new Error(`Failed to start recording: ${typeof detail === 'string' ? detail : response.statusText}`);
         }
     }
 );

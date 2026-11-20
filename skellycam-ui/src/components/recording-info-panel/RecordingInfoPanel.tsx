@@ -40,6 +40,7 @@ export const RecordingInfoPanel: React.FC = () => {
     const [recordingTag, setRecordingTag] = useState<string>("");
     const [micDeviceIndex, setMicDeviceIndex] = useState<number>(-1);
     const [micFetchTrigger, setMicFetchTrigger] = useState<number>(0);
+    const [startError, setStartError] = useState<string | null>(null);
     const [pathModalOpen, setPathModalOpen] = useState<boolean>(false);
 
     const {isElectron, api} = useElectronIPC();
@@ -112,10 +113,13 @@ export const RecordingInfoPanel: React.FC = () => {
             : recordingInfo.recordingDirectory;
         if (useIncrement) setCurrentIncrement((prev) => prev + 1);
         setPendingOperation({ type: 'start', timestamp: Date.now() });
+        setStartError(null);
         try {
             await dispatch(startRecording({ recordingName, recordingDirectory: recordingPath, micDeviceIndex })).unwrap();
         } catch (error) {
             console.error("Failed to start recording:", error);
+            // unwrap() rejects with a serialized error, not an Error instance
+            setStartError((error as { message?: string })?.message ?? String(error));
             setPendingOperation(null);
             throw error;
         }
@@ -218,14 +222,16 @@ export const RecordingInfoPanel: React.FC = () => {
                     onClick={handleRecordButtonClick}
                 />
             </div>
-                    
-            {/* Microphone */}
+            {startError && <p className="text sm text-error">{startError}</p>}
+
+            {/* Microphone: the new recorder refuses a microphone until step 5b */}
             <MicrophoneSelector
                 selectedMicIndex={micDeviceIndex}
                 onMicSelected={setMicDeviceIndex}
-                disabled={recordingInfo.isRecording}
+                disabled={true}
                 fetchTrigger={micFetchTrigger}
             />
+            <p className="text sm text-gray">Audio comes in step 5b.</p>
         </div>
         
      </div>
