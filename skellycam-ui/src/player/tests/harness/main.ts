@@ -41,7 +41,9 @@ function openWindow(name = firstPage): number {
     });
     // a never-shown window paints about once a second once a canvas draws: show it transparent, inactive
     // and click-through instead, so hidden runs behave as shown runs
-    if (process.env.PLAYER_HARNESS_SHOW !== '1') {
+    // Linux runs under xvfb, which shows nothing, and has no window opacity: show the window as it is
+    if (process.platform === 'linux') win.show();
+    else if (process.env.PLAYER_HARNESS_SHOW !== '1') {
         win.setOpacity(0);
         win.setIgnoreMouseEvents(true);
         win.showInactive();

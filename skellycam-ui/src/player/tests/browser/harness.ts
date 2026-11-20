@@ -33,8 +33,19 @@ export async function launch(recordings: string, picked: string, pageName: 'harn
     const app = await _electron.launch({args: [HARNESS_MAIN, '--no-sandbox'], env});
     const page = await app.firstWindow();
     await page.waitForFunction(name => name in window, pageName);
+    console.log(`harness ${pageName} window at start: requestAnimationFrame ${await rafRate(page)}/s`);
     return {app, page};
 }
+
+/** The display refreshes per second of the page over 0.5 s (at most 2 s): a slow window makes clicks time out. */
+export const rafRate = (page: Page) => page.evaluate(() => new Promise<number>(resolve => {
+    let n = 0;
+    const t0 = performance.now();
+    const rate = () => resolve(Math.round(n / ((performance.now() - t0) / 1000)));
+    const step = () => (performance.now() - t0 < 500 ? (n++, requestAnimationFrame(step)) : rate());
+    setTimeout(rate, 2000);
+    requestAnimationFrame(step);
+})).catch(() => -1);
 
 export function harnessTest(pageName: 'harness' | 'host') {
     return base.extend<{harness: Harness}>({
@@ -64,6 +75,7 @@ export function harnessTest(pageName: 'harness' | 'host') {
             try {
                 await use(h);
             } finally {
+                console.log(`harness ${pageName} window at the end: requestAnimationFrame ${await rafRate(page)}/s`);
                 await app.close();
                 rmSync(root, {recursive: true, force: true});
             }
