@@ -122,9 +122,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
     [ADR-FTC3](entries/FTC3-fixes-of-the-second-capture-ci-run-and-the-first-hardware-run.md). The
     next run must show T-CAP-86 and T-CAP-108 pass, and the place of the T-CAP-85 gap on macOS. The
     macOS job also runs the portable ring tests.
-  - A fault that no entry fixes yet: after a hang and a record stop, the close of the group gives
-    "Record requested before video_recorder was created" in the other camera (T-CAP-85, case 2, on
-    macOS CI and on Windows).
   - The start method on Linux: Python 3.13 forks the camera processes from the main process, which
     has threads (the server and the watch of each group). The product does not mix contexts. Spawn
     on each system is a decision of the user
@@ -133,12 +130,6 @@ task. Delete an item when its work is done. The PR that closes an item records t
     T-CAP-98.
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
     (14 tests with no counterpart yet).
-- **Phase 5: remove three interim rules of phase 3.** The new recorder of phase 5 must remove the three
-  interim rules of [ADR-QKX1](entries/QKX1-answers-of-the-user-to-the-phase-3-spec-questions.md):
-  U4 (a recording with a dead camera: timing files of unequal length, multi-frame rows with the live
-  cameras), U5 (a flagged frame gives the old recorder the last good image again) and U12 (on a hang
-  during a recording, finish the files for at most 5 s, then end hard). The files of the new recorder
-  survive a hard stop. The user: U4 and U5 "must change back once we have the new recorder".
 - **Support virtual cameras.** Detection shows a virtual camera with `virtual=True`, and a request
   that names it gets HTTP 422
   ([ADR-PDD3](entries/PDD3-decisions-of-the-user-on-items-65-to-78-and-the-3a-review.md) W5,
@@ -162,6 +153,8 @@ task. Delete an item when its work is done. The PR that closes an item records t
   Run the benchmarks with `SKELLYCAM_BENCH=1` and
   `SKELLYCAM_BENCH_OUT` set to a folder outside the repository. The merged list of proposed skellyfileformat changes
   F-1 to F-10 for the recorder and the player (section 13) still waits for the user (R6).
-  Branch `dom/recorder`. The
-  connection to the shared loop waits for step 3a. Section 14 lists the edits of
-  `specs/windows-capture.md` that the connection needs.
+  Done: the connection to the shared loop and the edits of section 14 of the spec in
+  `specs/windows-capture.md`; U4, U5 and U12 are removed
+  ([ADR-YNM2](entries/YNM2-connection-of-the-take-recorder-to-the-shared-loop.md), which the user
+  decides). Next: the first hardware run of the new recorder (a take with three cameras; an ended
+  camera process in place of an unplug), and the take in the new player and in Blender.
