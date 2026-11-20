@@ -59,7 +59,8 @@ def test_a_requested_shutdown_is_logged_at_info(caplog):
     from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
 
     registry = WorkerRegistry(global_kill_flag=multiprocessing.Value("b", True), worker_mode=WorkerMode.THREAD)
-    with caplog.at_level(logging.DEBUG),             patch("skellycam.core.ipc.process_management.worker_registry.os.kill") as terminate_server:
+    kill = "skellycam.core.ipc.process_management.worker_registry.os.kill"
+    with caplog.at_level(logging.DEBUG), patch(kill) as terminate_server:
         registry.start_heartbeat()
         try:
             deadline = time.monotonic() + 5

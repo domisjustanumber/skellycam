@@ -298,7 +298,9 @@ def test_t_cap_41_recommend_offset_and_range(monkeypatch, scene):
     """T-CAP-41, section 11.1, decision H of the user (2026-11-20): in a dark scene the nearest value is the
     brightest that the search tries, -5 (never -4), and the result is -6; in a bright scene the nearest
     value is -12, and the step darker stays in the range: -12."""
-    brightness = tuple((v, 2 * (v + 13)) for v in range(-12, -3)) if scene == "dark" else         tuple((v, 130 + 15 * (v + 12)) for v in range(-12, -3))
+    dark = tuple((v, 2 * (v + 13)) for v in range(-12, -3))
+    bright = tuple((v, 130 + 15 * (v + 12)) for v in range(-12, -3))
+    brightness = dark if scene == "dark" else bright
     with capture_app(monkeypatch, [FakeScript(brightness=brightness)]) as app:
         camera_id = app.factory.camera_ids[0]
         response = ready_app_steps(app, [app.config(camera_id, exposure_mode="RECOMMEND", exposure=-7)])

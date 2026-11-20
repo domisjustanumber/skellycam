@@ -68,6 +68,7 @@ def _colliding_links():
 MODES_720 = ((1280, 720, 30, 1, "MJPG"),)
 
 
+@pytest.mark.capture_timing  # a spawned detection child must answer within the 5 s limit; slow under load
 @WINDOWS_ONLY
 def test_t_cap_23_detection_refuses_two_links_with_one_camera_id():
     """T-CAP-23, section 7.1 [D13]: a detection result with two links that give the same `camera_id`.
@@ -80,6 +81,7 @@ def test_t_cap_23_detection_refuses_two_links_with_one_camera_id():
     assert first in str(error.value) and second in str(error.value)
 
 
+@pytest.mark.capture_timing  # a spawned detection child must answer within the 5 s limit; slow under load
 @WINDOWS_ONLY
 def test_t_cap_24_camera_id_hashes_the_lower_case_link():
     """T-CAP-24, section 7.2 [D11, agent 13]: hash known Media Foundation links in mixed case.
@@ -96,6 +98,7 @@ def test_t_cap_24_camera_id_hashes_the_lower_case_link():
         assert info.index == links.index(link)
 
 
+@pytest.mark.capture_timing  # a spawned detection child must answer within the 5 s limit; slow under load
 @WINDOWS_ONLY
 def test_t_cap_48_a_hung_device_does_not_block_detection():
     """T-CAP-48, sections 6.6 and 7.1 [D10, agent 17]: detection with a fake enumeration that hangs for
@@ -125,6 +128,7 @@ def test_t_cap_48_a_hung_device_does_not_block_detection():
     assert product(MODES_MODULE).rates_equal(30.0, 30.0), "the main process keeps running"
 
 
+@pytest.mark.capture_timing  # a spawned detection child must answer within the 5 s limit; slow under load
 @WINDOWS_ONLY
 def test_detection_marks_a_camera_under_a_software_device_root_virtual():
     """Section 7.1 [ADR-PDD3 W5], first hardware run of 3a: a software camera with no "virtual" in its

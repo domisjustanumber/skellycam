@@ -182,6 +182,7 @@ def test_t_cap_109_a_camera_process_that_ends_without_unwinding(monkeypatch, tmp
     assert [len(take_rows(tmp_path, cid)) for cid in (ended, other)] == [frame_count, frame_count]
 
 
+@pytest.mark.capture_timing  # 200 rows in 10 s of real time
 def test_t_cap_110_files_after_a_hang(monkeypatch, tmp_path):
     """T-CAP-110, section 6.6 [ADR-PDD3], changed by step 5a [R4, M5, M8]: during a recording of 10 s, the
     control read of one fake hangs; its process ends at once. After the stop, the take level completed its
