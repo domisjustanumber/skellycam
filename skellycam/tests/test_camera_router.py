@@ -57,8 +57,9 @@ class TestCameraGroupApply:
         mock_group = MagicMock()
         mock_group.id = "group-0"
         mock_group.configs = {DEFAULT_CAMERA_ID: CameraConfig()}
+        # spec 8.4 and 11.3: the group, the failure of each camera and the warnings
         mock_camera_group_manager.create_or_update_camera_group = AsyncMock(
-            return_value=mock_group
+            return_value=(mock_group, {}, [])
         )
 
         response = client.post(
@@ -69,6 +70,7 @@ class TestCameraGroupApply:
         data = response.json()
         assert data["group_id"] == "group-0"
         assert DEFAULT_CAMERA_ID in data["camera_configs"]
+        assert data["camera_failures"] == {} and data["warnings"] == []
 
     def test_apply_error(self, client, mock_camera_group_manager):
         """POST /skellycam/camera/group/apply returns 500 on error."""
@@ -84,13 +86,14 @@ class TestCameraGroupApply:
 
 class TestRecording:
     def test_start_recording(self, client, mock_camera_group_manager):
-        """POST /skellycam/camera/group/all/record/start returns true."""
+        """POST /skellycam/camera/group/all/record/start returns `started` and the warnings (spec 11.3)."""
+        mock_camera_group_manager.start_recording_all_groups = AsyncMock(return_value=[])
         response = client.post(
             "/skellycam/camera/group/all/record/start",
             json={},
         )
         assert response.status_code == 200
-        assert response.json() is True
+        assert response.json() == {"started": True, "warnings": []}
 
     def test_stop_recording(self, client, mock_camera_group_manager):
         """GET /skellycam/camera/group/all/record/stop returns list of StopRecordingResponse."""

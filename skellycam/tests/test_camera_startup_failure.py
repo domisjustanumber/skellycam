@@ -45,8 +45,9 @@ def ipc():
 
 
 def _worker_reports_failure(ipc):
-    ipc.report_setup_failure(CameraSetupFailure('1622', 'opening camera', 'FailedToOpenCameraException', 'access denied'))
-    ipc.report_setup_failure(CameraSetupFailure('sibling', 'shared memory', 'RuntimeError', 'group stopped'))
+    # spec 12: camera_id, stage, reason; the reason of an exception is `{type}: {message}`
+    ipc.report_setup_failure(CameraSetupFailure('1622', 'opening camera', 'FailedToOpenCameraException: access denied'))
+    ipc.report_setup_failure(CameraSetupFailure('sibling', 'shared memory', 'RuntimeError: group stopped'))
 
 
 def test_spawned_worker_failure_survives_shutdown(ipc):
@@ -138,9 +139,10 @@ def test_exhausted_open_retries_report_device_backend_and_release_capture():
 
 
 def test_verbose_failure_is_bounded_and_does_not_block_shutdown(ipc):
-    ipc.report_setup_failure(CameraSetupFailure('1622', 'opening camera', 'RuntimeError', '💀' * 100000))
+    ipc.report_setup_failure(CameraSetupFailure('1622', 'opening camera', 'RuntimeError: ' + '💀' * 100000))
     failure = ipc.take_setup_failure()
     assert failure.camera_id == '1622'
-    assert len(failure.message) == 512
-    assert not ipc.should_continue
+    assert failure.reason.startswith('RuntimeError: ') and len(failure.reason.encode('utf-8')) <= 2048
+    # spec 12, D23: a start failure does not set the shutdown flag; the other cameras stay open
+    assert not ipc.shutdown_camera_group_flag.value
     assert not ipc.global_kill_flag.value
