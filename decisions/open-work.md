@@ -114,8 +114,15 @@ task. Delete an item when its work is done. The PR that closes an item records t
   - Run the fake-source tests with
     `uv run pytest skellycam/tests/capture -m "not camera_hardware and not capture_local"`. The
     hardware tests run only with `SKELLYCAM_HARDWARE=1`. The workflow
-    `.github/workflows/capture.yml` (section 15: Windows, Linux and macOS) has not run yet. The macOS
-    job also runs the portable ring tests.
+    `.github/workflows/capture.yml` (section 15: Windows, Linux and macOS) ran one time, on
+    d8989972d. Its failures and their fixes are in
+    [ADR-BM73](entries/BM73-fixes-of-the-first-ci-run-of-the-capture-workflow.md), which the user
+    decides. The next run must show the fixes on Linux and macOS. The macOS job also runs the
+    portable ring tests.
+  - The start method on Linux: Python 3.13 forks the camera processes from the main process, which
+    has threads (the server and the watch of each group). The product does not mix contexts. Spawn
+    on each system is a decision of the user
+    ([ADR-BM73](entries/BM73-fixes-of-the-first-ci-run-of-the-capture-workflow.md), F3).
   - Phase 0 (the user, through the certify suite): the Linux and macOS hardware tests T-CAP-92 to
     T-CAP-98.
   - Phase 7: the parity table of section 16.7 of the spec is the to-do list for Linux and macOS
