@@ -836,9 +836,12 @@ A frame with no bit of the error mask 0x0F gives one block and one row. `flags` 
 
 ### 8.1 Order of the steps
 
-1. The stop request (or the error of 5.3 or 5.4) sets the last frame of the take in the orchestrator,
-   as today (`last_recording_frame_number`). Each live camera records to that frame. Each dead camera
-   gives placeholders to that frame (7.3).
+1. The stop request (or the error of 5.3 or 5.4) sets the last frame of the take in the orchestrator
+   (`last_recording_frame_number`). Each live camera records to that frame. Each dead camera gives
+   placeholders to that frame (7.3). Changed on 2026-11-20 ([ADR-F8C0](../decisions/entries/F8C0-third-review-choices.md)): the stop does not pause the cameras.
+   The last frame is the largest gate count plus 2 (the gate lets a camera hold one frame more than the
+   largest count), and at least the first frame. Before, the stop paused the cameras, and a push source
+   lost the frames of the pause before row N − 2 (a `gap`).
 2. The main process tells each camera to end, with the frame count of the take (7.6).
 3. Each camera process calls `end(frame_count)` and sends its `CameraTakeResult` (4.3).
 4. The main process waits for each camera while its writer makes progress, and at most the stall
@@ -879,9 +882,9 @@ finished [SFF-724].
 | `number_of_cameras` | `group_size`. |
 | `number_of_frames` | The frame count of the take (7.6). |
 | `total_duration_sec` | `duration_s` of the manifest summary [SFF-728, F-1]. |
-| `mean_framerate` | The mean of the frame rate of each group frame k ≥ 1. The rate of frame k is the mean over the cameras of 1 / (`arrival_ns`(k) − `arrival_ns`(k − 1)) in s, for each camera with neither row `missing`. Rounded to 2 decimals, as today. |
+| `mean_framerate` | Frames divided by the elapsed time (M of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), changed on 2026-11-20): for each camera, the group frames from its first to its last row that is not `missing`, divided by the time between their `arrival_ns`, in s; the mean over the cameras. Rounded to 2 decimals. Null (NaN) when no camera has two such rows. Before, the mean of a rate for each frame: two frames 1 ms apart counted as 1000 fps. |
 | `mean_inter_camera_sync_ms` | The mean of the range of frame k: the largest minus the smallest `arrival_ns` of the cameras whose row is not `missing`, in ms. Rounded to 2 decimals. |
-| `framerate_stats` | Median, mean, standard deviation, min and max of the rates of `mean_framerate`. |
+| `framerate_stats` | Median, mean, standard deviation, min and max of the rate of each group frame k ≥ 1: the mean over the cameras of 1 / (`arrival_ns`(k) − `arrival_ns`(k − 1)) in s, for each camera with neither row `missing` ([ADR-F8C0](../decisions/entries/F8C0-third-review-choices.md) item 11). |
 | `frame_duration_stats` | The same of the mean frame duration of each frame k ≥ 1, in ms. |
 | `inter_camera_grab_range_ms_stats` | The same of the ranges of `mean_inter_camera_sync_ms`. |
 
@@ -935,6 +938,19 @@ measures it (section 11).
 At its next start, the app does nothing with an unfinished take. It does not scan for unfinished
 takes, it does not ask the question of SFF-793, and it changes no file. The manifest state
 `recording` marks the take [SFF-724]. Step 5c adds the scan, the question and the repair [R1].
+
+Added on 2026-11-20 (L of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), [ADR-P5VE](../decisions/entries/P5VE-review-fix-choices.md)):
+
+- An ordinary exit of the app (the shutdown endpoint, the end of the server, Ctrl-C) stops a running
+  take through the take level (8.1) and closes the camera groups before it sets the kill flag. The
+  manifest is then `finished`. A camera process ignores Ctrl-C: the main process drives the exit.
+- The main process writes a heartbeat once a second from a thread of its own. A camera process that
+  sees no heartbeat for 10 s (`HEARTBEAT_TIMEOUT_SECONDS`) takes the main process as dead: the camera
+  processes notice a dead server after 10 seconds, not 300. They then finish their files and release
+  the cameras. With no take level, the first camera that ends sets the last frame of the take two
+  group frames after the latest group frame (the gate lets one camera be one frame ahead). Each camera
+  then ends its writer with that frame count: its pair has placeholders to that frame (7.3), the
+  `# end` line, and the same rows as each other pair. The manifest stays `recording` (step 5c).
 
 ## 10. Connection to the shared loop (after step 3a)
 

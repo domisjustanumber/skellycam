@@ -998,6 +998,10 @@ the recording info JSON of phase 3 is no longer written [R5].)
   | `close` | a hung close step |
   | `recording` | the writer of the recorder stuck past its limit (disk stall) [C6] |
 
+- A camera process also ends when the main process writes no heartbeat for 10 s (L of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), added on
+  2026-11-20). This is not a camera failure: the camera gets no failure object. It finishes a running
+  take as [`recorder.md`](recorder.md) section 9 says, releases the camera and ends.
+
 - "In use by another program" is the text of D13. The text of 10.4 follows D25. The texts "camera not
   found", "not ready in 15 s", "device removed", "no frame for 2 s", "end of stream" and the control
   error of 11.5
