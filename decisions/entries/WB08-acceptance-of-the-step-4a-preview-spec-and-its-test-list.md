@@ -1,6 +1,10 @@
 # WB08 — Acceptance of the step 4a preview spec and its test list
 
-**Status:** accepted, 2026-11-19 (user).
+**Status:** absorbed into
+[`specs/preview.md#phase-4-preview-specification-the-per-camera-websocket-message-and-its-sender-4a`](../../specs/preview.md#phase-4-preview-specification-the-per-camera-websocket-message-and-its-sender-4a),
+[`specs/preview.md#91-kinds-and-helpers`](../../specs/preview.md#91-kinds-and-helpers),
+[`specs/preview.md#92-test-list`](../../specs/preview.md#92-test-list),
+2026-11-20 (commit to dom/integration; was accepted, 2026-11-19 (user)).
 
 ## Decision
 

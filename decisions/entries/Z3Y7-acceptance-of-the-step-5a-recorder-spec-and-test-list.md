@@ -1,7 +1,12 @@
 # Z3Y7 — Acceptance of the step 5a recorder spec and its test list
 
-**Status:** accepted, 2026-11-20 (user; relayed to the agent that writes the failing tests; commit to
-dom/recorder).
+**Status:** absorbed into
+[`specs/recorder.md#phase-5-step-5a-specification-the-new-video-recorder`](../../specs/recorder.md#phase-5-step-5a-specification-the-new-video-recorder),
+[`specs/recorder.md#2-done-list`](../../specs/recorder.md#2-done-list),
+[`specs/recorder.md#13-proposed-format-changes-one-list-for-the-recorder-and-the-player`](../../specs/recorder.md#13-proposed-format-changes-one-list-for-the-recorder-and-the-player),
+[`specs/recorder.md#16-choices-of-the-agent`](../../specs/recorder.md#16-choices-of-the-agent),
+2026-11-20 (commit to dom/integration; was accepted, 2026-11-20 (user; relayed to the agent that
+writes the failing tests; commit to dom/recorder)).
 
 ## Decision
 
