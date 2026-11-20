@@ -419,12 +419,15 @@ records only the decisions that change the plan.
   which the frame rate falls, and reports "Add light" when no value is bright enough. The exposure does
   not change during a take.
 - **Frame rate.** One frame rate control for all cameras, at the top of the camera list.
-- **New stage: cameras free-run, pairing by time.** Today each camera waits for the others (lockstep).
+- **Possible future work (parked by the user on 2026-11-20): cameras free-run, pairing by time.** Today each camera waits for the others (lockstep).
   That causes three problems: a camera cannot be added to a running group, the frames of one group frame
   arrive about 36 ms apart, and about 0.2 % of the frames are replaced. The stage starts as a study: the
   design, the changes to the recording format, the player and the ring readers, and a camera run that logs
-  each frame with its times. No product code before the user accepts its spec. Place: after the `sfn26`
-  merge, step 3b and audio (5b); before the player switch-over (6b, 6c) and before freemocap is joined.
+  each frame with its times. No product code before the user accepts its spec. The user parked the whole
+  stage: more pressing work comes first. The first log run is done
+  (`research/usb_cameras/docs/free_run_log_20261120.md`): by arrival time, the amendment of the pairing
+  rule already reaches the best possible spread (15 ms median); the camera clocks disagree by one frame for
+  the Kiyo Pro, so an LED or moving-board test must come before any design. That test is parked too.
 - **Withdrawn until that stage:** the proposal to add a camera to a running group with spare status slots,
   and the camera trial of the pairing rule amendment. Until then, a new camera restarts the group, as
   `sfn26` does.
