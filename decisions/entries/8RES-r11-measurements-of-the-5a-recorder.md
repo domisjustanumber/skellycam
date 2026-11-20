@@ -40,6 +40,12 @@ What the results show for the two limits that the user must fix (R11):
 - The once-per-second fsync of SFF-788 did not delay capture (lateness p99 below 1 ms in all runs).
 - The writer thread did not delay a capture loop in the same process (T-REC-GIL).
 
+The user decided on 2026-11-20 ([ADR-C6DE](C6DE-stall-as-no-progress-limits-and-no-fat-disk.md)
+D2): the queue of 3 s and the stall limit of 10 s stay as starting values that the user chose. The
+data supports 3 s on one NVMe drive only. Nothing measured here can choose the 10 s. A slow disk
+(USB, spinning) is still to be measured on the hardware of the user. Since D1 of the same entry, the
+stall limit counts the time with no progress of the writer, not the time of one wait.
+
 Limits of the method (some found by an independent review on 2026-11-20):
 
 - The injected stall sleeps inside the MKV writes of one camera only. A real slow disk stalls all
