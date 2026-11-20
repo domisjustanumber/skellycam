@@ -40,6 +40,7 @@ These entries are `accepted`.
 | [C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) | Recorder decisions D1 to D3: a stall is no writer progress for the limit; 3 s and 10 s stay as starting values; no take on a FAT disk | accepted |
 | [JMS0](entries/JMS0-review-decisions.md) | Connection review decisions | accepted |
 | [22EJ](entries/22EJ-decisions-of-the-user-for-linux-and-macos-native-capture.md) | Linux and macOS native capture: certify validates it; own OS folders; test parity; SkellyCam Auto only; restore at close; checked per model | accepted |
+| [SC3Y](entries/SC3Y-later-rulings-of-the-user-for-native-capture-on-linux-and-macos.md) | Later native capture rulings: widest macOS control route; named checks turn native on; restore may re-enable auto; spec owners | accepted |
 
 ### Evidence
 
