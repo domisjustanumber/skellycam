@@ -114,7 +114,7 @@ class WorkerRegistry:
             if self._global_kill_flag.value:
                 for worker in self._workers:
                     worker.wait_for_recording_save()
-                logger.error(
+                logger.info(  # a requested shutdown, not a fault
                     "global_kill_flag is set (no worker death detected) — "
                     "triggering parent shutdown"
                 )

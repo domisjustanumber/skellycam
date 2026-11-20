@@ -32,9 +32,9 @@ def add_middleware(app: FastAPI) -> None:
                     f"Status: {response.status_code} - "
                     f"Process time: {process_time:.6f}s"
                 )
-            elif response.status_code < 500:  # an expected refusal: one line
-                logger.warning(f"Refused request: {request.method} {request.url} - Status: {response.status_code} - "
-                               f"Process time: {process_time:.6f}s")
+            elif response.status_code < 500:  # an expected refusal: the exception handler logs its one WARNING line
+                logger.api(f"Refused request: {request.method} {request.url} - Status: {response.status_code} - "
+                           f"Process time: {process_time:.6f}s")
             else:
                 # Log failed requests with more details
                 logger.error(

@@ -38,10 +38,35 @@ def test_a_refusal_is_one_warning_line_with_no_traceback(client, caplog):
     records = records_of(caplog)
     assert [r for r in records if r.levelno >= logging.ERROR] == []
     assert all(r.exc_info is None and "\n" not in r.getMessage() for r in records if r.levelno >= logging.WARNING)
-    assert any(r.levelno == logging.WARNING and "No recording runs" in r.getMessage() for r in records)
+    warnings = [r for r in records if r.levelno == logging.WARNING]
+    assert len(warnings) == 1 and "No recording runs" in warnings[0].getMessage(), [r.getMessage() for r in warnings]
 
 
 def test_a_server_error_stays_an_error_with_its_traceback(client, caplog):
     with caplog.at_level(logging.DEBUG):
         assert client.get("/broken").status_code == 500
     assert any(r.levelno == logging.ERROR and r.exc_info for r in records_of(caplog))
+
+
+def test_a_requested_shutdown_is_logged_at_info(caplog):
+    """Round 4, item 5: the child monitor logs a requested shutdown (the global kill flag, no worker death) at
+    INFO, not ERROR."""
+    import multiprocessing
+    import time
+    from unittest.mock import patch
+
+    from skellycam.core.ipc.process_management.managed_worker import WorkerMode
+    from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
+
+    registry = WorkerRegistry(global_kill_flag=multiprocessing.Value("b", True), worker_mode=WorkerMode.THREAD)
+    with caplog.at_level(logging.DEBUG),             patch("skellycam.core.ipc.process_management.worker_registry.os.kill") as terminate_server:
+        registry.start_heartbeat()
+        try:
+            deadline = time.monotonic() + 5
+            while not terminate_server.called and time.monotonic() < deadline:
+                time.sleep(0.01)
+        finally:
+            registry.shutdown_all()
+    assert terminate_server.called
+    lines = [r for r in caplog.records if "global_kill_flag is set" in r.getMessage()]
+    assert lines and all(r.levelno == logging.INFO for r in lines), [(r.levelname, r.getMessage()) for r in lines]
