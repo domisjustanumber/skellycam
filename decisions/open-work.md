@@ -127,8 +127,12 @@ task. Delete an item when its work is done. The PR that closes an item records t
     `npm run test:player:browser` in `skellycam-ui/`. The benchmarks T-PLAY-65 to T-PLAY-70 run by
     hand with `playwright.player-bench.config.ts`. The TypeScript names that the tests assume wait for
     the user ([ADR-4MJ4](entries/4MJ4-typescript-names-of-the-player-as-the-6a-tests-assume-them.md)).
-  - The `xvfb` version of `.github/workflows/player.yml` is not verified. No test ran on Node 26.13.1.
-  - Next, after the review of the tests: the product code of 6a.
+  - The `xvfb` version of `.github/workflows/player.yml` is not verified. The unit tests ran on Node
+    26.13.1 on the Windows test machine only.
+  - The product code of 6a is on `dom/player` (2026-11-20). Its corrections and choices wait for the
+    user ([ADR-1ACK](entries/1ACK-corrections-and-choices-of-the-6a-player-code.md)). Some tests
+    still fail; the report of the code lists each one. The recorder spec needs one sentence for a
+    `camera_dead` detail that does not parse (item 4 of ADR-1ACK).
 - **The full reader result and the conformance run of the JavaScript reader.** They come with step 6c
   (L2 of [ADR-4HNY](entries/4HNY-missing-frames-m1-to-m10-and-player-decisions-l1-to-l8.md)).
 - **Option B for the take files of the player (not part of 6a).** Review how the Python server can
