@@ -255,6 +255,18 @@ def test_t_cap_31_too_slow_after_a_live_change(monkeypatch, tmp_path):
         app.wait_state(camera_id, "ready")
 
 
+def test_measured_fps_after_too_slow_is_the_rate_of_the_check(monkeypatch):
+    """Sections 8.4 and 10.2, first hardware run of 3a: after a live change, the fake goes to 20 fps, and the
+    early decision gives `too_slow`. `measured_fps` is then the rate of the check (the delivered frames of
+    the window over its time up to the decision), not the 30 fps of the earlier check."""
+    with one_camera(monkeypatch, FakeScript(rate_after_change=(20.0,))) as (app, camera_id, _):
+        assert abs(app.status(camera_id)["measured_fps"] - 30.0) <= 0.9
+        assert app.apply([app.config(camera_id, exposure=-6)]).status_code == 200
+        app.wait_state(camera_id, "too_slow")
+        measured = app.status(camera_id)["measured_fps"]
+        assert measured < 0.97 * 30 and abs(measured - 20.0) <= 1.0, f"measured_fps {measured}"
+
+
 def test_t_cap_32_no_recording_while_checking(monkeypatch, tmp_path):
     """T-CAP-32, sections 8.3 and 10.2 [D33]: start a recording while a camera is `checking`. 409, the
     detail names the camera and `checking`.

@@ -180,8 +180,10 @@ class CameraLoop:
             if perf_counter_ns() - self.last_arrival >= STALL_NS:
                 raise CaptureFailure(self.stage, "no frame for 2 s")
             check = self.check
-            if check is not None and check["deadline"] is not None and perf_counter_ns() >= check["deadline"]:
-                self._too_slow()  # 10.2: no frame came by the deadline, so frame s_a + 59 cannot be in time
+            now = perf_counter_ns()
+            if check is not None and check["deadline"] is not None and now >= check["deadline"]:
+                # 10.2: no frame came by the deadline, so frame s_a + 59 cannot be in time
+                self._too_slow(rate_check.measured_rate(*check["start"], self.last_number, now))
             return None
         self.last_arrival, self.last_number = frame.arrival_ns, frame.source_frame_number
         return frame
@@ -387,7 +389,8 @@ class CameraLoop:
             return
         if frame.source_frame_number < check["start"][0] + rate_check.CHECK_FRAMES - 1:
             if frame.arrival_ns > check["deadline"]:
-                self._too_slow()  # 10.2: a later frame came after the deadline, so frame s_a + 59 did not come in time
+                # 10.2: a later frame came after the deadline, so frame s_a + 59 did not come in time
+                self._too_slow(rate_check.measured_rate(*check["start"], frame.source_frame_number, frame.arrival_ns))
             return
         measured = rate_check.measured_rate(*check["start"], frame.source_frame_number, frame.arrival_ns)
         self.check = None
@@ -396,10 +399,14 @@ class CameraLoop:
             self.status.set_state("ready" if rate_check.within_limit(measured, self.reference_rate)
                                   else "too_slow")
 
-    def _too_slow(self) -> None:
+    def _too_slow(self, measured: float) -> None:
         """The early decision of 10.2. Only a frame that did not come decides it: a frame that came in time
-        but waits (paused, or at the gate) gives no decision."""
+        but waits (paused, or at the gate) gives no decision.
+
+        `measured` is the rate of the window up to the decision: the frames delivered since frame s_a, over
+        the time since t_a. It is below the limit by the rule of the deadline. The status shows it (8.4)."""
         self.check = None
+        self.status.update_info(measured_fps=measured)
         if self.signals.empty():
             self.status.set_state("too_slow")
 
