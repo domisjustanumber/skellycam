@@ -182,7 +182,8 @@ class Take:
         """The end of the take (8.1 step 5). The caller passes a result, or None, for each camera only
         after the camera's writer ended or its process was joined [review B2]. `error_camera` is the
         `camera_id` of the camera of `ended_by_error`, when the caller knows it (F-5). The files of each
-        camera of `running_cameras` (a process that a kill did not end) are not completed (8.1 step 4)."""
+        camera of `running_cameras` (a process that a kill did not end) are not completed (8.1 step 4), and
+        the manifest then stays `recording` with a `take_error` for that camera."""
         dead_cameras = dead_cameras or {}
         mkvs = [self.folder / self.video_path(label) for label in self.labels]
         paths = [self.folder / self.timing_path(label) for label in self.labels]
@@ -227,6 +228,9 @@ class Take:
                                               f"last_frame={last} reason={dead_cameras[camera.camera_id]}"))
             if blocks is not None:
                 warnings.append(self._warning("camera_file_short", key, f"blocks={blocks} rows={frame_count}"))
+            if camera.camera_id in running_cameras:
+                warnings.append(self._warning("take_error", key, f"camera {camera.camera_id}: its process still runs "
+                                                                 f"after a kill; its files are not completed"))
         if ended_by_error is not None:
             # camera_key (F-5): the camera that the caller names, else the first camera whose result
             # holds an error, else null.
@@ -234,9 +238,12 @@ class Take:
                 error_camera = next((r.camera_id for r in results if r is not None and r.error is not None), None)
             keys = {c.camera_id: key for c, key in zip(self.cameras, self.keys)}
             warnings.append(self._warning("take_error", keys.get(error_camera), ended_by_error))
+        # `finished` means that every file of the take is finished (8.1, SFF-724): not with a camera that runs.
+        state = "recording" if running_cameras else "finished"
         try:
             with folder_files.take_lock(self.folder / folder_files.LOCK_NAME, self.lock_timeout_s):
-                self.write_folder_files("finished", folder_files.summary(self, sidecars), warnings)
+                self.write_folder_files(state, folder_files.summary(self, sidecars) if state == "finished"
+                                        else folder_files.summary(self), warnings)
         except OSError as error:  # a lock timeout, a reader that holds a file open, or a full disk
             logger.error("the manifest stays `recording`: %r", error)  # step 5c repairs the take (6.8)
         stop = stop_response_fields(paths, recording_name=self.rec, recording_path=self.folder,

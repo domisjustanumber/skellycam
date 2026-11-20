@@ -316,7 +316,8 @@ def test_item_12b_the_manifest_keeps_the_summary_members_of_freemocap(tmp_path, 
 
 def test_finish_does_not_touch_the_files_of_a_camera_whose_process_runs(tmp_path):
     """Review fault 6 of the connection [8.1 step 4, review B2]: `finish` with `running_cameras` leaves the
-    files of that camera as they are; the other camera is finished."""
+    files of that camera as they are; the other camera is finished. Second review, R2 [8.1, SFF-724]: the
+    manifest stays `recording`, with a `take_error` that names that camera."""
     from skellycam.core.take_recorder import CameraTakeWriter, start_take
     from skellycam.tests.capture.fake_source import synthetic_jpeg
     from skellycam.tests.take_recorder.rec_api import recorder_frame, take_camera
@@ -332,8 +333,13 @@ def test_finish_does_not_touch_the_files_of_a_camera_whose_process_runs(tmp_path
     writers[1].abandon()  # its files as a process left them that still runs
     running = [writers[1].spec.mkv_path, writers[1].spec.csv_path]
     before = [path.read_bytes() for path in running]
-    take.finish([result, None], frame_count=3, running_cameras={"ff00"})
+    summary = take.finish([result, None], frame_count=3, running_cameras={"ff00"})
     assert [path.read_bytes() for path in running] == before
+    manifest = json.loads((tmp_path / "take" / "recording_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["state"] == "recording"
+    errors = [w for w in manifest["warnings"] if w["code"] == "take_error"]
+    assert [w["camera_key"][:4] for w in errors] == ["ff00"] and "still runs" in errors[0]["detail"], errors
+    assert summary.warnings == manifest["warnings"]
     assert writers[0].spec.csv_path.read_text(encoding="utf-8").splitlines()[-1].startswith("# end ")
 
 
