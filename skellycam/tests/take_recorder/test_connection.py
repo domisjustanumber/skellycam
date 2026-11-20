@@ -1334,6 +1334,7 @@ def test_a_lost_heartbeat_ends_only_the_cameras(monkeypatch, tmp_path, during_ta
         for camera_id in app.factory.camera_ids:
             status = app.status(camera_id)
             assert status["state"] == "dead" and status["failure"]["reason"] == "lost the server's heartbeat", status
+            assert app.factory.logs[camera_id].closes.value >= 1, f"camera {camera_id} was not released"
         app.wait(lambda: time.perf_counter() - app.registry.heartbeat_timestamp.value < 2.0, "the heartbeat beats again")
         if during_take:
             app.wait(lambda: app.group.take is None, "the take ends in the group")
@@ -1371,3 +1372,211 @@ def test_a_start_after_an_error_end_logs_the_unfetched_summary(monkeypatch, tmp_
         assert app.record_start(tmp_path, name="take2").status_code == 200
         stop(app)
     assert any("summary" in m and "take" in m for m in logs.messages(logging.WARNING)), logs.messages(logging.WARNING)
+
+
+# ---------------------------------------------------------------------------
+# Fix round 5 (2026-11-20)
+# ---------------------------------------------------------------------------
+
+def stalling_heartbeat(app):
+    """Replace the stop event of the heartbeat writer: when `armed["on"]` is set, its next wait sleeps 12 s."""
+    armed = {"on": False}
+
+    class StallingEvent(threading.Event):
+        def wait(self, timeout=None):
+            if armed["on"] and threading.current_thread().name == "WorkerRegistry-Heartbeat":
+                armed["on"] = False
+                time.sleep(12.0)  # a long GIL hold, a debugger pause or a resume from sleep
+            return super().wait(timeout)
+
+    app.registry._heartbeat_stop = StallingEvent()
+    return armed
+
+
+def heartbeat_age(app):
+    return time.perf_counter() - app.registry.heartbeat_timestamp.value
+
+
+@pytest.mark.parametrize("request_kind", ["pause", "apply"])
+def test_a_request_while_the_heartbeat_is_stale_does_not_stop_the_group(monkeypatch, tmp_path, request_kind):
+    """Round 5, item 1: the main process serves a request while its heartbeat is stale (the cameras ended on
+    it). The main process reads only the flags of the group, not the heartbeat: a pause does not set the
+    shutdown flag; an apply works or reports each failure in its response. After the heartbeat beats
+    again, an apply opens the cameras again."""
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()], virtual=False) as app:
+        armed = stalling_heartbeat(app)
+        ready_app_steps(app)
+        time.sleep(1.0)
+        armed["on"] = True
+        for camera_id in app.factory.camera_ids:
+            app.wait_state(camera_id, "dead", timeout=30)
+        assert heartbeat_age(app) > 10.0
+        if request_kind == "pause":
+            app.client.get("/skellycam/camera/group/all/pause_unpause")
+        else:
+            response = app.apply([app.config(cid) for cid in app.factory.camera_ids])
+            assert response.status_code == 200, response.text
+            failures = response.json()["camera_failures"]
+            for camera_id in app.factory.camera_ids:  # each camera opened in the stale window is reported
+                if app.state(camera_id) == "failed":
+                    assert failures[camera_id]["reason"] == "lost the server's heartbeat", failures
+        assert not app.group.ipc.shutdown_camera_group_flag.value, "the request stopped the group for good"
+        app.wait(lambda: heartbeat_age(app) < 2.0, "the heartbeat beats again")
+        if request_kind == "pause" and app.group.to_state().paused:
+            app.client.get("/skellycam/camera/group/all/pause_unpause")
+        response = app.apply([app.config(cid) for cid in app.factory.camera_ids])
+        assert response.status_code == 200, response.text
+        for camera_id in app.factory.camera_ids:
+            app.wait_state(camera_id, "ready")
+
+
+def test_a_camera_that_loses_the_heartbeat_at_its_start_is_failed(monkeypatch, tmp_path):
+    """Round 5, item 4 (windows-capture.md 8.2, 12): a camera whose start-up sees a stale heartbeat ends as
+    `failed` after its close, with the reason "lost the server's heartbeat", and the apply response names it."""
+    from skellycam.core.camera_group import camera_group_ipc
+
+    stale = {"on": False}
+    check = camera_group_ipc.check_main_process_heartbeat
+    monkeypatch.setattr(camera_group_ipc, "check_main_process_heartbeat",
+                        lambda **kwargs: False if stale["on"] else check(**kwargs))
+    with capture_app(monkeypatch, [FakeScript()], virtual=False) as app:
+        app.detect()
+        camera_id = app.factory.camera_ids[0]
+        stale["on"] = True
+        response = app.apply([app.config(camera_id)])
+        stale["on"] = False
+        assert response.status_code == 200, response.text
+        assert response.json()["camera_failures"][camera_id]["reason"] == "lost the server's heartbeat"
+        status = app.status(camera_id)
+        assert status["state"] == "failed" and status["closed"], status
+
+
+def test_a_heartbeat_that_comes_back_at_once_still_ends_the_camera_with_its_reason(monkeypatch, tmp_path):
+    """Round 5, item 3: the loop of a camera leaves on a stale heartbeat, and the heartbeat is fresh again at
+    the next read. The end decides from the other reasons (no stop flag, no group or kill flag), not from a
+    second read of the clock: the camera still gets the reason "lost the server's heartbeat"."""
+    from skellycam.core.camera_group import camera_group_ipc
+
+    stale = {"left": 0}
+    check = camera_group_ipc.check_main_process_heartbeat
+
+    def once_stale(**kwargs):
+        if stale["left"] > 0 and threading.current_thread().name.startswith("Camera"):
+            stale["left"] -= 1
+            return False
+        return check(**kwargs)
+
+    monkeypatch.setattr(camera_group_ipc, "check_main_process_heartbeat", once_stale)
+    with capture_app(monkeypatch, [FakeScript()], virtual=False) as app:
+        ready_app_steps(app)
+        camera_id = app.factory.camera_ids[0]
+        stale["left"] = 1  # one stale read: the loop test sees it, any later read is fresh
+        app.wait_state(camera_id, "dead", timeout=30)
+        assert app.status(camera_id)["failure"]["reason"] == "lost the server's heartbeat"
+
+
+def test_a_pause_request_waits_for_a_running_stop(monkeypatch, tmp_path):
+    """Round 5, item 2: the pause route takes the end lock of the group, so it cannot race a stop (a pause in
+    the middle of a stop kept the cameras paused past the last frame)."""
+    import asyncio
+
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()], virtual=False) as app:
+        ready_app_steps(app)
+        group = app.group
+
+        async def hold_the_end_lock():
+            async with group._end_lock:
+                await asyncio.sleep(1.0)
+
+        held = asyncio.run_coroutine_threadsafe(hold_the_end_lock(), group._loop)
+        time.sleep(0.1)
+        started = time.monotonic()
+        assert app.client.get("/skellycam/camera/group/all/pause_unpause").status_code == 200
+        waited = time.monotonic() - started
+        held.result(10)
+        app.client.get("/skellycam/camera/group/all/pause_unpause")
+    assert waited >= 0.8, f"the pause did not wait for the end lock ({waited:.2f} s)"
+
+
+def test_a_second_shutdown_request_starts_no_second_close(monkeypatch, tmp_path):
+    """Round 5, item 5: two shutdown requests during a take (the finish is 2 s slow). The second answers with no
+    new close, and no ERROR line says "No recording runs": a 409 of the stop in a close is no error."""
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    import skellycam.core.camera_group.camera_group_manager as manager_module
+    from skellycam.api.http.app.shutdown import shutdown_router
+    from skellycam.core.take_recorder import Take
+    from skellycam.tests.capture.capture_session import capture_logs
+
+    finish = Take.finish
+
+    def slow_finish(take, *args, **kwargs):
+        time.sleep(2.0)
+        return finish(take, *args, **kwargs)
+
+    monkeypatch.setattr(Take, "finish", slow_finish)
+    monkeypatch.setattr(logging.Logger, "api", logging.Logger.info, raising=False)
+    with capture_logs() as logs, capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        ready_app_steps(app)
+        monkeypatch.setattr(manager_module, "_CAMERA_GROUP_MANAGER", app.manager)
+        server = FastAPI()
+        server.state.global_kill_flag = app.kill
+        server.include_router(shutdown_router, prefix="/skellycam")
+        assert app.record_start(tmp_path).status_code == 200
+        time.sleep(1.0)
+        with TestClient(server) as client:
+            assert client.get("/skellycam/shutdown").status_code == 200
+            task = server.state.shutdown_task
+            assert client.get("/skellycam/shutdown").status_code == 200
+            assert server.state.shutdown_task is task, "a second close task"
+            app.wait(lambda: app.kill.value, "the kill flag")
+    assert take_manifest(tmp_path)["state"] == "finished"
+    assert not [m for m in logs.messages(logging.ERROR) if "No recording runs" in m]
+
+
+def test_the_kill_flag_is_set_when_the_close_before_exit_fails(monkeypatch):
+    """Round 5, item 7: the background close of the shutdown endpoint raises; its `finally` still sets the kill
+    flag, so the app ends."""
+    import multiprocessing
+
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    import skellycam.api.http.app.shutdown as shutdown_module
+
+    async def failing_close():
+        raise RuntimeError("test: the close fails")
+
+    monkeypatch.setattr(shutdown_module, "close_camera_groups_before_exit", failing_close)
+    monkeypatch.setattr(logging.Logger, "api", logging.Logger.info, raising=False)
+    server = FastAPI()
+    server.state.global_kill_flag = multiprocessing.Value("b", False)
+    server.include_router(shutdown_module.shutdown_router, prefix="/skellycam")
+    with TestClient(server) as client:
+        assert client.get("/skellycam/shutdown").status_code == 200
+        deadline = time.monotonic() + 10
+        while not server.state.global_kill_flag.value and time.monotonic() < deadline:
+            time.sleep(0.01)
+    assert server.state.global_kill_flag.value
+
+
+def test_a_failed_start_keeps_the_unfetched_summary(monkeypatch, tmp_path):
+    """Round 5, item 6: after an error end, a record start that fails (a bad name: 422) keeps the stored
+    summary: the next stop returns it."""
+    module = group_module()
+    monkeypatch.setattr(module, "TAKE_QUEUE_SECONDS", 0.2)
+    monkeypatch.setattr(module, "TAKE_STALL_LIMIT_S", 1.0)
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        hold = WriterHold(monkeypatch, app.factory.camera_ids[0])
+        ready_app_steps(app)
+        assert app.record_start(tmp_path).status_code == 200
+        record_until(app, spies, 30)
+        hold.start()
+        app.wait(lambda: hold.stalled.is_set(), "`give` raises RecorderStalled")
+        hold.stop()
+        app.wait(lambda: app.group.ended_take is not None, "the error end")
+        assert app.record_start(tmp_path, name="bad/name").status_code == 422
+        stopped = app.record_stop()
+        assert stopped.status_code == 200 and stopped.json()[0]["recording_name"] == "take", stopped.text

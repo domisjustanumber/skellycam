@@ -155,7 +155,9 @@ class CameraLoop:
             logger.exception(f"Camera {self.camera_id} loop error: {error}")
             self._fail(CaptureFailure(self.stage, f"{type(error).__name__}: {error}"), at_end=True)
         finally:
-            if not hung and self.ipc.heartbeat_lost:
+            # The loop left with no failure, no stop flag and the group running: the heartbeat was lost. No second
+            # read of the clock (a heartbeat that came back would hide the reason).
+            if not hung and not self.failed and not self.status.should_close.value and self.ipc.running:
                 self._lost_heartbeat()
             self._end(hung)
 
@@ -166,7 +168,7 @@ class CameraLoop:
         if self.take_writer is not None:
             self.ipc.pubsub.topics[TopicTypes.RECORDING_FINISHED].publish(
                 RecordingFinishedMessage(camera_id=self.camera_id, error=f"camera {self.camera_id} {text}"))
-        self._fail(CaptureFailure(self.stage, text))
+        self._fail(CaptureFailure(self.stage, text), at_end=not self.started)  # not started: `failed` after its close
 
     def _pass(self) -> None:
         if self.hung.is_set():

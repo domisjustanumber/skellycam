@@ -83,6 +83,13 @@ class CameraGroupIPC:
                 )
 
     @property
+    def running(self) -> bool:
+        """The flags only: the group runs while no shutdown flag and no kill flag is set. For the main process:
+        it does not read the heartbeat, so a stale heartbeat (the cameras end on it, decision L) never stops a
+        live group (round 5). The camera loops use `should_continue`."""
+        return not self.shutdown_camera_group_flag.value and not self.global_kill_flag.value
+
+    @property
     def heartbeat_lost(self) -> bool:
         """No heartbeat of the main process for HEARTBEAT_TIMEOUT_SECONDS (decision L)."""
         return not check_main_process_heartbeat(heartbeat_timestamp=self.heartbeat_timestamp)

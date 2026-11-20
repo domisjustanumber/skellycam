@@ -25,7 +25,7 @@ def check_main_process_heartbeat(*, heartbeat_timestamp: Synchronized) -> bool:
     if time_since_heartbeat > HEARTBEAT_TIMEOUT_SECONDS:
         if current_time - _last_report > HEARTBEAT_TIMEOUT_SECONDS:  # one line for each stall, not one each call
             _last_report = current_time
-            logger.error(
+            logger.warning(  # one line for each stall; the camera then reports its reason
                 f"Main process heartbeat timeout! "
                 f"Last heartbeat was {time_since_heartbeat:.1f}s ago "
                 f"(timeout: {HEARTBEAT_TIMEOUT_SECONDS}s)"

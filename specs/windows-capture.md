@@ -1001,7 +1001,11 @@ the recording info JSON of phase 3 is no longer written [R5].)
 - A camera process also ends when the main process writes no heartbeat for 10 s (L of [ADR-JMS0](../decisions/entries/JMS0-review-decisions.md), added on
   2026-11-20). It sets no global kill flag. The camera gets the state `dead` with the reason "lost the
   server's heartbeat" (stage `streaming`). It finishes a running take as [`recorder.md`](recorder.md)
-  section 9 says, releases the camera and ends; a later apply opens it again.
+  section 9 says, releases the camera and ends; a later apply opens it again. A camera that had not
+  started (a heartbeat lost during its start-up) gets the state `failed` after its close, with the stage
+  of its start-up step and the same reason (8.2); the apply response names the failure. The main process
+  reads only the flags of the group, not the heartbeat, so a stale heartbeat does not stop the group
+  (round 5 of the fixes, 2026-11-20).
 
 - "In use by another program" is the text of D13. The text of 10.4 follows D25. The texts "camera not
   found", "not ready in 15 s", "device removed", "no frame for 2 s", "end of stream" and the control

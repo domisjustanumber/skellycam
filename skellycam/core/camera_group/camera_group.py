@@ -128,7 +128,7 @@ class CameraGroup:
     @property
     def alive(self) -> bool:
         return (
-            self.ipc.should_continue
+            self.ipc.running
             and bool(self.cameras.camera_workers)
             and all(
                 status.connected.value and not status.closed.value
@@ -180,7 +180,7 @@ class CameraGroup:
         self.cameras.start()
         threading.Thread(target=self._watch_workers, name=f"camera group {self.id} watch", daemon=True).start()
         configs, _ = await self._await_results(list(self.configs))
-        if not self.ipc.should_continue:
+        if not self.ipc.running:
             raise CameraSetupFailedException("Camera group startup aborted")
         sweep_stale_rings()
         with self._ring_lock:
@@ -246,7 +246,7 @@ class CameraGroup:
         pending, configs, warnings = set(camera_ids), {}, []
         statuses = self.cameras.orchestrator.camera_statuses
         subscription = self.ipc.extracted_config_subscription
-        while pending and self.ipc.should_continue:
+        while pending and self.ipc.running:
             while not subscription.empty():
                 message: DeviceExtractedConfigMessage = subscription.get()
                 camera_id = message.extracted_config.camera_id
@@ -268,7 +268,7 @@ class CameraGroup:
     async def _await_settled(self, camera_ids: list) -> None:
         """Wait until each camera has passed its rate check or failed (9.1, 10.1)."""
         statuses = self.cameras.orchestrator.camera_statuses
-        while self.ipc.should_continue:
+        while self.ipc.running:
             for camera_id in camera_ids:
                 worker = self.cameras.camera_workers.get(camera_id)
                 if worker is not None and worker.worker.exitcode is not None:
@@ -438,7 +438,8 @@ class CameraGroup:
         return frame_number, timestamp, memoryview(payload).toreadonly()
 
     async def pause_unpause(self, await_state_change: bool = True) -> None:
-        await self.cameras.pause_unpause(await_state_change)
+        async with self._end_lock:  # a pause in the middle of a stop would hold the cameras past the last frame
+            await self.cameras.pause_unpause(await_state_change)
 
     async def start_recording(self, recording_info: RecordingInfo, devices: dict | None = None) -> list:
         """Start a take (recorder.md section 10 items 3 to 5, 13). Return the warnings of 11.3. One start, stop or
@@ -469,10 +470,7 @@ class CameraGroup:
             status.set_warning_items(items)
             warnings += items
         self.recording_ids = list(statuses)
-        if self.ended_take is not None:  # its files and manifest are finished; only the stop response goes
-            logger.warning(f"A new take starts: the summary of the take {self.ended_take.stop_response.get('recording_name')} "
-                           f"that an error ended was not fetched by a stop request")
-        self.ended_take = self.take_error = None
+        self.take_error = None
         self.finished.clear()  # a late message of an earlier take
         await self.cameras.pause(await_paused=True)  # each camera gives the layout of its last good frame
         orchestrator = self.cameras.orchestrator
@@ -488,6 +486,11 @@ class CameraGroup:
             orchestrator.last_recording_frame_number.value = -1
             orchestrator.first_recording_frame_number.value = orchestrator.largest_gate_count() + 3  # [M7, review B4]
             self.take = take
+            if self.ended_take is not None:  # its files and manifest are finished; only the stop response goes
+                logger.warning(f"A new take starts: the summary of the take "
+                               f"{self.ended_take.stop_response.get('recording_name')} that an error ended was not "
+                               f"fetched by a stop request")
+                self.ended_take = None
             for camera_id in self.recording_ids:
                 statuses[camera_id].update_info(writer_failure=None)
             sent = True  # from here, a camera can have a writer
@@ -579,7 +582,7 @@ class CameraGroup:
                 if any(failures):
                     raise RuntimeError("; ".join(failure for failure in failures if failure))
                 return
-            if time.monotonic() >= deadline or not self.ipc.should_continue:
+            if time.monotonic() >= deadline or not self.ipc.running:
                 raise RuntimeError(f"Cameras did not start their take writer: {pending}")
             await await_10ms()
 
@@ -719,6 +722,8 @@ class CameraGroup:
             logger.info("Recording in progress — stopping recording before closing cameras")
             try:
                 await self.stop_recording()
+            except RequestRefused as e:  # a stop or a close that ran at the same time ended the take first
+                logger.info(f"The close found no take to stop: {e.detail}")
             except Exception as e:
                 logger.error(f"Error stopping recording during close: {type(e).__name__} - {e}")
 
