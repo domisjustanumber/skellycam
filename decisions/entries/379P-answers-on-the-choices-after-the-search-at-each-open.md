@@ -1,6 +1,7 @@
 # 379P — Answers of the user on the choices B4 to B13: the apply does not wait for the search
 
-**Status:** accepted, 2026-11-20 (user, relayed by the supervisor; commit to dom/requests-spec).
+**Status:** superseded by [6QFG](6QFG-pause-in-the-ui-search-on-native-sources-and-restore-at-close.md),
+2026-11-20 (commit to dom/requests-spec; was accepted, 2026-11-20 (user, relayed by the supervisor)).
 
 ## Decision
 
