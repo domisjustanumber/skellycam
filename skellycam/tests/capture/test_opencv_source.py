@@ -2,9 +2,10 @@
 (specs/windows-capture.md, sections 7.5, 8, 9.5, 10.1, 11.3 and 14.1).
 
 Each test runs the product `OpenCVSource` with the OpenCV fake (`OpenCVFakeFactory`) under the real
-camera group manager, with THREAD workers and real time. The detection result of the fake has
+camera group manager, with THREAD workers and the virtual clock of the factory (ADR-BM73): the
+results do not depend on the speed of the machine. The detection result of the fake has
 `supported_modes = []`, as on Linux and macOS, so the whole-request check compares the requested
-rates. These tests run on Windows, Linux and macOS (U20). Each takes about 4 to 10 s.
+rates. These tests run on Windows, Linux and macOS (U20). Each takes about 1 to 5 s.
 """
 
 import logging

@@ -22,6 +22,7 @@ import multiprocessing
 import threading
 import time
 from pathlib import Path
+from types import SimpleNamespace
 
 import cv2
 import numpy as np
@@ -503,12 +504,17 @@ def opencv_fake_class():
     class OpenCVFake(FakeCapture):
         """`FakeCapture` of the ring tests with a reported rate, a delivered rate, late grabs and a
         stop (`stop()`: each later grab fails, as after an unplug). It keeps the hash of each image it
-        gives and of the q90 JPEG of that image."""
+        gives and of the q90 JPEG of that image.
 
-        def __init__(self, width, height, reported_fps=30.0, delivered_fps=None, late_grabs=(), late_s=0.0):
+        With a `clock`, a grab waits on that clock, not in real time: frame k comes one period after
+        frame k - 1, or at once when the loop is later than that."""
+
+        def __init__(self, width, height, reported_fps=30.0, delivered_fps=None, late_grabs=(), late_s=0.0,
+                     clock=None):
             if delivered_fps is None:
                 delivered_fps = reported_fps if reported_fps > 0 else 30.0
             super().__init__(width, height, delivered_fps)
+            self.clock, self._period_ns, self._due = clock, round(1e9 / delivered_fps), None
             self.reported_fps = reported_fps
             self.stopped = False
             self.late_grabs, self.late_s = late_grabs, late_s
@@ -524,6 +530,8 @@ def opencv_fake_class():
             self.stopped = True
 
         def grab(self):
+            if self.clock is not None:
+                return self._grab_on_clock()
             if self.stopped:
                 time.sleep(0.01)
                 return False
@@ -534,6 +542,22 @@ def opencv_fake_class():
                 self.grabs += 1
                 self._remember(self._pending)
             return ok
+
+        def _grab_on_clock(self):
+            clock = self.clock
+            if self.stopped:
+                clock.wait_until(clock.now_ns() + 10_000_000)
+                return False
+            if self.grabs in self.late_grabs:
+                clock.wait_until(clock.now_ns() + round(self.late_s * 1e9))
+            now = clock.now_ns()
+            self._due = now if self._due is None else max(self._due + self._period_ns, now)
+            clock.wait_until(self._due)
+            self._mock._frame_count += 1
+            self._pending = self._mock._generate_frame()
+            self.grabs += 1
+            self._remember(self._pending)
+            return True
 
         def read(self, image=None):
             if self.stopped:
@@ -554,7 +578,10 @@ def opencv_fake_class():
 
 class OpenCVFakeFactory:
     """A `source_factory` (ADR-HP7D) that gives the product `OpenCVSource`. The tests replace
-    `opencv_source.create_cv2_video_capture` with the OpenCV fake (ADR-HP7D). Real time.
+    `opencv_source.create_cv2_video_capture` with the OpenCV fake (ADR-HP7D). A `VirtualClock`
+    (THREAD workers only): the OpenCV source stamps the arrival itself with `time.perf_counter_ns`, so
+    the factory replaces the `time` name of `opencv_source` with that clock (ADR-BM73). Thus the rate
+    check measures the rate of the fake, not the speed of the machine.
 
     Its detection result has `supported_modes = []`, as `cv2_enumerate_cameras` gives on Linux and
     macOS, so the whole-request check compares the requested rates (7.5, ADR-HP7D item 2).
@@ -565,7 +592,11 @@ class OpenCVFakeFactory:
         from skellycam.tests.capture.fake_source import FakeScript, fake_link, spec_camera_id
 
         opencv_source = product("skellycam.core.camera.capture.opencv_source")
-        self.clock, self.on_read = None, None
+        self.clock, self.on_read = VirtualClock(), None
+        clock = self.clock
+        monkeypatch.setattr(opencv_source, "time", SimpleNamespace(
+            perf_counter_ns=clock.now_ns, perf_counter=lambda: clock.now_ns() / 1e9,
+            sleep=lambda seconds: clock.wait_until(clock.now_ns() + round(seconds * 1e9))))
         self.scripts = [FakeScript(modes=((width, height, 30, 1, "MJPG"),)) for _ in range(count)]
         self.links = [fake_link(index) for index in range(count)]
         self.camera_ids = [spec_camera_id(link) for link in self.links]
@@ -582,7 +613,7 @@ class OpenCVFakeFactory:
         if index in self._fail_open:
             raise RuntimeError(f"the fake camera {config.camera_id} cannot open")
         args = {**self._fake_args, **self._per_camera.get(index, {})}
-        capture = self._fake_class(config.resolution.width, config.resolution.height, **args)
+        capture = self._fake_class(config.resolution.width, config.resolution.height, clock=self.clock, **args)
         self.captures[config.camera_id] = capture
         return capture, config
 
@@ -641,11 +672,14 @@ def video_frame_count(directory, camera_id, name="take"):
 
 class StateWatcher:
     """Polls the status of one camera every 2 ms in a thread (any worker mode). Keeps the first
-    `perf_counter_ns` time of each state, the first time of a failure object, and the last worker
-    object of the camera."""
+    `perf_counter_ns` time of each state (the virtual time with a `VirtualClock`), the first time of a
+    failure object, and the last worker object of the camera."""
 
     def __init__(self, app, camera_id):
         self.app, self.camera_id = app, camera_id
+        clock = getattr(app, "clock", None)
+        virtual = clock is not None and clock.virtual
+        self._now_ns = clock.now_ns if virtual else time.perf_counter_ns
         self.first = {}
         self.failure_ns, self.failure = None, None
         self.worker = None
@@ -662,7 +696,7 @@ class StateWatcher:
                     if worker is not None:
                         self.worker = worker
                     status = group.cameras.orchestrator.camera_statuses[self.camera_id].serialize()
-                    now = time.perf_counter_ns()
+                    now = self._now_ns()
                     self.first.setdefault(status.get("state"), now)
                     if status.get("failure") and self.failure_ns is None:
                         self.failure_ns, self.failure = now, status["failure"]

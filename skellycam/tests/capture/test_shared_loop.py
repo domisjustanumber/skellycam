@@ -3,7 +3,7 @@
 
 The fake-source tests run THREAD workers with a virtual clock. The spies of `capture_session`
 see each JPEG ring write, each BGR hand-over, each frame of the old recorder and each
-`cv2.imdecode` call. The OpenCV tests use the product `OpenCVSource` with the OpenCV fake, in real time.
+`cv2.imdecode` call. The OpenCV tests use the product `OpenCVSource` with the OpenCV fake, on a virtual clock.
 """
 
 import logging
@@ -386,7 +386,7 @@ def test_t_cap_41_exposure_modes(monkeypatch, mode):
 
 
 # ---------------------------------------------------------------------------
-# T-CAP-44, T-CAP-87: the OpenCV fake under the shared loop (real time)
+# T-CAP-44, T-CAP-87: the OpenCV fake under the shared loop (virtual clock)
 # ---------------------------------------------------------------------------
 
 @pytest.mark.parametrize("reported_fps", [30.0, 0.0], ids=["reports 30", "reports 0"])
@@ -397,7 +397,7 @@ def test_t_cap_44_opencv_source_under_the_shared_loop(monkeypatch, reported_fps)
     burned-in stamp (it decodes to the fake image); the BGR ring gets the OpenCV image.
 
     "q90, no stamp": each ring JPEG is byte-equal to `cv2.imencode` at quality 90 of an image that the
-    fake gave. Real time: about 4 s."""
+    fake gave. Virtual clock of the factory (ADR-BM73)."""
     factory = OpenCVFakeFactory(monkeypatch, reported_fps=reported_fps)
     app = CaptureApp(monkeypatch, factory)
     try:
@@ -420,7 +420,7 @@ def test_t_cap_44_opencv_source_under_the_shared_loop(monkeypatch, reported_fps)
 def test_t_cap_87_late_frames_do_not_reopen(monkeypatch):
     """T-CAP-87, sections 14.2 and 5.1 [U2, D8]: shared loop with the OpenCV fake on each OS: 60 frames,
     each 70 ms late (more than 2 x the period). No reopen: the open count stays 1; each ring JPEG
-    decodes to the fake image, with no stamp. Real time: about 10 s."""
+    decodes to the fake image, with no stamp. Virtual clock of the factory (ADR-BM73)."""
     factory = OpenCVFakeFactory(monkeypatch, late_grabs=range(150, 210), late_s=0.070)
     app = CaptureApp(monkeypatch, factory)
     try:
