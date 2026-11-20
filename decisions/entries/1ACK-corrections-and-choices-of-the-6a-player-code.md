@@ -82,9 +82,19 @@ size 256 × 128 and display size 128 × 256, and `drawImage` turned it. The rule
 Electron 45.3.4, harness of the 6a tests (2026-11-20): a `protocol.handle` handler that the main
 process installs after a page loaded does not serve that page; the page keeps the handler of its
 load. After a reload, the page client refused the 200 answer with the whole file and the 206 answer
-with a wrong start, and it accepted the 200 answer with the exact length. In the hidden harness
-window under Playwright 1.65.1, `requestAnimationFrame` ran about 4 times per second; in the shown
-window (`PLAYER_HARNESS_SHOW=1`), about 62 times per second.
+with a wrong start, and it accepted the 200 answer with the exact length. In a never-shown harness
+window under Playwright 1.65.1, `requestAnimationFrame` ran about once per second after a canvas
+drew, also with `backgroundThrottling: false`; in a shown window, about 58 times per second. A
+window that is shown inactive, with opacity 0 and no mouse events, ran at about 58 times per second.
+
+Test corrections of 2026-11-20 (the supervisor allowed them): T-PLAY-14 (`fit_negative`: the source
+frame numbers after row 61 go up, and k* = 60 is not checked, because row 61 is earlier than row 60
+and so is the image at T_60 by section 7.3); T-PLAY-52 (the swap is read with a poll, after the
+200 ms grid transition); T-PLAY-53 (F18 as today: the message goes away when each camera has drawn
+its first image; section 10 asks only that it counts the drawn cameras); T-PLAY-55 (no check for the
+byte 0xee, which the test pattern holds at byte 22); T-PLAY-59 (a reload after the handler variant);
+the harness window (item above). `IconButton.tsx` and `ButtonSm.tsx` import `TooltipPosition` with
+`import type`, so that the module `tsconfig.json` reports no error.
 
 ## Open work
 

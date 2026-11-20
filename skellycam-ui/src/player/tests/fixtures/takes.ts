@@ -172,6 +172,8 @@ export const PLANS: Record<string, () => TakePlan> = {
         // two segments; in the second, row 61 has a source frame number below that of pos_first (60)
         c0.rows[60].sfn = 1065n;
         c0.rows[61].sfn = 1064n;
+        // rows 62 on come after row 60, so no later row has the fitted time of row 60
+        for (let k = 62; k < 120; k++) c0.rows[k].sfn = 1004n + BigInt(k);
         c0.fit = [
             {posFirst: 0, posLast: 59, t0: 10_000_000n, periodPs: 33_333_333_333n},
             {posFirst: 60, posLast: 119, t0: 10_000_000n + 65n * NS_PER_FRAME_30, periodPs: 33_333_333_333n},

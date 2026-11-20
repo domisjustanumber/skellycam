@@ -221,7 +221,8 @@ test('T-PLAY-14 fitted times: two segments, a gap, a remainder, a negative d', a
     const on = await openFixture(t, neg);
     const want = fitted(neg, 0);
     assert.ok(want[61] < want[60], 'the fixture has a negative d at row 61');
-    assert.deepEqual(await shownTimes(on, 0, [59, 60, 61, 62]), [59, 60, 61, 62].map(k => Number(want[k])));
+    // at k* = 60 the image is row 61 (7.3: row 61 is earlier than row 60, so it is a candidate at T_60)
+    assert.deepEqual(await shownTimes(on, 0, [59, 61, 62]), [59, 61, 62].map(k => Number(want[k])));
 
     const other = planOf('two_segments');
     other.name = 'two_segments_other_fitter';

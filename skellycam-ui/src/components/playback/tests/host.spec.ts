@@ -156,9 +156,11 @@ test('T-PLAY-52 the host grid: auto tiling, manual columns, reset, a swap', asyn
     const tile1 = h.page.locator(`canvas[data-camera-label="${built.plan.cameras[1].label}"]`);
     const tile3 = h.page.locator(`canvas[data-camera-label="${built.plan.cameras[3].label}"]`);
     await tile1.dragTo(tile3);
-    const swapped = await labels();
-    expect(swapped[1]).toBe(order[3]);
-    expect(swapped[3]).toBe(order[1]);
+    // the grid moves the tiles with a 200 ms CSS transition
+    await expect.poll(async () => {
+        const swapped = await labels();
+        return [swapped[1], swapped[3]];
+    }).toEqual([order[3], order[1]]);
     await h.page.evaluate(([f]) => window.host.mount(f as string, {manualColumns: 2, resetKey: 1}), [built.dir] as const);
     await expect.poll(labels).toEqual(order);
 });
@@ -180,7 +182,9 @@ test('T-PLAY-53 initialFrame, frame events, loading, the empty state and the rou
     // the loading message counts the cameras whose first image is drawn
     const built = h.build(defaultTake('host_loading', 4, 30));
     await h.page.evaluate(f => window.host.mount(f), built.dir);
-    await expect(h.page.getByText(/4 \/ 4/)).toBeVisible();
+    // F18 as today: the message counts the drawn cameras and goes away when each one has drawn its image
+    await expect(h.page.locator('canvas[data-camera-label][title="timestamp from recording"]')).toHaveCount(4);
+    await expect(h.page.getByText(/^\d+ \/ 4$/)).toHaveCount(0);
     await h.page.evaluate(() => window.host.unmount());
     // an empty camera list: a take folder with no camera
     const empty = path.join(h.recordings, 'empty_take');

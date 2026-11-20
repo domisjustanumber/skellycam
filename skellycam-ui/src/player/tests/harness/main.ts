@@ -15,6 +15,8 @@ const recordingsFolder = process.env.PLAYER_HARNESS_RECORDINGS ?? '';
 const pickedFoldersFile = process.env.PLAYER_HARNESS_PICKED ?? '';
 const firstPage = process.env.PLAYER_HARNESS_PAGE ?? 'harness';
 
+for (const s of ['disable-renderer-backgrounding', 'disable-background-timer-throttling', 'disable-backgrounding-occluded-windows']) app.commandLine.appendSwitch(s);
+
 let productError: string | null = null;
 let scheme: SchemeModule | null = null;
 let handler: Handler | null = null;
@@ -34,8 +36,16 @@ const pages: Record<string, string> = {
 function openWindow(name = firstPage): number {
     const win = new BrowserWindow({
         width: 1400, height: 1000, show: process.env.PLAYER_HARNESS_SHOW === '1',
-        webPreferences: {preload: path.join(here, '..', 'preload', 'preload.mjs'), contextIsolation: true, sandbox: true},
+        // a hidden window must run requestAnimationFrame and timers as a shown one (CI runs hidden)
+        webPreferences: {preload: path.join(here, '..', 'preload', 'preload.mjs'), contextIsolation: true, sandbox: true, backgroundThrottling: false},
     });
+    // a never-shown window paints about once a second once a canvas draws: show it transparent, inactive
+    // and click-through instead, so hidden runs behave as shown runs
+    if (process.env.PLAYER_HARNESS_SHOW !== '1') {
+        win.setOpacity(0);
+        win.setIgnoreMouseEvents(true);
+        win.showInactive();
+    }
     void win.loadFile(pages[name]);
     return win.id;
 }
