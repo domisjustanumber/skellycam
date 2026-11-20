@@ -48,3 +48,26 @@ def test_lookup_failures_report_unknown_instead_of_raising(monkeypatch):
     monkeypatch.setattr(connection, "_linux_usb_version", lambda path: (_ for _ in ()).throw(OSError("no sysfs")))
     assert connection.usb_version("/dev/video0") is None
     assert connection.usb_version(None) is None
+
+
+def test_a_media_foundation_link_parses():
+    """Detection on Windows gives the Media Foundation link as the path (windows-capture.md 7.2)."""
+    match = connection.WINDOWS_DEVICE_PATH.match(
+        r"\\?\usb#vid_046d&pid_0825&mi_00#7&1c2a3b4&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global")
+    assert match.group("instance") == r"usb#vid_046d&pid_0825&mi_00#7&1c2a3b4&0&0000"
+
+
+def test_detection_gives_each_camera_its_usb_link(monkeypatch):
+    import cv2
+    from cv2_enumerate_cameras.camera_info import CameraInfo
+
+    from skellycam.core.device_detection import detect_cameras_devices as detection
+
+    monkeypatch.setattr(detection.platform, "system", lambda: "Linux")
+    monkeypatch.setattr(detection, "enumerate_cameras", lambda apiPreference: [
+        CameraInfo(0, "a", "/dev/video0", 0x046D, 0x0825, cv2.CAP_V4L2),
+        CameraInfo(2, "b", "/dev/video2", 0x046D, 0x0826, cv2.CAP_V4L2)])
+    monkeypatch.setattr(detection, "usb_version", {"/dev/video0": "USB 2"}.get)
+    cameras = detection.detect_available_cameras(backend_id=cv2.CAP_V4L2)
+    assert [camera.usb_version for camera in cameras] == ["USB 2", None]
+    assert cameras[0].model_dump()["usb_version"] == "USB 2"  # the /camera/detect response carries it
