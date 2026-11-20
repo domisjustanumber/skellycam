@@ -308,6 +308,21 @@ def test_t_cap_41_recommend_offset_and_range(monkeypatch, scene):
     assert (config["exposure_mode"], config["exposure"]) == ("MANUAL", -6 if scene == "dark" else -12)
 
 
+def test_a_failed_recommend_search_sets_back_the_exposure_of_before(monkeypatch):
+    """Section 11.1, port from sfn26: the frames stop during the search, so the start fails. The camera keeps a
+    UVC control after the close, so the loop sets back the exposure that the camera had before the search: the
+    fake starts at MANUAL -6."""
+    with capture_app(monkeypatch, [FakeScript(brightness=BRIGHTNESS, stop_after_frame=40)]) as app:
+        camera_id = app.factory.camera_ids[0]
+        app.detect()
+        response = app.apply([app.config(camera_id, exposure_mode="RECOMMEND", exposure=-7)])
+        assert response.status_code == 200, response.text
+        assert camera_id in response.json()["camera_failures"]
+        settings = [s["exposure"] for s in app.factory.logs[camera_id].settings if "exposure" in s]
+    assert -12 in [s.value for s in settings], "the search did not start"
+    assert (settings[-1].auto, settings[-1].value) == (False, -6)
+
+
 # ---------------------------------------------------------------------------
 # T-CAP-44, T-CAP-87: the OpenCV fake under the shared loop (virtual clock)
 # ---------------------------------------------------------------------------

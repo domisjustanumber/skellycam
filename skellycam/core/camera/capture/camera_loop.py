@@ -282,20 +282,31 @@ class CameraLoop:
 
     def _recommend(self, deadline: int) -> int:
         """RECOMMEND (11.1): -12 to -5, 10 frames to settle, the mean of the image nearest to 127.5, then one
-        step darker, in the range."""
+        step darker, in the range. A failed search sets back the exposure that the camera had before it."""
+        before = self.source.set_controls({}).get("exposure")  # no change: a read
         best = None
-        for value in range(MIN_EXPOSURE, RECOMMEND_MAX_EXPOSURE + 1):
-            set_ns = perf_counter_ns()
-            self.source.set_controls({"exposure": ControlSetting(auto=False, value=value)})
-            seen, frame = 0, None
-            while seen < NUMBER_OF_FRAMES_TO_SETTLE:
-                read = self._read_in_start(deadline)
-                if read is not None and read.arrival_ns > set_ns:
-                    seen, frame = seen + 1, read
-            image = frame.payload if frame.format == "BGR" else decode_jpeg(frame.payload)
-            error = abs(float(np.mean(image)) - TARGET_BRIGHTNESS) if image is not None else float("inf")
-            if best is None or error < best[0]:
-                best = (error, value)
+        try:
+            for value in range(MIN_EXPOSURE, RECOMMEND_MAX_EXPOSURE + 1):
+                set_ns = perf_counter_ns()
+                self.source.set_controls({"exposure": ControlSetting(auto=False, value=value)})
+                seen, frame = 0, None
+                while seen < NUMBER_OF_FRAMES_TO_SETTLE:
+                    read = self._read_in_start(deadline)
+                    if read is not None and read.arrival_ns > set_ns:
+                        seen, frame = seen + 1, read
+                image = frame.payload if frame.format == "BGR" else decode_jpeg(frame.payload)
+                error = abs(float(np.mean(image)) - TARGET_BRIGHTNESS) if image is not None else float("inf")
+                if best is None or error < best[0]:
+                    best = (error, value)
+        except BaseException as error:
+            # Port from sfn26: the device keeps a UVC control after the close, so put back the value of before
+            if before is not None and before.present and not getattr(error, "hung", False):
+                try:
+                    self.source.set_controls({"exposure": ControlSetting(auto=before.auto, value=before.value)})
+                except Exception as restore_error:
+                    logger.warning(f"Camera {self.camera_id}: the exposure of before the search was not set back: "
+                                   f"{type(restore_error).__name__}: {restore_error}")
+            raise
         return max(MIN_EXPOSURE, best[1] + RECOMMEND_OFFSET)
 
     def _wait_pass(self) -> None:
