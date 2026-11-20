@@ -579,7 +579,7 @@ def test_t_cap_86_relay_sends_each_camera_on_its_own(monkeypatch):
             source = app.factory.sources[reopened]
             assert app.state(reopened) == "starting"
             messages = []
-            app.wait(lambda: _collect(app, messages) >= 20, "20 relay messages")
+            _collect_one_frame_apart(app, messages, 20)
             for header, frames in messages:
                 assert reopened not in frames and {a, b} <= set(frames), frames
                 assert header == max(frames.values())
@@ -593,6 +593,22 @@ def test_t_cap_86_relay_sends_each_camera_on_its_own(monkeypatch):
         app.wait_state(reopened, "ready")
         after = []
         app.wait(lambda: _collect(app, after) and reopened in after[-1][1], "the reopened camera in the relay")
+
+
+def _collect_one_frame_apart(app, messages, count):
+    """Collect relay messages one frame of virtual time apart. The test thread joins the clock while it
+    collects, so the virtual time does not run on while a poll builds a payload. Else, on a slow
+    machine, the held camera passes its 15 s ready limit before the test has its messages (CI run of
+    d8989972d, macOS)."""
+    try:
+        app.clock.wait_until(app.clock.now_ns())  # join the clock before the first poll
+        for _ in range(50 * count):
+            if _collect(app, messages) >= count:
+                return
+            app.clock.wait_until(app.clock.now_ns() + FRAME_NS)
+        raise AssertionError(f"{len(messages)} relay messages, not {count}")
+    finally:
+        app.clock.leave()
 
 
 def _collect(app, messages):
