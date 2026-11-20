@@ -54,6 +54,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md) | Step 5a spec `specs/recorder.md` and its test list; the merged format list F-1 to F-10; agent choices; no question open | `recorder` | proposed |
 | [4A7H](entries/4A7H-other-fills-of-the-kit-adoption.md) | Other fills of the kit adoption; `CLAUDE.md` stays untracked | none | proposed |
 | [QEQ8](entries/QEQ8-python-api-of-the-recorder-as-the-5a-tests-assume-it.md) | Python API of the recorder as the 5a tests assume it; `dead_cameras` of `finish`; the test interpretations | `recorder` | proposed |
+| [T24F](entries/T24F-choices-of-the-5a-recorder-code.md) | Choices of the 5a recorder code: the writer after a write error, the completion walk, the manifest merge, the lock hold, empty statistics | `recorder` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
