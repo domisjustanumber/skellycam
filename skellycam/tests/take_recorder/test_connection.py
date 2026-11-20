@@ -1120,13 +1120,23 @@ def test_a_write_error_while_abandon_drains_reaches_the_take_level(monkeypatch, 
 def test_the_shutdown_endpoint_finishes_a_running_take(monkeypatch, tmp_path, workers):
     """Third review, S4: GET /shutdown during a take. The take level stops the take (recorder.md 8.1) and the
     groups close before the kill flag is set: the manifest is `finished`, and each camera has the frame
-    count of the take. Before, /shutdown only set the kill flag: the manifest stayed `recording`."""
+    count of the take. Before, /shutdown only set the kill flag: the manifest stayed `recording`.
+    Round 4, item 4: the endpoint answers at once (the Electron app waits 5 s at most) and the close runs in
+    the background, then sets the kill flag; here the finish of the take is made 2 s slow."""
     from fastapi import FastAPI
     from fastapi.testclient import TestClient
 
     import skellycam.core.camera_group.camera_group_manager as manager_module
     from skellycam.api.http.app.shutdown import shutdown_router
+    from skellycam.core.take_recorder import Take
 
+    finish = Take.finish
+
+    def slow_finish(take, *args, **kwargs):
+        time.sleep(2.0)
+        return finish(take, *args, **kwargs)
+
+    monkeypatch.setattr(Take, "finish", slow_finish)
     monkeypatch.setattr(logging.Logger, "api", logging.Logger.info, raising=False)  # a level of the app logger
     with capture_app(monkeypatch, [FakeScript(), FakeScript()], workers=workers) as app:
         ready_app_steps(app)
@@ -1136,10 +1146,14 @@ def test_the_shutdown_endpoint_finishes_a_running_take(monkeypatch, tmp_path, wo
         server.include_router(shutdown_router, prefix="/skellycam")
         assert app.record_start(tmp_path).status_code == 200
         time.sleep(1.0)
-        with TestClient(server) as client:
+        with TestClient(server) as client:  # its event loop runs the close in the background
+            started = time.monotonic()
             response = client.get("/skellycam/shutdown")
+            answered = time.monotonic() - started
+            app.wait(lambda: app.kill.value, "the close ends, then the kill flag")
         assert response.status_code == 200, response.text
-        assert app.kill.value and not app.manager.camera_groups
+        assert answered < 1.0, f"the shutdown endpoint answered after {answered:.1f} s"
+        assert not app.manager.camera_groups
     manifest = take_manifest(tmp_path)
     assert manifest["state"] == "finished"
     counts = [len(take_rows(tmp_path, cid)) for cid in app.factory.camera_ids]

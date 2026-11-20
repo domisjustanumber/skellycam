@@ -1,6 +1,7 @@
 """
 Clean shutdown endpoint with proper async handling.
 """
+import asyncio
 import logging
 
 from fastapi import APIRouter, Request
@@ -33,11 +34,17 @@ async def shutdown_server(
     """
     logger.api(f"Shutdown requested via API - {request.url}")
 
-    # A running take ends through the take level before the kill flag (recorder.md 8.1). The worker monitor
-    # then waits for active saves before signaling the server; self-termination would bypass that.
-    await close_camera_groups_before_exit()
-    request.app.state.global_kill_flag.value = True
-    logger.info("Requested shutdown after active video saves finish")
+    # Answer at once (the Electron app waits 5 s at most), then, in the background, end a running take through
+    # the take level (recorder.md 8.1) and close the groups before the kill flag. The worker monitor then waits
+    # for active saves before signaling the server; self-termination would bypass that.
+    async def close_then_kill() -> None:
+        try:
+            await close_camera_groups_before_exit()
+        finally:
+            request.app.state.global_kill_flag.value = True
+            logger.info("Requested shutdown after the camera groups closed")
+
+    request.app.state.shutdown_task = asyncio.create_task(close_then_kill())  # a reference keeps the task
     return JSONResponse(
         content={
             "status": "shutdown_initiated",
