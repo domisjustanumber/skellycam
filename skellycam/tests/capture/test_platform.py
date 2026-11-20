@@ -56,28 +56,43 @@ def test_t_cap_45_comtypes_pinned_for_windows_only():
     assert [p["version"] for p in lock["package"] if p["name"] == "comtypes"] == ["1.5.0"]
 
 
+# The body of T-CAP-46 in a fresh process. The product does each Media Foundation call in a fresh
+# process (the camera process and the detection child); the main process never imports comtypes.
+T_CAP_46_CHILD = """
+import ctypes
+import sys
+from skellycam.core.camera.capture.media_foundation import com, detect
+missing = [name for name in sys.argv[1].split(",") if not hasattr(com, name)]
+assert not missing, f"missing interface declarations: {missing}"
+try:
+    ctypes.WinDLL("mfplat.dll")
+except OSError:
+    print("NO MFPLAT")
+    sys.exit(0)
+com.startup()
+try:
+    assert isinstance(detect.MediaFoundationBackend().devices(), list)
+finally:
+    com.shutdown()
+print("ENUMERATED")
+"""
+
+
 @pytest.mark.skipif(not WINDOWS, reason="the Windows runner only (15)")
 def test_t_cap_46_media_foundation_module_loads():
     """T-CAP-46, section 15 [D1, D7, D47, agent 39]: on the Windows runner: import the Media Foundation
     module; if `mfplat.dll` loads, call `MFStartup`, enumerate, `MFShutdown`. The import passes; the
     interface declarations exist; an enumeration returns a list.
 
-    The enumeration lists the devices. It does not activate or open a device."""
-    import ctypes
-
-    com = product("skellycam.core.camera.capture.media_foundation.com")
-    detect = product("skellycam.core.camera.capture.media_foundation.detect")
-    missing = [name for name in INTERFACES if not hasattr(com, name)]
-    assert not missing, f"missing interface declarations: {missing}"
-    try:
-        ctypes.WinDLL("mfplat.dll")
-    except OSError:
+    The enumeration lists the devices. It does not activate or open a device. The steps run in a fresh
+    process, as in the product: comtypes joins the MTA at import, and the main thread of the test
+    process can already be in a single-threaded apartment (sounddevice puts it there at import)."""
+    process = subprocess.run([sys.executable, "-c", T_CAP_46_CHILD, ",".join(INTERFACES)],
+                             cwd=REPO_ROOT, capture_output=True, text=True, timeout=120)
+    assert process.returncode == 0, process.stderr[-2000:]
+    if "NO MFPLAT" in process.stdout:
         pytest.skip("mfplat.dll does not load on this runner (M-CAP-5); the import and the declarations passed")
-    com.startup()
-    try:
-        assert isinstance(detect.MediaFoundationBackend().devices(), list)
-    finally:
-        com.shutdown()
+    assert "ENUMERATED" in process.stdout, process.stdout
 
 
 def test_codec_probe_of_a_record_start_on_a_camera_loop_thread(monkeypatch):
