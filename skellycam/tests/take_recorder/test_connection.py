@@ -756,3 +756,34 @@ def test_a_writer_that_cannot_start_fails_the_record_start(monkeypatch, tmp_path
     errors = take_warnings(tmp_path, "take_error")
     assert len(errors) == 1 and "test: the disk refuses the file" in errors[0]["detail"], errors
     assert take_warnings(tmp_path, "camera_dead") == []
+
+
+def test_stall_watch_of_a_push_source_counts_from_the_end_of_the_wait(monkeypatch, tmp_path):
+    """Decision E of the user (2026-11-20, recorder.md 5.2 and 10 item 10): the 2 s stall watch of each source
+    counts from the later of the last frame and the end of the last wait. Two push fakes record; the writer of
+    one is held 3 s of the clock, and its source gives its next frame 4 s after its last frame, 1 s after
+    the hold. No camera is `dead`: counted from the last frame alone, the watch fires (checked by hand)."""
+    monkeypatch.setattr(group_module(), "TAKE_QUEUE_SECONDS", 0.2)
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        spies = Spies(monkeypatch, app)
+        held, other = app.factory.camera_ids
+        hold = WriterHold(monkeypatch, held)
+        ready_app_steps(app)
+        watchers = {cid: StateWatcher(app, cid) for cid in app.factory.camera_ids}
+        try:
+            assert app.record_start(tmp_path).status_code == 200
+            record_until(app, spies, 30)
+            hold.start()
+            wait_blocked_in_give(app, spies, hold)
+            app.factory.sources[held].slow_period(rate=0.25, seconds=1.0)  # one interval of 4 s
+            app.clock.advance_to(app.clock.now_ns() + 3 * 10**9)
+            time.sleep(0.3)
+            hold.stop()
+            count = len(spies.of("record", held))
+            app.wait(lambda: len(spies.of("record", held)) > count + 3, "the take goes on")
+            stop(app)
+        finally:
+            for watcher in watchers.values():
+                watcher.stop()
+    assert all("dead" not in watcher.first for watcher in watchers.values()), \
+        {cid: watcher.first for cid, watcher in watchers.items()}

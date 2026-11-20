@@ -218,3 +218,13 @@ class TestCameraOrchestratorPause:
             s.is_paused.value = False
 
         assert orch.any_cameras_paused is False
+
+
+def test_the_frame_count_of_a_take_is_last_minus_first() -> None:
+    """Decision A of the user (2026-11-20, recorder.md 7.6): the take records the group frames first to
+    last - 1, so the frame count is last - first, with no "+ 1"."""
+    orch = _make_orchestrator(["cam0"])
+    orch.first_recording_frame_number.value = 103
+    orch.last_recording_frame_number.value = 113
+    recorded = [n for n in range(100, 120) if orch.should_record_frame_number(frame_number=n)[0]]
+    assert recorded == list(range(103, 113)) and orch.take_frame_count() == len(recorded) == 10
