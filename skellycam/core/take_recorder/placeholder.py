@@ -23,16 +23,19 @@ def parse_sof(payload: bytes) -> JpegLayout:
         if marker == 0xFF:  # a fill byte before a marker
             i += 1
             continue
-        end = i + 2 + int.from_bytes(payload[i + 2:i + 4], "big")
-        if marker == SOS or end > n:
+        length = int.from_bytes(payload[i + 2:i + 4], "big")
+        end = i + 2 + length
+        if marker == SOS or length < 2 or end > n:
             break
         if marker in SOF_MARKERS:
             body = payload[i + 4:end]
-            count = body[5]
-            if len(body) < 6 + 3 * count:
+            if len(body) < 6 or len(body) < 6 + 3 * body[5]:
                 break
-            factors = tuple((body[7 + 3 * c] >> 4, body[7 + 3 * c] & 0x0F) for c in range(count))
-            return JpegLayout(int.from_bytes(body[3:5], "big"), int.from_bytes(body[1:3], "big"), factors)
+            factors = tuple((body[7 + 3 * c] >> 4, body[7 + 3 * c] & 0x0F) for c in range(body[5]))
+            layout = JpegLayout(int.from_bytes(body[3:5], "big"), int.from_bytes(body[1:3], "big"), factors)
+            if layout.width and layout.height and factors and all(1 <= f <= 4 for hv in factors for f in hv):
+                return layout
+            break
         i = end
     raise ValueError("no SOF0, SOF1 or SOF2 segment before the first SOS")
 

@@ -55,6 +55,8 @@ class CameraTakeWriter:
         self._wait_ms_max = 0.0
         self._rows = self._blocks = self._gaps = self._missing = 0
         self._last_real = None
+        self._last_frame_number = None
+        self._abandoned = False  # set by `end` when its deadline passed with the writer still busy
 
     @classmethod
     def start(cls, spec, *, clock=None):
@@ -64,7 +66,7 @@ class CameraTakeWriter:
         self._layout = spec.layout
         self._placeholder = None if spec.layout is None else build_placeholder(spec.layout)
         self._held = []  # rows that wait for the first good frame when the spec has no layout (6.4)
-        self._layout_warned = False
+        self._layout_warned = self._sof_warned = False
         self._k, self._pending, self._previous_sfn = 0, None, None
         self._mkv = MkvFile(spec.mkv_path, num=spec.num, den=spec.den, width=spec.width, height=spec.height)
         self._csv = None
@@ -85,7 +87,13 @@ class CameraTakeWriter:
     # --- the camera loop thread ---
 
     def give(self, frame) -> None:
+        """Raises ValueError, and does not queue the frame, when `frame_number` does not increase (4.1)."""
+        if self._started and not self._ended and self._last_frame_number is not None \
+                and frame.frame_number <= self._last_frame_number:
+            raise ValueError(f"camera {self.spec.camera_id}: frame_number {frame.frame_number} after "
+                             f"{self._last_frame_number}; it must increase")
         self._put(frame)
+        self._last_frame_number = frame.frame_number
 
     def give_missing(self) -> None:
         self._put(None)
@@ -121,7 +129,13 @@ class CameraTakeWriter:
             self.queue.put(frame_count, timeout=self.spec.stall_limit_s)
             self._thread.join(max(0.0, deadline - time.monotonic()))
         except queue.Full:
-            pass
+            # The non-daemon writer thread must not wait for ever for the marker: it stops after its
+            # current item, so that the process can end. The take level completes the files (7.4).
+            self._abandoned = True
+            try:
+                self.queue.put_nowait(frame_count)  # wakes a writer that emptied the queue meanwhile
+            except queue.Full:
+                pass
         stuck = self._thread.is_alive()
         result = CameraTakeResult(
             camera_id=self.spec.camera_id, rows=self._rows, blocks=self._blocks, missing_rows=self._missing,
@@ -138,6 +152,9 @@ class CameraTakeWriter:
     def _run(self) -> None:
         while True:
             item = self.queue.get()
+            if self._abandoned:
+                self._close_files()
+                return
             if isinstance(item, int):
                 break
             if self._error is not None:
@@ -187,12 +204,19 @@ class CameraTakeWriter:
     def _write(self, entry) -> None:
         """Mux block k, then write row k - 1: its block is now in the file (6.3)."""
         sfn, arrival, sample, missing, payload = entry
-        if payload is not None and not self._layout_warned:
+        if payload is not None:
             try:
-                same = parse_sof(payload) == self._layout
+                layout = parse_sof(payload)
             except ValueError:
-                same = False
-            if not same:  # a setting change is refused during a take [D36], so this is a defect
+                layout = None
+            if layout is None:  # no decoder can read it: a damaged frame (7.2)
+                missing, payload = True, None
+                if not self._sof_warned:
+                    self._sof_warned = True
+                    logger.warning("camera %s: row %d has no readable SOF; it is stored as a placeholder",
+                                   self.spec.camera_id, self._k)
+            elif layout != self._layout and not self._layout_warned:
+                # A setting change is refused during a take [D36], so this is a defect.
                 self._layout_warned = True
                 logger.warning("camera %s: row %d has another JPEG layout than the placeholder",
                                self.spec.camera_id, self._k)
