@@ -722,8 +722,25 @@ def test_t_cap_108_a_dying_camera_does_not_hold_the_others(monkeypatch, tmp_path
     on with no gap above 100 ms between their recorded frames (the limit of T-CAP-82).
 
     Changed by step 5a [M1, recorder.md 10 item 7]: the process of the dead camera writes placeholders
-    to the end of the take and closes its source after it, so the test sees the close after the stop."""
+    to the end of the take and closes its source after it, so the test sees the close after the stop. The
+    stop response returns before the close ends (review item 12): the close of the dying fake also waits
+    until the stop response returned, at most 10 s, so a stop that waits for the close returns after it."""
+    from skellycam.tests.capture.fake_source import FakeSource
+
     scripts = [FakeScript(), FakeScript(), FakeScript(close_delay_s=2.0)]
+    stopped, close_ended = threading.Event(), threading.Event()
+    close = FakeSource.close
+
+    def slow_close(source):
+        if source.script.close_delay_s:
+            with source.clock.blocked():
+                stopped.wait(10)
+            close(source)
+            close_ended.set()
+        else:
+            close(source)
+
+    monkeypatch.setattr(FakeSource, "close", slow_close)
     with capture_app(monkeypatch, scripts, track=True) as app:
         spies = Spies(monkeypatch, app)
         ready_app_steps(app)
@@ -737,6 +754,8 @@ def test_t_cap_108_a_dying_camera_does_not_hold_the_others(monkeypatch, tmp_path
             app.wait(lambda: any(e["arrival_ns"] > t_dead + 3 * 10**9 for e in spies.of("record", camera_id)),
                      f"camera {camera_id} records 3 s after the dead camera")
         assert app.record_stop().status_code == 200
+        assert not close_ended.is_set(), "the stop response came after the slow close"
+        stopped.set()
         events = app.factory.logs[dying].events
         app.wait(lambda: any(name == "close" for name, _, _ in events), "the close of the dead camera")
         close_ns = next(t for name, t, _ in events if name == "close")

@@ -244,7 +244,8 @@ def test_t_rec_43_dead_camera_runs_to_the_end_of_the_take(monkeypatch, tmp_path)
     normally; every CSV and MKV has the same rows and blocks; `camera_dead` in the manifest; no
     recording info JSON."""
     # The removal comes at the next frame after 60 recorded frames, not at source frame 300: the virtual
-    # time runs ahead of the test (as in the old T-CAP-35). "Its process runs": its THREAD worker.
+    # time runs ahead of the test (as in the old T-CAP-35). "Its process runs": its THREAD worker. "Dead" is
+    # within 100 ms of the removal (the rule of the old T-CAP-35, review item 11).
     from skellycam.tests.take_recorder.ebml import walk_file
 
     with capture_app(monkeypatch, [FakeScript(), FakeScript(), FakeScript()], track=True) as app:
@@ -253,9 +254,12 @@ def test_t_rec_43_dead_camera_runs_to_the_end_of_the_take(monkeypatch, tmp_path)
         live, dead = app.factory.camera_ids[:2], app.factory.camera_ids[2]
         assert app.record_start(tmp_path).status_code == 200
         record_until(app, spies, 60, [dead])
-        app.factory.sources[dead].remove_now()
+        source = app.factory.sources[dead]
+        source.remove_now()
         app.wait(lambda: app.tracker.first(dead, "dead") is not None, "the camera is dead")
         t_dead = app.tracker.first(dead, "dead")
+        removed_ns = app.factory.logs[dead].frames[source.removed_frame][0] + round(1e9 / 30)
+        assert t_dead - removed_ns < 100_000_000, f"dead {(t_dead - removed_ns) / 1e9:.3f} s after the removal"
         for camera_id in live:
             app.wait(lambda: any(e["arrival_ns"] > t_dead + 10**9 for e in spies.of("record", camera_id)),
                      f"camera {camera_id} records after the dead camera")
@@ -276,12 +280,15 @@ def test_t_rec_43_dead_camera_runs_to_the_end_of_the_take(monkeypatch, tmp_path)
     assert '"skellyfileformat": "capture_info"' in info and "dead_cameras" not in info, "a recording info JSON"
 
 
+@pytest.mark.capture_timing
 def test_t_rec_44_hang_ends_the_process_and_the_take_level_completes_its_file(monkeypatch, tmp_path):
     """T-REC-44 [R4, M5]: a bounded call of one fake hangs during a take. The failure is reported; the
     process ends within 1 s of the report; the take level completes its short file after the join;
     the others record to the stop."""
     # PROCESS workers in real time: the hard end of a camera thread would end the test process. The hung
     # call is the periodic control read on the control thread [U16]. It replaces T-CAP-85 (section 14).
+    # "Record to the stop": the other camera has no gap above 100 ms in its ring from the start of the take
+    # to the stop (U16, decision G of the user, 2026-11-20); real time, so the marker `capture_timing`.
     scripts = [FakeScript(hang_at="set_controls"), FakeScript()]
     with capture_app(monkeypatch, scripts, workers="process") as app:
         ready_app_steps(app)
@@ -291,6 +298,7 @@ def test_t_rec_44_hang_ends_the_process_and_the_take_level_completes_its_file(mo
         try:
             worker = app.worker(hung)
             assert app.record_start(tmp_path).status_code == 200
+            started_ns = time.perf_counter_ns()
             time.sleep(1.0)
             app.factory.logs[hung].arm_hang()
             app.wait(lambda: watcher.failure is not None, "the failure is reported")
@@ -299,7 +307,10 @@ def test_t_rec_44_hang_ends_the_process_and_the_take_level_completes_its_file(mo
             after_report = (exited - watcher.failure_ns) / 1e9
             assert after_report <= 1.0, f"the process ended {after_report:.2f} s after the report"
             app.wait(lambda: any(f[1] > exited + 2 * 10**9 for f in ring.frames), "the other camera records on")
+            stop_ns = time.perf_counter_ns()
             summary = stop(app)
+            largest, before = ring.largest_gap(started_ns, stop_ns)
+            assert largest <= 0.1, f"the other camera had a gap of {largest * 1000:.0f} ms at {before}"
         finally:
             watcher.stop()
             ring.stop()
@@ -342,6 +353,8 @@ def test_t_rec_45_stop_response_and_microphone_refusal_over_http(monkeypatch, tm
     expected = stop_response_fields(paths, recording_name="take", recording_path=tmp_path / "take",
                                     frame_count=len(take_rows(tmp_path, app.factory.camera_ids[0])))
     assert summary["number_of_frames"] >= 60 and summary["number_of_cameras"] == 2
+    assert summary["total_duration_sec"] > 0, "the take start and the arrivals are on two clocks"
+    assert all(row.arrival_ns >= 0 for cid in app.factory.camera_ids for row in take_rows(tmp_path, cid))
 
     def same(value, wanted):
         if isinstance(wanted, dict):
@@ -425,7 +438,9 @@ def test_t_rec_48_stall_watch_stall_end_and_failed_state(monkeypatch, tmp_path):
     `take_error`, the camera stays `ready`; case 3: the camera is `failed`, stage `recording`, reason
     "disk stall", and "apply again" reopens it."""
     # Case 1 holds the writer while the loops wait 3 s of the virtual clock (the stall watch counts that
-    # clock). Cases 2 and 3 use a stall limit of 1 s (real time, 5.3); each case has a queue of 0.2 s.
+    # clock). Then each grab fails for 100 ms: a read of the OpenCV source with no time left still grabs once,
+    # so with no failed grab a watch that counts from the last arrival would not fire either (review item
+    # 14). Cases 2 and 3 use a stall limit of 1 s (real time, 5.3); each case has a queue of 0.2 s.
     module = group_module()
     monkeypatch.setattr(module, "TAKE_QUEUE_SECONDS", 0.2)
     app = CaptureApp(monkeypatch, OpenCVFakeFactory(monkeypatch, count=2))
@@ -443,6 +458,8 @@ def test_t_rec_48_stall_watch_stall_end_and_failed_state(monkeypatch, tmp_path):
         wait_blocked_in_give(app, spies, hold)
         app.clock.advance_to(app.clock.now_ns() + 3 * 10**9)
         time.sleep(0.5)
+        for capture in app.factory.captures.values():
+            capture.fail_until_ns = app.clock.now_ns() + 100_000_000
         hold.stop()
         count = len(spies.of("record", held_id))
         app.wait(lambda: len(spies.of("record", held_id)) > count + 30, "the take goes on")

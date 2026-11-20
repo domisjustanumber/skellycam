@@ -260,6 +260,15 @@ class CaptureApp:
                 return missing_until_end(loop)
 
             monkeypatch.setattr(loop_module.CameraLoop, "_missing_until_end", leave_clock_first)
+            # The take start reads the host clock of the arrivals (SFF-774): the virtual clock, else each CSV
+            # time is negative (review item 15: total_duration_sec was -343355).
+            group_module = product("skellycam.core.camera_group.camera_group")
+            start_take = group_module.start_take
+
+            def start_take_on_the_clock(*args, **kwargs):
+                return start_take(*args, clock=(self.clock.now_ns, time.time_ns), **kwargs)
+
+            monkeypatch.setattr(group_module, "start_take", start_take_on_the_clock)
         if isinstance(factory.on_read, StateTracker):
             factory.on_read.app = self
         self.kill = multiprocessing.Value("b", False)
@@ -522,7 +531,8 @@ def opencv_fake_class():
         gives and of the q90 JPEG of that image.
 
         With a `clock`, a grab waits on that clock, not in real time: frame k comes one period after
-        frame k - 1, or at once when the loop is later than that."""
+        frame k - 1, or at once when the loop is later than that. Each grab fails before `fail_until_ns` of
+        that clock (a gap of the camera)."""
 
         def __init__(self, width, height, reported_fps=30.0, delivered_fps=None, late_grabs=(), late_s=0.0,
                      clock=None):
@@ -532,6 +542,7 @@ def opencv_fake_class():
             self.clock, self._period_ns, self._due = clock, round(1e9 / delivered_fps), None
             self.reported_fps = reported_fps
             self.stopped = False
+            self.fail_until_ns = 0
             self.late_grabs, self.late_s = late_grabs, late_s
             self.grabs = 0
             self.jpeg_hashes, self.image_hashes = set(), set()
@@ -562,6 +573,9 @@ def opencv_fake_class():
             clock = self.clock
             if self.stopped:
                 clock.wait_until(clock.now_ns() + 10_000_000)
+                return False
+            if clock.now_ns() < self.fail_until_ns:
+                clock.wait_until(min(clock.now_ns() + 10_000_000, self.fail_until_ns))
                 return False
             if self.grabs in self.late_grabs:
                 clock.wait_until(clock.now_ns() + round(self.late_s * 1e9))
