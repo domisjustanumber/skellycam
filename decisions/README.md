@@ -58,6 +58,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [037V](entries/037V-completion-of-w8-the-phase-2-loop-and-its-tests.md) | Completion of W8: phase 2 loop deleted; its tests moved to the shared loop or retired for a capture test or a changed rule | none | proposed |
 | [BM73](entries/BM73-fixes-of-the-first-ci-run-of-the-capture-workflow.md) | Fixes of the first capture CI run: stats float, codec alarm on the main thread, test fixes, OpenCV fake on a virtual clock, macOS timing step, group watch | none | proposed |
 | [R60B](entries/R60B-fixes-of-the-first-hardware-run-of-step-3a.md) | Fixes of the first 3a hardware run: DirectShow device path of the OpenCV source, hardware test labels by USB IDs | none | proposed |
+| [FTC3](entries/FTC3-fixes-of-the-second-capture-ci-run-and-the-first-hardware-run.md) | Fixes of the second capture CI run and the 3a hardware run: virtual clock step, T-CAP-86 clock join, empty timing values, virtual camera links | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).

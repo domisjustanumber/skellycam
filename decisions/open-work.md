@@ -117,8 +117,14 @@ task. Delete an item when its work is done. The PR that closes an item records t
     `.github/workflows/capture.yml` (section 15: Windows, Linux and macOS) ran one time, on
     d8989972d. Its failures and their fixes are in
     [ADR-BM73](entries/BM73-fixes-of-the-first-ci-run-of-the-capture-workflow.md), which the user
-    decides. The next run must show the fixes on Linux and macOS. The macOS job also runs the
-    portable ring tests.
+    decides. The second run (6d496aa24) failed T-CAP-86 on Linux, T-CAP-108 and T-CAP-85 on macOS;
+    the fixes and the choices for the user are in
+    [ADR-FTC3](entries/FTC3-fixes-of-the-second-capture-ci-run-and-the-first-hardware-run.md). The
+    next run must show T-CAP-86 and T-CAP-108 pass, and the place of the T-CAP-85 gap on macOS. The
+    macOS job also runs the portable ring tests.
+  - A fault that no entry fixes yet: after a hang and a record stop, the close of the group gives
+    "Record requested before video_recorder was created" in the other camera (T-CAP-85, case 2, on
+    macOS CI and on Windows).
   - The start method on Linux: Python 3.13 forks the camera processes from the main process, which
     has threads (the server and the watch of each group). The product does not mix contexts. Spawn
     on each system is a decision of the user
