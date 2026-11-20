@@ -15,7 +15,7 @@ import time
 import pytest
 
 from skellycam.tests.capture.capture_hardware import (
-    GOOD, LABELS, SLOW_REASON, hardware_app, kiyo_pro_rule, mode_list_follows_7_3, record_result)
+    GOOD, LABELS, SLOW_REASON, hardware_app, kiyo_pro_rule, label_of, mode_list_follows_7_3, record_result)
 from skellycam.tests.capture.capture_session import (
     RingWatcher, Spies, StateWatcher, capture_logs, column, digest, product, recording_info, recording_info_json,
     sfn_gaps, stop_line_count)
@@ -69,7 +69,10 @@ def test_t_cap_51_detection_with_four_cameras(monkeypatch):
                 watcher.stop()
         gaps = {label: w.largest_gap_s(t0 - 10**8, t1 + 10**8) for label, w in zip(("C922", "C930e"), watchers)}
         record_result("T-CAP-51", detection_s=(t1 - t0) / 1e9, gaps_s=gaps, cameras=[c["name"] for c in again])
-        assert len(again) == 4
+        # The four test cameras, by the labels of the harness (USB IDs first); a software camera (for
+        # example NDI) is virtual or has no label (first hardware run of 3a).
+        tested = sorted(label_of(c) for c in again if not c.get("virtual") and label_of(c))
+        assert tested == sorted(LABELS), f"detected again: {[c['name'] for c in again]}"
         assert all(gap <= 0.1 for gap in gaps.values()), gaps
 
 
