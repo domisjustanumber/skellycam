@@ -208,6 +208,7 @@ test-camera-lifecycle = { cmd = "python -B -m pytest skellycam/tests/test_camera
 # =============================================================================
 [tool.pytest.ini_options]
 testpaths = ["skellycam/tests", "tools/tests"]
+addopts = "-m 'not gate_amendment'"
 asyncio_mode = "auto"
 markers = [
     "real_data: reads reference videos, downloading missing recordings",
@@ -217,6 +218,7 @@ markers = [
     "camera_hardware: capture tests that need the cameras; they run only with SKELLYCAM_HARDWARE=1 (specs/windows-capture.md 16.1)",
     "capture_local: capture tests for the Windows development machine only; CI leaves them out (specs/windows-capture.md 16.1)",
     "capture_timing: capture tests that measure real-time gaps; the macOS job runs them in their own step (ADR-BM73)",
+    "gate_amendment: failing tests of the proposed gate rule (specs/windows-capture-gate-amendment.md); deselected until the user decides",
 ]
 
 # =============================================================================
