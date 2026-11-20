@@ -13,6 +13,13 @@ import fs from 'node:fs';
 import os from 'node:os';
 import http from 'node:http';
 import { APP_PATHS } from './app-paths';
+import type { TakeHandler } from '../../src/player/main/take-scheme.ts';
+
+// The take handler of the player remembers each folder that the user picks in the dialog (specs/player.md 5.3)
+let takeHandler: TakeHandler | null = null;
+export function setTakeHandler(handler: TakeHandler): void {
+    takeHandler = handler;
+}
 
 // Configure auto-updater (user triggers download manually)
 autoUpdater.autoDownload = false;
@@ -86,7 +93,9 @@ export const api = t.router({
                 const result = await dialog.showOpenDialog({
                     properties: ['openDirectory'],
                 });
-                return result.canceled ? null : result.filePaths[0];
+                if (result.canceled) return null;
+                await takeHandler?.recordPick(result.filePaths[0]);
+                return result.filePaths[0];
             }),
 
         openFolder: t.procedure

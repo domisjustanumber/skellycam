@@ -17,6 +17,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "allowImportingTsExtensions": true,
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
@@ -28,6 +29,10 @@
   "include": [
     "src",
     "src/lib/**/*"
+  ],
+  "exclude": [
+    "src/player/tests",
+    "src/components/playback/tests"
   ],
   "references": [
     {

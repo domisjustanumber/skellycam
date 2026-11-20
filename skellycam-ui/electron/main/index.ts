@@ -6,6 +6,9 @@ import { PythonServer } from './services/python-server';
 import { UpdateHandler } from './services/update-handler';
 import { LifecycleLogger } from './services/logger';
 import { buildApplicationMenu } from './services/menu-builder';
+import { installTakeHandler, registerTakeScheme } from '../../src/player/main/take-scheme.ts';
+import { setTakeHandler } from './api';
+import path from 'node:path';
 // import os from 'node:os'; // Uncomment if needed for platform-specific checks
 
 // Export environment configuration
@@ -18,6 +21,9 @@ export const APP_ENVIRONMENT = {
 // Platform config
 // if (os.release().startsWith('6.1')) app.disableHardwareAcceleration();
 if (process.platform === 'win32') app.setAppUserModelId(app.getName());
+
+// The scheme of the take handler must be registered before `app` is ready (specs/player.md 4.3)
+registerTakeScheme();
 
 // Prevent multiple instances
 const gotTheLock = app.requestSingleInstanceLock();
@@ -47,6 +53,12 @@ if (!gotTheLock) {
             await systemPreferences.askForMediaAccess('camera');
             await systemPreferences.askForMediaAccess('microphone');
         }
+
+        // The take handler of the player: the recordings folder of the backend and the remembered dialog picks
+        setTakeHandler(await installTakeHandler({
+            recordingsFolder: path.join(app.getPath('home'), 'skellycam_data', 'recordings'),
+            pickedFoldersFile: path.join(app.getPath('userData'), 'picked-take-folders.json'),
+        }));
 
         // Setup IPC
         setupIPC();
