@@ -38,6 +38,7 @@ def manager(monkeypatch):
     statuses = {name: CameraStatus() for name in ("camera1", "camera2")}
     for status in statuses.values():
         status.connected.value = True
+        status.set_state("ready")  # a running camera of the shared loop (spec 8.1)
     return CameraManager(
         ipc=ipc,
         orchestrator=CameraOrchestrator.from_statuses(statuses),

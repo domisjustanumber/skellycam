@@ -1,4 +1,8 @@
-"""Startup aborts must preserve the worker error across the process boundary."""
+"""Startup aborts must preserve the worker error across the process boundary.
+
+Two tests of the phase 2 helper `await_extracted_configs` are retired with it (ADR-037V): a camera
+process that ends with no final state gets `failed` with its exit code (T-CAP-109), and the apply
+response gives the config that each camera read back (T-CAP-41)."""
 import asyncio
 import multiprocessing
 import time
@@ -7,24 +11,13 @@ from unittest.mock import AsyncMock, Mock, patch
 import pytest
 
 from skellycam.core.camera.config.camera_config import CameraConfig
-from skellycam.core.camera_group.camera_group import await_extracted_configs
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 
 from skellycam.core.camera_group.camera_setup_failure import CameraSetupFailure, CameraSetupFailedException
 from skellycam.core.ipc.pubsub.pubsub_manager import PubSubTopicManager
-from skellycam.core.ipc.pubsub.pubsub_topics import DeviceExtractedConfigMessage
 from skellycam.core.camera_group.camera_group_manager import CameraGroupManager
 from skellycam.core.camera_group.camera_group import CameraGroup
 from skellycam.core.ipc.process_management.worker_registry import WorkerRegistry
-
-
-def test_aborted_startup_reports_missing_camera_instead_of_type_error():
-    ipc = Mock(spec=CameraGroupIPC, should_continue=False)
-    ipc.take_setup_failure.return_value = None
-    with pytest.raises(RuntimeError, match='1622'):
-        asyncio.run(await_extracted_configs(
-            ipc=ipc, requested_configs={'1622': CameraConfig(camera_id='1622', camera_index=0)}))
-
 
 
 @pytest.fixture
@@ -57,19 +50,12 @@ def test_spawned_worker_failure_survives_shutdown(ipc):
         process.join(15)
         assert process.exitcode == 0
         assert not ipc.global_kill_flag.value
-        with pytest.raises(CameraSetupFailedException, match='Camera 1622.*opening camera.*FailedToOpenCameraException: access denied'):
-            asyncio.run(await_extracted_configs(ipc=ipc, requested_configs={'1622': CameraConfig(camera_id='1622', camera_index=0)}))
+        # the first failure stays (spec 12); the main process reads it after the worker ended
+        assert str(ipc.take_setup_failure()) == 'Camera 1622 failed during opening camera: FailedToOpenCameraException: access denied'
     finally:
         if process.is_alive():
             process.terminate()
             process.join()
-
-
-def test_successful_config_is_unchanged(ipc):
-    config = CameraConfig(camera_id='1622', camera_index=0)
-    ipc.extracted_config_subscription.put(DeviceExtractedConfigMessage(config))
-    result = asyncio.run(asyncio.wait_for(await_extracted_configs(ipc=ipc, requested_configs={'1622': config}), 2))
-    assert result == {'1622': config}
 
 
 def test_failed_group_cleanup_preserves_failure_and_allows_retry():
@@ -99,23 +85,32 @@ def test_failed_group_cleanup_preserves_failure_and_allows_retry():
         healthy.ipc.pubsub.get_subscription.return_value.close()
 
 
-def test_worker_setup_reports_original_open_error(ipc):
-    from skellycam.core.camera.opencv.opencv_helpers.setup_opencv_camera_loop import setup_opencv_camera_loop
+def test_worker_setup_reports_original_open_error(monkeypatch):
+    """The shared loop with the OpenCV source: an open that raises gives the camera `failed`, stage
+    `open`, with the type and the text of the original error in the apply response (spec 12). The
+    application does not stop (D23)."""
+    import skellycam.core.camera.capture.opencv_source as opencv_source
     from skellycam.core.camera.opencv.opencv_helpers.create_cv2_video_capture import FailedToOpenCameraException
-    from skellycam.core.camera_group.camera_status import CameraStatus
-    from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
-    config = CameraConfig(camera_id='1622', camera_index=0)
-    status = CameraStatus()
-    with patch('skellycam.core.camera.opencv.opencv_helpers.setup_opencv_camera_loop.create_cv2_video_capture',
-               side_effect=FailedToOpenCameraException('camera access denied')):
-        with pytest.raises(CameraSetupFailedException, match='FailedToOpenCameraException: camera access denied'):
-            setup_opencv_camera_loop(config=config, ipc=ipc,
-                                     orchestrator=Mock(spec=CameraOrchestrator), self_status=status,
-                                     shm_subscription=ipc.extracted_config_subscription)
-    assert status.error.value
-    assert not ipc.global_kill_flag.value
-    with pytest.raises(CameraSetupFailedException, match='1622.*FailedToOpenCameraException: camera access denied'):
-        asyncio.run(await_extracted_configs(ipc=ipc, requested_configs={'1622': config}))
+    from skellycam.tests.capture.capture_session import CaptureApp, OpenCVFakeFactory
+
+    def refuse(config):
+        raise FailedToOpenCameraException('camera access denied')
+
+    factory = OpenCVFakeFactory(monkeypatch)
+    monkeypatch.setattr(opencv_source, 'create_cv2_video_capture', refuse)
+    app = CaptureApp(monkeypatch, factory)
+    try:
+        app.detect()
+        camera_id = factory.camera_ids[0]
+        response = app.apply([app.config(camera_id)])
+        assert response.status_code == 200, response.text
+        app.wait_state(camera_id, 'failed')
+        failure = {'camera_id': camera_id, 'stage': 'open', 'reason': 'FailedToOpenCameraException: camera access denied'}
+        assert response.json()['camera_failures'][camera_id] == failure
+        assert app.status(camera_id)['failure'] == failure
+        assert not app.kill.value
+    finally:
+        app.close()
 
 
 def test_exhausted_open_retries_report_device_backend_and_release_capture():

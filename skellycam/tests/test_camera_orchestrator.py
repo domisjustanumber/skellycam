@@ -22,20 +22,22 @@ class TestCameraStatus:
         status = CameraStatus()
         assert status.ready is False
 
-    def test_connected_status_is_ready(self) -> None:
+    def test_ready_state_is_ready(self) -> None:
+        """Spec 8.1: a camera in the state `ready` that is not paused or closing is ready."""
         status = CameraStatus()
-        status.connected.value = True
+        status.set_state("ready")
         assert status.ready is True
 
     def test_paused_status_is_not_ready(self) -> None:
         status = CameraStatus()
-        status.connected.value = True
+        status.set_state("ready")
         status.should_pause.value = True
         assert status.ready is False
 
     def test_error_status_is_not_ready(self) -> None:
+        """Spec 8.1: a camera that died is not ready."""
         status = CameraStatus()
-        status.connected.value = True
+        status.set_state("dead")
         status.error.value = True
         assert status.ready is False
 
@@ -71,27 +73,28 @@ class TestCameraStatus:
 # ---------------------------------------------------------------------------
 
 class TestCameraOrchestratorSync:
-    def test_not_ready_until_all_connected(self) -> None:
+    def test_not_ready_until_all_ready(self) -> None:
         orch = _make_orchestrator(["cam0", "cam1"])
         assert orch.all_ready is False
 
-        orch.camera_statuses["cam0"].connected.value = True
+        orch.camera_statuses["cam0"].set_state("ready")
         assert orch.all_ready is False
 
-        orch.camera_statuses["cam1"].connected.value = True
+        orch.camera_statuses["cam1"].set_state("ready")
         assert orch.all_ready is True
 
-    def test_should_grab_blocks_when_not_all_ready(self) -> None:
+    def test_should_grab_blocks_while_cameras_wait(self) -> None:
+        """Spec 9.4: the cameras in `waiting` take no frame until they join the gate together."""
         orch = _make_orchestrator(["cam0", "cam1"])
-        orch.camera_statuses["cam0"].connected.value = True
-        # cam1 not connected yet
+        orch.camera_statuses["cam0"].set_state("waiting")
+        orch.camera_statuses["cam1"].set_state("waiting")
         assert orch.should_grab_by_id("cam0") is False
 
     def test_should_grab_allows_slowest_camera(self) -> None:
         """The camera with the lowest frame count should be allowed to grab."""
         orch = _make_orchestrator(["cam0", "cam1"])
         for s in orch.camera_statuses.values():
-            s.connected.value = True
+            s.set_state("ready")
 
         # cam0 at frame 5, cam1 at frame 7 — cam0 should grab (it's behind)
         orch.camera_statuses["cam0"].frame_count.value = 5
@@ -104,7 +107,7 @@ class TestCameraOrchestratorSync:
         """When all cameras are at the same frame count, all should be allowed to grab."""
         orch = _make_orchestrator(["cam0", "cam1", "cam2"])
         for s in orch.camera_statuses.values():
-            s.connected.value = True
+            s.set_state("ready")
             s.frame_count.value = 10
 
         assert orch.should_grab_by_id("cam0") is True
@@ -179,7 +182,7 @@ class TestCameraOrchestratorPause:
     async def test_pause_and_unpause(self) -> None:
         orch = _make_orchestrator(["cam0", "cam1"])
         for s in orch.camera_statuses.values():
-            s.connected.value = True
+            s.set_state("ready")
 
         # Manually simulate what the camera loop does:
         # When should_pause is set, the camera sets is_paused
