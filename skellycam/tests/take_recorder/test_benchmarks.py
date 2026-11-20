@@ -143,12 +143,17 @@ def stall_pass_parts(out, stall_s, queue_s, limit_s):
 
 
 @pytest.mark.recorder_slow
-@pytest.mark.parametrize("stall_s", [0.05, 1.5], ids=["0.5_s_scaled", "15_s_scaled"])
+@pytest.mark.parametrize("stall_s", [0.05, 2.0], ids=["0.5_s_scaled", "15_s_scaled"])
 def test_t_rec_stall_short_pass_parts(tmp_path, runs, children, stall_s):
     """T-REC-STALL, the short CI form (12.1): two camera processes at 720p30 for 6 s; the MKV file
-    object of camera 0 blocks one time at frame 30; the queue (0.3 s), the stall limit (1.0 s) and the
-    stalls (0.05 s and 1.5 s) are scaled down by 10. 0.05 s: no `give` wait and no lost frame. 1.5 s:
-    the take ends with `take_error` "disk stall"; each file is finished; equal rows."""
+    object of camera 0 blocks one time at frame 30; the queue (0.3 s) and the stall limit (1.0 s) are
+    scaled down by 10. 0.05 s: no `give` wait and no lost frame. The 15 s case: the take ends with
+    `take_error` "disk stall"; each file is finished; equal rows.
+
+    The 15 s case needs a stall that `give` sees (longer than the queue fill plus the limit) and that
+    ends before `end` gives up (the end call plus the limit, at least 2.3 s after the stall began).
+    15 s scaled by 10 (1.5 s) left 0.2 s on the first side, and a slow runner (macOS CI) missed it.
+    2.0 s leaves 0.7 s there (a queue fill up to 3 times slower) and at least 0.3 s on the other."""
     out = paced_take(tmp_path, runs, children, groups=[(2, 1280, 720, (30, 1))], seconds=6.0,
                      stall=(0, 30, stall_s), queue_seconds=0.3, stall_limit_s=1.0)
     stall_pass_parts(out, stall_s, 0.3, 1.0)
