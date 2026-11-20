@@ -247,10 +247,13 @@ writer.abandon() -> None
   from the last progress, whichever is later), the result has `error="disk stall"`, and section 5.3
   applies [C6] [C6DE D1, changed on 2026-11-20: before, one deadline of the stall limit after the
   call].
-- `abandon` ends the writer thread after its current item, and it does not end the files. The files
-  stay unfinished, as after a kill, and the take level completes them after the join (7.4). The loop
-  calls it when its take did not end (no last frame, for example when the group closes): the frame
-  count is not known. It returns no result ([ADR-P5VE](../decisions/entries/P5VE-connection-review-fix-choices.md), added on 2026-11-20).
+- `abandon` puts a marker after the queued items. The writer thread writes each queued item, the row
+  of the last block (6.3), and closes both files with no padding and no `# end` line. `abandon` waits
+  for the put and for the writer thread as `end` does (D1). It returns no result. The loop calls it
+  when its take has no last frame and the take goes on (the camera ends alone): the take level
+  completes the pair after the join (7.4). When no take level follows (the group stops, or the main
+  process is gone), the loop calls `end` with the number of rows that it gave, as before (added on
+  2026-11-20, [ADR-P5VE](../decisions/entries/P5VE-connection-review-fix-choices.md)).
 - After `give` or `give_missing` raised `RecorderStalled` or `RecorderWriteError`, the caller calls
   only `end`, never `give` again. `end` pads the rest with `missing` rows; else each later row would
   move by one [agent 3].
@@ -338,9 +341,12 @@ process [R10]. The kill and stall tests run the camera level in a child process 
      commit sends the progress time of the writer to the main process with the camera's status.
   5. A camera whose writer finished in that time returns normally. It stays `ready` [C6].
   6. A camera whose writer is still stuck after that time (a result with `error="disk stall"`, or no
-     result) has its process ended (`terminate`, then `join`). It gets the state `failed`, stage
-     `recording`, reason "disk stall" [C6] [agent 25]. The user uses "apply again" or unselects it
-     [C6, cap 8.3]. Its files are completed as a short file (7.4) [M5].
+     result) has its process ended (`terminate`, then `join`; then `kill` and `join` when the process
+     still runs). It gets the state `failed`, stage `recording`, reason "disk stall" [C6] [agent 25].
+     The user uses "apply again" or unselects it [C6, cap 8.3]. Its files are completed as a short file
+     (7.4) [M5]. When its process still runs after the kill, its files are not touched, and the
+     manifest stays `recording` with a `take_error` that names the camera (8.1) (added on 2026-11-20,
+     [ADR-P5VE](../decisions/entries/P5VE-connection-review-fix-choices.md)).
 - The app keeps running. A new take can start [P §6].
 
 ### 5.4 A write error [C5, C6]
@@ -842,8 +848,14 @@ A frame with no bit of the error mask 0x0F gives one block and one row. `flags` 
    - a result with a write error and `files_closed`: the camera is done, and its files wait for 7.4;
    - a process that has already ended (hang, crash): the main process joins it;
    - no result in time, or a result with `error="disk stall"`: the main process ends the process
-     (`terminate`), joins it, and gives the camera the state `failed` of 5.3 [C6].
-   The main process never touches a camera's files before one of these four cases [review B2].
+     (`terminate`, then `kill` when it still runs), joins it, and gives the camera the state `failed`
+     of 5.3 [C6].
+   The main process never touches a camera's files before one of these four cases [review B2]. A
+   process that still runs after the kill is none of them: `finish` does not complete its files, and
+   it writes the manifest with `state` `"recording"` and a `take_error` for that camera (added on
+   2026-11-20, [ADR-P5VE](../decisions/entries/P5VE-connection-review-fix-choices.md)).
+   A stall or a write error that comes while a stop runs is the `take_error` of that take, as in 5.3
+   and 5.4.
 5. `Take.finish(results, frame_count=...)`:
    1. It completes each short file (7.4).
    2. It reads each CSV strictly [SFF-746] and checks the row count (7.6).
@@ -876,6 +888,11 @@ finished [SFF-724].
 Today these values come from the midpoints of the grab stamps of the old frame record. From step 3a,
 both grab stamps hold `arrival_ns` [cap 5.4]. Thus the meaning stays the same. A take that an error
 ended gives the same response; the error text is in the log and in the manifest [C5].
+
+A take that an error ended is ended at once for all cameras. The main process keeps its summary.
+The next stop request returns that summary, one time. Each later stop request, and a stop request
+with no take, gets HTTP 409 with the text "No recording runs". Two stop requests at the same time
+end the take one time: the second gets the 409 (B of [ADR-JMS0](../decisions/entries/JMS0-connection-review-decisions.md), added on 2026-11-20).
 
 ### 8.3 What is no longer written, and the code that goes
 
@@ -971,7 +988,11 @@ commit, with the connection tests of 12.2, does these steps:
     manifest does not stay `recording`. A camera writer that cannot start keeps its camera running; the
     start then fails with HTTP 500 and the text "camera <camera_id>: the take writer did not start:
     <error>"
-    ([ADR-P5VE](../decisions/entries/P5VE-connection-review-fix-choices.md)).
+    ([ADR-P5VE](../decisions/entries/P5VE-connection-review-fix-choices.md)). The failed start does not wait for the cameras to unpause. Before `finish`, it waits for
+    each camera that has a writer or is in the gate: its result, or its refusal. A camera that gets its
+    take spec when the take has ended or its start failed (first frame −1, or a last frame set)
+    refuses it with the text "camera <camera_id>: the take ended before its writer started". Thus
+    `finish` never completes the files of a live writer (8.1 step 4).
 14. **Playback list.** `list_recordings` shows a folder whose `recording_manifest.json` has
     `"skellyfileformat": "recording_manifest"` with the mark "needs the new player" [C7]: the entry
     gets `needs_new_player: true`, `video_count` from the manifest `cameras`, and null statistics.

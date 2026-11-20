@@ -893,10 +893,11 @@ The reason gives the declared rate, the measured rate and two hints in this orde
   of `CameraControl_Exposure`.
 - The goal is that auto modes are off during a recording. Before a recording, a consumer can use the
   auto mode of the camera to set focus or exposure, then change to manual to lock it [D29].
-- `RECOMMEND` runs in the shared loop through the capture interface: the exposure range -12 to -5,
-  10 frames to settle at each value, and the mean of the decoded image against 127.5, as
-  `recommend_camera_exposure_setting.py` does today. It then goes one step darker than the value
-  nearest to 127.5 (offset -1, in the range), as `get_recommended_cv2_cap_exposure` does. Changed on
+- `RECOMMEND` runs in the shared loop through the capture interface, with its own range: -12 to -5
+  (`RECOMMEND_MAX_EXPOSURE` of `camera_loop.py`), 10 frames to settle at each value, and the mean of
+  the decoded image against 127.5. The old helper `recommend_camera_exposure_setting.py` tries -12 to
+  -4. The loop then goes one step darker than the value nearest to 127.5 (offset -1, in the range),
+  as `get_recommended_cv2_cap_exposure` does. Changed on
   2026-11-20 (H of [ADR-JMS0](../decisions/entries/JMS0-connection-review-decisions.md)): before, the range ended at -4, and there was no offset. It runs at step 5 of 9.1. Its frames are not
   warm-up frames [agent 29]. As today (`_apply_exposure` in
   `opencv_apply_config.py`), the stored config then holds `exposure_mode: MANUAL` and the value that
