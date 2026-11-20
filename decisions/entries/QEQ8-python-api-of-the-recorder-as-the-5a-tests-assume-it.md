@@ -1,6 +1,6 @@
 # QEQ8 — Python API of the recorder, as the 5a tests assume it
 
-**Status:** proposed, 2026-11-20 (agent; commit to dom/recorder).
+**Status:** superseded by [P98T](P98T-step-5a-choices-of-the-recorder-and-its-connection.md), 2026-11-20 (commit to dom/integration; was accepted, 2026-11-20 (user, through the review sheets of 2026-11-20); was proposed, 2026-11-20 (agent; commit to dom/recorder)).
 
 ## Decision
 

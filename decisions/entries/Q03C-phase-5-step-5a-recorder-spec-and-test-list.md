@@ -1,6 +1,6 @@
 # Q03C — Phase 5 step 5a spec and test list: the new video recorder
 
-**Status:** proposed, 2026-11-19 (agent; commit to dom/recorder; revised on 2026-11-19 and 2026-11-20).
+**Status:** superseded by [P98T](P98T-step-5a-choices-of-the-recorder-and-its-connection.md), 2026-11-20 (commit to dom/integration; was accepted, 2026-11-20 (user, through the review sheets of 2026-11-20); was proposed, 2026-11-19 (agent; commit to dom/recorder; revised on 2026-11-19 and 2026-11-20)).
 
 ## Decision
 

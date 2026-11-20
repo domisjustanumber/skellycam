@@ -137,22 +137,29 @@ task. Delete an item when its work is done. The PR that closes an item records t
   the spec [`specs/recorder.md`](../specs/recorder.md) and its test list on 2026-11-20
   ([ADR-Z3Y7](entries/Z3Y7-acceptance-of-the-step-5a-recorder-spec-and-test-list.md),
   [ADR-Q03C](entries/Q03C-phase-5-step-5a-recorder-spec-and-test-list.md)). The failing tests are
-  in `skellycam/tests/take_recorder/`. They use the API of the proposed entry
-  [ADR-QEQ8](entries/QEQ8-python-api-of-the-recorder-as-the-5a-tests-assume-it.md), which waits for
-  the user. The product code of step 5a is in `skellycam/core/take_recorder/`. Its choices are in the
-  proposed entry [ADR-T24F](entries/T24F-choices-of-the-5a-recorder-code.md). The measurements of
+  in `skellycam/tests/take_recorder/`. The product code of step 5a is in
+  `skellycam/core/take_recorder/`. The user accepted the choices of step 5a, its test API and its
+  connection
+  ([ADR-P98T](entries/P98T-step-5a-choices-of-the-recorder-and-its-connection.md)). The measurements of
   R11 on Windows are in [ADR-8RES](entries/8RES-r11-measurements-of-the-5a-recorder.md). The user
   keeps 3 s and 10 s as starting values
   ([ADR-C6DE](entries/C6DE-stall-as-no-progress-limits-and-no-fat-disk.md) D2). Open: T-REC-STALL on
   a slow disk (USB, spinning) on the hardware of the user, and the D3 detection on Linux and macOS.
   Run the benchmarks with `SKELLYCAM_BENCH=1` and
-  `SKELLYCAM_BENCH_OUT` set to a folder outside the repository. The merged list of proposed skellyfileformat changes
-  F-1 to F-10 for the recorder and the player (section 13) still waits for the user (R6).
+  `SKELLYCAM_BENCH_OUT` set to a folder outside the repository.
   Done: the connection to the shared loop and the edits of section 14 of the spec in
   `specs/windows-capture.md`; U4, U5 and U12 are removed
-  ([ADR-YNM2](entries/YNM2-connection-of-the-take-recorder-to-the-shared-loop.md), which the user
-  decides). Next: the first hardware run of the new recorder (a take with three cameras; an ended
+  ([ADR-YNM2](entries/YNM2-connection-of-the-take-recorder-to-the-shared-loop.md)). Next: the first hardware run of the new recorder (a take with three cameras; an ended
   camera process in place of an unplug), and the take in the new player and in Blender.
+- **The change request F-1 to F-10 to skellyfileformat.** The user decided on 2026-11-20 that the
+  ten format changes of section 13 of [`specs/recorder.md`](../specs/recorder.md) go to
+  skellyfileformat as one change request, and that the user sees its text before it is sent
+  ([ADR-P98T](entries/P98T-step-5a-choices-of-the-recorder-and-its-connection.md)). It is not sent.
+  The list: F-1 the `missing` flag, the `missing=` count and the placeholder; F-2 the short file;
+  F-3 two exceptions to unchanged bytes; F-4 the completion of a take by its own writer; F-5 the
+  codes `camera_dead`, `camera_file_short`, `take_error`; F-6 `key_origin` `provisional`; F-7 the
+  lock on each OS; F-8 equal player times; F-9 when a player checks the block count; F-10 a
+  `missing` row in a player.
 - **Phase 6a (the canvas player for new takes).** The user decided Y1 to Y7 on 2026-11-19
   ([ADR-J2BQ](entries/J2BQ-phase-6-player-decisions-y1-to-y7.md)). The user accepted the spec
   [`specs/player.md`](../specs/player.md) (revision 2) and its test list T-PLAY-01 to T-PLAY-72 on

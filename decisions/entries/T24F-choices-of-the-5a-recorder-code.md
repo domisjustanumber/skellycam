@@ -1,7 +1,6 @@
 # T24F — Choices of the 5a recorder code
 
-**Status:** proposed, 2026-11-20 (agent; commit to dom/recorder; revised the same day after an
-independent review).
+**Status:** superseded by [P98T](P98T-step-5a-choices-of-the-recorder-and-its-connection.md), 2026-11-20 (commit to dom/integration; was accepted, 2026-11-20 (user, through the review sheets of 2026-11-20); was proposed, 2026-11-20 (agent; commit to dom/recorder; revised the same day after an independent review)).
 
 ## Decision
 

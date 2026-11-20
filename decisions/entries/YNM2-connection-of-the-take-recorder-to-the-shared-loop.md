@@ -1,6 +1,6 @@
 # YNM2 — Connection of the take recorder to the shared loop
 
-**Status:** proposed, 2026-11-20 (agent; the user approved the connection code on 2026-11-20).
+**Status:** superseded by [P98T](P98T-step-5a-choices-of-the-recorder-and-its-connection.md), 2026-11-20 (commit to dom/integration; was accepted, 2026-11-20 (user, through the review sheets of 2026-11-20); was proposed, 2026-11-20 (agent; the user approved the connection code on 2026-11-20)).
 
 ## Decision
 
