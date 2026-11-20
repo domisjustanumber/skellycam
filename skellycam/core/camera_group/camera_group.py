@@ -109,6 +109,7 @@ class CameraGroup:
     _audio_recorder: AudioRecorder | None = None
     _ring_lock: Any = field(default_factory=threading.RLock)
     _stop_watch: Any = field(default_factory=threading.Event)
+    _loop: Any = None  # the event loop of `start`: a ring reader is closed only on it (ADR-BM73)
 
     @property
     def id(self) -> CameraGroupIdString:
@@ -164,6 +165,7 @@ class CameraGroup:
     async def start(self) -> dict:
         """Start each camera. Return the failure object of each camera that failed (8.4, section 12)."""
         self.started = True
+        self._loop = asyncio.get_running_loop()
         logger.info(f"Starting camera group ID: {self.id} with cameras: {list(self.configs.keys())}")
         self.cameras.start()
         threading.Thread(target=self._watch_workers, name=f"camera group {self.id} watch", daemon=True).start()
@@ -277,19 +279,39 @@ class CameraGroup:
         """6.6: the main process cleans up only the camera whose process ended: its state and rings (D10).
 
         It also reads the queues that the camera processes write, so that no write waits on a full pipe.
+        An error in one step is logged, and the watch continues: else no later ended process is marked and
+        no queue is read (ADR-BM73).
         """
         while not self._stop_watch.wait(WATCH_INTERVAL_S):
-            while self.ipc.take_setup_failure() is not None:
-                pass  # the status of each camera holds its failure
-            self._take_finished()
+            try:
+                while self.ipc.take_setup_failure() is not None:
+                    pass  # the status of each camera holds its failure
+                self._take_finished()
+            except Exception as error:
+                logger.exception(f"Camera group {self.id}: the watch could not read the camera queues: {error}")
             for camera_id, worker in list(self.cameras.camera_workers.items()):
-                if worker.worker.exitcode is None:
-                    continue
-                self._mark_ended(camera_id, worker)
-                if camera_id in self.rings:
-                    logger.info(f"The process of camera {camera_id} ended; its rings close")
-                    with self._ring_lock:
-                        self._close_rings([camera_id])
+                try:
+                    self._watch_camera(camera_id, worker)
+                except Exception as error:
+                    logger.exception(f"Camera group {self.id}: the watch of camera {camera_id} failed: {error}")
+
+    def _watch_camera(self, camera_id: CameraIdString, worker) -> None:
+        if worker.worker.exitcode is None:
+            return
+        self._mark_ended(camera_id, worker)
+        ring = self.rings.get(camera_id)
+        if ring is not None:
+            # The readers are read on the event loop (the relay), so they are closed there too (ADR-BM73).
+            self._loop.call_soon_threadsafe(self._close_ended_ring, camera_id, ring)
+
+    def _close_ended_ring(self, camera_id: CameraIdString, ring: FrameRingCreator) -> None:
+        """On the event loop: close the rings of a camera whose process ended, if the camera still has that
+        ring. A restart before this call gives a new ring, which stays open."""
+        with self._ring_lock:
+            if self.rings.get(camera_id) is not ring:
+                return
+            logger.info(f"The process of camera {camera_id} ended; its rings close")
+            self._close_rings([camera_id])
 
     def _mark_ended(self, camera_id: CameraIdString, worker) -> None:
         """A camera process that ended with no final state (a native crash, a kill, an error before the loop)
