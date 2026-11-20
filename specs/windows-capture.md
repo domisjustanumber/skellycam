@@ -18,6 +18,17 @@ are 1.3, 1.4, 2.3, 5.1, 5.4, 5.5, 5.7, 6.6, 8.1, 8.2, 9.5, 11.3, 11.5, 11.6, 12,
 17.2. The interim rules U4, U5 and U12 are removed; section 20 keeps their text. The tests T-CAP-09,
 T-CAP-10, T-CAP-35 and T-CAP-85 are replaced by T-REC-41 to T-REC-44 of [`recorder.md`](recorder.md).
 
+Note of 2026-11-20 (exposure on each source, [ADR-22EJ](../decisions/entries/22EJ-decisions-of-the-user-for-linux-and-macos-native-capture.md)): the user ruled that the camera's own
+auto exposure is never a mode, on Windows too. Section 4.5 of [`unix-capture.md`](unix-capture.md) gives
+the rules for each source, Media Foundation included: Auto is SkellyCam's search and stays the stored
+mode; the search runs at each open, at a frame-rate change and on request, never in Manual; a new
+camera starts in Auto; the state `adjusting` during the search; the guard that never keeps a slow
+value; the slow-camera text "Camera is slow. Try adding more light"; the restore of the controls at
+the close. They replace D29, the text of 10.4 and the `AUTO` and `RECOMMEND` modes of 11.1, add
+`adjusting` to 8.1 to 8.3, and end the `auto_control` warning of 11.3 for exposure. The tests T-CAP-12,
+T-CAP-18, T-CAP-34, T-CAP-41, T-CAP-42, T-CAP-53, T-CAP-77, T-CAP-94 and T-CAP-104 change with them.
+The edits of those sections wait for their own commit.
+
 ## 0. How to read this spec
 
 Marks:

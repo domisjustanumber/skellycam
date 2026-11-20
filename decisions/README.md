@@ -49,6 +49,8 @@ These entries are `accepted`.
 | [V8RS](entries/V8RS-pause-freezes-the-ui-display-only.md) | Pause freezes the UI display only: no public pause route; the internal pause of the record start stays (Q495) | accepted |
 | [JK79](entries/JK79-exposure-search-at-each-open-and-camera-requests.md) | Supersedes C4FZ: Auto searches at each open, at a rate change and on request (G1); one slow-camera text; camera number; `usb_link`; virtual links | accepted |
 | [6QFG](entries/6QFG-pause-in-the-ui-search-on-native-sources-and-restore-at-close.md) | Supersedes 379P: pause is a UI display freeze, no server route (K1); search on native sources; no manual exposure; restore at close | accepted |
+| [22EJ](entries/22EJ-decisions-of-the-user-for-linux-and-macos-native-capture.md) | Linux and macOS native capture: certify validates it; own OS folders; test parity; SkellyCam Auto only; restore at close; checked per model | accepted |
+| [SC3Y](entries/SC3Y-later-rulings-of-the-user-for-native-capture-on-linux-and-macos.md) | Later native capture rulings: widest macOS control route; named checks turn native on; restore may re-enable auto; spec owners | accepted |
 
 ### Evidence
 
@@ -96,6 +98,7 @@ These entries wait for a decision of the user. Section is the section or area of
 | [6T78](entries/6T78-choices-of-the-sfn26-integration.md) | Choices of the `sfn26` integration: OpenCV helpers stay ours, kept and dropped items, forms of the four ports, Rust removal | none | proposed |
 | [Y6F6](entries/Y6F6-camera-request-choices.md) | Choices A1 to A23 of `specs/camera-requests.md`: search limits, held value, endpoint and texts, slow-camera texts, 60 fps check, fall back, `usb_link` | none | proposed |
 | [4Z7T](entries/4Z7T-choices-after-the-search-at-each-open.md) | Choices B1 to B21 after the search at each open: order and limits of an open, held value, state route, search count, manager call | none | proposed |
+| [AT04](entries/AT04-choices-of-the-linux-and-macos-capture-spec.md) | Spec `specs/unix-capture.md`, tests T-UNX: stdlib V4L2, PyObjC 13.0, identity, exposure map, controls, JPEG fallback, failure codes, diagnostics | `skellycam.core.camera.capture` | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).
