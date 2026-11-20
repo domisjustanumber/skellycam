@@ -1,7 +1,9 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Footer } from '@/components/ui-components/Footer';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { SyncedVideoPlayer } from '@/components/playback/SyncedVideoPlayer';
+import { CanvasTakePlayer } from '@/components/playback/CanvasTakePlayer';
+import { chooseTakePlayer } from '@/components/playback/take-route';
 import { CamerasViewSettingsOverlay } from '@/components/camera-view-settings-overlay/CamerasViewSettingsOverlay';
 import { useElectronIPC } from '@/services';
 import { useTranslation } from 'react-i18next';
@@ -43,6 +45,15 @@ const PlaybackPage: React.FC = () => {
         setResetKey((v) => v + 1);
     }, []);
 
+    // L1: a take folder of the new format plays in the canvas player
+    const [canvasTake, setCanvasTake] = useState(false);
+    useEffect(() => {
+        let gone = false;
+        setCanvasTake(false);
+        if (recordingPath && loadedVideos.length === 0) void chooseTakePlayer(recordingPath).then(r => !gone && setCanvasTake(r === 'canvas'));
+        return () => { gone = true; };
+    }, [recordingPath, loadedVideos.length]);
+
     const hasVideos = loadedVideos.length > 0;
     const totalSize = loadedVideos.reduce((sum, v) => sum + v.sizeBytes, 0);
 
@@ -54,7 +65,7 @@ const PlaybackPage: React.FC = () => {
 
             </div><div className="playback-page-content-main flex flex-col flex-1 overflow-hidden p-2 bg-middark rounded mt-1 br-2">
                 <ErrorBoundary>
-                    {hasVideos ? (
+                    {hasVideos || canvasTake ? (
                         <div className="playback-page-content no-videos empty-state flex flex-col h-full">
                             {/* Recording header bar */}
                             <div
@@ -80,9 +91,11 @@ const PlaybackPage: React.FC = () => {
                                     <span className="icon import-icon icon-size-20" />
                                 </button>
 
-                                <span className="camera-config-chip" title={t('cameraStreams')}>
-                                    {t('cameraCount', { count: loadedVideos.length })}
-                                </span>
+                                {hasVideos && (
+                                    <span className="camera-config-chip" title={t('cameraStreams')}>
+                                        {t('cameraCount', { count: loadedVideos.length })}
+                                    </span>
+                                )}
 
                                 {totalSize > 0 && (
                                     <span className="camera-config-chip" title={t('totalRecordingSize')}>
@@ -105,7 +118,15 @@ const PlaybackPage: React.FC = () => {
 
                             {/* Player */}
                             <div className="flex-1" style={{ minHeight: 0 }}>
-                                <SyncedVideoPlayer
+                                {canvasTake && recordingPath ? (
+                                    <CanvasTakePlayer
+                                        folderPath={recordingPath}
+                                        manualColumns={manualColumns}
+                                        resetKey={resetKey}
+                                        initialFrame={currentFrame}
+                                        onFrameChange={handleFrameChange}
+                                    />
+                                ) : <SyncedVideoPlayer
                                     videos={loadedVideos.map((v) => ({
                                         videoId: v.videoId,
                                         filename: v.filename,
@@ -117,7 +138,7 @@ const PlaybackPage: React.FC = () => {
                                     resetKey={resetKey}
                                     initialFrame={currentFrame}
                                     onFrameChange={handleFrameChange}
-                                />
+                                />}
                             </div>
                         </div>
                     ) : (

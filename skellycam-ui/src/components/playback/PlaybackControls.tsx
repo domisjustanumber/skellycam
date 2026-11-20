@@ -30,6 +30,8 @@ interface PlaybackControlsProps {
   onSeekToEnd: () => void;
   isLooping: boolean;
   onToggleLoop: () => void;
+  /** Hides the sync information button (F16); the canvas player gives it [U3]. */
+  hideSyncInfo?: boolean;
 }
 
 const PLAYBACK_RATES = [0.1, 0.25, 0.5, 1, 1.5, 2, 4, 8];
@@ -79,6 +81,7 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
   onSeekToEnd,
   isLooping,
   onToggleLoop,
+  hideSyncInfo = false,
 }) => {
   const { t } = useTranslation();
 
@@ -332,7 +335,7 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
 
         {/* Info & Settings Group */}
         <div className="playback-controls-group-info-settings flex items-center gap-1 flow-row p-1 bg-middark br-2">
-          <div className="flex pos-rel items-center onclick-tooltip-wrapper">
+          {!hideSyncInfo && <div className="flex pos-rel items-center onclick-tooltip-wrapper">
             <PromptTooltip
               show={syncInfoOpen}
               title="Recording Playback Timing Issue"
@@ -351,7 +354,7 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
               tooltipText={t("syncInfo")}
               tooltipPosition="pos-top"
             />
-          </div>
+          </div>}
 
           <div className="playback-settings-button-opener flex pos-rel items-center onclick-tooltip-wrapper">
             <IconButton

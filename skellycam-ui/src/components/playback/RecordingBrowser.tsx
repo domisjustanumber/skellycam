@@ -9,6 +9,7 @@ import clsx from "clsx";
 import { serverUrls } from "@/services/server/server-helpers/server-urls";
 import { backendFetch } from "@/services/electron-ipc/backend-fetch";
 import { useElectronIPC } from "@/services";
+import { chooseTakePlayer } from "./take-route";
 import { useTranslation } from "react-i18next";
 import ButtonSm from "../ui-components/ButtonSm";
 import SubactionHeader from "../ui-components/SubactionHeader";
@@ -249,6 +250,11 @@ export const RecordingBrowser: React.FC<RecordingBrowserProps> = ({
       setError(null);
 
       try {
+        // L1: a take folder of the new format opens in the canvas player, before any backend video call
+        if (recording.path && (await chooseTakePlayer(recording.path)) === "canvas") {
+          onRecordingLoaded([], recording.name, recording.path, recording.fps ?? undefined);
+          return;
+        }
         // If the recording has a full path, derive the parent directory
         // to pass as recording_parent_directory query param for non-standard locations
         let parentParam = "";
