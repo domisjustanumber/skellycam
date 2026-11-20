@@ -112,7 +112,10 @@ export const camerasConnectOrUpdate = createAsyncThunk<
             throw new Error('No cameras selected for connection');
         }
 
-        const request: CamerasConnectOrUpdateRequest = { camera_configs: cameraConfigs };
+        const request: CamerasConnectOrUpdateRequest = {
+            camera_configs: cameraConfigs,
+            backend: state.cameras.backend,
+        };
 
         const response = await backendFetch(serverUrls.endpoints.camerasConnectOrUpdate, {
             method: 'POST',
@@ -143,15 +146,18 @@ export const closeCameras = createAsyncThunk<void, void, { state: RootState }>(
     }
 );
 
-export const pauseUnpauseCameras = createAsyncThunk<void, void, { state: RootState }>(
+export const pauseUnpauseCameras = createAsyncThunk<boolean, void, { state: RootState }>(
     'cameras/pause',
-    async () => {
+    async (_, {getState}) => {
         const response = await backendFetch(serverUrls.endpoints.pauseUnpauseCameras, {
-            method: 'GET',
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({paused: !getState().cameras.isPaused}),
         });
 
         if (!response.ok) {
             throw new Error(`Failed to pause/unpause cameras: ${response.statusText}`);
         }
+        return (await response.json()).paused;
     }
 );

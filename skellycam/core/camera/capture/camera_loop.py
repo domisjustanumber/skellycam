@@ -26,11 +26,6 @@ from skellycam.core.camera.capture.source import (
 )
 from skellycam.core.camera.config.camera_config import CameraConfig
 from skellycam.core.camera.config.image_resolution import ImageResolution
-from skellycam.core.camera.opencv.opencv_helpers.recommend_camera_exposure_setting import (
-    MIN_EXPOSURE,
-    NUMBER_OF_FRAMES_TO_SETTLE,
-    TARGET_BRIGHTNESS,
-)
 from skellycam.core.camera_group.camera_group_ipc import CameraGroupIPC
 from skellycam.core.camera_group.camera_orchestrator import CameraOrchestrator
 from skellycam.core.camera_group.camera_setup_failure import CameraSetupFailure
@@ -65,6 +60,9 @@ CONTROL_READ_INTERVAL_S = 1.0  # 11.4, U16
 JPEG_Q90 = [int(cv2.IMWRITE_JPEG_QUALITY), 90]  # ring 2.3, 8.8
 RECOMMEND_MAX_EXPOSURE = -5  # 11.1, decision H (ADR-JMS0): -4 gives about 16 fps on the Logitech cameras
 RECOMMEND_OFFSET = -1  # 11.1, decision H: one step darker than the nearest value, as the old helper
+MIN_EXPOSURE = -12  # 11.1: the lowest value of the search, in log base 2 seconds
+NUMBER_OF_FRAMES_TO_SETTLE = 10  # 11.1: frames at each value before the sample
+TARGET_BRIGHTNESS = 127.5  # 11.1: half of 255
 
 
 class _Stop(Exception):

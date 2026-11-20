@@ -1,0 +1,878 @@
+//! Camera thread: openpnp-capture DirectShow capture on a dedicated OS thread.
+//!
+//! Each camera thread creates its own CapContext (COM thread-affine), opens a
+//! stream with the requested MJPG format, configures manual exposure, then runs
+//! a capture loop synchronized by a BreakableBarrier shared with the gatherer.
+//!
+//! The thread IS the camera. It owns the COM context and persists for the
+//! device's entire lifetime. The `Camera` handle communicates with it via
+//! channels. Config changes are applied on the existing thread and COM context.
+//!
+//! Internal state machine:
+//!   Configuring → Streaming → ShuttingDown
+//!        ↓            ↓           ↓
+//!     Faulted ←────────┴───────────┘
+//!
+//! The capture loop uses a `FrameStateMachine` from `frame_loop.rs` for
+//! frame-level substate tracking and automatic timestamp recording.
+
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::mpsc;
+use std::sync::Arc;
+use std::thread;
+use std::thread::JoinHandle;
+
+use crate::camera_group::sync_utils::BreakableBarrier;
+
+use super::ffi::*;
+use super::frame_loop::{FrameState, FrameStateMachine};
+use super::types::{
+    CameraConfig, CameraCommand, CameraEvent, CameraIdentity, FrameData, FramePacket,
+};
+
+const STABILIZATION_FRAMES: u32 = 30;
+
+/// Spawn a camera capture thread and return the communication channels plus
+/// the join handle.
+///
+/// On success, the camera is streaming — the thread is running the capture
+/// loop, synchronized via the shared barrier.
+///
+/// On failure, the error is returned before any thread is spawned (all
+/// failures happen during setup: create context, find format, open stream,
+/// configure, stabilize).
+pub fn spawn(
+    identity: &CameraIdentity,
+    shared_config: Arc<std::sync::Mutex<CameraConfig>>,
+    barrier: Arc<BreakableBarrier>,
+    paused: Arc<AtomicBool>,
+    start_frame_number: i64,
+) -> anyhow::Result<(
+    mpsc::Sender<CameraCommand>,
+    mpsc::Receiver<CameraEvent>,
+    mpsc::Receiver<FramePacket>,
+    JoinHandle<()>,
+)> {
+    let (command_sender, command_receiver) = mpsc::channel::<CameraCommand>();
+    let (event_sender, event_receiver) = mpsc::channel::<CameraEvent>();
+    let (frame_sender, frame_receiver) = mpsc::sync_channel::<FramePacket>(1);
+
+    let label = identity.label();
+    let identity = identity.clone();
+
+    let thread_handle = thread::Builder::new()
+        .name(label.clone())
+        .spawn(move || {
+        let result = run_camera_thread(
+            shared_config,
+            &identity,
+            &label,
+            &command_receiver,
+            &event_sender,
+            &frame_sender,
+            &barrier,
+            &paused,
+            start_frame_number,
+        );
+        if let Err(error) = result {
+            let _ = event_sender.send(CameraEvent::Error(format!(
+                "Camera {label} thread error: {error}"
+            )));
+        }
+    })?;
+
+    Ok((command_sender, event_receiver, frame_receiver, thread_handle))
+}
+
+enum CommandResult {
+    None,
+    Shutdown,
+    Configure(CameraConfig),
+}
+
+/// Check the command channel. Returns the first pending command, or None if empty.
+fn check_commands(command_receiver: &mpsc::Receiver<CameraCommand>) -> CommandResult {
+    match command_receiver.try_recv() {
+        Ok(CameraCommand::Shutdown) => CommandResult::Shutdown,
+        Ok(CameraCommand::Configure { config }) => CommandResult::Configure(config),
+        Err(mpsc::TryRecvError::Empty) => CommandResult::None,
+        Err(mpsc::TryRecvError::Disconnected) => CommandResult::Shutdown,
+    }
+}
+
+/// Apply a new config to the running camera.
+///
+/// For exposure-only changes: just reconfigures exposure in-place.
+/// For resolution/framerate changes: closes the current stream, finds
+/// the best matching MJPG format, opens a new stream, and re-applies
+/// exposure on the new stream. The camera thread stays alive — only
+/// the internal CaptureStream is replaced.
+///
+/// `old_config` is the previously *requested* config: the restart decision
+/// compares requests (see `CameraConfig::needs_stream_restart`), never the
+/// negotiated format against a request.
+///
+/// `device_index` is this camera's index in `ctx`'s own device enumeration
+/// (see `resolve_device_index`), not the index remembered in the config.
+///
+/// Returns the (possibly new) stream, actual_width, and actual_height.
+/// Apply `new_config`, restarting the stream when the format changes. On error the stream has been
+/// closed (a restart that could not reopen it): the caller releases the context, never the stream.
+unsafe fn apply_config(
+    ctx: CapContext,
+    stream: CapStream,
+    device_index: u32,
+    label: &str,
+    new_config: &CameraConfig,
+    old_config: &CameraConfig,
+    actual_width: u32,
+    actual_height: u32,
+    shared_config: &Arc<std::sync::Mutex<CameraConfig>>,
+    command_receiver: &mpsc::Receiver<CameraCommand>,
+) -> anyhow::Result<(CapStream, u32, u32)> { unsafe {
+    let exposure_mode = new_config.exposure_mode.clone();
+    let exposure_value = new_config.exposure;
+
+    if old_config.needs_stream_restart(new_config) {
+         Cap_closeStream(ctx, stream) ;
+
+        let format_info = match find_best_mjpg(
+            ctx,
+            device_index,
+            new_config.width,
+            new_config.height,
+            new_config.framerate,
+            label,
+        ) {
+            Ok(f) => f,
+            Err(e) => {
+                tracing::error!("Camera {label}: failed to find format for new config: {e}");
+                // Reopen with the original format as fallback
+                match find_best_mjpg(ctx, device_index, old_config.width, old_config.height, old_config.framerate, label) {
+                    Ok(f) => f,
+                    Err(_) => {
+                        anyhow::bail!("Camera {label}: no format matches the new or the previous settings; the stream is closed");
+                    }
+                }
+            }
+        };
+
+        let new_stream = match open_stream_raw(ctx, device_index, label, &format_info) {
+            Ok(s) => s,
+            Err(e) => {
+                anyhow::bail!("Camera {label}: could not reopen the stream ({e}); the stream is closed");
+            }
+        };
+
+        configure_exposure(ctx, new_stream, label, &exposure_mode, exposure_value);
+
+        // Write actual negotiated settings back to shared config
+        if let Ok(mut guard) = shared_config.lock() {
+            guard.framerate = format_info.fps as f64;
+            guard.width = format_info.width;
+            guard.height = format_info.height;
+        }
+
+        tracing::debug!(
+            "Camera {label}: stream restarted — {actual_width}x{actual_height} @{:.0}fps → {}x{} @{}fps",
+            old_config.framerate,
+            format_info.width, format_info.height, format_info.fps,
+        );
+        Ok((new_stream, format_info.width, format_info.height))
+    } else {
+        configure_exposure(ctx, stream, label, &exposure_mode, exposure_value);
+        tracing::debug!("Camera {label}: applied config (exposure={exposure_value} mode={exposure_mode})");
+        Ok((stream, actual_width, actual_height))
+    }
+}}
+
+fn run_camera_thread(
+    shared_config: Arc<std::sync::Mutex<CameraConfig>>,
+    identity: &CameraIdentity,
+    label: &str,
+    command_receiver: &mpsc::Receiver<CameraCommand>,
+    event_sender: &mpsc::Sender<CameraEvent>,
+    frame_sender: &mpsc::SyncSender<FramePacket>,
+    barrier: &BreakableBarrier,
+    paused: &Arc<AtomicBool>,
+    start_frame_number: i64,
+) -> anyhow::Result<()> {
+    unsafe {
+        let ctx = Cap_createContext();
+        if ctx.is_null() {
+            anyhow::bail!("Cap_createContext returned null");
+        }
+
+        let initial_config = {
+            shared_config.lock().unwrap().clone()
+        };
+
+        // Every failure below releases the context (and the stream, once opened).
+        let device_paths: Vec<String> = (0..Cap_getDeviceCount(ctx))
+            .map(|index| cstr_to_string(Cap_getDeviceUniqueID(ctx, index)).unwrap_or_default())
+            .collect();
+        let device_index = match resolve_device_index(
+            &identity.device_path, initial_config.camera_index, &device_paths,
+        ) {
+            Ok(index) => index,
+            Err(error) => {
+                Cap_releaseContext(ctx);
+                return Err(error.context(format!("Camera {label}")));
+            }
+        };
+        if device_index != initial_config.camera_index {
+            tracing::warn!(
+                "Camera {label}: device now enumerates at index {device_index}, not {}; opening by device path",
+                initial_config.camera_index,
+            );
+        }
+
+        let format_info = match find_best_mjpg(
+            ctx,
+            device_index,
+            initial_config.width,
+            initial_config.height,
+            initial_config.framerate,
+            label,
+        ) {
+            Ok(info) => info,
+            Err(error) => {
+                Cap_releaseContext(ctx);
+                return Err(error);
+            }
+        };
+
+        // Write actual negotiated settings back to shared config so that
+        // external consumers (recording path, API responses) see the real values.
+        {
+            let mut guard = shared_config.lock().unwrap();
+            guard.framerate = format_info.fps as f64;
+            guard.width = format_info.width;
+            guard.height = format_info.height;
+        }
+
+        let mut stream = match open_stream_raw(ctx, device_index, label, &format_info) {
+            Ok(stream) => stream,
+            Err(error) => {
+                Cap_releaseContext(ctx);
+                return Err(error);
+            }
+        };
+
+        configure_exposure(ctx, stream, label, &initial_config.exposure_mode, initial_config.exposure);
+        if let Err(error) = stabilize_raw(ctx, stream, label, command_receiver) {
+            Cap_closeStream(ctx, stream);
+            Cap_releaseContext(ctx);
+            return Err(error);
+        }
+
+        let mut actual_width = format_info.width;
+        let mut actual_height = format_info.height;
+
+        tracing::info!(
+            "Camera {label}: capture loop raw-MJPEG ({actual_width}x{actual_height} @{}fps)",
+            format_info.fps,
+        );
+
+        let _ = event_sender.send(CameraEvent::Ready);
+        let mut frame_sm = FrameStateMachine::new(start_frame_number);
+        // The driver copies each frame once, into a pooled buffer that consumers share.
+        let mut frame_pool = crate::camera::frame_pool::FramePool::default();
+        let mut frame_capacity: usize = 0;
+        let shared_identity = std::sync::Arc::new(identity.clone());
+        // The most recently requested config. The negotiated format lives in
+        // actual_width/actual_height and the shared config.
+        let mut active_config = initial_config;
+
+        loop {
+            // ── Process pending commands ──
+            match check_commands(command_receiver) {
+                CommandResult::Shutdown => {
+                    tracing::info!("Camera {label}: shutdown");
+                    break;
+                }
+                CommandResult::Configure(new_config) => {
+                    (stream, actual_width, actual_height) = apply_config(
+                        ctx, stream, device_index, label, &new_config, &active_config,
+                        actual_width, actual_height, &shared_config, command_receiver,
+                    ).map_err(|error| {
+                        Cap_releaseContext(ctx); // apply_config closed the stream
+                        error
+                    })?;
+                    active_config = new_config;
+                }
+                CommandResult::None => {}
+            }
+
+            // ── Paused spin ────────────────────────────────────────────
+            // Placed AFTER the previous cycle's barrier/increment so the
+            // camera has completed its last frame before spinning. Still
+            // checks commands so Configure/Shutdown remain responsive.
+            while paused.load(Ordering::SeqCst) {
+                match check_commands(command_receiver) {
+                    CommandResult::Shutdown => {
+                        tracing::info!("Camera {label}: shutdown while paused");
+                        Cap_closeStream(ctx, stream);
+                        Cap_releaseContext(ctx);
+                        return Ok(());
+                    }
+                    CommandResult::Configure(new_config) => {
+                        (stream, actual_width, actual_height) = apply_config(
+                            ctx, stream, device_index, label, &new_config, &active_config,
+                            actual_width, actual_height, &shared_config, command_receiver,
+                        ).map_err(|error| {
+                            Cap_releaseContext(ctx); // apply_config closed the stream
+                            error
+                        })?;
+                        active_config = new_config;
+                    }
+                    CommandResult::None => {
+                        std::thread::sleep(std::time::Duration::from_millis(1));
+                    }
+                }
+            }
+            // ── End paused spin ────────────────────────────────────────
+
+            // ── Spin on hasNewFrame ──
+            let wait_start = std::time::Instant::now();
+            loop {
+                match check_commands(command_receiver) {
+                    CommandResult::Shutdown => {
+                        tracing::info!("Camera {label}: shutdown during hasNewFrame");
+                        Cap_closeStream(ctx, stream);
+                        Cap_releaseContext(ctx);
+                        return Ok(());
+                    }
+                    CommandResult::Configure(new_config) => {
+                        (stream, actual_width, actual_height) = apply_config(
+                            ctx, stream, device_index, label, &new_config, &active_config,
+                            actual_width, actual_height, &shared_config, command_receiver,
+                        ).map_err(|error| {
+                            Cap_releaseContext(ctx); // apply_config closed the stream
+                            error
+                        })?;
+                        active_config = new_config;
+                    }
+                    CommandResult::None => {}
+                }
+                if Cap_hasNewFrame(ctx, stream) != 0 {
+                    break;
+                }
+                std::thread::yield_now();
+                if wait_start.elapsed().as_secs() > 5 {
+                    let msg = format!(
+                        "Camera {label}: timeout waiting for frame {}",
+                        frame_sm.frame_number()
+                    );
+                    let _ = event_sender.send(CameraEvent::Error(msg));
+                    Cap_closeStream(ctx, stream);
+                    Cap_releaseContext(ctx);
+                    return Ok(());
+                }
+            }
+
+            // Stamp `frame_available_ns` at the precise moment Cap_hasNewFrame
+            // returned true — the hardware-ready instant, before any capture work.
+            let frame_available_ns =
+                crate::timestamps::performance::performance_counter_nanoseconds();
+            // ── Capture the frame: the driver copies it once, into a pooled buffer ──
+            // Cap_getFrameSize and Cap_captureFrameRaw are not atomic — the
+            // DirectShow callback thread can deliver a differently-sized
+            // MJPEG frame between the two calls. Retry on buffer-too-small.
+            let mut out_bytes: u32 = 0;
+            let mut capture_ok = false;
+            let slot = frame_pool.take(frame_capacity);
+            let frame_bytes = std::sync::Arc::get_mut(slot).expect("a free pooled buffer has no other owner");
+            for _retry in 0..3 {
+                let mut frame_size: u32 = 0;
+                if Cap_getFrameSize(ctx, stream, &mut frame_size) != CAPRESULT_OK
+                    || frame_size == 0
+                {
+                    let msg = format!(
+                        "Camera {label}: getFrameSize failed or returned 0 at frame {}",
+                        frame_sm.frame_number()
+                    );
+                    let _ = event_sender.send(CameraEvent::Error(msg));
+                    break;
+                }
+                let needed = frame_size as usize;
+                if frame_bytes.capacity() < needed {
+                    frame_capacity = needed * 2;
+                    frame_bytes.reserve(frame_capacity);
+                }
+                // The driver writes into the buffer's spare capacity; only the bytes it reports
+                // are made part of the frame.
+                let result = Cap_captureFrameRaw(
+                    ctx, stream,
+                    frame_bytes.as_mut_ptr(), frame_bytes.capacity() as u32,
+                    &mut out_bytes,
+                );
+                if result == CAPRESULT_OK {
+                    frame_bytes.set_len(out_bytes as usize);
+                    capture_ok = true;
+                    break;
+                }
+                // Buffer too small — out_bytes carries the actual size,
+                // grow and retry.
+                if out_bytes as usize > frame_bytes.capacity() {
+                    frame_capacity = out_bytes as usize * 2;
+                    frame_bytes.reserve(frame_capacity);
+                    continue;
+                }
+                let msg = format!(
+                    "Camera {label}: captureFrameRaw failed at frame {} ({})",
+                    frame_sm.frame_number(),
+                    result_name(result)
+                );
+                let _ = event_sender.send(CameraEvent::Error(msg));
+                break;
+            }
+            if !capture_ok {
+                break;
+            }
+            let frame_data = FrameData::Mjpg(std::sync::Arc::clone(slot));
+            // Stamp `post_jpeg_extract_ns` immediately after the driver copied the frame.
+            // The interval (post_jpeg_extract - frame_available) covers Cap_captureFrameRaw,
+            // the only copy of the JPEG.
+            let post_jpeg_extract_ns =
+                crate::timestamps::performance::performance_counter_nanoseconds();
+            if let Err(e) = frame_sm.begin_capture(frame_available_ns) {
+                tracing::error!("Camera {label}: invalid frame state transition: {e}");
+            }
+            frame_sm.timestamps.post_jpeg_extract_ns = post_jpeg_extract_ns;
+
+            if let Err(e) = frame_sm.transition_to(FrameState::Sending) {
+                tracing::error!("Camera {label}: invalid frame state transition: {e}");
+            }
+
+            // Stamp `pre_send_ns` immediately before the channel send, so the
+            // packet's cloned timestamps include the correct value.
+            frame_sm.timestamps.pre_send_ns =
+                crate::timestamps::performance::performance_counter_nanoseconds();
+
+            let packet = FramePacket {
+                data: frame_data,
+                width: actual_width,
+                height: actual_height,
+                rotation: active_config.rotation,
+                timestamps: frame_sm.timestamps.clone(),
+                identity: std::sync::Arc::clone(&shared_identity),
+                frame_number: frame_sm.frame_number(),
+            };
+
+            if frame_sender.send(packet).is_err() {
+                break;
+            }
+
+            if let Err(e) = frame_sm.transition_to(FrameState::AtBarrier) {
+                tracing::error!("Camera {label}: invalid frame state transition: {e}");
+            }
+
+            // The camera calls barrier.wait() AFTER the packet has been sent
+            // downstream. That ordering means any timestamps bracketing this
+            // barrier call cannot be put on this iteration's packet — they
+            // would belong to the previous-or-next iteration and create
+            // off-by-one attribution bugs in the gatherer's stats. We do not
+            // stamp pre_barrier/post_barrier into the packet for that reason
+            // (see note in camera/types.rs). `loop_start_ns` IS still stamped
+            // because it marks the BEGINNING of the next iteration's frame
+            // packet, which the gatherer can attribute correctly.
+            if !barrier.wait() {
+                tracing::info!("Camera {label}: barrier broken (shutdown)");
+                Cap_closeStream(ctx, stream);
+                Cap_releaseContext(ctx);
+                return Ok(());
+            }
+            let post_barrier_ns =
+                crate::timestamps::performance::performance_counter_nanoseconds();
+            // `post_barrier_ns` IS the next iteration's `loop_start_ns` by
+            // definition (the camera exits the barrier and immediately begins
+            // the next capture cycle).
+            frame_sm.timestamps.loop_start_ns = post_barrier_ns;
+            if let Err(e) = frame_sm.transition_to(FrameState::WaitingForFrame) {
+                tracing::error!("Camera {label}: invalid frame state transition: {e}");
+            }
+            frame_sm.increment_frame();
+        }
+
+        Cap_closeStream(ctx, stream);
+        Cap_releaseContext(ctx);
+        tracing::info!("Camera {label}: shutdown complete");
+    }
+    Ok(())
+}
+
+/// This camera's index in a capture context's own device enumeration.
+///
+/// The remembered index comes from an earlier enumeration (detection, group
+/// creation). A USB reset or hot-plug can re-enumerate devices before this
+/// thread's context is created, so the remembered index can name a different
+/// camera or none. The device path (`Cap_getDeviceUniqueID`) identifies the
+/// device; an empty path (an identity built without detection) keeps the
+/// remembered index.
+fn resolve_device_index(
+    device_path: &str,
+    remembered_index: u32,
+    device_paths: &[String],
+) -> anyhow::Result<u32> {
+    if device_path.is_empty() {
+        return Ok(remembered_index);
+    }
+    device_paths
+        .iter()
+        .position(|path| path == device_path)
+        .map(|index| index as u32)
+        .ok_or_else(|| {
+            anyhow::anyhow!(
+                "device {device_path} is not connected ({} video devices enumerated)",
+                device_paths.len()
+            )
+        })
+}
+
+/// Find the best MJPG format matching the requested dimensions and framerate.
+unsafe fn find_best_mjpg(
+    ctx: CapContext,
+    index: u32,
+    requested_width: u32,
+    requested_height: u32,
+    requested_framerate: f64,
+    label: &str,
+) -> anyhow::Result<CapFormatInfo> {
+    let device_count = unsafe { Cap_getDeviceCount(ctx) };
+    if index >= device_count {
+        anyhow::bail!("Camera index {index} not found (only {device_count} devices)");
+    }
+
+    let num_formats = unsafe { Cap_getNumFormats(ctx, index) };
+    if num_formats <= 0 {
+        anyhow::bail!("Camera {label}: no formats available");
+    }
+
+    let want_fps = requested_framerate > 0.0;
+
+    if want_fps {
+        // Pass 1: exact resolution + framerate match
+        for f in 0..num_formats {
+            let mut info = CapFormatInfo::default();
+            if unsafe { Cap_getFormatInfo(ctx, index, f as CapFormatID, &mut info) } == CAPRESULT_OK {
+                if info.fourcc == FOURCC_MJPG
+                    && info.width == requested_width
+                    && info.height == requested_height
+                    && info.fps as f64 == requested_framerate
+                {
+                    tracing::trace!(
+                        "Camera {label}: format {f} ({}x{} @{}fps MJPG) — exact match",
+                        info.width, info.height, info.fps,
+                    );
+                    return Ok(info);
+                }
+            }
+        }
+
+        // Pass 2: exact resolution, any MJPG (pick closest framerate)
+        let mut best: Option<(CapFormatID, CapFormatInfo)> = None;
+        for f in 0..num_formats {
+            let mut info = CapFormatInfo::default();
+            if unsafe { Cap_getFormatInfo(ctx, index, f as CapFormatID, &mut info) } == CAPRESULT_OK
+                && info.fourcc == FOURCC_MJPG
+                && info.width == requested_width
+                && info.height == requested_height
+            {
+                match best {
+                    None => best = Some((f as CapFormatID, info)),
+                    Some((_, ref best_info)) => {
+                        let best_fps_diff = (best_info.fps as f64 - requested_framerate).abs();
+                        let this_fps_diff = (info.fps as f64 - requested_framerate).abs();
+                        if this_fps_diff < best_fps_diff {
+                            best = Some((f as CapFormatID, info));
+                        }
+                    }
+                }
+            }
+        }
+        if let Some((_fid, info)) = best {
+            tracing::trace!(
+                "Camera {label}: format ({}x{} @{}fps MJPG) — resolution match",
+                info.width, info.height, info.fps,
+            );
+            return Ok(info);
+        }
+
+        // Pass 3: any MJPG format (closest framerate fallback)
+        let mut best: Option<(CapFormatID, CapFormatInfo)> = None;
+        for f in 0..num_formats {
+            let mut info = CapFormatInfo::default();
+            if unsafe { Cap_getFormatInfo(ctx, index, f as CapFormatID, &mut info) } == CAPRESULT_OK
+                && info.fourcc == FOURCC_MJPG
+            {
+                match best {
+                    None => best = Some((f as CapFormatID, info)),
+                    Some((_, ref best_info)) => {
+                        let best_fps_diff = (best_info.fps as f64 - requested_framerate).abs();
+                        let this_fps_diff = (info.fps as f64 - requested_framerate).abs();
+                        if this_fps_diff < best_fps_diff {
+                            best = Some((f as CapFormatID, info));
+                        }
+                    }
+                }
+            }
+        }
+        if let Some((_fid, info)) = best {
+            tracing::trace!(
+                "Camera {label}: format {_fid} ({}x{} @{}fps MJPG) — best available",
+                info.width, info.height, info.fps,
+            );
+            return Ok(info);
+        }
+    } else {
+        // No specific framerate requested — prioritize resolution match.
+        // Pass 1: exact MJPG resolution match (any framerate).
+        let mut best: Option<(CapFormatID, CapFormatInfo)> = None;
+        for f in 0..num_formats {
+            let mut info = CapFormatInfo::default();
+            if unsafe { Cap_getFormatInfo(ctx, index, f as CapFormatID, &mut info) } == CAPRESULT_OK
+                && info.fourcc == FOURCC_MJPG
+                && info.width == requested_width
+                && info.height == requested_height
+            {
+                match best {
+                    None => best = Some((f as CapFormatID, info)),
+                    Some((_, ref best_info)) => {
+                        if info.fps > best_info.fps {
+                            best = Some((f as CapFormatID, info));
+                        }
+                    }
+                }
+            }
+        }
+        if let Some((_fid, info)) = best {
+            tracing::trace!(
+                "Camera {label}: format ({}x{} @{}fps MJPG) — resolution match (no framerate target)",
+                info.width, info.height, info.fps,
+            );
+            return Ok(info);
+        }
+
+        // Pass 2: if resolution not found in MJPG, fall back to any MJPG,
+        // picking highest FPS with tie-break on pixel area.
+        let mut best: Option<(CapFormatID, CapFormatInfo)> = None;
+        for f in 0..num_formats {
+            let mut info = CapFormatInfo::default();
+            if unsafe { Cap_getFormatInfo(ctx, index, f as CapFormatID, &mut info) } == CAPRESULT_OK
+                && info.fourcc == FOURCC_MJPG
+            {
+                match best {
+                    None => best = Some((f as CapFormatID, info)),
+                    Some((_, ref best_info)) => {
+                        if info.fps > best_info.fps
+                            || (info.fps == best_info.fps
+                                && info.width * info.height
+                                    > best_info.width * best_info.height)
+                        {
+                            best = Some((f as CapFormatID, info));
+                        }
+                    }
+                }
+            }
+        }
+        if let Some((_fid, info)) = best {
+            tracing::trace!(
+                "Camera {label}: format ({}x{} @{}fps MJPG) — resolution not matched, highest-FPS fallback",
+                info.width, info.height, info.fps,
+            );
+            return Ok(info);
+        }
+    }
+
+    anyhow::bail!("Camera {label}: no MJPG format found")
+}
+
+unsafe fn open_stream_raw(
+    ctx: CapContext,
+    index: u32,
+    label: &str,
+    info: &CapFormatInfo,
+) -> anyhow::Result<CapStream> {
+    let num_formats = unsafe { Cap_getNumFormats(ctx, index) };
+    let mut format_id: Option<CapFormatID> = None;
+    for f in 0..num_formats {
+        let mut check = CapFormatInfo::default();
+        if unsafe { Cap_getFormatInfo(ctx, index, f as CapFormatID, &mut check) } == CAPRESULT_OK
+            && check.fourcc == info.fourcc
+            && check.width == info.width
+            && check.height == info.height
+            && check.fps == info.fps
+        {
+            format_id = Some(f as CapFormatID);
+            break;
+        }
+    }
+    let format_id = format_id.ok_or_else(|| {
+        anyhow::anyhow!("Camera {label}: could not re-find matching format_id for raw stream")
+    })?;
+
+    let stream = unsafe { Cap_openStreamRaw(ctx, index, format_id) };
+    if stream < 0 {
+        anyhow::bail!(
+            "Camera {label}: Cap_openStreamRaw returned {stream} (camera may not support raw MJPEG)"
+        );
+    }
+    tracing::info!(
+        "Camera {label}: raw MJPEG stream opened (format={format_id} stream={stream} {}x{})",
+        info.width, info.height,
+    );
+    Ok(stream)
+}
+
+unsafe fn configure_exposure(
+    ctx: CapContext,
+    stream: CapStream,
+    label: &str,
+    exposure_mode: &str,
+    target_exposure: i32,
+) {
+    let mut min: i32 = 0;
+    let mut max: i32 = 0;
+    let mut default: i32 = 0;
+    let limits_result = unsafe {
+        Cap_getPropertyLimits(ctx, stream, CAPPROPID_EXPOSURE, &mut min, &mut max, &mut default)
+    };
+    let clamped = if limits_result == CAPRESULT_OK && min <= max {
+        target_exposure.clamp(min, max)
+    } else {
+        target_exposure
+    };
+    if exposure_mode == "AUTO" {
+        unsafe { Cap_setAutoProperty(ctx, stream, CAPPROPID_EXPOSURE, 1) };
+        tracing::debug!("Camera {label}: exposure set to AUTO (limits min={min} max={max} default={default})");
+    } else {
+        unsafe { Cap_setAutoProperty(ctx, stream, CAPPROPID_EXPOSURE, 0) };
+        unsafe { Cap_setProperty(ctx, stream, CAPPROPID_EXPOSURE, clamped) };
+        tracing::debug!("Camera {label}: exposure set to {clamped} (limits min={min} max={max} default={default})");
+    }
+}
+
+fn wait_for_startup_frame(
+    command_receiver: &mpsc::Receiver<CameraCommand>,
+    deadline: std::time::Instant,
+    mut has_frame: impl FnMut() -> bool,
+) -> anyhow::Result<()> {
+    loop {
+        match check_commands(command_receiver) {
+            CommandResult::Shutdown => anyhow::bail!("camera startup cancelled"),
+            CommandResult::Configure(_) => anyhow::bail!("camera configuration changed during startup"),
+            CommandResult::None => {}
+        }
+        if std::time::Instant::now() >= deadline {
+            anyhow::bail!("camera stabilization timed out waiting for frames");
+        }
+        if has_frame() {
+            return Ok(());
+        }
+        std::thread::sleep(std::time::Duration::from_millis(1));
+    }
+}
+
+fn stabilize_raw(
+    ctx: CapContext,
+    stream: CapStream,
+    label: &str,
+    command_receiver: &mpsc::Receiver<CameraCommand>,
+) -> anyhow::Result<()> {
+    // Bound the entire warmup below CameraGroup's 15-second readiness timeout.
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    let mut buffer: Vec<u8> = Vec::new();
+    for i in 0..STABILIZATION_FRAMES {
+        wait_for_startup_frame(command_receiver, deadline, || unsafe {
+            Cap_hasNewFrame(ctx, stream) != 0
+        })?;
+        let mut frame_size: u32 = 0;
+        if unsafe { Cap_getFrameSize(ctx, stream, &mut frame_size) } != CAPRESULT_OK
+            || frame_size == 0
+        {
+            tracing::warn!(
+                "Camera {label}: raw stabilize frame {i} getFrameSize failed or size=0, skipping"
+            );
+            continue;
+        }
+        if buffer.len() < frame_size as usize {
+            buffer.resize(frame_size as usize, 0);
+        }
+        let mut out_bytes: u32 = 0;
+        unsafe {
+            Cap_captureFrameRaw(ctx, stream, buffer.as_mut_ptr(), frame_size, &mut out_bytes);
+        }
+        let first_bytes = &buffer[..(out_bytes as usize).min(16)];
+        tracing::trace!(
+            "Camera {label}: raw stabilize frame {i}: {out_bytes}B  first_16={first_bytes:02X?}"
+        );
+    }
+    tracing::debug!("Camera {label}: raw stabilization complete ({STABILIZATION_FRAMES} frames)");
+    Ok(())
+}
+
+#[cfg(test)]
+mod device_index_tests {
+    use super::resolve_device_index;
+
+    fn paths(names: &[&str]) -> Vec<String> {
+        names.iter().map(|name| name.to_string()).collect()
+    }
+
+    #[test]
+    fn follows_the_device_path_when_enumeration_order_changed() {
+        let enumerated = paths(&["usb#port-20", "usb#port-19", "usb#port-5"]);
+        assert_eq!(resolve_device_index("usb#port-19", 0, &enumerated).unwrap(), 1);
+    }
+
+    #[test]
+    fn a_missing_device_fails_instead_of_opening_another_camera() {
+        let enumerated = paths(&["usb#port-20", "usb#port-5"]);
+        let error = resolve_device_index("usb#port-19", 0, &enumerated).unwrap_err().to_string();
+        assert!(error.contains("usb#port-19") && error.contains("not connected"), "{error}");
+    }
+
+    #[test]
+    fn identities_without_a_path_keep_the_remembered_index() {
+        assert_eq!(resolve_device_index("", 3, &paths(&["usb#port-20"])).unwrap(), 3);
+    }
+}
+
+#[cfg(test)]
+mod startup_wait_tests {
+    use super::*;
+    use std::time::{Duration, Instant};
+
+    #[test]
+    fn shutdown_interrupts_a_camera_that_never_delivers_frames() {
+        let (tx, rx) = mpsc::channel();
+        let worker = std::thread::spawn(move || {
+            wait_for_startup_frame(&rx, Instant::now() + Duration::from_secs(10), || false)
+                .unwrap_err().to_string()
+        });
+        tx.send(CameraCommand::Shutdown).unwrap();
+        assert_eq!(worker.join().unwrap(), "camera startup cancelled");
+    }
+
+    #[test]
+    fn disconnected_owner_cancels_startup() {
+        let (tx, rx) = mpsc::channel();
+        drop(tx);
+        assert!(wait_for_startup_frame(&rx, Instant::now() + Duration::from_secs(10), || false)
+            .unwrap_err().to_string().contains("cancelled"));
+    }
+
+    #[test]
+    fn no_frames_reach_the_startup_deadline() {
+        let (_tx, rx) = mpsc::channel();
+        assert!(wait_for_startup_frame(&rx, Instant::now(), || false)
+            .unwrap_err().to_string().contains("timed out"));
+    }
+
+    #[test]
+    fn arriving_frame_completes_the_wait() {
+        let (_tx, rx) = mpsc::channel();
+        assert!(wait_for_startup_frame(&rx, Instant::now() + Duration::from_secs(1), || true).is_ok());
+    }
+}

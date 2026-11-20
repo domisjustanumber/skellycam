@@ -332,6 +332,12 @@ class CameraGroupManager:
 _CAMERA_GROUP_MANAGER: CameraGroupManager | None = None
 
 
+async def close_camera_groups() -> None:
+    """Close every camera group, so that an open take finishes before the worker monitor exits."""
+    if _CAMERA_GROUP_MANAGER is not None and _CAMERA_GROUP_MANAGER.camera_groups:
+        await _CAMERA_GROUP_MANAGER.close_all_camera_groups()
+
+
 def get_or_create_camera_group_manager(app: FastAPI) -> CameraGroupManager:
     """Create the singleton CameraGroupManager instance."""
     global _CAMERA_GROUP_MANAGER

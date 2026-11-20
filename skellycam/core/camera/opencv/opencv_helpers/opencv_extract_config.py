@@ -7,7 +7,7 @@ from skellycam.core.camera.config.camera_config import CameraConfig
 from skellycam.core.camera.config.image_resolution import ImageResolution
 from skellycam.core.camera.config.image_rotation_types import RotationTypes
 from skellycam.core.types.type_overloads import CameraIndexInt
-from skellycam.core.camera.opencv.opencv_helpers.recommend_camera_exposure_setting import ExposureModes
+from skellycam.core.camera.config.exposure_modes import ExposureModes
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,10 @@ def extract_config_from_cv2_capture(camera_index: CameraIndexInt,
     ]):
         logger.error(f"Failed to extract configuration from cv2.VideoCapture object - "
                      f"width: {width}, height: {height}, exposure: {exposure}")
-        raise ValueError("Invalid camera configuration detected. Please check the camera settings.")
+        raise ValueError(
+            f"Camera {camera_id} (index {camera_index}) returned invalid device properties: "
+            f"width={width}, height={height}, exposure={exposure}, opened={cv2_capture.isOpened()}"
+        )
     try:
         return CameraConfig(
             camera_index=camera_index,

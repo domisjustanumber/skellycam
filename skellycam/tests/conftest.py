@@ -5,6 +5,7 @@ Builds a lightweight FastAPI app with the same routes as the real app
 but WITHOUT the heavy lifespan (bytecode compilation, logging setup, etc).
 """
 import multiprocessing
+import logging
 from unittest.mock import MagicMock, patch, AsyncMock
 
 import pytest
@@ -60,6 +61,7 @@ def mock_camera_group_manager():
     mgr.stop_recording_all_groups = AsyncMock(
         return_value=[TakeSummary(stop_response=stop_response, results=[], warnings=[])])
     mgr.close_all_camera_groups = AsyncMock()
+    mgr.set_paused_all_groups = AsyncMock()
     mgr.pause_unpause_all_groups = AsyncMock()
     mgr.pause_all_groups = AsyncMock()
     mgr.unpause_all_groups = AsyncMock()
@@ -77,7 +79,7 @@ def mock_camera_group_manager():
 # ---------------------------------------------------------------------------
 
 @pytest.fixture()
-def app(mock_global_kill_flag, mock_worker_registry, mock_camera_group_manager):
+def app(mock_global_kill_flag, mock_worker_registry, mock_camera_group_manager, logging_runtime):
     """
     A lightweight FastAPI app with the same routes but no heavy lifespan.
 
@@ -114,3 +116,18 @@ def client(app):
     """Synchronous TestClient for HTTP endpoint tests."""
     with TestClient(app, raise_server_exceptions=False) as c:
         yield c
+
+
+@pytest.fixture
+def logging_runtime(monkeypatch):
+    """Supply the normal logging prerequisites without files or global handlers."""
+    from skellylogs.configure_logging import _register_custom_levels
+    from skellylogs.handlers import websocket_log_queue_handler
+    for name in ('loop', 'trace', 'success', 'api'):
+        monkeypatch.setattr(logging.Logger, name, getattr(logging.Logger, name, None), raising=False)
+    _register_custom_levels()
+    queue = multiprocessing.Queue()
+    monkeypatch.setattr(websocket_log_queue_handler, 'WEBSOCKET_LOG_QUEUE', queue)
+    yield
+    queue.close()
+    queue.join_thread()

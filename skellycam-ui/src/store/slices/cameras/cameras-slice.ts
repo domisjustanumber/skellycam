@@ -1,7 +1,7 @@
 // cameras-slice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
-    CamerasState,
+    CamerasState, CameraBackend,
     CameraConfig, extractConfigSettings, areConfigsEqual, createDefaultCameraConfig,
 } from './cameras-types';
 import {
@@ -12,6 +12,8 @@ import {
 } from './cameras-thunks';
 import { serverStateReceived, serverDisconnected } from '../connection/connection-slice';
 import {
+    loadCameraBackend,
+    saveCameraBackend,
     savePersistedCameraSettings,
     clearPersistedCameraSettings,
     buildPersistedEntry,
@@ -28,6 +30,7 @@ function persistAllCameraSettings(state: CamerasState): void {
 }
 
 const initialState: CamerasState = {
+    backend: loadCameraBackend(),
     cameras: [],
     isPaused: false,
     isLoading: false,
@@ -38,6 +41,12 @@ export const cameraSlice = createSlice({
     name: 'cameras',
     initialState,
     reducers: {
+        cameraBackendSelected(state, action: PayloadAction<CameraBackend>) {
+            if (!state.isLoading && !state.cameras.some(camera => camera.connectionStatus === 'connected')) {
+                state.backend = action.payload;
+                saveCameraBackend(action.payload);
+            }
+        },
         // ========== Selection ==========
         cameraSelectionToggled: (state, action: PayloadAction<string>) => {
             const camera = state.cameras.find(cam => cam.id === action.payload);
@@ -175,8 +184,8 @@ export const cameraSlice = createSlice({
             })
 
             // ========== Pause / Unpause Cameras ==========
-            .addCase(pauseUnpauseCameras.fulfilled, (state) => {
-                state.isPaused = !state.isPaused;
+            .addCase(pauseUnpauseCameras.fulfilled, (state, action) => {
+                state.isPaused = action.payload;
             })
 
             // ========== Server state snapshot (authoritative) ==========
@@ -187,6 +196,7 @@ export const cameraSlice = createSlice({
                 const failures = new Map<string, string>();
                 let anyPaused = false;
                 for (const group of groups) {
+                    if (group.backend) state.backend = group.backend;
                     if (group.paused) anyPaused = true;
                     // `group.alive` is false as soon as one camera process ended, so judge each camera
                     // by its own state: the other cameras of the group keep streaming.
@@ -225,6 +235,7 @@ export const cameraSlice = createSlice({
 });
 
 export const {
+    cameraBackendSelected,
     cameraSelectionToggled,
     cameraDesiredConfigUpdated,
     configCopiedToAll,
