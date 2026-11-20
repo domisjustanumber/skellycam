@@ -100,13 +100,13 @@ export const detectCameras = createAsyncThunk<
 
 export const camerasConnectOrUpdate = createAsyncThunk<
     ConnectCamerasResponse,
-    void,
+    Record<string, CameraConfig> | undefined,  // only these cameras (Retry); the server keeps the others as they are
     { state: RootState }
 >(
     'cameras/connect',
-    async (_, { getState }) => {
+    async (onlyConfigs, { getState }) => {
         const state = getState();
-        const cameraConfigs = selectSelectedCameraConfigs(state);
+        const cameraConfigs = onlyConfigs ?? selectSelectedCameraConfigs(state);
 
         if (Object.keys(cameraConfigs).length === 0) {
             throw new Error('No cameras selected for connection');
