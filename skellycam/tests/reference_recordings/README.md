@@ -33,7 +33,7 @@ raw videos from these locations, downloading only when the recording is absent:
 | Test | `~/freemocap_data/recordings/freemocap_test_data` | https://github.com/freemocap/skellysamples/releases/download/test_data_v06_09_25/freemocap_test_data.zip |
 | Sample | `~/freemocap_data/recordings/freemocap_sample_data` | https://github.com/freemocap/skellysamples/releases/download/sample_data_v06_12_25/freemocap_sample_data.zip |
 
-On this workspace's Windows machine, `~` is `C:\Users\jonma`. Both recordings
+On this workspace's Windows machine, `~` is the user's home folder. Both recordings
 contain the same calibration-and-body-movement recording; test data is decimated.
 Neither calibration nor processed motion-capture outputs are needed here.
 
