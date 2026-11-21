@@ -269,3 +269,69 @@ def test_opencv_source_reports_the_directshow_path_it_opened(monkeypatch):
     source = opencv_source.OpenCVSource(CameraConfig(camera_id="a1b2", camera_index=6))
     opened = source.open(CaptureRequest(camera_id="a1b2", width=4, height=4, framerate=30.0))
     assert opened.device_path == "ds-path-3"
+
+
+from skellycam.tests.frame_ring.ring_session import _LIVE_CAPTURES  # noqa: E402
+
+
+def fake_capture(fourcc="YUY2"):
+    """A `cv2.VideoCapture` that opens no device: it is open and gives `fourcc` for `CAP_PROP_FOURCC`."""
+    import cv2
+
+    values = {cv2.CAP_PROP_FRAME_WIDTH: 640, cv2.CAP_PROP_FRAME_HEIGHT: 480, cv2.CAP_PROP_EXPOSURE: -6,
+              cv2.CAP_PROP_FPS: 30.0, cv2.CAP_PROP_FOURCC: float(cv2.VideoWriter.fourcc(*fourcc) if fourcc else 0)}
+
+    class Capture(cv2.VideoCapture):
+        released = 0
+
+        def __init__(self, *args):  # the arguments of an open: no device opens
+            super().__init__()
+            _LIVE_CAPTURES.append(self)  # as `ring_session.py`: OpenCV 5.1.0 crashes when the GC frees one
+
+        def isOpened(self):
+            return True
+
+        def get(self, prop):
+            return values.get(prop, -1)
+
+        def set(self, prop, value):
+            return True
+
+        def read(self):
+            return True, object()
+
+        def release(self):
+            self.released += 1
+
+    return Capture()
+
+
+def test_the_apply_logs_without_the_trace_level_and_a_failed_apply_releases_the_capture(monkeypatch):
+    """Fix lane I: `apply_camera_configuration` works with no `logger.trace` (outside the logging set-up of the
+    server); when it raises in `create_cv2_video_capture`, the capture is released."""
+    import logging
+
+    from skellycam.core.camera.config.camera_config import CameraConfig
+    from skellycam.core.camera.opencv.opencv_helpers import create_cv2_video_capture as create_module
+    from skellycam.core.camera.opencv.opencv_helpers.opencv_apply_config import apply_camera_configuration
+
+    monkeypatch.delattr(logging.Logger, "trace", raising=False)
+    config = CameraConfig(camera_id="c1", camera_index=0)
+    assert apply_camera_configuration(fake_capture(), None, config).camera_id == "c1"
+    opened = []
+
+    class OneCapture(type(fake_capture())):  # a class, so that the type hints that name cv2.VideoCapture still work
+        def __init__(self, *args):
+            super().__init__()
+            opened.append(self)
+
+    monkeypatch.setattr(create_module.cv2, "VideoCapture", OneCapture)
+    monkeypatch.setattr(create_module, "determine_opencv_camera_backend", lambda: type("B", (), {"id": -1, "name": "x"}))
+
+    def failing_apply(**kwargs):
+        raise RuntimeError("test: the apply fails")
+
+    monkeypatch.setattr(create_module, "apply_camera_configuration", failing_apply)
+    with pytest.raises(RuntimeError, match="the apply fails"):
+        create_module.create_cv2_video_capture(config)
+    assert [capture.released for capture in opened] == [1]
