@@ -1309,3 +1309,22 @@ def test_the_refusal_of_a_changed_config_names_the_search(monkeypatch):
         assert f"camera {camera_id} is adjusting" in refused.text
         app.factory.sources[camera_id].release()
         app.wait_state(camera_id, "ready", "too_slow")
+
+
+def test_a_camera_that_was_never_in_the_running_group_gets_a_left_out_warning(monkeypatch):
+    """windows-capture.md 11.3 (fix lane F): an apply to a running group that selects a camera that was never in it
+    answers 200 with one `cameras_left_out` item; the camera stays out. The next apply has no such item."""
+    with capture_app(monkeypatch, [FakeScript(), FakeScript()]) as app:
+        first, second = app.factory.camera_ids
+        app.detect()
+        assert app.apply([app.config(first)]).status_code == 200
+        app.wait_state(first, "ready")
+        response = app.apply([app.config(first), app.config(second)])
+        assert response.status_code == 200, response.text
+        items = [item for item in response.json()["warnings"] if item["kind"] == "cameras_left_out"]
+        assert items == [dict(kind="cameras_left_out", camera_ids=[second],
+                              text=f"Camera {second} cannot join a running group: close the cameras and open them "
+                                   f"again")]
+        assert second not in app.group.configs
+        response = app.apply([app.config(first)])
+        assert not [item for item in response.json()["warnings"] if item["kind"] == "cameras_left_out"]

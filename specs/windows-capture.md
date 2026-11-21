@@ -1015,6 +1015,11 @@ Changed on 2026-11-20 ([ADR-JK79](../decisions/entries/JK79-exposure-search-at-e
   applies [agent 33]. The kinds are `auto_control`, `mixed_rate` (7.5), `control_change_failed`
   (11.2), and `add_light`, `exposure_search_failed`, `no_manual_exposure` and `rate_fallback`
   ([`camera-requests.md`](camera-requests.md) 1.5, 2.4). On a native source, `auto_control` no longer comes for exposure.
+- An apply to a running group that selects a camera that was never in the group leaves that camera out:
+  it cannot join the gate of the other cameras. The `warnings` of that apply response then have one item
+  of the kind `cameras_left_out`, with the IDs of those cameras and the text "Camera `<id>` cannot join a
+  running group: close the cameras and open them again" ("Cameras `<id>`, `<id>`" for two or more). Only
+  that response has the item [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
 - The status (8.4) shows the same items in `warnings`, and `auto: true` for the control [agent 33].
 - The camera process also logs the text as a warning.
 - The capture info records it in `controls.<name>.auto` [D37].

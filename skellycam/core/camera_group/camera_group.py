@@ -223,17 +223,19 @@ class CameraGroup:
     async def apply(self, requested: CameraConfigs) -> tuple[dict, list]:
         """Apply a checked request to each camera on its own (8.3, U10). Return the failures and the warnings.
 
-        A camera that was unselected and is selected again starts again (8.3). Each other camera of the
-        request that is not in the group is left out, as before phase 3: the other camera processes have
-        no status for it, so it cannot join their gate.
+        A camera that was unselected and is selected again starts again (8.3). Each other selected camera of
+        the request that is not in the group is left out, as before phase 3: the other camera processes have
+        no status for it, so it cannot join their gate. The warnings then have one `cameras_left_out` item.
         """
         statuses = self.cameras.orchestrator.camera_statuses
-        restart, changed, removed = [], {}, []
+        restart, changed, removed, left_out = [], {}, [], []
         for camera_id, config in requested.items():
             if camera_id not in self.configs:
                 if config.use_this_camera and camera_id in self.cameras.removed_statuses:
                     self.configs[camera_id] = config
                     restart.append(camera_id)
+                elif config.use_this_camera:
+                    left_out.append(camera_id)
                 continue
             worker = self.cameras.camera_workers.get(camera_id)
             if not config.use_this_camera:
@@ -268,6 +270,11 @@ class CameraGroup:
             self._open_rings(new_rings)
         self.configs.update(configs)
         await self._await_settled(list(new_rings))
+        if left_out:  # windows-capture.md 11.3
+            text = (f"{'Camera' if len(left_out) == 1 else 'Cameras'} {', '.join(left_out)} cannot join a running "
+                    f"group: close the cameras and open them again")
+            warnings.append(dict(kind="cameras_left_out", camera_ids=left_out, text=text))
+            logger.warning(text)
         logger.info(f"Applied camera configs - {list(requested.keys())}")
         return self._failures(reopened), warnings
 
