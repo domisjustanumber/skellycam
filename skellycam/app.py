@@ -64,7 +64,11 @@ async def app_lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     shutdown_telemetry()
 
     # A running take ends through the take level before the kill flag (recorder.md 8.1). Ctrl-C comes here
-    # too: uvicorn ends the server, and __main__ sets the flag after it.
+    # too: uvicorn ends the server, and __main__ sets the flag after it. A close of `/shutdown` that runs ends
+    # first: two closes at the same time race. The second call then closes only a group whose close raised.
+    shutdown_task = getattr(app.state, "shutdown_task", None)
+    if shutdown_task is not None:
+        await shutdown_task
     await close_camera_groups_before_exit()
 
     # Then set the flag — __main__ owns the WorkerRegistry and calls shutdown_all()

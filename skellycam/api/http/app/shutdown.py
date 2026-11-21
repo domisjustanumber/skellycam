@@ -45,7 +45,7 @@ async def shutdown_server(
             logger.info("Requested shutdown after the camera groups closed")
 
     running = getattr(request.app.state, "shutdown_task", None)
-    if running is None or running.done():  # a second request (or Ctrl-C) starts no second close
+    if running is None or running.done():  # a second request starts no second close (the lifespan end waits for it)
         request.app.state.shutdown_task = asyncio.create_task(close_then_kill())  # a reference keeps the task
     return JSONResponse(
         content={
