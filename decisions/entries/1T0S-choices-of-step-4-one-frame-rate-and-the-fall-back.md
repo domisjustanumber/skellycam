@@ -36,7 +36,7 @@ The agent made these choices where the spec gave no rule. Sections 2.4a and 2.8 
 5. The watch thread of the group finds the fall back that a search starts. It examines only cameras in
    `AUTO` whose ended search (`held.count` of the status) came after the request at 60 fps. It stops when
    the fall back starts, when no camera is `starting`, `waiting`, `adjusting` or `checking`, at the next
-   apply request of the user, and at the close.
+   apply request of the user, at a search on request, and at the close.
 6. The watch thread starts the fall back on the event loop of the group. The log gets its failure.
 7. Known limit: the fall back does not refuse an apply request of the user that comes between its start
    and the reopen.

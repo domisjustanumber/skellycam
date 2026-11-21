@@ -139,6 +139,8 @@ class CameraGroup:
     camera_diagnostics: dict = field(default_factory=dict)  # the newest diagnostics of each camera (unix 4.2 item 2)
     _passes: dict = field(default_factory=dict)  # camera_id: (alive_count, time.monotonic() of its last change)
     _adopted: dict = field(default_factory=dict)  # camera_id: the search count whose held value is in `configs`
+    # (configs at 30 fps, search counts before the request) after an apply request at 60 fps (camera-requests.md 2.4a)
+    fall_back_armed: tuple | None = None
     stall_watch: bool = True
     _closing: bool = False  # `close` runs: the watch thread reads the queues but watches no camera (F4)
     _end_lock: Any = field(default_factory=asyncio.Lock)
@@ -381,6 +383,7 @@ class CameraGroup:
                     pass  # the status of each camera holds its failure
                 self._take_finished()
                 self._take_diagnostics()
+                self._watch_fall_back()
             except Exception as error:
                 logger.exception(f"Camera group {self.id}: the watch could not read the camera queues: {error}")
             for camera_id, worker in list(self.cameras.camera_workers.items()):
@@ -921,6 +924,59 @@ class CameraGroup:
         """At each apply request of the user (camera-requests.md 1.5); the fall back of step 4 must not call it."""
         for status in list(self.cameras.orchestrator.camera_statuses.values()):
             status.set_warning_items([], "group_warnings")
+
+    async def fall_back(self, configs: CameraConfigs, slow: dict) -> tuple[dict, list]:
+        """The one fall back of the group to 30 fps (camera-requests.md 2.4, 2.4a) [ADR-1T0S]: one `rate_fallback` item
+        in the status of each camera of `slow` (camera_id: (measured fps or None, exposure)), then an apply of `configs`.
+        Return the failures and the warnings of that apply, after the items."""
+        statuses = self.cameras.orchestrator.camera_statuses
+        items = []
+        for camera_id, (measured, exposure) in slow.items():
+            mode = statuses[camera_id].info_dict().get("mode") or {}
+            fps = mode["fps_num"] / mode["fps_den"] if mode.get("fps_num") else self.configs[camera_id].framerate
+            text = (f"The group runs at 30 fps. Camera {camera_id} could not set its 60 fps mode." if measured is None
+                    else f"The group runs at 30 fps. Camera {camera_id} measured {measured:.2f} fps in its {fps:g} fps "
+                         f"mode at exposure {exposure:g}.")
+            items.append(dict(kind="rate_fallback", camera_ids=[camera_id], text=text))
+            logger.warning(text)
+            self.add_group_warning(items[-1])
+        failures, warnings = await self.apply(configs)
+        return failures, items + warnings
+
+    def _watch_fall_back(self) -> None:
+        """camera-requests.md 2.4a item 5 [ADR-1T0S]: after an apply request at 60 fps, a camera in `AUTO` whose search
+        of that request (`held.count`) found no value that keeps the rate, or whose check after it failed, starts the
+        fall back. The watch stops when no camera starts, waits, searches or checks."""
+        armed = self.fall_back_armed
+        if armed is None or self._closing:
+            return
+        configs, counts = armed
+        statuses = self.cameras.orchestrator.camera_statuses
+        slow = {}
+        for camera_id, status in list(statuses.items()):
+            info, config = status.info_dict(), self.configs.get(camera_id)
+            held = info.get("held") or {}
+            if config is None or config.exposure_mode != "AUTO" or held.get("count", 0) <= counts.get(camera_id, 0):
+                continue
+            search = info.get("exposure_search") or {}
+            if search.get("state") == "failed" and search.get("reason") == "no-value-kept-rate":
+                best = max(search.get("trials") or [{}], key=lambda trial: trial.get("measured_fps") or 0)
+                slow[camera_id] = (best.get("measured_fps"), best.get("value"))  # [B7]: the trial with the highest rate
+            elif status.state == "too_slow":
+                slow[camera_id] = (info.get("measured_fps"), held.get("exposure"))
+        if slow:
+            self.fall_back_armed = None
+            asyncio.run_coroutine_threadsafe(self._fall_back_after_search(configs, slow), self._loop)
+        elif not any(status.state in ("starting", "waiting", "adjusting", "checking") for status in list(statuses.values())):
+            self.fall_back_armed = None
+
+    async def _fall_back_after_search(self, configs: CameraConfigs, slow: dict) -> None:
+        """On the event loop, as `_end_after_error`; no response carries the result, so the log gets a failure."""
+        try:
+            if not self._closing:
+                await self.fall_back(configs, slow)
+        except Exception as error:
+            logger.exception(f"The fall back of camera group {self.id} to 30 fps failed: {error!r}")
 
     async def search_exposure(self, camera_ids: list) -> dict:
         """camera-requests.md 1.5: each camera of `camera_ids` (checked by the manager) searches on its open stream;

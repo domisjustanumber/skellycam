@@ -34,17 +34,16 @@ def response_items(response):
     return [item for item in response.json()["warnings"] if item["kind"] == "rate_fallback"]
 
 
-def release_again(app, camera_id):
-    """End a hold of `hold_first_change`, then arm the release of the hold of the next open."""
-    source = app.factory.sources[camera_id]
-    source.release()
-    app.wait(lambda: not source.holding.is_set(), f"camera {camera_id} leaves its hold")
-    source.release()
+def released(app, camera_ids):
+    """End the hold of `hold_first_change` of the current open of each camera: each open has a new fake source."""
+    for camera_id in camera_ids:
+        app.factory.sources[camera_id].release()
+    return True
 
 
 def wait_ready_at(app, camera_ids, fps):
     for camera_id in camera_ids:
-        app.wait(lambda: app.state(camera_id) == "ready" and rate(app, camera_id) == fps,
+        app.wait(lambda: released(app, camera_ids) and app.state(camera_id) == "ready" and rate(app, camera_id) == fps,
                  f"camera {camera_id} ready at {fps} fps")
 
 
@@ -96,17 +95,13 @@ def test_t_req_32_a_search_with_no_value_at_60_falls_the_group_back(monkeypatch)
         ids, slow = app.factory.camera_ids, app.factory.camera_ids[2]
         app.detect()
         assert app.apply([auto(app, camera_id) for camera_id in ids]).status_code == 200
-        for camera_id in ids:
-            app.factory.sources[camera_id].release()
         wait_ready_at(app, ids, 30)
         response = app.apply([auto(app, camera_id, framerate=60.0) for camera_id in ids])
         assert response.status_code == 200, response.text
         assert [app.state(camera_id) for camera_id in ids] == ["adjusting"] * 3
         assert all(config["framerate"] == 60.0 for config in response.json()["camera_configs"].values())
         assert not response_items(response)
-        for camera_id in ids:
-            release_again(app, camera_id)
-        app.wait(lambda: fallback_items(app, slow), "the fall back writes rate_fallback")
+        app.wait(lambda: released(app, ids) and fallback_items(app, slow), "the fall back writes rate_fallback")
         wait_ready_at(app, ids, 30)
         app.wait(lambda: all(group_state(app)["configs"][camera_id]["exposure_found_at_fps"] == 30.0 for camera_id in ids),
                  "the held values found at 30")
@@ -219,12 +214,10 @@ def test_t_req_41_auto_searches_at_60_before_its_check(monkeypatch):
         camera_id = app.factory.camera_ids[0]
         app.detect()
         assert app.apply([auto(app, camera_id, exposure=-7, exposure_found_at_fps=30.0)]).status_code == 200
-        app.factory.sources[camera_id].release()
         wait_ready_at(app, [camera_id], 30)
         response = app.apply([auto(app, camera_id, framerate=60.0)])
         assert response.status_code == 200 and app.state(camera_id) == "adjusting", response.text
         assert response.json()["camera_configs"][camera_id]["framerate"] == 60.0
-        release_again(app, camera_id)
         wait_ready_at(app, [camera_id], 60)
         held = group_state(app)["configs"][camera_id]
         assert (held["exposure"], held["exposure_found_at_fps"]) == (-7, 60.0)

@@ -1008,8 +1008,8 @@ The rules above do not give these points. Each item is a proposed choice of the 
    camera is `too_slow` after such a search. The status field `held.count` (the search count of the
    ended search) is more than the search count before the request for such a search. The watch stops
    when the fall back starts, when no camera of the group is `starting`, `waiting`, `adjusting` or
-   `checking`, at the next apply request of the user, and at the close. Thus a later search of the
-   button or of "Search again" starts no fall back: it is not a request at 60 fps.
+   `checking`, at the next apply request of the user, at a search of the button or of "Search again",
+   and at the close. Thus a search on request starts no fall back: it is not a request at 60 fps.
 6. The watch thread starts the fall back on the event loop of the group, as the end of a take after an
    error. The log gets a failure of the fall back.
 7. The fall back does not refuse an apply request of the user that comes between its start and the

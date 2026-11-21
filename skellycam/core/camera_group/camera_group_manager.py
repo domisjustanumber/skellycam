@@ -113,8 +113,13 @@ class CameraGroupManager:
         if camera_group is not None:
             camera_group.adopt_search_results()
         warnings, rates_known = self._check_request(camera_configs, camera_group)
+        before, counts = {}, {}  # camera-requests.md 2.4a [ADR-1T0S]: for the fall back to 30 fps
         if camera_group is not None:  # camera-requests.md 1.5 [AC5B]: each apply request of the user clears them
             camera_group.clear_group_warnings()
+            camera_group.fall_back_armed = None
+            before = dict(camera_group.configs)
+            counts = {camera_id: status.search_count.value for camera_id, status in {
+                **camera_group.cameras.orchestrator.camera_statuses, **camera_group.cameras.removed_statuses}.items()}
         started = datetime.now(timezone.utc)
         if camera_group is None:
             selected = {camera_id: config for camera_id, config in camera_configs.items() if config.use_this_camera}
@@ -122,6 +127,19 @@ class CameraGroupManager:
         else:
             failures, change_warnings = await camera_group.apply(camera_configs)
             warnings += change_warnings
+        if any(config.use_this_camera and abs(config.framerate - 60) <= 0.5 for config in camera_configs.values()):
+            # 2.4: a request at 60 fps falls the group back to the configs from before the request, at 30 fps, one time
+            fallback = {camera_id: (before.get(camera_id) or camera_configs.get(camera_id) or config).model_copy(
+                update=dict(framerate=30.0)) for camera_id, config in camera_group.configs.items()}
+            statuses = camera_group.cameras.orchestrator.camera_statuses
+            slow = {camera_id: (statuses[camera_id].info_dict().get("measured_fps") if failure.get("stage") == "rate check"
+                                else None, camera_group.configs[camera_id].exposure)
+                    for camera_id, failure in failures.items() if failure.get("stage") in ("set mode", "rate check")}
+            if slow:
+                failures, fallback_warnings = await camera_group.fall_back(fallback, slow)
+                warnings += fallback_warnings
+            else:  # a search at 60 fps can still start it: the watch of the group (2.4a item 5)
+                camera_group.fall_back_armed = (fallback, counts)
         if failures:
             # One explanation of the failed start, where it adds a cause to the reasons (port from sfn26)
             # Review item 4: the device list only (no camera is activated); the links of the detection before
@@ -245,6 +263,7 @@ class CameraGroupManager:
         streaming = [camera_id for camera_id in named if camera_id not in opencv and camera_id not in lacking
                      and statuses[camera_id].state in ("ready", "too_slow", "checking")]
         self.searching = True
+        group.fall_back_armed = None  # 2.4a item 5 [ADR-1T0S]: a search on request is not a request at 60 fps
         try:
             response = await group.search_exposure(streaming)
         finally:
