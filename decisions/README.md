@@ -60,6 +60,10 @@ These entries are `accepted`.
 | [XT31](entries/XT31-kit-adoption-choices-camera-media-check-and-fills.md) | Supersedes NMM1, 4A7H: kit adoption choices; the media check refuses PNG, GIF, WebP, SVG with an allow by path; index limit 24,000 | accepted |
 | [6T78](entries/6T78-choices-of-the-sfn26-integration.md) | Choices of the `sfn26` integration: OpenCV helpers stay ours, kept and dropped items, forms of the four ports, Rust removal | accepted |
 | [82AA](entries/82AA-stop-last-frame-survivor-files-and-stuck-writer-limit.md) | The stop sets the last frame with no pause, plus 2, under its lock; a surviving process leaves its files to the repair step; the stuck-writer limit is 15 s | accepted |
+| [NYT6](entries/NYT6-choices-of-fix-lane-2.md) | Choices of fix lane 2: borderline repeat in the search, no lock outside a take, `exposure_clamped`, `alive`, restore record, no exit wait | accepted |
+| [VG5F](entries/VG5F-choices-of-the-first-certify-code.md) | Choices of the first certify code: built and not-built checks, plan `total`, `has-sequence`, unfilled keys, session child, phase G | accepted |
+| [X8XE](entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md) | Certify review fixes and format 1.6.0: wedge after any step, phase G rules, caller watch, time-out grace, run lock, `abandon`; 5 questions | accepted |
+| [TFD7](entries/TFD7-search-limit-stop-rate-median-role-flag-and-restore-after-a-failed-loop.md) | Decisions B1, B2, B7 to B9 of 2026-11-21: search limit stays 20 s; median stop rate, role flag, no restart, restore after a failed loop (not built) | accepted |
 
 ### Evidence
 
@@ -91,10 +95,6 @@ These entries wait for a decision of the user. Section is the section or area of
 | [Q2NY](entries/Q2NY-choices-of-code-step-2.md) | Choices of code step 2: stall watch at 3 s and off in the pause, diagnostics topic and close dict, no OpenCV restore, no restore after a failure | none | proposed |
 | [GEH0](entries/GEH0-choices-of-code-step-3.md) | Choices of code step 3: `not_streaming`, held value through the status, search flag, exposure range (`no-value-in-range`), 409 and 422 rules | none | proposed |
 | [QJH6](entries/QJH6-choices-of-the-fix-lane.md) | Choices of the fix lane: held value at the nearest search value, `cameras_left_out`, status locks, failed start keeps the summary, OpenCV mode FOURCC | none | proposed |
-| [NYT6](entries/NYT6-choices-of-fix-lane-2.md) | Choices of fix lane 2: borderline repeat in the search, no lock outside a take, `exposure_clamped`, `alive`, restore record, no exit wait | none | proposed |
-| [VG5F](entries/VG5F-choices-of-the-first-certify-code.md) | Choices of the first certify code: built and not-built checks, plan `total`, `has-sequence`, unfilled keys, session child, phase G | `certify` | proposed |
-| [X8XE](entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md) | Certify review fixes and format 1.6.0: wedge after any step, phase G rules, caller watch, time-out grace, run lock, `abandon`; 5 questions | `certify` | proposed |
-| [1T0S](entries/1T0S-choices-of-step-4-one-frame-rate-and-the-fall-back.md) | Choices of step 4: group rate of a request, configs of the fall back, its watch and texts, rate selector helpers, note and "Checking 60 fps…" | none | proposed |
 
 The entries that are `rejected`, `superseded by XXXX`, `absorbed into <path>#<anchor>`,
 `evidence; used by XXXX` or `done` are in [historical.md](historical.md).

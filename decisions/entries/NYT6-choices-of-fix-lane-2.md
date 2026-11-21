@@ -1,6 +1,7 @@
 # NYT6 — Choices of fix lane 2
 
-**Status:** proposed, 2026-11-21 (agent; the supervisor gave the items, after real-camera runs).
+**Status:** accepted, 2026-11-21 (user; commit to dom/accept-choices; was proposed, 2026-11-21 (agent; the
+supervisor gave the items, after real-camera runs)).
 
 ## Decision
 

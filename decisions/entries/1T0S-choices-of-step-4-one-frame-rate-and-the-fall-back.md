@@ -1,6 +1,10 @@
 # 1T0S — Choices of step 4: one frame rate for the group and the fall back to 30 fps
 
-**Status:** proposed, 2026-11-21 (agent of step 4; the user gave the go-ahead to build step 4 on that day).
+**Status:** absorbed into
+[`specs/camera-requests.md#24a-the-fall-back-in-the-code`](../../specs/camera-requests.md#24a-the-fall-back-in-the-code),
+[`specs/camera-requests.md#28-ui`](../../specs/camera-requests.md#28-ui),
+2026-11-21 (commit to dom/accept-choices; was accepted, 2026-11-21 (user; commit to dom/accept-choices); was
+proposed, 2026-11-21 (agent of step 4; the user gave the go-ahead to build step 4 on that day)).
 
 ## Decision
 

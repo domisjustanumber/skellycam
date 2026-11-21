@@ -1,6 +1,7 @@
 # VG5F — Choices of the first certify code (Windows first)
 
-**Status:** proposed, 2026-11-21 (agent; the user approved the build, the supervisor gave the scope).
+**Status:** accepted, 2026-11-21 (user; commit to dom/accept-choices; was proposed, 2026-11-21 (agent; the user
+approved the build, the supervisor gave the scope)).
 
 ## Decision
 
@@ -44,7 +45,7 @@ the decisions of the user, with no change of product code.
 
 ## Consequences
 
-- The user must decide item 3 (question 1 of [ADR-X8XE](X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md)).
+- The user kept item 3 on 2026-11-21 (question 1 of [ADR-X8XE](X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md)).
 - Item 10 changed in [ADR-X8XE](X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md).
 
 ## Alternatives rejected

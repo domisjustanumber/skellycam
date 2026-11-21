@@ -842,13 +842,13 @@ camera <camera name> wedged, please replug"" [U]. He also decided that the produ
 | `not-restored` | A control does not have its first "before" value at the end of the run. | Cleanup row `release:<label>`, `fail`, reason `camera-not-restored`. |
 | `replug` | The camera hung during the run, its camera process ended, or the plain open of phase G failed. | Cleanup row `release:<label>`, `fail`, reason `camera-wedged`. |
 
-After a stop of the caller, the end of the budget, a time-out or a crash, the rules of phase G are [A] [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md):
+After a stop of the caller, the end of the budget, a time-out or a crash, the rules of phase G are [U] [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md):
 
 - A camera that hung, whose process ended or that was removed (after any step) is `replug`. It is never opened
   again.
 - A camera whose `opens` has no result was in the middle of its open. It is never opened again. Its settings are
   not known, so it is `not-restored`, never `healthy`. A camera that had a step running at the stop is the same,
-  because the product needs 5 s to declare a hang [A, proposal of ADR-X8XE]. This costs the restore of each camera
+  because the product needs 5 s to declare a hang [U, question 6 of ADR-X8XE]. This costs the restore of each camera
   after a cancel during the take.
 - When the session closed its camera group itself (the close ran to its end), the close restored each camera:
   phase G takes the result of that close, as in quick with no stop, and opens no camera.
@@ -975,7 +975,7 @@ Quick: section 4.7. Full: section 16.
   limit gives `fail` with `timed-out` [C 2.5].
 - A check that cannot start because the time limit of the level was used up is `not-run` with the
   common code `over-budget` [C 5.3].
-- The bound of the call [A] [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md). The budget of quick starts at the call, so it holds the detection: the
+- The bound of the call [U] [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md). The budget of quick starts at the call, so it holds the detection: the
   detection ends at its limit of 20 s or at the end of the budget, whichever comes first. After the budget, the
   call can still take phase G (at most 5 s and about 1.5 s to start and end the child, for each touched camera
   that is opened again) and the wait for the end of the session child (`EXIT_LIMIT_S`, 5 s). Thus `certify("quick")`
@@ -1033,7 +1033,7 @@ The contract rules 1 to 16 apply [C 6]. In addition:
   folder that does not go gives the cleanup row `delete-work-folder` with `not-deleted`.
 - At the start, certify deletes earlier `skellycam-certify-*` folders that hold the marker file
   `.skellycam-certify`. It deletes nothing else.
-- One run at a time [A] [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md). A run holds the OS file lock of `certify.lock` beside `camera_checks.json` in the
+- One run at a time [U] [ADR-X8XE](../decisions/entries/X8XE-choices-of-the-certify-review-fixes-and-format-1-6-0.md). A run holds the OS file lock of `certify.lock` beside `camera_checks.json` in the
   skellycam base folder for its whole time. A second run is refused as in 9.7, with `cameras-busy`, and makes no
   work folder. The OS frees the lock when the process ends. Another error of the lock file refuses the run with
   the class name of the error.
