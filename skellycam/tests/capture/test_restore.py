@@ -103,3 +103,31 @@ def test_f7_no_restore_when_the_loop_failed(monkeypatch):
         app.wait(lambda: log.closes.value == 1, "the close of the dead camera")
     assert not [t for t, _ in exposure_sets(log) if t >= close_time(log)]
     assert source.diagnostics()["restore_ok"] is None
+
+
+def test_a_lost_heartbeat_still_restores_the_controls_at_the_close(monkeypatch):
+    """unix-capture.md 4.7 (fix lane C): a lost heartbeat of the server is no camera fault. The camera is `dead`
+    with its reason, and its close restores the exposure of before (auto, -6)."""
+    import threading
+
+    from skellycam.core.camera_group import camera_group_ipc
+
+    stale = {"on": False}
+    check = camera_group_ipc.check_main_process_heartbeat
+
+    def stale_in_the_camera(**kwargs):
+        if stale["on"] and threading.current_thread().name.startswith("Camera"):
+            return False
+        return check(**kwargs)
+
+    monkeypatch.setattr(camera_group_ipc, "check_main_process_heartbeat", stale_in_the_camera)
+    with one_camera(monkeypatch, FakeScript(controls=AUTO_BEFORE)) as (app, camera_id, _):
+        source, log = app.factory.sources[camera_id], app.factory.logs[camera_id]
+        stale["on"] = True
+        app.wait_state(camera_id, "dead", timeout=30)
+        app.wait(lambda: log.closes.value == 1, "the close")
+        stale["on"] = False
+        assert app.status(camera_id)["failure"]["reason"] == "lost the server's heartbeat"
+    auto = [s for t, s in exposure_sets(log) if t >= close_time(log) and s.auto]
+    assert [(s.auto, s.value) for s in auto] == [(True, -6)]
+    assert source.diagnostics()["restore_ok"] is True

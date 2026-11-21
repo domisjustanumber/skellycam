@@ -151,6 +151,7 @@ class CameraLoop:
         self.hung = threading.Event()
         self._failure_lock = threading.Lock()
         self.failed = False
+        self.lost_heartbeat = False  # not a camera fault: the close restores the controls (unix-capture.md 4.7)
         self.end_state: str | None = None  # the state that the end sets after the close
         # The diagnostics of the loop (unix-capture.md 4.2 item 3, 4.6.2 D-10, D-11)
         self.next_diagnostics_ns = 0
@@ -195,6 +196,7 @@ class CameraLoop:
         """Decision L: no heartbeat of the server for 10 s. This camera ends; its take files are finished and its
         camera released by `_end`. A live main process gets the reason in the status and ends the take with it."""
         text = "lost the server's heartbeat"
+        self.lost_heartbeat = True
         if self.take_writer is not None:
             self.ipc.pubsub.topics[TopicTypes.RECORDING_FINISHED].publish(
                 RecordingFinishedMessage(camera_id=self.camera_id, error=f"camera {self.camera_id} {text}"))
@@ -836,7 +838,8 @@ class CameraLoop:
                 self._add_replaced()
                 if self.source is not None:
                     try:
-                        self.source.close(restore=not self.failed)  # 4.7: a failed camera gets no restore
+                        # 4.7: a failed camera gets no restore; a lost heartbeat is no camera fault
+                        self.source.close(restore=not self.failed or self.lost_heartbeat)
                     except CaptureFailure as failure:
                         self._fail(failure)
                         hung = failure.hung

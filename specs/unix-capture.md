@@ -1260,6 +1260,8 @@ the record), 6 (the citation of 0) and 7 (4.4.10 filled) are applied here.
   the stall rule of [W 9.5], which sets no error of the source): the loop calls `close(restore=False)`,
   so a camera that can be wedged gets no set and no read-back [ADR-Q2NY](../decisions/entries/Q2NY-choices-of-code-step-2.md). A restore call that
   hangs ends the close as hung, within the bound of one call [W 6.6].
+- A lost heartbeat of the server ([`recorder.md`](recorder.md) section 9) is not a camera fault. The
+  close of that camera restores the controls. No other failure of the loop gets the restore.
 
 ### 4.8 Threads
 
