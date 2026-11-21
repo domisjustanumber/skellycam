@@ -17,6 +17,7 @@ from skellycam.tests.capture.test_camera_requests import MODEL, auto, group_stat
 
 MODES = ((640, 480, 30, 1, "MJPG"), (640, 480, 60, 1, "MJPG"))
 SLOW = 29.66  # the Kiyo Pro in its 60 fps mode (2.4); not slow at 30 fps, where the limit is 29.1
+REQUEST_RUNS = "Another change of the cameras runs now. Send the request again when the cameras are ready."
 FALLBACK_TEXT = r"The group runs at 30 fps\. Camera {} measured {} fps in its 60 fps mode at exposure {}\."
 
 
@@ -416,7 +417,7 @@ def test_t_req_93_no_request_of_the_user_while_a_fall_back_runs(monkeypatch):
         refused = app.apply([app.config(camera_id, exposure_mode="MANUAL", exposure=-9)])
         user_done.set()
         assert refused.status_code == 409, refused.text
-        assert "The group falls back to 30 fps. Send the request again when the cameras are ready." in refused.text
+        assert REQUEST_RUNS in refused.text
         wait_ready_at(app, [camera_id], 30)
         assert group_state(app)["configs"][camera_id]["exposure_mode"] == "AUTO"
         assert len(fallback_items(app, camera_id)) == 1
@@ -425,15 +426,76 @@ def test_t_req_93_no_request_of_the_user_while_a_fall_back_runs(monkeypatch):
 
 
 def test_t_req_94_the_texts_of_the_fall_back(monkeypatch):
-    """T-REQ-94, 2.4a item 4: the text of a search with no measured rate, of a `set mode` failure, and of a camera
-    whose mode rate at the failure was 60 while it now runs at 30."""
+    """T-REQ-94, 2.4a item 4: the text of a search with no measured rate, of a `set mode` failure, of a camera whose
+    mode rate at the failure was 60 while it now runs at 30, and of a measured rate with no exposure value."""
     with capture_app(monkeypatch, [FakeScript(modes=MODES)]) as app:
         ready_app_steps(app)
         camera_id = app.factory.camera_ids[0]
         texts = [on_loop(app, app.group.fall_back(at_30(app), {camera_id: facts}))[1][0]["text"]
-                 for facts in ((None, -7, 60.0), (None, None, None), (SLOW, -7, 60.0))]
+                 for facts in ((None, -7, 60.0), (None, None, None), (SLOW, -7, 60.0), (SLOW, None, 60.0))]
         assert texts == [f"The group runs at 30 fps. Camera {camera_id} found no exposure that keeps 60 fps.",
                          f"The group runs at 30 fps. Camera {camera_id} could not set its 60 fps mode.",
                          f"The group runs at 30 fps. Camera {camera_id} measured 29.66 fps in its 60 fps mode at "
-                         f"exposure -7."]
+                         f"exposure -7.",
+                         f"The group runs at 30 fps. Camera {camera_id} measured 29.66 fps in its 60 fps mode."]
         assert opens(app, camera_id) == 1  # the configs did not change: no reopen
+
+
+def test_t_req_96_no_second_change_while_a_request_runs(monkeypatch):
+    """T-REQ-96, 2.4a item 7: the apply of a request at 60 waits after it returned (B failed at 60). During the wait, a
+    request at 30 with -9, the button and "Search again" get 409 with the reason of 2.4a. Then the first request falls
+    back: both cameras run at 30 with -7, and B has one `rate_fallback` item."""
+    held_now, user_done = threading.Event(), threading.Event()
+    apply = CameraGroup.apply
+
+    async def held(group, requested):
+        result = await apply(group, requested)
+        if any(abs(config.framerate - 60) <= 0.5 for config in requested.values()):
+            held_now.set()
+            while not user_done.is_set():
+                await asyncio.sleep(0.01)
+        return result
+
+    monkeypatch.setattr(CameraGroup, "apply", held)
+    with capture_app(monkeypatch, [FakeScript(modes=MODES), FakeScript(modes=MODES, rate=SLOW)]) as app:
+        ready_app_steps(app)
+        a, b = app.factory.camera_ids
+        first = {}
+        thread = threading.Thread(target=lambda: first.setdefault("response", app.apply_all(framerate=60.0)))
+        thread.start()
+        try:
+            app.wait(held_now.is_set, "the apply at 60 returned")
+            refused = [app.apply([app.config(camera_id, exposure=-9) for camera_id in (a, b)]), press(app), press(app, [a])]
+        finally:
+            user_done.set()
+            thread.join(60)
+        assert [response.status_code for response in refused] == [409, 409, 409], [r.text for r in refused]
+        assert all(REQUEST_RUNS in response.text for response in refused), [r.text for r in refused]
+        assert [item["camera_ids"] for item in response_items(first["response"])] == [[b]]
+        wait_ready_at(app, [a, b], 30)
+        configs = group_state(app)["configs"]
+        assert [configs[camera_id]["exposure"] for camera_id in (a, b)] == [-7, -7]
+        assert len(fallback_items(app, b)) == 1
+
+
+def test_t_req_97_no_request_for_a_failed_camera_while_the_others_start(monkeypatch):
+    """T-REQ-97, 2.4a item 7: the reopen of A at 60 waits in its open, so B fails at 60 while A is `starting`. A request
+    for B alone at 30 with -9 gets 409. After the release of A, the first request falls back: A and B run at 30 and are
+    `ready`; no camera is `dead`."""
+    scripts = [FakeScript(modes=MODES, hold_opens=(2,)), FakeScript(modes=MODES, rate=SLOW)]
+    with capture_app(monkeypatch, scripts) as app:
+        ready_app_steps(app)
+        a, b = app.factory.camera_ids
+        first = {}
+        thread = threading.Thread(target=lambda: first.setdefault("response", app.apply_all(framerate=60.0)))
+        thread.start()
+        try:
+            app.wait(lambda: app.state(b) == "failed" and app.state(a) == "starting", "B failed at 60 while A starts")
+            refused = app.apply([app.config(b, framerate=30.0, exposure=-9)])
+        finally:
+            app.factory.sources[a].release()
+            thread.join(60)
+        assert refused.status_code == 409 and REQUEST_RUNS in refused.text, refused.text
+        assert first["response"].status_code == 200, first["response"].text
+        wait_ready_at(app, [a, b], 30)
+        assert not any(app.state(camera_id) == "dead" for camera_id in (a, b))
