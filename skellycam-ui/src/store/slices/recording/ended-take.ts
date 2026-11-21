@@ -5,7 +5,7 @@ import { cameraLabel, labelText } from '../cameras/camera-labels.ts';
 export interface GroupTakeState {
     take_state?: string;  // 'none' | 'recording' | 'ended_with_error'; absent from a server that predates recorder.md 8.4
     ended_take_summary?: { take_error: string; camera_id: string | null; summary: unknown } | null;
-    shown?: string;  // the slice only: the take of the last notice, kept across states (a failed start shows no old take)
+    shown?: string;  // the slice only: the take of the last notice; a new take ("recording") clears it
 }
 
 export interface EndedTakeNotice { groupId: string; takeError: string; cameraId: string | null; summary: unknown }
@@ -53,7 +53,7 @@ export function recordingAfterAppState<C>(
     const takeStates = Object.fromEntries(Object.entries(groups).map(([id, group]) => [id, {
         take_state: group.take_state,
         shown: group.take_state === 'ended_with_error' && group.ended_take_summary ? takeOf(group.ended_take_summary)
-            : lastShown(recording.takeStates[id]),
+            : group.take_state === 'recording' ? undefined : lastShown(recording.takeStates[id]),
     }]));
     const isRecording = Object.values(groups).some(group => group.recording_in_progress);
     // A take that ended by itself with an error: Start again, the error and the summary at once, no stop request

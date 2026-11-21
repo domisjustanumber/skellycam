@@ -1517,8 +1517,9 @@ is [`recorder.md`](recorder.md) 8.4: the live state gets `take_state` `"ended_wi
 - It shows them one time for each take: a pure function `endedTakeNotice(previous, state)` in
   `skellycam-ui/src/store/slices/recording/ended-take.ts` gives the notice only when the group is in
   `"ended_with_error"` with a take (its folder, else its name) that no notice showed yet. It gives `null`
-  while the state stays there, and when a record start that fails gives the old take again
-  [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
+  while the state stays there, and when a record start that fails gives the old take again. A record
+  start that succeeds (`"recording"`) clears the shown take, so a later take in the same folder shows its
+  notice [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
 - The UI sends no stop request for such a take.
 
 | ID | Kind | Set-up | Pass criterion |

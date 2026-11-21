@@ -74,14 +74,18 @@ test('reducer: a summary that does not parse gives no summary dialog, but the er
     assert.notEqual(next.endedTake, null);
 });
 
-test('reducer: a record start that fails and gives the old take again shows no second notice; a new take does', () => {
+test('reducer: the old take is shown once; a later take that ends with an error shows its notice, also in the same folder', () => {
     const endedA = { g: { recording_in_progress: false, take_state: 'ended_with_error', ended_take_summary: ended } };
     const shown = { ...recording, ...recordingAfterAppState({ ...recording, takeStates: { g: { take_state: 'recording' } } }, endedA, keepSummary) };
     assert.notEqual(shown.endedTake, null);
-    const starting = { ...shown, endedTake: null, ...recordingAfterAppState(shown, { g: { recording_in_progress: true, take_state: 'recording' } }, keepSummary) };
-    const back = recordingAfterAppState(starting, endedA, keepSummary);
-    assert.equal(back.endedTake, undefined, 'no notice of the old take');
-    assert.equal(endedTakeNotice(starting.takeStates, endedA), null);
-    const endedB = { g: { ...endedA.g, ended_take_summary: { ...ended, summary: { ...summary, recording_name: 'take_2' } } } };
-    assert.equal(endedTakeNotice(starting.takeStates, endedB)?.summary, endedB.g.ended_take_summary.summary);
+    // A record start that fails: the server keeps ended_with_error with the same summary (recorder.md 8.4), and an
+    // app state of the same group comes again: no second notice.
+    const again = { ...shown, ...recordingAfterAppState(shown, endedA, keepSummary) };
+    assert.equal(again.endedTake, shown.endedTake, 'no notice of the old take again');
+    assert.equal(endedTakeNotice(again.takeStates, endedA), null);
+    // A record start that succeeds ("recording"), then the new take ends with an error with the same folder and name.
+    const newTake = { ...again, ...recordingAfterAppState(again, { g: { recording_in_progress: true, take_state: 'recording' } }, keepSummary) };
+    assert.equal(newTake.takeStates.g.shown, undefined);
+    const endedLater = recordingAfterAppState(newTake, endedA, keepSummary);
+    assert.notEqual(endedLater.endedTake ?? null, null, 'the notice of the later take');
 });
