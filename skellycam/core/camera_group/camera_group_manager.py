@@ -20,7 +20,7 @@ from skellycam.core.camera.capture.modes import (
 )
 from skellycam.core.camera.capture.source import CaptureFailure, CaptureRequest
 from skellycam.core.camera.config.camera_config import CameraConfigs, MAX_MANUAL_EXPOSURE
-from skellycam.core.camera_group.camera_group import CameraGroup, RequestRefused, same_config
+from skellycam.core.camera_group.camera_group import FALLING_BACK, CameraGroup, RequestRefused, same_config
 from skellycam.core.camera_group.camera_start_failure import describe_start_failure
 from skellycam.core.device_detection.detect_cameras_devices import CameraDeviceInfo, detect_available_cameras
 from skellycam.core.ipc.pubsub.pubsub_manager import TopicTypes
@@ -117,6 +117,7 @@ class CameraGroupManager:
         if camera_group is not None:  # camera-requests.md 1.5 [AC5B]: each apply request of the user clears them
             camera_group.clear_group_warnings()
             camera_group.fall_back_armed = None
+            camera_group.request_count += 1  # 2.4a item 7: a fall back of an earlier request does not run
             before = dict(camera_group.configs)
             counts = {camera_id: status.search_count.value for camera_id, status in {
                 **camera_group.cameras.orchestrator.camera_statuses, **camera_group.cameras.removed_statuses}.items()}
@@ -132,14 +133,15 @@ class CameraGroupManager:
             fallback = {camera_id: (before.get(camera_id) or camera_configs.get(camera_id) or config).model_copy(
                 update=dict(framerate=30.0)) for camera_id, config in camera_group.configs.items()}
             statuses = camera_group.cameras.orchestrator.camera_statuses
-            slow = {camera_id: (statuses[camera_id].info_dict().get("measured_fps") if failure.get("stage") == "rate check"
-                                else None, camera_group.configs[camera_id].exposure)
+            slow = {camera_id: (statuses[camera_id].info_dict().get("measured_fps"), camera_group.configs[camera_id].exposure,
+                                camera_group.mode_rate(camera_id) or camera_group.configs[camera_id].framerate)
+                    if failure.get("stage") == "rate check" else (None, None, None)  # 2.4a item 4: `set mode`
                     for camera_id, failure in failures.items() if failure.get("stage") in ("set mode", "rate check")}
             if slow:
                 failures, fallback_warnings = await camera_group.fall_back(fallback, slow)
                 warnings += fallback_warnings
             else:  # a search at 60 fps can still start it: the watch of the group (2.4a item 5)
-                camera_group.fall_back_armed = (fallback, counts)
+                camera_group.fall_back_armed = (fallback, counts, camera_group.request_count)
         if failures:
             # One explanation of the failed start, where it adds a cause to the reasons (port from sfn26)
             # Review item 4: the device list only (no camera is activated); the links of the detection before
@@ -214,6 +216,8 @@ class CameraGroupManager:
         if problems:
             raise RequestRefused(422, "; ".join(problems))
         if camera_group is not None:
+            if camera_group.falling_back:  # camera-requests.md 2.4a item 7 [ADR-1T0S]
+                raise RequestRefused(409, FALLING_BACK)
             statuses = camera_group.cameras.orchestrator.camera_statuses
             recording = [camera_id for camera_id, status in list(statuses.items())
                          if status.recording_in_progress.value]
