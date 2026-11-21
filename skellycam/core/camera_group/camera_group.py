@@ -965,6 +965,8 @@ class CameraGroup:
             if held and camera_id in self.configs and held["count"] != self._adopted.get(camera_id):
                 self._adopted[camera_id] = held.pop("count")
                 self.configs[camera_id] = self.configs[camera_id].model_copy(update=held)
+                # the camera left the clamped MANUAL value (camera-requests.md 1.5) [NYT6]
+                status.replace_warning_items("group_warnings", ("exposure_clamped",), [])
 
     def to_state(self) -> CameraGroupState:
         self.adopt_search_results()
