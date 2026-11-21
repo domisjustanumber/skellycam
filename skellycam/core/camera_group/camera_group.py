@@ -14,7 +14,7 @@ from collections.abc import Callable
 from typing import Any
 
 import numpy as np
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, TypeAdapter
 
 from skellycam import __version__
 from skellycam.core.camera.camera_manager import CameraManager
@@ -115,7 +115,9 @@ class CameraGroupState(BaseModel):
     configs: dict[CameraIdString, CameraConfig]
     cameras: dict[CameraIdString, CameraState]
     alive: bool
-    recording_in_progress: bool
+    recording_in_progress: bool  # only for `take_state` "recording" (recorder.md 8.4)
+    take_state: str = "none"  # "none", "recording" or "ended_with_error" (recorder.md 8.4)
+    ended_take_summary: dict | None = None  # take_error, camera_id and summary while "ended_with_error"
 
 
 @dataclass
@@ -131,6 +133,7 @@ class CameraGroup:
     finished: list = field(default_factory=list)  # the result messages that the watch took from their queue
     take: Take | None = None  # the take that runs
     ended_take: TakeSummary | None = None  # a take that an error ended; the next stop request returns it
+    ended_take_summary: dict | None = None  # the live state of that take (recorder.md 8.4)
     take_error: tuple | None = None  # (text, camera_id) of the first stall or write error of the take (5.3, 5.4)
     camera_diagnostics: dict = field(default_factory=dict)  # the newest diagnostics of each camera (unix 4.2 item 2)
     _passes: dict = field(default_factory=dict)  # camera_id: (alive_count, time.monotonic() of its last change)
@@ -628,11 +631,6 @@ class CameraGroup:
             orchestrator.last_recording_frame_number.value = -1
             orchestrator.first_recording_frame_number.value = orchestrator.largest_gate_count() + 3  # [M7, review B4]
             self.take = take
-            if self.ended_take is not None:  # its files and manifest are finished; only the stop response goes
-                logger.warning(f"A new take starts: the summary of the take "
-                               f"{self.ended_take.stop_response.get('recording_name')} that an error ended was not "
-                               f"fetched by a stop request")
-                self.ended_take = None
             for camera_id in self.recording_ids:
                 statuses[camera_id].update_info(writer_failure=None)
             sent = True  # from here, a camera can have a writer
@@ -653,6 +651,11 @@ class CameraGroup:
                 if take is not None:
                     await self._finish_failed_start(take, error, wait=sent)
             raise
+        if self.ended_take is not None:  # its files and manifest are finished; only the stop response goes (8.4)
+            logger.warning(f"A new take starts: the summary of the take "
+                           f"{self.ended_take.stop_response.get('recording_name')} that an error ended was not "
+                           f"fetched by a stop request")
+            self.ended_take = self.ended_take_summary = None
         try:
             await orchestrator.unpause(await_unpaused=True)
         except (RuntimeError, TimeoutError) as error:  # each writer started: the take runs on
@@ -734,7 +737,7 @@ class CameraGroup:
             if self.take is None:
                 if self.ended_take is None:
                     raise RequestRefused(409, "No recording runs")
-                summary, self.ended_take = self.ended_take, None
+                summary, self.ended_take, self.ended_take_summary = self.ended_take, None, None
                 return summary
             return await self._end_take()
 
@@ -742,7 +745,11 @@ class CameraGroup:
         """A stall or a write error ends the take at once for every camera (5.3, 5.4) [C5]."""
         async with self._end_lock:
             if self.take is not None:
-                self.ended_take = await self._end_take()
+                error, camera_id = self.take_error or (None, None)  # `_end_take` clears it
+                summary = await self._end_take()
+                self.ended_take, self.ended_take_summary = summary, dict(  # JSON gives a NaN statistic as null
+                    take_error=error, camera_id=camera_id,
+                    summary=TypeAdapter(dict).dump_python(summary.stop_response, mode="json"))
 
     async def _end_take(self) -> TakeSummary:
         """8.1, under `_end_lock`: set the last frame, wait for each camera (D1), then `Take.finish`."""
@@ -951,6 +958,7 @@ class CameraGroup:
 
     def to_state(self) -> CameraGroupState:
         self.adopt_search_results()
+        take_state = "recording" if self.take is not None else "none" if self.ended_take is None else "ended_with_error"
         return CameraGroupState(
             id=self.id,
             configs=self.configs,
@@ -959,6 +967,7 @@ class CameraGroup:
                 for camera_id, worker in list(self.cameras.camera_workers.items())
             },
             alive=self.alive,
-            # Also when each camera died during the take, and until the stop fetched the summary of an error end.
-            recording_in_progress=self.take is not None or self.ended_take is not None,
+            recording_in_progress=take_state == "recording",  # also when each camera died during the take
+            take_state=take_state,
+            ended_take_summary=self.ended_take_summary if take_state == "ended_with_error" else None,
         )

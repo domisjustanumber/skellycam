@@ -18,6 +18,10 @@ The fix lane makes small fixes. The supervisor gave each rule. The agent made th
    lock, that status is used with no lock for good, and an error line is logged. The end of the camera
    process then gives the state and the reason (`process-ended`, as before)
    ([`unix-capture.md`](../../specs/unix-capture.md) 4.10).
+4. H. A record start that fails after `start_take` returned keeps `"ended_with_error"` and the summary
+   of the earlier take, as a refusal before it does. Only a record start that succeeds drops that
+   summary ([`recorder.md`](../../specs/recorder.md) 8.4). `ended_take_summary.summary` gives a NaN
+   statistic as null, as the stop response does.
 
 ## Reason
 
@@ -29,6 +33,8 @@ The fix lane makes small fixes. The supervisor gave each rule. The agent made th
    A main-process read then waits for ever, also on the event loop (the state route and the websocket).
    One writer at a time sets each scalar, and an aligned scalar is read and written whole, so a scalar
    needs no lock. A JSON array needs its lock against a torn read.
+4. H. The supervisor found the earlier rule a fault: a failed start dropped a summary that no client had
+   fetched, and logged "A new take starts" for a take that did not start.
 
 ## Alternatives rejected
 

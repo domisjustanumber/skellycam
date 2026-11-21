@@ -936,10 +936,10 @@ The user decided: when a take ends by itself with an error, the state changes to
 error". The app state no longer says that a recording runs, the record button of the UI returns to
 "Start", and the error and the summary of the take show at once, with no click on "Stop" ([ADR-H0BQ](../decisions/entries/H0BQ-user-rulings-of-the-spec-integration.md)).
 
-Today `CameraGroup.to_state()` gives `recording_in_progress: self.take is not None or self.ended_take
-is not None`: after a take that an error ended, the state still says that a recording runs until the
-next stop request fetches the summary (8.2), and the summary reaches a client only through that stop
-request. The behaviour above is the ruling of the user. The two fields below are a proposed design
+Before 2026-11-21, `CameraGroup.to_state()` gave `recording_in_progress: self.take is not None or
+self.ended_take is not None`: after a take that an error ended, the state still said that a recording
+ran until the next stop request fetched the summary (8.2), and the summary reached a client only
+through that stop request. The behaviour above is the ruling of the user. The two fields below are a proposed design
 (item 16 of [ADR-FC1C](../decisions/entries/FC1C-choices-of-the-spec-integration.md)). The new rule:
 
 - `CameraGroupState` gets the field `take_state`: `"none"`, `"recording"` or `"ended_with_error"`.
@@ -947,10 +947,10 @@ request. The behaviour above is the ruling of the user. The two fields below are
 - `"recording"` starts when the record start succeeds. A stop request that ends the take gives
   `"none"`. A take that the error of 5.3 or 5.4 ends gives `"ended_with_error"` as soon as
   `Take.finish` returns (8.1 step 5).
-- A record start that fails [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md): a refusal before `start_take` returns (HTTP 409 or 422)
-  changes nothing, so `"ended_with_error"` and its summary stay. A failure after `start_take`
-  returned (the take folder is finished with zero rows, 10 item 13) gives `"none"`: the code drops
-  the old summary at that point (`self.ended_take = None` in `start_recording`).
+- A record start that fails changes nothing: `"ended_with_error"` and its summary stay. This applies
+  to a refusal before `start_take` returns (HTTP 409 or 422) [ADR-AC5B](../decisions/entries/AC5B-choices-of-the-third-consistency-check.md), and to a failure after it
+  (the take folder of the failed start is finished with zero rows, 10 item 13) [ADR-QJH6](../decisions/entries/QJH6-choices-of-the-fix-lane.md).
+  Only a record start that succeeds drops the old summary.
 - `CameraGroupState` gets the field `ended_take_summary`: `null`, or, while `take_state` is
   `"ended_with_error"`, the object `{"take_error": <the text of the error>, "camera_id": <the camera of
   the error, or null>, "summary": <the fields of the stop response of 8.2>}`. The name differs from
@@ -1191,7 +1191,7 @@ Each test of the kinds unit and process uses at least two cameras unless it says
 | T-REC-47 | connection | Two fakes start a take at gate count 100. | Row 0 of each camera is group frame 103 [review B4, M7]. |
 | T-REC-48 | connection | Two OpenCV fakes record; the writer of one is held 3 s; then a fake writer is held past the stall limit and then released; then held for good. | Case 1: neither camera is marked `dead`, also the one that waited at the gate (5.2); case 2: the take ends with `take_error`, the camera stays `ready`; case 3: the camera is `failed`, stage `recording`, reason "disk stall", and "apply again" reopens it [agent 32, C5, C6]. |
 | T-REC-50 | connection | Two fakes record; the writer of one is held past the stall limit; read the live state each 0.5 s, then send a stop request, then start and stop a new take. | `take_state` is `"recording"`, then `"ended_with_error"` within 1.5 s after `Take.finish` returns, with `recording_in_progress` false and `ended_take_summary` holding `take_error` "disk stall on camera <id>", the camera ID and the fields of 8.2; the stop request returns that summary and the state becomes `"none"` with `ended_take_summary` null; the new take gives `"recording"`, then `"none"` (8.4). |
-| T-REC-51 | connection | A take ends with a write error; no stop request; then a record start. | `take_state` stays `"ended_with_error"` until the record start, which gives `"recording"` and `ended_take_summary` null; a stop request after that ends the new take normally; a record start that gets 409 before it keeps `"ended_with_error"` (8.4). |
+| T-REC-51 | connection | A take ends with a write error; no stop request; then a record start. | `take_state` stays `"ended_with_error"` until the record start, which gives `"recording"` and `ended_take_summary` null; a stop request after that ends the new take normally; a record start that gets 409 before it, or that fails after `start_take` (HTTP 500), keeps `"ended_with_error"` and the summary (8.4). |
 | T-REC-49 | connection | List the playback recordings with one old recording and one new take; ask for the videos of the new take. | Both are listed; the new take has `needs_new_player: true`; the old video list endpoint gives HTTP 409 with the mark text for it; no endpoint of the take folder itself is blocked [C7]. |
 
 ### 12.3 Conformance check against skellyfileformat
